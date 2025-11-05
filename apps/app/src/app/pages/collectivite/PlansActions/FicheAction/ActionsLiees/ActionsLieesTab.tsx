@@ -1,9 +1,9 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import { SharedFicheLinkedResourcesAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
+import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import ActionPicto from '@/app/ui/pictogrammes/ActionPicto';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { FicheWithRelations } from '@/domain/plans';
 import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
 import ActionsLieesListe from './ActionsLieesListe';
@@ -12,7 +12,7 @@ import ModaleActionsLiees from './ModaleActionsLiees';
 type ActionsLieesTabProps = {
   isReadonly: boolean;
   isEditLoading: boolean;
-  fiche: Fiche;
+  fiche: FicheWithRelations;
 };
 
 const ActionsLieesTab = ({
@@ -76,7 +76,7 @@ const ActionsLieesTab = ({
           <ActionsLieesListe
             isReadonly={isReadonly}
             externalCollectiviteId={fiche.collectiviteId}
-            actionIds={mesures?.map((action) => action.id)}
+            actionIds={mesures?.map((mesure) => mesure.id)}
             className="md:!grid-cols-2 lg:!grid-cols-1 xl:!grid-cols-2"
             onLoad={setIsLoading}
             onUnlink={(actionsLieeId) =>
@@ -84,7 +84,7 @@ const ActionsLieesTab = ({
                 ficheId: fiche.id,
                 ficheFields: {
                   mesures: mesures.filter(
-                    (action) => action.id !== actionsLieeId
+                    (mesure) => mesure.id !== actionsLieeId
                   ),
                 },
               })

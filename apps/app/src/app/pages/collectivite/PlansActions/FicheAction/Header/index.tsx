@@ -4,17 +4,17 @@ import {
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import { FicheWithRelations } from '@/domain/plans';
 import { PermissionOperation } from '@/domain/users';
 import { Divider, Icon } from '@/ui';
 import { format } from 'date-fns';
-import { Fiche } from '../data/use-get-fiche';
 import { FicheActionCompletionStatus } from '../FicheActionCompletion/fiche-action-completion';
 import Toolbar from './actions/toolbar';
 import { FicheBreadcrumbs } from './fiche-breadcrumbs';
 import TitreFiche from './TitreFiche';
 
 type FicheActionHeaderProps = {
-  fiche: Fiche;
+  fiche: FicheWithRelations;
   isReadonly: boolean;
   permissions: PermissionOperation[];
   updateTitle: (value: string | null) => void;

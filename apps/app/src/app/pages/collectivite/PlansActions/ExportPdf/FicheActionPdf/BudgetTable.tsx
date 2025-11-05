@@ -1,18 +1,51 @@
-import {
-  FormattedBudgetType,
-  getBudgetForTable,
-} from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/utils';
-import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { Paragraph, TCell, TRow, Table } from '@/app/ui/export-pdf/components';
 import { getFormattedFloat, getFormattedNumber } from '@/app/utils/formatUtils';
+import { FicheActionBudget } from '@/domain/plans';
+import { groupBy } from 'es-toolkit';
 
-type BudgetTableProps = {
-  budgets: BudgetType[];
+type FicheActionBudgetWithYear = FicheActionBudget & {
+  annee: number;
 };
 
-const BudgetTable = ({ budgets }: BudgetTableProps) => {
-  const formattedBudget: FormattedBudgetType = getBudgetForTable(budgets);
+type FormattedBudgetType = {
+  annee: number | undefined | null;
+  eurosPrevisionnel: number | undefined | null;
+  eurosReel: number | undefined | null;
+  etpPrevisionnel: number | undefined | null;
+  etpReel: number | undefined | null;
+}[];
 
+const getBudgetForTable = (
+  budgets: Array<FicheActionBudget>
+): FormattedBudgetType => {
+  const budgetsWithYear = budgets.filter(
+    (b): b is FicheActionBudgetWithYear => !!b.annee
+  );
+
+  const groupedBudgets = groupBy(budgetsWithYear, (b) => b.annee);
+
+  return Object.values(groupedBudgets)
+    .map((budgetsByYear) => {
+      const euroBudget = budgetsByYear.find((b) => b.unite === 'HT');
+      const etpBudget = budgetsByYear.find((b) => b.unite === 'ETP');
+      const eurosPrevisionnel = euroBudget?.budgetPrevisionnel;
+      const eurosReel = euroBudget?.budgetReel;
+      const etpPrevisionnel = etpBudget?.budgetPrevisionnel;
+      const etpReel = etpBudget?.budgetReel;
+
+      return {
+        annee: budgetsByYear[0].annee,
+        eurosPrevisionnel,
+        eurosReel,
+        etpPrevisionnel,
+        etpReel,
+      };
+    })
+    .sort((a, b) => a.annee - b.annee);
+};
+
+const BudgetTable = ({ budgets }: { budgets: FicheActionBudget[] }) => {
+  const formattedBudget = getBudgetForTable(budgets);
   return (
     <Table wrap={false}>
       {/* En-tête */}

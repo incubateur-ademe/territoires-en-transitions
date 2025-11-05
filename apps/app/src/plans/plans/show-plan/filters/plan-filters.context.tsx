@@ -4,8 +4,7 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { usePersonneListe } from '@/app/ui/dropdownLists/PersonnesDropdown/usePersonneListe';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import { TOption } from '@/app/ui/shared/select/commons';
-import { FicheResume } from '@/domain/plans';
-import { Plan } from '@/domain/plans';
+import { FicheResume, Plan } from '@/domain/plans';
 import { without } from 'es-toolkit';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { useFichesActionFiltresListe } from '../data/use-fiches-filters-list';
@@ -14,7 +13,6 @@ import {
   PrioriteOrNot,
   StatutOrNot,
 } from '../data/use-fiches-filters-list/types';
-
 export type CurrentFilters = Omit<FormFilters, 'collectiviteId' | 'axes'>;
 export type CurrentFiltersKeys = keyof CurrentFilters;
 

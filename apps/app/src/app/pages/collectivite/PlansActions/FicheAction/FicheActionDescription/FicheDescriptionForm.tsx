@@ -1,5 +1,3 @@
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-
 import { Field, Input } from '@/ui';
 
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
@@ -7,49 +5,44 @@ import { useGetThematiqueAndSousThematiqueOptions } from '@/app/ui/dropdownLists
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
 import { FormSectionGrid } from '@/ui';
 
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { FicheWithRelations } from '@/domain/plans';
 import { RichTextEditor, SelectFilter } from '@/ui';
 import { Controller, useForm } from 'react-hook-form';
 
 const DESCRIPTION_MAX_LENGTH = 20000;
-const MOYENS_MAX_LENGTH = 10000;
 const INSTANCES_MAX_LENGTH = 10000;
 
 export type FicheUpdatePayload = Pick<
-  Fiche,
+  FicheWithRelations,
   | 'id'
   | 'titre'
-  | 'ressources'
   | 'instanceGouvernance'
   | 'thematiques'
   | 'sousThematiques'
   | 'libreTags'
   | 'description'
-> &
-  FicheShareProperties;
+  | 'collectiviteId'
+  | 'collectiviteNom'
+  | 'sharedWithCollectivites'
+>;
 
 export const FicheDescriptionForm = ({
   fiche,
   onSubmit,
   formId,
 }: {
-  fiche: FicheUpdatePayload;
+  fiche: FicheWithRelations;
   onSubmit: (fiche: FicheUpdatePayload) => void;
   formId: string;
 }) => {
   const { handleSubmit, register, control, setValue, watch } =
-    useForm<FicheUpdatePayload>({
+    useForm<FicheWithRelations>({
       defaultValues: fiche,
     });
 
-  const {
-    thematiques,
-    description,
-    ressources,
-    instanceGouvernance,
-    sousThematiques,
-  } = watch();
+  const { thematiques, description, instanceGouvernance, sousThematiques } =
+    watch();
 
   const {
     sousThematiqueOptions,
@@ -65,14 +58,13 @@ export const FicheDescriptionForm = ({
   });
 
   const handleSave = async (
-    updatedFiche: FicheUpdatePayload
+    updatedFiche: FicheWithRelations
   ): Promise<void> => {
     const titleToSave = (updatedFiche.titre ?? '').trim();
 
     onSubmit({
       id: updatedFiche.id,
       titre: titleToSave.length ? titleToSave : null,
-      ressources: updatedFiche.ressources,
       instanceGouvernance: updatedFiche.instanceGouvernance,
       thematiques: updatedFiche.thematiques,
       sousThematiques: updatedFiche.sousThematiques,
@@ -166,28 +158,6 @@ export const FicheDescriptionForm = ({
             render={({ field }) => (
               <RichTextEditor
                 initialValue={fiche.description || ''}
-                onChange={(value) => field.onChange(value)}
-              />
-            )}
-          />
-        </Field>
-
-        <Field
-          title="Moyens humains et techniques"
-          className="col-span-2"
-          state={ressources?.length === MOYENS_MAX_LENGTH ? 'info' : 'default'}
-          message={getMaxLengthMessage(
-            ressources ?? '',
-            MOYENS_MAX_LENGTH,
-            true
-          )}
-        >
-          <Controller
-            control={control}
-            name="ressources"
-            render={({ field }) => (
-              <RichTextEditor
-                initialValue={fiche.ressources || ''}
                 onChange={(value) => field.onChange(value)}
               />
             )}

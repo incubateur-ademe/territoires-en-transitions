@@ -1,12 +1,12 @@
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
+import { FicheResume } from '@/domain/plans';
 import { Button, Field, ModalFooterOKCancel, RichTextEditor } from '@/ui';
 import { useState } from 'react';
 import { NOTES_MAX_LENGTH } from './ModaleCreationNote';
 
 type ModaleEditionNoteProps = {
-  fiche: FicheShareProperties;
+  fiche: FicheResume;
   notes: string;
   updateNotes: (notes: string | null) => void;
 };

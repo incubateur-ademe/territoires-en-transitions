@@ -1,6 +1,6 @@
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
+import { FicheResume } from '@/domain/plans';
 import {
   Alert,
   Button,
@@ -15,7 +15,7 @@ import { EditedNote } from '../data/useUpsertNoteSuivi';
 
 type ModaleCreationNoteDeSuiviProps = {
   isOpen: boolean;
-  fiche: FicheShareProperties;
+  fiche: FicheResume;
   setIsOpen: (opened: boolean) => void;
   onEdit: (editedNote: EditedNote) => void;
 };

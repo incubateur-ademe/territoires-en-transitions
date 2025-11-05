@@ -1,4 +1,4 @@
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { FicheWithRelations } from '@/domain/plans';
 import { Button, EmptyCard, getOptionLabel } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -15,7 +15,7 @@ import StructurePilotePicto from './PictosActeurs/StructurePilotePicto';
 
 type FicheActionActeursProps = {
   isReadonly: boolean;
-  fiche: Fiche;
+  fiche: FicheWithRelations;
   className?: string;
 };
 

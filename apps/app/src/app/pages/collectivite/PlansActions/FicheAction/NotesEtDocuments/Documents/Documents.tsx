@@ -1,9 +1,9 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { SharedFicheLinkedResourcesAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
 import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { FicheResume } from '@/domain/plans';
 import { Button, EmptyCard } from '@/ui';
 import { useEffect, useState } from 'react';
 import { useAddAnnexe } from '../../data/useAddAnnexe';
@@ -14,7 +14,7 @@ import ModaleAjoutDocument from './ModaleAjoutDocument';
 type DocumentsProps = {
   isReadonly: boolean;
   collectiviteId: number;
-  fiche: FicheShareProperties;
+  fiche: FicheResume;
 };
 
 const Documents = (props: DocumentsProps) => {

@@ -8,14 +8,13 @@ type FinanceursInputProps = {
   onUpdate: (financeurs: Financeur[] | null | undefined) => void;
 };
 
-const FinanceursInput = ({
+export const FinanceursInput = ({
   financeurs,
   onUpdate,
   collectiviteIds,
 }: FinanceursInputProps) => {
   return (
     <div className="flex flex-col gap-6">
-      {/* Liste des financeurs */}
       {(financeurs ?? []).map((financeur, index) => (
         <div
           key={`${financeur.financeurTag.nom}-${index}`}
@@ -72,7 +71,6 @@ const FinanceursInput = ({
         </div>
       ))}
 
-      {/* Nouveau financeur */}
       <div className="col-span-2 grid grid-cols-7 gap-4">
         <Field title="Ajouter un financeur" className="col-span-3">
           <FinanceursDropdown
@@ -101,5 +99,3 @@ const FinanceursInput = ({
     </div>
   );
 };
-
-export default FinanceursInput;

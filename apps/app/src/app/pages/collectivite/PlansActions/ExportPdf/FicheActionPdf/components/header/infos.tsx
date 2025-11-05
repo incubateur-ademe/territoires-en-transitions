@@ -8,14 +8,14 @@ import {
   TimeIcon,
 } from '@/app/ui/export-pdf/assets/icons';
 import { Box, Paragraph, Stack } from '@/app/ui/export-pdf/components';
+import { FicheWithRelations } from '@/domain/plans';
 import { preset } from '@/ui';
 import classNames from 'classnames';
 import { format, isBefore, startOfToday } from 'date-fns';
-import { FicheActionPdfProps } from '../../FicheActionPdf';
 
 const { colors } = preset.theme.extend;
 
-export const Infos = ({ fiche }: FicheActionPdfProps) => {
+export const Infos = ({ fiche }: { fiche: FicheWithRelations }) => {
   const {
     modifiedAt,
     modifiedBy,

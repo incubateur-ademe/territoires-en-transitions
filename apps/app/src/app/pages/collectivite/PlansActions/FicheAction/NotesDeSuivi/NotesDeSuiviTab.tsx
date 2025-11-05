@@ -1,4 +1,4 @@
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { FicheResume } from '@/domain/plans';
 import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
 import { useFicheActionNotesSuivi } from '../data/useFicheActionNotesSuivi';
@@ -12,7 +12,7 @@ import NotificationPicto from './NotificationPicto';
 
 type NotesDeSuiviTabProps = {
   isReadonly: boolean;
-  fiche: Fiche;
+  fiche: FicheResume;
 };
 
 const NotesDeSuiviTab = ({ fiche, isReadonly }: NotesDeSuiviTabProps) => {

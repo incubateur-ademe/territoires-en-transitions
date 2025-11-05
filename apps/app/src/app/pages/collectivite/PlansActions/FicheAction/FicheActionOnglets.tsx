@@ -1,7 +1,8 @@
 import { ENV } from '@/api/environmentVariables';
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { MoyensView } from '@/app/plans/fiches/update-fiche/moyens/moyens.view';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import { FicheWithRelations } from '@/domain/plans';
 import { CollectiviteAccess } from '@/domain/users';
 import { AppEnvironment } from '@/domain/utils';
 import { Tab, Tabs } from '@/ui';
@@ -9,7 +10,6 @@ import { ServicesWidget } from '@betagouv/les-communs-widget';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
 import type { ReactElement } from 'react';
 import ActionsLieesTab from './ActionsLiees/ActionsLieesTab';
-import BudgetTab from './Budget/BudgetTab';
 import FichesLieesTab from './FichesLiees/FichesLieesTab';
 import IndicateursTab from './Indicateurs/IndicateursTab';
 import NotesDeSuiviTab from './NotesDeSuivi/NotesDeSuiviTab';
@@ -23,7 +23,7 @@ type TabDescriptor = {
 };
 
 type FicheActionOngletsProps = {
-  fiche: Fiche;
+  fiche: FicheWithRelations;
   isEditLoading: boolean;
   isReadonly: boolean;
   className?: string;
@@ -72,9 +72,9 @@ const FicheActionOnglets = ({
       render: () => <NotesDeSuiviTab isReadonly={isReadonly} fiche={fiche} />,
     },
     {
-      label: 'Budget',
+      label: 'Moyens',
       isVisible: true,
-      render: () => <BudgetTab isReadonly={isReadonly} fiche={fiche} />,
+      render: () => <MoyensView isReadonly={isReadonly} fiche={fiche} />,
     },
     {
       label: 'Fiches action liées',

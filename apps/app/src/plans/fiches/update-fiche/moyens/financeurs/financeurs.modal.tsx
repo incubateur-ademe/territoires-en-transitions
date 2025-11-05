@@ -1,4 +1,3 @@
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { FicheWithRelations, Financeur } from '@/domain/plans';
@@ -6,15 +5,15 @@ import { Alert, Divider, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { isEqual } from 'es-toolkit';
 import { useState } from 'react';
-import FinanceursInput from './FinanceursInput';
+import { FinanceursInput } from './financeurs.input';
 
 type FinanceursModalProps = {
   openState: OpenState;
-  fiche: Pick<FicheWithRelations, 'financeurs'> & FicheShareProperties;
+  fiche: FicheWithRelations;
   updateFinanceurs: (financeurs: Financeur[] | null | undefined) => void;
 };
 
-const FinanceursModal = ({
+export const FinanceursModal = ({
   openState,
   fiche,
   updateFinanceurs,
@@ -69,5 +68,3 @@ const FinanceursModal = ({
     />
   );
 };
-
-export default FinanceursModal;
