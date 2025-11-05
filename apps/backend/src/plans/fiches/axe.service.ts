@@ -1,8 +1,9 @@
+import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { AxeCreate } from '@/domain/plans';
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '../../utils/database/database.service';
-import { axeTable, CreateAxeType } from './shared/models/axe.table';
+import { axeTable } from './shared/models/axe.table';
 import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
 
 @Injectable()
 export default class AxeService {
@@ -16,7 +17,7 @@ export default class AxeService {
    * @param tx transaction
    * @return identifiant de l'axe créé
    */
-  async createAxe(axe: CreateAxeType, tx?: Transaction): Promise<number> {
+  async createAxe(axe: AxeCreate, tx?: Transaction): Promise<number> {
     this.logger.log(
       `Création de l'axe ${axe.nom} pour la collectivité ${axe.collectiviteId}`
     );

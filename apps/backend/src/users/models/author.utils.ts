@@ -1,16 +1,13 @@
+import { dcpSchema } from '@/domain/users';
 import { sql } from 'drizzle-orm';
 import { PgColumn } from 'drizzle-orm/pg-core';
-import z from 'zod';
-import { dcpSchema } from './dcp.table';
+import * as z from 'zod/mini';
 
-export const authorSchema = dcpSchema
-  .pick({
-    nom: true,
-    prenom: true,
-  })
-  .extend({
-    id: dcpSchema.shape.userId,
-  });
+export const authorSchema = z.object({
+  id: dcpSchema.shape.userId,
+  nom: dcpSchema.shape.nom,
+  prenom: dcpSchema.shape.prenom,
+});
 
 export type Author = z.infer<typeof authorSchema>;
 

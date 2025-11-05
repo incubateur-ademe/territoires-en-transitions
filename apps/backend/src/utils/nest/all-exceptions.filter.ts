@@ -4,7 +4,7 @@ import {
   ArgumentsHost,
   Catch,
   HttpException,
-  HttpServer,
+  type HttpServer,
   Logger,
 } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
@@ -12,7 +12,7 @@ import * as Sentry from '@sentry/nestjs';
 import { Request, Response } from 'express';
 import { getErrorCode } from './errors.utils';
 import { HttpErrorResponse } from './http-error.response';
-import { getErrorMessage } from '../get-error-message';
+import { getErrorMessage } from '@/domain/utils';
 
 export const getHttpErrorResponse = (exception: unknown): HttpErrorResponse => {
   const httpErrorResponse: HttpErrorResponse = {

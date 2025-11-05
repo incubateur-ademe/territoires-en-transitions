@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { DiscussionRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
-import { DiscussionType } from '../infrastructure/discussion.tables';
+import { DiscussionType } from '../infrastructure/discussion.table';
 import {
   CreateDiscussionData,
   CreateDiscussionMessageResponse,
@@ -12,7 +12,7 @@ import {
 import { DiscussionDomainService } from './discussion-domain-service';
 import { DiscussionQueryService } from './discussion-query-service';
 import { DiscussionErrorEnum } from './discussion.errors';
-import { discussionStatus } from './discussion.types';
+import { discussionStatus } from '@tet/domain/collectivites';
 
 describe('DiscussionDomainService', () => {
   let service: DiscussionDomainService;

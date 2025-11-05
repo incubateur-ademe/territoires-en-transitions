@@ -10,18 +10,15 @@ import { ficheActionServiceTagTable } from '@/backend/plans/fiches/shared/models
 import { ficheActionSousThematiqueTable } from '@/backend/plans/fiches/shared/models/fiche-action-sous-thematique.table';
 import { ficheActionStructureTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-structure-tag.table';
 import { ficheActionThematiqueTable } from '@/backend/plans/fiches/shared/models/fiche-action-thematique.table';
-import {
-  Fiche,
-  ficheActionTable,
-  FicheCreate,
-} from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
+import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
+import { Fiche, FicheCreate } from '@tet/domain/plans';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import { UpdateFicheRequest } from '../update-fiche/update-fiche.request';
 import UpdateFicheService from '../update-fiche/update-fiche.service';
 import { Result } from './create-fiche.result';

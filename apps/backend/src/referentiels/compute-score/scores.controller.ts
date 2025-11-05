@@ -1,13 +1,13 @@
 import { AllowAnonymousAccess } from '@/backend/users/decorators/allow-anonymous-access.decorator';
 import { TokenInfo } from '@/backend/users/decorators/token-info.decorators';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
+import type { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
+import type { ReferentielId } from '@/domain/referentiels';
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
 import { createZodDto } from 'nestjs-zod';
 import { getReferentielMultipleScoresRequestSchema } from '../models/get-referentiel-multiple-scores.request';
-import { ReferentielId } from '../models/referentiel-id.enum';
 import ScoresService from './scores.service';
 
 class GetReferentielMultipleScoresRequestClass extends createZodDto(

@@ -1,13 +1,11 @@
 import ListPersonnalisationQuestionsService from '@/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
-import {
-  CreateQuestionChoixType,
-  questionChoixTable,
-} from '@/backend/collectivites/personnalisations/models/question-choix.table';
+import { questionChoixTable } from '@/backend/collectivites/personnalisations/models/question-choix.table';
+import { QuestionChoixCreate } from '@/domain/collectivites';
+import { questionThematiqueTable } from '@/backend/collectivites/personnalisations/models/question-thematique.table';
 import {
   QuestionThematique,
   questionThematiqueSchema,
-  questionThematiqueTable,
-} from '@/backend/collectivites/personnalisations/models/question-thematique.table';
+} from '@/domain/collectivites';
 import { QuestionWithChoices } from '@/backend/collectivites/personnalisations/models/question-with-choices.dto';
 import { questionTable } from '@/backend/collectivites/personnalisations/models/question.table';
 import BaseSpreadsheetImporterService from '@/backend/shared/services/base-spreadsheet-importer.service';
@@ -245,7 +243,7 @@ export default class ImportPersonnalisationQuestionService extends BaseSpreadshe
         .returning();
 
       // Insert new choices
-      let upsertedChoix: CreateQuestionChoixType[] = [];
+      let upsertedChoix: QuestionChoixCreate[] = [];
       if (choix.length > 0) {
         upsertedChoix = await tx
           .insert(questionChoixTable)

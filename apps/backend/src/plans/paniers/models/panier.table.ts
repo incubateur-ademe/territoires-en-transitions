@@ -1,5 +1,5 @@
 import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
-import { InferSelectModel, SQL, sql } from 'drizzle-orm';
+import { SQL, sql } from 'drizzle-orm';
 import {
   boolean,
   integer,
@@ -7,7 +7,6 @@ import {
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { createSelectSchema } from 'drizzle-zod';
 
 export const panierTable = pgTable('panier', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -33,6 +32,3 @@ export const panierTable = pgTable('panier', {
     (): SQL => sql`(${panierTable.collectiviteId} is not null)`
   ),
 });
-export type PanierType = InferSelectModel<typeof panierTable>;
-
-export const panierSchema = createSelectSchema(panierTable);

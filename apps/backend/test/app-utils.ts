@@ -3,9 +3,9 @@ import { CustomZodValidationPipe } from '@/backend/utils/nest/custom-zod-validat
 import VersionService from '@/backend/utils/version/version.service';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
-import { DatabaseService } from '../src/utils/database/database.service';
-import { TrpcRouter } from '../src/utils/trpc/trpc.router';
+import { AppModule } from '@/backend/app.module';
+import { DatabaseService } from '@/backend/utils/database/database.service';
+import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 
 export const getTestApp = async (options?: {
   mockProdEnv?: boolean;

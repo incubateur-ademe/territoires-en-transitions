@@ -1,5 +1,5 @@
-import { ListFichesRequestFilters } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
-import { CountByRecordGeneralType } from '@/backend/utils/count-by.dto';
+import { ListFichesRequestFilters } from '@/domain/plans';
+import { CountByRecordGeneralType } from '@/domain/utils';
 import { ArrayCountByProperty } from '../count-by.types';
 import { countByArrayValues } from './count-by-array-value';
 

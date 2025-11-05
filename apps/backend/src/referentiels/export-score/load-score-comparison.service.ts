@@ -1,17 +1,23 @@
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
-import { ScoreFinalFields } from '@/backend/referentiels/compute-score/score.dto';
 import { ExportScoreComparisonRequestQuery } from '@/backend/referentiels/export-score/export-score-comparison.request';
 import { HandleMesureServicesService } from '@/backend/referentiels/handle-mesure-services/handle-mesure-services.service';
 import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.table';
-import {
-  ActionDefinition,
-  MesureId,
-} from '@/backend/referentiels/models/action-definition.table';
-import { flatMapActionsEnfants } from '@/backend/referentiels/referentiels.utils';
-import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { unaccent } from '@/backend/utils/unaccent.utils';
+import {
+  PersonneTagOrUser,
+  TagWithCollectiviteId,
+} from '@/domain/collectivites';
+import {
+  ActionId,
+  ActionTypeEnum,
+  flatMapActionsEnfants,
+  ReferentielId,
+  ScoreSnapshot,
+  SnapshotJalonEnum,
+  TreeOfActionsIncludingScore,
+} from '@/domain/referentiels';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { format } from 'date-fns';
 import { and, desc, eq } from 'drizzle-orm';
@@ -19,29 +25,39 @@ import * as Utils from '../../utils/excel/export-excel.utils';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import { HandleMesurePilotesService } from '../handle-mesure-pilotes/handle-mesure-pilotes.service';
 import { auditTable } from '../labellisations/audit.table';
-import {
-  ActionDefinitionEssential,
-  TreeNode,
-} from '../models/action-definition.dto';
-import { ReferentielId } from '../models/referentiel-id.enum';
-import { Snapshot, snapshotTable } from '../snapshots/snapshot.table';
+import { snapshotTable } from '../snapshots/snapshot.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
-
-export type ActionWithScore = TreeNode<
-  Pick<ActionDefinition, 'nom' | 'identifiant' | 'categorie'> &
-    ActionDefinitionEssential &
-    ScoreFinalFields
->;
 
 export type Auditeur = {
   prenom: string | null;
   nom: string | null;
 };
 
-export type ScoreComparisonData = Awaited<
-  ReturnType<LoadScoreComparisonService['loadScoreComparison']>
->;
-export type ScoreRow = ScoreComparisonData['scoreRows'][number];
+export type ScoreRow = {
+  actionId: ActionId;
+  actionType: ActionTypeEnum;
+  score1: TreeOfActionsIncludingScore;
+  score2: TreeOfActionsIncludingScore | null;
+};
+
+export type ScoreComparisonData = {
+  collectiviteName: string;
+  referentielId: ReferentielId;
+  exportMode: ExportMode;
+  exportTitle: string;
+  exportFileName: string;
+  snapshot1: ScoreSnapshot;
+  snapshot2: ScoreSnapshot | null;
+  scoreRows: ScoreRow[];
+  snapshot1Label: string;
+  snapshot2Label: string;
+  auditeurs: Auditeur[] | null;
+  descriptions: Record<ActionId, string>;
+  pilotes: Record<ActionId, PersonneTagOrUser[]>;
+  services: Record<ActionId, TagWithCollectiviteId[]>;
+  fichesActionLiees: Record<ActionId, string>;
+  isScoreIndicatifEnabled: boolean | undefined;
+};
 
 export enum ExportMode {
   AUDIT = 'audit',
@@ -75,7 +91,7 @@ export class LoadScoreComparisonService {
     collectiviteId: number,
     referentielId: ReferentielId,
     query: ExportScoreComparisonRequestQuery
-  ) {
+  ): Promise<ScoreComparisonData> {
     const {
       exportFormat,
       isAudit,
@@ -199,7 +215,7 @@ export class LoadScoreComparisonService {
     collectiviteId: number,
     referentielId: ReferentielId,
     snapshotReferences?: string[]
-  ): Promise<{ snapshot1: Snapshot; snapshot2: Snapshot | null }> {
+  ): Promise<{ snapshot1: ScoreSnapshot; snapshot2: ScoreSnapshot | null }> {
     const { snapshot1Ref, snapshot2Ref } = await this.getSnapshotReferences(
       mode,
       collectiviteId,
@@ -207,8 +223,8 @@ export class LoadScoreComparisonService {
       snapshotReferences
     );
 
-    let snapshot1: Snapshot | null = null;
-    let snapshot2: Snapshot | null = null;
+    let snapshot1: ScoreSnapshot | null = null;
+    let snapshot2: ScoreSnapshot | null = null;
 
     if (mode === ExportMode.SINGLE_SNAPSHOT) {
       snapshot1 =
@@ -322,9 +338,9 @@ export class LoadScoreComparisonService {
    * Agrège les scores en une liste d'actions triées par identifiant
    */
   private transformSnapshotsIntoRows(
-    snapshot1: Snapshot,
-    snapshot2: Snapshot | null
-  ) {
+    snapshot1: ScoreSnapshot,
+    snapshot2: ScoreSnapshot | null
+  ): ScoreRow[] {
     const snapshot1Scores = snapshot1.scoresPayload.scores;
     const snapshot2Scores = snapshot2?.scoresPayload.scores;
     const s1Rows = flatMapActionsEnfants(snapshot1Scores);
@@ -358,7 +374,7 @@ export class LoadScoreComparisonService {
 
   private async getActionDescriptions(
     referentielId: ReferentielId
-  ): Promise<Record<MesureId, string>> {
+  ): Promise<Record<ActionId, string>> {
     const referentiel = await this.getReferentielService.getReferentielTree(
       referentielId,
       false
@@ -390,8 +406,8 @@ export class LoadScoreComparisonService {
 
   private async getFichesActionLiees(
     collectiviteId: number,
-    mesureIds: MesureId[]
-  ): Promise<Record<MesureId, string>> {
+    mesureIds: ActionId[]
+  ): Promise<Record<ActionId, string>> {
     const fichesActionLiees: Record<string, string[]> = {};
 
     try {
@@ -506,8 +522,8 @@ export class LoadScoreComparisonService {
 
   private getScoreHeaderLabels(
     mode: ExportMode,
-    snapshot1: Snapshot,
-    snapshot2: Snapshot | null
+    snapshot1: ScoreSnapshot,
+    snapshot2: ScoreSnapshot | null
   ): { snapshot1Label: string; snapshot2Label: string } {
     let snapshot1Label: string = snapshot1.nom;
 
@@ -552,7 +568,7 @@ export class LoadScoreComparisonService {
   // Génère le nom du fichier exporté
   private getExportFileName(
     mode: ExportMode,
-    snapshot1: Snapshot,
+    snapshot1: ScoreSnapshot,
     collectiviteName: string | null,
     referentielId: ReferentielId,
     exportFormat: 'excel' | 'csv'

@@ -1,11 +1,11 @@
 import { AllowAnonymousAccess } from '@/backend/users/decorators/allow-anonymous-access.decorator';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
-import { chartRenderRequestSchema } from '@/backend/utils/echarts/chart-render.request';
 import { EchartsService } from '@/backend/utils/echarts/echarts.service';
+import { chartRenderRequestSchema } from '@/domain/utils';
 import { Body, Controller, Next, Post, Res } from '@nestjs/common';
 import { ApiExcludeController, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { NextFunction, Response } from 'express';
+import type { NextFunction, Response } from 'express';
 import { createZodDto } from 'nestjs-zod';
 
 class ChartRenderRequestClass extends createZodDto(chartRenderRequestSchema) {}

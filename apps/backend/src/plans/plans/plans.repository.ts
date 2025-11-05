@@ -1,8 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { and, asc, desc, eq, getTableColumns, isNull, sql } from 'drizzle-orm';
-import { z } from 'zod';
-import { DatabaseService } from '../../utils/database/database.service';
 import {
+  AxeLight,
   CreatePlanRequest,
   flatAxeSchema,
   PlanNode,
@@ -11,18 +8,22 @@ import {
   UpdatePlanRequest as UpdatePlanOrAxeRequest,
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
-} from './plans.schema';
+} from '@/domain/plans';
+import { Injectable, Logger } from '@nestjs/common';
+import { and, asc, desc, eq, getTableColumns, isNull, sql } from 'drizzle-orm';
+import { z } from 'zod';
+import { DatabaseService } from '../../utils/database/database.service';
 
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { planActionTypeTable } from '@/backend/plans/fiches/shared/models/plan-action-type.table';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { dcpTable as userTable } from '@/backend/users/models/dcp.table';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { axeTable, AxeType } from '../fiches/shared/models/axe.table';
+import { PermissionOperationEnum } from '@/domain/users';
+import { axeTable } from '../fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '../fiches/shared/models/fiche-action-axe.table';
 import { planPiloteTable } from '../fiches/shared/models/plan-pilote.table';
 import { planReferentTable } from '../fiches/shared/models/plan-referent.table';
@@ -47,7 +48,7 @@ export class PlansRepository implements PlansRepositoryInterface {
     plan: CreatePlanRequest,
     userId: string,
     tx?: Transaction
-  ): Promise<Result<AxeType>> {
+  ): Promise<Result<AxeLight>> {
     try {
       const result = await (tx ?? this.databaseService.db)
         .insert(axeTable)
@@ -85,7 +86,7 @@ export class PlansRepository implements PlansRepositoryInterface {
     planOrAxe: UpdatePlanOrAxeRequest,
     userId: string,
     tx?: Transaction
-  ): Promise<Result<AxeType>> {
+  ): Promise<Result<AxeLight>> {
     try {
       const result = await (tx ?? this.databaseService.db)
         .update(axeTable)
@@ -126,7 +127,7 @@ export class PlansRepository implements PlansRepositoryInterface {
 
   async findById(
     planId: number
-  ): Promise<Result<AxeType & { pilotes: PlanReferentOrPilote[] }>> {
+  ): Promise<Result<AxeLight & { pilotes: PlanReferentOrPilote[] }>> {
     try {
       const [plan] = await this.databaseService.db
         .select()
@@ -194,7 +195,7 @@ export class PlansRepository implements PlansRepositoryInterface {
         direction: 'asc' | 'desc';
       };
     }
-  ): Promise<Result<{ plans: AxeType[]; totalCount: number }>> {
+  ): Promise<Result<{ plans: AxeLight[]; totalCount: number }>> {
     try {
       const { limit, page, sort } = options || {};
 
@@ -492,7 +493,7 @@ export class PlansRepository implements PlansRepositoryInterface {
 
   async getPlanBasicInfo(
     planId: number
-  ): Promise<Result<AxeType & { type: PlanType | null }>> {
+  ): Promise<Result<AxeLight & { type: PlanType | null }>> {
     try {
       const result = await this.databaseService.db
         .select({

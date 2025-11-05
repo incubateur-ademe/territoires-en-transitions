@@ -1,8 +1,8 @@
 import { getAuthUser, getTestRouter } from '@/backend/test';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { statutEnumValues } from '@/domain/plans';
 import { inferProcedureInput } from '@trpc/server';
-import { statutsEnumValues } from '../shared/models/fiche-action.table';
 
 type Input = inferProcedureInput<AppRouter['plans']['fiches']['countBy']>;
 
@@ -29,7 +29,7 @@ describe('CountByRouter', () => {
       countByProperty: 'statut',
     });
 
-    for (const statut of statutsEnumValues) {
+    for (const statut of statutEnumValues) {
       expect(result.countByResult[statut]).toMatchObject({
         value: expect.any(String),
         count: expect.any(Number),

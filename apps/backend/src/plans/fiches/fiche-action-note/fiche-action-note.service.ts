@@ -1,13 +1,11 @@
-import {
-  ficheActionNoteTable,
-  UpsertFicheActionNote,
-} from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
+import { ficheActionNoteTable } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
 import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import { FicheNoteCreate } from '@/domain/plans';
 import { Injectable, Logger } from '@nestjs/common';
 import { aliasedTable, and, desc, eq } from 'drizzle-orm';
 
@@ -23,7 +21,7 @@ export default class FicheActionNoteService {
   /** Insère ou met à jour des notes de suivi */
   async upsertNotes(
     ficheId: number,
-    notes: UpsertFicheActionNote[],
+    notes: FicheNoteCreate[],
     tokenInfo: AuthenticatedUser
   ) {
     this.logger.log(

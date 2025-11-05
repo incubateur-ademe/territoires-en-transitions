@@ -3,11 +3,11 @@ import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.se
 import { ShareFicheService } from '@/backend/plans/fiches/share-fiches/share-fiche.service';
 import { ficheActionLibreTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-libre-tag.table';
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import { PermissionOperationEnum } from '@/domain/users';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, inArray, or, sql } from 'drizzle-orm';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
@@ -27,7 +27,7 @@ export class BulkEditService {
     private readonly fichePermissionsService: FicheActionPermissionsService
   ) {}
 
-  async bulkEdit(request: BulkEditRequest, user: AuthUser) {
+  async bulkEdit(request: BulkEditRequest, user: AuthUser): Promise<void> {
     const actualFicheIds =
       request.ficheIds === 'all'
         ? (

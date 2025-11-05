@@ -1,5 +1,4 @@
 import { modifiedAt, modifiedBy } from '@/backend/utils/column.utils';
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   foreignKey,
   integer,
@@ -7,7 +6,6 @@ import {
   primaryKey,
   text,
 } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { authUsersTable } from '../../users/models/auth-users.table';
 import { actionIdVarchar } from './action-definition.table';
@@ -45,18 +43,4 @@ export const actionCommentaireTable = pgTable(
       }),
     };
   }
-);
-
-export type ActionCommentaireType = InferSelectModel<
-  typeof actionCommentaireTable
->;
-export type CreateActionCommentaireTypeType = InferInsertModel<
-  typeof actionCommentaireTable
->;
-
-export const actionCommentaireSchema = createSelectSchema(
-  actionCommentaireTable
-);
-export const createActionCommmentaireSchema = createInsertSchema(
-  actionCommentaireTable
 );

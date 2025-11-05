@@ -2,7 +2,7 @@
 import { Injectable, LoggerService, Optional } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
 import { Level, pino } from 'pino';
-import { Options } from 'pino-http';
+import type { Options } from 'pino-http';
 import { ContextStoreService } from '../context/context.service';
 import { Log } from './log.dto';
 

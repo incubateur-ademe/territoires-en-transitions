@@ -1,22 +1,28 @@
 import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
+import { COLLECTIVITE_SOURCE_LABEL } from '@/backend/indicateurs/valeurs/valeurs.constants';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import {
   CollectiviteResume,
   CollectiviteType,
   collectiviteTypeEnum,
-} from '@/backend/collectivites/shared/models/collectivite.table';
+} from '@/domain/collectivites';
 import {
   canTrajectoireBeComputedFromInputData,
+  COLLECTIVITE_SOURCE_ID,
+  DATE_DEBUT_SNBC_V2_REFERENCE,
+  DATE_FIN_SNBC_V2_REFERENCE,
   hasEnoughCarbonSequestrationDataFromSource,
   hasEnoughConsommationsFinalesDataFromSource,
   hasEnoughEmissionsGesDataFromSource,
-} from '@/backend/indicateurs/trajectoires/domain/can-trajectoire-be-computed';
-import {
-  COLLECTIVITE_SOURCE_ID,
-  COLLECTIVITE_SOURCE_LABEL,
-} from '@/backend/indicateurs/valeurs/valeurs.constants';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+  IndicateurSourceCreate,
+  IndicateurSourceEnum,
+  IndicateurSourceMetadonnee,
+  IndicateurSourceMetadonneeCreate,
+  IndicateurValeur,
+  VerificationTrajectoireStatus,
+} from '@/domain/indicateurs';
+import { PermissionOperationEnum } from '@/domain/users';
 import {
   Injectable,
   InternalServerErrorException,
@@ -25,30 +31,14 @@ import {
 import { flatten, isEqual, isNil, maxBy, uniq } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { AuthUser } from '../../users/models/auth.models';
-import {
-  SourceMetadonnee,
-  SourceMetadonneeInsert,
-} from '../shared/models/indicateur-source-metadonnee.table';
-import { SourceInsert } from '../shared/models/indicateur-source.table';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
-import {
-  IndicateurValeur,
-  IndicateurValeurAvecMetadonnesDefinition,
-} from '../valeurs/indicateur-valeur.table';
-import {
-  DATE_DEBUT_SNBC_V2_REFERENCE,
-  DATE_FIN_SNBC_V2_REFERENCE,
-} from './domain/constants';
-import { SourceIndicateur } from './domain/source-indicateur';
+import { IndicateurValeurAvecMetadonnesDefinition } from '../valeurs/indicateur-valeur.table';
 import { DonneesARemplirResultType } from './donnees-a-remplir-result.dto';
 import { DonneesARemplirValeurType } from './donnees-a-remplir-valeur.dto';
 import { DataInputForTrajectoireCompute } from './donnees-calcul-trajectoire-a-remplir.dto';
 import { VerificationTrajectoireRequest } from './verification-trajectoire.request';
-import {
-  VerificationTrajectoireResultType,
-  VerificationTrajectoireStatus,
-} from './verification-trajectoire.response';
+import { VerificationTrajectoireResultType } from './verification-trajectoire.response';
 
 @Injectable()
 export default class TrajectoiresDataService {
@@ -61,17 +51,17 @@ export default class TrajectoiresDataService {
   private readonly OBJECTIF_COMMENTAIRE_REGEXP = new RegExp(
     String.raw`Source[^-]*:\s*(.*?)(?:\s*-\s*${this.OBJECTIF_COMMENTAIRE_INDICATEURS_MANQUANTS}\s*(.*))?$`
   );
-  public readonly RARE_SOURCE_ID = SourceIndicateur.RARE;
-  public readonly ALDO_SOURCE_ID = SourceIndicateur.ALDO;
+  public readonly RARE_SOURCE_ID = IndicateurSourceEnum.RARE;
+  public readonly ALDO_SOURCE_ID = IndicateurSourceEnum.ALDO;
 
   public readonly TEST_COLLECTIVITE_SIREN = '000000000';
   public readonly TEST_COLLECTIVITE_VALID_SIREN = '242900314';
 
-  public readonly SNBC_SOURCE: SourceInsert = {
+  public readonly SNBC_SOURCE: IndicateurSourceCreate = {
     id: 'snbc',
     libelle: 'SNBC',
   };
-  public readonly SNBC_SOURCE_METADONNEES: SourceMetadonneeInsert = {
+  public readonly SNBC_SOURCE_METADONNEES: IndicateurSourceMetadonneeCreate = {
     sourceId: this.SNBC_SOURCE.id,
     dateVersion: DateTime.fromISO('2024-07-11T00:00:00', {
       zone: 'utc',
@@ -227,7 +217,7 @@ export default class TrajectoiresDataService {
     'cae_2.a', // 297 Total
   ];
 
-  private indicateurSourceMetadonnee: SourceMetadonnee | null = null;
+  private indicateurSourceMetadonnee: IndicateurSourceMetadonnee | null = null;
 
   constructor(
     private readonly listCollectivitesService: ListCollectivitesService,
@@ -247,7 +237,7 @@ export default class TrajectoiresDataService {
     );
   }
 
-  async getTrajectoireIndicateursMetadonnees(): Promise<SourceMetadonnee> {
+  async getTrajectoireIndicateursMetadonnees(): Promise<IndicateurSourceMetadonnee> {
     if (!this.indicateurSourceMetadonnee) {
       // Création de la source métadonnée SNBC si elle n'existe pas
       this.indicateurSourceMetadonnee =
@@ -332,7 +322,7 @@ export default class TrajectoiresDataService {
    */
   private async getIndicateursValeursBySourceId(
     collectiviteId: number,
-    sourceId: typeof COLLECTIVITE_SOURCE_ID | SourceIndicateur,
+    sourceId: typeof COLLECTIVITE_SOURCE_ID | IndicateurSourceEnum,
     identifiantsReferentiel: string[],
     options: {
       dateDebut?: string;
@@ -372,7 +362,7 @@ export default class TrajectoiresDataService {
     isCollectiviteDataSufficient: (
       data: IndicateurValeurAvecMetadonnesDefinition[]
     ) => boolean,
-    fallbackSourceId: SourceIndicateur,
+    fallbackSourceId: IndicateurSourceEnum,
     options: {
       dateDebut: string;
       dateFin: string;
@@ -776,7 +766,7 @@ export default class TrajectoiresDataService {
     const SUPPORTED_EPCI_TYPES: CollectiviteType[] = [
       collectiviteTypeEnum.EPCI,
       collectiviteTypeEnum.TEST,
-    ] as const;
+    ];
 
     if (SUPPORTED_EPCI_TYPES.includes(epci.type) === false) {
       return {

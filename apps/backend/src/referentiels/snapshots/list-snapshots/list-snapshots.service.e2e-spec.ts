@@ -1,8 +1,7 @@
-import { ReferentielIdEnum } from '@/backend/referentiels/models/referentiel-id.enum';
 import { getAuthUser, getTestApp } from '@/backend/test';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
+import { ReferentielIdEnum, SnapshotJalonEnum } from '@/domain/referentiels';
 import { ReferentielsRouter } from '../../referentiels.router';
-import { SnapshotJalonEnum } from '../snapshot-jalon.enum';
 
 describe('ListSnapshotsService', () => {
   let router: ReferentielsRouter;

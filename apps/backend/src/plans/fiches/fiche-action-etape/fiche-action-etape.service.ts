@@ -1,14 +1,11 @@
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import { FicheEtape, FicheEtapeCreate } from '@/domain/plans';
 import { Injectable } from '@nestjs/common';
 import { and, eq, gt, gte, lt, lte, sql } from 'drizzle-orm';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
-import {
-  ficheActionEtapeTable,
-  FicheActionEtapeType,
-  UpsertFicheActionEtapeType,
-} from './fiche-action-etape.table';
+import { ficheActionEtapeTable } from './fiche-action-etape.table';
 
 @Injectable()
 export class FicheActionEtapeService {
@@ -24,9 +21,9 @@ export class FicheActionEtapeService {
    * @param tokenInfo
    */
   async upsertEtape(
-    etape: UpsertFicheActionEtapeType,
+    etape: FicheEtapeCreate,
     tokenInfo: AuthUser
-  ): Promise<FicheActionEtapeType> {
+  ): Promise<FicheEtape> {
     const { id, ficheId, nom, ordre, realise = false } = etape;
     await this.ficheService.canWriteFiche(ficheId, tokenInfo);
     const userId = tokenInfo?.id;
@@ -188,7 +185,7 @@ export class FicheActionEtapeService {
   async getEtapesByFicheId(
     ficheId: number,
     tokenInfo: AuthUser
-  ): Promise<FicheActionEtapeType[]> {
+  ): Promise<FicheEtape[]> {
     await this.ficheService.canReadFiche(ficheId, tokenInfo);
     return this.databaseService.db
       .select()

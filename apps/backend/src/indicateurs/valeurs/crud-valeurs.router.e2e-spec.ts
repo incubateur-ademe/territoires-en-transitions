@@ -3,8 +3,8 @@ import {
   getCollectiviteIdBySiren,
   getIndicateurIdByIdentifiant,
 } from '@/backend/test';
-import { CollectiviteAccessLevelEnum } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
 import { addTestUser } from '@/backend/users/users/users.fixture';
+import { CollectiviteAccessLevelEnum } from '@/domain/users';
 import { INestApplication } from '@nestjs/common';
 import { inferProcedureInput } from '@trpc/server';
 import { and, eq } from 'drizzle-orm';
@@ -14,10 +14,7 @@ import { AuthenticatedUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { getIndicateursValeursResponseSchema } from './get-indicateur-valeurs.response';
-import {
-  IndicateurValeur,
-  indicateurValeurTable,
-} from './indicateur-valeur.table';
+import { indicateurValeurTable } from './indicateur-valeur.table';
 
 type InputList = inferProcedureInput<
   AppRouter['indicateurs']['valeurs']['list']
@@ -253,8 +250,8 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     expect(resultAfter.indicateurs[0].sources.collectivite.valeurs.length).toBe(
       1
     );
-    const indicateurCalculeValeur = resultAfter.indicateurs[0].sources
-      .collectivite.valeurs[0] as IndicateurValeur;
+    const indicateurCalculeValeur =
+      resultAfter.indicateurs[0].sources.collectivite.valeurs[0];
     expect(indicateurCalculeValeur.resultat).toBe(102.04);
     expect(indicateurCalculeValeur.calculAuto).toBe(true);
     expect(
@@ -408,6 +405,10 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       limitedEditionCaller.indicateurs.valeurs.upsert(input)
     ).rejects.toThrowError(/Droits insuffisants/);
 
+    if (!adminValue) {
+      expect.fail('adminValue is undefined');
+    }
+
     // We can't delete the value too
     await expect(
       limitedEditionCaller.indicateurs.valeurs.delete({
@@ -437,9 +438,12 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     });
 
     const result = await limitedEditionCaller.indicateurs.valeurs.upsert(input);
-    expect(result?.id).toBeDefined();
-    expect(result?.resultat).toBe(43);
-    console.log(`Valeur id: ${result?.id}`);
+
+    if (!result) {
+      expect.fail('result is undefined');
+    }
+
+    expect(result.resultat).toBe(43);
 
     // We can delete the value too
     await limitedEditionCaller.indicateurs.valeurs.delete({

@@ -10,10 +10,7 @@ import {
   collectiviteBanaticSubType,
   collectiviteBanaticTypeTable,
 } from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
-import {
-  collectiviteTable,
-  collectiviteTypeEnum,
-} from '@/backend/collectivites/shared/models/collectivite.table';
+import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
 import { membreTable } from '@/backend/collectivites/shared/models/membre.table';
 import { indicateurValeurTable } from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { axeTable } from '@/backend/plans/fiches/shared/models/axe.table';
@@ -21,12 +18,13 @@ import { ficheActionAxeTable } from '@/backend/plans/fiches/shared/models/fiche-
 import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';
 import { planActionTypeTable } from '@/backend/plans/fiches/shared/models/plan-action-type.table';
 import { labellisationTable } from '@/backend/referentiels/labellisations/labellisation.table';
-import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
 import { snapshotTable } from '@/backend/referentiels/snapshots/snapshot.table';
-import { CollectiviteAccessLevelEnum } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
 import { utilisateurCollectiviteAccessTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import { collectiviteTypeEnum } from '@/domain/collectivites';
+import { SnapshotJalonEnum } from '@/domain/referentiels';
+import { CollectiviteAccessLevelEnum } from '@/domain/users';
 import { Injectable, Logger } from '@nestjs/common';
 import { getTableName, sql } from 'drizzle-orm';
 

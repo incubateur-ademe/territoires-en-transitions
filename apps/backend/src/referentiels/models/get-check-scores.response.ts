@@ -1,7 +1,9 @@
+import {
+  actionScoreSchema,
+  referentielIdEnumSchema,
+} from '@/domain/referentiels';
 import { z } from 'zod';
-import { scoreSchema } from '../compute-score/score.dto';
 import { CheckScoreStatus } from './check-score-status.enum';
-import { referentielIdEnumSchema } from './referentiel-id.enum';
 
 export const getCheckScoresResponseSchema = z
   .object({
@@ -12,8 +14,8 @@ export const getCheckScoresResponseSchema = z
     differences: z.record(
       z.string(),
       z.object({
-        calcule: scoreSchema.partial(),
-        sauvegarde: scoreSchema.partial(),
+        calcule: actionScoreSchema.partial(),
+        sauvegarde: actionScoreSchema.partial(),
       })
     ),
   })

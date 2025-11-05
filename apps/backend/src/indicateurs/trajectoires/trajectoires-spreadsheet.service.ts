@@ -1,7 +1,12 @@
 import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
-import { CollectiviteResume } from '@/backend/collectivites/shared/models/collectivite.table';
 import { VerificationTrajectoireRequest } from '@/backend/indicateurs/trajectoires/verification-trajectoire.request';
 import { VerificationTrajectoireResultType } from '@/backend/indicateurs/trajectoires/verification-trajectoire.response';
+import { CollectiviteResume } from '@/domain/collectivites';
+import {
+  IndicateurDefinition,
+  IndicateurValeurCreate,
+  VerificationTrajectoireStatus,
+} from '@/domain/indicateurs';
 import {
   Injectable,
   InternalServerErrorException,
@@ -14,11 +19,9 @@ import GroupementsService from '../../collectivites/services/groupements.service
 import { AuthUser } from '../../users/models/auth.models';
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
-import { IndicateurDefinition } from '../definitions/indicateur-definition.table';
 import { ListDefinitionsLightRepository } from '../definitions/list-platform-predefined-definitions/list-definitions-light.repository';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
-import { IndicateurValeurInsert } from '../valeurs/indicateur-valeur.table';
 import {
   CalculTrajectoireRequestType,
   CalculTrajectoireReset,
@@ -28,7 +31,6 @@ import {
 import { CalculTrajectoireResult } from './calcul-trajectoire.response';
 import { DataInputForTrajectoireCompute } from './donnees-calcul-trajectoire-a-remplir.dto';
 import TrajectoiresDataService from './trajectoires-data.service';
-import { VerificationTrajectoireStatus } from './verification-trajectoire.response';
 
 @Injectable()
 export default class TrajectoiresSpreadsheetService {
@@ -473,7 +475,7 @@ export default class TrajectoiresSpreadsheetService {
     identifiantsReferentielAssocie: string[],
     indicateurResultatDefinitions: IndicateurDefinition[],
     donneesCalculTrajectoire: DataInputForTrajectoireCompute
-  ): IndicateurValeurInsert[] {
+  ): IndicateurValeurCreate[] {
     const donneesEntree = [
       ...donneesCalculTrajectoire.emissionsGes.valeurs,
       ...donneesCalculTrajectoire.consommationsFinales.valeurs,
@@ -484,7 +486,7 @@ export default class TrajectoiresSpreadsheetService {
         donneesCalculTrajectoire
       );
 
-    const indicateurValeursResultat: IndicateurValeurInsert[] = [];
+    const indicateurValeursResultat: IndicateurValeurCreate[] = [];
     donneesSpreadsheet?.forEach((ligne, ligneIndex) => {
       const identifiantReferentielSortie =
         identifiantsReferentielAssocie[ligneIndex];
@@ -581,7 +583,7 @@ export default class TrajectoiresSpreadsheetService {
                   // Les valeurs de séquestration sont positives en base quand il y a une séquestration mais la convention inverse est dans l'excel
                   facteur = -1;
                 }
-                const indicateurValeur: IndicateurValeurInsert = {
+                const indicateurValeur: IndicateurValeurCreate = {
                   indicateurId: indicateurResultatDefinition.id,
                   collectiviteId,
                   metadonneeId: indicateurSourceMetadonneeId,

@@ -1,4 +1,3 @@
-import { TagEnum, TagType } from '@/backend/collectivites/tags/tag.table-base';
 import { ImportPlanCleanService } from '@/backend/plans/fiches/import/import-plan-clean.service';
 import { ImportPlanFetchService } from '@/backend/plans/fiches/import/import-plan-fetch.service';
 import { ImportPlanSaveService } from '@/backend/plans/fiches/import/import-plan-save.service';
@@ -11,13 +10,14 @@ import {
   PlanImport,
   TagImport,
 } from '@/backend/plans/fiches/import/import-plan.dto';
-import {
-  UpdatePlanPilotesSchema,
-  UpdatePlanReferentsSchema,
-} from '@/backend/plans/plans/plans.schema';
 import { PlanService } from '@/backend/plans/plans/plans.service';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import { TagEnum, TagType } from '@/domain/collectivites';
+import {
+  UpdatePlanPilotesSchema,
+  UpdatePlanReferentsSchema,
+} from '@/domain/plans';
 import { Injectable, Logger } from '@nestjs/common';
 import ExcelJS from 'exceljs';
 const FIRST_DATA_ROW = 4; // The first three rows are not data

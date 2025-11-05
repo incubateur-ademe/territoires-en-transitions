@@ -1,4 +1,4 @@
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+import { InferSelectModel } from 'drizzle-orm';
 import {
   foreignKey,
   integer,
@@ -7,7 +7,6 @@ import {
   primaryKey,
   timestamp,
 } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { referentielIdPgEnum } from '../referentiel-id.column';
 
@@ -38,7 +37,3 @@ export const clientScoresTable = pgTable(
 );
 
 export type ClientScoresType = InferSelectModel<typeof clientScoresTable>;
-export type CreateClientScoresType = InferInsertModel<typeof clientScoresTable>;
-
-export const clientScoresSchema = createSelectSchema(clientScoresTable);
-export const createClientScoresTable = createInsertSchema(clientScoresTable);

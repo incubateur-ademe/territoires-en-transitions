@@ -1,14 +1,14 @@
-import { collectiviteDefaultModuleKeysSchema } from '@/backend/collectivites/tableau-de-bord/collectivite-default-module-keys.schema';
-import {
-  CreateModuleFicheActionCountByType,
-  ModuleFicheActionCountByType,
-} from '@/backend/collectivites/tableau-de-bord/module-fiche-action-count-by.schema';
 import { getAuthUser, getTestRouter } from '@/backend/test';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import {
+  collectiviteDefaultModuleKeysSchema,
+  ModuleFicheCountBy,
+  ModuleFicheCountByCreate,
+} from '@/domain/collectivites/tableau-de-bord';
 import { cloneDeep } from 'es-toolkit';
 
-export const moduleNew: CreateModuleFicheActionCountByType = {
+export const moduleNew: ModuleFicheCountByCreate = {
   id: '6957441c-c083-44f8-a464-65174e5438f2',
   collectiviteId: 2,
   titre: 'Actions par priorité',
@@ -199,7 +199,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
       (module) =>
         module.defaultKey ===
         collectiviteDefaultModuleKeysSchema.enum['fiche-actions-par-statut']
-    ) as ModuleFicheActionCountByType | undefined;
+    ) as ModuleFicheCountBy | undefined;
 
     if (!moduleToPersonnalize) {
       throw new Error('Module to personnalize not found');
@@ -217,13 +217,13 @@ describe('TableauDeBordCollectiviteRouter', () => {
 
     const foundModuleToPersonnalize = moduleListAfterCreation?.find(
       (module) => module.id === moduleToPersonnalize?.id
-    ) as ModuleFicheActionCountByType | undefined;
+    ) as ModuleFicheCountBy | undefined;
 
     if (!foundModuleToPersonnalize) {
       throw new Error('Module to personnalize after creation not found');
     }
 
-    expect(foundModuleToPersonnalize.options.countByProperty).toMatchObject(
+    expect(foundModuleToPersonnalize.options.countByProperty).toEqual(
       moduleToPersonnalize.options.countByProperty
     );
 

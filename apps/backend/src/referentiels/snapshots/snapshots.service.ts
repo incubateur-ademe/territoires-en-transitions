@@ -1,7 +1,17 @@
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
-import { roundTo } from '@/backend/utils/number.utils';
 import { toSlug } from '@/backend/utils/string.utils';
+import { PersonnalisationReponsesPayload } from '@/domain/collectivites';
+import {
+  ReferentielId,
+  ScoreSnapshot,
+  ScoreSnapshotCreate,
+  ScoresPayload,
+  SnapshotJalon,
+  SnapshotJalonEnum,
+  SnapshotWithoutPayloads,
+} from '@/domain/referentiels';
+import { roundTo } from '@/domain/utils';
 import {
   BadRequestException,
   ForbiddenException,
@@ -14,21 +24,12 @@ import { and, eq, getTableColumns, sql } from 'drizzle-orm';
 import { omit } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { z } from 'zod';
-import { PersonnalisationReponsesPayload } from '../../collectivites/personnalisations/models/get-personnalisation-reponses.response';
 import { AuthRole, AuthUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { isErrorWithCause } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
 import ScoresService from '../compute-score/scores.service';
-import { ReferentielId } from '../models/referentiel-id.enum';
-import { ScoresPayload } from './scores-payload.dto';
-import { SnapshotJalon, SnapshotJalonEnum } from './snapshot-jalon.enum';
-import {
-  Snapshot,
-  SnapshotInsert,
-  snapshotTable,
-  SnapshotWithoutPayloads,
-} from './snapshot.table';
+import { snapshotTable } from './snapshot.table';
 import { upsertSnapshotInputSchema } from './upsert-snapshot.input';
 
 @Injectable()
@@ -107,7 +108,7 @@ export class SnapshotsService {
 
     ref = ref.slice(0, 30);
 
-    this.logger.log(`Snapshot ref: ${ref}, nom: ${nom}`);
+    this.logger.log(`ScoreSnapshot ref: ${ref}, nom: ${nom}`);
 
     if (!nom || !ref) {
       throw new InternalServerErrorException(
@@ -146,7 +147,9 @@ export class SnapshotsService {
    * @param snapshot
    * @returns
    */
-  async upsertScoreSnapshot(snapshot: SnapshotInsert): Promise<Snapshot> {
+  async upsertScoreSnapshot(
+    snapshot: ScoreSnapshotCreate
+  ): Promise<ScoreSnapshot> {
     return await this.databaseService.db
       .insert(snapshotTable)
       .values(snapshot)
@@ -187,7 +190,7 @@ export class SnapshotsService {
     referentielId: ReferentielId,
     snapshotRef: string,
     newName: string
-  ): Promise<Snapshot[]> {
+  ): Promise<ScoreSnapshot[]> {
     this.logger.log(
       `Mise à jour du nom du snapshot ref: ${snapshotRef}, pour la collectivité ${collectiviteId} et le référentiel ${referentielId}. Nouveau nom: ${newName}.`
     );
@@ -233,8 +236,8 @@ export class SnapshotsService {
    * Insert with upsert only allowed if jalon is current score
    */
   async insertSnapshotOrUpsertIfCurrentJalon(
-    snapshot: SnapshotInsert
-  ): Promise<Snapshot> {
+    snapshot: ScoreSnapshotCreate
+  ): Promise<ScoreSnapshot> {
     return this.databaseService.db
       .insert(snapshotTable)
       .values(snapshot)
@@ -279,7 +282,7 @@ export class SnapshotsService {
     user,
   }: z.infer<typeof upsertSnapshotInputSchema> & {
     user?: AuthUser;
-  }): Promise<Snapshot> {
+  }): Promise<ScoreSnapshot> {
     const { scoresPayload, personnalisationReponsesPayload } =
       await this.scoresService.computeScoreForCollectivite(
         referentielId,
@@ -312,7 +315,7 @@ export class SnapshotsService {
     snapshotForceUpdate?: boolean,
     userId?: string | null,
     snapshotRef?: string
-  ): Promise<Snapshot> {
+  ): Promise<ScoreSnapshot> {
     if (!snapshotRef) {
       const { ref, nom } = this.getDefaultSnapshotMetadata({
         nom: snapshotNom,
@@ -349,13 +352,13 @@ export class SnapshotsService {
       personnalisationReponses: personnalisationResponses,
       createdBy: userId,
       modifiedBy: userId,
-    } satisfies SnapshotInsert;
+    } satisfies ScoreSnapshotCreate;
 
     this.logger.log(
       `Saving score snapshot with ref ${createScoreSnapshot.ref} and type ${createScoreSnapshot.jalon} for collectivite ${createScoreSnapshot.collectiviteId} and referentiel ${createScoreSnapshot.referentielId} (force update: ${snapshotForceUpdate})`
     );
 
-    let scoreSnapshot: Snapshot;
+    let scoreSnapshot: ScoreSnapshot;
     try {
       if (snapshotForceUpdate) {
         const existingSnapshot = await this.getSnapshotWithoutPayloads(
@@ -437,7 +440,7 @@ export class SnapshotsService {
     referentielId: ReferentielId,
     snapshotRef: string = SnapshotsService.SCORE_COURANT_SNAPSHOT_REF,
     user?: AuthUser
-  ): Promise<Snapshot> {
+  ): Promise<ScoreSnapshot> {
     let snapshot = await this.databaseService.db
       .select({
         ...getTableColumns(snapshotTable),
@@ -487,7 +490,7 @@ export class SnapshotsService {
     referentielId: ReferentielId,
     snapshotRef: string,
     user?: AuthUser
-  ): Promise<Snapshot> {
+  ): Promise<ScoreSnapshot> {
     this.logger.log(
       `Forcing recompute of snapshot ${snapshotRef} for collectivite ${collectiviteId} and referentiel ${referentielId}`
     );
@@ -508,15 +511,15 @@ export class SnapshotsService {
       );
     }
     this.logger.log(
-      `Snapshot ${snapshotRef} modified at ${snapshot.modifiedAt}, score: ${
-        snapshot.pointFait
-      }/${snapshot.pointPotentiel} = ${roundTo(
+      `ScoreSnapshot ${snapshotRef} modified at ${
+        snapshot.modifiedAt
+      }, score: ${snapshot.pointFait}/${snapshot.pointPotentiel} = ${roundTo(
         (snapshot.pointFait * 100) / snapshot.pointPotentiel,
         2
       )}%`
     );
 
-    let updatedSnapshot: Snapshot;
+    let updatedSnapshot: ScoreSnapshot;
     if (snapshot.jalon === SnapshotJalonEnum.COURANT) {
       updatedSnapshot = await this.computeAndUpsert({
         collectiviteId,
@@ -548,7 +551,7 @@ export class SnapshotsService {
     }
 
     this.logger.log(
-      `Snapshot ${snapshotRef} updated at ${
+      `ScoreSnapshot ${snapshotRef} updated at ${
         updatedSnapshot.modifiedAt
       }, score: ${updatedSnapshot.pointFait}/${
         updatedSnapshot.pointPotentiel

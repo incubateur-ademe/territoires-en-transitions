@@ -10,7 +10,7 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { NextFunction, Response } from 'express';
+import type { NextFunction, Response } from 'express';
 import { createZodDto } from 'nestjs-zod';
 import { AllowPublicAccess } from '../../users/decorators/allow-public-access.decorator';
 import { TokenInfo } from '../../users/decorators/token-info.decorators';
@@ -81,7 +81,7 @@ export class TrajectoiresController {
         request.collectiviteId || request.siren || request.communeCode
       }`
     );
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     const { spreadsheetId, ...response } =
       await this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
         request,

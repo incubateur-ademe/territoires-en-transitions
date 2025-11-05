@@ -2,13 +2,15 @@ import { utilisateurCollectiviteAccessTable } from '@/backend/users/authorizatio
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { membreCreateSchema } from '@/domain/collectivites';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 import { unionAll } from 'drizzle-orm/pg-core';
 import z from 'zod';
+import * as zm from 'zod/mini';
 import { invitationTable } from '../../users/models/invitation.table';
 import { MembreFonction } from '../shared/models/membre-fonction.enum';
-import { insertMembreSchema, membreTable } from '../shared/models/membre.table';
+import { membreTable } from '../shared/models/membre.table';
 
 @Injectable()
 export class CollectiviteMembresService {
@@ -123,15 +125,15 @@ export class CollectiviteMembresService {
     return rows;
   }
 
-  readonly updateInputSchema = insertMembreSchema
-    .pick({
+  readonly updateInputSchema = z.array(
+    zm.pick(membreCreateSchema, {
       collectiviteId: true,
       userId: true,
       fonction: true,
       detailsFonction: true,
       estReferent: true,
     })
-    .array();
+  );
 
   // met à jour un ou plusieurs membres
   async update(membres: z.infer<typeof this.updateInputSchema>) {

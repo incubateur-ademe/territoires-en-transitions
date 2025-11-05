@@ -1,9 +1,7 @@
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { AxeType } from '../fiches/shared/models/axe.table';
-import { PlanError } from './plans.errors';
-import { Result } from './plans.result';
 import {
+  AxeLight,
   CreatePlanRequest,
   PlanNode,
   PlanReferentOrPilote,
@@ -11,24 +9,26 @@ import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
   UpdatePlanRequest,
-} from './plans.schema';
+} from '@/domain/plans';
+import { PlanError } from './plans.errors';
+import { Result } from './plans.result';
 
 export interface PlansRepositoryInterface {
   create(
     plan: CreatePlanRequest,
     userId: string,
     tx?: Transaction
-  ): Promise<Result<AxeType, PlanError>>;
+  ): Promise<Result<AxeLight, PlanError>>;
 
   update(
     planOrAxeId: number,
     planOrAxe: UpdatePlanRequest,
     userId: string
-  ): Promise<Result<AxeType, PlanError>>;
+  ): Promise<Result<AxeLight, PlanError>>;
 
   findById(
     planId: number
-  ): Promise<Result<AxeType & { pilotes: PlanReferentOrPilote[] }, PlanError>>;
+  ): Promise<Result<AxeLight & { pilotes: PlanReferentOrPilote[] }, PlanError>>;
 
   list(
     collectiviteId: number,
@@ -40,7 +40,7 @@ export interface PlansRepositoryInterface {
         direction: 'asc' | 'desc';
       };
     }
-  ): Promise<Result<{ plans: AxeType[]; totalCount: number }>>;
+  ): Promise<Result<{ plans: AxeLight[]; totalCount: number }>>;
 
   getReferents(
     planId: number
@@ -74,7 +74,7 @@ export interface PlansRepositoryInterface {
 
   getPlanBasicInfo(
     planId: number
-  ): Promise<Result<AxeType & { type: PlanType | null }, PlanError>>;
+  ): Promise<Result<AxeLight & { type: PlanType | null }, PlanError>>;
 
   deleteAxeAndChildrenAxes(
     axeId: number

@@ -8,22 +8,18 @@ import {
   YOLO_DODO,
   YULU_DUDU,
 } from '@/backend/test';
-import { CollectiviteAccessLevelEnum } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { addTestUser } from '@/backend/users/users/users.fixture';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { PrioriteEnum, StatutEnum } from '@/domain/plans';
+import { CollectiviteAccessLevelEnum } from '@/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { inArray, sql } from 'drizzle-orm';
 import { createFiche } from '../fiches.test-fixture';
 import { ficheActionLibreTagTable } from '../shared/models/fiche-action-libre-tag.table';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
-import {
-  ficheActionTable,
-  prioriteEnumSchema,
-  StatutEnum,
-  statutsEnumSchema,
-} from '../shared/models/fiche-action.table';
+import { ficheActionTable } from '../shared/models/fiche-action.table';
 
 type Input = inferProcedureInput<AppRouter['plans']['fiches']['bulkEdit']>;
 
@@ -87,7 +83,7 @@ describe('BulkEditRouter', () => {
     const input1: Input = {
       collectiviteId: COLLECTIVITE_ID,
       ficheIds,
-      statut: statutsEnumSchema.enum['En retard'],
+      statut: StatutEnum.EN_RETARD,
     };
 
     const result = await caller.plans.fiches.bulkEdit(input1);
@@ -270,7 +266,7 @@ describe('BulkEditRouter', () => {
     const input1: Input = {
       collectiviteId: COLLECTIVITE_ID,
       ficheIds,
-      priorite: prioriteEnumSchema.enum.Élevé,
+      priorite: PrioriteEnum.Élevé,
     };
 
     const result = await caller.plans.fiches.bulkEdit(input1);
@@ -379,7 +375,7 @@ describe('BulkEditRouter', () => {
     const input: Input = {
       collectiviteId: COLLECTIVITE_ID,
       ficheIds,
-      statut: statutsEnumSchema.enum['En retard'],
+      statut: StatutEnum.EN_RETARD,
     };
 
     await expect(() =>
@@ -405,7 +401,7 @@ describe('BulkEditRouter', () => {
     const input: Input = {
       collectiviteId: COLLECTIVITE_ID,
       ficheIds,
-      statut: statutsEnumSchema.enum['En retard'],
+      statut: StatutEnum.EN_RETARD,
     };
 
     await expect(() =>

@@ -1,4 +1,4 @@
-import { collectiviteAccessLevelSchema } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
+import { collectiviteAccessLevelSchema } from '@/domain/users';
 import { z } from 'zod';
 
 export const createInvitationInputSchema = z.object({

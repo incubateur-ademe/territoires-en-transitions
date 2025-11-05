@@ -38,6 +38,17 @@ describe('Route CRUD des étapes des fiches actions', () => {
     const ficheId: listInput = {
       ficheId: 1,
     };
+
+    onTestFinished(async () => {
+      try {
+        await databaseService.db
+          .delete(ficheActionEtapeTable)
+          .where(eq(ficheActionEtapeTable.ficheId, 1));
+      } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
+      }
+    });
+
     const etapeA: upsertInput = {
       ficheId: ficheId.ficheId,
       nom: 'A',
@@ -115,15 +126,5 @@ describe('Route CRUD des étapes des fiches actions', () => {
     expect(ordre.length).toBe(1);
     expect(ordre[0].nom).toBe('C');
     expect(ordre[0].ordre).toBe(1);
-
-    onTestFinished(async () => {
-      try {
-        await databaseService.db
-          .delete(ficheActionEtapeTable)
-          .where(eq(ficheActionEtapeTable.ficheId, 1));
-      } catch (error) {
-        console.error('Erreur lors de la suppression:', error);
-      }
-    });
   });
 });

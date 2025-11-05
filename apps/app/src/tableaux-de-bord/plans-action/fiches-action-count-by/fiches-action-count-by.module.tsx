@@ -9,9 +9,9 @@ import { ReactECharts } from '@/app/ui/charts/echarts';
 import { useChartDownloader } from '@/app/ui/charts/useChartDownloader';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import {
-  ModuleFicheActionCountByProperty,
-  ModuleFicheActionCountFilters,
-} from '@/domain/collectivites';
+  ModuleFicheCountByProperty,
+  ModuleFicheCountFilters,
+} from '@/domain/collectivites/tableau-de-bord';
 import { ButtonProps, Checkbox, MenuAction } from '@/ui';
 
 import { makeFichesActionUrlWithParams } from './utils/make-fiches-action-url-with-params';
@@ -24,9 +24,9 @@ type Props = {
   /** Titre du module */
   titre: string;
   /** Propriété sur laquelle se base le comptage */
-  countByProperty: ModuleFicheActionCountByProperty;
+  countByProperty: ModuleFicheCountByProperty;
   /** Filtres de la requête */
-  filters?: ModuleFicheActionCountFilters;
+  filters?: ModuleFicheCountFilters;
   /** Actions disponnible dans le menu en haut à droite du module */
   menuActions?: {
     actions?: MenuAction[];

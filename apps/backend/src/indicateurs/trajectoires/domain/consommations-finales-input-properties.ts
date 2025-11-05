@@ -1,4 +1,4 @@
-import { TrajectoirePropertiesType } from './types';
+import { TrajectoirePropertiesType } from '@/domain/indicateurs';
 
 export const CONSOMMATIONS_FINALES_SPECIFIC_INPUT_SECTEURS: TrajectoirePropertiesType['secteurs'] =
   [

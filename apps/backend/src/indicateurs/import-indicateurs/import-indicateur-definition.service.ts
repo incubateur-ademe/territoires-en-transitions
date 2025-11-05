@@ -1,7 +1,4 @@
-import {
-  categorieTagTable,
-  CreateCategorieTag,
-} from '@/backend/collectivites/tags/categorie-tag.table';
+import { categorieTagTable } from '@/backend/collectivites/tags/categorie-tag.table';
 import {
   CreateIndicateurCategorieTag,
   indicateurCategorieTagTable,
@@ -11,17 +8,15 @@ import {
   CreateIndicateurGroupe,
   indicateurGroupeTable,
 } from '@/backend/indicateurs/shared/models/indicateur-groupe.table';
-import {
-  CreateIndicateurThematique,
-  indicateurThematiqueTable,
-} from '@/backend/indicateurs/shared/models/indicateur-thematique.table';
+import { indicateurThematiqueTable } from '@/backend/indicateurs/shared/models/indicateur-thematique.table';
 import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
-import {
-  ThematiqueInsert,
-  thematiqueTable,
-} from '@/backend/shared/thematiques/thematique.table';
+import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import VersionService from '@/backend/utils/version/version.service';
+import { CategorieTagCreate } from '@/domain/collectivites';
+import { IndicateurThematiqueCreate } from '@/domain/indicateurs';
+import { ThematiqueCreate } from '@/domain/shared';
+import { getErrorMessage } from '@/domain/utils';
 import {
   BadRequestException,
   HttpException,
@@ -36,7 +31,6 @@ import { omit } from 'es-toolkit';
 import BaseSpreadsheetImporterService from '../../shared/services/base-spreadsheet-importer.service';
 import ConfigurationService from '../../utils/config/configuration.service';
 import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
-import { getErrorMessage } from '../../utils/get-error-message';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { ListDefinitionsLightRepository } from '../definitions/list-platform-predefined-definitions/list-definitions-light.repository';
 import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';
@@ -415,8 +409,8 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       .from(categorieTagTable);
 
     // Check that existing thematiques and categories are present
-    const categoriesToCreate: CreateCategorieTag[] = [];
-    const thematiquesToCreate: ThematiqueInsert[] = [];
+    const categoriesToCreate: CategorieTagCreate[] = [];
+    const thematiquesToCreate: ThematiqueCreate[] = [];
     indicateurDefinitions.forEach((indicateur) => {
       indicateur.thematiques?.forEach((thematique) => {
         if (
@@ -538,7 +532,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
           .returning();
         thematiques.push(...createdThematiques);
       }
-      const indicateurThematiqueValues: CreateIndicateurThematique[] = [];
+      const indicateurThematiqueValues: IndicateurThematiqueCreate[] = [];
       indicateurDefinitions.forEach((indicateur) => {
         indicateur.thematiques?.forEach((thematique) => {
           const thematiqueId = thematiques.find(

@@ -5,7 +5,11 @@ import {
   modifiedAt,
   modifiedBy,
 } from '@/backend/utils/column.utils';
-import { InferInsertModel } from 'drizzle-orm';
+import {
+  IndicateurDefinition,
+  IndicateurSourceMetadonnee,
+  IndicateurValeur,
+} from '@/domain/indicateurs';
 import {
   boolean,
   date,
@@ -15,19 +19,8 @@ import {
   serial,
   text,
 } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { z } from 'zod';
-import {
-  IndicateurDefinition,
-  indicateurDefinitionSchemaTiny,
-  indicateurDefinitionTable,
-} from '../definitions/indicateur-definition.table';
-import {
-  indicateurSourceMetadonneeTable,
-  SourceMetadonnee,
-  sourceMetadonneeSchema,
-} from '../shared/models/indicateur-source-metadonnee.table';
-import { indicateurSourceSchema } from '../shared/models/indicateur-source.table';
+import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
+import { indicateurSourceMetadonneeTable } from '../shared/models/indicateur-source-metadonnee.table';
 
 export const indicateurValeurTable = pgTable('indicateur_valeur', {
   id: serial('id').primaryKey(),
@@ -63,91 +56,12 @@ export const indicateurValeurTable = pgTable('indicateur_valeur', {
   modifiedBy,
 });
 
-export const indicateurValeurSchema = createSelectSchema(indicateurValeurTable);
-export type IndicateurValeur = z.infer<typeof indicateurValeurSchema>;
-
-export type IndicateurValeurWithIdentifiant = IndicateurValeur & {
-  indicateurIdentifiant?: string | null;
-  sourceId?: string | null;
-};
-
-export const indicateurValeurSchemaInsert = createInsertSchema(
-  indicateurValeurTable
-);
-export type IndicateurValeurInsert = InferInsertModel<
-  typeof indicateurValeurTable
->;
-
-export const indicateurValeurGroupeeSchema = indicateurValeurSchema
-  .pick({
-    id: true,
-    collectiviteId: true,
-    dateValeur: true,
-    resultat: true,
-    resultatCommentaire: true,
-    objectif: true,
-    objectifCommentaire: true,
-    metadonneeId: true,
-    calculAuto: true,
-    calculAutoIdentifiantsManquants: true,
-  })
-  .partial({
-    resultat: true,
-    resultatCommentaire: true,
-    objectif: true,
-    objectifCommentaire: true,
-    metadonneeId: true,
-    calculAuto: true,
-    calculAutoIdentifiantsManquants: true,
-  })
-  .extend({
-    confidentiel: z.boolean().nullish(),
-  });
-
-export type IndicateurValeurGroupee = z.infer<
-  typeof indicateurValeurGroupeeSchema
->;
-
-export const indicateurAvecValeursSchema = z
-  .object({
-    definition: indicateurDefinitionSchemaTiny,
-    valeurs: z.array(indicateurValeurGroupeeSchema),
-  })
-  .describe('Indicateur définition et valeurs ordonnées par date');
-
-export type IndicateurAvecValeurs = z.infer<typeof indicateurAvecValeursSchema>;
-
-export const indicateurValeursGroupeeParSourceSchema = z
-  .object({
-    source: z.string(),
-    metadonnees: z.array(sourceMetadonneeSchema),
-    valeurs: z.array(indicateurValeurGroupeeSchema),
-    ordreAffichage: indicateurSourceSchema.shape.ordreAffichage,
-    libelle: indicateurSourceSchema.shape.libelle,
-  })
-  .describe('Indicateur valeurs pour une source donnée');
-
-export type IndicateurValeursGroupeeParSource = z.infer<
-  typeof indicateurValeursGroupeeParSourceSchema
->;
-
-export const indicateurAvecValeursParSourceSchema = z
-  .object({
-    definition: indicateurDefinitionSchemaTiny,
-    sources: z.record(z.string(), indicateurValeursGroupeeParSourceSchema),
-  })
-  .describe('Filtre de récupération des valeurs des indicateurs');
-
-export type IndicateurAvecValeursParSource = z.infer<
-  typeof indicateurAvecValeursParSourceSchema
->;
-
 export interface IndicateurValeurAvecMetadonnesDefinition {
   indicateur_valeur: IndicateurValeur;
 
   indicateur_definition: IndicateurDefinition | null;
 
-  indicateur_source_metadonnee: SourceMetadonnee | null;
+  indicateur_source_metadonnee: IndicateurSourceMetadonnee | null;
 
   confidentiel?: boolean | null;
 }

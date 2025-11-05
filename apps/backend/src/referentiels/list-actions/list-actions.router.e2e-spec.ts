@@ -1,12 +1,14 @@
-import { ActionTypeEnum } from '@/backend/referentiels/models/action-type.enum';
-import { ReferentielIdEnum } from '@/backend/referentiels/models/referentiel-id.enum';
 import { YOLO_DODO } from '@/backend/test';
+import {
+  ActionTypeEnum,
+  ListActionsRequestOptionsType,
+  ReferentielIdEnum,
+} from '@/domain/referentiels';
 import { inferProcedureInput } from '@trpc/server';
 import { getTestRouter } from '../../../test/app-utils';
 import { getAnonUser, getAuthUser } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { type AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import { ListActionsRequestOptionsType } from './list-actions.request';
 
 type ListActionsInput = inferProcedureInput<
   AppRouter['referentiels']['actions']['listActions']

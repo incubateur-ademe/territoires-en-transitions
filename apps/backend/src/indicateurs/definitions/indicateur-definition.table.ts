@@ -14,8 +14,6 @@ import {
   serial,
   text,
 } from 'drizzle-orm/pg-core';
-import { createSelectSchema } from 'drizzle-zod';
-import z from 'zod';
 
 export const indicateurDefinitionTable = pgTable('indicateur_definition', {
   id: serial('id').primaryKey(),
@@ -49,28 +47,3 @@ export const indicateurDefinitionTable = pgTable('indicateur_definition', {
   createdBy,
   modifiedBy,
 });
-
-export const indicateurDefinitionSchema = createSelectSchema(
-  indicateurDefinitionTable
-);
-
-export type IndicateurDefinition = z.infer<typeof indicateurDefinitionSchema>;
-
-export const indicateurDefinitionSchemaTiny = indicateurDefinitionSchema.pick({
-  id: true,
-  identifiantReferentiel: true,
-  titre: true,
-  titreLong: true,
-  description: true,
-  unite: true,
-  borneMin: true,
-  borneMax: true,
-});
-
-export type IndicateurDefinitionTiny = z.infer<
-  typeof indicateurDefinitionSchemaTiny
->;
-
-export type IndicateurDefinitionAvecEnfants = IndicateurDefinition & {
-  enfants: IndicateurDefinition[] | null;
-};

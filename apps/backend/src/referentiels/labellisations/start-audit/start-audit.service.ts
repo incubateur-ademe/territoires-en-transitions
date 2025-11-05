@@ -1,13 +1,13 @@
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import { LabellisationAudit, SnapshotJalonEnum } from '@/domain/referentiels';
 import {
   ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { eq, sql } from 'drizzle-orm';
-import { SnapshotJalonEnum } from '../../snapshots/snapshot-jalon.enum';
 import { SnapshotsService } from '../../snapshots/snapshots.service';
-import { Audit, auditTable } from '../audit.table';
+import { auditTable } from '../audit.table';
 import { labellisationDemandeTable } from '../labellisation-demande.table';
 
 @Injectable()
@@ -20,7 +20,11 @@ export class StartAuditService {
   private readonly db = this.databaseService.db;
 
   // Équivalent de la fonction PG `labellisation_commencer_audit()`
-  async startAudit({ auditId }: { auditId: number }): Promise<Audit> {
+  async startAudit({
+    auditId,
+  }: {
+    auditId: number;
+  }): Promise<LabellisationAudit> {
     // Check if demande is not `en_cours`
     const demande = await this.db
       .select({

@@ -1,7 +1,3 @@
-import {
-  budgetTypeSchema,
-  budgetUniteSchema,
-} from '@/backend/plans/fiches/fiche-action-budget/budget.types';
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import {
   boolean,
@@ -11,8 +7,6 @@ import {
   serial,
   text,
 } from 'drizzle-orm/pg-core';
-import { createInsertSchema } from 'drizzle-zod';
-import { z } from 'zod';
 import { BudgetType, BudgetUnite } from './budget.types';
 
 export const ficheActionBudgetTable = pgTable('fiche_action_budget', {
@@ -35,14 +29,3 @@ export const ficheActionBudgetTable = pgTable('fiche_action_budget', {
   }),
   estEtale: boolean('est_etale').notNull().default(false),
 });
-
-export const ficheActionBudgetSchema = createInsertSchema(
-  ficheActionBudgetTable,
-  {
-    id: z.number().optional(),
-    type: budgetTypeSchema,
-    unite: budgetUniteSchema,
-  }
-);
-
-export type FicheActionBudget = z.infer<typeof ficheActionBudgetSchema>;

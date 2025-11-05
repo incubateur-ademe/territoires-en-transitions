@@ -5,8 +5,6 @@ import {
   text,
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
-import { createSelectSchema } from 'drizzle-zod';
-import z from 'zod';
 import { thematiqueTable } from './thematique.table';
 
 export const sousThematiqueTable = pgTable(
@@ -26,7 +24,3 @@ export const sousThematiqueTable = pgTable(
     };
   }
 );
-
-export const sousThematiqueSchema = createSelectSchema(sousThematiqueTable);
-
-export type SousThematique = z.infer<typeof sousThematiqueSchema>;

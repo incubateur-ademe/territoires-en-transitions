@@ -1,14 +1,13 @@
-import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indicateur-pilote.table';
-import { createInsertSchema } from 'drizzle-zod';
-import z from 'zod';
+import { indicateurPiloteSchemaCreate } from '@/domain/indicateurs';
+import * as z from 'zod/mini';
 
-export const upsertIndicateurDefinitionPilotesInputSchema = createInsertSchema(
-  indicateurPiloteTable
-).omit({
-  id: true,
-  collectiviteId: true,
-  indicateurId: true,
-});
+export const upsertIndicateurDefinitionPilotesInputSchema = z.omit(
+  indicateurPiloteSchemaCreate,
+  {
+    collectiviteId: true,
+    indicateurId: true,
+  }
+);
 
 export type UpsertIndicateurDefinitionPilotesInput = z.infer<
   typeof upsertIndicateurDefinitionPilotesInputSchema

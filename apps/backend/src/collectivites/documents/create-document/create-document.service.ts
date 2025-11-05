@@ -4,18 +4,18 @@ import { ResourceType } from '@/backend/users/authorizations/resource-type.enum'
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import {
+  BibliothequeFichier,
+  BibliothequeFichierCreate,
+} from '@/domain/collectivites';
+import {
   Injectable,
   InternalServerErrorException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
+import { bibliothequeFichierTable } from '../models/bibliotheque-fichier.table';
 import { storageObjectTable } from '../models/storage-object.table';
-import {
-  CreateBibliothequeFichier,
-  BibliothequeFichier,
-  bibliothequeFichierTable,
-} from '../models/bibliotheque-fichier.table';
 
 @Injectable()
 export class CreateDocumentService {
@@ -27,7 +27,7 @@ export class CreateDocumentService {
   ) {}
 
   async createDocument(
-    document: CreateBibliothequeFichier,
+    document: BibliothequeFichierCreate,
     user: AuthenticatedUser
   ): Promise<BibliothequeFichier> {
     this.logger.log(

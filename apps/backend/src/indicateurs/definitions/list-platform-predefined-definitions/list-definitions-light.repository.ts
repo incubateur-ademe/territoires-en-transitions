@@ -1,6 +1,6 @@
-import type { IndicateurDefinition } from '@/backend/indicateurs/definitions/indicateur-definition.table';
 import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import type { IndicateurDefinition } from '@/domain/indicateurs';
 import { Injectable, Logger } from '@nestjs/common';
 import {
   and,

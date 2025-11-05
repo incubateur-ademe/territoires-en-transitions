@@ -1,4 +1,4 @@
-import { indicateurValeurSchema } from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
+import { indicateurValeurSchema } from '@/domain/indicateurs';
 import { z } from 'zod';
 
 export const upsertIndicateursValeursResponseSchema = z

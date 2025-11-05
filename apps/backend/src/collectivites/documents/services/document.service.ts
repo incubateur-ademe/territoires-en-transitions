@@ -1,8 +1,9 @@
 import { COLLECTIVITE_ID_ROUTE_PARAM } from '@/backend/collectivites/shared/models/collectivite-api.constants';
 import { collectiviteBucketTable } from '@/backend/collectivites/shared/models/collectivite-bucket.table';
-import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
 import SupabaseService from '@/backend/utils/database/supabase.service';
-import { getErrorMessage } from '@/backend/utils/get-error-message';
+import { PreuveDto, PreuveTypeEnum } from '@/domain/collectivites';
+import { ReferentielId } from '@/domain/referentiels';
+import { getErrorMessage } from '@/domain/utils';
 import {
   Injectable,
   InternalServerErrorException,
@@ -27,8 +28,6 @@ import { preuveActionTable } from '../models/preuve-action.table';
 import { preuveComplementaireTable } from '../models/preuve-complementaire.table';
 import { preuveReglementaireDefinitionTable } from '../models/preuve-reglementaire-definition.table';
 import { preuveReglementaireTable } from '../models/preuve-reglementaire.table';
-import { PreuveTypeEnum } from '../models/preuve-type.enum';
-import { PreuveDto } from '../models/preuve.dto';
 
 @Injectable()
 export default class DocumentService {
@@ -115,7 +114,7 @@ export default class DocumentService {
     collectiviteId: number,
     referentielId: ReferentielId,
     modifiedBeforeDate?: string
-  ) {
+  ): Promise<Record<string, PreuveDto[]>> {
     const preuves = (
       await Promise.all([
         this.getPreuvesReglementaires(

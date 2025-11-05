@@ -4,20 +4,18 @@ import {
   collectiviteBanaticTypeTable,
 } from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
-import { isNil } from 'es-toolkit';
 import {
+  Collectivite,
   CollectiviteAvecType,
   CollectivitePopulationTypeEnum,
   CollectiviteSousTypeEnum,
-  CollectiviteTypeEnum,
-} from '../identite-collectivite.dto';
-import {
-  Collectivite,
-  collectiviteTable,
   collectiviteTypeEnum,
-} from '../shared/models/collectivite.table';
+  CollectiviteTypeEnum,
+} from '@/domain/collectivites';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { and, eq } from 'drizzle-orm';
+import { isNil } from 'es-toolkit';
+import { collectiviteTable } from '../shared/models/collectivite.table';
 import { regionTable } from '../shared/models/imports-region.table';
 
 @Injectable()

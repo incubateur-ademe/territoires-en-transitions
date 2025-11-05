@@ -1,23 +1,23 @@
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import {
+  IndicateurAvecValeurs,
+  IndicateurAvecValeursParSource,
+  IndicateurDefinitionTiny,
+  IndicateurSourceMetadonnee,
+  IndicateurValeur,
+} from '@/domain/indicateurs';
 import { Test } from '@nestjs/testing';
 import { cloneDeep } from 'es-toolkit';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { DatabaseService } from '../../utils/database/database.service';
-import { IndicateurDefinitionTiny } from '../definitions/indicateur-definition.table';
 import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
 import { ListDefinitionsHavingComputedValueRepository } from '../definitions/list-platform-predefined-definitions/list-definitions-having-computed-value.repository';
 import { UpdateDefinitionService } from '../definitions/mutate-definition/update-definition.service';
-import { SourceMetadonnee } from '../shared/models/indicateur-source-metadonnee.table';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from './crud-valeurs.service';
 import IndicateurExpressionService from './indicateur-expression.service';
-import {
-  IndicateurAvecValeurs,
-  IndicateurAvecValeursParSource,
-  IndicateurValeur,
-  IndicateurValeurAvecMetadonnesDefinition,
-} from './indicateur-valeur.table';
+import { IndicateurValeurAvecMetadonnesDefinition } from './indicateur-valeur.table';
 import { indicateur1, indicateur2, indicateur3 } from './tests/fixture';
 
 describe('Indicateurs → crud-valeurs.service', () => {
@@ -182,7 +182,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
         indicateur1, // duplicate
       ];
 
-      const indicateurMetadonnees: SourceMetadonnee[] = [
+      const indicateurMetadonnees: IndicateurSourceMetadonnee[] = [
         {
           id: 2,
           sourceId: 'rare',

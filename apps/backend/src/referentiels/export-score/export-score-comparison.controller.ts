@@ -1,9 +1,9 @@
 import { COLLECTIVITE_ID_PARAM_KEY } from '@/backend/collectivites/shared/models/collectivite-api.constants';
 import { exportScoreComparisonRequestSchema } from '@/backend/referentiels/export-score/export-score-comparison.request';
-import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
 import { AllowAnonymousAccess } from '@/backend/users/decorators/allow-anonymous-access.decorator';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
+import { type ReferentielId } from '@/domain/referentiels';
 import {
   Controller,
   Get,
@@ -14,7 +14,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { ApiExcludeController, ApiTags } from '@nestjs/swagger';
-import { NextFunction, Response } from 'express';
+import type { NextFunction, Response } from 'express';
 import { createZodDto } from 'nestjs-zod';
 import { REFERENTIEL_ID_PARAM_KEY } from '../models/referentiel-api.constants';
 import { ExportScoreComparisonService } from './export-score-comparison.service';

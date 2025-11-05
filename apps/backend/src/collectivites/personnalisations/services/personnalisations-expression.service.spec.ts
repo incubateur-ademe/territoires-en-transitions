@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import {
   CollectivitePopulationTypeEnum,
   CollectiviteTypeEnum,
-} from '../../identite-collectivite.dto';
+} from '@/domain/collectivites';
 import PersonnalisationsExpressionService from './personnalisations-expression.service';
 
 // décommenter (et lancer les tests) pour màj la doc

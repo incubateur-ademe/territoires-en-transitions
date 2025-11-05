@@ -1,9 +1,6 @@
 import { integer, jsonb, text, uuid } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import z from 'zod';
 import { createdAt, modifiedAt } from '../column.utils';
 import { webhookConfigurationTable } from './webhook-configuration.table';
-import { WebhookStatus } from './webhook-status.enum';
 import { webhooksSchema } from './webhooks.schema';
 
 export const webhookMessageTable = webhooksSchema.table('webhook_message', {
@@ -31,17 +28,3 @@ export const webhookMessageTable = webhooksSchema.table('webhook_message', {
   createdAt,
   modifiedAt,
 });
-
-export const webhookMessageSchema = createSelectSchema(webhookMessageTable, {
-  status: z.enum(WebhookStatus),
-});
-
-export type WebhookMessage = z.infer<typeof webhookMessageSchema>;
-
-export const webhookMessageInsertSchema = createInsertSchema(
-  webhookMessageTable
-).extend({
-  status: z.enum(WebhookStatus),
-});
-
-export type WebhookMessageInsert = z.infer<typeof webhookMessageInsertSchema>;
