@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "dist",
-    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
+    "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo",
     "plugins": [
       {
         "name": "next"
@@ -10,25 +10,28 @@
     ],
     "types": ["node"],
     "paths": {
-      "@/site/*": ["./*"]
+      "@/auth/*": ["./*"]
     }
   },
   "include": [
+    "**/*.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "**/*.js",
     "**/*.jsx",
     "**/*.mjs",
-    ".next/types/**/*.ts",
-    "next-env.d.ts"
+    ".next/types/**/*.ts"
   ],
   "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"],
   "references": [
     {
-      "path": "../../packages/api"
+      "path": "../../packages/domain/tsconfig.lib.json"
     },
     {
-      "path": "../../packages/ui"
+      "path": "../../packages/ui/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/api/tsconfig.lib.json"
     }
   ]
 }

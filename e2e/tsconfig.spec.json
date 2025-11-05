@@ -1,16 +1,18 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "moduleResolution": "NodeNext",
-    "module": "NodeNext",
+    // "baseUrl": ".",
+    // "rootDir": "tests",
     "allowJs": true,
-    "noEmit": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "allowSyntheticDefaultImports": true,
+    "outDir": "dist/e2e",
+    "sourceMap": false,
+
+    // "moduleResolution": "NodeNext",
+    // "module": "NodeNext",
+
 
   },
-  "include": ["tests/**/*.ts", "playwright.config.ts"],
+  "include": ["**/*.ts", "playwright.config.ts"],
   "references": [
     {
       "path": "../packages/domain/tsconfig.lib.json"

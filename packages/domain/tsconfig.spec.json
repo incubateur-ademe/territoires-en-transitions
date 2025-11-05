@@ -1,28 +1,27 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "outDir": "out-tsc/spec",
     "types": [
       "vitest/globals",
       "vitest/importMeta",
       "vite/client",
       "node",
       "vitest"
-    ]
+    ],
+    "forceConsistentCasingInFileNames": true
   },
   "include": [
     "src/**/*.spec.ts",
     "src/**/*.test.ts",
-    "src/**/*.ts",
-    "../../apps/backend/src/**/*.ts"
+    "src/**/*.e2e-spec.ts",
   ],
   "exclude": [
-    "**/*.e2e-spec.ts",
-    "**/*.service.ts",
-    "**/*.controller.ts",
-    "**/*.module.ts",
-    "**/*.router.ts",
-    "**/*.decorator.ts",
-    "**/*.interceptor.ts"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    }
   ]
 }
 

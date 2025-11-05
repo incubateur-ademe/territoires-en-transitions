@@ -1,3 +1,4 @@
 packages:
-  - 'packages/domain'
+  - 'apps/*'
+  - 'packages/*'
   - 'e2e'

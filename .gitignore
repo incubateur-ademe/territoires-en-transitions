@@ -60,12 +60,7 @@ out
 docker-data
 .env
 
-
 storybook-static
-
-# fichiers `package.json` des packages enfant (créés automatiquement par le lancement des storybooks)
-packages/app/package.json
-packages/ui/package.json
 
 # gcloud credentials
 keyfile.json
