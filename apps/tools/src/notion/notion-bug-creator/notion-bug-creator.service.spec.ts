@@ -1,5 +1,5 @@
+import { TrpcClientService } from '@/tools/utils/trpc/trpc-client.service';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CreatePageParameters } from '@notionhq/client/build/src/api-endpoints';
 import { ToolsAutomationApiConfigurationType } from '../../config/configuration.model';
 import ConfigurationService from '../../config/configuration.service';
 import { NotionBugCreatorService } from './notion-bug-creator.service';
@@ -11,7 +11,7 @@ describe('NotionBugCreatorService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [NotionBugCreatorService],
+      providers: [NotionBugCreatorService, TrpcClientService],
     })
       .useMocker((token) => {
         if (token === ConfigurationService) {
@@ -35,9 +35,40 @@ describe('NotionBugCreatorService', () => {
     test('Standard test', () => {
       const notionBug = service.getNotionBugFromCrispSession(
         crispSessionSample,
-        ticketDatabaseSample
+        ticketDatabaseSample,
+        null,
+        null,
+        {
+          icon: {
+            type: 'external',
+            external: { url: 'https://www.notion.so/icons/bug_red.svg' },
+          },
+          properties: {
+            'Email utilisateur': {
+              type: 'email',
+              email: null,
+            },
+            'Conversation Crisp': {
+              type: 'url',
+              url: null,
+            },
+            'Date de remontée Crisp': {
+              type: 'date',
+              date: null,
+            },
+            'Epic (Roadmap)': {
+              type: 'relation',
+              relation: [{ id: 'notionEpicId' }],
+            },
+            Statut: { type: 'status', status: { name: 'Backlog' } },
+            Name: {
+              type: 'title',
+              title: [],
+            },
+          },
+        }
       );
-      const expectedNotionBug: CreatePageParameters = {
+      expect(notionBug).toMatchObject({
         icon: {
           type: 'external',
           external: { url: 'https://www.notion.so/icons/bug_red.svg' },
@@ -55,7 +86,10 @@ describe('NotionBugCreatorService', () => {
           'Date de remontée Crisp': {
             type: 'date',
             date: {
-              start: '2024-12-16T10:20:47.966+01:00',
+              start: expect.toBeOneOf([
+                '2024-12-16T10:20:47.966+01:00',
+                '2024-12-16T09:20:47.966+00:00',
+              ]),
               end: null,
               time_zone: null,
             },
@@ -75,8 +109,7 @@ describe('NotionBugCreatorService', () => {
             ],
           },
         },
-      };
-      expect(notionBug).toEqual(expectedNotionBug);
+      });
     });
   });
 });

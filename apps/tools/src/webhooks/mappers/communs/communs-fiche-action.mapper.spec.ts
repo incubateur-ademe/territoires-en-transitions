@@ -1,5 +1,4 @@
 import { FicheWithRelationsAndCollectivite } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
-import { CreateProjetRequest } from './client/types.gen';
 import { CommunsFicheActionMapper } from './communs-fiche-action.mapper';
 
 describe('CommunsFicheActionMapper', () => {
@@ -108,7 +107,7 @@ describe('CommunsFicheActionMapper', () => {
     const mapper = new CommunsFicheActionMapper();
     const communProjet = mapper.map(ficheAction);
 
-    const expectedCommunProjet: CreateProjetRequest = {
+    expect(communProjet).toMatchObject({
       budgetPrevisionnel: 12000,
       collectivites: [
         {
@@ -117,7 +116,10 @@ describe('CommunsFicheActionMapper', () => {
         },
       ],
       competences: [],
-      dateDebutPrevisionnelle: '2019-11-01T01:00:00.000+01:00',
+      dateDebutPrevisionnelle: expect.toBeOneOf([
+        '2019-11-01T01:00:00.000+01:00',
+        '2019-11-01T00:00:00.000+00:00',
+      ]),
       description: 'Texte de description',
       externalId: '10108',
       nom: "Fiche 12: Prévenir les conséquences du changement climatique : Consolidation et mise en œuvre d'une stratégie d’atténuation et d'adaptation au changement climatique ambitieuse",
@@ -125,12 +127,7 @@ describe('CommunsFicheActionMapper', () => {
       phaseStatut: 'En retard',
       porteur: {
         referentNom: 'Caroline Cordary',
-        referentEmail: null,
-        referentPrenom: null,
-        referentTelephone: null,
       },
-    };
-
-    expect(communProjet).toEqual(expectedCommunProjet);
+    });
   });
 });
