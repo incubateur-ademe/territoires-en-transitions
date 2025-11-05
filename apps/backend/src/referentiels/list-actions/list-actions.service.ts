@@ -1,24 +1,29 @@
-import {
-  discussionMessageTable,
-  discussionTable,
-} from '@/backend/collectivites/discussions/infrastructure/discussion.tables';
-import { preuveComplementaireTable } from '@/backend/collectivites/documents/models/preuve-complementaire.table';
-import { PersonneTagOrUser } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
-import { TagWithCollectiviteId } from '@/backend/collectivites/tags/tag.table-base';
 import { ListActionSummariesRequestType } from '@/backend/referentiels/list-actions/list-action-summaries.request';
 import { ActionDefinitionSummary } from '@/backend/referentiels/models/action-definition-summary.dto';
-import { ActionWithScore } from '@/backend/referentiels/models/action-definition.dto';
 import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
 import { actionRelationTable } from '@/backend/referentiels/models/action-relation.table';
-import { ActionType } from '@/backend/referentiels/models/action-type.enum';
 import { questionActionTable } from '@/backend/referentiels/models/question-action.table';
-import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  discussionMessageTable,
+  discussionTable,
+} from '@tet/backend/collectivites/discussions/infrastructure/discussion.table';
+import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
+import {
+  PersonneTagOrUser,
+  TagWithCollectiviteId,
+} from '@tet/domain/collectivites';
+import {
+  ActionType,
+  ActionWithScore,
+  ListActionsRequestType,
+  ReferentielId,
+} from '@tet/domain/referentiels';
 import {
   and,
   asc,
@@ -36,7 +41,6 @@ import { actionServiceTable } from '../models/action-service.table';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { getExtendActionWithComputedFields } from '../snapshots/snapshots.utils';
-import { ListActionsRequestType } from './list-actions.request';
 
 @Injectable()
 export class ListActionsService {

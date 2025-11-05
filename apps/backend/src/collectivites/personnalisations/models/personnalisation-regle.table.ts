@@ -1,11 +1,9 @@
 import { actionIdReference } from '@/backend/referentiels/models/action-relation.table';
 import { modifiedAt } from '@/backend/utils/column.utils';
+import { regleTypeEnumValues } from '@/domain/collectivites';
 import { pgEnum, pgTable, primaryKey, text } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
-export const regleType = ['score', 'desactivation', 'reduction'] as const;
-
-export const regleTypeEnum = pgEnum('regle_type', regleType);
+export const regleTypeEnum = pgEnum('regle_type', regleTypeEnumValues);
 
 export const personnalisationRegleTable = pgTable(
   'personnalisation_regle',
@@ -22,16 +20,4 @@ export const personnalisationRegleTable = pgTable(
       name: 'personnalisation_regle_pkey',
     }),
   ]
-);
-
-export type PersonnalisationRegle =
-  typeof personnalisationRegleTable.$inferSelect;
-export type PersonnalisationRegleInsert =
-  typeof personnalisationRegleTable.$inferInsert;
-
-export const personnalisationRegleSchema = createSelectSchema(
-  personnalisationRegleTable
-);
-export const personnalisationRegleInsertSchema = createInsertSchema(
-  personnalisationRegleTable
 );

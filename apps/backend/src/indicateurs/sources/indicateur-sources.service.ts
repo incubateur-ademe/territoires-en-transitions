@@ -1,15 +1,13 @@
+import {
+  IndicateurSourceCreate,
+  IndicateurSourceMetadonnee,
+  IndicateurSourceMetadonneeCreate,
+} from '@/domain/indicateurs';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, asc, eq, inArray, isNotNull, or } from 'drizzle-orm';
 import { DatabaseService } from '../../utils/database/database.service';
-import {
-  indicateurSourceMetadonneeTable,
-  SourceMetadonnee,
-  SourceMetadonneeInsert,
-} from '../shared/models/indicateur-source-metadonnee.table';
-import {
-  indicateurSourceTable,
-  SourceInsert,
-} from '../shared/models/indicateur-source.table';
+import { indicateurSourceMetadonneeTable } from '../shared/models/indicateur-source-metadonnee.table';
+import { indicateurSourceTable } from '../shared/models/indicateur-source.table';
 import { indicateurValeurTable } from '../valeurs/indicateur-valeur.table';
 import { GetAvailableSourcesRequestSchemaRequestType } from './get-available-sources.request';
 
@@ -20,7 +18,7 @@ export default class IndicateurSourcesService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async createIndicateurSourceMetadonnee(
-    indicateurSourceMetadonneeType: SourceMetadonneeInsert
+    indicateurSourceMetadonneeType: IndicateurSourceMetadonneeCreate
   ) {
     this.logger.log(
       `Création de la metadonnees pour la source d'indicateur ${indicateurSourceMetadonneeType.sourceId} et la date ${indicateurSourceMetadonneeType.dateVersion}`
@@ -34,7 +32,9 @@ export default class IndicateurSourcesService {
     return model;
   }
 
-  async getAllIndicateurSourceMetadonnees(): Promise<SourceMetadonnee[]> {
+  async getAllIndicateurSourceMetadonnees(): Promise<
+    IndicateurSourceMetadonnee[]
+  > {
     this.logger.log(`Get all metadonnees for indicateur sources`);
     const indicateurSourceMetadonnees = await this.databaseService.db
       .select()
@@ -49,7 +49,7 @@ export default class IndicateurSourcesService {
   async getIndicateurSourceMetadonnee(
     sourceId: string,
     dateVersion: string
-  ): Promise<SourceMetadonnee | null> {
+  ): Promise<IndicateurSourceMetadonnee | null> {
     this.logger.log(
       `Récupération de la metadonnees pour la source d'indicateur ${sourceId} et la date ${dateVersion}`
     );
@@ -68,7 +68,7 @@ export default class IndicateurSourcesService {
       : null;
   }
 
-  async upsertIndicateurSource(indicateurSource: SourceInsert) {
+  async upsertIndicateurSource(indicateurSource: IndicateurSourceCreate) {
     this.logger.log(`Upsert de la source d'indicateur ${indicateurSource.id}`);
     return this.databaseService.db
       .insert(indicateurSourceTable)

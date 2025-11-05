@@ -1,7 +1,7 @@
 import {
   CollectivitePopulationTypeEnum,
   IdentiteCollectivite,
-} from '@/backend/collectivites/identite-collectivite.dto';
+} from '@/domain/collectivites';
 import { PersonnalisationReponses } from '@/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import {
   ExpressionParser,

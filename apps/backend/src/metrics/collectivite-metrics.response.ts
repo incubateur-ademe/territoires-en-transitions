@@ -1,5 +1,5 @@
 import { labellisationRecordSchema } from '@/backend/referentiels/labellisations/list-labellisations.api-response';
-import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
+import { referentielIdEnumSchema } from '@/domain/referentiels';
 import z from 'zod';
 
 export const collectiviteMetricsResponseSchema = z.object({

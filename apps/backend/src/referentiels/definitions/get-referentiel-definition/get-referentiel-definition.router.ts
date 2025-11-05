@@ -1,5 +1,5 @@
-import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
+import { referentielIdEnumSchema } from '@/domain/referentiels';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
 import { getReferentielDefinitionOutputSchema } from './get-referentiel-definition.output';

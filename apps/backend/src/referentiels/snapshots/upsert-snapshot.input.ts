@@ -1,7 +1,9 @@
+import {
+  referentielIdEnumSchema,
+  snapshotJalonEnumSchema,
+} from '@/domain/referentiels';
 import z from 'zod';
 import { collectiviteIdInputSchema } from '../../collectivites/collectivite-id.input';
-import { referentielIdEnumSchema } from '../models/referentiel-id.enum';
-import { snapshotJalonEnumSchema } from './snapshot-jalon.enum';
 
 export const upsertSnapshotInputSchema = z.object({
   ...collectiviteIdInputSchema.shape,

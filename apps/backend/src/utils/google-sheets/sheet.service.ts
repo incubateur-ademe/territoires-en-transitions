@@ -2,11 +2,11 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Options, default as retry } from 'async-retry';
 import { isNil } from 'es-toolkit';
 import { set } from 'es-toolkit/compat';
-import { Response } from 'express';
+import type { Response } from 'express';
 import * as gaxios from 'gaxios';
 import * as auth from 'google-auth-library';
 import { drive_v3, google, sheets_v4 } from 'googleapis';
-import { z } from 'zod';
+import * as zCore from 'zod/v4/core';
 import { getPropertyPaths } from '../zod.utils';
 import { initGoogleCloudCredentials } from './gcloud.helper';
 import {
@@ -305,7 +305,7 @@ export default class SheetService {
 
   async getDataFromSheet<T extends Record<string, unknown>>(
     spreadsheetId: string,
-    schema: z.ZodObject,
+    schema: zCore.$ZodObject,
     range?: string,
     idProperties?: (keyof T)[],
     templateData?: Partial<T>
@@ -344,14 +344,14 @@ export default class SheetService {
                 (header) => header.toLowerCase() === fieldName.toLowerCase()
               );
               let fieldDef =
-                fieldNameSchema && schema.shape
-                  ? schema.shape[fieldNameSchema]
+                fieldNameSchema && schema._zod.def.shape
+                  ? schema._zod.def.shape[fieldNameSchema]
                   : null;
-              if (fieldDef instanceof z.ZodOptional) {
-                fieldDef = fieldDef.unwrap();
+              if (fieldDef instanceof zCore.$ZodOptional) {
+                fieldDef = fieldDef._zod.def.innerType;
               }
-              if (fieldDef instanceof z.ZodNullable) {
-                fieldDef = fieldDef.unwrap();
+              if (fieldDef instanceof zCore.$ZodNullable) {
+                fieldDef = fieldDef._zod.def.innerType;
               }
               // Skip empty fields, warning: 0 is not empty
               if (
@@ -367,7 +367,7 @@ export default class SheetService {
                 //logger.info(`Found field ${fieldName} with value ${row[iField]}`);
 
                 // try to parse as float
-                if (fieldDef instanceof z.ZodNumber) {
+                if (fieldDef instanceof zCore.$ZodNumber) {
                   // Remove spaces
                   const valueWithoutSpace = value.replace(/\s/g, '');
                   //console.log(valueWithoutSpace);
@@ -387,7 +387,7 @@ export default class SheetService {
                       value = floatValue;
                     }
                   }
-                } else if (fieldDef instanceof z.ZodBoolean) {
+                } else if (fieldDef instanceof zCore.$ZodBoolean) {
                   // Remove spaces
                   const valueWithoutSpace = value
                     .replace(/\s/g, '')
@@ -410,7 +410,7 @@ export default class SheetService {
           }
           if (!missingIdProperties) {
             try {
-              const parsedDataRecord = schema.parse(dataRecord);
+              const parsedDataRecord = zCore.parse(schema, dataRecord);
               data.push(parsedDataRecord);
             } catch (e) {
               let errorMessage = `Invalid sheet record on line ${iRow} ${JSON.stringify(
@@ -418,7 +418,7 @@ export default class SheetService {
               )}`;
               this.logger.error(errorMessage);
               this.logger.error(e);
-              if (e instanceof z.ZodError) {
+              if (e instanceof zCore.$ZodError) {
                 const errorList = e.issues.map((error) => {
                   return `${error.path.join('.')} - ${error.message} (${
                     error.code

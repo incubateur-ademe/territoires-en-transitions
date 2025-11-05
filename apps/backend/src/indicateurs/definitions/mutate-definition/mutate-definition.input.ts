@@ -1,49 +1,42 @@
-import { serviceTagSchema } from '@/backend/collectivites/tags/service-tag.table';
-import { thematiqueSchema } from '@/backend/shared/thematiques/thematique.table';
-import { createInsertSchema } from 'drizzle-zod';
+import { serviceTagSchema } from '@/domain/collectivites';
+import { indicateurDefinitionSchemaCreate } from '@/domain/indicateurs';
+import { thematiqueSchema } from '@/domain/shared';
 import z from 'zod';
+import * as zm from 'zod/mini';
 import { upsertIndicateurDefinitionPilotesInputSchema } from '../handle-definition-pilotes/handle-definition-pilotes.input';
-import { indicateurDefinitionTable } from '../indicateur-definition.table';
 
-export const createIndicateurDefinitionInputSchema = createInsertSchema(
-  indicateurDefinitionTable
-)
-  .pick({
-    titre: true,
-    unite: true,
-  })
-  // Pour les indicateurs personnalisés, l'unité n'est pas obligatoire ('' string vide en base le cas échéant)
-  .partial({ unite: true })
-  .extend({
-    collectiviteId: z.number(),
-    thematiques: z
-      .array(thematiqueSchema.pick({ id: true }))
-      .optional()
-      .default([]),
-    commentaire: z
-      .string()
-      .optional()
-      .describe('Correspond au champ "description et méthodologie de calcul"'),
-    estFavori: z
-      .boolean()
-      .optional()
-      .default(false)
-      .describe(
-        "Si l'indicateur doit faire parti des indicateurs favoris de la collectivité"
-      ),
-    estConfidentiel: z
-      .boolean()
-      .optional()
-      .default(false)
-      .describe(
-        "Si true, la valeur associée à l'indicateur la plus récente n'est pas consultable en mode visite."
-      ),
-    ficheId: z
-      .number()
-      .int()
-      .optional()
-      .describe('Fiche à laquelle rattacher le nouvel indicateur'),
-  });
+export const createIndicateurDefinitionInputSchema = z.object({
+  titre: indicateurDefinitionSchemaCreate.shape.titre,
+  unite: z.optional(indicateurDefinitionSchemaCreate.shape.unite),
+  collectiviteId: z.number(),
+  thematiques: z
+    .array(z.object({ id: thematiqueSchema.shape.id }))
+    .optional()
+    .default([]),
+  commentaire: z
+    .string()
+    .optional()
+    .describe('Correspond au champ "description et méthodologie de calcul"'),
+  estFavori: z
+    .boolean()
+    .optional()
+    .default(false)
+    .describe(
+      "Si l'indicateur doit faire parti des indicateurs favoris de la collectivité"
+    ),
+  estConfidentiel: z
+    .boolean()
+    .optional()
+    .default(false)
+    .describe(
+      "Si true, la valeur associée à l'indicateur la plus récente n'est pas consultable en mode visite."
+    ),
+  ficheId: z
+    .number()
+    .int()
+    .optional()
+    .describe('Fiche à laquelle rattacher le nouvel indicateur'),
+});
 
 export type CreateIndicateurDefinitionInput = z.output<
   typeof createIndicateurDefinitionInputSchema
@@ -52,17 +45,20 @@ export type CreateIndicateurDefinitionInput = z.output<
 export const updateIndicateurDefinitionInputSchema = z.object({
   indicateurId: z.number(),
   collectiviteId: z.number(),
-  indicateurFields: createIndicateurDefinitionInputSchema
-    .omit({
-      collectiviteId: true,
-      ficheId: true,
-      thematiques: true,
-    })
-    .extend({
+  indicateurFields: z
+    .object({
+      ...createIndicateurDefinitionInputSchema.omit({
+        collectiviteId: true,
+        ficheId: true,
+        thematiques: true,
+      }).shape,
+
       ficheIds: z.array(z.number()).optional(),
       pilotes: z.array(upsertIndicateurDefinitionPilotesInputSchema).optional(),
-      services: z.array(serviceTagSchema.pick({ id: true })).optional(),
-      thematiques: z.array(thematiqueSchema.pick({ id: true })).optional(),
+      services: z.array(zm.pick(serviceTagSchema, { id: true })).optional(),
+      thematiques: z
+        .array(z.object({ id: thematiqueSchema.shape.id }))
+        .optional(),
     })
     .partial(),
 });

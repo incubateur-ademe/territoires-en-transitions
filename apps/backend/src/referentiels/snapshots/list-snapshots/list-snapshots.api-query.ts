@@ -1,7 +1,7 @@
 import {
   SnapshotJalonEnum,
   snapshotJalonEnumSchema,
-} from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
+} from '@/domain/referentiels';
 import z from 'zod';
 
 export const LIST_DEFAULT_JALONS = [

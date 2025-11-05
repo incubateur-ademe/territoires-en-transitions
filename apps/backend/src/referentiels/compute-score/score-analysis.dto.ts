@@ -1,7 +1,9 @@
-import { bibliothequeFichierSchema } from '@/backend/collectivites/documents/models/bibliotheque-fichier.table';
+import { bibliothequeFichierSchema } from '@/domain/collectivites';
 import z from 'zod';
 
-export const scoreAnalysisSchema = bibliothequeFichierSchema.extend({
+export const scoreAnalysisSchema = z.object({
+  ...bibliothequeFichierSchema.shape,
+
   collectiviteNom: z.string().nullable(),
   auditId: z.number().nullable(),
   referentiel: z.string().nullable(),

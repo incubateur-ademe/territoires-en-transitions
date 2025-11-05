@@ -1,14 +1,4 @@
 import {
-  categorieFNVSchema,
-  CategorieFNVType,
-} from '@/backend/shared/models/categorie-fnv.table';
-import { tempsDeMiseEnOeuvreTable } from '@/backend/shared/models/temps-de-mise-en-oeuvre.table';
-import {
-  Thematique,
-  thematiqueSchema,
-} from '@/backend/shared/thematiques/thematique.table';
-import { InferSelectModel } from 'drizzle-orm';
-import {
   boolean,
   integer,
   jsonb,
@@ -16,13 +6,7 @@ import {
   serial,
   text,
 } from 'drizzle-orm/pg-core';
-import { createSelectSchema } from 'drizzle-zod';
-import { createZodDto } from 'nestjs-zod';
-import { z } from 'zod';
-import {
-  lienSchema,
-  lienType,
-} from '../../../collectivites/documents/models/document-lien.dto';
+import { tempsDeMiseEnOeuvreTable } from '../../../shared/models/temps-de-mise-en-oeuvre.table';
 import { actionImpactFourchetteBudgetaireTable } from './action-impact-fourchette-budgetaire.table';
 import { actionImpactTierTable } from './action-impact-tier.table';
 
@@ -56,47 +40,3 @@ export const actionImpactTable = pgTable('action_impact', {
   ressourcesExternes: jsonb('ressources_externes'),
   rex: jsonb('rex'),
 });
-export type ActionImpactType = InferSelectModel<typeof actionImpactTable>;
-
-export const actionImpactSchema = createSelectSchema(actionImpactTable);
-
-/* Une action à impact avec les liens jsonb transformés en type lien */
-export type ActionImpactTransformeType = Omit<
-  ActionImpactType,
-  'rex' | 'ressourcesExternes' | 'subventionsMobilisables'
-> & {
-  rex: lienType[];
-  ressourcesExternes: lienType[];
-  subventionsMobilisables: lienType[];
-};
-
-export const actionImpactTransformeSchema = actionImpactSchema
-  .omit({ rex: true, ressourcesExternes: true, subventionsMobilisables: true })
-  .extend({
-    rex: z.array(lienSchema),
-    ressourcesExternes: z.array(lienSchema),
-    subventionsMobilisables: z.array(lienSchema),
-  });
-
-/* Le resumé d'une action à impact, utilisé pour les cartes  */
-export type ActionImpactSnippetType = ActionImpactTransformeType & {
-  thematiques: Thematique[];
-};
-
-export const actionImpactSnippetSchema = actionImpactTransformeSchema.extend({
-  thematiques: z.array(thematiqueSchema),
-});
-
-/* Une action à impact avec des informations complémentaires, utilisé par la modale */
-export type ActionImpactDetailsType = ActionImpactTransformeType & {
-  thematiques: Thematique[] | null;
-} & { categoriesFNV: CategorieFNVType[] | null };
-
-export const actionImpactDetailsSchema = actionImpactTransformeSchema.extend({
-  thematiques: z.array(thematiqueSchema).nullable(),
-  categoriesFNV: z.array(categorieFNVSchema).nullable(),
-});
-
-export class ActionImpactDetailsClass extends createZodDto(
-  actionImpactDetailsSchema
-) {}

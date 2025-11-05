@@ -10,13 +10,11 @@ import {
 import ListCollectivitesService, {
   MIN_COMMUNE_POPULATION,
 } from '@/backend/collectivites/list-collectivites/list-collectivites.service';
-import {
-  CollectiviteRelationsInsert,
-  collectiviteRelationsTable,
-} from '@/backend/collectivites/shared/models/collectivite-relations.table';
+import { collectiviteRelationsTable } from '@/backend/collectivites/shared/models/collectivite-relations.table';
 import { CsvService } from '@/backend/utils/csv/csv.service';
 import { DatabaseService } from '@/backend/utils/database/database.service';
-import { getErrorMessage } from '@/backend/utils/get-error-message';
+import { CollectiviteRelation } from '@/domain/collectivites';
+import { getErrorMessage } from '@/domain/utils';
 import {
   Injectable,
   InternalServerErrorException,
@@ -83,7 +81,7 @@ export class ImportCollectiviteRelationsService {
     );
 
     // Parse CSV data using the new CSV service
-    const relations: CollectiviteRelationsInsert[] = [];
+    const relations: CollectiviteRelation[] = [];
     const processedEpcIs = new Set<string>();
 
     const csvRelationsResult =
@@ -266,7 +264,7 @@ export class ImportCollectiviteRelationsService {
     );
 
     // Parse CSV data using the new CSV service
-    const relations: CollectiviteRelationsInsert[] = [];
+    const relations: CollectiviteRelation[] = [];
     const processedSyndicats = new Set<string>();
 
     const csvRelationsResult =

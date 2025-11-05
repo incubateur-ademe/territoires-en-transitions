@@ -2,8 +2,7 @@
 
 import { SuiviPlansModule } from '@/app/tableaux-de-bord/plans-action/suivi-plans/suivi-plans.module';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-
-import { ModulePlanActionListType } from '@/domain/collectivites';
+import { ModulePlanActionList } from '@/domain/collectivites/tableau-de-bord';
 import { useFetchModules } from '../_hooks/use-fetch-modules';
 import TdbPaFichesActionCountModule from './tdb-pa-fiches-action-count.module';
 
@@ -32,7 +31,7 @@ const Modules = () => {
     (module) =>
       module.type === 'plan-action.list' &&
       module.defaultKey === 'suivi-plan-actions'
-  ) as ModulePlanActionListType;
+  ) as ModulePlanActionList;
 
   const countByModules = modules.filter(
     (module) => module.type === 'fiche-action.count-by'

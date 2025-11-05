@@ -1,4 +1,5 @@
-import { CollectiviteResume } from '@/backend/collectivites/shared/models/collectivite.table';
+import { CollectiviteResume } from '@/domain/collectivites';
+import { VerificationTrajectoireStatus } from '@/domain/indicateurs';
 import {
   Injectable,
   InternalServerErrorException,
@@ -14,7 +15,6 @@ import SheetService from '../../utils/google-sheets/sheet.service';
 import { DataInputForTrajectoireCompute } from './donnees-calcul-trajectoire-a-remplir.dto';
 import { ModeleTrajectoireTelechargementRequestType } from './modele-trajectoire-telechargement.request';
 import TrajectoiresDataService from './trajectoires-data.service';
-import { VerificationTrajectoireStatus } from './verification-trajectoire.response';
 
 @Injectable()
 export default class TrajectoiresXlsxService {

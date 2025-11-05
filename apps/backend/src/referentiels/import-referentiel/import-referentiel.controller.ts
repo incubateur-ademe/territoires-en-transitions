@@ -1,11 +1,11 @@
-import {
-  ActionDefinitionEssential,
-  TreeNode,
-} from '@/backend/referentiels/models/action-definition.dto';
-import { ActionTypeEnum } from '@/backend/referentiels/models/action-type.enum';
-import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
+import type { ReferentielId } from '@/domain/referentiels';
+import {
+  ActionDefinitionEssential,
+  ActionTreeNode,
+  ActionTypeEnum,
+} from '@/domain/referentiels';
 import { Controller, Get, Logger, Param } from '@nestjs/common';
 import { ApiExcludeController, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AllowAnonymousAccess } from '../../users/decorators/allow-anonymous-access.decorator';
@@ -17,7 +17,7 @@ class ImportReferentielResponse implements ReferentielResponse {
   constructor(
     public version: string,
     public orderedItemTypes: ActionTypeEnum[],
-    public itemsTree: TreeNode<
+    public itemsTree: ActionTreeNode<
       ActionDefinitionEssential & CorrelatedActionsFields
     >
   ) {}

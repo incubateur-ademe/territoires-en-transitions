@@ -1,13 +1,16 @@
 import { ListActionsService } from '@/backend/referentiels/list-actions/list-actions.service';
-import { getReferentielIdFromActionId } from '@/backend/referentiels/referentiels.utils';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import {
+  ActionTypeEnum,
+  getReferentielIdFromActionId,
+  MesureAuditStatutEnum,
+} from '@/domain/referentiels';
+import { PermissionOperationEnum } from '@/domain/users';
 import { Injectable } from '@nestjs/common';
 import { and, asc, eq, inArray, sql } from 'drizzle-orm';
-import { ActionTypeEnum } from '../../models/action-type.enum';
 import { GetAuditEnCoursRepository } from '../get-audit-en-cours/get-audit-en-cours.repository';
 import {
   GetMesureAuditStatutInput,
@@ -17,10 +20,7 @@ import {
   UpdateMesureAuditStatutInput,
   UpdateMesureAuditStatutOutput,
 } from './handle-mesure-audit-statut.dto';
-import {
-  MesureAuditStatutEnum,
-  mesureAuditStatutTable,
-} from './mesure-audit-statut.table';
+import { mesureAuditStatutTable } from './mesure-audit-statut.table';
 
 @Injectable()
 export class HandleMesureAuditStatutService {

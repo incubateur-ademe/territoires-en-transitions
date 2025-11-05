@@ -5,7 +5,6 @@ import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indic
 import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';
 import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
 import { actionPiloteTable } from '@/backend/referentiels/models/action-pilote.table';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { invitationPersonneTagTable } from '@/backend/users/invitations/invitation-personne-tag.table';
@@ -13,6 +12,7 @@ import { AuthUser } from '@/backend/users/models/auth.models';
 import { invitationTable } from '@/backend/users/models/invitation.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { PermissionOperationEnum } from '@/domain/users';
 import { Injectable, Logger } from '@nestjs/common';
 import { AnyColumn, and, eq, getTableName, inArray, sql } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';

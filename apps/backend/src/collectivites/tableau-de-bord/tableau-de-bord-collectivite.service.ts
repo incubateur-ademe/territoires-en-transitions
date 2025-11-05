@@ -1,14 +1,6 @@
-import { collectiviteDefaultModuleKeysSchema } from '@/backend/collectivites/tableau-de-bord/collectivite-default-module-keys.schema';
-import { collectiviteModuleEnumTypeSchema } from '@/backend/collectivites/tableau-de-bord/collectivite-module-type.schema';
-import {
-  CollectiviteModuleType,
-  createCollectiviteModuleSchema,
-  CreateCollectiviteModuleType,
-} from '@/backend/collectivites/tableau-de-bord/collectivite-module.schema';
 import { GetTableauDeBordModuleRequestType } from '@/backend/collectivites/tableau-de-bord/get-tableau-de-bord-module.request';
 import { tableauDeBordModuleTable } from '@/backend/collectivites/tableau-de-bord/tableau-de-bord-module.table';
 import { PlanService } from '@/backend/plans/plans/plans.service';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import {
@@ -16,6 +8,14 @@ import {
   AuthUser,
 } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import {
+  collectiviteDefaultModuleKeysSchema,
+  CollectiviteModule,
+  CollectiviteModuleCreate,
+  collectiviteModuleSchemaCreate,
+  collectiviteModuleTypeEnumSchema,
+} from '@/domain/collectivites/tableau-de-bord';
+import { PermissionOperationEnum } from '@/domain/users';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { and, eq, isNull, sql, SQL, SQLWrapper } from 'drizzle-orm';
 import { DateTime } from 'luxon';
@@ -41,7 +41,7 @@ export default class TableauDeBordCollectiviteService {
   async list(
     collectiviteId: number,
     authUser: AuthenticatedUser
-  ): Promise<CollectiviteModuleType[]> {
+  ): Promise<CollectiviteModule[]> {
     await this.permissionService.isAllowed(
       authUser,
       PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
@@ -57,7 +57,7 @@ export default class TableauDeBordCollectiviteService {
           eq(tableauDeBordModuleTable.collectiviteId, collectiviteId),
           isNull(tableauDeBordModuleTable.userId)
         )
-      )) as CollectiviteModuleType[];
+      )) as CollectiviteModule[];
 
     data.forEach((module) => {
       module.createdAt =
@@ -86,9 +86,9 @@ export default class TableauDeBordCollectiviteService {
   }
 
   async upsert(
-    module: CreateCollectiviteModuleType,
+    module: CollectiviteModuleCreate,
     authUser: AuthUser | null
-  ): Promise<CollectiviteModuleType> {
+  ): Promise<CollectiviteModule> {
     if (authUser) {
       await this.permissionService.isAllowed(
         authUser,
@@ -99,7 +99,7 @@ export default class TableauDeBordCollectiviteService {
     }
 
     // Check the schema to avoid inserting any kind of options
-    const parsedModule = createCollectiviteModuleSchema.parse(module);
+    const parsedModule = collectiviteModuleSchemaCreate.parse(module);
     if (!parsedModule.id) {
       parsedModule.id = crypto.randomUUID();
     }
@@ -119,7 +119,7 @@ export default class TableauDeBordCollectiviteService {
     this.logger.log(
       `Module upserted for collectivite ${insertedModules[0].collectiviteId} with id ${insertedModules[0].id}`
     );
-    return insertedModules[0] as CollectiviteModuleType;
+    return insertedModules[0] as CollectiviteModule;
   }
 
   async delete(
@@ -158,7 +158,7 @@ export default class TableauDeBordCollectiviteService {
   async get(
     request: GetTableauDeBordModuleRequestType,
     authUser: AuthenticatedUser
-  ): Promise<CollectiviteModuleType> {
+  ): Promise<CollectiviteModule> {
     await this.permissionService.isAllowed(
       authUser,
       PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
@@ -183,9 +183,9 @@ export default class TableauDeBordCollectiviteService {
     const data = (await this.databaseService.db
       .select()
       .from(tableauDeBordModuleTable)
-      .where(and(...conditions))) as CollectiviteModuleType[];
+      .where(and(...conditions))) as CollectiviteModule[];
 
-    let module: CollectiviteModuleType | null = null;
+    let module: CollectiviteModule | null = null;
     if (data.length) {
       module = data[0];
     } else if (request.defaultKey) {
@@ -215,7 +215,7 @@ export default class TableauDeBordCollectiviteService {
 
   private async mergeWithDefaultModules(
     collectiviteId: number,
-    fetchedModules: CollectiviteModuleType[],
+    fetchedModules: CollectiviteModule[],
     authUser: AuthenticatedUser
   ) {
     const planActionIdsResult = await this.plansService.listPlans(
@@ -249,10 +249,10 @@ export default class TableauDeBordCollectiviteService {
 
     // Ordonne manuellement les modules pour qu'ils apparaissent dans l'ordre voulu
     return Array.from(fetchedModulesMap.values()).sort((a, b) => {
-      const moduleATypeIndex = collectiviteModuleEnumTypeSchema.options.indexOf(
+      const moduleATypeIndex = collectiviteModuleTypeEnumSchema.options.indexOf(
         a.type
       );
-      const moduleBTypeIndex = collectiviteModuleEnumTypeSchema.options.indexOf(
+      const moduleBTypeIndex = collectiviteModuleTypeEnumSchema.options.indexOf(
         b.type
       );
       if (moduleATypeIndex !== moduleBTypeIndex) {
@@ -272,7 +272,7 @@ export default class TableauDeBordCollectiviteService {
     key: string,
     collectiviteId: number,
     planActionIds: number[]
-  ): CollectiviteModuleType {
+  ): CollectiviteModule {
     if (
       key === collectiviteDefaultModuleKeysSchema.enum['suivi-plan-actions']
     ) {

@@ -1,5 +1,5 @@
+import { SnapshotJalonEnum } from '@/domain/referentiels';
 import { z } from 'zod';
-import { SnapshotJalonEnum } from '../snapshots/snapshot-jalon.enum';
 
 export const getReferentielScoresRequestSchema = z
   .object({

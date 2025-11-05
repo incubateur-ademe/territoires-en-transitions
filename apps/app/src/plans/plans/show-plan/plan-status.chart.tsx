@@ -1,6 +1,6 @@
 import { useFichesCountBy } from '@/app/plans/fiches/data/use-fiches-count-by';
 import { Statuts } from '@/app/plans/plans/components/card/statuts';
-import { Statut, statutsEnumValues } from '@/domain/plans';
+import { Statut, statutEnumValues } from '@/domain/plans';
 
 const useGetPlanActionStatus = ({
   planId,
@@ -16,7 +16,7 @@ const useGetPlanActionStatus = ({
   });
 
   return {
-    ficheActionStatus: statutsEnumValues.reduce((acc, status) => {
+    ficheActionStatus: statutEnumValues.reduce((acc, status) => {
       const { value, count } = countByResponse?.countByResult?.[status] ?? {};
       if (!value) {
         return acc;

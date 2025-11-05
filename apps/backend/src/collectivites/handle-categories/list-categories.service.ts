@@ -1,14 +1,14 @@
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import { TagWithCollectiviteId } from '@/domain/collectivites';
+import { PermissionOperationEnum } from '@/domain/users';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray, isNull, or } from 'drizzle-orm';
 import { AuthUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { groupementCollectiviteTable } from '../shared/models/groupement-collectivite.table';
 import { categorieTagTable } from '../tags/categorie-tag.table';
-import { TagWithCollectiviteId } from '../tags/tag.table-base';
 
 @Injectable()
 export default class ListCategoriesService {

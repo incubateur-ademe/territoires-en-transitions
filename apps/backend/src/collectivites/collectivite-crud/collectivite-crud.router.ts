@@ -1,12 +1,12 @@
 import CollectiviteCrudService from '@/backend/collectivites/collectivite-crud/collectivite-crud.service';
-import {
-  collectiviteUpdateNICSchema,
-  collectiviteUpsertSchema,
-} from '@/backend/collectivites/shared/models/collectivite.table';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
+import {
+  collectiviteUpdateNICSchema,
+  collectiviteUpsertSchema,
+} from '@/domain/collectivites';
+import { PermissionOperationEnum } from '@/domain/users';
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 

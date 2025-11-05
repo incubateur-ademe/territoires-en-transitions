@@ -1,7 +1,10 @@
-import { ActionDefinitionEssential, TreeNode } from '../action-definition.dto';
-import { ActionTypeEnum } from '../action-type.enum';
+import {
+  ActionDefinitionEssential,
+  ActionTreeNode,
+  ActionTypeEnum,
+} from '@/domain/referentiels';
 
-export const caeReferentiel: TreeNode<
+export const caeReferentiel: ActionTreeNode<
   ActionDefinitionEssential & { [key: string]: unknown }
 > = {
   actionId: 'cae',

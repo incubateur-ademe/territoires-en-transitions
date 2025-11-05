@@ -1,11 +1,9 @@
 import { indicateurThematiqueTable } from '@/backend/indicateurs/shared/models/indicateur-thematique.table';
-import {
-  Thematique,
-  thematiqueTable,
-} from '@/backend/shared/thematiques/thematique.table';
+import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import { Thematique } from '@/domain/shared';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, asc, eq, notInArray } from 'drizzle-orm';
 import { ResourceType } from '../../../users/authorizations/resource-type.enum';

@@ -1,6 +1,4 @@
-import { InferSelectModel } from 'drizzle-orm';
 import { date, integer, pgTable, text } from 'drizzle-orm/pg-core';
-import { createSelectSchema } from 'drizzle-zod';
 import { indicateurDefinitionTable } from '../../definitions/indicateur-definition.table';
 
 export const indicateurObjectifTable = pgTable('indicateur_objectif', {
@@ -10,10 +8,3 @@ export const indicateurObjectifTable = pgTable('indicateur_objectif', {
   dateValeur: date('date_valeur').notNull(),
   formule: text('formule').notNull(),
 });
-
-export const indicateurObjectifSchema = createSelectSchema(
-  indicateurObjectifTable
-);
-export type IndicateurObjectif = InferSelectModel<
-  typeof indicateurObjectifTable
->;

@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { Discussion } from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { Result } from '../infrastructure/discussion.results';
-import { DiscussionType } from '../infrastructure/discussion.tables';
 import {
   DiscussionMessage,
   DiscussionMessages,
@@ -12,7 +13,6 @@ import {
 import { DiscussionQueryService } from './discussion-query-service';
 import { DiscussionError, DiscussionErrorEnum } from './discussion.errors';
 import { QueryOptionsType } from './discussion.query-options';
-import { ReferentielEnum } from './discussion.types';
 
 @Injectable()
 export class ListDiscussionService {
@@ -23,7 +23,7 @@ export class ListDiscussionService {
 
   async listDiscussions(
     collectiviteId: number,
-    referentielId: ReferentielEnum,
+    referentielId: ReferentielId,
     filters?: ListDiscussionsRequestFilters,
     options?: QueryOptionsType
   ): Promise<Result<DiscussionsMessagesListType, DiscussionError>> {
@@ -50,9 +50,7 @@ export class ListDiscussionService {
         discussionsResult.data.discussions;
 
       // Fetch all messages for these discussions in a single query (avoiding N+1)
-      const discussionIds: number[] = discussions.map(
-        (d: DiscussionType) => d.id
-      );
+      const discussionIds: number[] = discussions.map((d: Discussion) => d.id);
       const discussionMessages: Result<DiscussionMessage[], DiscussionError> =
         await this.discussionQueryService.findByDiscussionIds(discussionIds);
 

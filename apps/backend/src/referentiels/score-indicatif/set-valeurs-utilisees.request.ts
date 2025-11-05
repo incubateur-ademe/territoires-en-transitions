@@ -1,5 +1,5 @@
+import { scoreIndicatifTypeEnumSchema } from '@/domain/referentiels';
 import z from 'zod';
-import { typeScoreIndicatif } from '../models/type-score-indicatif.enum';
 
 export const setValeursUtiliseesRequestSchema = z.object({
   actionId: z.string(),
@@ -8,7 +8,7 @@ export const setValeursUtiliseesRequestSchema = z.object({
   valeurs: z
     .object({
       indicateurValeurId: z.number().nullable(),
-      typeScore: z.enum(typeScoreIndicatif),
+      typeScore: scoreIndicatifTypeEnumSchema,
     })
     .array(),
 });

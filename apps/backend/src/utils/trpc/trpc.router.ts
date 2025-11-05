@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
-import { Response } from 'express';
+import type { Response } from 'express';
 import z from 'zod';
 import { FichesRouter } from '../../plans/fiches/fiches.router';
 import { CompletionAnalyticsRouter } from '../../plans/plans/completion-analytics/completion-analytics.router';

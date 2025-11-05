@@ -8,15 +8,12 @@ import {
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { ActionTypeEnum } from '../../models/action-type.enum';
+import { ActionTypeEnum, MesureAuditStatutEnum } from '@/domain/referentiels';
 import {
   addAuditeurPermission,
   createAudit,
 } from '../labellisations.test-fixture';
-import {
-  MesureAuditStatutEnum,
-  mesureAuditStatutTable,
-} from './mesure-audit-statut.table';
+import { mesureAuditStatutTable } from './mesure-audit-statut.table';
 
 const collectiviteId = 34 as const;
 const referentielId = 'cae' as const;

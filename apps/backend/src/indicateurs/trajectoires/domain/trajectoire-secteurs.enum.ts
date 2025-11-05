@@ -1,4 +1,4 @@
-import { createEnumObject } from '@/backend/utils/enum.utils';
+import { createEnumObject } from '@/domain/utils';
 
 export const trajectoireSecteursEnumValues = [
   'Résidentiel',

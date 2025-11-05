@@ -1,8 +1,8 @@
+import type { FiltreRessourceLiees } from '@/domain/shared';
 import { beforeAll, expect, test } from 'vitest';
 import { signIn, signOut } from '../../../tests/auth';
 import { supabase } from '../../../tests/supabase';
 import { filtreValuesFetch } from './filtre-values.fetch';
-import { FiltreRessourceLiees } from '../domain/filtre-ressource-liees.schema';
 
 const getFiltreValues = async ({
   filtre,

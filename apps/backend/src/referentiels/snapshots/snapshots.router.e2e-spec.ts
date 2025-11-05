@@ -1,8 +1,3 @@
-import { ActionTypeEnum } from '@/backend/referentiels/models/action-type.enum';
-import {
-  ReferentielId,
-  ReferentielIdEnum,
-} from '@/backend/referentiels/models/referentiel-id.enum';
 import { snapshotTable } from '@/backend/referentiels/snapshots/snapshot.table';
 import { getScoresIndicatifsFromSnapshot } from '@/backend/referentiels/snapshots/snapshots.utils';
 import {
@@ -10,6 +5,12 @@ import {
   insertFixturePourScoreIndicatif,
 } from '@/backend/test';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import {
+  ActionTypeEnum,
+  ReferentielId,
+  ReferentielIdEnum,
+  SnapshotJalonEnum,
+} from '@/domain/referentiels';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import {
@@ -21,7 +22,6 @@ import { getAnonUser, getAuthUser } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import { SnapshotJalonEnum } from './snapshot-jalon.enum';
 import { SnapshotsRouter } from './snapshots.router';
 
 type ComputeScoreInput = inferProcedureInput<

@@ -1,9 +1,9 @@
 import { ImportActionDefinitionType } from '@/backend/referentiels/import-referentiel/import-action-definition.dto';
-import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
+import { ReferentielIdEnum } from '@/domain/referentiels';
 import { Test } from '@nestjs/testing';
-import { ImportPreuveReglementaireDefinitionType } from './import-preuve-reglementaire-definition.dto';
+import { ImportPreuveReglementaireDefinition } from './import-preuve-reglementaire-definition.dto';
 import ImportPreuveReglementaireDefinitionService from './import-preuve-reglementaire-definition.service';
 
 // Mock actions for testing
@@ -44,7 +44,7 @@ describe('ImportPreuveReglementaireDefinitionService', () => {
 
   describe('verifyReferentielPreuveReglementaireDefinitionsAndActionRelationsWithData', () => {
     it('should validate successfully with valid preuve definitions and action references', () => {
-      const preuveDefinitions: ImportPreuveReglementaireDefinitionType[] = [
+      const preuveDefinitions: ImportPreuveReglementaireDefinition[] = [
         {
           id: 'preuve_1',
           nom: 'Preuve 1',
@@ -61,7 +61,7 @@ describe('ImportPreuveReglementaireDefinitionService', () => {
 
       expect(() =>
         service.verifyReferentielPreuveReglementaireDefinitionsAndActionRelationsWithData(
-          referentielIdEnumSchema.enum.eci,
+          ReferentielIdEnum.ECI,
           mockActions,
           preuveDefinitions
         )
@@ -69,7 +69,7 @@ describe('ImportPreuveReglementaireDefinitionService', () => {
     });
 
     it('should throw error for duplicate preuve id', () => {
-      const preuveDefinitions: ImportPreuveReglementaireDefinitionType[] = [
+      const preuveDefinitions: ImportPreuveReglementaireDefinition[] = [
         {
           id: 'preuve_1',
           nom: 'Preuve 1',
@@ -86,7 +86,7 @@ describe('ImportPreuveReglementaireDefinitionService', () => {
 
       expect(() =>
         service.verifyReferentielPreuveReglementaireDefinitionsAndActionRelationsWithData(
-          referentielIdEnumSchema.enum.eci,
+          ReferentielIdEnum.ECI,
           mockActions,
           preuveDefinitions
         )
@@ -94,7 +94,7 @@ describe('ImportPreuveReglementaireDefinitionService', () => {
     });
 
     it('should throw error for invalid action reference', () => {
-      const preuveDefinitions: ImportPreuveReglementaireDefinitionType[] = [
+      const preuveDefinitions: ImportPreuveReglementaireDefinition[] = [
         {
           id: 'preuve_1',
           nom: 'Preuve 1',
@@ -105,7 +105,7 @@ describe('ImportPreuveReglementaireDefinitionService', () => {
 
       expect(() =>
         service.verifyReferentielPreuveReglementaireDefinitionsAndActionRelationsWithData(
-          referentielIdEnumSchema.enum.eci,
+          ReferentielIdEnum.ECI,
           mockActions,
           preuveDefinitions
         )

@@ -1,8 +1,12 @@
-import { FicheWithRelations } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
 import { axeTable } from '@/backend/plans/fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '@/backend/plans/fiches/shared/models/fiche-action-axe.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
+import {
+  FicheSharing,
+  FicheSharingCreate,
+  FicheWithRelations,
+} from '@/domain/plans';
 import { Injectable, Logger } from '@nestjs/common';
 import {
   and,
@@ -12,11 +16,7 @@ import {
   inArray,
   sql,
 } from 'drizzle-orm';
-import {
-  FicheActionSharing,
-  FicheActionSharingInsert,
-  ficheActionSharingTable,
-} from './fiche-action-sharing.table';
+import { ficheActionSharingTable } from './fiche-action-sharing.table';
 
 @Injectable()
 export class ShareFicheService {
@@ -24,7 +24,7 @@ export class ShareFicheService {
 
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async getFicheActionSharing(ficheId: number): Promise<FicheActionSharing[]> {
+  async listFicheSharings(ficheId: number): Promise<FicheSharing[]> {
     return this.databaseService.db
       .select()
       .from(ficheActionSharingTable)
@@ -97,12 +97,13 @@ export class ShareFicheService {
 
       const allNewSharings = ficheIds
         .map((ficheId) => {
-          const newSharings: FicheActionSharingInsert[] =
-            collectiviteIdsToAdd.map((collectiviteId) => ({
+          const newSharings: FicheSharingCreate[] = collectiviteIdsToAdd.map(
+            (collectiviteId) => ({
               ficheId: ficheId,
               collectiviteId,
               createdBy: userId,
-            }));
+            })
+          );
           return newSharings;
         })
         .flat();

@@ -1,4 +1,4 @@
-import { limitSchema } from '@/backend/utils/pagination.schema';
+import { limitSchema } from '@tet/domain/utils';
 import z from 'zod';
 
 const DEFAULT_ITEMS_NUMBER_PER_PAGE = 10;

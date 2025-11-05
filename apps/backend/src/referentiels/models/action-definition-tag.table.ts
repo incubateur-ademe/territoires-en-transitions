@@ -1,5 +1,4 @@
 import { pgTable, unique, varchar } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { actionDefinitionTable } from './action-definition.table';
 import { referentielDefinitionTable } from './referentiel-definition.table';
 
@@ -18,15 +17,4 @@ export const actionDefinitionTagTable = pgTable(
     tagRef: varchar('tag_ref', { length: 300 }).notNull(),
   },
   (t) => [unique().on(t.referentielId, t.actionId, t.tagRef)]
-);
-
-export type ActionDefinitionTag = typeof actionDefinitionTagTable.$inferSelect;
-export type ActionDefinitionTagInsert =
-  typeof actionDefinitionTagTable.$inferInsert;
-
-export const actionDefinitionTagSchema = createSelectSchema(
-  actionDefinitionTagTable
-);
-export const actionDefinitionTagInsertSchema = createInsertSchema(
-  actionDefinitionTagTable
 );

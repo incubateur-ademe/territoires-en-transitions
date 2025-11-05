@@ -1,10 +1,6 @@
-import {
-  Fiche,
-  Statut,
-  StatutEnum,
-  statutsEnumValues,
-} from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { addDays, subDays } from 'date-fns';
+import { Fiche } from '../fiche.schema';
+import { Statut, StatutEnum, statutEnumValues } from '../statut.enum.schema';
 import { isFicheOnTime } from './fiche.validator';
 
 const createMockFiche = (
@@ -16,7 +12,7 @@ const createMockFiche = (
 });
 
 describe('isFicheOnTime', () => {
-  const allStatuses = statutsEnumValues;
+  const allStatuses = statutEnumValues;
   const endedStatuses: Statut[] = [StatutEnum.REALISE, StatutEnum.ABANDONNE];
   const onGoingStatuses = allStatuses.filter((s) => !endedStatuses.includes(s));
 

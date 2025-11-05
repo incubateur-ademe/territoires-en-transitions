@@ -1,16 +1,38 @@
-import { PreuveDto } from '@/backend/collectivites/documents/models/preuve.dto';
 import DocumentService from '@/backend/collectivites/documents/services/document.service';
-import { PersonnalisationReponsesPayload } from '@/backend/collectivites/personnalisations/models/get-personnalisation-reponses.response';
-import { ActionDefinition } from '@/backend/referentiels/models/action-definition.table';
-import { ScoreIndicatifPayload } from '@/backend/referentiels/models/score-indicatif.dto';
 import { ScoreIndicatifService } from '@/backend/referentiels/score-indicatif/score-indicatif.service';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import {
+  CollectiviteAvecType,
+  PersonnalisationReponsesPayload,
+  PreuveDto,
+} from '@/domain/collectivites';
+import {
+  ActionDefinition,
+  ActionDefinitionEssential,
+  ActionScore,
+  ActionScoreWithOnlyPoints,
+  ActionScoreWithOnlyPointsAndStatuts,
+  ActionStatut,
+  ActionTreeNode,
+  ActionTypeEnum,
+  getParentIdFromActionId,
+  LabellisationAudit,
+  LabellisationEtoileDefinition,
+  ReferentielId,
+  ScoreFields,
+  ScoreFinalFields,
+  ScoreIndicatifPayload,
+  ScoresPayload,
+  SnapshotJalonEnum,
+  TreeOfActionsIncludingScore,
+} from '@/domain/referentiels';
+import {
   CollectiviteAccessLevel,
   CollectiviteAccessLevelEnum,
-} from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
+  PermissionOperationEnum,
+} from '@/domain/users';
+import { roundTo } from '@/domain/utils';
 import {
   HttpException,
   Injectable,
@@ -31,7 +53,6 @@ import {
 } from 'drizzle-orm';
 import { chunk, isEqual, isNil, pick } from 'es-toolkit';
 import { DateTime } from 'luxon';
-import { CollectiviteAvecType } from '../../collectivites/identite-collectivite.dto';
 import { PersonnalisationConsequencesByActionId } from '../../collectivites/personnalisations/models/personnalisation-consequence.dto';
 import PersonnalisationsExpressionService from '../../collectivites/personnalisations/services/personnalisations-expression.service';
 import PersonnalisationsService from '../../collectivites/personnalisations/services/personnalisations-service';
@@ -43,7 +64,6 @@ import {
 import ConfigurationService from '../../utils/config/configuration.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import MattermostNotificationService from '../../utils/mattermost-notification.service';
-import { roundTo } from '../../utils/number.utils';
 import { sleep } from '../../utils/sleep.utils';
 import { CorrelatedActionsWithScoreFields } from '../correlated-actions/correlated-actions.dto';
 import { CorrelatedActionWithScore } from '../correlated-actions/referentiel-action-origine-with-score.dto';
@@ -52,16 +72,9 @@ import {
   GetReferentielService,
   ReferentielResponse,
 } from '../get-referentiel/get-referentiel.service';
-import { Audit } from '../labellisations/audit.table';
-import { EtoileDefinition } from '../labellisations/etoile-definition.table';
 import { LabellisationService } from '../labellisations/labellisation.service';
 import { actionCommentaireTable } from '../models/action-commentaire.table';
-import {
-  ActionDefinitionEssential,
-  TreeNode,
-} from '../models/action-definition.dto';
-import { ActionStatut, actionStatutTable } from '../models/action-statut.table';
-import { ActionTypeEnum } from '../models/action-type.enum';
+import { actionStatutTable } from '../models/action-statut.table';
 import { CheckMultipleReferentielScoresRequestType } from '../models/check-multiple-referentiel-scores.request';
 import { CheckReferentielScoresRequestType } from '../models/check-referentiel-scores.request';
 import { CheckScoreStatus } from '../models/check-score-status.enum';
@@ -76,24 +89,11 @@ import { GetReferentielMultipleScoresRequestType } from '../models/get-referenti
 import { GetReferentielScoresRequestType } from '../models/get-referentiel-scores.request';
 import { historiqueActionCommentaireTable } from '../models/historique-action-commentaire.table';
 import { historiqueActionStatutTable } from '../models/historique-action-statut.table';
-import { ReferentielId } from '../models/referentiel-id.enum';
-import { getParentIdFromActionId } from '../referentiels.utils';
-import {
-  ScoresPayload,
-  TreeOfActionsIncludingScore,
-} from '../snapshots/scores-payload.dto';
-import { SnapshotJalonEnum } from '../snapshots/snapshot-jalon.enum';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
-import {
-  Score,
-  ScoreFields,
-  ScoreFinalFields,
-  ScoresByActionId,
-  ScoreWithOnlyPoints,
-  ScoreWithOnlyPointsAndStatuts,
-} from './score.dto';
 
-type ActionWithScore = TreeNode<ActionDefinitionEssential & ScoreFields>;
+type ActionWithScore = ActionTreeNode<ActionDefinitionEssential & ScoreFields>;
+
+type ScoresByActionId = Record<string, ActionScore>;
 
 @Injectable()
 export default class ScoresService {
@@ -142,7 +142,7 @@ export default class ScoresService {
   }
 
   private buildActionWithScore(
-    action: TreeNode<
+    action: ActionTreeNode<
       ActionDefinitionEssential &
         Partial<ScoreFields> &
         CorrelatedActionsWithScoreFields
@@ -153,7 +153,7 @@ export default class ScoresService {
       [origineActionId: string]: CorrelatedActionWithScore;
     },
     existingScores?: ScoresByActionId
-  ): TreeNode<
+  ): ActionTreeNode<
     ActionDefinitionEssential &
       CorrelatedActionsWithScoreFields &
       ScoreFinalFields
@@ -181,9 +181,9 @@ export default class ScoresService {
             pasConcerneTachesAvancement: null,
             desactive: false,
             renseigne: true,
-          } as Score);
+          } as ActionScore);
 
-    const actionWithScore: TreeNode<
+    const actionWithScore: ActionTreeNode<
       ActionDefinitionEssential & ScoreFields & CorrelatedActionsWithScoreFields
     > = {
       ...action,
@@ -263,13 +263,13 @@ export default class ScoresService {
       : 1;
     actionWithScore.score.totalTachesCount = totalTachesCount;
 
-    return actionWithScore as TreeNode<
+    return actionWithScore as ActionTreeNode<
       ActionDefinitionEssential & ScoreFinalFields
     >;
   }
 
   private appliquePersonnalisationPotentielPerso(
-    action: TreeNode<ActionDefinitionEssential & ScoreFinalFields>,
+    action: ActionTreeNode<ActionDefinitionEssential & ScoreFinalFields>,
     personnalisationConsequences: PersonnalisationConsequencesByActionId,
     potentielPerso?: number
   ) {
@@ -318,7 +318,7 @@ export default class ScoresService {
   }
 
   private appliquePersonnalisationDesactivation(
-    referentielActionAvecScore: TreeNode<
+    referentielActionAvecScore: ActionTreeNode<
       ActionDefinitionEssential & ScoreFinalFields
     >,
     personnalisationConsequences: PersonnalisationConsequencesByActionId,
@@ -351,7 +351,7 @@ export default class ScoresService {
   }
 
   private appliqueActionStatutNonConcerneEtRemonteAuxParents(
-    referentielActionAvecScore: TreeNode<
+    referentielActionAvecScore: ActionTreeNode<
       ActionDefinitionEssential & ScoreFinalFields
     >,
     actionStatuts: ActionStatutsByActionId,
@@ -399,7 +399,7 @@ export default class ScoresService {
   }
 
   private redistribuePotentielActionsDesactiveesNonConcerneesEtRecalculePotentielParent(
-    action: TreeNode<ActionDefinitionEssential & ScoreFinalFields>,
+    action: ActionTreeNode<ActionDefinitionEssential & ScoreFinalFields>,
     actionLevel: number,
     disablePotentielRedistribution: boolean
   ) {
@@ -511,7 +511,7 @@ export default class ScoresService {
   }
 
   private appliqueActionAvancementEtRemonteAuxParents(
-    referentielActionAvecScore: TreeNode<
+    referentielActionAvecScore: ActionTreeNode<
       ActionDefinitionEssential & ScoreFinalFields
     >,
     actionStatuts: ActionStatutsByActionId
@@ -614,8 +614,8 @@ export default class ScoresService {
   }
 
   private mergePointScoresEnfants(
-    scoreParent: ScoreWithOnlyPoints,
-    scoreEnfants: ScoreWithOnlyPoints[],
+    scoreParent: ActionScoreWithOnlyPoints,
+    scoreEnfants: ActionScoreWithOnlyPoints[],
     includePointPotentielAndReferentiel = false,
     roundingDigits: number | undefined = undefined
   ) {
@@ -677,7 +677,10 @@ export default class ScoresService {
     }
   }
 
-  private mergeScoresEnfants(scoreParent: Score, scoreEnfants: Score[]) {
+  private mergeScoresEnfants(
+    scoreParent: ActionScore,
+    scoreEnfants: ActionScore[]
+  ) {
     this.mergePointScoresEnfants(scoreParent, scoreEnfants);
 
     // TODO: supprimer ce recalcul du totalTachesCount une fois le moteur validé
@@ -717,7 +720,7 @@ export default class ScoresService {
   }
 
   private appliquePersonnalisationScore(
-    action: TreeNode<ActionDefinitionEssential & ScoreFinalFields>,
+    action: ActionTreeNode<ActionDefinitionEssential & ScoreFinalFields>,
     personnalisationConsequences: PersonnalisationConsequencesByActionId,
     scoreMap: { [key: string]: number },
     overridenScoreFactor?: number
@@ -772,7 +775,7 @@ export default class ScoresService {
 
   private computeEtoiles(
     action: ActionWithScore,
-    etoilesDefinition: EtoileDefinition[],
+    etoilesDefinition: LabellisationEtoileDefinition[],
     recursive = false
   ) {
     // Compute etoiles only for root level by default
@@ -787,8 +790,8 @@ export default class ScoresService {
   }
 
   private fillEtoilesInScore(
-    score: Score,
-    etoilesDefinition: EtoileDefinition[]
+    score: ActionScore,
+    etoilesDefinition: LabellisationEtoileDefinition[]
   ) {
     // WARNING the etoiles definition is supposed to have been sorted by minRealisePercentage desc
     for (const etoileDefinition of etoilesDefinition) {
@@ -1014,9 +1017,11 @@ export default class ScoresService {
     return getActionStatutsExplications;
   }
 
-  private getActionPointScore(actionScore: Score): ScoreWithOnlyPoints | null {
+  private getActionPointScore(
+    actionScore: ActionScore
+  ): ActionScoreWithOnlyPoints | null {
     if (actionScore) {
-      const actionPointScore: ScoreWithOnlyPoints = {
+      const actionPointScore: ActionScoreWithOnlyPoints = {
         pointPotentiel: actionScore.pointPotentiel || 0,
         pointFait: actionScore.pointFait || 0,
         pointProgramme: actionScore.pointProgramme || 0,
@@ -1033,19 +1038,20 @@ export default class ScoresService {
   }
 
   private getActionPointScoreWithAvancement(
-    actionScore: Score
-  ): ScoreWithOnlyPointsAndStatuts | null {
+    actionScore: ActionScore
+  ): ActionScoreWithOnlyPointsAndStatuts | null {
     const actionPointScore = this.getActionPointScore(actionScore);
     if (actionPointScore) {
-      const actionPointScoreWithAvancement: ScoreWithOnlyPointsAndStatuts = {
-        ...actionPointScore,
-        totalTachesCount: actionScore.totalTachesCount || 0,
-        faitTachesAvancement: actionScore.faitTachesAvancement || 0,
-        programmeTachesAvancement: actionScore.programmeTachesAvancement || 0,
-        pasFaitTachesAvancement: actionScore.pasFaitTachesAvancement || 0,
-        pasConcerneTachesAvancement:
-          actionScore.pasConcerneTachesAvancement || 0,
-      };
+      const actionPointScoreWithAvancement: ActionScoreWithOnlyPointsAndStatuts =
+        {
+          ...actionPointScore,
+          totalTachesCount: actionScore.totalTachesCount || 0,
+          faitTachesAvancement: actionScore.faitTachesAvancement || 0,
+          programmeTachesAvancement: actionScore.programmeTachesAvancement || 0,
+          pasFaitTachesAvancement: actionScore.pasFaitTachesAvancement || 0,
+          pasConcerneTachesAvancement:
+            actionScore.pasConcerneTachesAvancement || 0,
+        };
       return actionPointScoreWithAvancement;
     }
     return null;
@@ -1144,7 +1150,7 @@ export default class ScoresService {
         }
 
         // Audits are sorted by date desc
-        let audit: Audit | undefined = audits[0];
+        let audit: LabellisationAudit | undefined = audits[0];
         if (parameters.anneeAudit) {
           audit = audits.find(
             (a) =>
@@ -1272,7 +1278,7 @@ export default class ScoresService {
 
       this.logger.log(`Recalcul des scores `);
       const referentielWithScore = this.computeScore(
-        referentiel.itemsTree as TreeNode<
+        referentiel.itemsTree as ActionTreeNode<
           ActionDefinitionEssential &
             Partial<ScoreFields> &
             CorrelatedActionsWithScoreFields
@@ -1295,7 +1301,7 @@ export default class ScoresService {
         collectiviteId,
         collectiviteInfo,
         date: parameters.date || DateTime.now().toISO(),
-        scores: referentielWithScore as TreeNode<
+        scores: referentielWithScore as ActionTreeNode<
           Pick<ActionDefinition, 'identifiant' | 'nom' | 'categorie'> &
             ActionDefinitionEssential &
             ScoreFinalFields
@@ -1332,7 +1338,7 @@ export default class ScoresService {
       const scores = await this.computeScoreFromReferentielsOrigine(
         collectiviteId,
         parameters,
-        referentiel.itemsTree as TreeNode<
+        referentiel.itemsTree as ActionTreeNode<
           ActionDefinitionEssential &
             Partial<ScoreFields> &
             CorrelatedActionsWithScoreFields
@@ -1384,12 +1390,14 @@ export default class ScoresService {
     origineActions: CorrelatedActionWithScore[] | undefined,
     roundingDigits: number,
     referentielPointsPotentiels?: number | null
-  ): Partial<Pick<ScoreWithOnlyPoints, 'pointPotentiel' | 'pointReferentiel'>> &
-    Omit<ScoreWithOnlyPoints, 'pointPotentiel' | 'pointReferentiel'> {
+  ): Partial<
+    Pick<ActionScoreWithOnlyPoints, 'pointPotentiel' | 'pointReferentiel'>
+  > &
+    Omit<ActionScoreWithOnlyPoints, 'pointPotentiel' | 'pointReferentiel'> {
     const initialScore: Partial<
-      Pick<ScoreWithOnlyPoints, 'pointPotentiel' | 'pointReferentiel'>
+      Pick<ActionScoreWithOnlyPoints, 'pointPotentiel' | 'pointReferentiel'>
     > &
-      Omit<ScoreWithOnlyPoints, 'pointPotentiel' | 'pointReferentiel'> = {
+      Omit<ActionScoreWithOnlyPoints, 'pointPotentiel' | 'pointReferentiel'> = {
       pointFait: 0,
       pointProgramme: 0,
       pointPasFait: 0,
@@ -1467,7 +1475,7 @@ export default class ScoresService {
   }
 
   updateFromOrigineActions(
-    action: TreeNode<
+    action: ActionTreeNode<
       ActionDefinitionEssential & ScoreFields & CorrelatedActionsWithScoreFields
     >,
     roundingDigits = ScoresService.DEFAULT_ROUNDING_DIGITS
@@ -1508,7 +1516,7 @@ export default class ScoresService {
         origineReferentielActions,
         roundingDigits,
         null // Set to null to compute the potentiel points from the origine actions
-      ) as ScoreWithOnlyPoints;
+      ) as ActionScoreWithOnlyPoints;
 
       const {
         pointFait,
@@ -1550,7 +1558,7 @@ export default class ScoresService {
   }
 
   private affectScoreRecursivelyFromOrigineActions(
-    action: TreeNode<
+    action: ActionTreeNode<
       ActionDefinitionEssential & ScoreFields & CorrelatedActionsWithScoreFields
     >
   ) {
@@ -1570,7 +1578,7 @@ export default class ScoresService {
       );
       action.scoresOrigine = {};
       action.referentielsOrigine?.forEach((referentielId) => {
-        const originalConsolidatedScore: ScoreWithOnlyPoints = {
+        const originalConsolidatedScore: ActionScoreWithOnlyPoints = {
           pointFait: 0,
           pointProgramme: 0,
           pointPasFait: 0,
@@ -1631,7 +1639,7 @@ export default class ScoresService {
               point_referentiel: enfant.score.pointReferentiel,
             }
         );
-        const consolidatedScore: ScoreWithOnlyPoints = {
+        const consolidatedScore: ActionScoreWithOnlyPoints = {
           pointFait: 0,
           pointProgramme: 0,
           pointPasFait: 0,
@@ -1651,18 +1659,24 @@ export default class ScoresService {
   }
 
   private fillScoreMap(
-    action: TreeNode<ActionDefinitionEssential & ScoreFinalFields>,
-    scoreMap: ScoresByActionId
-  ) {
-    scoreMap[action.actionId] = action.score;
-    action.actionsEnfant.forEach((actionEnfant) => {
-      this.fillScoreMap(actionEnfant, scoreMap);
-    });
-    return scoreMap;
+    action: ActionTreeNode<ActionDefinitionEssential & ScoreFinalFields>
+  ): ScoresByActionId {
+    const actionScoresOfChildren = action.actionsEnfant.reduce(
+      (acc, actionEnfant) => ({
+        ...acc,
+        ...this.fillScoreMap(actionEnfant),
+      }),
+      {}
+    );
+
+    return {
+      [action.actionId]: action.score,
+      ...actionScoresOfChildren,
+    };
   }
 
   private fillScorePercentageMap(
-    action: TreeNode<ActionDefinitionEssential & ScoreFinalFields>,
+    action: ActionTreeNode<ActionDefinitionEssential & ScoreFinalFields>,
     scorePercentageMap: { [actionId: string]: number }
   ) {
     scorePercentageMap[action.actionId] = action.score.pointPotentiel
@@ -1675,7 +1689,7 @@ export default class ScoresService {
   }
 
   computeScoreMap(
-    action: TreeNode<ActionDefinitionEssential>,
+    action: ActionTreeNode<ActionDefinitionEssential>,
     personnalisationConsequences: PersonnalisationConsequencesByActionId,
     actionStatuts: ActionStatutsByActionId,
     actionLevel: number,
@@ -1689,15 +1703,13 @@ export default class ScoresService {
       disablePotentielRedistribution || false
     );
 
-    const getActionScores: ScoresByActionId = {};
-    this.fillScoreMap(score, getActionScores);
-    return getActionScores;
+    return this.fillScoreMap(score);
   }
 
   private async computeScoreFromReferentielsOrigine(
     collectiviteId: number,
     parameters: GetReferentielScoresRequestType,
-    referentiel: TreeNode<
+    referentiel: ActionTreeNode<
       ActionDefinitionEssential &
         Partial<ScoreFields> &
         CorrelatedActionsWithScoreFields
@@ -1705,7 +1717,7 @@ export default class ScoresService {
     actionLevel: number,
     disablePotentielRedistribution: boolean,
     personnalisationConsequences: PersonnalisationConsequencesByActionId,
-    etoilesDefinitions?: EtoileDefinition[]
+    etoilesDefinitions?: LabellisationEtoileDefinition[]
   ) {
     const actionsOrigineMap: {
       [origineActionId: string]: CorrelatedActionWithScore;
@@ -1745,8 +1757,6 @@ export default class ScoresService {
     // TODO: get already computed scores from database
     const referentielsOrigine = referentiel.referentielsOrigine || [];
 
-    const scoreMap: ScoresByActionId = {};
-
     const referentielsOriginePromiseScores: Promise<ScoresPayload>[] = [];
     referentielsOrigine.forEach(async (referentielOrigine) => {
       const result = this.computeScoreForCollectivite(
@@ -1764,9 +1774,13 @@ export default class ScoresService {
       referentielsOriginePromiseScores
     );
 
-    referentielsOrigineScores.forEach((referentielOrigineScore) => {
-      this.fillScoreMap(referentielOrigineScore.scores, scoreMap);
-    });
+    const scoreMap = referentielsOrigineScores.reduce(
+      (acc, referentielOrigineScore) => ({
+        ...acc,
+        ...this.fillScoreMap(referentielOrigineScore.scores),
+      }),
+      {} as ScoresByActionId
+    );
 
     // Apply scores to origine actions
     const actionOrigines = Object.keys(actionsOrigineMap);
@@ -1798,7 +1812,7 @@ export default class ScoresService {
       this.computeEtoiles(actionWithScore, etoilesDefinitions);
     }
 
-    return actionWithScore as TreeNode<
+    return actionWithScore as ActionTreeNode<
       Pick<ActionDefinition, 'identifiant' | 'nom' | 'categorie'> &
         ActionDefinitionEssential &
         ScoreFinalFields
@@ -1806,7 +1820,7 @@ export default class ScoresService {
   }
 
   private computeScore(
-    action: TreeNode<
+    action: ActionTreeNode<
       ActionDefinitionEssential &
         Partial<ScoreFields> &
         CorrelatedActionsWithScoreFields
@@ -1817,7 +1831,7 @@ export default class ScoresService {
     disablePotentielRedistribution: boolean,
     actionStatutExplications?: GetActionStatutExplicationsResponseType,
     actionPreuves?: { [actionId: string]: PreuveDto[] },
-    etoilesDefinitions?: EtoileDefinition[]
+    etoilesDefinitions?: LabellisationEtoileDefinition[]
   ): TreeOfActionsIncludingScore {
     const actionStatutsKeys = Object.keys(actionStatuts);
     for (const actionStatutKey of actionStatutsKeys) {
@@ -1887,7 +1901,7 @@ export default class ScoresService {
   // Enrichit l'arbre des scores avec les scores indicatifs
   private ajouteScoresIndicatifs(
     scoresIndicatifs: Array<{ actionId: string; score: ScoreIndicatifPayload }>,
-    node: TreeNode<ActionDefinitionEssential & ScoreFinalFields>
+    node: TreeOfActionsIncludingScore
   ) {
     const scoreIndicatif = scoresIndicatifs.find(
       (s) => s.actionId === node.actionId
@@ -1908,7 +1922,7 @@ export default class ScoresService {
   private async getClientScoresForCollectivite(
     referentielId: ReferentielId,
     collectiviteId: number,
-    etoilesDefinition?: EtoileDefinition[]
+    etoilesDefinition?: LabellisationEtoileDefinition[]
   ): Promise<{
     date: string;
     scoresMap: ScoresByActionId;
@@ -1932,7 +1946,7 @@ export default class ScoresService {
 
   private async getFirstDatabaseScoreFromJsonb(
     scoreRecords: ClientScoresType[],
-    etoilesDefinition?: EtoileDefinition[]
+    etoilesDefinition?: LabellisationEtoileDefinition[]
   ): Promise<{
     date: string;
     scoresMap: ScoresByActionId;
@@ -1954,8 +1968,8 @@ export default class ScoresService {
     // See https://stackoverflow.com/questions/74830166/unable-to-import-esm-module-in-nestjs
     const camelcaseKeys = await this.getCamelcaseKeysFunction();
     const scoreList = (scoreRecords[0].scores as any[]).map(
-      (score) => camelcaseKeys(score) as Score
-    ) as Score[];
+      (score) => camelcaseKeys(score) as ActionScore
+    ) as ActionScore[];
     scoreList.forEach((score) => {
       getActionScoresResponse[score.actionId] = score;
     });
@@ -2074,7 +2088,7 @@ export default class ScoresService {
     );
 
     const { scores, collectiviteInfo } = scoresPayload;
-    const scoreMap = this.fillScoreMap(scores, {});
+    const scoreMap = this.fillScoreMap(scores);
 
     const getReferentielScores: GetCheckScoresResponseType = {
       collectiviteId,
@@ -2207,12 +2221,12 @@ export default class ScoresService {
   }
 
   getScoreDiff(
-    computedScore: Score,
-    savedScore: Score | undefined | null,
+    computedScore: ActionScore,
+    savedScore: ActionScore | undefined | null,
     fullScoreMap?: ScoresByActionId
   ): {
-    sauvegarde: Partial<Score>;
-    calcule: Partial<Score>;
+    sauvegarde: Partial<ActionScore>;
+    calcule: Partial<ActionScore>;
   } | null {
     const savedScoreDiff: any = {};
     let scoreMapDiff: any = {};
@@ -2220,7 +2234,7 @@ export default class ScoresService {
       ...new Set(
         Object.keys(computedScore).concat(Object.keys(savedScore || {}))
       ).values(),
-    ] as (keyof Score)[];
+    ] as (keyof ActionScore)[];
     let hasDiff = false;
     if (savedScore) {
       for (const key of scoreMapKeys) {

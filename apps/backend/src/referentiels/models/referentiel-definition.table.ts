@@ -1,8 +1,7 @@
 import { createdAt, modifiedAt, version } from '@/backend/utils/column.utils';
 import { boolean, pgTable, varchar } from 'drizzle-orm/pg-core';
-import { createSelectSchema } from 'drizzle-zod';
 import { referentielIdPgEnum } from '../referentiel-id.column';
-import { actionTypePgEnum, actionTypeSchema } from './action-type.enum';
+import { actionTypePgEnum } from './action-type.column';
 
 export const referentielDefinitionTable = pgTable('referentiel_definition', {
   id: referentielIdPgEnum('id').primaryKey().notNull(),
@@ -13,13 +12,3 @@ export const referentielDefinitionTable = pgTable('referentiel_definition', {
   createdAt,
   modifiedAt,
 });
-
-export type ReferentielDefinition =
-  typeof referentielDefinitionTable.$inferSelect;
-
-export const referentielDefinitionSchema = createSelectSchema(
-  referentielDefinitionTable,
-  {
-    hierarchie: actionTypeSchema.array(),
-  }
-);

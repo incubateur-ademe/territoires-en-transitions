@@ -2,14 +2,13 @@ import { ListCollectiviteApiResponse } from '@/backend/collectivites/list-collec
 import { ListCollectiviteInput } from '@/backend/collectivites/list-collectivites/list-collectivites.input';
 import { CollectiviteNatureType } from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
 import { collectiviteRelationsTable } from '@/backend/collectivites/shared/models/collectivite-relations.table';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
 import {
   CollectivitePublic,
   CollectiviteResume,
-  collectiviteTable,
   CollectiviteType,
-} from '@/backend/collectivites/shared/models/collectivite.table';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
+} from '@/domain/collectivites';
 import {
   BadRequestException,
   Injectable,
@@ -28,6 +27,7 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { DatabaseService } from '../../utils/database/database.service';
+import { collectiviteTable } from '../shared/models/collectivite.table';
 import { GetCollectiviteInput } from './get-collectivite.input';
 
 /**

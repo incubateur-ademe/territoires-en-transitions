@@ -1,8 +1,10 @@
-import { CollectiviteAvecType } from '@/backend/collectivites/identite-collectivite.dto';
-import { PersonnalisationReponsesPayload } from '@/backend/collectivites/personnalisations/models/get-personnalisation-reponses.response';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { IndicateurDefinition } from '@/backend/indicateurs/definitions/indicateur-definition.table';
 import { GetValeursReferenceRequest } from '@/backend/indicateurs/valeurs/get-valeurs-reference.request';
+import {
+  CollectiviteAvecType,
+  PersonnalisationReponsesPayload,
+} from '@/domain/collectivites';
+import { IndicateurDefinition } from '@/domain/indicateurs';
 import { Injectable, Logger } from '@nestjs/common';
 import { inArray } from 'drizzle-orm';
 import { groupBy, isNil } from 'es-toolkit';

@@ -1,25 +1,23 @@
 import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
 import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.table';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import {
-  UtilisateurCollectiviteAccess,
-  utilisateurCollectiviteAccessTable,
-} from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
-import {
-  AuditRole,
-  Role,
-  UserRole,
-} from '@/backend/users/authorizations/roles/role.enum';
+import { utilisateurCollectiviteAccessTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { AuthRole, AuthUser } from '@/backend/users/models/auth.models';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import {
+  AuditRole,
+  CollectiviteAccess,
+  Role,
+  UserRole,
+  UtilisateurCollectiviteAccess,
+} from '@/domain/users';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, asc, count, eq, getTableColumns, not } from 'drizzle-orm';
 import { auditTable } from '../../../referentiels/labellisations/audit.table';
-import { CollectiviteAccess } from '../../users/list-users/user-with-collectivite-accesses.dto';
-import { permissionsByRole } from '../permission.models';
 import { utilisateurSupportTable } from './utilisateur-support.table';
 import { utilisateurVerifieTable } from './utilisateur-verifie.table';
+import { permissionsByRole } from '@/domain/users';
 
 @Injectable()
 export class RoleService {

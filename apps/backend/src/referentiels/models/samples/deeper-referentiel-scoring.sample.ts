@@ -1,17 +1,10 @@
-import { ScoreFinalFields } from '@/backend/referentiels/compute-score/score.dto';
-import { ActionDefinitionEssential, TreeNode } from '../action-definition.dto';
 import {
   ActionCategorieEnum,
-  ActionDefinition,
-} from '../action-definition.table';
-import { ActionTypeEnum } from '../action-type.enum';
+  ActionTypeEnum,
+  TreeOfActionsIncludingScore,
+} from '@/domain/referentiels';
 
-type ActionDefinitionFields = ActionDefinitionEssential &
-  Pick<ActionDefinition, 'nom' | 'identifiant' | 'categorie'>;
-
-export const deeperReferentielScoring: TreeNode<
-  ActionDefinitionFields & ScoreFinalFields
-> = {
+export const deeperReferentielScoring: TreeOfActionsIncludingScore = {
   actionId: 'eci',
   identifiant: 'eci',
   nom: 'Référentiel Économie Circulaire',

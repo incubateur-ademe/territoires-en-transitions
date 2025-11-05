@@ -1,4 +1,4 @@
-import { paginationNoSortSchemaOptionalLimit } from '@/backend/utils/pagination.schema';
+import { paginationNoSortSchemaOptionalLimit } from '@/domain/utils';
 import { z } from 'zod';
 
 export const listDefinitionsApiRequestSchema =

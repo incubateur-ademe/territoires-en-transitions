@@ -2,7 +2,6 @@ import { collectiviteTable } from '@/backend/collectivites/shared/models/collect
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { createdAt, createdBy } from '@/backend/utils/column.utils';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
 export const ficheActionSharingTable = pgTable(
   'fiche_action_sharing',
@@ -23,14 +22,3 @@ export const ficheActionSharingTable = pgTable(
     }),
   ]
 );
-
-export const ficheActionSharingSchema = createSelectSchema(
-  ficheActionSharingTable
-);
-export const ficheActionSharingInsertSchema = createInsertSchema(
-  ficheActionSharingTable
-);
-
-export type FicheActionSharing = typeof ficheActionSharingTable.$inferSelect;
-export type FicheActionSharingInsert =
-  typeof ficheActionSharingTable.$inferInsert;

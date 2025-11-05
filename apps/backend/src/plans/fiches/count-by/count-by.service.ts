@@ -1,8 +1,11 @@
 import { countByDateSlots } from '@/backend/plans/fiches/count-by/count-by-date-slots.enum';
 import { countByArrayValues } from '@/backend/plans/fiches/count-by/utils/count-by-array-value';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
-import { ListFichesRequestFilters } from '@/backend/plans/fiches/shared/filters/filters.request';
+import { ficheActionResultatsAttenduValues } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import {
+  CountByPropertyEnumType,
+  FicheWithRelations,
+  ListFichesRequestFilters,
   SANS_CIBLE_LABEL,
   SANS_FINANCEUR_TAG_LABEL,
   SANS_LIBRE_TAG_LABEL,
@@ -17,23 +20,15 @@ import {
   SANS_STATUT_LABEL,
   SANS_STRUCTURE_TAG_LABEL,
   SANS_THEMATIQUE_LABEL,
-} from '@/backend/plans/fiches/shared/labels';
-import {
-  ciblesEnumValues,
-  ficheActionResultatsAttenduValues,
+  cibleEnumValues,
   participationCitoyenneEnumValues,
   prioriteEnumValues,
-  statutsEnumValues,
-} from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import {
-  CountByRecordGeneralType,
-  CountByResponseType,
-} from '@/backend/utils/count-by.dto';
+  statutEnumValues,
+} from '@/domain/plans';
+import { CountByRecordGeneralType, CountByResponseType } from '@/domain/utils';
 import { Injectable, Logger, NotImplementedException } from '@nestjs/common';
 import { isNil } from 'es-toolkit';
 import { DateTime } from 'luxon';
-import { FicheWithRelations } from '../list-fiches/fiche-action-with-relations.dto';
-import { CountByPropertyEnumType } from './count-by-property-options.enum';
 import { isArrayCountByProperty } from './count-by.types';
 
 @Injectable()
@@ -50,10 +45,10 @@ export class CountByService {
     const countByPropertyToEnumMapping: Partial<
       Record<CountByPropertyEnumType, readonly string[]>
     > = {
-      statut: statutsEnumValues,
+      statut: statutEnumValues,
       priorite: prioriteEnumValues,
       effetsAttendus: ficheActionResultatsAttenduValues,
-      cibles: ciblesEnumValues,
+      cibles: cibleEnumValues,
       participationCitoyenneType: participationCitoyenneEnumValues,
     };
     return countByPropertyToEnumMapping[countByProperty] ?? null;

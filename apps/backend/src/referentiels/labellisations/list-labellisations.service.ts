@@ -7,11 +7,11 @@ import {
   LabellisationRecord,
   ListLabellisationApiResponse,
 } from '@/backend/referentiels/labellisations/list-labellisations.api-response';
-import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
 import { snapshotTable } from '@/backend/referentiels/snapshots/snapshot.table';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
 import { DatabaseService } from '@/backend/utils/database/database.service';
-import { roundTo } from '@/backend/utils/number.utils';
+import { SnapshotJalonEnum } from '@/domain/referentiels';
+import { roundTo } from '@/domain/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { desc, getTableColumns, inArray, isNotNull } from 'drizzle-orm';
 import { and, eq, or } from 'drizzle-orm/sql';

@@ -1,13 +1,20 @@
 import { preuveLabellisationTable } from '@/backend/collectivites/documents/models/preuve-labellisation.table';
-import { ScoreFinal } from '@/backend/referentiels/compute-score/score.dto';
-import { StatutAvancementEnum } from '@/backend/referentiels/models/action-statut.table';
-import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import {
+  ActionScoreFinal,
+  Etoile,
+  EtoileEnum,
   findActionById,
   getParentIdFromActionId,
   getScoreRatios,
-} from '@/backend/referentiels/referentiels.utils';
-import { DatabaseService } from '@/backend/utils/database/database.service';
+  Labellisation,
+  LabellisationAudit,
+  LabellisationCritere,
+  LabellisationDemande,
+  ReferentielId,
+  ScoresPayload,
+  StatutAvancementEnum,
+} from '@/domain/referentiels';
 import {
   Injectable,
   InternalServerErrorException,
@@ -15,26 +22,17 @@ import {
 } from '@nestjs/common';
 import { and, desc, eq, getTableColumns, lte, not, sql } from 'drizzle-orm';
 import { ObjectToSnake, objectToSnake } from 'ts-case-convert';
-import { ScoresPayload } from '../snapshots/scores-payload.dto';
 import { SnapshotsService } from '../snapshots/snapshots.service';
-import { Audit, auditTable } from './audit.table';
+import { auditTable } from './audit.table';
 import { cotTable } from './cot.table';
 import {
   EtoileActionConditionDefinition,
   etoileActionConditionDefinitionTable,
 } from './etoile-action-condition-definition.table';
-import {
-  Etoile,
-  etoileDefinitionTable,
-  EtoileEnum,
-} from './etoile-definition.table';
-import {
-  LabellisationDemande,
-  labellisationDemandeTable,
-} from './labellisation-demande.table';
+import { etoileDefinitionTable } from './etoile-definition.table';
+import { labellisationDemandeTable } from './labellisation-demande.table';
 import { LabellisationService } from './labellisation.service';
-import { Labellisation, labellisationTable } from './labellisation.table';
-import { TCritereScore } from './labellisations.types';
+import { labellisationTable } from './labellisation.table';
 
 type ConditionFichiers = { atteint: boolean };
 
@@ -42,7 +40,7 @@ type TLabellisationAndDemandeAndAudit = {
   labellisation: ObjectToSnake<
     Labellisation & { prochaine_etoile: Etoile | null }
   > | null;
-  audit: ObjectToSnake<Audit> | null;
+  audit: ObjectToSnake<LabellisationAudit> | null;
   demande: ObjectToSnake<LabellisationDemande> | null;
   isCot: boolean;
   conditionFichiers: ConditionFichiers;
@@ -51,7 +49,7 @@ type TLabellisationAndDemandeAndAudit = {
 type ParcoursLabellisation = {
   etoiles: Etoile;
   completude_ok: boolean;
-  critere_score: TCritereScore;
+  critere_score: LabellisationCritere;
   criteres_action: ObjectToSnake<
     Omit<
       EtoileActionConditionDefinition,
@@ -70,7 +68,7 @@ type ParcoursLabellisation = {
     | (ObjectToSnake<Labellisation> & { prochaine_etoile: Etoile | null })
     | null;
   demande: ObjectToSnake<LabellisationDemande> | null;
-  audit: ObjectToSnake<Audit> | null;
+  audit: ObjectToSnake<LabellisationAudit> | null;
   isCot: boolean;
   conditionFichiers: ConditionFichiers;
   score: ScoresPayload['scores']['score'];
@@ -154,12 +152,12 @@ export class GetLabellisationService {
     collectiviteId: number,
     referentielId: ReferentielId
   ): Promise<{
-    audit: ObjectToSnake<Audit>;
+    audit: ObjectToSnake<LabellisationAudit>;
     demande: ObjectToSnake<LabellisationDemande>;
   }> {
     return this.db.transaction(async (tx) => {
       // Function labellisation.current_audit
-      let currentAudit: Audit;
+      let currentAudit: LabellisationAudit;
       const currentAuditResult = await tx
         .select()
         .from(auditTable)
@@ -594,7 +592,7 @@ from s_etoile s
  * Équivalent de la fonction PG `labellisation.critere_action()`, basée sur `client_scores`.
  */
 function addIsScoreConditionSatisfied<
-  A extends { actionId: string; actionsEnfant?: A[]; score: ScoreFinal }
+  A extends { actionId: string; actionsEnfant: A[]; score: ActionScoreFinal }
 >(actionScoresTree: A) {
   return (
     actionCondition: Awaited<

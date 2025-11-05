@@ -1,5 +1,5 @@
-import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import { ActionScore, ReferentielIdEnum } from '@/domain/referentiels';
 import { inferProcedureInput } from '@trpc/server';
 import {
   getTestApp,
@@ -10,7 +10,6 @@ import { getAuthUser } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import { Score } from '../compute-score/score.dto';
 
 type Input = inferProcedureInput<
   AppRouter['referentiels']['actions']['updateStatut']
@@ -111,7 +110,7 @@ describe('UpdateActionStatutRouter', () => {
     const currentFullScoreStatutUpdateResponse =
       await caller.referentiels.actions.updateStatut(input);
 
-    const expectedCaeRootScoreAfterStatutUpdate: Score = {
+    const expectedCaeRootScoreAfterStatutUpdate: ActionScore = {
       actionId: 'cae',
       etoiles: 1,
       pointReferentiel: 500,
@@ -138,7 +137,7 @@ describe('UpdateActionStatutRouter', () => {
     // Check that the current score has been correctly updated & saved
     const currentFullCurentScore =
       await caller.referentiels.snapshots.getCurrent({
-        referentielId: referentielIdEnumSchema.enum.cae,
+        referentielId: ReferentielIdEnum.CAE,
         collectiviteId: 1,
       });
     expect(currentFullCurentScore.scoresPayload.scores.score).toEqual(
@@ -159,7 +158,7 @@ describe('UpdateActionStatutRouter', () => {
     const currentFullScoreStatutRestoreResponse =
       await caller.referentiels.actions.updateStatut(actionNonFaite);
 
-    const expectedCaeRootScoreAfterStatutRestore: Score = {
+    const expectedCaeRootScoreAfterStatutRestore: ActionScore = {
       actionId: 'cae',
       etoiles: 1,
       pointReferentiel: 500,
