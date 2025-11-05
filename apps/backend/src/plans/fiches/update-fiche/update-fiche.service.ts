@@ -125,7 +125,8 @@ export default class UpdateFicheService {
           false,
           user
         );
-      } catch (e) {
+      } catch (error) {
+        this.logger.error(error);
         return {
           success: false,
           error: UpdateFicheErrorType.PARENT_NOT_FOUND,
