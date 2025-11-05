@@ -93,6 +93,16 @@ export const Moyens = ({ fiche, budgets = [] }: MoyensProps) => {
           </Paragraph>
           {!emptyFinancements ? financements : 'Non renseignés '}
         </Paragraph>
+        <Paragraph
+          className={classNames({
+            'text-grey-7': emptyRessources,
+          })}
+        >
+          <Paragraph className="text-primary-9 font-bold uppercase">
+            Moyens humains et techniques :{' '}
+          </Paragraph>
+          {ressources ? htmlToText(ressources) : 'Non renseignés '}
+        </Paragraph>
       </Stack>
     </>
   );
