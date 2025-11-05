@@ -1,16 +1,15 @@
 import { FicheRestreintEditorFormSection } from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionAcces/fiche-restreint-editor.form-section';
 import FicheShareEditorFormSection from '@/app/plans/fiches/share-fiche/fiche-share-editor.form-section';
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { FicheWithRelations } from '@/domain/plans';
+import { FicheResume } from '@/domain/plans';
 import { Modal, ModalFooterOKCancel } from '@/ui';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 type ModaleAccesProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  fiche: Pick<FicheWithRelations, 'titre' | 'restreint'> & FicheShareProperties;
+  fiche: FicheResume;
   onUpdateAccess: (
-    params: Pick<FicheWithRelations, 'restreint' | 'sharedWithCollectivites'>
+    params: Pick<FicheResume, 'restreint' | 'sharedWithCollectivites'>
   ) => void;
 };
 
@@ -28,16 +27,16 @@ const ModaleAcces = ({
     sharedWithCollectivites ?? []
   );
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setEditedRestreint(isRestreint);
     setEditedSharedCollectivites(sharedWithCollectivites ?? []);
-  };
+  }, [isRestreint, sharedWithCollectivites]);
 
   useEffect(() => {
     if (isOpen) {
       resetForm();
     }
-  }, [isOpen]);
+  }, [isOpen, resetForm]);
 
   const handleSave = () => {
     if (

@@ -1,12 +1,11 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { FicheWithRelations } from '@/domain/plans';
+import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
+import { FicheResume } from '@/domain/plans';
 import { Alert, Button, Modal, ModalFooterOKCancel } from '@/ui';
 import classNames from 'classnames';
 
 type RemoveSharingModalProps = {
-  fiche: Pick<FicheWithRelations, 'titre'> & FicheShareProperties;
+  fiche: FicheResume;
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
   /** Redirige vers le plan ou la page toutes les fiches action à la suppression de la fiche */

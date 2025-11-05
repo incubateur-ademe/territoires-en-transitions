@@ -10,9 +10,9 @@ import {
 } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 
+import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import { isEqual } from 'es-toolkit/predicate';
 import { useState } from 'react';
-import { useUpdateFiche } from '../data/use-update-fiche';
 
 const OBJECTIFS_MAX_LENGTH = 10000;
 

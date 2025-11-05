@@ -5,8 +5,7 @@ import { useState } from 'react';
 
 import { Button, Checkbox } from '@/ui';
 
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { FicheActionEtapeType } from '@/domain/plans';
+import { FicheActionEtapeType, FicheResume } from '@/domain/plans';
 import { useEtapesDispatch } from '../etapes-context';
 import ModalDeleteEtape from './modal-delete-etape';
 import { Textarea } from './textarea';
@@ -14,7 +13,7 @@ import { useUpsertEtape } from './use-upsert-etape';
 
 type Props = {
   etape: FicheActionEtapeType;
-  fiche: FicheShareProperties;
+  fiche: FicheResume;
   isReadonly: boolean;
 };
 

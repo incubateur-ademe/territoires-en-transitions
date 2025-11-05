@@ -41,3 +41,5 @@ export {
   type UpdatePlanRequest,
 } from '@/backend/plans/plans/plans.schema';
 export * from './fiches/utils/fiche.validator';
+export * from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
+export * from '@/backend/plans/fiches/update-fiche/update-fiche.request';

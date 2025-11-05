@@ -1,15 +1,15 @@
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import {
   AddPreuveModal,
   TAddPreuveModalHandlers,
 } from '@/app/referentiels/preuves/AddPreuveModal';
+import { FicheResume } from '@/domain/plans';
 
 type ModaleAjoutDocumentProps = {
   handlers: TAddPreuveModalHandlers;
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  fiche: FicheShareProperties;
+  fiche: FicheResume;
 };
 
 const ModaleAjoutDocument = ({

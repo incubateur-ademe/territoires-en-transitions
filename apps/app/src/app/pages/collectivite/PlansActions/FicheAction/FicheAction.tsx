@@ -5,20 +5,20 @@ import { useUser } from '@/api/users/user-context/user-provider';
 import FicheActionAcces from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionAcces/FicheActionAcces';
 import { FicheNoAccessPage } from '@/app/plans/fiches/get-fiche/fiche-no-access.page';
 import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import { ErrorPage } from '@/app/utils/error/error.page';
 import { FicheWithRelations } from '@/domain/plans';
-import { Fiche, useGetFiche } from './data/use-get-fiche';
-import { useUpdateFiche } from './data/use-update-fiche';
+import { useGetFiche } from './data/use-get-fiche';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
-import FicheActionDescription from './FicheActionDescription/FicheActionDescription';
+import { FicheActionDescription } from './FicheActionDescription/FicheActionDescription';
 import FicheActionImpact from './FicheActionImpact';
 import FicheActionOnglets from './FicheActionOnglets';
 import FicheActionPilotes from './FicheActionPilotes/FicheActionPilotes';
-import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
+import { FicheActionPlanning } from './FicheActionPlanning/FicheActionPlanning';
 import { Header } from './Header';
 
 type FicheActionProps = {
-  fiche: Fiche;
+  fiche: FicheWithRelations;
   planId?: number;
 };
 

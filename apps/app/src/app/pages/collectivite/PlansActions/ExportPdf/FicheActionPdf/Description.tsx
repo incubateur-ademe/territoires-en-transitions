@@ -5,18 +5,57 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
+import { FicheWithRelations } from '@/domain/plans';
 import { htmlToText } from '@/domain/utils';
-import { FicheActionPdfProps } from './FicheActionPdf';
 
-const Description = ({ fiche }: FicheActionPdfProps) => {
+const Section = ({
+  title,
+  value,
+}: {
+  title: string;
+  value: string | null | undefined;
+}) => (
+  <Stack gap={1}>
+    <Title variant="h5" className="text-primary-10">
+      {title}
+    </Title>
+    <Paragraph className="text-primary-10 text-[0.65rem]">
+      {htmlToText(value || 'Non renseigné')}
+    </Paragraph>
+  </Stack>
+);
+
+const Description = ({ fiche }: { fiche: FicheWithRelations }) => {
   const {
     thematiques,
     sousThematiques,
     description,
-    ressources,
     instanceGouvernance,
     libreTags,
   } = fiche;
+
+  const badgeItems: Array<{
+    id: number;
+    nom: string;
+    state: 'info' | 'default';
+    uppercase: boolean;
+  }> = [
+    ...(thematiques ?? []).map((t) => ({
+      ...t,
+      state: 'info' as const,
+      uppercase: true,
+    })),
+    ...(sousThematiques ?? []).map((st) => ({
+      ...st,
+      state: 'info' as const,
+      uppercase: true,
+    })),
+    ...(libreTags ?? []).map((tag) => ({
+      ...tag,
+      state: 'default' as const,
+      uppercase: false,
+    })),
+  ];
 
   return (
     <Card gap={2.5} className="bg-primary-2 border-primary-2">
@@ -25,28 +64,12 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
         sousThematiques?.length ||
         libreTags?.length) && (
         <Stack direction="row" gap={2} className="flex-wrap gap-y-2">
-          {thematiques?.map((thematique) => (
+          {badgeItems.map((b) => (
             <Badge
-              key={thematique.id}
-              title={thematique.nom}
-              state="info"
-              light
-            />
-          ))}
-          {sousThematiques?.map((ssThematique) => (
-            <Badge
-              key={ssThematique.id}
-              title={ssThematique.nom}
-              state="info"
-              light
-            />
-          ))}
-          {libreTags?.map((tagPerso) => (
-            <Badge
-              uppercase={false}
-              key={tagPerso.id}
-              title={tagPerso.nom}
-              state="default"
+              key={b.id}
+              title={b.nom}
+              state={b.state}
+              uppercase={b.uppercase}
               light
             />
           ))}
@@ -54,35 +77,12 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
       )}
 
       <Stack gap={2.5}>
-        {/* Description */}
-        <Stack gap={1}>
-          <Title variant="h5" className="text-primary-10">
-            {"Description de l'action :"}
-          </Title>
-          <Paragraph className="text-primary-10 text-[0.65rem]">
-            {htmlToText(description || 'Non renseigné')}
-          </Paragraph>
-        </Stack>
+        <Section title={"Description de l'action :"} value={description} />
 
-        {/* Moyens humains et technqiues */}
-        <Stack gap={1}>
-          <Title variant="h5" className="text-primary-10">
-            Moyens humains et techniques :
-          </Title>
-          <Paragraph className="text-primary-10 text-[0.65rem]">
-            {htmlToText(ressources || 'Non renseigné')}
-          </Paragraph>
-        </Stack>
-
-        {/* Instances de gouvernance */}
-        <Stack gap={1}>
-          <Title variant="h5" className="text-primary-10">
-            Instances de gouvernance :
-          </Title>
-          <Paragraph className="text-primary-10 text-[0.65rem]">
-            {htmlToText(instanceGouvernance || 'Non renseigné')}
-          </Paragraph>
-        </Stack>
+        <Section
+          title="Instances de gouvernance :"
+          value={instanceGouvernance}
+        />
       </Stack>
     </Card>
   );

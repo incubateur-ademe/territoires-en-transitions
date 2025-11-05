@@ -20,7 +20,6 @@ import { cn } from '@/ui/utils/cn';
 
 type RichTextEditorProps = {
   className?: string;
-  style?: string;
   initialValue?: string;
   placeholder?: string;
   disabled?: boolean;
