@@ -1,11 +1,14 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "composite": true,
-  },
   "files": [],
   "include": [],
   "references": [
+    {
+      "path": "../api"
+    },
+    {
+      "path": "../domain"
+    },
     {
       "path": "./tsconfig.lib.json"
     },

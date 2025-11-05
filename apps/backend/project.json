@@ -17,13 +17,6 @@
       "options": {
         "cwd": "apps/backend"
       }
-    },
-    "typecheck": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "tsc --noEmit",
-        "cwd": "apps/backend"
-      }
     }
   }
 }

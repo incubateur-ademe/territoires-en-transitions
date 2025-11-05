@@ -1,49 +1,41 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "out-tsc",
-    "tsBuildInfoFile": "out-tsc/tsconfig.tsbuildinfo",
+    "outDir": "dist",
+    "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo",
     "plugins": [
       {
         "name": "next"
       }
     ],
     "types": [
-      "node"
+      "node",
+      "@nx/react/typings/cssmodule.d.ts",
+      "@nx/react/typings/image.d.ts"
     ],
-    "paths": {
-      "@/panier/*": [
-        "./*"
-      ]
-    },
     "allowJs": true,
     "noEmit": true,
     "resolveJsonModule": true
   },
   "include": [
+    "**/*.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "**/*.js",
     "**/*.jsx",
     "**/*.mjs",
-    "next-env.d.ts",
     ".next/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts",
-    "**/*.test.ts",
-    "eslint.config.mjs"
-  ],
+  "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"],
   "references": [
     {
-      "path": "../../packages/domain"
+      "path": "../../packages/domain/tsconfig.lib.json"
     },
     {
-      "path": "../../packages/api"
+      "path": "../../packages/ui/tsconfig.lib.json"
     },
     {
-      "path": "../../packages/ui"
+      "path": "../../packages/api/tsconfig.lib.json"
     }
   ]
 }

@@ -4,6 +4,15 @@
   "include": [],
   "references": [
     {
+      "path": "../../packages/domain"
+    },
+    {
+      "path": "../backend"
+    },
+    {
+      "path": "../../packages/domain"
+    },
+    {
       "path": "./tsconfig.app.json"
     },
     {

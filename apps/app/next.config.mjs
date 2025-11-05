@@ -10,6 +10,15 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
 
+  typescript: {
+    // We safely disable the internal type checking of Next.js because
+    // all apps are type checked during the first steps of our CI.
+    // This avoids redundancy as well as Next.js
+    // incomplete support for TypeScript project references.
+    ignoreBuildErrors: true,
+    tsconfigPath: 'tsconfig.app.json',
+  },
+
   experimental: {
     optimizePackageImports: [
       '@gouvfr/dsfr',
@@ -57,10 +66,6 @@ const nextConfig = {
     fileLoaderRule.exclude = /\.svg$/i;
 
     return config;
-  },
-
-  typescript: {
-    tsconfigPath: 'tsconfig.app.json',
   },
 
   // Useful for self-hosting in a Docker container

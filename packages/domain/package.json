@@ -2,18 +2,31 @@
   "name": "@/domain",
   "description": "Domain library",
   "private": true,
-  "type": "module",
   "exports": {
     "./package.json": "./package.json",
     "./*": {
-      "types": "./src/*/index.d.ts",
-      "import": "./src/*/index.ts",
-      "default": "./src/*/index.ts"
-    },
-    "./trpc-router": {
-      "types": "./src/trpc-router.d.ts",
-      "import": "./src/trpc-router.ts",
-      "default": "./src/trpc-router.ts"
+      "types": "./dist/*/index.d.ts",
+      "import": "./dist/*/index.js",
+      "default": "./dist/*/index.js"
+    }
+  },
+  "nx": {
+    "name": "domain",
+    "sourceRoot": "packages/domain/src",
+    "targets": {
+      "build": {
+        "executor": "@nx/js:swc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "packages/domain/dist",
+          "main": "packages/domain/src/index.ts",
+          "tsConfig": "packages/domain/tsconfig.lib.json",
+          "skipTypeCheck": true,
+          "stripLeadingPaths": true
+        }
+      }
     }
   }
 }
