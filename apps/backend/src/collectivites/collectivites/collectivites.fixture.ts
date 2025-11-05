@@ -1,17 +1,17 @@
 import { CollectiviteNatureType } from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
 import { collectiviteBucketTable } from '@/backend/collectivites/shared/models/collectivite-bucket.table';
+import { addTestUser, TestUserArgs } from '@/backend/users/users/users.fixture';
+import { DatabaseServiceInterface } from '@/backend/utils/database/database-service.interface';
 import {
   Collectivite,
-  collectiviteTable,
   CollectiviteType,
   collectiviteTypeEnum,
   CreateCollectivite,
-} from '@/backend/collectivites/shared/models/collectivite.table';
-import { Dcp } from '@/backend/users/models/dcp.table';
-import { addTestUser, TestUserArgs } from '@/backend/users/users/users.fixture';
-import { DatabaseServiceInterface } from '@/backend/utils/database/database-service.interface';
-import { getErrorMessage } from '@/backend/utils/get-error-message';
+} from '@/domain/collectivites';
+import { Dcp } from '@/domain/users';
+import { getErrorMessage } from '@/domain/utils';
 import { eq } from 'drizzle-orm';
+import { collectiviteTable } from '../shared/models/collectivite.table';
 
 // ajoute une collectivité
 export async function addTestCollectivite(

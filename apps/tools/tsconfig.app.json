@@ -19,9 +19,6 @@
     },
     {
       "path": "../backend/tsconfig.app.json"
-    },
-    {
-      "path": "../../packages/domain/tsconfig.lib.json"
     }
   ]
 }

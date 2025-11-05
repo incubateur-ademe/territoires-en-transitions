@@ -1,4 +1,7 @@
-import { ApplicationSousScopesType } from '@/backend/utils/application-domains.enum';
+import {
+  ApplicationSousScopesType,
+  WebhookMessageCreate,
+} from '@/domain/utils';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, Logger } from '@nestjs/common';
 import { DefaultJobOptions, Queue } from 'bullmq';
@@ -6,10 +9,7 @@ import { eq } from 'drizzle-orm';
 import { WEBHOOK_NOTIFICATIONS_QUEUE_NAME } from '../bullmq/queue-names.constants';
 import { DatabaseService } from '../database/database.service';
 import { webhookConfigurationTable } from './webhook-configuration.table';
-import {
-  WebhookMessageInsert,
-  webhookMessageTable,
-} from './webhook-message.table';
+import { webhookMessageTable } from './webhook-message.table';
 
 @Injectable()
 export class WebhookService {
@@ -55,7 +55,7 @@ export class WebhookService {
         `Found ${configurations.length} webhook configurations for type: ${type}`
       );
 
-      const messages: WebhookMessageInsert[] = configurations.map((config) => {
+      const messages: WebhookMessageCreate[] = configurations.map((config) => {
         return {
           status: 'pending',
           entityId: entityId,

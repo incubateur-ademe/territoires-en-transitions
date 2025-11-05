@@ -1,16 +1,16 @@
 import { ConvertJwtToAuthUserService } from '@/backend/users/convert-jwt-to-auth-user.service';
-import { Dcp } from '@/backend/users/models/dcp.table';
-import {
-  createClient,
-  SignInWithPasswordCredentials,
-  SupabaseClient,
-} from '@supabase/supabase-js';
 import {
   AuthenticatedUser,
   AuthRole,
   AuthUser,
   isAuthenticatedUser,
-} from '../src/users/models/auth.models';
+} from '@/backend/users/models/auth.models';
+import { Dcp } from '@/domain/users';
+import {
+  createClient,
+  SignInWithPasswordCredentials,
+  SupabaseClient,
+} from '@supabase/supabase-js';
 import { getTestApp } from './app-utils';
 import { YOLO_DODO } from './test-users.samples';
 
@@ -19,8 +19,8 @@ let supabase: SupabaseClient;
 export const getSupabaseClient = (): SupabaseClient => {
   if (!supabase) {
     supabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_ANON_KEY
+      process.env.SUPABASE_URL as string,
+      process.env.SUPABASE_ANON_KEY as string
     );
   }
   return supabase;

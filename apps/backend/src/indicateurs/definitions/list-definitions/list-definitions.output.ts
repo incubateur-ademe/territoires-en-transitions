@@ -1,24 +1,26 @@
-import { personneTagOrUserSchema } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
-import { tagSchema } from '@/backend/collectivites/tags/tag.table-base';
 import { authorSchema } from '@/backend/users/models/author.utils';
+import { personneTagOrUserSchema, tagSchema } from '@/domain/collectivites';
+import {
+  indicateurCollectiviteSchema,
+  indicateurDefinitionSchema,
+} from '@/domain/indicateurs';
 import z from 'zod';
-import { indicateurCollectiviteSchema } from '../indicateur-collectivite.table';
-import { indicateurDefinitionSchema } from '../indicateur-definition.table';
 
-export const indicateurDefinitionEnfantDtoSchema =
-  indicateurDefinitionSchema.pick({
-    id: true,
-    identifiantReferentiel: true,
-    titre: true,
-    titreCourt: true,
-  });
+export const indicateurDefinitionEnfantDtoSchema = z.object({
+  id: indicateurDefinitionSchema.shape.id,
+  identifiantReferentiel:
+    indicateurDefinitionSchema.shape.identifiantReferentiel,
+  titre: indicateurDefinitionSchema.shape.titre,
+  titreCourt: indicateurDefinitionSchema.shape.titreCourt,
+});
 
-export const indicateurDefinitionParentDtoSchema =
-  indicateurDefinitionEnfantDtoSchema.extend({
-    parent: indicateurDefinitionEnfantDtoSchema.nullable(),
-  });
+export const indicateurDefinitionParentDtoSchema = z.object({
+  ...indicateurDefinitionEnfantDtoSchema.shape,
+  parent: z.nullable(indicateurDefinitionEnfantDtoSchema),
+});
 
-export const definitionListItemSchema = indicateurDefinitionSchema.extend({
+export const definitionListItemSchema = z.object({
+  ...indicateurDefinitionSchema.shape,
   commentaire: z.string().nullable(),
   estConfidentiel: z.boolean().nullable(),
   estFavori: z.boolean().nullable(),
@@ -50,7 +52,7 @@ export const definitionListItemSchema = indicateurDefinitionSchema.extend({
   estPerso: z.boolean(),
   estAgregation: z.boolean(),
   estRempli: z.boolean(),
-  modifiedBy: authorSchema.nullable(),
+  modifiedBy: z.nullable(authorSchema),
   modifiedAt: indicateurCollectiviteSchema.shape.modifiedAt,
 });
 

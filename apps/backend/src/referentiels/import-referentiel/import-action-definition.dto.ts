@@ -1,16 +1,17 @@
-import {
-  ActionCategorieEnum,
-  actionDefinitionSchemaInsert,
-} from '@/backend/referentiels/models/action-definition.table';
 import { getZodStringArrayFromQueryString } from '@/backend/utils/zod.utils';
+import {
+  actionCategorieEnumSchema,
+  actionDefinitionSchemaCreate,
+} from '@/domain/referentiels';
 import z from 'zod';
+import * as zm from 'zod/mini';
 
 export enum ImportActionDefinitionCoremeasureType {
   COREMEASURE = 'coremeasure',
 }
 
-export const importActionDefinitionSchema = actionDefinitionSchemaInsert
-  .partial({
+export const importActionDefinitionSchema = z.object({
+  ...zm.partial(actionDefinitionSchemaCreate, {
     actionId: true,
     description: true,
     nom: true,
@@ -23,30 +24,30 @@ export const importActionDefinitionSchema = actionDefinitionSchemaInsert
     reductionPotentiel: true,
     perimetreEvaluation: true,
     exprScore: true,
-  })
-  .extend({
-    categorie: z
-      .string()
-      .toLowerCase()
-      .pipe(z.enum(ActionCategorieEnum))
-      .optional(),
-    origine: z.string().optional(),
-    labels: getZodStringArrayFromQueryString().optional(),
-    coremeasure: z.string().optional(),
-    /* Lien vers les indicateurs */
-    indicateurs: getZodStringArrayFromQueryString().nullable().optional(),
-    /* Lien vers les questions de personnalisation pour pouvoir remplir les réponses depuis les sous-mesures */
-    personnalisationQuestions: getZodStringArrayFromQueryString()
-      .nullable()
-      .optional(),
-    /** règles de personnalisation */
-    desactivation: z.string().optional(),
-    desactivationDesc: z.string().optional(),
-    score: z.string().optional(),
-    scoreDesc: z.string().optional(),
-    reduction: z.string().optional(),
-    reductionDesc: z.string().optional(),
-  });
+  }).shape,
+
+  categorie: z
+    .string()
+    .toLowerCase()
+    .pipe(actionCategorieEnumSchema)
+    .optional(),
+  origine: z.string().optional(),
+  labels: getZodStringArrayFromQueryString().optional(),
+  coremeasure: z.string().optional(),
+  /* Lien vers les indicateurs */
+  indicateurs: getZodStringArrayFromQueryString().nullable().optional(),
+  /* Lien vers les questions de personnalisation pour pouvoir remplir les réponses depuis les sous-mesures */
+  personnalisationQuestions: getZodStringArrayFromQueryString()
+    .nullable()
+    .optional(),
+  /** règles de personnalisation */
+  desactivation: z.string().optional(),
+  desactivationDesc: z.string().optional(),
+  score: z.string().optional(),
+  scoreDesc: z.string().optional(),
+  reduction: z.string().optional(),
+  reductionDesc: z.string().optional(),
+});
 
 export type ImportActionDefinitionType = z.infer<
   typeof importActionDefinitionSchema

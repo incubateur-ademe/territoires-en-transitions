@@ -1,4 +1,5 @@
 import { modifiedAt } from '@/backend/utils/column.utils';
+import { MesureAuditStatutEnum } from '@/domain/referentiels';
 import { sql } from 'drizzle-orm';
 import {
   boolean,
@@ -10,21 +11,11 @@ import {
   unique,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../../collectivites/shared/models/collectivite.table';
 import { authUsersTable } from '../../../users/models/auth-users.table';
 import { actionIdReference } from '../../models/action-relation.table';
 import { auditTable } from '../audit.table';
 import { labellisationSchema } from '../labellisation.schema';
-
-export const MesureAuditStatutEnum = {
-  NON_AUDITE: 'non_audite',
-  EN_COURS: 'en_cours',
-  AUDITE: 'audite',
-} as const;
-
-export type MesureAuditStatutEnum =
-  (typeof MesureAuditStatutEnum)[keyof typeof MesureAuditStatutEnum];
 
 const auditStatutPgEnum = pgEnum('audit_statut', [
   MesureAuditStatutEnum.NON_AUDITE,
@@ -65,14 +56,4 @@ export const mesureAuditStatutTable = labellisationSchema.table(
     }),
     unique('action_audit').on(table.auditId, table.mesureId),
   ]
-);
-
-export type MesureAuditStatut = typeof mesureAuditStatutTable.$inferSelect;
-
-export const mesureAuditStatutSchema = createSelectSchema(
-  mesureAuditStatutTable
-);
-
-export const mesureAuditStatutInsertSchema = createInsertSchema(
-  mesureAuditStatutTable
 );

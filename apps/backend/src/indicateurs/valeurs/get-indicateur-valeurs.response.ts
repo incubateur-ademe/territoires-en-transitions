@@ -1,5 +1,5 @@
+import { indicateurAvecValeursParSourceSchema } from '@/domain/indicateurs';
 import { z } from 'zod';
-import { indicateurAvecValeursParSourceSchema } from './indicateur-valeur.table';
 
 export const getIndicateursValeursResponseSchema = z
   .object({
@@ -8,6 +8,6 @@ export const getIndicateursValeursResponseSchema = z
   })
   .describe('Valeurs par indicateur et par source');
 
-export type GetIndicateursValeursResponseType = z.infer<
+export type GetIndicateursValeursResponse = z.infer<
   typeof getIndicateursValeursResponseSchema
 >;

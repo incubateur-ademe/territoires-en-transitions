@@ -1,14 +1,15 @@
-import { z } from 'zod';
-import { actionTypeSchema } from '../../models/action-type.enum';
-import { referentielIdEnumSchema } from '../../models/referentiel-id.enum';
 import {
-  mesureAuditStatutInsertSchema,
-  mesureAuditStatutSchema,
-} from './mesure-audit-statut.table';
+  actionAuditStatutSchema,
+  actionAuditStatutSchemaCreate,
+  actionTypeSchema,
+} from '@/domain/referentiels';
+import * as z from 'zod/mini';
+
+import { referentielIdEnumSchema } from '@/domain/referentiels';
 
 // Get
 
-export const getMesureAuditStatutInputSchema = mesureAuditStatutSchema.pick({
+export const getMesureAuditStatutInputSchema = z.pick(actionAuditStatutSchema, {
   collectiviteId: true,
   mesureId: true,
 });
@@ -17,11 +18,14 @@ export type GetMesureAuditStatutInput = z.infer<
   typeof getMesureAuditStatutInputSchema
 >;
 
-export const getMesureAuditStatutOutputSchema = mesureAuditStatutSchema.omit({
-  id: true,
-  modifiedBy: true,
-  modifiedAt: true,
-});
+export const getMesureAuditStatutOutputSchema = z.omit(
+  actionAuditStatutSchema,
+  {
+    id: true,
+    modifiedBy: true,
+    modifiedAt: true,
+  }
+);
 
 export type GetMesureAuditStatutOutput = z.infer<
   typeof getMesureAuditStatutOutputSchema
@@ -39,7 +43,8 @@ export type ListMesureAuditStatutsInput = z.infer<
 >;
 
 export const listMesureAuditStatutsOutputSchema = z.array(
-  getMesureAuditStatutOutputSchema.extend({
+  z.object({
+    ...getMesureAuditStatutOutputSchema.shape,
     mesureType: actionTypeSchema,
     mesureNom: z.string(),
   })
@@ -51,18 +56,20 @@ export type ListMesureAuditStatutsOutput = z.infer<
 
 // Update
 
-export const updateMesureAuditStatutRequestSchema =
-  mesureAuditStatutInsertSchema
-    .pick({
-      collectiviteId: true,
-      mesureId: true,
-      statut: true,
-      avis: true,
-      ordreDuJour: true,
-    })
-    .partial({
-      statut: true,
-    });
+export const updateMesureAuditStatutRequestSchema = z.partial(
+  z.pick(actionAuditStatutSchemaCreate, {
+    collectiviteId: true,
+    mesureId: true,
+    statut: true,
+    avis: true,
+    ordreDuJour: true,
+  }),
+  {
+    statut: true,
+    avis: true,
+    ordreDuJour: true,
+  }
+);
 
 export type UpdateMesureAuditStatutInput = z.infer<
   typeof updateMesureAuditStatutRequestSchema

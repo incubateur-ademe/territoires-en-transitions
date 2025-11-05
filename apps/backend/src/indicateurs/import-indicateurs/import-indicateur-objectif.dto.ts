@@ -1,14 +1,14 @@
-import { z } from 'zod';
-import { indicateurObjectifSchema } from '../shared/models/indicateur-objectif.table';
+import { indicateurObjectifSchema } from '@/domain/indicateurs';
+import * as z from 'zod/mini';
 
-export const importObjectifSchema = indicateurObjectifSchema
-  .omit({
+export const importObjectifSchema = z.object({
+  ...z.omit(indicateurObjectifSchema, {
     indicateurId: true,
     dateValeur: true,
-  })
-  .extend({
-    identifiantReferentiel: z.string(),
-    dateValeur: z.iso.date(),
-  });
+  }).shape,
+
+  identifiantReferentiel: z.string(),
+  dateValeur: z.iso.date(),
+});
 
 export type ImportObjectifType = z.infer<typeof importObjectifSchema>;

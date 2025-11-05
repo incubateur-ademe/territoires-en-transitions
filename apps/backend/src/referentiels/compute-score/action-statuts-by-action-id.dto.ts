@@ -1,7 +1,7 @@
-import { z } from 'zod';
-import { actionStatutSchema } from '../models/action-statut.table';
+import { actionStatutSchema } from '@/domain/referentiels';
+import * as z from 'zod/mini';
 
-export const simpleActionStatutSchema = actionStatutSchema.pick({
+export const simpleActionStatutSchema = z.pick(actionStatutSchema, {
   concerne: true,
   avancement: true,
   avancementDetaille: true,
@@ -9,9 +9,10 @@ export const simpleActionStatutSchema = actionStatutSchema.pick({
 
 export type SimpleActionStatutType = z.infer<typeof simpleActionStatutSchema>;
 
-export const actionStatutsByActionIdSchema = z
-  .record(z.string(), simpleActionStatutSchema)
-  .describe('Statuts des actions');
+export const actionStatutsByActionIdSchema = z.record(
+  z.string(),
+  simpleActionStatutSchema
+);
 
 export type ActionStatutsByActionId = z.infer<
   typeof actionStatutsByActionIdSchema

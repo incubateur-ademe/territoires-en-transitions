@@ -1,9 +1,10 @@
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ShareFicheService } from '@/backend/plans/fiches/share-fiches/share-fiche.service';
-import { ApplicationSousScopesEnum } from '@/backend/utils/application-domains.enum';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { WebhookService } from '@/backend/utils/webhooks/webhook.service';
+import { ficheSchemaUpdate } from '@/domain/plans';
+import { ApplicationSousScopesEnum } from '@/domain/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import {
   Column,
@@ -31,10 +32,7 @@ import { ficheActionServiceTagTable } from '../shared/models/fiche-action-servic
 import { ficheActionSousThematiqueTable } from '../shared/models/fiche-action-sous-thematique.table';
 import { ficheActionStructureTagTable } from '../shared/models/fiche-action-structure-tag.table';
 import { ficheActionThematiqueTable } from '../shared/models/fiche-action-thematique.table';
-import {
-  ficheActionTable,
-  ficheSchemaUpdate,
-} from '../shared/models/fiche-action.table';
+import { ficheActionTable } from '../shared/models/fiche-action.table';
 import { UpdateFicheRequest } from './update-fiche.request';
 
 type ColumnType = Column<

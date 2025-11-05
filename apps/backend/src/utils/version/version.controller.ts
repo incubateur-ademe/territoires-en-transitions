@@ -1,11 +1,11 @@
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
+import { versionResponseSchema } from '@/domain/utils';
 import { Controller, Get, HttpException, HttpStatus } from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { createZodDto } from 'nestjs-zod';
 import { AllowAnonymousAccess } from '../../users/decorators/allow-anonymous-access.decorator';
 import { AllowPublicAccess } from '../../users/decorators/allow-public-access.decorator';
-import { versionResponseSchema } from './version.models';
 import VersionService from './version.service';
 
 /**

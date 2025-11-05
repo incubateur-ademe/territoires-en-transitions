@@ -10,22 +10,22 @@ import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 
-import { referentielIdEnumSchema } from '../../models/referentiel-id.enum';
+import {
+  MesureAuditStatutEnum,
+  ReferentielIdEnum,
+} from '@/domain/referentiels';
 import {
   addAuditeurPermission,
   createAudit,
 } from '../labellisations.test-fixture';
-import {
-  MesureAuditStatutEnum,
-  mesureAuditStatutTable,
-} from './mesure-audit-statut.table';
+import { mesureAuditStatutTable } from './mesure-audit-statut.table';
 
 describe('MesureAuditStatutRouter : règles métier', () => {
   let router: TrpcRouter;
   let user: AuthenticatedUser;
   let databaseService: DatabaseService;
 
-  const referentielId = referentielIdEnumSchema.enum.cae;
+  const referentielId = ReferentielIdEnum.CAE;
   const mesureId = 'cae_1.1.1.1';
 
   beforeAll(async () => {
@@ -180,7 +180,7 @@ describe('MesureAuditStatutRouter : règles métier', () => {
 describe('MesureAuditStatutRouter : permissions', () => {
   let router: TrpcRouter;
   let databaseService: DatabaseService;
-  const referentielId = referentielIdEnumSchema.enum.cae;
+  const referentielId = ReferentielIdEnum.CAE;
   const mesureId = 'cae_1.1.1.1';
   const collectiviteId = 99; // id sur lequel YOLO_DODO n'a pas de droits
 

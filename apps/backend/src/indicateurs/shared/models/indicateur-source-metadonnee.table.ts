@@ -1,6 +1,4 @@
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { indicateurSourceTable } from './indicateur-source.table';
 
 export const indicateurSourceMetadonneeTable = pgTable(
@@ -18,19 +16,3 @@ export const indicateurSourceMetadonneeTable = pgTable(
     limites: text('limites'),
   }
 );
-
-export const sourceMetadonneeSchema = createSelectSchema(
-  indicateurSourceMetadonneeTable
-);
-
-export type SourceMetadonnee = InferSelectModel<
-  typeof indicateurSourceMetadonneeTable
->;
-
-export const sourceMetadonneeSchemaInsert = createInsertSchema(
-  indicateurSourceMetadonneeTable
-);
-
-export type SourceMetadonneeInsert = InferInsertModel<
-  typeof indicateurSourceMetadonneeTable
->;

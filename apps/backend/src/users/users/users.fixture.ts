@@ -1,12 +1,13 @@
-import {
-  CollectiviteAccessLevel,
-  CollectiviteAccessLevelEnum,
-} from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
 import { utilisateurCollectiviteAccessTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { utilisateurVerifieTable } from '@/backend/users/authorizations/roles/utilisateur-verifie.table';
 import { authUsersTable } from '@/backend/users/models/auth-users.table';
-import { Dcp, dcpTable } from '@/backend/users/models/dcp.table';
+import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseServiceInterface } from '@/backend/utils/database/database-service.interface';
+import {
+  CollectiviteAccessLevel,
+  CollectiviteAccessLevelEnum,
+  Dcp,
+} from '@/domain/users';
 import assert from 'assert';
 import { and, count, eq, sql } from 'drizzle-orm';
 

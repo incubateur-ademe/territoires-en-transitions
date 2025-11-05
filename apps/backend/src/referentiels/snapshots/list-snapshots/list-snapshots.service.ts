@@ -1,13 +1,16 @@
-import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
 import { LIST_DEFAULT_JALONS } from '@/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-query';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
 import { DatabaseService } from '@/backend/utils/database/database.service';
-import { roundTo } from '@/backend/utils/number.utils';
+import {
+  referentielIdEnumSchema,
+  ScoreSnapshot,
+  snapshotJalonEnumSchema,
+} from '@/domain/referentiels';
+import { roundTo } from '@/domain/utils';
 import { Injectable } from '@nestjs/common';
 import { and, desc, eq, inArray } from 'drizzle-orm';
 import z from 'zod';
-import { snapshotJalonEnumSchema } from '../snapshot-jalon.enum';
-import { Snapshot, snapshotTable } from '../snapshot.table';
+import { snapshotTable } from '../snapshot.table';
 
 export const listInputSchema = z.object({
   referentielId: referentielIdEnumSchema,
@@ -36,7 +39,7 @@ export class ListSnapshotsService {
     collectiviteId,
     referentielId,
     options: { jalons },
-  }: ListInput): Promise<Snapshot[]> {
+  }: ListInput): Promise<ScoreSnapshot[]> {
     const filters = [
       eq(snapshotTable.collectiviteId, collectiviteId),
       eq(snapshotTable.referentielId, referentielId),
@@ -52,7 +55,7 @@ export class ListSnapshotsService {
       .where(and(...filters))
       .orderBy(desc(snapshotTable.date));
 
-    return snapshots as Snapshot[];
+    return snapshots as ScoreSnapshot[];
   }
 
   async list({
