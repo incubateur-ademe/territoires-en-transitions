@@ -1,4 +1,4 @@
-import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
+import { InferInsertModel, sql } from 'drizzle-orm';
 import {
   boolean,
   doublePrecision,
@@ -6,7 +6,6 @@ import {
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { historiqueSchema } from '../../collectivites/personnalisations/models/historique-reponse-choix.table';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { actionIdReference } from './action-relation.table';
@@ -42,16 +41,6 @@ export const historiqueActionStatutTable = historiqueSchema.table(
   }
 );
 
-export type HistoriqueActionStatut = InferSelectModel<
-  typeof historiqueActionStatutTable
->;
 export type HistoriqueActionStatutInsert = InferInsertModel<
   typeof historiqueActionStatutTable
 >;
-
-export const historiqueActionStatutSchema = createSelectSchema(
-  historiqueActionStatutTable
-);
-export const createHistoriqueActionStatutSchema = createInsertSchema(
-  historiqueActionStatutTable
-);

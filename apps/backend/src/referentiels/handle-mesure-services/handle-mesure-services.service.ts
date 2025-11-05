@@ -1,10 +1,10 @@
 import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
-import { TagWithCollectiviteId } from '@/backend/collectivites/tags/tag.table-base';
-import { MesureId } from '@/backend/referentiels/models/action-definition.table';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { TagWithCollectiviteId } from '@/domain/collectivites';
+import { ActionId } from '@/domain/referentiels';
+import { PermissionOperationEnum } from '@/domain/users';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { PermissionService } from '../../users/authorizations/permission.service';
@@ -22,9 +22,9 @@ export class HandleMesureServicesService {
 
   async listServices(
     collectiviteId: number,
-    mesureIds?: MesureId[],
+    mesureIds?: ActionId[],
     tx?: Transaction
-  ): Promise<Record<MesureId, TagWithCollectiviteId[]>> {
+  ): Promise<Record<ActionId, TagWithCollectiviteId[]>> {
     this.logger.log(this.formatServicesLog(collectiviteId, mesureIds));
 
     const db = tx || this.databaseService.db;
@@ -48,7 +48,7 @@ export class HandleMesureServicesService {
       )
       .where(and(...conditions));
 
-    const servicesByMesureId: Record<MesureId, TagWithCollectiviteId[]> = {};
+    const servicesByMesureId: Record<ActionId, TagWithCollectiviteId[]> = {};
     for (const service of services) {
       if (!servicesByMesureId[service.actionId]) {
         servicesByMesureId[service.actionId] = [];
@@ -65,10 +65,10 @@ export class HandleMesureServicesService {
 
   async upsertServices(
     collectiviteId: number,
-    mesureId: MesureId,
+    mesureId: ActionId,
     services: { serviceTagId: number }[],
     tokenInfo: AuthUser
-  ): Promise<Record<MesureId, TagWithCollectiviteId[]>> {
+  ): Promise<Record<ActionId, TagWithCollectiviteId[]>> {
     await this.permissionService.isAllowed(
       tokenInfo,
       PermissionOperationEnum['REFERENTIELS.MUTATE'],
@@ -108,7 +108,7 @@ export class HandleMesureServicesService {
 
   async deleteServices(
     collectiviteId: number,
-    mesureId: MesureId,
+    mesureId: ActionId,
     tokenInfo: AuthUser
   ): Promise<void> {
     await this.permissionService.isAllowed(
@@ -134,7 +134,7 @@ export class HandleMesureServicesService {
 
   private formatServicesLog(
     collectiviteId: number,
-    mesureIds?: MesureId[]
+    mesureIds?: ActionId[]
   ): string {
     if (!mesureIds || mesureIds.length === 0) {
       return `Récupération de tous les services pour la collectivité ${collectiviteId}`;

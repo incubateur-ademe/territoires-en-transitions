@@ -5,11 +5,11 @@ import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.se
 import PlanActionsService from '@/backend/plans/fiches/plan-actions.service';
 import { ListLabellisationsService } from '@/backend/referentiels/labellisations/list-labellisations.service';
 import { ListActionsService } from '@/backend/referentiels/list-actions/list-actions.service';
-import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
+import { ReferentielId } from '@/domain/referentiels';
+import { PermissionOperationEnum } from '@/domain/users';
 import { Injectable, Logger } from '@nestjs/common';
 import { LabellisationRecord } from '../referentiels/labellisations/list-labellisations.api-response';
 

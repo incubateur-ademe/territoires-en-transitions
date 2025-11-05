@@ -1,5 +1,4 @@
 import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
-import { PersonneTagOrUser } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
 import { categorieTagTable } from '@/backend/collectivites/tags/categorie-tag.table';
 import { indicateurCollectiviteTable } from '@/backend/indicateurs/definitions/indicateur-collectivite.table';
 import {
@@ -11,13 +10,18 @@ import { indicateurSourceMetadonneeTable } from '@/backend/indicateurs/shared/mo
 import { indicateurValeurTable } from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { ficheActionIndicateurTable } from '@/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import { normalizeIdentifiantReferentiel } from '@/backend/referentiels/referentiels.utils';
 import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { sqlAuthorOrNull } from '@/backend/users/models/author.utils';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
+import { PersonneTagOrUser, Tag } from '@/domain/collectivites';
+import {
+  IndicateurDefinition,
+  IndicateurDefinitionAvecEnfants,
+} from '@/domain/indicateurs';
+import { normalizeIdentifiantReferentiel } from '@/domain/referentiels';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import assert from 'assert';
 import {
@@ -43,7 +47,6 @@ import { groupementCollectiviteTable } from '../../../collectivites/shared/model
 import { groupementTable } from '../../../collectivites/shared/models/groupement.table';
 import { personneTagTable } from '../../../collectivites/tags/personnes/personne-tag.table';
 import { serviceTagTable } from '../../../collectivites/tags/service-tag.table';
-import { Tag } from '../../../collectivites/tags/tag.table-base';
 import { axeTable } from '../../../plans/fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '../../../plans/fiches/shared/models/fiche-action-axe.table';
 import { actionDefinitionTable } from '../../../referentiels/models/action-definition.table';
@@ -55,11 +58,7 @@ import { indicateurThematiqueTable } from '../../shared/models/indicateur-themat
 import { indicateurServiceTagTable } from '../handle-definition-services/indicateur-service-tag.table';
 import { indicateurActionTable } from '../indicateur-action.table';
 import { indicateurCategorieTagTable } from '../indicateur-categorie-tag.table';
-import {
-  IndicateurDefinition,
-  IndicateurDefinitionAvecEnfants,
-  indicateurDefinitionTable,
-} from '../indicateur-definition.table';
+import { indicateurDefinitionTable } from '../indicateur-definition.table';
 import { GetFavorisCountRequest } from './get-favoris-count.request';
 import { GetPathRequest } from './get-path.request';
 import { ListDefinitionsInput } from './list-definitions.input';

@@ -1,46 +1,42 @@
-import { CollectiviteAvecType } from '@/backend/collectivites/identite-collectivite.dto';
 import PersonnalisationsService from '@/backend/collectivites/personnalisations/services/personnalisations-service';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { categorieTagTable } from '@/backend/collectivites/tags/categorie-tag.table';
 import { indicateurCategorieTagTable } from '@/backend/indicateurs/definitions/indicateur-categorie-tag.table';
 import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
-import {
-  indicateurSourceMetadonneeTable,
-  SourceMetadonnee,
-} from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
+import { indicateurSourceMetadonneeTable } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '@/backend/indicateurs/shared/models/indicateur-source.table';
 import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
 import IndicateurExpressionService, {
   EvaluationContext,
 } from '@/backend/indicateurs/valeurs/indicateur-expression.service';
-import {
-  IndicateurAvecValeursParSource,
-  IndicateurValeurGroupee,
-  indicateurValeurTable,
-} from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
+import { indicateurValeurTable } from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
 import ValeursReferenceService from '@/backend/indicateurs/valeurs/valeurs-reference.service';
-import { COLLECTIVITE_SOURCE_ID } from '@/backend/indicateurs/valeurs/valeurs.constants';
 import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
 import { actionScoreIndicateurValeurTable } from '@/backend/referentiels/models/action-score-indicateur-valeur.table';
 import { GetValeursUtilisablesRequest } from '@/backend/referentiels/score-indicatif/get-valeurs-utilisables.request';
 import { SetValeursUtiliseesRequest } from '@/backend/referentiels/score-indicatif/set-valeurs-utilisees.request';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Injectable, Logger } from '@nestjs/common';
-import { and, eq, getTableColumns, inArray, not, sql } from 'drizzle-orm';
-import { groupBy, keyBy, mapValues, pick } from 'es-toolkit';
-import { objectToCamel } from 'ts-case-convert';
+import { CollectiviteAvecType } from '@/domain/collectivites';
+import {
+  COLLECTIVITE_SOURCE_ID,
+  IndicateurAvecValeursParSource,
+  IndicateurSourceMetadonnee,
+  IndicateurValeurGroupee,
+} from '@/domain/indicateurs';
 import {
   ActionScoreIndicatif,
   IndicateurAssocie,
   ScoreIndicatifActionValeurUtilisable,
   ScoreIndicatifPayload,
+  ScoreIndicatifType,
+  scoreIndicatifTypeEnum,
   ValeurUtilisee,
-} from '../models/score-indicatif.dto';
-import {
-  TypeScoreIndicatif,
-  typeScoreIndicatifEnum,
-} from '../models/type-score-indicatif.enum';
+} from '@/domain/referentiels';
+import { Injectable, Logger } from '@nestjs/common';
+import { and, eq, getTableColumns, inArray, not, sql } from 'drizzle-orm';
+import { groupBy, keyBy, mapValues, pick } from 'es-toolkit';
+import { objectToCamel } from 'ts-case-convert';
 import { GetScoreIndicatifRequest } from './get-score-indicatif.request';
 
 @Injectable()
@@ -150,7 +146,7 @@ export class ScoreIndicatifService {
     );
 
     const selection: Record<
-      TypeScoreIndicatif,
+      ScoreIndicatifType,
       {
         id: number;
         annee: number;
@@ -161,12 +157,12 @@ export class ScoreIndicatifService {
 
     const transformeValeur = (
       v: IndicateurValeurGroupee,
-      typeScore: TypeScoreIndicatif,
+      typeScore: ScoreIndicatifType,
       source: string
     ) => {
       const utilisee = valeursUtiliseesParTypeScore[typeScore]?.includes(v.id);
       const valeur = (
-        typeScore === typeScoreIndicatifEnum.FAIT ? v.resultat : v.objectif
+        typeScore === scoreIndicatifTypeEnum.FAIT ? v.resultat : v.objectif
       ) as number;
       const annee = new Date(v.dateValeur).getFullYear();
       if (utilisee) {
@@ -183,10 +179,10 @@ export class ScoreIndicatifService {
 
     const mapValeurs = (
       s: IndicateurAvecValeursParSource['sources'][string],
-      typeScore: TypeScoreIndicatif
+      typeScore: ScoreIndicatifType
     ) => {
       const field =
-        typeScore === typeScoreIndicatifEnum.FAIT ? 'resultat' : 'objectif';
+        typeScore === scoreIndicatifTypeEnum.FAIT ? 'resultat' : 'objectif';
       return s.valeurs
         .filter((v) => typeof v[field] === 'number')
         .map((v) => transformeValeur(v, typeScore, s.source));
@@ -212,8 +208,8 @@ export class ScoreIndicatifService {
           source: s.source,
           libelle: s.source === COLLECTIVITE_SOURCE_ID ? null : s.libelle,
           ordreAffichage: getOrdreAffichage(s),
-          fait: mapValeurs(s, typeScoreIndicatifEnum.FAIT),
-          programme: mapValeurs(s, typeScoreIndicatifEnum.PROGRAMME),
+          fait: mapValeurs(s, scoreIndicatifTypeEnum.FAIT),
+          programme: mapValeurs(s, scoreIndicatifTypeEnum.PROGRAMME),
         }))
         .sort((a, b) => a.ordreAffichage - b.ordreAffichage),
     };
@@ -315,7 +311,7 @@ export class ScoreIndicatifService {
           exprScore,
           valeursParTypeScore,
           indicateurs,
-          typeScoreIndicatifEnum.FAIT,
+          scoreIndicatifTypeEnum.FAIT,
           evaluationContext
         );
         const programme = this.computeScore(
@@ -323,7 +319,7 @@ export class ScoreIndicatifService {
           exprScore,
           valeursParTypeScore,
           indicateurs,
-          typeScoreIndicatifEnum.PROGRAMME,
+          scoreIndicatifTypeEnum.PROGRAMME,
           evaluationContext
         );
 
@@ -464,7 +460,7 @@ export class ScoreIndicatifService {
         objectif: indicateurValeurTable.objectif,
         sourceLibelle: indicateurSourceTable.libelle,
         sourceMetadonnee:
-          sql<SourceMetadonnee | null>`to_jsonb(${indicateurSourceMetadonneeTable})`.as(
+          sql<IndicateurSourceMetadonnee | null>`to_jsonb(${indicateurSourceMetadonneeTable})`.as(
             'sourceMetadonnee'
           ),
       })
@@ -500,7 +496,7 @@ export class ScoreIndicatifService {
     const valeursNonNulles = objectToCamel(valeurs)
       .map(({ objectif, resultat, ...v }) => ({
         ...v,
-        valeur: (v.typeScore === typeScoreIndicatifEnum.FAIT
+        valeur: (v.typeScore === scoreIndicatifTypeEnum.FAIT
           ? resultat
           : objectif) as number,
       }))
@@ -567,9 +563,9 @@ export class ScoreIndicatifService {
   private computeScore(
     actionId: string,
     exprScore: string,
-    valeursParTypeScore: Record<TypeScoreIndicatif, ValeurUtilisee[]>,
+    valeursParTypeScore: Record<ScoreIndicatifType, ValeurUtilisee[]>,
     indicateursAssocies: IndicateurAssocie[],
-    typeScore: TypeScoreIndicatif,
+    typeScore: ScoreIndicatifType,
     evaluationContext: EvaluationContext
   ) {
     const valeursUtilisees = valeursParTypeScore[typeScore] || [];
@@ -669,18 +665,18 @@ export class ScoreIndicatifService {
       unite: scoreIndicatif.indicateurs?.[0].unite,
       fait: this.formatValeursForPayload(
         scoreIndicatif,
-        typeScoreIndicatifEnum.FAIT
+        scoreIndicatifTypeEnum.FAIT
       ),
       programme: this.formatValeursForPayload(
         scoreIndicatif,
-        typeScoreIndicatifEnum.PROGRAMME
+        scoreIndicatifTypeEnum.PROGRAMME
       ),
     };
   }
 
   private formatValeursForPayload(
     scoreIndicatif: ActionScoreIndicatif,
-    typeScore: TypeScoreIndicatif
+    typeScore: ScoreIndicatifType
   ) {
     const scoreData = scoreIndicatif[typeScore];
     if (!scoreData) return null;

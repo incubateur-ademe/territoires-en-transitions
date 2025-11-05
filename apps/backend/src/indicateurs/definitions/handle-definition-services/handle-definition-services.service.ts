@@ -1,10 +1,8 @@
-import {
-  ServiceTag,
-  serviceTagTable,
-} from '@/backend/collectivites/tags/service-tag.table';
+import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import { ServiceTag } from '@/domain/collectivites';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, notInArray, sql } from 'drizzle-orm';
 import { ResourceType } from '../../../users/authorizations/resource-type.enum';

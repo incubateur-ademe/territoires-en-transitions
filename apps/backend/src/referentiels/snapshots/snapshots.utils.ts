@@ -1,20 +1,18 @@
 import { memoize } from 'es-toolkit';
 
-import { ScoreFinalFields } from '@/backend/referentiels/compute-score/score.dto';
 import {
   ActionDefinitionEssential,
-  TreeNode,
-} from '@/backend/referentiels/models/action-definition.dto';
-import { StatutAvancementEnum } from '@/backend/referentiels/models/action-statut.table';
-import { Snapshot } from '@/backend/referentiels/snapshots/snapshot.table';
-import { ScoreIndicatifPayload } from '../models/score-indicatif.dto';
-import {
+  ActionTreeNode,
   findActionInTree,
   flatMapActionsEnfants,
   getStatutAvancementBasedOnChildren,
   ReferentielException,
-} from '../referentiels.utils';
-import { ReferentielId } from './../models/referentiel-id.enum';
+  ReferentielId,
+  ScoreFinalFields,
+  ScoreIndicatifPayload,
+  ScoreSnapshot,
+  StatutAvancementEnum,
+} from '@/domain/referentiels';
 import { SnapshotsService } from './snapshots.service';
 
 /**
@@ -75,12 +73,12 @@ export function getExtendActionWithComputedFields(
  * Récupère les scores indicatifs d'un snapshot
  */
 export async function getScoresIndicatifsFromSnapshot(
-  snapshot: Snapshot
+  snapshot: ScoreSnapshot
 ): Promise<Record<string, ScoreIndicatifPayload>> {
   const scoresIndicatifs: Record<string, ScoreIndicatifPayload> = {};
 
   const extractScoresIndicatifs = (
-    node: TreeNode<ActionDefinitionEssential & ScoreFinalFields>
+    node: ActionTreeNode<ActionDefinitionEssential & ScoreFinalFields>
   ) => {
     if (node.actionId && node.scoreIndicatif) {
       scoresIndicatifs[node.actionId] = node.scoreIndicatif;

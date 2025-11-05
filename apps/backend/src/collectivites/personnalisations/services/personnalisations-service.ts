@@ -1,26 +1,24 @@
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import {
+  CollectiviteAvecType,
+  IdentiteCollectivite,
+  PersonnalisationRegle,
+  PersonnalisationReponsesPayload,
+} from '@/domain/collectivites';
+import { PermissionOperationEnum } from '@/domain/users';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, asc, desc, eq, like, lte, SQL, SQLWrapper } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { DatabaseService } from '../../../utils/database/database.service';
-import {
-  CollectiviteAvecType,
-  IdentiteCollectivite,
-} from '../../identite-collectivite.dto';
 import CollectivitesService from '../../services/collectivites.service';
 import { GetPersonnalisationConsequencesRequestType } from '../models/get-personnalisation-consequences.request';
 import { GetPersonnalisationReglesResponseType } from '../models/get-personnalisation-regles.response';
-import { PersonnalisationReponsesPayload } from '../models/get-personnalisation-reponses.response';
 import { historiqueReponseBinaireTable } from '../models/historique-reponse-binaire.table';
 import { historiqueReponseChoixTable } from '../models/historique-reponse-choix.table';
 import { historiqueReponseProportionTable } from '../models/historique-reponse-proportion.table';
 import { PersonnalisationConsequencesByActionId } from '../models/personnalisation-consequence.dto';
-import {
-  PersonnalisationRegle,
-  personnalisationRegleTable,
-} from '../models/personnalisation-regle.table';
+import { personnalisationRegleTable } from '../models/personnalisation-regle.table';
 import { reponseBinaireTable } from '../models/reponse-binaire.table';
 import { reponseChoixTable } from '../models/reponse-choix.table';
 import { reponseProportionTable } from '../models/reponse-proportion.table';

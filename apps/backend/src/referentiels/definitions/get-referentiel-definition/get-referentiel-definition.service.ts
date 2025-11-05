@@ -1,7 +1,7 @@
 import { referentielDefinitionTable } from '@/backend/referentiels/models/referentiel-definition.table';
-import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import type { ReferentielId } from '@/domain/referentiels';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { eq, getTableColumns } from 'drizzle-orm';
 import { GetReferentielDefinitionOutput } from './get-referentiel-definition.output';

@@ -1,14 +1,15 @@
-import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
 import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Injectable, Logger } from '@nestjs/common';
-import { and, desc, eq, getTableColumns, lte, sql } from 'drizzle-orm';
-import { Audit, auditTable } from './audit.table';
-import { etoileActionConditionDefinitionTable } from './etoile-action-condition-definition.table';
 import {
   Etoile,
-  EtoileDefinition,
-  etoileDefinitionTable,
-} from './etoile-definition.table';
+  LabellisationAudit,
+  LabellisationEtoileDefinition,
+  ReferentielId,
+} from '@/domain/referentiels';
+import { Injectable, Logger } from '@nestjs/common';
+import { and, desc, eq, getTableColumns, lte, sql } from 'drizzle-orm';
+import { auditTable } from './audit.table';
+import { etoileActionConditionDefinitionTable } from './etoile-action-condition-definition.table';
+import { etoileDefinitionTable } from './etoile-definition.table';
 
 @Injectable()
 export class LabellisationService {
@@ -20,7 +21,7 @@ export class LabellisationService {
 
   private readonly db = this.databaseService.db;
 
-  async getEtoileDefinitions(): Promise<EtoileDefinition[]> {
+  async getEtoileDefinitions(): Promise<LabellisationEtoileDefinition[]> {
     return this.db
       .select({
         ...getTableColumns(etoileDefinitionTable),
@@ -87,7 +88,7 @@ export class LabellisationService {
   }: {
     collectiviteId: number;
     referentielId: ReferentielId;
-  }): Promise<Audit[]> {
+  }): Promise<LabellisationAudit[]> {
     const filter = [
       eq(auditTable.collectiviteId, collectiviteId),
       eq(auditTable.referentielId, referentielId),

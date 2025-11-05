@@ -5,11 +5,11 @@ import {
   getTestDatabase,
   YOLO_DODO,
 } from '@/backend/test';
-import { CollectiviteAccessLevelEnum } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { addTestUser } from '@/backend/users/users/users.fixture';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { CollectiviteAccessLevelEnum } from '@/domain/users';
 import { describe, expect } from 'vitest';
 import { createIndicateurPerso } from '../definitions.test-fixture';
 

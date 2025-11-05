@@ -1,11 +1,11 @@
+import { referentielIdEnumSchema } from '@/domain/referentiels';
 import { z } from 'zod';
-import { referentielIdEnumSchema } from '../../../referentiels/models/referentiel-id.enum';
 import { getPersonnalisationReponsesRequestSchema } from './get-personnalisation-reponses.request';
 
 export const getPersonnalisationConsequencesRequestSchema =
   getPersonnalisationReponsesRequestSchema
     .extend({
-      referentiel: referentielIdEnumSchema.optional(),
+      referentiel: z.optional(referentielIdEnumSchema),
     })
     .describe(
       'Paramètres de la requête pour obtenir les conséquences de personnalisation sur un référentiel pour une collectivité donnée'

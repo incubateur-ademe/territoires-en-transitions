@@ -1,7 +1,13 @@
 import { preuveActionTable } from '@/backend/collectivites/documents/models/preuve-action.table';
 import { preuveReglementaireDefinitionTable } from '@/backend/collectivites/documents/models/preuve-reglementaire-definition.table';
-import { ActionTypeIncludingExemple } from '@/backend/referentiels/models/action-type.enum';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import {
+  ActionDefinition,
+  ActionDefinitionEssential,
+  ActionTreeNode,
+  ActionTypeIncludingExemple,
+  ReferentielId,
+} from '@/domain/referentiels';
 import {
   HttpException,
   HttpStatus,
@@ -16,16 +22,8 @@ import { CorrelatedActionsFields } from '../correlated-actions/correlated-action
 import { GetActionOrigineDtoSchema } from '../correlated-actions/get-action-origine.dto';
 import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { actionDefinitionTagTable } from '../models/action-definition-tag.table';
-import {
-  ActionDefinitionEssential,
-  TreeNode,
-} from '../models/action-definition.dto';
-import {
-  ActionDefinition,
-  actionDefinitionTable,
-} from '../models/action-definition.table';
+import { actionDefinitionTable } from '../models/action-definition.table';
 import { actionRelationTable } from '../models/action-relation.table';
-import { ReferentielId } from '../models/referentiel-id.enum';
 
 export type ActionDefinitionAvecParent = Pick<
   ActionDefinition,
@@ -41,7 +39,9 @@ export type ActionDefinitionAvecParent = Pick<
 export interface ReferentielResponse {
   version: string;
   orderedItemTypes: Array<ActionTypeIncludingExemple>;
-  itemsTree: TreeNode<ActionDefinitionEssential & CorrelatedActionsFields>;
+  itemsTree: ActionTreeNode<
+    ActionDefinitionEssential & CorrelatedActionsFields
+  >;
 }
 
 @Injectable()
@@ -250,7 +250,7 @@ export function buildReferentielTree(
 }
 
 function attacheActionsEnfant(
-  referentiel: TreeNode<
+  referentiel: ActionTreeNode<
     Partial<ActionDefinition> &
       ActionDefinitionEssential &
       CorrelatedActionsFields

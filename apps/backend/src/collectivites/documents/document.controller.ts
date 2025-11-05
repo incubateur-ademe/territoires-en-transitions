@@ -3,7 +3,7 @@ import { DOCUMENT_ID_PARAM_KEY } from '@/backend/collectivites/documents/models/
 import DocumentService from '@/backend/collectivites/documents/services/document.service';
 import { AllowAnonymousAccess } from '@/backend/users/decorators/allow-anonymous-access.decorator';
 import { TokenInfo } from '@/backend/users/decorators/token-info.decorators';
-import { AuthUser } from '@/backend/users/models/auth.models';
+import type { AuthUser } from '@/backend/users/models/auth.models';
 import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { Controller, Get, Next, Param, Res } from '@nestjs/common';
@@ -12,7 +12,7 @@ import {
   ApiExcludeController,
   ApiOkResponse,
 } from '@nestjs/swagger';
-import { NextFunction, Response } from 'express';
+import type { NextFunction, Response } from 'express';
 import { Readable } from 'stream';
 
 @ApiExcludeController()

@@ -1,10 +1,9 @@
-import { collectiviteTypeEnumSchema } from '@/backend/collectivites/shared/models/collectivite.table';
 import { version } from '@/backend/utils/column.utils';
-import { integer, pgTable, text, varchar } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import z from 'zod';
+import { questionTypeEnumValues } from '@/domain/collectivites';
+import { integer, pgEnum, pgTable, text, varchar } from 'drizzle-orm/pg-core';
 import { questionThematiqueTable } from './question-thematique.table';
-import { questionTypePgEnum } from './question-type.enum';
+
+const questionTypePgEnum = pgEnum('question_type', questionTypeEnumValues);
 
 // Question à propos des caractéristiques de la collectivités, afin de
 // personnaliser la notation des référentiels
@@ -21,19 +20,3 @@ export const questionTable = pgTable('question', {
   formulation: text('formulation').notNull(),
   version,
 });
-
-export const questionSchema = createSelectSchema(questionTable).extend({
-  typesCollectivitesConcernees: collectiviteTypeEnumSchema
-    .array()
-    .optional()
-    .nullable(),
-});
-export type QuestionType = z.infer<typeof questionSchema>;
-
-export const createQuestionSchema = createInsertSchema(questionTable).extend({
-  typesCollectivitesConcernees: collectiviteTypeEnumSchema
-    .array()
-    .optional()
-    .nullable(),
-});
-export type CreateQuestionType = z.infer<typeof createQuestionSchema>;

@@ -1,9 +1,12 @@
-import { collectiviteResumeSchema } from '@/backend/collectivites/shared/models/collectivite.table';
-import { labellisationSchema } from '@/backend/referentiels/labellisations/labellisation.table';
-import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
+import { collectiviteResumeSchema } from '@/domain/collectivites';
+import {
+  labellisationSchema,
+  referentielIdEnumSchema,
+} from '@/domain/referentiels';
 import z from 'zod';
+import * as zm from 'zod/mini';
 
-export const labellisationRecordSchema = labellisationSchema.partial({
+export const labellisationRecordSchema = zm.partial(labellisationSchema, {
   collectiviteId: true,
 });
 
@@ -16,7 +19,7 @@ export const collectiviteWithLabellisationSchema =
         referentielIdEnumSchema,
         z.object({
           courante: labellisationRecordSchema,
-          historique: labellisationRecordSchema.array(),
+          historique: z.array(labellisationRecordSchema),
         })
       )
       .optional(),
