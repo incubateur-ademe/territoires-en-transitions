@@ -1,16 +1,20 @@
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { FicheWithRelations } from '@/domain/plans';
 import { Badge } from '@/ui';
 import classNames from 'classnames';
-import { RichTextView } from '../../components/RichTextView';
+import { RichTextView } from '../../../../../../plans/fiches/update-fiche/components/RichTextView';
 import ModaleDescription from './ModaleDescription';
 
 type FicheActionDescriptionProps = {
   isReadonly: boolean;
-  fiche: Fiche;
+  fiche: FicheWithRelations;
   className?: string;
 };
 
-const FicheActionDescription = ({
+const Title = ({ children }: { children: React.ReactNode }) => (
+  <h6 className="text-lg leading-6 mb-0 text-grey-1">{children}</h6>
+);
+
+export const FicheActionDescription = ({
   isReadonly,
   fiche,
   className,
@@ -19,7 +23,6 @@ const FicheActionDescription = ({
     thematiques,
     sousThematiques,
     description,
-    ressources,
     instanceGouvernance,
     libreTags,
   } = fiche;
@@ -77,31 +80,15 @@ const FicheActionDescription = ({
         )}
       </div>
 
-      {/* Description de l'action */}
-      <div className="text-grey-1">
-        <h6 className="text-lg leading-6 text-inherit mb-0">
-          {"Description de l'action :"}
-        </h6>
+      <div className="text-inherit">
+        <Title>{"Description de l'action :"}</Title>
         <RichTextView content={description} placeholder="Non renseigné" />
       </div>
 
-      {/* Moyens humains et techniques */}
-      <div className="text-grey-1">
-        <h6 className="text-lg leading-6 text-inherit mb-0">
-          Moyens humains et techniques :
-        </h6>
-        <RichTextView content={ressources} />
-      </div>
-
-      {/* Instances de gouvernance */}
-      <div className="text-grey-1">
-        <h6 className="text-lg text-inherit leading-6 mb-0">
-          Instances de gouvernance :
-        </h6>
+      <div>
+        <Title>Instances de gouvernance :</Title>
         <RichTextView content={instanceGouvernance} />
       </div>
     </div>
   );
 };
-
-export default FicheActionDescription;

@@ -1,4 +1,4 @@
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { FicheResume } from '@/domain/plans';
 import { Button, EmptyCard } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -8,7 +8,7 @@ import PersonnePilotePicto from './PersonnePilotePicto';
 
 type FicheActionPilotesProps = {
   isReadonly: boolean;
-  fiche: Fiche;
+  fiche: FicheResume;
   className?: string;
 };
 

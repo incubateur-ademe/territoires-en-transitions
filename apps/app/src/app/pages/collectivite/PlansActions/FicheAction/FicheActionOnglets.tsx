@@ -1,14 +1,14 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { CollectiviteAccess } from '@/domain/users';
 import { ENV } from '@/api/environmentVariables';
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { MoyensView } from '@/app/plans/fiches/update-fiche/moyens/moyens.view';
+import { FicheWithRelations } from '@/domain/plans';
 import { AppEnvironment } from '@/domain/utils';
 import { Tab, Tabs } from '@/ui';
 import { ServicesWidget } from '@betagouv/les-communs-widget';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
 import ActionsLieesTab from './ActionsLiees/ActionsLieesTab';
-import BudgetTab from './Budget/BudgetTab';
 import FichesLieesTab from './FichesLiees/FichesLieesTab';
 import IndicateursTab from './Indicateurs/IndicateursTab';
 import NotesDeSuiviTab from './NotesDeSuivi/NotesDeSuiviTab';
@@ -16,7 +16,7 @@ import NotesEtDocumentsTab from './NotesEtDocuments/NotesEtDocumentsTab';
 import Etapes from './etapes';
 
 type FicheActionOngletsProps = {
-  fiche: Fiche;
+  fiche: FicheWithRelations;
   isEditLoading: boolean;
   className?: string;
   collectivite: CollectiviteAccess;
@@ -61,9 +61,8 @@ const FicheActionOnglets = ({
         <NotesDeSuiviTab isReadonly={isReadonly} fiche={fiche} />
       </Tab>
 
-      {/* Budget */}
-      <Tab label="Budget">
-        <BudgetTab isReadonly={isReadonly} fiche={fiche} />
+      <Tab label="Moyens">
+        <MoyensView isReadonly={isReadonly} fiche={fiche} />
       </Tab>
 
       {/* Fiches action liées */}

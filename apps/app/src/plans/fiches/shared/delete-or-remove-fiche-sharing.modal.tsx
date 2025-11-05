@@ -1,11 +1,10 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import RemoveSharingModal from '@/app/plans/fiches/share-fiche/remove-sharing.modal';
 import DeleteFicheModal from '@/app/plans/fiches/shared/delete-fiche.modal';
 import { FicheResume } from '@/domain/plans';
 
 type DeleteOrRemoveFicheSharingModalProps = {
-  fiche: Pick<FicheResume, 'titre' | 'plans'> & FicheShareProperties;
+  fiche: FicheResume;
   isReadonly?: boolean;
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;

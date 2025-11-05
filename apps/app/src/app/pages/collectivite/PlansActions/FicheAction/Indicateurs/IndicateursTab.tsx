@@ -1,10 +1,10 @@
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { FicheWithRelations } from '@/domain/plans';
 import IndicateursAssocies from './IndicateursAssocies';
 import IndicateursHeader from './IndicateursHeader';
 
 type IndicateursTabProps = {
   isReadonly: boolean;
-  fiche: Fiche;
+  fiche: FicheWithRelations;
 };
 
 const IndicateursTab = (props: IndicateursTabProps) => {

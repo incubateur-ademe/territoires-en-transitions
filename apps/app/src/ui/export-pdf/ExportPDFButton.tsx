@@ -62,7 +62,7 @@ const ExportPDFButton = ({
     ) {
       updateInstance(<DocumentToExport content={content} />);
     }
-  }, [content]);
+  }, [content, requestData, updateInstance]);
 
   useEffect(() => {
     if (instance.blob && isDownloadRequested) {

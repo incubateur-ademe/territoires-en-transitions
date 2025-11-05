@@ -1,15 +1,15 @@
 import { ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
+import { FicheResume } from '@/domain/plans';
 import { useEtapesDispatch } from '../etapes-context';
 import { useDeleteEtape } from './use-delete-etape';
 
 type Props = {
   openState: OpenState;
   etapeId: number;
-  fiche: FicheShareProperties;
+  fiche: FicheResume;
 };
 
 const ModalDeleteEtape = ({ openState, etapeId, fiche }: Props) => {

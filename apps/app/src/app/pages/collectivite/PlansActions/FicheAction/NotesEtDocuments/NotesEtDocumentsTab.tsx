@@ -1,11 +1,11 @@
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
+import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
+import { FicheWithRelations } from '@/domain/plans';
 import Documents from './Documents/Documents';
 import NotesComplementaires from './Notes/NotesComplementaires';
 
 type NotesEtDocumentsTabProps = {
   isReadonly: boolean;
-  fiche: Fiche;
+  fiche: FicheWithRelations;
 };
 
 const NotesEtDocumentsTab = ({

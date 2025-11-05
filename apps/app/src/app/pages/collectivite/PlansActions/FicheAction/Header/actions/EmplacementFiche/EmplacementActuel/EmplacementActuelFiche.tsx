@@ -1,10 +1,10 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
+import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
+import { FicheResume } from '@/domain/plans';
 import CheminEmplacement from './CheminEmplacement';
 
 type EmplacementActuelFicheProps = {
-  fiche: Fiche;
+  fiche: FicheResume;
 };
 
 const EmplacementActuelFiche = ({ fiche }: EmplacementActuelFicheProps) => {
