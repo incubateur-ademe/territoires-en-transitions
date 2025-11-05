@@ -1,10 +1,10 @@
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { FicheResume } from '@/domain/plans';
 import { Alert } from '@/ui';
 import Link from 'next/link';
 
 type SharedFicheLinkedResourcesAlertProps = {
-  fiche: FicheShareProperties;
+  fiche: FicheResume;
   currentCollectiviteId: number;
   sharedDataTitle: string;
   sharedDataDescription: string;

@@ -1,9 +1,9 @@
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { SharedFicheUpdateAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-update.alert';
+import { FicheResume } from '@/domain/plans';
 import { Modal, ModalProps } from '@/ui';
 
 type BaseUpdateFicheModalProps = ModalProps & {
-  fiche: FicheShareProperties;
+  fiche: FicheResume;
 };
 
 const BaseUpdateFicheModal = (props: BaseUpdateFicheModalProps) => {

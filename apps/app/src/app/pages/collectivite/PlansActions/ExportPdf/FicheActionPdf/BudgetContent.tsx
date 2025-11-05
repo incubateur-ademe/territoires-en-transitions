@@ -1,23 +1,35 @@
 import BudgetTable from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/BudgetTable';
-import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import {
   BadgeFinanceur,
   Paragraph,
   Stack,
 } from '@/app/ui/export-pdf/components';
+import { FicheActionBudget } from '@/domain/plans';
 import classNames from 'classnames';
 import { Fragment } from 'react';
 
 type BudgetContentProps = {
   type: 'investissement' | 'fonctionnement';
-  budgets: BudgetType[];
+  budgets: FicheActionBudget[];
 };
 
 const BudgetContent = ({ type, budgets }: BudgetContentProps) => {
   const extendedBudget = budgets?.filter((elt) => !elt.annee);
 
-  return budgets && budgets.length > 0 ? (
-    // Vue remplie
+  if (!budgets || budgets.length === 0) {
+    return (
+      <Paragraph className="text-grey-7">
+        <Paragraph className="text-primary-9 font-bold uppercase">
+          {type === 'investissement'
+            ? 'Budget d’investissement : '
+            : 'Budget de fonctionnement : '}
+        </Paragraph>
+        Non renseigné
+      </Paragraph>
+    );
+  }
+
+  return (
     <Stack
       wrap={false}
       gap={1.5}
@@ -64,16 +76,6 @@ const BudgetContent = ({ type, budgets }: BudgetContentProps) => {
         <BudgetTable budgets={budgets} />
       )}
     </Stack>
-  ) : (
-    // Vue vide
-    <Paragraph className="text-grey-7">
-      <Paragraph className="text-primary-9 font-bold uppercase">
-        {type === 'investissement'
-          ? 'Budget d’investissement : '
-          : 'Budget de fonctionnement : '}
-      </Paragraph>
-      Non renseigné
-    </Paragraph>
   );
 };
 

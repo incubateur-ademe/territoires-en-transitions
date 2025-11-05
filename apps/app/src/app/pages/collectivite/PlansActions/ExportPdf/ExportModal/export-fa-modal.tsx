@@ -1,10 +1,10 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useListAllFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { Filters } from '@/app/plans/fiches/list-all-fiches/filters/types';
-import { SortOptions } from '@/domain/plans';
+import { FicheWithRelations, SortOptions } from '@/domain/plans';
 import { Button, Modal, ModalFooter, useEventTracker } from '@/ui';
 import { Event } from '@/ui/components/tracking/posthog-events';
+import { mapValues } from 'es-toolkit';
 import { useState } from 'react';
 import { ExportFicheActionButton } from '../ExportFicheActionButton';
 import ExportFicheActionGroupeesButton from '../ExportFicheActionGroupeesButton';
@@ -54,7 +54,7 @@ export const ExportFicheModal = ({
   fiche,
 }: {
   disabled?: boolean;
-  fiche: Fiche;
+  fiche: FicheWithRelations;
 }) => {
   const [options, setOptions] = useState(sectionsInitValue);
 
@@ -120,9 +120,12 @@ export const ExportMultipleFichesModal = ({
           options={options}
           disabled={!Object.values(options).find((opt) => opt.isChecked)}
           onDownloadEnd={() => {
-            const selectedOptions = Object.keys(options).filter(
-              (k) => options[k].isChecked === true
-            );
+            const selectedOptions = Object.keys(
+              mapValues(
+                options,
+                (value: { isChecked: boolean }) => value.isChecked
+              )
+            ).filter(Boolean);
             tracker(Event.fiches.exportPdfGroupe, {
               sections: selectedOptions,
             });

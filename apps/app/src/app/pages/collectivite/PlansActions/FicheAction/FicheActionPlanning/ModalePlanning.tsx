@@ -1,9 +1,10 @@
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
+import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import MiseEnOeuvreDropdown from '@/app/ui/dropdownLists/ficheAction/MiseEnOeuvreDropdown/MiseEnOeuvreDropdown';
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
+import { FicheWithRelations } from '@/domain/plans';
 import {
   Checkbox,
   Event,
@@ -16,11 +17,10 @@ import {
 } from '@/ui';
 import { isEqual } from 'es-toolkit/predicate';
 import { useEffect, useRef, useState } from 'react';
-import { useUpdateFiche } from '../data/use-update-fiche';
 type ModalePlanningProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  fiche: Fiche;
+  fiche: FicheWithRelations;
 };
 
 const ModalePlanning = ({ isOpen, setIsOpen, fiche }: ModalePlanningProps) => {

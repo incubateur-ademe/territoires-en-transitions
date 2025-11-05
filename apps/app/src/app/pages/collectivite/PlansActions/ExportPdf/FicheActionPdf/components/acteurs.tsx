@@ -1,4 +1,3 @@
-import { FicheActionPdfProps } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/FicheActionPdf';
 import { ficheActionParticipationOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import {
   BriefcaseIcon,
@@ -16,11 +15,12 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
+import { FicheWithRelations } from '@/domain/plans';
 import { getOptionLabel, preset } from '@/ui';
 
 const { colors } = preset.theme.extend;
 
-const Acteurs = ({ fiche }: FicheActionPdfProps) => {
+const Acteurs = ({ fiche }: { fiche: FicheWithRelations }) => {
   const {
     pilotes,
     services,
@@ -77,7 +77,7 @@ const Acteurs = ({ fiche }: FicheActionPdfProps) => {
 
       {!!structures && structures.length > 0 && (
         <ActeursListe
-          titre="Structures Pilotess"
+          titre="Structures Pilotes"
           liste={structures.map((s) => s.nom)}
           icon={(fill) => <BriefcaseIcon fill={fill} />}
         />

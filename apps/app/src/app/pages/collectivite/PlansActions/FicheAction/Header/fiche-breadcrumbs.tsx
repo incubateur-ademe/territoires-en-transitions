@@ -1,11 +1,11 @@
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { FicheResume } from '@/domain/plans';
 import { Button, VisibleWhen } from '@/ui';
 import { useState } from 'react';
 import { ClassifiedFicheBreadcrumbs } from './classified-fiche-breadcrumbs';
 import { NotClassifiedFicheBreadcrumbs } from './not-classified-fiche-breadcrumbs';
 
 type Axe = Pick<
-  NonNullable<Fiche['axes']>[number],
+  NonNullable<FicheResume['axes']>[number],
   'id' | 'planId' | 'collectiviteId'
 >;
 

@@ -1,4 +1,3 @@
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { FicheWithRelations } from '@/domain/plans';
 import { Divider, Field, ModalFooterOKCancel, Textarea } from '@/ui';
@@ -7,11 +6,11 @@ import { useState } from 'react';
 
 type FinancementsModalProps = {
   openState: OpenState;
-  fiche: Pick<FicheWithRelations, 'financements'> & FicheShareProperties;
+  fiche: FicheWithRelations;
   updateFinancements: (financements: string | null | undefined) => void;
 };
 
-const FinancementsModal = ({
+export const FinancementsModal = ({
   openState,
   fiche,
   updateFinancements,
@@ -64,5 +63,3 @@ const FinancementsModal = ({
     />
   );
 };
-
-export default FinancementsModal;

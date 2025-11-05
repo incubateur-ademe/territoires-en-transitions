@@ -10,9 +10,9 @@ import {
 import { PlanNode } from '@/domain/plans';
 import { NestedDroppableContainers } from './NestedDroppableContainers';
 
-import { CollectiviteAccess } from '@/domain/users';
-import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
+import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import { FicheResume } from '@/domain/plans';
+import { CollectiviteAccess } from '@/domain/users';
 
 import { useDragAxe } from '@/app/plans/plans/show-plan/data/use-drag-axe';
 import './dropAnimation.css';

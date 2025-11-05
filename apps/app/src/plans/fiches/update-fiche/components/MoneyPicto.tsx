@@ -1,4 +1,4 @@
-const MoneyPicto = ({
+export const MoneyPicto = ({
   className,
   width = '101',
   height = '100',
@@ -55,5 +55,3 @@ const MoneyPicto = ({
     />
   </svg>
 );
-
-export default MoneyPicto;

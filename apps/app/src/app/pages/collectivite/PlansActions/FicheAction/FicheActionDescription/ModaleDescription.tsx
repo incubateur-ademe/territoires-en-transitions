@@ -1,13 +1,11 @@
-import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
+import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { Button, Event, ModalFooterOKCancel, useEventTracker } from '@/ui';
-import {
-  FicheDescriptionForm,
-  type FicheUpdatePayload,
-} from './FicheDescriptionForm';
+import { FicheDescriptionForm } from './FicheDescriptionForm';
+import { FicheWithRelations } from '@/domain/plans';
 
 type ModaleDescriptionProps = {
-  fiche: FicheUpdatePayload;
+  fiche: FicheWithRelations;
 };
 
 const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {
