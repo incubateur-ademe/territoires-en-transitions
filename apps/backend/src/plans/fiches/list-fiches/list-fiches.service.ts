@@ -1769,7 +1769,6 @@ export default class ListFichesService {
           isNull(ficheActionTable.parentId)
         )
       );
-    console.log(result);
     return result[0]?.count ?? 0;
   }
 
