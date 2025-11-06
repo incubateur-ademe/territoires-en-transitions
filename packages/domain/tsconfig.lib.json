@@ -7,7 +7,7 @@
     // "composite": true,
     // "declaration": true,
     // "declarationMap": true,
-    "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
+    // "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
     "emitDeclarationOnly": false,
 
     // NodeNext resolution required to be compatible with Nest.js apps compilation.

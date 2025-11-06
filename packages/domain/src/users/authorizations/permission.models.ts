@@ -1,13 +1,9 @@
-import {
-  AuditRole,
-  CollectiviteAccessLevelEnum,
-  Role,
-  UserRole,
-} from '@/domain/users';
+import { CollectiviteAccessLevelEnum } from './collectivite-access-level.enum.schema';
 import {
   PermissionOperation,
   PermissionOperationEnum,
 } from './permission-operation.enum.schema';
+import { AuditRole, Role, UserRole } from './role.enum.schema';
 
 export const permissionsByRole: Record<Role, PermissionOperation[]> = {
   [UserRole.CONNECTE]: [],
