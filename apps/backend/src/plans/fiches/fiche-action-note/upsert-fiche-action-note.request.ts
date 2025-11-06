@@ -9,9 +9,9 @@ export const upsertFicheActionNotesRequestSchema = z
     notes: z
       .array(upsertFicheActionNoteSchema)
       .min(1)
-      .describe('Liste de notes de suivi'),
+      .describe('Liste de notes'),
   })
-  .describe('Notes de suivi à insérer ou mettre à jour');
+  .describe('Notes à insérer ou mettre à jour');
 
 export const deleteFicheActionNotesRequestSchema =
-  deleteFicheActionNoteSchema.describe('Note de suivi à supprimer');
+  deleteFicheActionNoteSchema.describe('Note à supprimer');

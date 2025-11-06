@@ -4,7 +4,7 @@ export type PdfSectionKey =
   | 'acteurs'
   | 'indicateurs'
   | 'etapes'
-  | 'notes_suivi'
+  | 'notes'
   | 'moyens'
   | 'fiches'
   | 'actionsLiees'
@@ -16,7 +16,7 @@ export const keyToTitle: Record<PdfSectionKey, string> = {
   acteurs: 'Acteurs',
   indicateurs: 'Indicateurs de suivi',
   etapes: 'Étapes',
-  notes_suivi: 'Notes de suivi',
+  notes: 'Notes',
   moyens: 'Moyens',
   fiches: 'Fiches action liées',
   actionsLiees: 'Mesures des référentiels liées',
@@ -34,7 +34,7 @@ export const sectionsInitValue: TSectionsValues = {
   acteurs: { isChecked: true, values: undefined },
   indicateurs: { isChecked: true, values: undefined },
   etapes: { isChecked: true, values: undefined },
-  notes_suivi: { isChecked: true, values: [0] },
+  notes: { isChecked: true, values: [0] },
   moyens: { isChecked: true, values: undefined },
   fiches: { isChecked: true, values: undefined },
   actionsLiees: { isChecked: true, values: undefined },

@@ -9,8 +9,8 @@ import { Event, useEventTracker } from '@/ui';
 import { mapValues } from 'es-toolkit';
 import { createElement, useEffect, useState } from 'react';
 import { useAnnexesFicheActionInfos } from '../FicheAction/data/useAnnexesFicheActionInfos';
-import { useFicheActionNotesSuivi } from '../FicheAction/data/useFicheActionNotesSuivi';
 import { useFichesActionLiees } from '../FicheAction/data/useFichesActionLiees';
+import { useGetFicheNotes } from '../FicheAction/notes/use-get-fiche-notes';
 import { useFicheActionChemins } from '../PlanAction/data/usePlanActionChemin';
 import FicheActionPdf from './FicheActionPdf/FicheActionPdf';
 import { TSectionsValues, sectionsInitValue } from './utils';
@@ -63,8 +63,10 @@ export const FicheActionPdfContent = ({
   const { data: annexes, isLoading: isLoadingAnnexes } =
     useAnnexesFicheActionInfos(fiche.id, options.notes_docs.isChecked);
 
-  const { data: notesSuivi, isLoading: isLoadingNotesSuivi } =
-    useFicheActionNotesSuivi(fiche, options.notes_suivi.isChecked);
+  const { data: notes, isLoading: isLoadingNotes } = useGetFicheNotes(
+    fiche,
+    options.notes.isChecked
+  );
 
   const { data: etapes, isLoading: isLoadingEtapes } = useGetEtapes(
     fiche.id,
@@ -81,7 +83,7 @@ export const FicheActionPdfContent = ({
     isLoadingActionsLiees ||
     isLoadingAxes ||
     isLoadingAnnexes ||
-    isLoadingNotesSuivi ||
+    isLoadingNotes ||
     isLoadingEtapes ||
     isLoadingBudget;
 
@@ -99,14 +101,27 @@ export const FicheActionPdfContent = ({
           fichesLiees,
           actionsLiees: fiche?.mesures?.length ? actionsLiees ?? [] : [],
           annexes,
-          notesSuivi,
+          notes,
           budgets,
         })
       );
     }
-  }, [isLoading]);
+  }, [
+    actionsLiees,
+    annexes,
+    axes,
+    budgets,
+    etapes,
+    fiche,
+    fichesLiees,
+    generateContent,
+    indicateursListe,
+    isLoading,
+    notes,
+    options,
+  ]);
 
-  return <></>;
+  return null;
 };
 
 type ExportFicheActionButtonProps = {

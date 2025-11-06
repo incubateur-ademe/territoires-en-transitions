@@ -1,5 +1,4 @@
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
-import { AnneesNoteDeSuiviDropdown } from '@/app/ui/dropdownLists/ficheAction/AnneesNoteDeSuiviDropdown/AnneeNoteDeSuiviDropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
@@ -35,7 +34,7 @@ import {
   FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS,
   INDICATEURS_OPTIONS,
   MESURES_LIEES_OPTIONS,
-  NOTES_DE_SUIVI_OPTIONS,
+  NOTES_OPTIONS,
   OPTIONS_PERIOD_TYPE,
 } from './options';
 import { FormFilters } from './types';
@@ -233,13 +232,13 @@ export const ToutesLesFichesFiltersForm = ({
               />
             </Field>
 
-            <Field title="Notes de suivi">
+            <Field title="Notes">
               <Controller
-                name="notesDeSuivi"
+                name="notes"
                 control={control}
                 render={({ field }) => (
                   <Select
-                    options={NOTES_DE_SUIVI_OPTIONS}
+                    options={NOTES_OPTIONS}
                     values={field.value}
                     onChange={(v) => field.onChange(v ?? EMPTY_VALUE)}
                   />

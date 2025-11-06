@@ -1,60 +1,55 @@
-import { FicheActionNote } from '@/api/plan-actions';
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { FicheResume } from '@/domain/plans';
 import {
+  Alert,
+  Button,
   Field,
   FormSectionGrid,
-  ModalFooterOKCancel,
+  ModalFooter,
   RichTextEditor,
   Select,
 } from '@/ui';
 import { useState } from 'react';
 import { EditedNote } from '../data/useUpsertNoteSuivi';
 
-type ModaleEditionNoteDeSuiviProps = {
-  fiche: FicheResume;
+type NoteCreationModalProps = {
   isOpen: boolean;
+  fiche: FicheResume;
   setIsOpen: (opened: boolean) => void;
-  editedNote: FicheActionNote;
   onEdit: (editedNote: EditedNote) => void;
 };
 
-const ModaleEditionNoteDeSuivi = ({
-  fiche,
+export const NoteCreationModal = ({
   isOpen,
+  fiche,
   setIsOpen,
-  editedNote,
   onEdit,
-}: ModaleEditionNoteDeSuiviProps) => {
+}: NoteCreationModalProps) => {
   const { yearsOptions } = getYearsOptions();
 
-  const initialYear = new Date(editedNote.dateNote).getFullYear();
-  const [year, setYear] = useState<number>(
-    new Date(editedNote.dateNote).getFullYear()
-  );
-  const [note, setNote] = useState<string>(editedNote.note);
+  const [year, setYear] = useState<number | undefined>();
+  const [note, setNote] = useState<string | undefined>();
 
   const handleSave = () => {
-    if (
-      note.trim().length > 0 &&
-      (note !== editedNote.note || year !== initialYear)
-    ) {
-      onEdit({ id: editedNote.id, note, year });
+    if (note !== undefined && note.trim().length > 0 && year !== undefined) {
+      onEdit({ note, year });
     }
   };
 
   return (
     <BaseUpdateFicheModal
-      openState={{ isOpen, setIsOpen }}
       fiche={fiche}
-      title="Modifier la note"
-      subTitle={`Note de suivi ${year}${
-        editedNote.createdAt ? ` créée par ${editedNote.createdBy}` : ''
-      }`}
+      openState={{ isOpen, setIsOpen }}
+      title="Note et points de vigilance"
       size="lg"
       render={({ descriptionId }) => (
         <FormSectionGrid formSectionId={descriptionId}>
+          <Alert
+            className="col-span-2"
+            description="Vous pouvez ajouter des éléments de suivi annuels, ou sur une maille temporelle plus fine ! Sélectionnez l'année concernée et précisez la date ou période de suivi plus précise directement dans votre commentaire"
+          />
+
           <Field title="Année" className="col-span-2">
             <Select
               options={yearsOptions}
@@ -68,26 +63,36 @@ const ModaleEditionNoteDeSuivi = ({
           <Field title="Note" className="col-span-2">
             <RichTextEditor
               placeholder="Écrire ici un commentaire"
-              initialValue={editedNote.note}
               onChange={(value) => setNote(value)}
             />
           </Field>
         </FormSectionGrid>
       )}
-      // Boutons pour valider / annuler les modifications
       renderFooter={({ close }) => (
-        <ModalFooterOKCancel
-          btnCancelProps={{ onClick: close }}
-          btnOKProps={{
-            onClick: () => {
+        <ModalFooter variant="right">
+          <Button
+            variant="outlined"
+            disabled={!year || !note?.trim()}
+            onClick={() => {
+              handleSave();
+              setYear(undefined);
+              setNote('');
+            }}
+          >
+            Valider et créer une nouvelle note
+          </Button>
+          <Button
+            type="submit"
+            disabled={!year || !note?.trim()}
+            onClick={() => {
               handleSave();
               close();
-            },
-          }}
-        />
+            }}
+          >
+            Valider
+          </Button>
+        </ModalFooter>
       )}
     />
   );
 };
-
-export default ModaleEditionNoteDeSuivi;

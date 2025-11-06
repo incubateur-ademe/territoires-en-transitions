@@ -12,7 +12,7 @@ import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAc
 import { NOTES_DE_SUIVI_PROPERTIES } from '@/app/plans/fiches/list-all-fiches/filters/options';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
 import { ListDefinitionsInputFilters } from '@/domain/indicateurs';
-import { ListFichesRequestFilters, NotesDeSuiviOption } from '@/domain/plans';
+import { ListFichesRequestFilters, NotesOption } from '@/domain/plans';
 
 /**
  * Types de tous les filtres passables au hook `useFiltersToBadges`.
@@ -195,8 +195,7 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
           );
         } else if (key === 'notesDeSuivi') {
           badgeValues.push(
-            NOTES_DE_SUIVI_PROPERTIES[mergedFilters[key] as NotesDeSuiviOption]
-              .label
+            NOTES_DE_SUIVI_PROPERTIES[mergedFilters[key] as NotesOption].label
           );
         } else if (
           key === 'anneesNoteDeSuivi' &&

@@ -850,13 +850,13 @@ describe('Filtres sur les fiches actions', () => {
     );
   });
 
-  test('Fetch avec filtre sur aucune note de suivi', async () => {
+  test('Fetch avec filtre sur aucune note', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
     const [fiche] = await db.db
       .insert(ficheActionTable)
       .values({
-        titre: 'Test aucune note de suivi',
+        titre: 'Test aucune note',
         collectiviteId: COLLECTIVITE_ID,
       })
       .returning();
@@ -871,7 +871,7 @@ describe('Filtres sur les fiches actions', () => {
     const { data: fichesWithoutNote } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
-        hasNoteDeSuivi: false,
+        hasNote: false,
       },
     });
 
@@ -1830,26 +1830,26 @@ test('Fetch avec selectAll retourne tous les IDs correspondant aux filtres', asy
   );
 });
 
-test('Fetch avec filtre sur les années de notes de suivi', async () => {
+test('Fetch avec filtre sur les années de notes', async () => {
   const caller = router.createCaller({ user: yoloDodo });
 
   // Créer une fiche de test
   const [fiche] = await db.db
     .insert(ficheActionTable)
     .values({
-      titre: 'Fiche test pour notes de suivi',
+      titre: 'Fiche test pour notes',
       collectiviteId: COLLECTIVITE_ID,
     })
     .returning();
   const testFicheId = fiche.id;
 
-  // Créer des notes de suivi pour différentes années
+  // Créer des notes pour différentes années
   const now = new Date();
   await db.db.insert(ficheActionNoteTable).values([
     {
       ficheId: testFicheId,
       dateNote: '2023-01-01T00:00:00Z',
-      note: 'Note de suivi 2023',
+      note: 'Note 2023',
       createdBy: yoloDodo.id,
       modifiedBy: yoloDodo.id,
       createdAt: now.toISOString(),
@@ -1858,7 +1858,7 @@ test('Fetch avec filtre sur les années de notes de suivi', async () => {
     {
       ficheId: testFicheId,
       dateNote: '2024-01-01T00:00:00Z',
-      note: 'Note de suivi 2024',
+      note: 'Note 2024',
       createdBy: yoloDodo.id,
       modifiedBy: yoloDodo.id,
       createdAt: now.toISOString(),
@@ -1867,7 +1867,7 @@ test('Fetch avec filtre sur les années de notes de suivi', async () => {
     {
       ficheId: testFicheId,
       dateNote: '2025-01-01T00:00:00Z',
-      note: 'Note de suivi 2025',
+      note: 'Note 2025',
       createdBy: yoloDodo.id,
       modifiedBy: yoloDodo.id,
       createdAt: now.toISOString(),

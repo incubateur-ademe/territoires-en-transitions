@@ -25,8 +25,7 @@ import Documents from './Documents';
 import FichesLiees from './FichesLiees';
 import Indicateurs from './Indicateurs';
 import { Moyens } from './Moyens';
-import Notes from './Notes';
-import NotesDeSuivi from './NotesDeSuivi';
+import { Notes } from './Notes';
 
 export type FicheActionPdfExtendedProps = {
   fiche: FicheWithRelations;
@@ -37,7 +36,7 @@ export type FicheActionPdfExtendedProps = {
   fichesLiees: FicheResume[];
   actionsLiees: ActionWithScore[];
   annexes: AnnexeInfo[] | undefined;
-  notesSuivi: FicheActionNote[] | undefined;
+  notes: FicheActionNote[] | undefined;
   budgets: FicheActionBudget[] | undefined;
 };
 
@@ -50,7 +49,7 @@ const FicheActionPdf = ({
   fichesLiees,
   actionsLiees,
   annexes,
-  notesSuivi,
+  notes,
   budgets,
 }: FicheActionPdfExtendedProps) => {
   const { titre } = fiche;
@@ -90,11 +89,8 @@ const FicheActionPdf = ({
 
       {sections.etapes.isChecked && <Etapes etapes={etapes} />}
 
-      {sections.notes_suivi.isChecked && (
-        <NotesDeSuivi
-          notesSuivi={notesSuivi}
-          years={sections.notes_suivi.values}
-        />
+      {sections.notes.isChecked && (
+        <Notes notes={notesSuivi} years={sections.notes.values} />
       )}
 
       {sections.moyens.isChecked && <Moyens fiche={fiche} budgets={budgets} />}
@@ -104,13 +100,7 @@ const FicheActionPdf = ({
         <ActionsLiees actionsLiees={actionsLiees} />
       )}
 
-      {sections.notes_docs.isChecked && (
-        <>
-          <Notes fiche={fiche} />
-
-          <Documents annexes={annexes} />
-        </>
-      )}
+      {sections.notes_docs.isChecked && <Documents annexes={annexes} />}
     </Stack>
   );
 };

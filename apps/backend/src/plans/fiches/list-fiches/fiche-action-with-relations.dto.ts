@@ -104,7 +104,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     })
     .array()
     .nullable()
-    .describe('Notes de suivi et points de vigilance'),
+    .describe('Notes et points de vigilance'),
   mesures: z
     .object({
       id: z.string(),
