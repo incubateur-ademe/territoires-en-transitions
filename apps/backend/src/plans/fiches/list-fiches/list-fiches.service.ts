@@ -1393,16 +1393,14 @@ export default class ListFichesService {
     );
 
     if (filters.ficheIds?.length) {
-      if (filters.withChildren) {
-        conditions.push(
-          or(
-            inArray(ficheActionTable.id, filters.ficheIds),
-            inArray(ficheActionTable.parentId, filters.ficheIds)
-          )
-        );
-      } else {
-        conditions.push(inArray(ficheActionTable.id, filters.ficheIds));
-      }
+      const ficheIdsConditions = [
+        inArray(ficheActionTable.id, filters.ficheIds),
+        filters.withChildren
+          ? inArray(ficheActionTable.parentId, filters.ficheIds)
+          : null,
+      ].filter((c) => c !== null);
+
+      conditions.push(or(...ficheIdsConditions));
     }
 
     conditions.push(
