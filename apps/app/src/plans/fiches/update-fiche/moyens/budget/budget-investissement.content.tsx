@@ -26,7 +26,9 @@ export const BudgetInvestissementContent = ({
       <div className="flex flex-wrap gap-x-3 gap-y-2">
         {budgets.map((budget) => (
           <BudgetTagsList
-            key={`${budget.unit}-${budget.value.previsionnel}-${budget.value.reel}`}
+            key={`${budget.unit}-${
+              budget.value?.previsionnel ?? 'previsionnel'
+            }-${budget.value?.reel ?? 'reel'}`}
             tags={[
               {
                 name: labelsForBudgetPrevisionnel[budget.unit],

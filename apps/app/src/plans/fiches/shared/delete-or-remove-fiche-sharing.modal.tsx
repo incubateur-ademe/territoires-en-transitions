@@ -5,12 +5,9 @@ import { hasPermission } from '@/app/users/authorizations/permission-access-leve
 import { FicheResume } from '@/domain/plans';
 import { OpenState } from '@/ui/utils/types';
 
-import { PermissionOperation } from '@/domain/users';
-
 type DeleteOrRemoveFicheSharingModalProps = {
   openState?: OpenState;
   fiche: FicheResume;
-  permissions: PermissionOperation[];
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
   /** Redirection à la suppression de la fiche (suppression du partage ou de la fiche en elle-même) */

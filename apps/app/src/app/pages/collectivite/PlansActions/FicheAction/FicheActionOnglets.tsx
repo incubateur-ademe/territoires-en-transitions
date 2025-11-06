@@ -8,13 +8,12 @@ import { AppEnvironment } from '@/domain/utils';
 import { Tab, Tabs } from '@/ui';
 import { ServicesWidget } from '@betagouv/les-communs-widget';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
-import type { ReactElement } from 'react';
-import ActionsLieesTab from './ActionsLiees/ActionsLieesTab';
 import FichesLieesTab from './FichesLiees/FichesLieesTab';
 import IndicateursTab from './Indicateurs/IndicateursTab';
 import NotesDeSuiviTab from './NotesDeSuivi/NotesDeSuiviTab';
 import NotesEtDocumentsTab from './NotesEtDocuments/NotesEtDocumentsTab';
 import Etapes from './etapes';
+import { MesuresLieesView } from './mesures-liees/mesures-liees.view';
 
 type TabDescriptor = {
   label: string;
@@ -98,7 +97,7 @@ const FicheActionOnglets = ({
         (!niveauAcces &&
           hasPermission(permissions, 'referentiels.read_public')),
       render: () => (
-        <ActionsLieesTab
+        <MesuresLieesView
           isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
           isEditLoading={isEditLoading}
           fiche={fiche}
@@ -125,7 +124,7 @@ const FicheActionOnglets = ({
     },
   ];
 
-  const visibleTabElements: ReactElement[] = tabDescriptors
+  const visibleTabElements = tabDescriptors
     .filter((tab) => tab.isVisible)
     .map((tab) => (
       <Tab key={tab.label} label={tab.label}>

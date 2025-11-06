@@ -1,6 +1,6 @@
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { FicheWithRelations } from '@/domain/plans';
-import { Divider, Field, ModalFooterOKCancel, RichTextEditor } from '@/ui';
+import { ModalFooterOKCancel, RichTextEditor } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
 
@@ -47,17 +47,10 @@ export const ResourcesModal = ({
       title="Moyens humains et techniques"
       size="lg"
       render={() => (
-        <div>
-          <Divider />
-          <Field title="Moyens humains et techniques">
-            <RichTextEditor
-              initialValue={fiche.ressources ?? undefined}
-              onChange={(value) =>
-                setEditedResources(value?.trim() ? value : null)
-              }
-            />
-          </Field>
-        </div>
+        <RichTextEditor
+          initialValue={fiche.ressources ?? undefined}
+          onChange={(value) => setEditedResources(value?.trim() ? value : null)}
+        />
       )}
       renderFooter={({ close }) => (
         <ModalFooterOKCancel

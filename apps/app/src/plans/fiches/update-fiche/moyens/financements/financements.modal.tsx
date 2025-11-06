@@ -1,6 +1,6 @@
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { FicheWithRelations } from '@/domain/plans';
-import { Divider, Field, ModalFooterOKCancel, Textarea } from '@/ui';
+import { Field, ModalFooterOKCancel, RichTextEditor } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
 
@@ -31,23 +31,14 @@ export const FinancementsModal = ({
       title="Financements"
       size="lg"
       render={() => (
-        <div>
-          <Divider />
-          <Field
-            title="Financements"
-            hint="Coûts unitaires, fonctionnement, investissement, recettes attendues, subventions…"
-          >
-            <Textarea
-              className="min-h-[120px]"
-              value={editedFinancements ?? ''}
-              onChange={(evt) => {
-                const value = (evt.target as HTMLTextAreaElement).value;
-                if (value.trim() !== '') setEditedFinancements(value);
-                else setEditedFinancements(null);
-              }}
-            />
-          </Field>
-        </div>
+        <Field hint="Coûts unitaires, fonctionnement, investissement, recettes attendues, subventions…">
+          <RichTextEditor
+            initialValue={editedFinancements ?? ''}
+            onChange={(value) => {
+              setEditedFinancements(value?.trim() ? value : null);
+            }}
+          />
+        </Field>
       )}
       renderFooter={({ close }) => (
         <ModalFooterOKCancel

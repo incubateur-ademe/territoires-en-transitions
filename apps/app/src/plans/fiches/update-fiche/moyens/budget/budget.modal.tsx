@@ -1,14 +1,7 @@
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { FicheActionBudget, FicheResume } from '@/domain/plans';
-import {
-  Alert,
-  ButtonGroup,
-  Checkbox,
-  Divider,
-  ModalFooterOKCancel,
-} from '@/ui';
+import { ButtonGroup, Checkbox, Divider, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import classNames from 'classnames';
 import { useState } from 'react';
 import { useDeleteBudgets } from '../../data/use-delete-budgets';
 import { useUpsertBudgets } from '../../data/use-upsert-budgets';
@@ -166,14 +159,6 @@ export const BudgetModal = ({
 
             {/* Formulaire */}
             <div className="flex flex-col gap-6">
-              <Alert
-                state="warning"
-                title="Ce champ historiquement en TTC est passé en HT, veillez à vérifier vos valeurs et à les modifier le cas échéant. N’hésitez pas à contacter le support si vous avez besoin d’aide pour faire les conversions."
-                rounded
-                withBorder
-                className={classNames({ hidden: !isEuros })}
-              />
-
               {isDetailled ? (
                 <DetailedBudgetForm
                   budgets={detailedBudgetDataForm}
