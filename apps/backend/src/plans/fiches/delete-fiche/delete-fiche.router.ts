@@ -15,7 +15,7 @@ export class DeleteFicheRouter {
       .input(
         z.object({
           ficheId: z.number(),
-          force: z.boolean().optional(),
+          deleteMode: z.enum(['soft', 'hard']).optional(),
         })
       )
       .mutation(async ({ input, ctx }) => {
