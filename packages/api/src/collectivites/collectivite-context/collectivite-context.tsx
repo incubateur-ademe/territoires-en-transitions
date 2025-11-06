@@ -4,7 +4,7 @@ import {
   CollectiviteAccess,
   UserWithCollectiviteAccesses,
 } from '@/domain/users';
-import { createContext, ReactNode, useState } from 'react';
+import { createContext, ReactNode, useMemo, useState } from 'react';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 
 const STORAGE_KEY_PREFIX = 'tet_collectivite';
@@ -20,6 +20,26 @@ type ContextProps = {
 };
 
 export const CollectiviteContext = createContext<ContextProps | null>(null);
+
+function useGetCurrentCollectivite(args: {
+  availableCollectivites: CollectiviteAccess[];
+  collectivite: CollectiviteAccess | null;
+  storedCollectivite: StoredCollectivite | undefined;
+  defaultCollectivite: CollectiviteAccess | null;
+}): CollectiviteAccess | null {
+  const collectiviteFromStorage = useMemo(
+    () =>
+      args.availableCollectivites.find(
+        (c) => c.collectiviteId === args.storedCollectivite?.collectiviteId
+      ) || null,
+    [args.storedCollectivite?.collectiviteId, args.availableCollectivites]
+  );
+
+  const currentCollectivite =
+    collectiviteFromStorage ?? args.collectivite ?? args.defaultCollectivite;
+
+  return currentCollectivite;
+}
 
 export function CollectiviteProvider_OnlyImportWithoutSSR({
   user,
@@ -48,11 +68,21 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
     setStoredCollectivite({ collectiviteId: collectivite.collectiviteId });
   };
 
+  const currentCollectivite = useGetCurrentCollectivite({
+    availableCollectivites: user.collectivites,
+    collectivite,
+    storedCollectivite,
+    defaultCollectivite,
+  });
+
+  if (currentCollectivite?.collectiviteId !== collectivite?.collectiviteId) {
+    setCollectivite(currentCollectivite);
+  }
   return (
     <CollectiviteContext.Provider
       value={{
-        collectiviteId: storedCollectivite?.collectiviteId,
-        collectivite: collectivite ?? null,
+        collectiviteId: currentCollectivite?.collectiviteId,
+        collectivite: currentCollectivite ?? null,
         storeCollectivite,
       }}
     >
