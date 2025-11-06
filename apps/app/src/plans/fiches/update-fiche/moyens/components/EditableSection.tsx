@@ -23,14 +23,10 @@ export const EditableSection = ({
     <div className="flex flex-col gap-2">
       <div className="flex justify-between items-center">
         <div>
-          <span className="uppercase text-primary-9 text-sm font-bold leading-7">
+          <span className="uppercase text-primary-9 text-sm font-bold">
             {label}
           </span>
-          {!hasContent && (
-            <span className="text-sm text-grey-7 leading-7">
-              Non renseignés
-            </span>
-          )}
+          {!hasContent && <span className="text-grey-7">Non renseignés</span>}
         </div>
         <VisibleWhen condition={!isReadonly && !!onEdit}>
           <Button

@@ -3,13 +3,17 @@ import { FicheWithRelations } from '@/domain/plans';
 import { RichTextView } from '../../components/RichTextView';
 import { EditableSection } from '../components/EditableSection';
 
-type MoyensProps = {
+type RessourcesEditableViewProps = {
   fiche: Pick<FicheWithRelations, 'ressources'> & FicheShareProperties;
   isReadonly?: boolean;
   onEdit?: () => void;
 };
 
-export const Moyens = ({ fiche, isReadonly = true, onEdit }: MoyensProps) => {
+export const RessourcesEditableView = ({
+  fiche,
+  isReadonly = true,
+  onEdit,
+}: RessourcesEditableViewProps) => {
   const ressources = fiche.ressources;
   const hasContent = !!ressources && ressources.trim().length > 0;
   return (
@@ -20,9 +24,7 @@ export const Moyens = ({ fiche, isReadonly = true, onEdit }: MoyensProps) => {
       onEdit={onEdit}
       editButtonTitle="Modifier les moyens"
     >
-      <div className="mb-0 text-sm leading-6">
-        <RichTextView content={ressources} textColor="grey" />
-      </div>
+      <RichTextView content={ressources} textColor="grey" />
     </EditableSection>
   );
 };

@@ -1,6 +1,7 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { FicheResume } from '@/domain/plans';
 import { Notification, Tooltip } from '@/ui';
+import { FicheShareProperties } from './fiche-share-properties.dto';
 
 type FicheShareInfoProps = {
   fiche: FicheResume;

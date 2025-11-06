@@ -4,29 +4,29 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import classNames from 'classnames';
 import { useEffect } from 'react';
 
-type ActionsLieesListeProps = {
+type MesuresLieesListeProps = {
   isReadonly?: boolean;
   /**
    * Spécifie une collectivité lorsqu'on charge les données d'une autrre collectivité que la collectivité courante.
    */
   externalCollectiviteId?: number;
-  actionIds: string[];
+  mesuresIds: string[];
   className?: string;
   onLoad?: (isLoading: boolean) => void;
   onUnlink?: (actionId: string) => void;
 };
 
-const ActionsLieesListe = ({
+export const MesuresLieesListe = ({
   isReadonly,
   externalCollectiviteId,
-  actionIds,
+  mesuresIds,
   className,
   onLoad,
   onUnlink,
-}: ActionsLieesListeProps) => {
+}: MesuresLieesListeProps) => {
   const { data: actionsLiees, isLoading } = useListActions(
     {
-      actionIds,
+      actionIds: mesuresIds,
     },
     true,
     externalCollectiviteId
@@ -63,5 +63,3 @@ const ActionsLieesListe = ({
     </div>
   );
 };
-
-export default ActionsLieesListe;

@@ -1,6 +1,6 @@
 import { getFormattedFloat, getFormattedNumber } from '@/app/utils/formatUtils';
 import { Badge, TBody, TCell, THead, THeadCell, TRow, Table } from '@/ui';
-import classNames from 'classnames';
+import { cn } from '@/ui/utils/cn';
 import { uniq } from 'es-toolkit';
 import { PerYearBudgetProperties } from './types';
 
@@ -23,10 +23,10 @@ export const groupedByYearAndMergedBudget = (
 
     return {
       year,
-      eurosPrevisionnel: euros?.value.previsionnel ?? null,
-      eurosReel: euros?.value.reel ?? null,
-      etpPrevisionnel: etps?.value.previsionnel ?? null,
-      etpReel: etps?.value.reel ?? null,
+      eurosPrevisionnel: euros?.value?.previsionnel ?? null,
+      eurosReel: euros?.value?.reel ?? null,
+      etpPrevisionnel: etps?.value?.previsionnel ?? null,
+      etpReel: etps?.value?.reel ?? null,
     };
   });
 };
@@ -53,8 +53,7 @@ export const BudgetPerYearContent = ({
   const headCellClassname =
     'text-left !text-grey-9 font-normal uppercase w-1/5';
 
-  const bodyCellClassname = (idx: number) =>
-    classNames('!py-3', { 'bg-primary-0': idx % 2 !== 0 });
+  const CELL_CLASSNAME = 'py-3 even:bg-primary-0';
 
   return (
     <div className="w-full overflow-x-auto">
@@ -74,15 +73,15 @@ export const BudgetPerYearContent = ({
         </THead>
 
         <TBody>
-          {groupedBudgets.map((budget, idx) => (
+          {groupedBudgets.map((budget) => (
             <TRow key={budget.year}>
               <TCell
                 variant="title"
-                className={classNames(bodyCellClassname(idx), 'text-primary-9')}
+                className={cn(CELL_CLASSNAME, 'text-primary-9')}
               >
                 {budget.year}
               </TCell>
-              <TCell className={bodyCellClassname(idx)}>
+              <TCell className={CELL_CLASSNAME}>
                 {budget.eurosPrevisionnel && (
                   <Badge
                     title={
@@ -97,7 +96,7 @@ export const BudgetPerYearContent = ({
                   />
                 )}
               </TCell>
-              <TCell className={bodyCellClassname(idx)}>
+              <TCell className={CELL_CLASSNAME}>
                 {budget.eurosReel && (
                   <Badge
                     title={
@@ -112,7 +111,7 @@ export const BudgetPerYearContent = ({
                   />
                 )}
               </TCell>
-              <TCell className={bodyCellClassname(idx)}>
+              <TCell className={CELL_CLASSNAME}>
                 {budget.etpPrevisionnel && (
                   <Badge
                     title={
@@ -126,7 +125,7 @@ export const BudgetPerYearContent = ({
                   />
                 )}
               </TCell>
-              <TCell className={bodyCellClassname(idx)}>
+              <TCell className={CELL_CLASSNAME}>
                 {budget.etpReel && (
                   <Badge
                     title={<span>{getFormattedFloat(budget.etpReel)} ETP</span>}
@@ -141,13 +140,10 @@ export const BudgetPerYearContent = ({
 
           {/* Total */}
           <TRow>
-            <TCell
-              variant="title"
-              className={bodyCellClassname(groupedBudgets.length)}
-            >
+            <TCell variant="title" className={CELL_CLASSNAME}>
               Total
             </TCell>
-            <TCell className={bodyCellClassname(groupedBudgets.length)}>
+            <TCell className={CELL_CLASSNAME}>
               <Badge
                 title={
                   <span>
@@ -161,7 +157,7 @@ export const BudgetPerYearContent = ({
                 className="mx-auto"
               />
             </TCell>
-            <TCell className={bodyCellClassname(groupedBudgets.length)}>
+            <TCell className={CELL_CLASSNAME}>
               <Badge
                 title={
                   <span>
@@ -175,7 +171,7 @@ export const BudgetPerYearContent = ({
                 className="mx-auto"
               />
             </TCell>
-            <TCell className={bodyCellClassname(groupedBudgets.length)}>
+            <TCell className={CELL_CLASSNAME}>
               <Badge
                 title={
                   <span>
@@ -189,7 +185,7 @@ export const BudgetPerYearContent = ({
                 className="mx-auto"
               />
             </TCell>
-            <TCell className={bodyCellClassname(groupedBudgets.length)}>
+            <TCell className={CELL_CLASSNAME}>
               <Badge
                 title={
                   <span>

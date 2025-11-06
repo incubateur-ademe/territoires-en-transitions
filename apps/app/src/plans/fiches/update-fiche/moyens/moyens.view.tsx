@@ -42,13 +42,7 @@ export const MoyensView = ({ isReadonly, fiche }: MoyensViewProps) => {
 
   const hasFicheMoyensRelatedData =
     hasBudgets || hasFinanceurs || hasFinancements || hasRessources;
-  console.log(
-    hasFicheMoyensRelatedData,
-    hasBudgets,
-    hasFinanceurs,
-    hasFinancements,
-    hasRessources
-  );
+
   return (
     <>
       {hasFicheMoyensRelatedData ? (
