@@ -1,5 +1,9 @@
 import { addTestCollectivite, Collectivite } from '@/domain/collectivites';
-import { BulkEditRequest, UpdateFicheRequest } from '@/domain/plans';
+import {
+  BulkEditRequest,
+  FicheCreate,
+  UpdateFicheRequest,
+} from '@/domain/plans';
 import type { AppRouter } from '@/domain/trpc-router';
 import { addTestUser, Dcp, TestUserArgs } from '@/domain/users';
 import { BrowserContext, test } from '@playwright/test';
@@ -114,7 +118,11 @@ class UserFixture implements IFixtureData {
     if (!this.trpcClient) {
       throw new Error('Trpc client not setup');
     }
-    const trpcClient = this.trpcClient;
+    return this.trpcClient;
+  }
+
+  async createFiches(fiches: FicheCreate[]) {
+    const trpcClient = this.getTrpcClient();
     const createdFichesPromises = fiches.map((fiche) => {
       console.log('Create fiche', fiche);
       return trpcClient.plans.fiches.create.mutate(fiche);
