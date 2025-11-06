@@ -2,8 +2,8 @@
  * Voir doc/adr/0003-conventions-de-code.md
  */
 
-import { createEnumObject } from '@/domain/utils';
 import * as z from 'zod/mini';
+import { createEnumObject } from './enum.utils';
 
 export const ApplicationDomains = [
   'utilisateurs',

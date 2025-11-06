@@ -1,4 +1,4 @@
-import { IndicateurSourceEnum } from './indicateur-source.enum.js';
+import { IndicateurSourceEnum } from './indicateur-source.enum';
 import { TrajectoireSecteursType } from './trajectoire-secteurs';
 import { TrajectoirePropertiesType } from './types';
 
