@@ -1,0 +1,22 @@
+# Unit test tools
+name: test-tools
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+
+jobs:
+  test-tools:
+    runs-on: ubuntu-latest
+    environment: ci
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/pnpm-install
+
+      - run: pnpm test:tools
+        env:
+          SIRENE_API_KEY: ${{ secrets.SIRENE_API_KEY }}
+          SIRENE_API_URL: ${{ vars.SIRENE_API_URL }}
