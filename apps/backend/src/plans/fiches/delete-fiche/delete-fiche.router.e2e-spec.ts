@@ -114,7 +114,7 @@ describe('Delete Fiche Action', () => {
       // Delete the fiche
       const result = await caller.plans.fiches.delete({
         ficheId: anotherFicheId,
-        force: true,
+        deleteMode: 'hard',
       });
 
       // Verify the result
@@ -153,7 +153,7 @@ describe('Delete Fiche Action', () => {
       // Delete the fiche
       const result = await caller.plans.fiches.delete({
         ficheId: anotherFicheId,
-        force: true,
+        deleteMode: 'hard',
       });
 
       // Verify the result

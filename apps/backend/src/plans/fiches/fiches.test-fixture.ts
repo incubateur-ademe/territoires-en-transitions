@@ -33,7 +33,7 @@ export async function createFicheAndCleanupFunction({
     console.log(`Cleanup fiche ${ficheId}`);
     await caller.plans.fiches.delete({
       ficheId,
-      force: true,
+      deleteMode: 'hard',
     });
   };
 

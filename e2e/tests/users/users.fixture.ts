@@ -164,7 +164,7 @@ class UserFixture implements IFixtureData {
       const cleanupFichesPromises = this.ficheIds.map((ficheId) => {
         return this.trpcClient.plans.fiches.delete.mutate({
           ficheId,
-          force: true,
+          deleteMode: 'hard',
         });
       });
       await Promise.all(cleanupFichesPromises);
