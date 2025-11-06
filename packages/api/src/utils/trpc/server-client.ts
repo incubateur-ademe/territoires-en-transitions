@@ -1,10 +1,12 @@
 import { getAuthHeaders } from '@/api/utils/supabase/get-auth-headers';
 import { createClient } from '@/api/utils/supabase/server-client';
-import type { AppRouter } from '@/domain/trpc-router';
 import { createTRPCClient, httpLink } from '@trpc/client';
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
 import { cache } from 'react';
 import { makeQueryClient } from './query-client';
+
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import type { AppRouter } from '../../../../../apps/backend/dist/utils/trpc/trpc.router.d';
 
 async function authenticatedHeaders() {
   const supabaseClient = await createClient();
