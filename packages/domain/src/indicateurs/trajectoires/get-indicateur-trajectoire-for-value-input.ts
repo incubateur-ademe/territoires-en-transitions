@@ -1,10 +1,8 @@
-import {
-  CONSOMMATIONS_FINALES_PROPERTIES,
-  EMISSIONS_GES_PROPERTIES,
-  SEQUESTRATION_CARBONE_PROPERTIES,
-  TrajectoirePropertiesType,
-  TrajectoireSecteursType,
-} from '../index';
+import { CONSOMMATIONS_FINALES_PROPERTIES } from './consommations-finales-properties';
+import { EMISSIONS_GES_PROPERTIES } from './ges-emissions-properties';
+import { TrajectoireSecteursType } from './trajectoire-secteurs';
+import { SEQUESTRATION_CARBONE_PROPERTIES } from './trajectoires-carbon-sequestration-properties';
+import { TrajectoirePropertiesType } from './types';
 
 // Common secteurs names, matching domain secteurs values
 const COMMON_SECTEURS: readonly TrajectoireSecteursType[] = [
