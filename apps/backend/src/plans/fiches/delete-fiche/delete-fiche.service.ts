@@ -16,17 +16,17 @@ export class DeleteFicheService {
 
   async deleteFiche({
     ficheId,
-    force,
+    deleteMode,
     user,
   }: {
     ficheId: number;
     user: AuthenticatedUser;
-    force?: boolean;
+    deleteMode?: 'soft' | 'hard';
   }): Promise<{ success: boolean; error?: string }> {
     await this.fichePermissionService.canWriteFiche(ficheId, user);
 
     try {
-      if (force) {
+      if (deleteMode === 'hard') {
         await this.databaseService.db
           .delete(ficheActionTable)
           .where(

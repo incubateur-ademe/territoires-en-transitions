@@ -120,7 +120,7 @@ describe('DeleteFicheRouter', () => {
         .where(inArray(ficheActionTable.id, [ficheId, sousFiche.id]));
     });
 
-    const result = await caller.delete({ ficheId, force: true });
+    const result = await caller.delete({ ficheId, deleteMode: 'hard' });
     expect(result).toEqual({ success: true });
 
     const rows = await db.db

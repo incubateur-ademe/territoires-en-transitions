@@ -32,7 +32,7 @@ export async function createFiche({
   onTestFinished(async () => {
     await caller.plans.fiches.delete({
       ficheId,
-      force: true,
+      deleteMode: 'hard',
     });
   });
 
