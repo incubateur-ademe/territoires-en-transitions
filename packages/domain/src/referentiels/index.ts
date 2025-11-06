@@ -20,7 +20,7 @@ export * from './referentiel-definition.schema';
 export * from './referentiel-id.enum';
 export * from './referentiel-tag.schema';
 export * from './referentiel.utils';
-export * from './scores/action-score.schema.js';
+export * from './scores/action-score.schema';
 export * from './scores/action-with-score.schema';
 export * from './scores/score-compute-mode.enum.schema';
 export * from './scores/score-indicatif.schema';

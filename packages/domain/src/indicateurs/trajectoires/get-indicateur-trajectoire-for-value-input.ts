@@ -1,9 +1,7 @@
-import {
-  CONSOMMATIONS_FINALES_PROPERTIES,
-  EMISSIONS_GES_PROPERTIES,
-  SEQUESTRATION_CARBONE_PROPERTIES,
-  TrajectoirePropertiesType,
-} from '../index';
+import { CONSOMMATIONS_FINALES_PROPERTIES } from './consommations-finales-properties';
+import { EMISSIONS_GES_PROPERTIES } from './ges-emissions-properties';
+import { SEQUESTRATION_CARBONE_PROPERTIES } from './trajectoires-carbon-sequestration-properties';
+import { TrajectoirePropertiesType } from './types';
 
 // Common secteurs names, matching domain secteurs values
 const COMMON_SECTEURS = [
@@ -15,9 +13,8 @@ const COMMON_SECTEURS = [
   'Branche énergie',
 ] as const;
 
-const CONSOMMATIONS_FINALES_SPECIFIC_INPUT_SECTEURS: TrajectoirePropertiesType['secteurs'] = [
-  { nom: 'Transports', identifiant: 'transports' },
-];
+const CONSOMMATIONS_FINALES_SPECIFIC_INPUT_SECTEURS: TrajectoirePropertiesType['secteurs'] =
+  [{ nom: 'Transports', identifiant: 'transports' }];
 
 const GES_SPECIFIC_INPUT_SECTEURS: TrajectoirePropertiesType['secteurs'] = [
   { nom: 'Transports', identifiant: 'transports' },
@@ -58,5 +55,3 @@ export const getIndicateurTrajectoireForValueInput = (
     secteurs: toInputFormatSecteurs(id, INDICATEURS_TRAJECTOIRE.secteurs),
   };
 };
-
-

@@ -5,7 +5,7 @@ import {
   actionDefinitionSchema,
 } from '../actions/action-definition.schema';
 import { referentielIdEnumSchema } from '../referentiel-id.enum';
-import { scoreFinalFieldsSchema } from './action-score.schema.js';
+import { scoreFinalFieldsSchema } from './action-score.schema';
 import { scoreComnputeModeEnumSchema } from './score-compute-mode.enum.schema';
 import { snapshotJalonEnumSchema } from './snapshot-jalon.enum';
 

@@ -1,4 +1,4 @@
-import { CollectiviteAccessLevel } from '@/domain/users';
+import { CollectiviteAccessLevel } from './collectivite-access-level.enum.schema';
 
 export enum UserRole {
   CONNECTE = 'Connecté',
