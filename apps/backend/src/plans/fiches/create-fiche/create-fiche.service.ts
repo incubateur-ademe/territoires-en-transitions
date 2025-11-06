@@ -65,7 +65,9 @@ export class CreateFicheService {
       );
     }
 
-    const executeInTransaction = async (transaction: Transaction) => {
+    const executeInTransaction = async (
+      transaction: Transaction
+    ): Promise<Result<Fiche>> => {
       const [createdFiche] = await transaction
         .insert(ficheActionTable)
         .values(fiche)
@@ -74,7 +76,7 @@ export class CreateFicheService {
       const ficheId = createdFiche.id;
       if (!ficheId) {
         return {
-          success: false as const,
+          success: false,
           error: `Échec de création de la fiche`,
         };
       }
@@ -89,13 +91,13 @@ export class CreateFicheService {
 
         if (!result.success) {
           return {
-            success: false as const,
+            success: false,
             error: `Échec de la mise à jour de la fiche: ${result.error}`,
           };
         }
       }
 
-      return { success: true as const, data: createdFiche };
+      return { success: true, data: createdFiche };
     };
 
     // Utiliser la transaction fournie ou en crée une nouvelle
