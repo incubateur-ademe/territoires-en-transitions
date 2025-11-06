@@ -65,6 +65,11 @@ jobs:
     needs: [test-syntax]
     uses: ./.github/workflows/test-app.yml
 
+  test-tools:
+    needs: [test-syntax]
+    uses: ./.github/workflows/test-tools.yml
+    secrets: inherit
+
   test-e2e:
     needs: [init-db]
     uses: ./.github/workflows/test-e2e.yml
