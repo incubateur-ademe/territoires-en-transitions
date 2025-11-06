@@ -1,16 +1,14 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "outDir": "out-tsc/lib",
     "rootDir": "src",
-    "outDir": "dist",
     "types": ["node"],
     // "composite": true,
     // "declaration": true,
     // "declarationMap": true,
-    "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
+    // "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo",
     "emitDeclarationOnly": false,
-    "forceConsistentCasingInFileNames": true,
     // "module": "NodeNext",
     // "moduleResolution": "NodeNext",
   },

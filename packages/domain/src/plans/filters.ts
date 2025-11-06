@@ -1,5 +1,5 @@
-import { modifiedSinceSchema } from '@/domain/utils';
 import { z } from 'zod';
+import { modifiedSinceSchema } from '../utils/modified-since';
 import { cibleEnumSchema } from './fiches/cible.enum.schema';
 import { prioriteEnumSchema } from './fiches/priorite.enum.schema';
 import { statutEnumSchema } from './fiches/statut.enum.schema';

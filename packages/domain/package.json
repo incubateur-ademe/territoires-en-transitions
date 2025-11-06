@@ -9,11 +9,6 @@
       "types": "./src/*/index.ts",
       "import": "./src/*/index.ts",
       "default": "./src/*/index.ts"
-    },
-    "./trpc-router": {
-      "types": "./src/trpc-router.ts",
-      "import": "./src/trpc-router.ts",
-      "default": "./src/trpc-router.ts"
     }
   },
   "nx": {

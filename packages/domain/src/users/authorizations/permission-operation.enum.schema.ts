@@ -1,5 +1,5 @@
-import { createEnumObject } from '@/domain/utils';
 import z from 'zod';
+import { createEnumObject } from '../../utils';
 
 export const PermissionOperations = [
   // Collectivités

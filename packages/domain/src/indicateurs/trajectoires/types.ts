@@ -1,4 +1,4 @@
-import { IndicateurSourceEnum } from './indicateur-source.enum.js';
+import { IndicateurSourceEnum } from './indicateur-source.enum';
 
 export type TrajectoirePropertiesType<T extends string = string> = {
   identifiant: string;

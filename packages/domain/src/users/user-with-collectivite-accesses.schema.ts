@@ -1,6 +1,7 @@
-import { collectiviteAccessSchema, dcpSchema } from '@/domain/users';
 import z from 'zod';
 import * as zm from 'zod/mini';
+import { collectiviteAccessSchema } from './authorizations/collectivite-access-level.schema';
+import { dcpSchema } from './dcp.schema';
 
 export const UserWithCollectiviteAccessesSchema = z.object({
   ...zm.pick(dcpSchema, {
