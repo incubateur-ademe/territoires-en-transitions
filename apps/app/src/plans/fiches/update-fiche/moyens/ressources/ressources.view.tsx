@@ -9,7 +9,11 @@ type MoyensProps = {
   onEdit?: () => void;
 };
 
-export const Moyens = ({ fiche, isReadonly = true, onEdit }: MoyensProps) => {
+export const Ressources = ({
+  fiche,
+  isReadonly = true,
+  onEdit,
+}: MoyensProps) => {
   const ressources = fiche.ressources;
   const hasContent = !!ressources && ressources.trim().length > 0;
   return (
