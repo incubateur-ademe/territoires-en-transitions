@@ -5,6 +5,6 @@ BEGIN;
 create trigger set_modified_at before
 update
     on
-    public.discussion for each row execute function update_modified_at()
+    public.discussion for each row execute function update_modified_at();
 
 COMMIT;
