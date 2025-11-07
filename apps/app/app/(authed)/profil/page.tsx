@@ -1,14 +1,15 @@
+'use client';
+
 import { getRejoindreCollectivitePath } from '@/api';
-import { getUser } from '@/api/users/user-details.fetch.server';
-import { getCurrentUrl } from '@/api/utils/get-current-url';
+import { useUser } from '@/api/users/user-context/user-provider';
 import { Button } from '@/ui';
 import { ModifierProfilModal } from './_components/modifier-profil.modal';
 import { ResendConfirmationLinkButton } from './_components/resend-confirmation-link.button';
 
-export default async function Page() {
-  const user = await getUser();
+export default function Page() {
+  const user = useUser();
   const rejoindreCollectivitePath = getRejoindreCollectivitePath(
-    await getCurrentUrl()
+    document.location.origin
   );
 
   const isEmailChangeWaitingForConfirmation = user.newEmail !== undefined;
