@@ -1,6 +1,8 @@
 import { CollectiviteCrudRouter } from '@/backend/collectivites/collectivite-crud/collectivite-crud.router';
 import CollectiviteCrudService from '@/backend/collectivites/collectivite-crud/collectivite-crud.service';
 import { DocumentController } from '@/backend/collectivites/documents/document.controller';
+import { CreateDocumentRouter } from '@/backend/collectivites/documents/create-document/create-document.router';
+import { CreateDocumentService } from '@/backend/collectivites/documents/create-document/create-document.service';
 import { ImportCollectiviteRelationsRouter } from '@/backend/collectivites/import-collectivite-relations/import-collectivite-relations.router';
 import { ImportCollectiviteRelationsService } from '@/backend/collectivites/import-collectivite-relations/import-collectivite-relations.service';
 import { ExportConnectService } from '@/backend/collectivites/membres/export-connect.service';
@@ -24,6 +26,7 @@ import CollectivitesService from './services/collectivites.service';
 import GroupementsService from './services/groupements.service';
 import { PersonnesService } from './services/personnes.service';
 import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
+import { DocumentsRouter } from './documents/documents.router';
 
 @Module({
   imports: [TableauDeBordModule],
@@ -37,6 +40,9 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     PersonnesRouter,
     ListCategoriesService,
     ListCategoriesRouter,
+    CreateDocumentService,
+    CreateDocumentRouter,
+    DocumentsRouter,
     DocumentService,
     TagService,
     PersonneTagService,
@@ -60,7 +66,10 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     PersonnesRouter,
     ListCategoriesService,
     ListCategoriesRouter,
+    CreateDocumentService,
+    CreateDocumentRouter,
     DocumentService,
+    DocumentsRouter,
     TagService,
     ListCollectivitesService,
     PersonneTagService,
