@@ -9,6 +9,7 @@ import { DiscussionRouter } from './discussion.router';
 describe('DiscussionRouter', () => {
   let router: DiscussionRouter;
   let discussionApplicationService: Partial<DiscussionApplicationService>;
+  let trpcService: TrpcService;
 
   const mockUser = {
     id: 'user-123',
