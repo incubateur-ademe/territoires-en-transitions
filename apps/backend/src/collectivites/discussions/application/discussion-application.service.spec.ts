@@ -270,6 +270,7 @@ describe('DiscussionApplicationService', () => {
       const mockResponse = { success: true as const, data: undefined };
 
       vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockRoleService.getUserRoles)?.mockResolvedValue([]);
       vi.mocked(
         mockDiscussionDomainService.deleteDiscussionAndDiscussionMessage
       )?.mockResolvedValue(mockResponse);
@@ -285,6 +286,11 @@ describe('DiscussionApplicationService', () => {
         'Collectivité',
         collectiviteId
       );
+      expect(mockRoleService.getUserRoles).toHaveBeenCalledWith(
+        mockUser,
+        'Collectivité',
+        collectiviteId
+      );
       expect(
         mockDiscussionDomainService.deleteDiscussionAndDiscussionMessage
       ).toHaveBeenCalledWith(discussionId);
@@ -293,6 +299,93 @@ describe('DiscussionApplicationService', () => {
 
     test('should return UNAUTHORIZED when user lacks permission', async () => {
       vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(false);
+      vi.mocked(mockRoleService.getUserRoles)?.mockResolvedValue([]);
+
+      const result = await service.deleteDiscussionAndDiscussionMessage(
+        { discussionId, collectiviteId },
+        mockUser
+      );
+
+      expect(result).toEqual({
+        success: false,
+        error: DiscussionErrorEnum.UNAUTHORIZED,
+      });
+      expect(mockLogger.error).toHaveBeenCalled();
+      expect(
+        mockDiscussionDomainService.deleteDiscussionAndDiscussionMessage
+      ).not.toHaveBeenCalled();
+    });
+
+    test('should return UNAUTHORIZED when user has Support role', async () => {
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockRoleService.getUserRoles)?.mockResolvedValue([
+        UserRole.SUPPORT,
+      ]);
+
+      const result = await service.deleteDiscussionAndDiscussionMessage(
+        { discussionId, collectiviteId },
+        mockUser
+      );
+
+      expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
+        mockUser,
+        'collectivites.lecture',
+        'Collectivité',
+        collectiviteId
+      );
+      expect(mockRoleService.getUserRoles).toHaveBeenCalledWith(
+        mockUser,
+        'Collectivité',
+        collectiviteId
+      );
+      expect(result).toEqual({
+        success: false,
+        error: DiscussionErrorEnum.UNAUTHORIZED,
+      });
+      expect(mockLogger.error).toHaveBeenCalled();
+      expect(
+        mockDiscussionDomainService.deleteDiscussionAndDiscussionMessage
+      ).not.toHaveBeenCalled();
+    });
+
+    test('should return UNAUTHORIZED when user has ADEME role', async () => {
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockRoleService.getUserRoles)?.mockResolvedValue([
+        UserRole.ADEME,
+      ]);
+
+      const result = await service.deleteDiscussionAndDiscussionMessage(
+        { discussionId, collectiviteId },
+        mockUser
+      );
+
+      expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
+        mockUser,
+        'collectivites.lecture',
+        'Collectivité',
+        collectiviteId
+      );
+      expect(mockRoleService.getUserRoles).toHaveBeenCalledWith(
+        mockUser,
+        'Collectivité',
+        collectiviteId
+      );
+      expect(result).toEqual({
+        success: false,
+        error: DiscussionErrorEnum.UNAUTHORIZED,
+      });
+      expect(mockLogger.error).toHaveBeenCalled();
+      expect(
+        mockDiscussionDomainService.deleteDiscussionAndDiscussionMessage
+      ).not.toHaveBeenCalled();
+    });
+
+    test('should return UNAUTHORIZED when user has both Support and ADEME roles', async () => {
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockRoleService.getUserRoles)?.mockResolvedValue([
+        UserRole.SUPPORT,
+        UserRole.ADEME,
+      ]);
 
       const result = await service.deleteDiscussionAndDiscussionMessage(
         { discussionId, collectiviteId },
@@ -434,6 +527,7 @@ describe('DiscussionApplicationService', () => {
       };
 
       vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockRoleService.getUserRoles)?.mockResolvedValue([]);
       vi.mocked(
         mockDiscussionDomainService.updateDiscussion
       )?.mockResolvedValue(mockResponse);
@@ -449,6 +543,11 @@ describe('DiscussionApplicationService', () => {
         'Collectivité',
         collectiviteId
       );
+      expect(mockRoleService.getUserRoles).toHaveBeenCalledWith(
+        mockUser,
+        'Collectivité',
+        collectiviteId
+      );
       expect(mockDiscussionDomainService.updateDiscussion).toHaveBeenCalledWith(
         discussionId,
         status
@@ -458,6 +557,93 @@ describe('DiscussionApplicationService', () => {
 
     test('should return UNAUTHORIZED when user lacks permission', async () => {
       vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(false);
+      vi.mocked(mockRoleService.getUserRoles)?.mockResolvedValue([]);
+
+      const result = await service.updateDiscussion(
+        { discussionId, status, collectiviteId },
+        mockUser
+      );
+
+      expect(result).toEqual({
+        success: false,
+        error: DiscussionErrorEnum.UNAUTHORIZED,
+      });
+      expect(mockLogger.error).toHaveBeenCalled();
+      expect(
+        mockDiscussionDomainService.updateDiscussion
+      ).not.toHaveBeenCalled();
+    });
+
+    test('should return UNAUTHORIZED when user has Support role', async () => {
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockRoleService.getUserRoles)?.mockResolvedValue([
+        UserRole.SUPPORT,
+      ]);
+
+      const result = await service.updateDiscussion(
+        { discussionId, status, collectiviteId },
+        mockUser
+      );
+
+      expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
+        mockUser,
+        'collectivites.lecture',
+        'Collectivité',
+        collectiviteId
+      );
+      expect(mockRoleService.getUserRoles).toHaveBeenCalledWith(
+        mockUser,
+        'Collectivité',
+        collectiviteId
+      );
+      expect(result).toEqual({
+        success: false,
+        error: DiscussionErrorEnum.UNAUTHORIZED,
+      });
+      expect(mockLogger.error).toHaveBeenCalled();
+      expect(
+        mockDiscussionDomainService.updateDiscussion
+      ).not.toHaveBeenCalled();
+    });
+
+    test('should return UNAUTHORIZED when user has ADEME role', async () => {
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockRoleService.getUserRoles)?.mockResolvedValue([
+        UserRole.ADEME,
+      ]);
+
+      const result = await service.updateDiscussion(
+        { discussionId, status, collectiviteId },
+        mockUser
+      );
+
+      expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
+        mockUser,
+        'collectivites.lecture',
+        'Collectivité',
+        collectiviteId
+      );
+      expect(mockRoleService.getUserRoles).toHaveBeenCalledWith(
+        mockUser,
+        'Collectivité',
+        collectiviteId
+      );
+      expect(result).toEqual({
+        success: false,
+        error: DiscussionErrorEnum.UNAUTHORIZED,
+      });
+      expect(mockLogger.error).toHaveBeenCalled();
+      expect(
+        mockDiscussionDomainService.updateDiscussion
+      ).not.toHaveBeenCalled();
+    });
+
+    test('should return UNAUTHORIZED when user has both Support and ADEME roles', async () => {
+      vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockRoleService.getUserRoles)?.mockResolvedValue([
+        UserRole.SUPPORT,
+        UserRole.ADEME,
+      ]);
 
       const result = await service.updateDiscussion(
         { discussionId, status, collectiviteId },
@@ -489,6 +675,7 @@ describe('DiscussionApplicationService', () => {
       };
 
       vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockRoleService.getUserRoles)?.mockResolvedValue([]);
       vi.mocked(
         mockDiscussionDomainService.updateDiscussion
       )?.mockResolvedValue(mockResponse);
@@ -527,6 +714,7 @@ describe('DiscussionApplicationService', () => {
       };
 
       vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
+      vi.mocked(mockRoleService.getUserRoles)?.mockResolvedValue([]);
       vi.mocked(
         mockDiscussionDomainService.updateDiscussion
       )?.mockResolvedValue(mockResponse);

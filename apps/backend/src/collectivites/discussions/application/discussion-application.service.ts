@@ -105,6 +105,24 @@ export class DiscussionApplicationService {
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
+    const roles = await this.roleService.getUserRoles(
+      user,
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+
+    const hasSupportRole = roles.includes(UserRole.SUPPORT);
+    const hasADMERole = roles.includes(UserRole.ADEME);
+
+    if (hasSupportRole || hasADMERole) {
+      this.logger.error(
+        `L'utilisateur ${user.id} avec le rôle Support ou ADEME ne peut pas supprimer la discussion sur la collectivité ${collectiviteId}`
+      );
+      return {
+        success: false,
+        error: DiscussionErrorEnum.UNAUTHORIZED,
+      };
+    }
     if (!hasPermission) {
       this.logger.error(
         `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation supprimer le message de discussion sur la ressource Collectivité ${collectiviteId}`
@@ -193,6 +211,24 @@ export class DiscussionApplicationService {
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
+    const roles = await this.roleService.getUserRoles(
+      user,
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+
+    const hasSupportRole = roles.includes(UserRole.SUPPORT);
+    const hasADMERole = roles.includes(UserRole.ADEME);
+
+    if (hasSupportRole || hasADMERole) {
+      this.logger.error(
+        `L'utilisateur ${user.id} avec le rôle Support ou ADEME ne peut pas mettre à jour la discussion sur la collectivité ${collectiviteId}`
+      );
+      return {
+        success: false,
+        error: DiscussionErrorEnum.UNAUTHORIZED,
+      };
+    }
     if (!hasPermission) {
       this.logger.error(
         `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation mettre à jour la discussion sur la ressource Collectivité ${collectiviteId}`

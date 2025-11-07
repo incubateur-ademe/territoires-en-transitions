@@ -36,7 +36,7 @@ export class FilterDiscussionPom {
       .click();
   }
 
-  async selectStatus(status: String) {
+  async selectStatus(status: string) {
     await this.statusSelect.click();
 
     await this.page
