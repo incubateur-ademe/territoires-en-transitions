@@ -44,8 +44,7 @@ export class ListActionsRouter {
 
     listActionSummaries: this.trpc.authedProcedure
       .input(listActionSummariesRequestSchema)
-      .query(async ({ input, ctx: { user } }) => {
-        const { collectiviteId } = input;
+      .query(async ({ input }) => {
         return this.listActionsService.listActionSummaries(input);
       }),
   });

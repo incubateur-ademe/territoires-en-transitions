@@ -27,10 +27,6 @@ export class DiscussionDomainService {
     tx?: Transaction
   ): Promise<Result<CreateDiscussionResponse, DiscussionError>> {
     let discussion: Result<DiscussionType, DiscussionError>;
-    let discussionMessage: Result<
-      CreateDiscussionMessageResponse,
-      DiscussionError
-    >;
 
     if (!discussionData.discussionId) {
       discussion = await this.discussionRepository.create(discussionData);
@@ -57,7 +53,10 @@ export class DiscussionDomainService {
         };
       }
     }
-    discussionMessage = await this.discussionRepository.createDiscussionMessage(
+    const discussionMessage: Result<
+      CreateDiscussionMessageResponse,
+      DiscussionError
+    > = await this.discussionRepository.createDiscussionMessage(
       {
         discussionId: discussion?.data?.id ?? discussionData.discussionId,
         message: discussionData.message,
