@@ -9,7 +9,6 @@ import { DiscussionRouter } from './discussion.router';
 describe('DiscussionRouter', () => {
   let router: DiscussionRouter;
   let discussionApplicationService: Partial<DiscussionApplicationService>;
-  let trpcService: TrpcService;
 
   const mockUser = {
     id: 'user-123',
@@ -60,7 +59,6 @@ describe('DiscussionRouter', () => {
     discussionApplicationService = module.get(
       DiscussionApplicationService
     ) as Partial<DiscussionApplicationService>;
-    trpcService = module.get<TrpcService>(TrpcService);
   });
 
   describe('create', () => {
