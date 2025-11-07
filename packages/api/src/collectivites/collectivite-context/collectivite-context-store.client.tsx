@@ -11,14 +11,13 @@ export const CollectiviteProviderStoreClient = ({
   children: ReactNode;
   collectivite: CollectiviteAccess;
 }) => {
-  const { collectivite: storedCollectivite, storeCollectivite } =
-    useCollectiviteContext();
+  const { collectivite, setCollectivite } = useCollectiviteContext();
 
   useEffect(() => {
-    if (newCollectivite.collectiviteId !== storedCollectivite?.collectiviteId) {
-      storeCollectivite(newCollectivite);
+    if (newCollectivite.collectiviteId !== collectivite?.collectiviteId) {
+      setCollectivite(newCollectivite);
     }
-  }, [newCollectivite, storedCollectivite, storeCollectivite]);
+  }, [newCollectivite, collectivite, setCollectivite]);
 
   return children;
 };
