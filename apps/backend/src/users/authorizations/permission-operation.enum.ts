@@ -14,6 +14,9 @@ export const PermissionOperations = [
   // Tags
   'collectivites.tags.mutate',
   'collectivites.tags.read',
+  // Documents
+  'collectivites.documents.read',
+  'collectivites.documents.create',
 
   // Référentiels
   'referentiels.read',
