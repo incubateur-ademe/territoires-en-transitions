@@ -11,6 +11,7 @@ export const TerritoiresEnTransitionsLogo = ({
       className={className}
       src={TerritoiresEnTransitionsImage}
       alt="Territoires en Transitions"
+      priority
     />
   );
 };
