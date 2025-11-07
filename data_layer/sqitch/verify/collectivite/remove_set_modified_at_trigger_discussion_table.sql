@@ -8,8 +8,9 @@ BEGIN
         SELECT FROM information_schema.triggers
         WHERE trigger_schema = 'public'
         AND trigger_name = 'set_modified_at'
+        AND event_object_table = 'discussion'
     ) THEN
-        RAISE EXCEPTION 'Trigger set_modified_at still exists';
+          RAISE EXCEPTION 'Trigger set_modified_at still exists on discussion table';
     END IF;
 END $$;
 
