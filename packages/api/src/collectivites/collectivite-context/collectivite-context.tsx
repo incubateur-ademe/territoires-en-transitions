@@ -4,7 +4,7 @@ import {
   CollectiviteAccess,
   UserWithCollectiviteAccesses,
 } from '@/domain/users';
-import { createContext, ReactNode, useMemo, useState } from 'react';
+import { createContext, ReactNode, useState } from 'react';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 
 const STORAGE_KEY_PREFIX = 'tet_collectivite';
@@ -16,30 +16,10 @@ type StoredCollectivite = {
 type ContextProps = {
   collectiviteId: number | undefined;
   collectivite: CollectiviteAccess | null;
-  storeCollectivite: (collectivite: CollectiviteAccess) => void;
+  setCollectivite: (collectivite: CollectiviteAccess) => void;
 };
 
 export const CollectiviteContext = createContext<ContextProps | null>(null);
-
-function useGetCurrentCollectivite(args: {
-  availableCollectivites: CollectiviteAccess[];
-  collectivite: CollectiviteAccess | null;
-  storedCollectivite: StoredCollectivite | undefined;
-  defaultCollectivite: CollectiviteAccess | null;
-}): CollectiviteAccess | null {
-  const collectiviteFromStorage = useMemo(
-    () =>
-      args.availableCollectivites.find(
-        (c) => c.collectiviteId === args.storedCollectivite?.collectiviteId
-      ) || null,
-    [args.storedCollectivite?.collectiviteId, args.availableCollectivites]
-  );
-
-  const currentCollectivite =
-    collectiviteFromStorage ?? args.collectivite ?? args.defaultCollectivite;
-
-  return currentCollectivite;
-}
 
 export function CollectiviteProvider_OnlyImportWithoutSSR({
   user,
@@ -52,38 +32,43 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
     user.collectivites.length > 0 ? user.collectivites[0] : null;
 
   const [storedCollectivite, setStoredCollectivite] =
-    useLocalStorage<StoredCollectivite>(
-      getStorageKey(user.id),
-      defaultCollectivite
-        ? { collectiviteId: defaultCollectivite.collectiviteId }
-        : undefined
-    );
+    useLocalStorage<StoredCollectivite>(getStorageKey(user.id));
 
   const [collectivite, setCollectivite] = useState<CollectiviteAccess | null>(
-    defaultCollectivite
+    null
   );
 
-  const storeCollectivite = (collectivite: CollectiviteAccess) => {
-    setCollectivite(collectivite);
+  if (
+    collectivite &&
+    collectivite.collectiviteId !== storedCollectivite?.collectiviteId &&
+    user.collectivites.find(
+      (c) => c.collectiviteId === collectivite.collectiviteId
+    )
+  ) {
+    // Only store the newly selected collectiviteId in localStorage if it is one of the user's collectivites
+    // Do not store the collectiviteId when visiting other collectivites.
     setStoredCollectivite({ collectiviteId: collectivite.collectiviteId });
-  };
-
-  const currentCollectivite = useGetCurrentCollectivite({
-    availableCollectivites: user.collectivites,
-    collectivite,
-    storedCollectivite,
-    defaultCollectivite,
-  });
-
-  if (currentCollectivite?.collectiviteId !== collectivite?.collectiviteId) {
-    setCollectivite(currentCollectivite);
   }
+
+  if (!collectivite) {
+    if (storedCollectivite?.collectiviteId) {
+      const collectiviteBasedOnStorage = user.collectivites.find(
+        (c) => c.collectiviteId === storedCollectivite.collectiviteId
+      );
+      if (collectiviteBasedOnStorage) {
+        setCollectivite(collectiviteBasedOnStorage);
+      }
+    } else if (defaultCollectivite) {
+      setCollectivite(defaultCollectivite);
+    }
+  }
+
   return (
     <CollectiviteContext.Provider
       value={{
-        collectiviteId: currentCollectivite?.collectiviteId,
-        collectivite: currentCollectivite ?? null,
-        storeCollectivite,
+        collectiviteId: collectivite?.collectiviteId,
+        collectivite,
+        setCollectivite,
       }}
     >
       {children}
