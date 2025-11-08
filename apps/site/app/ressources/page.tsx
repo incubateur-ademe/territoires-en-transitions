@@ -49,7 +49,7 @@ const publicPath =
  * @param {Directory} directory - Le Directory à remplir
  * @return {Promise<void>} - La Promesse qui se résout une fois le Directory remplit
  */
-async function fillDirectory(directory: Directory) {
+async function fillDirectory(directory: Directory): Promise<void> {
   const files = fs.readdirSync(directory.path);
   files.sort();
 
@@ -58,27 +58,25 @@ async function fillDirectory(directory: Directory) {
 
     const fileDescriptor = fs.openSync(filePath, 'r');
 
-    fs.fstat(fileDescriptor, async (err, stats) => {
-      if (err) {
-        throw err;
-      }
+    const stats = fs.fstatSync(fileDescriptor);
 
-      if (stats.isDirectory()) {
-        const subDirectory: Directory = {
-          name: file,
-          path: filePath,
-          filenames: [],
-          subDirectory: [],
-        };
-        directory.subDirectory.push(subDirectory);
-        await fillDirectory(subDirectory);
-      } else if (filePath.endsWith('.md')) {
-        const markdown = fs.readFileSync(fileDescriptor, 'utf8');
-        directory.markdown = markdown;
-      } else {
-        directory.filenames.push(filePath);
-      }
-    });
+    if (stats.isDirectory()) {
+      const subDirectory: Directory = {
+        name: file,
+        path: filePath,
+        filenames: [],
+        subDirectory: [],
+      };
+      directory.subDirectory.push(subDirectory);
+      await fillDirectory(subDirectory);
+    } else if (filePath.endsWith('.md')) {
+      const markdown = fs.readFileSync(fileDescriptor, 'utf8');
+      directory.markdown = markdown;
+    } else {
+      directory.filenames.push(filePath);
+    }
+
+    fs.closeSync(fileDescriptor);
   }
 }
 
