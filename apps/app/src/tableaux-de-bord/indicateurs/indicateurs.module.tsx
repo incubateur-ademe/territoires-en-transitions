@@ -1,10 +1,9 @@
-import { useCollectiviteId } from '@/api/collectivites';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { listIndicateursParamsSerializer } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
 import {
-  makeCollectiviteIndicateursCollectiviteUrl,
   makeCollectiviteIndicateursListUrl,
   makeCollectiviteIndicateursUrl,
 } from '@/app/app/paths';
@@ -12,6 +11,7 @@ import { useListIndicateurDefinitions } from '@/app/indicateurs/definitions/use-
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import { ButtonProps, MenuAction } from '@/ui';
+import { IndicateursListParamOption } from '@/app/app/paths';
 
 type Props = {
   module: ModuleIndicateursSelect;
@@ -19,59 +19,60 @@ type Props = {
   menuActions?: MenuAction[];
   /** Bouton à afficher dans l'état vide */
   emptyButtons?: ButtonProps[];
+
+  bottomLinkListId?: IndicateursListParamOption;
 };
+
+const MAX_DISPLAYED_INDICATEURS = 3;
 
 /** Module pour afficher des indicateurs en fonctions de filtres spécifiques */
 export const IndicateursModule = ({
   module,
   menuActions,
   emptyButtons,
+  bottomLinkListId,
 }: Props) => {
   const { titre, options } = module;
 
-  const collectiviteId = useCollectiviteId();
+  const { collectiviteId } = useCurrentCollectivite();
 
-  const { data: { data: indicateurs, count: totalCount = 0 } = {}, isLoading } =
-    useListIndicateurDefinitions(
-      {
-        filters: module.options.filtre,
-        queryOptions: {
-          sort: [{ field: 'estRempli', direction: 'desc' }],
-          limit: 3,
-          page: 1,
-        },
+  const { data: listIndicateursData, isLoading } = useListIndicateurDefinitions(
+    {
+      filters: module.options.filtre,
+      queryOptions: {
+        sort: [{ field: 'estRempli', direction: 'desc' }],
+        limit: MAX_DISPLAYED_INDICATEURS,
+        page: 1,
       },
-      { disableAutoRefresh: false }
-    );
+    },
+    { disableAutoRefresh: false }
+  );
 
-  const getBottomLinks = () => {
-    const links: ButtonProps[] = [
-      {
-        variant: 'grey',
-        size: 'sm',
-        children: 'Voir les indicateurs de la collectivité',
-        href: makeCollectiviteIndicateursCollectiviteUrl({ collectiviteId }),
-      },
-    ];
+  const indicateurs = listIndicateursData?.data;
+  const totalCount = listIndicateursData?.count || 0;
 
-    if (totalCount > 3) {
-      links.push({
-        size: 'sm',
-        children: `Afficher ${
-          totalCount === 4
-            ? '1 autre indicateur'
-            : `les ${totalCount - 3} autres indicateurs`
-        }`,
-        href: `${makeCollectiviteIndicateursListUrl({
-          collectiviteId,
-          listId: 'mes-indicateurs',
-        })}${listIndicateursParamsSerializer({
-          filter: options.filtre,
-        })}`,
-      });
-    }
-
-    return links;
+  const getBottomLinks = (): ButtonProps[] => {
+    return totalCount >= MAX_DISPLAYED_INDICATEURS
+      ? [
+          {
+            size: 'sm',
+            variant: 'grey',
+            children: `Afficher ${
+              totalCount === MAX_DISPLAYED_INDICATEURS + 1
+                ? '1 autre indicateur'
+                : `les ${
+                    totalCount - MAX_DISPLAYED_INDICATEURS
+                  } autres indicateurs`
+            }`,
+            href: `${makeCollectiviteIndicateursListUrl({
+              collectiviteId,
+              listId: bottomLinkListId,
+            })}${listIndicateursParamsSerializer({
+              filter: options.filtre,
+            })}`,
+          },
+        ]
+      : [];
   };
 
   return (
@@ -86,7 +87,7 @@ export const IndicateursModule = ({
       footerEndButtons={getBottomLinks()}
     >
       <div className="grid md:grid-cols-2 2xl:grid-cols-3 gap-4">
-        {indicateurs?.map((definition) => (
+        {indicateurs?.slice(0, MAX_DISPLAYED_INDICATEURS).map((definition) => (
           <IndicateurCard
             key={definition.id}
             definition={definition}
