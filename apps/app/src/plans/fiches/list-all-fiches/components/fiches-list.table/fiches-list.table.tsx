@@ -7,10 +7,10 @@ import {
 } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
 
-import { CurrentCollectivite } from '@/api/collectivites';
 import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
+import { CollectiviteAccess } from '@/domain/users';
 import { FichesListCellActions } from './cells/fiches-list.cell-actions';
 import { FichesListCellCheckbox } from './cells/fiches-list.cell-checkbox';
 import { FichesListCellDateFin } from './cells/fiches-list.cell-date-fin';
@@ -63,9 +63,7 @@ const columns = [
   }),
 
   columnHelper.accessor('pilotes', {
-    header: () => (
-      <THeadCell title="Pilote" icon="user-line" className="w-44" />
-    ),
+    header: () => <THeadCell title="Pilote" className="w-44" />,
     cell: (info) => <FichesListCellPilotes pilotes={info.getValue()} />,
   }),
 
@@ -90,7 +88,7 @@ const columns = [
 ];
 
 type Props = {
-  collectivite: CurrentCollectivite;
+  collectivite: CollectiviteAccess;
   fiches: FicheWithRelationsAndCollectivite[];
   isLoading: boolean;
   isGroupedActionsOn: boolean;
