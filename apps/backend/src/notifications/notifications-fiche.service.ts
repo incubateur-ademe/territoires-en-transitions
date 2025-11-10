@@ -12,6 +12,7 @@ import GetUrlService from '../utils/get-url.service';
 import { MethodResult } from '../utils/result.type';
 import { getNewlyAssignedPilotes } from './get-newly-assigned-pilotes';
 import { NotificationStatusEnum } from './models/notification-status.enum';
+import { GetNotificationContent } from './models/notification-template.dto';
 import {
   Notification,
   NotificationInsert,
@@ -19,6 +20,7 @@ import {
 } from './models/notification.table';
 import { NotifiedOnEnum } from './models/notified-on.enum';
 import { OnUpdateFichePiloteTemplate } from './models/on-update-fiche-pilote-template.dto';
+import { OnUpdateFichePiloteEmail } from './templates/on-update-fiche-pilote.email';
 
 type UpsertNotificationsResult = MethodResult<
   // nombre de notifications insérées
@@ -54,7 +56,7 @@ export class NotificationsFicheService {
 
   /**
    * Insère/met à jour la notification à envoyer aux pilotes nouvellement
-   * affectés à la fiche
+   * affectés à la fiche (appelée lors de l'update de la fiche)
    */
   async upsertPiloteNotifications({
     updatedFiche,
@@ -168,10 +170,36 @@ export class NotificationsFicheService {
   }
 
   /**
+   * Charge les données et génère le contenu de la notification
+   * (appelée lors de l'envoi des notifications)
+   */
+  async getPiloteNotificationContent(
+    notification: Notification
+  ): Promise<MethodResult<GetNotificationContent, string>> {
+    // charge les données
+    const ret = await this.getPiloteNotificationTemplateData(notification);
+    if (!ret.success) {
+      this.logger.log(`getPiloteNotificationTemplate error: ${ret.error}`);
+      return ret;
+    }
+
+    const templateData = ret.data;
+    const { sendToEmail, subject } = templateData;
+    return {
+      success: true,
+      data: {
+        sendToEmail,
+        subject,
+        content: OnUpdateFichePiloteEmail(templateData),
+      },
+    };
+  }
+
+  /**
    * Prépare les données nécessaires à l'envoi de la notification aux pilotes
    * nouvellement affectés à la fiche
    */
-  async getPiloteNotificationTemplateData(
+  private async getPiloteNotificationTemplateData(
     notification: Notification
   ): Promise<MethodResult<OnUpdateFichePiloteTemplate, string>> {
     const { createdBy, notificationData } = notification;
@@ -217,7 +245,7 @@ export class NotificationsFicheService {
     return {
       success: true,
       data: {
-        sendTo: pilote.email,
+        sendToEmail: pilote.email,
         subject: `Vous avez été assigné(e) à une ${
           fiche.parentId ? 'sous-' : ''
         }action sur Territoires en Transitions`,

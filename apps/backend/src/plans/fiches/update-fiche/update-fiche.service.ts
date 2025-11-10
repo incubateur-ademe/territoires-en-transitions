@@ -1,3 +1,4 @@
+import { NotificationsFicheService } from '@/backend/notifications/notifications-fiche.service';
 import { FicheWithRelations } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ShareFicheService } from '@/backend/plans/fiches/share-fiches/share-fiche.service';
@@ -69,7 +70,8 @@ export default class UpdateFicheService {
     private readonly webhookService: WebhookService,
     private readonly ficheActionListService: ListFichesService,
     private readonly fichePermissionService: FicheActionPermissionsService,
-    private readonly shareFicheService: ShareFicheService
+    private readonly shareFicheService: ShareFicheService,
+    private readonly notificationsFicheService: NotificationsFicheService
   ) {}
 
   async updateFiche({
@@ -119,13 +121,14 @@ export default class UpdateFicheService {
         };
       }
 
-      const result = await this.ficheActionListService.getFicheById(
-        unsafeFicheAction.parentId,
-        false,
-        user
-      );
-      if (!result.success) {
-        this.logger.error(result.error);
+      const resultGetParentFiche =
+        await this.ficheActionListService.getFicheById(
+          unsafeFicheAction.parentId,
+          false,
+          user
+        );
+      if (!resultGetParentFiche.success) {
+        this.logger.error(resultGetParentFiche.error);
         return {
           success: false,
           error: UpdateFicheErrorEnum.PARENT_NOT_FOUND,
@@ -133,20 +136,24 @@ export default class UpdateFicheService {
       }
     }
 
-    const executeInTransaction = async (transaction: Transaction) => {
-      const result = await this.ficheActionListService.getFicheById(
-        ficheId,
-        false,
-        user
-      );
-      if (!result.success) {
-        this.logger.error(result.error);
+    const executeInTransaction = async (
+      transaction: Transaction
+    ): Promise<
+      Result<
+        { updatedFiche: FicheWithRelations; previousFiche: FicheWithRelations },
+        UpdateFicheError
+      >
+    > => {
+      const resultGetExistingFiche =
+        await this.ficheActionListService.getFicheById(ficheId, false, user);
+      if (!resultGetExistingFiche.success) {
+        this.logger.error(resultGetExistingFiche.error);
         return {
           success: false,
           error: UpdateFicheErrorEnum.FICHE_NOT_FOUND,
         };
       }
-      const existingFicheAction = result.data;
+      const existingFicheAction = resultGetExistingFiche.data;
 
       /**
        * Updates fiche action properties
@@ -382,35 +389,53 @@ export default class UpdateFicheService {
           transaction
         );
       }
+
+      // Recharge la fiche mise à jour
+      const result = await this.ficheActionListService.getFicheById(
+        ficheId,
+        true,
+        user
+      );
+      if (!result.success) {
+        return { success: false, error: UpdateFicheErrorEnum.FICHE_NOT_FOUND };
+      }
+
+      return {
+        success: true,
+        data: {
+          updatedFiche: result.data,
+          previousFiche: existingFicheAction,
+        },
+      };
     };
 
     // Utilise la transaction fournie ou en crée une nouvelle
-    await (tx
+    const result = await (tx
       ? executeInTransaction(tx)
       : this.databaseService.db.transaction((newTx) =>
           executeInTransaction(newTx)
         ));
-
-    // Recharge la fiche mise à jour
-    const result = await this.ficheActionListService.getFicheById(
-      ficheId,
-      true,
-      user
-    );
     if (!result.success) {
-      return { success: false, error: UpdateFicheErrorEnum.FICHE_NOT_FOUND };
+      return { success: false, error: result.error };
     }
-    const ficheActionWithRelation = result.data;
+
+    // Ajoute les notifications pour les pilotes nouvellement associés à une sous-fiche
+    const { updatedFiche, previousFiche } = result.data;
+    await this.notificationsFicheService.upsertPiloteNotifications({
+      updatedFiche,
+      previousFiche,
+      user,
+    });
 
     await this.webhookService.sendWebhookNotification(
       ApplicationSousScopesEnum.FICHES,
       `${ficheId}`,
-      ficheActionWithRelation
+      updatedFiche
     );
 
     return {
       success: true,
-      data: ficheActionWithRelation,
+      data: updatedFiche,
     };
   }
 
