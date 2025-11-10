@@ -1,7 +1,7 @@
-import { cn } from '@/ui/utils/cn';
-import { ButtonHTMLProps, isLink } from '@/ui/utils/types';
 import Link from 'next/link';
 import { Ref, forwardRef } from 'react';
+import { cn } from '../../utils/cn';
+import { ButtonHTMLProps, isLink } from '../../utils/types';
 import ButtonContent from './ButtonContent';
 import { buttonSizeClassnames, buttonThemeClassnames } from './theme';
 import { ButtonContentProps, ButtonProps } from './types';

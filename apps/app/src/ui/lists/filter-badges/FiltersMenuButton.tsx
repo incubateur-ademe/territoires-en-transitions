@@ -1,5 +1,5 @@
 import { Badge } from '@/ui';
-import { ButtonMenu } from '@/ui/design-system/Button';
+import { DEPRECATED_ButtonMenu } from '@/ui/design-system/Button';
 import { ButtonSize } from '@/ui/design-system/Button/types';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { ReactNode, useState } from 'react';
@@ -17,7 +17,7 @@ export const FiltersMenuButton = ({
 
   return (
     <div className="relative">
-      <ButtonMenu
+      <DEPRECATED_ButtonMenu
         icon="equalizer-line"
         variant="outlined"
         text="Filtrer"
@@ -29,7 +29,7 @@ export const FiltersMenuButton = ({
         menuPlacement="bottom-end"
       >
         <div className="p-4 min-w-[400px]">{children}</div>
-      </ButtonMenu>
+      </DEPRECATED_ButtonMenu>
       <VisibleWhen condition={activeFiltersCount > 0}>
         <Badge
           className="absolute -top-2 -right-2 rounded-full border-2 border-white"

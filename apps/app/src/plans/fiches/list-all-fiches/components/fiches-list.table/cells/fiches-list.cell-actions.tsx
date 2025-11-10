@@ -7,7 +7,7 @@ import {
 } from '@/app/plans/fiches/share-fiche/fiche-share-info';
 import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
-import { ButtonMenu, cn, Icon } from '@/ui';
+import { cn, DEPRECATED_ButtonMenu, Icon } from '@/ui';
 
 type Props = {
   fiche: FicheWithRelationsAndCollectivite;
@@ -25,7 +25,7 @@ export const FichesListCellActions = ({ fiche }: Props) => {
 
   return (
     <>
-      <ButtonMenu
+      <DEPRECATED_ButtonMenu
         openState={{
           isOpen: isMenuOpen,
           setIsOpen: setIsMenuOpen,
@@ -75,7 +75,7 @@ export const FichesListCellActions = ({ fiche }: Props) => {
             </div>
           )}
         </div>
-      </ButtonMenu>
+      </DEPRECATED_ButtonMenu>
       <ModifierFicheModale
         initialFiche={fiche}
         isOpen={isEditOpen}
@@ -124,7 +124,7 @@ const MenuItem = ({
   onClick: () => void;
 }) => (
   <button
-    className="flex items-center gap-3 py-2 px-3 font-medium text-primary-9 text-sm text-left rounded hover:!bg-primary-1"
+    className="flex items-center gap-3 py-2 px-3 text-primary-9 text-sm text-left rounded hover:!bg-primary-1"
     onClick={onClick}
   >
     {icon && <Icon icon={icon} size="sm" className="-mt-0.5" />}
