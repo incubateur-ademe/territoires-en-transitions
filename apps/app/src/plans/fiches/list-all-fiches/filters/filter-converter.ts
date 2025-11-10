@@ -1,7 +1,4 @@
-import {
-  notesDeSuiviOptionValues,
-  typePeriodeEnumValues,
-} from '@/domain/plans';
+import { notes, typePeriodeEnumValues } from '@/domain/plans';
 import { mapValues } from 'es-toolkit/object';
 import {
   createParser,
@@ -122,7 +119,7 @@ export const searchParametersParser: Record<FilterKeys, Parser<any>> = {
   sharedWithCollectivites: parseAsBoolean,
   hasAtLeastBeginningOrEndDate: parseAsBoolean,
 
-  notesDeSuivi: parseAsStringEnum([...notesDeSuiviOptionValues]),
+  notesDeSuivi: parseAsStringEnum([...notes]),
   hasIndicateurLies: withOrWithoutArrayParserWithFlag(),
   hasMesuresLiees: withOrWithoutArrayParserWithFlag(),
   hasDateDeFinPrevisionnelle: withOrWithoutArrayParserWithFlag(),
@@ -146,7 +143,7 @@ export const searchParametersParser: Record<FilterKeys, Parser<any>> = {
   statuts: parseAsArrayOfWithFlag(parseAsString),
   priorites: parseAsArrayOfWithFlag(parseAsString),
   cibles: parseAsArrayOfWithFlag(parseAsString),
-  anneesNoteDeSuivi: parseAsArrayOfWithFlag(parseAsString),
+  anneesNote: parseAsArrayOfWithFlag(parseAsString),
   utilisateurPiloteIds: parseAsArrayOfWithFlag(parseAsString),
   utilisateurReferentIds: parseAsArrayOfWithFlag(parseAsString),
 

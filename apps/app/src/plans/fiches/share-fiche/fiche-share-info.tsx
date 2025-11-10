@@ -1,10 +1,9 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { FicheResume } from '@/domain/plans';
 import { Notification, Tooltip } from '@/ui';
 
 type FicheShareInfoProps = {
-  fiche: FicheShareProperties;
+  fiche: FicheResume;
 };
 
 export const SHARE_ICON = 'share-forward-fill';
@@ -17,7 +16,7 @@ export const getFicheActionShareIcon = (
 };
 
 export const getFicheActionShareText = (
-  fiche: FicheShareProperties,
+  fiche: FicheResume,
   collectiviteId: number
 ): string => {
   if (!fiche.sharedWithCollectivites?.length) {
@@ -41,7 +40,7 @@ export const FicheActionShareInfoText = ({
   fiche,
   collectiviteId,
 }: {
-  fiche: FicheShareProperties;
+  fiche: FicheResume;
   collectiviteId: number;
 }) => {
   if (!fiche.sharedWithCollectivites?.length) {

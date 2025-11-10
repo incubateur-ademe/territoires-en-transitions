@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const noteSuiviSchema = z.object({
+export const noteSchema = z.object({
   id: z.number(),
   createdAt: z.iso.datetime(),
   createdBy: z.string(),
@@ -10,4 +10,4 @@ export const noteSuiviSchema = z.object({
   note: z.string(),
 });
 
-export type FicheActionNote = z.infer<typeof noteSuiviSchema>;
+export type FicheActionNote = z.infer<typeof noteSchema>;
