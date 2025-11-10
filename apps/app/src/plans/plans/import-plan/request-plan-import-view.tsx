@@ -3,7 +3,13 @@ import { useRouter } from 'next/navigation';
 import { Fragment } from 'react';
 
 import { ExternalLink } from '@/app/ui/externalLink/ExternalLink';
-import { Button, ButtonMenu, Event, Icon, useEventTracker } from '@/ui';
+import {
+  Button,
+  DEPRECATED_ButtonMenu,
+  Event,
+  Icon,
+  useEventTracker,
+} from '@/ui';
 
 const DOWNLOAD_TEMPLATE_OPTIONS = [
   { value: 'xlsx', label: 'Format Excel (.xlsx)' },
@@ -122,7 +128,11 @@ export const RequestPlanImportView = () => {
 const DownloadMenu = () => {
   const trackEvent = useEventTracker();
   return (
-    <ButtonMenu icon="download-line" size="sm" text="Télécharger le modèle">
+    <DEPRECATED_ButtonMenu
+      icon="download-line"
+      size="sm"
+      text="Télécharger le modèle"
+    >
       <div className="flex flex-col">
         {DOWNLOAD_TEMPLATE_OPTIONS.map((option, index) => (
           <Fragment key={option.value}>
@@ -143,6 +153,6 @@ const DownloadMenu = () => {
           </Fragment>
         ))}
       </div>
-    </ButtonMenu>
+    </DEPRECATED_ButtonMenu>
   );
 };

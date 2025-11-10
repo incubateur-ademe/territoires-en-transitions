@@ -1,5 +1,5 @@
 import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
-import { ActionsMenu, MenuAction } from '@/ui';
+import { ButtonMenu, MenuAction } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 export type ChartDownloadSettings = {
   showTrigger: boolean;
@@ -51,7 +51,7 @@ const IndicateurCardMenu = ({
   ];
 
   return (
-    <ActionsMenu
+    <ButtonMenu
       openState={openState}
       actions={menuActions.filter((action) => action.isVisible)}
     />

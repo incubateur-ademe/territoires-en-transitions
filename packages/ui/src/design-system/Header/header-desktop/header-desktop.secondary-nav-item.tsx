@@ -1,13 +1,13 @@
 import { cn } from '@/ui/utils/cn';
 import { useState } from 'react';
-import { Button, ButtonMenu } from '../../Button';
+import { Button, DEPRECATED_ButtonMenu } from '../../Button';
 import { isNavDropdown, isNavLink, NavItem } from '../types';
 
 export const HeaderDesktopSecondaryNavItem = ({ item }: { item: NavItem }) => {
   const [isOpen, setIsOpen] = useState(false);
   if (isNavDropdown(item)) {
     return (
-      <ButtonMenu
+      <DEPRECATED_ButtonMenu
         text={item.children}
         icon={item.icon}
         iconPosition="left"
@@ -39,7 +39,7 @@ export const HeaderDesktopSecondaryNavItem = ({ item }: { item: NavItem }) => {
             />
           ))}
         </div>
-      </ButtonMenu>
+      </DEPRECATED_ButtonMenu>
     );
   }
   if (isNavLink(item)) {

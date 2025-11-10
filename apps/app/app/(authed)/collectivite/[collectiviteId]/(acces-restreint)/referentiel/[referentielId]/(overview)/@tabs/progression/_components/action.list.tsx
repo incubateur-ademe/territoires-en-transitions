@@ -6,7 +6,7 @@ import { ActionListFilters } from '@/app/referentiels/actions/use-list-actions';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import FilterBadges, { useFiltersToBadges } from '@/app/ui/lists/filter-badges';
 import { ActionTypeEnum } from '@/domain/referentiels';
-import { ButtonMenu, Checkbox, Select } from '@/ui';
+import { Checkbox, DEPRECATED_ButtonMenu, Select } from '@/ui';
 import Filters from './filters';
 import List from './list';
 
@@ -73,7 +73,7 @@ const ActionList = () => {
           />
 
           <div className="flex items-center gap-6 max-sm:w-full sm:ml-auto">
-            <ButtonMenu
+            <DEPRECATED_ButtonMenu
               openState={{
                 isOpen: isFilterOpen,
                 setIsOpen: setIsFilterOpen,
@@ -87,7 +87,7 @@ const ActionList = () => {
                 filters={filters}
                 setFilters={(filters) => onFilterChange(filters)}
               />
-            </ButtonMenu>
+            </DEPRECATED_ButtonMenu>
           </div>
         </div>
       </div>
