@@ -1,3 +1,4 @@
+import { NotificationsFicheService } from '@/backend/notifications/notifications-fiche.service';
 import AxeService from '@/backend/plans/fiches/axe.service';
 import { CreateFicheService } from '@/backend/plans/fiches/create-fiche/create-fiche.service';
 import { ExportPlanController } from '@/backend/plans/fiches/export/export-plan.controller';
@@ -53,6 +54,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     CreateFicheService,
     CreateFicheRouter,
     FichesRouter,
+    NotificationsFicheService,
   ],
   exports: [
     FicheActionPermissionsService,

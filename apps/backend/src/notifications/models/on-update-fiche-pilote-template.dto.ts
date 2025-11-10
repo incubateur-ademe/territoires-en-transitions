@@ -1,7 +1,7 @@
+import { NotificationTemplate } from './notification-template.dto';
+
 // données attendues par le template
-export type OnUpdateFichePiloteTemplate = {
-  sendTo: string;
-  subject: string;
+export interface OnUpdateFichePiloteTemplate extends NotificationTemplate {
   assignedTo: string;
   assignedBy: string;
   actionTitre: string | null;
@@ -11,4 +11,4 @@ export type OnUpdateFichePiloteTemplate = {
   description: string | null;
   actionUrl: string;
   isSousAction: boolean;
-};
+}
