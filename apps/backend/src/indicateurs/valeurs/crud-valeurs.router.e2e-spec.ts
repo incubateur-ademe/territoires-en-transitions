@@ -3,11 +3,13 @@ import {
   getCollectiviteIdBySiren,
   getIndicateurIdByIdentifiant,
 } from '@/backend/test';
+import { CollectiviteAccessLevelEnum } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
+import { addTestUser } from '@/backend/users/users/users.fixture';
 import { INestApplication } from '@nestjs/common';
 import { inferProcedureInput } from '@trpc/server';
 import { and, eq } from 'drizzle-orm';
 import { getTestApp } from '../../../test/app-utils';
-import { getAuthUser } from '../../../test/auth-utils';
+import { getAuthUser, getAuthUserFromDcp } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
@@ -371,5 +373,88 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
         seuil: 45,
       },
     ]);
+  });
+
+  test("Un utilisateur ayant le droit edition limité, ne peut insérer / modifier / supprimer une valeur que si il est pilote de l'indicateur", async () => {
+    const adminCaller = router.createCaller({ user: yoloDodoUser });
+    const adminValue = await adminCaller.indicateurs.valeurs.upsert({
+      collectiviteId,
+      indicateurId,
+      dateValeur: '2025-01-01',
+      resultat: 42,
+    });
+
+    const { user, cleanup } = await addTestUser(databaseService, {
+      collectiviteId: collectiviteId,
+      accessLevel: CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS,
+    });
+    onTestFinished(async () => {
+      await cleanup();
+    });
+
+    const limitedEditionUser = getAuthUserFromDcp(user);
+    const limitedEditionCaller = router.createCaller({
+      user: limitedEditionUser,
+    });
+
+    const input: InputUpsert = {
+      collectiviteId,
+      indicateurId,
+      dateValeur: '2050-01-01',
+      resultat: 43,
+      resultatCommentaire: `commentaire utilisateur ${limitedEditionUser.id}`,
+    };
+    await expect(
+      limitedEditionCaller.indicateurs.valeurs.upsert(input)
+    ).rejects.toThrowError(/Droits insuffisants/);
+
+    // We can't delete the value too
+    await expect(
+      limitedEditionCaller.indicateurs.valeurs.delete({
+        collectiviteId,
+        indicateurId,
+        id: adminValue.id,
+      })
+    ).rejects.toThrowError(/Droits insuffisants/);
+
+    const indicateurDefinitionResult =
+      await adminCaller.indicateurs.definitions.list({
+        collectiviteId,
+        filters: {
+          indicateurIds: [indicateurId],
+        },
+      });
+    const indicateur = indicateurDefinitionResult.data[0];
+    const pilotes = indicateur.pilotes || [];
+
+    // now set it as pilote
+    await adminCaller.indicateurs.definitions.update({
+      indicateurId,
+      collectiviteId,
+      indicateurFields: {
+        pilotes: [...pilotes, { userId: limitedEditionUser.id }],
+      },
+    });
+
+    const result = await limitedEditionCaller.indicateurs.valeurs.upsert(input);
+    expect(result?.id).toBeDefined();
+    expect(result?.resultat).toBe(43);
+    console.log(`Valeur id: ${result?.id}`);
+
+    // We can delete the value too
+    await limitedEditionCaller.indicateurs.valeurs.delete({
+      collectiviteId,
+      indicateurId,
+      id: result.id,
+    });
+
+    // Remove the user from pilote & delete the value to be able to delete the user
+    await adminCaller.indicateurs.definitions.update({
+      indicateurId,
+      collectiviteId,
+      indicateurFields: {
+        pilotes: pilotes.filter((p) => p.userId !== limitedEditionUser.id),
+      },
+    });
   });
 });

@@ -37,6 +37,8 @@ class UserFixture implements IFixtureData {
 
   private readonly ficheIds: number[] = [];
 
+  private extraCleanupBeforeUserCleanup: (() => Promise<void>) | null = null;
+
   constructor(
     public readonly data: Dcp & { password: string },
     private readonly mainCleanup: () => Promise<void>
@@ -146,7 +148,16 @@ class UserFixture implements IFixtureData {
     return trpcClient.plans.fiches.bulkEdit.mutate(bulkEditRequest);
   }
 
+  setExtraCleanupBeforeUserCleanup(
+    extraCleanupBeforeUserCleanup: () => Promise<void>
+  ) {
+    this.extraCleanupBeforeUserCleanup = extraCleanupBeforeUserCleanup;
+  }
+
   async cleanup() {
+    if (this.extraCleanupBeforeUserCleanup) {
+      await this.extraCleanupBeforeUserCleanup();
+    }
     if (this.trpcClient) {
       console.log('Cleanup fiches', this.ficheIds);
       const cleanupFichesPromises = this.ficheIds.map((ficheId) => {
