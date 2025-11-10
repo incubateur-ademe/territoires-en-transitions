@@ -16,6 +16,19 @@ export const getFicheActionShareIcon = (
   return fiche.collectiviteId === collectiviteId ? 'team-fill' : SHARE_ICON;
 };
 
+export const ficheSharedSingularAndPluralText = (
+  sharedWithCollectivites: NonNullable<
+    FicheShareProperties['sharedWithCollectivites']
+  >
+) =>
+  sharedWithCollectivites.length === 1
+    ? `la collectivité ${sharedWithCollectivites[0].nom}`
+    : `la collectivité ${sharedWithCollectivites[0].nom} et ${
+        sharedWithCollectivites?.length - 1 === 1
+          ? `1 autre`
+          : `${sharedWithCollectivites?.length - 1} autres`
+      }`;
+
 export const getFicheActionShareText = (
   fiche: FicheShareProperties,
   collectiviteId: number
@@ -25,19 +38,13 @@ export const getFicheActionShareText = (
   }
 
   return fiche.collectiviteId === collectiviteId
-    ? `Cette fiche est partagée en édition avec ${
-        fiche.sharedWithCollectivites?.length === 1
-          ? `la collectivité ${fiche.sharedWithCollectivites[0].nom}`
-          : `la collectivité ${fiche.sharedWithCollectivites[0].nom} et ${
-              fiche.sharedWithCollectivites?.length - 1 === 1
-                ? `1 autre`
-                : `${fiche.sharedWithCollectivites?.length - 1} autres`
-            }`
-      }`
+    ? `Cette fiche est partagée en édition avec ${ficheSharedSingularAndPluralText(
+        fiche.sharedWithCollectivites
+      )}`
     : `Cette fiche vous est partagée en édition par la collectivité ${fiche.collectiviteNom}`;
 };
 
-export const FicheActionShareInfoText = ({
+const FicheActionShareInfoText = ({
   fiche,
   collectiviteId,
 }: {
@@ -52,21 +59,9 @@ export const FicheActionShareInfoText = ({
     return (
       <span>
         Cette fiche est partagée en édition avec{' '}
-        <Tooltip
-          label={`Partagée avec les collectivités : ${fiche.sharedWithCollectivites
-            .map((c) => c.nom)
-            .join(', ')}`}
-        >
-          <span className="font-extrabold">
-            {fiche.sharedWithCollectivites?.length === 1
-              ? `la collectivité ${fiche.sharedWithCollectivites[0].nom}`
-              : `la collectivité ${fiche.sharedWithCollectivites[0].nom} et ${
-                  fiche.sharedWithCollectivites?.length - 1 === 1
-                    ? `1 autre`
-                    : `${fiche.sharedWithCollectivites?.length - 1} autres`
-                }`}
-          </span>
-        </Tooltip>
+        <span className="font-extrabold">
+          {ficheSharedSingularAndPluralText(fiche.sharedWithCollectivites)}
+        </span>
       </span>
     );
   }
@@ -83,17 +78,30 @@ const FicheShareInfo = ({ fiche }: FicheShareInfoProps) => {
   const { sharedWithCollectivites } = fiche;
   const collectiviteId = useCollectiviteId();
 
-  return sharedWithCollectivites && sharedWithCollectivites.length > 0 ? (
-    <div className="flex items-start gap-2">
-      <Notification
-        variant="success"
-        icon={getFicheActionShareIcon(fiche, collectiviteId)}
-        size="xs"
-        classname="h-6 w-8 justify-center"
-      />
-      <FicheActionShareInfoText fiche={fiche} collectiviteId={collectiviteId} />
-    </div>
-  ) : null;
+  if (!sharedWithCollectivites || sharedWithCollectivites.length === 0) {
+    return null;
+  }
+
+  return (
+    <Tooltip
+      label={`Partagée avec les collectivités : ${sharedWithCollectivites
+        .map((c) => c.nom)
+        .join(', ')}`}
+    >
+      <div className="flex items-start gap-2">
+        <Notification
+          variant="success"
+          icon={getFicheActionShareIcon(fiche, collectiviteId)}
+          size="xs"
+          classname="h-6 w-8 justify-center"
+        />
+        <FicheActionShareInfoText
+          fiche={fiche}
+          collectiviteId={collectiviteId}
+        />
+      </div>
+    </Tooltip>
+  );
 };
 
 export default FicheShareInfo;
