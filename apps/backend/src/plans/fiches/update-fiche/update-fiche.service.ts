@@ -1,3 +1,4 @@
+import { NotificationsFicheService } from '@/backend/notifications/notifications-fiche.service';
 import { FicheWithRelations } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ShareFicheService } from '@/backend/plans/fiches/share-fiches/share-fiche.service';
@@ -69,7 +70,8 @@ export default class UpdateFicheService {
     private readonly webhookService: WebhookService,
     private readonly ficheActionListService: ListFichesService,
     private readonly fichePermissionService: FicheActionPermissionsService,
-    private readonly shareFicheService: ShareFicheService
+    private readonly shareFicheService: ShareFicheService,
+    private readonly notificationsFicheService: NotificationsFicheService
   ) {}
 
   async updateFiche({
@@ -372,27 +374,42 @@ export default class UpdateFicheService {
           transaction
         );
       }
+
+      const updatedFiche = await this.ficheActionListService.getFicheById(
+        ficheId,
+        true,
+        user
+      );
+
+      return {
+        updatedFiche,
+        previousFiche: existingFicheAction,
+      };
     };
 
     // Utilise la transaction fournie ou en crée une nouvelle
-    await (tx
+    const { updatedFiche, previousFiche } = await (tx
       ? executeInTransaction(tx)
       : this.databaseService.db.transaction((newTx) =>
           executeInTransaction(newTx)
         ));
 
-    const ficheActionWithRelation =
-      await this.ficheActionListService.getFicheById(ficheId, true, user);
+    // Ajoute les notifications pour les pilotes nouvellement associés à une sous-fiche
+    await this.notificationsFicheService.upsertPiloteNotifications({
+      updatedFiche,
+      previousFiche,
+      user,
+    });
 
     await this.webhookService.sendWebhookNotification(
       ApplicationSousScopesEnum.FICHES,
       `${ficheId}`,
-      ficheActionWithRelation
+      updatedFiche
     );
 
     return {
       success: true,
-      data: ficheActionWithRelation,
+      data: updatedFiche,
     };
   }
 
