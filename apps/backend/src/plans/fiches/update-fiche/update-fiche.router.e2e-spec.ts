@@ -2,11 +2,14 @@ import { libreTagTable } from '@/backend/collectivites/tags/libre-tag.table';
 import { FichesRouter } from '@/backend/plans/fiches/fiches.router';
 import {
   getAuthUser,
+  getAuthUserFromDcp,
   getTestApp,
   getTestDatabase,
   YOLO_DODO,
 } from '@/backend/test';
+import { CollectiviteAccessLevelEnum } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
+import { addTestUser } from '@/backend/users/users/users.fixture';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { eq } from 'drizzle-orm';
 import { describe, expect } from 'vitest';
@@ -667,6 +670,58 @@ describe('UpdateFicheService', () => {
       expect(fiche.titre).toBe(
         'Titre mis à jour par une utilisatrice autorisée'
       );
+    });
+
+    test('User with limited edition rights on collectivite can update fiche only if he is pilote', async () => {
+      const { user, cleanup } = await addTestUser(db, {
+        collectiviteId: collectiviteId,
+        accessLevel: CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS,
+      });
+
+      const adminCaller = router.createCaller({ user: yoloDodo });
+
+      onTestFinished(async () => {
+        await cleanup();
+      });
+
+      const limitedEditionUser = getAuthUserFromDcp(user);
+      const limitedEditionCaller = router.createCaller({
+        user: limitedEditionUser,
+      });
+
+      // Attempt to update should fail
+      await expect(
+        limitedEditionCaller.update({
+          ficheId: ficheId,
+          ficheFields: { titre: 'Tentative de mise à jour sans droits' },
+        })
+      ).rejects.toThrow(
+        `Droits insuffisants, l'utilisateur ${user.userId} n'a pas l'autorisation plans.fiches.update sur la ressource Collectivité ${collectiviteId}`
+      );
+
+      // Udpate to add it as pilote
+      await adminCaller.update({
+        ficheId: ficheId,
+        ficheFields: { pilotes: [{ tagId: 1, userId: user.userId }] },
+      });
+
+      // Update should now succeed
+      await limitedEditionCaller.update({
+        ficheId: ficheId,
+        ficheFields: { titre: 'Mise à jour avec droits pilote' },
+      });
+
+      const fiche = await limitedEditionCaller.get({
+        id: ficheId,
+      });
+
+      expect(fiche.titre).toBe('Mise à jour avec droits pilote');
+
+      // Update to be able to delete the user
+      await adminCaller.update({
+        ficheId: ficheId,
+        ficheFields: { pilotes: [] },
+      });
     });
   });
 

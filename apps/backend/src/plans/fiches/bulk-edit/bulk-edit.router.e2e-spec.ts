@@ -1,13 +1,16 @@
 import { libreTagTable } from '@/backend/collectivites/tags/libre-tag.table';
 import {
   getAuthUser,
+  getAuthUserFromDcp,
   getTestApp,
   getTestDatabase,
   getTestRouter,
   YOLO_DODO,
   YULU_DUDU,
 } from '@/backend/test';
+import { CollectiviteAccessLevelEnum } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
+import { addTestUser } from '@/backend/users/users/users.fixture';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { inferProcedureInput } from '@trpc/server';
@@ -381,6 +384,32 @@ describe('BulkEditRouter', () => {
 
     await expect(() =>
       callerYuluDudu.plans.fiches.bulkEdit(input)
+    ).rejects.toThrowError(/droits insuffisants/i);
+  });
+
+  test('authenticated, with limited edition access', async () => {
+    const caller = router.createCaller({ user: yoloDodo });
+    const ficheIds = await generateFicheIds(caller);
+    const { user, cleanup } = await addTestUser(db, {
+      collectiviteId: COLLECTIVITE_ID,
+      accessLevel: CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS,
+    });
+    onTestFinished(async () => {
+      await cleanup();
+    });
+    const limitedEditionUser = getAuthUserFromDcp(user);
+    const limitedEditionCaller = router.createCaller({
+      user: limitedEditionUser,
+    });
+
+    const input: Input = {
+      collectiviteId: COLLECTIVITE_ID,
+      ficheIds,
+      statut: statutsEnumSchema.enum['En retard'],
+    };
+
+    await expect(() =>
+      limitedEditionCaller.plans.fiches.bulkEdit(input)
     ).rejects.toThrowError(/droits insuffisants/i);
   });
 

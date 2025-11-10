@@ -4,17 +4,15 @@ import { testWithUsers as test } from '../users.fixture';
 
 test.describe('Role edition fiches indicateurs', () => {
   test.beforeEach(async ({ page, users }) => {
-    const { user, collectivite } = await users.addCollectiviteAndUserWithLogin(
-      page.context(),
-      {
+    const { user: adminUser, collectivite } =
+      await users.addCollectiviteAndUserWithLogin(page.context(), {
         user: {
-          accessLevel: 'edition_fiches_indicateurs',
+          accessLevel: 'admin',
         },
-      }
-    );
+      });
 
-    console.log(`Create fiches`);
-    const createdFicheIds = await user.createFiches([
+    console.log(`Create fiches with admin user`);
+    const createdFicheIds = await adminUser.createFiches([
       {
         titre: 'Fiche test',
         collectiviteId: collectivite.data.id,
@@ -27,9 +25,15 @@ test.describe('Role edition fiches indicateurs', () => {
       },
     ]);
 
+    const limitedEditionUser = await users.addUser({
+      accessLevel: 'edition_fiches_indicateurs',
+      cguAcceptees: true,
+      collectiviteId: collectivite.data.id,
+    });
+
     console.log(
       `Add pilotes ${
-        user.data.userId
+        limitedEditionUser.data.userId
       } to fiches with ids ${createdFicheIds.join(',')} for collectivite ${
         collectivite.data.id
       }`
@@ -38,10 +42,24 @@ test.describe('Role edition fiches indicateurs', () => {
       collectiviteId: collectivite.data.id,
       ficheIds: createdFicheIds,
       pilotes: {
-        add: [{ userId: user.data.userId }],
+        add: [{ userId: limitedEditionUser.data.userId }],
       },
     };
-    await user.bulkEditFiches(bulkEditRequest);
+    await adminUser.bulkEditFiches(bulkEditRequest);
+
+    limitedEditionUser.setExtraCleanupBeforeUserCleanup(async () => {
+      // Remove the pilote from the fiches to be able to delete the user
+      await adminUser.bulkEditFiches({
+        collectiviteId: collectivite.data.id,
+        ficheIds: createdFicheIds,
+        pilotes: {
+          remove: [{ userId: limitedEditionUser.data.userId }],
+        },
+      });
+    });
+
+    // Now that the fiches are created, we can login as limited edition user
+    await limitedEditionUser.loginAndSetupTrpcClient(page.context());
 
     page.goto('/');
 
