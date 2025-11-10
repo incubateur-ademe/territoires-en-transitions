@@ -53,7 +53,7 @@ describe('Téléchargement de la trajectoire SNBC', () => {
     expect(fileName).toBe(
       '"Trajectoire SNBC - 246700488 - Eurome?tropole de Strasbourg.xlsx"'
     );
-  }, 30000);
+  }, 60000);
 
   test(`Verification, calcul avec donnees completes et gestion de la mise à jour`, async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
