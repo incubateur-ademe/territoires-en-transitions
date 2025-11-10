@@ -1,6 +1,5 @@
+import { MethodResult } from '@/backend/utils/result.type';
+
 export type CreateFicheError = string;
 
-export type Result<T, E = CreateFicheError> =
-  | { success: true; data: T }
-  | { success: false; error: E };
-
+export type Result<T, E = CreateFicheError> = MethodResult<T, E>;
