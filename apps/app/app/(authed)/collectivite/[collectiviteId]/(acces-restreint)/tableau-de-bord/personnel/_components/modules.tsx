@@ -98,6 +98,7 @@ const Modules = () => {
           <FilteredFichesByModule
             key={module.defaultKey}
             module={module as ModuleFicheActionsSelect}
+            bottomLinkViewType="mes-fiches"
             isEditionEnabled={canEditModules}
             onFilterChange={() => tracker(properties.event)}
             ModalComponent={properties.ModalComponent}

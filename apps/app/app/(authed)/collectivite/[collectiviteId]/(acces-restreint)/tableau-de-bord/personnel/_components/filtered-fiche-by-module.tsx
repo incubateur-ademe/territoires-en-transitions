@@ -9,11 +9,13 @@ import { QueryKey } from '@tanstack/react-query';
 import React from 'react';
 import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';
 import { getModuleEditActions } from './get-module-edit-actions';
+import { FicheActionViewType } from '@/app/plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
 
 type Props = {
   module: ModuleFicheActionsSelect;
   isEditionEnabled: boolean;
   onFilterChange: () => void;
+  bottomLinkViewType?: FicheActionViewType;
   ModalComponent: React.ComponentType<{
     module: ModuleFicheActionsSelect;
     openState: { isOpen: boolean; setIsOpen: (open: boolean) => void };
@@ -56,6 +58,7 @@ const buildFilterSearchParameters = (module: ModuleFicheActionsSelect) => {
 
 export const FilteredFichesByModule = ({
   module,
+  bottomLinkViewType,
   onFilterChange,
   isEditionEnabled,
   ModalComponent,
@@ -77,6 +80,7 @@ export const FilteredFichesByModule = ({
         {...getModuleEditActions(isEditionEnabled, openFilters)}
         footerLink={`${makeCollectiviteToutesLesFichesUrl({
           collectiviteId,
+          ficheViewType: bottomLinkViewType,
         })}?${filterSearchParameters.toString()}`}
       />
       <ModalComponent
