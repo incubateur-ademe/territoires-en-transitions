@@ -1,14 +1,14 @@
 import { Meta, StoryObj } from '@storybook/nextjs';
 
-import { ActionsMenu } from './ActionsMenu';
+import { ButtonMenu } from './ActionsMenu';
 
-const meta: Meta<typeof ActionsMenu> = {
-  component: ActionsMenu,
+const meta: Meta<typeof ButtonMenu> = {
+  component: ButtonMenu,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof ActionsMenu>;
+type Story = StoryObj<typeof ButtonMenu>;
 
 export const Default: Story = {
   args: {

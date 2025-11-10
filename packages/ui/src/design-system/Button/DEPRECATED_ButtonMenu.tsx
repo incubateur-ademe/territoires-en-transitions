@@ -14,17 +14,17 @@ import {
   UseHoverProps,
   useInteractions,
 } from '@floating-ui/react';
+import classNames from 'classnames';
 import { cloneElement, useState } from 'react';
 import { flushSync } from 'react-dom';
 
-import { Icon } from '@/ui';
-import { cn } from '@/ui/utils/cn';
-import classNames from 'classnames';
+import { cn } from '../../utils/cn';
 import { OpenState } from '../../utils/types';
+import { Icon } from '../Icon';
 import { Button } from './Button';
 import { ButtonProps } from './types';
 
-export type ButtonMenuProps = {
+export type DEPRECATED_ButtonMenuProps = {
   /** Le contenu du menu */
   children: React.ReactNode;
   /** Placement du menu pour l'élément floating-ui */
@@ -46,7 +46,7 @@ export type ButtonMenuProps = {
  *
  * Ne pas oublier de donner une largeur fixe au menu s'il contient des élements qui peuvent être resizer comme un sélecteur avec une valeur.
  */
-export const ButtonMenu = ({
+export const DEPRECATED_ButtonMenu = ({
   menuPlacement = 'bottom-end',
   openState,
   children,
@@ -55,7 +55,7 @@ export const ButtonMenu = ({
   menuContainerClassName,
   hoverConfig = { enabled: false },
   ...props
-}: ButtonMenuProps) => {
+}: DEPRECATED_ButtonMenuProps) => {
   const isControlled = !!openState;
   const [open, setOpen] = useState(false);
 

@@ -6,7 +6,7 @@ import RestreindreFichesModal from './update-fiche-visibility.modal';
 import { makeCollectivitePlansActionsListUrl } from '@/app/app/paths';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Plan } from '@/domain/plans';
-import { Button, ButtonMenu, Icon, Tooltip } from '@/ui';
+import { Button, DEPRECATED_ButtonMenu, Icon, Tooltip } from '@/ui';
 import { useState } from 'react';
 import { useExportPlanAction } from '../data/use-export-plan';
 import { UpdatePlanModal } from './update-plan.modal';
@@ -61,7 +61,7 @@ export const Actions = ({ axeHasFiches, plan }: Props) => {
             <SpinnerLoader />
           </div>
         ) : (
-          <ButtonMenu
+          <DEPRECATED_ButtonMenu
             dataTest="export-pa"
             disabled={isPending}
             title="Exporter"
@@ -85,7 +85,7 @@ export const Actions = ({ axeHasFiches, plan }: Props) => {
                 </>
               ))}
             </div>
-          </ButtonMenu>
+          </DEPRECATED_ButtonMenu>
         )
       ) : null}
       <DeletePlanOrAxeModal

@@ -1,9 +1,9 @@
-import {
-  ButtonMenu,
-  ButtonMenuProps,
-} from '@/ui/design-system/Button/ButtonMenu';
-import { Icon } from '@/ui/design-system/Icon';
 import { useState } from 'react';
+import { Icon } from '../Icon';
+import {
+  DEPRECATED_ButtonMenu,
+  DEPRECATED_ButtonMenuProps,
+} from './DEPRECATED_ButtonMenu';
 
 export type MenuAction = {
   icon?: string;
@@ -11,8 +11,8 @@ export type MenuAction = {
   onClick: () => void | boolean; // return true to keep the menu opened
 };
 
-type ActionsMenuProps = Pick<
-  ButtonMenuProps,
+type ButtonMenuProps = Pick<
+  DEPRECATED_ButtonMenuProps,
   | 'icon'
   | 'size'
   | 'variant'
@@ -24,14 +24,14 @@ type ActionsMenuProps = Pick<
   actions: MenuAction[];
 };
 
-export const ActionsMenu = ({
+export const ButtonMenu = ({
   actions,
   openState,
   icon = 'more-line',
   size = 'xs',
   variant = 'grey',
   ...props
-}: ActionsMenuProps) => {
+}: ButtonMenuProps) => {
   const isControlled = !!openState;
   const [open, setOpen] = useState(false);
   const isOpen = isControlled ? openState.isOpen : open;
@@ -45,7 +45,7 @@ export const ActionsMenu = ({
   };
 
   return (
-    <ButtonMenu
+    <DEPRECATED_ButtonMenu
       icon={icon}
       size={size}
       variant={variant}
@@ -79,6 +79,6 @@ export const ActionsMenu = ({
           </button>
         ))}
       </div>
-    </ButtonMenu>
+    </DEPRECATED_ButtonMenu>
   );
 };
