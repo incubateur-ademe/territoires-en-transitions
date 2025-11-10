@@ -2,8 +2,8 @@ import { useState } from 'react';
 
 import ModifierFicheModale from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/ModifierFicheModale';
 import {
+  ficheSharedSingularAndPluralText,
   getFicheActionShareIcon,
-  getFicheActionShareText,
 } from '@/app/plans/fiches/share-fiche/fiche-share-info';
 import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
@@ -31,11 +31,11 @@ export const FichesListCellActions = ({ fiche }: Props) => {
           setIsOpen: setIsMenuOpen,
         }}
         icon="more-2-line"
-        variant="grey"
+        variant="white"
         size="xs"
         menuPlacement="left"
       >
-        <div className="flex flex-col p-2 border border-grey-2 rounded-md bg-white shadow]">
+        <div className="max-w-56 flex flex-col p-2 border border-grey-2 rounded-md bg-white shadow]">
           <MenuItem
             icon="edit-2-line"
             onClick={() => {
@@ -56,11 +56,13 @@ export const FichesListCellActions = ({ fiche }: Props) => {
           </MenuItem>
           {(isSharedWithCollectivites || fiche.restreint) && (
             <div className="flex flex-col gap-1 m-2 mb-0 pt-2 text-xs border-t border-grey-3">
-              {isSharedWithCollectivites && (
+              {fiche.sharedWithCollectivites && (
                 <AdditionalMenuInfo
                   icon={getFicheActionShareIcon(fiche, fiche.collectiviteId)}
                   iconClassName="text-success"
-                  label={getFicheActionShareText(fiche, fiche.collectiviteId)}
+                  label={`Partagée avec ${ficheSharedSingularAndPluralText(
+                    fiche.sharedWithCollectivites
+                  )}`}
                 />
               )}
               {fiche.restreint && (
