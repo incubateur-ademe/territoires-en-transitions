@@ -3,7 +3,6 @@ import { useUser } from '@/api/users/user-context/user-provider';
 import { useBaseToast } from '@/app/utils/toast/use-base-toast';
 import {
   CollectiviteAccess,
-  CollectiviteAccessLevel,
   UserWithCollectiviteAccesses,
 } from '@/domain/users';
 import { Modal } from '@/ui';
@@ -67,7 +66,7 @@ const InvitationModal = ({
 
   return (
     <>
-      {openState.isOpen && (
+      {openState.isOpen && niveauAcces && (
         <Modal
           openState={openState}
           title="Inviter un membre"
@@ -75,14 +74,14 @@ const InvitationModal = ({
           render={({ close }) => (
             <InviteMemberForm
               collectiviteId={collectiviteId}
-              niveauAcces={niveauAcces as 'edition' | 'admin'}
+              niveauAcces={niveauAcces}
               defaultTagIds={tagIds}
               onCancel={close}
               onSubmit={({ email, niveau, tagIds }) => {
                 createInvitation({
                   collectiviteId,
                   email: email.toLowerCase(),
-                  accessLevel: niveau as CollectiviteAccessLevel,
+                  accessLevel: niveau,
                   tagIds,
                 });
                 close();

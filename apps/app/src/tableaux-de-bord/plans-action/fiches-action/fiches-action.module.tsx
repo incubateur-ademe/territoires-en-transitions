@@ -17,6 +17,8 @@ type Props = {
   footerLink?: string;
 };
 
+const MAX_DISPLAYED_FICHE_ACTIONS = 4;
+
 /** Module pour afficher des indicateurs en fonctions de filtres spécifiques */
 export const FichesActionModule = ({
   module,
@@ -41,7 +43,7 @@ export const FichesActionModule = ({
       },
       queryOptions: {
         sort: getSort(),
-        limit: 4,
+        limit: MAX_DISPLAYED_FICHE_ACTIONS,
         page: 1,
       },
     }
@@ -57,15 +59,17 @@ export const FichesActionModule = ({
       isEmpty={count === 0}
       emptyButtons={emptyButtons}
       footerEndButtons={
-        count > 4
+        count > MAX_DISPLAYED_FICHE_ACTIONS
           ? [
               {
                 variant: 'grey',
                 size: 'sm',
                 children: `Afficher ${
-                  count === 5
+                  count === MAX_DISPLAYED_FICHE_ACTIONS + 1
                     ? '1 autre action'
-                    : `les ${count - 4} autres actions`
+                    : `les ${
+                        count - MAX_DISPLAYED_FICHE_ACTIONS
+                      } autres actions`
                 }`,
                 href: footerLink,
               },
