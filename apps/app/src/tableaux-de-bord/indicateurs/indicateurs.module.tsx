@@ -31,7 +31,7 @@ export const IndicateursModule = ({
 
   const collectiviteId = useCollectiviteId();
 
-  const { data: { data: indicateurs } = {}, isLoading } =
+  const { data: { data: indicateurs, count: totalCount = 0 } = {}, isLoading } =
     useListIndicateurDefinitions(
       {
         filters: module.options.filtre,
@@ -44,8 +44,6 @@ export const IndicateursModule = ({
       { disableAutoRefresh: false }
     );
 
-  const totalCount = indicateurs?.length || 0;
-
   const getBottomLinks = () => {
     const links: ButtonProps[] = [
       {
@@ -55,6 +53,7 @@ export const IndicateursModule = ({
         href: makeCollectiviteIndicateursCollectiviteUrl({ collectiviteId }),
       },
     ];
+
     if (totalCount > 3) {
       links.push({
         size: 'sm',
@@ -71,6 +70,7 @@ export const IndicateursModule = ({
         })}`,
       });
     }
+
     return links;
   };
 
@@ -86,7 +86,7 @@ export const IndicateursModule = ({
       footerEndButtons={getBottomLinks()}
     >
       <div className="grid md:grid-cols-2 2xl:grid-cols-3 gap-4">
-        {indicateurs?.slice(0, 3).map((definition) => (
+        {indicateurs?.map((definition) => (
           <IndicateurCard
             key={definition.id}
             definition={definition}
