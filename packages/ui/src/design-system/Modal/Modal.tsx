@@ -12,8 +12,9 @@ import {
   useRole,
 } from '@floating-ui/react';
 import classNames from 'classnames';
-import { RefObject, cloneElement, useState } from 'react';
+import { RefObject, cloneElement } from 'react';
 
+import { useOpenState } from '@/ui/hooks/use-open-state';
 import { preset } from '@/ui/tailwind-preset';
 import { OpenState } from '@/ui/utils/types';
 import { Button } from '../Button';
@@ -99,19 +100,13 @@ export const Modal = ({
   dataTest = 'Modal',
   footerIsAlwaysVisible = false,
 }: ModalProps) => {
-  const isControlled = !!openState;
-  const [open, setOpen] = useState(false);
-
-  const isOpen = isControlled ? openState.isOpen : open;
+  const { isOpen, toggleIsOpen } = useOpenState(openState);
 
   const handleOpenChange = () => {
-    if (isControlled) {
-      openState.setIsOpen(!openState.isOpen);
-      openState.isOpen && onClose && onClose();
-    } else {
-      setOpen(!open);
-      open && onClose && onClose();
+    if (isOpen && onClose) {
+      onClose();
     }
+    toggleIsOpen();
   };
 
   const nodeId = useFloatingNodeId();
