@@ -52,8 +52,15 @@ const IndicateurCardMenu = ({
 
   return (
     <ButtonMenu
-      openState={openState}
-      actions={menuActions.filter((action) => action.isVisible)}
+      icon="more-line"
+      variant="grey"
+      size="xs"
+      menu={{
+        sections: [
+          { actions: menuActions.filter((action) => action.isVisible) },
+        ],
+        openState,
+      }}
     />
   );
 };

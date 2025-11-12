@@ -128,7 +128,12 @@ const Module = ({
         </h6>
         {/** Menu */}
         {menuActions && menuActions.length > 0 && (
-          <ButtonMenu actions={menuActions} />
+          <ButtonMenu
+            icon="more-line"
+            variant="grey"
+            size="xs"
+            menu={{ sections: [menuActions] }}
+          />
         )}
       </div>
       {/** Filtres du module */}
