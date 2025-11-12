@@ -1,5 +1,5 @@
-import { ProgrammeTeteLogo } from '@/ui/assets/programme-tete.logo';
 import { AdemeLogo } from '../../assets/ademe.logo';
+import { ProgrammeTeTeLogo } from '../../assets/programme-tete.logo';
 import { RepubliqueFrancaiseLogo } from '../../assets/republique-francaise.logo';
 import { TerritoiresEnTransitionsLogo } from '../../assets/territoires-en-transitions.logo';
 import HeaderDesktop from './header-desktop/header-desktop';
@@ -25,10 +25,10 @@ export const Header = ({
   pathname,
   rootUrl = '/',
   logos = [
-    <RepubliqueFrancaiseLogo className="h-full" />,
-    <AdemeLogo className="h-full" />,
-    <ProgrammeTeteLogo className="h-full" />,
-    <TerritoiresEnTransitionsLogo className="h-full" />,
+    <RepubliqueFrancaiseLogo />,
+    <AdemeLogo />,
+    <ProgrammeTeTeLogo />,
+    <TerritoiresEnTransitionsLogo />,
   ],
   mainNav,
   secondaryNav,
