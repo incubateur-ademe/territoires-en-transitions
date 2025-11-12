@@ -1,3 +1,4 @@
+import { useOpenState } from '@/ui/hooks/use-open-state';
 import { preset } from '@/ui/tailwind-preset';
 import { OpenState } from '@/ui/utils/types';
 import {
@@ -58,19 +59,7 @@ export const DropdownFloater = ({
   dropdownZindex,
   'data-test': dataTest,
 }: DropdownFloaterProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const isControlled = !!openState;
-
-  const open = isControlled ? openState.isOpen : isOpen;
-
-  const handleOpenChange = () => {
-    if (isControlled) {
-      openState.setIsOpen(!openState.isOpen);
-    } else {
-      setIsOpen(!isOpen);
-    }
-  };
+  const { isOpen, toggleIsOpen } = useOpenState(openState);
 
   const [maxHeight, setMaxHeight] = useState(0);
   const [minHeight, setMinHeight] = useState(0);
@@ -83,8 +72,8 @@ export const DropdownFloater = ({
 
   const { x, y, strategy, refs, context } = useFloating({
     nodeId,
-    open: disabled ? false : open,
-    onOpenChange: disabled ? () => null : handleOpenChange,
+    open: disabled ? false : isOpen,
+    onOpenChange: disabled ? () => null : toggleIsOpen,
     placement: placement ?? 'bottom',
     whileElementsMounted: autoUpdate,
     middleware: [
@@ -126,12 +115,12 @@ export const DropdownFloater = ({
         children,
         getReferenceProps({
           ref: refs.setReference,
-          isOpen: open,
+          isOpen,
           ...children.props,
         })
       )}
       <FloatingNode id={nodeId}>
-        {open && (
+        {isOpen && (
           <FloaterContent parentId={parentId} parentNodeId={parentNodeId}>
             <FloatingFocusManager
               context={context}
@@ -164,7 +153,7 @@ export const DropdownFloater = ({
                   style={{ maxHeight: maxHeight - 16, minHeight }}
                 >
                   {render({
-                    close: () => handleOpenChange(),
+                    close: () => toggleIsOpen(),
                   })}
                 </div>
               </div>
