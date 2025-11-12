@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const backendConfigurationSchema = z.object({
+  APP_URL: z.string().min(1).describe('Main front app URL'),
   SUPABASE_DATABASE_URL: z
     .string()
     .min(1)
