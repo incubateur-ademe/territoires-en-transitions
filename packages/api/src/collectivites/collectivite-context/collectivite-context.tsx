@@ -57,6 +57,12 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
       );
       if (collectiviteBasedOnStorage) {
         setCollectivite(collectiviteBasedOnStorage);
+      } else if (defaultCollectivite) {
+        // Related to historical reasons (stored collectiviteId before this fix), not supposed to happen
+        setStoredCollectivite({
+          collectiviteId: defaultCollectivite.collectiviteId,
+        });
+        setCollectivite(defaultCollectivite);
       }
     } else if (defaultCollectivite) {
       setCollectivite(defaultCollectivite);
