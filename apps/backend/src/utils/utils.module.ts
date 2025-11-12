@@ -4,6 +4,7 @@ import { Global, Module } from '@nestjs/common';
 import { WEBHOOK_NOTIFICATIONS_QUEUE_NAME } from './bullmq/queue-names.constants';
 import { ContextStoreService } from './context/context.service';
 import { CsvService } from './csv/csv.service';
+import GetUrlService from './get-url.service';
 import MattermostNotificationService from './mattermost-notification.service';
 import { VersionController } from './version/version.controller';
 import { WebhookService } from './webhooks/webhook.service';
@@ -22,6 +23,7 @@ import { WebhookService } from './webhooks/webhook.service';
     MattermostNotificationService,
     WebhookService,
     VersionService,
+    GetUrlService,
   ],
   exports: [
     ContextStoreService,
@@ -29,6 +31,7 @@ import { WebhookService } from './webhooks/webhook.service';
     MattermostNotificationService,
     WebhookService,
     VersionService,
+    GetUrlService,
   ],
   controllers: [VersionController],
 })
