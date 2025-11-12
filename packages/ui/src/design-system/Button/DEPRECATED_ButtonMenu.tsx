@@ -18,6 +18,7 @@ import classNames from 'classnames';
 import { cloneElement, useState } from 'react';
 import { flushSync } from 'react-dom';
 
+import { useOpenState } from '@/ui/hooks/use-open-state';
 import { cn } from '../../utils/cn';
 import { OpenState } from '../../utils/types';
 import { Icon } from '../Icon';
@@ -56,18 +57,7 @@ export const DEPRECATED_ButtonMenu = ({
   hoverConfig = { enabled: false },
   ...props
 }: DEPRECATED_ButtonMenuProps) => {
-  const isControlled = !!openState;
-  const [open, setOpen] = useState(false);
-
-  const isOpen = isControlled ? openState.isOpen : open;
-
-  const handleOpenChange = () => {
-    if (isControlled) {
-      openState.setIsOpen(!openState.isOpen);
-    } else {
-      setOpen(!open);
-    }
-  };
+  const { isOpen, toggleIsOpen } = useOpenState(openState);
 
   const [maxHeight, setMaxHeight] = useState(0);
 
@@ -76,7 +66,7 @@ export const DEPRECATED_ButtonMenu = ({
   const { refs, context, x, y, strategy } = useFloating({
     nodeId,
     open: isOpen,
-    onOpenChange: handleOpenChange,
+    onOpenChange: toggleIsOpen,
     placement: menuPlacement,
     whileElementsMounted: autoUpdate,
     middleware: [
