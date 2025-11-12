@@ -55,7 +55,14 @@ const IndicateurCardMenu = ({
     return menuActions;
   }, [isFavoriCollectivite, chartDownloadSettings.showTrigger]);
 
-  return <ButtonMenu openState={openState} actions={actions} />;
+  return (
+    <ButtonMenu
+      icon="more-line"
+      variant="grey"
+      size="xs"
+      menu={{ sections: [actions], openState }}
+    />
+  );
 };
 
 export default IndicateurCardMenu;
