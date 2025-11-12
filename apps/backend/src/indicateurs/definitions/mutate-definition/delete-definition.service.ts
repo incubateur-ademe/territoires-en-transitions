@@ -1,6 +1,5 @@
 import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
 import { DeleteIndicateurDefinitionInput } from '@/backend/indicateurs/definitions/mutate-definition/mutate-definition.input';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
@@ -27,7 +26,7 @@ export class DeleteDefinitionService {
     // Vérification des permissions
     await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['INDICATEURS.DELETE'],
+      'indicateurs.definitions.delete',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

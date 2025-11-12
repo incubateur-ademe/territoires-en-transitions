@@ -5,7 +5,11 @@ import {
   getQueryClient,
   trpcInServerComponent,
 } from '@/api/utils/trpc/server-client';
-import { CollectiviteAccess } from '@/domain/users';
+import {
+  CollectiviteAccess,
+  permissionsByRole,
+  UserRole,
+} from '@/domain/users';
 import { cache } from 'react';
 
 export const getCollectivite = cache(
@@ -41,7 +45,7 @@ const fetchCollectiviteWhenVisiteMode = cache(
       collectiviteId: collectivite.id,
       accesRestreint: collectivite.accesRestreint ?? false,
       niveauAcces: null,
-      permissions: [],
+      permissions: permissionsByRole[UserRole.VERIFIE],
       isRoleAuditeur: false,
       isReadOnly: true,
       isSimplifiedView: false,

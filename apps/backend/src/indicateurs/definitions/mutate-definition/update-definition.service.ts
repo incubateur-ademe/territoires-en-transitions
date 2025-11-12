@@ -41,11 +41,11 @@ export class UpdateDefinitionService {
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
-    if (permissions.has('indicateurs.update')) {
+    if (permissions.has('indicateurs.definitions.update')) {
       return true;
     }
 
-    if (permissions.has('indicateurs.update_piloted_by_me')) {
+    if (permissions.has('indicateurs.definitions.update_piloted_by_me')) {
       if (indicateurDefinition.pilotes?.some((p) => p.userId === user.id)) {
         return true;
       }
@@ -54,7 +54,7 @@ export class UpdateDefinitionService {
     if (!doNotThrow) {
       this.permissionService.throwForbiddenException(
         user,
-        'indicateurs.update',
+        'indicateurs.definitions.update',
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -164,7 +164,6 @@ export class UpdateDefinitionService {
           indicateurId,
           collectiviteId,
           ficheIds,
-          user,
         });
       }
 
@@ -173,7 +172,6 @@ export class UpdateDefinitionService {
           indicateurId,
           collectiviteId,
           pilotes,
-          user,
         });
       }
 
@@ -182,7 +180,6 @@ export class UpdateDefinitionService {
           indicateurId,
           collectiviteId,
           serviceIds: services.map((s) => s.id),
-          user,
         });
       }
 
@@ -190,9 +187,7 @@ export class UpdateDefinitionService {
         await this.handleDefinitionThematiquesService.upsertIndicateurThematiques(
           {
             indicateurId,
-            collectiviteId,
             thematiqueIds: thematiques.map((t) => t.id),
-            user,
           }
         );
       }

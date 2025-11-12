@@ -1,5 +1,4 @@
 import { collectiviteIdInputSchemaPartial } from '@/backend/collectivites/collectivite-id.input';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
@@ -50,7 +49,7 @@ export class IndicateurValeursRouter {
         // Vérifie les droits
         await this.permissionService.isAllowed(
           ctx.user,
-          PermissionOperationEnum['INDICATEURS.READ_PUBLIC'],
+          'indicateurs.valeurs.read_public',
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );

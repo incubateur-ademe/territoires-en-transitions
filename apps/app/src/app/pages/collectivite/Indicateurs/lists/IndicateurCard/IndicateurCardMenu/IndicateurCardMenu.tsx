@@ -1,8 +1,6 @@
 import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
 import { ActionsMenu, MenuAction } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import { useMemo } from 'react';
-
 export type ChartDownloadSettings = {
   showTrigger: boolean;
   openModal: () => void;
@@ -11,6 +9,7 @@ export type ChartDownloadSettings = {
 type Props = {
   indicateurId: number;
   openState: OpenState;
+  isEditable?: boolean;
   chartDownloadSettings: ChartDownloadSettings;
   isFavoriCollectivite: boolean;
 };
@@ -18,6 +17,7 @@ type Props = {
 const IndicateurCardMenu = ({
   openState,
   isFavoriCollectivite,
+  isEditable,
   indicateurId,
   chartDownloadSettings,
 }: Props) => {
@@ -29,33 +29,33 @@ const IndicateurCardMenu = ({
     openState.setIsOpen(false);
   };
 
-  const actions = useMemo<MenuAction[]>(() => {
-    const menuActions: MenuAction[] = [];
-    if (isFavoriCollectivite) {
-      menuActions.push({
-        label: 'Retirer des favoris',
-        onClick: () => toggleEstFavori(false),
-      });
-    } else {
-      menuActions.push({
-        label: 'Ajouter aux favoris',
-        onClick: () => toggleEstFavori(true),
-      });
-    }
+  const menuActions: (MenuAction & { isVisible?: boolean })[] = [
+    {
+      label: 'Retirer des favoris',
+      onClick: () => toggleEstFavori(false),
+      isVisible: isEditable && isFavoriCollectivite,
+    },
+    {
+      label: 'Ajouter aux favoris',
+      onClick: () => toggleEstFavori(true),
+      isVisible: isEditable && !isFavoriCollectivite,
+    },
+    {
+      label: 'Télécharger le graphique (.png)',
+      onClick: () => {
+        chartDownloadSettings.openModal();
+        openState.setIsOpen(false);
+      },
+      isVisible: chartDownloadSettings.showTrigger,
+    },
+  ];
 
-    if (chartDownloadSettings.showTrigger) {
-      menuActions.push({
-        label: 'Télécharger le graphique (.png)',
-        onClick: () => {
-          chartDownloadSettings.openModal();
-          openState.setIsOpen(false);
-        },
-      });
-    }
-    return menuActions;
-  }, [isFavoriCollectivite, chartDownloadSettings.showTrigger]);
-
-  return <ActionsMenu openState={openState} actions={actions} />;
+  return (
+    <ActionsMenu
+      openState={openState}
+      actions={menuActions.filter((action) => action.isVisible)}
+    />
+  );
 };
 
 export default IndicateurCardMenu;

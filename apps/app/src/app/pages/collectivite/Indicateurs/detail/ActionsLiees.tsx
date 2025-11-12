@@ -3,10 +3,11 @@ import { EmptyCard } from '@/ui';
 import ActionsLieesListe from '../../PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
 
 type Props = {
+  isReadonly: boolean;
   actionsIds: string[];
 };
 
-const ActionsLiees = ({ actionsIds }: Props) => {
+const ActionsLiees = ({ actionsIds, isReadonly }: Props) => {
   const isEmpty = actionsIds.length === 0;
 
   if (isEmpty) {
@@ -26,7 +27,7 @@ const ActionsLiees = ({ actionsIds }: Props) => {
           Mesures des référentiels liées
         </h6>
       </div>
-      <ActionsLieesListe actionIds={actionsIds} />
+      <ActionsLieesListe isReadonly={isReadonly} actionIds={actionsIds} />
     </div>
   );
 };

@@ -37,43 +37,34 @@ const IndicateurToolbar = ({
   return (
     <>
       <div className={classNames('flex gap-4 lg:mt-2', className)}>
-        {/** TODO: visible when pilote */}
-        <VisibleWhen
-          condition={hasPermission(permissions, 'indicateurs.update')}
+        <Button
+          disabled={isPending}
+          title="Modifier l'indicateur"
+          aria-label="Modifier l'indicateur"
+          size="xs"
+          variant="grey"
+          onClick={() => setIsEditModalOpen(true)}
+        >
+          Modifier
+        </Button>
+
+        <Tooltip
+          label={
+            estFavori
+              ? 'Retirer des favoris de ma collectivité'
+              : 'Ajouter aux favoris de ma collectivité'
+          }
         >
           <Button
-            disabled={isPending}
-            title="Modifier l'indicateur"
-            aria-label="Modifier l'indicateur"
+            icon={estFavori ? 'star-fill' : 'star-line'}
             size="xs"
             variant="grey"
-            onClick={() => setIsEditModalOpen(true)}
-          >
-            Modifier
-          </Button>
-        </VisibleWhen>
-
-        <VisibleWhen
-          condition={hasPermission(permissions, 'indicateurs.update')}
-        >
-          <Tooltip
-            label={
-              estFavori
-                ? 'Retirer des favoris de ma collectivité'
-                : 'Ajouter aux favoris de ma collectivité'
-            }
-          >
-            <Button
-              icon={estFavori ? 'star-fill' : 'star-line'}
-              size="xs"
-              variant="grey"
-              className={classNames({
-                'text-warning-1 hover:text-warning-1': estFavori,
-              })}
-              onClick={() => updateIndicateur({ estFavori: !estFavori })}
-            />
-          </Tooltip>
-        </VisibleWhen>
+            className={classNames({
+              'text-warning-1 hover:text-warning-1': estFavori,
+            })}
+            onClick={() => updateIndicateur({ estFavori: !estFavori })}
+          />
+        </Tooltip>
 
         <Button
           loading={isPending}
@@ -87,7 +78,8 @@ const IndicateurToolbar = ({
 
         <VisibleWhen
           condition={
-            isPerso && hasPermission(permissions, 'indicateurs.delete')
+            isPerso &&
+            hasPermission(permissions, 'indicateurs.definitions.delete')
           }
         >
           <DeleteModal {...{ definition, isPending }} />
