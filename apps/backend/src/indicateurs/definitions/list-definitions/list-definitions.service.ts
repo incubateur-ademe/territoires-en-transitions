@@ -13,7 +13,6 @@ import { ficheActionIndicateurTable } from '@/backend/plans/fiches/shared/models
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { normalizeIdentifiantReferentiel } from '@/backend/referentiels/referentiels.utils';
 import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { sqlAuthorOrNull } from '@/backend/users/models/author.utils';
@@ -572,7 +571,7 @@ export class ListDefinitionsService {
     if (user) {
       await this.permissionService.isAllowed(
         user,
-        PermissionOperationEnum['INDICATEURS.READ_PUBLIC'],
+        'indicateurs.definitions.read_public',
         collectiviteId ? ResourceType.COLLECTIVITE : ResourceType.PLATEFORME,
         collectiviteId ?? null
       );
@@ -991,7 +990,7 @@ export class ListDefinitionsService {
     const { collectiviteId, indicateurId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperationEnum['INDICATEURS.READ_PUBLIC'],
+      'indicateurs.definitions.read_public',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -1050,7 +1049,7 @@ export class ListDefinitionsService {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperationEnum['INDICATEURS.READ_PUBLIC'],
+      'indicateurs.definitions.read_public',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -1078,7 +1077,7 @@ export class ListDefinitionsService {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperationEnum['INDICATEURS.READ_PUBLIC'],
+      'indicateurs.definitions.read_public',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -1103,7 +1102,7 @@ export class ListDefinitionsService {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperationEnum['INDICATEURS.READ_PUBLIC'],
+      'indicateurs.definitions.read_public',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

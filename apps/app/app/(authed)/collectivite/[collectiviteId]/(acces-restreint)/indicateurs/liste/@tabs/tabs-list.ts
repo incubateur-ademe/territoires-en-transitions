@@ -15,19 +15,19 @@ export const TabsListParams: TabParams[] = [
     listId: 'cles',
     label: INDICATEUR_LABELS.keys.plural,
     isVisibleWithPermissions: (permissions) =>
-      hasPermission(permissions, 'indicateurs.read'),
+      hasPermission(permissions, 'indicateurs.definitions.read_public'),
   },
   {
     listId: 'perso',
     label: INDICATEUR_LABELS.personalized.plural,
     isVisibleWithPermissions: (permissions) =>
-      hasPermission(permissions, 'indicateurs.read'),
+      hasPermission(permissions, 'indicateurs.definitions.read_public'),
   },
   {
     listId: 'collectivite',
     label: INDICATEUR_LABELS.favorites.plural,
     isVisibleWithPermissions: (permissions) =>
-      hasPermission(permissions, 'indicateurs.read'),
+      hasPermission(permissions, 'indicateurs.definitions.read_public'),
     icon: 'star-fill',
     iconClassName: 'text-secondary-1',
     tooltip: INDICATEUR_LABELS.favorites.tooltip,
@@ -36,14 +36,13 @@ export const TabsListParams: TabParams[] = [
     listId: 'mes-indicateurs',
     label: INDICATEUR_LABELS.myIndicateurs.plural,
     isVisibleWithPermissions: (permissions) =>
-      hasPermission(permissions, 'indicateurs.read') ||
-      hasPermission(permissions, 'indicateurs.read_piloted_by_me'),
+      hasPermission(permissions, 'indicateurs.definitions.read'),
     tooltip: INDICATEUR_LABELS.myIndicateurs.tooltip,
   },
   {
     listId: 'tous',
     label: INDICATEUR_LABELS.all.plural,
     isVisibleWithPermissions: (permissions) =>
-      hasPermission(permissions, 'indicateurs.read'),
+      hasPermission(permissions, 'indicateurs.definitions.read_public'),
   },
 ];

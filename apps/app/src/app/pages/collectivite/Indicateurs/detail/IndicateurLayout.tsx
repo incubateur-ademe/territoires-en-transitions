@@ -1,4 +1,6 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
+import { useUser } from '@/api/users/user-context/user-provider';
+import { canUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/indicateur-definition-authorization.utils';
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
 import Markdown from '@/app/ui/Markdown';
@@ -25,8 +27,15 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
   const { mutate: updateIndicateur } = useUpdateIndicateurDefinition(
     definition.id
   );
+  const { id } = useUser();
 
-  const { collectiviteId, isReadOnly, permissions } = useCurrentCollectivite();
+  const { collectiviteId, permissions, niveauAcces } = useCurrentCollectivite();
+
+  const isReadOnly = !canUpdateIndicateurDefinition(
+    permissions,
+    definition,
+    id
+  );
 
   const composeSansAgregation = !!enfants && enfants.length > 0 && sansValeur;
   const composeAvecAgregation = !!enfants && enfants.length > 0 && !sansValeur;
@@ -55,6 +64,14 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
 
   const enfantsIds = enfants?.map(({ id }) => id) || [];
 
+  const displayFichesLieesVisiteOrPermission =
+    hasPermission(permissions, 'plans.fiches.read') ||
+    (!niveauAcces && hasPermission(permissions, 'plans.fiches.read_public'));
+  const displayMesuresLieesVisiteOrPermissionForReferenceIndicateur =
+    !definition.estPerso &&
+    (hasPermission(permissions, 'referentiels.read') ||
+      (!niveauAcces && hasPermission(permissions, 'referentiels.read_public')));
+
   return (
     <>
       <IndicateurHeader
@@ -78,7 +95,8 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
             {/* Données */}
             <Tab label="Données">
               <DonneesIndicateur
-                {...{ definition, isReadOnly }}
+                definition={definition}
+                isReadonly={isReadOnly}
                 updateUnite={handleUniteUpdate}
                 updateCommentaire={handleCommentaireUpdate}
               />
@@ -98,10 +116,10 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
               </Tab>
             ) : undefined}
 
-            {!definition.estPerso &&
-            hasPermission(permissions, 'referentiels.read') ? (
+            {displayMesuresLieesVisiteOrPermissionForReferenceIndicateur ? (
               <Tab label="Mesures des référentiels">
                 <ActionsLiees
+                  isReadonly={isReadOnly}
                   actionsIds={
                     definition.mesures?.map((mesure) => mesure.id) ?? []
                   }
@@ -109,7 +127,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
               </Tab>
             ) : undefined}
 
-            {hasPermission(permissions, 'plans.fiches.read') ? (
+            {displayFichesLieesVisiteOrPermission ? (
               <Tab label="Fiches action">
                 <FichesLiees
                   definition={definition}

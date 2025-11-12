@@ -290,14 +290,14 @@ export default class CrudValeursService {
         );
         hasPermissionLecture = await this.permissionService.isAllowed(
           user,
-          PermissionOperationEnum['INDICATEURS.READ'],
+          'indicateurs.valeurs.read',
           ResourceType.COLLECTIVITE,
           collectiviteId,
           true
         );
         const hasPermissionVisite = await this.permissionService.isAllowed(
           user,
-          PermissionOperationEnum['INDICATEURS.READ_PUBLIC'],
+          'indicateurs.valeurs.read_public',
           ResourceType.COLLECTIVITE,
           collectiviteId,
           true
@@ -310,8 +310,8 @@ export default class CrudValeursService {
               user.id
             } n'a pas l'autorisation ${
               accesRestreintRequis
-                ? PermissionOperationEnum['INDICATEURS.READ']
-                : PermissionOperationEnum['INDICATEURS.READ_PUBLIC']
+                ? 'indicateurs.valeurs.read'
+                : 'indicateurs.valeurs.read_public'
             } sur la ressource Collectivité ${collectiviteId}`
           );
         }
@@ -463,6 +463,7 @@ export default class CrudValeursService {
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
+
     if (permissions.has('indicateurs.valeurs.mutate')) {
       return true;
     }
@@ -595,12 +596,11 @@ export default class CrudValeursService {
 
   async deleteValeurIndicateur(data: DeleteValeurIndicateur, user: AuthUser) {
     const { collectiviteId, indicateurId, id } = data;
-    await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['INDICATEURS.VALEURS.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId
-    );
+
+    const indicateurDefinition =
+      await this.indicateurDefinitionService.getDefinition(indicateurId);
+
+    await this.canMutateValeur(user, collectiviteId, indicateurDefinition);
 
     if (user.role === AuthRole.AUTHENTICATED && user.id) {
       await this.databaseService.db

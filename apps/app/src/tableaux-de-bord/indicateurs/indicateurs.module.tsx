@@ -87,7 +87,7 @@ export const IndicateursModule = ({
       footerEndButtons={getBottomLinks()}
     >
       <div className="grid md:grid-cols-2 2xl:grid-cols-3 gap-4">
-        {indicateurs?.slice(0, MAX_DISPLAYED_INDICATEURS).map((definition) => (
+        {indicateurs?.map((definition) => (
           <IndicateurCard
             key={definition.id}
             definition={definition}
@@ -99,7 +99,6 @@ export const IndicateursModule = ({
               indicateurId: definition.id,
               identifiantReferentiel: definition.identifiantReferentiel,
             })}
-            card={{ external: true }}
           />
         ))}
       </div>

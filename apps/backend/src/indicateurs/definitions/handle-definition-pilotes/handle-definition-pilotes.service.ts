@@ -1,6 +1,5 @@
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indicateur-pilote.table';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
@@ -30,7 +29,7 @@ export class HandleDefinitionPilotesService {
   }) {
     await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['INDICATEURS.READ'],
+      'indicateurs.definitions.read',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -78,20 +77,11 @@ export class HandleDefinitionPilotesService {
     indicateurId,
     collectiviteId,
     pilotes,
-    user,
   }: {
     indicateurId: number;
     collectiviteId: number;
     pilotes: UpsertIndicateurDefinitionPilotesInput[];
-    user: AuthUser;
   }) {
-    await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['INDICATEURS.UPDATE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId
-    );
-
     this.logger.log(
       `Mise à jour des pilotes de l'indicateur dont l'id est ${indicateurId}`
     );

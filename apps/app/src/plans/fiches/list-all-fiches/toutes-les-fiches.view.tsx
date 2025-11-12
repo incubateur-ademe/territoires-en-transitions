@@ -91,17 +91,26 @@ const ToutesLesFichesActionContent = () => {
     isVisibleWithPermissions: boolean;
   }[] = [
     {
-      isVisibleWithPermissions: hasPermission(permissions, 'plans.fiches.read'),
+      isVisibleWithPermissions: hasPermission(
+        permissions,
+        'plans.fiches.read_public'
+      ),
       type: 'all',
       label: getLabelAndCount(viewTitleByType.all, totalCount),
     },
     {
-      isVisibleWithPermissions: hasPermission(permissions, 'plans.fiches.read'),
+      isVisibleWithPermissions: hasPermission(
+        permissions,
+        'plans.fiches.read_public'
+      ),
       type: 'classifiees',
       label: getLabelAndCount(viewTitleByType.classifiees, fichesClasseesCount),
     },
     {
-      isVisibleWithPermissions: hasPermission(permissions, 'plans.fiches.read'),
+      isVisibleWithPermissions: hasPermission(
+        permissions,
+        'plans.fiches.read_public'
+      ),
       type: 'non-classifiees',
       label: getLabelAndCount(
         viewTitleByType['non-classifiees'],
@@ -109,9 +118,7 @@ const ToutesLesFichesActionContent = () => {
       ),
     },
     {
-      isVisibleWithPermissions:
-        hasPermission(permissions, 'plans.fiches.read') ||
-        hasPermission(permissions, 'plans.fiches.read_piloted_by_me'),
+      isVisibleWithPermissions: hasPermission(permissions, 'plans.fiches.read'),
       type: 'mes-fiches',
       label: getLabelAndCount(viewTitleByType['mes-fiches'], undefined),
     },

@@ -62,7 +62,6 @@ export const ToutesLesFichesFiltersForm = ({
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
   const shareFicheEnabled = useShareFicheEnabled();
-  console.log('readonlyFilters', readonlyFilters);
 
   const debutPeriodeRef = useRef<HTMLInputElement>(null);
   const finPeriodeRef = useRef<HTMLInputElement>(null);

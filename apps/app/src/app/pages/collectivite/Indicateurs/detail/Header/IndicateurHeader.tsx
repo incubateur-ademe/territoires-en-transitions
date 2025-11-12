@@ -43,11 +43,7 @@ const IndicateurHeader = ({
             <IndicateurTitle
               title={titre}
               unite={unite}
-              isReadonly={
-                isReadonly ||
-                !isPerso ||
-                !hasPermission(permissions, 'indicateurs.update')
-              }
+              isReadonly={isReadonly || !isPerso}
               composeSansAgregation={composeSansAgregation}
               updateTitle={(value) => onUpdate?.(value)}
               isSticky={isSticky}
@@ -63,7 +59,10 @@ const IndicateurHeader = ({
           </div>
 
           <VisibleWhen
-            condition={hasPermission(permissions, 'indicateurs.read')}
+            condition={hasPermission(
+              permissions,
+              'indicateurs.definitions.read_public'
+            )}
           >
             <CheminIndicateur
               collectiviteId={collectiviteId}

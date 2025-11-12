@@ -81,8 +81,7 @@ const Modules = () => {
         m.type === 'fiche_action.list' &&
         m.defaultKey === 'actions-dont-je-suis-pilote',
       isVisibleWithPermissions: (permissions) =>
-        hasPermission(permissions, 'plans.fiches.read') ||
-        hasPermission(permissions, 'plans.fiches.read_piloted_by_me'),
+        hasPermission(permissions, 'plans.fiches.read'),
       render: (module) => {
         if (noPlanAndCanCreatePlan) {
           // We already display the placeholder to create a plan, so we don't need to display the list of fiche actions module.
@@ -111,8 +110,7 @@ const Modules = () => {
         m.type === 'indicateur.list' &&
         m.defaultKey === 'indicateurs-dont-je-suis-pilote',
       isVisibleWithPermissions: (permissions) =>
-        hasPermission(permissions, 'indicateurs.read') ||
-        hasPermission(permissions, 'indicateurs.read_piloted_by_me'),
+        hasPermission(permissions, 'indicateurs.definitions.read'),
       render: (module) => (
         <IndicateursDontJeSuisLePiloteModule
           key={module.defaultKey}

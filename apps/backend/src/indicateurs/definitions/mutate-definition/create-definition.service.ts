@@ -2,7 +2,6 @@ import { indicateurCollectiviteTable } from '@/backend/indicateurs/definitions/i
 import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
 import { indicateurThematiqueTable } from '@/backend/indicateurs/shared/models/indicateur-thematique.table';
 import { ficheActionIndicateurTable } from '@/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
@@ -35,7 +34,7 @@ export default class CreateDefinitionService {
   ) {
     await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['INDICATEURS.CREATE'],
+      'indicateurs.definitions.create',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
