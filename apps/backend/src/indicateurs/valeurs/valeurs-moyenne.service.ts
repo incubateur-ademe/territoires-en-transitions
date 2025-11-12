@@ -17,7 +17,6 @@ import { DatabaseService } from '../../utils/database/database.service';
 
 import { indicateurSourceMetadonneeTable } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '@/backend/indicateurs/shared/models/indicateur-source.table';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { indicateurValeurTable } from '../valeurs/indicateur-valeur.table';
@@ -65,8 +64,8 @@ export default class ValeursMoyenneService {
     await this.permissionService.isAllowed(
       tokenInfo,
       collectivitePrivate
-        ? PermissionOperationEnum['INDICATEURS.READ']
-        : PermissionOperationEnum['INDICATEURS.READ_PUBLIC'],
+        ? 'indicateurs.definitions.read'
+        : 'indicateurs.definitions.read_public',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

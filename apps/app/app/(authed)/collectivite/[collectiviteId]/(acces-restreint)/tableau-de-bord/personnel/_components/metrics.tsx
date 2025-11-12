@@ -76,8 +76,7 @@ const Metrics = () => {
     },
     {
       isVisibleWithPermissions: (perms) =>
-        hasPermission(perms, 'plans.fiches.read') ||
-        hasPermission(perms, 'plans.fiches.read_piloted_by_me'),
+        hasPermission(perms, 'plans.fiches.read'),
       getCount: () => metrics?.plans.piloteFichesCount || 0,
       getTitle: (count) =>
         `Action${count > 1 ? 's' : ''} pilotée${count > 1 ? 's' : ''}`,
@@ -94,8 +93,7 @@ const Metrics = () => {
     },
     {
       isVisibleWithPermissions: (perms) =>
-        hasPermission(perms, 'indicateurs.read') ||
-        hasPermission(perms, 'indicateurs.read_piloted_by_me'),
+        hasPermission(perms, 'indicateurs.definitions.read'),
       getCount: () => metrics?.indicateurs.piloteCount || 0,
       getTitle: (count) =>
         `Indicateur${count > 1 ? 's' : ''} piloté${count > 1 ? 's' : ''}`,

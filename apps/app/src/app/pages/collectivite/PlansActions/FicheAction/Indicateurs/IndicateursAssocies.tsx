@@ -1,17 +1,27 @@
-import { useCollectiviteId } from '@/api/collectivites';
+import { useCurrentCollectivite } from '@/api/collectivites';
+import { useUser } from '@/api/users/user-context/user-provider';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import { IndicateursAssociesEmpty } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/IndicateursAssociesEmpty';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
+import { canUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/indicateur-definition-authorization.utils';
 import {
   IndicateurDefinitionListItem,
   useListIndicateurDefinitions,
 } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Button, Divider, Event, SideMenu, useEventTracker } from '@/ui';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import {
+  Button,
+  Divider,
+  Event,
+  SideMenu,
+  useEventTracker,
+  VisibleWhen,
+} from '@/ui';
 import { useState } from 'react';
 import { SharedFicheLinkedResourcesAlert } from '../../../../../../plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
 import ModaleCreerIndicateur from './ModaleCreerIndicateur';
@@ -27,7 +37,9 @@ const IndicateursAssocies = ({
   fiche,
 }: IndicateursAssociesProps) => {
   const { mutate: updateFiche } = useUpdateFiche();
-  const currentCollectiviteId = useCollectiviteId();
+  const { collectiviteId: currentCollectiviteId, permissions } =
+    useCurrentCollectivite();
+  const { id: userId } = useUser();
 
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -64,6 +76,11 @@ const IndicateursAssocies = ({
     });
   };
 
+  const canCreateIndicateur = hasPermission(
+    permissions,
+    'indicateurs.definitions.create'
+  );
+
   return (
     <>
       <div>
@@ -78,18 +95,20 @@ const IndicateursAssocies = ({
               </span>
               {!isReadonly && (
                 <div className="flex justify-center items-center gap-4">
-                  <Button
-                    size="xs"
-                    variant="outlined"
-                    icon="add-line"
-                    onClick={() => {
-                      tracker(Event.indicateurs.createIndicateurPerso);
-                      setIsModalOpen(true);
-                      setIsPanelOpen(false);
-                    }}
-                  >
-                    Créer un indicateur
-                  </Button>
+                  <VisibleWhen condition={canCreateIndicateur}>
+                    <Button
+                      size="xs"
+                      variant="outlined"
+                      icon="add-line"
+                      onClick={() => {
+                        tracker(Event.indicateurs.createIndicateurPerso);
+                        setIsModalOpen(true);
+                        setIsPanelOpen(false);
+                      }}
+                    >
+                      Créer un indicateur
+                    </Button>
+                  </VisibleWhen>
                   <Button
                     size="xs"
                     icon="link"
@@ -117,6 +136,7 @@ const IndicateursAssocies = ({
         ) : selectedIndicateurs?.length === 0 ? (
           <IndicateursAssociesEmpty
             isReadonly={isReadonly}
+            canCreateIndicateur={canCreateIndicateur}
             onCreateIndicateur={() => {
               tracker(Event.indicateurs.createIndicateurPerso);
               setIsModalOpen(true);
@@ -134,8 +154,11 @@ const IndicateursAssocies = ({
                 readonly={isReadonly}
                 definition={indicateur}
                 externalCollectiviteId={fiche.collectiviteId}
-                isEditable
-                card={{ external: true }}
+                isEditable={canUpdateIndicateurDefinition(
+                  permissions,
+                  indicateur,
+                  userId
+                )}
                 href={makeCollectiviteIndicateursUrl({
                   collectiviteId: fiche.collectiviteId,
                   indicateurView: getIndicateurGroup(

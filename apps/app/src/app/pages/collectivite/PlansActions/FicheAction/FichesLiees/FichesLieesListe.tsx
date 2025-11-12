@@ -1,7 +1,7 @@
-import { CollectiviteAccess } from '@/domain/users';
 import FicheActionCardSkeleton from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
 import { FicheResume } from '@/domain/plans';
+import { CollectiviteAccess } from '@/domain/users';
 import classNames from 'classnames';
 import FicheActionCard from '../Carte/FicheActionCard';
 
@@ -36,7 +36,6 @@ const FichesLieesListe = ({
           : fiches.map((fiche) => (
               <FicheActionCard
                 key={fiche.id}
-                openInNewTab
                 ficheAction={fiche}
                 link={getFichePageUrlForCollectivite({
                   collectiviteId: collectivite.collectiviteId,

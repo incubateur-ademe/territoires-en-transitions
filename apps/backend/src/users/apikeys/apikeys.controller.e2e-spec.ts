@@ -125,8 +125,10 @@ describe('Oauth controller test', () => {
     const result = await caller.users.apikeys.create({
       userId: yoloDodoUser.id,
       permissions: [
-        PermissionOperationEnum['INDICATEURS.READ'],
-        PermissionOperationEnum['INDICATEURS.READ_PUBLIC'],
+        PermissionOperationEnum['INDICATEURS.DEFINITIONS.READ'],
+        PermissionOperationEnum['INDICATEURS.DEFINITIONS.READ_PUBLIC'],
+        PermissionOperationEnum['INDICATEURS.VALEURS.READ'],
+        PermissionOperationEnum['INDICATEURS.VALEURS.READ_PUBLIC'],
       ],
     });
 

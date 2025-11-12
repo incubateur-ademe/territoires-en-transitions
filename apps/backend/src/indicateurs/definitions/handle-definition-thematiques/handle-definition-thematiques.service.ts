@@ -8,7 +8,6 @@ import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, asc, eq, notInArray } from 'drizzle-orm';
-import { PermissionOperationEnum } from '../../../users/authorizations/permission-operation.enum';
 import { ResourceType } from '../../../users/authorizations/resource-type.enum';
 
 @Injectable()
@@ -31,7 +30,7 @@ export class HandleDefinitionThematiquesService {
   }): Promise<Thematique[]> {
     await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['INDICATEURS.READ'],
+      'indicateurs.definitions.read',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -55,22 +54,11 @@ export class HandleDefinitionThematiquesService {
 
   async upsertIndicateurThematiques({
     indicateurId,
-    collectiviteId,
     thematiqueIds,
-    user,
   }: {
     indicateurId: number;
-    collectiviteId: number;
     thematiqueIds: number[];
-    user: AuthUser;
   }) {
-    await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['INDICATEURS.UPDATE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId
-    );
-
     this.logger.log(
       `Mise à jour des thematiques de l'indicateur dont l'id est ${indicateurId}`
     );

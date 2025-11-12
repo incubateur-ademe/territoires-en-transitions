@@ -5,6 +5,7 @@ import {
   makeCollectiviteTousLesIndicateursUrl,
 } from '@/app/app/paths';
 import PictoDataViz from '@/app/ui/pictogrammes/PictoDataViz';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { ButtonProps, EmptyCard, Event, useEventTracker } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -60,7 +61,7 @@ export const IndicateursListEmpty = ({
 /** Affiche un message particulier en fonction de la liste concernée */
 const IndicateursListEmptyCustom = ({ listId }: { listId: EmptyListId }) => {
   const tracker = useEventTracker();
-  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
+  const { collectiviteId, isReadOnly, permissions } = useCurrentCollectivite();
 
   const router = useRouter();
 
@@ -80,7 +81,11 @@ const IndicateursListEmptyCustom = ({ listId }: { listId: EmptyListId }) => {
     },
   ];
 
-  if (!isReadOnly && listId === 'perso') {
+  if (
+    !isReadOnly &&
+    hasPermission(permissions, 'indicateurs.definitions.create') &&
+    listId === 'perso'
+  ) {
     actions[0].variant = 'outlined';
     actions.push({
       children: 'Créer un indicateur personnalisé',

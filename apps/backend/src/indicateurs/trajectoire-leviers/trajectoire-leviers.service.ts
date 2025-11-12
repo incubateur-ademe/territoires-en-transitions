@@ -17,7 +17,6 @@ import {
 import TrajectoiresDataService from '@/backend/indicateurs/trajectoires/trajectoires-data.service';
 import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
 import { GetIndicateursValeursResponseType } from '@/backend/indicateurs/valeurs/get-indicateur-valeurs.response';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
@@ -278,7 +277,7 @@ export class TrajectoireLeviersService {
 
     await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['INDICATEURS.READ_PUBLIC'],
+      'indicateurs.valeurs.read_public',
       ResourceType.COLLECTIVITE,
       collectivite.id
     );

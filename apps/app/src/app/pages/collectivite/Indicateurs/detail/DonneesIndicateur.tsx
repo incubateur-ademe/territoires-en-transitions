@@ -29,7 +29,6 @@ const DonneesIndicateur = ({
   updateCommentaire,
 }: Props) => {
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
-
   const { commentaire, unite } = definition;
 
   // charge les valeurs à afficher dans le graphe
@@ -98,6 +97,7 @@ const DonneesIndicateur = ({
         <IndicateurValuesTabs
           definition={definition}
           chartInfo={chartInfo}
+          isReadonly={isReadonly}
           openModalState={{
             isOpen: isTableModalOpen,
             setIsOpen: setIsTableModalOpen,
