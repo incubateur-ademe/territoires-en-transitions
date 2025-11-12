@@ -51,7 +51,7 @@ runs:
         echo "NEXT_PUBLIC_GIT_COMMIT_TIMESTAMP=${{ steps.setup.outputs.git_commit_timestamp }}" >> $file
         echo "NEXT_PUBLIC_APPLICATION_VERSION=${{ steps.setup.outputs.application_version }}" >> $file
         echo "NEXT_PUBLIC_ENV_NAME=${{ inputs.environment }}" >> $file
-        echo "NEXT_PUBLIC_APP_URL=${{ fromJSON(inputs.json_vars).APP_URL }}" >> $file
+        echo "=${{ fromJSON(inputs.json_vars).APP_URL }}" >> $file
         echo "NEXT_PUBLIC_AUTH_URL=${{ fromJSON(inputs.json_vars).AUTH_URL }}" >> $file
         echo "NEXT_PUBLIC_PANIER_URL=${{ fromJSON(inputs.json_vars).PANIER_URL }}" >> $file
         echo "NEXT_PUBLIC_AXEPTIO_ID=${{ fromJSON(inputs.json_vars).AXEPTIO_ID }}" >> $file
@@ -85,6 +85,7 @@ runs:
         echo "BREVO_API_KEY=${{ fromJSON(inputs.json_secrets).BREVO_API_KEY }}" >> $file
         echo "QUEUE_REDIS_HOST=${{ fromJSON(inputs.json_vars).REDIS_HOST }}" >> $file
         echo "SUPABASE_JWT_SECRET=${{ fromJSON(inputs.json_secrets).SUPABASE_JWT_SECRET }}" >> $file
+        echo "APP_URL=${{ fromJSON(inputs.json_vars).APP_URL }}" >> $file
 
     # env. for automation tools
     - if: ${{ inputs.app_name == 'tools' }}
