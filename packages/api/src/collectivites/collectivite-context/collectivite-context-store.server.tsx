@@ -1,7 +1,7 @@
 import 'server-only';
 
-import { getCollectivite } from '@/api/collectivites/get-collectivite.server';
 import { ReactNode } from 'react';
+import { getCollectivite } from '../get-collectivite.server';
 import { CollectiviteProviderStoreClient } from './collectivite-context-store.client';
 
 export const CollectiviteProviderStore = async ({

@@ -1,4 +1,4 @@
-import { DBClient } from '@/api/typeUtils';
+import { DBClient } from '../../../typeUtils';
 
 export async function updateLinkedFiches(
   dbClient: DBClient,
