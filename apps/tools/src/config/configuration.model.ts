@@ -1,4 +1,3 @@
-import { stringToJSON } from '@/backend/utils/zod.utils';
 import { z } from 'zod';
 
 export const toolsAutomationApiConfigurationSchema = z.object({
@@ -51,9 +50,11 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .string()
     .min(1)
     .describe('Database url to be able to persist webhook events'),
-  EXTERNAL_SYSTEM_SECRET_MAP: stringToJSON().describe(
-    `Clé valeur contenant les accès pour les appels vers les systèmes externes`
-  ),
+  EXTERNAL_SYSTEM_SECRET_MAP: z
+    .json()
+    .describe(
+      `Clé valeur contenant les accès pour les appels vers les systèmes externes`
+    ),
   AIRTABLE_PERSONAL_ACCESS_TOKEN: z
     .string()
     .min(1)
