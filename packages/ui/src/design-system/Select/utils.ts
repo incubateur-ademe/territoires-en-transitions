@@ -1,11 +1,8 @@
 import Fuse from 'fuse.js';
 
-import { IconValue } from '@/ui/design-system/Icon';
-import {
-  ITEM_ALL,
-  itemAllOption,
-} from '@/ui/design-system/Select/SelectFilter';
 import { naturalSort } from '../../utils/naturalSort';
+import { IconValue } from '../Icon';
+import { ITEM_ALL, itemAllOption } from './SelectFilter';
 
 /**
  * Types partagés entre tous les composants selects

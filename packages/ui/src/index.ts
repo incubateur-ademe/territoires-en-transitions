@@ -35,6 +35,8 @@ export * from './design-system/Input';
 export * from './design-system/Modal';
 export * from './design-system/Notification';
 export * from './design-system/Pagination';
+export * from './design-system/Picto/PictoPadlock';
+export * from './design-system/Picto/PictoWarning';
 export * from './design-system/RadioButton';
 export * from './design-system/RichTextEditor';
 export * from './design-system/Select';
@@ -54,3 +56,9 @@ export * from './shadcn/slider';
 
 // dossier utils
 export * from './utils/constants';
+
+// dossier assets
+export * from './assets/ademe.logo';
+export * from './assets/programme-tete.logo';
+export * from './assets/republique-francaise.logo';
+export * from './assets/territoires-en-transitions.logo';
