@@ -1,5 +1,5 @@
 import {
-  TagInsert,
+  TagCreate,
   TagType,
   TagWithCollectiviteId,
 } from '@/domain/collectivites';
@@ -16,7 +16,7 @@ import { DBClient } from '../../typeUtils';
 export async function insertTags(
   dbClient: DBClient,
   tagType: TagType,
-  tags: TagInsert[]
+  tags: TagCreate[]
 ): Promise<TagWithCollectiviteId[]> {
   const { data } = await dbClient
     .from(`${tagType}_tag` as const)

@@ -1,4 +1,4 @@
-import { ENV } from '@/api/environmentVariables';
+import { ENV } from '../environmentVariables';
 
 export function getRequestUrl(request: Request) {
   const url = new URL(request.url);

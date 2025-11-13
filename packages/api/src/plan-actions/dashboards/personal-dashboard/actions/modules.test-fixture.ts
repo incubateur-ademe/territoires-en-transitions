@@ -1,5 +1,5 @@
-import { dbAdmin } from '@/api/tests/supabase';
 import { expect } from 'vitest';
+import { dbAdmin } from '../../../../tests/supabase';
 import { ModuleInsert } from '../domain/module.schema';
 
 export const moduleNew: ModuleInsert = {

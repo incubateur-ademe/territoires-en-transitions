@@ -1,5 +1,5 @@
-import { DBClient } from '@/api/typeUtils';
 import { objectToSnake } from 'ts-case-convert';
+import { DBClient } from '../../../../typeUtils';
 import {
   ModuleInsert,
   moduleCommonSchemaInsert,
