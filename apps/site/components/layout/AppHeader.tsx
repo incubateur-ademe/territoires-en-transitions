@@ -4,8 +4,8 @@ import { getAuthPaths } from '@/api';
 import { ENV } from '@/api/environmentVariables';
 import { TerritoiresEnTransitionsLogo } from '@/ui/assets/territoires-en-transitions.logo';
 import classNames from 'classnames';
+import Link from 'next/dist/client/link';
 import Image from 'next/image';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { MenuPrincipal } from './MenuPrincipal';
@@ -34,6 +34,7 @@ function Brand({ menuOpened, setMenuOpened }: MenuProps) {
             width="80"
             height="80"
           />
+          <TerritoiresEnTransitionsLogo className="h-14 m-auto" />
         </div>
       </div>
       <div className="fr-header__navbar">
@@ -105,17 +106,14 @@ function Body(props: MenuProps) {
       <div className="fr-container">
         <div className="fr-header__body-row">
           <div className="fr-header__brand fr-enlarge-link">
-            <Brand {...props} />
-            <div className="fr-header__service max-md:text-center md:max-xl:p-2">
-              <Link
-                href="/"
-                aria-current="page"
-                title="Accueil - Territoires en Transitions"
-                className="router-link-exact-active router-link-active"
-              >
-                <TerritoiresEnTransitionsLogo className="h-full w-auto" />
-              </Link>
-            </div>
+            <Link
+              href="/"
+              aria-current="page"
+              title="Accueil - Territoires en Transitions"
+              className="router-link-exact-active router-link-active"
+            >
+              <Brand {...props} />
+            </Link>
           </div>
           <div className="fr-header__tools md:max-xl:pr-0 md:max-xl:pl-1">
             <div className="fr-header__tools-links">
