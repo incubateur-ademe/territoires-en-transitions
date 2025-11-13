@@ -1,10 +1,10 @@
 import 'server-only';
 
-import { getAuthUser } from '@/api/utils/supabase/auth-user.server';
 import { CollectiviteAccess } from '@/domain/users';
 import { User } from '@supabase/supabase-js';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
+import { getAuthUser } from '../utils/supabase/auth-user.server';
 import {
   getQueryClient,
   trpcInServerComponent,

@@ -1,12 +1,14 @@
-import { getAuthHeaders } from '@/api/utils/supabase/get-auth-headers';
-import { createClient } from '@/api/utils/supabase/server-client';
-import { createTRPCClient, httpLink } from '@trpc/client';
-import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
+import { createTRPCClient, httpLink, TRPCClient } from '@trpc/client';
+import {
+  createTRPCOptionsProxy,
+  TRPCOptionsProxy,
+} from '@trpc/tanstack-react-query';
 import { cache } from 'react';
+import { getAuthHeaders } from '../supabase/get-auth-headers';
+import { createClient } from '../supabase/server-client';
 import { makeQueryClient } from './query-client';
 
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import type { AppRouter } from '../../../../../apps/backend/dist/utils/trpc/trpc.router.d';
+import type { AppRouter } from '@/backend/utils/trpc/trpc.router';
 
 async function authenticatedHeaders() {
   const supabaseClient = await createClient();
@@ -29,14 +31,16 @@ export const getQueryClient = cache(makeQueryClient);
 // TRPC client utilisable dans les RSC avec le QueryClient
 // ce qui permet de partager la data entre server et front,
 // ou bien de faire du prefetching
-export const trpcInServerComponent = createTRPCOptionsProxy({
-  client: createTRPCClient<AppRouter>({
-    links: [TRPC_LINK],
-  }),
-  queryClient: getQueryClient,
-});
+export const trpcInServerComponent: TRPCOptionsProxy<AppRouter> =
+  createTRPCOptionsProxy({
+    client: createTRPCClient<AppRouter>({
+      links: [TRPC_LINK],
+    }),
+    queryClient: getQueryClient,
+  });
 
 // TRPC client utilisable dans les server actions et les route handlers
-export const trpcInServerFunction = createTRPCClient<AppRouter>({
-  links: [TRPC_LINK],
-});
+export const trpcInServerFunction: TRPCClient<AppRouter> =
+  createTRPCClient<AppRouter>({
+    links: [TRPC_LINK],
+  });
