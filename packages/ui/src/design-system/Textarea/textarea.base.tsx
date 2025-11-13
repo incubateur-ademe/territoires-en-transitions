@@ -7,7 +7,7 @@ import {
   useState,
 } from 'react';
 
-import { cn } from '@/ui/utils/cn';
+import { cn } from '../../utils/cn';
 
 export type TextareaBaseProps = ComponentPropsWithRef<'textarea'> & {
   autoresize?: boolean;

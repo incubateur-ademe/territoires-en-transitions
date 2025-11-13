@@ -1,6 +1,6 @@
-import { Icon, IconSize } from '@/ui/design-system/Icon';
-import { Tooltip, TooltipProps } from '@/ui/design-system/Tooltip';
 import classNames from 'classnames';
+import { Icon, IconSize } from '../Icon';
+import { Tooltip, TooltipProps } from './Tooltip';
 
 type InfoTooltipProps = Omit<TooltipProps, 'children'> & {
   size?: IconSize;

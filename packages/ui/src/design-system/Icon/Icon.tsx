@@ -1,5 +1,5 @@
-import { cn } from '@/ui/utils/cn';
 import { forwardRef, HTMLAttributes, Ref } from 'react';
+import { cn } from '../../utils/cn';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 

@@ -1,4 +1,4 @@
-import { preset } from '@/ui/tailwind-preset';
+import { preset } from '../../tailwind-preset';
 
 export const PictoWarning = ({
   className,

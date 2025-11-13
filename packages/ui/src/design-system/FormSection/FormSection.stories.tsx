@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/nextjs';
 
-import { Field } from '@/ui/design-system/Field';
-import { Input } from '@/ui/design-system/Input';
+import { Field } from '../Field';
+import { Input } from '../Input';
 import { FormSection } from './FormSection';
 import { FormSectionGrid } from './FormSectionGrid';
 

@@ -1,5 +1,5 @@
-import { Button } from '@/ui/design-system/Button';
 import type { Meta, StoryObj } from '@storybook/nextjs';
+import { Button } from '../../design-system/Button';
 import { EmptyCard } from './EmptyCard';
 
 const meta = {

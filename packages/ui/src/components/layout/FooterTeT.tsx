@@ -1,8 +1,8 @@
-import { AdemeLogo } from '@/ui/assets/ademe.logo';
-import { RepubliqueFrancaiseLogo } from '@/ui/assets/republique-francaise.logo';
-import { Button } from '@/ui/design-system/Button';
-import { SITE_BASE_URL } from '@/ui/utils/constants';
+import { AdemeLogo } from '../../assets/ademe.logo';
+import { RepubliqueFrancaiseLogo } from '../../assets/republique-francaise.logo';
+import { Button } from '../../design-system/Button';
 import { Footer, LinkObject } from '../../design-system/Footer/Footer';
+import { SITE_BASE_URL } from '../../utils/constants';
 
 type FooterTeTProps = {
   id?: string;

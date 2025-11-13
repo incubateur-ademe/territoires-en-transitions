@@ -1,5 +1,5 @@
-import { IconValue } from '@/ui/design-system/Icon';
-import { ButtonHTMLProps, LinkFullProps } from '@/ui/utils/types';
+import { ButtonHTMLProps, LinkFullProps } from '../../utils/types';
+import { IconValue } from '../Icon';
 import { NotificationProps } from '../Notification';
 
 export type ButtonState = 'default' | 'disabled';

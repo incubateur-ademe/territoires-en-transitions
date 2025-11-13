@@ -1,10 +1,9 @@
 import classNames from 'classnames';
 import { Fragment } from 'react';
 
-import { Badge, BadgeSize, BadgeState } from '@/ui/design-system/Badge';
-import { Icon } from '@/ui/design-system/Icon';
-
-import { ITEM_ALL } from '@/ui/design-system/Select/SelectFilter';
+import { Badge, BadgeSize, BadgeState } from '../../Badge';
+import { Icon } from '../../Icon';
+import { ITEM_ALL } from '../SelectFilter';
 import {
   OptionValue,
   SelectOption,

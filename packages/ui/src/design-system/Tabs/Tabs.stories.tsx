@@ -1,7 +1,7 @@
-import {Meta, StoryObj} from '@storybook/nextjs';
-import {action} from 'storybook/actions';
-import {Tabs} from './Tabs';
-import {Tab} from './Tab';
+import { Meta, StoryObj } from '@storybook/nextjs';
+import { action } from 'storybook/actions';
+import { Tabs } from './Tabs';
+import { Tab } from './Tab';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,
@@ -35,7 +35,7 @@ export const Onglet2: Story = {
   },
 };
 
-export const AvecIcones: Story = {
+export const AvecIcones = {
   args: {
     defaultActiveTab: 1,
     children: [
@@ -50,7 +50,7 @@ export const AvecIcones: Story = {
       </Tab>,
     ],
   },
-};
+} satisfies Story;
 
 export const AvecIconesStylees: Story = {
   args: {

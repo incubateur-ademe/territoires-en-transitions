@@ -1,6 +1,6 @@
-import { Icon, IconValue } from '@/ui/design-system/Icon';
 import classNames from 'classnames';
 import { useState } from 'react';
+import { Icon, IconValue } from '../../design-system/Icon';
 import { AlertState, alertClassnames, stateToIcon } from './utils';
 
 export type AlertProps = {

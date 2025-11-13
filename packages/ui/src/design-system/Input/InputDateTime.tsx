@@ -1,6 +1,6 @@
-import { InputDate, InputDateProps } from '@/ui/design-system/Input/InputDate';
 import { DateTime } from 'luxon';
 import { ForwardedRef, forwardRef } from 'react';
+import { InputDate, InputDateProps } from './InputDate';
 
 export interface InputDateTimeProps extends InputDateProps {
   onDateTimeChange?: (

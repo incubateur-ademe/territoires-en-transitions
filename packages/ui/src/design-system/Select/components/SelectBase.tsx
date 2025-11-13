@@ -1,14 +1,12 @@
 import { Placement } from '@floating-ui/react';
+import * as Sentry from '@sentry/nextjs';
 import classNames from 'classnames';
 import { Fragment, Ref, forwardRef, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { Badge, BadgeSize, BadgeState } from '@/ui/design-system/Badge';
-import { Icon } from '@/ui/design-system/Icon';
-import { DropdownFloater } from '@/ui/design-system/Select/components/DropdownFloater';
-import * as Sentry from '@sentry/nextjs';
-
-import { Tooltip } from '@/ui/design-system/Tooltip';
+import { Badge, BadgeSize, BadgeState } from '../../Badge';
+import { Icon } from '../../Icon';
+import { Tooltip } from '../../Tooltip';
 import {
   Option,
   OptionValue,
@@ -19,6 +17,7 @@ import {
   isOptionSection,
   sortOptionByAlphabet,
 } from '../utils';
+import { DropdownFloater } from './DropdownFloater';
 import Options from './Options';
 
 export type CreateOption = {

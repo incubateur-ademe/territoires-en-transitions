@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import { getFlatOptions } from '@/ui/design-system/Select/utils';
 import {
   SelectMultiple,
   SelectMultipleOnChangeArgs,
   SelectMultipleProps,
 } from './SelectMultiple';
+import { getFlatOptions } from './utils';
 
 /** constante pour gérer la sélection de tous les filtres */
 export const ITEM_ALL = 'tous';
