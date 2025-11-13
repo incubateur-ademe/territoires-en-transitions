@@ -10,6 +10,7 @@ import { SentryModule } from '@sentry/nestjs/setup';
 import { CollectivitesModule } from './collectivites/collectivites.module';
 import { PersonnalisationsModule } from './collectivites/personnalisations/personnalisations.module';
 import { IndicateursModule } from './indicateurs/indicateurs.module';
+import { NotificationsModule } from './notifications/notifications.module';
 import { FichesModule } from './plans/fiches/fiches.module';
 import { PlanModule } from './plans/plans/plans.module';
 import { ReferentielsModule } from './referentiels/referentiels.module';
@@ -54,10 +55,7 @@ const appLogger = new Logger('AppModule');
         appLogger.log(`Connecting to Redis at ${host}:${port}`);
 
         return {
-          connection: {
-            host: host,
-            port: port,
-          },
+          connection: { host, port },
         };
       },
       inject: [ConfigurationService],
@@ -78,6 +76,7 @@ const appLogger = new Logger('AppModule');
     SharedModule,
     TrackingModule,
     MetricsModule,
+    NotificationsModule,
   ],
   providers: [
     TrpcRouter,
