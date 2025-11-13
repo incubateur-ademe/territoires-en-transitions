@@ -1,7 +1,7 @@
 'use client';
 
-import { Database } from '@/api';
 import { CookieOptionsWithName, createBrowserClient } from '@supabase/ssr';
+import { Database } from '../../database.types';
 import { ENV } from '../../environmentVariables';
 
 export function createClient(cookieOptions: CookieOptionsWithName) {

@@ -1,8 +1,8 @@
-import { getAuthHeaders } from '@/api/utils/supabase/get-auth-headers';
-import { createClient } from '@/api/utils/supabase/server-client';
 import { createTRPCClient, httpLink } from '@trpc/client';
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
 import { cache } from 'react';
+import { getAuthHeaders } from '../supabase/get-auth-headers';
+import { createClient } from '../supabase/server-client';
 import { makeQueryClient } from './query-client';
 
 // eslint-disable-next-line @nx/enforce-module-boundaries

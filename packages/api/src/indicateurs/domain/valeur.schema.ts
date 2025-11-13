@@ -1,20 +1,20 @@
 import {
-  indicateurValeurSchemaInsert,
-  sourceMetadonneeSchema,
+  indicateurSourceMetadonneeSchema,
+  indicateurValeurSchemaCreate,
 } from '@/domain/indicateurs';
-import { z } from 'zod';
+import { z } from 'zod/mini';
 
 /**
  * Schéma zod d'une valeur d'indicateur
  */
-export const valeurSchema = indicateurValeurSchemaInsert
-  .omit({
+export const valeurSchema = z.object({
+  ...z.omit(indicateurValeurSchemaCreate, {
     dateValeur: true,
-  })
-  .extend({
-    annee: z.number(),
-    source: sourceMetadonneeSchema.optional().nullable(),
-  });
+  }).shape,
+
+  annee: z.number(),
+  source: z.nullish(indicateurSourceMetadonneeSchema),
+});
 
 /**
  * Type TS d'une valeur d'indicateur
@@ -27,9 +27,9 @@ export type Valeur = z.input<typeof valeurSchema>;
 export const valeurComparaisonLigneSchema = z.object({
   conflit: z.boolean(),
   annee: z.number(),
-  idAEcraser: z.number().nullable(),
+  idAEcraser: z.nullable(z.number()),
   idAAppliquer: z.number(),
-  valeurAEcraser: z.number().nullable(),
+  valeurAEcraser: z.nullable(z.number()),
   valeurAAppliquer: z.number(),
   source: z.string(),
 });
@@ -45,7 +45,7 @@ export type ValeurComparaisonLigne = z.input<
  * Schéma zod pour la comparaison des valeurs utilisateurs avec les valeurs d'une source
  */
 export const valeurComparaisonSchema = z.object({
-  lignes: valeurComparaisonLigneSchema.array(),
+  lignes: z.array(valeurComparaisonLigneSchema),
   conflits: z.number(),
   ajouts: z.number(),
 });

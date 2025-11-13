@@ -1,6 +1,5 @@
 'use client';
 
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { UserWithCollectiviteAccesses } from '@/domain/users';
 import { Session } from '@supabase/supabase-js';
 import {
@@ -10,6 +9,7 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { useSupabase } from '../../utils/supabase/use-supabase';
 
 type UserContextProps = {
   user: UserWithCollectiviteAccesses | null;

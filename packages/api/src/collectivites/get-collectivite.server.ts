@@ -1,12 +1,12 @@
 import 'server-only';
 
-import { getUser } from '@/api/users/user-details.fetch.server';
+import { CollectiviteAccess } from '@/domain/users';
+import { cache } from 'react';
+import { getUser } from '../users/user-details.fetch.server';
 import {
   getQueryClient,
   trpcInServerComponent,
-} from '@/api/utils/trpc/server-client';
-import { CollectiviteAccess } from '@/domain/users';
-import { cache } from 'react';
+} from '../utils/trpc/server-client';
 
 export const getCollectivite = cache(
   async (collectiviteId: number): Promise<CollectiviteAccess> => {
