@@ -1,4 +1,4 @@
-import { cn } from '@/ui/utils/cn';
+import { cn } from '../../utils/cn';
 
 export type FormSectionGridProps = {
   /** Id appliqué au container du formulaire */

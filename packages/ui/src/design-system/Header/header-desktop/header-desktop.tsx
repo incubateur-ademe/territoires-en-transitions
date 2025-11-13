@@ -1,10 +1,10 @@
 import Link from 'next/link';
 
-import { AdemeLogo } from '@/ui/assets/ademe.logo';
-import { ProgrammeTeTeLogo } from '@/ui/assets/programme-tete.logo';
-import { RepubliqueFrancaiseLogo } from '@/ui/assets/republique-francaise.logo';
-import { TerritoiresEnTransitionsLogo } from '@/ui/assets/territoires-en-transitions.logo';
-import { cn } from '@/ui/utils/cn';
+import { AdemeLogo } from '../../../assets/ademe.logo';
+import { ProgrammeTeTeLogo } from '../../../assets/programme-tete.logo';
+import { RepubliqueFrancaiseLogo } from '../../../assets/republique-francaise.logo';
+import { TerritoiresEnTransitionsLogo } from '../../../assets/territoires-en-transitions.logo';
+import { cn } from '../../../utils/cn';
 import { HeaderProps } from '../Header';
 import { HeaderDesktopMainNavItem } from './header-desktop.main-nav-item';
 import { HeaderDesktopSecondaryNavItem } from './header-desktop.secondary-nav-item';

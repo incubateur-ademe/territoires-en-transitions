@@ -1,7 +1,7 @@
-import { useGetDefaultEventProperties } from '@/ui/components/tracking/use-get-default-event-properties';
 import { usePostHog } from 'posthog-js/react';
 import { objectToSnake } from 'ts-case-convert';
 import { EventName } from './posthog-events';
+import { useGetDefaultEventProperties } from './use-get-default-event-properties';
 
 /**
  * Renvoie une fonction pour enregistrer des évenements de tracking PostHog.

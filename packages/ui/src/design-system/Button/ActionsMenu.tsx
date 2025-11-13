@@ -1,9 +1,6 @@
-import {
-  ButtonMenu,
-  ButtonMenuProps,
-} from '@/ui/design-system/Button/ButtonMenu';
-import { Icon } from '@/ui/design-system/Icon';
 import { useState } from 'react';
+import { Icon } from '../Icon';
+import { ButtonMenu, ButtonMenuProps } from './ButtonMenu';
 
 export type MenuAction = {
   icon?: string;
