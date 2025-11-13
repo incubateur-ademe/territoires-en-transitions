@@ -1,5 +1,5 @@
 import js from '@eslint/js';
-import nxEslintPlugin from '@nx/eslint-plugin';
+import nxPlugin from '@nx/eslint-plugin';
 import tseslint from 'typescript-eslint';
 
 // Increase max listeners to prevent warning in Nx monorepo with multiple ESLint plugins
@@ -8,31 +8,14 @@ process.setMaxListeners(20);
 
 export default [
   {
-    ignores: ['**/dist/**', '.next', 'next-env.d.ts', '.tsc-trace', '**/e2e-cypress-deprecated/**'],
+    ignores: ['**/dist/**', 'out-tsc', '.next', 'next-env.d.ts', '.tsc-trace', '**/e2e-cypress-deprecated/**'],
   },
+  ...nxPlugin.configs['flat/base'],
+  ...nxPlugin.configs['flat/typescript'],
+  ...nxPlugin.configs['flat/javascript'],
   js.configs.recommended,
   ...tseslint.configs.recommended,
-  { plugins: { '@nx': nxEslintPlugin } },
-  {
-    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
-    rules: {
-      '@nx/enforce-module-boundaries': [
-        'error',
-        {
-          enforceBuildableLibDependency: true,
-          allowCircularSelfDependency: true,
-          banTransitiveDependencies: false,
-          allow: ['../../packages/ui/src/tailwind-preset', '@/backend/*'],
-          depConstraints: [
-            {
-              sourceTag: '*',
-              onlyDependOnLibsWithTags: ['*'],
-            },
-          ],
-        },
-      ],
-    },
-  },
+  { plugins: { '@nx': nxPlugin } },
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.cts', '**/*.mts'],
     rules: {
