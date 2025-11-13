@@ -4,9 +4,6 @@ import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import baseConfig from '../../eslint.config.mjs';
 
 const config = [
-  {
-    ignores: ['**/dist'],
-  },
   ...nxPlugin.configs['flat/react-typescript'],
   nextPlugin.flatConfig.coreWebVitals,
   ...baseConfig,

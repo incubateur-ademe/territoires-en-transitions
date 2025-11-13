@@ -6,9 +6,6 @@ import baseConfig from '../eslint.config.mjs';
 process.setMaxListeners(20);
 
 export default [
-  {
-    ignores: ['**/dist'],
-  },
   ...baseConfig,
   {
     ...playwright.configs['flat/recommended'],
