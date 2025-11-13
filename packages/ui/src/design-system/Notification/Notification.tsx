@@ -1,4 +1,4 @@
-import { cn } from '@/ui/utils/cn';
+import { cn } from '../../utils/cn';
 import { Icon, IconValue } from '../Icon';
 
 export type NotificationVariant =

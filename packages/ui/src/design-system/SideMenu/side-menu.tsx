@@ -1,6 +1,8 @@
-import { Button, Icon, Notification } from '@/ui';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
+import { Button } from '../Button';
+import { Icon } from '../Icon';
+import { Notification } from '../Notification';
 
 export const sideMenuContentZindex = 'z-[801]';
 

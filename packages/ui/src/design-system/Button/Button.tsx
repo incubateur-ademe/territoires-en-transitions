@@ -28,7 +28,7 @@ export const Button = forwardRef<
       external,
       notification,
       dataTest,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       isOpen, // obligé de le déstructurer pour ne pas le passer au bouton (donnée par un élément floating-ui comme la modale)
       ...props
     },

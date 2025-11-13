@@ -1,13 +1,13 @@
 'use client';
 
-import { Tooltip } from '@/ui/design-system/Tooltip';
 import classNames from 'classnames';
 import { Route } from 'next';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { createContext, ReactNode, useContext } from 'react';
 import { Icon, IconValue } from '../Icon';
-import { TabSize } from './Tabs';
+import { Tooltip } from '../Tooltip';
+import { TabSize } from '../Tabs/Tabs';
 
 type TabsContextProps = {
   /** Permet d'ajuster les styles de la liste d'onglets */

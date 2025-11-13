@@ -3,9 +3,9 @@
 import * as SliderPrimitive from '@radix-ui/react-slider';
 import { forwardRef, LegacyRef } from 'react';
 
-import { preset } from '@/ui';
 import classNames from 'classnames';
 import { cn } from '../utils/cn';
+import { preset } from '../tailwind-preset';
 
 type Props = SliderPrimitive.SliderProps & {
   /**
