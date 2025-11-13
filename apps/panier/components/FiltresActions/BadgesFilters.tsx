@@ -174,37 +174,43 @@ export const BadgesFilters = ({
               }
             : undefined
         }
-      >
-        <div className="flex flex-col gap-4 w-72 p-4">
-          {filters.map((filter) =>
-            filter.type === 'checkbox' ? (
-              <div className="flex flex-row items-end" key={filter.title}>
-                <Checkbox
-                  label={filter.title}
-                  checked={filter.value}
-                  onChange={(evt) => filter.onChange(evt.currentTarget.checked)}
-                />
-                {!!filter.tooltip && (
-                  <InfoTooltip
-                    iconClassName="text-primary-8"
-                    label={filter.tooltip}
-                    size="md"
-                  />
-                )}
-              </div>
-            ) : (
-              <Field key={filter.title} title={filter.title}>
-                <SelectMultiple
-                  options={filter.options}
-                  values={filter.values}
-                  onChange={filter.onChange}
-                  small
-                />
-              </Field>
-            )
-          )}
-        </div>
-      </ButtonMenu>
+        menu={{
+          className: 'max-w-none',
+          sections: [
+            <div className="flex flex-col gap-4 p-4">
+              {filters.map((filter) =>
+                filter.type === 'checkbox' ? (
+                  <div className="flex flex-row items-end" key={filter.title}>
+                    <Checkbox
+                      label={filter.title}
+                      checked={filter.value}
+                      onChange={(evt) =>
+                        filter.onChange(evt.currentTarget.checked)
+                      }
+                    />
+                    {!!filter.tooltip && (
+                      <InfoTooltip
+                        iconClassName="text-primary-8"
+                        label={filter.tooltip}
+                        size="md"
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <Field key={filter.title} title={filter.title}>
+                    <SelectMultiple
+                      options={filter.options}
+                      values={filter.values}
+                      onChange={filter.onChange}
+                      small
+                    />
+                  </Field>
+                )
+              )}
+            </div>,
+          ],
+        }}
+      />
     </div>
   );
 };
