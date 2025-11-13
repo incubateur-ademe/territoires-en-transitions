@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { createClient } from '@/api/utils/supabase/server-client';
+import { createClient } from './server-client';
 
 export async function getAuthUser() {
   const supabaseClient = await createClient();
