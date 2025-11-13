@@ -2,7 +2,10 @@ import { differenceBy, isNil } from 'es-toolkit';
 import { PersonneTagOrUserWithContacts } from '../collectivites/shared/models/personne-tag-or-user.dto';
 import { FicheWithRelations } from '../plans/fiches/list-fiches/fiche-action-with-relations.dto';
 
-type UserWithEmail = Omit<PersonneTagOrUserWithContacts, 'userId' | 'email'> & {
+export type UserWithEmail = Omit<
+  PersonneTagOrUserWithContacts,
+  'userId' | 'email'
+> & {
   userId: string;
   email: string;
 };
@@ -15,7 +18,7 @@ export function getNewlyAssignedPilotes(
   updatedFiche: FicheWithRelations,
   previousFiche: FicheWithRelations,
   userId: string
-) {
+): UserWithEmail[] {
   const withEmailAndNotAutoAssigned = (p: PersonneTagOrUserWithContacts) =>
     !isNil(p.email) && !isNil(p.userId) && p.userId !== userId;
 
