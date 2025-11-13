@@ -1,6 +1,6 @@
-import { Button, ButtonSize } from '@/ui/design-system/Button';
-import { Icon, IconSize } from '@/ui/design-system/Icon';
 import classNames from 'classnames';
+import { Button, ButtonSize } from '../Button';
+import { Icon, IconSize } from '../Icon';
 
 const buttonSizeToIconSize: Record<ButtonSize, IconSize> = {
   xs: 'sm',

@@ -1,5 +1,5 @@
-import { APP_BASE_URL, SITE_BASE_URL } from '@/ui/utils/constants';
 import { Meta, StoryObj } from '@storybook/nextjs';
+import { APP_BASE_URL, SITE_BASE_URL } from '../../utils/constants';
 import { Footer } from './Footer';
 
 const meta: Meta<typeof Footer> = {

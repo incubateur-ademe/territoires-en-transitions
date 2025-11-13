@@ -1,5 +1,5 @@
-import { cn } from '@/ui/utils/cn';
 import { MouseEvent, useState } from 'react';
+import { cn } from '../../../utils/cn';
 import { Button } from '../../Button/Button';
 import { Icon } from '../../Icon';
 import { NavDropdown as NavDropdownTypes, NavLink } from '../types';

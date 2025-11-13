@@ -4,10 +4,10 @@ import {
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
 } from '@/api';
-import { Badge } from '@/ui/design-system/Badge';
-import { Button } from '@/ui/design-system/Button';
-import { Divider } from '@/ui/design-system/Divider';
-import { InfoTooltip } from '@/ui/design-system/Tooltip';
+import { Badge } from '../../design-system/Badge';
+import { Button } from '../../design-system/Button';
+import { Divider } from '../../design-system/Divider';
+import { InfoTooltip } from '../../design-system/Tooltip';
 
 const URL_AIDES_TERRITOIRES = 'https://aides-territoires.beta.gouv.fr';
 

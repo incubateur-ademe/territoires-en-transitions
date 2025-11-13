@@ -1,7 +1,7 @@
-import { validateInputNumLength } from '@/ui/design-system/Input/validateInputNumLength';
 import { ComponentType, Ref, forwardRef } from 'react';
 import { PatternFormat, PatternFormatProps } from 'react-number-format';
 import { InputBase, InputBaseProps } from './InputBase';
+import { validateInputNumLength } from './validateInputNumLength';
 
 export type InputTelProps = Omit<
   PatternFormatProps,

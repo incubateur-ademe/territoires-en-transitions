@@ -1,5 +1,5 @@
-import { OptionValue } from '@/ui/design-system/Select/utils';
 import { SelectBase, SelectProps } from './components/SelectBase';
+import { OptionValue } from './utils';
 
 type Props = Omit<
   SelectProps,

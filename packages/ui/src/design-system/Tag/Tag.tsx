@@ -1,5 +1,5 @@
-import { Icon } from '@/ui/design-system/Icon';
 import classNames from 'classnames';
+import { Icon } from '../Icon';
 
 type TagProps = {
   /** Libellé affiché dans l'étiquette */

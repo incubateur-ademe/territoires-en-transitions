@@ -1,9 +1,6 @@
-import {
-  InputPattern,
-  InputPatternProps,
-} from '@/ui/design-system/Input/InputPattern';
 import { ComponentType, Ref, forwardRef } from 'react';
 import { InputBase, InputBaseProps } from './InputBase';
+import { InputPattern, InputPatternProps } from './InputPattern';
 import { validateInputNumLength } from './validateInputNumLength';
 
 export type InputOTPProps = Omit<
