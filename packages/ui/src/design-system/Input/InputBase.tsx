@@ -1,10 +1,10 @@
-import { Button } from '@/ui/design-system/Button';
-import { DefaultButtonProps } from '@/ui/design-system/Button/types';
-import { FieldState, stateToTextColor } from '@/ui/design-system/Field';
-import { Icon, IconValue } from '@/ui/design-system/Icon';
-import { preset } from '@/ui/tailwind-preset';
 import classNames from 'classnames';
 import { forwardRef } from 'react';
+import { preset } from '../../tailwind-preset';
+import { Button } from '../Button';
+import { DefaultButtonProps } from '../Button/types';
+import { FieldState, stateToTextColor } from '../Field';
+import { Icon, IconValue } from '../Icon';
 
 // variantes de taille
 export type InputSize = 'md' | 'sm';

@@ -1,4 +1,4 @@
-import { cn } from '@/ui/utils/cn';
+import { cn } from '../../utils/cn';
 
 type Props = React.HTMLAttributes<HTMLTableCellElement>;
 

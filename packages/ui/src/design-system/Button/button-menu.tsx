@@ -14,8 +14,8 @@ import {
 } from '@floating-ui/react';
 import { cloneElement, useState } from 'react';
 
-import { useOpenState } from '@/ui/hooks/use-open-state';
 import { flushSync } from 'react-dom';
+import { useOpenState } from '../../hooks/use-open-state';
 import { cn } from '../../utils/cn';
 import { OpenState } from '../../utils/types';
 import { Icon } from '../Icon';

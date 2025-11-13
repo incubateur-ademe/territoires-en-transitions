@@ -1,7 +1,7 @@
-import { cn } from '@/ui/utils/cn';
-import { DivHTMLProps, isLink, LinkFullProps } from '@/ui/utils/types';
 import classNames from 'classnames';
 import Link from 'next/link';
+import { cn } from '../../utils/cn';
+import { DivHTMLProps, isLink, LinkFullProps } from '../../utils/types';
 
 /** Types custom de Card */
 type BaseCardProps = {

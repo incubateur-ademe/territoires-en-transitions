@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/nextjs';
 
-import { Input } from '@/ui/design-system/Input';
+import { Input } from '../Input';
 import { Field } from './Field';
 
 const meta: Meta<typeof Field> = {

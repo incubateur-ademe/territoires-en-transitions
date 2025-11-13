@@ -1,5 +1,5 @@
-import { cn } from '@/ui/utils/cn';
 import { useState } from 'react';
+import { cn } from '../../../utils/cn';
 import { Button, DEPRECATED_ButtonMenu } from '../../Button';
 import { isNavDropdown, isNavLink, NavItem } from '../types';
 

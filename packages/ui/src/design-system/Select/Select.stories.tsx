@@ -1,12 +1,11 @@
-import { action } from 'storybook/actions';
 import { Meta, StoryObj } from '@storybook/nextjs';
 import { useState } from 'react';
+import { action } from 'storybook/actions';
 
-import { Field } from '@/ui/design-system/Field';
-
-import { SelectFilter } from '@/ui/design-system/Select/SelectFilter';
-import { SelectBase } from '@/ui/design-system/Select/components/SelectBase';
 import { Select, SelectMultiple } from '.';
+import { Field } from '../Field';
+import { SelectBase } from './components/SelectBase';
+import { SelectFilter } from './SelectFilter';
 import {
   OptionValue,
   SelectOption,

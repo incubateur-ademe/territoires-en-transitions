@@ -1,5 +1,5 @@
-import { Icon, IconSize } from '@/ui/design-system/Icon';
 import classNames from 'classnames';
+import { Icon, IconSize } from '../Icon';
 import { Notification } from '../Notification';
 import { buttonThemeClassnames } from './theme';
 import { ButtonContentProps, ButtonSize, ButtonVariant } from './types';

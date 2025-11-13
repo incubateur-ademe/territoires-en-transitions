@@ -18,7 +18,7 @@ import classNames from 'classnames';
 import { cloneElement, useState } from 'react';
 import { flushSync } from 'react-dom';
 
-import { useOpenState } from '@/ui/hooks/use-open-state';
+import { useOpenState } from '../../hooks/use-open-state';
 import { cn } from '../../utils/cn';
 import { OpenState } from '../../utils/types';
 import { Icon } from '../Icon';

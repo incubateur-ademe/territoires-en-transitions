@@ -2,7 +2,7 @@ import classNames from 'classnames';
 
 import { Icon, IconValue } from '../Icon';
 
-import { cn } from '@/ui/utils/cn';
+import { cn } from '../../utils/cn';
 import { badgeClassnames } from './utils';
 
 export type BadgeState =

@@ -1,4 +1,4 @@
-import { Button } from '@/ui/design-system/Button';
+import { Button } from '../Button';
 
 type PaginationPageButtonProps = {
   pageNumber?: number;

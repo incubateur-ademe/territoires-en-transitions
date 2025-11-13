@@ -1,5 +1,5 @@
-import { Button } from '@/ui/design-system/Button';
 import classNames from 'classnames';
+import { Button } from '../Button';
 
 export type LinkObject = { label: string; href: string; external?: boolean };
 

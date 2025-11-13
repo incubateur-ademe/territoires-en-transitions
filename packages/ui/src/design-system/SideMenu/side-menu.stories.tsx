@@ -12,7 +12,6 @@ const meta: Meta<typeof SideMenu> = {
     headerType: 'title',
     title: 'Side menu',
     count: 2,
-    canExtend: false,
     isOpen: true,
   },
 };

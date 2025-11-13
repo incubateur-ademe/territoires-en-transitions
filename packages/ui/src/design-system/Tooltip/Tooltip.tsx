@@ -1,4 +1,3 @@
-import { preset } from '@/ui/tailwind-preset';
 import {
   FloatingArrow,
   FloatingPortal,
@@ -19,6 +18,7 @@ import {
 } from '@floating-ui/react';
 import classNames from 'classnames';
 import { cloneElement, useCallback, useRef, useState } from 'react';
+import { preset } from '../../tailwind-preset';
 
 const colorTheme = preset.theme.extend.colors;
 

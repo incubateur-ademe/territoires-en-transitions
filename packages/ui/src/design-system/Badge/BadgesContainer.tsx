@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 
-import { Badge, BadgeProps } from '@/ui/design-system/Badge/Badge';
-import { Tooltip } from '@/ui/design-system/Tooltip';
+import { Badge, BadgeProps } from '../Badge';
+import { Tooltip } from '../Tooltip';
 
 type BadgesContainerProps = {
   /** valeurs des badges à afficher */

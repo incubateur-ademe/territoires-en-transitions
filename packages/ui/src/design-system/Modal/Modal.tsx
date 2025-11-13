@@ -14,9 +14,9 @@ import {
 import classNames from 'classnames';
 import { RefObject, cloneElement } from 'react';
 
-import { useOpenState } from '@/ui/hooks/use-open-state';
-import { preset } from '@/ui/tailwind-preset';
-import { OpenState } from '@/ui/utils/types';
+import { useOpenState } from '../../hooks/use-open-state';
+import { preset } from '../../tailwind-preset';
+import { OpenState } from '../../utils/types';
 import { Button } from '../Button';
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';

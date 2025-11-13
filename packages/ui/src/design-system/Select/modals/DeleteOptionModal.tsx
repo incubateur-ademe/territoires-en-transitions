@@ -1,5 +1,7 @@
-import { Alert, Modal, ModalFooterOKCancel } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { OpenState } from '../../../utils/types';
+import { Alert } from '../../Alert';
+import { Modal } from '../../Modal';
+import { ModalFooterOKCancel } from '../../Modal/ModalFooterOKCancel';
 
 type DeleteOptionModalProps = {
   openState: OpenState;

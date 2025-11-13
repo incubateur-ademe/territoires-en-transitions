@@ -1,6 +1,6 @@
 import { Ref, forwardRef, useId } from 'react';
 
-import { cn } from '@/ui/utils/cn';
+import { cn } from '../../utils/cn';
 import { FieldMessage, FieldMessageProps } from '../Field';
 
 export type CheckboxProps = Omit<

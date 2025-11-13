@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from '@storybook/nextjs';
 import { useRef } from 'react';
 
-import DoubleCheckIcon from '@/ui/assets/DoubleCheckIcon';
+import DoubleCheckIcon from '../../assets/DoubleCheckIcon';
 
-import { SITE_BASE_URL } from '@/ui/utils/constants';
+import { SITE_BASE_URL } from '../../utils/constants';
 import { Button } from './Button';
 
 const meta: Meta<typeof Button> = {
@@ -357,8 +357,8 @@ export const AnchorButtons: Story = {
 
 export const WithRef: Story = {
   render: () => {
-    const buttonRef = useRef();
-    const anchorRef = useRef();
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const anchorRef = useRef<HTMLAnchorElement>(null);
     const onButtonClick = () => console.log(buttonRef.current);
     const onAnchorClick = () => console.log(anchorRef.current);
     return (
