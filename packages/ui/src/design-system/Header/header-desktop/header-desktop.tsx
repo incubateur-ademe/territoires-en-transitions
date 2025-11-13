@@ -1,5 +1,9 @@
 import Link from 'next/link';
 
+import { AdemeLogo } from '@/ui/assets/ademe.logo';
+import { ProgrammeTeTeLogo } from '@/ui/assets/programme-tete.logo';
+import { RepubliqueFrancaiseLogo } from '@/ui/assets/republique-francaise.logo';
+import { TerritoiresEnTransitionsLogo } from '@/ui/assets/territoires-en-transitions.logo';
 import { cn } from '@/ui/utils/cn';
 import { HeaderProps } from '../Header';
 import { HeaderDesktopMainNavItem } from './header-desktop.main-nav-item';
@@ -13,7 +17,6 @@ type Props = HeaderProps & {
 
 const HeaderDesktop = ({
   pathname,
-  logos,
   rootUrl,
   mainNav,
   secondaryNav,
@@ -28,15 +31,12 @@ const HeaderDesktop = ({
           href={rootUrl ?? '/'}
           className="bg-none hover:!bg-primary-1 rounded-lg"
         >
-          {!!logos && (
-            <div className="flex h-20 gap-8 p-1">
-              {logos.map((logo, i) => (
-                <div key={i} className="[&>svg]:h-full">
-                  {logo}
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="flex gap-4">
+            <RepubliqueFrancaiseLogo className="h-20" />
+            <AdemeLogo className="h-20" />
+            <ProgrammeTeTeLogo className="h-20" />
+            <TerritoiresEnTransitionsLogo className="h-14 my-auto" />
+          </div>
         </Link>
         {/** Navigation secondaire */}
         {!!secondaryNav && (
