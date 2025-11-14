@@ -7,9 +7,7 @@ import {
 } from '@react-email/components';
 import { toMerged } from 'es-toolkit';
 import * as React from 'react';
-
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { preset } from '@/ui/tailwind-preset';
+import { preset } from './preset';
 
 /**
  * Génère l'enveloppe globale du mail avec
@@ -21,9 +19,7 @@ export const EmailContainer = ({ children }: { children: React.ReactNode }) => {
     <Html>
       <Tailwind
         config={toMerged(pixelBasedPreset, {
-          presets: [
-            { theme: { extend: { colors: preset.theme.extend.colors } } },
-          ],
+          presets: [preset],
         })}
       >
         <Body className="bg-grey-2 text-grey-10 font-sans text-sm">
