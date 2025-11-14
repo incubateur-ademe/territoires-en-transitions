@@ -11,6 +11,7 @@ import { ficheActionSousThematiqueTable } from '@/backend/plans/fiches/shared/mo
 import { ficheActionStructureTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-structure-tag.table';
 import { ficheActionThematiqueTable } from '@/backend/plans/fiches/shared/models/fiche-action-thematique.table';
 import {
+  Fiche,
   ficheActionTable,
   FicheCreate,
 } from '@/backend/plans/fiches/shared/models/fiche-action.table';
@@ -21,6 +22,9 @@ import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
+import { UpdateFicheRequest } from '../update-fiche/update-fiche.request';
+import UpdateFicheService from '../update-fiche/update-fiche.service';
+import { Result } from './create-fiche.result';
 
 @Injectable()
 export class CreateFicheService {
@@ -28,7 +32,8 @@ export class CreateFicheService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly updateFicheService: UpdateFicheService
   ) {}
 
   /**
@@ -37,8 +42,16 @@ export class CreateFicheService {
    */
   async createFiche(
     fiche: FicheCreate,
-    { tx, user }: { tx?: Transaction; user?: AuthenticatedUser } = {}
-  ): Promise<number> {
+    {
+      ficheFields,
+      tx,
+      user,
+    }: {
+      ficheFields?: Omit<UpdateFicheRequest, 'id'>;
+      tx?: Transaction;
+      user: AuthenticatedUser;
+    }
+  ): Promise<Result<Fiche>> {
     this.logger.log(
       `Création de la fiche ${fiche.titre} pour la collectivité ${fiche.collectiviteId}`
     );
@@ -52,12 +65,47 @@ export class CreateFicheService {
       );
     }
 
-    const ficheCree = await (tx ?? this.databaseService.db)
-      .insert(ficheActionTable)
-      .values(fiche)
-      .returning();
+    const executeInTransaction = async (
+      transaction: Transaction
+    ): Promise<Result<Fiche>> => {
+      const [createdFiche] = await transaction
+        .insert(ficheActionTable)
+        .values(fiche)
+        .returning();
 
-    return ficheCree[0]?.id;
+      const ficheId = createdFiche.id;
+      if (!ficheId) {
+        return {
+          success: false,
+          error: `Échec de création de la fiche`,
+        };
+      }
+
+      if (ficheFields) {
+        const result = await this.updateFicheService.updateFiche({
+          ficheId,
+          ficheFields,
+          user,
+          tx: transaction,
+        });
+
+        if (!result.success) {
+          return {
+            success: false,
+            error: `Échec de la mise à jour de la fiche: ${result.error}`,
+          };
+        }
+      }
+
+      return { success: true, data: createdFiche };
+    };
+
+    // Utiliser la transaction fournie ou en crée une nouvelle
+    return tx
+      ? executeInTransaction(tx)
+      : this.databaseService.db.transaction(async (newTx) =>
+          executeInTransaction(newTx)
+        );
   }
 
   /**

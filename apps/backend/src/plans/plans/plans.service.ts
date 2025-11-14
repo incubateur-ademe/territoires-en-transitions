@@ -562,9 +562,10 @@ export class PlanService {
     const { impactedFicheIds } = deleteResult.data;
     if (impactedFicheIds.length > 0) {
       this.logger.log(`Deleting ${impactedFicheIds.length} orphaned fiches`);
+
       await Promise.all(
         impactedFicheIds.map((ficheId) =>
-          this.deleteFicheService.deleteFiche(ficheId, { user })
+          this.deleteFicheService.deleteFiche({ ficheId, user })
         )
       );
     }
@@ -621,7 +622,7 @@ export class PlanService {
         this.logger.log(`Deleting ${impactedFicheIds.length} orphaned fiches`);
         await Promise.all(
           impactedFicheIds.map((ficheId) =>
-            this.deleteFicheService.deleteFiche(ficheId, { user })
+            this.deleteFicheService.deleteFiche({ ficheId, user })
           )
         );
       }

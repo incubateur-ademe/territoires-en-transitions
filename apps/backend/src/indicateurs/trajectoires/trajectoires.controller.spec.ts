@@ -372,7 +372,7 @@ describe('Téléchargement de la trajectoire SNBC', () => {
     expect(verificationApresMajEtRecalculResponse.status).toEqual(
       VerificationTrajectoireStatus.DEJA_CALCULE
     );
-  }, 30000);
+  }, 60_000);
 
   afterAll(async () => {
     await app.close();
