@@ -1,9 +1,9 @@
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
-import { ScoreFinal } from '@/domain/referentiels';
+import { ActionScoreFinal } from '@/domain/referentiels';
 import { useScore } from '../../use-snapshot';
 
 type ScorePartial = Pick<
-  ScoreFinal,
+  ActionScoreFinal,
   'pointReferentiel' | 'pointPotentiel' | 'pointPotentielPerso' | 'desactive'
 >;
 

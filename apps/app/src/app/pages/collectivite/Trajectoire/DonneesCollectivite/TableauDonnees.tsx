@@ -1,4 +1,4 @@
-import { SourceIndicateur } from '@/domain/indicateurs';
+import { IndicateurSourceEnum } from '@/domain/indicateurs';
 import {
   DEPRECATED_Table,
   DEPRECATED_TBody,
@@ -58,14 +58,14 @@ export const TableauDonnees = (props: TableauDonneesProps) => {
   // pour toujours avoir la colonne "Données de la collectivité"
   // même si aucune donnée n'est encore disponible pour cette source
   const sources = sourcesDispo?.find(
-    (s) => s.id === SourceIndicateur.COLLECTIVITE
+    (s) => s.id === IndicateurSourceEnum.COLLECTIVITE
   )
     ? sourcesDispo
     : [
         ...sourcesDispo,
         {
-          id: SourceIndicateur.COLLECTIVITE,
-          nom: getNomSource(SourceIndicateur.COLLECTIVITE),
+          id: IndicateurSourceEnum.COLLECTIVITE,
+          nom: getNomSource(IndicateurSourceEnum.COLLECTIVITE),
         },
       ];
 
@@ -127,7 +127,7 @@ const CellNumber = ({
   const { valeurs, indicateurId } =
     valeursSecteurs?.find((v) => v?.secteurId === identifiantSecteur) || {};
 
-  const estSourceCollectivite = source.id === SourceIndicateur.COLLECTIVITE;
+  const estSourceCollectivite = source.id === IndicateurSourceEnum.COLLECTIVITE;
 
   const entry = valeurs?.find((v) => v.source === source.id);
   const valNumber = entry?.valeur;

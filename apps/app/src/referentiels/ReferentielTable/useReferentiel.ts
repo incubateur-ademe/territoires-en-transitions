@@ -1,6 +1,6 @@
 import { DBClient } from '@/api';
 import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import { TActionStatutsRow } from '@/app/types/alias';
 import { indexBy } from '@/app/utils/indexBy';
 import {

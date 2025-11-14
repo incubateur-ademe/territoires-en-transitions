@@ -1,13 +1,14 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
-import { FicheResume } from '@/domain/plans';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
+import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { Alert, Button, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import classNames from 'classnames';
 
 type RemoveSharingModalProps = {
   openState?: OpenState;
-  fiche: FicheResume;
+  fiche: Pick<Fiche, 'titre'> & FicheShareProperties;
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
   /** Redirige vers le plan ou la page toutes les fiches action à la suppression de la fiche */

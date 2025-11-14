@@ -1,4 +1,7 @@
-import { Completion } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import {
+  Completion,
+  FicheListItem,
+} from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import {
   getFicheActionShareIcon,
   getFicheActionShareText,
@@ -8,7 +11,6 @@ import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or
 import { getFicheActionPlanForCollectivite } from '@/app/plans/fiches/shared/fiche-action-plans.utils';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
-import { FicheResume } from '@/domain/plans';
 import { CollectiviteAccess } from '@/domain/users';
 import { Button, Card, Checkbox, Notification, Tooltip } from '@/ui';
 import { QueryKey } from '@tanstack/react-query';
@@ -23,7 +25,7 @@ import ModifierFicheModale from './ModifierFicheModale';
 
 export type FicheActionCardProps = {
   /** Contenu de la carte fiche action */
-  ficheAction: FicheResume;
+  ficheAction: FicheListItem;
   /** Complétion de la fiche action */
   completion?: Completion;
   completionClassName?: string;

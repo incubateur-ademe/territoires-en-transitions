@@ -1,4 +1,4 @@
-import { RouterInput, useTRPC } from '@/api/utils/trpc/client';
+import { RouterInput, useTRPC } from '@/api';
 import { PALETTE } from '@/app/ui/charts/echarts';
 import { useQuery } from '@tanstack/react-query';
 import { LAYERS as LAYERS_TRAJECTOIRE } from '../../Trajectoire/graphes/layer-parameters';

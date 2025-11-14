@@ -3,12 +3,13 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 import { ActionCard } from '@/app/referentiels/actions/action.card';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
-import { ActionType, Action as TActionBase } from '@/domain/referentiels';
+import { ActionType } from '@/domain/referentiels';
 import { AccordionControlled, AccordionType } from '@/ui';
 
-export type TAxe = TActionBase & {
+export type TAxe = ActionListItem & {
   children?: TAxe[];
 };
 

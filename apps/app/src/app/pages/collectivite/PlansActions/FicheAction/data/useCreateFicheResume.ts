@@ -1,10 +1,11 @@
-import { useTRPC } from '@/api/utils/trpc/client';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
 import { dropAnimation } from '@/app/plans/plans/show-plan/plan-arborescence.view';
+import { useTRPC } from '@tet/api';
 
+import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
-import { FicheResume, Plan } from '@/domain/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Plan } from '@tet/domain/plans';
 import { isNil } from 'es-toolkit';
 import { useRouter } from 'next/navigation';
 import { ficheResumeFactory, sortFichesResume } from './utils';
@@ -85,7 +86,7 @@ export const useCreateFicheResume = (args: Args) => {
 
       queryClient.setQueryData(
         axe_fiches_key,
-        (old: FicheResume[] | undefined) => {
+        (old: FicheListItem[] | undefined) => {
           return old ? [tempFiche, ...old] : [tempFiche];
         }
       );
@@ -131,12 +132,12 @@ export const useCreateFicheResume = (args: Args) => {
       );
     },
     onSuccess: async (data) => {
-      const newFiche = data as unknown as FicheResume;
+      const newFiche = data as unknown as FicheListItem;
 
       // On récupère la fiche renvoyer par le serveur pour la remplacer dans le cache avant invalidation
       queryClient.setQueryData(
         axe_fiches_key,
-        (old: FicheResume[] | undefined): FicheResume[] => {
+        (old: FicheListItem[] | undefined): FicheListItem[] => {
           const updatedData = old ?? [];
           return sortFichesResume(
             updatedData.map((f) => {

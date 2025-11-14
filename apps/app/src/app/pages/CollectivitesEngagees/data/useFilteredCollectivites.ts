@@ -1,6 +1,5 @@
-import { CollectiviteEngagee } from '@/api';
-import { useUserSession } from '@/api/users/user-context/user-provider';
-import { useTRPC } from '@/api/utils/trpc/client';
+import { CollectiviteEngagee, useTRPC } from '@/api';
+import { useUserSession } from '@/api/users';
 import { useQuery } from '@tanstack/react-query';
 import { getFilterProperties } from './get-filter-properties';
 

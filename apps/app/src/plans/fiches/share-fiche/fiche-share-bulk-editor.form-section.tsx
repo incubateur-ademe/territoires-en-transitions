@@ -1,5 +1,5 @@
 import { MultipleCollectiviteSelector } from '@/app/plans/fiches/share-fiche/multiple-collectivite.selector';
-import { IdNameSchema } from '@/domain/collectivites';
+import { IdNameSchema } from '@/domain/shared';
 import { Field, FormSection } from '@/ui';
 import classNames from 'classnames';
 

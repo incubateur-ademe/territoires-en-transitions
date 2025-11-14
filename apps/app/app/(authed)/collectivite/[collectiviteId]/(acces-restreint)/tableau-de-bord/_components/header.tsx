@@ -1,7 +1,7 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { TDBViewId } from '@/app/app/paths';
 import { Button, ButtonProps } from '@/ui';
-import { TabsTab } from '@/ui/design-system/Tabs/Tabs.next';
+import { TabsTab } from '@/ui/design-system/TabsNext/index';
 
 type Props = {
   activeTab: TDBViewId;

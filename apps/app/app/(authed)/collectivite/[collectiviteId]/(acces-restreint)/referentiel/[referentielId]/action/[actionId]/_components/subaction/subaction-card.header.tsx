@@ -1,8 +1,8 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import {
   OpenModaleState,
   SubActionStatutDropdown,
 } from '@/app/referentiels/actions/sub-action-statut.dropdown';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import Markdown from '@/app/ui/Markdown';

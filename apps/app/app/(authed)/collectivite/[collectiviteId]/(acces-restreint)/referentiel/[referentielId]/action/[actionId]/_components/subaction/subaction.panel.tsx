@@ -1,9 +1,11 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ActionPreuvePanel } from '@/app/referentiels/actions/action-preuve.panel.lazy';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
-import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
+import {
+  ActionDefinitionSummary,
+  useActionSummaryChildren,
+} from '@/app/referentiels/referentiel-hooks';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { Tab, Tabs, sideMenuContentZindex } from '@/ui';
 import classNames from 'classnames';

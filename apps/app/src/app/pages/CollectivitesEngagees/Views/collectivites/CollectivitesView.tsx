@@ -1,7 +1,6 @@
 'use client';
 
 import { CollectiviteEngagee } from '@/api';
-import { RecherchesCollectivite } from '@/api/collectiviteEngagees';
 import { nameToShortNames } from '@/app/app/pages/CollectivitesEngagees/data/filters';
 import { useFilteredCollectivites } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
 import { View } from '@/app/app/pages/CollectivitesEngagees/Views/View';
@@ -24,7 +23,7 @@ export const CollectivitesView = ({
   const { isLoading, collectivites, collectivitesCount } =
     useFilteredCollectivites(filters);
   return (
-    <View<RecherchesCollectivite>
+    <View<CollectiviteEngagee.RecherchesCollectivite>
       data={collectivites}
       dataCount={collectivitesCount}
       isLoading={isLoading}

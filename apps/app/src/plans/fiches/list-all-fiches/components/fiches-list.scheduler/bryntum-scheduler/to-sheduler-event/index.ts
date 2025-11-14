@@ -1,10 +1,10 @@
 import { DateHelper } from '@bryntum/scheduler';
 
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import { FicheResume } from '@/domain/plans';
 import { computeDateRange } from './compute-data-range';
 
-export function toSchedulerEvent(fiches: FicheResume[]) {
+export function toSchedulerEvent(fiches: Fiche[]) {
   return fiches
     .map((fiche) => {
       const startDate = fiche.dateDebut ? new Date(fiche.dateDebut) : null;

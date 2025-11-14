@@ -1,4 +1,4 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';

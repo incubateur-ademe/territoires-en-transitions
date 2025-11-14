@@ -1,8 +1,8 @@
 import {
   CONSOMMATIONS_FINALES_PROPERTIES,
   EMISSIONS_GES_PROPERTIES,
+  IndicateurSourceEnum,
   SEQUESTRATION_CARBONE_PROPERTIES,
-  SourceIndicateur,
   TrajectoirePropertiesType,
   TrajectoireSecteursType,
 } from '@/domain/indicateurs';
@@ -18,8 +18,8 @@ export const DOC_METHODO =
   'ADEME-Methodo-Outil-trajectoire-reference_VF_Nov2024.pdf';
 
 const NOMS_SOURCE: Record<string, string> = {
-  [SourceIndicateur.COLLECTIVITE]: 'Données de la collectivité',
-  [SourceIndicateur.RARE]: 'RARE-OREC',
+  [IndicateurSourceEnum.COLLECTIVITE]: 'Données de la collectivité',
+  [IndicateurSourceEnum.RARE]: 'RARE-OREC',
 };
 
 export const getNomSource = (id: string) =>
@@ -63,7 +63,7 @@ export const INDICATEURS_TRAJECTOIRE: {
     titreSecteur: '',
     ...SEQUESTRATION_CARBONE_PROPERTIES,
   },
-};
+} as const;
 
 export const INDICATEUR_TRAJECTOIRE_IDENTFIANTS: string[] = Object.values(
   INDICATEURS_TRAJECTOIRE

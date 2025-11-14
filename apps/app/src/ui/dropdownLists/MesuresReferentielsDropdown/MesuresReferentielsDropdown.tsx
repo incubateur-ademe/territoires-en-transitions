@@ -1,5 +1,5 @@
 import {
-  ActionItem,
+  ActionListItem,
   ListActionsResponse,
   useListActions,
 } from '@/app/referentiels/actions/use-list-actions';
@@ -71,7 +71,7 @@ const MesuresReferentielsDropdown = (
         } else {
           mesureListeFiltered = fuse
             .search(search)
-            .map((r: FuseResult<ActionItem>) => r.item);
+            .map((r: FuseResult<ActionListItem>) => r.item);
         }
       }
 

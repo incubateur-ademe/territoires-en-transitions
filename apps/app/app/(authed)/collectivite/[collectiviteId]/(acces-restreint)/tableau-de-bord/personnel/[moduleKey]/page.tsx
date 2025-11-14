@@ -1,4 +1,4 @@
-import { PersonalDefaultModuleKeys } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import { PersonalDefaultModuleKeys } from '@/api/plan-actions';
 
 import TdbPersoModulePage from './_components/tdb-perso-module.page';
 

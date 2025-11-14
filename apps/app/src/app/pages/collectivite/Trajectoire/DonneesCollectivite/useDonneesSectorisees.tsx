@@ -5,10 +5,10 @@ import {
   hasEnoughConsommationsFinalesDataFromSource,
   hasEnoughEmissionsGesDataFromSource,
   IndicateurAvecValeursParSource,
+  IndicateurSourceEnum,
   IndicateurValeurGroupee,
   SNBC_ALDO_DATE_DEBUT_REFERENCE,
   SNBC_ALDO_DATE_FIN_REFERENCE,
-  SourceIndicateur,
   TrajectoirePropertiesType,
 } from '@/domain/indicateurs';
 
@@ -94,17 +94,17 @@ const useGetDonneesSectoriseesByIndicateurId = (
   const { data: dataAldo, isLoading: isLoadingAldo } = useListIndicateurValeurs(
     {
       identifiantsReferentiel: secteurIds,
-      sources: [SourceIndicateur.ALDO],
+      sources: [IndicateurSourceEnum.ALDO],
       dateDebut: SNBC_ALDO_DATE_DEBUT_REFERENCE,
       dateFin: SNBC_ALDO_DATE_FIN_REFERENCE,
     },
-    { enabled: requestedSources.includes(SourceIndicateur.ALDO) }
+    { enabled: requestedSources.includes(IndicateurSourceEnum.ALDO) }
   );
   const indicateurs = data?.indicateurs ?? [];
   if (dataAldo?.indicateurs?.length && indicateurs.length) {
     // fusionne les données ALDO avec les autres sources
     dataAldo.indicateurs.forEach((indSourceAldo) => {
-      if (indSourceAldo.sources[SourceIndicateur.ALDO]) {
+      if (indSourceAldo.sources[IndicateurSourceEnum.ALDO]) {
         const indicateur = indicateurs.find(
           (ind) => ind.definition.id === indSourceAldo.definition.id
         );
@@ -152,7 +152,7 @@ export type IndicateurAvecSources = {
 
 const extractValue = (
   indicateur: IndicateurAvecValeursParSource,
-  source: SourceIndicateur
+  source: IndicateurSourceEnum
 ): number | null => {
   return indicateur.sources[source]?.valeurs?.[0]?.resultat ?? null;
 };
@@ -167,7 +167,7 @@ const isDataSufficientForATrajectoireComputation = (
   id: IndicateurTrajectoireId,
   indicateurs: IndicateurAvecValeursParSource[],
   identifiants: string[],
-  requestedSources: SourceIndicateur[]
+  requestedSources: IndicateurSourceEnum[]
 ): {
   isDataSufficient: boolean;
   warningMessage?: string;

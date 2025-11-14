@@ -1,18 +1,18 @@
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import { getFormattedNumber } from '@/app/utils/formatUtils';
-import { FicheActionBudget } from '@/domain/plans';
 import { Button, Field, Input, OptionValue, Select } from '@/ui';
+import { FicheBudgetCreate } from '@tet/domain/plans';
 import classNames from 'classnames';
 import { noop } from 'es-toolkit';
 import { useEffect } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 
 type DetailedBudgetFormProps = {
-  budgets: FicheActionBudget[];
+  budgets: FicheBudgetCreate[];
   ficheId: number;
   type: 'investissement' | 'fonctionnement';
   isEuros: boolean;
-  onFormChange: (formData: FicheActionBudget[]) => void;
+  onFormChange: (formData: FicheBudgetCreate[]) => void;
 };
 
 export const DetailedBudgetForm = ({
@@ -220,7 +220,7 @@ export const DetailedBudgetForm = ({
 };
 
 const calculateTotal = (
-  fields: FicheActionBudget[],
+  fields: FicheBudgetCreate[],
   isEuros: boolean,
   fieldType: 'budgetPrevisionnel' | 'budgetReel'
 ): number => {

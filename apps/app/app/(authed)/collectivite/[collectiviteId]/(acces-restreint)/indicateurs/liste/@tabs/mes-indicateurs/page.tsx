@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from '@/api/users/user-context/user-provider';
+import { useUser } from '@/api/users';
 import IndicateursListView from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-view';
 import { getFiltersForMyIndicateurs } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 

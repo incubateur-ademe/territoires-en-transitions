@@ -1,9 +1,8 @@
-import { DBClient } from '@/api';
+import { DBClient, useSupabase } from '@/api';
 import { useCollectiviteId, useCurrentCollectivite } from '@/api/collectivites';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useAudit, useIsAuditeur } from '@/app/referentiels/audits/useAudit';
 import {
-  ActionStatutInsert,
+  ActionStatutCreate,
   StatutAvancement,
   getReferentielIdFromActionId,
 } from '@/domain/referentiels';
@@ -75,7 +74,7 @@ export const useSaveActionStatut = () => {
     useSnapshotComputeAndUpdate();
 
   const { isPending, mutate: saveActionStatut } = useMutation({
-    mutationFn: async (statut: ActionStatutInsert) => {
+    mutationFn: async (statut: ActionStatutCreate) => {
       return supabase
         .from('action_statut')
         .upsert([objectToSnake(omit(statut, ['modifiedAt', 'modifiedBy']))], {
@@ -140,7 +139,7 @@ export const useEditActionStatutIsDisabled = (actionId: string) => {
   const score = useScore(actionId);
 
   return Boolean(
-isReadOnly ||
+    isReadOnly ||
       !score ||
       score.desactive ||
       (audit && (!isAuditeur || audit.valide))

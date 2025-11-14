@@ -1,11 +1,11 @@
-import { RecherchesCollectivite } from '@/api/collectiviteEngagees';
+import { CollectiviteEngagee } from '@/api';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { Card, Event, Icon, useEventTracker } from '@/ui';
 import classNames from 'classnames';
 import ContactsDisplay from '../../contacts/contacts-display';
 
 type Props = {
-  collectivite: RecherchesCollectivite;
+  collectivite: CollectiviteEngagee.RecherchesCollectivite;
   isClickable: boolean;
 };
 

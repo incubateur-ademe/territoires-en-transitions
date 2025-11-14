@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from '@/api/users/user-context/user-provider';
+import { useUser } from '@/api/users';
 import { Event, useEventTracker } from '@/ui';
 import { createContext, ReactNode, useContext } from 'react';
 import { countActiveFicheFilters } from './count-active-fiche-filters';

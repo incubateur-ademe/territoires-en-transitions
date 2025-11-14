@@ -2,14 +2,14 @@ import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from '@/app/app/paths';
-import { FicheResume } from '@/domain/plans';
+import { FicheListItem } from '../list-all-fiches/data/use-list-fiches';
 
 export function getFichePageUrlForCollectivite({
   fiche,
   collectiviteId,
 }: {
   collectiviteId: number;
-  fiche: Pick<FicheResume, 'id' | 'plans'>;
+  fiche: Pick<FicheListItem, 'id' | 'plans'>;
 }) {
   const foundPlan = fiche.plans?.find(
     (plan) => plan.collectiviteId === collectiviteId

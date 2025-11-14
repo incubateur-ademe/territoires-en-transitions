@@ -10,19 +10,19 @@ export const collectiviteType = {
   EPCI: 'epci',
   Commune: 'commune',
   Test: 'test',
-};
+} as const;
 
 export const CollectiviteTypeField = ({ type, onSelect }: Props) => {
-  const options : Option[] = [
+  const options: Option[] = [
     { label: 'Commune', value: collectiviteType.Commune },
     { label: 'EPCI', value: collectiviteType.EPCI },
     { label: 'Département', value: collectiviteType.Departement },
     { label: 'Région', value: collectiviteType.Region },
-    { label: 'Collectivité test', value: collectiviteType.Test},
+    { label: 'Collectivité test', value: collectiviteType.Test },
   ];
 
   return (
-    <Field title="Type de collectivité" className='self-end'>
+    <Field title="Type de collectivité" className="self-end">
       <Select
         options={options}
         values={type ?? ''}

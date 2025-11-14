@@ -1,4 +1,4 @@
-import { useTRPC } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api';
 import { useMutationCacheSubscriber } from '@/app/utils/react-query/use-mutation-cache-subscriber';
 import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
 import { debounce } from 'es-toolkit';

@@ -14,6 +14,7 @@ describe('deleteFilterValueForSingleKey', () => {
     notesDeSuivi: WITHOUT,
     hasMesuresLiees: WITH,
     hasDateDeFinPrevisionnelle: WITHOUT,
+    sort: 'created_at',
   };
 
   const mockLookupConfig: Partial<Record<FilterKeys, LookupConfig>> = {

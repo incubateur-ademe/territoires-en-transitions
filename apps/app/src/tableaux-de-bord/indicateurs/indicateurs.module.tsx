@@ -1,9 +1,10 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import { ModuleIndicateursSelect } from '@/api/plan-actions';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { listIndicateursParamsSerializer } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
 import {
+  IndicateursListParamOption,
   makeCollectiviteIndicateursListUrl,
   makeCollectiviteIndicateursUrl,
 } from '@/app/app/paths';
@@ -11,7 +12,6 @@ import { useListIndicateurDefinitions } from '@/app/indicateurs/definitions/use-
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import { ButtonProps, MenuAction } from '@/ui';
-import { IndicateursListParamOption } from '@/app/app/paths';
 
 type Props = {
   module: ModuleIndicateursSelect;

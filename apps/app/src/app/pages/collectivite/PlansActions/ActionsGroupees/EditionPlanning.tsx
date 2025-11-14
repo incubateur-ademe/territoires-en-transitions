@@ -1,5 +1,5 @@
+import { BulkEditRequest } from '@/app/plans/fiches/list-all-fiches/data/use-bulk-fiches-edit';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
-import { BulkEditRequest } from '@/domain/plans';
 import { Button, Checkbox, Event, Field, Input, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useRef, useState } from 'react';

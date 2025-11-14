@@ -1,4 +1,4 @@
-import { RouterOutput, useTRPC } from '@/api/utils/trpc/client';
+import { RouterOutput, useTRPC } from '@/api';
 import { useQuery } from '@tanstack/react-query';
 
 export type IndicateurDefinition =

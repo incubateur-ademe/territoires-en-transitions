@@ -1,5 +1,5 @@
+import { RouterOutput, useTRPC } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
-import { RouterOutput, useTRPC } from '@/api/utils/trpc/client';
 import { SHARE_ICON } from '@/app/plans/fiches/share-fiche/fiche-share-info';
 import { useTagCreate } from '@/app/ui/dropdownLists/tags/useTagCreate';
 import { useDeleteTag } from '@/app/ui/dropdownLists/tags/useTagDelete';

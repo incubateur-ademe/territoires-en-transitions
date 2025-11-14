@@ -1,9 +1,9 @@
-import { Audit } from '@/domain/referentiels';
+import { LabellisationAudit } from '@/domain/referentiels';
 import { ObjectToSnake } from 'ts-case-convert';
 
 export type TAuditEnCours = ObjectToSnake<
   Pick<
-    Audit,
+    LabellisationAudit,
     | 'id'
     | 'collectiviteId'
     | 'demandeId'

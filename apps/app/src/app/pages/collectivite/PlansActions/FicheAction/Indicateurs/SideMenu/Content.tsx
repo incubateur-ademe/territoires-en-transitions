@@ -1,4 +1,4 @@
-import { useUser } from '@/api/users/user-context/user-provider';
+import { useUser } from '@/api/users';
 import { INDICATEUR_LABELS } from '@/app/app/pages/collectivite/Indicateurs/constants';
 import {
   getFiltersForIndicateurClefs,

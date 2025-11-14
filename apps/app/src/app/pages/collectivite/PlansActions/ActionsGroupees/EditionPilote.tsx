@@ -1,7 +1,7 @@
+import { BulkEditRequest } from '@/app/plans/fiches/list-all-fiches/data/use-bulk-fiches-edit';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import { PersonneTagOrUser } from '@/domain/collectivites';
-import { BulkEditRequest } from '@/domain/plans';
 import { Button, Event, Field, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';

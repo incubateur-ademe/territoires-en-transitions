@@ -1,15 +1,15 @@
+import { RouterInput, RouterOutput, useTRPC } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
-import { RouterInput, RouterOutput, useTRPC } from '@/api/utils/trpc/client';
 import { useQuery } from '@tanstack/react-query';
 
 export type ActionListFilters =
   RouterInput['referentiels']['actions']['listActions']['filters'];
 
-export type ActionItem =
+export type ActionListItem =
   RouterOutput['referentiels']['actions']['listActions'][number];
 
 export type ListActionsResponse = {
-  data: ActionItem[] | undefined;
+  data: ActionListItem[] | undefined;
   isLoading: boolean;
 };
 

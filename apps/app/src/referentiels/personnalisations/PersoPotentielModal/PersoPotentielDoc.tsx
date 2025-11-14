@@ -1,7 +1,7 @@
 /**
  * Affiche l'onglet "Documentation"
  */
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { useScore } from '@/app/referentiels/use-snapshot';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import DOMPurify from 'dompurify';

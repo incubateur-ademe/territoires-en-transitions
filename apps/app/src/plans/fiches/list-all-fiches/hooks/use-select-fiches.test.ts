@@ -10,6 +10,7 @@ describe('useFicheActionSelection', () => {
           view: 'grid',
           currentPage: 1,
           isReadOnly: false,
+          permissions: [],
         })
       );
 
@@ -35,6 +36,7 @@ describe('useFicheActionSelection', () => {
           view: 'grid',
           currentPage: 1,
           isReadOnly: false,
+          permissions: [],
         })
       );
 
@@ -55,6 +57,7 @@ describe('useFicheActionSelection', () => {
           view: 'grid',
           currentPage: 1,
           isReadOnly: false,
+          permissions: [],
         })
       );
 
@@ -77,6 +80,7 @@ describe('useFicheActionSelection', () => {
           view: 'grid',
           currentPage: 1,
           isReadOnly: false,
+          permissions: [],
         })
       );
 
@@ -95,6 +99,7 @@ describe('useFicheActionSelection', () => {
           view: 'grid',
           currentPage: 1,
           isReadOnly: false,
+          permissions: [],
         })
       );
 
@@ -120,6 +125,7 @@ describe('useFicheActionSelection', () => {
           view: 'grid',
           currentPage: 1,
           isReadOnly: false,
+          permissions: [],
         })
       );
 
@@ -146,6 +152,7 @@ describe('useFicheActionSelection', () => {
             view: 'grid',
             currentPage,
             isReadOnly: false,
+            permissions: [],
           }),
         { initialProps: 1 }
       );
@@ -169,6 +176,7 @@ describe('useFicheActionSelection', () => {
             view: 'grid',
             currentPage,
             isReadOnly: false,
+            permissions: [],
           }),
         { initialProps: 1 }
       );
@@ -202,6 +210,7 @@ describe('useFicheActionSelection', () => {
           view: 'grid',
           currentPage: 1,
           isReadOnly: false,
+          permissions: [],
         })
       );
 
@@ -226,6 +235,7 @@ describe('useFicheActionSelection', () => {
           view: 'grid',
           currentPage: 1,
           isReadOnly: false,
+          permissions: [],
         })
       );
 
@@ -250,6 +260,7 @@ describe('useFicheActionSelection', () => {
             view: 'grid',
             currentPage,
             isReadOnly: false,
+            permissions: [],
           }),
         { initialProps: 1 }
       );

@@ -1,4 +1,4 @@
-import { RouterOutput } from '@/api/utils/trpc/client';
+import { RouterOutput } from '@/api';
 import { SnapshotJalonEnum } from '@/domain/referentiels';
 import { SelectMultiple, SelectMultipleProps } from '@/ui';
 

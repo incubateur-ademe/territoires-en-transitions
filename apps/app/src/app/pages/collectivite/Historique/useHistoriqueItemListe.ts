@@ -1,5 +1,5 @@
 import { DBClient } from '@/api';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
 import { ITEM_ALL } from '@/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';

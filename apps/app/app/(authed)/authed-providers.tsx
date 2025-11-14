@@ -1,7 +1,7 @@
 'use client';
 
 import { CollectiviteProvider } from '@/api/collectivites';
-import { UserProviderStoreClient } from '@/api/users/user-context/user-context-store.client';
+import { UserProviderStoreClient } from '@/api/users';
 import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
 import { DemoModeProvider } from '@/app/users/demo-mode-support-provider';
 import { NPSTracker } from '@/app/utils/nps/nps-tracker';

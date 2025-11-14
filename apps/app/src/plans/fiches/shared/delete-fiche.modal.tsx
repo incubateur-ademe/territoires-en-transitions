@@ -1,12 +1,12 @@
 import { useDeleteFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-delete-fiche';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
-import { FicheResume } from '@/domain/plans';
 import { Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
+import { FicheListItem } from '../list-all-fiches/data/use-list-fiches';
 
 type DeleteFicheModalProps = {
   openState?: OpenState;
-  fiche: Pick<FicheResume, 'id' | 'titre' | 'plans'>;
+  fiche: Pick<FicheListItem, 'id' | 'titre' | 'plans'>;
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
   /** Redirection à la suppression de la fiche */

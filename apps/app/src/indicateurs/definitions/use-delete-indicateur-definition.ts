@@ -1,5 +1,5 @@
+import { useTRPC } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
-import { useTRPC } from '@/api/utils/trpc/client';
 import { makeCollectiviteTousLesIndicateursUrl } from '@/app/app/paths';
 import { Event, useEventTracker } from '@/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

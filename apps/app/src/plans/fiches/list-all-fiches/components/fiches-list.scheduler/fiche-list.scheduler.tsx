@@ -1,13 +1,14 @@
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { Scheduler } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/bryntum-scheduler/scheduler';
 import { toSchedulerEvent } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/bryntum-scheduler/to-sheduler-event';
-import { FicheResume } from '@/domain/plans';
-import { Alert, Badge, DEPRECATED_ButtonMenu } from '@/ui';
+import { Alert, Badge } from '@/ui';
 import { cn } from '@/ui/utils/cn';
 import '@bryntum/scheduler/scheduler.stockholm.css';
+import { DEPRECATED_ButtonMenu } from '@tet/ui';
 import './bryntum-scheduler/scheduler.css';
 
 type Props = {
-  fiches: FicheResume[];
+  fiches: Fiche[];
   isLoading: boolean;
   fichesPerPage: number;
 };

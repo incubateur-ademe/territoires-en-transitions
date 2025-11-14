@@ -1,6 +1,6 @@
 import { MultipleCollectiviteSelector } from '@/app/plans/fiches/share-fiche/multiple-collectivite.selector';
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
-import { IdNameSchema } from '@/domain/collectivites';
+import { IdNameSchema } from '@/domain/shared';
 import { Field, FormSection } from '@/ui';
 
 type FicheShareEditorFormSectionProps = {

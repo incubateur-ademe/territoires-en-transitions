@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
 import { useListMesurePilotes } from '@/app/referentiels/actions/use-mesure-pilotes';
 import { useListMesureServicesPilotes } from '@/app/referentiels/actions/use-mesure-services-pilotes';
 import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';

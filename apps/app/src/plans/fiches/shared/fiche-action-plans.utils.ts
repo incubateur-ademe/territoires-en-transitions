@@ -1,7 +1,7 @@
-import { FicheResume } from '@/domain/plans';
+import { FicheListItem } from '../list-all-fiches/data/use-list-fiches';
 
 export function getFicheActionPlanForCollectivite(
-  ficheAction: FicheResume,
+  ficheAction: FicheListItem,
   collectiviteId: number
 ) {
   return (
@@ -10,7 +10,7 @@ export function getFicheActionPlanForCollectivite(
 }
 
 export function getFirstFicheActionPlanForCollectivite(
-  ficheAction: FicheResume,
+  ficheAction: FicheListItem,
   collectiviteId: number
 ) {
   const plans = getFicheActionPlanForCollectivite(ficheAction, collectiviteId);

@@ -1,4 +1,4 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { toCamel } from 'ts-case-convert';
 
 // tous les items du sommaire (avant filtrage)

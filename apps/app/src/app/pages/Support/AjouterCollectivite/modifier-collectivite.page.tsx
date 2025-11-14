@@ -15,7 +15,7 @@ import {
   useSelectCollectivite,
 } from '@/app/app/pages/Support/AjouterCollectivite/use-select-collectivite';
 import { Button, Field, Input } from '@/ui';
-import { InputNumber } from '@/ui/design-system/Input/InputNumber';
+import { InputNumber } from '@/ui';
 import { useEffect, useState } from 'react';
 
 export const ModifierCollectivitePage = () => {

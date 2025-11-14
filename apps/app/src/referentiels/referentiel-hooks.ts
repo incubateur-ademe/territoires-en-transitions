@@ -1,12 +1,11 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { RouterInput, useTRPC } from '@/api/utils/trpc/client';
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { RouterInput, RouterOutput, useTRPC } from '@/api';
 import {
   ActionType,
   ActionTypeEnum,
   ReferentielId,
 } from '@/domain/referentiels';
 import { useQuery } from '@tanstack/react-query';
+import { useCollectiviteId } from '@tet/api/collectivites';
 
 const referentielStruct: ActionType[] = [
   ActionTypeEnum.REFERENTIEL,
@@ -23,6 +22,9 @@ const actionStruct: ActionType[] = [
 
 type ActionSummariesInput =
   RouterInput['referentiels']['actions']['listActionSummaries'];
+
+export type ActionDefinitionSummary =
+  RouterOutput['referentiels']['actions']['listActionSummaries'][number];
 
 /**
  * Returns a list of actions

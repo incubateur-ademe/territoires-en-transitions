@@ -1,13 +1,13 @@
-import { FicheActionNote } from '@/api/plan-actions';
+import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
+import { FicheNote } from '@/domain/plans';
 import { ModalFooterOKCancel } from '@/ui';
 import { DeletedNote } from '../data/useUpsertNoteSuivi';
-import { FicheResume } from '@/domain/plans';
 
 type ModaleSuppressionNoteDeSuiviProps = {
-  fiche: FicheResume;
-  editedNote: FicheActionNote;
+  fiche: FicheShareProperties;
+  editedNote: FicheNote;
   onDelete: (deletedNote: DeletedNote) => void;
 };
 
