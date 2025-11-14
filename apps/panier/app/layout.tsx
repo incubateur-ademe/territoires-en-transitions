@@ -1,5 +1,5 @@
+import { SupabaseProvider } from '@/api';
 import { getCookieOptions } from '@/api/utils/supabase/cookie-options';
-import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
 import Footer from '@/panier/components/Layout/Footer';
 import Header from '@/panier/components/Layout/Header';
 import { headers } from 'next/headers';

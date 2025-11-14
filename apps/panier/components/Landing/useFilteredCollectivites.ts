@@ -1,4 +1,4 @@
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import useSWR from 'swr';
 
 type Collectivite = {
