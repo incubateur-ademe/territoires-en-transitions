@@ -41,6 +41,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   );
   const { etoiles, audit, completude_ok, labellisation } = parcours;
   const canSubmitDemande = peutDemanderEtoile || (isCOT && completude_ok);
+  const peutDemander1ereEtoileCOT = etoiles === 1 && isCOT && completude_ok;
   const DemandeModal = isCOT ? DemandeAuditModal : DemandeLabellisationModal;
   const auditId = audit?.id;
   return (
@@ -56,9 +57,10 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
         <>
           {etoiles === 1 && isCOT ? (
             <Button
+              className="mb-4"
               dataTest="1ereEtoileCOT"
               size="sm"
-              disabled={!peutDemanderEtoile}
+              disabled={!peutDemander1ereEtoileCOT}
               onClick={() => setOpened_1ereEtoileCOT(true)}
             >
               Demander la première étoile
@@ -178,11 +180,7 @@ const DerniereLabellisation = ({
   return (
     <p className="m-0">
       <span className="capitalize">{etoileLabel}</span> étoile depuis le{' '}
-      {fromDate
-        ? new Date(fromDate).toLocaleDateString('fr-FR', {
-            dateStyle: 'long',
-          })
-        : null}
+      {fromDate ? fromDate : null}
     </p>
   );
 };
