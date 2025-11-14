@@ -1,4 +1,4 @@
-import { DBClient } from '@/api/typeUtils';
+import { DBClient } from '../../../typeUtils';
 import { Groupement } from '../domain/groupement.schema';
 
 /**

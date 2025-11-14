@@ -1,10 +1,5 @@
 import { text } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import z from 'zod';
-import { ApplicationSousScopes } from '../application-domains.enum';
 import { createdAt, modifiedAt } from '../column.utils';
-import { WebhookAuthenticationMethod } from './webhook-authentication-method.enum';
-import { WebhookPayloadFormat } from './webhook-payload-format.enum';
 import { webhooksSchema } from './webhooks.schema';
 
 export const webhookConfigurationTable = webhooksSchema.table(
@@ -26,22 +21,3 @@ export const webhookConfigurationTable = webhooksSchema.table(
     modifiedAt,
   }
 );
-
-export const webhookConfigurationSchema = createSelectSchema(
-  webhookConfigurationTable,
-  {
-    entityType: z.enum(ApplicationSousScopes),
-    authenticationMethod: z.enum(WebhookAuthenticationMethod),
-    payloadFormat: z.enum(WebhookPayloadFormat),
-  }
-);
-
-export type WebhookConfiguration = z.infer<typeof webhookConfigurationSchema>;
-
-export const webhookConfigurationInsertSchema = createInsertSchema(
-  webhookConfigurationTable
-);
-
-export type WebhookConfigurationInsert = z.infer<
-  typeof webhookConfigurationInsertSchema
->;

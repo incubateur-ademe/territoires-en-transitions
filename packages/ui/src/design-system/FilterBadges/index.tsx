@@ -1,6 +1,6 @@
-import { Badge } from '@/ui/design-system/Badge';
-import { Icon } from '@/ui/design-system/Icon';
-import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
+import { Badge } from '../Badge';
+import { Icon } from '../Icon';
+import { VisibleWhen } from '../VisibleWhen';
 
 export type FilterCategory<TKey extends string = string> = {
   /** Unique identifier for the filter category */

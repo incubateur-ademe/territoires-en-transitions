@@ -1,6 +1,6 @@
 import { DBClient } from '@/api';
 import { useCollectiviteId, useCurrentCollectivite } from '@/api/collectivites';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import { useAudit, useIsAuditeur } from '@/app/referentiels/audits/useAudit';
 import {
   ActionStatutInsert,
@@ -140,7 +140,7 @@ export const useEditActionStatutIsDisabled = (actionId: string) => {
   const score = useScore(actionId);
 
   return Boolean(
-isReadOnly ||
+    isReadOnly ||
       !score ||
       score.desactive ||
       (audit && (!isAuditeur || audit.valide))

@@ -12,7 +12,7 @@ import {
   listPlansRequestSchema,
   updateAxeRequestSchema,
   updatePlanSchema,
-} from './plans.schema';
+} from '@/domain/plans';
 import { PlanService } from './plans.service';
 
 @Injectable()

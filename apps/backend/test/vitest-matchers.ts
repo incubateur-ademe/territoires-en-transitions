@@ -9,7 +9,6 @@ export const ISO_8601_DATE_TIME_REGEX =
 
 export interface CustomMatchers<R = unknown> {
   toEqualDate: (expected: string) => R;
-
   toThrowTrpcHttpError: (error: HttpException) => Promise<R>;
 }
 

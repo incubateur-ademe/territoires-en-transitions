@@ -1,13 +1,11 @@
 import {
   ScoreIndicatifPayload,
+  ScoreIndicatifType,
+  scoreIndicatifTypeEnum,
   ValeurUtilisee,
-} from '@/backend/referentiels/models/score-indicatif.dto';
-import {
-  TypeScoreIndicatif,
-  typeScoreIndicatifEnum,
-} from '@/backend/referentiels/models/type-score-indicatif.enum';
+} from '@/domain/referentiels';
 
-const typeScoreToLabel: Record<TypeScoreIndicatif, string> = {
+const typeScoreToLabel: Record<ScoreIndicatifType, string> = {
   fait: 'Résultats de la collectivité',
   programme: 'Objectifs de la collectivité',
 };
@@ -20,10 +18,10 @@ export function getLibelleScoreIndicatif(
 ) {
   return [
     scoreIndicatif.fait
-      ? getTextScoreIndicatif(typeScoreIndicatifEnum.FAIT, scoreIndicatif)
+      ? getTextScoreIndicatif(scoreIndicatifTypeEnum.FAIT, scoreIndicatif)
       : null,
     scoreIndicatif.programme
-      ? getTextScoreIndicatif(typeScoreIndicatifEnum.PROGRAMME, scoreIndicatif)
+      ? getTextScoreIndicatif(scoreIndicatifTypeEnum.PROGRAMME, scoreIndicatif)
       : null,
   ]
     .filter(Boolean)
@@ -34,7 +32,7 @@ export function getLibelleScoreIndicatif(
  * Génère le texte du score indicatif fait ou programmé
  */
 function getTextScoreIndicatif(
-  typeScore: TypeScoreIndicatif,
+  typeScore: ScoreIndicatifType,
   scoreIndicatif: ScoreIndicatifPayload
 ) {
   const donnees = prepareScoreIndicatifData(typeScore, scoreIndicatif);
@@ -46,7 +44,7 @@ function getTextScoreIndicatif(
     valeurSecondaire?.dateValeur || valeurPrincipale.dateValeur;
 
   return (
-    (typeScore === typeScoreIndicatifEnum.FAIT
+    (typeScore === scoreIndicatifTypeEnum.FAIT
       ? `Pourcentage indicatif Fait de ${toPercentString(
           score
         )} calculé sur la base de : `
@@ -65,7 +63,7 @@ function getTextScoreIndicatif(
           noSource,
         })}`
       : '') +
-    (typeScore === typeScoreIndicatifEnum.PROGRAMME
+    (typeScore === scoreIndicatifTypeEnum.PROGRAMME
       ? ` atteint${valeurSecondaire ? 's' : ''}`
       : '')
   );
@@ -75,7 +73,7 @@ function getTextScoreIndicatif(
  * Prépare les données pour l'affichage du score indicatif
  */
 function prepareScoreIndicatifData(
-  typeScore: TypeScoreIndicatif,
+  typeScore: ScoreIndicatifType,
   scoreIndicatif: ScoreIndicatifPayload
 ) {
   const donnees = scoreIndicatif[typeScore];
@@ -95,7 +93,7 @@ function prepareScoreIndicatifData(
 }
 
 type LibelleValeurUtiliseeArgs = {
-  typeScore: TypeScoreIndicatif;
+  typeScore: ScoreIndicatifType;
   unite: string;
   valeurUtilisee: Pick<
     ValeurUtilisee,

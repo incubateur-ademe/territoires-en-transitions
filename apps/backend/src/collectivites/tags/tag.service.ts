@@ -5,14 +5,14 @@ import { partenaireTagTable } from '@/backend/collectivites/tags/partenaire-tag.
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
 import { structureTagTable } from '@/backend/collectivites/tags/structure-tag.table';
-import {
-  TagEnum,
-  TagInsert,
-  TagType,
-  TagWithCollectiviteId,
-} from '@/backend/collectivites/tags/tag.table-base';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
+import {
+  TagCreate,
+  TagEnum,
+  TagType,
+  TagWithCollectiviteId,
+} from '@/domain/collectivites';
 import { Injectable } from '@nestjs/common';
 import { AnyColumn, eq } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
@@ -67,7 +67,7 @@ export class TagService {
    * @param tx transaction
    */
   async saveTag(
-    tag: TagInsert,
+    tag: TagCreate,
     tagType: TagType,
     tx?: Transaction
   ): Promise<TagWithCollectiviteId> {

@@ -1,5 +1,5 @@
-import { ListFichesRequestFilters } from '@/backend/plans/fiches/shared/filters/filters.request';
-import { CountByRecordGeneralType } from '@/backend/utils/count-by.dto';
+import { ListFichesRequestFilters } from '@/domain/plans';
+import { CountByRecordGeneralType } from '@/domain/utils';
 import {
   ArrayCountByProperty,
   countByPropertyFichesFiltersKeysMapping,

@@ -1,7 +1,4 @@
-import {
-  AppEnvironment,
-  VersionResponseType,
-} from '@/backend/utils/version/version.models';
+import { AppEnvironment, VersionResponseType } from '@/domain/utils';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

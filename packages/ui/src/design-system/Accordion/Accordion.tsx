@@ -1,6 +1,6 @@
-import { Icon, IconValue } from '@/ui/design-system/Icon';
 import classNames from 'classnames';
 import { forwardRef, useState } from 'react';
+import { Icon, IconValue } from '../../design-system/Icon';
 
 export type AccordionType = {
   dataTest?: string;

@@ -1,15 +1,18 @@
 import js from '@eslint/js';
-import nxEslintPlugin from '@nx/eslint-plugin';
+import nxPlugin from '@nx/eslint-plugin';
 import tseslint from 'typescript-eslint';
 
 
 export default [
+  ...nxPlugin.configs['flat/base'],
+  ...nxPlugin.configs['flat/typescript'],
+  ...nxPlugin.configs['flat/javascript'],
   {
     ignores: ['**/dist', '**/e2e-cypress-deprecated/**'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
-  { plugins: { '@nx': nxEslintPlugin } },
+  { plugins: { '@nx': nxPlugin } },
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     rules: {
@@ -17,9 +20,9 @@ export default [
         'error',
         {
           enforceBuildableLibDependency: true,
-          allowCircularSelfDependency: true,
+          allowCircularSelfDependency: false,
           banTransitiveDependencies: true,
-          allow: ['../../packages/ui/src/tailwind-preset', '@/domain'],
+          allow: ['../../packages/ui/src/tailwind-preset'],
           depConstraints: [
             {
               sourceTag: '*',

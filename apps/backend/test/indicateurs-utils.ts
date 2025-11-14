@@ -1,10 +1,10 @@
 import { indicateurActionTable } from '@/backend/indicateurs/definitions/indicateur-action.table';
+import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
 import { indicateurValeurTable } from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
 import { actionScoreIndicateurValeurTable } from '@/backend/referentiels/models/action-score-indicateur-valeur.table';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { and, eq, inArray } from 'drizzle-orm';
-import { indicateurDefinitionTable } from '../src/indicateurs/definitions/indicateur-definition.table';
-import { DatabaseService } from '../src/utils/database/database.service';
 
 export const getIndicateurIdByIdentifiant = async (
   databaseService: DatabaseService,

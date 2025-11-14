@@ -1,7 +1,7 @@
 'use client';
 import { DBClient } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';

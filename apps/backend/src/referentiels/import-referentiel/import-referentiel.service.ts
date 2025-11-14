@@ -1,9 +1,5 @@
 import ListPersonnalisationQuestionsService from '@/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
-import {
-  PersonnalisationRegleInsert,
-  personnalisationRegleTable,
-  regleType,
-} from '@/backend/collectivites/personnalisations/models/personnalisation-regle.table';
+import { personnalisationRegleTable } from '@/backend/collectivites/personnalisations/models/personnalisation-regle.table';
 import PersonnalisationsExpressionService from '@/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import {
   CreateIndicateurActionType,
@@ -19,35 +15,38 @@ import {
   importActionDefinitionSchema,
   ImportActionDefinitionType,
 } from '@/backend/referentiels/import-referentiel/import-action-definition.dto';
-import {
-  ActionRelationInsert,
-  actionRelationTable,
-} from '@/backend/referentiels/models/action-relation.table';
-import { ActionTypeEnum } from '@/backend/referentiels/models/action-type.enum';
-import {
-  CreateQuestionActionType,
-  questionActionTable,
-} from '@/backend/referentiels/models/question-action.table';
-import {
-  ReferentielId,
-  referentielIdEnumSchema,
-} from '@/backend/referentiels/models/referentiel-id.enum';
+import { actionRelationTable } from '@/backend/referentiels/models/action-relation.table';
+import { questionActionTable } from '@/backend/referentiels/models/question-action.table';
 import {
   ReferentielLabelEnum,
   referentielLabelEnumSchema,
 } from '@/backend/referentiels/models/referentiel-label.enum';
-import {
-  getActionTypeFromActionId,
-  getParentIdFromActionId,
-} from '@/backend/referentiels/referentiels.utils';
 import BaseSpreadsheetImporterService from '@/backend/shared/services/base-spreadsheet-importer.service';
 import { BackendConfigurationType } from '@/backend/utils/config/configuration.model';
 import ConfigurationService from '@/backend/utils/config/configuration.service';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
 import { DatabaseService } from '@/backend/utils/database/database.service';
-import { getErrorMessage } from '@/backend/utils/get-error-message';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
 import VersionService from '@/backend/utils/version/version.service';
+import {
+  PersonnalisationRegleCreate,
+  regleTypeEnumValues,
+} from '@/domain/collectivites';
+import {
+  ActionDefinitionCreate,
+  ActionDefinitionTag,
+  ActionOrigine,
+  ActionQuestion,
+  ActionRelationCreate,
+  ActionTypeEnum,
+  getActionTypeFromActionId,
+  getParentIdFromActionId,
+  ReferentielDefinition,
+  ReferentielId,
+  ReferentielIdEnum,
+  ReferentielTag,
+} from '@/domain/referentiels';
+import { getErrorMessage } from '@/domain/utils';
 import {
   ForbiddenException,
   HttpException,
@@ -59,31 +58,16 @@ import {
 } from '@nestjs/common';
 import { eq, ilike, like } from 'drizzle-orm';
 import { isNil, uniq } from 'es-toolkit';
-import {
-  ActionOrigineInsert,
-  actionOrigineTable,
-} from '../correlated-actions/action-origine.table';
+import { actionOrigineTable } from '../correlated-actions/action-origine.table';
 import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
 import {
   GetReferentielService,
   ReferentielResponse,
 } from '../get-referentiel/get-referentiel.service';
-import {
-  ActionDefinitionTagInsert,
-  actionDefinitionTagTable,
-} from '../models/action-definition-tag.table';
-import {
-  ActionDefinitionInsert,
-  actionDefinitionTable,
-} from '../models/action-definition.table';
-import {
-  ReferentielDefinition,
-  referentielDefinitionTable,
-} from '../models/referentiel-definition.table';
-import {
-  CreateReferentielTagType,
-  referentielTagTable,
-} from '../models/referentiel-tag.table';
+import { actionDefinitionTagTable } from '../models/action-definition-tag.table';
+import { actionDefinitionTable } from '../models/action-definition.table';
+import { referentielDefinitionTable } from '../models/referentiel-definition.table';
+import { referentielTagTable } from '../models/referentiel-tag.table';
 
 const REFERENTIEL_SPREADSHEET_RANGE = 'Structure référentiel!A:Z';
 const ACTION_ID_REGEXP = /^[a-zA-Z]+_\d+(\.\d+)*$/;
@@ -185,13 +169,13 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         ['identifiant']
       );
 
-    const actionDefinitions: ActionDefinitionInsert[] = [];
-    const createActionOrigines: ActionOrigineInsert[] = [];
-    const createPersonnalisationRegles: PersonnalisationRegleInsert[] = [];
+    const actionDefinitions: ActionDefinitionCreate[] = [];
+    const createActionOrigines: ActionOrigine[] = [];
+    const createPersonnalisationRegles: PersonnalisationRegleCreate[] = [];
     const indicateurIdentifiants: { identifiant: string; actionId: string }[] =
       [];
-    const personnalisationQuestionRelations: CreateQuestionActionType[] = [];
-    const createActionTags: ActionDefinitionTagInsert[] = [];
+    const personnalisationQuestionRelations: ActionQuestion[] = [];
+    const createActionTags: ActionDefinitionTag[] = [];
     importActionDefinitions.data.forEach((action) => {
       const actionId = `${referentielId}_${action.identifiant}`;
       const alreadyExists = actionDefinitions.find(
@@ -202,7 +186,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           actionId,
           referentielDefinition.hierarchie
         );
-        const createActionDefinition: ActionDefinitionInsert = {
+        const createActionDefinition: ActionDefinitionCreate = {
           identifiant: action.identifiant,
           actionId,
           nom: action.nom || '',
@@ -255,7 +239,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
               );
             }
 
-            const labelTag: ActionDefinitionTagInsert = {
+            const labelTag: ActionDefinitionTag = {
               referentielId: referentielId,
               actionId: createActionDefinition.actionId,
               tagRef: label,
@@ -269,7 +253,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           ImportActionDefinitionCoremeasureType.COREMEASURE
         ) {
           // add associated tag
-          const coremeasureTag: ActionDefinitionTagInsert = {
+          const coremeasureTag: ActionDefinitionTag = {
             referentielId: referentielId,
             actionId: createActionDefinition.actionId,
             tagRef: ImportActionDefinitionCoremeasureType.COREMEASURE,
@@ -277,9 +261,9 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           createActionTags.push(coremeasureTag);
         }
 
-        regleType.forEach((ruleType) => {
+        regleTypeEnumValues.forEach((ruleType) => {
           if (action[ruleType]) {
-            const regle: PersonnalisationRegleInsert = {
+            const regle: PersonnalisationRegleCreate = {
               actionId: createActionDefinition.actionId,
               type: ruleType,
               formule: action[ruleType],
@@ -319,7 +303,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             ).values(),
           ];
           origineReferentiels.forEach((origineReferentiel) => {
-            const origineTag: ActionDefinitionTagInsert = {
+            const origineTag: ActionDefinitionTag = {
               referentielId: referentielId,
               actionId: createActionDefinition.actionId,
               tagRef: origineReferentiel,
@@ -435,7 +419,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     actionDefinitions.sort((a, b) => {
       return a.actionId.localeCompare(b.actionId);
     });
-    const actionRelations: ActionRelationInsert[] = [];
+    const actionRelations: ActionRelationCreate[] = [];
     actionDefinitions.forEach((action) => {
       const parent = getParentIdFromActionId(action.actionId);
       if (parent) {
@@ -443,7 +427,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           (action) => action.actionId === parent
         );
         if (foundParent) {
-          const actionRelation: ActionRelationInsert = {
+          const actionRelation: ActionRelationCreate = {
             id: action.actionId,
             parent: parent,
             referentiel: referentielId,
@@ -456,7 +440,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         }
       } else {
         // Root action
-        const actionRelation: ActionRelationInsert = {
+        const actionRelation: ActionRelationCreate = {
           id: action.actionId,
           parent: null,
           referentiel: referentielId,
@@ -672,7 +656,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
   ) {
     actions.forEach((action) => {
       const actionId = `${referentielId}_${action.identifiant}`;
-      regleType.forEach((ruleType) => {
+      regleTypeEnumValues.forEach((ruleType) => {
         if (action[ruleType]) {
           try {
             this.personnalisationsExpressionService.parseExpression(
@@ -872,14 +856,14 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
   }
 
   private async createReferentielTagsIfNeeded(): Promise<void> {
-    const referentielTags: CreateReferentielTagType[] = [
+    const referentielTags: ReferentielTag[] = [
       {
-        ref: referentielIdEnumSchema.enum.cae,
+        ref: ReferentielIdEnum.CAE,
         nom: 'CAE',
         type: 'Catalogue',
       },
       {
-        ref: referentielIdEnumSchema.enum.eci,
+        ref: ReferentielIdEnum.ECI,
         nom: 'ECI',
         type: 'Catalogue',
       },
@@ -889,12 +873,12 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         type: 'EEA',
       },
       {
-        ref: referentielLabelEnumSchema.enum.TE_ECI,
+        ref: ReferentielLabelEnum.TE_ECI,
         nom: 'Label TE ECI',
         type: 'Label',
       },
       {
-        ref: referentielLabelEnumSchema.enum.TE_CAE,
+        ref: ReferentielLabelEnum.TE_CAE,
         nom: 'Label TE CAE',
         type: 'Label',
       },
@@ -913,9 +897,9 @@ export function parseActionsOrigine(
   origine: string,
   referentielDefinitions: ReferentielDefinition[],
   existingActionIds?: string[]
-): ActionOrigineInsert[] {
+): ActionOrigine[] {
   const createActionOrigines: {
-    [actionKey: string]: ActionOrigineInsert;
+    [actionKey: string]: ActionOrigine;
   } = {};
   const lowerCaseOrigine = origine.toLowerCase();
   if (!lowerCaseOrigine.startsWith(ORIGIN_NEW_ACTION_PREFIX)) {
@@ -965,7 +949,7 @@ export function parseActionsOrigine(
         );
       }
 
-      const createActionOrigine: ActionOrigineInsert = {
+      const createActionOrigine: ActionOrigine = {
         referentielId: referentielId,
         actionId: actionId,
         origineReferentielId: origineReferentielId,

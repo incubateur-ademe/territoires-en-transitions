@@ -1,24 +1,25 @@
-import {
-  Collectivite,
-  collectiviteTable,
-  collectiviteTypeEnum,
-  CollectiviteUpdateNIC,
-  CollectiviteUpsert,
-} from '@/backend/collectivites/shared/models/collectivite.table';
 import { banaticTable } from '@/backend/collectivites/shared/models/imports-banatic.table';
 import { importCommuneTable } from '@/backend/collectivites/shared/models/imports-commune.table';
 import { departementTable } from '@/backend/collectivites/shared/models/imports-departement.table';
 import { regionTable } from '@/backend/collectivites/shared/models/imports-region.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import {
+  Collectivite,
+  CollectiviteNatureType,
+  collectiviteTypeEnum,
+  CollectiviteUpdateNIC,
+  CollectiviteUpsert,
+} from '@/domain/collectivites';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray, sql, SQL } from 'drizzle-orm';
+import { collectiviteTable } from '../shared/models/collectivite.table';
 
 type colInfo = {
   nom: string | null;
   departementCode?: string | null;
   regionCode: string | null;
   population: number | null;
-  natureInsee?: string | null;
+  natureInsee?: CollectiviteNatureType | null;
 };
 
 @Injectable()

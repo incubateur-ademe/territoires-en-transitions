@@ -1,8 +1,10 @@
-import { ActionWithScore } from '@/backend/referentiels/export-score/load-score-comparison.service';
-import { ActionCategorieEnum } from '../action-definition.table';
-import { ActionTypeEnum } from '../action-type.enum';
+import {
+  ActionCategorieEnum,
+  ActionTypeEnum,
+  TreeOfActionsIncludingScore,
+} from '@/domain/referentiels';
 
-export const simpleReferentielScoring: ActionWithScore = {
+export const simpleReferentielScoring: TreeOfActionsIncludingScore = {
   actionId: 'eci',
   points: 100,
   level: 0,

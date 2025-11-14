@@ -1,9 +1,9 @@
-import { ActionDefinition } from '@/backend/referentiels/models/action-definition.table';
 import {
+  ActionDefinition,
   ActionDefinitionEssential,
-  TreeNode,
-} from '../models/action-definition.dto';
-import { ActionTypeEnum } from '../models/action-type.enum';
+  ActionTreeNode,
+  ActionTypeEnum,
+} from '@/domain/referentiels';
 import {
   ActionDefinitionAvecParent,
   buildReferentielTree,
@@ -75,7 +75,7 @@ describe('ReferentielsService', () => {
         orderedActionTypes
       );
 
-      const expectedActionEnfant: TreeNode<
+      const expectedActionEnfant: ActionTreeNode<
         Partial<ActionDefinition> & ActionDefinitionEssential
       > = {
         actionId: 'eci',

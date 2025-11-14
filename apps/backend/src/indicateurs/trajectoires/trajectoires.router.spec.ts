@@ -1,7 +1,4 @@
-import {
-  VerificationTrajectoireResponseType,
-  VerificationTrajectoireStatus,
-} from '@/backend/indicateurs/trajectoires/verification-trajectoire.response';
+import { VerificationTrajectoireResponseType } from '@/backend/indicateurs/trajectoires/verification-trajectoire.response';
 import {
   getAuthUser,
   getTestApp,
@@ -10,6 +7,7 @@ import {
 } from '@/backend/test';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { VerificationTrajectoireStatus } from '@/domain/indicateurs';
 import {
   ForbiddenException,
   INestApplication,

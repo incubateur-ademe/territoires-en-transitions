@@ -1,22 +1,17 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "jsx": "preserve",
-    "allowJs": false,
-    "allowSyntheticDefaultImports": true,
-    "noEmit": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "types": ["node"]
-  },
   "files": [],
   "include": [],
   "references": [
+    {
+      "path": "../../packages/ui"
+    },
+    {
+      "path": "../../packages/domain"
+    },
+    {
+      "path": "../../packages/api"
+    },
     {
       "path": "./tsconfig.app.json"
     },
@@ -25,9 +20,6 @@
     },
     {
       "path": "./tsconfig.storybook.json"
-    },
-    {
-      "path": "../../packages/domain"
     }
   ]
 }

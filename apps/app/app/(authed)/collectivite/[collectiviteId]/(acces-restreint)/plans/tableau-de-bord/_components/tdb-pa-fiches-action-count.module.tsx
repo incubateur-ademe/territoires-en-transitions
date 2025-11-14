@@ -2,14 +2,14 @@ import { useState } from 'react';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { FichesActionCountByModule } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/fiches-action-count-by.module';
-import { ModuleFicheActionCountByType } from '@/domain/collectivites';
+import { ModuleFicheCountBy } from '@/domain/collectivites/tableau-de-bord';
 
 import { BottomOkCancel, ButtonProps, Event, useEventTracker } from '@/ui';
 import { useDeleteModule } from '../_hooks/use-delete-module';
 import TdbPaFichesActionCountModal from './tdb-pa-fiches-action-count.modal';
 
 type Props = {
-  module: ModuleFicheActionCountByType;
+  module: ModuleFicheCountBy;
 };
 
 const TdbPaFichesActionCountModule = ({ module }: Props) => {

@@ -1,5 +1,5 @@
 import { DBClient } from '@/api';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
 import { dropAnimation } from '@/app/plans/plans/show-plan/plan-arborescence.view';

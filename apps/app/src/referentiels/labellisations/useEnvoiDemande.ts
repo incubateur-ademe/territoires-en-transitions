@@ -1,4 +1,4 @@
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { Etoile, EtoileAsString, ReferentielId } from '@/domain/referentiels';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

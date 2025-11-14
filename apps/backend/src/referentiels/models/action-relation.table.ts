@@ -1,6 +1,4 @@
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { pgTable, varchar } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { referentielIdPgEnum } from '../referentiel-id.column';
 import {
   actionDefinitionTable,
@@ -17,13 +15,6 @@ export const actionRelationTable = pgTable('action_relation', {
     () => actionDefinitionTable.actionId
   ),
 });
-
-export type ActionRelation = InferSelectModel<typeof actionRelationTable>;
-export type ActionRelationInsert = InferInsertModel<typeof actionRelationTable>;
-
-export const actionRelationSchema = createSelectSchema(actionRelationTable);
-export const actionRelationInsertSchema =
-  createInsertSchema(actionRelationTable);
 
 export const actionIdReference = actionIdVarchar.references(
   () => actionRelationTable.id

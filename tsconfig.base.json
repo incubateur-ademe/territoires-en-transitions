@@ -1,41 +1,46 @@
 {
-  "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
-    "rootDir": "./",
-    "outDir": "dist",
-    "sourceMap": true,
-    "strict": true,
-    "declaration": true,
+    "composite": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "importHelpers": true,
+    "isolatedModules": true,
+    "lib": ["es2023", "dom", "dom.iterable"],
+    "module": "esnext",
     "moduleResolution": "bundler",
+    "strict": true,
+    "target": "es2021",
+    // "noEmitOnError": true,
+
+    "disableSourceOfProjectReferenceRedirect": true,
     "emitDecoratorMetadata": true,
+
+    "esModuleInterop": true,
+    "incremental": true,
+
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
-    "importHelpers": true,
-    "target": "es2021",
-    "module": "esnext",
-    "lib": ["es2023", "dom", "dom.iterable"],
+
+    // "noFallthroughCasesInSwitch": true,
+    // "noImplicitOverride": true,
+    // "noImplicitReturns": true,
+    // "noUnusedLocals": true,
     "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "esModuleInterop": true,
-    "incremental": true,
-    "jsx": "react-jsx",
-    "paths": {
-      "@/api": ["./packages/api/src/index"],
-      "@/api/*": ["./packages/api/src/*"],
-      "@/app/*": ["./apps/app/src/*"],
-      "@/auth/*": ["./apps/auth/*"],
-      "@/panier/*": ["./apps/panier/*"],
-      "@/site/*": ["./apps/site/*"],
-      "@/tools/*": ["./apps/tools/src/*"],
-      "@/ui": ["./packages/ui/src/index"],
-      "@/ui/*": ["./packages/ui/src/*"],
-      "@/backend/*": ["apps/backend/src/*"],
-      "@/backend/test": ["apps/backend/test/index"],
-      "@/domain": ["./packages/domain/src/index"],
-      "@/domain/*": ["./packages/domain/src/*"]
-    }
+    "jsx": "preserve",
+    // "paths": {
+    //   "@/api": ["./packages/api/src/index"],
+    //   "@/api/*": ["./packages/api/src/*"],
+    //   "@/app/*": ["./apps/app/src/*"],
+    //   "@/auth/*": ["./apps/auth/*"],
+    //   "@/backend/*": ["apps/backend/src/*"],
+    //   "@/backend/test": ["apps/backend/test/index"],
+    //   "@/panier/*": ["./apps/panier/*"],
+    //   "@/site/*": ["./apps/site/*"],
+    //   "@/tools/*": ["./apps/tools/src/*"],
+    //   "@/ui": ["./packages/ui/src/index"],
+    //   "@/ui/*": ["./packages/ui/src/*"]
+    // }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["**/node_modules", "**/.*/", "tmp"]
 }

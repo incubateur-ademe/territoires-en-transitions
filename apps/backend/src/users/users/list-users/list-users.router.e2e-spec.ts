@@ -1,4 +1,9 @@
-import { CollectiviteAccessLevelEnum } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
+import {
+  AuditRole,
+  CollectiviteAccessLevelEnum,
+  permissionsByRole,
+  UserWithCollectiviteAccesses,
+} from '@/domain/users';
 import { INestApplication } from '@nestjs/common';
 import { inferProcedureInput } from '@trpc/server';
 import { sql } from 'drizzle-orm';
@@ -7,10 +12,7 @@ import { getAuthUser, getServiceRoleUser } from '../../../../test/auth-utils';
 import { YOLO_DODO, YOULOU_DOUDOU } from '../../../../test/test-users.samples';
 import { DatabaseService } from '../../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../../utils/trpc/trpc.router';
-import { permissionsByRole } from '../../authorizations/permission.models';
-import { AuditRole } from '../../authorizations/roles/role.enum';
 import { AuthenticatedUser } from '../../models/auth.models';
-import { UserWithCollectiviteAccesses } from './user-with-collectivite-accesses.dto';
 
 type Input = inferProcedureInput<AppRouter['users']['get']>;
 

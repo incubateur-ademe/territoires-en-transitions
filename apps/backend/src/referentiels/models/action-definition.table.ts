@@ -1,4 +1,5 @@
 import { modifiedAt } from '@/backend/utils/column.utils';
+import { ActionCategorieEnum } from '@/domain/referentiels';
 import {
   doublePrecision,
   pgEnum,
@@ -6,25 +7,8 @@ import {
   text,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { z } from 'zod';
 import { referentielIdPgEnum } from '../referentiel-id.column';
-import { actionTypeIncludingExempleSchema } from './action-type.enum';
 import { referentielDefinitionTable } from './referentiel-definition.table';
-
-export const ActionCategorieEnum = {
-  BASES: 'bases',
-  MISE_EN_OEUVRE: 'mise en œuvre',
-  EFFETS: 'effets',
-} as const;
-
-export const actionCategorieEnumSchema = z.enum([
-  ActionCategorieEnum.BASES,
-  ActionCategorieEnum.MISE_EN_OEUVRE,
-  ActionCategorieEnum.EFFETS,
-]);
-
-export type ActionCategorie = z.infer<typeof actionCategorieEnumSchema>;
 
 export const actionCategoriePgEnum = pgEnum('action_categorie', [
   ActionCategorieEnum.BASES,
@@ -55,27 +39,3 @@ export const actionDefinitionTable = pgTable('action_definition', {
   categorie: actionCategoriePgEnum('categorie'),
   exprScore: text('expr_score'),
 });
-
-export const actionDefinitionSchema = createSelectSchema(actionDefinitionTable);
-export type ActionDefinition = typeof actionDefinitionTable.$inferSelect;
-
-export const actionDefinitionSchemaInsert = createInsertSchema(
-  actionDefinitionTable
-);
-export type ActionDefinitionInsert = typeof actionDefinitionTable.$inferInsert;
-
-export const actionDefinitionSeulementIdObligatoireSchema =
-  actionDefinitionSchema.partial();
-
-export const actionDefinitionMinimalWithTypeAndLevel =
-  actionDefinitionSchema.extend({
-    level: z.number(),
-    actionType: actionTypeIncludingExempleSchema,
-  });
-
-export type ActionDefinitionMinimalWithTypeAndLevel = z.infer<
-  typeof actionDefinitionMinimalWithTypeAndLevel
->;
-
-export const mesureIdSchema = z.string();
-export type MesureId = z.infer<typeof mesureIdSchema>;

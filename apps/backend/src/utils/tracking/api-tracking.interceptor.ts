@@ -12,7 +12,7 @@ import { Observable, tap } from 'rxjs';
 import { ApiUsageEnum } from '../api/api-usage-type.enum';
 import { ApiUsage } from '../api/api-usage.decorator';
 import { ContextStoreService } from '../context/context.service';
-import { getErrorMessage } from '../get-error-message';
+import { getErrorMessage } from '@/domain/utils';
 import { TrackingService } from './tracking.service';
 
 @Injectable()

@@ -8,7 +8,7 @@ import {
   PlanRow,
 } from '@/backend/plans/fiches/plan-actions.service';
 import { formatDate } from '@/backend/utils/excel/export-excel.utils';
-import { htmlToText } from '@/backend/utils/html-to-text.utils';
+import { htmlToText } from '@/domain/utils';
 import { getDepthLabel, participationCitoyenneTypeToLabel } from './utils';
 
 // l'export est organisé en sections ou groupes de colonnes

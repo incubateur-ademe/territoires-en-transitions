@@ -8,7 +8,6 @@ import {
   timestamp,
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
-import { createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { referentielIdPgEnum } from '../referentiel-id.column';
 import { labellisationDemandeTable } from './labellisation-demande.table';
@@ -49,6 +48,3 @@ export const auditTable = labellisationSchema.table(
     }),
   ]
 );
-
-export type Audit = typeof auditTable.$inferSelect;
-export const auditSchema = createSelectSchema(auditTable);

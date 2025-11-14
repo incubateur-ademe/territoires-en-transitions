@@ -1,17 +1,17 @@
-import { mesureIdSchema } from '@/backend/referentiels/models/action-definition.table';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
+import { actionIdSchema } from '@/domain/referentiels';
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 import { HandleMesureServicesService } from './handle-mesure-services.service';
 
 const listServicesSchema = z.object({
   collectiviteId: z.int(),
-  mesureIds: z.array(mesureIdSchema).optional(),
+  mesureIds: z.array(actionIdSchema).optional(),
 });
 
 const upsertServicesSchema = z.object({
   collectiviteId: z.int(),
-  mesureId: mesureIdSchema,
+  mesureId: actionIdSchema,
   services: z.array(
     z.object({
       serviceTagId: z.int(),
@@ -22,7 +22,7 @@ const upsertServicesSchema = z.object({
 
 const deleteServicesSchema = z.object({
   collectiviteId: z.int(),
-  mesureId: mesureIdSchema,
+  mesureId: actionIdSchema,
 });
 
 @Injectable()

@@ -438,9 +438,15 @@ importers:
         specifier: ^4.1.12
         version: 4.1.12
     devDependencies:
+      '@/api':
+        specifier: workspace:*
+        version: link:packages/api
       '@/domain':
         specifier: workspace:*
         version: link:packages/domain
+      '@/ui':
+        specifier: workspace:*
+        version: link:packages/ui
       '@eslint/js':
         specifier: ~8.57.0
         version: 8.57.1
@@ -685,7 +691,11 @@ importers:
         specifier: ^5.1.4
         version: 5.1.4(webpack-dev-server@5.2.1)(webpack@5.102.1)
 
+  packages/api: {}
+
   packages/domain: {}
+
+  packages/ui: {}
 
 packages:
 

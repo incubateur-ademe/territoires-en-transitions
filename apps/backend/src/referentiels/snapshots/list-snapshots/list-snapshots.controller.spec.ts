@@ -1,8 +1,6 @@
-import { ReferentielIdEnum } from '@/backend/referentiels/models/referentiel-id.enum';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
 import { LIST_DEFAULT_JALONS } from '@/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-query';
 import { ListSnapshotsApiResponse } from '@/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-response';
-import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
 import {
   getAuthUser,
   getTestApp,
@@ -11,6 +9,7 @@ import {
   YOLO_DODO,
 } from '@/backend/test';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
+import { ReferentielIdEnum, SnapshotJalonEnum } from '@/domain/referentiels';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 

@@ -1,6 +1,7 @@
-import { Badge, BadgeSize, Button, ButtonProps, ButtonSize } from '@/ui';
 import classNames from 'classnames';
 import React from 'react';
+import { Badge, BadgeSize } from '../../design-system/Badge';
+import { Button, ButtonProps, ButtonSize } from '../../design-system/Button';
 
 type EmptyCardSize = 'xs' | 'md' | 'xl';
 

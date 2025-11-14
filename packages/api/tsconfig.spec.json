@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist",
+    "outDir": "out-tsc/spec",
     "types": [
       "vitest/globals",
       "vitest/importMeta",
@@ -25,6 +25,9 @@
     "src/**/*.d.ts"
   ],
   "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
     {
       "path": "../../packages/domain/tsconfig.lib.json"
     }

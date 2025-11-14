@@ -1,10 +1,12 @@
-import { ActionTypeEnum } from '@/backend/referentiels/models/action-type.enum';
-import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
-import { ActionOrigineInsert as CreateActionOrigineType } from '../correlated-actions/action-origine.table';
-import { ReferentielDefinition as ReferentielDefinitionType } from '../models/referentiel-definition.table';
+import {
+  ActionOrigine,
+  ActionTypeEnum,
+  ReferentielDefinition,
+  ReferentielIdEnum,
+} from '@/domain/referentiels';
 import { parseActionsOrigine } from './import-referentiel.service';
 
-const refentielDefinitions: ReferentielDefinitionType[] = [
+const refentielDefinitions: ReferentielDefinition[] = [
   {
     id: 'eci',
     nom: 'Economie circulaire',
@@ -41,7 +43,7 @@ const refentielDefinitions: ReferentielDefinitionType[] = [
 describe('ReferentielImportService', () => {
   describe('parseActionsOrigine', () => {
     it('Standard test without ponderation', async () => {
-      const expectedCreateActionOrigines: CreateActionOrigineType[] = [
+      const expectedCreateActionOrigines: ActionOrigine[] = [
         {
           actionId: 'te_3.5.4',
           origineActionId: 'eci_3.5.3.6',
@@ -59,7 +61,7 @@ describe('ReferentielImportService', () => {
       ];
       expect(
         parseActionsOrigine(
-          referentielIdEnumSchema.enum.te,
+          ReferentielIdEnum.TE,
           'te_3.5.4',
           `Eci_3.5.3.6
 Eci_3.5.4.2`,
@@ -69,7 +71,7 @@ Eci_3.5.4.2`,
     });
 
     it('Standard test with ponderation', async () => {
-      const expectedCreateActionOrigines: CreateActionOrigineType[] = [
+      const expectedCreateActionOrigines: ActionOrigine[] = [
         {
           actionId: 'te_3.5.4',
           origineActionId: 'cae_5.1.4.4.1',
@@ -95,7 +97,7 @@ Eci_3.5.4.2`,
 
       expect(
         parseActionsOrigine(
-          referentielIdEnumSchema.enum.te,
+          ReferentielIdEnum.TE,
           'te_3.5.4',
           `Cae_5.1.4.4.1 (1)
 Cae_5.1.4.4.2 (0,5)
@@ -108,7 +110,7 @@ Eci_1.3.2.4 (1)`,
     it('Invalid action id', async () => {
       expect(() =>
         parseActionsOrigine(
-          referentielIdEnumSchema.enum.te,
+          ReferentielIdEnum.TE,
           'te_3.5.4',
           `Cae 5.1.4.4.1`,
           refentielDefinitions
@@ -117,7 +119,7 @@ Eci_1.3.2.4 (1)`,
 
       expect(() =>
         parseActionsOrigine(
-          referentielIdEnumSchema.enum.te,
+          ReferentielIdEnum.TE,
           'te_3.5.4',
           `test_.1.4.4.1`,
           refentielDefinitions
@@ -126,7 +128,7 @@ Eci_1.3.2.4 (1)`,
 
       expect(() =>
         parseActionsOrigine(
-          referentielIdEnumSchema.enum.te,
+          ReferentielIdEnum.TE,
           'te_3.5.4',
           `test_1.1.4.4.1 0.5`,
           refentielDefinitions
@@ -137,7 +139,7 @@ Eci_1.3.2.4 (1)`,
     it('Invalid action id referentiel', async () => {
       expect(() =>
         parseActionsOrigine(
-          referentielIdEnumSchema.enum.te,
+          ReferentielIdEnum.TE,
           'te_3.5.4',
           `Ca_5.1.4.4.1`,
           refentielDefinitions
@@ -150,7 +152,7 @@ Eci_1.3.2.4 (1)`,
     it('Invalid ponderation', async () => {
       expect(() =>
         parseActionsOrigine(
-          referentielIdEnumSchema.enum.te,
+          ReferentielIdEnum.TE,
           'te_3.5.4',
           `Cae_5.1.4.4.1 (zero)`,
           refentielDefinitions

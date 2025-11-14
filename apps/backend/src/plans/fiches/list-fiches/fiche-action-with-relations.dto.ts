@@ -1,17 +1,24 @@
-import { collectiviteSchema } from '@/backend/collectivites/shared/models/collectivite.table';
 import { idNameSchema } from '@/backend/collectivites/shared/models/id-name.schema';
-import { personneTagOrUserSchemaWithContacts } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
+import { personneTagOrUserSchemaWithContacts } from '@/domain/collectivites';
+import { tagSchema, tagWithCollectiviteIdSchema } from '@/domain/collectivites';
+import { collectiviteSchema, financeurTagSchema } from '@/domain/collectivites';
+import { ficheSchema } from '@/domain/plans';
 import {
-  tagSchema,
-  tagWithCollectiviteIdSchema,
-} from '@/backend/collectivites/tags/tag.table-base';
-import { effetAttenduSchema } from '@/backend/shared/effet-attendu/effet-attendu.table';
-import { tempsDeMiseEnOeuvreSchema } from '@/backend/shared/models/temps-de-mise-en-oeuvre.table';
-import { sousThematiqueSchema } from '@/backend/shared/thematiques/sous-thematique.table';
-import { thematiqueSchema } from '@/backend/shared/thematiques/thematique.table';
+  effetAttenduSchema,
+  sousThematiqueSchema,
+  tempsDeMiseEnOeuvreSchema,
+  thematiqueSchema,
+} from '@/domain/shared';
 import z from 'zod';
-import { financeurSchema } from '../shared/models/fiche-action-financeur-tag.table';
-import { ficheSchema } from '../shared/models/fiche-action.table';
+
+const financeurSchema = z.object({
+  ficheId: z.number(),
+  montantTtc: z.number(),
+  financeurTagId: z.number(),
+  financeurTag: financeurTagSchema,
+});
+
+export type Financeur = z.infer<typeof financeurSchema>;
 
 export const userSchema = z.object({
   id: z.uuid(),
@@ -50,7 +57,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .array()
     .nullable()
     .describe('Sous-thématiques'),
-  thematiques: thematiqueSchema.array().nullable().describe('Thématiques'),
+  thematiques: z.array(thematiqueSchema).nullable().describe('Thématiques'),
   structures: z.array(tagSchema).nullable().describe('Structure pilote'),
   sharedWithCollectivites: idNameSchema
     .array()

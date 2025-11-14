@@ -1,0 +1,51 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "types": [
+      "node",
+      "@nx/react/typings/cssmodule.d.ts",
+      "@nx/react/typings/image.d.ts"
+    ],
+    "allowJs": true,
+    "noEmit": true,
+    "incremental": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "@/auth/*": [
+        "./*"
+      ]
+    },
+  },
+  "include": [
+    "**/*.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.mjs",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "eslint.config.mjs",
+    "tailwind.config.ts"
+  ],
+  "references": [
+    {
+      "path": "../../packages/domain/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/ui/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/api/tsconfig.lib.json"
+    }
+  ]
+}

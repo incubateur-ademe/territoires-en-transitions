@@ -12,11 +12,11 @@ import {
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
-import { ModulePlanActionListType } from '@/domain/collectivites';
+import type { ModulePlanActionList } from '@/domain/collectivites/tableau-de-bord';
 import { ButtonGroup } from '@/ui';
 
 type Props = {
-  module: ModulePlanActionListType;
+  module: ModulePlanActionList;
 };
 
 const MAX_PLANS_TO_DISPLAY = 3;

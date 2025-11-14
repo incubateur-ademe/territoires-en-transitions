@@ -6,7 +6,7 @@ import {
   FiltreRessourceLiees,
   FiltreValues,
 } from '@/api/collectivites/shared/domain/filtre-ressource-liees.schema';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import { INDICATEUR_LABELS } from '@/app/app/pages/collectivite/Indicateurs/constants';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { NOTES_DE_SUIVI_PROPERTIES } from '@/app/plans/fiches/list-all-fiches/filters/options';

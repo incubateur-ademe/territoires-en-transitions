@@ -17,9 +17,9 @@ import { DatabaseService } from '../../utils/database/database.service';
 
 import { indicateurSourceMetadonneeTable } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '@/backend/indicateurs/shared/models/indicateur-source.table';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
+import { PermissionOperationEnum } from '@/domain/users';
 import { indicateurValeurTable } from '../valeurs/indicateur-valeur.table';
 import { GetMoyenneCollectivitesRequest } from './get-moyenne-collectivites.request';
 

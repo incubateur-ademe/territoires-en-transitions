@@ -12,10 +12,7 @@ import { AuthenticatedUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { getIndicateursValeursResponseSchema } from './get-indicateur-valeurs.response';
-import {
-  IndicateurValeur,
-  indicateurValeurTable,
-} from './indicateur-valeur.table';
+import { indicateurValeurTable } from './indicateur-valeur.table';
 
 type InputList = inferProcedureInput<
   AppRouter['indicateurs']['valeurs']['list']
@@ -251,8 +248,8 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     expect(resultAfter.indicateurs[0].sources.collectivite.valeurs.length).toBe(
       1
     );
-    const indicateurCalculeValeur = resultAfter.indicateurs[0].sources
-      .collectivite.valeurs[0] as IndicateurValeur;
+    const indicateurCalculeValeur =
+      resultAfter.indicateurs[0].sources.collectivite.valeurs[0];
     expect(indicateurCalculeValeur.resultat).toBe(102.04);
     expect(indicateurCalculeValeur.calculAuto).toBe(true);
     expect(

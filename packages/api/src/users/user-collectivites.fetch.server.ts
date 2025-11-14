@@ -1,8 +1,8 @@
 import 'server-only';
 
-import { DBClient } from '@/api';
-import { toCollectiviteAccess } from '@/api/collectivites';
 import { CollectiviteAccess } from '@/domain/users';
+import { toCollectiviteAccess } from '../collectivites';
+import { DBClient } from '../typeUtils';
 
 // charge les collectivités associées au compte de l'utilisateur courant
 // (identifié à partir du token passant dans toutes les requêtes)

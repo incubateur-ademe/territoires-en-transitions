@@ -8,6 +8,7 @@ import {
 } from '@/backend/test';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import { CibleEnum, PiliersEciEnum, StatutEnum } from '@/domain/plans';
 import { eq } from 'drizzle-orm';
 import { describe, expect } from 'vitest';
 import {
@@ -41,12 +42,7 @@ import { ficheActionServiceTagTable } from '../shared/models/fiche-action-servic
 import { ficheActionSousThematiqueTable } from '../shared/models/fiche-action-sous-thematique.table';
 import { ficheActionStructureTagTable } from '../shared/models/fiche-action-structure-tag.table';
 import { ficheActionThematiqueTable } from '../shared/models/fiche-action-thematique.table';
-import {
-  ciblesEnumSchema,
-  ficheActionTable,
-  PiliersEciEnum,
-  statutsEnumSchema,
-} from '../shared/models/fiche-action.table';
+import { ficheActionTable } from '../shared/models/fiche-action.table';
 import { UpdateFicheRequest } from './update-fiche.request';
 
 const collectiviteId = 1;
@@ -182,14 +178,11 @@ describe('UpdateFicheService', () => {
         ],
         objectifs:
           'Diminution de 15% de la consommation de feuilles de papier / Indicateurs : Nombre de papiers',
-        cibles: [
-          ciblesEnumSchema.enum['Grand public'],
-          ciblesEnumSchema.enum['Associations'],
-        ],
+        cibles: [CibleEnum.GRAND_PUBLIC, CibleEnum.ASSOCIATIONS],
         ressources: 'Service numérique',
         financements: 'De 40 000€ à 100 000€',
         budgetPrevisionnel: '35000',
-        statut: statutsEnumSchema.enum['En pause'],
+        statut: StatutEnum.EN_PAUSE,
         ameliorationContinue: false,
         calendrier: 'Calendrier prévisionnel',
         notesComplementaires: 'Vive le vélo !',

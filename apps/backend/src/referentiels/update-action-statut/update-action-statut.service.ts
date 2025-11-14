@@ -1,24 +1,23 @@
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
+import {
+  actionStatutSchemaCreate,
+  getReferentielIdFromActionId,
+  ScoreSnapshot,
+} from '@/domain/referentiels';
+import { PermissionOperationEnum } from '@/domain/users';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
 import z from 'zod';
 import { isErrorWithCause } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
-import ScoresService from '../compute-score/scores.service';
-import {
-  actionStatutSchemaInsert,
-  actionStatutTable,
-} from '../models/action-statut.table';
-import { getReferentielIdFromActionId } from '../referentiels.utils';
-import { Snapshot } from '../snapshots/snapshot.table';
+import { actionStatutTable } from '../models/action-statut.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 
 export const upsertActionStatutRequestSchema = z.object({
-  actionStatut: actionStatutSchemaInsert,
+  actionStatut: actionStatutSchemaCreate,
 });
 
 export type UpsertActionStatutRequest = z.infer<
@@ -32,14 +31,13 @@ export class UpdateActionStatutService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
-    private readonly scoresService: ScoresService,
     private readonly snapshotsService: SnapshotsService
   ) {}
 
   async upsertActionStatut(
     request: UpsertActionStatutRequest,
     user: AuthUser
-  ): Promise<Snapshot> {
+  ): Promise<ScoreSnapshot> {
     // Check user access
     await this.permissionService.isAllowed(
       user,

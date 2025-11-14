@@ -165,7 +165,7 @@ const InteractiveFilterBadges = () => {
       <FilterBadges<TaskFilterKeys>
         filterCategories={filterCategories}
         onDeleteFilterValue={({ categoryKey, valueToDelete }) =>
-          handleDeleteFilterValue(categoryKey, valueToDelete)
+          handleDeleteFilterValue(categoryKey as TaskFilterKeys, valueToDelete)
         }
         onDeleteFilterCategory={handleDeleteFilterCategory}
         onClearAllFilters={handleClearAllFilters}

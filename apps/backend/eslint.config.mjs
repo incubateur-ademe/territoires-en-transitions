@@ -10,23 +10,35 @@ const config = [
       'no-restricted-imports': [
         'error',
         {
-          patterns: ['@/backend/**/index-domain', '@/domain/**'],
+          patterns: ['@/backend/**/index-domain'],
         },
       ],
     },
   },
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
-    rules: {},
+    rules: {
+      '@nx/enforce-module-boundaries': [
+        'error',
+        {
+          enforceBuildableLibDependency: true,
+          allowCircularSelfDependency: true,
+          banTransitiveDependencies: false,
+          allow: ['@/backend/*'],
+          depConstraints: [
+            {
+              sourceTag: '*',
+              onlyDependOnLibsWithTags: ['*'],
+            },
+          ],
+        },
+      ],
+    },
   },
   {
     files: ['**/*.ts', '**/*.tsx'],
     rules: {},
-  },
-  {
-    files: ['**/*.js', '**/*.jsx'],
-    rules: {},
-  },
+  }
 ];
 
 export default config;

@@ -1,13 +1,12 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist",
+    "rootDir": ".",
     "types": [
       "node",
       "@nx/react/typings/cssmodule.d.ts",
       "@nx/react/typings/image.d.ts"
     ],
-    "allowJs": true,
     "noEmit": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -34,15 +33,16 @@
     "**/*.stories.jsx",
     "**/*.stories.tsx"
   ],
-  "include": [
-    "**/*.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts"
-  ],
+  "include": ["**/*.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "references": [
     {
+      "path": "../../packages/ui/tsconfig.lib.json"
+    },
+    {
       "path": "../../packages/domain/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/api/tsconfig.lib.json"
     }
   ]
 }
