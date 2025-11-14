@@ -5,7 +5,7 @@ import {
   getRejoindreCollectivitePath,
 } from '@/api';
 import { CollectiviteAccess } from '@/domain/users';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import StepperValidation from '@/panier/components/Stepper/StepperValidation';
 import {
   useCollectiviteContext,

@@ -1,7 +1,6 @@
 'use client';
 
-import { getAuthPaths, PanierAPI } from '@/api';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { getAuthPaths, PanierAPI, useSupabase } from '@/api';
 import { Button, Event, Icon, useEventTracker } from '@/ui';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
