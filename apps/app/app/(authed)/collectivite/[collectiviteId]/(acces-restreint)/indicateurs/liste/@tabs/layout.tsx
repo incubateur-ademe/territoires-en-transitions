@@ -7,7 +7,7 @@ import {
   TabsList,
   TabsPanel,
   TabsTab,
-} from '@/ui/design-system/Tabs/Tabs.next';
+} from '@/ui/design-system/TabsNext/index';
 import { ReactNode } from 'react';
 import { TabsListParams } from './tabs-list';
 

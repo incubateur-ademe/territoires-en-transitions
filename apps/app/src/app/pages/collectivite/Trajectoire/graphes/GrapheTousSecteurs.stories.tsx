@@ -1,14 +1,16 @@
 import { INDICATEURS_TRAJECTOIRE } from '@/app/indicateurs/trajectoires/trajectoire-constants';
 import { roundTo } from '@/domain/utils';
-import { Meta } from '@storybook/nextjs';
+import { Meta, StoryObj } from '@storybook/nextjs';
 import { GrapheTousSecteurs } from './GrapheTousSecteurs';
 
-export default {
+const meta: Meta<typeof GrapheTousSecteurs> = {
   component: GrapheTousSecteurs,
   parameters: { storyshots: false },
-} as Meta;
+};
 
-const Template = (args) => <GrapheTousSecteurs {...args} />;
+export default meta;
+
+type Story = StoryObj<typeof GrapheTousSecteurs>;
 
 const ANNEE_REFERENCE = 2015;
 //const ANNEE_JALON1 = 2030;
@@ -18,36 +20,41 @@ const ANNEES = Array(ANNEE_JALON2 - ANNEE_REFERENCE + 1)
   .fill(0)
   .map((_, i) => ANNEE_REFERENCE + i);
 
-const genRandomValues = (offset = 0) =>
-  ANNEES.map((annee) => ({
+const genRandomDataset = (id: string, name: string, offset = 0) => ({
+  id,
+  name,
+  dimensions: ['x', 'y'],
+  source: ANNEES.map((annee) => ({
     x: new Date(`${annee}-01-01`),
     y: roundTo(Math.random() * 100 + offset, 2),
-  }));
+  })),
+});
 
-const secteurs = INDICATEURS_TRAJECTOIRE['emissions_ges'].secteurs.map(
-  (secteur) => ({
-    id: secteur.identifiant,
-    label: secteur.nom,
-    data: genRandomValues(),
-  })
+const emissionsGes = INDICATEURS_TRAJECTOIRE['emissions_ges'];
+
+const secteurs = emissionsGes.secteurs.map((secteur) =>
+  genRandomDataset(secteur.identifiant, secteur.nom)
 );
-const objectifs = genRandomValues(350);
-const resultats = genRandomValues(350);
-const titre = 'Comparaison des trajectoires d’émissions de GES';
+
+const objectifs = genRandomDataset('objectifs', 'Mes objectifs', 350);
+const resultats = genRandomDataset('resultats', 'Mes résultats', 350);
+const titre = "Comparaison des trajectoires d'émissions de GES";
 const unite = 'ktco2eq';
 
-export const Secteurs = Template.bind({});
-Secteurs.args = {
-  titre,
-  unite,
-  secteurs,
+export const Secteurs: Story = {
+  args: {
+    titre,
+    unite,
+    secteurs,
+  },
 };
 
-export const AvecObjectifsEtResultats = Template.bind({});
-AvecObjectifsEtResultats.args = {
-  titre,
-  unite,
-  secteurs,
-  objectifs,
-  resultats,
+export const AvecObjectifsEtResultats: Story = {
+  args: {
+    titre,
+    unite,
+    secteurs,
+    objectifs,
+    resultats,
+  },
 };

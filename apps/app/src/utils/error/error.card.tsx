@@ -1,8 +1,7 @@
 'use client'; // Error boundaries must be Client Components
 
 import { getErrorMessage } from '@/domain/utils';
-import { EmptyCard } from '@/ui';
-import { PictoWarning } from '@/ui/design-system/Picto/PictoWarning';
+import { EmptyCard, PictoWarning } from '@/ui';
 import { datadogLogs } from '@datadog/browser-logs';
 import * as Sentry from '@sentry/nextjs';
 import { TRPCClientErrorLike } from '@trpc/client';

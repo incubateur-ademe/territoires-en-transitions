@@ -2,12 +2,12 @@
  * Affiche l'onglet "Personnalisation du potentiel"
  */
 
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import {
   TChangeReponse,
   TQuestionReponse,
   TReponse,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { Accordion } from '@/ui';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';

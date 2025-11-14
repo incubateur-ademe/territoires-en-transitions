@@ -2,11 +2,6 @@
 import { Pagination } from '@/ui';
 
 import { CollectiviteEngagee } from '@/api';
-import {
-  RecherchesCollectivite,
-  RecherchesPlan,
-  RecherchesReferentiel,
-} from '@/api/collectiviteEngagees';
 import { Grid } from '@/app/app/pages/CollectivitesEngagees/Views/Grid';
 import { MAX_NUMBER_OF_CARDS_PER_PAGE } from '@/app/app/pages/CollectivitesEngagees/data/get-filter-properties';
 import { RecherchesViewParam } from '@/app/app/paths';
@@ -23,9 +18,9 @@ export type CollectivitesEngageesView = {
 };
 
 export type Data =
-  | RecherchesCollectivite
-  | RecherchesReferentiel
-  | RecherchesPlan;
+  | CollectiviteEngagee.RecherchesCollectivite
+  | CollectiviteEngagee.RecherchesReferentiel
+  | CollectiviteEngagee.RecherchesPlan;
 
 type ViewProps<T extends Data> = {
   view: RecherchesViewParam;

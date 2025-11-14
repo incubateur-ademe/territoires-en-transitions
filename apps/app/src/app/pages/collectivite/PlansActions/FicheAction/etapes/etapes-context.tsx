@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useReducer } from 'react';
 
-import { RouterInput, RouterOutput } from '@/api/utils/trpc/client';
+import { RouterInput, RouterOutput } from '@/api';
 
 type Action =
   | {

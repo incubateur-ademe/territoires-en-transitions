@@ -1,10 +1,12 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import SubActionPreuvesAccordion from '@/app/referentiels/actions/sub-action/sub-action-preuves.accordion';
 import SubActionDescription from '@/app/referentiels/actions/sub-action/sub-action.description';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
-import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
+import {
+  ActionDefinitionSummary,
+  useActionSummaryChildren,
+} from '@/app/referentiels/referentiel-hooks';
 import { ActionTypeEnum } from '@/domain/referentiels';
 import { Accordion, Divider } from '@/ui';
 import classNames from 'classnames';

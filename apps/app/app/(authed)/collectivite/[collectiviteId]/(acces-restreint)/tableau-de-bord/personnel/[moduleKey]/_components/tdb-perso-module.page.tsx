@@ -1,6 +1,6 @@
 'use client';
 
-import { PersonalDefaultModuleKeys } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import { PersonalDefaultModuleKeys } from '@/api/plan-actions';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { MesuresModulePage } from '@/app/tableaux-de-bord/referentiels/mesures.module-page';
 

@@ -1,24 +1,24 @@
 import BudgetTable from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/budget-table';
 import BudgetTagsList from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/budget-tags-list';
-import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
+import { FicheBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { BudgetModal } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/budget-modal';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { FicheWithRelations } from '@/domain/plans';
 import { Button } from '@/ui';
 import { useState } from 'react';
+import { Fiche } from '../../data/use-get-fiche';
 
 type BudgetProps = {
-  fiche: Pick<FicheWithRelations, 'budgets'> & FicheShareProperties;
+  fiche: Pick<Fiche, 'budgets'> & FicheShareProperties;
   type: 'investissement' | 'fonctionnement';
   isReadonly?: boolean;
-  budgets: BudgetType[] | undefined;
+  budgets: FicheBudget[] | undefined;
 };
 
 const Budget = (props: BudgetProps) => {
   const { fiche, type, isReadonly } = props;
   const [isOpen, setIsOpen] = useState(false);
   const budgets = (props.budgets?.filter((elt) => elt.type === type) ||
-    []) as BudgetType[];
+    []) as FicheBudget[];
 
   const extendedBudget = budgets?.filter((elt) => !elt.annee);
 

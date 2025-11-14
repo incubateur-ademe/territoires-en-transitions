@@ -1,7 +1,7 @@
-import { Action } from '@/domain/referentiels';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { TAxe } from './axe';
 
-export const buildReferentiel = (actions: Action[]): TAxe[] => {
+export const buildReferentiel = (actions: ActionListItem[]): TAxe[] => {
   return actions.reduce((acc: TAxe[], a) => {
     const parentAxe = acc.find((axe) => a.actionId.startsWith(axe.actionId));
     if (a.actionType === 'axe' || a.actionType === 'sous-axe') {

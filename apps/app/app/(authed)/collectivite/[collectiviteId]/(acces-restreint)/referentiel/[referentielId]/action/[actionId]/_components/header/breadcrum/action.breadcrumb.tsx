@@ -3,8 +3,10 @@ import { useState } from 'react';
 
 import { useCollectiviteId } from '@/api/collectivites';
 import { makeReferentielUrl } from '@/app/app/paths';
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { useReferentielDownToAction } from '@/app/referentiels/referentiel-hooks';
+import {
+  ActionDefinitionSummary,
+  useReferentielDownToAction,
+} from '@/app/referentiels/referentiel-hooks';
 import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import { getReferentielIdFromActionId } from '@/domain/referentiels';
 import { Breadcrumbs } from '@/ui';

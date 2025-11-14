@@ -1,4 +1,4 @@
-import { TypeScoreIndicatif } from '@/domain/referentiels';
+import { ScoreIndicatifType } from '@/domain/referentiels';
 import { typeScoreToLabel } from './score-indicatif.labels';
 import {
   ScoreIndicatifAction,
@@ -9,7 +9,7 @@ import {
  * Prépare les données pour l'affichage du score indicatif
  */
 export function prepareScoreIndicatifData(
-  typeScore: TypeScoreIndicatif,
+  typeScore: ScoreIndicatifType,
   scoreIndicatif: ScoreIndicatifAction
 ) {
   const donnees = scoreIndicatif[typeScore];
@@ -39,7 +39,7 @@ export function texteValeurUtilisee({
   noYear,
 }: {
   valeurUtilisee: ScoreIndicatifValeurUtilisee;
-  typeScore: TypeScoreIndicatif;
+  typeScore: ScoreIndicatifType;
   unite: string;
   noSource?: boolean;
   noYear?: boolean;

@@ -1,6 +1,6 @@
 import { BadgeAuditStatut, statusToState } from './BadgeAuditStatut';
 
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { MesureAuditStatutEnum } from '@/domain/referentiels';
 import { SelectBadge } from '@/ui';
 import {

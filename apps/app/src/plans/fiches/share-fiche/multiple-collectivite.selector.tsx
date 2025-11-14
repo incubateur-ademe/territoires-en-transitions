@@ -1,5 +1,5 @@
-import { useTRPC } from '@/api/utils/trpc/client';
-import { IdNameSchema } from '@/domain/collectivites';
+import { useTRPC } from '@/api';
+import { IdNameSchema } from '@/domain/shared';
 import { Select, SelectProps } from '@/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';

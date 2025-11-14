@@ -1,6 +1,6 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ActionPreuvePanel } from '@/app/referentiels/actions/action-preuve.panel.lazy';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { AccordionControlled } from '@/ui';
 import { useState } from 'react';
 

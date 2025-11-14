@@ -1,5 +1,5 @@
+import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { naturalSort } from '@/app/utils/naturalSort';
-import { FicheResume } from '@/domain/plans';
 
 /**
  * Formate un nouveau tag qui nécessite un type minimum collectivite_id, nom
@@ -39,7 +39,7 @@ export const ficheResumeFactory = ({
   tempId,
   collectiviteId,
   axeId,
-}: FactoryArgs): FicheResume => {
+}: FactoryArgs): FicheListItem => {
   return {
     id: tempId,
     collectiviteId,
@@ -59,5 +59,40 @@ export const ficheResumeFactory = ({
     axes: axeId
       ? [{ id: axeId, collectiviteId, nom: '', parentId: null, planId: null }]
       : null,
+    description: null,
+    piliersEci: null,
+    objectifs: null,
+    cibles: null,
+    indicateurs: null,
+    mesures: null,
+    etapes: null,
+    fichesLiees: null,
+    financements: null,
+    budgetPrevisionnel: null,
+    calendrier: null,
+    notesComplementaires: null,
+    instanceGouvernance: null,
+    participationCitoyenne: null,
+    participationCitoyenneType: null,
+    tempsDeMiseEnOeuvre: null,
+    majTermine: null,
+    ressources: null,
+    createdAt: new Date().toISOString(),
+    partenaires: [],
+    referents: [],
+    effetsAttendus: [],
+    sousThematiques: [],
+    thematiques: [],
+    structures: [],
+    libreTags: [],
+    financeurs: [],
+    notes: [],
+    docs: [],
+    budgets: [],
+    completion: {
+      ficheId: tempId,
+      fields: [],
+      isCompleted: false,
+    },
   };
 };

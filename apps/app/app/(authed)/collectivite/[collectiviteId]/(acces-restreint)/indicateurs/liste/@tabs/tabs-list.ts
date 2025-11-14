@@ -2,7 +2,7 @@ import { INDICATEUR_LABELS } from '@/app/app/pages/collectivite/Indicateurs/cons
 import { IndicateursListParamOption } from '@/app/app/paths';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { PermissionOperation } from '@/domain/users';
-import { TabProps } from '@/ui/design-system/Tabs/Tabs.next';
+import { TabProps } from '@/ui/design-system/TabsNext/index';
 
 type TabParams = Omit<TabProps, 'href'> & {
   listId: IndicateursListParamOption;

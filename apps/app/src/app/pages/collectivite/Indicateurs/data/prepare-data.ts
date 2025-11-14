@@ -1,6 +1,6 @@
 /** Transforme les données pour l'affichage dans le tableau */
 
-import { RouterOutput } from '@/api/utils/trpc/client';
+import { RouterOutput } from '@/api';
 import { getAnnee } from '@/app/ui/charts/echarts';
 import { uniq } from 'es-toolkit';
 import { SourceType } from '../types';

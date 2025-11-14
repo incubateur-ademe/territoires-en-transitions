@@ -1,10 +1,10 @@
 import { Badge } from '@/app/ui/export-pdf/components/Badge';
 import { Stack } from '@/app/ui/export-pdf/components/Stack';
-import { ScoreFinal } from '@/domain/referentiels';
+import { ActionScoreFinal } from '@/domain/referentiels';
 import { roundTo } from '@/domain/utils';
 
 type ScoreRatioBadgeProps = {
-  score: ScoreFinal;
+  score: ActionScoreFinal;
   size?: 'sm' | 'md';
 };
 

@@ -1,10 +1,10 @@
 'use client';
 
 import { useCollectiviteId } from '@/api/collectivites';
+import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { usePersonneListe } from '@/app/ui/dropdownLists/PersonnesDropdown/usePersonneListe';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import { TOption } from '@/app/ui/shared/select/commons';
-import { FicheResume } from '@/domain/plans';
 import { Plan } from '@/domain/plans';
 import { without } from 'es-toolkit';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
@@ -24,7 +24,7 @@ type PlanActionFiltersContextType = {
   isFiltered: boolean;
   isLoading: boolean;
   filtersCount: number;
-  filteredResults: FicheResume[];
+  filteredResults: FicheListItem[];
   resetFilters: () => void;
   onDeleteFilterCategory: (
     key: CurrentFiltersKeys | CurrentFiltersKeys[]

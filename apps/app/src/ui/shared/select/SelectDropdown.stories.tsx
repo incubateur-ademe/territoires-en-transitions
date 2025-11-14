@@ -12,7 +12,7 @@ const options = [
 ];
 
 export const Default = () => {
-  const [value, setValue] = useState(undefined);
+  const [value, setValue] = useState<string | undefined>(undefined);
   return (
     <SelectDropdown
       value={value}

@@ -4,13 +4,13 @@ import {
   useFicheActionRemoveTagPilote,
   useFicheActionRemoveUserPilote,
 } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionPilote';
+import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
-import { FicheResume } from '@/domain/plans';
 import {
   Checkbox,
   Field,
@@ -23,7 +23,7 @@ import { format } from 'date-fns';
 import { useRef, useState } from 'react';
 
 type Props = {
-  initialFiche: FicheResume;
+  initialFiche: FicheListItem;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   keysToInvalidate?: QueryKey[];

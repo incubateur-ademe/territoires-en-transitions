@@ -1,4 +1,4 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import Markdown from '@/app/ui/Markdown';
 import { Accordion } from '@/ui';
 import { TTOCItem } from './action-information.types';

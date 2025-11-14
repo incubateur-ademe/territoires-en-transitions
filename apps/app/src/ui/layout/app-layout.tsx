@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { usePathname } from 'next/navigation';
 import { ReactNode, useEffect } from 'react';
 
-import { useUser } from '@/api/users/user-context/user-provider';
+import { useUser } from '@/api/users';
 import { Header } from '@/app/ui/layout/header/header';
 import { SidePanel } from '@/app/ui/layout/side-panel/side-panel';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';

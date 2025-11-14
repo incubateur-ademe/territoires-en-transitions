@@ -6,8 +6,7 @@ import { EmptyAllPlansVisitorView } from '@/app/plans/plans/list-all-plans/empty
 import { EmptyAllPlansView } from '@/app/plans/plans/list-all-plans/empty-all-plans.view';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
-import { Spacer } from '@/ui';
-import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
+import { Spacer, VisibleWhen } from '@/ui';
 import { useQueryStates } from 'nuqs';
 import { Header } from '../components/header';
 import { PlanCardWithFiltersList } from './plan-card-with-filters.list';

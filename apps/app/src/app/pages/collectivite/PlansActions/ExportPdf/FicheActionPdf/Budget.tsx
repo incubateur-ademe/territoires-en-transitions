@@ -1,5 +1,5 @@
 import BudgetContent from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/BudgetContent';
-import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
+import { FicheBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import {
   BadgeFinanceur,
@@ -12,7 +12,7 @@ import classNames from 'classnames';
 
 type BudgetProps = {
   fiche: Fiche;
-  budgets: BudgetType[] | undefined;
+  budgets: FicheBudget[] | undefined;
 };
 
 const Budget = ({ fiche, budgets = [] }: BudgetProps) => {

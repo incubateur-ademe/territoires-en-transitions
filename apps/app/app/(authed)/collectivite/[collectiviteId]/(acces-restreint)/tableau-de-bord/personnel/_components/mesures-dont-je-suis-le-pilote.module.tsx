@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { ModuleMesuresSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import { ModuleMesuresSelect } from '@/api/plan-actions';
 import { MesuresModule } from '@/app/tableaux-de-bord/referentiels/mesures.module';
 
 import { Event, useEventTracker } from '@/ui';
