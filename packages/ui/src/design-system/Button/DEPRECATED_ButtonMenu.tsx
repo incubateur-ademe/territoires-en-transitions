@@ -14,17 +14,18 @@ import {
   UseHoverProps,
   useInteractions,
 } from '@floating-ui/react';
+import classNames from 'classnames';
 import { cloneElement, useState } from 'react';
 import { flushSync } from 'react-dom';
 
-import { Icon } from '@/ui';
-import { cn } from '@/ui/utils/cn';
-import classNames from 'classnames';
+import { useOpenState } from '@/ui/hooks/use-open-state';
+import { cn } from '../../utils/cn';
 import { OpenState } from '../../utils/types';
+import { Icon } from '../Icon';
 import { Button } from './Button';
 import { ButtonProps } from './types';
 
-export type ButtonMenuProps = {
+export type DEPRECATED_ButtonMenuProps = {
   /** Le contenu du menu */
   children: React.ReactNode;
   /** Placement du menu pour l'élément floating-ui */
@@ -46,7 +47,7 @@ export type ButtonMenuProps = {
  *
  * Ne pas oublier de donner une largeur fixe au menu s'il contient des élements qui peuvent être resizer comme un sélecteur avec une valeur.
  */
-export const ButtonMenu = ({
+export const DEPRECATED_ButtonMenu = ({
   menuPlacement = 'bottom-end',
   openState,
   children,
@@ -55,19 +56,8 @@ export const ButtonMenu = ({
   menuContainerClassName,
   hoverConfig = { enabled: false },
   ...props
-}: ButtonMenuProps) => {
-  const isControlled = !!openState;
-  const [open, setOpen] = useState(false);
-
-  const isOpen = isControlled ? openState.isOpen : open;
-
-  const handleOpenChange = () => {
-    if (isControlled) {
-      openState.setIsOpen(!openState.isOpen);
-    } else {
-      setOpen(!open);
-    }
-  };
+}: DEPRECATED_ButtonMenuProps) => {
+  const { isOpen, toggleIsOpen } = useOpenState(openState);
 
   const [maxHeight, setMaxHeight] = useState(0);
 
@@ -76,7 +66,7 @@ export const ButtonMenu = ({
   const { refs, context, x, y, strategy } = useFloating({
     nodeId,
     open: isOpen,
-    onOpenChange: handleOpenChange,
+    onOpenChange: toggleIsOpen,
     placement: menuPlacement,
     whileElementsMounted: autoUpdate,
     middleware: [

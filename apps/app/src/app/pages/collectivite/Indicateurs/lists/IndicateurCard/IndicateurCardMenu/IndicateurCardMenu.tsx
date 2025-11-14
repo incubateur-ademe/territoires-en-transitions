@@ -1,5 +1,5 @@
 import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
-import { ActionsMenu, MenuAction } from '@/ui';
+import { ButtonMenu, MenuAction } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useMemo } from 'react';
 
@@ -55,7 +55,14 @@ const IndicateurCardMenu = ({
     return menuActions;
   }, [isFavoriCollectivite, chartDownloadSettings.showTrigger]);
 
-  return <ActionsMenu openState={openState} actions={actions} />;
+  return (
+    <ButtonMenu
+      icon="more-line"
+      variant="grey"
+      size="xs"
+      menu={{ sections: [actions], openState }}
+    />
+  );
 };
 
 export default IndicateurCardMenu;

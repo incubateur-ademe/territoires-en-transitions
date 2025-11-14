@@ -1,12 +1,13 @@
 import { Meta, StoryObj } from '@storybook/nextjs';
 
 import { useState } from 'react';
-import { ButtonMenu } from './ButtonMenu';
+import { DEPRECATED_ButtonMenu } from './DEPRECATED_ButtonMenu';
 
-const meta: Meta<typeof ButtonMenu> = {
-  component: ButtonMenu,
+const meta: Meta<typeof DEPRECATED_ButtonMenu> = {
+  component: DEPRECATED_ButtonMenu,
   args: {
-    icon: 'equalizer-fill',
+    icon: 'menu-2-line',
+    variant: 'grey',
     children: (
       <div className="!w-44 text-sm">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium,
@@ -19,14 +20,14 @@ const meta: Meta<typeof ButtonMenu> = {
 
 export default meta;
 
-type Story = StoryObj<typeof ButtonMenu>;
+type Story = StoryObj<typeof DEPRECATED_ButtonMenu>;
 
 export const Default: Story = {
   render: (args) => {
     return (
       <div className="flex gap-24 justify-between mb-52">
-        <ButtonMenu {...args} menuPlacement="bottom-start" />
-        <ButtonMenu {...args} notification={{ number: 2 }} />
+        <DEPRECATED_ButtonMenu {...args} menuPlacement="bottom-start" />
+        <DEPRECATED_ButtonMenu {...args} notification={{ number: 2 }} />
       </div>
     );
   },
@@ -37,7 +38,7 @@ export const Controlled: Story = {
     const [isOpen, setIsOpen] = useState(false);
     return (
       <div className="mb-52">
-        <ButtonMenu
+        <DEPRECATED_ButtonMenu
           {...args}
           menuPlacement="bottom-start"
           openState={{
@@ -55,7 +56,7 @@ export const WithArrow: Story = {
     return (
       // <div className="flex gap-24 justify-between mb-52">
       // </div>
-      <ButtonMenu {...args} text="Button Menu" withArrow />
+      <DEPRECATED_ButtonMenu {...args} text="Button Menu" withArrow />
     );
   },
 };
