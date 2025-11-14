@@ -139,10 +139,7 @@ export default class UpdateFicheService {
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<
-      Result<
-        { updatedFiche: FicheWithRelations; previousFiche: FicheWithRelations },
-        UpdateFicheError
-      >
+      Result<{ previousFiche: FicheWithRelations }, UpdateFicheError>
     > => {
       const resultGetExistingFiche =
         await this.ficheActionListService.getFicheById(ficheId, false, user);
@@ -390,37 +387,37 @@ export default class UpdateFicheService {
         );
       }
 
-      // Recharge la fiche mise à jour
-      const result = await this.ficheActionListService.getFicheById(
-        ficheId,
-        true,
-        user
-      );
-      if (!result.success) {
-        return { success: false, error: UpdateFicheErrorEnum.FICHE_NOT_FOUND };
-      }
-
       return {
         success: true,
         data: {
-          updatedFiche: result.data,
           previousFiche: existingFicheAction,
         },
       };
     };
 
     // Utilise la transaction fournie ou en crée une nouvelle
-    const result = await (tx
+    const resultUpdate = await (tx
       ? executeInTransaction(tx)
       : this.databaseService.db.transaction((newTx) =>
           executeInTransaction(newTx)
         ));
-    if (!result.success) {
-      return { success: false, error: result.error };
+    if (!resultUpdate.success) {
+      return { success: false, error: resultUpdate.error };
+    }
+
+    // Recharge la fiche mise à jour
+    const resultUpdated = await this.ficheActionListService.getFicheById(
+      ficheId,
+      true,
+      user
+    );
+    if (!resultUpdated.success) {
+      return { success: false, error: UpdateFicheErrorEnum.FICHE_NOT_FOUND };
     }
 
     // Ajoute les notifications pour les pilotes nouvellement associés à une sous-fiche
-    const { updatedFiche, previousFiche } = result.data;
+    const { previousFiche } = resultUpdate.data;
+    const updatedFiche = resultUpdated.data;
     await this.notificationsFicheService.upsertPiloteNotifications({
       updatedFiche,
       previousFiche,
