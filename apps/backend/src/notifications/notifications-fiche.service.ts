@@ -12,7 +12,7 @@ import GetUrlService from '../utils/get-url.service';
 import { MethodResult } from '../utils/result.type';
 import { getNewlyAssignedPilotes } from './get-newly-assigned-pilotes';
 import { NotificationStatusEnum } from './models/notification-status.enum';
-import { GetNotificationContent } from './models/notification-template.dto';
+import { GetNotificationContentResult } from './models/notification-template.dto';
 import {
   Notification,
   NotificationInsert,
@@ -175,7 +175,7 @@ export class NotificationsFicheService {
    */
   async getPiloteNotificationContent(
     notification: Notification
-  ): Promise<MethodResult<GetNotificationContent, string>> {
+  ): Promise<GetNotificationContentResult> {
     // charge les données
     const ret = await this.getPiloteNotificationTemplateData(notification);
     if (!ret.success) {
