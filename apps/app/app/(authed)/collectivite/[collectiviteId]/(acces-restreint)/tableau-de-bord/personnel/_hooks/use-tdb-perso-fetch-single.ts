@@ -4,7 +4,7 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { moduleFetch } from '@/api/plan-actions/dashboards/personal-dashboard/actions/module.fetch';
 import { PersonalDefaultModuleKeys } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { useUser } from '@/api/users/user-context/user-provider';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 
 /**

@@ -1,5 +1,5 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { FicheResume } from '@/domain/plans';
 import { PlanNode } from '@/domain/plans';

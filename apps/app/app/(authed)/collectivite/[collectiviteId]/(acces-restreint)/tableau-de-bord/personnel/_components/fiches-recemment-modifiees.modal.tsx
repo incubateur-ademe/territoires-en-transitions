@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { modulesSave } from '@/api/plan-actions/dashboards/personal-dashboard';
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PeriodeDropdown from '@/app/ui/dropdownLists/PeriodeDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';

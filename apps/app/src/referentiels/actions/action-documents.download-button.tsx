@@ -1,6 +1,6 @@
 import { DBClient } from '@/api';
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { TFichier } from '@/app/referentiels/preuves/Bibliotheque/types';
