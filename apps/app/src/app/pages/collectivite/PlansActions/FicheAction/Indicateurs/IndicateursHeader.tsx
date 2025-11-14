@@ -1,12 +1,12 @@
 import { RichTextView } from '@/app/plans/fiches/update-fiche/components/RichTextView';
-import { FicheWithRelations } from '@/domain/plans';
 import { Badge, Button } from '@/ui';
 import { useState } from 'react';
+import { Fiche } from '../data/use-get-fiche';
 import ModaleIndicateursHeader from './ModaleIndicateursHeader';
 
 type IndicateursHeaderProps = {
   isReadonly: boolean;
-  fiche: FicheWithRelations;
+  fiche: Fiche;
 };
 
 const IndicateursHeader = ({ isReadonly, fiche }: IndicateursHeaderProps) => {

@@ -6,8 +6,10 @@ import { useCurrentCollectivite } from '@/api/collectivites';
 import { FichesListEmpty } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.empty';
 import { FichesListGrid } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.grid';
 import { FicheListScheduler } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/fiche-list.scheduler';
-import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import { ListFichesSortValue } from '@/domain/plans';
+import {
+  SortValue,
+  useListFiches,
+} from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import {
   ButtonGroup,
   Checkbox,
@@ -28,7 +30,7 @@ import {
   useSelectFichesView,
 } from '../hooks/use-select-fiche-view';
 
-import { useUser } from '@/api/users/user-context/user-provider';
+import { useUser } from '@/api/users';
 import { PermissionOperation } from '@/domain/users';
 import { useCountFiches } from '../hooks/use-count-fiches';
 import { useManageFichesPagination } from '../hooks/use-manage-fiches-pagination';
@@ -48,7 +50,7 @@ type Props = {
   filters: FormFilters;
   customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;
-  defaultSort?: ListFichesSortValue;
+  defaultSort?: SortValue;
   isReadOnly?: boolean;
   permissions: PermissionOperation[];
   containerClassName?: string;

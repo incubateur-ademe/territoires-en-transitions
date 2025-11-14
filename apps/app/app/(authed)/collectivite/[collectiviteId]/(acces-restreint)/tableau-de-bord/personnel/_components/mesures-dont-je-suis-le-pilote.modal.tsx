@@ -1,11 +1,9 @@
 import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { modulesSave } from '@/api/plan-actions/dashboards/personal-dashboard';
-import { ModuleMesuresSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import { useUser } from '@/api/users/user-context/user-provider';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { RouterInput } from '@/api/utils/trpc/client';
+import { RouterInput, useSupabase } from '@/api';
+import { ModuleMesuresSelect, modulesSave } from '@/api/plan-actions';
+import { useUser } from '@/api/users';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { ReferentielId } from '@/domain/referentiels';
 import {

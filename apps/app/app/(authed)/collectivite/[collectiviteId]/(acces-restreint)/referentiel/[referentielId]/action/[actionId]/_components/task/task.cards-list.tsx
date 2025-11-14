@@ -1,4 +1,4 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { Checkbox, Divider } from '@/ui';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';

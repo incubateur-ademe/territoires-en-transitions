@@ -1,4 +1,4 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { Checkbox, Field, RichTextEditor } from '@/ui';
 import { ChangeEvent } from 'react';
 import {

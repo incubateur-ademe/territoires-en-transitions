@@ -1,16 +1,17 @@
 import FicheShareInfoDiv from '@/app/plans/fiches/share-fiche/fiche-share-info';
-import { FicheResume } from '@/domain/plans';
+import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { Button, Notification } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
+import { Fiche } from '../data/use-get-fiche';
 import ModaleAcces from './ModaleAcces';
 import TooltipRestreint from './TooltipRestreint';
 
 type FicheActionAccesProps = {
   isReadonly: boolean;
-  fiche: FicheResume;
+  fiche: Pick<Fiche, 'titre' | 'restreint'> & FicheShareProperties;
   onUpdateAccess: (
-    params: Pick<FicheResume, 'restreint' | 'sharedWithCollectivites'>
+    params: Pick<Fiche, 'restreint' | 'sharedWithCollectivites'>
   ) => void;
 };
 

@@ -1,7 +1,7 @@
 import { createSerializer } from 'nuqs';
 import { useState } from 'react';
 
-import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import { ModuleFicheActionsSelect } from '@/api/plan-actions';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { FicheActionViewType } from '@/app/plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
 import {

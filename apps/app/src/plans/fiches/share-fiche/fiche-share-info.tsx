@@ -1,16 +1,16 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { FicheResume } from '@/domain/plans';
+import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { Notification, Tooltip } from '@/ui';
-import { FicheShareProperties } from './fiche-share-properties.dto';
+import { FicheListItem } from '../list-all-fiches/data/use-list-fiches';
 
 type FicheShareInfoProps = {
-  fiche: FicheResume;
+  fiche: FicheShareProperties;
 };
 
 export const SHARE_ICON = 'share-forward-fill';
 
 export const getFicheActionShareIcon = (
-  fiche: Pick<FicheResume, 'collectiviteId'>,
+  fiche: Pick<FicheListItem, 'collectiviteId'>,
   collectiviteId: number
 ) => {
   return fiche.collectiviteId === collectiviteId ? 'team-fill' : SHARE_ICON;
@@ -30,7 +30,7 @@ export const ficheSharedSingularAndPluralText = (
       }`;
 
 export const getFicheActionShareText = (
-  fiche: FicheResume,
+  fiche: FicheShareProperties,
   collectiviteId: number
 ): string => {
   if (!fiche.sharedWithCollectivites?.length) {
@@ -48,7 +48,7 @@ const FicheActionShareInfoText = ({
   fiche,
   collectiviteId,
 }: {
-  fiche: FicheResume;
+  fiche: FicheShareProperties;
   collectiviteId: number;
 }) => {
   if (!fiche.sharedWithCollectivites?.length) {

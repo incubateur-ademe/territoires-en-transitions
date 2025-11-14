@@ -4,8 +4,8 @@ import '@bryntum/scheduler/locales/scheduler.locale.FrFr';
 import { useEffect, useRef } from 'react';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users/user-context/user-provider';
-import { FicheResume } from '@/domain/plans';
+import { useUser } from '@/api/users';
+import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
 import { preset } from '@/ui';
 import { FicheCardScheduler } from './fiche-card.scheduler';
 
@@ -13,7 +13,7 @@ import { FicheCardScheduler } from './fiche-card.scheduler';
 LocaleManager.applyLocale('FrFr');
 
 export type FicheActionEvent = EventModelConfig & {
-  fiche?: FicheResume;
+  fiche?: FicheWithRelationsAndCollectivite;
 };
 
 export type SchedulerProps = {

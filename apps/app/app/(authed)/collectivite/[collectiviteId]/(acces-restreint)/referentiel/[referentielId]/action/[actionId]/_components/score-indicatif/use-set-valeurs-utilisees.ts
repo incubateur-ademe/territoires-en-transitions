@@ -1,4 +1,4 @@
-import { useTRPC } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api';
 import { useSnapshotComputeAndUpdate } from '@/app/referentiels/use-snapshot';
 import { getReferentielIdFromActionId } from '@/domain/referentiels';
 import { Event, useEventTracker } from '@/ui';

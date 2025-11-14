@@ -1,7 +1,7 @@
 'use client';
 
 import { getRejoindreCollectivitePath } from '@/api';
-import { useUser } from '@/api/users/user-context/user-provider';
+import { useUser } from '@/api/users';
 import { Button } from '@/ui';
 import { ModifierProfilModal } from './_components/modifier-profil.modal';
 import { ResendConfirmationLinkButton } from './_components/resend-confirmation-link.button';

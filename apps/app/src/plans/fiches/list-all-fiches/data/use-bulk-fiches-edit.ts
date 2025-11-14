@@ -1,10 +1,11 @@
+import { RouterInput, useTRPC } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
-import { useTRPC } from '@/api/utils/trpc/client';
 import { Filters } from '@/app/plans/fiches/list-all-fiches/filters/types';
-import { BulkEditRequest } from '@/domain/plans';
 import { useEventTracker } from '@/ui';
 import { Event } from '@/ui/components/tracking/posthog-events';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+export type BulkEditRequest = RouterInput['plans']['fiches']['bulkEdit'];
 
 const events = {
   pilotes: Event.fiches.updatePilote.multiple,

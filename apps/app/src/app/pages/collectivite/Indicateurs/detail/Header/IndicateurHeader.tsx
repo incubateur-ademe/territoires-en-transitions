@@ -2,7 +2,7 @@ import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indi
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { PermissionOperation } from '@/domain/users';
-import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
+import { VisibleWhen } from '@/ui';
 import { cn } from '@/ui/utils/cn';
 import CheminIndicateur from './CheminIndicateur';
 import { IndicateurInfos } from './IndicateurInfos';

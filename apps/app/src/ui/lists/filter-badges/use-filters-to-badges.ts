@@ -1,18 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { useSupabase } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { filtreValuesFetch } from '@/api/collectivites/shared/data-access/filtre-values.fetch';
-import {
-  FiltreRessourceLiees,
-  FiltreValues,
-} from '@/api/collectivites/shared/domain/filtre-ressource-liees.schema';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { INDICATEUR_LABELS } from '@/app/app/pages/collectivite/Indicateurs/constants';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { NOTES_DE_SUIVI_PROPERTIES } from '@/app/plans/fiches/list-all-fiches/filters/options';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
 import { ListDefinitionsInputFilters } from '@/domain/indicateurs';
 import { ListFichesRequestFilters, NotesDeSuiviOption } from '@/domain/plans';
+import { FiltreRessourceLiees, FiltreValues } from '@/domain/shared';
 
 /**
  * Types de tous les filtres passables au hook `useFiltersToBadges`.
@@ -46,12 +43,13 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
 
   // On nettoie les valeurs vides de l'objet customValues.
   // Permet de ne pas avoir à le faire dans les composants utilisant le hook.
-  customValues &&
+  if (customValues) {
     Object.entries(customValues).forEach(([key, value]) => {
       if (!value) {
         delete customValues[key as keyof CustomFilterBadges];
       }
     });
+  }
 
   return useQuery({
     queryKey: ['filter_badges', filters, customValues],
@@ -93,18 +91,26 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
           const users = mergedFilters[key]?.map(
             (user) => `${user.prenom} ${user.nom}`
           );
-          users && pilotes.push(...users);
+          if (users) {
+            pilotes.push(...users);
+          }
         } else if (key === 'personnePilotes') {
           const personnes = mergedFilters[key]?.map((tag) => tag.nom);
-          personnes && pilotes.push(...personnes);
+          if (personnes) {
+            pilotes.push(...personnes);
+          }
         } else if (key === 'utilisateurReferents') {
           const users = mergedFilters[key]?.map(
             (user) => `${user.prenom} ${user.nom}`
           );
-          users && referents.push(...users);
+          if (users) {
+            referents.push(...users);
+          }
         } else if (key === 'personneReferentes') {
           const personnes = mergedFilters[key]?.map((tag) => tag.nom);
-          personnes && referents.push(...personnes);
+          if (personnes) {
+            referents.push(...personnes);
+          }
         } else if (key === 'servicePilotes') {
           badgeValues.push(
             `Direction ou service pilote : ${mergedFilters[key]

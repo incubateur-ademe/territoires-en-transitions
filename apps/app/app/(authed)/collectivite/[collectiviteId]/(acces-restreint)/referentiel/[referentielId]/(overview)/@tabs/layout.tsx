@@ -1,4 +1,4 @@
-import { ReferentielId } from '@/domain/referentiels';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { ReactNode } from 'react';
 import { Header } from './header';
 import { TabsWrapper } from './tabs-wrapper';

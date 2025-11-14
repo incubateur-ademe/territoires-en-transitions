@@ -1,7 +1,7 @@
 import ActionsGroupeesModale from '@/app/app/pages/collectivite/PlansActions/ActionsGroupees/ActionsGroupeesModale';
+import { BulkEditRequest } from '@/app/plans/fiches/list-all-fiches/data/use-bulk-fiches-edit';
 import { FicheShareBulkEditorFormSection } from '@/app/plans/fiches/share-fiche/fiche-share-bulk-editor.form-section';
-import { IdNameSchema } from '@/domain/collectivites';
-import { BulkEditRequest } from '@/domain/plans';
+import { IdNameSchema } from '@/domain/shared';
 import { Button, Event, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';

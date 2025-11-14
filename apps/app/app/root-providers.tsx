@@ -1,7 +1,7 @@
-import { UserProvider } from '@/api/users/user-context/user-provider';
+import { ReactQueryAndTRPCProvider } from '@/api';
+import { UserProvider } from '@/api/users';
 import { getCookieOptions } from '@/api/utils/supabase/cookie-options';
-import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
-import { ReactQueryAndTRPCProvider } from '@/api/utils/trpc/client';
+import { SupabaseProvider } from '@/api';
 import { PostHogProvider } from '@/ui';
 import { headers } from 'next/headers';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';

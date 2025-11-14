@@ -1,9 +1,11 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { useListAllFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import {
+  SortOptions,
+  useListAllFiches,
+} from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { Filters } from '@/app/plans/fiches/list-all-fiches/filters/types';
-import { FicheWithRelations, SortOptions } from '@/domain/plans';
-import { Button, Modal, ModalFooter, useEventTracker } from '@/ui';
-import { Event } from '@/ui/components/tracking/posthog-events';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { FicheWithRelations } from '@tet/domain/plans';
+import { Button, Event, Modal, ModalFooter, useEventTracker } from '@tet/ui';
 import { mapValues } from 'es-toolkit';
 import { useState } from 'react';
 import { ExportFicheActionButton } from '../ExportFicheActionButton';

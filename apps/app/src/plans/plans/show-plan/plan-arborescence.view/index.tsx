@@ -11,9 +11,9 @@ import { PlanNode } from '@/domain/plans';
 import { NestedDroppableContainers } from './NestedDroppableContainers';
 
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
-import { FicheResume } from '@/domain/plans';
 import { CollectiviteAccess } from '@/domain/users';
 
+import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { useDragAxe } from '@/app/plans/plans/show-plan/data/use-drag-axe';
 import './dropAnimation.css';
 
@@ -63,7 +63,7 @@ export const PlanArborescence = ({ plan, axes, collectivite }: Props) => {
     if (over && overData) {
       // si c'est une fiche
       if (activeData?.type === 'fiche') {
-        const fiche = activeData.fiche as FicheResume;
+        const fiche = activeData.fiche as FicheListItem;
         // Conserve tous les autres axes qui ne sont pas associés à ce plan
         const updatedAxes =
           fiche.axes

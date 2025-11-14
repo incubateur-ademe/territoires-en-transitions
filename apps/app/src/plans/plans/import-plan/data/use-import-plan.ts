@@ -1,4 +1,4 @@
-import { useTRPC } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api';
 import { convertFileToBase64 } from '@/app/utils/convert-file-to-base64';
 import {
   UpdatePlanPilotesSchema,

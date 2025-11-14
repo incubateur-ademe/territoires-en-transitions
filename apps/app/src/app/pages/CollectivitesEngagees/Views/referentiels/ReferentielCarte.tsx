@@ -1,4 +1,4 @@
-import { RecherchesReferentiel } from '@/api/collectiviteEngagees';
+import { CollectiviteEngagee } from '@/api';
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielRootUrl } from '@/app/app/paths';
 import { NIVEAUX } from '@/app/referentiels/tableau-de-bord/labellisation/LabellisationInfo';
@@ -13,7 +13,7 @@ import classNames from 'classnames';
 import ContactsDisplay from '../../contacts/contacts-display';
 
 type Props = {
-  collectivite: RecherchesReferentiel;
+  collectivite: CollectiviteEngagee.RecherchesReferentiel;
   isClickable: boolean;
 };
 

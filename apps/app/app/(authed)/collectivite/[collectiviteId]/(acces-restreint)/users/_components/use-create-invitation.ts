@@ -1,4 +1,4 @@
-import { useTRPC } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api';
 import { UserWithCollectiviteAccesses } from '@/domain/users';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSendInvitation } from './use-invite-member';

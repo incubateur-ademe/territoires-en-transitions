@@ -1,13 +1,14 @@
-import { FicheWithRelations } from '@/domain/plans';
+import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { EmptyCard } from '@/ui';
 import { useState } from 'react';
+import { Fiche } from '../../data/use-get-fiche';
 import CarteNote from './CarteNote';
 import ModaleCreationNote from './ModaleCreationNote';
 import NotesPicto from './NotesPicto';
 
 type NotesComplementairesProps = {
   isReadonly: boolean;
-  fiche: FicheWithRelations;
+  fiche: Pick<Fiche, 'notesComplementaires'> & FicheShareProperties;
   updateNotes: (notes: string | null) => void;
 };
 

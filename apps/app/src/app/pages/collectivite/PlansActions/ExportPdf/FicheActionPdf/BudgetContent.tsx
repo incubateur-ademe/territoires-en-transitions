@@ -1,16 +1,16 @@
 import BudgetTable from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/BudgetTable';
+import { FicheBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import {
   BadgeFinanceur,
   Paragraph,
   Stack,
 } from '@/app/ui/export-pdf/components';
-import { FicheActionBudget } from '@/domain/plans';
 import classNames from 'classnames';
 import { Fragment } from 'react';
 
 type BudgetContentProps = {
   type: 'investissement' | 'fonctionnement';
-  budgets: FicheActionBudget[];
+  budgets: FicheBudget[];
 };
 
 const BudgetContent = ({ type, budgets }: BudgetContentProps) => {

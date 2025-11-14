@@ -1,6 +1,6 @@
 'use client';
 
-import { useTRPC } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 

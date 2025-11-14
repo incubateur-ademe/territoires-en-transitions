@@ -4,7 +4,7 @@ import {
   ModuleMesuresSelect,
   ModuleSelect,
   PersonalDefaultModuleKeys,
-} from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+} from '@/api/plan-actions';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Event, EventName, useEventTracker } from '@/ui';
 

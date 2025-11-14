@@ -1,15 +1,16 @@
 import { FicheRestreintEditorFormSection } from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionAcces/fiche-restreint-editor.form-section';
 import FicheShareEditorFormSection from '@/app/plans/fiches/share-fiche/fiche-share-editor.form-section';
-import { FicheResume } from '@/domain/plans';
+import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { Modal, ModalFooterOKCancel } from '@/ui';
 import { useCallback, useEffect, useState } from 'react';
+import { Fiche } from '../data/use-get-fiche';
 
 type ModaleAccesProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  fiche: FicheResume;
+  fiche: Pick<Fiche, 'titre' | 'restreint'> & FicheShareProperties;
   onUpdateAccess: (
-    params: Pick<FicheResume, 'restreint' | 'sharedWithCollectivites'>
+    params: Pick<Fiche, 'restreint' | 'sharedWithCollectivites'>
   ) => void;
 };
 

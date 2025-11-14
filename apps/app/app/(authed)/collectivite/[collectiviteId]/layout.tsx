@@ -1,4 +1,4 @@
-import { CollectiviteProviderStore } from '@/api/collectivites/collectivite-context/collectivite-context-store.server';
+import { CollectiviteProviderStore } from '@/api/collectivites/index.server';
 import { getUser } from '@/api/users/user-details.fetch.server';
 import { UnverifiedUserCard } from '@/app/users/unverified-user-card';
 import { ReactNode } from 'react';

@@ -1,6 +1,5 @@
 'use client';
 import { CollectiviteEngagee } from '@/api';
-import { RecherchesReferentiel } from '@/api/collectiviteEngagees';
 import { View } from '@/app/app/pages/CollectivitesEngagees/Views/View';
 import {
   initialFilters,
@@ -25,7 +24,7 @@ export const ReferentielsView = ({
   const { isLoading, collectivites, collectivitesCount } =
     useFilteredReferentiels(filters);
   return (
-    <View<RecherchesReferentiel>
+    <View<CollectiviteEngagee.RecherchesReferentiel>
       data={collectivites}
       dataCount={collectivitesCount}
       isLoading={isLoading}

@@ -1,10 +1,10 @@
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { FicheResume } from '@/domain/plans';
 import { CollectiviteAccess } from '@/domain/users';
+import { FicheListItem } from '../list-all-fiches/data/use-list-fiches';
 
 export function isFicheSharedWithCollectivite(
-  fiche: Pick<FicheResume, 'sharedWithCollectivites'>,
+  fiche: Pick<FicheListItem, 'sharedWithCollectivites'>,
   collectiviteId: number
 ) {
   return fiche.sharedWithCollectivites?.some(
@@ -13,7 +13,7 @@ export function isFicheSharedWithCollectivite(
 }
 
 export function isFicheEditableByCollectiviteUser(
-  fiche: FicheShareProperties & Pick<FicheResume, 'pilotes'>,
+  fiche: FicheShareProperties & Pick<FicheListItem, 'pilotes'>,
   currentCollectivite: CollectiviteAccess,
   userId?: string
 ) {
