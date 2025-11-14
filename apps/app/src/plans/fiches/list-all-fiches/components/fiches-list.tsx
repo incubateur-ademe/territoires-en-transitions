@@ -26,6 +26,7 @@ import {
   useSelectFichesView,
 } from '../hooks/use-select-fiche-view';
 
+import { useUser } from '@/api/users/user-context/user-provider';
 import { PermissionOperation } from '@/domain/users';
 import { useManageFichesPagination } from '../hooks/use-manage-fiches-pagination';
 import { useSearchFiches } from '../hooks/use-search-fiches';
@@ -90,6 +91,8 @@ export const FichesList = ({
   }
 
   const collectivite = useCurrentCollectivite();
+  const user = useUser();
+  
   const filtersWithSearch = {
     ...fromFormFiltersToFilters(filters),
     texteNomOuDescription: debouncedSearch,
@@ -267,6 +270,7 @@ export const FichesList = ({
       {view === 'grid' && (
         <FichesListGrid
           collectivite={collectivite}
+          currentUserId={user.id}
           fiches={fiches ?? []}
           isLoading={isLoading}
           displayEditionMenu={displayEditionMenu}

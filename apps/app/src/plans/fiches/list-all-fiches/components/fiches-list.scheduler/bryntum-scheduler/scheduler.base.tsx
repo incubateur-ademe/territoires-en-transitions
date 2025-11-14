@@ -4,6 +4,7 @@ import '@bryntum/scheduler/locales/scheduler.locale.FrFr';
 import { useEffect, useRef } from 'react';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
+import { useUser } from '@/api/users/user-context/user-provider';
 import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
 import { preset } from '@/ui';
 import { FicheCardScheduler } from './fiche-card.scheduler';
@@ -22,6 +23,7 @@ export type SchedulerProps = {
 
 const SchedulerBase = ({ events, isLoading }: SchedulerProps) => {
   const currentCollectivite = useCurrentCollectivite();
+  const user = useUser();
 
   const resources = events.map((event) => ({ id: event.resourceId }));
 
@@ -66,6 +68,7 @@ const SchedulerBase = ({ events, isLoading }: SchedulerProps) => {
           <FicheCardScheduler
             ficheAction={eventRecord.fiche}
             currentCollectivite={currentCollectivite}
+            currentUserId={user.id}
           />
         );
       }}

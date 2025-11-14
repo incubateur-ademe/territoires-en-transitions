@@ -10,6 +10,7 @@ type FichesLieesListeProps = {
   className?: string;
   onUnlink?: (ficheId: number) => void;
   collectivite: CollectiviteAccess;
+  currentUserId: string;
   isLoading?: boolean;
 };
 
@@ -18,6 +19,7 @@ const FichesLieesListe = ({
   className,
   onUnlink,
   collectivite,
+  currentUserId,
   isLoading,
 }: FichesLieesListeProps) => {
   if (!isLoading && fiches.length === 0) return null;
@@ -43,6 +45,7 @@ const FichesLieesListe = ({
                 })}
                 onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
                 currentCollectivite={collectivite}
+                currentUserId={currentUserId}
               />
             ))}
       </div>
