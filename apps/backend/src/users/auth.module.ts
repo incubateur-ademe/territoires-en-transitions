@@ -55,6 +55,7 @@ import { UpdateUserService } from './users/update-user/update-user.service';
   ],
   exports: [
     PermissionService,
+    RoleService,
     RoleUpdateService,
     ListUsersService,
     UsersRouter,

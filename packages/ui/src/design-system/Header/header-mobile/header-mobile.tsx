@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import Link from 'next/link';
-import { useState } from 'react';
+import { Children, useState } from 'react';
 import { useLockBodyScroll } from 'react-use';
 import { Button } from '../../Button/Button';
 import { HeaderProps } from '../Header';
@@ -25,6 +25,7 @@ const HeaderMobile = ({
   const [isOpen, setIsOpen] = useState(false);
 
   useLockBodyScroll(isOpen);
+  const logosToRender = Children.toArray(logos).slice(0, 2);
 
   return (
     <div
@@ -34,7 +35,7 @@ const HeaderMobile = ({
     >
       <div className="flex justify-between items-start">
         <Link href={rootUrl ?? '/'} className="flex items-center h-24 bg-none">
-          {[0, 1].map((i) => logos?.[i])}
+          {logosToRender}
         </Link>
         <Button
           icon={isOpen ? 'close-line' : 'menu-line'}
