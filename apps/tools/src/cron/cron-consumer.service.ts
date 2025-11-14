@@ -1,6 +1,6 @@
 import { ContextStoreService } from '@/backend/utils/context/context.service';
-import { getSentryContextFromApplicationContext } from '@/backend/utils/sentry-init';
 import { getErrorMessage } from '@/backend/utils/get-error-message';
+import { getSentryContextFromApplicationContext } from '@/backend/utils/sentry-init';
 import { CalendlySynchroService } from '@/tools/calendly/calendly-synchro.service';
 import { ConnectSynchroService } from '@/tools/connect/connect-synchro.service';
 import { CronComputeTrajectoireService } from '@/tools/indicateurs/trajectoires/cron-compute-trajectoire.service';
@@ -8,6 +8,7 @@ import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger, NotFoundException } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
 import { Job } from 'bullmq';
+import { CronNotificationsService } from './cron-notifications.service';
 import { CRON_JOBS_QUEUE_NAME, JobName } from './cron.config';
 
 @Processor(CRON_JOBS_QUEUE_NAME)
@@ -18,6 +19,7 @@ export class CronConsumerService extends WorkerHost {
     private readonly calendlySynchroService: CalendlySynchroService,
     private readonly connectSynchroService: ConnectSynchroService,
     private readonly cronComputeTrajectoireService: CronComputeTrajectoireService,
+    private readonly cronNotificationsService: CronNotificationsService,
     private readonly contextStoreService: ContextStoreService
   ) {
     super();
@@ -43,6 +45,10 @@ export class CronConsumerService extends WorkerHost {
             await this.cronComputeTrajectoireService.computeAllOutdatedTrajectoires(
               job.data as { forceEvenIfNotOutdated?: boolean }
             );
+          break;
+        case 'send-notifications':
+          result =
+            await this.cronNotificationsService.sendPendingNotifications();
           break;
         default:
           result = this.handlerNotFound(job.name);

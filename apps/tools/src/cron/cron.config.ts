@@ -28,6 +28,11 @@ export const JOBS_CONFIG = [
     cronExpression: CronExpression.EVERY_DAY_AT_1AM,
     data: {},
   },
+  {
+    name: 'send-notifications',
+    cronExpression: CronExpression.EVERY_5_MINUTES,
+    data: {},
+  },
 ] as const;
 
 export type JobConfig = (typeof JOBS_CONFIG)[number];
