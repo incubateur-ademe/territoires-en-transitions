@@ -1,5 +1,6 @@
-import { CollectiviteAccess } from '@/domain/users';
+import { useUser } from '@/api/users/user-context/user-provider';
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
+import { CollectiviteAccess } from '@/domain/users';
 import classNames from 'classnames';
 import FicheActionCardSkeleton from '../../../../app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { useListFiches } from '../../../fiches/list-all-fiches/data/use-list-fiches';
@@ -21,6 +22,7 @@ export const FichesList = ({
   axeId,
   collectivite,
 }: Props) => {
+  const user = useUser();
   const { fiches, isLoading } = useListFiches(collectivite.collectiviteId, {
     filters: {
       ficheIds,
@@ -56,6 +58,7 @@ export const FichesList = ({
           return (
             <DraggableFicheCard
               collectivite={collectivite}
+              currentUserId={user.id}
               key={fiche.id}
               fiche={fiche}
               editKeysToInvalidate={[['axe_fiches', axeId, ficheIds]]}

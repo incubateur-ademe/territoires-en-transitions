@@ -1,6 +1,7 @@
 'use client';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
+import { useUser } from '@/api/users/user-context/user-provider';
 import { PiloteOrReferentLabel } from '@/app/plans/plans/components/PiloteOrReferentLabel';
 import { EmptyPlanView } from '@/app/plans/plans/show-plan/empty-plan.view';
 import { usePlanFilters } from '@/app/plans/plans/show-plan/filters/plan-filters.context';
@@ -46,6 +47,7 @@ type Props = {
 
 export const PlanView = ({ plan: initialPlanData }: Props) => {
   const currentCollectivite = useCurrentCollectivite();
+  const user = useUser();
 
   const { isFiltered } = usePlanFilters();
   const plan = useGetPlan(initialPlanData.id, {
@@ -131,6 +133,7 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
             <FilteredResults
               collectivite={currentCollectivite}
               planId={rootAxe.id}
+              currentUserId={user.id}
             />
           </VisibleWhen>
         </ContentPanelWithHeader>

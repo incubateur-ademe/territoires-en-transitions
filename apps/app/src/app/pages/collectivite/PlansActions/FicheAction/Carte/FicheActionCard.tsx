@@ -1,14 +1,15 @@
-import { CollectiviteAccess } from '@/domain/users';
 import { Completion } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import {
   getFicheActionShareIcon,
   getFicheActionShareText,
 } from '@/app/plans/fiches/share-fiche/fiche-share-info';
+import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { getFicheActionPlanForCollectivite } from '@/app/plans/fiches/shared/fiche-action-plans.utils';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
 import { FicheResume } from '@/domain/plans';
+import { CollectiviteAccess } from '@/domain/users';
 import { Button, Card, Checkbox, Notification, Tooltip } from '@/ui';
 import { QueryKey } from '@tanstack/react-query';
 import classNames from 'classnames';
@@ -43,6 +44,8 @@ export type FicheActionCardProps = {
   onToggleOpen?: (isOpen: boolean) => void;
   /** Id de la collectivité */
   currentCollectivite: CollectiviteAccess;
+  /** Id de l'utilisateur */
+  currentUserId: string;
 };
 
 const FicheActionCard = ({
@@ -57,6 +60,7 @@ const FicheActionCard = ({
   onSelect,
   onToggleOpen,
   currentCollectivite,
+  currentUserId
 }: FicheActionCardProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
 
@@ -68,6 +72,8 @@ const FicheActionCard = ({
   );
   const isNotClickable =
     currentCollectivite.niveauAcces === null && !!ficheAction.restreint;
+
+  const canUpdate = isFicheEditableByCollectiviteUser(ficheAction, currentCollectivite, currentUserId);
 
   const toggleOpen = (isOpen: boolean) => {
     setIsEditOpen(isOpen);
@@ -88,7 +94,7 @@ const FicheActionCard = ({
               onClick={onUnlink}
             />
           )}
-          {isEditable && !onSelect && (
+          {isEditable && canUpdate && !onSelect && (
             <>
               <>
                 {isEditOpen && (
