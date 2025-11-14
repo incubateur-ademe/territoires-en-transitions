@@ -4,7 +4,6 @@ import {
   TUpdateMembre,
 } from '@/app/app/pages/collectivite/Users/types';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
-import { getAccessLevelLabel } from '@/app/users/authorizations/permission-access-level.utils';
 import { CollectiviteAccessLevel } from '@/domain/users';
 import { Badge, Button, TCell, TRow, Tooltip } from '@/ui';
 import { useState } from 'react';
@@ -20,17 +19,6 @@ import {
   FonctionDropdown,
   TAccesDropdownOption,
 } from './MembreListTableRow';
-
-export const niveauAcces: { value: CollectiviteAccessLevel; label: string }[] =
-  [
-    { value: 'admin', label: getAccessLevelLabel('admin') },
-    { value: 'edition', label: getAccessLevelLabel('edition') },
-    {
-      value: 'edition_fiches_indicateurs',
-      label: getAccessLevelLabel('edition_fiches_indicateurs'),
-    },
-    { value: 'lecture', label: getAccessLevelLabel('lecture') },
-  ];
 
 export type TMembreListTableRowProps = {
   collectiviteId: number;
@@ -160,10 +148,7 @@ const MembresListeTableRow = ({
               }}
             />
           ) : (
-            <BadgeAcces
-              acces={niveauAcces.find((v) => v.value === niveau_acces)?.value}
-              size="sm"
-            />
+            <BadgeAcces acces={niveau_acces} size="sm" />
           )}
         </TCell>
 
