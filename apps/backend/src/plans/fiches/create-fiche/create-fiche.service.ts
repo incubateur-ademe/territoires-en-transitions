@@ -81,7 +81,10 @@ export class CreateFicheService {
         };
       }
 
-      if (ficheFields) {
+      if (
+        ficheFields &&
+        Object.values(ficheFields).filter((v) => v !== undefined).length
+      ) {
         const result = await this.updateFicheService.updateFiche({
           ficheId,
           ficheFields,
