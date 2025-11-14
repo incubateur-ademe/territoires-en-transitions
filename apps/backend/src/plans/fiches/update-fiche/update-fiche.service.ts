@@ -375,24 +375,23 @@ export default class UpdateFicheService {
         );
       }
 
-      const updatedFiche = await this.ficheActionListService.getFicheById(
-        ficheId,
-        true,
-        user
-      );
-
       return {
-        updatedFiche,
         previousFiche: existingFicheAction,
       };
     };
 
     // Utilise la transaction fournie ou en crée une nouvelle
-    const { updatedFiche, previousFiche } = await (tx
+    const { previousFiche } = await (tx
       ? executeInTransaction(tx)
       : this.databaseService.db.transaction((newTx) =>
           executeInTransaction(newTx)
         ));
+
+    const updatedFiche = await this.ficheActionListService.getFicheById(
+      ficheId,
+      true,
+      user
+    );
 
     // Ajoute les notifications pour les pilotes nouvellement associés à une sous-fiche
     await this.notificationsFicheService.upsertPiloteNotifications({
