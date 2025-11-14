@@ -1,16 +1,15 @@
-import { UserProvider } from '@/api/users/user-context/user-provider';
+import { ReactQueryAndTRPCProvider, SupabaseProvider } from '@/api';
+import { UserProvider } from '@/api/users';
 import { getCookieOptions } from '@/api/utils/supabase/cookie-options';
-import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
-import { ReactQueryAndTRPCProvider } from '@/api/utils/trpc/client';
 import { Header, PostHogProvider } from '@/ui';
+import { Metadata } from 'next';
 import { headers } from 'next/headers';
 import './global.css';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Territoires en Transitions',
   description:
     'Initiez des actions impactantes et valorisez le chemin déjà parcouru',
-  lang: 'fr',
   icons: {
     icon: '/favicon.ico',
     other: [
