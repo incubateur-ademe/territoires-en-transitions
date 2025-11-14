@@ -1,5 +1,7 @@
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useGetPasswordStrength } from '@/auth/components/PasswordStrengthMeter/useGetPasswordStrength';
+import { useSupabase } from '@tet/api';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useGetPasswordStrength } from '../../components/PasswordStrengthMeter/useGetPasswordStrength';
 import {
   SignupData,
   SignupDataStep1,
@@ -7,10 +9,8 @@ import {
   SignupDataStep3,
   SignupView,
   isValidSignupView,
-} from '@/auth/components/Signup';
-import { ResendFunction } from '@/auth/components/VerifyOTP';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+} from '../../components/Signup';
+import { ResendFunction } from '../../components/VerifyOTP';
 
 /**
  * Gère l'appel à la fonction de signup et la redirection

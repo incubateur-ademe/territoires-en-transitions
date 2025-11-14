@@ -1,4 +1,4 @@
-import { UserProviderStore } from '@/api/users/user-context/user-context-store.server';
+import { UserProviderStore } from '@/api/users/index.server';
 import { RejoindreUneCollectivitePage } from './page.client';
 
 /**

@@ -1,5 +1,5 @@
-import { MailSendMessage } from '@/auth/components/Login/MailSendMessage';
-import { useFormState } from '@/auth/components/Login/useFormState';
+import { MailSendMessage } from '../../components/Login/MailSendMessage';
+import { useFormState } from '../../components/Login/useFormState';
 import { ResendMessage } from '../ResendMessage';
 import { SignupStep1 } from './SignupStep1';
 import { SignupStep2 } from './SignupStep2';

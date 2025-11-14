@@ -1,8 +1,8 @@
 // modale floating-ui ne pouvant s'afficher que côté client...
 'use client';
 
-import { LoginModal } from '@/auth/components/Login';
 import { useEffect } from 'react';
+import { LoginModal } from '../../components/Login';
 import { deleteOldAuthCookie } from './delete-old-auth-cookie.server';
 import { useLoginState } from './useLoginState';
 
