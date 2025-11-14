@@ -5,9 +5,11 @@ import { Pagination } from '@/ui';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
+import { useUser } from '@/api/users/user-context/user-provider';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { IndicateursListNoResults } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-empty';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
+import { canUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/indicateur-definition-authorization.utils';
 import {
   ListDefinitionsInputFilters,
   useListIndicateurDefinitions,
@@ -50,7 +52,8 @@ const IndicateursListe = (props: Props) => {
     renderSettings,
   } = props;
 
-  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
+  const { collectiviteId, permissions } = useCurrentCollectivite();
+  const { id: currentUserId } = useUser();
 
   const { displayGraphs, sortBy, currentPage, ...filters } = searchParams;
 
@@ -148,7 +151,13 @@ const IndicateursListe = (props: Props) => {
                 className="hover:!bg-white"
                 hideChart={!displayGraphs}
                 isEditable={isEditable}
-                readonly={isReadOnly}
+                readonly={
+                  !canUpdateIndicateurDefinition(
+                    permissions,
+                    definition,
+                    currentUserId
+                  )
+                }
               />
             ))}
           </GridContainer>

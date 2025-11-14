@@ -1,4 +1,5 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
+import { useUser } from '@/api/users/user-context/user-provider';
 import FichesActionsDropdown from '@/app/ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { Button, Field } from '@/ui';
@@ -17,6 +18,7 @@ export type TFichesActionProps = {
 export const FichesActionLiees = (props: TFichesActionProps) => {
   const { actionId } = props;
   const collectivite = useCurrentCollectivite();
+  const { id: currentUserId } = useUser();
   const { data: fiches, isLoading } = useFichesActionLiees({
     actionId,
     collectiviteId: collectivite.collectiviteId,
@@ -52,6 +54,7 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
 
       <FichesLieesListe
         collectivite={collectivite}
+        currentUserId={currentUserId}
         fiches={fiches}
         isLoading={isLoading}
       />

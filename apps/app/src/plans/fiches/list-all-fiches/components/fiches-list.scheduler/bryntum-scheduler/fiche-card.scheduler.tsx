@@ -10,17 +10,22 @@ import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from '@/app/app/paths';
+import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { Button, Card } from '@/ui';
 import { cn } from '@/ui/utils/cn';
 
-type Props = Pick<FicheActionCardProps, 'ficheAction' | 'currentCollectivite'>;
+type Props = Pick<
+  FicheActionCardProps,
+  'ficheAction' | 'currentCollectivite' | 'currentUserId'
+>;
 
 /** Carte d'une fiche à utiliser dans le scheduler  */
 export const FicheCardScheduler = ({
   ficheAction: fiche,
   currentCollectivite,
+  currentUserId,
 }: Props) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
 
@@ -59,6 +64,12 @@ export const FicheCardScheduler = ({
         collectiviteId: currentCollectivite.collectiviteId,
         ficheUid: fiche.id.toString(),
       });
+
+  const canUpdate = isFicheEditableByCollectiviteUser(
+    fiche,
+    currentCollectivite,
+    currentUserId
+  );
 
   return (
     <div className="group relative flex">
@@ -111,7 +122,7 @@ export const FicheCardScheduler = ({
           )}
         </Link>
         {/* Menu d'édition et de suppression */}
-        {!currentCollectivite.isReadOnly && (
+        {canUpdate && (
           <div className="hidden group-hover:flex absolute left-full gap-2 py-3 pl-2">
             {isEditOpen && (
               <ModifierFicheModale
