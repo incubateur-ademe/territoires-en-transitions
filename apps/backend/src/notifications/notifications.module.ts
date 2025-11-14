@@ -3,6 +3,7 @@ import { FichesModule } from '../plans/fiches/fiches.module';
 import { EmailService } from '../shared/email/email.service';
 import { NotificationContentService } from './notification-content.service';
 import { NotificationsFicheService } from './notifications-fiche.service';
+import { NotificationsRouter } from './notifications.router';
 import { NotificationsService } from './notifications.service';
 
 @Module({
@@ -12,7 +13,8 @@ import { NotificationsService } from './notifications.service';
     NotificationsService,
     NotificationContentService,
     NotificationsFicheService,
+    NotificationsRouter,
   ],
-  exports: [NotificationsService, NotificationsFicheService],
+  exports: [NotificationsService, NotificationsFicheService, NotificationsRouter],
 })
 export class NotificationsModule {}
