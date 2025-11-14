@@ -137,6 +137,7 @@ describe('prepareData', () => {
     expect(objectifs.valeursExistantes).toEqual([
       {
         annee: 2020,
+        collectiviteId: 1,
         dateValeur: '2020-01-01',
         id: 1,
         objectif: 21,
@@ -145,6 +146,7 @@ describe('prepareData', () => {
       },
       {
         annee: 2021,
+        collectiviteId: 1,
         dateValeur: '2021-01-01',
         id: 2,
         objectif: 13,

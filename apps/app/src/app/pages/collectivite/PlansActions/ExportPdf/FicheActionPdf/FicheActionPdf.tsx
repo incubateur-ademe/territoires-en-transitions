@@ -1,5 +1,3 @@
-import { FicheActionNote } from '@/api/plan-actions';
-import { RouterOutput } from '@/api/utils/trpc/client';
 import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
 import Acteurs from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/acteurs';
 import Calendrier from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/calendrier';
@@ -9,14 +7,12 @@ import {
   Statuts,
 } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/header';
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
+import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { TAxeRow } from '@/app/types/alias';
 import { Paragraph, Stack, Title } from '@/app/ui/export-pdf/components';
-import {
-  FicheActionBudget,
-  FicheResume,
-  FicheWithRelations,
-} from '@/domain/plans';
-import { ActionWithScore } from '@/domain/referentiels';
+import { RouterOutput } from '@tet/api';
+import { FicheBudget, FicheNote, FicheWithRelations } from '@tet/domain/plans';
+import { ActionWithScore } from '@tet/domain/referentiels';
 import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 import { TSectionsValues, sectionsInitValue } from '../utils';
 import ActionsLiees from './ActionsLiees';
@@ -34,11 +30,11 @@ export type FicheActionPdfExtendedProps = {
   sections?: TSectionsValues;
   indicateursListe: IndicateurDefinition[] | undefined | null;
   etapes?: RouterOutput['plans']['fiches']['etapes']['list'];
-  fichesLiees: FicheResume[];
+  fichesLiees: FicheListItem[];
   actionsLiees: ActionWithScore[];
   annexes: AnnexeInfo[] | undefined;
-  notesSuivi: FicheActionNote[] | undefined;
-  budgets: FicheActionBudget[] | undefined;
+  notesSuivi: FicheNote[] | undefined;
+  budgets: FicheBudget[] | undefined;
 };
 
 const FicheActionPdf = ({

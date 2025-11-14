@@ -30,6 +30,7 @@
           "valeurs": [
             {
               "id": 1,
+              "collectiviteId": 1,
               "dateValeur": "2020-01-01",
               "resultat": 20,
               "objectif": 21,
@@ -37,6 +38,7 @@
             },
             {
               "id": 2,
+              "collectiviteId": 1,
               "dateValeur": "2021-01-01",
               "resultat": 12,
               "objectif": 13,
@@ -52,11 +54,13 @@
           "valeurs": [
             {
               "id": 3,
+              "collectiviteId": 1,
               "dateValeur": "2020-01-01",
               "resultat": 20.1
             },
             {
               "id": 4,
+              "collectiviteId": 1,
               "dateValeur": "2022-01-01",
               "resultat": 12.2
             }
@@ -70,11 +74,13 @@
           "valeurs": [
             {
               "id": 5,
+              "collectiviteId": 1,
               "dateValeur": "2020-01-01",
               "objectif": 19
             },
             {
               "id": 6,
+              "collectiviteId": 1,
               "dateValeur": "2021-01-01",
               "objectif": 10
             }

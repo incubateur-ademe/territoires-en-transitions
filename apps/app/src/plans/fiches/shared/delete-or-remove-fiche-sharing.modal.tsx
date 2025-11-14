@@ -2,12 +2,12 @@ import { useCurrentCollectivite } from '@/api/collectivites';
 import RemoveSharingModal from '@/app/plans/fiches/share-fiche/remove-sharing.modal';
 import DeleteFicheModal from '@/app/plans/fiches/shared/delete-fiche.modal';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { FicheResume } from '@/domain/plans';
 import { OpenState } from '@/ui/utils/types';
+import { FicheListItem } from '../list-all-fiches/data/use-list-fiches';
 
 type DeleteOrRemoveFicheSharingModalProps = {
   openState?: OpenState;
-  fiche: FicheResume;
+  fiche: FicheListItem;
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
   /** Redirection à la suppression de la fiche (suppression du partage ou de la fiche en elle-même) */

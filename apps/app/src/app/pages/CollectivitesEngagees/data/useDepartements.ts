@@ -1,6 +1,6 @@
 import { NonNullableFields, Views } from '@/api';
 import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import { useQuery } from '@tanstack/react-query';
 
 /**

@@ -1,8 +1,8 @@
 import { avancementToLabel } from '@/app/app/labels';
 import { toPercentString } from '@/app/utils/to-percent-string';
 import {
-  TypeScoreIndicatif,
-  typeScoreIndicatifEnum,
+  ScoreIndicatifType,
+  scoreIndicatifTypeEnum,
 } from '@/domain/referentiels';
 import {
   ScoreIndicatifValeurUtilisee,
@@ -61,7 +61,7 @@ export const LibelleScoreIndicatif = ({
   donnees,
   unite,
 }: {
-  typeScore: TypeScoreIndicatif;
+  typeScore: ScoreIndicatifType;
   donnees: {
     valeurPrincipale: ScoreIndicatifValeurUtilisee;
     valeurSecondaire: ScoreIndicatifValeurUtilisee;
@@ -76,7 +76,7 @@ export const LibelleScoreIndicatif = ({
 
   return (
     <p className="mb-0 text-sm text-grey-8 font-normal leading-5">
-      {typeScore === typeScoreIndicatifEnum.FAIT ? (
+      {typeScore === scoreIndicatifTypeEnum.FAIT ? (
         <LibelleScoreFait score={score} />
       ) : (
         <LibelleScoreProgramme score={score} dateValeur={dateValeur} />
@@ -98,7 +98,7 @@ export const LibelleScoreIndicatif = ({
           />
         </>
       )}
-      {typeScore === typeScoreIndicatifEnum.PROGRAMME &&
+      {typeScore === scoreIndicatifTypeEnum.PROGRAMME &&
         ` atteint${valeurSecondaire ? 's' : ''}`}
     </p>
   );
@@ -136,7 +136,7 @@ export function LibelleScoreProgramme({
 }
 
 type LibelleValeurUtiliseeProps = {
-  typeScore: TypeScoreIndicatif;
+  typeScore: ScoreIndicatifType;
   unite: string;
   valeurUtilisee: ScoreIndicatifValeurUtilisee;
   noSource?: boolean;
@@ -173,7 +173,7 @@ export const LibelleValeurSelectionnee = (props: {
   indicateurId: number;
   unite: string;
   valeurUtilisees?: ScoreIndicatifValeursUtilisees;
-  typeScore: TypeScoreIndicatif;
+  typeScore: ScoreIndicatifType;
 }) => {
   const { unite, valeurUtilisees, typeScore } = props;
   const valeurUtilisee = valeurUtilisees?.find(

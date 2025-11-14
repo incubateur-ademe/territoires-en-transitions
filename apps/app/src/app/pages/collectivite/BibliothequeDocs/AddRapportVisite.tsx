@@ -1,6 +1,5 @@
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
-import { Button, Field, Modal } from '@/ui';
-import { InputDate } from '@/ui/design-system/Input/InputDate';
+import { Button, Field, InputDate, Modal } from '@/ui';
 import { format } from 'date-fns';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
 import { useAddRapportVisite } from './useAddRapportVisite';

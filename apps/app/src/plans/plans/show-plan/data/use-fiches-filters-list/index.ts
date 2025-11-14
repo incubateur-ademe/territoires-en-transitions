@@ -1,6 +1,7 @@
+import { useTRPC } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
-import { useTRPC } from '@/api/utils/trpc/client';
-import { FicheResume, listFichesRequestFiltersSchema } from '@/domain/plans';
+import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import { listFichesRequestFiltersSchema } from '@/domain/plans';
 import { useQuery } from '@tanstack/react-query';
 import { parseAsJson, useQueryState } from 'nuqs';
 import * as formatter from './filter-formatters';
@@ -45,7 +46,7 @@ const countActiveFilters = (formattedFilters: FormFilters): number => {
 export const useFichesActionFiltresListe = ({
   parameters,
 }: Args): {
-  items: FicheResume[];
+  items: FicheListItem[];
   isLoading: boolean;
   total: number;
   filters: FormFilters;

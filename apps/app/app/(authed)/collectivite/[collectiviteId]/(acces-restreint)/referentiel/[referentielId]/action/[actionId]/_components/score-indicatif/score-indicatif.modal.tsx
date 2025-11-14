@@ -3,8 +3,8 @@ import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useGetIndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import Markdown from '@/app/ui/Markdown';
 import {
-  TypeScoreIndicatif,
-  typeScoreIndicatifEnum,
+  ScoreIndicatifType,
+  scoreIndicatifTypeEnum,
 } from '@/domain/referentiels';
 import {
   Alert,
@@ -86,7 +86,7 @@ export const ScoreIndicatifModal = (props: ScoreIndicatifModalProps) => {
  */
 const anneesDifferentesSelectionnees = (
   scoreIndicatif: ScoreIndicatifAction,
-  typeScore: TypeScoreIndicatif
+  typeScore: ScoreIndicatifType
 ) =>
   uniqBy(scoreIndicatif[typeScore]?.valeursUtilisees || [], (v) =>
     new Date(v.dateValeur).getFullYear()
@@ -120,7 +120,7 @@ const ScoreIndicatifModalIndicateurs = (
       />
       {anneesDifferentesSelectionnees(
         scoreIndicatif,
-        typeScoreIndicatifEnum.FAIT
+        scoreIndicatifTypeEnum.FAIT
       ) && (
         <Alert
           className="border-8 border-error-2 rounded-lg mt-2"
@@ -130,7 +130,7 @@ const ScoreIndicatifModalIndicateurs = (
       )}
       {anneesDifferentesSelectionnees(
         scoreIndicatif,
-        typeScoreIndicatifEnum.PROGRAMME
+        scoreIndicatifTypeEnum.PROGRAMME
       ) && (
         <Alert
           className="border-8 border-error-2 rounded-lg mt-2"

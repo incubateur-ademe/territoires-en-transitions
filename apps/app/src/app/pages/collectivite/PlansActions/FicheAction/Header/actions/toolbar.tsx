@@ -1,12 +1,12 @@
 import { ExportFicheModal } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
 import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { FicheWithRelations } from '@/domain/plans';
 import { PermissionOperation } from '@/domain/users';
+import { Fiche } from '../../data/use-get-fiche';
 import ModaleEmplacement from './EmplacementFiche/ModaleEmplacement';
 
 type Props = {
-  fiche: FicheWithRelations;
+  fiche: Fiche;
   permissions: PermissionOperation[];
   collectiviteId: number;
   onDeleteRedirectPath: string;

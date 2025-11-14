@@ -1,6 +1,5 @@
 'use client';
 import { CollectiviteEngagee } from '@/api';
-import { RecherchesPlan } from '@/api/collectiviteEngagees';
 import { useFilteredPlans } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredPlans';
 import { PlanCarte } from '@/app/app/pages/CollectivitesEngagees/Views/plans/PlanCarte';
 import { View } from '@/app/app/pages/CollectivitesEngagees/Views/View';
@@ -16,7 +15,7 @@ export const PlansView = ({ collectiviteId }: { collectiviteId?: number }) => {
   );
   const { isLoading, plans, plansCount } = useFilteredPlans(filters);
   return (
-    <View<RecherchesPlan>
+    <View<CollectiviteEngagee.RecherchesPlan>
       data={plans}
       dataCount={plansCount}
       isLoading={isLoading}

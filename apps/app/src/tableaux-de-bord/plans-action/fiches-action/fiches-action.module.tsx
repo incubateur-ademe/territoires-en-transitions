@@ -1,6 +1,6 @@
+import { useUser } from '@/api';
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import { useUser } from '@/api/users/user-context/user-provider';
+import { ModuleFicheActionsSelect } from '@/api/plan-actions';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';

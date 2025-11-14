@@ -1,4 +1,3 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-context/user-provider';
 import { buildActionLink } from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
@@ -6,6 +5,7 @@ import { getInitials, getModifiedSince } from '@/app/utils/formatUtils';
 import { DiscussionMessage } from '@/domain/collectivites';
 import { Button, Select } from '@/ui';
 import { cn } from '@/ui/utils/cn';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import Link from 'next/link';
 import { useState } from 'react';
 import ActionCommentInput from './action-comments.input';

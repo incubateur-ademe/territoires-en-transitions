@@ -1,4 +1,4 @@
-import { useTRPC } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 /** Ajoute le fichier dans la bibliothèque */

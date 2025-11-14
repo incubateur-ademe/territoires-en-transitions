@@ -1,77 +1,47 @@
-import { Meta } from '@storybook/nextjs';
+import { Meta, StoryObj } from '@storybook/nextjs';
 import { action } from 'storybook/actions';
-import { TUpdateMembre } from '../../../../../../../../src/app/pages/collectivite/Users/types';
 import {
   fakeAdmin,
   fakeEditeur,
   fakeLecteur,
-  fakeMembres,
 } from '../../_components/fakeData';
-import MembreListTable, { MembreListTableProps } from './MembreListTable';
+import MembreListTable from './MembreListTable';
 
-export default {
+const meta: Meta<typeof MembreListTable> = {
   component: MembreListTable,
-} as Meta;
+};
+
+export default meta;
+
+type Story = StoryObj<typeof MembreListTable>;
 
 const handlers = {
-  updateMembre: action('updateMembre') as TUpdateMembre,
-  removeFromCollectivite: action('removeFromCollectivite'),
+  sendInvitation: action('sendInvitation'),
 };
 
-const AsAdminArgs: MembreListTableProps = {
-  membres: fakeMembres,
-  currentUserId: fakeAdmin.user_id,
-  currentUserAccess: 'admin',
-  isLoading: false,
-  ...handlers,
+export const AsAdmin: Story = {
+  args: {
+    collectiviteId: 1,
+    currentUserId: fakeAdmin.user_id as string,
+    currentUserAccess: 'admin',
+    ...handlers,
+  },
 };
 
-export const AsAdmin = {
-  args: AsAdminArgs,
+export const AsEditeur: Story = {
+  args: {
+    collectiviteId: 1,
+    currentUserId: fakeEditeur.user_id as string,
+    currentUserAccess: 'edition',
+    ...handlers,
+  },
 };
 
-const AsEditeurArgs: MembreListTableProps = {
-  membres: fakeMembres,
-  currentUserId: fakeEditeur.user_id,
-  currentUserAccess: 'edition',
-  isLoading: false,
-  ...handlers,
-};
-
-export const AsEditeur = {
-  args: AsEditeurArgs,
-};
-
-const AsLecteurArgs: MembreListTableProps = {
-  membres: fakeMembres,
-  currentUserId: fakeLecteur.user_id,
-  currentUserAccess: 'lecture',
-  isLoading: false,
-  ...handlers,
-};
-
-export const AsLecteur = {
-  args: AsLecteurArgs,
-};
-
-const IsLoadingArgs: MembreListTableProps = {
-  currentUserId: fakeAdmin.user_id,
-  currentUserAccess: 'admin',
-  isLoading: true,
-  ...handlers,
-};
-
-export const IsLoading = {
-  args: IsLoadingArgs,
-};
-
-const EmptyArgs: MembreListTableProps = {
-  currentUserId: fakeAdmin.user_id,
-  currentUserAccess: 'admin',
-  isLoading: false,
-  ...handlers,
-};
-
-export const Empty = {
-  args: EmptyArgs,
+export const AsLecteur: Story = {
+  args: {
+    collectiviteId: 1,
+    currentUserId: fakeLecteur.user_id as string,
+    currentUserAccess: 'lecture',
+    ...handlers,
+  },
 };

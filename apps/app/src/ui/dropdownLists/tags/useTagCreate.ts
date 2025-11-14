@@ -1,6 +1,6 @@
 import { CollectiviteTag, TableTag } from '@/api';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { TagInsert } from '@/domain/collectivites';
+import { useSupabase } from '@/api';
+import { TagCreate } from '@/domain/collectivites';
 import {
   useMutation,
   useQueryClient,
@@ -28,7 +28,7 @@ export const useTagCreate = ({
 
   return useMutation({
     mutationKey: ['create_tag'],
-    mutationFn: async (tag: TagInsert) =>
+    mutationFn: async (tag: TagCreate) =>
       await supabase.from(tagTableName).insert(objectToSnake(tag)).select(),
     onMutate: async (tag) => {
       await queryClient.cancelQueries({ queryKey: key });
@@ -36,7 +36,7 @@ export const useTagCreate = ({
       const previousdata: { tags: Tag[] } | undefined =
         queryClient.getQueryData(key);
 
-      queryClient.setQueryData(key, (old?: TagInsert[]) => {
+      queryClient.setQueryData(key, (old?: TagCreate[]) => {
         return old ? [tag, ...old] : [tag];
       });
 

@@ -1,7 +1,7 @@
 import { usePathname } from 'next/navigation';
 
 import { useCollectiviteContext } from '@/api/collectivites';
-import { useUser } from '@/api/users/user-context/user-provider';
+import { useUser } from '@/api/users';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
 import { useDemoMode } from '@/app/users/demo-mode-support-provider';

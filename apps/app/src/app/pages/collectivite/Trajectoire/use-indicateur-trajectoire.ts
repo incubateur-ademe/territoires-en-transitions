@@ -6,7 +6,7 @@ import {
   DATE_FIN_SNBC_V2,
   EMISSIONS_NETTES,
   IndicateurAvecValeurs,
-  SourceIndicateur,
+  IndicateurSourceEnum,
 } from '@/domain/indicateurs';
 import {
   IndicateurTrajectoire,
@@ -70,21 +70,21 @@ export const useIndicateurTrajectoire = ({
       identifiantsReferentiel: [identifiant],
       dateFin: DATE_FIN_SNBC_V2,
       sources: [
-        SourceIndicateur.COLLECTIVITE,
-        SourceIndicateur.RARE,
-        SourceIndicateur.PCAET,
+        IndicateurSourceEnum.COLLECTIVITE,
+        IndicateurSourceEnum.RARE,
+        IndicateurSourceEnum.PCAET,
       ],
     });
   // sépare les valeurs objectif & résultat
   const sources = indicateursEtValeurs?.indicateurs?.[0]?.sources;
   const objectifsEtResultats = separeObjectifsEtResultats(
-    sources?.[SourceIndicateur.COLLECTIVITE]?.valeurs
+    sources?.[IndicateurSourceEnum.COLLECTIVITE]?.valeurs
   );
   const objectifsPCAET = separeObjectifsEtResultats(
-    sources?.[SourceIndicateur.PCAET]?.valeurs
+    sources?.[IndicateurSourceEnum.PCAET]?.valeurs
   )?.objectifs;
   const resultatsRARE = separeObjectifsEtResultats(
-    sources?.[SourceIndicateur.RARE]?.valeurs
+    sources?.[IndicateurSourceEnum.RARE]?.valeurs
   )?.resultats;
 
   // sélectionne le jeu de données approprié et détermine la source utilisée
@@ -94,7 +94,7 @@ export const useIndicateurTrajectoire = ({
   } = selectDatasetWithSource({
     donneesCollectivites: objectifsEtResultats?.objectifs,
     sourcesExternes: [
-      { donnees: objectifsPCAET, source: SourceIndicateur.PCAET },
+      { donnees: objectifsPCAET, source: IndicateurSourceEnum.PCAET },
     ],
   });
 
@@ -104,7 +104,7 @@ export const useIndicateurTrajectoire = ({
   } = selectDatasetWithSource({
     donneesCollectivites: objectifsEtResultats?.resultats,
     sourcesExternes: [
-      { donnees: resultatsRARE, source: SourceIndicateur.RARE },
+      { donnees: resultatsRARE, source: IndicateurSourceEnum.RARE },
     ],
   });
 
@@ -203,11 +203,11 @@ const selectDatasetWithSource = ({
   donneesCollectivites?: IndicateurValeurGroupee[];
   sourcesExternes: Array<{
     donnees?: IndicateurValeurGroupee[];
-    source: SourceIndicateur;
+    source: IndicateurSourceEnum;
   }>;
 }): {
   donnees?: IndicateurValeurGroupee[];
-  source: SourceIndicateur;
+  source: IndicateurSourceEnum;
 } => {
   const sourceExterneAvecDonnees = sourcesExternes.find(
     (s) => s.donnees?.length
@@ -222,17 +222,17 @@ const selectDatasetWithSource = ({
 
   return {
     donnees: donneesCollectivites,
-    source: SourceIndicateur.COLLECTIVITE,
+    source: IndicateurSourceEnum.COLLECTIVITE,
   };
 };
 
 const getLabel = (
   type: 'objectifs' | 'resultats',
-  source: SourceIndicateur
+  source: IndicateurSourceEnum
 ): string => {
   const typeLabel = type === 'objectifs' ? 'Objectifs' : 'Résultats';
   const sourceLabel =
-    source === SourceIndicateur.COLLECTIVITE
+    source === IndicateurSourceEnum.COLLECTIVITE
       ? 'de la collectivité'
       : getNomSource(source);
   return `${typeLabel} ${sourceLabel}`;

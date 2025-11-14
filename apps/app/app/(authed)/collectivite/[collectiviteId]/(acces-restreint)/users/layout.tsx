@@ -1,5 +1,5 @@
 import { getUser } from '@/api/users/user-details.fetch.server';
-import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
+import { VisibleWhen } from '@/ui';
 import { ReactNode } from 'react';
 import { z } from 'zod';
 import { InviteMemberButton } from './_components/invite-member.button';

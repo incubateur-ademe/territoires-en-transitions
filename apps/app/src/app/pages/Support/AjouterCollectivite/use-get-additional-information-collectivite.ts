@@ -1,4 +1,4 @@
-import { RouterInput, useTRPC } from '@/api/utils/trpc/client';
+import { RouterInput, useTRPC } from '@/api';
 import { useQuery } from '@tanstack/react-query';
 
 export type CollectiviteInput =

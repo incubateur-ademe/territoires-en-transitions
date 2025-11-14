@@ -1,5 +1,5 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import { TagWithCollectiviteId } from '@/domain/collectivites';
 import { useQuery } from '@tanstack/react-query';
 import { objectToCamel } from 'ts-case-convert';

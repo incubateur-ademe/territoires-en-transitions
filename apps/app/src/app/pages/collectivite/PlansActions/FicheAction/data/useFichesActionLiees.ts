@@ -1,7 +1,6 @@
+import { useSupabase, useTRPC } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
 import { updateLinkedFiches } from '@/api/plan-actions';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useTRPC } from '@/api/utils/trpc/client';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 

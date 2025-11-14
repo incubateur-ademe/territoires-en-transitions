@@ -6,8 +6,8 @@ import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
 import Markdown from '@/app/ui/Markdown';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import {
-  Action,
   ActionType,
+  ActionWithScore,
   getReferentielIdFromActionId,
 } from '@/domain/referentiels';
 import { Button, Card } from '@/ui';
@@ -16,7 +16,7 @@ import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 
 /** Carte générique d'une mesure du référentiel */
 type ActionCardProps = {
-  action: Action;
+  action: ActionWithScore;
   showDescription?: boolean;
 };
 

@@ -1,9 +1,9 @@
 import { QueryKey, useQuery } from '@tanstack/react-query';
 
+import { useSupabase } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
-import { modulesFetch } from '@/api/plan-actions/dashboards/personal-dashboard';
-import { useUser } from '@/api/users/user-context/user-provider';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { modulesFetch } from '@/api/plan-actions';
+import { useUser } from '@/api/users';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 
 /** Charges les différents modules du tableau de bord personnel */

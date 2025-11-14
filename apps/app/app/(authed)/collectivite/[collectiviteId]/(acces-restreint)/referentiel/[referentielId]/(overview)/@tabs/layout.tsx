@@ -1,4 +1,4 @@
-import { referentielIdEnumSchema } from '@/domain/referentiels';
+import { referentielIdEnumSchema } from '@tet/domain/referentiels';
 import { ReactNode } from 'react';
 import { Header } from './header';
 import { TabsWrapper } from './tabs-wrapper';

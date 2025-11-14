@@ -1,5 +1,5 @@
 'use client';
-import { Breadcrumbs } from '@/ui/design-system/Breadcrumbs';
+import { Breadcrumbs } from '@/ui';
 import { cn } from '@/ui/utils/cn';
 import { PropsWithChildren } from 'react';
 

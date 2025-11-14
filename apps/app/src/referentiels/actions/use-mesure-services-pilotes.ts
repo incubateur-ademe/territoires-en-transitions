@@ -1,5 +1,5 @@
+import { useTRPC } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
-import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 /** Récupère la liste des services pilotes d'une mesure */

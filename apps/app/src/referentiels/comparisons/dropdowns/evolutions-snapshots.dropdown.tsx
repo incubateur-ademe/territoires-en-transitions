@@ -1,5 +1,5 @@
+import { RouterOutput } from '@/api';
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { RouterOutput } from '@/api/utils/trpc/client';
 import { DeleteSnapshotButton } from '@/app/referentiels/comparisons/deleteSnapshot/delete-snapshot.button';
 import { UpdateSnapshotNameButton } from '@/app/referentiels/comparisons/updateSnapshotName/update-snapshot-name.button';
 import { SnapshotJalonEnum } from '@/domain/referentiels';

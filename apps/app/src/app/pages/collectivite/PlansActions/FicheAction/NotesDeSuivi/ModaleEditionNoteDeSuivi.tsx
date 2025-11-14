@@ -1,7 +1,6 @@
-import { FicheActionNote } from '@/api/plan-actions';
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
-import { FicheResume } from '@/domain/plans';
+import { FicheNote } from '@/domain/plans';
 import {
   Field,
   FormSectionGrid,
@@ -10,13 +9,14 @@ import {
   Select,
 } from '@/ui';
 import { useState } from 'react';
+import { Fiche } from '../data/use-get-fiche';
 import { EditedNote } from '../data/useUpsertNoteSuivi';
 
 type ModaleEditionNoteDeSuiviProps = {
-  fiche: FicheResume;
+  fiche: Fiche;
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  editedNote: FicheActionNote;
+  editedNote: FicheNote;
   onEdit: (editedNote: EditedNote) => void;
 };
 

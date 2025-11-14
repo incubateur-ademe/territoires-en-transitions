@@ -1,4 +1,6 @@
 import BudgetContent from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/BudgetContent';
+import { FicheBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import {
   BadgeFinanceur,
   Divider,
@@ -6,13 +8,12 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
-import { FicheActionBudget, FicheWithRelations } from '@/domain/plans';
 import { htmlToText } from '@/domain/utils';
 import classNames from 'classnames';
 
 type MoyensProps = {
-  fiche: FicheWithRelations;
-  budgets: FicheActionBudget[] | undefined;
+  fiche: Fiche;
+  budgets: FicheBudget[] | undefined;
 };
 
 export const Moyens = ({ fiche, budgets = [] }: MoyensProps) => {

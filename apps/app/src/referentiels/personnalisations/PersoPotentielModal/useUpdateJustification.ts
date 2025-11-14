@@ -1,5 +1,5 @@
 import { TablesInsert } from '@/api';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import { TReponseRead } from '@/app/referentiels/personnalisations/personnalisation.types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 

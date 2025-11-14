@@ -1,4 +1,4 @@
-import { RouterOutput, useTRPC } from '@/api/utils/trpc/client';
+import { RouterOutput, useTRPC } from '@/api';
 import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from '@tanstack/react-query';
 

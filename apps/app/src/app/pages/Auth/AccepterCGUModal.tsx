@@ -1,5 +1,5 @@
-import { useUser } from '@/api/users/user-context/user-provider';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
+import { useUser } from '@/api/users';
 import { Button, CGU_URL, Modal, ModalFooter } from '@/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';

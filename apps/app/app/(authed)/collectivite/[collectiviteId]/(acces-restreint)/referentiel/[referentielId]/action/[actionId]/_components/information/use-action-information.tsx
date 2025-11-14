@@ -1,6 +1,6 @@
+import { useSupabase } from '@/api';
 import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { useQuery } from '@tanstack/react-query';
 import { TActionInfo, TRPCName } from './action-information.types';
 

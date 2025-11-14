@@ -1,8 +1,8 @@
 import {
   ListFichesRequestFilters,
   listFichesRequestFiltersSchema,
-  ListFichesSortValue,
 } from '@/domain/plans';
+import { SortValue } from '../data/use-list-fiches';
 
 export const WITH = 'WITH';
 export const WITHOUT = 'WITHOUT';
@@ -48,5 +48,5 @@ export type FormFilters = Omit<
   hasMesuresLiees?: WithOrWithoutOptions;
   hasDateDeFinPrevisionnelle?: WithOrWithoutOptions;
   hasBudget?: WithOrWithoutOptions;
-  sort: ListFichesSortValue;
+  sort: SortValue;
 };

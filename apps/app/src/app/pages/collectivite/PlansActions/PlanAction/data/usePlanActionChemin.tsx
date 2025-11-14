@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { TAxeRow } from '@/app/types/alias';
 import { generateTitle } from '../../FicheAction/data/utils';

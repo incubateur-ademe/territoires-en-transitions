@@ -1,5 +1,4 @@
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useTRPC } from '@/api/utils/trpc/client';
+import { useSupabase, useTRPC } from '@/api';
 import {
   TChangeReponse,
   TQuestionRead,

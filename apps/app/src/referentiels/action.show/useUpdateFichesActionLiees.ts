@@ -1,16 +1,15 @@
+import { useSupabase, useTRPC } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useTRPC } from '@/api/utils/trpc/client';
+import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 
 import { diff } from '@/app/utils/diff';
-import { FicheResume } from '@/domain/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type TUpdateFichesActionLieesArgs = {
   /** liste courante des fiches associées à l'action */
-  fiches: FicheResume[];
+  fiches: FicheListItem[];
   /** liste mise à jour des fiches associées à l'action */
-  fiches_liees: FicheResume[];
+  fiches_liees: FicheListItem[];
 };
 
 /**

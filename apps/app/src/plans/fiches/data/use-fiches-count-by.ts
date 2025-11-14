@@ -1,8 +1,9 @@
+import { RouterInput, useTRPC } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
-import { useTRPC } from '@/api/utils/trpc/client';
-import { CountByRequest } from '@/domain/plans';
 import { useQuery } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
+
+type CountByRequest = RouterInput['plans']['fiches']['countBy'];
 
 export const useFichesCountBy = (
   countByProperty: CountByRequest['countByProperty'],

@@ -1,8 +1,6 @@
 import classNames from 'classnames';
 
-import { PictoWarning } from '@/ui/design-system/Picto/PictoWarning';
-
-import { Button, ButtonProps } from '@/ui';
+import { Button, ButtonProps, PictoWarning } from '@/ui';
 import React from 'react';
 import { ModuleProps } from './module';
 import { ModuleContainer } from './module.container';

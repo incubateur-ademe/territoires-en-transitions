@@ -1,6 +1,6 @@
-import { FicheWithRelations } from '@/domain/plans';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 
 export type FicheShareProperties = Pick<
-  FicheWithRelations,
+  Fiche,
   'id' | 'collectiviteId' | 'collectiviteNom' | 'sharedWithCollectivites'
 >;

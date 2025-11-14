@@ -1,5 +1,5 @@
+import { useTRPC } from '@/api';
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { useTRPC } from '@/api/utils/trpc/client';
 import {
   COULEURS_BY_SECTEUR_IDENTIFIANT,
   EXTRA_SECTEUR_COLORS,

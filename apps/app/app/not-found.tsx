@@ -1,6 +1,5 @@
 'use client';
-import { EmptyCard } from '@/ui';
-import { PictoWarning } from '@/ui/design-system/Picto/PictoWarning';
+import { EmptyCard, PictoWarning } from '@/ui';
 import { redirect } from 'next/navigation';
 
 export default function NotFound() {

@@ -1,5 +1,5 @@
 import { DBClient } from '@/api';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { useQuery } from '@tanstack/react-query';
 

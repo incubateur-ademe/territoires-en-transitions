@@ -1,4 +1,4 @@
-import { useUserSession } from '@/api/users/user-context/user-provider';
+import { useUserSession } from '@/api/users';
 import { getAuthHeaders } from '@/api/utils/supabase/get-auth-headers';
 import {
   makeCollectiviteAccueilUrl,
