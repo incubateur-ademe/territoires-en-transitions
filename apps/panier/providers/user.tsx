@@ -1,6 +1,6 @@
 'use client';
 
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import { User } from '@supabase/supabase-js';
 import {
   Dispatch,

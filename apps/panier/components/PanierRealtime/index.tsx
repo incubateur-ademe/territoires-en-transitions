@@ -1,7 +1,7 @@
 'use client';
 
 import { Panier, PanierAPI } from '@/api';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@/api';
 import ListeActions from '@/panier/components/ListeActions';
 import PanierActions from '@/panier/components/PanierActions';
 import {
