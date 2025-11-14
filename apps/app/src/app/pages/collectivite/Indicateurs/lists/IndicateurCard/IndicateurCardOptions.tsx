@@ -5,11 +5,12 @@ import IndicateurCardMenu, {
   ChartDownloadSettings,
 } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/IndicateurCardMenu';
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
-import { Button } from '@/ui';
+import { Button, VisibleWhen } from '@/ui';
 import IndicateurCardEditModal from './IndicateurCardEditModal';
 
 type Props = {
   definition: IndicateurDefinitionListItem;
+  isEditable?: boolean;
   chartDownloadSettings: ChartDownloadSettings;
   isFavoriCollectivite?: boolean;
   otherMenuActions?: (
@@ -19,6 +20,7 @@ type Props = {
 
 const IndicateurCardOptions = ({
   definition,
+  isEditable = true,
   isFavoriCollectivite = false,
   chartDownloadSettings,
   otherMenuActions,
@@ -36,28 +38,32 @@ const IndicateurCardOptions = ({
         otherMenuActions(definition)?.map((action, i) => (
           <Fragment key={i}>{action}</Fragment>
         ))}
-      <Button
-        title="Modifier"
-        icon="edit-line"
-        size="xs"
-        variant="grey"
-        onClick={() => {
-          setIsEditOpen(!isEditOpen);
-        }}
-      />
-      {isEditOpen && (
-        <IndicateurCardEditModal
-          indicateur={definition}
-          openState={{
-            isOpen: isEditOpen,
-            setIsOpen: () => setIsEditOpen(!isEditOpen),
+
+      <VisibleWhen condition={isEditable}>
+        <Button
+          title="Modifier"
+          icon="edit-line"
+          size="xs"
+          variant="grey"
+          onClick={() => {
+            setIsEditOpen(!isEditOpen);
           }}
         />
-      )}
+        {isEditOpen && (
+          <IndicateurCardEditModal
+            indicateur={definition}
+            openState={{
+              isOpen: isEditOpen,
+              setIsOpen: () => setIsEditOpen(!isEditOpen),
+            }}
+          />
+        )}
+      </VisibleWhen>
       <IndicateurCardMenu
         indicateurId={definition.id}
         isFavoriCollectivite={isFavoriCollectivite}
         chartDownloadSettings={chartDownloadSettings}
+        isEditable={isEditable}
         openState={{
           isOpen: isMenuOpen,
           setIsOpen: () => setIsMenuOpen(!isMenuOpen),

@@ -62,8 +62,8 @@ export class PlanService {
     const isAllowed = await this.permissionService.isAllowed(
       user,
       collectivitePrivate
-        ? PermissionOperationEnum['PLANS.LECTURE']
-        : PermissionOperationEnum['PLANS.VISITE'],
+        ? PermissionOperationEnum['PLANS.READ']
+        : PermissionOperationEnum['PLANS.READ_PUBLIC'],
       ResourceType.COLLECTIVITE,
       collectiviteId,
       true
@@ -173,7 +173,7 @@ export class PlanService {
 
     const isEditionAllowed = await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['PLANS.EDITION'],
+      PermissionOperationEnum['PLANS.MUTATE'],
       ResourceType.COLLECTIVITE,
       plan.collectiviteId,
       true
@@ -271,7 +271,7 @@ export class PlanService {
 
     const isAllowed = await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['PLANS.EDITION'],
+      PermissionOperationEnum['PLANS.MUTATE'],
       ResourceType.COLLECTIVITE,
       plan.collectiviteId,
       true
@@ -316,7 +316,7 @@ export class PlanService {
       // Check referent permissions if referents are being updated
       const referentPermissionAllowed = await this.permissionService.isAllowed(
         user,
-        PermissionOperationEnum['PLANS.EDITION'],
+        PermissionOperationEnum['PLANS.MUTATE'],
         ResourceType.COLLECTIVITE,
         plan.collectiviteId,
         true
@@ -358,7 +358,7 @@ export class PlanService {
     if (plan.pilotes !== undefined) {
       const pilotePermissionAllowed = await this.permissionService.isAllowed(
         user,
-        PermissionOperationEnum['PLANS.EDITION'],
+        PermissionOperationEnum['PLANS.MUTATE'],
         ResourceType.COLLECTIVITE,
         plan.collectiviteId,
         true
@@ -424,8 +424,8 @@ export class PlanService {
     const isAllowed = await this.permissionService.isAllowed(
       user,
       collectivitePrivate
-        ? PermissionOperationEnum['PLANS.LECTURE']
-        : PermissionOperationEnum['PLANS.VISITE'],
+        ? PermissionOperationEnum['PLANS.READ']
+        : PermissionOperationEnum['PLANS.READ_PUBLIC'],
       ResourceType.COLLECTIVITE,
       collectiviteId,
       true
@@ -483,7 +483,7 @@ export class PlanService {
   ): Promise<Result<AxeType, PlanError>> {
     const isAllowed = await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['PLANS.EDITION'],
+      PermissionOperationEnum['PLANS.MUTATE'],
       ResourceType.COLLECTIVITE,
       axe.collectiviteId,
       true
@@ -536,7 +536,7 @@ export class PlanService {
 
     const isAllowed = await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['PLANS.EDITION'],
+      PermissionOperationEnum['PLANS.MUTATE'],
       ResourceType.COLLECTIVITE,
       axeResult.data.collectiviteId,
       true
@@ -599,7 +599,7 @@ export class PlanService {
 
     const isAllowed = await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['PLANS.EDITION'],
+      PermissionOperationEnum['PLANS.MUTATE'],
       ResourceType.COLLECTIVITE,
       planResult.data.collectiviteId,
       true

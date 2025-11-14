@@ -1,4 +1,3 @@
-import { CollectiviteAccess } from '@/domain/users';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import FicheActionCardSkeleton from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
@@ -7,6 +6,7 @@ import {
   usePlanFilters,
 } from '@/app/plans/plans/show-plan/filters/plan-filters.context';
 import { FicheResume } from '@/domain/plans';
+import { CollectiviteAccess } from '@/domain/users';
 import { Spacer } from '@/ui';
 import { FilterBadges, FilterCategory } from '@/ui/design-system/FilterBadges';
 import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
@@ -33,10 +33,12 @@ const FilteredResultsList = ({
   planId,
   collectivite,
   filteredResults,
+  currentUserId,
 }: {
   planId: number;
   collectivite: CollectiviteAccess;
   filteredResults: FicheResume[];
+  currentUserId: string;
 }) => {
   return (
     <div className={ficheListGridClassName}>
@@ -50,6 +52,7 @@ const FilteredResultsList = ({
             ficheUid: fiche.id.toString(),
           })}
           currentCollectivite={collectivite}
+          currentUserId={currentUserId}
         />
       ))}
     </div>
@@ -59,9 +62,10 @@ const FilteredResultsList = ({
 type Props = {
   planId: number;
   collectivite: CollectiviteAccess;
+  currentUserId: string;
 };
 
-export const FilteredResults = ({ planId, collectivite }: Props) => {
+export const FilteredResults = ({ planId, collectivite, currentUserId }: Props) => {
   const {
     filters,
     isLoading,
@@ -123,6 +127,7 @@ export const FilteredResults = ({ planId, collectivite }: Props) => {
               planId={planId}
               collectivite={collectivite}
               filteredResults={filteredResults}
+              currentUserId={currentUserId}
             />
           </VisibleWhen>
           <VisibleWhen condition={hasFilteredContent === false}>

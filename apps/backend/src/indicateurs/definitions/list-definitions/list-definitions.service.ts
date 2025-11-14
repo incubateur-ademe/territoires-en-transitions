@@ -2,7 +2,10 @@ import { collectiviteTable } from '@/backend/collectivites/shared/models/collect
 import { PersonneTagOrUser } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
 import { categorieTagTable } from '@/backend/collectivites/tags/categorie-tag.table';
 import { indicateurCollectiviteTable } from '@/backend/indicateurs/definitions/indicateur-collectivite.table';
-import { ListDefinitionsOutput } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.output';
+import {
+  DefinitionListItem,
+  ListDefinitionsOutput,
+} from '@/backend/indicateurs/definitions/list-definitions/list-definitions.output';
 import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indicateur-pilote.table';
 import { indicateurSourceMetadonneeTable } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurValeurTable } from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
@@ -10,13 +13,12 @@ import { ficheActionIndicateurTable } from '@/backend/plans/fiches/shared/models
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { normalizeIdentifiantReferentiel } from '@/backend/referentiels/referentiels.utils';
 import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { sqlAuthorOrNull } from '@/backend/users/models/author.utils';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import assert from 'assert';
 import {
   aliasedTable,
@@ -549,6 +551,19 @@ export class ListDefinitionsService {
     return indicateurDefinitions;
   }
 
+  async getDefinition(indicateurId: number): Promise<DefinitionListItem> {
+    const indicateurDefinitions = await this.listDefinitions({
+      filters: { indicateurIds: [indicateurId] },
+      queryOptions: { page: 1, limit: 1 },
+    });
+    if (indicateurDefinitions.data.length === 0) {
+      throw new BadRequestException(
+        `Indicateur definition not found for id ${indicateurId}`
+      );
+    }
+    return indicateurDefinitions.data[0];
+  }
+
   async listDefinitions(
     { collectiviteId, filters, queryOptions }: ListDefinitionsInput,
     user?: AuthUser
@@ -556,7 +571,7 @@ export class ListDefinitionsService {
     if (user) {
       await this.permissionService.isAllowed(
         user,
-        PermissionOperationEnum['INDICATEURS.VISITE'],
+        'indicateurs.definitions.read_public',
         collectiviteId ? ResourceType.COLLECTIVITE : ResourceType.PLATEFORME,
         collectiviteId ?? null
       );
@@ -975,7 +990,7 @@ export class ListDefinitionsService {
     const { collectiviteId, indicateurId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperationEnum['INDICATEURS.VISITE'],
+      'indicateurs.definitions.read_public',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -1034,7 +1049,7 @@ export class ListDefinitionsService {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperationEnum['INDICATEURS.VISITE'],
+      'indicateurs.definitions.read_public',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -1062,7 +1077,7 @@ export class ListDefinitionsService {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperationEnum['INDICATEURS.VISITE'],
+      'indicateurs.definitions.read_public',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -1087,7 +1102,7 @@ export class ListDefinitionsService {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperationEnum['INDICATEURS.VISITE'],
+      'indicateurs.definitions.read_public',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

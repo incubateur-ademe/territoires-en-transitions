@@ -12,17 +12,19 @@ const ID_SEQUESTRATION = 'cae_63.';
 export const IndicateurValuesTabs = ({
   definition,
   chartInfo,
+  isReadonly,
   openModalState,
 }: {
+  isReadonly: boolean;
   definition: IndicateurDefinition;
   chartInfo: IndicateurChartInfo;
   openModalState?: OpenState;
 }) => {
-  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
+  const { collectiviteId } = useCurrentCollectivite();
 
   return (
     <>
-      {!isReadOnly && (
+      {!isReadonly && (
         <>
           {definition.identifiantReferentiel?.startsWith(ID_SEQUESTRATION) && (
             <Alert
@@ -38,7 +40,7 @@ export const IndicateurValuesTabs = ({
         collectiviteId={collectiviteId}
         definition={definition}
         confidentiel={definition.estConfidentiel || false}
-        readonly={isReadOnly}
+        readonly={isReadonly}
         openModalState={openModalState}
       />
     </>

@@ -26,6 +26,8 @@ import {
   useSelectFichesView,
 } from '../hooks/use-select-fiche-view';
 
+import { useUser } from '@/api/users/user-context/user-provider';
+import { PermissionOperation } from '@/domain/users';
 import { useManageFichesPagination } from '../hooks/use-manage-fiches-pagination';
 import { useSearchFiches } from '../hooks/use-search-fiches';
 import { useSelectFiches } from '../hooks/use-select-fiches';
@@ -38,6 +40,7 @@ type Props = {
   resetFilters?: () => void;
   defaultSort?: ListFichesSortValue;
   isReadOnly?: boolean;
+  permissions: PermissionOperation[];
   containerClassName?: string;
   displayEditionMenu?: boolean;
   onUnlink?: (ficheId: number) => void;
@@ -59,6 +62,7 @@ const NUMBER_OF_FICHE_PER_PAGE = 15;
 export const FichesList = ({
   defaultSort = 'titre',
   isReadOnly,
+  permissions,
   containerClassName,
   displayEditionMenu = false,
   onUnlink,
@@ -87,6 +91,8 @@ export const FichesList = ({
   }
 
   const collectivite = useCurrentCollectivite();
+  const user = useUser();
+  
   const filtersWithSearch = {
     ...fromFormFiltersToFilters(filters),
     texteNomOuDescription: debouncedSearch,
@@ -118,6 +124,7 @@ export const FichesList = ({
     view,
     currentPage,
     isReadOnly: isReadOnly ?? false,
+    permissions,
   });
 
   const searchIsActive = isSearchActive(filters, debouncedSearch);
@@ -263,6 +270,7 @@ export const FichesList = ({
       {view === 'grid' && (
         <FichesListGrid
           collectivite={collectivite}
+          currentUserId={user.id}
           fiches={fiches ?? []}
           isLoading={isLoading}
           displayEditionMenu={displayEditionMenu}

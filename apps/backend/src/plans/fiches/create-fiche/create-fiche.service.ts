@@ -46,7 +46,7 @@ export class CreateFicheService {
     if (user) {
       await this.permissionService.isAllowed(
         user,
-        PermissionOperationEnum['PLANS.FICHES.EDITION'],
+        PermissionOperationEnum['PLANS.FICHES.CREATE'],
         ResourceType.COLLECTIVITE,
         fiche.collectiviteId
       );

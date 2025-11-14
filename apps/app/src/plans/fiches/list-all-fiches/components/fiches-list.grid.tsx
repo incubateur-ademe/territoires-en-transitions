@@ -1,4 +1,3 @@
-import { CollectiviteAccess } from '@/domain/users';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import {
   makeCollectiviteFicheNonClasseeUrl,
@@ -7,10 +6,12 @@ import {
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
+import { CollectiviteAccess } from '@/domain/users';
 import { EmptyCard } from '@/ui';
 
 type Props = {
   collectivite: CollectiviteAccess;
+  currentUserId: string;
   fiches: FicheWithRelationsAndCollectivite[];
   isLoading: boolean;
   displayEditionMenu: boolean;
@@ -22,6 +23,7 @@ type Props = {
 
 export const FichesListGrid = ({
   collectivite,
+  currentUserId,
   fiches,
   isLoading,
   displayEditionMenu,
@@ -79,6 +81,7 @@ export const FichesListGrid = ({
                   })
             }
             currentCollectivite={collectivite}
+            currentUserId={currentUserId}
           />
         ))}
       </div>

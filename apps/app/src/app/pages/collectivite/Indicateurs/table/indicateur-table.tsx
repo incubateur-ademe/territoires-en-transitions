@@ -92,7 +92,7 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
       />
       {/** résultat récent en mode privé */}
       {type === 'resultat' && !!data.donneesCollectivite?.valeurs.length && (
-        <PrivateModeSwitch definition={definition} />
+        <PrivateModeSwitch definition={definition} isReadOnly={readonly} />
       )}
       {/** dialogue d'édition des valeurs */}
       {isOpen && (

@@ -35,7 +35,7 @@ export default class MetricsService {
   ): Promise<CollectiviteMetricsResponse> {
     await this.permissionsService.isAllowed(
       user,
-      PermissionOperationEnum['COLLECTIVITES.VISITE'],
+      PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -123,7 +123,7 @@ export default class MetricsService {
   ): Promise<PersonalMetricsResponse> {
     await this.permissionsService.isAllowed(
       user,
-      PermissionOperationEnum['COLLECTIVITES.VISITE'],
+      PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

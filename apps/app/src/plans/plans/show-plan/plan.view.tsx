@@ -1,11 +1,13 @@
 'use client';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
+import { useUser } from '@/api/users/user-context/user-provider';
 import { PiloteOrReferentLabel } from '@/app/plans/plans/components/PiloteOrReferentLabel';
 import { EmptyPlanView } from '@/app/plans/plans/show-plan/empty-plan.view';
 import { usePlanFilters } from '@/app/plans/plans/show-plan/filters/plan-filters.context';
 import { PlanArborescence } from '@/app/plans/plans/show-plan/plan-arborescence.view';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { Plan } from '@/domain/plans';
 import { Spacer, VisibleWhen } from '@/ui';
 import { Header } from '../components/header';
@@ -45,6 +47,7 @@ type Props = {
 
 export const PlanView = ({ plan: initialPlanData }: Props) => {
   const currentCollectivite = useCurrentCollectivite();
+  const user = useUser();
 
   const { isFiltered } = usePlanFilters();
   const plan = useGetPlan(initialPlanData.id, {
@@ -97,7 +100,12 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
           title="Détail du plan"
           headerActionButtons={
             <>
-              <VisibleWhen condition={currentCollectivite.isReadOnly === false}>
+              <VisibleWhen
+                condition={
+                  currentCollectivite.isReadOnly === false &&
+                  hasPermission(currentCollectivite.permissions, 'plans.mutate')
+                }
+              >
                 <EditPlanButtons
                   plan={rootAxe}
                   collectiviteId={currentCollectivite.collectiviteId}
@@ -125,6 +133,7 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
             <FilteredResults
               collectivite={currentCollectivite}
               planId={rootAxe.id}
+              currentUserId={user.id}
             />
           </VisibleWhen>
         </ContentPanelWithHeader>

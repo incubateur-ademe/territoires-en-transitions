@@ -7,6 +7,7 @@ import {
   collectiviteTypeEnum,
   CreateCollectivite,
 } from '@/backend/collectivites/shared/models/collectivite.table';
+import { Dcp } from '@/backend/users/models/dcp.table';
 import { addTestUser, TestUserArgs } from '@/backend/users/users/users.fixture';
 import { DatabaseServiceInterface } from '@/backend/utils/database/database-service.interface';
 import { getErrorMessage } from '@/backend/utils/get-error-message';
@@ -65,14 +66,17 @@ export async function addTestCollectiviteAndUser(
   databaseService: DatabaseServiceInterface,
   args?: {
     user: Omit<TestUserArgs, 'collectiviteId'>;
-    collectivite: Partial<Collectivite>;
+    collectivite?: Partial<Collectivite>;
   }
-) {
-  const { collectivite: collectiviteArgs, user: userArgs } = args || {};
+): Promise<{
+  collectivite: Collectivite;
+  user: Dcp & { password: string };
+  cleanup: () => Promise<void>;
+}> {
   const { collectivite, cleanup: collectiviteCleanup } =
-    await addTestCollectivite(databaseService, collectiviteArgs);
+    await addTestCollectivite(databaseService, args?.collectivite);
   const { user, cleanup: userCleanup } = await addTestUser(databaseService, {
-    ...userArgs,
+    ...(args?.user ?? {}),
     collectiviteId: collectivite.id,
   });
   const cleanup = async () => {

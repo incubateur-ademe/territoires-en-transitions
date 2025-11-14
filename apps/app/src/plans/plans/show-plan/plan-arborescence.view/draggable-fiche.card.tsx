@@ -1,5 +1,5 @@
-import { CollectiviteAccess } from '@/domain/users';
 import { FicheResume } from '@/domain/plans';
+import { CollectiviteAccess } from '@/domain/users';
 import { DragOverlay, useDraggable } from '@dnd-kit/core';
 import { QueryKey } from '@tanstack/react-query';
 import classNames from 'classnames';
@@ -17,6 +17,7 @@ type Props = {
   fiche: FicheResume;
   editKeysToInvalidate?: QueryKey[];
   collectivite: CollectiviteAccess;
+  currentUserId: string;
 };
 
 export const DraggableFicheCard = ({
@@ -24,6 +25,7 @@ export const DraggableFicheCard = ({
   fiche,
   editKeysToInvalidate,
   collectivite,
+  currentUserId,
 }: Props) => {
   const canDrag =
     collectivite?.niveauAcces === 'admin' ||
@@ -57,6 +59,7 @@ export const DraggableFicheCard = ({
           <DragOverlay dropAnimation={null}>
             <div className="w-[24rem] ml-1 opacity-80 !cursor-grabbing">
               <FicheActionCard
+                currentUserId={currentUserId}
                 ficheAction={fiche}
                 link=""
                 currentCollectivite={collectivite}
@@ -80,6 +83,7 @@ export const DraggableFicheCard = ({
             editKeysToInvalidate={editKeysToInvalidate}
             onToggleOpen={(isOpen) => setIsDisabled(isOpen)}
             currentCollectivite={collectivite}
+            currentUserId={currentUserId}
           />
         </div>
       )}

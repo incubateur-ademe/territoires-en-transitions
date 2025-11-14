@@ -35,6 +35,7 @@ export async function createIndicateurPerso({
     ...pick(indicateurData, createFields),
     titre: indicateurData.titre ?? 'Fixture titre',
   });
+  console.log(`Created indicateur ${indicateurId}`);
 
   const updateFields = omit(indicateurData, createFields);
 
@@ -59,6 +60,7 @@ export async function createIndicateurPerso({
   }
 
   onTestFinished(async () => {
+    console.log(`Deleting indicateur ${indicateurId}`);
     await caller.indicateurs.definitions.delete({
       indicateurId,
       collectiviteId: indicateurData.collectiviteId,

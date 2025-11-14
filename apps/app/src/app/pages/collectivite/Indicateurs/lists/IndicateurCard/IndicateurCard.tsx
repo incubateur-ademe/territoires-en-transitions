@@ -155,9 +155,10 @@ export const IndicateurCardBase = ({
         )}
 
         {/** Menus d'édition */}
-        {!readonly && isEditable && (
+        {!readonly && (
           <IndicateurCardOptions
             definition={definitionSimple}
+            isEditable={isEditable}
             isFavoriCollectivite={definition.estFavori || false}
             otherMenuActions={otherMenuActions}
             chartDownloadSettings={{

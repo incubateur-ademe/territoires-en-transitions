@@ -101,7 +101,7 @@ export default class PersonnalisationsService {
     if (reponsesDate && tokenInfo) {
       await this.permissionService.isAllowed(
         tokenInfo,
-        PermissionOperationEnum['REFERENTIELS.LECTURE'],
+        PermissionOperationEnum['REFERENTIELS.READ'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -170,7 +170,7 @@ export default class PersonnalisationsService {
     if (request.date && tokenInfo) {
       await this.permissionService.isAllowed(
         tokenInfo,
-        PermissionOperationEnum['REFERENTIELS.LECTURE'],
+        PermissionOperationEnum['REFERENTIELS.READ'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );

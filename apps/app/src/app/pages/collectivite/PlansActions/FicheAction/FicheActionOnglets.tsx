@@ -1,12 +1,13 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { CollectiviteAccess } from '@/domain/users';
 import { ENV } from '@/api/environmentVariables';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import { CollectiviteAccess } from '@/domain/users';
 import { AppEnvironment } from '@/domain/utils';
 import { Tab, Tabs } from '@/ui';
 import { ServicesWidget } from '@betagouv/les-communs-widget';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
+import type { ReactElement } from 'react';
 import ActionsLieesTab from './ActionsLiees/ActionsLieesTab';
 import BudgetTab from './Budget/BudgetTab';
 import FichesLieesTab from './FichesLiees/FichesLieesTab';
@@ -15,9 +16,16 @@ import NotesDeSuiviTab from './NotesDeSuivi/NotesDeSuiviTab';
 import NotesEtDocumentsTab from './NotesEtDocuments/NotesEtDocumentsTab';
 import Etapes from './etapes';
 
+type TabDescriptor = {
+  label: string;
+  isVisible: boolean;
+  render: () => React.ReactNode;
+};
+
 type FicheActionOngletsProps = {
   fiche: Fiche;
   isEditLoading: boolean;
+  isReadonly: boolean;
   className?: string;
   collectivite: CollectiviteAccess;
 };
@@ -25,10 +33,11 @@ type FicheActionOngletsProps = {
 const FicheActionOnglets = ({
   fiche,
   isEditLoading,
+  isReadonly,
   className,
   collectivite,
 }: FicheActionOngletsProps) => {
-  const collectiviteId = useCollectiviteId();
+  const { collectiviteId, permissions, niveauAcces } = collectivite;
   const widgetCommunsFlagEnabled = useFeatureFlagEnabled(
     'is-widget-communs-enabled'
   );
@@ -37,68 +46,99 @@ const FicheActionOnglets = ({
     fiche,
     collectiviteId
   );
-  const isReadonly = collectivite.isReadOnly;
-  return (
-    <Tabs
-      className={className}
-      tabsListClassName="!justify-start pl-0 flex-nowrap overflow-x-scroll"
-    >
-      {/* Indicateurs de suivi */}
-      <Tab label="Indicateurs de suivi">
+
+  const tabDescriptors: TabDescriptor[] = [
+    {
+      label: 'Indicateurs de suivi',
+      isVisible:
+        hasPermission(permissions, 'indicateurs.definitions.read') ||
+        (!niveauAcces &&
+          hasPermission(permissions, 'indicateurs.definitions.read_public')),
+      render: () => (
         <IndicateursTab
           isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
           fiche={fiche}
         />
-      </Tab>
-
-      {/* Étapes */}
-      <Tab label="Étapes">
-        <Etapes isReadonly={isReadonly} fiche={fiche} />
-      </Tab>
-
-      {/* Notes de suivi */}
-      <Tab label="Notes de suivi">
-        <NotesDeSuiviTab isReadonly={isReadonly} fiche={fiche} />
-      </Tab>
-
-      {/* Budget */}
-      <Tab label="Budget">
-        <BudgetTab isReadonly={isReadonly} fiche={fiche} />
-      </Tab>
-
-      {/* Fiches action liées */}
-      <Tab label="Fiches action">
+      ),
+    },
+    {
+      label: 'Étapes',
+      isVisible: true,
+      render: () => <Etapes isReadonly={isReadonly} fiche={fiche} />,
+    },
+    {
+      label: 'Notes de suivi',
+      isVisible: true,
+      render: () => <NotesDeSuiviTab isReadonly={isReadonly} fiche={fiche} />,
+    },
+    {
+      label: 'Budget',
+      isVisible: true,
+      render: () => <BudgetTab isReadonly={isReadonly} fiche={fiche} />,
+    },
+    {
+      label: 'Fiches action liées',
+      isVisible:
+        hasPermission(permissions, 'plans.fiches.read') ||
+        (!niveauAcces &&
+          hasPermission(permissions, 'plans.fiches.read_public')),
+      render: () => (
         <FichesLieesTab
           isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
           collectivite={collectivite}
           isEditLoading={isEditLoading}
           fiche={fiche}
         />
-      </Tab>
-
-      {/* Mesures des référentiels liées */}
-      <Tab label="Mesures des référentiels">
+      ),
+    },
+    {
+      label: 'Mesures des référentiels liées',
+      isVisible:
+        hasPermission(permissions, 'referentiels.read') ||
+        (!niveauAcces &&
+          hasPermission(permissions, 'referentiels.read_public')),
+      render: () => (
         <ActionsLieesTab
           isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
           isEditLoading={isEditLoading}
           fiche={fiche}
         />
-      </Tab>
-
-      {/* Notes et documents */}
-      <Tab label="Notes et documents ">
+      ),
+    },
+    {
+      label: 'Notes et documents',
+      isVisible: true,
+      render: () => (
         <NotesEtDocumentsTab isReadonly={isReadonly} fiche={fiche} />
-      </Tab>
+      ),
+    },
+    {
+      label: 'Services liés',
+      isVisible: widgetCommunsFlagEnabled ?? false,
+      render: () => (
+        <ServicesWidget
+          projectId={fiche.id.toString()}
+          isStagingEnv={ENV.application_env === AppEnvironment.STAGING}
+          idType={'tetId'}
+        />
+      ),
+    },
+  ];
 
-      {widgetCommunsFlagEnabled ? (
-        <Tab label="Services liés">
-          <ServicesWidget
-            projectId={fiche.id.toString()}
-            isStagingEnv={ENV.application_env === AppEnvironment.STAGING}
-            idType={'tetId'}
-          />
-        </Tab>
-      ) : undefined}
+  const visibleTabElements: ReactElement[] = tabDescriptors
+    .filter((tab) => tab.isVisible)
+    .map((tab) => (
+      <Tab key={tab.label} label={tab.label}>
+        {tab.render()}
+      </Tab>
+    ));
+
+  return (
+    <Tabs
+      className={className}
+      tabsListClassName="!justify-start pl-0 flex-nowrap overflow-x-scroll"
+    >
+      {visibleTabElements}
     </Tabs>
   );
 };

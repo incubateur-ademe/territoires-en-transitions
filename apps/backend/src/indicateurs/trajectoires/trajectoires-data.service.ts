@@ -753,7 +753,7 @@ export default class TrajectoiresDataService {
 
     const isAllowedToRead = await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperationEnum['INDICATEURS.VISITE'],
+      'indicateurs.valeurs.read_public',
       ResourceType.COLLECTIVITE,
       request.collectiviteId,
       doNotThrowIfUnauthorized
@@ -865,7 +865,7 @@ export default class TrajectoiresDataService {
     if (user) {
       await this.permissionService.isAllowed(
         user,
-        PermissionOperationEnum['INDICATEURS.EDITION'],
+        PermissionOperationEnum['INDICATEURS.VALEURS.MUTATE'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );

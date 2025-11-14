@@ -1,4 +1,8 @@
 import {
+  CollectiviteAccessLevel,
+  collectiviteAccessLevelSchema,
+} from '@/domain/users';
+import {
   Field,
   Input,
   ModalFooterOKCancel,
@@ -16,14 +20,14 @@ const validationSchema = z.object({
   email: z.email({
     error: 'Un email valide est requis',
   }),
-  niveau: z.enum(['lecture', 'edition', 'admin']),
+  niveau: collectiviteAccessLevelSchema,
   tagIds: z.number().array().optional(),
 });
 type FormData = z.infer<typeof validationSchema>;
 
 export type Props = {
   /** Niveau de l'utilisateur sur la collectivité */
-  niveauAcces: 'edition' | 'admin';
+  niveauAcces: CollectiviteAccessLevel;
   /** Fonction appelée à l'envoi du formulaire */
   onSubmit: SubmitHandler<FormData>;
   /** Fonction appelée à l'annulation du formulaire */

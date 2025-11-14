@@ -1,7 +1,7 @@
-import { CollectiviteAccess } from '@/domain/users';
 import FicheActionCardSkeleton from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
 import { FicheResume } from '@/domain/plans';
+import { CollectiviteAccess } from '@/domain/users';
 import classNames from 'classnames';
 import FicheActionCard from '../Carte/FicheActionCard';
 
@@ -10,6 +10,7 @@ type FichesLieesListeProps = {
   className?: string;
   onUnlink?: (ficheId: number) => void;
   collectivite: CollectiviteAccess;
+  currentUserId: string;
   isLoading?: boolean;
 };
 
@@ -18,6 +19,7 @@ const FichesLieesListe = ({
   className,
   onUnlink,
   collectivite,
+  currentUserId,
   isLoading,
 }: FichesLieesListeProps) => {
   if (!isLoading && fiches.length === 0) return null;
@@ -36,7 +38,6 @@ const FichesLieesListe = ({
           : fiches.map((fiche) => (
               <FicheActionCard
                 key={fiche.id}
-                openInNewTab
                 ficheAction={fiche}
                 link={getFichePageUrlForCollectivite({
                   collectiviteId: collectivite.collectiviteId,
@@ -44,6 +45,7 @@ const FichesLieesListe = ({
                 })}
                 onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
                 currentCollectivite={collectivite}
+                currentUserId={currentUserId}
               />
             ))}
       </div>
