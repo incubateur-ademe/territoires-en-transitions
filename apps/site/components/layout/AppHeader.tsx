@@ -2,7 +2,7 @@
 
 import { getAuthPaths } from '@/api';
 import { ENV } from '@/api/environmentVariables';
-import { TerritoiresEnTransitionsLogo } from '@/ui/assets/territoires-en-transitions.logo';
+import { TerritoiresEnTransitionsLogo } from '@/ui';
 import classNames from 'classnames';
 import Link from 'next/dist/client/link';
 import Image from 'next/image';
