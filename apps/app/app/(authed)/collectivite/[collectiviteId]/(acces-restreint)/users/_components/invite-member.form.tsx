@@ -1,4 +1,3 @@
-import { getAccessLevelLabel } from '@/app/users/authorizations/permission-access-level.utils';
 import {
   Field,
   Input,
@@ -10,6 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Tag, useListTags } from './use-list-tags';
+import { useAccessLevels } from '@/app/users/authorizations/use-access-levels';
 
 // validation du formulaire
 const validationSchema = z.object({
@@ -20,17 +20,6 @@ const validationSchema = z.object({
   tagIds: z.number().array().optional(),
 });
 type FormData = z.infer<typeof validationSchema>;
-
-// options pour la liste déroulante "Niveau d'accès"
-const AdminOption = { value: 'admin', label: getAccessLevelLabel('admin') };
-const EditionOptions = [
-  { value: 'edition', label: getAccessLevelLabel('edition') },
-  {
-    value: 'edition_fiches_indicateurs',
-    label: getAccessLevelLabel('edition_fiches_indicateurs'),
-  },
-  { value: 'lecture', label: getAccessLevelLabel('lecture') },
-];
 
 export type Props = {
   /** Niveau de l'utilisateur sur la collectivité */
@@ -61,8 +50,9 @@ export const InviteMemberForm = (props: Props) => {
     resolver: zodResolver(validationSchema),
   });
 
-  const options =
-    niveauAcces === 'admin' ? [AdminOption, ...EditionOptions] : EditionOptions;
+  const accessLevelsOptions = useAccessLevels({
+    allowAdmin: niveauAcces === 'admin',
+  });
 
   const { data: tags, isLoading: isLoadingTags } = useListTags(collectiviteId);
 
@@ -92,7 +82,7 @@ export const InviteMemberForm = (props: Props) => {
             render={({ field: { value, onChange } }) => (
               <Select
                 dataTest="niveau"
-                options={options}
+                options={accessLevelsOptions}
                 values={value}
                 onChange={onChange}
               />

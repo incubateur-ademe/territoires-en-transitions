@@ -9,7 +9,8 @@ import { MembreFonction } from '@/domain/collectivites';
 import { ReferentielId } from '@/domain/referentiels';
 import { CollectiviteAccessLevel } from '@/domain/users';
 import BadgeAcces from '../../_components/badge-acces';
-import { niveauAcces } from './membres-liste-table-row';
+import { getAccessLevelLabel } from '@/app/users/authorizations/permission-access-level.utils';
+import { useAccessLevels } from '@/app/users/authorizations/use-access-levels';
 
 /**
  * La nouvelle version du composant est dans le fichier membres-liste-table-row.tsx
@@ -97,7 +98,7 @@ const AccessDropdownLabel = ({
   if (currentUserAccess === 'admin')
     return (
       <div>
-        <div>{niveauAcces.find((v) => v.value === option)?.label}</div>
+        <div>{getAccessLevelLabel(option)}</div>
         <div
           aria-label={getAccessLevelDescription(option)}
           className="mt-1 text-xs text-gray-500"
@@ -120,14 +121,10 @@ export const AccesDropdown = ({
   value,
   onSelect,
 }: TAccesDropdownProps) => {
+  const accessLevelsOptions = useAccessLevels({ allowAdmin: true });
+
   if (currentUserAccess !== 'admin')
-    return (
-      <BadgeAcces
-        acces={niveauAcces.find((v) => v.value === currentUserAccess)?.value}
-        size="sm"
-        className="ml-3"
-      />
-    );
+    return <BadgeAcces acces={currentUserAccess} size="sm" className="ml-3" />;
 
   return (
     <div data-test="acces-dropdown">
@@ -135,12 +132,9 @@ export const AccesDropdown = ({
         placement="bottom-end"
         value={value}
         onSelect={onSelect}
-        options={niveauAcces}
+        options={accessLevelsOptions}
         renderSelection={(value) => (
-          <BadgeAcces
-            acces={niveauAcces.find((v) => v.value === value)?.value}
-            size="sm"
-          />
+          <BadgeAcces acces={value as CollectiviteAccessLevel} size="sm" />
         )}
         renderOption={(option) => (
           <AccessDropdownLabel
