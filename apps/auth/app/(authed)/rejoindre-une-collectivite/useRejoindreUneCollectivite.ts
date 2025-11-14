@@ -1,6 +1,10 @@
-import { Database, Enums, getCollectivitePath } from '@/api';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useTRPC } from '@/api/utils/trpc/client';
+import {
+  Database,
+  Enums,
+  getCollectivitePath,
+  useSupabase,
+  useTRPC,
+} from '@/api';
 import { CollectivitePublic } from '@/domain/collectivites';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
