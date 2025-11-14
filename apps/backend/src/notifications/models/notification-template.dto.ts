@@ -1,3 +1,6 @@
+import { MethodResult } from '@/backend/utils/result.type';
+import { ReactNode } from 'react';
+
 /**  Interface commune aux notifications */
 export interface NotificationTemplate {
   sendToEmail: string;
@@ -5,5 +8,10 @@ export interface NotificationTemplate {
 }
 
 export type GetNotificationContent = NotificationTemplate & {
-  content: JSX.Element;
+  content: ReactNode;
 };
+
+export type GetNotificationContentResult = MethodResult<
+  GetNotificationContent,
+  string
+>;

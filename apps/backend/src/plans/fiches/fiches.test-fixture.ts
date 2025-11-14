@@ -5,6 +5,7 @@ import { onTestFinished } from 'vitest';
 type CreateFicheInput =
   inferRouterInputs<AppRouter>['plans']['fiches']['create']['fiche'] & {
     axeId?: number;
+    pilotes?: { userId: string }[];
   };
 
 type FicheId = number;
@@ -16,15 +17,16 @@ export async function createFicheAndCleanupFunction({
   caller: ReturnType<TrpcRouter['createCaller']>;
   ficheInput: CreateFicheInput;
 }): Promise<{ ficheId: FicheId; ficheCleanup: () => Promise<void> }> {
-  const { axeId, ...ficheProps } = ficheInput;
+  const { axeId, pilotes, ...ficheProps } = ficheInput;
   const fiche = await caller.plans.fiches.create({ fiche: ficheProps });
   const ficheId = fiche.id;
 
-  if (axeId) {
+  if (axeId || pilotes?.length) {
     await caller.plans.fiches.update({
       ficheId,
       ficheFields: {
-        axes: [{ id: axeId }],
+        axes: axeId ? [{ id: axeId }] : undefined,
+        pilotes,
       },
     });
   }
