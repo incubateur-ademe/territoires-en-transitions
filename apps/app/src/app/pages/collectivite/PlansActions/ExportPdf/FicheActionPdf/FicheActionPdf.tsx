@@ -1,5 +1,4 @@
-import { FicheActionNote } from '@/api/plan-actions';
-import { RouterOutput } from '@/api/utils/trpc/client';
+import { RouterOutput } from '@/api';
 import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
 import Acteurs from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/acteurs';
 import Calendrier from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/calendrier';
@@ -8,12 +7,13 @@ import {
   Infos,
   Statuts,
 } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/header';
-import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
+import { FicheBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
+import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { TAxeRow } from '@/app/types/alias';
 import { Paragraph, Stack, Title } from '@/app/ui/export-pdf/components';
-import { FicheResume } from '@/domain/plans';
+import { FicheNote } from '@/domain/plans';
 import { ActionWithScore } from '@/domain/referentiels';
 import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 import { TSectionsValues, sectionsInitValue } from '../utils';
@@ -35,11 +35,11 @@ export type FicheActionPdfExtendedProps = FicheActionPdfProps & {
   sections?: TSectionsValues;
   indicateursListe: IndicateurDefinition[] | undefined | null;
   etapes?: RouterOutput['plans']['fiches']['etapes']['list'];
-  fichesLiees: FicheResume[];
+  fichesLiees: FicheListItem[];
   actionsLiees: ActionWithScore[];
   annexes: AnnexeInfo[] | undefined;
-  notesSuivi: FicheActionNote[] | undefined;
-  budgets: BudgetType[] | undefined;
+  notesSuivi: FicheNote[] | undefined;
+  budgets: FicheBudget[] | undefined;
 };
 
 const FicheActionPdf = ({

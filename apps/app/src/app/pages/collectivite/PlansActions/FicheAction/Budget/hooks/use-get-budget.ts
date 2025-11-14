@@ -1,13 +1,13 @@
-import { RouterOutput, useTRPC } from '@/api/utils/trpc/client';
+import { RouterOutput, TRPCUseQueryResult, useTRPC } from '@/api';
 import { useQuery } from '@tanstack/react-query';
 
-export type BudgetType =
+export type FicheBudget =
   RouterOutput['plans']['fiches']['budgets']['list'][number];
 
 export const useGetBudget = (
   { ficheId }: { ficheId: number },
   requested = true
-) => {
+): TRPCUseQueryResult<FicheBudget[]> => {
   const trpc = useTRPC();
 
   return useQuery(

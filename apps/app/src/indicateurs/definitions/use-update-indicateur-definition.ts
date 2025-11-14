@@ -1,5 +1,5 @@
+import { RouterInput, useTRPC } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
-import { RouterInput, useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type DefinitionFieldsInput =

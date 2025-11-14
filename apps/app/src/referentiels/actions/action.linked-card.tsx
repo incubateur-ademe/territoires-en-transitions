@@ -2,14 +2,14 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielTacheUrl } from '@/app/app/paths';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
-import { Action, ActionTypeEnum } from '@/domain/referentiels';
+import { ActionTypeEnum, ActionWithScore } from '@/domain/referentiels';
 import { Button, Card } from '@/ui';
 import { ScoreProgressBar } from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 
 type ActionCardProps = {
   isReadonly?: boolean;
-  action: Action;
+  action: ActionWithScore;
   externalCollectiviteId?: number;
   openInNewTab?: boolean;
   onUnlink?: () => void;

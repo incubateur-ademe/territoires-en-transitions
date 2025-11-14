@@ -1,4 +1,4 @@
-import { RecherchesContact } from '@/api/collectiviteEngagees';
+import { CollectiviteEngagee } from '@/api';
 import {
   membreFonctionToLabel,
   membreFonctionToTeteFonction,
@@ -22,7 +22,7 @@ const getFormattedPhone = (phoneNumber: string | undefined) => {
 };
 
 type Props = {
-  contacts: RecherchesContact[];
+  contacts: CollectiviteEngagee.RecherchesContact[];
   view: RecherchesViewParam;
   collectiviteName: string;
   openState: OpenState;

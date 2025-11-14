@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import { ModuleFicheActionsSelect } from '@/api/plan-actions';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { nameToparams } from '@/app/plans/fiches/list-all-fiches/filters/filters-search-parameters-mapper';
 import { FichesActionModule } from '@/app/tableaux-de-bord/plans-action/fiches-action/fiches-action.module';

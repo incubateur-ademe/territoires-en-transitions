@@ -1,17 +1,20 @@
-import { RouterOutput, useTRPC } from '@/api/utils/trpc/client';
-import {
-  ListFichesRequestFilters,
-  QueryOptionsSchema,
-  SortOptions,
-} from '@/domain/plans';
+import { RouterInput, RouterOutput, useTRPC } from '@/api';
+import { ListFichesRequestFilters } from '@/domain/plans';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+
+export type ListFichesInput = RouterInput['plans']['fiches']['listFiches'];
+export type QueryOptionsSchema = NonNullable<ListFichesInput['queryOptions']>;
+export type SortOptions = QueryOptionsSchema['sort'];
+export type SortValue = NonNullable<SortOptions>[number]['field'];
+
+export type ListFichesOutput = RouterOutput['plans']['fiches']['listFiches'];
+export type FicheListItem = ListFichesOutput['data'][number];
+export type Completion = FicheListItem['completion'];
+
 export type GetFichesOptions = Partial<{
   filters: Omit<ListFichesRequestFilters, 'collectiviteId'>;
   queryOptions: QueryOptionsSchema;
 }>;
-
-export type Completion =
-  RouterOutput['plans']['fiches']['listFiches']['data'][number]['completion'];
 
 export const useListFiches = (
   collectiviteId: number,

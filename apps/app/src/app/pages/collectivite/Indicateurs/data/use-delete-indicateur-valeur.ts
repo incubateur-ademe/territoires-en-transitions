@@ -1,4 +1,4 @@
-import { useTRPC } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useDeleteIndicateurValeur = () => {
@@ -24,7 +24,7 @@ export const useDeleteIndicateurValeur = () => {
         }
       },
       meta: {
-        success: "La valeur a été supprimée",
+        success: 'La valeur a été supprimée',
         error: "La valeur n'a pas pu être supprimée",
       },
     })

@@ -1,4 +1,4 @@
-import { useUser } from '@/api/users/user-context/user-provider';
+import { useUser } from '@/api/users';
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
 import { CollectiviteAccess } from '@/domain/users';
 import classNames from 'classnames';

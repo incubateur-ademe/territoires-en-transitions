@@ -1,5 +1,4 @@
-import { EmptyCard } from '@/ui';
-import { PictoPadlock } from '@/ui/design-system/Picto/PictoPadlock';
+import { EmptyCard, PictoPadlock } from '@/ui';
 
 export function FicheNoAccessPage() {
   return (

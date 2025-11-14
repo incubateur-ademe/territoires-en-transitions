@@ -1,15 +1,13 @@
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import FicheActionCardSkeleton from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
+import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import {
   CurrentFiltersKeys,
   usePlanFilters,
 } from '@/app/plans/plans/show-plan/filters/plan-filters.context';
-import { FicheResume } from '@/domain/plans';
 import { CollectiviteAccess } from '@/domain/users';
-import { Spacer } from '@/ui';
-import { FilterBadges, FilterCategory } from '@/ui/design-system/FilterBadges';
-import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
+import { FilterBadges, FilterCategory, Spacer, VisibleWhen } from '@/ui';
 
 const ficheListGridClassName = 'grid md:grid-cols-2 gap-4';
 
@@ -37,7 +35,7 @@ const FilteredResultsList = ({
 }: {
   planId: number;
   collectivite: CollectiviteAccess;
-  filteredResults: FicheResume[];
+  filteredResults: FicheListItem[];
   currentUserId: string;
 }) => {
   return (
@@ -65,7 +63,11 @@ type Props = {
   currentUserId: string;
 };
 
-export const FilteredResults = ({ planId, collectivite, currentUserId }: Props) => {
+export const FilteredResults = ({
+  planId,
+  collectivite,
+  currentUserId,
+}: Props) => {
   const {
     filters,
     isLoading,

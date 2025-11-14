@@ -1,8 +1,11 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import {
+  FicheListItem,
+  useListFiches,
+} from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { naturalSort } from '@/app/utils/naturalSort';
-import { CreateAxeType, FicheResume } from '@/domain/plans';
+import { AxeCreate } from '@/domain/plans';
 import {
   Option,
   OptionValue,
@@ -27,8 +30,8 @@ type FichesActionsDropdownProps = Omit<
     fiches,
     selectedFiche,
   }: {
-    fiches: FicheResume[];
-    selectedFiche: FicheResume;
+    fiches: FicheListItem[];
+    selectedFiche: FicheListItem;
   }) => void;
 };
 
@@ -56,7 +59,7 @@ const FichesActionsDropdown = ({
   /* Récupère tous les plans liés aux fiches */
 
   const plans = fichesDisponiblesListe?.reduce<
-    Array<Pick<CreateAxeType, 'id' | 'collectiviteId' | 'nom'>>
+    Array<Pick<AxeCreate, 'id' | 'collectiviteId' | 'nom'>>
   >((acc, fiche) => {
     acc.push(
       fiche.plans?.[0] ?? {
@@ -118,8 +121,8 @@ const FichesActionsDropdown = ({
       placeholder={props.placeholder ?? 'Recherchez par mots-clés'}
       onChange={({ values, selectedValue }) =>
         props.onChange({
-          fiches: getSelectedFiches(values) as FicheResume[],
-          selectedFiche: getSelectedFiches([selectedValue])[0] as FicheResume,
+          fiches: getSelectedFiches(values) as FicheListItem[],
+          selectedFiche: getSelectedFiches([selectedValue])[0] as FicheListItem,
         })
       }
     />

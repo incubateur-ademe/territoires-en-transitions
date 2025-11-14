@@ -1,12 +1,12 @@
 import FicheActionCardSkeleton from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
-import { FicheResume } from '@/domain/plans';
+import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { CollectiviteAccess } from '@/domain/users';
 import classNames from 'classnames';
 import FicheActionCard from '../Carte/FicheActionCard';
 
 type FichesLieesListeProps = {
-  fiches: FicheResume[];
+  fiches: FicheListItem[];
   className?: string;
   onUnlink?: (ficheId: number) => void;
   collectivite: CollectiviteAccess;

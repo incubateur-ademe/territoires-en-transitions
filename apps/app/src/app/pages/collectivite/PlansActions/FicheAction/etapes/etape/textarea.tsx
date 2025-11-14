@@ -1,8 +1,8 @@
-import { forwardRef, Ref, useState } from 'react';
 import classNames from 'classnames';
+import { forwardRef, Ref, useState } from 'react';
 
+import { RouterInput } from '@/api';
 import { AutoResizedTextarea, TextareaProps } from '@/ui';
-import { RouterInput } from '@/api/utils/trpc/client';
 
 type EtapeUpsert = RouterInput['plans']['fiches']['etapes']['upsert'];
 

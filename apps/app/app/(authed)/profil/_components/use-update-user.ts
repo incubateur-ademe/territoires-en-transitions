@@ -1,4 +1,4 @@
-import { useTRPC } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 

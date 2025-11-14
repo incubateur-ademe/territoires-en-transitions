@@ -2,12 +2,12 @@ import {
   FormattedBudgetType,
   getBudgetForTable,
 } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/utils';
-import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
+import { FicheBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { Paragraph, TCell, TRow, Table } from '@/app/ui/export-pdf/components';
 import { getFormattedFloat, getFormattedNumber } from '@/app/utils/formatUtils';
 
 type BudgetTableProps = {
-  budgets: BudgetType[];
+  budgets: FicheBudget[];
 };
 
 const BudgetTable = ({ budgets }: BudgetTableProps) => {

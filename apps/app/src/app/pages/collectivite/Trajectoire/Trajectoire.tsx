@@ -1,7 +1,7 @@
 'use client';
 
+import { useTRPC } from '@/api';
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { useTRPC } from '@/api/utils/trpc/client';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { VerificationTrajectoireStatus } from '@/domain/indicateurs';
 import { Alert, Button, Card, Modal } from '@/ui';

@@ -1,4 +1,4 @@
-import { ModuleMesuresSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import { ModuleMesuresSelect } from '@/api/plan-actions';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { ActionCard } from '@/app/referentiels/actions/action.card';
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';

@@ -1,4 +1,4 @@
-import { RouterInput, RouterOutput, useTRPC } from '@/api/utils/trpc/client';
+import { RouterInput, RouterOutput, useTRPC } from '@/api';
 import { useQuery } from '@tanstack/react-query';
 
 type GetPathInput = RouterInput['indicateurs']['definitions']['getPath'];

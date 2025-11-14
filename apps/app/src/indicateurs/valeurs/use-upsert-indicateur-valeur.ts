@@ -1,4 +1,4 @@
-import { useTRPC } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ListIndicateurValeurOuput } from './use-list-indicateur-valeurs';
 

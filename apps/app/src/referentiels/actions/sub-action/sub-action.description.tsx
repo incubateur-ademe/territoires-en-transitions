@@ -1,4 +1,4 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import Markdown from '@/app/ui/Markdown';
 import classNames from 'classnames';
 import { ComponentPropsWithoutRef } from 'react';

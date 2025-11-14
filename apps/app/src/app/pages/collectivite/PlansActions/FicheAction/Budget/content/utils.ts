@@ -1,4 +1,4 @@
-import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
+import { FicheBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 
 export type FormattedBudgetType = {
   annee: number | undefined | null;
@@ -8,7 +8,7 @@ export type FormattedBudgetType = {
   etpReel: number | undefined | null;
 }[];
 
-export const getBudgetForTable = (budgets: BudgetType[]) => {
+export const getBudgetForTable = (budgets: FicheBudget[]) => {
   const formattedBudget: FormattedBudgetType = [];
 
   budgets

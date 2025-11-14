@@ -2,11 +2,11 @@ import { avancementToLabel } from '@/app/app/labels';
 import { actionAvancementColors } from '@/app/app/theme';
 import { Box } from '@/app/ui/export-pdf/components';
 import { Stack } from '@/app/ui/export-pdf/components/Stack';
-import { ScoreFinal } from '@/domain/referentiels';
+import { ActionScoreFinal } from '@/domain/referentiels';
 import classNames from 'classnames';
 
 type ScoreProgressBarProps = {
-  score?: ScoreFinal;
+  score?: ActionScoreFinal;
   className?: string;
 };
 

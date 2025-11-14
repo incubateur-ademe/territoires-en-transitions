@@ -1,6 +1,6 @@
+import { useTRPC } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
-import { useTRPC } from '@/api/utils/trpc/client';
-import { ListFichesOutput } from '@/domain/plans';
+import { ListFichesOutput } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
@@ -46,7 +46,7 @@ export const useUpdateFiche = (args?: {
           (previous: ListFichesOutput) => {
             return {
               ...previous,
-              fiches: (previous.fiches ?? []).map((fiche) =>
+              data: previous.data.map((fiche) =>
                 fiche.id === ficheId ? { ...fiche, ...ficheFields } : fiche
               ),
             };

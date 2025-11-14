@@ -2,8 +2,8 @@ import classNames from 'classnames';
 import Link from 'next/link';
 
 import { makeReferentielActionUrl } from '@/app/app/paths';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import {
-  ActionDefinitionSummary,
   ActionTypeEnum,
   getReferentielIdFromActionId,
 } from '@/domain/referentiels';

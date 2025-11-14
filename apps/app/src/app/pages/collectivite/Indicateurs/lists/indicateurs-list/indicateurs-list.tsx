@@ -5,7 +5,7 @@ import { Pagination } from '@/ui';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users/user-context/user-provider';
+import { useUser } from '@/api/users';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { IndicateursListNoResults } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-empty';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';

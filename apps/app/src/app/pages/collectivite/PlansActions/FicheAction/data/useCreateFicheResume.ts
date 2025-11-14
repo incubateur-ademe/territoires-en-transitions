@@ -1,11 +1,9 @@
-import { DBClient } from '@/api';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useTRPC } from '@/api/utils/trpc/client';
+import { DBClient, useSupabase, useTRPC } from '@/api';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
 import { dropAnimation } from '@/app/plans/plans/show-plan/plan-arborescence.view';
 
+import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
-import { FicheResume } from '@/domain/plans';
 import { Plan } from '@/domain/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -111,7 +109,7 @@ export const useCreateFicheResume = (args: Args) => {
 
       queryClient.setQueryData(
         axe_fiches_key,
-        (old: FicheResume[] | undefined) => {
+        (old: FicheListItem[] | undefined) => {
           return old ? [tempFiche, ...old] : [tempFiche];
         }
       );
@@ -157,12 +155,12 @@ export const useCreateFicheResume = (args: Args) => {
       );
     },
     onSuccess: async (data) => {
-      const newFiche = data as unknown as FicheResume;
+      const newFiche = data as unknown as FicheListItem;
 
       // On récupère la fiche renvoyer par le serveur pour la remplacer dans le cache avant invalidation
       queryClient.setQueryData(
         axe_fiches_key,
-        (old: FicheResume[] | undefined): FicheResume[] => {
+        (old: FicheListItem[] | undefined): FicheListItem[] => {
           const updatedData = old ?? [];
           return sortFichesResume(
             updatedData.map((f) => {

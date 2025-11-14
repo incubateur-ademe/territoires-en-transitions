@@ -1,5 +1,5 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users/user-context/user-provider';
+import { useUser } from '@/api/users';
 import { useBaseToast } from '@/app/utils/toast/use-base-toast';
 import {
   CollectiviteAccess,

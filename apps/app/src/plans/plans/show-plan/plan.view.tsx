@@ -1,7 +1,7 @@
 'use client';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users/user-context/user-provider';
+import { useUser } from '@/api/users';
 import { PiloteOrReferentLabel } from '@/app/plans/plans/components/PiloteOrReferentLabel';
 import { EmptyPlanView } from '@/app/plans/plans/show-plan/empty-plan.view';
 import { usePlanFilters } from '@/app/plans/plans/show-plan/filters/plan-filters.context';

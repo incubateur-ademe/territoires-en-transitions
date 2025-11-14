@@ -1,4 +1,4 @@
-import { Valeur } from '@/api/indicateurs/domain';
+import { Valeur } from '@/api/indicateurs/domain/valeur.schema';
 import Markdown from '@/app/ui/Markdown';
 import { Tooltip } from '@/ui';
 

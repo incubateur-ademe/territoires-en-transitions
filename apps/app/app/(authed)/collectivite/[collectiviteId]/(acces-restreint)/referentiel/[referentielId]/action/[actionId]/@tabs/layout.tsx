@@ -4,7 +4,6 @@ import { ReactNode } from 'react';
 
 import { useCollectiviteId } from '@/api/collectivites';
 import { makeReferentielActionUrl } from '@/app/app/paths';
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import {
   DEPRECATED_useActionDefinition,
   useAction,
@@ -23,9 +22,10 @@ import {
   TabsList,
   TabsPanel,
   TabsTab,
-} from '@/ui/design-system/Tabs/Tabs.next';
+} from '@/ui/design-system/TabsNext/index';
 import ActionCommentsPanel from '../_components/comments/action-comments.panel';
 import { ActionHeader } from '../_components/header/action.header';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 
 export default function Layout({ children }: { children: ReactNode }) {
   const actionDefinition = DEPRECATED_useActionDefinition();

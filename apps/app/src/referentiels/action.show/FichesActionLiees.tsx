@@ -1,5 +1,5 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users/user-context/user-provider';
+import { useUser } from '@/api/users';
 import FichesActionsDropdown from '@/app/ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { Button, Field } from '@/ui';

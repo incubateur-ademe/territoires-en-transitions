@@ -1,4 +1,4 @@
-import { Option } from '@/ui/design-system/Select/utils';
+import { Option } from '@/ui';
 import { useEffect, useMemo } from 'react';
 
 import { useSousThematiqueListe } from '@/app/ui/dropdownLists/ThematiquesDropdown/useSousThematiqueListe';

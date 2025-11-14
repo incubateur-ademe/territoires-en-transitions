@@ -1,11 +1,11 @@
 import FinancementsModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/financements-modal';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { FicheWithRelations } from '@/domain/plans';
 import { Button } from '@/ui';
 import { useState } from 'react';
+import { Fiche } from '../../data/use-get-fiche';
 
 type FinancementsProps = {
-  fiche: Pick<FicheWithRelations, 'financements'> & FicheShareProperties;
+  fiche: Pick<Fiche, 'financements'> & FicheShareProperties;
   isReadonly?: boolean;
   updateFinancements: (financements: string | null | undefined) => void;
 };

@@ -1,5 +1,5 @@
 import BudgetTable from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/BudgetTable';
-import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
+import { FicheBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import {
   BadgeFinanceur,
   Paragraph,
@@ -10,7 +10,7 @@ import { Fragment } from 'react';
 
 type BudgetContentProps = {
   type: 'investissement' | 'fonctionnement';
-  budgets: BudgetType[];
+  budgets: FicheBudget[];
 };
 
 const BudgetContent = ({ type, budgets }: BudgetContentProps) => {

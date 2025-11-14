@@ -1,5 +1,5 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import Modal from '@/app/ui/shared/floating-ui/Modal';
 import { getReferentielIdFromActionId } from '@/domain/referentiels';
 import { Button } from '@/ui';

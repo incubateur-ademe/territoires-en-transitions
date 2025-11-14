@@ -1,5 +1,5 @@
-import { FicheActionNote } from '@/api/plan-actions';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
+import { FicheNote } from '@/domain/plans';
 import { Button, Card, Icon, RichTextEditor } from '@/ui';
 import { format } from 'date-fns';
 import { useState } from 'react';
@@ -10,7 +10,7 @@ import ModaleSuppressionNoteDeSuivi from './ModaleSuppressionNoteDeSuivi';
 type NoteSuiviCardProps = {
   isReadonly?: boolean;
   fiche: FicheShareProperties;
-  note: FicheActionNote;
+  note: FicheNote;
   onEdit: (editedNote: EditedNote) => void;
   onDelete: (deletedNote: DeletedNote) => void;
 };

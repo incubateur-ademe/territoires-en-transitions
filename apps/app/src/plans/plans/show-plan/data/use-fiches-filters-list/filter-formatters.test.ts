@@ -5,7 +5,7 @@ import {
   SANS_STATUT_LABEL,
 } from '@/domain/plans';
 import * as formatter from './filter-formatters';
-import { FormFilters, QueryPayload } from './types';
+import { Filters, FormFilters, QueryPayload } from './types';
 
 describe('useFichesActionFiltresListe filter formatters', () => {
   it('format from form filters to raw filters', () => {
@@ -17,7 +17,7 @@ describe('useFichesActionFiltresListe filter formatters', () => {
       pilotes: [SANS_PILOTE_LABEL, 'Jane Doe'],
       priorites: ['Bas', 'Moyen', SANS_PRIORITE_LABEL],
     };
-    const expected: FormFilters = {
+    const expected: Filters = {
       collectiviteId: 1,
       axes: [1],
       statuts: ['À venir'],
@@ -34,7 +34,7 @@ describe('useFichesActionFiltresListe filter formatters', () => {
   });
 
   it('format from raw filters to form filters', () => {
-    const filters: FormFilters = {
+    const filters: Filters = {
       collectiviteId: 1,
       axes: [1],
       statuts: ['À venir'],
@@ -75,7 +75,7 @@ describe('useFichesActionFiltresListe filter formatters', () => {
   });
 
   it('format to query payload', () => {
-    const filters: FormFilters = {
+    const filters: Filters = {
       collectiviteId: 1,
       axes: [1],
       statuts: ['À venir'],

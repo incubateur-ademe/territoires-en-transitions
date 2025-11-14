@@ -1,4 +1,4 @@
-import { useUser } from '@/api/users/user-context/user-provider';
+import { useUser } from '@/api/users';
 import { Button } from '@/ui';
 import classNames from 'classnames';
 import { format } from 'date-fns';

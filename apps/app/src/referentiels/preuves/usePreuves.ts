@@ -1,7 +1,6 @@
-import { DBClient } from '@/api';
+import { DBClient, useSupabase } from '@/api';
 import { useCollectiviteId } from '@/api/collectivites';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { useQuery } from '@tanstack/react-query';
 import { TPreuve, TPreuvesParType, TPreuveType } from './Bibliotheque/types';
 

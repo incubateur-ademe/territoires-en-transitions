@@ -5,8 +5,8 @@ import { Alert, Button, VisibleWhen } from '@/ui';
 import classNames from 'classnames';
 
 import { ExportMultipleFichesModal } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
+import { SortOptions } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
-import { SortOptions } from '@/domain/plans';
 import EditionPilote from './EditionPilote';
 import EditionPlanning from './EditionPlanning';
 import EditionPriorite from './EditionPriorite';

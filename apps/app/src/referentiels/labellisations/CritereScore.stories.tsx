@@ -1,14 +1,18 @@
-import {StoryFn, Meta} from '@storybook/nextjs';
-import {CritereScore, TCritereScoreProps} from './CritereScore';
+import { Meta, StoryFn } from '@storybook/nextjs';
+import { CritereScore, TCritereScoreProps } from './CritereScore';
 import fixture from './fixture.json';
+import { TLabellisationParcours } from './types';
 
 export default {
   component: CritereScore,
 } as Meta;
 
-const Template: StoryFn<TCritereScoreProps> = args => (
+const Template: StoryFn<TCritereScoreProps> = (args) => (
   <ul>
-    <CritereScore parcours={fixture.parcours1} {...args} />
+    <CritereScore
+      {...args}
+      parcours={fixture.parcours1 as TLabellisationParcours}
+    />
   </ul>
 );
 
