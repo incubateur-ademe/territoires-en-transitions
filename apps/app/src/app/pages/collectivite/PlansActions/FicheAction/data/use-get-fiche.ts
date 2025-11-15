@@ -1,14 +1,13 @@
-import { RouterOutput, useTRPC } from '@/api/utils/trpc/client';
+import { useTRPC } from '@/api/utils/trpc/client';
+import { FicheWithRelations } from '@/domain/plans';
 import { useQuery } from '@tanstack/react-query';
-
-export type Fiche = RouterOutput['plans']['fiches']['get'];
 
 export function useGetFiche({
   id,
   initialData,
 }: {
   id: number;
-  initialData?: Fiche;
+  initialData?: FicheWithRelations;
 }) {
   const trpc = useTRPC();
   return useQuery(

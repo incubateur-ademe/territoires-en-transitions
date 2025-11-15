@@ -1,26 +1,18 @@
-import { useDeleteBudgets } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-delete-budgets';
-import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
-import { useUpsertBudgets } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-upsert-budgets';
-import { ExtendedBudgetForm } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/extended-budget-form';
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
-import {
-  Alert,
-  ButtonGroup,
-  Checkbox,
-  Divider,
-  ModalFooterOKCancel,
-} from '@/ui';
+import { FicheActionBudget, FicheResume } from '@/domain/plans';
+import { ButtonGroup, Checkbox, Divider, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import classNames from 'classnames';
 import { useState } from 'react';
+import { useDeleteBudgets } from '../../data/use-delete-budgets';
+import { useUpsertBudgets } from '../../data/use-upsert-budgets';
 import { DetailedBudgetForm } from './detailed-budget-form';
+import { ExtendedBudgetForm } from './extended-budget-form';
 
 const getDefaultBudgetData = (
   ficheId: number,
   type: 'investissement' | 'fonctionnement',
   unite: 'HT' | 'ETP'
-) => {
+): FicheActionBudget => {
   return {
     ficheId,
     type,
@@ -29,17 +21,19 @@ const getDefaultBudgetData = (
     budgetPrevisionnel: undefined,
     budgetReel: undefined,
     estEtale: undefined,
-  } as BudgetType;
+  };
 };
 
 const initExtendedBudgetFormData = (
-  budgets: BudgetType[],
+  budgets: FicheActionBudget[],
   ficheId: number,
   type: 'investissement' | 'fonctionnement'
 ) => {
-  const budgetReel = budgets.filter((elt) => elt.unite === 'HT' && !elt.annee);
+  const budgetReel = budgets.filter(
+    (budget) => budget.unite === 'HT' && !budget.annee
+  );
   const budgetPrevisionnel = budgets.filter(
-    (elt) => elt.unite === 'ETP' && !elt.annee
+    (budget) => budget.unite === 'ETP' && !budget.annee
   );
 
   return [
@@ -52,8 +46,8 @@ const initExtendedBudgetFormData = (
   ];
 };
 
-const getInitFullPlanState = (budgets: BudgetType[]) => {
-  const filteredBudget = budgets.filter((elt) => !elt.annee);
+const getInitFullPlanState = (budgets: FicheActionBudget[]) => {
+  const filteredBudget = budgets.filter((budget) => !budget.annee);
   if (filteredBudget.length > 0) {
     return filteredBudget[0].estEtale;
   }
@@ -62,9 +56,9 @@ const getInitFullPlanState = (budgets: BudgetType[]) => {
 
 type BudgetModalProps = {
   openState: OpenState;
-  fiche: FicheShareProperties;
+  fiche: FicheResume;
   type: 'investissement' | 'fonctionnement';
-  budgets: BudgetType[];
+  budgets: FicheActionBudget[];
 };
 
 export const BudgetModal = ({
@@ -74,24 +68,22 @@ export const BudgetModal = ({
   budgets,
 }: BudgetModalProps) => {
   const ficheId = fiche.id;
-  // Options avec checkbox
   const [isDetailled, setIsDetailled] = useState(!!budgets[0]?.annee);
   const [isEuros, setIsEuros] = useState(true);
   const [isFullPlan, setIsFullPlan] = useState(getInitFullPlanState(budgets));
 
   const [detailedBudgetDataForm, setDetailedBudgetDataForm] = useState<
-    BudgetType[]
-  >(() => budgets.filter((elt) => !!elt.annee));
+    FicheActionBudget[]
+  >(() => budgets.filter((budget) => !!budget.annee));
   const [extendedBudgetDataForm, setExtendedBudgetDataForm] = useState<
-    BudgetType[]
+    FicheActionBudget[]
   >(() => initExtendedBudgetFormData(budgets, ficheId, type));
 
-  // Sauvegardes
   const { mutate: createBudgets } = useUpsertBudgets();
   const { mutate: deleteBudgets } = useDeleteBudgets();
 
   const handleSave = () => {
-    const newBudgets: BudgetType[] = [];
+    const newBudgets: FicheActionBudget[] = [];
 
     const budgetData = isDetailled
       ? detailedBudgetDataForm
@@ -167,14 +159,6 @@ export const BudgetModal = ({
 
             {/* Formulaire */}
             <div className="flex flex-col gap-6">
-              <Alert
-                state="warning"
-                title="Ce champ historiquement en TTC est passé en HT, veillez à vérifier vos valeurs et à les modifier le cas échéant. N’hésitez pas à contacter le support si vous avez besoin d’aide pour faire les conversions."
-                rounded
-                withBorder
-                className={classNames({ hidden: !isEuros })}
-              />
-
               {isDetailled ? (
                 <DetailedBudgetForm
                   budgets={detailedBudgetDataForm}

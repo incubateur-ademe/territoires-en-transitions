@@ -12,13 +12,12 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { FicheActionEtapeType } from '@/domain/plans/';
+import { FicheActionEtapeType, FicheResume } from '@/domain/plans/';
 import { Etape, useUpsertEtape } from './etape';
 import { useEtapesDispatch } from './etapes-context';
 
 type Props = {
-  fiche: FicheShareProperties;
+  fiche: FicheResume;
   etapes: FicheActionEtapeType[];
   isReadonly: boolean;
 };

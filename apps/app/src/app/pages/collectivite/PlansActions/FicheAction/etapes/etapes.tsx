@@ -1,6 +1,6 @@
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { SharedFicheUpdateAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-update.alert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { FicheResume } from '@/domain/plans';
 import { Checkbox } from '@/ui';
 import { useRef } from 'react';
 import { Textarea, useUpsertEtape } from './etape';
@@ -13,7 +13,7 @@ import EtapesList from './etapes-list';
 import { useGetEtapes } from './use-get-etapes';
 
 type Props = {
-  fiche: Fiche;
+  fiche: FicheResume;
   isReadonly: boolean;
 };
 

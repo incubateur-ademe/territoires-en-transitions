@@ -1,11 +1,12 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { useGetBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useGetEtapes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/etapes/use-get-etapes';
 import { useListIndicateurDefinitions } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
+import { useGetBudget } from '@/app/plans/fiches/update-fiche/data/use-get-budget';
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
+import { FicheWithRelations } from '@/domain/plans';
 import { Event, useEventTracker } from '@/ui';
+import { mapValues } from 'es-toolkit';
 import { createElement, useEffect, useState } from 'react';
 import { useAnnexesFicheActionInfos } from '../FicheAction/data/useAnnexesFicheActionInfos';
 import { useFicheActionNotesSuivi } from '../FicheAction/data/useFicheActionNotesSuivi';
@@ -15,7 +16,7 @@ import FicheActionPdf from './FicheActionPdf/FicheActionPdf';
 import { TSectionsValues, sectionsInitValue } from './utils';
 
 type FicheActionPdfContentProps = {
-  fiche: Fiche;
+  fiche: FicheWithRelations;
   options: TSectionsValues;
   generateContent: (content: JSX.Element) => void;
 };
@@ -69,10 +70,9 @@ export const FicheActionPdfContent = ({
     fiche.id,
     options.etapes.isChecked
   );
-
   const { data: budgets, isLoading: isLoadingBudget } = useGetBudget(
     { ficheId: fiche.id },
-    options.budget.isChecked
+    options.moyens.isChecked
   );
 
   const isLoading =
@@ -110,7 +110,7 @@ export const FicheActionPdfContent = ({
 };
 
 type ExportFicheActionButtonProps = {
-  fiche: Fiche;
+  fiche: FicheWithRelations;
   options?: TSectionsValues;
   disabled?: boolean;
   onDownloadEnd?: () => void;
@@ -129,9 +129,9 @@ export const ExportFicheActionButton = ({
 
   const fileName = `fiche-action-${fiche.id}`;
 
-  const selectedOptions = Object.keys(options).filter(
-    (k) => options[k].isChecked === true
-  );
+  const selectedOptions = Object.keys(
+    mapValues(options, (value: { isChecked: boolean }) => value.isChecked)
+  ).filter(Boolean);
 
   return (
     <>

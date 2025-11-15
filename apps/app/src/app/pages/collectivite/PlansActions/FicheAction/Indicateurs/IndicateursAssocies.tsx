@@ -1,8 +1,6 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import { IndicateursAssociesEmpty } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/IndicateursAssociesEmpty';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import {
@@ -10,7 +8,9 @@ import {
   useListIndicateurDefinitions,
 } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { FicheWithRelations } from '@/domain/plans';
 import { Button, Divider, Event, SideMenu, useEventTracker } from '@/ui';
 import { useState } from 'react';
 import { SharedFicheLinkedResourcesAlert } from '../../../../../../plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
@@ -19,7 +19,7 @@ import { Content } from './SideMenu/Content';
 
 type IndicateursAssociesProps = {
   isReadonly: boolean;
-  fiche: Fiche;
+  fiche: FicheWithRelations;
 };
 
 const IndicateursAssocies = ({

@@ -3,16 +3,16 @@ import {
   makeCollectivitePlanActionUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
+import { FicheWithRelations } from '@/domain/plans';
 import { Divider, Icon } from '@/ui';
 import { format } from 'date-fns';
-import { Fiche } from '../data/use-get-fiche';
 import { FicheActionCompletionStatus } from '../FicheActionCompletion/fiche-action-completion';
 import Toolbar from './actions/toolbar';
 import { FicheBreadcrumbs } from './fiche-breadcrumbs';
 import TitreFiche from './TitreFiche';
 
 type FicheActionHeaderProps = {
-  fiche: Fiche;
+  fiche: FicheWithRelations;
   isReadonly: boolean;
   updateTitle: (value: string | null) => void;
   planId?: number;
