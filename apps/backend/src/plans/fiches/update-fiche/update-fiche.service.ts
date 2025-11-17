@@ -77,11 +77,13 @@ export default class UpdateFicheService {
   async updateFiche({
     ficheId,
     ficheFields,
+    isNotificationEnabled,
     user,
     tx,
   }: {
     ficheId: number;
     ficheFields: UpdateFicheRequest;
+    isNotificationEnabled?: boolean;
     user: AuthenticatedUser;
     tx?: Transaction;
   }): Promise<Result<FicheWithRelations, UpdateFicheError>> {
@@ -415,14 +417,17 @@ export default class UpdateFicheService {
       return { success: false, error: UpdateFicheErrorEnum.FICHE_NOT_FOUND };
     }
 
-    // Ajoute les notifications pour les pilotes nouvellement associés à une sous-fiche
-    const { previousFiche } = resultUpdate.data;
     const updatedFiche = resultUpdated.data;
-    await this.notificationsFicheService.upsertPiloteNotifications({
-      updatedFiche,
-      previousFiche,
-      user,
-    });
+
+    // Ajoute les notifications pour les pilotes nouvellement associés à une sous-fiche
+    if (isNotificationEnabled) {
+      const { previousFiche } = resultUpdate.data;
+      await this.notificationsFicheService.upsertPiloteNotifications({
+        updatedFiche,
+        previousFiche,
+        user,
+      });
+    }
 
     await this.webhookService.sendWebhookNotification(
       ApplicationSousScopesEnum.FICHES,
