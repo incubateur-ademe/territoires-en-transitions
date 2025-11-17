@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray, not } from 'drizzle-orm';
+import { differenceBy, isNil } from 'es-toolkit';
 import { DatabaseError } from 'pg';
 import { z } from 'zod';
+import { PersonneTagOrUserWithContacts } from '../collectivites/shared/models/personne-tag-or-user.dto';
 import { FicheWithRelations } from '../plans/fiches/list-fiches/fiche-action-with-relations.dto';
 import ListFichesService from '../plans/fiches/list-fiches/list-fiches.service';
 import { AuthenticatedUser } from '../users/models/auth.models';
@@ -10,7 +12,6 @@ import { DatabaseService } from '../utils/database/database.service';
 import { Transaction } from '../utils/database/transaction.utils';
 import GetUrlService from '../utils/get-url.service';
 import { MethodResult } from '../utils/result.type';
-import { getNewlyAssignedPilotes } from './get-newly-assigned-pilotes';
 import { NotificationStatusEnum } from './models/notification-status.enum';
 import { GetNotificationContentResult } from './models/notification-template.dto';
 import {
@@ -22,6 +23,13 @@ import { NotifiedOnEnum } from './models/notified-on.enum';
 import { OnUpdateFichePiloteTemplate } from './models/on-update-fiche-pilote-template.dto';
 import { OnUpdateFichePiloteEmail } from './templates/on-update-fiche-pilote.email';
 
+export type UserWithEmail = Omit<
+  PersonneTagOrUserWithContacts,
+  'userId' | 'email'
+> & {
+  userId: string;
+  email: string;
+};
 type UpsertNotificationsResult = MethodResult<
   // nombre de notifications insérées
   { count: number },
@@ -73,7 +81,7 @@ export class NotificationsFicheService {
       return { success: false, error: 'User Id non valide' };
     }
     const userId = user.id;
-    const pilotes = getNewlyAssignedPilotes(
+    const pilotes = this.getNewlyAssignedPilotes(
       updatedFiche,
       previousFiche,
       userId
@@ -167,6 +175,37 @@ export class NotificationsFicheService {
     }
 
     return { success: true, data: { count: insertedCount } };
+  }
+
+  /**
+   * Donne, en excluant l'auto-assignation, les pilotes nouvellement assignés et
+   * ayant un email
+   */
+  private getNewlyAssignedPilotes(
+    updatedFiche: FicheWithRelations,
+    previousFiche: FicheWithRelations,
+    userId: string
+  ): UserWithEmail[] {
+    const withEmailAndNotAutoAssigned = (p: PersonneTagOrUserWithContacts) =>
+      !isNil(p.email) && !isNil(p.userId) && p.userId !== userId;
+
+    const pilotesWithEmailIntoUpdatedFiche = updatedFiche.pilotes?.filter(
+      withEmailAndNotAutoAssigned
+    ) as UserWithEmail[];
+    if (!pilotesWithEmailIntoUpdatedFiche?.length) return [];
+
+    const pilotesWithEmailIntoPreviousFiche = previousFiche.pilotes?.filter(
+      withEmailAndNotAutoAssigned
+    ) as UserWithEmail[];
+    if (!pilotesWithEmailIntoPreviousFiche?.length)
+      return pilotesWithEmailIntoUpdatedFiche;
+
+    // pilotes présents dans la fiche màj et qui ne l'étaient pas dans la version précédente
+    return differenceBy(
+      pilotesWithEmailIntoUpdatedFiche,
+      pilotesWithEmailIntoPreviousFiche,
+      (p) => p.email
+    );
   }
 
   /**
