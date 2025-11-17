@@ -122,9 +122,6 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     });
     testFicheIds.push(ficheId);
 
-    // charge la fiche initiale (sans pilotes)
-    const previousFiche = await getFicheWithRelations(ficheId);
-
     // ajoute des pilotes à la fiche
     await caller.plans.fiches.update({
       ficheId,
@@ -133,20 +130,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       },
     });
 
-    // Obtenir la fiche mise à jour
-    const updatedFiche = await getFicheWithRelations(ficheId);
-
-    // màj les notifications
-    const result = await notificationsService.upsertPiloteNotifications({
-      updatedFiche,
-      previousFiche,
-      user: yoloDodo,
-    });
-
-    assert(result.success);
-    expect(result.data?.count).toBe(2);
-
-    // vérifie que les notifications ont été créées
+    // vérifie que les notifications ont été créées automatiquement par update-fiche
     const notifications = await getNotificationsForFiche(ficheId);
     expect(notifications).toHaveLength(2);
     expect(notifications).toEqual(
@@ -202,15 +186,9 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
 
     const updatedFiche = await getFicheWithRelations(ficheId);
 
-    // Premier appel - crée les notifications
-    const result1 = await notificationsService.upsertPiloteNotifications({
-      updatedFiche,
-      previousFiche,
-      user: yoloDodo,
-    });
-
-    assert(result1.success);
-    expect(result1.data?.count).toBe(2);
+    // vérifie que les notifications ont été créées automatiquement par update-fiche
+    let notifications = await getNotificationsForFiche(ficheId);
+    expect(notifications).toHaveLength(2);
 
     // Deuxième appel avec la même fiche - ne doit pas créer de doublons
     const result2 = await notificationsService.upsertPiloteNotifications({
@@ -220,10 +198,10 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     });
 
     assert(result2.success);
-    expect(result2.data?.count).toBe(0); // Aucune nouvelle notification
+    expect(result2.data?.count).toBe(0); // Aucune nouvelle notification car elles existent déjà
 
     // vérifie qu'il n'y a toujours que 2 notifications
-    const notifications = await getNotificationsForFiche(ficheId);
+    notifications = await getNotificationsForFiche(ficheId);
     expect(notifications).toHaveLength(2);
   });
 
@@ -389,19 +367,6 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       },
     });
 
-    const updatedFiche2 = await getFicheWithRelations(ficheId);
-
-    // màj les notifications
-    const result = await notificationsService.upsertPiloteNotifications({
-      updatedFiche: updatedFiche2,
-      previousFiche: updatedFiche1,
-      user: yoloDodo,
-    });
-
-    assert(result.success);
-    expect(result.data?.count).toBe(2); // user2 et user3
-
-    // vérifie que la notification pour user1 a été supprimée
     // et que les notifications pour user2 et user3 ont été créées
     const notifications = await getNotificationsForFiche(ficheId);
     expect(notifications).toHaveLength(2);
