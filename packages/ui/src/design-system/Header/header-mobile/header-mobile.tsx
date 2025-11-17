@@ -1,3 +1,5 @@
+import { AdemeLogo } from '@/ui/assets/ademe.logo';
+import { RepubliqueFrancaiseLogo } from '@/ui/assets/republique-francaise.logo';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -16,7 +18,6 @@ type Props = HeaderProps & {
 
 const HeaderMobile = ({
   pathname,
-  logos,
   rootUrl,
   mainNav = { startItems: [], endItems: [] },
   secondaryNav = [],
@@ -34,7 +35,8 @@ const HeaderMobile = ({
     >
       <div className="flex justify-between items-start">
         <Link href={rootUrl ?? '/'} className="flex items-center h-24 bg-none">
-          {[0, 1].map((i) => logos?.[i])}
+          <RepubliqueFrancaiseLogo />
+          <AdemeLogo />
         </Link>
         <Button
           icon={isOpen ? 'close-line' : 'menu-line'}

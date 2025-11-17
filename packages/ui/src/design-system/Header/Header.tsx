@@ -1,7 +1,3 @@
-import { AdemeLogo } from '../../assets/ademe.logo';
-import { ProgrammeTeTeLogo } from '../../assets/programme-tete.logo';
-import { RepubliqueFrancaiseLogo } from '../../assets/republique-francaise.logo';
-import { TerritoiresEnTransitionsLogo } from '../../assets/territoires-en-transitions.logo';
 import HeaderDesktop from './header-desktop/header-desktop';
 import HeaderMobile from './header-mobile/header-mobile';
 import { NavItem } from './types';
@@ -11,8 +7,6 @@ export type HeaderProps = {
   pathname?: string;
   /** Url custom lors du clic sur les logos */
   rootUrl?: string;
-  /** Liste de logos à afficher à gauche du header. */
-  logos?: React.ReactNode[];
   mainNav?: {
     startItems: NavItem[];
     endItems?: NavItem[];
@@ -24,12 +18,6 @@ export type HeaderProps = {
 export const Header = ({
   pathname,
   rootUrl = '/',
-  logos = [
-    <RepubliqueFrancaiseLogo />,
-    <AdemeLogo />,
-    <ProgrammeTeTeLogo />,
-    <TerritoiresEnTransitionsLogo />,
-  ],
   mainNav,
   secondaryNav,
   id,
@@ -43,7 +31,6 @@ export const Header = ({
         className="max-lg:hidden"
         rootUrl={rootUrl}
         pathname={pathname}
-        logos={logos}
         mainNav={mainNav}
         secondaryNav={secondaryNav}
       />
@@ -51,7 +38,6 @@ export const Header = ({
         className="lg:hidden"
         rootUrl={rootUrl}
         pathname={pathname}
-        logos={logos}
         mainNav={mainNav}
         secondaryNav={secondaryNav}
       />

@@ -1,17 +1,9 @@
 import { Meta, StoryObj } from '@storybook/nextjs';
-import { AdemeLogo } from '../../assets/ademe.logo';
-import { RepubliqueFrancaiseLogo } from '../../assets/republique-francaise.logo';
-import { TerritoiresEnTransitionsLogo } from '../../assets/territoires-en-transitions.logo';
 import { Header } from './Header';
 
 const meta: Meta<typeof Header> = {
   component: Header,
   args: {
-    logos: [
-      <RepubliqueFrancaiseLogo />,
-      <AdemeLogo />,
-      <TerritoiresEnTransitionsLogo />,
-    ],
     mainNav: {
       startItems: [
         {
