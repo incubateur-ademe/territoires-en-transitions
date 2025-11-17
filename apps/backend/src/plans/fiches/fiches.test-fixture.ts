@@ -28,6 +28,7 @@ export async function createFicheAndCleanupFunction({
         axes: axeId ? [{ id: axeId }] : undefined,
         pilotes,
       },
+      isNotificationEnabled: true,
     });
   }
 
