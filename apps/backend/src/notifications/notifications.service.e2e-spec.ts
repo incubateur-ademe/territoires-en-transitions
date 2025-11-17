@@ -186,15 +186,27 @@ describe('NotificationsService - sendPendingNotifications', () => {
     });
     testFicheIds.push(ficheId);
 
-    const notification = await createTestNotification({
-      ficheId,
-      userId: pilote.userId,
-      createdBy: admin.userId,
-      createdAt,
-      retries,
-      status,
-    });
-    assert(notification.id);
+    // Récupère la notification créée automatiquement par createFiche
+    const notifications = await getNotificationsForFiche(ficheId);
+    const notification = notifications.find((n) => n.sendTo === pilote.userId);
+    assert(notification);
+
+    // Met à jour la notification
+    const [updatedNotification] = await databaseService.db
+      .update(notificationTable)
+      .set({
+        retries,
+        status,
+        // Si createdAt n'est pas fourni explicitement, on le définit à il y a 30 minutes
+        // pour que la notification soit envoyable (le délai minimum est de 15 minutes)
+        createdAt: createdAt || DateTime.now().minus({ minutes: 30 }).toSQL(),
+      })
+      .where(eq(notificationTable.id, notification.id))
+      .returning();
+
+    assert(updatedNotification.id === notification.id);
+
+    testNotificationIds.push(notification.id);
 
     return { caller, admin, pilote, notification, ficheId };
   }
