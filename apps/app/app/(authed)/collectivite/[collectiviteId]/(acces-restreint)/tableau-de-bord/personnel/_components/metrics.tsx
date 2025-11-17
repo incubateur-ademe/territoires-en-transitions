@@ -1,4 +1,5 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
+import { useUser } from '@/api/users/user-context/user-provider';
 import {
   makeCollectiviteIndicateursListUrl,
   makeCollectivitePlansActionsListUrl,
@@ -6,12 +7,12 @@ import {
   makeCollectiviteToutesLesFichesUrl,
   makeTdbCollectiviteUrl,
 } from '@/app/app/paths';
+import { nameToparams } from '@/app/plans/fiches/list-all-fiches/filters/filters-search-parameters-mapper';
 import {
   MetricCard,
   MetricCardProps,
 } from '@/app/tableaux-de-bord/metrics/metric.card';
 import { MetricCardSkeleton } from '@/app/tableaux-de-bord/metrics/metric.card-skeleton';
-
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { PermissionOperation } from '@/domain/users';
 import { useTdbPersoFetchMetrics } from '../_hooks/use-tdb-perso-fetch-metrics';
@@ -49,7 +50,7 @@ function getMetricsToDisplay(
 
 const Metrics = () => {
   const { collectiviteId, permissions } = useCurrentCollectivite();
-
+  const { id: userId } = useUser();
   const { data: metrics, isLoading } = useTdbPersoFetchMetrics();
 
   const metricDescriptors: MetricDescriptor[] = [
@@ -83,7 +84,10 @@ const Metrics = () => {
       link: ({ count }) =>
         count > 0
           ? {
-              href: makeCollectiviteToutesLesFichesUrl({ collectiviteId }),
+              href: makeCollectiviteToutesLesFichesUrl({
+                collectiviteId,
+                searchParams: `${nameToparams.utilisateurPiloteIds}=${userId}`,
+              }),
               children: 'Voir les actions',
             }
           : undefined,
