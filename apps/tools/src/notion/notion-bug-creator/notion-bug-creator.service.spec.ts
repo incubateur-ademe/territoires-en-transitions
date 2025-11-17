@@ -1,4 +1,4 @@
-import { TrpcClientService } from '@/tools/utils/trpc/trpc-client.service';
+import { TrpcClientService } from '../../utils/trpc/trpc-client.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ToolsAutomationApiConfigurationType } from '../../config/configuration.model';
 import ConfigurationService from '../../config/configuration.service';

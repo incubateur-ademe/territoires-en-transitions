@@ -1,13 +1,13 @@
-import { getErrorMessage } from '@/backend/utils/get-error-message';
-import { AirtableService } from '@/tools/airtable/airtable.service';
-import { CrispMessageReceivedEventDataDto } from '@/tools/crisp/models/crisp-message-received-event-data.dto';
-import { CrispOperatorIndo } from '@/tools/crisp/models/get-crisp-operator.response';
+import { getErrorMessage } from '@/domain/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import Crisp from 'crisp-api';
 import { DateTime } from 'luxon';
+import { AirtableService } from '../../airtable/airtable.service';
 import ConfigurationService from '../../config/configuration.service';
 import { NotionBugCreatorService } from '../../notion/notion-bug-creator/notion-bug-creator.service';
 import { CrispEventRequest } from '../models/crisp-event.request';
+import { CrispMessageReceivedEventDataDto } from '../models/crisp-message-received-event-data.dto';
+import { CrispOperatorIndo } from '../models/get-crisp-operator.response';
 import { CrispSessionMessage } from '../models/get-crisp-session-messages.response';
 import { CrispSession } from '../models/get-crisp-session.response';
 

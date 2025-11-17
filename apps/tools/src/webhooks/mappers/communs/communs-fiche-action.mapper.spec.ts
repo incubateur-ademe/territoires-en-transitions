@@ -1,10 +1,13 @@
-import { FicheWithRelationsAndCollectivite } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
+import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
 import { CommunsFicheActionMapper } from './communs-fiche-action.mapper';
+
+const collectiviteId = 4708;
 
 describe('CommunsFicheActionMapper', () => {
   test('Standard mapping', async () => {
     const ficheAction: FicheWithRelationsAndCollectivite = {
       id: 10108,
+      parentId: null,
       createdBy: {
         id: '3fb7dbe4-6af2-4f8d-a199-fe381014d85e',
         prenom: 'Caroline',
@@ -16,10 +19,11 @@ describe('CommunsFicheActionMapper', () => {
           nom: 'Axe 4: Aménager un territoire durable : bien vivre au Bassin de Pompey',
           parentId: null,
           planId: null,
+          collectiviteId,
         },
       ],
-      tags: null,
-      plans: [{ id: 8017, nom: 'PCAET 2022-2028' }],
+      libreTags: null,
+      plans: [{ id: 8017, nom: 'PCAET 2022-2028', collectiviteId }],
       titre:
         "Fiche 12: Prévenir les conséquences du changement climatique : Consolidation et mise en œuvre d'une stratégie d’atténuation et d'adaptation au changement climatique ambitieuse",
       cibles: [
@@ -40,7 +44,7 @@ describe('CommunsFicheActionMapper', () => {
         },
       ],
       priorite: null,
-      services: [{ id: 9475, nom: 'Environnement' }],
+      services: [{ id: 9475, nom: 'Environnement', collectiviteId }],
       createdAt: '2023-09-19 14:05:42.168359+00',
       dateDebut: '2019-11-01 00:00:00+00',
       objectifs: "Texte d'objectif",
@@ -53,7 +57,14 @@ describe('CommunsFicheActionMapper', () => {
       ],
       restreint: false,
       calendrier: null,
-      financeurs: [{ id: 2193, nom: 'ADEME' }],
+      financeurs: [
+        {
+          ficheId: 10108,
+          montantTtc: null,
+          financeurTagId: 2193,
+          financeurTag: { id: 2193, nom: 'ADEME', collectiviteId },
+        },
+      ],
       majTermine: null,
       modifiedAt: '2025-04-02 16:00:19.987446+00',
       modifiedBy: {
@@ -82,6 +93,8 @@ describe('CommunsFicheActionMapper', () => {
         natureInsee: 'CC',
         accesRestreint: false,
         departementCode: '54',
+        nic: null,
+        dansAireUrbaine: null,
       },
       financements: null,
       collectiviteId: 4708,
@@ -89,7 +102,9 @@ describe('CommunsFicheActionMapper', () => {
         { id: 1, nom: 'Adaptation au changement climatique', notice: null },
         { id: 5, nom: 'Préservation de la biodiversité', notice: null },
       ],
-      sousThematiques: [{ id: 36, nom: 'Adaptation au changement climatique' }],
+      sousThematiques: [
+        { id: 36, nom: 'Adaptation au changement climatique', thematiqueId: 5 },
+      ],
       budgetPrevisionnel: '12000',
       instanceGouvernance: null,
       tempsDeMiseEnOeuvre: null,
@@ -102,6 +117,14 @@ describe('CommunsFicheActionMapper', () => {
       docs: null,
       fichesLiees: null,
       mesures: null,
+      collectiviteNom: 'CC du Bassin de Pompey',
+      sharedWithCollectivites: null,
+      budgets: null,
+      completion: {
+        ficheId: 10108,
+        fields: [],
+        isCompleted: false,
+      },
     };
 
     const mapper = new CommunsFicheActionMapper();

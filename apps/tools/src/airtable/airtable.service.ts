@@ -1,19 +1,19 @@
-import { AirtableErrorResponse } from '@/tools/airtable/airtable-error.response';
-import { AirtableFeedbackRecord } from '@/tools/airtable/airtable-feedback.record';
-import { AirtableFetchRecordsRequest } from '@/tools/airtable/airtable-fetch-records.request';
-import { AirtableFetchRecordsResponse } from '@/tools/airtable/airtable-fetch-records.response';
-import { AirtableInsertRecordsRequest } from '@/tools/airtable/airtable-insert-records.request';
-import { AirtableInsertRecordsResponse } from '@/tools/airtable/airtable-insert-records.response';
-import { AirtableProspectRecord } from '@/tools/airtable/airtable-prospect.record';
-import { AirtableRowInsertDto } from '@/tools/airtable/airtable-row-insert.dto';
-import { AirtableRowDto } from '@/tools/airtable/airtable-row.dto';
-import { AirtableUserRecord } from '@/tools/airtable/airtable-user.record';
-import ConfigurationService from '@/tools/config/configuration.service';
+import { AirtableErrorResponse } from './airtable-error.response';
+import { AirtableFeedbackRecord } from './airtable-feedback.record';
+import { AirtableFetchRecordsRequest } from './airtable-fetch-records.request';
+import { AirtableFetchRecordsResponse } from './airtable-fetch-records.response';
+import { AirtableInsertRecordsRequest } from './airtable-insert-records.request';
+import { AirtableInsertRecordsResponse } from './airtable-insert-records.response';
+import { AirtableProspectRecord } from './airtable-prospect.record';
+import { AirtableRowInsertDto } from './airtable-row-insert.dto';
+import { AirtableRowDto } from './airtable-row.dto';
+import { AirtableUserRecord } from './airtable-user.record';
+import ConfigurationService from '../config/configuration.service';
 import {
   CrispSessionMessage,
   CrispUser,
-} from '@/tools/crisp/models/get-crisp-session-messages.response';
-import { CrispSession } from '@/tools/crisp/models/get-crisp-session.response';
+} from '../crisp/models/get-crisp-session-messages.response';
+import { CrispSession } from '../crisp/models/get-crisp-session.response';
 import { Injectable, Logger } from '@nestjs/common';
 import { chunk } from 'es-toolkit';
 import { DateTime } from 'luxon';

@@ -1,12 +1,12 @@
-import { CalendlyModule } from '@/tools/calendly/calendly.module';
-import { ConnectModule } from '@/tools/connect/connect.module';
-import { CronConsumerService } from '@/tools/cron/cron-consumer.service';
+import { CalendlyModule } from '../calendly/calendly.module';
+import { ConnectModule } from '../connect/connect.module';
+import { CronConsumerService } from './cron-consumer.service';
 import {
   CRON_JOBS_QUEUE_NAME,
   DEFAULT_JOB_OPTIONS,
-} from '@/tools/cron/cron.config';
-import { ToolsIndicateursModule } from '@/tools/indicateurs/tools-indicateurs.module';
-import { UtilsModule } from '@/tools/utils/utils.module';
+} from './cron.config';
+import { ToolsIndicateursModule } from '../indicateurs/tools-indicateurs.module';
+import { UtilsModule } from '../utils/utils.module';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { BullModule } from '@nestjs/bullmq';

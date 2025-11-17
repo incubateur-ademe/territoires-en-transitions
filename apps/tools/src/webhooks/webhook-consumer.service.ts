@@ -1,26 +1,19 @@
+import { WEBHOOK_NOTIFICATIONS_QUEUE_NAME } from '@/backend/utils/bullmq/queue-names.constants';
 import { ContextStoreService } from '@/backend/utils/context/context.service';
 import { getSentryContextFromApplicationContext } from '@/backend/utils/sentry-init';
-import { ApplicationSousScopesType } from '@/backend/utils/application-domains.enum';
-import { getErrorMessage } from '@/backend/utils/get-error-message';
-import { WEBHOOK_NOTIFICATIONS_QUEUE_NAME } from '@/backend/utils/bullmq/queue-names.constants';
+import { webhookConfigurationTable } from '@/backend/utils/webhooks/webhook-configuration.table';
+import { webhookMessageTable } from '@/backend/utils/webhooks/webhook-message.table';
 import {
+  ApplicationSousScopesType,
+  getErrorMessage,
+  WebhookAuthenticationMethod,
   WebhookAuthenticationMethodEnum,
-  WebhookAuthenticationMethodType,
-} from '@/backend/utils/webhooks/webhook-authentication-method.enum';
-import {
   WebhookConfiguration,
-  webhookConfigurationTable,
-} from '@/backend/utils/webhooks/webhook-configuration.table';
-import {
   WebhookMessage,
-  webhookMessageTable,
-} from '@/backend/utils/webhooks/webhook-message.table';
-import {
+  WebhookPayloadFormat,
   WebhookPayloadFormatEnum,
-  WebhookPayloadFormatType,
-} from '@/backend/utils/webhooks/webhook-payload-format.enum';
-import { WebhookStatusType } from '@/backend/utils/webhooks/webhook-status.enum';
-import { CommunsFicheActionMapper } from '@/tools/webhooks/mappers/communs/communs-fiche-action.mapper';
+  WebhookStatus,
+} from '@/domain/utils';
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import {
   Injectable,
@@ -35,6 +28,7 @@ import { DateTime } from 'luxon';
 import ConfigurationService from '../config/configuration.service';
 import { DatabaseService } from '../utils/database/database.service';
 import { IEntityMapper } from './mappers/AbstractEntityMapper';
+import { CommunsFicheActionMapper } from './mappers/communs/communs-fiche-action.mapper';
 
 @Processor(WEBHOOK_NOTIFICATIONS_QUEUE_NAME)
 @Injectable()
@@ -67,7 +61,7 @@ export class WebhookConsumerService extends WorkerHost {
 
   private getEntityMapper(
     entityType: ApplicationSousScopesType,
-    format: WebhookPayloadFormatType
+    format: WebhookPayloadFormat
   ): IEntityMapper {
     const mapper = this.entityMappers.get(`${entityType}_${format}`);
     if (!mapper) {
@@ -121,7 +115,7 @@ export class WebhookConsumerService extends WorkerHost {
   }
 
   async getAuthenticationHeaders(
-    authenticationMethod: WebhookAuthenticationMethodType,
+    authenticationMethod: WebhookAuthenticationMethod,
     secret: any
   ): Promise<Record<string, string>> {
     this.logger.log(
@@ -151,7 +145,7 @@ export class WebhookConsumerService extends WorkerHost {
     jobId,
   }: {
     url: string;
-    authenticationMethod: WebhookAuthenticationMethodType;
+    authenticationMethod: WebhookAuthenticationMethod;
     secretKey: string;
     payload: any;
     retryCount: number;
@@ -180,7 +174,7 @@ export class WebhookConsumerService extends WorkerHost {
     });
     const responseText = await response.text();
     let externalId: string | null = null;
-    const status: WebhookStatusType = response.ok ? 'success' : 'error';
+    const status: WebhookStatus = response.ok ? 'success' : 'error';
     let jsonResponse: any = null;
     if (!response.ok) {
       this.logger.error(`Error sending webhook notification: ${responseText}`);
