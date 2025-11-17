@@ -81,7 +81,7 @@ export const TableLoading = ({
     </Row>
   ));
 
-export const TRowEmpty = ({
+export const TableEmpty = ({
   columnIds,
   title,
   classNames,

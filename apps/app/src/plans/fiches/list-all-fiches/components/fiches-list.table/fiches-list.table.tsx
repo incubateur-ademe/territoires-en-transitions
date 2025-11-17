@@ -17,7 +17,8 @@ import { FichesListCellDateFin } from './cells/fiches-list.cell-date-fin';
 import { FichesListCellPilotes } from './cells/fiches-list.cell-pilotes';
 import { FichesListCellPlans } from './cells/fiches-list.cell-plans';
 import { FichesListCellTitle } from './cells/fiches-list.cell-title';
-import { HeaderCell, Row, TableLoading, TRowEmpty } from './components';
+import { HeaderCell } from './components';
+import { FichesListTableContent } from './fiches-list.table-content';
 
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -143,26 +144,11 @@ export const FichesListTable = ({
           ))}
         </thead>
         <tbody>
-          {isLoading ? (
-            <TableLoading
-              columnIds={table.getVisibleFlatColumns().map((col) => col.id)}
-            />
-          ) : fiches.length === 0 ? (
-            <TRowEmpty
-              columnIds={table.getVisibleFlatColumns().map((col) => col.id)}
-              title="Aucune action ne correspond à votre recherche"
-            />
-          ) : (
-            table.getRowModel().rows.map((row) => (
-              <Row key={row.id} className="text-sm">
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="px-4 py-3">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </Row>
-            ))
-          )}
+          <FichesListTableContent
+            isLoading={isLoading}
+            isEmpty={fiches.length === 0}
+            table={table}
+          />
         </tbody>
       </table>
     </div>
