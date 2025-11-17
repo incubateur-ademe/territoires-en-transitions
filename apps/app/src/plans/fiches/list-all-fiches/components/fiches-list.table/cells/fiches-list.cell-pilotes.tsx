@@ -13,7 +13,9 @@ export const FichesListCellPilotes = ({ pilotes }: Props) => {
       title={pilotes[0].nom}
       list={pilotes.map((p) => p.nom)}
       className="text-grey-8"
-      displayedTextClassName="max-w-48 line-clamp-1"
+      renderFirstItem={(item) => (
+        <span className="max-w-48 line-clamp-1">{item}</span>
+      )}
     />
   );
 };
