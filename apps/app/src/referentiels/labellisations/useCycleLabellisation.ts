@@ -17,6 +17,7 @@ export type TCycleLabellisation = {
   labellisable: boolean;
   peutDemanderEtoile: boolean;
   peutCommencerAudit: boolean;
+  peutDemander1ereEtoileCOT: boolean;
 };
 
 // état consolidé du cycle de labellisation/audit
@@ -54,6 +55,11 @@ export const useCycleLabellisation = (
   const status = getParcoursStatus(parcours);
   const isCOT = Boolean(identite?.is_cot);
 
+  // cas spéciaux pour les COT
+  const peutDemander1ereEtoileCOT = Boolean(
+    etoiles === 1 && isCOT && completude_ok
+  );
+
   // on peut demander une étoile si...
   // TODO: à mettre dans le backend et à tester unitairement
   const peutDemanderEtoile = Boolean(
@@ -78,6 +84,7 @@ export const useCycleLabellisation = (
     isAuditeur,
     isCOT,
     peutDemanderEtoile,
+    peutDemander1ereEtoileCOT,
     peutCommencerAudit,
     labellisable,
   };

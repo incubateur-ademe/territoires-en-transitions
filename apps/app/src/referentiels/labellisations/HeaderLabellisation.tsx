@@ -27,6 +27,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
     isCOT,
     peutDemanderEtoile,
     peutCommencerAudit,
+    peutDemander1ereEtoileCOT,
   } = parcoursLabellisation;
 
   const { data: auditeurs } = useAuditeurs();
@@ -41,7 +42,6 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   );
   const { etoiles, audit, completude_ok, labellisation } = parcours;
   const canSubmitDemande = peutDemanderEtoile || (isCOT && completude_ok);
-  const peutDemander1ereEtoileCOT = etoiles === 1 && isCOT && completude_ok;
   const DemandeModal = isCOT ? DemandeAuditModal : DemandeLabellisationModal;
   const auditId = audit?.id;
   return (
