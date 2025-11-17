@@ -1,8 +1,4 @@
-import {
-  useFicheActionAddPilote,
-  useFicheActionRemoveTagPilote,
-  useFicheActionRemoveUserPilote,
-} from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionPilote';
+import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
@@ -32,19 +28,8 @@ type Props = {
 /**
  * Modale pour modifier une fiche action.
  */
-const ModifierFicheModale = ({
-  initialFiche,
-  isOpen,
-  setIsOpen,
-  keysToInvalidate,
-}: Props) => {
+const ModifierFicheModale = ({ initialFiche, isOpen, setIsOpen }: Props) => {
   const { mutate: updateFiche } = useUpdateFiche();
-
-  const { mutate: addPilotes } = useFicheActionAddPilote(keysToInvalidate);
-  const { mutate: removeUserPilotes } =
-    useFicheActionRemoveUserPilote(keysToInvalidate);
-  const { mutate: removeTagPilotes } =
-    useFicheActionRemoveTagPilote(keysToInvalidate);
 
   const [fiche, setFiche] = useState(initialFiche);
 
@@ -180,49 +165,6 @@ const ModifierFicheModale = ({
             <ModalFooterOKCancel
               btnOKProps={{
                 onClick: () => {
-                  const pilotesToAdd =
-                    fiche.pilotes
-                      ?.filter(
-                        (finalPilote) =>
-                          !initialFiche.pilotes?.some(
-                            (oldPilote) => finalPilote.nom === oldPilote.nom
-                          )
-                      )
-                      .map((pilote) => ({
-                        ficheId: fiche.id,
-                        userId: pilote.userId,
-                        tagId: pilote.tagId,
-                      })) ?? [];
-
-                  if (pilotesToAdd.length > 0) {
-                    addPilotes(pilotesToAdd);
-                  }
-
-                  const pilotesToRemove =
-                    initialFiche.pilotes
-                      ?.filter(
-                        (oldPilote) =>
-                          !fiche.pilotes?.some(
-                            (finalPilote) => finalPilote.nom === oldPilote.nom
-                          )
-                      )
-                      .map((pilote) => ({
-                        ficheId: fiche.id,
-                        userId: pilote.userId,
-                        tagId: pilote.tagId,
-                      })) ?? [];
-                  if (pilotesToRemove.length > 0) {
-                    const pilotesTag = pilotesToRemove.filter(
-                      (pilote) => pilote.tagId
-                    );
-                    if (pilotesTag.length > 0) {
-                      removeTagPilotes(pilotesTag);
-                    }
-                    const pilotesUser = pilotesToRemove.filter(
-                      (pilote) => pilote.userId
-                    );
-                    removeUserPilotes(pilotesUser);
-                  }
                   updateFiche({ ficheId: fiche.id, ficheFields: fiche });
                   close();
                 },
