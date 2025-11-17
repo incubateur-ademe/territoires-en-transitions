@@ -131,9 +131,14 @@ export const FichesListTable = ({
         <thead className="sticky top-0 shadow-[0_1px_0px_0px] shadow-grey-3 z-[1]">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} className="bg-white">
-              {headerGroup.headers.map((header) =>
-                flexRender(header.column.columnDef.header, header.getContext())
-              )}
+              {headerGroup.headers.map((header) => (
+                <Fragment key={header.id}>
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext()
+                  )}
+                </Fragment>
+              ))}
             </tr>
           ))}
         </thead>
