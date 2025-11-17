@@ -78,7 +78,12 @@ const columns = [
 
   columnHelper.accessor('dateFin', {
     header: () => <HeaderCell title="Date de fin" className="w-32" />,
-    cell: (info) => <FichesListCellDateFin date={info.getValue()} />,
+    cell: (info) => (
+      <FichesListCellDateFin
+        dateFin={info.getValue()}
+        statut={info.row.original.statut}
+      />
+    ),
   }),
 
   columnHelper.display({
