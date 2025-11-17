@@ -1,4 +1,3 @@
-import { BulkEditRequest } from '@/domain/plans';
 import { expect } from '@playwright/test';
 import { testWithUsers as test } from '../users.fixture';
 
@@ -38,7 +37,7 @@ test.describe('Role edition fiches indicateurs', () => {
         collectivite.data.id
       }`
     );
-    const bulkEditRequest: BulkEditRequest = {
+    const bulkEditRequest = {
       collectiviteId: collectivite.data.id,
       ficheIds: createdFicheIds,
       pilotes: {
