@@ -5,7 +5,7 @@ import {
   RowData,
   useReactTable,
 } from '@tanstack/react-table';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 
 import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
@@ -17,7 +17,7 @@ import { FichesListCellDateFin } from './cells/fiches-list.cell-date-fin';
 import { FichesListCellPilotes } from './cells/fiches-list.cell-pilotes';
 import { FichesListCellPlans } from './cells/fiches-list.cell-plans';
 import { FichesListCellTitle } from './cells/fiches-list.cell-title';
-import { THeadCell, TRow, TRowEmpty, TRowLoading } from './components';
+import { HeaderCell, Row, TableLoading, TRowEmpty } from './components';
 
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -32,7 +32,7 @@ const columnHelper = createColumnHelper<FicheWithRelationsAndCollectivite>();
 const columns = [
   columnHelper.display({
     id: 'select',
-    header: () => <THeadCell className="w-12" />,
+    header: () => <HeaderCell className="w-12" />,
     cell: ({ row, table }) => (
       <FichesListCellCheckbox
         ficheId={row.original.id}
@@ -43,19 +43,19 @@ const columns = [
   }),
 
   columnHelper.accessor('titre', {
-    header: () => <THeadCell title="Titre" />,
+    header: () => <HeaderCell title="Titre" />,
     cell: (info) => (
       <FichesListCellTitle title={info.getValue()} fiche={info.row.original} />
     ),
   }),
 
   columnHelper.accessor('plans', {
-    header: () => <THeadCell title="Plan" className="w-40 xl:w-60" />,
+    header: () => <HeaderCell title="Plan" className="w-40 xl:w-60" />,
     cell: (info) => <FichesListCellPlans plans={info.getValue()} />,
   }),
 
   columnHelper.accessor('statut', {
-    header: () => <THeadCell title="Statut" className="w-32" />,
+    header: () => <HeaderCell title="Statut" className="w-32" />,
     cell: (info) => {
       const statut = info.getValue();
       return statut && <BadgeStatut statut={statut} size="sm" />;
@@ -63,12 +63,12 @@ const columns = [
   }),
 
   columnHelper.accessor('pilotes', {
-    header: () => <THeadCell title="Pilote" className="w-44" />,
+    header: () => <HeaderCell title="Pilote" className="w-44" />,
     cell: (info) => <FichesListCellPilotes pilotes={info.getValue()} />,
   }),
 
   columnHelper.accessor('priorite', {
-    header: () => <THeadCell title="Priorité" className="w-24" />,
+    header: () => <HeaderCell title="Priorité" className="w-24" />,
     cell: (info) => {
       const priorite = info.getValue();
       return priorite && <BadgePriorite priorite={priorite} size="sm" />;
@@ -76,13 +76,13 @@ const columns = [
   }),
 
   columnHelper.accessor('dateFin', {
-    header: () => <THeadCell title="Date de fin" className="w-32" />,
+    header: () => <HeaderCell title="Date de fin" className="w-32" />,
     cell: (info) => <FichesListCellDateFin date={info.getValue()} />,
   }),
 
   columnHelper.display({
     id: 'actions',
-    header: () => <THeadCell className="w-16" icon="more-2-line" />,
+    header: () => <HeaderCell className="w-16" icon="more-2-line" />,
     cell: (info) => <FichesListCellActions fiche={info.row.original} />,
   }),
 ];
@@ -139,7 +139,7 @@ export const FichesListTable = ({
         </thead>
         <tbody>
           {isLoading ? (
-            <TRowLoading
+            <TableLoading
               columnIds={table.getVisibleFlatColumns().map((col) => col.id)}
             />
           ) : fiches.length === 0 ? (
@@ -149,13 +149,13 @@ export const FichesListTable = ({
             />
           ) : (
             table.getRowModel().rows.map((row) => (
-              <TRow key={row.id} className="text-sm">
+              <Row key={row.id} className="text-sm">
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="px-4 py-3">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
-              </TRow>
+              </Row>
             ))
           )}
         </tbody>
