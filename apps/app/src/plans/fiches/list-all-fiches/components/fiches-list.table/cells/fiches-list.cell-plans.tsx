@@ -14,7 +14,9 @@ export const FichesListCellPlans = ({ plans }: Props) => {
       title={plans[0].nom}
       list={plans.map((p) => generateTitle(p.nom))}
       className="text-grey-8"
-      displayedTextClassName="max-w-64 line-clamp-2"
+      renderFirstItem={(item) => (
+        <span className="max-w-48 line-clamp-2">{item}</span>
+      )}
     />
   );
 };

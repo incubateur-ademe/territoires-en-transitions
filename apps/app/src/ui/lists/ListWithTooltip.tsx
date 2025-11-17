@@ -8,7 +8,7 @@ type Props = {
   hoveringColor?: 'grey' | 'primary';
   onClick?: () => void;
   className?: string;
-  displayedTextClassName?: string;
+  renderFirstItem?: (item: string) => React.ReactNode;
   disabled?: boolean;
 };
 
@@ -17,7 +17,7 @@ const ListWithTooltip = ({
   list,
   icon,
   hoveringColor = 'primary',
-  displayedTextClassName,
+  renderFirstItem,
   onClick,
   className,
   disabled,
@@ -43,7 +43,7 @@ const ListWithTooltip = ({
       )}
     >
       {!!icon && <Icon icon={icon} size="sm" className="mr-1" />}
-      <span className={cn(displayedTextClassName)}>{firstItem}</span>
+      {renderFirstItem ? renderFirstItem(firstItem) : <span>{firstItem}</span>}
       {otherItems.length > 0 && (
         <Tooltip
           openingDelay={250}
