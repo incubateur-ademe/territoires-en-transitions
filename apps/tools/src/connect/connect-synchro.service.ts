@@ -1,8 +1,8 @@
-import { UpsertExportConnect } from '@/backend/collectivites/membres/export-connect.table';
-import { SireneService } from '@/tools/sirene/sirene.service';
-import { sleep } from '@/tools/utils/sleep.utils';
+import { ExportConnectCreate } from '@/domain/collectivites';
 import { Injectable, Logger } from '@nestjs/common';
 import { chunk } from 'es-toolkit';
+import { SireneService } from '../sirene/sirene.service';
+import { sleep } from '../utils/sleep.utils';
 import { TrpcClientService } from '../utils/trpc/trpc-client.service';
 import { ConnectApiService } from './connect-api.service';
 
@@ -52,7 +52,7 @@ export class ConnectSynchroService {
     const membreChunks: Array<typeof membres> = chunk(membres, this.CHUNK_SIZE);
     for (const membreChunk of membreChunks) {
       await sleep(100);
-      const exported: UpsertExportConnect = [];
+      const exported: ExportConnectCreate[] = [];
       await Promise.all(
         membreChunk.map(async (membre) => {
           const isExported = await this.connectApiService.upsertContact(membre);

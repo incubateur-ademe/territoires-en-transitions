@@ -1,9 +1,11 @@
-import { ApplicationSousScopesType } from '@/backend/utils/application-domains.enum';
-import { WebhookPayloadFormatType } from '@/backend/utils/webhooks/webhook-payload-format.enum';
+import {
+  ApplicationSousScopesType,
+  WebhookPayloadFormat,
+} from '@/domain/utils';
 
 export interface IEntityMapper {
   entityType: ApplicationSousScopesType;
-  format: WebhookPayloadFormatType;
+  format: WebhookPayloadFormat;
 
   map(input: unknown): unknown;
 }
@@ -13,7 +15,7 @@ export abstract class AbstractEntityMapper<FromType, ToType>
 {
   constructor(
     public readonly entityType: ApplicationSousScopesType,
-    public readonly format: WebhookPayloadFormatType
+    public readonly format: WebhookPayloadFormat
   ) {}
 
   /**

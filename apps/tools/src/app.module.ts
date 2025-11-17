@@ -1,11 +1,11 @@
 import { Logger, Module } from '@nestjs/common';
 
-import { AirtableModule } from '@/tools/airtable/airtable.module';
-import { CalendlyModule } from '@/tools/calendly/calendly.module';
-import { CronModule } from '@/tools/cron/cron.module';
-import { ToolsIndicateursModule } from '@/tools/indicateurs/tools-indicateurs.module';
-import { SireneModule } from '@/tools/sirene/sirene.module';
-import { WebhookModule } from '@/tools/webhooks/webhook.module';
+import { AirtableModule } from './airtable/airtable.module';
+import { CalendlyModule } from './calendly/calendly.module';
+import { CronModule } from './cron/cron.module';
+import { ToolsIndicateursModule } from './indicateurs/tools-indicateurs.module';
+import { SireneModule } from './sirene/sirene.module';
+import { WebhookModule } from './webhooks/webhook.module';
 import { ExpressAdapter } from '@bull-board/express';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { BullModule } from '@nestjs/bullmq';

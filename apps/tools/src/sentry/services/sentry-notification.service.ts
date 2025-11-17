@@ -1,9 +1,9 @@
-import { getErrorMessage } from '@/backend/utils/get-error-message';
-import { SentryEventWebhookPayload } from '@/tools/sentry/models/SentryEventWebhookPayload';
-import MattermostNotificationService from '@/tools/utils/mattermost-notification.service';
+import { getErrorMessage } from '@/domain/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { DateTime } from 'luxon';
 import ConfigurationService from '../../config/configuration.service';
+import MattermostNotificationService from '../../utils/mattermost-notification.service';
+import { SentryEventWebhookPayload } from '../models/SentryEventWebhookPayload';
 
 @Injectable()
 export class SentryNotificationService {
