@@ -1,5 +1,6 @@
 import { Statut } from '@/domain/plans';
 import { Locator, Page } from '@playwright/test';
+
 export class FilterFichesPom {
   readonly page: Page;
   readonly statutsSelector: Locator;

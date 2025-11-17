@@ -1,8 +1,5 @@
 import { expect } from '@playwright/test';
-import {
-  fillAndSubmitLoginForm,
-  goToAuthUrl,
-} from 'e2e/tests/users/auth.utils';
+import { fillAndSubmitLoginForm, goToAuthUrl } from './auth.utils';
 import { testWithUsers as test } from './users.fixture';
 
 // Test data
