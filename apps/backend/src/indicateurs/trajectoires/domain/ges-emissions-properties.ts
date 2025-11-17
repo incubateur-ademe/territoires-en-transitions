@@ -6,9 +6,10 @@ import {
 import { TrajectoirePropertiesType } from './types';
 
 const EMISSIONS_GES_UNITE = 'kteq CO2';
+const EMISSIONS_GES_IDENTIFIANT = 'cae_1.a';
 
 export const EMISSIONS_NETTES = {
-  id: 'cae_1.a',
+  id: EMISSIONS_GES_IDENTIFIANT,
   nom: 'Émissions nettes',
 };
 
@@ -167,7 +168,7 @@ const EMISSIONS_GES_SECTEURS = [
 
 export const EMISSIONS_GES_PROPERTIES: TrajectoirePropertiesType<TrajectoireSecteursType> =
   {
-    identifiant: 'cae_1.a',
+    identifiant: EMISSIONS_GES_IDENTIFIANT,
     unite: EMISSIONS_GES_UNITE,
     sources: EMISSIONS_GES_SOURCES,
     secteurs: EMISSIONS_GES_SECTEURS,

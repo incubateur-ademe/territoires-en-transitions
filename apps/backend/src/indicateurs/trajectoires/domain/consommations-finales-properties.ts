@@ -5,7 +5,7 @@ import {
 } from './trajectoire-secteurs.enum';
 import { TrajectoirePropertiesType } from './types';
 
-const CONSOMMATIONS_FINALES_ID = 'consommations_finales';
+const CONSOMMATIONS_FINALES_IDENTIFIANT = 'cae_2.a';
 const CONSOMMATIONS_FINALES_UNITE = 'GWh';
 
 const CONSOMMATIONS_FINALES_SOURCES = [
@@ -56,7 +56,7 @@ const CONSOMMATIONS_FINALES_SECTEURS = [
 
 export const CONSOMMATIONS_FINALES_PROPERTIES: TrajectoirePropertiesType<TrajectoireSecteursType> =
   {
-    identifiant: CONSOMMATIONS_FINALES_ID,
+    identifiant: CONSOMMATIONS_FINALES_IDENTIFIANT,
     unite: CONSOMMATIONS_FINALES_UNITE,
     sources: CONSOMMATIONS_FINALES_SOURCES,
     secteurs: CONSOMMATIONS_FINALES_SECTEURS,
