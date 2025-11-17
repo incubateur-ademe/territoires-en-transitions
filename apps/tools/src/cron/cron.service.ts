@@ -1,4 +1,4 @@
-import ConfigurationService from '@/tools/config/configuration.service';
+import ConfigurationService from '../config/configuration.service';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, Logger } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';

@@ -1,6 +1,6 @@
-import { getErrorMessage } from '@/backend/utils/get-error-message';
-import ConfigurationService from '@/tools/config/configuration.service';
+import { getErrorMessage } from '@/domain/utils';
 import { Injectable, Logger } from '@nestjs/common';
+import ConfigurationService from '../config/configuration.service';
 /**
  * TODO: share code between microservices with a shared library
  */

@@ -1,5 +1,5 @@
 import type { AppRouter } from '@/backend/utils/trpc/trpc.router';
-import ConfigurationService from '@/tools/config/configuration.service';
+import ConfigurationService from '../config/configuration.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { inferProcedureOutput } from '@trpc/server';
 import { contactSchema, ContactUpsert } from './contact.model';

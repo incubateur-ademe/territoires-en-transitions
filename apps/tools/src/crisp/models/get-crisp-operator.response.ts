@@ -1,4 +1,4 @@
-import { BaseCrispResponse } from '@/tools/crisp/models/base-crisp.response';
+import { BaseCrispResponse } from './base-crisp.response';
 
 export type GetCrispOperatorResponse = BaseCrispResponse<CrispOperatorIndo>;
 

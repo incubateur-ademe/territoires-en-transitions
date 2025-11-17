@@ -1,8 +1,8 @@
 import {
   COMPUTE_TRAJECTOIRE_QUEUE_NAME,
   CronComputeTrajectoireService,
-} from '@/tools/indicateurs/trajectoires/cron-compute-trajectoire.service';
-import { UtilsModule } from '@/tools/utils/utils.module';
+} from './trajectoires/cron-compute-trajectoire.service';
+import { UtilsModule } from '../utils/utils.module';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { BullModule } from '@nestjs/bullmq';

@@ -1,4 +1,4 @@
-import { AirtableCollaboratorRecord } from '@/tools/airtable/airtable-collaborator.record';
+import { AirtableCollaboratorRecord } from './airtable-collaborator.record';
 
 /**
  *
