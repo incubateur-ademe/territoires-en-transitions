@@ -1,5 +1,8 @@
-import { toolsAutomationApiConfigurationSchema } from './configuration.model';
+import {
+  toolsAutomationApiConfigurationSchema,
+  ToolsAutomationApiConfigurationType,
+} from './configuration.model';
 
-export default () => ({
+export default (): ToolsAutomationApiConfigurationType => ({
   ...toolsAutomationApiConfigurationSchema.parse(process.env),
 });
