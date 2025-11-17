@@ -1,5 +1,6 @@
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { sendPendingNotificationsInputSchema } from './models/send-pending-notifications.input';
 import { NotificationsService } from './notifications.service';
 
 @Injectable()
@@ -10,8 +11,10 @@ export class NotificationsRouter {
   ) {}
 
   router = this.trpc.router({
-    sendPendingNotifications: this.trpc.serviceRoleProcedure.mutation(() =>
-      this.notificationsService.sendPendingNotifications()
-    ),
+    sendPendingNotifications: this.trpc.serviceRoleProcedure
+      .input(sendPendingNotificationsInputSchema)
+      .mutation(({ input }) =>
+        this.notificationsService.sendPendingNotifications(input)
+      ),
   });
 }
