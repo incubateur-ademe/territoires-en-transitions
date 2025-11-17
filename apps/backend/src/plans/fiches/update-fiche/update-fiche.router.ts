@@ -10,6 +10,7 @@ import UpdateFicheService from './update-fiche.service';
 const updateFicheInput = z.object({
   ficheId: z.number(),
   ficheFields: updateFicheRequestSchema,
+  isNotificationEnabled: z.boolean().optional(),
 });
 
 @Injectable()

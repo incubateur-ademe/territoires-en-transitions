@@ -128,6 +128,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       ficheFields: {
         pilotes: [{ userId: user1.userId }, { userId: user2.userId }],
       },
+      isNotificationEnabled: true,
     });
 
     // vérifie que les notifications ont été créées automatiquement par update-fiche
@@ -182,6 +183,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       ficheFields: {
         pilotes: [{ userId: user1.userId }, { userId: user2.userId }],
       },
+      isNotificationEnabled: true,
     });
 
     const updatedFiche = await getFicheWithRelations(ficheId);
@@ -225,6 +227,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       ficheFields: {
         pilotes: [{ userId: user1.userId }, { userId: user2.userId }],
       },
+      isNotificationEnabled: true,
     });
 
     const updatedFiche1 = await getFicheWithRelations(ficheId);
@@ -255,6 +258,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       ficheFields: {
         pilotes: [{ userId: user1.userId }],
       },
+      isNotificationEnabled: true,
     });
 
     const updatedFiche2 = await getFicheWithRelations(ficheId);
@@ -291,6 +295,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       ficheFields: {
         pilotes: [{ userId: user1.userId }, { userId: user2.userId }],
       },
+      isNotificationEnabled: true,
     });
 
     const updatedFiche1 = await getFicheWithRelations(ficheId);
@@ -312,6 +317,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       ficheFields: {
         pilotes: [],
       },
+      isNotificationEnabled: true,
     });
 
     const updatedFiche2 = await getFicheWithRelations(ficheId);
@@ -347,6 +353,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       ficheFields: {
         pilotes: [{ userId: user1.userId }],
       },
+      isNotificationEnabled: true,
     });
 
     const previousFiche1 = await getFicheWithRelations(ficheId);
@@ -365,6 +372,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       ficheFields: {
         pilotes: [{ userId: user2.userId }, { userId: user3.userId }],
       },
+      isNotificationEnabled: true,
     });
 
     // et que les notifications pour user2 et user3 ont été créées
