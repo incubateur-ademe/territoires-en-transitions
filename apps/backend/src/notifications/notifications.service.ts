@@ -7,6 +7,7 @@ import { DatabaseService } from '../utils/database/database.service';
 import { NotificationStatusEnum } from './models/notification-status.enum';
 import { GetNotificationContent } from './models/notification-template.dto';
 import { Notification, notificationTable } from './models/notification.table';
+import { SendPendingNotificationsInput } from './models/send-pending-notifications.input';
 import { NotificationContentService } from './notification-content.service';
 
 const DEFAULT_DELAY_BEFORE_SENDING: DurationLike = { minutes: 15 };
@@ -25,12 +26,13 @@ export class NotificationsService {
   /**
    * Charge et envoi les notifications
    */
-  async sendPendingNotifications() {
+  async sendPendingNotifications(input: SendPendingNotificationsInput) {
     try {
       const pendingNotifications = await this.getPendingNotificationsToSend(
-        DEFAULT_DELAY_BEFORE_SENDING
+        input?.delayInSeconds
+          ? { seconds: input.delayInSeconds }
+          : DEFAULT_DELAY_BEFORE_SENDING
       );
-
       if (pendingNotifications.length > 0) {
         await Promise.all(
           pendingNotifications.map((notification) =>
