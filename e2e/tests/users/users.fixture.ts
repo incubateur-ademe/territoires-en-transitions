@@ -1,11 +1,10 @@
-import { addTestCollectivite, Collectivite } from '@/domain/collectivites';
-import {
-  BulkEditRequest,
-  FicheCreate,
-  UpdateFicheRequest,
-} from '@/domain/plans';
-import type { AppRouter } from '@/domain/trpc-router';
-import { addTestUser, Dcp, TestUserArgs } from '@/domain/users';
+import { addTestCollectivite } from '@/backend/collectivites/collectivites/collectivites.fixture';
+import { BulkEditRequest } from '@/backend/plans/fiches/bulk-edit/bulk-edit.input';
+import { addTestUser, TestUserArgs } from '@/backend/users/users/users.fixture';
+import type { AppRouter } from '@/backend/utils/trpc/trpc.router';
+import { Collectivite } from '@/domain/collectivites';
+import { FicheCreate } from '@/domain/plans';
+import { Dcp } from '@/domain/users';
 import { BrowserContext, test } from '@playwright/test';
 import { createTRPCClient, httpBatchLink, TRPCClient } from '@trpc/client';
 import { databaseService } from '../fixtures/database.service';

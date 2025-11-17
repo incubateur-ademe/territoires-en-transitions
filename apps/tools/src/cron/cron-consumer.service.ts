@@ -1,9 +1,9 @@
-import { getErrorMessage } from '@/domain/utils';
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger, NotFoundException } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
 import { ContextStoreService } from '@tet/backend/utils/context/context.service';
 import { getSentryContextFromApplicationContext } from '@tet/backend/utils/sentry-init';
+import { getErrorMessage } from '@tet/domain/utils';
 import { Job } from 'bullmq';
 import { CalendlySynchroService } from '../calendly/calendly-synchro.service';
 import { ConnectSynchroService } from '../connect/connect-synchro.service';
