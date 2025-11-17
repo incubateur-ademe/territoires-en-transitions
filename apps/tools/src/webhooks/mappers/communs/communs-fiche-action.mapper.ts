@@ -1,11 +1,12 @@
 import { CollectiviteNatureType } from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
-import { FicheWithRelationsAndCollectivite } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
-import { Statut } from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import { ApplicationSousScopesEnum } from '@/backend/utils/application-domains.enum';
-import { WebhookPayloadFormatEnum } from '@/backend/utils/webhooks/webhook-payload-format.enum';
-import { AbstractEntityMapper } from '@/tools/webhooks/mappers/AbstractEntityMapper';
+import { FicheWithRelationsAndCollectivite, Statut } from '@/domain/plans';
+import {
+  ApplicationSousScopesEnum,
+  WebhookPayloadFormatEnum,
+} from '@/domain/utils';
 import { Logger } from '@nestjs/common';
 import { DateTime } from 'luxon';
+import { AbstractEntityMapper } from '../AbstractEntityMapper';
 import { CreateProjetRequest } from './client/types.gen';
 
 type CompetenceType = NonNullable<CreateProjetRequest['competences']>[number];

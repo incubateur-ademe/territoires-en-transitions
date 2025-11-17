@@ -1,13 +1,13 @@
 import { ContextStoreService } from '@/backend/utils/context/context.service';
 import { getSentryContextFromApplicationContext } from '@/backend/utils/sentry-init';
-import { getErrorMessage } from '@/backend/utils/get-error-message';
-import { CalendlySynchroService } from '@/tools/calendly/calendly-synchro.service';
-import { ConnectSynchroService } from '@/tools/connect/connect-synchro.service';
-import { CronComputeTrajectoireService } from '@/tools/indicateurs/trajectoires/cron-compute-trajectoire.service';
+import { getErrorMessage } from '@/domain/utils';
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger, NotFoundException } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
 import { Job } from 'bullmq';
+import { CalendlySynchroService } from '../calendly/calendly-synchro.service';
+import { ConnectSynchroService } from '../connect/connect-synchro.service';
+import { CronComputeTrajectoireService } from '../indicateurs/trajectoires/cron-compute-trajectoire.service';
 import { CRON_JOBS_QUEUE_NAME, JobName } from './cron.config';
 
 @Processor(CRON_JOBS_QUEUE_NAME)
