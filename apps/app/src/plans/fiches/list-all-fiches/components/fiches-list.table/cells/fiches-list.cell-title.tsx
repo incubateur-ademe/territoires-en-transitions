@@ -14,8 +14,8 @@ type Props = {
 export const FichesListCellTitle = ({ title, fiche }: Props) => {
   const currentCollectivite = useCurrentCollectivite();
 
-  const isClickable =
-    !fiche.restreint || currentCollectivite.niveauAcces !== null;
+  const isReadOnly =
+    fiche.restreint || currentCollectivite.niveauAcces === null;
 
   const href = getFichePageUrlForCollectivite({
     fiche,
@@ -23,31 +23,13 @@ export const FichesListCellTitle = ({ title, fiche }: Props) => {
   });
 
   if (title) {
-    return (
-      <div className="flex">
-        {isClickable ? (
-          <Link
-            title={generateTitle(title)}
-            className="font-bold text-primary-9 line-clamp-2 bg-none active:!bg-transparent hover:underline"
-            href={href}
-          >
-            {generateTitle(title)}
-          </Link>
-        ) : (
-          <span
-            title={generateTitle(title)}
-            className="font-bold text-primary-9 line-clamp-2"
-          >
-            {generateTitle(title)}
-          </span>
-        )}
-      </div>
-    );
+    return <FicheTitre href={href} title={title} isReadOnly={isReadOnly} />;
   }
+
   return (
     <div className="group flex items-center gap-2 justify-between">
       <div className="italic text-grey-6">Sans titre</div>
-      {isClickable && (
+      {!isReadOnly && (
         <Button
           variant="grey"
           size="xs"
@@ -58,5 +40,37 @@ export const FichesListCellTitle = ({ title, fiche }: Props) => {
         </Button>
       )}
     </div>
+  );
+};
+
+const FicheTitre = ({
+  href,
+  title,
+  isReadOnly,
+}: {
+  title: FicheWithRelationsAndCollectivite['titre'];
+  href: string;
+  isReadOnly: boolean;
+}) => {
+  const ficheTitle = generateTitle(title);
+
+  if (isReadOnly) {
+    return (
+      <span
+        title={ficheTitle}
+        className="font-bold text-primary-9 line-clamp-2"
+      >
+        {ficheTitle}
+      </span>
+    );
+  }
+  return (
+    <Link
+      title={ficheTitle}
+      className="font-bold text-primary-9 line-clamp-2 bg-none active:!bg-transparent hover:underline"
+      href={href}
+    >
+      {ficheTitle}
+    </Link>
   );
 };
