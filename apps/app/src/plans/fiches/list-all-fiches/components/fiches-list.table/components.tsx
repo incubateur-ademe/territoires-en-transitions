@@ -1,7 +1,7 @@
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import { cn, EmptyCard, Icon } from '@/ui';
 
-export const THeadCell = ({
+export const HeaderCell = ({
   title,
   sortFn,
   className,
@@ -47,7 +47,7 @@ export const THeadCell = ({
   );
 };
 
-export const TRow = ({
+export const Row = ({
   className,
   children,
 }: {
@@ -64,7 +64,7 @@ export const TRow = ({
   </tr>
 );
 
-export const TRowLoading = ({
+export const TableLoading = ({
   columnIds,
   nbOfRows = 10,
 }: {
@@ -72,13 +72,13 @@ export const TRowLoading = ({
   nbOfRows?: number;
 }) =>
   [...Array(nbOfRows).keys()].map((i) => (
-    <TRow key={i}>
+    <Row key={i}>
       {columnIds.map((columnId) => (
         <td key={columnId} className="px-4 py-3">
           <div className="animate-pulse h-5 bg-grey-2 rounded-md" />
         </td>
       ))}
-    </TRow>
+    </Row>
   ));
 
 export const TRowEmpty = ({
