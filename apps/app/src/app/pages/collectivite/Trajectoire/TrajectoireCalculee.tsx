@@ -277,6 +277,31 @@ export const TrajectoireCalculee = () => {
       />
 
       <div className="flex flex-col gap-8 w-full">
+        <VisibleWhen
+          condition={
+            shouldShowDataPartiallyFilledWarning &&
+            isLoadingDonneesSectorisees === false
+          }
+        >
+          <DonneesPartiellementDisponibles
+            disabled={isReadOnly}
+            description={
+              isReadOnly
+                ? "Il manque des données pour certains secteurs : un utilisateur en Edition ou Admin sur le profil de cette collectivité peut compléter les données manquantes pour l'année 2015 afin de finaliser le calcul"
+                : undefined
+            }
+            onOpenModal={() => setIsModalDataOpen(true)}
+          />
+        </VisibleWhen>
+
+        <VisibleWhen condition={comparezLaTrajectoireIsVisible}>
+          <ComparezLaTrajectoire
+            collectiviteId={collectiviteId}
+            identifiantReferentiel={identifiant}
+            readonly={isReadOnly}
+          />
+        </VisibleWhen>
+
         {allSecteursDataAvailable && (
           <Card className="h-fit">
             <GrapheTousSecteurs
@@ -309,31 +334,6 @@ export const TrajectoireCalculee = () => {
             <Methodologie secteur={selectedSecteur} />
           </Card>
         )}
-
-        <VisibleWhen
-          condition={
-            shouldShowDataPartiallyFilledWarning &&
-            isLoadingDonneesSectorisees === false
-          }
-        >
-          <DonneesPartiellementDisponibles
-            disabled={isReadOnly}
-            description={
-              isReadOnly
-                ? "Il manque des données pour certains secteurs : un utilisateur en Edition ou Admin sur le profil de cette collectivité peut compléter les données manquantes pour l'année 2015 afin de finaliser le calcul"
-                : undefined
-            }
-            onOpenModal={() => setIsModalDataOpen(true)}
-          />
-        </VisibleWhen>
-
-        <VisibleWhen condition={comparezLaTrajectoireIsVisible}>
-          <ComparezLaTrajectoire
-            collectiviteId={collectiviteId}
-            identifiantReferentiel={identifiant}
-            readonly={isReadOnly}
-          />
-        </VisibleWhen>
 
         <VisibleWhen condition={isLoadingTrajectoireIndicateurData}>
           <Card className="h-[450px]">
