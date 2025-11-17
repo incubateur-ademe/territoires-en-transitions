@@ -1,14 +1,14 @@
+import { Fiche, isFicheOnTime } from '@/domain/plans';
 import { cn, Icon } from '@/ui';
-import { format, isBefore, startOfToday } from 'date-fns';
+import { format } from 'date-fns';
 
-type Props = {
-  date?: string | null;
-};
+export const FichesListCellDateFin = ({
+  dateFin,
+  statut,
+}: Pick<Fiche, 'statut' | 'dateFin'>) => {
+  if (!dateFin) return null;
 
-export const FichesListCellDateFin = ({ date }: Props) => {
-  if (!date) return null;
-
-  const isLate = isBefore(new Date(date), startOfToday());
+  const isLate = !isFicheOnTime({ dateFin, statut });
 
   return (
     <span
@@ -17,7 +17,7 @@ export const FichesListCellDateFin = ({ date }: Props) => {
       })}
     >
       <Icon icon="calendar-line" size="sm" />
-      {format(new Date(date), 'dd/MM/yyyy')}
+      {format(new Date(dateFin), 'dd/MM/yyyy')}
     </span>
   );
 };
