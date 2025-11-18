@@ -50,7 +50,7 @@ export class ListLabellisationsService {
         pointFait: snapshotTable.pointFait,
         pointProgramme: snapshotTable.pointProgramme,
         pointPotentiel: snapshotTable.pointPotentiel,
-        etoiles: labellisationDemandeTable.etoiles,
+        etoiles: snapshotTable.etoiles,
         auditId: snapshotTable.auditId,
       })
       .from(snapshotTable)
@@ -75,14 +75,13 @@ export class ListLabellisationsService {
         if (!labellisation.etoiles || !labellisation.auditId) {
           return null;
         }
-        const etoiles: number = parseInt(labellisation.etoiles);
         const annee = DateTime.fromISO(labellisation.date).year;
         const labellisationrecord: LabellisationRecord = {
           id: labellisation.auditId,
           collectiviteId: labellisation.collectiviteId,
           referentiel: labellisation.referentielId,
           obtenueLe: labellisation.date,
-          etoiles: etoiles,
+          etoiles: labellisation.etoiles,
           annee: annee,
           scoreRealise: labellisation.pointPotentiel
             ? roundTo(

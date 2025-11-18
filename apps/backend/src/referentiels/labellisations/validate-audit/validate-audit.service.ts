@@ -1,5 +1,5 @@
 import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { SnapshotJalonEnum } from '../../snapshots/snapshot-jalon.enum';
 import { SnapshotsService } from '../../snapshots/snapshots.service';
@@ -18,16 +18,31 @@ export class ValidateAuditService {
   async validateAudit({ auditId }: { auditId: number }): Promise<Audit> {
     // Update audit to set valide=true
     // There is a PG trigger `labellisation.update_audit()` that update `date_fin` and `clos`
+    // TODO: Modifier la fonction labellisation.update_labellisation() coalesce
     const audit = await this.db
-      .update(auditTable)
-      .set({ valide: true })
+      .select()
+      .from(auditTable)
       .where(eq(auditTable.id, auditId))
-      .returning()
       .then((rows) => rows[0]);
 
     if (!audit) {
       throw new NotFoundException(`Audit ${auditId} non trouvé`);
     }
+
+    if (audit.valide) {
+      throw new BadRequestException(`L'audit ${auditId} pour la collectivité ${audit.collectiviteId} et le referentiel ${audit.referentielId} a déjà été validé`);
+    }
+
+    const updatedAuditFields: Partial<Audit> = {
+      valide: true,
+    };
+    const updatedAudit = await this.db
+      .update(auditTable)
+      .set(updatedAuditFields)
+      .where(eq(auditTable.id, auditId))
+      .returning()
+      .then((rows) => rows[0]);
+
 
     // TODO it could be great to create a transaction containing the update of the audit and the creation of the snapshot,
     // it would be better for consistency but maybe it's too big an operation?
@@ -38,8 +53,9 @@ export class ValidateAuditService {
       referentielId: audit.referentielId,
       jalon: SnapshotJalonEnum.POST_AUDIT,
       auditId: audit.id,
+
     });
 
-    return audit;
+    return updatedAudit;
   }
 }
