@@ -864,7 +864,7 @@ export default class ListFichesService {
     return ficheIdsQuery;
   }
 
-  private async listFichesQuery(
+   async listFichesQuery(
     collectiviteId: number | null,
     filters?: ListFichesRequestFilters,
     queryOptions?: QueryOptionsSchema
