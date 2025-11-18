@@ -1,4 +1,5 @@
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
+import { BudgetType, BudgetUnite } from '@tet/domain/plans';
 import {
   boolean,
   integer,
@@ -7,7 +8,6 @@ import {
   serial,
   text,
 } from 'drizzle-orm/pg-core';
-import { BudgetType, BudgetUnite } from './budget.types';
 
 export const ficheActionBudgetTable = pgTable('fiche_action_budget', {
   id: serial('id').primaryKey(),

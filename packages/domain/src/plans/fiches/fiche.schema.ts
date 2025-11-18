@@ -211,8 +211,8 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
       type: z.string(),
       unite: z.string(),
       annee: z.number().nullable().optional(),
-      budgetPrevisionnel: z.string().nullable().optional(),
-      budgetReel: z.string().nullable().optional(),
+      budgetPrevisionnel: z.number().nullable().optional(),
+      budgetReel: z.number().nullable().optional(),
       estEtale: z.boolean().optional(),
     })
     .array()

@@ -21,6 +21,7 @@ import { ResourceType } from '@tet/backend/users/authorizations/resource-type.en
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { indicateurValeurTable } from '../valeurs/indicateur-valeur.table';
 import { GetMoyenneCollectivitesRequest } from './get-moyenne-collectivites.request';
+import { ValeursMoyenneDTO } from './valeurs-moyenne.dto';
 
 @Injectable()
 export default class ValeursMoyenneService {
@@ -53,22 +54,24 @@ export default class ValeursMoyenneService {
    */
   async getMoyenneCollectivites(
     options: GetMoyenneCollectivitesRequest,
-    tokenInfo: AuthUser
-  ) {
+    user?: AuthUser
+  ): Promise<ValeursMoyenneDTO | null> {
     const { collectiviteId, indicateurId } = options;
 
-    // Vérifie les droits
-    const collectivitePrivate = await this.collectiviteService.isPrivate(
-      collectiviteId
-    );
-    await this.permissionService.isAllowed(
-      tokenInfo,
-      collectivitePrivate
-        ? 'indicateurs.definitions.read'
-        : 'indicateurs.definitions.read_public',
-      ResourceType.COLLECTIVITE,
-      collectiviteId
-    );
+    // Vérifie les droits if needed
+    if (user) {
+      const collectivitePrivate = await this.collectiviteService.isPrivate(
+        collectiviteId
+      );
+      await this.permissionService.isAllowed(
+        user,
+        collectivitePrivate
+          ? 'indicateurs.definitions.read'
+          : 'indicateurs.definitions.read_public',
+        ResourceType.COLLECTIVITE,
+        collectiviteId
+      );
+    }
 
     this.logger.log(
       `Récupération des valeurs moyenne d'un indicateur selon ces options : ${JSON.stringify(
@@ -171,6 +174,6 @@ export default class ValeursMoyenneService {
       `Récupération de ${valeurs.length} valeurs moyenne d'indicateur`
     );
 
-    return { typeCollectivite, valeurs };
+    return { indicateurId, typeCollectivite, valeurs };
   }
 }

@@ -13,7 +13,8 @@
     },
     "assets": [
       { "include": "**/*.csv", "outDir": "dist" },
-      { "include": "**/*.xlsx", "outDir": "dist" }
+      { "include": "**/*.xlsx", "outDir": "dist" },
+      { "include": "**/*.pptx", "outDir": "dist" }
     ]
   }
 }
