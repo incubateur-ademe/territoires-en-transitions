@@ -57,7 +57,7 @@ enum ColumnNames {
   Calendrier = 'Calendrier',
   ActionsLiees = 'Actions liées',
   FichesPlansLiees = 'Fiches des plans liées',
-  NotesSuivi = 'Notes de suivi',
+  Notes = 'Notes',
   EtapesFicheAction = 'Etapes de la fiche action',
   DocumentsLiens = 'Documents et liens',
 }
