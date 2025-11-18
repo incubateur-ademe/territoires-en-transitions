@@ -899,3 +899,4 @@ utilisateur/add_edition_fiches_indicateurs 2025-10-28T10:28:20Z System Administr
 utilisateur/droits_add_edition_fiches_indicateurs 2025-11-10T12:45:02Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # prise en compte du niveau acces edition_fiches_indicateurs pour la gestion documentaire
 @v4.86.0 2025-11-19T17:24:05Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Ajout du role d'editeur limité aux fiches et indicateurs
 
+referentiel/add_audit_etoiles 2025-11-18T09:38:13Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Ajoute les etoiles reellement obtenues dans l'audit

@@ -340,6 +340,7 @@ export class SnapshotsService {
         scoresPayload.jalon === SnapshotJalonEnum.COURANT
           ? SnapshotJalonEnum.DATE_PERSONNALISEE
           : scoresPayload.jalon,
+      etoiles: scoresPayload.scores.score.etoiles || null,
       pointFait: scoresPayload.scores.score.pointFait || 0,
       pointProgramme: scoresPayload.scores.score.pointProgramme || 0,
       pointPasFait: scoresPayload.scores.score.pointPasFait || 0,

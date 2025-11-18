@@ -51,7 +51,8 @@ export const snapshotTable = pgTable(
     pointFait: doublePrecision('point_fait').notNull(),
     pointProgramme: doublePrecision('point_programme').notNull(),
     pointPasFait: doublePrecision('point_pas_fait').notNull(),
-    pointPotentiel: doublePrecision('point_potentiel').notNull(),
+    pointPotentiel: doublePrecision('point_potentiel').notNull(), 
+    etoiles: integer('etoiles'),
     scoresPayload: jsonb('referentiel_scores').notNull().$type<ScoresPayload>(),
     personnalisationReponses: jsonb('personnalisation_reponses')
       .$type<PersonnalisationReponsesPayload>()
@@ -104,6 +105,7 @@ const snapshotSchema = z.object({
   pointProgramme: z.number(),
   pointPasFait: z.number(),
   pointPotentiel: z.number(),
+  etoiles: z.number().nullable(),
   scoresPayload: scoresPayloadSchema,
   personnalisationReponses: personnalisationReponsesPayloadSchema,
   createdAt: z.iso.datetime(),
