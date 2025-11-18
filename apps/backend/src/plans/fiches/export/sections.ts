@@ -171,8 +171,8 @@ const ETAPES: Section = {
   ],
 };
 
-const NOTES_DE_SUIVI: Section = {
-  sectionLabel: 'Notes de suivi et points de vigilance',
+const NOTES: Section = {
+  sectionLabel: 'Notes',
   cols: ({ anneesNotes }) =>
     anneesNotes.map((annee) => ({
       colLabel: annee.toString(),
@@ -255,10 +255,6 @@ const INFO_LIEES: Section = {
         ),
     },
     {
-      colLabel: 'Notes complémentaires',
-      cellValue: ({ fiche }) => htmlToText(fiche?.notesComplementaires || ''),
-    },
-    {
       colLabel: 'Documents et liens',
       cellValue: ({ fiche }) =>
         fiche?.docs
@@ -302,7 +298,7 @@ export const SECTIONS: Section[] = [
   MISE_EN_OEUVRE,
   ACTEURS,
   ETAPES,
-  NOTES_DE_SUIVI,
+  NOTES,
   BUDGET,
   INDICATEURS,
   INFO_LIEES,
