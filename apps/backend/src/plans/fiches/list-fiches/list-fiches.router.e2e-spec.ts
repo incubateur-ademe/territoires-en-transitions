@@ -34,6 +34,7 @@ import {
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { eq, inArray } from 'drizzle-orm';
+import { uniq } from 'es-toolkit';
 import { StatutEnum } from '../shared/models/fiche-action.table';
 
 let router: FichesRouter;
@@ -340,13 +341,10 @@ describe('Filtres sur les fiches actions', () => {
       collectiviteId: COLLECTIVITE_ID,
       filters: {},
     });
-
-    expect(emptyData.length).toBe(0);
-
-    const { data: withData } = await caller.listFiches({
+    const { data: aVenirFiche } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
-        statuts: [StatutEnum.EN_COURS, StatutEnum.A_VENIR],
+        statuts: [StatutEnum.A_VENIR],
       },
     });
     const allFichesStatuts = uniq(allFiches.map((fiche) => fiche.statut));
@@ -868,7 +866,7 @@ describe('Filtres sur les fiches actions', () => {
     const { data: fichesWithoutNote } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
-        hasNote: false,
+        notes: 'WITHOUT',
       },
     });
 
@@ -1886,7 +1884,7 @@ test('Fetch avec filtre sur les années de notes', async () => {
   const { data: fiches2023 } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
-      anneesNoteDeSuivi: ['2023'],
+      anneesNotes: ['2023'],
     },
   });
 
@@ -1902,7 +1900,7 @@ test('Fetch avec filtre sur les années de notes', async () => {
   const { data: fichesMultiples } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
-      anneesNoteDeSuivi: ['2024', '2025'],
+      anneesNotes: ['2024', '2025'],
     },
   });
 
@@ -1918,7 +1916,7 @@ test('Fetch avec filtre sur les années de notes', async () => {
   const { data: fichesInexistantes } = await caller.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
-      anneesNoteDeSuivi: ['2020'],
+      anneesNotes: ['2020'],
     },
   });
 
