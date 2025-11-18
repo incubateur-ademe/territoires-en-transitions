@@ -1,6 +1,6 @@
 import ActionPicto from '@/app/ui/pictogrammes/ActionPicto';
 import { EmptyCard } from '@/ui';
-import ActionsLieesListe from '../../PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
+import { MesuresLieesListe } from '../../PlansActions/FicheAction/mesures-liees/mesures-liees.list';
 
 type Props = {
   isReadonly: boolean;
@@ -27,7 +27,7 @@ const ActionsLiees = ({ actionsIds, isReadonly }: Props) => {
           Mesures des référentiels liées
         </h6>
       </div>
-      <ActionsLieesListe isReadonly={isReadonly} actionIds={actionsIds} />
+      <MesuresLieesListe mesuresIds={actionsIds} isReadonly={isReadonly} />
     </div>
   );
 };

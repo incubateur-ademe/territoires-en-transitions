@@ -1,12 +1,12 @@
 import { FicheActionBudget, FicheWithRelations } from '@/domain/plans';
 import { Divider, Spacer } from '@/ui';
-import { Budget } from './budget/budget';
 import { BudgetUnitWarning } from './budget/budget-unit-warning';
+import { BudgetEditableView } from './budget/budget.editable-view';
 import { shouldDisplayUnitWarning } from './budget/utils';
-import { Financements } from './financements/financements';
-import { Financeurs } from './financeurs/financeurs.view';
+import { FinancementsEditableView } from './financements/financements.editable-view';
+import { FinanceursEditableView } from './financeurs/financeurs.editable-view';
 import { ModalType } from './moyens.modals';
-import { Ressources } from './ressources/ressources.view';
+import { RessourcesEditableView } from './ressources/ressources.editable-view';
 
 const Section = ({ children }: { children: React.ReactNode }) => (
   <div>
@@ -14,59 +14,6 @@ const Section = ({ children }: { children: React.ReactNode }) => (
     {children}
   </div>
 );
-
-type BudgetsContentProps = {
-  fiche: FicheWithRelations;
-  budgets: FicheActionBudget[];
-  isReadonly: boolean;
-  onEdit: (modalType: ModalType) => void;
-};
-
-const BudgetsContent = ({
-  fiche,
-  budgets,
-  isReadonly,
-  onEdit,
-}: BudgetsContentProps) => {
-  const shouldDisplayWarning = shouldDisplayUnitWarning(fiche, budgets);
-
-  const investmentView = (
-    <Budget
-      budgets={budgets}
-      type="investissement"
-      isReadonly={isReadonly}
-      onEdit={() => onEdit('investissement')}
-    />
-  );
-  const fonctionnementView = (
-    <Budget
-      type="fonctionnement"
-      isReadonly={isReadonly}
-      budgets={budgets}
-      onEdit={() => onEdit('fonctionnement')}
-    />
-  );
-
-  if (shouldDisplayWarning) {
-    return (
-      <>
-        <Section>
-          {investmentView}
-          <Spacer height={2} />
-          {fonctionnementView}
-        </Section>
-        <BudgetUnitWarning />
-      </>
-    );
-  }
-
-  return (
-    <>
-      <Section>{investmentView}</Section>
-      <Section>{fonctionnementView}</Section>
-    </>
-  );
-};
 
 type MoyensContentProps = {
   fiche: FicheWithRelations;
@@ -81,18 +28,29 @@ export const MoyensContent = ({
   isReadonly,
   onEdit,
 }: MoyensContentProps) => {
+  const shouldDisplayWarning = shouldDisplayUnitWarning(fiche, budgets);
   return (
-    <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-5">
+    <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-6">
       <h5 className="text-primary-8 mb-0">Moyens</h5>
 
-      <BudgetsContent
-        fiche={fiche}
-        budgets={budgets}
-        isReadonly={isReadonly}
-        onEdit={onEdit}
-      />
       <Section>
-        <Financeurs
+        <BudgetEditableView
+          budgets={budgets}
+          type="investissement"
+          isReadonly={isReadonly}
+          onEdit={() => onEdit('investissement')}
+        />
+        <Spacer height={1} />
+        <BudgetEditableView
+          type="fonctionnement"
+          isReadonly={isReadonly}
+          budgets={budgets}
+          onEdit={() => onEdit('fonctionnement')}
+        />
+      </Section>
+      {shouldDisplayWarning && <BudgetUnitWarning />}
+      <Section>
+        <FinanceursEditableView
           fiche={fiche}
           onEdit={() => onEdit('financeurs')}
           isReadonly={isReadonly}
@@ -100,14 +58,14 @@ export const MoyensContent = ({
       </Section>
 
       <Section>
-        <Financements
+        <FinancementsEditableView
           fiche={fiche}
           onEdit={() => onEdit('financements')}
           isReadonly={isReadonly}
         />
       </Section>
       <Section>
-        <Ressources
+        <RessourcesEditableView
           fiche={fiche}
           isReadonly={isReadonly}
           onEdit={() => onEdit('resources')}

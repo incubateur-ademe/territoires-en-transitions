@@ -5,7 +5,7 @@ import { BudgetPerYearContent } from './budget-per-year.content';
 import { toBudgetProperties } from './to-budget-properties';
 import { PerYearBudgetProperties } from './types';
 
-function getSectionLabel(type: BudgetProps['type']) {
+function getSectionLabel(type: BudgetType) {
   const labels = {
     investissement: 'd’investissement',
     fonctionnement: 'de fonctionnement',
@@ -13,14 +13,15 @@ function getSectionLabel(type: BudgetProps['type']) {
   return `Budget ${labels[type]} : `;
 }
 
-type BudgetProps = {
-  type: 'investissement' | 'fonctionnement';
+type BudgetType = 'investissement' | 'fonctionnement';
+type BudgetEditableViewProps = {
+  type: BudgetType;
   isReadonly?: boolean;
   budgets: FicheActionBudget[];
   onEdit: () => void;
 };
 
-export const Budget = (props: BudgetProps) => {
+export const BudgetEditableView = (props: BudgetEditableViewProps) => {
   const { type, isReadonly, budgets, onEdit } = props;
 
   const budgetsToConsider = toBudgetProperties(budgets, type);

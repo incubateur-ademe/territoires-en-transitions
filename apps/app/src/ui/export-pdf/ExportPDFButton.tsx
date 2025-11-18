@@ -62,7 +62,9 @@ const ExportPDFButton = ({
     ) {
       updateInstance(<DocumentToExport content={content} />);
     }
-  }, [content, requestData, updateInstance]);
+    // to avoid a "duplicate key" error
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content]);
 
   useEffect(() => {
     if (instance.blob && isDownloadRequested) {

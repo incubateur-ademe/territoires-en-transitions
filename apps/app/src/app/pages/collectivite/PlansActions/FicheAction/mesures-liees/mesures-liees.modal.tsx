@@ -6,12 +6,15 @@ import { OpenState } from '@/ui/utils/types';
 import { isEqual } from 'es-toolkit/predicate';
 import { useState } from 'react';
 
-type ModaleActionsLieesProps = {
+type MesuresLieesModalProps = {
   openState: OpenState;
   fiche: FicheWithRelations;
 };
 
-const ModaleActionsLiees = ({ openState, fiche }: ModaleActionsLieesProps) => {
+export const MesuresLieesModal = ({
+  openState,
+  fiche,
+}: MesuresLieesModalProps) => {
   const ficheMesureIds = fiche.mesures?.map((mesure) => mesure.id);
   const [editedMesureIds, setEditedMesureIds] = useState(ficheMesureIds);
 
@@ -59,5 +62,3 @@ const ModaleActionsLiees = ({ openState, fiche }: ModaleActionsLieesProps) => {
     />
   );
 };
-
-export default ModaleActionsLiees;
