@@ -23,10 +23,10 @@ export const groupedByYearAndMergedBudget = (
 
     return {
       year,
-      eurosPrevisionnel: euros?.value.previsionnel ?? null,
-      eurosReel: euros?.value.reel ?? null,
-      etpPrevisionnel: etps?.value.previsionnel ?? null,
-      etpReel: etps?.value.reel ?? null,
+      eurosPrevisionnel: euros?.value?.previsionnel ?? null,
+      eurosReel: euros?.value?.reel ?? null,
+      etpPrevisionnel: etps?.value?.previsionnel ?? null,
+      etpReel: etps?.value?.reel ?? null,
     };
   });
 };
