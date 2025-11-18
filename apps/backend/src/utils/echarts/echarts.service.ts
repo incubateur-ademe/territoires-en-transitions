@@ -8,6 +8,10 @@ import { NextFunction, Response } from 'express';
 export class EchartsService {
   private readonly logger = new Logger(EchartsService.name);
 
+  private readonly DEFAULT_FONT_SIZE = 20;
+
+  private readonly DEVICE_PIXEL_RATIO = 3;
+
   /**
    * Ecma script module
    * @returns
@@ -63,15 +67,26 @@ export class EchartsService {
     res.end();
   }
 
-  async renderToPngBuffer(request: ChartRenderRequestType): Promise<Buffer> {
+  async renderToPngBuffer(
+    request: Omit<ChartRenderRequestType, 'format' | 'name'>
+  ): Promise<Buffer> {
     const echarts = await this.getEcharts();
     const canvas = createCanvas(request.width, request.height);
 
     // ECharts can use the Canvas instance created by node-canvas as a container directly
-    let chart: ECharts | null = echarts.init(canvas);
+    let chart: ECharts | null = echarts.init(canvas, null, {
+      width: request.width,
+      height: request.height,
+      devicePixelRatio: this.DEVICE_PIXEL_RATIO,
+      renderer: 'canvas',
+    });
 
     // setOption as normal
-    chart?.setOption(request.options);
+    chart?.setOption({
+      ...request.options,
+      animation: false,
+      textStyle: { fontSize: this.DEFAULT_FONT_SIZE },
+    });
 
     const buffer = canvas.toBuffer('image/png');
 

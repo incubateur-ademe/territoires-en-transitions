@@ -8,10 +8,9 @@ import ComputeValeursService from '@tet/backend/indicateurs/valeurs/compute-vale
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { PersonnalisationsModule } from '../collectivites/personnalisations/personnalisations.module';
-import PersonnalisationsExpressionService from '../collectivites/personnalisations/services/personnalisations-expression.service';
-import PersonnalisationsService from '../collectivites/personnalisations/services/personnalisations-service';
 import { AuthModule } from '../users/auth.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
+import { IndicateurChartService } from './charts/indicateur-chart.service';
 import { ListCollectiviteDefinitionsRepository } from './definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
 import { ListPlatformDefinitionsController } from './definitions/list-platform-definitions/list-platform-definitions.controller';
 import { ListPlatformDefinitionsRepository } from './definitions/list-platform-definitions/list-platform-definitions.repository';
@@ -80,6 +79,7 @@ const DEFINITIONS_PROVIDERS = [
 
     IndicateurValeursRouter,
     IndicateurSourcesRouter,
+    IndicateurChartService,
     TrajectoiresDataService,
     TrajectoiresSpreadsheetService,
     TrajectoiresXlsxService,
@@ -87,8 +87,6 @@ const DEFINITIONS_PROVIDERS = [
     TrajectoireLeviersService,
     TrajectoireLeviersRouter,
 
-    PersonnalisationsService,
-    PersonnalisationsExpressionService,
     ComputeValeursService,
     IndicateursRouter,
 
@@ -105,6 +103,7 @@ const DEFINITIONS_PROVIDERS = [
     ValeursReferenceService,
 
     IndicateursRouter,
+    IndicateurChartService,
   ],
   controllers: [
     IndicateursValeursController,

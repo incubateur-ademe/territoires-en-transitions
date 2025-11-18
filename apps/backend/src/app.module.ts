@@ -9,6 +9,7 @@ import { PersonnalisationsModule } from './collectivites/personnalisations/perso
 import { IndicateursModule } from './indicateurs/indicateurs.module';
 import { MetricsModule } from './metrics/metrics.module';
 import { PlanMainModule } from './plans/plans-main.module';
+import { GenerateReportsModule } from './plans/plans/generate-plan-report-pptx/generate-reports.module';
 import { ReferentielsModule } from './referentiels/referentiels.module';
 import { SharedModule } from './shared/shared.module';
 import { AuthModule } from './users/auth.module';
@@ -69,6 +70,7 @@ const appLogger = new Logger('AppModule');
     IndicateursModule,
     AuthModule,
     PlanMainModule,
+    GenerateReportsModule,
     PersonnalisationsModule,
     ReferentielsModule,
     SharedModule,

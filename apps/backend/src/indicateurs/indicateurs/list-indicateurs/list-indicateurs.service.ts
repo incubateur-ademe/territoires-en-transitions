@@ -447,6 +447,27 @@ export class ListIndicateursService {
     return indicateurs.data[0];
   }
 
+  async getIndicateurByIdentifiantReferentiel({
+    identifiantReferentiel,
+    collectiviteId,
+  }: {
+    identifiantReferentiel: string;
+    collectiviteId: number;
+  }): Promise<IndicateurListItem> {
+    const indicateurs = await this.listIndicateurs({
+      collectiviteId,
+      filters: { identifiantsReferentiel: [identifiantReferentiel] },
+      queryOptions: { page: 1, limit: 1 },
+    });
+
+    if (indicateurs.data.length === 0) {
+      throw new BadRequestException(
+        `Indicateur not found for identifiant referentiel ${identifiantReferentiel}`
+      );
+    }
+    return indicateurs.data[0];
+  }
+
   async listIndicateurs(
     { collectiviteId, filters, queryOptions }: ListIndicateursInput,
     user?: AuthUser

@@ -40,6 +40,7 @@ import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.tabl
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { sqlAuthorOrNull } from '@tet/backend/users/models/author.utils';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { getISOFormatDateQuery } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   Collectivite,
@@ -90,6 +91,7 @@ import { ficheActionEtapeTable } from '../fiche-action-etape/fiche-action-etape.
 import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
+import { ficheRecursiveAxeView } from '../shared/models/fiche-recursive-axe.view';
 import { checkCompletion } from './completion';
 
 type FicheWithoutCompletion = Omit<FicheWithRelations, 'completion'>;
@@ -387,20 +389,9 @@ export default class ListFichesService {
   }
 
   private getFicheActionAxesQuery(ficheIds: number[]) {
-    const planTable = aliasedTable(axeTable, 'plan_table');
-    const parentAxeTable = aliasedTable(axeTable, 'parent_axe_table');
-
     const query = this.databaseService.db
       .select({
-        ficheId: ficheActionAxeTable.ficheId,
-        axeIds: sql<number[]>`array_agg(${ficheActionAxeTable.axeId})`.as(
-          'axe_ids'
-        ),
-        axesCollectiviteIds: sql<
-          number[]
-        >`array_agg(distinct ${axeTable.collectiviteId})`.as(
-          'axes_collectivite_ids'
-        ),
+        ficheId: ficheRecursiveAxeView.ficheId,
         axes: sql<
           {
             id: number;
@@ -409,12 +400,24 @@ export default class ListFichesService {
             parentId: number | null;
             planId: number | null;
           }[]
-        >`array_agg(json_build_object('id', ${ficheActionAxeTable.axeId}, 'nom', ${axeTable.nom}, 'collectiviteId', ${axeTable.collectiviteId}, 'parentId', ${parentAxeTable.id}, 'planId', ${axeTable.plan}))`.as(
+        >`array_agg(json_build_object('id', ${ficheRecursiveAxeView.id}, 'nom', ${ficheRecursiveAxeView.nom}, 'collectiviteId', ${ficheRecursiveAxeView.collectiviteId}, 'parentId', ${ficheRecursiveAxeView.parentId}, 'planId', ${ficheRecursiveAxeView.planId}, 'axeLevel', ${ficheRecursiveAxeView.axeLevel}))`.as(
           'axes'
         ),
-        planIds: sql<
-          number[]
-        >`array_agg(COALESCE(${axeTable.plan}, ${axeTable.id}))`.as('plan_ids'),
+      })
+      .from(ficheRecursiveAxeView);
+
+    query.where(inArray(ficheRecursiveAxeView.ficheId, ficheIds));
+
+    return query.groupBy(ficheRecursiveAxeView.ficheId).as('ficheActionAxes');
+  }
+
+  private getFicheActionPlansQuery(ficheIds: number[]) {
+    const planTable = aliasedTable(axeTable, 'plan_table');
+    const parentAxeTable = aliasedTable(axeTable, 'parent_axe_table');
+
+    const query = this.databaseService.db
+      .select({
+        ficheId: ficheActionAxeTable.ficheId,
         plans: sql<
           TagWithCollectiviteId[]
         >`array_agg(json_build_object('id', COALESCE(${axeTable.plan}, ${axeTable.id}), 'nom', COALESCE(${planTable.nom}, ${axeTable.nom}),  'collectiviteId', ${axeTable.collectiviteId}))`.as(
@@ -434,7 +437,7 @@ export default class ListFichesService {
 
     query.where(inArray(ficheActionAxeTable.ficheId, ficheIds));
 
-    return query.groupBy(ficheActionAxeTable.ficheId).as('ficheActionAxes');
+    return query.groupBy(ficheActionAxeTable.ficheId).as('ficheActionPlans');
   }
 
   private getFicheActionServicesQuery(ficheIds: number[]) {
@@ -665,8 +668,8 @@ export default class ListFichesService {
             type: string;
             unite: string;
             annee?: number | null;
-            budgetPrevisionnel?: string | null;
-            budgetReel?: string | null;
+            budgetPrevisionnel?: number | null;
+            budgetReel?: number | null;
             estEtale?: boolean;
           }[]
         >`array_agg
@@ -854,7 +857,7 @@ export default class ListFichesService {
     return ficheIdsQuery;
   }
 
-  private async listFichesQuery(
+  async listFichesQuery(
     collectiviteId: number | null,
     filters?: ListFichesRequestFilters,
     queryOptions?: QueryOptionsSchema
@@ -890,6 +893,7 @@ export default class ListFichesService {
     const ficheActionPilotes = this.getFicheActionPilotesQuery(ficheIds);
     const ficheActionServices = this.getFicheActionServicesQuery(ficheIds);
     const ficheActionAxes = this.getFicheActionAxesQuery(ficheIds);
+    const ficheActionPlans = this.getFicheActionPlansQuery(ficheIds);
     const ficheActionEtapes = this.getFicheActionEtapesQuery(ficheIds);
     const ficheActionNotes = this.getFicheActionNotesQuery(ficheIds);
     const ficheActionMesures = this.getFicheActionMesuresQuery(ficheIds);
@@ -904,6 +908,8 @@ export default class ListFichesService {
     const query = this.databaseService.db
       .select({
         ...getTableColumns(ficheActionTable),
+        dateDebut: getISOFormatDateQuery(ficheActionTable.dateDebut),
+        dateFin: getISOFormatDateQuery(ficheActionTable.dateFin),
         collectiviteNom: collectiviteTable.nom,
         createdBy: sqlAuthorOrNull({
           userIdColumn: ficheActionTable.createdBy,
@@ -930,7 +936,7 @@ export default class ListFichesService {
         referents: ficheActionReferent.referents,
         services: ficheActionServices.services,
         axes: ficheActionAxes.axes,
-        plans: ficheActionAxes.plans,
+        plans: ficheActionPlans.plans,
         etapes: ficheActionEtapes.etapes,
         notes: ficheActionNotes.notes,
         mesures: ficheActionMesures.mesures,
@@ -988,6 +994,10 @@ export default class ListFichesService {
       .leftJoin(
         ficheActionAxes,
         eq(ficheActionAxes.ficheId, ficheActionTable.id)
+      )
+      .leftJoin(
+        ficheActionPlans,
+        eq(ficheActionPlans.ficheId, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionEtapes,

@@ -4,6 +4,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import {
   IndicateurAvecValeurs,
   IndicateurAvecValeursParSource,
+  IndicateurDefinition,
   IndicateurDefinitionTiny,
   IndicateurSourceMetadonnee,
   IndicateurValeur,
@@ -304,7 +305,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               unite: 'teq CO2',
               borneMin: null,
               borneMax: null,
-            },
+            } as IndicateurDefinition,
             sources: {
               rare: {
                 source: 'rare',
@@ -366,7 +367,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               unite: 'teq CO2',
               borneMin: null,
               borneMax: null,
-            },
+            } as IndicateurDefinition,
             sources: {
               snbc: {
                 source: 'snbc',

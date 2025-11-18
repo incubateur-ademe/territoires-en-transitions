@@ -1,13 +1,10 @@
-import {
-  budgetTypeSchema,
-  budgetUniteSchema,
-} from '@tet/backend/plans/fiches/fiche-action-budget/budget.types';
+import { budgetTypeSchema, budgetUniteSchema } from '@tet/domain/plans';
 import { z } from 'zod';
 
 export const getBudgetsRequestSchema = z.object({
   ficheId: z.number(),
-  type: budgetTypeSchema.optional(),
-  unite: budgetUniteSchema.optional(),
+  type: z.optional(budgetTypeSchema),
+  unite: z.optional(budgetUniteSchema),
   total: z.boolean().optional(),
 });
 

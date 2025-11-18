@@ -1,4 +1,5 @@
 export * from './definitions/indicateur-definition.schema';
+export * from './definitions/indicateur-segmentations.enum';
 export * from './definitions/list-definitions.input';
 export * from './shared/indicateur-collectivite.schema';
 export * from './shared/indicateur-objectif.schema';
@@ -17,6 +18,7 @@ export * from './trajectoires/indicateur-source.enum';
 export * from './trajectoires/trajectoire-secteurs';
 export * from './trajectoires/trajectoires-carbon-sequestration-properties';
 export * from './trajectoires/types';
+export * from './valeurs/indicateur-valeur-type.enum';
 export * from './valeurs/indicateur-valeur.schema';
 export * from './valeurs/values.constants';
 export * from './verification-trajectoire-status';

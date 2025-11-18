@@ -1,5 +1,8 @@
 import * as z from 'zod/mini';
-import { indicateurDefinitionSchemaTiny } from '../definitions/indicateur-definition.schema';
+import {
+  indicateurDefinitionSchema,
+  indicateurDefinitionSchemaTiny,
+} from '../definitions/indicateur-definition.schema';
 import { indicateurSourceMetadonneeSchema } from '../shared/indicateur-source-metadonnee.schema';
 import { indicateurSourceSchema } from '../shared/indicateur-source.schema';
 
@@ -82,7 +85,7 @@ export const indicateurValeursGroupeeParSourceSchema = z.object({
 });
 
 export const indicateurAvecValeursParSourceSchema = z.object({
-  definition: indicateurDefinitionSchemaTiny,
+  definition: indicateurDefinitionSchema,
   sources: z.record(z.string(), indicateurValeursGroupeeParSourceSchema),
 });
 

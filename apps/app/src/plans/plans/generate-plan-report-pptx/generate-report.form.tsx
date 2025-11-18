@@ -1,0 +1,148 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Plan, reportGenerationInputSchema } from '@tet/domain/plans';
+import { Checkbox, Field, Input } from '@tet/ui';
+import { useEffect, useState } from 'react';
+import { z } from 'zod';
+
+import { Controller, useForm } from 'react-hook-form';
+import { PlanFicheSelector } from './plan-fiche-selector';
+
+// Form schema that accepts File for logoFile (will be converted to base64 before sending)
+const generateReportFormSchema = reportGenerationInputSchema
+  .extend({
+    logoFile: z.instanceof(File).optional().nullable(),
+  })
+  .partial({
+    templateKey: true,
+    includeFicheIndicateursSlides: true,
+  });
+
+export type GenerateReportFormArgs = z.infer<typeof generateReportFormSchema>;
+
+type GenerateReportFormProps = {
+  formId?: string;
+  plan: Plan;
+  disabled?: boolean;
+  onSubmit: (data: GenerateReportFormArgs) => void;
+};
+
+export function GenerateReportForm({
+  formId,
+  plan,
+  disabled,
+  onSubmit,
+}: GenerateReportFormProps) {
+  const [includeAllFiches, setIncludeAllFiches] = useState(true);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const {
+    handleSubmit,
+    control,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<GenerateReportFormArgs>({
+    resolver: zodResolver(generateReportFormSchema),
+    mode: 'onChange',
+    disabled,
+    defaultValues: {
+      planId: plan.id,
+      templateKey: 'general_bilan_template',
+      ficheIds: undefined,
+    },
+  });
+
+  const logoFile = watch('logoFile');
+
+  useEffect(() => {
+    if (logoFile && logoFile instanceof File) {
+      const objectUrl = URL.createObjectURL(logoFile);
+      setImagePreview(objectUrl);
+
+      return () => {
+        URL.revokeObjectURL(objectUrl);
+      };
+    } else {
+      setImagePreview(null);
+    }
+  }, [logoFile]);
+
+  return (
+    <form
+      id={formId}
+      onSubmit={handleSubmit(async (data) => {
+        onSubmit(data);
+      })}
+      className="flex flex-col gap-8"
+    >
+      <Field
+        title="Ajoutez le logo de votre collectivité"
+        message={errors.logoFile?.message}
+        state={errors.logoFile?.message ? 'error' : 'default'}
+      >
+        <Controller
+          name="logoFile"
+          control={control}
+          render={({ field }) => (
+            <>
+              {field.value && imagePreview && (
+                <div className="mt-2 text-sm text-grey-7 flex flex-col items-center gap-2">
+                  <img
+                    src={imagePreview}
+                    alt="Aperçu du logo"
+                    className="max-w-48 object-contain rounded-lg border border-grey-4 p-2 bg-grey-1"
+                  />
+                  <span>
+                    Fichier sélectionné : <strong>{field.value.name}</strong>
+                  </span>
+                </div>
+              )}
+              <Input
+                type="file"
+                disabled={disabled}
+                accept=".png,.jpg,.jpeg"
+                displaySize="md"
+                onChange={(e) => field.onChange(e.target.files?.[0] ?? null)}
+              />
+            </>
+          )}
+        />
+      </Field>
+      <Field title="Actions à ajouter au rapport">
+        <div className="flex flex-col gap-4 mt-2">
+          <Checkbox
+            label="Toutes les actions"
+            checked={includeAllFiches}
+            disabled={disabled}
+            onChange={(e) => {
+              const checked = e.target.checked;
+              setIncludeAllFiches(checked);
+              if (checked) {
+                setValue('ficheIds', undefined);
+              }
+            }}
+          />
+          {!includeAllFiches && (
+            <Controller
+              control={control}
+              name="ficheIds"
+              render={({ field }) => {
+                return (
+                  <PlanFicheSelector
+                    disabled={disabled}
+                    collectiviteId={plan.collectiviteId}
+                    planId={plan.id}
+                    values={field.value ?? undefined}
+                    onChange={(args) => {
+                      field.onChange(args.values ?? []);
+                    }}
+                  />
+                );
+              }}
+            />
+          )}
+        </div>
+      </Field>
+    </form>
+  );
+}
