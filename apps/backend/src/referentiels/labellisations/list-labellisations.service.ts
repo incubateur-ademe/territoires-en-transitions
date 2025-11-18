@@ -14,7 +14,7 @@ import { DatabaseService } from '@/backend/utils/database/database.service';
 import { roundTo } from '@/backend/utils/number.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { desc, getTableColumns, inArray, isNotNull } from 'drizzle-orm';
-import { and, eq } from 'drizzle-orm/sql';
+import { and, eq, sql } from 'drizzle-orm/sql';
 import { DateTime } from 'luxon';
 
 //site_labellisation
@@ -50,7 +50,7 @@ export class ListLabellisationsService {
         pointFait: snapshotTable.pointFait,
         pointProgramme: snapshotTable.pointProgramme,
         pointPotentiel: snapshotTable.pointPotentiel,
-        etoiles: labellisationDemandeTable.etoiles,
+        etoiles: sql<number>`COALESCE(${auditTable.etoilesValidees}, ${labellisationDemandeTable.etoiles}::text::integer)`,
         auditId: snapshotTable.auditId,
       })
       .from(snapshotTable)
@@ -75,14 +75,13 @@ export class ListLabellisationsService {
         if (!labellisation.etoiles || !labellisation.auditId) {
           return null;
         }
-        const etoiles: number = parseInt(labellisation.etoiles);
         const annee = DateTime.fromISO(labellisation.date).year;
         const labellisationrecord: LabellisationRecord = {
           id: labellisation.auditId,
           collectiviteId: labellisation.collectiviteId,
           referentiel: labellisation.referentielId,
           obtenueLe: labellisation.date,
-          etoiles: etoiles,
+          etoiles: labellisation.etoiles,
           annee: annee,
           scoreRealise: labellisation.pointPotentiel
             ? roundTo(

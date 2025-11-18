@@ -18,11 +18,11 @@ export class ValidateAuditService {
   async validateAudit({ auditId }: { auditId: number }): Promise<Audit> {
     // Update audit to set valide=true
     // There is a PG trigger `labellisation.update_audit()` that update `date_fin` and `clos`
+    // TODO: Modifier la fonction labellisation.update_labellisation() coalesce
     const audit = await this.db
-      .update(auditTable)
-      .set({ valide: true })
+      .select()
+      .from(auditTable)
       .where(eq(auditTable.id, auditId))
-      .returning()
       .then((rows) => rows[0]);
 
     if (!audit) {
@@ -33,13 +33,26 @@ export class ValidateAuditService {
     // it would be better for consistency but maybe it's too big an operation?
 
     // Crée un snapshot de 'post_audit'
-    await this.snapshotsService.computeAndUpsert({
+    const snapshot = await this.snapshotsService.computeAndUpsert({
       collectiviteId: audit.collectiviteId,
       referentielId: audit.referentielId,
       jalon: SnapshotJalonEnum.POST_AUDIT,
       auditId: audit.id,
     });
 
-    return audit;
+    const etoilesObtenues =snapshot.scoresPayload.scores.score.etoiles;
+
+    const updatedAuditFields: Partial<Audit> = {
+      valide: true,
+      etoilesValidees: etoilesObtenues,
+    };
+    const updatedAudit = await this.db
+      .update(auditTable)
+      .set(updatedAuditFields)
+      .where(eq(auditTable.id, auditId))
+      .returning()
+      .then((rows) => rows[0]);
+
+    return updatedAudit;
   }
 }

@@ -6,7 +6,7 @@ import {
   integer,
   serial,
   timestamp,
-  uniqueIndex,
+  uniqueIndex
 } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
@@ -28,6 +28,7 @@ export const auditTable = labellisationSchema.table(
     dateCnl: timestamp('date_cnl', TIMESTAMP_OPTIONS),
     valideLabellisation: boolean('valide_labellisation'),
     clos: boolean('clos').default(false).notNull(),
+    etoilesValidees: integer('etoiles_validees'),
   },
   (table) => [
     uniqueIndex('audit_existant')
@@ -46,7 +47,7 @@ export const auditTable = labellisationSchema.table(
       columns: [table.demandeId],
       foreignColumns: [labellisationDemandeTable.id],
       name: 'audit_demande_id_fkey',
-    }),
+    })
   ]
 );
 
