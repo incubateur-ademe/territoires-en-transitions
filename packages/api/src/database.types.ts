@@ -5164,7 +5164,6 @@ export type Database = {
           niveau_priorite:
             | Database['public']['Enums']['fiche_action_niveaux_priorite']
             | null;
-          notes_complementaires: string | null;
           objectifs: string | null;
           participation_citoyenne: string | null;
           participation_citoyenne_type: string | null;
@@ -5201,7 +5200,6 @@ export type Database = {
           niveau_priorite?:
             | Database['public']['Enums']['fiche_action_niveaux_priorite']
             | null;
-          notes_complementaires?: string | null;
           objectifs?: string | null;
           participation_citoyenne?: string | null;
           participation_citoyenne_type?: string | null;
@@ -5237,7 +5235,6 @@ export type Database = {
           niveau_priorite?:
             | Database['public']['Enums']['fiche_action_niveaux_priorite']
             | null;
-          notes_complementaires?: string | null;
           objectifs?: string | null;
           participation_citoyenne?: string | null;
           participation_citoyenne_type?: string | null;
@@ -16813,7 +16810,6 @@ export type Database = {
           niveau_priorite:
             | Database['public']['Enums']['fiche_action_niveaux_priorite']
             | null;
-          notes_complementaires: string | null;
           objectifs: string | null;
           partenaires:
             | Database['public']['Tables']['partenaire_tag']['Row'][]

@@ -11,21 +11,21 @@ import {
   Select,
 } from '@/ui';
 import { useState } from 'react';
-import { EditedNote } from '../data/useUpsertNoteSuivi';
+import { EditedNote } from '../data/use-upsert-note';
 
-type ModaleCreationNoteDeSuiviProps = {
+type NoteCreationModalProps = {
   isOpen: boolean;
   fiche: FicheResume;
   setIsOpen: (opened: boolean) => void;
   onEdit: (editedNote: EditedNote) => void;
 };
 
-const ModaleCreationNoteDeSuivi = ({
+export const NoteCreationModal = ({
   isOpen,
   fiche,
   setIsOpen,
   onEdit,
-}: ModaleCreationNoteDeSuiviProps) => {
+}: NoteCreationModalProps) => {
   const { yearsOptions } = getYearsOptions();
 
   const [year, setYear] = useState<number | undefined>();
@@ -41,7 +41,7 @@ const ModaleCreationNoteDeSuivi = ({
     <BaseUpdateFicheModal
       fiche={fiche}
       openState={{ isOpen, setIsOpen }}
-      title="Note de suivi et points de vigilance"
+      title="Notes"
       size="lg"
       render={({ descriptionId }) => (
         <FormSectionGrid formSectionId={descriptionId}>
@@ -68,7 +68,6 @@ const ModaleCreationNoteDeSuivi = ({
           </Field>
         </FormSectionGrid>
       )}
-      // Boutons pour valider les modifications
       renderFooter={({ close }) => (
         <ModalFooter variant="right">
           <Button
@@ -97,5 +96,3 @@ const ModaleCreationNoteDeSuivi = ({
     />
   );
 };
-
-export default ModaleCreationNoteDeSuivi;

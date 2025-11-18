@@ -8,12 +8,12 @@ import { AppEnvironment } from '@/domain/utils';
 import { Tab, Tabs } from '@/ui';
 import { ServicesWidget } from '@betagouv/les-communs-widget';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
+import { DocumentsView } from './Documents/documents.view';
+import Etapes from './etapes';
 import FichesLieesTab from './FichesLiees/FichesLieesTab';
 import IndicateursTab from './Indicateurs/IndicateursTab';
-import NotesDeSuiviTab from './NotesDeSuivi/NotesDeSuiviTab';
-import NotesEtDocumentsTab from './NotesEtDocuments/NotesEtDocumentsTab';
-import Etapes from './etapes';
 import { MesuresLieesView } from './mesures-liees/mesures-liees.view';
+import { NotesView } from './notes/notes.view';
 
 type TabDescriptor = {
   label: string;
@@ -66,9 +66,9 @@ const FicheActionOnglets = ({
       render: () => <Etapes isReadonly={isReadonly} fiche={fiche} />,
     },
     {
-      label: 'Notes de suivi',
+      label: 'Notes',
       isVisible: true,
-      render: () => <NotesDeSuiviTab isReadonly={isReadonly} fiche={fiche} />,
+      render: () => <NotesView isReadonly={isReadonly} fiche={fiche} />,
     },
     {
       label: 'Moyens',
@@ -105,10 +105,14 @@ const FicheActionOnglets = ({
       ),
     },
     {
-      label: 'Notes et documents',
+      label: 'Documents',
       isVisible: true,
       render: () => (
-        <NotesEtDocumentsTab isReadonly={isReadonly} fiche={fiche} />
+        <DocumentsView
+          isReadonly={isReadonly}
+          collectiviteId={collectiviteId}
+          fiche={fiche}
+        />
       ),
     },
     {
