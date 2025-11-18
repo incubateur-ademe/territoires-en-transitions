@@ -15,59 +15,6 @@ const Section = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-type BudgetsContentProps = {
-  fiche: FicheWithRelations;
-  budgets: FicheActionBudget[];
-  isReadonly: boolean;
-  onEdit: (modalType: ModalType) => void;
-};
-
-const BudgetsContent = ({
-  fiche,
-  budgets,
-  isReadonly,
-  onEdit,
-}: BudgetsContentProps) => {
-  const shouldDisplayWarning = shouldDisplayUnitWarning(fiche, budgets);
-
-  const investmentView = (
-    <Budget
-      budgets={budgets}
-      type="investissement"
-      isReadonly={isReadonly}
-      onEdit={() => onEdit('investissement')}
-    />
-  );
-  const fonctionnementView = (
-    <Budget
-      type="fonctionnement"
-      isReadonly={isReadonly}
-      budgets={budgets}
-      onEdit={() => onEdit('fonctionnement')}
-    />
-  );
-
-  if (shouldDisplayWarning) {
-    return (
-      <>
-        <Section>
-          {investmentView}
-          <Spacer height={2} />
-          {fonctionnementView}
-        </Section>
-        <BudgetUnitWarning />
-      </>
-    );
-  }
-
-  return (
-    <>
-      <Section>{investmentView}</Section>
-      <Section>{fonctionnementView}</Section>
-    </>
-  );
-};
-
 type MoyensContentProps = {
   fiche: FicheWithRelations;
   budgets: FicheActionBudget[];
