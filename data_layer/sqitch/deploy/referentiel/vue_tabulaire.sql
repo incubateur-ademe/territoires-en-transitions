@@ -12,8 +12,8 @@ create or replace function private.convert_client_scores(scores jsonb) returns S
     language sql
 as
 $$
-select (select referentiel from action_relation ar where ar.id = (score ->> 'action_id')),
-       (score ->> 'action_id')::action_id,
+select (select referentiel from public.action_relation ar where ar.id = (score ->> 'action_id')),
+       (score ->> 'action_id')::public.action_id,
        (score ->> 'concerne')::boolean,
        (score ->> 'desactive')::boolean,
        (score ->> 'point_fait')::float,
