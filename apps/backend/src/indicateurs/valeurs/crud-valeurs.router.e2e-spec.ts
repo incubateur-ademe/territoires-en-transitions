@@ -328,6 +328,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       indicateurId: 73,
     });
     expect(result).toStrictEqual({
+      indicateurId: 73,
       typeCollectivite: 'CA',
       valeurs: [
         {

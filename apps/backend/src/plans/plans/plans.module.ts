@@ -14,6 +14,7 @@ import { UpsertAxeRepository } from '../axes/upsert-axe/upsert-axe.repository';
 import { UpsertAxeRouter } from '../axes/upsert-axe/upsert-axe.router';
 import { UpsertAxeService } from '../axes/upsert-axe/upsert-axe.service';
 import { FichesModule } from '../fiches/fiches.module';
+import { ComputeBudgetRules } from './compute-budget/compute-budget.rules';
 import { DeletePlanRepository } from './delete-plan/delete-plan.repository';
 import { DeletePlanRouter } from './delete-plan/delete-plan.router';
 import { DeletePlanService } from './delete-plan/delete-plan.service';
@@ -26,6 +27,7 @@ import { ListPlansRepository } from './list-plans/list-plans.repository';
 import { ListPlansRouter } from './list-plans/list-plans.router';
 import { ListPlansService } from './list-plans/list-plans.service';
 import { PlanRouter } from './plans.router';
+import { PlanProgressRules } from './progress/plan-progress.rules';
 import { UpsertPlanRepository } from './upsert-plan/upsert-plan.repository';
 import { UpsertPlanRouter } from './upsert-plan/upsert-plan.router';
 import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
@@ -63,8 +65,17 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     UpsertPlanRepository,
     UpsertPlanService,
     UpsertPlanRouter,
+    PlanProgressRules,
+    ComputeBudgetRules,
     PlanRouter,
   ],
-  exports: [PlanRouter, UpsertPlanService, ListPlansService],
+  exports: [
+    PlanRouter,
+    UpsertPlanService,
+    ListPlansService,
+    GetPlanService,
+    PlanProgressRules,
+    ComputeBudgetRules,
+  ],
 })
 export class PlanModule {}
