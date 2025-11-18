@@ -5,9 +5,9 @@ import {
   Tailwind,
   pixelBasedPreset,
 } from '@react-email/components';
+import { preset } from '@tet/domain/utils';
 import { toMerged } from 'es-toolkit';
 import * as React from 'react';
-import { preset } from './preset';
 
 /**
  * Génère l'enveloppe globale du mail avec
