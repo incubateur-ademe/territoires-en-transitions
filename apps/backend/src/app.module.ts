@@ -10,6 +10,7 @@ import { IndicateursModule } from './indicateurs/indicateurs.module';
 import { MetricsModule } from './metrics/metrics.module';
 import { FichesModule } from './plans/fiches/fiches.module';
 import { PlanModule } from './plans/plans/plans.module';
+import { ReportsModule } from './plans/reports/reports.module';
 import { ReferentielsModule } from './referentiels/referentiels.module';
 import { SharedModule } from './shared/shared.module';
 import { AuthModule } from './users/auth.module';
@@ -71,6 +72,7 @@ const appLogger = new Logger('AppModule');
     AuthModule,
     FichesModule,
     PlanModule,
+    ReportsModule,
     PersonnalisationsModule,
     ReferentielsModule,
     SharedModule,
