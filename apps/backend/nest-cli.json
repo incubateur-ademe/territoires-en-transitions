@@ -7,7 +7,8 @@
     "tsConfigPath": "tsconfig.app.json",
     "assets": [
       { "include": "**/*.csv", "outDir": "../../dist/apps/backend/src" },
-      { "include": "**/*.xlsx", "outDir": "../../dist/apps/backend/src" }
+      { "include": "**/*.xlsx", "outDir": "../../dist/apps/backend/src" },
+      { "include": "**/*.pptx", "outDir": "../../dist/apps/backend/src" }
     ]
   }
 }
