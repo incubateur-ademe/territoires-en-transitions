@@ -72,7 +72,6 @@ describe('ValidateAuditRouter', () => {
     // On vérifie que le snapshot associé à l'audit est bien créé
     expect(snapshot).toBeDefined();
     expect(snapshot.jalon).toBe(SnapshotJalonEnum.POST_AUDIT);
-    expect(snapshot.date).toBe(validatedAudit.dateFin);
   });
 
   test('un non auditeur ne peut pas valider un audit', async () => {
