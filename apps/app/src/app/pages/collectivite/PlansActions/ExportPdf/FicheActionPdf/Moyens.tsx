@@ -54,7 +54,7 @@ export const Moyens = ({ fiche, budgets = [] }: MoyensProps) => {
           <Paragraph className="text-primary-9 font-bold uppercase">
             Moyens humains et techniques :{' '}
           </Paragraph>
-          {ressources ? htmlToText(ressources) : 'Non renseignés '}
+          {ressources ? htmlToText(ressources) : 'Non renseignés'}
         </Paragraph>
 
         <BudgetContent type="investissement" budgets={budgetInvestissement} />

@@ -60,7 +60,7 @@ const FicheActionCard = ({
   onSelect,
   onToggleOpen,
   currentCollectivite,
-  currentUserId
+  currentUserId,
 }: FicheActionCardProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
 
@@ -73,7 +73,11 @@ const FicheActionCard = ({
   const isNotClickable =
     currentCollectivite.niveauAcces === null && !!ficheAction.restreint;
 
-  const canUpdate = isFicheEditableByCollectiviteUser(ficheAction, currentCollectivite, currentUserId);
+  const canUpdate = isFicheEditableByCollectiviteUser(
+    ficheAction,
+    currentCollectivite,
+    currentUserId
+  );
 
   const toggleOpen = (isOpen: boolean) => {
     setIsEditOpen(isOpen);
