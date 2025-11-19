@@ -218,6 +218,8 @@ export class GetLabellisationService {
         currentAudit.demandeId = currentDemande.id;
       }
 
+      // Mapping for legacy reasons,
+      // TODO: to be removed when the frontend is updated
       return {
         audit: {
           collectivite_id: currentAudit.collectiviteId,
@@ -230,6 +232,7 @@ export class GetLabellisationService {
           valide: currentAudit.valide,
           valide_labellisation: currentAudit.valideLabellisation,
           clos: currentAudit.clos,
+          etoiles_validees: currentAudit.etoilesValidees,
         },
         demande: {
           collectivite_id: currentDemande.collectiviteId,
