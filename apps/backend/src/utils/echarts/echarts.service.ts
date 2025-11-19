@@ -68,10 +68,15 @@ export class EchartsService {
     const canvas = createCanvas(request.width, request.height);
 
     // ECharts can use the Canvas instance created by node-canvas as a container directly
-    let chart: ECharts | null = echarts.init(canvas);
+    let chart: ECharts | null = echarts.init(canvas, null, {
+      width: request.width,
+      height: request.height,
+      devicePixelRatio: 3,
+      renderer: 'canvas',
+    });
 
     // setOption as normal
-    chart?.setOption(request.options);
+    chart?.setOption({ ...request.options, textStyle: { fontSize: 24 } });
 
     const buffer = canvas.toBuffer('image/png');
 
