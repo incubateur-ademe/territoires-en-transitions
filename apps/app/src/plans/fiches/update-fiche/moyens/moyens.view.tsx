@@ -13,6 +13,48 @@ type MoyensViewProps = {
   fiche: FicheWithRelations;
 };
 
+type EmptyMoyensViewProps = {
+  isReadonly: boolean;
+  setOpenModalType: (modalType: ModalType) => void;
+};
+
+const EmptyMoyensView = ({
+  isReadonly,
+  setOpenModalType,
+}: EmptyMoyensViewProps) => {
+  return (
+    <EmptyCard
+      picto={(props) => <MoneyPicto {...props} />}
+      title="Moyens"
+      isReadonly={isReadonly}
+      actions={[
+        {
+          children: 'Détailler les moyens humains et techniques',
+          onClick: () => setOpenModalType('resources'),
+        },
+        {
+          children: "Compléter le budget d'investissement",
+          onClick: () => setOpenModalType('investissement'),
+        },
+        {
+          children: 'Compléter le budget de fonctionnement',
+          onClick: () => setOpenModalType('fonctionnement'),
+        },
+        {
+          children: 'Ajouter des financeurs',
+          variant: 'outlined',
+          onClick: () => setOpenModalType('financeurs'),
+        },
+        {
+          children: 'Détailler les financements',
+          variant: 'outlined',
+          onClick: () => setOpenModalType('financements'),
+        },
+      ]}
+      size="xs"
+    />
+  );
+};
 const isBudgetEmpty = (budgets: FicheActionBudget[]) => {
   if (!budgets) return true;
   if (budgets.length === 0) return true;
@@ -53,35 +95,9 @@ export const MoyensView = ({ isReadonly, fiche }: MoyensViewProps) => {
           onEdit={setOpenModalType}
         />
       ) : (
-        <EmptyCard
-          picto={(props) => <MoneyPicto {...props} />}
-          title="Moyens"
+        <EmptyMoyensView
           isReadonly={isReadonly}
-          actions={[
-            {
-              children: "Compléter le budget d'investissement",
-              onClick: () => setOpenModalType('investissement'),
-            },
-            {
-              children: 'Compléter le budget de fonctionnement',
-              onClick: () => setOpenModalType('fonctionnement'),
-            },
-            {
-              children: 'Ajouter des financeurs',
-              variant: 'outlined',
-              onClick: () => setOpenModalType('financeurs'),
-            },
-            {
-              children: 'Détailler les financements',
-              variant: 'outlined',
-              onClick: () => setOpenModalType('financements'),
-            },
-            {
-              children: 'Détailler les moyens humains et techniques',
-              onClick: () => setOpenModalType('resources'),
-            },
-          ]}
-          size="xs"
+          setOpenModalType={setOpenModalType}
         />
       )}
       <MoyensModals
