@@ -48,10 +48,14 @@ describe('Create Fiche Action', () => {
         collectiviteId: collectivite.id,
       };
 
-      const ficheId = await caller.plans.fiches.create(ficheInput);
+      const createdFiche = await caller.plans.fiches.create({
+        fiche: ficheInput,
+      });
+      const ficheId = createdFiche.id;
+      assert(ficheId);
 
       onTestFinished(async () => {
-        await caller.plans.fiches.delete({ ficheId });
+        await caller.plans.fiches.delete({ ficheId, deleteMode: 'hard' });
       });
 
       const fiche = await caller.plans.fiches.get({ id: ficheId });
@@ -73,8 +77,10 @@ describe('Create Fiche Action', () => {
 
       await expect(
         caller.plans.fiches.create({
-          titre: 'Fiche non autorisée',
-          collectiviteId: collectivite.id,
+          fiche: {
+            titre: 'Fiche non autorisée',
+            collectiviteId: collectivite.id,
+          },
         })
       ).rejects.toThrow(
         `Droits insuffisants, l'utilisateur ${YOLO_DODO.id} n'a pas l'autorisation plans.fiches.create sur la ressource Collectivité ${collectivite.id}`
@@ -96,8 +102,10 @@ describe('Create Fiche Action', () => {
 
       await expect(
         caller.plans.fiches.create({
-          titre: 'Fiche non autorisée',
-          collectiviteId: collectivite.id,
+          fiche: {
+            titre: 'Fiche non autorisée',
+            collectiviteId: collectivite.id,
+          },
         })
       ).rejects.toThrow(
         `Droits insuffisants, l'utilisateur ${user.userId} n'a pas l'autorisation plans.fiches.create sur la ressource Collectivité ${collectivite.id}`
@@ -119,8 +127,10 @@ describe('Create Fiche Action', () => {
 
       await expect(
         caller.plans.fiches.create({
-          titre: 'Fiche non autorisée',
-          collectiviteId: collectivite.id,
+          fiche: {
+            titre: 'Fiche non autorisée',
+            collectiviteId: collectivite.id,
+          },
         })
       ).rejects.toThrow(
         `Droits insuffisants, l'utilisateur ${user.userId} n'a pas l'autorisation plans.fiches.create sur la ressource Collectivité ${collectivite.id}`
