@@ -28,7 +28,7 @@ export class PermissionService {
     }
   }
 
-  async getPermissions(
+  async listPermissions(
     user: AuthUser,
     resourceType: ResourceType,
     resourceId: number | null
@@ -117,7 +117,7 @@ export class PermissionService {
       }
     }
 
-    const permissions = await this.getPermissions(
+    const permissions = await this.listPermissions(
       user,
       resourceType,
       resourceId

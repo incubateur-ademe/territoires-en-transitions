@@ -56,11 +56,9 @@ const DeleteFicheModal = ({
           btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
-              if (id) {
-                deleteFiche({
-                  ficheId: id,
-                });
-              }
+              deleteFiche({
+                ficheId: id,
+              });
               close();
             },
           }}

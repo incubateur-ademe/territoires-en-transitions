@@ -3,7 +3,8 @@ import {
   makeCollectivitePlanActionUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
-import { PermissionOperation, PermissionOperationEnum } from '@/domain/users';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import { PermissionOperation } from '@/domain/users';
 import { Divider, Icon } from '@/ui';
 import { format } from 'date-fns';
 import { Fiche } from '../data/use-get-fiche';
@@ -74,7 +75,7 @@ export const Header = ({
       </div>
 
       {/* Fils d'ariane avec emplacements de la fiche */}
-      {permissions?.includes(PermissionOperationEnum['PLANS.READ']) && (
+      {hasPermission(permissions, 'plans.read') && (
         <FicheBreadcrumbs
           titre={titre ?? 'Sans titre'}
           collectiviteId={collectiviteId}

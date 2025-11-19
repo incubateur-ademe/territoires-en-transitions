@@ -51,12 +51,12 @@ const EMPTY_ARRAY_VALUE: number[] | string[] = [];
 export const ToutesLesFichesFiltersForm = ({
   title = 'Filtres',
   filters,
-  readonlyFilters,
+  readonlyFilters = {},
   setFilters,
 }: {
   title?: string;
   filters: FormFilters;
-  readonlyFilters: Partial<FormFilters>;
+  readonlyFilters?: Partial<FormFilters>;
   setFilters: (filters: Partial<FormFilters>) => void;
 }) => {
   const pilotes = getPilotesValues(filters);

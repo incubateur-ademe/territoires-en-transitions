@@ -17,7 +17,6 @@ export async function createFicheAndCleanupFunction({
   ficheInput: CreateFicheInput;
 }): Promise<{ ficheId: FicheId; ficheCleanup: () => Promise<void> }> {
   const ficheId = await caller.plans.fiches.create(ficheInput);
-  console.log(`Created fiche ${ficheId}`);
 
   if (ficheInput.axeId) {
     await caller.plans.fiches.update({
