@@ -70,7 +70,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
 
     ListFichesService,
     ListFichesRouter,
-
+    CountByService,
     CreateFicheService,
     CreateFicheRouter,
 

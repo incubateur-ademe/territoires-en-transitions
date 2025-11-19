@@ -6,6 +6,7 @@ import { CompletionAnalyticsService } from './completion-analytics/completion-an
 import { PlansRepository } from './plans.repository';
 import { PlanRouter } from './plans.router';
 import { PlanService } from './plans.service';
+import { PlanProgressRules } from './progress/plan-progress.rules';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { PlanService } from './plans.service';
   ],
   providers: [
     PlanService,
+    PlanProgressRules,
     {
       provide: 'PlansRepositoryInterface',
       useClass: PlansRepository,
@@ -23,6 +25,11 @@ import { PlanService } from './plans.service';
     CompletionAnalyticsService,
     CompletionAnalyticsRouter,
   ],
-  exports: [PlanService, PlanRouter, CompletionAnalyticsRouter],
+  exports: [
+    PlanService,
+    PlanProgressRules,
+    PlanRouter,
+    CompletionAnalyticsRouter,
+  ],
 })
 export class PlanModule {}
