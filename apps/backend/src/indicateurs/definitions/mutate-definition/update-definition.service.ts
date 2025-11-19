@@ -36,7 +36,7 @@ export class UpdateDefinitionService {
     indicateurDefinition: DefinitionListItem,
     doNotThrow?: boolean
   ): Promise<boolean> {
-    const permissions = await this.permissionService.getPermissions(
+    const permissions = await this.permissionService.listPermissions(
       user,
       ResourceType.COLLECTIVITE,
       collectiviteId

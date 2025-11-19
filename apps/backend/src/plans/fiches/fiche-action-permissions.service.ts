@@ -243,7 +243,7 @@ export default class FicheActionPermissionsService {
     }
 
     // Check direct permissions first
-    const permissions = await this.permissionService.getPermissions(
+    const permissions = await this.permissionService.listPermissions(
       user,
       ResourceType.COLLECTIVITE,
       fiche.collectiviteId
