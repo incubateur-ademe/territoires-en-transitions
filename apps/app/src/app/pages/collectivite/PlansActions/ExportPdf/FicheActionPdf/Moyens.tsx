@@ -43,8 +43,19 @@ export const Moyens = ({ fiche, budgets = [] }: MoyensProps) => {
       <Divider className="mt-2" />
       <Stack>
         <Title variant="h5" className="text-primary-8 uppercase">
-          Budget
+          Moyens
         </Title>
+
+        <Paragraph
+          className={classNames({
+            'text-grey-7': emptyRessources,
+          })}
+        >
+          <Paragraph className="text-primary-9 font-bold uppercase">
+            Moyens humains et techniques :{' '}
+          </Paragraph>
+          {ressources ? htmlToText(ressources) : 'Non renseignés '}
+        </Paragraph>
 
         <BudgetContent type="investissement" budgets={budgetInvestissement} />
 
@@ -81,16 +92,6 @@ export const Moyens = ({ fiche, budgets = [] }: MoyensProps) => {
             Financements :{' '}
           </Paragraph>
           {!emptyFinancements ? financements : 'Non renseignés '}
-        </Paragraph>
-        <Paragraph
-          className={classNames({
-            'text-grey-7': emptyRessources,
-          })}
-        >
-          <Paragraph className="text-primary-9 font-bold uppercase">
-            Moyens humains et techniques :{' '}
-          </Paragraph>
-          {ressources ? htmlToText(ressources) : 'Non renseignés '}
         </Paragraph>
       </Stack>
     </>
