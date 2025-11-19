@@ -12,7 +12,7 @@ import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { addTestUser } from '@/backend/users/users/users.fixture';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { inArray } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { createFicheAndCleanupFunction } from '../fiches.test-fixture';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
 
@@ -38,7 +38,7 @@ describe('Delete Fiche Action', () => {
 
     const caller = router.createCaller({ user: editorUser });
     const createFicheResult = await createFicheAndCleanupFunction({
-      caller: caller,
+      caller,
       ficheInput: {
         titre: 'Fiche à supprimer',
         collectiviteId: collectivite.id,
@@ -64,9 +64,17 @@ describe('Delete Fiche Action', () => {
       // Verify the result
       expect(result).toEqual({ success: true });
 
+      // Verify fiche is no longer returned by the get() method
+      await expect(
+        caller.plans.fiches.get({ id: testFicheId })
+      ).rejects.toThrow(`Aucune fiche action trouvée avec l'id ${testFicheId}`);
+
       // Verify fiche still exists in database but with the "deleted" flag
-      const fiche = await caller.plans.fiches.get({ id: testFicheId });
-      expect(fiche.deleted).toBe(true);
+      const [row1] = await db.db
+        .select({ id: ficheActionTable.id, deleted: ficheActionTable.deleted })
+        .from(ficheActionTable)
+        .where(eq(ficheActionTable.id, testFicheId));
+      expect(row1.deleted).toBe(true);
     });
 
     test('Successfully delete a fiche and sub-fiche (soft delete)', async () => {
