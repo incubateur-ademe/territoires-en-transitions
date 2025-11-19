@@ -1,9 +1,10 @@
+import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { FicheResume } from '@/domain/plans';
 import { CollectiviteAccess } from '@/domain/users';
 
 export function isFicheSharedWithCollectivite(
-  fiche: FicheResume,
+  fiche: Pick<FicheResume, 'sharedWithCollectivites'>,
   collectiviteId: number
 ) {
   return fiche.sharedWithCollectivites?.some(
@@ -11,8 +12,8 @@ export function isFicheSharedWithCollectivite(
   );
 }
 
-export function isFicheEditableByCollectivite(
-  fiche: FicheResume,
+export function isFicheEditableByCollectiviteUser(
+  fiche: FicheShareProperties & Pick<FicheResume, 'pilotes'>,
   currentCollectivite: CollectiviteAccess,
   userId?: string
 ) {
@@ -35,7 +36,7 @@ export function isFicheEditableByCollectivite(
  * @param fiche
  * @returns
  */
-export function getFicheAllEditorCollectiviteIds(fiche: FicheResume) {
+export function getFicheAllEditorCollectiviteIds(fiche: FicheShareProperties) {
   return [
     fiche.collectiviteId,
     ...(fiche.sharedWithCollectivites?.map((s) => s.id) || []),
