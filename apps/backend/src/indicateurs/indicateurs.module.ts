@@ -18,6 +18,7 @@ import PersonnalisationsExpressionService from '../collectivites/personnalisatio
 import PersonnalisationsService from '../collectivites/personnalisations/services/personnalisations-service';
 import { AuthModule } from '../users/auth.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
+import { IndicateurChartService } from './charts/indicateur-chart.service';
 import { ListDefinitionsRouter } from './definitions/list-definitions/list-definitions.router';
 import { ListDefinitionsService } from './definitions/list-definitions/list-definitions.service';
 import { ListDefinitionIdsRepository } from './definitions/list-platform-predefined-definitions/list-definition-ids.repository';
@@ -84,6 +85,7 @@ const DEFINITIONS_PROVIDERS = [
 
     IndicateurValeursRouter,
     IndicateurSourcesRouter,
+    IndicateurChartService,
     TrajectoiresDataService,
     TrajectoiresSpreadsheetService,
     TrajectoiresXlsxService,
@@ -110,6 +112,7 @@ const DEFINITIONS_PROVIDERS = [
     ValeursReferenceService,
 
     IndicateursRouter,
+    IndicateurChartService,
   ],
   controllers: [
     IndicateursValeursController,

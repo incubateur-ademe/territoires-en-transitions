@@ -27,6 +27,7 @@ import {
   statutEnumValues,
 } from '@tet/domain/plans';
 import {
+  CountByForEntityResponseType,
   CountByRecordGeneralType,
   CountByResponseType,
 } from '@tet/domain/utils';
@@ -172,12 +173,20 @@ export class CountByService {
           label: allowedValue,
           value: allowedValue,
           count: 0,
+          color:
+            countByProperty === 'statut'
+              ? statutFicheActionToColor[allowedValue as Statut]
+              : undefined,
         };
       });
       countByMap[this.NULL_VALUE_KEY] = {
         label: this.getNullValueLabel(countByProperty),
         value: null,
         count: 0,
+        color:
+          countByProperty === 'statut'
+            ? statutFicheActionToColor[SANS_STATUT_LABEL]
+            : undefined,
       };
     }
   }
@@ -383,6 +392,40 @@ export class CountByService {
     }
   }
 
+  async countByPropertyForEachAxeWithFiches(
+    planId: number,
+    fiches: FicheWithRelations[],
+    countByProperty: CountByPropertyEnumType,
+    filters: ListFichesRequestFilters
+  ): Promise<CountByForEntityResponseType[]> {
+    const axes = Object.values(
+      fiches
+        .map((fiche) => fiche.axes?.find((axe) => axe.parentId === planId))
+        .reduce((acc: Record<number, TagWithCollectiviteId>, axe) => {
+          if (axe && !acc[axe.id]) {
+            acc[axe.id] = axe;
+          }
+          return acc;
+        }, {})
+    );
+
+    return await Promise.all(
+      axes.map(async (axe) => {
+        const countByResponse = await this.countByPropertyWithFiches(
+          fiches.filter((fiche) => fiche.axes?.some((a) => a.id === axe.id)),
+          countByProperty,
+          filters
+        );
+
+        return {
+          id: axe.id,
+          nom: axe.nom,
+          ...countByResponse,
+        };
+      })
+    );
+  }
+
   async countByProperty(
     collectiviteId: number,
     countByProperty: CountByPropertyEnumType,
@@ -399,6 +442,15 @@ export class CountByService {
         collectiviteId,
         filters,
       });
+
+    return this.countByPropertyWithFiches(fiches, countByProperty, filters);
+  }
+
+  async countByPropertyWithFiches(
+    fiches: FicheWithRelations[],
+    countByProperty: CountByPropertyEnumType,
+    filters: ListFichesRequestFilters
+  ) {
     const countByResponse: CountByResponseType = {
       countByProperty,
       total: fiches.length,
