@@ -11,9 +11,11 @@ import { ListFichesSortValue } from '@/domain/plans';
 import {
   ButtonGroup,
   Checkbox,
+  Event,
   Input,
   Pagination,
   Select,
+  useEventTracker,
   VisibleWhen,
 } from '@/ui';
 import classNames from 'classnames';
@@ -74,6 +76,8 @@ export const FichesList = ({
   onUnlink,
   filters,
 }: Props) => {
+  const trackEvent = useEventTracker();
+
   const collectivite = useCurrentCollectivite();
 
   const { view, setView } = useSelectFichesView('grid');
@@ -213,19 +217,28 @@ export const FichesList = ({
                   id: 'grid',
                   icon: 'grid-line',
                   children: 'Carte',
-                  onClick: () => handleChangeView('grid'),
+                  onClick: () => {
+                    handleChangeView('grid');
+                    trackEvent(Event.fiches.listChangeView.grid);
+                  },
                 },
                 {
                   id: 'table',
                   icon: 'menu-line',
                   children: 'Tableau',
-                  onClick: () => handleChangeView('table'),
+                  onClick: () => {
+                    handleChangeView('table');
+                    trackEvent(Event.fiches.listChangeView.table);
+                  },
                 },
                 {
                   id: 'scheduler',
                   icon: 'calendar-line',
                   children: 'Calendrier',
-                  onClick: () => handleChangeView('scheduler'),
+                  onClick: () => {
+                    handleChangeView('scheduler');
+                    trackEvent(Event.fiches.listChangeView.calendar);
+                  },
                 },
               ].filter((button) => !(isReadOnly && button.id === 'scheduler'))}
             />
