@@ -1,5 +1,5 @@
-import { EmailService } from '@/backend/shared/email/email.service';
 import ConfigurationService from '@/backend/utils/config/configuration.service';
+import { EmailService } from '@/backend/utils/email/email.service';
 import { Test } from '@nestjs/testing';
 import { simpleParser } from 'mailparser';
 import { SMTPServer } from 'smtp-server';
