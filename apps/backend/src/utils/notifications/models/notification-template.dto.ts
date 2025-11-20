@@ -1,5 +1,6 @@
 import { MethodResult } from '@/backend/utils/result.type';
 import { ReactNode } from 'react';
+import { Notification } from './notification.table';
 
 /**  Interface commune aux notifications */
 export interface NotificationTemplate {
@@ -15,3 +16,7 @@ export type GetNotificationContentResult = MethodResult<
   GetNotificationContent,
   string
 >;
+
+export type NotificationContentGenerator = (
+  notification: Notification
+) => Promise<GetNotificationContentResult>;

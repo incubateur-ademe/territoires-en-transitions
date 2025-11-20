@@ -1,7 +1,6 @@
-import { getAnonUser } from '@/backend/test';
+import { getAnonUser, getTestRouter } from '@/backend/test';
 import { AuthRole, AuthUser } from '@/backend/users/models/auth.models';
-import { getTestRouter } from '../../test/app-utils';
-import { TrpcRouter } from '../utils/trpc/trpc.router';
+import { TrpcRouter } from '../trpc/trpc.router';
 
 describe('Route de notifications', () => {
   let router: TrpcRouter;
