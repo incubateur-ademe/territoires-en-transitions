@@ -1,5 +1,4 @@
 'use client';
-import { CollectiviteEngagee } from '@/api';
 import { View } from '@/app/app/pages/CollectivitesEngagees/Views/View';
 import {
   initialFilters,
@@ -8,6 +7,7 @@ import {
 import { useFilteredReferentiels } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredReferentiels';
 import { recherchesReferentielsUrl } from '@/app/app/paths';
 import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
+import { CollectiviteEngagee } from '@tet/api';
 import { ReferentielCarte } from './ReferentielCarte';
 
 export const ReferentielsView = ({

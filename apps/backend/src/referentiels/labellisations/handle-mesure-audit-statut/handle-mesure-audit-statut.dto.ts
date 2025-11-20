@@ -2,10 +2,10 @@ import {
   actionAuditStatutSchema,
   actionAuditStatutSchemaCreate,
   actionTypeSchema,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import * as z from 'zod/mini';
 
-import { referentielIdEnumSchema } from '@/domain/referentiels';
+import { referentielIdEnumSchema } from '@tet/domain/referentiels';
 
 // Get
 

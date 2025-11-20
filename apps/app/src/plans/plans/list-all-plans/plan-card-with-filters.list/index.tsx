@@ -1,7 +1,7 @@
 'use client';
 
-import { Plan } from '@/domain/plans';
-import { Spacer } from '@/ui';
+import { Plan } from '@tet/domain/plans';
+import { Spacer } from '@tet/ui';
 import { useListPlans } from '../data/use-list-plans';
 import { Filters } from './filters';
 import { PlanCardList } from './plan-card.list';

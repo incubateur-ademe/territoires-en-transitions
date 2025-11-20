@@ -1,7 +1,7 @@
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import { getFormattedNumber } from '@/app/utils/formatUtils';
-import { Button, Field, Input, OptionValue, Select } from '@/ui';
 import { FicheBudgetCreate } from '@tet/domain/plans';
+import { Button, Field, Input, OptionValue, Select } from '@tet/ui';
 import classNames from 'classnames';
 import { noop } from 'es-toolkit';
 import { useEffect } from 'react';

@@ -1,15 +1,15 @@
 import { uniq } from 'es-toolkit';
 import { useState } from 'react';
 
-import { useCollectiviteId } from '@/api/collectivites';
 import { makeReferentielUrl } from '@/app/app/paths';
 import {
   ActionDefinitionSummary,
   useReferentielDownToAction,
 } from '@/app/referentiels/referentiel-hooks';
 import { ActionDetailed } from '@/app/referentiels/use-snapshot';
-import { getReferentielIdFromActionId } from '@/domain/referentiels';
-import { Breadcrumbs } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
+import { Breadcrumbs } from '@tet/ui';
 import { ReferentielDropdownNavigation } from './referentiel-dropdown.navigation';
 
 /**

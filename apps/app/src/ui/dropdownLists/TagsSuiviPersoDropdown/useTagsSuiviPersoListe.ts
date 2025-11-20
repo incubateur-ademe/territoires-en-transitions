@@ -1,7 +1,7 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { useSupabase } from '@/api';
-import { TagWithCollectiviteId } from '@/domain/collectivites';
 import { useQuery } from '@tanstack/react-query';
+import { useSupabase } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { TagWithCollectiviteId } from '@tet/domain/collectivites';
 import { objectToCamel } from 'ts-case-convert';
 
 export const useTagsSuiviPersoListe = (collectiviteIds?: number[]) => {

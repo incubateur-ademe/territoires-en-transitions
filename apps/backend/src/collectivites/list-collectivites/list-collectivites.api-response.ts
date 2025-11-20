@@ -1,7 +1,7 @@
 import {
   collectivitePublicSchema,
   collectiviteResumeSchema,
-} from '@/domain/collectivites';
+} from '@tet/domain/collectivites';
 import z from 'zod';
 
 export const listCollectiviteApiResponseSchema = z.object({

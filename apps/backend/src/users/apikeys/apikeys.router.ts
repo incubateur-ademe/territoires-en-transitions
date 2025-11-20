@@ -1,7 +1,7 @@
-import { ApikeysService } from '@/backend/users/apikeys/apikeys.service';
-import { deleteApiKeyRequestSchema } from '@/backend/users/apikeys/delete-api-key.request';
-import { generateApiKeyRequestSchema } from '@/backend/users/apikeys/generate-api-key.request';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
+import { ApikeysService } from '@tet/backend/users/apikeys/apikeys.service';
+import { deleteApiKeyRequestSchema } from '@tet/backend/users/apikeys/delete-api-key.request';
+import { generateApiKeyRequestSchema } from '@tet/backend/users/apikeys/generate-api-key.request';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

@@ -1,6 +1,6 @@
 'use client';
 
-import { ENV } from '@/api/environmentVariables';
+import { ENV } from '@tet/api/environmentVariables';
 import { useEffect } from 'react';
 
 export default function DataDogInit() {

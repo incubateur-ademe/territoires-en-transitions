@@ -1,14 +1,13 @@
-import { DBClient } from '@/api';
-import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
-import { useSupabase } from '@/api';
 import { TActionStatutsRow } from '@/app/types/alias';
 import { indexBy } from '@/app/utils/indexBy';
+import { useQuery } from '@tanstack/react-query';
+import { DBClient, useSupabase } from '@tet/api';
+import { DISABLE_AUTO_REFETCH } from '@tet/api/utils/react-query/query-options';
 import {
   flatMapActionsEnfants,
   reduceActions,
   ReferentielId,
-} from '@/domain/referentiels';
-import { useQuery } from '@tanstack/react-query';
+} from '@tet/domain/referentiels';
 import { useCallback, useMemo } from 'react';
 import { ActionType, TableState } from 'react-table';
 import { getMaxDepth } from '../AidePriorisation/queries';

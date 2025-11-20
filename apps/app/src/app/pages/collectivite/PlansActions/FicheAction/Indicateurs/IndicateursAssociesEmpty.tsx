@@ -1,4 +1,4 @@
-import { ButtonProps, EmptyCard } from '@/ui';
+import { ButtonProps, EmptyCard } from '@tet/ui';
 import DatavizPicto from './DatavizPicto';
 
 type IndicateursAssociesEmptyProps = {

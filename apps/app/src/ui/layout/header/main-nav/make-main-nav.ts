@@ -2,8 +2,8 @@ import { finaliserMonInscriptionUrl } from '@/app/app/paths';
 import {
   CollectiviteAccess,
   UserWithCollectiviteAccesses,
-} from '@/domain/users';
-import { HeaderProps } from '@/ui';
+} from '@tet/domain/users';
+import { HeaderProps } from '@tet/ui';
 import { makeCollectiviteNav } from './collectivite/make-collectivite-nav';
 import { makeRoleEditionActionsIndicateursNav } from './collectivite/make-role-edition-actions-indicateurs-nav';
 

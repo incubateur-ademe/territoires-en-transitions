@@ -1,5 +1,5 @@
-import { libreTagTable } from '@/backend/collectivites/tags/libre-tag.table';
-import { createdAt, createdBy } from '@/backend/utils/column.utils';
+import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
+import { createdAt, createdBy } from '@tet/backend/utils/column.utils';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { ficheActionTable } from './fiche-action.table';
 

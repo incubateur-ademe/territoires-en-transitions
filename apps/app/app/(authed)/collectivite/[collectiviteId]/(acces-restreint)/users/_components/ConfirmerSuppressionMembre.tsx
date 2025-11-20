@@ -1,4 +1,4 @@
-import { Modal, ModalFooterOKCancel } from '@/ui';
+import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import { Dispatch, SetStateAction } from 'react';
 import { Membre } from '../../../../../../../src/app/pages/collectivite/Users/types';
 import { useRemoveFromCollectivite } from '../../../../../../../src/app/pages/collectivite/Users/useRemoveFromCollectivite';

@@ -1,7 +1,7 @@
 import { useDeleteFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-delete-fiche';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
-import { Modal, ModalFooterOKCancel } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { Modal, ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { FicheListItem } from '../list-all-fiches/data/use-list-fiches';
 
 type DeleteFicheModalProps = {

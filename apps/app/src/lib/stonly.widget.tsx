@@ -1,8 +1,8 @@
 'use client';
 
-import { ENV } from '@/api/environmentVariables';
-import { useSubscribeToUserAuthEvents } from '@/api/users/user-context/use-subscribe-to-user-auth-events';
-import { UserWithCollectiviteAccesses } from '@/domain/users';
+import { ENV } from '@tet/api/environmentVariables';
+import { useSubscribeToUserAuthEvents } from '@tet/api/users/user-context/use-subscribe-to-user-auth-events';
+import { UserWithCollectiviteAccesses } from '@tet/domain/users';
 import Script from 'next/script';
 
 export default function StonlyWidget() {

@@ -1,6 +1,6 @@
 import { referentielToName } from '@/app/app/labels';
 import { useBaseToast } from '@/app/utils/toast/use-base-toast';
-import { Icon, Tooltip, useCopyToClipboard } from '@/ui';
+import { Icon, Tooltip, useCopyToClipboard } from '@tet/ui';
 import { CollectiviteMembre } from './useMembres';
 
 export type ReferentItemProps = {

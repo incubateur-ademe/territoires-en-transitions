@@ -1,5 +1,5 @@
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   AxeLight,
   CreatePlanRequest,
@@ -9,7 +9,7 @@ import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
   UpdatePlanRequest,
-} from '@/domain/plans';
+} from '@tet/domain/plans';
 import { PlanError } from './plans.errors';
 import { Result } from './plans.result';
 

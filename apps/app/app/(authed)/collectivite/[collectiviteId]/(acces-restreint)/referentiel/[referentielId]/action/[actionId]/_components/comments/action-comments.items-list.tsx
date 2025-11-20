@@ -1,5 +1,5 @@
-import { DiscussionMessages } from '@/domain/collectivites';
-import { cn } from '@/ui/utils/cn';
+import { DiscussionMessages } from '@tet/domain/collectivites';
+import { cn } from '@tet/ui/utils/cn';
 import ActionCommentItem from './action-comments.item';
 import { ActionDiscussionStatut } from './action-comments.types';
 

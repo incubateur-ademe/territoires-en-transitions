@@ -1,14 +1,14 @@
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
-import { FicheResume } from '@/domain/plans';
-import { Field, ModalFooterOKCancel, RichTextEditor } from '@/ui';
+import { Field, ModalFooterOKCancel, RichTextEditor } from '@tet/ui';
 import { useEffect, useState } from 'react';
+import { Fiche } from '../../data/use-get-fiche';
 
 export const NOTES_MAX_LENGTH = 20000;
 
 type ModaleCreationNoteProps = {
   isOpen: boolean;
-  fiche: FicheResume;
+  fiche: Fiche;
   setIsOpen: (opened: boolean) => void;
   updateNotes: (notes: string | null) => void;
 };

@@ -1,13 +1,13 @@
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
-import { FicheNote } from '@/domain/plans';
+import { FicheNote } from '@tet/domain/plans';
 import {
   Field,
   FormSectionGrid,
   ModalFooterOKCancel,
   RichTextEditor,
   Select,
-} from '@/ui';
+} from '@tet/ui';
 import { useState } from 'react';
 import { Fiche } from '../data/use-get-fiche';
 import { EditedNote } from '../data/useUpsertNoteSuivi';

@@ -1,5 +1,5 @@
 import { statusToState } from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
-import { Statut } from '@/domain/plans';
+import { Statut } from '@tet/domain/plans';
 import classNames from 'classnames';
 import { Badge } from './Badge';
 

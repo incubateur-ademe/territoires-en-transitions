@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-import { ModuleIndicateursSelect } from '@/api/plan-actions';
 import { IndicateursModule } from '@/app/tableaux-de-bord/indicateurs/indicateurs.module';
+import { ModuleIndicateursSelect } from '@tet/api/plan-actions';
 
-import { Event, useEventTracker } from '@/ui';
+import { Event, useEventTracker } from '@tet/ui';
 import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';
 import { getModuleEditActions } from './get-module-edit-actions';
 import IndicateursDontJeSuisLePiloteModal from './indicateurs-dont-je-suis-le-pilote.modal';

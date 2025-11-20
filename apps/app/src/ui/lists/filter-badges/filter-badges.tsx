@@ -1,5 +1,5 @@
 import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
-import { BadgesContainer } from '@/ui';
+import { BadgesContainer } from '@tet/ui';
 
 type Props = {
   /** valeurs des badges à afficher */

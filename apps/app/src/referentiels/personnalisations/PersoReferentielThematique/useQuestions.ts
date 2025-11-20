@@ -1,8 +1,7 @@
-import { DBClient } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
-import { useSupabase } from '@/api';
 import { TQuestionRead } from '@/app/referentiels/personnalisations/personnalisation.types';
 import { useQuery } from '@tanstack/react-query';
+import { DBClient, useSupabase } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
 
 export type TFilters = {
   action_ids?: string[];

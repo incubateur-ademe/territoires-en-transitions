@@ -3,15 +3,15 @@ import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fi
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
-import { FicheResume } from '@/domain/plans';
-import { Field, FormSectionGrid, ModalFooterOKCancel } from '@/ui';
+import { Field, FormSectionGrid, ModalFooterOKCancel } from '@tet/ui';
 import { isEqual } from 'es-toolkit/predicate';
 import { useState } from 'react';
+import { Fiche } from '../data/use-get-fiche';
 
 type ModalePilotesProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  fiche: FicheResume;
+  fiche: Fiche;
 };
 
 const ModalePilotes = ({ isOpen, setIsOpen, fiche }: ModalePilotesProps) => {

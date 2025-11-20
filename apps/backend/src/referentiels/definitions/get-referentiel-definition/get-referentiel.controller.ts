@@ -1,17 +1,3 @@
-import { ActionTreeNode } from '@/domain/referentiels';
-import {
-  REFERENTIEL_ID_PARAM_KEY,
-  REFERENTIEL_ID_ROUTE_PARAM,
-} from '@/backend/referentiels/models/referentiel-api.constants';
-import { AllowPublicAccess } from '@/backend/users/decorators/allow-public-access.decorator';
-import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
-import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
-import {
-  ActionDefinitionEssential,
-  ActionTypeEnum,
-  referentielDefinitionSchema,
-  type ReferentielId,
-} from '@/domain/referentiels';
 import { Controller, Get, Logger, Param } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -20,6 +6,20 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import {
+  REFERENTIEL_ID_PARAM_KEY,
+  REFERENTIEL_ID_ROUTE_PARAM,
+} from '@tet/backend/referentiels/models/referentiel-api.constants';
+import { AllowPublicAccess } from '@tet/backend/users/decorators/allow-public-access.decorator';
+import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
+import {
+  ActionDefinitionEssential,
+  ActionTreeNode,
+  ActionTypeEnum,
+  referentielDefinitionSchema,
+  type ReferentielId,
+} from '@tet/domain/referentiels';
 import { omit } from 'es-toolkit';
 import { createZodDto } from 'nestjs-zod';
 import z from 'zod';

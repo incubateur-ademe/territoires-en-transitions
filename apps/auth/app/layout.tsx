@@ -1,7 +1,7 @@
-import { ReactQueryAndTRPCProvider, SupabaseProvider } from '@/api';
-import { UserProvider } from '@/api/users';
-import { getCookieOptions } from '@/api/utils/supabase/cookie-options';
-import { Header, PostHogProvider } from '@/ui';
+import { ReactQueryAndTRPCProvider, SupabaseProvider } from '@tet/api';
+import { UserProvider } from '@tet/api/users';
+import { getCookieOptions } from '@tet/api/utils/supabase/cookie-options';
+import { Header, PostHogProvider } from '@tet/ui';
 import { Metadata } from 'next';
 import { headers } from 'next/headers';
 import './global.css';

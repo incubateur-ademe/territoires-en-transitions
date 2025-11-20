@@ -1,14 +1,14 @@
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import MesuresReferentielsDropdown from '@/app/ui/dropdownLists/MesuresReferentielsDropdown/MesuresReferentielsDropdown';
-import { FicheWithRelations } from '@/domain/plans';
-import { Field, Modal, ModalFooterOKCancel } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { isEqual } from 'es-toolkit/predicate';
 import { useState } from 'react';
+import { Fiche } from '../data/use-get-fiche';
 
 type MesuresLieesModalProps = {
   openState: OpenState;
-  fiche: FicheWithRelations;
+  fiche: Fiche;
 };
 
 export const MesuresLieesModal = ({

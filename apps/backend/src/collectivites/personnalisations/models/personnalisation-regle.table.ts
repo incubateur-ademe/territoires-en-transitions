@@ -1,6 +1,6 @@
-import { actionIdReference } from '@/backend/referentiels/models/action-relation.table';
-import { modifiedAt } from '@/backend/utils/column.utils';
-import { regleTypeEnumValues } from '@/domain/collectivites';
+import { actionIdReference } from '@tet/backend/referentiels/models/action-relation.table';
+import { modifiedAt } from '@tet/backend/utils/column.utils';
+import { regleTypeEnumValues } from '@tet/domain/collectivites';
 import { pgEnum, pgTable, primaryKey, text } from 'drizzle-orm/pg-core';
 
 export const regleTypeEnum = pgEnum('regle_type', regleTypeEnumValues);

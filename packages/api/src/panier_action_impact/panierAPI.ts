@@ -1,5 +1,5 @@
-import { CollectiviteAccess } from '@/domain/users';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { CollectiviteAccess } from '@tet/domain/users';
 import { toCollectiviteAccess } from '../collectivites/fetch-current-collectivite';
 import { Database } from '../typeUtils';
 import {

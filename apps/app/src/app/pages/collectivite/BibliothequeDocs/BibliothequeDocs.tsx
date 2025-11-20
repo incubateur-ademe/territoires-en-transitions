@@ -1,12 +1,12 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
 import {
   TPreuveAuditEtLabellisation,
   TPreuveRapport,
 } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { usePreuvesParType } from '@/app/referentiels/preuves/usePreuves';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { AddRapportVisite } from './AddRapportVisite';
 import { PreuvesLabellisation } from './PreuveLabellisation';
 import { PreuvesTabs } from './PreuvesTabs';

@@ -1,4 +1,3 @@
-import { RouterOutput } from '@/api';
 import {
   Divider,
   List,
@@ -6,6 +5,7 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
+import { RouterOutput } from '@tet/api';
 import classNames from 'classnames';
 
 type Props = {

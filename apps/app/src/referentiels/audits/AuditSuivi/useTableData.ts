@@ -1,14 +1,14 @@
-import { RouterOutput, useTRPC } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
 import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
+import { useQuery } from '@tanstack/react-query';
+import { RouterOutput, useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   ActionTypeEnum,
   getIdentifiantFromActionId,
   getLevelFromActionId,
   ReferentielId,
-} from '@/domain/referentiels';
-import { ITEM_ALL } from '@/ui';
-import { useQuery } from '@tanstack/react-query';
+} from '@tet/domain/referentiels';
+import { ITEM_ALL } from '@tet/ui';
 import { TableOptions } from 'react-table';
 import { useGetReferentielDefinitionFromContext } from '../../referentiel-context';
 import { initialFilters, nameToShortNames, TFilters } from './filters';

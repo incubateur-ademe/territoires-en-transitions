@@ -2,7 +2,7 @@ import {
   ActionCategorieEnum,
   ActionTypeEnum,
   TreeOfActionsIncludingScore,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 
 export const deeperReferentielScoring: TreeOfActionsIncludingScore = {
   actionId: 'eci',

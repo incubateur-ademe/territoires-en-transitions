@@ -1,27 +1,26 @@
-import { FicheWithRelations } from '@/domain/plans';
-import {
-  FicheAccessMode,
-  FicheAccessModeEnum,
-} from '@/backend/plans/fiches/share-fiches/fiche-access-mode.enum';
-import { ShareFicheService } from '@/backend/plans/fiches/share-fiches/share-fiche.service';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Fiche } from '@/domain/plans';
-import {
-  type PermissionOperation,
-  PermissionOperationEnum,
-} from '@/domain/users';
 import {
   ForbiddenException,
   Injectable,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import {
+  FicheAccessMode,
+  FicheAccessModeEnum,
+} from '@tet/backend/plans/fiches/share-fiches/fiche-access-mode.enum';
+import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-fiche.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Fiche, FicheWithRelations } from '@tet/domain/plans';
+import {
+  type PermissionOperation,
+  PermissionOperationEnum,
+} from '@tet/domain/users';
 import { and, eq, getTableColumns, isNotNull, sql } from 'drizzle-orm';
 import { AuthUser } from '../../users/models/auth.models';
-import { ficheActionTable } from './shared/models/fiche-action.table';
 import { ficheActionPiloteTable } from './shared/models/fiche-action-pilote.table';
+import { ficheActionTable } from './shared/models/fiche-action.table';
 
 @Injectable()
 export default class FicheActionPermissionsService {

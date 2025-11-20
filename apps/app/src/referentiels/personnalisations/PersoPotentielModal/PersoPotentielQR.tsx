@@ -8,7 +8,7 @@ import {
   TReponse,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
-import { Accordion } from '@/ui';
+import { Accordion } from '@tet/ui';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
 import { Justification } from './Justification';

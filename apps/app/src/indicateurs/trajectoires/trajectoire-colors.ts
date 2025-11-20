@@ -1,7 +1,7 @@
 import {
   isTrajectoireSecteur,
   TrajectoireSecteursType,
-} from '@/domain/indicateurs';
+} from '@tet/domain/indicateurs';
 import { INDICATEURS_TRAJECTOIRE } from './trajectoire-constants';
 
 export const COULEURS_BY_SECTEUR: Record<TrajectoireSecteursType, string> = {

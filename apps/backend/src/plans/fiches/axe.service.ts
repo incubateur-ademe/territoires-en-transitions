@@ -1,6 +1,6 @@
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { AxeCreate } from '@/domain/plans';
 import { Injectable, Logger } from '@nestjs/common';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { AxeCreate } from '@tet/domain/plans';
 import { DatabaseService } from '../../utils/database/database.service';
 import { axeTable } from './shared/models/axe.table';
 import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';

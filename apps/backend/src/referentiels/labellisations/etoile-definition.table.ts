@@ -1,4 +1,4 @@
-import { Etoile } from '@/domain/referentiels';
+import { Etoile } from '@tet/domain/referentiels';
 import { sql } from 'drizzle-orm';
 import {
   customType,

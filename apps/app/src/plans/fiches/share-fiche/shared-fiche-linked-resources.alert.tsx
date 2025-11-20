@@ -1,10 +1,10 @@
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { FicheResume } from '@/domain/plans';
-import { Alert } from '@/ui';
+import { Alert } from '@tet/ui';
 import Link from 'next/link';
 
 type SharedFicheLinkedResourcesAlertProps = {
-  fiche: FicheResume;
+  fiche: Fiche;
   currentCollectiviteId: number;
   sharedDataTitle: string;
   sharedDataDescription: string;

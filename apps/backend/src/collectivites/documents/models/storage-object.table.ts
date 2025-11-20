@@ -1,4 +1,4 @@
-import { createdAt } from '@/backend/utils/column.utils';
+import { createdAt } from '@tet/backend/utils/column.utils';
 import { sql } from 'drizzle-orm';
 import {
   integer,

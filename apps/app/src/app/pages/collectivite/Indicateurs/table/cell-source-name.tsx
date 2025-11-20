@@ -1,5 +1,5 @@
 import { DashedLineSymbol, SolidLineSymbol } from '@/app/ui/charts/ChartLegend';
-import { Icon, TCell } from '@/ui';
+import { Icon, TCell } from '@tet/ui';
 import { getSourceLabel } from '../data/get-source-label';
 import { PreparedData } from '../data/prepare-data';
 import { GetColorBySourceId } from '../data/use-indicateur-sources';

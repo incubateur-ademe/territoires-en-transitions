@@ -1,6 +1,6 @@
 import Modal from '@/app/ui/shared/floating-ui/Modal';
-import { Etoile } from '@/domain/referentiels';
-import { Alert, Button } from '@/ui';
+import { Etoile } from '@tet/domain/referentiels';
+import { Alert, Button } from '@tet/ui';
 import { MessageCompletudeECi } from './MessageCompletudeECi';
 import { numLabels } from './numLabels';
 import { TCycleLabellisation } from './useCycleLabellisation';

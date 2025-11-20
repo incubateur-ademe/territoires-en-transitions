@@ -1,5 +1,5 @@
-import { Modal } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { Modal } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { IndicateurChartInfo } from '../data/use-indicateur-chart';
 import IndicateurChart from './IndicateurChart';
 

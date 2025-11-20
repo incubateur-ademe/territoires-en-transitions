@@ -1,4 +1,4 @@
-import { htmlToText } from '@/domain/utils';
+import { htmlToText } from '@tet/domain/utils';
 import { differenceInCalendarDays, format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 

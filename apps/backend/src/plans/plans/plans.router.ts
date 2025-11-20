@@ -1,7 +1,6 @@
-import { createTrpcErrorHandler } from '@/backend/utils/trpc/trpc-error-handler';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
-import { planErrorConfig } from './plans.errors';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import {
   createAxeRequestSchema,
   createPlanSchema,
@@ -11,7 +10,8 @@ import {
   listPlansRequestSchema,
   updateAxeRequestSchema,
   updatePlanSchema,
-} from '@/domain/plans';
+} from '@tet/domain/plans';
+import { planErrorConfig } from './plans.errors';
 import { PlanService } from './plans.service';
 
 @Injectable()

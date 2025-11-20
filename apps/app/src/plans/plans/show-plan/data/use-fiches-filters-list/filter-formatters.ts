@@ -3,7 +3,7 @@ import {
   SANS_PRIORITE_LABEL,
   SANS_REFERENT_LABEL,
   SANS_STATUT_LABEL,
-} from '@/domain/plans';
+} from '@tet/domain/plans';
 import { Filters, FormFilters, QueryPayload } from './types';
 
 export const toFilters = (filters: Filters): FormFilters => {

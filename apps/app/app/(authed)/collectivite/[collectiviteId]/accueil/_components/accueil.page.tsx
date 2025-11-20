@@ -1,7 +1,7 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
 
 import {
   makeCollectiviteIndicateursListUrl,
@@ -20,7 +20,7 @@ import { PictoIndicateurs } from '@/app/ui/pictogrammes/PictoIndicateurs';
 import { PictoPanierActions } from '@/app/ui/pictogrammes/PictoPanierActions';
 import { PictoPlansAction } from '@/app/ui/pictogrammes/PictoPlansAction';
 import { PictoTrajectoire } from '@/app/ui/pictogrammes/PictoTrajectoire';
-import { Button, Event, useEventTracker } from '@/ui';
+import { Button, Event, useEventTracker } from '@tet/ui';
 import SectionCard from './section.card';
 
 const AccueilPage = () => {

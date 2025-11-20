@@ -1,5 +1,5 @@
+import { importsSchema } from '@tet/backend/collectivites/shared/models/imports-region.table';
 import { integer, varchar } from 'drizzle-orm/pg-core';
-import { importsSchema } from '@/backend/collectivites/shared/models/imports-region.table';
 
 export const departementTable = importsSchema.table('departement', {
   code: varchar('code', { length: 3 }),

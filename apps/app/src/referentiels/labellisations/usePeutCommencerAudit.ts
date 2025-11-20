@@ -1,6 +1,6 @@
-import { useSupabase } from '@/api';
-import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from '@tanstack/react-query';
+import { useSupabase } from '@tet/api';
+import { ReferentielId } from '@tet/domain/referentiels';
 
 // vérifie si l'utilisateur courant peut commencer l'audit
 export const usePeutCommencerAudit = ({

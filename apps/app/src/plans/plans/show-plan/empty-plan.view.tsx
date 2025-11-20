@@ -1,7 +1,7 @@
-import { CollectiviteAccess } from '@/domain/users';
 import PictoAction from '@/app/ui/pictogrammes/PictoAction';
-import { PlanNode } from '@/domain/plans';
-import { EmptyCard } from '@/ui';
+import { PlanNode } from '@tet/domain/plans';
+import { CollectiviteAccess } from '@tet/domain/users';
+import { EmptyCard } from '@tet/ui';
 import { EditPlanButtons } from './edit-plan.buttons';
 
 export const EmptyPlanView = ({

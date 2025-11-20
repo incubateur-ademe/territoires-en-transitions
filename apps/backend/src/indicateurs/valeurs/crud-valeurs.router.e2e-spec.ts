@@ -1,11 +1,11 @@
+import { INestApplication } from '@nestjs/common';
 import {
   deleteIndicateurValeursForCollectivite,
   getCollectiviteIdBySiren,
   getIndicateurIdByIdentifiant,
-} from '@/backend/test';
-import { addTestUser } from '@/backend/users/users/users.fixture';
-import { CollectiviteAccessLevelEnum } from '@/domain/users';
-import { INestApplication } from '@nestjs/common';
+} from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.fixture';
+import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { and, eq } from 'drizzle-orm';
 import { getTestApp } from '../../../test/app-utils';

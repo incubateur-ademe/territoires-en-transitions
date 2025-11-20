@@ -1,5 +1,5 @@
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
-import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
 import { integer, pgTable, primaryKey, varchar } from 'drizzle-orm/pg-core';
 import { actionRelationTable } from './action-relation.table';
 

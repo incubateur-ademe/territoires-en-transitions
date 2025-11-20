@@ -1,15 +1,15 @@
-import { addTestCollectiviteAndUser } from '@/backend/collectivites/collectivites/collectivites.fixture';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.fixture';
 import {
   getAuthUser,
   getAuthUserFromDcp,
   getTestApp,
   getTestDatabase,
   YOLO_DODO,
-} from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { addTestUser } from '@/backend/users/users/users.fixture';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.fixture';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
 import { eq, inArray } from 'drizzle-orm';

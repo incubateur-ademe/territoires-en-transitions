@@ -3,7 +3,7 @@ import {
   ActionDefinitionEssential,
   ActionTreeNode,
   ActionTypeEnum,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import {
   ActionDefinitionAvecParent,
   buildReferentielTree,

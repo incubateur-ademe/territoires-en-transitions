@@ -1,5 +1,5 @@
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { ficheSchemaCreate } from '@tet/domain/plans';
 import { TRPCError } from '@trpc/server';
 import z from 'zod';

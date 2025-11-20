@@ -1,12 +1,12 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { buildActionLink } from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   DiscussionMessages,
   discussionOrderByValues,
-} from '@/domain/collectivites';
-import { ReferentielId } from '@/domain/referentiels';
-import { Divider, VisibleWhen } from '@/ui';
-import { cn } from '@/ui/utils/cn';
+} from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { Divider, VisibleWhen } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 import Link from 'next/link';
 import { Fragment, useMemo } from 'react';
 import ActionCommentsEmptyImg from './action-comment.empty-img';

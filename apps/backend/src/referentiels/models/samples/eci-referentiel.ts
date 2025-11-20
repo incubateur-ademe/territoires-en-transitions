@@ -2,7 +2,7 @@ import {
   ActionDefinitionEssential,
   ActionTreeNode,
   ActionTypeEnum,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 
 export const eciReferentiel: ActionTreeNode<
   ActionDefinitionEssential & { [key: string]: unknown }

@@ -1,4 +1,4 @@
-import { ScoreIndicatifType } from '@/domain/referentiels';
+import { ScoreIndicatifType } from '@tet/domain/referentiels';
 import { typeScoreToLabel } from './score-indicatif.labels';
 import {
   ScoreIndicatifAction,

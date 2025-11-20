@@ -7,8 +7,8 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
-import { FicheWithRelations } from '@/domain/plans';
-import { htmlToText } from '@/domain/utils';
+import { FicheWithRelations } from '@tet/domain/plans';
+import { htmlToText } from '@tet/domain/utils';
 import classNames from 'classnames';
 
 type IndicateurCardProps = {

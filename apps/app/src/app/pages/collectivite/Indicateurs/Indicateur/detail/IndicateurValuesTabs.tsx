@@ -1,7 +1,7 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
-import { Alert } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Alert } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
 import { IndicateurTable } from '../../table/indicateur-table';
 

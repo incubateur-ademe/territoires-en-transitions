@@ -1,11 +1,11 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   ActionTypeEnum,
   reduceActions,
   StatutAvancement,
   StatutAvancementEnum,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import { TableOptions } from 'react-table';
 import { useSaveActionStatut } from '../actions/action-statut/use-action-statut';
 import { actionNewToDeprecated } from '../DEPRECATED_scores.types';

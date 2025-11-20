@@ -1,5 +1,5 @@
-import { AuthUser } from '@/backend/users/models/auth.models';
 import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { sql } from 'drizzle-orm/sql';
 import { Pool } from 'pg';

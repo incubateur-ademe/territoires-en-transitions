@@ -1,6 +1,6 @@
-import { RouterOutput, useTRPC } from '@/api';
-import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from '@tanstack/react-query';
+import { RouterOutput, useTRPC } from '@tet/api';
+import { ReferentielId } from '@tet/domain/referentiels';
 
 export type ReferentielDefinition =
   RouterOutput['referentiels']['definitions']['get'];

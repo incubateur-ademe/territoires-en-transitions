@@ -1,4 +1,4 @@
-import { createEnumObject } from '@/domain/utils';
+import { createEnumObject } from '@tet/domain/utils';
 import { pgEnum } from 'drizzle-orm/pg-core';
 
 export const MembreFonction = [

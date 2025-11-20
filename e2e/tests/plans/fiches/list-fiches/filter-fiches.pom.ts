@@ -1,5 +1,5 @@
-import { Statut } from '@/domain/plans';
 import { Locator, Page } from '@playwright/test';
+import { Statut } from '@tet/domain/plans';
 
 export class FilterFichesPom {
   readonly page: Page;

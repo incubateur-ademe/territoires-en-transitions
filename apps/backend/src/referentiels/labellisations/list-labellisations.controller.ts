@@ -1,9 +1,3 @@
-import { listCollectiviteApiRequestSchema } from '@/backend/collectivites/list-collectivites/list-collectivites.api-request';
-import { listLabellisationApiResponseSchema } from '@/backend/referentiels/labellisations/list-labellisations.api-response';
-import { ListLabellisationsService } from '@/backend/referentiels/labellisations/list-labellisations.service';
-import { AllowAnonymousAccess } from '@/backend/users/decorators/allow-anonymous-access.decorator';
-import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
-import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { Controller, Get, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -11,6 +5,12 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { listCollectiviteApiRequestSchema } from '@tet/backend/collectivites/list-collectivites/list-collectivites.api-request';
+import { listLabellisationApiResponseSchema } from '@tet/backend/referentiels/labellisations/list-labellisations.api-response';
+import { ListLabellisationsService } from '@tet/backend/referentiels/labellisations/list-labellisations.service';
+import { AllowAnonymousAccess } from '@tet/backend/users/decorators/allow-anonymous-access.decorator';
+import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import { createZodDto } from 'nestjs-zod';
 
 /**

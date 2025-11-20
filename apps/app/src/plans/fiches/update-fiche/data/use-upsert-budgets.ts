@@ -1,6 +1,6 @@
-import { useTRPC } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
 
 export const useUpsertBudgets = () => {
   const trpc = useTRPC();

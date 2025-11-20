@@ -1,5 +1,5 @@
-import { CollectiviteAccessLevel } from '@/domain/users';
-import { TBody, TCell, THead, THeadCell, TRow, Table } from '@/ui';
+import { CollectiviteAccessLevel } from '@tet/domain/users';
+import { TBody, TCell, THead, THeadCell, TRow, Table } from '@tet/ui';
 import classNames from 'classnames';
 import {
   SendInvitationArgs,

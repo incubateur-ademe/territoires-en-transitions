@@ -1,4 +1,4 @@
-import { Button, ButtonSize } from '@/ui';
+import { Button, ButtonSize } from '@tet/ui';
 import classNames from 'classnames';
 
 export type ButtonsListType = { id: number; label: string; url?: string }[];

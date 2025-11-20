@@ -1,4 +1,3 @@
-import { ModuleMesuresSelect } from '@/api/plan-actions';
 import { referentielToName } from '@/app/app/labels';
 import { ActionCard } from '@/app/referentiels/actions/action.card';
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
@@ -9,9 +8,10 @@ import {
 import FilterBadges, { useFiltersToBadges } from '@/app/ui/lists/filter-badges';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { ActionTypeEnum, ReferentielId } from '@/domain/referentiels';
-import { Button, EmptyCard } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { ModuleMesuresSelect } from '@tet/api/plan-actions';
+import { ActionTypeEnum, ReferentielId } from '@tet/domain/referentiels';
+import { Button, EmptyCard } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 
 type Props = {

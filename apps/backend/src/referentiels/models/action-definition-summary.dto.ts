@@ -2,7 +2,7 @@ import {
   ActionCategorie,
   ActionType,
   ReferentielId,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 
 export type ActionDefinitionSummary = {
   id: string;

@@ -158,7 +158,7 @@
     "zod": "4.1.12"
   },
   "devDependencies": {
-    "@/domain": "workspace:*",
+    "@tet/domain": "workspace:*",
     "@eslint/js": "8.57.0",
     "@hey-api/client-fetch": "0.10.2",
     "@hey-api/openapi-ts": "0.86.3",

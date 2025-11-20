@@ -1,11 +1,11 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useGetIndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import Markdown from '@/app/ui/Markdown';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   ScoreIndicatifType,
   scoreIndicatifTypeEnum,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import {
   Alert,
   Button,
@@ -15,8 +15,8 @@ import {
   ModalFooterOKCancel,
   Tab,
   Tabs,
-} from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+} from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { uniqBy } from 'es-toolkit';
 import { useState } from 'react';
 import { ScoreIndicatifDonnees } from './score-indicatif.donnees';

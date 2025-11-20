@@ -2,7 +2,6 @@ import ActionsGroupeesMenu from '@/app/app/pages/collectivite/PlansActions/Actio
 import { FiltersMenuButton } from '@/app/plans/fiches/list-all-fiches/filters/filters-menu.button';
 import { CustomFilterBadges } from '@/app/ui/lists/filter-badges/use-filters-to-badges';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { FichesListEmpty } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.empty';
 import { FichesListGrid } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.grid';
 import { FicheListScheduler } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/fiche-list.scheduler';
@@ -10,6 +9,7 @@ import {
   SortValue,
   useListFiches,
 } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   ButtonGroup,
   Checkbox,
@@ -19,7 +19,7 @@ import {
   Select,
   useEventTracker,
   VisibleWhen,
-} from '@/ui';
+} from '@tet/ui';
 import classNames from 'classnames';
 import { isEqual } from 'es-toolkit';
 import { useState } from 'react';
@@ -30,8 +30,8 @@ import {
   useSelectFichesView,
 } from '../hooks/use-select-fiche-view';
 
-import { useUser } from '@/api/users';
-import { PermissionOperation } from '@/domain/users';
+import { useUser } from '@tet/api/users';
+import { PermissionOperation } from '@tet/domain/users';
 import { useCountFiches } from '../hooks/use-count-fiches';
 import { useManageFichesPagination } from '../hooks/use-manage-fiches-pagination';
 import { useSearchFiches } from '../hooks/use-search-fiches';

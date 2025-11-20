@@ -1,4 +1,4 @@
-import { Tables, Views } from '@/api';
+import { Tables, Views } from '@tet/api';
 import { ActionReferentiel } from '../../DEPRECATED_scores.types';
 
 // alias et règle les imperfections du typage auto-généré

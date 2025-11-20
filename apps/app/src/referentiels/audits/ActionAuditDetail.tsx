@@ -1,5 +1,5 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
-import { Checkbox, Field, RichTextEditor } from '@/ui';
+import { Checkbox, Field, RichTextEditor } from '@tet/ui';
 import { ChangeEvent } from 'react';
 import {
   MesureAuditStatut,

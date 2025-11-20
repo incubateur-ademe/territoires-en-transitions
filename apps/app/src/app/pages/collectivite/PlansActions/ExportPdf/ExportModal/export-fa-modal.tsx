@@ -4,10 +4,10 @@ import {
 } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { Filters } from '@/app/plans/fiches/list-all-fiches/filters/types';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { FicheWithRelations } from '@tet/domain/plans';
 import { Button, Event, Modal, ModalFooter, useEventTracker } from '@tet/ui';
 import { mapValues } from 'es-toolkit';
 import { useState } from 'react';
+import { Fiche } from '../../FicheAction/data/use-get-fiche';
 import { ExportFicheActionButton } from '../ExportFicheActionButton';
 import ExportFicheActionGroupeesButton from '../ExportFicheActionGroupeesButton';
 import { sectionsInitValue } from '../utils';
@@ -56,7 +56,7 @@ export const ExportFicheModal = ({
   fiche,
 }: {
   disabled?: boolean;
-  fiche: FicheWithRelations;
+  fiche: Fiche;
 }) => {
   const [options, setOptions] = useState(sectionsInitValue);
 

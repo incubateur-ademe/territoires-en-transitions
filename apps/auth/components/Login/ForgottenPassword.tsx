@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Button,
   Event,
@@ -7,8 +8,7 @@ import {
   ModalFooter,
   ModalFooterSection,
   useEventTracker,
-} from '@/ui';
-import { zodResolver } from '@hookform/resolvers/zod';
+} from '@tet/ui';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { LoginPropsWithState } from './type';
@@ -17,8 +17,8 @@ import { LoginPropsWithState } from './type';
 const useForgottenPassword = (email: string) => {
   const validationSchema = z.object({
     email: z.email({
-              error: 'Un email valide est requis'
-          }),
+      error: 'Un email valide est requis',
+    }),
   });
 
   return useForm({

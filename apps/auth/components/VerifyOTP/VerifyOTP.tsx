@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Event,
   FieldMessage,
@@ -5,8 +6,7 @@ import {
   ModalFooterOKCancel,
   useEventTracker,
   validateOTP,
-} from '@/ui';
-import { zodResolver } from '@hookform/resolvers/zod';
+} from '@tet/ui';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { MailSendMessage } from '../../components/Login/MailSendMessage';

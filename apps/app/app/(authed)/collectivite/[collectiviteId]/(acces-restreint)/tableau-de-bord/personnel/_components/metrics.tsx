@@ -1,4 +1,3 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import {
   makeCollectiviteIndicateursListUrl,
   makeCollectivitePlansActionsListUrl,
@@ -12,7 +11,8 @@ import {
 } from '@/app/tableaux-de-bord/metrics/metric.card';
 import { MetricCardSkeleton } from '@/app/tableaux-de-bord/metrics/metric.card-skeleton';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { PermissionOperation } from '@/domain/users';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { PermissionOperation } from '@tet/domain/users';
 import { useTdbPersoFetchMetrics } from '../_hooks/use-tdb-perso-fetch-metrics';
 
 // Type descriptor for metric cards

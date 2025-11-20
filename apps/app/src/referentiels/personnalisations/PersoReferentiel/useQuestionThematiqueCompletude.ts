@@ -1,7 +1,6 @@
-import { DBClient, NonNullableFields, Views } from '@/api';
-import { useSupabase } from '@/api';
-import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from '@tanstack/react-query';
+import { DBClient, NonNullableFields, useSupabase, Views } from '@tet/api';
+import { ReferentielId } from '@tet/domain/referentiels';
 
 type TQuestionThematiqueCompletudeRead = NonNullableFields<
   Views<'question_thematique_completude'>

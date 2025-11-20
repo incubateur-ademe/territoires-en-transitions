@@ -4,16 +4,17 @@ import {
   getTextFormattedDate,
   getTruncatedText,
 } from '@/app/utils/formatUtils';
-import { FicheWithRelations, isFicheOnTime } from '@/domain/plans';
-import { Button, Divider, EmptyCard, Icon } from '@/ui';
+import { isFicheOnTime } from '@tet/domain/plans';
+import { Button, Divider, EmptyCard, Icon } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
+import { Fiche } from '../data/use-get-fiche';
 import ModalePlanning from './ModalePlanning';
 import EmptyCalendarPicto from './PictosPlanning/EmptyCalendarPicto';
 import FilledCalendarPicto from './PictosPlanning/FilledCalendarPicto';
 type FicheActionPlanningProps = {
   isReadonly: boolean;
-  fiche: FicheWithRelations;
+  fiche: Fiche;
   className?: string;
 };
 

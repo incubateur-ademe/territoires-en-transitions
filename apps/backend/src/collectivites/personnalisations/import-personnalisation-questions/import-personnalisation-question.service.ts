@@ -1,24 +1,24 @@
-import ListPersonnalisationQuestionsService from '@/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
-import { questionChoixTable } from '@/backend/collectivites/personnalisations/models/question-choix.table';
-import { QuestionChoixCreate } from '@/domain/collectivites';
-import { questionThematiqueTable } from '@/backend/collectivites/personnalisations/models/question-thematique.table';
-import {
-  QuestionThematique,
-  questionThematiqueSchema,
-} from '@/domain/collectivites';
-import { QuestionWithChoices } from '@/backend/collectivites/personnalisations/models/question-with-choices.dto';
-import { questionTable } from '@/backend/collectivites/personnalisations/models/question.table';
-import BaseSpreadsheetImporterService from '@/backend/shared/services/base-spreadsheet-importer.service';
-import ConfigurationService from '@/backend/utils/config/configuration.service';
-import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import SheetService from '@/backend/utils/google-sheets/sheet.service';
-import VersionService from '@/backend/utils/version/version.service';
 import {
   Injectable,
   Logger,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
+import { questionChoixTable } from '@tet/backend/collectivites/personnalisations/models/question-choix.table';
+import { questionThematiqueTable } from '@tet/backend/collectivites/personnalisations/models/question-thematique.table';
+import { QuestionWithChoices } from '@tet/backend/collectivites/personnalisations/models/question-with-choices.dto';
+import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
+import BaseSpreadsheetImporterService from '@tet/backend/shared/services/base-spreadsheet-importer.service';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
+import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
+import VersionService from '@tet/backend/utils/version/version.service';
+import {
+  QuestionChoixCreate,
+  QuestionThematique,
+  questionThematiqueSchema,
+} from '@tet/domain/collectivites';
 import { sql } from 'drizzle-orm';
 import {
   ImportPersonnalisationChoix,

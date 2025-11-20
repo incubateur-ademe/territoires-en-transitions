@@ -2,7 +2,7 @@ import {
   MultiSelectFilter,
   MultiSelectFilterTitle,
 } from '@/app/ui/shared/select/MultiSelectFilter';
-import { ITEM_ALL } from '@/ui';
+import { ITEM_ALL } from '@tet/ui';
 import { TFiltreProps } from './filters';
 
 export const PHASE = 'phase';

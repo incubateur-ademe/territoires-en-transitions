@@ -1,5 +1,5 @@
-import { TempsDeMiseEnOeuvre } from '@/domain/shared';
-import { Select, SelectProps } from '@/ui';
+import { TempsDeMiseEnOeuvre } from '@tet/domain/shared';
+import { Select, SelectProps } from '@tet/ui';
 import { useMiseEnOeuvre } from './useMiseEnOeuvre';
 
 type MiseEnOeuvreDropdownProps = Omit<

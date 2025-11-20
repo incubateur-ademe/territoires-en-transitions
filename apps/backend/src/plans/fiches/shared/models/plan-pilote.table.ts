@@ -1,6 +1,6 @@
-import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
-import { dcpTable } from '@/backend/users/models/dcp.table';
-import { createdAt, createdBy } from '@/backend/utils/column.utils';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { createdAt, createdBy } from '@tet/backend/utils/column.utils';
 import { integer, pgTable, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 import { axeTable } from './axe.table';
 

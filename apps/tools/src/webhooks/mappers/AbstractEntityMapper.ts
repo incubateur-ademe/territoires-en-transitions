@@ -1,7 +1,7 @@
 import {
   ApplicationSousScopesType,
   WebhookPayloadFormat,
-} from '@/domain/utils';
+} from '@tet/domain/utils';
 
 export interface IEntityMapper {
   entityType: ApplicationSousScopesType;

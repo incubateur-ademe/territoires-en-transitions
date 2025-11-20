@@ -1,6 +1,6 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { StatutAvancement } from '@/domain/referentiels';
-import { Checkbox } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { StatutAvancement } from '@tet/domain/referentiels';
+import { Checkbox } from '@tet/ui';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { AVANCEMENT_DETAILLE_PAR_STATUT } from '../../utils';

@@ -1,5 +1,5 @@
-import { getZodStringArrayFromQueryString } from '@/backend/utils/zod.utils';
-import { preuveReglementaireDefinitionSchema } from '@/domain/collectivites';
+import { getZodStringArrayFromQueryString } from '@tet/backend/utils/zod.utils';
+import { preuveReglementaireDefinitionSchema } from '@tet/domain/collectivites';
 import z from 'zod';
 
 export const importPreuveReglementaireDefinitionSchema = z.object({

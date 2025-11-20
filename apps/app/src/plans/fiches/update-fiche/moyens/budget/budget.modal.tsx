@@ -1,13 +1,13 @@
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
-import { FicheBudget } from '@/domain/plans';
-import { ButtonGroup, Checkbox, Divider, ModalFooterOKCancel } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { ButtonGroup, Checkbox, Divider, ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import { FicheShareProperties } from '../../../share-fiche/fiche-share-properties.dto';
 import { useDeleteBudgets } from '../../data/use-delete-budgets';
 import { useUpsertBudgets } from '../../data/use-upsert-budgets';
 import { DetailedBudgetForm } from './detailed-budget-form';
 import { ExtendedBudgetForm } from './extended-budget-form';
+import { FicheBudget } from '../../data/use-get-budget';
 
 const getDefaultBudgetData = (
   ficheId: number,

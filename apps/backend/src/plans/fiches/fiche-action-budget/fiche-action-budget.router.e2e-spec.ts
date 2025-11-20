@@ -1,19 +1,19 @@
 import {
   BudgetType,
   BudgetUnite,
-} from '@/backend/plans/fiches/fiche-action-budget/budget.types';
-import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
-import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
+} from '@tet/backend/plans/fiches/fiche-action-budget/budget.types';
+import { ficheActionBudgetTable } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
   getAuthUser,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-} from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { FicheBudgetCreate } from '@/domain/plans';
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { FicheBudgetCreate } from '@tet/domain/plans';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 

@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useSupabase } from '@/api';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { TAxeRow } from '@/app/types/alias';
+import { useSupabase } from '@tet/api';
 import { generateTitle } from '../../FicheAction/data/utils';
 
 type FilArianeLink = {

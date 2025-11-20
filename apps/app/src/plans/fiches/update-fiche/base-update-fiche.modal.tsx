@@ -1,9 +1,9 @@
 import { SharedFicheUpdateAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-update.alert';
-import { FicheResume } from '@/domain/plans';
-import { Modal, ModalProps } from '@/ui';
+import { Fiche } from '@tet/domain/plans';
+import { Modal, ModalProps } from '@tet/ui';
 
 type BaseUpdateFicheModalProps = ModalProps & {
-  fiche: FicheResume;
+  fiche: Fiche;
 };
 
 const BaseUpdateFicheModal = (props: BaseUpdateFicheModalProps) => {

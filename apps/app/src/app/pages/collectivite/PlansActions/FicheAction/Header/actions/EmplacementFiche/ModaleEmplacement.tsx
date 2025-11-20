@@ -1,6 +1,6 @@
-import { FicheResume } from '@/domain/plans';
-import { Button, Modal, Tab, Tabs } from '@/ui';
+import { Button, Modal, Tab, Tabs } from '@tet/ui';
 import { useState } from 'react';
+import { Fiche } from '../../../data/use-get-fiche';
 import EmplacementActuelFiche from './EmplacementActuel/EmplacementActuelFiche';
 import NouvelEmplacementFiche from './NouvelEmplacement/NouvelEmplacementFiche';
 
@@ -8,7 +8,7 @@ import NouvelEmplacementFiche from './NouvelEmplacement/NouvelEmplacementFiche';
  * Bouton + modale pour le déplacement de la fiche action
  */
 type ModaleEmplacementProps = {
-  fiche: FicheResume;
+  fiche: Fiche;
   isReadonly?: boolean;
 };
 

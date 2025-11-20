@@ -1,13 +1,13 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { useGetEtapes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/etapes/use-get-etapes';
 import { useListIndicateurDefinitions } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import { useGetBudget } from '@/app/plans/fiches/update-fiche/data/use-get-budget';
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
-import { FicheWithRelations } from '@/domain/plans';
-import { Event, useEventTracker } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Event, useEventTracker } from '@tet/ui';
 import { mapValues } from 'es-toolkit';
 import { createElement, useEffect, useState } from 'react';
+import { Fiche } from '../FicheAction/data/use-get-fiche';
 import { useAnnexesFicheActionInfos } from '../FicheAction/data/useAnnexesFicheActionInfos';
 import { useFicheActionNotesSuivi } from '../FicheAction/data/useFicheActionNotesSuivi';
 import { useFichesActionLiees } from '../FicheAction/data/useFichesActionLiees';
@@ -16,7 +16,7 @@ import FicheActionPdf from './FicheActionPdf/FicheActionPdf';
 import { TSectionsValues, sectionsInitValue } from './utils';
 
 type FicheActionPdfContentProps = {
-  fiche: FicheWithRelations;
+  fiche: Fiche;
   options: TSectionsValues;
   generateContent: (content: JSX.Element) => void;
 };
@@ -110,7 +110,7 @@ export const FicheActionPdfContent = ({
 };
 
 type ExportFicheActionButtonProps = {
-  fiche: FicheWithRelations;
+  fiche: Fiche;
   options?: TSectionsValues;
   disabled?: boolean;
   onDownloadEnd?: () => void;

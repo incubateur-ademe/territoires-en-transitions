@@ -4,8 +4,8 @@ import {
   TUpdateMembre,
 } from '@/app/app/pages/collectivite/Users/types';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
-import { CollectiviteAccessLevel } from '@/domain/users';
-import { Badge, Button, TCell, TRow, Tooltip } from '@/ui';
+import { CollectiviteAccessLevel } from '@tet/domain/users';
+import { Badge, Button, TCell, TRow, Tooltip } from '@tet/ui';
 import { useState } from 'react';
 import BadgeAcces from '../../_components/badge-acces';
 import { ConfirmerChangementNiveau } from '../../_components/ConfirmerChangementNiveau';

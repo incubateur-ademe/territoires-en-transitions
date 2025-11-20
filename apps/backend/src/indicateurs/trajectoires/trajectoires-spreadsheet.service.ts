@@ -1,18 +1,18 @@
-import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
-import { VerificationTrajectoireRequest } from '@/backend/indicateurs/trajectoires/verification-trajectoire.request';
-import { VerificationTrajectoireResultType } from '@/backend/indicateurs/trajectoires/verification-trajectoire.response';
-import { CollectiviteResume } from '@/domain/collectivites';
-import {
-  IndicateurDefinition,
-  IndicateurValeurCreate,
-  VerificationTrajectoireStatus,
-} from '@/domain/indicateurs';
 import {
   Injectable,
   InternalServerErrorException,
   Logger,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import ListCollectivitesService from '@tet/backend/collectivites/list-collectivites/list-collectivites.service';
+import { VerificationTrajectoireRequest } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.request';
+import { VerificationTrajectoireResultType } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.response';
+import { CollectiviteResume } from '@tet/domain/collectivites';
+import {
+  IndicateurDefinition,
+  IndicateurValeurCreate,
+  VerificationTrajectoireStatus,
+} from '@tet/domain/indicateurs';
 import { flatten, isNil, partition } from 'es-toolkit';
 import slugify from 'slugify';
 import GroupementsService from '../../collectivites/services/groupements.service';

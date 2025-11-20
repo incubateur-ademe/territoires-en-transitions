@@ -3,7 +3,7 @@ import {
   FicheCreate,
   PiliersEciEnum,
   StatutEnum,
-} from '@/domain/plans';
+} from '@tet/domain/plans';
 
 export const ficheActionFixture: FicheCreate = {
   id: 9999,

@@ -1,12 +1,12 @@
-import { FicheWithRelations } from '@/domain/plans';
-import { Badge } from '@/ui';
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { Badge } from '@tet/ui';
 import classNames from 'classnames';
 import { RichTextView } from '../../../../../../plans/fiches/update-fiche/components/RichTextView';
 import ModaleDescription from './ModaleDescription';
 
 type FicheActionDescriptionProps = {
   isReadonly: boolean;
-  fiche: FicheWithRelations;
+  fiche: Fiche;
   className?: string;
 };
 

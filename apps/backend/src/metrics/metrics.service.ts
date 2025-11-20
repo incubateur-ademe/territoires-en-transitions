@@ -1,16 +1,16 @@
-import { ListDefinitionsService } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.service';
-import { CollectiviteMetricsResponse } from '@/backend/metrics/collectivite-metrics.response';
-import { PersonalMetricsResponse } from '@/backend/metrics/personal-metrics.response';
-import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
-import PlanActionsService from '@/backend/plans/fiches/plan-actions.service';
-import { ListLabellisationsService } from '@/backend/referentiels/labellisations/list-labellisations.service';
-import { ListActionsService } from '@/backend/referentiels/list-actions/list-actions.service';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { AuthUser } from '@/backend/users/models/auth.models';
-import { ReferentielId } from '@/domain/referentiels';
-import { PermissionOperationEnum } from '@/domain/users';
+import { ListDefinitionsService } from '@tet/backend/indicateurs/definitions/list-definitions/list-definitions.service';
+import { CollectiviteMetricsResponse } from '@tet/backend/metrics/collectivite-metrics.response';
+import { PersonalMetricsResponse } from '@tet/backend/metrics/personal-metrics.response';
+import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
+import PlanActionsService from '@tet/backend/plans/fiches/plan-actions.service';
+import { ListLabellisationsService } from '@tet/backend/referentiels/labellisations/list-labellisations.service';
+import { ListActionsService } from '@tet/backend/referentiels/list-actions/list-actions.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { Injectable, Logger } from '@nestjs/common';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import { LabellisationRecord } from '../referentiels/labellisations/list-labellisations.api-response';
 
 @Injectable()

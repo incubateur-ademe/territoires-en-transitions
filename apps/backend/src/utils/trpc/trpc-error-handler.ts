@@ -1,5 +1,5 @@
+import { createEnumObject } from '@tet/domain/utils';
 import { TRPCError } from '@trpc/server';
-import { createEnumObject } from '../enum.utils';
 import { MethodResult } from '../result.type';
 import {
   COMMON_ERROR_CONFIG,

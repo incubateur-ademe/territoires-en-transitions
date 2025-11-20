@@ -1,4 +1,4 @@
-import { Button, HEAD_CELL_STYLE, Notification, TCell, Tooltip } from '@/ui';
+import { Button, HEAD_CELL_STYLE, Notification, TCell, Tooltip } from '@tet/ui';
 import classNames from 'classnames';
 import { PreparedData, PreparedValue } from '../data/prepare-data';
 import { SourceType } from '../types';

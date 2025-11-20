@@ -1,5 +1,5 @@
-import { PersonneTagOrUser } from '@/domain/collectivites';
-import { ListFichesRequestFilters as Filtres } from '@/domain/plans';
+import { PersonneTagOrUser } from '@tet/domain/collectivites';
+import { ListFichesRequestFilters as Filtres } from '@tet/domain/plans';
 
 /**
  * Renvoie l'id en string d'un type Personne qui est soit un tag_id number ou un user_id string

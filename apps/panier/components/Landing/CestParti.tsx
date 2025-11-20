@@ -1,7 +1,7 @@
 'use client';
 
-import { getAuthPaths, PanierAPI, useSupabase } from '@/api';
-import { Button, Event, Icon, useEventTracker } from '@/ui';
+import { getAuthPaths, PanierAPI, useSupabase } from '@tet/api';
+import { Button, Event, Icon, useEventTracker } from '@tet/ui';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useUserContext } from '../../providers';

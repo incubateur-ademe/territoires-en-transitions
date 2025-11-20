@@ -1,4 +1,4 @@
-import { libreTagTable } from '@/backend/collectivites/tags/libre-tag.table';
+import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
 import {
   getAuthUser,
   getAuthUserFromDcp,
@@ -7,13 +7,13 @@ import {
   getTestRouter,
   YOLO_DODO,
   YULU_DUDU,
-} from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { addTestUser } from '@/backend/users/users/users.fixture';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { PrioriteEnum, StatutEnum } from '@/domain/plans';
-import { CollectiviteAccessLevelEnum } from '@/domain/users';
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.fixture';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { PrioriteEnum, StatutEnum } from '@tet/domain/plans';
+import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { inArray, sql } from 'drizzle-orm';
 import { createFiche } from '../fiches.test-fixture';

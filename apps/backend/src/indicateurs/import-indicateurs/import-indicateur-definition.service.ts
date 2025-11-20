@@ -1,22 +1,3 @@
-import { categorieTagTable } from '@/backend/collectivites/tags/categorie-tag.table';
-import {
-  CreateIndicateurCategorieTag,
-  indicateurCategorieTagTable,
-} from '@/backend/indicateurs/definitions/indicateur-categorie-tag.table';
-import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
-import {
-  CreateIndicateurGroupe,
-  indicateurGroupeTable,
-} from '@/backend/indicateurs/shared/models/indicateur-groupe.table';
-import { indicateurThematiqueTable } from '@/backend/indicateurs/shared/models/indicateur-thematique.table';
-import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
-import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import VersionService from '@/backend/utils/version/version.service';
-import { CategorieTagCreate } from '@/domain/collectivites';
-import { IndicateurThematiqueCreate } from '@/domain/indicateurs';
-import { ThematiqueCreate } from '@/domain/shared';
-import { getErrorMessage } from '@/domain/utils';
 import {
   BadRequestException,
   HttpException,
@@ -25,6 +6,25 @@ import {
   Logger,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
+import {
+  CreateIndicateurCategorieTag,
+  indicateurCategorieTagTable,
+} from '@tet/backend/indicateurs/definitions/indicateur-categorie-tag.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import {
+  CreateIndicateurGroupe,
+  indicateurGroupeTable,
+} from '@tet/backend/indicateurs/shared/models/indicateur-groupe.table';
+import { indicateurThematiqueTable } from '@tet/backend/indicateurs/shared/models/indicateur-thematique.table';
+import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
+import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import VersionService from '@tet/backend/utils/version/version.service';
+import { CategorieTagCreate } from '@tet/domain/collectivites';
+import { IndicateurThematiqueCreate } from '@tet/domain/indicateurs';
+import { ThematiqueCreate } from '@tet/domain/shared';
+import { getErrorMessage } from '@tet/domain/utils';
 import { DepGraph } from 'dependency-graph';
 import { inArray } from 'drizzle-orm';
 import { omit } from 'es-toolkit';

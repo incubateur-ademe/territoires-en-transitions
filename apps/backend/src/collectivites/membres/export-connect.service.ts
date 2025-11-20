@@ -1,14 +1,14 @@
-import { exportConnectTable } from '@/backend/collectivites/membres/export-connect.table';
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
-import { membreTable } from '@/backend/collectivites/shared/models/membre.table';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { utilisateurCollectiviteAccessTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
-import { authUsersTable } from '@/backend/users/models/auth-users.table';
-import { AuthUser } from '@/backend/users/models/auth.models';
-import { dcpTable } from '@/backend/users/models/dcp.table';
-import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
-import { ExportConnectCreate } from '@/domain/collectivites';
 import { Injectable, Logger } from '@nestjs/common';
+import { exportConnectTable } from '@tet/backend/collectivites/membres/export-connect.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { membreTable } from '@tet/backend/collectivites/shared/models/membre.table';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
+import { ExportConnectCreate } from '@tet/domain/collectivites';
 import { createHash } from 'crypto';
 import {
   and,

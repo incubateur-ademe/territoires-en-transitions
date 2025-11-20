@@ -1,7 +1,7 @@
 import {
   referentielIdEnumSchema,
   snapshotJalonEnumSchema,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import z from 'zod';
 import { collectiviteIdInputSchema } from '../../collectivites/collectivite-id.input';
 

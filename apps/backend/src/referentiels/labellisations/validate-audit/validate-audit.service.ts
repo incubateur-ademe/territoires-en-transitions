@@ -1,9 +1,9 @@
-import { DatabaseService } from '@/backend/utils/database/database.service';
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   LabellisationAudit,
   SnapshotJalonEnum,

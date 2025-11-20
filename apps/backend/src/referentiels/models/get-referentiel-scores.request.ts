@@ -1,4 +1,4 @@
-import { SnapshotJalonEnum } from '@/domain/referentiels';
+import { SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { z } from 'zod';
 
 export const getReferentielScoresRequestSchema = z

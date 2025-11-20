@@ -1,7 +1,7 @@
 import {
   ListFichesRequestFilters,
   listFichesRequestFiltersSchema,
-} from '@/domain/plans';
+} from '@tet/domain/plans';
 import { SortValue } from '../data/use-list-fiches';
 
 export const WITH = 'WITH';

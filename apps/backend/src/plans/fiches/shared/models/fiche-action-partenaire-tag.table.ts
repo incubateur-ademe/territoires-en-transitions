@@ -1,4 +1,4 @@
-import { partenaireTagTable } from '@/backend/collectivites/tags/partenaire-tag.table';
+import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-tag.table';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { ficheActionTable } from './fiche-action.table';
 

@@ -1,6 +1,6 @@
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
-import { Checkbox, Tooltip } from '@/ui';
+import { Checkbox, Tooltip } from '@tet/ui';
 
 /** Affiche le bouton "Résultat récent en mode privé" */
 export const PrivateModeSwitch = ({

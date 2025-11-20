@@ -1,8 +1,8 @@
-import { useSupabase, useTRPC } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
-import { updateLinkedFiches } from '@/api/plan-actions';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSupabase, useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { updateLinkedFiches } from '@tet/api/plan-actions';
 
 /**
  * Charge la liste des fiches action liées à une autre fiche action

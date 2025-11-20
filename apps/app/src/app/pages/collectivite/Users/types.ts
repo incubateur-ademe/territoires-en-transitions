@@ -1,6 +1,6 @@
-import { MembreFonction } from '@/domain/collectivites';
-import { ReferentielId } from '@/domain/referentiels';
-import { CollectiviteAccessLevel } from '@/domain/users';
+import { MembreFonction } from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { CollectiviteAccessLevel } from '@tet/domain/users';
 
 export interface Membre {
   email: string;

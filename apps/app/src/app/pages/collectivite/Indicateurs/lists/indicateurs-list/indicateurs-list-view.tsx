@@ -3,7 +3,7 @@
 import { IndicateursListFilters } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-filters';
 import { IndicateursListParamOption } from '@/app/app/paths';
 import { ListDefinitionsInputFilters } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
-import { DEPRECATED_ButtonMenu, Event, useEventTracker } from '@/ui';
+import { DEPRECATED_ButtonMenu, Event, useEventTracker } from '@tet/ui';
 import IndicateursListe from './indicateurs-list';
 import { IndicateursListEmpty } from './indicateurs-list-empty';
 import {

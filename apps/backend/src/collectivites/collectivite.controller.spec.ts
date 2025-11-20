@@ -1,10 +1,10 @@
-import { ListCollectiviteApiResponse } from '@/backend/collectivites/list-collectivites/list-collectivites.api-response';
+import { ListCollectiviteApiResponse } from '@tet/backend/collectivites/list-collectivites/list-collectivites.api-response';
 import {
   getTestApp,
   ISO_8601_DATE_TIME_REGEX,
   signInWith,
   YOLO_DODO,
-} from '@/backend/test';
+} from '@tet/backend/test';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 

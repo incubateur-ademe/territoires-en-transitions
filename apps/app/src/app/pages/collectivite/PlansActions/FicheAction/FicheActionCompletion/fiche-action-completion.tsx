@@ -1,7 +1,7 @@
 import { Completion } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import { FicheWithRelations } from '@/domain/plans';
-import { Icon, Tooltip } from '@/ui';
-import { cn } from '@/ui/utils/cn';
+import { Icon, Tooltip } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
+import { Fiche } from '../data/use-get-fiche';
 
 type FicheActionCompletionStatusProps = {
   completion?: Completion;
@@ -9,14 +9,14 @@ type FicheActionCompletionStatusProps = {
 };
 
 // Mapping of backend fields to display labels
-const DISPLAYED_LABELS: Partial<Record<keyof FicheWithRelations, string>> = {
+const DISPLAYED_LABELS: Partial<Record<keyof Fiche, string>> = {
   titre: 'titre',
   description: 'description',
   statut: 'statut',
   pilotes: 'pilote',
 } as const;
 
-const getFieldLabel = (field: keyof FicheWithRelations) => {
+const getFieldLabel = (field: keyof Fiche) => {
   return DISPLAYED_LABELS[field] || field;
 };
 
@@ -82,7 +82,7 @@ const CompletionList = ({ completion }: { completion: Completion }) => {
           field,
           isCompleted,
         }: {
-          field: keyof FicheWithRelations;
+          field: keyof Fiche;
           isCompleted: boolean;
         }) => (
           <li key={field} className="ml-2">

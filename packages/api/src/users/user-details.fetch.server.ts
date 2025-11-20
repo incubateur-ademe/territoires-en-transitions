@@ -1,7 +1,7 @@
 import 'server-only';
 
-import { CollectiviteAccess } from '@/domain/users';
 import { User } from '@supabase/supabase-js';
+import { CollectiviteAccess } from '@tet/domain/users';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
 import { getAuthUser } from '../utils/supabase/auth-user.server';

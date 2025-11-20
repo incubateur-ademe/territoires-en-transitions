@@ -1,11 +1,11 @@
 import { usePathname } from 'next/navigation';
 
-import { useCollectiviteContext } from '@/api/collectivites';
-import { useUser } from '@/api/users';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
 import { useDemoMode } from '@/app/users/demo-mode-support-provider';
-import { Header as HeaderTet } from '@/ui';
+import { useCollectiviteContext } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
+import { Header as HeaderTet } from '@tet/ui';
 import { makeMainNav } from './main-nav/make-main-nav';
 import { makeSecondaryNav } from './make-secondary-nav';
 

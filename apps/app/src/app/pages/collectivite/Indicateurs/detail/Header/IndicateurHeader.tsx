@@ -1,9 +1,9 @@
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { PermissionOperation } from '@/domain/users';
-import { VisibleWhen } from '@/ui';
-import { cn } from '@/ui/utils/cn';
+import { PermissionOperation } from '@tet/domain/users';
+import { VisibleWhen } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 import CheminIndicateur from './CheminIndicateur';
 import { IndicateurInfos } from './IndicateurInfos';
 import IndicateurTitle from './IndicateurTitle';

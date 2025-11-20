@@ -1,18 +1,18 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { SharedFicheLinkedResourcesAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import ActionPicto from '@/app/ui/pictogrammes/ActionPicto';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { FicheWithRelations } from '@/domain/plans';
-import { Button, EmptyCard } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Button, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
+import { Fiche } from '../data/use-get-fiche';
 import { MesuresLieesListe } from './mesures-liees.list';
 import { MesuresLieesModal } from './mesures-liees.modal';
 
 type MesuresLieesViewProps = {
   isReadonly: boolean;
   isEditLoading: boolean;
-  fiche: FicheWithRelations;
+  fiche: Fiche;
 };
 
 export const MesuresLieesView = ({

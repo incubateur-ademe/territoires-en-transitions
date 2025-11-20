@@ -1,27 +1,27 @@
 import {
-  EpciPerimetre,
-  epciPerimetreSchema,
-} from '@/backend/collectivites/import-collectivite-relations/epci-perimetre.schema';
-import { ImportCollectiviteRelationsResponse } from '@/backend/collectivites/import-collectivite-relations/import-collectivite-relations.response';
-import {
-  SyndicatEpci,
-  syndicatEpciSchema,
-} from '@/backend/collectivites/import-collectivite-relations/syndicat-epci.schema';
-import ListCollectivitesService, {
-  MIN_COMMUNE_POPULATION,
-} from '@/backend/collectivites/list-collectivites/list-collectivites.service';
-import { collectiviteRelationsTable } from '@/backend/collectivites/shared/models/collectivite-relations.table';
-import { CsvService } from '@/backend/utils/csv/csv.service';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { CollectiviteRelation } from '@/domain/collectivites';
-import { getErrorMessage } from '@/domain/utils';
-import {
   Injectable,
   InternalServerErrorException,
   Logger,
   NotImplementedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import {
+  EpciPerimetre,
+  epciPerimetreSchema,
+} from '@tet/backend/collectivites/import-collectivite-relations/epci-perimetre.schema';
+import { ImportCollectiviteRelationsResponse } from '@tet/backend/collectivites/import-collectivite-relations/import-collectivite-relations.response';
+import {
+  SyndicatEpci,
+  syndicatEpciSchema,
+} from '@tet/backend/collectivites/import-collectivite-relations/syndicat-epci.schema';
+import ListCollectivitesService, {
+  MIN_COMMUNE_POPULATION,
+} from '@tet/backend/collectivites/list-collectivites/list-collectivites.service';
+import { collectiviteRelationsTable } from '@tet/backend/collectivites/shared/models/collectivite-relations.table';
+import { CsvService } from '@tet/backend/utils/csv/csv.service';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { CollectiviteRelation } from '@tet/domain/collectivites';
+import { getErrorMessage } from '@tet/domain/utils';
 import { chunk } from 'es-toolkit';
 import { readFileSync } from 'fs';
 import { join } from 'path';

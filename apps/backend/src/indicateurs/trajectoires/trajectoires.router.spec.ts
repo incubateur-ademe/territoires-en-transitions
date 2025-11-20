@@ -1,18 +1,18 @@
-import { VerificationTrajectoireResponseType } from '@/backend/indicateurs/trajectoires/verification-trajectoire.response';
-import {
-  getAuthUser,
-  getTestApp,
-  getTestRouter,
-  YOLO_DODO,
-} from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { VerificationTrajectoireStatus } from '@/domain/indicateurs';
 import {
   ForbiddenException,
   INestApplication,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { VerificationTrajectoireResponseType } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.response';
+import {
+  getAuthUser,
+  getTestApp,
+  getTestRouter,
+  YOLO_DODO,
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { VerificationTrajectoireStatus } from '@tet/domain/indicateurs';
 import { expect } from 'vitest';
 
 describe('Calcul de trajectoire SNBC', () => {

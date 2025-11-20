@@ -8,8 +8,8 @@ import {
   TimeIcon,
 } from '@/app/ui/export-pdf/assets/icons';
 import { Box, Paragraph, Stack } from '@/app/ui/export-pdf/components';
-import { FicheWithRelations } from '@/domain/plans';
-import { preset } from '@/ui';
+import { FicheWithRelations } from '@tet/domain/plans';
+import { preset } from '@tet/ui';
 import classNames from 'classnames';
 import { format, isBefore, startOfToday } from 'date-fns';
 

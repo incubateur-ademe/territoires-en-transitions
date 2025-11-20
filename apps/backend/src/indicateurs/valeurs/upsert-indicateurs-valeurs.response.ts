@@ -1,4 +1,4 @@
-import { indicateurValeurSchema } from '@/domain/indicateurs';
+import { indicateurValeurSchema } from '@tet/domain/indicateurs';
 import { z } from 'zod';
 
 export const upsertIndicateursValeursResponseSchema = z

@@ -1,4 +1,4 @@
-import { Modal } from '@/ui';
+import { Modal } from '@tet/ui';
 import { useState } from 'react';
 import { Signup } from './Signup';
 import { SignupProps, SignupView } from './type';

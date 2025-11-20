@@ -1,7 +1,7 @@
 import { referentielToName } from '@/app/app/labels';
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
-import { Divider, Icon } from '@/ui';
+import { Divider, Icon } from '@tet/ui';
 import classNames from 'classnames';
 import { format } from 'date-fns';
 import { useState } from 'react';

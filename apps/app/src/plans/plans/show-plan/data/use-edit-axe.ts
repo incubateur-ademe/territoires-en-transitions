@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { useSupabase, useTRPC } from '@/api';
-import { Plan, PlanNode, PlanType } from '@/domain/plans';
+import { useSupabase, useTRPC } from '@tet/api';
+import { Plan, PlanNode, PlanType } from '@tet/domain/plans';
 
 /**
  * Édite un axe dans un plan d'action

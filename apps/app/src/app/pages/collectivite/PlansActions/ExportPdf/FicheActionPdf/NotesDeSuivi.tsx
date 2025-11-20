@@ -7,9 +7,9 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
-import { FicheNote } from '@/domain/plans';
-import { htmlToText } from '@/domain/utils';
-import { preset } from '@/ui';
+import { FicheNote } from '@tet/domain/plans';
+import { htmlToText } from '@tet/domain/utils';
+import { preset } from '@tet/ui';
 import { format } from 'date-fns';
 
 const { colors } = preset.theme.extend;

@@ -1,8 +1,8 @@
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielTacheUrl } from '@/app/app/paths';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
-import { getIdentifiantFromActionId } from '@/domain/referentiels';
-import { Icon } from '@/ui';
+import { getIdentifiantFromActionId } from '@tet/domain/referentiels';
+import { Icon } from '@tet/ui';
 import classNames from 'classnames';
 import './CriteresAction.css';
 

@@ -1,4 +1,4 @@
-import { PermissionOperations } from '@/domain/users';
+import { PermissionOperations } from '@tet/domain/users';
 import { z } from 'zod';
 
 export const generateApiKeyRequestSchema = z.object({

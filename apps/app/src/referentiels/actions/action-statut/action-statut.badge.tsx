@@ -1,6 +1,6 @@
 import { avancementToLabel } from '@/app/app/labels';
-import { StatutAvancementIncludingNonConcerne } from '@/domain/referentiels';
-import { Badge, BadgeState } from '@/ui';
+import { StatutAvancementIncludingNonConcerne } from '@tet/domain/referentiels';
+import { Badge, BadgeState } from '@tet/ui';
 import classNames from 'classnames';
 
 type Props = {

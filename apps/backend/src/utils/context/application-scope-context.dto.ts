@@ -1,4 +1,4 @@
-import { ApplicationDomainsType } from '@/domain/utils';
+import { ApplicationDomainsType } from '@tet/domain/utils';
 
 export interface ApplicationScopeContext {
   domain?: ApplicationDomainsType;

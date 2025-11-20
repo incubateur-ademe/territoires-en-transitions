@@ -1,6 +1,6 @@
 'use client';
 
-import { FooterTeT } from '@/ui';
+import { FooterTeT } from '@tet/ui';
 import { usePathname } from 'next/navigation';
 
 const Footer = () => {

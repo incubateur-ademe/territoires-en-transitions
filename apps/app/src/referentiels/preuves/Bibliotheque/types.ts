@@ -1,5 +1,5 @@
 import { TAuditEnCours } from '@/app/referentiels/audits/types';
-import { LabellisationDemande } from '@/domain/referentiels';
+import { LabellisationDemande } from '@tet/domain/referentiels';
 import { ObjectToSnake } from 'ts-case-convert';
 import { TEditState } from './useEditState';
 

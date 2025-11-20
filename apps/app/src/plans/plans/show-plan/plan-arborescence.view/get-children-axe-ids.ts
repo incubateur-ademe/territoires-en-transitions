@@ -1,4 +1,4 @@
-import { PlanNode } from '@/domain/plans';
+import { PlanNode } from '@tet/domain/plans';
 import { childrenOfPlanNodes } from '../../utils';
 
 export const getChildrenAxeIds = (

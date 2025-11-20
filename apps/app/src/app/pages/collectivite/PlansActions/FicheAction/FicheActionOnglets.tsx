@@ -1,17 +1,18 @@
-import { ENV } from '@/api/environmentVariables';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { MoyensView } from '@/app/plans/fiches/update-fiche/moyens/moyens.view';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { FicheWithRelations } from '@/domain/plans';
-import { CollectiviteAccess } from '@/domain/users';
-import { AppEnvironment } from '@/domain/utils';
-import { Tab, Tabs } from '@/ui';
+import { ENV } from '@tet/api';
+
 import { ServicesWidget } from '@betagouv/les-communs-widget';
+import { CollectiviteAccess } from '@tet/domain/users';
+import { AppEnvironment } from '@tet/domain/utils';
+import { Tab, Tabs } from '@tet/ui';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
 import FichesLieesTab from './FichesLiees/FichesLieesTab';
 import IndicateursTab from './Indicateurs/IndicateursTab';
 import NotesDeSuiviTab from './NotesDeSuivi/NotesDeSuiviTab';
 import NotesEtDocumentsTab from './NotesEtDocuments/NotesEtDocumentsTab';
+import { Fiche } from './data/use-get-fiche';
 import Etapes from './etapes';
 import { MesuresLieesView } from './mesures-liees/mesures-liees.view';
 
@@ -22,7 +23,7 @@ type TabDescriptor = {
 };
 
 type FicheActionOngletsProps = {
-  fiche: FicheWithRelations;
+  fiche: Fiche;
   isEditLoading: boolean;
   isReadonly: boolean;
   className?: string;

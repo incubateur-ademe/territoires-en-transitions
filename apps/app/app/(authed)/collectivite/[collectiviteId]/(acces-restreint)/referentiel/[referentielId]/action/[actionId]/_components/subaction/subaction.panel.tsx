@@ -7,7 +7,7 @@ import {
   useActionSummaryChildren,
 } from '@/app/referentiels/referentiel-hooks';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
-import { Tab, Tabs, sideMenuContentZindex } from '@/ui';
+import { Tab, Tabs, sideMenuContentZindex } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { ScoreIndicatifBadge } from '../score-indicatif/score-indicatif.badge';

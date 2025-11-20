@@ -7,7 +7,7 @@ import {
   EMISSIONS_NETTES,
   IndicateurAvecValeurs,
   IndicateurSourceEnum,
-} from '@/domain/indicateurs';
+} from '@tet/domain/indicateurs';
 import {
   IndicateurTrajectoire,
   getNomSource,

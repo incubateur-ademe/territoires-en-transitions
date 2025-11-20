@@ -4,9 +4,9 @@ import {
   getCollectivitePath,
   useSupabase,
   useTRPC,
-} from '@/api';
-import { CollectivitePublic } from '@/domain/collectivites';
+} from '@tet/api';
 import { useQueryClient } from '@tanstack/react-query';
+import { CollectivitePublic } from '@tet/domain/collectivites';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
