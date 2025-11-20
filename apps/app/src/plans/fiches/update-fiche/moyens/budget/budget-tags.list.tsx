@@ -6,7 +6,7 @@ type BudgetTagsListProps = {
   unit?: 'HT' | 'ETP';
 };
 
-const BudgetTagsList = ({ tags, unit = 'HT' }: BudgetTagsListProps) => {
+export const BudgetTagsList = ({ tags, unit = 'HT' }: BudgetTagsListProps) => {
   return (
     <>
       {(tags ?? []).map((tag, index) => (
@@ -44,5 +44,3 @@ const BudgetTagsList = ({ tags, unit = 'HT' }: BudgetTagsListProps) => {
     </>
   );
 };
-
-export default BudgetTagsList;

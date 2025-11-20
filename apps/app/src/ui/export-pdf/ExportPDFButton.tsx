@@ -62,6 +62,8 @@ const ExportPDFButton = ({
     ) {
       updateInstance(<DocumentToExport content={content} />);
     }
+    // to avoid a "duplicate key" error
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content]);
 
   useEffect(() => {

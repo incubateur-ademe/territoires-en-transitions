@@ -4,10 +4,10 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
+import { FicheWithRelations } from '@/domain/plans';
 import { htmlToText } from '@/domain/utils';
-import { FicheActionPdfProps } from './FicheActionPdf';
 
-const Notes = ({ fiche }: FicheActionPdfProps) => {
+const Notes = ({ fiche }: { fiche: FicheWithRelations }) => {
   const { notesComplementaires } = fiche;
 
   if (!notesComplementaires) return null;

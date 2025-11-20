@@ -1,11 +1,10 @@
 import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import {
   getTextFormattedDate,
   getTruncatedText,
 } from '@/app/utils/formatUtils';
-import { isFicheOnTime } from '@/domain/plans';
+import { FicheWithRelations, isFicheOnTime } from '@/domain/plans';
 import { Button, Divider, EmptyCard, Icon } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -14,11 +13,11 @@ import EmptyCalendarPicto from './PictosPlanning/EmptyCalendarPicto';
 import FilledCalendarPicto from './PictosPlanning/FilledCalendarPicto';
 type FicheActionPlanningProps = {
   isReadonly: boolean;
-  fiche: Fiche;
+  fiche: FicheWithRelations;
   className?: string;
 };
 
-const FicheActionPlanning = ({
+export const FicheActionPlanning = ({
   isReadonly,
   fiche,
   className,
@@ -224,5 +223,3 @@ const FicheActionPlanning = ({
     </>
   );
 };
-
-export default FicheActionPlanning;

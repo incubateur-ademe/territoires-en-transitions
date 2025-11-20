@@ -1,8 +1,8 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useCreateIndicateurDefinition } from '@/app/indicateurs/definitions/use-create-indicateur-definition';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import { FicheWithRelations } from '@/domain/plans';
 import {
   Alert,
   Button,
@@ -36,7 +36,7 @@ const IndicateurPersoNouveau = ({
   onClose,
 }: {
   /** Fiche action à laquelle rattacher le nouvel indicateur */
-  fiche?: Fiche;
+  fiche?: FicheWithRelations;
   isFavoriCollectivite?: boolean;
   onClose?: () => void;
 }) => {

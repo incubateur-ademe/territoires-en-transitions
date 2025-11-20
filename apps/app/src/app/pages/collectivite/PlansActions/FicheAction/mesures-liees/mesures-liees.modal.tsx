@@ -1,17 +1,20 @@
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
+import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import MesuresReferentielsDropdown from '@/app/ui/dropdownLists/MesuresReferentielsDropdown/MesuresReferentielsDropdown';
+import { FicheWithRelations } from '@/domain/plans';
 import { Field, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { isEqual } from 'es-toolkit/predicate';
 import { useState } from 'react';
 
-type ModaleActionsLieesProps = {
+type MesuresLieesModalProps = {
   openState: OpenState;
-  fiche: Fiche;
+  fiche: FicheWithRelations;
 };
 
-const ModaleActionsLiees = ({ openState, fiche }: ModaleActionsLieesProps) => {
+export const MesuresLieesModal = ({
+  openState,
+  fiche,
+}: MesuresLieesModalProps) => {
   const ficheMesureIds = fiche.mesures?.map((mesure) => mesure.id);
   const [editedMesureIds, setEditedMesureIds] = useState(ficheMesureIds);
 
@@ -59,5 +62,3 @@ const ModaleActionsLiees = ({ openState, fiche }: ModaleActionsLieesProps) => {
     />
   );
 };
-
-export default ModaleActionsLiees;

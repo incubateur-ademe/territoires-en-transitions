@@ -1,25 +1,25 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import { SharedFicheLinkedResourcesAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
+import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import ActionPicto from '@/app/ui/pictogrammes/ActionPicto';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { FicheWithRelations } from '@/domain/plans';
 import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
-import ActionsLieesListe from './ActionsLieesListe';
-import ModaleActionsLiees from './ModaleActionsLiees';
+import { MesuresLieesListe } from './mesures-liees.list';
+import { MesuresLieesModal } from './mesures-liees.modal';
 
-type ActionsLieesTabProps = {
+type MesuresLieesViewProps = {
   isReadonly: boolean;
   isEditLoading: boolean;
-  fiche: Fiche;
+  fiche: FicheWithRelations;
 };
 
-const ActionsLieesTab = ({
+export const MesuresLieesView = ({
   isReadonly,
   isEditLoading,
   fiche,
-}: ActionsLieesTabProps) => {
+}: MesuresLieesViewProps) => {
   const currentCollectiviteId = useCollectiviteId();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -73,19 +73,17 @@ const ActionsLieesTab = ({
             size="xs"
           />
         ) : (
-          <ActionsLieesListe
+          <MesuresLieesListe
             isReadonly={isReadonly}
             externalCollectiviteId={fiche.collectiviteId}
-            actionIds={mesures?.map((action) => action.id)}
+            mesuresIds={mesures?.map((mesure) => mesure.id)}
             className="md:!grid-cols-2 lg:!grid-cols-1 xl:!grid-cols-2"
             onLoad={setIsLoading}
-            onUnlink={(actionsLieeId) =>
+            onUnlink={(mesureId) =>
               updateFiche({
                 ficheId: fiche.id,
                 ficheFields: {
-                  mesures: mesures.filter(
-                    (action) => action.id !== actionsLieeId
-                  ),
+                  mesures: mesures.filter((mesure) => mesure.id !== mesureId),
                 },
               })
             }
@@ -94,7 +92,7 @@ const ActionsLieesTab = ({
       </div>
 
       {isModalOpen && (
-        <ModaleActionsLiees
+        <MesuresLieesModal
           openState={{ isOpen: isModalOpen, setIsOpen: setIsModalOpen }}
           fiche={fiche}
         />
@@ -102,5 +100,3 @@ const ActionsLieesTab = ({
     </>
   );
 };
-
-export default ActionsLieesTab;

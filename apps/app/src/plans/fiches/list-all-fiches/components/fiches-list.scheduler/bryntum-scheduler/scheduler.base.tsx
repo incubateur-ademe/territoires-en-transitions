@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useUser } from '@/api/users/user-context/user-provider';
-import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
+import { FicheResume } from '@/domain/plans';
 import { preset } from '@/ui';
 import { FicheCardScheduler } from './fiche-card.scheduler';
 
@@ -13,7 +13,7 @@ import { FicheCardScheduler } from './fiche-card.scheduler';
 LocaleManager.applyLocale('FrFr');
 
 export type FicheActionEvent = EventModelConfig & {
-  fiche?: FicheWithRelationsAndCollectivite;
+  fiche?: FicheResume;
 };
 
 export type SchedulerProps = {

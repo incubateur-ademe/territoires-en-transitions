@@ -1,6 +1,6 @@
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
+import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
@@ -8,6 +8,7 @@ import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropd
 import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import ParticipationCitoyenneDropdown from '@/app/ui/dropdownLists/ficheAction/ParticipationCitoyenneDropdown/ParticipationCitoyenneDropdown';
+import { FicheWithRelations } from '@/domain/plans';
 import {
   Event,
   Field,
@@ -18,12 +19,11 @@ import {
 } from '@/ui';
 import { isEqual } from 'es-toolkit/predicate';
 import { useState } from 'react';
-import { useUpdateFiche } from '../data/use-update-fiche';
 
 type ModaleActeursProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  fiche: Fiche;
+  fiche: FicheWithRelations;
 };
 
 const ModaleActeurs = ({ isOpen, setIsOpen, fiche }: ModaleActeursProps) => {

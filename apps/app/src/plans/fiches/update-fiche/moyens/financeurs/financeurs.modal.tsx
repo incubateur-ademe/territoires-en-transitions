@@ -1,20 +1,19 @@
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { FicheWithRelations, Financeur } from '@/domain/plans';
-import { Alert, Divider, ModalFooterOKCancel } from '@/ui';
+import { ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { isEqual } from 'es-toolkit';
 import { useState } from 'react';
-import FinanceursInput from './FinanceursInput';
+import { FinanceursInput } from './financeurs.input';
 
 type FinanceursModalProps = {
   openState: OpenState;
-  fiche: Pick<FicheWithRelations, 'financeurs'> & FicheShareProperties;
+  fiche: FicheWithRelations;
   updateFinanceurs: (financeurs: Financeur[] | null | undefined) => void;
 };
 
-const FinanceursModal = ({
+export const FinanceursModal = ({
   openState,
   fiche,
   updateFinanceurs,
@@ -37,22 +36,11 @@ const FinanceursModal = ({
       title="Financeurs"
       size="lg"
       render={() => (
-        <div>
-          <Divider />
-          <Alert
-            state="warning"
-            title="Ce champ historiquement en TTC est passé en HT, veillez à vérifier vos valeurs et à les modifier le cas échéant. N’hésitez pas à contacter le support si vous avez besoin d’aide pour faire les conversions."
-            rounded
-            withBorder
-            className="mb-8"
-          />
-          <FinanceursInput
-            financeurs={editedFinanceurs}
-            collectiviteIds={getFicheAllEditorCollectiviteIds(fiche)}
-            onUpdate={setEditedFinanceurs}
-          />
-          <Divider className="-mb-6 mt-6" />
-        </div>
+        <FinanceursInput
+          financeurs={editedFinanceurs}
+          collectiviteIds={getFicheAllEditorCollectiviteIds(fiche)}
+          onUpdate={setEditedFinanceurs}
+        />
       )}
       // Boutons pour valider / annuler les modifications
       renderFooter={({ close }) => (
@@ -69,5 +57,3 @@ const FinanceursModal = ({
     />
   );
 };
-
-export default FinanceursModal;
