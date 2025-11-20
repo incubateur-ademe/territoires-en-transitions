@@ -1,5 +1,5 @@
-import { getAnonUser, getServiceRoleUser } from '@/backend/test';
-import { AuthRole, AuthUser } from '@/backend/users/models/auth.models';
+import { getAnonUser, getServiceRoleUser } from '@tet/backend/test';
+import { AuthRole, AuthUser } from '@tet/backend/users/models/auth.models';
 import { getTestRouter } from '../../../test/app-utils';
 import { TrpcRouter } from '../../utils/trpc/trpc.router';
 

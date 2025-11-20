@@ -1,9 +1,9 @@
+import { InjectQueue } from '@nestjs/bullmq';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   ApplicationSousScopesType,
   WebhookMessageCreate,
-} from '@/domain/utils';
-import { InjectQueue } from '@nestjs/bullmq';
-import { Injectable, Logger } from '@nestjs/common';
+} from '@tet/domain/utils';
 import { DefaultJobOptions, Queue } from 'bullmq';
 import { eq } from 'drizzle-orm';
 import { WEBHOOK_NOTIFICATIONS_QUEUE_NAME } from '../bullmq/queue-names.constants';

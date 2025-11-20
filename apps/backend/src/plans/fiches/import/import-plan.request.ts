@@ -1,7 +1,7 @@
 import {
   updatePlanPiloteSchema,
   updatePlanReferentSchema,
-} from '@/domain/plans';
+} from '@tet/domain/plans';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 

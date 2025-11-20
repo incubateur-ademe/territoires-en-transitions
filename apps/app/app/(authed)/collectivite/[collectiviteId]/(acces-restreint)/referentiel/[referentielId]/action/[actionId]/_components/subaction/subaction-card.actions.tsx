@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useState } from 'react';
 import { ScoreIndicatifModal } from '../score-indicatif/score-indicatif.modal';
 import { useGetScoreIndicatif } from '../score-indicatif/use-get-score-indicatif';

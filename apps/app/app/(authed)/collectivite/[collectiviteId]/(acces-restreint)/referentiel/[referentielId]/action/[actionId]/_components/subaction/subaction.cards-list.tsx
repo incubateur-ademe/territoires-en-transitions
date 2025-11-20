@@ -1,6 +1,6 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { phaseToLabel } from '@/app/referentiels/utils';
-import { Divider, SideMenu } from '@/ui';
+import { Divider, SideMenu } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import SubActionCard from './subaction-card';

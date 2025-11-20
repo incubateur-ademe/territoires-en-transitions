@@ -1,5 +1,5 @@
-import { getPaginationSchema, PAGE_DEFAULT } from '@/domain/utils';
-import { listDefinitionsInputFiltersSchema } from '@/domain/indicateurs';
+import { listDefinitionsInputFiltersSchema } from '@tet/domain/indicateurs';
+import { getPaginationSchema, PAGE_DEFAULT } from '@tet/domain/utils';
 import { z } from 'zod';
 
 export const listDefinitionsInputSortValues = [

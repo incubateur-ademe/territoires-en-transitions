@@ -1,6 +1,6 @@
-import { useUser } from '@/api/users';
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
-import { CollectiviteAccess } from '@/domain/users';
+import { useUser } from '@tet/api/users';
+import { CollectiviteAccess } from '@tet/domain/users';
 import classNames from 'classnames';
 import FicheActionCardSkeleton from '../../../../app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { useListFiches } from '../../../fiches/list-all-fiches/data/use-list-fiches';

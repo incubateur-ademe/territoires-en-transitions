@@ -1,5 +1,5 @@
 import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
-import { ReferentielId } from '@/domain/referentiels';
+import { ReferentielId } from '@tet/domain/referentiels';
 
 // groupe les preuves par référentiel
 type TPreuvesParReferentiel = Record<

@@ -1,9 +1,12 @@
-import { DBClient, useSupabase } from '@/api';
-import { useCollectiviteId, useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users';
 import { usePreuvesParType } from '@/app/referentiels/preuves/usePreuves';
-import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from '@tanstack/react-query';
+import { DBClient, useSupabase } from '@tet/api';
+import {
+  useCollectiviteId,
+  useCurrentCollectivite,
+} from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { useReferentielId } from '../referentiel-context';
 import { TAuditEnCours } from './types';
 

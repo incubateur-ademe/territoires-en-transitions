@@ -1,10 +1,10 @@
-import ListPersonnalisationQuestionsService from '@/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
-import ConfigurationService from '@/backend/utils/config/configuration.service';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import SheetService from '@/backend/utils/google-sheets/sheet.service';
-import VersionService from '@/backend/utils/version/version.service';
 import { Test } from '@nestjs/testing';
-import { QuestionThematique } from '@/domain/collectivites';
+import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
+import VersionService from '@tet/backend/utils/version/version.service';
+import { QuestionThematique } from '@tet/domain/collectivites';
 import {
   ImportPersonnalisationChoix,
   ImportPersonnalisationQuestion,

@@ -2,7 +2,7 @@ import { avancementToLabel } from '@/app/app/labels';
 import { actionAvancementColors } from '@/app/app/theme';
 import { Box } from '@/app/ui/export-pdf/components';
 import { Stack } from '@/app/ui/export-pdf/components/Stack';
-import { ActionScoreFinal } from '@/domain/referentiels';
+import { ActionScoreFinal } from '@tet/domain/referentiels';
 import classNames from 'classnames';
 
 type ScoreProgressBarProps = {

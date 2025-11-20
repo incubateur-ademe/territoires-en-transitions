@@ -1,4 +1,4 @@
-import { indicateurAvecValeursSchema } from '@/domain/indicateurs';
+import { indicateurAvecValeursSchema } from '@tet/domain/indicateurs';
 import { z } from 'zod';
 
 export const calculTrajectoireResponseDonneesSchema = z

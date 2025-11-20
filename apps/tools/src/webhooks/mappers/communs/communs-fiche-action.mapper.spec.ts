@@ -1,4 +1,4 @@
-import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
+import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
 import { CommunsFicheActionMapper } from './communs-fiche-action.mapper';
 
 const collectiviteId = 4708;

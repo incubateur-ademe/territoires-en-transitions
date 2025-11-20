@@ -1,15 +1,15 @@
 'use client';
 
-import { useCollectiviteId } from '@/api/collectivites';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { useCreatePlan } from '@/app/plans/plans/show-plan/data/use-create-plan';
 import { UpsertPlanForm } from '@/app/plans/plans/upsert-plan/upsert-plan.form';
 import { useBaseToast } from '@/app/utils/toast/use-base-toast';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
-} from '@/domain/plans';
-import { Button, Icon } from '@/ui';
+} from '@tet/domain/plans';
+import { Button, Icon } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 
 const useGetCreatePlanFunction = () => {

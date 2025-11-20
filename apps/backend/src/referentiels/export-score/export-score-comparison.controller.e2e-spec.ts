@@ -1,6 +1,6 @@
-import { insertFixturePourScoreIndicatif } from '@/backend/test';
-import { DatabaseService } from '@/backend/utils/database/database.service';
 import { INestApplication } from '@nestjs/common';
+import { insertFixturePourScoreIndicatif } from '@tet/backend/test';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CellValue, Workbook } from 'exceljs';
 import { DateTime } from 'luxon';
 import { default as request } from 'supertest';

@@ -1,9 +1,9 @@
-import { CollectiviteTypeEnum } from '@/domain/collectivites';
 import { Test } from '@nestjs/testing';
+import { CollectiviteTypeEnum } from '@tet/domain/collectivites';
 import IndicateurExpressionService from './indicateur-expression.service';
 
 // décommenter (et lancer les tests) pour màj la doc
-//import { generateDiagrams } from '@/backend/utils/expression-parser/generate-diagrams';
+//import { generateDiagrams } from '@tet/backend/utils/expression-parser/generate-diagrams';
 //import { parser } from './indicateur-expression.service';
 //generateDiagrams(parser, __dirname);
 

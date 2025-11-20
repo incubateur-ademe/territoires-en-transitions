@@ -1,5 +1,5 @@
-import { roundTo } from '@/domain/utils';
-import { Tooltip } from '@/ui';
+import { roundTo } from '@tet/domain/utils';
+import { Tooltip } from '@tet/ui';
 import ProgressBar, { ProgressBarType } from './progress-bar';
 
 type ProgressBarTooltipContentProps = {

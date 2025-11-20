@@ -1,4 +1,4 @@
-import { DBClient } from '@/api';
+import { DBClient } from '@tet/api';
 
 type UpsertArgs = {
   collectivite_id: number;

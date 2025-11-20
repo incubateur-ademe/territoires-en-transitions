@@ -1,7 +1,7 @@
 'use client';
 import { useCreateFicheResume } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
-import { PlanNode } from '@/domain/plans';
-import { Button, VisibleWhen } from '@/ui';
+import { PlanNode } from '@tet/domain/plans';
+import { Button, VisibleWhen } from '@tet/ui';
 import { useUpsertAxe } from './data/use-upsert-axe';
 
 type Props = {

@@ -1,6 +1,6 @@
 'use client';
-import { Breadcrumbs } from '@/ui';
-import { cn } from '@/ui/utils/cn';
+import { Breadcrumbs } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 import { PropsWithChildren } from 'react';
 
 type HeaderProps = {

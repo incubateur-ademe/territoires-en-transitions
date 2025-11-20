@@ -1,6 +1,6 @@
-import { listCollectivitesFieldsModeSchema } from '@/backend/collectivites/list-collectivites/list-collectivites-fields-mode.enum';
-import { collectiviteNatureEnumSchema } from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
-import { collectiviteTypeEnumSchema } from '@/domain/collectivites';
+import { listCollectivitesFieldsModeSchema } from '@tet/backend/collectivites/list-collectivites/list-collectivites-fields-mode.enum';
+import { collectiviteNatureEnumSchema } from '@tet/backend/collectivites/shared/models/collectivite-banatic-type.table';
+import { collectiviteTypeEnumSchema } from '@tet/domain/collectivites';
 import z from 'zod';
 
 export const listCollectiviteApiRequestSchema = z.object({

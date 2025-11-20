@@ -1,5 +1,5 @@
-import { useUserSession } from '@/api/users';
-import { getAuthHeaders } from '@/api/utils/supabase/get-auth-headers';
+import { useUserSession } from '@tet/api/users';
+import { getAuthHeaders } from '@tet/api/utils/supabase/get-auth-headers';
 import { isNil } from 'es-toolkit';
 import { getFileNameFromResponse } from './get-filename-from-response';
 

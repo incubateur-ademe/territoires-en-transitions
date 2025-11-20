@@ -10,7 +10,7 @@ import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropd
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import IndicateurCategoriesDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCategoriesDropdown';
 import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
-import { Checkbox, Field, FormSection } from '@/ui';
+import { Checkbox, Field, FormSection } from '@tet/ui';
 import { INDICATEUR_LABELS } from '../../constants';
 
 type Props = {

@@ -1,5 +1,5 @@
-import { ContextStoreService } from '@/backend/utils/context/context.service';
-import { getSentryContextFromApplicationContext } from '@/backend/utils/sentry-init';
+import { ContextStoreService } from '@tet/backend/utils/context/context.service';
+import { getSentryContextFromApplicationContext } from '@tet/backend/utils/sentry-init';
 import {
   ArgumentsHost,
   Catch,
@@ -9,10 +9,10 @@ import {
 } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 import * as Sentry from '@sentry/nestjs';
+import { getErrorMessage } from '@tet/domain/utils';
 import { Request, Response } from 'express';
 import { getErrorCode } from './errors.utils';
 import { HttpErrorResponse } from './http-error.response';
-import { getErrorMessage } from '@/domain/utils';
 
 export const getHttpErrorResponse = (exception: unknown): HttpErrorResponse => {
   const httpErrorResponse: HttpErrorResponse = {

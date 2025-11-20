@@ -1,4 +1,4 @@
-import { Field, Textarea } from '@/ui';
+import { Field, Textarea } from '@tet/ui';
 import { useState } from 'react';
 
 type Props = {

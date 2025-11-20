@@ -1,5 +1,5 @@
 {
-  "name": "@/domain",
+  "name": "@tet/domain",
   "description": "Domain library",
   "private": true,
   "exports": {

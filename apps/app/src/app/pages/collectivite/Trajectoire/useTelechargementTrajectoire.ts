@@ -1,9 +1,9 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { useApiClient } from '@/app/utils/use-api-client';
 import { DOWNLOAD_FILE_MUTATION_OPTIONS } from '@/app/utils/useDownloadFile';
-import { Event, useEventTracker } from '@/ui';
 import { useMutation } from '@tanstack/react-query';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Event, useEventTracker } from '@tet/ui';
 
 /** Télécharge le fichier xlsx de la trajectoire */
 export const useTelechargementTrajectoire = () => {

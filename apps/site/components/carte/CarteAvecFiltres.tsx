@@ -2,7 +2,7 @@
 
 import { CollectivitesCarteFrance } from '@/site/components/carte/useCarteCollectivitesEngagees';
 import Section from '@/site/components/sections/Section';
-import { Divider } from '@/ui';
+import { Divider } from '@tet/ui';
 import classNames from 'classnames';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';

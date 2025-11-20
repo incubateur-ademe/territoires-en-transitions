@@ -438,18 +438,6 @@ importers:
         specifier: ^4.1.12
         version: 4.1.12
     devDependencies:
-      '@/api':
-        specifier: workspace:*
-        version: link:packages/api
-      '@/backend':
-        specifier: workspace:*
-        version: link:apps/backend
-      '@/domain':
-        specifier: workspace:*
-        version: link:packages/domain
-      '@/ui':
-        specifier: workspace:*
-        version: link:packages/ui
       '@eslint/js':
         specifier: ~8.57.0
         version: 8.57.1
@@ -549,6 +537,18 @@ importers:
       '@testing-library/react':
         specifier: ^16.3.0
         version: 16.3.0(@testing-library/dom@10.4.0)(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tet/api':
+        specifier: workspace:*
+        version: link:packages/api
+      '@tet/backend':
+        specifier: workspace:*
+        version: link:apps/backend
+      '@tet/domain':
+        specifier: workspace:*
+        version: link:packages/domain
+      '@tet/ui':
+        specifier: workspace:*
+        version: link:packages/ui
       '@types/async-retry':
         specifier: ^1.4.9
         version: 1.4.9
@@ -10637,6 +10637,7 @@ packages:
   keygrip@1.1.0:
     resolution: {integrity: sha512-iYSchDJ+liQ8iwbSI2QqsQOvqv58eJCEanyJPJi+Khyu8smkcKSFUCbPwzFcL7YVtZ6eONjqRX/38caJ7QjRAQ==}
     engines: {node: '>= 0.6'}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}

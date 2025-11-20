@@ -1,9 +1,9 @@
-import { RouterInput, useTRPC } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
 import { Filters } from '@/app/plans/fiches/list-all-fiches/filters/types';
-import { useEventTracker } from '@/ui';
-import { Event } from '@/ui/components/tracking/posthog-events';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { RouterInput, useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { useEventTracker } from '@tet/ui';
+import { Event } from '@tet/ui/components/tracking/posthog-events';
 
 export type BulkEditRequest = RouterInput['plans']['fiches']['bulkEdit'];
 

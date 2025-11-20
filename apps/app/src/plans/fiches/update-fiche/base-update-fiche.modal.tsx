@@ -1,6 +1,6 @@
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { SharedFicheUpdateAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-update.alert';
-import { Modal, ModalProps } from '@/ui';
+import { Modal, ModalProps } from '@tet/ui';
 
 type BaseUpdateFicheModalProps = ModalProps & {
   fiche: FicheShareProperties;

@@ -1,5 +1,5 @@
-import { MesureAuditStatutEnum } from '@/domain/referentiels';
-import { Badge, BadgeState } from '@/ui';
+import { MesureAuditStatutEnum } from '@tet/domain/referentiels';
+import { Badge, BadgeState } from '@tet/ui';
 
 export const statusToLabel: Record<MesureAuditStatutEnum, string> = {
   non_audite: 'Non audité',

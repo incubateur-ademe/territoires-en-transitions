@@ -1,9 +1,14 @@
-import { TableTag } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
 import { SHARE_ICON } from '@/app/plans/fiches/share-fiche/fiche-share-info';
-import { TagWithCollectiviteId } from '@/domain/collectivites';
-import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
 import { QueryKey } from '@tanstack/react-query';
+import { TableTag } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { TagWithCollectiviteId } from '@tet/domain/collectivites';
+import {
+  Option,
+  OptionValue,
+  SelectFilter,
+  SelectMultipleProps,
+} from '@tet/ui';
 import { useEffect } from 'react';
 import { useDeleteTag, useTagCreate, useTagUpdate } from '.';
 

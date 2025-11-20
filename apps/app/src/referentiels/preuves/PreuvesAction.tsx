@@ -1,6 +1,6 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { AddPreuveComplementaire } from '@/app/referentiels/preuves/AddPreuveComplementaire';
-import { Alert, Divider } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Alert, Divider } from '@tet/ui';
 import classNames from 'classnames';
 import { ComponentPropsWithoutRef, Fragment } from 'react';
 import PreuveDoc from './Bibliotheque/PreuveDoc';

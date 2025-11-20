@@ -1,5 +1,5 @@
-import { version } from '@/backend/utils/column.utils';
-import { questionTypeEnumValues } from '@/domain/collectivites';
+import { version } from '@tet/backend/utils/column.utils';
+import { questionTypeEnumValues } from '@tet/domain/collectivites';
 import { integer, pgEnum, pgTable, text, varchar } from 'drizzle-orm/pg-core';
 import { questionThematiqueTable } from './question-thematique.table';
 

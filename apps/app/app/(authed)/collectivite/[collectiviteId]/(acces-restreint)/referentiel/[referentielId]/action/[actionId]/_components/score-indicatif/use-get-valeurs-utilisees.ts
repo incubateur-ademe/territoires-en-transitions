@@ -1,7 +1,7 @@
-import { useTRPC } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
 import { useIsScoreIndicatifEnabled } from '@/app/referentiels/comparisons/use-is-score-indicatif-enabled';
 import { useQuery } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
 
 export function useGetValeursUtilisees(actionId: string, indicateurId: number) {
   const collectiviteId = useCollectiviteId();

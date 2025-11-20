@@ -1,10 +1,10 @@
-import { ReferentielId } from '@/domain/referentiels';
+import { ReferentielId } from '@tet/domain/referentiels';
 import {
   Tabs,
   TabsList,
   TabsPanel,
   TabsTab,
-} from '@/ui/design-system/TabsNext/index';
+} from '@tet/ui/design-system/TabsNext/index';
 import { ReactNode } from 'react';
 import { Header } from './header';
 

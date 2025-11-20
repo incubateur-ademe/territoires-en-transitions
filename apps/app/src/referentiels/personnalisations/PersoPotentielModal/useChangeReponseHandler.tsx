@@ -1,4 +1,3 @@
-import { useSupabase, useTRPC } from '@/api';
 import {
   TChangeReponse,
   TQuestionRead,
@@ -6,8 +5,9 @@ import {
   TReponse,
   TReponseWrite,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
-import { ReferentielId } from '@/domain/referentiels';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSupabase, useTRPC } from '@tet/api';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { useSnapshotComputeAndUpdate } from '../../use-snapshot';
 
 type TUseChangeReponseHandler = (

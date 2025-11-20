@@ -1,11 +1,11 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users';
 import FicheActionAcces from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionAcces/FicheActionAcces';
 import { FicheNoAccessPage } from '@/app/plans/fiches/get-fiche/fiche-no-access.page';
 import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { ErrorPage } from '@/app/utils/error/error.page';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
 import { Fiche, useGetFiche } from './data/use-get-fiche';
 import { useUpdateFiche } from './data/use-update-fiche';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';

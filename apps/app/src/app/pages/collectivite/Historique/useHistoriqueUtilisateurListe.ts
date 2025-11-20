@@ -1,6 +1,5 @@
-import { DBClient, Views } from '@/api';
-import { useSupabase } from '@/api';
 import { useQuery } from '@tanstack/react-query';
+import { DBClient, useSupabase, Views } from '@tet/api';
 
 type TFetchedData = {
   modified_by_id: Views<'historique_utilisateur'>['modified_by_id'];

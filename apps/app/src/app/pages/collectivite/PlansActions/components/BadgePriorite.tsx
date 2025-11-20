@@ -1,7 +1,7 @@
-import { Badge, BadgeState } from '@/ui';
+import { Badge, BadgeState } from '@tet/ui';
 import classNames from 'classnames';
 
-import { Priorite } from '@/domain/plans';
+import { Priorite } from '@tet/domain/plans';
 
 type Extends<T, U extends T> = U;
 export type PrioriteState = Extends<

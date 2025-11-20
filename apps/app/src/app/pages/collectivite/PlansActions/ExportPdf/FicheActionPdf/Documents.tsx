@@ -13,7 +13,7 @@ import {
   StyledLink,
   Title,
 } from '@/app/ui/export-pdf/components';
-import { preset } from '@/ui';
+import { preset } from '@tet/ui';
 import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 import { generateTitle } from '../../FicheAction/data/utils';
 

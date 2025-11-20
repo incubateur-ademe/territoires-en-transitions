@@ -1,4 +1,4 @@
-import { Select, SelectProps } from '@/ui';
+import { Select, SelectProps } from '@tet/ui';
 
 type Value = 'rempli' | 'incomplet';
 

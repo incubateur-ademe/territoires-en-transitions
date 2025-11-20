@@ -1,4 +1,3 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import SubActionPreuvesAccordion from '@/app/referentiels/actions/sub-action/sub-action-preuves.accordion';
 import SubActionDescription from '@/app/referentiels/actions/sub-action/sub-action.description';
@@ -7,8 +6,9 @@ import {
   ActionDefinitionSummary,
   useActionSummaryChildren,
 } from '@/app/referentiels/referentiel-hooks';
-import { ActionTypeEnum } from '@/domain/referentiels';
-import { Accordion, Divider } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { ActionTypeEnum } from '@tet/domain/referentiels';
+import { Accordion, Divider } from '@tet/ui';
 import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { ActionJustificationField } from '../action/action.justification-field';

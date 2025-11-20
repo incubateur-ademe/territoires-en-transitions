@@ -1,11 +1,11 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { useGetBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useGetEtapes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/etapes/use-get-etapes';
 import { useListIndicateurDefinitions } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
-import { Event, useEventTracker } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Event, useEventTracker } from '@tet/ui';
 import { createElement, useEffect, useState } from 'react';
 import { useAnnexesFicheActionInfos } from '../FicheAction/data/useAnnexesFicheActionInfos';
 import { useFicheActionNotesSuivi } from '../FicheAction/data/useFicheActionNotesSuivi';

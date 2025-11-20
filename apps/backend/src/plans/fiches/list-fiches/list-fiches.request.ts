@@ -1,8 +1,8 @@
 import {
   FicheWithRelationsAndCollectivite,
   listFichesRequestFiltersSchema,
-} from '@/domain/plans';
-import { limitSchema } from '@/domain/utils';
+} from '@tet/domain/plans';
+import { limitSchema } from '@tet/domain/utils';
 import { z } from 'zod';
 
 export const sortValues = [

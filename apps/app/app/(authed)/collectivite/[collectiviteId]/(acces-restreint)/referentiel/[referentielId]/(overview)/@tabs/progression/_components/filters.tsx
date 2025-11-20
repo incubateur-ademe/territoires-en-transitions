@@ -1,4 +1,4 @@
-import { Field, FormSection } from '@/ui';
+import { Field, FormSection } from '@tet/ui';
 
 import { ActionListFilters } from '@/app/referentiels/actions/use-list-actions';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';

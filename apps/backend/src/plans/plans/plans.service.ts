@@ -1,8 +1,9 @@
-import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   AxeLight,
   CreateAxeRequest,
@@ -13,9 +14,8 @@ import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
   UpdatePlanRequest,
-} from '@/domain/plans';
-import { PermissionOperationEnum } from '@/domain/users';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+} from '@tet/domain/plans';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import { DeleteFicheService } from '../fiches/delete-fiche/delete-fiche.service';
 import { PlanError, PlanErrorType } from './plans.errors';
 import type { PlansRepositoryInterface } from './plans.repository.interface';

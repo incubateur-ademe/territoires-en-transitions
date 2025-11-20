@@ -1,3 +1,8 @@
+import {
+  CategorieTagCreate,
+  PersonneTagCreate,
+  ServiceTagCreate,
+} from '@tet/domain/collectivites';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 import { DatabaseService } from '../utils/database/database.service';
@@ -9,11 +14,6 @@ import {
 import { categorieTagTable } from './tags/categorie-tag.table';
 import { personneTagTable } from './tags/personnes/personne-tag.table';
 import { serviceTagTable } from './tags/service-tag.table';
-import {
-  PersonneTagCreate,
-  ServiceTagCreate,
-  CategorieTagCreate,
-} from '@/domain/collectivites';
 
 type PersonneTagAllowedInput = Partial<PersonneTagCreate> &
   Pick<PersonneTagCreate, 'collectiviteId'>;

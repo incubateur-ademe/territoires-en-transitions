@@ -1,8 +1,8 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users';
-import { Alert } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
+import { Alert } from '@tet/ui';
 import { useSendInvitation } from '../../_components/use-invite-member';
 import { TagsListeTable } from './_components/tags-liste-table';
 

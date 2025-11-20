@@ -2,7 +2,7 @@ import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAc
 import { TAxeRow } from '@/app/types/alias';
 import { ArrowRightIcon } from '@/app/ui/export-pdf/assets/icons';
 import { Paragraph, Stack } from '@/app/ui/export-pdf/components';
-import { preset } from '@/ui';
+import { preset } from '@tet/ui';
 
 const { colors } = preset.theme.extend;
 

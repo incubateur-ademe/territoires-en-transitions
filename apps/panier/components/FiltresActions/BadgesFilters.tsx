@@ -12,7 +12,7 @@ import {
   SelectMultipleOnChangeArgs,
   SelectOption,
   getFlatOptions,
-} from '@/ui';
+} from '@tet/ui';
 
 type FilterSelect = {
   type?: never;

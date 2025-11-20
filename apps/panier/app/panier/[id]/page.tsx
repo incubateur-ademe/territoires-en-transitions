@@ -1,5 +1,5 @@
 import { extractIdsFromParam } from '@/panier/src/utils/extractIdsFromParam';
-import { PostHogPageView } from '@/ui';
+import { PostHogPageView } from '@tet/ui';
 import { notFound } from 'next/navigation';
 import PagePanier from './PagePanier';
 import {

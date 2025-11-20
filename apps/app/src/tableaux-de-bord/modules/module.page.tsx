@@ -1,4 +1,4 @@
-import { Breadcrumbs } from '@/ui';
+import { Breadcrumbs } from '@tet/ui';
 
 export type ModuleParentPage = {
   label: string;

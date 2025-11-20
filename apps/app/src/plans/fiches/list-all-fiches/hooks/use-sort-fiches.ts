@@ -1,4 +1,4 @@
-import { Option } from '@/ui';
+import { Option } from '@tet/ui';
 import { parseAsString, useQueryState } from 'nuqs';
 import { useMemo } from 'react';
 import { sortByProperties } from '../../utils';

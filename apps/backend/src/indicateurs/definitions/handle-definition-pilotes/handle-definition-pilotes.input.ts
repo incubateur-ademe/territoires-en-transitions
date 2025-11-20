@@ -1,4 +1,4 @@
-import { indicateurPiloteSchemaCreate } from '@/domain/indicateurs';
+import { indicateurPiloteSchemaCreate } from '@tet/domain/indicateurs';
 import * as z from 'zod/mini';
 
 export const upsertIndicateurDefinitionPilotesInputSchema = z.omit(

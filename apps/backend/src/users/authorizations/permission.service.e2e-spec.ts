@@ -1,19 +1,19 @@
-import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import {
   getAuthUser,
   getTestApp,
   getTestDatabase,
   YOULOU_DOUDOU,
-} from '@/backend/test';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { RoleUpdateService } from '@/backend/users/authorizations/roles/role-update.service';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { dcpTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { PermissionOperationEnum } from '@/domain/users';
+} from '@tet/backend/test';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { RoleUpdateService } from '@tet/backend/users/authorizations/roles/role-update.service';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { INestApplication } from '@nestjs/common';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 
 describe('Gestion des droits', () => {

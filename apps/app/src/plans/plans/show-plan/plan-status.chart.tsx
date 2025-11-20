@@ -1,6 +1,6 @@
 import { useFichesCountBy } from '@/app/plans/fiches/data/use-fiches-count-by';
 import { Statuts } from '@/app/plans/plans/components/card/statuts';
-import { Statut, statutEnumValues } from '@/domain/plans';
+import { Statut, statutEnumValues } from '@tet/domain/plans';
 
 const useGetPlanActionStatus = ({
   planId,

@@ -3,7 +3,7 @@ import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheA
 import { usePlanActionProfondeur } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionProfondeur';
 import { TProfondeurAxe } from '@/app/plans/plans/types';
 import { checkAxeExistInPlanProfondeur } from '@/app/plans/plans/utils';
-import { Alert, Button } from '@/ui';
+import { Alert, Button } from '@tet/ui';
 import { useState } from 'react';
 import ColonneTableauEmplacement from './ColonneTableauEmplacement';
 

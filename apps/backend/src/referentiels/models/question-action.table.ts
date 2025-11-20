@@ -1,5 +1,5 @@
-import { questionTable } from '@/backend/collectivites/personnalisations/models/question.table';
-import { actionRelationTable } from '@/backend/referentiels/models/action-relation.table';
+import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
+import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
 import { pgTable, primaryKey, varchar } from 'drizzle-orm/pg-core';
 
 export const questionActionTable = pgTable(

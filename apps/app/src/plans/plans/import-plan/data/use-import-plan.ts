@@ -1,10 +1,10 @@
-import { useTRPC } from '@/api';
 import { convertFileToBase64 } from '@/app/utils/convert-file-to-base64';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
-} from '@/domain/plans';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+} from '@tet/domain/plans';
 import { useState } from 'react';
 
 export const useImportPlan = () => {

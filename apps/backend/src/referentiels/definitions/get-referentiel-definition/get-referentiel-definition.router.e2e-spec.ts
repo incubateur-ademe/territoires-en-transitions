@@ -1,4 +1,4 @@
-import { ReferentielId, ReferentielIdEnum } from '@/domain/referentiels';
+import { ReferentielId, ReferentielIdEnum } from '@tet/domain/referentiels';
 import { inferProcedureInput } from '@trpc/server';
 import { getTestRouter } from '../../../../test/app-utils';
 import { getAnonUser } from '../../../../test/auth-utils';

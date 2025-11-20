@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-import { Button, ButtonProps, PictoWarning } from '@/ui';
+import { Button, ButtonProps, PictoWarning } from '@tet/ui';
 import React from 'react';
 import { ModuleProps } from './module';
 import { ModuleContainer } from './module.container';

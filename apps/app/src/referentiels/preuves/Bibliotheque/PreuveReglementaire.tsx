@@ -1,5 +1,5 @@
 import { AddPreuveReglementaire } from '@/app/referentiels/preuves/AddPreuveReglementaire';
-import { InfoTooltip } from '@/ui';
+import { InfoTooltip } from '@tet/ui';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
 import { IdentifiantAction, isDisabledAction } from './IdentifiantAction';

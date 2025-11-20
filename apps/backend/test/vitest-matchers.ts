@@ -1,5 +1,5 @@
-import { HttpExceptionDto } from '@/backend/utils/nest/http-exception.dto';
 import { HttpException } from '@nestjs/common';
+import { HttpExceptionDto } from '@tet/backend/utils/nest/http-exception.dto';
 import { TRPCError } from '@trpc/server';
 import { DateTime } from 'luxon';
 import { expect } from 'vitest';

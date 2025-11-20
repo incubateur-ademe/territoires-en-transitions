@@ -1,7 +1,7 @@
-import { useSupabase } from '@/api';
-import { useUser } from '@/api/users';
-import { Button, CGU_URL, Modal, ModalFooter } from '@/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSupabase } from '@tet/api';
+import { useUser } from '@tet/api/users';
+import { Button, CGU_URL, Modal, ModalFooter } from '@tet/ui';
 import { useState } from 'react';
 import ContractSVG from './contract.svg';
 

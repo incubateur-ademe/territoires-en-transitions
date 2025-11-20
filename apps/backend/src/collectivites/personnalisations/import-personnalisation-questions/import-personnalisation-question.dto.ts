@@ -1,9 +1,9 @@
-import { getZodEnumArrayFromQueryString } from '@/backend/utils/zod.utils';
+import { getZodEnumArrayFromQueryString } from '@tet/backend/utils/zod.utils';
 import {
   collectiviteTypeEnumSchema,
   questionChoixCreateSchema,
   questionCreateSchema,
-} from '@/domain/collectivites';
+} from '@tet/domain/collectivites';
 import z from 'zod';
 
 // Schema for importing questions from spreadsheet

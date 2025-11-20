@@ -1,37 +1,46 @@
-import ListPersonnalisationQuestionsService from '@/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
-import { personnalisationRegleTable } from '@/backend/collectivites/personnalisations/models/personnalisation-regle.table';
-import PersonnalisationsExpressionService from '@/backend/collectivites/personnalisations/services/personnalisations-expression.service';
+import {
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
+import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
+import { personnalisationRegleTable } from '@tet/backend/collectivites/personnalisations/models/personnalisation-regle.table';
+import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import {
   CreateIndicateurActionType,
   indicateurActionTable,
-} from '@/backend/indicateurs/definitions/indicateur-action.table';
-import { ListDefinitionIdsRepository } from '@/backend/indicateurs/definitions/list-platform-predefined-definitions/list-definition-ids.repository';
-import { ListDefinitionsLightRepository } from '@/backend/indicateurs/definitions/list-platform-predefined-definitions/list-definitions-light.repository';
-import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
-import { ReferencedIndicateur } from '@/backend/indicateurs/valeurs/referenced-indicateur.dto';
-import ImportPreuveReglementaireDefinitionService from '@/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
+} from '@tet/backend/indicateurs/definitions/indicateur-action.table';
+import { ListDefinitionIdsRepository } from '@tet/backend/indicateurs/definitions/list-platform-predefined-definitions/list-definition-ids.repository';
+import { ListDefinitionsLightRepository } from '@tet/backend/indicateurs/definitions/list-platform-predefined-definitions/list-definitions-light.repository';
+import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
+import { ReferencedIndicateur } from '@tet/backend/indicateurs/valeurs/referenced-indicateur.dto';
+import ImportPreuveReglementaireDefinitionService from '@tet/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
 import {
   ImportActionDefinitionCoremeasureType,
   importActionDefinitionSchema,
   ImportActionDefinitionType,
-} from '@/backend/referentiels/import-referentiel/import-action-definition.dto';
-import { actionRelationTable } from '@/backend/referentiels/models/action-relation.table';
-import { questionActionTable } from '@/backend/referentiels/models/question-action.table';
+} from '@tet/backend/referentiels/import-referentiel/import-action-definition.dto';
+import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
+import { questionActionTable } from '@tet/backend/referentiels/models/question-action.table';
 import {
   ReferentielLabelEnum,
   referentielLabelEnumSchema,
-} from '@/backend/referentiels/models/referentiel-label.enum';
-import BaseSpreadsheetImporterService from '@/backend/shared/services/base-spreadsheet-importer.service';
-import { BackendConfigurationType } from '@/backend/utils/config/configuration.model';
-import ConfigurationService from '@/backend/utils/config/configuration.service';
-import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import SheetService from '@/backend/utils/google-sheets/sheet.service';
-import VersionService from '@/backend/utils/version/version.service';
+} from '@tet/backend/referentiels/models/referentiel-label.enum';
+import BaseSpreadsheetImporterService from '@tet/backend/shared/services/base-spreadsheet-importer.service';
+import { BackendConfigurationType } from '@tet/backend/utils/config/configuration.model';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
+import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
+import VersionService from '@tet/backend/utils/version/version.service';
 import {
   PersonnalisationRegleCreate,
   regleTypeEnumValues,
-} from '@/domain/collectivites';
+} from '@tet/domain/collectivites';
 import {
   ActionDefinitionCreate,
   ActionDefinitionTag,
@@ -45,17 +54,8 @@ import {
   ReferentielId,
   ReferentielIdEnum,
   ReferentielTag,
-} from '@/domain/referentiels';
-import { getErrorMessage } from '@/domain/utils';
-import {
-  ForbiddenException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  Logger,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+} from '@tet/domain/referentiels';
+import { getErrorMessage } from '@tet/domain/utils';
 import { eq, ilike, like } from 'drizzle-orm';
 import { isNil, uniq } from 'es-toolkit';
 import { actionOrigineTable } from '../correlated-actions/action-origine.table';

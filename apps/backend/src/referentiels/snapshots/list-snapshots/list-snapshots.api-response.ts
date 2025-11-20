@@ -2,7 +2,7 @@ import {
   referentielIdEnumSchema,
   snapshotJalonEnumSchema,
   snapshotWithoutPayloadsSchema,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import z from 'zod';
 
 export const listSnapshotsApiResponseSchema = z.object({

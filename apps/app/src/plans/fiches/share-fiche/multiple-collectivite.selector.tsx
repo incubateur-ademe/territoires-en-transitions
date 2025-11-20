@@ -1,7 +1,7 @@
-import { useTRPC } from '@/api';
-import { IdNameSchema } from '@/domain/shared';
-import { Select, SelectProps } from '@/ui';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { IdNameSchema } from '@tet/domain/shared';
+import { Select, SelectProps } from '@tet/ui';
 import { useState } from 'react';
 
 type MultipleCollectiviteSelectorProps = {

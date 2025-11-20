@@ -1,7 +1,7 @@
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
-import { Divider, Field, ModalFooterOKCancel, Textarea } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { Divider, Field, ModalFooterOKCancel, Textarea } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import { Fiche } from '../../data/use-get-fiche';
 

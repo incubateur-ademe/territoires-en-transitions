@@ -1,7 +1,7 @@
 import { Membre } from '@/app/app/pages/collectivite/Users/types';
 import { useCollectiviteMembres } from '@/app/app/pages/collectivite/Users/useCollectiviteMembres';
-import { Alert, Button, Field, Modal, OptionValue, Select } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { Alert, Button, Field, Modal, OptionValue, Select } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import { useLinkTag } from '../../../_components/use-link-tag';
 import { Tag } from '../../../_components/use-list-tags';

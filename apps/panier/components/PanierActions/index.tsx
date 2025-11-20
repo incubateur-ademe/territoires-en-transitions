@@ -2,12 +2,12 @@ import {
   ActionImpactFourchetteBudgetaire,
   ActionImpactFull,
   Panier,
-} from '@/api';
+} from '@tet/api';
 import { ActionImpact } from '@/panier/components/ActionImpact';
 import BasketPicto from '@/panier/components/Picto/BasketPicto';
 import EmptyBasketPicto from '@/panier/components/Picto/EmptyBasketPicto';
 import ValiderPanierButton from '@/panier/components/ValidationPanier/ValiderPanierButton';
-import { Alert } from '@/ui';
+import { Alert } from '@tet/ui';
 import { AjouterActionsRealiseesOuEnCours } from './AjouterActionsRealiseesOuEnCours';
 import { AjouterActionsRealiseesOuEnCoursState } from './useAjouterActionsRealiseesOuEnCoursState';
 type PanierActionsProps = {

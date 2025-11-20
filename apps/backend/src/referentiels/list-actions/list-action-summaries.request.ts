@@ -1,7 +1,7 @@
 import {
   actionTypeSchema,
   referentielIdEnumSchema,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import z from 'zod';
 
 export const listActionSummariesRequestSchema = z.object({

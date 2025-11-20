@@ -12,7 +12,7 @@ import {
   ScoreIndicatifPayload,
   ScoreSnapshot,
   StatutAvancementEnum,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import { SnapshotsService } from './snapshots.service';
 
 /**

@@ -1,9 +1,3 @@
-import { COLLECTIVITE_ID_PARAM_KEY } from '@/backend/collectivites/shared/models/collectivite-api.constants';
-import { exportScoreComparisonRequestSchema } from '@/backend/referentiels/export-score/export-score-comparison.request';
-import { AllowAnonymousAccess } from '@/backend/users/decorators/allow-anonymous-access.decorator';
-import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
-import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
-import { type ReferentielId } from '@/domain/referentiels';
 import {
   Controller,
   Get,
@@ -14,6 +8,12 @@ import {
   Res,
 } from '@nestjs/common';
 import { ApiExcludeController, ApiTags } from '@nestjs/swagger';
+import { COLLECTIVITE_ID_PARAM_KEY } from '@tet/backend/collectivites/shared/models/collectivite-api.constants';
+import { exportScoreComparisonRequestSchema } from '@tet/backend/referentiels/export-score/export-score-comparison.request';
+import { AllowAnonymousAccess } from '@tet/backend/users/decorators/allow-anonymous-access.decorator';
+import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
+import { type ReferentielId } from '@tet/domain/referentiels';
 import type { NextFunction, Response } from 'express';
 import { createZodDto } from 'nestjs-zod';
 import { REFERENTIEL_ID_PARAM_KEY } from '../models/referentiel-api.constants';

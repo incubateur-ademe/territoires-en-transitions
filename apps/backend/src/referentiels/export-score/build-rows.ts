@@ -2,7 +2,7 @@ import {
   ActionTypeEnum,
   getLevelFromActionId,
   ReferentielId,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import { toMerged } from 'es-toolkit';
 import { Row, Worksheet } from 'exceljs';
 import * as Utils from '../../utils/excel/export-excel.utils';

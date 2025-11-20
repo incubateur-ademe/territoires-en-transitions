@@ -1,19 +1,19 @@
-import { categorieTagTable } from '@/backend/collectivites/tags/categorie-tag.table';
-import { financeurTagTable } from '@/backend/collectivites/tags/financeur-tag.table';
-import { libreTagTable } from '@/backend/collectivites/tags/libre-tag.table';
-import { partenaireTagTable } from '@/backend/collectivites/tags/partenaire-tag.table';
-import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
-import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
-import { structureTagTable } from '@/backend/collectivites/tags/structure-tag.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { Injectable } from '@nestjs/common';
+import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
+import { financeurTagTable } from '@tet/backend/collectivites/tags/financeur-tag.table';
+import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
+import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-tag.table';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
+import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   TagCreate,
   TagEnum,
   TagType,
   TagWithCollectiviteId,
-} from '@/domain/collectivites';
-import { Injectable } from '@nestjs/common';
+} from '@tet/domain/collectivites';
 import { AnyColumn, eq } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
 

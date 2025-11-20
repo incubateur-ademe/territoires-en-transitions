@@ -1,8 +1,8 @@
-import { useTRPC } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
 import { makeCollectiviteTousLesIndicateursUrl } from '@/app/app/paths';
-import { Event, useEventTracker } from '@/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Event, useEventTracker } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 
 export const useDeleteIndicateurDefinition = (indicateurId: number) => {

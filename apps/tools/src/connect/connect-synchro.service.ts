@@ -1,5 +1,5 @@
-import { ExportConnectCreate } from '@/domain/collectivites';
 import { Injectable, Logger } from '@nestjs/common';
+import { ExportConnectCreate } from '@tet/domain/collectivites';
 import { chunk } from 'es-toolkit';
 import { SireneService } from '../sirene/sirene.service';
 import { sleep } from '../utils/sleep.utils';

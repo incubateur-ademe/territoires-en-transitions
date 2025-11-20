@@ -1,4 +1,4 @@
-import { Prefix } from '@/api';
+import { Prefix } from '@tet/api';
 import { TOC_ITEMS } from './action-information.utils';
 
 // type d'info associées à une action

@@ -9,7 +9,7 @@ import {
   Pagination,
   SelectFilter,
   SelectOption,
-} from '@/ui';
+} from '@tet/ui';
 import { useEffect, useState } from 'react';
 import { ActuCard, getData } from './utils';
 

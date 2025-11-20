@@ -1,5 +1,5 @@
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
-import { dcpTable } from '@/backend/users/models/dcp.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import {
   foreignKey,
   integer,

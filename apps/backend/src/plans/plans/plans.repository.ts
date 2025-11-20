@@ -1,3 +1,4 @@
+import { Injectable, Logger } from '@nestjs/common';
 import {
   AxeLight,
   CreatePlanRequest,
@@ -8,21 +9,20 @@ import {
   UpdatePlanRequest as UpdatePlanOrAxeRequest,
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
-} from '@/domain/plans';
-import { Injectable, Logger } from '@nestjs/common';
+} from '@tet/domain/plans';
 import { and, asc, desc, eq, getTableColumns, isNull, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { DatabaseService } from '../../utils/database/database.service';
 
-import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
-import { planActionTypeTable } from '@/backend/plans/fiches/shared/models/plan-action-type.table';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { dcpTable as userTable } from '@/backend/users/models/dcp.table';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { PermissionOperationEnum } from '@/domain/users';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { dcpTable as userTable } from '@tet/backend/users/models/dcp.table';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import { axeTable } from '../fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '../fiches/shared/models/fiche-action-axe.table';
 import { planPiloteTable } from '../fiches/shared/models/plan-pilote.table';

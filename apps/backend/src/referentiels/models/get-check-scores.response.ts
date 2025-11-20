@@ -1,7 +1,7 @@
 import {
   actionScoreSchema,
   referentielIdEnumSchema,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import { z } from 'zod';
 import { CheckScoreStatus } from './check-score-status.enum';
 

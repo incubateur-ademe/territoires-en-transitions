@@ -1,12 +1,12 @@
-import { ApikeysService } from '@/backend/users/apikeys/apikeys.service';
+import { ApikeysService } from '@tet/backend/users/apikeys/apikeys.service';
 import {
   GenerateTokenRequest,
   generateTokenRequestSchema,
   generateTokenRequestWithOptionalClientIdClientSecretSchema,
-} from '@/backend/users/apikeys/generate-token.request';
-import { AllowPublicAccess } from '@/backend/users/decorators/allow-public-access.decorator';
-import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
-import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
+} from '@tet/backend/users/apikeys/generate-token.request';
+import { AllowPublicAccess } from '@tet/backend/users/decorators/allow-public-access.decorator';
+import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import { Body, Controller, Headers, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';

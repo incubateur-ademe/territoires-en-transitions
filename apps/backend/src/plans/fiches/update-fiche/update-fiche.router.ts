@@ -1,6 +1,6 @@
-import { isAuthenticatedUser } from '@/backend/users/models/auth.models';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { isAuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import z from 'zod';
 import { updateFicheRequestSchema } from './update-fiche.request';
 import UpdateFicheService from './update-fiche.service';

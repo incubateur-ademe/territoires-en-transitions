@@ -1,12 +1,17 @@
-import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
-import { COLLECTIVITE_SOURCE_LABEL } from '@/backend/indicateurs/valeurs/valeurs.constants';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
+import ListCollectivitesService from '@tet/backend/collectivites/list-collectivites/list-collectivites.service';
+import { COLLECTIVITE_SOURCE_LABEL } from '@tet/backend/indicateurs/valeurs/valeurs.constants';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import {
   CollectiviteResume,
   CollectiviteType,
   collectiviteTypeEnum,
-} from '@/domain/collectivites';
+} from '@tet/domain/collectivites';
 import {
   canTrajectoireBeComputedFromInputData,
   COLLECTIVITE_SOURCE_ID,
@@ -21,13 +26,8 @@ import {
   IndicateurSourceMetadonneeCreate,
   IndicateurValeur,
   VerificationTrajectoireStatus,
-} from '@/domain/indicateurs';
-import { PermissionOperationEnum } from '@/domain/users';
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
+} from '@tet/domain/indicateurs';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import { flatten, isEqual, isNil, maxBy, uniq } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { AuthUser } from '../../users/models/auth.models';

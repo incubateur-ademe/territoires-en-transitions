@@ -1,5 +1,5 @@
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Button, Field, Icon, Option, SelectFilter } from '@/ui';
+import { Button, Field, Icon, Option, SelectFilter } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { TBibliothequeFichier } from '../Bibliotheque/types';

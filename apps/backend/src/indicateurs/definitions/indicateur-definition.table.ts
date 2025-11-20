@@ -1,11 +1,11 @@
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import {
   createdAt,
   createdBy,
   modifiedAt,
   modifiedBy,
   version,
-} from '@/backend/utils/column.utils';
+} from '@tet/backend/utils/column.utils';
 import {
   boolean,
   doublePrecision,

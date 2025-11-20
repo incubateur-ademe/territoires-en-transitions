@@ -1,7 +1,7 @@
-import { useTRPC } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
 import { ListFichesOutput } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { useRouter } from 'next/navigation';
 
 export const useUpdateFiche = (args?: {

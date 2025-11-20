@@ -1,6 +1,6 @@
-import { getErrorMessage } from '@/domain/utils';
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { getErrorMessage } from '@tet/domain/utils';
 import ConfigurationService from '../utils/config/configuration.service';
 import { AuthJwtPayload, AuthUser, jwtToUser } from './models/auth.models';
 

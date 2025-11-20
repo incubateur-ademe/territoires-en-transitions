@@ -1,4 +1,4 @@
-import { roundTo } from '@/domain/utils';
+import { roundTo } from '@tet/domain/utils';
 
 /** Renvoi une taille de fichier (en octet) formatée pour l'affichage */
 export const formatFileSize = (size: number) => {

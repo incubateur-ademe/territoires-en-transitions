@@ -1,5 +1,5 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { Button, EmptyCard } from '@/ui';
+import { Button, EmptyCard } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import EmptyActeursPicto from '../FicheActionActeurs/PictosActeurs/EmptyActeursPicto';

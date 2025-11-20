@@ -1,21 +1,21 @@
-import DocumentService from '@/backend/collectivites/documents/services/document.service';
-import { CorrelatedActionWithScore } from '@/backend/referentiels/correlated-actions/referentiel-action-origine-with-score.dto';
-import { ScoreIndicatifService } from '@/backend/referentiels/score-indicatif/score-indicatif.service';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import { Test } from '@nestjs/testing';
+import DocumentService from '@tet/backend/collectivites/documents/services/document.service';
+import { CorrelatedActionWithScore } from '@tet/backend/referentiels/correlated-actions/referentiel-action-origine-with-score.dto';
+import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import {
   CollectiviteTypeEnum,
   IdentiteCollectivite,
   PersonnalisationReponsesPayload,
-} from '@/domain/collectivites';
+} from '@tet/domain/collectivites';
 import {
   ActionDefinitionEssential,
   ActionScoreWithOnlyPoints,
   ActionTreeNode,
   ActionTypeEnum,
   ScoreFields,
-} from '@/domain/referentiels';
-import { roundTo } from '@/domain/utils';
-import { Test } from '@nestjs/testing';
+} from '@tet/domain/referentiels';
+import { roundTo } from '@tet/domain/utils';
 import { PersonnalisationConsequencesByActionId } from '../../collectivites/personnalisations/models/personnalisation-consequence.dto';
 import { caePersonnalisationRegles } from '../../collectivites/personnalisations/models/samples/cae-personnalisation-regles.sample';
 import PersonnalisationsExpressionService from '../../collectivites/personnalisations/services/personnalisations-expression.service';

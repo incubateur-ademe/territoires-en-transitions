@@ -5,7 +5,7 @@ import {
   PrioriteEnum,
   StatutEnum,
   statutEnumValues,
-} from '@/domain/plans';
+} from '@tet/domain/plans';
 import {
   boolean,
   integer,

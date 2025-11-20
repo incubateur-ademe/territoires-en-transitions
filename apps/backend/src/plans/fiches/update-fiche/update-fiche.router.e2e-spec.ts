@@ -1,17 +1,17 @@
-import { libreTagTable } from '@/backend/collectivites/tags/libre-tag.table';
-import { FichesRouter } from '@/backend/plans/fiches/fiches.router';
+import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
+import { FichesRouter } from '@tet/backend/plans/fiches/fiches.router';
 import {
   getAuthUser,
   getAuthUserFromDcp,
   getTestApp,
   getTestDatabase,
   YOLO_DODO,
-} from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { addTestUser } from '@/backend/users/users/users.fixture';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { CibleEnum, PiliersEciEnum, StatutEnum } from '@/domain/plans';
-import { CollectiviteAccessLevelEnum } from '@/domain/users';
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.fixture';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { CibleEnum, PiliersEciEnum, StatutEnum } from '@tet/domain/plans';
+import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { describe, expect } from 'vitest';
 import {

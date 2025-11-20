@@ -1,5 +1,5 @@
-import { useSupabase } from '@/api';
 import { useQuery } from '@tanstack/react-query';
+import { useSupabase } from '@tet/api';
 
 /**
  * Charge les temps de mise en oeuvre

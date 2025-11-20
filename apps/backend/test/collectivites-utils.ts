@@ -1,5 +1,5 @@
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { eq } from 'drizzle-orm';
 
 export const getCollectiviteIdBySiren = async (

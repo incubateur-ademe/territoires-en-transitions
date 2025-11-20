@@ -6,8 +6,8 @@ import {
   Modal,
   ModalFooterOKCancel,
   RichTextEditor,
-} from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+} from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 
 import { isEqual } from 'es-toolkit/predicate';
 import { useState } from 'react';

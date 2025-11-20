@@ -1,4 +1,4 @@
-import { Thematique, ThematiqueCreate } from '@/domain/shared';
+import { Thematique, ThematiqueCreate } from '@tet/domain/shared';
 import { DatabaseService } from '../utils/database/database.service';
 import { thematiqueTable } from './thematiques/thematique.table';
 

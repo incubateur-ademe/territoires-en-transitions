@@ -3,7 +3,7 @@
 import Section from '@/site/components/sections/Section';
 import CommunityPicto from '@/site/public/pictogrammes/CommunityPicto';
 import PictoWithBackground from '@/site/public/pictogrammes/PictoWithBackground';
-import { Button } from '@/ui';
+import { Button } from '@tet/ui';
 
 const ContactEquipe = () => {
   return (

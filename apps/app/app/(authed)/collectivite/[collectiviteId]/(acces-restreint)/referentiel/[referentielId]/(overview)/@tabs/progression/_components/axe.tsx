@@ -6,8 +6,8 @@ import { ActionCard } from '@/app/referentiels/actions/action.card';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
-import { ActionType } from '@/domain/referentiels';
-import { AccordionControlled, AccordionType } from '@/ui';
+import { ActionType } from '@tet/domain/referentiels';
+import { AccordionControlled, AccordionType } from '@tet/ui';
 
 export type TAxe = ActionListItem & {
   children?: TAxe[];

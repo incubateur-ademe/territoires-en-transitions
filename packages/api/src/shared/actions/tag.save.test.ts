@@ -1,4 +1,4 @@
-import { TagCreate } from '@/domain/collectivites';
+import { TagCreate } from '@tet/domain/collectivites';
 import { beforeAll, expect, test } from 'vitest';
 import { signIn, signOut } from '../../tests/auth';
 import { supabase } from '../../tests/supabase';

@@ -1,8 +1,8 @@
 'use client';
 
-import { getAuthPaths } from '@/api';
-import { ENV } from '@/api/environmentVariables';
-import { TerritoiresEnTransitionsLogo } from '@/ui';
+import { getAuthPaths } from '@tet/api';
+import { ENV } from '@tet/api/environmentVariables';
+import { TerritoiresEnTransitionsLogo } from '@tet/ui';
 import classNames from 'classnames';
 import Link from 'next/dist/client/link';
 import Image from 'next/image';

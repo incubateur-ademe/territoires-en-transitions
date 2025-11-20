@@ -1,4 +1,4 @@
-import { createEnumObject } from '@/domain/utils';
+import { createEnumObject } from '@tet/domain/utils';
 
 export const trajectoireSecteursEnumValues = [
   'Résidentiel',

@@ -1,4 +1,4 @@
-import { PersonalDefaultModuleKeys } from '@/api/plan-actions';
+import { PersonalDefaultModuleKeys } from '@tet/api/plan-actions';
 
 import TdbPersoModulePage from './_components/tdb-perso-module.page';
 

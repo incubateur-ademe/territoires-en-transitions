@@ -1,22 +1,22 @@
-import { GetTableauDeBordModuleRequestType } from '@/backend/collectivites/tableau-de-bord/get-tableau-de-bord-module.request';
-import { tableauDeBordModuleTable } from '@/backend/collectivites/tableau-de-bord/tableau-de-bord-module.table';
-import { PlanService } from '@/backend/plans/plans/plans.service';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { GetTableauDeBordModuleRequestType } from '@tet/backend/collectivites/tableau-de-bord/get-tableau-de-bord-module.request';
+import { tableauDeBordModuleTable } from '@tet/backend/collectivites/tableau-de-bord/tableau-de-bord-module.table';
+import { PlanService } from '@tet/backend/plans/plans/plans.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import {
   AuthenticatedUser,
   AuthUser,
-} from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
+} from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   collectiviteDefaultModuleKeysSchema,
   CollectiviteModule,
   CollectiviteModuleCreate,
   collectiviteModuleSchemaCreate,
   collectiviteModuleTypeEnumSchema,
-} from '@/domain/collectivites/tableau-de-bord';
-import { PermissionOperationEnum } from '@/domain/users';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+} from '@tet/domain/collectivites/tableau-de-bord';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import { and, eq, isNull, sql, SQL, SQLWrapper } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 

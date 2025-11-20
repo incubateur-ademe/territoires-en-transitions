@@ -1,7 +1,7 @@
 import { avancementToLabel } from '@/app/app/labels';
 import { actionAvancementColors } from '@/app/app/theme';
 import ProgressBarWithTooltip from '@/app/referentiels/scores/progress-bar-with-tooltip';
-import { ActionType } from '@/domain/referentiels';
+import { ActionType } from '@tet/domain/referentiels';
 import { useScore } from '../use-snapshot';
 
 type ScoreProgressBarProps = {

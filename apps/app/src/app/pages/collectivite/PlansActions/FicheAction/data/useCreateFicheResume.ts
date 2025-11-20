@@ -1,11 +1,11 @@
-import { DBClient, useSupabase, useTRPC } from '@/api';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
 import { dropAnimation } from '@/app/plans/plans/show-plan/plan-arborescence.view';
+import { DBClient, useSupabase, useTRPC } from '@tet/api';
 
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
-import { Plan } from '@/domain/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Plan } from '@tet/domain/plans';
 import { useRouter } from 'next/navigation';
 import { objectToCamel } from 'ts-case-convert';
 import { ficheResumeFactory, sortFichesResume } from './utils';

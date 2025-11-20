@@ -1,6 +1,5 @@
-import { DBClient, Views } from '@/api';
-import { useSupabase } from '@/api';
 import { useQuery } from '@tanstack/react-query';
+import { DBClient, useSupabase, Views } from '@tet/api';
 
 export type TCarteIdentite = Views<'collectivite_carte_identite'>;
 type TUseCarteIdentite = (

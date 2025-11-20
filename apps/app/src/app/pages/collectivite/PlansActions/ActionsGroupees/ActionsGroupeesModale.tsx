@@ -1,5 +1,5 @@
-import { FormSectionGrid, Modal, ModalFooterOKCancel } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { FormSectionGrid, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 
 type ActionsGroupeesModaleProps = {
   children: JSX.Element;

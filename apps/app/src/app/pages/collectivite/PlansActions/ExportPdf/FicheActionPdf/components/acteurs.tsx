@@ -16,7 +16,7 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
-import { getOptionLabel, preset } from '@/ui';
+import { getOptionLabel, preset } from '@tet/ui';
 
 const { colors } = preset.theme.extend;
 

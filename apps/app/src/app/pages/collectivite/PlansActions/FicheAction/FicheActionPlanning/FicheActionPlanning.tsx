@@ -5,8 +5,8 @@ import {
   getTextFormattedDate,
   getTruncatedText,
 } from '@/app/utils/formatUtils';
-import { isFicheOnTime } from '@/domain/plans';
-import { Button, Divider, EmptyCard, Icon } from '@/ui';
+import { isFicheOnTime } from '@tet/domain/plans';
+import { Button, Divider, EmptyCard, Icon } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import ModalePlanning from './ModalePlanning';

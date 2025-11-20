@@ -1,14 +1,15 @@
-import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
-import { ExportScoreComparisonRequestQuery } from '@/backend/referentiels/export-score/export-score-comparison.request';
-import { HandleMesureServicesService } from '@/backend/referentiels/handle-mesure-services/handle-mesure-services.service';
-import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.table';
-import { dcpTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { unaccent } from '@/backend/utils/unaccent.utils';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
+import { ExportScoreComparisonRequestQuery } from '@tet/backend/referentiels/export-score/export-score-comparison.request';
+import { HandleMesureServicesService } from '@tet/backend/referentiels/handle-mesure-services/handle-mesure-services.service';
+import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { unaccent } from '@tet/backend/utils/unaccent.utils';
 import {
   PersonneTagOrUser,
   TagWithCollectiviteId,
-} from '@/domain/collectivites';
+} from '@tet/domain/collectivites';
 import {
   ActionId,
   ActionTypeEnum,
@@ -17,8 +18,7 @@ import {
   ScoreSnapshot,
   SnapshotJalonEnum,
   TreeOfActionsIncludingScore,
-} from '@/domain/referentiels';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+} from '@tet/domain/referentiels';
 import { format } from 'date-fns';
 import { and, desc, eq } from 'drizzle-orm';
 import * as Utils from '../../utils/excel/export-excel.utils';

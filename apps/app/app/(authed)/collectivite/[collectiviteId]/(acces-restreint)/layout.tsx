@@ -2,8 +2,8 @@
 
 import { ReactNode } from 'react';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 
 export default function Layout({ children }: { children: ReactNode }) {
   const collectivite = useCurrentCollectivite();

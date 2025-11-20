@@ -1,4 +1,3 @@
-import { RouterOutput } from '@/api';
 import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
 import Acteurs from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/acteurs';
 import Calendrier from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/calendrier';
@@ -13,8 +12,9 @@ import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indi
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { TAxeRow } from '@/app/types/alias';
 import { Paragraph, Stack, Title } from '@/app/ui/export-pdf/components';
-import { FicheNote } from '@/domain/plans';
-import { ActionWithScore } from '@/domain/referentiels';
+import { RouterOutput } from '@tet/api';
+import { FicheNote } from '@tet/domain/plans';
+import { ActionWithScore } from '@tet/domain/referentiels';
 import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 import { TSectionsValues, sectionsInitValue } from '../utils';
 import ActionsLiees from './ActionsLiees';

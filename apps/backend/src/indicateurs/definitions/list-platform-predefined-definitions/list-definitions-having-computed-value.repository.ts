@@ -1,7 +1,7 @@
-import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import type { IndicateurDefinition } from '@/domain/indicateurs';
 import { Injectable, Logger } from '@nestjs/common';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import type { IndicateurDefinition } from '@tet/domain/indicateurs';
 import {
   and,
   isNotNull,

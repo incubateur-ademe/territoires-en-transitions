@@ -1,12 +1,12 @@
 'use client';
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { Header } from '@/app/plans/plans/components/header';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { Button, Spacer, VisibleWhen } from '@/ui';
-import { cn } from '@/ui/utils/cn';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Button, Spacer, VisibleWhen } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 import NextLink from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { FichesList } from './components/fiches-list';

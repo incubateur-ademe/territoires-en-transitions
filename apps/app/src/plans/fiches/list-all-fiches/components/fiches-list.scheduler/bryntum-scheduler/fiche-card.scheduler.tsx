@@ -13,8 +13,8 @@ import {
 import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
-import { Button, Card } from '@/ui';
-import { cn } from '@/ui/utils/cn';
+import { Button, Card } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 
 type Props = Pick<
   FicheActionCardProps,

@@ -4,15 +4,15 @@ import { useUpsertBudgets } from '@/app/app/pages/collectivite/PlansActions/Fich
 import { ExtendedBudgetForm } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/extended-budget-form';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
-import { FicheBudgetCreate } from '@/domain/plans';
+import { FicheBudgetCreate } from '@tet/domain/plans';
 import {
   Alert,
   ButtonGroup,
   Checkbox,
   Divider,
   ModalFooterOKCancel,
-} from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+} from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { DetailedBudgetForm } from './detailed-budget-form';

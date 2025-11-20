@@ -1,6 +1,6 @@
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
-import { ficheEtapeCreateSchema } from '@/domain/plans';
 import { Injectable } from '@nestjs/common';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
+import { ficheEtapeCreateSchema } from '@tet/domain/plans';
 import { z } from 'zod';
 import { FicheActionEtapeService } from './fiche-action-etape.service';
 

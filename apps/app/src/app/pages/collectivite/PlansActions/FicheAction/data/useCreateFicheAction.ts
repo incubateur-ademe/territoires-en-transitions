@@ -1,9 +1,8 @@
 'use client';
-import { DBClient } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
-import { useSupabase } from '@/api';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { DBClient, useSupabase } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { useRouter } from 'next/navigation';
 import { objectToCamel } from 'ts-case-convert';
 

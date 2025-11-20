@@ -1,7 +1,7 @@
-import { RouterInput, RouterOutput, useTRPC } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
-import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
 import { useQuery } from '@tanstack/react-query';
+import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { DISABLE_AUTO_REFETCH } from '@tet/api/utils/react-query/query-options';
 
 type ListDefinitionsInput = RouterInput['indicateurs']['definitions']['list'];
 

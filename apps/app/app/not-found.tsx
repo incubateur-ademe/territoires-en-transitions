@@ -1,5 +1,5 @@
 'use client';
-import { EmptyCard, PictoWarning } from '@/ui';
+import { EmptyCard, PictoWarning } from '@tet/ui';
 import { redirect } from 'next/navigation';
 
 export default function NotFound() {

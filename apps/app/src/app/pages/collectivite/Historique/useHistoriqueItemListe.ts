@@ -1,8 +1,7 @@
-import { DBClient } from '@/api';
-import { useSupabase } from '@/api';
 import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
-import { ITEM_ALL } from '@/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { DBClient, useSupabase } from '@tet/api';
+import { ITEM_ALL } from '@tet/ui';
 import { useEffect } from 'react';
 import { NB_ITEMS_PER_PAGE, TFilters, nameToShortNames } from './filters';
 import { THistoriqueItem, THistoriqueProps } from './types';

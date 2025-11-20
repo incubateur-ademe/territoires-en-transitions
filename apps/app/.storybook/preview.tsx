@@ -5,10 +5,10 @@ import '../app/global.css';
 // surcharge les styles pour la zone de prévisualisation
 import './preview.css';
 
-import { ReactQueryAndTRPCProvider, SupabaseProvider } from '@/api';
-import { CollectiviteProvider } from '@/api/collectivites';
-import { UserProvider } from '@/api/users';
-import { CollectiviteAccessLevelEnum } from '@/domain/users';
+import { ReactQueryAndTRPCProvider, SupabaseProvider } from '@tet/api';
+import { CollectiviteProvider } from '@tet/api/collectivites';
+import { UserProvider } from '@tet/api/users';
+import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
 
 const user = {
   collectivites: [

@@ -1,6 +1,6 @@
 'use client';
 
-import { useSupabase } from '@/api';
+import { useSupabase } from '@tet/api';
 import { User } from '@supabase/supabase-js';
 import {
   Dispatch,

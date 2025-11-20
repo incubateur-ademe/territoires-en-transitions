@@ -1,9 +1,9 @@
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { createInvitationInputSchema } from '@/backend/users/invitations/create-invitation.input';
-import { InvitationService } from '@/backend/users/invitations/invitation.service';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
-import { PermissionOperationEnum } from '@/domain/users';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { createInvitationInputSchema } from '@tet/backend/users/invitations/create-invitation.input';
+import { InvitationService } from '@tet/backend/users/invitations/invitation.service';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import { z } from 'zod';
 import { PermissionService } from '../authorizations/permission.service';
 

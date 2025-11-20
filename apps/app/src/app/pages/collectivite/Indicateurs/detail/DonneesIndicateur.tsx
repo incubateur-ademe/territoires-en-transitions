@@ -1,8 +1,8 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import { QuestionReponseList } from '@/app/referentiels/personnalisations/PersoPotentielModal/PersoPotentielQR';
 import { useChangeReponseHandler } from '@/app/referentiels/personnalisations/PersoPotentielModal/useChangeReponseHandler';
-import { Divider } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Divider } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { useIndicateurChartInfo } from '../data/use-indicateur-chart';

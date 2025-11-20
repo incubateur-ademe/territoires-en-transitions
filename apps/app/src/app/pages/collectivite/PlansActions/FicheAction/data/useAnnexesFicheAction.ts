@@ -1,7 +1,6 @@
-import { DBClient } from '@/api';
-import { useSupabase } from '@/api';
 import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { useQuery } from '@tanstack/react-query';
+import { DBClient, useSupabase } from '@tet/api';
 
 /** Renvoi les annexes associées à une fiche */
 export const useAnnexesFicheAction = (

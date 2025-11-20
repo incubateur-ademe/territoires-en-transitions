@@ -1,5 +1,5 @@
 'use client';
-import { EmptyCard } from '@/ui';
+import { EmptyCard } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import PictoCarte from '../../app/(authed)/finaliser-mon-inscription/carte.svg';
 

@@ -1,6 +1,6 @@
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
-import { PersonneTagOrUser, Tag } from '@/domain/collectivites';
-import { OpenState } from '@/ui/utils/types';
+import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
+import { OpenState } from '@tet/ui/utils/types';
 
 type Props = {
   openState: OpenState;

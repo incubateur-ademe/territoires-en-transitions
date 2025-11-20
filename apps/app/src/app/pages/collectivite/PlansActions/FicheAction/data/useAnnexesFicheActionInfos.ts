@@ -1,5 +1,5 @@
-import { useSupabase } from '@/api';
 import { useQuery } from '@tanstack/react-query';
+import { useSupabase } from '@tet/api';
 
 export type AnnexeInfo = {
   id: number | null;

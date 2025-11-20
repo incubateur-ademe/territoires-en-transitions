@@ -2,13 +2,13 @@
 
 import { useAudit } from '@/app/referentiels/audits/useAudit';
 import CriteresLabellisationConnected from '@/app/referentiels/labellisations/CriteresLabellisation';
-import { Alert } from '@/ui';
+import { Alert } from '@tet/ui';
 import {
   Tabs,
   TabsList,
   TabsPanel,
   TabsTab,
-} from '@/ui/design-system/TabsNext/index';
+} from '@tet/ui/design-system/TabsNext/index';
 import { ReactNode } from 'react';
 
 export default function Layout({ children }: { children: ReactNode }) {

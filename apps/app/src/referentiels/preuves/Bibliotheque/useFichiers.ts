@@ -1,8 +1,7 @@
-import { DBClient } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
-import { createClientWithoutCookieOptions } from '@/api/utils/supabase/browser-client';
-import { useSupabase } from '@/api';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { DBClient, useSupabase } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { createClientWithoutCookieOptions } from '@tet/api/utils/supabase/browser-client';
 import { TBibliothequeFichier } from './types';
 
 export const NB_ITEMS_PER_PAGE = 5;

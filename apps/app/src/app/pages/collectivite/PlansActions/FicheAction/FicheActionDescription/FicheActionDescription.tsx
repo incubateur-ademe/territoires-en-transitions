@@ -1,5 +1,5 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { Badge } from '@/ui';
+import { Badge } from '@tet/ui';
 import classNames from 'classnames';
 import { RichTextView } from '../../components/RichTextView';
 import ModaleDescription from './ModaleDescription';

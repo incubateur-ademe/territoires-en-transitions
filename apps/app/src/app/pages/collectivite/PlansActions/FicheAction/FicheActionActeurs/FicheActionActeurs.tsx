@@ -1,5 +1,5 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { Button, EmptyCard, getOptionLabel } from '@/ui';
+import { Button, EmptyCard, getOptionLabel } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { ficheActionParticipationOptions } from '../../../../../../ui/dropdownLists/listesStatiques';

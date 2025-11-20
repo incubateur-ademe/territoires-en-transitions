@@ -1,8 +1,8 @@
-import { FicheActionBudgetService } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.service';
-import { getBudgetsRequestSchema } from '@/backend/plans/fiches/fiche-action-budget/get-budgets.request';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
-import { ficheBudgetCreateSchema, ficheBudgetSchema } from '@/domain/plans';
 import { Injectable } from '@nestjs/common';
+import { FicheActionBudgetService } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.service';
+import { getBudgetsRequestSchema } from '@tet/backend/plans/fiches/fiche-action-budget/get-budgets.request';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
+import { ficheBudgetCreateSchema, ficheBudgetSchema } from '@tet/domain/plans';
 import z from 'zod';
 
 @Injectable()

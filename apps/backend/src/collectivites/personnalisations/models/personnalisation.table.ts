@@ -1,4 +1,4 @@
-import { actionIdReference } from '@/backend/referentiels/models/action-relation.table';
+import { actionIdReference } from '@tet/backend/referentiels/models/action-relation.table';
 import { pgTable, text } from 'drizzle-orm/pg-core';
 
 export const personnalisationTable = pgTable('personnalisation', {

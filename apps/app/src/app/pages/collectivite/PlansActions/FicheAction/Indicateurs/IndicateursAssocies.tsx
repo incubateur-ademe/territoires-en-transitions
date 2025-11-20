@@ -1,5 +1,3 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users';
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
@@ -14,6 +12,8 @@ import {
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
 import {
   Button,
   Divider,
@@ -21,7 +21,7 @@ import {
   SideMenu,
   useEventTracker,
   VisibleWhen,
-} from '@/ui';
+} from '@tet/ui';
 import { useState } from 'react';
 import { SharedFicheLinkedResourcesAlert } from '../../../../../../plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
 import ModaleCreerIndicateur from './ModaleCreerIndicateur';

@@ -1,10 +1,10 @@
-import { questionChoixTable } from '@/backend/collectivites/personnalisations/models/question-choix.table';
-import { questionThematiqueTable } from '@/backend/collectivites/personnalisations/models/question-thematique.table';
-import { QuestionWithChoices } from '@/backend/collectivites/personnalisations/models/question-with-choices.dto';
-import { questionTable } from '@/backend/collectivites/personnalisations/models/question.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { CollectiviteType, QuestionChoix } from '@/domain/collectivites';
 import { Injectable, Logger } from '@nestjs/common';
+import { questionChoixTable } from '@tet/backend/collectivites/personnalisations/models/question-choix.table';
+import { questionThematiqueTable } from '@tet/backend/collectivites/personnalisations/models/question-thematique.table';
+import { QuestionWithChoices } from '@tet/backend/collectivites/personnalisations/models/question-with-choices.dto';
+import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { CollectiviteType, QuestionChoix } from '@tet/domain/collectivites';
 import { eq, sql } from 'drizzle-orm';
 
 @Injectable()

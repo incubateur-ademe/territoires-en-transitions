@@ -1,4 +1,4 @@
-import { Checkbox, TBody, TCell, THead, TRow, Table } from '@/ui';
+import { Checkbox, TBody, TCell, THead, TRow, Table } from '@tet/ui';
 import { PdfSectionKey, TSectionsValues, sectionsList } from '../utils';
 import ExportSuiviSelect from './export-suivi-select';
 

@@ -13,7 +13,7 @@ import {
 } from '@dnd-kit/sortable';
 
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { FicheEtape } from '@/domain/plans';
+import { FicheEtape } from '@tet/domain/plans';
 import { Etape, useUpsertEtape } from './etape';
 import { useEtapesDispatch } from './etapes-context';
 

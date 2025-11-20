@@ -1,7 +1,7 @@
-import { getAuthUser, getTestApp, getTestRouter } from '@/backend/test';
-import { RoleUpdateService } from '@/backend/users/authorizations/roles/role-update.service';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { getAuthUser, getTestApp, getTestRouter } from '@tet/backend/test';
+import { RoleUpdateService } from '@tet/backend/users/authorizations/roles/role-update.service';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { inferProcedureInput } from '@trpc/server';
 import * as fs from 'node:fs';
 import path from 'path';

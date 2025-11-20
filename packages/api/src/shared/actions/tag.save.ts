@@ -2,7 +2,7 @@ import {
   TagCreate,
   TagType,
   TagWithCollectiviteId,
-} from '@/domain/collectivites';
+} from '@tet/domain/collectivites';
 import { objectToCamel, objectToSnake } from 'ts-case-convert';
 import { DBClient } from '../../typeUtils';
 

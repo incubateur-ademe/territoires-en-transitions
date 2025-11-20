@@ -1,5 +1,10 @@
-import { preuveLabellisationTable } from '@/backend/collectivites/documents/models/preuve-labellisation.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
+import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   ActionScoreFinal,
   Etoile,
@@ -14,12 +19,7 @@ import {
   ReferentielId,
   ScoresPayload,
   StatutAvancementEnum,
-} from '@/domain/referentiels';
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
+} from '@tet/domain/referentiels';
 import { and, desc, eq, getTableColumns, lte, not, sql } from 'drizzle-orm';
 import { ObjectToSnake, objectToSnake } from 'ts-case-convert';
 import { SnapshotsService } from '../snapshots/snapshots.service';
