@@ -1,4 +1,3 @@
-import { PasswordStrengthMeter } from '@/auth/components/PasswordStrengthMeter';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Event,
@@ -13,6 +12,7 @@ import {
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { PasswordStrengthMeter } from '../../components/PasswordStrengthMeter';
 import { SignupDataStep1, SignupPropsWithState } from './type';
 
 /** Gestionnaire d'état pour le formulaire de l'étape 1 */

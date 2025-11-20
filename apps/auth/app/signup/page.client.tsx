@@ -1,6 +1,6 @@
 'use client';
 
-import { SignupModal } from '@/auth/components/Signup';
+import { SignupModal } from '../../components/Signup';
 import { useState } from 'react';
 import { useCollectivites } from './useCollectivites';
 import { useSignupState } from './useSignupState';
