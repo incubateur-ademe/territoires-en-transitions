@@ -176,7 +176,7 @@ export const BadgesFilters = ({
         }
         menu={{
           className: 'max-w-none',
-          sections: [
+          endContent: (
             <div className="flex flex-col gap-4 p-4">
               {filters.map((filter) =>
                 filter.type === 'checkbox' ? (
@@ -207,8 +207,8 @@ export const BadgesFilters = ({
                   </Field>
                 )
               )}
-            </div>,
-          ],
+            </div>
+          ),
         }}
       />
     </div>
