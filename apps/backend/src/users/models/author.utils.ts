@@ -1,4 +1,4 @@
-import { dcpSchema } from '@/domain/users';
+import { dcpSchema } from '@tet/domain/users';
 import { sql } from 'drizzle-orm';
 import { PgColumn } from 'drizzle-orm/pg-core';
 import * as z from 'zod/mini';

@@ -1,9 +1,9 @@
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
-import { referentielIdEnumSchema } from '@/domain/referentiels';
-import { PermissionOperationEnum } from '@/domain/users';
 import { Injectable } from '@nestjs/common';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
+import { referentielIdEnumSchema } from '@tet/domain/referentiels';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import z from 'zod';
 import { GetLabellisationService } from './get-labellisation.service';
 

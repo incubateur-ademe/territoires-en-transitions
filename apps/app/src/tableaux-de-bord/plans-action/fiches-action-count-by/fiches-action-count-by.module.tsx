@@ -1,18 +1,18 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { useCollectiviteId } from '@/api/collectivites';
 import { useFichesCountBy } from '@/app/plans/fiches/data/use-fiches-count-by';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import { getChartOption } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/utils/get-chart-option';
 import { ReactECharts } from '@/app/ui/charts/echarts';
 import { useChartDownloader } from '@/app/ui/charts/useChartDownloader';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   ModuleFicheCountByProperty,
   ModuleFicheCountFilters,
-} from '@/domain/collectivites/tableau-de-bord';
-import { ButtonProps, Checkbox, MenuAction } from '@/ui';
+} from '@tet/domain/collectivites/tableau-de-bord';
+import { ButtonProps, Checkbox, MenuAction } from '@tet/ui';
 
 import { makeFichesActionUrlWithParams } from './utils/make-fiches-action-url-with-params';
 

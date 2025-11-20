@@ -2,11 +2,11 @@ import { Test } from '@nestjs/testing';
 import {
   CollectivitePopulationTypeEnum,
   CollectiviteTypeEnum,
-} from '@/domain/collectivites';
+} from '@tet/domain/collectivites';
 import PersonnalisationsExpressionService from './personnalisations-expression.service';
 
 // décommenter (et lancer les tests) pour màj la doc
-//import { generateDiagrams } from '@/backend/utils/expression-parser/generate-diagrams';
+//import { generateDiagrams } from '@tet/backend/utils/expression-parser/generate-diagrams';
 //import { parser } from './personnalisations-expression.service';
 //generateDiagrams(parser, __dirname);
 

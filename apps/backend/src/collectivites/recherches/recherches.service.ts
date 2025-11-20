@@ -1,31 +1,31 @@
-import { RecherchesCollectivite } from '@/backend/collectivites/recherches/collectivites.response';
-import { FiltersRequest } from '@/backend/collectivites/recherches/filters.request';
+import { Injectable, Logger } from '@nestjs/common';
+import { RecherchesCollectivite } from '@tet/backend/collectivites/recherches/collectivites.response';
+import { FiltersRequest } from '@tet/backend/collectivites/recherches/filters.request';
 import {
   filtreIntervalleTable,
   TypeIntervalleEnum,
-} from '@/backend/collectivites/recherches/filtre-intervalle.table';
-import { RecherchesPlan } from '@/backend/collectivites/recherches/plans.response';
-import { RecherchesReferentiel } from '@/backend/collectivites/recherches/referentiels.response';
+} from '@tet/backend/collectivites/recherches/filtre-intervalle.table';
+import { RecherchesPlan } from '@tet/backend/collectivites/recherches/plans.response';
+import { RecherchesReferentiel } from '@tet/backend/collectivites/recherches/referentiels.response';
 import {
   collectiviteBanaticSubType,
   collectiviteBanaticTypeTable,
-} from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
-import { membreTable } from '@/backend/collectivites/shared/models/membre.table';
-import { indicateurValeurTable } from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
-import { axeTable } from '@/backend/plans/fiches/shared/models/axe.table';
-import { ficheActionAxeTable } from '@/backend/plans/fiches/shared/models/fiche-action-axe.table';
-import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';
-import { planActionTypeTable } from '@/backend/plans/fiches/shared/models/plan-action-type.table';
-import { labellisationTable } from '@/backend/referentiels/labellisations/labellisation.table';
-import { snapshotTable } from '@/backend/referentiels/snapshots/snapshot.table';
-import { utilisateurCollectiviteAccessTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
-import { dcpTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { collectiviteTypeEnum } from '@/domain/collectivites';
-import { SnapshotJalonEnum } from '@/domain/referentiels';
-import { CollectiviteAccessLevelEnum } from '@/domain/users';
-import { Injectable, Logger } from '@nestjs/common';
+} from '@tet/backend/collectivites/shared/models/collectivite-banatic-type.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { membreTable } from '@tet/backend/collectivites/shared/models/membre.table';
+import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-axe.table';
+import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
+import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
+import { labellisationTable } from '@tet/backend/referentiels/labellisations/labellisation.table';
+import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.table';
+import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { collectiviteTypeEnum } from '@tet/domain/collectivites';
+import { SnapshotJalonEnum } from '@tet/domain/referentiels';
+import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
 import { getTableName, sql } from 'drizzle-orm';
 
 /** Type of view */

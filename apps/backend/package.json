@@ -1,5 +1,5 @@
 {
-  "name": "@/backend",
+  "name": "@tet/backend",
   "description": "Backend TRPC app",
   "private": true,
   "main": "./dist/main.js",

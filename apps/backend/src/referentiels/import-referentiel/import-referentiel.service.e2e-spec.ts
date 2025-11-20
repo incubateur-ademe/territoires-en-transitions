@@ -1,6 +1,6 @@
-import { ImportReferentielService } from '@/backend/referentiels/import-referentiel/import-referentiel.service';
-import { getTestApp } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
+import { ImportReferentielService } from '@tet/backend/referentiels/import-referentiel/import-referentiel.service';
+import { getTestApp } from '@tet/backend/test';
 
 describe('import-referentiel.service', () => {
   let app: INestApplication;

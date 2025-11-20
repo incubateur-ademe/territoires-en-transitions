@@ -1,9 +1,9 @@
-import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
-import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
-import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import { AuthUser } from '@/backend/users/models/auth.models';
-import { Fiche, FicheWithRelations } from '@/domain/plans';
 import { Injectable, Logger } from '@nestjs/common';
+import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
+import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { Fiche, FicheWithRelations } from '@tet/domain/plans';
 import { and, count, eq, isNull, sql } from 'drizzle-orm';
 import { uniq } from 'es-toolkit';
 import z from 'zod';

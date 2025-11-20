@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-import { ModuleMesuresSelect } from '@/api/plan-actions';
 import { MesuresModule } from '@/app/tableaux-de-bord/referentiels/mesures.module';
+import { ModuleMesuresSelect } from '@tet/api/plan-actions';
 
-import { Event, useEventTracker } from '@/ui';
+import { Event, useEventTracker } from '@tet/ui';
 import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';
 import { getModuleEditActions } from './get-module-edit-actions';
 import MesuresDontJeSuisLePiloteModal from './mesures-dont-je-suis-le-pilote.modal';

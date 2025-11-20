@@ -1,8 +1,8 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useCreateIndicateurDefinition } from '@/app/indicateurs/definitions/use-create-indicateur-definition';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import { FicheWithRelations } from '@/domain/plans';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   Alert,
   Button,
@@ -11,12 +11,12 @@ import {
   FormSectionGrid,
   Input,
   Textarea,
-} from '@/ui';
-import { zodResolver } from '@hookform/resolvers/zod';
+} from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { Fiche } from '../PlansActions/FicheAction/data/use-get-fiche';
 
 const validationSchema = z.object({
   titre: z
@@ -36,7 +36,7 @@ const IndicateurPersoNouveau = ({
   onClose,
 }: {
   /** Fiche action à laquelle rattacher le nouvel indicateur */
-  fiche?: FicheWithRelations;
+  fiche?: Fiche;
   isFavoriCollectivite?: boolean;
   onClose?: () => void;
 }) => {

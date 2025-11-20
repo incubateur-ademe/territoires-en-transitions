@@ -1,11 +1,11 @@
-import { DatabaseService } from '@/backend/utils/database/database.service';
+import { Injectable, Logger } from '@nestjs/common';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   Etoile,
   LabellisationAudit,
   LabellisationEtoileDefinition,
   ReferentielId,
-} from '@/domain/referentiels';
-import { Injectable, Logger } from '@nestjs/common';
+} from '@tet/domain/referentiels';
 import { and, desc, eq, getTableColumns, lte, sql } from 'drizzle-orm';
 import { auditTable } from './audit.table';
 import { etoileActionConditionDefinitionTable } from './etoile-action-condition-definition.table';

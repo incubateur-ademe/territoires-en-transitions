@@ -1,6 +1,6 @@
-import { getTestApp, getTestDatabase } from '@/backend/test';
-import { DatabaseService } from '@/backend/utils/database/database.service';
 import { INestApplication } from '@nestjs/common';
+import { getTestApp, getTestDatabase } from '@tet/backend/test';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { sql } from 'drizzle-orm';
 import { default as request } from 'supertest';
 import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';

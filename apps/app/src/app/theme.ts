@@ -1,4 +1,4 @@
-import { StatutAvancementIncludingNonConcerne } from '@/domain/referentiels';
+import { StatutAvancementIncludingNonConcerne } from '@tet/domain/referentiels';
 
 export const actionAvancementColors: Record<
   StatutAvancementIncludingNonConcerne,

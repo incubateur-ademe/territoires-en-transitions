@@ -1,4 +1,3 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import ModaleCreerIndicateur from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
 import {
   IndicateursListParamOption,
@@ -6,7 +5,8 @@ import {
 } from '@/app/app/paths';
 import PictoDataViz from '@/app/ui/pictogrammes/PictoDataViz';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { ButtonProps, EmptyCard, Event, useEventTracker } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { ButtonProps, EmptyCard, Event, useEventTracker } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 

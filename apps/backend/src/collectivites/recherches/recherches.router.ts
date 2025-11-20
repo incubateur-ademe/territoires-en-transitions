@@ -1,8 +1,8 @@
-import { filtersRequestSchema } from '@/backend/collectivites/recherches/filters.request';
-import RecherchesService from '@/backend/collectivites/recherches/recherches.service';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { filtersRequestSchema } from '@tet/backend/collectivites/recherches/filters.request';
+import RecherchesService from '@tet/backend/collectivites/recherches/recherches.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 
 @Injectable()
 export class RecherchesRouter {

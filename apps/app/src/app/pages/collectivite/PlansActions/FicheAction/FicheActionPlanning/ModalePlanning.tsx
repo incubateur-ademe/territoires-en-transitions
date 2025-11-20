@@ -4,7 +4,7 @@ import MiseEnOeuvreDropdown from '@/app/ui/dropdownLists/ficheAction/MiseEnOeuvr
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
-import { FicheWithRelations } from '@/domain/plans';
+import { FicheWithRelations } from '@tet/domain/plans';
 import {
   Checkbox,
   Event,
@@ -14,7 +14,7 @@ import {
   ModalFooterOKCancel,
   Textarea,
   useEventTracker,
-} from '@/ui';
+} from '@tet/ui';
 import { isEqual } from 'es-toolkit/predicate';
 import { useEffect, useRef, useState } from 'react';
 type ModalePlanningProps = {

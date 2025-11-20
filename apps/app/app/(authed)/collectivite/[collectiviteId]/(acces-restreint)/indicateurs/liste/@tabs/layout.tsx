@@ -1,13 +1,13 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { makeCollectiviteIndicateursListUrl } from '@/app/app/paths';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   Tabs,
   TabsList,
   TabsPanel,
   TabsTab,
-} from '@/ui/design-system/TabsNext/index';
+} from '@tet/ui/design-system/TabsNext/index';
 import { ReactNode } from 'react';
 import { TabsListParams } from './tabs-list';
 

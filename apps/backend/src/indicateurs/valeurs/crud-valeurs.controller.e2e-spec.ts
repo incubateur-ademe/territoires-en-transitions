@@ -1,6 +1,7 @@
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
-import { indicateurValeurTable } from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
-import { UpsertIndicateursValeursResponse } from '@/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.response';
+import { INestApplication } from '@nestjs/common';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
+import { UpsertIndicateursValeursResponse } from '@tet/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.response';
 import {
   getAuthToken,
   getCollectiviteIdBySiren,
@@ -8,9 +9,8 @@ import {
   getTestApp,
   getTestDatabase,
   YOLO_DODO,
-} from '@/backend/test';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { INestApplication } from '@nestjs/common';
+} from '@tet/backend/test';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { and, eq, isNull } from 'drizzle-orm';
 import { default as request } from 'supertest';
 import { UpsertIndicateursValeursRequest } from './upsert-indicateurs-valeurs.request';

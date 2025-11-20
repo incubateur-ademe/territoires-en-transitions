@@ -1,8 +1,8 @@
-import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import { AuthUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { FicheEtape, FicheEtapeCreate } from '@/domain/plans';
 import { Injectable } from '@nestjs/common';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { FicheEtape, FicheEtapeCreate } from '@tet/domain/plans';
 import { and, eq, gt, gte, lt, lte, sql } from 'drizzle-orm';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
 import { ficheActionEtapeTable } from './fiche-action-etape.table';

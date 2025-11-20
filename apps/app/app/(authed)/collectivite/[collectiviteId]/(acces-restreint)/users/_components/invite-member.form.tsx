@@ -1,19 +1,19 @@
+import { useAccessLevels } from '@/app/users/authorizations/use-access-levels';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   CollectiviteAccessLevel,
   collectiviteAccessLevelSchema,
-} from '@/domain/users';
+} from '@tet/domain/users';
 import {
   Field,
   Input,
   ModalFooterOKCancel,
   Select,
   SelectMultiple,
-} from '@/ui';
-import { zodResolver } from '@hookform/resolvers/zod';
+} from '@tet/ui';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Tag, useListTags } from './use-list-tags';
-import { useAccessLevels } from '@/app/users/authorizations/use-access-levels';
 
 // validation du formulaire
 const validationSchema = z.object({

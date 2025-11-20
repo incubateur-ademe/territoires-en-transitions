@@ -6,8 +6,8 @@ import {
   Niveau,
   Panier,
   PanierAPI,
-} from '@/api';
-import { createClient } from '@/api/utils/supabase/server-client';
+} from '@tet/api';
+import { createClient } from '@tet/api/utils/supabase/server-client';
 
 const apiKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const apiUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

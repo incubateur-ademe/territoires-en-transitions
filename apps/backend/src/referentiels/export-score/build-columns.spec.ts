@@ -1,4 +1,4 @@
-import { CollectiviteAvecType } from '@/domain/collectivites';
+import { CollectiviteAvecType } from '@tet/domain/collectivites';
 import {
   ActionTypeEnum,
   ScoreComputeMode,
@@ -7,7 +7,7 @@ import {
   ScoresPayload,
   SnapshotJalonEnum,
   StatutAvancementEnum,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import { formatActionStatut } from './build-columns';
 import {
   ExportMode,

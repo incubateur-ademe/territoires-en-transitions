@@ -8,7 +8,7 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
-import { htmlToText } from '@/domain/utils';
+import { htmlToText } from '@tet/domain/utils';
 import classNames from 'classnames';
 
 type MoyensProps = {

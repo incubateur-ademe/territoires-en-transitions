@@ -1,4 +1,4 @@
-import { actionRelationTable } from '@/backend/referentiels/models/action-relation.table';
+import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { integer, pgTable, primaryKey, varchar } from 'drizzle-orm/pg-core';
 import { indicateurDefinitionTable } from './indicateur-definition.table';

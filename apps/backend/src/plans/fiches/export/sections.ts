@@ -1,14 +1,14 @@
 /**
  * Déclaration des différentes sections de l'export
  */
-import { formatBudgets } from '@/backend/plans/fiches/export/format';
+import { formatBudgets } from '@tet/backend/plans/fiches/export/format';
 import {
   Plan,
   PlanFiche,
   PlanRow,
-} from '@/backend/plans/fiches/plan-actions.service';
-import { formatDate } from '@/backend/utils/excel/export-excel.utils';
-import { htmlToText } from '@/domain/utils';
+} from '@tet/backend/plans/fiches/plan-actions.service';
+import { formatDate } from '@tet/backend/utils/excel/export-excel.utils';
+import { htmlToText } from '@tet/domain/utils';
 import { getDepthLabel, participationCitoyenneTypeToLabel } from './utils';
 
 // l'export est organisé en sections ou groupes de colonnes

@@ -1,4 +1,4 @@
-import { actionRelationTable } from '@/backend/referentiels/models/action-relation.table';
+import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
 import { integer, pgTable, primaryKey, varchar } from 'drizzle-orm/pg-core';
 import { ficheActionTable } from './fiche-action.table';
 

@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => ({
 
   plugins: [
     swc.vite({ tsconfigFile: './tsconfig.spec.json' }),
-    tsconfigPaths({ projects: ['../../tsconfig.base.json'] }),
+    tsconfigPaths(),
   ],
 
   test: {

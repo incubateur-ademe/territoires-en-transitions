@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from '@/ui';
+import { Button, ButtonProps } from '@tet/ui';
 import html2canvas from 'html2canvas';
 import { MouseEvent, RefObject } from 'react';
 

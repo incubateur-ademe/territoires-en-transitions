@@ -1,5 +1,5 @@
-import { getAuthToken, getTestApp } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
+import { getAuthToken, getTestApp } from '@tet/backend/test';
 import { eq } from 'drizzle-orm';
 import { Workbook } from 'exceljs';
 import { default as request } from 'supertest';

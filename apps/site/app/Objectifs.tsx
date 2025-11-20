@@ -6,7 +6,7 @@ import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import Markdown from '@/site/components/markdown/Markdown';
 import CardsSection from '@/site/components/sections/CardsSection';
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
-import { Button, Modal } from '@/ui';
+import { Button, Modal } from '@tet/ui';
 import { Fragment, useState } from 'react';
 
 type ObjectifsProps = {

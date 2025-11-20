@@ -2,7 +2,7 @@ import {
   getTextFormattedDate,
   getTruncatedText,
 } from '@/app/utils/formatUtils';
-import { Button, Card, Icon, Notification, Tooltip } from '@/ui';
+import { Button, Card, Icon, Notification, Tooltip } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import AlerteSuppression from './AlerteSuppression';

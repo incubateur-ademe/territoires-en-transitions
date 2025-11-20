@@ -1,4 +1,4 @@
-import { Field, Input } from '@/ui';
+import { Field, Input } from '@tet/ui';
 
 type Props = {
   value: string | undefined;

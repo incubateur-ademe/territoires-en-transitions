@@ -1,5 +1,5 @@
-import { modifiedAt } from '@/backend/utils/column.utils';
-import { MesureAuditStatutEnum } from '@/domain/referentiels';
+import { modifiedAt } from '@tet/backend/utils/column.utils';
+import { MesureAuditStatutEnum } from '@tet/domain/referentiels';
 import { sql } from 'drizzle-orm';
 import {
   boolean,

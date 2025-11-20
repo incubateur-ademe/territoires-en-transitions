@@ -1,9 +1,9 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { useApiClient } from '@/app/utils/use-api-client';
-import { Event, useEventTracker } from '@/ui';
 import { useMutation } from '@tanstack/react-query';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Event, useEventTracker } from '@tet/ui';
 
 export const useExportIndicateurs = (
   definitions?: IndicateurDefinitionListItem[]

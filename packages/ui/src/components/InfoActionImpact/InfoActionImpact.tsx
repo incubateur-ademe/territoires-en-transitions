@@ -3,7 +3,7 @@ import {
   ActionImpactStatut,
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
-} from '@/api';
+} from '@tet/api';
 import { Badge } from '../../design-system/Badge';
 import { Button } from '../../design-system/Button';
 import { Divider } from '../../design-system/Divider';

@@ -4,7 +4,7 @@ import { useEvolutionTotalActivation } from '@/site/app/stats/EvolutionTotalActi
 import Section from '@/site/components/sections/Section';
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
-import { Button } from '@/ui';
+import { Button } from '@tet/ui';
 import posthog from 'posthog-js';
 import Arrow from './Arrow';
 

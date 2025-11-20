@@ -1,4 +1,4 @@
-import { Icon } from '@/ui';
+import { Icon } from '@tet/ui';
 import { DonutData } from './DonutChart';
 
 export const fakeNoDonutData: DonutData[] = [];

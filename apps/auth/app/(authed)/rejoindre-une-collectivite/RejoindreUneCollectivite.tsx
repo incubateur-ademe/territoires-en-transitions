@@ -1,4 +1,4 @@
-import { Enums } from '@/api';
+import { Enums } from '@tet/api';
 import {
   Accordion,
   Checkbox,
@@ -11,7 +11,7 @@ import {
   Select,
   SelectMultiple,
   useEventTracker,
-} from '@/ui';
+} from '@tet/ui';
 import { useState } from 'react';
 import { CollectiviteSelectionnee } from './CollectiviteSelectionnee';
 import {

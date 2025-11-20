@@ -1,12 +1,12 @@
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { getChartOption } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/utils/get-chart-option';
 import { ReactECharts } from '@/app/ui/charts/echarts/ReactECharts';
-import { SANS_STATUT_LABEL, Statut } from '@/domain/plans';
-import { Tooltip } from '@/ui';
+import { SANS_STATUT_LABEL, Statut } from '@tet/domain/plans';
+import { Tooltip } from '@tet/ui';
 
 import { statutFicheActionToColor } from '@/app/plans/fiches/utils';
 import { PlanCardDisplay } from '@/app/plans/plans/components/card/plan.card';
-import { cn } from '@/ui/utils/cn';
+import { cn } from '@tet/ui/utils/cn';
 import { forwardRef } from 'react';
 
 type Props = {

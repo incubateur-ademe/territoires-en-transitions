@@ -1,11 +1,11 @@
-import { ContextStoreService } from '@/backend/utils/context/context.service';
-import { CustomZodValidationPipe } from '@/backend/utils/nest/custom-zod-validation.pipe';
-import VersionService from '@/backend/utils/version/version.service';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { AppModule } from '@/backend/app.module';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { AppModule } from '@tet/backend/app.module';
+import { ContextStoreService } from '@tet/backend/utils/context/context.service';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { CustomZodValidationPipe } from '@tet/backend/utils/nest/custom-zod-validation.pipe';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import VersionService from '@tet/backend/utils/version/version.service';
 
 export const getTestApp = async (options?: {
   mockProdEnv?: boolean;

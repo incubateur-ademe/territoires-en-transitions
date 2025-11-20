@@ -2,7 +2,7 @@
 
 import Section from '@/site/components/sections/Section';
 import { fetchCollection } from '@/site/src/strapi/strapi';
-import { Divider } from '@/ui';
+import { Divider } from '@tet/ui';
 import { Metadata } from 'next';
 import ListeActus from './ListeActus';
 

@@ -1,4 +1,4 @@
-import { ButtonProps, MenuAction } from '@/ui';
+import { ButtonProps, MenuAction } from '@tet/ui';
 
 export const getModuleEditActions = (
   isEditionEnabled: boolean,

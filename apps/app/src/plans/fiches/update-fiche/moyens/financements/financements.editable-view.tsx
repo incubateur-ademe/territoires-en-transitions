@@ -1,4 +1,4 @@
-import { FicheWithRelations } from '@/domain/plans';
+import { FicheWithRelations } from '@tet/domain/plans';
 import { RichTextView } from '../../components/RichTextView';
 import { EditableSection } from '../components/EditableSection';
 

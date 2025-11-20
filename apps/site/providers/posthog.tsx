@@ -7,7 +7,7 @@ import {
   getNextConsentEnvId,
   PostHogProvider,
   ScriptLikeProps,
-} from '@/ui';
+} from '@tet/ui';
 import Script from 'next/script';
 import posthog from 'posthog-js';
 

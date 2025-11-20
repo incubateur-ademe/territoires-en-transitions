@@ -3,7 +3,7 @@ import {
   makeCollectiviteTousLesIndicateursUrl,
 } from '@/app/app/paths';
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
-import { Breadcrumbs } from '@/ui';
+import { Breadcrumbs } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { getIndicateurGroup } from '../../lists/IndicateurCard/utils';
 

@@ -1,11 +1,11 @@
-import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
-import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indicateur-pilote.table';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { AuthUser } from '@/backend/users/models/auth.models';
-import { dcpTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { indicateurPiloteTable } from '@tet/backend/indicateurs/shared/models/indicateur-pilote.table';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { and, eq, getTableColumns, inArray, not, sql } from 'drizzle-orm';
 import { UpsertIndicateurDefinitionPilotesInput } from './handle-definition-pilotes.input';
 

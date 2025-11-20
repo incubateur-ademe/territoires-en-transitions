@@ -1,6 +1,6 @@
 'use client';
-import { getRejoindreCollectivitePath } from '@/api';
-import { EmptyCard } from '@/ui';
+import { getRejoindreCollectivitePath } from '@tet/api';
+import { EmptyCard } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import PictoCarte from './carte.svg';
 

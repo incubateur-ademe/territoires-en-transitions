@@ -1,7 +1,7 @@
 'use client';
 
-import { UserWithCollectiviteAccesses } from '@/domain/users';
 import { Session } from '@supabase/supabase-js';
+import { UserWithCollectiviteAccesses } from '@tet/domain/users';
 import {
   createContext,
   ReactNode,

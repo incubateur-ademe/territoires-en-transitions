@@ -1,8 +1,8 @@
 // This file configures the initialization of Sentry on the client.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
-import { ENV } from '@/api/environmentVariables';
 import * as Sentry from '@sentry/nextjs';
+import { ENV } from '@tet/api/environmentVariables';
 
 function initSentry() {
   if (!ENV.sentry_dsn || !ENV.sentry_dsn.length) {

@@ -1,6 +1,6 @@
-import { Panier } from '@/api';
+import { Panier } from '@tet/api';
 import FiltresActions from '@/panier/components/FiltresActions';
-import { Alert, Button, SITE_BASE_URL, Tab, Tabs } from '@/ui';
+import { Alert, Button, SITE_BASE_URL, Tab, Tabs } from '@tet/ui';
 import { useSearchParams } from 'next/navigation';
 import { ContenuListesFiltre, PanierOngletName } from '../FiltresActions/types';
 import ListeActionsFiltrees from './ListeActionsFiltrees';

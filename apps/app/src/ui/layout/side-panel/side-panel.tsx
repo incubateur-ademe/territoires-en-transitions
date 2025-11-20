@@ -2,8 +2,8 @@ import Link from 'next/link';
 
 import { appLayoutGridClassnames } from '@/app/ui/layout/app-layout';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
-import { Icon } from '@/ui';
-import { cn } from '@/ui/utils/cn';
+import { Icon } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 
 export const SidePanel = () => {
   const { panel, setPanel } = useSidePanel();

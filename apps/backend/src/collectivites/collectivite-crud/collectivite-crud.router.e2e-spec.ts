@@ -1,16 +1,16 @@
-import { collectiviteBucketTable } from '@/backend/collectivites/shared/models/collectivite-bucket.table';
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
+import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import {
   getAuthUser,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-} from '@/backend/test';
-import { RoleUpdateService } from '@/backend/users/authorizations/roles/role-update.service';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { collectiviteTypeEnum } from '@/domain/collectivites';
+} from '@tet/backend/test';
+import { RoleUpdateService } from '@tet/backend/users/authorizations/roles/role-update.service';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { collectiviteTypeEnum } from '@tet/domain/collectivites';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 

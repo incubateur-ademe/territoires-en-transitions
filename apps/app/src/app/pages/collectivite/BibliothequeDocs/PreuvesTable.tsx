@@ -1,7 +1,7 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import ActionPreuvePanel from '@/app/referentiels/actions/action-preuve.panel';
 import { ActionReferentiel } from '@/app/referentiels/DEPRECATED_scores.types';
-import { ReferentielId } from '@/domain/referentiels';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { Fragment, useEffect, useRef } from 'react';
 import {
   CellProps,

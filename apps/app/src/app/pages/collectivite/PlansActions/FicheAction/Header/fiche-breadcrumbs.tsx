@@ -1,11 +1,11 @@
-import { FicheResume } from '@/domain/plans';
-import { Button, VisibleWhen } from '@/ui';
+import { Button, VisibleWhen } from '@tet/ui';
 import { useState } from 'react';
+import { Fiche } from '../data/use-get-fiche';
 import { ClassifiedFicheBreadcrumbs } from './classified-fiche-breadcrumbs';
 import { NotClassifiedFicheBreadcrumbs } from './not-classified-fiche-breadcrumbs';
 
 type Axe = Pick<
-  NonNullable<FicheResume['axes']>[number],
+  NonNullable<Fiche['axes']>[number],
   'id' | 'planId' | 'collectiviteId'
 >;
 

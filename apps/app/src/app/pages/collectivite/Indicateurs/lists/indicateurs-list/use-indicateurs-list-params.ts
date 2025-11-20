@@ -4,7 +4,7 @@ import {
   listDefinitionsInputFiltersSchema,
   ListDefinitionsInputSort,
   listDefinitionsInputSortValues,
-} from '@/domain/indicateurs';
+} from '@tet/domain/indicateurs';
 import { omit, pick } from 'es-toolkit';
 import {
   createSerializer,

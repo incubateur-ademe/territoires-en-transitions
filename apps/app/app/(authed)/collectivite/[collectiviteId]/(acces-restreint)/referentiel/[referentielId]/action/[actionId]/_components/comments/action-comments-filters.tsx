@@ -1,12 +1,12 @@
 import { isSousMesure } from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
+import { DiscussionOrderBy, DiscussionStatus } from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { Select } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 import {
-  DiscussionOrderBy,
-  DiscussionStatus,
-} from '@/domain/collectivites';
-import { ReferentielId } from '@/domain/referentiels';
-import { Select } from '@/ui';
-import { cn } from '@/ui/utils/cn';
-import { orderByOptions, statusOptions } from './action-comments-filters.constants';
+  orderByOptions,
+  statusOptions,
+} from './action-comments-filters.constants';
 
 export type Option = {
   label: string;
@@ -50,9 +50,7 @@ export const StatusSelect = ({
       options={statusOptions}
       values={selectedStatus}
       onChange={(value) => onStatusChange(value as DiscussionStatus)}
-      customItem={(v) => (
-        <span className="text-grey-8 text-xs">{v.label}</span>
-      )}
+      customItem={(v) => <span className="text-grey-8 text-xs">{v.label}</span>}
       small
     />
   );
@@ -84,8 +82,12 @@ export const ActionSelect = ({
       customItem={(v) => (
         <span
           className={cn('text-grey-8 text-xs text-left', {
-            'ml-4': indentSubActions && isSousMesure(v.value as string, referentielId),
-            'pl-4': !indentSubActions && isSousMesure(v.value as string, referentielId),
+            'ml-4':
+              indentSubActions &&
+              isSousMesure(v.value as string, referentielId),
+            'pl-4':
+              !indentSubActions &&
+              isSousMesure(v.value as string, referentielId),
           })}
         >
           {v.label}
@@ -95,4 +97,3 @@ export const ActionSelect = ({
     />
   );
 };
-

@@ -1,27 +1,23 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { ListDefinitionsService } from '@tet/backend/indicateurs/definitions/list-definitions/list-definitions.service';
+import { ListDefinitionsHavingComputedValueRepository } from '@tet/backend/indicateurs/definitions/list-platform-predefined-definitions/list-definitions-having-computed-value.repository';
+import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
+import { indicateurSourceSourceCalculTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-source-calcul.table';
+import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
+import IndicateurSourcesService from '@tet/backend/indicateurs/sources/indicateur-sources.service';
+import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
+import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
+import { DEFAULT_ROUNDING_PRECISION } from '@tet/backend/indicateurs/valeurs/valeurs.constants';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
+  COLLECTIVITE_SOURCE_ID,
   IndicateurDefinition,
   IndicateurValeur,
   IndicateurValeurCreate,
   IndicateurValeurWithIdentifiant,
-} from '@/domain/indicateurs';
-
-type IndicateurValeurInsert = IndicateurValeurCreate;
-import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
-import { ListDefinitionsService } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.service';
-import { ListDefinitionsHavingComputedValueRepository } from '@/backend/indicateurs/definitions/list-platform-predefined-definitions/list-definitions-having-computed-value.repository';
-import { indicateurSourceMetadonneeTable } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
-import { indicateurSourceSourceCalculTable } from '@/backend/indicateurs/shared/models/indicateur-source-source-calcul.table';
-import { indicateurSourceTable } from '@/backend/indicateurs/shared/models/indicateur-source.table';
-import IndicateurSourcesService from '@/backend/indicateurs/sources/indicateur-sources.service';
-import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
-import {
-  indicateurValeurTable,
-} from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
-import { DEFAULT_ROUNDING_PRECISION } from '@/backend/indicateurs/valeurs/valeurs.constants';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { COLLECTIVITE_SOURCE_ID } from '@/domain/indicateurs';
-import { roundTo } from '@/domain/utils';
-import { Injectable, Logger } from '@nestjs/common';
+} from '@tet/domain/indicateurs';
+import { roundTo } from '@tet/domain/utils';
 import {
   and,
   eq,
@@ -33,6 +29,8 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
+
+type IndicateurValeurInsert = IndicateurValeurCreate;
 
 @Injectable()
 export default class ComputeValeursService {

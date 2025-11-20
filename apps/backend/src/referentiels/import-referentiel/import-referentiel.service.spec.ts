@@ -3,7 +3,7 @@ import {
   ActionTypeEnum,
   ReferentielDefinition,
   ReferentielIdEnum,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import { parseActionsOrigine } from './import-referentiel.service';
 
 const refentielDefinitions: ReferentielDefinition[] = [

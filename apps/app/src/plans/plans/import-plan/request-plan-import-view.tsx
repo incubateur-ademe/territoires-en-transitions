@@ -9,7 +9,7 @@ import {
   Event,
   Icon,
   useEventTracker,
-} from '@/ui';
+} from '@tet/ui';
 
 const DOWNLOAD_TEMPLATE_OPTIONS = [
   { value: 'xlsx', label: 'Format Excel (.xlsx)' },

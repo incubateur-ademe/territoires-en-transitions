@@ -1,7 +1,7 @@
 import { StatutsDropdown } from './status.dropdown';
 
-import { SANS_PILOTE_LABEL, SANS_REFERENT_LABEL } from '@/domain/plans';
-import { Field, SelectFilter } from '@/ui';
+import { SANS_PILOTE_LABEL, SANS_REFERENT_LABEL } from '@tet/domain/plans';
+import { Field, SelectFilter } from '@tet/ui';
 import { usePlanFilters } from '../plan-filters.context';
 import { PrioriteDropdown } from './priorites.dropdown';
 

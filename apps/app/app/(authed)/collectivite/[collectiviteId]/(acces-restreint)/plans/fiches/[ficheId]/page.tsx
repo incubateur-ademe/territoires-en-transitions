@@ -1,8 +1,8 @@
+import { FicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheAction';
 import {
   getQueryClient,
   trpcInServerComponent,
-} from '@/api/utils/trpc/server-client';
-import { FicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheAction';
+} from '@tet/api/utils/trpc/server-client';
 import z from 'zod';
 
 const paramsSchema = z.object({

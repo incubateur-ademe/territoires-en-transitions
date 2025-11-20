@@ -1,5 +1,8 @@
-import { collectiviteResumeSchema } from '@/domain/collectivites';
-import { IndicateurValeur, VerificationTrajectoireStatus } from '@/domain/indicateurs';
+import { collectiviteResumeSchema } from '@tet/domain/collectivites';
+import {
+  IndicateurValeur,
+  VerificationTrajectoireStatus,
+} from '@tet/domain/indicateurs';
 import { z } from 'zod';
 import { dataInputForTrajectoireComputeSchema } from './donnees-calcul-trajectoire-a-remplir.dto';
 

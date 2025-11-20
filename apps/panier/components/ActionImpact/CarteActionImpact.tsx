@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Icon } from '@/ui';
+import { Badge, Button, Card, Icon } from '@tet/ui';
 import classNames from 'classnames';
 import NiveauBudget from './NiveauBudget';
 import { CarteActionImpactProps } from './types';

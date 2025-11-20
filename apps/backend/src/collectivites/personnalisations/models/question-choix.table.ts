@@ -1,4 +1,4 @@
-import { version } from '@/backend/utils/column.utils';
+import { version } from '@tet/backend/utils/column.utils';
 import { integer, pgTable, text, varchar } from 'drizzle-orm/pg-core';
 import { questionTable } from './question.table';
 

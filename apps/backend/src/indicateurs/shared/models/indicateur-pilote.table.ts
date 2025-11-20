@@ -1,5 +1,5 @@
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
-import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import { integer, pgTable, serial, uuid } from 'drizzle-orm/pg-core';
 import { indicateurDefinitionTable } from '../../definitions/indicateur-definition.table';
 

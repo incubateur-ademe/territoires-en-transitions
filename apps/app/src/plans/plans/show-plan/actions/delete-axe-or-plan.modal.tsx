@@ -1,4 +1,4 @@
-import { Alert, Modal, ModalFooterOKCancel } from '@/ui';
+import { Alert, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useDeleteAxe } from '../data/use-delete-axe';
 import { useDeletePlan } from '../data/use-delete-plan';
 

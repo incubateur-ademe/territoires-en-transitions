@@ -1,4 +1,4 @@
-import { RecherchesContact } from '@/backend/collectivites/recherches/contacts.response';
+import { RecherchesContact } from '@tet/backend/collectivites/recherches/contacts.response';
 
 export type RecherchesReferentiel = {
   collectiviteId: number;

@@ -1,10 +1,10 @@
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
-import { FicheResume } from '@/domain/plans';
-import { ModalFooterOKCancel } from '@/ui';
+import { ModalFooterOKCancel } from '@tet/ui';
+import { Fiche } from '../../data/use-get-fiche';
 
 type ModaleSuppressionNoteProps = {
-  fiche: FicheResume;
+  fiche: Fiche;
   onDelete: () => void;
 };
 

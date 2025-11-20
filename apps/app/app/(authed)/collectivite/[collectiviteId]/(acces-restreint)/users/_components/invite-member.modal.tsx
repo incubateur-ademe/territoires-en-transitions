@@ -1,12 +1,12 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users';
 import { useBaseToast } from '@/app/utils/toast/use-base-toast';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
 import {
   CollectiviteAccess,
   UserWithCollectiviteAccesses,
-} from '@/domain/users';
-import { Modal } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+} from '@tet/domain/users';
+import { Modal } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { useEffect, useState } from 'react';
 import { InviteMemberForm } from './invite-member.form';
 import { InvitationData, useCreateInvitation } from './use-create-invitation';

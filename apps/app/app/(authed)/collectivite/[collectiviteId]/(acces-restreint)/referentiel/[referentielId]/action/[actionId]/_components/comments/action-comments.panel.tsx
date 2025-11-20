@@ -1,16 +1,16 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import {
   canCreateDiscussion,
   isSousMesure,
   sortDiscussions,
 } from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   discussionOrderByValues,
   DiscussionStatus,
   discussionStatus,
-} from '@/domain/collectivites';
-import { ReferentielId } from '@/domain/referentiels';
+} from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { useEffect, useMemo, useState } from 'react';
 import ActionCommentsPageHeader from './action-comments-page.header';
 import ActionCommentsPanelHeader from './action-comments-panel.header';

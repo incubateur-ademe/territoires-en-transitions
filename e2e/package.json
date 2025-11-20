@@ -1,5 +1,5 @@
 {
-  "name": "@/e2e",
+  "name": "@tet/e2e",
   "nx": {
     "name": "e2e"
   }

@@ -1,5 +1,5 @@
-import { FicheBudgetCreate } from '@/domain/plans';
-import { Input } from '@/ui';
+import { FicheBudgetCreate } from '@tet/domain/plans';
+import { Input } from '@tet/ui';
 import classNames from 'classnames';
 import { useEffect } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';

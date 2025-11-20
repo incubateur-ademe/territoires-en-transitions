@@ -13,19 +13,19 @@ import {
   Option,
   Select,
   useEventTracker,
-} from '@/ui';
+} from '@tet/ui';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import {
   fromFiltersToFormFilters,
   fromFormFiltersToFilters,
 } from '@/app/plans/fiches/list-all-fiches/filters/filter-converter';
 import { ToutesLesFichesFiltersForm } from '@/app/plans/fiches/list-all-fiches/filters/toutes-les-fiches-filters.form';
-import { ModuleFicheCountByCreate } from '@/domain/collectivites/tableau-de-bord';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { ModuleFicheCountByCreate } from '@tet/domain/collectivites/tableau-de-bord';
 import {
   CountByPropertyEnumType,
   ficheActionForCountBySchema,
-} from '@/domain/plans';
+} from '@tet/domain/plans';
 import { useUpsertModule } from '../_hooks/use-upsert-module';
 
 const editionStep = {

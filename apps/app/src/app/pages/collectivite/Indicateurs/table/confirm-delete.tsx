@@ -8,7 +8,7 @@ import {
   DEPRECATED_TRow,
   Modal,
   ModalFooterOKCancel,
-} from '@/ui';
+} from '@tet/ui';
 import { useState } from 'react';
 import { PreparedValue } from '../data/prepare-data';
 import { CellValue } from './cell-value';

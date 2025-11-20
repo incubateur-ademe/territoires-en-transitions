@@ -3,8 +3,8 @@
  * si le texte est tronqué.
  */
 
-import { Button, RichTextEditor } from '@/ui';
-import { cn } from '@/ui/utils/cn';
+import { Button, RichTextEditor } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 import { useState } from 'react';
 
 type RichTextViewProps = {

@@ -1,10 +1,10 @@
-import { indicateurThematiqueTable } from '@/backend/indicateurs/shared/models/indicateur-thematique.table';
-import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { AuthUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Thematique } from '@/domain/shared';
 import { Injectable, Logger } from '@nestjs/common';
+import { indicateurThematiqueTable } from '@tet/backend/indicateurs/shared/models/indicateur-thematique.table';
+import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Thematique } from '@tet/domain/shared';
 import { and, asc, eq, notInArray } from 'drizzle-orm';
 import { ResourceType } from '../../../users/authorizations/resource-type.enum';
 

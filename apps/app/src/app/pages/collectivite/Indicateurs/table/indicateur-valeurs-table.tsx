@@ -7,7 +7,7 @@ import {
   DEPRECATED_TBody,
   DEPRECATED_TCell,
   DEPRECATED_TRow,
-} from '@/ui';
+} from '@tet/ui';
 import { useState } from 'react';
 import { PreparedData, PreparedValue } from '../data/prepare-data';
 import { useDeleteIndicateurValeur } from '../data/use-delete-indicateur-valeur';

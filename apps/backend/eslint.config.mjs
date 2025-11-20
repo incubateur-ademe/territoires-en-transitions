@@ -7,7 +7,7 @@ const config = [
       'no-restricted-imports': [
         'error',
         {
-          patterns: ['@/backend/**/index-domain'],
+          patterns: ['@tet/backend/**/index-domain'],
         },
       ],
     },
@@ -21,7 +21,7 @@ const config = [
           enforceBuildableLibDependency: true,
           allowCircularSelfDependency: true,
           banTransitiveDependencies: false,
-          allow: ['@/backend/*'],
+          allow: ['@tet/backend/*'],
           depConstraints: [
             {
               sourceTag: '*',

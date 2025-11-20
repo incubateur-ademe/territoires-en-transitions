@@ -1,9 +1,9 @@
-import { useIsAccessEditionFichesIndicateursEnabled } from './use-is-access-edition-fiches-indicateurs-enabled';
 import {
-  CollectiviteAccessLevelEnum,
   CollectiviteAccessLevel,
-} from '@/domain/users';
+  CollectiviteAccessLevelEnum,
+} from '@tet/domain/users';
 import { getAccessLevelLabel } from './permission-access-level.utils';
+import { useIsAccessEditionFichesIndicateursEnabled } from './use-is-access-edition-fiches-indicateurs-enabled';
 
 type UseAccessLevelsProps = {
   allowAdmin?: boolean;

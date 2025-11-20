@@ -1,5 +1,5 @@
-import { Statut } from '@/domain/plans';
-import { Badge, BadgeState } from '@/ui';
+import { Statut } from '@tet/domain/plans';
+import { Badge, BadgeState } from '@tet/ui';
 import classNames from 'classnames';
 
 export const statusToState: Record<Statut | 'Sans statut', BadgeState> = {

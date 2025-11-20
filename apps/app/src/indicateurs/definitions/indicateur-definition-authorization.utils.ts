@@ -1,5 +1,5 @@
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { PermissionOperation } from '@/domain/users';
+import { PermissionOperation } from '@tet/domain/users';
 import { IndicateurDefinition } from './use-get-indicateur-definition';
 
 export function canUpdateIndicateurDefinition(

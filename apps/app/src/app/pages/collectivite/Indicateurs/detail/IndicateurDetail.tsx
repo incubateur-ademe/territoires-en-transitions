@@ -1,9 +1,9 @@
 'use client';
 
-import { useCollectiviteId } from '@/api/collectivites';
 import { useGetIndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import { INDICATEUR_TRAJECTOIRE_IDENTFIANTS } from '@/app/indicateurs/trajectoires/trajectoire-constants';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { useGetStatutTrajectoire } from '../../Trajectoire/use-get-statut-trajectoire';
 import { useGetTrajectoire } from '../../Trajectoire/use-trajectoire';
 import IndicateurLayout from './IndicateurLayout';

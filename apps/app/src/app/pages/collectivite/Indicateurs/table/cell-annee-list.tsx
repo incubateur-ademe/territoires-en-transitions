@@ -4,7 +4,7 @@ import {
   DEPRECATED_TCell,
   Notification,
   Tooltip,
-} from '@/ui';
+} from '@tet/ui';
 import classNames from 'classnames';
 import { PreparedData, PreparedValue } from '../data/prepare-data';
 import { SourceType } from '../types';

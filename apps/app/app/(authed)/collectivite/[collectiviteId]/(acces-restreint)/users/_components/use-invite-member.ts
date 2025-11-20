@@ -1,11 +1,11 @@
-import { useUserSession } from '@/api/users';
-import { getAuthHeaders } from '@/api/utils/supabase/get-auth-headers';
 import {
   makeCollectiviteAccueilUrl,
   makeInvitationLandingPath,
 } from '@/app/app/paths';
-import { UserWithCollectiviteAccesses } from '@/domain/users';
 import { useMutation } from '@tanstack/react-query';
+import { useUserSession } from '@tet/api/users';
+import { getAuthHeaders } from '@tet/api/utils/supabase/get-auth-headers';
+import { UserWithCollectiviteAccesses } from '@tet/domain/users';
 
 export type SendInvitationArgs = {
   email: string;

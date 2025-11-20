@@ -6,14 +6,14 @@ import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/ut
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
+import { QueryKey } from '@tanstack/react-query';
 import {
   Checkbox,
   Field,
   FormSectionGrid,
   Input,
   ModalFooterOKCancel,
-} from '@/ui';
-import { QueryKey } from '@tanstack/react-query';
+} from '@tet/ui';
 import { format } from 'date-fns';
 import { useRef, useState } from 'react';
 

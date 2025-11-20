@@ -1,5 +1,5 @@
-import { PanierAPI } from '@/api';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { PanierAPI } from '@tet/api';
 
 export const fetchCollectivitePanierInfo = async (
   supabase: SupabaseClient,

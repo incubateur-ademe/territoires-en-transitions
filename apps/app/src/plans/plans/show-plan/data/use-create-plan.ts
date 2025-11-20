@@ -1,6 +1,6 @@
-import { useTRPC } from '@/api';
-import { AxeLight, CreatePlanRequest } from '@/domain/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { AxeLight, CreatePlanRequest } from '@tet/domain/plans';
 
 export const useCreatePlan = ({
   collectiviteId,

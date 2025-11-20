@@ -1,12 +1,17 @@
-import { RouterOutput, useTRPC } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
 import { SHARE_ICON } from '@/app/plans/fiches/share-fiche/fiche-share-info';
 import { useTagCreate } from '@/app/ui/dropdownLists/tags/useTagCreate';
 import { useDeleteTag } from '@/app/ui/dropdownLists/tags/useTagDelete';
 import { useTagUpdate } from '@/app/ui/dropdownLists/tags/useTagUpdate';
-import { PersonneTagOrUser } from '@/domain/collectivites';
-import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
 import { QueryKey, useQueryClient } from '@tanstack/react-query';
+import { RouterOutput, useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { PersonneTagOrUser } from '@tet/domain/collectivites';
+import {
+  Option,
+  OptionValue,
+  SelectFilter,
+  SelectMultipleProps,
+} from '@tet/ui';
 import { useEffect } from 'react';
 import { usePersonneListe } from './usePersonneListe';
 import { getPersonneStringId } from './utils';

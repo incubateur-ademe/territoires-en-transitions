@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 
-import { Pagination } from '@/ui';
+import { Pagination } from '@tet/ui';
 
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { IndicateursListNoResults } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-empty';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
@@ -15,7 +13,9 @@ import {
   useListIndicateurDefinitions,
 } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import { CustomFilterBadges } from '@/app/ui/lists/filter-badges';
-import { OpenState } from '@/ui/utils/types';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
+import { OpenState } from '@tet/ui/utils/types';
 import { IndicateurCardSkeleton } from '../IndicateurCard/indicateur-card.skeleton';
 import BadgeList from './badge-list';
 import { IndicateursListeOptions } from './indicateurs-list-options';

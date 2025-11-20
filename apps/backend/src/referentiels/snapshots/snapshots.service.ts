@@ -1,17 +1,3 @@
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
-import { toSlug } from '@/backend/utils/string.utils';
-import { PersonnalisationReponsesPayload } from '@/domain/collectivites';
-import {
-  ReferentielId,
-  ScoreSnapshot,
-  ScoreSnapshotCreate,
-  ScoresPayload,
-  SnapshotJalon,
-  SnapshotJalonEnum,
-  SnapshotWithoutPayloads,
-} from '@/domain/referentiels';
-import { roundTo } from '@/domain/utils';
 import {
   BadRequestException,
   ForbiddenException,
@@ -20,6 +6,20 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { getISOFormatDateQuery } from '@tet/backend/utils/column.utils';
+import { toSlug } from '@tet/backend/utils/string.utils';
+import { PersonnalisationReponsesPayload } from '@tet/domain/collectivites';
+import {
+  ReferentielId,
+  ScoreSnapshot,
+  ScoreSnapshotCreate,
+  ScoresPayload,
+  SnapshotJalon,
+  SnapshotJalonEnum,
+  SnapshotWithoutPayloads,
+} from '@tet/domain/referentiels';
+import { roundTo } from '@tet/domain/utils';
 import { and, eq, getTableColumns, sql } from 'drizzle-orm';
 import { omit } from 'es-toolkit';
 import { DateTime } from 'luxon';

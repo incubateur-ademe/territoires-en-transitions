@@ -1,4 +1,4 @@
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { integer } from 'drizzle-orm/pg-core';
 
 export const collectiviteId = {

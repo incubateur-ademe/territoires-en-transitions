@@ -1,11 +1,11 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import {
   useActionCommentaire,
   useSaveActionCommentaire,
 } from '@/app/referentiels/use-action-commentaire';
-import { Field, RichTextEditor, TextareaProps } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Field, RichTextEditor, TextareaProps } from '@tet/ui';
 
 type Props = TextareaProps & {
   actionId: string;

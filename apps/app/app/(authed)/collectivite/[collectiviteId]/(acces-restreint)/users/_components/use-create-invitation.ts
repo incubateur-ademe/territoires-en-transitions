@@ -1,6 +1,6 @@
-import { useTRPC } from '@/api';
-import { UserWithCollectiviteAccesses } from '@/domain/users';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { UserWithCollectiviteAccesses } from '@tet/domain/users';
 import { useSendInvitation } from './use-invite-member';
 
 export type InvitationData =

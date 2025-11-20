@@ -1,4 +1,4 @@
-import { SelectMultiple } from '@/ui';
+import { SelectMultiple } from '@tet/ui';
 import { FiltresSource, SourceFilter } from '../data/use-source-filter';
 
 type Props = {

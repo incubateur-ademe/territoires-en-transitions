@@ -1,5 +1,5 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { Accordion, Textarea } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Accordion, Textarea } from '@tet/ui';
 import { useEffect, useState } from 'react';
 import { TQuestionReponseProps } from './PersoPotentielQR';
 import { useUpdateJustification } from './useUpdateJustification';

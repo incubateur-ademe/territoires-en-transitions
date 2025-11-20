@@ -1,8 +1,8 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { useApiClient } from '@/app/utils/use-api-client';
-import { Event, useEventTracker } from '@/ui';
 import { useMutation } from '@tanstack/react-query';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Event, useEventTracker } from '@tet/ui';
 
 export const useExportPlanAction = (planId: number) => {
   const tracker = useEventTracker();

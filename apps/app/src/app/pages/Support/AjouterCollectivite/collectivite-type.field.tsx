@@ -1,4 +1,4 @@
-import { Field, Option, Select } from '@/ui';
+import { Field, Option, Select } from '@tet/ui';
 type Props = {
   type?: string;
   onSelect: (type?: Option) => void;

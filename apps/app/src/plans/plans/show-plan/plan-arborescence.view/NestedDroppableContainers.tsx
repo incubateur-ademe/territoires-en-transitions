@@ -1,8 +1,8 @@
 import { useDroppable } from '@dnd-kit/core';
 import classNames from 'classnames';
 
-import { CollectiviteAccess } from '@/domain/users';
-import { PlanNode } from '@/domain/plans';
+import { PlanNode } from '@tet/domain/plans';
+import { CollectiviteAccess } from '@tet/domain/users';
 import { childrenOfPlanNodes } from '../../utils';
 import { AxeDndData, DraggableAxe } from './draggable-axe';
 import { FichesList } from './fiches.list';

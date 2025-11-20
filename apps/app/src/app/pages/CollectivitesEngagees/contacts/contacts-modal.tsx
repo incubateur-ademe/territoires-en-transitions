@@ -1,12 +1,12 @@
-import { CollectiviteEngagee } from '@/api';
 import {
   membreFonctionToLabel,
   membreFonctionToTeteFonction,
 } from '@/app/app/labels';
 import { RecherchesViewParam } from '@/app/app/paths';
-import { MembreFonction } from '@/domain/collectivites';
-import { Icon, Modal, Tooltip, useCopyToClipboard } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { CollectiviteEngagee } from '@tet/api';
+import { MembreFonction } from '@tet/domain/collectivites';
+import { Icon, Modal, Tooltip, useCopyToClipboard } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import classNames from 'classnames';
 import { useState } from 'react';
 

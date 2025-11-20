@@ -1,4 +1,4 @@
-import { modifiedAt } from '@/backend/utils/column.utils';
+import { modifiedAt } from '@tet/backend/utils/column.utils';
 import {
   doublePrecision,
   integer,

@@ -1,6 +1,7 @@
-import { ImportPlanCleanService } from '@/backend/plans/fiches/import/import-plan-clean.service';
-import { ImportPlanFetchService } from '@/backend/plans/fiches/import/import-plan-fetch.service';
-import { ImportPlanSaveService } from '@/backend/plans/fiches/import/import-plan-save.service';
+import { Injectable, Logger } from '@nestjs/common';
+import { ImportPlanCleanService } from '@tet/backend/plans/fiches/import/import-plan-clean.service';
+import { ImportPlanFetchService } from '@tet/backend/plans/fiches/import/import-plan-fetch.service';
+import { ImportPlanSaveService } from '@tet/backend/plans/fiches/import/import-plan-save.service';
 import {
   AxeImport,
   FicheImport,
@@ -9,16 +10,15 @@ import {
   MemoryImport,
   PlanImport,
   TagImport,
-} from '@/backend/plans/fiches/import/import-plan.dto';
-import { PlanService } from '@/backend/plans/plans/plans.service';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { TagEnum, TagType } from '@/domain/collectivites';
+} from '@tet/backend/plans/fiches/import/import-plan.dto';
+import { PlanService } from '@tet/backend/plans/plans/plans.service';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { TagEnum, TagType } from '@tet/domain/collectivites';
 import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
-} from '@/domain/plans';
-import { Injectable, Logger } from '@nestjs/common';
+} from '@tet/domain/plans';
 import ExcelJS from 'exceljs';
 const FIRST_DATA_ROW = 4; // The first three rows are not data
 

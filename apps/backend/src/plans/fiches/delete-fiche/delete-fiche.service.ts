@@ -1,6 +1,6 @@
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { eq, or } from 'drizzle-orm';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
 import { ficheActionTable } from '../shared/models/fiche-action.table';

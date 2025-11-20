@@ -1,5 +1,5 @@
-import { CollectiviteAccess } from '@/domain/users';
-import { HeaderProps } from '@/ui';
+import { CollectiviteAccess } from '@tet/domain/users';
+import { HeaderProps } from '@tet/ui';
 import { generateCollectiviteNavItem } from './generate-collectivite-nav-item';
 import { generateTdbPersonalLink } from './generate-tdb-personal-link';
 import { CollectiviteNavItem } from './make-collectivite-nav';

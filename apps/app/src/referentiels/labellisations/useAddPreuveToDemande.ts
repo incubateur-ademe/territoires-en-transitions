@@ -1,9 +1,8 @@
-import { DBClient } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
-import { useSupabase } from '@/api';
 import { TAddFileFromLib } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
 import { useAddPreuveLabellisation } from '@/app/referentiels/preuves/useAddPreuves';
-import { LabellisationDemande, ReferentielId } from '@/domain/referentiels';
+import { DBClient, useSupabase } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { LabellisationDemande, ReferentielId } from '@tet/domain/referentiels';
 import { useReferentielId } from '../referentiel-context';
 import { useCycleLabellisation } from './useCycleLabellisation';
 

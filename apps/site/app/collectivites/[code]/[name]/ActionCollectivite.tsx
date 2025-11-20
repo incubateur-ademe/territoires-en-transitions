@@ -3,7 +3,7 @@
 import Markdown from '@/site/components/markdown/Markdown';
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
-import { Button } from '@/ui';
+import { Button } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 

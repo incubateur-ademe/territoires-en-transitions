@@ -1,20 +1,20 @@
-import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
-import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';
-import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
+import { ficheActionReferentTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-referent.table';
 import {
   getAuthUser,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-} from '@/backend/test';
-import { utilisateurCollectiviteAccessTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
-import { invitationPersonneTagTable } from '@/backend/users/invitations/invitation-personne-tag.table';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { dcpTable } from '@/backend/users/models/dcp.table';
-import { invitationTable } from '@/backend/users/models/invitation.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { CollectiviteAccessLevelEnum } from '@/domain/users';
+} from '@tet/backend/test';
+import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { invitationPersonneTagTable } from '@tet/backend/users/invitations/invitation-personne-tag.table';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { invitationTable } from '@tet/backend/users/models/invitation.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
 import { and, eq, isNotNull, ne } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 

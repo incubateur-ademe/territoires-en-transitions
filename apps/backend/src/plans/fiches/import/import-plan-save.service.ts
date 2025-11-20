@@ -1,12 +1,12 @@
-import { TagService } from '@/backend/collectivites/tags/tag.service';
+import { Injectable } from '@nestjs/common';
+import { TagService } from '@tet/backend/collectivites/tags/tag.service';
 import {
   AxeImport,
   FicheImport,
   TagImport,
-} from '@/backend/plans/fiches/import/import-plan.dto';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { Injectable } from '@nestjs/common';
+} from '@tet/backend/plans/fiches/import/import-plan.dto';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import AxeService from '../axe.service';
 import { CreateFicheService } from '../create-fiche/create-fiche.service';
 

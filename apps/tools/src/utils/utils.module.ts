@@ -1,9 +1,9 @@
-import { ContextStoreService } from '@/backend/utils/context/context.service';
-import { VersionController } from '@/backend/utils/version/version.controller';
-import VersionService from '@/backend/utils/version/version.service';
-import MattermostNotificationService from './mattermost-notification.service';
 import { Module } from '@nestjs/common';
+import { ContextStoreService } from '@tet/backend/utils/context/context.service';
+import { VersionController } from '@tet/backend/utils/version/version.controller';
+import VersionService from '@tet/backend/utils/version/version.service';
 import { ConfigurationModule } from '../config/configuration.module';
+import MattermostNotificationService from './mattermost-notification.service';
 import { TrpcClientService } from './trpc/trpc-client.service';
 
 @Module({

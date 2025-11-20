@@ -1,4 +1,4 @@
-import { Database } from '@/api';
+import { Database } from '@tet/api';
 import { createClient } from '@supabase/supabase-js';
 
 export const supabase = createClient<Database>(

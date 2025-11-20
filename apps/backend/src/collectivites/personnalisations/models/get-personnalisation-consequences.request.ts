@@ -1,4 +1,4 @@
-import { referentielIdEnumSchema } from '@/domain/referentiels';
+import { referentielIdEnumSchema } from '@tet/domain/referentiels';
 import { z } from 'zod';
 import { getPersonnalisationReponsesRequestSchema } from './get-personnalisation-reponses.request';
 

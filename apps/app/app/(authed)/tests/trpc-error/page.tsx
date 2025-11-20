@@ -1,7 +1,7 @@
 'use client';
 
-import { useTRPC } from '@/api';
 import { useQuery } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import { useEffect } from 'react';
 
 export default function Page() {

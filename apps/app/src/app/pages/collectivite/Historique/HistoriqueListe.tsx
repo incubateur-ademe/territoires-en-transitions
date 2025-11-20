@@ -1,7 +1,7 @@
 import HistoriqueItemActionPrecision from '@/app/app/pages/collectivite/Historique/actionPrecision/HistoriqueItemActionPrecision';
 import HistoriqueItemActionStatut from '@/app/app/pages/collectivite/Historique/actionStatut/HistoriqueItemActionStatut';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Event, Pagination, useEventTracker } from '@/ui';
+import { Event, Pagination, useEventTracker } from '@tet/ui';
 import { FC } from 'react';
 import { NB_ITEMS_PER_PAGE } from './filters';
 import HistoriqueFiltres from './HistoriqueFiltres/HistoriqueFiltres';

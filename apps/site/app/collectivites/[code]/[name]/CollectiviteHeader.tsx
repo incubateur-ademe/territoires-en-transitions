@@ -3,7 +3,7 @@
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { getFormattedNumber } from '@/site/src/utils/getFormattedNumber';
-import { Badge, Icon } from '@/ui';
+import { Badge, Icon } from '@tet/ui';
 import classNames from 'classnames';
 import Image from 'next/image';
 

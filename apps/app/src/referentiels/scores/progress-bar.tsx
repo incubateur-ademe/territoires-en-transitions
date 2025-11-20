@@ -1,5 +1,5 @@
-import { roundTo } from '@/domain/utils';
-import { Badge } from '@/ui';
+import { roundTo } from '@tet/domain/utils';
+import { Badge } from '@tet/ui';
 import classNames from 'classnames';
 
 export type ProgressBarType = {

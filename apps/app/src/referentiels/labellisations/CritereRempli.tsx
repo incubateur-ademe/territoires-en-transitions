@@ -1,4 +1,4 @@
-import { Icon } from '@/ui';
+import { Icon } from '@tet/ui';
 import classNames from 'classnames';
 
 /** Affiche le picto et le libellé pour un critère rempli */

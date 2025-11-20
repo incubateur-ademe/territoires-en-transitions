@@ -1,8 +1,8 @@
-import { useTRPC } from '@/api';
 import { useSnapshotComputeAndUpdate } from '@/app/referentiels/use-snapshot';
-import { getReferentielIdFromActionId } from '@/domain/referentiels';
-import { Event, useEventTracker } from '@/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
+import { Event, useEventTracker } from '@tet/ui';
 
 export function useSetValeursUtilisees() {
   const trackEvent = useEventTracker();

@@ -1,4 +1,4 @@
-import { Plan as DetailedPlanType } from '@/domain/plans';
+import { Plan as DetailedPlanType } from '@tet/domain/plans';
 import { PlanFiltersProvider } from './filters/plan-filters.context';
 import { PlanView } from './plan.view';
 

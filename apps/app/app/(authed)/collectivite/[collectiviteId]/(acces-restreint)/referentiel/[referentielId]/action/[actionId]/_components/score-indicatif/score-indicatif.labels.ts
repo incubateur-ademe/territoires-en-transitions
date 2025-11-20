@@ -1,4 +1,4 @@
-import { ScoreIndicatifType } from '@/domain/referentiels';
+import { ScoreIndicatifType } from '@tet/domain/referentiels';
 
 export const typeScoreToLabel: Record<ScoreIndicatifType, string> = {
   fait: 'Résultats de la collectivité',

@@ -2,7 +2,7 @@ import {
   ActionImpactFourchetteBudgetaire,
   ActionImpactFull,
   ActionImpactTempsMiseEnOeuvre,
-} from '@/api';
+} from '@tet/api';
 import { ActionImpact } from '@/panier/components/ActionImpact';
 
 type ListeActionsFiltreesProps = {

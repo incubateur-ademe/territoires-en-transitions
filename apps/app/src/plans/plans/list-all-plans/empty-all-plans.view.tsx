@@ -1,7 +1,7 @@
 'use client';
 import { CreatePlanButton } from '@/app/plans/plans/create-plan/components/create-plan.button';
 import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
-import { EmptyCard } from '@/ui';
+import { EmptyCard } from '@tet/ui';
 
 export const EmptyAllPlansView = ({
   collectiviteId,

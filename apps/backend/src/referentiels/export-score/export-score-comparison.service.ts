@@ -1,6 +1,6 @@
-import { ExportScoreComparisonRequestQuery } from '@/backend/referentiels/export-score/export-score-comparison.request';
-import { ReferentielId } from '@/domain/referentiels';
 import { Injectable, Logger } from '@nestjs/common';
+import { ExportScoreComparisonRequestQuery } from '@tet/backend/referentiels/export-score/export-score-comparison.request';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { Workbook } from 'exceljs';
 import { buildRows } from './build-rows';
 import { LoadScoreComparisonService } from './load-score-comparison.service';

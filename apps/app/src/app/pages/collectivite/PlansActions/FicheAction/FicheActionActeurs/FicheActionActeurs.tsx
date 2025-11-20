@@ -1,8 +1,8 @@
-import { FicheWithRelations } from '@/domain/plans';
-import { Button, EmptyCard, getOptionLabel } from '@/ui';
+import { Button, EmptyCard, getOptionLabel } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { ficheActionParticipationOptions } from '../../../../../../ui/dropdownLists/listesStatiques';
+import { Fiche } from '../data/use-get-fiche';
 import ListeActeurs from './ListeActeurs';
 import ModaleActeurs from './ModaleActeurs';
 import CiblePicto from './PictosActeurs/CiblePicto';
@@ -15,7 +15,7 @@ import StructurePilotePicto from './PictosActeurs/StructurePilotePicto';
 
 type FicheActionActeursProps = {
   isReadonly: boolean;
-  fiche: FicheWithRelations;
+  fiche: Fiche;
   className?: string;
 };
 

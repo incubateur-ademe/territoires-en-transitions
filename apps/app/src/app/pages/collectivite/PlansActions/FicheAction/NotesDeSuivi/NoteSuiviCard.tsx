@@ -1,6 +1,6 @@
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { Button, Card, Icon, RichTextEditor } from '@/ui';
 import { FicheNote } from '@tet/domain/plans';
+import { Button, Card, Icon, RichTextEditor } from '@tet/ui';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { DeletedNote, EditedNote } from '../data/useUpsertNoteSuivi';

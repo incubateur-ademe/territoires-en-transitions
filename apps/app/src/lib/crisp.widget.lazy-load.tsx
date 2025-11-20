@@ -1,6 +1,6 @@
 'use client';
 
-import { ENV } from '@/api/environmentVariables';
+import { ENV } from '@tet/api/environmentVariables';
 import dynamic from 'next/dynamic';
 
 const CrispWidget = dynamic(

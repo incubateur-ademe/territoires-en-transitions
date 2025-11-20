@@ -1,6 +1,6 @@
 import { useApiClient } from '@/app/utils/use-api-client';
-import { Fiche, FicheNote } from '@/domain/plans';
 import { useQuery } from '@tanstack/react-query';
+import { Fiche, FicheNote } from '@tet/domain/plans';
 
 /**
  * Charge les notes de suivi d'une fiche action

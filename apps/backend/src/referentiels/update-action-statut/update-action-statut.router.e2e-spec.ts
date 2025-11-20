@@ -1,5 +1,5 @@
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { ActionScore, ReferentielIdEnum } from '@/domain/referentiels';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { ActionScore, ReferentielIdEnum } from '@tet/domain/referentiels';
 import { inferProcedureInput } from '@trpc/server';
 import {
   getTestApp,

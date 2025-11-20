@@ -1,4 +1,4 @@
-import { structureTagTable } from '@/backend/collectivites/tags/structure-tag.table';
+import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag.table';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { ficheActionTable } from './fiche-action.table';
 

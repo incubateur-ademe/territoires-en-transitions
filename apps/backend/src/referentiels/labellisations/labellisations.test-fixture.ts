@@ -1,8 +1,8 @@
-import { auditTable } from '@/backend/referentiels/labellisations/audit.table';
-import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.table';
-import { mesureAuditStatutTable } from '@/backend/referentiels/labellisations/handle-mesure-audit-statut/mesure-audit-statut.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { ReferentielId } from '@/domain/referentiels';
+import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
+import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
+import { mesureAuditStatutTable } from '@tet/backend/referentiels/labellisations/handle-mesure-audit-statut/mesure-audit-statut.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 import { labellisationDemandeTable } from './labellisation-demande.table';

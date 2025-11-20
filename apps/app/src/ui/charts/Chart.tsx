@@ -1,4 +1,4 @@
-import { ModalSize } from '@/ui';
+import { ModalSize } from '@tet/ui';
 
 import ChartModal from './ChartModal';
 import DonutChart, { DonutChartProps } from './Donut/DonutChart';

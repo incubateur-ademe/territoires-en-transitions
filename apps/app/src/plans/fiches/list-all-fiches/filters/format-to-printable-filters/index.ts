@@ -2,7 +2,7 @@ import {
   getPilotesValues,
   getReferentsValues,
 } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
-import { FilterCategory } from '@/ui';
+import { FilterCategory } from '@tet/ui';
 import { uniqBy } from 'es-toolkit/array';
 import { getFilterLabel } from '../labels';
 import {

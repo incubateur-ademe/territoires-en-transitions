@@ -1,4 +1,3 @@
-import { CollectiviteEngagee } from '@/api';
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielRootUrl } from '@/app/app/paths';
 import { NIVEAUX } from '@/app/referentiels/tableau-de-bord/labellisation/LabellisationInfo';
@@ -7,8 +6,9 @@ import {
   RedStar,
 } from '@/app/referentiels/tableau-de-bord/labellisation/Star';
 import { toPercentString } from '@/app/utils/to-percent-string';
-import { ReferentielId } from '@/domain/referentiels';
-import { Card, Event, Icon, useEventTracker } from '@/ui';
+import { CollectiviteEngagee } from '@tet/api';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { Card, Event, Icon, useEventTracker } from '@tet/ui';
 import classNames from 'classnames';
 import ContactsDisplay from '../../contacts/contacts-display';
 

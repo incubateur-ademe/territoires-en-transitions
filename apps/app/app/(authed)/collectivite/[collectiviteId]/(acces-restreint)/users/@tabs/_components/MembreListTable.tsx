@@ -3,7 +3,7 @@ import {
   useCollectiviteMembres,
 } from '@/app/app/pages/collectivite/Users/useCollectiviteMembres';
 import { useUpdateCollectiviteMembre } from '@/app/app/pages/collectivite/Users/useUpdateCollectiviteMembre';
-import { CollectiviteAccessLevel } from '@/domain/users';
+import { CollectiviteAccessLevel } from '@tet/domain/users';
 import {
   DEPRECATED_Table,
   DEPRECATED_TBody,
@@ -12,7 +12,7 @@ import {
   DEPRECATED_THeadCell,
   DEPRECATED_TRow,
   Pagination,
-} from '@/ui';
+} from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { SendInvitationArgs } from '../../_components/use-invite-member';

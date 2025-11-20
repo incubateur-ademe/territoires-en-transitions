@@ -1,4 +1,4 @@
-import { RouterOutput } from '@/api';
+import { RouterOutput } from '@tet/api';
 
 export type ScoreIndicatifAction =
   RouterOutput['referentiels']['actions']['getScoreIndicatif'][string];

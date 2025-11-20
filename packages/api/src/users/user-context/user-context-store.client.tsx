@@ -1,6 +1,6 @@
 'use client';
 
-import { UserWithCollectiviteAccesses } from '@/domain/users';
+import { UserWithCollectiviteAccesses } from '@tet/domain/users';
 import { ReactNode, useEffect } from 'react';
 import { useUserContext } from './user-provider';
 

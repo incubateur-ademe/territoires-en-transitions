@@ -1,8 +1,8 @@
 /**
  * Affiche le composant d'upload de fichiers
  */
-import { useCollectiviteId } from '@/api/collectivites';
-import { Button, Field, Input } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Button, Field, Input } from '@tet/ui';
 import { FormEvent, useEffect, useState } from 'react';
 import { useUpdateBibliothequeFichierConfidentiel } from '../Bibliotheque/useEditPreuve';
 import { CheckboxConfidentiel } from './CheckboxConfidentiel';

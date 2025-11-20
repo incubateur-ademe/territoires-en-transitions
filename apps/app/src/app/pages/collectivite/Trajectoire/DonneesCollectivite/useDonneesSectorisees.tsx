@@ -10,7 +10,7 @@ import {
   SNBC_ALDO_DATE_DEBUT_REFERENCE,
   SNBC_ALDO_DATE_FIN_REFERENCE,
   TrajectoirePropertiesType,
-} from '@/domain/indicateurs';
+} from '@tet/domain/indicateurs';
 
 import { Secteur } from '@/app/app/pages/collectivite/Trajectoire/DonneesCollectivite/TableauDonnees';
 import { useListIndicateurValeurs } from '@/app/indicateurs/valeurs/use-list-indicateur-valeurs';

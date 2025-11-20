@@ -1,17 +1,17 @@
-import { preuveActionTable } from '@/backend/collectivites/documents/models/preuve-action.table';
-import { preuveReglementaireDefinitionTable } from '@/backend/collectivites/documents/models/preuve-reglementaire-definition.table';
-import { ImportActionDefinitionType } from '@/backend/referentiels/import-referentiel/import-action-definition.dto';
-import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import SheetService from '@/backend/utils/google-sheets/sheet.service';
-import { PreuveReglementaireDefinition } from '@/domain/collectivites';
-import { ReferentielId } from '@/domain/referentiels';
 import {
   Injectable,
   Logger,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
+import { preuveReglementaireDefinitionTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire-definition.table';
+import { ImportActionDefinitionType } from '@tet/backend/referentiels/import-referentiel/import-action-definition.dto';
+import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
+import { PreuveReglementaireDefinition } from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { ilike } from 'drizzle-orm';
 import {
   ImportPreuveReglementaireDefinition,

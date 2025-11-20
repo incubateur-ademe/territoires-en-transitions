@@ -1,6 +1,6 @@
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
-import { FicheResume } from '@/domain/plans';
+import { FicheResume } from '@tet/domain/plans';
 import {
   Alert,
   Button,
@@ -9,7 +9,7 @@ import {
   ModalFooter,
   RichTextEditor,
   Select,
-} from '@/ui';
+} from '@tet/ui';
 import { useState } from 'react';
 import { EditedNote } from '../data/useUpsertNoteSuivi';
 

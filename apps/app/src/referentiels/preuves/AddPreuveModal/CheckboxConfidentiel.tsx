@@ -1,4 +1,4 @@
-import { Checkbox, InfoTooltip } from '@/ui';
+import { Checkbox, InfoTooltip } from '@tet/ui';
 import { DocType } from './types';
 
 // types de documents pour lesquels l'utilisateur peut choisir l'option "confidentiel"

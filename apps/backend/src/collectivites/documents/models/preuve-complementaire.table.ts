@@ -1,4 +1,4 @@
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { foreignKey, index, pgTable, text } from 'drizzle-orm/pg-core';
 import { actionRelationTable } from '../../../referentiels/models/action-relation.table';
 import { DocumentBase } from './document.basetable';

@@ -2,7 +2,7 @@
 
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
-import { Button } from '@/ui';
+import { Button } from '@tet/ui';
 import posthog from 'posthog-js';
 
 type QuestionsPlateformeProps = {

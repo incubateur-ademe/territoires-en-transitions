@@ -1,5 +1,5 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { ActionReferentiel } from '@/app/referentiels/DEPRECATED_scores.types';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { TableOptions } from 'react-table';
 import { useReferentiel } from '../../../../referentiels/ReferentielTable/useReferentiel';
 

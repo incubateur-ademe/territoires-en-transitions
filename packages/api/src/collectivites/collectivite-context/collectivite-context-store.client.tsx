@@ -1,6 +1,6 @@
 'use client';
 
-import { CollectiviteAccess } from '@/domain/users';
+import { CollectiviteAccess } from '@tet/domain/users';
 import { ReactNode, useEffect } from 'react';
 import { useCollectiviteContext } from './collectivite-provider.no-ssr';
 

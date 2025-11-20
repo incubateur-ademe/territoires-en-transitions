@@ -444,9 +444,6 @@ importers:
         specifier: 4.1.12
         version: 4.1.12
     devDependencies:
-      '@/domain':
-        specifier: workspace:*
-        version: link:packages/domain
       '@eslint/js':
         specifier: 8.57.0
         version: 8.57.0
@@ -549,6 +546,9 @@ importers:
       '@testing-library/react':
         specifier: 16.3.0
         version: 16.3.0(@testing-library/dom@10.4.0)(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tet/domain':
+        specifier: workspace:*
+        version: link:packages/domain
       '@types/async-retry':
         specifier: 1.4.9
         version: 1.4.9
@@ -706,7 +706,21 @@ importers:
         specifier: 5.1.4
         version: 5.1.4(webpack-dev-server@5.2.1)(webpack@5.102.1)
 
+  apps/app: {}
+
+  apps/auth: {}
+
+  apps/backend: {}
+
+  apps/tools: {}
+
+  e2e: {}
+
+  packages/api: {}
+
   packages/domain: {}
+
+  packages/ui: {}
 
 packages:
 

@@ -1,8 +1,8 @@
-import { collectiviteId } from '@/backend/collectivites/collectivite-id.column';
-import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
-import { indicateurValeurTable } from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
-import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
-import { scoreIndicatifTypeEnumValues } from '@/domain/referentiels';
+import { collectiviteId } from '@tet/backend/collectivites/collectivite-id.column';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
+import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
+import { scoreIndicatifTypeEnumValues } from '@tet/domain/referentiels';
 import { sql } from 'drizzle-orm';
 import { check, integer, pgTable, text, varchar } from 'drizzle-orm/pg-core';
 

@@ -5,8 +5,8 @@ import { useState } from 'react';
 import { ActionListFilters } from '@/app/referentiels/actions/use-list-actions';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import FilterBadges, { useFiltersToBadges } from '@/app/ui/lists/filter-badges';
-import { ActionTypeEnum } from '@/domain/referentiels';
-import { Checkbox, DEPRECATED_ButtonMenu, Select } from '@/ui';
+import { ActionTypeEnum } from '@tet/domain/referentiels';
+import { Checkbox, DEPRECATED_ButtonMenu, Select } from '@tet/ui';
 import Filters from './filters';
 import List from './list';
 

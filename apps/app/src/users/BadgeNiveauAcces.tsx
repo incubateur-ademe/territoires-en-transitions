@@ -1,6 +1,6 @@
 import { getAccessLevelLabel } from '@/app/users/authorizations/permission-access-level.utils';
-import { CollectiviteAccessLevel } from '@/domain/users';
-import { Badge, BadgeSize } from '@/ui';
+import { CollectiviteAccessLevel } from '@tet/domain/users';
+import { Badge, BadgeSize } from '@tet/ui';
 import classNames from 'classnames';
 
 type Props = {

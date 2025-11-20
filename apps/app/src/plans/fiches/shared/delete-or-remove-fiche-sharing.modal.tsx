@@ -1,8 +1,8 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import RemoveSharingModal from '@/app/plans/fiches/share-fiche/remove-sharing.modal';
 import DeleteFicheModal from '@/app/plans/fiches/shared/delete-fiche.modal';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { OpenState } from '@/ui/utils/types';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { OpenState } from '@tet/ui';
 import { FicheListItem } from '../list-all-fiches/data/use-list-fiches';
 
 type DeleteOrRemoveFicheSharingModalProps = {

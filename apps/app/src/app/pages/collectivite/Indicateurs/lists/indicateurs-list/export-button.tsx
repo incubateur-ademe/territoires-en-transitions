@@ -1,6 +1,6 @@
 import { useExportIndicateurs } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
-import { Badge } from '@/ui';
+import { Badge } from '@tet/ui';
 import classNames from 'classnames';
 
 type Props = {

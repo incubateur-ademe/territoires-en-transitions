@@ -11,10 +11,10 @@
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@/ui/shadcn/components",
-    "utils": "@/ui/shadcn/utils",
-    "hooks": "@/ui/shadcn/hooks",
-    "lib": "@/ui/shadcn/lib",
-    "ui": "@/ui/shadcn"
+    "components": "@tet/ui/shadcn/components",
+    "utils": "@tet/ui/shadcn/utils",
+    "hooks": "@tet/ui/shadcn/hooks",
+    "lib": "@tet/ui/shadcn/lib",
+    "ui": "@tet/ui/shadcn"
   }
 }

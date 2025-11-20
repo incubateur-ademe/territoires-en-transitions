@@ -1,6 +1,5 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { referentielToName } from '@/app/app/labels';
 import DownloadScoreButton from '@/app/app/pages/collectivite/Referentiels/DownloadScore/download-score.button';
 import SaveScoreButton from '@/app/app/pages/collectivite/Referentiels/SaveScore/save-score.button';
@@ -8,7 +7,8 @@ import { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
 import { useReferentielDownToAction } from '@/app/referentiels/referentiel-hooks';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
-import { ReferentielId } from '@/domain/referentiels';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
 
 export const Header = ({ referentielId }: { referentielId: ReferentielId }) => {
   const { collectiviteId, niveauAcces } = useCurrentCollectivite();

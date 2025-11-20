@@ -1,8 +1,8 @@
-import { referentielDefinitionTable } from '@/backend/referentiels/models/referentiel-definition.table';
-import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import type { ReferentielId } from '@/domain/referentiels';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { referentielDefinitionTable } from '@tet/backend/referentiels/models/referentiel-definition.table';
+import { getISOFormatDateQuery } from '@tet/backend/utils/column.utils';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import type { ReferentielId } from '@tet/domain/referentiels';
 import { eq, getTableColumns } from 'drizzle-orm';
 import { GetReferentielDefinitionOutput } from './get-referentiel-definition.output';
 

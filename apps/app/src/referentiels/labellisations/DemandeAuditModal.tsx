@@ -1,6 +1,6 @@
 import Modal from '@/app/ui/shared/floating-ui/Modal';
-import { SujetDemande } from '@/domain/referentiels';
-import { Alert, Button, RadioButton } from '@/ui';
+import { SujetDemande } from '@tet/domain/referentiels';
+import { Alert, Button, RadioButton } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import {

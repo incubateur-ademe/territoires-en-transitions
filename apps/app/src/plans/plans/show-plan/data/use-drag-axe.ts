@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { useSupabase, useTRPC } from '@/api';
-import { PlanNode } from '@/domain/plans';
+import { useSupabase, useTRPC } from '@tet/api';
+import { PlanNode } from '@tet/domain/plans';
 import { dropAnimation } from '../plan-arborescence.view';
 
 /**

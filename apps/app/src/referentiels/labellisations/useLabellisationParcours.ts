@@ -1,7 +1,7 @@
-import { useTRPC } from '@/api';
-import { useUserSession } from '@/api/users';
-import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { useUserSession } from '@tet/api/users';
+import { ReferentielId } from '@tet/domain/referentiels';
 
 /**
  * charge les données du parcours

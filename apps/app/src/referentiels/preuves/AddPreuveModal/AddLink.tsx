@@ -2,8 +2,8 @@
  * Affiche le formulaire d'ajout de liens
  */
 
-import { Button, Field, Input } from '@/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Button, Field, Input } from '@tet/ui';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 

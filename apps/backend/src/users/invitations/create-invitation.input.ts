@@ -1,4 +1,4 @@
-import { collectiviteAccessLevelSchema } from '@/domain/users';
+import { collectiviteAccessLevelSchema } from '@tet/domain/users';
 import { z } from 'zod';
 
 export const createInvitationInputSchema = z.object({

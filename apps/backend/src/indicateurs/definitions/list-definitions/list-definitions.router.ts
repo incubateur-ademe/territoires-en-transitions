@@ -1,5 +1,5 @@
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { getFavorisCountRequestSchema } from './get-favoris-count.request';
 import { getPathRequestSchema } from './get-path.request';
 import { listDefinitionsInputSchema } from './list-definitions.input';

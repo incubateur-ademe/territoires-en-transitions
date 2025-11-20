@@ -9,8 +9,8 @@ import {
   Modal,
   ModalFooter,
   Textarea,
-} from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+} from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import { IndicateurSourceValeur, PreparedData } from '../data/prepare-data';
 import { InputValue } from './input-value';

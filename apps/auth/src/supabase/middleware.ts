@@ -1,9 +1,9 @@
 // Code partially taken from https://supabase.com/docs/guides/auth/server-side/nextjs
 
-import { getRequestUrl } from '@/api';
-import { dcpFetch } from '@/api/users/dcp.fetch';
-import { getRootDomain } from '@/api/utils/pathUtils';
-import { createClient } from '@/api/utils/supabase/middleware-client';
+import { getRequestUrl } from '@tet/api';
+import { dcpFetch } from '@tet/api/users/dcp.fetch';
+import { getRootDomain } from '@tet/api/utils/pathUtils';
+import { createClient } from '@tet/api/utils/supabase/middleware-client';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function updateSessionOrRedirect(request: NextRequest) {

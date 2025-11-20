@@ -1,4 +1,4 @@
-import { CollectiviteEngagee } from '@/api';
+import { CollectiviteEngagee } from '@tet/api';
 
 const notEmpty = (l: unknown[]): boolean => l.length > 0;
 

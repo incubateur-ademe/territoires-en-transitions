@@ -1,6 +1,6 @@
 import { useSaveSnapshot } from '@/app/app/pages/collectivite/Referentiels/SaveScore/useSaveScore';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
-import { ReferentielId } from '@/domain/referentiels';
+import { ReferentielId } from '@tet/domain/referentiels';
 import {
   Alert,
   ButtonGroup,
@@ -10,8 +10,8 @@ import {
   Modal,
   ModalFooterOKCancel,
   useEventTracker,
-} from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+} from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { DateTime } from 'luxon';
 import { useRef, useState } from 'react';
 

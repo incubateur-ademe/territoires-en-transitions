@@ -1,5 +1,5 @@
-import { ListFichesRequestFilters } from '@/domain/plans';
-import { CountByRecordGeneralType } from '@/domain/utils';
+import { ListFichesRequestFilters } from '@tet/domain/plans';
+import { CountByRecordGeneralType } from '@tet/domain/utils';
 import { ArrayCountByProperty } from '../count-by.types';
 import { countByArrayValues } from './count-by-array-value';
 

@@ -1,7 +1,3 @@
-import { collectiviteIdInputSchemaCoerce } from '@/backend/collectivites/collectivite-id.input';
-import TrajectoiresSpreadsheetService from '@/backend/indicateurs/trajectoires/trajectoires-spreadsheet.service';
-import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
-import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { Controller, Get, Logger, Next, Query, Res } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -10,6 +6,10 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
+import { collectiviteIdInputSchemaCoerce } from '@tet/backend/collectivites/collectivite-id.input';
+import TrajectoiresSpreadsheetService from '@tet/backend/indicateurs/trajectoires/trajectoires-spreadsheet.service';
+import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import type { NextFunction, Response } from 'express';
 import { createZodDto } from 'nestjs-zod';
 import { AllowPublicAccess } from '../../users/decorators/allow-public-access.decorator';

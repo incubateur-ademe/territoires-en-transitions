@@ -1,5 +1,5 @@
 'use client';
-import { cn } from '@/ui/utils/cn';
+import { cn } from '@tet/ui/utils/cn';
 import NextLink from 'next/link';
 
 type LinkWithIcon = {

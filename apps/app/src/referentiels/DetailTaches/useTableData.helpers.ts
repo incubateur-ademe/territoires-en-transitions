@@ -3,12 +3,14 @@ import {
   ActionTypeEnum,
   flatMapActionsEnfants,
   StatutAvancementEnum,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 
 /**
  * Vérifie si une action est non renseigné ou contient des sous-actions ou taches non renseignées ou pas de sous actions ou taches
  */
-export function hasNonInformedActionOrNonInformedChild(action: ActionDetailed): boolean {
+export function hasNonInformedActionOrNonInformedChild(
+  action: ActionDetailed
+): boolean {
   return flatMapActionsEnfants(action).some((act) => {
     const isSousAction = act.actionType === ActionTypeEnum.SOUS_ACTION;
     if (isSousAction === false) {
@@ -18,34 +20,42 @@ export function hasNonInformedActionOrNonInformedChild(action: ActionDetailed): 
     if (isConcerned === false) {
       return false;
     }
-    const isNotRenseigne = act.score.renseigne === false || act.score.avancement === StatutAvancementEnum.NON_RENSEIGNE;
+    const isNotRenseigne =
+      act.score.renseigne === false ||
+      act.score.avancement === StatutAvancementEnum.NON_RENSEIGNE;
     if (isNotRenseigne === false) {
       return false;
     }
 
-
     const hasNoChildren = act.actionsEnfant.length === 0;
     const hasNonRenseigneChild = act.actionsEnfant.some(
-      (a: ActionDetailed) => a.score.concerne === true && a.score.renseigne === false
+      (a: ActionDetailed) =>
+        a.score.concerne === true && a.score.renseigne === false
     );
-    return (hasNoChildren || hasNonRenseigneChild);
+    return hasNoChildren || hasNonRenseigneChild;
   });
 }
 
 /**
  * Vérifie si une sous action est détaillée ou si une de ses taches est détaillée
  */
-export function hasDetailedSousActionOrInformedTache(action: ActionDetailed): boolean {
+export function hasDetailedSousActionOrInformedTache(
+  action: ActionDetailed
+): boolean {
   return flatMapActionsEnfants(action).some((act) => {
     const isDetaille = act.score.avancement === StatutAvancementEnum.DETAILLE;
     const isSousAction = act.actionType === ActionTypeEnum.SOUS_ACTION;
     const isConcerned = act.score.concerne === true;
     const isNotRenseigne = act.score.renseigne === false;
     const hasRenseigneChild = act.actionsEnfant.some(
-      (a: ActionDetailed) => a.score.concerne === true && a.score.renseigne === true
+      (a: ActionDetailed) =>
+        a.score.concerne === true && a.score.renseigne === true
     );
 
-    return isDetaille || (isSousAction && isConcerned && isNotRenseigne && hasRenseigneChild);
+    return (
+      isDetaille ||
+      (isSousAction && isConcerned && isNotRenseigne && hasRenseigneChild)
+    );
   });
 }
 
@@ -133,7 +143,8 @@ export function filterSousAction(
   // - OU avec statut non renseigné, et des tâches renseignées
   // ou sous-action contenant une tâche au statut détaillé
   if (statuts.includes(StatutAvancementEnum.DETAILLE)) {
-    const isDetaille = action.score.avancement === StatutAvancementEnum.DETAILLE;
+    const isDetaille =
+      action.score.avancement === StatutAvancementEnum.DETAILLE;
     const hasDetailleChild = action.actionsEnfant.some(
       (a) => a.score.avancement === StatutAvancementEnum.DETAILLE
     );
@@ -143,8 +154,10 @@ export function filterSousAction(
       (a) => a.score.concerne === true && a.score.renseigne === true
     );
 
-    const isSousActionWithPartialTaches = isConcerned && isNotRenseigne && hasRenseigneChild;
-    const isDetailedSousAction = isDetaille || hasDetailleChild || isSousActionWithPartialTaches;
+    const isSousActionWithPartialTaches =
+      isConcerned && isNotRenseigne && hasRenseigneChild;
+    const isDetailedSousAction =
+      isDetaille || hasDetailleChild || isSousActionWithPartialTaches;
 
     if (isDetailedSousAction) {
       return true;
@@ -155,14 +168,24 @@ export function filterSousAction(
   const isConcerned = action.score.concerne === true;
   const isRenseigne = action.score.renseigne === true;
   const hasValidAvancement = !!action.score.avancement;
-  const isNotNonRenseigne = hasValidAvancement && action.score.avancement !== StatutAvancementEnum.NON_RENSEIGNE;
+  const isNotNonRenseigne =
+    hasValidAvancement &&
+    action.score.avancement !== StatutAvancementEnum.NON_RENSEIGNE;
   const hasAvancement = !!action.score.avancement;
-  const avancementMatches = hasAvancement && statuts.includes(action.score.avancement ?? '');
-  const hasMatchingChild = !hasAvancement && action.actionsEnfant.some((a) =>
-    statuts.includes(a.score.avancement ?? '')
-  );
+  const avancementMatches =
+    hasAvancement && statuts.includes(action.score.avancement ?? '');
+  const hasMatchingChild =
+    !hasAvancement &&
+    action.actionsEnfant.some((a) =>
+      statuts.includes(a.score.avancement ?? '')
+    );
 
-  if (isConcerned && isRenseigne && isNotNonRenseigne && (avancementMatches || hasMatchingChild)) {
+  if (
+    isConcerned &&
+    isRenseigne &&
+    isNotNonRenseigne &&
+    (avancementMatches || hasMatchingChild)
+  ) {
     return true;
   }
   return false;

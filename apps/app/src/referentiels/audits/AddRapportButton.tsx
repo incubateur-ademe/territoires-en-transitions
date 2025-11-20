@@ -1,6 +1,6 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
-import { Button, Modal } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Button, Modal } from '@tet/ui';
 import { useState } from 'react';
 import { useAddPreuveToAudit } from './useAddPreuveToAudit';
 

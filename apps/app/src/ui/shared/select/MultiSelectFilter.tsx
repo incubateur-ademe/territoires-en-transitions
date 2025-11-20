@@ -1,7 +1,7 @@
 import MultiSelectDropdown, {
   TMultiSelectDropdownProps,
 } from '@/app/ui/shared/select/MultiSelectDropdown';
-import { Icon, ITEM_ALL } from '@/ui';
+import { Icon, ITEM_ALL } from '@tet/ui';
 
 import { getIsAllSelected, getOptions } from './commons';
 

@@ -6,7 +6,7 @@ import {
   getNextConsentEnvId,
   PostHogProvider,
   ScriptLikeProps,
-} from '@/ui';
+} from '@tet/ui';
 import Script from 'next/script';
 import { PostHog } from 'posthog-js';
 import { ReactNode, useState } from 'react';

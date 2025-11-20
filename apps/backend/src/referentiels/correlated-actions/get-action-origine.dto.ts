@@ -1,4 +1,4 @@
-import { actionOrigineSchema } from '@/domain/referentiels';
+import { actionOrigineSchema } from '@tet/domain/referentiels';
 import { z } from 'zod';
 
 export const getActionOrigineDtoSchema = z.object({

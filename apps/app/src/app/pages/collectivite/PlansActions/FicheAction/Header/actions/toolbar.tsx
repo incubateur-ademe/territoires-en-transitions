@@ -1,7 +1,7 @@
 import { ExportFicheModal } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
 import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { PermissionOperation } from '@/domain/users';
+import { PermissionOperation } from '@tet/domain/users';
 import { Fiche } from '../../data/use-get-fiche';
 import ModaleEmplacement from './EmplacementFiche/ModaleEmplacement';
 

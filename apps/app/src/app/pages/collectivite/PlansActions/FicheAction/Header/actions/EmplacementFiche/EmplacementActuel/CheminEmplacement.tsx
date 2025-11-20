@@ -1,6 +1,6 @@
 import { usePlanActionChemin } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionChemin';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
-import { Icon } from '@/ui';
+import { Icon } from '@tet/ui';
 
 type CheminEmplacementProps = {
   ficheId: number;

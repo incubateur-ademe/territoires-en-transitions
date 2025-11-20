@@ -1,8 +1,8 @@
 import {
   isTrajectoireSecteur,
   TrajectoirePropertiesType,
-} from '@/domain/indicateurs';
-import { Accordion } from '@/ui';
+} from '@tet/domain/indicateurs';
+import { Accordion } from '@tet/ui';
 import { METHODO_PAR_SECTEUR } from '../../../../indicateurs/trajectoires/trajectoire-constants';
 import { MethodologieSection } from './MethodologieSection';
 

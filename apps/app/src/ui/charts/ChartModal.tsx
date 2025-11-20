@@ -1,4 +1,4 @@
-import { Modal } from '@/ui';
+import { Modal } from '@tet/ui';
 
 import DownloadCanvasButton from '@/app/ui/buttons/DownloadCanvasButton';
 import { ChartProps } from './Chart';

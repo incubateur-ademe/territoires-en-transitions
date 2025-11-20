@@ -1,11 +1,11 @@
 'use client';
 
-import { useCollectiviteId } from '@/api/collectivites';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { usePersonneListe } from '@/app/ui/dropdownLists/PersonnesDropdown/usePersonneListe';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import { TOption } from '@/app/ui/shared/select/commons';
-import { Plan } from '@/domain/plans';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Plan } from '@tet/domain/plans';
 import { without } from 'es-toolkit';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { useFichesActionFiltresListe } from '../data/use-fiches-filters-list';

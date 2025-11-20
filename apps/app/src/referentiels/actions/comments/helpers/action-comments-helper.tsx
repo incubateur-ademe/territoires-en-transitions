@@ -5,12 +5,12 @@ import {
   DiscussionMessages,
   discussionOrderByValues,
   discussionStatus,
-} from '@/domain/collectivites';
+} from '@tet/domain/collectivites';
 import {
   isSousMesure as isSousMesureDomain,
   ReferentielId,
-} from '@/domain/referentiels';
-import { CollectiviteAccess } from '@/domain/users';
+} from '@tet/domain/referentiels';
+import { CollectiviteAccess } from '@tet/domain/users';
 
 /**
  * Recursively extracts all actionId and nom properties from actionsEnfant

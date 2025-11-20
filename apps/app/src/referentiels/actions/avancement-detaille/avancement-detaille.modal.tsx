@@ -1,6 +1,6 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
-import { Modal, ModalFooterOKCancel } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { Modal, ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { ActionJustificationField } from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.justification-field';
 import AvancementDetailleSliderAutoSave from './avancement-detaille.slider.auto-save';
 

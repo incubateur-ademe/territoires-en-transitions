@@ -1,4 +1,3 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { makeCollectivitePlansActionsListUrl } from '@/app/app/paths';
 import { useFichesCountBy } from '@/app/plans/fiches/data/use-fiches-count-by';
 import { Statuts } from '@/app/plans/plans/components/card/statuts';
@@ -8,9 +7,10 @@ import {
 } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.container';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Statut } from '@/domain/plans';
-import { CountByRecordType } from '@/domain/utils';
-import { Button } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Statut } from '@tet/domain/plans';
+import { CountByRecordType } from '@tet/domain/utils';
+import { Button } from '@tet/ui';
 
 /**
  * Module unique car la page TDB synthétique

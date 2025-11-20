@@ -3,7 +3,7 @@
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { ActionTypeEnum } from '@/domain/referentiels';
+import { ActionTypeEnum } from '@tet/domain/referentiels';
 import ActionCommentsPanel from '../../../action/[actionId]/_components/comments/action-comments.panel';
 
 export default function Page() {

@@ -1,16 +1,16 @@
 // WARNING: Do these imports first
-import '@/backend/utils/sentry-init';
+import '@tet/backend/utils/sentry-init';
 // Other imports
 import { Logger } from '@nestjs/common';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 
-import { ContextStoreService } from '@/backend/utils/context/context.service';
+import { ContextStoreService } from '@tet/backend/utils/context/context.service';
 import {
   CustomLogger,
   getDefaultLoggerOptions,
-} from '@/backend/utils/log/custom-logger.service';
-import { AllExceptionsFilter } from '@/backend/utils/nest/all-exceptions.filter';
-import { CustomZodValidationPipe } from '@/backend/utils/nest/custom-zod-validation.pipe';
+} from '@tet/backend/utils/log/custom-logger.service';
+import { AllExceptionsFilter } from '@tet/backend/utils/nest/all-exceptions.filter';
+import { CustomZodValidationPipe } from '@tet/backend/utils/nest/custom-zod-validation.pipe';
 import { json, NextFunction, Request, Response } from 'express';
 import { AppModule } from './app.module';
 

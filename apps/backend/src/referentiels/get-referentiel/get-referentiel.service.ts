@@ -1,13 +1,6 @@
-import { preuveActionTable } from '@/backend/collectivites/documents/models/preuve-action.table';
-import { preuveReglementaireDefinitionTable } from '@/backend/collectivites/documents/models/preuve-reglementaire-definition.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import {
-  ActionDefinition,
-  ActionDefinitionEssential,
-  ActionTreeNode,
-  ActionTypeIncludingExemple,
-  ReferentielId,
-} from '@/domain/referentiels';
+import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
+import { preuveReglementaireDefinitionTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire-definition.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   HttpException,
   HttpStatus,
@@ -15,6 +8,13 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import {
+  ActionDefinition,
+  ActionDefinitionEssential,
+  ActionTreeNode,
+  ActionTypeIncludingExemple,
+  ReferentielId,
+} from '@tet/domain/referentiels';
 import { and, asc, eq, getTableColumns, ilike, sql } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
 import { actionOrigineTable } from '../correlated-actions/action-origine.table';

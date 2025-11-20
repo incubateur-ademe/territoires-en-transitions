@@ -1,6 +1,6 @@
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
-import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import { createdAt, createdBy } from '@/backend/utils/column.utils';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
+import { createdAt, createdBy } from '@tet/backend/utils/column.utils';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 
 export const ficheActionSharingTable = pgTable(

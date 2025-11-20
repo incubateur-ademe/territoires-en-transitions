@@ -1,15 +1,15 @@
 import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { useSupabase } from '@/api';
-import { ModuleIndicateursSelect, modulesSave } from '@/api/plan-actions';
-import { useUser } from '@/api/users';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
-import { ListDefinitionsInputFilters } from '@/domain/indicateurs';
+import { useSupabase } from '@tet/api';
+import { ModuleIndicateursSelect, modulesSave } from '@tet/api/plan-actions';
+import { useUser } from '@tet/api/users';
+import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
 import {
   Event,
   Field,
@@ -17,8 +17,8 @@ import {
   Modal,
   ModalFooterOKCancel,
   useEventTracker,
-} from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+} from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 
 type Props = {
   module: ModuleIndicateursSelect;

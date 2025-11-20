@@ -1,4 +1,4 @@
-import { TagEnum, TagType } from '@/domain/collectivites';
+import { TagEnum, TagType } from '@tet/domain/collectivites';
 import {
   Cible,
   ParticipationCitoyenne,
@@ -6,7 +6,7 @@ import {
   Statut,
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
-} from '@/domain/plans';
+} from '@tet/domain/plans';
 
 export const ficheTagTypes = [
   TagEnum.Partenaire,

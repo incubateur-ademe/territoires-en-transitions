@@ -1,9 +1,9 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import ModaleCreerIndicateur from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { Button } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Button } from '@tet/ui';
 import { ReactNode, useState } from 'react';
 
 /**

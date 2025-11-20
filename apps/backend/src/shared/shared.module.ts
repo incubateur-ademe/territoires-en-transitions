@@ -1,5 +1,5 @@
-import { EffetAttenduService } from '@/backend/shared/effet-attendu/effet-attendu.service';
-import { ThematiqueService } from '@/backend/shared/thematiques/thematique.service';
+import { EffetAttenduService } from '@tet/backend/shared/effet-attendu/effet-attendu.service';
+import { ThematiqueService } from '@tet/backend/shared/thematiques/thematique.service';
 import { Module } from '@nestjs/common';
 
 @Module({

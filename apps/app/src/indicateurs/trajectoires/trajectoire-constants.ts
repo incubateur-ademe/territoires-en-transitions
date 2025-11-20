@@ -5,7 +5,7 @@ import {
   SEQUESTRATION_CARBONE_PROPERTIES,
   TrajectoirePropertiesType,
   TrajectoireSecteursType,
-} from '@/domain/indicateurs';
+} from '@tet/domain/indicateurs';
 
 export const SIMULATEUR_TERRITORIAL_URL =
   'https://planification-territoires.ecologie.gouv.fr/';

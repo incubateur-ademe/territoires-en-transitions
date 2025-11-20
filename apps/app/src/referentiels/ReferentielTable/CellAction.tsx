@@ -1,7 +1,7 @@
 import { makeReferentielTacheUrl } from '@/app/app/paths';
 import { Kbd } from '@/app/ui/shared/Kbd';
-import { ReferentielId } from '@/domain/referentiels';
-import { Tooltip } from '@/ui';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { Tooltip } from '@tet/ui';
 import Link from 'next/link';
 import { CellProps } from 'react-table';
 import { ActionReferentiel } from '../DEPRECATED_scores.types';

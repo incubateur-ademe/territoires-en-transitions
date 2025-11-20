@@ -1,6 +1,6 @@
-import { RouterInput, useTRPC } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { RouterInput, useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
 
 type DefinitionFieldsInput =
   RouterInput['indicateurs']['definitions']['update']['indicateurFields'];

@@ -1,6 +1,6 @@
-import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { Injectable, Logger } from '@nestjs/common';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import {
   aliasedTable,
   and,
@@ -15,10 +15,10 @@ import {
 import { collectiviteCardView } from '../../collectivites/shared/models/collectivite-card.view';
 import { DatabaseService } from '../../utils/database/database.service';
 
-import { indicateurSourceMetadonneeTable } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
-import { indicateurSourceTable } from '@/backend/indicateurs/shared/models/indicateur-source.table';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { AuthUser } from '@/backend/users/models/auth.models';
+import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
+import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { indicateurValeurTable } from '../valeurs/indicateur-valeur.table';
 import { GetMoyenneCollectivitesRequest } from './get-moyenne-collectivites.request';
 

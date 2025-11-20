@@ -1,18 +1,18 @@
+import { INestApplication } from '@nestjs/common';
 import {
   createCategorieTag,
   createGroupement,
   createPersonneTag,
   createServiceTag,
-} from '@/backend/collectivites/collectivites.test-fixture';
+} from '@tet/backend/collectivites/collectivites.test-fixture';
 import {
   createAxe,
   createFiche,
   createPlan,
-} from '@/backend/plans/fiches/fiches.test-fixture';
-import { createThematique } from '@/backend/shared/shared.test-fixture';
-import { getAuthUser, getTestApp } from '@/backend/test';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { INestApplication } from '@nestjs/common';
+} from '@tet/backend/plans/fiches/fiches.test-fixture';
+import { createThematique } from '@tet/backend/shared/shared.test-fixture';
+import { getAuthUser, getTestApp } from '@tet/backend/test';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { inferProcedureInput } from '@trpc/server';
 import { eq, inArray } from 'drizzle-orm';
 import z from 'zod';

@@ -1,5 +1,5 @@
 import { TAxeRow } from '@/app/types/alias';
-import { Breadcrumbs } from '@/ui';
+import { Breadcrumbs } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import {
   generateFilArianeLinks,

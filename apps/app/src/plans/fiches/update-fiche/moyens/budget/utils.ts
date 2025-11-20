@@ -1,4 +1,4 @@
-import { FicheActionBudget, FicheWithRelations } from '@/domain/plans';
+import { FicheActionBudget, FicheWithRelations } from '@tet/domain/plans';
 import { isAfter } from 'date-fns';
 import { toBudgetProperties } from './to-budget-properties';
 

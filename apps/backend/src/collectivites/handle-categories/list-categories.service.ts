@@ -1,9 +1,9 @@
-import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { TagWithCollectiviteId } from '@/domain/collectivites';
-import { PermissionOperationEnum } from '@/domain/users';
 import { Injectable, Logger } from '@nestjs/common';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { TagWithCollectiviteId } from '@tet/domain/collectivites';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import { and, eq, inArray, isNull, or } from 'drizzle-orm';
 import { AuthUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';

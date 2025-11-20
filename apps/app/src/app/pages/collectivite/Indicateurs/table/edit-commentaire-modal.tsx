@@ -6,8 +6,8 @@ import {
   ModalFooter,
   ModalFooterOKCancel,
   Textarea,
-} from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+} from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import { getSourceTypeLabel } from '../constants';
 import { SourceType } from '../types';

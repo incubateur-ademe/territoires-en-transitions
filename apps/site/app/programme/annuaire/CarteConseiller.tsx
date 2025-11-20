@@ -2,7 +2,7 @@
 
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
-import { Icon, Tooltip, useCopyToClipboard } from '@/ui';
+import { Icon, Tooltip, useCopyToClipboard } from '@tet/ui';
 import { useState } from 'react';
 
 type CarteConseillerProps = {

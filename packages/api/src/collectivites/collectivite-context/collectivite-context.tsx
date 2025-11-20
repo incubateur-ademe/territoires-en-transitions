@@ -3,7 +3,7 @@
 import {
   CollectiviteAccess,
   UserWithCollectiviteAccesses,
-} from '@/domain/users';
+} from '@tet/domain/users';
 import { createContext, ReactNode, useState } from 'react';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 

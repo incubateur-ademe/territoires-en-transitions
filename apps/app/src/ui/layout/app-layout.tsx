@@ -4,12 +4,12 @@ import classNames from 'classnames';
 import { usePathname } from 'next/navigation';
 import { ReactNode, useEffect } from 'react';
 
-import { useUser } from '@/api/users';
 import { Header } from '@/app/ui/layout/header/header';
 import { SidePanel } from '@/app/ui/layout/side-panel/side-panel';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { useDemoMode } from '@/app/users/demo-mode-support-provider';
-import { Alert, Checkbox, FooterTeT, useOnlineStatus } from '@/ui';
+import { useUser } from '@tet/api/users';
+import { Alert, Checkbox, FooterTeT, useOnlineStatus } from '@tet/ui';
 
 /**
  * Permet de faire matcher la largeur du panneau avec son emplacement dans la grille.

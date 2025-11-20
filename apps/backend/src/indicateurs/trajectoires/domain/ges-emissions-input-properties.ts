@@ -1,4 +1,4 @@
-import { TrajectoirePropertiesType } from '@/domain/indicateurs';
+import { TrajectoirePropertiesType } from '@tet/domain/indicateurs';
 
 export const GES_SPECIFIC_INPUT_SECTEURS: TrajectoirePropertiesType['secteurs'] =
   [

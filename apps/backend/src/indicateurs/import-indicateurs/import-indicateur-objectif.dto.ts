@@ -1,4 +1,4 @@
-import { indicateurObjectifSchema } from '@/domain/indicateurs';
+import { indicateurObjectifSchema } from '@tet/domain/indicateurs';
 import * as z from 'zod/mini';
 
 export const importObjectifSchema = z.object({

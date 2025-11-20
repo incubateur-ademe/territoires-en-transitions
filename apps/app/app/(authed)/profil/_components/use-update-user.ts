@@ -1,5 +1,5 @@
-import { useTRPC } from '@/api';
 import { useMutation } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import { useRouter } from 'next/navigation';
 
 export const useUpdateUser = () => {

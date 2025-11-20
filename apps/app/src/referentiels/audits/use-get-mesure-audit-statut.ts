@@ -1,6 +1,6 @@
-import { RouterOutput, useTRPC } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
 import { useQuery } from '@tanstack/react-query';
+import { RouterOutput, useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
 
 export type MesureAuditStatut =
   RouterOutput['referentiels']['labellisations']['getMesureAuditStatut'];

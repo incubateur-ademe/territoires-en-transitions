@@ -1,5 +1,5 @@
-import { TagWithCollectiviteId } from '@/domain/collectivites';
-import { SelectMultipleProps } from '@/ui';
+import { TagWithCollectiviteId } from '@tet/domain/collectivites';
+import { SelectMultipleProps } from '@tet/ui';
 import SelectTags from '../tags/SelectTags';
 import { useFinanceursListe } from './useFinanceursListe';
 

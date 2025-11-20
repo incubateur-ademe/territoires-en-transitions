@@ -1,4 +1,4 @@
-import { Button, VisibleWhen } from '@/ui';
+import { Button, VisibleWhen } from '@tet/ui';
 import { ReactNode } from 'react';
 
 type EditableSectionProps = {

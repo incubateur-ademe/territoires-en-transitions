@@ -2,7 +2,7 @@ import {
   createdAt,
   modifiedAt,
   modifiedBy,
-} from '@/backend/utils/column.utils';
+} from '@tet/backend/utils/column.utils';
 import {
   AnyPgColumn,
   integer,

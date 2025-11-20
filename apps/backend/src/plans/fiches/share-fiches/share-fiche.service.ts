@@ -1,13 +1,13 @@
-import { axeTable } from '@/backend/plans/fiches/shared/models/axe.table';
-import { ficheActionAxeTable } from '@/backend/plans/fiches/shared/models/fiche-action-axe.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { Injectable, Logger } from '@nestjs/common';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-axe.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   FicheSharing,
   FicheSharingCreate,
   FicheWithRelations,
-} from '@/domain/plans';
-import { Injectable, Logger } from '@nestjs/common';
+} from '@tet/domain/plans';
 import {
   and,
   eq,

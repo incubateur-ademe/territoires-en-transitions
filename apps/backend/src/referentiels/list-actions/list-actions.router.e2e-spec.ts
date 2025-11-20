@@ -1,9 +1,9 @@
-import { YOLO_DODO } from '@/backend/test';
+import { YOLO_DODO } from '@tet/backend/test';
 import {
   ActionTypeEnum,
   ListActionsRequestOptionsType,
   ReferentielIdEnum,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import { inferProcedureInput } from '@trpc/server';
 import { getTestRouter } from '../../../test/app-utils';
 import { getAnonUser, getAuthUser } from '../../../test/auth-utils';

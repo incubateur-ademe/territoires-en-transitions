@@ -1,7 +1,7 @@
-import { createFiche } from '@/backend/plans/fiches/fiches.test-fixture';
-import { getAuthUser, getTestApp, YOLO_DODO } from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { createFiche } from '@tet/backend/plans/fiches/fiches.test-fixture';
+import { getAuthUser, getTestApp, YOLO_DODO } from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { describe, expect } from 'vitest';
 import { createIndicateurPerso } from '../definitions.test-fixture';
 

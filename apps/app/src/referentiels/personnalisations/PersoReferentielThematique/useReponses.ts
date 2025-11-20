@@ -1,13 +1,12 @@
-import { DBClient } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
-import { useSupabase } from '@/api';
 import {
   TQuestionRead,
   TReponse,
   TReponseRead,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
-import { roundTo } from '@/domain/utils';
 import { useQueries } from '@tanstack/react-query';
+import { DBClient, useSupabase } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { roundTo } from '@tet/domain/utils';
 
 // charge les réponses existantes pour une série de questions donnée
 export const useReponses = (questions: TQuestionRead[]) => {

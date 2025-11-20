@@ -1,8 +1,16 @@
-import { WEBHOOK_NOTIFICATIONS_QUEUE_NAME } from '@/backend/utils/bullmq/queue-names.constants';
-import { ContextStoreService } from '@/backend/utils/context/context.service';
-import { getSentryContextFromApplicationContext } from '@/backend/utils/sentry-init';
-import { webhookConfigurationTable } from '@/backend/utils/webhooks/webhook-configuration.table';
-import { webhookMessageTable } from '@/backend/utils/webhooks/webhook-message.table';
+import { Processor, WorkerHost } from '@nestjs/bullmq';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
+import * as Sentry from '@sentry/nestjs';
+import { WEBHOOK_NOTIFICATIONS_QUEUE_NAME } from '@tet/backend/utils/bullmq/queue-names.constants';
+import { ContextStoreService } from '@tet/backend/utils/context/context.service';
+import { getSentryContextFromApplicationContext } from '@tet/backend/utils/sentry-init';
+import { webhookConfigurationTable } from '@tet/backend/utils/webhooks/webhook-configuration.table';
+import { webhookMessageTable } from '@tet/backend/utils/webhooks/webhook-message.table';
 import {
   ApplicationSousScopesType,
   getErrorMessage,
@@ -13,15 +21,7 @@ import {
   WebhookPayloadFormat,
   WebhookPayloadFormatEnum,
   WebhookStatus,
-} from '@/domain/utils';
-import { Processor, WorkerHost } from '@nestjs/bullmq';
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
-import * as Sentry from '@sentry/nestjs';
+} from '@tet/domain/utils';
 import { Job } from 'bullmq';
 import { eq } from 'drizzle-orm';
 import { DateTime } from 'luxon';

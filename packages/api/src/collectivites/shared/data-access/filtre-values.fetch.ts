@@ -5,7 +5,7 @@ import {
   FiltreRessourceLiees,
   FiltreValues,
   filtreRessourceLieesSchema,
-} from '@/domain/shared';
+} from '@tet/domain/shared';
 
 type Input = {
   dbClient: DBClient;

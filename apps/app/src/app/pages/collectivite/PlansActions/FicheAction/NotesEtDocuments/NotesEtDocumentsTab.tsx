@@ -1,5 +1,5 @@
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
-import { FicheWithRelations } from '@/domain/plans';
+import { FicheWithRelations } from '@tet/domain/plans';
 import Documents from './Documents/Documents';
 import NotesComplementaires from './Notes/NotesComplementaires';
 

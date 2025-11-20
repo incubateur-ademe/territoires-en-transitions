@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Button,
   CGU_URL,
@@ -11,8 +12,7 @@ import {
   ModalFooterOKCancel,
   useEventTracker,
   validateTel,
-} from '@/ui';
-import { zodResolver } from '@hookform/resolvers/zod';
+} from '@tet/ui';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { SignupDataStep3, SignupPropsWithState } from './type';
@@ -24,7 +24,7 @@ const useSignupStep3 = () => {
     prenom: z.string().min(1, 'Champ requis'),
     telephone: z.string().refine(validateTel),
     cgu_acceptees: z.boolean().refine((value) => !!value, {
-        error: "Vous devez accepter le cadre d'utilisation de la plateforme"
+      error: "Vous devez accepter le cadre d'utilisation de la plateforme",
     }),
   });
 

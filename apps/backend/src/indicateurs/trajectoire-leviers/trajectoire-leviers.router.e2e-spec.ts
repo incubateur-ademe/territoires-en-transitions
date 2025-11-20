@@ -1,9 +1,9 @@
-import { getAnonUser, getAuthUser, YOLO_DODO } from '@/backend/test';
+import { getAnonUser, getAuthUser, YOLO_DODO } from '@tet/backend/test';
 import {
   AuthenticatedUser,
   AuthRole,
   AuthUser,
-} from '@/backend/users/models/auth.models';
+} from '@tet/backend/users/models/auth.models';
 import { getTestRouter } from '../../../test/app-utils';
 import { TrpcRouter } from '../../utils/trpc/trpc.router';
 

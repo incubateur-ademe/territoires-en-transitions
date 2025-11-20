@@ -1,5 +1,5 @@
-import { ParticipationCitoyenne } from '@/domain/plans';
-import { Select, SelectMultipleProps } from '@/ui';
+import { ParticipationCitoyenne } from '@tet/domain/plans';
+import { Select, SelectMultipleProps } from '@tet/ui';
 import { ficheActionParticipationOptions } from '../../listesStatiques';
 
 type ParticipationCitoyenneDropdownProps = Omit<

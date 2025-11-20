@@ -1,8 +1,8 @@
 'use client';
-import { useCollectiviteId } from '@/api/collectivites';
-import { useTRPC } from '@/api/utils/trpc/client';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { useRouter } from 'next/navigation';
 
 export const useCreateFicheAction = () => {

@@ -1,6 +1,6 @@
-import { RouterInput, RouterOutput, useTRPC } from '@/api';
-import { ListFichesRequestFilters } from '@/domain/plans';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
+import { ListFichesRequestFilters } from '@tet/domain/plans';
 
 export type ListFichesInput = RouterInput['plans']['fiches']['listFiches'];
 export type QueryOptionsSchema = NonNullable<ListFichesInput['queryOptions']>;

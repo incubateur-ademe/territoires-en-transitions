@@ -1,5 +1,5 @@
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { getAvailableSourcesRequestSchema } from './get-available-sources.request';
 import IndicateurSourcesService from './indicateur-sources.service';
 

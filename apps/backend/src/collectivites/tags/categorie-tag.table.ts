@@ -1,4 +1,4 @@
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { boolean, integer, pgTable } from 'drizzle-orm/pg-core';
 import { createdAt, createdBy } from '../../utils/column.utils';
 import { tagTableBase } from './tag.table-base';

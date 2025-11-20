@@ -1,6 +1,6 @@
 import type { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
-import { MembreFonction } from '@/domain/collectivites';
-import { StatutAvancementIncludingNonConcerne } from '@/domain/referentiels';
+import { MembreFonction } from '@tet/domain/collectivites';
+import { StatutAvancementIncludingNonConcerne } from '@tet/domain/referentiels';
 
 // Define all labels from app
 export const referentielToName: Record<

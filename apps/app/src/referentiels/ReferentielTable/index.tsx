@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/api/collectivites';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { useCallback, useMemo } from 'react';
 import { TableInstance } from 'react-table';
 import { useReferentielId } from '../referentiel-context';

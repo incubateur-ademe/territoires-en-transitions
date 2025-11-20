@@ -5,7 +5,7 @@ import {
   LabellisationCritere,
   LabellisationDemande,
   ReferentielId,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import { ObjectToSnake } from 'ts-case-convert';
 
 // et surchargé pour gérer le cas sujet="cot" (audit SANS labellisation)

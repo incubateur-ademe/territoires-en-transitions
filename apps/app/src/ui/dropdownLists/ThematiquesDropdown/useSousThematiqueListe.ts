@@ -1,6 +1,6 @@
-import { useSupabase } from '@/api';
-import { SousThematique } from '@/domain/shared';
 import { useQuery } from '@tanstack/react-query';
+import { useSupabase } from '@tet/api';
+import { SousThematique } from '@tet/domain/shared';
 import { objectToCamel } from 'ts-case-convert';
 
 export const useSousThematiqueListe = (): SousThematique[] => {

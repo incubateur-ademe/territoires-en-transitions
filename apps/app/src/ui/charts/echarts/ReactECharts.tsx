@@ -4,7 +4,7 @@
  * Ref: https://dev.to/manufac/using-apache-echarts-with-react-and-typescript-353k
  */
 
-import { preset } from '@/ui';
+import { preset } from '@tet/ui';
 import type {
   ECElementEvent,
   ECharts,

@@ -18,7 +18,7 @@ import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropd
 import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import { ListFichesRequestFilters as Filtres } from '@/domain/plans';
+import { ListFichesRequestFilters as Filtres } from '@tet/domain/plans';
 import {
   Checkbox,
   Field,
@@ -27,7 +27,7 @@ import {
   InputDateTime,
   Select,
   Spacer,
-} from '@/ui';
+} from '@tet/ui';
 import { isNil } from 'es-toolkit';
 import { useEffect, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';

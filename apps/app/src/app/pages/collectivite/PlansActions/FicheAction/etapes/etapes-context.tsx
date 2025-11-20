@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useReducer } from 'react';
 
-import { RouterInput, RouterOutput } from '@/api';
+import { RouterInput, RouterOutput } from '@tet/api';
 
 type Action =
   | {

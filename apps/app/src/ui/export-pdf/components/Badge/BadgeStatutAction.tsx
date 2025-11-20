@@ -1,6 +1,6 @@
 import { avancementToLabel } from '@/app/app/labels';
 import { statusToState } from '@/app/referentiels/actions/action-statut/action-statut.badge';
-import { StatutAvancementIncludingNonConcerne } from '@/domain/referentiels';
+import { StatutAvancementIncludingNonConcerne } from '@tet/domain/referentiels';
 import classNames from 'classnames';
 import { Badge } from './Badge';
 

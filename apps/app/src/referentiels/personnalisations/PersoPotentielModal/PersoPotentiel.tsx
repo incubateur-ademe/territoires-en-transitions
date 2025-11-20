@@ -1,8 +1,8 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import Modal from '@/app/ui/shared/floating-ui/Modal';
-import { getReferentielIdFromActionId } from '@/domain/referentiels';
-import { Button } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
+import { Button } from '@tet/ui';
 import { useQuestionsReponses } from '../PersoReferentielThematique/useQuestionsReponses';
 import { PersoPotentielTabs } from './PersoPotentielTabs';
 import { PointsPotentiels } from './points-potentiels.label';

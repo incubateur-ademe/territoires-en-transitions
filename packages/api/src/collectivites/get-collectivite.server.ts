@@ -4,7 +4,7 @@ import {
   CollectiviteAccess,
   permissionsByRole,
   UserRole,
-} from '@/domain/users';
+} from '@tet/domain/users';
 import { cache } from 'react';
 import { getUser } from '../users/user-details.fetch.server';
 import {

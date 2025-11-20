@@ -1,11 +1,11 @@
 import IndicateurPersoNouveau from '@/app/app/pages/collectivite/Indicateurs/IndicateurPersoNouveau';
-import { FicheWithRelations } from '@/domain/plans';
-import { Modal } from '@/ui';
+import { Modal } from '@tet/ui';
+import { Fiche } from '../data/use-get-fiche';
 
 type ModaleCreerIndicateurProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  fiche?: FicheWithRelations;
+  fiche?: Fiche;
   isFavoriCollectivite?: boolean;
 };
 

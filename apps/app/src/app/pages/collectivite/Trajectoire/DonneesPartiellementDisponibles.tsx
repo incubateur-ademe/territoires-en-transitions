@@ -1,4 +1,4 @@
-import { Alert, Button } from '@/ui';
+import { Alert, Button } from '@tet/ui';
 
 interface DonneesPartiellementDisponibles {
   title?: string;

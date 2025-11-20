@@ -1,4 +1,4 @@
-import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { integer, pgEnum, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import z from 'zod';
 import { ficheActionTable } from './fiche-action.table';

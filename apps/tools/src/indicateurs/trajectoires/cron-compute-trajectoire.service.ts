@@ -1,12 +1,12 @@
+import { InjectQueue, Processor, WorkerHost } from '@nestjs/bullmq';
+import { Logger } from '@nestjs/common';
 import {
   CalculTrajectoireRequestType,
   CalculTrajectoireReset,
-} from '@/backend/indicateurs/trajectoires/calcul-trajectoire.request';
-import { CalculTrajectoireResponse } from '@/backend/indicateurs/trajectoires/calcul-trajectoire.response';
-import { COLLECTIVITE_SOURCE_ID } from '@/backend/indicateurs/valeurs/valeurs.constants';
-import { VerificationTrajectoireStatus } from '@/domain/indicateurs';
-import { InjectQueue, Processor, WorkerHost } from '@nestjs/bullmq';
-import { Logger } from '@nestjs/common';
+} from '@tet/backend/indicateurs/trajectoires/calcul-trajectoire.request';
+import { CalculTrajectoireResponse } from '@tet/backend/indicateurs/trajectoires/calcul-trajectoire.response';
+import { COLLECTIVITE_SOURCE_ID } from '@tet/backend/indicateurs/valeurs/valeurs.constants';
+import { VerificationTrajectoireStatus } from '@tet/domain/indicateurs';
 import { Job, Queue } from 'bullmq';
 import { chunk } from 'es-toolkit';
 import { TrpcClientService } from '../../utils/trpc/trpc-client.service';

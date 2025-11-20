@@ -1,6 +1,6 @@
-import { collectiviteIdInputSchemaCoerce } from '@/backend/collectivites/collectivite-id.input';
-import MetricsService from '@/backend/metrics/metrics.service';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
+import { collectiviteIdInputSchemaCoerce } from '@tet/backend/collectivites/collectivite-id.input';
+import MetricsService from '@tet/backend/metrics/metrics.service';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

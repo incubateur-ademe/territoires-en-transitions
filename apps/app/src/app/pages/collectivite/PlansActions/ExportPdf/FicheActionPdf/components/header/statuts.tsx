@@ -3,7 +3,7 @@ import {
   BadgeStatut,
   Stack,
 } from '@/app/ui/export-pdf/components';
-import { Priorite, Statut } from '@/domain/plans';
+import { Priorite, Statut } from '@tet/domain/plans';
 
 type StatuTsProps = {
   statut?: Statut | null;

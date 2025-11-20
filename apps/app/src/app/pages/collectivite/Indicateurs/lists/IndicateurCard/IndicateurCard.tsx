@@ -9,7 +9,7 @@ import {
   EmptyCard,
   Notification,
   Tooltip,
-} from '@/ui';
+} from '@tet/ui';
 
 import BadgeIndicateurPerso from '@/app/app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 import BadgeOpenData from '@/app/app/pages/collectivite/Indicateurs/components/BadgeOpenData';

@@ -1,4 +1,4 @@
-import { indicateurValeurSchemaCreate } from '@/domain/indicateurs';
+import { indicateurValeurSchemaCreate } from '@tet/domain/indicateurs';
 import * as z from 'zod/mini';
 
 /** Upsert d'une valeur d'indicateur pour une collectivité */

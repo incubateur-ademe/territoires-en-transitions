@@ -6,8 +6,8 @@ import {
   getFicheActionShareIcon,
 } from '@/app/plans/fiches/share-fiche/fiche-share-info';
 import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
-import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
-import { ButtonMenu, cn, Icon } from '@/ui';
+import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
+import { ButtonMenu, cn, Icon } from '@tet/ui';
 
 type Props = {
   fiche: FicheWithRelationsAndCollectivite;

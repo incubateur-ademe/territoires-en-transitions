@@ -1,12 +1,18 @@
-import DocumentService from '@/backend/collectivites/documents/services/document.service';
-import { ScoreIndicatifService } from '@/backend/referentiels/score-indicatif/score-indicatif.service';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import {
+  HttpException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
+import DocumentService from '@tet/backend/collectivites/documents/services/document.service';
+import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import {
   CollectiviteAvecType,
   PersonnalisationReponsesPayload,
   PreuveDto,
-} from '@/domain/collectivites';
+} from '@tet/domain/collectivites';
 import {
   ActionDefinition,
   ActionDefinitionEssential,
@@ -26,19 +32,13 @@ import {
   ScoresPayload,
   SnapshotJalonEnum,
   TreeOfActionsIncludingScore,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import {
   CollectiviteAccessLevel,
   CollectiviteAccessLevelEnum,
   PermissionOperationEnum,
-} from '@/domain/users';
-import { roundTo } from '@/domain/utils';
-import {
-  HttpException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+} from '@tet/domain/users';
+import { roundTo } from '@tet/domain/utils';
 import {
   and,
   asc,

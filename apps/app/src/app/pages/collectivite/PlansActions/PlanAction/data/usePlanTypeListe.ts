@@ -1,7 +1,6 @@
-import { DBClient } from '@/api';
-import { useSupabase } from '@/api';
-import { OptionSection } from '@/ui';
 import { useQuery } from '@tanstack/react-query';
+import { DBClient, useSupabase } from '@tet/api';
+import { OptionSection } from '@tet/ui';
 
 const fetchPlanTypeListe = async (supabase: DBClient) => {
   const query = supabase.from('plan_action_type').select();

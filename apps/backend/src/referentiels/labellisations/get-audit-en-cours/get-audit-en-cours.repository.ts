@@ -1,5 +1,5 @@
-import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable } from '@nestjs/common';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { and, eq } from 'drizzle-orm';
 import { auditTable } from '../audit.table';
 

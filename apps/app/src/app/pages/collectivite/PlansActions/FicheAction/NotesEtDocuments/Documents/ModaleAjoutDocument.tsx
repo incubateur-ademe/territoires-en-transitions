@@ -3,7 +3,7 @@ import {
   AddPreuveModal,
   TAddPreuveModalHandlers,
 } from '@/app/referentiels/preuves/AddPreuveModal';
-import { FicheResume } from '@/domain/plans';
+import { FicheResume } from '@tet/domain/plans';
 
 type ModaleAjoutDocumentProps = {
   handlers: TAddPreuveModalHandlers;

@@ -11,9 +11,9 @@ import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or
 import { getFicheActionPlanForCollectivite } from '@/app/plans/fiches/shared/fiche-action-plans.utils';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
-import { CollectiviteAccess } from '@/domain/users';
-import { Button, Card, Checkbox, Notification, Tooltip } from '@/ui';
 import { QueryKey } from '@tanstack/react-query';
+import { CollectiviteAccess } from '@tet/domain/users';
+import { Button, Card, Checkbox, Notification, Tooltip } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import BadgePriorite from '../../components/BadgePriorite';

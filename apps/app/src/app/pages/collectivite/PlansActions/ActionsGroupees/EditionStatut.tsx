@@ -1,8 +1,8 @@
-import { RouterInput } from '@/api';
 import { BulkEditRequest } from '@/app/plans/fiches/list-all-fiches/data/use-bulk-fiches-edit';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
-import { Button, Event, Field, useEventTracker } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { RouterInput } from '@tet/api';
+import { Button, Event, Field, useEventTracker } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
 

@@ -1,5 +1,5 @@
 import { useAutoSizeTextarea } from '@/app/ui/shared/form/useAutoSizeTextarea';
-import { cn } from '@/ui/utils/cn';
+import { cn } from '@tet/ui/utils/cn';
 import React, {
   ForwardedRef,
   forwardRef,

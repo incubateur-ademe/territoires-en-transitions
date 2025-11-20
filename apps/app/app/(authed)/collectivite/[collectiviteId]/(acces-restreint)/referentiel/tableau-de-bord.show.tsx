@@ -1,6 +1,5 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { referentielToName } from '@/app/app/labels';
 import { ReferentielCardSkeleton } from '@/app/referentiels/tableau-de-bord/referentiel-card.skeleton';
 import { ReferentielCard } from '@/app/referentiels/tableau-de-bord/referentiel.card';
@@ -11,7 +10,8 @@ import {
   useMembres,
 } from '@/app/referentiels/tableau-de-bord/referents/useMembres';
 import { useProgressionReferentiel } from '@/app/referentiels/tableau-de-bord/useProgressionReferentiel';
-import { Button } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Button } from '@tet/ui';
 import { useState } from 'react';
 
 /**

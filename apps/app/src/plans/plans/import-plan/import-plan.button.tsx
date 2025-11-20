@@ -1,12 +1,12 @@
 'use client';
 
-import { useUser } from '@/api/users';
 import {
   ImportPlanModal,
   ImportPlanProps,
 } from '@/app/plans/plans/import-plan/import-plan.modal';
 import { useDemoMode } from '@/app/users/demo-mode-support-provider';
-import { Button } from '@/ui';
+import { useUser } from '@tet/api/users';
+import { Button } from '@tet/ui';
 
 export const ImportPlanButton = ({ collectiviteId }: ImportPlanProps) => {
   const user = useUser();

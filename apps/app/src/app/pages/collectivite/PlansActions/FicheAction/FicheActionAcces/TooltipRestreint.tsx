@@ -1,4 +1,4 @@
-import { Tooltip } from '@/ui';
+import { Tooltip } from '@tet/ui';
 
 type TooltipRestreintProps = {
   children: JSX.Element;

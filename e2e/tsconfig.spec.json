@@ -5,9 +5,9 @@
     "baseUrl": ".",
     "paths": {
       // Playwright seems to support only project reference with one only level of nesting.
-      // When calling a @/backend files that references @/domain files, path resolving fails.
+      // When calling a @tet/backend files that references @tet/domain files, path resolving fails.
       // Not very elegant, but this manual alias solves the issue.
-      "@/domain/*": [
+      "@tet/domain/*": [
         "../packages/domain/src/*"
       ]
     }

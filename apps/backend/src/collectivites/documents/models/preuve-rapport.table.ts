@@ -1,5 +1,5 @@
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
-import { TIMESTAMP_OPTIONS } from '@/backend/utils/column.utils';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { TIMESTAMP_OPTIONS } from '@tet/backend/utils/column.utils';
 import { foreignKey, index, pgTable, timestamp } from 'drizzle-orm/pg-core';
 import { DocumentBase } from './document.basetable';
 

@@ -1,5 +1,5 @@
-import { ENV } from '@/api/environmentVariables';
-import { AppEnvironment } from '@/domain/utils';
+import { ENV } from '@tet/api/environmentVariables';
+import { AppEnvironment } from '@tet/domain/utils';
 import { NextResponse } from 'next/server';
 
 export async function GET() {

@@ -1,5 +1,5 @@
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
-import { ActionScoreFinal } from '@/domain/referentiels';
+import { ActionScoreFinal } from '@tet/domain/referentiels';
 import { useScore } from '../../use-snapshot';
 
 type ScorePartial = Pick<

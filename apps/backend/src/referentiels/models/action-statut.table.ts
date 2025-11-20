@@ -1,5 +1,5 @@
-import { modifiedAt, modifiedBy } from '@/backend/utils/column.utils';
-import { statutAvancementEnumValues } from '@/domain/referentiels';
+import { modifiedAt, modifiedBy } from '@tet/backend/utils/column.utils';
+import { statutAvancementEnumValues } from '@tet/domain/referentiels';
 import {
   boolean,
   doublePrecision,

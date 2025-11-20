@@ -1,8 +1,8 @@
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { ficheActionStatutOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { TOption } from '@/app/ui/shared/select/commons';
-import { SANS_STATUT_LABEL, Statut } from '@/domain/plans';
-import { Field, SelectFilter } from '@/ui';
+import { SANS_STATUT_LABEL, Statut } from '@tet/domain/plans';
+import { Field, SelectFilter } from '@tet/ui';
 import { StatutOrNot } from '../../data/use-fiches-filters-list/types';
 
 const options: TOption[] = [

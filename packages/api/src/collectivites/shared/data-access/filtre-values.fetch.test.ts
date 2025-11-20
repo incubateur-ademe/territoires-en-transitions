@@ -1,4 +1,4 @@
-import type { FiltreRessourceLiees } from '@/domain/shared';
+import type { FiltreRessourceLiees } from '@tet/domain/shared';
 import { beforeAll, expect, test } from 'vitest';
 import { signIn, signOut } from '../../../tests/auth';
 import { supabase } from '../../../tests/supabase';
