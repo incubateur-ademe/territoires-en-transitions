@@ -1,9 +1,10 @@
-import { Heading, Section, Text } from '@react-email/components';
-import * as React from 'react';
-import { NotifyPiloteProps } from './notify-pilote.props';
 import { CTAButton } from '@/backend/utils/notifications/components/cta.button';
 import { EmailContainer } from '@/backend/utils/notifications/components/email-container';
 import { Footer } from '@/backend/utils/notifications/components/footer';
+import { formatDate } from '@/backend/utils/notifications/components/format-date.utils';
+import { Heading, Section, Text } from '@react-email/components';
+import * as React from 'react';
+import { NotifyPiloteProps } from './notify-pilote.props';
 
 const DESCRIPTION_MAX_LENGTH = 200;
 
@@ -17,13 +18,13 @@ export const NotifyPiloteEmail = (
     sousActionTitre,
     actionTitre,
     planNom,
-    dateFin,
     description,
     actionUrl,
     isSousAction,
   } = props;
 
   const actionType = isSousAction ? 'la sous-action' : "l'action";
+  const dateFin = formatDate(props.dateFin);
 
   return (
     <EmailContainer>
@@ -72,7 +73,7 @@ NotifyPiloteEmail.PreviewProps = {
   actionTitre: "<nom de l'action>",
   sousActionTitre: '<nom de la sous-action>',
   planNom: '<nom du plan>',
-  dateFin: "<date d'échéance si définie>",
+  dateFin: '2025-11-20T17:02:19.958Z',
   description: '<courte description si disponible>',
   actionUrl: 'https://app.territoiresentransitions.fr',
   isSousAction: true,
