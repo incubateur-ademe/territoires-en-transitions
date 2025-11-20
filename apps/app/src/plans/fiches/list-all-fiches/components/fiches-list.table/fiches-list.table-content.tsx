@@ -14,16 +14,20 @@ export const FichesListTableContent = ({
   table,
 }: Props) => {
   if (isLoading) {
-    <TableLoading
-      columnIds={table.getVisibleFlatColumns().map((col) => col.id)}
-    />;
+    return (
+      <TableLoading
+        columnIds={table.getVisibleFlatColumns().map((col) => col.id)}
+      />
+    );
   }
 
   if (isEmpty) {
-    <TableEmpty
-      columnIds={table.getVisibleFlatColumns().map((col) => col.id)}
-      title="Aucune action ne correspond à votre recherche"
-    />;
+    return (
+      <TableEmpty
+        columnIds={table.getVisibleFlatColumns().map((col) => col.id)}
+        title="Aucune action ne correspond à votre recherche"
+      />
+    );
   }
 
   return table.getRowModel().rows.map((row) => (
