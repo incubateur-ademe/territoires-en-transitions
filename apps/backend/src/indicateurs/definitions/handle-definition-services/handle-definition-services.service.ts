@@ -1,9 +1,9 @@
-import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { AuthUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { ServiceTag } from '@/domain/collectivites';
 import { Injectable, Logger } from '@nestjs/common';
+import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { ServiceTag } from '@tet/domain/collectivites';
 import { and, eq, notInArray, sql } from 'drizzle-orm';
 import { ResourceType } from '../../../users/authorizations/resource-type.enum';
 import { indicateurServiceTagTable } from './indicateur-service-tag.table';

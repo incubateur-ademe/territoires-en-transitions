@@ -1,8 +1,8 @@
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { PermissionOperation } from '@/domain/users';
-import { Button, Tooltip, VisibleWhen } from '@/ui';
+import { PermissionOperation } from '@tet/domain/users';
+import { Button, Tooltip, VisibleWhen } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { useExportIndicateurs } from '../../Indicateur/useExportIndicateurs';

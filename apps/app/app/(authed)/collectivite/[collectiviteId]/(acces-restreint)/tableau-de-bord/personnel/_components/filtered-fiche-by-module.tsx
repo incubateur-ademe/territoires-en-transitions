@@ -1,15 +1,15 @@
 import { useState } from 'react';
 
-import { ModuleFicheActionsSelect } from '@/api/plan-actions';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
+import { FicheActionViewType } from '@/app/plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
 import { nameToparams } from '@/app/plans/fiches/list-all-fiches/filters/filters-search-parameters-mapper';
 import { FichesActionModule } from '@/app/tableaux-de-bord/plans-action/fiches-action/fiches-action.module';
-import { ModifiedSince } from '@/domain/utils';
 import { QueryKey } from '@tanstack/react-query';
+import { ModuleFicheActionsSelect } from '@tet/api/plan-actions';
+import { ModifiedSince } from '@tet/domain/utils';
 import React from 'react';
 import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';
 import { getModuleEditActions } from './get-module-edit-actions';
-import { FicheActionViewType } from '@/app/plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
 
 type Props = {
   module: ModuleFicheActionsSelect;

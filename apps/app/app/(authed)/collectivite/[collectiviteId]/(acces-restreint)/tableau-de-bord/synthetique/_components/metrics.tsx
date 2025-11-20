@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import {
   makeCollectiviteIndicateursListUrl,
   makeCollectivitePlansActionsListUrl,
@@ -14,6 +13,7 @@ import {
 } from '@/app/referentiels/tableau-de-bord/labellisation/Star';
 import { MetricCard } from '@/app/tableaux-de-bord/metrics/metric.card';
 import { MetricCardSkeleton } from '@/app/tableaux-de-bord/metrics/metric.card-skeleton';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 
 import ModaleCreerIndicateur from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';

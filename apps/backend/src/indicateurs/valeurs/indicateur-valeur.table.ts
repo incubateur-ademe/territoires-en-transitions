@@ -1,15 +1,15 @@
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import {
   createdAt,
   createdBy,
   modifiedAt,
   modifiedBy,
-} from '@/backend/utils/column.utils';
+} from '@tet/backend/utils/column.utils';
 import {
   IndicateurDefinition,
   IndicateurSourceMetadonnee,
   IndicateurValeur,
-} from '@/domain/indicateurs';
+} from '@tet/domain/indicateurs';
 import {
   boolean,
   date,

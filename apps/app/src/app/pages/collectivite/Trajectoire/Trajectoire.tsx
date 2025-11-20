@@ -1,11 +1,11 @@
 'use client';
 
-import { useTRPC } from '@/api';
-import { useCurrentCollectivite } from '@/api/collectivites';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { VerificationTrajectoireStatus } from '@/domain/indicateurs';
-import { Alert, Button, Card, Modal } from '@/ui';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { VerificationTrajectoireStatus } from '@tet/domain/indicateurs';
+import { Alert, Button, Card, Modal } from '@tet/ui';
 import { HELPDESK_URL } from '../../../../indicateurs/trajectoires/trajectoire-constants';
 import { CommuneNonSupportee } from './CommuneNonSupportee';
 import DbErrorPicto from './db-error.svg';

@@ -1,10 +1,10 @@
+import { INestApplication } from '@nestjs/common';
 import {
   AuditRole,
   CollectiviteAccessLevelEnum,
   permissionsByRole,
   UserWithCollectiviteAccesses,
-} from '@/domain/users';
-import { INestApplication } from '@nestjs/common';
+} from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { sql } from 'drizzle-orm';
 import { getTestApp } from '../../../../test/app-utils';

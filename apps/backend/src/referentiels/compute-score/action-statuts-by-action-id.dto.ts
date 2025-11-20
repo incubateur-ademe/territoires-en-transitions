@@ -1,4 +1,4 @@
-import { actionStatutSchema } from '@/domain/referentiels';
+import { actionStatutSchema } from '@tet/domain/referentiels';
 import * as z from 'zod/mini';
 
 export const simpleActionStatutSchema = z.pick(actionStatutSchema, {

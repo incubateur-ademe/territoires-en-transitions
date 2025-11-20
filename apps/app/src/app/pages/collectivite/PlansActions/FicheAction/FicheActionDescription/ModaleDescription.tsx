@@ -1,6 +1,6 @@
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
-import { Button, Event, ModalFooterOKCancel, useEventTracker } from '@/ui';
+import { Button, Event, ModalFooterOKCancel, useEventTracker } from '@tet/ui';
 import {
   FicheDescriptionForm,
   type FicheUpdatePayload,

@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/nextjs';
 import { useState } from 'react';
 
-import { Button } from '@/ui';
+import { Button } from '@tet/ui';
 
 import Chart from './Chart';
 import { fakeComplexeDonutData, fakeSimpleDonutData } from './Donut/fixtures';

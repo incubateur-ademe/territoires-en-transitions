@@ -1,4 +1,4 @@
-import { useSupabase } from '@/api';
+import { useSupabase } from '@tet/api';
 import { useGetPasswordStrength } from '@/auth/components/PasswordStrengthMeter/useGetPasswordStrength';
 import {
   SignupData,

@@ -1,4 +1,4 @@
-import { UserWithCollectiviteAccesses } from '@/domain/users';
+import { UserWithCollectiviteAccesses } from '@tet/domain/users';
 import { useState } from 'react';
 import { useUserContext } from './user-provider';
 

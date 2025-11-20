@@ -1,4 +1,5 @@
 import { PasswordStrengthMeter } from '@/auth/components/PasswordStrengthMeter';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Event,
   Field,
@@ -6,8 +7,7 @@ import {
   Input,
   ModalFooterOKCancel,
   useEventTracker,
-} from '@/ui';
-import { zodResolver } from '@hookform/resolvers/zod';
+} from '@tet/ui';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { LoginData, LoginPropsWithState } from './type';
@@ -16,7 +16,7 @@ import { LoginData, LoginPropsWithState } from './type';
 const useResetPassword = (email: string) => {
   const validationSchema = z.object({
     password: z.string().refine((value) => value.length >= 8, {
-        error: 'Le mot de passe doit comporter au moins 8 caractères'
+      error: 'Le mot de passe doit comporter au moins 8 caractères',
     }),
   });
 

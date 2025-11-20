@@ -3,8 +3,8 @@ import {
   MultiSelectFilter,
   MultiSelectFilterTitle,
 } from '@/app/ui/shared/select/MultiSelectFilter';
-import { MesureAuditStatutEnum } from '@/domain/referentiels';
-import { ITEM_ALL } from '@/ui';
+import { MesureAuditStatutEnum } from '@tet/domain/referentiels';
+import { ITEM_ALL } from '@tet/ui';
 import { TFiltreProps } from './filters';
 
 export const FILTER = 'statut';

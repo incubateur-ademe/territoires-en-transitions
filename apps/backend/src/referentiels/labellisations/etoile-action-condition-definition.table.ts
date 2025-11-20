@@ -1,4 +1,4 @@
-import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
+import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import {
   doublePrecision,
   integer,

@@ -1,8 +1,8 @@
-import { getZodStringArrayFromQueryString } from '@/backend/utils/zod.utils';
+import { getZodStringArrayFromQueryString } from '@tet/backend/utils/zod.utils';
 import {
   actionCategorieEnumSchema,
   actionDefinitionSchemaCreate,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import z from 'zod';
 import * as zm from 'zod/mini';
 

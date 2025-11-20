@@ -1,6 +1,6 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { TActionDef } from '@/app/referentiels/preuves/usePreuves';
-import { Button, Field, Modal, Select } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Button, Field, Modal, Select } from '@tet/ui';
 import { useState } from 'react';
 import { useSubActionOptionsListe } from '../use-sub-action-definitions';
 import { AddPreuveModal } from './AddPreuveModal';

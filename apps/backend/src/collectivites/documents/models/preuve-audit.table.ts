@@ -1,4 +1,4 @@
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { foreignKey, index, integer, pgTable } from 'drizzle-orm/pg-core';
 import { auditTable } from '../../../referentiels/labellisations/audit.table';
 import { DocumentBase } from './document.basetable';

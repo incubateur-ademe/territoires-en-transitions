@@ -1,7 +1,7 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
 import { useSendInvitation } from '../_components/use-invite-member';
 import MembreListTable from './_components/MembreListTable';
 

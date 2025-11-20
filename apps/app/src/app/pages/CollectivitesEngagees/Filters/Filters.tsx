@@ -5,9 +5,8 @@ import {
   SelectFilter,
   getFlatOptions,
   useEventTracker,
-} from '@/ui';
+} from '@tet/ui';
 
-import { CollectiviteEngagee } from '@/api';
 import { MultiSelectCheckboxes } from '@/app/app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes';
 import { SetFilters } from '@/app/app/pages/CollectivitesEngagees/data/filters';
 import {
@@ -20,6 +19,7 @@ import {
 import { usePlanTypeListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
 import { RecherchesViewParam } from '@/app/app/paths';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { CollectiviteEngagee } from '@tet/api';
 import { useEffect, useState } from 'react';
 import { useDepartements } from '../data/useDepartements';
 import { useRegions } from '../data/useRegions';
@@ -67,7 +67,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
           />
           {vue === 'plans' && (
             /** Type plan d'action */
-            (<Field title="Type de plan" small>
+            <Field title="Type de plan" small>
               <SelectFilter
                 dropdownZindex={600} // nécessaire pour le menu mobile
                 options={planTypeOptions ?? []}
@@ -86,7 +86,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
                 values={filters.typesPlan}
                 small
               />
-            </Field>)
+            </Field>
           )}
           <div className="font-bold pb-4 border-b border-b-primary-3">
             Collectivité

@@ -1,4 +1,4 @@
-import { indicateurValeurSchemaCreate } from '@/domain/indicateurs';
+import { indicateurValeurSchemaCreate } from '@tet/domain/indicateurs';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 

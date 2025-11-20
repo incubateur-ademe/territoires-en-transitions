@@ -14,7 +14,7 @@ export default [
           enforceBuildableLibDependency: true,
           allowCircularSelfDependency: true,
           banTransitiveDependencies: true,
-          allow: ['@/backend'],
+          allow: ['@tet/backend'],
           depConstraints: [
             {
               sourceTag: '*',

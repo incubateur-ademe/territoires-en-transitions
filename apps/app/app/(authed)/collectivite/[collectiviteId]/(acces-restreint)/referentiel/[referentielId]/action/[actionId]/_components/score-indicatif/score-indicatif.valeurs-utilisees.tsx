@@ -1,6 +1,6 @@
-import { COLLECTIVITE_SOURCE_ID } from '@/domain/indicateurs';
-import { ScoreIndicatifType } from '@/domain/referentiels';
-import { Field, FormSection, Input, Select } from '@/ui';
+import { COLLECTIVITE_SOURCE_ID } from '@tet/domain/indicateurs';
+import { ScoreIndicatifType } from '@tet/domain/referentiels';
+import { Field, FormSection, Input, Select } from '@tet/ui';
 import { useEffect, useState } from 'react';
 import {
   typeScoreToLabel,

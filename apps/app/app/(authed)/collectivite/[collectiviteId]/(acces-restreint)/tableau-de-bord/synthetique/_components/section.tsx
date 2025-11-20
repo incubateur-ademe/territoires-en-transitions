@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { Button, ButtonProps } from '@/ui';
+import { Button, ButtonProps } from '@tet/ui';
 
 type Props = {
   title: string;

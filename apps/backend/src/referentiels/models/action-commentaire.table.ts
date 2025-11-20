@@ -1,4 +1,4 @@
-import { modifiedAt, modifiedBy } from '@/backend/utils/column.utils';
+import { modifiedAt, modifiedBy } from '@tet/backend/utils/column.utils';
 import {
   foreignKey,
   integer,

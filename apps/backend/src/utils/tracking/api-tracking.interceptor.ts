@@ -1,4 +1,4 @@
-import { getErrorCode } from '@/backend/utils/nest/errors.utils';
+import { getErrorCode } from '@tet/backend/utils/nest/errors.utils';
 import {
   CallHandler,
   ExecutionContext,
@@ -7,12 +7,12 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { getErrorMessage } from '@tet/domain/utils';
 import { Request, Response } from 'express';
 import { Observable, tap } from 'rxjs';
 import { ApiUsageEnum } from '../api/api-usage-type.enum';
 import { ApiUsage } from '../api/api-usage.decorator';
 import { ContextStoreService } from '../context/context.service';
-import { getErrorMessage } from '@/domain/utils';
 import { TrackingService } from './tracking.service';
 
 @Injectable()

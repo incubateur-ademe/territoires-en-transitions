@@ -7,7 +7,7 @@ import Card from '@/site/components/cards/Card';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import CardsSection from '@/site/components/sections/CardsSection';
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
-import { Button } from '@/ui';
+import { Button } from '@tet/ui';
 
 type EtapesProps = {
   titre: string;

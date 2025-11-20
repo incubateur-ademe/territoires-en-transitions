@@ -1,5 +1,5 @@
 'use client';
-import { Panier } from '@/api';
+import { Panier } from '@tet/api';
 import {
   Button,
   Card,
@@ -7,7 +7,7 @@ import {
   Icon,
   useCopyToClipboard,
   useEventTracker,
-} from '@/ui';
+} from '@tet/ui';
 import { useEffect, useState } from 'react';
 import Membres from '../Picto/Membres';
 

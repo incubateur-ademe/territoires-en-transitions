@@ -1,13 +1,13 @@
 import { usePlanTypeListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   PlanReferentOrPilote,
   updatePlanPiloteSchema,
   updatePlanReferentSchema,
-} from '@/domain/plans';
-import { Button, Field, Input, Select, VisibleWhen } from '@/ui';
-import { zodResolver } from '@hookform/resolvers/zod';
+} from '@tet/domain/plans';
+import { Button, Field, Input, Select, VisibleWhen } from '@tet/ui';
 
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';

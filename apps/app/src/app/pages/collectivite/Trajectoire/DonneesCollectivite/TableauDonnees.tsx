@@ -1,5 +1,5 @@
-import { IndicateurSourceEnum } from '@/domain/indicateurs';
-import { Input, Table, TBody, TCell, THead, THeadCell, TRow } from '@/ui';
+import { IndicateurSourceEnum } from '@tet/domain/indicateurs';
+import { Input, Table, TBody, TCell, THead, THeadCell, TRow } from '@tet/ui';
 import classNames from 'classnames';
 import { getNomSource } from '../../../../../indicateurs/trajectoires/trajectoire-constants';
 

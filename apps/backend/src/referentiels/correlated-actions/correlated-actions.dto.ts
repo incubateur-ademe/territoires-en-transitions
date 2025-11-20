@@ -1,4 +1,4 @@
-import { actionScoreWithOnlyPointsSchema } from '@/domain/referentiels';
+import { actionScoreWithOnlyPointsSchema } from '@tet/domain/referentiels';
 import { z } from 'zod';
 import { corelatedActionWithScoreSchema } from './referentiel-action-origine-with-score.dto';
 import { correlatedActionSchema } from './referentiel-action-origine.dto';

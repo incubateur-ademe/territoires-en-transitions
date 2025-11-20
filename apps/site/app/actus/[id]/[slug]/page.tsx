@@ -7,7 +7,7 @@ import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImag
 import EmbededVideo from '@/site/components/video/EmbededVideo';
 import { getLocalDateString } from '@/site/src/utils/getLocalDateString';
 import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
-import { Badge, Button } from '@/ui';
+import { Badge, Button } from '@tet/ui';
 import { Metadata, ResolvingMetadata } from 'next';
 import { notFound } from 'next/navigation';
 import { GallerieArticleData, ImageArticleData } from '../../../types';

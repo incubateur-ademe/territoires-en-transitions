@@ -1,7 +1,7 @@
-import { getAuthUser, getTestRouter } from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { statutEnumValues } from '@/domain/plans';
+import { getAuthUser, getTestRouter } from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { statutEnumValues } from '@tet/domain/plans';
 import { inferProcedureInput } from '@trpc/server';
 
 type Input = inferProcedureInput<AppRouter['plans']['fiches']['countBy']>;

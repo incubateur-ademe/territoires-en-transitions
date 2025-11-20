@@ -1,5 +1,5 @@
 import { RichTextView } from '@/app/app/pages/collectivite/PlansActions/components/RichTextView';
-import { Badge, Button } from '@/ui';
+import { Badge, Button } from '@tet/ui';
 import { useState } from 'react';
 import { Fiche } from '../data/use-get-fiche';
 import ModaleIndicateursHeader from './ModaleIndicateursHeader';

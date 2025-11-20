@@ -1,10 +1,10 @@
-import { RouterInput, RouterOutput, useTRPC } from '@/api';
+import { useQuery } from '@tanstack/react-query';
+import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
 import {
   ActionType,
   ActionTypeEnum,
   ReferentielId,
-} from '@/domain/referentiels';
-import { useQuery } from '@tanstack/react-query';
+} from '@tet/domain/referentiels';
 
 const referentielStruct: ActionType[] = [
   ActionTypeEnum.REFERENTIEL,

@@ -1,8 +1,8 @@
-import { useSupabase, useTRPC } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import { PlanNode } from '@/domain/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSupabase, useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { PlanNode } from '@tet/domain/plans';
 
 export const useRestreindreFiches = (axes: PlanNode[]) => {
   const queryClient = useQueryClient();

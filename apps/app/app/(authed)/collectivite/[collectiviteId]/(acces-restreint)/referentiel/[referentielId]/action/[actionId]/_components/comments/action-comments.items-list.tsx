@@ -1,4 +1,4 @@
-import { Button } from '@/ui';
+import { Button } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import ActionCommentItem from './action-comments.item';

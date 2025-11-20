@@ -3,7 +3,7 @@ import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
-import { Field, FormSectionGrid, ModalFooterOKCancel } from '@/ui';
+import { Field, FormSectionGrid, ModalFooterOKCancel } from '@tet/ui';
 import { isEqual } from 'es-toolkit/predicate';
 import { useState } from 'react';
 import { useUpdateFiche } from '../data/use-update-fiche';

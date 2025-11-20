@@ -14,7 +14,7 @@ import {
   useGetAdditionalInformationCollectivite,
 } from '@/app/app/pages/Support/AjouterCollectivite/use-get-additional-information-collectivite';
 import { useSaveCollectivite } from '@/app/app/pages/Support/AjouterCollectivite/use-save-collectivite';
-import { Button, Field, Input, InputNumber } from '@/ui';
+import { Button, Field, Input, InputNumber } from '@tet/ui';
 import { useState } from 'react';
 
 const statusSearch = {

@@ -1,9 +1,10 @@
+import { Injectable } from '@nestjs/common';
 import {
   PersonneImport,
   TagImport,
-} from '@/backend/plans/fiches/import/import-plan.dto';
-import { getFuse } from '@/backend/utils/fuse/fuse.utils';
-import { TagEnum, TagType } from '@/domain/collectivites';
+} from '@tet/backend/plans/fiches/import/import-plan.dto';
+import { getFuse } from '@tet/backend/utils/fuse/fuse.utils';
+import { TagEnum, TagType } from '@tet/domain/collectivites';
 import {
   Cible,
   ParticipationCitoyenne,
@@ -13,8 +14,7 @@ import {
   participationCitoyenneEnumValues,
   prioriteEnumValues,
   statutEnumValues,
-} from '@/domain/plans';
-import { Injectable } from '@nestjs/common';
+} from '@tet/domain/plans';
 
 /** Regex to detect spaces */
 const regexEspace = /\\t|\\r|\\n/;

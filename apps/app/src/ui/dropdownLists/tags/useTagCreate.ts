@@ -1,11 +1,10 @@
-import { CollectiviteTag, TableTag } from '@/api';
-import { useSupabase } from '@/api';
-import { TagCreate } from '@/domain/collectivites';
 import {
   useMutation,
   useQueryClient,
   type QueryKey,
 } from '@tanstack/react-query';
+import { CollectiviteTag, TableTag, useSupabase } from '@tet/api';
+import { TagCreate } from '@tet/domain/collectivites';
 import { objectToSnake } from 'ts-case-convert';
 
 type Tag = CollectiviteTag;

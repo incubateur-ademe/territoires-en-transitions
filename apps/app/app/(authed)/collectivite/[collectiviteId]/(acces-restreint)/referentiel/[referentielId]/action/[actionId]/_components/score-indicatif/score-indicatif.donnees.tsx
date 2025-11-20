@@ -1,10 +1,10 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import IndicateurDetailChart from '@/app/app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
 import { useIndicateurChartInfo } from '@/app/app/pages/collectivite/Indicateurs/data/use-indicateur-chart';
 import { EditValeursModal } from '@/app/app/pages/collectivite/Indicateurs/table/edit-valeurs-modal';
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
-import { ModalFooterOKCancel } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import { ScoreIndicatifAction } from './score-indicatif.types';
 import {

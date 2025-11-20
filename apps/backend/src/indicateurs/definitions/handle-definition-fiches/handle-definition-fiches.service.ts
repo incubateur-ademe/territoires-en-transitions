@@ -1,8 +1,8 @@
-import { ficheActionIndicateurTable } from '@/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
-import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
+import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { and, eq, inArray, notInArray } from 'drizzle-orm';
 
 @Injectable()

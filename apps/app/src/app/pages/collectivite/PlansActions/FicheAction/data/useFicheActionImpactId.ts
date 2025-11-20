@@ -1,6 +1,5 @@
-import { DBClient } from '@/api';
-import { useSupabase } from '@/api';
 import { useQuery } from '@tanstack/react-query';
+import { DBClient, useSupabase } from '@tet/api';
 import { objectToCamel } from 'ts-case-convert';
 
 export const useFicheActionImpactId = (ficheId: number) => {

@@ -3,9 +3,9 @@ import { useState } from 'react';
 
 import { Filters } from './Filters';
 
-import { CollectiviteEngagee } from '@/api';
 import { RecherchesViewParam } from '@/app/app/paths';
-import { Button } from '@/ui';
+import { CollectiviteEngagee } from '@tet/api';
+import { Button } from '@tet/ui';
 import { SetFilters, getNumberOfActiveFilters } from '../data/filters';
 
 type Props = {

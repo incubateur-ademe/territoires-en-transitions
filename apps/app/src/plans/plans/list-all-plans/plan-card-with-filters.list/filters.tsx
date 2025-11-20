@@ -1,4 +1,4 @@
-import { Select } from '@/ui';
+import { Select } from '@tet/ui';
 import {
   isSortValue,
   sortByOptions,

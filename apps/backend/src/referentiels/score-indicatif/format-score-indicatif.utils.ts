@@ -3,7 +3,7 @@ import {
   ScoreIndicatifType,
   scoreIndicatifTypeEnum,
   ValeurUtilisee,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 
 const typeScoreToLabel: Record<ScoreIndicatifType, string> = {
   fait: 'Résultats de la collectivité',

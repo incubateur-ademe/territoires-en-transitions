@@ -1,4 +1,4 @@
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { foreignKey, index, pgTable, varchar } from 'drizzle-orm/pg-core';
 import { DocumentBase } from './document.basetable';
 import { preuveReglementaireDefinitionTable } from './preuve-reglementaire-definition.table';

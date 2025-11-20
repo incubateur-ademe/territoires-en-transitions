@@ -1,5 +1,5 @@
-import { RouterInput, RouterOutput, useTRPC } from '@/api';
 import { useQuery } from '@tanstack/react-query';
+import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
 import { groupBy } from 'es-toolkit';
 
 type ListMembresInput = RouterInput['collectivites']['membres']['list'];

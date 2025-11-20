@@ -1,6 +1,6 @@
-import { useSupabase } from '@/api';
 import { fetchCollectivitePanierInfo } from '@/app/collectivites/panier/data/fetchCollectivitePanierInfo';
 import { useQuery } from '@tanstack/react-query';
+import { useSupabase } from '@tet/api';
 
 export const useGetCollectivitePanierInfo = (collectiviteId: number | null) => {
   const supabase = useSupabase();

@@ -1,10 +1,10 @@
 import { QueryKey, useQuery } from '@tanstack/react-query';
 
-import { useSupabase } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
-import { moduleFetch, PersonalDefaultModuleKeys } from '@/api/plan-actions';
-import { useUser } from '@/api/users';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
+import { useSupabase } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { moduleFetch, PersonalDefaultModuleKeys } from '@tet/api/plan-actions';
+import { useUser } from '@tet/api/users';
 
 /**
  * Fetch un module spécifique du tableau de bord d'une collectivité et d'un user.

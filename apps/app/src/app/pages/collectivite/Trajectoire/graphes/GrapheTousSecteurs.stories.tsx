@@ -1,6 +1,6 @@
 import { INDICATEURS_TRAJECTOIRE } from '@/app/indicateurs/trajectoires/trajectoire-constants';
-import { roundTo } from '@/domain/utils';
 import { Meta, StoryObj } from '@storybook/nextjs';
+import { roundTo } from '@tet/domain/utils';
 import { GrapheTousSecteurs } from './GrapheTousSecteurs';
 
 const meta: Meta<typeof GrapheTousSecteurs> = {

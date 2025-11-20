@@ -1,7 +1,7 @@
 import FicheActionCardSkeleton from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import { CollectiviteAccess } from '@/domain/users';
+import { CollectiviteAccess } from '@tet/domain/users';
 import classNames from 'classnames';
 import FicheActionCard from '../Carte/FicheActionCard';
 

@@ -1,6 +1,6 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { makeReferentielActionUrl } from '@/app/app/paths';
 import { useReferentielDownToAction } from '@/app/referentiels/referentiel-hooks';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { useReferentielId } from '../referentiel-context';
 
 /**

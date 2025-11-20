@@ -1,9 +1,9 @@
-import { CollectivitesRouter } from '@/backend/collectivites/collectivites.router';
-import { IndicateursRouter } from '@/backend/indicateurs/indicateurs.router';
-import { MetricsRouter } from '@/backend/metrics/metrics.router';
-import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
-import { ContextStoreService } from '@/backend/utils/context/context.service';
-import { getSentryContextFromApplicationContext } from '@/backend/utils/sentry-init';
+import { CollectivitesRouter } from '@tet/backend/collectivites/collectivites.router';
+import { IndicateursRouter } from '@tet/backend/indicateurs/indicateurs.router';
+import { MetricsRouter } from '@tet/backend/metrics/metrics.router';
+import { ReferentielsRouter } from '@tet/backend/referentiels/referentiels.router';
+import { ContextStoreService } from '@tet/backend/utils/context/context.service';
+import { getSentryContextFromApplicationContext } from '@tet/backend/utils/sentry-init';
 import {
   HttpException,
   INestApplication,

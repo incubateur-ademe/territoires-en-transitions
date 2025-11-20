@@ -1,7 +1,7 @@
-import { ImportActionDefinitionCoremeasureType } from '@/backend/referentiels/import-referentiel/import-action-definition.dto';
-import { ReferentielLabelEnum } from '@/backend/referentiels/models/referentiel-label.enum';
-import { ReferentielIdEnum, ScoresPayload } from '@/domain/referentiels';
 import { INestApplication } from '@nestjs/common';
+import { ImportActionDefinitionCoremeasureType } from '@tet/backend/referentiels/import-referentiel/import-action-definition.dto';
+import { ReferentielLabelEnum } from '@tet/backend/referentiels/models/referentiel-label.enum';
+import { ReferentielIdEnum, ScoresPayload } from '@tet/domain/referentiels';
 import { default as request } from 'supertest';
 import { getTestApp } from '../../../test/app-utils';
 

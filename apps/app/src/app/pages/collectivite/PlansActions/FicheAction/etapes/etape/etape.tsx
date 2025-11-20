@@ -3,10 +3,10 @@ import { CSS } from '@dnd-kit/utilities';
 import classNames from 'classnames';
 import { useState } from 'react';
 
-import { Button, Checkbox } from '@/ui';
+import { Button, Checkbox } from '@tet/ui';
 
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { FicheEtape } from '@/domain/plans';
+import { FicheEtape } from '@tet/domain/plans';
 import { useEtapesDispatch } from '../etapes-context';
 import ModalDeleteEtape from './modal-delete-etape';
 import { Textarea } from './textarea';

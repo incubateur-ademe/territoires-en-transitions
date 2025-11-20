@@ -1,8 +1,8 @@
-import { DBClient, TablesInsert, useSupabase } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
-import { useUser } from '@/api/users';
-import { getReferentielIdFromActionId } from '@/domain/referentiels';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { DBClient, TablesInsert, useSupabase } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 
 /**
  * Permet de charger un commentaire (précision) pour une action.

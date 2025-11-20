@@ -4,7 +4,7 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
-import { htmlToText } from '@/domain/utils';
+import { htmlToText } from '@tet/domain/utils';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
 const Notes = ({ fiche }: FicheActionPdfProps) => {

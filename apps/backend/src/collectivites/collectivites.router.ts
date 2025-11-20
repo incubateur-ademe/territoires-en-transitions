@@ -1,6 +1,6 @@
-import { CollectiviteCrudRouter } from '@/backend/collectivites/collectivite-crud/collectivite-crud.router';
-import { ImportCollectiviteRelationsRouter } from '@/backend/collectivites/import-collectivite-relations/import-collectivite-relations.router';
-import { RecherchesRouter } from '@/backend/collectivites/recherches/recherches.router';
+import { CollectiviteCrudRouter } from '@tet/backend/collectivites/collectivite-crud/collectivite-crud.router';
+import { ImportCollectiviteRelationsRouter } from '@tet/backend/collectivites/import-collectivite-relations/import-collectivite-relations.router';
+import { RecherchesRouter } from '@tet/backend/collectivites/recherches/recherches.router';
 import { Injectable } from '@nestjs/common';
 import { TrpcService } from '../utils/trpc/trpc.service';
 import { ListCategoriesRouter } from './handle-categories/list-categories.router';

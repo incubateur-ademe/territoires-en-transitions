@@ -1,5 +1,5 @@
-import { CollectiviteEngagee } from '@/api';
 import { RecherchesViewParam } from '@/app/app/paths';
+import { CollectiviteEngagee } from '@tet/api';
 import { useState } from 'react';
 import ContactButton from './contacts-button';
 import ContactsModal from './contacts-modal';

@@ -1,7 +1,7 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { makeCollectivitePlansActionsNouveauUrl } from '@/app/app/paths';
 import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
-import { EmptyCard } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { EmptyCard } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 
 /** Carte représentant l'état des tableaux de bord lorsque

@@ -1,6 +1,6 @@
-import { RouterInput, RouterOutput, useTRPC } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
 import { useQuery } from '@tanstack/react-query';
+import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
 
 export type IndicateurValeurGroupee = {
   id: number;

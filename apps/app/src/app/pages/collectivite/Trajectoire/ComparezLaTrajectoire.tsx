@@ -1,5 +1,5 @@
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
-import { Button, Card } from '@/ui';
+import { Button, Card } from '@tet/ui';
 
 interface ComparezLaTrajectoireProps {
   collectiviteId: number;

@@ -1,6 +1,6 @@
 'use client';
 
-import { AnchorButtonProps } from '@/ui';
+import { AnchorButtonProps } from '@tet/ui';
 import React, { createContext, ReactNode, useContext, useReducer } from 'react';
 
 type Panel = {

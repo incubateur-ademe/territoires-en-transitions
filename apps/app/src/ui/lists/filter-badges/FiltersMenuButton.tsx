@@ -1,4 +1,4 @@
-import { Badge, ButtonMenu, ButtonSize, VisibleWhen } from '@/ui';
+import { Badge, ButtonMenu, ButtonSize, VisibleWhen } from '@tet/ui';
 import { ReactNode, useState } from 'react';
 
 export const FiltersMenuButton = ({

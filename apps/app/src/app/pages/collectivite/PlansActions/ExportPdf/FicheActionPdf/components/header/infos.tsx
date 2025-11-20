@@ -8,7 +8,7 @@ import {
   TimeIcon,
 } from '@/app/ui/export-pdf/assets/icons';
 import { Box, Paragraph, Stack } from '@/app/ui/export-pdf/components';
-import { preset } from '@/ui';
+import { preset } from '@tet/ui';
 import classNames from 'classnames';
 import { format, isBefore, startOfToday } from 'date-fns';
 import { FicheActionPdfProps } from '../../FicheActionPdf';

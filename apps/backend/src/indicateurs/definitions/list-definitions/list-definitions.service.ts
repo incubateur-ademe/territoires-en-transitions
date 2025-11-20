@@ -1,28 +1,28 @@
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
-import { categorieTagTable } from '@/backend/collectivites/tags/categorie-tag.table';
-import { indicateurCollectiviteTable } from '@/backend/indicateurs/definitions/indicateur-collectivite.table';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
+import { indicateurCollectiviteTable } from '@tet/backend/indicateurs/definitions/indicateur-collectivite.table';
 import {
   DefinitionListItem,
   ListDefinitionsOutput,
-} from '@/backend/indicateurs/definitions/list-definitions/list-definitions.output';
-import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indicateur-pilote.table';
-import { indicateurSourceMetadonneeTable } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
-import { indicateurValeurTable } from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
-import { ficheActionIndicateurTable } from '@/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
-import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { AuthUser } from '@/backend/users/models/auth.models';
-import { sqlAuthorOrNull } from '@/backend/users/models/author.utils';
-import { dcpTable } from '@/backend/users/models/dcp.table';
-import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
-import { PersonneTagOrUser, Tag } from '@/domain/collectivites';
+} from '@tet/backend/indicateurs/definitions/list-definitions/list-definitions.output';
+import { indicateurPiloteTable } from '@tet/backend/indicateurs/shared/models/indicateur-pilote.table';
+import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
+import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
+import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
+import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { sqlAuthorOrNull } from '@tet/backend/users/models/author.utils';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { getISOFormatDateQuery } from '@tet/backend/utils/column.utils';
+import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import {
   IndicateurDefinition,
   IndicateurDefinitionAvecEnfants,
-} from '@/domain/indicateurs';
-import { normalizeIdentifiantReferentiel } from '@/domain/referentiels';
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+} from '@tet/domain/indicateurs';
+import { normalizeIdentifiantReferentiel } from '@tet/domain/referentiels';
 import assert from 'assert';
 import {
   aliasedTable,

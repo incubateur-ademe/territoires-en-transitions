@@ -1,14 +1,14 @@
-import {
-  CollectivitePopulationTypeEnum,
-  IdentiteCollectivite,
-} from '@/domain/collectivites';
-import { PersonnalisationReponses } from '@/backend/collectivites/personnalisations/services/personnalisations-expression.service';
+import { HttpException, Injectable, Logger } from '@nestjs/common';
+import { PersonnalisationReponses } from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import {
   ExpressionParser,
   getExpressionVisitor,
-} from '@/backend/utils/expression-parser';
-import { getFormmattedErrors } from '@/backend/utils/expression-parser/get-formatted-errors.utils';
-import { HttpException, Injectable, Logger } from '@nestjs/common';
+} from '@tet/backend/utils/expression-parser';
+import { getFormmattedErrors } from '@tet/backend/utils/expression-parser/get-formatted-errors.utils';
+import {
+  CollectivitePopulationTypeEnum,
+  IdentiteCollectivite,
+} from '@tet/domain/collectivites';
 import { createToken, CstNode } from 'chevrotain';
 import { isNil } from 'es-toolkit';
 import { ReferencedIndicateur } from './referenced-indicateur.dto';

@@ -1,11 +1,11 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { defaultColors } from '@/app/ui/charts/chartsTheme';
 import BarChartCardWithSubrows, {
   TBarChartScoreTable,
 } from '@/app/ui/charts/old/BarChartCardWithSubrows';
-import { Button } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Button } from '@tet/ui';
 import { useReferentielId } from '../../referentiel-context';
 import { AuditComparaisonTable } from './AuditComparaisonTable';
 import { TScoreAuditRowData } from './types';

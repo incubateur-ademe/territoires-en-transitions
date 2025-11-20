@@ -1,4 +1,4 @@
-import { Views } from '@/api';
+import { Views } from '@tet/api';
 import { TFilters, TInitialFilters } from './filters';
 
 /* type de modification enregistrée dans l'historique */

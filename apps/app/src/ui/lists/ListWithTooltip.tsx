@@ -1,4 +1,4 @@
-import { Icon, IconValue, Tooltip } from '@/ui';
+import { Icon, IconValue, Tooltip } from '@tet/ui';
 import classNames from 'classnames';
 
 type Props = {

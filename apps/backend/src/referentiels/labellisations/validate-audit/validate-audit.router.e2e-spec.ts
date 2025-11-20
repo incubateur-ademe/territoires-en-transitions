@@ -1,16 +1,16 @@
-import { createAudit } from '@/backend/referentiels/labellisations/labellisations.test-fixture';
+import { INestApplication } from '@nestjs/common';
+import { createAudit } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
 import {
   getAuthUser,
   getTestApp,
   getTestDatabase,
   getTestRouter,
   YOLO_DODO,
-} from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { ReferentielIdEnum, SnapshotJalonEnum } from '@/domain/referentiels';
-import { INestApplication } from '@nestjs/common';
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { ReferentielIdEnum, SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { eq } from 'drizzle-orm';
 import { snapshotTable } from '../../snapshots/snapshot.table';
 import { addAuditeurPermission } from '../labellisations.test-fixture';

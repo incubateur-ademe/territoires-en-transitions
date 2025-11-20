@@ -1,6 +1,6 @@
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
-import { Tooltip } from '@/ui';
+import { Tooltip } from '@tet/ui';
 import ScoreShow from '../../scores/score.show';
 import { GreyStar, RedStar } from './Star';
 

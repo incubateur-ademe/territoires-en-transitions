@@ -1,4 +1,4 @@
-import { Database } from '@/api';
+import { Database } from '@tet/api';
 import { type CookieOptions, createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
 

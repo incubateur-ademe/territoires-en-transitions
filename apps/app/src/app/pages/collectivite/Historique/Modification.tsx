@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import { referentielToName } from '@/app/app/labels';
 import { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
-import { Button, Icon } from '@/ui';
+import { Button, Icon } from '@tet/ui';
 import { HistoriqueType, THistoriqueItem } from './types';
 
 export type HistoriqueDescription = {

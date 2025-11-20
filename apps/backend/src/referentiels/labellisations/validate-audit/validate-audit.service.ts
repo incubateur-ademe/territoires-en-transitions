@@ -1,6 +1,9 @@
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { LabellisationAudit, SnapshotJalonEnum } from '@/domain/referentiels';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import {
+  LabellisationAudit,
+  SnapshotJalonEnum,
+} from '@tet/domain/referentiels';
 import { eq } from 'drizzle-orm';
 import { SnapshotsService } from '../../snapshots/snapshots.service';
 import { auditTable } from '../audit.table';

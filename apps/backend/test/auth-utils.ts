@@ -1,16 +1,16 @@
-import { ConvertJwtToAuthUserService } from '@/backend/users/convert-jwt-to-auth-user.service';
-import {
-  AuthenticatedUser,
-  AuthRole,
-  AuthUser,
-  isAuthenticatedUser,
-} from '@/backend/users/models/auth.models';
-import { Dcp } from '@/domain/users';
 import {
   createClient,
   SignInWithPasswordCredentials,
   SupabaseClient,
 } from '@supabase/supabase-js';
+import { ConvertJwtToAuthUserService } from '@tet/backend/users/convert-jwt-to-auth-user.service';
+import {
+  AuthenticatedUser,
+  AuthRole,
+  AuthUser,
+  isAuthenticatedUser,
+} from '@tet/backend/users/models/auth.models';
+import { Dcp } from '@tet/domain/users';
 import { getTestApp } from './app-utils';
 import { YOLO_DODO } from './test-users.samples';
 

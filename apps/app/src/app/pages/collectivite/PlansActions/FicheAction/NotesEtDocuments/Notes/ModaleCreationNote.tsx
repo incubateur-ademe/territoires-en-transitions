@@ -1,7 +1,7 @@
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
-import { Field, ModalFooterOKCancel, RichTextEditor } from '@/ui';
+import { Field, ModalFooterOKCancel, RichTextEditor } from '@tet/ui';
 import { useEffect, useState } from 'react';
 
 export const NOTES_MAX_LENGTH = 20000;

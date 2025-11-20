@@ -1,5 +1,5 @@
-import { useSupabase } from '@/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSupabase } from '@tet/api';
 
 /**
  * Supprime un commentaire d'une discussion

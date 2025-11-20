@@ -1,5 +1,5 @@
 import FichesActionsDropdown from '@/app/ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
-import { Field, Modal, ModalFooterOKCancel } from '@/ui';
+import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useEffect, useState } from 'react';
 
 type ModaleFichesLieesProps = {

@@ -5,16 +5,16 @@ import {
   partenaireTagSchema,
   serviceTagSchema,
   structureTagSchema,
-} from '@/domain/collectivites';
-import { indicateurDefinitionSchema } from '@/domain/indicateurs';
-import { axeSchema, ficheSchema, ficheSchemaUpdate } from '@/domain/plans';
-import { actionRelationSchema } from '@/domain/referentiels';
+} from '@tet/domain/collectivites';
+import { indicateurDefinitionSchema } from '@tet/domain/indicateurs';
+import { axeSchema, ficheSchema, ficheSchemaUpdate } from '@tet/domain/plans';
+import { actionRelationSchema } from '@tet/domain/referentiels';
 import {
   effetAttenduSchema,
   sousThematiqueSchema,
   tempsDeMiseEnOeuvreSchema,
   thematiqueSchema,
-} from '@/domain/shared';
+} from '@tet/domain/shared';
 import z from 'zod';
 import * as zm from 'zod/mini';
 

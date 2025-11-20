@@ -1,11 +1,11 @@
-import { getAuthUser, getTestRouter } from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { getAuthUser, getTestRouter } from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import {
   collectiviteDefaultModuleKeysSchema,
   ModuleFicheCountBy,
   ModuleFicheCountByCreate,
-} from '@/domain/collectivites/tableau-de-bord';
+} from '@tet/domain/collectivites/tableau-de-bord';
 import { cloneDeep } from 'es-toolkit';
 
 export const moduleNew: ModuleFicheCountByCreate = {

@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { Fragment } from 'react';
 
 import { ExternalLink } from '@/app/ui/externalLink/ExternalLink';
-import { Button, ButtonMenu, Event, Icon, useEventTracker } from '@/ui';
+import { Button, ButtonMenu, Event, Icon, useEventTracker } from '@tet/ui';
 
 const DOWNLOAD_TEMPLATE_OPTIONS = [
   { value: 'xlsx', label: 'Format Excel (.xlsx)' },

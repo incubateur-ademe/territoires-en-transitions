@@ -1,6 +1,6 @@
 'use client';
 
-import { Select } from '@/ui';
+import { Select } from '@tet/ui';
 import { useState } from 'react';
 import { useCollectiviteInfo } from './useCollectiviteInfo';
 import { useFilteredCollectivites } from './useFilteredCollectivites';

@@ -1,5 +1,5 @@
-import { RouterOutput, useTRPC } from '@/api';
 import { useQuery } from '@tanstack/react-query';
+import { RouterOutput, useTRPC } from '@tet/api';
 
 export type CollectiviteOutput =
   RouterOutput['collectivites']['collectivites']['select'];

@@ -1,6 +1,6 @@
-import { getUser } from '@/api/users/user-details.fetch.server';
 import { CollectivitesView } from '@/app/app/pages/CollectivitesEngagees/Views/collectivites/CollectivitesView';
 import { UnverifiedUserCard } from '@/app/users/unverified-user-card';
+import { getUser } from '@tet/api/users/user-details.fetch.server';
 import { notFound } from 'next/navigation';
 import z from 'zod';
 

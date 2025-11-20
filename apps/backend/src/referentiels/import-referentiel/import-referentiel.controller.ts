@@ -1,13 +1,13 @@
-import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
-import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
-import type { ReferentielId } from '@/domain/referentiels';
+import { Controller, Get, Logger, Param } from '@nestjs/common';
+import { ApiExcludeController, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
+import type { ReferentielId } from '@tet/domain/referentiels';
 import {
   ActionDefinitionEssential,
   ActionTreeNode,
   ActionTypeEnum,
-} from '@/domain/referentiels';
-import { Controller, Get, Logger, Param } from '@nestjs/common';
-import { ApiExcludeController, ApiResponse, ApiTags } from '@nestjs/swagger';
+} from '@tet/domain/referentiels';
 import { AllowAnonymousAccess } from '../../users/decorators/allow-anonymous-access.decorator';
 import { CorrelatedActionsFields } from '../correlated-actions/correlated-actions.dto';
 import { ReferentielResponse } from '../get-referentiel/get-referentiel.service';

@@ -1,5 +1,5 @@
-import { ChartRenderRequestType } from '@/domain/utils';
 import { Injectable, Logger } from '@nestjs/common';
+import { ChartRenderRequestType } from '@tet/domain/utils';
 import { createCanvas } from 'canvas';
 import type { ECharts, EChartsOption } from 'echarts/types/dist/echarts';
 import { NextFunction, Response } from 'express';

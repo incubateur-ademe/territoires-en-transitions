@@ -1,6 +1,6 @@
 import { useApiClient } from '@/app/utils/use-api-client';
-import { Fiche, FicheNote } from '@/domain/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Fiche, FicheNote } from '@tet/domain/plans';
 
 export type EditedNote = Pick<FicheNote, 'note'> & {
   id?: number;

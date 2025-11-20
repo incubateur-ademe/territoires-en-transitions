@@ -1,10 +1,10 @@
-import { CollectiviteNatureType } from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
-import { FicheWithRelationsAndCollectivite, Statut } from '@/domain/plans';
+import { Logger } from '@nestjs/common';
+import { CollectiviteNatureType } from '@tet/backend/collectivites/shared/models/collectivite-banatic-type.table';
+import { FicheWithRelationsAndCollectivite, Statut } from '@tet/domain/plans';
 import {
   ApplicationSousScopesEnum,
   WebhookPayloadFormatEnum,
-} from '@/domain/utils';
-import { Logger } from '@nestjs/common';
+} from '@tet/domain/utils';
 import { DateTime } from 'luxon';
 import { AbstractEntityMapper } from '../AbstractEntityMapper';
 import { CreateProjetRequest } from './client/types.gen';

@@ -1,6 +1,6 @@
-import { RouterOutput } from '@/api';
-import { SnapshotJalonEnum } from '@/domain/referentiels';
-import { SelectMultiple, SelectMultipleProps } from '@/ui';
+import { RouterOutput } from '@tet/api';
+import { SnapshotJalonEnum } from '@tet/domain/referentiels';
+import { SelectMultiple, SelectMultipleProps } from '@tet/ui';
 
 type SnapshotJalon =
   RouterOutput['referentiels']['snapshots']['updateName'][number]['jalon'];

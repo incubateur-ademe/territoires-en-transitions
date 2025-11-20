@@ -1,7 +1,7 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { SharedFicheUpdateAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-update.alert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Checkbox } from '@/ui';
+import { Checkbox } from '@tet/ui';
 import { useRef } from 'react';
 import { Textarea, useUpsertEtape } from './etape';
 import {

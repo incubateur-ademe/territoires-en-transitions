@@ -1,7 +1,7 @@
 'use client';
 
-import { getRejoindreCollectivitePath } from '@/api';
-import { Alert, Button } from '@/ui';
+import { getRejoindreCollectivitePath } from '@tet/api';
+import { Alert, Button } from '@tet/ui';
 import { useEffect, useState } from 'react';
 
 export default function Template({ children }: { children: React.ReactNode }) {

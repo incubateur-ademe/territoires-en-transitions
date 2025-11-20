@@ -1,9 +1,9 @@
-import { authorSchema } from '@/backend/users/models/author.utils';
-import { personneTagOrUserSchema, tagSchema } from '@/domain/collectivites';
+import { authorSchema } from '@tet/backend/users/models/author.utils';
+import { personneTagOrUserSchema, tagSchema } from '@tet/domain/collectivites';
 import {
   indicateurCollectiviteSchema,
   indicateurDefinitionSchema,
-} from '@/domain/indicateurs';
+} from '@tet/domain/indicateurs';
 import z from 'zod';
 
 export const indicateurDefinitionEnfantDtoSchema = z.object({

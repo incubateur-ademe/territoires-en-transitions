@@ -1,15 +1,15 @@
-import { COLLECTIVITE_ID_ROUTE_PARAM } from '@/backend/collectivites/shared/models/collectivite-api.constants';
-import { collectiviteBucketTable } from '@/backend/collectivites/shared/models/collectivite-bucket.table';
-import SupabaseService from '@/backend/utils/database/supabase.service';
-import { PreuveDto, PreuveTypeEnum } from '@/domain/collectivites';
-import { ReferentielId } from '@/domain/referentiels';
-import { getErrorMessage } from '@/domain/utils';
+import { COLLECTIVITE_ID_ROUTE_PARAM } from '@tet/backend/collectivites/shared/models/collectivite-api.constants';
+import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
+import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import {
   Injectable,
   InternalServerErrorException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { PreuveDto, PreuveTypeEnum } from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { getErrorMessage } from '@tet/domain/utils';
 import {
   and,
   asc,

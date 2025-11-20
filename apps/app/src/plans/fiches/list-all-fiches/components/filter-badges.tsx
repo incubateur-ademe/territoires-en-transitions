@@ -1,6 +1,6 @@
 import { useFicheActionFilters } from '@/app/plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
 import { formatToPrintableFilters } from '@/app/plans/fiches/list-all-fiches/filters/format-to-printable-filters';
-import { FilterBadges as UIFilterBadges } from '@/ui';
+import { FilterBadges as UIFilterBadges } from '@tet/ui';
 
 export const FilterBadges = (): JSX.Element | null => {
   const {

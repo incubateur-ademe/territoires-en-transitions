@@ -1,5 +1,5 @@
 {
-  "name": "@/backend",
+  "name": "@tet/backend",
   "description": "Backend TRPC app",
   "private": true,
   "type": "module",

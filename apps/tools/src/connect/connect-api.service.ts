@@ -1,7 +1,7 @@
-import type { AppRouter } from '@/backend/utils/trpc/trpc.router';
-import ConfigurationService from '../config/configuration.service';
 import { Injectable, Logger } from '@nestjs/common';
+import type { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { inferProcedureOutput } from '@trpc/server';
+import ConfigurationService from '../config/configuration.service';
 import { contactSchema, ContactUpsert } from './contact.model';
 
 const SOURCE_TET = 'Territoires en Transitions';

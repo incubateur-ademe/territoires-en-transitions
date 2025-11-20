@@ -1,11 +1,11 @@
-import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
-import { getBudgetsRequest } from '@/backend/plans/fiches/fiche-action-budget/get-budgets.request';
-import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
-import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import { AuthUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { FicheBudget, FicheBudgetCreate } from '@/domain/plans';
 import { Injectable } from '@nestjs/common';
+import { ficheActionBudgetTable } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
+import { getBudgetsRequest } from '@tet/backend/plans/fiches/fiche-action-budget/get-budgets.request';
+import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { FicheBudget, FicheBudgetCreate } from '@tet/domain/plans';
 import { and, eq, isNotNull, isNull } from 'drizzle-orm';
 
 @Injectable()

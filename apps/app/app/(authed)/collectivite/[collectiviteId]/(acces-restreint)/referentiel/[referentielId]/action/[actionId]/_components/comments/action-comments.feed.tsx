@@ -1,5 +1,5 @@
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Divider } from '@/ui';
+import { Divider } from '@tet/ui';
 import { Fragment } from 'react';
 import ActionCommentsEmptyImg from './action-comment.empty-img';
 import ActionCommentDiscussion from './action-comments.discussion';

@@ -4,11 +4,14 @@ import {
   getTestDatabase,
   getTestRouter,
   YOLO_DODO,
-} from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { ActionTypeEnum, MesureAuditStatutEnum } from '@/domain/referentiels';
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import {
+  ActionTypeEnum,
+  MesureAuditStatutEnum,
+} from '@tet/domain/referentiels';
 import {
   addAuditeurPermission,
   createAudit,

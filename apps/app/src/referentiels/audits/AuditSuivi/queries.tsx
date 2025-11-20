@@ -1,4 +1,4 @@
-import { MesureAuditStatutEnum } from '@/domain/referentiels';
+import { MesureAuditStatutEnum } from '@tet/domain/referentiels';
 import { ActionReferentiel } from '../../DEPRECATED_scores.types';
 
 // un sous-ensemble des champs pour alimenter notre table

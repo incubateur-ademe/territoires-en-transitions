@@ -1,17 +1,17 @@
 import { EChartsOption, PieSeriesOption } from 'echarts';
 
-import { RouterOutput } from '@/api';
 import { prioritesToState } from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
 import { statutFicheActionToColor } from '@/app/plans/fiches/utils';
 import { remToPx } from '@/app/ui/charts/echarts/remToPx';
+import { RouterOutput } from '@tet/api';
 import {
   CountByPropertyEnumType,
   ficheActionForCountBySchema,
   Priorite,
   Statut,
-} from '@/domain/plans';
-import { roundTo } from '@/domain/utils';
-import { preset } from '@/ui';
+} from '@tet/domain/plans';
+import { roundTo } from '@tet/domain/utils';
+import { preset } from '@tet/ui';
 import { cloneDeep } from 'es-toolkit';
 
 const getItemColor = (

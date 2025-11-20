@@ -4,7 +4,7 @@ import {
   makeCollectivitePlansActionsCreerUrl,
   makeCollectivitePlansActionsImporterUrl,
 } from '@/app/app/paths';
-import { Event, useEventTracker } from '@/ui';
+import { Event, useEventTracker } from '@tet/ui';
 import CreateWithActions from './create-with-actions.svg';
 import CreatePlanPicto from './create.svg';
 import ImportPlanPicto from './import.svg';

@@ -15,7 +15,7 @@ import {
   ModalFooterOKCancel,
   Textarea,
   useEventTracker,
-} from '@/ui';
+} from '@tet/ui';
 import { isEqual } from 'es-toolkit/predicate';
 import { useState } from 'react';
 import { useUpdateFiche } from '../data/use-update-fiche';

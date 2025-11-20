@@ -1,4 +1,4 @@
-import { TCell } from '@/ui';
+import { TCell } from '@tet/ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { InputValue } from './input-value';
 

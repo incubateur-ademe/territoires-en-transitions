@@ -1,7 +1,7 @@
 'use client';
 
-import { useSubscribeToUserAuthEvents } from '@/api/users/user-context/use-subscribe-to-user-auth-events';
-import { UserWithCollectiviteAccesses } from '@/domain/users';
+import { useSubscribeToUserAuthEvents } from '@tet/api/users/user-context/use-subscribe-to-user-auth-events';
+import { UserWithCollectiviteAccesses } from '@tet/domain/users';
 import { Crisp } from 'crisp-sdk-web';
 import { useEffect } from 'react';
 

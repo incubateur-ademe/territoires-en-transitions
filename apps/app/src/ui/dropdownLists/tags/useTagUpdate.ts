@@ -1,7 +1,6 @@
-import { TableTag } from '@/api';
-import { useSupabase } from '@/api';
-import { TagUpdate } from '@/domain/collectivites';
 import { QueryKey, useMutation, useQueryClient } from '@tanstack/react-query';
+import { TableTag, useSupabase } from '@tet/api';
+import { TagUpdate } from '@tet/domain/collectivites';
 import { objectToSnake } from 'ts-case-convert';
 
 type Args = {

@@ -1,7 +1,7 @@
 'use client';
 
 import Section from '@/site/components/sections/Section';
-import { Button } from '@/ui';
+import { Button } from '@tet/ui';
 import classNames from 'classnames';
 import { InfoData } from './types';
 

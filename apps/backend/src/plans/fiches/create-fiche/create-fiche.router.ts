@@ -1,6 +1,6 @@
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
-import { ficheSchemaCreate } from '@/domain/plans';
 import { Injectable } from '@nestjs/common';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
+import { ficheSchemaCreate } from '@tet/domain/plans';
 import { CreateFicheService } from './create-fiche.service';
 
 @Injectable()

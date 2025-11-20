@@ -1,9 +1,9 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { Scheduler } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/bryntum-scheduler/scheduler';
 import { toSchedulerEvent } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/bryntum-scheduler/to-sheduler-event';
-import { Alert, Badge, ButtonMenu } from '@/ui';
-import { cn } from '@/ui/utils/cn';
 import '@bryntum/scheduler/scheduler.stockholm.css';
+import { Alert, Badge, ButtonMenu } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 import './bryntum-scheduler/scheduler.css';
 
 type Props = {

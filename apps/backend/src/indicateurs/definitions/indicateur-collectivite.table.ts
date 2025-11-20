@@ -1,5 +1,5 @@
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
-import { modifiedAt, modifiedBy } from '@/backend/utils/column.utils';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { modifiedAt, modifiedBy } from '@tet/backend/utils/column.utils';
 import {
   boolean,
   integer,

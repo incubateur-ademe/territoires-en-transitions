@@ -1,6 +1,6 @@
 import ModaleSuppressionNote from '@/app/app/pages/collectivite/PlansActions/FicheAction/NotesEtDocuments/Notes/ModaleSuppressionNote';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { Card, Icon } from '@/ui';
+import { Card, Icon } from '@tet/ui';
 import { RichTextView } from '../../../components/RichTextView';
 import ModaleEditionNote from './ModaleEditionNote';
 

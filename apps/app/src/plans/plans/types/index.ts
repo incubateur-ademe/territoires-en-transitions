@@ -1,5 +1,5 @@
-import { Views } from '@/api';
 import { TAxeRow } from '@/app/types/alias';
+import { Views } from '@tet/api';
 
 type TPlanActionProfondeur = Views<'plan_action_profondeur'>;
 

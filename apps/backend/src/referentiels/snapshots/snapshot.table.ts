@@ -1,9 +1,9 @@
-import { PersonnalisationReponsesPayload } from '@/domain/collectivites';
+import { PersonnalisationReponsesPayload } from '@tet/domain/collectivites';
 import {
   ScoresPayload,
   SnapshotJalon,
   snapshotJalonEnumValues,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import {
   doublePrecision,
   foreignKey,

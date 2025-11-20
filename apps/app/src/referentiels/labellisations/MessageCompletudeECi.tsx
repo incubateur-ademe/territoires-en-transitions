@@ -1,4 +1,4 @@
-import { Alert } from '@/ui';
+import { Alert } from '@tet/ui';
 import { TLabellisationParcours } from './types';
 
 export const MessageCompletudeECi = ({

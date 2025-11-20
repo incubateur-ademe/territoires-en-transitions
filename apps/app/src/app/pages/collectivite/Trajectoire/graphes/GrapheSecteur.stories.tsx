@@ -1,6 +1,6 @@
 import { Dataset } from '@/app/ui/charts/echarts';
-import { roundTo } from '@/domain/utils';
 import { Meta, StoryObj } from '@storybook/nextjs';
+import { roundTo } from '@tet/domain/utils';
 import { GrapheSecteur } from './GrapheSecteur';
 
 const meta: Meta<typeof GrapheSecteur> = {

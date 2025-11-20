@@ -1,8 +1,8 @@
 'use client';
 
-import { PersonalDefaultModuleKeys } from '@/api/plan-actions';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { MesuresModulePage } from '@/app/tableaux-de-bord/referentiels/mesures.module-page';
+import { PersonalDefaultModuleKeys } from '@tet/api/plan-actions';
 
 import MesuresDontJeSuisLePiloteModal from '../../_components/mesures-dont-je-suis-le-pilote.modal';
 import {

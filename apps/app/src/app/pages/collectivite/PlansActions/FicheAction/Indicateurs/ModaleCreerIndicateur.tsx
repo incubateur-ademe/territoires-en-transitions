@@ -1,6 +1,6 @@
 import IndicateurPersoNouveau from '@/app/app/pages/collectivite/Indicateurs/IndicateurPersoNouveau';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { Modal } from '@/ui';
+import { Modal } from '@tet/ui';
 
 type ModaleCreerIndicateurProps = {
   isOpen: boolean;

@@ -1,4 +1,4 @@
-import { indicateurSourceTable } from '@/backend/indicateurs/shared/models/indicateur-source.table';
+import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
 import { pgTable, text, unique } from 'drizzle-orm/pg-core';
 
 export const indicateurSourceSourceCalculTable = pgTable(

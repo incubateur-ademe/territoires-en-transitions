@@ -1,4 +1,4 @@
-import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
   boolean,
   integer,

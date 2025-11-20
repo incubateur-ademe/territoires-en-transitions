@@ -1,4 +1,4 @@
-import { TrajectoirePropertiesType } from '@/domain/indicateurs';
+import { TrajectoirePropertiesType } from '@tet/domain/indicateurs';
 
 export const CONSOMMATIONS_FINALES_SPECIFIC_INPUT_SECTEURS: TrajectoirePropertiesType['secteurs'] =
   [

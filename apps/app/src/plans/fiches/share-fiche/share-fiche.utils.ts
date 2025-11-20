@@ -1,6 +1,6 @@
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { CollectiviteAccess } from '@/domain/users';
+import { CollectiviteAccess } from '@tet/domain/users';
 import { FicheListItem } from '../list-all-fiches/data/use-list-fiches';
 
 export function isFicheSharedWithCollectivite(

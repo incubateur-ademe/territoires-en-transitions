@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Field, Select } from '@/ui';
+import { Button, Field, Select } from '@tet/ui';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import useSWR from 'swr';

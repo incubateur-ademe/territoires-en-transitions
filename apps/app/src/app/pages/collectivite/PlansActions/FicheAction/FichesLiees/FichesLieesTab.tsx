@@ -1,10 +1,10 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { useUser } from '@/api/users';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { SharedFicheLinkedResourcesAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { CollectiviteAccess } from '@/domain/users';
-import { Button, EmptyCard } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
+import { CollectiviteAccess } from '@tet/domain/users';
+import { Button, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
 import {
   useFichesActionLiees,

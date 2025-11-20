@@ -4,7 +4,7 @@ import NoResult from '@/site/components/info/NoResult';
 import Section from '@/site/components/sections/Section';
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
-import { Alert } from '@/ui';
+import { Alert } from '@tet/ui';
 import { Metadata, ResolvingMetadata } from 'next';
 import ContactForm from './ContactForm';
 import { getStrapiData } from './utils';

@@ -4,8 +4,8 @@ import { pick } from 'es-toolkit';
 import { avancementToLabel } from '@/app/app/labels';
 import { actionAvancementColors } from '@/app/app/theme';
 import { toPercentString } from '@/app/utils/to-percent-string';
-import { StatutAvancement } from '@/domain/referentiels';
-import { Slider } from '@/ui';
+import { StatutAvancement } from '@tet/domain/referentiels';
+import { Slider } from '@tet/ui';
 
 export type AvancementValues = [number, number, number];
 

@@ -3,9 +3,9 @@ import {
   ListActionsResponse,
   useListActions,
 } from '@/app/referentiels/actions/use-list-actions';
-import { ActionTypeEnum } from '@/domain/referentiels';
-import { SelectFilter, SelectMultipleProps, SelectOption } from '@/ui';
-import { cn } from '@/ui/utils/cn';
+import { ActionTypeEnum } from '@tet/domain/referentiels';
+import { SelectFilter, SelectMultipleProps, SelectOption } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 import Fuse, { FuseResult } from 'fuse.js';
 import { useCallback, useEffect, useState } from 'react';
 

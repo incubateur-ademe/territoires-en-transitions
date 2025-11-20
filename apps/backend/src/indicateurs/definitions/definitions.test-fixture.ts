@@ -1,4 +1,4 @@
-import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { inferRouterInputs } from '@trpc/server';
 import { omit, pick } from 'es-toolkit';
 import { onTestFinished } from 'vitest';

@@ -1,7 +1,6 @@
 'use client';
 
-import { DBClient } from '@/api';
-import { useSupabase } from '@/api';
+import { DBClient, useSupabase } from '@tet/api';
 import { useRouter } from 'next/navigation';
 
 declare global {

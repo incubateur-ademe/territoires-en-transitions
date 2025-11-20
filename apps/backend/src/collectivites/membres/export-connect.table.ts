@@ -1,6 +1,6 @@
-import { authUsersTable } from '@/backend/users/models/auth-users.table';
-import { utilisateurSchema } from '@/backend/users/models/invitation.table';
-import { modifiedAt } from '@/backend/utils/column.utils';
+import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
+import { utilisateurSchema } from '@tet/backend/users/models/invitation.table';
+import { modifiedAt } from '@tet/backend/utils/column.utils';
 import { text, uuid } from 'drizzle-orm/pg-core';
 
 export const exportConnectTable = utilisateurSchema.table('export_connect', {

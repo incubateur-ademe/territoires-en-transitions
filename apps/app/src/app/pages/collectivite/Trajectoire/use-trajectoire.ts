@@ -1,8 +1,8 @@
-import { useTRPC } from '@/api';
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { CalculTrajectoireResultatMode } from '@/domain/indicateurs';
-import { Event, useEventTracker } from '@/ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { CalculTrajectoireResultatMode } from '@tet/domain/indicateurs';
+import { Event, useEventTracker } from '@tet/ui';
 
 /** Charge la trajectoire */
 export const useGetTrajectoire = ({

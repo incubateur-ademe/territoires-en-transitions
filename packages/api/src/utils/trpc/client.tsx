@@ -16,7 +16,7 @@ import { useUserSession } from '../../users/user-context/user-provider';
 import { getAuthHeaders } from '../supabase/get-auth-headers';
 import { getQueryClient } from './query-client';
 
-import type { AppRouter } from '@/backend/utils/trpc/trpc.router';
+import type { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
 
 export type RouterInput = inferRouterInputs<AppRouter>;
 export type RouterOutput = inferRouterOutputs<AppRouter>;

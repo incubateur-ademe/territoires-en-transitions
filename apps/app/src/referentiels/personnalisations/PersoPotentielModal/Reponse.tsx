@@ -1,10 +1,10 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import {
   TListeChoix,
   TReponse,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
 import { useDebouncedInput } from '@/app/ui/shared/useDebouncedInput';
-import { Button, Field, Input, RadioButton as RadioButtonBase } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Button, Field, Input, RadioButton as RadioButtonBase } from '@tet/ui';
 import classNames from 'classnames';
 import { FC, ReactNode } from 'react';
 import { TQuestionReponseProps } from './PersoPotentielQR';

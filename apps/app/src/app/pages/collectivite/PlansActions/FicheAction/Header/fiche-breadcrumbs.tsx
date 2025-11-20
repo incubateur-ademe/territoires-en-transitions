@@ -1,5 +1,5 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { Button, VisibleWhen } from '@/ui';
+import { Button, VisibleWhen } from '@tet/ui';
 import { useState } from 'react';
 import { ClassifiedFicheBreadcrumbs } from './classified-fiche-breadcrumbs';
 import { NotClassifiedFicheBreadcrumbs } from './not-classified-fiche-breadcrumbs';

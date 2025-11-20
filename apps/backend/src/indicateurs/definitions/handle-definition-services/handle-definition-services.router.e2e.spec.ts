@@ -4,12 +4,12 @@ import {
   getTestApp,
   getTestDatabase,
   YOLO_DODO,
-} from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { addTestUser } from '@/backend/users/users/users.fixture';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { CollectiviteAccessLevelEnum } from '@/domain/users';
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.fixture';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
 import { describe, expect } from 'vitest';
 import { createIndicateurPerso } from '../definitions.test-fixture';
 

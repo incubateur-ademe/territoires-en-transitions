@@ -1,5 +1,5 @@
 import { prioritesToState } from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
-import { Priorite } from '@/domain/plans';
+import { Priorite } from '@tet/domain/plans';
 import classNames from 'classnames';
 import { Badge } from './Badge';
 
