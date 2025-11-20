@@ -2,7 +2,6 @@
 import { useCurrentCollectivite } from '@/api/collectivites';
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
-import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { Header } from '@/app/plans/plans/components/header';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { Button, Spacer, VisibleWhen } from '@/ui';
@@ -15,6 +14,7 @@ import {
   FicheActionViewType,
   useFicheActionFilters,
 } from './filters/fiche-action-filters-context';
+import { useCountFiches } from './hooks/use-count-fiches';
 
 type ToutesLesFichesViewProps = {
   type: FicheActionViewType;
@@ -42,24 +42,6 @@ const Link = ({
   );
 };
 
-const useFichesNonClasseesCount = (): number | undefined => {
-  const { collectiviteId } = useCurrentCollectivite();
-  const { count } = useListFiches(collectiviteId, {
-    filters: { noPlan: true },
-    queryOptions: { limit: 1, page: 1 },
-  });
-  return count;
-};
-
-const useFichesClasseesCount = (): number | undefined => {
-  const { collectiviteId } = useCurrentCollectivite();
-  const { count } = useListFiches(collectiviteId, {
-    filters: { noPlan: false },
-    queryOptions: { limit: 1, page: 1 },
-  });
-  return count;
-};
-
 const getLabelAndCount = (label: string, count: number | undefined) => {
   return `${label} ${count ? `(${count})` : ''}`;
 };
@@ -73,12 +55,8 @@ const viewTitleByType: Record<FicheActionViewType, string> = {
 
 const ToutesLesFichesActionContent = () => {
   const { collectiviteId, isReadOnly, permissions } = useCurrentCollectivite();
-  const fichesNonClasseesCount = useFichesNonClasseesCount();
-  const fichesClasseesCount = useFichesClasseesCount();
-  const totalCount =
-    fichesNonClasseesCount || fichesClasseesCount
-      ? (fichesNonClasseesCount || 0) + (fichesClasseesCount || 0)
-      : undefined;
+  const { countFichesNonClassees, countFichesClassees, countTotalFiches } =
+    useCountFiches();
   const { mutate: createFicheAction } = useCreateFicheAction();
   const { filters, ficheType } = useFicheActionFilters();
   const searchParams = useSearchParams();
@@ -96,7 +74,7 @@ const ToutesLesFichesActionContent = () => {
         'plans.fiches.read_public'
       ),
       type: 'all',
-      label: getLabelAndCount(viewTitleByType.all, totalCount),
+      label: getLabelAndCount(viewTitleByType.all, countTotalFiches),
     },
     {
       isVisibleWithPermissions: hasPermission(
@@ -104,7 +82,7 @@ const ToutesLesFichesActionContent = () => {
         'plans.fiches.read_public'
       ),
       type: 'classifiees',
-      label: getLabelAndCount(viewTitleByType.classifiees, fichesClasseesCount),
+      label: getLabelAndCount(viewTitleByType.classifiees, countFichesClassees),
     },
     {
       isVisibleWithPermissions: hasPermission(
@@ -114,7 +92,7 @@ const ToutesLesFichesActionContent = () => {
       type: 'non-classifiees',
       label: getLabelAndCount(
         viewTitleByType['non-classifiees'],
-        fichesNonClasseesCount
+        countFichesNonClassees
       ),
     },
     {
