@@ -1,5 +1,5 @@
-import { Panier, PanierAPI } from '@/api';
-import { useSupabase } from '@/api';
+import { Panier, PanierAPI } from '@tet/api';
+import { useSupabase } from '@tet/api';
 import { useEffect, useState } from 'react';
 import { usePanierContext } from '../../providers';
 

@@ -1,4 +1,4 @@
-import { Database } from '@/api';
+import { Database } from '@tet/api';
 import { createClient } from '@supabase/supabase-js';
 
 type FuncName = keyof Database['public']['Functions'];
@@ -20,7 +20,10 @@ export class SupabaseClient {
   }
 
   // permet d'appeler les fonctions sql de test
-  async rpc<Returns, Name extends FuncName = FuncName>(name: Name, args: Functions<Name>['Args']) {
+  async rpc<Returns, Name extends FuncName = FuncName>(
+    name: Name,
+    args: Functions<Name>['Args']
+  ) {
     const { data, error } = await this.client.rpc(name, args);
     if (error) {
       throw error;

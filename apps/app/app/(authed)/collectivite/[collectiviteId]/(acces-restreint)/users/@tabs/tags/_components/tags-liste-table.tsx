@@ -1,4 +1,4 @@
-import { CollectiviteAccessLevel } from '@/domain/users';
+import { CollectiviteAccessLevel } from '@tet/domain/users';
 import {
   DEPRECATED_Table,
   DEPRECATED_TBody,
@@ -6,7 +6,7 @@ import {
   DEPRECATED_THead,
   DEPRECATED_THeadCell,
   DEPRECATED_TRow,
-} from '@/ui';
+} from '@tet/ui';
 import classNames from 'classnames';
 import {
   SendInvitationArgs,

@@ -1,16 +1,16 @@
-import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
-import { LIST_DEFAULT_JALONS } from '@/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-query';
-import { ListSnapshotsApiResponse } from '@/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-response';
+import { INestApplication } from '@nestjs/common';
+import { ReferentielsRouter } from '@tet/backend/referentiels/referentiels.router';
+import { LIST_DEFAULT_JALONS } from '@tet/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-query';
+import { ListSnapshotsApiResponse } from '@tet/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-response';
 import {
   getAuthUser,
   getTestApp,
   ISO_8601_DATE_TIME_REGEX,
   signInWith,
   YOLO_DODO,
-} from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { ReferentielIdEnum, SnapshotJalonEnum } from '@/domain/referentiels';
-import { INestApplication } from '@nestjs/common';
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { ReferentielIdEnum, SnapshotJalonEnum } from '@tet/domain/referentiels';
 import request from 'supertest';
 
 describe('Api pour lister les snapshots', () => {

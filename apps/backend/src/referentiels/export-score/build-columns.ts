@@ -2,9 +2,9 @@ import {
   ExportMode,
   ScoreComparisonData,
   ScoreRow,
-} from '@/backend/referentiels/export-score/load-score-comparison.service';
-import { getLibelleScoreIndicatif } from '@/backend/referentiels/score-indicatif/format-score-indicatif.utils';
-import { PreuveEssential } from '@/domain/collectivites';
+} from '@tet/backend/referentiels/export-score/load-score-comparison.service';
+import { getLibelleScoreIndicatif } from '@tet/backend/referentiels/score-indicatif/format-score-indicatif.utils';
+import { PreuveEssential } from '@tet/domain/collectivites';
 import {
   ActionTypeEnum,
   getIdentifiantFromActionId,
@@ -12,8 +12,8 @@ import {
   ScoreComputeModeEnum,
   StatutAvancement,
   StatutAvancementEnum,
-} from '@/domain/referentiels';
-import { htmlToText, roundTo } from '@/domain/utils';
+} from '@tet/domain/referentiels';
+import { htmlToText, roundTo } from '@tet/domain/utils';
 import { toMerged } from 'es-toolkit';
 import { CellFormulaValue, Style } from 'exceljs';
 import * as Utils from '../../utils/excel/export-excel.utils';

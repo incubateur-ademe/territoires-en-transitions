@@ -1,13 +1,13 @@
-import { Enums } from '@/api';
+import { Enums } from '@tet/api';
 import {
   listFichesRequestFiltersSchema,
   Priorite,
-  Statut,
   SANS_PILOTE_LABEL,
   SANS_PRIORITE_LABEL,
   SANS_REFERENT_LABEL,
   SANS_STATUT_LABEL,
-} from '@/domain/plans';
+  Statut,
+} from '@tet/domain/plans';
 import { z } from 'zod';
 
 type TFicheActionEcheances = Enums<'fiche_action_echeances'>;

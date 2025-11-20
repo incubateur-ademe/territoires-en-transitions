@@ -5,7 +5,7 @@ import {
   useTerritoiresLabellises,
 } from '@/site/app/stats/NombreCollectivitesEngagees';
 import Section from '@/site/components/sections/Section';
-import { Button } from '@/ui';
+import { Button } from '@tet/ui';
 import { useActiveUsers } from './stats/ActiveUsers';
 
 type CommunauteProps = {

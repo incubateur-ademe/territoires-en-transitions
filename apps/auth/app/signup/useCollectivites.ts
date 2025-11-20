@@ -1,4 +1,4 @@
-import { DBClient, useSupabase } from '@/api';
+import { DBClient, useSupabase } from '@tet/api';
 import useSWR from 'swr';
 
 /** Charge la liste des collectivités */

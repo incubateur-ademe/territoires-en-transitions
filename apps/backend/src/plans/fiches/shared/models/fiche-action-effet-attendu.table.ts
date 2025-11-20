@@ -1,4 +1,4 @@
-import { effetAttenduTable } from '@/backend/shared/effet-attendu/effet-attendu.table';
+import { effetAttenduTable } from '@tet/backend/shared/effet-attendu/effet-attendu.table';
 import { sql } from 'drizzle-orm';
 import { integer, pgPolicy, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { authenticatedRole } from 'drizzle-orm/supabase';

@@ -1,4 +1,4 @@
-import { Checkbox, Option } from '@/ui';
+import { Checkbox, Option } from '@tet/ui';
 
 export type TMultiSelectCheckboxesProps = {
   htmlId: string;

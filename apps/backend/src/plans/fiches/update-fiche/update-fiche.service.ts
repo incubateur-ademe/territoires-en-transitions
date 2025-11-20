@@ -1,9 +1,9 @@
-import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
-import { ShareFicheService } from '@/backend/plans/fiches/share-fiches/share-fiche.service';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { WebhookService } from '@/backend/utils/webhooks/webhook.service';
 import { Injectable, Logger } from '@nestjs/common';
+import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
+import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-fiche.service';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { WebhookService } from '@tet/backend/utils/webhooks/webhook.service';
 import { ficheSchemaUpdate, FicheWithRelations } from '@tet/domain/plans';
 import { ApplicationSousScopesEnum } from '@tet/domain/utils';
 import {

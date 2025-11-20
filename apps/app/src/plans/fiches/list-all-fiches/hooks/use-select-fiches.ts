@@ -1,5 +1,5 @@
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { PermissionOperation } from '@/domain/users';
+import { PermissionOperation } from '@tet/domain/users';
 import { useState } from 'react';
 import { FicheActionViewOptions } from './use-select-fiche-view';
 

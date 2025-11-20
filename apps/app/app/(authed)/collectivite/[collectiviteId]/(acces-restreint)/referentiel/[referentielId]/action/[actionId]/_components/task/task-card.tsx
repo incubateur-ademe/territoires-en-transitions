@@ -1,7 +1,7 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
-import { Divider } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Divider } from '@tet/ui';
 import { useState } from 'react';
 import { ActionJustificationField } from '../action/action.justification-field';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';

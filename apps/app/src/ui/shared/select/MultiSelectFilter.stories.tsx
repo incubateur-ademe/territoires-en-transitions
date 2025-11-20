@@ -1,4 +1,4 @@
-import { Icon, ITEM_ALL } from '@/ui';
+import { Icon, ITEM_ALL } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { MultiSelectFilter } from './MultiSelectFilter';

@@ -1,12 +1,12 @@
-import { ficheActionNoteTable } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
-import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
-import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { dcpTable } from '@/backend/users/models/dcp.table';
-import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { FicheNoteCreate } from '@/domain/plans';
 import { Injectable, Logger } from '@nestjs/common';
+import { ficheActionNoteTable } from '@tet/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
+import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { FicheNoteCreate } from '@tet/domain/plans';
 import { aliasedTable, and, desc, eq } from 'drizzle-orm';
 
 @Injectable()

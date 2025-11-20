@@ -1,7 +1,6 @@
 import { createSerializer } from 'nuqs';
 import { useState } from 'react';
 
-import { ModuleFicheActionsSelect } from '@/api/plan-actions';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { FicheActionViewType } from '@/app/plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
 import {
@@ -10,9 +9,10 @@ import {
 } from '@/app/plans/fiches/list-all-fiches/filters/filter-converter';
 import { nameToparams } from '@/app/plans/fiches/list-all-fiches/filters/filters-search-parameters-mapper';
 import { FichesActionModule } from '@/app/tableaux-de-bord/plans-action/fiches-action/fiches-action.module';
-import { ListFichesRequestFilters as Filtres } from '@/domain/plans';
-import { ModifiedSince } from '@/domain/utils';
 import { QueryKey } from '@tanstack/react-query';
+import { ModuleFicheActionsSelect } from '@tet/api/plan-actions';
+import { ListFichesRequestFilters } from '@tet/domain/plans';
+import { ModifiedSince } from '@tet/domain/utils';
 import { mapValues } from 'es-toolkit/object';
 import React from 'react';
 import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';
@@ -41,7 +41,7 @@ const getDateFromModifiedSince = (modifiedSince: ModifiedSince) => {
 };
 
 const buildFilterSearchParameters = (module: ModuleFicheActionsSelect) => {
-  const filters: Filtres = { ...module.options.filtre };
+  const filters: ListFichesRequestFilters = { ...module.options.filtre };
 
   if (filters.modifiedSince) {
     Object.assign(filters, {

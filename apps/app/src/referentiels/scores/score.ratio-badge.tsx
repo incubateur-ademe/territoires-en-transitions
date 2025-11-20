@@ -1,5 +1,5 @@
-import { roundTo } from '@/domain/utils';
-import { Badge, BadgeSize } from '@/ui';
+import { roundTo } from '@tet/domain/utils';
+import { Badge, BadgeSize } from '@tet/ui';
 import classNames from 'classnames';
 import { useScore } from '../use-snapshot';
 

@@ -1,6 +1,6 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { Notification, Tooltip } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Notification, Tooltip } from '@tet/ui';
 import { FicheListItem } from '../list-all-fiches/data/use-list-fiches';
 
 type FicheShareInfoProps = {

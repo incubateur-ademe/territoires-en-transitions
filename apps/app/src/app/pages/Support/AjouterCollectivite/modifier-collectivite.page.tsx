@@ -1,6 +1,5 @@
 'use client';
 
-import { useCollectiviteId } from '@/api/collectivites';
 import { CodeCommuneField } from '@/app/app/pages/Support/AjouterCollectivite/code-commune.field';
 import { CodeDepartementField } from '@/app/app/pages/Support/AjouterCollectivite/code-departement.field';
 import { CodeRegionField } from '@/app/app/pages/Support/AjouterCollectivite/code-region.field';
@@ -14,8 +13,8 @@ import {
   CollectiviteOutput,
   useSelectCollectivite,
 } from '@/app/app/pages/Support/AjouterCollectivite/use-select-collectivite';
-import { Button, Field, Input } from '@/ui';
-import { InputNumber } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Button, Field, Input, InputNumber } from '@tet/ui';
 import { useEffect, useState } from 'react';
 
 export const ModifierCollectivitePage = () => {

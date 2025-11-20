@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { SansPlanPlaceholder } from '@/app/tableaux-de-bord/plans-action/sans-plan.placeholder';
-import { Button } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Button } from '@tet/ui';
 
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import Modules from './modules';

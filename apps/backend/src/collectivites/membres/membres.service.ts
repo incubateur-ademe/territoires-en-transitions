@@ -1,9 +1,9 @@
-import { utilisateurCollectiviteAccessTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
-import { dcpTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { membreCreateSchema } from '@/domain/collectivites';
 import { Injectable, Logger } from '@nestjs/common';
+import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { membreCreateSchema } from '@tet/domain/collectivites';
 import { and, eq, sql } from 'drizzle-orm';
 import { unionAll } from 'drizzle-orm/pg-core';
 import z from 'zod';

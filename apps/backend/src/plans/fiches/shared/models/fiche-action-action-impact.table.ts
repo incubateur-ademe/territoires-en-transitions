@@ -1,4 +1,4 @@
-import { actionImpactTable } from '@/backend/plans/paniers/models/action-impact.table';
+import { actionImpactTable } from '@tet/backend/plans/paniers/models/action-impact.table';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { ficheActionTable } from './fiche-action.table';
 

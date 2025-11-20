@@ -1,12 +1,12 @@
 'use client';
 
-import { CollectiviteProvider } from '@/api/collectivites';
-import { UserProviderStoreClient } from '@/api/users';
 import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
 import { DemoModeProvider } from '@/app/users/demo-mode-support-provider';
 import { NPSTracker } from '@/app/utils/nps/nps-tracker';
 import { Toasters } from '@/app/utils/toast/toasters';
-import { UserWithCollectiviteAccesses } from '@/domain/users';
+import { CollectiviteProvider } from '@tet/api/collectivites';
+import { UserProviderStoreClient } from '@tet/api/users';
+import { UserWithCollectiviteAccesses } from '@tet/domain/users';
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
 

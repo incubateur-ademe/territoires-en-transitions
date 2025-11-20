@@ -3,9 +3,9 @@ import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import { PersonneTagOrUser, Tag } from '@/domain/collectivites';
-import { Field, FormSectionGrid, Modal, ModalFooterOKCancel } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
+import { Field, FormSectionGrid, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { isEqual } from 'es-toolkit';
 import { useEffect, useState } from 'react';
 

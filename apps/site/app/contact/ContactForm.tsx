@@ -9,7 +9,7 @@ import {
   OptionValue,
   Select,
   Textarea,
-} from '@/ui';
+} from '@tet/ui';
 import classNames from 'classnames';
 import { useRouter, useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';

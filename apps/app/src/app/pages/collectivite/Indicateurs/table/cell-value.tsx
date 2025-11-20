@@ -1,4 +1,4 @@
-import { DEPRECATED_TCell } from '@/ui';
+import { DEPRECATED_TCell } from '@tet/ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { InputValue } from './input-value';
 

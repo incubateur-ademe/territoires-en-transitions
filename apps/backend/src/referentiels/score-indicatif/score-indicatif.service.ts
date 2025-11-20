@@ -1,29 +1,30 @@
-import PersonnalisationsService from '@/backend/collectivites/personnalisations/services/personnalisations-service';
-import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { categorieTagTable } from '@/backend/collectivites/tags/categorie-tag.table';
-import { indicateurCategorieTagTable } from '@/backend/indicateurs/definitions/indicateur-categorie-tag.table';
-import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
-import { indicateurSourceMetadonneeTable } from '@/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
-import { indicateurSourceTable } from '@/backend/indicateurs/shared/models/indicateur-source.table';
-import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
+import { Injectable, Logger } from '@nestjs/common';
+import PersonnalisationsService from '@tet/backend/collectivites/personnalisations/services/personnalisations-service';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { categorieTagTable } from '@tet/backend/collectivites/tags/categorie-tag.table';
+import { indicateurCategorieTagTable } from '@tet/backend/indicateurs/definitions/indicateur-categorie-tag.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
+import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
+import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
 import IndicateurExpressionService, {
   EvaluationContext,
-} from '@/backend/indicateurs/valeurs/indicateur-expression.service';
-import { indicateurValeurTable } from '@/backend/indicateurs/valeurs/indicateur-valeur.table';
-import ValeursReferenceService from '@/backend/indicateurs/valeurs/valeurs-reference.service';
-import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
-import { actionScoreIndicateurValeurTable } from '@/backend/referentiels/models/action-score-indicateur-valeur.table';
-import { GetValeursUtilisablesRequest } from '@/backend/referentiels/score-indicatif/get-valeurs-utilisables.request';
-import { SetValeursUtiliseesRequest } from '@/backend/referentiels/score-indicatif/set-valeurs-utilisees.request';
-import { AuthUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { CollectiviteAvecType } from '@/domain/collectivites';
+} from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
+import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
+import ValeursReferenceService from '@tet/backend/indicateurs/valeurs/valeurs-reference.service';
+import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
+import { actionScoreIndicateurValeurTable } from '@tet/backend/referentiels/models/action-score-indicateur-valeur.table';
+import { GetValeursUtilisablesRequest } from '@tet/backend/referentiels/score-indicatif/get-valeurs-utilisables.request';
+import { SetValeursUtiliseesRequest } from '@tet/backend/referentiels/score-indicatif/set-valeurs-utilisees.request';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { CollectiviteAvecType } from '@tet/domain/collectivites';
 import {
   COLLECTIVITE_SOURCE_ID,
   IndicateurAvecValeursParSource,
   IndicateurSourceMetadonnee,
   IndicateurValeurGroupee,
-} from '@/domain/indicateurs';
+} from '@tet/domain/indicateurs';
 import {
   ActionScoreIndicatif,
   IndicateurAssocie,
@@ -32,8 +33,7 @@ import {
   ScoreIndicatifType,
   scoreIndicatifTypeEnum,
   ValeurUtilisee,
-} from '@/domain/referentiels';
-import { Injectable, Logger } from '@nestjs/common';
+} from '@tet/domain/referentiels';
 import { and, eq, getTableColumns, inArray, not, sql } from 'drizzle-orm';
 import { groupBy, keyBy, mapValues, pick } from 'es-toolkit';
 import { objectToCamel } from 'ts-case-convert';

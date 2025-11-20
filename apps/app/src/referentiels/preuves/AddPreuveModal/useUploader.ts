@@ -1,8 +1,8 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { ENV } from '@/api/environmentVariables';
-import { useUserSession } from '@/api/users';
-import { getAuthHeaders } from '@/api/utils/supabase/get-auth-headers';
 import { shasum256 } from '@/app/utils/shasum256';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { ENV } from '@tet/api/environmentVariables';
+import { useUserSession } from '@tet/api/users';
+import { getAuthHeaders } from '@tet/api/utils/supabase/get-auth-headers';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import {

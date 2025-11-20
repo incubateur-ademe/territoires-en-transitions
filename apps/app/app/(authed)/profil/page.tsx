@@ -1,8 +1,8 @@
 'use client';
 
-import { getRejoindreCollectivitePath } from '@/api';
-import { useUser } from '@/api/users';
-import { Button } from '@/ui';
+import { getRejoindreCollectivitePath } from '@tet/api';
+import { useUser } from '@tet/api/users';
+import { Button } from '@tet/ui';
 import { ModifierProfilModal } from './_components/modifier-profil.modal';
 import { ResendConfirmationLinkButton } from './_components/resend-confirmation-link.button';
 

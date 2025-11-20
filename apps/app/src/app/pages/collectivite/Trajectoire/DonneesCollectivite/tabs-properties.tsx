@@ -2,7 +2,7 @@ import { IndicateurTrajectoireId } from '@/app/indicateurs/trajectoires/trajecto
 import {
   MINIMAL_NUMBER_OF_VALID_VALUES_FOR_CONSOMMATIONS_FINALES,
   MINIMAL_NUMBER_OF_VALID_VALUES_FOR_EMISSIONS_GES,
-} from '@/domain/indicateurs';
+} from '@tet/domain/indicateurs';
 
 export const tabsProperties: Array<{
   id: IndicateurTrajectoireId;

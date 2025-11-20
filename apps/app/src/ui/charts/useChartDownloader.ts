@@ -1,8 +1,8 @@
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { useApiClient } from '@/app/utils/use-api-client';
 import { DOWNLOAD_FILE_MUTATION_OPTIONS } from '@/app/utils/useDownloadFile';
-import { ChartRenderRequestType } from '@/domain/utils';
 import { useMutation } from '@tanstack/react-query';
+import { ChartRenderRequestType } from '@tet/domain/utils';
 
 /** Télécharge le fichier xlsx modèle */
 export const useChartDownloader = () => {

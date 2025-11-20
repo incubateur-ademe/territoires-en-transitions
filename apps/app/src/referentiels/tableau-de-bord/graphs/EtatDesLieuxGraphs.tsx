@@ -1,10 +1,10 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielUrl } from '@/app/app/paths';
 import Chart from '@/app/ui/charts/Chart';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
-import { ReferentielId } from '@/domain/referentiels';
-import { Button, Event, useEventTracker } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { Button, Event, useEventTracker } from '@tet/ui';
 import { useState } from 'react';
 import { TableOptions } from 'react-table';
 import { ProgressionRow } from '../../DEPRECATED_scores.types';

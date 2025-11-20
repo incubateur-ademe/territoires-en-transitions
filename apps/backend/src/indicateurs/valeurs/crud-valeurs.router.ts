@@ -1,8 +1,8 @@
-import { collectiviteIdInputSchemaPartial } from '@/backend/collectivites/collectivite-id.input';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { collectiviteIdInputSchemaPartial } from '@tet/backend/collectivites/collectivite-id.input';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import IndicateurValeursService from './crud-valeurs.service';
 import { deleteValeurIndicateurSchema } from './delete-valeur-indicateur.request';
 import { getIndicateursValeursInputSchema } from './get-indicateur-valeurs.input';

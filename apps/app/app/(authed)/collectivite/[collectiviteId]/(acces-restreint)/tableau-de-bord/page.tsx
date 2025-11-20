@@ -1,8 +1,8 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 

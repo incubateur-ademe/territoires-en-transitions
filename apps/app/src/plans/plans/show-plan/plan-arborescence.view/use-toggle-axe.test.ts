@@ -1,4 +1,4 @@
-import { PlanNode } from '@/domain/plans';
+import { PlanNode } from '@tet/domain/plans';
 import { findAxeWithUniqDepth, getCanBeScrolledTo } from './use-toggle-axe';
 
 const createAxe = (args: {

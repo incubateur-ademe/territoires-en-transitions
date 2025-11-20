@@ -1,8 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users';
 import {
   makeCollectivitePlansActionsNouveauUrl,
   makeReferentielRootUrl,
@@ -10,7 +8,9 @@ import {
 } from '@/app/app/paths';
 import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.container';
 import { FichesActionCountByModule } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/fiches-action-count-by.module';
-import { Button } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
+import { Button } from '@tet/ui';
 import Header from '../_components/header';
 import Metrics from './_components/metrics';
 import ScoreReferentielCard from './_components/score-referentiel.card';

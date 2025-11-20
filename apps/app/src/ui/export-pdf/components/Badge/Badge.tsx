@@ -1,5 +1,5 @@
-import { BadgeState, badgeClassnames } from '@/ui';
 import { Text, TextProps } from '@react-pdf/renderer';
+import { BadgeState, badgeClassnames } from '@tet/ui';
 import { tw } from '../../utils';
 import { Stack } from '../Stack';
 

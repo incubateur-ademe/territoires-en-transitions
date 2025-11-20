@@ -1,7 +1,7 @@
 import {
   invitationTable,
   utilisateurSchema,
-} from '@/backend/users/models/invitation.table';
+} from '@tet/backend/users/models/invitation.table';
 import { integer, primaryKey, text, uuid } from 'drizzle-orm/pg-core';
 
 export const invitationPersonneTagTable = utilisateurSchema.table(

@@ -1,18 +1,18 @@
-import { ListCollectiviteInput } from '@/backend/collectivites/list-collectivites/list-collectivites.input';
-import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
-import { auditTable } from '@/backend/referentiels/labellisations/audit.table';
-import { labellisationDemandeTable } from '@/backend/referentiels/labellisations/labellisation-demande.table';
-import { labellisationTable } from '@/backend/referentiels/labellisations/labellisation.table';
+import { Injectable, Logger } from '@nestjs/common';
+import { ListCollectiviteInput } from '@tet/backend/collectivites/list-collectivites/list-collectivites.input';
+import ListCollectivitesService from '@tet/backend/collectivites/list-collectivites/list-collectivites.service';
+import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
+import { labellisationDemandeTable } from '@tet/backend/referentiels/labellisations/labellisation-demande.table';
+import { labellisationTable } from '@tet/backend/referentiels/labellisations/labellisation.table';
 import {
   LabellisationRecord,
   ListLabellisationApiResponse,
-} from '@/backend/referentiels/labellisations/list-labellisations.api-response';
-import { snapshotTable } from '@/backend/referentiels/snapshots/snapshot.table';
-import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { SnapshotJalonEnum } from '@/domain/referentiels';
-import { roundTo } from '@/domain/utils';
-import { Injectable, Logger } from '@nestjs/common';
+} from '@tet/backend/referentiels/labellisations/list-labellisations.api-response';
+import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.table';
+import { getISOFormatDateQuery } from '@tet/backend/utils/column.utils';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { SnapshotJalonEnum } from '@tet/domain/referentiels';
+import { roundTo } from '@tet/domain/utils';
 import { desc, getTableColumns, inArray, isNotNull } from 'drizzle-orm';
 import { and, eq, or } from 'drizzle-orm/sql';
 import { DateTime } from 'luxon';

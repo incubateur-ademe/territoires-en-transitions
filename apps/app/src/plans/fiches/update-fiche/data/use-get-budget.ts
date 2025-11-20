@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { TRPCUseQueryResult, useTRPC } from '@tet/api';
-import { FicheBudget } from '@tet/domain/plans';
+import { RouterOutput, TRPCUseQueryResult, useTRPC } from '@tet/api';
+
+export type FicheBudget =
+  RouterOutput['plans']['fiches']['budgets']['list'][number];
 
 export const useGetBudget = (
   { ficheId }: { ficheId: number },

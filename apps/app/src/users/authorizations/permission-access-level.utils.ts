@@ -1,4 +1,7 @@
-import { CollectiviteAccessLevel, PermissionOperation } from '@/domain/users';
+import {
+  CollectiviteAccessLevel,
+  PermissionOperation,
+} from '@tet/domain/users';
 
 export const accessLevelLabels: Record<CollectiviteAccessLevel, string> = {
   admin: 'Admin',

@@ -1,7 +1,7 @@
 import { SharedFicheUpdateAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-update.alert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { FicheResume } from '@/domain/plans';
-import { Checkbox } from '@/ui';
+import { Checkbox } from '@tet/ui';
+import { Fiche } from '../data/use-get-fiche';
 import { EtapeTextarea, useUpsertEtape } from './etape';
 import {
   EtapesProvider,
@@ -12,7 +12,7 @@ import EtapesList from './etapes-list';
 import { useGetEtapes } from './use-get-etapes';
 
 type Props = {
-  fiche: FicheResume;
+  fiche: Fiche;
   isReadonly: boolean;
 };
 

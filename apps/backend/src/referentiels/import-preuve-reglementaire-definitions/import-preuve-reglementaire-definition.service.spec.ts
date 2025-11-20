@@ -1,8 +1,8 @@
-import { ImportActionDefinitionType } from '@/backend/referentiels/import-referentiel/import-action-definition.dto';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import SheetService from '@/backend/utils/google-sheets/sheet.service';
-import { ReferentielIdEnum } from '@/domain/referentiels';
 import { Test } from '@nestjs/testing';
+import { ImportActionDefinitionType } from '@tet/backend/referentiels/import-referentiel/import-action-definition.dto';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
+import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { ImportPreuveReglementaireDefinition } from './import-preuve-reglementaire-definition.dto';
 import ImportPreuveReglementaireDefinitionService from './import-preuve-reglementaire-definition.service';
 

@@ -1,12 +1,12 @@
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
-import { FicheResume } from '@/domain/plans';
-import { Button, Field, ModalFooterOKCancel, RichTextEditor } from '@/ui';
+import { Button, Field, ModalFooterOKCancel, RichTextEditor } from '@tet/ui';
 import { useState } from 'react';
+import { Fiche } from '../../data/use-get-fiche';
 import { NOTES_MAX_LENGTH } from './ModaleCreationNote';
 
 type ModaleEditionNoteProps = {
-  fiche: FicheResume;
+  fiche: Fiche;
   notes: string;
   updateNotes: (notes: string | null) => void;
 };

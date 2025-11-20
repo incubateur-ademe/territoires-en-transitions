@@ -1,9 +1,9 @@
-import { Enums } from '@/api';
+import { Enums } from '@tet/api';
 import {
   StatutAvancement,
   StatutAvancementEnum,
   StatutAvancementIncludingNonConcerne,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 
 export const phaseToLabel: Record<Enums<'action_categorie'> | string, string> =
   {

@@ -1,14 +1,14 @@
+import { HttpException, Injectable, Logger } from '@nestjs/common';
 import {
   ExpressionParser,
   getExpressionVisitor,
-} from '@/backend/utils/expression-parser';
-import { getFormmattedErrors } from '@/backend/utils/expression-parser/get-formatted-errors.utils';
-import { HttpException, Injectable, Logger } from '@nestjs/common';
-import { createToken, CstNode } from 'chevrotain';
+} from '@tet/backend/utils/expression-parser';
+import { getFormmattedErrors } from '@tet/backend/utils/expression-parser/get-formatted-errors.utils';
 import {
   CollectivitePopulationTypeEnum,
   IdentiteCollectivite,
-} from '@/domain/collectivites';
+} from '@tet/domain/collectivites';
+import { createToken, CstNode } from 'chevrotain';
 
 const IDENTITE = createToken({ name: 'IDENTITE', pattern: /identite/i });
 const REPONSE = createToken({ name: 'REPONSE', pattern: /reponse/i });

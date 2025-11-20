@@ -5,7 +5,7 @@ import {
   DEPRECATED_THead,
   DEPRECATED_TRow,
   DEPRECATED_Table,
-} from '@/ui';
+} from '@tet/ui';
 import { PdfSectionKey, TSectionsValues, sectionsList } from '../utils';
 import ExportSuiviSelect from './export-suivi-select';
 

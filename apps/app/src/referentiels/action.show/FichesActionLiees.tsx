@@ -1,8 +1,8 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users';
 import FichesActionsDropdown from '@/app/ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { Button, Field } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
+import { Button, Field } from '@tet/ui';
 import FichesLieesListe from '../../app/pages/collectivite/PlansActions/FicheAction/FichesLiees/FichesLieesListe';
 import { useCreateFicheResume } from '../../app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
 import { useFichesActionLiees } from './useFichesActionLiees';

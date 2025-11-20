@@ -1,5 +1,5 @@
 import Modification from '@/app/app/pages/collectivite/Historique/Modification';
-import { RichTextEditor } from '@/ui';
+import { RichTextEditor } from '@tet/ui';
 import classNames from 'classnames';
 import {
   DetailNouvelleModificationWrapper,

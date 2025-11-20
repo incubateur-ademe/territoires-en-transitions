@@ -1,8 +1,12 @@
-import { Checkbox, Input, Select } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { Checkbox, Input, Select } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { SearchParams, SortBy, sortByItems } from './use-indicateurs-list-params';
+import {
+  SearchParams,
+  SortBy,
+  sortByItems,
+} from './use-indicateurs-list-params';
 
 export type IndicateursListeOptionsProps = {
   menuContainerClassname?: string;
@@ -46,7 +50,8 @@ export const IndicateursListeOptions = (
           <Select
             options={sortByItems}
             onChange={(value) =>
-              value && setSearchParams({ ...searchParams, sortBy: value as SortBy })
+              value &&
+              setSearchParams({ ...searchParams, sortBy: value as SortBy })
             }
             values={sortBy}
             customItem={(v) => <span className="text-grey-8">{v.label}</span>}
@@ -63,7 +68,10 @@ export const IndicateursListeOptions = (
             labelClassname="font-normal !text-grey-7"
             checked={displayGraphs}
             onChange={() => {
-              setSearchParams({ ...searchParams, displayGraphs: !displayGraphs });
+              setSearchParams({
+                ...searchParams,
+                displayGraphs: !displayGraphs,
+              });
             }}
           />
 
@@ -82,7 +90,9 @@ export const IndicateursListeOptions = (
         <Input
           type="search"
           onChange={(e) => setSearch(e.target.value)}
-          onSearch={(v) => setSearchParams({ ...searchParams, currentPage: 1, text: v })}
+          onSearch={(v) =>
+            setSearchParams({ ...searchParams, currentPage: 1, text: v })
+          }
           value={search}
           containerClassname="w-full xl:w-96"
           placeholder="Rechercher par nom ou description"

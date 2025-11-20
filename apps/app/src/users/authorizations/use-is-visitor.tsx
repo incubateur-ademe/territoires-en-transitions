@@ -1,8 +1,8 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users';
-import { CollectiviteAccessLevel } from '@/domain/users';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
+import { CollectiviteAccessLevel } from '@tet/domain/users';
 
 export const getIsVisitor = ({
   niveauAcces,

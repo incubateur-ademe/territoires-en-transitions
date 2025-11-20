@@ -7,7 +7,7 @@ import { getActionsAndSubActions } from '@/app/referentiels/actions/comments/hel
 import { usePrevAndNextActionLinks } from '@/app/referentiels/actions/use-prev-and-next-action-links';
 import { ReferentielProvider } from '@/app/referentiels/referentiel-context';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
-import { isSousMesure, ReferentielId } from '@/domain/referentiels';
+import { isSousMesure, ReferentielId } from '@tet/domain/referentiels';
 import ActionCommentsPanel from '../action-comments.panel';
 
 // Component that wraps ActionCommentsPanel with ActionProvider and computes actionsAndSubActionsTitleList

@@ -1,4 +1,4 @@
-import { ficheNoteCreateSchema } from '@/domain/plans';
+import { ficheNoteCreateSchema } from '@tet/domain/plans';
 import { z } from 'zod';
 
 export const upsertFicheActionNotesRequestSchema = z

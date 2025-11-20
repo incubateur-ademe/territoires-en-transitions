@@ -1,6 +1,6 @@
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
-import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
-import { dcpTable } from '@/backend/users/models/dcp.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { sql } from 'drizzle-orm';
 import {
   check,

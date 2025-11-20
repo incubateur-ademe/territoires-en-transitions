@@ -1,4 +1,4 @@
-import { collectiviteIdInputSchema } from '@/backend/collectivites/collectivite-id.input';
+import { collectiviteIdInputSchema } from '@tet/backend/collectivites/collectivite-id.input';
 import z from 'zod';
 
 export const getTableauDeBordModuleRequestSchema = z

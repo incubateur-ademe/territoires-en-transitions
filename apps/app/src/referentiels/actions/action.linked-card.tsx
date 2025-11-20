@@ -1,9 +1,9 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielTacheUrl } from '@/app/app/paths';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
-import { ActionTypeEnum, ActionWithScore } from '@/domain/referentiels';
-import { Button, Card } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { ActionTypeEnum, ActionWithScore } from '@tet/domain/referentiels';
+import { Button, Card } from '@tet/ui';
 import { ScoreProgressBar } from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 

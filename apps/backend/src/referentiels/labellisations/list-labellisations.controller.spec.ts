@@ -1,5 +1,6 @@
-import { ListLabellisationApiResponse } from '@/backend/referentiels/labellisations/list-labellisations.api-response';
-import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
+import { INestApplication } from '@nestjs/common';
+import { ListLabellisationApiResponse } from '@tet/backend/referentiels/labellisations/list-labellisations.api-response';
+import { ReferentielsRouter } from '@tet/backend/referentiels/referentiels.router';
 import {
   getAuthUser,
   getTestApp,
@@ -7,9 +8,8 @@ import {
   signInWith,
   YOLO_DODO,
   YOULOU_DOUDOU,
-} from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { INestApplication } from '@nestjs/common';
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import request from 'supertest';
 
 describe('Api pour lister les labellisations des collectivités', () => {

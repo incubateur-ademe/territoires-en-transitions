@@ -1,11 +1,11 @@
-import { UpsertIndicateursValeursRequest } from '@/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.request';
-import { getAuthUser, getServiceRoleUser, getTestApp } from '@/backend/test';
-import { GenerateTokenRequest } from '@/backend/users/apikeys/generate-token.request';
-import { GenerateTokenResponse } from '@/backend/users/apikeys/generate-token.response';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { PermissionOperationEnum } from '@/domain/users';
+import { UpsertIndicateursValeursRequest } from '@tet/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.request';
+import { getAuthUser, getServiceRoleUser, getTestApp } from '@tet/backend/test';
+import { GenerateTokenRequest } from '@tet/backend/users/apikeys/generate-token.request';
+import { GenerateTokenResponse } from '@tet/backend/users/apikeys/generate-token.response';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { INestApplication } from '@nestjs/common';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import { default as request } from 'supertest';
 
 describe('Oauth controller test', () => {

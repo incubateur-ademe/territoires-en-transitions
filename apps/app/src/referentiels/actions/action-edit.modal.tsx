@@ -1,7 +1,6 @@
 import { isEqual } from 'es-toolkit';
 import { useState } from 'react';
 
-import { useCollectiviteId } from '@/api/collectivites';
 import {
   useDeleteMesurePilotes,
   useUpsertMesurePilotes,
@@ -13,9 +12,10 @@ import {
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import { PersonneTagOrUser, Tag } from '@/domain/collectivites';
-import { Field, Modal, ModalFooterOKCancel } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
+import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 
 type Props = {
   actionId: string;

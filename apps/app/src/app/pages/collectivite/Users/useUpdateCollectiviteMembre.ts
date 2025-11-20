@@ -1,6 +1,6 @@
-import { DBClient, useSupabase, useTRPC } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { DBClient, useSupabase, useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { TUpdateMembre, TUpdateMembreArgs } from './types';
 
 /**

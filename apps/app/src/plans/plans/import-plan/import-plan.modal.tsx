@@ -1,5 +1,5 @@
 import { UpsertPlanForm } from '@/app/plans/plans/upsert-plan/upsert-plan.form';
-import { Button, Modal } from '@/ui';
+import { Button, Modal } from '@tet/ui';
 import { PropsWithChildren } from 'react';
 import { useImportPlan } from './data/use-import-plan';
 

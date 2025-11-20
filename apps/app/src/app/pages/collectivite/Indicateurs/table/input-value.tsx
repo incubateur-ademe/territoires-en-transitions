@@ -1,4 +1,4 @@
-import { Input } from '@/ui';
+import { Input } from '@tet/ui';
 import classNames from 'classnames';
 
 export type InputValueProps = {

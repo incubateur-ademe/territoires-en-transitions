@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { useTRPC } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
 import { TAxeInsert } from '@/app/types/alias';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
-import { Plan, PlanNode } from '@/domain/plans';
+import { useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Plan, PlanNode } from '@tet/domain/plans';
 import { planNodeFactory, sortPlanNodes } from '../../utils';
 
 export const useUpsertAxe = ({

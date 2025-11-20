@@ -1,6 +1,6 @@
-import { Valeur } from '@/api/indicateurs/domain/valeur.schema';
 import Markdown from '@/app/ui/Markdown';
-import { Tooltip } from '@/ui';
+import { Valeur } from '@tet/api/indicateurs/domain/valeur.schema';
+import { Tooltip } from '@tet/ui';
 
 type DataSourceTooltipProps = {
   metadonnee: NonNullable<Valeur['source']>;

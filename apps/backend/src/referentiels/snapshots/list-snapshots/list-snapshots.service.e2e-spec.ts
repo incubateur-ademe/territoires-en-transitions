@@ -1,6 +1,6 @@
-import { getAuthUser, getTestApp } from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { ReferentielIdEnum, SnapshotJalonEnum } from '@/domain/referentiels';
+import { getAuthUser, getTestApp } from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { ReferentielIdEnum, SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { ReferentielsRouter } from '../../referentiels.router';
 
 describe('ListSnapshotsService', () => {

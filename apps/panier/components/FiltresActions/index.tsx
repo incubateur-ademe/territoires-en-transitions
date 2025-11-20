@@ -6,7 +6,7 @@ import {
   OptionValue,
   SelectMultipleOnChangeArgs,
   useEventTracker,
-} from '@/ui';
+} from '@tet/ui';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { BadgesFilters } from './BadgesFilters';

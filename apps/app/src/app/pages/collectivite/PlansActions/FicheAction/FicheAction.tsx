@@ -1,14 +1,13 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users';
 import FicheActionAcces from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionAcces/FicheActionAcces';
 import { FicheNoAccessPage } from '@/app/plans/fiches/get-fiche/fiche-no-access.page';
 import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import { ErrorPage } from '@/app/utils/error/error.page';
-import { FicheWithRelations } from '@tet/domain/plans';
-import { useGetFiche } from './data/use-get-fiche';
+import { useUser } from '@tet/api';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Fiche, useGetFiche } from './data/use-get-fiche';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
 import { FicheActionDescription } from './FicheActionDescription/FicheActionDescription';
 import FicheActionImpact from './FicheActionImpact';
@@ -18,7 +17,7 @@ import { FicheActionPlanning } from './FicheActionPlanning/FicheActionPlanning';
 import { Header } from './Header';
 
 type FicheActionProps = {
-  fiche: FicheWithRelations;
+  fiche: Fiche;
   planId?: number;
 };
 

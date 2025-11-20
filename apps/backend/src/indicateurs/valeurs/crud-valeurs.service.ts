@@ -1,11 +1,17 @@
-import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { indicateurCollectiviteTable } from '@/backend/indicateurs/definitions/indicateur-collectivite.table';
-import { UpdateDefinitionService } from '@/backend/indicateurs/definitions/mutate-definition/update-definition.service';
-import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
-import { DEFAULT_ROUNDING_PRECISION } from '@/backend/indicateurs/valeurs/valeurs.constants';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { indicateurCollectiviteTable } from '@tet/backend/indicateurs/definitions/indicateur-collectivite.table';
+import { UpdateDefinitionService } from '@tet/backend/indicateurs/definitions/mutate-definition/update-definition.service';
+import ComputeValeursService from '@tet/backend/indicateurs/valeurs/compute-valeurs.service';
+import { DEFAULT_ROUNDING_PRECISION } from '@tet/backend/indicateurs/valeurs/valeurs.constants';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { getISOFormatDateQuery } from '@tet/backend/utils/column.utils';
 import {
   COLLECTIVITE_SOURCE_ID,
   IndicateurAvecValeurs,
@@ -19,15 +25,9 @@ import {
   IndicateurValeurGroupee,
   IndicateurValeursGroupeeParSource,
   IndicateurValeurWithIdentifiant,
-} from '@/domain/indicateurs';
-import { PermissionOperationEnum } from '@/domain/users';
-import { getErrorMessage, roundTo } from '@/domain/utils';
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+} from '@tet/domain/indicateurs';
+import { PermissionOperationEnum } from '@tet/domain/users';
+import { getErrorMessage, roundTo } from '@tet/domain/utils';
 import {
   and,
   eq,

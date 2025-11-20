@@ -1,4 +1,4 @@
-import { LabellisationAudit } from '@/domain/referentiels';
+import { LabellisationAudit } from '@tet/domain/referentiels';
 import { ObjectToSnake } from 'ts-case-convert';
 
 export type TAuditEnCours = ObjectToSnake<

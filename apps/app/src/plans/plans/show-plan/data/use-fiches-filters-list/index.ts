@@ -1,8 +1,8 @@
-import { useTRPC } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import { listFichesRequestFiltersSchema } from '@/domain/plans';
 import { useQuery } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { listFichesRequestFiltersSchema } from '@tet/domain/plans';
 import { parseAsJson, useQueryState } from 'nuqs';
 import * as formatter from './filter-formatters';
 import { Filters, FormFilters } from './types';

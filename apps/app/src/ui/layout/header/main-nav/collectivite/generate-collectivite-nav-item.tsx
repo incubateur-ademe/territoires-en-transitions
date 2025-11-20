@@ -1,8 +1,8 @@
-import { CollectiviteAccess } from '@/domain/users';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
-import { NavItem, Tooltip } from '@/ui';
-import { cn } from '@/ui/utils/cn';
+import { CollectiviteAccess } from '@tet/domain/users';
+import { NavItem, Tooltip } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 
 export const generateCollectiviteNavItem = (
   collectivites: CollectiviteAccess[],

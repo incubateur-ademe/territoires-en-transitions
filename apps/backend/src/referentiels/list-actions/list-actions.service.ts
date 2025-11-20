@@ -1,19 +1,19 @@
-import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
-import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
-import { ListActionSummariesRequestType } from '@/backend/referentiels/list-actions/list-action-summaries.request';
-import { ActionDefinitionSummary } from '@/backend/referentiels/models/action-definition-summary.dto';
-import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
-import { actionRelationTable } from '@/backend/referentiels/models/action-relation.table';
-import { questionActionTable } from '@/backend/referentiels/models/question-action.table';
-import { AuthUser } from '@/backend/users/models/auth.models';
-import { dcpTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   discussionMessageTable,
   discussionTable,
 } from '@tet/backend/collectivites/discussions/infrastructure/discussion.table';
 import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
+import { ListActionSummariesRequestType } from '@tet/backend/referentiels/list-actions/list-action-summaries.request';
+import { ActionDefinitionSummary } from '@tet/backend/referentiels/models/action-definition-summary.dto';
+import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
+import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
+import { questionActionTable } from '@tet/backend/referentiels/models/question-action.table';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   PersonneTagOrUser,
   TagWithCollectiviteId,

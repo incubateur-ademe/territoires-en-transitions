@@ -1,6 +1,6 @@
 import { SelectActionStatut } from '@/app/referentiels/actions/action-statut/action-statut.select';
 import { useEditActionStatutIsDisabled } from '@/app/referentiels/actions/action-statut/use-action-statut';
-import { statutAvancementIncludingNonConcerneEnumSchema } from '@/domain/referentiels';
+import { statutAvancementIncludingNonConcerneEnumSchema } from '@tet/domain/referentiels';
 import { useCallback } from 'react';
 import { TCellProps } from './DetailTacheTable';
 

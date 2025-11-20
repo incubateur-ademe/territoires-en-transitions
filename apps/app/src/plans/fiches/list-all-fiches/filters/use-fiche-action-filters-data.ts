@@ -1,4 +1,3 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { useFinanceursListe } from '@/app/ui/dropdownLists/FinanceursDropdown/useFinanceursListe';
 import { usePartenairesListe } from '@/app/ui/dropdownLists/PartenairesDropdown/usePartenairesListe';
@@ -8,6 +7,7 @@ import { useServicesPilotesListe } from '@/app/ui/dropdownLists/ServicesPilotesD
 import { useStructuresListe } from '@/app/ui/dropdownLists/StructuresDropdown/useStructuresListe';
 import { useTagsSuiviPersoListe } from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/useTagsSuiviPersoListe';
 import { useGetThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { useMemo } from 'react';
 import { NOTES_DE_SUIVI_OPTIONS } from './options';
 import { FilterKeys } from './types';

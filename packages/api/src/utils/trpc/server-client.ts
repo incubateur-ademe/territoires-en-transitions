@@ -8,7 +8,7 @@ import { getAuthHeaders } from '../supabase/get-auth-headers';
 import { createClient } from '../supabase/server-client';
 import { makeQueryClient } from './query-client';
 
-import type { AppRouter } from '@/backend/utils/trpc/trpc.router';
+import type { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
 
 async function authenticatedHeaders() {
   const supabaseClient = await createClient();

@@ -1,5 +1,5 @@
 import { OPEN_AXES_KEY_SEARCH_PARAMETER } from '@/app/app/paths';
-import { PlanNode } from '@/domain/plans';
+import { PlanNode } from '@tet/domain/plans';
 import { groupBy, maxBy } from 'es-toolkit';
 import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs';
 import React, { useState } from 'react';

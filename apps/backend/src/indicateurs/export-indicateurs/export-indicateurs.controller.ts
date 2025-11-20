@@ -1,7 +1,7 @@
-import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
-import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import { ApiExcludeController, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import type { Response } from 'express';
 import { createZodDto } from 'nestjs-zod';
 import { TokenInfo } from '../../users/decorators/token-info.decorators';

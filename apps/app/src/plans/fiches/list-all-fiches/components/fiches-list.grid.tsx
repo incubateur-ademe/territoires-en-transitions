@@ -5,9 +5,9 @@ import {
 } from '@/app/app/paths';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
-import { CollectiviteAccess } from '@/domain/users';
-import { EmptyCard } from '@/ui';
+import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
+import { CollectiviteAccess } from '@tet/domain/users';
+import { EmptyCard } from '@tet/ui';
 
 type Props = {
   collectivite: CollectiviteAccess;

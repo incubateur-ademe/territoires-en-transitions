@@ -1,5 +1,5 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { Field, SelectFilter } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Field, SelectFilter } from '@tet/ui';
 import { TFiltreProps } from '../filters';
 import { useHistoriqueUtilisateurListe } from '../useHistoriqueUtilisateurListe';
 

@@ -1,18 +1,18 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import {
   FicheListItem,
   useListFiches,
 } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { naturalSort } from '@/app/utils/naturalSort';
-import { AxeCreate } from '@/domain/plans';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { AxeCreate } from '@tet/domain/plans';
 import {
   Option,
   OptionValue,
   SelectFilter,
   SelectMultipleProps,
   SelectOption,
-} from '@/ui';
+} from '@tet/ui';
 
 const sortByLabel = (a: Option, b: Option) => {
   if (!a.label) return -1;

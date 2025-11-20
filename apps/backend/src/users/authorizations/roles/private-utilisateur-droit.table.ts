@@ -1,5 +1,5 @@
-import { createdAt, modifiedAt } from '@/backend/utils/column.utils';
-import { CollectiviteAccessLevelEnum } from '@/domain/users';
+import { createdAt, modifiedAt } from '@tet/backend/utils/column.utils';
+import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
 import { boolean, integer, pgTable, serial, uuid } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../../collectivites/shared/models/collectivite.table';
 import { invitationTable } from '../../models/invitation.table';

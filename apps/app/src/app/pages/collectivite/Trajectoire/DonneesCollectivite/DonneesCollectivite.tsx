@@ -1,10 +1,10 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   DATE_DEBUT_SNBC_V2_REFERENCE,
   IndicateurAvecValeursParSource,
-} from '@/domain/indicateurs';
-import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@/ui';
+} from '@tet/domain/indicateurs';
+import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@tet/ui';
 import { useComputeTrajectoire } from '../use-trajectoire';
 import { Secteur, TableauDonnees } from './TableauDonnees';
 import { tabsProperties } from './tabs-properties';

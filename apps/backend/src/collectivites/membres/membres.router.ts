@@ -1,7 +1,7 @@
-import { ExportConnectService } from '@/backend/collectivites/membres/export-connect.service';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
-import { exportConnectCreateSchema } from '@/domain/collectivites';
 import { Injectable } from '@nestjs/common';
+import { ExportConnectService } from '@tet/backend/collectivites/membres/export-connect.service';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
+import { exportConnectCreateSchema } from '@tet/domain/collectivites';
 import z from 'zod';
 import { CollectiviteMembresService } from './membres.service';
 

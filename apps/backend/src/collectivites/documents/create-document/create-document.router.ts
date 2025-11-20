@@ -1,6 +1,6 @@
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
-import { bibliothequeFichierSchemaCreate } from '@/domain/collectivites';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { bibliothequeFichierSchemaCreate } from '@tet/domain/collectivites';
 import { CreateDocumentService } from './create-document.service';
 
 @Injectable()

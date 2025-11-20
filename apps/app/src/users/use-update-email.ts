@@ -1,5 +1,5 @@
-import { useSupabase } from '@/api';
 import { useMutation } from '@tanstack/react-query';
+import { useSupabase } from '@tet/api';
 import { useRouter } from 'next/navigation';
 
 export interface UpdateEmailParams {

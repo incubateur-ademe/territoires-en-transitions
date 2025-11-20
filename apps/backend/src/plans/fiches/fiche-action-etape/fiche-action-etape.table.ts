@@ -3,7 +3,7 @@ import {
   createdBy,
   modifiedAt,
   modifiedBy,
-} from '@/backend/utils/column.utils';
+} from '@tet/backend/utils/column.utils';
 import { boolean, integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
 

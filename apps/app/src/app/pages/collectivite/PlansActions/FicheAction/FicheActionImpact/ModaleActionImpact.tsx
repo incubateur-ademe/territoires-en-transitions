@@ -1,5 +1,5 @@
 import Markdown from '@/app/ui/Markdown';
-import { Event, InfoActionImpact, Modal, useEventTracker } from '@/ui';
+import { Event, InfoActionImpact, Modal, useEventTracker } from '@tet/ui';
 import { useState } from 'react';
 import { useActionImpact } from './useActionImpact';
 

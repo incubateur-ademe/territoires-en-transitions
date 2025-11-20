@@ -1,4 +1,4 @@
-import { Input, Textarea } from '@/ui';
+import { Input, Textarea } from '@tet/ui';
 import classNames from 'classnames';
 import { TEditState } from './useEditState';
 

@@ -1,4 +1,8 @@
-import { createdAt, modifiedAt, version } from '@/backend/utils/column.utils';
+import {
+  createdAt,
+  modifiedAt,
+  version,
+} from '@tet/backend/utils/column.utils';
 import { boolean, pgTable, varchar } from 'drizzle-orm/pg-core';
 import { referentielIdPgEnum } from '../referentiel-id.column';
 import { actionTypePgEnum } from './action-type.column';

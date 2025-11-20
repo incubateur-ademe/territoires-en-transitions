@@ -1,5 +1,5 @@
-import { authUsersTable } from '@/backend/users/models/auth-users.table';
-import { createdAt, modifiedAt } from '@/backend/utils/column.utils';
+import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
+import { createdAt, modifiedAt } from '@tet/backend/utils/column.utils';
 import { pgTable, text, uuid } from 'drizzle-orm/pg-core';
 
 export const userApiKeyTable = pgTable('user_api_key', {

@@ -1,6 +1,5 @@
-import { ActionImpactDetails } from '@/api';
-import { useSupabase } from '@/api';
 import { useQuery } from '@tanstack/react-query';
+import { ActionImpactDetails, useSupabase } from '@tet/api';
 
 /**
  * Charge le détail d'une action à impact

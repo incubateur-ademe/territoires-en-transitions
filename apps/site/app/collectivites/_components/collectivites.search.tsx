@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { convertNameToSlug } from '@/site/src/utils/convertNameToSlug';
-import { Select } from '@/ui';
+import { Select } from '@tet/ui';
 import { useFilteredCollectivites } from '../../useFilteredCollectivites';
 
 const CollectiviteSearch = () => {

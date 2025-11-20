@@ -7,11 +7,11 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 
-import { PlanNode } from '@/domain/plans';
+import { PlanNode } from '@tet/domain/plans';
 import { NestedDroppableContainers } from './NestedDroppableContainers';
 
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
-import { CollectiviteAccess } from '@/domain/users';
+import { CollectiviteAccess } from '@tet/domain/users';
 
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { useDragAxe } from '@/app/plans/plans/show-plan/data/use-drag-axe';

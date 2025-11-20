@@ -1,4 +1,4 @@
-import { EmptyCard, PictoPadlock } from '@/ui';
+import { EmptyCard, PictoPadlock } from '@tet/ui';
 
 export function FicheNoAccessPage() {
   return (

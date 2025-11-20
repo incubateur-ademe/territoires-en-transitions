@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/api/collectivites';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import ActionCommentInput from './action-comments.input';
 import { useAddDiscussion } from './hooks/use-add-discussion';
 

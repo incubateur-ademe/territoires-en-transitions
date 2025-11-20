@@ -1,13 +1,13 @@
 import {
   ListDefinitionsInputFilters,
   listDefinitionsInputFiltersSchema,
-} from '@/domain/indicateurs';
+} from '@tet/domain/indicateurs';
 import {
   ListFichesRequestFilters,
   listFichesRequestFiltersSchema,
-} from '@/domain/plans';
-import { listActionsRequestOptionsSchema } from '@/domain/referentiels';
-import { getPaginationSchema } from '@/domain/utils';
+} from '@tet/domain/plans';
+import { listActionsRequestOptionsSchema } from '@tet/domain/referentiels';
+import { getPaginationSchema } from '@tet/domain/utils';
 import { z } from 'zod';
 
 const moduleTypeSchema = z.enum([

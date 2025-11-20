@@ -1,7 +1,6 @@
-import { TokenInfo } from '@/backend/users/decorators/token-info.decorators';
-import type { AuthUser } from '@/backend/users/models/auth.models';
-import { ListUsersService } from '@/backend/users/users/list-users/list-users.service';
-import { UserWithCollectiviteAccessesSchema } from '@/domain/users';
+import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
+import type { AuthUser } from '@tet/backend/users/models/auth.models';
+import { ListUsersService } from '@tet/backend/users/users/list-users/list-users.service';
 import { Controller, Get } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -9,6 +8,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { UserWithCollectiviteAccessesSchema } from '@tet/domain/users';
 import { createZodDto } from 'nestjs-zod';
 
 class UserWithCollectiviteAccessesClass extends createZodDto(

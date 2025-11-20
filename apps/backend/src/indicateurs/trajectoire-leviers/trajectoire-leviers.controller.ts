@@ -1,8 +1,3 @@
-import { getTrajectoireLeviersDataRequestSchema } from '@/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.request';
-import { getTrajectoireLeviersDataResponseSchema } from '@/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.response';
-import { TrajectoireLeviersService } from '@/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.service';
-import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
-import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { Controller, Get, Logger, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -11,6 +6,11 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
+import { getTrajectoireLeviersDataRequestSchema } from '@tet/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.request';
+import { getTrajectoireLeviersDataResponseSchema } from '@tet/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.response';
+import { TrajectoireLeviersService } from '@tet/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.service';
+import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import { createZodDto } from 'nestjs-zod';
 import { TokenInfo } from '../../users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../users/models/auth.models';

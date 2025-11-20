@@ -1,5 +1,5 @@
-import { getErrorMessage } from '@/domain/utils';
 import { Injectable, Logger } from '@nestjs/common';
+import { getErrorMessage } from '@tet/domain/utils';
 import Crisp from 'crisp-api';
 import { DateTime } from 'luxon';
 import { AirtableService } from '../../airtable/airtable.service';

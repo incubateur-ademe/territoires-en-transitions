@@ -1,5 +1,5 @@
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
-import { Icon } from '@/ui';
+import { Icon } from '@tet/ui';
 import classNames from 'classnames';
 
 type ScoreDisplayProps = {

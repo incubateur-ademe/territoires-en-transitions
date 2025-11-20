@@ -1,6 +1,6 @@
 'use client';
 
-import { useCollectiviteId } from '@/api/collectivites';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { HistoriqueListe } from './HistoriqueListe';
 import { THistoriqueProps } from './types';
 import { useHistoriqueItemListe } from './useHistoriqueItemListe';

@@ -1,10 +1,10 @@
-import { useTRPC } from '@/api';
-import { useCurrentCollectivite } from '@/api/collectivites';
 import {
   COULEURS_BY_SECTEUR_IDENTIFIANT,
   EXTRA_SECTEUR_COLORS,
 } from '@/app/indicateurs/trajectoires/trajectoire-colors';
 import { useQuery } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 
 /** Charge les leviers de la trajectoire */
 export const useTrajectoireLeviers = () => {

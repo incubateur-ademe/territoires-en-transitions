@@ -1,5 +1,5 @@
 import { signInPath, signUpPath } from '@/app/app/paths';
-import { FooterTeT, Header } from '@/ui';
+import { FooterTeT, Header } from '@tet/ui';
 import { ReactNode } from 'react';
 
 export default async function Layout({ children }: { children: ReactNode }) {

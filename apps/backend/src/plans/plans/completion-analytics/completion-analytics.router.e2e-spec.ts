@@ -1,19 +1,19 @@
-import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
-import { ficheActionNoteTable } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
-import { axeTable } from '@/backend/plans/fiches/shared/models/axe.table';
-import { ficheActionAxeTable } from '@/backend/plans/fiches/shared/models/fiche-action-axe.table';
-import { ficheActionIndicateurTable } from '@/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
-import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';
-import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import { ficheActionBudgetTable } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
+import { ficheActionNoteTable } from '@tet/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-axe.table';
+import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
+import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
   getAuthUser,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-} from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 import { ORDERED_FIELDS_TO_CHECK_FOR_COMPLETION } from './domain/plan.completion-calculator';

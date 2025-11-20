@@ -1,7 +1,7 @@
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
-import { PersonneTagOrUser, Tag } from '@/domain/collectivites';
-import { Icon } from '@/ui';
+import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
+import { Icon } from '@tet/ui';
 import classNames from 'classnames';
 import { isBefore, startOfToday } from 'date-fns';
 

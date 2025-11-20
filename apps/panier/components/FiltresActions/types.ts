@@ -3,7 +3,7 @@ import {
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
   ActionImpactTypologie,
-} from '@/api';
+} from '@tet/api';
 
 /**
  * Listes passées au panneau de filtrage pour afficher les différentes

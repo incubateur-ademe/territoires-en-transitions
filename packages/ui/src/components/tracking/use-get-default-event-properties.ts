@@ -1,5 +1,5 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { CollectiviteAccessLevel } from '@/domain/users';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { CollectiviteAccessLevel } from '@tet/domain/users';
 import { useParams } from 'next/navigation';
 
 export function useGetDefaultEventProperties() {

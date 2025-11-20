@@ -1,6 +1,6 @@
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
-import { actionIdSchema } from '@/domain/referentiels';
 import { Injectable } from '@nestjs/common';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
+import { actionIdSchema } from '@tet/domain/referentiels';
 import { z } from 'zod';
 import { HandleMesurePilotesService } from './handle-mesure-pilotes.service';
 

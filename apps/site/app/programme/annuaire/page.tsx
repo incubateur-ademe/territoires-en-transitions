@@ -1,7 +1,7 @@
 'use client';
 
 import Section from '@/site/components/sections/Section';
-import { Input, Pagination } from '@/ui';
+import { Input, Pagination } from '@tet/ui';
 import { useEffect, useState } from 'react';
 import CarteConseiller from './CarteConseiller';
 import { ConseillerType, getData } from './utils';

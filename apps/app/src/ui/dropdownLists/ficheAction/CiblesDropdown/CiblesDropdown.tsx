@@ -1,5 +1,5 @@
-import { Cible } from '@/domain/plans';
-import { SelectFilter, SelectMultipleProps } from '@/ui';
+import { Cible } from '@tet/domain/plans';
+import { SelectFilter, SelectMultipleProps } from '@tet/ui';
 import { ficheActionCiblesOptions } from '../../listesStatiques';
 
 type CiblesDropdownProps = Omit<

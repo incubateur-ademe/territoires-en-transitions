@@ -1,4 +1,4 @@
-import { Select } from '@/ui';
+import { Select } from '@tet/ui';
 import {
   IndicateurChartInfo,
   SEGMENTATIONS,
@@ -17,8 +17,7 @@ export const TypeSegmentationSelect = ({
 }: {
   chartInfo: IndicateurChartInfo;
 }) => {
-  const { typesSegmentation, segmentation, setSegmentation } =
-    chartInfo;
+  const { typesSegmentation, segmentation, setSegmentation } = chartInfo;
 
   return (
     <Select

@@ -1,5 +1,5 @@
-import { modifiedAt } from '@/backend/utils/column.utils';
-import { ActionCategorieEnum } from '@/domain/referentiels';
+import { modifiedAt } from '@tet/backend/utils/column.utils';
+import { ActionCategorieEnum } from '@tet/domain/referentiels';
 import {
   doublePrecision,
   pgEnum,

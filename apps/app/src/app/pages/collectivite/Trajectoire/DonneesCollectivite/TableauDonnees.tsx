@@ -1,4 +1,4 @@
-import { IndicateurSourceEnum } from '@/domain/indicateurs';
+import { IndicateurSourceEnum } from '@tet/domain/indicateurs';
 import {
   DEPRECATED_Table,
   DEPRECATED_TBody,
@@ -7,7 +7,7 @@ import {
   DEPRECATED_THeadCell,
   DEPRECATED_TRow,
   Input,
-} from '@/ui';
+} from '@tet/ui';
 import classNames from 'classnames';
 import { getNomSource } from '../../../../../indicateurs/trajectoires/trajectoire-constants';
 

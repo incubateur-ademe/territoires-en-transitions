@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from '@/ui';
+import { Button, ButtonProps } from '@tet/ui';
 import classNames from 'classnames';
 import React from 'react';
 

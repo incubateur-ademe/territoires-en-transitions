@@ -1,9 +1,9 @@
-import { collectiviteId } from '@/backend/collectivites/collectivite-id.column';
+import { collectiviteId } from '@tet/backend/collectivites/collectivite-id.column';
 import {
   serialIdPrimaryKey,
   TIMESTAMP_OPTIONS,
-} from '@/backend/utils/column.utils';
-import { Etoile } from '@/domain/referentiels';
+} from '@tet/backend/utils/column.utils';
+import { Etoile } from '@tet/domain/referentiels';
 import {
   doublePrecision,
   integer,

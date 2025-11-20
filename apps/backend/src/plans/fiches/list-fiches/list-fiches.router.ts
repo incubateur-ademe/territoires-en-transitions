@@ -1,9 +1,10 @@
-import { listFichesInputSchema } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { TRPCError } from '@trpc/server';
 import z from 'zod';
+import { listFichesInputSchema } from './list-fiches.request';
 import ListFichesService from './list-fiches.service';
+
 @Injectable()
 export class ListFichesRouter {
   constructor(

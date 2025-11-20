@@ -2,8 +2,8 @@ import {
   BudgetType,
   BudgetUnite,
   budgetUnites,
-} from '@/backend/plans/fiches/fiche-action-budget/budget.types';
-import { PlanFiche } from '@/backend/plans/fiches/plan-actions.service';
+} from '@tet/backend/plans/fiches/fiche-action-budget/budget.types';
+import { PlanFiche } from '@tet/backend/plans/fiches/plan-actions.service';
 import { groupBy } from 'es-toolkit';
 
 const formatUnit = (unit: BudgetUnite | string) =>

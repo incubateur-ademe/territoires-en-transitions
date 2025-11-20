@@ -1,4 +1,4 @@
-import { getTestApp } from '@/backend/test';
+import { getTestApp } from '@tet/backend/test';
 import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
 

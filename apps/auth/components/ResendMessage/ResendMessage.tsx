@@ -1,5 +1,5 @@
-import { Button, Event, Input, useEventTracker } from '@/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Button, Event, Input, useEventTracker } from '@tet/ui';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -26,8 +26,8 @@ export const ResendMessage = (props: ResendMessageProps) => {
   const { email, isLoading, isOpened = false, onResend, type } = props;
   const validationSchema = z.object({
     email: z.email({
-              error: 'Un email valide est requis'
-          }),
+      error: 'Un email valide est requis',
+    }),
   });
 
   const { register, watch, formState } = useForm({

@@ -1,6 +1,6 @@
 import { MultipleCollectiviteSelector } from '@/app/plans/fiches/share-fiche/multiple-collectivite.selector';
-import { IdNameSchema } from '@/domain/shared';
-import { Field, FormSection } from '@/ui';
+import { IdNameSchema } from '@tet/domain/shared';
+import { Field, FormSection } from '@tet/ui';
 import classNames from 'classnames';
 
 type FicheShareBulkEditorFormSectionProps = {

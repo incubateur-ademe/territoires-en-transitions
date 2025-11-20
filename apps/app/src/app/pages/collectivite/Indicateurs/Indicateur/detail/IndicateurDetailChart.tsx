@@ -1,6 +1,6 @@
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
-import { Button, EmptyCard } from '@/ui';
+import { Button, EmptyCard } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import DownloadIndicateurChartModal from '../../chart/DownloadIndicateurChart';

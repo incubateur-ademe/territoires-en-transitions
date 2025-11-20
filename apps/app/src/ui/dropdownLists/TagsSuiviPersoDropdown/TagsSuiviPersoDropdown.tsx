@@ -1,6 +1,6 @@
-import { Tag } from '@/domain/collectivites';
-import { SelectMultipleProps } from '@/ui';
 import { QueryKey } from '@tanstack/react-query';
+import { Tag } from '@tet/domain/collectivites';
+import { SelectMultipleProps } from '@tet/ui';
 import SelectTags from '../tags/SelectTags';
 import { useTagsSuiviPersoListe } from './useTagsSuiviPersoListe';
 

@@ -1,5 +1,5 @@
 'use client';
-import { ITEM_ALL } from '@/ui';
+import { ITEM_ALL } from '@tet/ui';
 import {
   usePathname,
   useRouter,

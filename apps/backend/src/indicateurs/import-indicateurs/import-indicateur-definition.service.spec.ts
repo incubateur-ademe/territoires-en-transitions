@@ -1,10 +1,10 @@
-import ImportIndicateurDefinitionService from '@/backend/indicateurs/import-indicateurs/import-indicateur-definition.service';
-import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
-import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
-import ConfigurationService from '@/backend/utils/config/configuration.service';
-import SheetService from '@/backend/utils/google-sheets/sheet.service';
-import VersionService from '@/backend/utils/version/version.service';
 import { Test } from '@nestjs/testing';
+import ImportIndicateurDefinitionService from '@tet/backend/indicateurs/import-indicateurs/import-indicateur-definition.service';
+import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
+import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
+import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
+import VersionService from '@tet/backend/utils/version/version.service';
 import { cloneDeep } from 'es-toolkit';
 import { DatabaseService } from '../../utils/database/database.service';
 import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';

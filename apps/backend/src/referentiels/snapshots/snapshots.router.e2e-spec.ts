@@ -1,16 +1,16 @@
-import { snapshotTable } from '@/backend/referentiels/snapshots/snapshot.table';
-import { getScoresIndicatifsFromSnapshot } from '@/backend/referentiels/snapshots/snapshots.utils';
+import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.table';
+import { getScoresIndicatifsFromSnapshot } from '@tet/backend/referentiels/snapshots/snapshots.utils';
 import {
   fixturePourScoreIndicatif,
   insertFixturePourScoreIndicatif,
-} from '@/backend/test';
-import { DatabaseService } from '@/backend/utils/database/database.service';
+} from '@tet/backend/test';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   ActionTypeEnum,
   ReferentielId,
   ReferentielIdEnum,
   SnapshotJalonEnum,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import {

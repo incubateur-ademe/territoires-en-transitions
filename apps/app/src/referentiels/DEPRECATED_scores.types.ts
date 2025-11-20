@@ -5,8 +5,8 @@ import {
   ReferentielId,
   StatutAvancement,
   StatutAvancementEnum,
-} from '@/domain/referentiels';
-import { divisionOrZero } from '@/domain/utils';
+} from '@tet/domain/referentiels';
+import { divisionOrZero } from '@tet/domain/utils';
 import { TActionStatutsRow } from '../types/alias';
 import { ActionDetailed } from './use-snapshot';
 

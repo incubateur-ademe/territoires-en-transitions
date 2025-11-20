@@ -1,12 +1,12 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   Option,
   SelectFilter,
   SelectMultiple,
   SelectMultipleProps,
-} from '@/ui';
+} from '@tet/ui';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   type?: 'multiple' | 'filter';

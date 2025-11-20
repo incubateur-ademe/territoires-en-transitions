@@ -1,10 +1,10 @@
-import { ModuleMesuresSelect } from '@/api/plan-actions';
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { ActionCard } from '@/app/referentiels/actions/action.card';
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import { PictoEtatDesLieuxMonochrome } from '@/app/ui/pictogrammes/PictoEtatDesLieuxMonochrome';
-import { ButtonProps, MenuAction } from '@/ui';
+import { ModuleMesuresSelect } from '@tet/api/plan-actions';
+import { ButtonProps, MenuAction } from '@tet/ui';
 
 type Props = {
   module: ModuleMesuresSelect;

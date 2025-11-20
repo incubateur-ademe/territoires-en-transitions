@@ -1,11 +1,11 @@
 'use client';
 
-import { CollectiviteEngagee } from '@/api';
 import { nameToShortNames } from '@/app/app/pages/CollectivitesEngagees/data/filters';
 import { useFilteredCollectivites } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
 import { View } from '@/app/app/pages/CollectivitesEngagees/Views/View';
 import { recherchesCollectivitesUrl } from '@/app/app/paths';
 import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
+import { CollectiviteEngagee } from '@tet/api';
 import { initialFilters } from '../../data/filters';
 import { CollectiviteCarte } from './CollectiviteCarte';
 

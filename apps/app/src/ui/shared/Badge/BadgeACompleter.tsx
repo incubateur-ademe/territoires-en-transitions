@@ -1,4 +1,4 @@
-import { Badge } from '@/ui';
+import { Badge } from '@tet/ui';
 
 /** Affiche le badge "complété" ou "à compléter" */
 export const BadgeACompleter = ({

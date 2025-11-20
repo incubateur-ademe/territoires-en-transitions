@@ -1,4 +1,4 @@
-import { roundTo } from '@/domain/utils';
+import { roundTo } from '@tet/domain/utils';
 import { useMemo } from 'react';
 import {
   CellProps,

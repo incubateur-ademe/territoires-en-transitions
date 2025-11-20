@@ -1,5 +1,5 @@
 import { makeReferentielTacheUrl } from '@/app/app/paths';
-import { getReferentielIdFromActionId } from '@/domain/referentiels';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { THistoriqueItem } from '../types';
 
 /** Génère les propriétés communes aux modifications (statut, précision) sur les

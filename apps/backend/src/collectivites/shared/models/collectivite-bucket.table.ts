@@ -1,5 +1,5 @@
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { integer, pgTable, primaryKey, text } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
 
 export const collectiviteBucketTable = pgTable(
   'collectivite_bucket',

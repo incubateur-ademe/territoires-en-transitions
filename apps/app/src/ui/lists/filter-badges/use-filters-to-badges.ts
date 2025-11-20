@@ -1,15 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useSupabase } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
-import { filtreValuesFetch } from '@/api/collectivites/shared/data-access/filtre-values.fetch';
 import { INDICATEUR_LABELS } from '@/app/app/pages/collectivite/Indicateurs/constants';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { NOTES_DE_SUIVI_PROPERTIES } from '@/app/plans/fiches/list-all-fiches/filters/options';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
-import { ListDefinitionsInputFilters } from '@/domain/indicateurs';
-import { ListFichesRequestFilters, NotesDeSuiviOption } from '@/domain/plans';
-import { FiltreRessourceLiees, FiltreValues } from '@/domain/shared';
+import { useSupabase } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { filtreValuesFetch } from '@tet/api/collectivites/shared/data-access/filtre-values.fetch';
+import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
+import {
+  ListFichesRequestFilters,
+  NotesDeSuiviOption,
+} from '@tet/domain/plans';
+import { FiltreRessourceLiees, FiltreValues } from '@tet/domain/shared';
 
 /**
  * Types de tous les filtres passables au hook `useFiltersToBadges`.

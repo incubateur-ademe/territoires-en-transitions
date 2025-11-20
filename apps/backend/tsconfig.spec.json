@@ -14,8 +14,8 @@
     "moduleResolution": "nodenext",
 
     "paths": {
-      "@/backend/*": ["./src/*"],
-      "@/backend/test": ["./test/index.ts"],
+      "@tet/backend/*": ["./src/*"],
+      "@tet/backend/test": ["./test/index.ts"],
     }
   },
   "include": [

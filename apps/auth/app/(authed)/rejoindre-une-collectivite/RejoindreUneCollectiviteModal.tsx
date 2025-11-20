@@ -1,4 +1,4 @@
-import { Modal } from '@/ui';
+import { Modal } from '@tet/ui';
 import { useState } from 'react';
 import { RejoindreUneCollectivite } from './RejoindreUneCollectivite';
 import { RejoindreUneCollectiviteProps } from './useRejoindreUneCollectivite';

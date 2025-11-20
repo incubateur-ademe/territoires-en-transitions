@@ -1,5 +1,5 @@
 import { ReferentielProvider } from '@/app/referentiels/referentiel-context';
-import { referentielIdEnumSchema } from '@/domain/referentiels';
+import { referentielIdEnumSchema } from '@tet/domain/referentiels';
 import { ReactNode } from 'react';
 
 export default async function Layout({

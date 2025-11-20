@@ -1,5 +1,5 @@
-import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 
 export const useUpdateDiscussionMessage = () => {
   const queryClient = useQueryClient();

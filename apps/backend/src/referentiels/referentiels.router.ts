@@ -1,5 +1,5 @@
-import { ScoreIndicatifRouter } from '@/backend/referentiels/score-indicatif/score-indicatif.router';
 import { Injectable } from '@nestjs/common';
+import { ScoreIndicatifRouter } from '@tet/backend/referentiels/score-indicatif/score-indicatif.router';
 import { TrpcService } from '../utils/trpc/trpc.service';
 import { GetReferentielDefinitionRouter } from './definitions/get-referentiel-definition/get-referentiel-definition.router';
 import { HandleMesurePilotesRouter } from './handle-mesure-pilotes/handle-mesure-pilotes.router';

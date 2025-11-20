@@ -1,5 +1,5 @@
 {
-  "name": "@/api",
+  "name": "@tet/api",
   "description": "shared frontend library for requesting the database with supabase",
   "private": true,
   "type": "module",

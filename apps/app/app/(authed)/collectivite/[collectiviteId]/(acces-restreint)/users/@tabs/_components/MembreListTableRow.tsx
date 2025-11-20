@@ -1,4 +1,4 @@
-import { Textarea } from '@/ui';
+import { Textarea } from '@tet/ui';
 import { useState } from 'react';
 
 import { membreFonctions, referentielToName } from '@/app/app/labels';
@@ -9,9 +9,9 @@ import {
   getAccessLevelLabel,
 } from '@/app/users/authorizations/permission-access-level.utils';
 import { useAccessLevels } from '@/app/users/authorizations/use-access-levels';
-import { MembreFonction } from '@/domain/collectivites';
-import { ReferentielId } from '@/domain/referentiels';
-import { CollectiviteAccessLevel } from '@/domain/users';
+import { MembreFonction } from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { CollectiviteAccessLevel } from '@tet/domain/users';
 import BadgeAcces from '../../_components/badge-acces';
 
 /**

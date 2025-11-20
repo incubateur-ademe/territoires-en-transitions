@@ -1,6 +1,6 @@
-import { signOutUser } from '@/api/utils/supabase/sign-out-user.server';
 import { profilPath } from '@/app/app/paths';
-import { UserWithCollectiviteAccesses } from '@/domain/users';
+import { signOutUser } from '@tet/api/utils/supabase/sign-out-user.server';
+import { UserWithCollectiviteAccesses } from '@tet/domain/users';
 
 export const makeSecondaryNav = (user: UserWithCollectiviteAccesses) => {
   return [

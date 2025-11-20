@@ -1,6 +1,6 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { Alert, Modal, ModalFooterOKCancel } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Alert, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { useReferentielId } from '../../referentiel-context';
 import { useSnapshotDelete } from '../../use-snapshot';
 

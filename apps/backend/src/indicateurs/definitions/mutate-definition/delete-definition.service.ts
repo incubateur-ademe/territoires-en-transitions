@@ -1,10 +1,10 @@
-import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
-import { DeleteIndicateurDefinitionInput } from '@/backend/indicateurs/definitions/mutate-definition/mutate-definition.input';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { AuthUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { DeleteIndicateurDefinitionInput } from '@tet/backend/indicateurs/definitions/mutate-definition/mutate-definition.input';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { and, eq, isNotNull } from 'drizzle-orm';
 
 @Injectable()

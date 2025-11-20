@@ -7,8 +7,8 @@ import {
   DEPRECATED_THead,
   DEPRECATED_THeadCell,
   DEPRECATED_TRow,
-} from '@/ui';
-import { cn } from '@/ui/utils/cn';
+} from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 import { uniq } from 'es-toolkit';
 import { PerYearBudgetProperties } from './types';
 

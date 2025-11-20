@@ -16,7 +16,7 @@ import {
   Title,
 } from '@/app/ui/export-pdf/components';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
-import { preset } from '@/ui';
+import { preset } from '@tet/ui';
 import classNames from 'classnames';
 import { format, isBefore, startOfToday } from 'date-fns';
 import { generateTitle } from '../../FicheAction/data/utils';

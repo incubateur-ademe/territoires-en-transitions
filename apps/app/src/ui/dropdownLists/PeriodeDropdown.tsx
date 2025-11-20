@@ -1,6 +1,6 @@
 import { ficheActionModifiedSinceOptions } from '@/app/ui/dropdownLists/listesStatiques';
-import { ModifiedSince } from '@/domain/utils';
-import { Select, SelectMultipleProps } from '@/ui';
+import { ModifiedSince } from '@tet/domain/utils';
+import { Select, SelectMultipleProps } from '@tet/ui';
 
 type PeriodeDropdownProps = Omit<
   SelectMultipleProps,

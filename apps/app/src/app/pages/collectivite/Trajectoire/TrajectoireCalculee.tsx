@@ -1,4 +1,3 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { useDonneesSectorisees } from '@/app/app/pages/collectivite/Trajectoire/DonneesCollectivite/useDonneesSectorisees';
 import { Methodologie } from '@/app/app/pages/collectivite/Trajectoire/Methodologie';
 import { GrapheSecteur } from '@/app/app/pages/collectivite/Trajectoire/graphes/GrapheSecteur';
@@ -13,6 +12,7 @@ import HeaderSticky, {
   Z_INDEX_ABOVE_STICKY_HEADER,
 } from '@/app/ui/layout/HeaderSticky';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   Button,
   ButtonGroup,
@@ -23,8 +23,8 @@ import {
   Spacer,
   useEventTracker,
   VisibleWhen,
-} from '@/ui';
-import { cn } from '@/ui/utils/cn';
+} from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 import { isNil } from 'es-toolkit';
 import { parseAsInteger, parseAsStringEnum, useQueryStates } from 'nuqs';
 import { useState } from 'react';

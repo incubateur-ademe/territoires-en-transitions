@@ -7,8 +7,8 @@ import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycl
 import Chart from '@/app/ui/charts/Chart';
 import logoTerritoireEngage from '@/app/ui/logo/logoTerritoireEngage_big.png';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
-import { ReferentielId } from '@/domain/referentiels';
-import { Button, Event, useEventTracker } from '@/ui';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { Button, Event, useEventTracker } from '@tet/ui';
 import Image from 'next/image';
 import { TableOptions } from 'react-table';
 import { ProgressionRow } from '../../DEPRECATED_scores.types';

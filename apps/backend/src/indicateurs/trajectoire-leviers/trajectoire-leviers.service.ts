@@ -1,31 +1,31 @@
-import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
-import { GetTrajectoireLeviersDataRequest } from '@/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.request';
-import {
-  GetTrajectoireLeviersDataResponse,
-  TrajectoireData,
-  TrajectoireLevier,
-  TrajectoireSecteur,
-} from '@/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.response';
-import {
-  LevierConfiguration,
-  RegionCode,
-  SecteurConfiguration,
-  TRAJECTOIRE_LEVIERS_CONFIGURATION,
-  TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,
-} from '@/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.config';
-import TrajectoiresDataService from '@/backend/indicateurs/trajectoires/trajectoires-data.service';
-import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
-import { GetIndicateursValeursResponse } from '@/backend/indicateurs/valeurs/get-indicateur-valeurs.response';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { AuthUser } from '@/backend/users/models/auth.models';
-import { roundTo } from '@/domain/utils';
 import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
+import ListCollectivitesService from '@tet/backend/collectivites/list-collectivites/list-collectivites.service';
+import { GetTrajectoireLeviersDataRequest } from '@tet/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.request';
+import {
+  GetTrajectoireLeviersDataResponse,
+  TrajectoireData,
+  TrajectoireLevier,
+  TrajectoireSecteur,
+} from '@tet/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.response';
+import {
+  LevierConfiguration,
+  RegionCode,
+  SecteurConfiguration,
+  TRAJECTOIRE_LEVIERS_CONFIGURATION,
+  TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,
+} from '@tet/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.config';
+import TrajectoiresDataService from '@tet/backend/indicateurs/trajectoires/trajectoires-data.service';
+import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
+import { GetIndicateursValeursResponse } from '@tet/backend/indicateurs/valeurs/get-indicateur-valeurs.response';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { roundTo } from '@tet/domain/utils';
 import { isNil, sum, sumBy } from 'es-toolkit';
 
 @Injectable()

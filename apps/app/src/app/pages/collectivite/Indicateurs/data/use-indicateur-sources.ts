@@ -1,6 +1,6 @@
-import { RouterInput, useTRPC } from '@/api';
 import { PALETTE } from '@/app/ui/charts/echarts';
 import { useQuery } from '@tanstack/react-query';
+import { RouterInput, useTRPC } from '@tet/api';
 import { LAYERS as LAYERS_TRAJECTOIRE } from '../../Trajectoire/graphes/layer-parameters';
 import { LAYERS as INDICATEUR_LAYERS } from '../chart/layer-parameters';
 import { SourceType } from '../types';

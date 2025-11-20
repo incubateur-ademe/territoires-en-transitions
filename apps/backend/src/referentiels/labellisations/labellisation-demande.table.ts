@@ -1,8 +1,8 @@
-import { TIMESTAMP_OPTIONS } from '@/backend/utils/column.utils';
+import { TIMESTAMP_OPTIONS } from '@tet/backend/utils/column.utils';
 import {
   etoileAsStringEnumValues,
   SujetDemandeEnum,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import {
   boolean,
   foreignKey,

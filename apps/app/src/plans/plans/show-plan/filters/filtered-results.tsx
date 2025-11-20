@@ -6,8 +6,8 @@ import {
   CurrentFiltersKeys,
   usePlanFilters,
 } from '@/app/plans/plans/show-plan/filters/plan-filters.context';
-import { CollectiviteAccess } from '@/domain/users';
-import { FilterBadges, FilterCategory, Spacer, VisibleWhen } from '@/ui';
+import { CollectiviteAccess } from '@tet/domain/users';
+import { FilterBadges, FilterCategory, Spacer, VisibleWhen } from '@tet/ui';
 
 const ficheListGridClassName = 'grid md:grid-cols-2 gap-4';
 

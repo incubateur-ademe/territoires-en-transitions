@@ -1,6 +1,6 @@
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
-import { ButtonVariant } from '@/ui';
+import { ButtonVariant } from '@tet/ui';
 import classNames from 'classnames';
 import Slideshow from './Slideshow';
 

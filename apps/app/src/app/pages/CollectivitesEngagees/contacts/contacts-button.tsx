@@ -1,4 +1,4 @@
-import { Button, Tooltip } from '@/ui';
+import { Button, Tooltip } from '@tet/ui';
 import classNames from 'classnames';
 
 type Props = {

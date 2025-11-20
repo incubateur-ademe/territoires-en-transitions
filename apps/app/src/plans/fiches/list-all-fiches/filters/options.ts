@@ -1,4 +1,4 @@
-import { NotesDeSuiviOption } from '@/domain/plans';
+import { NotesDeSuiviOption } from '@tet/domain/plans';
 import { typePeriodLabels } from './labels';
 import { Filters, WITH, WITH_RECENT, WITHOUT, WITHOUT_RECENT } from './types';
 

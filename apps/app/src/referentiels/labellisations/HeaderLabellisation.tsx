@@ -1,7 +1,7 @@
 /**
  * Affiche l'en-tête de page contenant l'objectif et le bouton pour candidater
  */
-import { Button } from '@/ui';
+import { Button } from '@tet/ui';
 import { useState } from 'react';
 import { TAuditeur, useAuditeurs } from '../audits/useAudit';
 import { ValiderAuditButton } from '../audits/valider-audit.button';

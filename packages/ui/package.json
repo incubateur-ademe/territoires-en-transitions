@@ -1,5 +1,5 @@
 {
-  "name": "@/ui",
+  "name": "@tet/ui",
   "description": "frontend library containing shared components and design system",
   "private": true,
   "type": "module",

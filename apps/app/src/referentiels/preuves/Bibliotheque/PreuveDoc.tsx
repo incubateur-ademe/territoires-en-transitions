@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import CarteDocument from './CarteDocument';
 import { TPreuve } from './types';
 

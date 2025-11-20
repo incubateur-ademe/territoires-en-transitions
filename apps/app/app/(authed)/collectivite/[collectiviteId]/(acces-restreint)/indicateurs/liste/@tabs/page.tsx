@@ -1,8 +1,8 @@
+import { makeCollectiviteIndicateursListUrl } from '@/app/app/paths';
 import {
   getQueryClient,
   trpcInServerComponent,
-} from '@/api/utils/trpc/server-client';
-import { makeCollectiviteIndicateursListUrl } from '@/app/app/paths';
+} from '@tet/api/utils/trpc/server-client';
 import { redirect } from 'next/navigation';
 
 /**

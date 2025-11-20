@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { FichesActionCountByModule } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/fiches-action-count-by.module';
-import { ModuleFicheCountBy } from '@/domain/collectivites/tableau-de-bord';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { ModuleFicheCountBy } from '@tet/domain/collectivites/tableau-de-bord';
 
-import { BottomOkCancel, ButtonProps, Event, useEventTracker } from '@/ui';
+import { BottomOkCancel, ButtonProps, Event, useEventTracker } from '@tet/ui';
 import { useDeleteModule } from '../_hooks/use-delete-module';
 import TdbPaFichesActionCountModal from './tdb-pa-fiches-action-count.modal';
 

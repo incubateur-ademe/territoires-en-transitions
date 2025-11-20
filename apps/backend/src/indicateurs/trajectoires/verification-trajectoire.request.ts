@@ -1,4 +1,4 @@
-import { zodQueryBoolean } from '@/backend/utils/zod.utils';
+import { zodQueryBoolean } from '@tet/backend/utils/zod.utils';
 import { z } from 'zod';
 import { collectiviteIdInputSchemaCoerce } from '../../collectivites/collectivite-id.input';
 

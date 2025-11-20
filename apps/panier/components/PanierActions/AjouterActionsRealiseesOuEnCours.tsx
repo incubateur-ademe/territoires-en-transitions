@@ -1,4 +1,4 @@
-import { Checkbox } from '@/ui';
+import { Checkbox } from '@tet/ui';
 import classNames from 'classnames';
 import { AjouterActionsRealiseesOuEnCoursState } from './useAjouterActionsRealiseesOuEnCoursState';
 

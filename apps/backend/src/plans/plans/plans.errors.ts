@@ -1,7 +1,7 @@
 import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
-} from '@/backend/utils/trpc/trpc-error-handler';
+} from '@tet/backend/utils/trpc/trpc-error-handler';
 
 const specificErrors = ['PLAN_NOT_FOUND'] as const;
 type SpecificError = (typeof specificErrors)[number];

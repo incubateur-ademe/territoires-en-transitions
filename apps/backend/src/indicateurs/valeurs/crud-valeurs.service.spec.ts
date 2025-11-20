@@ -1,13 +1,13 @@
-import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import { Test } from '@nestjs/testing';
+import ComputeValeursService from '@tet/backend/indicateurs/valeurs/compute-valeurs.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import {
   IndicateurAvecValeurs,
   IndicateurAvecValeursParSource,
   IndicateurDefinitionTiny,
   IndicateurSourceMetadonnee,
   IndicateurValeur,
-} from '@/domain/indicateurs';
-import { Test } from '@nestjs/testing';
+} from '@tet/domain/indicateurs';
 import { cloneDeep } from 'es-toolkit';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { DatabaseService } from '../../utils/database/database.service';

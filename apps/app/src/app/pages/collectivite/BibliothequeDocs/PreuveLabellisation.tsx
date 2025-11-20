@@ -2,7 +2,7 @@ import { referentielToName } from '@/app/app/labels';
 import { getParcoursStatus } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
 import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
-import { Etoile, ReferentielId } from '@/domain/referentiels';
+import { Etoile, ReferentielId } from '@tet/domain/referentiels';
 import { Fragment } from 'react';
 import { useIsAuditAuditeur } from '../../../../referentiels/audits/useAudit';
 import { numLabels } from '../../../../referentiels/labellisations/numLabels';

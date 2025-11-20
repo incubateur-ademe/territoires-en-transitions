@@ -1,4 +1,4 @@
-import type { ReferentielId } from '@/domain/referentiels';
+import type { ReferentielId } from '@tet/domain/referentiels';
 import { FicheActionViewType } from '../plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
 
 export const signInPath = `/login`;

@@ -1,5 +1,5 @@
 import { FilterKeys } from '@/app/plans/fiches/list-all-fiches/filters/types';
-import { CountByPropertyEnumType } from '@/domain/plans';
+import { CountByPropertyEnumType } from '@tet/domain/plans';
 
 export const noValueCountByToFilterKeyMapping = {
   priorite: 'noPriorite',

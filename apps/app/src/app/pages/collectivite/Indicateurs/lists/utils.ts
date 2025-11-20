@@ -1,4 +1,4 @@
-import { ListDefinitionsInputFilters } from '@/domain/indicateurs';
+import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
 
 export const indicateursNameToParams: Record<
   keyof Omit<ListDefinitionsInputFilters, 'indicateurIds'>,

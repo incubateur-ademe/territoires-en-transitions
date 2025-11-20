@@ -1,5 +1,5 @@
-import { useTRPC } from '@/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 
 /**
  * Ajoute ou modifie un module du tableau de bord d'une collectivité.

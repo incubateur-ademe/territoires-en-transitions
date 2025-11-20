@@ -1,6 +1,6 @@
-import { ListDefinitionsOutput } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.output';
-import { getTestApp, signInWith, YOLO_DODO } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
+import { ListDefinitionsOutput } from '@tet/backend/indicateurs/definitions/list-definitions/list-definitions.output';
+import { getTestApp, signInWith, YOLO_DODO } from '@tet/backend/test';
 import request from 'supertest';
 
 describe("Api pour lister les définitions d'indicateur", () => {

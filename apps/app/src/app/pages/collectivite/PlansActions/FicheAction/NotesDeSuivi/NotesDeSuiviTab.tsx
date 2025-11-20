@@ -1,6 +1,6 @@
-import { FicheResume } from '@/domain/plans';
-import { Button, EmptyCard } from '@/ui';
+import { Button, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
+import { Fiche } from '../data/use-get-fiche';
 import { useFicheActionNotesSuivi } from '../data/useFicheActionNotesSuivi';
 import {
   useDeleteNoteSuivi,
@@ -12,7 +12,7 @@ import NotificationPicto from './NotificationPicto';
 
 type NotesDeSuiviTabProps = {
   isReadonly: boolean;
-  fiche: FicheResume;
+  fiche: Fiche;
 };
 
 const NotesDeSuiviTab = ({ fiche, isReadonly }: NotesDeSuiviTabProps) => {

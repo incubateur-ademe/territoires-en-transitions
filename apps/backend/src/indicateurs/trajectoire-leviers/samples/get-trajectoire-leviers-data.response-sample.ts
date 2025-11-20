@@ -1,4 +1,4 @@
-import { GetTrajectoireLeviersDataResponse } from '@/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.response';
+import { GetTrajectoireLeviersDataResponse } from '@tet/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.response';
 
 export const getTrajectoireLeviersDataResponseSample: GetTrajectoireLeviersDataResponse =
   {

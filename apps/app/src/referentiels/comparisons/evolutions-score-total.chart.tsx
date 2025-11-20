@@ -4,8 +4,8 @@ import {
   ReferentielId,
   SnapshotJalon,
   SnapshotJalonEnum,
-} from '@/domain/referentiels';
-import { roundTo } from '@/domain/utils';
+} from '@tet/domain/referentiels';
+import { roundTo } from '@tet/domain/utils';
 import type { EChartsOption, SeriesOption } from 'echarts';
 import { theme as importedTheme } from '../../ui/charts/chartsTheme';
 import { SnapshotDetails } from '../use-snapshot';

@@ -1,8 +1,8 @@
-import { collectiviteResumeSchema } from '@/domain/collectivites';
+import { collectiviteResumeSchema } from '@tet/domain/collectivites';
 import {
   labellisationSchema,
   referentielIdEnumSchema,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import z from 'zod';
 import * as zm from 'zod/mini';
 

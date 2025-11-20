@@ -16,19 +16,19 @@ export default defineConfig({
 
   resolve: {
     alias: {
-      '@/domain/utils': resolve(
+      '@tet/domain/utils': resolve(
         __dirname,
         '../../packages/domain/src/utils/index'
       ),
-      '@/domain/plans': resolve(
+      '@tet/domain/plans': resolve(
         __dirname,
         '../../packages/domain/src/plans/index'
       ),
-      '@/domain/referentiels': resolve(
+      '@tet/domain/referentiels': resolve(
         __dirname,
         '../../packages/domain/src/referentiels/index'
       ),
-      '@/domain/indicateurs': resolve(
+      '@tet/domain/indicateurs': resolve(
         __dirname,
         '../../packages/domain/src/indicateurs/index'
       ),

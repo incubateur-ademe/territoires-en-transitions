@@ -1,7 +1,7 @@
 import {
   indicateurSourceMetadonneeSchema,
   indicateurValeurSchemaCreate,
-} from '@/domain/indicateurs';
+} from '@tet/domain/indicateurs';
 import { z } from 'zod/mini';
 
 /**

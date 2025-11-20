@@ -1,4 +1,4 @@
-import { AuthUser } from '@/backend/users/models/auth.models';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { PgColumn, PgSelect } from 'drizzle-orm/pg-core';

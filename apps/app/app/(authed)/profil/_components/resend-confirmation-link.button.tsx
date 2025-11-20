@@ -1,7 +1,7 @@
 'use client';
 
 import { useUpdateEmail } from '@/app/users/use-update-email';
-import { Button, ButtonProps } from '@/ui';
+import { Button, ButtonProps } from '@tet/ui';
 
 type Props = ButtonProps & {
   newEmail: string;

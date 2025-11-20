@@ -1,8 +1,8 @@
 'use client';
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { EvolutionsSnapshotsDropdown } from '@/app/referentiels/comparisons/dropdowns/evolutions-snapshots.dropdown';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Badge, EmptyCard } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Badge, EmptyCard } from '@tet/ui';
 import { useEffect, useState } from 'react';
 import SaveScoreButton from '../../app/pages/collectivite/Referentiels/SaveScore/save-score.button';
 import PictoDashboard from '../../ui/pictogrammes/PictoDashboard';

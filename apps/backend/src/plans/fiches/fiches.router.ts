@@ -1,5 +1,5 @@
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { BulkEditRouter } from './bulk-edit/bulk-edit.router';
 import { CountByRouter } from './count-by/count-by.router';
 import { CreateFicheRouter } from './create-fiche/create-fiche.router';

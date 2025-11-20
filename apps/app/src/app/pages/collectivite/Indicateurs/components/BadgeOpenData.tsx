@@ -1,4 +1,4 @@
-import { Badge, BadgeProps, Tooltip } from '@/ui';
+import { Badge, BadgeProps, Tooltip } from '@tet/ui';
 
 type Props = {
   size?: BadgeProps['size'];

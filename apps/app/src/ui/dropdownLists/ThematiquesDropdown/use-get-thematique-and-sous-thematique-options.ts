@@ -1,11 +1,11 @@
-import { Option } from '@/ui';
+import { Option } from '@tet/ui';
 import { useEffect, useMemo } from 'react';
 
 import { useSousThematiqueListe } from '@/app/ui/dropdownLists/ThematiquesDropdown/useSousThematiqueListe';
 
 import { useThematiqueListe } from '@/app/ui/dropdownLists/ThematiquesDropdown/useThematiqueListe';
 
-import { SousThematique, Thematique } from '@/domain/shared';
+import { SousThematique, Thematique } from '@tet/domain/shared';
 
 export const useGetThematiqueOptions = (): {
   thematiqueOptions: Array<Option>;

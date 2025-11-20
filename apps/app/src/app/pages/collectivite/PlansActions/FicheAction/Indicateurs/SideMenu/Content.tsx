@@ -1,4 +1,3 @@
-import { useUser } from '@/api/users';
 import { INDICATEUR_LABELS } from '@/app/app/pages/collectivite/Indicateurs/constants';
 import {
   getFiltersForIndicateurClefs,
@@ -8,7 +7,8 @@ import {
   useListIndicateurDefinitions,
 } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import { Checkbox, Field, Icon, Input, Tooltip } from '@/ui';
+import { useUser } from '@tet/api/users';
+import { Checkbox, Field, Icon, Input, Tooltip } from '@tet/ui';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import SelectIndicateursGrid from './SelectIndicateursGrid';

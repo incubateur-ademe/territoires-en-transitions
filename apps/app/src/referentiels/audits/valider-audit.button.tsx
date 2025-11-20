@@ -1,5 +1,5 @@
 import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
-import { Button, Modal, RenderProps } from '@/ui';
+import { Button, Modal, RenderProps } from '@tet/ui';
 import { useValidateAudit } from '../labellisations/useValidateAudit';
 import { AddRapportButton } from './AddRapportButton';
 import { useRapportsAudit } from './useAudit';
@@ -12,11 +12,20 @@ type TValiderAuditProps = {
 /**
  * Affiche le bouton permettant d'ouvrir la modale de validation d'un audit
  */
-export const ValiderAuditButton = ({ auditId, demandeId }: TValiderAuditProps) => (
+export const ValiderAuditButton = ({
+  auditId,
+  demandeId,
+}: TValiderAuditProps) => (
   <Modal
     size="lg"
     disableDismiss
-    render={(modalProps) => <ValiderAuditModal {...modalProps} auditId={auditId} demandeId={demandeId} />}
+    render={(modalProps) => (
+      <ValiderAuditModal
+        {...modalProps}
+        auditId={auditId}
+        demandeId={demandeId}
+      />
+    )}
   >
     <Button dataTest="ValiderAuditBtn" size="sm">
       {"Valider l'audit"}
@@ -32,7 +41,11 @@ const auditLabellisation =
 /**
  * Affiche la modale de validation d'un audit
  */
-export const ValiderAuditModal = ({ auditId, demandeId, close }: RenderProps & TValiderAuditProps) => {
+export const ValiderAuditModal = ({
+  auditId,
+  demandeId,
+  close,
+}: RenderProps & TValiderAuditProps) => {
   const { mutate: onValidateAudit } = useValidateAudit();
 
   // on peut valider seulement si au moins un rapport a été attaché à l'audit

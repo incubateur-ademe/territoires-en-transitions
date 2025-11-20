@@ -1,11 +1,11 @@
-import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import { Test, TestingModule } from '@nestjs/testing';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import {
   AuthenticatedUser,
   AuthRole,
-} from '@/backend/users/models/auth.models';
-import { Test, TestingModule } from '@nestjs/testing';
+} from '@tet/backend/users/models/auth.models';
 import { AxeLight } from '@tet/domain/plans';
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { vi } from 'vitest';

@@ -1,10 +1,10 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import {
   IndicateurDefinitionListItem,
   useListIndicateurDefinitions,
 } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import { useListIndicateurValeurs } from '@/app/indicateurs/valeurs/use-list-indicateur-valeurs';
 import { getAnnee, PALETTE_LIGHT } from '@/app/ui/charts/echarts';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { intersection } from 'es-toolkit';
 import { useEffect, useState } from 'react';
 import { typeCollectiviteOptions } from '../../../CollectivitesEngagees/data/filtreOptions';

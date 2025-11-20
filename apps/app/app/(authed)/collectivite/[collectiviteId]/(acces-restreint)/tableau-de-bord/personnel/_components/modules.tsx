@@ -1,18 +1,18 @@
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import {
   ModuleFicheActionsSelect,
   ModuleIndicateursSelect,
   ModuleMesuresSelect,
   ModuleSelect,
   PersonalDefaultModuleKeys,
-} from '@/api/plan-actions';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Event, EventName, useEventTracker } from '@/ui';
+} from '@tet/api/plan-actions';
+import { Event, EventName, useEventTracker } from '@tet/ui';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { SansPlanPlaceholder } from '@/app/tableaux-de-bord/plans-action/sans-plan.placeholder';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { PermissionOperation } from '@/domain/users';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { PermissionOperation } from '@tet/domain/users';
 import { useTdbPersoFetchModules } from '../_hooks/use-tdb-perso-fetch-modules';
 import FichesDontJeSuisLePiloteModal from './fiches-dont-je-suis-le-pilote.modal';
 import { FilteredFichesByModule } from './filtered-fiche-by-module';

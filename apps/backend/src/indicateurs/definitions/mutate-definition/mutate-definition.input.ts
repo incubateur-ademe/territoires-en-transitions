@@ -1,6 +1,6 @@
-import { serviceTagSchema } from '@/domain/collectivites';
-import { indicateurDefinitionSchemaCreate } from '@/domain/indicateurs';
-import { thematiqueSchema } from '@/domain/shared';
+import { serviceTagSchema } from '@tet/domain/collectivites';
+import { indicateurDefinitionSchemaCreate } from '@tet/domain/indicateurs';
+import { thematiqueSchema } from '@tet/domain/shared';
 import z from 'zod';
 import * as zm from 'zod/mini';
 import { upsertIndicateurDefinitionPilotesInputSchema } from '../handle-definition-pilotes/handle-definition-pilotes.input';

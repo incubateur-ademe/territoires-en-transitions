@@ -1,4 +1,4 @@
-import { UserProviderStore } from '@/api/users/index.server';
+import { UserProviderStore } from '@tet/api/users/index.server';
 import { RejoindreUneCollectivitePage } from './page.client';
 
 /**

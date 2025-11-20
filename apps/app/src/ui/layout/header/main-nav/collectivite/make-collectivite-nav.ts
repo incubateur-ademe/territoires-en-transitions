@@ -8,14 +8,14 @@ import { getIsVisitor } from '@/app/users/authorizations/use-is-visitor';
 import {
   CollectiviteAccess,
   UserWithCollectiviteAccesses,
-} from '@/domain/users';
+} from '@tet/domain/users';
 import {
   HeaderProps,
   isNavDropdown,
   NavDropdown,
   NavItem,
   NavLink,
-} from '@/ui';
+} from '@tet/ui';
 import { generateCollectiviteNavItem } from './generate-collectivite-nav-item';
 import { generateEdlDropdown } from './generate-edl-dropdown';
 import { generateIndicateursDropdown } from './generate-indicateurs-dropdown';

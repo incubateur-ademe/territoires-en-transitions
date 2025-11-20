@@ -1,6 +1,6 @@
-import { useSupabase } from '@/api';
-import { Thematique } from '@/domain/shared';
 import { useQuery } from '@tanstack/react-query';
+import { useSupabase } from '@tet/api';
+import { Thematique } from '@tet/domain/shared';
 
 export const useThematiqueListe = (): Thematique[] => {
   const supabase = useSupabase();

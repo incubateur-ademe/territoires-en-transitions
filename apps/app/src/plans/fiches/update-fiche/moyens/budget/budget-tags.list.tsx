@@ -1,5 +1,5 @@
 import { getFormattedFloat } from '@/app/utils/formatUtils';
-import { Badge } from '@/ui';
+import { Badge } from '@tet/ui';
 
 type BudgetTagsListProps = {
   tags?: { name: string; amount: number | null | undefined }[];

@@ -3,12 +3,12 @@
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import {
   makeCollectivitePersoRefThematiqueUrl,
   makeCollectivitePersoRefUrl,
 } from '@/app/app/paths';
-import { Button, Checkbox } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Button, Checkbox } from '@tet/ui';
 
 import { usePersonnalisationReferentiels } from '../personnalisation-referentiel.context';
 import { QuestionReponseList } from '../PersoPotentielModal/PersoPotentielQR';

@@ -4,7 +4,7 @@ import { GreyStar, RedStar } from '@/site/components/labellisation/Star';
 import ImageStrapi from '@/site/components/strapiImage/ImageStrapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { convertNameToSlug } from '@/site/src/utils/convertNameToSlug';
-import { Badge } from '@/ui';
+import { Badge } from '@tet/ui';
 
 export const NumFormat = Intl.NumberFormat('fr', { maximumFractionDigits: 3 });
 

@@ -1,4 +1,4 @@
-import { Icon } from '@/ui';
+import { Icon } from '@tet/ui';
 import { useState } from 'react';
 import { DeleteSnapshotModal } from './delete-snapshot.modal';
 

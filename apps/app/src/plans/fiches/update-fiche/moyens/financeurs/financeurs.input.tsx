@@ -1,6 +1,6 @@
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
-import { Financeur } from '@/domain/plans';
-import { Button, Field, Input } from '@/ui';
+import { Financeur } from '@tet/domain/plans';
+import { Button, Field, Input } from '@tet/ui';
 
 type FinanceursInputProps = {
   financeurs: Financeur[] | null | undefined;

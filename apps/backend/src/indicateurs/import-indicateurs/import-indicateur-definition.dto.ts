@@ -1,5 +1,5 @@
-import { getZodStringArrayFromQueryString } from '@/backend/utils/zod.utils';
-import { indicateurDefinitionSchema } from '@/domain/indicateurs';
+import { getZodStringArrayFromQueryString } from '@tet/backend/utils/zod.utils';
+import { indicateurDefinitionSchema } from '@tet/domain/indicateurs';
 import * as z from 'zod/mini';
 
 export const importIndicateurDefinitionSchema = z.object({

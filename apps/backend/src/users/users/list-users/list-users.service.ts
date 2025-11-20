@@ -1,13 +1,13 @@
-import { authUsersTable } from '@/backend/users/models/auth-users.table';
-import { AuthUser } from '@/backend/users/models/auth.models';
-import { dcpTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { UserWithCollectiviteAccesses } from '@/domain/users';
+import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { UserWithCollectiviteAccesses } from '@tet/domain/users';
 import { and, eq, inArray, sql, SQL, SQLWrapper } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
 import z from 'zod';

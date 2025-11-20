@@ -1,6 +1,6 @@
-import { useTRPC } from '@/api';
 import { useMutationCacheSubscriber } from '@/app/utils/react-query/use-mutation-cache-subscriber';
-import { useNPSSurveyManager } from '@/ui/components/tracking/use-nps-survey-manager';
+import { useTRPC } from '@tet/api';
+import { useNPSSurveyManager } from '@tet/ui/components/tracking/use-nps-survey-manager';
 import { debounce } from 'es-toolkit';
 import { useMemo } from 'react';
 

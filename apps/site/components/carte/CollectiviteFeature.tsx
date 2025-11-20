@@ -1,6 +1,6 @@
 'use client';
 
-import { Json, Views } from '@/api';
+import { Json, Views } from '@tet/api';
 import { convertNameToSlug } from '@/site/src/utils/convertNameToSlug';
 import { GeoJsonObject } from 'geojson';
 import { PathOptions } from 'leaflet';

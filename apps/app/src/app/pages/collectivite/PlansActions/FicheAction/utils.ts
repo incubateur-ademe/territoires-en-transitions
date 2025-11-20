@@ -1,5 +1,5 @@
-import { SANS_STATUT_LABEL, Statut } from '@/domain/plans';
-import { preset } from '@/ui';
+import { SANS_STATUT_LABEL, Statut } from '@tet/domain/plans';
+import { preset } from '@tet/ui';
 
 /** Correspondance entre les statuts et couleurs associées */
 export const statutToColor: Record<

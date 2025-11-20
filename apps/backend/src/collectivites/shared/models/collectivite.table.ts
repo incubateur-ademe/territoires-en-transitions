@@ -1,6 +1,6 @@
-import { collectiviteBanaticTypeTable } from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
-import { createdAt, modifiedAt } from '@/backend/utils/column.utils';
-import { collectiviteNature } from '@/domain/collectivites';
+import { collectiviteBanaticTypeTable } from '@tet/backend/collectivites/shared/models/collectivite-banatic-type.table';
+import { createdAt, modifiedAt } from '@tet/backend/utils/column.utils';
+import { collectiviteNature } from '@tet/domain/collectivites';
 import {
   boolean,
   integer,

@@ -1,4 +1,4 @@
-import { scoreIndicatifTypeEnumSchema } from '@/domain/referentiels';
+import { scoreIndicatifTypeEnumSchema } from '@tet/domain/referentiels';
 import z from 'zod';
 
 export const setValeursUtiliseesRequestSchema = z.object({

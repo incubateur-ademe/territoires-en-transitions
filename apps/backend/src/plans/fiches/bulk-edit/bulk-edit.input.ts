@@ -1,5 +1,5 @@
-import { updateFicheRequestSchema } from '@/backend/plans/fiches/update-fiche/update-fiche.request';
-import { ficheSchema, listFichesRequestFiltersSchema } from '@/domain/plans';
+import { updateFicheRequestSchema } from '@tet/backend/plans/fiches/update-fiche/update-fiche.request';
+import { ficheSchema, listFichesRequestFiltersSchema } from '@tet/domain/plans';
 import z from 'zod';
 
 // Utility function to create a sub-schema for array field in the input body

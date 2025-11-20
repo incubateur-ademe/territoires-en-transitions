@@ -1,4 +1,4 @@
-import { ITEM_ALL } from '@/ui';
+import { ITEM_ALL } from '@tet/ui';
 
 export type TFilters = {
   ordreDuJour: string[];

@@ -1,5 +1,5 @@
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
-import { OptionValue, SelectMultiple } from '@/ui';
+import { OptionValue, SelectMultiple } from '@tet/ui';
 import { TSectionsValues } from '../utils';
 
 type Props = {

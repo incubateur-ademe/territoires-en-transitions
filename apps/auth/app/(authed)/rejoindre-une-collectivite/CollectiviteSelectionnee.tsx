@@ -1,5 +1,5 @@
-import { useUser } from '@/api';
-import { Alert, Button, Icon, useCopyToClipboard } from '@/ui';
+import { useUser } from '@tet/api';
+import { Alert, Button, Icon, useCopyToClipboard } from '@tet/ui';
 import { CollectiviteInfo } from './useRejoindreUneCollectivite';
 
 type Props = {

@@ -3,7 +3,7 @@
  * circulaire (ui -> api -> @/domain -> backend -> ui).
  *
  * Idéalement il faudrait :
- * - éliminer la dépendance entre @/ui et @/api pour pouvoir importer le
+ * - éliminer la dépendance entre @tet/ui et @tet/api pour pouvoir importer le
  *   tailwind-preset depuis le backend
  * - OU déplacer le tailwind-preset dans un package séparé (permettrait de
  *   simplifier son import et d'éviter l'exception `allow:

@@ -1,6 +1,6 @@
 import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
-import { ButtonMenu, MenuAction } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { ButtonMenu, MenuAction } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 export type ChartDownloadSettings = {
   showTrigger: boolean;
   openModal: () => void;

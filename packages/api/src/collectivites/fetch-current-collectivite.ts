@@ -5,7 +5,7 @@ import {
   PermissionOperation,
   permissionsByRole,
   Role,
-} from '@/domain/users';
+} from '@tet/domain/users';
 import { MesCollectivites } from '../typeUtils';
 
 export const toCollectiviteAccess = (

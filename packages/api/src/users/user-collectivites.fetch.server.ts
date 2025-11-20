@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { CollectiviteAccess } from '@/domain/users';
+import { CollectiviteAccess } from '@tet/domain/users';
 import { toCollectiviteAccess } from '../collectivites';
 import { DBClient } from '../typeUtils';
 

@@ -1,6 +1,6 @@
-import { getRequestUrl, isAllowedOrigin } from '@/api';
-import { ENV } from '@/api/environmentVariables';
-import { getRootDomain } from '@/api/utils/pathUtils';
+import { getRequestUrl, isAllowedOrigin } from '@tet/api';
+import { ENV } from '@tet/api/environmentVariables';
+import { getRootDomain } from '@tet/api/utils/pathUtils';
 import { NextRequest } from 'next/server';
 import { updateSessionOrRedirect } from './src/supabase/middleware';
 

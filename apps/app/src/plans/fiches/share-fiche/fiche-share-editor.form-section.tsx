@@ -1,7 +1,7 @@
 import { MultipleCollectiviteSelector } from '@/app/plans/fiches/share-fiche/multiple-collectivite.selector';
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
-import { IdNameSchema } from '@/domain/shared';
-import { Field, FormSection } from '@/ui';
+import { IdNameSchema } from '@tet/domain/shared';
+import { Field, FormSection } from '@tet/ui';
 
 type FicheShareEditorFormSectionProps = {
   collectivites: IdNameSchema[];

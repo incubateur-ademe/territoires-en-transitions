@@ -1,7 +1,6 @@
-import { NonNullableFields, Views } from '@/api';
-import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
-import { useSupabase } from '@/api';
 import { useQuery } from '@tanstack/react-query';
+import { NonNullableFields, useSupabase, Views } from '@tet/api';
+import { DISABLE_AUTO_REFETCH } from '@tet/api/utils/react-query/query-options';
 
 /**
  * Charge la liste des régions.

@@ -1,4 +1,4 @@
-import { Icon } from '@/ui';
+import { Icon } from '@tet/ui';
 import { useState } from 'react';
 import { UpdateSnapshotNameModal } from './update-snapshot-name.modal';
 

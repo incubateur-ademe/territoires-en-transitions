@@ -1,7 +1,7 @@
-import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { IndicateurValeur } from '@/domain/indicateurs';
 import { Test } from '@nestjs/testing';
+import ListCollectivitesService from '@tet/backend/collectivites/list-collectivites/list-collectivites.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { IndicateurValeur } from '@tet/domain/indicateurs';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';

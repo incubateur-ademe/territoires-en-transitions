@@ -1,4 +1,4 @@
-import { bibliothequeFichierSchema } from '@/domain/collectivites';
+import { bibliothequeFichierSchema } from '@tet/domain/collectivites';
 import z from 'zod';
 
 export const scoreAnalysisSchema = z.object({

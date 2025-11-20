@@ -1,13 +1,13 @@
-import { LIST_DEFAULT_JALONS } from '@/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-query';
-import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
-import { DatabaseService } from '@/backend/utils/database/database.service';
+import { LIST_DEFAULT_JALONS } from '@tet/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-query';
+import { getISOFormatDateQuery } from '@tet/backend/utils/column.utils';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Injectable } from '@nestjs/common';
 import {
   referentielIdEnumSchema,
   ScoreSnapshot,
   snapshotJalonEnumSchema,
-} from '@/domain/referentiels';
-import { roundTo } from '@/domain/utils';
-import { Injectable } from '@nestjs/common';
+} from '@tet/domain/referentiels';
+import { roundTo } from '@tet/domain/utils';
 import { and, desc, eq, inArray } from 'drizzle-orm';
 import z from 'zod';
 import { snapshotTable } from '../snapshot.table';

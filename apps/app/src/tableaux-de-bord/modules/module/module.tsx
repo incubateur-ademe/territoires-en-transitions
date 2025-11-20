@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { useCollectiviteId } from '@/api/collectivites';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import FilterBadges, {
   BadgeFilters,
   useFiltersToBadges,
 } from '@/app/ui/lists/filter-badges';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   Button,
   ButtonMenu,
@@ -14,7 +14,7 @@ import {
   EmptyCard,
   InfoTooltip,
   MenuAction,
-} from '@/ui';
+} from '@tet/ui';
 import { ModuleContainer } from './module.container';
 import { ModuleError } from './module.error';
 

@@ -1,7 +1,7 @@
 import { FicheRestreintEditorFormSection } from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionAcces/fiche-restreint-editor.form-section';
 import FicheShareEditorFormSection from '@/app/plans/fiches/share-fiche/fiche-share-editor.form-section';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { Modal, ModalFooterOKCancel } from '@/ui';
+import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useCallback, useEffect, useState } from 'react';
 import { Fiche } from '../data/use-get-fiche';
 

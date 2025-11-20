@@ -1,12 +1,12 @@
 import ModaleSuppressionNote from '@/app/app/pages/collectivite/PlansActions/FicheAction/NotesEtDocuments/Notes/ModaleSuppressionNote';
 import { RichTextView } from '@/app/plans/fiches/update-fiche/components/RichTextView';
-import { FicheResume } from '@/domain/plans';
-import { Card, Icon } from '@/ui';
+import { Card, Icon } from '@tet/ui';
+import { Fiche } from '../../data/use-get-fiche';
 import ModaleEditionNote from './ModaleEditionNote';
 
 type CarteNoteProps = {
   isReadonly: boolean;
-  fiche: FicheResume;
+  fiche: Fiche;
   notes: string;
   updateNotes: (notes: string | null) => void;
 };

@@ -1,7 +1,7 @@
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
-import { FicheWithRelations } from '@/domain/plans';
-import { ModalFooterOKCancel, RichTextEditor } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { FicheWithRelations } from '@tet/domain/plans';
+import { ModalFooterOKCancel, RichTextEditor } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 
 type ResourcesModalProps = {

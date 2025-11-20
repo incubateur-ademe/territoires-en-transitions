@@ -1,5 +1,5 @@
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
-import { Breadcrumbs } from '@/ui';
+import { Breadcrumbs } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 
 type NotClassifiedFicheBreadcrumbsProps = {

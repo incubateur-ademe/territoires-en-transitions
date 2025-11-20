@@ -1,5 +1,5 @@
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { IndicateurDefinitionsRouter } from './definitions/indicateur-definitions.router';
 import { IndicateurSourcesRouter } from './sources/indicateur-sources.router';
 import { TrajectoiresRouter } from './trajectoires/trajectoires.router';

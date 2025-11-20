@@ -1,4 +1,4 @@
-import { Etoile } from '@/domain/referentiels';
+import { Etoile } from '@tet/domain/referentiels';
 
 export const numLabels: Record<Etoile, string> = {
   1: 'première',

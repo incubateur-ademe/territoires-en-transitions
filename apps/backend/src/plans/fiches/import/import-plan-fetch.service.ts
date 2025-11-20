@@ -1,10 +1,10 @@
-import { CollectiviteMembresService } from '@/backend/collectivites/membres/membres.service';
-import { TagService } from '@/backend/collectivites/tags/tag.service';
-import { TagImport } from '@/backend/plans/fiches/import/import-plan.dto';
-import { EffetAttenduService } from '@/backend/shared/effet-attendu/effet-attendu.service';
-import { ThematiqueService } from '@/backend/shared/thematiques/thematique.service';
-import { TagType } from '@/domain/collectivites';
 import { Injectable } from '@nestjs/common';
+import { CollectiviteMembresService } from '@tet/backend/collectivites/membres/membres.service';
+import { TagService } from '@tet/backend/collectivites/tags/tag.service';
+import { TagImport } from '@tet/backend/plans/fiches/import/import-plan.dto';
+import { EffetAttenduService } from '@tet/backend/shared/effet-attendu/effet-attendu.service';
+import { ThematiqueService } from '@tet/backend/shared/thematiques/thematique.service';
+import { TagType } from '@tet/domain/collectivites';
 
 @Injectable()
 export class ImportPlanFetchService {

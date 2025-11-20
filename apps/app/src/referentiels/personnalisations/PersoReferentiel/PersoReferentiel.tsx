@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { referentielToName } from '@/app/app/labels';
 import { makeCollectivitePersoRefThematiqueUrl } from '@/app/app/paths';
 import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
-import { ReferentielId } from '@/domain/referentiels';
-import { Checkbox } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { Checkbox } from '@tet/ui';
 
 import { usePersonnalisationReferentiels } from '../personnalisation-referentiel.context';
 import { useQuestionThematiqueCompletude } from './useQuestionThematiqueCompletude';

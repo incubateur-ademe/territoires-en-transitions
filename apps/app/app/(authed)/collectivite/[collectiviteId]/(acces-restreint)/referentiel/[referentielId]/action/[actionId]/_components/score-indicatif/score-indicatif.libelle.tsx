@@ -3,7 +3,7 @@ import { toPercentString } from '@/app/utils/to-percent-string';
 import {
   ScoreIndicatifType,
   scoreIndicatifTypeEnum,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import {
   ScoreIndicatifValeurUtilisee,
   ScoreIndicatifValeursUtilisees,

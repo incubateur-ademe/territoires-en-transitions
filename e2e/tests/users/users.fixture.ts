@@ -1,11 +1,14 @@
-import { addTestCollectivite } from '@/backend/collectivites/collectivites/collectivites.fixture';
-import { BulkEditRequest } from '@/backend/plans/fiches/bulk-edit/bulk-edit.input';
-import { addTestUser, TestUserArgs } from '@/backend/users/users/users.fixture';
-import type { AppRouter } from '@/backend/utils/trpc/trpc.router';
-import { Collectivite } from '@/domain/collectivites';
-import { FicheCreate } from '@/domain/plans';
-import { Dcp } from '@/domain/users';
 import { BrowserContext, test } from '@playwright/test';
+import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.fixture';
+import { BulkEditRequest } from '@tet/backend/plans/fiches/bulk-edit/bulk-edit.input';
+import {
+  addTestUser,
+  TestUserArgs,
+} from '@tet/backend/users/users/users.fixture';
+import type { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { Collectivite } from '@tet/domain/collectivites';
+import { FicheCreate } from '@tet/domain/plans';
+import { Dcp } from '@tet/domain/users';
 import { createTRPCClient, httpBatchLink, TRPCClient } from '@trpc/client';
 import { databaseService } from '../fixtures/database.service';
 import { SupabaseClient } from '../fixtures/supabase-client.utils';

@@ -1,7 +1,8 @@
-import { countByDateSlots } from '@/backend/plans/fiches/count-by/count-by-date-slots.enum';
-import { countByArrayValues } from '@/backend/plans/fiches/count-by/utils/count-by-array-value';
-import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
-import { ficheActionResultatsAttenduValues } from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import { Injectable, Logger, NotImplementedException } from '@nestjs/common';
+import { countByDateSlots } from '@tet/backend/plans/fiches/count-by/count-by-date-slots.enum';
+import { countByArrayValues } from '@tet/backend/plans/fiches/count-by/utils/count-by-array-value';
+import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
+import { ficheActionResultatsAttenduValues } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
   CountByPropertyEnumType,
   FicheWithRelations,
@@ -24,9 +25,11 @@ import {
   participationCitoyenneEnumValues,
   prioriteEnumValues,
   statutEnumValues,
-} from '@/domain/plans';
-import { CountByRecordGeneralType, CountByResponseType } from '@/domain/utils';
-import { Injectable, Logger, NotImplementedException } from '@nestjs/common';
+} from '@tet/domain/plans';
+import {
+  CountByRecordGeneralType,
+  CountByResponseType,
+} from '@tet/domain/utils';
 import { isNil } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { isArrayCountByProperty } from './count-by.types';

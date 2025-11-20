@@ -1,7 +1,6 @@
 'use client';
 
-import { Panier, PanierAPI } from '@/api';
-import { useSupabase } from '@/api';
+import { Panier, PanierAPI, useSupabase } from '@tet/api';
 import ListeActions from '@/panier/components/ListeActions';
 import PanierActions from '@/panier/components/PanierActions';
 import {
@@ -9,7 +8,7 @@ import {
   usePanierContext,
   useUserContext,
 } from '@/panier/providers';
-import { Event, useEventTracker } from '@/ui';
+import { Event, useEventTracker } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ContenuListesFiltre, PanierOngletName } from '../FiltresActions/types';

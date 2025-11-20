@@ -1,9 +1,9 @@
 'use client';
 
-import { useCollectiviteId } from '@/api/collectivites';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import { TPreuveLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
-import { Alert } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Alert } from '@tet/ui';
 import { useReferentielId } from '../referentiel-context';
 import { CritereCompletude } from './CritereCompletude';
 import { CriterePreuves } from './CriterePreuves';

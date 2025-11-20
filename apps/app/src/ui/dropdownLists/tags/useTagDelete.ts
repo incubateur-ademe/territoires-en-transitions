@@ -1,6 +1,5 @@
-import { CollectiviteTag, TableTag } from '@/api';
-import { useSupabase } from '@/api';
 import { QueryKey, useMutation, useQueryClient } from '@tanstack/react-query';
+import { CollectiviteTag, TableTag, useSupabase } from '@tet/api';
 
 type Tag = CollectiviteTag;
 

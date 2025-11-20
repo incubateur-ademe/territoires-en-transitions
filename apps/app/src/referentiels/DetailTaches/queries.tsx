@@ -1,4 +1,4 @@
-import { DBClient } from '@/api';
+import { DBClient } from '@tet/api';
 import { ProgressionRow } from '../DEPRECATED_scores.types';
 import { TFilters } from './filters';
 

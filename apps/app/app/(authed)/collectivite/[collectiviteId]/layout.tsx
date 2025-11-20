@@ -1,6 +1,6 @@
-import { CollectiviteProviderStore } from '@/api/collectivites/index.server';
-import { getUser } from '@/api/users/user-details.fetch.server';
 import { UnverifiedUserCard } from '@/app/users/unverified-user-card';
+import { CollectiviteProviderStore } from '@tet/api/collectivites/index.server';
+import { getUser } from '@tet/api/users/user-details.fetch.server';
 import { ReactNode } from 'react';
 import z from 'zod';
 

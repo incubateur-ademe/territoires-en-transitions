@@ -1,7 +1,7 @@
 import {
   budgetTypeSchema,
   budgetUniteSchema,
-} from '@/backend/plans/fiches/fiche-action-budget/budget.types';
+} from '@tet/backend/plans/fiches/fiche-action-budget/budget.types';
 import { z } from 'zod';
 
 export const getBudgetsRequestSchema = z.object({

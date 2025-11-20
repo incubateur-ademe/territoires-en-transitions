@@ -1,13 +1,13 @@
-import { utilisateurCollectiviteAccessTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
-import { utilisateurVerifieTable } from '@/backend/users/authorizations/roles/utilisateur-verifie.table';
-import { authUsersTable } from '@/backend/users/models/auth-users.table';
-import { dcpTable } from '@/backend/users/models/dcp.table';
-import { DatabaseServiceInterface } from '@/backend/utils/database/database-service.interface';
+import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles/utilisateur-verifie.table';
+import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import {
   CollectiviteAccessLevel,
   CollectiviteAccessLevelEnum,
   Dcp,
-} from '@/domain/users';
+} from '@tet/domain/users';
 import assert from 'assert';
 import { and, count, eq, sql } from 'drizzle-orm';
 

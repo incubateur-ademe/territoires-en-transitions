@@ -1,5 +1,5 @@
-import { Icon, IconValue, Tooltip } from '@/ui';
-import { cn } from '@/ui/utils/cn';
+import { Icon, IconValue, Tooltip } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 
 type Props = {
   title?: string;

@@ -4,7 +4,7 @@ import { DEPRECATED_useActionDefinition } from '@/app/referentiels/actions/actio
 import { DownloadDocs } from '@/app/referentiels/actions/action-documents.download-button';
 import ActionPreuvePanel from '@/app/referentiels/actions/action-preuve.panel';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Divider } from '@/ui';
+import { Divider } from '@tet/ui';
 
 export default function Page() {
   const actionDefinition = DEPRECATED_useActionDefinition();
