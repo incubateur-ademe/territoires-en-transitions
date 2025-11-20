@@ -56,9 +56,7 @@ const IndicateurCardMenu = ({
       variant="grey"
       size="xs"
       menu={{
-        sections: [
-          { actions: menuActions.filter((action) => action.isVisible) },
-        ],
+        actions: menuActions,
         openState,
       }}
     />

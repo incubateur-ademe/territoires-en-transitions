@@ -30,44 +30,42 @@ export const FichesListCellActions = ({ fiche }: Props) => {
         menu={{
           placement: 'left',
           className: 'max-w-56',
-          sections: [
-            [
-              {
-                icon: 'edit-2-line',
-                label: 'Modifier l’action',
-                onClick: () => {
-                  setIsEditOpen(true);
-                },
+          actions: [
+            {
+              icon: 'edit-2-line',
+              label: 'Modifier l’action',
+              onClick: () => {
+                setIsEditOpen(true);
               },
-              {
-                icon: 'delete-bin-2-line',
-                label: 'Supprimer l’action',
-                onClick: () => {
-                  setIsDeleteOpen(true);
-                },
+            },
+            {
+              icon: 'delete-bin-2-line',
+              label: 'Supprimer l’action',
+              onClick: () => {
+                setIsDeleteOpen(true);
               },
-            ],
-            (isSharedWithCollectivites || fiche.restreint) && (
-              <div className="flex flex-col gap-1 px-2 text-xs">
-                {fiche.sharedWithCollectivites && (
-                  <AdditionalMenuInfo
-                    icon={getFicheActionShareIcon(fiche, fiche.collectiviteId)}
-                    iconClassName="text-success"
-                    label={`Partagée avec ${ficheSharedSingularAndPluralText(
-                      fiche.sharedWithCollectivites
-                    )}`}
-                  />
-                )}
-                {fiche.restreint && (
-                  <AdditionalMenuInfo
-                    icon="lock-fill"
-                    iconClassName="text-primary-7"
-                    label="Fiche en accès restreint"
-                  />
-                )}
-              </div>
-            ),
+            },
           ],
+          endContent: (isSharedWithCollectivites || fiche.restreint) && (
+            <div className="flex flex-col gap-1 px-2 text-xs">
+              {fiche.sharedWithCollectivites && (
+                <AdditionalMenuInfo
+                  icon={getFicheActionShareIcon(fiche, fiche.collectiviteId)}
+                  iconClassName="text-success"
+                  label={`Partagée avec ${ficheSharedSingularAndPluralText(
+                    fiche.sharedWithCollectivites
+                  )}`}
+                />
+              )}
+              {fiche.restreint && (
+                <AdditionalMenuInfo
+                  icon="lock-fill"
+                  iconClassName="text-primary-7"
+                  label="Fiche en accès restreint"
+                />
+              )}
+            </div>
+          ),
         }}
       />
       <ModifierFicheModale

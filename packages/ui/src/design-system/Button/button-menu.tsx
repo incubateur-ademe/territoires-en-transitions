@@ -12,7 +12,7 @@ import {
   UseHoverProps,
   useInteractions,
 } from '@floating-ui/react';
-import { cloneElement, Fragment, useState } from 'react';
+import { cloneElement, useState } from 'react';
 
 import { useOpenState } from '@/ui/hooks/use-open-state';
 import { flushSync } from 'react-dom';
@@ -26,20 +26,20 @@ export type MenuAction = {
   label: string;
   onClick: () => void;
   icon?: string;
+  /** True par défaut */
+  isVisible?: boolean;
 };
-
-export type MenuSection = MenuAction[] | React.ReactNode;
-
-function isActionsSection(section: MenuSection): section is MenuAction[] {
-  return Array.isArray(section);
-}
 
 type Props = {
   menu: {
     /** Classe CSS à appliquer au container du menu */
     className?: string;
-    /** Contenu du menu */
-    sections: MenuSection[];
+    /** Actions du menu */
+    actions?: MenuAction[];
+    /** Contenu à afficher au début du menu */
+    startContent?: React.ReactNode;
+    /** Contenu à afficher à la fin du menu */
+    endContent?: React.ReactNode;
     /** Rend le composant controllable */
     openState?: OpenState;
     /** Ouvre le menu au hover */
@@ -57,7 +57,9 @@ export const ButtonMenu = ({ menu, withArrow, children, ...props }: Props) => {
     className: menuClassName,
     placement,
     hoverConfig,
-    sections,
+    actions,
+    startContent,
+    endContent,
   } = menu;
   const { isOpen, toggleIsOpen } = useOpenState(openState);
 
@@ -126,26 +128,26 @@ export const ButtonMenu = ({ menu, withArrow, children, ...props }: Props) => {
               ),
             })}
           >
-            {sections.map((section, i) =>
-              isActionsSection(section) ? (
-                <Fragment key={i}>
-                  <div className="flex flex-col">
-                    {section.map((action) => (
-                      <MenuItem
-                        key={action.label}
-                        {...action}
-                        onClick={() => {
-                          toggleIsOpen();
-                          action.onClick();
-                        }}
-                      />
-                    ))}
-                  </div>
-                  <div className="h-px mx-2 bg-grey-3 last:hidden" />
-                </Fragment>
-              ) : (
-                section
-              )
+            {startContent}
+            {actions && (
+              <div className="flex flex-col">
+                {actions.map((action) => (
+                  <MenuAction
+                    key={action.label}
+                    {...action}
+                    onClick={() => {
+                      toggleIsOpen();
+                      action.onClick();
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+            {endContent && (
+              <>
+                <div className="h-px mx-2 bg-grey-3 last:hidden" />
+                {endContent}
+              </>
             )}
           </div>
         </FloatingPortal>
@@ -154,12 +156,18 @@ export const ButtonMenu = ({ menu, withArrow, children, ...props }: Props) => {
   );
 };
 
-const MenuItem = ({ icon, label, onClick }: MenuAction) => (
-  <button
-    className="flex items-baseline gap-3 py-2 px-3 text-primary-9 text-sm text-left rounded hover:!bg-primary-1"
-    onClick={onClick}
-  >
-    {icon && <Icon icon={icon} size="sm" className="-mt-0.5" />}
-    {label}
-  </button>
-);
+const MenuAction = ({ icon, label, onClick, isVisible = true }: MenuAction) => {
+  if (!isVisible) {
+    return null;
+  }
+
+  return (
+    <button
+      className="flex items-baseline gap-3 py-2 px-3 text-primary-9 text-sm text-left rounded hover:!bg-primary-1"
+      onClick={onClick}
+    >
+      {icon && <Icon icon={icon} size="sm" className="-mt-0.5" />}
+      {label}
+    </button>
+  );
+};
