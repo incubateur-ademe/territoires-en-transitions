@@ -2,13 +2,16 @@ import { Injectable, Logger } from '@nestjs/common';
 import { render } from '@react-email/components';
 import { and, eq, lt } from 'drizzle-orm';
 import { DateTime, DurationLike } from 'luxon';
-import { EmailService } from '../shared/email/email.service';
-import { DatabaseService } from '../utils/database/database.service';
+import { DatabaseService } from '../database/database.service';
+import { EmailService } from '../email/email.service';
 import { NotificationStatusEnum } from './models/notification-status.enum';
-import { GetNotificationContent } from './models/notification-template.dto';
+import {
+  GetNotificationContent,
+  NotificationContentGenerator,
+} from './models/notification-template.dto';
 import { Notification, notificationTable } from './models/notification.table';
+import { NotifiedOnType } from './models/notified-on.enum';
 import { SendPendingNotificationsInput } from './models/send-pending-notifications.input';
-import { NotificationContentService } from './notification-content.service';
 
 const DEFAULT_DELAY_BEFORE_SENDING: DurationLike = { minutes: 15 };
 const MAX_SEND_RETRIES = 5;
@@ -16,17 +19,29 @@ const MAX_SEND_RETRIES = 5;
 @Injectable()
 export class NotificationsService {
   private readonly logger = new Logger(NotificationsService.name);
+  private registeredGenerator: Partial<
+    Record<NotifiedOnType, NotificationContentGenerator>
+  > = {};
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly notificationHandlersService: NotificationContentService,
     private readonly emailService: EmailService
   ) {}
 
   /**
+   * Enregistre un générateur de contenu de notification
+   */
+  registerContentGenerator(
+    notifiedOn: NotifiedOnType,
+    generator: NotificationContentGenerator
+  ) {
+    this.registeredGenerator[notifiedOn] = generator;
+  }
+
+  /**
    * Charge et envoi les notifications
    */
-  async sendPendingNotifications(input: SendPendingNotificationsInput) {
+  async sendPendingNotifications(input?: SendPendingNotificationsInput) {
     try {
       const pendingNotifications = await this.getPendingNotificationsToSend(
         input?.delayInSeconds
@@ -51,9 +66,11 @@ export class NotificationsService {
    * Charge et envoi la notification
    */
   private async sendNotification(notification: Notification) {
-    const ret = await this.notificationHandlersService.getNotificationContent(
-      notification
-    );
+    const contentGenerator = this.registeredGenerator[notification.notifiedOn];
+    if (!contentGenerator) {
+      return;
+    }
+    const ret = await contentGenerator(notification);
     if (!ret.success) {
       return;
     }

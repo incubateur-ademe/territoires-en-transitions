@@ -1,9 +1,9 @@
 import { CollectivitesRouter } from '@/backend/collectivites/collectivites.router';
 import { IndicateursRouter } from '@/backend/indicateurs/indicateurs.router';
 import { MetricsRouter } from '@/backend/metrics/metrics.router';
-import { NotificationsRouter } from '@/backend/notifications/notifications.router';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
 import { ContextStoreService } from '@/backend/utils/context/context.service';
+import { NotificationsRouter } from '@/backend/utils/notifications/notifications.router';
 import { getSentryContextFromApplicationContext } from '@/backend/utils/sentry-init';
 import {
   HttpException,
