@@ -28,6 +28,7 @@ import {
 
 import { useUser } from '@/api/users/user-context/user-provider';
 import { PermissionOperation } from '@/domain/users';
+import { useCountFiches } from '../hooks/use-count-fiches';
 import { useManageFichesPagination } from '../hooks/use-manage-fiches-pagination';
 import { useSearchFiches } from '../hooks/use-search-fiches';
 import { useSelectFiches } from '../hooks/use-select-fiches';
@@ -118,7 +119,6 @@ export const FichesList = ({
       sort: [sort],
     },
   });
-  const hasFiches = fiches.length > 0;
 
   const {
     selectedFicheIds,
@@ -137,8 +137,14 @@ export const FichesList = ({
 
   const searchIsActive = isSearchActive(filters, debouncedSearch);
 
+  /** Doit être récupéré indépendamment de fiches car pour la vue calendaire,
+   *  les fiches sans date sont filtrées, on se retrouve donc avec <FichesListEmpty />
+   *  qui fait disparaitre le bouton de changement de vue, même si la collectivité a des fiches
+   *  visibles dans les vues Carte et Tableau. */
+  const { countTotalFiches: countTotalCollectiviteFiches } = useCountFiches();
+
   const noFichesAtAll =
-    hasFiches === false && isLoading === false && searchIsActive === false;
+    countTotalCollectiviteFiches === 0 && !isLoading && !searchIsActive;
 
   if (noFichesAtAll) {
     return (
