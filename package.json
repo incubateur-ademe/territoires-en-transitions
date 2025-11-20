@@ -248,7 +248,7 @@
     "dev:site": "nx dev site",
     "dev:auth": "nx dev auth",
     "dev:panier": "nx run-many -t dev -p panier auth",
-    "dev:email": "email dev -d apps/backend/src/notifications/templates -p 3030",
+    "dev:email": "sh ./apps/backend/src/utils/notifications/run-preview.sh",
     "build:app": "nx build app",
     "build:auth": "nx build auth",
     "build:backend": "nx build backend",
