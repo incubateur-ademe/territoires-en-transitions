@@ -1,4 +1,3 @@
-import { NotificationsFicheService } from '@/backend/notifications/notifications-fiche.service';
 import AxeService from '@/backend/plans/fiches/axe.service';
 import { CreateFicheService } from '@/backend/plans/fiches/create-fiche/create-fiche.service';
 import { ExportPlanController } from '@/backend/plans/fiches/export/export-plan.controller';
@@ -11,6 +10,7 @@ import { ListFichesRouter } from '@/backend/plans/fiches/list-fiches/list-fiches
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import PlanActionsService from '@/backend/plans/fiches/plan-actions.service';
 import { ShareFicheService } from '@/backend/plans/fiches/share-fiches/share-fiche.service';
+import { NotificationsModule } from '@/backend/utils/notifications/notifications.module';
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '../../collectivites/collectivites.module';
 import { BulkEditRouter } from './bulk-edit/bulk-edit.router';
@@ -25,11 +25,16 @@ import { FicheActionEtapeRouter } from './fiche-action-etape/fiche-action-etape.
 import { FicheActionEtapeService } from './fiche-action-etape/fiche-action-etape.service';
 import FicheActionPermissionsService from './fiche-action-permissions.service';
 import { ImportPlanModule } from './import/import-plan.module';
+import { NotifyPiloteService } from './notify-pilote/notify-pilote.service';
 import { UpdateFicheRouter } from './update-fiche/update-fiche.router';
 import UpdateFicheService from './update-fiche/update-fiche.service';
 
 @Module({
-  imports: [forwardRef(() => CollectivitesModule), ImportPlanModule],
+  imports: [
+    forwardRef(() => CollectivitesModule),
+    ImportPlanModule,
+    NotificationsModule,
+  ],
   providers: [
     PlanActionsService,
     FicheActionPermissionsService,
@@ -54,7 +59,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     CreateFicheService,
     CreateFicheRouter,
     FichesRouter,
-    NotificationsFicheService,
+    NotifyPiloteService,
   ],
   exports: [
     FicheActionPermissionsService,

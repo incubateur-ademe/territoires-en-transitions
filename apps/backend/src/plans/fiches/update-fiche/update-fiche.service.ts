@@ -1,4 +1,3 @@
-import { NotificationsFicheService } from '@/backend/notifications/notifications-fiche.service';
 import { FicheWithRelations } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ShareFicheService } from '@/backend/plans/fiches/share-fiches/share-fiche.service';
@@ -20,6 +19,7 @@ import { isNil } from 'es-toolkit';
 import { toCamel } from 'ts-case-convert';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
+import { NotifyPiloteService } from '../notify-pilote/notify-pilote.service';
 import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
 import { ficheActionEffetAttenduTable } from '../shared/models/fiche-action-effet-attendu.table';
@@ -71,7 +71,7 @@ export default class UpdateFicheService {
     private readonly ficheActionListService: ListFichesService,
     private readonly fichePermissionService: FicheActionPermissionsService,
     private readonly shareFicheService: ShareFicheService,
-    private readonly notificationsFicheService: NotificationsFicheService
+    private readonly notificationsFicheService: NotifyPiloteService
   ) {}
 
   async updateFiche({
