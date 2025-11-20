@@ -1,5 +1,5 @@
 import Markdown from '@/site/components/markdown/Markdown';
-import { Alert } from '@/ui';
+import { Alert } from '@tet/ui';
 
 type InfoArticleProps = {
   texte: string;

@@ -1,12 +1,11 @@
-import { referentielDefinitionTable } from '@/backend/referentiels/models/referentiel-definition.table';
-import { ReferentielIdEnum } from '@/backend/referentiels/models/referentiel-id.enum';
-import { getTestApp, getTestDatabase } from '@/backend/test';
-import { DatabaseService } from '@/backend/utils/database/database.service';
 import { INestApplication } from '@nestjs/common';
+import { referentielDefinitionTable } from '@tet/backend/referentiels/models/referentiel-definition.table';
+import { getTestApp, getTestDatabase } from '@tet/backend/test';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { findActionById, ReferentielIdEnum } from '@tet/domain/referentiels';
 import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';
 import { ReferentielResponse } from '../get-referentiel/get-referentiel.service';
-import { findActionById } from '../referentiels.utils';
 
 describe('import-referentiel.controller.e2e-spec', () => {
   let app: INestApplication;

@@ -1,4 +1,4 @@
-import { Badge, BadgeProps } from '@/ui';
+import { Badge, BadgeProps } from '@tet/ui';
 
 type Props = Pick<BadgeProps, 'size'>;
 

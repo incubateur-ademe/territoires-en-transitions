@@ -1,4 +1,4 @@
-import { Field, SelectFilter } from '@/ui';
+import { Field, SelectFilter } from '@tet/ui';
 import { filtresTypeOptions, TFilterType, TFiltreProps } from '../filters';
 
 const FiltreType = ({ filters, setFilters }: TFiltreProps) => {

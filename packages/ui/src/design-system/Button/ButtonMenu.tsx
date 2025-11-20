@@ -17,10 +17,10 @@ import {
 import { cloneElement, useState } from 'react';
 import { flushSync } from 'react-dom';
 
-import { Icon } from '@/ui';
-import { cn } from '@/ui/utils/cn';
 import classNames from 'classnames';
+import { cn } from '../../utils/cn';
 import { OpenState } from '../../utils/types';
+import { Icon } from '../Icon';
 import { Button } from './Button';
 import { ButtonProps } from './types';
 

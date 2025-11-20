@@ -1,16 +1,3 @@
-import {
-  ActionDefinitionEssential,
-  TreeNode,
-} from '@/backend/referentiels/models/action-definition.dto';
-import { ActionTypeEnum } from '@/backend/referentiels/models/action-type.enum';
-import {
-  REFERENTIEL_ID_PARAM_KEY,
-  REFERENTIEL_ID_ROUTE_PARAM,
-} from '@/backend/referentiels/models/referentiel-api.constants';
-import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
-import { AllowPublicAccess } from '@/backend/users/decorators/allow-public-access.decorator';
-import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
-import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { Controller, Get, Logger, Param } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -19,29 +6,43 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import {
+  REFERENTIEL_ID_PARAM_KEY,
+  REFERENTIEL_ID_ROUTE_PARAM,
+} from '@tet/backend/referentiels/models/referentiel-api.constants';
+import { AllowPublicAccess } from '@tet/backend/users/decorators/allow-public-access.decorator';
+import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
+import {
+  ActionDefinitionEssential,
+  ActionTreeNode,
+  ActionTypeEnum,
+  referentielDefinitionSchema,
+  type ReferentielId,
+} from '@tet/domain/referentiels';
 import { omit } from 'es-toolkit';
 import { createZodDto } from 'nestjs-zod';
 import z from 'zod';
+import * as zm from 'zod/mini';
 import { CorrelatedActionsFields } from '../../correlated-actions/correlated-actions.dto';
 import {
   GetReferentielService,
   ReferentielResponse,
 } from '../../get-referentiel/get-referentiel.service';
-import { referentielDefinitionSchema } from '../../models/referentiel-definition.table';
 import { GetReferentielDefinitionService } from './get-referentiel-definition.service';
 
 class ReferentielResponseClass implements ReferentielResponse {
   constructor(
     public version: string,
     public orderedItemTypes: ActionTypeEnum[],
-    public itemsTree: TreeNode<
+    public itemsTree: ActionTreeNode<
       ActionDefinitionEssential & CorrelatedActionsFields
     >
   ) {}
 }
 
 const listReferentielsResponseSchema = z.array(
-  referentielDefinitionSchema.omit({
+  zm.omit(referentielDefinitionSchema, {
     createdAt: true,
     locked: true,
   })

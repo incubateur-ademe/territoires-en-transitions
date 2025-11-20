@@ -1,7 +1,7 @@
-import { FicheResume } from '@/domain/plans';
-import { CollectiviteAccess } from '@/domain/users';
+import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { DragOverlay, useDraggable } from '@dnd-kit/core';
 import { QueryKey } from '@tanstack/react-query';
+import { CollectiviteAccess } from '@tet/domain/users';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -9,12 +9,12 @@ import FicheActionCard from '../../../../app/pages/collectivite/PlansActions/Fic
 
 export type FicheDndData = {
   type: 'fiche';
-  fiche: FicheResume;
+  fiche: FicheListItem;
 };
 
 type Props = {
   url?: string;
-  fiche: FicheResume;
+  fiche: FicheListItem;
   editKeysToInvalidate?: QueryKey[];
   collectivite: CollectiviteAccess;
   currentUserId: string;

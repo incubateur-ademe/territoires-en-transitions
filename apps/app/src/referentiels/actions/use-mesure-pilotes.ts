@@ -1,6 +1,6 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
 
 export const useListMesurePilotes = (actionId: string) => {
   const collectiviteId = useCollectiviteId();

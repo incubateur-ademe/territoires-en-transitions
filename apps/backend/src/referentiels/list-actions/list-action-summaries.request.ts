@@ -1,11 +1,11 @@
-import { actionTypeSchema } from '@/backend/referentiels/models/action-type.enum';
-import { referentielIdEnumSchema } from '@/backend/referentiels/models/referentiel-id.enum';
+import {
+  actionTypeSchema,
+  referentielIdEnumSchema,
+} from '@tet/domain/referentiels';
 import z from 'zod';
 
 export const listActionSummariesRequestSchema = z.object({
-  referentielId: referentielIdEnumSchema.describe(
-    'Identifiant du référentiel à récupérer (ex : cae).'
-  ),
+  referentielId: referentielIdEnumSchema,
   actionTypes: actionTypeSchema
     .array()
     .describe(

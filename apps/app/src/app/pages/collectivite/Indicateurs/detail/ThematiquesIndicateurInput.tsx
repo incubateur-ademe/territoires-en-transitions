@@ -1,7 +1,7 @@
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import { Field } from '@/ui';
+import { Field } from '@tet/ui';
 
 type Props = {
   definition: IndicateurDefinition;

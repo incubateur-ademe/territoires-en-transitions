@@ -1,22 +1,20 @@
-import { CalculTrajectoireResultatMode } from '@/backend/indicateurs/trajectoires/calcul-trajectoire.request';
-import { CalculTrajectoireResponse } from '@/backend/indicateurs/trajectoires/calcul-trajectoire.response';
-import {
-  VerificationTrajectoireResponseType,
-  VerificationTrajectoireStatus,
-} from '@/backend/indicateurs/trajectoires/verification-trajectoire.response';
-import { GetIndicateursValeursResponseType } from '@/backend/indicateurs/valeurs/get-indicateur-valeurs.response';
-import { UpsertIndicateursValeursRequest } from '@/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.request';
+import { INestApplication } from '@nestjs/common';
+import { CalculTrajectoireResultatMode } from '@tet/backend/indicateurs/trajectoires/calcul-trajectoire.request';
+import { CalculTrajectoireResponse } from '@tet/backend/indicateurs/trajectoires/calcul-trajectoire.response';
+import { VerificationTrajectoireResponseType } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.response';
+import { GetIndicateursValeursResponse } from '@tet/backend/indicateurs/valeurs/get-indicateur-valeurs.response';
+import { UpsertIndicateursValeursRequest } from '@tet/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.request';
 import {
   getAuthUser,
   getTestApp,
   getTestRouter,
   signInWith,
   YOLO_DODO,
-} from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { sleep } from '@/backend/utils/sleep.utils';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { INestApplication } from '@nestjs/common';
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { sleep } from '@tet/backend/utils/sleep.utils';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { VerificationTrajectoireStatus } from '@tet/domain/indicateurs';
 import request from 'supertest';
 import { expect } from 'vitest';
 
@@ -67,7 +65,7 @@ describe('Téléchargement de la trajectoire SNBC', () => {
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200);
     const indicateurExistingValeurs =
-      response.body as GetIndicateursValeursResponseType;
+      response.body as GetIndicateursValeursResponse;
     const indicateurCae1eId =
       indicateurExistingValeurs.indicateurs[0].definition.id;
     const indicateurCae1eMetadataId =

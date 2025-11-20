@@ -1,6 +1,6 @@
-import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { and, inArray, isNotNull, isNull } from 'drizzle-orm';
 
 @Injectable()

@@ -1,4 +1,4 @@
-import { Badge } from '@/ui';
+import { Badge } from '@tet/ui';
 
 /** Bouton badge générique pour supprimer des filtres */
 export const DeleteFiltersButton = ({

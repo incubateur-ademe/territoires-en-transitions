@@ -2,7 +2,7 @@ import classNames from 'classnames';
 
 import { usePrevAndNextActionLinks } from '@/app/referentiels/actions/use-prev-and-next-action-links';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
-import { Button } from '@/ui';
+import { Button } from '@tet/ui';
 import ActionCommentsPanel from '../comments/action-comments.panel';
 
 type Props = {

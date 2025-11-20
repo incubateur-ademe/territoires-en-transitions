@@ -1,4 +1,4 @@
-import { preset } from '@/ui';
+import { preset } from '@tet/ui';
 
 const colorTheme = preset.theme.extend.colors;
 

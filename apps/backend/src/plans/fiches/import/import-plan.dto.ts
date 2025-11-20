@@ -1,14 +1,12 @@
-import { TagEnum, TagType } from '@/backend/collectivites/tags/tag.table-base';
+import { TagEnum, TagType } from '@tet/domain/collectivites';
 import {
   Cible,
   ParticipationCitoyenne,
   Priorite,
   Statut,
-} from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
-} from '@/backend/plans/plans/plans.schema';
+} from '@tet/domain/plans';
 
 export const ficheTagTypes = [
   TagEnum.Partenaire,

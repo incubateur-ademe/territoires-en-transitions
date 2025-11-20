@@ -1,5 +1,5 @@
 /* feuille de styles globale fourni par le module partagé */
-@import '@/ui/global.css';
+@import '@tet/ui/global.css';
 
 /*** CSS spécifique au site ***/
 @media (min-width: 78em) {

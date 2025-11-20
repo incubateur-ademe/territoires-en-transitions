@@ -1,5 +1,5 @@
 import { useIsScoreIndicatifEnabled } from '@/app/referentiels/comparisons/use-is-score-indicatif-enabled';
-import { Badge } from '@/ui';
+import { Badge } from '@tet/ui';
 import { useGetScoreIndicatif } from './use-get-score-indicatif';
 
 type Props = {

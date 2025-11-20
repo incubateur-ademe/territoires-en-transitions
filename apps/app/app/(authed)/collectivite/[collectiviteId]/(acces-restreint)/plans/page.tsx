@@ -1,6 +1,6 @@
-import { createClient } from '@/api/utils/supabase/server-client';
 import { fetchCollectivitePanierInfo } from '@/app/collectivites/panier/data/fetchCollectivitePanierInfo';
 import { AllPlansView } from '@/app/plans/plans/list-all-plans/all-plans.view';
+import { createClient } from '@tet/api/utils/supabase/server-client';
 import { z } from 'zod';
 
 export default async function PlansListPage({

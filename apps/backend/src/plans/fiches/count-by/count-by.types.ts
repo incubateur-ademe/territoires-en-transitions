@@ -1,5 +1,7 @@
-import { countByPropertyEnumSchema } from '@/backend/plans/fiches/count-by/count-by-property-options.enum';
-import { listFichesRequestFiltersSchema } from '@/backend/plans/fiches/shared/filters/filters.request';
+import {
+  countByPropertyEnumSchema,
+  listFichesRequestFiltersSchema,
+} from '@tet/domain/plans';
 import { z } from 'zod';
 
 const arrayCountByPropertyValues = [

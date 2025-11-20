@@ -1,9 +1,7 @@
-import {
-  EffetAttendu,
-  effetAttenduTable,
-} from '@/backend/shared/effet-attendu/effet-attendu.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
+import { effetAttenduTable } from '@tet/backend/shared/effet-attendu/effet-attendu.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Injectable } from '@nestjs/common';
+import { EffetAttendu } from '@tet/domain/shared';
 
 @Injectable()
 export class EffetAttenduService {

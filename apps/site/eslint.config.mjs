@@ -4,9 +4,6 @@ import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import baseConfig from '../../eslint.config.mjs';
 
 const config = [
-  {
-    ignores: ['**/dist'],
-  },
   ...nxPlugin.configs['flat/react-typescript'],
   nextPlugin.flatConfig.coreWebVitals,
   ...baseConfig,
@@ -34,6 +31,17 @@ const config = [
   },
   {
     ignores: ['.next/**/*'],
+  },
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    rules: {
+      '@nx/enforce-module-boundaries': [
+        'error',
+        {
+          allow: ['../../packages/ui/src/tailwind-preset', '@/site'],
+        },
+      ],
+    },
   },
 ];
 

@@ -1,8 +1,8 @@
-import { getAuthUrl, getRequestUrl } from '@/api';
-import { DBClient } from '@/api/typeUtils';
-import { dcpFetch } from '@/api/users/dcp.fetch';
-import { fetchUserCollectivites } from '@/api/users/user-collectivites.fetch.server';
-import { createClient } from '@/api/utils/supabase/middleware-client';
+import { getAuthUrl, getRequestUrl } from '@tet/api';
+import { DBClient } from '@tet/api/typeUtils';
+import { dcpFetch } from '@tet/api/users/dcp.fetch';
+import { fetchUserCollectivites } from '@tet/api/users/user-collectivites.fetch.server';
+import { createClient } from '@tet/api/utils/supabase/middleware-client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import {

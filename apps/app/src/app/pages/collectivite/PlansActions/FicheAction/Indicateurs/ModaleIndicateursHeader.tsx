@@ -1,23 +1,23 @@
 import EffetsAttendusDropdown from '@/app/ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
-import { FicheWithRelations } from '@/domain/plans';
 import {
   Field,
   FormSectionGrid,
   Modal,
   ModalFooterOKCancel,
   RichTextEditor,
-} from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+} from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 
 import { isEqual } from 'es-toolkit/predicate';
 import { useState } from 'react';
+import { Fiche } from '../data/use-get-fiche';
 import { useUpdateFiche } from '../data/use-update-fiche';
 
 const OBJECTIFS_MAX_LENGTH = 10000;
 
 type ModaleIndicateursHeaderProps = {
-  fiche: FicheWithRelations;
+  fiche: Fiche;
   openState: OpenState;
 };
 

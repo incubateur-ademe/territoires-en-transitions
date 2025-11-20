@@ -1,6 +1,6 @@
-import { useTRPC } from '@/api/utils/trpc/client';
-import { UpdatePlanRequest } from '@/domain/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { UpdatePlanRequest } from '@tet/domain/plans';
 
 export const useUpdatePlan = ({
   collectiviteId,

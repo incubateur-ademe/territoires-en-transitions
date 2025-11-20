@@ -1,17 +1,18 @@
 import { useDeleteBudgets } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-delete-budgets';
-import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
+import { FicheBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { useUpsertBudgets } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-upsert-budgets';
 import { ExtendedBudgetForm } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/extended-budget-form';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
+import { FicheBudgetCreate } from '@tet/domain/plans';
 import {
   Alert,
   ButtonGroup,
   Checkbox,
   Divider,
   ModalFooterOKCancel,
-} from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+} from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { DetailedBudgetForm } from './detailed-budget-form';
@@ -25,15 +26,15 @@ const getDefaultBudgetData = (
     ficheId,
     type,
     unite,
-    annee: undefined,
-    budgetPrevisionnel: undefined,
-    budgetReel: undefined,
-    estEtale: undefined,
-  } as BudgetType;
+    annee: null,
+    budgetPrevisionnel: null,
+    budgetReel: null,
+    estEtale: false,
+  } as FicheBudget;
 };
 
 const initExtendedBudgetFormData = (
-  budgets: BudgetType[],
+  budgets: FicheBudget[],
   ficheId: number,
   type: 'investissement' | 'fonctionnement'
 ) => {
@@ -52,7 +53,7 @@ const initExtendedBudgetFormData = (
   ];
 };
 
-const getInitFullPlanState = (budgets: BudgetType[]) => {
+const getInitFullPlanState = (budgets: FicheBudget[]) => {
   const filteredBudget = budgets.filter((elt) => !elt.annee);
   if (filteredBudget.length > 0) {
     return filteredBudget[0].estEtale;
@@ -64,7 +65,7 @@ type BudgetModalProps = {
   openState: OpenState;
   fiche: FicheShareProperties;
   type: 'investissement' | 'fonctionnement';
-  budgets: BudgetType[];
+  budgets: FicheBudget[];
 };
 
 export const BudgetModal = ({
@@ -80,10 +81,10 @@ export const BudgetModal = ({
   const [isFullPlan, setIsFullPlan] = useState(getInitFullPlanState(budgets));
 
   const [detailedBudgetDataForm, setDetailedBudgetDataForm] = useState<
-    BudgetType[]
+    FicheBudgetCreate[]
   >(() => budgets.filter((elt) => !!elt.annee));
   const [extendedBudgetDataForm, setExtendedBudgetDataForm] = useState<
-    BudgetType[]
+    FicheBudgetCreate[]
   >(() => initExtendedBudgetFormData(budgets, ficheId, type));
 
   // Sauvegardes
@@ -91,7 +92,7 @@ export const BudgetModal = ({
   const { mutate: deleteBudgets } = useDeleteBudgets();
 
   const handleSave = () => {
-    const newBudgets: BudgetType[] = [];
+    const newBudgets: FicheBudgetCreate[] = [];
 
     const budgetData = isDetailled
       ? detailedBudgetDataForm

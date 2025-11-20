@@ -1,5 +1,5 @@
-import { preset } from '@/ui';
 import { Font, StyleSheet } from '@react-pdf/renderer';
+import { preset } from '@tet/ui';
 
 const { colors } = preset.theme.extend;
 

@@ -1,4 +1,4 @@
-import { Modal, ModalFooterOKCancel } from '@/ui';
+import { Modal, ModalFooterOKCancel } from '@tet/ui';
 
 type AlerteSuppressionProps = {
   isOpen: boolean;

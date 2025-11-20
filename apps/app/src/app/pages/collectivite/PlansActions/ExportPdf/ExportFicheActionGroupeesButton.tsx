@@ -1,5 +1,5 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { useEffect, useState } from 'react';
 import { useGetFiche } from '../FicheAction/data/use-get-fiche';
 import { FicheActionPdfContent } from './ExportFicheActionButton';

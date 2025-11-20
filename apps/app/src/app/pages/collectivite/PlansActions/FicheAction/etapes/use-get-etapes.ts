@@ -1,5 +1,5 @@
-import { useTRPC } from '@/api/utils/trpc/client';
 import { useQuery } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 
 /**
  * Charge les étapes d'une fiche action

@@ -1,7 +1,7 @@
-import { utilisateurSupportTable } from '@/backend/users/authorizations/roles/utilisateur-support.table';
-import { utilisateurVerifieTable } from '@/backend/users/authorizations/roles/utilisateur-verifie.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { utilisateurSupportTable } from '@tet/backend/users/authorizations/roles/utilisateur-support.table';
+import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles/utilisateur-verifie.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { eq, sql } from 'drizzle-orm';
 

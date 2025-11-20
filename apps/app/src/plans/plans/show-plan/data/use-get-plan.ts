@@ -1,6 +1,6 @@
-import { useTRPC } from '@/api/utils/trpc/client';
-import { Plan } from '@/domain/plans';
 import { useQuery } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { Plan } from '@tet/domain/plans';
 
 export const useGetPlan = (
   planId: number,

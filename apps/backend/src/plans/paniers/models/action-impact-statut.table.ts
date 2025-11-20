@@ -1,9 +1,7 @@
 import { integer, pgTable, primaryKey, text, uuid } from 'drizzle-orm/pg-core';
-import { actionImpactTable } from './action-impact.table';
-import { InferSelectModel } from 'drizzle-orm';
-import { panierTable } from './panier.table';
 import { actionImpactCategorieTable } from './action-impact-categorie.table';
-import { createSelectSchema } from 'drizzle-zod';
+import { actionImpactTable } from './action-impact.table';
+import { panierTable } from './panier.table';
 
 export const actionImpactStatutTable = pgTable(
   'action_impact_statut',
@@ -18,15 +16,5 @@ export const actionImpactStatutTable = pgTable(
       .notNull()
       .references(() => actionImpactCategorieTable.id),
   },
-  (table) => {
-    return {
-      pk: primaryKey({ columns: [table.panierId, table.actionId] }),
-    };
-  }
-);
-export type ActionImpactStatutType = InferSelectModel<
-  typeof actionImpactStatutTable
->;
-export const actionImpactStatutSchema = createSelectSchema(
-  actionImpactStatutTable
+  (table) => [primaryKey({ columns: [table.panierId, table.actionId] })]
 );

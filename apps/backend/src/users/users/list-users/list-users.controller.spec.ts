@@ -1,9 +1,11 @@
-import { getTestApp, signInWith, YOLO_DODO } from '@/backend/test';
+import { getTestApp, signInWith, YOLO_DODO } from '@tet/backend/test';
 import { INestApplication } from '@nestjs/common';
+import {
+  CollectiviteAccessLevelEnum,
+  permissionsByRole,
+  UserWithCollectiviteAccesses,
+} from '@tet/domain/users';
 import request from 'supertest';
-import { permissionsByRole } from '../../authorizations/permission.models';
-import { CollectiviteAccessLevelEnum } from '../../authorizations/roles/collectivite-access-level.enum';
-import { UserWithCollectiviteAccesses } from './user-with-collectivite-accesses.dto';
 
 describe("Api pour lister les permissions de l'utilisateur", () => {
   let app: INestApplication;

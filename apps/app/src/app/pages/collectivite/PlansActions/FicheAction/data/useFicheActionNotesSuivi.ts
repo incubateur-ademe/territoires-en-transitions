@@ -1,7 +1,6 @@
-import { FicheActionNote } from '@/api/plan-actions';
 import { useApiClient } from '@/app/utils/use-api-client';
-import { Fiche } from '@/domain/plans';
 import { useQuery } from '@tanstack/react-query';
+import { Fiche, FicheNote } from '@tet/domain/plans';
 
 /**
  * Charge les notes de suivi d'une fiche action
@@ -17,7 +16,7 @@ export const useFicheActionNotesSuivi = (
 
     queryFn: async () => {
       if (!collectiviteId || !ficheId) return;
-      return api.get<FicheActionNote[]>({
+      return api.get<FicheNote[]>({
         route: `/collectivites/${collectiviteId}/fiches-action/${ficheId}/notes`,
       });
     },

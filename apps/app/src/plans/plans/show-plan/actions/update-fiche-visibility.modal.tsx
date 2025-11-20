@@ -1,5 +1,5 @@
-import { PlanNode } from '@/domain/plans';
-import { Modal, ModalFooterOKCancel } from '@/ui';
+import { PlanNode } from '@tet/domain/plans';
+import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useRestreindreFiches } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/useRestreindreFiches';
 
 type Props = {

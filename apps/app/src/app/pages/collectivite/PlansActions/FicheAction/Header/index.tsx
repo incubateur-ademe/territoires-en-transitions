@@ -1,11 +1,11 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import {
   makeCollectivitePlanActionUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { PermissionOperation } from '@/domain/users';
-import { Divider, Icon } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { PermissionOperation } from '@tet/domain/users';
+import { Divider, Icon } from '@tet/ui';
 import { format } from 'date-fns';
 import { Fiche } from '../data/use-get-fiche';
 import { FicheActionCompletionStatus } from '../FicheActionCompletion/fiche-action-completion';

@@ -1,6 +1,6 @@
-import { COLLECTIVITE_SOURCE_ID } from '@/domain/indicateurs';
-import { TypeScoreIndicatif } from '@/domain/referentiels';
-import { Field, FormSection, Input, Select } from '@/ui';
+import { COLLECTIVITE_SOURCE_ID } from '@tet/domain/indicateurs';
+import { ScoreIndicatifType } from '@tet/domain/referentiels';
+import { Field, FormSection, Input, Select } from '@tet/ui';
 import { useEffect, useState } from 'react';
 import {
   typeScoreToLabel,
@@ -119,7 +119,7 @@ type SelectionValeurIndicateur = ReturnType<
 // conserve l'état de la sélection pour une valeur ("résultat" ou "objectif")
 const useSelectionValeurIndicateur = (
   valeursIndicateur: ScoreIndicatifValeursIndicateur | undefined,
-  typeScore: TypeScoreIndicatif
+  typeScore: ScoreIndicatifType
 ) => {
   const initialSelection = valeursIndicateur?.selection?.[typeScore] || null;
   const [selection, setSelection] = useState<{

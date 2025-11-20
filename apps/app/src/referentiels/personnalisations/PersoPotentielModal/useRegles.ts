@@ -1,6 +1,5 @@
-import { Tables } from '@/api';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useQuery } from '@tanstack/react-query';
+import { Tables, useSupabase } from '@tet/api';
 
 export type TPersonnalisationRegleRead = Tables<'personnalisation_regle'>;
 

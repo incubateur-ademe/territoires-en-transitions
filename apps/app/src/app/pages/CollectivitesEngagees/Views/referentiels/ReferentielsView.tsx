@@ -1,6 +1,4 @@
 'use client';
-import { CollectiviteEngagee } from '@/api';
-import { RecherchesReferentiel } from '@/api/collectiviteEngagees';
 import { View } from '@/app/app/pages/CollectivitesEngagees/Views/View';
 import {
   initialFilters,
@@ -9,6 +7,7 @@ import {
 import { useFilteredReferentiels } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredReferentiels';
 import { recherchesReferentielsUrl } from '@/app/app/paths';
 import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
+import { CollectiviteEngagee } from '@tet/api';
 import { ReferentielCarte } from './ReferentielCarte';
 
 export const ReferentielsView = ({
@@ -25,7 +24,7 @@ export const ReferentielsView = ({
   const { isLoading, collectivites, collectivitesCount } =
     useFilteredReferentiels(filters);
   return (
-    <View<RecherchesReferentiel>
+    <View<CollectiviteEngagee.RecherchesReferentiel>
       data={collectivites}
       dataCount={collectivitesCount}
       isLoading={isLoading}

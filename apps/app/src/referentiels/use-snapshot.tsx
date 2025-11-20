@@ -1,12 +1,12 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
-import { RouterInput, RouterOutput, useTRPC } from '@/api/utils/trpc/client';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { DISABLE_AUTO_REFETCH } from '@tet/api/utils/react-query/query-options';
 import {
   ReferentielException,
   ReferentielId,
   getReferentielIdFromActionId,
-} from '@/domain/referentiels';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+} from '@tet/domain/referentiels';
 import { useReferentielId } from './referentiel-context';
 
 export type Snapshot = RouterOutput['referentiels']['snapshots']['getCurrent'];

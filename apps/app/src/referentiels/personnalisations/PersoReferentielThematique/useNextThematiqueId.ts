@@ -1,4 +1,4 @@
-import { ReferentielId } from '@/domain/referentiels';
+import { ReferentielId } from '@tet/domain/referentiels';
 
 import { useQuestionThematiqueCompletude } from '../PersoReferentiel/useQuestionThematiqueCompletude';
 

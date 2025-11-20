@@ -1,7 +1,4 @@
-import {
-  Completion,
-  FicheWithRelations,
-} from './fiche-action-with-relations.dto';
+import { Completion, FicheWithRelations } from '@tet/domain/plans';
 
 type FicheWithoutCompletion = Omit<FicheWithRelations, 'completion'>;
 

@@ -1,5 +1,5 @@
-import { EffetAttendu } from '@/domain/shared';
-import { SelectFilter, SelectMultipleProps } from '@/ui';
+import { EffetAttendu } from '@tet/domain/shared';
+import { SelectFilter, SelectMultipleProps } from '@tet/ui';
 import { useEffetsAttendus } from './useEffetsAttendus';
 
 type EffetsAttendusDropdownProps = Omit<

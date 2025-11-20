@@ -9,7 +9,7 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
-import { ActionWithScore } from '@/domain/referentiels';
+import { ActionWithScore } from '@tet/domain/referentiels';
 
 type ActionLieeCardProps = {
   action: ActionWithScore;

@@ -1,6 +1,6 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { useRouter } from 'next/navigation';
 
 export const useDeletePlan = (planId: number, redirectURL?: string) => {

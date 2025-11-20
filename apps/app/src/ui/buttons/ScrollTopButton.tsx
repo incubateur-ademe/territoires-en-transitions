@@ -1,4 +1,4 @@
-import { Button } from '@/ui';
+import { Button } from '@tet/ui';
 import { APP_HEADER_ID } from '../layout/header/header';
 
 const ScrollTopButton = ({ className = '' }: { className?: string }) => {

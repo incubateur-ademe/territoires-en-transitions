@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { DBClient } from '@/api';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { DBClient, useSupabase } from '@tet/api';
 import { insertActionDiscussionCommentaire } from './queries';
 
 /**

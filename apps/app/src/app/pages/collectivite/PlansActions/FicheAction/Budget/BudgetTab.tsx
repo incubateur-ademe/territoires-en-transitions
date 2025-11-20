@@ -8,7 +8,7 @@ import FinanceursModal from '@/app/app/pages/collectivite/PlansActions/FicheActi
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Divider, EmptyCard } from '@/ui';
+import { Divider, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
 import MoneyPicto from './MoneyPicto';
 

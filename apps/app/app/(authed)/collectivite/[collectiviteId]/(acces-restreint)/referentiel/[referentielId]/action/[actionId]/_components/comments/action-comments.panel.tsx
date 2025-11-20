@@ -1,4 +1,4 @@
-import { Select } from '@/ui';
+import { Select } from '@tet/ui';
 import { useState } from 'react';
 import ActionCommentFeed from './action-comments.feed';
 import ActionCommentNew from './action-comments.new';

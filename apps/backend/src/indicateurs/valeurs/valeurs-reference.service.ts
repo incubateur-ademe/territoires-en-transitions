@@ -1,9 +1,11 @@
-import { CollectiviteAvecType } from '@/backend/collectivites/identite-collectivite.dto';
-import { PersonnalisationReponsesPayload } from '@/backend/collectivites/personnalisations/models/get-personnalisation-reponses.response';
-import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { IndicateurDefinition } from '@/backend/indicateurs/definitions/indicateur-definition.table';
-import { GetValeursReferenceRequest } from '@/backend/indicateurs/valeurs/get-valeurs-reference.request';
 import { Injectable, Logger } from '@nestjs/common';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { GetValeursReferenceRequest } from '@tet/backend/indicateurs/valeurs/get-valeurs-reference.request';
+import {
+  CollectiviteAvecType,
+  PersonnalisationReponsesPayload,
+} from '@tet/domain/collectivites';
+import { IndicateurDefinition } from '@tet/domain/indicateurs';
 import { inArray } from 'drizzle-orm';
 import { groupBy, isNil } from 'es-toolkit';
 import PersonnalisationsExpressionService from '../../collectivites/personnalisations/services/personnalisations-expression.service';

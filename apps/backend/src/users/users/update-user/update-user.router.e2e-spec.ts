@@ -1,7 +1,7 @@
-import { getAuthUser, getTestApp, YOLO_DODO } from '@/backend/test';
-import { UsersRouter } from '@/backend/users/users.router';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { AppRouter } from '@/backend/utils/trpc/trpc.router';
+import { getAuthUser, getTestApp, YOLO_DODO } from '@tet/backend/test';
+import { UsersRouter } from '@tet/backend/users/users.router';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { INestApplication } from '@nestjs/common';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';

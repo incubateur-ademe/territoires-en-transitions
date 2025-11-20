@@ -1,5 +1,5 @@
-import { SentryEventWebhookPayload } from '@/tools/sentry/models/SentryEventWebhookPayload';
 import { Body, Controller, Logger, Post } from '@nestjs/common';
+import type { SentryEventWebhookPayload } from '../models/SentryEventWebhookPayload';
 import { SentryNotificationService } from '../services/sentry-notification.service';
 
 @Controller('sentry')

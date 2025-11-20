@@ -1,6 +1,6 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { useTRPC } from '@/api/utils/trpc/client';
 import { useQuery } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
 
 /** Charge le nombre d'indicateurs favoris de la collectivité */
 export const useIndicateursFavorisCount = () => {

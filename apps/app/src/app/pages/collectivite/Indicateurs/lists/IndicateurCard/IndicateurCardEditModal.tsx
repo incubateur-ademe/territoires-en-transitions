@@ -3,10 +3,10 @@ import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import { PersonneTagOrUser, Tag } from '@/domain/collectivites';
-import { Thematique } from '@/domain/shared';
-import { Field, Modal, ModalFooterOKCancel } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
+import { Thematique } from '@tet/domain/shared';
+import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { useEffect, useState } from 'react';
 
 type Props = {

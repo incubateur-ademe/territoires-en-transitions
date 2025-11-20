@@ -16,8 +16,8 @@ import { useTable } from '@/app/referentiels/ReferentielTable/useReferentiel';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
 import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
-import { ReferentielId } from '@/domain/referentiels';
-import { ITEM_ALL } from '@/ui';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { ITEM_ALL } from '@tet/ui';
 import { flow } from 'es-toolkit';
 
 function actionMatchingCategorie(categories: string[]) {

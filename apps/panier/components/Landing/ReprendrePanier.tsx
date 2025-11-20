@@ -1,7 +1,7 @@
 'use client';
 
 import { useCollectiviteContext } from '@/panier/providers';
-import { Button, Event, useEventTracker } from '@/ui';
+import { Button, Event, useEventTracker } from '@tet/ui';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 
 const ReprendrePanier = () => {

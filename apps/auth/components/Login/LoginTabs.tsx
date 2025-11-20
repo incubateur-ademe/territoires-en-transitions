@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Button,
   Event,
@@ -8,8 +9,7 @@ import {
   Tab,
   Tabs,
   useEventTracker,
-} from '@/ui';
-import { zodResolver } from '@hookform/resolvers/zod';
+} from '@tet/ui';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';

@@ -1,4 +1,4 @@
-import { Field, Input } from '@/ui';
+import { Field, Input } from '@tet/ui';
 import { useRef } from 'react';
 import { TFiltreProps } from '../filters';
 

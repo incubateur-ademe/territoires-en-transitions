@@ -1,14 +1,14 @@
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useSupabase } from '@tet/api';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import {
   Credentials,
   isValidLoginView,
   LoginData,
   LoginView,
-} from '@/auth/components/Login';
-import { useGetPasswordStrength } from '@/auth/components/PasswordStrengthMeter/useGetPasswordStrength';
-import { ResendFunction, VerifyOTPData } from '@/auth/components/VerifyOTP';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+} from '../../components/Login';
+import { useGetPasswordStrength } from '../../components/PasswordStrengthMeter/useGetPasswordStrength';
+import { ResendFunction, VerifyOTPData } from '../../components/VerifyOTP';
 
 /**
  * Gère l'appel à la fonction de login et la redirection après un login réussi

@@ -2,8 +2,8 @@
 
 import { createContext, ReactNode, useContext } from 'react';
 
-import { ReferentielId } from '@/domain/referentiels';
-import { useState, Dispatch, SetStateAction } from 'react';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { Dispatch, SetStateAction, useState } from 'react';
 
 type ContextProps = {
   referentiels: ReferentielId[];

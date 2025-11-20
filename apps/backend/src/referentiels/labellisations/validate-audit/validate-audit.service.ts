@@ -1,9 +1,12 @@
-import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import {
+  LabellisationAudit,
+  SnapshotJalonEnum,
+} from '@tet/domain/referentiels';
 import { eq } from 'drizzle-orm';
-import { SnapshotJalonEnum } from '../../snapshots/snapshot-jalon.enum';
 import { SnapshotsService } from '../../snapshots/snapshots.service';
-import { Audit, auditTable } from '../audit.table';
+import { auditTable } from '../audit.table';
 
 @Injectable()
 export class ValidateAuditService {
@@ -15,7 +18,11 @@ export class ValidateAuditService {
   private readonly db = this.databaseService.db;
 
   // Équivalent de la fonction PG `public.valider_audit()`
-  async validateAudit({ auditId }: { auditId: number }): Promise<Audit> {
+  async validateAudit({
+    auditId,
+  }: {
+    auditId: number;
+  }): Promise<LabellisationAudit> {
     // Update audit to set valide=true
     // There is a PG trigger `labellisation.update_audit()` that update `date_fin` and `clos`
     const audit = await this.db

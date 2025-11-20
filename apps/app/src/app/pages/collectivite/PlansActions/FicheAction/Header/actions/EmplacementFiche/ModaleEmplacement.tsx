@@ -1,5 +1,5 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { Button, Modal, Tab, Tabs } from '@/ui';
+import { Button, Modal, Tab, Tabs } from '@tet/ui';
 import { useState } from 'react';
 import EmplacementActuelFiche from './EmplacementActuel/EmplacementActuelFiche';
 import NouvelEmplacementFiche from './NouvelEmplacement/NouvelEmplacementFiche';

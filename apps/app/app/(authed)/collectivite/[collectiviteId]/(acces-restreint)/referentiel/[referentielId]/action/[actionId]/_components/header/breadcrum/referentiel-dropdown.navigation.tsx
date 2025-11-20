@@ -2,11 +2,11 @@ import classNames from 'classnames';
 import Link from 'next/link';
 
 import { makeReferentielActionUrl } from '@/app/app/paths';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import {
-  ActionDefinitionSummary,
   ActionTypeEnum,
   getReferentielIdFromActionId,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +17,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@/ui';
+} from '@tet/ui';
 
 type Props = {
   referentiel: ActionDefinitionSummary[];

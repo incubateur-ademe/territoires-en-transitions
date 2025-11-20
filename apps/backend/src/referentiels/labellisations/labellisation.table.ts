@@ -1,8 +1,9 @@
-import { collectiviteId } from '@/backend/collectivites/collectivite-id.column';
+import { collectiviteId } from '@tet/backend/collectivites/collectivite-id.column';
 import {
   serialIdPrimaryKey,
   TIMESTAMP_OPTIONS,
-} from '@/backend/utils/column.utils';
+} from '@tet/backend/utils/column.utils';
+import { Etoile } from '@tet/domain/referentiels';
 import {
   doublePrecision,
   integer,
@@ -10,10 +11,7 @@ import {
   timestamp,
   unique,
 } from 'drizzle-orm/pg-core';
-import z from 'zod';
-import { referentielIdEnumSchema } from '../models/referentiel-id.enum';
 import { referentielIdPgEnum } from '../referentiel-id.column';
-import { Etoile } from './etoile-definition.table';
 
 export const labellisationTable = pgTable(
   'labellisation',
@@ -35,16 +33,3 @@ export const labellisationTable = pgTable(
     ),
   ]
 );
-
-export const labellisationSchema = z.object({
-  id: z.number(),
-  collectiviteId: z.number(),
-  referentiel: referentielIdEnumSchema,
-  obtenueLe: z.string(),
-  annee: z.number(),
-  etoiles: z.number(),
-  scoreRealise: z.number().nullable(),
-  scoreProgramme: z.number().nullable(),
-});
-
-export type Labellisation = z.infer<typeof labellisationSchema>;

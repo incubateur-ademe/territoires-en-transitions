@@ -1,6 +1,9 @@
-import { Field, Input, Modal, ModalFooterOKCancel } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
+import { OpenState } from '../../../utils/types';
+import { Field } from '../../Field';
+import { Input } from '../../Input';
+import { Modal } from '../../Modal';
+import { ModalFooterOKCancel } from '../../Modal/ModalFooterOKCancel';
 
 type UpdateOptionModalProps = {
   openState: OpenState;

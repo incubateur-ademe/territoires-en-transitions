@@ -1,5 +1,3 @@
-import { preset } from '@/ui/tailwind-preset';
-import { OpenState } from '@/ui/utils/types';
 import {
   FloatingFocusManager,
   FloatingNode,
@@ -20,6 +18,8 @@ import {
 import classNames from 'classnames';
 import { cloneElement, useState } from 'react';
 import { flushSync } from 'react-dom';
+import { preset } from '../../../tailwind-preset';
+import { OpenState } from '../../../utils/types';
 
 type DropdownFloaterProps = {
   /** Élement qui reçoit la fonction d'ouverture du dropdown */

@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useCollectiviteId } from '@/api/collectivites';
+import { useCollectiviteId } from '@tet/api/collectivites';
 
-import { DBClient } from '@/api';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { DBClient, useSupabase } from '@tet/api';
 import {
   TActionDiscussion,
   TActionDiscussionStatut,

@@ -1,4 +1,4 @@
-import { NonNullableFields, Tables, TablesInsert, Views } from '@/api';
+import { NonNullableFields, Tables, TablesInsert, Views } from '@tet/api';
 
 export type TAxeRow = Tables<'axe'>;
 export type TAxeInsert = TablesInsert<'axe'>;

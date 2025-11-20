@@ -1,5 +1,5 @@
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { ListDefinitionsRouter } from './list-definitions/list-definitions.router';
 import { MutateDefinitionRouter } from './mutate-definition/mutate-definition.router';
 

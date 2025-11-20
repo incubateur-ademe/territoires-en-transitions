@@ -2,10 +2,10 @@ import { TAuditEnCours } from '@/app/referentiels/audits/types';
 import {
   Etoile,
   Labellisation,
+  LabellisationCritere,
   LabellisationDemande,
   ReferentielId,
-  TCritereScore,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import { ObjectToSnake } from 'ts-case-convert';
 
 // et surchargé pour gérer le cas sujet="cot" (audit SANS labellisation)
@@ -28,7 +28,7 @@ export type TLabellisationParcours = {
   /** Critères liés aux actions à remplir */
   criteres_action: TCritereAction[];
   /** Critère lié au score */
-  critere_score: TCritereScore;
+  critere_score: LabellisationCritere;
   /** Indique que les critères action, score et fichiers de labellisation sont tous atteints */
   rempli: boolean;
   /** Demande de labellisation associée au parcours */

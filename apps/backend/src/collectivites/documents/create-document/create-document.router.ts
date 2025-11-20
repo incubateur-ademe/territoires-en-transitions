@@ -1,7 +1,7 @@
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { bibliothequeFichierSchemaCreate } from '@tet/domain/collectivites';
 import { CreateDocumentService } from './create-document.service';
-import { createBibliothequeFichierSchema } from '../models/bibliotheque-fichier.table';
 
 @Injectable()
 export class CreateDocumentRouter {
@@ -12,7 +12,7 @@ export class CreateDocumentRouter {
 
   router = this.trpc.router({
     create: this.trpc.authedProcedure
-      .input(createBibliothequeFichierSchema)
+      .input(bibliothequeFichierSchemaCreate)
       .mutation(async ({ input, ctx }) => {
         return this.service.createDocument(input, ctx.user);
       }),

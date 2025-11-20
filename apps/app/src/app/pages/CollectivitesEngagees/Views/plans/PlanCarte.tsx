@@ -1,14 +1,14 @@
 import classNames from 'classnames';
 
-import { Badge, Card, Event, useEventTracker } from '@/ui';
+import { Badge, Card, Event, useEventTracker } from '@tet/ui';
 
-import { RecherchesPlan } from '@/api/collectiviteEngagees';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
+import { CollectiviteEngagee } from '@tet/api';
 import ContactsDisplay from '../../contacts/contacts-display';
 
 type Props = {
-  plan: RecherchesPlan;
+  plan: CollectiviteEngagee.RecherchesPlan;
   isClickable: boolean;
 };
 

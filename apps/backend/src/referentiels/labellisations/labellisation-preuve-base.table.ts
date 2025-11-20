@@ -1,5 +1,5 @@
-import { bibliothequeFichierTable } from '@/backend/collectivites/documents/models/bibliotheque-fichier.table';
-import { modifiedAt, modifiedBy } from '@/backend/utils/column.utils';
+import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
+import { modifiedAt, modifiedBy } from '@tet/backend/utils/column.utils';
 import { sql } from 'drizzle-orm';
 import { foreignKey, integer, jsonb, text } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';

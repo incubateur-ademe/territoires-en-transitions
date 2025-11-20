@@ -1,13 +1,13 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import RemoveSharingModal from '@/app/plans/fiches/share-fiche/remove-sharing.modal';
 import DeleteFicheModal from '@/app/plans/fiches/shared/delete-fiche.modal';
-import { FicheResume } from '@/domain/plans';
-import { PermissionOperation } from '@/domain/users';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { PermissionOperation } from '@tet/domain/users';
+import { FicheListItem } from '../list-all-fiches/data/use-list-fiches';
 
 type DeleteOrRemoveFicheSharingModalProps = {
-  fiche: Pick<FicheResume, 'titre' | 'plans'> & FicheShareProperties;
+  fiche: Pick<FicheListItem, 'titre' | 'plans'> & FicheShareProperties;
   permissions: PermissionOperation[];
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;

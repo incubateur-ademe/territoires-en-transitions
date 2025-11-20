@@ -1,7 +1,7 @@
 import {
   notesDeSuiviOptionValues,
   typePeriodeEnumValues,
-} from '@/domain/plans';
+} from '@tet/domain/plans';
 import { mapValues } from 'es-toolkit/object';
 import {
   createParser,

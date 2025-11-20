@@ -1,14 +1,14 @@
-import { FicheActionNote } from '@/api/plan-actions';
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
+import { FicheNote } from '@tet/domain/plans';
 import {
   Field,
   FormSectionGrid,
   ModalFooterOKCancel,
   RichTextEditor,
   Select,
-} from '@/ui';
+} from '@tet/ui';
 import { useState } from 'react';
 import { EditedNote } from '../data/useUpsertNoteSuivi';
 
@@ -16,7 +16,7 @@ type ModaleEditionNoteDeSuiviProps = {
   fiche: FicheShareProperties;
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  editedNote: FicheActionNote;
+  editedNote: FicheNote;
   onEdit: (editedNote: EditedNote) => void;
 };
 

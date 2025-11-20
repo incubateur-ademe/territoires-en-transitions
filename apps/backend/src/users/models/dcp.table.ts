@@ -6,8 +6,6 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { createSelectSchema } from 'drizzle-zod';
-import z from 'zod';
 import { createdAt, modifiedAt } from '../../utils/column.utils';
 
 export const dcpTable = pgTable('dcp', {
@@ -25,7 +23,3 @@ export const dcpTable = pgTable('dcp', {
     mode: 'string',
   }),
 });
-
-export const dcpSchema = createSelectSchema(dcpTable);
-
-export type Dcp = z.infer<typeof dcpSchema>;

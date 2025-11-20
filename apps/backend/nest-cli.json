@@ -2,12 +2,12 @@
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
   "sourceRoot": "./src",
-  "entryFile": "apps/backend/src/main",
+  "entryFile": "./main",
   "compilerOptions": {
     "tsConfigPath": "tsconfig.app.json",
     "assets": [
-      { "include": "**/*.csv", "outDir": "../../dist/apps/backend/src" },
-      { "include": "**/*.xlsx", "outDir": "../../dist/apps/backend/src" }
+      { "include": "**/*.csv", "outDir": "./dist" },
+      { "include": "**/*.xlsx", "outDir": "./dist" }
     ]
   }
 }

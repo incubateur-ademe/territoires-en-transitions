@@ -1,6 +1,6 @@
 import { Completion } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import { Icon, Tooltip } from '@/ui';
-import { cn } from '@/ui/utils/cn';
+import { Icon, Tooltip } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 import { Fiche } from '../data/use-get-fiche';
 
 type FicheActionCompletionStatusProps = {

@@ -1,7 +1,8 @@
-import { ExportConnectService } from '@/backend/collectivites/membres/export-connect.service';
-import { upsertExportConnectSchema } from '@/backend/collectivites/membres/export-connect.table';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { ExportConnectService } from '@tet/backend/collectivites/membres/export-connect.service';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
+import { exportConnectCreateSchema } from '@tet/domain/collectivites';
+import z from 'zod';
 import { CollectiviteMembresService } from './membres.service';
 
 @Injectable()
@@ -26,7 +27,7 @@ export class CollectiviteMembresRouter {
     ),
 
     upsertExportConnect: this.trpc.authedOrServiceRoleProcedure
-      .input(upsertExportConnectSchema)
+      .input(z.array(exportConnectCreateSchema))
       .mutation(({ input, ctx }) =>
         this.exportConnectService.upsert(input, ctx.user)
       ),

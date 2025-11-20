@@ -1,8 +1,8 @@
-import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { AuthUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { unaccent } from '@/backend/utils/unaccent.utils';
 import { Injectable, Logger } from '@nestjs/common';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { unaccent } from '@tet/backend/utils/unaccent.utils';
 import { format as formatDate } from 'date-fns';
 import z from 'zod';
 import PlanActionsService from '../plan-actions.service';

@@ -1,5 +1,5 @@
+import { referentielDefinitionSchema } from '@tet/domain/referentiels';
 import z from 'zod';
-import { referentielDefinitionSchema } from '../../models/referentiel-definition.table';
 
 export const getReferentielDefinitionOutputSchema = referentielDefinitionSchema;
 

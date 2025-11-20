@@ -1,5 +1,5 @@
 import { getFormattedNumber } from '@/app/utils/formatUtils';
-import { Badge } from '@/ui';
+import { Badge } from '@tet/ui';
 
 type BudgetBadgeProps = {
   budgetPrevisionnel: number;

@@ -1,8 +1,7 @@
-import { DBClient } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { useQuery } from '@tanstack/react-query';
+import { DBClient, useSupabase } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { TPreuve, TPreuvesParType, TPreuveType } from './Bibliotheque/types';
 
 export type TActionDef = Pick<

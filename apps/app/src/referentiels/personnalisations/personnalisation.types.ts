@@ -2,7 +2,7 @@
  * Typage des questions/réponses pour la personnalisation des référentiels
  */
 
-import { Enums } from '@/api';
+import { Enums } from '@tet/api';
 
 /** Question */
 export type TQuestionRead = {

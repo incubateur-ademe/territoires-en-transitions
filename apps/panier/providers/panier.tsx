@@ -1,6 +1,6 @@
 'use client';
 
-import { Panier } from '@/api';
+import { Panier } from '@tet/api';
 import {
   Dispatch,
   SetStateAction,

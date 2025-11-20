@@ -1,3 +1,4 @@
+import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import {
   CalendarIcon,
   LeafIcon,
@@ -15,8 +16,7 @@ import {
   Title,
 } from '@/app/ui/export-pdf/components';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
-import { FicheResume } from '@/domain/plans';
-import { preset } from '@/ui';
+import { preset } from '@tet/ui';
 import classNames from 'classnames';
 import { format, isBefore, startOfToday } from 'date-fns';
 import { generateTitle } from '../../FicheAction/data/utils';
@@ -24,7 +24,7 @@ import { generateTitle } from '../../FicheAction/data/utils';
 const { colors } = preset.theme.extend;
 
 type FicheLieeCardProps = {
-  ficheLiee: FicheResume;
+  ficheLiee: FicheListItem;
 };
 
 const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
@@ -169,7 +169,7 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
 };
 
 type FichesLieesProps = {
-  fichesLiees: FicheResume[];
+  fichesLiees: FicheListItem[];
 };
 
 const FichesLiees = ({ fichesLiees }: FichesLieesProps) => {

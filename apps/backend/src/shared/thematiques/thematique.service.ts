@@ -1,13 +1,8 @@
-import {
-  SousThematique,
-  sousThematiqueTable,
-} from '@/backend/shared/thematiques/sous-thematique.table';
-import {
-  Thematique,
-  thematiqueTable,
-} from '@/backend/shared/thematiques/thematique.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
+import { sousThematiqueTable } from '@tet/backend/shared/thematiques/sous-thematique.table';
+import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Injectable } from '@nestjs/common';
+import { SousThematique, Thematique } from '@tet/domain/shared';
 
 @Injectable()
 export class ThematiqueService {

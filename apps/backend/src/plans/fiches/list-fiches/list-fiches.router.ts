@@ -1,6 +1,6 @@
-import { listFichesInputSchema } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { listFichesInputSchema } from '@tet/backend/plans/fiches/list-fiches/list-fiches.request';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import z from 'zod';
 import ListFichesService from './list-fiches.service';
 @Injectable()

@@ -1,6 +1,6 @@
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
-import { Button, ButtonGroup } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { Button, ButtonGroup } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { useEffect, useState } from 'react';
 import { IndicateurChartInfo } from '../data/use-indicateur-chart';
 import { SourceType } from '../types';

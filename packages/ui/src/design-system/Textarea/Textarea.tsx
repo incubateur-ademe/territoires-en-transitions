@@ -1,4 +1,3 @@
-import { FieldState } from '@/ui/design-system/Field';
 import classNames from 'classnames';
 import {
   DetailedHTMLProps,
@@ -6,6 +5,7 @@ import {
   TextareaHTMLAttributes,
   forwardRef,
 } from 'react';
+import { FieldState } from '../Field';
 
 // Variantes de taille
 export type TextareaSize = 'md' | 'sm';

@@ -1,23 +1,21 @@
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
-import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.table';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import {
-  UtilisateurCollectiviteAccess,
-  utilisateurCollectiviteAccessTable,
-} from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { AuthRole, AuthUser } from '@tet/backend/users/models/auth.models';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   AuditRole,
+  CollectiviteAccess,
+  permissionsByRole,
   Role,
   UserRole,
-} from '@/backend/users/authorizations/roles/role.enum';
-import { AuthRole, AuthUser } from '@/backend/users/models/auth.models';
-import { dcpTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Injectable, Logger } from '@nestjs/common';
+  UtilisateurCollectiviteAccess,
+} from '@tet/domain/users';
 import { and, asc, count, eq, getTableColumns, not } from 'drizzle-orm';
 import { auditTable } from '../../../referentiels/labellisations/audit.table';
-import { CollectiviteAccess } from '../../users/list-users/user-with-collectivite-accesses.dto';
-import { permissionsByRole } from '../permission.models';
 import { utilisateurSupportTable } from './utilisateur-support.table';
 import { utilisateurVerifieTable } from './utilisateur-verifie.table';
 

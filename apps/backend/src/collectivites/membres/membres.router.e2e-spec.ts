@@ -1,5 +1,5 @@
-import { CollectiviteAccessLevelEnum } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
 import { INestApplication } from '@nestjs/common';
+import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { sql } from 'drizzle-orm';
 import { getTestApp } from '../../../test/app-utils';

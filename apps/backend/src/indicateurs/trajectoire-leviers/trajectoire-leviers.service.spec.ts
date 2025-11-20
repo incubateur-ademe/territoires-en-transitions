@@ -1,9 +1,9 @@
-import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
-import { ListDefinitionsService } from '@/backend/indicateurs/definitions/list-definitions/list-definitions.service';
-import TrajectoiresDataService from '@/backend/indicateurs/trajectoires/trajectoires-data.service';
-import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { Test } from '@nestjs/testing';
+import ListCollectivitesService from '@tet/backend/collectivites/list-collectivites/list-collectivites.service';
+import { ListDefinitionsService } from '@tet/backend/indicateurs/definitions/list-definitions/list-definitions.service';
+import TrajectoiresDataService from '@tet/backend/indicateurs/trajectoires/trajectoires-data.service';
+import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { GetTrajectoireLeviersDataResponse } from './get-trajectoire-leviers-data.response';
 import { TrajectoireLeviersService } from './trajectoire-leviers.service';
 

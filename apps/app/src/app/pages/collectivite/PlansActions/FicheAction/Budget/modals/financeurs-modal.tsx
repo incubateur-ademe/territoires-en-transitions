@@ -1,16 +1,17 @@
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
-import { FicheWithRelations, Financeur } from '@/domain/plans';
-import { Alert, Divider, ModalFooterOKCancel } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { Financeur } from '@tet/domain/plans';
+import { Alert, Divider, ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { isEqual } from 'es-toolkit';
 import { useState } from 'react';
+import { Fiche } from '../../data/use-get-fiche';
 import FinanceursInput from './FinanceursInput';
 
 type FinanceursModalProps = {
   openState: OpenState;
-  fiche: Pick<FicheWithRelations, 'financeurs'> & FicheShareProperties;
+  fiche: Pick<Fiche, 'financeurs'> & FicheShareProperties;
   updateFinanceurs: (financeurs: Financeur[] | null | undefined) => void;
 };
 

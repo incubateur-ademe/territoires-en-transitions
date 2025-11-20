@@ -1,7 +1,7 @@
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
-import { ModalFooterOKCancel } from '@/ui';
+import { ModalFooterOKCancel } from '@tet/ui';
 
 type ModaleSuppressionNoteProps = {
   fiche: FicheShareProperties;

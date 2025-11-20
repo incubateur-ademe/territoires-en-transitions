@@ -1,7 +1,7 @@
 import { useDeleteIndicateurDefinition } from '@/app/indicateurs/definitions/use-delete-indicateur-definition';
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
-import { Modal, ModalFooterOKCancel } from '@/ui';
+import { Modal, ModalFooterOKCancel } from '@tet/ui';
 
 /**
  * Bouton + modale pour la suppression d'un indicateur personnalisé

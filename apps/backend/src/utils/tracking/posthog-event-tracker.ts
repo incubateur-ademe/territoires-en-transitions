@@ -1,4 +1,4 @@
-import ConfigurationService from '@/backend/utils/config/configuration.service';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
 import { PostHog } from 'posthog-node';
 import { EventTracker } from './event-tracker.interface';

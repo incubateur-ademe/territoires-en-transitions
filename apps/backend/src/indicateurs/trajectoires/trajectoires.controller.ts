@@ -1,7 +1,3 @@
-import { collectiviteIdInputSchemaCoerce } from '@/backend/collectivites/collectivite-id.input';
-import TrajectoiresSpreadsheetService from '@/backend/indicateurs/trajectoires/trajectoires-spreadsheet.service';
-import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
-import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { Controller, Get, Logger, Next, Query, Res } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -10,7 +6,11 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { NextFunction, Response } from 'express';
+import { collectiviteIdInputSchemaCoerce } from '@tet/backend/collectivites/collectivite-id.input';
+import TrajectoiresSpreadsheetService from '@tet/backend/indicateurs/trajectoires/trajectoires-spreadsheet.service';
+import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
+import type { NextFunction, Response } from 'express';
 import { createZodDto } from 'nestjs-zod';
 import { AllowPublicAccess } from '../../users/decorators/allow-public-access.decorator';
 import { TokenInfo } from '../../users/decorators/token-info.decorators';
@@ -81,7 +81,7 @@ export class TrajectoiresController {
         request.collectiviteId || request.siren || request.communeCode
       }`
     );
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     const { spreadsheetId, ...response } =
       await this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
         request,

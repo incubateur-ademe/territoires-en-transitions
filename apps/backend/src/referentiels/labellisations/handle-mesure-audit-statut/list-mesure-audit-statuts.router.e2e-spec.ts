@@ -4,19 +4,19 @@ import {
   getTestDatabase,
   getTestRouter,
   YOLO_DODO,
-} from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { ActionTypeEnum } from '../../models/action-type.enum';
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import {
+  ActionTypeEnum,
+  MesureAuditStatutEnum,
+} from '@tet/domain/referentiels';
 import {
   addAuditeurPermission,
   createAudit,
 } from '../labellisations.test-fixture';
-import {
-  MesureAuditStatutEnum,
-  mesureAuditStatutTable,
-} from './mesure-audit-statut.table';
+import { mesureAuditStatutTable } from './mesure-audit-statut.table';
 
 const collectiviteId = 34 as const;
 const referentielId = 'cae' as const;

@@ -1,22 +1,20 @@
-import { preuveActionTable } from '@/backend/collectivites/documents/models/preuve-action.table';
-import {
-  CreatePreuveReglementaireDefinitionType,
-  preuveReglementaireDefinitionTable,
-} from '@/backend/collectivites/documents/models/preuve-reglementaire-definition.table';
-import { ImportActionDefinitionType } from '@/backend/referentiels/import-referentiel/import-action-definition.dto';
-import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
-import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import SheetService from '@/backend/utils/google-sheets/sheet.service';
 import {
   Injectable,
   Logger,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
+import { preuveReglementaireDefinitionTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire-definition.table';
+import { ImportActionDefinitionType } from '@tet/backend/referentiels/import-referentiel/import-action-definition.dto';
+import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
+import { PreuveReglementaireDefinition } from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { ilike } from 'drizzle-orm';
 import {
-  ImportPreuveReglementaireDefinitionType,
+  ImportPreuveReglementaireDefinition,
   importPreuveReglementaireDefinitionSchema,
 } from './import-preuve-reglementaire-definition.dto';
 
@@ -38,7 +36,7 @@ export default class ImportPreuveReglementaireDefinitionService {
     actions: ImportActionDefinitionType[],
     tx: Transaction
   ): Promise<{
-    definitions: CreatePreuveReglementaireDefinitionType[];
+    definitions: PreuveReglementaireDefinition[];
   }> {
     const { data: preuveDefinitions } =
       await this.getPreuveReglementaireDefinitions(spreadsheetId);
@@ -65,7 +63,7 @@ export default class ImportPreuveReglementaireDefinitionService {
   }
 
   async getPreuveReglementaireDefinitions(spreadsheetId: string) {
-    return this.sheetService.getDataFromSheet<ImportPreuveReglementaireDefinitionType>(
+    return this.sheetService.getDataFromSheet<ImportPreuveReglementaireDefinition>(
       spreadsheetId,
       importPreuveReglementaireDefinitionSchema,
       this.PREUVE_REGLEMENTAIRE_DEFINITIONS_SPREADSHEET_RANGE,
@@ -94,11 +92,11 @@ export default class ImportPreuveReglementaireDefinitionService {
   verifyReferentielPreuveReglementaireDefinitionsAndActionRelationsWithData(
     referentielId: ReferentielId,
     actions: ImportActionDefinitionType[],
-    preuveDefinitions: ImportPreuveReglementaireDefinitionType[]
+    preuveDefinitions: ImportPreuveReglementaireDefinition[]
   ) {
     const preuveDefinitionsMap = new Map<
       string,
-      ImportPreuveReglementaireDefinitionType
+      ImportPreuveReglementaireDefinition
     >();
 
     preuveDefinitions.forEach((preuve) => {
@@ -128,9 +126,9 @@ export default class ImportPreuveReglementaireDefinitionService {
 
   private async upsertPreuveReglementaireDefinitionsAndActionRelations(
     referentielId: ReferentielId,
-    preuveDefinitions: ImportPreuveReglementaireDefinitionType[],
+    preuveDefinitions: ImportPreuveReglementaireDefinition[],
     tx: Transaction
-  ): Promise<CreatePreuveReglementaireDefinitionType[]> {
+  ): Promise<PreuveReglementaireDefinition[]> {
     const preuveDefinitionsToCreate = preuveDefinitions.map(
       ({ actions, ...preuve }) => preuve
     );

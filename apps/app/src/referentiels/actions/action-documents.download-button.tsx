@@ -1,12 +1,11 @@
-import { DBClient } from '@/api';
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { TFichier } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { usePreuves } from '@/app/referentiels/preuves/usePreuves';
-import { Button } from '@/ui';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { DBClient, useSupabase } from '@tet/api';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Button } from '@tet/ui';
 import classNames from 'classnames';
 
 export type TDownloadDocsProps = {

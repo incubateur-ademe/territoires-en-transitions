@@ -1,13 +1,13 @@
-import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
-import { Input } from '@/ui';
+import { FicheBudgetCreate } from '@tet/domain/plans';
+import { Input } from '@tet/ui';
 import classNames from 'classnames';
 import { useEffect } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 
 type ExtendedBudgetFormProps = {
-  budgets: BudgetType[];
+  budgets: FicheBudgetCreate[];
   isEuros: boolean;
-  onFormChange: (budgets: BudgetType[]) => void;
+  onFormChange: (budgets: FicheBudgetCreate[]) => void;
 };
 
 export const ExtendedBudgetForm = ({

@@ -1,12 +1,12 @@
-import { RecherchesContact } from '@/api/collectiviteEngagees';
 import { RecherchesViewParam } from '@/app/app/paths';
+import { CollectiviteEngagee } from '@tet/api';
 import { useState } from 'react';
 import ContactButton from './contacts-button';
 import ContactsModal from './contacts-modal';
 
 type Props = {
   view: RecherchesViewParam;
-  contacts: RecherchesContact[];
+  contacts: CollectiviteEngagee.RecherchesContact[];
   collectiviteName: string;
   buttonClassName?: string;
   onButtonClick?: () => void;

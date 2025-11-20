@@ -1,7 +1,7 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { Alert } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Alert } from '@tet/ui';
 
 type SharedFicheUpdateAlertProps = {
   fiche: FicheShareProperties;

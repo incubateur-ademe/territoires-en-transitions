@@ -1,11 +1,11 @@
-import { ENV } from '@/api/environmentVariables';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { CollectiviteAccess } from '@/domain/users';
-import { AppEnvironment } from '@/domain/utils';
-import { Tab, Tabs } from '@/ui';
 import { ServicesWidget } from '@betagouv/les-communs-widget';
+import { ENV } from '@tet/api/environmentVariables';
+import { CollectiviteAccess } from '@tet/domain/users';
+import { AppEnvironment } from '@tet/domain/utils';
+import { Tab, Tabs } from '@tet/ui';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
 import type { ReactElement } from 'react';
 import ActionsLieesTab from './ActionsLiees/ActionsLieesTab';

@@ -1,9 +1,9 @@
-import { AdemeLogo } from '@/ui/assets/ademe.logo';
-import { RepubliqueFrancaiseLogo } from '@/ui/assets/republique-francaise.logo';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useLockBodyScroll } from 'react-use';
+import { AdemeLogo } from '../../../assets/ademe.logo';
+import { RepubliqueFrancaiseLogo } from '../../../assets/republique-francaise.logo';
 import { Button } from '../../Button/Button';
 import { HeaderProps } from '../Header';
 import { isNavDropdown, isNavLink } from '../types';

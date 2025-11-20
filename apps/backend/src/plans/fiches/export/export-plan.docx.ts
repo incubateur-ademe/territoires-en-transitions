@@ -1,8 +1,8 @@
 /**
  * Export d'un plan d'action au format Word
  */
-import { Plan, PlanRow } from '@/backend/plans/fiches/plan-actions.service';
-import { formatDate } from '@/backend/utils/excel/export-excel.utils';
+import { Plan, PlanRow } from '@tet/backend/plans/fiches/plan-actions.service';
+import { formatDate } from '@tet/backend/utils/excel/export-excel.utils';
 import {
   AlignmentType,
   Document,

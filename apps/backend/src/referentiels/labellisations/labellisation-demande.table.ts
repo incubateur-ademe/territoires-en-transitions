@@ -1,4 +1,8 @@
-import { TIMESTAMP_OPTIONS } from '@/backend/utils/column.utils';
+import { TIMESTAMP_OPTIONS } from '@tet/backend/utils/column.utils';
+import {
+  etoileAsStringEnumValues,
+  SujetDemandeEnum,
+} from '@tet/domain/referentiels';
 import {
   boolean,
   foreignKey,
@@ -10,25 +14,16 @@ import {
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { authUsersTable } from '../../users/models/auth-users.table';
 import { referentielIdPgEnum } from '../referentiel-id.column';
-import { etoilePgEnum } from './etoile-definition.table';
 import { labellisationSchema } from './labellisation.schema';
-
-export const SujetDemandeEnum = {
-  LABELLISATION: 'labellisation',
-  LABELLISATION_COT: 'labellisation_cot',
-  COT: 'cot',
-} as const;
-
-export type SujetDemande =
-  (typeof SujetDemandeEnum)[keyof typeof SujetDemandeEnum];
 
 export const labellisationSujetDemandeEnum = labellisationSchema.enum(
   'sujet_demande',
-  [
-    SujetDemandeEnum.LABELLISATION,
-    SujetDemandeEnum.LABELLISATION_COT,
-    SujetDemandeEnum.COT,
-  ]
+  SujetDemandeEnum
+);
+
+const etoilePgEnum = labellisationSchema.enum(
+  'etoile',
+  etoileAsStringEnumValues
 );
 
 export const labellisationDemandeTable = labellisationSchema.table(
@@ -62,6 +57,3 @@ export const labellisationDemandeTable = labellisationSchema.table(
     }),
   ]
 );
-
-export type LabellisationDemande =
-  typeof labellisationDemandeTable.$inferSelect;

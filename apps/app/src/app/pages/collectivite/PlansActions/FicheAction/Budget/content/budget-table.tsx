@@ -2,13 +2,13 @@ import {
   FormattedBudgetType,
   getBudgetForTable,
 } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/content/utils';
-import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
+import { FicheBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { getFormattedFloat, getFormattedNumber } from '@/app/utils/formatUtils';
-import { Badge, TBody, TCell, THead, THeadCell, TRow, Table } from '@/ui';
+import { Badge, TBody, TCell, THead, THeadCell, TRow, Table } from '@tet/ui';
 import classNames from 'classnames';
 
 type BudgetTableProps = {
-  budgets: BudgetType[];
+  budgets: FicheBudget[];
 };
 
 const BudgetTable = ({ budgets }: BudgetTableProps) => {

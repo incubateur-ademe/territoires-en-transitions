@@ -1,5 +1,5 @@
 import { formatFileSize } from '@/app/utils/file';
-import { Button } from '@/ui';
+import { Button } from '@tet/ui';
 import { useEffect } from 'react';
 import {
   UploadStatus,

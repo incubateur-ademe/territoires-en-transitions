@@ -1,20 +1,20 @@
-import { TagEnum, TagType } from '@/backend/collectivites/tags/tag.table-base';
+import { Injectable } from '@nestjs/common';
 import {
   PersonneImport,
   TagImport,
-} from '@/backend/plans/fiches/import/import-plan.dto';
+} from '@tet/backend/plans/fiches/import/import-plan.dto';
+import { getFuse } from '@tet/backend/utils/fuse/fuse.utils';
+import { TagEnum, TagType } from '@tet/domain/collectivites';
 import {
   Cible,
   ParticipationCitoyenne,
   Priorite,
   Statut,
-  ciblesEnumValues,
+  cibleEnumValues,
   participationCitoyenneEnumValues,
   prioriteEnumValues,
-  statutsEnumValues,
-} from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import { getFuse } from '@/backend/utils/fuse/fuse.utils';
-import { Injectable } from '@nestjs/common';
+  statutEnumValues,
+} from '@tet/domain/plans';
 
 /** Regex to detect spaces */
 const regexEspace = /\\t|\\r|\\n/;
@@ -228,7 +228,7 @@ export class ImportPlanCleanService {
   async cible(cible: string): Promise<Cible | undefined> {
     if (!cible) return undefined;
     const Fuse = await getFuse();
-    const fuse = new Fuse(ciblesEnumValues);
+    const fuse = new Fuse(cibleEnumValues);
     const cleaned = this.text(cible);
     if (!cleaned) return undefined;
     return fuse.search(cleaned)?.[0]?.item;
@@ -278,7 +278,7 @@ export class ImportPlanCleanService {
   async statut(statut: string): Promise<Statut | undefined> {
     if (!statut) return undefined;
     const Fuse = await getFuse();
-    const fuse = new Fuse(statutsEnumValues);
+    const fuse = new Fuse(statutEnumValues);
     const cleaned = this.text(statut);
     if (!cleaned) return undefined;
     return fuse.search(cleaned)?.[0]?.item;

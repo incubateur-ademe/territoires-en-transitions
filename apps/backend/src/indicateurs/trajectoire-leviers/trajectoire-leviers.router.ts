@@ -1,7 +1,7 @@
-import { getTrajectoireLeviersDataRequestSchema } from '@/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.request';
-import { TrajectoireLeviersService } from '@/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.service';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { getTrajectoireLeviersDataRequestSchema } from '@tet/backend/indicateurs/trajectoire-leviers/get-trajectoire-leviers-data.request';
+import { TrajectoireLeviersService } from '@tet/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.service';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 
 @Injectable()
 export class TrajectoireLeviersRouter {

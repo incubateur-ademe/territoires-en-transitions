@@ -1,6 +1,6 @@
 import { useTable } from '@/app/referentiels/ReferentielTable/useReferentiel';
 import { phaseToLabel } from '@/app/referentiels/utils';
-import { reduceActions } from '@/domain/referentiels';
+import { reduceActions } from '@tet/domain/referentiels';
 import { ActionDetailed, useAction } from '../use-snapshot';
 
 /**

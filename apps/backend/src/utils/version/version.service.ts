@@ -1,8 +1,5 @@
-import {
-  AppEnvironment,
-  VersionResponseType,
-} from '@/backend/utils/version/version.models';
 import { Injectable } from '@nestjs/common';
+import { AppEnvironment, VersionResponseType } from '@tet/domain/utils';
 
 @Injectable()
 export default class VersionService {

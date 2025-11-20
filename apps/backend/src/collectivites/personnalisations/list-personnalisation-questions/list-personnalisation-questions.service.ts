@@ -1,13 +1,10 @@
-import {
-  questionChoixTable,
-  QuestionChoixType,
-} from '@/backend/collectivites/personnalisations/models/question-choix.table';
-import { questionThematiqueTable } from '@/backend/collectivites/personnalisations/models/question-thematique.table';
-import { QuestionWithChoices } from '@/backend/collectivites/personnalisations/models/question-with-choices.dto';
-import { questionTable } from '@/backend/collectivites/personnalisations/models/question.table';
-import { CollectiviteType } from '@/backend/collectivites/shared/models/collectivite.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
+import { questionChoixTable } from '@tet/backend/collectivites/personnalisations/models/question-choix.table';
+import { questionThematiqueTable } from '@tet/backend/collectivites/personnalisations/models/question-thematique.table';
+import { QuestionWithChoices } from '@tet/backend/collectivites/personnalisations/models/question-with-choices.dto';
+import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { CollectiviteType, QuestionChoix } from '@tet/domain/collectivites';
 import { eq, sql } from 'drizzle-orm';
 
 @Injectable()
@@ -25,7 +22,7 @@ export default class ListPersonnalisationQuestionsService {
     const query = this.databaseService.db
       .select({
         questionId: questionChoixTable.questionId,
-        choix: sql<Omit<QuestionChoixType, 'questionId' | 'version'>[]>`
+        choix: sql<Omit<QuestionChoix, 'questionId' | 'version'>[]>`
           array_agg(
             json_build_object(
               'id', ${questionChoixTable.id},
@@ -67,7 +64,7 @@ export default class ListPersonnalisationQuestionsService {
         formulation: questionTable.formulation,
         version: questionTable.version,
         choix: sql<
-          Omit<QuestionChoixType, 'questionId' | 'version'>[]
+          Omit<QuestionChoix, 'questionId' | 'version'>[]
         >`${questionChoixSubquery.choix}`,
       })
       .from(questionTable)

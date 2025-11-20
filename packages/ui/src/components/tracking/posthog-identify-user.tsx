@@ -1,6 +1,6 @@
 'use client';
 
-import { useSubscribeToUserAuthEvents } from '@/api/users/user-context/use-subscribe-to-user-auth-events';
+import { useSubscribeToUserAuthEvents } from '@tet/api/users/user-context/use-subscribe-to-user-auth-events';
 import posthog from 'posthog-js';
 
 export const PostHogIdentifyUser = () => {

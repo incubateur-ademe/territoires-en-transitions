@@ -1,8 +1,8 @@
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
+import { ficheEtapeCreateSchema } from '@tet/domain/plans';
 import { z } from 'zod';
 import { FicheActionEtapeService } from './fiche-action-etape.service';
-import { upsertFicheActionEtapeSchema } from './fiche-action-etape.table';
 
 @Injectable()
 export class FicheActionEtapeRouter {
@@ -14,7 +14,7 @@ export class FicheActionEtapeRouter {
   router = this.trpc.router({
     etapes: {
       upsert: this.trpc.authedProcedure
-        .input(upsertFicheActionEtapeSchema)
+        .input(ficheEtapeCreateSchema)
         .mutation(({ ctx, input }) => {
           return this.service.upsertEtape(input, ctx.user);
         }),

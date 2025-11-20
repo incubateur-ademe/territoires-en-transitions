@@ -2,7 +2,7 @@ import { FilterKeys } from '@/app/plans/fiches/list-all-fiches/filters/types';
 import {
   CountByPropertyEnumType,
   countByPropertyOptions,
-} from '@/domain/plans';
+} from '@tet/domain/plans';
 import {
   generalCountByToFilterKeyMapping,
   noValueCountByToFilterKeyMapping,

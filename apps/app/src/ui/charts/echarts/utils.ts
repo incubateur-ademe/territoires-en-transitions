@@ -1,4 +1,4 @@
-import { preset } from '@/ui';
+import { preset } from '@tet/ui';
 import type {
   DatasetComponentOption,
   EChartsOption,

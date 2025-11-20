@@ -1,14 +1,15 @@
-import { COLLECTIVITE_ID_ROUTE_PARAM } from '@/backend/collectivites/shared/models/collectivite-api.constants';
-import { collectiviteBucketTable } from '@/backend/collectivites/shared/models/collectivite-bucket.table';
-import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
-import SupabaseService from '@/backend/utils/database/supabase.service';
-import { getErrorMessage } from '@/backend/utils/get-error-message';
+import { COLLECTIVITE_ID_ROUTE_PARAM } from '@tet/backend/collectivites/shared/models/collectivite-api.constants';
+import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
+import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import {
   Injectable,
   InternalServerErrorException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { PreuveDto, PreuveTypeEnum } from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { getErrorMessage } from '@tet/domain/utils';
 import {
   and,
   asc,
@@ -27,8 +28,6 @@ import { preuveActionTable } from '../models/preuve-action.table';
 import { preuveComplementaireTable } from '../models/preuve-complementaire.table';
 import { preuveReglementaireDefinitionTable } from '../models/preuve-reglementaire-definition.table';
 import { preuveReglementaireTable } from '../models/preuve-reglementaire.table';
-import { PreuveTypeEnum } from '../models/preuve-type.enum';
-import { PreuveDto } from '../models/preuve.dto';
 
 @Injectable()
 export default class DocumentService {
@@ -115,7 +114,7 @@ export default class DocumentService {
     collectiviteId: number,
     referentielId: ReferentielId,
     modifiedBeforeDate?: string
-  ) {
+  ): Promise<Record<string, PreuveDto[]>> {
     const preuves = (
       await Promise.all([
         this.getPreuvesReglementaires(

@@ -1,5 +1,5 @@
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import CreateDefinitionService from './create-definition.service';
 import { DeleteDefinitionService } from './delete-definition.service';
 import {

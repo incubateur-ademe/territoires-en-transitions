@@ -1,6 +1,6 @@
-import { importCollectiviteRelationsRequestSchema } from '@/backend/collectivites/import-collectivite-relations/import-collectivite-relations.request';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { importCollectiviteRelationsRequestSchema } from '@tet/backend/collectivites/import-collectivite-relations/import-collectivite-relations.request';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { ImportCollectiviteRelationsService } from './import-collectivite-relations.service';
 
 @Injectable()

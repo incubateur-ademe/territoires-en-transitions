@@ -1,4 +1,4 @@
-import {StoryFn, Meta} from '@storybook/nextjs';
+import { Meta, StoryFn } from '@storybook/nextjs';
 import {
   CriteresLabellisation,
   TCriteresLabellisationProps,
@@ -9,8 +9,8 @@ export default {
   component: CriteresLabellisation,
 } as Meta;
 
-const Template: StoryFn<TCriteresLabellisationProps> = args => (
-  <CriteresLabellisation collectiviteId={1} {...args} />
+const Template: StoryFn<TCriteresLabellisationProps> = (args) => (
+  <CriteresLabellisation {...args} collectiviteId={1} />
 );
 
 export const PremiereEtoileECI = {

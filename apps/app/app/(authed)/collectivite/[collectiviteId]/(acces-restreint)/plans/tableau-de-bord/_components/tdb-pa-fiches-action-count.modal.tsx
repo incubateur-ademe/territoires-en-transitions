@@ -13,19 +13,19 @@ import {
   Option,
   Select,
   useEventTracker,
-} from '@/ui';
+} from '@tet/ui';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import {
   fromFiltersToFormFilters,
   fromFormFiltersToFilters,
 } from '@/app/plans/fiches/list-all-fiches/filters/filter-converter';
 import { ToutesLesFichesFiltersForm } from '@/app/plans/fiches/list-all-fiches/filters/toutes-les-fiches-filters.form';
-import { CreateModuleFicheActionCountByType } from '@/domain/collectivites';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { ModuleFicheCountByCreate } from '@tet/domain/collectivites/tableau-de-bord';
 import {
   CountByPropertyEnumType,
   ficheActionForCountBySchema,
-} from '@/domain/plans';
+} from '@tet/domain/plans';
 import { useUpsertModule } from '../_hooks/use-upsert-module';
 
 const editionStep = {
@@ -43,7 +43,7 @@ const countByPropertyOptions: Option[] = Object.entries(
   .sort((a, b) => a.label.localeCompare(b.label));
 
 type Props = ModalProps & {
-  module?: CreateModuleFicheActionCountByType;
+  module?: ModuleFicheCountByCreate;
 };
 const TdbPaFichesActionCountModal = ({ openState, module }: Props) => {
   const collectivite = useCurrentCollectivite();
@@ -52,19 +52,18 @@ const TdbPaFichesActionCountModal = ({ openState, module }: Props) => {
 
   const [step, setStep] = useState<number>(editionStep.GENERAL_PARAMETERS);
 
-  const [moduleState, setModuleState] =
-    useState<CreateModuleFicheActionCountByType>(
-      cloneDeep(module) || {
-        id: crypto.randomUUID(),
-        titre: '',
-        collectiviteId: collectivite.collectiviteId,
-        type: 'fiche-action.count-by',
-        options: {
-          countByProperty: '' as CountByPropertyEnumType, // We want the user to select a value
-          filtre: {},
-        },
-      }
-    );
+  const [moduleState, setModuleState] = useState<ModuleFicheCountByCreate>(
+    cloneDeep(module) || {
+      id: crypto.randomUUID(),
+      titre: '',
+      collectiviteId: collectivite.collectiviteId,
+      type: 'fiche-action.count-by',
+      options: {
+        countByProperty: '' as CountByPropertyEnumType, // We want the user to select a value
+        filtre: {},
+      },
+    }
+  );
 
   const tracker = useEventTracker();
   return (

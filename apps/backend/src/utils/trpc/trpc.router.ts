@@ -1,9 +1,9 @@
-import { CollectivitesRouter } from '@/backend/collectivites/collectivites.router';
-import { IndicateursRouter } from '@/backend/indicateurs/indicateurs.router';
-import { MetricsRouter } from '@/backend/metrics/metrics.router';
-import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
-import { ContextStoreService } from '@/backend/utils/context/context.service';
-import { getSentryContextFromApplicationContext } from '@/backend/utils/sentry-init';
+import { CollectivitesRouter } from '@tet/backend/collectivites/collectivites.router';
+import { IndicateursRouter } from '@tet/backend/indicateurs/indicateurs.router';
+import { MetricsRouter } from '@tet/backend/metrics/metrics.router';
+import { ReferentielsRouter } from '@tet/backend/referentiels/referentiels.router';
+import { ContextStoreService } from '@tet/backend/utils/context/context.service';
+import { getSentryContextFromApplicationContext } from '@tet/backend/utils/sentry-init';
 import {
   HttpException,
   INestApplication,
@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
-import { Response } from 'express';
+import type { Response } from 'express';
 import z from 'zod';
 import { FichesRouter } from '../../plans/fiches/fiches.router';
 import { CompletionAnalyticsRouter } from '../../plans/plans/completion-analytics/completion-analytics.router';

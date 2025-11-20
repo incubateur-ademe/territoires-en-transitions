@@ -1,12 +1,12 @@
-import { createPreuveReglementaireDefinitionSchema } from '@/backend/collectivites/documents/models/preuve-reglementaire-definition.table';
-import { getZodStringArrayFromQueryString } from '@/backend/utils/zod.utils';
+import { getZodStringArrayFromQueryString } from '@tet/backend/utils/zod.utils';
+import { preuveReglementaireDefinitionSchema } from '@tet/domain/collectivites';
 import z from 'zod';
 
-export const importPreuveReglementaireDefinitionSchema =
-  createPreuveReglementaireDefinitionSchema.extend({
-    actions: getZodStringArrayFromQueryString(),
-  });
+export const importPreuveReglementaireDefinitionSchema = z.object({
+  ...preuveReglementaireDefinitionSchema.shape,
+  actions: getZodStringArrayFromQueryString(),
+});
 
-export type ImportPreuveReglementaireDefinitionType = z.infer<
+export type ImportPreuveReglementaireDefinition = z.infer<
   typeof importPreuveReglementaireDefinitionSchema
 >;

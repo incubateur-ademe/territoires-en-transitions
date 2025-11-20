@@ -1,4 +1,4 @@
-import { AutoResizedTextarea, Button } from '@/ui';
+import { AutoResizedTextarea, Button } from '@tet/ui';
 import { useState } from 'react';
 
 type Props = {

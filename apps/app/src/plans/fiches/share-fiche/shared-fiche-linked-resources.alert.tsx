@@ -1,6 +1,6 @@
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { Alert } from '@/ui';
+import { Alert } from '@tet/ui';
 import Link from 'next/link';
 
 type SharedFicheLinkedResourcesAlertProps = {

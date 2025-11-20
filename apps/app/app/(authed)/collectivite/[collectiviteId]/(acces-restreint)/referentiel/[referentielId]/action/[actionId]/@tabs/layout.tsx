@@ -2,9 +2,7 @@
 
 import { ReactNode } from 'react';
 
-import { useCollectiviteId } from '@/api/collectivites';
 import { makeReferentielActionUrl } from '@/app/app/paths';
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import {
   DEPRECATED_useActionDefinition,
   useAction,
@@ -14,16 +12,18 @@ import { usePrevAndNextActionLinks } from '@/app/referentiels/actions/use-prev-a
 import { ActionAuditDetail } from '@/app/referentiels/audits/ActionAuditDetail';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Button } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Button } from '@tet/ui';
 import {
   Tabs,
   TabsList,
   TabsPanel,
   TabsTab,
-} from '@/ui/design-system/Tabs/Tabs.next';
+} from '@tet/ui/design-system/TabsNext/index';
 import ActionCommentsPanel from '../_components/comments/action-comments.panel';
 import { ActionHeader } from '../_components/header/action.header';
 

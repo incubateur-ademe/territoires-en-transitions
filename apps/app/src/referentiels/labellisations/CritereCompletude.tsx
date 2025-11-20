@@ -1,6 +1,6 @@
 import { makeReferentielUrl } from '@/app/app/paths';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
-import { Button } from '@/ui';
+import { Button } from '@tet/ui';
 import { CritereRempli } from './CritereRempli';
 
 export type TCritereScoreProps = {

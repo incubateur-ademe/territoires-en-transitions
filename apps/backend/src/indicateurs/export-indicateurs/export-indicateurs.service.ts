@@ -1,7 +1,12 @@
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { Injectable, Logger } from '@nestjs/common';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import {
+  IndicateurDefinition,
+  IndicateurDefinitionAvecEnfants,
+  IndicateurSourceMetadonnee,
+} from '@tet/domain/indicateurs';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import { format } from 'date-fns';
 import { uniq } from 'es-toolkit';
 import { Workbook } from 'exceljs';
@@ -12,12 +17,7 @@ import {
   BOLD,
   normalizeWorksheetName,
 } from '../../utils/excel/export-excel.utils';
-import {
-  IndicateurDefinition,
-  IndicateurDefinitionAvecEnfants,
-} from '../definitions/indicateur-definition.table';
 import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
-import { SourceMetadonnee } from '../shared/models/indicateur-source-metadonnee.table';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
 import { IndicateurValeurAvecMetadonnesDefinition } from '../valeurs/indicateur-valeur.table';
 import { ExportIndicateursRequestType } from './export-indicateurs.request';
@@ -274,7 +274,7 @@ export default class ExportIndicateursService {
     adjustColumnWidth(worksheet);
   }
 
-  private getSourceName(source: SourceMetadonnee) {
+  private getSourceName(source: IndicateurSourceMetadonnee) {
     return source.nomDonnees || source.diffuseur || source.producteur;
   }
 

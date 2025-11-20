@@ -1,5 +1,5 @@
-import { useUser } from '@/api/users/user-context/user-provider';
-import { Button } from '@/ui';
+import { useUser } from '@tet/api/users';
+import { Button } from '@tet/ui';
 import classNames from 'classnames';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';

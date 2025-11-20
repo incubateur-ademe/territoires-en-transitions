@@ -3,7 +3,7 @@ import { actionAvancementColors } from '@/app/app/theme';
 import BarChartCardWithSubrows, {
   TBarChartScoreTable,
 } from '@/app/ui/charts/old/BarChartCardWithSubrows';
-import { ReferentielId } from '@/domain/referentiels';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { TableOptions } from 'react-table';
 import { ProgressionRow } from '../../DEPRECATED_scores.types';
 import { getFormattedScore } from '../utils';

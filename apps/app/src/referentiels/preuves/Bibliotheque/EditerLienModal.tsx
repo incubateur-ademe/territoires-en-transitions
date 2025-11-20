@@ -1,4 +1,4 @@
-import { Field, Input, Modal, ModalFooterOKCancel } from '@/ui';
+import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useState } from 'react';
 import { TPreuve } from './types';
 import { useUpdatePreuveLien } from './useEditPreuve';

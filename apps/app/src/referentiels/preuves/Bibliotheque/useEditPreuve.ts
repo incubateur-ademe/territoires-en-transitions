@@ -1,5 +1,5 @@
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSupabase } from '@tet/api';
 import { invalidateQueries } from '../useAddPreuves';
 import { TEditHandlers, TPreuve } from './types';
 import { useEditFilenameState, useEditState } from './useEditState';
