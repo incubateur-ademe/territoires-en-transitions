@@ -132,7 +132,7 @@ const Module = ({
             icon="more-line"
             variant="grey"
             size="xs"
-            menu={{ sections: [menuActions] }}
+            menu={{ actions: menuActions }}
           />
         )}
       </div>
