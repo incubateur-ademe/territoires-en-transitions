@@ -8,21 +8,22 @@ import { z } from 'zod';
 export const referentielEnumValues = ['cae', 'eci', 'te', 'te-test'] as const;
 export type ReferentielEnum = (typeof referentielEnumValues)[number];
 
-export const DiscussionStatutEnum = {
+export const discussionStatus = {
   ALL: 'all',
   OUVERT: 'ouvert',
   FERME: 'ferme',
 } as const;
 
-export const discussionStatusEnumValues = [
-  DiscussionStatutEnum.ALL,
-  DiscussionStatutEnum.OUVERT,
-  DiscussionStatutEnum.FERME,
+export const discussionStatusValues = [
+  discussionStatus.ALL,
+  discussionStatus.OUVERT,
+  discussionStatus.FERME,
 ] as const;
 
-export const discussionStatusEnumSchema = z.enum(discussionStatusEnumValues);
+export const discussionStatusEnumSchema = z.enum(discussionStatusValues);
 export const discussionStatusPgEnum = pgEnum(
   'discussion_statut',
-  discussionStatusEnumValues
+  discussionStatusValues
 );
-export type DiscussionStatus = z.infer<typeof discussionStatusEnumSchema>;
+export type DiscussionStatus =
+  (typeof discussionStatus)[keyof typeof discussionStatus];

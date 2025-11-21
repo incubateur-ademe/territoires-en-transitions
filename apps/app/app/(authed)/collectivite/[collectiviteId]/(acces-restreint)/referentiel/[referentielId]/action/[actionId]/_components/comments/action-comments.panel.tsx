@@ -8,8 +8,9 @@ import {
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import {
   DiscussionMessages,
+  discussionOrderByValues,
   DiscussionStatus,
-  DiscussionStatutEnum,
+  discussionStatus,
 } from '@/domain/collectivites';
 import { ReferentielId } from '@/domain/referentiels';
 import { useEffect, useState } from 'react';
@@ -43,10 +44,12 @@ const ActionCommentsPanel = ({
     'all'
   );
   const [selectedStatus, setSelectedStatus] = useState<DiscussionStatus>(
-    DiscussionStatutEnum.OUVERT
+    discussionStatus.OUVERT
   );
   const [selectedOrderBy, setSelectedOrderBy] = useState<string>(
-    isDisplayedAsPanel ? 'actionId' : 'createdAt'
+    isDisplayedAsPanel
+      ? discussionOrderByValues.ACTION_ID
+      : discussionOrderByValues.CREATED_AT
   );
   const [commentsCount, setCommentsCount] = useState<number>(0);
 

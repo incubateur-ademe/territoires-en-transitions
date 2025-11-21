@@ -5,6 +5,7 @@ import {
 } from '@/app/referentiels/actions/action-context';
 import { getActionsAndSubActions } from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
 import { usePrevAndNextActionLinks } from '@/app/referentiels/actions/use-prev-and-next-action-links';
+import { ReferentielProvider } from '@/app/referentiels/referentiel-context';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { ReferentielId } from '@/domain/referentiels';
 import ActionCommentsPanel from '../action-comments.panel';
@@ -58,16 +59,18 @@ export const useCommentPanel = (
       isPersistentWithNextPath: (pathname) =>
         pathname === nextActionLink || pathname === prevActionLink,
       content: (
-        <ActionProvider actionId={actionId}>
-          <ActionCommentsPanelWrapper
-            referentielId={referentielId}
-            parentActionId={parentActionId}
-            actionId={actionId}
-            updateTitlePanel={(title: string) => {
-              setTitle(title);
-            }}
-          />
-        </ActionProvider>
+        <ReferentielProvider referentielId={referentielId}>
+          <ActionProvider actionId={actionId}>
+            <ActionCommentsPanelWrapper
+              referentielId={referentielId}
+              parentActionId={parentActionId}
+              actionId={actionId}
+              updateTitlePanel={(title: string) => {
+                setTitle(title);
+              }}
+            />
+          </ActionProvider>
+        </ReferentielProvider>
       ),
     });
   };

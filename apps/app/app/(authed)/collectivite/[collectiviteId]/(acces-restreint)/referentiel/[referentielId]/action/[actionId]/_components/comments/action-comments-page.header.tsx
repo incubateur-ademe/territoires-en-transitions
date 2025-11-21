@@ -1,18 +1,11 @@
-import { isSousMesure } from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
-import {
-  DiscussionOrderBy,
-  discussionOrderByValues,
-  DiscussionStatus,
-  DiscussionStatutEnum,
-} from '@/domain/collectivites';
+import { DiscussionOrderBy, DiscussionStatus } from '@/domain/collectivites';
 import { ReferentielId } from '@/domain/referentiels';
-import { Select } from '@/ui';
-import { cn } from '@/ui/utils/cn';
-
-type Option = {
-  label: string;
-  value: string;
-};
+import {
+  ActionSelect,
+  OrderBySelect,
+  StatusSelect,
+  type Option,
+} from './action-comments-filters';
 
 type Props = {
   selectedOrderBy: DiscussionOrderBy;
@@ -25,18 +18,6 @@ type Props = {
   commentsCount?: number;
   referentielId: ReferentielId;
 };
-
-const statusOptions = [
-  { label: 'Tous les commentaires', value: DiscussionStatutEnum.ALL },
-  { label: 'Commentaires ouverts', value: DiscussionStatutEnum.OUVERT },
-  { label: 'Commentaires fermés', value: DiscussionStatutEnum.FERME },
-];
-
-const orderByOptions = [
-  { label: 'mesure', value: discussionOrderByValues.ACTION_ID },
-  { label: 'date de publication', value: discussionOrderByValues.CREATED_AT },
-  { label: 'auteur', value: discussionOrderByValues.CREATED_BY },
-];
 
 const ActionCommentsPageHeader = ({
   selectedOrderBy,
@@ -54,15 +35,9 @@ const ActionCommentsPageHeader = ({
       <div className="mx-4 py-4 flex flex-col gap-4 border-b border-primary-3">
         <div className="flex items-center gap-24">
           <div className="flex-none justify-self-start">
-            <Select
-              placeholder="Trier par"
-              options={orderByOptions}
-              values={selectedOrderBy}
-              onChange={(value) => onOrderByChange(value as DiscussionOrderBy)}
-              customItem={(v) => (
-                <span className="text-grey-8 text-xs">Trier par {v.label}</span>
-              )}
-              small
+            <OrderBySelect
+              selectedOrderBy={selectedOrderBy}
+              onOrderByChange={onOrderByChange}
             />
           </div>
           <div className="flex items-center gap-2 w-full justify-end">
@@ -71,34 +46,19 @@ const ActionCommentsPageHeader = ({
               {`commentaire${(commentsCount ?? 0) > 1 ? 's' : ''}`}
             </span>
             <div className="">
-              <Select
-                options={statusOptions}
-                values={selectedStatus}
-                onChange={(value) => onStatusChange(value as DiscussionStatus)}
-                customItem={(v) => (
-                  <span className="text-grey-8 text-xs">{v.label}</span>
-                )}
-                small
+              <StatusSelect
+                selectedStatus={selectedStatus}
+                onStatusChange={onStatusChange}
               />
             </div>
             <div className="flex-1 ">
-              <Select
+              <ActionSelect
+                selectedAction={selectedAction}
+                onActionChange={onActionChange}
+                actionsOptions={actionsOptions}
+                referentielId={referentielId}
                 placeholder="Toutes les mesures"
-                options={actionsOptions}
-                values={selectedAction ?? undefined}
-                onChange={(value) =>
-                  onActionChange(value as string | undefined)
-                }
-                customItem={(v) => (
-                  <span
-                    className={cn('text-grey-8 text-xs text-left', {
-                      'ml-4': isSousMesure(v.value as string, referentielId),
-                    })}
-                  >
-                    {v.label}
-                  </span>
-                )}
-                small
+                indentSubActions={true}
               />
             </div>
           </div>

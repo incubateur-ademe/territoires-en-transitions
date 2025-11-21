@@ -1,19 +1,12 @@
-import { isSousMesure } from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
-import {
-  DiscussionOrderBy,
-  discussionOrderByValues,
-  DiscussionStatus,
-  DiscussionStatutEnum,
-} from '@/domain/collectivites';
+import { DiscussionOrderBy, DiscussionStatus } from '@/domain/collectivites';
 import { ReferentielId } from '@/domain/referentiels';
-import { Select } from '@/ui';
-import { cn } from '@/ui/utils/cn';
+import {
+  ActionSelect,
+  OrderBySelect,
+  StatusSelect,
+  type Option,
+} from './action-comments-filters';
 import ActionCommentNew from './action-comments.new';
-
-type Option = {
-  label: string;
-  value: string;
-};
 
 type Props = {
   selectedOrderBy: DiscussionOrderBy;
@@ -27,18 +20,6 @@ type Props = {
   parentActionId?: string;
   referentielId: ReferentielId;
 };
-
-const statusOptions = [
-  { label: 'Tous les commentaires', value: DiscussionStatutEnum.ALL },
-  { label: 'Commentaires ouverts', value: DiscussionStatutEnum.OUVERT },
-  { label: 'Commentaires fermés', value: DiscussionStatutEnum.FERME },
-];
-
-const orderByOptions = [
-  { label: 'mesure', value: discussionOrderByValues.ACTION_ID },
-  { label: 'date de publication', value: discussionOrderByValues.CREATED_AT },
-  { label: 'auteur', value: discussionOrderByValues.CREATED_BY },
-];
 
 const ActionCommentsPanelHeader = ({
   selectedOrderBy,
@@ -56,40 +37,22 @@ const ActionCommentsPanelHeader = ({
     <div className="bg-white sticky top-0 z-10">
       <div className="mx-4 py-4 flex flex-col gap-4 border-b border-primary-3">
         <div className="flex justify-between items-center gap-4">
-          <Select
-            placeholder="Trier par"
-            options={orderByOptions}
-            values={selectedOrderBy}
-            onChange={(value) => onOrderByChange(value as DiscussionOrderBy)}
-            customItem={(v) => (
-              <span className="text-grey-8 text-xs">Trier par {v.label}</span>
-            )}
-            small
+          <OrderBySelect
+            selectedOrderBy={selectedOrderBy}
+            onOrderByChange={onOrderByChange}
           />
-          <Select
-            options={statusOptions}
-            values={selectedStatus}
-            onChange={(value) => onStatusChange(value as DiscussionStatus)}
-            customItem={(v) => (
-              <span className="text-grey-8 text-xs">{v.label}</span>
-            )}
-            small
+          <StatusSelect
+            selectedStatus={selectedStatus}
+            onStatusChange={onStatusChange}
           />
         </div>
-        <Select
+        <ActionSelect
+          selectedAction={selectedAction}
+          onActionChange={onActionChange}
+          actionsOptions={actionsOptions}
+          referentielId={referentielId}
           placeholder="Sélectionner ou rédiger un commentaire sur la mesure"
-          options={actionsOptions}
-          values={selectedAction ?? undefined}
-          onChange={(value) => onActionChange(value as string | undefined)}
-          customItem={(option) => (
-            <span
-              className={cn('text-grey-8 text-xs text-left', {
-                'pl-4': isSousMesure(option.value as string, referentielId),
-              })}
-            >
-              {option.label}
-            </span>
-          )}
+          indentSubActions={false}
         />
 
         {canCreateDiscussion && (selectedAction || parentActionId) && (

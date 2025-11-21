@@ -21,6 +21,7 @@ const ActionCommentNew = ({ actionId, disabledInput }: Props) => {
       placeholder="Écrire un nouveau commentaire..."
       onSave={onSave}
       disabled={disabledInput}
+      onClose={() => {}}
     />
   );
 };

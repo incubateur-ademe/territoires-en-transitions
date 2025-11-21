@@ -10,7 +10,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { DiscussionDomainService } from '../domain/discussion-domain-service';
 import { DiscussionErrorEnum } from '../domain/discussion.errors';
-import { DiscussionStatutEnum } from '../domain/discussion.types';
+import { discussionStatus } from '../domain/discussion.types';
 import { ListDiscussionService } from '../domain/list-discussion-service';
 import {
   CreateDiscussionRequest,
@@ -39,6 +39,8 @@ describe('DiscussionApplicationService', () => {
   } as AuthUser;
 
   beforeEach(async () => {
+    vi.clearAllMocks();
+
     mockDiscussionDomainService = {
       createOrUpdateDiscussion: vi.fn(),
       deleteDiscussionAndDiscussionMessage: vi.fn(),
@@ -142,7 +144,7 @@ describe('DiscussionApplicationService', () => {
 
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
-        PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+        PermissionOperationEnum['COLLECTIVITES.READ'],
         ResourceType.COLLECTIVITE,
         1
       );
@@ -192,7 +194,7 @@ describe('DiscussionApplicationService', () => {
 
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         supportUser,
-        PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+        PermissionOperationEnum['COLLECTIVITES.READ'],
         ResourceType.COLLECTIVITE,
         1
       );
@@ -226,7 +228,7 @@ describe('DiscussionApplicationService', () => {
 
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         ademeUser,
-        PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+        PermissionOperationEnum['COLLECTIVITES.READ'],
         ResourceType.COLLECTIVITE,
         1
       );
@@ -290,7 +292,7 @@ describe('DiscussionApplicationService', () => {
 
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
-        PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+        PermissionOperationEnum['COLLECTIVITES.READ'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -337,7 +339,7 @@ describe('DiscussionApplicationService', () => {
 
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
-        PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+        PermissionOperationEnum['COLLECTIVITES.READ'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -369,7 +371,7 @@ describe('DiscussionApplicationService', () => {
 
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
-        PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+        PermissionOperationEnum['COLLECTIVITES.READ'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -454,7 +456,7 @@ describe('DiscussionApplicationService', () => {
 
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
-        PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+        PermissionOperationEnum['COLLECTIVITES.READ'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -514,7 +516,7 @@ describe('DiscussionApplicationService', () => {
   describe('updateDiscussion', () => {
     const discussionId = 1;
     const collectiviteId = 1;
-    const status = DiscussionStatutEnum.FERME;
+    const status = discussionStatus.FERME;
 
     test('should update discussion status when user has permission', async () => {
       const mockResponse = {
@@ -523,7 +525,7 @@ describe('DiscussionApplicationService', () => {
           id: discussionId,
           collectiviteId,
           actionId: 'cae_1.1.1',
-          status: DiscussionStatutEnum.FERME,
+          status: discussionStatus.FERME,
           createdBy: 'user-123',
           createdAt: '2025-01-01T00:00:00.000Z',
           modifiedAt: '2025-01-01T00:00:00.000Z',
@@ -543,7 +545,7 @@ describe('DiscussionApplicationService', () => {
 
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
-        PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+        PermissionOperationEnum['COLLECTIVITES.READ'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -591,7 +593,7 @@ describe('DiscussionApplicationService', () => {
 
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
-        PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+        PermissionOperationEnum['COLLECTIVITES.READ'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -623,7 +625,7 @@ describe('DiscussionApplicationService', () => {
 
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
-        PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+        PermissionOperationEnum['COLLECTIVITES.READ'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -671,7 +673,7 @@ describe('DiscussionApplicationService', () => {
           id: discussionId,
           collectiviteId,
           actionId: 'cae_1.1.1',
-          status: DiscussionStatutEnum.FERME,
+          status: discussionStatus.FERME,
           createdBy: 'user-123',
           createdAt: '2025-01-01T00:00:00.000Z',
           modifiedAt: '2025-01-01T00:00:00.000Z',
@@ -687,7 +689,7 @@ describe('DiscussionApplicationService', () => {
       const result = await service.updateDiscussion(
         {
           discussionId,
-          status: DiscussionStatutEnum.FERME,
+          status: discussionStatus.FERME,
           collectiviteId,
         },
         mockUser
@@ -695,11 +697,11 @@ describe('DiscussionApplicationService', () => {
 
       expect(mockDiscussionDomainService.updateDiscussion).toHaveBeenCalledWith(
         discussionId,
-        DiscussionStatutEnum.FERME
+        discussionStatus.FERME
       );
       expect(result.success).toBe(true);
       if (result.success) {
-        expect((result.data as any).status).toBe(DiscussionStatutEnum.FERME);
+        expect((result.data as any).status).toBe(discussionStatus.FERME);
       }
     });
 
@@ -710,7 +712,7 @@ describe('DiscussionApplicationService', () => {
           id: discussionId,
           collectiviteId,
           actionId: 'cae_1.1.1',
-          status: DiscussionStatutEnum.OUVERT,
+          status: discussionStatus.OUVERT,
           createdBy: 'user-123',
           createdAt: '2025-01-01T00:00:00.000Z',
           modifiedAt: '2025-01-01T00:00:00.000Z',
@@ -726,7 +728,7 @@ describe('DiscussionApplicationService', () => {
       const result = await service.updateDiscussion(
         {
           discussionId,
-          status: DiscussionStatutEnum.OUVERT,
+          status: discussionStatus.OUVERT,
           collectiviteId,
         },
         mockUser
@@ -734,11 +736,11 @@ describe('DiscussionApplicationService', () => {
 
       expect(mockDiscussionDomainService.updateDiscussion).toHaveBeenCalledWith(
         discussionId,
-        DiscussionStatutEnum.OUVERT
+        discussionStatus.OUVERT
       );
       expect(result.success).toBe(true);
       if (result.success) {
-        expect((result.data as any).status).toBe(DiscussionStatutEnum.OUVERT);
+        expect((result.data as any).status).toBe(discussionStatus.OUVERT);
       }
     });
   });
@@ -779,7 +781,7 @@ describe('DiscussionApplicationService', () => {
 
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
-        PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+        PermissionOperationEnum['COLLECTIVITES.READ'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -820,7 +822,7 @@ describe('DiscussionApplicationService', () => {
 
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
-        PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+        PermissionOperationEnum['COLLECTIVITES.READ'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -849,7 +851,7 @@ describe('DiscussionApplicationService', () => {
 
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
-        PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+        PermissionOperationEnum['COLLECTIVITES.READ'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -912,7 +914,7 @@ describe('DiscussionApplicationService', () => {
 
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
-        PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+        PermissionOperationEnum['COLLECTIVITES.READ'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -953,7 +955,7 @@ describe('DiscussionApplicationService', () => {
 
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
-        PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+        PermissionOperationEnum['COLLECTIVITES.READ'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -982,7 +984,7 @@ describe('DiscussionApplicationService', () => {
 
       expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
         mockUser,
-        PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+        PermissionOperationEnum['COLLECTIVITES.READ'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );

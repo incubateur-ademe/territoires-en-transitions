@@ -2,7 +2,8 @@ import { makeReferentielActionUrl } from '@/app/app/paths';
 import { type ActionDetailed } from '@/app/referentiels/use-snapshot';
 import {
   DiscussionMessages,
-  DiscussionStatutEnum,
+  discussionOrderByValues,
+  discussionStatus,
 } from '@/domain/collectivites';
 import {
   isSousMesure as isSousMesureDomain,
@@ -54,7 +55,7 @@ export const isSousMesure = (
 ) => {
   return (
     isSousMesureDomain(actionId, referentielId) &&
-    actionId !== DiscussionStatutEnum.ALL
+    actionId !== discussionStatus.ALL
   );
 };
 
@@ -103,13 +104,13 @@ export const sortDiscussions = (
   const sortedDiscussions = [...discussions];
 
   switch (orderBy) {
-    case 'actionId':
+    case discussionOrderByValues.ACTION_ID:
       return sortedDiscussions.sort((a, b) =>
         a.actionId.localeCompare(b.actionId)
       );
-    case 'createdAt':
+    case discussionOrderByValues.CREATED_AT:
       return sortedDiscussions.sort(sortByCreatedAt);
-    case 'createdBy':
+    case discussionOrderByValues.CREATED_BY:
       return sortedDiscussions.sort(sortByCreator);
     default:
       return sortedDiscussions;

@@ -1,6 +1,6 @@
 import {
   DiscussionStatus,
-  DiscussionStatutEnum,
+  discussionStatus,
   ReferentielEnum,
 } from '@/backend/collectivites/discussions/domain/discussion.types';
 import { DiscussionRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
@@ -65,7 +65,7 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
       const discussionToCreate: CreateDiscussionType = {
         collectiviteId: discussion.collectiviteId,
         actionId: discussion.actionId,
-        status: DiscussionStatutEnum.OUVERT,
+        status: discussionStatus.OUVERT,
         createdBy: discussion.createdBy,
         createdAt: new Date().toISOString(),
         modifiedAt: new Date().toISOString(),

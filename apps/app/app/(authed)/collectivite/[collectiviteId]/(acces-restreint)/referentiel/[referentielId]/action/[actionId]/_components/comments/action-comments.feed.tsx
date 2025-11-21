@@ -1,6 +1,9 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { buildActionLink } from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
-import { DiscussionMessages } from '@/domain/collectivites';
+import {
+  DiscussionMessages,
+  discussionOrderByValues,
+} from '@/domain/collectivites';
 import { ReferentielId } from '@/domain/referentiels';
 import { Divider, VisibleWhen } from '@/ui';
 import { cn } from '@/ui/utils/cn';
@@ -49,7 +52,7 @@ const ActionCommentFeed = ({
           'flex items-center justify-between rounded-md border border-primary text-white text-sm  gap-1 font-bold  px-3 bg-primary',
           {
             'top-[139px]': !isDisplayedAsPanel || isInputDisabled,
-            'top-[190px]': isDisplayedAsPanel && !isInputDisabled,
+            'top-[180px]': isDisplayedAsPanel && !isInputDisabled,
             'sticky z-10': isDisplayedAsPanel,
           }
         )}
@@ -89,7 +92,7 @@ const ActionCommentFeed = ({
             <Fragment key={discussion.id}>
               <VisibleWhen
                 condition={
-                  orderBy === 'actionId' &&
+                  orderBy === discussionOrderByValues.ACTION_ID &&
                   discussion.actionId !== discussions[idx - 1]?.actionId
                 }
               >
@@ -107,7 +110,7 @@ const ActionCommentFeed = ({
                         collectiviteId
                       )}
                       target="_blank"
-                      className="no-underline after:hidden"
+                      className="after:hidden bg-none"
                     >
                       <ActionHeader
                         discussion={discussion}
@@ -120,12 +123,12 @@ const ActionCommentFeed = ({
               <ActionCommentDiscussion
                 discussion={discussion}
                 title={
-                  orderBy !== 'actionId'
+                  orderBy !== discussionOrderByValues.ACTION_ID
                     ? `${discussion.actionIdentifiant} - ${discussion.actionNom}`
                     : undefined
                 }
               />
-              {idx !== discussion.messages.length - 1 && (
+              {orderBy !== discussionOrderByValues.ACTION_ID && (
                 <Divider className="-mb-6" />
               )}
             </Fragment>

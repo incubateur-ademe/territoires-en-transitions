@@ -12,7 +12,7 @@ import {
 import { DiscussionDomainService } from './discussion-domain-service';
 import { DiscussionQueryService } from './discussion-query-service';
 import { DiscussionErrorEnum } from './discussion.errors';
-import { DiscussionStatutEnum } from './discussion.types';
+import { discussionStatus } from './discussion.types';
 
 describe('DiscussionDomainService', () => {
   let service: DiscussionDomainService;
@@ -24,7 +24,7 @@ describe('DiscussionDomainService', () => {
     id: 1,
     collectiviteId: 123,
     actionId: 'action-1',
-    status: DiscussionStatutEnum.OUVERT,
+    status: discussionStatus.OUVERT,
     createdBy: 'user-id-1',
     createdAt: '2025-01-01T00:00:00.000Z',
     modifiedAt: '2025-01-01T00:00:00.000Z',
@@ -49,6 +49,8 @@ describe('DiscussionDomainService', () => {
   };
 
   beforeEach(async () => {
+    vi.clearAllMocks();
+
     mockDiscussionRepository = {
       create: vi.fn(),
       createDiscussionMessage: vi.fn(),
@@ -131,7 +133,7 @@ describe('DiscussionDomainService', () => {
         expect(result.data.message).toBe('Test message');
         expect(result.data.collectiviteId).toBe(123);
         expect(result.data.actionId).toBe('action-1');
-        expect(result.data.status).toBe(DiscussionStatutEnum.OUVERT);
+        expect(result.data.status).toBe(discussionStatus.OUVERT);
         expect(result.data.createdBy).toBe('user-id-1');
       }
 
@@ -295,7 +297,7 @@ describe('DiscussionDomainService', () => {
         data: undefined,
       });
 
-      const result = await service.deleteDiscussionMessage(1, 1, 123);
+      const result = await service.deleteDiscussionMessage(1, 1);
 
       expect(result.success).toBe(true);
       expect(
@@ -324,7 +326,7 @@ describe('DiscussionDomainService', () => {
         data: undefined,
       });
 
-      const result = await service.deleteDiscussionMessage(1, 1, 123);
+      const result = await service.deleteDiscussionMessage(1, 1);
 
       expect(result.success).toBe(true);
       expect(
@@ -346,7 +348,7 @@ describe('DiscussionDomainService', () => {
         error: DiscussionErrorEnum.DATABASE_ERROR,
       });
 
-      const result = await service.deleteDiscussionMessage(1, 1, 123);
+      const result = await service.deleteDiscussionMessage(1, 1);
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -375,7 +377,7 @@ describe('DiscussionDomainService', () => {
         error: DiscussionErrorEnum.DATABASE_ERROR,
       });
 
-      const result = await service.deleteDiscussionMessage(1, 1, 123);
+      const result = await service.deleteDiscussionMessage(1, 1);
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -401,7 +403,7 @@ describe('DiscussionDomainService', () => {
         error: DiscussionErrorEnum.DATABASE_ERROR,
       });
 
-      const result = await service.deleteDiscussionMessage(1, 1, 123);
+      const result = await service.deleteDiscussionMessage(1, 1);
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -417,7 +419,7 @@ describe('DiscussionDomainService', () => {
     test('should update discussion status', async () => {
       const updatedDiscussion = {
         ...mockDiscussion,
-        status: DiscussionStatutEnum.FERME,
+        status: discussionStatus.FERME,
       };
 
       vi.mocked(mockDiscussionRepository.update)?.mockResolvedValue({
@@ -425,18 +427,15 @@ describe('DiscussionDomainService', () => {
         data: updatedDiscussion,
       });
 
-      const result = await service.updateDiscussion(
-        1,
-        DiscussionStatutEnum.FERME
-      );
+      const result = await service.updateDiscussion(1, discussionStatus.FERME);
 
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.status).toBe(DiscussionStatutEnum.FERME);
+        expect(result.data.status).toBe(discussionStatus.FERME);
       }
       expect(mockDiscussionRepository.update).toHaveBeenCalledWith(
         1,
-        DiscussionStatutEnum.FERME
+        discussionStatus.FERME
       );
     });
 
@@ -446,10 +445,7 @@ describe('DiscussionDomainService', () => {
         error: DiscussionErrorEnum.DATABASE_ERROR,
       });
 
-      const result = await service.updateDiscussion(
-        1,
-        DiscussionStatutEnum.FERME
-      );
+      const result = await service.updateDiscussion(1, discussionStatus.FERME);
 
       expect(result.success).toBe(false);
       if (!result.success) {

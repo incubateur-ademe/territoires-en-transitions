@@ -1,7 +1,7 @@
 import z from 'zod';
 import { queryOptionsTypeSchema } from '../domain/discussion.query-options';
 import {
-  discussionStatusEnumValues,
+  discussionStatusValues,
   referentielEnumValues,
 } from '../domain/discussion.types';
 import { DiscussionType } from '../infrastructure/discussion.tables';
@@ -20,7 +20,7 @@ export const createDiscussionRequestSchema = z.object({
 });
 
 export const listDiscussionsRequestFiltersSchema = z.object({
-  status: z.enum(discussionStatusEnumValues).optional(),
+  status: z.enum(discussionStatusValues).optional(),
   actionId: z.string().nonempty().optional(),
 });
 
@@ -44,7 +44,7 @@ export const deleteDiscussionMessageRequestSchema = z.object({
 export const updateDiscussionRequestSchema = z.object({
   discussionId: z.number().positive(),
   collectiviteId: z.number().positive(),
-  status: z.enum(discussionStatusEnumValues),
+  status: z.enum(discussionStatusValues),
 });
 
 export const updateDiscussionMessageRequestSchema = z.object({
