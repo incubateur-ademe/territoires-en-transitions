@@ -263,16 +263,20 @@ export class NotifyPiloteService {
     }
     const { ficheId, piloteId } = data;
 
-    const fiche = await this.listFichesService.getFicheById(ficheId);
-    if (!fiche) {
+    const result = await this.listFichesService.getFicheById(ficheId);
+    if (!result.success) {
       return { success: false, error: 'Fiche non trouvée' };
     }
+    const fiche = result.data;
     let ficheParente;
     if (fiche.parentId) {
-      ficheParente = await this.listFichesService.getFicheById(fiche.parentId);
-      if (!ficheParente) {
+      const getParentResult = await this.listFichesService.getFicheById(
+        fiche.parentId
+      );
+      if (!getParentResult.success) {
         return { success: false, error: 'Fiche parente non trouvée' };
       }
+      ficheParente = getParentResult.data;
     }
     const createdByUser = await this.listUsersService.getUserInfoById(
       createdBy

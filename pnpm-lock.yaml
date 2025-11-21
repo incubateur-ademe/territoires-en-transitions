@@ -9433,8 +9433,8 @@ packages:
   fb-watchman@2.0.2:
     resolution: {integrity: sha512-p5161BqbuCaSnB8jIbzQHOlpgsPmK5rJVDfDKO91Axs5NC1uu3HRQm6wt9cd9/+GtQQIO53JdGXXoyDpTAsgYA==}
 
-  fbemitter@git+https://git@github.com:crisp-dev/emitter.git#695f60594bdca0c876e5c232de57702ab3151b6f:
-    resolution: {commit: 695f60594bdca0c876e5c232de57702ab3151b6f, repo: git@github.com:crisp-dev/emitter.git, type: git}
+  fbemitter@https://codeload.github.com/crisp-dev/emitter/tar.gz/695f60594bdca0c876e5c232de57702ab3151b6f:
+    resolution: {tarball: https://codeload.github.com/crisp-dev/emitter/tar.gz/695f60594bdca0c876e5c232de57702ab3151b6f}
     version: 3.0.0
 
   fbjs-css-vars@1.0.2:
@@ -24777,7 +24777,7 @@ snapshots:
 
   crisp-api@9.12.1(encoding@0.1.13):
     dependencies:
-      fbemitter: git+https://git@github.com:crisp-dev/emitter.git#695f60594bdca0c876e5c232de57702ab3151b6f(encoding@0.1.13)
+      fbemitter: https://codeload.github.com/crisp-dev/emitter/tar.gz/695f60594bdca0c876e5c232de57702ab3151b6f(encoding@0.1.13)
       got: 11.8.5
       socket.io-client: 4.7.2
     transitivePeerDependencies:
@@ -26396,7 +26396,7 @@ snapshots:
     dependencies:
       bser: 2.1.1
 
-  fbemitter@git+https://git@github.com:crisp-dev/emitter.git#695f60594bdca0c876e5c232de57702ab3151b6f(encoding@0.1.13):
+  fbemitter@https://codeload.github.com/crisp-dev/emitter/tar.gz/695f60594bdca0c876e5c232de57702ab3151b6f(encoding@0.1.13):
     dependencies:
       fbjs: 3.0.4(encoding@0.1.13)
     transitivePeerDependencies:
