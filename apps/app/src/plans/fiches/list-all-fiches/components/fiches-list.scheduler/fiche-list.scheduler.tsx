@@ -1,7 +1,7 @@
 import { Scheduler } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/bryntum-scheduler/scheduler';
 import { toSchedulerEvent } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.scheduler/bryntum-scheduler/to-sheduler-event';
 import { FicheWithRelations } from '@/domain/plans';
-import { Alert, Badge, ButtonMenu } from '@/ui';
+import { Alert, Badge, DEPRECATED_ButtonMenu } from '@/ui';
 import { cn } from '@/ui/utils/cn';
 import '@bryntum/scheduler/scheduler.stockholm.css';
 import './bryntum-scheduler/scheduler.css';
@@ -39,7 +39,7 @@ export const FicheListScheduler = ({
 };
 
 const MenuAide = () => (
-  <ButtonMenu
+  <DEPRECATED_ButtonMenu
     className={cn('absolute top-20 right-4 z-[1]')}
     variant="outlined"
     size="xs"
@@ -73,5 +73,5 @@ const MenuAide = () => (
         </div>
       }
     />
-  </ButtonMenu>
+  </DEPRECATED_ButtonMenu>
 );

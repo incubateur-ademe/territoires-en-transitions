@@ -51,7 +51,7 @@ const Modules = () => {
   const { totalCount: plansCount } = useListPlans(collectiviteId);
 
   const noPlanAndCanCreatePlan =
-    plansCount === 0 && hasPermission(permissions, 'plans.edition');
+    plansCount === 0 && hasPermission(permissions, 'plans.mutate');
 
   // In order to simplify UI, we don't allow to edit modules for edition_fiches_indicateurs users
   // Later maybe generalized
@@ -77,9 +77,11 @@ const Modules = () => {
 
   const modulesDescriptors: ModuleDescriptor[] = [
     {
-      match: (m) => m.type === 'fiche_action.list',
+      match: (m) =>
+        m.type === 'fiche_action.list' &&
+        m.defaultKey === 'actions-dont-je-suis-pilote',
       isVisibleWithPermissions: (permissions) =>
-        hasPermission(permissions, 'plans.fiches.lecture'),
+        hasPermission(permissions, 'plans.fiches.read'),
       render: (module) => {
         if (noPlanAndCanCreatePlan) {
           // We already display the placeholder to create a plan, so we don't need to display the list of fiche actions module.
@@ -95,6 +97,7 @@ const Modules = () => {
           <FilteredFichesByModule
             key={module.defaultKey}
             module={module as ModuleFicheActionsSelect}
+            bottomLinkViewType="mes-fiches"
             isEditionEnabled={canEditModules}
             onFilterChange={() => tracker(properties.event)}
             ModalComponent={properties.ModalComponent}
@@ -107,7 +110,7 @@ const Modules = () => {
         m.type === 'indicateur.list' &&
         m.defaultKey === 'indicateurs-dont-je-suis-pilote',
       isVisibleWithPermissions: (permissions) =>
-        hasPermission(permissions, 'indicateurs.lecture'),
+        hasPermission(permissions, 'indicateurs.definitions.read'),
       render: (module) => (
         <IndicateursDontJeSuisLePiloteModule
           key={module.defaultKey}
@@ -119,7 +122,7 @@ const Modules = () => {
     {
       match: (m) => m.type === 'mesure.list',
       isVisibleWithPermissions: (permissions) =>
-        hasPermission(permissions, 'referentiels.lecture'),
+        hasPermission(permissions, 'referentiels.read'),
       render: (module) => (
         <MesuresDontJeSuisLePiloteModule
           key={module.defaultKey}

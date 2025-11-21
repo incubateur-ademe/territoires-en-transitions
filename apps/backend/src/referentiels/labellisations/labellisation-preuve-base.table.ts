@@ -1,9 +1,9 @@
+import { bibliothequeFichierTable } from '@/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import { modifiedAt, modifiedBy } from '@/backend/utils/column.utils';
 import { sql } from 'drizzle-orm';
 import { foreignKey, integer, jsonb, text } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { authUsersTable } from '../../users/models/auth-users.table';
-import { labellisationBibliothequeFichierTable } from './labellisation-bibliotheque-fichier.table';
 import { labellisationSchema } from './labellisation.schema';
 
 export const preuveBaseInLabellisation = labellisationSchema.table(
@@ -31,7 +31,7 @@ END`),
       }),
       preuveBaseFichierIdFkey: foreignKey({
         columns: [table.fichierId],
-        foreignColumns: [labellisationBibliothequeFichierTable.id],
+        foreignColumns: [bibliothequeFichierTable.id],
         name: 'preuve_base_fichier_id_fkey',
       }),
       preuveBaseModifiedByFkey: foreignKey({

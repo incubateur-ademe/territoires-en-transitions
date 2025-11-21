@@ -1,8 +1,9 @@
 import { useCollectiviteId } from '@/api/collectivites';
-import { CollectiviteAccess } from '@/domain/users';
+import { useUser } from '@/api/users/user-context/user-provider';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { SharedFicheLinkedResourcesAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { CollectiviteAccess } from '@/domain/users';
 import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
 import {
@@ -27,6 +28,7 @@ const FichesLieesTab = ({
   collectivite,
 }: FichesLieesTabProps) => {
   const currentCollectiviteId = useCollectiviteId();
+  const user = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { fiches: fichesLiees, isLoading } = useFichesActionLiees({
     ficheId: fiche.id,
@@ -84,6 +86,7 @@ const FichesLieesTab = ({
         ) : (
           <FichesLieesListe
             collectivite={collectivite}
+            currentUserId={user.id}
             fiches={fichesLiees}
             className="sm:grid-cols-2 md:grid-cols-3"
             isLoading={isLoading}

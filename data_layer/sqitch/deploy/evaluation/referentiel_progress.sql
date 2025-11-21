@@ -15,10 +15,10 @@ create function private.referentiel_progress(collectivite_id integer)
             )
 as
 $$
-with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
+with ref as (select unnest(enum_range(null::public.referentiel)) as referentiel),
      scores as (select s.*
                 from ref
-                         left join client_scores cs on cs.referentiel = ref.referentiel
+                         left join public.client_scores cs on cs.referentiel = ref.referentiel
                          join private.convert_client_scores(cs.scores) s on true
                 where cs.collectivite_id = referentiel_progress.collectivite_id)
 select s.referentiel,
@@ -29,7 +29,7 @@ select s.referentiel,
        ss.concerne
 from scores s
          join private.score_summary_of(s) ss on true
-where s.action_id = s.referentiel::action_id;
+where s.action_id = s.referentiel::public.action_id;
 $$ language sql stable;
 comment on function private.referentiel_progress is
     'Les progrès d''une collectivité par référentiel.';

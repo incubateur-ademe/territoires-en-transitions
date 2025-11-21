@@ -30,6 +30,7 @@ export const IndicateursDontJeSuisLePiloteModule = ({
     <>
       <IndicateursModule
         module={module}
+        bottomLinkListId="mes-indicateurs"
         {...getModuleEditActions(isEditionEnabled, openFilters)}
       />
       {isEditModalOpen && (

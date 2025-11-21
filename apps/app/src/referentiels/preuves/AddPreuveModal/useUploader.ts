@@ -108,9 +108,9 @@ export const useUploader = (
     progress: 0,
   });
 
-  const collectivite_id = useCollectiviteId();
+  const collectiviteId = useCollectiviteId();
   const { addFileToLib } = useAddFileToLib();
-  const bucket_id = useCollectiviteBucketId(collectivite_id);
+  const bucket_id = useCollectiviteBucketId(collectiviteId);
 
   // pour éviter les uploads multiples du même fichier
   const upload = useDebouncedCallback(addFileToBucket, 500);
@@ -122,7 +122,7 @@ export const useUploader = (
       if (status.code === UploadStatusCode.uploaded) {
         const { filename, hash } = status;
         // crée l'entrée dans la bibliothèque
-        addFileToLib({ collectivite_id, filename, hash }).then((fichier) => {
+        addFileToLib({ collectiviteId, filename, hash }).then((fichier) => {
           setStatus({
             code: UploadStatusCode.completed,
             fichier_id: fichier.id,
@@ -141,7 +141,7 @@ export const useUploader = (
       }
     };
     fetchData();
-  }, [collectivite_id, bucket_id, upload, file, addFileToLib, session]);
+  }, [collectiviteId, bucket_id, upload, file, addFileToLib, session]);
 
   return { status };
 };

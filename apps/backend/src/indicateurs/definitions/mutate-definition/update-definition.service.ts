@@ -1,6 +1,5 @@
 import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
 import { UpdateIndicateurDefinitionInput } from '@/backend/indicateurs/definitions/mutate-definition/mutate-definition.input';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/users/authorizations/permission.service';
 import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/users/models/auth.models';
@@ -14,6 +13,8 @@ import { HandleDefinitionPilotesService } from '../handle-definition-pilotes/han
 import { HandleDefinitionServicesService } from '../handle-definition-services/handle-definition-services.service';
 import { HandleDefinitionThematiquesService } from '../handle-definition-thematiques/handle-definition-thematiques.service';
 import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
+import { DefinitionListItem } from '../list-definitions/list-definitions.output';
+import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
 
 @Injectable()
 export class UpdateDefinitionService {
@@ -22,11 +23,44 @@ export class UpdateDefinitionService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
+    private readonly listDefinitionsService: ListDefinitionsService,
     private readonly handleDefinitionFichesService: HandleDefinitionFichesService,
     private readonly handleDefinitionPilotesService: HandleDefinitionPilotesService,
     private readonly handleDefinitionServicesService: HandleDefinitionServicesService,
     private readonly handleDefinitionThematiquesService: HandleDefinitionThematiquesService
   ) {}
+
+  async canUpdateDefinition(
+    user: AuthUser,
+    collectiviteId: number,
+    indicateurDefinition: DefinitionListItem,
+    doNotThrow?: boolean
+  ): Promise<boolean> {
+    const permissions = await this.permissionService.listPermissions(
+      user,
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+    if (permissions.has('indicateurs.definitions.update')) {
+      return true;
+    }
+
+    if (permissions.has('indicateurs.definitions.update_piloted_by_me')) {
+      if (indicateurDefinition.pilotes?.some((p) => p.userId === user.id)) {
+        return true;
+      }
+    }
+
+    if (!doNotThrow) {
+      this.permissionService.throwForbiddenException(
+        user,
+        'indicateurs.definitions.update',
+        ResourceType.COLLECTIVITE,
+        collectiviteId
+      );
+    }
+    return false;
+  }
 
   async updateDefinition(
     {
@@ -36,12 +70,9 @@ export class UpdateDefinitionService {
     }: UpdateIndicateurDefinitionInput,
     user: AuthUser
   ): Promise<void> {
-    await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['INDICATEURS.EDITION'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId
-    );
+    const indicateurDefinition =
+      await this.listDefinitionsService.getDefinition(indicateurId);
+    await this.canUpdateDefinition(user, collectiviteId, indicateurDefinition);
 
     this.logger.log(
       `Mise à jour de l'indicateur dont l'id est ${indicateurId}`
@@ -133,7 +164,6 @@ export class UpdateDefinitionService {
           indicateurId,
           collectiviteId,
           ficheIds,
-          user,
         });
       }
 
@@ -142,7 +172,6 @@ export class UpdateDefinitionService {
           indicateurId,
           collectiviteId,
           pilotes,
-          user,
         });
       }
 
@@ -151,7 +180,6 @@ export class UpdateDefinitionService {
           indicateurId,
           collectiviteId,
           serviceIds: services.map((s) => s.id),
-          user,
         });
       }
 
@@ -159,9 +187,7 @@ export class UpdateDefinitionService {
         await this.handleDefinitionThematiquesService.upsertIndicateurThematiques(
           {
             indicateurId,
-            collectiviteId,
             thematiqueIds: thematiques.map((t) => t.id),
-            user,
           }
         );
       }

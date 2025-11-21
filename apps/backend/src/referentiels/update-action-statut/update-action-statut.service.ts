@@ -43,7 +43,7 @@ export class UpdateActionStatutService {
     // Check user access
     await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['REFERENTIELS.EDITION'],
+      PermissionOperationEnum['REFERENTIELS.MUTATE'],
       ResourceType.COLLECTIVITE,
       request.actionStatut.collectiviteId
     );

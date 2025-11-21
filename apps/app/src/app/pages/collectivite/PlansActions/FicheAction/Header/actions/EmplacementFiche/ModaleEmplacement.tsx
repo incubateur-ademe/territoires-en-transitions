@@ -12,10 +12,7 @@ type ModaleEmplacementProps = {
   isReadonly?: boolean;
 };
 
-const ModaleEmplacement = ({
-  fiche,
-  isReadonly = true,
-}: ModaleEmplacementProps) => {
+const ModaleEmplacement = ({ fiche, isReadonly }: ModaleEmplacementProps) => {
   const nbEmplacements = fiche.axes?.length ?? 0;
   const [activeTab, setActiveTab] = useState(nbEmplacements > 0 ? 0 : 1);
 

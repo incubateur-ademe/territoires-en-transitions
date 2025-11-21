@@ -25,7 +25,7 @@ export class PersonnesRouter {
         // It's ok to load tags from all collectivites
         await this.permission.isAllowed(
           ctx.user,
-          PermissionOperationEnum['COLLECTIVITES.VISITE'],
+          PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
           ResourceType.PLATEFORME,
           null
         );

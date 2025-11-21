@@ -1,0 +1,36 @@
+name: Synchronise la base de données de preprod avec la base de données de production
+run-name: Synchronisation de la BDD preprod
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        type: choice
+        description: Quel environnement ?
+        options:
+          - prod
+
+jobs:
+  sync-production-to-staging:
+    name: Synchronisation de la BDD preprod avec les données de production
+    environment: prod
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: earthly/actions-setup@v1
+        with:
+          github-token: ${{ secrets.GH_TOKEN }}
+          version: ^0.8.0
+      - name: Login into registry
+        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
+
+      - name: Trigger db sync
+        run: >
+          earthly
+          --use-inline-cache --save-inline-cache --push
+          --platform=linux/amd64
+          +db-sync
+          --FROM_DB_URL=${{ secrets.PROD_DB_URL }}
+          --TO_DB_URL=${{ secrets.PREPROD_DB_URL }}

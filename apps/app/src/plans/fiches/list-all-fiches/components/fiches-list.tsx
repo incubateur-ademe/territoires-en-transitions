@@ -11,9 +11,11 @@ import { ListFichesSortValue } from '@/domain/plans';
 import {
   ButtonGroup,
   Checkbox,
+  Event,
   Input,
   Pagination,
   Select,
+  useEventTracker,
   VisibleWhen,
 } from '@/ui';
 import classNames from 'classnames';
@@ -26,11 +28,21 @@ import {
   useSelectFichesView,
 } from '../hooks/use-select-fiche-view';
 
+import { useUser } from '@/api/users/user-context/user-provider';
+import { PermissionOperation } from '@/domain/users';
+import { useCountFiches } from '../hooks/use-count-fiches';
 import { useManageFichesPagination } from '../hooks/use-manage-fiches-pagination';
 import { useSearchFiches } from '../hooks/use-search-fiches';
 import { useSelectFiches } from '../hooks/use-select-fiches';
 import { useSortFiches } from '../hooks/use-sort-fiches';
+import { FichesListTable } from './fiches-list.table/fiches-list.table';
 import { FilterBadges } from './filter-badges';
+
+const fichesPerPageByView: Record<FicheActionViewOptions, number> = {
+  grid: 15,
+  scheduler: 15,
+  table: 50,
+};
 
 type Props = {
   filters: FormFilters;
@@ -38,6 +50,7 @@ type Props = {
   resetFilters?: () => void;
   defaultSort?: ListFichesSortValue;
   isReadOnly?: boolean;
+  permissions: PermissionOperation[];
   containerClassName?: string;
   displayEditionMenu?: boolean;
   onUnlink?: (ficheId: number) => void;
@@ -54,16 +67,19 @@ const isSearchActive = (
   return atLeastOneFilterIsSet !== undefined || !!debouncedSearch;
 };
 
-const NUMBER_OF_FICHE_PER_PAGE = 15;
-
 export const FichesList = ({
   defaultSort = 'titre',
   isReadOnly,
+  permissions,
   containerClassName,
   displayEditionMenu = false,
   onUnlink,
   filters,
 }: Props) => {
+  const trackEvent = useEventTracker();
+
+  const collectivite = useCurrentCollectivite();
+
   const { view, setView } = useSelectFichesView('grid');
 
   const handleChangeView = (view: FicheActionViewOptions) => {
@@ -79,6 +95,8 @@ export const FichesList = ({
   const { currentPage, setCurrentPage, resetPagination } =
     useManageFichesPagination(filters);
 
+  const fichesPerPage = fichesPerPageByView[view];
+
   const [previousFilters, setPreviousFilters] = useState(filters);
 
   if (!isEqual(previousFilters, filters)) {
@@ -86,7 +104,8 @@ export const FichesList = ({
     resetPagination();
   }
 
-  const collectivite = useCurrentCollectivite();
+  const user = useUser();
+
   const filtersWithSearch = {
     ...fromFormFiltersToFilters(filters),
     texteNomOuDescription: debouncedSearch,
@@ -100,11 +119,10 @@ export const FichesList = ({
     filters: filtersWithSearch,
     queryOptions: {
       page: currentPage,
-      limit: NUMBER_OF_FICHE_PER_PAGE,
+      limit: fichesPerPage,
       sort: [sort],
     },
   });
-  const hasFiches = fiches.length > 0;
 
   const {
     selectedFicheIds,
@@ -118,12 +136,19 @@ export const FichesList = ({
     view,
     currentPage,
     isReadOnly: isReadOnly ?? false,
+    permissions,
   });
 
   const searchIsActive = isSearchActive(filters, debouncedSearch);
 
+  /** Doit être récupéré indépendamment de fiches car pour la vue calendaire,
+   *  les fiches sans date sont filtrées, on se retrouve donc avec <FichesListEmpty />
+   *  qui fait disparaitre le bouton de changement de vue, même si la collectivité a des fiches
+   *  visibles dans les vues Carte et Tableau. */
+  const { countTotalFiches: countTotalCollectiviteFiches } = useCountFiches();
+
   const noFichesAtAll =
-    hasFiches === false && isLoading === false && searchIsActive === false;
+    countTotalCollectiviteFiches === 0 && !isLoading && !searchIsActive;
 
   if (noFichesAtAll) {
     return (
@@ -172,38 +197,51 @@ export const FichesList = ({
           <div className="flex gap-x-8 gap-y-4">
             <Input
               type="search"
-              className="min-w-96"
+              className="w-full"
               onChange={(e) => handleSearchChange(e.target.value)}
               onSearch={(v) => {
                 handleSearchSubmit(v);
                 resetPagination();
               }}
               value={search}
-              containerClassname="w-full xl:w-96"
+              containerClassname="w-full xl:w-80"
               placeholder="Rechercher par nom ou description"
               displaySize="sm"
             />
 
-            {!isReadOnly && (
-              <ButtonGroup
-                activeButtonId={view}
-                size="sm"
-                buttons={[
-                  {
-                    id: 'grid',
-                    icon: 'grid-line',
-                    children: 'Carte',
-                    onClick: () => handleChangeView('grid'),
+            <ButtonGroup
+              activeButtonId={view}
+              size="sm"
+              buttons={[
+                {
+                  id: 'grid',
+                  icon: 'grid-line',
+                  children: 'Carte',
+                  onClick: () => {
+                    handleChangeView('grid');
+                    trackEvent(Event.fiches.listChangeView.grid);
                   },
-                  {
-                    id: 'scheduler',
-                    icon: 'calendar-line',
-                    children: 'Calendrier',
-                    onClick: () => handleChangeView('scheduler'),
+                },
+                {
+                  id: 'table',
+                  icon: 'menu-line',
+                  children: 'Tableau',
+                  onClick: () => {
+                    handleChangeView('table');
+                    trackEvent(Event.fiches.listChangeView.table);
                   },
-                ]}
-              />
-            )}
+                },
+                {
+                  id: 'scheduler',
+                  icon: 'calendar-line',
+                  children: 'Calendrier',
+                  onClick: () => {
+                    handleChangeView('scheduler');
+                    trackEvent(Event.fiches.listChangeView.calendar);
+                  },
+                },
+              ].filter((button) => !(isReadOnly && button.id === 'scheduler'))}
+            />
 
             <FiltersMenuButton />
           </div>
@@ -257,18 +295,31 @@ export const FichesList = ({
         <FicheListScheduler
           fiches={fiches ?? []}
           isLoading={isLoading}
-          fichesPerPage={NUMBER_OF_FICHE_PER_PAGE}
+          fichesPerPage={fichesPerPage}
         />
       )}
+
       {view === 'grid' && (
         <FichesListGrid
           collectivite={collectivite}
+          currentUserId={user.id}
           fiches={fiches ?? []}
           isLoading={isLoading}
           displayEditionMenu={displayEditionMenu}
           isGroupedActionsOn={isGroupedActionsModeActive}
           selectedFicheIds={selectedFicheIds}
+          handleSelectFiche={handleSelectFiche}
           onUnlink={onUnlink}
+        />
+      )}
+
+      {view === 'table' && (
+        <FichesListTable
+          collectivite={collectivite}
+          fiches={fiches ?? []}
+          isLoading={isLoading}
+          isGroupedActionsOn={isGroupedActionsModeActive}
+          selectedFicheIds={selectedFicheIds}
           handleSelectFiche={handleSelectFiche}
         />
       )}
@@ -277,14 +328,14 @@ export const FichesList = ({
         className="mx-auto mt-6"
         selectedPage={currentPage}
         nbOfElements={countTotal}
-        maxElementsPerPage={NUMBER_OF_FICHE_PER_PAGE}
+        maxElementsPerPage={fichesPerPage}
         idToScrollTo={view === 'scheduler' ? 'fa-scheduler' : 'app-header'}
         onChange={setCurrentPage}
       />
 
       <ActionsGroupeesMenu
         selectedFicheIds={selectedFicheIds}
-        isVisible={isGroupedActionsModeActive}
+        isVisible={isGroupedActionsModeActive && selectedFicheIds.length > 0}
         filters={filtersWithSearch}
         sort={[{ field: sort.field, direction: sort.direction }]}
         fichesCountExportedToPDF={

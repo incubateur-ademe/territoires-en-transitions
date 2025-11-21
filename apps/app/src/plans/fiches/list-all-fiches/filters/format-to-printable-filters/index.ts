@@ -243,6 +243,7 @@ const processFilterEntry = (
 
 export const formatToPrintableFilters = (
   filters: FormFilters,
+  readonlyFilters: Partial<FormFilters>,
   getFilterValuesLabels: (key: FilterKeys, values: any[]) => string[]
 ): FilterCategory<FilterKeys>[] => {
   const { dateFilterCategory, remainingFilters } =
@@ -251,8 +252,18 @@ export const formatToPrintableFilters = (
   const filterCategories: FilterCategory<FilterKeys>[] = Object.entries(
     remainingFilters
   )
-    .filter(([, value]) => value !== undefined)
-    .map((entry) => processFilterEntry(entry, filters, getFilterValuesLabels))
+    .filter(([_, value]) => value !== undefined)
+    .map((entry) => {
+      const category = processFilterEntry(
+        entry,
+        filters,
+        getFilterValuesLabels
+      );
+      if (category && readonlyFilters[entry[0] as FilterKeys]) {
+        category.readonly = true;
+      }
+      return category;
+    })
     .filter(
       (category): category is FilterCategory<FilterKeys> => category !== null
     );
@@ -263,6 +274,20 @@ export const formatToPrintableFilters = (
   const formattedFilterCategories = dateFilterCategory
     ? [...uniqFilterCategories, dateFilterCategory]
     : uniqFilterCategories;
+
+  // Define the readonly property for the filter categories
+  formattedFilterCategories.forEach((category) => {
+    if (category) {
+      const categoryKeys = Array.isArray(category.key)
+        ? category.key
+        : [category.key];
+      categoryKeys.forEach((key) => {
+        if (readonlyFilters[key]) {
+          category.readonly = true;
+        }
+      });
+    }
+  });
 
   return formattedFilterCategories;
 };

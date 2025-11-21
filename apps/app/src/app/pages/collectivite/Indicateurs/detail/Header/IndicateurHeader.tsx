@@ -1,5 +1,8 @@
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import { PermissionOperation } from '@/domain/users';
+import { VisibleWhen } from '@/ui/design-system/VisibleWhen';
 import { cn } from '@/ui/utils/cn';
 import CheminIndicateur from './CheminIndicateur';
 import { IndicateurInfos } from './IndicateurInfos';
@@ -9,6 +12,7 @@ import IndicateurToolbar from './IndicateurToolbar';
 type Props = {
   collectiviteId: number;
   definition: IndicateurDefinition;
+  permissions: PermissionOperation[];
   isReadonly: boolean;
   isPerso: boolean;
   composeSansAgregation: boolean;
@@ -17,6 +21,7 @@ type Props = {
 
 const IndicateurHeader = ({
   collectiviteId,
+  permissions,
   definition,
   isReadonly,
   isPerso,
@@ -47,16 +52,23 @@ const IndicateurHeader = ({
             {/* Actions sur l'indicateur */}
             {!isReadonly && (
               <IndicateurToolbar
-                {...{ definition, isPerso }}
+                {...{ definition, isPerso, permissions }}
                 className={cn('ml-auto', { '!mt-0': isSticky })}
               />
             )}
           </div>
 
-          <CheminIndicateur
-            collectiviteId={collectiviteId}
-            indicateur={definition}
-          />
+          <VisibleWhen
+            condition={hasPermission(
+              permissions,
+              'indicateurs.definitions.read_public'
+            )}
+          >
+            <CheminIndicateur
+              collectiviteId={collectiviteId}
+              indicateur={definition}
+            />
+          </VisibleWhen>
 
           {/* Infos générales sur l'indicateur */}
           <IndicateurInfos

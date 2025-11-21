@@ -9,13 +9,13 @@ type CreateFicheInput =
 
 type FicheId = number;
 
-export async function createFiche({
+export async function createFicheAndCleanupFunction({
   caller,
   ficheInput,
 }: {
   caller: ReturnType<TrpcRouter['createCaller']>;
   ficheInput: CreateFicheInput;
-}): Promise<FicheId> {
+}): Promise<{ ficheId: FicheId; ficheCleanup: () => Promise<void> }> {
   const ficheId = await caller.plans.fiches.create(ficheInput);
 
   if (ficheInput.axeId) {
@@ -27,10 +27,30 @@ export async function createFiche({
     });
   }
 
-  onTestFinished(async () => {
+  const ficheCleanup = async () => {
+    console.log(`Cleanup fiche ${ficheId}`);
     await caller.plans.fiches.delete({
       ficheId,
     });
+  };
+
+  return { ficheId, ficheCleanup };
+}
+
+export async function createFiche({
+  caller,
+  ficheInput,
+}: {
+  caller: ReturnType<TrpcRouter['createCaller']>;
+  ficheInput: CreateFicheInput;
+}): Promise<FicheId> {
+  const { ficheId, ficheCleanup } = await createFicheAndCleanupFunction({
+    caller,
+    ficheInput,
+  });
+
+  onTestFinished(async () => {
+    await ficheCleanup();
   });
 
   return ficheId;

@@ -9,13 +9,14 @@ import { CollectiviteMembresRouter } from './membres/membres.router';
 import { PersonnesRouter } from './personnes.router';
 import { TableauDeBordCollectiviteRouter } from './tableau-de-bord/tableau-de-bord-collectivite.router';
 import { PersonneTagRouter } from './tags/personnes/personne-tag.router';
-
+import { DocumentsRouter } from './documents/documents.router';
 @Injectable()
 export class CollectivitesRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly personnesRouter: PersonnesRouter,
     private readonly membresRouter: CollectiviteMembresRouter,
+    private readonly documentsRouter: DocumentsRouter,
     private readonly tableauBordRouter: TableauDeBordCollectiviteRouter,
     private readonly categoriesRouter: ListCategoriesRouter,
     private readonly listCollectivitesRouter: ListCollectivitesRouter,
@@ -28,6 +29,7 @@ export class CollectivitesRouter {
   router = this.trpc.router({
     personnes: this.personnesRouter.router,
     membres: this.membresRouter.router,
+    documents: this.documentsRouter.router,
     tableauDeBord: this.tableauBordRouter.router,
     categories: this.categoriesRouter.router,
     collectivites: this.trpc.mergeRouters(

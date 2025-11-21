@@ -3,6 +3,7 @@ import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use
 import { FichesList } from '@/app/plans/fiches/list-all-fiches/components/fiches-list';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { FicheActionFiltersProvider } from '@/app/plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
+import { PermissionOperation } from '@/domain/users';
 import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
 import FichePicto from '../../PlansActions/FicheAction/FichesLiees/FichePicto';
@@ -11,10 +12,16 @@ import ModaleFichesLiees from '../../PlansActions/FicheAction/FichesLiees/Modale
 type Props = {
   definition: IndicateurDefinition;
   isReadonly: boolean;
+  permissions: PermissionOperation[];
   collectiviteId: number;
 };
 
-const FichesLiees = ({ definition, isReadonly, collectiviteId }: Props) => {
+const FichesLiees = ({
+  definition,
+  isReadonly,
+  permissions,
+  collectiviteId,
+}: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { fiches } = useListFiches(collectiviteId, {
@@ -68,12 +75,16 @@ const FichesLiees = ({ definition, isReadonly, collectiviteId }: Props) => {
                 indicateurIds: [definition.id],
                 sort: 'titre',
               }}
+              permissions={permissions}
               isReadOnly={isReadonly}
               containerClassName="bg-white"
-              onUnlink={(ficheId) =>
-                updateIndicateur({
-                  ficheIds: ficheIds.filter((id) => id !== ficheId),
-                })
+              onUnlink={
+                isReadonly
+                  ? undefined
+                  : (ficheId) =>
+                      updateIndicateur({
+                        ficheIds: ficheIds.filter((id) => id !== ficheId),
+                      })
               }
             />
           </FicheActionFiltersProvider>

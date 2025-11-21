@@ -24,7 +24,7 @@ export class CollectiviteCrudRouter {
       .mutation(async ({ ctx, input }) => {
         await this.permission.isAllowed(
           ctx.user,
-          PermissionOperationEnum['COLLECTIVITES.EDITION'],
+          PermissionOperationEnum['COLLECTIVITES.MUTATE'],
           ResourceType.PLATEFORME,
           null
         );
@@ -35,7 +35,7 @@ export class CollectiviteCrudRouter {
       .mutation(async ({ ctx, input }) => {
         await this.permission.isAllowed(
           ctx.user,
-          PermissionOperationEnum['COLLECTIVITES.EDITION'],
+          PermissionOperationEnum['COLLECTIVITES.MUTATE'],
           ResourceType.PLATEFORME,
           null
         );
@@ -46,7 +46,7 @@ export class CollectiviteCrudRouter {
       .query(async ({ ctx, input }) => {
         await this.permission.isAllowed(
           ctx.user,
-          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+          PermissionOperationEnum['COLLECTIVITES.READ'],
           ResourceType.PLATEFORME,
           null
         );
@@ -57,7 +57,7 @@ export class CollectiviteCrudRouter {
       .query(async ({ ctx, input }) => {
         await this.permission.isAllowed(
           ctx.user,
-          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+          PermissionOperationEnum['COLLECTIVITES.READ'],
           ResourceType.PLATEFORME,
           null
         );
@@ -68,7 +68,7 @@ export class CollectiviteCrudRouter {
       .query(async ({ ctx, input }) => {
         await this.permission.isAllowed(
           ctx.user,
-          PermissionOperationEnum['COLLECTIVITES.LECTURE'],
+          PermissionOperationEnum['COLLECTIVITES.READ'],
           ResourceType.PLATEFORME,
           null
         );

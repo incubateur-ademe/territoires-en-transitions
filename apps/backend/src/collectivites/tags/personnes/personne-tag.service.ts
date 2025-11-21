@@ -99,7 +99,7 @@ export class PersonneTagService {
   ) {
     await this.permissionService.isAllowed(
       token,
-      PermissionOperationEnum['COLLECTIVITES.TAGS.EDITION'],
+      PermissionOperationEnum['COLLECTIVITES.TAGS.MUTATE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

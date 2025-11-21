@@ -1362,7 +1362,7 @@ WHERE (p.nb_plans <> 0 OR f.nb_fiches <> 0)
 ORDER BY c.day DESC, c.collectivite_id;
 
 -- Fonction save_reponse
-create or replace function save_reponse(json json) returns void
+create or replace function save_reponse(jsonarg json) returns void
     language plpgsql
 as
 $$

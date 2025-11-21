@@ -72,6 +72,11 @@ export const Event = {
     updateDescription: 'validation_modale_modifier_fa',
     viewImpactInfo: 'cta_fa_fai',
     downloadModele: 'cta_telecharger_modele',
+    listChangeView: {
+      grid: 'plans:fiches:change_view_grid',
+      table: 'plans:fiches:change_view_table',
+      calendar: 'plans:fiches:change_view_calendar',
+    },
   },
   trajectoire: {
     selectIndicateur: 'indicateurs_trajectoire_snbc_select',

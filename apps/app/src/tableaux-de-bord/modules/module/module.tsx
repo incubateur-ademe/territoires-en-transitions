@@ -8,8 +8,8 @@ import FilterBadges, {
 } from '@/app/ui/lists/filter-badges';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import {
-  ActionsMenu,
   Button,
+  ButtonMenu,
   ButtonProps,
   EmptyCard,
   InfoTooltip,
@@ -128,7 +128,12 @@ const Module = ({
         </h6>
         {/** Menu */}
         {menuActions && menuActions.length > 0 && (
-          <ActionsMenu actions={menuActions} />
+          <ButtonMenu
+            icon="more-line"
+            variant="grey"
+            size="xs"
+            menu={{ actions: menuActions }}
+          />
         )}
       </div>
       {/** Filtres du module */}

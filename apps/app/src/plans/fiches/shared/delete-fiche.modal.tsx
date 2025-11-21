@@ -1,11 +1,11 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { useDeleteFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useDeleteFicheAction';
+import { useDeleteFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-delete-fiche';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { FicheResume } from '@/domain/plans';
 import { Modal, ModalFooterOKCancel } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
 
 type DeleteFicheModalProps = {
-  isReadonly?: boolean;
+  openState?: OpenState;
   fiche: Pick<FicheResume, 'id' | 'titre' | 'plans'>;
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
@@ -17,23 +17,19 @@ type DeleteFicheModalProps = {
  * Bouton + modale de suppression d'une fiche action
  */
 const DeleteFicheModal = ({
-  isReadonly = true,
+  openState,
   fiche,
   buttonVariant,
   buttonClassName,
   redirectPath,
 }: DeleteFicheModalProps) => {
-  const collectiviteId = useCollectiviteId();
   const { id, titre, plans } = fiche;
   const isInMultipleAxes = !!plans && plans.length > 1;
-  const { mutate: deleteFiche } = useDeleteFicheAction({
-    collectiviteId,
-    ficheId: id,
-    redirectPath,
-  });
+  const { mutate: deleteFiche } = useDeleteFiche({ redirectPath });
 
   return (
     <Modal
+      openState={openState}
       title="Supprimer la fiche"
       subTitle={titre || 'Fiche sans titre'}
       render={({ descriptionId }) => (
@@ -62,7 +58,9 @@ const DeleteFicheModal = ({
           btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
-              deleteFiche();
+              deleteFiche({
+                ficheId: id,
+              });
               close();
             },
           }}
@@ -76,7 +74,6 @@ const DeleteFicheModal = ({
         variant={buttonVariant}
         size="xs"
         className={buttonClassName}
-        disabled={isReadonly}
       />
     </Modal>
   );

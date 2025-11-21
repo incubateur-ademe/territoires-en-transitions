@@ -23,7 +23,7 @@ export const PHProvider = ({
   return (
     <>
       <PostHogProvider
-        config={config}
+        config={{ ...config, shouldIdentifyUser: false }}
         onClientInit={(client) => setPosthogClient(client)}
       >
         {children}
