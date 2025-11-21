@@ -65,12 +65,8 @@ import { sqlAuthorOrNull } from '@/backend/users/models/author.utils';
 import { dcpTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { getModifiedSinceDate } from '@/backend/utils/modified-since.enum';
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { MethodResult } from '@/backend/utils/result.type';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import {
   aliasedTable,
   and,
@@ -706,7 +702,9 @@ export default class ListFichesService {
     ficheId: number,
     addCollectiviteData?: boolean,
     user?: AuthUser
-  ): Promise<FicheWithRelations | FicheWithRelationsAndCollectivite> {
+  ): Promise<
+    MethodResult<FicheWithRelations | FicheWithRelationsAndCollectivite, string>
+  > {
     this.logger.log(`Récupération de la fiche action ${ficheId}`);
 
     const { data: fichesAction } = await this.listFichesQuery(null, {
@@ -715,9 +713,10 @@ export default class ListFichesService {
     });
 
     if (!fichesAction?.length) {
-      throw new NotFoundException(
-        `Aucune fiche action trouvée avec l'id ${ficheId}`
-      );
+      return {
+        success: false,
+        error: `Aucune fiche action trouvée avec l'id ${ficheId}`,
+      };
     }
 
     const ficheAction = fichesAction[0];
@@ -733,7 +732,7 @@ export default class ListFichesService {
         collectivite.collectivite as Collectivite;
     }
 
-    return ficheAction;
+    return { success: true, data: ficheAction };
   }
 
   async countPiloteFiches(collectiviteId: number, user: AuthUser) {
