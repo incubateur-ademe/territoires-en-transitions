@@ -24,6 +24,7 @@ type ServicesPilotesDropdownProps = Omit<
   }) => void;
   disabledOptionsIds?: number[];
   additionalKeysToInvalidate?: QueryKey[];
+  disableEdition?: boolean;
 };
 
 const ServicesPilotesDropdown = (props: ServicesPilotesDropdownProps) => {

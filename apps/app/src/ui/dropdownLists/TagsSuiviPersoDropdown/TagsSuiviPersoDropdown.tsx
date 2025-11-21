@@ -29,7 +29,9 @@ const TagsSuiviPersoDropdown = (props: TagsSuiviPersoDropdownProps) => {
   return (
     <SelectTags
       {...props}
-      placeholder={props.placeholder ?? 'Créez un tag de suivi personnalisé'}
+      getPlaceholder={(disableEdition) =>
+        `Sélectionner ${!disableEdition ? 'ou créer ' : ''}un tag`
+      }
       queryKey={['tags_suivi_perso']}
       tagTableName="libre_tag"
       additionalKeysToInvalidate={props.additionalKeysToInvalidate}
