@@ -112,4 +112,10 @@ test.describe('Discussions', () => {
     await discussionsPom.expectDiscussionPanelVisible();
     await discussionsPom.expectedDiscussionCount(1);
   });
+
+  test("Ouvrir l'onglet Commentaires", async ({ page }) => {
+    const discussionsPom = new DiscussionsPom(page);
+    await discussionsPom.gotoCommentairesTab(collectiviteId, referentielId);
+    await discussionsPom.expectCommentairesTabVisible();
+  });
 });

@@ -34,4 +34,14 @@ export class DiscussionsPom {
   async expectedDiscussionCount(count: number) {
     await expect(this.commentItem).toHaveCount(count);
   }
+
+  async gotoCommentairesTab(collectiviteId: number, referentielId: string) {
+    await this.page.goto(
+      `/collectivite/${collectiviteId}/referentiel/${referentielId}/commentaires`
+    );
+  }
+
+  async expectCommentairesTabVisible() {
+    await expect(this.discussionPanel).toBeVisible();
+  }
 }
