@@ -3,6 +3,7 @@ import { IndicateursRouter } from '@/backend/indicateurs/indicateurs.router';
 import { MetricsRouter } from '@/backend/metrics/metrics.router';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
 import { ContextStoreService } from '@/backend/utils/context/context.service';
+import { NotificationsRouter } from '@/backend/utils/notifications/notifications.router';
 import { getSentryContextFromApplicationContext } from '@/backend/utils/sentry-init';
 import {
   HttpException,
@@ -34,7 +35,8 @@ export class TrpcRouter {
     private readonly fichesRouter: FichesRouter,
     private readonly planRouter: PlanRouter,
     private readonly completionAnalyticsRouter: CompletionAnalyticsRouter,
-    private readonly metricsRouter: MetricsRouter
+    private readonly metricsRouter: MetricsRouter,
+    private readonly notificationsRouter: NotificationsRouter
   ) {}
 
   appRouter = this.trpc.router({
@@ -51,6 +53,7 @@ export class TrpcRouter {
     },
     referentiels: this.referentielsRouter.router,
     metrics: this.metricsRouter.router,
+    notifications: this.notificationsRouter.router,
   });
 
   createCaller = this.trpc.createCallerFactory(this.appRouter);

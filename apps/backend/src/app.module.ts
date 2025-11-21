@@ -19,6 +19,7 @@ import { ConfigurationModule } from './utils/config/configuration.module';
 import ConfigurationService from './utils/config/configuration.service';
 import { DatabaseModule } from './utils/database/database.module';
 import { SheetModule } from './utils/google-sheets/sheet.module';
+import { NotificationsModule } from './utils/notifications/notifications.module';
 import { TrackingModule } from './utils/tracking/tracking.module';
 import { TrpcModule } from './utils/trpc/trpc.module';
 import { TrpcRouter } from './utils/trpc/trpc.router';
@@ -54,10 +55,7 @@ const appLogger = new Logger('AppModule');
         appLogger.log(`Connecting to Redis at ${host}:${port}`);
 
         return {
-          connection: {
-            host: host,
-            port: port,
-          },
+          connection: { host, port },
         };
       },
       inject: [ConfigurationService],
@@ -78,6 +76,7 @@ const appLogger = new Logger('AppModule');
     SharedModule,
     TrackingModule,
     MetricsModule,
+    NotificationsModule,
   ],
   providers: [
     TrpcRouter,

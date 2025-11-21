@@ -19,6 +19,7 @@ import { isNil } from 'es-toolkit';
 import { toCamel } from 'ts-case-convert';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
+import { NotifyPiloteService } from '../notify-pilote/notify-pilote.service';
 import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
 import { ficheActionEffetAttenduTable } from '../shared/models/fiche-action-effet-attendu.table';
@@ -69,17 +70,20 @@ export default class UpdateFicheService {
     private readonly webhookService: WebhookService,
     private readonly ficheActionListService: ListFichesService,
     private readonly fichePermissionService: FicheActionPermissionsService,
-    private readonly shareFicheService: ShareFicheService
+    private readonly shareFicheService: ShareFicheService,
+    private readonly notificationsFicheService: NotifyPiloteService
   ) {}
 
   async updateFiche({
     ficheId,
     ficheFields,
+    isNotificationEnabled,
     user,
     tx,
   }: {
     ficheId: number;
     ficheFields: UpdateFicheRequest;
+    isNotificationEnabled?: boolean;
     user: AuthenticatedUser;
     tx?: Transaction;
   }): Promise<Result<FicheWithRelations, UpdateFicheError>> {
@@ -119,13 +123,14 @@ export default class UpdateFicheService {
         };
       }
 
-      const result = await this.ficheActionListService.getFicheById(
-        unsafeFicheAction.parentId,
-        false,
-        user
-      );
-      if (!result.success) {
-        this.logger.error(result.error);
+      const resultGetParentFiche =
+        await this.ficheActionListService.getFicheById(
+          unsafeFicheAction.parentId,
+          false,
+          user
+        );
+      if (!resultGetParentFiche.success) {
+        this.logger.error(resultGetParentFiche.error);
         return {
           success: false,
           error: UpdateFicheErrorType.PARENT_NOT_FOUND,
@@ -133,20 +138,21 @@ export default class UpdateFicheService {
       }
     }
 
-    const executeInTransaction = async (transaction: Transaction) => {
-      const result = await this.ficheActionListService.getFicheById(
-        ficheId,
-        false,
-        user
-      );
-      if (!result.success) {
-        this.logger.error(result.error);
+    const executeInTransaction = async (
+      transaction: Transaction
+    ): Promise<
+      Result<{ previousFiche: FicheWithRelations }, UpdateFicheError>
+    > => {
+      const resultGetExistingFiche =
+        await this.ficheActionListService.getFicheById(ficheId, false, user);
+      if (!resultGetExistingFiche.success) {
+        this.logger.error(resultGetExistingFiche.error);
         return {
           success: false,
           error: UpdateFicheErrorType.FICHE_NOT_FOUND,
         };
       }
-      const existingFicheAction = result.data;
+      const existingFicheAction = resultGetExistingFiche.data;
 
       /**
        * Updates fiche action properties
@@ -382,35 +388,56 @@ export default class UpdateFicheService {
           transaction
         );
       }
+
+      return {
+        success: true,
+        data: {
+          previousFiche: existingFicheAction,
+        },
+      };
     };
 
     // Utilise la transaction fournie ou en crée une nouvelle
-    await (tx
+    const resultUpdate = await (tx
       ? executeInTransaction(tx)
       : this.databaseService.db.transaction((newTx) =>
           executeInTransaction(newTx)
         ));
+    if (!resultUpdate.success) {
+      return { success: false, error: resultUpdate.error };
+    }
 
     // Recharge la fiche mise à jour
-    const result = await this.ficheActionListService.getFicheById(
+    const resultUpdated = await this.ficheActionListService.getFicheById(
       ficheId,
       true,
       user
     );
-    if (!result.success) {
+    if (!resultUpdated.success) {
       return { success: false, error: UpdateFicheErrorType.FICHE_NOT_FOUND };
     }
-    const ficheActionWithRelation = result.data;
+
+    const updatedFiche = resultUpdated.data;
+
+    // Ajoute les notifications pour les pilotes nouvellement associés à une sous-fiche
+    if (isNotificationEnabled) {
+      const { previousFiche } = resultUpdate.data;
+      await this.notificationsFicheService.upsertPiloteNotifications({
+        updatedFiche,
+        previousFiche,
+        user,
+      });
+    }
 
     await this.webhookService.sendWebhookNotification(
       ApplicationSousScopesEnum.FICHES,
       `${ficheId}`,
-      ficheActionWithRelation
+      updatedFiche
     );
 
     return {
       success: true,
-      data: ficheActionWithRelation,
+      data: updatedFiche,
     };
   }
 

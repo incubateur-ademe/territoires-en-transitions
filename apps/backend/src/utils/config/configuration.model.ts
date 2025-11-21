@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const backendConfigurationSchema = z.object({
+  APP_URL: z.string().min(1).describe('Main front app URL'),
   SUPABASE_DATABASE_URL: z
     .string()
     .min(1)
@@ -121,6 +122,16 @@ export const backendConfigurationSchema = z.object({
     .describe('The throttle limit'),
   POSTHOG_KEY: z.string().optional().describe('The PostHog key'),
   POSTHOG_HOST: z.string().optional().describe('The PostHog host'),
+  SMTP_URL: z
+    .string()
+    .optional()
+    .describe('SMTP API URL (smtp://<username>@<host>:<port>)'),
+  SMTP_KEY: z.string().optional().describe('SMTP API key'),
+  SMTP_FROM: z
+    .string()
+    .optional()
+    .default('Territoires en Transitions <contact@territoiresentransitions.fr>')
+    .describe('SMTP sender name and address'),
 });
 export type BackendConfigurationType = z.infer<
   typeof backendConfigurationSchema
