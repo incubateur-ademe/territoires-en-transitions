@@ -18,4 +18,6 @@ export type ActionDefinitionSummary = {
   haveQuestions: boolean;
   haveScoreIndicatif: boolean;
   phase: ActionCategorie | null;
+  discussionsCount: number;
+  preuvesCount: number;
 };

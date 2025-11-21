@@ -119,3 +119,12 @@ export const getTruncatedText = (text: string | null, limit: number) => {
 export const isDateValid = (dateStr: string) => {
   return !isNaN(new Date(dateStr).getTime());
 };
+
+// Renvoie les initiales d'un nom (premier lettre de chaque mot)
+export const getInitials = (name: string): string => {
+  if (!name) return '';
+  return name
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase())
+    .join('');
+};

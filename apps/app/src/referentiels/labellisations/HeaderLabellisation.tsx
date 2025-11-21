@@ -55,17 +55,16 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
       </h2>
       {status === 'non_demandee' && !isAuditeur ? (
         <>
-          {etoiles === 1 && isCOT ? (
-            <Button
-              className="mb-4"
-              dataTest="1ereEtoileCOT"
-              size="sm"
-              disabled={!peutDemander1ereEtoileCOT}
-              onClick={() => setOpened_1ereEtoileCOT(true)}
-            >
-              Demander la première étoile
-            </Button>
-          ) : null}
+          {/* {etoiles === 1 && !isCOT ? ( */}
+          <Button
+            className="mb-4"
+            dataTest="1ereEtoileCOT"
+            size="sm"
+            disabled={!peutDemander1ereEtoileCOT}
+            onClick={() => setOpened_1ereEtoileCOT(true)}
+          >
+            Demander la première étoile
+          </Button>
           <Button
             dataTest="SubmitDemandeBtn"
             size="sm"
@@ -74,7 +73,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
           >
             {etoiles === 1 && !isCOT
               ? 'Demander la première étoile'
-              : 'Demander un audit'}
+              : 'Demander un auditsss'}
           </Button>
         </>
       ) : null}

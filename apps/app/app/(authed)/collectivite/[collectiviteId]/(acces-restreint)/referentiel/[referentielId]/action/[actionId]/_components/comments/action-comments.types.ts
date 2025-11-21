@@ -1,4 +1,4 @@
-export type TActionDiscussionStatut = 'ouvert' | 'ferme';
+export type ActionDiscussionStatut = 'ouvert' | 'ferme';
 
 export type TActionDiscussion = {
   id: number;
@@ -8,7 +8,7 @@ export type TActionDiscussion = {
   created_by_nom: string;
   action_id: string;
   collectivite_id: number;
-  status: TActionDiscussionStatut;
+  status: ActionDiscussionStatut;
   commentaires: TActionDiscussionCommentaire[]; // liste commentaires
 };
 
