@@ -1,7 +1,15 @@
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { TRPCError } from '@trpc/server';
+import z from 'zod';
 import { ficheSchemaCreate } from '../shared/models/fiche-action.table';
+import { updateFicheRequestSchema } from '../update-fiche/update-fiche.request';
 import { CreateFicheService } from './create-fiche.service';
+
+const createFicheInput = z.object({
+  fiche: ficheSchemaCreate,
+  ficheFields: updateFicheRequestSchema.optional(),
+});
 
 @Injectable()
 export class CreateFicheRouter {
@@ -11,11 +19,22 @@ export class CreateFicheRouter {
   ) {}
 
   router = this.trpc.router({
-    // TODO Brancher ce endpoint aux hooks front qui utilisent encore supabase en direct
     create: this.trpc.authedProcedure
-      .input(ficheSchemaCreate)
+      .input(createFicheInput)
       .mutation(async ({ input, ctx }) => {
-        return this.service.createFiche(input, { user: ctx.user });
+        const result = await this.service.createFiche(input.fiche, {
+          ficheFields: input.ficheFields,
+          user: ctx.user,
+        });
+
+        if (!result.success) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: result.error,
+          });
+        }
+
+        return result.data;
       }),
   });
 }

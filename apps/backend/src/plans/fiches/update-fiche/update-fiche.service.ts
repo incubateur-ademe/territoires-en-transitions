@@ -1,3 +1,4 @@
+import { FicheWithRelations } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ShareFicheService } from '@/backend/plans/fiches/share-fiches/share-fiche.service';
 import { ApplicationSousScopesEnum } from '@/backend/utils/application-domains.enum';
@@ -14,6 +15,7 @@ import {
   TableConfig,
 } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
+import { isNil } from 'es-toolkit';
 import { toCamel } from 'ts-case-convert';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
@@ -35,7 +37,9 @@ import {
   ficheActionTable,
   ficheSchemaUpdate,
 } from '../shared/models/fiche-action.table';
+import { UpdateFicheError, UpdateFicheErrorType } from './update-fiche.errors';
 import { UpdateFicheRequest } from './update-fiche.request';
+import { Result } from './update-fiche.result';
 
 type ColumnType = Column<
   ColumnBaseConfig<ColumnDataType, string>,
@@ -72,11 +76,13 @@ export default class UpdateFicheService {
     ficheId,
     ficheFields,
     user,
+    tx,
   }: {
     ficheId: number;
     ficheFields: UpdateFicheRequest;
     user: AuthenticatedUser;
-  }) {
+    tx?: Transaction;
+  }): Promise<Result<FicheWithRelations, UpdateFicheError>> {
     await this.fichePermissionService.canWriteFiche(ficheId, user);
 
     this.logger.log(`Mise à jour de la fiche action dont l'id est ${ficheId}`);
@@ -101,12 +107,46 @@ export default class UpdateFicheService {
       ...unsafeFicheAction
     } = ficheFields;
 
-    await this.databaseService.db.transaction(async (tx) => {
-      const existingFicheAction =
-        await this.ficheActionListService.getFicheById(ficheId, false, user);
+    // Removes all props that are not in the schema
+    const ficheAction = ficheSchemaUpdate.parse(unsafeFicheAction);
 
-      // Removes all props that are not in the schema
-      const ficheAction = ficheSchemaUpdate.parse(unsafeFicheAction);
+    // Validate parentId before transaction
+    if (!isNil(unsafeFicheAction.parentId)) {
+      if (unsafeFicheAction.parentId === ficheId) {
+        return {
+          success: false,
+          error: UpdateFicheErrorType.SELF_REFERENCE,
+        };
+      }
+
+      const result = await this.ficheActionListService.getFicheById(
+        unsafeFicheAction.parentId,
+        false,
+        user
+      );
+      if (!result.success) {
+        this.logger.error(result.error);
+        return {
+          success: false,
+          error: UpdateFicheErrorType.PARENT_NOT_FOUND,
+        };
+      }
+    }
+
+    const executeInTransaction = async (transaction: Transaction) => {
+      const result = await this.ficheActionListService.getFicheById(
+        ficheId,
+        false,
+        user
+      );
+      if (!result.success) {
+        this.logger.error(result.error);
+        return {
+          success: false,
+          error: UpdateFicheErrorType.FICHE_NOT_FOUND,
+        };
+      }
+      const existingFicheAction = result.data;
 
       /**
        * Updates fiche action properties
@@ -123,7 +163,7 @@ export default class UpdateFicheService {
       // }
 
       if (Object.keys(ficheFields).length > 0) {
-        await tx
+        await transaction
           .update(ficheActionTable)
           .set({
             ...ficheAction,
@@ -142,7 +182,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           axes,
-          tx,
+          transaction,
           ficheActionAxeTable,
           ['id'],
           ficheActionAxeTable.ficheId,
@@ -154,7 +194,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           thematiques,
-          tx,
+          transaction,
           ficheActionThematiqueTable,
           ['id'],
           ficheActionThematiqueTable.ficheId,
@@ -166,7 +206,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           sousThematiques,
-          tx,
+          transaction,
           ficheActionSousThematiqueTable,
           ['id'],
           ficheActionSousThematiqueTable.ficheId,
@@ -178,7 +218,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           partenaires,
-          tx,
+          transaction,
           ficheActionPartenaireTagTable,
           ['id'],
           ficheActionPartenaireTagTable.ficheId,
@@ -190,7 +230,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           structures,
-          tx,
+          transaction,
           ficheActionStructureTagTable,
           ['id'],
           ficheActionStructureTagTable.ficheId,
@@ -202,7 +242,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           pilotes,
-          tx,
+          transaction,
           ficheActionPiloteTable,
           ['tagId', 'userId'],
           ficheActionPiloteTable.ficheId,
@@ -214,7 +254,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           referents,
-          tx,
+          transaction,
           ficheActionReferentTable,
           ['tagId', 'userId'],
           ficheActionReferentTable.ficheId,
@@ -226,7 +266,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           mesures,
-          tx,
+          transaction,
           ficheActionActionTable,
           ['id'],
           ficheActionActionTable.ficheId,
@@ -238,7 +278,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           indicateurs,
-          tx,
+          transaction,
           ficheActionIndicateurTable,
           ['id'],
           ficheActionIndicateurTable.ficheId,
@@ -250,7 +290,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           services,
-          tx,
+          transaction,
           ficheActionServiceTagTable,
           ['id'],
           ficheActionServiceTagTable.ficheId,
@@ -263,7 +303,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           flatFinanceurs,
-          tx,
+          transaction,
           ficheActionFinanceurTagTable,
           ['financeurTagId', 'montantTtc'],
           ficheActionFinanceurTagTable.ficheId,
@@ -276,7 +316,7 @@ export default class UpdateFicheService {
 
       if (fichesLiees !== undefined) {
         // Deletes all existing relations linked to fiche action
-        await tx
+        await transaction
           .delete(ficheActionLienTable)
           .where(
             or(
@@ -287,7 +327,7 @@ export default class UpdateFicheService {
 
         // Adds new relations to fiche action
         if (fichesLiees !== null && fichesLiees.length > 0) {
-          await tx
+          await transaction
             .insert(ficheActionLienTable)
             .values(
               fichesLiees.map((fiche) => ({
@@ -303,7 +343,7 @@ export default class UpdateFicheService {
         await this.updateRelations(
           ficheId,
           effetsAttendus,
-          tx,
+          transaction,
           ficheActionEffetAttenduTable,
           ['id'],
           ficheActionEffetAttenduTable.ficheId,
@@ -313,13 +353,13 @@ export default class UpdateFicheService {
 
       if (libreTags !== undefined) {
         // Delete existing relations
-        await tx
+        await transaction
           .delete(ficheActionLibreTagTable)
           .where(eq(ficheActionLibreTagTable.ficheId, ficheId));
 
         // Insert new relations
         if (libreTags !== null && libreTags.length > 0) {
-          await tx
+          await transaction
             .insert(ficheActionLibreTagTable)
             .values(
               libreTags.map((relation) => ({
@@ -339,13 +379,28 @@ export default class UpdateFicheService {
           existingFicheAction,
           collectiviteIds,
           user.id,
-          tx
+          transaction
         );
       }
-    });
+    };
 
-    const ficheActionWithRelation =
-      await this.ficheActionListService.getFicheById(ficheId, true, user);
+    // Utilise la transaction fournie ou en crée une nouvelle
+    await (tx
+      ? executeInTransaction(tx)
+      : this.databaseService.db.transaction((newTx) =>
+          executeInTransaction(newTx)
+        ));
+
+    // Recharge la fiche mise à jour
+    const result = await this.ficheActionListService.getFicheById(
+      ficheId,
+      true,
+      user
+    );
+    if (!result.success) {
+      return { success: false, error: UpdateFicheErrorType.FICHE_NOT_FOUND };
+    }
+    const ficheActionWithRelation = result.data;
 
     await this.webhookService.sendWebhookNotification(
       ApplicationSousScopesEnum.FICHES,
@@ -353,7 +408,10 @@ export default class UpdateFicheService {
       ficheActionWithRelation
     );
 
-    return ficheActionWithRelation;
+    return {
+      success: true,
+      data: ficheActionWithRelation,
+    };
   }
 
   /**

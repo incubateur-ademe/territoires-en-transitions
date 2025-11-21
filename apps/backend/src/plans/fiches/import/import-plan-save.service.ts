@@ -4,6 +4,7 @@ import {
   FicheImport,
   TagImport,
 } from '@/backend/plans/fiches/import/import-plan.dto';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable } from '@nestjs/common';
 import AxeService from '../axe.service';
@@ -52,11 +53,11 @@ export class ImportPlanSaveService {
   async fiches(
     collectiviteId: number,
     fiches: Set<FicheImport>,
-    tx: Transaction
+    tx: Transaction,
+    user: AuthenticatedUser
   ): Promise<void> {
     for (const fiche of fiches) {
-      // Save "fiche"
-      const ficheId = await this.ficheService.createFiche(
+      const createdFicheResult = await this.ficheService.createFiche(
         {
           collectiviteId,
           titre: fiche.titre,
@@ -76,8 +77,14 @@ export class ImportPlanSaveService {
           instanceGouvernance: fiche.gouvernance,
           participationCitoyenneType: fiche.participation,
         },
-        { tx }
+        { tx, user }
       );
+      if (!createdFicheResult.success) {
+        throw new Error(
+          `Échec de la création de la fiche: ${createdFicheResult.error}`
+        );
+      }
+      const ficheId = createdFicheResult.data.id;
       fiche.id = ficheId;
 
       // Save "thématique"
