@@ -20,6 +20,7 @@ type FinanceursDropdownProps = Omit<
     financeurs: TagWithCollectiviteId[];
     selectedFinanceur: TagWithCollectiviteId;
   }) => void;
+  disableEdition?: boolean;
 };
 
 const FinanceursDropdown = (props: FinanceursDropdownProps) => {
@@ -42,6 +43,7 @@ const FinanceursDropdown = (props: FinanceursDropdownProps) => {
           selectedFinanceur: selectedValue,
         });
       }}
+      disableEdition={props.disableEdition}
     />
   );
 };
