@@ -43,11 +43,25 @@ const buildFilterSearchParameters = (module: ModuleFicheActionsSelect) => {
       ).toISOString()
     );
   }
-
   if (module.options.filtre.utilisateurPiloteIds) {
     params.set(
       nameToparams.utilisateurPiloteIds,
       module.options.filtre.utilisateurPiloteIds.join(',')
+    );
+  }
+  if (module.options.filtre.statuts) {
+    params.set(nameToparams.statuts, module.options.filtre.statuts.join(','));
+  }
+  if (module.options.filtre.priorites) {
+    params.set(
+      nameToparams.priorites,
+      module.options.filtre.priorites.join(',')
+    );
+  }
+  if (module.options.filtre.planActionIds) {
+    params.set(
+      nameToparams.planActionIds,
+      module.options.filtre.planActionIds.join(',')
     );
   }
 
@@ -69,6 +83,11 @@ export const FilteredFichesByModule = ({
   };
 
   const filterSearchParameters = buildFilterSearchParameters(module);
+
+  console.log(
+    'filterSearchParameters :::::::: ',
+    filterSearchParameters.toString()
+  );
 
   return (
     <>
