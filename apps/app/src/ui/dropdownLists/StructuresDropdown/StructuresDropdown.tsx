@@ -29,7 +29,11 @@ const StructuresDropdown = (props: StructuresDropdownProps) => {
   return (
     <SelectTags
       {...props}
-      placeholder={props.placeholder ?? 'Sélectionnez ou créez un pilote'}
+      placeholder={(isEditionAllowed) =>
+        `Sélectionner ${
+          isEditionAllowed ? 'ou créer ' : ''
+        }une structure pilote`
+      }
       queryKey={['structures']}
       tagTableName="structure_tag"
       additionalKeysToInvalidate={props.additionalKeysToInvalidate}
