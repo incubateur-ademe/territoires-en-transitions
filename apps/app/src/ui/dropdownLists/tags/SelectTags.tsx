@@ -1,5 +1,5 @@
 import { TableTag } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { SHARE_ICON } from '@/app/plans/fiches/share-fiche/fiche-share-info';
 import { TagWithCollectiviteId } from '@/domain/collectivites';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
@@ -7,7 +7,10 @@ import { QueryKey } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useDeleteTag, useTagCreate, useTagUpdate } from '.';
 
-type SelectTagsProps = Omit<SelectMultipleProps, 'options' | 'onChange'> & {
+type SelectTagsProps = Omit<
+  SelectMultipleProps,
+  'options' | 'onChange' | 'placeholder'
+> & {
   queryKey: QueryKey;
   additionalKeysToInvalidate?: QueryKey[];
   tagTableName: TableTag;
@@ -24,6 +27,7 @@ type SelectTagsProps = Omit<SelectMultipleProps, 'options' | 'onChange'> & {
     selectedValue: TagWithCollectiviteId;
   }) => void;
   optionsAreCaseSensitive?: boolean;
+  placeholder?: string | ((isEditionAllowed: boolean) => string);
 };
 
 const SelectTags = ({
@@ -36,9 +40,11 @@ const SelectTags = ({
   disabledOptionsIds,
   refetchOptions,
   optionsAreCaseSensitive = true,
+  placeholder,
   ...props
 }: SelectTagsProps) => {
-  const collectiviteId = useCollectiviteId();
+  const collectivite = useCurrentCollectivite();
+  const collectiviteId = collectivite.collectiviteId;
   // Liste d'options pour le select
   const options: Option[] = (optionsListe ?? []).map((opt) => ({
     value: opt.id,
@@ -65,6 +71,8 @@ const SelectTags = ({
   // Formattage des valeurs sélectionnées pour les renvoyer au composant parent
   const getSelectedValues = (values?: OptionValue[]) =>
     (optionsListe ?? []).filter((opt) => values?.some((v) => v === opt.id));
+
+  const isEditionAllowed = collectivite.niveauAcces !== null;
 
   // ***
   // Ajout d'un nouveau tag à la liste d'options
@@ -139,9 +147,16 @@ const SelectTags = ({
     });
     deleteTag(parseInt(tagId as string));
   };
+
+  const computedPlaceholder =
+    typeof placeholder === 'string'
+      ? placeholder
+      : placeholder?.(isEditionAllowed);
+
   return (
     <SelectFilter
       {...props}
+      placeholder={computedPlaceholder}
       options={options}
       onChange={({ values, selectedValue }) =>
         props.onChange({
@@ -149,12 +164,16 @@ const SelectTags = ({
           selectedValue: getSelectedValues([selectedValue])[0],
         })
       }
-      createProps={{
-        userCreatedOptions: userCreatedOptionsIds ?? editableOptionsIds,
-        onCreate: handleTagCreate,
-        onUpdate: handleTagUpdate,
-        onDelete: handleTagDelete,
-      }}
+      createProps={
+        isEditionAllowed
+          ? {
+              userCreatedOptions: userCreatedOptionsIds ?? editableOptionsIds,
+              onCreate: handleTagCreate,
+              onUpdate: handleTagUpdate,
+              onDelete: handleTagDelete,
+            }
+          : undefined
+      }
       optionsAreCaseSensitive={optionsAreCaseSensitive}
     />
   );
