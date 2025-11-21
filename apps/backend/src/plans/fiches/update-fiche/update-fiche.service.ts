@@ -119,14 +119,13 @@ export default class UpdateFicheService {
         };
       }
 
-      try {
-        await this.ficheActionListService.getFicheById(
-          unsafeFicheAction.parentId,
-          false,
-          user
-        );
-      } catch (error) {
-        this.logger.error(error);
+      const result = await this.ficheActionListService.getFicheById(
+        unsafeFicheAction.parentId,
+        false,
+        user
+      );
+      if (!result.success) {
+        this.logger.error(result.error);
         return {
           success: false,
           error: UpdateFicheErrorType.PARENT_NOT_FOUND,
@@ -135,8 +134,19 @@ export default class UpdateFicheService {
     }
 
     const executeInTransaction = async (transaction: Transaction) => {
-      const existingFicheAction =
-        await this.ficheActionListService.getFicheById(ficheId, false, user);
+      const result = await this.ficheActionListService.getFicheById(
+        ficheId,
+        false,
+        user
+      );
+      if (!result.success) {
+        this.logger.error(result.error);
+        return {
+          success: false,
+          error: UpdateFicheErrorType.FICHE_NOT_FOUND,
+        };
+      }
+      const existingFicheAction = result.data;
 
       /**
        * Updates fiche action properties
@@ -381,8 +391,16 @@ export default class UpdateFicheService {
           executeInTransaction(newTx)
         ));
 
-    const ficheActionWithRelation =
-      await this.ficheActionListService.getFicheById(ficheId, true, user);
+    // Recharge la fiche mise à jour
+    const result = await this.ficheActionListService.getFicheById(
+      ficheId,
+      true,
+      user
+    );
+    if (!result.success) {
+      return { success: false, error: UpdateFicheErrorType.FICHE_NOT_FOUND };
+    }
+    const ficheActionWithRelation = result.data;
 
     await this.webhookService.sendWebhookNotification(
       ApplicationSousScopesEnum.FICHES,

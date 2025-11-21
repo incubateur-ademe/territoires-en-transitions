@@ -25,6 +25,7 @@ export class UpdateFicheRouter {
       'La fiche ne peut pas se référencer elle-même',
     [UpdateFicheErrorType.PARENT_NOT_FOUND]:
       'La fiche ne peut pas référencer une fiche inexistante',
+    [UpdateFicheErrorType.FICHE_NOT_FOUND]: 'Fiche non trouvée',
   };
 
   private getErrorMessage(errorKey: string): string {
@@ -53,6 +54,10 @@ export class UpdateFicheRouter {
       [UpdateFicheErrorType.PARENT_NOT_FOUND]: {
         code: 'BAD_REQUEST',
         message: this.getErrorMessage(UpdateFicheErrorType.PARENT_NOT_FOUND),
+      },
+      [UpdateFicheErrorType.FICHE_NOT_FOUND]: {
+        code: 'NOT_FOUND',
+        message: this.getErrorMessage(UpdateFicheErrorType.FICHE_NOT_FOUND),
       },
     };
 
