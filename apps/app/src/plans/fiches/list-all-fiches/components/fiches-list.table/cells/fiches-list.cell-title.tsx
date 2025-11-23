@@ -15,7 +15,7 @@ export const FichesListCellTitle = ({ title, fiche }: Props) => {
   const currentCollectivite = useCurrentCollectivite();
 
   const isReadOnly =
-    fiche.restreint || currentCollectivite.niveauAcces === null;
+    !!fiche.restreint && currentCollectivite.niveauAcces === null;
 
   const href = getFichePageUrlForCollectivite({
     fiche,
