@@ -1,6 +1,6 @@
 import { ActionTypeEnum } from '@/backend/referentiels/models/action-type.enum';
 import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
-import { getLevelFromActionId } from '@/backend/referentiels/referentiels.utils';
+import { getIdentifiantFromActionId, getLevelFromActionId } from '@/backend/referentiels/referentiels.utils';
 import { toMerged } from 'es-toolkit';
 import { Row, Worksheet } from 'exceljs';
 import * as Utils from '../../utils/excel/export-excel.utils';
@@ -175,6 +175,11 @@ function setRowStyles(
   const depth = getLevelFromActionId(actionId);
   if (depth > 1) {
     row.outlineLevel = depth;
+  }
+
+  if (!identifiant) {
+    // WARNING: not supposed to happen for new snapshots but we need to handle this case for legacy data
+    identifiant = getIdentifiantFromActionId(actionId) || '';
   }
 
   // couleur de fond
