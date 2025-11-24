@@ -41,7 +41,7 @@ export default class FicheActionNoteService {
       await trx
         .update(ficheActionTable)
         .set({
-          modifiedBy: tokenInfo?.id,
+          modifiedBy: tokenInfo.id,
           modifiedAt: new Date().toISOString(),
         })
         .where(eq(ficheActionTable.id, ficheId));
