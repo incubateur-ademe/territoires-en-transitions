@@ -1,6 +1,7 @@
 import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
 import {
   CollectiviteResume,
+  CollectiviteType,
   collectiviteTypeEnum,
 } from '@/backend/collectivites/shared/models/collectivite.table';
 import {
@@ -772,7 +773,7 @@ export default class TrajectoiresDataService {
       };
     }
 
-    const SUPPORTED_EPCI_TYPES = [
+    const SUPPORTED_EPCI_TYPES: CollectiviteType[] = [
       collectiviteTypeEnum.EPCI,
       collectiviteTypeEnum.TEST,
     ] as const;
