@@ -7,7 +7,7 @@ import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { DeleteFicheService } from '../fiches/delete-fiche/delete-fiche.service';
 import { AxeType } from '../fiches/shared/models/axe.table';
-import { PlanError, PlanErrorType } from './plans.errors';
+import { PlanError, PlanErrorEnum } from './plans.errors';
 import type { PlansRepositoryInterface } from './plans.repository.interface';
 import { Result } from './plans.result';
 import {
@@ -72,7 +72,7 @@ export class PlanService {
     if (!isAllowed) {
       return {
         success: false,
-        error: PlanErrorType.UNAUTHORIZED,
+        error: PlanErrorEnum.UNAUTHORIZED,
       };
     }
 
@@ -182,7 +182,7 @@ export class PlanService {
     if (!isEditionAllowed && !isImportAllowed) {
       return {
         success: false,
-        error: PlanErrorType.UNAUTHORIZED,
+        error: PlanErrorEnum.UNAUTHORIZED,
       };
     }
 
@@ -280,7 +280,7 @@ export class PlanService {
     if (!isAllowed) {
       return {
         success: false,
-        error: PlanErrorType.UNAUTHORIZED,
+        error: PlanErrorEnum.UNAUTHORIZED,
       };
     }
 
@@ -295,7 +295,7 @@ export class PlanService {
     if (!isRootAxe) {
       return {
         success: false,
-        error: PlanErrorType.UNAUTHORIZED,
+        error: PlanErrorEnum.UNAUTHORIZED,
       };
     }
 
@@ -325,7 +325,7 @@ export class PlanService {
       if (!referentPermissionAllowed) {
         return {
           success: false,
-          error: PlanErrorType.UNAUTHORIZED,
+          error: PlanErrorEnum.UNAUTHORIZED,
         };
       }
 
@@ -367,7 +367,7 @@ export class PlanService {
       if (!pilotePermissionAllowed) {
         return {
           success: false,
-          error: PlanErrorType.UNAUTHORIZED,
+          error: PlanErrorEnum.UNAUTHORIZED,
         };
       }
 
@@ -434,7 +434,7 @@ export class PlanService {
     if (!isAllowed) {
       return {
         success: false,
-        error: PlanErrorType.UNAUTHORIZED,
+        error: PlanErrorEnum.UNAUTHORIZED,
       };
     }
 
@@ -491,7 +491,7 @@ export class PlanService {
     if (!isAllowed) {
       return {
         success: false,
-        error: PlanErrorType.UNAUTHORIZED,
+        error: PlanErrorEnum.UNAUTHORIZED,
       };
     }
 
@@ -545,7 +545,7 @@ export class PlanService {
     if (!isAllowed) {
       return {
         success: false,
-        error: PlanErrorType.UNAUTHORIZED,
+        error: PlanErrorEnum.UNAUTHORIZED,
       };
     }
 
@@ -594,7 +594,7 @@ export class PlanService {
     if (planResult.data.parent !== null) {
       return {
         success: false,
-        error: PlanErrorType.UNAUTHORIZED,
+        error: PlanErrorEnum.UNAUTHORIZED,
       };
     }
 
@@ -609,7 +609,7 @@ export class PlanService {
     if (!isAllowed) {
       return {
         success: false,
-        error: PlanErrorType.UNAUTHORIZED,
+        error: PlanErrorEnum.UNAUTHORIZED,
       };
     }
 
