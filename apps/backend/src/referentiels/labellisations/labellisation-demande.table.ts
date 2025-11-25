@@ -48,12 +48,18 @@ export const labellisationDemandeTable = labellisationSchema.table(
     }),
     envoyeeLe: timestamp('envoyee_le', TIMESTAMP_OPTIONS),
     demandeur: uuid('demandeur'),
+    associatedCollectiviteId: integer('associated_collectivite_id'),
   },
   (table) => [
     foreignKey({
       columns: [table.collectiviteId],
       foreignColumns: [collectiviteTable.id],
       name: 'demande_collectivite_id_fkey',
+    }),
+    foreignKey({
+      columns: [table.associatedCollectiviteId],
+      foreignColumns: [collectiviteTable.id],
+      name: 'demande_associated_collectivite_id_fkey',
     }),
     foreignKey({
       columns: [table.demandeur],
