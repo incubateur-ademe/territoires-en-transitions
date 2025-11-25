@@ -37,7 +37,7 @@ import {
   ficheActionTable,
   ficheSchemaUpdate,
 } from '../shared/models/fiche-action.table';
-import { UpdateFicheError, UpdateFicheErrorType } from './update-fiche.errors';
+import { UpdateFicheError, UpdateFicheErrorEnum } from './update-fiche.errors';
 import { UpdateFicheRequest } from './update-fiche.request';
 import { Result } from './update-fiche.result';
 
@@ -115,7 +115,7 @@ export default class UpdateFicheService {
       if (unsafeFicheAction.parentId === ficheId) {
         return {
           success: false,
-          error: UpdateFicheErrorType.SELF_REFERENCE,
+          error: UpdateFicheErrorEnum.SELF_REFERENCE,
         };
       }
 
@@ -128,7 +128,7 @@ export default class UpdateFicheService {
         this.logger.error(result.error);
         return {
           success: false,
-          error: UpdateFicheErrorType.PARENT_NOT_FOUND,
+          error: UpdateFicheErrorEnum.PARENT_NOT_FOUND,
         };
       }
     }
@@ -143,7 +143,7 @@ export default class UpdateFicheService {
         this.logger.error(result.error);
         return {
           success: false,
-          error: UpdateFicheErrorType.FICHE_NOT_FOUND,
+          error: UpdateFicheErrorEnum.FICHE_NOT_FOUND,
         };
       }
       const existingFicheAction = result.data;
@@ -398,7 +398,7 @@ export default class UpdateFicheService {
       user
     );
     if (!result.success) {
-      return { success: false, error: UpdateFicheErrorType.FICHE_NOT_FOUND };
+      return { success: false, error: UpdateFicheErrorEnum.FICHE_NOT_FOUND };
     }
     const ficheActionWithRelation = result.data;
 
