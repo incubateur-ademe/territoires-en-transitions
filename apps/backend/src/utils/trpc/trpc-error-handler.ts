@@ -4,24 +4,9 @@ import { MethodResult } from '../result.type';
 import {
   COMMON_ERROR_CONFIG,
   CommonError,
-  CommonErrorEnum,
+  commonErrors,
 } from './common-errors';
-
-/**
- * Configuration d'une erreur avec son code TRPC et son message
- */
-export type ErrorConfig = {
-  code: TRPCError['code'];
-  message: string;
-};
-
-/**
- * Correspondances entre un code erreur et la configuration de l'erreur TRPC
- */
-export type ErrorConfigMap<SpecificError extends string> = Record<
-  SpecificError,
-  ErrorConfig
->;
+import { ErrorConfig, ErrorConfigMap } from './trpc-error-config';
 
 /**
  * Configuration pour créer un handler d'erreurs TRPC
@@ -43,11 +28,7 @@ export type TrpcErrorHandlerConfig<SpecificError extends string> = {
 export function createErrorsEnum<SpecificError extends string>(
   specificErrors: readonly [SpecificError, ...SpecificError[]]
 ) {
-  const SpecificErrorsEnum = createEnumObject(specificErrors);
-  return {
-    ...CommonErrorEnum,
-    ...SpecificErrorsEnum,
-  };
+  return createEnumObject([...specificErrors, ...commonErrors]);
 }
 
 /**
