@@ -26,6 +26,7 @@ export const labellisationTable = pgTable(
     etoiles: integer('etoiles').$type<Etoile>().notNull(),
     scoreRealise: doublePrecision('score_realise'),
     scoreProgramme: doublePrecision('score_programme'),
+    auditId: integer('audit_id'),
   },
   (table) => [
     unique('labellisation_collectivite_id_annee_referentiel_key').on(

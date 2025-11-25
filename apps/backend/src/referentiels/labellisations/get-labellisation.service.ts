@@ -244,6 +244,7 @@ export class GetLabellisationService {
           id: currentDemande.id,
           referentiel: currentDemande.referentiel,
           sujet: currentDemande.sujet,
+          associated_collectivite_id: currentDemande.associatedCollectiviteId,
         },
       };
     });
