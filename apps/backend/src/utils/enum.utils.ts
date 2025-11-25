@@ -16,10 +16,14 @@
  */
 export const createEnumObject = <T extends readonly [string, ...string[]]>(
   values: T
-): Record<Uppercase<T[number]>, T[number]> => {
+): {
+  [K in T[number] as Uppercase<K>]: K;
+} => {
   const obj: Record<string, T[number]> = {};
   for (const value of values) {
     obj[value.toUpperCase()] = value;
   }
-  return obj;
+  return obj as {
+    [K in T[number] as Uppercase<K>]: K;
+  };
 };

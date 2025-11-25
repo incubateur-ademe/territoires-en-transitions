@@ -1,10 +1,10 @@
 import { createEnumObject } from '../enum.utils';
-import { ErrorConfigMap } from './trpc-error-handler';
+import { ErrorConfigMap } from './trpc-error-config';
 
 /**
  * Erreurs communes
  */
-const commonErrors = [
+export const commonErrors = [
   'SERVER_ERROR',
   'UNAUTHORIZED',
   'DATABASE_ERROR',
