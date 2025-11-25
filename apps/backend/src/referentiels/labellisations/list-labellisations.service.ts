@@ -14,7 +14,7 @@ import { DatabaseService } from '@/backend/utils/database/database.service';
 import { roundTo } from '@/backend/utils/number.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { desc, getTableColumns, inArray, isNotNull } from 'drizzle-orm';
-import { and, eq } from 'drizzle-orm/sql';
+import { and, eq, or } from 'drizzle-orm/sql';
 import { DateTime } from 'luxon';
 
 //site_labellisation
@@ -42,9 +42,11 @@ export class ListLabellisationsService {
     );
 
     // We do not need the labellisation table anymore. instead, use the snapshot table
-    const labellisations = await this.databaseService.db
+    const labellisationsQuery = this.databaseService.db
       .select({
         collectiviteId: snapshotTable.collectiviteId,
+        associatedCollectiviteId:
+          labellisationDemandeTable.associatedCollectiviteId,
         referentielId: snapshotTable.referentielId,
         date: getISOFormatDateQuery(snapshotTable.date),
         pointFait: snapshotTable.pointFait,
@@ -61,7 +63,13 @@ export class ListLabellisationsService {
       )
       .where(
         and(
-          inArray(snapshotTable.collectiviteId, collectiviteIds),
+          or(
+            inArray(snapshotTable.collectiviteId, collectiviteIds),
+            inArray(
+              labellisationDemandeTable.associatedCollectiviteId,
+              collectiviteIds
+            )
+          ),
           eq(snapshotTable.jalon, SnapshotJalonEnum.POST_AUDIT),
           eq(auditTable.valideLabellisation, true),
           eq(auditTable.valide, true),
@@ -69,6 +77,8 @@ export class ListLabellisationsService {
         )
       )
       .orderBy(desc(snapshotTable.date));
+
+    const labellisations = await labellisationsQuery;
 
     const labelisationRecords = labellisations
       .map((labellisation) => {
@@ -98,8 +108,18 @@ export class ListLabellisationsService {
               )
             : 0,
         };
-        return labellisationrecord;
+        if (labellisation.associatedCollectiviteId) {
+          return [
+            labellisationrecord,
+            {
+              ...labellisationrecord,
+              collectiviteId: labellisation.associatedCollectiviteId,
+            },
+          ];
+        }
+        return [labellisationrecord];
       })
+      .flat()
       .filter((labellisation) => labellisation !== null);
 
     // It seems that there are still some old labellisations for which there is no score
