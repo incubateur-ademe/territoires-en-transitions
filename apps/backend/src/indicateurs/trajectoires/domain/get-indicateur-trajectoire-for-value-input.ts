@@ -17,7 +17,7 @@ const toInputFormatSecteurs = (
     return secteurs;
   }
 
-  const COMMON_SECTEURS = [
+  const COMMON_SECTEURS: readonly TrajectoireSecteursType[] = [
     TrajectoireSecteursEnum.RÉSIDENTIEL,
     TrajectoireSecteursEnum.TERTIAIRE,
     TrajectoireSecteursEnum.INDUSTRIE,
