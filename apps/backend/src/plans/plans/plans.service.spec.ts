@@ -10,7 +10,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { vi } from 'vitest';
 import { DeleteFicheService } from '../fiches/delete-fiche/delete-fiche.service';
 import { AxeType } from '../fiches/shared/models/axe.table';
-import { PlanErrorType } from './plans.errors';
+import { PlanErrorEnum } from './plans.errors';
 import { PlanService } from './plans.service';
 
 describe('PlanService', () => {
@@ -125,7 +125,7 @@ describe('PlanService', () => {
         const mockPlansRepository = {
           findById: vi.fn().mockResolvedValue({
             success: false,
-            error: PlanErrorType.PLAN_NOT_FOUND,
+            error: PlanErrorEnum.PLAN_NOT_FOUND,
           }),
           deleteAxeAndChildrenAxes: vi.fn(),
         };
@@ -166,7 +166,7 @@ describe('PlanService', () => {
 
         expect(result).toEqual({
           success: false,
-          error: PlanErrorType.PLAN_NOT_FOUND,
+          error: PlanErrorEnum.PLAN_NOT_FOUND,
         });
         expect(mockPlansRepository.findById).toHaveBeenCalledWith(planId);
         expect(mockPermissionService.isAllowed).not.toHaveBeenCalled();
@@ -222,7 +222,7 @@ describe('PlanService', () => {
 
         expect(result).toEqual({
           success: false,
-          error: PlanErrorType.UNAUTHORIZED,
+          error: PlanErrorEnum.UNAUTHORIZED,
         });
         expect(mockPlansRepository.findById).toHaveBeenCalledWith(planId);
         expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
@@ -245,7 +245,7 @@ describe('PlanService', () => {
           }),
           deleteAxeAndChildrenAxes: vi.fn().mockResolvedValue({
             success: false,
-            error: PlanErrorType.DATABASE_ERROR,
+            error: PlanErrorEnum.DATABASE_ERROR,
           }),
         };
 
@@ -285,7 +285,7 @@ describe('PlanService', () => {
 
         expect(result).toEqual({
           success: false,
-          error: PlanErrorType.DATABASE_ERROR,
+          error: PlanErrorEnum.DATABASE_ERROR,
         });
         expect(mockPlansRepository.findById).toHaveBeenCalledWith(planId);
         expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
@@ -460,7 +460,7 @@ describe('PlanService', () => {
         const mockPlansRepository = {
           findById: vi.fn().mockResolvedValue({
             success: false,
-            error: PlanErrorType.PLAN_NOT_FOUND,
+            error: PlanErrorEnum.PLAN_NOT_FOUND,
           }),
           deleteAxeAndChildrenAxes: vi.fn(),
         };
@@ -505,7 +505,7 @@ describe('PlanService', () => {
 
         expect(result).toEqual({
           success: false,
-          error: PlanErrorType.PLAN_NOT_FOUND,
+          error: PlanErrorEnum.PLAN_NOT_FOUND,
         });
         expect(mockPlansRepository.findById).toHaveBeenCalledWith(axeId);
         expect(mockPermissionService.isAllowed).not.toHaveBeenCalled();
@@ -566,7 +566,7 @@ describe('PlanService', () => {
 
         expect(result).toEqual({
           success: false,
-          error: PlanErrorType.UNAUTHORIZED,
+          error: PlanErrorEnum.UNAUTHORIZED,
         });
         expect(mockPlansRepository.findById).toHaveBeenCalledWith(axeId);
         expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
@@ -592,7 +592,7 @@ describe('PlanService', () => {
           }),
           deleteAxeAndChildrenAxes: vi.fn().mockResolvedValue({
             success: false,
-            error: PlanErrorType.DATABASE_ERROR,
+            error: PlanErrorEnum.DATABASE_ERROR,
           }),
         };
 
@@ -636,7 +636,7 @@ describe('PlanService', () => {
 
         expect(result).toEqual({
           success: false,
-          error: PlanErrorType.DATABASE_ERROR,
+          error: PlanErrorEnum.DATABASE_ERROR,
         });
         expect(mockPlansRepository.findById).toHaveBeenCalledWith(axeId);
         expect(mockPermissionService.isAllowed).toHaveBeenCalledWith(
