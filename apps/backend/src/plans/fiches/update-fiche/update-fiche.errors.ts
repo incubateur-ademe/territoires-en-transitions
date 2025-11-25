@@ -1,10 +1,31 @@
-export const UpdateFicheErrorType = {
-  SELF_REFERENCE: 'SELF_REFERENCE',
-  PARENT_NOT_FOUND: 'PARENT_NOT_FOUND',
-  FICHE_NOT_FOUND: 'FICHE_NOT_FOUND',
-} as const;
+import {
+  createErrorsEnum,
+  TrpcErrorHandlerConfig,
+} from '@/backend/utils/trpc/trpc-error-handler';
 
-export type UpdateFicheErrorType =
-  (typeof UpdateFicheErrorType)[keyof typeof UpdateFicheErrorType];
+const specificErrors = [
+  'SELF_REFERENCE',
+  'PARENT_NOT_FOUND',
+  'FICHE_NOT_FOUND',
+] as const;
+type SpecificError = (typeof specificErrors)[number];
 
-export type UpdateFicheError = UpdateFicheErrorType;
+export const updateFicheErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
+  specificErrors: {
+    SELF_REFERENCE: {
+      code: 'BAD_REQUEST',
+      message: 'La fiche ne peut pas se référencer elle-même',
+    },
+    PARENT_NOT_FOUND: {
+      code: 'BAD_REQUEST',
+      message: 'La fiche ne peut pas référencer une fiche inexistante',
+    },
+    FICHE_NOT_FOUND: {
+      code: 'NOT_FOUND',
+      message: 'Fiche non trouvée',
+    },
+  },
+};
+
+export const UpdateFicheErrorEnum = createErrorsEnum(specificErrors);
+export type UpdateFicheError = keyof typeof UpdateFicheErrorEnum;
