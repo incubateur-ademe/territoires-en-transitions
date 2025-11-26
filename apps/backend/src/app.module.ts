@@ -10,6 +10,7 @@ import { SentryModule } from '@sentry/nestjs/setup';
 import { CollectivitesModule } from './collectivites/collectivites.module';
 import { PersonnalisationsModule } from './collectivites/personnalisations/personnalisations.module';
 import { IndicateursModule } from './indicateurs/indicateurs.module';
+import { AxeModule } from './plans/axes/axe.module';
 import { FichesModule } from './plans/fiches/fiches.module';
 import { PlanModule } from './plans/plans/plans.module';
 import { ReferentielsModule } from './referentiels/referentiels.module';
@@ -71,6 +72,7 @@ const appLogger = new Logger('AppModule');
     AuthModule,
     FichesModule,
     PlanModule,
+    AxeModule,
     PersonnalisationsModule,
     ReferentielsModule,
     SharedModule,
