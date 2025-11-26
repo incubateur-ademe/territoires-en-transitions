@@ -14,6 +14,7 @@ import { getSentryContextFromApplicationContext } from '@tet/backend/utils/sentr
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import type { Response } from 'express';
 import z from 'zod';
+import { MutateAxeRouter } from '../../plans/axes/mutate-axe/mutate-axe.router';
 import { FichesRouter } from '../../plans/fiches/fiches.router';
 import { CompletionAnalyticsRouter } from '../../plans/plans/completion-analytics/completion-analytics.router';
 import { PlanRouter } from '../../plans/plans/plans.router';
@@ -35,6 +36,7 @@ export class TrpcRouter {
     private readonly fichesRouter: FichesRouter,
     private readonly planRouter: PlanRouter,
     private readonly completionAnalyticsRouter: CompletionAnalyticsRouter,
+    private readonly mutateAxeRouter: MutateAxeRouter,
     private readonly metricsRouter: MetricsRouter,
     private readonly notificationsRouter: NotificationsRouter
   ) {}
@@ -50,6 +52,7 @@ export class TrpcRouter {
       fiches: this.fichesRouter.router,
       plans: this.planRouter.router,
       completionAnalytics: this.completionAnalyticsRouter.router,
+      axes: this.mutateAxeRouter.router,
     },
     referentiels: this.referentielsRouter.router,
     metrics: this.metricsRouter.router,
