@@ -12,9 +12,11 @@ import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { addTestUser } from '@/backend/users/users/users.fixture';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
+import { axeIndicateurTable } from '../../fiches/shared/models/axe-indicateur.table';
 
-describe('Mutate Axe', () => {
+describe('Créer ou modifier un axe', () => {
   let router: TrpcRouter;
   let db: DatabaseService;
 
@@ -50,8 +52,8 @@ describe('Mutate Axe', () => {
     };
   });
 
-  describe('Mutate Axe - Success Cases', () => {
-    test('Successfully create an axe', async () => {
+  describe('Créer ou modifier un axe - Cas de succès', () => {
+    test('Créer avec succès un axe', async () => {
       const caller = router.createCaller({ user: editorUser });
 
       const axeInput = {
@@ -84,7 +86,7 @@ describe('Mutate Axe', () => {
       );
     });
 
-    test('Successfully update an axe', async () => {
+    test('Modifier avec succès un axe', async () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un axe
@@ -119,8 +121,8 @@ describe('Mutate Axe', () => {
     });
   });
 
-  describe('Mutate Axe - Access Rights', () => {
-    test('User without rights on collectivite cannot create axe', async () => {
+  describe("Créer ou modifier un axe - Droits d'accès", () => {
+    test('Un utilisateur sans droits sur la collectivité ne peut pas créer un axe', async () => {
       const yoloDodoUser = await getAuthUser(YOLO_DODO);
       const caller = router.createCaller({ user: yoloDodoUser });
 
@@ -134,7 +136,7 @@ describe('Mutate Axe', () => {
       ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
     });
 
-    test('User with lecture rights on collectivite cannot create axe', async () => {
+    test('Un utilisateur avec des droits de lecture sur la collectivité ne peut pas créer un axe', async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
         accessLevel: CollectiviteAccessLevelEnum.LECTURE,
@@ -157,7 +159,7 @@ describe('Mutate Axe', () => {
       ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
     });
 
-    test('User with limited edition rights on collectivite cannot create axe', async () => {
+    test("Un utilisateur avec des droits d'édition limités sur la collectivité ne peut pas créer un axe", async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
         accessLevel: CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS,
@@ -178,6 +180,298 @@ describe('Mutate Axe', () => {
           parent: planId,
         })
       ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
+    });
+  });
+
+  describe('Créer ou modifier un axe - Indicateurs', () => {
+    test('Créer avec succès un axe avec des indicateurs', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      // Créer des indicateurs de test
+      const indicateur1Id = await caller.indicateurs.definitions.create({
+        collectiviteId: collectivite.id,
+        titre: 'Indicateur 1 pour test axe',
+        unite: 'kg',
+      });
+
+      const indicateur2Id = await caller.indicateurs.definitions.create({
+        collectiviteId: collectivite.id,
+        titre: 'Indicateur 2 pour test axe',
+        unite: 'm²',
+      });
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.indicateurs.definitions.delete({
+          indicateurId: indicateur1Id,
+          collectiviteId: collectivite.id,
+        });
+        await cleanupCaller.indicateurs.definitions.delete({
+          indicateurId: indicateur2Id,
+          collectiviteId: collectivite.id,
+        });
+      });
+
+      // Créer un axe avec des indicateurs
+      const axeInput = {
+        nom: 'Axe avec indicateurs',
+        collectiviteId: collectivite.id,
+        planId,
+        parent: planId,
+        indicateurs: [{ id: indicateur1Id }, { id: indicateur2Id }],
+      };
+
+      const createdAxe = await caller.plans.axes.upsert(axeInput);
+      const axeId = createdAxe.id;
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.plans.deleteAxe({ axeId });
+      });
+
+      // Vérifier que les indicateurs sont associés à l'axe
+      const axeIndicateurs = await db.db
+        .select()
+        .from(axeIndicateurTable)
+        .where(eq(axeIndicateurTable.axeId, axeId));
+
+      expect(axeIndicateurs).toHaveLength(2);
+      expect(axeIndicateurs.map((ai) => ai.indicateurId)).toEqual(
+        expect.arrayContaining([indicateur1Id, indicateur2Id])
+      );
+    });
+
+    test('Ajouter avec succès des indicateurs à un axe existant', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      // Créer un axe sans indicateurs
+      const createdAxe = await caller.plans.axes.upsert({
+        nom: 'Axe sans indicateurs',
+        collectiviteId: collectivite.id,
+        planId,
+        parent: planId,
+      });
+      const axeId = createdAxe.id;
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.plans.deleteAxe({ axeId });
+      });
+
+      // Vérifier qu'il n'y a pas d'indicateurs associés
+      let axeIndicateurs = await db.db
+        .select()
+        .from(axeIndicateurTable)
+        .where(eq(axeIndicateurTable.axeId, axeId));
+      expect(axeIndicateurs).toHaveLength(0);
+
+      // Créer des indicateurs de test
+      const indicateur1Id = await caller.indicateurs.definitions.create({
+        collectiviteId: collectivite.id,
+        titre: 'Indicateur à ajouter 1',
+        unite: 'kg',
+      });
+
+      const indicateur2Id = await caller.indicateurs.definitions.create({
+        collectiviteId: collectivite.id,
+        titre: 'Indicateur à ajouter 2',
+        unite: 'm²',
+      });
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.indicateurs.definitions.delete({
+          indicateurId: indicateur1Id,
+          collectiviteId: collectivite.id,
+        });
+        await cleanupCaller.indicateurs.definitions.delete({
+          indicateurId: indicateur2Id,
+          collectiviteId: collectivite.id,
+        });
+      });
+
+      // Ajouter des indicateurs à l'axe
+      await caller.plans.axes.upsert({
+        id: axeId,
+        collectiviteId: collectivite.id,
+        indicateurs: [{ id: indicateur1Id }, { id: indicateur2Id }],
+      });
+
+      // Vérifier que les indicateurs sont maintenant associés
+      axeIndicateurs = await db.db
+        .select()
+        .from(axeIndicateurTable)
+        .where(eq(axeIndicateurTable.axeId, axeId));
+
+      expect(axeIndicateurs).toHaveLength(2);
+      expect(axeIndicateurs.map((ai) => ai.indicateurId)).toEqual(
+        expect.arrayContaining([indicateur1Id, indicateur2Id])
+      );
+    });
+
+    test("Supprimer avec succès des indicateurs d'un axe", async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      // Créer des indicateurs de test
+      const indicateur1Id = await caller.indicateurs.definitions.create({
+        collectiviteId: collectivite.id,
+        titre: 'Indicateur à supprimer 1',
+        unite: 'kg',
+      });
+
+      const indicateur2Id = await caller.indicateurs.definitions.create({
+        collectiviteId: collectivite.id,
+        titre: 'Indicateur à supprimer 2',
+        unite: 'm²',
+      });
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.indicateurs.definitions.delete({
+          indicateurId: indicateur1Id,
+          collectiviteId: collectivite.id,
+        });
+        await cleanupCaller.indicateurs.definitions.delete({
+          indicateurId: indicateur2Id,
+          collectiviteId: collectivite.id,
+        });
+      });
+
+      // Créer un axe avec des indicateurs
+      const createdAxe = await caller.plans.axes.upsert({
+        nom: 'Axe avec indicateurs à supprimer',
+        collectiviteId: collectivite.id,
+        planId,
+        parent: planId,
+        indicateurs: [{ id: indicateur1Id }, { id: indicateur2Id }],
+      });
+      const axeId = createdAxe.id;
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.plans.deleteAxe({ axeId });
+      });
+
+      // Vérifier que les indicateurs sont associés
+      let axeIndicateurs = await db.db
+        .select()
+        .from(axeIndicateurTable)
+        .where(eq(axeIndicateurTable.axeId, axeId));
+      expect(axeIndicateurs).toHaveLength(2);
+
+      // Supprimer tous les indicateurs (passer un tableau vide)
+      await caller.plans.axes.upsert({
+        id: axeId,
+        collectiviteId: collectivite.id,
+        indicateurs: [],
+      });
+
+      // Vérifier qu'il n'y a plus d'indicateurs associés
+      axeIndicateurs = await db.db
+        .select()
+        .from(axeIndicateurTable)
+        .where(eq(axeIndicateurTable.axeId, axeId));
+      expect(axeIndicateurs).toHaveLength(0);
+    });
+
+    test("Remplacer avec succès les indicateurs d'un axe", async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      // Créer des indicateurs de test initiaux
+      const indicateur1Id = await caller.indicateurs.definitions.create({
+        collectiviteId: collectivite.id,
+        titre: 'Indicateur initial 1',
+        unite: 'kg',
+      });
+
+      const indicateur2Id = await caller.indicateurs.definitions.create({
+        collectiviteId: collectivite.id,
+        titre: 'Indicateur initial 2',
+        unite: 'm²',
+      });
+
+      // Créer des indicateurs de remplacement
+      const indicateur3Id = await caller.indicateurs.definitions.create({
+        collectiviteId: collectivite.id,
+        titre: 'Indicateur remplacement 1',
+        unite: 'L',
+      });
+
+      const indicateur4Id = await caller.indicateurs.definitions.create({
+        collectiviteId: collectivite.id,
+        titre: 'Indicateur remplacement 2',
+        unite: 'W',
+      });
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.indicateurs.definitions.delete({
+          indicateurId: indicateur1Id,
+          collectiviteId: collectivite.id,
+        });
+        await cleanupCaller.indicateurs.definitions.delete({
+          indicateurId: indicateur2Id,
+          collectiviteId: collectivite.id,
+        });
+        await cleanupCaller.indicateurs.definitions.delete({
+          indicateurId: indicateur3Id,
+          collectiviteId: collectivite.id,
+        });
+        await cleanupCaller.indicateurs.definitions.delete({
+          indicateurId: indicateur4Id,
+          collectiviteId: collectivite.id,
+        });
+      });
+
+      // Créer un axe avec les indicateurs initiaux
+      const createdAxe = await caller.plans.axes.upsert({
+        nom: 'Axe avec indicateurs à remplacer',
+        collectiviteId: collectivite.id,
+        planId,
+        parent: planId,
+        indicateurs: [{ id: indicateur1Id }, { id: indicateur2Id }],
+      });
+      const axeId = createdAxe.id;
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.plans.deleteAxe({ axeId });
+      });
+
+      // Vérifier les indicateurs initiaux
+      let axeIndicateurs = await db.db
+        .select()
+        .from(axeIndicateurTable)
+        .where(eq(axeIndicateurTable.axeId, axeId));
+      expect(axeIndicateurs).toHaveLength(2);
+      expect(axeIndicateurs.map((ai) => ai.indicateurId)).toEqual(
+        expect.arrayContaining([indicateur1Id, indicateur2Id])
+      );
+
+      // Remplacer par de nouveaux indicateurs
+      await caller.plans.axes.upsert({
+        id: axeId,
+        collectiviteId: collectivite.id,
+        indicateurs: [{ id: indicateur3Id }, { id: indicateur4Id }],
+      });
+
+      // Vérifier que les nouveaux indicateurs sont associés
+      axeIndicateurs = await db.db
+        .select()
+        .from(axeIndicateurTable)
+        .where(eq(axeIndicateurTable.axeId, axeId));
+
+      expect(axeIndicateurs).toHaveLength(2);
+      expect(axeIndicateurs.map((ai) => ai.indicateurId)).toEqual(
+        expect.arrayContaining([indicateur3Id, indicateur4Id])
+      );
+      // Vérifier que les anciens indicateurs ne sont plus associés
+      expect(axeIndicateurs.map((ai) => ai.indicateurId)).not.toContain(
+        indicateur1Id
+      );
+      expect(axeIndicateurs.map((ai) => ai.indicateurId)).not.toContain(
+        indicateur2Id
+      );
     });
   });
 });
