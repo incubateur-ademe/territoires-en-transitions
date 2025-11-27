@@ -4,14 +4,17 @@
     "rootDir": ".",
     "baseUrl": ".",
     "outDir": "out-tsc/app",
+    "noEmit": true,
+    // "emitDeclarationOnly": false,
+    // "composite": false,
+    // "declarationMap": false,
+    // "declaration": false,
     "types": [
       "node",
       "@nx/react/typings/cssmodule.d.ts",
       "@nx/react/typings/image.d.ts"
     ],
     "allowJs": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
     "plugins": [
       {
         "name": "next"
@@ -45,16 +48,16 @@
     "**/*.stories.js",
     "**/*.stories.jsx",
     "**/*.stories.tsx"
-  ],
-  "references": [
-    {
-      "path": "../../packages/ui/tsconfig.lib.json"
-    },
-    {
-      "path": "../../packages/domain/tsconfig.lib.json"
-    },
-    {
-      "path": "../../packages/api/tsconfig.lib.json"
-    }
   ]
+  // "references": [
+  //   {
+  //     "path": "../../packages/ui/tsconfig.lib.json"
+  //   },
+  //   {
+  //     "path": "../../packages/domain/tsconfig.lib.json"
+  //   },
+  //   {
+  //     "path": "../../packages/api/tsconfig.lib.json"
+  //   }
+  // ]
 }

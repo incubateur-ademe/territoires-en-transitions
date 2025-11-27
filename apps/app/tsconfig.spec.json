@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "./tsconfig.project.json",
   "compilerOptions": {
     "outDir": "out-tsc/spec",
     "types": [
@@ -27,10 +27,5 @@
     "src/**/*.test.jsx",
     "src/**/*.spec.jsx",
     "**/fixture.json"
-  ],
-  "references": [
-    {
-      "path": "./tsconfig.project.json"
-    }
   ]
 }

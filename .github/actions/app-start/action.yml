@@ -31,7 +31,7 @@ runs:
           PORT=${{ inputs.port }}
           QUEUE_REDIS_HOST=localhost
           node --env-file="./apps/${{ inputs.name }}/.env"
-          "./dist/apps/${{ inputs.name }}/src/main.js"
+          "./apps/${{ inputs.name }}/dist/main.js"
           > "/${{ inputs.logs_dir }}/${{ inputs.name }}.log" &
         wait-on: |
           ${{ inputs.wait }}

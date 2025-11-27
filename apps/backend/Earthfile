@@ -7,7 +7,8 @@ build:
 
   RUN pnpm build:backend
 
-  SAVE ARTIFACT dist /dist AS LOCAL earthly-build/dist
+  SAVE ARTIFACT apps/backend/dist /backend-dist AS LOCAL earthly-build/dist
+  SAVE ARTIFACT packages/domain/dist /domain-dist AS LOCAL earthly-build/dist
 
 local-seed:
   LOCALLY
@@ -30,9 +31,10 @@ docker:
 
   EXPOSE ${PORT}
 
-  COPY +build/dist ./dist
+  COPY +build/backend-dist ./dist
+  COPY +build/domain-dist $DOMAIN_DIR/dist
 
-  CMD ["node", "dist/apps/backend/src/main.js"]
+  CMD ["node", "dist/main.js"]
   SAVE IMAGE --push $DOCKER_IMAGE
 
 deploy: ## Déploie le backend dans une app Koyeb existante

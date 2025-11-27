@@ -14,4 +14,15 @@
       "path": "../../packages/api/tsconfig.lib.json"
     }
   ]
+  // "references": [
+  //   {
+  //     "path": "../../packages/ui/tsconfig.lib.json"
+  //   },
+  //   {
+  //     "path": "../../packages/domain/tsconfig.lib.json"
+  //   },
+  //   {
+  //     "path": "../../packages/api/tsconfig.lib.json"
+  //   }
+  // ]
 }

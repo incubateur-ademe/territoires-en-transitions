@@ -257,8 +257,11 @@ node-alpine-with-prod-deps:
 
   COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
+  # Copy shared libraries
   COPY $BACKEND_DIR $BACKEND_DIR
   COPY $DOMAIN_DIR $DOMAIN_DIR
+  COPY $API_DIR $API_DIR
+  COPY $UI_DIR $UI_DIR
 
   # Uninstall node-canvas not used by the frontends.
   # Otherwise, need to add make g++ jpeg-dev cairo-dev giflib-dev pango-dev libtool autoconf automake in the docker image to do npm install
@@ -272,11 +275,6 @@ node-alpine-with-all-deps:
   RUN pnpm install --frozen-lockfile
 
   COPY *.json ./
-
-  # Copy shared libraries
-  COPY $API_DIR $API_DIR
-  COPY $UI_DIR $UI_DIR
-
 
 # construit l'image de base pour les images utilisant node
 node-fr:
@@ -315,23 +313,24 @@ prod-deps:
     COPY pnpm-lock.yaml ./
     RUN pnpm fetch --prod
 
-    COPY package.json ./
+    COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
     RUN pnpm install -r --offline --prod
+
+    COPY $DOMAIN_DIR $DOMAIN_DIR
+
 
 # construit l'image contenant les dépendances des modules front
 front-deps:
     FROM +prod-deps
 
-    RUN pnpm install --frozen-lockfile
-
     COPY *.json ./
 
-    # Copy only shared libraries
+    # Copy shared libraries
+    COPY $BACKEND_DIR $BACKEND_DIR
     COPY $API_DIR $API_DIR
     COPY $UI_DIR $UI_DIR
-    # Backend is also used as a shared library
-    COPY $BACKEND_DIR $BACKEND_DIR
-    COPY $DOMAIN_DIR $DOMAIN_DIR
+
+    RUN pnpm install --frozen-lockfile
 
 # APP ENTRYPOINTS
 # ---------------
