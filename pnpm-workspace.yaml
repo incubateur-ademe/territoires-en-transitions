@@ -1,3 +1,6 @@
 packages:
   - 'packages/domain'
   - 'e2e'
+
+# Ensures that only packages released at least one day ago can be installed
+minimumReleaseAge: 1440
