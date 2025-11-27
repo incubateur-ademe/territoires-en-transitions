@@ -10,7 +10,7 @@ import { ficheActionNoteTable } from '@/backend/plans/fiches/fiche-action-note/f
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { authUsersTable } from '@/backend/users/models/auth-users.table';
 import { dcpTable } from '@/backend/users/models/dcp.table';
-import { and, eq, isNotNull, sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 
@@ -141,12 +141,7 @@ async function main() {
         })
         .from(ficheActionTable)
         .where(
-          and(
-            // @ts-expect-error-next-line - column exists in DB at migration time
-            isNotNull(ficheActionTable.notesComplementaires),
-            // @ts-expect-error-next-line - notesComplementaires exists in DB but removed from TypeScript schema
-            sql`TRIM(${ficheActionTable.notesComplementaires}) != ''`
-          )
+          sql`"notes_complementaires" IS NOT NULL AND TRIM("notes_complementaires") != ''`
         );
 
       console.log(
@@ -154,7 +149,7 @@ async function main() {
       );
 
       if (fichesWithNotes.length === 0) {
-        console.log('   ✅ No fiches to migrate');
+        console.log('✅ No fiches to migrate');
         return;
       }
 
