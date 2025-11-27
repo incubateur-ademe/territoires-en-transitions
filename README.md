@@ -79,9 +79,17 @@ Cela permet de bénéficier des avantages suivants par rapport aux markdown empl
 ### Dépendances
 
 - Docker, permet de lancer les conteneurs qui composent le produit. Installation simple avec [Docker Desktop](https://docs.docker.com/desktop/).
-- PNPM
 - [act](https://nektosact.com/) qui permet de lancer le projet en local avec les mêmes actions que celles utilisées en CI. Voir plus d'information dans le [README](./.github/README.md) de notre configuration de CI.
 - [Supabase CLI](https://supabase.com/docs/guides/cli) pour lancer le datalayer et générer les types.
+
+### Package manager
+
+**⚠️ Ce projet utilise exclusivement [`pnpm`](https://pnpm.io/).**
+
+- **Espace disque optimisé**: stockage partagé des dépendances entre projets
+- **Sécurité**: résolution stricte des dépendances et `node_modules` non-plat
+- **Performance**: installation plus rapide et meilleure prise en charge des monorepos
+
 
 Pour installer les dépendances avec pnpm il est nécessaire que la clé `BRYNTUM_ACCESS_TOKEN` soit définie dans votre environnement et que les deux commandes suivantes aient été lancées avant de pouvoir lancer la commande `pnpm i`.
 
