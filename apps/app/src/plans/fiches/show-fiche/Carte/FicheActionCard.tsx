@@ -119,10 +119,7 @@ const FicheActionCard = ({
                   onClick={() => toggleOpen(!isEditOpen)}
                 />
               </>
-              <DeleteOrRemoveFicheSharingModal
-                fiche={ficheAction}
-                permissions={currentCollectivite.permissions}
-              />
+              <DeleteOrRemoveFicheSharingModal fiche={ficheAction} />
             </>
           )}
         </div>

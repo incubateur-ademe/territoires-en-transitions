@@ -1,5 +1,5 @@
-import { getYearsOptions } from '../utils';
 import { OptionValue, SelectMultiple } from '@/ui';
+import { getYearsOptions } from '../../utils';
 import { TSectionsValues } from '../utils';
 
 type Props = {

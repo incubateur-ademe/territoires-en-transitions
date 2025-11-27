@@ -22,7 +22,6 @@ const Toolbar = ({ fiche, permissions, onDeleteRedirectPath }: Props) => {
       <ExportFicheModal fiche={fiche} />
 
       <DeleteOrRemoveFicheSharingModal
-        permissions={permissions}
         fiche={fiche}
         buttonClassName="!border-error-1 hover:!border-error-1"
         redirectPath={onDeleteRedirectPath}

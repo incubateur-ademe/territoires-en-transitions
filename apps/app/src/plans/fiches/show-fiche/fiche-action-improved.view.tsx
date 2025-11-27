@@ -15,7 +15,7 @@ import FicheActionImpact from './FicheActionImpact';
 import FicheActionOnglets from './FicheActionOnglets';
 import FicheActionPilotes from './FicheActionPilotes/FicheActionPilotes';
 import { FicheActionPlanning } from './FicheActionPlanning/FicheActionPlanning';
-import { Header } from './Header';
+import { Header } from './header';
 
 type FicheActionImprovedProps = {
   fiche: FicheWithRelations;

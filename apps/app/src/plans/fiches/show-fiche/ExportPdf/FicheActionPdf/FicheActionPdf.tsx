@@ -1,13 +1,5 @@
 import { FicheActionNote } from '@/api/plan-actions';
 import { RouterOutput } from '@/api/utils/trpc/client';
-import Etapes from './Etapes';
-import Acteurs from './components/acteurs';
-import Calendrier from './components/calendrier';
-import {
-  Chemins,
-  Infos,
-  Statuts,
-} from './components/header';
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import { TAxeRow } from '@/app/types/alias';
 import { Paragraph, Stack, Title } from '@/app/ui/export-pdf/components';
@@ -17,15 +9,19 @@ import {
   FicheWithRelations,
 } from '@/domain/plans';
 import { ActionWithScore } from '@/domain/referentiels';
-import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
+import { AnnexeInfo } from '../../data/useAnnexesFicheActionInfos';
 import { TSectionsValues, sectionsInitValue } from '../utils';
 import ActionsLiees from './ActionsLiees';
 import Description from './Description';
 import Documents from './Documents';
+import Etapes from './Etapes';
 import FichesLiees from './FichesLiees';
 import Indicateurs from './Indicateurs';
 import { Moyens } from './Moyens';
 import { Notes } from './Notes';
+import Acteurs from './components/acteurs';
+import Calendrier from './components/calendrier';
+import { Chemins, Infos, Statuts } from './components/header';
 
 export type FicheActionPdfExtendedProps = {
   fiche: FicheWithRelations;
