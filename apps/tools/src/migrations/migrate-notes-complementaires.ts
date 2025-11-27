@@ -7,10 +7,9 @@
  */
 
 import { ficheActionNoteTable } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
-import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { authUsersTable } from '@/backend/users/models/auth-users.table';
 import { dcpTable } from '@/backend/users/models/dcp.table';
-import { and, eq, isNotNull, sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 
@@ -131,30 +130,24 @@ async function main() {
       // Step 2: Get all fiches with non-empty notes_complementaires
       console.log('📝 Step 2: Finding fiches with notes complémentaires...');
 
-      const fichesWithNotes = await tx
-        .select({
-          id: ficheActionTable.id,
-          // @ts-expect-error-next-line - column exists in DB at migration time
-          notesComplementaires: ficheActionTable.notesComplementaires,
-          createdAt: ficheActionTable.createdAt,
-          modifiedAt: ficheActionTable.modifiedAt,
-        })
-        .from(ficheActionTable)
-        .where(
-          and(
-            // @ts-expect-error-next-line - column exists in DB at migration time
-            isNotNull(ficheActionTable.notesComplementaires),
-            // @ts-expect-error-next-line - notesComplementaires exists in DB but removed from TypeScript schema
-            sql`TRIM(${ficheActionTable.notesComplementaires}) != ''`
-          )
-        );
+      const fichesWithNotes = await tx.execute<{
+        id: number;
+        notes_complementaires: string;
+        created_at: string;
+        modified_at: string;
+      }>(sql`
+        SELECT id, notes_complementaires, created_at, modified_at
+        FROM fiche_action
+        WHERE notes_complementaires IS NOT NULL 
+          AND TRIM(notes_complementaires) != ''
+      `);
 
       console.log(
-        `   Found ${fichesWithNotes.length} fiches with notes complémentaires`
+        `   Found ${fichesWithNotes.rows.length} fiches with notes complémentaires`
       );
 
-      if (fichesWithNotes.length === 0) {
-        console.log('   ✅ No fiches to migrate');
+      if (fichesWithNotes.rows.length === 0) {
+        console.log('✅ No fiches to migrate');
         return;
       }
 
@@ -164,8 +157,8 @@ async function main() {
       );
       let migratedCount = 0;
 
-      for (const fiche of fichesWithNotes) {
-        const trimmedNote = (fiche.notesComplementaires || '').trim();
+      for (const fiche of fichesWithNotes.rows) {
+        const trimmedNote = (fiche.notes_complementaires || '').trim();
         if (!trimmedNote) {
           continue;
         }
@@ -182,17 +175,15 @@ async function main() {
         });
 
         // Clear notes_complementaires after successful migration
-        await tx
-          .update(ficheActionTable)
-          // @ts-expect-error-next-line - notesComplementaires exists in DB but removed from TypeScript schema
-          .set({ notesComplementaires: null })
-          .where(eq(ficheActionTable.id, fiche.id));
+        await tx.execute(
+          sql`UPDATE fiche_action SET notes_complementaires = NULL WHERE id = ${fiche.id}`
+        );
 
         migratedCount++;
 
         if (migratedCount % 100 === 0) {
           console.log(
-            `   Progress: ${migratedCount}/${fichesWithNotes.length}...`
+            `   Progress: ${migratedCount}/${fichesWithNotes.rows.length}...`
           );
         }
       }
