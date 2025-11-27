@@ -1,4 +1,4 @@
-import BudgetContent from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/BudgetContent';
+import BudgetContent from './BudgetContent';
 import {
   BadgeFinanceur,
   Divider,
