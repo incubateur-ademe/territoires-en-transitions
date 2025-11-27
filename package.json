@@ -4,6 +4,11 @@
   "version": "1.0.0",
   "description": "Dans le cadre des programmes d'accompagnement des collectivités dans leurs démarches de transition écologique, l'[ADEME (l'Agence de la transition écologique)](https://www.ademe.fr/) s'est associée à [beta.gouv.fr](https://beta.gouv.fr/) pour lancer une plateforme numérique pour faciliter et accélérer la mise en œuvre des actions de transition écologique dans les collectivités territoriales.",
   "packageManager": "pnpm@9.15.5",
+  "engines": {
+    "npm": "use-pnpm-instead",
+    "yarn": "use-pnpm-instead",
+    "pnpm": "9.x",
+  },
   "dependencies": {
     "@betagouv/les-communs-widget": "0.3.4",
     "@blocknote/core": "0.37.0",
