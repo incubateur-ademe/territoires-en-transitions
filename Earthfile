@@ -233,10 +233,7 @@ refresh-views:
         -c "refresh materialized view stats.collectivite; refresh materialized view site_labellisation;"
 
 node-alpine:
-  # Pinning the docker image version to node:20.15.1-alpine
-  # because of existing memory leaks from using the fetch() API in node 20.16.0
-  # https://www.reddit.com/r/node/comments/1ejzn64/sudden_inexplicable_memory_leak_on_new_builds/
-  FROM node:20.15.1-alpine
+  FROM node:24.11.1-alpine
 
   # Allow CI mode for Nx (and other tools)
   ENV CI=true
@@ -287,7 +284,7 @@ node-fr:
     # `--PLATFORM=<platform>` pour forcer la plateforme cible, sinon ce sera la
     # même que celle sur laquelle le build est fait
     ARG PLATFORM=$TARGETPLATFORM
-    FROM --platform=$PLATFORM node:20.15.1-slim
+    FROM --platform=$PLATFORM node:24.11.1-slim
 
     # Allow CI mode for Nx (and other tools)
     ENV CI=true
