@@ -10,9 +10,9 @@ import {
   Select,
 } from '@/ui';
 import { useState } from 'react';
-import { EditedNote } from '../data/useUpsertNoteSuivi';
+import { EditedNote } from '../data/use-upsert-note';
 
-type ModaleEditionNoteDeSuiviProps = {
+type NoteEditionModalProps = {
   fiche: FicheResume;
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
@@ -20,13 +20,13 @@ type ModaleEditionNoteDeSuiviProps = {
   onEdit: (editedNote: EditedNote) => void;
 };
 
-const ModaleEditionNoteDeSuivi = ({
+export const NoteEditionModal = ({
   fiche,
   isOpen,
   setIsOpen,
   editedNote,
   onEdit,
-}: ModaleEditionNoteDeSuiviProps) => {
+}: NoteEditionModalProps) => {
   const { yearsOptions } = getYearsOptions();
 
   const initialYear = new Date(editedNote.dateNote).getFullYear();
@@ -49,7 +49,7 @@ const ModaleEditionNoteDeSuivi = ({
       openState={{ isOpen, setIsOpen }}
       fiche={fiche}
       title="Modifier la note"
-      subTitle={`Note de suivi ${year}${
+      subTitle={`Note ${year}${
         editedNote.createdAt ? ` créée par ${editedNote.createdBy}` : ''
       }`}
       size="lg"
@@ -89,5 +89,3 @@ const ModaleEditionNoteDeSuivi = ({
     />
   );
 };
-
-export default ModaleEditionNoteDeSuivi;

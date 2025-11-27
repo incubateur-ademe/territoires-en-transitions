@@ -3,9 +3,10 @@ import { FicheResume } from '@/domain/plans';
 import { Button, Card, Icon, RichTextEditor } from '@/ui';
 import { format } from 'date-fns';
 import { useState } from 'react';
-import { DeletedNote, EditedNote } from '../data/useUpsertNoteSuivi';
-import ModaleEditionNoteDeSuivi from './ModaleEditionNoteDeSuivi';
-import ModaleSuppressionNoteDeSuivi from './ModaleSuppressionNoteDeSuivi';
+import { DeletedNote } from '../data/use-delete-note';
+import { EditedNote } from '../data/use-upsert-note';
+import { NoteDeletionModal } from './note-deletion.modal';
+import { NoteEditionModal } from './note-edition.modal';
 
 type NoteSuiviCardProps = {
   isReadonly?: boolean;
@@ -15,7 +16,7 @@ type NoteSuiviCardProps = {
   onDelete: (deletedNote: DeletedNote) => void;
 };
 
-const NoteSuiviCard = ({
+const NoteCard = ({
   isReadonly,
   fiche,
   note,
@@ -38,7 +39,7 @@ const NoteSuiviCard = ({
               onClick={() => setIsModalOpen(true)}
             />
             {!isReadonly && isModalOpen && (
-              <ModaleEditionNoteDeSuivi
+              <NoteEditionModal
                 fiche={fiche}
                 editedNote={note}
                 onEdit={onEdit}
@@ -46,7 +47,7 @@ const NoteSuiviCard = ({
                 setIsOpen={setIsModalOpen}
               />
             )}
-            <ModaleSuppressionNoteDeSuivi
+            <NoteDeletionModal
               fiche={fiche}
               editedNote={note}
               onDelete={onDelete}
@@ -56,25 +57,20 @@ const NoteSuiviCard = ({
       </div>
 
       <Card className="h-full px-4 py-[1.125rem] !gap-3 text-grey-8 hover:border-primary-3 hover:!bg-primary-1 !shadow-none transition">
-        {/* Année */}
         <span>{year}</span>
 
-        {/* Contenu de la note */}
         <RichTextEditor
           disabled
           className="border-none !px-0 !bg-transparent"
           initialValue={note.note}
         />
 
-        {/* Auteurs et dates */}
         <div className="flex gap-2">
-          {/* Création */}
           <span className="text-grey-8 text-sm font-normal">
             <Icon icon="user-line" size="sm" className="mr-1" />
             Créée par {note.createdBy} le{' '}
             {format(new Date(note.createdAt), 'dd/MM/yyyy')}
           </span>
-          {/* Edition */}
           {note.modifiedAt && note.modifiedAt !== note.createdAt && (
             <>
               <div className="w-[1px] h-4 bg-grey-5" />
@@ -93,4 +89,4 @@ const NoteSuiviCard = ({
   );
 };
 
-export default NoteSuiviCard;
+export default NoteCard;

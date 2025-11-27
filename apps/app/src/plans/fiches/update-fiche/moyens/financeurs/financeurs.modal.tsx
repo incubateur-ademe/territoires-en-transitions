@@ -42,7 +42,6 @@ export const FinanceursModal = ({
           onUpdate={setEditedFinanceurs}
         />
       )}
-      // Boutons pour valider / annuler les modifications
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnCancelProps={{ onClick: close }}

@@ -6,10 +6,8 @@ export type EditedNote = Pick<FicheActionNote, 'note'> & {
   id?: number;
   year: number;
 };
-export type DeletedNote = { id: number };
 
-// renvoie une fonction de modification des notes de suivi
-export const useUpsertNoteSuivi = ({
+export const useUpsertNote = ({
   id: ficheId,
   collectiviteId,
 }: Pick<Fiche, 'id' | 'collectiviteId'>) => {
@@ -18,7 +16,7 @@ export const useUpsertNoteSuivi = ({
 
   // TODO: use trpc
   return useMutation({
-    mutationKey: ['upsert_note_suivi'],
+    mutationKey: ['upsert_note'],
     mutationFn: async ({ id, note, year }: EditedNote) => {
       return api.put({
         route: `/collectivites/${collectiviteId}/fiches-action/${ficheId}/notes`,
@@ -35,34 +33,7 @@ export const useUpsertNoteSuivi = ({
         queryKey: ['fiche_action', ficheId.toString()],
       });
       queryClient.invalidateQueries({
-        queryKey: ['fiche_action_notes_suivi', collectiviteId, ficheId],
-      });
-    },
-  });
-};
-
-// renvoie une fonction de suppression d'une note de suivi
-export const useDeleteNoteSuivi = ({
-  id: ficheId,
-  collectiviteId,
-}: Pick<Fiche, 'id' | 'collectiviteId'>) => {
-  const api = useApiClient();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ id }: DeletedNote) => {
-      return api.delete({
-        route: `/collectivites/${collectiviteId}/fiches-action/${ficheId}/note`,
-        params: { id },
-      });
-    },
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['fiche_action', ficheId.toString()],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['fiche_action_notes_suivi', collectiviteId, ficheId],
+        queryKey: ['fiche_action_notes', collectiviteId, ficheId],
       });
     },
   });

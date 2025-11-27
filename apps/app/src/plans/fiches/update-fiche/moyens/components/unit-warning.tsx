@@ -1,6 +1,6 @@
 import { Alert } from '@/ui';
 
-export const BudgetUnitWarning = () => {
+export const UnitWarning = () => {
   return (
     <Alert
       state="warning"

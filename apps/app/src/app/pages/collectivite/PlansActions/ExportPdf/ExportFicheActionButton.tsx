@@ -8,8 +8,8 @@ import { FicheWithRelations } from '@/domain/plans';
 import { Event, useEventTracker } from '@/ui';
 import { mapValues } from 'es-toolkit';
 import { createElement, useEffect, useState } from 'react';
+import { useGetFicheNotes } from '../FicheAction/data/use-get-fiche-notes';
 import { useAnnexesFicheActionInfos } from '../FicheAction/data/useAnnexesFicheActionInfos';
-import { useFicheActionNotesSuivi } from '../FicheAction/data/useFicheActionNotesSuivi';
 import { useFichesActionLiees } from '../FicheAction/data/useFichesActionLiees';
 import { useFicheActionChemins } from '../PlanAction/data/usePlanActionChemin';
 import FicheActionPdf from './FicheActionPdf/FicheActionPdf';
@@ -61,10 +61,12 @@ export const FicheActionPdfContent = ({
     );
 
   const { data: annexes, isLoading: isLoadingAnnexes } =
-    useAnnexesFicheActionInfos(fiche.id, options.notes_docs.isChecked);
+    useAnnexesFicheActionInfos(fiche.id, options.documents.isChecked);
 
-  const { data: notesSuivi, isLoading: isLoadingNotesSuivi } =
-    useFicheActionNotesSuivi(fiche, options.notes_suivi.isChecked);
+  const { data: notes, isLoading: isLoadingNotes } = useGetFicheNotes(
+    fiche,
+    options.notes.isChecked
+  );
 
   const { data: etapes, isLoading: isLoadingEtapes } = useGetEtapes(
     fiche.id,
@@ -81,7 +83,7 @@ export const FicheActionPdfContent = ({
     isLoadingActionsLiees ||
     isLoadingAxes ||
     isLoadingAnnexes ||
-    isLoadingNotesSuivi ||
+    isLoadingNotes ||
     isLoadingEtapes ||
     isLoadingBudget;
 
@@ -99,14 +101,17 @@ export const FicheActionPdfContent = ({
           fichesLiees,
           actionsLiees: fiche?.mesures?.length ? actionsLiees ?? [] : [],
           annexes,
-          notesSuivi,
+          notes,
           budgets,
         })
       );
     }
+    // to prevent any unexpected bug, legacy code deps only have "isLoading" so we leave it
+    // that way for now before a further refactoring to move everything in the backend
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
-  return <></>;
+  return null;
 };
 
 type ExportFicheActionButtonProps = {
