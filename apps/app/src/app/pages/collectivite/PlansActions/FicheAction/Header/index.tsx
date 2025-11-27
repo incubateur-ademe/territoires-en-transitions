@@ -8,6 +8,7 @@ import { FicheWithRelations } from '@/domain/plans';
 import { PermissionOperation } from '@/domain/users';
 import { Divider, Icon } from '@/ui';
 import { format } from 'date-fns';
+import { useRouter } from 'next/router';
 import { FicheActionCompletionStatus } from '../FicheActionCompletion/fiche-action-completion';
 import Toolbar from './actions/toolbar';
 import { FicheBreadcrumbs } from './fiche-breadcrumbs';
@@ -37,7 +38,7 @@ export const Header = ({
     createdAt,
     completion,
   } = fiche;
-
+  const router = useRouter();
   const collectiviteId = useCollectiviteId();
 
   const displayCreationInfo = createdBy || createdAt;
@@ -47,7 +48,7 @@ export const Header = ({
 
   const displayInfoSection = displayCreationInfo || displayModificationInfo;
 
-  const onDeleteRedirectPath = planId
+  const redirectPathAfterDelete = planId
     ? makeCollectivitePlanActionUrl({
         collectiviteId: collectiviteId,
         planActionUid: planId.toString(),
@@ -70,7 +71,7 @@ export const Header = ({
           fiche={fiche}
           permissions={permissions}
           collectiviteId={collectiviteId}
-          onDeleteRedirectPath={onDeleteRedirectPath}
+          onDeleteRedirectPath={() => router.push(redirectPathAfterDelete)}
         />
       </div>
 

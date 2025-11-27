@@ -1,11 +1,8 @@
 import { useCollectiviteId } from '@/api/collectivites';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-
 type Args = {
-  /** Url de redirection à la suppression de la fiche */
-  redirectPath?: string;
+  onDeleteCallback?: () => void;
 };
 
 /**
@@ -14,7 +11,6 @@ type Args = {
 export const useDeleteFiche = (args: Args) => {
   const queryClient = useQueryClient();
   const collectiviteId = useCollectiviteId();
-  const router = useRouter();
   const trpc = useTRPC();
 
   return useMutation(
@@ -27,9 +23,7 @@ export const useDeleteFiche = (args: Args) => {
           }),
         });
 
-        if (args.redirectPath) {
-          router.push(args.redirectPath);
-        }
+        args.onDeleteCallback?.();
       },
     })
   );

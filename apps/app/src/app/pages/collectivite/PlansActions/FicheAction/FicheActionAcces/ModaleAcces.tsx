@@ -1,5 +1,5 @@
 import { FicheRestreintEditorFormSection } from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionAcces/fiche-restreint-editor.form-section';
-import FicheShareEditorFormSection from '@/app/plans/fiches/share-fiche/fiche-share-editor.form-section';
+import { FicheShareEditorFormSection } from '@/app/plans/fiches/show-fiche/share-fiche/fiche-share-editor.form-section';
 import { FicheResume } from '@/domain/plans';
 import { Modal, ModalFooterOKCancel } from '@/ui';
 import { useCallback, useEffect, useState } from 'react';
@@ -13,7 +13,7 @@ type ModaleAccesProps = {
   ) => void;
 };
 
-const ModaleAcces = ({
+export const ModaleAcces = ({
   isOpen,
   setIsOpen,
   fiche,
@@ -85,5 +85,3 @@ const ModaleAcces = ({
     />
   );
 };
-
-export default ModaleAcces;

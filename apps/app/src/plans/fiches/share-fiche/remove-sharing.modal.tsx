@@ -10,24 +10,22 @@ type RemoveSharingModalProps = {
   fiche: FicheResume;
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
-  /** Redirige vers le plan ou la page toutes les fiches action à la suppression de la fiche */
-  redirectPath?: string;
+  onDeleteCallback?: () => void;
+  onClose?: () => void;
 };
 
-/**
- * Bouton + modale de suppression du partage d'une fiche action partagée
- */
-const RemoveSharingModal = ({
+export const RemoveSharingModal = ({
   openState,
   fiche,
   buttonVariant,
   buttonClassName,
-  redirectPath,
+  onDeleteCallback,
+  onClose,
 }: RemoveSharingModalProps) => {
   const { id, titre, collectiviteNom } = fiche;
   const collectiviteId = useCollectiviteId();
   const { mutate: updateFiche } = useUpdateFiche({
-    redirectPath,
+    onUpdateCallback: onDeleteCallback,
   });
 
   return (
@@ -35,6 +33,7 @@ const RemoveSharingModal = ({
       openState={openState}
       title="Retirer le partage"
       subTitle={titre || 'Fiche sans titre'}
+      onClose={onClose}
       render={({ descriptionId }) => (
         // Texte d'avertissement
         <div id={descriptionId} data-test="supprimer-fiche-modale">
@@ -82,5 +81,3 @@ const RemoveSharingModal = ({
     </Modal>
   );
 };
-
-export default RemoveSharingModal;

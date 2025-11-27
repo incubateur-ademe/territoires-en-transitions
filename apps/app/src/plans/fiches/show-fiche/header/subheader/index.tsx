@@ -1,0 +1,38 @@
+import { FicheWithRelations } from '@/domain/plans';
+import { CompletionStatus } from '../../components/completion-status';
+import { AccessManagementBadges } from './access-management/access-management.badges';
+import { Pilotes } from './pilotes/pilotes.trigger';
+import { Priority } from './priority/priority.trigger';
+import { Status } from './status/status.trigger';
+
+const Separator = () => {
+  return <div className="w-[1px] h-5 bg-grey-5" />;
+};
+
+export const SubHeader = ({
+  fiche,
+  collectiviteId,
+}: {
+  fiche: FicheWithRelations;
+  collectiviteId: number;
+}): JSX.Element => {
+  const { completion, pilotes } = fiche;
+  return (
+    <div className="flex gap-4 items-center">
+      <Pilotes personnes={pilotes ?? []} />
+      <Separator />
+
+      <Status status={fiche.statut} />
+      <Separator />
+      <Priority priority={fiche.priorite} />
+      <Separator />
+      {completion ? (
+        <>
+          <CompletionStatus completion={completion} />
+          <Separator />
+        </>
+      ) : null}
+      <AccessManagementBadges fiche={fiche} collectiviteId={collectiviteId} />
+    </div>
+  );
+};

@@ -2,20 +2,16 @@ import { useCollectiviteId } from '@/api/collectivites';
 import { useTRPC } from '@/api/utils/trpc/client';
 import { ListFichesOutput } from '@/domain/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
 
-export const useUpdateFiche = (args?: {
-  invalidatePlanId?: number;
-  /**
-   * Path to redirect to after the update.
-   * Useful for instance to redirect after sharing removal.
-   */
-  redirectPath?: string;
-}) => {
+type Args = Partial<{
+  invalidatePlanId: number;
+  onUpdateCallback: () => void;
+}>;
+
+export const useUpdateFiche = (args?: Args) => {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation(
     trpc.plans.fiches.update.mutationOptions({
@@ -165,9 +161,7 @@ export const useUpdateFiche = (args?: {
         });
       },
       onSuccess: () => {
-        if (args?.redirectPath) {
-          router.push(args.redirectPath);
-        }
+        args?.onUpdateCallback?.();
       },
     })
   );

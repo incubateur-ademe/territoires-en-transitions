@@ -3,7 +3,7 @@ import { FicheResume } from '@/domain/plans';
 import { Button, Notification } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
-import ModaleAcces from './ModaleAcces';
+import { ModaleAcces } from './ModaleAcces';
 import TooltipRestreint from './TooltipRestreint';
 
 type FicheActionAccesProps = {
