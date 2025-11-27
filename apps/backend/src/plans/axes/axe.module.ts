@@ -1,6 +1,9 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '../../collectivites/collectivites.module';
 import { AxesRouter } from './axes.router';
+import { GetAxeRepository } from './get-axe/get-axe.repository';
+import { GetAxeRouter } from './get-axe/get-axe.router';
+import { GetAxeService } from './get-axe/get-axe.service';
 import { ListAxesRepository } from './list-axes/list-axes.repository';
 import { ListAxesRouter } from './list-axes/list-axes.router';
 import { ListAxesService } from './list-axes/list-axes.service';
@@ -17,6 +20,9 @@ import { MutateAxeService } from './mutate-axe/mutate-axe.service';
     ListAxesService,
     ListAxesRepository,
     ListAxesRouter,
+    GetAxeService,
+    GetAxeRepository,
+    GetAxeRouter,
     AxesRouter,
   ],
   exports: [AxesRouter],
