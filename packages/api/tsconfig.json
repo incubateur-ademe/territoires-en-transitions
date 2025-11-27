@@ -4,6 +4,9 @@
   "include": [],
   "references": [
     {
+      "path": "../../apps/backend"
+    },
+    {
       "path": "../domain"
     },
     {

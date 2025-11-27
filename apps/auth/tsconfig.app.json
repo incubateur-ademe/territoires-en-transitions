@@ -14,7 +14,8 @@
     ],
     "allowJs": true,
     "noEmit": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "tsBuildInfoFile": "out-tsc/tsconfig.app.tsbuildinfo",
   },
   "include": [
     "**/*.d.ts",

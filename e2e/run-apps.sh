@@ -24,7 +24,7 @@ function startFrontApp() {
 
 function startBackApp() {
   echo "Starting $1"
-  HOSTNAME=0.0.0.0 PORT="$2" QUEUE_REDIS_HOST=localhost node --env-file="./apps/$1/.env" "./dist/apps/$1/src/main.js" > "$LOG_DIR/$1.log" 2>&1 &
+  HOSTNAME=0.0.0.0 PORT="$2" QUEUE_REDIS_HOST=localhost node --env-file="./apps/$1/.env" "./apps/$1/dist/main.js" > "$LOG_DIR/$1.log" 2>&1 &
   PID=$!
   echo "$1 starting (PID: $PID)"
 }

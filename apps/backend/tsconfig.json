@@ -7,7 +7,7 @@
       "path": "../../packages/domain"
     },
     {
-      "path": "./tsconfig.app.json"
+      "path": "./tsconfig.project.json"
     },
     {
       "path": "./tsconfig.spec.json"

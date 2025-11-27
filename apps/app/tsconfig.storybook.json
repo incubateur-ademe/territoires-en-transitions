@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "./tsconfig.project.json",
   "compilerOptions": {
     "outDir": "out-tsc/storybook",
     "paths": {
@@ -28,10 +28,5 @@
     "src/**/*.test.tsx",
     "src/**/*.spec.jsx",
     "src/**/*.test.js"
-  ],
-  "references": [
-    {
-      "path": "./tsconfig.project.json"
-    }
   ]
 }
