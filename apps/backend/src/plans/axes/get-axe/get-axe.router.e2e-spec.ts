@@ -1,0 +1,319 @@
+import { addTestCollectiviteAndUser } from '@/backend/collectivites/collectivites/collectivites.fixture';
+import { Collectivite } from '@/backend/collectivites/shared/models/collectivite.table';
+import {
+  getAuthUser,
+  getAuthUserFromDcp,
+  getTestApp,
+  getTestDatabase,
+  YOLO_DODO,
+} from '@/backend/test';
+import { CollectiviteAccessLevelEnum } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
+import { addTestUser } from '@/backend/users/users/users.fixture';
+import { DatabaseService } from '@/backend/utils/database/database.service';
+import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { onTestFinished } from 'vitest';
+
+describe('Récupérer un axe', () => {
+  let router: TrpcRouter;
+  let db: DatabaseService;
+
+  let collectivite: Collectivite;
+  let editorUser: AuthenticatedUser;
+  let planId: number;
+
+  beforeAll(async () => {
+    const app = await getTestApp();
+    router = await app.get(TrpcRouter);
+    db = await getTestDatabase(app);
+
+    const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(db, {
+      user: {
+        accessLevel: CollectiviteAccessLevelEnum.ADMIN,
+      },
+      collectivite: {
+        accesRestreint: true,
+      },
+    });
+
+    collectivite = testCollectiviteAndUserResult.collectivite;
+    editorUser = getAuthUserFromDcp(testCollectiviteAndUserResult.user);
+
+    // Créer un plan pour les tests
+    const caller = router.createCaller({ user: editorUser });
+    const plan = await caller.plans.plans.create({
+      nom: 'Plan de test',
+      collectiviteId: collectivite.id,
+    });
+    planId = plan.id;
+
+    return async () => {
+      await caller.plans.plans.delete({ planId });
+      await testCollectiviteAndUserResult.cleanup();
+    };
+  });
+
+  describe('Récupérer un axe - Cas de succès', () => {
+    test('Récupérer avec succès un axe existant', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      // Créer un axe
+      const createdAxe = await caller.plans.axes.upsert({
+        nom: 'Axe à récupérer',
+        collectiviteId: collectivite.id,
+        planId,
+        parent: planId,
+      });
+      const axeId = createdAxe.id;
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.axes.delete({ axeId });
+      });
+
+      const result = await caller.plans.axes.get({
+        axeId,
+      });
+
+      expect(result).toBeDefined();
+      expect(result.id).toBe(axeId);
+      expect(result.nom).toBe('Axe à récupérer');
+      expect(result.collectiviteId).toBe(collectivite.id);
+      expect(result.parent).toBe(planId);
+      expect(result.plan).toBe(planId);
+      expect(result.createdAt).toBeDefined();
+      expect(result.modifiedAt).toBeDefined();
+    });
+
+    test('Récupérer avec succès un axe avec planType', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      // Créer un axe avec un type
+      const createdAxe = await caller.plans.axes.upsert({
+        nom: 'Axe avec type',
+        collectiviteId: collectivite.id,
+        planId,
+        parent: planId,
+      });
+      const axeId = createdAxe.id;
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.axes.delete({ axeId });
+      });
+
+      const result = await caller.plans.axes.get({
+        axeId,
+      });
+
+      expect(result).toBeDefined();
+      expect(result.id).toBe(axeId);
+      expect(result.planType).toBeDefined(); // Peut être null ou un objet PlanActionType
+    });
+
+    test('Récupérer avec succès un axe imbriqué (axe enfant)', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      // Créer un axe parent
+      const parentAxe = await caller.plans.axes.upsert({
+        nom: 'Axe parent',
+        collectiviteId: collectivite.id,
+        planId,
+        parent: planId,
+      });
+
+      // Créer un axe enfant
+      const childAxe = await caller.plans.axes.upsert({
+        nom: 'Axe enfant',
+        collectiviteId: collectivite.id,
+        planId,
+        parent: parentAxe.id,
+      });
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.axes.delete({ axeId: childAxe.id });
+        await cleanupCaller.plans.axes.delete({ axeId: parentAxe.id });
+      });
+
+      const result = await caller.plans.axes.get({
+        axeId: childAxe.id,
+      });
+
+      expect(result).toBeDefined();
+      expect(result.id).toBe(childAxe.id);
+      expect(result.nom).toBe('Axe enfant');
+      expect(result.parent).toBe(parentAxe.id);
+      expect(result.plan).toBe(planId);
+    });
+  });
+
+  describe("Récupérer un axe - Cas d'erreur", () => {
+    test("Échec de récupération d'un axe inexistant", async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const nonExistentAxeId = 999999;
+
+      await expect(
+        caller.plans.axes.get({
+          axeId: nonExistentAxeId,
+        })
+      ).rejects.toThrow("L'axe demandé n'a pas été trouvé");
+    });
+
+    test("Échec de récupération d'un axe avec un axeId invalide (négatif)", async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      await expect(
+        caller.plans.axes.get({
+          axeId: -1,
+        })
+      ).rejects.toThrow();
+    });
+
+    test("Échec de récupération d'un axe avec un axeId invalide (zéro)", async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      await expect(
+        caller.plans.axes.get({
+          axeId: 0,
+        })
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("Récupérer un axe - Droits d'accès", () => {
+    test('Un utilisateur sans droits sur la collectivité ne peut pas récupérer un axe', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      // Créer un axe avec l'utilisateur admin
+      const createdAxe = await caller.plans.axes.upsert({
+        nom: 'Axe pour test permissions',
+        collectiviteId: collectivite.id,
+        planId,
+        parent: planId,
+      });
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.axes.delete({ axeId: createdAxe.id });
+      });
+
+      const yoloDodoUser = await getAuthUser(YOLO_DODO);
+      const unauthorizedCaller = router.createCaller({ user: yoloDodoUser });
+
+      await expect(
+        unauthorizedCaller.plans.axes.get({
+          axeId: createdAxe.id,
+        })
+      ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
+    });
+
+    test('Un utilisateur avec des droits de lecture sur la collectivité peut récupérer un axe', async () => {
+      const { user, cleanup } = await addTestUser(db, {
+        collectiviteId: collectivite.id,
+        accessLevel: CollectiviteAccessLevelEnum.LECTURE,
+      });
+
+      onTestFinished(async () => {
+        await cleanup();
+      });
+
+      const lectureUser = getAuthUserFromDcp(user);
+      const caller = router.createCaller({ user: lectureUser });
+
+      // Créer un axe avec l'utilisateur admin
+      const adminCaller = router.createCaller({ user: editorUser });
+      const createdAxe = await adminCaller.plans.axes.upsert({
+        nom: 'Axe pour lecture',
+        collectiviteId: collectivite.id,
+        planId,
+        parent: planId,
+      });
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.axes.delete({ axeId: createdAxe.id });
+      });
+
+      const result = await caller.plans.axes.get({
+        axeId: createdAxe.id,
+      });
+
+      expect(result).toBeDefined();
+      expect(result.id).toBe(createdAxe.id);
+      expect(result.nom).toBe('Axe pour lecture');
+      expect(result.collectiviteId).toBe(collectivite.id);
+    });
+
+    test("Un utilisateur avec des droits d'édition limités sur la collectivité ne peut pas récupérer un axe", async () => {
+      const { user, cleanup } = await addTestUser(db, {
+        collectiviteId: collectivite.id,
+        accessLevel: CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS,
+      });
+
+      onTestFinished(async () => {
+        await cleanup();
+      });
+
+      const limitedEditionUser = getAuthUserFromDcp(user);
+      const caller = router.createCaller({ user: limitedEditionUser });
+
+      // Créer un axe avec l'utilisateur admin
+      const adminCaller = router.createCaller({ user: editorUser });
+      const createdAxe = await adminCaller.plans.axes.upsert({
+        nom: 'Axe pour édition limitée',
+        collectiviteId: collectivite.id,
+        planId,
+        parent: planId,
+      });
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.axes.delete({ axeId: createdAxe.id });
+      });
+
+      await expect(
+        caller.plans.axes.get({
+          axeId: createdAxe.id,
+        })
+      ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
+    });
+
+    test("Un utilisateur avec des droits d'édition sur la collectivité peut récupérer un axe", async () => {
+      const { user, cleanup } = await addTestUser(db, {
+        collectiviteId: collectivite.id,
+        accessLevel: CollectiviteAccessLevelEnum.EDITION,
+      });
+
+      onTestFinished(async () => {
+        await cleanup();
+      });
+
+      const editionUser = getAuthUserFromDcp(user);
+      const caller = router.createCaller({ user: editionUser });
+
+      // Créer un axe avec l'utilisateur admin
+      const adminCaller = router.createCaller({ user: editorUser });
+      const createdAxe = await adminCaller.plans.axes.upsert({
+        nom: 'Axe pour édition',
+        collectiviteId: collectivite.id,
+        planId,
+        parent: planId,
+      });
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.axes.delete({ axeId: createdAxe.id });
+      });
+
+      const result = await caller.plans.axes.get({
+        axeId: createdAxe.id,
+      });
+
+      expect(result).toBeDefined();
+      expect(result.id).toBe(createdAxe.id);
+      expect(result.nom).toBe('Axe pour édition');
+    });
+  });
+});
