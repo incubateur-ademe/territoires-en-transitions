@@ -10,8 +10,6 @@
       "@nx/react/typings/image.d.ts"
     ],
     "allowJs": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
     "plugins": [
       {
         "name": "next"

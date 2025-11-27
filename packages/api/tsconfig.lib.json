@@ -7,7 +7,10 @@
 
       "@nx/react/typings/cssmodule.d.ts",
       "@nx/react/typings/image.d.ts"
-    ]
+    ],
+
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
   },
   "exclude": [
     "**/*.spec.ts",
@@ -21,6 +24,9 @@
   ],
   "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],
   "references": [
+    {
+      "path": "../../apps/backend/tsconfig.app.json"
+    },
     {
       "path": "../domain/tsconfig.lib.json"
     }
