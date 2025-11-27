@@ -8,6 +8,7 @@
     "npm": "use-pnpm-instead",
     "yarn": "use-pnpm-instead",
     "pnpm": "9.x",
+    "node": "24.x"
   },
   "dependencies": {
     "@betagouv/les-communs-widget": "0.3.4",
