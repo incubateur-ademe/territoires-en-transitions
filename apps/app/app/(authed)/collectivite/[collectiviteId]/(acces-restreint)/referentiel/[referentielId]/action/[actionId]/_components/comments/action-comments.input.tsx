@@ -1,4 +1,4 @@
-import { AutoResizedTextarea, Button } from '@/ui';
+import { Button, Textarea } from '@/ui';
 import { useState } from 'react';
 
 type Props = {
@@ -26,15 +26,14 @@ const ActionCommentInput = ({
   };
   return (
     <div data-test={dataTest} className="flex gap-2">
-      <AutoResizedTextarea
+      <Textarea
         onBlur={() => {
           onPublishComment();
         }}
         value={comment}
         onChange={(evt) => setComment(evt.currentTarget.value)}
         placeholder={placeholder}
-        containerClassname="shrink"
-        displaySize="sm"
+        size="xs"
         rows={numberOfRows}
         name="comment"
         disabled={disabled}

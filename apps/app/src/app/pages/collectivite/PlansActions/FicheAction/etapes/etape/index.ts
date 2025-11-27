@@ -1,3 +1,3 @@
 export { Etape } from './etape';
-export { Textarea } from './textarea';
+export { EtapeTextarea } from './textarea';
 export { useUpsertEtape } from './use-upsert-etape';

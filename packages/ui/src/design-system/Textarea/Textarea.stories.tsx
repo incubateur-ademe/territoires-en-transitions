@@ -1,32 +1,20 @@
 import { Meta, StoryObj } from '@storybook/nextjs';
-import { action } from 'storybook/actions';
+import { useState } from 'react';
+import { Field } from '../Field';
 import { Textarea } from './Textarea';
-import { useRef, useState } from 'react';
-import { AutoResizedTextarea } from './AutoResizedTextarea';
 
 const meta: Meta<typeof Textarea> = {
   component: Textarea,
-  argTypes: {
-    displaySize: {
-      control: { type: 'select' },
-    },
-    resize: {
-      control: { type: 'select' },
-    },
+  args: {
+    placeholder: 'Saisir un texte...',
   },
   render: (args) => {
     const [value, setValue] = useState(args.value);
-    const ref = useRef(null);
     return (
       <Textarea
         {...args}
-        ref={ref}
         value={value}
-        onChange={(evt: any) => {
-          action('onChange')(evt.currentTarget);
-          action('ref.current.value')((ref.current as any).value);
-          setValue(evt.currentTarget.value);
-        }}
+        onChange={(evt) => setValue(evt.currentTarget.value)}
       />
     );
   },
@@ -36,45 +24,53 @@ export default meta;
 
 type Story = StoryObj<typeof Textarea>;
 
-/** Sans aucune props renseignée */
 export const Default: Story = {};
 
-/** Avec une aide à la saisie quand le champ est vide */
-export const WithPlaceholder: Story = {
-  args: {
-    placeholder: 'Saisir une valeur',
-  },
-};
-
-/** Avec une valeur */
-export const WithValue: Story = {
+export const disabled: Story = {
   args: {
     value: 'Test',
-    onChange: action('onChange'),
+    disabled: true,
   },
-};
-
-/** Variante en fonction de l'état */
-export const WithColorBorders: Story = {
-  render: () => (
-    <div className="flex flex-col gap-4">
-      <Textarea placeholder="Info" state="info" />
-      <Textarea placeholder="Error" state="error" />
-      <Textarea placeholder="Success" state="success" />
-      <Textarea placeholder="Warning" state="warning" />
-    </div>
-  ),
 };
 
 /** Variante small */
-export const SmallVariant: Story = {
-  args: {
-    placeholder: 'Small',
-    displaySize: 'sm',
+export const Size: Story = {
+  render: (args) => {
+    const [value, setValue] = useState();
+    const valueState = {
+      value,
+      onChange: (e: any) => setValue(e.currentTarget.value),
+    };
+    return (
+      <div className="flex flex-col gap-4">
+        <Textarea {...args} {...valueState} size="xs" />
+        <Textarea {...args} {...valueState} size="sm" />
+        <Textarea {...args} {...valueState} size="md" />
+      </div>
+    );
   },
 };
 
-/** Avec redimensionnement automatique du champ lors de la saisie */
-export const WithAutoResize: Story = {
-  render: () => <AutoResizedTextarea />,
+export const WithoutAutoResize: Story = {
+  args: {
+    autoresize: false,
+  },
+};
+
+export const WithinField: Story = {
+  render: (args) => {
+    const [value, setValue] = useState();
+    return (
+      <div className="flex flex-col gap-4">
+        <Field title="Description">
+          <Textarea
+            {...args}
+            value={value}
+            onChange={(e: any) => setValue(e.currentTarget.value)}
+            rows={5}
+          />
+        </Field>
+      </div>
+    );
+  },
 };

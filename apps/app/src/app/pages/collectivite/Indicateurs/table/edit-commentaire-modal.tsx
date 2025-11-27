@@ -1,11 +1,11 @@
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import {
-  AutoResizedTextarea,
   Button,
   Field,
   Modal,
   ModalFooter,
   ModalFooterOKCancel,
+  Textarea,
 } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
@@ -47,11 +47,12 @@ export const EditCommentaireModal = (props: EditCommentaireModalProps) => {
       render={() => {
         return (
           <Field title="Commentaire">
-            <AutoResizedTextarea
+            <Textarea
               rows={10}
               value={commentaire ?? ''}
               onChange={(e) => setCommentaire(e.target.value)}
               disabled={isReadonly}
+              autoFocus
             />
           </Field>
         );
