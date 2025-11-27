@@ -14,7 +14,7 @@ import { Button, Card, Checkbox, Notification, Tooltip } from '@/ui';
 import { QueryKey } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { CompletionStatus } from '../../../components/completion-status';
+import { CompletionStatus } from '../../../components/completion.badge';
 import { PriorityBadge } from '../../../components/priority.badge';
 import { StatusBadge } from '../../../components/status.badge';
 import { generateTitle } from '../../../utils';

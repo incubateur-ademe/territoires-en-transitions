@@ -1,5 +1,5 @@
 import { FicheWithRelations } from '@/domain/plans';
-import { CompletionStatus } from '../../components/completion-status';
+import { CompletionStatus } from '../../components/completion.badge';
 import { AccessManagementBadges } from './access-management/access-management.badges';
 import { Pilotes } from './pilotes/pilotes.trigger';
 import { Priority } from './priority/priority.trigger';

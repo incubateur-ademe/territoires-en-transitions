@@ -17,5 +17,5 @@ const DEFAULT_LABEL = 'Sans priorité';
 export const PriorityBadge = ({ priority }: { priority: Priorite | null }) => {
   const title = priority ?? DEFAULT_LABEL;
   const state = prioritiesToBadgeState[title];
-  return <Badge title={title} state={state} light />;
+  return <Badge title={title} state={state} />;
 };

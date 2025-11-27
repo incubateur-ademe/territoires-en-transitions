@@ -1,6 +1,7 @@
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { PermissionOperation } from '@/domain/users';
 import { ButtonMenu } from '@/ui/design-system/Button/button-menu';
+import { Icon } from '@/ui/design-system/Icon';
 import {
   ModalType,
   useEditionModalManager,
@@ -61,8 +62,11 @@ export const Menu = ({ permissions }: MenuProps) => {
           onClick: () => openModal(action.id),
         })),
       }}
-      children={'...'}
-      variant="white"
+      children={
+        <Icon icon="more-line" size="sm" className="h-4 w-4 color-primary-9" />
+      }
+      className="border-grey-4 border-solid border-2 py-4 px-2 w-9 h-9 rounded-lg flex items-center justify-center bg-white"
+      variant="unstyled"
     />
   );
 };
