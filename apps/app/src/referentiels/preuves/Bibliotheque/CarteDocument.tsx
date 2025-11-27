@@ -2,7 +2,7 @@ import {
   getTextFormattedDate,
   getTruncatedText,
 } from '@/app/utils/formatUtils';
-import { Button, Card, Divider, Icon, Notification, Tooltip } from '@/ui';
+import { Button, Card, Icon, Notification, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import AlerteSuppression from './AlerteSuppression';
@@ -103,8 +103,8 @@ const CarteDocument = ({
           {!editComment.isEditing ? (
             !!commentaire &&
             commentaire.length > 0 && (
-              <div className="mt-auto flex flex-col gap-2">
-                <Divider color="light" className="-mb-6" />
+              <div className="flex flex-col gap-2 leading-5">
+                <div className="h-px bg-primary-3" />
                 <div className="flex gap-1 items-start">
                   <Icon
                     icon="discuss-line"
@@ -138,13 +138,9 @@ const CarteDocument = ({
               </div>
             )
           ) : (
-            <div className="mt-auto flex flex-col gap-2">
-              <Divider color="light" className="-mb-6" />
-              <DocumentInput
-                editElement={editComment}
-                type="textarea"
-                className="text-grey-8 text-xs"
-              />
+            <div className="flex flex-col gap-2 leading-5">
+              <div className="h-px bg-primary-3" />
+              <DocumentInput editElement={editComment} type="textarea" />
             </div>
           )}
 

@@ -4,13 +4,15 @@ import { useState } from 'react';
 import { membreFonctions, referentielToName } from '@/app/app/labels';
 import MultiSelectDropdown from '@/app/ui/shared/select/MultiSelectDropdown';
 import SelectDropdown from '@/app/ui/shared/select/SelectDropdown';
-import { getAccessLevelDescription } from '@/app/users/authorizations/permission-access-level.utils';
+import {
+  getAccessLevelDescription,
+  getAccessLevelLabel,
+} from '@/app/users/authorizations/permission-access-level.utils';
+import { useAccessLevels } from '@/app/users/authorizations/use-access-levels';
 import { MembreFonction } from '@/domain/collectivites';
 import { ReferentielId } from '@/domain/referentiels';
 import { CollectiviteAccessLevel } from '@/domain/users';
 import BadgeAcces from '../../_components/badge-acces';
-import { getAccessLevelLabel } from '@/app/users/authorizations/permission-access-level.utils';
-import { useAccessLevels } from '@/app/users/authorizations/use-access-levels';
 
 /**
  * La nouvelle version du composant est dans le fichier membres-liste-table-row.tsx
@@ -30,7 +32,8 @@ export const DetailsFonctionTextarea = ({
     <Textarea
       data-test="details_fonction-textarea"
       value={value}
-      resize="none"
+      className="max-h-[4rem]"
+      rows={1}
       onChange={(evt) => setValue(evt.currentTarget.value)}
       onBlur={() => details_fonction !== value && save(value)}
       placeholder="À renseigner"

@@ -1,8 +1,9 @@
-import { forwardRef, Ref, useState } from 'react';
 import classNames from 'classnames';
+import { forwardRef, Ref, useState } from 'react';
 
-import { AutoResizedTextarea, TextareaProps } from '@/ui';
 import { RouterInput } from '@/api/utils/trpc/client';
+import { TextareaProps } from '@/ui';
+import { TextareaBase } from '@/ui/design-system/Textarea/textarea.base';
 
 type EtapeUpsert = RouterInput['plans']['fiches']['etapes']['upsert'];
 
@@ -19,7 +20,7 @@ type Props = Pick<EtapeUpsert, 'nom' | 'realise'> &
  * Wrapper de `AutoResizedTextarea` du design-system.
  * Utilisé pour l'affichage, la modification et la création du titre d'une étape.
  */
-export const Textarea = forwardRef(
+export const EtapeTextarea = forwardRef(
   (
     { nom, realise, onBlur, className, placeholder, disabled }: Props,
     ref?: Ref<HTMLTextAreaElement>
@@ -29,11 +30,10 @@ export const Textarea = forwardRef(
     const [value, setValue] = useState(initialNom);
 
     return (
-      <AutoResizedTextarea
+      <TextareaBase
         ref={ref}
-        containerClassname="w-full border-none bg-transparent resize-none"
         className={classNames(
-          'ml-1 !p-0 font-medium !text-base text-grey-8 placeholder:!font-normal placeholder:!text-base placeholder:!italic',
+          'w-full ml-1 !p-0 font-medium !text-base text-grey-8 border-none bg-transparent placeholder:!font-normal placeholder:!text-base placeholder:!italic',
           {
             '!text-grey-8': disabled && !realise,
             'line-through !text-grey-6': realise,
@@ -60,9 +60,8 @@ export const Textarea = forwardRef(
         }}
         placeholder={placeholder}
         disabled={disabled}
+        rows={1}
       />
     );
   }
 );
-
-Textarea.displayName = 'Textarea';

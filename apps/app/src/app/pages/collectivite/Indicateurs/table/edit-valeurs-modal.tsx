@@ -1,6 +1,6 @@
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
+import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
 import {
-  AutoResizedTextarea,
   Button,
   Divider,
   Field,
@@ -8,10 +8,10 @@ import {
   Input,
   Modal,
   ModalFooter,
+  Textarea,
 } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
-import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
 import { IndicateurSourceValeur, PreparedData } from '../data/prepare-data';
 import { InputValue } from './input-value';
 
@@ -76,14 +76,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
       title={title || 'Compléter le tableau'}
       render={() => {
         return (
-          <div
-            className="flex flex-col gap-8"
-            onKeyUp={(evt) => {
-              if (!disabled && evt.key === 'Enter') {
-                validateAndAddNewValue();
-              }
-            }}
-          >
+          <div className="flex flex-col gap-8">
             <Field title="Année *">
               <Input
                 type="text"
@@ -108,7 +101,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
               />
             </Field>
             <Field title="Ajouter un commentaire sur le résultat">
-              <AutoResizedTextarea
+              <Textarea
                 value={resultatCommentaire ?? ''}
                 onChange={(e) =>
                   setValeur({ ...valeur, resultatCommentaire: e.target.value })
@@ -125,7 +118,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
               />
             </Field>
             <Field title="Ajouter un commentaire sur l’objectif">
-              <AutoResizedTextarea
+              <Textarea
                 value={objectifCommentaire ?? ''}
                 onChange={(e) =>
                   setValeur({ ...valeur, objectifCommentaire: e.target.value })

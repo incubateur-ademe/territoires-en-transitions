@@ -1,6 +1,6 @@
-import { TEditState } from './useEditState';
 import { Input, Textarea } from '@/ui';
 import classNames from 'classnames';
+import { TEditState } from './useEditState';
 
 type DocumentInputProps = {
   editElement: TEditState;

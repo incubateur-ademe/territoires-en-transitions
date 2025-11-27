@@ -8,7 +8,7 @@ import { Button, Checkbox } from '@/ui';
 import { FicheActionEtapeType, FicheResume } from '@/domain/plans';
 import { useEtapesDispatch } from '../etapes-context';
 import ModalDeleteEtape from './modal-delete-etape';
-import { Textarea } from './textarea';
+import { EtapeTextarea } from './textarea';
 import { useUpsertEtape } from './use-upsert-etape';
 
 type Props = {
@@ -82,7 +82,7 @@ export const Etape = ({ etape, fiche, isReadonly }: Props) => {
           });
         }}
       />
-      <Textarea
+      <EtapeTextarea
         nom={etape.nom}
         realise={etape.realise}
         placeholder="Renseigner l'étape."

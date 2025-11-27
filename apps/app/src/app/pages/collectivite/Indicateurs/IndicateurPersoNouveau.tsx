@@ -15,7 +15,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const validationSchema = z.object({
@@ -76,6 +76,7 @@ const IndicateurPersoNouveau = ({
   );
 
   const {
+    control,
     register,
     handleSubmit,
     formState: { isValid },
@@ -138,7 +139,17 @@ const IndicateurPersoNouveau = ({
           htmlFor="commentaire"
           className="col-span-2"
         >
-          <Textarea id="commentaire" {...register('commentaire')} />
+          <Controller
+            control={control}
+            name="commentaire"
+            render={({ field }) => (
+              <Textarea
+                id="commentaire"
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
         </Field>
 
         <Checkbox
