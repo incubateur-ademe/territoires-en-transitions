@@ -1,15 +1,21 @@
+import { createSerializer } from 'nuqs';
 import { useState } from 'react';
 
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
+import { FicheActionViewType } from '@/app/plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
+import {
+  parameterMustBeNull,
+  searchParametersParser,
+} from '@/app/plans/fiches/list-all-fiches/filters/filter-converter';
 import { nameToparams } from '@/app/plans/fiches/list-all-fiches/filters/filters-search-parameters-mapper';
 import { FichesActionModule } from '@/app/tableaux-de-bord/plans-action/fiches-action/fiches-action.module';
 import { ModifiedSince } from '@/domain/utils';
 import { QueryKey } from '@tanstack/react-query';
+import { mapValues } from 'es-toolkit/object';
 import React from 'react';
 import { getQueryKey } from '../_hooks/use-tdb-perso-fetch-modules';
 import { getModuleEditActions } from './get-module-edit-actions';
-import { FicheActionViewType } from '@/app/plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
 
 type Props = {
   module: ModuleFicheActionsSelect;
@@ -34,26 +40,32 @@ const getDateFromModifiedSince = (modifiedSince: ModifiedSince) => {
 };
 
 const buildFilterSearchParameters = (module: ModuleFicheActionsSelect) => {
-  const params = new URLSearchParams();
+  const filters = { ...module.options.filtre };
 
-  if (module.options.filtre.modifiedSince) {
-    params.set(nameToparams.typePeriode, 'modification');
-    params.set(
-      nameToparams.debutPeriode,
-      getDateFromModifiedSince(
-        module.options.filtre.modifiedSince
-      ).toISOString()
-    );
+  if (filters.modifiedSince) {
+    Object.assign(filters, {
+      typePeriode: 'modification',
+      debutPeriode: getDateFromModifiedSince(
+        filters.modifiedSince
+      ).toISOString(),
+    });
   }
 
-  if (module.options.filtre.utilisateurPiloteIds) {
-    params.set(
-      nameToparams.utilisateurPiloteIds,
-      module.options.filtre.utilisateurPiloteIds.join(',')
-    );
-  }
+  const sanitizedFilters = mapValues(filters ?? {}, (value: any) => {
+    if (parameterMustBeNull(value)) {
+      //nuqs expect null values only when a param is not present
+      return null;
+    }
+    return value;
+  });
 
-  return params;
+  const serializer = createSerializer(searchParametersParser as any, {
+    urlKeys: nameToparams,
+  });
+
+  const searchParamsString = serializer(sanitizedFilters);
+
+  return new URLSearchParams(searchParamsString);
 };
 
 export const FilteredFichesByModule = ({

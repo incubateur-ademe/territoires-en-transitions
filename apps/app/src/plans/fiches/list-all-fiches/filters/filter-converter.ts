@@ -161,7 +161,7 @@ const emptyFilters = Object.keys(searchParametersParser).reduce((acc, key) => {
   return acc;
 }, {} as Record<FilterKeys, null>);
 
-const parameterMustBeNull = (value: any) => {
+export const parameterMustBeNull = (value: any) => {
   return (
     value === undefined ||
     value === '' ||

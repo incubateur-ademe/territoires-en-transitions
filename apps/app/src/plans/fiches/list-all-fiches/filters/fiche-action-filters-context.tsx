@@ -106,7 +106,7 @@ export const FicheActionFiltersProvider = ({
   const { filters: filterParams, setFilters: setFilterParams } =
     useFicheFiltersFromUrl();
 
-  const basicFilters: Partial<FormFilters> = {
+  const basicFiltersRaw: Partial<FormFilters> = {
     // noPlan is not in the search parameters, so we handle it here using the props
     noPlan: {
       'non-classifiees': true,
@@ -121,6 +121,11 @@ export const FicheActionFiltersProvider = ({
       'mes-fiches': [user.id],
     }[ficheType],
   };
+
+  // Enlève les filtres qui sont undefined à basicFiltersRaw pour ne pas écraser les filtres params
+  const basicFilters = Object.fromEntries(
+    Object.entries(basicFiltersRaw).filter(([_, value]) => value !== undefined)
+  );
 
   const formFilters = {
     ...filterParams,
