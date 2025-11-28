@@ -1,3 +1,4 @@
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
 import { AnneesNoteDeSuiviDropdown } from '@/app/ui/dropdownLists/ficheAction/AnneesNoteDeSuiviDropdown/AnneeNoteDeSuiviDropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
@@ -76,6 +77,10 @@ export const ToutesLesFichesFiltersForm = ({
     'debutPeriode',
   ]);
 
+  const collectivite = useCurrentCollectivite();
+
+  const isVisitor = collectivite.niveauAcces === null;
+
   const onSubmit = (data: FormFilters) => {
     setFilters(data);
   };
@@ -140,6 +145,7 @@ export const ToutesLesFichesFiltersForm = ({
                         uIds.length > 0 ? uIds : (EMPTY_ARRAY_VALUE as string[])
                       );
                     }}
+                    disableEdition={isVisitor}
                   />
                 )}
               />
@@ -160,6 +166,7 @@ export const ToutesLesFichesFiltersForm = ({
                           : EMPTY_ARRAY_VALUE;
                       field.onChange(serviceIds);
                     }}
+                    disableEdition={isVisitor}
                   />
                 )}
               />
@@ -180,6 +187,7 @@ export const ToutesLesFichesFiltersForm = ({
                           : EMPTY_ARRAY_VALUE;
                       field.onChange(structureIds);
                     }}
+                    disableEdition={isVisitor}
                   />
                 )}
               />
@@ -200,6 +208,7 @@ export const ToutesLesFichesFiltersForm = ({
                           : EMPTY_ARRAY_VALUE;
                       field.onChange(tagIds);
                     }}
+                    disableEdition={isVisitor}
                   />
                 )}
               />
@@ -229,6 +238,7 @@ export const ToutesLesFichesFiltersForm = ({
                         uIds.length > 0 ? uIds : (EMPTY_ARRAY_VALUE as string[])
                       );
                     }}
+                    disableEdition={isVisitor}
                   />
                 )}
               />
@@ -345,6 +355,7 @@ export const ToutesLesFichesFiltersForm = ({
                           : EMPTY_ARRAY_VALUE;
                       field.onChange(financeurIds);
                     }}
+                    disableEdition={isVisitor}
                   />
                 )}
               />
@@ -364,6 +375,7 @@ export const ToutesLesFichesFiltersForm = ({
                           : EMPTY_ARRAY_VALUE;
                       field.onChange(partenaireIds);
                     }}
+                    disableEdition={isVisitor}
                   />
                 )}
               />

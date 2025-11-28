@@ -21,6 +21,7 @@ type TagsSuiviPersoDropdownProps = Omit<
     selectedLibreTag: Tag;
   }) => void;
   additionalKeysToInvalidate?: QueryKey[];
+  disableEdition?: boolean;
 };
 
 const TagsSuiviPersoDropdown = (props: TagsSuiviPersoDropdownProps) => {
@@ -29,7 +30,10 @@ const TagsSuiviPersoDropdown = (props: TagsSuiviPersoDropdownProps) => {
   return (
     <SelectTags
       {...props}
-      placeholder={props.placeholder ?? 'Créez un tag de suivi personnalisé'}
+      placeholder={
+        props.placeholder ??
+        `Sélectionner ${!props.disableEdition ? 'ou créer ' : ''}un tag`
+      }
       queryKey={['tags_suivi_perso']}
       tagTableName="libre_tag"
       additionalKeysToInvalidate={props.additionalKeysToInvalidate}
@@ -41,6 +45,7 @@ const TagsSuiviPersoDropdown = (props: TagsSuiviPersoDropdownProps) => {
           selectedLibreTag: selectedValue,
         });
       }}
+      disableEdition={props.disableEdition}
     />
   );
 };

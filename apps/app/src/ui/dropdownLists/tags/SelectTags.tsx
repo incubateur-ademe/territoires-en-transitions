@@ -24,6 +24,7 @@ type SelectTagsProps = Omit<SelectMultipleProps, 'options' | 'onChange'> & {
     selectedValue: TagWithCollectiviteId;
   }) => void;
   optionsAreCaseSensitive?: boolean;
+  disableEdition?: boolean;
 };
 
 const SelectTags = ({
@@ -36,6 +37,7 @@ const SelectTags = ({
   disabledOptionsIds,
   refetchOptions,
   optionsAreCaseSensitive = true,
+  disableEdition,
   ...props
 }: SelectTagsProps) => {
   const collectiviteId = useCollectiviteId();
@@ -149,12 +151,16 @@ const SelectTags = ({
           selectedValue: getSelectedValues([selectedValue])[0],
         })
       }
-      createProps={{
-        userCreatedOptions: userCreatedOptionsIds ?? editableOptionsIds,
-        onCreate: handleTagCreate,
-        onUpdate: handleTagUpdate,
-        onDelete: handleTagDelete,
-      }}
+      createProps={
+        disableEdition
+          ? undefined
+          : {
+              userCreatedOptions: userCreatedOptionsIds ?? editableOptionsIds,
+              onCreate: handleTagCreate,
+              onUpdate: handleTagUpdate,
+              onDelete: handleTagDelete,
+            }
+      }
       optionsAreCaseSensitive={optionsAreCaseSensitive}
     />
   );

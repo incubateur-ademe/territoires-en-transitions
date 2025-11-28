@@ -21,6 +21,7 @@ type PartenairesDropdownProps = Omit<
     selectedPartenaire: TagWithCollectiviteId;
   }) => void;
   additionalKeysToInvalidate?: QueryKey[];
+  disableEdition?: boolean;
 };
 
 const PartenairesDropdown = (props: PartenairesDropdownProps) => {
@@ -29,7 +30,10 @@ const PartenairesDropdown = (props: PartenairesDropdownProps) => {
   return (
     <SelectTags
       {...props}
-      placeholder={props.placeholder ?? 'Sélectionnez ou créez un partenaire'}
+      placeholder={
+        props.placeholder ??
+        `Sélectionner ${!props.disableEdition ? 'ou créer ' : ''}un partenaire`
+      }
       queryKey={['partenaires']}
       tagTableName="partenaire_tag"
       additionalKeysToInvalidate={props.additionalKeysToInvalidate}
@@ -41,6 +45,7 @@ const PartenairesDropdown = (props: PartenairesDropdownProps) => {
           selectedPartenaire: selectedValue,
         });
       }}
+      disableEdition={props.disableEdition}
     />
   );
 };
