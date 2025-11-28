@@ -18,32 +18,18 @@ export const useUpsertAxe = ({
   const collectivite_id = useCollectiviteId();
   const trpc = useTRPC();
 
-  const { mutateAsync: createAxe } = useMutation(
-    trpc.plans.plans.createAxe.mutationOptions()
-  );
-  const { mutateAsync: updateAxe } = useMutation(
-    trpc.plans.plans.updateAxe.mutationOptions()
+  const { mutateAsync: upsertAxe } = useMutation(
+    trpc.plans.axes.upsert.mutationOptions()
   );
   return useMutation({
     mutationFn: async (axe: TAxeInsert) => {
-      if (axe.id) {
-        const result = await updateAxe({
-          id: axe.id,
-          nom: axe.nom ?? '',
-          collectiviteId: axe.collectivite_id,
-          planId,
-          parent: parentAxe.id,
-        });
-        return result;
-      } else {
-        const result = await createAxe({
-          nom: axe.nom ?? '',
-          collectiviteId: axe.collectivite_id,
-          planId,
-          parent: parentAxe.id,
-        });
-        return result;
-      }
+      return await upsertAxe({
+        id: axe.id,
+        nom: axe.nom ?? '',
+        collectiviteId: axe.collectivite_id,
+        planId,
+        parent: parentAxe.id,
+      });
     },
     meta: { disableToast: true },
     onMutate: async () => {
