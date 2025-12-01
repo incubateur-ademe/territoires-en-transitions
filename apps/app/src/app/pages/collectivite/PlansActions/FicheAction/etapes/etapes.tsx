@@ -2,8 +2,7 @@ import { SharedFicheUpdateAlert } from '@/app/plans/fiches/share-fiche/shared-fi
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { FicheResume } from '@/domain/plans';
 import { Checkbox } from '@/ui';
-import { useRef } from 'react';
-import { Textarea, useUpsertEtape } from './etape';
+import { EtapeTextarea, useUpsertEtape } from './etape';
 import {
   EtapesProvider,
   useEtapesDispatch,
@@ -61,8 +60,6 @@ const EtapesWithContext = ({ fiche, isReadonly }: Props) => {
 
   const etapesRealiseesCount = etapes.filter((etape) => etape.realise).length;
 
-  const createRef = useRef<HTMLTextAreaElement>(null);
-
   const handleCreateEtape = (newTitle: string) => {
     if (newTitle.length) {
       createEtape(
@@ -74,12 +71,6 @@ const EtapesWithContext = ({ fiche, isReadonly }: Props) => {
         {
           onSuccess: (newEtape) => {
             dispatchEtapes({ type: 'create', payload: newEtape });
-            // Remet immédiatement le focus sur le champ de création d'étape
-            if (createRef.current) {
-              // set timeout pour permettre à isPending de se mettre à jour
-              // et éviter le focus si le champ est désactivé
-              setTimeout(() => createRef.current?.focus(), 25);
-            }
           },
         }
       );
@@ -103,8 +94,7 @@ const EtapesWithContext = ({ fiche, isReadonly }: Props) => {
       {!isReadonly && (
         <div className="flex items-start p-4">
           <Checkbox />
-          <Textarea
-            ref={createRef}
+          <EtapeTextarea
             placeholder="Commencer à écrire pour ajouter une étape"
             disabled={isReadonly || isPending}
             onBlur={handleCreateEtape}
