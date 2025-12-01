@@ -1,10 +1,10 @@
-import { DiscussionMessages } from '@tet/domain/collectivites';
+import { DiscussionWithMessages } from '@tet/domain/collectivites';
 import { cn } from '@tet/ui/utils/cn';
 import ActionCommentItem from './action-comments.item';
 import { ActionDiscussionStatut } from './action-comments.types';
 
 type Props = {
-  discussion: DiscussionMessages;
+  discussion: DiscussionWithMessages;
   title: string | undefined;
   isDisplayedAsPanel: boolean;
 };

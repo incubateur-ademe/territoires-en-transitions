@@ -9,6 +9,7 @@ import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche
 import { RichTextEditor, SelectFilter } from '@tet/ui';
 import { Controller, useForm } from 'react-hook-form';
 import { Fiche } from '../data/use-get-fiche';
+import { FicheWithRelations } from '@tet/domain/plans';
 
 const DESCRIPTION_MAX_LENGTH = 20000;
 const INSTANCES_MAX_LENGTH = 10000;
@@ -32,13 +33,14 @@ export const FicheDescriptionForm = ({
   onSubmit,
   formId,
 }: {
-  fiche: Fiche;
+  fiche: FicheWithRelations;
   onSubmit: (fiche: FicheUpdatePayload) => void;
   formId: string;
 }) => {
-  const { handleSubmit, register, control, setValue, watch } = useForm<Fiche>({
-    defaultValues: fiche,
-  });
+  const { handleSubmit, register, control, setValue, watch } =
+    useForm<FicheWithRelations>({
+      defaultValues: fiche,
+    });
 
   const { thematiques, description, instanceGouvernance, sousThematiques } =
     watch();

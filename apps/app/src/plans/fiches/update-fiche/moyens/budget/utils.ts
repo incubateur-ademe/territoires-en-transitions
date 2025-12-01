@@ -1,4 +1,4 @@
-import { FicheActionBudget, FicheWithRelations } from '@tet/domain/plans';
+import { FicheBudget, FicheWithRelations } from '@tet/domain/plans';
 import { isAfter } from 'date-fns';
 import { toBudgetProperties } from './to-budget-properties';
 
@@ -6,7 +6,7 @@ const DATE_OF_THE_UNIT_SWITCH = new Date('2025-05-13');
 
 export const shouldDisplayUnitWarning = (
   fiche: FicheWithRelations,
-  budgets: FicheActionBudget[]
+  budgets: FicheBudget[]
 ) => {
   const isFicheTooRecent = isAfter(
     new Date(fiche.createdAt),

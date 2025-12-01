@@ -1,9 +1,10 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { Alert, Button, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import classNames from 'classnames';
+import { useUpdateFiche } from '../update-fiche/data/use-update-fiche';
 
 type RemoveSharingModalProps = {
   openState?: OpenState;

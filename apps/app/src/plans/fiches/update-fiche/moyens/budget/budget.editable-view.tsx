@@ -1,4 +1,4 @@
-import { FicheActionBudget } from '@tet/domain/plans';
+import { FicheBudget } from '@tet/domain/plans';
 import { EditableSection } from '../components/EditableSection';
 import { BudgetInvestissementContent } from './budget-investissement.content';
 import { BudgetPerYearContent } from './budget-per-year.content';
@@ -17,7 +17,7 @@ type BudgetType = 'investissement' | 'fonctionnement';
 type BudgetEditableViewProps = {
   type: BudgetType;
   isReadonly?: boolean;
-  budgets: FicheActionBudget[];
+  budgets: FicheBudget[];
   onEdit: () => void;
 };
 

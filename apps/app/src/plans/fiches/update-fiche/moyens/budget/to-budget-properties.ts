@@ -1,8 +1,8 @@
-import { FicheActionBudget } from '@tet/domain/plans';
+import { FicheBudget } from '@tet/domain/plans';
 import type { BudgetProperties } from './types';
 
 export const toBudgetProperties = (
-  budgets: Array<FicheActionBudget>,
+  budgets: Array<FicheBudget>,
   type: 'investissement' | 'fonctionnement'
 ): Array<BudgetProperties> => {
   return budgets
