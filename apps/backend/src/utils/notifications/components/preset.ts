@@ -1,6 +1,6 @@
 /**
- * Duplique la palette de @/ui/tailwind-preset pour éviter une dépendance
- * circulaire (ui -> api -> @/domain -> backend -> ui).
+ * Duplique la palette de @tet/ui/tailwind-preset pour éviter une dépendance
+ * circulaire (ui -> api -> domain -> backend -> ui).
  *
  * Idéalement il faudrait :
  * - éliminer la dépendance entre @tet/ui et @tet/api pour pouvoir importer le

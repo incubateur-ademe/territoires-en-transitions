@@ -1,11 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { Discussion } from '@tet/domain/collectivites';
+import {
+  Discussion,
+  DiscussionMessage,
+  DiscussionWithMessages,
+} from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { Result } from '../infrastructure/discussion.results';
 import {
-  DiscussionMessage,
-  DiscussionMessages,
   DiscussionsMessagesListType,
   DiscussionWithActionName,
   ListDiscussionsRequestFilters,
@@ -73,7 +75,7 @@ export class ListDiscussionService {
         messagesByDiscussionId.set(message.discussionId, existing);
       });
 
-      const discussionsWithMessages: DiscussionMessages[] = discussions.map(
+      const discussionsWithMessages: DiscussionWithMessages[] = discussions.map(
         (discussion: DiscussionWithActionName) => {
           return {
             ...discussion,

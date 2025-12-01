@@ -2,17 +2,19 @@ import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { DiscussionRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
-import { DiscussionType } from '../infrastructure/discussion.table';
+import { DiscussionRepository } from '@tet/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
+import {
+  Discussion,
+  DiscussionMessage,
+  discussionStatus,
+} from '@tet/domain/collectivites';
 import {
   CreateDiscussionData,
   CreateDiscussionMessageResponse,
-  DiscussionMessage,
 } from '../presentation/discussion.schemas';
 import { DiscussionDomainService } from './discussion-domain-service';
 import { DiscussionQueryService } from './discussion-query-service';
 import { DiscussionErrorEnum } from './discussion.errors';
-import { discussionStatus } from '@tet/domain/collectivites';
 
 describe('DiscussionDomainService', () => {
   let service: DiscussionDomainService;
@@ -20,7 +22,7 @@ describe('DiscussionDomainService', () => {
   let mockDiscussionQueryService: Partial<DiscussionQueryService>;
   let mockLogger: Partial<Logger>;
 
-  const mockDiscussion: DiscussionType = {
+  const mockDiscussion: Discussion = {
     id: 1,
     collectiviteId: 123,
     actionId: 'action-1',

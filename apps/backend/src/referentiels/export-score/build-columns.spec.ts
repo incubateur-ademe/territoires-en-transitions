@@ -21,6 +21,7 @@ function createSnapshot(
   return {
     collectiviteId: 1,
     referentielId: 'eci',
+    etoiles: null,
     ref: 'snapshot-test',
     nom: 'Test Snapshot',
     jalon: SnapshotJalonEnum.COURANT,

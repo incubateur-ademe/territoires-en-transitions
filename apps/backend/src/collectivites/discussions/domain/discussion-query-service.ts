@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
-import { dcpTable as userTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
+import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
+import { dcpTable as userTable } from '@tet/backend/users/models/dcp.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { DiscussionMessage } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import {
   and,
@@ -22,7 +23,6 @@ import {
   discussionTable,
 } from '../infrastructure/discussion.table';
 import {
-  DiscussionMessage,
   DiscussionsListType,
   ListDiscussionsRequestFilters,
 } from '../presentation/discussion.schemas';

@@ -1,14 +1,17 @@
-import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 
-import type { DiscussionRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
-import { Discussion, DiscussionStatus } from '@tet/domain/collectivites';
+import type { DiscussionRepository } from '@tet/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
+import {
+  Discussion,
+  DiscussionMessage,
+  DiscussionStatus,
+} from '@tet/domain/collectivites';
 import { Result } from '../infrastructure/discussion.results';
 import {
   CreateDiscussionData,
   CreateDiscussionMessageResponse,
   CreateDiscussionResponse,
-  DiscussionMessage,
 } from '../presentation/discussion.schemas';
 import { DiscussionError, DiscussionErrorEnum } from './discussion.errors';
 

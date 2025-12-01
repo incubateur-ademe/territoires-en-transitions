@@ -1,4 +1,4 @@
-import { NotificationTemplate } from '@/backend/utils/notifications/models/notification-template.dto';
+import { NotificationTemplate } from '@tet/backend/utils/notifications/models/notification-template.dto';
 
 // données attendues par le template
 export interface NotifyPiloteProps extends NotificationTemplate {

@@ -1,8 +1,8 @@
-import { CTAButton } from '@/backend/utils/notifications/components/cta.button';
-import { EmailContainer } from '@/backend/utils/notifications/components/email-container';
-import { Footer } from '@/backend/utils/notifications/components/footer';
-import { formatDate } from '@/backend/utils/notifications/components/format-date.utils';
 import { Heading, Section, Text } from '@react-email/components';
+import { CTAButton } from '@tet/backend/utils/notifications/components/cta.button';
+import { EmailContainer } from '@tet/backend/utils/notifications/components/email-container';
+import { Footer } from '@tet/backend/utils/notifications/components/footer';
+import { formatDate } from '@tet/backend/utils/notifications/components/format-date.utils';
 import * as React from 'react';
 import { NotifyPiloteProps } from './notify-pilote.props';
 
