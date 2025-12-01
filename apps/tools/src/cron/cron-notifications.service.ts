@@ -1,5 +1,5 @@
-import { sendPendingNotificationsInputSchema } from '@/backend/utils/notifications/models/send-pending-notifications.input';
 import { Injectable } from '@nestjs/common';
+import { sendPendingNotificationsInputSchema } from '@tet/backend/utils/notifications/models/send-pending-notifications.input';
 import { TrpcClientService } from '../utils/trpc/trpc-client.service';
 
 @Injectable()

@@ -10,10 +10,10 @@ SRC_DIR=$(pwd)/apps/backend
 
 # create target dir for symlinks
 mkdir -p "${TMP_DIR}"
-mkdir -p "${TMP_DIR}/@/backend/utils"
+mkdir -p "${TMP_DIR}/@tet/backend/utils"
 
 # create symlink on the notification shared components sources
-ln -sf "${SRC_DIR}/src/utils/notifications" "${TMP_DIR}/@/backend/utils"
+ln -sf "${SRC_DIR}/src/utils/notifications" "${TMP_DIR}/@tet/backend/utils"
 
 # create symlink on all email template/props found into the backend
 find "${SRC_DIR}" -name "*.email.tsx" -exec ln -sf {} "${TMP_DIR}" ';'

@@ -1,4 +1,8 @@
-import { discussionStatusValues } from '@tet/domain/collectivites';
+import {
+  Discussion,
+  discussionStatusValues,
+  DiscussionWithMessages,
+} from '@tet/domain/collectivites';
 import { referentielIdEnumSchema } from '@tet/domain/referentiels';
 import z from 'zod';
 import { queryOptionsTypeSchema } from '../domain/discussion.query-options';
@@ -112,36 +116,12 @@ export type CreateDiscussionMessageResponse = {
   createdAt: string;
 };
 
-export type DiscussionMessage = {
-  id: number;
-  discussionId: number;
-  message: string;
-  createdBy: string;
-  createdAt: string;
-  createdByNom: string | null;
-  createdByPrenom: string | null;
-};
-
-export type DiscussionMessages = {
-  id: number;
-  collectiviteId: number;
-  actionId: string;
-  actionNom: string;
-  actionIdentifiant: string;
-  status: string;
-  createdBy: string;
-  createdAt: string;
-  messages: DiscussionMessage[];
-};
-
 export type DiscussionsMessagesListType = {
-  discussions: DiscussionMessages[];
+  discussions: DiscussionWithMessages[];
   count: number;
 };
 
-export type DiscussionWithActionName = {
-  data: DiscussionMessages[];
-  count: number;
+export type DiscussionWithActionName = Discussion & {
   actionNom: string;
   actionIdentifiant: string;
 };

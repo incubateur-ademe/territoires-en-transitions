@@ -1,4 +1,4 @@
-import { createEnumObject } from '@/backend/utils/enum.utils';
+import { createEnumObject } from '@tet/domain/utils';
 
 export const NotificationStatus = ['pending', 'sent', 'failed'] as const;
 

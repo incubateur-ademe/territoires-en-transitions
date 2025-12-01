@@ -1,15 +1,15 @@
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { RoleService } from '@/backend/users/authorizations/roles/role.service';
-import { AuthRole, AuthUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { RoleService } from '@tet/backend/users/authorizations/roles/role.service';
+import { AuthRole, AuthUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { discussionStatus } from '@tet/domain/collectivites';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { DiscussionDomainService } from '../domain/discussion-domain-service';
 import { DiscussionErrorEnum } from '../domain/discussion.errors';
-import { discussionStatus } from '@tet/domain/collectivites';
 import { ListDiscussionService } from '../domain/list-discussion-service';
 import {
   CreateDiscussionRequest,
@@ -229,28 +229,33 @@ describe('DiscussionApplicationService', () => {
     test('should list discussions when user has permission', async () => {
       const mockResponse = {
         success: true as const,
-        data: [
-          {
-            id: 1,
-            collectiviteId: 1,
-            actionId: 'cae_1.1.1',
-            actionNom: 'Test Action',
-            actionIdentifiant: '1.1.1',
-            status: 'ouvert',
-            createdBy: 'user-123',
-            createdAt: '2025-01-01T00:00:00.000Z',
-            messages: [
-              {
-                id: 1,
-                discussionId: 1,
-                message: 'Test message',
-                createdBy: 'user-123',
-                createdAt: '2025-01-01T00:00:00.000Z',
-                createdByNom: 'Test User',
-              },
-            ],
-          },
-        ],
+        data: {
+          discussions: [
+            {
+              id: 1,
+              collectiviteId: 1,
+              actionId: 'cae_1.1.1',
+              actionNom: 'Test Action',
+              actionIdentifiant: '1.1.1',
+              status: 'ouvert' as const,
+              createdBy: 'user-123',
+              createdAt: '2025-01-01T00:00:00.000Z',
+              modifiedAt: '2025-01-01T00:00:00.000Z',
+              messages: [
+                {
+                  id: 1,
+                  discussionId: 1,
+                  message: 'Test message',
+                  createdBy: 'user-123',
+                  createdAt: '2025-01-01T00:00:00.000Z',
+                  createdByNom: 'Test User',
+                  createdByPrenom: 'Test User',
+                },
+              ],
+            },
+          ],
+          count: 1,
+        },
       };
 
       vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
@@ -301,7 +306,7 @@ describe('DiscussionApplicationService', () => {
       const options = { limit: 20, page: 1 };
       const mockResponse = {
         success: true as const,
-        data: [],
+        data: { discussions: [], count: 0 },
       };
 
       vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
@@ -484,6 +489,7 @@ describe('DiscussionApplicationService', () => {
           message,
           createdBy: 'user-123',
           createdByNom: null,
+          createdByPrenom: null,
           createdAt: '2025-01-01T00:00:00.000Z',
           modifiedAt: '2025-01-01T00:00:00.000Z',
         },

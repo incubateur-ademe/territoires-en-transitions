@@ -1,7 +1,7 @@
-import ConfigurationService from '@/backend/utils/config/configuration.service';
-import { EmailService } from '@/backend/utils/email/email.service';
 import { Test } from '@nestjs/testing';
-import { simpleParser } from 'mailparser';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
+import { EmailService } from '@tet/backend/utils/email/email.service';
+import { AddressObject, simpleParser } from 'mailparser';
 import { SMTPServer } from 'smtp-server';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
@@ -130,10 +130,10 @@ describe('EmailService e2e', () => {
         stream.on('end', async () => {
           const mail = await simpleParser(emailData);
           receivedEmails.push({
-            from: mail?.from?.text,
-            to: mail?.to?.text,
-            subject: mail?.subject,
-            html: mail?.html,
+            from: mail?.from?.text ?? '',
+            to: (mail?.to as AddressObject)?.text ?? '',
+            subject: mail?.subject ?? '',
+            html: mail?.html ? mail.html.toString() : '',
           });
           callback(null);
         });

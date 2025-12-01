@@ -22,6 +22,7 @@ import { statutEnumValues } from './statut.enum.schema';
 export const ficheSchema = z.object({
   id: z.number(),
   collectiviteId: z.number(),
+  parentId: z.number().nullable(),
   titre: z.string().nullable().describe('Titre'),
   description: z.string().nullable().describe('Description'),
   piliersEci: z.array(piliersEciEnumSchema).nullable().describe('Piliers ECI'),

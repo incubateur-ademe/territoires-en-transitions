@@ -1,16 +1,16 @@
-import { DiscussionRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
+import { Injectable, Logger } from '@nestjs/common';
+import { DiscussionRepository } from '@tet/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
 import {
   CreateDiscussionData,
   CreateDiscussionMessageResponse,
-  DiscussionMessage,
-} from '@/backend/collectivites/discussions/presentation/discussion.schemas';
-import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { Injectable, Logger } from '@nestjs/common';
+} from '@tet/backend/collectivites/discussions/presentation/discussion.schemas';
+import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   Discussion,
   DiscussionCreate,
+  DiscussionMessage,
   DiscussionMessageCreate,
   DiscussionStatus,
   discussionStatus,

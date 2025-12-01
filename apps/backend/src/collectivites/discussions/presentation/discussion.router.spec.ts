@@ -1,5 +1,5 @@
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Test, TestingModule } from '@nestjs/testing';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { TRPCError } from '@trpc/server';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { DiscussionApplicationService } from '../application/discussion-application.service';

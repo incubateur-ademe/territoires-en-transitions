@@ -3,6 +3,7 @@ export * from './collectivite-banatic-type.enum';
 export * from './collectivite-relation.schema';
 export * from './collectivite-type.enum';
 export * from './collectivite.schema';
+export * from './discussion-order-by.enum';
 export * from './discussion-status.enum';
 export * from './discussion.schema';
 export * from './documents/bibliotheque-fichier.schema';
