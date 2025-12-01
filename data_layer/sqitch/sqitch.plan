@@ -900,6 +900,8 @@ utilisateur/add_edition_fiches_indicateurs 2025-10-28T10:28:20Z System Administr
 utilisateur/droits_add_edition_fiches_indicateurs 2025-11-10T12:45:02Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # prise en compte du niveau acces edition_fiches_indicateurs pour la gestion documentaire
 @v4.86.0 2025-11-19T17:24:05Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Ajout du role d'editeur limité aux fiches et indicateurs
 
+referentiel/add_audit_etoiles 2025-11-18T09:38:13Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Ajoute les etoiles reellement obtenues dans l'audit
+
 collectivite/rename_commentaire_to_discussion 2025-10-13T12:37:35Z System Administrator <root@Mitris-Mac.local> # Renomme la table action_discussion_commentaire en discussion_message et action_discussion en discussion
 @v4.74.0 2025-11-20T13:11:22Z System Administrator <root@Mitris-Mac.local> # renomage de la table action_commentaire en discussion et action_commentaire_discussion en discussion_message
 
@@ -908,7 +910,7 @@ collectivite/remove_supprimer_commentaire_via_table_trigger 2025-10-14T09:34:13Z
 
 collectivite/remove_set_modified_at_trigger_discussion_table 2025-11-13T13:47:09Z System Administrator <root@Mitris-Mac.local> # Supprime le triggeer set_modified_at sur la table discussion
 @v4.76.0 2025-11-20T13:51:31Z System Administrator <root@Mitris-Mac.local> # supprime le trigger modified_at de la table discussion
-referentiel/add_audit_etoiles 2025-11-18T09:38:13Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Ajoute les etoiles reellement obtenues dans l'audit
+
 plan_action/sous_fiche 2025-10-27T15:44:15Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute la notion de sous-fiche (une fiche peut avoir une autre fiche comme parent)
 plan_action/drop_create_fiche 2025-10-30T08:42:16Z Marc Rutkowski <marc@attractive-media.fr> # Supprime la fonction create_fiche
 plan_action/soft_delete_fiche 2025-10-30T11:14:46Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute le "soft delete" pour les fiches action
