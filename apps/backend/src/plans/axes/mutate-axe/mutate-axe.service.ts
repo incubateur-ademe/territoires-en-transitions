@@ -62,7 +62,8 @@ export class MutateAxeService {
         return result;
       }
 
-      if (indicateurs === null || indicateurs) {
+      // Met à jour les indicateurs liés
+      if (indicateurs !== undefined) {
         const setIndicateursResult =
           await this.mutateAxeRepository.setIndicateurs(
             result.data.id,

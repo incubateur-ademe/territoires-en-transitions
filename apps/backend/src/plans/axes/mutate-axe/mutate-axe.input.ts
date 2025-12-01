@@ -1,20 +1,28 @@
 import { z } from 'zod';
+import {
+  baseCreateAxeOrPlanSchema,
+  baseUpdateAxeOrPlanSchema,
+} from '../../shared/mutate-axe-base.input';
 
-export const createAxeSchema = z.object({
-  nom: z.string().nonempty("Le nom de l'axe est requis"),
-  collectiviteId: z.number().positive("L'ID de la collectivité est requis"),
+/**
+ * Schéma pour créer un axe
+ * Un axe a planId et parent (tous deux requis)
+ */
+export const createAxeSchema = baseCreateAxeOrPlanSchema.extend({
   planId: z.number().positive("Identifiant du plan auquel appartient l'axe"),
-  parent: z
-    .number()
-    .positive(
-      "Identifiant de l'axe parent, en cas de sous-axe, ou du plan sinon"
-    ),
+  parent: z.number().positive("Identifiant de l'axe parent"),
 });
 export type CreateAxeInput = z.infer<typeof createAxeSchema>;
 
-const updateAxeSchema = createAxeSchema.partial().extend({
-  id: z.number().positive("Identifiant de l'axe à modifier"),
-  collectiviteId: z.number().positive("L'ID de la collectivité est requis"),
+/**
+ * Schéma pour mettre à jour un axe
+ */
+const updateAxeSchema = baseUpdateAxeOrPlanSchema.extend({
+  planId: z
+    .number()
+    .positive("Identifiant du plan auquel appartient l'axe")
+    .optional(),
+  parent: z.number().positive("Identifiant de l'axe parent").optional(),
 });
 export type UpdateAxeInput = z.infer<typeof updateAxeSchema>;
 
@@ -32,7 +40,7 @@ const mutateAxeOptionsSchema = z.object({
     .nullish(),
 });
 export const mutateAxeSchema = z.union([
-  createAxeSchema.extend(mutateAxeOptionsSchema.shape),
   updateAxeSchema.extend(mutateAxeOptionsSchema.shape),
+  createAxeSchema.extend(mutateAxeOptionsSchema.shape),
 ]);
 export type MutateAxeInput = z.infer<typeof mutateAxeSchema>;
