@@ -45,7 +45,7 @@ describe('Mutate Axe', () => {
     planId = plan.id;
 
     return async () => {
-      await caller.plans.plans.deletePlan({ planId });
+      await caller.plans.plans.delete({ planId });
       await testCollectiviteAndUserResult.cleanup();
     };
   });
@@ -67,7 +67,7 @@ describe('Mutate Axe', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId });
+        await cleanupCaller.plans.axes.delete({ axeId });
       });
 
       const plan = await caller.plans.plans.get({ planId });
@@ -77,7 +77,6 @@ describe('Mutate Axe', () => {
           expect.objectContaining({
             id: axeId,
             nom: axeInput.nom,
-            collectiviteId: collectivite.id,
             parent: planId,
           }),
         ])
@@ -98,7 +97,7 @@ describe('Mutate Axe', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId });
+        await cleanupCaller.plans.axes.delete({ axeId });
       });
 
       // Modifier l'axe
