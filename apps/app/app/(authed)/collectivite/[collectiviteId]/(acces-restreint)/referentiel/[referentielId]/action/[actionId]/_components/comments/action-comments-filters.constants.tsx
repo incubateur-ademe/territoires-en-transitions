@@ -1,5 +1,5 @@
 import {
-  discussionOrderByValues,
+  discussionOrderByEnum,
   discussionStatus,
 } from '@tet/domain/collectivites';
 
@@ -10,7 +10,7 @@ export const statusOptions = [
 ];
 
 export const orderByOptions = [
-  { label: 'mesure', value: discussionOrderByValues.ACTION_ID },
-  { label: 'date de publication', value: discussionOrderByValues.CREATED_AT },
-  { label: 'auteur', value: discussionOrderByValues.CREATED_BY },
+  { label: 'mesure', value: discussionOrderByEnum.ACTION_ID },
+  { label: 'date de publication', value: discussionOrderByEnum.CREATED_AT },
+  { label: 'auteur', value: discussionOrderByEnum.CREATED_BY },
 ];

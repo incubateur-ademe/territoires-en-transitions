@@ -2,14 +2,14 @@ import { ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
-import { FicheResume } from '@tet/domain/plans';
+import { Fiche } from '../../data/use-get-fiche';
 import { useEtapesDispatch } from '../etapes-context';
 import { useDeleteEtape } from './use-delete-etape';
 
 type Props = {
   openState: OpenState;
   etapeId: number;
-  fiche: FicheResume;
+  fiche: Fiche;
 };
 
 const ModalDeleteEtape = ({ openState, etapeId, fiche }: Props) => {

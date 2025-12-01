@@ -1,6 +1,5 @@
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
-import { FicheResume } from '@tet/domain/plans';
 import {
   Alert,
   Button,
@@ -11,11 +10,12 @@ import {
   Select,
 } from '@tet/ui';
 import { useState } from 'react';
+import { Fiche } from '../data/use-get-fiche';
 import { EditedNote } from '../data/useUpsertNoteSuivi';
 
 type ModaleCreationNoteDeSuiviProps = {
   isOpen: boolean;
-  fiche: FicheResume;
+  fiche: Fiche;
   setIsOpen: (opened: boolean) => void;
   onEdit: (editedNote: EditedNote) => void;
 };

@@ -1,9 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useTRPC } from '@tet/api';
+import { RouterInput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { ListFichesOutput } from '@tet/domain/plans';
 import { useRouter } from 'next/navigation';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
+import { ListFichesOutput } from '../../list-all-fiches/data/use-list-fiches';
+
+export type UpdateFicheInput = RouterInput['plans']['fiches']['update'];
 
 export const useUpdateFiche = (args?: {
   invalidatePlanId?: number;
@@ -55,7 +57,7 @@ export const useUpdateFiche = (args?: {
         (previous: ListFichesOutput) => {
           return {
             ...previous,
-            fiches: (previous.fiches ?? []).map((fiche) =>
+            data: (previous.data ?? []).map((fiche) =>
               fiche.id === ficheId ? { ...fiche, ...ficheFields } : fiche
             ),
           };

@@ -1,4 +1,4 @@
-import { FicheActionBudget, FicheWithRelations } from '@tet/domain/plans';
+import { FicheBudget, FicheWithRelations } from '@tet/domain/plans';
 import { Divider, Spacer } from '@tet/ui';
 import { BudgetUnitWarning } from './budget/budget-unit-warning';
 import { BudgetEditableView } from './budget/budget.editable-view';
@@ -17,7 +17,7 @@ const Section = ({ children }: { children: React.ReactNode }) => (
 
 type MoyensContentProps = {
   fiche: FicheWithRelations;
-  budgets: FicheActionBudget[];
+  budgets: FicheBudget[];
   isReadonly: boolean;
   onEdit: (modalType: ModalType) => void;
 };

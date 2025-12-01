@@ -5,8 +5,8 @@ import { useState } from 'react';
 
 import { Button, Checkbox } from '@tet/ui';
 
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { FicheEtape } from '@tet/domain/plans';
+import { Fiche } from '../../data/use-get-fiche';
 import { useEtapesDispatch } from '../etapes-context';
 import ModalDeleteEtape from './modal-delete-etape';
 import { EtapeTextarea } from './textarea';
@@ -14,7 +14,7 @@ import { useUpsertEtape } from './use-upsert-etape';
 
 type Props = {
   etape: FicheEtape;
-  fiche: FicheShareProperties;
+  fiche: Fiche;
   isReadonly: boolean;
 };
 

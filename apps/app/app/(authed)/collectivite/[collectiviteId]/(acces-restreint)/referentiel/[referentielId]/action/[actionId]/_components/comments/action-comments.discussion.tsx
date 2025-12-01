@@ -1,13 +1,13 @@
 import { canCreateDiscussion } from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
-import { DiscussionMessages } from '@tet/domain/collectivites';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { DiscussionWithMessages } from '@tet/domain/collectivites';
 import classNames from 'classnames';
 import ActionCommentInput from './action-comments.input';
 import ActionCommentsItemsList from './action-comments.items-list';
 import { useAddDiscussion } from './hooks/use-add-discussion';
 
 export type Props = {
-  discussion: DiscussionMessages;
+  discussion: DiscussionWithMessages;
   title: string | undefined;
   isDisplayedAsPanel: boolean;
 };
