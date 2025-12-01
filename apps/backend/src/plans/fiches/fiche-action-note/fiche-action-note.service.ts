@@ -20,7 +20,7 @@ export default class FicheActionNoteService {
     private readonly databaseService: DatabaseService
   ) {}
 
-  /** Insère ou met à jour des notes de suivi */
+  /** Insère ou met à jour des notes */
   async upsertNotes(
     ficheId: number,
     notes: UpsertFicheActionNote[],
@@ -41,7 +41,7 @@ export default class FicheActionNoteService {
       await trx
         .update(ficheActionTable)
         .set({
-          modifiedBy: tokenInfo?.id,
+          modifiedBy: tokenInfo.id,
           modifiedAt: new Date().toISOString(),
         })
         .where(eq(ficheActionTable.id, ficheId));
@@ -104,7 +104,6 @@ export default class FicheActionNoteService {
     });
   }
 
-  /** Lit les notes de suivi attachées à la fiche */
   async getNotes(ficheId: number, tokenInfo: AuthenticatedUser) {
     const canRead = await this.permissionService.canReadFiche(
       ficheId,

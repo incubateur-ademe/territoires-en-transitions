@@ -4,16 +4,14 @@ import { toBudgetProperties } from './to-budget-properties';
 
 const DATE_OF_THE_UNIT_SWITCH = new Date('2025-05-13');
 
-export const shouldDisplayUnitWarning = (
+const isFicheTooRecent = (fiche: FicheWithRelations) => {
+  return isAfter(new Date(fiche.createdAt), DATE_OF_THE_UNIT_SWITCH);
+};
+export const shouldDisplayBudgetUnitWarning = (
   fiche: FicheWithRelations,
   budgets: FicheActionBudget[]
 ) => {
-  const isFicheTooRecent = isAfter(
-    new Date(fiche.createdAt),
-    DATE_OF_THE_UNIT_SWITCH
-  );
-
-  if (isFicheTooRecent) {
+  if (isFicheTooRecent(fiche)) {
     return false;
   }
 
@@ -31,4 +29,15 @@ export const shouldDisplayUnitWarning = (
     fonctionnementBudgetsToConsider?.some((budget) => !!budget.value);
 
   return atLeastOneBudgetInformationIsFilled;
+};
+
+export const shouldDisplayFinanceursUnitWarning = (
+  fiche: FicheWithRelations
+) => {
+  if (isFicheTooRecent(fiche)) {
+    return false;
+  }
+  const hasFinanceurInformation =
+    !!fiche.financeurs && fiche.financeurs.length > 0;
+  return hasFinanceurInformation;
 };
