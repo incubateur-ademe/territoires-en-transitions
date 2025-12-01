@@ -4,6 +4,7 @@ import {
   useImperativeHandle,
   useLayoutEffect,
   useRef,
+  useState,
 } from 'react';
 
 import { cn } from '@/ui/utils/cn';
@@ -17,6 +18,15 @@ export const TextareaBase = forwardRef(
     { autoresize = true, ...props }: TextareaBaseProps,
     ref?: React.Ref<HTMLTextAreaElement | null>
   ) => {
+    const [localValue, setLocalValue] = useState(props.value);
+
+    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      if (props.onChange) {
+        props.onChange(e);
+      }
+      setLocalValue(e.target.value);
+    };
+
     const localRef = useRef<HTMLTextAreaElement>(null);
 
     useImperativeHandle(ref, () => localRef.current);
@@ -27,7 +37,7 @@ export const TextareaBase = forwardRef(
         localRef.current.style.height = 'auto';
         localRef.current.style.height = `${localRef.current.scrollHeight}px`;
       }
-    }, [localRef.current?.value, autoresize]);
+    }, [localValue, autoresize]);
 
     /** Ensure focus at the end of the content */
     useLayoutEffect(() => {
@@ -42,6 +52,7 @@ export const TextareaBase = forwardRef(
       <textarea
         {...props}
         ref={localRef}
+        onChange={handleChange}
         className={cn(
           'outline-none',
           { 'resize-none': autoresize },
