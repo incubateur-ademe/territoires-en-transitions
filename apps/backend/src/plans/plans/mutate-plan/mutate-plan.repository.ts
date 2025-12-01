@@ -1,0 +1,122 @@
+import { PersonneId } from '@/backend/shared/models/personne.dto';
+import { DatabaseService } from '@/backend/utils/database/database.service';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { MethodResult } from '@/backend/utils/result.type';
+import { Injectable, Logger } from '@nestjs/common';
+import { eq } from 'drizzle-orm';
+import { planPiloteTable } from '../../fiches/shared/models/plan-pilote.table';
+import { planReferentTable } from '../../fiches/shared/models/plan-referent.table';
+import { MutateAxeBaseRepository } from '../../axes/mutate-axe/mutate-axe-base.repository';
+import { MutatePlanError, MutatePlanErrorEnum } from './mutate-plan.errors';
+import { CreatePlanInput, UpdatePlanInput } from './mutate-plan.input';
+
+@Injectable()
+export class MutatePlanRepository extends MutateAxeBaseRepository<
+  CreatePlanInput,
+  UpdatePlanInput,
+  MutatePlanError
+> {
+  protected readonly logger = new Logger(MutatePlanRepository.name);
+
+  constructor(databaseService: DatabaseService) {
+    super(databaseService);
+  }
+
+  protected getCreateError(): MutatePlanError {
+    return MutatePlanErrorEnum.CREATE_PLAN_ERROR;
+  }
+
+  protected getUpdateError(): MutatePlanError {
+    return MutatePlanErrorEnum.UPDATE_PLAN_ERROR;
+  }
+
+  /**
+   * Met à jour les relations entre un plan et ses référents
+   * @param planId identifiant du plan
+   * @param referents liste des référents à associer
+   * @param userId identifiant de l'utilisateur
+   * @param tx transaction
+   */
+  async setReferents(
+    planId: number,
+    referents: PersonneId[] | null,
+    userId: string,
+    tx: Transaction
+  ): Promise<MethodResult<undefined, MutatePlanError>> {
+    try {
+      // Supprime toutes les relations existantes liées au plan
+      await tx
+        .delete(planReferentTable)
+        .where(eq(planReferentTable.planId, planId));
+
+      // Ajoute les nouvelles relations
+      if (referents && referents.length > 0) {
+        await tx
+          .insert(planReferentTable)
+          .values(
+            referents.map((referent) => ({
+              planId,
+              tagId: referent.tagId,
+              userId: referent.userId,
+              createdBy: userId,
+              createdAt: new Date().toISOString(),
+            }))
+          )
+          .returning();
+      }
+
+      return { success: true, data: undefined };
+    } catch (error) {
+      this.logger.error(`Error updating plan ${planId} referents: ${error}`);
+      return {
+        success: false,
+        error: MutatePlanErrorEnum.UPDATE_REFERENTS_ERROR,
+      };
+    }
+  }
+
+  /**
+   * Met à jour les relations entre un plan et ses pilotes
+   * @param planId identifiant du plan
+   * @param pilotes liste des pilotes à associer
+   * @param userId identifiant de l'utilisateur
+   * @param tx transaction
+   */
+  async setPilotes(
+    planId: number,
+    pilotes: PersonneId[] | null,
+    userId: string,
+    tx: Transaction
+  ): Promise<MethodResult<undefined, MutatePlanError>> {
+    try {
+      // Supprime toutes les relations existantes liées au plan
+      await tx
+        .delete(planPiloteTable)
+        .where(eq(planPiloteTable.planId, planId));
+
+      // Ajoute les nouvelles relations
+      if (pilotes && pilotes.length > 0) {
+        await tx
+          .insert(planPiloteTable)
+          .values(
+            pilotes.map((pilote) => ({
+              planId,
+              tagId: pilote.tagId,
+              userId: pilote.userId,
+              createdBy: userId,
+              createdAt: new Date().toISOString(),
+            }))
+          )
+          .returning();
+      }
+
+      return { success: true, data: undefined };
+    } catch (error) {
+      this.logger.error(`Error updating plan ${planId} pilotes: ${error}`);
+      return {
+        success: false,
+        error: MutatePlanErrorEnum.UPDATE_PILOTES_ERROR,
+      };
+    }
+  }
+}
