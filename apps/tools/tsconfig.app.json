@@ -4,7 +4,10 @@
     "outDir": "out-tsc/app",
     "rootDir": "src",
     "tsBuildInfoFile": "out-tsc/app/tsconfig.app.tsbuildinfo",
-    "types": ["node"]
+    "types": ["node"],
+
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
   },
   "include": ["src/**/*.ts"],
   "exclude": [
@@ -14,6 +17,9 @@
     "**/*.test-fixture.ts"
   ],
   "references": [
+    {
+      "path": "../../packages/domain/tsconfig.lib.json"
+    },
     {
       "path": "../backend/tsconfig.app.json"
     }
