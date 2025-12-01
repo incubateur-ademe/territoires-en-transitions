@@ -915,3 +915,4 @@ plan_action/sous_fiche 2025-10-27T15:44:15Z Marc Rutkowski <marc@attractive-medi
 plan_action/drop_create_fiche 2025-10-30T08:42:16Z Marc Rutkowski <marc@attractive-media.fr> # Supprime la fonction create_fiche
 plan_action/soft_delete_fiche 2025-10-30T11:14:46Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute le "soft delete" pour les fiches action
 notifications/notification 2025-11-03T15:38:46Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute un schéma et une table pour les notifications
+@v4.88.0 2025-12-01T13:56:22Z Marc Rutkowski <marc@attractive-media.fr> # Gestion des fils de discussion, des notifications et des sous-actions
