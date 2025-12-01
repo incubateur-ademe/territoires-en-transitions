@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
-import { dcpTable as userTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
+import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
+import { dcpTable as userTable } from '@tet/backend/users/models/dcp.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ReferentielId } from '@tet/domain/referentiels';
 import {
   and,

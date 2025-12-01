@@ -1,6 +1,6 @@
-import ConfigurationService from '@/backend/utils/config/configuration.service';
-import { MethodResult } from '@/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
+import { MethodResult } from '@tet/backend/utils/result.type';
 import nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 

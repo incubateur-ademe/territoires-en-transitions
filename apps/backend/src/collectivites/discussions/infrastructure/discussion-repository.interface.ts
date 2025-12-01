@@ -2,8 +2,8 @@ import {
   CreateDiscussionData,
   CreateDiscussionMessageResponse,
   DiscussionMessage,
-} from '@/backend/collectivites/discussions/presentation/discussion.schemas';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
+} from '@tet/backend/collectivites/discussions/presentation/discussion.schemas';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   Discussion,
   DiscussionMessageCreate,

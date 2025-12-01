@@ -1,6 +1,6 @@
-import ConfigurationService from '@/backend/utils/config/configuration.service';
-import { EmailService } from '@/backend/utils/email/email.service';
 import { Test } from '@nestjs/testing';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
+import { EmailService } from '@tet/backend/utils/email/email.service';
 import { simpleParser } from 'mailparser';
 import { SMTPServer } from 'smtp-server';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';

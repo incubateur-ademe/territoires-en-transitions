@@ -1,4 +1,4 @@
-import { MethodResult } from '@/backend/utils/result.type';
+import { MethodResult } from '@tet/backend/utils/result.type';
 import { ReactNode } from 'react';
 import { Notification } from './notification.table';
 

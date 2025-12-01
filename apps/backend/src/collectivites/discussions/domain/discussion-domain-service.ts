@@ -1,7 +1,7 @@
-import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 
-import type { DiscussionRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
+import type { DiscussionRepository } from '@tet/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
 import { Discussion, DiscussionStatus } from '@tet/domain/collectivites';
 import { Result } from '../infrastructure/discussion.results';
 import {

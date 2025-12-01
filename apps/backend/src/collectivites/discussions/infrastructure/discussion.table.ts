@@ -1,9 +1,9 @@
-import { actionIdVarchar } from '@/backend/referentiels/models/action-definition.table';
+import { actionIdVarchar } from '@tet/backend/referentiels/models/action-definition.table';
 import {
   createdAt,
   modifiedAt,
   SQL_AUTH_UID,
-} from '@/backend/utils/column.utils';
+} from '@tet/backend/utils/column.utils';
 import { discussionStatusValues } from '@tet/domain/collectivites';
 import {
   integer,

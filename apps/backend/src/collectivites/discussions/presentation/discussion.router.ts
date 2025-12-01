@@ -1,5 +1,5 @@
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { TRPC_ERROR_CODE_KEY, TRPCError } from '@trpc/server';
 import { DiscussionApplicationService } from '../application/discussion-application.service';
 import {
