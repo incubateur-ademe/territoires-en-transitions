@@ -1,8 +1,5 @@
-import {
-  FicheActionBudget,
-  FicheWithRelations,
-  UpdateFicheRequest,
-} from '@tet/domain/plans';
+import { FicheBudget, FicheWithRelations } from '@tet/domain/plans';
+import { UpdateFicheInput } from '../data/use-update-fiche';
 import { BudgetModal } from './budget/budget.modal';
 import { FinancementsModal } from './financements/financements.modal';
 import { FinanceursModal } from './financeurs/financeurs.modal';
@@ -20,11 +17,8 @@ type MoyensModalsProps = {
   type: ModalType | null;
   onClose: () => void;
   fiche: FicheWithRelations;
-  budgets: FicheActionBudget[];
-  updateFiche: (params: {
-    ficheId: number;
-    ficheFields: UpdateFicheRequest;
-  }) => void;
+  budgets: FicheBudget[];
+  updateFiche: (params: UpdateFicheInput) => void;
 };
 
 export const MoyensModals = ({

@@ -6,7 +6,7 @@ import {
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
-  discussionOrderByValues,
+  discussionOrderByEnum,
   DiscussionStatus,
   discussionStatus,
 } from '@tet/domain/collectivites';
@@ -46,8 +46,8 @@ const ActionCommentsPanel = ({
   );
   const [selectedOrderBy, setSelectedOrderBy] = useState<string>(
     isDisplayedAsPanel
-      ? discussionOrderByValues.ACTION_ID
-      : discussionOrderByValues.CREATED_AT
+      ? discussionOrderByEnum.ACTION_ID
+      : discussionOrderByEnum.CREATED_AT
   );
   const [commentsCount, setCommentsCount] = useState<number>(0);
 

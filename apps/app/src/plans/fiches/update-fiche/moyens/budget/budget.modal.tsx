@@ -1,19 +1,20 @@
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
+import { FicheBudgetCreate } from '@tet/domain/plans';
 import { ButtonGroup, Checkbox, Divider, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import { FicheShareProperties } from '../../../share-fiche/fiche-share-properties.dto';
 import { useDeleteBudgets } from '../../data/use-delete-budgets';
+import { FicheBudget } from '../../data/use-get-budget';
 import { useUpsertBudgets } from '../../data/use-upsert-budgets';
 import { DetailedBudgetForm } from './detailed-budget-form';
 import { ExtendedBudgetForm } from './extended-budget-form';
-import { FicheBudget } from '../../data/use-get-budget';
 
 const getDefaultBudgetData = (
   ficheId: number,
   type: 'investissement' | 'fonctionnement',
   unite: 'HT' | 'ETP'
-): FicheBudget => {
+): FicheBudgetCreate => {
   return {
     ficheId,
     type,
@@ -74,17 +75,17 @@ export const BudgetModal = ({
   const [isFullPlan, setIsFullPlan] = useState(getInitFullPlanState(budgets));
 
   const [detailedBudgetDataForm, setDetailedBudgetDataForm] = useState<
-    FicheBudget[]
+    FicheBudgetCreate[]
   >(() => budgets.filter((budget) => !!budget.annee));
   const [extendedBudgetDataForm, setExtendedBudgetDataForm] = useState<
-    FicheBudget[]
+    FicheBudgetCreate[]
   >(() => initExtendedBudgetFormData(budgets, ficheId, type));
 
   const { mutate: createBudgets } = useUpsertBudgets();
   const { mutate: deleteBudgets } = useDeleteBudgets();
 
   const handleSave = () => {
-    const newBudgets: FicheBudget[] = [];
+    const newBudgets: FicheBudgetCreate[] = [];
 
     const budgetData = isDetailled
       ? detailedBudgetDataForm

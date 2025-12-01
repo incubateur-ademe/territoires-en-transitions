@@ -1,8 +1,8 @@
 import { buildActionLink } from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {
-  DiscussionMessages,
-  discussionOrderByValues,
+  DiscussionWithMessages,
+  discussionOrderByEnum,
 } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { Divider, VisibleWhen } from '@tet/ui';
@@ -16,7 +16,7 @@ import { ActionDiscussionStatut } from './action-comments.types';
 type Props = {
   state: ActionDiscussionStatut | 'all';
   orderBy: string;
-  discussions: DiscussionMessages[];
+  discussions: DiscussionWithMessages[];
   isInputDisabled: boolean;
   isDisplayedAsPanel?: boolean;
   referentielId: ReferentielId;
@@ -63,7 +63,7 @@ const ActionCommentFeed = ({
             <Fragment key={discussion.id}>
               <VisibleWhen
                 condition={
-                  orderBy === discussionOrderByValues.CREATED_BY &&
+                  orderBy === discussionOrderByEnum.CREATED_BY &&
                   discussion.createdBy !== discussions[idx - 1]?.createdBy &&
                   !isDisplayedAsPanel
                 }
@@ -80,7 +80,7 @@ const ActionCommentFeed = ({
 
               <VisibleWhen
                 condition={
-                  orderBy === discussionOrderByValues.ACTION_ID &&
+                  orderBy === discussionOrderByEnum.ACTION_ID &&
                   discussion.actionId !== discussions[idx - 1]?.actionId
                 }
               >
@@ -119,14 +119,14 @@ const ActionCommentFeed = ({
               <ActionCommentDiscussion
                 discussion={discussion}
                 title={
-                  orderBy !== discussionOrderByValues.ACTION_ID
+                  orderBy !== discussionOrderByEnum.ACTION_ID
                     ? `${discussion.actionIdentifiant} - ${discussion.actionNom}`
                     : undefined
                 }
                 isDisplayedAsPanel={isDisplayedAsPanel}
               />
-              {orderBy !== discussionOrderByValues.ACTION_ID &&
-                orderBy !== discussionOrderByValues.CREATED_BY && (
+              {orderBy !== discussionOrderByEnum.ACTION_ID &&
+                orderBy !== discussionOrderByEnum.CREATED_BY && (
                   <Divider className="-mb-6" />
                 )}
             </Fragment>
@@ -145,7 +145,7 @@ const ActionHeader = ({
   isDisplayedAsPanel,
   isInputDisabled,
 }: {
-  discussion: DiscussionMessages;
+  discussion: DiscussionWithMessages;
   numberOfMessages: number;
   orderBy: string;
   canDisplayNumberOfMessages: boolean;
@@ -163,7 +163,7 @@ const ActionHeader = ({
         }
       )}
     >
-      {orderBy === discussionOrderByValues.CREATED_BY ? (
+      {orderBy === discussionOrderByEnum.CREATED_BY ? (
         <span>
           {discussion.messages[0].createdByPrenom}{' '}
           {discussion.messages[0].createdByNom}

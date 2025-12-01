@@ -2,9 +2,9 @@ import { makeReferentielActionUrl } from '@/app/app/paths';
 import { type ActionDetailed } from '@/app/referentiels/use-snapshot';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import {
-  DiscussionMessages,
-  discussionOrderByValues,
+  discussionOrderByEnum,
   discussionStatus,
+  DiscussionWithMessages,
 } from '@tet/domain/collectivites';
 import {
   isSousMesure as isSousMesureDomain,
@@ -41,7 +41,7 @@ export const getActionsAndSubActions = (
     });
   }
   if (actionNode.actionsEnfant && Array.isArray(actionNode.actionsEnfant)) {
-    actionNode.actionsEnfant.forEach((enfant: any) => {
+    actionNode.actionsEnfant.forEach((enfant) => {
       result.push(...getActionsAndSubActions(enfant));
     });
   }
@@ -59,7 +59,7 @@ export const isSousMesure = (
   );
 };
 
-const getMostRecentMessage = (disc: DiscussionMessages) => {
+const getMostRecentMessage = (disc: DiscussionWithMessages) => {
   if (!disc.messages || disc.messages.length === 0) {
     return disc.createdAt;
   }
@@ -69,7 +69,7 @@ const getMostRecentMessage = (disc: DiscussionMessages) => {
   }, disc.messages[0].createdAt);
 };
 
-const getMainMessageCreator = (disc: DiscussionMessages) => {
+const getMainMessageCreator = (disc: DiscussionWithMessages) => {
   const mainMessage = disc.messages?.reduce((oldest, msg) =>
     msg.createdAt < oldest.createdAt ? msg : oldest
   );
@@ -81,7 +81,10 @@ const getMainMessageCreator = (disc: DiscussionMessages) => {
   );
 };
 
-const sortByCreator = (a: DiscussionMessages, b: DiscussionMessages) => {
+const sortByCreator = (
+  a: DiscussionWithMessages,
+  b: DiscussionWithMessages
+) => {
   const aCreator = getMainMessageCreator(a);
   const bCreator = getMainMessageCreator(b);
   const creatorCompare = aCreator.localeCompare(bCreator);
@@ -91,7 +94,10 @@ const sortByCreator = (a: DiscussionMessages, b: DiscussionMessages) => {
   return creatorCompare;
 };
 
-const sortByCreatedAt = (a: DiscussionMessages, b: DiscussionMessages) => {
+const sortByCreatedAt = (
+  a: DiscussionWithMessages,
+  b: DiscussionWithMessages
+) => {
   const aLatest = getMostRecentMessage(a);
   const bLatest = getMostRecentMessage(b);
   return bLatest.localeCompare(aLatest);
@@ -99,18 +105,18 @@ const sortByCreatedAt = (a: DiscussionMessages, b: DiscussionMessages) => {
 
 export const sortDiscussions = (
   orderBy: string,
-  discussions: DiscussionMessages[]
-): DiscussionMessages[] => {
+  discussions: DiscussionWithMessages[]
+): DiscussionWithMessages[] => {
   const sortedDiscussions = [...discussions];
 
   switch (orderBy) {
-    case discussionOrderByValues.ACTION_ID:
+    case discussionOrderByEnum.ACTION_ID:
       return sortedDiscussions.sort((a, b) =>
         a.actionId.localeCompare(b.actionId)
       );
-    case discussionOrderByValues.CREATED_AT:
+    case discussionOrderByEnum.CREATED_AT:
       return sortedDiscussions.sort(sortByCreatedAt);
-    case discussionOrderByValues.CREATED_BY:
+    case discussionOrderByEnum.CREATED_BY:
       return sortedDiscussions.sort(sortByCreator);
     default:
       return sortedDiscussions;

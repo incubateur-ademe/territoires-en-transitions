@@ -43,6 +43,7 @@ export const ficheResumeFactory = ({
   return {
     id: tempId,
     collectiviteId,
+    parentId: null,
     collectiviteNom: null,
     dateDebut: null,
     dateFin: null,

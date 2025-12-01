@@ -1,13 +1,11 @@
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
+import { FicheWithRelations } from '@tet/domain/plans';
 import { Button, Event, ModalFooterOKCancel, useEventTracker } from '@tet/ui';
-import {
-  FicheDescriptionForm,
-  type FicheUpdatePayload,
-} from './FicheDescriptionForm';
+import { FicheDescriptionForm } from './FicheDescriptionForm';
 
 type ModaleDescriptionProps = {
-  fiche: FicheUpdatePayload;
+  fiche: FicheWithRelations;
 };
 
 const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {

@@ -1,7 +1,7 @@
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { MoyensView } from '@/app/plans/fiches/update-fiche/moyens/moyens.view';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { ENV } from '@tet/api';
+import { ENV } from '@tet/api/environmentVariables';
 
 import { ServicesWidget } from '@betagouv/les-communs-widget';
 import { CollectiviteAccess } from '@tet/domain/users';
