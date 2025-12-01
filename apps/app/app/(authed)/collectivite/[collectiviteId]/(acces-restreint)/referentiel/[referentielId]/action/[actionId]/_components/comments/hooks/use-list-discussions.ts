@@ -1,11 +1,11 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { useTRPC } from '@/api/utils/trpc/client';
 import {
   ListDiscussionsRequestFilters,
   QueryOptionsType,
 } from '@/domain/collectivites';
 import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from '@tanstack/react-query';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { useTRPC } from '@tet/api/utils/trpc/client';
 
 export const useListDiscussions = (
   referentielId: ReferentielId,

@@ -1,7 +1,7 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { useTRPC } from '@/api/utils/trpc/client';
 import { ListFichesOutput } from '@/domain/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { useTRPC } from '@tet/api/utils/trpc/client';
 import { useRouter } from 'next/navigation';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
 
