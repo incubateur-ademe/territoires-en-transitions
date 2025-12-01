@@ -158,16 +158,6 @@ class UserFixture implements IFixtureData {
     return createdDiscussionIds;
   }
 
-  async updateFiches(fiches: UpdateFicheRequest[]) {
-    const trpcClient = this.getTrpcClient();
-
-    const updatedFichesPromises = fiches.map((fiche) => {
-      console.log('Update fiche', fiche);
-      return trpcClient.plans.fiches.update.mutate(fiche);
-    });
-    await Promise.all(updatedFichesPromises);
-  }
-
   async bulkEditFiches(bulkEditRequest: BulkEditRequest) {
     const trpcClient = this.getTrpcClient();
     return trpcClient.plans.fiches.bulkEdit.mutate(bulkEditRequest);
@@ -187,7 +177,7 @@ class UserFixture implements IFixtureData {
       const trpcClient = this.trpcClient;
       console.log('Cleanup fiches', this.ficheIds);
       const cleanupFichesPromises = this.ficheIds.map((ficheId) => {
-        return this.trpcClient.plans.fiches.delete.mutate({
+        return trpcClient.plans.fiches.delete.mutate({
           ficheId,
           deleteMode: 'hard',
         });
