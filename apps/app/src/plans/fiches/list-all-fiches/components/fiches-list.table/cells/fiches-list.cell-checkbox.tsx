@@ -1,4 +1,4 @@
-import { Checkbox } from '@/ui';
+import { Checkbox } from '@tet/ui';
 
 type Props = {
   ficheId: number;

@@ -1,5 +1,5 @@
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
-import { cn, EmptyCard, Icon } from '@/ui';
+import { cn, EmptyCard, Icon } from '@tet/ui';
 
 export const HeaderCell = ({
   title,
