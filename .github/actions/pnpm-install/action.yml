@@ -25,7 +25,3 @@ runs:
         pnpm config set '@bryntum:registry' 'https://npm.bryntum.com'
         pnpm config set '//npm.bryntum.com/:_authToken' "${{ inputs.bryntum_access_token }}"
         pnpm install --frozen-lockfile
-
-    - name: Rebuild native dependencies
-      shell: bash
-      run: pnpm rebuild canvas
