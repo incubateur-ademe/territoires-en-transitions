@@ -15,6 +15,10 @@
         "name": "next"
       }
     ],
+
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+
     "paths": {
       "@/app/*": [
         "./src/*"
