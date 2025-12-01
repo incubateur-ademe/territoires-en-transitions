@@ -65,50 +65,38 @@ export class CreateFicheService {
       );
     }
 
-    const executeInTransaction = async (
-      transaction: Transaction
-    ): Promise<Result<Fiche>> => {
-      const [createdFiche] = await transaction
-        .insert(ficheActionTable)
-        .values(fiche)
-        .returning();
+    const [createdFiche] = await (tx || this.databaseService.db)
+      .insert(ficheActionTable)
+      .values(fiche)
+      .returning();
 
-      const ficheId = createdFiche.id;
-      if (!ficheId) {
+    const ficheId = createdFiche.id;
+    if (!ficheId) {
+      return {
+        success: false,
+        error: `Échec de création de la fiche`,
+      };
+    }
+
+    if (
+      ficheFields &&
+      Object.values(ficheFields).filter((v) => v !== undefined).length
+    ) {
+      const result = await this.updateFicheService.updateFiche({
+        ficheId,
+        ficheFields,
+        user,
+      });
+
+      if (!result.success) {
         return {
           success: false,
-          error: `Échec de création de la fiche`,
+          error: `Échec de la mise à jour de la fiche: ${result.error}`,
         };
       }
+    }
 
-      if (
-        ficheFields &&
-        Object.values(ficheFields).filter((v) => v !== undefined).length
-      ) {
-        const result = await this.updateFicheService.updateFiche({
-          ficheId,
-          ficheFields,
-          user,
-          tx: transaction,
-        });
-
-        if (!result.success) {
-          return {
-            success: false,
-            error: `Échec de la mise à jour de la fiche: ${result.error}`,
-          };
-        }
-      }
-
-      return { success: true, data: createdFiche };
-    };
-
-    // Utiliser la transaction fournie ou en crée une nouvelle
-    return tx
-      ? executeInTransaction(tx)
-      : this.databaseService.db.transaction(async (newTx) =>
-          executeInTransaction(newTx)
-        );
+    return { success: true, data: createdFiche };
   }
 
   /**
