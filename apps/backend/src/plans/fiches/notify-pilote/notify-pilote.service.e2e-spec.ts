@@ -92,10 +92,10 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       false,
       yoloDodo
     );
-    if (!fiche) {
+    if (!fiche.success) {
       throw new Error(`Fiche ${ficheId} not found`);
     }
-    return fiche;
+    return fiche.data;
   }
 
   /**

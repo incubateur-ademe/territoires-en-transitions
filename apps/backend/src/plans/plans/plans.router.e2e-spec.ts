@@ -1,5 +1,4 @@
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.fixture';
-import { Collectivite } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import {
   getAuthUser,
   getAuthUserFromDcp,
@@ -7,11 +6,12 @@ import {
   getTestDatabase,
   YOLO_DODO,
 } from '@tet/backend/test';
-import { CollectiviteAccessLevelEnum } from '@tet/backend/users/authorizations/roles/collectivite-access-level.enum';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { Collectivite } from '@tet/domain/collectivites';
+import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
 import { onTestFinished } from 'vitest';
 
 describe('Create Plan', () => {

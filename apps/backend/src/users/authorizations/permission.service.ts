@@ -1,8 +1,11 @@
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
-import { PermissionOperation, permissionsByRole } from '@tet/domain/users';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import {
+  PermissionOperation,
+  permissionsByRole,
+  UserRole,
+} from '@tet/domain/users';
 import { AuthRole, AuthUser } from '../models/auth.models';
-import { UserRole } from './roles/role.enum';
 import { RoleService } from './roles/role.service';
 
 @Injectable()

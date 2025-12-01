@@ -1,6 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PersonneTagOrUserWithContacts } from '@tet/backend/collectivites/shared/models/personne-tag-or-user.dto';
-import { FicheWithRelations } from '@tet/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { ListUsersService } from '@tet/backend/users/users/list-users/list-users.service';
@@ -17,6 +15,8 @@ import {
 import { NotifiedOnEnum } from '@tet/backend/utils/notifications/models/notified-on.enum';
 import { NotificationsService } from '@tet/backend/utils/notifications/notifications.service';
 import { MethodResult } from '@tet/backend/utils/result.type';
+import { PersonneTagOrUserWithContacts } from '@tet/domain/collectivites';
+import { FicheWithRelations } from '@tet/domain/plans';
 import { and, eq, inArray, not } from 'drizzle-orm';
 import { differenceBy, isNil } from 'es-toolkit';
 import { DatabaseError } from 'pg';

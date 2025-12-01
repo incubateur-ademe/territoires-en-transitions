@@ -3,8 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { DiscussionRepository } from '@tet/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
-import { discussionStatus } from '@tet/domain/collectivites';
-import { DiscussionType } from '../infrastructure/discussion.table';
+import { Discussion, discussionStatus } from '@tet/domain/collectivites';
 import {
   CreateDiscussionData,
   CreateDiscussionMessageResponse,
@@ -20,7 +19,7 @@ describe('DiscussionDomainService', () => {
   let mockDiscussionQueryService: Partial<DiscussionQueryService>;
   let mockLogger: Partial<Logger>;
 
-  const mockDiscussion: DiscussionType = {
+  const mockDiscussion: Discussion = {
     id: 1,
     collectiviteId: 123,
     actionId: 'action-1',

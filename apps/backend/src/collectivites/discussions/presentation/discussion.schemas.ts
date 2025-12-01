@@ -1,4 +1,4 @@
-import { discussionStatusValues } from '@tet/domain/collectivites';
+import { Discussion, discussionStatusValues } from '@tet/domain/collectivites';
 import { referentielIdEnumSchema } from '@tet/domain/referentiels';
 import z from 'zod';
 import { queryOptionsTypeSchema } from '../domain/discussion.query-options';
@@ -139,9 +139,7 @@ export type DiscussionsMessagesListType = {
   count: number;
 };
 
-export type DiscussionWithActionName = {
-  data: DiscussionMessages[];
-  count: number;
+export type DiscussionWithActionName = Discussion & {
   actionNom: string;
   actionIdentifiant: string;
 };
