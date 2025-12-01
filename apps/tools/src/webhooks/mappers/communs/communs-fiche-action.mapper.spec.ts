@@ -7,6 +7,7 @@ describe('CommunsFicheActionMapper', () => {
   test('Standard mapping', async () => {
     const ficheAction: FicheWithRelationsAndCollectivite = {
       id: 10108,
+      parentId: null,
       createdBy: {
         id: '3fb7dbe4-6af2-4f8d-a199-fe381014d85e',
         prenom: 'Caroline',
