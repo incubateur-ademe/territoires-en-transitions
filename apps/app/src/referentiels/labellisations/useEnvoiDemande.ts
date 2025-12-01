@@ -1,7 +1,10 @@
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useTRPC } from '@/api/utils/trpc/client';
-import { Etoile, EtoileAsString, ReferentielId } from '@/domain/referentiels';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSupabase, useTRPC } from '@tet/api';
+import {
+  Etoile,
+  EtoileAsString,
+  ReferentielId,
+} from '@tet/domain/referentiels';
 import { TLabellisationParcours } from './types';
 
 export const useEnvoiDemande = () => {

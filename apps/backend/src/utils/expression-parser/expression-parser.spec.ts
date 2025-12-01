@@ -1,4 +1,4 @@
-import { getFormmattedErrors } from '@/backend/utils/expression-parser/get-formatted-errors.utils';
+import { getFormmattedErrors } from '@tet/backend/utils/expression-parser/get-formatted-errors.utils';
 import { CstNode } from 'chevrotain';
 import { ExpressionParser } from './expression-parser';
 import { getExpressionVisitor } from './expression-visitor';

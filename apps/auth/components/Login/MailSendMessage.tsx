@@ -1,4 +1,4 @@
-import { Alert } from '@/ui';
+import { Alert } from '@tet/ui';
 import MailSend from './MailSend';
 
 /** Affiche un message suite à l'envoi du mail de connexion ou de

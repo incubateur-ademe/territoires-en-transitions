@@ -1,8 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
-import { dcpTable as userTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
+import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
+import { dcpTable as userTable } from '@tet/backend/users/models/dcp.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { DiscussionMessage } from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
 import {
   and,
   asc,
@@ -19,15 +21,13 @@ import { Result } from '../infrastructure/discussion.results';
 import {
   discussionMessageTable,
   discussionTable,
-} from '../infrastructure/discussion.tables';
+} from '../infrastructure/discussion.table';
 import {
-  DiscussionMessage,
   DiscussionsListType,
   ListDiscussionsRequestFilters,
 } from '../presentation/discussion.schemas';
 import { DiscussionErrorEnum } from './discussion.errors';
 import { QueryOptionsType } from './discussion.query-options';
-import { ReferentielEnum } from './discussion.types';
 
 @Injectable()
 export class DiscussionQueryService {
@@ -74,7 +74,7 @@ export class DiscussionQueryService {
 
   async listDiscussions(
     collectiviteId: number,
-    referentielId: ReferentielEnum,
+    referentielId: ReferentielId,
     filters?: ListDiscussionsRequestFilters,
     options?: QueryOptionsType
   ): Promise<Result<DiscussionsListType>> {

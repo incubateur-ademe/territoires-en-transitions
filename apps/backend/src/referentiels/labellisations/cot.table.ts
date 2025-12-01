@@ -1,5 +1,5 @@
-import { collectiviteId } from '@/backend/collectivites/collectivite-id.column';
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
+import { collectiviteId } from '@tet/backend/collectivites/collectivite-id.column';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { boolean, integer, pgTable } from 'drizzle-orm/pg-core';
 
 export const cotTable = pgTable('cot', {

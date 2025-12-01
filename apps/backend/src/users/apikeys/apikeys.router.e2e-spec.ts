@@ -3,9 +3,9 @@ import {
   getServiceRoleUser,
   getTestApp,
   YOULOU_DOUDOU,
-} from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { INestApplication } from '@nestjs/common';
 
 describe('Apikeys router test', () => {

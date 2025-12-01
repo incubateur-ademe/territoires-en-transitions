@@ -1,4 +1,4 @@
-import { VerifyOTP } from '@/auth/components/VerifyOTP/VerifyOTP';
+import { VerifyOTP } from '../../components/VerifyOTP/VerifyOTP';
 import { SignupPropsWithState } from './type';
 
 /**

@@ -1,4 +1,4 @@
-import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
+import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { ficheActionTable } from './fiche-action.table';
 

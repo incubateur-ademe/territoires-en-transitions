@@ -2,18 +2,19 @@ import {
   ActionTypeEnum,
   flatMapActionsEnfants,
   StatutAvancementEnum,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import { describe, expect, it } from 'vitest';
 import { ActionDetailed } from '../use-snapshot';
 import {
   actionMatchingFilter,
   hasDetailedSousActionOrInformedTache,
-  hasNonInformedActionOrNonInformedChild
+  hasNonInformedActionOrNonInformedChild,
 } from './useTableData.helpers';
 
-
 // Helper to create a mock action with default values
-const createMockAction = (overrides: Partial<ActionDetailed> = {}): ActionDetailed => {
+const createMockAction = (
+  overrides: Partial<ActionDetailed> = {}
+): ActionDetailed => {
   return {
     actionId: 'test_1.1',
     actionType: ActionTypeEnum.TACHE,
@@ -308,7 +309,9 @@ describe('useTableData - actionMatchingFilter', () => {
 
   describe('Filter: TACHE', () => {
     it('should filter tache with non_concerne status', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.NON_CONCERNE] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.NON_CONCERNE],
+      });
 
       const tache = createMockAction({
         actionType: ActionTypeEnum.TACHE,
@@ -322,7 +325,9 @@ describe('useTableData - actionMatchingFilter', () => {
     });
 
     it('should filter tache with non_renseigne status', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.NON_RENSEIGNE] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.NON_RENSEIGNE],
+      });
 
       const tache = createMockAction({
         actionType: ActionTypeEnum.TACHE,
@@ -337,7 +342,9 @@ describe('useTableData - actionMatchingFilter', () => {
     });
 
     it('should filter tache with fait status', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.FAIT] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.FAIT],
+      });
 
       const tache = createMockAction({
         actionType: ActionTypeEnum.TACHE,
@@ -353,7 +360,9 @@ describe('useTableData - actionMatchingFilter', () => {
     });
 
     it('should not filter tache with fait when looking for pas_fait', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.PAS_FAIT] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.PAS_FAIT],
+      });
 
       const tache = createMockAction({
         actionType: ActionTypeEnum.TACHE,
@@ -369,7 +378,9 @@ describe('useTableData - actionMatchingFilter', () => {
     });
 
     it('should not filter non-concerned tache when not filtering for non_concerne', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.FAIT] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.FAIT],
+      });
 
       const tache = createMockAction({
         actionType: ActionTypeEnum.TACHE,
@@ -385,7 +396,9 @@ describe('useTableData - actionMatchingFilter', () => {
 
   describe('Filter: SOUS_ACTION', () => {
     it('should filter sous-action that is non concernée', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.NON_CONCERNE] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.NON_CONCERNE],
+      });
 
       const sousAction = createMockAction({
         actionType: ActionTypeEnum.SOUS_ACTION,
@@ -399,7 +412,9 @@ describe('useTableData - actionMatchingFilter', () => {
     });
 
     it('should filter sous-action with non concernée child', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.NON_CONCERNE] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.NON_CONCERNE],
+      });
 
       const tache = createMockAction({
         actionType: ActionTypeEnum.TACHE,
@@ -422,7 +437,9 @@ describe('useTableData - actionMatchingFilter', () => {
     });
 
     it('should filter non renseignée sous-action with no children', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.NON_RENSEIGNE] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.NON_RENSEIGNE],
+      });
 
       const sousAction = createMockAction({
         actionType: ActionTypeEnum.SOUS_ACTION,
@@ -441,7 +458,9 @@ describe('useTableData - actionMatchingFilter', () => {
     });
 
     it('should filter détaillé sous-action', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.DETAILLE] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.DETAILLE],
+      });
 
       const sousAction = createMockAction({
         actionType: ActionTypeEnum.SOUS_ACTION,
@@ -455,7 +474,9 @@ describe('useTableData - actionMatchingFilter', () => {
     });
 
     it('should filter sous-action with fait status', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.FAIT] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.FAIT],
+      });
 
       const sousAction = createMockAction({
         actionType: ActionTypeEnum.SOUS_ACTION,
@@ -471,7 +492,9 @@ describe('useTableData - actionMatchingFilter', () => {
     });
 
     it('should not filter sous-action with matching child when sous-action has no avancement', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.FAIT] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.FAIT],
+      });
 
       const tache = createMockAction({
         actionType: ActionTypeEnum.TACHE,
@@ -501,7 +524,9 @@ describe('useTableData - actionMatchingFilter', () => {
     });
 
     it('should filter ACTION containing non renseignée sous-action with no children', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.NON_RENSEIGNE] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.NON_RENSEIGNE],
+      });
 
       const sousAction = createMockAction({
         actionType: ActionTypeEnum.SOUS_ACTION,
@@ -523,7 +548,9 @@ describe('useTableData - actionMatchingFilter', () => {
     });
 
     it('should not filter renseignée sous-action when looking for non_renseigne', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.NON_RENSEIGNE] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.NON_RENSEIGNE],
+      });
 
       const sousAction = createMockAction({
         actionType: ActionTypeEnum.SOUS_ACTION,
@@ -541,7 +568,9 @@ describe('useTableData - actionMatchingFilter', () => {
 
   describe('Filter: ACTION/AXE/SOUS_AXE', () => {
     it('should filter action with non concernée child', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.NON_CONCERNE] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.NON_CONCERNE],
+      });
 
       const tache = createMockAction({
         actionType: ActionTypeEnum.TACHE,
@@ -565,7 +594,9 @@ describe('useTableData - actionMatchingFilter', () => {
     });
 
     it('should filter action with non renseignée sous-action', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.NON_RENSEIGNE] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.NON_RENSEIGNE],
+      });
 
       const sousAction = createMockAction({
         actionType: ActionTypeEnum.SOUS_ACTION,
@@ -586,7 +617,9 @@ describe('useTableData - actionMatchingFilter', () => {
     });
 
     it('should filter action with détaillé sous-action', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.DETAILLE] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.DETAILLE],
+      });
 
       const sousAction = createMockAction({
         actionType: ActionTypeEnum.SOUS_ACTION,
@@ -605,7 +638,9 @@ describe('useTableData - actionMatchingFilter', () => {
     });
 
     it('should filter action with fait child', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.FAIT] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.FAIT],
+      });
 
       const tache = createMockAction({
         actionType: ActionTypeEnum.TACHE,
@@ -631,7 +666,9 @@ describe('useTableData - actionMatchingFilter', () => {
     });
 
     it('should not filter action without matching children', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.FAIT] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.FAIT],
+      });
 
       const tache = createMockAction({
         actionType: ActionTypeEnum.TACHE,
@@ -708,7 +745,9 @@ describe('useTableData - actionMatchingFilter', () => {
 
   describe('Edge cases', () => {
     it('should handle unknown action type', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.FAIT] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.FAIT],
+      });
 
       const action = createMockAction({
         actionType: 'UNKNOWN' as any,
@@ -718,7 +757,9 @@ describe('useTableData - actionMatchingFilter', () => {
     });
 
     it('should handle action with undefined avancement', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.FAIT] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.FAIT],
+      });
 
       const tache = createMockAction({
         actionType: ActionTypeEnum.TACHE,
@@ -734,7 +775,9 @@ describe('useTableData - actionMatchingFilter', () => {
     });
 
     it('should handle deeply nested actions', () => {
-      const filter = createFilterFunction({ statut: [StatutAvancementEnum.FAIT] });
+      const filter = createFilterFunction({
+        statut: [StatutAvancementEnum.FAIT],
+      });
 
       const tache = createMockAction({
         actionType: ActionTypeEnum.TACHE,

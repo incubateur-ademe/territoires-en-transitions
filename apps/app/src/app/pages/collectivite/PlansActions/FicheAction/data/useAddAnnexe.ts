@@ -1,7 +1,7 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { TAddFileFromLib } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
 import { TAddLink } from '@/app/referentiels/preuves/AddPreuveModal/AddLink';
 import { useAddPreuveAnnexe } from '@/app/referentiels/preuves/useAddPreuves';
+import { useCollectiviteId } from '@tet/api/collectivites';
 
 type TAddDocs = (demande_id: number) => {
   /** ajoute un fichier sélectionné depuis la bibliothèque */

@@ -1,13 +1,13 @@
-import { FicheActionBudget } from '@/domain/plans';
-import { Input } from '@/ui';
+import { FicheBudgetCreate } from '@tet/domain/plans';
+import { Input } from '@tet/ui';
 import classNames from 'classnames';
 import { useEffect } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 
 type ExtendedBudgetFormProps = {
-  budgets: FicheActionBudget[];
+  budgets: FicheBudgetCreate[];
   isEuros: boolean;
-  onFormChange: (budgets: FicheActionBudget[]) => void;
+  onFormChange: (budgets: FicheBudgetCreate[]) => void;
 };
 
 export const ExtendedBudgetForm = ({

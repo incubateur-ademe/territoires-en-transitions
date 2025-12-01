@@ -1,7 +1,12 @@
-import { YOLO_DODO, YULU_DUDU, getAuthUser, getTestApp } from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { ForbiddenException, INestApplication } from '@nestjs/common';
+import {
+  YOLO_DODO,
+  YULU_DUDU,
+  getAuthUser,
+  getTestApp,
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { createFiche } from '../fiches.test-fixture';
 
 describe('ShareFicheService', () => {

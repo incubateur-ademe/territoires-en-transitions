@@ -1,11 +1,11 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useGetIndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
 import Markdown from '@/app/ui/Markdown';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import {
-  TypeScoreIndicatif,
-  typeScoreIndicatifEnum,
-} from '@/domain/referentiels';
+  ScoreIndicatifType,
+  scoreIndicatifTypeEnum,
+} from '@tet/domain/referentiels';
 import {
   Alert,
   Button,
@@ -15,8 +15,8 @@ import {
   ModalFooterOKCancel,
   Tab,
   Tabs,
-} from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+} from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { uniqBy } from 'es-toolkit';
 import { useState } from 'react';
 import { ScoreIndicatifDonnees } from './score-indicatif.donnees';
@@ -86,7 +86,7 @@ export const ScoreIndicatifModal = (props: ScoreIndicatifModalProps) => {
  */
 const anneesDifferentesSelectionnees = (
   scoreIndicatif: ScoreIndicatifAction,
-  typeScore: TypeScoreIndicatif
+  typeScore: ScoreIndicatifType
 ) =>
   uniqBy(scoreIndicatif[typeScore]?.valeursUtilisees || [], (v) =>
     new Date(v.dateValeur).getFullYear()
@@ -120,7 +120,7 @@ const ScoreIndicatifModalIndicateurs = (
       />
       {anneesDifferentesSelectionnees(
         scoreIndicatif,
-        typeScoreIndicatifEnum.FAIT
+        scoreIndicatifTypeEnum.FAIT
       ) && (
         <Alert
           className="border-8 border-error-2 rounded-lg mt-2"
@@ -130,7 +130,7 @@ const ScoreIndicatifModalIndicateurs = (
       )}
       {anneesDifferentesSelectionnees(
         scoreIndicatif,
-        typeScoreIndicatifEnum.PROGRAMME
+        scoreIndicatifTypeEnum.PROGRAMME
       ) && (
         <Alert
           className="border-8 border-error-2 rounded-lg mt-2"

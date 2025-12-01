@@ -1,7 +1,7 @@
 'use client';
-import { useCollectiviteId } from '@/api/collectivites';
 import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
 import { CreatePlanOptionLinksList } from '@/app/plans/plans/create-plan/components/create-plan-option-link.list.tsx';
+import { useCollectiviteId } from '@tet/api/collectivites';
 
 export const CreatePlanOptionsView = () => {
   const collectiviteId = useCollectiviteId();

@@ -1,22 +1,22 @@
 import { useState } from 'react';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { makeReferentielActionUrl } from '@/app/app/paths';
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
 import Markdown from '@/app/ui/Markdown';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
-  Action,
   ActionType,
+  ActionWithScore,
   getReferentielIdFromActionId,
-} from '@/domain/referentiels';
-import { Button, Card } from '@/ui';
+} from '@tet/domain/referentiels';
+import { Button, Card } from '@tet/ui';
 import { ScoreProgressBar } from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 
 /** Carte générique d'une mesure du référentiel */
 type ActionCardProps = {
-  action: Action;
+  action: ActionWithScore;
   showDescription?: boolean;
 };
 

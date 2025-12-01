@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import { useCollectiviteId } from '@/api/collectivites';
 import {
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsListUrl,
@@ -12,11 +11,12 @@ import {
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
-import { ModulePlanActionListType } from '@/domain/collectivites';
-import { ButtonGroup } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import type { ModulePlanActionList } from '@tet/domain/collectivites/tableau-de-bord';
+import { ButtonGroup } from '@tet/ui';
 
 type Props = {
-  module: ModulePlanActionListType;
+  module: ModulePlanActionList;
 };
 
 const MAX_PLANS_TO_DISPLAY = 3;

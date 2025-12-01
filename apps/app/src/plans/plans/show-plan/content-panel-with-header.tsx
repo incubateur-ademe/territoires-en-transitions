@@ -1,4 +1,4 @@
-import { Spacer } from '@/ui';
+import { Spacer } from '@tet/ui';
 
 export const ContentPanelWithHeader = ({
   children,

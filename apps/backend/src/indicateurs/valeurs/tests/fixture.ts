@@ -1,4 +1,4 @@
-import { IndicateurDefinitionTiny } from '../../definitions/indicateur-definition.table';
+import { IndicateurDefinitionTiny } from '@tet/domain/indicateurs';
 
 export const indicateur1: IndicateurDefinitionTiny = {
   id: 456,

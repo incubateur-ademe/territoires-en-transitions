@@ -1,28 +1,25 @@
-import {
-  DiscussionStatus,
-  discussionStatus,
-  ReferentielEnum,
-} from '@/backend/collectivites/discussions/domain/discussion.types';
-import { DiscussionRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
+import { Injectable, Logger } from '@nestjs/common';
+import { DiscussionRepository } from '@tet/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
 import {
   CreateDiscussionData,
   CreateDiscussionMessageResponse,
+} from '@tet/backend/collectivites/discussions/presentation/discussion.schemas';
+import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import {
+  Discussion,
+  DiscussionCreate,
   DiscussionMessage,
-} from '@/backend/collectivites/discussions/presentation/discussion.schemas';
-import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { Injectable, Logger } from '@nestjs/common';
+  DiscussionMessageCreate,
+  DiscussionStatus,
+  discussionStatus,
+} from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { and, count, eq, getTableColumns, like } from 'drizzle-orm';
 import { DiscussionErrorEnum } from '../domain/discussion.errors';
 import { Result } from './discussion.results';
-import {
-  CreateDiscussionMessageType,
-  CreateDiscussionType,
-  discussionMessageTable,
-  discussionTable,
-  DiscussionType,
-} from './discussion.tables';
+import { discussionMessageTable, discussionTable } from './discussion.table';
 
 @Injectable()
 export class DiscussionRepositoryImpl implements DiscussionRepository {
@@ -32,8 +29,8 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
 
   async findByCollectiviteIdAndReferentielId(
     collectiviteId: number,
-    referentielId: ReferentielEnum
-  ): Promise<Result<DiscussionType[]>> {
+    referentielId: ReferentielId
+  ): Promise<Result<Discussion[]>> {
     const discussions = await this.databaseService.db
       .select({
         ...getTableColumns(discussionTable),
@@ -57,12 +54,12 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
   create: (
     discussion: CreateDiscussionData,
     tx?: Transaction
-  ) => Promise<Result<DiscussionType>> = async (
+  ) => Promise<Result<Discussion>> = async (
     discussion,
     tx
-  ): Promise<Result<DiscussionType>> => {
+  ): Promise<Result<Discussion>> => {
     try {
-      const discussionToCreate: CreateDiscussionType = {
+      const discussionToCreate: DiscussionCreate = {
         collectiviteId: discussion.collectiviteId,
         actionId: discussion.actionId,
         status: discussionStatus.OUVERT,
@@ -102,7 +99,7 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
   };
 
   async createDiscussionMessage(
-    discussionMessage: CreateDiscussionMessageType,
+    discussionMessage: DiscussionMessageCreate,
     tx?: Transaction
   ): Promise<Result<CreateDiscussionMessageResponse>> {
     try {
@@ -145,7 +142,7 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
     }
   }
 
-  async findById(id: number): Promise<Result<DiscussionType>> {
+  async findById(id: number): Promise<Result<Discussion>> {
     try {
       const result = await this.databaseService.db
         .select()
@@ -192,7 +189,7 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
   async update(
     discussionId: number,
     status: DiscussionStatus
-  ): Promise<Result<DiscussionType>> {
+  ): Promise<Result<Discussion>> {
     try {
       const result = await this.databaseService.db
         .update(discussionTable)

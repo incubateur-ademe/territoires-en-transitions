@@ -1,8 +1,8 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users/user-context/user-provider';
-import { Button } from '@/ui/design-system/Button/Button';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
+import { Button } from '@tet/ui';
 import { useState } from 'react';
 import { InviteMemberModal } from './invite-member.modal';
 import { useSendInvitation } from './use-invite-member';

@@ -1,18 +1,18 @@
-import PlanActionsService from '@/backend/plans/fiches/plan-actions.service';
-import { axeTable } from '@/backend/plans/fiches/shared/models/axe.table';
-import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import { ficheActionAxeTable } from '@/backend/plans/fiches/shared/models/fiche-action-axe.table';
+import { INestApplication } from '@nestjs/common';
+import PlanActionsService from '@tet/backend/plans/fiches/plan-actions.service';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-axe.table';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
   getAuthUser,
   getTestApp,
   getTestDatabase,
   YOLO_DODO,
-} from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { INestApplication } from '@nestjs/common';
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { eq } from 'drizzle-orm';
-import { describe, expect, it, beforeAll, onTestFinished } from 'vitest';
+import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
 
 describe('PlanActionsService', () => {
   let db: DatabaseService;

@@ -1,5 +1,5 @@
 import { actionIdToLabel } from '@/app/app/labels';
-import { ReferentielId } from '@/domain/referentiels';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { TableOptions } from 'react-table';
 import { ProgressionRow } from '../DEPRECATED_scores.types';
 import { EtatDesLieuxGraphs } from './graphs/EtatDesLieuxGraphs';

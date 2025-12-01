@@ -12,7 +12,7 @@ import {
 } from '@floating-ui/react';
 import { Fragment, useState } from 'react';
 
-import { cn } from '@/ui/utils/cn';
+import { cn } from '../../../utils/cn';
 import { Button } from '../../Button';
 import { Icon } from '../../Icon';
 import { isNavDropdown, NavDropdown, NavItem, NavLink } from '../types';

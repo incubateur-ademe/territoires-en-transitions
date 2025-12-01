@@ -1,5 +1,5 @@
-import { getErrorMessage } from '@/backend/utils/get-error-message';
 import { Injectable, Logger } from '@nestjs/common';
+import { getErrorMessage } from '@tet/domain/utils';
 import { Options, parse, Parser } from 'csv-parse';
 import { z } from 'zod';
 

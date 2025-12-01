@@ -1,6 +1,6 @@
 import DownloadCanvasButton from '@/app/ui/buttons/DownloadCanvasButton';
 import Modal from '@/app/ui/shared/floating-ui/Modal';
-import { Button } from '@/ui';
+import { Button } from '@tet/ui';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import BarChart, { BarChartProps } from './BarChart';

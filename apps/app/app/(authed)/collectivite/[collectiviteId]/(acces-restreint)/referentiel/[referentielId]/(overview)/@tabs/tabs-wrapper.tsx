@@ -6,7 +6,7 @@ import {
   TabsList,
   TabsPanel,
   TabsTab,
-} from '@/ui/design-system/Tabs/Tabs.next';
+} from '@tet/ui/design-system/TabsNext/index';
 import { PropsWithChildren } from 'react';
 
 export const TabsWrapper = ({ children }: PropsWithChildren) => {

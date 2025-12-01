@@ -3,7 +3,7 @@
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
-import { Alert, Button, Icon } from '@/ui';
+import { Alert, Button, Icon } from '@tet/ui';
 
 const PDF_FILENAME = 'ADEME-Methodo-Outil-trajectoire-reference_VF_Nov2024.pdf';
 const XLSX_FILENAME = 'Trajectoire-GES-de-reference-V1-1-20240905.xlsx';

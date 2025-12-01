@@ -1,20 +1,21 @@
-import { Field, Input } from '@/ui';
+import { Field, Input } from '@tet/ui';
 
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import { useGetThematiqueAndSousThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
-import { FormSectionGrid } from '@/ui';
+import { FormSectionGrid } from '@tet/ui';
 
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { FicheWithRelations } from '@/domain/plans';
-import { RichTextEditor, SelectFilter } from '@/ui';
+import { RichTextEditor, SelectFilter } from '@tet/ui';
 import { Controller, useForm } from 'react-hook-form';
+import { Fiche } from '../data/use-get-fiche';
+import { FicheWithRelations } from '@tet/domain/plans';
 
 const DESCRIPTION_MAX_LENGTH = 20000;
 const INSTANCES_MAX_LENGTH = 10000;
 
 export type FicheUpdatePayload = Pick<
-  FicheWithRelations,
+  Fiche,
   | 'id'
   | 'titre'
   | 'instanceGouvernance'
@@ -57,9 +58,7 @@ export const FicheDescriptionForm = ({
     },
   });
 
-  const handleSave = async (
-    updatedFiche: FicheWithRelations
-  ): Promise<void> => {
+  const handleSave = async (updatedFiche: Fiche): Promise<void> => {
     const titleToSave = (updatedFiche.titre ?? '').trim();
 
     onSubmit({

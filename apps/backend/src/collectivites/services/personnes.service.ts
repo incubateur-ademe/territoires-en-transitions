@@ -1,8 +1,8 @@
-import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
-import { utilisateurCollectiviteAccessTable } from '@/backend/users/authorizations/roles/private-utilisateur-droit.table';
-import { invitationPersonneTagTable } from '@/backend/users/invitations/invitation-personne-tag.table';
-import { dcpTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { invitationPersonneTagTable } from '@tet/backend/users/invitations/invitation-personne-tag.table';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Injectable } from '@nestjs/common';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { union } from 'drizzle-orm/pg-core';

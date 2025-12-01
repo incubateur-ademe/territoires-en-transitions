@@ -1,4 +1,3 @@
-import { Button } from '@/ui';
 import {
   FloatingFocusManager,
   FloatingOverlay,
@@ -10,6 +9,7 @@ import {
   useInteractions,
   useRole,
 } from '@floating-ui/react';
+import { Button } from '@tet/ui';
 import classNames from 'classnames';
 import React, { cloneElement, Dispatch, SetStateAction, useState } from 'react';
 

@@ -1,4 +1,4 @@
-import { Alert } from '@/ui';
+import { Alert } from '@tet/ui';
 
 export const BudgetUnitWarning = () => {
   return (

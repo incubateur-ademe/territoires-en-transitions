@@ -1,4 +1,3 @@
-import { FicheActionNote } from '@/api/plan-actions';
 import { EditIcon, UserIcon } from '@/app/ui/export-pdf/assets/icons';
 import {
   Box,
@@ -8,14 +7,15 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
-import { htmlToText } from '@/domain/utils';
-import { preset } from '@/ui';
+import { FicheNote } from '@tet/domain/plans';
+import { htmlToText } from '@tet/domain/utils';
+import { preset } from '@tet/ui';
 import { format } from 'date-fns';
 
 const { colors } = preset.theme.extend;
 
 type NotesDeSuiviCardProps = {
-  noteSuivi: FicheActionNote;
+  noteSuivi: FicheNote;
 };
 
 const NotesDeSuiviCard = ({ noteSuivi }: NotesDeSuiviCardProps) => {
@@ -58,7 +58,7 @@ const NotesDeSuiviCard = ({ noteSuivi }: NotesDeSuiviCardProps) => {
 };
 
 type NotesDeSuiviProps = {
-  notesSuivi: FicheActionNote[] | undefined;
+  notesSuivi: FicheNote[] | undefined;
   years: number[] | undefined;
 };
 

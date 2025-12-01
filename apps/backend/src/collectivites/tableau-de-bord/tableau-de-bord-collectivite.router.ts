@@ -1,9 +1,9 @@
-import { collectiviteIdInputSchemaCoerce } from '@/backend/collectivites/collectivite-id.input';
-import { createCollectiviteModuleSchema } from '@/backend/collectivites/tableau-de-bord/collectivite-module.schema';
-import { getTableauDeBordModuleRequestSchema } from '@/backend/collectivites/tableau-de-bord/get-tableau-de-bord-module.request';
-import TableauDeBordCollectiviteService from '@/backend/collectivites/tableau-de-bord/tableau-de-bord-collectivite.service';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { collectiviteIdInputSchemaCoerce } from '@tet/backend/collectivites/collectivite-id.input';
+import { getTableauDeBordModuleRequestSchema } from '@tet/backend/collectivites/tableau-de-bord/get-tableau-de-bord-module.request';
+import TableauDeBordCollectiviteService from '@tet/backend/collectivites/tableau-de-bord/tableau-de-bord-collectivite.service';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
+import { collectiviteModuleSchemaCreate } from '@tet/domain/collectivites/tableau-de-bord';
 import z from 'zod';
 
 @Injectable()
@@ -29,7 +29,7 @@ export class TableauDeBordCollectiviteRouter {
       }),
 
     upsert: this.trpc.authedProcedure
-      .input(createCollectiviteModuleSchema)
+      .input(collectiviteModuleSchemaCreate)
       .mutation(async ({ input, ctx }) => {
         return this.tableauDeBordCollectiviteService.upsert(input, ctx.user);
       }),

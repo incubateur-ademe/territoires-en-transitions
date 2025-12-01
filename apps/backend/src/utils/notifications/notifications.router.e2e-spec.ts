@@ -1,9 +1,9 @@
-import { getAnonUser, getAuthUser, getTestRouter } from '@/backend/test';
+import { getAnonUser, getAuthUser, getTestRouter } from '@tet/backend/test';
 import {
   AuthRole,
   AuthUser,
   AuthenticatedUser,
-} from '@/backend/users/models/auth.models';
+} from '@tet/backend/users/models/auth.models';
 import { TrpcRouter } from '../trpc/trpc.router';
 
 describe('Route de notifications', () => {

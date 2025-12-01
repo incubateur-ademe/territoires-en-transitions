@@ -1,6 +1,6 @@
-import { Button, ButtonProps } from '@/ui';
 import classNames from 'classnames';
 import { alertClassnames } from '../Alert/utils';
+import { Button, ButtonProps } from '../Button';
 
 type BottomOkCancelProps = {
   title: string;

@@ -1,13 +1,13 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import {
   OpenModaleState,
   SubActionStatutDropdown,
 } from '@/app/referentiels/actions/sub-action-statut.dropdown';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import Markdown from '@/app/ui/Markdown';
-import { ActionTypeEnum } from '@/domain/referentiels';
-import { Icon, InfoTooltip } from '@/ui';
+import { ActionTypeEnum } from '@tet/domain/referentiels';
+import { Icon, InfoTooltip } from '@tet/ui';
 import { ScoreIndicatifBadge } from '../score-indicatif/score-indicatif.badge';
 
 type Props = {

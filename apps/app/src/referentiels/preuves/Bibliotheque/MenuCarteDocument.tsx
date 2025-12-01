@@ -1,7 +1,7 @@
 import { EditerDocumentModal } from '@/app/referentiels/preuves/Bibliotheque/EditerDocumentModal';
 import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
-import { Button } from '@/ui';
+import { Button } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { EditerLienModal } from './EditerLienModal';

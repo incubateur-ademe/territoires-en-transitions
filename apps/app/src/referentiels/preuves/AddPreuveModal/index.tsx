@@ -1,7 +1,7 @@
 /**
  * Affiche le sélecteur de ressources (fichiers ou liens)
  */
-import { Tab, Tabs } from '@/ui';
+import { Tab, Tabs } from '@tet/ui';
 import { AddFile, TAddFileFromLib } from './AddFile';
 import AddFromLib from './AddFromLib';
 import { AddLink, TAddLink } from './AddLink';

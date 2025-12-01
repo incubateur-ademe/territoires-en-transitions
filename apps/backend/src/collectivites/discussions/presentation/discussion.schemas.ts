@@ -1,10 +1,11 @@
+import {
+  Discussion,
+  discussionStatusValues,
+  DiscussionWithMessages,
+} from '@tet/domain/collectivites';
+import { referentielIdEnumSchema } from '@tet/domain/referentiels';
 import z from 'zod';
 import { queryOptionsTypeSchema } from '../domain/discussion.query-options';
-import {
-  discussionStatusValues,
-  referentielEnumValues,
-} from '../domain/discussion.types';
-import { DiscussionType } from '../infrastructure/discussion.tables';
 
 export const createDiscussionRequestSchema = z.object({
   discussionId: z.number().positive().optional(),
@@ -26,7 +27,7 @@ export const listDiscussionsRequestFiltersSchema = z.object({
 
 export const listDiscussionsRequestSchema = z.object({
   collectiviteId: z.number().positive(),
-  referentielId: z.enum(referentielEnumValues),
+  referentielId: referentielIdEnumSchema,
   filters: listDiscussionsRequestFiltersSchema.optional(),
   options: queryOptionsTypeSchema.optional(),
 });
@@ -115,39 +116,12 @@ export type CreateDiscussionMessageResponse = {
   createdAt: string;
 };
 
-export type DiscussionMessage = {
-  id: number;
-  discussionId: number;
-  message: string;
-  createdBy: string;
-  createdAt: string;
-  createdByNom: string | null;
-  createdByPrenom: string | null;
-};
-
-export type DiscussionMessages = {
-  id: number;
-  collectiviteId: number;
-  actionId: string;
-  actionNom: string;
-  actionIdentifiant: string;
-  status: string;
-  createdBy: string;
-  createdAt: string;
-  messages: DiscussionMessage[];
-};
-
 export type DiscussionsMessagesListType = {
-  discussions: DiscussionMessages[];
+  discussions: DiscussionWithMessages[];
   count: number;
 };
 
-export type Discussion = {
-  data: DiscussionMessages[];
-  count: number;
-};
-
-export type DiscussionWithActionName = DiscussionType & {
+export type DiscussionWithActionName = Discussion & {
   actionNom: string;
   actionIdentifiant: string;
 };

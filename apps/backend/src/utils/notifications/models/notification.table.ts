@@ -1,9 +1,9 @@
-import { authUsersTable } from '@/backend/users/models/auth-users.table';
+import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import {
   createdAt,
   createdBy,
   TIMESTAMP_OPTIONS,
-} from '@/backend/utils/column.utils';
+} from '@tet/backend/utils/column.utils';
 import {
   integer,
   jsonb,

@@ -1,11 +1,11 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielUrl } from '@/app/app/paths';
 import { useListSnapshots } from '@/app/referentiels/use-snapshot';
 import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.container';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { ReferentielId } from '@/domain/referentiels';
-import { Button } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { Button } from '@tet/ui';
 
 import { ScoreTotalEvolutionsChart } from '@/app/referentiels/comparisons/evolutions-score-total.chart';
 import imagePlaceholder from './score-referentiel-placeholder.png';

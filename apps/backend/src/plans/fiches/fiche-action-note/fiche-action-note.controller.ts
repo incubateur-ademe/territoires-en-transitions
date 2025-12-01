@@ -1,14 +1,3 @@
-import FicheActionNoteService from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.service';
-import { ficheActionNoteSchema } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
-import {
-  deleteFicheActionNotesRequestSchema,
-  upsertFicheActionNotesRequestSchema,
-} from '@/backend/plans/fiches/fiche-action-note/upsert-fiche-action-note.request';
-import { getFichesActionResponseSchema } from '@/backend/plans/fiches/shared/models/get-fiche-actions.response';
-import { TokenInfo } from '@/backend/users/decorators/token-info.decorators';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
-import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -16,6 +5,16 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import FicheActionNoteService from '@tet/backend/plans/fiches/fiche-action-note/fiche-action-note.service';
+import {
+  deleteFicheActionNotesRequestSchema,
+  upsertFicheActionNotesRequestSchema,
+} from '@tet/backend/plans/fiches/fiche-action-note/upsert-fiche-action-note.request';
+import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
+import type { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
+import { ficheNoteSchema } from '@tet/domain/plans';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
@@ -24,7 +23,7 @@ import { z } from 'zod';
  */
 
 export class GetFicheActionNotesResponseClass extends createZodDto(
-  z.array(ficheActionNoteSchema)
+  z.array(ficheNoteSchema)
 ) {}
 
 export class UpsertFicheActionNotesRequestClass extends createZodDto(
@@ -33,10 +32,6 @@ export class UpsertFicheActionNotesRequestClass extends createZodDto(
 
 export class DeleteFicheActionNotesRequestClass extends createZodDto(
   deleteFicheActionNotesRequestSchema
-) {}
-
-export class GetFichesActionResponseClass extends createZodDto(
-  getFichesActionResponseSchema
 ) {}
 
 @ApiExcludeController()

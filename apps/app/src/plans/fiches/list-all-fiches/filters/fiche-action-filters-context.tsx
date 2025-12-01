@@ -1,7 +1,7 @@
 'use client';
 
-import { useUser } from '@/api/users/user-context/user-provider';
-import { Event, useEventTracker } from '@/ui';
+import { useUser } from '@tet/api/users';
+import { Event, useEventTracker } from '@tet/ui';
 import { createContext, ReactNode, useContext } from 'react';
 import { countActiveFicheFilters } from './count-active-fiche-filters';
 import { useFicheFiltersFromUrl } from './filter-converter';

@@ -1,4 +1,4 @@
-import { Option, SelectFilter, SelectMultipleProps } from '@/ui';
+import { Option, SelectFilter, SelectMultipleProps } from '@tet/ui';
 
 import { CollectiviteMembre } from './useMembres';
 

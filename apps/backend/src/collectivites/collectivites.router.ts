@@ -1,16 +1,16 @@
-import { CollectiviteCrudRouter } from '@/backend/collectivites/collectivite-crud/collectivite-crud.router';
-import { DiscussionRouter } from '@/backend/collectivites/discussions/presentation/discussion.router';
-import { ImportCollectiviteRelationsRouter } from '@/backend/collectivites/import-collectivite-relations/import-collectivite-relations.router';
-import { RecherchesRouter } from '@/backend/collectivites/recherches/recherches.router';
 import { Injectable } from '@nestjs/common';
+import { CollectiviteCrudRouter } from '@tet/backend/collectivites/collectivite-crud/collectivite-crud.router';
+import { DiscussionRouter } from '@tet/backend/collectivites/discussions/presentation/discussion.router';
+import { ImportCollectiviteRelationsRouter } from '@tet/backend/collectivites/import-collectivite-relations/import-collectivite-relations.router';
+import { RecherchesRouter } from '@tet/backend/collectivites/recherches/recherches.router';
 import { TrpcService } from '../utils/trpc/trpc.service';
+import { DocumentsRouter } from './documents/documents.router';
 import { ListCategoriesRouter } from './handle-categories/list-categories.router';
 import { ListCollectivitesRouter } from './list-collectivites/list-collectivites.router';
 import { CollectiviteMembresRouter } from './membres/membres.router';
 import { PersonnesRouter } from './personnes.router';
 import { TableauDeBordCollectiviteRouter } from './tableau-de-bord/tableau-de-bord-collectivite.router';
 import { PersonneTagRouter } from './tags/personnes/personne-tag.router';
-import { DocumentsRouter } from './documents/documents.router';
 @Injectable()
 export class CollectivitesRouter {
   constructor(

@@ -1,13 +1,15 @@
-import { DBClient } from '@/api';
-import { useCollectiviteId, useCurrentCollectivite } from '@/api/collectivites';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useAudit, useIsAuditeur } from '@/app/referentiels/audits/useAudit';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { DBClient, useSupabase } from '@tet/api';
 import {
-  ActionStatutInsert,
+  useCollectiviteId,
+  useCurrentCollectivite,
+} from '@tet/api/collectivites';
+import {
+  ActionStatutCreate,
   StatutAvancement,
   getReferentielIdFromActionId,
-} from '@/domain/referentiels';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+} from '@tet/domain/referentiels';
 import { omit } from 'es-toolkit';
 import { objectToCamel, objectToSnake } from 'ts-case-convert';
 import { useScore, useSnapshotComputeAndUpdate } from '../../use-snapshot';
@@ -75,7 +77,7 @@ export const useSaveActionStatut = () => {
     useSnapshotComputeAndUpdate();
 
   const { isPending, mutate: saveActionStatut } = useMutation({
-    mutationFn: async (statut: ActionStatutInsert) => {
+    mutationFn: async (statut: ActionStatutCreate) => {
       return supabase
         .from('action_statut')
         .upsert([objectToSnake(omit(statut, ['modifiedAt', 'modifiedBy']))], {
@@ -140,7 +142,7 @@ export const useEditActionStatutIsDisabled = (actionId: string) => {
   const score = useScore(actionId);
 
   return Boolean(
-isReadOnly ||
+    isReadOnly ||
       !score ||
       score.desactive ||
       (audit && (!isAuditeur || audit.valide))

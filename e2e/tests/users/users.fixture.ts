@@ -1,12 +1,14 @@
-import { addTestCollectivite, Collectivite } from '@/domain/collectivites';
-import {
-  BulkEditRequest,
-  FicheCreate,
-  UpdateFicheRequest,
-} from '@/domain/plans';
-import type { AppRouter } from '@/domain/trpc-router';
-import { addTestUser, Dcp, TestUserArgs } from '@/domain/users';
 import { BrowserContext, test } from '@playwright/test';
+import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.fixture';
+import { BulkEditRequest } from '@tet/backend/plans/fiches/bulk-edit/bulk-edit.input';
+import {
+  addTestUser,
+  TestUserArgs,
+} from '@tet/backend/users/users/users.fixture';
+import type { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { Collectivite } from '@tet/domain/collectivites';
+import { FicheCreate } from '@tet/domain/plans';
+import { Dcp } from '@tet/domain/users';
 import { createTRPCClient, httpBatchLink, TRPCClient } from '@trpc/client';
 import { databaseService } from '../fixtures/database.service';
 import { SupabaseClient } from '../fixtures/supabase-client.utils';
@@ -156,16 +158,6 @@ class UserFixture implements IFixtureData {
     return createdDiscussionIds;
   }
 
-  async updateFiches(fiches: UpdateFicheRequest[]) {
-    const trpcClient = this.getTrpcClient();
-
-    const updatedFichesPromises = fiches.map((fiche) => {
-      console.log('Update fiche', fiche);
-      return trpcClient.plans.fiches.update.mutate(fiche);
-    });
-    await Promise.all(updatedFichesPromises);
-  }
-
   async bulkEditFiches(bulkEditRequest: BulkEditRequest) {
     const trpcClient = this.getTrpcClient();
     return trpcClient.plans.fiches.bulkEdit.mutate(bulkEditRequest);
@@ -185,7 +177,7 @@ class UserFixture implements IFixtureData {
       const trpcClient = this.trpcClient;
       console.log('Cleanup fiches', this.ficheIds);
       const cleanupFichesPromises = this.ficheIds.map((ficheId) => {
-        return this.trpcClient.plans.fiches.delete.mutate({
+        return trpcClient.plans.fiches.delete.mutate({
           ficheId,
           deleteMode: 'hard',
         });

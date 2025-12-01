@@ -1,7 +1,7 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { parseSnapshotName } from '@/domain/referentiels';
-import { Field, Input, Modal, ModalFooterOKCancel } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { parseSnapshotName } from '@tet/domain/referentiels';
+import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import { useReferentielId } from '../../referentiel-context';
 import { useSnapshotUpdateName } from '../../use-snapshot';

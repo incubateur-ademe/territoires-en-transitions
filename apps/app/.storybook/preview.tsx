@@ -1,18 +1,14 @@
 import { Preview } from '@storybook/nextjs';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // charge les styles globaux
 import '../app/global.css';
 // surcharge les styles pour la zone de prévisualisation
 import './preview.css';
 
-import { CollectiviteProvider } from '@/api/collectivites';
-import { UserProvider } from '@/api/users/user-context/user-provider';
-import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
-import { ReactQueryAndTRPCProvider } from '@/api/utils/trpc/client';
-import { CollectiviteAccessLevelEnum } from '@/domain/users';
-
-const queryClient = new QueryClient();
+import { ReactQueryAndTRPCProvider, SupabaseProvider } from '@tet/api';
+import { CollectiviteProvider } from '@tet/api/collectivites';
+import { UserProvider } from '@tet/api/users';
+import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
 
 const user = {
   collectivites: [
@@ -23,6 +19,9 @@ const user = {
       role: null,
       accesRestreint: false,
       isReadOnly: false,
+      isRoleAuditeur: false,
+      isSimplifiedView: false,
+      permissions: [],
     },
   ],
   id: '',
@@ -47,15 +46,13 @@ const preview: Preview = {
   decorators: [
     (Story) => (
       <SupabaseProvider cookieOptions={null}>
-        <QueryClientProvider client={queryClient}>
-          <UserProvider user={user}>
-            <ReactQueryAndTRPCProvider>
-              <CollectiviteProvider user={user}>
-                <Story />
-              </CollectiviteProvider>
-            </ReactQueryAndTRPCProvider>
-          </UserProvider>
-        </QueryClientProvider>
+        <UserProvider>
+          <ReactQueryAndTRPCProvider>
+            <CollectiviteProvider user={user}>
+              <Story />
+            </CollectiviteProvider>
+          </ReactQueryAndTRPCProvider>
+        </UserProvider>
       </SupabaseProvider>
     ),
   ],

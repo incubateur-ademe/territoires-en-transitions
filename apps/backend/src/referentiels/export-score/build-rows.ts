@@ -1,6 +1,9 @@
-import { ActionTypeEnum } from '@/backend/referentiels/models/action-type.enum';
-import { ReferentielId } from '@/backend/referentiels/models/referentiel-id.enum';
-import { getIdentifiantFromActionId, getLevelFromActionId } from '@/backend/referentiels/referentiels.utils';
+import {
+  ActionTypeEnum,
+  getIdentifiantFromActionId,
+  getLevelFromActionId,
+  ReferentielId,
+} from '@tet/domain/referentiels';
 import { toMerged } from 'es-toolkit';
 import { Row, Worksheet } from 'exceljs';
 import * as Utils from '../../utils/excel/export-excel.utils';

@@ -1,11 +1,11 @@
-import { AirtableFeedbackRecord } from '@/tools/airtable/airtable-feedback.record';
-import { AirtableProspectRecord } from '@/tools/airtable/airtable-prospect.record';
+import { AirtableFeedbackRecord } from '../airtable/airtable-feedback.record';
+import { AirtableProspectRecord } from '../airtable/airtable-prospect.record';
 import {
   AirtableRowInsertDto,
   AirtableUpdateRowDto,
-} from '@/tools/airtable/airtable-row-insert.dto';
-import { AirtableRowDto } from '@/tools/airtable/airtable-row.dto';
-import { AirtableUserRecord } from '@/tools/airtable/airtable-user.record';
+} from '../airtable/airtable-row-insert.dto';
+import { AirtableRowDto } from '../airtable/airtable-row.dto';
+import { AirtableUserRecord } from '../airtable/airtable-user.record';
 import {
   Injectable,
   InternalServerErrorException,

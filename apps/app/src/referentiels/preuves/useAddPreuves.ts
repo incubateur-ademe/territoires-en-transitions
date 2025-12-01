@@ -1,9 +1,9 @@
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import {
   QueryClient,
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useSupabase } from '@tet/api';
 
 // on peut ajouter une preuve sous forme de...
 type TFileOrLink =

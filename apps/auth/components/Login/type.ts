@@ -1,4 +1,4 @@
-import { ResendFunction, VerifyOTPData } from '@/auth/components/VerifyOTP';
+import { ResendFunction, VerifyOTPData } from '../../components/VerifyOTP';
 import { ZxcvbnResult } from '@zxcvbn-ts/core';
 import { FormState } from './useFormState';
 

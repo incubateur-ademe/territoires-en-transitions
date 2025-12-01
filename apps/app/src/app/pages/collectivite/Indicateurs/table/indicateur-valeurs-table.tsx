@@ -1,8 +1,8 @@
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
-import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
-import { Button, Table, TBody, TCell, TRow } from '@/ui';
-import { useState } from 'react';
 import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
+import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
+import { Button, Table, TBody, TCell, TRow } from '@tet/ui';
+import { useState } from 'react';
 import { PreparedData, PreparedValue } from '../data/prepare-data';
 import { useDeleteIndicateurValeur } from '../data/use-delete-indicateur-valeur';
 import { useGetColorBySourceId } from '../data/use-indicateur-sources';

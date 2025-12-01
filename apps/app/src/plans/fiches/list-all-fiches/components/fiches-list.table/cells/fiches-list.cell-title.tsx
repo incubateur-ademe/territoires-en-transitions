@@ -1,10 +1,10 @@
 import Link from 'next/link';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
-import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
-import { Button } from '@/ui';
+import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Button } from '@tet/ui';
 
 type Props = {
   title?: string | null;

@@ -1,6 +1,6 @@
 import { getFormattedFloat, getFormattedNumber } from '@/app/utils/formatUtils';
-import { Badge, TBody, TCell, THead, THeadCell, TRow, Table } from '@/ui';
-import { cn } from '@/ui/utils/cn';
+import { Badge, TBody, TCell, THead, THeadCell, TRow, Table } from '@tet/ui';
+import { cn } from '@tet/ui/utils/cn';
 import { uniq } from 'es-toolkit';
 import { PerYearBudgetProperties } from './types';
 

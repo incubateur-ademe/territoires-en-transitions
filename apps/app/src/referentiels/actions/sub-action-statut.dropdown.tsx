@@ -1,18 +1,18 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { SelectActionStatut } from '@/app/referentiels/actions/action-statut/action-statut.select';
 import {
   useActionStatut,
   useEditActionStatutIsDisabled,
   useSaveActionStatut,
 } from '@/app/referentiels/actions/action-statut/use-action-statut';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
-  ActionStatutInsert,
+  ActionStatutCreate,
   ActionTypeEnum,
   StatutAvancementIncludingNonConcerne,
   getStatutAvancement,
   statutAvancementIncludingNonConcerneEnumSchema,
-} from '@/domain/referentiels';
+} from '@tet/domain/referentiels';
 import { useEffect, useState } from 'react';
 import { useScore } from '../use-snapshot';
 import { statutParAvancement } from '../utils';
@@ -21,7 +21,7 @@ import SubActionModal from './sub-action/sub-action.modal';
 
 export type StatusToSavePayload = {
   actionId: string;
-  statut: ActionStatutInsert | null;
+  statut: ActionStatutCreate | null;
   avancement: StatutAvancementIncludingNonConcerne;
   avancementDetaille?: number[];
 };

@@ -1,11 +1,11 @@
-import { DBClient } from '@/api/typeUtils';
 import { objectToCamel } from 'ts-case-convert';
+import { DBClient } from '../../../typeUtils';
 
 import {
   FiltreRessourceLiees,
   FiltreValues,
   filtreRessourceLieesSchema,
-} from '../domain/filtre-ressource-liees.schema';
+} from '@tet/domain/shared';
 
 type Input = {
   dbClient: DBClient;

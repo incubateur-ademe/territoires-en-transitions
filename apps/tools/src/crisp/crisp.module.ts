@@ -1,4 +1,4 @@
-import { AirtableModule } from '@/tools/airtable/airtable.module';
+import { AirtableModule } from '../airtable/airtable.module';
 import { Module } from '@nestjs/common';
 import { ConfigurationModule } from '../config/configuration.module';
 import { NotionModule } from '../notion/notion.module';

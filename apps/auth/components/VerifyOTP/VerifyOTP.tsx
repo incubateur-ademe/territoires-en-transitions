@@ -1,5 +1,4 @@
-import { MailSendMessage } from '@/auth/components/Login/MailSendMessage';
-import { ResendMessage } from '@/auth/components/ResendMessage';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Event,
   FieldMessage,
@@ -7,10 +6,11 @@ import {
   ModalFooterOKCancel,
   useEventTracker,
   validateOTP,
-} from '@/ui';
-import { zodResolver } from '@hookform/resolvers/zod';
+} from '@tet/ui';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { MailSendMessage } from '../../components/Login/MailSendMessage';
+import { ResendMessage } from '../../components/ResendMessage';
 
 export type VerifyOTPData = {
   email: string;

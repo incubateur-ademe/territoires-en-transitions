@@ -1,4 +1,4 @@
-import { Button, Input } from '@/ui';
+import { Button, Input } from '@tet/ui';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 

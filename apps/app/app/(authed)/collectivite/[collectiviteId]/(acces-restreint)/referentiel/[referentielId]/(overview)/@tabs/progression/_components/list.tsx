@@ -5,8 +5,8 @@ import {
 } from '@/app/referentiels/actions/use-list-actions';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { ActionTypeEnum } from '@/domain/referentiels';
-import { EmptyCard } from '@/ui';
+import { ActionTypeEnum } from '@tet/domain/referentiels';
+import { EmptyCard } from '@tet/ui';
 import classNames from 'classnames';
 import { DisplayOption } from './action.list';
 import Axe from './axe';

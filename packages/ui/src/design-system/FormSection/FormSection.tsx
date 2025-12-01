@@ -1,5 +1,5 @@
-import { Icon, IconValue } from '@/ui/design-system/Icon';
 import classNames from 'classnames';
+import { Icon, IconValue } from '../Icon';
 import { FormSectionGrid, FormSectionGridProps } from './FormSectionGrid';
 
 type FormSectionProps = {

@@ -1,16 +1,18 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { useTRPC } from '@/api/utils/trpc/client';
-import {
-  ListDiscussionsRequestFilters,
-  QueryOptionsType,
-} from '@/domain/collectivites';
-import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from '@tanstack/react-query';
+import { RouterInput, useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
+
+export type ListDiscussionsInput =
+  RouterInput['collectivites']['discussions']['list'];
+
+type QueryOptions = ListDiscussionsInput['options'];
+type Filters = ListDiscussionsInput['filters'];
 
 export const useListDiscussions = (
   referentielId: ReferentielId,
-  filters?: ListDiscussionsRequestFilters,
-  options?: QueryOptionsType
+  filters?: Filters,
+  options?: QueryOptions
 ) => {
   const collectivite_id = useCollectiviteId();
   const trpc = useTRPC();

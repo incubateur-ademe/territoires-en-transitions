@@ -1,5 +1,5 @@
-import { Fiche, isFicheOnTime } from '@/domain/plans';
-import { cn, Icon } from '@/ui';
+import { Fiche, isFicheOnTime } from '@tet/domain/plans';
+import { cn, Icon } from '@tet/ui';
 import { format } from 'date-fns';
 
 export const FichesListCellDateFin = ({

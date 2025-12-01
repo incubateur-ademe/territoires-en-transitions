@@ -1,5 +1,5 @@
-import { HttpExceptionDto } from '@/backend/utils/nest/http-exception.dto';
 import { HttpException } from '@nestjs/common';
+import { HttpExceptionDto } from '@tet/backend/utils/nest/http-exception.dto';
 import { TRPCError } from '@trpc/server';
 import { DateTime } from 'luxon';
 import { expect } from 'vitest';
@@ -9,7 +9,6 @@ export const ISO_8601_DATE_TIME_REGEX =
 
 export interface CustomMatchers<R = unknown> {
   toEqualDate: (expected: string) => R;
-
   toThrowTrpcHttpError: (error: HttpException) => Promise<R>;
 }
 

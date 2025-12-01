@@ -1,13 +1,13 @@
 'use client';
 
+import { CollectiviteAccess } from '@tet/domain/users';
 import dynamic from 'next/dynamic';
 import { useContext } from 'react';
-import { CollectiviteAccess } from '@/domain/users';
 import { CollectiviteContext } from './collectivite-context';
 
 export const CollectiviteProvider = dynamic(
   () =>
-    import('./collectivite-context').then(
+    import('./collectivite-context.js').then(
       (mod) => mod.CollectiviteProvider_OnlyImportWithoutSSR
     ),
   { ssr: false }

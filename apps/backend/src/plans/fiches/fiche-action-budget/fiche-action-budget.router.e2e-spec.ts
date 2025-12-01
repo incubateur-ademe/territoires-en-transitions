@@ -1,21 +1,19 @@
 import {
   BudgetType,
   BudgetUnite,
-} from '@/backend/plans/fiches/fiche-action-budget/budget.types';
-import {
-  FicheActionBudget,
-  ficheActionBudgetTable,
-} from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
-import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
+} from '@tet/backend/plans/fiches/fiche-action-budget/budget.types';
+import { ficheActionBudgetTable } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
   getAuthUser,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-} from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { FicheBudgetCreate } from '@tet/domain/plans';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 
@@ -41,7 +39,7 @@ describe('Route CRUD des budgets des fiches actions', () => {
       .values({ titre: 'test', collectiviteId })
       .returning();
 
-    const budgetToInsert: FicheActionBudget = {
+    const budgetToInsert: FicheBudgetCreate = {
       ficheId: fiche.id,
       type: 'investissement',
       unite: 'HT',
@@ -97,18 +95,18 @@ describe('Route CRUD des budgets des fiches actions', () => {
 
     // Crée jeu de test
     const ficheId = 1;
-    const budgetHTInvTot: FicheActionBudget = {
+    const budgetHTInvTot: FicheBudgetCreate = {
       ficheId: ficheId,
       type: 'investissement',
       unite: 'HT',
       budgetPrevisionnel: 5000,
       estEtale: true,
     };
-    const budgetHTInvTotBis: FicheActionBudget = {
+    const budgetHTInvTotBis: FicheBudgetCreate = {
       ...budgetHTInvTot,
       estEtale: false,
     };
-    const budgetHTInv2020: FicheActionBudget = {
+    const budgetHTInv2020: FicheBudgetCreate = {
       ficheId: ficheId,
       type: 'investissement',
       unite: 'HT',
@@ -116,22 +114,22 @@ describe('Route CRUD des budgets des fiches actions', () => {
       budgetPrevisionnel: 5000,
       budgetReel: 5000,
     };
-    const budgetHTInv2021: FicheActionBudget = {
+    const budgetHTInv2021: FicheBudgetCreate = {
       ...budgetHTInv2020,
       annee: 2021,
     };
 
-    const budgetHTFon2020: FicheActionBudget = {
+    const budgetHTFon2020: FicheBudgetCreate = {
       ...budgetHTInv2020,
       type: 'fonctionnement',
     };
 
-    const budgetETPInv2020: FicheActionBudget = {
+    const budgetETPInv2020: FicheBudgetCreate = {
       ...budgetHTInv2020,
       unite: 'ETP',
     };
 
-    const budgetHTInv2020Bis: FicheActionBudget = {
+    const budgetHTInv2020Bis: FicheBudgetCreate = {
       ...budgetHTInv2020,
       budgetReel: 6000,
     };

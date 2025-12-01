@@ -1,6 +1,6 @@
 'use client';
 import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
-import { EmptyCard } from '@/ui';
+import { EmptyCard } from '@tet/ui';
 
 export const EmptyAllPlansVisitorView = () => {
   return (

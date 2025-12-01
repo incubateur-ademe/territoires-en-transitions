@@ -1,5 +1,5 @@
-import { DiscussionOrderBy, DiscussionStatus } from '@/domain/collectivites';
-import { ReferentielId } from '@/domain/referentiels';
+import { DiscussionOrderBy, DiscussionStatus } from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
 import {
   ActionSelect,
   OrderBySelect,

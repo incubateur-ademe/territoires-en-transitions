@@ -1,4 +1,4 @@
-import { createEnumObject } from '../enum.utils';
+import { createEnumObject } from '@tet/domain/utils';
 import { ErrorConfigMap } from './trpc-error-config';
 
 /**

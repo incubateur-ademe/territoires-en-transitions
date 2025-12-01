@@ -1,40 +1,37 @@
-import { financeurTagTable } from '@/backend/collectivites/tags/financeur-tag.table';
-import { libreTagTable } from '@/backend/collectivites/tags/libre-tag.table';
-import { partenaireTagTable } from '@/backend/collectivites/tags/partenaire-tag.table';
-import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
-import { structureTagTable } from '@/backend/collectivites/tags/structure-tag.table';
-import { ficheActionNoteTable } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
-import { FichesRouter } from '@/backend/plans/fiches/fiches.router';
-import { ficheActionSharingTable } from '@/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
-import { axeTable } from '@/backend/plans/fiches/shared/models/axe.table';
-import { ficheActionActionTable } from '@/backend/plans/fiches/shared/models/fiche-action-action.table';
-import { ficheActionAxeTable } from '@/backend/plans/fiches/shared/models/fiche-action-axe.table';
-import { ficheActionFinanceurTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-financeur-tag.table';
-import { ficheActionIndicateurTable } from '@/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
-import { ficheActionLibreTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-libre-tag.table';
-import { ficheActionLienTable } from '@/backend/plans/fiches/shared/models/fiche-action-lien.table';
-import { ficheActionPartenaireTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-partenaire-tag.table';
-import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
-import { ficheActionSousThematiqueTable } from '@/backend/plans/fiches/shared/models/fiche-action-sous-thematique.table';
-import { ficheActionStructureTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-structure-tag.table';
-import { ficheActionThematiqueTable } from '@/backend/plans/fiches/shared/models/fiche-action-thematique.table';
-import {
-  ficheActionTable,
-  statutsEnumSchema,
-} from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import { sousThematiqueTable } from '@/backend/shared/thematiques/sous-thematique.table';
-import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
+import { financeurTagTable } from '@tet/backend/collectivites/tags/financeur-tag.table';
+import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
+import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-tag.table';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag.table';
+import { ficheActionNoteTable } from '@tet/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
+import { FichesRouter } from '@tet/backend/plans/fiches/fiches.router';
+import { ficheActionSharingTable } from '@tet/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { ficheActionActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-action.table';
+import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-axe.table';
+import { ficheActionFinanceurTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-financeur-tag.table';
+import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
+import { ficheActionLibreTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-libre-tag.table';
+import { ficheActionLienTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-lien.table';
+import { ficheActionPartenaireTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-partenaire-tag.table';
+import { ficheActionReferentTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-referent.table';
+import { ficheActionSousThematiqueTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-sous-thematique.table';
+import { ficheActionStructureTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-structure-tag.table';
+import { ficheActionThematiqueTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-thematique.table';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
+import { sousThematiqueTable } from '@tet/backend/shared/thematiques/sous-thematique.table';
+import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import {
   getAuthUser,
   getTestApp,
   getTestDatabase,
   YOLO_DODO,
   YOULOU_DOUDOU,
-} from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { notesDeSuiviEnumSchema, StatutEnum } from '@tet/domain/plans';
 import { eq, inArray } from 'drizzle-orm';
-import { StatutEnum } from '../shared/models/fiche-action.table';
 
 let router: FichesRouter;
 let yoloDodo: AuthenticatedUser;
@@ -627,7 +624,7 @@ describe('Filtres sur les fiches actions', () => {
       await db.db
         .update(ficheActionTable)
         .set({
-          statut: statutsEnumSchema.enum['En pause'],
+          statut: StatutEnum.EN_PAUSE,
         })
         .where(eq(ficheActionTable.id, fiche.id));
 
@@ -871,7 +868,7 @@ describe('Filtres sur les fiches actions', () => {
     const { data: fichesWithoutNote } = await caller.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
-        hasNoteDeSuivi: false,
+        notesDeSuivi: notesDeSuiviEnumSchema.enum.WITHOUT,
       },
     });
 
@@ -1690,7 +1687,7 @@ test('Fetch avec filtre sur un statut', async () => {
 
   // Que des fiches avec un statut 'À venir' dans les seeds de base
   for (const fiche of withData) {
-    expect(fiche.statut).toBe(statutsEnumSchema.enum['À venir']);
+    expect(fiche.statut).toBe(StatutEnum.A_VENIR);
   }
 });
 

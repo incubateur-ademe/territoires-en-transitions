@@ -1,5 +1,5 @@
+import { indicateurAvecValeursSchema } from '@tet/domain/indicateurs';
 import { z } from 'zod';
-import { indicateurAvecValeursSchema } from '../valeurs/indicateur-valeur.table';
 
 export const calculTrajectoireResponseDonneesSchema = z
   .object({

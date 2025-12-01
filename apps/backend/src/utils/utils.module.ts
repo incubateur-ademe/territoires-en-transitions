@@ -1,4 +1,4 @@
-import VersionService from '@/backend/utils/version/version.service';
+import VersionService from '@tet/backend/utils/version/version.service';
 import { BullModule } from '@nestjs/bullmq';
 import { Global, Module } from '@nestjs/common';
 import { WEBHOOK_NOTIFICATIONS_QUEUE_NAME } from './bullmq/queue-names.constants';

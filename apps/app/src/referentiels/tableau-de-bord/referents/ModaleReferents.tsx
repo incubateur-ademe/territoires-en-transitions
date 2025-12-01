@@ -1,7 +1,7 @@
 import { membreFonctionToLabel } from '@/app/app/labels';
 import { makeCollectiviteUsersUrl } from '@/app/app/paths';
-import { type MembreFonction } from '@/domain/collectivites';
-import { Field, Modal, ModalFooterOKCancel, OptionValue } from '@/ui';
+import { type MembreFonction } from '@tet/domain/collectivites';
+import { Field, Modal, ModalFooterOKCancel, OptionValue } from '@tet/ui';
 import { pick } from 'es-toolkit';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';

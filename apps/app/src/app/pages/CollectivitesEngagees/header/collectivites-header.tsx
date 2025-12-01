@@ -1,5 +1,4 @@
 'use client';
-import { CollectiviteEngagee } from '@/api';
 import {
   getNumberOfActiveFilters,
   SetFilters,
@@ -7,7 +6,8 @@ import {
 import { trierParOptions } from '@/app/app/pages/CollectivitesEngagees/data/filtreOptions';
 import { getRechercheViewUrl, RecherchesViewParam } from '@/app/app/paths';
 import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
-import { ButtonGroup, Select } from '@/ui';
+import { CollectiviteEngagee } from '@tet/api';
+import { ButtonGroup, Select } from '@tet/ui';
 import classNames from 'classnames';
 import { useRouter, useSearchParams } from 'next/navigation';
 

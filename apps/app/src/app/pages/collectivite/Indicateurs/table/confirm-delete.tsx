@@ -8,7 +8,7 @@ import {
   THeadCell,
   THeadRow,
   TRow,
-} from '@/ui';
+} from '@tet/ui';
 import { useState } from 'react';
 import { PreparedValue } from '../data/prepare-data';
 import { CellValue } from './cell-value';

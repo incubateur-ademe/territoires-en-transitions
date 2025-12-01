@@ -1,4 +1,4 @@
-import { AirtableRowDto } from '@/tools/airtable/airtable-row.dto';
+import { AirtableRowDto } from './airtable-row.dto';
 
 export interface AirtableInsertRecordsResponse<TFields> {
   records: AirtableRowDto<TFields>[];

@@ -6,7 +6,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { useUpdateEmail } from '@/app/users/use-update-email';
-import { UserWithCollectiviteAccesses } from '@/domain/users';
+import { UserWithCollectiviteAccesses } from '@tet/domain/users';
 import {
   Field,
   FormSectionGrid,
@@ -14,7 +14,7 @@ import {
   Modal,
   ModalFooterOKCancel,
   validateTel,
-} from '@/ui';
+} from '@tet/ui';
 import { useUpdateUser } from './use-update-user';
 
 const validationSchema = z.object({

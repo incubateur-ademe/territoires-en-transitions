@@ -1,13 +1,11 @@
 import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { modulesSave } from '@/api/plan-actions/dashboards/personal-dashboard';
-import { ModuleMesuresSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import { useUser } from '@/api/users/user-context/user-provider';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { RouterInput } from '@/api/utils/trpc/client';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { ReferentielId } from '@/domain/referentiels';
+import { RouterInput, useSupabase } from '@tet/api';
+import { ModuleMesuresSelect, modulesSave } from '@tet/api/plan-actions';
+import { useUser } from '@tet/api/users';
+import { ReferentielId } from '@tet/domain/referentiels';
 import {
   Event,
   Field,
@@ -16,8 +14,8 @@ import {
   ModalFooterOKCancel,
   SelectFilter,
   useEventTracker,
-} from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+} from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 
 type ActionListFilters =
   RouterInput['referentiels']['actions']['listActions']['filters'];

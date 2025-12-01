@@ -4,7 +4,7 @@ import { useActionId } from '@/app/referentiels/actions/action-context';
 import { usePrevAndNextActionLinks } from '@/app/referentiels/actions/use-prev-and-next-action-links';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
-import { Button } from '@/ui';
+import { Button } from '@tet/ui';
 import { useCommentPanel } from '../comments/hooks/use-comment-panel';
 
 type Props = {

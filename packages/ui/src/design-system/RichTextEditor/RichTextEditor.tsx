@@ -12,11 +12,11 @@ import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
+
+import { cn } from '../../utils/cn';
+import { TextPlaceholder } from '../TextPlaceholder/TextPlaceholder';
 import { ENABLED_ITEMS, FormattingToolbar } from './FormattingToolbar';
 import { SuggestionMenu } from './SuggestionMenu';
-
-import { TextPlaceholder } from '@/ui/design-system/TextPlaceholder/TextPlaceholder';
-import { cn } from '@/ui/utils/cn';
 
 type RichTextEditorProps = {
   className?: string;

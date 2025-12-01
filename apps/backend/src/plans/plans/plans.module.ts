@@ -1,5 +1,5 @@
-import { CollectivitesModule } from '@/backend/collectivites/collectivites.module';
 import { forwardRef, Module } from '@nestjs/common';
+import { CollectivitesModule } from '@tet/backend/collectivites/collectivites.module';
 import { FichesModule } from '../fiches/fiches.module';
 import { CompletionAnalyticsRouter } from './completion-analytics/completion-analytics.router';
 import { CompletionAnalyticsService } from './completion-analytics/completion-analytics.service';

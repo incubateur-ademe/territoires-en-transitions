@@ -1,5 +1,5 @@
-import { FicheActionBudget, FicheWithRelations } from '@/domain/plans';
-import { Divider, Spacer } from '@/ui';
+import { FicheBudget, FicheWithRelations } from '@tet/domain/plans';
+import { Divider, Spacer } from '@tet/ui';
 import { BudgetUnitWarning } from './budget/budget-unit-warning';
 import { BudgetEditableView } from './budget/budget.editable-view';
 import { shouldDisplayUnitWarning } from './budget/utils';
@@ -17,7 +17,7 @@ const Section = ({ children }: { children: React.ReactNode }) => (
 
 type MoyensContentProps = {
   fiche: FicheWithRelations;
-  budgets: FicheActionBudget[];
+  budgets: FicheBudget[];
   isReadonly: boolean;
   onEdit: (modalType: ModalType) => void;
 };

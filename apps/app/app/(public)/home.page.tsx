@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 import { signInPath, signUpPath } from '@/app/app/paths';
 import homeImage from '@/app/app/static/img/home.jpg';
-import { Button } from '@/ui';
+import { Button } from '@tet/ui';
 
 export const HomePage = () => {
   return (
@@ -40,7 +40,9 @@ export const HomePage = () => {
           <Button href={signUpPath} prefetch={false} variant="outlined">
             Créer un compte
           </Button>
-          <Button href={signInPath} prefetch={false}>Se connecter</Button>
+          <Button href={signInPath} prefetch={false}>
+            Se connecter
+          </Button>
         </div>
         <Image
           className="rounded-t-3xl border-t border-l border-r border-primary-4"

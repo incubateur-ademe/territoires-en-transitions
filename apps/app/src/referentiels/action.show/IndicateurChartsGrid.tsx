@@ -1,4 +1,3 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import IndicateurCard, {
   IndicateurCardProps,
 } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
@@ -8,6 +7,7 @@ import {
 } from '@/app/app/paths';
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 
 type TIndicateurChartsGridProps = {
   definitions: IndicateurDefinitionListItem[];

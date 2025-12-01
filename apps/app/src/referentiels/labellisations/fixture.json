@@ -1,11 +1,15 @@
 {
   "parcours1": {
+    "collectivite_id": 1,
+    "demande": null,
+    "labellisation": null,
+    "audit": null,
     "referentiel": "eci",
-    "etoiles": "1",
+    "etoiles": 1,
     "completude_ok": false,
     "critere_score": {
       "atteint": false,
-      "etoiles": "1",
+      "etoiles": 1,
       "score_fait": 0,
       "score_a_realiser": 0
     },
@@ -16,8 +20,8 @@
         "formulation": "Identifier un⸱e élu⸱e référent⸱e",
         "statut_ou_score": "Fait",
         "action_identifiant": "1.1.1.1",
-        "etoile": "1",
-        "prio": 1
+        "etoile": 1,
+        "priorite": 1
       },
       {
         "rempli": false,
@@ -25,8 +29,8 @@
         "formulation": "Identifier une personne technique",
         "statut_ou_score": "Programmé ou fait",
         "action_identifiant": "1.1.1.3",
-        "etoile": "1",
-        "prio": 2
+        "etoile": 1,
+        "priorite": 2
       },
       {
         "rempli": false,
@@ -34,8 +38,8 @@
         "formulation": "Mettre en place une équipe projet",
         "statut_ou_score": "Programmé ou fait",
         "action_identifiant": "1.1.1.3",
-        "etoile": "1",
-        "prio": 3
+        "etoile": 1,
+        "priorite": 3
       },
       {
         "rempli": false,
@@ -43,8 +47,8 @@
         "formulation": "Engager un diagnostic territorial",
         "statut_ou_score": "20% fait minimum",
         "action_identifiant": "1.1.2",
-        "etoile": "1",
-        "prio": 4
+        "etoile": 1,
+        "priorite": 4
       },
       {
         "rempli": false,
@@ -52,8 +56,8 @@
         "formulation": "Respecter la réglementation PLPDMA",
         "statut_ou_score": "Programmé ou fait",
         "action_identifiant": "2.1.0",
-        "etoile": "1",
-        "prio": 5
+        "etoile": 1,
+        "priorite": 5
       },
       {
         "rempli": false,
@@ -61,8 +65,8 @@
         "formulation": "Respecter la réglementation liée au système de collecte",
         "statut_ou_score": "Programmé ou fait",
         "action_identifiant": "2.2.0",
-        "etoile": "1",
-        "prio": 6
+        "etoile": 1,
+        "priorite": 6
       },
       {
         "rempli": false,
@@ -70,8 +74,8 @@
         "formulation": "Respecter la règlementation concernant la valorisation des déchets (dont organiques)",
         "statut_ou_score": "Programmé ou fait",
         "action_identifiant": "2.3.0",
-        "etoile": "1",
-        "prio": 7
+        "etoile": 1,
+        "priorite": 7
       },
       {
         "rempli": false,
@@ -79,8 +83,8 @@
         "formulation": "Respecter la règlementation sur les impacts environnementaux des émissions polluantes et les nuisances (olfactives, sonores....)",
         "statut_ou_score": "Programmé ou fait",
         "action_identifiant": "2.4.0",
-        "etoile": "1",
-        "prio": 8
+        "etoile": 1,
+        "priorite": 8
       },
       {
         "rempli": false,
@@ -88,8 +92,8 @@
         "formulation": "Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables (SPASER)",
         "statut_ou_score": "Programmé ou fait",
         "action_identifiant": "3.2.0",
-        "etoile": "1",
-        "prio": 9
+        "etoile": 1,
+        "priorite": 9
       },
       {
         "rempli": false,
@@ -97,8 +101,8 @@
         "formulation": "Rédiger le rapport annuel SPPGD",
         "statut_ou_score": "Programmé ou fait",
         "action_identifiant": "4.1.0",
-        "etoile": "1",
-        "prio": 10
+        "etoile": 1,
+        "priorite": 10
       },
       {
         "rempli": false,
@@ -106,8 +110,8 @@
         "formulation": "Avoir engagé la politique Économie Circulaire",
         "statut_ou_score": "Fait",
         "action_identifiant": "1.1.1.2",
-        "etoile": "1",
-        "prio": 11
+        "etoile": 1,
+        "priorite": 11
       },
       {
         "rempli": false,
@@ -115,8 +119,8 @@
         "formulation": "Respecter la réglementation PLPDMA",
         "statut_ou_score": "Fait",
         "action_identifiant": "2.1.0",
-        "etoile": "1",
-        "prio": 12
+        "etoile": 1,
+        "priorite": 12
       },
       {
         "rempli": false,
@@ -124,8 +128,8 @@
         "formulation": "Respecter la réglementation liée au système de collecte",
         "statut_ou_score": "Fait",
         "action_identifiant": "2.2.0",
-        "etoile": "1",
-        "prio": 13
+        "etoile": 1,
+        "priorite": 13
       },
       {
         "rempli": false,
@@ -133,8 +137,8 @@
         "formulation": "Respecter la règlementation concernant la valorisation des déchets (dont organiques)",
         "statut_ou_score": "Fait",
         "action_identifiant": "2.3.0",
-        "etoile": "1",
-        "prio": 14
+        "etoile": 1,
+        "priorite": 14
       },
       {
         "rempli": false,
@@ -142,8 +146,8 @@
         "formulation": "Respecter la règlementation sur les impacts environnementaux des émissions polluantes et les nuisances (olfactives, sonores....)",
         "statut_ou_score": "Fait",
         "action_identifiant": "2.4.0",
-        "etoile": "1",
-        "prio": 15
+        "etoile": 1,
+        "priorite": 15
       },
       {
         "rempli": false,
@@ -151,8 +155,8 @@
         "formulation": "Mettre en place le Schéma de promotion des achats publics socialement et écologiquement responsables (SPASER)",
         "statut_ou_score": "Fait",
         "action_identifiant": "3.2.0",
-        "etoile": "1",
-        "prio": 16
+        "etoile": 1,
+        "priorite": 16
       },
       {
         "rempli": false,
@@ -160,8 +164,8 @@
         "formulation": "Rédiger le rapport annuel SPPGD",
         "statut_ou_score": "Fait",
         "action_identifiant": "4.1.0",
-        "etoile": "1",
-        "prio": 17
+        "etoile": 1,
+        "priorite": 17
       }
     ],
     "rempli": false,
@@ -171,11 +175,11 @@
   },
   "parcours2": {
     "referentiel": "cae",
-    "etoiles": "3",
+    "etoiles": 3,
     "completude_ok": false,
     "critere_score": {
       "atteint": false,
-      "etoiles": "3",
+      "etoiles": 3,
       "score_fait": 0.0733346913831738,
       "score_a_realiser": 0.5
     },
@@ -186,8 +190,8 @@
         "formulation": "Identifier un⸱e élu⸱e référent⸱e",
         "statut_ou_score": "Fait",
         "action_identifiant": "5.1.1.1.3",
-        "etoile": "3",
-        "prio": 1
+        "etoile": 3,
+        "priorite": 1
       },
       {
         "rempli": false,
@@ -195,8 +199,8 @@
         "formulation": "Identifier une personne technique",
         "statut_ou_score": "Programmé ou fait",
         "action_identifiant": "5.1.1.1.3",
-        "etoile": "3",
-        "prio": 2
+        "etoile": 3,
+        "priorite": 2
       },
       {
         "rempli": false,
@@ -204,8 +208,8 @@
         "formulation": "Mettre en place une équipe projet",
         "statut_ou_score": "Programmé ou fait",
         "action_identifiant": "5.1.1.3.2",
-        "etoile": "3",
-        "prio": 3
+        "etoile": 3,
+        "priorite": 3
       },
       {
         "rempli": false,
@@ -213,8 +217,8 @@
         "formulation": "Engager un diagnostic territorial",
         "statut_ou_score": "20% fait minimum",
         "action_identifiant": "1.1.2",
-        "etoile": "3",
-        "prio": 4
+        "etoile": 3,
+        "priorite": 4
       },
       {
         "rempli": true,
@@ -222,14 +226,14 @@
         "formulation": "Avoir formalisé une vision et des engagements dans une décision de politique générale",
         "statut_ou_score": "Fait",
         "action_identifiant": "1.1.1.1.1",
-        "etoile": "3",
-        "prio": 5
+        "etoile": 3,
+        "priorite": 5
       }
     ],
     "rempli": false,
     "calendrier": "Les prochaines sessions d’audit climat air énergie ... .",
     "derniere_demande": {
-      "etoiles": "4",
+      "etoiles": 4,
       "demandee_le": "2022-05-04T14:37:18.3609+00:00"
     },
     "derniere_labellisation": {

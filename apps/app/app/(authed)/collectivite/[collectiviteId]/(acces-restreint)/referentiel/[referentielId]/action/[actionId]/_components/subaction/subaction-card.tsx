@@ -1,15 +1,17 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useActionId } from '@/app/referentiels/actions/action-context';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import SubActionPreuvesAccordion from '@/app/referentiels/actions/sub-action/sub-action-preuves.accordion';
 import SubActionDescription from '@/app/referentiels/actions/sub-action/sub-action.description';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
+import {
+  ActionDefinitionSummary,
+  useActionSummaryChildren,
+} from '@/app/referentiels/referentiel-hooks';
 import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
-import { ActionTypeEnum } from '@/domain/referentiels';
-import { Accordion, Button, Divider } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { ActionTypeEnum } from '@tet/domain/referentiels';
+import { Accordion, Button, Divider } from '@tet/ui';
 import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { ActionJustificationField } from '../action/action.justification-field';

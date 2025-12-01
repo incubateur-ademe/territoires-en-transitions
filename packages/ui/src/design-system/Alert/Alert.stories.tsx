@@ -1,6 +1,6 @@
-import { Button } from '@/ui/design-system/Button';
 import { Meta, StoryObj } from '@storybook/nextjs';
 import { useState } from 'react';
+import { Button } from '../Button';
 import { Alert, ControlledAlert } from './Alert';
 
 const meta: Meta<typeof Alert> = {

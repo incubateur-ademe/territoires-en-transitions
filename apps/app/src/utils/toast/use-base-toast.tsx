@@ -1,5 +1,5 @@
 import { ToastFloater } from '@/app/ui/shared/floating-ui/ToastFloater';
-import { Icon } from '@/ui';
+import { Icon } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 

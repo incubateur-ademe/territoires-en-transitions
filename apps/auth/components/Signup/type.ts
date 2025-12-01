@@ -1,6 +1,6 @@
-import { FormState } from '@/auth/components/Login/useFormState';
-import { ResendFunction, VerifyOTPData } from '@/auth/components/VerifyOTP';
 import { ZxcvbnResult } from '@zxcvbn-ts/core';
+import { FormState } from '../../components/Login/useFormState';
+import { ResendFunction, VerifyOTPData } from '../../components/VerifyOTP';
 
 const ValidSignupView = [
   'etape1',

@@ -2,13 +2,13 @@ import { usePlanActionProfondeur } from '@/app/app/pages/collectivite/PlansActio
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import { TProfondeurAxe } from '@/app/plans/plans/types';
 import { checkAxeExistInPlanProfondeur } from '@/app/plans/plans/utils';
-import { FicheResume } from '@/domain/plans';
-import { Alert, Button } from '@/ui';
+import { Alert, Button } from '@tet/ui';
 import { useState } from 'react';
+import { Fiche } from '../../../../data/use-get-fiche';
 import ColonneTableauEmplacement from './ColonneTableauEmplacement';
 
 type NouvelEmplacementFicheProps = {
-  fiche: FicheResume;
+  fiche: Fiche;
   onSave: () => void;
 };
 

@@ -1,4 +1,4 @@
-import { ReferentielId } from '@/domain/referentiels';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { ScoreTotalEvolutionsChart } from '../../comparisons/evolutions-score-total.chart';
 import { useListSnapshots } from '../../use-snapshot';
 import { GraphCard } from './EtatDesLieuxGraphs';

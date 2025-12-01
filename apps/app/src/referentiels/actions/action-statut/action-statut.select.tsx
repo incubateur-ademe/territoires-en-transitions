@@ -3,8 +3,8 @@ import {
   statutAvancementEnumSchema,
   StatutAvancementIncludingNonConcerne,
   statutAvancementIncludingNonConcerneEnumSchema,
-} from '@/domain/referentiels';
-import { SelectBadge } from '@/ui';
+} from '@tet/domain/referentiels';
+import { SelectBadge } from '@tet/ui';
 import ActionStatutBadge, { statusToState } from './action-statut.badge';
 
 export type TSelectActionStatutProps = {

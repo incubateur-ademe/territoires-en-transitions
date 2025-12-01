@@ -15,8 +15,8 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
-import { FicheWithRelations } from '@/domain/plans';
-import { getOptionLabel, preset } from '@/ui';
+import { FicheWithRelations } from '@tet/domain/plans';
+import { getOptionLabel, preset } from '@tet/ui';
 
 const { colors } = preset.theme.extend;
 

@@ -1,4 +1,4 @@
-import { ApplicationContext } from '@/backend/utils/context/application-context.dto';
+import { ApplicationContext } from '@tet/backend/utils/context/application-context.dto';
 import * as Sentry from '@sentry/nestjs';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
 

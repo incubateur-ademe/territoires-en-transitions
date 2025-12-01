@@ -1,8 +1,8 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { useTRPC } from '@/api/utils/trpc/client';
 import { TActionDef } from '@/app/referentiels/preuves/usePreuves';
-import { ActionTypeEnum } from '@/domain/referentiels';
 import { useQuery } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { ActionTypeEnum } from '@tet/domain/referentiels';
 
 /**
  * Liste de options pour la sélection d'une sous-action

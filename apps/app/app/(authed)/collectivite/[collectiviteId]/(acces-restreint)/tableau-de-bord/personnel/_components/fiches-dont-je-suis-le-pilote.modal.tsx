@@ -1,15 +1,14 @@
 import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { modulesSave } from '@/api/plan-actions/dashboards/personal-dashboard';
-import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import { useUser } from '@/api/users/user-context/user-provider';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
-import { ListFichesRequestFilters } from '@/domain/plans';
+import { useSupabase } from '@tet/api';
+import { ModuleFicheActionsSelect, modulesSave } from '@tet/api/plan-actions';
+import { useUser } from '@tet/api/users';
+import { ListFichesRequestFilters } from '@tet/domain/plans';
 import {
   Event,
   Field,
@@ -18,8 +17,8 @@ import {
   Modal,
   ModalFooterOKCancel,
   useEventTracker,
-} from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+} from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 
 type Props = {
   module: ModuleFicheActionsSelect;

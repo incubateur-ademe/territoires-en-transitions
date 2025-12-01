@@ -1,5 +1,5 @@
-import { CollectiviteAccessLevel } from '@/domain/users';
-import { Badge, BadgeProps, IconValue } from '@/ui';
+import { CollectiviteAccessLevel } from '@tet/domain/users';
+import { Badge, BadgeProps, IconValue } from '@tet/ui';
 import classNames from 'classnames';
 
 import { getAccessLevelLabel } from '@/app/users/authorizations/permission-access-level.utils';

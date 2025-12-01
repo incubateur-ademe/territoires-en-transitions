@@ -1,6 +1,6 @@
-import { signIn, signOut } from '@/api/tests/auth';
-import { supabase } from '@/api/tests/supabase';
 import { beforeEach, expect, test } from 'vitest';
+import { signIn, signOut } from '../../../../tests/auth';
+import { supabase } from '../../../../tests/supabase';
 import {
   ModuleInsert,
   personalDefaultModuleKeysSchema,

@@ -1,5 +1,6 @@
-import { SortOptions, Statut } from '@/domain/plans';
-import { preset } from '@/ui';
+import { Statut } from '@tet/domain/plans';
+import { preset } from '@tet/ui';
+import { SortOptions } from './list-all-fiches/data/use-list-fiches';
 
 export const SANS_STATUT_LABEL = 'Sans statut';
 /** Correspondance entre les statuts et couleurs associées */

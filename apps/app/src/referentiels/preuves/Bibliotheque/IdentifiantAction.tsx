@@ -1,4 +1,4 @@
-import { Badge } from '@/ui';
+import { Badge } from '@tet/ui';
 import { TPreuveAction } from './types';
 
 export type TIdentifiantActionProps = {

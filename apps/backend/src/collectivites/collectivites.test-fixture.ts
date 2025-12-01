@@ -1,3 +1,8 @@
+import {
+  CategorieTagCreate,
+  PersonneTagCreate,
+  ServiceTagCreate,
+} from '@tet/domain/collectivites';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 import { DatabaseService } from '../utils/database/database.service';
@@ -6,18 +11,12 @@ import {
   CreateGroupementType,
   groupementTable,
 } from './shared/models/groupement.table';
-import {
-  categorieTagTable,
-  CreateCategorieTag,
-} from './tags/categorie-tag.table';
-import {
-  PersonneTagInsert,
-  personneTagTable,
-} from './tags/personnes/personne-tag.table';
-import { ServiceTagInsert, serviceTagTable } from './tags/service-tag.table';
+import { categorieTagTable } from './tags/categorie-tag.table';
+import { personneTagTable } from './tags/personnes/personne-tag.table';
+import { serviceTagTable } from './tags/service-tag.table';
 
-type PersonneTagAllowedInput = Partial<PersonneTagInsert> &
-  Pick<PersonneTagInsert, 'collectiviteId'>;
+type PersonneTagAllowedInput = Partial<PersonneTagCreate> &
+  Pick<PersonneTagCreate, 'collectiviteId'>;
 
 export async function createPersonneTag({
   database,
@@ -43,8 +42,8 @@ export async function createPersonneTag({
 
 // ----------
 
-type ServiceTagAllowedInput = Partial<ServiceTagInsert> &
-  Pick<ServiceTagInsert, 'collectiviteId'>;
+type ServiceTagAllowedInput = Partial<ServiceTagCreate> &
+  Pick<ServiceTagCreate, 'collectiviteId'>;
 
 export async function createServiceTag({
   database,
@@ -70,8 +69,8 @@ export async function createServiceTag({
 
 // ----------
 
-type CategorieTagAllowedInput = Partial<CreateCategorieTag> &
-  Pick<CreateCategorieTag, 'collectiviteId'>;
+type CategorieTagAllowedInput = Partial<CategorieTagCreate> &
+  Pick<CategorieTagCreate, 'collectiviteId'>;
 
 export async function createCategorieTag({
   database,

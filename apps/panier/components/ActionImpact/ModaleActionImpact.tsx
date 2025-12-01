@@ -6,7 +6,7 @@ import {
   Modal,
   ModalFooter,
   ModalFooterSection,
-} from '@/ui';
+} from '@tet/ui';
 import classNames from 'classnames';
 import { ModaleActionImpactProps } from './types';
 

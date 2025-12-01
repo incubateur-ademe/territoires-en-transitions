@@ -1,6 +1,6 @@
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useDownloadFile } from '@/app/utils/useDownloadFile';
-import { Button } from '@/ui';
+import { Button } from '@tet/ui';
 import {
   DOC_METHODO,
   SIMULATEUR_TERRITORIAL_URL,

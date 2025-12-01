@@ -1,5 +1,5 @@
-import { CrispEventRequest } from '@/tools/crisp/models/crisp-event.request';
-import { CrispMessageReceivedEventDataDto } from '@/tools/crisp/models/crisp-message-received-event-data.dto';
+import { CrispEventRequest } from '../crisp-event.request';
+import { CrispMessageReceivedEventDataDto } from '../crisp-message-received-event-data.dto';
 
 export const sampleCripsMessageReceivedEvent: CrispEventRequest<CrispMessageReceivedEventDataDto> =
   {

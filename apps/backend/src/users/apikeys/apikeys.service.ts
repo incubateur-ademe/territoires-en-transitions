@@ -1,18 +1,15 @@
-import { GenerateApiKeyRequest } from '@/backend/users/apikeys/generate-api-key.request';
-import { GenerateApiKeyResponse } from '@/backend/users/apikeys/generate-api-key.response';
-import { GenerateTokenRequest } from '@/backend/users/apikeys/generate-token.request';
-import { GenerateTokenResponse } from '@/backend/users/apikeys/generate-token.response';
-import {
-  UserApiKeyInsert,
-  userApiKeyTable,
-} from '@/backend/users/apikeys/user-api-keys.table';
-import { authUsersTable } from '@/backend/users/models/auth-users.table';
+import { GenerateApiKeyRequest } from '@tet/backend/users/apikeys/generate-api-key.request';
+import { GenerateApiKeyResponse } from '@tet/backend/users/apikeys/generate-api-key.response';
+import { GenerateTokenRequest } from '@tet/backend/users/apikeys/generate-token.request';
+import { GenerateTokenResponse } from '@tet/backend/users/apikeys/generate-token.response';
+import { userApiKeyTable } from '@tet/backend/users/apikeys/user-api-keys.table';
+import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import {
   AuthJwtPayload,
   AuthRole,
   AuthUser,
-} from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
+} from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   ForbiddenException,
   Injectable,
@@ -21,6 +18,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserAppMetadata } from '@supabase/supabase-js';
+import { UserApiKeyCreate } from '@tet/domain/users';
 import argon2 from 'argon2';
 import { eq, getTableColumns } from 'drizzle-orm';
 import { omit } from 'es-toolkit';
@@ -103,7 +101,7 @@ export class ApikeysService {
 
     const clientSecretHash = await this.hashClientSecret(clientSecret);
 
-    const userApiKey: UserApiKeyInsert = {
+    const userApiKey: UserApiKeyCreate = {
       userId: request.userId,
       clientId,
       clientSecretHash: clientSecretHash,

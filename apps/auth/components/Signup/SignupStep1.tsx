@@ -1,4 +1,4 @@
-import { PasswordStrengthMeter } from '@/auth/components/PasswordStrengthMeter';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Event,
   Field,
@@ -8,24 +8,24 @@ import {
   Tab,
   Tabs,
   useEventTracker,
-} from '@/ui';
-import { zodResolver } from '@hookform/resolvers/zod';
+} from '@tet/ui';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { PasswordStrengthMeter } from '../../components/PasswordStrengthMeter';
 import { SignupDataStep1, SignupPropsWithState } from './type';
 
 /** Gestionnaire d'état pour le formulaire de l'étape 1 */
 const useSignupStep1 = (isPasswordless: boolean, email: string) => {
   const validationSchema = z.object({
     email: z.email({
-              error: 'Un email valide est requis'
-          }),
+      error: 'Un email valide est requis',
+    }),
     password: z
       .string()
       .refine((value) => (isPasswordless ? true : value.length >= 8), {
-          error: 'Le mot de passe doit comporter au moins 8 caractères'
-    }),
+        error: 'Le mot de passe doit comporter au moins 8 caractères',
+      }),
   });
   return useForm({
     reValidateMode: 'onChange',

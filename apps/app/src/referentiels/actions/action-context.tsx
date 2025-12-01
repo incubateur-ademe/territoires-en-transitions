@@ -1,10 +1,12 @@
 'use client';
 
-import { ReferentielId } from '@/domain/referentiels';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { createContext, ReactNode, useContext } from 'react';
 import { z } from 'zod';
-import { ActionDefinitionSummary } from '../ActionDefinitionSummaryReadEndpoint';
-import { useActionDownToTache } from '../referentiel-hooks';
+import {
+  ActionDefinitionSummary,
+  useActionDownToTache,
+} from '../referentiel-hooks';
 import { useAction as useActionById } from '../use-snapshot';
 
 type ContextProps = {

@@ -1,10 +1,13 @@
-import { CollectiviteAvecType } from '@/backend/collectivites/identite-collectivite.dto';
-import { StatutAvancementEnum } from '@/backend/referentiels/models/action-statut.table';
-import { ActionTypeEnum } from '@/backend/referentiels/models/action-type.enum';
-import { ComputeScoreMode } from '@/backend/referentiels/snapshots/compute-score-mode.enum';
-import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
-import { Snapshot } from '@/backend/referentiels/snapshots/snapshot.table';
-import { ScoresPayload } from '../snapshots/scores-payload.dto';
+import { CollectiviteAvecType } from '@tet/domain/collectivites';
+import {
+  ActionTypeEnum,
+  ScoreComputeMode,
+  ScoreComputeModeEnum,
+  ScoreSnapshot,
+  ScoresPayload,
+  SnapshotJalonEnum,
+  StatutAvancementEnum,
+} from '@tet/domain/referentiels';
 import { formatActionStatut } from './build-columns';
 import {
   ExportMode,
@@ -13,11 +16,12 @@ import {
 } from './load-score-comparison.service';
 
 function createSnapshot(
-  mode: ComputeScoreMode = ComputeScoreMode.RECALCUL
-): Snapshot {
+  mode: ScoreComputeMode = ScoreComputeModeEnum.RECALCUL
+): ScoreSnapshot {
   return {
     collectiviteId: 1,
     referentielId: 'eci',
+    etoiles: null,
     ref: 'snapshot-test',
     nom: 'Test Snapshot',
     jalon: SnapshotJalonEnum.COURANT,
@@ -54,7 +58,7 @@ function createSnapshot(
 }
 
 function createScoreComparisonData(
-  mode: ComputeScoreMode = ComputeScoreMode.RECALCUL,
+  mode: ScoreComputeMode = ScoreComputeModeEnum.RECALCUL,
   scoreRows: ScoreRow[] = []
 ): ScoreComparisonData {
   return {
@@ -133,7 +137,7 @@ describe('formatActionStatut', () => {
         pointPotentiel: 10,
       });
       const data = createScoreComparisonData(
-        ComputeScoreMode.DEPUIS_SAUVEGARDE,
+        ScoreComputeModeEnum.DEPUIS_SAUVEGARDE,
         [row]
       );
 

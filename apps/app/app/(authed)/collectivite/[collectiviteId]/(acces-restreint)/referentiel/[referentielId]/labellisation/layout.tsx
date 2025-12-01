@@ -1,6 +1,5 @@
 'use client';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielUrl } from '@/app/app/paths';
 import HeaderLabellisationConnected from '@/app/referentiels/labellisations/HeaderLabellisation';
@@ -9,8 +8,9 @@ import { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useEtatLieuxHasStarted } from '@/app/referentiels/use-snapshot';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { ReferentielId } from '@/domain/referentiels';
-import { Button } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { Button } from '@tet/ui';
 import { ReactNode } from 'react';
 
 export default function Layout({ tabs }: { tabs: ReactNode }) {

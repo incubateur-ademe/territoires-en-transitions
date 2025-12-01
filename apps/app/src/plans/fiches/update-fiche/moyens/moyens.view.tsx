@@ -1,7 +1,7 @@
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { FicheActionBudget, FicheWithRelations } from '@/domain/plans';
-import { EmptyCard } from '@/ui';
+import { FicheBudget, FicheWithRelations } from '@tet/domain/plans';
+import { EmptyCard } from '@tet/ui';
 import { useState } from 'react';
 import { MoneyPicto } from '../components/MoneyPicto';
 import { useGetBudget } from '../data/use-get-budget';
@@ -55,7 +55,7 @@ const EmptyMoyensView = ({
     />
   );
 };
-const isBudgetEmpty = (budgets: FicheActionBudget[]) => {
+const isBudgetEmpty = (budgets: FicheBudget[]) => {
   if (!budgets) return true;
   if (budgets.length === 0) return true;
   return budgets.every(

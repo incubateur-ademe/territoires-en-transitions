@@ -1,4 +1,4 @@
-import { Icon } from '@/ui';
+import { Icon } from '@tet/ui';
 import { CellProps } from 'react-table';
 import { BadgeAuditStatut } from '../BadgeAuditStatut';
 import { MesureAuditStatut } from './useTableData';

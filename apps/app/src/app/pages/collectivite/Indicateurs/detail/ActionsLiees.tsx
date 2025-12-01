@@ -1,5 +1,5 @@
 import ActionPicto from '@/app/ui/pictogrammes/ActionPicto';
-import { EmptyCard } from '@/ui';
+import { EmptyCard } from '@tet/ui';
 import { MesuresLieesListe } from '../../PlansActions/FicheAction/mesures-liees/mesures-liees.list';
 
 type Props = {

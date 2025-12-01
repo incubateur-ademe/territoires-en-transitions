@@ -1,7 +1,7 @@
 'use client';
 
-import { useCollectiviteId } from '@/api/collectivites';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 

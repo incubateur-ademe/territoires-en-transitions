@@ -1,9 +1,9 @@
 import { Paragraph, TCell, TRow, Table } from '@/app/ui/export-pdf/components';
 import { getFormattedFloat, getFormattedNumber } from '@/app/utils/formatUtils';
-import { FicheActionBudget } from '@/domain/plans';
+import { FicheBudget } from '@tet/domain/plans';
 import { groupBy } from 'es-toolkit';
 
-type FicheActionBudgetWithYear = FicheActionBudget & {
+type FicheActionBudgetWithYear = FicheBudget & {
   annee: number;
 };
 
@@ -16,7 +16,7 @@ type FormattedBudgetType = {
 }[];
 
 const getBudgetForTable = (
-  budgets: Array<FicheActionBudget>
+  budgets: Array<FicheBudget>
 ): FormattedBudgetType => {
   const budgetsWithYear = budgets.filter(
     (b): b is FicheActionBudgetWithYear => !!b.annee
@@ -44,7 +44,7 @@ const getBudgetForTable = (
     .sort((a, b) => a.annee - b.annee);
 };
 
-const BudgetTable = ({ budgets }: { budgets: FicheActionBudget[] }) => {
+const BudgetTable = ({ budgets }: { budgets: FicheBudget[] }) => {
   const formattedBudget = getBudgetForTable(budgets);
   return (
     <Table wrap={false}>

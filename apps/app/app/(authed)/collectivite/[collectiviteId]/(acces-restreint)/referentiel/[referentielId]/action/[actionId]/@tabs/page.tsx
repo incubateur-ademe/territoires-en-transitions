@@ -1,9 +1,11 @@
 'use client';
 
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { DEPRECATED_useActionDefinition } from '@/app/referentiels/actions/action-context';
-import { useSortedActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
-import { Button, Checkbox, Divider } from '@/ui';
+import {
+  ActionDefinitionSummary,
+  useSortedActionSummaryChildren,
+} from '@/app/referentiels/referentiel-hooks';
+import { Button, Checkbox, Divider } from '@tet/ui';
 import { useState } from 'react';
 import { ActionJustificationField } from '../_components/action/action.justification-field';
 import { SubActionCardsList } from '../_components/subaction/subaction.cards-list';

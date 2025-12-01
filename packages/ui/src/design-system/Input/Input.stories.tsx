@@ -1,22 +1,22 @@
-import {useRef, useState} from 'react';
-import {Meta, StoryObj} from '@storybook/nextjs';
-import {action} from 'storybook/actions';
+import { Meta, StoryObj } from '@storybook/nextjs';
+import { useRef, useState } from 'react';
+import { action } from 'storybook/actions';
 
-import {Input} from './Input';
+import { Input } from './Input';
 
 const meta: Meta<typeof Input> = {
   component: Input,
-  render: args => {
+  render: (args) => {
     const [value, setValue] = useState(args.value);
-    const inputRef = useRef(null);
+    const inputRef = useRef<HTMLInputElement>(null);
     return (
       <Input
         {...args}
         ref={inputRef}
         value={value}
-        onChange={e => {
+        onChange={(e) => {
           action('onChange')(e.target.value);
-          action('inputRef.current.value')(inputRef.current.value);
+          action('inputRef.current.value')(inputRef.current?.value);
           setValue(e.target.value);
         }}
       />
@@ -53,7 +53,7 @@ export const AvecValeur: Story = {
 export const AvecIcone: Story = {
   args: {
     placeholder: 'placeholder',
-    icon: {value: 'search-line'},
+    icon: { value: 'search-line' },
   },
 };
 
@@ -75,7 +75,7 @@ export const AvecIconeBouton: Story = {
 export const AvecIconeTexte: Story = {
   args: {
     placeholder: 'placeholder',
-    icon: {text: 'TTC'},
+    icon: { text: 'TTC' },
   },
 };
 
@@ -120,13 +120,13 @@ export const VarianteSmallIconeTexte: Story = {
   args: {
     displaySize: 'sm',
     placeholder: 'placeholder',
-    icon: {text: 'TTC'},
+    icon: { text: 'TTC' },
   },
 };
 
 /** Date sans aucune props renseignée. */
 export const TypeDate: Story = {
-  args: {type: 'date'},
+  args: { type: 'date' },
 };
 
 /** Avec une valeur renseignée. */
@@ -140,7 +140,7 @@ export const TypeDateAvecValeur: Story = {
 
 /** Mot de passe sans aucune props renseignée. */
 export const TypePassword: Story = {
-  args: {type: 'password'},
+  args: { type: 'password' },
 };
 
 /** Mdp avec une valeur renseignée. */
@@ -154,7 +154,7 @@ export const TypePasswordAvecValeur: Story = {
 
 /** Valeur non renseignée. */
 export const TypeSearch: Story = {
-  args: {type: 'search', onSearch: action('onSearch')},
+  args: { type: 'search', onSearch: action('onSearch') },
 };
 
 /** Recherche avec une valeur renseignée. */
@@ -172,7 +172,7 @@ export const TypeNumberInt: Story = {
     type: 'number',
     // `onChange` renvoi la valeur formatée sous forme de chaîne
     // mais la valeur int sous-jacente peut être récupérée ainsi :
-    onValueChange: values => action('onValueChange')(Number(values.value)),
+    onValueChange: (values) => action('onValueChange')(Number(values.value)),
   },
 };
 export const TypeNumberIntAvecValeur: Story = {
@@ -188,7 +188,8 @@ export const TypeNumberFloat: Story = {
     numType: 'float',
     // `onChange` renvoi la valeur formatée sous forme de chaîne
     // mais la valeur float sous-jacente peut être récupérée ainsi :
-    onValueChange: values => action('onValueChange')(Number(values.floatValue)),
+    onValueChange: (values) =>
+      action('onValueChange')(Number(values.floatValue)),
   },
   render: TypeNumberInt.render,
 };
@@ -284,7 +285,7 @@ export const AvecIconeEtDesactive: Story = {
   args: {
     disabled: true,
     placeholder: 'placeholder',
-    icon: {value: 'search-line'},
+    icon: { value: 'search-line' },
   },
 };
 export const AvecIconeBoutonEtDesactive: Story = {
@@ -304,11 +305,11 @@ export const AvecIconeTexteEtDesactive: Story = {
   args: {
     disabled: true,
     placeholder: 'placeholder',
-    icon: {text: 'TTC'},
+    icon: { text: 'TTC' },
   },
 };
 
 /** Personnalisation du container (par exemple changement du padding) */
 export const PersonnalisationDuContainer: Story = {
-  args: {containerClassname: 'p-2', value: 'une valeur'},
+  args: { containerClassname: 'p-2', value: 'une valeur' },
 };

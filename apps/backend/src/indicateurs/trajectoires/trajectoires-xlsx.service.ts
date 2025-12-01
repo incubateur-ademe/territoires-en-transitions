@@ -1,10 +1,11 @@
-import { CollectiviteResume } from '@/backend/collectivites/shared/models/collectivite.table';
 import {
   Injectable,
   InternalServerErrorException,
   Logger,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { CollectiviteResume } from '@tet/domain/collectivites';
+import { VerificationTrajectoireStatus } from '@tet/domain/indicateurs';
 import { NextFunction, Response } from 'express';
 import { default as XlsxTemplate } from 'xlsx-template';
 import { CollectiviteIdInput } from '../../collectivites/collectivite-id.input';
@@ -14,7 +15,6 @@ import SheetService from '../../utils/google-sheets/sheet.service';
 import { DataInputForTrajectoireCompute } from './donnees-calcul-trajectoire-a-remplir.dto';
 import { ModeleTrajectoireTelechargementRequestType } from './modele-trajectoire-telechargement.request';
 import TrajectoiresDataService from './trajectoires-data.service';
-import { VerificationTrajectoireStatus } from './verification-trajectoire.response';
 
 @Injectable()
 export default class TrajectoiresXlsxService {

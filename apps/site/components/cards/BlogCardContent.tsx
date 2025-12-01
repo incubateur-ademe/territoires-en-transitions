@@ -1,5 +1,5 @@
 import { getLocalDateString } from '@/site/src/utils/getLocalDateString';
-import { Badge, Button } from '@/ui';
+import { Badge, Button } from '@tet/ui';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { DEPRECATED_StrapiImage } from '../strapiImage/StrapiImage';

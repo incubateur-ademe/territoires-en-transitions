@@ -1,9 +1,8 @@
-import { ReferentielIdEnum } from '@/backend/referentiels/models/referentiel-id.enum';
-import { getTestApp, ISO_8601_DATE_TIME_REGEX } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
+import { getTestApp, ISO_8601_DATE_TIME_REGEX } from '@tet/backend/test';
+import { ActionTypeEnum, ReferentielIdEnum } from '@tet/domain/referentiels';
 import { default as request } from 'supertest';
 import { ReferentielResponse } from '../../get-referentiel/get-referentiel.service';
-import { ActionTypeEnum } from '../../models/action-type.enum';
 import { GetReferentielDefinitionOutput } from './get-referentiel-definition.output';
 
 describe('Referentiels routes', () => {

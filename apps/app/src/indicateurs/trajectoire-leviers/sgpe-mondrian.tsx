@@ -1,10 +1,10 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
 import { useTrajectoireLeviers } from '@/app/indicateurs/trajectoire-leviers/use-trajectoire-leviers';
 import { TOOLBOX_BASE } from '@/app/ui/charts/echarts';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ErrorCard } from '@/app/utils/error/error.card';
-import { getErrorMessage } from '@/domain/utils';
-import { Card, Event, preset, useEventTracker } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { getErrorMessage } from '@tet/domain/utils';
+import { Card, Event, preset, useEventTracker } from '@tet/ui';
 import { MondrianTreemap } from 'mondrian-treemap';
 import React from 'react';
 

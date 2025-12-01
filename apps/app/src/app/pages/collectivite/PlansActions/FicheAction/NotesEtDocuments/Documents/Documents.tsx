@@ -1,11 +1,11 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { SharedFicheLinkedResourcesAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
 import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { FicheResume } from '@/domain/plans';
-import { Button, EmptyCard } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Button, EmptyCard } from '@tet/ui';
 import { useEffect, useState } from 'react';
+import { Fiche } from '../../data/use-get-fiche';
 import { useAddAnnexe } from '../../data/useAddAnnexe';
 import { useAnnexesFicheAction } from '../../data/useAnnexesFicheAction';
 import DocumentPicto from './DocumentPicto';
@@ -14,7 +14,7 @@ import ModaleAjoutDocument from './ModaleAjoutDocument';
 type DocumentsProps = {
   isReadonly: boolean;
   collectiviteId: number;
-  fiche: FicheResume;
+  fiche: Fiche;
 };
 
 const Documents = (props: DocumentsProps) => {

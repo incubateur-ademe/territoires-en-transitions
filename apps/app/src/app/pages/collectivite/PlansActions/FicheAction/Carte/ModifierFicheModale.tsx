@@ -1,3 +1,4 @@
+import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
@@ -5,20 +6,19 @@ import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/ut
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
-import { FicheResume } from '@/domain/plans';
+import { QueryKey } from '@tanstack/react-query';
 import {
   Checkbox,
   Field,
   FormSectionGrid,
   Input,
   ModalFooterOKCancel,
-} from '@/ui';
-import { QueryKey } from '@tanstack/react-query';
+} from '@tet/ui';
 import { format } from 'date-fns';
 import { useRef, useState } from 'react';
 
 type Props = {
-  initialFiche: FicheResume;
+  initialFiche: FicheListItem;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   keysToInvalidate?: QueryKey[];

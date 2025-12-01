@@ -1,9 +1,10 @@
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { AuthUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Discussion, DiscussionMessage } from '@tet/domain/collectivites';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import { DiscussionDomainService } from '../domain/discussion-domain-service';
 import {
   DiscussionError,
@@ -11,14 +12,12 @@ import {
 } from '../domain/discussion.errors';
 import { ListDiscussionService } from '../domain/list-discussion-service';
 import { Result } from '../infrastructure/discussion.results';
-import { DiscussionType } from '../infrastructure/discussion.tables';
 import {
   CreateDiscussionData,
   CreateDiscussionRequest,
   CreateDiscussionResponse,
   DeleteDiscussionAndDiscussionMessageRequest,
   DeleteDiscussionMessageRequest,
-  DiscussionMessage,
   DiscussionsMessagesListType,
   ListDiscussionsRequest,
   UpdateDiscussionMessageRequest,
@@ -186,7 +185,7 @@ export class DiscussionApplicationService {
   async updateDiscussion(
     input: UpdateDiscussionRequest,
     user: AuthUser
-  ): Promise<Result<DiscussionType, DiscussionError>> {
+  ): Promise<Result<Discussion, DiscussionError>> {
     const { collectiviteId, discussionId, status } = input;
     const hasPermission = await this.permissionService.isAllowed(
       user,

@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/api/collectivites';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useListFiches } from '../data/use-list-fiches';
 
 export const useCountFiches = () => {

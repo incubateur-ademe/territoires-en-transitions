@@ -1,6 +1,6 @@
-import { useCollectiviteId } from '@/api/collectivites';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useQuery } from '@tanstack/react-query';
+import { useSupabase } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { objectToCamel } from 'ts-case-convert';
 
 export const useStructuresListe = (collectiviteIds?: number[]) => {

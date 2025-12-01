@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, ButtonVariant } from '@/ui';
+import { Button, ButtonVariant } from '@tet/ui';
 import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import { useSwipeable } from 'react-swipeable';

@@ -1,12 +1,13 @@
+import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
-import { FicheWithRelations } from '@/domain/plans';
-import { Field, ModalFooterOKCancel, RichTextEditor } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
+import { Field, ModalFooterOKCancel, RichTextEditor } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
+import { FicheShareProperties } from '../../../share-fiche/fiche-share-properties.dto';
 
 type FinancementsModalProps = {
   openState: OpenState;
-  fiche: FicheWithRelations;
+  fiche: Pick<Fiche, 'financements'> & FicheShareProperties;
   updateFinancements: (financements: string | null | undefined) => void;
 };
 

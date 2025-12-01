@@ -1,6 +1,3 @@
-import { UpsertIndicateursValeursResponse } from '@/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.response';
-import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
-import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { Body, Controller, Get, Logger, Post, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -10,6 +7,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { UpsertIndicateursValeursResponse } from '@tet/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.response';
+import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import { createZodDto } from 'nestjs-zod';
 import { TokenInfo } from '../../users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../users/models/auth.models';

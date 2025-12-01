@@ -1,8 +1,8 @@
 import {
   authError,
   getDbUserFromRequest,
-} from '@/auth/src/supabase/getDbUserFromRequest';
-import { sendEmail } from '@/auth/src/utils/sendEmail';
+} from '../../src/supabase/getDbUserFromRequest';
+import { sendEmail } from '../../src/utils/sendEmail';
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 

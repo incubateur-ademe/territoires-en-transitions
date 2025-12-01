@@ -1,7 +1,7 @@
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { nameToparams } from '@/app/plans/fiches/list-all-fiches/filters/filters-search-parameters-mapper';
 import { WITHOUT_RECENT } from '@/app/plans/fiches/list-all-fiches/filters/types';
-import { CompletionFieldName } from '@/domain/plans';
+import { CompletionFieldName } from '../data/use-get-completion';
 
 type CompletionMessage = {
   title: string;

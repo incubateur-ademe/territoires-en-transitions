@@ -1,27 +1,30 @@
 'use client';
 
-import { useUserSession } from '@/api/users/user-context/user-provider';
-import { QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider, UseQueryResult } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import {
   createTRPCClient,
   httpBatchLink,
   httpLink,
   splitLink,
+  TRPCClientErrorLike,
 } from '@trpc/client';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import { createTRPCContext } from '@trpc/tanstack-react-query';
 import { useMemo } from 'react';
+import { useUserSession } from '../../users/user-context/user-provider';
 import { getAuthHeaders } from '../supabase/get-auth-headers';
 import { getQueryClient } from './query-client';
 
-// By using `import type` you ensure that the reference will be stripped at compile-time, meaning you don't inadvertently import server-side code into your client.
-// For more information, see the Typescript docs: https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html#type-only-imports-and-export
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import type { AppRouter } from '@/domain/trpc-router';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import type { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
 
 export type RouterInput = inferRouterInputs<AppRouter>;
 export type RouterOutput = inferRouterOutputs<AppRouter>;
+
+export type TRPCUseQueryResult<TData> = UseQueryResult<
+  TData,
+  TRPCClientErrorLike<AppRouter>
+>;
 
 export const { TRPCProvider, useTRPC, useTRPCClient } =
   createTRPCContext<AppRouter>();

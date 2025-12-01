@@ -1,4 +1,4 @@
-import { Checkbox, FormSection } from '@/ui';
+import { Checkbox, FormSection } from '@tet/ui';
 
 type FicheRestreintEditorFormSectionProps = {
   restreint: boolean;

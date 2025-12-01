@@ -1,13 +1,13 @@
-import { collectiviteIdInputSchemaCoerce } from '@/backend/collectivites/collectivite-id.input';
-import { TrajectoireLeviersRouter } from '@/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.router';
+import { Injectable } from '@nestjs/common';
+import { collectiviteIdInputSchemaCoerce } from '@tet/backend/collectivites/collectivite-id.input';
+import { TrajectoireLeviersRouter } from '@tet/backend/indicateurs/trajectoire-leviers/trajectoire-leviers.router';
 import {
   calculTrajectoireRequestSchema,
   CalculTrajectoireReset,
-} from '@/backend/indicateurs/trajectoires/calcul-trajectoire.request';
-import TrajectoiresDataService from '@/backend/indicateurs/trajectoires/trajectoires-data.service';
-import { verificationTrajectoireRequestSchema } from '@/backend/indicateurs/trajectoires/verification-trajectoire.request';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
-import { Injectable } from '@nestjs/common';
+} from '@tet/backend/indicateurs/trajectoires/calcul-trajectoire.request';
+import TrajectoiresDataService from '@tet/backend/indicateurs/trajectoires/trajectoires-data.service';
+import { verificationTrajectoireRequestSchema } from '@tet/backend/indicateurs/trajectoires/verification-trajectoire.request';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import TrajectoiresSpreadsheetService from './trajectoires-spreadsheet.service';
 
 @Injectable()

@@ -1,17 +1,19 @@
-import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 
-import type { DiscussionRepository } from '@/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
+import type { DiscussionRepository } from '@tet/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
+import {
+  Discussion,
+  DiscussionMessage,
+  DiscussionStatus,
+} from '@tet/domain/collectivites';
 import { Result } from '../infrastructure/discussion.results';
-import { DiscussionType } from '../infrastructure/discussion.tables';
 import {
   CreateDiscussionData,
   CreateDiscussionMessageResponse,
   CreateDiscussionResponse,
-  DiscussionMessage,
 } from '../presentation/discussion.schemas';
 import { DiscussionError, DiscussionErrorEnum } from './discussion.errors';
-import { DiscussionStatus } from './discussion.types';
 
 @Injectable()
 export class DiscussionDomainService {
@@ -25,7 +27,7 @@ export class DiscussionDomainService {
     discussionData: CreateDiscussionData,
     tx?: Transaction
   ): Promise<Result<CreateDiscussionResponse, DiscussionError>> {
-    let discussion: Result<DiscussionType, DiscussionError>;
+    let discussion: Result<Discussion, DiscussionError>;
 
     if (!discussionData.discussionId) {
       discussion = await this.discussionRepository.create(discussionData);
@@ -127,7 +129,7 @@ export class DiscussionDomainService {
   async updateDiscussion(
     discussionId: number,
     status: DiscussionStatus
-  ): Promise<Result<DiscussionType, DiscussionError>> {
+  ): Promise<Result<Discussion, DiscussionError>> {
     const result = await this.discussionRepository.update(discussionId, status);
     if (!result.success) {
       this.logger.error(

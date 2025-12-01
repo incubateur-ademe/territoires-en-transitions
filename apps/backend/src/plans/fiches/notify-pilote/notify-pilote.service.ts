@@ -1,22 +1,22 @@
-import { PersonneTagOrUserWithContacts } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
-import { FicheWithRelations } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
-import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { ListUsersService } from '@/backend/users/users/list-users/list-users.service';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import GetUrlService from '@/backend/utils/get-url.service';
-import { NotificationStatusEnum } from '@/backend/utils/notifications/models/notification-status.enum';
-import { GetNotificationContentResult } from '@/backend/utils/notifications/models/notification-template.dto';
+import { Injectable, Logger } from '@nestjs/common';
+import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { ListUsersService } from '@tet/backend/users/users/list-users/list-users.service';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import GetUrlService from '@tet/backend/utils/get-url.service';
+import { NotificationStatusEnum } from '@tet/backend/utils/notifications/models/notification-status.enum';
+import { GetNotificationContentResult } from '@tet/backend/utils/notifications/models/notification-template.dto';
 import {
   Notification,
   NotificationInsert,
   notificationTable,
-} from '@/backend/utils/notifications/models/notification.table';
-import { NotifiedOnEnum } from '@/backend/utils/notifications/models/notified-on.enum';
-import { NotificationsService } from '@/backend/utils/notifications/notifications.service';
-import { MethodResult } from '@/backend/utils/result.type';
-import { Injectable, Logger } from '@nestjs/common';
+} from '@tet/backend/utils/notifications/models/notification.table';
+import { NotifiedOnEnum } from '@tet/backend/utils/notifications/models/notified-on.enum';
+import { NotificationsService } from '@tet/backend/utils/notifications/notifications.service';
+import { MethodResult } from '@tet/backend/utils/result.type';
+import { PersonneTagOrUserWithContacts } from '@tet/domain/collectivites';
+import { FicheWithRelations } from '@tet/domain/plans';
 import { and, eq, inArray, not } from 'drizzle-orm';
 import { differenceBy, isNil } from 'es-toolkit';
 import { DatabaseError } from 'pg';

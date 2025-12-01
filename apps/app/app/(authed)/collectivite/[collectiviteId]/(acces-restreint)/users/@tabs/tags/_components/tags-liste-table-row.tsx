@@ -1,6 +1,6 @@
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { useDeleteTag, useTagUpdate } from '@/app/ui/dropdownLists/tags';
-import { CollectiviteAccessLevel } from '@/domain/users';
+import { CollectiviteAccessLevel } from '@tet/domain/users';
 import {
   Badge,
   Button,
@@ -9,7 +9,7 @@ import {
   TRow,
   Tooltip,
   UpdateOptionModal,
-} from '@/ui';
+} from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { InviteMemberModal } from '../../../_components/invite-member.modal';

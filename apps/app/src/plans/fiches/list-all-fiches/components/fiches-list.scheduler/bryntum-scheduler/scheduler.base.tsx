@@ -3,17 +3,17 @@ import { BryntumScheduler } from '@bryntum/scheduler-react';
 import '@bryntum/scheduler/locales/scheduler.locale.FrFr';
 import { useEffect, useRef } from 'react';
 
-import { useCurrentCollectivite } from '@/api/collectivites';
-import { useUser } from '@/api/users/user-context/user-provider';
-import { FicheResume } from '@/domain/plans';
-import { preset } from '@/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
+import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
+import { preset } from '@tet/ui';
 import { FicheCardScheduler } from './fiche-card.scheduler';
 
 // Configure la langue française
 LocaleManager.applyLocale('FrFr');
 
 export type FicheActionEvent = EventModelConfig & {
-  fiche?: FicheResume;
+  fiche?: FicheWithRelationsAndCollectivite;
 };
 
 export type SchedulerProps = {

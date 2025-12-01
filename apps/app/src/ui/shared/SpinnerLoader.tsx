@@ -1,4 +1,4 @@
-import { cn } from '@/ui/utils/cn';
+import { cn } from '@tet/ui/utils/cn';
 
 type Props = {
   className?: string;

@@ -1,8 +1,8 @@
-import { IndicateursModule } from '@/backend/indicateurs/indicateurs.module';
-import { MetricsRouter } from '@/backend/metrics/metrics.router';
-import MetricsService from '@/backend/metrics/metrics.service';
-import { FichesModule } from '@/backend/plans/fiches/fiches.module';
-import { ReferentielsModule } from '@/backend/referentiels/referentiels.module';
+import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
+import { MetricsRouter } from '@tet/backend/metrics/metrics.router';
+import MetricsService from '@tet/backend/metrics/metrics.service';
+import { FichesModule } from '@tet/backend/plans/fiches/fiches.module';
+import { ReferentielsModule } from '@tet/backend/referentiels/referentiels.module';
 import { Module } from '@nestjs/common';
 
 @Module({

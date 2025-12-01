@@ -1,7 +1,6 @@
-import { useTRPC } from '@/api/utils/trpc/client';
-import { AxeType } from '@/domain/plans';
-import { CreatePlanRequest } from '@/domain/plans';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { AxeLight, CreatePlanRequest } from '@tet/domain/plans';
 
 export const useCreatePlan = ({
   collectiviteId,
@@ -9,7 +8,7 @@ export const useCreatePlan = ({
   onError,
 }: {
   collectiviteId: number;
-  onSuccess?: (data: AxeType) => void;
+  onSuccess?: (data: AxeLight) => void;
   onError?: (error: Error) => void;
 }) => {
   const queryClient = useQueryClient();

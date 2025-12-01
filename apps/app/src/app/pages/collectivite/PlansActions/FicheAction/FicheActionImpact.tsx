@@ -1,4 +1,4 @@
-import { Icon, Notification } from '@/ui';
+import { Icon, Notification } from '@tet/ui';
 import classNames from 'classnames';
 import { useFicheActionImpactId } from './data/useFicheActionImpactId';
 import { ModaleActionImpact } from './FicheActionImpact/ModaleActionImpact';

@@ -5,7 +5,7 @@ import {
   ActionImpactThematique,
   ActionImpactTypologie,
   ActionReferentiel,
-} from '@/api';
+} from '@tet/api';
 
 type LinkType = {
   url: string;

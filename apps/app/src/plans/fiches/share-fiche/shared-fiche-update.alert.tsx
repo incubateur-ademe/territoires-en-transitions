@@ -1,9 +1,13 @@
-import { useCollectiviteId } from '@/api/collectivites';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { FicheResume } from '@/domain/plans';
-import { Alert } from '@/ui';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Alert } from '@tet/ui';
+import { FicheShareProperties } from './fiche-share-properties.dto';
 
-export const SharedFicheUpdateAlert = ({ fiche }: { fiche: FicheResume }) => {
+export const SharedFicheUpdateAlert = ({
+  fiche,
+}: {
+  fiche: FicheShareProperties;
+}) => {
   const collectiviteId = useCollectiviteId();
 
   if (!isFicheSharedWithCollectivite(fiche, collectiviteId)) {

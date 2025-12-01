@@ -12,15 +12,12 @@ import {
 } from '@floating-ui/react';
 import { Ref, cloneElement, forwardRef, useState } from 'react';
 
-import { Button } from '@/ui/design-system/Button';
-import { Icon } from '@/ui/design-system/Icon';
+import { Button } from '../../Button';
+import { Icon } from '../../Icon';
 
-import {
-  DeleteOptionModal,
-  UpdateOptionModal,
-} from '@/ui/design-system/Select';
-import { CreateOption } from '@/ui/design-system/Select/components/SelectBase';
+import { DeleteOptionModal, UpdateOptionModal } from '../../Select';
 import { Option } from '../utils';
+import { CreateOption } from './SelectBase';
 
 type Props = Omit<CreateOption, 'userCreatedOptions' | 'onCreate'> & {
   /** L'option à modifier */

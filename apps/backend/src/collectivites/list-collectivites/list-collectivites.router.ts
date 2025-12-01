@@ -1,5 +1,5 @@
-import { listCollectiviteInputSchema } from '@/backend/collectivites/list-collectivites/list-collectivites.input';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
+import { listCollectiviteInputSchema } from '@tet/backend/collectivites/list-collectivites/list-collectivites.input';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { getCollectiviteInputSchema } from './get-collectivite.input';
 import ListCollectivitesService from './list-collectivites.service';

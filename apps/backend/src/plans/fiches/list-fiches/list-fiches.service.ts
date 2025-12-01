@@ -1,72 +1,65 @@
-import { annexeTable } from '@/backend/collectivites/documents/models/annexe.table';
-import { bibliothequeFichierTable } from '@/backend/collectivites/documents/models/bibliotheque-fichier.table';
-import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import {
-  Collectivite,
-  collectiviteTable,
-} from '@/backend/collectivites/shared/models/collectivite.table';
-import { PersonneTagOrUserWithContacts } from '@/backend/collectivites/shared/models/personne-tag-or-user.dto';
-import { financeurTagTable } from '@/backend/collectivites/tags/financeur-tag.table';
-import { libreTagTable } from '@/backend/collectivites/tags/libre-tag.table';
-import { partenaireTagTable } from '@/backend/collectivites/tags/partenaire-tag.table';
-import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
-import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
-import { structureTagTable } from '@/backend/collectivites/tags/structure-tag.table';
-import {
-  Tag,
-  TagWithCollectiviteId,
-} from '@/backend/collectivites/tags/tag.table-base';
-import { indicateurDefinitionTable } from '@/backend/indicateurs/definitions/indicateur-definition.table';
-import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
-import { ficheActionNoteTable } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
-import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { annexeTable } from '@tet/backend/collectivites/documents/models/annexe.table';
+import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { financeurTagTable } from '@tet/backend/collectivites/tags/financeur-tag.table';
+import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
+import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-tag.table';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
+import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag.table';
+import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
+import { ficheActionBudgetTable } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
+import { ficheActionNoteTable } from '@tet/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
+import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import {
   ListFichesSortValue,
   QueryOptionsSchema,
-} from '@/backend/plans/fiches/list-fiches/list-fiches.request';
-import { ficheActionSharingTable } from '@/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
+} from '@tet/backend/plans/fiches/list-fiches/list-fiches.request';
+import { ficheActionSharingTable } from '@tet/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { ficheActionEffetAttenduTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-effet-attendu.table';
+import { ficheActionFinanceurTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-financeur-tag.table';
+import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
+import { ficheActionLibreTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-libre-tag.table';
+import { ficheActionLienTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-lien.table';
+import { ficheActionPartenaireTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-partenaire-tag.table';
+import { ficheActionReferentTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-referent.table';
+import { ficheActionServiceTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-service-tag.table';
+import { ficheActionSousThematiqueTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-sous-thematique.table';
+import { ficheActionStructureTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-structure-tag.table';
+import { ficheActionThematiqueTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-thematique.table';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
+import { actionImpactActionTable } from '@tet/backend/plans/paniers/models/action-impact-action.table';
+import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
+import { effetAttenduTable } from '@tet/backend/shared/effet-attendu/effet-attendu.table';
+import { tempsDeMiseEnOeuvreTable } from '@tet/backend/shared/models/temps-de-mise-en-oeuvre.table';
+import { sousThematiqueTable } from '@tet/backend/shared/thematiques/sous-thematique.table';
+import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { sqlAuthorOrNull } from '@tet/backend/users/models/author.utils';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
+  Collectivite,
+  PersonneTagOrUserWithContacts,
+  Tag,
+  TagWithCollectiviteId,
+} from '@tet/domain/collectivites';
+import {
+  FicheWithRelations,
+  FicheWithRelationsAndCollectivite,
+  Financeur,
   ListFichesRequestFilters,
   TypePeriodeEnum,
-} from '@/backend/plans/fiches/shared/filters/filters.request';
-import { axeTable } from '@/backend/plans/fiches/shared/models/axe.table';
-import { ficheActionEffetAttenduTable } from '@/backend/plans/fiches/shared/models/fiche-action-effet-attendu.table';
-import {
-  ficheActionFinanceurTagTable,
-  Financeur,
-} from '@/backend/plans/fiches/shared/models/fiche-action-financeur-tag.table';
-import { ficheActionIndicateurTable } from '@/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
-import { ficheActionLibreTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-libre-tag.table';
-import { ficheActionLienTable } from '@/backend/plans/fiches/shared/models/fiche-action-lien.table';
-import { ficheActionPartenaireTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-partenaire-tag.table';
-import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
-import { ficheActionServiceTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-service-tag.table';
-import { ficheActionSousThematiqueTable } from '@/backend/plans/fiches/shared/models/fiche-action-sous-thematique.table';
-import { ficheActionStructureTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-structure-tag.table';
-import { ficheActionThematiqueTable } from '@/backend/plans/fiches/shared/models/fiche-action-thematique.table';
-import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import { actionImpactActionTable } from '@/backend/plans/paniers/models/action-impact-action.table';
-import { actionDefinitionTable } from '@/backend/referentiels/models/action-definition.table';
+} from '@tet/domain/plans';
 import {
   EffetAttendu,
-  effetAttenduTable,
-} from '@/backend/shared/effet-attendu/effet-attendu.table';
-import {
-  TempsDeMiseEnOeuvre,
-  tempsDeMiseEnOeuvreTable,
-} from '@/backend/shared/models/temps-de-mise-en-oeuvre.table';
-import {
   SousThematique,
-  sousThematiqueTable,
-} from '@/backend/shared/thematiques/sous-thematique.table';
-import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
-import { AuthUser } from '@/backend/users/models/auth.models';
-import { sqlAuthorOrNull } from '@/backend/users/models/author.utils';
-import { dcpTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { getModifiedSinceDate } from '@/backend/utils/modified-since.enum';
-import { MethodResult } from '@/backend/utils/result.type';
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+  TempsDeMiseEnOeuvre,
+} from '@tet/domain/shared';
+import { getModifiedSinceDate } from '@tet/domain/utils';
 import {
   aliasedTable,
   and,
@@ -92,15 +85,12 @@ import {
 } from 'drizzle-orm';
 import { PgColumn, TableConfig } from 'drizzle-orm/pg-core';
 import { isNil } from 'es-toolkit';
+import { MethodResult } from '../../../utils/result.type';
 import { ficheActionEtapeTable } from '../fiche-action-etape/fiche-action-etape.table';
 import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import { checkCompletion } from './completion';
-import {
-  FicheWithRelations,
-  FicheWithRelationsAndCollectivite,
-} from './fiche-action-with-relations.dto';
 
 type FicheWithoutCompletion = Omit<FicheWithRelations, 'completion'>;
 

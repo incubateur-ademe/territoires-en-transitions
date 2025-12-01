@@ -1,6 +1,6 @@
-import { Button } from '@/ui/design-system/Button';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
+import { Button } from '../Button';
 import PaginationPageButton from './PaginationPageButton';
 import { calculatePaginationArray } from './utils';
 

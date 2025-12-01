@@ -1,4 +1,4 @@
-import { createClientWithoutCookieOptions } from '@/api/utils/supabase/browser-client';
+import { createClientWithoutCookieOptions } from '@tet/api/utils/supabase/browser-client';
 import { saveBlob } from './saveBlob';
 import { TPreuve } from './types';
 

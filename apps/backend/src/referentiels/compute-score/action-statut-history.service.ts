@@ -1,10 +1,8 @@
-import {
-  ActionStatut,
-  actionStatutTable,
-} from '@/backend/referentiels/models/action-statut.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import MattermostNotificationService from '@/backend/utils/mattermost-notification.service';
 import { Injectable, Logger } from '@nestjs/common';
+import { actionStatutTable } from '@tet/backend/referentiels/models/action-statut.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import MattermostNotificationService from '@tet/backend/utils/mattermost-notification.service';
+import { ActionStatut } from '@tet/domain/referentiels';
 import {
   aliasedTable,
   and,

@@ -1,4 +1,4 @@
-import { AirtableRowInsertDto } from '@/tools/airtable/airtable-row-insert.dto';
+import { AirtableRowInsertDto } from './airtable-row-insert.dto';
 
 export interface AirtableRowDto<TFields> extends AirtableRowInsertDto<TFields> {
   id: string;

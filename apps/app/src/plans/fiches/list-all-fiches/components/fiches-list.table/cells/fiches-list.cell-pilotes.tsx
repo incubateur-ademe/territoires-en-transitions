@@ -1,5 +1,5 @@
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
-import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
+import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
 
 type Props = {
   pilotes: FicheWithRelationsAndCollectivite['pilotes'] | null;
