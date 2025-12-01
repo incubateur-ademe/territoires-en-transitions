@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
-import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
+import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 

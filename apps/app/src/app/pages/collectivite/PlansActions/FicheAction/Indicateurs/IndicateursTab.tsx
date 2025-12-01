@@ -1,4 +1,4 @@
-import { FicheWithRelations } from '@/domain/plans';
+import { FicheWithRelations } from '@tet/domain/plans';
 import IndicateursAssocies from './IndicateursAssocies';
 import IndicateursHeader from './IndicateursHeader';
 

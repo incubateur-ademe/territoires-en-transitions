@@ -1,4 +1,4 @@
-import { FicheWithRelations } from '@/domain/plans';
+import { FicheWithRelations } from '@tet/domain/plans';
 import { BudgetTagsList } from '../budget/budget-tags.list';
 import { EditableSection } from '../components/EditableSection';
 

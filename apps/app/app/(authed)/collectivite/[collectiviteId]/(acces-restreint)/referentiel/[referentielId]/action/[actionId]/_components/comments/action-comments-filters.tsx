@@ -1,6 +1,6 @@
 import { isSousMesure } from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
-import { DiscussionOrderBy, DiscussionStatus } from '@/domain/collectivites';
-import { ReferentielId } from '@/domain/referentiels';
+import { DiscussionOrderBy, DiscussionStatus } from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { Select } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import {

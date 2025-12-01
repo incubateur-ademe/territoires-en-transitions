@@ -1,4 +1,4 @@
-import { FicheActionBudget } from '@/domain/plans';
+import { FicheActionBudget } from '@tet/domain/plans';
 import { EditableSection } from '../components/EditableSection';
 import { BudgetInvestissementContent } from './budget-investissement.content';
 import { BudgetPerYearContent } from './budget-per-year.content';

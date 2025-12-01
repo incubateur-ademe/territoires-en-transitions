@@ -1,5 +1,5 @@
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { FicheWithRelations } from '@/domain/plans';
+import { FicheWithRelations } from '@tet/domain/plans';
 import { RichTextView } from '../../components/RichTextView';
 import { EditableSection } from '../components/EditableSection';
 

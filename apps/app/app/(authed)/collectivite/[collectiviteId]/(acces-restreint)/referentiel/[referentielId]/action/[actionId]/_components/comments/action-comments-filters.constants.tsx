@@ -1,7 +1,7 @@
 import {
   discussionOrderByValues,
   discussionStatus,
-} from '@/domain/collectivites';
+} from '@tet/domain/collectivites';
 
 export const statusOptions = [
   { label: 'Tous les commentaires', value: discussionStatus.ALL },
@@ -14,4 +14,3 @@ export const orderByOptions = [
   { label: 'date de publication', value: discussionOrderByValues.CREATED_AT },
   { label: 'auteur', value: discussionOrderByValues.CREATED_BY },
 ];
-

@@ -2,7 +2,7 @@ import {
   FicheActionBudget,
   FicheWithRelations,
   UpdateFicheRequest,
-} from '@/domain/plans';
+} from '@tet/domain/plans';
 import { BudgetModal } from './budget/budget.modal';
 import { FinancementsModal } from './financements/financements.modal';
 import { FinanceursModal } from './financeurs/financeurs.modal';

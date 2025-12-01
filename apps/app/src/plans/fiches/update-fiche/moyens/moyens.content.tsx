@@ -1,4 +1,4 @@
-import { FicheActionBudget, FicheWithRelations } from '@/domain/plans';
+import { FicheActionBudget, FicheWithRelations } from '@tet/domain/plans';
 import { Divider, Spacer } from '@tet/ui';
 import { BudgetUnitWarning } from './budget/budget-unit-warning';
 import { BudgetEditableView } from './budget/budget.editable-view';

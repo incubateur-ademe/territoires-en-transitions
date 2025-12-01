@@ -1,4 +1,4 @@
-import { FicheActionBudget } from '@/domain/plans';
+import { FicheActionBudget } from '@tet/domain/plans';
 import type { BudgetProperties } from './types';
 
 export const toBudgetProperties = (

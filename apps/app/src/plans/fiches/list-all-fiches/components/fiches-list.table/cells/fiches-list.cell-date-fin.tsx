@@ -1,4 +1,4 @@
-import { Fiche, isFicheOnTime } from '@/domain/plans';
+import { Fiche, isFicheOnTime } from '@tet/domain/plans';
 import { cn, Icon } from '@tet/ui';
 import { format } from 'date-fns';
 

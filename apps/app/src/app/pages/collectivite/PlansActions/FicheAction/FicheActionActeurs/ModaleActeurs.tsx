@@ -8,7 +8,7 @@ import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropd
 import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import ParticipationCitoyenneDropdown from '@/app/ui/dropdownLists/ficheAction/ParticipationCitoyenneDropdown/ParticipationCitoyenneDropdown';
-import { FicheWithRelations } from '@/domain/plans';
+import { FicheWithRelations } from '@tet/domain/plans';
 import {
   Event,
   Field,

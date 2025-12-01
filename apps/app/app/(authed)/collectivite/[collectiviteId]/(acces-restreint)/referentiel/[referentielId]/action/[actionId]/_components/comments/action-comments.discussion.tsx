@@ -1,5 +1,5 @@
 import { canCreateDiscussion } from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
-import { DiscussionMessages } from '@/domain/collectivites';
+import { DiscussionMessages } from '@tet/domain/collectivites';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import classNames from 'classnames';
 import ActionCommentInput from './action-comments.input';
