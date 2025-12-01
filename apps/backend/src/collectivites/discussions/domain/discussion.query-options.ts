@@ -1,13 +1,15 @@
+import { discussionOrderByEnumSchema } from '@tet/domain/collectivites';
 import { limitSchema } from '@tet/domain/utils';
 import z from 'zod';
 
 const DEFAULT_ITEMS_NUMBER_PER_PAGE = 10;
 const DEFAULT_PAGE = 1;
 
-export const sortValues = ['actionId', 'created_at', 'status'] as const;
-
 const sortSchema = z
-  .object({ field: z.enum(sortValues), direction: z.enum(['asc', 'desc']) })
+  .object({
+    field: discussionOrderByEnumSchema,
+    direction: z.enum(['asc', 'desc']),
+  })
   .array()
   .optional();
 
@@ -29,12 +31,3 @@ const pagination = z.union([
 
 export const queryOptionsTypeSchema = commonQueryOptionsSchema.and(pagination);
 export type QueryOptionsType = z.infer<typeof queryOptionsTypeSchema>;
-
-export const discussionOrderByValues = {
-  ACTION_ID: 'actionId',
-  CREATED_AT: 'createdAt',
-  CREATED_BY: 'createdBy',
-};
-
-export type DiscussionOrderBy =
-  (typeof discussionOrderByValues)[keyof typeof discussionOrderByValues];

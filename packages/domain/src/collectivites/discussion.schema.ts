@@ -17,7 +17,7 @@ export const discussionCreateSchema = discussionSchema.omit({ id: true });
 
 export type DiscussionCreate = z.infer<typeof discussionCreateSchema>;
 
-export const discussionMessageSchema = z.object({
+export const discussionMessageBaseSchema = z.object({
   id: z.number(),
   discussionId: z.number(),
   message: z.string(),
@@ -25,12 +25,36 @@ export const discussionMessageSchema = z.object({
   createdAt: z.iso.datetime(),
 });
 
-export type DiscussionMessage = z.infer<typeof discussionMessageSchema>;
+export type DiscussionBaseMessage = z.infer<typeof discussionMessageBaseSchema>;
 
-export const discussionMessageCreateSchema = discussionMessageSchema.omit({
+export const discussionMessageCreateSchema = discussionMessageBaseSchema.omit({
   id: true,
 });
 
 export type DiscussionMessageCreate = z.infer<
   typeof discussionMessageCreateSchema
+>;
+
+// Extended types
+
+export const discussionMessageSchema = z.object({
+  ...discussionMessageBaseSchema.shape,
+
+  createdByNom: z.string().nullable(),
+  createdByPrenom: z.string().nullable(),
+});
+
+export type DiscussionMessage = z.infer<typeof discussionMessageSchema>;
+
+export const discussionWithMessagesSchema = z.object({
+  ...discussionSchema.shape,
+
+  actionNom: z.string(),
+  actionIdentifiant: z.string(),
+
+  messages: z.array(discussionMessageSchema),
+});
+
+export type DiscussionWithMessages = z.infer<
+  typeof discussionWithMessagesSchema
 >;

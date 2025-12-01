@@ -1,11 +1,11 @@
 import {
   CreateDiscussionData,
   CreateDiscussionMessageResponse,
-  DiscussionMessage,
 } from '@tet/backend/collectivites/discussions/presentation/discussion.schemas';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   Discussion,
+  DiscussionMessage,
   DiscussionMessageCreate,
   DiscussionStatus,
 } from '@tet/domain/collectivites';

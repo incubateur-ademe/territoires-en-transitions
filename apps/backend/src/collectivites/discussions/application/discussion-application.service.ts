@@ -3,7 +3,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { Discussion } from '@tet/domain/collectivites';
+import { Discussion, DiscussionMessage } from '@tet/domain/collectivites';
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { DiscussionDomainService } from '../domain/discussion-domain-service';
 import {
@@ -18,7 +18,6 @@ import {
   CreateDiscussionResponse,
   DeleteDiscussionAndDiscussionMessageRequest,
   DeleteDiscussionMessageRequest,
-  DiscussionMessage,
   DiscussionsMessagesListType,
   ListDiscussionsRequest,
   UpdateDiscussionMessageRequest,

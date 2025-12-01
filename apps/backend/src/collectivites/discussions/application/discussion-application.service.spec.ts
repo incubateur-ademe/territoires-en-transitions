@@ -237,9 +237,10 @@ describe('DiscussionApplicationService', () => {
               actionId: 'cae_1.1.1',
               actionNom: 'Test Action',
               actionIdentifiant: '1.1.1',
-              status: 'ouvert',
+              status: 'ouvert' as const,
               createdBy: 'user-123',
               createdAt: '2025-01-01T00:00:00.000Z',
+              modifiedAt: '2025-01-01T00:00:00.000Z',
               messages: [
                 {
                   id: 1,

@@ -3,11 +3,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { DiscussionRepository } from '@tet/backend/collectivites/discussions/infrastructure/discussion-repository.interface';
-import { Discussion, discussionStatus } from '@tet/domain/collectivites';
+import {
+  Discussion,
+  DiscussionMessage,
+  discussionStatus,
+} from '@tet/domain/collectivites';
 import {
   CreateDiscussionData,
   CreateDiscussionMessageResponse,
-  DiscussionMessage,
 } from '../presentation/discussion.schemas';
 import { DiscussionDomainService } from './discussion-domain-service';
 import { DiscussionQueryService } from './discussion-query-service';
