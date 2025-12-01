@@ -1,4 +1,10 @@
-import { ComponentPropsWithRef, useLayoutEffect, useRef } from 'react';
+import {
+  ComponentPropsWithRef,
+  forwardRef,
+  useImperativeHandle,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 
 import { cn } from '@/ui/utils/cn';
 
@@ -6,38 +12,42 @@ export type TextareaBaseProps = ComponentPropsWithRef<'textarea'> & {
   autoresize?: boolean;
 };
 
-export const TextareaBase = ({
-  autoresize = true,
-  ...props
-}: TextareaBaseProps) => {
-  const ref = useRef<HTMLTextAreaElement>(null);
+export const TextareaBase = forwardRef(
+  (
+    { autoresize = true, ...props }: TextareaBaseProps,
+    ref?: React.Ref<HTMLTextAreaElement | null>
+  ) => {
+    const localRef = useRef<HTMLTextAreaElement>(null);
 
-  /** Autoresize - Adjust the height of the textarea to fit its content */
-  useLayoutEffect(() => {
-    if (autoresize && ref.current) {
-      ref.current.style.height = 'auto';
-      ref.current.style.height = `${ref.current.scrollHeight}px`;
-    }
-  }, [props.value, autoresize]);
+    useImperativeHandle(ref, () => localRef.current);
 
-  /** Ensure focus at the end of the content */
-  useLayoutEffect(() => {
-    if (props.autoFocus && ref.current) {
-      const length = ref.current.value.length;
-      ref.current.focus();
-      ref.current.setSelectionRange(length, length);
-    }
-  }, [props.autoFocus]);
+    /** Autoresize - Adjust the height of the textarea to fit its content */
+    useLayoutEffect(() => {
+      if (autoresize && localRef.current) {
+        localRef.current.style.height = 'auto';
+        localRef.current.style.height = `${localRef.current.scrollHeight}px`;
+      }
+    }, [localRef.current?.value, autoresize]);
 
-  return (
-    <textarea
-      {...props}
-      ref={ref}
-      className={cn(
-        'outline-none',
-        { 'resize-none': autoresize },
-        props.className
-      )}
-    />
-  );
-};
+    /** Ensure focus at the end of the content */
+    useLayoutEffect(() => {
+      if (props.autoFocus && localRef.current) {
+        const length = localRef.current.value.length;
+        localRef.current.focus();
+        localRef.current.setSelectionRange(length, length);
+      }
+    }, [props.autoFocus]);
+
+    return (
+      <textarea
+        {...props}
+        ref={localRef}
+        className={cn(
+          'outline-none',
+          { 'resize-none': autoresize },
+          props.className
+        )}
+      />
+    );
+  }
+);
