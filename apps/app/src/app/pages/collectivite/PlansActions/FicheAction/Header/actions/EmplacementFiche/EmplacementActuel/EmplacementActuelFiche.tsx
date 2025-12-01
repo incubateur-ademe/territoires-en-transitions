@@ -1,5 +1,5 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { useUpdateFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-fiche';
+import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import CheminEmplacement from './CheminEmplacement';
 
