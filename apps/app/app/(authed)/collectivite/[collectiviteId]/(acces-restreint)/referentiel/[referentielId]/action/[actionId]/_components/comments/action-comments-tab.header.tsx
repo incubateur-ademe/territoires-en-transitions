@@ -19,7 +19,7 @@ type Props = {
   referentielId: ReferentielId;
 };
 
-const ActionCommentsPageHeader = ({
+const ActionCommentsTabHeader = ({
   selectedOrderBy,
   onOrderByChange,
   selectedStatus,
@@ -68,4 +68,5 @@ const ActionCommentsPageHeader = ({
   );
 };
 
-export default ActionCommentsPageHeader;
+export default ActionCommentsTabHeader;
+

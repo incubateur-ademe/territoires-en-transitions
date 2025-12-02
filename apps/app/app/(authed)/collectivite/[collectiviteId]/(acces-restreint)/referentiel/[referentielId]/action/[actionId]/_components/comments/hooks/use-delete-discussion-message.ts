@@ -11,6 +11,9 @@ export const useDeleteDiscussionMessage = () => {
         queryClient.invalidateQueries({
           queryKey: trpc.collectivites.discussions.list.queryKey(),
         });
+        queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.actions.listActionSummaries.queryKey(),
+        });
       },
     })
   );
