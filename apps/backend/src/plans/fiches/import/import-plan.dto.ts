@@ -5,10 +5,7 @@ import {
   Priorite,
   Statut,
 } from '@/backend/plans/fiches/shared/models/fiche-action.table';
-import {
-  UpdatePlanPilotesSchema,
-  UpdatePlanReferentsSchema,
-} from '@/backend/plans/plans/plans.schema';
+import { PersonneInput } from '../../plans/mutate-plan/mutate-plan.input';
 
 export const ficheTagTypes = [
   TagEnum.Partenaire,
@@ -71,7 +68,7 @@ export type FicheImport = {
 
 export type AxeImport = {
   nom: string;
-  id?: number;
+  id?: number | undefined;
   parent?: AxeImport | PlanImport;
   enfants: Set<AxeImport>;
   fiches: FicheImport[];
@@ -79,8 +76,8 @@ export type AxeImport = {
 
 export type PlanImport = AxeImport & {
   typeId?: number;
-  pilotes?: UpdatePlanPilotesSchema[];
-  referents?: UpdatePlanReferentsSchema[];
+  pilotes?: PersonneInput[];
+  referents?: PersonneInput[];
 };
 
 export type MemoryImport = {

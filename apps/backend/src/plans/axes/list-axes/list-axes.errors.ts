@@ -17,3 +17,4 @@ export const listAxesErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
 
 export const ListAxesErrorEnum = createErrorsEnum(specificErrors);
 export type ListAxesError = keyof typeof ListAxesErrorEnum;
+

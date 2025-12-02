@@ -11,11 +11,11 @@ import {
   PlanImport,
   TagImport,
 } from '@/backend/plans/fiches/import/import-plan.dto';
+import { MutatePlanService } from '@/backend/plans/plans/mutate-plan/mutate-plan.service';
 import {
   UpdatePlanPilotesSchema,
   UpdatePlanReferentsSchema,
 } from '@/backend/plans/plans/plans.schema';
-import { PlanService } from '@/backend/plans/plans/plans.service';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Injectable, Logger } from '@nestjs/common';
@@ -83,7 +83,7 @@ export class ImportPlanService {
     private readonly fetch: ImportPlanFetchService,
     private readonly save: ImportPlanSaveService,
     private readonly clean: ImportPlanCleanService,
-    private readonly planService: PlanService
+    private readonly mutatePlanService: MutatePlanService
   ) {}
 
   private getDataWorksheet(workbook: ExcelJS.Workbook) {
@@ -450,7 +450,7 @@ export class ImportPlanService {
     await this.databaseService.db.transaction(async (tx) => {
       await this.save.tags(collectiviteId, memoryData.tags, tx);
       await this.save.fiches(collectiviteId, memoryData.fiches, tx, user);
-      const planResult = await this.planService.createPlan(
+      const planResult = await this.mutatePlanService.mutatePlan(
         {
           collectiviteId,
           ...plan,
