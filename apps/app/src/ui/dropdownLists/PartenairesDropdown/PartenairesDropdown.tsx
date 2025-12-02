@@ -29,7 +29,9 @@ const PartenairesDropdown = (props: PartenairesDropdownProps) => {
   return (
     <SelectTags
       {...props}
-      placeholder={props.placeholder ?? 'Sélectionnez ou créez un partenaire'}
+      getPlaceholder={(disableEdition) =>
+        `Sélectionner ${!disableEdition ? 'ou créer ' : ''}un partenaire`
+      }
       queryKey={['partenaires']}
       tagTableName="partenaire_tag"
       additionalKeysToInvalidate={props.additionalKeysToInvalidate}

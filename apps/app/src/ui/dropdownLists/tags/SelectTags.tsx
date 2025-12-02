@@ -1,5 +1,5 @@
 import { TableTag } from '@/api';
-import { useCollectiviteId } from '@/api/collectivites';
+import { useCurrentCollectivite } from '@/api/collectivites';
 import { SHARE_ICON } from '@/app/plans/fiches/share-fiche/fiche-share-info';
 import { TagWithCollectiviteId } from '@/domain/collectivites';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
@@ -24,6 +24,7 @@ type SelectTagsProps = Omit<SelectMultipleProps, 'options' | 'onChange'> & {
     selectedValue: TagWithCollectiviteId;
   }) => void;
   optionsAreCaseSensitive?: boolean;
+  getPlaceholder?: (disableEdition: boolean) => string;
 };
 
 const SelectTags = ({
@@ -36,9 +37,11 @@ const SelectTags = ({
   disabledOptionsIds,
   refetchOptions,
   optionsAreCaseSensitive = true,
+  getPlaceholder,
   ...props
 }: SelectTagsProps) => {
-  const collectiviteId = useCollectiviteId();
+  const collectivite = useCurrentCollectivite();
+  const collectiviteId = collectivite.collectiviteId;
   // Liste d'options pour le select
   const options: Option[] = (optionsListe ?? []).map((opt) => ({
     value: opt.id,
@@ -65,6 +68,8 @@ const SelectTags = ({
   // Formattage des valeurs sélectionnées pour les renvoyer au composant parent
   const getSelectedValues = (values?: OptionValue[]) =>
     (optionsListe ?? []).filter((opt) => values?.some((v) => v === opt.id));
+
+  const disableEdition = collectivite.niveauAcces === null;
 
   // ***
   // Ajout d'un nouveau tag à la liste d'options
@@ -142,6 +147,7 @@ const SelectTags = ({
   return (
     <SelectFilter
       {...props}
+      placeholder={props.placeholder ?? getPlaceholder?.(disableEdition)}
       options={options}
       onChange={({ values, selectedValue }) =>
         props.onChange({
@@ -149,12 +155,16 @@ const SelectTags = ({
           selectedValue: getSelectedValues([selectedValue])[0],
         })
       }
-      createProps={{
-        userCreatedOptions: userCreatedOptionsIds ?? editableOptionsIds,
-        onCreate: handleTagCreate,
-        onUpdate: handleTagUpdate,
-        onDelete: handleTagDelete,
-      }}
+      createProps={
+        disableEdition
+          ? undefined
+          : {
+              userCreatedOptions: userCreatedOptionsIds ?? editableOptionsIds,
+              onCreate: handleTagCreate,
+              onUpdate: handleTagUpdate,
+              onDelete: handleTagDelete,
+            }
+      }
       optionsAreCaseSensitive={optionsAreCaseSensitive}
     />
   );
