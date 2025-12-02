@@ -21,7 +21,7 @@ const useGetMutationPatterns = () => {
       'update_linked_fiches',
       'upsert_note',
       trpc.plans.fiches.etapes.upsert.mutationKey(),
-      trpc.plans.plans.create.mutationKey(),
+      'create_plan',
       trpc.plans.plans.createAxe.mutationKey(),
       'upsert_preuve_annexe',
       'update_fiche_bibliotheque_fichier_filename',
