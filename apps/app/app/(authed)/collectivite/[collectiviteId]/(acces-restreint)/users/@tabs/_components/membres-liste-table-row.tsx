@@ -5,7 +5,13 @@ import {
 } from '@/app/app/pages/collectivite/Users/types';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { CollectiviteAccessLevel } from '@/domain/users';
-import { Badge, Button, TCell, TRow, Tooltip } from '@/ui';
+import {
+  Badge,
+  Button,
+  DEPRECATED_TCell,
+  DEPRECATED_TRow,
+  Tooltip,
+} from '@/ui';
 import { useState } from 'react';
 import BadgeAcces from '../../_components/badge-acces';
 import { ConfirmerChangementNiveau } from '../../_components/ConfirmerChangementNiveau';
@@ -72,17 +78,20 @@ const MembresListeTableRow = ({
 
   return (
     <>
-      <TRow data-test={`MembreRow-${email}`} className={rowClassnames}>
+      <DEPRECATED_TRow
+        data-test={`MembreRow-${email}`}
+        className={rowClassnames}
+      >
         {/* Nom et adresse mail */}
-        <TCell className={defaultCellClassnames}>
+        <DEPRECATED_TCell className={defaultCellClassnames}>
           <div className="text-sm text-primary-10 font-bold">
             {membre_id ? `${prenom} ${nom}` : 'Création de compte en attente'}
           </div>
           <div className="text-xs text-grey-8">{email}</div>
-        </TCell>
+        </DEPRECATED_TCell>
 
         {/* Fonction */}
-        <TCell className={cellClassnames}>
+        <DEPRECATED_TCell className={cellClassnames}>
           {membre_id && canUpdate ? (
             <FonctionDropdown
               value={fonction}
@@ -93,10 +102,10 @@ const MembresListeTableRow = ({
           ) : (
             fonction && membreFonctions.find((v) => v.value === fonction)?.label
           )}
-        </TCell>
+        </DEPRECATED_TCell>
 
         {/* Champ d'intervention */}
-        <TCell className={cellClassnames}>
+        <DEPRECATED_TCell className={cellClassnames}>
           {membre_id && canUpdate ? (
             <ChampsInterventionDropdown
               values={champ_intervention ?? []}
@@ -109,10 +118,10 @@ const MembresListeTableRow = ({
               <div key={champ}>{referentielToName[champ]}</div>
             ))
           )}
-        </TCell>
+        </DEPRECATED_TCell>
 
         {/* Intitulé de poste */}
-        <TCell className={cellClassnames}>
+        <DEPRECATED_TCell className={cellClassnames}>
           {membre_id && canUpdate ? (
             <DetailsFonctionTextarea
               details_fonction={details_fonction ?? ''}
@@ -129,10 +138,10 @@ const MembresListeTableRow = ({
               {details_fonction}
             </span>
           )}
-        </TCell>
+        </DEPRECATED_TCell>
 
         {/* Accès */}
-        <TCell className={cellClassnames}>
+        <DEPRECATED_TCell className={cellClassnames}>
           {membre_id && canUpdate ? (
             <AccesDropdown
               currentUserAccess={currentUserAccess}
@@ -150,10 +159,10 @@ const MembresListeTableRow = ({
           ) : (
             <BadgeAcces acces={niveau_acces} size="sm" />
           )}
-        </TCell>
+        </DEPRECATED_TCell>
 
         {/* Statut */}
-        <TCell className={defaultCellClassnames}>
+        <DEPRECATED_TCell className={defaultCellClassnames}>
           <Tooltip
             label={
               membre_id ? 'Rattachement effectué' : 'En attente de validation'
@@ -167,10 +176,10 @@ const MembresListeTableRow = ({
               />
             </div>
           </Tooltip>
-        </TCell>
+        </DEPRECATED_TCell>
 
         {/* Actions */}
-        <TCell className={defaultCellClassnames}>
+        <DEPRECATED_TCell className={defaultCellClassnames}>
           <div className="flex gap-2 justify-start items-center">
             {membre_id && isEditor && (
               <Tooltip label="Associer ce compte à un tag">
@@ -219,8 +228,8 @@ const MembresListeTableRow = ({
               </>
             )}
           </div>
-        </TCell>
-      </TRow>
+        </DEPRECATED_TCell>
+      </DEPRECATED_TRow>
 
       {/* Modales */}
       {membre_id && canUpdate && isOpenChangeNiveau && (

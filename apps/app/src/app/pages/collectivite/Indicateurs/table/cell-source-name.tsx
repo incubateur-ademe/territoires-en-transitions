@@ -1,5 +1,5 @@
 import { DashedLineSymbol, SolidLineSymbol } from '@/app/ui/charts/ChartLegend';
-import { Icon, TCell } from '@/ui';
+import { DEPRECATED_TCell, Icon } from '@/ui';
 import { getSourceLabel } from '../data/get-source-label';
 import { PreparedData } from '../data/prepare-data';
 import { GetColorBySourceId } from '../data/use-indicateur-sources';
@@ -22,7 +22,7 @@ export const CellSourceName = ({
   const color = getColorBySourceId(source.source, type);
 
   return (
-    <TCell className="font-bold text-sm">
+    <DEPRECATED_TCell className="font-bold text-sm">
       <div className="inline-flex items-center min-w-72 gap-2">
         {type === 'objectif' ? DashedLineSymbol(color) : SolidLineSymbol(color)}
         {getSourceLabel(
@@ -44,6 +44,6 @@ export const CellSourceName = ({
           </DataSourceTooltip>
         )}
       </div>
-    </TCell>
+    </DEPRECATED_TCell>
   );
 };

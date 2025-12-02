@@ -1,4 +1,10 @@
-import { Button, HEAD_CELL_STYLE, Notification, TCell, Tooltip } from '@/ui';
+import {
+  Button,
+  DEPRECATED_HEAD_CELL_STYLE,
+  DEPRECATED_TCell,
+  Notification,
+  Tooltip,
+} from '@/ui';
 import classNames from 'classnames';
 import { PreparedData, PreparedValue } from '../data/prepare-data';
 import { SourceType } from '../types';
@@ -27,10 +33,10 @@ export const CellAnneeList = ({
       confidentiel && type === 'resultat' && annee === anneeModePrive;
 
     return (
-      <TCell
+      <DEPRECATED_TCell
         key={annee}
         className={classNames(
-          HEAD_CELL_STYLE,
+          DEPRECATED_HEAD_CELL_STYLE,
           'font-bold text-center relative w-[8.5rem]',
           { '!py-2': modePrive }
         )}
@@ -56,7 +62,7 @@ export const CellAnneeList = ({
             />
           )}
         </div>
-      </TCell>
+      </DEPRECATED_TCell>
     );
   });
 };

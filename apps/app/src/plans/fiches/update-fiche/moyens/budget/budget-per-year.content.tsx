@@ -1,5 +1,13 @@
 import { getFormattedFloat, getFormattedNumber } from '@/app/utils/formatUtils';
-import { Badge, TBody, TCell, THead, THeadCell, TRow, Table } from '@/ui';
+import {
+  Badge,
+  DEPRECATED_Table,
+  DEPRECATED_TBody,
+  DEPRECATED_TCell,
+  DEPRECATED_THead,
+  DEPRECATED_THeadCell,
+  DEPRECATED_TRow,
+} from '@/ui';
 import { cn } from '@/ui/utils/cn';
 import { uniq } from 'es-toolkit';
 import { PerYearBudgetProperties } from './types';
@@ -57,31 +65,37 @@ export const BudgetPerYearContent = ({
 
   return (
     <div className="w-full overflow-x-auto">
-      <Table className="rounded-none">
-        <THead className="bg-white">
-          <TRow>
-            <THeadCell className={headCellClassname}>Année</THeadCell>
-            <THeadCell className={headCellClassname}>
+      <DEPRECATED_Table className="rounded-none">
+        <DEPRECATED_THead className="bg-white">
+          <DEPRECATED_TRow>
+            <DEPRECATED_THeadCell className={headCellClassname}>
+              Année
+            </DEPRECATED_THeadCell>
+            <DEPRECATED_THeadCell className={headCellClassname}>
               Montant prévisionnel
-            </THeadCell>
-            <THeadCell className={headCellClassname}>Montant dépensé</THeadCell>
-            <THeadCell className={headCellClassname}>
+            </DEPRECATED_THeadCell>
+            <DEPRECATED_THeadCell className={headCellClassname}>
+              Montant dépensé
+            </DEPRECATED_THeadCell>
+            <DEPRECATED_THeadCell className={headCellClassname}>
               ETP prévisionnel
-            </THeadCell>
-            <THeadCell className={headCellClassname}>ETP réel</THeadCell>
-          </TRow>
-        </THead>
+            </DEPRECATED_THeadCell>
+            <DEPRECATED_THeadCell className={headCellClassname}>
+              ETP réel
+            </DEPRECATED_THeadCell>
+          </DEPRECATED_TRow>
+        </DEPRECATED_THead>
 
-        <TBody>
+        <DEPRECATED_TBody>
           {groupedBudgets.map((budget) => (
-            <TRow key={budget.year}>
-              <TCell
+            <DEPRECATED_TRow key={budget.year}>
+              <DEPRECATED_TCell
                 variant="title"
                 className={cn(CELL_CLASSNAME, 'text-primary-9')}
               >
                 {budget.year}
-              </TCell>
-              <TCell className={CELL_CLASSNAME}>
+              </DEPRECATED_TCell>
+              <DEPRECATED_TCell className={CELL_CLASSNAME}>
                 {budget.eurosPrevisionnel && (
                   <Badge
                     title={
@@ -95,8 +109,8 @@ export const BudgetPerYearContent = ({
                     className="mx-auto"
                   />
                 )}
-              </TCell>
-              <TCell className={CELL_CLASSNAME}>
+              </DEPRECATED_TCell>
+              <DEPRECATED_TCell className={CELL_CLASSNAME}>
                 {budget.eurosReel && (
                   <Badge
                     title={
@@ -110,8 +124,8 @@ export const BudgetPerYearContent = ({
                     className="mx-auto"
                   />
                 )}
-              </TCell>
-              <TCell className={CELL_CLASSNAME}>
+              </DEPRECATED_TCell>
+              <DEPRECATED_TCell className={CELL_CLASSNAME}>
                 {budget.etpPrevisionnel && (
                   <Badge
                     title={
@@ -124,8 +138,8 @@ export const BudgetPerYearContent = ({
                     className="mx-auto"
                   />
                 )}
-              </TCell>
-              <TCell className={CELL_CLASSNAME}>
+              </DEPRECATED_TCell>
+              <DEPRECATED_TCell className={CELL_CLASSNAME}>
                 {budget.etpReel && (
                   <Badge
                     title={<span>{getFormattedFloat(budget.etpReel)} ETP</span>}
@@ -134,16 +148,16 @@ export const BudgetPerYearContent = ({
                     className="mx-auto"
                   />
                 )}
-              </TCell>
-            </TRow>
+              </DEPRECATED_TCell>
+            </DEPRECATED_TRow>
           ))}
 
           {/* Total */}
-          <TRow>
-            <TCell variant="title" className={CELL_CLASSNAME}>
+          <DEPRECATED_TRow>
+            <DEPRECATED_TCell variant="title" className={CELL_CLASSNAME}>
               Total
-            </TCell>
-            <TCell className={CELL_CLASSNAME}>
+            </DEPRECATED_TCell>
+            <DEPRECATED_TCell className={CELL_CLASSNAME}>
               <Badge
                 title={
                   <span>
@@ -156,8 +170,8 @@ export const BudgetPerYearContent = ({
                 state="standard"
                 className="mx-auto"
               />
-            </TCell>
-            <TCell className={CELL_CLASSNAME}>
+            </DEPRECATED_TCell>
+            <DEPRECATED_TCell className={CELL_CLASSNAME}>
               <Badge
                 title={
                   <span>
@@ -170,8 +184,8 @@ export const BudgetPerYearContent = ({
                 state="standard"
                 className="mx-auto"
               />
-            </TCell>
-            <TCell className={CELL_CLASSNAME}>
+            </DEPRECATED_TCell>
+            <DEPRECATED_TCell className={CELL_CLASSNAME}>
               <Badge
                 title={
                   <span>
@@ -184,8 +198,8 @@ export const BudgetPerYearContent = ({
                 state="standard"
                 className="mx-auto"
               />
-            </TCell>
-            <TCell className={CELL_CLASSNAME}>
+            </DEPRECATED_TCell>
+            <DEPRECATED_TCell className={CELL_CLASSNAME}>
               <Badge
                 title={
                   <span>
@@ -198,10 +212,10 @@ export const BudgetPerYearContent = ({
                 state="standard"
                 className="mx-auto"
               />
-            </TCell>
-          </TRow>
-        </TBody>
-      </Table>
+            </DEPRECATED_TCell>
+          </DEPRECATED_TRow>
+        </DEPRECATED_TBody>
+      </DEPRECATED_Table>
     </div>
   );
 };
