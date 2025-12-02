@@ -41,7 +41,7 @@ describe('Récupérer un axe', () => {
 
     // Créer un plan pour les tests
     const caller = router.createCaller({ user: editorUser });
-    const plan = await caller.plans.plans.create({
+    const plan = await caller.plans.plans.upsert({
       nom: 'Plan de test',
       collectiviteId: collectivite.id,
     });

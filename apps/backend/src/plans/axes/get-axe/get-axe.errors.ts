@@ -21,3 +21,4 @@ export const getAxeErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
 
 export const GetAxeErrorEnum = createErrorsEnum(specificErrors);
 export type GetAxeError = keyof typeof GetAxeErrorEnum;
+
