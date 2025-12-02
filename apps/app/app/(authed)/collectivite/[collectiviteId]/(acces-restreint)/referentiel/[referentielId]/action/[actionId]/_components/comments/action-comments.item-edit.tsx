@@ -7,7 +7,6 @@ type Props = {
   onSave: (value: string) => void;
   message?: string;
   onCancel: () => void;
-  isEditingComment: boolean;
 };
 
 const ActionCommentItemEdit = ({
@@ -16,7 +15,6 @@ const ActionCommentItemEdit = ({
   onSave,
   onCancel,
   message,
-  isEditingComment,
 }: Props) => {
   const [comment, setComment] = useState(message ?? '');
 
@@ -36,34 +34,31 @@ const ActionCommentItemEdit = ({
         onChange={(evt) => setComment(evt.currentTarget.value)}
         placeholder={placeholder}
         name="comment"
-        disabled={!isEditingComment}
         autoFocus={true}
         autoresize={true}
       />
-      {isEditingComment && (
-        <div className="flex gap-2 justify-end items-start mt-2">
-          <Button
-            icon="close-line"
-            size="xs"
-            variant="outlined"
-            disabled={comment.trim().length === 0}
-            onClick={() => {
-              setComment(message ?? '');
-              onCancel();
-            }}
-          >
-            Annuler
-          </Button>
-          <Button
-            icon="save-line"
-            size="xs"
-            disabled={comment.trim().length === 0}
-            onClick={handlePublishComment}
-          >
-            Enregistrer
-          </Button>
-        </div>
-      )}
+      <div className="flex gap-2 justify-end items-start mt-2">
+        <Button
+          icon="close-line"
+          size="xs"
+          variant="outlined"
+          disabled={comment.trim().length === 0}
+          onClick={() => {
+            setComment(message ?? '');
+            onCancel();
+          }}
+        >
+          Annuler
+        </Button>
+        <Button
+          icon="save-line"
+          size="xs"
+          disabled={comment.trim().length === 0}
+          onClick={handlePublishComment}
+        >
+          Enregistrer
+        </Button>
+      </div>
     </div>
   );
 };

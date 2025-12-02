@@ -1,5 +1,5 @@
 import { useCollectiviteId } from '@tet/api/collectivites';
-import ActionCommentInput from './action-comments.input';
+import ActionNewDiscussionInput from './action-new-discussion-input';
 import { useAddDiscussion } from './hooks/use-add-discussion';
 
 type Props = {
@@ -16,7 +16,7 @@ const ActionCommentNew = ({ actionId, disabledInput }: Props) => {
   };
 
   return (
-    <ActionCommentInput
+    <ActionNewDiscussionInput
       dataTest="ActionDiscussionsNouvelleDiscussion"
       placeholder="Écrire un nouveau commentaire..."
       onSave={onSave}

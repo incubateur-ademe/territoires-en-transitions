@@ -103,7 +103,7 @@ export const ActionHeader = ({
           {/** Score | Informations | Options */}
           <div
             className={classNames(
-              'flex max-lg:flex-col gap-3 lg:items-center text-sm text-grey-8 border-y border-primary-3',
+              'flex max-lg:flex-col flex-wrap gap-3 lg:items-center text-sm text-grey-8 border-y border-primary-3',
               {
                 'py-3 mt-3': !isSticky,
                 'py-1.5 mt-2': isSticky,
@@ -114,7 +114,7 @@ export const ActionHeader = ({
 
             <Divider className="lg:hidden -mb-6" />
 
-            <div className="flex max-sm:flex-col gap-3 sm:items-center w-full">
+            <div className="flex max-sm:flex-col gap-3 sm:items-center w-fit">
               {action && (
                 <Infos
                   openState={{
