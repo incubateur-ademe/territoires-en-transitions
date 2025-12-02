@@ -8,6 +8,8 @@ type Props = {
   numberOfRows?: number;
   disabled?: boolean;
   message?: string;
+  onCancel?: () => void;
+  autoFocus?: boolean;
 };
 
 const ActionCommentInput = ({
@@ -17,19 +19,26 @@ const ActionCommentInput = ({
   onSave,
   numberOfRows = 1,
   message,
+  onCancel,
+  autoFocus = false,
 }: Props) => {
   const [comment, setComment] = useState(message ?? '');
 
-  const onPublishComment = () => {
-    onSave(comment);
-    setComment('');
+  const handlePublishComment = () => {
+    if (comment.trim() !== (message ?? '').trim()) {
+      onSave(comment);
+    }
+    resetComment();
   };
+  const resetComment = () => {
+    setComment('');
+    onCancel?.();
+  };
+
   return (
     <div data-test={dataTest} className="flex gap-2">
       <Textarea
-        onBlur={() => {
-          onPublishComment();
-        }}
+        className="field-sizing-content"
         value={comment}
         onChange={(evt) => setComment(evt.currentTarget.value)}
         placeholder={placeholder}
@@ -37,15 +46,16 @@ const ActionCommentInput = ({
         rows={numberOfRows}
         name="comment"
         disabled={disabled}
+        autoFocus={autoFocus}
       />
-      <div className="flex justify-start items-start">
+      <div className="flex gap-2 justify-start items-start">
         <Button
           icon="send-plane-fill"
           title="Publier"
           variant="grey"
           size="xs"
           disabled={comment.trim().length === 0}
-          onClick={onPublishComment}
+          onClick={handlePublishComment}
         />
       </div>
     </div>

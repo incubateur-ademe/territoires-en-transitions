@@ -5,7 +5,6 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { DiscussionMessage } from '@tet/domain/collectivites';
 import { Button, Select } from '@tet/ui';
-import { cn } from '@tet/ui/utils/cn';
 import Link from 'next/link';
 import { useState } from 'react';
 import ActionCommentInput from './action-comments.input';
@@ -129,27 +128,65 @@ const ActionCommentItem = ({
 
           {/* Content */}
           <div className=" flex flex-col gap-2 w-full">
-            <div className="sm:h-7 flex sm:items-center gap-2 max-sm:flex-col">
-              <span className="text-primary-9 text-sm font-bold">
-                {comment.createdByPrenom} {comment.createdByNom}
-              </span>
-              <span className="text-grey-6 text-xs font-medium">
-                {getModifiedSince(creationDate.toISOString())}
-              </span>
-              {canUpdateOrDeleteComment && (
-                <Button
-                  className="invisible opacity-0 transition-opacity duration-150 group-hover:visible group-hover:opacity-100 focus-visible:visible focus-visible:opacity-100"
-                  dataTest="ActionDiscussionCommentaireMenu"
-                  icon="delete-bin-6-line"
-                  title="Supprimer mon commentaire"
-                  variant="outlined"
-                  size="xs"
-                  loading={isDeletingDiscussionMessage}
-                  disabled={isDeletingDiscussionMessage}
-                  onClick={() => {
-                    void handleDeleteDiscussionMessage();
-                  }}
-                />
+            <div className="sm:h-7 flex sm:items-center gap-2 max-sm:flex-col justify-between">
+              <div className="flex align-center items-center gap-2">
+                <span className="text-primary-9 text-sm font-bold">
+                  {comment.createdByPrenom} {comment.createdByNom}
+                </span>
+                <span className="text-grey-6 text-xs font-medium">
+                  {getModifiedSince(creationDate.toISOString())}
+                </span>
+                {canUpdateOrDeleteComment && (
+                  <div className="flex gap-2">
+                    <Button
+                      className="invisible opacity-0 transition-opacity duration-150 group-hover:visible group-hover:opacity-100 focus-visible:visible focus-visible:opacity-100"
+                      dataTest="ActionDiscussionCommentaireMenu"
+                      icon="pencil-line"
+                      title="Editer mon commentaire"
+                      variant="outlined"
+                      size="xs"
+                      loading={isUpdatingDiscussionMessage}
+                      disabled={isEditingComment}
+                      onClick={() => {
+                        if (!canUpdateOrDeleteComment) return;
+                        setIsEditingComment(!isEditingComment);
+                      }}
+                    />
+                    <Button
+                      className="invisible opacity-0 transition-opacity duration-150 group-hover:visible group-hover:opacity-100 focus-visible:visible focus-visible:opacity-100"
+                      dataTest="ActionDiscussionCommentaireMenu"
+                      icon="delete-bin-6-line"
+                      title="Supprimer mon commentaire"
+                      variant="outlined"
+                      size="xs"
+                      loading={isDeletingDiscussionMessage}
+                      disabled={isDeletingDiscussionMessage}
+                      onClick={() => {
+                        void handleDeleteDiscussionMessage();
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+              {isFirstComment && (
+                <div className="">
+                  <Select
+                    options={statusOptions}
+                    values={selectedStatus}
+                    disabled={isUpdatingDiscussion}
+                    onChange={(value) => {
+                      if (value) {
+                        void handleUpdateDiscussionStatus(
+                          value as ActionDiscussionStatut
+                        );
+                      }
+                    }}
+                    customItem={(v) => (
+                      <span className="text-primary font-bold">{v.label}</span>
+                    )}
+                    small
+                  />
+                </div>
               )}
             </div>
             {title &&
@@ -169,21 +206,9 @@ const ActionCommentItem = ({
               ) : (
                 <ActionCommentTitle title={title} />
               ))}
+
             {!isEditingComment && (
-              <p
-                className={cn(
-                  'text-sm text-primary-10 font-medium whitespace-pre-wrap mb-0 w-full',
-                  {
-                    'cursor-text': canUpdateOrDeleteComment,
-                  }
-                )}
-                style={{ overflowWrap: 'anywhere' }}
-                title={canUpdateOrDeleteComment ? 'Editer mon commentaire' : ''}
-                onClick={() => {
-                  if (!canUpdateOrDeleteComment) return;
-                  setIsEditingComment(!isEditingComment);
-                }}
-              >
+              <p className="text-sm text-primary-10 font-medium whitespace-pre-wrap mb-0 w-full wrap-anywhere">
                 {comment.message}
               </p>
             )}
@@ -194,32 +219,14 @@ const ActionCommentItem = ({
                   handleSaveComment(value);
                 }}
                 disabled={isUpdatingDiscussionMessage}
+                onCancel={() => {
+                  setIsEditingComment(false);
+                }}
+                autoFocus={true}
               />
             )}
           </div>
         </div>
-        {isFirstComment && (
-          <div className="flex-none items-center gap-2 ">
-            <div className="shrink-0">
-              <Select
-                options={statusOptions}
-                values={selectedStatus}
-                disabled={isUpdatingDiscussion}
-                onChange={(value) => {
-                  if (value) {
-                    void handleUpdateDiscussionStatus(
-                      value as ActionDiscussionStatut
-                    );
-                  }
-                }}
-                customItem={(v) => (
-                  <span className="text-primary font-bold">{v.label}</span>
-                )}
-                small
-              />
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
