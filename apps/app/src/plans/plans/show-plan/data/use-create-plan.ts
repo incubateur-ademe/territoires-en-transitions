@@ -15,10 +15,11 @@ export const useCreatePlan = ({
   const trpc = useTRPC();
 
   const { mutateAsync: createPlan } = useMutation(
-    trpc.plans.plans.create.mutationOptions()
+    trpc.plans.plans.upsert.mutationOptions()
   );
 
   const { mutateAsync } = useMutation({
+    mutationKey: 'create_plan',
     mutationFn: async (plan: CreatePlanRequest) => {
       const result = await createPlan({
         nom: plan.nom,
