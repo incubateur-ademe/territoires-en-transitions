@@ -20,16 +20,10 @@ export class FilterDiscussionsPom {
 
   async closeFirstComment() {
     await this.page
-      .locator('button')
-      .filter({ hasNotText: 'Commentaires ouverts' })
-      .filter({ hasText: 'Ouvert' })
+      .getByText('Troisième commentaire sur la mesure')
       .first()
-      .click();
-    await this.page
-      .locator('button')
-      .filter({ hasText: 'Fermé' })
-      .first()
-      .click();
+      .hover();
+    await this.page.getByRole('button', { name: 'Fermer' }).first().click();
   }
 
   async selectStatus(status: string) {
