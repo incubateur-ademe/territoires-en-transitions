@@ -41,6 +41,7 @@ export * from './design-system/RichTextEditor';
 export * from './design-system/Select';
 export * from './design-system/SideMenu';
 export * from './design-system/Spacer';
+export * from './design-system/table';
 export * from './design-system/Tabs';
 export * from './design-system/Tag';
 export * from './design-system/Textarea';
