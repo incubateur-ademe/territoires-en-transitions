@@ -1,4 +1,11 @@
-import { Checkbox, TBody, TCell, THead, TRow, Table } from '@/ui';
+import {
+  Checkbox,
+  DEPRECATED_TBody,
+  DEPRECATED_TCell,
+  DEPRECATED_THead,
+  DEPRECATED_TRow,
+  DEPRECATED_Table,
+} from '@/ui';
 import { PdfSectionKey, TSectionsValues, sectionsList } from '../utils';
 import ExportSuiviSelect from './export-suivi-select';
 
@@ -22,36 +29,40 @@ const ExportFicheActionTable = ({ options, setOptions }: Props) => {
 
   return (
     <div className="w-full max-w-full overflow-x-auto">
-      <Table className="border-[0.5px] border-primary-4">
+      <DEPRECATED_Table className="border-[0.5px] border-primary-4">
         {/* En-tête du tableau */}
-        <THead>
-          <TRow className="bg-primary-2 text-primary-9 font-bold text-sm">
-            <TCell className="min-w-80">Sections</TCell>
-            <TCell className="min-w-80">Personnaliser la section</TCell>
-            <TCell className="min-w-52">Ajouter à l’export PDF</TCell>
-          </TRow>
-        </THead>
+        <DEPRECATED_THead>
+          <DEPRECATED_TRow className="bg-primary-2 text-primary-9 font-bold text-sm">
+            <DEPRECATED_TCell className="min-w-80">Sections</DEPRECATED_TCell>
+            <DEPRECATED_TCell className="min-w-80">
+              Personnaliser la section
+            </DEPRECATED_TCell>
+            <DEPRECATED_TCell className="min-w-52">
+              Ajouter à l’export PDF
+            </DEPRECATED_TCell>
+          </DEPRECATED_TRow>
+        </DEPRECATED_THead>
 
         {/* Contenu du tableau */}
-        <TBody>
+        <DEPRECATED_TBody>
           {sectionsList.map((section) => (
-            <TRow key={section.key}>
+            <DEPRECATED_TRow key={section.key}>
               {/* Sections */}
-              <TCell className="text-primary-10 font-bold text-sm">
+              <DEPRECATED_TCell className="text-primary-10 font-bold text-sm">
                 {section.title}
-              </TCell>
+              </DEPRECATED_TCell>
 
               {/* Personnalisation */}
-              <TCell className="!px-3 !py-1">
+              <DEPRECATED_TCell className="!px-3 !py-1">
                 {section.key === 'notes_suivi' ? (
                   <ExportSuiviSelect {...{ options, setOptions }} />
                 ) : (
                   ''
                 )}
-              </TCell>
+              </DEPRECATED_TCell>
 
               {/* Sélection */}
-              <TCell>
+              <DEPRECATED_TCell>
                 <Checkbox
                   className="mx-auto"
                   checked={options[section.key].isChecked}
@@ -59,11 +70,11 @@ const ExportFicheActionTable = ({ options, setOptions }: Props) => {
                     handleOnCheck(section.key, evt.currentTarget.checked)
                   }
                 />
-              </TCell>
-            </TRow>
+              </DEPRECATED_TCell>
+            </DEPRECATED_TRow>
           ))}
-        </TBody>
-      </Table>
+        </DEPRECATED_TBody>
+      </DEPRECATED_Table>
     </div>
   );
 };

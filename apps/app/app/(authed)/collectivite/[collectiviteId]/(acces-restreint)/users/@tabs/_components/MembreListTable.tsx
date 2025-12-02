@@ -4,7 +4,15 @@ import {
 } from '@/app/app/pages/collectivite/Users/useCollectiviteMembres';
 import { useUpdateCollectiviteMembre } from '@/app/app/pages/collectivite/Users/useUpdateCollectiviteMembre';
 import { CollectiviteAccessLevel } from '@/domain/users';
-import { Pagination, TBody, TCell, THead, THeadCell, TRow, Table } from '@/ui';
+import {
+  DEPRECATED_Table,
+  DEPRECATED_TBody,
+  DEPRECATED_TCell,
+  DEPRECATED_THead,
+  DEPRECATED_THeadCell,
+  DEPRECATED_TRow,
+  Pagination,
+} from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { SendInvitationArgs } from '../../_components/use-invite-member';
@@ -35,58 +43,62 @@ const MembreListTable = ({
   return (
     <>
       <div className="overflow-x-auto">
-        <Table className="min-w-full bg-white">
-          <THead>
-            <TRow>
-              <THeadCell
+        <DEPRECATED_Table className="min-w-full bg-white">
+          <DEPRECATED_THead>
+            <DEPRECATED_TRow>
+              <DEPRECATED_THeadCell
                 className={classNames(headCellClassnames, 'text-left')}
               >
                 Nom et adresse mail
-              </THeadCell>
-              <THeadCell
+              </DEPRECATED_THeadCell>
+              <DEPRECATED_THeadCell
                 className={classNames(headCellClassnames, 'text-left')}
               >
                 Fonction
                 <div className="text-xs font-normal">
                   dans cette collectivité
                 </div>
-              </THeadCell>
-              <THeadCell
+              </DEPRECATED_THeadCell>
+              <DEPRECATED_THeadCell
                 className={classNames(headCellClassnames, 'text-left')}
               >
                 {"Champ d'intervention"}
                 <div className="text-xs font-normal">
                   dans cette collectivité
                 </div>
-              </THeadCell>
-              <THeadCell
+              </DEPRECATED_THeadCell>
+              <DEPRECATED_THeadCell
                 className={classNames(headCellClassnames, 'text-left')}
               >
                 Intitulé de poste
                 <div className="text-xs font-normal">
                   dans cette collectivité
                 </div>
-              </THeadCell>
-              <THeadCell
+              </DEPRECATED_THeadCell>
+              <DEPRECATED_THeadCell
                 className={classNames(headCellClassnames, 'text-left')}
               >
                 Accès
-              </THeadCell>
-              <THeadCell className={headCellClassnames}>Statut</THeadCell>
-              <THeadCell className={headCellClassnames}>Actions</THeadCell>
-            </TRow>
-          </THead>
+              </DEPRECATED_THeadCell>
+              <DEPRECATED_THeadCell className={headCellClassnames}>
+                Statut
+              </DEPRECATED_THeadCell>
+              <DEPRECATED_THeadCell className={headCellClassnames}>
+                Actions
+              </DEPRECATED_THeadCell>
+            </DEPRECATED_TRow>
+          </DEPRECATED_THead>
 
-          <TBody>
+          <DEPRECATED_TBody>
             {isLoading ? (
               // Chargement
-              <TRow data-test="Loading">
-                <TCell colSpan={6}>
+              <DEPRECATED_TRow data-test="Loading">
+                <DEPRECATED_TCell colSpan={6}>
                   <div className="text-center py-4 text-grey-8">
                     Chargement...
                   </div>
-                </TCell>
-              </TRow>
+                </DEPRECATED_TCell>
+              </DEPRECATED_TRow>
             ) : membres ? (
               // Liste des membres
               membres.map((membre) => (
@@ -102,16 +114,16 @@ const MembreListTable = ({
               ))
             ) : (
               // Liste vide
-              <TRow>
-                <TCell colSpan={6}>
+              <DEPRECATED_TRow>
+                <DEPRECATED_TCell colSpan={6}>
                   <div className="text-center py-4 text-grey-8">
                     {"Aucun membre n'est rattaché à cette collectivité"}
                   </div>
-                </TCell>
-              </TRow>
+                </DEPRECATED_TCell>
+              </DEPRECATED_TRow>
             )}
-          </TBody>
-        </Table>
+          </DEPRECATED_TBody>
+        </DEPRECATED_Table>
       </div>
       {/* Pagination */}
       <Pagination

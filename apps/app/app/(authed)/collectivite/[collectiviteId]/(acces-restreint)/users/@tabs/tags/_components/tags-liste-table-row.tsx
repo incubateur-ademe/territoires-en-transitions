@@ -5,8 +5,8 @@ import {
   Badge,
   Button,
   DeleteOptionModal,
-  TCell,
-  TRow,
+  DEPRECATED_TCell,
+  DEPRECATED_TRow,
   Tooltip,
   UpdateOptionModal,
 } from '@/ui';
@@ -63,17 +63,17 @@ const TagsListeTableRow = ({
 
   return (
     <>
-      <TRow className={rowClassnames}>
+      <DEPRECATED_TRow className={rowClassnames}>
         {/* Tag pilote */}
-        <TCell className={cellClassnames}>
+        <DEPRECATED_TCell className={cellClassnames}>
           <div className="text-sm text-primary-10 font-bold">{tag.tagNom}</div>
           {isInvitationSent && (
             <div className="text-xs text-grey-8">{tag.email}</div>
           )}
-        </TCell>
+        </DEPRECATED_TCell>
 
         {/* Statut */}
-        <TCell className={classNames(cellClassnames, 'w-56')}>
+        <DEPRECATED_TCell className={classNames(cellClassnames, 'w-56')}>
           <div className="flex justify-center items-center">
             {isInvitationSent && (
               <Badge
@@ -85,11 +85,11 @@ const TagsListeTableRow = ({
               />
             )}
           </div>
-        </TCell>
+        </DEPRECATED_TCell>
 
         {/* Actions */}
         {(isAdmin || isEditor) && (
-          <TCell className={classNames(cellClassnames, 'w-56')}>
+          <DEPRECATED_TCell className={classNames(cellClassnames, 'w-56')}>
             <div className="flex gap-2 justify-center items-center">
               <Tooltip
                 label={
@@ -143,9 +143,9 @@ const TagsListeTableRow = ({
                 </Tooltip>
               )}
             </div>
-          </TCell>
+          </DEPRECATED_TCell>
         )}
-      </TRow>
+      </DEPRECATED_TRow>
 
       <InviteMemberModal
         openState={{
