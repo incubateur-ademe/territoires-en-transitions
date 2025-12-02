@@ -5,3 +5,4 @@ export const getAxeInputSchema = z.object({
 });
 
 export type GetAxeInput = z.infer<typeof getAxeInputSchema>;
+
