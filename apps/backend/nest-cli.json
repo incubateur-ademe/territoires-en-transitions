@@ -5,7 +5,12 @@
   "entryFile": "main",
   "compilerOptions": {
     "tsConfigPath": "tsconfig.app.json",
-    "builder": "swc",
+    "builder": {
+      "type": "swc",
+      "options": {
+        "extensions": [".ts", ".tsx"]
+      }
+    },
     "assets": [
       { "include": "**/*.csv", "outDir": "dist" },
       { "include": "**/*.xlsx", "outDir": "dist" }
