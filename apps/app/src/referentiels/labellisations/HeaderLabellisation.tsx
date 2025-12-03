@@ -73,7 +73,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
           >
             {etoiles === 1 && !isCOT
               ? 'Demander la première étoile'
-              : 'Demander un auditsss'}
+              : 'Demander un audit'}
           </Button>
         </>
       ) : null}
