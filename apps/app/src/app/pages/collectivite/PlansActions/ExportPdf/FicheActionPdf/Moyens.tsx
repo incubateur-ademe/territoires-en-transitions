@@ -1,6 +1,6 @@
 import BudgetContent from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/BudgetContent';
-import { FicheBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { FicheBudget } from '@/app/plans/fiches/update-fiche/data/use-get-budget';
 import {
   BadgeFinanceur,
   Divider,

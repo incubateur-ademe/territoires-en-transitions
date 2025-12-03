@@ -1,7 +1,8 @@
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { FicheWithRelations, Financeur } from '@tet/domain/plans';
-import { ModalFooterOKCancel, OpenState } from '@tet/ui';
+import { ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { isEqual } from 'es-toolkit';
 import { useState } from 'react';
 import { FinanceursInput } from './financeurs.input';

@@ -115,7 +115,6 @@ export function ReactECharts({
       chart?.dispose();
       window.removeEventListener('resize', resizeChart);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [theme, heightRatio]);
 
   useEffect(() => {

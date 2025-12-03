@@ -1,5 +1,5 @@
 import BudgetTable from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/BudgetTable';
-import { FicheBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
+import { FicheBudget } from '@/app/plans/fiches/update-fiche/data/use-get-budget';
 import {
   BadgeFinanceur,
   Paragraph,

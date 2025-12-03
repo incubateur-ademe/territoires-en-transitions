@@ -7,6 +7,7 @@ import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-
 import { ErrorPage } from '@/app/utils/error/error.page';
 import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { FicheWithRelations } from '@tet/domain/plans';
 import { Fiche, useGetFiche } from './data/use-get-fiche';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
 import { FicheActionDescription } from './FicheActionDescription/FicheActionDescription';
