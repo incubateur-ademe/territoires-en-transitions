@@ -4,7 +4,7 @@ import { TableFull } from './table-full';
 
 const meta: Meta<typeof TableFull> = {
   component: TableFull,
-  title: 'Design System/React Table',
+  title: 'Design System/Table',
 };
 
 export default meta;
