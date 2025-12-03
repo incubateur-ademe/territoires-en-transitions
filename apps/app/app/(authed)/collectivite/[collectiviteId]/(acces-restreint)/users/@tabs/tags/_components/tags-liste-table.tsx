@@ -1,5 +1,12 @@
 import { CollectiviteAccessLevel } from '@/domain/users';
-import { TBody, TCell, THead, THeadCell, TRow, Table } from '@/ui';
+import {
+  DEPRECATED_Table,
+  DEPRECATED_TBody,
+  DEPRECATED_TCell,
+  DEPRECATED_THead,
+  DEPRECATED_THeadCell,
+  DEPRECATED_TRow,
+} from '@/ui';
 import classNames from 'classnames';
 import {
   SendInvitationArgs,
@@ -46,31 +53,35 @@ export const TagsListeTable = ({
   return (
     <>
       <div className="overflow-x-auto">
-        <Table className="min-w-full bg-white">
-          <THead>
-            <TRow>
-              <THeadCell
+        <DEPRECATED_Table className="min-w-full bg-white">
+          <DEPRECATED_THead>
+            <DEPRECATED_TRow>
+              <DEPRECATED_THeadCell
                 className={classNames(headCellClassnames, 'text-left')}
               >
                 Tag pilote
-              </THeadCell>
-              <THeadCell className={headCellClassnames}>Statut</THeadCell>
+              </DEPRECATED_THeadCell>
+              <DEPRECATED_THeadCell className={headCellClassnames}>
+                Statut
+              </DEPRECATED_THeadCell>
               {(isAdmin || isEditor) && (
-                <THeadCell className={headCellClassnames}>Actions</THeadCell>
+                <DEPRECATED_THeadCell className={headCellClassnames}>
+                  Actions
+                </DEPRECATED_THeadCell>
               )}
-            </TRow>
-          </THead>
+            </DEPRECATED_TRow>
+          </DEPRECATED_THead>
 
-          <TBody>
+          <DEPRECATED_TBody>
             {isLoading ? (
               // Chargement
-              <TRow data-test="Loading">
-                <TCell colSpan={3}>
+              <DEPRECATED_TRow data-test="Loading">
+                <DEPRECATED_TCell colSpan={3}>
                   <div className="text-center py-4 text-grey-8">
                     Chargement...
                   </div>
-                </TCell>
-              </TRow>
+                </DEPRECATED_TCell>
+              </DEPRECATED_TRow>
             ) : tags && tags.length > 0 ? (
               // Liste des tags
               tags.map((tag) => (
@@ -86,16 +97,16 @@ export const TagsListeTable = ({
               ))
             ) : (
               // Liste vide
-              <TRow>
-                <TCell colSpan={3}>
+              <DEPRECATED_TRow>
+                <DEPRECATED_TCell colSpan={3}>
                   <div className="text-center py-4 text-grey-8">
                     {"Aucun tag pilote n'est défini dans cette collectivité"}
                   </div>
-                </TCell>
-              </TRow>
+                </DEPRECATED_TCell>
+              </DEPRECATED_TRow>
             )}
-          </TBody>
-        </Table>
+          </DEPRECATED_TBody>
+        </DEPRECATED_Table>
       </div>
     </>
   );

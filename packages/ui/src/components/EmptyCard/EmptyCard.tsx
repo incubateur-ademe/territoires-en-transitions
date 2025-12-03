@@ -1,6 +1,7 @@
-import { Badge, BadgeSize, Button, ButtonProps, ButtonSize } from '@/ui';
 import classNames from 'classnames';
 import React from 'react';
+import { Badge, BadgeSize } from '../../design-system/Badge';
+import { Button, ButtonProps, ButtonSize } from '../../design-system/Button';
 
 type EmptyCardSize = 'xs' | 'md' | 'xl';
 
@@ -40,9 +41,9 @@ const sizeClasses = {
   },
 };
 
-type EmptyCardProps = {
+export type EmptyCardProps = {
   /** Pictogramme en en-tête de la carte */
-  picto: (props: PictoProps) => React.ReactNode;
+  picto?: (props: PictoProps) => React.ReactNode;
   /** Titre de la carte */
   title?: string;
   /** Sous-titre de la carte */
@@ -117,7 +118,7 @@ export const EmptyCard = ({
       data-test={dataTest}
     >
       {/* Pictogramme */}
-      {picto({
+      {picto?.({
         className: 'mx-auto',
         width: sizeClasses[size].picto.width,
         height: sizeClasses[size].picto.height,

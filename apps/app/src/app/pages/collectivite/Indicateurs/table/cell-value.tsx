@@ -1,4 +1,4 @@
-import { TCell } from '@/ui';
+import { DEPRECATED_TCell } from '@/ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { InputValue } from './input-value';
 
@@ -23,17 +23,17 @@ export const CellValue = (props: CellValueProps) => {
 
 const CellValueReadOnly = ({ value }: CellValueProps) => {
   return (
-    <TCell variant="number">
+    <DEPRECATED_TCell variant="number">
       {typeof value === 'number' ? NumFormat.format(value) : ''}
-    </TCell>
+    </DEPRECATED_TCell>
   );
 };
 
 const CellValueInput = ({ value, onChange }: CellValueProps) => {
   const handleChange = useDebouncedCallback(onChange ?? (() => void 0), 500);
   return (
-    <TCell variant="input">
+    <DEPRECATED_TCell variant="input">
       <InputValue displaySize="sm" value={value} onChange={handleChange} />
-    </TCell>
+    </DEPRECATED_TCell>
   );
 };

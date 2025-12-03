@@ -1,6 +1,7 @@
 import { flexRender, Table } from '@tanstack/react-table';
 
-import { Row, TableEmpty, TableLoading } from './components';
+import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
+import { TableEmpty, TableLoading, TableRow } from '@/ui';
 
 type Props = {
   isLoading: boolean;
@@ -26,17 +27,18 @@ export const FichesListTableContent = ({
       <TableEmpty
         columnIds={table.getVisibleFlatColumns().map((col) => col.id)}
         title="Aucune action ne correspond à votre recherche"
+        picto={(props) => <PictoExpert {...props} />}
       />
     );
   }
 
   return table.getRowModel().rows.map((row) => (
-    <Row key={row.id} className="text-sm">
+    <TableRow key={row.id} className="text-sm">
       {row.getVisibleCells().map((cell) => (
         <td key={cell.id} className="px-4 py-3">
           {flexRender(cell.column.columnDef.cell, cell.getContext())}
         </td>
       ))}
-    </Row>
+    </TableRow>
   ));
 };

@@ -1,13 +1,13 @@
 import {
+  DEPRECATED_Table,
+  DEPRECATED_TBody,
+  DEPRECATED_TCell,
+  DEPRECATED_THead,
+  DEPRECATED_THeadCell,
+  DEPRECATED_THeadRow,
+  DEPRECATED_TRow,
   Modal,
   ModalFooterOKCancel,
-  Table,
-  TBody,
-  TCell,
-  THead,
-  THeadCell,
-  THeadRow,
-  TRow,
 } from '@/ui';
 import { useState } from 'react';
 import { PreparedValue } from '../data/prepare-data';
@@ -46,27 +46,31 @@ export const ConfirmDelete = (props: ConfirmDeleteProps) => {
             Attention, les données existantes pour l&apos;année <b>{annee}</b>{' '}
             seront supprimées.
           </p>
-          <Table>
-            <THead>
-              <THeadRow>
-                <THeadCell>&nbsp;</THeadCell>
-                <THeadCell>Valeur</THeadCell>
-                <THeadCell>Commentaire</THeadCell>
-              </THeadRow>
-            </THead>
-            <TBody>
-              <TRow>
-                <TCell className="font-medium">Résultat ({unite})</TCell>
+          <DEPRECATED_Table>
+            <DEPRECATED_THead>
+              <DEPRECATED_THeadRow>
+                <DEPRECATED_THeadCell>&nbsp;</DEPRECATED_THeadCell>
+                <DEPRECATED_THeadCell>Valeur</DEPRECATED_THeadCell>
+                <DEPRECATED_THeadCell>Commentaire</DEPRECATED_THeadCell>
+              </DEPRECATED_THeadRow>
+            </DEPRECATED_THead>
+            <DEPRECATED_TBody>
+              <DEPRECATED_TRow>
+                <DEPRECATED_TCell className="font-medium">
+                  Résultat ({unite})
+                </DEPRECATED_TCell>
                 <CellValue readonly value={resultat ?? ''} />
-                <TCell>{resultatCommentaire}</TCell>
-              </TRow>
-              <TRow>
-                <TCell className="font-medium">Objectif ({unite})</TCell>
+                <DEPRECATED_TCell>{resultatCommentaire}</DEPRECATED_TCell>
+              </DEPRECATED_TRow>
+              <DEPRECATED_TRow>
+                <DEPRECATED_TCell className="font-medium">
+                  Objectif ({unite})
+                </DEPRECATED_TCell>
                 <CellValue readonly value={objectif ?? ''} />
-                <TCell>{objectifCommentaire}</TCell>
-              </TRow>
-            </TBody>
-          </Table>
+                <DEPRECATED_TCell>{objectifCommentaire}</DEPRECATED_TCell>
+              </DEPRECATED_TRow>
+            </DEPRECATED_TBody>
+          </DEPRECATED_Table>
         </>
       )}
       renderFooter={({ close }) => (

@@ -1,8 +1,14 @@
 import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
-import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
-import { Button, Table, TBody, TCell, TRow } from '@/ui';
-import { useState } from 'react';
 import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
+import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
+import {
+  Button,
+  DEPRECATED_Table,
+  DEPRECATED_TBody,
+  DEPRECATED_TCell,
+  DEPRECATED_TRow,
+} from '@/ui';
+import { useState } from 'react';
 import { PreparedData, PreparedValue } from '../data/prepare-data';
 import { useDeleteIndicateurValeur } from '../data/use-delete-indicateur-valeur';
 import { useGetColorBySourceId } from '../data/use-indicateur-sources';
@@ -59,10 +65,10 @@ export const IndicateurValeursTable = ({
 
   return (
     <>
-      <Table>
-        <TBody>
-          <TRow className="bg-primary-2 border-b-2 border-primary-4">
-            <TCell className="bg-white">&nbsp;</TCell>
+      <DEPRECATED_Table>
+        <DEPRECATED_TBody>
+          <DEPRECATED_TRow className="bg-primary-2 border-b-2 border-primary-4">
+            <DEPRECATED_TCell className="bg-white">&nbsp;</DEPRECATED_TCell>
             {/* colonnes pour chaque année */}
             {data && (
               <CellAnneeList
@@ -98,10 +104,10 @@ export const IndicateurValeursTable = ({
                   rowSpan={(sources?.length ?? 0) + 2}
                 />
               ))}
-          </TRow>
+          </DEPRECATED_TRow>
           {/* lignes pour chaque source */}
           {sources?.map((s) => (
-            <TRow key={s.source}>
+            <DEPRECATED_TRow key={s.source}>
               {/* nom de la source et rappel de l'unité */}
               <CellSourceName
                 source={s}
@@ -134,12 +140,12 @@ export const IndicateurValeursTable = ({
                   />
                 );
               })}
-            </TRow>
+            </DEPRECATED_TRow>
           ))}
           {/* ligne pour les boutons "commentaire" */}
           {!disableComments && (
-            <TRow>
-              <TCell>&nbsp;</TCell>
+            <DEPRECATED_TRow>
+              <DEPRECATED_TCell>&nbsp;</DEPRECATED_TCell>
               {annees?.map((annee) => {
                 const entry = donneesCollectivite?.valeurs.find(
                   (v) => v.annee === annee
@@ -148,7 +154,7 @@ export const IndicateurValeursTable = ({
                 const commentaire = entry?.commentaire ?? '';
 
                 return (
-                  <TCell key={annee}>
+                  <DEPRECATED_TCell key={annee}>
                     <div className="flex justify-center">
                       <Button
                         size="xs"
@@ -159,13 +165,13 @@ export const IndicateurValeursTable = ({
                         onClick={() => setCommentaireValeur(entry ?? { annee })}
                       />
                     </div>
-                  </TCell>
+                  </DEPRECATED_TCell>
                 );
               })}
-            </TRow>
+            </DEPRECATED_TRow>
           )}
-        </TBody>
-      </Table>
+        </DEPRECATED_TBody>
+      </DEPRECATED_Table>
       {commentaireValeur && (
         <EditCommentaireModal
           annee={commentaireValeur.annee}

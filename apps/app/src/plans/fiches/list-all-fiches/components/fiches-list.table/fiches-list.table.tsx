@@ -11,13 +11,13 @@ import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
 import { CollectiviteAccess } from '@/domain/users';
+import { Table, TableHead, TableHeaderCell } from '@/ui';
 import { FichesListCellActions } from './cells/fiches-list.cell-actions';
 import { FichesListCellCheckbox } from './cells/fiches-list.cell-checkbox';
 import { FichesListCellDateFin } from './cells/fiches-list.cell-date-fin';
 import { FichesListCellPilotes } from './cells/fiches-list.cell-pilotes';
 import { FichesListCellPlans } from './cells/fiches-list.cell-plans';
 import { FichesListCellTitle } from './cells/fiches-list.cell-title';
-import { HeaderCell } from './components';
 import { FichesListTableContent } from './fiches-list.table-content';
 
 declare module '@tanstack/react-table' {
@@ -33,7 +33,7 @@ const columnHelper = createColumnHelper<FicheWithRelationsAndCollectivite>();
 const columns = [
   columnHelper.display({
     id: 'select',
-    header: () => <HeaderCell className="w-12" />,
+    header: () => <TableHeaderCell className="w-12" />,
     cell: ({ row, table }) => (
       <FichesListCellCheckbox
         ficheId={row.original.id}
@@ -44,19 +44,19 @@ const columns = [
   }),
 
   columnHelper.accessor('titre', {
-    header: () => <HeaderCell title="Titre" />,
+    header: () => <TableHeaderCell title="Titre" />,
     cell: (info) => (
       <FichesListCellTitle title={info.getValue()} fiche={info.row.original} />
     ),
   }),
 
   columnHelper.accessor('plans', {
-    header: () => <HeaderCell title="Plan" className="w-40 xl:w-60" />,
+    header: () => <TableHeaderCell title="Plan" className="w-40 xl:w-60" />,
     cell: (info) => <FichesListCellPlans plans={info.getValue()} />,
   }),
 
   columnHelper.accessor('statut', {
-    header: () => <HeaderCell title="Statut" className="w-32" />,
+    header: () => <TableHeaderCell title="Statut" className="w-32" />,
     cell: (info) => {
       const statut = info.getValue();
       return statut && <BadgeStatut statut={statut} size="sm" />;
@@ -64,12 +64,12 @@ const columns = [
   }),
 
   columnHelper.accessor('pilotes', {
-    header: () => <HeaderCell title="Pilote" className="w-44" />,
+    header: () => <TableHeaderCell title="Pilote" className="w-44" />,
     cell: (info) => <FichesListCellPilotes pilotes={info.getValue()} />,
   }),
 
   columnHelper.accessor('priorite', {
-    header: () => <HeaderCell title="Priorité" className="w-24" />,
+    header: () => <TableHeaderCell title="Priorité" className="w-24" />,
     cell: (info) => {
       const priorite = info.getValue();
       return priorite && <BadgePriorite priorite={priorite} size="sm" />;
@@ -77,7 +77,7 @@ const columns = [
   }),
 
   columnHelper.accessor('dateFin', {
-    header: () => <HeaderCell title="Date de fin" className="w-32" />,
+    header: () => <TableHeaderCell title="Date de fin" className="w-32" />,
     cell: (info) => (
       <FichesListCellDateFin
         dateFin={info.getValue()}
@@ -88,7 +88,7 @@ const columns = [
 
   columnHelper.display({
     id: 'actions',
-    header: () => <HeaderCell className="w-16" icon="more-2-line" />,
+    header: () => <TableHeaderCell className="w-16" icon="more-2-line" />,
     cell: (info) => <FichesListCellActions fiche={info.row.original} />,
   }),
 ];
@@ -132,11 +132,11 @@ export const FichesListTable = ({
   }, [collectivite.isReadOnly, isGroupedActionsOn, table]);
 
   return (
-    <div className="p-4 lg:p-8 bg-white rounded-xl border border-grey-3">
-      <table className="table-fixed w-full">
-        <thead className="sticky top-0 shadow-[0_1px_0px_0px] shadow-grey-3 z-[1]">
+    <div className="p-4 pt-2 lg:p-8 lg:pt-4 bg-white rounded-xl border border-grey-3">
+      <Table>
+        <TableHead className="sticky top-0 shadow-[0_1px_0px_0px] shadow-grey-3 z-[1]">
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} className="bg-white">
+            <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <Fragment key={header.id}>
                   {flexRender(
@@ -147,7 +147,7 @@ export const FichesListTable = ({
               ))}
             </tr>
           ))}
-        </thead>
+        </TableHead>
         <tbody>
           <FichesListTableContent
             isLoading={isLoading}
@@ -155,7 +155,7 @@ export const FichesListTable = ({
             table={table}
           />
         </tbody>
-      </table>
+      </Table>
     </div>
   );
 };

@@ -9,8 +9,9 @@ import {
 
 /**
  * Affiche un tableau
+ * @deprecated Utiliser les composants de Table à la place
  */
-export const Table = (props: TableProps) => {
+export const DEPRECATED_Table = (props: TableProps) => {
   const { children, className } = props;
   return (
     <div
@@ -26,8 +27,9 @@ export const Table = (props: TableProps) => {
 
 /**
  * Affiche un en-tête de tableau
+ * @deprecated Utiliser les composants de Table à la place
  */
-export const THead = (props: THeadProps) => {
+export const DEPRECATED_THead = (props: THeadProps) => {
   const { children, className } = props;
   return (
     <thead
@@ -43,21 +45,30 @@ export const THead = (props: THeadProps) => {
 
 /**
  * Affiche une ligne d'en-tête de tableau
+ * @deprecated Utiliser les composants de Table à la place
  */
-export const THeadRow = (props: TRowProps) => {
+export const DEPRECATED_THeadRow = (props: TRowProps) => {
   const { children, className } = props;
   return <tr className={className}>{children}</tr>;
 };
 
 /**
- * Affiche une cellule d'en-tête de tableau
+ * @deprecated Utiliser les composants de Table à la place
  */
-export const HEAD_CELL_STYLE =
+export const DEPRECATED_HEAD_CELL_STYLE =
   'px-5 py-4 [&:not(:last-child)]:border-r border-primary-4 text-primary-9 text-xs';
-export const THeadCell = (props: TCellProps) => {
+
+/**
+ * Affiche une cellule d'en-tête de tableau
+ * @deprecated Utiliser les composants de Table à la place
+ */
+export const DEPRECATED_THeadCell = (props: TCellProps) => {
   const { children, className } = props;
   return (
-    <th scope="col" className={classNames(HEAD_CELL_STYLE, className)}>
+    <th
+      scope="col"
+      className={classNames(DEPRECATED_HEAD_CELL_STYLE, className)}
+    >
       {children}
     </th>
   );
@@ -65,16 +76,18 @@ export const THeadCell = (props: TCellProps) => {
 
 /**
  * Affiche un corps de tableau
+ * @deprecated Utiliser les composants de Table à la place
  */
-export const TBody = (props: TBodyProps) => {
+export const DEPRECATED_TBody = (props: TBodyProps) => {
   const { children, className } = props;
   return <tbody className={className}>{children}</tbody>;
 };
 
 /**
  * Affiche une ligne de tableau
+ * @deprecated Utiliser les composants de Table à la place
  */
-export const TRow = (props: TRowProps) => {
+export const DEPRECATED_TRow = (props: TRowProps) => {
   const { children, className } = props;
   return (
     <tr
@@ -90,8 +103,9 @@ export const TRow = (props: TRowProps) => {
 
 /**
  * Affiche une cellule de tableau
+ * @deprecated Utiliser les composants de Table à la place
  */
-export const TCell = (props: TCellProps) => {
+export const DEPRECATED_TCell = (props: TCellProps) => {
   const { children, className, variant, colSpan } = props;
   return (
     <td

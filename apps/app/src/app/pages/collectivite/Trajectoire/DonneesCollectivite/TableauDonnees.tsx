@@ -1,5 +1,13 @@
 import { SourceIndicateur } from '@/domain/indicateurs';
-import { Input, Table, TBody, TCell, THead, THeadCell, TRow } from '@/ui';
+import {
+  DEPRECATED_Table,
+  DEPRECATED_TBody,
+  DEPRECATED_TCell,
+  DEPRECATED_THead,
+  DEPRECATED_THeadCell,
+  DEPRECATED_TRow,
+  Input,
+} from '@/ui';
 import classNames from 'classnames';
 import { getNomSource } from '../../../../../indicateurs/trajectoires/trajectoire-constants';
 
@@ -62,27 +70,29 @@ export const TableauDonnees = (props: TableauDonneesProps) => {
       ];
 
   return (
-    <Table className="mt-7">
-      <THead>
-        <TRow>
-          <THeadCell className="text-left uppercase">Secteur</THeadCell>
+    <DEPRECATED_Table className="mt-7">
+      <DEPRECATED_THead>
+        <DEPRECATED_TRow>
+          <DEPRECATED_THeadCell className="text-left uppercase">
+            Secteur
+          </DEPRECATED_THeadCell>
           {sources.map((source) => (
-            <THeadCell
+            <DEPRECATED_THeadCell
               key={source.id}
               className={classNames('w-1/5', {
                 uppercase: source.id !== 'collectivite',
               })}
             >
               {source.nom}
-            </THeadCell>
+            </DEPRECATED_THeadCell>
           ))}
-        </TRow>
-      </THead>
-      <TBody>
+        </DEPRECATED_TRow>
+      </DEPRECATED_THead>
+      <DEPRECATED_TBody>
         {secteurs.map((secteur) => {
           return (
-            <TRow key={secteur.identifiant}>
-              <TCell variant="title">{secteur.nom}</TCell>
+            <DEPRECATED_TRow key={secteur.identifiant}>
+              <DEPRECATED_TCell variant="title">{secteur.nom}</DEPRECATED_TCell>
               {sources.map((source) => (
                 <CellNumber
                   secteurs={secteurs}
@@ -94,11 +104,11 @@ export const TableauDonnees = (props: TableauDonneesProps) => {
                   source={source}
                 />
               ))}
-            </TRow>
+            </DEPRECATED_TRow>
           );
         })}
-      </TBody>
-    </Table>
+      </DEPRECATED_TBody>
+    </DEPRECATED_Table>
   );
 };
 
@@ -124,7 +134,10 @@ const CellNumber = ({
   const val = valNumber?.toString() ?? '';
 
   return (
-    <TCell key={source.id} variant={estSourceCollectivite ? 'input' : 'number'}>
+    <DEPRECATED_TCell
+      key={source.id}
+      variant={estSourceCollectivite ? 'input' : 'number'}
+    >
       {estSourceCollectivite ? (
         <Input
           type="number"
@@ -151,6 +164,6 @@ const CellNumber = ({
       ) : (
         '--'
       )}
-    </TCell>
+    </DEPRECATED_TCell>
   );
 };

@@ -32,11 +32,16 @@ type Story = StoryObj<typeof EmptyCard>;
 
 export const Default: Story = {
   args: {
-    picto: (props) =>
-      DemoIcon(props.className ?? '', {
-        width: props.width ?? '24',
-        height: props.height ?? '24',
-      }),
+    picto: ({ width, height, className }) => (
+      <svg
+        className={className}
+        width={width}
+        height={height}
+        viewBox="0 0 24 24"
+      >
+        <rect width="24" height="24" rx="12" fill="#E5E7EB" />
+      </svg>
+    ),
     title: 'Titre de la carte vide',
     subTitle: 'Sous-titre optionnel',
     description:
@@ -83,6 +88,13 @@ export const ReadOnly: Story = {
   args: {
     ...Default.args,
     isReadonly: true,
+  },
+};
+
+export const WithoutPicto: Story = {
+  args: {
+    ...Default.args,
+    picto: undefined,
   },
 };
 
