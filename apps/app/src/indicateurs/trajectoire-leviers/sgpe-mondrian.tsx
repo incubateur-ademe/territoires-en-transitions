@@ -69,7 +69,7 @@ export const SgpeMondrian: React.FC<SgpeMondrianProps> = (
         }}
         titleOptions={{
           left: '1%',
-          text: 'Objectifs du territoire répartis par levier',
+          text: 'Objectifs du territoire à horizon 2030, répartis par leviers',
           textStyle: {
             color: colors.primary['9'],
           },
