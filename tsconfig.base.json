@@ -30,6 +30,8 @@
     // "noImplicitReturns": true,
     // "noUnusedLocals": true,
     "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+
     "jsx": "preserve",
   },
   "exclude": ["**/node_modules", "**/out-tsc", "**/.*/", "tmp"]

@@ -13,7 +13,7 @@
       "path": "../../packages/api"
     },
     {
-      "path": "./tsconfig.app.json"
+      "path": "./tsconfig.project.json"
     },
     {
       "path": "./tsconfig.spec.json"
