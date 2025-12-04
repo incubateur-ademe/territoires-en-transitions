@@ -1,6 +1,10 @@
 'use client';
 
-import { QueryClientProvider, UseQueryResult } from '@tanstack/react-query';
+import {
+  QueryClientProvider,
+  UseMutationResult,
+  UseQueryResult,
+} from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import {
   createTRPCClient,
@@ -17,17 +21,32 @@ import { getAuthHeaders } from '../supabase/get-auth-headers';
 import { getQueryClient } from './query-client';
 
 import type { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
+export type { AppRouter };
 
 export type RouterInput = inferRouterInputs<AppRouter>;
 export type RouterOutput = inferRouterOutputs<AppRouter>;
+
+type TRPCContext = ReturnType<typeof createTRPCContext<AppRouter>>;
+
+const trpcContext = createTRPCContext<AppRouter>();
+
+export const TRPCProvider: TRPCContext['TRPCProvider'] =
+  trpcContext.TRPCProvider;
+export const useTRPC: TRPCContext['useTRPC'] = trpcContext.useTRPC;
+export const useTRPCClient: TRPCContext['useTRPCClient'] =
+  trpcContext.useTRPCClient;
 
 export type TRPCUseQueryResult<TData> = UseQueryResult<
   TData,
   TRPCClientErrorLike<AppRouter>
 >;
 
-export const { TRPCProvider, useTRPC, useTRPCClient } =
-  createTRPCContext<AppRouter>();
+export type TRPCUseMutationResult<TVariables, TData> = UseMutationResult<
+  TData,
+  TRPCClientErrorLike<AppRouter>,
+  TVariables,
+  unknown
+>;
 
 function getUrl() {
   return `${

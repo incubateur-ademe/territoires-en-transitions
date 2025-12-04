@@ -52,7 +52,7 @@ export const useCommentPanel = (
 ) => {
   const { setPanel, setTitle, panel } = useSidePanel();
 
-  const { data: action, isLoading } = useAction();
+  const { data: action, isPending } = useAction();
   const { prevActionLink, nextActionLink } =
     usePrevAndNextActionLinks(parentActionId);
 
@@ -87,7 +87,7 @@ export const useCommentPanel = (
   return {
     action,
     panel,
-    isLoading,
+    isPending,
     openPanel,
     closePanel,
   };

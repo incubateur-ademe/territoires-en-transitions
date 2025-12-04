@@ -23,8 +23,8 @@ export const useProgressionReferentiel = () => {
   const caePhases = { bases: 0, 'mise en œuvre': 0, effets: 0 };
   const eciPhases = { bases: 0, 'mise en œuvre': 0, effets: 0 };
 
-  const { data: cae, isLoading: isLoadingCae } = caeResult;
-  const { data: eci, isLoading: isLoadingEci } = eciResult;
+  const { data: cae, isPending: isLoadingCae } = caeResult;
+  const { data: eci, isPending: isLoadingEci } = eciResult;
 
   const groupPointsParCategorie = (
     pointsParCategorie: typeof caePhases,

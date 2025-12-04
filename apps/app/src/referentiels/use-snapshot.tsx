@@ -1,5 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { RouterInput, RouterOutput, useTRPC } from '@tet/api';
+import {
+  RouterInput,
+  RouterOutput,
+  TRPCUseQueryResult,
+  useTRPC,
+} from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { DISABLE_AUTO_REFETCH } from '@tet/api/utils/react-query/query-options';
 import {
@@ -22,7 +27,7 @@ export function useSnapshot({
 }: {
   actionId: string;
   externalCollectiviteId?: number;
-}) {
+}): TRPCUseQueryResult<Snapshot> {
   const collectiviteId = useCollectiviteId();
   const referentielId = getReferentielIdFromActionId(actionId);
   const trpc = useTRPC();
@@ -67,7 +72,7 @@ export function useListSnapshots({
 }
 
 export function useAction(actionId: string, externalCollectiviteId?: number) {
-  const { data: snapshot, ...rest } = useSnapshot({
+  const { data: snapshot, isPending } = useSnapshot({
     actionId,
     externalCollectiviteId,
   });
@@ -83,7 +88,7 @@ export function useAction(actionId: string, externalCollectiviteId?: number) {
   };
 
   return {
-    ...rest,
+    isPending,
     data: snapshot ? toAction(snapshot) : undefined,
   };
 }

@@ -27,7 +27,7 @@ export const useCreateInvitation = (
     user
   );
 
-  const { mutate } = useMutation(
+  return useMutation(
     trpc.users.invitations.create.mutationOptions({
       onSuccess: async (data, variables) => {
         if (typeof data === 'string' || data === null) {
@@ -71,6 +71,4 @@ export const useCreateInvitation = (
       },
     })
   );
-
-  return { mutate };
 };

@@ -49,14 +49,14 @@ function ActionLayout({
   const actionId = useActionId();
   const isVisitor = useIsVisitor();
 
-  const { openPanel, closePanel, action, isLoading, panel } = useCommentPanel(
+  const { openPanel, closePanel, action, isPending, panel } = useCommentPanel(
     referentielId,
     actionId
   );
 
   const preuvesCount = useActionPreuvesCount(actionDefinition.id);
 
-  if (isLoading) {
+  if (isPending) {
     return <SpinnerLoader className="m-auto" />;
   }
 
