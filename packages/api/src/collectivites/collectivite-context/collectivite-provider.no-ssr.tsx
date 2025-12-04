@@ -7,7 +7,7 @@ import { CollectiviteContext } from './collectivite-context';
 
 export const CollectiviteProvider = dynamic(
   () =>
-    import('./collectivite-context.js').then(
+    import('./collectivite-context').then(
       (mod) => mod.CollectiviteProvider_OnlyImportWithoutSSR
     ),
   { ssr: false }
