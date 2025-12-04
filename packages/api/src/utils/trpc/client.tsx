@@ -1,6 +1,10 @@
 'use client';
 
-import { QueryClientProvider, UseQueryResult } from '@tanstack/react-query';
+import {
+  QueryClientProvider,
+  UseMutationResult,
+  UseQueryResult,
+} from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import {
   createTRPCClient,
@@ -26,8 +30,20 @@ export type TRPCUseQueryResult<TData> = UseQueryResult<
   TRPCClientErrorLike<AppRouter>
 >;
 
-export const { TRPCProvider, useTRPC, useTRPCClient } =
-  createTRPCContext<AppRouter>();
+export type TRPCUseMutationResult<TData> = UseMutationResult<
+  TData,
+  TRPCClientErrorLike<AppRouter>
+>;
+
+type TRPCContext = ReturnType<typeof createTRPCContext<AppRouter>>;
+
+const trpcContext = createTRPCContext<AppRouter>();
+
+export const TRPCProvider: TRPCContext['TRPCProvider'] =
+  trpcContext.TRPCProvider;
+export const useTRPC: TRPCContext['useTRPC'] = trpcContext.useTRPC;
+export const useTRPCClient: TRPCContext['useTRPCClient'] =
+  trpcContext.useTRPCClient;
 
 function getUrl() {
   return `${
