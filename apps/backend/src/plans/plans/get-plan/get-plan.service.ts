@@ -1,0 +1,124 @@
+import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
+import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/users/authorizations/permission.service';
+import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
+import { AuthenticatedUser } from '@/backend/users/models/auth.models';
+import { DatabaseService } from '@/backend/utils/database/database.service';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { MethodResult } from '@/backend/utils/result.type';
+import { Injectable, Logger } from '@nestjs/common';
+import { ListAxesService } from '../../axes/list-axes/list-axes.service';
+import { GetPlanError, GetPlanErrorEnum } from './get-plan.errors';
+import { GetPlanInput } from './get-plan.input';
+import { Plan } from './get-plan.output';
+import { GetPlanRepository } from './get-plan.repository';
+
+@Injectable()
+export class GetPlanService {
+  private readonly logger = new Logger(GetPlanService.name);
+
+  constructor(
+    private readonly collectivite: CollectivitesService,
+    private readonly databaseService: DatabaseService,
+    private readonly listAxesService: ListAxesService,
+    private readonly getPlanRepository: GetPlanRepository,
+    private readonly permissionService: PermissionService
+  ) {}
+
+  async getPlan(
+    input: GetPlanInput,
+    user: AuthenticatedUser,
+    tx?: Transaction
+  ): Promise<MethodResult<Plan, GetPlanError>> {
+    const executeInTransaction = async (
+      transaction: Transaction
+    ): Promise<MethodResult<Plan, GetPlanError>> => {
+      const { planId } = input;
+
+      const planResult = await this.getPlanRepository.getPlan(
+        planId,
+        transaction
+      );
+      if (!planResult.success) {
+        return planResult;
+      }
+      const plan = planResult.data;
+
+      const isAllowed = await this.checkPermission(plan.collectiviteId, user);
+      if (!isAllowed) {
+        return {
+          success: false,
+          error: GetPlanErrorEnum.UNAUTHORIZED,
+        };
+      }
+
+      const axesResult = await this.listAxesService.listAxesRecursively(
+        { collectiviteId: plan.collectiviteId, parentId: plan.id },
+        user,
+        transaction
+      );
+      if (!axesResult.success) {
+        return axesResult;
+      }
+
+      const referentsResult = await this.getPlanRepository.getReferents(
+        planId,
+        transaction
+      );
+      if (!referentsResult.success) {
+        return referentsResult;
+      }
+
+      const pilotesResult = await this.getPlanRepository.getPilotes(
+        planId,
+        transaction
+      );
+      if (!pilotesResult.success) {
+        return pilotesResult;
+      }
+
+      return {
+        success: true,
+        data: {
+          ...plan,
+          axes: axesResult.data,
+          referents: referentsResult.data,
+          pilotes: pilotesResult.data,
+        },
+      };
+    };
+
+    return tx
+      ? executeInTransaction(tx)
+      : this.databaseService.db.transaction(async (newTx) =>
+          executeInTransaction(newTx)
+        );
+  }
+
+  async checkPermission(
+    collectiviteId: number,
+    user: AuthenticatedUser
+  ): Promise<boolean> {
+    const collectivitePrivate = await this.collectivite.isPrivate(
+      collectiviteId
+    );
+
+    const isAllowed = await this.permissionService.isAllowed(
+      user,
+      collectivitePrivate
+        ? PermissionOperationEnum['PLANS.READ']
+        : PermissionOperationEnum['PLANS.READ_PUBLIC'],
+      ResourceType.COLLECTIVITE,
+      collectiviteId,
+      true
+    );
+
+    if (!isAllowed) {
+      this.logger.log(
+        `User ${user.id} is not allowed to get axe for collectivité ${collectiviteId}`
+      );
+    }
+
+    return isAllowed;
+  }
+}
