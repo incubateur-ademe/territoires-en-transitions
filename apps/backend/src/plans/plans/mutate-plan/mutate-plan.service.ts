@@ -50,14 +50,14 @@ export class MutatePlanService {
       const { referents, pilotes, ...planProps } = plan;
 
       const result =
-        'id' in plan && typeof plan.id === 'number'
+        'id' in planProps && typeof planProps.id === 'number'
           ? await this.mutatePlanRepository.update(
-              { ...planProps } as UpdatePlanInput,
+              planProps,
               user.id,
               transaction
             )
           : await this.mutatePlanRepository.create(
-              planProps as CreatePlanInput,
+              planProps,
               user.id,
               transaction
             );

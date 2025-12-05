@@ -130,7 +130,7 @@ export class ListAxesRepository {
   };
 
   private flatAxesToNodes(axes: FlatAxe[]): AxeNode[] {
-    return axes.map(({ ancestors, nom, ...a }) => {
+    return axes.map(({ ancestors, nom, sort_path, ...a }) => {
       return {
         ...a,
         parent: ancestors?.length ? ancestors[ancestors.length - 1] : null,

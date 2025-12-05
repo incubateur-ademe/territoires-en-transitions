@@ -98,7 +98,7 @@ export async function createAxe({
   const axe = await caller.plans.axes.upsert(axeData);
 
   onTestFinished(async () => {
-    await caller.plans.plans.deleteAxe({ axeId: axe.id });
+    await caller.plans.axes.delete({ axeId: axe.id });
   });
 
   return axe;

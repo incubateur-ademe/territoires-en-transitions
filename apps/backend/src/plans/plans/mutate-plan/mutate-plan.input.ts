@@ -3,6 +3,7 @@ import {
   baseCreateAxeOrPlanSchema,
   baseUpdateAxeOrPlanSchema,
 } from '../../shared/mutate-axe-base.input';
+import { personneIdSchema } from '../../shared/personne.dto';
 
 /**
  * Schéma pour créer un plan
@@ -17,20 +18,11 @@ const updatePlanSchema = baseUpdateAxeOrPlanSchema;
 export type UpdatePlanInput = z.infer<typeof updatePlanSchema>;
 
 /**
- * Schéma pour une personne (référent ou pilote)
- */
-export const personneSchema = z.union([
-  z.object({ tagId: z.number(), userId: z.null().optional() }),
-  z.object({ tagId: z.null().optional(), userId: z.string() }),
-]);
-export type PersonneInput = z.infer<typeof personneSchema>;
-
-/**
  * Options supplémentaires pour mutate (referents et pilotes)
  */
 const mutatePlanOptionsSchema = z.object({
-  referents: z.array(personneSchema).nullish(),
-  pilotes: z.array(personneSchema).nullish(),
+  referents: z.array(personneIdSchema).nullish(),
+  pilotes: z.array(personneIdSchema).nullish(),
 });
 
 /**

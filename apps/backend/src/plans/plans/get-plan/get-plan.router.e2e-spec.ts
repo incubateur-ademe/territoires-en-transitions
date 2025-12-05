@@ -14,7 +14,7 @@ import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { onTestFinished } from 'vitest';
 
-describe('Récupérer un axe', () => {
+describe('Récupérer un plan', () => {
   let router: TrpcRouter;
   let db: DatabaseService;
 
@@ -53,163 +53,161 @@ describe('Récupérer un axe', () => {
     };
   });
 
-  describe('Récupérer un axe - Cas de succès', () => {
-    test('Récupérer avec succès un axe existant', async () => {
+  describe('Récupérer un plan - Cas de succès', () => {
+    test('Récupérer avec succès un plan existant', async () => {
       const caller = router.createCaller({ user: editorUser });
 
-      // Créer un axe
-      const createdAxe = await caller.plans.axes.upsert({
-        nom: 'Axe à récupérer',
+      // Créer un plan
+      const createdPlan = await caller.plans.plans.upsert({
+        nom: 'Plan à récupérer',
         collectiviteId: collectivite.id,
-        planId,
-        parent: planId,
       });
-      const axeId = createdAxe.id;
+      const testPlanId = createdPlan.id;
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.axes.delete({ axeId });
+        await cleanupCaller.plans.plans.deletePlan({ planId: testPlanId });
       });
 
-      const result = await caller.plans.axes.get({
-        axeId,
+      const result = await caller.plans.plans.get({
+        planId: testPlanId,
       });
 
       expect(result).toBeDefined();
-      expect(result.id).toBe(axeId);
-      expect(result.nom).toBe('Axe à récupérer');
+      expect(result.id).toBe(testPlanId);
+      expect(result.nom).toBe('Plan à récupérer');
       expect(result.collectiviteId).toBe(collectivite.id);
-      expect(result.parent).toBe(planId);
-      expect(result.plan).toBe(planId);
+      expect(result.axes).toBeDefined();
+      expect(Array.isArray(result.axes)).toBe(true);
+      expect(result.referents).toBeDefined();
+      expect(Array.isArray(result.referents)).toBe(true);
+      expect(result.pilotes).toBeDefined();
+      expect(Array.isArray(result.pilotes)).toBe(true);
       expect(result.createdAt).toBeDefined();
-      expect(result.modifiedAt).toBeDefined();
     });
 
-    test('Récupérer avec succès un axe avec planType', async () => {
+    test('Récupérer avec succès un plan avec planType', async () => {
       const caller = router.createCaller({ user: editorUser });
 
-      // Créer un axe avec un type
-      const createdAxe = await caller.plans.axes.upsert({
-        nom: 'Axe avec type',
+      // Créer un plan avec un type
+      const createdPlan = await caller.plans.plans.upsert({
+        nom: 'Plan avec type',
         collectiviteId: collectivite.id,
-        planId,
-        parent: planId,
       });
-      const axeId = createdAxe.id;
+      const testPlanId = createdPlan.id;
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.axes.delete({ axeId });
+        await cleanupCaller.plans.plans.deletePlan({ planId: testPlanId });
       });
 
-      const result = await caller.plans.axes.get({
-        axeId,
-      });
-
-      expect(result).toBeDefined();
-      expect(result.id).toBe(axeId);
-      expect(result.planType).toBeDefined(); // Peut être null ou un objet PlanActionType
-    });
-
-    test('Récupérer avec succès un axe imbriqué (axe enfant)', async () => {
-      const caller = router.createCaller({ user: editorUser });
-
-      // Créer un axe parent
-      const parentAxe = await caller.plans.axes.upsert({
-        nom: 'Axe parent',
-        collectiviteId: collectivite.id,
-        planId,
-        parent: planId,
-      });
-
-      // Créer un axe enfant
-      const childAxe = await caller.plans.axes.upsert({
-        nom: 'Axe enfant',
-        collectiviteId: collectivite.id,
-        planId,
-        parent: parentAxe.id,
-      });
-
-      onTestFinished(async () => {
-        const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.axes.delete({ axeId: childAxe.id });
-        await cleanupCaller.plans.axes.delete({ axeId: parentAxe.id });
-      });
-
-      const result = await caller.plans.axes.get({
-        axeId: childAxe.id,
+      const result = await caller.plans.plans.get({
+        planId: testPlanId,
       });
 
       expect(result).toBeDefined();
-      expect(result.id).toBe(childAxe.id);
-      expect(result.nom).toBe('Axe enfant');
-      expect(result.parent).toBe(parentAxe.id);
-      expect(result.plan).toBe(planId);
-    });
-  });
-
-  describe("Récupérer un axe - Cas d'erreur", () => {
-    test("Échec de récupération d'un axe inexistant", async () => {
-      const caller = router.createCaller({ user: editorUser });
-
-      const nonExistentAxeId = 999999;
-
-      await expect(
-        caller.plans.axes.get({
-          axeId: nonExistentAxeId,
-        })
-      ).rejects.toThrow("L'axe demandé n'a pas été trouvé");
+      expect(result.id).toBe(testPlanId);
+      expect(result.type).toBeDefined(); // Peut être null ou un objet PlanType
     });
 
-    test("Échec de récupération d'un axe avec un axeId invalide (négatif)", async () => {
+    test('Récupérer avec succès un plan avec des axes', async () => {
       const caller = router.createCaller({ user: editorUser });
 
-      await expect(
-        caller.plans.axes.get({
-          axeId: -1,
-        })
-      ).rejects.toThrow();
-    });
+      // Créer un plan
+      const createdPlan = await caller.plans.plans.upsert({
+        nom: 'Plan avec axes',
+        collectiviteId: collectivite.id,
+      });
+      const testPlanId = createdPlan.id;
 
-    test("Échec de récupération d'un axe avec un axeId invalide (zéro)", async () => {
-      const caller = router.createCaller({ user: editorUser });
-
-      await expect(
-        caller.plans.axes.get({
-          axeId: 0,
-        })
-      ).rejects.toThrow();
-    });
-  });
-
-  describe("Récupérer un axe - Droits d'accès", () => {
-    test('Un utilisateur sans droits sur la collectivité ne peut pas récupérer un axe', async () => {
-      const caller = router.createCaller({ user: editorUser });
-
-      // Créer un axe avec l'utilisateur admin
+      // Créer un axe dans ce plan
       const createdAxe = await caller.plans.axes.upsert({
-        nom: 'Axe pour test permissions',
+        nom: 'Axe de test',
         collectiviteId: collectivite.id,
-        planId,
-        parent: planId,
+        planId: testPlanId,
+        parent: testPlanId,
       });
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
         await cleanupCaller.plans.axes.delete({ axeId: createdAxe.id });
+        await cleanupCaller.plans.plans.deletePlan({ planId: testPlanId });
+      });
+
+      const result = await caller.plans.plans.get({
+        planId: testPlanId,
+      });
+
+      expect(result).toBeDefined();
+      expect(result.id).toBe(testPlanId);
+      expect(result.axes).toBeDefined();
+      expect(result.axes.length).toBeGreaterThan(0);
+      const axe = result.axes.find((a) => a.id === createdAxe.id);
+      expect(axe).toBeDefined();
+      expect(axe?.nom).toBe('Axe de test');
+    });
+  });
+
+  describe("Récupérer un plan - Cas d'erreur", () => {
+    test("Échec de récupération d'un plan inexistant", async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const nonExistentPlanId = 999999;
+
+      await expect(
+        caller.plans.plans.get({
+          planId: nonExistentPlanId,
+        })
+      ).rejects.toThrow("Le plan demandé n'a pas été trouvé");
+    });
+
+    test("Échec de récupération d'un plan avec un planId invalide (négatif)", async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      await expect(
+        caller.plans.plans.get({
+          planId: -1,
+        })
+      ).rejects.toThrow();
+    });
+
+    test("Échec de récupération d'un plan avec un planId invalide (zéro)", async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      await expect(
+        caller.plans.plans.get({
+          planId: 0,
+        })
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("Récupérer un plan - Droits d'accès", () => {
+    test('Un utilisateur sans droits sur la collectivité ne peut pas récupérer un plan', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      // Créer un plan avec l'utilisateur admin
+      const createdPlan = await caller.plans.plans.upsert({
+        nom: 'Plan pour test permissions',
+        collectiviteId: collectivite.id,
+      });
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.plans.deletePlan({ planId: createdPlan.id });
       });
 
       const yoloDodoUser = await getAuthUser(YOLO_DODO);
       const unauthorizedCaller = router.createCaller({ user: yoloDodoUser });
 
       await expect(
-        unauthorizedCaller.plans.axes.get({
-          axeId: createdAxe.id,
+        unauthorizedCaller.plans.plans.get({
+          planId: createdPlan.id,
         })
       ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
     });
 
-    test('Un utilisateur avec des droits de lecture sur la collectivité peut récupérer un axe', async () => {
+    test('Un utilisateur avec des droits de lecture sur la collectivité peut récupérer un plan', async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
         accessLevel: CollectiviteAccessLevelEnum.LECTURE,
@@ -222,31 +220,29 @@ describe('Récupérer un axe', () => {
       const lectureUser = getAuthUserFromDcp(user);
       const caller = router.createCaller({ user: lectureUser });
 
-      // Créer un axe avec l'utilisateur admin
+      // Créer un plan avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdAxe = await adminCaller.plans.axes.upsert({
-        nom: 'Axe pour lecture',
+      const createdPlan = await adminCaller.plans.plans.upsert({
+        nom: 'Plan pour lecture',
         collectiviteId: collectivite.id,
-        planId,
-        parent: planId,
       });
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.axes.delete({ axeId: createdAxe.id });
+        await cleanupCaller.plans.plans.deletePlan({ planId: createdPlan.id });
       });
 
-      const result = await caller.plans.axes.get({
-        axeId: createdAxe.id,
+      const result = await caller.plans.plans.get({
+        planId: createdPlan.id,
       });
 
       expect(result).toBeDefined();
-      expect(result.id).toBe(createdAxe.id);
-      expect(result.nom).toBe('Axe pour lecture');
+      expect(result.id).toBe(createdPlan.id);
+      expect(result.nom).toBe('Plan pour lecture');
       expect(result.collectiviteId).toBe(collectivite.id);
     });
 
-    test("Un utilisateur avec des droits d'édition limités sur la collectivité ne peut pas récupérer un axe", async () => {
+    test("Un utilisateur avec des droits d'édition limités sur la collectivité ne peut pas récupérer un plan", async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
         accessLevel: CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS,
@@ -259,28 +255,26 @@ describe('Récupérer un axe', () => {
       const limitedEditionUser = getAuthUserFromDcp(user);
       const caller = router.createCaller({ user: limitedEditionUser });
 
-      // Créer un axe avec l'utilisateur admin
+      // Créer un plan avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdAxe = await adminCaller.plans.axes.upsert({
-        nom: 'Axe pour édition limitée',
+      const createdPlan = await adminCaller.plans.plans.upsert({
+        nom: 'Plan pour édition limitée',
         collectiviteId: collectivite.id,
-        planId,
-        parent: planId,
       });
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.axes.delete({ axeId: createdAxe.id });
+        await cleanupCaller.plans.plans.deletePlan({ planId: createdPlan.id });
       });
 
       await expect(
-        caller.plans.axes.get({
-          axeId: createdAxe.id,
+        caller.plans.plans.get({
+          planId: createdPlan.id,
         })
       ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
     });
 
-    test("Un utilisateur avec des droits d'édition sur la collectivité peut récupérer un axe", async () => {
+    test("Un utilisateur avec des droits d'édition sur la collectivité peut récupérer un plan", async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
         accessLevel: CollectiviteAccessLevelEnum.EDITION,
@@ -293,27 +287,25 @@ describe('Récupérer un axe', () => {
       const editionUser = getAuthUserFromDcp(user);
       const caller = router.createCaller({ user: editionUser });
 
-      // Créer un axe avec l'utilisateur admin
+      // Créer un plan avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdAxe = await adminCaller.plans.axes.upsert({
-        nom: 'Axe pour édition',
+      const createdPlan = await adminCaller.plans.plans.upsert({
+        nom: 'Plan pour édition',
         collectiviteId: collectivite.id,
-        planId,
-        parent: planId,
       });
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.axes.delete({ axeId: createdAxe.id });
+        await cleanupCaller.plans.plans.deletePlan({ planId: createdPlan.id });
       });
 
-      const result = await caller.plans.axes.get({
-        axeId: createdAxe.id,
+      const result = await caller.plans.plans.get({
+        planId: createdPlan.id,
       });
 
       expect(result).toBeDefined();
-      expect(result.id).toBe(createdAxe.id);
-      expect(result.nom).toBe('Axe pour édition');
+      expect(result.id).toBe(createdPlan.id);
+      expect(result.nom).toBe('Plan pour édition');
     });
   });
 });

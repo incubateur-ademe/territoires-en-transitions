@@ -58,7 +58,7 @@ export abstract class MutateAxeBaseRepository<
         data: created,
       };
     } catch (error) {
-      this.logger.error(`Error creating: ${error}`);
+      this.logger.error(`Error creating: ${JSON.stringify(error)}`);
       return {
         success: false,
         error: this.getCreateError(),

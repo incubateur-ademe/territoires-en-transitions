@@ -11,7 +11,7 @@ export const useUpdatePlan = ({
   const trpc = useTRPC();
 
   const { mutateAsync: updatePlanMutation } = useMutation(
-    trpc.plans.plans.update.mutationOptions()
+    trpc.plans.plans.upsert.mutationOptions()
   );
 
   const { mutateAsync } = useMutation({

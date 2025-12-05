@@ -82,7 +82,7 @@ describe('Lister les axes', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId });
+        await cleanupCaller.plans.axes.delete({ axeId });
       });
 
       const result = await caller.plans.axes.list({
@@ -129,9 +129,9 @@ describe('Lister les axes', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe1.id });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe2.id });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe3.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe1.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe2.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe3.id });
       });
 
       const result = await caller.plans.axes.list({
@@ -166,8 +166,8 @@ describe('Lister les axes', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe1.id });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe2.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe1.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe2.id });
       });
 
       const result = await caller.plans.axes.list({
@@ -207,9 +207,9 @@ describe('Lister les axes', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe1.id });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe2.id });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe3.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe1.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe2.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe3.id });
       });
 
       // Première page
@@ -268,9 +268,9 @@ describe('Lister les axes', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axeA.id });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axeB.id });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axeC.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axeA.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axeB.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axeC.id });
       });
 
       const result = await caller.plans.axes.list({
@@ -324,9 +324,9 @@ describe('Lister les axes', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axeA.id });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axeB.id });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axeC.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axeA.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axeB.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axeC.id });
       });
 
       const result = await caller.plans.axes.list({
@@ -376,8 +376,8 @@ describe('Lister les axes', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe1.id });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe2.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe1.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe2.id });
       });
 
       const result = await caller.plans.axes.list({
@@ -425,8 +425,8 @@ describe('Lister les axes', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe1.id });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe2.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe1.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe2.id });
       });
 
       const result = await caller.plans.axes.list({
@@ -489,7 +489,7 @@ describe('Lister les axes', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: createdAxe.id });
+        await cleanupCaller.plans.axes.delete({ axeId: createdAxe.id });
       });
 
       const result = await caller.plans.axes.list({
@@ -527,7 +527,7 @@ describe('Lister les axes', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: createdAxe.id });
+        await cleanupCaller.plans.axes.delete({ axeId: createdAxe.id });
       });
 
       await expect(
@@ -570,7 +570,7 @@ describe('Lister les axes', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId });
+        await cleanupCaller.plans.axes.delete({ axeId });
       });
 
       const result = await caller.plans.axes.listRecursively({
@@ -619,9 +619,9 @@ describe('Lister les axes', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe1.id });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe2.id });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe3.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe1.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe2.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe3.id });
       });
 
       const result = await caller.plans.axes.listRecursively({
@@ -688,11 +688,11 @@ describe('Lister les axes', () => {
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
         // Supprimer dans l'ordre inverse (du plus profond au moins profond)
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe3A.id });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe3B.id });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe3C.id });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe2.id });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: axe1.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe3A.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe3B.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe3C.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe2.id });
+        await cleanupCaller.plans.axes.delete({ axeId: axe1.id });
       });
 
       const result = await caller.plans.axes.listRecursively({
@@ -708,45 +708,36 @@ describe('Lister les axes', () => {
           id: planId,
           nom: 'Plan de test',
           parent: null,
-          sort_path: '0 Plan de test',
         },
         {
           depth: 1,
           id: axe1.id,
           nom: 'Axe niveau 1',
           parent: planId,
-          sort_path: '0 Plan de test 1 Axe niveau 1',
         },
         {
           depth: 2,
           id: axe2.id,
           nom: 'Axe niveau 2',
           parent: axe1.id,
-          sort_path: '0 Plan de test 1 Axe niveau 1 2 Axe niveau 2',
         },
         {
           depth: 3,
           id: axe3A.id,
           nom: 'Axe niveau 3 (A)',
           parent: axe2.id,
-          sort_path:
-            '0 Plan de test 1 Axe niveau 1 2 Axe niveau 2 3 Axe niveau 3 (A)',
         },
         {
           depth: 3,
           id: axe3B.id,
           nom: 'Axe niveau 3 (B)',
           parent: axe2.id,
-          sort_path:
-            '0 Plan de test 1 Axe niveau 1 2 Axe niveau 2 3 Axe niveau 3 (B)',
         },
         {
           depth: 3,
           id: axe3C.id,
           nom: 'Axe niveau 3 (C)',
           parent: axe2.id,
-          sort_path:
-            '0 Plan de test 1 Axe niveau 1 2 Axe niveau 2 3 Axe niveau 3 (C)',
         },
       ]);
     });
@@ -779,9 +770,9 @@ describe('Lister les axes', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: childAxe1.id });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: childAxe2.id });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: parentAxe.id });
+        await cleanupCaller.plans.axes.delete({ axeId: childAxe1.id });
+        await cleanupCaller.plans.axes.delete({ axeId: childAxe2.id });
+        await cleanupCaller.plans.axes.delete({ axeId: parentAxe.id });
       });
 
       // Lister récursivement à partir de l'axe parent (pas du plan)
@@ -798,21 +789,18 @@ describe('Lister les axes', () => {
           id: parentAxe.id,
           nom: 'Axe parent pour test',
           parent: null,
-          sort_path: '0 Axe parent pour test',
         },
         {
           depth: 1,
           id: childAxe1.id,
           nom: 'Enfant 1',
           parent: parentAxe.id,
-          sort_path: '0 Axe parent pour test 1 Enfant 1',
         },
         {
           depth: 1,
           id: childAxe2.id,
           nom: 'Enfant 2',
           parent: parentAxe.id,
-          sort_path: '0 Axe parent pour test 1 Enfant 2',
         },
       ]);
     });
@@ -855,7 +843,7 @@ describe('Lister les axes', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: createdAxe.id });
+        await cleanupCaller.plans.axes.delete({ axeId: createdAxe.id });
       });
 
       const result = await caller.plans.axes.listRecursively({
@@ -893,7 +881,7 @@ describe('Lister les axes', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId: createdAxe.id });
+        await cleanupCaller.plans.axes.delete({ axeId: createdAxe.id });
       });
 
       await expect(

@@ -6,9 +6,10 @@ import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { MethodResult } from '@/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
+import { AxeType } from '../../fiches/shared/models/axe.table';
 import { GetAxeError, GetAxeErrorEnum } from './get-axe.errors';
 import { GetAxeInput } from './get-axe.input';
-import { GetAxeOutput, GetAxeRepository } from './get-axe.repository';
+import { GetAxeRepository } from './get-axe.repository';
 
 @Injectable()
 export class GetAxeService {
@@ -24,7 +25,7 @@ export class GetAxeService {
     input: GetAxeInput,
     user: AuthenticatedUser,
     tx?: Transaction
-  ): Promise<MethodResult<GetAxeOutput, GetAxeError>> {
+  ): Promise<MethodResult<AxeType, GetAxeError>> {
     // récupèrer l'axe pour obtenir la collectivité
     const axeResult = await this.getAxeRepository.getAxe(input.axeId, tx);
     if (!axeResult.success) {

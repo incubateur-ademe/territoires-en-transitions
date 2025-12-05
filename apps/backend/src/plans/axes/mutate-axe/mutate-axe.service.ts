@@ -46,7 +46,7 @@ export class MutateAxeService {
       const { indicateurs, ...axeProps } = axe;
 
       const result =
-        'id' in axeProps && typeof id === 'number'
+        'id' in axeProps && typeof axeProps.id === 'number'
           ? await this.mutateAxeRepository.update(
               axeProps,
               user.id,

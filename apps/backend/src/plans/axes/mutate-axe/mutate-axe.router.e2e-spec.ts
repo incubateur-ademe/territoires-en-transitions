@@ -69,7 +69,7 @@ describe('Créer ou modifier un axe', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId });
+        await cleanupCaller.plans.axes.delete({ axeId });
       });
 
       const plan = await caller.plans.plans.get({ planId });
@@ -79,7 +79,6 @@ describe('Créer ou modifier un axe', () => {
           expect.objectContaining({
             id: axeId,
             nom: axeInput.nom,
-            collectiviteId: collectivite.id,
             parent: planId,
           }),
         ])
@@ -100,7 +99,7 @@ describe('Créer ou modifier un axe', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId });
+        await cleanupCaller.plans.axes.delete({ axeId });
       });
 
       // Modifier l'axe
@@ -226,7 +225,7 @@ describe('Créer ou modifier un axe', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId });
+        await cleanupCaller.plans.axes.delete({ axeId });
       });
 
       // Vérifier que les indicateurs sont associés à l'axe
@@ -255,7 +254,7 @@ describe('Créer ou modifier un axe', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId });
+        await cleanupCaller.plans.axes.delete({ axeId });
       });
 
       // Vérifier qu'il n'y a pas d'indicateurs associés
@@ -349,7 +348,7 @@ describe('Créer ou modifier un axe', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId });
+        await cleanupCaller.plans.axes.delete({ axeId });
       });
 
       // Vérifier que les indicateurs sont associés
@@ -435,7 +434,7 @@ describe('Créer ou modifier un axe', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.deleteAxe({ axeId });
+        await cleanupCaller.plans.axes.delete({ axeId });
       });
 
       // Vérifier les indicateurs initiaux
