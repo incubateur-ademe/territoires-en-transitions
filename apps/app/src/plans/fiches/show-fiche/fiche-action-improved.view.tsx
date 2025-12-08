@@ -1,21 +1,17 @@
 'use client';
 
 import { FicheNoAccessPage } from '@/app/plans/fiches/get-fiche/fiche-no-access.page';
-import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import { ErrorPage } from '@/app/utils/error/error.page';
-import { useUser } from '@tet/api';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
+import { FicheProvider } from './context/fiche-context';
 import { useGetFiche } from './data/use-get-fiche';
-import FicheActionAcces from './FicheActionAcces/FicheActionAcces';
-import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
-import { FicheActionDescription } from './FicheActionDescription/FicheActionDescription';
-import FicheActionImpact from './FicheActionImpact';
-import FicheActionOnglets from './FicheActionOnglets';
-import FicheActionPilotes from './FicheActionPilotes/FicheActionPilotes';
-import { FicheActionPlanning } from './FicheActionPlanning/FicheActionPlanning';
 import { Header } from './header';
+import { Tabs } from './tabs';
+import { FicheActionActeurs } from './tabs/acteurs/FicheActionActeurs';
+import { FicheActionDescription } from './tabs/description/FicheActionDescription';
+import { FicheActionImpact } from './tabs/impact/FicheActionImpact';
+import { FicheActionPlanning } from './tabs/planning/FicheActionPlanning';
+
 type FicheActionImprovedProps = {
   fiche: FicheWithRelations;
   planId?: number;
@@ -25,15 +21,10 @@ export const FicheActionImprovedView = ({
   fiche: initialFiche,
   planId,
 }: FicheActionImprovedProps) => {
-  const collectivite = useCurrentCollectivite();
-  const user = useUser();
-
   const { data: fiche, error } = useGetFiche({
     id: initialFiche.id,
     initialData: initialFiche,
   });
-
-  const { mutate: updateFiche, isPending: isEditLoading } = useUpdateFiche();
 
   if (error) {
     if (error.data?.code === 'FORBIDDEN') {
@@ -46,86 +37,26 @@ export const FicheActionImprovedView = ({
     return null;
   }
 
-  const isReadonly =
-    collectivite.isReadOnly ||
-    !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id);
-
-  const handleUpdateAccess = ({
-    restreint,
-    sharedWithCollectivites,
-  }: Pick<FicheWithRelations, 'restreint' | 'sharedWithCollectivites'>) => {
-    updateFiche({
-      ficheId: fiche.id,
-      ficheFields: { restreint, sharedWithCollectivites },
-    });
-  };
-
   return (
-    <>
+    <FicheProvider fiche={fiche} planId={planId}>
       <div className="w-full bg-grey-2">
-        <h2 className="text-2xl font-bold text-center text-primary-6">
-          NEW LAYOUT
-        </h2>
-
         <div className="flex flex-col w-full px-2 mx-auto xl:max-w-7xl 2xl:max-w-8xl">
-          <Header
-            fiche={fiche}
-            isReadonly={isReadonly}
-            permissions={collectivite.permissions}
-            updateTitle={(titre) =>
-              updateFiche({
-                ficheId: fiche.id,
-                ficheFields: { titre },
-              })
-            }
-            planId={planId}
-          />
+          <Header />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-10 gap-5 lg:gap-9 xl:gap-11">
-            <FicheActionDescription
-              isReadonly={isReadonly}
-              fiche={fiche}
-              className="col-span-full lg:col-span-2 xl:col-span-7"
-            />
+            <FicheActionDescription className="col-span-full lg:col-span-2 xl:col-span-7" />
 
-            {/* Colonne de droite */}
             <div className="max-lg:col-span-full xl:col-span-3 lg:row-span-3 max-lg:grid max-md:grid-cols-1 md:max-lg:grid-cols-2 lg:flex lg:flex-col gap-5">
-              <div className="flex flex-col gap-5">
-                {/* Information sur le mode public / privé et le partage */}
-                <FicheActionAcces
-                  isReadonly={isReadonly}
-                  fiche={fiche}
-                  onUpdateAccess={handleUpdateAccess}
-                />
+              <FicheActionImpact />
 
-                {/** Fiche action issue du panier d'action */}
-                <FicheActionImpact ficheId={fiche.id} />
+              <FicheActionPlanning />
 
-                {/* Pilotes */}
-                <FicheActionPilotes isReadonly={isReadonly} fiche={fiche} />
-              </div>
-
-              {/* Planning prévisionnel */}
-              <FicheActionPlanning isReadonly={isReadonly} fiche={fiche} />
-
-              {/* Acteurs du projet */}
-              <FicheActionActeurs
-                isReadonly={isReadonly}
-                fiche={fiche}
-                className="md:max-lg:col-span-2"
-              />
+              <FicheActionActeurs className="md:max-lg:col-span-2" />
             </div>
 
-            {/* Contenu de la fiche action */}
-            <FicheActionOnglets
-              isReadonly={isReadonly}
-              collectivite={collectivite}
-              fiche={fiche}
-              isEditLoading={isEditLoading}
-              className="col-span-full lg:col-span-2 xl:col-span-7"
-            />
+            <Tabs className="col-span-full lg:col-span-2 xl:col-span-7" />
           </div>
         </div>
       </div>
-    </>
+    </FicheProvider>
   );
 };

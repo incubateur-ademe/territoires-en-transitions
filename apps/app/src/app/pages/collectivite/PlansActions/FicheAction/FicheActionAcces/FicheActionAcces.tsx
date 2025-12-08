@@ -3,8 +3,7 @@ import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share
 import { Button, Notification } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { Fiche } from '../data/use-get-fiche';
-import ModaleAcces from './ModaleAcces';
+import { ModaleAcces } from './ModaleAcces';
 import TooltipRestreint from './TooltipRestreint';
 
 type FicheActionAccesProps = {

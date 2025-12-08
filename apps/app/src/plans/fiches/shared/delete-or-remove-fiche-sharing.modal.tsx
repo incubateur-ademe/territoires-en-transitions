@@ -1,5 +1,5 @@
-import RemoveSharingModal from '@/app/plans/fiches/share-fiche/remove-sharing.modal';
-import DeleteFicheModal from '@/app/plans/fiches/shared/delete-fiche.modal';
+import { RemoveSharingModal } from '@/app/plans/fiches/share-fiche/remove-sharing.modal';
+import { DeleteFicheModal } from '@/app/plans/fiches/shared/delete-fiche.modal';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { OpenState } from '@tet/ui/utils/types';
@@ -10,19 +10,17 @@ type DeleteOrRemoveFicheSharingModalProps = {
   fiche: FicheListItem;
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
-  /** Redirection à la suppression de la fiche (suppression du partage ou de la fiche en elle-même) */
-  redirectPath?: string;
+  onDeleteCallback?: () => void;
+  onClose?: () => void;
 };
 
-/**
- * Bouton + modale de suppression du partage d'une fiche action partagée
- */
-const DeleteOrRemoveFicheSharingModal = ({
+export const DeleteOrRemoveFicheSharingModal = ({
   openState,
   fiche,
   buttonVariant,
   buttonClassName,
-  redirectPath,
+  onDeleteCallback,
+  onClose,
 }: DeleteOrRemoveFicheSharingModalProps) => {
   const { sharedWithCollectivites } = fiche;
   const { collectiviteId, permissions } = useCurrentCollectivite();
@@ -41,9 +39,10 @@ const DeleteOrRemoveFicheSharingModal = ({
       <RemoveSharingModal
         openState={openState}
         fiche={fiche}
-        redirectPath={redirectPath}
+        onDeleteCallback={onDeleteCallback}
         buttonVariant={buttonVariant}
         buttonClassName={buttonClassName}
+        onClose={onClose}
       />
     );
   }
@@ -54,9 +53,8 @@ const DeleteOrRemoveFicheSharingModal = ({
       fiche={fiche}
       buttonVariant={buttonVariant}
       buttonClassName={buttonClassName}
-      redirectPath={redirectPath}
+      onDeleteCallback={onDeleteCallback}
+      onClose={onClose}
     />
   );
 };
-
-export default DeleteOrRemoveFicheSharingModal;
