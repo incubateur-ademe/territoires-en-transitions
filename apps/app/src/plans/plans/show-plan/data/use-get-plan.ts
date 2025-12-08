@@ -12,7 +12,7 @@ export const useGetPlan = (
 ): Plan => {
   const trpc = useTRPC();
   const { data } = useQuery(
-    trpc.plans.plans.get.queryOptions(
+    trpc.plans.get.queryOptions(
       { planId },
       {
         initialData,

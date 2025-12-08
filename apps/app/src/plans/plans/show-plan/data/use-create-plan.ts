@@ -15,7 +15,7 @@ export const useCreatePlan = ({
   const trpc = useTRPC();
 
   const { mutateAsync: createPlan } = useMutation(
-    trpc.plans.plans.upsert.mutationOptions()
+    trpc.plans.upsert.mutationOptions()
   );
 
   const { mutateAsync } = useMutation({
@@ -36,7 +36,7 @@ export const useCreatePlan = ({
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: trpc.plans.plans.list.queryKey({
+        queryKey: trpc.plans.list.queryKey({
           collectiviteId,
         }),
       });

@@ -53,16 +53,16 @@ describe('Créer ou modifier un plan', () => {
         collectiviteId: collectivite.id,
       };
 
-      const createdPlan = await caller.plans.plans.upsert(planInput);
+      const createdPlan = await caller.plans.upsert(planInput);
       const planId = createdPlan.id;
       expect(planId).toBeDefined();
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.delete({ planId });
+        await cleanupCaller.plans.delete({ planId });
       });
 
-      const plan = await caller.plans.plans.get({ planId });
+      const plan = await caller.plans.get({ planId });
 
       expect(plan).toEqual(
         expect.objectContaining({
@@ -77,7 +77,7 @@ describe('Créer ou modifier un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan
-      const createdPlan = await caller.plans.plans.upsert({
+      const createdPlan = await caller.plans.upsert({
         nom: 'Plan à modifier',
         collectiviteId: collectivite.id,
       });
@@ -85,11 +85,11 @@ describe('Créer ou modifier un plan', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.delete({ planId });
+        await cleanupCaller.plans.delete({ planId });
       });
 
       // Modifier le plan
-      const updatedPlan = await caller.plans.plans.upsert({
+      const updatedPlan = await caller.plans.upsert({
         id: planId,
         nom: 'Plan modifié',
         collectiviteId: collectivite.id,
@@ -111,7 +111,7 @@ describe('Créer ou modifier un plan', () => {
       const caller = router.createCaller({ user: yoloDodoUser });
 
       await expect(
-        caller.plans.plans.upsert({
+        caller.plans.upsert({
           nom: 'Plan non autorisé',
           collectiviteId: collectivite.id,
         })
@@ -132,7 +132,7 @@ describe('Créer ou modifier un plan', () => {
       const caller = router.createCaller({ user: lectureUser });
 
       await expect(
-        caller.plans.plans.upsert({
+        caller.plans.upsert({
           nom: 'Plan non autorisé',
           collectiviteId: collectivite.id,
         })
@@ -153,7 +153,7 @@ describe('Créer ou modifier un plan', () => {
       const caller = router.createCaller({ user: limitedEditionUser });
 
       await expect(
-        caller.plans.plans.upsert({
+        caller.plans.upsert({
           nom: 'Plan non autorisé',
           collectiviteId: collectivite.id,
         })
@@ -189,12 +189,12 @@ describe('Créer ou modifier un plan', () => {
         referents: [{ tagId: tag1.id }, { tagId: tag2.id }],
       };
 
-      const createdPlan = await caller.plans.plans.upsert(planInput);
+      const createdPlan = await caller.plans.upsert(planInput);
       const planId = createdPlan.id;
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.delete({ planId });
+        await cleanupCaller.plans.delete({ planId });
       });
 
       // Vérifier que les référents sont associés au plan
@@ -213,7 +213,7 @@ describe('Créer ou modifier un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan sans référents
-      const createdPlan = await caller.plans.plans.upsert({
+      const createdPlan = await caller.plans.upsert({
         nom: 'Plan sans référents',
         collectiviteId: collectivite.id,
       });
@@ -221,7 +221,7 @@ describe('Créer ou modifier un plan', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.delete({ planId });
+        await cleanupCaller.plans.delete({ planId });
       });
 
       // Vérifier qu'il n'y a pas de référents associés
@@ -249,7 +249,7 @@ describe('Créer ou modifier un plan', () => {
       });
 
       // Ajouter des référents au plan
-      await caller.plans.plans.upsert({
+      await caller.plans.upsert({
         id: planId,
         collectiviteId: collectivite.id,
         referents: [{ tagId: tag1.id }, { tagId: tag2.id }],
@@ -288,7 +288,7 @@ describe('Créer ou modifier un plan', () => {
       });
 
       // Créer un plan avec des référents
-      const createdPlan = await caller.plans.plans.upsert({
+      const createdPlan = await caller.plans.upsert({
         nom: 'Plan avec référents à supprimer',
         collectiviteId: collectivite.id,
         referents: [{ tagId: tag1.id }, { tagId: tag2.id }],
@@ -297,7 +297,7 @@ describe('Créer ou modifier un plan', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.delete({ planId });
+        await cleanupCaller.plans.delete({ planId });
       });
 
       // Vérifier que les référents sont associés
@@ -308,7 +308,7 @@ describe('Créer ou modifier un plan', () => {
       expect(planReferents).toHaveLength(2);
 
       // Supprimer tous les référents (passer un tableau vide)
-      await caller.plans.plans.upsert({
+      await caller.plans.upsert({
         id: planId,
         collectiviteId: collectivite.id,
         referents: [],
@@ -360,7 +360,7 @@ describe('Créer ou modifier un plan', () => {
       });
 
       // Créer un plan avec les référents initiaux
-      const createdPlan = await caller.plans.plans.upsert({
+      const createdPlan = await caller.plans.upsert({
         nom: 'Plan avec référents à remplacer',
         collectiviteId: collectivite.id,
         referents: [{ tagId: tag1.id }, { tagId: tag2.id }],
@@ -369,7 +369,7 @@ describe('Créer ou modifier un plan', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.delete({ planId });
+        await cleanupCaller.plans.delete({ planId });
       });
 
       // Vérifier les référents initiaux
@@ -383,7 +383,7 @@ describe('Créer ou modifier un plan', () => {
       );
 
       // Remplacer par de nouveaux référents
-      await caller.plans.plans.upsert({
+      await caller.plans.upsert({
         id: planId,
         collectiviteId: collectivite.id,
         referents: [{ tagId: tag3.id }, { tagId: tag4.id }],
@@ -433,12 +433,12 @@ describe('Créer ou modifier un plan', () => {
         pilotes: [{ tagId: tag1.id }, { tagId: tag2.id }],
       };
 
-      const createdPlan = await caller.plans.plans.upsert(planInput);
+      const createdPlan = await caller.plans.upsert(planInput);
       const planId = createdPlan.id;
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.delete({ planId });
+        await cleanupCaller.plans.delete({ planId });
       });
 
       // Vérifier que les pilotes sont associés au plan
@@ -457,7 +457,7 @@ describe('Créer ou modifier un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan sans pilotes
-      const createdPlan = await caller.plans.plans.upsert({
+      const createdPlan = await caller.plans.upsert({
         nom: 'Plan sans pilotes',
         collectiviteId: collectivite.id,
       });
@@ -465,7 +465,7 @@ describe('Créer ou modifier un plan', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.delete({ planId });
+        await cleanupCaller.plans.delete({ planId });
       });
 
       // Vérifier qu'il n'y a pas de pilotes associés
@@ -493,7 +493,7 @@ describe('Créer ou modifier un plan', () => {
       });
 
       // Ajouter des pilotes au plan
-      await caller.plans.plans.upsert({
+      await caller.plans.upsert({
         id: planId,
         collectiviteId: collectivite.id,
         pilotes: [{ tagId: tag1.id }, { tagId: tag2.id }],
@@ -532,7 +532,7 @@ describe('Créer ou modifier un plan', () => {
       });
 
       // Créer un plan avec des pilotes
-      const createdPlan = await caller.plans.plans.upsert({
+      const createdPlan = await caller.plans.upsert({
         nom: 'Plan avec pilotes à supprimer',
         collectiviteId: collectivite.id,
         pilotes: [{ tagId: tag1.id }, { tagId: tag2.id }],
@@ -541,7 +541,7 @@ describe('Créer ou modifier un plan', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.delete({ planId });
+        await cleanupCaller.plans.delete({ planId });
       });
 
       // Vérifier que les pilotes sont associés
@@ -552,7 +552,7 @@ describe('Créer ou modifier un plan', () => {
       expect(planPilotes).toHaveLength(2);
 
       // Supprimer tous les pilotes (passer un tableau vide)
-      await caller.plans.plans.upsert({
+      await caller.plans.upsert({
         id: planId,
         collectiviteId: collectivite.id,
         pilotes: [],
@@ -604,7 +604,7 @@ describe('Créer ou modifier un plan', () => {
       });
 
       // Créer un plan avec les pilotes initiaux
-      const createdPlan = await caller.plans.plans.upsert({
+      const createdPlan = await caller.plans.upsert({
         nom: 'Plan avec pilotes à remplacer',
         collectiviteId: collectivite.id,
         pilotes: [{ tagId: tag1.id }, { tagId: tag2.id }],
@@ -613,7 +613,7 @@ describe('Créer ou modifier un plan', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.delete({ planId });
+        await cleanupCaller.plans.delete({ planId });
       });
 
       // Vérifier les pilotes initiaux
@@ -627,7 +627,7 @@ describe('Créer ou modifier un plan', () => {
       );
 
       // Remplacer par de nouveaux pilotes
-      await caller.plans.plans.upsert({
+      await caller.plans.upsert({
         id: planId,
         collectiviteId: collectivite.id,
         pilotes: [{ tagId: tag3.id }, { tagId: tag4.id }],

@@ -28,6 +28,7 @@ import { ListPlansService } from './list-plans/list-plans.service';
 import { MutatePlanRepository } from './mutate-plan/mutate-plan.repository';
 import { MutatePlanRouter } from './mutate-plan/mutate-plan.router';
 import { MutatePlanService } from './mutate-plan/mutate-plan.service';
+import { PlanRouter } from './plans.router';
 
 @Module({
   imports: [
@@ -62,18 +63,8 @@ import { MutatePlanService } from './mutate-plan/mutate-plan.service';
     MutatePlanRepository,
     MutatePlanService,
     MutatePlanRouter,
+    PlanRouter,
   ],
-  exports: [
-    CompletionAnalyticsRouter,
-    DeleteAxeRouter,
-    GetAxeRouter,
-    ListAxesRouter,
-    MutateAxeRouter,
-    DeletePlanRouter,
-    GetPlanRouter,
-    ListPlansRouter,
-    MutatePlanRouter,
-    MutatePlanService,
-  ],
+  exports: [PlanRouter, MutatePlanService, ListPlansService],
 })
 export class PlanModule {}

@@ -84,11 +84,9 @@ describe('CompletionAnalyticsRouter tests', () => {
     it('should return empty array for plan with no fiches', async () => {
       const caller = router.createCaller({ user: yoloDodoUser });
 
-      const result = await caller.plans.completionAnalytics.getFieldsToComplete(
-        {
-          planId: testPlanId,
-        }
-      );
+      const result = await caller.plans.getFieldsToComplete({
+        planId: testPlanId,
+      });
 
       expect(result).toHaveLength(0);
       expect(result).toEqual([]);
@@ -143,11 +141,9 @@ describe('CompletionAnalyticsRouter tests', () => {
         { ficheId: fiche2.id, axeId: testPlanId },
       ]);
 
-      const result = await caller.plans.completionAnalytics.getFieldsToComplete(
-        {
-          planId: testPlanId,
-        }
-      );
+      const result = await caller.plans.getFieldsToComplete({
+        planId: testPlanId,
+      });
 
       expect(result.find((f) => f.name === 'titre')?.count).toBe(2);
       expect(result.find((f) => f.name === 'description')?.count).toBe(2);
@@ -186,11 +182,9 @@ describe('CompletionAnalyticsRouter tests', () => {
         axeId: testPlanId,
       });
 
-      const result = await caller.plans.completionAnalytics.getFieldsToComplete(
-        {
-          planId: testPlanId,
-        }
-      );
+      const result = await caller.plans.getFieldsToComplete({
+        planId: testPlanId,
+      });
 
       // Should return only incomplete fields (objectifs, indicateurs, budgets, suiviRecent)
       expect(result).toHaveLength(4);
@@ -253,11 +247,9 @@ describe('CompletionAnalyticsRouter tests', () => {
         axeId: testPlanId,
       });
 
-      const result = await caller.plans.completionAnalytics.getFieldsToComplete(
-        {
-          planId: testPlanId,
-        }
-      );
+      const result = await caller.plans.getFieldsToComplete({
+        planId: testPlanId,
+      });
 
       expect(result).toEqual([]);
     });
@@ -295,11 +287,9 @@ describe('CompletionAnalyticsRouter tests', () => {
         { ficheId: fiche2.id, axeId: testPlanId },
       ]);
 
-      const result = await caller.plans.completionAnalytics.getFieldsToComplete(
-        {
-          planId: testPlanId,
-        }
-      );
+      const result = await caller.plans.getFieldsToComplete({
+        planId: testPlanId,
+      });
 
       expect(result).toHaveLength(
         ORDERED_FIELDS_TO_CHECK_FOR_COMPLETION.length
@@ -376,11 +366,9 @@ describe('CompletionAnalyticsRouter tests', () => {
         { ficheId: fiche3.id, axeId: testPlanId },
       ]);
 
-      const result = await caller.plans.completionAnalytics.getFieldsToComplete(
-        {
-          planId: testPlanId,
-        }
-      );
+      const result = await caller.plans.getFieldsToComplete({
+        planId: testPlanId,
+      });
 
       expect(result.find((f) => f.name === 'titre')?.count).toBe(1);
       expect(result.find((f) => f.name === 'description')?.count).toBe(1);
@@ -470,11 +458,9 @@ describe('CompletionAnalyticsRouter tests', () => {
         { ficheId: oldFicheWithRecentNote.id, axeId: testPlanId },
       ]);
 
-      const result = await caller.plans.completionAnalytics.getFieldsToComplete(
-        {
-          planId: testPlanId,
-        }
-      );
+      const result = await caller.plans.getFieldsToComplete({
+        planId: testPlanId,
+      });
 
       const notesDeSuiviCompletion = result.find(
         (field) => field.name === 'suiviRecent'

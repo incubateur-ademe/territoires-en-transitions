@@ -66,8 +66,7 @@ export async function createFiche({
 
 // ----------
 
-type PlanAllowedInput =
-  inferRouterInputs<AppRouter>['plans']['plans']['upsert'];
+type PlanAllowedInput = inferRouterInputs<AppRouter>['plans']['upsert'];
 
 export async function createPlan({
   caller,
@@ -76,10 +75,10 @@ export async function createPlan({
   caller: ReturnType<TrpcRouter['createCaller']>;
   planData: PlanAllowedInput;
 }) {
-  const plan = await caller.plans.plans.upsert(planData);
+  const plan = await caller.plans.upsert(planData);
 
   onTestFinished(async () => {
-    await caller.plans.plans.delete({ planId: plan.id });
+    await caller.plans.delete({ planId: plan.id });
   });
 
   return plan;
