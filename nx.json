@@ -20,7 +20,7 @@
   },
   "neverConnectToCloud": true,
   "tui": {
-    "enabled": false
+    "enabled": true
   },
   "targetDefaults": {
     "test": {
