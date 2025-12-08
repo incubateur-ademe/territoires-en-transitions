@@ -10,24 +10,36 @@ import {
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { PasswordStrengthMeter } from '../../components/PasswordStrengthMeter';
-import { LoginData, LoginPropsWithState } from './type';
-
-const validationSchema = z.object({
-  password: z.string().refine((value) => value.length >= 8, {
-    error: 'Le mot de passe doit comporter au moins 8 caractères',
-  }),
-  email: z.email({
-    error: 'Un email valide est requis',
-  }),
-});
+import { LoginPropsWithState } from './type';
 
 /** Gestionnaire d'état pour le formulaire */
-const useResetPassword = (email: string) => {
+const useResetPassword = (
+  defaultValues: { email: string },
+  isScoreStrongEnough: (password: string, otherValues: string[]) => boolean
+) => {
+  const validationSchema = z.object({
+    email: z.email({
+      error: 'Un email valide est requis',
+    }),
+    password: z
+      .string()
+      .refine((value) => value.length >= 8, {
+        error: 'Le mot de passe doit comporter au moins 8 caractères',
+      })
+      .refine(
+        (value) => isScoreStrongEnough(value, [defaultValues?.email || '']),
+        {
+          error: "Votre mot de passe n'est pas suffisamment robuste",
+        }
+      ),
+  });
+
   return useForm({
+    mode: 'onChange',
     reValidateMode: 'onChange',
     resolver: zodResolver(validationSchema),
     defaultValues: {
-      email: email || '',
+      email: defaultValues?.email || '',
       password: '',
     },
   });
@@ -41,21 +53,25 @@ export const ResetPassword = (props: LoginPropsWithState) => {
     onCancel,
     onSubmit,
     getPasswordStrength,
+    isScoreStrongEnough,
     defaultValues,
   } = props;
   const {
     handleSubmit,
     register,
     watch,
-    formState: { isValid },
-  } = useResetPassword(defaultValues?.email || '');
+    formState: { isValid, errors },
+  } = useResetPassword(
+    { email: defaultValues?.email || '' },
+    isScoreStrongEnough
+  );
 
   const password = watch('password');
   const res = getPasswordStrength(password, [defaultValues?.email || '']);
 
   const eventTracker = useEventTracker();
-  const onSubmitForm = handleSubmit((data: LoginData) => {
-    onSubmit?.(data);
+  const onSubmitForm = handleSubmit((data) => {
+    onSubmit?.({ email: data.email || '', password: data.password });
     eventTracker(Event.auth.submitResetPassword);
   });
 
@@ -67,7 +83,12 @@ export const ResetPassword = (props: LoginPropsWithState) => {
         htmlFor="password"
       >
         <Input type="password" {...register('password')} id="password" />
-        {!!res && <PasswordStrengthMeter strength={res} />}
+        {!!res && (
+          <PasswordStrengthMeter
+            strength={res}
+            errorMessage={errors?.password?.message?.toString() || ''}
+          />
+        )}
       </Field>
       {!!error && (
         <FieldMessage messageClassName="mt-4" state="error" message={error} />
@@ -75,7 +96,7 @@ export const ResetPassword = (props: LoginPropsWithState) => {
       <ModalFooterOKCancel
         btnOKProps={{
           type: 'submit',
-          disabled: !isValid || isLoading || (!!res && res.score < 4),
+          disabled: !isValid || isLoading,
         }}
         btnCancelProps={{ onClick: onCancel }}
       />

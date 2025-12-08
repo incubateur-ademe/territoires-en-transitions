@@ -44,8 +44,8 @@ export class SignupUserPom {
       timeout: 10000,
     });
 
-    // Saisir le code OTP (6 chiffres) via l'input formaté
-    const otpInput = this.page.locator('input[name="otp"]');
+    // L'OTP est rendu via le composant Input type="otp", sans attribut name stable.
+    const otpInput = this.page.getByTestId('SignUpPage').locator('input').first();
     await expect(otpInput).toBeVisible();
     await otpInput.pressSequentially(otp);
 
