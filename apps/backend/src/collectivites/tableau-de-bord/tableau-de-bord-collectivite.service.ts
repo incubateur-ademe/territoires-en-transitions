@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { GetTableauDeBordModuleRequestType } from '@tet/backend/collectivites/tableau-de-bord/get-tableau-de-bord-module.request';
 import { tableauDeBordModuleTable } from '@tet/backend/collectivites/tableau-de-bord/tableau-de-bord-module.table';
-import { PlanService } from '@tet/backend/plans/plans/plans.service';
+import { ListPlansService } from '@tet/backend/plans/plans/list-plans/list-plans.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import {
@@ -31,7 +31,7 @@ export default class TableauDeBordCollectiviteService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly plansService: PlanService,
+    private readonly listPlansService: ListPlansService,
     private readonly permissionService: PermissionService
   ) {}
 
@@ -189,8 +189,8 @@ export default class TableauDeBordCollectiviteService {
     if (data.length) {
       module = data[0];
     } else if (request.defaultKey) {
-      const planActionIdsResult = await this.plansService.listPlans(
-        request.collectiviteId,
+      const planActionIdsResult = await this.listPlansService.listPlans(
+        { collectiviteId: request.collectiviteId },
         authUser
       );
       const planActionIds = planActionIdsResult.success
@@ -218,8 +218,8 @@ export default class TableauDeBordCollectiviteService {
     fetchedModules: CollectiviteModule[],
     authUser: AuthenticatedUser
   ) {
-    const planActionIdsResult = await this.plansService.listPlans(
-      collectiviteId,
+    const planActionIdsResult = await this.listPlansService.listPlans(
+      { collectiviteId },
       authUser
     );
 
