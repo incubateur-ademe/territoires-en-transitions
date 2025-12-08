@@ -1,4 +1,4 @@
-import { ReferentielId } from '@/domain/referentiels';
+import { referentielIdEnumSchema } from '@/domain/referentiels';
 import { ReactNode } from 'react';
 import { Header } from './header';
 import { TabsWrapper } from './tabs-wrapper';
@@ -8,9 +8,10 @@ export default async function Layout({
   params,
 }: {
   children: ReactNode;
-  params: Promise<{ referentielId: ReferentielId }>;
+  params: Promise<{ collectiviteId: string; referentielId: string }>;
 }) {
-  const { referentielId } = await params;
+  const { referentielId: unsafeReferentielId } = await params;
+  const referentielId = referentielIdEnumSchema.parse(unsafeReferentielId);
 
   return (
     <>

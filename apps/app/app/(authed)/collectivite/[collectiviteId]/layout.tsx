@@ -9,7 +9,7 @@ export default async function Layout({
   params,
 }: {
   children: ReactNode;
-  params: Promise<{ collectiviteId: number }>;
+  params: Promise<{ collectiviteId: string }>;
 }) {
   const { collectiviteId: unsafeCollectiviteId } = await params;
   const collectiviteId = z.coerce.number().parse(unsafeCollectiviteId);
