@@ -1,28 +1,26 @@
 import { useUpdatePlan } from '@/app/plans/plans/show-plan/data/use-update-plan';
 import { UpsertPlanForm } from '@/app/plans/plans/upsert-plan/upsert-plan.form';
-import { PlanNode, PlanReferentOrPilote, PlanType } from '@tet/domain/plans';
+import { Plan } from '@tet/domain/plans';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 
 type Props = {
-  plan: PlanNode;
-  type: PlanType | null;
+  plan: Plan;
   openState: OpenState;
-  referents: PlanReferentOrPilote[] | null;
-  pilotes: PlanReferentOrPilote[] | null;
-  defaultValues: {
-    nom: string;
-    typeId: number | null;
-    referents?: PlanReferentOrPilote[];
-    pilotes?: PlanReferentOrPilote[];
-  };
 };
 
 const FORM_ID = 'update-plan-form';
-export const UpdatePlanModal = ({ plan, openState, defaultValues }: Props) => {
+export const UpdatePlanModal = ({ plan, openState }: Props) => {
   const { mutate: updatePlan } = useUpdatePlan({
     collectiviteId: plan.collectiviteId,
   });
+  const defaultValues = {
+    nom: plan.nom ?? 'Sans titre',
+    typeId: plan.type?.id ?? null,
+    referents: plan.referents ?? undefined,
+    pilotes: plan.pilotes ?? undefined,
+  };
+
   return (
     <Modal
       dataTest="ModifierPlanTitreModale"
