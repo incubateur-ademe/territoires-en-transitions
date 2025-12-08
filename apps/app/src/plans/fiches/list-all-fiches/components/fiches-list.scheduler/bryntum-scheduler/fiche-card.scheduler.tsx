@@ -11,7 +11,7 @@ import {
   makeCollectivitePlanActionFicheUrl,
 } from '@/app/app/paths';
 import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
+import { DeleteOrRemoveFicheSharingModal } from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { Button, Card } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';

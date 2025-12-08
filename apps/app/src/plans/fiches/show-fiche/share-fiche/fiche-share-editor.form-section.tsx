@@ -8,7 +8,7 @@ type FicheShareEditorFormSectionProps = {
   onChange: (collectivites: IdNameSchema[]) => void;
 };
 
-const FicheShareEditorFormSection = ({
+export const FicheShareEditorFormSection = ({
   collectivites,
   onChange,
 }: FicheShareEditorFormSectionProps) => {
@@ -37,5 +37,3 @@ const FicheShareEditorFormSection = ({
     </FormSection>
   );
 };
-
-export default FicheShareEditorFormSection;

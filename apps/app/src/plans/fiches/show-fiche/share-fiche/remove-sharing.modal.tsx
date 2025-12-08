@@ -3,6 +3,7 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Alert, Button, Modal, ModalFooterOKCancel } from '@tet/ui';
 import classNames from 'classnames';
+import { useRouter } from 'next/navigation';
 
 type RemoveSharingModalProps = {
   fiche: FicheWithRelations;
@@ -23,8 +24,13 @@ const RemoveSharingModal = ({
 }: RemoveSharingModalProps) => {
   const { id, titre, collectiviteNom } = fiche;
   const collectiviteId = useCollectiviteId();
+  const router = useRouter();
   const { mutate: updateFiche } = useUpdateFiche({
-    redirectPath,
+    onUpdateCallback: () => {
+      if (redirectPath) {
+        router.push(redirectPath);
+      }
+    },
   });
 
   return (

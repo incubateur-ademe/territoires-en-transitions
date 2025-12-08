@@ -1,17 +1,16 @@
 import FicheShareInfoDiv from '@/app/plans/fiches/share-fiche/fiche-share-info';
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
+import { FicheWithRelations } from '@tet/domain/plans';
 import { Button, Notification } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { Fiche } from '../data/use-get-fiche';
-import ModaleAcces from './ModaleAcces';
+import { ModaleAcces } from './ModaleAcces';
 import TooltipRestreint from './TooltipRestreint';
 
 type FicheActionAccesProps = {
   isReadonly: boolean;
-  fiche: Pick<Fiche, 'titre' | 'restreint'> & FicheShareProperties;
+  fiche: FicheWithRelations;
   onUpdateAccess: (
-    params: Pick<Fiche, 'restreint' | 'sharedWithCollectivites'>
+    params: Pick<FicheWithRelations, 'restreint' | 'sharedWithCollectivites'>
   ) => void;
 };
 

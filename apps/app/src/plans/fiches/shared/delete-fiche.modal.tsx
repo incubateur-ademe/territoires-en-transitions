@@ -9,29 +9,28 @@ type DeleteFicheModalProps = {
   fiche: Pick<FicheListItem, 'id' | 'titre' | 'plans'>;
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
-  /** Redirection à la suppression de la fiche */
-  redirectPath?: string;
+  onDeleteCallback?: () => void;
+  onClose?: () => void;
 };
 
-/**
- * Bouton + modale de suppression d'une fiche action
- */
-const DeleteFicheModal = ({
+export const DeleteFicheModal = ({
   openState,
   fiche,
   buttonVariant,
   buttonClassName,
-  redirectPath,
+  onDeleteCallback,
+  onClose,
 }: DeleteFicheModalProps) => {
   const { id, titre, plans } = fiche;
   const isInMultipleAxes = !!plans && plans.length > 1;
-  const { mutate: deleteFiche } = useDeleteFiche({ redirectPath });
+  const { mutate: deleteFiche } = useDeleteFiche({ onDeleteCallback });
 
   return (
     <Modal
       openState={openState}
       title="Supprimer la fiche"
       subTitle={titre || 'Fiche sans titre'}
+      onClose={onClose}
       render={({ descriptionId }) => (
         // Texte d'avertissement
         <div id={descriptionId} data-test="supprimer-fiche-modale">
@@ -78,5 +77,3 @@ const DeleteFicheModal = ({
     </Modal>
   );
 };
-
-export default DeleteFicheModal;
