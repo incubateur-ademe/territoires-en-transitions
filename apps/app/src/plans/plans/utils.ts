@@ -63,7 +63,6 @@ export const childrenOfPlanNodes = (
 };
 
 type PlanNodeFactory = {
-  collectiviteId: number;
   axes: PlanNode[];
   parentId?: number;
   parentDepth?: number;
@@ -71,7 +70,6 @@ type PlanNodeFactory = {
 };
 
 export const planNodeFactory = ({
-  collectiviteId,
   axes,
   parentId,
   parentDepth,
@@ -86,6 +84,5 @@ export const planNodeFactory = ({
     fiches: [],
     parent: parentId ?? null,
     depth: parentDepth ?? 0,
-    collectiviteId,
   };
 };
