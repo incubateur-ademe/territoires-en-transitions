@@ -2,22 +2,6 @@ import { Button } from '@/ui/design-system/Button';
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { EmptyCard } from './EmptyCard';
 
-const DemoIcon = (
-  className: string,
-  size: { width: string; height: string }
-) => (
-  <svg
-    className={className}
-    width={size.width}
-    height={size.height}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <rect width="24" height="24" rx="12" fill="#E5E7EB" />
-  </svg>
-);
-
 const meta = {
   title: 'Components/EmptyCard',
   component: EmptyCard,
