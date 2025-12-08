@@ -1,8 +1,8 @@
 import { MailSendMessage } from '../../components/Login/MailSendMessage';
 import { useFormState } from '../../components/Login/useFormState';
 import { ResendMessage } from '../ResendMessage';
+import { VerifyOTP } from '../VerifyOTP/VerifyOTP';
 import { SignupStep1 } from './SignupStep1';
-import { SignupStep2 } from './SignupStep2';
 import { SignupStep3 } from './SignupStep3';
 import { SignupProps } from './type';
 
@@ -12,13 +12,21 @@ import { SignupProps } from './type';
 export const Signup = (props: SignupProps) => {
   const { view, onResend, isLoading } = props;
   const formState = useFormState(props);
-
   if (view === 'etape1') {
     return <SignupStep1 {...props} formState={formState} />;
   }
 
   if (view === 'etape2') {
-    return <SignupStep2 {...props} formState={formState} />;
+    return (
+      <VerifyOTP
+        type="signup"
+        {...props}
+        defaultValues={{
+          email: props?.defaultValues?.email || formState.email,
+          otp: props?.defaultValues?.otp,
+        }}
+      />
+    );
   }
 
   if (view === 'etape3') {

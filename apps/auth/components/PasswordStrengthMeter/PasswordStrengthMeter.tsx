@@ -1,4 +1,5 @@
-import {ZxcvbnResult} from '@zxcvbn-ts/core';
+import { FieldMessage } from '@tet/ui';
+import { ZxcvbnResult } from '@zxcvbn-ts/core';
 
 // libellés et couleurs en fonction du niveau de robustesse du mdp
 const DEFAULT_LABEL = 'Faible';
@@ -34,39 +35,60 @@ const textColorsByScore = [
 export const PasswordStrengthMeter = ({
   strength,
   className,
+  errorMessage,
 }: {
   /** Résultat du contrôle de robustesse tel que fourni par zxcvbn */
   strength: ZxcvbnResult;
   /** Styles appliqués au container */
   className?: string;
+  errorMessage?: string;
 }) => {
   if (!strength) return;
-  
-  const {score, feedback} = strength;
-  const {warning, suggestions} = feedback || {};
-  const label = labelsByScore[score] || DEFAULT_LABEL;
-  const bgColor = bgColorsByScore[score] || DEFAULT_BG_COLOR;
-  const textColor = textColorsByScore[score] || DEFAULT_TEXT_COLOR;
+
+  const { score, feedback } = strength;
+  const { suggestions } = feedback || {};
+  const label: string = labelsByScore[score] || DEFAULT_LABEL;
+  const bgColor: string = bgColorsByScore[score] || DEFAULT_BG_COLOR;
+  const textColor: string = textColorsByScore[score] || DEFAULT_TEXT_COLOR;
+
+  // le label Bon porte à confusion, on le remplace par Moyen et on change la couleur du texte et du fond
+  const { modifiedLabel, modifiedBgColor, modifiedTextColor } =
+    label === 'Passable' || label === 'Bon'
+      ? {
+          modifiedLabel: 'Moyen',
+          modifiedBgColor: 'bg-warning-1',
+          modifiedTextColor: 'text-warning-1',
+        }
+      : {
+          modifiedLabel: label,
+          modifiedBgColor: bgColor,
+          modifiedTextColor: textColor,
+        };
 
   return (
     <section className={className}>
       <div className="w-full bg-gray-200 rounded-full h-2.5">
         <div
-          className={`${bgColor} h-2.5 rounded-full`}
-          style={{width: `${score * 25}%`}}
+          className={`${modifiedBgColor} h-2.5 rounded-full`}
+          style={{ width: `${score * 25}%` }}
         ></div>
       </div>
-      <label className={`${textColor} block text-sm`}>
-        {score ? label : ''}
+      <label className={`${modifiedTextColor} block text-sm`}>
+        {score ? modifiedLabel : ''}
       </label>
-      {warning ? <label>{warning}</label> : null}
-      {suggestions?.length ? (
-        <ul className="mt-2 ml-4 text-sm list-disc">
-          {suggestions.map(s => (
-            <li key={s}>{s}</li>
-          ))}
-        </ul>
-      ) : null}
+
+      {suggestions?.length
+        ? suggestions.map((s, index) => (
+            <div key={index} className="mt-2">
+              <FieldMessage state="warning" message={s} />
+            </div>
+          ))
+        : null}
+      {errorMessage && (
+        <div className="mt-2">
+          <FieldMessage state="error" message={errorMessage} />
+        </div>
+      )}
     </section>
   );
 };
