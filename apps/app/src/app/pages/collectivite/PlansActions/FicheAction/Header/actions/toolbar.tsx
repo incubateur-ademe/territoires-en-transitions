@@ -1,5 +1,5 @@
 import { ExportFicheModal } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
-import DeleteOrRemoveFicheSharingModal from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
+import { DeleteOrRemoveFicheSharingModal } from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { PermissionOperation } from '@tet/domain/users';
 import { Fiche } from '../../data/use-get-fiche';
@@ -9,7 +9,7 @@ type Props = {
   fiche: Fiche;
   permissions: PermissionOperation[];
   collectiviteId: number;
-  onDeleteRedirectPath: string;
+  onDeleteRedirectPath: () => void;
 };
 
 const Toolbar = ({ fiche, permissions, onDeleteRedirectPath }: Props) => {
@@ -24,7 +24,7 @@ const Toolbar = ({ fiche, permissions, onDeleteRedirectPath }: Props) => {
       <DeleteOrRemoveFicheSharingModal
         fiche={fiche}
         buttonClassName="!border-error-1 hover:!border-error-1"
-        redirectPath={onDeleteRedirectPath}
+        onDeleteCallback={onDeleteRedirectPath}
       />
     </div>
   );
