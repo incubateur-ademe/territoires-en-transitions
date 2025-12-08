@@ -77,7 +77,7 @@ export async function createPlan({
   const plan = await caller.plans.plans.upsert(planData);
 
   onTestFinished(async () => {
-    await caller.plans.plans.deletePlan({ planId: plan.id });
+    await caller.plans.plans.delete({ planId: plan.id });
   });
 
   return plan;
@@ -86,7 +86,7 @@ export async function createPlan({
 // ----------
 
 type CreateAxeAllowedInput =
-  inferRouterInputs<AppRouter>['plans']['plans']['createAxe'];
+  inferRouterInputs<AppRouter>['plans']['axes']['upsert'];
 
 export async function createAxe({
   caller,
@@ -98,7 +98,7 @@ export async function createAxe({
   const axe = await caller.plans.axes.upsert(axeData);
 
   onTestFinished(async () => {
-    await caller.plans.plans.deleteAxe({ axeId: axe.id });
+    await caller.plans.axes.delete({ axeId: axe.id });
   });
 
   return axe;

@@ -22,7 +22,7 @@ const useGetMutationPatterns = () => {
       'upsert_note_suivi',
       trpc.plans.fiches.etapes.upsert.mutationKey(),
       'create_plan',
-      trpc.plans.plans.createAxe.mutationKey(),
+      'create_axe',
       'upsert_preuve_annexe',
       'update_fiche_bibliotheque_fichier_filename',
     ],
