@@ -41,14 +41,14 @@ describe('Lister les axes', () => {
 
     // Créer un plan pour les tests
     const caller = router.createCaller({ user: editorUser });
-    const plan = await caller.plans.plans.upsert({
+    const plan = await caller.plans.upsert({
       nom: 'Plan de test',
       collectiviteId: collectivite.id,
     });
     planId = plan.id;
 
     return async () => {
-      await caller.plans.plans.delete({ planId });
+      await caller.plans.delete({ planId });
       await testCollectiviteAndUserResult.cleanup();
     };
   });

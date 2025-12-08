@@ -20,7 +20,7 @@ export default async function PlanPage({
   }
 
   const plan = await getQueryClient().fetchQuery(
-    trpcInServerComponent.plans.plans.get.queryOptions({
+    trpcInServerComponent.plans.get.queryOptions({
       planId: data.planId,
     })
   );
