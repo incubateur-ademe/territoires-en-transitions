@@ -10,9 +10,11 @@ import { planNodeFactory, sortPlanNodes } from '../../utils';
 export const useUpsertAxe = ({
   parentAxe,
   planId,
+  mutationKey,
 }: {
   parentAxe: Pick<PlanNode, 'id' | 'depth'>;
   planId: number;
+  mutationKey?: string[];
 }) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
@@ -22,6 +24,7 @@ export const useUpsertAxe = ({
     trpc.plans.axes.upsert.mutationOptions()
   );
   return useMutation({
+    mutationKey,
     mutationFn: async (axe: TAxeInsert) => {
       return await upsertAxe({
         id: axe.id,
