@@ -1,17 +1,17 @@
-import {LoginProps} from './type';
-import {MailSendMessage} from './MailSendMessage';
-import {ResetPassword} from './ResetPassword';
-import {VerifyOTP} from '../VerifyOTP';
-import {ResendMessage} from '../ResendMessage';
-import {LoginTabs} from './LoginTabs';
-import {useFormState} from './useFormState';
-import {ForgottenPassword} from './ForgottenPassword';
+import { ResendMessage } from '../ResendMessage';
+import { VerifyOTP } from '../VerifyOTP';
+import { ForgottenPassword } from './ForgottenPassword';
+import { LoginTabs } from './LoginTabs';
+import { MailSendMessage } from './MailSendMessage';
+import { ResetPassword } from './ResetPassword';
+import { LoginProps } from './type';
+import { useFormState } from './useFormState';
 
 /**
  * Affiche le panneau d'authentification et le formulaire "mot de passe oublié"
  */
 export const Login = (props: LoginProps) => {
-  const {view, onResend, isLoading} = props;
+  const { view, onResend, isLoading } = props;
   const formState = useFormState(props);
 
   // affiche les onglets connexion sans/avec mot de passe

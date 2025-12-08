@@ -1,5 +1,5 @@
-import { ResendFunction, VerifyOTPData } from '../../components/VerifyOTP';
 import { ZxcvbnResult } from '@zxcvbn-ts/core';
+import { ResendFunction, VerifyOTPData } from '../../components/VerifyOTP';
 import { FormState } from './useFormState';
 
 const ValidLoginView = [
@@ -43,6 +43,8 @@ export type LoginProps = {
     password: string,
     otherValues: string[]
   ) => ZxcvbnResult | null;
+  /** Fonction pour vérifier si le score est suffisant */
+  isScoreStrongEnough: (password: string, otherValues: string[]) => boolean;
 };
 
 export type LoginPropsWithState = LoginProps & { formState: FormState };

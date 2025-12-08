@@ -29,7 +29,7 @@
     "@emotion/styled": "11.14.1",
     "@floating-ui/react": "0.26.28",
     "@gouvfr/dsfr": "1.10.2",
-    "@hookform/resolvers": "3.10.0",
+    "@hookform/resolvers": "5.2.2",
     "@nestjs/bullmq": "11.0.3",
     "@nestjs/common": "11.1.5",
     "@nestjs/config": "4.0.2",
