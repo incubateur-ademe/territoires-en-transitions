@@ -14,7 +14,7 @@ export const useImportPlan = () => {
       onSuccess: () => {
         setErrorMessage(null);
         queryClient.invalidateQueries({
-          queryKey: trpc.plans.plans.list.queryKey({}),
+          queryKey: trpc.plans.list.queryKey({}),
         });
       },
       onError: (error) => {

@@ -47,7 +47,7 @@ describe('Lister les plans', () => {
     test('Lister avec succès des plans vides', async () => {
       const caller = router.createCaller({ user: editorUser });
 
-      const result = await caller.plans.plans.list({
+      const result = await caller.plans.list({
         collectiviteId: collectivite.id,
       });
 
@@ -61,7 +61,7 @@ describe('Lister les plans', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan
-      const createdPlan = await caller.plans.plans.upsert({
+      const createdPlan = await caller.plans.upsert({
         nom: 'Plan unique',
         collectiviteId: collectivite.id,
       });
@@ -69,10 +69,10 @@ describe('Lister les plans', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.delete({ planId });
+        await cleanupCaller.plans.delete({ planId });
       });
 
-      const result = await caller.plans.plans.list({
+      const result = await caller.plans.list({
         collectiviteId: collectivite.id,
       });
 
@@ -94,29 +94,29 @@ describe('Lister les plans', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer plusieurs plans
-      const plan1 = await caller.plans.plans.upsert({
+      const plan1 = await caller.plans.upsert({
         nom: 'Plan 1',
         collectiviteId: collectivite.id,
       });
 
-      const plan2 = await caller.plans.plans.upsert({
+      const plan2 = await caller.plans.upsert({
         nom: 'Plan 2',
         collectiviteId: collectivite.id,
       });
 
-      const plan3 = await caller.plans.plans.upsert({
+      const plan3 = await caller.plans.upsert({
         nom: 'Plan 3',
         collectiviteId: collectivite.id,
       });
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.delete({ planId: plan1.id });
-        await cleanupCaller.plans.plans.delete({ planId: plan2.id });
-        await cleanupCaller.plans.plans.delete({ planId: plan3.id });
+        await cleanupCaller.plans.delete({ planId: plan1.id });
+        await cleanupCaller.plans.delete({ planId: plan2.id });
+        await cleanupCaller.plans.delete({ planId: plan3.id });
       });
 
-      const result = await caller.plans.plans.list({
+      const result = await caller.plans.list({
         collectiviteId: collectivite.id,
       });
 
@@ -131,23 +131,23 @@ describe('Lister les plans', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer plusieurs plans
-      const plan1 = await caller.plans.plans.upsert({
+      const plan1 = await caller.plans.upsert({
         nom: 'Plan limit 1',
         collectiviteId: collectivite.id,
       });
 
-      const plan2 = await caller.plans.plans.upsert({
+      const plan2 = await caller.plans.upsert({
         nom: 'Plan limit 2',
         collectiviteId: collectivite.id,
       });
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.delete({ planId: plan1.id });
-        await cleanupCaller.plans.plans.delete({ planId: plan2.id });
+        await cleanupCaller.plans.delete({ planId: plan1.id });
+        await cleanupCaller.plans.delete({ planId: plan2.id });
       });
 
-      const result = await caller.plans.plans.list({
+      const result = await caller.plans.list({
         collectiviteId: collectivite.id,
         limit: 1,
       });
@@ -160,30 +160,30 @@ describe('Lister les plans', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer plusieurs plans
-      const plan1 = await caller.plans.plans.upsert({
+      const plan1 = await caller.plans.upsert({
         nom: 'Plan page 1',
         collectiviteId: collectivite.id,
       });
 
-      const plan2 = await caller.plans.plans.upsert({
+      const plan2 = await caller.plans.upsert({
         nom: 'Plan page 2',
         collectiviteId: collectivite.id,
       });
 
-      const plan3 = await caller.plans.plans.upsert({
+      const plan3 = await caller.plans.upsert({
         nom: 'Plan page 3',
         collectiviteId: collectivite.id,
       });
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.delete({ planId: plan1.id });
-        await cleanupCaller.plans.plans.delete({ planId: plan2.id });
-        await cleanupCaller.plans.plans.delete({ planId: plan3.id });
+        await cleanupCaller.plans.delete({ planId: plan1.id });
+        await cleanupCaller.plans.delete({ planId: plan2.id });
+        await cleanupCaller.plans.delete({ planId: plan3.id });
       });
 
       // Première page
-      const page1 = await caller.plans.plans.list({
+      const page1 = await caller.plans.list({
         collectiviteId: collectivite.id,
         limit: 2,
         page: 1,
@@ -193,7 +193,7 @@ describe('Lister les plans', () => {
       expect(page1.totalCount).toBeGreaterThanOrEqual(3);
 
       // Deuxième page
-      const page2 = await caller.plans.plans.list({
+      const page2 = await caller.plans.list({
         collectiviteId: collectivite.id,
         limit: 2,
         page: 2,
@@ -213,29 +213,29 @@ describe('Lister les plans', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer des plans avec des noms spécifiques
-      const planB = await caller.plans.plans.upsert({
+      const planB = await caller.plans.upsert({
         nom: 'B - Plan',
         collectiviteId: collectivite.id,
       });
 
-      const planA = await caller.plans.plans.upsert({
+      const planA = await caller.plans.upsert({
         nom: 'A - Plan',
         collectiviteId: collectivite.id,
       });
 
-      const planC = await caller.plans.plans.upsert({
+      const planC = await caller.plans.upsert({
         nom: 'C - Plan',
         collectiviteId: collectivite.id,
       });
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.delete({ planId: planA.id });
-        await cleanupCaller.plans.plans.delete({ planId: planB.id });
-        await cleanupCaller.plans.plans.delete({ planId: planC.id });
+        await cleanupCaller.plans.delete({ planId: planA.id });
+        await cleanupCaller.plans.delete({ planId: planB.id });
+        await cleanupCaller.plans.delete({ planId: planC.id });
       });
 
-      const result = await caller.plans.plans.list({
+      const result = await caller.plans.list({
         collectiviteId: collectivite.id,
         sort: {
           field: 'nom',
@@ -262,29 +262,29 @@ describe('Lister les plans', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer des plans avec des noms spécifiques
-      const planB = await caller.plans.plans.upsert({
+      const planB = await caller.plans.upsert({
         nom: 'Z - Plan',
         collectiviteId: collectivite.id,
       });
 
-      const planA = await caller.plans.plans.upsert({
+      const planA = await caller.plans.upsert({
         nom: 'Y - Plan',
         collectiviteId: collectivite.id,
       });
 
-      const planC = await caller.plans.plans.upsert({
+      const planC = await caller.plans.upsert({
         nom: 'X - Plan',
         collectiviteId: collectivite.id,
       });
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.delete({ planId: planA.id });
-        await cleanupCaller.plans.plans.delete({ planId: planB.id });
-        await cleanupCaller.plans.plans.delete({ planId: planC.id });
+        await cleanupCaller.plans.delete({ planId: planA.id });
+        await cleanupCaller.plans.delete({ planId: planB.id });
+        await cleanupCaller.plans.delete({ planId: planC.id });
       });
 
-      const result = await caller.plans.plans.list({
+      const result = await caller.plans.list({
         collectiviteId: collectivite.id,
         sort: {
           field: 'nom',
@@ -311,7 +311,7 @@ describe('Lister les plans', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer des plans avec un délai pour avoir des createdAt différents
-      const plan1 = await caller.plans.plans.upsert({
+      const plan1 = await caller.plans.upsert({
         nom: 'Plan createdAt 1',
         collectiviteId: collectivite.id,
       });
@@ -319,18 +319,18 @@ describe('Lister les plans', () => {
       // Petit délai pour s'assurer que les dates sont différentes
       await new Promise((resolve) => setTimeout(resolve, 10));
 
-      const plan2 = await caller.plans.plans.upsert({
+      const plan2 = await caller.plans.upsert({
         nom: 'Plan createdAt 2',
         collectiviteId: collectivite.id,
       });
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.delete({ planId: plan1.id });
-        await cleanupCaller.plans.plans.delete({ planId: plan2.id });
+        await cleanupCaller.plans.delete({ planId: plan1.id });
+        await cleanupCaller.plans.delete({ planId: plan2.id });
       });
 
-      const result = await caller.plans.plans.list({
+      const result = await caller.plans.list({
         collectiviteId: collectivite.id,
         sort: {
           field: 'createdAt',
@@ -358,7 +358,7 @@ describe('Lister les plans', () => {
       const caller = router.createCaller({ user: yoloDodoUser });
 
       await expect(
-        caller.plans.plans.list({
+        caller.plans.list({
           collectiviteId: collectivite.id,
         })
       ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
@@ -379,17 +379,17 @@ describe('Lister les plans', () => {
 
       // Créer un plan avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdPlan = await adminCaller.plans.plans.upsert({
+      const createdPlan = await adminCaller.plans.upsert({
         nom: 'Plan pour lecture',
         collectiviteId: collectivite.id,
       });
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.delete({ planId: createdPlan.id });
+        await cleanupCaller.plans.delete({ planId: createdPlan.id });
       });
 
-      const result = await caller.plans.plans.list({
+      const result = await caller.plans.list({
         collectiviteId: collectivite.id,
       });
 
@@ -414,18 +414,18 @@ describe('Lister les plans', () => {
 
       // Créer un plan avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdPlan = await adminCaller.plans.plans.upsert({
+      const createdPlan = await adminCaller.plans.upsert({
         nom: 'Plan pour édition limitée',
         collectiviteId: collectivite.id,
       });
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.plans.delete({ planId: createdPlan.id });
+        await cleanupCaller.plans.delete({ planId: createdPlan.id });
       });
 
       await expect(
-        caller.plans.plans.list({
+        caller.plans.list({
           collectiviteId: collectivite.id,
         })
       ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");

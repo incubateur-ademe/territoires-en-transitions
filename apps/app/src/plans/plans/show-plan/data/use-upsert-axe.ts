@@ -35,18 +35,16 @@ export const useUpsertAxe = ({
     meta: { disableToast: true },
     onMutate: async () => {
       await queryClient.cancelQueries({
-        queryKey: trpc.plans.plans.get.queryKey({ planId }),
+        queryKey: trpc.plans.get.queryKey({ planId }),
       });
 
       const previousData = {
-        queryKey: trpc.plans.plans.get.queryKey({ planId }),
-        data: queryClient.getQueryData(
-          trpc.plans.plans.get.queryKey({ planId })
-        ),
+        queryKey: trpc.plans.get.queryKey({ planId }),
+        data: queryClient.getQueryData(trpc.plans.get.queryKey({ planId })),
       };
 
       queryClient.setQueryData(
-        trpc.plans.plans.get.queryKey({ planId }),
+        trpc.plans.get.queryKey({ planId }),
         (old): Plan | undefined => {
           if (!old) {
             return undefined;
@@ -71,7 +69,7 @@ export const useUpsertAxe = ({
     onSuccess: async (data) => {
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: trpc.plans.plans.get.queryKey({ planId }),
+          queryKey: trpc.plans.get.queryKey({ planId }),
         }),
       ]);
       await waitForMarkup(`#axe-${data.id}`).then((el) => {
