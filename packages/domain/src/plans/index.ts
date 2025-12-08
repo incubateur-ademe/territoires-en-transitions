@@ -15,4 +15,3 @@ export * from './filters';
 export * from './labels';
 export * from './paniers/action-impact.schema';
 export * from './plans/plan-type.schema';
-export * from './schemas';
