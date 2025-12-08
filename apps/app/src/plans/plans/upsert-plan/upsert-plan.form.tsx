@@ -2,11 +2,7 @@ import { usePlanTypeListe } from '@/app/app/pages/collectivite/PlansActions/Plan
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  PlanReferentOrPilote,
-  updatePlanPiloteSchema,
-  updatePlanReferentSchema,
-} from '@tet/domain/plans';
+import { PersonneId, personneIdSchema } from '@tet/domain/collectivites';
 import { Button, Field, Input, Select, VisibleWhen } from '@tet/ui';
 
 import { Controller, useForm } from 'react-hook-form';
@@ -15,8 +11,8 @@ import { z } from 'zod';
 const upsertPlanWithoutFileSchema = z.object({
   nom: z.string().min(1, 'Le nom du plan est requis'),
   typeId: z.number().nullable(),
-  referents: z.array(updatePlanReferentSchema).nullable(),
-  pilotes: z.array(updatePlanPiloteSchema).nullable(),
+  referents: z.array(personneIdSchema).nullable(),
+  pilotes: z.array(personneIdSchema).nullable(),
   file: z.undefined(),
 });
 
@@ -42,8 +38,8 @@ type BaseProps = {
   defaultValues?: {
     nom: string;
     typeId?: number | null;
-    referents?: PlanReferentOrPilote[];
-    pilotes?: PlanReferentOrPilote[];
+    referents?: PersonneId[];
+    pilotes?: PersonneId[];
   };
   formId?: string;
   showButtons?: boolean;

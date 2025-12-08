@@ -3,6 +3,7 @@ import {
   financeurTagSchema,
   libreTagSchema,
   partenaireTagSchema,
+  personneIdSchema,
   serviceTagSchema,
   structureTagSchema,
 } from '@tet/domain/collectivites';
@@ -17,12 +18,6 @@ import {
 } from '@tet/domain/shared';
 import z from 'zod';
 import * as zm from 'zod/mini';
-
-// There is no proper Pilote or Referent tables, so we use a custom schema here
-export const personneSchema = z.object({
-  tagId: z.number().nullish(),
-  userId: z.uuid().nullish(),
-});
 
 const financeurSchema = financeurTagSchema.pick({ id: true }).extend({
   id: financeurTagSchema.shape.id,
@@ -55,8 +50,8 @@ export const updateFicheRequestSchema = ficheSchemaUpdate.extend({
   sousThematiques: sousThematiqueSchema.pick({ id: true }).array().nullish(),
   partenaires: partenaireTagSchema.pick({ id: true }).array().nullish(),
   structures: structureTagSchema.pick({ id: true }).array().nullish(),
-  pilotes: personneSchema.array().nullish(),
-  referents: personneSchema.array().nullish(),
+  pilotes: personneIdSchema.array().nullish(),
+  referents: personneIdSchema.array().nullish(),
   sharedWithCollectivites: collectiviteSchema
     .pick({ id: true })
     .array()
