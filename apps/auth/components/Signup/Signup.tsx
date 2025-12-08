@@ -12,7 +12,6 @@ import { SignupProps } from './type';
 export const Signup = (props: SignupProps) => {
   const { view, onResend, isLoading } = props;
   const formState = useFormState(props);
-
   if (view === 'etape1') {
     return <SignupStep1 {...props} formState={formState} />;
   }

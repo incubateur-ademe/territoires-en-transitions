@@ -22,6 +22,7 @@ export const SignupModal = (props: SignupProps) => {
       backdropBlur
       size={mdDialog.includes(view) ? 'md' : 'lg'}
       title={getTitle(view)}
+      subTitle={getSubTitle(view)}
       openState={{ isOpen, setIsOpen }}
       onClose={onClose}
       noCloseButton={view === 'etape3'}
@@ -31,11 +32,18 @@ export const SignupModal = (props: SignupProps) => {
 };
 
 // la modale est en format "md" pour ces contenus
-const mdDialog: SignupView[] = ['msg_lien_envoye', 'etape2'];
+const mdDialog: SignupView[] = ['msg_lien_envoye'];
 
 // retourne le titre approprié de la modale en fonction de son contenu
 const getTitle = (view: SignupView) => {
   if (view === 'etape1') return 'Créer un compte';
+  if (view === 'etape2') return 'Créer un compte';
   if (view === 'etape3')
     return 'Il nous manque quelques informations sur vous !';
+};
+
+const getSubTitle = (view: SignupView) => {
+  if (view === 'etape1') return 'Étape 1/3';
+  if (view === 'etape2') return 'Étape 2/3';
+  if (view === 'etape3') return 'Étape 3/3';
 };

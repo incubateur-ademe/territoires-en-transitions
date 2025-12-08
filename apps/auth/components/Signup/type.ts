@@ -38,6 +38,12 @@ export type SignupProps = {
   defaultValues?: { email: string | null; otp?: string | null };
   /** Erreur à afficher */
   error: string | null;
+  /** Fonction pour définir l'erreur */
+  setError: (error: string | null) => void;
+  /** Message de succès à afficher */
+  successMessage: string | null;
+  /** Fonction pour définir le message de succès */
+  setSuccessMessage: (successMessage: string | null) => void;
   /** Indique qu'un appel réseau est en cours */
   isLoading?: boolean;
   /** Liste de collectivités auxquelles le compte peut être rattaché */
@@ -57,4 +63,6 @@ export type SignupProps = {
   ) => ZxcvbnResult | null;
 };
 
-export type SignupPropsWithState = SignupProps & { formState: FormState };
+export type SignupPropsWithState = SignupProps & {
+  formState: FormState;
+};

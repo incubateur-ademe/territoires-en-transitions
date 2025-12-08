@@ -9,10 +9,14 @@ export const SignupStep2 = (props: SignupPropsWithState) => {
     defaultValues,
     isLoading,
     error,
+    successMessage,
     onCancel,
     onSubmit,
     onResend,
+    setView,
     formState: { email },
+    setError,
+    setSuccessMessage,
   } = props;
 
   return (
@@ -24,9 +28,13 @@ export const SignupStep2 = (props: SignupPropsWithState) => {
         otp: defaultValues?.otp,
       }}
       error={error}
+      successMessage={successMessage}
       onCancel={onCancel}
       onSubmit={onSubmit}
       onResend={onResend}
+      setView={setView}
+      setError={setError}
+      setSuccessMessage={setSuccessMessage}
     />
   );
 };
