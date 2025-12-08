@@ -30,9 +30,17 @@ export const upsertAxeSchema = z.union([createAxeSchema, updateAxeSchema]);
 export type UpsertAxeInput = z.infer<typeof upsertAxeSchema>;
 
 // options supplémentaires pouvant être passées lors du mutate
-const mutateAxeOptionsSchema = z.object({});
+const mutateAxeOptionsSchema = z.object({
+  indicateurs: z
+    .array(
+      z.object({
+        id: z.number().positive("Identifiant d'un indicateur associé à l'axe"),
+      })
+    )
+    .nullish(),
+});
 export const mutateAxeSchema = z.union([
-  updateAxeSchema.extend(mutateAxeOptionsSchema.shape),
   createAxeSchema.extend(mutateAxeOptionsSchema.shape),
+  updateAxeSchema.extend(mutateAxeOptionsSchema.shape),
 ]);
 export type MutateAxeInput = z.infer<typeof mutateAxeSchema>;

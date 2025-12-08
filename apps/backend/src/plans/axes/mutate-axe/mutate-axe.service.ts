@@ -47,7 +47,7 @@ export class MutateAxeService {
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<MethodResult<AxeLight, MutateAxeError>> => {
-      const axeProps = axe;
+      const { indicateurs, ...axeProps } = axe;
       const updateAxeProps = updateAxeSchema.safeParse(axeProps);
 
       let result;
@@ -65,16 +65,28 @@ export class MutateAxeService {
             user.id,
             transaction
           );
+        } else {
+          this.logger.log(
+            `Parsing error detected ${createAxeProps.error.cause}`
+          );
+          return { success: false, error: MutateAxeErrorEnum.CREATE_AXE_ERROR };
         }
       }
 
       if (!result?.success) {
-        return (
-          result || {
-            success: false,
-            error: MutateAxeErrorEnum.CREATE_AXE_ERROR,
-          }
-        );
+        return { success: false, error: MutateAxeErrorEnum.UPDATE_AXE_ERROR };
+      }
+
+      if (indicateurs === null || indicateurs) {
+        const setIndicateursResult =
+          await this.mutateAxeRepository.setIndicateurs(
+            result.data.id,
+            indicateurs,
+            transaction
+          );
+        if (!setIndicateursResult.success) {
+          return setIndicateursResult;
+        }
       }
 
       return { success: true, data: result.data };
