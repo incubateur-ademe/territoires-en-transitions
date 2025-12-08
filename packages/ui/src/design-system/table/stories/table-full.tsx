@@ -1,6 +1,5 @@
 import {
   createColumnHelper,
-  flexRender,
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
@@ -8,15 +7,8 @@ import {
 import { useState } from 'react';
 import { Badge } from '../../Badge';
 import { Checkbox } from '../../Checkbox';
-import {
-  Table,
-  TableCell,
-  TableEmpty,
-  TableHead,
-  TableHeaderCell,
-  TableLoading,
-  TableRow,
-} from '../index';
+import { TableHeaderCell } from '../index';
+import { ReactTable } from '../react-table';
 import { FakeVueTabulaireAction, fakeVueTabulaireData } from './fixtures';
 
 const columnHelper = createColumnHelper<FakeVueTabulaireAction>();
@@ -34,29 +26,19 @@ const columns = [
       </TableHeaderCell>
     ),
     cell: ({ row }) => (
-      <TableCell>
-        <Checkbox
-          checked={row.getIsSelected()}
-          onChange={row.getToggleSelectedHandler()}
-        />
-      </TableCell>
+      <Checkbox
+        checked={row.getIsSelected()}
+        onChange={row.getToggleSelectedHandler()}
+      />
     ),
   }),
   columnHelper.accessor('title', {
     header: () => <TableHeaderCell title="Titre" />,
-    cell: (info) => (
-      <TableCell>
-        <div className="line-clamp-2">{info.getValue()}</div>
-      </TableCell>
-    ),
+    cell: (info) => <div className="line-clamp-2">{info.getValue()}</div>,
   }),
   columnHelper.accessor('description', {
     header: () => <TableHeaderCell title="Description" />,
-    cell: (info) => (
-      <TableCell>
-        <div className="line-clamp-2">{info.getValue()}</div>
-      </TableCell>
-    ),
+    cell: (info) => <div className="line-clamp-2">{info.getValue()}</div>,
   }),
   columnHelper.accessor('statut', {
     header: (header) => (
@@ -66,21 +48,18 @@ const columns = [
         title="Statut"
       />
     ),
-    cell: (info) => (
-      <TableCell>
-        {info.getValue() ? (
-          <Badge state="info" title={info.getValue()} size="sm" />
-        ) : (
-          <span className="italic text-sm text-grey-6">
-            Sélectionner un statut
-          </span>
-        )}
-      </TableCell>
-    ),
+    cell: (info) =>
+      info.getValue() ? (
+        <Badge state="info" title={info.getValue()} size="sm" />
+      ) : (
+        <span className="italic text-sm text-grey-6">
+          Sélectionner un statut
+        </span>
+      ),
   }),
   columnHelper.accessor('pilotes', {
     header: () => <TableHeaderCell className="w-32" title="Pilotes" />,
-    cell: (info) => <TableCell>{info.getValue()}</TableCell>,
+    cell: (info) => info.getValue(),
   }),
   columnHelper.accessor('dateDeFin', {
     header: (header) => (
@@ -90,7 +69,7 @@ const columns = [
         title="Date de fin"
       />
     ),
-    cell: (info) => <TableCell>{info.getValue()}</TableCell>,
+    cell: (info) => info.getValue(),
   }),
 ];
 
@@ -114,39 +93,5 @@ export const TableFull = ({ isLoading, isEmpty }: Props) => {
     getSortedRowModel: getSortedRowModel(),
   });
 
-  return (
-    <Table>
-      <TableHead>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) =>
-              flexRender(header.column.columnDef.header, header.getContext())
-            )}
-          </tr>
-        ))}
-      </TableHead>
-      <tbody>
-        {isLoading ? (
-          <TableLoading
-            columnIds={table.getVisibleFlatColumns().map((col) => col.id)}
-          />
-        ) : isEmpty ? (
-          <TableEmpty
-            columnIds={table.getVisibleFlatColumns().map((col) => col.id)}
-            description="Aucune donnée disponible"
-          />
-        ) : (
-          table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id} className="text-sm">
-              {row
-                .getVisibleCells()
-                .map((cell) =>
-                  flexRender(cell.column.columnDef.cell, cell.getContext())
-                )}
-            </TableRow>
-          ))
-        )}
-      </tbody>
-    </Table>
-  );
+  return <ReactTable table={table} isLoading={isLoading} isEmpty={isEmpty} />;
 };

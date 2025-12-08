@@ -1,24 +1,23 @@
 import {
   createColumnHelper,
-  flexRender,
   getCoreRowModel,
   RowData,
   useReactTable,
 } from '@tanstack/react-table';
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
+import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import { FicheWithRelationsAndCollectivite } from '@/domain/plans';
 import { CollectiviteAccess } from '@/domain/users';
-import { Table, TableHead, TableHeaderCell } from '@/ui';
+import { ReactTable, TableHeaderCell } from '@/ui';
 import { FichesListCellActions } from './cells/fiches-list.cell-actions';
 import { FichesListCellCheckbox } from './cells/fiches-list.cell-checkbox';
 import { FichesListCellDateFin } from './cells/fiches-list.cell-date-fin';
 import { FichesListCellPilotes } from './cells/fiches-list.cell-pilotes';
 import { FichesListCellPlans } from './cells/fiches-list.cell-plans';
 import { FichesListCellTitle } from './cells/fiches-list.cell-title';
-import { FichesListTableContent } from './fiches-list.table-content';
 
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -133,29 +132,15 @@ export const FichesListTable = ({
 
   return (
     <div className="p-4 pt-2 lg:p-8 lg:pt-4 bg-white rounded-xl border border-grey-3">
-      <Table>
-        <TableHead className="sticky top-0 shadow-[0_1px_0px_0px] shadow-grey-3 z-[1]">
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <Fragment key={header.id}>
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
-                </Fragment>
-              ))}
-            </tr>
-          ))}
-        </TableHead>
-        <tbody>
-          <FichesListTableContent
-            isLoading={isLoading}
-            isEmpty={fiches.length === 0}
-            table={table}
-          />
-        </tbody>
-      </Table>
+      <ReactTable
+        table={table}
+        isLoading={isLoading}
+        isEmpty={fiches.length === 0}
+        emptyCard={{
+          description: 'Aucune action ne correspond à votre recherche',
+          picto: (props) => <PictoExpert {...props} />,
+        }}
+      />
     </div>
   );
 };
