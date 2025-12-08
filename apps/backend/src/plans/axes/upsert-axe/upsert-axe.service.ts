@@ -47,7 +47,7 @@ export class UpsertAxeService {
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<MethodResult<AxeLight, UpsertAxeError>> => {
-      const axeProps = axe;
+      const { indicateurs, ...axeProps } = axe;
       const updateAxeProps = baseUpdateAxeSchema.safeParse(axeProps);
 
       let result;
@@ -65,6 +65,11 @@ export class UpsertAxeService {
             user.id,
             transaction
           );
+        } else {
+          this.logger.log(
+            `Parsing error detected ${createAxeProps.error.cause}`
+          );
+          return { success: false, error: UpsertAxeErrorEnum.CREATE_AXE_ERROR };
         }
       }
 
@@ -72,9 +77,21 @@ export class UpsertAxeService {
         return (
           result || {
             success: false,
-            error: UpsertAxeErrorEnum.CREATE_AXE_ERROR,
+            error: UpsertAxeErrorEnum.UPDATE_AXE_ERROR,
           }
         );
+      }
+
+      if (indicateurs === null || indicateurs) {
+        const setIndicateursResult =
+          await this.upsertAxeRepository.setIndicateurs(
+            result.data.id,
+            indicateurs,
+            transaction
+          );
+        if (!setIndicateursResult.success) {
+          return setIndicateursResult;
+        }
       }
 
       return { success: true, data: result.data };
