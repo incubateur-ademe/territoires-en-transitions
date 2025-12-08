@@ -5,10 +5,7 @@ import { useCreatePlan } from '@/app/plans/plans/show-plan/data/use-create-plan'
 import { UpsertPlanForm } from '@/app/plans/plans/upsert-plan/upsert-plan.form';
 import { useBaseToast } from '@/app/utils/toast/use-base-toast';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import {
-  UpdatePlanPilotesSchema,
-  UpdatePlanReferentsSchema,
-} from '@tet/domain/plans';
+import { PersonneId } from '@tet/domain/collectivites';
 import { Button, Icon } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 
@@ -40,8 +37,8 @@ const useGetCreatePlanFunction = () => {
   }: {
     nom: string;
     typeId: number | null;
-    referents: UpdatePlanReferentsSchema[] | null;
-    pilotes: UpdatePlanPilotesSchema[] | null;
+    referents: PersonneId[] | null;
+    pilotes: PersonneId[] | null;
   }): Promise<void> => {
     await createPlanAction({
       collectiviteId,

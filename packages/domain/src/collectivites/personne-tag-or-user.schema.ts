@@ -23,3 +23,14 @@ export type PersonneTagOrUserWithContacts = z.infer<
   typeof personneTagOrUserSchemaWithContacts
 >;
 
+export const personneIdSchema = personneTagOrUserSchema.pick({
+  tagId: true,
+  userId: true,
+});
+export type PersonneId = z.infer<typeof personneIdSchema>;
+
+export const personneSchema = personneIdSchema.extend({
+  tagName: z.string().nullish(),
+  userName: z.string().nullish(),
+});
+export type Personne = z.infer<typeof personneSchema>;

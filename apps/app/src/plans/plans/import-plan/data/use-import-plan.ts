@@ -1,10 +1,7 @@
 import { convertFileToBase64 } from '@/app/utils/convert-file-to-base64';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import {
-  UpdatePlanPilotesSchema,
-  UpdatePlanReferentsSchema,
-} from '@tet/domain/plans';
+import { PersonneId } from '@tet/domain/collectivites';
 import { useState } from 'react';
 
 export const useImportPlan = () => {
@@ -31,8 +28,8 @@ export const useImportPlan = () => {
     collectiviteId: number;
     planName: string;
     planType?: number;
-    pilotes?: UpdatePlanPilotesSchema[];
-    referents?: UpdatePlanReferentsSchema[];
+    pilotes?: PersonneId[];
+    referents?: PersonneId[];
   }) => {
     try {
       const base64File = await convertFileToBase64(planToImport.file);
