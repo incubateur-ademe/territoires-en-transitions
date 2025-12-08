@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TAxeInsert } from '@/app/types/alias';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { useTRPC } from '@tet/api';
-import { useCollectiviteId } from '@tet/api/collectivites';
 import { Plan, PlanNode } from '@tet/domain/plans';
 import { planNodeFactory, sortPlanNodes } from '../../utils';
 
@@ -17,7 +16,6 @@ export const useUpsertAxe = ({
   mutationKey?: string[];
 }) => {
   const queryClient = useQueryClient();
-  const collectivite_id = useCollectiviteId();
   const trpc = useTRPC();
 
   const { mutateAsync: upsertAxe } = useMutation(
@@ -54,7 +52,6 @@ export const useUpsertAxe = ({
             return undefined;
           }
           const axe = planNodeFactory({
-            collectiviteId: collectivite_id,
             axes: old.axes,
             parentId: parentAxe.id,
             parentDepth: parentAxe.depth + 1,
