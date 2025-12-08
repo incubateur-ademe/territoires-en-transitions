@@ -8,7 +8,7 @@ process.setMaxListeners(20);
 
 export default [
   {
-    ignores: ['**/dist', '**/e2e-cypress-deprecated/**'],
+    ignores: ['**/dist/**', '.next', 'next-env.d.ts', '.tsc-trace', '**/e2e-cypress-deprecated/**'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

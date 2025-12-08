@@ -2,6 +2,7 @@ import AppHeader from '@/site/components/layout/AppHeader';
 import Footer from '@/site/components/layout/Footer';
 import { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
+import { ReactNode } from 'react';
 import { Trackers } from '../providers/posthog';
 import './global.css';
 import { getMetaData } from './utils';
@@ -72,7 +73,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function RootLayout({
   children,
 }: {
-  children: JSX.Element;
+  children: ReactNode;
 }) {
   const headersList = await headers();
   const nonce = headersList.get('x-nonce');
