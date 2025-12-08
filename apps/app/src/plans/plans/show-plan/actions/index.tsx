@@ -37,16 +37,7 @@ export const Actions = ({ axeHasFiches, plan }: Props) => {
       </button>
       {isModifierPlanModalOpen && (
         <UpdatePlanModal
-          plan={plan.axes[0]}
-          type={plan.type}
-          referents={plan.referents}
-          pilotes={plan.pilotes}
-          defaultValues={{
-            nom: plan.nom ?? 'Sans titre',
-            typeId: plan.type?.id ?? null,
-            referents: plan.referents ?? undefined,
-            pilotes: plan.pilotes ?? undefined,
-          }}
+          plan={plan}
           openState={{
             isOpen: isModifierPlanModalOpen,
             setIsOpen: setIsModifierPlanModalOpen,
