@@ -1,4 +1,5 @@
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
+import { Personne } from '@/backend/shared/models/personne.dto';
 import { dcpTable as userTable } from '@/backend/users/models/dcp.table';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
@@ -12,7 +13,6 @@ import {
 } from '../../fiches/shared/models/plan-action-type.table';
 import { planPiloteTable } from '../../fiches/shared/models/plan-pilote.table';
 import { planReferentTable } from '../../fiches/shared/models/plan-referent.table';
-import { Personne } from '../../shared/personne.dto';
 import { GetPlanError, GetPlanErrorEnum } from './get-plan.errors';
 
 export type GetPlanOutput = AxeType & { type: PlanActionType | null };

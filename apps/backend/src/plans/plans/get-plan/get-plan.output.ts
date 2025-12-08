@@ -1,5 +1,5 @@
-import { AxeNode } from '../../axes/list-axes/flat-axe.schema';
-import { Personne } from '../../shared/personne.dto';
+import { Personne } from '@/backend/shared/models/personne.dto';
+import { PlanNode } from '../../axes/list-axes/flat-axe.schema';
 
 export type PlanType = {
   categorie: string;
@@ -11,7 +11,7 @@ export type PlanType = {
 export type Plan = {
   id: number;
   nom: string | null;
-  axes: AxeNode[];
+  axes: PlanNode[];
   referents: Personne[];
   pilotes: Personne[];
   type: PlanType | null;

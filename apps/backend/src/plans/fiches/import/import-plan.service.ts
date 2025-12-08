@@ -2,6 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ImportPlanCleanService } from '@tet/backend/plans/fiches/import/import-plan-clean.service';
 import { ImportPlanFetchService } from '@tet/backend/plans/fiches/import/import-plan-fetch.service';
 import { ImportPlanSaveService } from '@tet/backend/plans/fiches/import/import-plan-save.service';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { PersonneId, TagEnum } from '@tet/domain/collectivites';
+import ExcelJS from 'exceljs';
+import { MutatePlanService } from '../../plans/mutate-plan/mutate-plan.service';
 import {
   AxeImport,
   FicheImport,
@@ -10,15 +15,7 @@ import {
   MemoryImport,
   PlanImport,
   TagImport,
-} from '@tet/backend/plans/fiches/import/import-plan.dto';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { TagEnum, TagType } from '@tet/domain/collectivites';
-import {
-  UpdatePlanPilotesSchema,
-  UpdatePlanReferentsSchema,
-} from '@tet/domain/plans';
-import ExcelJS from 'exceljs';
+} from './import-plan.dto';
 const FIRST_DATA_ROW = 4; // The first three rows are not data
 
 /** Column names ordered (order is important) */
@@ -107,8 +104,8 @@ export class ImportPlanService {
     collectiviteId: number,
     planName: string,
     planType?: number,
-    pilotes?: UpdatePlanPilotesSchema[],
-    referents?: UpdatePlanReferentsSchema[]
+    pilotes?: PersonneId[],
+    referents?: PersonneId[]
   ): Promise<boolean> {
     const plan: PlanImport = {
       nom: planName,
