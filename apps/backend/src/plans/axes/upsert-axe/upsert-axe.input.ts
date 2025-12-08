@@ -27,7 +27,15 @@ export const baseUpdateAxeSchema = baseUpdateAxeOrPlanSchema.extend({
 export type BaseUpdateAxeInput = z.infer<typeof baseUpdateAxeSchema>;
 
 // options supplémentaires pouvant être passées lors de l'upsert
-const upsertAxeOptionsSchema = z.object({});
+const upsertAxeOptionsSchema = z.object({
+  indicateurs: z
+    .array(
+      z.object({
+        id: z.number().positive("Identifiant d'un indicateur associé à l'axe"),
+      })
+    )
+    .nullish(),
+});
 
 export const updateAxeSchema = baseUpdateAxeSchema.extend(
   upsertAxeOptionsSchema.shape
