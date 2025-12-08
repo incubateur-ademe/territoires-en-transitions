@@ -8,18 +8,15 @@ import * as Sentry from '@sentry/nestjs';
 import { CollectivitesRouter } from '@tet/backend/collectivites/collectivites.router';
 import { IndicateursRouter } from '@tet/backend/indicateurs/indicateurs.router';
 import { MetricsRouter } from '@tet/backend/metrics/metrics.router';
+import { PlanMainRouter } from '@tet/backend/plans/plans-main.router';
 import { ReferentielsRouter } from '@tet/backend/referentiels/referentiels.router';
 import { ContextStoreService } from '@tet/backend/utils/context/context.service';
+import { NotificationsRouter } from '@tet/backend/utils/notifications/notifications.router';
 import { getSentryContextFromApplicationContext } from '@tet/backend/utils/sentry-init';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import type { Response } from 'express';
 import z from 'zod';
-import { AxesRouter } from '../../plans/axes/axes.router';
-import { FichesRouter } from '../../plans/fiches/fiches.router';
-import { CompletionAnalyticsRouter } from '../../plans/plans/completion-analytics/completion-analytics.router';
-import { PlanRouter } from '../../plans/plans/plans.router';
 import { UsersRouter } from '../../users/users.router';
-import { NotificationsRouter } from '../notifications/notifications.router';
 import { TrpcService } from './trpc.service';
 
 @Injectable()
@@ -33,10 +30,7 @@ export class TrpcRouter {
     private readonly collectivitesRouter: CollectivitesRouter,
     private readonly referentielsRouter: ReferentielsRouter,
     private readonly usersRouter: UsersRouter,
-    private readonly fichesRouter: FichesRouter,
-    private readonly planRouter: PlanRouter,
-    private readonly completionAnalyticsRouter: CompletionAnalyticsRouter,
-    private readonly axesRouter: AxesRouter,
+    private readonly planMainRouter: PlanMainRouter,
     private readonly metricsRouter: MetricsRouter,
     private readonly notificationsRouter: NotificationsRouter
   ) {}
@@ -48,12 +42,7 @@ export class TrpcRouter {
     users: this.usersRouter.router,
     collectivites: this.collectivitesRouter.router,
     indicateurs: this.indicateursRouter.router,
-    plans: {
-      fiches: this.fichesRouter.router,
-      plans: this.planRouter.router,
-      completionAnalytics: this.completionAnalyticsRouter.router,
-      axes: this.axesRouter.router,
-    },
+    plans: this.planMainRouter.router,
     referentiels: this.referentielsRouter.router,
     metrics: this.metricsRouter.router,
     notifications: this.notificationsRouter.router,

@@ -10,7 +10,7 @@ export const useDeletePlan = (planId: number, redirectURL?: string) => {
   const trpc = useTRPC();
 
   const { mutateAsync: deletePlan } = useMutation(
-    trpc.plans.plans.delete.mutationOptions()
+    trpc.plans.delete.mutationOptions()
   );
 
   return useMutation({
@@ -19,7 +19,7 @@ export const useDeletePlan = (planId: number, redirectURL?: string) => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: trpc.plans.plans.list.queryKey({
+        queryKey: trpc.plans.list.queryKey({
           collectiviteId,
         }),
       });
