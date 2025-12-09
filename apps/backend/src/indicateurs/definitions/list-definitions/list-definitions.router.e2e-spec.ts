@@ -13,6 +13,7 @@ import {
 import { createThematique } from '@tet/backend/shared/shared.test-fixture';
 import { getAuthUser, getTestApp } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { IndicateurDefinition } from '@tet/domain/indicateurs';
 import { inferProcedureInput } from '@trpc/server';
 import { eq, inArray } from 'drizzle-orm';
 import z from 'zod';
@@ -233,55 +234,56 @@ describe('ListDefinitionsRouter', () => {
       );
     });
 
+    async function createIndicateur(
+      values: Partial<IndicateurDefinition> & { parentId?: number }
+    ) {
+      const [indicateur] = await database.db
+        .insert(indicateurDefinitionTable)
+        .values({
+          ...values,
+          titre: values.titre ?? 'Indicateur',
+          unite: values.unite ?? 'unité',
+        })
+        .returning();
+
+      if (values.parentId) {
+        await database.db.insert(indicateurGroupeTable).values({
+          parent: values.parentId,
+          enfant: indicateur.id,
+        });
+      }
+
+      return indicateur;
+    }
+
     test('filtre par ficheIds - remonte aussi les indicateurs enfants', async () => {
       const caller = router.createCaller({ user: yoloDodoUser });
 
-      const identifiantParent = `test_parent_fiche_${Date.now()}`;
-      const [parent] = await database.db
-        .insert(indicateurDefinitionTable)
-        .values({
-          identifiantReferentiel: identifiantParent,
-          titre: 'Indicateur Parent avec fiche',
-          unite: 'unité',
-        })
-        .returning();
-
-      const identifiantEnfant = `test_enfant_fiche_${Date.now()}`;
-      const [enfant] = await database.db
-        .insert(indicateurDefinitionTable)
-        .values({
-          identifiantReferentiel: identifiantEnfant,
-          titre: 'Indicateur Enfant avec fiche',
-          unite: 'unité',
-        })
-        .returning();
-
-      // Lier l'enfant au parent
-      await database.db.insert(indicateurGroupeTable).values({
-        parent: parent.id,
-        enfant: enfant.id,
+      const parent = await createIndicateur({
+        titre: 'Indicateur Parent',
+        identifiantReferentiel: `test_parent_fiche_${Date.now()}`,
       });
 
-      const ficheId = await createFiche({
-        caller,
-        ficheInput: {
-          collectiviteId: 1,
-          titre: 'Fiche Test Enfant',
-        },
-      });
-
-      // Associer l'indicateur enfant à la fiche
-      await caller.plans.fiches.update({
-        ficheId,
-        ficheFields: {
-          indicateurs: [{ id: enfant.id }],
-        },
+      const enfant = await createIndicateur({
+        titre: 'Indicateur Enfant',
+        identifiantReferentiel: `test_enfant_fiche_${Date.now()}`,
+        parentId: parent.id,
       });
 
       onTestFinished(async () => {
         await database.db
           .delete(indicateurDefinitionTable)
           .where(inArray(indicateurDefinitionTable.id, [parent.id, enfant.id]));
+      });
+
+      // Créer une fiche liée à l'indicateur enfant
+      const ficheId = await createFiche({
+        caller,
+        ficheInput: {
+          collectiviteId: 1,
+          titre: 'Fiche Test Enfant',
+          indicateurs: [{ id: enfant.id }],
+        },
       });
 
       const { data: indicateurs } = await caller.indicateurs.definitions.list({
@@ -301,6 +303,89 @@ describe('ListDefinitionsRouter', () => {
       expect(enfantResult?.fiches).toContainEqual(
         expect.objectContaining({ id: ficheId })
       );
+    });
+
+    test("filtre par ficheIds - le parent remonté contient le bon nombre d'enfants", async () => {
+      const caller = router.createCaller({ user: yoloDodoUser });
+
+      // Créer un groupement avec plusieurs collectivités pour reproduire le bug de doublons d'enfants
+      const groupement1 = await createGroupement({
+        database,
+        groupementData: {
+          nom: `Test Groupement 1 ${Date.now()}`,
+          // Groupement avec plusieurs collectivités pour créer des doublons dans le join
+          // Collectivités ne contenant pas la collectivité associée à la fiche (CID `1`)
+          collectiviteIds: [150, 151, 152, 153],
+        },
+      });
+
+      const parent = await createIndicateur({
+        titre: 'Indicateur Parent',
+        identifiantReferentiel: `test_parent_fiche_${Date.now()}`,
+      });
+
+      const enfant1 = await createIndicateur({
+        titre: 'Indicateur Enfant 1',
+        identifiantReferentiel: `test_enfant_fiche_${Date.now()}`,
+        parentId: parent.id,
+        groupementId: groupement1.id,
+      });
+
+      onTestFinished(async () => {
+        await database.db
+          .delete(indicateurDefinitionTable)
+          .where(
+            inArray(indicateurDefinitionTable.id, [parent.id, enfant1.id])
+          );
+      });
+
+      // Créer une fiche liée à l'indicateur enfant et parent
+      const ficheId = await createFiche({
+        caller,
+        ficheInput: {
+          collectiviteId: 1,
+          titre: 'Fiche Test Parent avec Enfants',
+          indicateurs: [{ id: parent.id }],
+        },
+      });
+
+      // Sans filtre par collectivité pour vérifier que le parent remonte bien les enfants
+      // de tous les groupements, sans doublons
+      const { data: indicateurs } = await caller.indicateurs.definitions.list({
+        filters: {
+          ficheIds: [ficheId],
+        },
+      });
+
+      const parentResult = indicateurs.find((i) => i.id === parent.id);
+      if (!parentResult) {
+        expect.fail('Parent not found');
+      }
+
+      // Vérifier que le tableau enfants du parent ne contient pas de doublons
+      expect(parentResult.enfants.length).toBe(1);
+      expect(parentResult.enfants).toContainEqual(
+        expect.objectContaining({ id: enfant1.id })
+      );
+
+      // Puis avec filtre par collectivité pour vérifier que le parent remonte bien les enfants
+      // de la collectivité spécifiée, sans doublons
+      const { data: indicateursFilteredForCollectivite } =
+        await caller.indicateurs.definitions.list({
+          collectiviteId: 1,
+          filters: {
+            ficheIds: [ficheId],
+          },
+        });
+
+      const parentResultFilteredForCollectivite =
+        indicateursFilteredForCollectivite.find((i) => i.id === parent.id);
+      if (!parentResultFilteredForCollectivite) {
+        expect.fail('Parent not found');
+      }
+
+      // Vérifier que le tableau enfants du parent ne contient pas de doublons
+      expect(parentResultFilteredForCollectivite.enfants.length).toBe(0);
     });
 
     test('filtre par thematiqueIds', async () => {
