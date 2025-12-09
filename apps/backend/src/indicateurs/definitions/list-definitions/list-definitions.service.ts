@@ -177,10 +177,61 @@ export class ListDefinitionsService {
       'enfantDefinition'
     );
 
-    const query = this.databaseService.db
+    // Sous-requête pour obtenir les enfants uniques (évite les doublons dus aux groupements multiples)
+    // Utilise GROUP BY pour garantir une seule ligne par combinaison parent-enfant
+    const buildBaseQuery = () => {
+      const query = this.databaseService.db
+        .select({
+          parent: indicateurGroupeTable.parent,
+          enfant: indicateurGroupeTable.enfant,
+          identifiantReferentiel: enfantDefinition.identifiantReferentiel,
+          titre: enfantDefinition.titre,
+          titreCourt: enfantDefinition.titreCourt,
+        })
+        .from(indicateurGroupeTable)
+        .leftJoin(
+          enfantDefinition,
+          eq(enfantDefinition.id, indicateurGroupeTable.enfant)
+        );
+
+      // Si une collectivité est spécifiée, on filtre par groupement
+      if (collectiviteId) {
+        query
+          .leftJoin(
+            groupementTable,
+            eq(groupementTable.id, enfantDefinition.groupementId)
+          )
+          .leftJoin(
+            groupementCollectiviteTable,
+            eq(groupementCollectiviteTable.groupementId, groupementTable.id)
+          )
+          .where(
+            or(
+              isNull(enfantDefinition.groupementId),
+              eq(groupementCollectiviteTable.collectiviteId, collectiviteId)
+            )
+          );
+      }
+
+      return query.groupBy(
+        indicateurGroupeTable.parent,
+        indicateurGroupeTable.enfant,
+        enfantDefinition.identifiantReferentiel,
+        enfantDefinition.titre,
+        enfantDefinition.titreCourt
+      );
+    };
+
+    const enfantsBase = this.databaseService.db
+      .$with('enfantsBase')
+      .as(buildBaseQuery());
+
+    // Requête finale qui agrège les enfants uniques
+    return this.databaseService.db
+      .with(enfantsBase)
       .select({
-        indicateurId: indicateurGroupeTable.parent,
-        enfantIds: sql<string[]>`array_agg(${indicateurGroupeTable.enfant})`.as(
+        indicateurId: enfantsBase.parent,
+        enfantIds: sql<string[]>`array_agg(${enfantsBase.enfant})`.as(
           'enfant_ids'
         ),
         enfants: sql<
@@ -190,35 +241,13 @@ export class ListDefinitionsService {
             titre: string;
             titreCourt: string | null;
           }[]
-        >`array_agg(json_build_object('id', ${indicateurGroupeTable.enfant}, 'identifiantReferentiel', ${enfantDefinition.identifiantReferentiel}, 'titre', ${enfantDefinition.titre}, 'titreCourt', ${enfantDefinition.titreCourt} ))`.as(
+        >`array_agg(json_build_object('id', ${enfantsBase.enfant}, 'identifiantReferentiel', ${enfantsBase.identifiantReferentiel}, 'titre', ${enfantsBase.titre}, 'titreCourt', ${enfantsBase.titreCourt} ))`.as(
           'enfants'
         ),
       })
-      .from(indicateurGroupeTable)
-      .leftJoin(
-        enfantDefinition,
-        eq(enfantDefinition.id, indicateurGroupeTable.enfant)
-      )
-      .leftJoin(
-        groupementTable,
-        eq(groupementTable.id, enfantDefinition.groupementId)
-      )
-      .leftJoin(
-        groupementCollectiviteTable,
-        eq(groupementCollectiviteTable.groupementId, groupementTable.id)
-      );
-
-    // Filtrer les enfants selon leur groupement si une collectivité est spécifiée
-    if (collectiviteId) {
-      query.where(
-        or(
-          isNull(enfantDefinition.groupementId),
-          eq(groupementCollectiviteTable.collectiviteId, collectiviteId)
-        )
-      );
-    }
-
-    return query.groupBy(indicateurGroupeTable.parent).as('indicateurEnfants');
+      .from(enfantsBase)
+      .groupBy(enfantsBase.parent)
+      .as('indicateurEnfants');
   }
 
   // TODO: create a materialized view for this
