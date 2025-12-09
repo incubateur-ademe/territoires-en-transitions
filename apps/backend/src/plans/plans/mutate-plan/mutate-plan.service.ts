@@ -5,7 +5,7 @@ import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { MethodResult } from '@/backend/utils/result.type';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { AxeType } from '../../fiches/shared/models/axe.table';
 import { MutatePlanError, MutatePlanErrorEnum } from './mutate-plan.errors';
 import {
@@ -17,7 +17,7 @@ import { MutatePlanRepository } from './mutate-plan.repository';
 
 @Injectable()
 export class MutatePlanService {
-  //private readonly logger = new Logger(MutatePlanService.name);
+  private readonly logger = new Logger(MutatePlanService.name);
 
   constructor(
     private readonly permissionService: PermissionService,
@@ -64,6 +64,10 @@ export class MutatePlanService {
             createPlanProps.data,
             user.id,
             transaction
+          );
+        } else {
+          this.logger.log(
+            `Parsing error detected into input: ${createPlanProps.error}`
           );
         }
       }
