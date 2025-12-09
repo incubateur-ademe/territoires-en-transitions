@@ -1,4 +1,5 @@
 import * as Zod from 'zod';
+import * as zCore from 'zod/v4/core';
 
 /**
  * support for both string query param and native type
@@ -43,21 +44,24 @@ export const getZodStringArrayFromQueryString = (
   ]);
 };
 
-export const getPropertyPaths = (schema: Zod.core.$ZodType): string[] => {
+export const getPropertyPaths = (schema: zCore.$ZodType): string[] => {
   // Adjusted: Signature now uses Zod.ZodType to eliminate null& undefined check
   // check if schema is nullable or optional
 
-  if (schema instanceof Zod.ZodNullable || schema instanceof Zod.ZodOptional) {
-    return getPropertyPaths(schema.unwrap());
+  if (
+    schema instanceof zCore.$ZodNullable ||
+    schema instanceof zCore.$ZodOptional
+  ) {
+    return getPropertyPaths(schema._zod.def.innerType);
   }
   // check if schema is an array
-  if (schema instanceof Zod.ZodArray) {
-    return getPropertyPaths(schema.element);
+  if (schema instanceof zCore.$ZodArray) {
+    return getPropertyPaths(schema._zod.def.element);
   }
   // check if schema is an object
-  if (schema instanceof Zod.ZodObject) {
+  if (schema instanceof zCore.$ZodObject) {
     // get key/value pairs from schema
-    const entries = Object.entries<Zod.ZodType>(schema.shape); // Adjusted: Uses Zod.ZodType as generic to remove instanceof check. Since .shape returns ZodRawShape which has Zod.ZodType as type for each key.
+    const entries = Object.entries<zCore.$ZodType>(schema._zod.def.shape); // Adjusted: Uses Zod.ZodType as generic to remove instanceof check. Since .shape returns ZodRawShape which has Zod.ZodType as type for each key.
     // loop through key/value pairs
     return entries.flatMap(([key, value]) => {
       // get nested keys
