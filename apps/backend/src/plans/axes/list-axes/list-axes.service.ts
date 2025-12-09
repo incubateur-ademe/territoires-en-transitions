@@ -34,19 +34,7 @@ export class ListAxesService {
       };
     }
 
-    const listResult = await this.listAxesRepository.listChildren(input, tx);
-
-    if (!listResult.success) {
-      return {
-        success: false,
-        error: listResult.error,
-      };
-    }
-
-    return {
-      success: true,
-      data: listResult.data,
-    };
+    return this.listAxesRepository.listChildren(input, tx);
   }
 
   async listAxesRecursively(
@@ -62,22 +50,7 @@ export class ListAxesService {
       };
     }
 
-    const listResult = await this.listAxesRepository.listChildrenRecursively(
-      input,
-      tx
-    );
-
-    if (!listResult.success) {
-      return {
-        success: false,
-        error: listResult.error,
-      };
-    }
-
-    return {
-      success: true,
-      data: listResult.data,
-    };
+    return this.listAxesRepository.listChildrenRecursively(input, tx);
   }
 
   private async checkPermission(
