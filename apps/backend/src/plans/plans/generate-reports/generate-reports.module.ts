@@ -4,8 +4,8 @@ import { EchartsModule } from '@/backend/utils/echarts/echarts.module';
 import { Module } from '@nestjs/common';
 import { FichesModule } from '../../fiches/fiches.module';
 import { PlanModule } from '../plans.module';
-import { ReportsController } from './reports.controller';
-import { ReportsService } from './reports.service';
+import { GenerateReportsController } from './generate-reports.controller';
+import { GenerateReportsService } from './generate-reports.service';
 
 @Module({
   imports: [
@@ -15,8 +15,8 @@ import { ReportsService } from './reports.service';
     IndicateursModule,
     EchartsModule,
   ],
-  providers: [ReportsService],
-  exports: [ReportsService],
-  controllers: [ReportsController],
+  providers: [GenerateReportsService],
+  exports: [GenerateReportsService],
+  controllers: [GenerateReportsController],
 })
-export class ReportsModule {}
+export class GenerateReportsModule {}

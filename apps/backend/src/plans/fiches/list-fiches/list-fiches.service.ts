@@ -907,6 +907,8 @@ export default class ListFichesService {
     const query = this.databaseService.db
       .select({
         ...getTableColumns(ficheActionTable),
+        dateDebut: getISOFormatDateQuery(ficheActionTable.dateDebut),
+        dateFin: getISOFormatDateQuery(ficheActionTable.dateFin),
         collectiviteNom: collectiviteTable.nom,
         createdBy: sqlAuthorOrNull({
           userIdColumn: ficheActionTable.createdBy,

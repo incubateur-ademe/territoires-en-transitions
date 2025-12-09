@@ -2,8 +2,8 @@ import { CollectiviteAvecType } from '@/backend/collectivites/identite-collectiv
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { IndicateurChartService } from '@/backend/indicateurs/charts/indicateur-chart.service';
 import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
-import { COLLECTIVITE_SOURCE_ID } from '@/backend/indicateurs/valeurs/valeurs.constants';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
+import { CountByForEntityResponseType } from '@/backend/utils/count-by.dto';
 import { EchartsService } from '@/backend/utils/echarts/echarts.service';
 import { getHorizontalStackedBarChartOption } from '@/backend/utils/echarts/get-horizontal-stackedbar-chart-option.utils';
 import { getPieChartOption } from '@/backend/utils/echarts/get-pie-chart-option.utils';
@@ -11,10 +11,12 @@ import { getErrorMessage } from '@/backend/utils/get-error-message';
 import { MethodResult } from '@/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
 import { EChartsOption } from 'echarts/types/dist/echarts';
+import { chunk } from 'es-toolkit';
 import { Response } from 'express';
 import { createWriteStream, mkdirSync, rmSync, writeFileSync } from 'fs';
 import { imageSizeFromFile } from 'image-size/fromFile';
 import { ISizeCalculationResult } from 'image-size/types/interface';
+import { DateTime } from 'luxon';
 import * as path from 'path';
 import {
   Automizer,
@@ -36,6 +38,8 @@ import { PlanService } from '../plans.service';
 import { PlanProgressRules } from '../progress/plan-progress.rules';
 import { GenerateReportErrorType } from './generate-report.errors';
 import { ReportGenerationRequest } from './generate-report.request';
+import { ReportAxeGeneralInfo } from './report-axe-general-info.dto';
+import { ReportFicheInfo } from './report-fiche-info.dto';
 import { ReportPlanGeneralInfo } from './report-plan-general-info.dto';
 import { ReportTemplateConfig } from './report-template-config.dto';
 import {
@@ -45,8 +49,8 @@ import {
 import { ReportTemplateSlidesType } from './report-template-slides.enum';
 import { ReportTemplatesType } from './report-templates.enum';
 @Injectable()
-export class ReportsService {
-  private readonly logger = new Logger(ReportsService.name);
+export class GenerateReportsService {
+  private readonly logger = new Logger(GenerateReportsService.name);
 
   /** PowerPoint EMU precision (1 px = 9525 EMU) */
   private readonly EMU_PER_PX = 914400 / 96; // 9525
@@ -56,12 +60,9 @@ export class ReportsService {
     return Math.round(emu / this.EMU_PER_PX);
   }
 
-  private pxToEmu(px: number): number {
-    return px * this.EMU_PER_PX;
-  }
-
   private readonly LOCALE = 'fr-FR';
   private readonly CHART_SCALE_FACTOR = 2;
+  private readonly NOT_DEFINED_VALUE = 'ND';
   private readonly LOGO_FILE_NAME = 'logo.png';
   private readonly SLIDE_TEMPLATES_CONFIG: {
     [key in ReportTemplatesType]: ReportTemplateConfig;
@@ -77,7 +78,10 @@ export class ReportsService {
         overview_section_slide: 3,
         summary_slide: 5,
         progression_slide: 6,
-        fiche_summary_no_picture_slide: 18,
+        axes_section_slide: 13,
+        axe_summary_slide: 14,
+        fiche_summary_no_picture_slide: 17,
+        fiche_indicateurs_slide: 18,
       },
     },
   };
@@ -176,7 +180,8 @@ export class ReportsService {
     allElements: ElementInfo[],
     imageElementName: ReportTemplateImagesType,
     chartOption: EChartsOption,
-    mode: 'cover' | 'resize'
+    mode: 'cover' | 'resize',
+    imageFilePrefix?: string
   ) {
     const imageElement = this.getImageElement(allElements, imageElementName);
     if (!imageElement) {
@@ -199,7 +204,9 @@ export class ReportsService {
       height: elementPxHeight,
       options: chartOption,
     });
-    const imageFile = `${imageElementName}.png`;
+    const imageFile = `${
+      imageFilePrefix ? `${imageFilePrefix}_` : ''
+    }${imageElementName}.png`;
     writeFileSync(`${mediaDir}/${imageFile}`, buffer as Uint8Array);
     presentation.loadMedia(imageFile);
 
@@ -223,6 +230,7 @@ export class ReportsService {
         plan: Plan;
         collectivite: CollectiviteAvecType;
         axes: PlanNode[];
+        sousAxesByAxe: Record<number, PlanNode[]>;
         fiches: FicheWithRelations[];
         planGeneralInfo: ReportPlanGeneralInfo;
       },
@@ -267,6 +275,17 @@ export class ReportsService {
           numeric: true,
         })
       );
+
+    const sousAxesByAxe = plan.data.axes.reduce<Record<number, PlanNode[]>>(
+      (acc, axe) => {
+        if (axe.parent && axes.some((a) => a.id === axe.parent)) {
+          acc[axe.parent] = (acc[axe.parent] ?? []).concat(axe);
+        }
+        return acc;
+      },
+      {}
+    );
+
     const planGeneralInfo: ReportPlanGeneralInfo = {
       PLAN_ID: planId,
       PLAN_PROGRESS: this.planProgressRules.computeProgress(fiches.data),
@@ -280,6 +299,7 @@ export class ReportsService {
       }).format(new Date()),
       INDICATEURS_COUNT: indicateursCount,
       FICHES_COUNT: fiches.count,
+      SOUS_FICHES_COUNT: 0,
       AXES_COUNT: axes.length,
     };
 
@@ -288,9 +308,10 @@ export class ReportsService {
     return {
       success: true,
       data: {
-        collectivite: collectivite,
+        collectivite,
         plan: plan.data,
-        axes: axes,
+        axes,
+        sousAxesByAxe,
         fiches: fiches.data,
         planGeneralInfo,
       },
@@ -352,12 +373,14 @@ export class ReportsService {
     planGeneralInfo: ReportPlanGeneralInfo;
     template: ReportTemplateConfig;
     slideType: ReportTemplateSlidesType;
-    logoDimensions: ISizeCalculationResult;
+    logoDimensions: { width: number; height: number };
     callback?: (slide: ISlide) => Promise<void>;
+    extraTextReplacements?: any;
   }) {
     const {
       presentation,
       planGeneralInfo,
+      extraTextReplacements,
       template,
       slideType,
       logoDimensions,
@@ -382,7 +405,10 @@ export class ReportsService {
         );
 
         // End with text replacements
-        await this.replaceTextInSlide(slide, planGeneralInfo);
+        await this.replaceTextInSlide(slide, {
+          ...planGeneralInfo,
+          ...(extraTextReplacements ?? {}),
+        });
       }
     );
   }
@@ -452,7 +478,7 @@ export class ReportsService {
     planGeneralInfo: ReportPlanGeneralInfo;
     template: ReportTemplateConfig;
     logoDimensions: ISizeCalculationResult;
-  }) {
+  }): Promise<CountByForEntityResponseType[]> {
     const {
       presentation,
       mediaDir,
@@ -462,10 +488,6 @@ export class ReportsService {
       logoDimensions,
     } = args;
 
-    if (!template.slides.progression_slide) {
-      return;
-    }
-
     const statutCountByForEachAxe =
       await this.countByService.countByPropertyForEachAxeWithFiches(
         planGeneralInfo.PLAN_ID,
@@ -473,6 +495,11 @@ export class ReportsService {
         'statut',
         {}
       );
+
+    if (!template.slides.progression_slide) {
+      return statutCountByForEachAxe;
+    }
+
     const orderedStatuts: string[] = [
       'null', // pour les fiches sans statut
       StatutEnum.A_DISCUTER,
@@ -498,42 +525,90 @@ export class ReportsService {
       slideType: 'progression_slide',
       callback: async (slide) => {
         const allElements = await slide.getAllElements();
-        const imageElement = this.getImageElement(
-          allElements,
-          ReportTemplateImagesEnum.IMG_PLAN_PROGRESS_BY_AXE_CHART
-        );
-        if (!imageElement) {
-          return;
-        }
 
-        const elementPxWidth =
-          this.emuToPx(imageElement.position.cx) * this.CHART_SCALE_FACTOR;
-        const elementPxHeight =
-          this.emuToPx(imageElement.position.cy) * this.CHART_SCALE_FACTOR;
-        this.logger.log(
-          `Image element size: ${elementPxWidth}x${elementPxHeight}`
-        );
-
-        const buffer = await this.echartsService.renderToPngBuffer({
-          name: ReportTemplateImagesEnum.IMG_PLAN_PROGRESS_BY_AXE_CHART,
-          format: 'png',
-          width: elementPxWidth,
-          height: elementPxHeight,
-          options: statutCountByForEachAxeChartOption,
-        });
-        const imageFile = `${ReportTemplateImagesEnum.IMG_PLAN_PROGRESS_BY_AXE_CHART}.png`;
-        writeFileSync(`${mediaDir}/${imageFile}`, buffer as Uint8Array);
-        presentation.loadMedia(imageFile);
-
-        this.replaceImageInSlide(
+        await this.renderChartToImageInSlide(
           slide,
           presentation,
+          mediaDir,
           allElements,
           ReportTemplateImagesEnum.IMG_PLAN_PROGRESS_BY_AXE_CHART,
-          imageFile,
-          { width: elementPxWidth, height: elementPxHeight },
+          statutCountByForEachAxeChartOption,
           'cover'
         );
+      },
+    });
+
+    return statutCountByForEachAxe;
+  }
+
+  private async addAxesSummarySlide(args: {
+    presentation: Automizer;
+    mediaDir: string;
+    axe: PlanNode;
+    sousAxes: PlanNode[];
+    statutCountBy: CountByForEntityResponseType | undefined;
+    fiches: FicheWithRelations[];
+    planGeneralInfo: ReportPlanGeneralInfo;
+    template: ReportTemplateConfig;
+    logoDimensions: ISizeCalculationResult;
+  }) {
+    const {
+      presentation,
+      mediaDir,
+      axe,
+      sousAxes,
+      statutCountBy,
+      fiches,
+      planGeneralInfo,
+      template,
+      logoDimensions,
+    } = args;
+
+    if (!template.slides.axe_summary_slide) {
+      return;
+    }
+
+    const axeGeneralInfo = this.getAxeGeneralInfo(axe, sousAxes, fiches);
+
+    this.logger.log(
+      `Axe ${axe.nom} general info: ${JSON.stringify(axeGeneralInfo)}`
+    );
+
+    this.addSlide({
+      presentation,
+      planGeneralInfo,
+      template,
+      logoDimensions,
+      slideType: 'axe_summary_slide',
+      extraTextReplacements: axeGeneralInfo,
+      callback: async (slide) => {
+        const allElements = await slide.getAllElements();
+
+        if (statutCountBy) {
+          const statutPieChartOption = getPieChartOption({
+            displayItemsLabel: true,
+            countByResponse: statutCountBy,
+          });
+
+          await this.renderChartToImageInSlide(
+            slide,
+            presentation,
+            mediaDir,
+            allElements,
+            ReportTemplateImagesEnum.IMG_AXE_COUNT_BY_STATUT_PIE,
+            statutPieChartOption,
+            'cover',
+            `axe_${axe.id}`
+          );
+        } else {
+          const imageElement = this.getImageElement(
+            allElements,
+            ReportTemplateImagesEnum.IMG_AXE_COUNT_BY_STATUT_PIE
+          );
+          if (imageElement) {
+            slide.removeElement(imageElement.id);
+          }
+        }
       },
     });
   }
@@ -555,7 +630,8 @@ export class ReportsService {
   ) {
     const reportResult = await this.generatePlanReport(request, user);
     if (!reportResult.success) {
-      return reportResult;
+      res.status(500).json(reportResult);
+      return;
     }
 
     res.attachment(reportResult.data.reportName);
@@ -573,6 +649,179 @@ export class ReportsService {
         rmSync(reportResult.data.outputDir, { recursive: true });
       }
     });
+  }
+
+  private getFicheTextReplacementsInfos(
+    fiche: FicheWithRelations
+  ): ReportFicheInfo {
+    const dateDebut = fiche.dateDebut
+      ? DateTime.fromISO(fiche.dateDebut)
+          .setLocale(this.LOCALE)
+          .toLocaleString(DateTime.DATE_SHORT)
+      : this.NOT_DEFINED_VALUE;
+    const dateFin = fiche.dateFin
+      ? DateTime.fromISO(fiche.dateFin)
+          .setLocale(this.LOCALE)
+          .toLocaleString(DateTime.DATE_SHORT)
+      : this.NOT_DEFINED_VALUE;
+    return {
+      FICHE_TITRE: fiche.titre ?? '',
+      FICHE_PILOTES:
+        fiche.pilotes?.map((pilote) => pilote.nom ?? '').join(', ') ??
+        this.NOT_DEFINED_VALUE,
+      FICHE_PERIODE: `${dateDebut} -> ${dateFin}`,
+      FICHE_DATE_DEBUT: dateDebut,
+      FICHE_DATE_FIN: dateFin,
+    };
+  }
+
+  private getAxeGeneralInfo(
+    axe: PlanNode,
+    sousAxes: PlanNode[] | undefined,
+    fiches: FicheWithRelations[]
+  ): ReportAxeGeneralInfo {
+    const axeFilteredFiches = fiches.filter(
+      (fiche) => !fiche.parentId && fiche.axes?.some((a) => a.id === axe.id)
+    );
+    this.logger.log(`Axe ${axe.nom} has ${axeFilteredFiches.length} fiches`);
+    const indicateursCount = new Set(
+      axeFilteredFiches
+        .map((fiche) => fiche.indicateurs?.map((indicateur) => indicateur.id))
+        .flat()
+    ).size;
+
+    return {
+      AXE_ID: axe.id,
+      AXE_NOM: axe.nom?.startsWith('Axe') ? axe.nom : `Axe ${axe.nom ?? ''}`,
+      SOUS_AXES_COUNT: sousAxes?.length ?? 0,
+      AXE_PROGRESS: this.planProgressRules.computeProgress(axeFilteredFiches),
+      INDICATEURS_COUNT: indicateursCount,
+      FICHES_COUNT: axeFilteredFiches.length,
+      SOUS_FICHES_COUNT: 0,
+    };
+  }
+
+  private async addFicheInfosSlides(args: {
+    presentation: Automizer;
+    planGeneralInfo: ReportPlanGeneralInfo;
+    ficheTextReplacementsInfo: ReportFicheInfo;
+    logoDimensions: {
+      width: number;
+      height: number;
+    };
+    template: ReportTemplateConfig;
+    mediaDir: string;
+    fiche: FicheWithRelations;
+  }) {
+    const {
+      presentation,
+      planGeneralInfo,
+      ficheTextReplacementsInfo,
+      logoDimensions,
+      template,
+      mediaDir,
+      fiche,
+    } = args;
+
+    if (!template.slides.fiche_summary_no_picture_slide) {
+      return;
+    }
+
+    this.addSlide({
+      presentation,
+      template,
+      planGeneralInfo,
+      logoDimensions,
+      slideType: 'fiche_summary_no_picture_slide',
+      extraTextReplacements: ficheTextReplacementsInfo,
+      callback: async (slide) => {
+        const allElements = await slide.getAllElements();
+      },
+    });
+  }
+
+  private async addFicheIndicateursSlides(args: {
+    presentation: Automizer;
+    planGeneralInfo: ReportPlanGeneralInfo;
+    ficheTextReplacementsInfo: ReportFicheInfo;
+    logoDimensions: {
+      width: number;
+      height: number;
+    };
+    template: ReportTemplateConfig;
+    mediaDir: string;
+    fiche: FicheWithRelations;
+  }) {
+    const {
+      presentation,
+      planGeneralInfo,
+      ficheTextReplacementsInfo,
+      logoDimensions,
+      template,
+      mediaDir,
+      fiche,
+    } = args;
+    if (!template.slides.fiche_indicateurs_slide) {
+      return;
+    }
+
+    const indicateurWithValeurs = await Promise.all(
+      fiche.indicateurs?.map((indicateur) =>
+        this.indicateurValeursService
+          .getIndicateurValeursGroupees({
+            collectiviteId: fiche.collectiviteId,
+            indicateurIds: [indicateur.id],
+          })
+          .then((result) => result.indicateurs[0])
+      ) ?? []
+    );
+
+    if (indicateurWithValeurs.length) {
+      const indicateurWithValeursChunks = chunk(indicateurWithValeurs, 2);
+
+      for (const indicateurWithValeursChunk of indicateurWithValeursChunks) {
+        this.addSlide({
+          presentation,
+          template,
+          planGeneralInfo,
+          logoDimensions,
+          slideType: 'fiche_indicateurs_slide',
+          extraTextReplacements: ficheTextReplacementsInfo,
+          callback: async (slide) => {
+            const allElements = await slide.getAllElements();
+
+            await Promise.all(
+              indicateurWithValeursChunk.map(
+                (indicateurWithValeurs, iIndicateur) => {
+                  const chartOption = this.indicateurChartService.getChartData(
+                    indicateurWithValeurs
+                  );
+
+                  return this.renderChartToImageInSlide(
+                    slide,
+                    presentation,
+                    mediaDir,
+                    allElements,
+                    iIndicateur === 0
+                      ? ReportTemplateImagesEnum.IMG_FICHE_INDICATEUR_CHART_1
+                      : ReportTemplateImagesEnum.IMG_FICHE_INDICATEUR_CHART_2,
+                    chartOption,
+                    'cover',
+                    `fiche_${fiche.id}_chart_${indicateurWithValeurs.definition.id}`
+                  );
+                }
+              )
+            );
+
+            if (indicateurWithValeursChunk.length === 1) {
+              slide.removeElement(
+                ReportTemplateImagesEnum.IMG_FICHE_INDICATEUR_CHART_2
+              );
+            }
+          },
+        });
+      }
+    }
   }
 
   async generatePlanReport(
@@ -603,7 +852,8 @@ export class ReportsService {
           error: planDataResult.error,
         };
       }
-      const { axes, fiches, planGeneralInfo } = planDataResult.data;
+      const { axes, sousAxesByAxe, fiches, planGeneralInfo } =
+        planDataResult.data;
 
       const generationId = crypto.randomUUID();
       mediaDir = path.join(__dirname, `media/${generationId}`);
@@ -621,6 +871,7 @@ export class ReportsService {
         showIntegrityInfo: false, // WARNING: changing this to true throw some weird errors on generated images not beeing found
         assertRelatedContents: true,
         cleanup: true,
+        compression: 9,
         verbosity: 1,
         statusTracker: (status: StatusTracker) => {
           this.logger.log(status.info + ' (' + status.share + '%)');
@@ -672,7 +923,7 @@ export class ReportsService {
         logoDimensions,
       });
 
-      await this.addPlanProgressSlide({
+      const statutCountByForEachAxe = await this.addPlanProgressSlide({
         presentation,
         mediaDir,
         fiches,
@@ -681,160 +932,63 @@ export class ReportsService {
         logoDimensions,
       });
 
-      /*  presentation.addSlide('template_bilan.pptx', 12, async (slide) => {
-      const descriptions: string[] = fiches.data
-        .filter((fiche) => fiche.description)
-        .map((fiche) => fiche.description ?? '');
-      const data = {
-        body: [
-          <TableRow>{
-            label: 'item test r1',
-            values: [descriptions[0], 10, 16],
-            styles: [
-              null,
-              <TableRowStyle>{
-                color: {
-                  type: 'srgbClr',
-                  value: 'cccccc',
-                },
-                size: 1400,
-              },
-            ],
-          },
-          { label: 'item test r2', values: [descriptions[1], 12, 18] },
-          {
-            label: 'item test r3',
-            values: [descriptions[3], 14, 13],
-          },
-          {
-            label: 'item test 4',
-            values: [descriptions[4], 14, 13],
-          },
-          {
-            label: 'item test 5',
-            values: [descriptions[5], 14, 13],
-          },
-        ],
-      };
+      this.addSlide({
+        presentation,
+        planGeneralInfo,
+        template: templateConfig,
+        logoDimensions,
+        slideType: 'axes_section_slide',
+      });
 
-      slide.modifyElement('table_avancement_plan', [
-        modify.setTableData(data),
-        modify.adjustHeight(data),
-        modify.adjustWidth(data),
-      ]);
-    });*/
+      const filteredFiches = request.ficheIds
+        ? fiches.filter((fiche) => request.ficheIds?.includes(fiche.id))
+        : fiches;
+      this.logger.log(
+        `Fiches to be included in the report: ${filteredFiches.length}`
+      );
 
-      for (const fiche of fiches) {
-        const indicateurValeurs = await Promise.all(
-          fiche.indicateurs?.map((indicateur) =>
-            this.indicateurValeursService
-              .getIndicateurValeursGroupees({
-                collectiviteId: fiche.collectiviteId,
-                indicateurIds: [indicateur.id],
-              })
-              .then((result) => result.indicateurs[0])
-          ) ?? []
+      for (const axe of axes) {
+        await this.addAxesSummarySlide({
+          presentation,
+          mediaDir,
+          axe,
+          sousAxes: sousAxesByAxe[axe.id],
+          statutCountBy: statutCountByForEachAxe.find(
+            (countBy) => countBy.id === axe.id
+          ),
+          fiches: fiches,
+          planGeneralInfo,
+          template: templateConfig,
+          logoDimensions,
+        });
+
+        const axeFilteredFiches = filteredFiches.filter((fiche) =>
+          fiche.axes?.some((a) => a.id === axe.id)
         );
+        for (const fiche of axeFilteredFiches) {
+          const ficheTextReplacementsInfo =
+            this.getFicheTextReplacementsInfos(fiche);
 
-        if (indicateurValeurs.length) {
-          for (const indicateurValeur of indicateurValeurs) {
-            if (
-              indicateurValeur.sources[COLLECTIVITE_SOURCE_ID]?.valeurs
-                ?.length &&
-              indicateurValeur.sources[COLLECTIVITE_SOURCE_ID].valeurs.length >=
-                2
-            ) {
-              this.logger.log(JSON.stringify(indicateurValeur));
-              const chartData = await this.indicateurChartService.getChartData(
-                indicateurValeur
-              );
-              this.logger.log(JSON.stringify(chartData));
-            }
-          }
-        }
-
-        presentation
-          // 1 = index du slide source (1-based)
-          .addSlide(templateConfig.key, 18, async (slide) => {
-            const txtElementIds = await slide.getAllTextElementIds();
-
-            const statusElementsToHide = Object.keys(StatutEnum)
-              .filter(
-                (key) =>
-                  StatutEnum[key as keyof typeof StatutEnum] !== fiche.statut
-              )
-              .map((key) => `txt_fiche_statut_${key}`);
-
-            statusElementsToHide.forEach((statusElementToHide) => {
-              if (txtElementIds.includes(statusElementToHide)) {
-                slide.removeElement(statusElementToHide);
-              }
-            });
-
-            // WARNING: we have to do this at the end otherwise removing elements will not work
-            await this.replaceTextInSlide(slide, {
-              ...planGeneralInfo,
-              FICHE_TITRE: fiche.titre ?? '',
-            });
-
-            //slide.
-            /*
-          slide.modifyElement(
-            'txt_description',
-            modify.setMultiText([
-              {
-                paragraph: {
-                  bullet: true,
-                  level: 0,
-                  marginLeft: 41338,
-                  indent: -87325,
-                  alignment: 'l',
-                },
-                textRuns: [
-                  {
-                    text: fiche.description ?? '',
-                    style: {
-                      isItalics: true,
-                      color: {
-                        type: 'srgbClr',
-                        value: 'CCCCCC',
-                      },
-                    },
-                  },
-                ],
-              },
-            ])
-          );
-
-          slide.modifyElement('Grafik 5', [
-            // Override the original media source of element 'imagePNG'
-            // by an imported file:
-            // @ts-ignore
-            ModifyImageHelper.setRelationTargetCover(imageFile, presentation),
-          ]);
-
-          slide.modifyElement(
-            'txt_budget_effectif_fill_link',
-            modify.addHyperlink(
-              `https://app.territoiresentransitions.fr/collectivite/${
-                fiche.collectiviteId
-              }/plans/${fiche.plans ? fiche.plans[0].id : ''}/fiches/${
-                fiche.id
-              }`
-            )
-          );
-
-          slide.generate((pptxGenJSSlide) => {
-            pptxGenJSSlide.addText(`External Link`, {
-              hyperlink: { url: 'https://github.com' },
-              x: 1,
-              y: 1,
-              w: 2.5,
-              h: 0.5,
-              fontSize: 12,
-            });
-          });*/
+          await this.addFicheInfosSlides({
+            presentation,
+            planGeneralInfo,
+            ficheTextReplacementsInfo,
+            template: templateConfig,
+            logoDimensions,
+            mediaDir,
+            fiche,
           });
+
+          await this.addFicheIndicateursSlides({
+            presentation,
+            planGeneralInfo,
+            ficheTextReplacementsInfo,
+            template: templateConfig,
+            logoDimensions,
+            mediaDir,
+            fiche,
+          });
+        }
       }
 
       reportName = this.getReportName(planGeneralInfo);
@@ -842,8 +996,10 @@ export class ReportsService {
       this.logger.log(`Report summary: ${JSON.stringify(reportSummary)}`);
       reportPath = path.join(outputDir, reportName);
       this.logger.log(`Report path: ${reportPath}`);
-    } catch (error) {
-      this.logger.error(`Error generating plan report: ${error}`);
+    } catch (err) {
+      this.logger.error(
+        `Error generating plan report: ${getErrorMessage(err)}`
+      );
       error = GenerateReportErrorType.SERVER_ERROR;
     } finally {
       if (mediaDir) {

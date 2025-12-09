@@ -5,27 +5,41 @@ import {
 } from '../shared/models/indicateur-valeur-type.enum';
 import { COLLECTIVITE_SOURCE_ID } from '../valeurs/valeurs.constants';
 
-export type ChartLineStype = Pick<
+export type ChartLineStyle = Pick<
   LineSeriesOption,
-  'color' | 'smooth' | 'symbol' | 'symbolSize' | 'lineStyle'
+  'color' | 'smooth' | 'symbol' | 'symbolSize' | 'lineStyle' | 'showSymbol'
 >;
 
-export const DEFAULT_CHART_LINE_STYLE: ChartLineStype = {
-  color: '#6A6AF4',
+export const DEFAULT_CHART_LINE_STYLE: ChartLineStyle = {
   smooth: true,
   symbol: 'circle',
-  symbolSize: 8,
-  lineStyle: {
-    width: 2,
+  showSymbol: true,
+};
+
+export const DEFAULT_CHART_LINE_STYLES_BY_VALEUR_TYPE: {
+  [valeurType in IndicateurValeurType]: ChartLineStyle;
+} = {
+  [IndicateurValeurEnum.RESULTAT]: {
+    symbolSize: 8,
+    lineStyle: {
+      width: 2,
+    },
+  },
+  [IndicateurValeurEnum.OBJECTIF]: {
+    symbolSize: 4,
+    lineStyle: {
+      width: 2,
+      type: 'dashed',
+    },
   },
 };
 
 /**
  * TODO: to be shared with app
  */
-export const INDICATEUR_CHART_COLORS: {
+export const INDICATEUR_CHART_LINE_STYLES_BY_SOURCE_ID: {
   [sourceId: string]: {
-    [valeurType in IndicateurValeurType]?: ChartLineStype;
+    [valeurType in IndicateurValeurType]?: ChartLineStyle;
   };
 } = {
   moyenne: { [IndicateurValeurEnum.RESULTAT]: { color: '#41E6FF' } },
