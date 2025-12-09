@@ -11,7 +11,7 @@ import { CollectivitesModule } from './collectivites/collectivites.module';
 import { PersonnalisationsModule } from './collectivites/personnalisations/personnalisations.module';
 import { IndicateursModule } from './indicateurs/indicateurs.module';
 import { FichesModule } from './plans/fiches/fiches.module';
-import { ReportsModule } from './plans/plans/generate-reports/reports.module';
+import { GenerateReportsModule } from './plans/plans/generate-reports/generate-reports.module';
 import { PlanModule } from './plans/plans/plans.module';
 import { ReferentielsModule } from './referentiels/referentiels.module';
 import { AuthModule } from './users/auth.module';
@@ -72,7 +72,7 @@ const appLogger = new Logger('AppModule');
     AuthModule,
     FichesModule,
     PlanModule,
-    ReportsModule,
+    GenerateReportsModule,
     PersonnalisationsModule,
     ReferentielsModule,
     SharedModule,

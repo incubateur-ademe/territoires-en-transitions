@@ -63,6 +63,7 @@ import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
 import { AuthUser } from '@/backend/users/models/auth.models';
 import { sqlAuthorOrNull } from '@/backend/users/models/author.utils';
 import { dcpTable } from '@/backend/users/models/dcp.table';
+import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { getModifiedSinceDate } from '@/backend/utils/modified-since.enum';
 import { MethodResult } from '@/backend/utils/result.type';
@@ -917,6 +918,8 @@ export default class ListFichesService {
     const query = this.databaseService.db
       .select({
         ...getTableColumns(ficheActionTable),
+        dateDebut: getISOFormatDateQuery(ficheActionTable.dateDebut),
+        dateFin: getISOFormatDateQuery(ficheActionTable.dateFin),
         collectiviteNom: collectiviteTable.nom,
         createdBy: sqlAuthorOrNull({
           userIdColumn: ficheActionTable.createdBy,

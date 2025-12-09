@@ -82,6 +82,7 @@ export class EchartsService {
     // setOption as normal
     chart?.setOption({
       ...request.options,
+      animation: false,
       textStyle: { fontSize: this.DEFAULT_FONT_SIZE },
     });
 

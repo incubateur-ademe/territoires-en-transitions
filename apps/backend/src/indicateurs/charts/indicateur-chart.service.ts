@@ -13,10 +13,10 @@ import {
   IndicateurValeurType,
 } from '../shared/models/indicateur-valeur-type.enum';
 import { IndicateurAvecValeursParSource } from '../valeurs/indicateur-valeur.table';
-import { COLLECTIVITE_SOURCE_ID } from '../valeurs/valeurs.constants';
 import {
   DEFAULT_CHART_LINE_STYLE,
-  INDICATEUR_CHART_COLORS,
+  DEFAULT_CHART_LINE_STYLES_BY_VALEUR_TYPE,
+  INDICATEUR_CHART_LINE_STYLES_BY_SOURCE_ID,
 } from './indicateur-chart-colors.constants';
 
 const { colors } = preset.theme.extend;
@@ -45,13 +45,38 @@ export class IndicateurChartService {
     }
   }
 
-  async getChartData(indicateurAvecValeurs: IndicateurAvecValeursParSource) {
-    // TODO: transpose code from useIndicateurChartInfo
+  /**
+   * 
+   * @param indicateurAvecValeurs const makeReferenceDataset = (
+  id: 'cible' | 'seuil',
+  valeur: number,
+  unite: string,
+  anneeISO: string,
+  libelle: string | null
+) => ({
+  color: LAYERS[id].color,
+  id,
+  calculAuto: false,
+  name: `Valeur ${id === 'seuil' ? 'limite' : id} : ${valeur} ${unite}`,
+  source: [{ anneeISO, valeur }],
+  dimensions: ['anneeISO', 'valeur'],
+  metadonnee: null,
+  nomSource: libelle,
+});
+   * @param sourceId 
+   * @param valeurType 
+   * @returns 
+   */
 
-    //color: getColorBySourceId(source, type),
-    const sourceId = COLLECTIVITE_SOURCE_ID;
-    const valeurType = IndicateurValeurEnum.RESULTAT;
+  getSourceDatasetSeries(
+    indicateurAvecValeurs: IndicateurAvecValeursParSource,
+    sourceId: string,
+    valeurType: IndicateurValeurType
+  ): { dataset: DatasetComponentOption; serie: LineSeriesOption } | null {
     const source = indicateurAvecValeurs.sources[sourceId];
+    if (!source) {
+      return null;
+    }
 
     const datasetId = `${valeurType}-${sourceId}`;
     const datasetName = this.getSourceLabel(
@@ -61,59 +86,84 @@ export class IndicateurChartService {
         : source.libelle,
       valeurType
     );
-    const dataset: DatasetComponentOption[] = [
-      {
-        id: datasetId,
-        name: datasetName,
-        source: source.valeurs
-          .map((valeur) => {
-            if (isNil(valeur[valeurType])) {
-              return null;
-            }
 
-            const annee = new Date(valeur.dateValeur).getFullYear();
+    const dataset: DatasetComponentOption = {
+      id: datasetId,
+      name: datasetName,
+      source: source.valeurs
+        .map((valeur) => {
+          if (isNil(valeur[valeurType])) {
+            return null;
+          }
 
-            return {
-              date: valeur.dateValeur,
-              annee,
-              valeur: valeur[valeurType],
-            };
-          })
-          .filter((v) => v !== null),
-        dimensions: ['date', 'valeur'],
-      },
-    ];
-    const lineStyle = {
-      ...DEFAULT_CHART_LINE_STYLE,
-      ...(INDICATEUR_CHART_COLORS[sourceId]?.[valeurType] || {}),
+          const annee = new Date(valeur.dateValeur).getFullYear();
+
+          return {
+            date: valeur.dateValeur,
+            annee,
+            valeur: valeur[valeurType],
+          };
+        })
+        .filter((v) => v !== null),
+      dimensions: ['date', 'valeur'],
     };
 
-    const series: LineSeriesOption[] = [
-      {
-        id: datasetId,
-        datasetId,
-        name: datasetName,
-        type: 'line',
-        emphasis: { focus: 'series' },
-        ...lineStyle,
-        //symbol: ds.id === 'trajectoire' ? 'none' : 'circle',
-        //symbolSize: ds.id?.toString().startsWith('resultat') ? 8 : 4,
-        /*lineStyle: estLignePointillee(ds)
+    if (!dataset.source?.length) {
+      return null;
+    }
+
+    const lineStyle = {
+      ...DEFAULT_CHART_LINE_STYLE,
+      ...(DEFAULT_CHART_LINE_STYLES_BY_VALEUR_TYPE[valeurType] || {}),
+      ...(INDICATEUR_CHART_LINE_STYLES_BY_SOURCE_ID[sourceId]?.[valeurType] ||
+        {}),
+    };
+    const serie: LineSeriesOption = {
+      id: datasetId,
+      datasetId,
+      name: datasetName,
+      type: 'line',
+      emphasis: { focus: 'series' },
+      ...lineStyle,
+      //symbol: ds.id === 'trajectoire' ? 'none' : 'circle',
+      //symbolSize: ds.id?.toString().startsWith('resultat') ? 8 : 4,
+      /*lineStyle: estLignePointillee(ds)
               ? { type: 'dashed', width: 2 }
               : { width: 2 } */
-      },
-    ];
+    };
+
+    return {
+      dataset,
+      serie: serie,
+    };
+  }
+
+  getChartData(
+    indicateurAvecValeurs: IndicateurAvecValeursParSource
+  ): EChartsOption {
+    const sources = Object.keys(indicateurAvecValeurs.sources);
+    const datasetsAndSeries = sources
+      .map((sourceId) => {
+        return [
+          this.getSourceDatasetSeries(
+            indicateurAvecValeurs,
+            sourceId,
+            IndicateurValeurEnum.RESULTAT
+          ),
+          this.getSourceDatasetSeries(
+            indicateurAvecValeurs,
+            sourceId,
+            IndicateurValeurEnum.OBJECTIF
+          ),
+        ];
+      })
+      .flat()
+      .filter((ds) => ds !== null);
+
+    const dataset = datasetsAndSeries.map((ds) => ds.dataset);
+    const series = datasetsAndSeries.map((ds) => ds.serie);
 
     const chartOptions: EChartsOption = {
-      textStyle: {
-        fontFamily: '"Marianne", arial, sans-serif',
-      },
-      grid: {
-        left: 32,
-        right: 32,
-        bottom: 80,
-        containLabel: true,
-      },
       dataset,
       series,
       legend: {

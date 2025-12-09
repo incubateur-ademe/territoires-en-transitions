@@ -7,7 +7,7 @@ import { ApiExcludeController, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { createZodDto } from 'nestjs-zod';
 import { reportGenerationRequestSchema } from './generate-report.request';
-import { ReportsService } from './reports.service';
+import { GenerateReportsService } from './generate-reports.service';
 
 class ReportGenerationRequestClass extends createZodDto(
   reportGenerationRequestSchema
@@ -16,8 +16,10 @@ class ReportGenerationRequestClass extends createZodDto(
 @ApiExcludeController()
 @ApiTags("Plan d'action")
 @Controller('reports')
-export class ReportsController {
-  constructor(private readonly reportsService: ReportsService) {}
+export class GenerateReportsController {
+  constructor(
+    private readonly generateReportsService: GenerateReportsService
+  ) {}
 
   @Post('generate')
   @ApiUsage([ApiUsageEnum.APP])
@@ -30,7 +32,7 @@ export class ReportsController {
     @Res() res: Response,
     @TokenInfo() user: AuthenticatedUser
   ) {
-    return await this.reportsService.generateAndDownloadPlanReport(
+    return await this.generateReportsService.generateAndDownloadPlanReport(
       request,
       user,
       res
