@@ -67,7 +67,7 @@ export type FicheImport = {
 
 export type AxeImport = {
   nom: string;
-  id?: number | undefined;
+  id?: number;
   parent?: AxeImport | PlanImport;
   enfants: Set<AxeImport>;
   fiches: FicheImport[];
