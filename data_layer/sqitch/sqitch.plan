@@ -918,3 +918,5 @@ notifications/notification 2025-11-03T15:38:46Z Marc Rutkowski <marc@attractive-
 @v4.88.0 2025-12-01T13:56:22Z Marc Rutkowski <marc@attractive-media.fr> # Gestion des fils de discussion, des notifications et des sous-actions
 
 referentiel/add_demande_associated_collectivite_id 2025-11-25T15:05:19Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # ajout de la collectivité associée dans le cas d'une demande conjointe
+@v4.89.0 2025-12-09T15:49:59Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # support minimal des démarches conjointes de labellisation/audit
+
