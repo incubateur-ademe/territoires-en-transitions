@@ -14,6 +14,7 @@ import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
+import { axeIndicateurTable } from '../../fiches/shared/models/axe-indicateur.table';
 import { axeTable } from '../../fiches/shared/models/axe.table';
 
 describe('Supprimer un axe', () => {
@@ -266,6 +267,67 @@ describe('Supprimer un axe', () => {
       expect(axeIdsAfter).not.toContain(axe2.id);
       expect(axeIdsAfter).toContain(axe1.id);
       expect(axeIdsAfter).toContain(axe3.id);
+    });
+
+    test('Supprimer avec succès un axe supprime les indicateurs qui lui sont rattachés', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      // Créer des indicateurs de test
+      const indicateur1Id = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Indicateur 1 pour suppression',
+        unite: 'kg',
+      });
+
+      const indicateur2Id = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Indicateur 2 pour suppression',
+        unite: 'm²',
+      });
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.indicateurs.indicateurs.delete({
+          indicateurId: indicateur1Id,
+          collectiviteId: collectivite.id,
+        });
+        await cleanupCaller.indicateurs.indicateurs.delete({
+          indicateurId: indicateur2Id,
+          collectiviteId: collectivite.id,
+        });
+      });
+
+      // Créer un axe avec des indicateurs
+      const createdAxe = await caller.plans.axes.upsert({
+        nom: 'Axe avec indicateurs à supprimer',
+        collectiviteId: collectivite.id,
+        planId,
+        parent: planId,
+        indicateurs: [{ id: indicateur1Id }, { id: indicateur2Id }],
+      });
+      const axeId = createdAxe.id;
+
+      // Vérifier que les indicateurs sont associés à l'axe avant suppression
+      const axeIndicateursBefore = await db.db
+        .select()
+        .from(axeIndicateurTable)
+        .where(eq(axeIndicateurTable.axeId, axeId));
+
+      expect(axeIndicateursBefore).toHaveLength(2);
+      expect(axeIndicateursBefore.map((ai) => ai.indicateurId)).toEqual(
+        expect.arrayContaining([indicateur1Id, indicateur2Id])
+      );
+
+      // Supprimer l'axe
+      await caller.plans.axes.delete({ axeId });
+
+      // Vérifier que les liens entre l'axe et les indicateurs ont été supprimés
+      const axeIndicateursAfter = await db.db
+        .select()
+        .from(axeIndicateurTable)
+        .where(eq(axeIndicateurTable.axeId, axeId));
+
+      expect(axeIndicateursAfter).toHaveLength(0);
     });
   });
 
