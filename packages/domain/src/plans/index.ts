@@ -1,6 +1,7 @@
 export * from '@/backend/plans/fiches/bulk-edit/bulk-edit.input';
 export * from '@/backend/plans/fiches/count-by/count-by-property-options.enum';
 export * from '@/backend/plans/fiches/count-by/count-by.types';
+export * from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 export * from '@/backend/plans/fiches/fiche-action-etape/fiche-action-etape.table';
 export * from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
 export * from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
@@ -23,8 +24,9 @@ export * from '@/backend/plans/fiches/shared/models/filtre-ressource-liees.schem
 export * from '@/backend/plans/fiches/shared/models/plan-action-type-categorie.table';
 export * from '@/backend/plans/fiches/shared/models/plan-action-type.table';
 export * from '@/backend/plans/fiches/shared/models/plans-fetch-options.schema';
-export * from '@/backend/plans/plans/completion-analytics/completion-analytics.dto';
 export * from '@/backend/plans/fiches/update-fiche/update-fiche.request';
+export * from '@/backend/plans/plans/completion-analytics/completion-analytics.dto';
+export * from '@/backend/plans/plans/generate-reports/generate-report.request';
 export {
   flatAxeSchema,
   updatePlanPiloteSchema,
@@ -41,5 +43,3 @@ export {
   type UpdatePlanRequest,
 } from '@/backend/plans/plans/plans.schema';
 export * from './fiches/utils/fiche.validator';
-export * from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
-export * from '@/backend/plans/fiches/update-fiche/update-fiche.request';

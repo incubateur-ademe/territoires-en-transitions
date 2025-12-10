@@ -744,6 +744,8 @@ export class GenerateReportsService {
       extraTextReplacements: ficheTextReplacementsInfo,
       callback: async (slide) => {
         const allElements = await slide.getAllElements();
+
+        slide.removeElement('group_fiche_indicateur_1');
       },
     });
   }
