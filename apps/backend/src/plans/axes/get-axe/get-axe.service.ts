@@ -3,12 +3,13 @@ import CollectivitesService from '@tet/backend/collectivites/services/collectivi
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { MethodResult } from '@tet/backend/utils/result.type';
-import { AxeLight } from '@tet/domain/plans';
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { GetAxeError, GetAxeErrorEnum } from './get-axe.errors';
 import { GetAxeInput } from './get-axe.input';
+import { GetAxeOutput } from './get-axe.output';
 import { GetAxeRepository } from './get-axe.repository';
 
 @Injectable()
@@ -16,36 +17,62 @@ export class GetAxeService {
   private readonly logger = new Logger(GetAxeService.name);
 
   constructor(
-    private readonly permissionService: PermissionService,
+    private readonly collectivite: CollectivitesService,
+    private readonly databaseService: DatabaseService,
     private readonly getAxeRepository: GetAxeRepository,
-    private readonly collectivite: CollectivitesService
+    private readonly permissionService: PermissionService
   ) {}
 
   async getAxe(
     input: GetAxeInput,
     user: AuthenticatedUser,
     tx?: Transaction
-  ): Promise<MethodResult<AxeLight, GetAxeError>> {
-    // récupèrer l'axe pour obtenir la collectivité
-    const axeResult = await this.getAxeRepository.getAxe(input.axeId, tx);
-    if (!axeResult.success) {
-      return axeResult;
-    }
+  ): Promise<MethodResult<GetAxeOutput, GetAxeError>> {
+    const executeInTransaction = async (
+      transaction: Transaction
+    ): Promise<MethodResult<GetAxeOutput, GetAxeError>> => {
+      // récupèrer l'axe pour obtenir la collectivité
+      const axeResult = await this.getAxeRepository.getAxe(
+        input.axeId,
+        transaction
+      );
+      if (!axeResult.success) {
+        return axeResult;
+      }
+      const axe = axeResult.data;
 
-    // vérifier les permissions
-    const collectiviteId = axeResult.data.collectiviteId;
-    const isAllowed = await this.checkPermission(collectiviteId, user);
-    if (!isAllowed) {
+      // vérifier les permissions
+      const collectiviteId = axeResult.data.collectiviteId;
+      const isAllowed = await this.checkPermission(collectiviteId, user);
+      if (!isAllowed) {
+        return {
+          success: false,
+          error: GetAxeErrorEnum.UNAUTHORIZED,
+        };
+      }
+
+      const indicateursResult = await this.getAxeRepository.geIndicateurs(
+        axe.id,
+        transaction
+      );
+      if (!indicateursResult.success) {
+        return indicateursResult;
+      }
+
       return {
-        success: false,
-        error: GetAxeErrorEnum.UNAUTHORIZED,
+        success: true,
+        data: {
+          ...axe,
+          indicateurs: indicateursResult.data,
+        },
       };
-    }
-
-    return {
-      success: true,
-      data: axeResult.data,
     };
+
+    return tx
+      ? executeInTransaction(tx)
+      : this.databaseService.db.transaction(async (newTx) =>
+          executeInTransaction(newTx)
+        );
   }
 
   private async checkPermission(

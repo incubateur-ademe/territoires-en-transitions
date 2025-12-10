@@ -5,6 +5,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { MethodResult } from '@tet/backend/utils/result.type';
 import { PermissionOperationEnum } from '@tet/domain/users';
+import { GetAxeErrorEnum } from '../get-axe/get-axe.errors';
 import { GetAxeService } from '../get-axe/get-axe.service';
 import { ListAxesService } from '../list-axes/list-axes.service';
 import { DeleteAxeError, DeleteAxeErrorEnum } from './delete-axe.errors';
@@ -35,7 +36,13 @@ export class DeleteAxeService {
     );
 
     if (!axeResult.success) {
-      return axeResult;
+      return {
+        success: false,
+        error:
+          axeResult.error === GetAxeErrorEnum.UNAUTHORIZED
+            ? axeResult.error
+            : GetAxeErrorEnum.AXE_NOT_FOUND,
+      };
     }
 
     const collectiviteId = axeResult.data.collectiviteId;
