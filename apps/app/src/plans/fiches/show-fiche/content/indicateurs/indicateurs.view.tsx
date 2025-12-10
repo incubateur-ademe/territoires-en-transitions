@@ -1,35 +1,106 @@
-import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { FicheWithRelations } from '@tet/domain/plans';
+import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
+import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
+import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { Button, SideMenu } from '@tet/ui';
 import { useFicheContext } from '../../context/fiche-context';
-import IndicateursAssocies from './IndicateursAssocies';
-import IndicateursHeader from './IndicateursHeader';
+import { SharedFicheLinkedResourcesAlert } from '../../share-fiche/shared-fiche-linked-resources.alert';
+import { ActionButtons } from './action.buttons';
+import { EmptyIndicateursView } from './empty-indicateurs.view';
+import { ModaleCreerIndicateur } from './ModaleCreerIndicateur';
+import { LinkIndicateursView } from './SideMenu/link-indicateur.view';
 
-type IndicateursViewProps = {
-  isReadonly: boolean;
-  fiche: FicheWithRelations;
-};
+export const IndicateursView = () => {
+  const {
+    updateIndicateurs,
+    selectedIndicateurs,
+    isLoadingIndicateurs,
+    canUpdateIndicateur,
+    indicateurAction,
+    toggleIndicateurAction,
+    isReadonly,
+    fiche,
+  } = useFicheContext();
+  const collectiviteId = useCollectiviteId();
+  if (isLoadingIndicateurs) {
+    return (
+      <div className="h-[24rem] flex">
+        <SpinnerLoader className="m-auto" />
+      </div>
+    );
+  }
 
-export const IndicateursView = (props: IndicateursViewProps) => {
-  const { updateFiche, fiche, isReadonly } = useFicheContext();
-  const { collectiviteId, permissions } = useCurrentCollectivite();
+  const showEmptyView =
+    isLoadingIndicateurs === false && selectedIndicateurs?.length === 0;
 
   return (
-    <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-5">
-      <IndicateursHeader {...props} />
-      <IndicateursAssocies
-        collectiviteId={collectiviteId}
-        onUpdateFiche={(indicateurs) =>
-          updateFiche({
-            ficheId: fiche.id,
-            ficheFields: {
-              indicateurs,
-            },
-          })
-        }
-        permissions={permissions}
+    <>
+      <SharedFicheLinkedResourcesAlert
         fiche={fiche}
-        isReadonly={isReadonly}
+        currentCollectiviteId={collectiviteId}
+        sharedDataTitle="Indicateurs associés"
+        sharedDataDescription="Les indicateurs et les données affichées correspondent à ceux de cette collectivité."
       />
-    </div>
+      <ModaleCreerIndicateur
+        isOpen={indicateurAction === 'creating'}
+        setIsOpen={() => toggleIndicateurAction('creating')}
+        fiche={fiche}
+      />
+      <SideMenu
+        title="Lier des indicateurs"
+        isOpen={indicateurAction === 'associating'}
+        setIsOpen={() => toggleIndicateurAction('associating')}
+      >
+        <LinkIndicateursView
+          selectedIndicateurs={selectedIndicateurs}
+          onSelect={(indicateur) => updateIndicateurs(indicateur)}
+        />
+      </SideMenu>
+
+      {showEmptyView ? (
+        <EmptyIndicateursView />
+      ) : (
+        <>
+          <div className="flex justify-end gap-2">
+            <ActionButtons />
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-3">
+            {selectedIndicateurs.map((indicateur) => (
+              <IndicateurCard
+                key={`${indicateur.id}-${indicateur.titre}`}
+                readonly={isReadonly}
+                definition={indicateur}
+                externalCollectiviteId={fiche.collectiviteId}
+                isEditable={canUpdateIndicateur(indicateur)}
+                href={makeCollectiviteIndicateursUrl({
+                  collectiviteId: fiche.collectiviteId,
+                  indicateurView: getIndicateurGroup(
+                    indicateur.identifiantReferentiel
+                  ),
+                  indicateurId: indicateur.id,
+                  identifiantReferentiel: indicateur.identifiantReferentiel,
+                })}
+                selectState={{
+                  // Dissocier
+                  selected: true,
+                  setSelected: (i) => updateIndicateurs(i),
+                }}
+                otherMenuActions={(indicateur) => [
+                  <Button
+                    key={indicateur.id}
+                    onClick={() => updateIndicateurs(indicateur)} // Ajouter
+                    icon="link-unlink"
+                    title="Dissocier l'indicateur"
+                    size="xs"
+                    variant="grey"
+                  />,
+                ]}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </>
   );
 };

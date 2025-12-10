@@ -38,7 +38,7 @@ export const NotesView = ({ fiche, isReadonly }: NotesViewProps) => {
           size="xs"
         />
       ) : (
-        <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-5">
+        <>
           <div className="flex justify-between">
             <h5 className="text-primary-8 mb-0">Notes</h5>
             {!isReadonly && (
@@ -70,7 +70,7 @@ export const NotesView = ({ fiche, isReadonly }: NotesViewProps) => {
                 />
               ))}
           </div>
-        </div>
+        </>
       )}
 
       {!isReadonly && isModalOpen && (

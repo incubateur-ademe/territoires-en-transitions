@@ -3,6 +3,7 @@ import { hasPermission } from '@/app/users/authorizations/permission-access-leve
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Tab as TabUI, Tabs as TabsUI } from '@tet/ui';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
+import React from 'react';
 import { useFicheContext } from '../context/fiche-context';
 import { DetailsView } from './details/details.view';
 import { DocumentsView } from './documents/documents.view';
@@ -14,6 +15,13 @@ import { MoyensView } from './moyens/moyens.view';
 import { NotesView } from './notes/notes.view';
 import { ServicesWidgetTab } from './services-widget/ServicesWidgetTab';
 
+const TabContent = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-5">
+      {children}
+    </div>
+  );
+};
 export const Content = () => {
   const {
     fiche,
@@ -24,6 +32,7 @@ export const Content = () => {
   const collectivite = useCurrentCollectivite();
   const { collectiviteId, niveauAcces, permissions } = collectivite;
 
+  const { selectedIndicateurs } = useFicheContext();
   const widgetCommunsFlagEnabled = useFeatureFlagEnabled(
     'is-widget-communs-enabled'
   );
@@ -35,35 +44,60 @@ export const Content = () => {
   const isReadonly = cannotBeModifiedBecauseFicheIsShared || globalIsReadonly;
 
   const tabDescriptors: Array<{
+    id: string;
     label: string;
     isVisible?: boolean;
     render: JSX.Element;
   }> = [
     {
+      id: 'presentation',
       label: 'Présentation',
       render: <DetailsView />,
     },
     {
-      label: 'Indicateurs de suivi',
+      id: 'indicateurs',
+      label: `Indicateurs de suivi ${
+        selectedIndicateurs.length > 0 ? `(${selectedIndicateurs.length})` : ''
+      }`,
       isVisible:
         hasPermission(permissions, 'indicateurs.definitions.read') ||
         (!niveauAcces &&
           hasPermission(permissions, 'indicateurs.definitions.read_public')),
-      render: <IndicateursView isReadonly={isReadonly} fiche={fiche} />,
+      render: (
+        <TabContent>
+          <IndicateursView />
+        </TabContent>
+      ),
     },
     {
+      id: 'etapes',
       label: 'Étapes',
-      render: <Etapes isReadonly={isReadonly} fiche={fiche} />,
+      render: (
+        <TabContent>
+          <Etapes isReadonly={isReadonly} fiche={fiche} />
+        </TabContent>
+      ),
     },
     {
+      id: 'notes',
       label: 'Notes',
-      render: <NotesView isReadonly={isReadonly} fiche={fiche} />,
+      render: (
+        <TabContent>
+          <NotesView isReadonly={isReadonly} fiche={fiche} />
+        </TabContent>
+      ),
     },
     {
+      id: 'moyens',
       label: 'Moyens',
-      render: <MoyensView isReadonly={isReadonly} fiche={fiche} />,
+      render: (
+        <TabContent>
+          <MoyensView isReadonly={isReadonly} fiche={fiche} />
+        </TabContent>
+      ),
     },
     {
+      id: 'fiches-liees',
       label: 'Fiches action liées',
       isVisible:
         hasPermission(permissions, 'plans.fiches.read') ||
@@ -79,6 +113,7 @@ export const Content = () => {
       ),
     },
     {
+      id: 'mesures-liees',
       label: 'Mesures des référentiels liées',
       isVisible:
         hasPermission(permissions, 'referentiels.read') ||
@@ -93,6 +128,7 @@ export const Content = () => {
       ),
     },
     {
+      id: 'documents',
       label: 'Documents',
       render: (
         <DocumentsView
@@ -103,6 +139,7 @@ export const Content = () => {
       ),
     },
     {
+      id: 'services-liees',
       label: 'Services liés',
       isVisible: widgetCommunsFlagEnabled ?? false,
       render: <ServicesWidgetTab ficheId={fiche.id} />,
@@ -112,7 +149,8 @@ export const Content = () => {
   const tabsToDisplay = tabDescriptors
     .filter((tab) => tab.isVisible ?? true)
     .map((tab) => (
-      <TabUI key={tab.label} label={tab.label}>
+      /** id is used as key cause it's stable contrary to label */
+      <TabUI key={tab.id} label={tab.label}>
         {tab.render}
       </TabUI>
     ));

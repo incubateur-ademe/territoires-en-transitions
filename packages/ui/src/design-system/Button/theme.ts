@@ -23,8 +23,8 @@ export const buttonThemeClassnames: Record<
   primary: {
     default: {
       text: 'text-white hover:!text-white',
-      background: 'bg-primary-7 hover:!bg-primary-8',
-      border: 'border-primary-7 hover:!border-primary-8',
+      background: 'bg-primary-9 hover:!bg-primary-8',
+      border: 'border-primary-9 hover:!border-primary-8',
       icon: 'fill-white group-hover:fill-white',
     },
     disabled: {
@@ -50,10 +50,10 @@ export const buttonThemeClassnames: Record<
   },
   outlined: {
     default: {
-      text: 'text-primary-7 hover:text-primary-8',
+      text: 'text-primary-9 hover:text-primary-8',
       background: 'bg-primary-0 hover:!bg-primary-1',
-      border: 'border-primary-7 hover:!border-primary-8',
-      icon: 'fill-primary-7 group-hover:fill-primary-8',
+      border: 'border-primary-9 hover:!border-primary-8',
+      icon: 'fill-primary-9 group-hover:fill-primary-8',
     },
     disabled: {
       text: '!text-primary-3',
@@ -137,7 +137,7 @@ export const buttonSizeClassnames: Record<
     iconButton: 'p-2',
   },
   sm: {
-    textButton: 'text-sm py-2.5 px-6',
+    textButton: 'text-sm py-2.5 px-3',
     iconButton: 'p-2.5',
   },
   md: {

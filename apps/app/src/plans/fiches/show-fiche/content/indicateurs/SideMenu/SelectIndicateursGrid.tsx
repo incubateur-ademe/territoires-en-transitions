@@ -15,7 +15,6 @@ type Props = {
 /** Affiche une grille de graphiques d'indicateur */
 const SelectIndicateursGrid = (props: Props) => {
   const { definitions, isLoading, selectedIndicateurs, onSelect } = props;
-
   return (
     <>
       {/** Loading */}

@@ -18,7 +18,10 @@ type Props = {
   onSelect: (indicateur: IndicateurDefinitionListItem) => void;
 };
 
-export const Content = ({ selectedIndicateurs, onSelect }: Props) => {
+export const LinkIndicateursView = ({
+  selectedIndicateurs,
+  onSelect,
+}: Props) => {
   const user = useUser();
   const { setValue, watch } = useForm<
     ListDefinitionsInputFilters & {
