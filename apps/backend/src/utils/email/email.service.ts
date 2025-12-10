@@ -130,7 +130,7 @@ export class EmailService {
           host: hostname,
           port: portNumber,
           secure: false,
-          auth: { user: username, pass },
+          auth: { user: decodeURIComponent(username), pass },
         },
       } as const;
     } catch (error) {
