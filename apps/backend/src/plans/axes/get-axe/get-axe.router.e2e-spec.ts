@@ -83,6 +83,9 @@ describe('Récupérer un axe', () => {
       expect(result.plan).toBe(planId);
       expect(result.createdAt).toBeDefined();
       expect(result.modifiedAt).toBeDefined();
+      expect(result.indicateurs).toBeDefined();
+      expect(Array.isArray(result.indicateurs)).toBe(true);
+      expect(result.indicateurs).toHaveLength(0);
     });
 
     test('Récupérer avec succès un axe imbriqué (axe enfant)', async () => {
@@ -119,6 +122,72 @@ describe('Récupérer un axe', () => {
       expect(result.nom).toBe('Axe enfant');
       expect(result.parent).toBe(parentAxe.id);
       expect(result.plan).toBe(planId);
+      expect(result.indicateurs).toBeDefined();
+      expect(Array.isArray(result.indicateurs)).toBe(true);
+    });
+
+    test('Récupérer avec succès un axe avec des indicateurs associés', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      // Créer des indicateurs de test
+      const indicateur1Id = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Indicateur 1 pour récupération',
+        unite: 'kg',
+      });
+
+      const indicateur2Id = await caller.indicateurs.indicateurs.create({
+        collectiviteId: collectivite.id,
+        titre: 'Indicateur 2 pour récupération',
+        unite: 'm²',
+      });
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.indicateurs.indicateurs.delete({
+          indicateurId: indicateur1Id,
+          collectiviteId: collectivite.id,
+        });
+        await cleanupCaller.indicateurs.indicateurs.delete({
+          indicateurId: indicateur2Id,
+          collectiviteId: collectivite.id,
+        });
+      });
+
+      // Créer un axe avec des indicateurs
+      const createdAxe = await caller.plans.axes.upsert({
+        nom: 'Axe avec indicateurs à récupérer',
+        collectiviteId: collectivite.id,
+        planId,
+        parent: planId,
+        indicateurs: [{ id: indicateur1Id }, { id: indicateur2Id }],
+      });
+      const axeId = createdAxe.id;
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.axes.delete({ axeId });
+      });
+
+      const result = await caller.plans.axes.get({
+        axeId,
+      });
+
+      expect(result).toBeDefined();
+      expect(result.id).toBe(axeId);
+      expect(result.nom).toBe('Axe avec indicateurs à récupérer');
+      expect(result.indicateurs).toBeDefined();
+      expect(Array.isArray(result.indicateurs)).toBe(true);
+      expect(result.indicateurs).toHaveLength(2);
+      expect(result.indicateurs.map((ind) => ind.id)).toEqual(
+        expect.arrayContaining([indicateur1Id, indicateur2Id])
+      );
+      expect(result.indicateurs[0]).toHaveProperty('id');
+      expect(result.indicateurs[0]).toHaveProperty('titre');
+      expect(result.indicateurs[0]).toHaveProperty('unite');
+      expect(result.indicateurs[0].titre).toBeDefined();
+      expect(result.indicateurs[1].titre).toBeDefined();
+      expect(result.indicateurs[1].unite).toBeDefined();
     });
   });
 
@@ -218,6 +287,8 @@ describe('Récupérer un axe', () => {
       expect(result.id).toBe(createdAxe.id);
       expect(result.nom).toBe('Axe pour lecture');
       expect(result.collectiviteId).toBe(collectivite.id);
+      expect(result.indicateurs).toBeDefined();
+      expect(Array.isArray(result.indicateurs)).toBe(true);
     });
 
     test("Un utilisateur avec des droits d'édition limités sur la collectivité ne peut pas récupérer un axe", async () => {
@@ -288,6 +359,8 @@ describe('Récupérer un axe', () => {
       expect(result).toBeDefined();
       expect(result.id).toBe(createdAxe.id);
       expect(result.nom).toBe('Axe pour édition');
+      expect(result.indicateurs).toBeDefined();
+      expect(Array.isArray(result.indicateurs)).toBe(true);
     });
   });
 });
