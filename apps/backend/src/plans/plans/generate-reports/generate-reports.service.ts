@@ -1,7 +1,8 @@
 import { CollectiviteAvecType } from '@/backend/collectivites/identite-collectivite.dto';
+import { PersonnalisationReponsesPayload } from '@/backend/collectivites/personnalisations/models/get-personnalisation-reponses.response';
+import PersonnalisationsService from '@/backend/collectivites/personnalisations/services/personnalisations-service';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { IndicateurChartService } from '@/backend/indicateurs/charts/indicateur-chart.service';
-import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { CountByForEntityResponseType } from '@/backend/utils/count-by.dto';
 import { EchartsService } from '@/backend/utils/echarts/echarts.service';
@@ -93,8 +94,8 @@ export class GenerateReportsService {
     private readonly planService: PlanService,
     private readonly collectiviteService: CollectivitesService,
     private readonly planProgressRules: PlanProgressRules,
-    private readonly indicateurValeursService: CrudValeursService,
-    private readonly indicateurChartService: IndicateurChartService
+    private readonly indicateurChartService: IndicateurChartService,
+    private readonly personnalisationsService: PersonnalisationsService
   ) {}
 
   private async replaceTextInSlide(
@@ -233,6 +234,7 @@ export class GenerateReportsService {
         sousAxesByAxe: Record<number, PlanNode[]>;
         fiches: FicheWithRelations[];
         planGeneralInfo: ReportPlanGeneralInfo;
+        personnalisationReponses: PersonnalisationReponsesPayload;
       },
       GenerateReportErrorType
     >
@@ -248,6 +250,11 @@ export class GenerateReportsService {
     const collectivite = await this.collectiviteService.getCollectiviteAvecType(
       plan.data.collectiviteId
     );
+
+    const personnalisationReponses =
+      await this.personnalisationsService.getPersonnalisationReponses(
+        plan.data.collectiviteId
+      );
 
     const fiches = await this.fichesService.listFichesQuery(
       plan.data.collectiviteId,
@@ -309,6 +316,7 @@ export class GenerateReportsService {
       success: true,
       data: {
         collectivite,
+        personnalisationReponses,
         plan: plan.data,
         axes,
         sousAxesByAxe,
@@ -742,6 +750,8 @@ export class GenerateReportsService {
 
   private async addFicheIndicateursSlides(args: {
     presentation: Automizer;
+    collectivite: CollectiviteAvecType;
+    personnalisationReponses: PersonnalisationReponsesPayload;
     planGeneralInfo: ReportPlanGeneralInfo;
     ficheTextReplacementsInfo: ReportFicheInfo;
     logoDimensions: {
@@ -754,7 +764,9 @@ export class GenerateReportsService {
   }) {
     const {
       presentation,
+      collectivite,
       planGeneralInfo,
+      personnalisationReponses,
       ficheTextReplacementsInfo,
       logoDimensions,
       template,
@@ -765,21 +777,26 @@ export class GenerateReportsService {
       return;
     }
 
-    const indicateurWithValeurs = await Promise.all(
+    const indicateurWithValeursAndChartData = await Promise.all(
       fiche.indicateurs?.map((indicateur) =>
-        this.indicateurValeursService
-          .getIndicateurValeursGroupees({
-            collectiviteId: fiche.collectiviteId,
-            indicateurIds: [indicateur.id],
-          })
-          .then((result) => result.indicateurs[0])
+        this.indicateurChartService.getIndicateurValeursAndChartData({
+          collectiviteId: fiche.collectiviteId,
+          indicateurId: indicateur.id,
+          collectiviteAvecType: collectivite,
+          personnalisationReponses,
+          includeReferenceValeurs: true,
+          includeMoyenne: true,
+        })
       ) ?? []
     );
 
-    if (indicateurWithValeurs.length) {
-      const indicateurWithValeursChunks = chunk(indicateurWithValeurs, 2);
+    if (indicateurWithValeursAndChartData.length) {
+      const indicateurWithValeursAndChartDataChunks = chunk(
+        indicateurWithValeursAndChartData,
+        2
+      );
 
-      for (const indicateurWithValeursChunk of indicateurWithValeursChunks) {
+      for (const indicateurWithValeursAndChartDataChunk of indicateurWithValeursAndChartDataChunks) {
         this.addSlide({
           presentation,
           template,
@@ -791,12 +808,8 @@ export class GenerateReportsService {
             const allElements = await slide.getAllElements();
 
             await Promise.all(
-              indicateurWithValeursChunk.map(
-                (indicateurWithValeurs, iIndicateur) => {
-                  const chartOption = this.indicateurChartService.getChartData(
-                    indicateurWithValeurs
-                  );
-
+              indicateurWithValeursAndChartDataChunk.map(
+                (indicateurWithValeursAndChartData, iIndicateur) => {
                   return this.renderChartToImageInSlide(
                     slide,
                     presentation,
@@ -805,15 +818,15 @@ export class GenerateReportsService {
                     iIndicateur === 0
                       ? ReportTemplateImagesEnum.IMG_FICHE_INDICATEUR_CHART_1
                       : ReportTemplateImagesEnum.IMG_FICHE_INDICATEUR_CHART_2,
-                    chartOption,
+                    indicateurWithValeursAndChartData.chartData,
                     'cover',
-                    `fiche_${fiche.id}_chart_${indicateurWithValeurs.definition.id}`
+                    `fiche_${fiche.id}_chart_${indicateurWithValeursAndChartData.indicateurValeurs.definition.id}`
                   );
                 }
               )
             );
 
-            if (indicateurWithValeursChunk.length === 1) {
+            if (indicateurWithValeursAndChartDataChunk.length === 1) {
               slide.removeElement(
                 ReportTemplateImagesEnum.IMG_FICHE_INDICATEUR_CHART_2
               );
@@ -852,8 +865,14 @@ export class GenerateReportsService {
           error: planDataResult.error,
         };
       }
-      const { axes, sousAxesByAxe, fiches, planGeneralInfo } =
-        planDataResult.data;
+      const {
+        axes,
+        sousAxesByAxe,
+        fiches,
+        planGeneralInfo,
+        collectivite,
+        personnalisationReponses,
+      } = planDataResult.data;
 
       const generationId = crypto.randomUUID();
       mediaDir = path.join(__dirname, `media/${generationId}`);
@@ -981,6 +1000,8 @@ export class GenerateReportsService {
 
           await this.addFicheIndicateursSlides({
             presentation,
+            collectivite,
+            personnalisationReponses,
             planGeneralInfo,
             ficheTextReplacementsInfo,
             template: templateConfig,
