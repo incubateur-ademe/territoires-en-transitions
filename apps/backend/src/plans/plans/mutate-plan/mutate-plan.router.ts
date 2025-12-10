@@ -1,6 +1,6 @@
-import { createTrpcErrorHandler } from '@/backend/utils/trpc/trpc-error-handler';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { mutatePlanErrorConfig } from './mutate-plan.errors';
 import { mutatePlanSchema } from './mutate-plan.input';
 import { MutatePlanService } from './mutate-plan.service';

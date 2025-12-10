@@ -1,9 +1,9 @@
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { MethodResult } from '@/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { MethodResult } from '@tet/backend/utils/result.type';
+import { Plan } from '@tet/domain/plans';
 import { ListAxesService } from '../../axes/list-axes/list-axes.service';
-import { Plan } from '../get-plan/get-plan.output';
 import { GetPlanRepository } from '../get-plan/get-plan.repository';
 import { GetPlanService } from '../get-plan/get-plan.service';
 import { ListPlansError, ListPlansErrorEnum } from './list-plans.errors';

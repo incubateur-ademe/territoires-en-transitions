@@ -1,7 +1,7 @@
 import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
-} from '@/backend/utils/trpc/trpc-error-handler';
+} from '@tet/backend/utils/trpc/trpc-error-handler';
 
 const specificErrors = ['CREATE_AXE_ERROR', 'UPDATE_AXE_ERROR'] as const;
 type SpecificError = (typeof specificErrors)[number];

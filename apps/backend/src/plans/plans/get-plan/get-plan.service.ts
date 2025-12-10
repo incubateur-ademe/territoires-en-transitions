@@ -1,16 +1,16 @@
-import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { MethodResult } from '@/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { MethodResult } from '@tet/backend/utils/result.type';
+import { Plan } from '@tet/domain/plans';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import { ListAxesService } from '../../axes/list-axes/list-axes.service';
 import { GetPlanError, GetPlanErrorEnum } from './get-plan.errors';
 import { GetPlanInput } from './get-plan.input';
-import { Plan } from './get-plan.output';
 import { GetPlanRepository } from './get-plan.repository';
 
 @Injectable()

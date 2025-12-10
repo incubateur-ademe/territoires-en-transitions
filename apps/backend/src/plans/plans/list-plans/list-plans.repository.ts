@@ -1,14 +1,15 @@
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { MethodResult } from '@/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { MethodResult } from '@tet/backend/utils/result.type';
+import { AxeLight } from '@tet/domain/plans';
 import { and, asc, desc, eq, getTableColumns, isNull, sql } from 'drizzle-orm';
-import { axeTable, AxeType } from '../../fiches/shared/models/axe.table';
+import { axeTable } from '../../fiches/shared/models/axe.table';
 import { ListPlansError, ListPlansErrorEnum } from './list-plans.errors';
 import { ListPlansInput } from './list-plans.input';
 
 export type ListPlansRepositoryOutput = {
-  plans: AxeType[];
+  plans: AxeLight[];
   totalCount: number;
 };
 

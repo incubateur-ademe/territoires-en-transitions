@@ -1,7 +1,7 @@
 import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
-} from '@/backend/utils/trpc/trpc-error-handler';
+} from '@tet/backend/utils/trpc/trpc-error-handler';
 
 const specificErrors = ['AXE_NOT_FOUND', 'SERVER_ERROR'] as const;
 type SpecificError = (typeof specificErrors)[number];
@@ -21,4 +21,3 @@ export const getAxeErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
 
 export const GetAxeErrorEnum = createErrorsEnum(specificErrors);
 export type GetAxeError = keyof typeof GetAxeErrorEnum;
-

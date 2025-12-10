@@ -4,7 +4,7 @@ import { ImportPlanFetchService } from '@tet/backend/plans/fiches/import/import-
 import { ImportPlanSaveService } from '@tet/backend/plans/fiches/import/import-plan-save.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { PersonneId, TagEnum } from '@tet/domain/collectivites';
+import { PersonneId, TagEnum, TagType } from '@tet/domain/collectivites';
 import ExcelJS from 'exceljs';
 import { MutatePlanService } from '../../plans/mutate-plan/mutate-plan.service';
 import {

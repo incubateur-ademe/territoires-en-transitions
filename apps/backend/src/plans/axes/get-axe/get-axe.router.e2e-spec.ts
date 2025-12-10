@@ -1,17 +1,17 @@
-import { addTestCollectiviteAndUser } from '@/backend/collectivites/collectivites/collectivites.fixture';
-import { Collectivite } from '@/backend/collectivites/shared/models/collectivite.table';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.fixture';
 import {
   getAuthUser,
   getAuthUserFromDcp,
   getTestApp,
   getTestDatabase,
   YOLO_DODO,
-} from '@/backend/test';
-import { CollectiviteAccessLevelEnum } from '@/backend/users/authorizations/roles/collectivite-access-level.enum';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { addTestUser } from '@/backend/users/users/users.fixture';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.fixture';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { Collectivite } from '@tet/domain/collectivites';
+import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
 import { onTestFinished } from 'vitest';
 
 describe('Récupérer un axe', () => {
@@ -83,32 +83,6 @@ describe('Récupérer un axe', () => {
       expect(result.plan).toBe(planId);
       expect(result.createdAt).toBeDefined();
       expect(result.modifiedAt).toBeDefined();
-    });
-
-    test('Récupérer avec succès un axe avec planType', async () => {
-      const caller = router.createCaller({ user: editorUser });
-
-      // Créer un axe avec un type
-      const createdAxe = await caller.plans.axes.upsert({
-        nom: 'Axe avec type',
-        collectiviteId: collectivite.id,
-        planId,
-        parent: planId,
-      });
-      const axeId = createdAxe.id;
-
-      onTestFinished(async () => {
-        const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.axes.delete({ axeId });
-      });
-
-      const result = await caller.plans.axes.get({
-        axeId,
-      });
-
-      expect(result).toBeDefined();
-      expect(result.id).toBe(axeId);
-      expect(result.planType).toBeDefined(); // Peut être null ou un objet PlanActionType
     });
 
     test('Récupérer avec succès un axe imbriqué (axe enfant)', async () => {

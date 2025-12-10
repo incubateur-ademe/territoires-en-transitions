@@ -1,6 +1,6 @@
-import { createTrpcErrorHandler } from '@/backend/utils/trpc/trpc-error-handler';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { getAxeErrorConfig } from './get-axe.errors';
 import { getAxeInputSchema } from './get-axe.input';
 import { GetAxeService } from './get-axe.service';
@@ -24,5 +24,3 @@ export class GetAxeRouter {
       }),
   });
 }
-
-
