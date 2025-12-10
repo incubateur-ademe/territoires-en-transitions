@@ -1,12 +1,12 @@
-import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { MethodResult } from '@/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
-import { AxeType } from '../../fiches/shared/models/axe.table';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { MethodResult } from '@tet/backend/utils/result.type';
+import { AxeLight } from '@tet/domain/plans';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import { GetAxeError, GetAxeErrorEnum } from './get-axe.errors';
 import { GetAxeInput } from './get-axe.input';
 import { GetAxeRepository } from './get-axe.repository';
@@ -25,7 +25,7 @@ export class GetAxeService {
     input: GetAxeInput,
     user: AuthenticatedUser,
     tx?: Transaction
-  ): Promise<MethodResult<AxeType, GetAxeError>> {
+  ): Promise<MethodResult<AxeLight, GetAxeError>> {
     // récupèrer l'axe pour obtenir la collectivité
     const axeResult = await this.getAxeRepository.getAxe(input.axeId, tx);
     if (!axeResult.success) {

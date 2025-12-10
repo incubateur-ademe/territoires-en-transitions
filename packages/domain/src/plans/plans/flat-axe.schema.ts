@@ -1,8 +1,8 @@
-import z from 'zod';
+import * as z from 'zod/mini';
 
 export const flatAxeSchema = z.object({
   id: z.number(),
-  nom: z.string().nullable(),
+  nom: z.nullable(z.string()),
   ancestors: z.array(z.number()),
   depth: z.number(),
   sort_path: z.string(),

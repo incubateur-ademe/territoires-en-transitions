@@ -1,21 +1,19 @@
-import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
-import { Personne } from '@/backend/shared/models/personne.dto';
-import { dcpTable as userTable } from '@/backend/users/models/dcp.table';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { MethodResult } from '@/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { dcpTable as userTable } from '@tet/backend/users/models/dcp.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { MethodResult } from '@tet/backend/utils/result.type';
+import { Personne } from '@tet/domain/collectivites';
+import { AxeLight, PlanType } from '@tet/domain/plans';
 import { and, eq, isNull, sql } from 'drizzle-orm';
-import { axeTable, AxeType } from '../../fiches/shared/models/axe.table';
-import {
-  PlanActionType,
-  planActionTypeTable,
-} from '../../fiches/shared/models/plan-action-type.table';
+import { axeTable } from '../../fiches/shared/models/axe.table';
+import { planActionTypeTable } from '../../fiches/shared/models/plan-action-type.table';
 import { planPiloteTable } from '../../fiches/shared/models/plan-pilote.table';
 import { planReferentTable } from '../../fiches/shared/models/plan-referent.table';
 import { GetPlanError, GetPlanErrorEnum } from './get-plan.errors';
 
-export type GetPlanOutput = AxeType & { type: PlanActionType | null };
+export type GetPlanOutput = AxeLight & { type: PlanType | null };
 
 @Injectable()
 export class GetPlanRepository {

@@ -1,4 +1,4 @@
-import { Plan } from '../get-plan/get-plan.output';
+import { Plan } from '@tet/domain/plans';
 
 export type ListPlansOutput = {
   plans: Plan[];

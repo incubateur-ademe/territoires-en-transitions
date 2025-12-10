@@ -1,12 +1,10 @@
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { MethodResult } from '@/backend/utils/result.type';
 import { Logger } from '@nestjs/common';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { MethodResult } from '@tet/backend/utils/result.type';
+import { AxeLight } from '@tet/domain/plans';
 import { eq } from 'drizzle-orm';
-import {
-  axeTable,
-  AxeType,
-} from '@/backend/plans/fiches/shared/models/axe.table';
 
 /**
  * Type d'erreur générique pour les opérations de mutation
@@ -37,7 +35,7 @@ export abstract class MutateAxeBaseRepository<
     input: TCreateInput,
     userId: string,
     tx?: Transaction
-  ): Promise<MethodResult<AxeType, TError>> {
+  ): Promise<MethodResult<AxeLight, TError>> {
     try {
       const result = await (tx ?? this.databaseService.db)
         .insert(axeTable)
@@ -80,7 +78,7 @@ export abstract class MutateAxeBaseRepository<
     input: TUpdateInput,
     userId: string,
     tx?: Transaction
-  ): Promise<MethodResult<AxeType, TError>> {
+  ): Promise<MethodResult<AxeLight, TError>> {
     try {
       const { id, ...otherProps } = input;
       const result = await (tx ?? this.databaseService.db)

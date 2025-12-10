@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import { AxeLight, MutatePlanInput } from '@tet/domain/plans';
+import { AxeLight } from '@tet/domain/plans';
 
 export const useCreatePlan = ({
   collectiviteId,
@@ -20,7 +20,7 @@ export const useCreatePlan = ({
 
   const { mutateAsync } = useMutation({
     mutationKey: ['create_plan'] as const,
-    mutationFn: async (plan: MutatePlanInput) => {
+    mutationFn: async (plan: Parameters<typeof createPlan>[0]) => {
       const result = await createPlan({
         nom: plan.nom,
         collectiviteId: plan.collectiviteId,
