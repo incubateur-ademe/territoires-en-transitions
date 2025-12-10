@@ -6,6 +6,7 @@ export const reportGenerationRequestSchema = z.object({
   planId: z.number(),
   ficheIds: z.array(z.number()).optional(),
   templateKey: z.enum(ReportTemplates).default('general_bilan_template'),
+  logoFile: z.file().optional(),
 });
 
 export type ReportGenerationRequest = z.infer<
