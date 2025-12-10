@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { RouterOutput, useTRPC } from '@tet/api';
 
 export type CompletionField =
-  RouterOutput['plans']['completionAnalytics']['getFieldsToComplete'][number];
+  RouterOutput['plans']['getFieldsToComplete'][number];
 
 export type CompletionFieldName = CompletionField['name'];
 

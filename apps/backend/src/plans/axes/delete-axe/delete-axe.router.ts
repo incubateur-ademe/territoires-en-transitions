@@ -1,6 +1,6 @@
-import { createTrpcErrorHandler } from '@/backend/utils/trpc/trpc-error-handler';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { deleteAxeErrorConfig } from './delete-axe.errors';
 import { deleteAxeInputSchema } from './delete-axe.input';
 import { DeleteAxeService } from './delete-axe.service';
@@ -24,4 +24,3 @@ export class DeleteAxeRouter {
       }),
   });
 }
-

@@ -14,4 +14,6 @@ export * from './fiches/utils/fiche.validator';
 export * from './filters';
 export * from './labels';
 export * from './paniers/action-impact.schema';
+export * from './plans/flat-axe.schema';
 export * from './plans/plan-type.schema';
+export * from './plans/plan.schema';

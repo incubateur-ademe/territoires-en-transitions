@@ -1,16 +1,16 @@
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { MethodResult } from '@/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { MethodResult } from '@tet/backend/utils/result.type';
+import { AxeLight, FlatAxe, flatAxeSchema, PlanNode } from '@tet/domain/plans';
 import { and, asc, desc, eq, getTableColumns, sql } from 'drizzle-orm';
 import z from 'zod';
-import { axeTable, AxeType } from '../../fiches/shared/models/axe.table';
-import { PlanNode, FlatAxe, flatAxeSchema } from './flat-axe.schema';
+import { axeTable } from '../../fiches/shared/models/axe.table';
 import { ListAxesError, ListAxesErrorEnum } from './list-axes.errors';
 import { ListAxesInput } from './list-axes.input';
 
 export type ListAxesOutput = {
-  axes: AxeType[];
+  axes: AxeLight[];
   totalCount: number;
 };
 

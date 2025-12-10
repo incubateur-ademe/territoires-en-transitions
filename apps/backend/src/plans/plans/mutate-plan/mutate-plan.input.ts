@@ -1,4 +1,4 @@
-import { personneIdSchema } from '@/backend/shared/models/personne.dto';
+import { personneIdSchema } from '@tet/domain/collectivites';
 import { z } from 'zod';
 import {
   baseCreateAxeOrPlanSchema,
