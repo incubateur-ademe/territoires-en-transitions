@@ -8,9 +8,12 @@ import { TPreuveLabellisation } from '@/app/referentiels/preuves/Bibliotheque/ty
 import { AddDocsButton } from './AddDocsButton';
 import { CritereRempli } from './CritereRempli';
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.territoiresentransitions.fr';
+
 const REGLEMENTS: { [k: string]: string } = {
-  eci: '/Reglement_label_ECi_20220316.pdf',
-  cae: '/TE-CAE_Reglement-label_2021.pdf',
+  eci: `${SITE_URL}/fichiers/reglement/ECi_Reglement_label.pdf`,
+  cae: `${SITE_URL}/fichiers/reglement/CAE_Reglement_label.pdf`,
 };
 
 export type TCriterePreuvesProps = {
