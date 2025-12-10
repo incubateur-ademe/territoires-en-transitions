@@ -49,11 +49,14 @@ export class NotificationsService {
           : DEFAULT_DELAY_BEFORE_SENDING
       );
       if (pendingNotifications.length > 0) {
+        this.logger.log(`Sending ${pendingNotifications.length} notifications`);
         await Promise.all(
           pendingNotifications.map((notification) =>
             this.sendNotification(notification)
           )
         );
+      } else {
+        this.logger.log(`Nothing to send`);
       }
     } catch (error) {
       this.logger.log(
