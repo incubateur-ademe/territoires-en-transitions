@@ -72,7 +72,7 @@ const EtapesWithContext = () => {
 
   /** Liste des étapes */
   return (
-    <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8">
+    <>
       <h5 className="mb-3 text-primary-8">
         Étapes {etapes.length > 0 && `${etapesRealiseesCount}/${etapes.length}`}
       </h5>
@@ -94,6 +94,6 @@ const EtapesWithContext = () => {
           />
         </div>
       )}
-    </div>
+    </>
   );
 };

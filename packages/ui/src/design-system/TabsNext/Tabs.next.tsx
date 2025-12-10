@@ -7,8 +7,8 @@ import { usePathname } from 'next/navigation';
 import { createContext, ReactNode, useContext } from 'react';
 import { cn } from '../../utils/cn';
 import { Icon, IconValue } from '../Icon';
-import { Tooltip } from '../Tooltip';
 import { TabSize } from '../Tabs/Tabs';
+import { Tooltip } from '../Tooltip';
 
 type TabsContextProps = {
   /** Permet d'ajuster les styles de la liste d'onglets */
@@ -152,9 +152,20 @@ export const TabsTab = (props: TabProps) => {
   );
 };
 
-export const TabsPanel = ({ children }: { children: ReactNode }) => {
+export const TabsPanel = ({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) => {
   return (
-    <div className="grow flex flex-col p-7 border border-grey-3 bg-white rounded-lg">
+    <div
+      className={cn(
+        'grow flex flex-col p-7 border border-grey-3 bg-white rounded-lg',
+        className
+      )}
+    >
       {children}
     </div>
   );
