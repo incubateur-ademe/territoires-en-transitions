@@ -14,12 +14,12 @@ type PictoProps = {
 const sizeClasses = {
   xs: {
     container: 'gap-4',
-    title: 'text-lg leading-5',
+    title: 'text-base leading-5',
     subtitle: 'text-sm leading-5',
     description: 'text-sm',
     badgeSize: 'sm' as BadgeSize,
     buttonSize: 'xs' as ButtonSize,
-    picto: { width: '100px', height: '100px' },
+    picto: { width: '4rem', height: '4rem' },
   },
   md: {
     container: 'gap-4',
@@ -143,7 +143,7 @@ export const EmptyCard = ({
         {/* Sous-titre */}
         <p
           className={classNames(
-            'text-primary-7 font-normal text-center mb-0',
+            'text-primary-8 font-normal text-center mb-0',
             { hidden: !subTitle },
             sizeClasses[size].subtitle
           )}
