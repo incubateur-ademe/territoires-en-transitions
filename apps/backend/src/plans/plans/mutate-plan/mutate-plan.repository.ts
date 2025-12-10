@@ -1,12 +1,12 @@
-import { PersonneId } from '@/backend/shared/models/personne.dto';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { MethodResult } from '@/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { MethodResult } from '@tet/backend/utils/result.type';
+import { PersonneId } from '@tet/domain/collectivites';
 import { eq } from 'drizzle-orm';
+import { MutateAxeBaseRepository } from '../../axes/mutate-axe/mutate-axe-base.repository';
 import { planPiloteTable } from '../../fiches/shared/models/plan-pilote.table';
 import { planReferentTable } from '../../fiches/shared/models/plan-referent.table';
-import { MutateAxeBaseRepository } from '../../axes/mutate-axe/mutate-axe-base.repository';
 import { MutatePlanError, MutatePlanErrorEnum } from './mutate-plan.errors';
 import { CreatePlanInput, UpdatePlanInput } from './mutate-plan.input';
 

@@ -1,12 +1,12 @@
-import { PermissionOperationEnum } from '@/backend/users/authorizations/permission-operation.enum';
-import { PermissionService } from '@/backend/users/authorizations/permission.service';
-import { ResourceType } from '@/backend/users/authorizations/resource-type.enum';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { DatabaseService } from '@/backend/utils/database/database.service';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { MethodResult } from '@/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
-import { AxeType } from '../../fiches/shared/models/axe.table';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { MethodResult } from '@tet/backend/utils/result.type';
+import { AxeLight } from '@tet/domain/plans';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import { MutateAxeError, MutateAxeErrorEnum } from './mutate-axe.errors';
 import {
   createAxeSchema,
@@ -29,7 +29,7 @@ export class MutateAxeService {
     axe: MutateAxeInput,
     user: AuthenticatedUser,
     tx?: Transaction
-  ): Promise<MethodResult<AxeType, MutateAxeError>> {
+  ): Promise<MethodResult<AxeLight, MutateAxeError>> {
     const isAllowed = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['PLANS.MUTATE'],
@@ -46,7 +46,7 @@ export class MutateAxeService {
 
     const executeInTransaction = async (
       transaction: Transaction
-    ): Promise<MethodResult<AxeType, MutateAxeError>> => {
+    ): Promise<MethodResult<AxeLight, MutateAxeError>> => {
       const axeProps = axe;
       const updateAxeProps = updateAxeSchema.safeParse(axeProps);
 

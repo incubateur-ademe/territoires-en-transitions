@@ -1,7 +1,7 @@
 import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
-} from '@/backend/utils/trpc/trpc-error-handler';
+} from '@tet/backend/utils/trpc/trpc-error-handler';
 
 const specificErrors = ['LIST_AXES_ERROR'] as const;
 type SpecificError = (typeof specificErrors)[number];
@@ -17,4 +17,3 @@ export const listAxesErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
 
 export const ListAxesErrorEnum = createErrorsEnum(specificErrors);
 export type ListAxesError = keyof typeof ListAxesErrorEnum;
-

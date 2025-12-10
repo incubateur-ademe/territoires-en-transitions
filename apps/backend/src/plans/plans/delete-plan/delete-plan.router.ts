@@ -1,6 +1,6 @@
-import { createTrpcErrorHandler } from '@/backend/utils/trpc/trpc-error-handler';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { deletePlanErrorConfig } from './delete-plan.errors';
 import { deletePlanInputSchema } from './delete-plan.input';
 import { DeletePlanService } from './delete-plan.service';
