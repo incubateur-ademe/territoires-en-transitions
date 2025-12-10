@@ -14,8 +14,6 @@ import ComputeValeursService from '@tet/backend/indicateurs/valeurs/compute-vale
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { PersonnalisationsModule } from '../collectivites/personnalisations/personnalisations.module';
-import PersonnalisationsExpressionService from '../collectivites/personnalisations/services/personnalisations-expression.service';
-import PersonnalisationsService from '../collectivites/personnalisations/services/personnalisations-service';
 import { AuthModule } from '../users/auth.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { IndicateurChartService } from './charts/indicateur-chart.service';
@@ -93,8 +91,6 @@ const DEFINITIONS_PROVIDERS = [
     TrajectoireLeviersService,
     TrajectoireLeviersRouter,
 
-    PersonnalisationsService,
-    PersonnalisationsExpressionService,
     ComputeValeursService,
     IndicateursRouter,
 

@@ -1,4 +1,5 @@
 import { CollectivitesModule } from '@/backend/collectivites/collectivites.module';
+import { PersonnalisationsModule } from '@/backend/collectivites/personnalisations/personnalisations.module';
 import { IndicateursModule } from '@/backend/indicateurs/indicateurs.module';
 import { EchartsModule } from '@/backend/utils/echarts/echarts.module';
 import { Module } from '@nestjs/common';
@@ -10,6 +11,7 @@ import { GenerateReportsService } from './generate-reports.service';
 @Module({
   imports: [
     CollectivitesModule,
+    PersonnalisationsModule,
     PlanModule,
     FichesModule,
     IndicateursModule,
