@@ -1,0 +1,87 @@
+name: Mattermost Bot Operations
+
+on:
+  repository_dispatch:
+    types: [create_tag, deploy]
+
+jobs:
+  create-tag:
+    if: github.event.action == 'create_tag'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create and push tag
+        run: |
+          BRANCH="${{ github.event.client_payload.branch }}"
+          VERSION="${{ github.event.client_payload.version }}"
+          REQUESTED_BY="${{ github.event.client_payload.requested_by }}"
+
+          echo "Creating tag $VERSION from branch $BRANCH (requested by $REQUESTED_BY)"
+
+          # Verify branch exists
+          git fetch origin $BRANCH
+          git checkout $BRANCH
+
+          # Create tag
+          git tag -a $VERSION -m "Release $VERSION (requested by $REQUESTED_BY via Mattermost)"
+
+          # Push tag
+          git push origin $VERSION
+
+          echo "✅ Tag $VERSION created and pushed successfully"
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.event.client_payload.version }}
+          release_name: Release ${{ github.event.client_payload.version }}
+          body: |
+            Release ${{ github.event.client_payload.version }}
+
+            Requested by: ${{ github.event.client_payload.requested_by }}
+            Branch: ${{ github.event.client_payload.branch }}
+
+            This release was created automatically via Mattermost bot.
+          draft: false
+          prerelease: false
+
+  deploy-staging:
+    if: github.event.action == 'deploy' && github.event.client_payload.environment == 'staging'
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy to staging
+        run: |
+          VERSION="${{ github.event.client_payload.version }}"
+          REQUESTED_BY="${{ github.event.client_payload.requested_by }}"
+
+          echo "🚀 Deploying $VERSION to staging (requested by $REQUESTED_BY)"
+
+          # Checkout the specific version
+          git fetch --tags
+          git checkout $VERSION
+
+          # Here you would add your staging deployment logic
+          # For example:
+          # - Build the application
+          # - Run tests
+          # - Deploy to staging environment
+
+          echo "✅ Successfully deployed $VERSION to staging"
+
+          # You can add notifications here (e.g., Slack, Mattermost)
+          # curl -X POST ${{ secrets.MATTERMOST_WEBHOOK_URL }} \
+          #   -H 'Content-Type: application/json' \
+          #   -d '{"text": "🚀 Successfully deployed '$VERSION' to staging"}'

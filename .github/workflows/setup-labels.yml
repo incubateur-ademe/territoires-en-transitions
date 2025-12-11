@@ -1,0 +1,22 @@
+name: Setup Labels
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/labels.yml'
+      - '.github/scripts/setup-labels.sh'
+
+jobs:
+  setup-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Labels
+        run: |
+          chmod +x .github/scripts/setup-labels.sh
+          .github/scripts/setup-labels.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
