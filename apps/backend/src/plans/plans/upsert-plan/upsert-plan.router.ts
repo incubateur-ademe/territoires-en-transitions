@@ -1,26 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
-import { mutatePlanErrorConfig } from './mutate-plan.errors';
-import { mutatePlanSchema } from './mutate-plan.input';
-import { MutatePlanService } from './mutate-plan.service';
+import { upsertPlanErrorConfig } from './upsert-plan.errors';
+import { upsertPlanSchema } from './upsert-plan.input';
+import { UpsertPlanService } from './upsert-plan.service';
 
 @Injectable()
-export class MutatePlanRouter {
+export class UpsertPlanRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly mutatePlanService: MutatePlanService
+    private readonly upsertPlanService: UpsertPlanService
   ) {}
 
   private readonly getResultDataOrThrowError = createTrpcErrorHandler(
-    mutatePlanErrorConfig
+    upsertPlanErrorConfig
   );
 
   router = this.trpc.router({
     upsert: this.trpc.authedProcedure
-      .input(mutatePlanSchema)
+      .input(upsertPlanSchema)
       .mutation(async ({ input, ctx }) => {
-        const result = await this.mutatePlanService.mutatePlan(input, ctx.user);
+        const result = await this.upsertPlanService.upsertPlan(input, ctx.user);
         return this.getResultDataOrThrowError(result);
       }),
   });

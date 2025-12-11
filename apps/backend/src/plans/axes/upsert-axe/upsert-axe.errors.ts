@@ -6,7 +6,7 @@ import {
 const specificErrors = ['CREATE_AXE_ERROR', 'UPDATE_AXE_ERROR'] as const;
 type SpecificError = (typeof specificErrors)[number];
 
-export const mutateAxeErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
+export const upsertAxeErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
   specificErrors: {
     CREATE_AXE_ERROR: {
       code: 'INTERNAL_SERVER_ERROR',
@@ -19,5 +19,5 @@ export const mutateAxeErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
   },
 };
 
-export const MutateAxeErrorEnum = createErrorsEnum(specificErrors);
-export type MutateAxeError = keyof typeof MutateAxeErrorEnum;
+export const UpsertAxeErrorEnum = createErrorsEnum(specificErrors);
+export type UpsertAxeError = keyof typeof UpsertAxeErrorEnum;

@@ -6,7 +6,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { PersonneId, TagEnum, TagType } from '@tet/domain/collectivites';
 import ExcelJS from 'exceljs';
-import { MutatePlanService } from '../../plans/mutate-plan/mutate-plan.service';
+import { UpsertPlanService } from '../../plans/upsert-plan/upsert-plan.service';
 import {
   AxeImport,
   FicheImport,
@@ -78,7 +78,7 @@ export class ImportPlanService {
     private readonly fetch: ImportPlanFetchService,
     private readonly save: ImportPlanSaveService,
     private readonly clean: ImportPlanCleanService,
-    private readonly mutatePlanService: MutatePlanService
+    private readonly upsertPlanService: UpsertPlanService
   ) {}
 
   private getDataWorksheet(workbook: ExcelJS.Workbook) {
@@ -443,7 +443,7 @@ export class ImportPlanService {
     await this.databaseService.db.transaction(async (tx) => {
       await this.save.tags(collectiviteId, memoryData.tags, tx);
       await this.save.fiches(collectiviteId, memoryData.fiches, tx, user);
-      const planResult = await this.mutatePlanService.mutatePlan(
+      const planResult = await this.upsertPlanService.upsertPlan(
         {
           collectiviteId,
           ...plan,

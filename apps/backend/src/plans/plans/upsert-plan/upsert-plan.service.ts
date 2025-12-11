@@ -7,29 +7,29 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { MethodResult } from '@tet/backend/utils/result.type';
 import { AxeLight } from '@tet/domain/plans';
 import { PermissionOperationEnum } from '@tet/domain/users';
-import { MutatePlanError, MutatePlanErrorEnum } from './mutate-plan.errors';
+import { UpsertPlanError, UpsertPlanErrorEnum } from './upsert-plan.errors';
 import {
   createPlanSchema,
-  MutatePlanInput,
   updatePlanSchema,
-} from './mutate-plan.input';
-import { MutatePlanRepository } from './mutate-plan.repository';
+  UpsertPlanInput,
+} from './upsert-plan.input';
+import { UpsertPlanRepository } from './upsert-plan.repository';
 
 @Injectable()
-export class MutatePlanService {
-  private readonly logger = new Logger(MutatePlanService.name);
+export class UpsertPlanService {
+  private readonly logger = new Logger(UpsertPlanService.name);
 
   constructor(
     private readonly permissionService: PermissionService,
-    private readonly mutatePlanRepository: MutatePlanRepository,
+    private readonly upsertPlanRepository: UpsertPlanRepository,
     private readonly databaseService: DatabaseService
   ) {}
 
-  async mutatePlan(
-    plan: MutatePlanInput,
+  async upsertPlan(
+    plan: UpsertPlanInput,
     user: AuthenticatedUser,
     tx?: Transaction
-  ): Promise<MethodResult<AxeLight, MutatePlanError>> {
+  ): Promise<MethodResult<AxeLight, UpsertPlanError>> {
     const isAllowed = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['PLANS.MUTATE'],
@@ -40,19 +40,19 @@ export class MutatePlanService {
     if (!isAllowed) {
       return {
         success: false,
-        error: MutatePlanErrorEnum.UNAUTHORIZED,
+        error: UpsertPlanErrorEnum.UNAUTHORIZED,
       };
     }
 
     const executeInTransaction = async (
       transaction: Transaction
-    ): Promise<MethodResult<AxeLight, MutatePlanError>> => {
+    ): Promise<MethodResult<AxeLight, UpsertPlanError>> => {
       const { referents, pilotes, ...planProps } = plan;
       const updatePlanProps = updatePlanSchema.safeParse(planProps);
 
       let result;
       if (updatePlanProps.success) {
-        result = await this.mutatePlanRepository.update(
+        result = await this.upsertPlanRepository.update(
           updatePlanProps.data,
           user.id,
           transaction
@@ -60,7 +60,7 @@ export class MutatePlanService {
       } else {
         const createPlanProps = createPlanSchema.safeParse(planProps);
         if (createPlanProps.success) {
-          result = await this.mutatePlanRepository.create(
+          result = await this.upsertPlanRepository.create(
             createPlanProps.data,
             user.id,
             transaction
@@ -76,14 +76,14 @@ export class MutatePlanService {
         return (
           result || {
             success: false,
-            error: MutatePlanErrorEnum.CREATE_PLAN_ERROR,
+            error: UpsertPlanErrorEnum.CREATE_PLAN_ERROR,
           }
         );
       }
 
       // Met à jour les référents liés
       if (referents !== undefined) {
-        const setReferentsResult = await this.mutatePlanRepository.setReferents(
+        const setReferentsResult = await this.upsertPlanRepository.setReferents(
           result.data.id,
           referents,
           user.id,
@@ -96,7 +96,7 @@ export class MutatePlanService {
 
       // Met à jour les pilotes liés
       if (pilotes !== undefined) {
-        const setPilotesResult = await this.mutatePlanRepository.setPilotes(
+        const setPilotesResult = await this.upsertPlanRepository.setPilotes(
           result.data.id,
           pilotes ?? null,
           user.id,

@@ -10,16 +10,16 @@ import { GetAxeService } from './get-axe/get-axe.service';
 import { ListAxesRepository } from './list-axes/list-axes.repository';
 import { ListAxesRouter } from './list-axes/list-axes.router';
 import { ListAxesService } from './list-axes/list-axes.service';
-import { MutateAxeRepository } from './mutate-axe/mutate-axe.repository';
-import { MutateAxeRouter } from './mutate-axe/mutate-axe.router';
-import { MutateAxeService } from './mutate-axe/mutate-axe.service';
+import { UpsertAxeRepository } from './upsert-axe/upsert-axe.repository';
+import { UpsertAxeRouter } from './upsert-axe/upsert-axe.router';
+import { UpsertAxeService } from './upsert-axe/upsert-axe.service';
 
 @Module({
   imports: [forwardRef(() => CollectivitesModule)],
   providers: [
-    MutateAxeService,
-    MutateAxeRepository,
-    MutateAxeRouter,
+    UpsertAxeService,
+    UpsertAxeRepository,
+    UpsertAxeRouter,
     ListAxesService,
     ListAxesRepository,
     ListAxesRouter,
