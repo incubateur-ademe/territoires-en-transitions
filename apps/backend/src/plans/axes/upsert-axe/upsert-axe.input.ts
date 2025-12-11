@@ -2,7 +2,7 @@ import { z } from 'zod';
 import {
   baseCreateAxeOrPlanSchema,
   baseUpdateAxeOrPlanSchema,
-} from './mutate-axe-base.input';
+} from './upsert-axe-base.input';
 
 /**
  * Schéma pour créer un axe
@@ -26,13 +26,10 @@ export const updateAxeSchema = baseUpdateAxeOrPlanSchema.extend({
 });
 export type UpdateAxeInput = z.infer<typeof updateAxeSchema>;
 
-export const upsertAxeSchema = z.union([createAxeSchema, updateAxeSchema]);
-export type UpsertAxeInput = z.infer<typeof upsertAxeSchema>;
-
-// options supplémentaires pouvant être passées lors du mutate
-const mutateAxeOptionsSchema = z.object({});
-export const mutateAxeSchema = z.union([
-  updateAxeSchema.extend(mutateAxeOptionsSchema.shape),
-  createAxeSchema.extend(mutateAxeOptionsSchema.shape),
+// options supplémentaires pouvant être passées lors de l'upsert
+const upsertAxeOptionsSchema = z.object({});
+export const upsertAxeSchema = z.union([
+  updateAxeSchema.extend(upsertAxeOptionsSchema.shape),
+  createAxeSchema.extend(upsertAxeOptionsSchema.shape),
 ]);
-export type MutateAxeInput = z.infer<typeof mutateAxeSchema>;
+export type UpsertAxeInput = z.infer<typeof upsertAxeSchema>;

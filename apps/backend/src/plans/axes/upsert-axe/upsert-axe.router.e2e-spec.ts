@@ -14,7 +14,7 @@ import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
 import { onTestFinished } from 'vitest';
 
-describe('Mutate Axe', () => {
+describe('Upsert Axe', () => {
   let router: TrpcRouter;
   let db: DatabaseService;
 
@@ -50,7 +50,7 @@ describe('Mutate Axe', () => {
     };
   });
 
-  describe('Mutate Axe - Success Cases', () => {
+  describe('Upsert Axe - Success Cases', () => {
     test('Successfully create an axe', async () => {
       const caller = router.createCaller({ user: editorUser });
 
@@ -118,7 +118,7 @@ describe('Mutate Axe', () => {
     });
   });
 
-  describe('Mutate Axe - Access Rights', () => {
+  describe('Upsert Axe - Access Rights', () => {
     test('User without rights on collectivite cannot create axe', async () => {
       const yoloDodoUser = await getAuthUser(YOLO_DODO);
       const caller = router.createCaller({ user: yoloDodoUser });

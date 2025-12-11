@@ -11,7 +11,7 @@ const specificErrors = [
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
-export const mutatePlanErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
+export const upsertPlanErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
   specificErrors: {
     CREATE_PLAN_ERROR: {
       code: 'INTERNAL_SERVER_ERROR',
@@ -32,5 +32,5 @@ export const mutatePlanErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
   },
 };
 
-export const MutatePlanErrorEnum = createErrorsEnum(specificErrors);
-export type MutatePlanError = keyof typeof MutatePlanErrorEnum;
+export const UpsertPlanErrorEnum = createErrorsEnum(specificErrors);
+export type UpsertPlanError = keyof typeof UpsertPlanErrorEnum;

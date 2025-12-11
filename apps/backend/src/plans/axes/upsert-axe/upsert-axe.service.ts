@@ -7,29 +7,29 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { MethodResult } from '@tet/backend/utils/result.type';
 import { AxeLight } from '@tet/domain/plans';
 import { PermissionOperationEnum } from '@tet/domain/users';
-import { MutateAxeError, MutateAxeErrorEnum } from './mutate-axe.errors';
+import { UpsertAxeError, UpsertAxeErrorEnum } from './upsert-axe.errors';
 import {
   createAxeSchema,
-  MutateAxeInput,
   updateAxeSchema,
-} from './mutate-axe.input';
-import { MutateAxeRepository } from './mutate-axe.repository';
+  UpsertAxeInput,
+} from './upsert-axe.input';
+import { UpsertAxeRepository } from './upsert-axe.repository';
 
 @Injectable()
-export class MutateAxeService {
-  private readonly logger = new Logger(MutateAxeService.name);
+export class UpsertAxeService {
+  private readonly logger = new Logger(UpsertAxeService.name);
 
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
-    private readonly mutateAxeRepository: MutateAxeRepository
+    private readonly upsertAxeRepository: UpsertAxeRepository
   ) {}
 
-  async mutateAxe(
-    axe: MutateAxeInput,
+  async upsertAxe(
+    axe: UpsertAxeInput,
     user: AuthenticatedUser,
     tx?: Transaction
-  ): Promise<MethodResult<AxeLight, MutateAxeError>> {
+  ): Promise<MethodResult<AxeLight, UpsertAxeError>> {
     const isAllowed = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['PLANS.MUTATE'],
@@ -40,19 +40,19 @@ export class MutateAxeService {
     if (!isAllowed) {
       return {
         success: false,
-        error: MutateAxeErrorEnum.UNAUTHORIZED,
+        error: UpsertAxeErrorEnum.UNAUTHORIZED,
       };
     }
 
     const executeInTransaction = async (
       transaction: Transaction
-    ): Promise<MethodResult<AxeLight, MutateAxeError>> => {
+    ): Promise<MethodResult<AxeLight, UpsertAxeError>> => {
       const axeProps = axe;
       const updateAxeProps = updateAxeSchema.safeParse(axeProps);
 
       let result;
       if (updateAxeProps.success) {
-        result = await this.mutateAxeRepository.update(
+        result = await this.upsertAxeRepository.update(
           updateAxeProps.data,
           user.id,
           transaction
@@ -60,7 +60,7 @@ export class MutateAxeService {
       } else {
         const createAxeProps = createAxeSchema.safeParse(axeProps);
         if (createAxeProps.success) {
-          result = await this.mutateAxeRepository.create(
+          result = await this.upsertAxeRepository.create(
             createAxeProps.data,
             user.id,
             transaction
@@ -72,7 +72,7 @@ export class MutateAxeService {
         return (
           result || {
             success: false,
-            error: MutateAxeErrorEnum.CREATE_AXE_ERROR,
+            error: UpsertAxeErrorEnum.CREATE_AXE_ERROR,
           }
         );
       }
