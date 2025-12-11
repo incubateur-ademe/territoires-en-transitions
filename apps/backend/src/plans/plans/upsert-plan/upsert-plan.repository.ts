@@ -8,12 +8,12 @@ import { UpsertAxeBaseRepository } from '../../axes/upsert-axe/upsert-axe-base.r
 import { planPiloteTable } from '../../fiches/shared/models/plan-pilote.table';
 import { planReferentTable } from '../../fiches/shared/models/plan-referent.table';
 import { UpsertPlanError, UpsertPlanErrorEnum } from './upsert-plan.errors';
-import { CreatePlanInput, UpdatePlanInput } from './upsert-plan.input';
+import { BaseCreatePlanInput, BaseUpdatePlanInput } from './upsert-plan.input';
 
 @Injectable()
 export class UpsertPlanRepository extends UpsertAxeBaseRepository<
-  CreatePlanInput,
-  UpdatePlanInput,
+  BaseCreatePlanInput,
+  BaseUpdatePlanInput,
   UpsertPlanError
 > {
   protected readonly logger = new Logger(UpsertPlanRepository.name);
