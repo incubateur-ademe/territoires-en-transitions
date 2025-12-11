@@ -10,9 +10,9 @@ import { GetAxeService } from '../axes/get-axe/get-axe.service';
 import { ListAxesRepository } from '../axes/list-axes/list-axes.repository';
 import { ListAxesRouter } from '../axes/list-axes/list-axes.router';
 import { ListAxesService } from '../axes/list-axes/list-axes.service';
-import { MutateAxeRepository } from '../axes/mutate-axe/mutate-axe.repository';
-import { MutateAxeRouter } from '../axes/mutate-axe/mutate-axe.router';
-import { MutateAxeService } from '../axes/mutate-axe/mutate-axe.service';
+import { UpsertAxeRepository } from '../axes/upsert-axe/upsert-axe.repository';
+import { UpsertAxeRouter } from '../axes/upsert-axe/upsert-axe.router';
+import { UpsertAxeService } from '../axes/upsert-axe/upsert-axe.service';
 import { FichesModule } from '../fiches/fiches.module';
 import { CompletionAnalyticsRouter } from './completion-analytics/completion-analytics.router';
 import { CompletionAnalyticsService } from './completion-analytics/completion-analytics.service';
@@ -25,10 +25,10 @@ import { GetPlanService } from './get-plan/get-plan.service';
 import { ListPlansRepository } from './list-plans/list-plans.repository';
 import { ListPlansRouter } from './list-plans/list-plans.router';
 import { ListPlansService } from './list-plans/list-plans.service';
-import { MutatePlanRepository } from './mutate-plan/mutate-plan.repository';
-import { MutatePlanRouter } from './mutate-plan/mutate-plan.router';
-import { MutatePlanService } from './mutate-plan/mutate-plan.service';
 import { PlanRouter } from './plans.router';
+import { UpsertPlanRepository } from './upsert-plan/upsert-plan.repository';
+import { UpsertPlanRouter } from './upsert-plan/upsert-plan.router';
+import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
 
 @Module({
   imports: [
@@ -48,9 +48,9 @@ import { PlanRouter } from './plans.router';
     ListAxesRepository,
     ListAxesService,
     ListAxesRouter,
-    MutateAxeService,
-    MutateAxeRouter,
-    MutateAxeRepository,
+    UpsertAxeService,
+    UpsertAxeRouter,
+    UpsertAxeRepository,
     DeletePlanRepository,
     DeletePlanService,
     DeletePlanRouter,
@@ -60,11 +60,11 @@ import { PlanRouter } from './plans.router';
     ListPlansRepository,
     ListPlansService,
     ListPlansRouter,
-    MutatePlanRepository,
-    MutatePlanService,
-    MutatePlanRouter,
+    UpsertPlanRepository,
+    UpsertPlanService,
+    UpsertPlanRouter,
     PlanRouter,
   ],
-  exports: [PlanRouter, MutatePlanService, ListPlansService],
+  exports: [PlanRouter, UpsertPlanService, ListPlansService],
 })
 export class PlanModule {}

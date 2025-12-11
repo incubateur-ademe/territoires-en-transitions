@@ -7,18 +7,18 @@ import { AxeLight } from '@tet/domain/plans';
 import { eq } from 'drizzle-orm';
 
 /**
- * Type d'erreur générique pour les opérations de mutation
+ * Type d'erreur générique pour les opérations d'upsert
  */
-export type MutateError = string;
+export type UpsertError = string;
 
 /**
- * Classe de base abstraite pour les repositories de mutation d'axes/plans
+ * Classe de base abstraite pour les repositories d'upsert d'axes/plans
  * Factorise les méthodes communes create et update
  */
-export abstract class MutateAxeBaseRepository<
+export abstract class UpsertAxeBaseRepository<
   TCreateInput extends { collectiviteId: number },
   TUpdateInput extends { id: number; collectiviteId: number },
-  TError extends MutateError
+  TError extends UpsertError
 > {
   protected abstract readonly logger: Logger;
 

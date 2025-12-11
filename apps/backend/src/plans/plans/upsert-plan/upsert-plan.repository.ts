@@ -4,30 +4,30 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { MethodResult } from '@tet/backend/utils/result.type';
 import { PersonneId } from '@tet/domain/collectivites';
 import { eq } from 'drizzle-orm';
-import { MutateAxeBaseRepository } from '../../axes/mutate-axe/mutate-axe-base.repository';
+import { UpsertAxeBaseRepository } from '../../axes/upsert-axe/upsert-axe-base.repository';
 import { planPiloteTable } from '../../fiches/shared/models/plan-pilote.table';
 import { planReferentTable } from '../../fiches/shared/models/plan-referent.table';
-import { MutatePlanError, MutatePlanErrorEnum } from './mutate-plan.errors';
-import { CreatePlanInput, UpdatePlanInput } from './mutate-plan.input';
+import { UpsertPlanError, UpsertPlanErrorEnum } from './upsert-plan.errors';
+import { CreatePlanInput, UpdatePlanInput } from './upsert-plan.input';
 
 @Injectable()
-export class MutatePlanRepository extends MutateAxeBaseRepository<
+export class UpsertPlanRepository extends UpsertAxeBaseRepository<
   CreatePlanInput,
   UpdatePlanInput,
-  MutatePlanError
+  UpsertPlanError
 > {
-  protected readonly logger = new Logger(MutatePlanRepository.name);
+  protected readonly logger = new Logger(UpsertPlanRepository.name);
 
   constructor(databaseService: DatabaseService) {
     super(databaseService);
   }
 
-  protected getCreateError(): MutatePlanError {
-    return MutatePlanErrorEnum.CREATE_PLAN_ERROR;
+  protected getCreateError(): UpsertPlanError {
+    return UpsertPlanErrorEnum.CREATE_PLAN_ERROR;
   }
 
-  protected getUpdateError(): MutatePlanError {
-    return MutatePlanErrorEnum.UPDATE_PLAN_ERROR;
+  protected getUpdateError(): UpsertPlanError {
+    return UpsertPlanErrorEnum.UPDATE_PLAN_ERROR;
   }
 
   /**
@@ -42,7 +42,7 @@ export class MutatePlanRepository extends MutateAxeBaseRepository<
     referents: PersonneId[] | null,
     userId: string,
     tx: Transaction
-  ): Promise<MethodResult<undefined, MutatePlanError>> {
+  ): Promise<MethodResult<undefined, UpsertPlanError>> {
     try {
       // Supprime toutes les relations existantes liées au plan
       await tx
@@ -70,7 +70,7 @@ export class MutatePlanRepository extends MutateAxeBaseRepository<
       this.logger.error(`Error updating plan ${planId} referents: ${error}`);
       return {
         success: false,
-        error: MutatePlanErrorEnum.UPDATE_REFERENTS_ERROR,
+        error: UpsertPlanErrorEnum.UPDATE_REFERENTS_ERROR,
       };
     }
   }
@@ -87,7 +87,7 @@ export class MutatePlanRepository extends MutateAxeBaseRepository<
     pilotes: PersonneId[] | null,
     userId: string,
     tx: Transaction
-  ): Promise<MethodResult<undefined, MutatePlanError>> {
+  ): Promise<MethodResult<undefined, UpsertPlanError>> {
     try {
       // Supprime toutes les relations existantes liées au plan
       await tx
@@ -115,7 +115,7 @@ export class MutatePlanRepository extends MutateAxeBaseRepository<
       this.logger.error(`Error updating plan ${planId} pilotes: ${error}`);
       return {
         success: false,
-        error: MutatePlanErrorEnum.UPDATE_PILOTES_ERROR,
+        error: UpsertPlanErrorEnum.UPDATE_PILOTES_ERROR,
       };
     }
   }
