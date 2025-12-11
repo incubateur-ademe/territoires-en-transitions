@@ -8,18 +8,18 @@ import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { count, eq, or, sql } from 'drizzle-orm';
 import { ficheActionNoteTable } from '../../fiches/fiche-action-note/fiche-action-note.table';
-import { CompletionField } from './completion-analytics.dto';
 import { getCompletion } from './domain/plan.completion-calculator';
+import { CompletionField } from './get-plan-completion.dto';
 
 @Injectable()
-export class CompletionAnalyticsService {
-  private readonly logger = new Logger(CompletionAnalyticsService.name);
+export class GetPlanCompletionService {
+  private readonly logger = new Logger(GetPlanCompletionService.name);
 
   private db = this.database.db;
 
   constructor(private readonly database: DatabaseService) {}
 
-  async getFieldsToComplete(planId: number) {
+  async getPlanCompletion(planId: number) {
     this.logger.log(`Getting fields to complete for plan ${planId}`);
     return await this.getFieldsNeedingCompletion(planId);
   }
