@@ -129,7 +129,7 @@ export const useUpdateFiche = (args?: {
        * les champs à compléter après mise à jour d'une fiche
        */
       queryClient.invalidateQueries({
-        queryKey: trpc.plans.plans.getFieldsToComplete.queryKey(),
+        queryKey: trpc.plans.plans.getPlanCompletion.queryKey(),
       });
 
       if (ficheFields.axes) {

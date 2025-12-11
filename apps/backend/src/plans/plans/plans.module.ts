@@ -14,11 +14,11 @@ import { UpsertAxeRepository } from '../axes/upsert-axe/upsert-axe.repository';
 import { UpsertAxeRouter } from '../axes/upsert-axe/upsert-axe.router';
 import { UpsertAxeService } from '../axes/upsert-axe/upsert-axe.service';
 import { FichesModule } from '../fiches/fiches.module';
-import { CompletionAnalyticsRouter } from './completion-analytics/completion-analytics.router';
-import { CompletionAnalyticsService } from './completion-analytics/completion-analytics.service';
 import { DeletePlanRepository } from './delete-plan/delete-plan.repository';
 import { DeletePlanRouter } from './delete-plan/delete-plan.router';
 import { DeletePlanService } from './delete-plan/delete-plan.service';
+import { GetPlanCompletionRouter } from './get-plan-completion/get-plan-completion.router';
+import { GetPlanCompletionService } from './get-plan-completion/get-plan-completion.service';
 import { GetPlanRepository } from './get-plan/get-plan.repository';
 import { GetPlanRouter } from './get-plan/get-plan.router';
 import { GetPlanService } from './get-plan/get-plan.service';
@@ -37,8 +37,8 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     AxeModule,
   ],
   providers: [
-    CompletionAnalyticsService,
-    CompletionAnalyticsRouter,
+    GetPlanCompletionService,
+    GetPlanCompletionRouter,
     DeleteAxeService,
     DeleteAxeRouter,
     DeleteAxeRepository,
