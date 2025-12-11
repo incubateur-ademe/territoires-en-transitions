@@ -1,6 +1,3 @@
-import BudgetContent from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/BudgetContent';
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { FicheBudget } from '@/app/plans/fiches/update-fiche/data/use-get-budget';
 import {
   BadgeFinanceur,
   Divider,
@@ -8,11 +5,13 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
+import { FicheBudget, FicheWithRelations } from '@tet/domain/plans';
 import { htmlToText } from '@tet/domain/utils';
 import classNames from 'classnames';
+import BudgetContent from './BudgetContent';
 
 type MoyensProps = {
-  fiche: Fiche;
+  fiche: FicheWithRelations;
   budgets: FicheBudget[] | undefined;
 };
 

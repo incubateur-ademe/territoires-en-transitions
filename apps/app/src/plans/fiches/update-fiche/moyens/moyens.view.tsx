@@ -84,7 +84,6 @@ export const MoyensView = ({ isReadonly, fiche }: MoyensViewProps) => {
 
   const hasFicheMoyensRelatedData =
     hasBudgets || hasFinanceurs || hasFinancements || hasRessources;
-
   return (
     <>
       {hasFicheMoyensRelatedData ? (
