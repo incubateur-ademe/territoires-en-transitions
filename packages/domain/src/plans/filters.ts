@@ -14,16 +14,16 @@ export type TypePeriodeEnum = (typeof typePeriodeEnumValues)[number];
 
 export const typePeriodeEnumSchema = z.enum(typePeriodeEnumValues);
 
-export const notesDeSuiviOptionValues = [
+export const notesOptionValues = [
   'WITH',
   'WITHOUT',
   'WITH_RECENT',
   'WITHOUT_RECENT',
 ] as const;
 
-export type NotesDeSuiviOption = (typeof notesDeSuiviOptionValues)[number];
+export type NotesOption = (typeof notesOptionValues)[number];
 
-export const notesDeSuiviEnumSchema = z.enum(notesDeSuiviOptionValues);
+export const notesEnumSchema = z.enum(notesOptionValues);
 
 export const listFichesRequestFiltersSchema = z
   .object({
@@ -88,16 +88,16 @@ export const listFichesRequestFiltersSchema = z
       .optional()
       .describe('Liste des cibles séparées par des virgules'),
 
-    notesDeSuivi: z
-      .enum(notesDeSuiviOptionValues)
+    notes: z
+      .enum(notesOptionValues)
       .optional()
       .describe(
-        `A une note de suivi (WITH), n'a pas de note (WITHOUT), a une note récente < 1 an (WITH_RECENT), ou pas de note récente > 1 an (WITHOUT_RECENT)`
+        `A une note (WITH), n'a pas de note (WITHOUT), a une note récente < 1 an (WITH_RECENT), ou pas de note récente > 1 an (WITHOUT_RECENT)`
       ),
-    anneesNoteDeSuivi: z
+    anneesNotes: z
       .array(z.coerce.string())
       .optional()
-      .describe('Années des notes de suivi séparées par des virgules'),
+      .describe('Années des notes séparées par des virgules'),
 
     ficheIds: z
       .array(z.coerce.number())

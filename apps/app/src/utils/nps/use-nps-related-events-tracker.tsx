@@ -19,7 +19,7 @@ const useGetMutationPatterns = () => {
       trpc.plans.fiches.budgets.upsert.mutationKey(),
       'create_fiche_resume',
       'update_linked_fiches',
-      'upsert_note_suivi',
+      'upsert_note',
       trpc.plans.fiches.etapes.upsert.mutationKey(),
       trpc.plans.plans.create.mutationKey(),
       trpc.plans.plans.createAxe.mutationKey(),

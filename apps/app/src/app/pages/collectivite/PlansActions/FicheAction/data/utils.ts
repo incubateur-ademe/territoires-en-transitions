@@ -71,7 +71,7 @@ export const ficheResumeFactory = ({
     financements: null,
     budgetPrevisionnel: null,
     calendrier: null,
-    notesComplementaires: null,
+    notes: null,
     instanceGouvernance: null,
     participationCitoyenne: null,
     participationCitoyenneType: null,
@@ -87,7 +87,6 @@ export const ficheResumeFactory = ({
     structures: [],
     libreTags: [],
     financeurs: [],
-    notes: [],
     docs: [],
     budgets: [],
     completion: {

@@ -12,17 +12,17 @@ const ExportSuiviSelect = ({ options, setOptions }: Props) => {
     {
       value: 0,
       label: 'Toutes les années',
-      disabled: options.notes_suivi.values?.includes(0),
+      disabled: options.notes.values?.includes(0),
     },
     ...getYearsOptions().yearsOptions,
   ];
 
   const handleOnChange = (values: OptionValue[] | undefined) => {
-    const prevValues = options.notes_suivi.values;
+    const prevValues = options.notes.values;
     const isPrevSelectAll = prevValues?.includes(0) ?? false;
 
     const newValue = {
-      ...options.notes_suivi,
+      ...options.notes,
       values: isPrevSelectAll
         ? (values?.filter((v) => v !== 0) as number[] | undefined)
         : values?.includes(0) || values === undefined || !values.length
@@ -32,7 +32,7 @@ const ExportSuiviSelect = ({ options, setOptions }: Props) => {
 
     const newOptions = {
       ...options,
-      notes_suivi: newValue,
+      notes: newValue,
     };
 
     setOptions(newOptions);
@@ -42,9 +42,9 @@ const ExportSuiviSelect = ({ options, setOptions }: Props) => {
     <SelectMultiple
       maxBadgesToShow={2}
       options={optionsList}
-      values={options.notes_suivi.values}
+      values={options.notes.values}
       onChange={({ values }) => handleOnChange(values)}
-      disabled={!options.notes_suivi.isChecked}
+      disabled={!options.notes.isChecked}
       small
     />
   );

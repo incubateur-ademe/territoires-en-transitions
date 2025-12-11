@@ -19,6 +19,11 @@
       "import": "./src/plan-actions/index.ts",
       "default": "./src/plan-actions/index.ts"
     },
+    "./tests/auth": {
+      "types": "./src/tests/auth.ts",
+      "import": "./src/tests/auth.ts",
+      "default": "./src/tests/auth.ts"
+    },
     "./*": {
       "types": "./src/*.ts",
       "import": "./src/*.ts",
