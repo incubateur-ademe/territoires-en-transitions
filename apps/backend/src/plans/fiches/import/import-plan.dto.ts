@@ -1,11 +1,9 @@
-import { TagEnum, TagType } from '@tet/domain/collectivites';
+import { PersonneId, TagEnum, TagType } from '@tet/domain/collectivites';
 import {
   Cible,
   ParticipationCitoyenne,
   Priorite,
   Statut,
-  UpdatePlanPilotesSchema,
-  UpdatePlanReferentsSchema,
 } from '@tet/domain/plans';
 
 export const ficheTagTypes = [
@@ -77,8 +75,8 @@ export type AxeImport = {
 
 export type PlanImport = AxeImport & {
   typeId?: number;
-  pilotes?: UpdatePlanPilotesSchema[];
-  referents?: UpdatePlanReferentsSchema[];
+  pilotes?: PersonneId[];
+  referents?: PersonneId[];
 };
 
 export type MemoryImport = {

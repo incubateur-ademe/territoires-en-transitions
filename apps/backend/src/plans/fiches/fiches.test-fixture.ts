@@ -77,7 +77,7 @@ export async function createPlan({
   const plan = await caller.plans.plans.create(planData);
 
   onTestFinished(async () => {
-    await caller.plans.plans.deletePlan({ planId: plan.id });
+    await caller.plans.plans.delete({ planId: plan.id });
   });
 
   return plan;
@@ -86,7 +86,7 @@ export async function createPlan({
 // ----------
 
 type CreateAxeAllowedInput =
-  inferRouterInputs<AppRouter>['plans']['plans']['createAxe'];
+  inferRouterInputs<AppRouter>['plans']['axes']['create'];
 
 export async function createAxe({
   caller,
@@ -95,10 +95,10 @@ export async function createAxe({
   caller: ReturnType<TrpcRouter['createCaller']>;
   axeData: CreateAxeAllowedInput;
 }) {
-  const axe = await caller.plans.plans.createAxe(axeData);
+  const axe = await caller.plans.axes.create(axeData);
 
   onTestFinished(async () => {
-    await caller.plans.plans.deleteAxe({ axeId: axe.id });
+    await caller.plans.axes.delete({ axeId: axe.id });
   });
 
   return axe;

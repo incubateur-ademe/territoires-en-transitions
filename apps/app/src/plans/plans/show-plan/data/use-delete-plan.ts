@@ -10,7 +10,7 @@ export const useDeletePlan = (planId: number, redirectURL?: string) => {
   const trpc = useTRPC();
 
   const { mutateAsync: deletePlan } = useMutation(
-    trpc.plans.plans.deletePlan.mutationOptions()
+    trpc.plans.plans.delete.mutationOptions()
   );
 
   return useMutation({

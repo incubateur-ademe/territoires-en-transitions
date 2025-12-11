@@ -3,47 +3,43 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TAxeInsert } from '@/app/types/alias';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { useTRPC } from '@tet/api';
-import { useCollectiviteId } from '@tet/api/collectivites';
 import { Plan, PlanNode } from '@tet/domain/plans';
 import { planNodeFactory, sortPlanNodes } from '../../utils';
 
 export const useUpsertAxe = ({
   parentAxe,
   planId,
+  mutationKey,
 }: {
   parentAxe: Pick<PlanNode, 'id' | 'depth'>;
   planId: number;
+  mutationKey?: string[];
 }) => {
   const queryClient = useQueryClient();
-  const collectivite_id = useCollectiviteId();
   const trpc = useTRPC();
 
   const { mutateAsync: createAxe } = useMutation(
-    trpc.plans.plans.createAxe.mutationOptions()
+    trpc.plans.axes.create.mutationOptions()
   );
   const { mutateAsync: updateAxe } = useMutation(
-    trpc.plans.plans.updateAxe.mutationOptions()
+    trpc.plans.axes.update.mutationOptions()
   );
+
   return useMutation({
-    mutationFn: async (axe: TAxeInsert) => {
-      if (axe.id) {
-        const result = await updateAxe({
-          id: axe.id,
-          nom: axe.nom ?? '',
-          collectiviteId: axe.collectivite_id,
-          planId,
-          parent: parentAxe.id,
-        });
-        return result;
-      } else {
-        const result = await createAxe({
-          nom: axe.nom ?? '',
-          collectiviteId: axe.collectivite_id,
-          planId,
-          parent: parentAxe.id,
-        });
-        return result;
-      }
+    mutationKey,
+    mutationFn: (axe: TAxeInsert) => {
+      const dataToUpsert = {
+        nom: axe.nom ?? '',
+        collectiviteId: axe.collectivite_id,
+        planId,
+        parent: parentAxe.id,
+      };
+      return 'id' in axe && typeof axe.id === 'number'
+        ? updateAxe({
+            id: axe.id,
+            ...dataToUpsert,
+          })
+        : createAxe(dataToUpsert);
     },
     meta: { disableToast: true },
     onMutate: async () => {
@@ -65,7 +61,6 @@ export const useUpsertAxe = ({
             return undefined;
           }
           const axe = planNodeFactory({
-            collectiviteId: collectivite_id,
             axes: old.axes,
             parentId: parentAxe.id,
             parentDepth: parentAxe.depth + 1,
