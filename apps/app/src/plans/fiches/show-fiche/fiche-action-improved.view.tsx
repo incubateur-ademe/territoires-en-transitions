@@ -1,35 +1,30 @@
 'use client';
 
-import FicheActionAcces from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheActionAcces/FicheActionAcces';
 import { FicheNoAccessPage } from '@/app/plans/fiches/get-fiche/fiche-no-access.page';
 import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import {
-  FicheActionImprovedView,
-  useImprovedFicheActionUiEnabled,
-} from '@/app/plans/fiches/show-fiche';
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import { ErrorPage } from '@/app/utils/error/error.page';
 import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
-import { Fiche, useGetFiche } from './data/use-get-fiche';
+import { useGetFiche } from './data/use-get-fiche';
+import FicheActionAcces from './FicheActionAcces/FicheActionAcces';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
 import { FicheActionDescription } from './FicheActionDescription/FicheActionDescription';
 import FicheActionImpact from './FicheActionImpact';
 import FicheActionOnglets from './FicheActionOnglets';
 import FicheActionPilotes from './FicheActionPilotes/FicheActionPilotes';
 import { FicheActionPlanning } from './FicheActionPlanning/FicheActionPlanning';
-import { Header } from './Header';
-
-type FicheActionProps = {
-  fiche: Fiche;
+import { Header } from './header';
+type FicheActionImprovedProps = {
+  fiche: FicheWithRelations;
   planId?: number;
 };
 
-const FicheActionLegacy = ({
+export const FicheActionImprovedView = ({
   fiche: initialFiche,
   planId,
-}: FicheActionProps) => {
+}: FicheActionImprovedProps) => {
   const collectivite = useCurrentCollectivite();
   const user = useUser();
 
@@ -42,7 +37,6 @@ const FicheActionLegacy = ({
 
   if (error) {
     if (error.data?.code === 'FORBIDDEN') {
-      // Suppose to happen only for "restreint" fiches
       return <FicheNoAccessPage />;
     }
     return <ErrorPage error={error} reset={() => window.location.reload()} />;
@@ -68,9 +62,12 @@ const FicheActionLegacy = ({
 
   return (
     <>
-      <div data-test="FicheAction" className="w-full bg-grey-2">
+      <div className="w-full bg-grey-2">
+        <h2 className="text-2xl font-bold text-center text-primary-6">
+          NEW LAYOUT
+        </h2>
+
         <div className="flex flex-col w-full px-2 mx-auto xl:max-w-7xl 2xl:max-w-8xl">
-          {/* Header de la fiche action (titre, fil d'ariane) */}
           <Header
             fiche={fiche}
             isReadonly={isReadonly}
@@ -84,7 +81,6 @@ const FicheActionLegacy = ({
             planId={planId}
           />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-10 gap-5 lg:gap-9 xl:gap-11">
-            {/* Description, moyens humains et techniques, et thématiques */}
             <FicheActionDescription
               isReadonly={isReadonly}
               fiche={fiche}
@@ -132,17 +128,4 @@ const FicheActionLegacy = ({
       </div>
     </>
   );
-};
-
-export const FicheAction = ({
-  fiche: initialFiche,
-  planId,
-}: FicheActionProps) => {
-  const isImprovedUiEnabled = useImprovedFicheActionUiEnabled();
-
-  if (isImprovedUiEnabled) {
-    return <FicheActionImprovedView fiche={initialFiche} planId={planId} />;
-  }
-
-  return <FicheActionLegacy fiche={initialFiche} planId={planId} />;
 };
