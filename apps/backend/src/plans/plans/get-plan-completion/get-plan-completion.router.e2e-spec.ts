@@ -27,7 +27,7 @@ sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 const threeYearsAgo = new Date();
 threeYearsAgo.setFullYear(threeYearsAgo.getFullYear() - 3);
 
-describe('CompletionAnalyticsRouter tests', () => {
+describe('GetPlanCompletionRouter tests', () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
   let databaseService: DatabaseService;
@@ -80,11 +80,11 @@ describe('CompletionAnalyticsRouter tests', () => {
     });
   });
 
-  describe('getFieldsToComplete', () => {
+  describe('getPlanCompletion', () => {
     it('should return empty array for plan with no fiches', async () => {
       const caller = router.createCaller({ user: yoloDodoUser });
 
-      const result = await caller.plans.plans.getFieldsToComplete({
+      const result = await caller.plans.plans.getPlanCompletion({
         planId: testPlanId,
       });
 
@@ -141,7 +141,7 @@ describe('CompletionAnalyticsRouter tests', () => {
         { ficheId: fiche2.id, axeId: testPlanId },
       ]);
 
-      const result = await caller.plans.plans.getFieldsToComplete({
+      const result = await caller.plans.plans.getPlanCompletion({
         planId: testPlanId,
       });
 
@@ -182,7 +182,7 @@ describe('CompletionAnalyticsRouter tests', () => {
         axeId: testPlanId,
       });
 
-      const result = await caller.plans.plans.getFieldsToComplete({
+      const result = await caller.plans.plans.getPlanCompletion({
         planId: testPlanId,
       });
 
@@ -247,7 +247,7 @@ describe('CompletionAnalyticsRouter tests', () => {
         axeId: testPlanId,
       });
 
-      const result = await caller.plans.plans.getFieldsToComplete({
+      const result = await caller.plans.plans.getPlanCompletion({
         planId: testPlanId,
       });
 
@@ -287,7 +287,7 @@ describe('CompletionAnalyticsRouter tests', () => {
         { ficheId: fiche2.id, axeId: testPlanId },
       ]);
 
-      const result = await caller.plans.plans.getFieldsToComplete({
+      const result = await caller.plans.plans.getPlanCompletion({
         planId: testPlanId,
       });
 
@@ -366,7 +366,7 @@ describe('CompletionAnalyticsRouter tests', () => {
         { ficheId: fiche3.id, axeId: testPlanId },
       ]);
 
-      const result = await caller.plans.plans.getFieldsToComplete({
+      const result = await caller.plans.plans.getPlanCompletion({
         planId: testPlanId,
       });
 
@@ -458,7 +458,7 @@ describe('CompletionAnalyticsRouter tests', () => {
         { ficheId: oldFicheWithRecentNote.id, axeId: testPlanId },
       ]);
 
-      const result = await caller.plans.plans.getFieldsToComplete({
+      const result = await caller.plans.plans.getPlanCompletion({
         planId: testPlanId,
       });
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
-import { CompletionAnalyticsRouter } from './completion-analytics/completion-analytics.router';
 import { DeletePlanRouter } from './delete-plan/delete-plan.router';
+import { GetPlanCompletionRouter } from './get-plan-completion/get-plan-completion.router';
 import { GetPlanRouter } from './get-plan/get-plan.router';
 import { ListPlansRouter } from './list-plans/list-plans.router';
 import { UpsertPlanRouter } from './upsert-plan/upsert-plan.router';
@@ -10,7 +10,7 @@ import { UpsertPlanRouter } from './upsert-plan/upsert-plan.router';
 export class PlanRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly completionAnalyticsRouter: CompletionAnalyticsRouter,
+    private readonly getPlanCompletionRouter: GetPlanCompletionRouter,
     private readonly upsertPlanRouter: UpsertPlanRouter,
     private readonly getPlanRouter: GetPlanRouter,
     private readonly listPlansRouter: ListPlansRouter,
@@ -18,7 +18,7 @@ export class PlanRouter {
   ) {}
 
   router = this.trpc.mergeRouters(
-    this.completionAnalyticsRouter.router,
+    this.getPlanCompletionRouter.router,
     this.upsertPlanRouter.router,
     this.getPlanRouter.router,
     this.listPlansRouter.router,
