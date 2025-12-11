@@ -1,24 +1,18 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { RouterInput, useTRPC } from '@tet/api';
+import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { useRouter } from 'next/navigation';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
 import { ListFichesOutput } from '../../list-all-fiches/data/use-list-fiches';
 
-export type UpdateFicheInput = RouterInput['plans']['fiches']['update'];
+type Args = Partial<{
+  invalidatePlanId: number;
+  onUpdateCallback: () => void;
+}>;
 
-export const useUpdateFiche = (args?: {
-  invalidatePlanId?: number;
-  /**
-   * Path to redirect to after the update.
-   * Useful for instance to redirect after sharing removal.
-   */
-  redirectPath?: string;
-}) => {
+export const useUpdateFiche = (args?: Args) => {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const router = useRouter();
   const isNotificationEnabled = useFeatureFlagEnabled(
     'is-notification-enabled'
   );
@@ -175,8 +169,8 @@ export const useUpdateFiche = (args?: {
       });
     },
     onSuccess: () => {
-      if (args?.redirectPath) {
-        router.push(args.redirectPath);
+      if (args?.onUpdateCallback) {
+        args.onUpdateCallback();
       }
     },
   });

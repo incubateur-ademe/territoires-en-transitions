@@ -100,11 +100,12 @@ export const userSchema = z.object({
   nom: z.string(),
 });
 
+const completionFields = ['titre', 'description', 'statut', 'pilotes'] as const;
 export const completionSchema = z.object({
   ficheId: z.number(),
   fields: z.array(
     z.object({
-      field: z.enum(['titre', 'description', 'statut', 'pilotes']),
+      field: z.enum([...completionFields]),
       isCompleted: z.boolean(),
     })
   ),
@@ -226,6 +227,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
 
 export type FicheWithRelations = z.infer<typeof ficheWithRelationsSchema>;
 export type Completion = z.infer<typeof completionSchema>;
+export type CompletionField = (typeof completionFields)[number];
 
 export const ficheWithRelationsAndCollectiviteSchema =
   ficheWithRelationsSchema.extend({
