@@ -2,7 +2,7 @@ import {
   CompletionField,
   CompletionFieldName,
   completionFields,
-} from '../completion-analytics.dto';
+} from '../get-plan-completion.dto';
 
 export type CompletionPlanData = Record<
   CompletionFieldName,
