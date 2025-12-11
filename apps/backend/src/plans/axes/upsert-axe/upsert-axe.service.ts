@@ -9,8 +9,8 @@ import { AxeLight } from '@tet/domain/plans';
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { UpsertAxeError, UpsertAxeErrorEnum } from './upsert-axe.errors';
 import {
+  baseUpdateAxeSchema,
   createAxeSchema,
-  updateAxeSchema,
   UpsertAxeInput,
 } from './upsert-axe.input';
 import { UpsertAxeRepository } from './upsert-axe.repository';
@@ -48,7 +48,7 @@ export class UpsertAxeService {
       transaction: Transaction
     ): Promise<MethodResult<AxeLight, UpsertAxeError>> => {
       const axeProps = axe;
-      const updateAxeProps = updateAxeSchema.safeParse(axeProps);
+      const updateAxeProps = baseUpdateAxeSchema.safeParse(axeProps);
 
       let result;
       if (updateAxeProps.success) {

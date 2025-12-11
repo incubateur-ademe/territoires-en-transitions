@@ -8,14 +8,14 @@ import {
 /**
  * Schéma pour créer un plan
  */
-export const createPlanSchema = baseCreateAxeOrPlanSchema;
-export type CreatePlanInput = z.infer<typeof createPlanSchema>;
+export const baseCreatePlanSchema = baseCreateAxeOrPlanSchema;
+export type BaseCreatePlanInput = z.infer<typeof baseCreatePlanSchema>;
 
 /**
  * Schéma pour mettre à jour un plan
  */
-export const updatePlanSchema = baseUpdateAxeOrPlanSchema;
-export type UpdatePlanInput = z.infer<typeof updatePlanSchema>;
+export const baseUpdatePlanSchema = baseUpdateAxeOrPlanSchema;
+export type BaseUpdatePlanInput = z.infer<typeof baseUpdatePlanSchema>;
 
 /**
  * Options supplémentaires pour upsert (referents et pilotes)
@@ -28,9 +28,15 @@ const upsertPlanOptionsSchema = z.object({
 /**
  * Schéma pour upsert (create ou update avec options)
  */
-export const upsertPlanSchema = z.union([
-  updatePlanSchema.extend(upsertPlanOptionsSchema.shape),
-  createPlanSchema.extend(upsertPlanOptionsSchema.shape),
-]);
+export const updatePlanSchema = baseUpdatePlanSchema.extend(
+  upsertPlanOptionsSchema.shape
+);
+export type UpdatePlan = z.infer<typeof updatePlanSchema>;
 
+export const createPlanSchema = baseCreatePlanSchema.extend(
+  upsertPlanOptionsSchema.shape
+);
+export type CreatePlan = z.infer<typeof createPlanSchema>;
+
+export const upsertPlanSchema = z.union([updatePlanSchema, createPlanSchema]);
 export type UpsertPlanInput = z.infer<typeof upsertPlanSchema>;

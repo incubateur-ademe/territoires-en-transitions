@@ -18,19 +18,28 @@ export const useUpsertAxe = ({
   const queryClient = useQueryClient();
   const trpc = useTRPC();
 
-  const { mutateAsync: upsertAxe } = useMutation(
-    trpc.plans.axes.upsert.mutationOptions()
+  const { mutateAsync: createAxe } = useMutation(
+    trpc.plans.axes.create.mutationOptions()
   );
+  const { mutateAsync: updateAxe } = useMutation(
+    trpc.plans.axes.update.mutationOptions()
+  );
+
   return useMutation({
     mutationKey,
-    mutationFn: async (axe: TAxeInsert) => {
-      return await upsertAxe({
-        id: axe.id,
+    mutationFn: (axe: TAxeInsert) => {
+      const dataToUpsert = {
         nom: axe.nom ?? '',
         collectiviteId: axe.collectivite_id,
         planId,
         parent: parentAxe.id,
-      });
+      };
+      return 'id' in axe && typeof axe.id === 'number'
+        ? updateAxe({
+            id: axe.id,
+            ...dataToUpsert,
+          })
+        : createAxe(dataToUpsert);
     },
     meta: { disableToast: true },
     onMutate: async () => {

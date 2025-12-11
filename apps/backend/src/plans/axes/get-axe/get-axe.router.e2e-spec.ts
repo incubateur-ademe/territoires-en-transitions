@@ -41,7 +41,7 @@ describe('Récupérer un axe', () => {
 
     // Créer un plan pour les tests
     const caller = router.createCaller({ user: editorUser });
-    const plan = await caller.plans.plans.upsert({
+    const plan = await caller.plans.plans.create({
       nom: 'Plan de test',
       collectiviteId: collectivite.id,
     });
@@ -58,7 +58,7 @@ describe('Récupérer un axe', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un axe
-      const createdAxe = await caller.plans.axes.upsert({
+      const createdAxe = await caller.plans.axes.create({
         nom: 'Axe à récupérer',
         collectiviteId: collectivite.id,
         planId,
@@ -89,7 +89,7 @@ describe('Récupérer un axe', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un axe parent
-      const parentAxe = await caller.plans.axes.upsert({
+      const parentAxe = await caller.plans.axes.create({
         nom: 'Axe parent',
         collectiviteId: collectivite.id,
         planId,
@@ -97,7 +97,7 @@ describe('Récupérer un axe', () => {
       });
 
       // Créer un axe enfant
-      const childAxe = await caller.plans.axes.upsert({
+      const childAxe = await caller.plans.axes.create({
         nom: 'Axe enfant',
         collectiviteId: collectivite.id,
         planId,
@@ -161,7 +161,7 @@ describe('Récupérer un axe', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un axe avec l'utilisateur admin
-      const createdAxe = await caller.plans.axes.upsert({
+      const createdAxe = await caller.plans.axes.create({
         nom: 'Axe pour test permissions',
         collectiviteId: collectivite.id,
         planId,
@@ -198,7 +198,7 @@ describe('Récupérer un axe', () => {
 
       // Créer un axe avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdAxe = await adminCaller.plans.axes.upsert({
+      const createdAxe = await adminCaller.plans.axes.create({
         nom: 'Axe pour lecture',
         collectiviteId: collectivite.id,
         planId,
@@ -235,7 +235,7 @@ describe('Récupérer un axe', () => {
 
       // Créer un axe avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdAxe = await adminCaller.plans.axes.upsert({
+      const createdAxe = await adminCaller.plans.axes.create({
         nom: 'Axe pour édition limitée',
         collectiviteId: collectivite.id,
         planId,
@@ -269,7 +269,7 @@ describe('Récupérer un axe', () => {
 
       // Créer un axe avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdAxe = await adminCaller.plans.axes.upsert({
+      const createdAxe = await adminCaller.plans.axes.create({
         nom: 'Axe pour édition',
         collectiviteId: collectivite.id,
         planId,

@@ -9,8 +9,8 @@ import { AxeLight } from '@tet/domain/plans';
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { UpsertPlanError, UpsertPlanErrorEnum } from './upsert-plan.errors';
 import {
-  createPlanSchema,
-  updatePlanSchema,
+  baseCreatePlanSchema,
+  baseUpdatePlanSchema,
   UpsertPlanInput,
 } from './upsert-plan.input';
 import { UpsertPlanRepository } from './upsert-plan.repository';
@@ -48,7 +48,7 @@ export class UpsertPlanService {
       transaction: Transaction
     ): Promise<MethodResult<AxeLight, UpsertPlanError>> => {
       const { referents, pilotes, ...planProps } = plan;
-      const updatePlanProps = updatePlanSchema.safeParse(planProps);
+      const updatePlanProps = baseUpdatePlanSchema.safeParse(planProps);
 
       let result;
       if (updatePlanProps.success) {
@@ -58,7 +58,7 @@ export class UpsertPlanService {
           transaction
         );
       } else {
-        const createPlanProps = createPlanSchema.safeParse(planProps);
+        const createPlanProps = baseCreatePlanSchema.safeParse(planProps);
         if (createPlanProps.success) {
           result = await this.upsertPlanRepository.create(
             createPlanProps.data,
