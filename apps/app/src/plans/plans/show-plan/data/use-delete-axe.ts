@@ -20,12 +20,12 @@ export const useDeleteAxe = (
     },
     onMutate: async () => {
       await queryClient.cancelQueries({
-        queryKey: trpc.plans.get.queryKey({ planId }),
+        queryKey: trpc.plans.plans.get.queryKey({ planId }),
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: trpc.plans.get.queryKey({ planId }),
+        queryKey: trpc.plans.plans.get.queryKey({ planId }),
       });
       redirectURL && router.push(redirectURL);
     },

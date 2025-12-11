@@ -41,14 +41,14 @@ describe('Récupérer un plan', () => {
 
     // Créer un plan pour les tests
     const caller = router.createCaller({ user: editorUser });
-    const plan = await caller.plans.upsert({
+    const plan = await caller.plans.plans.upsert({
       nom: 'Plan de test',
       collectiviteId: collectivite.id,
     });
     planId = plan.id;
 
     return async () => {
-      await caller.plans.delete({ planId });
+      await caller.plans.plans.delete({ planId });
       await testCollectiviteAndUserResult.cleanup();
     };
   });
@@ -58,7 +58,7 @@ describe('Récupérer un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan
-      const createdPlan = await caller.plans.upsert({
+      const createdPlan = await caller.plans.plans.upsert({
         nom: 'Plan à récupérer',
         collectiviteId: collectivite.id,
       });
@@ -66,10 +66,10 @@ describe('Récupérer un plan', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.delete({ planId: testPlanId });
+        await cleanupCaller.plans.plans.delete({ planId: testPlanId });
       });
 
-      const result = await caller.plans.get({
+      const result = await caller.plans.plans.get({
         planId: testPlanId,
       });
 
@@ -90,7 +90,7 @@ describe('Récupérer un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan avec un type
-      const createdPlan = await caller.plans.upsert({
+      const createdPlan = await caller.plans.plans.upsert({
         nom: 'Plan avec type',
         collectiviteId: collectivite.id,
       });
@@ -98,10 +98,10 @@ describe('Récupérer un plan', () => {
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.delete({ planId: testPlanId });
+        await cleanupCaller.plans.plans.delete({ planId: testPlanId });
       });
 
-      const result = await caller.plans.get({
+      const result = await caller.plans.plans.get({
         planId: testPlanId,
       });
 
@@ -114,7 +114,7 @@ describe('Récupérer un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan
-      const createdPlan = await caller.plans.upsert({
+      const createdPlan = await caller.plans.plans.upsert({
         nom: 'Plan avec axes',
         collectiviteId: collectivite.id,
       });
@@ -131,10 +131,10 @@ describe('Récupérer un plan', () => {
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
         await cleanupCaller.plans.axes.delete({ axeId: createdAxe.id });
-        await cleanupCaller.plans.delete({ planId: testPlanId });
+        await cleanupCaller.plans.plans.delete({ planId: testPlanId });
       });
 
-      const result = await caller.plans.get({
+      const result = await caller.plans.plans.get({
         planId: testPlanId,
       });
 
@@ -155,7 +155,7 @@ describe('Récupérer un plan', () => {
       const nonExistentPlanId = 999999;
 
       await expect(
-        caller.plans.get({
+        caller.plans.plans.get({
           planId: nonExistentPlanId,
         })
       ).rejects.toThrow("Le plan demandé n'a pas été trouvé");
@@ -165,7 +165,7 @@ describe('Récupérer un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       await expect(
-        caller.plans.get({
+        caller.plans.plans.get({
           planId: -1,
         })
       ).rejects.toThrow();
@@ -175,7 +175,7 @@ describe('Récupérer un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       await expect(
-        caller.plans.get({
+        caller.plans.plans.get({
           planId: 0,
         })
       ).rejects.toThrow();
@@ -187,21 +187,21 @@ describe('Récupérer un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan avec l'utilisateur admin
-      const createdPlan = await caller.plans.upsert({
+      const createdPlan = await caller.plans.plans.upsert({
         nom: 'Plan pour test permissions',
         collectiviteId: collectivite.id,
       });
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.delete({ planId: createdPlan.id });
+        await cleanupCaller.plans.plans.delete({ planId: createdPlan.id });
       });
 
       const yoloDodoUser = await getAuthUser(YOLO_DODO);
       const unauthorizedCaller = router.createCaller({ user: yoloDodoUser });
 
       await expect(
-        unauthorizedCaller.plans.get({
+        unauthorizedCaller.plans.plans.get({
           planId: createdPlan.id,
         })
       ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
@@ -222,17 +222,17 @@ describe('Récupérer un plan', () => {
 
       // Créer un plan avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdPlan = await adminCaller.plans.upsert({
+      const createdPlan = await adminCaller.plans.plans.upsert({
         nom: 'Plan pour lecture',
         collectiviteId: collectivite.id,
       });
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.delete({ planId: createdPlan.id });
+        await cleanupCaller.plans.plans.delete({ planId: createdPlan.id });
       });
 
-      const result = await caller.plans.get({
+      const result = await caller.plans.plans.get({
         planId: createdPlan.id,
       });
 
@@ -257,18 +257,18 @@ describe('Récupérer un plan', () => {
 
       // Créer un plan avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdPlan = await adminCaller.plans.upsert({
+      const createdPlan = await adminCaller.plans.plans.upsert({
         nom: 'Plan pour édition limitée',
         collectiviteId: collectivite.id,
       });
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.delete({ planId: createdPlan.id });
+        await cleanupCaller.plans.plans.delete({ planId: createdPlan.id });
       });
 
       await expect(
-        caller.plans.get({
+        caller.plans.plans.get({
           planId: createdPlan.id,
         })
       ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
@@ -289,17 +289,17 @@ describe('Récupérer un plan', () => {
 
       // Créer un plan avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdPlan = await adminCaller.plans.upsert({
+      const createdPlan = await adminCaller.plans.plans.upsert({
         nom: 'Plan pour édition',
         collectiviteId: collectivite.id,
       });
 
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
-        await cleanupCaller.plans.delete({ planId: createdPlan.id });
+        await cleanupCaller.plans.plans.delete({ planId: createdPlan.id });
       });
 
-      const result = await caller.plans.get({
+      const result = await caller.plans.plans.get({
         planId: createdPlan.id,
       });
 

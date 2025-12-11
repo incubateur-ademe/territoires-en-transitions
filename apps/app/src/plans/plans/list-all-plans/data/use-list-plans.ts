@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { RouterOutput, useTRPC } from '@tet/api';
 
-export type PlanListItem = RouterOutput['plans']['list']['plans'][number];
+export type PlanListItem =
+  RouterOutput['plans']['plans']['list']['plans'][number];
 
 export const useListPlans = (
   collectiviteId: number,
@@ -26,7 +27,7 @@ export const useListPlans = (
   const trpc = useTRPC();
 
   const { data, isLoading, error } = useQuery(
-    trpc.plans.list.queryOptions({
+    trpc.plans.plans.list.queryOptions({
       collectiviteId,
       limit,
       page,
