@@ -1,25 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
-import { mutateAxeErrorConfig } from './mutate-axe.errors';
-import { mutateAxeSchema } from './mutate-axe.input';
-import { MutateAxeService } from './mutate-axe.service';
+import { upsertAxeErrorConfig } from './upsert-axe.errors';
+import { upsertAxeSchema } from './upsert-axe.input';
+import { UpsertAxeService } from './upsert-axe.service';
 
 @Injectable()
-export class MutateAxeRouter {
+export class UpsertAxeRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly mutateAxeService: MutateAxeService
+    private readonly upsertAxeService: UpsertAxeService
   ) {}
 
   private readonly getResultDataOrThrowError =
-    createTrpcErrorHandler(mutateAxeErrorConfig);
+    createTrpcErrorHandler(upsertAxeErrorConfig);
 
   router = this.trpc.router({
     upsert: this.trpc.authedProcedure
-      .input(mutateAxeSchema)
+      .input(upsertAxeSchema)
       .mutation(async ({ input, ctx }) => {
-        const result = await this.mutateAxeService.mutateAxe(input, ctx.user);
+        const result = await this.upsertAxeService.upsertAxe(input, ctx.user);
         return this.getResultDataOrThrowError(result);
       }),
   });
