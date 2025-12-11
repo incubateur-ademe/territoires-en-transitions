@@ -61,7 +61,7 @@ describe('Lister les plans', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan
-      const createdPlan = await caller.plans.plans.upsert({
+      const createdPlan = await caller.plans.plans.create({
         nom: 'Plan unique',
         collectiviteId: collectivite.id,
       });
@@ -94,17 +94,17 @@ describe('Lister les plans', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer plusieurs plans
-      const plan1 = await caller.plans.plans.upsert({
+      const plan1 = await caller.plans.plans.create({
         nom: 'Plan 1',
         collectiviteId: collectivite.id,
       });
 
-      const plan2 = await caller.plans.plans.upsert({
+      const plan2 = await caller.plans.plans.create({
         nom: 'Plan 2',
         collectiviteId: collectivite.id,
       });
 
-      const plan3 = await caller.plans.plans.upsert({
+      const plan3 = await caller.plans.plans.create({
         nom: 'Plan 3',
         collectiviteId: collectivite.id,
       });
@@ -131,12 +131,12 @@ describe('Lister les plans', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer plusieurs plans
-      const plan1 = await caller.plans.plans.upsert({
+      const plan1 = await caller.plans.plans.create({
         nom: 'Plan limit 1',
         collectiviteId: collectivite.id,
       });
 
-      const plan2 = await caller.plans.plans.upsert({
+      const plan2 = await caller.plans.plans.create({
         nom: 'Plan limit 2',
         collectiviteId: collectivite.id,
       });
@@ -160,17 +160,17 @@ describe('Lister les plans', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer plusieurs plans
-      const plan1 = await caller.plans.plans.upsert({
+      const plan1 = await caller.plans.plans.create({
         nom: 'Plan page 1',
         collectiviteId: collectivite.id,
       });
 
-      const plan2 = await caller.plans.plans.upsert({
+      const plan2 = await caller.plans.plans.create({
         nom: 'Plan page 2',
         collectiviteId: collectivite.id,
       });
 
-      const plan3 = await caller.plans.plans.upsert({
+      const plan3 = await caller.plans.plans.create({
         nom: 'Plan page 3',
         collectiviteId: collectivite.id,
       });
@@ -213,17 +213,17 @@ describe('Lister les plans', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer des plans avec des noms spécifiques
-      const planB = await caller.plans.plans.upsert({
+      const planB = await caller.plans.plans.create({
         nom: 'B - Plan',
         collectiviteId: collectivite.id,
       });
 
-      const planA = await caller.plans.plans.upsert({
+      const planA = await caller.plans.plans.create({
         nom: 'A - Plan',
         collectiviteId: collectivite.id,
       });
 
-      const planC = await caller.plans.plans.upsert({
+      const planC = await caller.plans.plans.create({
         nom: 'C - Plan',
         collectiviteId: collectivite.id,
       });
@@ -262,17 +262,17 @@ describe('Lister les plans', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer des plans avec des noms spécifiques
-      const planB = await caller.plans.plans.upsert({
+      const planB = await caller.plans.plans.create({
         nom: 'Z - Plan',
         collectiviteId: collectivite.id,
       });
 
-      const planA = await caller.plans.plans.upsert({
+      const planA = await caller.plans.plans.create({
         nom: 'Y - Plan',
         collectiviteId: collectivite.id,
       });
 
-      const planC = await caller.plans.plans.upsert({
+      const planC = await caller.plans.plans.create({
         nom: 'X - Plan',
         collectiviteId: collectivite.id,
       });
@@ -311,7 +311,7 @@ describe('Lister les plans', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer des plans avec un délai pour avoir des createdAt différents
-      const plan1 = await caller.plans.plans.upsert({
+      const plan1 = await caller.plans.plans.create({
         nom: 'Plan createdAt 1',
         collectiviteId: collectivite.id,
       });
@@ -319,7 +319,7 @@ describe('Lister les plans', () => {
       // Petit délai pour s'assurer que les dates sont différentes
       await new Promise((resolve) => setTimeout(resolve, 10));
 
-      const plan2 = await caller.plans.plans.upsert({
+      const plan2 = await caller.plans.plans.create({
         nom: 'Plan createdAt 2',
         collectiviteId: collectivite.id,
       });
@@ -379,7 +379,7 @@ describe('Lister les plans', () => {
 
       // Créer un plan avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdPlan = await adminCaller.plans.plans.upsert({
+      const createdPlan = await adminCaller.plans.plans.create({
         nom: 'Plan pour lecture',
         collectiviteId: collectivite.id,
       });
@@ -414,7 +414,7 @@ describe('Lister les plans', () => {
 
       // Créer un plan avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdPlan = await adminCaller.plans.plans.upsert({
+      const createdPlan = await adminCaller.plans.plans.create({
         nom: 'Plan pour édition limitée',
         collectiviteId: collectivite.id,
       });

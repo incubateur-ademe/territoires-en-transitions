@@ -2,12 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { UpsertAxeBaseRepository } from './upsert-axe-base.repository';
 import { UpsertAxeError, UpsertAxeErrorEnum } from './upsert-axe.errors';
-import { CreateAxeInput, UpdateAxeInput } from './upsert-axe.input';
+import { BaseCreateAxeInput, BaseUpdateAxeInput } from './upsert-axe.input';
 
 @Injectable()
 export class UpsertAxeRepository extends UpsertAxeBaseRepository<
-  CreateAxeInput,
-  UpdateAxeInput,
+  BaseCreateAxeInput,
+  BaseUpdateAxeInput,
   UpsertAxeError
 > {
   protected readonly logger = new Logger(UpsertAxeRepository.name);

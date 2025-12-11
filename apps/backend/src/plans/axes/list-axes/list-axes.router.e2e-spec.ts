@@ -41,7 +41,7 @@ describe('Lister les axes', () => {
 
     // Créer un plan pour les tests
     const caller = router.createCaller({ user: editorUser });
-    const plan = await caller.plans.plans.upsert({
+    const plan = await caller.plans.plans.create({
       nom: 'Plan de test',
       collectiviteId: collectivite.id,
     });
@@ -72,7 +72,7 @@ describe('Lister les axes', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un axe
-      const createdAxe = await caller.plans.axes.upsert({
+      const createdAxe = await caller.plans.axes.create({
         nom: 'Axe unique',
         collectiviteId: collectivite.id,
         planId,
@@ -106,21 +106,21 @@ describe('Lister les axes', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer plusieurs axes
-      const axe1 = await caller.plans.axes.upsert({
+      const axe1 = await caller.plans.axes.create({
         nom: 'Axe 1',
         collectiviteId: collectivite.id,
         planId,
         parent: planId,
       });
 
-      const axe2 = await caller.plans.axes.upsert({
+      const axe2 = await caller.plans.axes.create({
         nom: 'Axe 2',
         collectiviteId: collectivite.id,
         planId,
         parent: planId,
       });
 
-      const axe3 = await caller.plans.axes.upsert({
+      const axe3 = await caller.plans.axes.create({
         nom: 'Axe 3',
         collectiviteId: collectivite.id,
         planId,
@@ -150,14 +150,14 @@ describe('Lister les axes', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer plusieurs axes
-      const axe1 = await caller.plans.axes.upsert({
+      const axe1 = await caller.plans.axes.create({
         nom: 'Axe limit 1',
         collectiviteId: collectivite.id,
         planId,
         parent: planId,
       });
 
-      const axe2 = await caller.plans.axes.upsert({
+      const axe2 = await caller.plans.axes.create({
         nom: 'Axe limit 2',
         collectiviteId: collectivite.id,
         planId,
@@ -184,21 +184,21 @@ describe('Lister les axes', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer plusieurs axes
-      const axe1 = await caller.plans.axes.upsert({
+      const axe1 = await caller.plans.axes.create({
         nom: 'Axe page 1',
         collectiviteId: collectivite.id,
         planId,
         parent: planId,
       });
 
-      const axe2 = await caller.plans.axes.upsert({
+      const axe2 = await caller.plans.axes.create({
         nom: 'Axe page 2',
         collectiviteId: collectivite.id,
         planId,
         parent: planId,
       });
 
-      const axe3 = await caller.plans.axes.upsert({
+      const axe3 = await caller.plans.axes.create({
         nom: 'Axe page 3',
         collectiviteId: collectivite.id,
         planId,
@@ -245,21 +245,21 @@ describe('Lister les axes', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer des axes avec des noms spécifiques
-      const axeB = await caller.plans.axes.upsert({
+      const axeB = await caller.plans.axes.create({
         nom: 'B - Axe',
         collectiviteId: collectivite.id,
         planId,
         parent: planId,
       });
 
-      const axeA = await caller.plans.axes.upsert({
+      const axeA = await caller.plans.axes.create({
         nom: 'A - Axe',
         collectiviteId: collectivite.id,
         planId,
         parent: planId,
       });
 
-      const axeC = await caller.plans.axes.upsert({
+      const axeC = await caller.plans.axes.create({
         nom: 'C - Axe',
         collectiviteId: collectivite.id,
         planId,
@@ -301,21 +301,21 @@ describe('Lister les axes', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer des axes avec des noms spécifiques
-      const axeB = await caller.plans.axes.upsert({
+      const axeB = await caller.plans.axes.create({
         nom: 'Z - Axe',
         collectiviteId: collectivite.id,
         planId,
         parent: planId,
       });
 
-      const axeA = await caller.plans.axes.upsert({
+      const axeA = await caller.plans.axes.create({
         nom: 'Y - Axe',
         collectiviteId: collectivite.id,
         planId,
         parent: planId,
       });
 
-      const axeC = await caller.plans.axes.upsert({
+      const axeC = await caller.plans.axes.create({
         nom: 'X - Axe',
         collectiviteId: collectivite.id,
         planId,
@@ -357,7 +357,7 @@ describe('Lister les axes', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer des axes avec un délai pour avoir des createdAt différents
-      const axe1 = await caller.plans.axes.upsert({
+      const axe1 = await caller.plans.axes.create({
         nom: 'Axe createdAt 1',
         collectiviteId: collectivite.id,
         planId,
@@ -367,7 +367,7 @@ describe('Lister les axes', () => {
       // Petit délai pour s'assurer que les dates sont différentes
       await new Promise((resolve) => setTimeout(resolve, 10));
 
-      const axe2 = await caller.plans.axes.upsert({
+      const axe2 = await caller.plans.axes.create({
         nom: 'Axe createdAt 2',
         collectiviteId: collectivite.id,
         planId,
@@ -406,7 +406,7 @@ describe('Lister les axes', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer des axes avec un délai pour avoir des createdAt différents
-      const axe1 = await caller.plans.axes.upsert({
+      const axe1 = await caller.plans.axes.create({
         nom: 'Axe createdAt desc 1',
         collectiviteId: collectivite.id,
         planId,
@@ -416,7 +416,7 @@ describe('Lister les axes', () => {
       // Petit délai pour s'assurer que les dates sont différentes
       await new Promise((resolve) => setTimeout(resolve, 10));
 
-      const axe2 = await caller.plans.axes.upsert({
+      const axe2 = await caller.plans.axes.create({
         nom: 'Axe createdAt desc 2',
         collectiviteId: collectivite.id,
         planId,
@@ -480,7 +480,7 @@ describe('Lister les axes', () => {
 
       // Créer un axe avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdAxe = await adminCaller.plans.axes.upsert({
+      const createdAxe = await adminCaller.plans.axes.create({
         nom: 'Axe pour lecture',
         collectiviteId: collectivite.id,
         planId,
@@ -518,7 +518,7 @@ describe('Lister les axes', () => {
 
       // Créer un axe avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdAxe = await adminCaller.plans.axes.upsert({
+      const createdAxe = await adminCaller.plans.axes.create({
         nom: 'Axe pour édition limitée',
         collectiviteId: collectivite.id,
         planId,
@@ -560,7 +560,7 @@ describe('Lister les axes', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un axe enfant
-      const createdAxe = await caller.plans.axes.upsert({
+      const createdAxe = await caller.plans.axes.create({
         nom: 'Axe enfant unique',
         collectiviteId: collectivite.id,
         planId,
@@ -596,21 +596,21 @@ describe('Lister les axes', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer plusieurs axes enfants
-      const axe1 = await caller.plans.axes.upsert({
+      const axe1 = await caller.plans.axes.create({
         nom: 'Axe enfant 1',
         collectiviteId: collectivite.id,
         planId,
         parent: planId,
       });
 
-      const axe2 = await caller.plans.axes.upsert({
+      const axe2 = await caller.plans.axes.create({
         nom: 'Axe enfant 2',
         collectiviteId: collectivite.id,
         planId,
         parent: planId,
       });
 
-      const axe3 = await caller.plans.axes.upsert({
+      const axe3 = await caller.plans.axes.create({
         nom: 'Axe enfant 3',
         collectiviteId: collectivite.id,
         planId,
@@ -650,7 +650,7 @@ describe('Lister les axes', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un axe de niveau 1
-      const axe1 = await caller.plans.axes.upsert({
+      const axe1 = await caller.plans.axes.create({
         nom: 'Axe niveau 1',
         collectiviteId: collectivite.id,
         planId,
@@ -658,7 +658,7 @@ describe('Lister les axes', () => {
       });
 
       // Créer un axe de niveau 2 (enfant de axe1)
-      const axe2 = await caller.plans.axes.upsert({
+      const axe2 = await caller.plans.axes.create({
         nom: 'Axe niveau 2',
         collectiviteId: collectivite.id,
         planId,
@@ -666,19 +666,19 @@ describe('Lister les axes', () => {
       });
 
       // Créer trois axes de niveau 3 (enfants de axe2)
-      const axe3B = await caller.plans.axes.upsert({
+      const axe3B = await caller.plans.axes.create({
         nom: 'Axe niveau 3 (B)',
         collectiviteId: collectivite.id,
         planId,
         parent: axe2.id,
       });
-      const axe3A = await caller.plans.axes.upsert({
+      const axe3A = await caller.plans.axes.create({
         nom: 'Axe niveau 3 (A)',
         collectiviteId: collectivite.id,
         planId,
         parent: axe2.id,
       });
-      const axe3C = await caller.plans.axes.upsert({
+      const axe3C = await caller.plans.axes.create({
         nom: 'Axe niveau 3 (C)',
         collectiviteId: collectivite.id,
         planId,
@@ -752,7 +752,7 @@ describe('Lister les axes', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un axe parent
-      const parentAxe = await caller.plans.axes.upsert({
+      const parentAxe = await caller.plans.axes.create({
         nom: 'Axe parent pour test',
         collectiviteId: collectivite.id,
         planId,
@@ -760,14 +760,14 @@ describe('Lister les axes', () => {
       });
 
       // Créer des axes enfants
-      const childAxe1 = await caller.plans.axes.upsert({
+      const childAxe1 = await caller.plans.axes.create({
         nom: 'Enfant 1',
         collectiviteId: collectivite.id,
         planId,
         parent: parentAxe.id,
       });
 
-      const childAxe2 = await caller.plans.axes.upsert({
+      const childAxe2 = await caller.plans.axes.create({
         nom: 'Enfant 2',
         collectiviteId: collectivite.id,
         planId,
@@ -843,7 +843,7 @@ describe('Lister les axes', () => {
 
       // Créer un axe avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdAxe = await adminCaller.plans.axes.upsert({
+      const createdAxe = await adminCaller.plans.axes.create({
         nom: 'Axe pour lecture récursive',
         collectiviteId: collectivite.id,
         planId,
@@ -881,7 +881,7 @@ describe('Lister les axes', () => {
 
       // Créer un axe avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdAxe = await adminCaller.plans.axes.upsert({
+      const createdAxe = await adminCaller.plans.axes.create({
         nom: 'Axe pour édition limitée récursive',
         collectiviteId: collectivite.id,
         planId,

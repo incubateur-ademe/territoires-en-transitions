@@ -38,7 +38,7 @@ describe('Upsert Axe', () => {
 
     // Créer un plan pour les tests
     const caller = router.createCaller({ user: editorUser });
-    const plan = await caller.plans.plans.upsert({
+    const plan = await caller.plans.plans.create({
       nom: 'Plan de test',
       collectiviteId: collectivite.id,
     });
@@ -61,7 +61,7 @@ describe('Upsert Axe', () => {
         parent: planId,
       };
 
-      const createdAxe = await caller.plans.axes.upsert(axeInput);
+      const createdAxe = await caller.plans.axes.create(axeInput);
       const axeId = createdAxe.id;
       expect(axeId).toBeDefined();
 
@@ -87,7 +87,7 @@ describe('Upsert Axe', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un axe
-      const createdAxe = await caller.plans.axes.upsert({
+      const createdAxe = await caller.plans.axes.create({
         nom: 'Axe à modifier',
         collectiviteId: collectivite.id,
         planId,
@@ -101,7 +101,7 @@ describe('Upsert Axe', () => {
       });
 
       // Modifier l'axe
-      const updatedAxe = await caller.plans.axes.upsert({
+      const updatedAxe = await caller.plans.axes.update({
         id: axeId,
         nom: 'Axe modifié',
         collectiviteId: collectivite.id,
@@ -124,7 +124,7 @@ describe('Upsert Axe', () => {
       const caller = router.createCaller({ user: yoloDodoUser });
 
       await expect(
-        caller.plans.axes.upsert({
+        caller.plans.axes.create({
           nom: 'Axe non autorisé',
           collectiviteId: collectivite.id,
           planId,
@@ -147,7 +147,7 @@ describe('Upsert Axe', () => {
       const caller = router.createCaller({ user: lectureUser });
 
       await expect(
-        caller.plans.axes.upsert({
+        caller.plans.axes.create({
           nom: 'Axe non autorisé',
           collectiviteId: collectivite.id,
           planId,
@@ -170,7 +170,7 @@ describe('Upsert Axe', () => {
       const caller = router.createCaller({ user: limitedEditionUser });
 
       await expect(
-        caller.plans.axes.upsert({
+        caller.plans.axes.create({
           nom: 'Axe non autorisé',
           collectiviteId: collectivite.id,
           planId,

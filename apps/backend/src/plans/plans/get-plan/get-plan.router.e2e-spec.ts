@@ -41,7 +41,7 @@ describe('Récupérer un plan', () => {
 
     // Créer un plan pour les tests
     const caller = router.createCaller({ user: editorUser });
-    const plan = await caller.plans.plans.upsert({
+    const plan = await caller.plans.plans.create({
       nom: 'Plan de test',
       collectiviteId: collectivite.id,
     });
@@ -58,7 +58,7 @@ describe('Récupérer un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan
-      const createdPlan = await caller.plans.plans.upsert({
+      const createdPlan = await caller.plans.plans.create({
         nom: 'Plan à récupérer',
         collectiviteId: collectivite.id,
       });
@@ -90,7 +90,7 @@ describe('Récupérer un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan avec un type
-      const createdPlan = await caller.plans.plans.upsert({
+      const createdPlan = await caller.plans.plans.create({
         nom: 'Plan avec type',
         collectiviteId: collectivite.id,
       });
@@ -114,14 +114,14 @@ describe('Récupérer un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan
-      const createdPlan = await caller.plans.plans.upsert({
+      const createdPlan = await caller.plans.plans.create({
         nom: 'Plan avec axes',
         collectiviteId: collectivite.id,
       });
       const testPlanId = createdPlan.id;
 
       // Créer un axe dans ce plan
-      const createdAxe = await caller.plans.axes.upsert({
+      const createdAxe = await caller.plans.axes.create({
         nom: 'Axe de test',
         collectiviteId: collectivite.id,
         planId: testPlanId,
@@ -187,7 +187,7 @@ describe('Récupérer un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan avec l'utilisateur admin
-      const createdPlan = await caller.plans.plans.upsert({
+      const createdPlan = await caller.plans.plans.create({
         nom: 'Plan pour test permissions',
         collectiviteId: collectivite.id,
       });
@@ -222,7 +222,7 @@ describe('Récupérer un plan', () => {
 
       // Créer un plan avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdPlan = await adminCaller.plans.plans.upsert({
+      const createdPlan = await adminCaller.plans.plans.create({
         nom: 'Plan pour lecture',
         collectiviteId: collectivite.id,
       });
@@ -257,7 +257,7 @@ describe('Récupérer un plan', () => {
 
       // Créer un plan avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdPlan = await adminCaller.plans.plans.upsert({
+      const createdPlan = await adminCaller.plans.plans.create({
         nom: 'Plan pour édition limitée',
         collectiviteId: collectivite.id,
       });
@@ -289,7 +289,7 @@ describe('Récupérer un plan', () => {
 
       // Créer un plan avec l'utilisateur admin
       const adminCaller = router.createCaller({ user: editorUser });
-      const createdPlan = await adminCaller.plans.plans.upsert({
+      const createdPlan = await adminCaller.plans.plans.create({
         nom: 'Plan pour édition',
         collectiviteId: collectivite.id,
       });

@@ -69,7 +69,7 @@ describe('Supprimer un axe', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un axe
-      const createdAxe = await caller.plans.axes.upsert({
+      const createdAxe = await caller.plans.axes.create({
         nom: 'Axe à supprimer',
         collectiviteId: collectivite.id,
         planId,
@@ -95,7 +95,7 @@ describe('Supprimer un axe', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un axe parent
-      const parentAxe = await caller.plans.axes.upsert({
+      const parentAxe = await caller.plans.axes.create({
         nom: 'Axe parent à supprimer',
         collectiviteId: collectivite.id,
         planId,
@@ -103,14 +103,14 @@ describe('Supprimer un axe', () => {
       });
 
       // Créer des axes enfants
-      const childAxe1 = await caller.plans.axes.upsert({
+      const childAxe1 = await caller.plans.axes.create({
         nom: 'Enfant 1',
         collectiviteId: collectivite.id,
         planId,
         parent: parentAxe.id,
       });
 
-      const childAxe2 = await caller.plans.axes.upsert({
+      const childAxe2 = await caller.plans.axes.create({
         nom: 'Enfant 2',
         collectiviteId: collectivite.id,
         planId,
@@ -148,28 +148,28 @@ describe('Supprimer un axe', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer une hiérarchie: parent -> enfant -> petit-enfant
-      const parentAxe = await caller.plans.axes.upsert({
+      const parentAxe = await caller.plans.axes.create({
         nom: 'Axe parent hiérarchie',
         collectiviteId: collectivite.id,
         planId,
         parent: planId,
       });
 
-      const childAxe = await caller.plans.axes.upsert({
+      const childAxe = await caller.plans.axes.create({
         nom: 'Axe enfant',
         collectiviteId: collectivite.id,
         planId,
         parent: parentAxe.id,
       });
 
-      const grandchildAxe1 = await caller.plans.axes.upsert({
+      const grandchildAxe1 = await caller.plans.axes.create({
         nom: 'Petit-enfant 1',
         collectiviteId: collectivite.id,
         planId,
         parent: childAxe.id,
       });
 
-      const grandchildAxe2 = await caller.plans.axes.upsert({
+      const grandchildAxe2 = await caller.plans.axes.create({
         nom: 'Petit-enfant 2',
         collectiviteId: collectivite.id,
         planId,
@@ -218,21 +218,21 @@ describe('Supprimer un axe', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer plusieurs axes
-      const axe1 = await caller.plans.axes.upsert({
+      const axe1 = await caller.plans.axes.create({
         nom: 'Axe 1',
         collectiviteId: collectivite.id,
         planId,
         parent: planId,
       });
 
-      const axe2 = await caller.plans.axes.upsert({
+      const axe2 = await caller.plans.axes.create({
         nom: 'Axe 2',
         collectiviteId: collectivite.id,
         planId,
         parent: planId,
       });
 
-      const axe3 = await caller.plans.axes.upsert({
+      const axe3 = await caller.plans.axes.create({
         nom: 'Axe 3',
         collectiviteId: collectivite.id,
         planId,
@@ -284,7 +284,7 @@ describe('Supprimer un axe', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un axe avec l'utilisateur admin
-      const createdAxe = await caller.plans.axes.upsert({
+      const createdAxe = await caller.plans.axes.create({
         nom: 'Axe pour test permissions',
         collectiviteId: collectivite.id,
         planId,
@@ -304,7 +304,7 @@ describe('Supprimer un axe', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un axe avec l'utilisateur admin
-      const createdAxe = await caller.plans.axes.upsert({
+      const createdAxe = await caller.plans.axes.create({
         nom: 'Axe pour test lecture',
         collectiviteId: collectivite.id,
         planId,
@@ -333,7 +333,7 @@ describe('Supprimer un axe', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un axe avec l'utilisateur admin
-      const createdAxe = await caller.plans.axes.upsert({
+      const createdAxe = await caller.plans.axes.create({
         nom: 'Axe pour test édition limitée',
         collectiviteId: collectivite.id,
         planId,
@@ -366,21 +366,21 @@ describe('Supprimer un axe', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer plusieurs axes frères
-      const axe1 = await caller.plans.axes.upsert({
+      const axe1 = await caller.plans.axes.create({
         nom: 'Axe frère 1',
         collectiviteId: collectivite.id,
         planId,
         parent: planId,
       });
 
-      const axe2 = await caller.plans.axes.upsert({
+      const axe2 = await caller.plans.axes.create({
         nom: 'Axe frère 2',
         collectiviteId: collectivite.id,
         planId,
         parent: planId,
       });
 
-      const axe3 = await caller.plans.axes.upsert({
+      const axe3 = await caller.plans.axes.create({
         nom: 'Axe frère 3',
         collectiviteId: collectivite.id,
         planId,
@@ -418,42 +418,42 @@ describe('Supprimer un axe', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer une hiérarchie complexe
-      const level1 = await caller.plans.axes.upsert({
+      const level1 = await caller.plans.axes.create({
         nom: 'Niveau 1',
         collectiviteId: collectivite.id,
         planId,
         parent: planId,
       });
 
-      const level2a = await caller.plans.axes.upsert({
+      const level2a = await caller.plans.axes.create({
         nom: 'Niveau 2a',
         collectiviteId: collectivite.id,
         planId,
         parent: level1.id,
       });
 
-      const level2b = await caller.plans.axes.upsert({
+      const level2b = await caller.plans.axes.create({
         nom: 'Niveau 2b',
         collectiviteId: collectivite.id,
         planId,
         parent: level1.id,
       });
 
-      const level3a = await caller.plans.axes.upsert({
+      const level3a = await caller.plans.axes.create({
         nom: 'Niveau 3a',
         collectiviteId: collectivite.id,
         planId,
         parent: level2a.id,
       });
 
-      const level3b = await caller.plans.axes.upsert({
+      const level3b = await caller.plans.axes.create({
         nom: 'Niveau 3b',
         collectiviteId: collectivite.id,
         planId,
         parent: level2a.id,
       });
 
-      const level4 = await caller.plans.axes.upsert({
+      const level4 = await caller.plans.axes.create({
         nom: 'Niveau 4',
         collectiviteId: collectivite.id,
         planId,
