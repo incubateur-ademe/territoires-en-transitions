@@ -84,7 +84,7 @@ describe('CompletionAnalyticsRouter tests', () => {
     it('should return empty array for plan with no fiches', async () => {
       const caller = router.createCaller({ user: yoloDodoUser });
 
-      const result = await caller.plans.getFieldsToComplete({
+      const result = await caller.plans.plans.getFieldsToComplete({
         planId: testPlanId,
       });
 
@@ -141,7 +141,7 @@ describe('CompletionAnalyticsRouter tests', () => {
         { ficheId: fiche2.id, axeId: testPlanId },
       ]);
 
-      const result = await caller.plans.getFieldsToComplete({
+      const result = await caller.plans.plans.getFieldsToComplete({
         planId: testPlanId,
       });
 
@@ -182,7 +182,7 @@ describe('CompletionAnalyticsRouter tests', () => {
         axeId: testPlanId,
       });
 
-      const result = await caller.plans.getFieldsToComplete({
+      const result = await caller.plans.plans.getFieldsToComplete({
         planId: testPlanId,
       });
 
@@ -247,7 +247,7 @@ describe('CompletionAnalyticsRouter tests', () => {
         axeId: testPlanId,
       });
 
-      const result = await caller.plans.getFieldsToComplete({
+      const result = await caller.plans.plans.getFieldsToComplete({
         planId: testPlanId,
       });
 
@@ -287,7 +287,7 @@ describe('CompletionAnalyticsRouter tests', () => {
         { ficheId: fiche2.id, axeId: testPlanId },
       ]);
 
-      const result = await caller.plans.getFieldsToComplete({
+      const result = await caller.plans.plans.getFieldsToComplete({
         planId: testPlanId,
       });
 
@@ -366,7 +366,7 @@ describe('CompletionAnalyticsRouter tests', () => {
         { ficheId: fiche3.id, axeId: testPlanId },
       ]);
 
-      const result = await caller.plans.getFieldsToComplete({
+      const result = await caller.plans.plans.getFieldsToComplete({
         planId: testPlanId,
       });
 
@@ -458,7 +458,7 @@ describe('CompletionAnalyticsRouter tests', () => {
         { ficheId: oldFicheWithRecentNote.id, axeId: testPlanId },
       ]);
 
-      const result = await caller.plans.getFieldsToComplete({
+      const result = await caller.plans.plans.getFieldsToComplete({
         planId: testPlanId,
       });
 

@@ -10,7 +10,7 @@ export const useUpdatePlan = ({
   const trpc = useTRPC();
 
   const { mutateAsync: updatePlanMutation } = useMutation(
-    trpc.plans.upsert.mutationOptions()
+    trpc.plans.plans.upsert.mutationOptions()
   );
 
   const { mutateAsync } = useMutation({
@@ -18,7 +18,7 @@ export const useUpdatePlan = ({
     meta: { disableToast: true },
     onSuccess: async (data) => {
       await queryClient.invalidateQueries({
-        queryKey: trpc.plans.get.queryKey({ planId: data.id }),
+        queryKey: trpc.plans.plans.get.queryKey({ planId: data.id }),
       });
       /**
        * to handle case where "libreTags" are renamed and some fiches might depend on the
@@ -29,7 +29,7 @@ export const useUpdatePlan = ({
         }),
       });
       await queryClient.invalidateQueries({
-        queryKey: trpc.plans.list.queryKey({
+        queryKey: trpc.plans.plans.list.queryKey({
           collectiviteId,
         }),
       });

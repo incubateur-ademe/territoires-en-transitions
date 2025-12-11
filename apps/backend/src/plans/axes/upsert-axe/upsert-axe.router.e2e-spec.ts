@@ -38,14 +38,14 @@ describe('Upsert Axe', () => {
 
     // Créer un plan pour les tests
     const caller = router.createCaller({ user: editorUser });
-    const plan = await caller.plans.upsert({
+    const plan = await caller.plans.plans.upsert({
       nom: 'Plan de test',
       collectiviteId: collectivite.id,
     });
     planId = plan.id;
 
     return async () => {
-      await caller.plans.delete({ planId });
+      await caller.plans.plans.delete({ planId });
       await testCollectiviteAndUserResult.cleanup();
     };
   });
@@ -70,7 +70,7 @@ describe('Upsert Axe', () => {
         await cleanupCaller.plans.axes.delete({ axeId });
       });
 
-      const plan = await caller.plans.get({ planId });
+      const plan = await caller.plans.plans.get({ planId });
 
       expect(plan.axes).toEqual(
         expect.arrayContaining([

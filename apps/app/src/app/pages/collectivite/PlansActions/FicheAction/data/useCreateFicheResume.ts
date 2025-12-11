@@ -63,14 +63,16 @@ export const useCreateFicheResume = (args: Args) => {
     },
     onMutate: async () => {
       await queryClient.cancelQueries({
-        queryKey: trpcClient.plans.get.queryKey({ planId }),
+        queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
       });
       await queryClient.cancelQueries({ queryKey: axe_fiches_key });
 
       const previousData = [
         [
-          trpcClient.plans.get.queryKey({ planId }),
-          queryClient.getQueryData(trpcClient.plans.get.queryKey({ planId })),
+          trpcClient.plans.plans.get.queryKey({ planId }),
+          queryClient.getQueryData(
+            trpcClient.plans.plans.get.queryKey({ planId })
+          ),
         ],
         [axe_fiches_key, queryClient.getQueryData(axe_fiches_key)],
       ];
@@ -90,7 +92,7 @@ export const useCreateFicheResume = (args: Args) => {
       );
 
       queryClient.setQueryData(
-        trpcClient.plans.get.queryKey({ planId }),
+        trpcClient.plans.plans.get.queryKey({ planId }),
         (old): Plan | undefined => {
           if (!old) {
             return undefined;
@@ -147,7 +149,7 @@ export const useCreateFicheResume = (args: Args) => {
 
       // On récupère la fiche renvoyer par le serveur pour la remplacer dans le cache avant invalidation
       queryClient.setQueryData(
-        trpcClient.plans.get.queryKey({ planId }),
+        trpcClient.plans.plans.get.queryKey({ planId }),
         (old: Plan | undefined): Plan | undefined => {
           if (!old) {
             return undefined;
@@ -173,7 +175,7 @@ export const useCreateFicheResume = (args: Args) => {
       // Force a refetch of the data
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: trpcClient.plans.get.queryKey({ planId }),
+          queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
         }),
         queryClient.invalidateQueries({ queryKey: axe_fiches_key }),
         queryClient.invalidateQueries({
