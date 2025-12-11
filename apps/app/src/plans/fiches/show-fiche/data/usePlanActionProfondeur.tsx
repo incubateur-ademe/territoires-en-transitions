@@ -1,0 +1,42 @@
+import { useQuery } from '@tanstack/react-query';
+
+import { TProfondeurPlan } from '@/app/plans/plans/types';
+import { DBClient, useSupabase } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+
+type TFetchedData = {
+  plans: TProfondeurPlan[];
+};
+
+const fetchPlanActionProfondeur = async (
+  supabase: DBClient,
+  collectivite_id: number
+): Promise<TFetchedData> => {
+  const query = supabase
+    .from('plan_action_profondeur')
+    .select()
+    .eq('collectivite_id', collectivite_id);
+
+  const { error, data } = await query;
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return { plans: (data as TProfondeurPlan[]) || [] };
+};
+
+/** Récupère les plans d'une collectivité avec leurs sous-axe.
+ * Ne contient pas de fiche.
+ */
+export const usePlanActionProfondeur = () => {
+  const collectiviteId = useCollectiviteId();
+  const supabase = useSupabase();
+
+  const { data } = useQuery({
+    queryKey: ['plan_action_profondeur', collectiviteId],
+
+    queryFn: () => fetchPlanActionProfondeur(supabase, collectiviteId),
+  });
+
+  return data;
+};

@@ -23,8 +23,6 @@ export const notesOptionValues = [
 
 export type NotesOption = (typeof notesOptionValues)[number];
 
-export const notesEnumSchema = z.enum(notesOptionValues);
-
 export const listFichesRequestFiltersSchema = z
   .object({
     noPilote: z.coerce
