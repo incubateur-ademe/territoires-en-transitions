@@ -1,0 +1,149 @@
+import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { MoyensView } from '@/app/plans/fiches/update-fiche/moyens/moyens.view';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import { ServicesWidget } from '@betagouv/les-communs-widget';
+import { ENV } from '@tet/api/environmentVariables';
+import { FicheWithRelations } from '@tet/domain/plans';
+import { CollectiviteAccess } from '@tet/domain/users';
+import { AppEnvironment } from '@tet/domain/utils';
+import { Tab, Tabs } from '@tet/ui';
+import { useFeatureFlagEnabled } from 'posthog-js/react';
+import { DocumentsView } from './Documents/documents.view';
+import Etapes from './etapes';
+import FichesLieesTab from './FichesLiees/FichesLieesTab';
+import IndicateursTab from './Indicateurs/IndicateursTab';
+import { MesuresLieesView } from './mesures-liees/mesures-liees.view';
+import { NotesView } from './notes/notes.view';
+
+type TabDescriptor = {
+  label: string;
+  isVisible: boolean;
+  render: () => React.ReactNode;
+};
+
+type FicheActionOngletsProps = {
+  fiche: FicheWithRelations;
+  isEditLoading: boolean;
+  isReadonly: boolean;
+  className?: string;
+  collectivite: CollectiviteAccess;
+};
+
+const FicheActionOnglets = ({
+  fiche,
+  isEditLoading,
+  isReadonly,
+  className,
+  collectivite,
+}: FicheActionOngletsProps) => {
+  const { collectiviteId, permissions, niveauAcces } = collectivite;
+  const widgetCommunsFlagEnabled = useFeatureFlagEnabled(
+    'is-widget-communs-enabled'
+  );
+
+  const cannotBeModifiedBecauseFicheIsShared = isFicheSharedWithCollectivite(
+    fiche,
+    collectiviteId
+  );
+
+  const tabDescriptors: TabDescriptor[] = [
+    {
+      label: 'Indicateurs de suivi',
+      isVisible:
+        hasPermission(permissions, 'indicateurs.definitions.read') ||
+        (!niveauAcces &&
+          hasPermission(permissions, 'indicateurs.definitions.read_public')),
+      render: () => (
+        <IndicateursTab
+          isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
+          fiche={fiche}
+        />
+      ),
+    },
+    {
+      label: 'Étapes',
+      isVisible: true,
+      render: () => <Etapes isReadonly={isReadonly} fiche={fiche} />,
+    },
+    {
+      label: 'Notes',
+      isVisible: true,
+      render: () => <NotesView isReadonly={isReadonly} fiche={fiche} />,
+    },
+    {
+      label: 'Moyens',
+      isVisible: true,
+      render: () => <MoyensView isReadonly={isReadonly} fiche={fiche} />,
+    },
+    {
+      label: 'Fiches action liées',
+      isVisible:
+        hasPermission(permissions, 'plans.fiches.read') ||
+        (!niveauAcces &&
+          hasPermission(permissions, 'plans.fiches.read_public')),
+      render: () => (
+        <FichesLieesTab
+          isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
+          collectivite={collectivite}
+          isEditLoading={isEditLoading}
+          fiche={fiche}
+        />
+      ),
+    },
+    {
+      label: 'Mesures des référentiels liées',
+      isVisible:
+        hasPermission(permissions, 'referentiels.read') ||
+        (!niveauAcces &&
+          hasPermission(permissions, 'referentiels.read_public')),
+      render: () => (
+        <MesuresLieesView
+          isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
+          isEditLoading={isEditLoading}
+          fiche={fiche}
+        />
+      ),
+    },
+    {
+      label: 'Documents',
+      isVisible: true,
+      render: () => (
+        <DocumentsView
+          isReadonly={isReadonly}
+          collectiviteId={collectiviteId}
+          fiche={fiche}
+        />
+      ),
+    },
+    {
+      label: 'Services liés',
+      isVisible: widgetCommunsFlagEnabled ?? false,
+      render: () => (
+        <ServicesWidget
+          projectId={fiche.id.toString()}
+          isStagingEnv={ENV.application_env === AppEnvironment.STAGING}
+          idType={'tetId'}
+        />
+      ),
+    },
+  ];
+
+  const visibleTabElements = tabDescriptors
+    .filter((tab) => tab.isVisible)
+    .map((tab) => (
+      <Tab key={tab.label} label={tab.label}>
+        {tab.render()}
+      </Tab>
+    ));
+
+  return (
+    <Tabs
+      className={className}
+      tabsListClassName="!justify-start pl-0 flex-nowrap overflow-x-scroll"
+    >
+      {visibleTabElements}
+    </Tabs>
+  );
+};
+
+export default FicheActionOnglets;
