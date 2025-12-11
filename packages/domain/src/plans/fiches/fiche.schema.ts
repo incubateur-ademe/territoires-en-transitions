@@ -44,7 +44,6 @@ export const ficheSchema = z.object({
     .nullable()
     .describe('Action se répète tous les ans'),
   calendrier: z.string().nullable().describe('Calendrier'),
-  notesComplementaires: z.string().nullable().describe('Notes complémentaires'),
   instanceGouvernance: z
     .string()
     .nullable()
@@ -186,7 +185,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     })
     .array()
     .nullable()
-    .describe('Notes de suivi et points de vigilance'),
+    .describe('Notes'),
   mesures: z
     .object({
       id: z.string(),

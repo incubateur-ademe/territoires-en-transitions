@@ -1,6 +1,6 @@
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
-import { AnneesNoteDeSuiviDropdown } from '@/app/ui/dropdownLists/ficheAction/AnneesNoteDeSuiviDropdown/AnneeNoteDeSuiviDropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
+import { NoteYearsDropdown } from '@/app/ui/dropdownLists/ficheAction/notes/note-years.dropdown';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
@@ -37,7 +37,7 @@ import {
   FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS,
   INDICATEURS_OPTIONS,
   MESURES_LIEES_OPTIONS,
-  NOTES_DE_SUIVI_OPTIONS,
+  NOTES_OPTIONS,
   OPTIONS_PERIOD_TYPE,
 } from './options';
 import { FormFilters } from './types';
@@ -257,15 +257,15 @@ export const ToutesLesFichesFiltersForm = ({
               />
             </Field>
 
-            <Field title="Notes de suivi">
+            <Field title="Notes">
               <Controller
-                name="notesDeSuivi"
+                name="notes"
                 control={control}
                 render={({ field }) => (
                   <Select
-                    options={NOTES_DE_SUIVI_OPTIONS}
+                    options={NOTES_OPTIONS}
                     values={field.value}
-                    disabled={!isNil(readonlyFilters.notesDeSuivi)}
+                    disabled={!isNil(readonlyFilters.notes)}
                     onChange={(v) => field.onChange(v ?? EMPTY_VALUE)}
                   />
                 )}
@@ -414,18 +414,18 @@ export const ToutesLesFichesFiltersForm = ({
                 )}
               />
             </Field>
-            <Field title={getFilterLabel('anneesNoteDeSuivi')}>
+            <Field title={getFilterLabel('anneesNotes')}>
               <Controller
-                name="anneesNoteDeSuivi"
+                name="anneesNotes"
                 control={control}
                 render={({ field }) => (
-                  <AnneesNoteDeSuiviDropdown
+                  <NoteYearsDropdown
                     values={field.value}
-                    disabled={!isNil(readonlyFilters.anneesNoteDeSuivi)}
+                    disabled={!isNil(readonlyFilters.anneesNotes)}
                     onChange={(value: string[]) => {
-                      const anneesNoteDeSuivi =
+                      const anneesNotes =
                         value && value.length > 0 ? value : EMPTY_ARRAY_VALUE;
-                      field.onChange(anneesNoteDeSuivi ?? EMPTY_VALUE);
+                      field.onChange(anneesNotes ?? EMPTY_VALUE);
                     }}
                   />
                 )}

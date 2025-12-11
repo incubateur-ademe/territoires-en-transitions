@@ -121,7 +121,7 @@ describe('CompletionAnalyticsRouter tests', () => {
       await databaseService.db.insert(ficheActionNoteTable).values({
         ficheId: fiche1.id,
         dateNote: twoYearsAgo.toISOString(),
-        note: 'Note de suivi plutôt ancienne',
+        note: 'Note plutôt ancienne',
         createdAt: twoYearsAgo.toISOString(),
         modifiedAt: twoYearsAgo.toISOString(),
         modifiedBy: yoloDodoUser.id,
@@ -131,7 +131,7 @@ describe('CompletionAnalyticsRouter tests', () => {
       await databaseService.db.insert(ficheActionNoteTable).values({
         ficheId: fiche2.id,
         dateNote: twoYearsAgo.toISOString(),
-        note: 'Note de suivi plutôt ancienne',
+        note: 'Note plutôt ancienne',
         createdAt: twoYearsAgo.toISOString(),
         modifiedAt: twoYearsAgo.toISOString(),
         modifiedBy: yoloDodoUser.id,
@@ -240,7 +240,7 @@ describe('CompletionAnalyticsRouter tests', () => {
       await databaseService.db.insert(ficheActionNoteTable).values({
         ficheId: fiche.id,
         dateNote: sixMonthsAgo.toISOString().split('T')[0], // Format YYYY-MM-DD
-        note: 'Note de suivi récente',
+        note: 'Note récente',
         createdAt: sixMonthsAgo.toISOString(),
         modifiedAt: sixMonthsAgo.toISOString(),
         modifiedBy: yoloDodoUser.id,

@@ -1,9 +1,8 @@
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
-import { FicheBudgetCreate } from '@tet/domain/plans';
+import { FicheBudgetCreate, FicheWithRelations } from '@tet/domain/plans';
 import { ButtonGroup, Checkbox, Divider, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
-import { FicheShareProperties } from '../../../share-fiche/fiche-share-properties.dto';
 import { useDeleteBudgets } from '../../data/use-delete-budgets';
 import { FicheBudget } from '../../data/use-get-budget';
 import { useUpsertBudgets } from '../../data/use-upsert-budgets';
@@ -58,7 +57,7 @@ const getInitFullPlanState = (budgets: FicheBudget[]) => {
 
 type BudgetModalProps = {
   openState: OpenState;
-  fiche: FicheShareProperties;
+  fiche: FicheWithRelations;
   type: 'investissement' | 'fonctionnement';
   budgets: FicheBudget[];
 };

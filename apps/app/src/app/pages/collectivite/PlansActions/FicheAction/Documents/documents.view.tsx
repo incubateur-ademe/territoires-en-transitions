@@ -4,10 +4,10 @@ import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Button, EmptyCard } from '@tet/ui';
-import { useEffect, useState } from 'react';
-import { Fiche } from '../../data/use-get-fiche';
-import { useAddAnnexe } from '../../data/useAddAnnexe';
-import { useAnnexesFicheAction } from '../../data/useAnnexesFicheAction';
+import { useState } from 'react';
+import { Fiche } from '../data/use-get-fiche';
+import { useAddAnnexe } from '../data/useAddAnnexe';
+import { useAnnexesFicheAction } from '../data/useAnnexesFicheAction';
 import DocumentPicto from './DocumentPicto';
 import ModaleAjoutDocument from './ModaleAjoutDocument';
 
@@ -17,7 +17,7 @@ type DocumentsProps = {
   fiche: Fiche;
 };
 
-const Documents = (props: DocumentsProps) => {
+export const DocumentsView = (props: DocumentsProps) => {
   const currentCollectiviteId = useCollectiviteId();
   const { fiche, collectiviteId } = props;
 
@@ -29,25 +29,10 @@ const Documents = (props: DocumentsProps) => {
 
   const ficheId = fiche.id;
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditLoading, setIsEditLoading] = useState(false);
 
-  const { data: documents, isLoading } = useAnnexesFicheAction(
-    collectiviteId,
-    ficheId
-  );
-  const handlers = useAddAnnexe(ficheId);
-
-  useEffect(() => {
-    if (handlers.isLoading) setIsEditLoading(true);
-  }, [handlers.isLoading]);
-
-  useEffect(() => {
-    if (handlers.isError) setIsEditLoading(false);
-  }, [handlers.isError]);
-
-  useEffect(() => {
-    setIsEditLoading(false);
-  }, [documents?.length]);
+  const { data: documents, isLoading: isLoadingDocuments } =
+    useAnnexesFicheAction(collectiviteId, ficheId);
+  const { isLoading, isError, addFileFromLib, addLink } = useAddAnnexe(ficheId);
 
   const isEmpty = !documents || documents.length === 0;
 
@@ -57,15 +42,15 @@ const Documents = (props: DocumentsProps) => {
         {/* Titre et bouton d'édition */}
         <div className="flex justify-between">
           <h5 className="text-primary-8 mb-0">Documents</h5>
-          {!isReadonly && !handlers.isError && (
+          {!isReadonly && !isError && (
             <Button
-              icon={!isEditLoading ? 'file-download-line' : undefined}
+              icon={!isLoading ? 'file-download-line' : undefined}
               size="xs"
               variant="outlined"
-              disabled={isEditLoading}
+              disabled={isLoading || isLoadingDocuments}
               onClick={() => setIsModalOpen(true)}
             >
-              {isEditLoading && <SpinnerLoader className="!h-4" />}
+              {isLoading && <SpinnerLoader className="!h-4" />}
               Ajouter un document
             </Button>
           )}
@@ -98,7 +83,7 @@ const Documents = (props: DocumentsProps) => {
         ) : (
           <>
             {/* Liste des documents */}
-            {handlers.isError ? (
+            {isError ? (
               <span className="text-primary-9 text-sm text-center">
                 Impossible de charger les documents...
               </span>
@@ -119,10 +104,10 @@ const Documents = (props: DocumentsProps) => {
         )}
       </div>
 
-      {!isReadonly && !!handlers && (
+      {!isReadonly && (
         <ModaleAjoutDocument
           fiche={fiche}
-          handlers={handlers}
+          handlers={{ addFileFromLib, addLink }}
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}
         />
@@ -130,5 +115,3 @@ const Documents = (props: DocumentsProps) => {
     </>
   );
 };
-
-export default Documents;

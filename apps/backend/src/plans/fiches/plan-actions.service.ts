@@ -98,7 +98,7 @@ export default class PlanActionsService {
       rows,
       /** Profondeur maximum d'une fiche dans le plan */
       maxDepth,
-      /** Années distinctes pour lesquelles il y a au moins une fiche avec une note de suivi */
+      /** Années distinctes pour lesquelles il y a au moins une fiche avec une note */
       anneesNotes,
       /** Nombre de financeurs maximum */
       maxFinanceurs,

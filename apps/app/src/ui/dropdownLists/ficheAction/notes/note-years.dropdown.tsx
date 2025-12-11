@@ -6,11 +6,11 @@ type Props = Omit<SelectProps, 'values' | 'onChange' | 'options'> & {
   onChange: (value: string[]) => void;
 };
 
-export const AnneesNoteDeSuiviDropdown = ({ onChange, values }: Props) => {
+export const NoteYearsDropdown = ({ onChange, values }: Props) => {
   return (
     <SelectFilter
       values={values ?? undefined}
-      dataTest={'anneesNoteDeSuivi'}
+      dataTest={'anneesNote'}
       options={getYearsOptions(1).yearsOptions}
       onChange={({ values }) => {
         onChange(values as string[]);

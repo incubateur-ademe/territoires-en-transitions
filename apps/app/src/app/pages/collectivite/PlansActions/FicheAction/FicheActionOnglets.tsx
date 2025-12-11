@@ -4,17 +4,17 @@ import { hasPermission } from '@/app/users/authorizations/permission-access-leve
 import { ENV } from '@tet/api/environmentVariables';
 
 import { ServicesWidget } from '@betagouv/les-communs-widget';
+import { FicheWithRelations } from '@tet/domain/plans';
 import { CollectiviteAccess } from '@tet/domain/users';
 import { AppEnvironment } from '@tet/domain/utils';
 import { Tab, Tabs } from '@tet/ui';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
+import { DocumentsView } from './Documents/documents.view';
+import Etapes from './etapes';
 import FichesLieesTab from './FichesLiees/FichesLieesTab';
 import IndicateursTab from './Indicateurs/IndicateursTab';
-import NotesDeSuiviTab from './NotesDeSuivi/NotesDeSuiviTab';
-import NotesEtDocumentsTab from './NotesEtDocuments/NotesEtDocumentsTab';
-import { Fiche } from './data/use-get-fiche';
-import Etapes from './etapes';
 import { MesuresLieesView } from './mesures-liees/mesures-liees.view';
+import { NotesView } from './notes/notes.view';
 
 type TabDescriptor = {
   label: string;
@@ -23,7 +23,7 @@ type TabDescriptor = {
 };
 
 type FicheActionOngletsProps = {
-  fiche: Fiche;
+  fiche: FicheWithRelations;
   isEditLoading: boolean;
   isReadonly: boolean;
   className?: string;
@@ -67,9 +67,9 @@ const FicheActionOnglets = ({
       render: () => <Etapes isReadonly={isReadonly} fiche={fiche} />,
     },
     {
-      label: 'Notes de suivi',
+      label: 'Notes',
       isVisible: true,
-      render: () => <NotesDeSuiviTab isReadonly={isReadonly} fiche={fiche} />,
+      render: () => <NotesView isReadonly={isReadonly} fiche={fiche} />,
     },
     {
       label: 'Moyens',
@@ -106,10 +106,14 @@ const FicheActionOnglets = ({
       ),
     },
     {
-      label: 'Notes et documents',
+      label: 'Documents',
       isVisible: true,
       render: () => (
-        <NotesEtDocumentsTab isReadonly={isReadonly} fiche={fiche} />
+        <DocumentsView
+          isReadonly={isReadonly}
+          collectiviteId={collectiviteId}
+          fiche={fiche}
+        />
       ),
     },
     {

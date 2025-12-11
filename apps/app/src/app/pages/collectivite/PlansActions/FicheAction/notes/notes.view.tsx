@@ -1,27 +1,25 @@
+import { FicheWithRelations } from '@tet/domain/plans';
 import { Button, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
-import { Fiche } from '../data/use-get-fiche';
-import { useFicheActionNotesSuivi } from '../data/useFicheActionNotesSuivi';
-import {
-  useDeleteNoteSuivi,
-  useUpsertNoteSuivi,
-} from '../data/useUpsertNoteSuivi';
-import ModaleCreationNoteDeSuivi from './ModaleCreationNoteDeSuivi';
-import NoteSuiviCard from './NoteSuiviCard';
-import NotificationPicto from './NotificationPicto';
+import { useDeleteNote } from '../data/use-delete-note';
+import { useGetFicheNotes } from '../data/use-get-fiche-notes';
+import { useUpsertNote } from '../data/use-upsert-note';
+import { NoteCreationModal } from './note-creation.modal';
+import NoteCard from './note.card';
+import NotificationPicto from './notification.picto';
 
-type NotesDeSuiviTabProps = {
+type NotesViewProps = {
   isReadonly: boolean;
-  fiche: Fiche;
+  fiche: FicheWithRelations;
 };
 
-const NotesDeSuiviTab = ({ fiche, isReadonly }: NotesDeSuiviTabProps) => {
+export const NotesView = ({ fiche, isReadonly }: NotesViewProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { mutate: updateNotes } = useUpsertNoteSuivi(fiche);
-  const { mutate: deleteNote } = useDeleteNoteSuivi(fiche);
-  const { data: notesSuivi } = useFicheActionNotesSuivi(fiche);
+  const { mutate: updateNotes } = useUpsertNote(fiche);
+  const { mutate: deleteNote } = useDeleteNote(fiche);
+  const { data: notesData } = useGetFicheNotes(fiche);
 
-  const notes = notesSuivi || [];
+  const notes = notesData || [];
   const isEmpty = notes.length === 0;
 
   return (
@@ -29,7 +27,7 @@ const NotesDeSuiviTab = ({ fiche, isReadonly }: NotesDeSuiviTabProps) => {
       {isEmpty ? (
         <EmptyCard
           picto={(props) => <NotificationPicto {...props} />}
-          title="Aucune note de suivi ou point de vigilance n'est renseigné"
+          title="Aucune note n'est renseignée"
           isReadonly={isReadonly}
           actions={[
             {
@@ -41,11 +39,8 @@ const NotesDeSuiviTab = ({ fiche, isReadonly }: NotesDeSuiviTabProps) => {
         />
       ) : (
         <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-5">
-          {/* Titre et bouton d'édition */}
           <div className="flex justify-between">
-            <h5 className="text-primary-8 mb-0">
-              Notes de suivi et points de vigilance
-            </h5>
+            <h5 className="text-primary-8 mb-0">Notes</h5>
             {!isReadonly && (
               <Button
                 icon="add-line"
@@ -59,21 +54,27 @@ const NotesDeSuiviTab = ({ fiche, isReadonly }: NotesDeSuiviTabProps) => {
           </div>
 
           <div className="flex flex-col gap-3">
-            {notes.map((note, index) => (
-              <NoteSuiviCard
-                key={`${note.dateNote}-${index}`}
-                fiche={fiche}
-                note={note}
-                onEdit={updateNotes}
-                onDelete={deleteNote}
-              />
-            ))}
+            {notes
+              .sort(
+                (a, b) =>
+                  new Date(b.dateNote).getTime() -
+                  new Date(a.dateNote).getTime()
+              )
+              .map((note, index) => (
+                <NoteCard
+                  key={`${note.dateNote}-${index}`}
+                  fiche={fiche}
+                  note={note}
+                  onEdit={updateNotes}
+                  onDelete={deleteNote}
+                />
+              ))}
           </div>
         </div>
       )}
 
       {!isReadonly && isModalOpen && (
-        <ModaleCreationNoteDeSuivi
+        <NoteCreationModal
           fiche={fiche}
           isOpen={isModalOpen && !isReadonly}
           setIsOpen={setIsModalOpen}
@@ -83,5 +84,3 @@ const NotesDeSuiviTab = ({ fiche, isReadonly }: NotesDeSuiviTabProps) => {
     </>
   );
 };
-
-export default NotesDeSuiviTab;

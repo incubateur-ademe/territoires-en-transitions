@@ -188,7 +188,6 @@ describe('UpdateFicheService', () => {
         statut: StatutEnum.EN_PAUSE,
         ameliorationContinue: false,
         calendrier: 'Calendrier prévisionnel',
-        notesComplementaires: 'Vive le vélo !',
         majTermine: true,
         tempsDeMiseEnOeuvre: { id: 1 },
         participationCitoyenne:
@@ -236,7 +235,6 @@ describe('UpdateFicheService', () => {
         statut: null,
         ameliorationContinue: null,
         calendrier: null,
-        notesComplementaires: null,
         majTermine: null,
         tempsDeMiseEnOeuvre: null,
         participationCitoyenne: null,

@@ -1,9 +1,9 @@
-import { FicheActionThematiques } from "./enums/ficheActionThematiques.ts";
-import { FicheActionPiliersEci } from "./enums/ficheActionPiliersEci.ts";
-import { FicheActionResultatsAttendus } from "./enums/ficheActionResultatsAttendus.ts";
-import { FicheActionCibles } from "./enums/ficheActionCibles.ts";
-import { FicheActionStatuts } from "./enums/ficheActionStatuts.ts";
-import { FicheActionNiveauxPriorite } from "./enums/ficheActionNiveauxPriorite.ts";
+import { FicheActionThematiques } from './enums/ficheActionThematiques.ts';
+import { FicheActionPiliersEci } from './enums/ficheActionPiliersEci.ts';
+import { FicheActionResultatsAttendus } from './enums/ficheActionResultatsAttendus.ts';
+import { FicheActionCibles } from './enums/ficheActionCibles.ts';
+import { FicheActionStatuts } from './enums/ficheActionStatuts.ts';
+import { FicheActionNiveauxPriorite } from './enums/ficheActionNiveauxPriorite.ts';
 
 export type FicheAction = {
   /*id : number;*/
@@ -22,7 +22,6 @@ export type FicheAction = {
     date_fin_provisoire : Date;
     amelioration_continue: boolean;
     calendrier: string;
-    notes_complementaires: string;
     maj_termine: boolean;
     collectivite_id: number;*/
 };

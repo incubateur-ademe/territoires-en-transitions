@@ -21,7 +21,6 @@ export const ficheActionFixture: FicheCreate = {
   dateFin: null,
   ameliorationContinue: false,
   calendrier: 'Calendrier à préciser',
-  notesComplementaires: '',
   majTermine: true,
   collectiviteId: 1,
   createdAt: '2024-11-08T09:09:16Z',
