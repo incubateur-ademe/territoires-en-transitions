@@ -13,13 +13,11 @@ export class PlanMainRouter {
     private readonly axesRouter: AxesRouter
   ) {}
 
-  router = this.trpc.mergeRouters(
-    this.planRouter.router,
-    this.trpc.router({
-      fiches: this.fichesRouter.router,
-      axes: this.axesRouter.router,
-    })
-  );
+  router = this.trpc.router({
+    plans: this.planRouter.router,
+    fiches: this.fichesRouter.router,
+    axes: this.axesRouter.router,
+  });
 
   createCaller = this.trpc.createCallerFactory(this.router);
 }

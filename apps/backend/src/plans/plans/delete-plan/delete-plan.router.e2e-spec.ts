@@ -48,22 +48,22 @@ describe('Supprimer un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan
-      const createdPlan = await caller.plans.upsert({
+      const createdPlan = await caller.plans.plans.upsert({
         nom: 'Plan à supprimer',
         collectiviteId: collectivite.id,
       });
       const planId = createdPlan.id;
 
       // Vérifier que le plan existe avant suppression
-      const planBefore = await caller.plans.get({ planId });
+      const planBefore = await caller.plans.plans.get({ planId });
       expect(planBefore).toBeDefined();
       expect(planBefore.id).toBe(planId);
 
       // Supprimer le plan
-      await caller.plans.delete({ planId });
+      await caller.plans.plans.delete({ planId });
 
       // Vérifier que le plan n'existe plus
-      await expect(caller.plans.get({ planId })).rejects.toThrow(
+      await expect(caller.plans.plans.get({ planId })).rejects.toThrow(
         "Le plan demandé n'a pas été trouvé"
       );
     });
@@ -72,7 +72,7 @@ describe('Supprimer un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan
-      const createdPlan = await caller.plans.upsert({
+      const createdPlan = await caller.plans.plans.upsert({
         nom: 'Plan avec axes enfants',
         collectiviteId: collectivite.id,
       });
@@ -94,7 +94,7 @@ describe('Supprimer un plan', () => {
       });
 
       // Vérifier que tous les axes existent avant suppression
-      const planBefore = await caller.plans.get({ planId });
+      const planBefore = await caller.plans.plans.get({ planId });
       expect(planBefore).toBeDefined();
       expect(planBefore.axes.length).toBeGreaterThanOrEqual(2);
 
@@ -105,10 +105,10 @@ describe('Supprimer un plan', () => {
       expect(child2Before).toBeDefined();
 
       // Supprimer le plan (devrait supprimer récursivement les axes enfants)
-      await caller.plans.delete({ planId });
+      await caller.plans.plans.delete({ planId });
 
       // Vérifier que le plan et tous les axes ont été supprimés
-      await expect(caller.plans.get({ planId })).rejects.toThrow(
+      await expect(caller.plans.plans.get({ planId })).rejects.toThrow(
         "Le plan demandé n'a pas été trouvé"
       );
 
@@ -125,7 +125,7 @@ describe('Supprimer un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan
-      const createdPlan = await caller.plans.upsert({
+      const createdPlan = await caller.plans.plans.upsert({
         nom: 'Plan avec hiérarchie',
         collectiviteId: collectivite.id,
       });
@@ -154,7 +154,7 @@ describe('Supprimer un plan', () => {
       });
 
       // Vérifier que tous les axes existent avant suppression
-      const planBefore = await caller.plans.get({ planId });
+      const planBefore = await caller.plans.plans.get({ planId });
       expect(planBefore).toBeDefined();
 
       const level1Before = await caller.plans.axes.get({
@@ -173,10 +173,10 @@ describe('Supprimer un plan', () => {
       expect(level2bBefore).toBeDefined();
 
       // Supprimer le plan (devrait supprimer récursivement toute la hiérarchie)
-      await caller.plans.delete({ planId });
+      await caller.plans.plans.delete({ planId });
 
       // Vérifier que tous les axes ont été supprimés
-      await expect(caller.plans.get({ planId })).rejects.toThrow(
+      await expect(caller.plans.plans.get({ planId })).rejects.toThrow(
         "Le plan demandé n'a pas été trouvé"
       );
 
@@ -197,17 +197,17 @@ describe('Supprimer un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer plusieurs plans
-      const plan1 = await caller.plans.upsert({
+      const plan1 = await caller.plans.plans.upsert({
         nom: 'Plan 1',
         collectiviteId: collectivite.id,
       });
 
-      const plan2 = await caller.plans.upsert({
+      const plan2 = await caller.plans.plans.upsert({
         nom: 'Plan 2',
         collectiviteId: collectivite.id,
       });
 
-      const plan3 = await caller.plans.upsert({
+      const plan3 = await caller.plans.plans.upsert({
         nom: 'Plan 3',
         collectiviteId: collectivite.id,
       });
@@ -215,19 +215,19 @@ describe('Supprimer un plan', () => {
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
         try {
-          await cleanupCaller.plans.delete({ planId: plan1.id });
+          await cleanupCaller.plans.plans.delete({ planId: plan1.id });
         } catch {
           // Ignore si déjà supprimé
         }
         try {
-          await cleanupCaller.plans.delete({ planId: plan3.id });
+          await cleanupCaller.plans.plans.delete({ planId: plan3.id });
         } catch {
           // Ignore si déjà supprimé
         }
       });
 
       // Vérifier que tous les plans sont dans la liste
-      const listBefore = await caller.plans.list({
+      const listBefore = await caller.plans.plans.list({
         collectiviteId: collectivite.id,
       });
       const planIdsBefore = listBefore.plans.map((p) => p.id);
@@ -236,10 +236,10 @@ describe('Supprimer un plan', () => {
       expect(planIdsBefore).toContain(plan3.id);
 
       // Supprimer un plan
-      await caller.plans.delete({ planId: plan2.id });
+      await caller.plans.plans.delete({ planId: plan2.id });
 
       // Vérifier que le plan supprimé n'est plus dans la liste
-      const listAfter = await caller.plans.list({
+      const listAfter = await caller.plans.plans.list({
         collectiviteId: collectivite.id,
       });
       const planIdsAfter = listAfter.plans.map((p) => p.id);
@@ -256,7 +256,7 @@ describe('Supprimer un plan', () => {
       const nonExistentPlanId = 999999;
 
       await expect(
-        caller.plans.delete({ planId: nonExistentPlanId })
+        caller.plans.plans.delete({ planId: nonExistentPlanId })
       ).rejects.toThrow("Le plan demandé n'a pas été trouvé");
     });
 
@@ -264,7 +264,7 @@ describe('Supprimer un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan avec l'utilisateur admin
-      const createdPlan = await caller.plans.upsert({
+      const createdPlan = await caller.plans.plans.upsert({
         nom: 'Plan pour test permissions',
         collectiviteId: collectivite.id,
       });
@@ -272,7 +272,7 @@ describe('Supprimer un plan', () => {
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
         try {
-          await cleanupCaller.plans.delete({
+          await cleanupCaller.plans.plans.delete({
             planId: createdPlan.id,
           });
         } catch {
@@ -285,7 +285,7 @@ describe('Supprimer un plan', () => {
       const unauthorizedCaller = router.createCaller({ user: yoloDodoUser });
 
       await expect(
-        unauthorizedCaller.plans.delete({ planId: createdPlan.id })
+        unauthorizedCaller.plans.plans.delete({ planId: createdPlan.id })
       ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
     });
 
@@ -293,7 +293,7 @@ describe('Supprimer un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan avec l'utilisateur admin
-      const createdPlan = await caller.plans.upsert({
+      const createdPlan = await caller.plans.plans.upsert({
         nom: 'Plan pour test lecture',
         collectiviteId: collectivite.id,
       });
@@ -301,7 +301,7 @@ describe('Supprimer un plan', () => {
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
         try {
-          await cleanupCaller.plans.delete({
+          await cleanupCaller.plans.plans.delete({
             planId: createdPlan.id,
           });
         } catch {
@@ -323,7 +323,7 @@ describe('Supprimer un plan', () => {
       const lectureCaller = router.createCaller({ user: lectureUser });
 
       await expect(
-        lectureCaller.plans.delete({ planId: createdPlan.id })
+        lectureCaller.plans.plans.delete({ planId: createdPlan.id })
       ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
     });
 
@@ -331,7 +331,7 @@ describe('Supprimer un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan avec l'utilisateur admin
-      const createdPlan = await caller.plans.upsert({
+      const createdPlan = await caller.plans.plans.upsert({
         nom: 'Plan pour test édition limitée',
         collectiviteId: collectivite.id,
       });
@@ -339,7 +339,7 @@ describe('Supprimer un plan', () => {
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
         try {
-          await cleanupCaller.plans.delete({
+          await cleanupCaller.plans.plans.delete({
             planId: createdPlan.id,
           });
         } catch {
@@ -363,7 +363,7 @@ describe('Supprimer un plan', () => {
       });
 
       await expect(
-        limitedEditionCaller.plans.delete({ planId: createdPlan.id })
+        limitedEditionCaller.plans.plans.delete({ planId: createdPlan.id })
       ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
     });
   });
@@ -373,17 +373,17 @@ describe('Supprimer un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer plusieurs plans
-      const plan1 = await caller.plans.upsert({
+      const plan1 = await caller.plans.plans.upsert({
         nom: 'Plan frère 1',
         collectiviteId: collectivite.id,
       });
 
-      const plan2 = await caller.plans.upsert({
+      const plan2 = await caller.plans.plans.upsert({
         nom: 'Plan frère 2',
         collectiviteId: collectivite.id,
       });
 
-      const plan3 = await caller.plans.upsert({
+      const plan3 = await caller.plans.plans.upsert({
         nom: 'Plan frère 3',
         collectiviteId: collectivite.id,
       });
@@ -391,40 +391,40 @@ describe('Supprimer un plan', () => {
       onTestFinished(async () => {
         const cleanupCaller = router.createCaller({ user: editorUser });
         try {
-          await cleanupCaller.plans.delete({ planId: plan1.id });
+          await cleanupCaller.plans.plans.delete({ planId: plan1.id });
         } catch {
           // Ignore si déjà supprimé
         }
         try {
-          await cleanupCaller.plans.delete({ planId: plan3.id });
+          await cleanupCaller.plans.plans.delete({ planId: plan3.id });
         } catch {
           // Ignore si déjà supprimé
         }
       });
 
       // Vérifier que tous les plans existent
-      const plan1Before = await caller.plans.get({ planId: plan1.id });
+      const plan1Before = await caller.plans.plans.get({ planId: plan1.id });
       expect(plan1Before).toBeDefined();
 
-      const plan2Before = await caller.plans.get({ planId: plan2.id });
+      const plan2Before = await caller.plans.plans.get({ planId: plan2.id });
       expect(plan2Before).toBeDefined();
 
-      const plan3Before = await caller.plans.get({ planId: plan3.id });
+      const plan3Before = await caller.plans.plans.get({ planId: plan3.id });
       expect(plan3Before).toBeDefined();
 
       // Supprimer seulement plan2
-      await caller.plans.delete({ planId: plan2.id });
+      await caller.plans.plans.delete({ planId: plan2.id });
 
       // Vérifier que plan2 est supprimé mais plan1 et plan3 existent toujours
-      await expect(caller.plans.get({ planId: plan2.id })).rejects.toThrow(
-        "Le plan demandé n'a pas été trouvé"
-      );
+      await expect(
+        caller.plans.plans.get({ planId: plan2.id })
+      ).rejects.toThrow("Le plan demandé n'a pas été trouvé");
 
-      const plan1After = await caller.plans.get({ planId: plan1.id });
+      const plan1After = await caller.plans.plans.get({ planId: plan1.id });
       expect(plan1After).toBeDefined();
       expect(plan1After.id).toBe(plan1.id);
 
-      const plan3After = await caller.plans.get({ planId: plan3.id });
+      const plan3After = await caller.plans.plans.get({ planId: plan3.id });
       expect(plan3After).toBeDefined();
       expect(plan3After.id).toBe(plan3.id);
     });
@@ -433,7 +433,7 @@ describe('Supprimer un plan', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un plan
-      const createdPlan = await caller.plans.upsert({
+      const createdPlan = await caller.plans.plans.upsert({
         nom: 'Plan avec hiérarchie complexe',
         collectiviteId: collectivite.id,
       });
@@ -498,10 +498,10 @@ describe('Supprimer un plan', () => {
       }
 
       // Supprimer le plan (devrait supprimer toute la hiérarchie)
-      await caller.plans.delete({ planId });
+      await caller.plans.plans.delete({ planId });
 
       // Vérifier que le plan et tous les axes ont été supprimés
-      await expect(caller.plans.get({ planId })).rejects.toThrow(
+      await expect(caller.plans.plans.get({ planId })).rejects.toThrow(
         "Le plan demandé n'a pas été trouvé"
       );
 

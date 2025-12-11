@@ -9,7 +9,7 @@ export type CompletionFieldName = CompletionField['name'];
 export const useGetPlanCompletion = (planId: number): CompletionField[] => {
   const trpc = useTRPC();
   const { data } = useQuery(
-    trpc.plans.getFieldsToComplete.queryOptions({ planId })
+    trpc.plans.plans.getFieldsToComplete.queryOptions({ planId })
   );
   return data ?? [];
 };

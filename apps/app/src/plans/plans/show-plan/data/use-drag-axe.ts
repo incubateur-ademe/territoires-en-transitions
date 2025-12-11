@@ -30,7 +30,7 @@ export const useDragAxe = (planId: number) => {
     onSettled: (data, err, args) => {
       if (planId) {
         queryClient.invalidateQueries({
-          queryKey: trpcClient.plans.get.queryKey({ planId }),
+          queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
         });
         dropAnimation(`axe-${args.axe.id}`);
       }
