@@ -57,9 +57,8 @@ enum ColumnNames {
   Calendrier = 'Calendrier',
   ActionsLiees = 'Actions liées',
   FichesPlansLiees = 'Fiches des plans liées',
-  NotesSuivi = 'Notes de suivi',
+  Notes = 'Notes',
   EtapesFicheAction = 'Etapes de la fiche action',
-  NotesComplementaires = 'Notes complémentaires',
   DocumentsLiens = 'Documents et liens',
 }
 
@@ -362,9 +361,7 @@ export class ImportPlanService {
       fiches: undefined, // unavailable
       notesSuivi: undefined, // unavailable
       etapes: undefined, // unavailable
-      notesComplementaire: this.clean.text(
-        rowData[columnIndexes[ColumnNames.NotesComplementaires]]
-      ),
+      notes: undefined, // unavailable
       annexes: undefined, // unavailable
     };
     return toReturn;

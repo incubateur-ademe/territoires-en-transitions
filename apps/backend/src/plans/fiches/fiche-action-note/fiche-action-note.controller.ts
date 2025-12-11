@@ -45,7 +45,7 @@ export class FicheActionNoteController {
   @ApiUsage([ApiUsageEnum.APP])
   @ApiOkResponse({
     type: GetFicheActionNotesResponseClass,
-    description: 'Charge les notes de suivi',
+    description: 'Charge les notes',
   })
   async selectFicheActionNotes(
     @Param('id') ficheId: number,
@@ -58,7 +58,7 @@ export class FicheActionNoteController {
   @ApiUsage([ApiUsageEnum.APP])
   @ApiOkResponse({
     type: UpsertFicheActionNotesRequestClass,
-    description: 'Insère ou met à jour les notes de suivi',
+    description: 'Insère ou met à jour les notes',
   })
   async upsertFicheActionNotes(
     @Param('id') ficheId: number,
@@ -72,7 +72,7 @@ export class FicheActionNoteController {
   @ApiUsage([ApiUsageEnum.APP])
   @ApiOkResponse({
     type: DeleteFicheActionNotesRequestClass,
-    description: 'Supprime une note de suivi',
+    description: 'Supprime une note',
   })
   async deleteFicheActionNotes(
     @Param('id') ficheId: number,

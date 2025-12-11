@@ -39,6 +39,6 @@ Les sous-actions doivent être stockées en base comme une fiche action ayant un
 
 ### Axes
 
-Les axes doivent restés des objets distincts. Il est important de bien cadrer ce qui peut être édité sur un axe: indicateur, budget pourquoi pas mais pas par exemple de statut, de document, note de suivi, etc afin de bien rester dans la philosophie d'un groupement qui vient aggréger des éléments pilotable mais n'est pas pilotable finement en lui même.
+Les axes doivent restés des objets distincts. Il est important de bien cadrer ce qui peut être édité sur un axe: indicateur, budget pourquoi pas mais pas par exemple de statut, de document, note, etc afin de bien rester dans la philosophie d'un groupement qui vient aggréger des éléments pilotable mais n'est pas pilotable finement en lui même.
 
 Entre autre une des différences notables entre un axe et une fiche action est la suivante: une fiche action peut être rattachée à différents axes de différents plans. En revanche, une sous-action ne peut pas être rattachée à différentes actions.

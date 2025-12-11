@@ -2,16 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 
 import { INDICATEUR_LABELS } from '@/app/app/pages/collectivite/Indicateurs/constants';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import { NOTES_DE_SUIVI_PROPERTIES } from '@/app/plans/fiches/list-all-fiches/filters/options';
+import { NOTES_PROPERTIES } from '@/app/plans/fiches/list-all-fiches/filters/options';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
 import { useSupabase } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { filtreValuesFetch } from '@tet/api/collectivites/shared/data-access/filtre-values.fetch';
 import { ListDefinitionsInputFilters } from '@tet/domain/indicateurs';
-import {
-  ListFichesRequestFilters,
-  NotesDeSuiviOption,
-} from '@tet/domain/plans';
+import { ListFichesRequestFilters, NotesOption } from '@tet/domain/plans';
 import { FiltreRessourceLiees, FiltreValues } from '@tet/domain/shared';
 
 /**
@@ -202,13 +199,12 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
               ? 'Date de fin prévisionnelle renseignée'
               : 'Date de fin prévisionnelle non renseignée'
           );
-        } else if (key === 'notesDeSuivi') {
+        } else if (key === 'notes') {
           badgeValues.push(
-            NOTES_DE_SUIVI_PROPERTIES[mergedFilters[key] as NotesDeSuiviOption]
-              .label
+            NOTES_PROPERTIES[mergedFilters[key] as NotesOption].label
           );
         } else if (
-          key === 'anneesNoteDeSuivi' &&
+          key === 'anneesNotes' &&
           mergedFilters[key] &&
           mergedFilters[key].length > 0
         ) {

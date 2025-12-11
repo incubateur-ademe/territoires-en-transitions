@@ -1046,7 +1046,9 @@ export default class ListFichesService {
       );
     }
     const data = await query;
-    const completionData = checkCompletion(data as FicheWithoutCompletion[]);
+    const completionData = checkCompletion(
+      data as unknown as FicheWithoutCompletion[]
+    );
 
     const fichesWithCompletion = data.map((fiche) => {
       const completion = completionData.find((c) => c.ficheId === fiche.id);
@@ -1206,18 +1208,18 @@ export default class ListFichesService {
       : notExists(linkedEntityQuery);
   }
 
-  private getNotesDeSuiviCondition(
+  private getNotesCondition(
     filters: ListFichesRequestFilters
   ): SQLWrapper | undefined {
-    const { notesDeSuivi } = filters;
+    const { notes } = filters;
 
-    if (!notesDeSuivi) {
+    if (!notes) {
       return;
     }
 
-    if (notesDeSuivi === 'WITH' || notesDeSuivi === 'WITHOUT') {
+    if (notes === 'WITH' || notes === 'WITHOUT') {
       return this.getHasAnyLinkedEntityCondition(
-        notesDeSuivi === 'WITH',
+        notes === 'WITH',
         ficheActionNoteTable,
         ficheActionNoteTable.ficheId
       );
@@ -1238,7 +1240,7 @@ export default class ListFichesService {
         )
       );
 
-    if (notesDeSuivi === 'WITH_RECENT') {
+    if (notes === 'WITH_RECENT') {
       return exists(recentNotesQuery);
     }
     return notExists(recentNotesQuery);
@@ -1518,10 +1520,10 @@ export default class ListFichesService {
         ficheActionBudgetTable.ficheId
       )
     );
-    conditions.push(this.getNotesDeSuiviCondition(filters));
+    conditions.push(this.getNotesCondition(filters));
 
-    if (filters.anneesNoteDeSuivi) {
-      const dateList = filters.anneesNoteDeSuivi?.map(
+    if (filters.anneesNotes) {
+      const dateList = filters.anneesNotes?.map(
         (year) => new Date(year).toISOString().split('T')[0]
       );
       conditions.push(

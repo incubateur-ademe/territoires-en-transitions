@@ -1,4 +1,4 @@
-import { NotesDeSuiviOption } from '@tet/domain/plans';
+import { NotesOption } from '@tet/domain/plans';
 import { typePeriodLabels } from './labels';
 import { Filters, WITH, WITH_RECENT, WITHOUT, WITHOUT_RECENT } from './types';
 
@@ -25,23 +25,23 @@ export const INDICATEURS_OPTIONS = [
   { label: 'Fiches sans indicateurs', value: WITHOUT },
 ];
 
-export const NOTES_DE_SUIVI_PROPERTIES: Record<
-  NotesDeSuiviOption,
-  { label: string; value: NotesDeSuiviOption }
+export const NOTES_PROPERTIES: Record<
+  NotesOption,
+  { label: string; value: NotesOption }
 > = {
-  WITH: { label: 'Fiches avec notes de suivi', value: WITH },
-  WITHOUT: { label: 'Fiches sans notes de suivi', value: WITHOUT },
+  WITH: { label: 'Fiches avec notes', value: WITH },
+  WITHOUT: { label: 'Fiches sans notes', value: WITHOUT },
   WITH_RECENT: {
-    label: 'Fiches avec notes de suivi récentes (< 1 an)',
+    label: 'Fiches avec notes récentes (< 1 an)',
     value: WITH_RECENT,
   },
   WITHOUT_RECENT: {
-    label: 'Fiches sans notes de suivi récentes (> 1 an)',
+    label: 'Fiches sans notes récentes (> 1 an)',
     value: WITHOUT_RECENT,
   },
 };
 
-export const NOTES_DE_SUIVI_OPTIONS = Object.values(NOTES_DE_SUIVI_PROPERTIES);
+export const NOTES_OPTIONS = Object.values(NOTES_PROPERTIES);
 
 export const MESURES_LIEES_OPTIONS = [
   { label: 'Avec mesures liées', value: WITH },

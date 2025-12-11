@@ -6,7 +6,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { FicheNoteCreate } from '@tet/domain/plans';
+import { FicheNoteUpsert } from '@tet/domain/plans';
 import { aliasedTable, and, desc, eq } from 'drizzle-orm';
 
 @Injectable()
@@ -18,10 +18,10 @@ export default class FicheActionNoteService {
     private readonly databaseService: DatabaseService
   ) {}
 
-  /** Insère ou met à jour des notes de suivi */
+  /** Insère ou met à jour des notes */
   async upsertNotes(
     ficheId: number,
-    notes: FicheNoteCreate[],
+    notes: FicheNoteUpsert[],
     tokenInfo: AuthenticatedUser
   ) {
     this.logger.log(
@@ -39,7 +39,7 @@ export default class FicheActionNoteService {
       await trx
         .update(ficheActionTable)
         .set({
-          modifiedBy: tokenInfo?.id,
+          modifiedBy: tokenInfo.id,
           modifiedAt: new Date().toISOString(),
         })
         .where(eq(ficheActionTable.id, ficheId));
@@ -102,7 +102,6 @@ export default class FicheActionNoteService {
     });
   }
 
-  /** Lit les notes de suivi attachées à la fiche */
   async getNotes(ficheId: number, tokenInfo: AuthenticatedUser) {
     const canRead = await this.permissionService.canReadFiche(
       ficheId,

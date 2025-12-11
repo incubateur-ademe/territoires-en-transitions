@@ -48,8 +48,8 @@ type FicheSearchParameters =
   | 'npr'
   | 'ma'
   | 'nt'
-  | 'nds'
-  | 'ands'
+  | 'notes'
+  | 'anneesNote'
   | 'nr'
   | 'swc'
   | 'nti'
@@ -97,8 +97,8 @@ export const nameToparams: Record<
   typePeriode: 'tp',
   debutPeriode: 'dp',
   finPeriode: 'fp',
-  notesDeSuivi: 'nds',
-  anneesNoteDeSuivi: 'ands',
+  notes: 'notes',
+  anneesNotes: 'anneesNote',
   sousThematiqueIds: 'st',
   noReferent: 'nr',
   sharedWithCollectivites: 'swc',

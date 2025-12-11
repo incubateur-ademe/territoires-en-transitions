@@ -1,6 +1,6 @@
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
-import { FicheNote } from '@tet/domain/plans';
+import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
 import {
   Field,
   FormSectionGrid,
@@ -9,24 +9,23 @@ import {
   Select,
 } from '@tet/ui';
 import { useState } from 'react';
-import { Fiche } from '../data/use-get-fiche';
-import { EditedNote } from '../data/useUpsertNoteSuivi';
+import { EditedNote } from '../data/use-upsert-note';
 
-type ModaleEditionNoteDeSuiviProps = {
-  fiche: Fiche;
+type NoteEditionModalProps = {
+  fiche: FicheWithRelations;
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
   editedNote: FicheNote;
   onEdit: (editedNote: EditedNote) => void;
 };
 
-const ModaleEditionNoteDeSuivi = ({
+export const NoteEditionModal = ({
   fiche,
   isOpen,
   setIsOpen,
   editedNote,
   onEdit,
-}: ModaleEditionNoteDeSuiviProps) => {
+}: NoteEditionModalProps) => {
   const { yearsOptions } = getYearsOptions();
 
   const initialYear = new Date(editedNote.dateNote).getFullYear();
@@ -49,7 +48,7 @@ const ModaleEditionNoteDeSuivi = ({
       openState={{ isOpen, setIsOpen }}
       fiche={fiche}
       title="Modifier la note"
-      subTitle={`Note de suivi ${year}${
+      subTitle={`Note ${year}${
         editedNote.createdAt ? ` créée par ${editedNote.createdBy}` : ''
       }`}
       size="lg"
@@ -89,5 +88,3 @@ const ModaleEditionNoteDeSuivi = ({
     />
   );
 };
-
-export default ModaleEditionNoteDeSuivi;

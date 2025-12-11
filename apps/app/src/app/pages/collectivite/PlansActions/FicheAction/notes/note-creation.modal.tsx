@@ -1,5 +1,6 @@
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
+import { FicheWithRelations } from '@tet/domain/plans';
 import {
   Alert,
   Button,
@@ -10,22 +11,21 @@ import {
   Select,
 } from '@tet/ui';
 import { useState } from 'react';
-import { Fiche } from '../data/use-get-fiche';
-import { EditedNote } from '../data/useUpsertNoteSuivi';
+import { EditedNote } from '../data/use-upsert-note';
 
-type ModaleCreationNoteDeSuiviProps = {
+type NoteCreationModalProps = {
   isOpen: boolean;
-  fiche: Fiche;
+  fiche: FicheWithRelations;
   setIsOpen: (opened: boolean) => void;
   onEdit: (editedNote: EditedNote) => void;
 };
 
-const ModaleCreationNoteDeSuivi = ({
+export const NoteCreationModal = ({
   isOpen,
   fiche,
   setIsOpen,
   onEdit,
-}: ModaleCreationNoteDeSuiviProps) => {
+}: NoteCreationModalProps) => {
   const { yearsOptions } = getYearsOptions();
 
   const [year, setYear] = useState<number | undefined>();
@@ -41,7 +41,7 @@ const ModaleCreationNoteDeSuivi = ({
     <BaseUpdateFicheModal
       fiche={fiche}
       openState={{ isOpen, setIsOpen }}
-      title="Note de suivi et points de vigilance"
+      title="Notes"
       size="lg"
       render={({ descriptionId }) => (
         <FormSectionGrid formSectionId={descriptionId}>
@@ -68,7 +68,6 @@ const ModaleCreationNoteDeSuivi = ({
           </Field>
         </FormSectionGrid>
       )}
-      // Boutons pour valider les modifications
       renderFooter={({ close }) => (
         <ModalFooter variant="right">
           <Button
@@ -97,5 +96,3 @@ const ModaleCreationNoteDeSuivi = ({
     />
   );
 };
-
-export default ModaleCreationNoteDeSuivi;

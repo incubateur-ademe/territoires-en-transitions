@@ -1,15 +1,17 @@
-import { ficheNoteCreateSchema } from '@tet/domain/plans';
 import { z } from 'zod';
+import {
+  deleteFicheActionNoteSchema,
+  upsertFicheActionNoteSchema,
+} from './fiche-action-note.table';
 
 export const upsertFicheActionNotesRequestSchema = z
   .object({
     notes: z
-      .array(ficheNoteCreateSchema)
+      .array(upsertFicheActionNoteSchema)
       .min(1)
-      .describe('Liste de notes de suivi'),
+      .describe('Liste de notes'),
   })
-  .describe('Notes de suivi à insérer ou mettre à jour');
+  .describe('Notes à insérer ou mettre à jour');
 
-export const deleteFicheActionNotesRequestSchema = z
-  .object({ id: z.number() })
-  .describe('Note de suivi à supprimer');
+export const deleteFicheActionNotesRequestSchema =
+  deleteFicheActionNoteSchema.describe('Note à supprimer');
