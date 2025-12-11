@@ -22,20 +22,22 @@ export const useEditAxe = (planId: number) => {
     },
     onMutate: async (axe: PlanNode & { type: PlanType | null }) => {
       await queryClient.cancelQueries({
-        queryKey: trpcClient.plans.get.queryKey({ planId }),
+        queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
       });
       await queryClient.cancelQueries({ queryKey: plan_type_key });
 
       const previousData = [
         [plan_type_key, queryClient.getQueryData(plan_type_key)],
         [
-          trpcClient.plans.get.queryKey({ planId }),
-          queryClient.getQueryData(trpcClient.plans.get.queryKey({ planId })),
+          trpcClient.plans.plans.get.queryKey({ planId }),
+          queryClient.getQueryData(
+            trpcClient.plans.plans.get.queryKey({ planId })
+          ),
         ],
       ];
       // update les axes d'un plan
       queryClient.setQueryData(
-        trpcClient.plans.get.queryKey({ planId }),
+        trpcClient.plans.plans.get.queryKey({ planId }),
         (old): Plan | undefined =>
           old
             ? {
@@ -56,7 +58,7 @@ export const useEditAxe = (planId: number) => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: trpcClient.plans.get.queryKey({ planId }),
+        queryKey: trpcClient.plans.plans.get.queryKey({ planId }),
       });
       queryClient.invalidateQueries({ queryKey: plan_type_key });
     },
