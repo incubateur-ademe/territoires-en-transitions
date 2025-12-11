@@ -1,4 +1,4 @@
-import * as z from 'zod/mini';
+import * as z from 'zod';
 
 export const ficheNoteSchema = z.object({
   id: z.number(),
@@ -12,10 +12,11 @@ export const ficheNoteSchema = z.object({
 
 export type FicheNote = z.infer<typeof ficheNoteSchema>;
 
-export const ficheNoteCreateSchema = z.pick(ficheNoteSchema, {
-  id: true,
-  dateNote: true,
-  note: true,
-});
+export const ficheNoteUpsertSchema = ficheNoteSchema
+  .pick({
+    dateNote: true,
+    note: true,
+  })
+  .extend({ id: z.number().optional() });
 
-export type FicheNoteCreate = z.infer<typeof ficheNoteCreateSchema>;
+export type FicheNoteUpsert = z.infer<typeof ficheNoteUpsertSchema>;

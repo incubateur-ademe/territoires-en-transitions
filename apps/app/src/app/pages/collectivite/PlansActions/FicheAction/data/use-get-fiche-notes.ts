@@ -2,17 +2,14 @@ import { useApiClient } from '@/app/utils/use-api-client';
 import { useQuery } from '@tanstack/react-query';
 import { Fiche, FicheNote } from '@tet/domain/plans';
 
-/**
- * Charge les notes de suivi d'une fiche action
- */
-export const useFicheActionNotesSuivi = (
+export const useGetFicheNotes = (
   { id: ficheId, collectiviteId }: Pick<Fiche, 'id' | 'collectiviteId'>,
   requested = true
 ) => {
   const api = useApiClient();
 
   return useQuery({
-    queryKey: ['fiche_action_notes_suivi', collectiviteId, ficheId],
+    queryKey: ['fiche_action_notes', collectiviteId, ficheId],
 
     queryFn: async () => {
       if (!collectiviteId || !ficheId) return;

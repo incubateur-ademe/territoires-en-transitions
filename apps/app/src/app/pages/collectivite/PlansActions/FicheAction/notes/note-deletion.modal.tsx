@@ -1,37 +1,33 @@
-import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
-import { FicheNote } from '@tet/domain/plans';
+import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
 import { ModalFooterOKCancel } from '@tet/ui';
-import { DeletedNote } from '../data/useUpsertNoteSuivi';
+import { DeletedNote } from '../data/use-delete-note';
 
-type ModaleSuppressionNoteDeSuiviProps = {
-  fiche: FicheShareProperties;
+type NoteDeletionModalProps = {
+  fiche: FicheWithRelations;
   editedNote: FicheNote;
   onDelete: (deletedNote: DeletedNote) => void;
 };
 
-/**
- * Bouton + modale de suppression d'une fiche action
- */
-const ModaleSuppressionNoteDeSuivi = ({
+export const NoteDeletionModal = ({
   fiche,
   editedNote,
   onDelete,
-}: ModaleSuppressionNoteDeSuiviProps) => {
+}: NoteDeletionModalProps) => {
   const year = new Date(editedNote.dateNote).getFullYear();
   return (
     <BaseUpdateFicheModal
       fiche={fiche}
-      title="Supprimer la note de suivi"
-      subTitle={`Note de suivi ${year}${
+      title="Supprimer la note"
+      subTitle={`Note ${year}${
         editedNote.createdAt ? ` créée par ${editedNote.createdBy}` : ''
       }`}
       render={({ descriptionId }) => (
         <div id={descriptionId}>
           <p className="mb-0">
             Cette note sera supprimée définitivement de la fiche action.
-            Souhaitez-vous vraiment supprimer cette note de suivi ?
+            Souhaitez-vous vraiment supprimer cette note ?
           </p>
         </div>
       )}
@@ -53,5 +49,3 @@ const ModaleSuppressionNoteDeSuivi = ({
     </BaseUpdateFicheModal>
   );
 };
-
-export default ModaleSuppressionNoteDeSuivi;

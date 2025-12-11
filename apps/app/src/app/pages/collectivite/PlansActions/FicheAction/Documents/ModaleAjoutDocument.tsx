@@ -3,13 +3,13 @@ import {
   AddPreuveModal,
   TAddPreuveModalHandlers,
 } from '@/app/referentiels/preuves/AddPreuveModal';
-import { Fiche } from '../../data/use-get-fiche';
+import { FicheWithRelations } from '@tet/domain/plans';
 
 type ModaleAjoutDocumentProps = {
   handlers: TAddPreuveModalHandlers;
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  fiche: Fiche;
+  fiche: FicheWithRelations;
 };
 
 const ModaleAjoutDocument = ({

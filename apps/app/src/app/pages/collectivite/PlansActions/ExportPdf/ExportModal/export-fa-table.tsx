@@ -54,7 +54,7 @@ const ExportFicheActionTable = ({ options, setOptions }: Props) => {
 
               {/* Personnalisation */}
               <DEPRECATED_TCell className="!px-3 !py-1">
-                {section.key === 'notes_suivi' ? (
+                {section.key === 'notes' ? (
                   <ExportSuiviSelect {...{ options, setOptions }} />
                 ) : (
                   ''

@@ -921,3 +921,4 @@ referentiel/add_demande_associated_collectivite_id 2025-11-25T15:05:19Z System A
 @v4.89.0 2025-12-09T15:49:59Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # support minimal des démarches conjointes de labellisation/audit
 
 plan_action/remove-default-fiche-title 2025-12-09T14:49:55Z Marc Rutkowski <marc@attractive-media.fr> # Supprime la valeur par défaut pour le titre d'une fiche action
+notes_complementaires_column_deletion 2025-11-18T13:57:03Z System Administrator <root@Host-002.lan> # Suppression des "notes_complémentaires"

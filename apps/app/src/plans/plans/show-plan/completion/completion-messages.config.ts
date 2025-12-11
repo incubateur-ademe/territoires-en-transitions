@@ -130,7 +130,7 @@ export const COMPLETION_MESSAGES: Record<
     getButtonLink: (collectiviteId, planId) =>
       makeCollectiviteToutesLesFichesUrl({
         collectiviteId,
-        searchParams: `${nameToparams.planActionIds}=${planId}&${nameToparams.notesDeSuivi}=${WITHOUT_RECENT}`,
+        searchParams: `${nameToparams.planActionIds}=${planId}&${nameToparams.notes}=${WITHOUT_RECENT}`,
       }),
   },
 };

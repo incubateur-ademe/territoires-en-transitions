@@ -3,16 +3,16 @@ import { TAddLink } from '@/app/referentiels/preuves/AddPreuveModal/AddLink';
 import { useAddPreuveAnnexe } from '@/app/referentiels/preuves/useAddPreuves';
 import { useCollectiviteId } from '@tet/api/collectivites';
 
-type TAddDocs = (demande_id: number) => {
-  /** ajoute un fichier sélectionné depuis la bibliothèque */
-  addFileFromLib: TAddFileFromLib;
-  isLoading: boolean;
-  isError: boolean;
-};
-
 /** Renvoie les gestionnaires d'événements du dialogue d'ajout de
  * fichiers/liens à une fiche action */
-export const useAddAnnexe: TAddDocs = (fiche_id: number) => {
+export const useAddAnnexe = (
+  ficheId: number
+): {
+  addFileFromLib: TAddFileFromLib;
+  addLink: TAddLink;
+  isLoading: boolean;
+  isError: boolean;
+} => {
   const collectivite_id = useCollectiviteId();
   const { mutate: addPreuve, isPending, isError } = useAddPreuveAnnexe();
 
@@ -20,7 +20,7 @@ export const useAddAnnexe: TAddDocs = (fiche_id: number) => {
   const addFileFromLib: TAddFileFromLib = (fichier_id) => {
     if (collectivite_id) {
       addPreuve({
-        fiche_id,
+        fiche_id: ficheId,
         collectivite_id,
         commentaire: '',
         fichier_id,
@@ -31,7 +31,7 @@ export const useAddAnnexe: TAddDocs = (fiche_id: number) => {
   const addLink: TAddLink = (titre, url) => {
     if (collectivite_id) {
       addPreuve({
-        fiche_id,
+        fiche_id: ficheId,
         collectivite_id,
         commentaire: '',
         titre,
