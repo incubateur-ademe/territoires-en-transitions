@@ -72,6 +72,12 @@ const ActionCommentsPanel = ({
     value: 'all',
   });
 
+  const handleActionChange = (value: string | undefined) => {
+    if (value !== undefined) {
+      setSelectedAction(value);
+    }
+  };
+
   const filteredDiscussions = useMemo(() => {
     return (
       discussions?.discussions.filter(
@@ -127,7 +133,7 @@ const ActionCommentsPanel = ({
           onStatusChange={(value: DiscussionStatus) => setSelectedStatus(value)}
           selectedAction={selectedAction}
           onActionChange={(value: string | undefined) =>
-            setSelectedAction(value)
+            handleActionChange(value)
           }
           actionsOptions={actionsOptions}
           canCreateDiscussion={canCreateDiscussion(currentCollectivite)}
@@ -142,7 +148,7 @@ const ActionCommentsPanel = ({
           onStatusChange={(value: DiscussionStatus) => setSelectedStatus(value)}
           selectedAction={selectedAction}
           onActionChange={(value: string | undefined) =>
-            setSelectedAction(value)
+            handleActionChange(value)
           }
           actionsOptions={actionsOptions}
           commentsCount={commentsCount}
