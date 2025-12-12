@@ -93,7 +93,7 @@ export const RequestPlanImportView = () => {
           <li>
             Visualisez une vidéo de présentation du fichier d’import{' '}
             <ExternalLink
-              href={'https://www.youtube.com/watch?v=jQ6qnXH4tKY'}
+              href={'https://www.youtube.com/watch?v=o0M4VdQ8bEc'}
               text={'en cliquant ici.'}
             />
           </li>
