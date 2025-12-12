@@ -12,10 +12,13 @@ export const ficheNoteSchema = z.object({
 
 export type FicheNote = z.infer<typeof ficheNoteSchema>;
 
-export const ficheNoteCreateSchema = z.pick(ficheNoteSchema, {
-  id: true,
-  dateNote: true,
-  note: true,
-});
+export const ficheNoteCreateSchema = z.partial(
+  z.pick(ficheNoteSchema, {
+    id: true,
+    dateNote: true,
+    note: true,
+  }),
+  { id: true }
+);
 
 export type FicheNoteCreate = z.infer<typeof ficheNoteCreateSchema>;
