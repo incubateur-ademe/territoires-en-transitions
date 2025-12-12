@@ -10,10 +10,10 @@ import {
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { PasswordStrengthMeter } from '../../components/PasswordStrengthMeter';
-import { LoginData, LoginPropsWithState } from './type';
+import { LoginPropsWithState } from './type';
 
 /** Gestionnaire d'état pour le formulaire */
-const useResetPassword = (email: string) => {
+const useResetPassword = () => {
   const validationSchema = z.object({
     password: z.string().refine((value) => value.length >= 8, {
       error: 'Le mot de passe doit comporter au moins 8 caractères',
@@ -24,7 +24,6 @@ const useResetPassword = (email: string) => {
     reValidateMode: 'onChange',
     resolver: zodResolver(validationSchema),
     defaultValues: {
-      email: email || '',
       password: '',
     },
   });
@@ -45,14 +44,14 @@ export const ResetPassword = (props: LoginPropsWithState) => {
     register,
     watch,
     formState: { isValid },
-  } = useResetPassword(defaultValues?.email || '');
+  } = useResetPassword();
 
   const password = watch('password');
   const res = getPasswordStrength(password, [defaultValues?.email || '']);
 
   const eventTracker = useEventTracker();
-  const onSubmitForm = handleSubmit((data: LoginData) => {
-    onSubmit?.(data);
+  const onSubmitForm = handleSubmit((data) => {
+    onSubmit?.({ email: defaultValues?.email || '', password: data.password });
     eventTracker(Event.auth.submitResetPassword);
   });
 

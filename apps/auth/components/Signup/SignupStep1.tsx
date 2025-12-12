@@ -1,15 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
+  Button,
   Event,
   Field,
-  FieldMessage,
   Input,
   ModalFooterOKCancel,
   Tab,
   Tabs,
   useEventTracker,
 } from '@tet/ui';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { PasswordStrengthMeter } from '../../components/PasswordStrengthMeter';
@@ -27,7 +27,9 @@ const useSignupStep1 = (isPasswordless: boolean, email: string) => {
         error: 'Le mot de passe doit comporter au moins 8 caractères',
       }),
   });
+
   return useForm({
+    mode: 'onChange',
     reValidateMode: 'onChange',
     resolver: zodResolver(validationSchema),
     defaultValues: {
@@ -53,7 +55,7 @@ export const SignupStep1 = (props: SignupPropsWithState) => {
       <Tabs
         className="justify-center"
         defaultActiveTab={isPasswordless ? 1 : 0}
-        onChange={(activeTab) => {
+        onChange={(activeTab: number) => {
           if (activeTab === 0) {
             // reset le champ mdp qui peut être rempli quand on passe d'un onglet à l'autre
             setIsPasswordless(false);
@@ -87,6 +89,7 @@ const SignupStep1Form = (
 ) => {
   const {
     error,
+    setError,
     isLoading,
     isPasswordless,
     onSubmit,
@@ -116,37 +119,50 @@ const SignupStep1Form = (
   const email = watch('email');
   const password = watch('password');
 
+  useEffect(() => {
+    setError(null);
+  }, [email]);
+
   const res = isPasswordless ? null : getPasswordStrength(password, [email]);
+
+  const isEmailAlreadyExistsError =
+    error === "L'email est déjà associé à un compte existant.";
 
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmitForm)}>
       <Field
         title="Email professionnel *"
         htmlFor="email"
-        state={errors.email ? 'error' : undefined}
-        message={errors.email?.message?.toString()}
+        state={
+          errors.email
+            ? 'error'
+            : isEmailAlreadyExistsError
+            ? 'warning'
+            : undefined
+        }
+        message={
+          errors.email?.message?.toString() ||
+          (isEmailAlreadyExistsError ? error : undefined)
+        }
       >
         <Input id="email" type="text" {...register('email')} />
       </Field>
+      {isEmailAlreadyExistsError && (
+        <Button href="/login" prefetch={false} size="xs" variant="underlined">
+          Se connecter
+        </Button>
+      )}
       {!isPasswordless && (
         <Field
           title="Mot de passe *"
           htmlFor="password"
           state={errors.password ? 'error' : undefined}
-          message={errors.password?.message?.toString()}
         >
           <Input id="password" type="password" {...register('password')} />
           {!!res && <PasswordStrengthMeter strength={res} />}
         </Field>
       )}
-      {!!error && (
-        <FieldMessage
-          data-test="error"
-          messageClassName="mt-4"
-          state="error"
-          message={error}
-        />
-      )}
+
       <ModalFooterOKCancel
         btnCancelProps={{ onClick: onCancel }}
         btnOKProps={{

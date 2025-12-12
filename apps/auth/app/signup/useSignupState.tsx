@@ -36,6 +36,7 @@ export const useSignupState = ({
     isValidSignupView(defaultView) ? (defaultView as SignupView) : 'etape1'
   );
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const onCancel = () => router.back();
@@ -43,7 +44,7 @@ export const useSignupState = ({
   const onSubmit = async (formData: SignupData) => {
     // réinitialise les erreurs
     setError(null);
-
+    setSuccessMessage(null);
     // ETAPE 1
     if (view === 'etape1') {
       const { email, password } = formData as SignupDataStep1;
@@ -65,10 +66,10 @@ export const useSignupState = ({
 
       // sort si il y a une erreur
       if (error) {
-        console.error(error.status, error.name, error.message);
+        console.error(error.status, error.code, error.name, error.message);
         setError(
-          error.message === 'User already registered'
-            ? 'Utilisateur déjà enregistré'
+          error.code === 'user_already_exists'
+            ? `L'email est déjà associé à un compte existant.`
             : `Le compte n'a pas pu être créé`
         );
         return;
@@ -161,6 +162,7 @@ export const useSignupState = ({
     if (type && email) {
       // réinitialise les erreurs
       setError(null);
+      setSuccessMessage(null);
 
       setIsLoading(true);
       let ret;
@@ -181,7 +183,13 @@ export const useSignupState = ({
       setIsLoading(false);
       if (ret?.error) {
         console.error(ret?.error);
-        setError("L'envoi du message a échoué");
+        setError(
+          "Erreur lors de l'envoi du code : veuillez attendre 30 secondes avant le renvoi d'un nouveau code"
+        );
+      } else {
+        setSuccessMessage(
+          `Un nouveau code vient de vous être envoyé à l'adresse mail : ${email}`
+        );
       }
       return;
     }
@@ -194,7 +202,9 @@ export const useSignupState = ({
     view,
     setView,
     error,
+    successMessage,
     setError,
+    setSuccessMessage,
     isLoading,
     setIsLoading,
     getPasswordStrength,
