@@ -5,8 +5,6 @@ type Props = {
   dataTest?: string;
   placeholder?: string;
   onSave: (value: string) => void;
-  numberOfRows?: number;
-  disabled?: boolean;
   message?: string;
   onCancel: () => void;
   isEditingComment: boolean;
@@ -14,11 +12,9 @@ type Props = {
 
 const ActionCommentNewInput = ({
   dataTest,
-  disabled,
   placeholder,
   onSave,
   onCancel,
-  numberOfRows = 1,
   message,
   isEditingComment,
 }: Props) => {
