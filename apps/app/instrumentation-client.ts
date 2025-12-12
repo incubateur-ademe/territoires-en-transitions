@@ -17,7 +17,7 @@ function initSentry() {
     integrations: [Sentry.replayIntegration()],
 
     // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-    tracesSampleRate: 0.25,
+    tracesSampleRate: 0.1,
 
     // replay enregistré uniquement en cas d'erreur
     replaysSessionSampleRate: 0,
