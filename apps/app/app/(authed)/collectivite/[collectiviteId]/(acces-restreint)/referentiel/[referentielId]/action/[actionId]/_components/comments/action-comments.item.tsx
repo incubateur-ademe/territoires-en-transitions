@@ -7,7 +7,7 @@ import { DiscussionMessage } from '@tet/domain/collectivites';
 import { Button, Select } from '@tet/ui';
 import Link from 'next/link';
 import { useState } from 'react';
-import ActionCommentInput from './action-comments.input';
+import ActionCommentNewInput from './action-comments.new-input';
 import { ActionDiscussionStatut } from './action-comments.types';
 import { useDeleteDiscussionMessage } from './hooks/use-delete-discussion-message';
 import { useUpdateDiscussion } from './hooks/use-update-discussion';
@@ -118,6 +118,8 @@ const ActionCommentItem = ({
     { label: 'fermé', value: 'ferme' },
   ];
 
+  const commentActionButtonsClassName = ' group-hover:flex gap-2 ml-auto p-3';
+
   return (
     <div className="group">
       <div className="flex items-start gap-3 justify-between">
@@ -130,7 +132,7 @@ const ActionCommentItem = ({
           <div className=" flex flex-col gap-2 w-full">
             <div className="sm:h-7 flex sm:items-center gap-2 max-sm:flex-col justify-between">
               <div className="flex align-center items-center gap-2">
-                <span className="text-primary-9 text-sm font-bold">
+                <span className="shrink-0 text-primary-9 text-sm font-bold">
                   {comment.createdByPrenom} {comment.createdByNom}
                 </span>
                 <span className="text-grey-6 text-xs font-medium">
@@ -139,25 +141,25 @@ const ActionCommentItem = ({
                 {canUpdateOrDeleteComment && (
                   <div className="flex gap-2">
                     <Button
-                      className="invisible opacity-0 transition-opacity duration-150 group-hover:visible group-hover:opacity-100 focus-visible:visible focus-visible:opacity-100"
-                      dataTest="ActionDiscussionCommentaireMenu"
+                      className={commentActionButtonsClassName}
+                      dataTest="ActionEditDiscussionCommentaireMenu"
                       icon="pencil-line"
                       title="Editer mon commentaire"
-                      variant="outlined"
+                      variant="grey"
                       size="xs"
                       loading={isUpdatingDiscussionMessage}
                       disabled={isEditingComment}
                       onClick={() => {
                         if (!canUpdateOrDeleteComment) return;
-                        setIsEditingComment(!isEditingComment);
+                        setIsEditingComment(true);
                       }}
                     />
                     <Button
-                      className="invisible opacity-0 transition-opacity duration-150 group-hover:visible group-hover:opacity-100 focus-visible:visible focus-visible:opacity-100"
-                      dataTest="ActionDiscussionCommentaireMenu"
+                      className={commentActionButtonsClassName}
+                      dataTest="ActionDeleteDiscussionCommentaireMenu"
                       icon="delete-bin-6-line"
                       title="Supprimer mon commentaire"
-                      variant="outlined"
+                      variant="grey"
                       size="xs"
                       loading={isDeletingDiscussionMessage}
                       disabled={isDeletingDiscussionMessage}
@@ -169,7 +171,7 @@ const ActionCommentItem = ({
                 )}
               </div>
               {isFirstComment && (
-                <div className="">
+                <div className="w-fit">
                   <Select
                     options={statusOptions}
                     values={selectedStatus}
@@ -207,24 +209,35 @@ const ActionCommentItem = ({
                 <ActionCommentTitle title={title} />
               ))}
 
-            {!isEditingComment && (
-              <p className="text-sm text-primary-10 font-medium whitespace-pre-wrap mb-0 w-full wrap-anywhere">
+            {/* {!isEditingComment && (
+              <p className="text-sm text-primary-10 whitespace-pre-wrap mb-0">
                 {comment.message}
               </p>
-            )}
-            {isEditingComment && (
+            )} */}
+            {/* {isEditingComment && (
               <ActionCommentInput
                 message={comment.message}
                 onSave={(value) => {
                   handleSaveComment(value);
                 }}
                 disabled={isUpdatingDiscussionMessage}
-                onCancel={() => {
+                onPublish={() => {
                   setIsEditingComment(false);
                 }}
-                autoFocus={true}
+                autoFocus
               />
-            )}
+            )} */}
+
+            <ActionCommentNewInput
+              isEditingComment={isEditingComment}
+              message={comment.message}
+              onSave={(value) => {
+                handleSaveComment(value);
+              }}
+              onCancel={() => {
+                setIsEditingComment(false);
+              }}
+            />
           </div>
         </div>
       </div>

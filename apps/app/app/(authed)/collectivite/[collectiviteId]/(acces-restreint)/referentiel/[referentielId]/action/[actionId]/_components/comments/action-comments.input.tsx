@@ -8,7 +8,7 @@ type Props = {
   numberOfRows?: number;
   disabled?: boolean;
   message?: string;
-  onCancel?: () => void;
+  onPublish?: () => void;
   autoFocus?: boolean;
 };
 
@@ -19,7 +19,7 @@ const ActionCommentInput = ({
   onSave,
   numberOfRows = 1,
   message,
-  onCancel,
+  onPublish,
   autoFocus = false,
 }: Props) => {
   const [comment, setComment] = useState(message ?? '');
@@ -28,11 +28,8 @@ const ActionCommentInput = ({
     if (comment.trim() !== (message ?? '').trim()) {
       onSave(comment);
     }
-    resetComment();
-  };
-  const resetComment = () => {
     setComment('');
-    onCancel?.();
+    onPublish?.();
   };
 
   return (
