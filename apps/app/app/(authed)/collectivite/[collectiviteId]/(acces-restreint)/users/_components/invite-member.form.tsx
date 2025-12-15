@@ -98,7 +98,7 @@ export const InviteMemberForm = (props: Props) => {
       <Field
         title="Associer l’utilisateur à un ou plusieurs tag(s) pilote(s)"
         state="info"
-        message="Si vous avez ajouté une personne pilote à une fiche, une mesure ou un indicateur alors qu'elle n'avait pas encore de compte dans l'application, son nom apparaîtra dans cette liste. En l'associant à l'invitation, tous les éléments qui lui sont attribués seront automatiquement transférés vers son nouveau profil."
+        message="Si vous avez ajouté une personne pilote à une action, une mesure ou un indicateur alors qu'elle n'avait pas encore de compte dans l'application, son nom apparaîtra dans cette liste. En l'associant à l'invitation, tous les éléments qui lui sont attribués seront automatiquement transférés vers son nouveau profil."
       >
         <Controller
           name="tagIds"

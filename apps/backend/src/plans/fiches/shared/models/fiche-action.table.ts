@@ -59,7 +59,7 @@ export const prioritePgEnum = pgEnum(
 export const ficheActionTable = pgTable('fiche_action', {
   id: serial('id').primaryKey().notNull(),
   parentId: integer('parent_id'),
-  titre: varchar('titre', { length: 300 }).default('Nouvelle fiche'),
+  titre: varchar('titre', { length: 300 }).default('Nouvelle action'),
   description: varchar('description', { length: 20000 }),
   piliersEci: varchar('piliers_eci', {
     length: 50,

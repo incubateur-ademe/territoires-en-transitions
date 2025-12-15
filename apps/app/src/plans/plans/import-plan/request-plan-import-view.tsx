@@ -25,11 +25,11 @@ export const RequestPlanImportView = () => {
     <>
       <h3 className="mb-8">
         <Icon icon="import-fill" size="lg" className="mr-2" />
-        Importer un plan d’action
+        Importer un plan
       </h3>
       <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-white rounded-lg">
         <div className="mb-1 text-sm">Étape 1</div>
-        <h6 className="mb-4">Téléchargez le modèle de plan d’action</h6>
+        <h6 className="mb-4">Téléchargez le modèle de plan</h6>
         <p className="mb-4">
           Il est structuré selon le format attendu par la plateforme.
         </p>
@@ -38,7 +38,7 @@ export const RequestPlanImportView = () => {
 
         <div className="mb-1 text-sm">Étape 2</div>
         <h6 className="mb-4">
-          Complétez le fichier avec les informations de votre plan d’action
+          Complétez le fichier avec les informations de votre plan
         </h6>
         <p>
           Le modèle vous permet de renseigner la structure du plan ainsi que les
@@ -59,7 +59,7 @@ export const RequestPlanImportView = () => {
           <span className="font-bold">contact@territoiresentransitions.fr</span>
         </p>
         <p className="mb-0">
-          Nous vous informons dès que l’import est réalisé. Des questions
+          Nous vous informons dès que l'import est réalisé. Des questions
           pendant le remplissage, contactez nous.
         </p>
 
@@ -91,7 +91,7 @@ export const RequestPlanImportView = () => {
         <h6 className="mb-4">Ressources</h6>
         <ul className="mb-0">
           <li>
-            Visualisez une vidéo de présentation du fichier d’import{' '}
+            Visualisez une vidéo de présentation du fichier d'import{' '}
             <ExternalLink
               href={'https://www.youtube.com/watch?v=o0M4VdQ8bEc'}
               text={'en cliquant ici.'}
@@ -117,7 +117,7 @@ export const RequestPlanImportView = () => {
             onClick={goBackToPreviousPage}
             type="button"
           >
-            Revenir à l’étape précédente
+            Revenir à l'étape précédente
           </Button>
         </div>
       </div>

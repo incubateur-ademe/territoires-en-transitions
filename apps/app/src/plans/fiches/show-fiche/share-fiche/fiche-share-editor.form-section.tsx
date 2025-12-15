@@ -25,9 +25,9 @@ export const FicheShareEditorFormSection = ({
       className="!grid-cols-1"
     >
       <Field
-        title="Collectivités pouvant éditer cette fiche :"
+        title="Collectivités pouvant éditer cette action :"
         state="info"
-        message="Les administrateurs et éditeurs de cette collectivité pourront éditer cette fiche"
+        message="Les administrateurs et éditeurs de cette collectivité pourront éditer cette action"
       >
         <MultipleCollectiviteSelector
           collectivites={collectivites}

@@ -45,7 +45,7 @@ export const NotifyPiloteEmail = (
         ) : (
           <li>Action : {actionTitre}</li>
         )}
-        {planNom && <li>Plan d'action : {planNom}</li>}
+        {planNom && <li>Plan : {planNom}</li>}
         {dateFin && <li>Date de fin : {dateFin}</li>}
       </ul>
 

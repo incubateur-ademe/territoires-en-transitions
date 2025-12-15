@@ -705,7 +705,7 @@ export default class ListFichesService {
     if (!fichesAction?.length) {
       return {
         success: false,
-        error: `Aucune fiche action trouvée avec l'id ${ficheId}`,
+        error: `Aucune action trouvée avec l'id ${ficheId}`,
       };
     }
 
@@ -1053,7 +1053,7 @@ export default class ListFichesService {
     const fichesWithCompletion = data.map((fiche) => {
       const completion = completionData.find((c) => c.ficheId === fiche.id);
       if (!completion) {
-        throw new Error(`Completion data not found for fiche ${fiche.id}`);
+        throw new Error(`Completion data not found for action ${fiche.id}`);
       }
       return { ...fiche, completion };
     });

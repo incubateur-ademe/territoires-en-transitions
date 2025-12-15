@@ -68,7 +68,7 @@ export const Tabs = ({ className }: TabsProps) => {
       render: () => <MoyensTab isReadonly={isReadonly} fiche={fiche} />,
     },
     {
-      label: 'Fiches action liées',
+      label: 'Actions liées',
       isVisible:
         hasPermission(permissions, 'plans.fiches.read') ||
         (!niveauAcces &&

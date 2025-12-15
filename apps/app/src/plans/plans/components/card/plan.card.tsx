@@ -10,17 +10,17 @@ import { Statuts } from './statuts';
 export type PlanCardDisplay = 'circular' | 'row';
 
 type Props = {
-  /** Plan d'action */
+  /** Plan */
   plan: Plan;
-  /** Lien vers la fiche action */
+  /** Lien vers la fiche */
   link?: string;
-  /** Doit ouvrir la fiche action dans un nouvel onglet */
+  /** Doit ouvrir la fiche dans un nouvel onglet */
   openInNewTab?: boolean;
   /** Gère l'affichage des statuts des fiches */
   display?: PlanCardDisplay;
 };
 
-/** Carte résumé d'un plan d'action */
+/** Carte résumé d'un plan */
 export const PlanCard = ({
   plan,
   link,
@@ -98,7 +98,7 @@ export const PlanCard = ({
         <div className="w-0.5 h-4/5 my-auto bg-grey-5" />
         {/** Nombre de fiches */}
         <span>
-          {fichesCount ?? 0} fiche{fichesCount > 1 ? 's' : ''}
+          {fichesCount ?? 0} action{fichesCount > 1 ? 's' : ''}
         </span>
       </div>
     </Card>

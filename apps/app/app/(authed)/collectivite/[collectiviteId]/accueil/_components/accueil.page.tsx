@@ -62,15 +62,15 @@ const AccueilPage = () => {
             },
           ]}
         />
-        {/** 0 plan d'action */}
+        {/** 0 plan */}
         {plansCount === 0 ? (
           <SectionCard
             picto={<PictoPlansAction />}
-            title="Comment piloter mes plans d’actions ?"
+            title="Comment piloter mes plans ?"
             description="Centralisez les différents plans de la collectivité (PCAET, PAT, Plan Mobilité…), suivez la progression de vos actions à l’aide de nos tableaux de bord dynamiques et invitez les personnes qui pilotent ces actions !"
             buttons={[
               {
-                children: 'Créer mon plan d’action',
+                children: 'Créer mon plan',
                 href: makeCollectivitePlansActionsCreerUrl({
                   collectiviteId: collectivite.collectiviteId,
                 }),
@@ -79,11 +79,11 @@ const AccueilPage = () => {
             ]}
           />
         ) : (
-          // Plusieurs plans d'action
+          // Plusieurs plans
           <SectionCard
             picto={<PictoPlansAction />}
-            title={`${plansCount} Plans d’actions suivis par la collectivité`}
-            description="Centralisez et réalisez le suivi des plans d'actions de transition écologique de votre collectivité. Collaborez à plusieurs sur les fiches action pour planifier et piloter leur mise en oeuvre !"
+            title={`${plansCount} Plans suivis par la collectivité`}
+            description="Centralisez et réalisez le suivi des plans de transition écologique de votre collectivité. Collaborez à plusieurs sur les actions pour planifier et piloter leur mise en oeuvre !"
             buttons={[
               {
                 children: 'Voir le tableau de bord',
@@ -160,7 +160,7 @@ const AccueilPage = () => {
         <SectionCard
           picto={<PictoCollectivite />}
           title="Comment progresser plus rapidement ?"
-          description="Inspirez vous des états des lieux ou plans d’actions d’autres collectivités du territoire, trouvez facilement les contacts de vos homologues."
+          description="Inspirez vous des états des lieux ou plans d'autres collectivités du territoire, trouvez facilement les contacts de vos homologues."
           buttons={[
             {
               children: 'Rechercher des modèles',

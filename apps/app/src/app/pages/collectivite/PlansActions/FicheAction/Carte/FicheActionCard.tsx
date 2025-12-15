@@ -94,7 +94,7 @@ const FicheActionCard = ({
           {onUnlink && (
             <Button
               icon="link-unlink"
-              title="Dissocier la fiche action"
+              title="Dissocier l'action"
               variant="grey"
               size="xs"
               onClick={onUnlink}
@@ -115,7 +115,7 @@ const FicheActionCard = ({
                   data-test="EditerFicheBouton"
                   id={`fiche-${ficheAction.id}-edit-button`}
                   icon="edit-line"
-                  title="Modifier la fiche"
+                  title="Modifier l'action"
                   variant="grey"
                   size="xs"
                   onClick={() => toggleOpen(!isEditOpen)}
@@ -132,7 +132,7 @@ const FicheActionCard = ({
         ficheAction.sharedWithCollectivites?.length) && (
         <div className="absolute -top-3 left-5 flex items-center gap-1">
           {ficheAction.restreint && (
-            <div data-test="FicheCartePrivee" title="Fiche en accès restreint">
+            <div data-test="FicheCartePrivee" title="Action en accès restreint">
               <Notification icon="lock-fill" size="xs" classname="w-7 h-7" />
             </div>
           )}
@@ -186,7 +186,7 @@ const FicheActionCard = ({
                 <BadgeStatut statut={ficheAction.statut} size="sm" />
               )}
               {ficheAction.actionImpactId && (
-                <Tooltip label="Fiche action issue du service Actions à Impact">
+                <Tooltip label="Action issue du service Actions à Impact">
                   <Button
                     variant="outlined"
                     size="xs"
@@ -248,14 +248,14 @@ const FicheActionCard = ({
           </span>
         </div>
 
-        {/* Plans d'action dans lesquels sont la fiche */}
+        {/* Plans dans lesquels sont la fiche */}
         <span title="Emplacements" className="text-sm font-medium">
           {collectivitePlans.length > 0 ? (
             <ListWithTooltip
               list={collectivitePlans.map((p) => generateTitle(p.nom))}
             />
           ) : (
-            'Fiche non classée'
+            'Action non classée'
           )}
         </span>
       </Card>

@@ -6,10 +6,10 @@ import { getMaxLengthMessage } from '@/app/utils/formatUtils';
 import { FormSectionGrid } from '@tet/ui';
 
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { FicheWithRelations } from '@tet/domain/plans';
 import { RichTextEditor, SelectFilter } from '@tet/ui';
 import { Controller, useForm } from 'react-hook-form';
 import { Fiche } from '../data/use-get-fiche';
-import { FicheWithRelations } from '@tet/domain/plans';
 
 const DESCRIPTION_MAX_LENGTH = 20000;
 const INSTANCES_MAX_LENGTH = 10000;
@@ -78,7 +78,7 @@ export const FicheDescriptionForm = ({
   return (
     <form id={formId} onSubmit={handleSubmit(handleSave)}>
       <FormSectionGrid>
-        <Field title="Nom de la fiche action" className="col-span-2">
+        <Field title="Nom de l'action" className="col-span-2">
           <Input type="text" {...register('titre')} />
         </Field>
 

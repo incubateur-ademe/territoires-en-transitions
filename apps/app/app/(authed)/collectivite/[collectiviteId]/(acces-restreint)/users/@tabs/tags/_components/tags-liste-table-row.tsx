@@ -191,7 +191,7 @@ const TagsListeTableRow = ({
           }}
           tagName={tag.tagNom}
           title="Supprimer un tag pilote"
-          message="En confirmant la suppression, cela supprimera également l’association de ce tag aux fiches action, indicateurs et mesures des référentiels."
+          message="En confirmant la suppression, cela supprimera également l’association de ce tag aux actions, indicateurs et mesures des référentiels."
           onDelete={() => deleteTag(tag.tagId)}
         />
       )}

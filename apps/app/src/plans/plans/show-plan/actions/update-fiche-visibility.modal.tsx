@@ -10,7 +10,7 @@ type Props = {
 };
 
 /**
- * Modale pour modifier la confidentialité des fiches d'un plan.
+ * Modale pour modifier la confidentialité des actions d'un plan.
  */
 const RestreindreFichesModal = ({
   children,
@@ -24,13 +24,13 @@ const RestreindreFichesModal = ({
       textAlign="left"
       title={
         restreindre
-          ? 'Souhaitez-vous rendre privées toutes les fiches de ce plan ?'
-          : 'Souhaitez-vous rendre publiques toutes les fiches de ce plan ?'
+          ? 'Souhaitez-vous rendre privées toutes les actions de ce plan ?'
+          : 'Souhaitez-vous rendre publiques toutes les actions de ce plan ?'
       }
       description={
         restreindre
-          ? "En passant en privé l'ensemble des fiches de ce plan, elles ne seront plus accessibles par les personnes n’étant pas membres de votre collectivité. Les fiches restent consultables par l’ADEME et le service support de la plateforme."
-          : "En passant en public l'ensemble des fiches de ce plan, elles seront accessibles à toutes les personnes n’étant pas membres de votre collectivité."
+          ? "En passant en privé l'ensemble des actions de ce plan, elles ne seront plus accessibles par les personnes n’étant pas membres de votre collectivité. Les actions restent consultables par l’ADEME et le service support de la plateforme."
+          : "En passant en public l'ensemble des actions de ce plan, elles seront accessibles à toutes les personnes n’étant pas membres de votre collectivité."
       }
       renderFooter={({ close }) => (
         <ModalFooterOKCancel

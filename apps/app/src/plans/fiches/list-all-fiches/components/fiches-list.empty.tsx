@@ -17,12 +17,12 @@ export const FichesListEmpty = ({
     <div className="col-span-full flex flex-col items-center p-12 text-center bg-primary-0 border border-primary-4 rounded-xl">
       <EmptyCard
         picto={(props) => <EmptyFichePicto {...props} />}
-        title="Vous n'avez pas encore créé de fiche action !"
-        subTitle="Une fois vos fiches action créées, vous les retrouvez toutes dans cette vue où vous pourrez les filtrer sur de nombreux critères."
+        title="Vous n'avez pas encore créé d'actions !"
+        subTitle="Une fois vos actions créées, vous les retrouvez toutes dans cette vue où vous pourrez les filtrer sur de nombreux critères."
         isReadonly={isReadOnly}
         actions={[
           {
-            children: "Créer un plan d'action",
+            children: 'Créer un plan',
             onClick: () =>
               createPlan({
                 collectiviteId,
@@ -31,7 +31,7 @@ export const FichesListEmpty = ({
             variant: 'outlined',
           },
           {
-            children: 'Créer une fiche action',
+            children: 'Créer une action',
             onClick: () => createFicheAction(),
           },
         ]}

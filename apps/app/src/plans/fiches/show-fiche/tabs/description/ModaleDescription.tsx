@@ -16,7 +16,7 @@ const ModaleDescription = ({ fiche }: ModaleDescriptionProps) => {
   return (
     <BaseUpdateFicheModal
       fiche={fiche}
-      title="Modifier la fiche"
+      title="Modifier l'action"
       footerIsAlwaysVisible
       size="lg"
       render={({ close }) => (

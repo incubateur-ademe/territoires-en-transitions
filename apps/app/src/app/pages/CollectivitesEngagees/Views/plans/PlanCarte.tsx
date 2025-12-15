@@ -13,7 +13,7 @@ type Props = {
 };
 
 /**
- * Carte représentant un plan d'action.
+ * Carte représentant un plan.
  * Utilisée dans la vue collectivités engagées.
  *
  * Lien vers la page du plan.

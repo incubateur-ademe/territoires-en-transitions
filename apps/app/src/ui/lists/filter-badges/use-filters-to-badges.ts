@@ -143,7 +143,7 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
           );
         } else if (key === 'planActions') {
           badgeValues.push(
-            `Plan d'action : ${mergedFilters[key]
+            `Plan : ${mergedFilters[key]
               ?.map((plan) => generateTitle(plan.nom))
               .join(', ')}`
           );
@@ -176,7 +176,7 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         } else if (key === 'hasOpenData') {
           mergedFilters[key] && badgeValues.push('Données Open Data');
 
-          /** Fiches action */
+          /** Actions */
         } else if (key === 'hasBudgetPrevisionnel') {
           mergedFilters[key] && badgeValues.push('Budget renseigné');
         } else if (key === 'restreint') {
@@ -184,14 +184,14 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         } else if (key === 'hasIndicateurLies') {
           badgeValues.push(
             mergedFilters[key]
-              ? 'Fiche avec indicateur(s) associé(s)'
-              : 'Fiche sans indicateur(s) associé(s)'
+              ? 'Action avec indicateur(s) associé(s)'
+              : 'Action sans indicateur(s) associé(s)'
           );
         } else if (key === 'hasMesuresLiees') {
           badgeValues.push(
             mergedFilters[key]
-              ? 'Fiches avec mesure(s) des référentiels liée(s)'
-              : 'Fiches sans mesure(s) des référentiels liée(s)'
+              ? 'Actions avec mesure(s) des référentiels liée(s)'
+              : 'Actions sans mesure(s) des référentiels liée(s)'
           );
         } else if (key === 'hasDateDeFinPrevisionnelle') {
           badgeValues.push(

@@ -47,7 +47,7 @@ export const NoteCreationModal = ({
         <FormSectionGrid formSectionId={descriptionId}>
           <Alert
             className="col-span-2"
-            description="Vous pouvez ajouter des éléments de suivi annuels, ou sur une maille temporelle plus fine ! Sélectionnez l'année concernée et précisez la date ou période de suivi plus précise directement dans votre commentaire"
+            description="Vous pouvez ajouter des éléments de suivi annuels, ou sur une maille temporelle plus fine. Sélectionnez l'année concernée et précisez la date ou période de suivi plus précise directement dans votre commentaire."
           />
 
           <Field title="Année" className="col-span-2">

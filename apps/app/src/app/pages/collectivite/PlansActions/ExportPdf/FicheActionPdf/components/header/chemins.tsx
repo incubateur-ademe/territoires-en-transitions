@@ -35,7 +35,7 @@ export const Chemins = ({ chemins }: CheminsProps) => {
         ))
       ) : (
         <Paragraph className="text-grey-7 text-[0.5rem]">
-          Fiche non classée
+          Action non classée
         </Paragraph>
       )}
     </Stack>

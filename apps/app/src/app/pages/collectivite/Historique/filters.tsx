@@ -12,11 +12,6 @@ export const filtresTypeOptions: { value: TFilterType; label: string }[] = [
     value: 'justification',
     label: 'Caractéristique de la collectivité : justification',
   },
-  // {value: 'preuve', label: 'Documents et preuves'},
-  // {value: 'membre', label: 'Membre'},
-  // {value: 'indicateur', label: 'Indicateur'},
-  // {value: 'plan_action_arborescence', label: "Plan d'action: arborescence"},
-  // {value: 'plan_action_fiche', label: "Plan d'action: arborescence"},
 ];
 
 export type TFilters = {

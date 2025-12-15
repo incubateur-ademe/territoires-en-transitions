@@ -1,5 +1,5 @@
 /**
- * Export d'un plan d'action au format Excel
+ * Export d'un plan au format Excel
  */
 import { FILL } from '@tet/backend/utils/excel/export-excel.utils';
 import { isNotNil } from 'es-toolkit';

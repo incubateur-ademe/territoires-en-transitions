@@ -65,7 +65,7 @@ const FichesActionsDropdown = ({
       fiche.plans?.[0] ?? {
         collectiviteId: fiche.collectiviteId,
         id: -1,
-        nom: 'Fiches non classées',
+        nom: 'Actions non classées',
       }
     );
     return acc;
@@ -78,7 +78,7 @@ const FichesActionsDropdown = ({
     )
     .sort((a, b) => {
       if (!a.nom) return -1;
-      return naturalSort(a.nom, b.nom || 'Fiches non classées');
+      return naturalSort(a.nom, b.nom || 'Actions non classées');
     });
 
   /* Génère la liste d'options */
@@ -86,7 +86,7 @@ const FichesActionsDropdown = ({
     // id -1 : correspond aux fiches non classées
     if (plan.id === -1) {
       return {
-        title: 'Fiches non classées',
+        title: 'Actions non classées',
         options: (fichesDisponiblesListe ?? [])
           .filter((fiche) => !fiche.plans || !fiche.plans[0])
           .map((fiche) => ({

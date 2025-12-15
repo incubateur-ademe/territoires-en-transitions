@@ -76,7 +76,7 @@ describe('Referentiels scoring routes', () => {
         'Personnes pilotes',
         'Services ou Directions pilotes',
         'Documents liés',
-        'Fiches actions liées',
+        'Actions liées',
       ])
     );
 

@@ -48,7 +48,7 @@ const BudgetContent = ({ type, budgets }: BudgetContentProps) => {
           <Paragraph className="text-grey-7">
             Le budget prévisionnel total renseigné{' '}
             {extendedBudget[0].estEtale ? 's’étale' : 'ne s’étale pas'} sur
-            toute la durée du plan d’action.
+            toute la durée du plan.
           </Paragraph>
         )}
       </Paragraph>

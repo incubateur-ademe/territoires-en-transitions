@@ -26,7 +26,7 @@ export const NoteDeletionModal = ({
       render={({ descriptionId }) => (
         <div id={descriptionId}>
           <p className="mb-0">
-            Cette note sera supprimée définitivement de la fiche action.
+            Cette note sera supprimée définitivement de l&apos;action.
             Souhaitez-vous vraiment supprimer cette note ?
           </p>
         </div>

@@ -66,7 +66,7 @@ const FicheActionAcces = ({
                 classname="h-6 w-8 justify-center"
               />
               <span>
-                Cette fiche est en mode{' '}
+                Cette action est en mode{' '}
                 <span className="font-extrabold">
                   {isRestreint ? 'privé' : 'public'}
                 </span>

@@ -37,11 +37,11 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
       {!isReadonly &&
         hasPermission(collectivite.permissions, 'plans.fiches.create') && (
           <Button icon="add-line" size="sm" onClick={() => createFicheResume()}>
-            Créer une fiche action
+            Créer une action
           </Button>
         )}
 
-      <Field title="Fiches action">
+      <Field title="Actions">
         <FichesActionsDropdown
           disabled={isReadonly}
           ficheCouranteId={null}

@@ -114,7 +114,7 @@ export const useUpdateFiche = (args?: Args) => {
 
       /**
        * Invalide le cache de la query countBy des fiches
-       * pour recalculer le status d'un plan d'action
+       * pour recalculer le status d'un plan
        */
       queryClient.invalidateQueries({
         queryKey: trpc.plans.fiches.countBy.queryKey(),

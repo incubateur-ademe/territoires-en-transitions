@@ -38,10 +38,10 @@ export const getFicheActionShareText = (
   }
 
   return fiche.collectiviteId === collectiviteId
-    ? `Cette fiche est partagée en édition avec ${ficheSharedSingularAndPluralText(
+    ? `Cette action est partagée en édition avec ${ficheSharedSingularAndPluralText(
         fiche.sharedWithCollectivites
       )}`
-    : `Cette fiche vous est partagée en édition par la collectivité ${fiche.collectiviteNom}`;
+    : `Cette action vous est partagée en édition par la collectivité ${fiche.collectiviteNom}`;
 };
 
 const FicheActionShareInfoText = ({
@@ -58,7 +58,7 @@ const FicheActionShareInfoText = ({
   if (fiche.collectiviteId === collectiviteId) {
     return (
       <span>
-        Cette fiche est partagée en édition avec{' '}
+        Cette action est partagée en édition avec{' '}
         <span className="font-extrabold">
           {ficheSharedSingularAndPluralText(fiche.sharedWithCollectivites)}
         </span>
@@ -68,7 +68,7 @@ const FicheActionShareInfoText = ({
 
   return (
     <span>
-      Cette fiche vous est partagée en édition par la collectivité{' '}
+      Cette action vous est partagée en édition par la collectivité{' '}
       <span className="font-extrabold">{fiche.collectiviteNom}</span>
     </span>
   );

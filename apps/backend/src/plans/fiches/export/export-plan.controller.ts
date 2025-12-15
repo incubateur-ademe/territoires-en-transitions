@@ -19,7 +19,7 @@ import { createZodDto } from 'nestjs-zod';
 class GetExportRequestClass extends createZodDto(exportRequestSchema) {}
 
 @ApiExcludeController()
-@ApiTags("Plan d'action")
+@ApiTags('Plan')
 @ApiBearerAuth()
 @Controller('plan')
 export class ExportPlanController {

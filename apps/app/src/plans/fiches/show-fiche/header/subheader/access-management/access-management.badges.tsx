@@ -7,7 +7,7 @@ import {
 
 const PrivateFicheBadge = () => {
   return (
-    <div title="Fiche en accès restreint">
+    <div title="Action en accès restreint">
       <Notification icon="lock-fill" size="xs" classname="w-7 h-7" />
     </div>
   );

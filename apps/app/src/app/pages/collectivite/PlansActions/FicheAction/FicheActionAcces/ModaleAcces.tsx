@@ -54,7 +54,7 @@ export const ModaleAcces = ({
   return (
     <Modal
       openState={{ isOpen, setIsOpen }}
-      title="Gestion des accès au niveau de la fiche action"
+      title="Gestion des accès au niveau de l'action"
       subTitle={titre || ''}
       size="lg"
       render={() => (

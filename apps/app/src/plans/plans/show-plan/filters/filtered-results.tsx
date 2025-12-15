@@ -22,7 +22,7 @@ const FilteredResultsSummary = ({ count }: { count: number }) => {
 const FilteredResultsEmpty = () => {
   return (
     <div className="mt-16 mb-8">
-      Aucune fiche ne correspond à votre recherche
+      Aucune action ne correspond à votre recherche
     </div>
   );
 };

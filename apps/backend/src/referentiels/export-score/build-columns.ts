@@ -217,7 +217,7 @@ export function buildColumns(
         formatPreuves(row.score1.preuves || row.score2?.preuves),
     },
     {
-      title: 'Fiches actions liées',
+      title: 'Actions liées',
       colProps: {
         style: { alignment: Utils.ALIGN_LEFT_WRAP },
         width: WIDTH_MEDIUM,

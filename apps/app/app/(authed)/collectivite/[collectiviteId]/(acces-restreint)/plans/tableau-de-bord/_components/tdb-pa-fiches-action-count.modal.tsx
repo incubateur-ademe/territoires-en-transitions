@@ -98,7 +98,7 @@ const TdbPaFichesActionCountModal = ({ openState, module }: Props) => {
                 </Field>
 
                 <Field
-                  title="Répartition des fiches action par :"
+                  title="Répartition des actions par :"
                   state="info"
                   message="Ce paramètre vous permet de choisir l’affichage selon lequel votre graphique sera trié."
                   className="md:col-span-3"
@@ -128,7 +128,7 @@ const TdbPaFichesActionCountModal = ({ openState, module }: Props) => {
         } else {
           return (
             <ToutesLesFichesFiltersForm
-              title="Etape 2/2 : Choisissez les conditions applicables aux fiches actions"
+              title="Etape 2/2 : Choisissez les conditions applicables aux actions"
               filters={fromFiltersToFormFilters(moduleState.options.filtre)}
               setFilters={(filtre) => {
                 setModuleState({

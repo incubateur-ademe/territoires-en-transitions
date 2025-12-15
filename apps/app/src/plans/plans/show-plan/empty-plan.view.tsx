@@ -14,8 +14,8 @@ export const EmptyPlanView = ({
   return (
     <EmptyCard
       picto={() => <PictoAction height="100" width="100" />}
-      title="Vous n'avez aucune fiche action ni arborescence de plan"
-      description="Vous n'avez aucune fiche action ni arborescence de plan"
+      title="Vous n'avez aucune action ni arborescence de plan"
+      description="Vous n'avez aucune action ni arborescence de plan"
       actions={[
         <EditPlanButtons
           key={plan.id}

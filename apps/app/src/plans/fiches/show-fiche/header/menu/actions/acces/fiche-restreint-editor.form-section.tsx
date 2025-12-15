@@ -16,8 +16,8 @@ export const FicheRestreintEditorFormSection = ({
       <Checkbox
         data-test="FicheToggleConfidentialite"
         variant="switch"
-        label="Fiche action en mode privé"
-        message="Si le mode privé est activé, la fiche action n'est plus consultable par les personnes n'étant pas membres de votre collectivité. La fiche reste consultable par l'ADEME, le service support de la plateforme et les autres collectivités avec qui vous avez partagé la fiche en édition."
+        label="Action en mode privé"
+        message="Si le mode privé est activé, l'action n'est plus consultable par les personnes n'étant pas membres de votre collectivité. L'action reste consultable par l'ADEME, le service support de la plateforme et les autres collectivités avec qui vous l'avez partagée en édition."
         containerClassname="col-span-2"
         checked={restreint}
         onChange={() => onChange(!restreint)}

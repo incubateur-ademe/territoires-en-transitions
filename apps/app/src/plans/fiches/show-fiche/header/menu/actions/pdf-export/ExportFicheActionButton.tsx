@@ -132,7 +132,7 @@ export const ExportFicheActionButton = ({
   const [isDataRequested, setIsDataRequested] = useState(false);
   const [content, setContent] = useState<JSX.Element | undefined>(undefined);
 
-  const fileName = `fiche-action-${fiche.id}`;
+  const fileName = `action-${fiche.id}`;
 
   const selectedOptions = Object.keys(
     mapValues(options, (value: { isChecked: boolean }) => value.isChecked)

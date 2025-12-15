@@ -19,7 +19,7 @@ import {
  *  - m pour les ids de temps de mise en oeuvre ex : 1 ou 1,2
  *  - c pour ne pas restreindre aux compétences territoriales ex : true ou false (false par défaut)
  *
- *  Ainsi que le contrôle de la modale de "Création de plan d’action”
+ *  Ainsi que le contrôle de la modale de "Création de plan”
  *  - Si le paramètre `modale` est égal à `creation` la modale est initialement ouverte
  */
 async function Page({

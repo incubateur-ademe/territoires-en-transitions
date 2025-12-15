@@ -127,14 +127,14 @@ export function UpsertPlanForm({
       className="flex flex-col gap-6"
     >
       <Field
-        title="Nom du plan d'action"
+        title="Nom du plan"
         hint="Exemple : Plan Climat Air Énergie territorial 2022-2026"
         state={errors.nom ? 'error' : 'default'}
         message={errors.nom?.message}
       >
         <Input data-test="PlanNomInput" type="text" {...register('nom')} />
       </Field>
-      <Field title="Type de plan d'action">
+      <Field title="Type de plan">
         <Controller
           control={control}
           name="typeId"

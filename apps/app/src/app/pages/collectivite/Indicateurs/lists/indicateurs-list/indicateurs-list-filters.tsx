@@ -111,7 +111,7 @@ export const IndicateursListFilters = ({
       </FormSection>
 
       <FormSection title="Pilotage :" className="!grid-cols-1">
-        <Field title="Plan d'action">
+        <Field title="Plan">
           <PlansActionDropdown
             values={filters.planIds}
             onChange={({ plans }) => {

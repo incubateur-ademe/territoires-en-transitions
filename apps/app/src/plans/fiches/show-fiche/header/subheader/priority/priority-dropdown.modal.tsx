@@ -30,7 +30,7 @@ export const PriorityDropdownModal = ({
       fiche={fiche}
       onClose={onClose}
       openState={{ isOpen: true, setIsOpen: () => {} }}
-      title="Priorité de la fiche action"
+      title="Priorité de l'action"
       size="lg"
       render={() => (
         <PrioritesFilterDropdown

@@ -21,7 +21,7 @@ const Landing = () => {
           </h1>
           <p>
             Sélectionnez des Actions à Impact adaptées aux compétences de votre
-            collectivité et retrouvez-les au sein d’un plan d’action pilotable.
+            collectivité et retrouvez-les au sein d’un plan pilotable.
           </p>
           <div className="flex gap-x-8 gap-y-4 flex-wrap">
             <CestParti />

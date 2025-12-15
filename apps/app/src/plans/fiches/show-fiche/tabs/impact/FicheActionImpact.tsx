@@ -21,7 +21,7 @@ export const FicheActionImpact = () => {
           size="xs"
           classname="h-6 w-8 justify-center"
         />
-        <span className="mt-1">Fiche issue du service “Actions à Impact”</span>
+        <span className="mt-1">Action issue du service “Actions à Impact”</span>
         <Icon
           className="!absolute right-6 text-primary-10"
           icon="eye-line"

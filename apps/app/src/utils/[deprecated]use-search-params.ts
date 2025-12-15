@@ -62,7 +62,7 @@ export const useSearchParams = <T extends TParams>(
     }
   }, [params, pathname]);
 
-  // besoin de ça car les params ne s'actualisent pas au changement d'URL entre 2 plans d'action
+  // besoin de ça car les params ne s'actualisent pas au changement d'URL entre 2 plans
   useEffect(() => {
     setParams(currentParamsFromURL);
   }, [pathname]);

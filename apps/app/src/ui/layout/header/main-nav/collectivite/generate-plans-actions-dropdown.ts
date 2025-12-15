@@ -25,14 +25,14 @@ export const generatePlansActionsDropdown = ({
       }),
     },
     {
-      children: "Tous les plans d'action",
+      children: 'Tous les plans',
       dataTest: 'pa-tous',
       href: makeCollectivitePlansActionsListUrl({
         collectiviteId,
       }),
     },
     {
-      children: 'Toutes les fiches action',
+      children: 'Toutes les actions',
       dataTest: 'pa-fa-toutes',
       href: makeCollectiviteToutesLesFichesUrl({
         collectiviteId,

@@ -35,7 +35,7 @@ const IndicateurPersoNouveau = ({
   isFavoriCollectivite,
   onClose,
 }: {
-  /** Fiche action à laquelle rattacher le nouvel indicateur */
+  /** Fiche à laquelle rattacher le nouvel indicateur */
   fiche?: Fiche;
   isFavoriCollectivite?: boolean;
   onClose?: () => void;
@@ -108,7 +108,7 @@ const IndicateurPersoNouveau = ({
       <Alert
         description=" Les indicateurs personnalisés vous permettent de suivre de manière
               spécifique les actions menées par votre collectivité. Associez-les
-              à une ou plusieurs fiches action pour faciliter leur mise à jour !"
+              à une ou plusieurs actions pour faciliter leur mise à jour !"
       />
 
       {/* Champs du formulaire */}

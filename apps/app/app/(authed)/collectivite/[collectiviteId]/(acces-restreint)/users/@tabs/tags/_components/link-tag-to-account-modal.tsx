@@ -42,7 +42,7 @@ const LinkTagToAccountModal = ({ openState, collectiviteId, tag }: Props) => {
         <>
           <Alert
             rounded
-            description="Vous pouvez associer ce tag à un utilisateur déjà inscrit. Ainsi, toutes les fiches actions, indicateurs et mesures des référentiels seront automatiquement attribués à cette personne."
+            description="Vous pouvez associer ce tag à un utilisateur déjà inscrit. Ainsi, toutes les actions, indicateurs et mesures des référentiels seront automatiquement attribués à cette personne."
           />
           <Field title="Associer ce tag à un compte utilisateur">
             <Select

@@ -111,7 +111,7 @@ export const FichesActionCountByModule = ({
       title={titre}
       titleTooltip={
         !isError && sumCountBy !== countByTotal
-          ? 'Le total est inférieur à la somme des répartitions, car certaines fiches action peuvent se trouver dans plusieurs catégories à la fois.'
+          ? 'Le total est inférieur à la somme des répartitions, car certaines actions peuvent se trouver dans plusieurs catégories à la fois.'
           : undefined
       }
       filters={filters}

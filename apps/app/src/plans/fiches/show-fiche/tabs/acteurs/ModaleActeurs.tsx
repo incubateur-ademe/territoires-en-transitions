@@ -57,7 +57,7 @@ const ModaleActeurs = ({ isOpen, setIsOpen, fiche }: ModaleActeursProps) => {
     <BaseUpdateFicheModal
       fiche={fiche}
       openState={{ isOpen, setIsOpen }}
-      title="Acteurs du projet"
+      title="Acteurs de l'action"
       size="lg"
       render={({ descriptionId }) => (
         <FormSectionGrid formSectionId={descriptionId}>

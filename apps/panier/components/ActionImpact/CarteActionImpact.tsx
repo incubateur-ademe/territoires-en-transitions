@@ -77,7 +77,7 @@ export const CarteActionImpact = ({
             )}
             <span className="text-xs font-medium -mb-1">
               <Icon icon="eye-line" size="xs" className="mr-1" />
-              Voir le détail de la fiche
+              Voir le détail de l'action
             </span>
           </div>
         </div>

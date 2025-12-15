@@ -40,7 +40,7 @@ export const MSG_ANNEXE_CONFIDENTIELLE = `Nous vous encourageons à partager vos
 
 Si vos documents sont confidentiels, vous pouvez activer cette option : seuls les membres de votre collectivité (dont votre conseiller et votre auditeur si vous êtes engagés dans le programme “Territoire Engagé Transition Écologique”) et le service support de la plateforme pourront y accéder.
 
-Si la fiche action est en mode privé, les documents ne seront pas accessibles par des personnes n’étant pas membres de votre collectivité, que le document soit en mode privé ou non.`;
+Si l'action est en mode privé, les documents ne seront pas accessibles par des personnes n’étant pas membres de votre collectivité, que le document soit en mode privé ou non.`;
 
 export const MSG_DOC_CONFIDENTIEL = `Nous vous encourageons à partager vos documents : ils permettent à d’autres collectivités de s’inspirer de vos actions, vos pratiques, etc.
 

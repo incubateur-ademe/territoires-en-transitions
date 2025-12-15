@@ -100,7 +100,7 @@ export const Actions = ({ axeHasFiches, plan }: Props) => {
           dataTest="SupprimerPlanBouton"
           icon="delete-bin-6-line"
           className="!text-error-1"
-          title="Supprimer ce plan d'action"
+          title="Supprimer ce plan"
           size="xs"
           variant="white"
         />
@@ -119,7 +119,7 @@ export const Actions = ({ axeHasFiches, plan }: Props) => {
           >
             <Tooltip
               placement="bottom"
-              label="Rendre publiques l'ensemble des fiches du plan"
+              label="Rendre publiques l'ensemble des actions du plan"
             >
               <span
                 className={classNames(
@@ -140,7 +140,7 @@ export const Actions = ({ axeHasFiches, plan }: Props) => {
           >
             <Tooltip
               placement="bottom"
-              label="Rendre privées l'ensemble des fiches du plan"
+              label="Rendre privées l'ensemble des actions du plan"
             >
               <span
                 className={classNames(

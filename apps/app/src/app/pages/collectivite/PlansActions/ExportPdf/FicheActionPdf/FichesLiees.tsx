@@ -60,7 +60,7 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
           {generateTitle(titre)}
         </Title>
 
-        {/* Plans d'actions associés */}
+        {/* Plans associés */}
         <Paragraph className="text-grey-8 font-medium">
           {!!plans && plans[0] ? (
             <>
@@ -73,7 +73,7 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
               )}
             </>
           ) : (
-            'Fiche non classée'
+            'Action non classée'
           )}
         </Paragraph>
       </Stack>
@@ -184,7 +184,7 @@ const FichesLiees = ({ fichesLiees }: FichesLieesProps) => {
       <Stack gap={2.5}>
         <Stack wrap={false}>
           <Title variant="h5" className="text-primary-8 uppercase">
-            Fiches action liées
+            Actions liées
           </Title>
           {firstFichesList.length > 0 && (
             <Stack gap={2.5} direction="row" className="flex-wrap">

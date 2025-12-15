@@ -119,7 +119,7 @@ export const FicheActionActeurs = ({ className }: FicheActionActeursProps) => {
       ) : (
         <EmptyCard
           picto={(props) => <EmptyActeursPicto {...props} />}
-          title="Aucun acteur du projet n'est renseigné !"
+          title="Aucun acteur de l'action n'est renseigné !"
           tags={[
             'Structure pilote',
             'Élu·e référent·e',

@@ -70,7 +70,7 @@ const FicheActionLegacy = ({
     <>
       <div data-test="FicheAction" className="w-full bg-grey-2">
         <div className="flex flex-col w-full px-2 mx-auto xl:max-w-7xl 2xl:max-w-8xl">
-          {/* Header de la fiche action (titre, fil d'ariane) */}
+          {/* Header de la fiche (titre, fil d'ariane) */}
           <Header
             fiche={fiche}
             isReadonly={isReadonly}
@@ -101,7 +101,7 @@ const FicheActionLegacy = ({
                   onUpdateAccess={handleUpdateAccess}
                 />
 
-                {/** Fiche action issue du panier d'action */}
+                {/** Fiche issue du panier d'action */}
                 <FicheActionImpact ficheId={fiche.id} />
 
                 {/* Pilotes */}

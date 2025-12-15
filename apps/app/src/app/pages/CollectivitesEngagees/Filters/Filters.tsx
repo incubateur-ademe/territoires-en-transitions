@@ -66,7 +66,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
             displaySize="sm"
           />
           {vue === 'plans' && (
-            /** Type plan d'action */
+            /** Type plan */
             <Field title="Type de plan" small>
               <SelectFilter
                 dropdownZindex={600} // nécessaire pour le menu mobile

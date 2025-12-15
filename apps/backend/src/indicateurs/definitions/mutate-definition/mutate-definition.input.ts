@@ -35,7 +35,7 @@ export const createIndicateurDefinitionInputSchema = z.object({
     .number()
     .int()
     .optional()
-    .describe('Fiche à laquelle rattacher le nouvel indicateur'),
+    .describe('Action à laquelle rattacher le nouvel indicateur'),
 });
 
 export type CreateIndicateurDefinitionInput = z.output<

@@ -21,7 +21,7 @@ export const BudgetInvestissementContent = ({
       <p className="mb-0 text-grey-8 text-sm font-medium">
         Le budget prévisionnel total renseigné{' '}
         {first.isExtended ? 's’étale' : 'ne s’étale pas'} sur toute la durée du
-        plan d’action.
+        plan.
       </p>
       <div className="flex flex-wrap gap-x-3 gap-y-2">
         {budgets.map((budget) => (

@@ -17,7 +17,7 @@ export const NotClassifiedFicheBreadcrumbs = ({
     <Breadcrumbs
       items={[
         {
-          label: 'Fiches non classées',
+          label: 'Actions non classées',
           onClick: () => {
             router.push(
               makeCollectiviteToutesLesFichesUrl({

@@ -22,7 +22,7 @@ type Props = {
   size?: 'sm' | 'md';
 };
 
-/** Badge représentant le statut d'une fiche action */
+/** Badge représentant le statut d'une fiche */
 const BadgeStatut = ({ className, statut, size, count }: Props) => {
   return (
     <Badge

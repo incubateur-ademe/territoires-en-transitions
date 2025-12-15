@@ -29,7 +29,7 @@ export const listFichesRequestFiltersSchema = z
       .boolean()
       .optional()
       .describe(
-        `Aucun utilisateur ou personne pilote n'est associé à la fiche`
+        `Aucun utilisateur ou personne pilote n'est associé à l'action`
       ),
     hasBudgetPrevisionnel: z.coerce
       .boolean()
@@ -57,18 +57,15 @@ export const listFichesRequestFiltersSchema = z
       .boolean()
       .optional()
       .describe(`Est en amélioration continue`),
-    restreint: z.coerce
-      .boolean()
-      .optional()
-      .describe(`Fiche action en mode privé`),
+    restreint: z.coerce.boolean().optional().describe(`Action en mode privé`),
     noServicePilote: z.coerce
       .boolean()
       .optional()
-      .describe(`Aucune direction ou service pilote n'est associée à la fiche`),
+      .describe(`Aucune direction ou service pilote n'est associée à l'action`),
     sharedWithCollectivites: z
       .boolean()
       .optional()
-      .describe(`Fiche action mutualisée avec d'autres collectivités`),
+      .describe(`Action mutualisée avec d'autres collectivités`),
     noStatut: z.coerce.boolean().optional().describe(`Aucun statut`),
     noTag: z.coerce.boolean().optional().describe(`Aucun tag personnalisés`),
     statuts: z
@@ -172,9 +169,7 @@ export const listFichesRequestFiltersSchema = z
     planActionIds: z
       .array(z.coerce.number())
       .optional()
-      .describe(
-        "Liste des identifiants des plans d'action séparés par des virgules"
-      ),
+      .describe('Liste des identifiants des plans séparés par des virgules'),
     mesureIds: z
       .array(z.string())
       .optional()
@@ -185,12 +180,12 @@ export const listFichesRequestFiltersSchema = z
       .array(z.coerce.number())
       .optional()
       .describe(
-        'Liste des identifiants des fiches liées séparés par des virgules'
+        'Liste des identifiants des actions liées séparés par des virgules'
       ),
     modifiedAfter: z.iso
       .datetime()
       .optional()
-      .describe('Uniquement les fiches modifiées après cette date'),
+      .describe('Uniquement les actions modifiées après cette date'),
     typePeriode: typePeriodeEnumSchema.optional(),
     debutPeriode: z.iso.datetime().optional(),
     finPeriode: z.iso.datetime().optional(),
@@ -209,13 +204,13 @@ export const listFichesRequestFiltersSchema = z
       .array(z.coerce.number())
       .optional()
       .describe(
-        'Liste uniquement les sous-fiches associées aux fiches parentes spécifiées. Exclut automatiquement les fiches parentes et les autres sous-fiches. Mutuellement exclusif avec `withChildren`.'
+        'Liste uniquement les sous-actions associées aux actions parentes spécifiées. Exclut automatiquement les actions parentes et les autres sous-actions. Mutuellement exclusif avec `withChildren`.'
       ),
     withChildren: z.coerce
       .boolean()
       .optional()
       .describe(
-        'Inclut les sous-fiches dans les résultats. Par défaut, les sous-fiches sont exclues. Mutuellement exclusif avec `parentsId`.'
+        'Inclut les sous-actions dans les résultats. Par défaut, les sous-actions sont exclues. Mutuellement exclusif avec `parentsId`.'
       ),
   })
   .refine((data) => !(data.parentsId && data.withChildren), {
@@ -223,7 +218,7 @@ export const listFichesRequestFiltersSchema = z
       'Les filtres `parentsId` et `withChildren` sont mutuellement exclusifs et ne peuvent pas être utilisés simultanément.',
     path: ['parentsId', 'withChildren'],
   })
-  .describe('Filtre de récupération des fiches action');
+  .describe('Filtre de récupération des actions');
 
 export type ListFichesRequestFilters = z.output<
   typeof listFichesRequestFiltersSchema

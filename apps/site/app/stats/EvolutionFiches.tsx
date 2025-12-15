@@ -18,14 +18,14 @@ const colonneValeur = {
 };
 
 const legende = {
-  stats_locales_evolution_nombre_fiches: 'Nombre total de fiches',
+  stats_locales_evolution_nombre_fiches: "Nombre total d'actions",
   stats_locales_evolution_collectivite_avec_minimum_fiches:
-    'Collectivités avec cinq fiches ou plus',
+    'Collectivités avec cinq actions ou plus',
   stats_evolution_nombre_plans: 'Historique du nombre de plans',
 };
 
 const labels = {
-  fiches: 'Fiches',
+  actions: 'Actions',
   collectivites: 'Collectivités',
   plans: 'Plans',
 };

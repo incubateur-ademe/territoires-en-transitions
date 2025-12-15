@@ -31,7 +31,7 @@ export class ExportService {
     const { collectiviteId, planId, format } = request;
 
     this.logger.log(
-      `Export ${format} du plan d'action ${planId} de la collectivité ${collectiviteId}`
+      `Export ${format} du plan ${planId} de la collectivité ${collectiviteId}`
     );
 
     // charge le plan

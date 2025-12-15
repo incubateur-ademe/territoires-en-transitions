@@ -265,7 +265,7 @@ export class NotifyPiloteService {
 
     const result = await this.listFichesService.getFicheById(ficheId);
     if (!result.success) {
-      return { success: false, error: 'Fiche non trouvée' };
+      return { success: false, error: 'Action non trouvée' };
     }
     const fiche = result.data;
     let ficheParente;
@@ -274,7 +274,7 @@ export class NotifyPiloteService {
         fiche.parentId
       );
       if (!getParentResult.success) {
-        return { success: false, error: 'Fiche parente non trouvée' };
+        return { success: false, error: 'Action parente non trouvée' };
       }
       ficheParente = getParentResult.data;
     }

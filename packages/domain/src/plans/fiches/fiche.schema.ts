@@ -137,7 +137,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
   sharedWithCollectivites: idNameSchema
     .array()
     .nullable()
-    .describe('Collectivités avec lesquelles la fiche est partagée'),
+    .describe("Collectivités avec lesquelles l'action est partagée"),
   indicateurs: z
     .object({
       id: z.number(),
@@ -166,10 +166,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .array()
     .nullable()
     .describe('Axes'),
-  plans: z
-    .array(tagWithCollectiviteIdSchema)
-    .nullable()
-    .describe("Plans d'action"),
+  plans: z.array(tagWithCollectiviteIdSchema).nullable().describe('Plans'),
   etapes: z
     .object({
       nom: z.string(),
@@ -197,7 +194,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .array()
     .nullable()
     .describe('Mesures des référentiels'),
-  fichesLiees: z.array(tagSchema).nullable().describe('Fiches action'),
+  fichesLiees: z.array(tagSchema).nullable().describe('Actions'),
   docs: z
     .object({
       id: z.number(),
@@ -220,7 +217,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     })
     .array()
     .nullable()
-    .describe(`Budgets de la fiche action`),
+    .describe(`Budgets de l'action`),
   actionImpactId: z.number().nullish(),
   completion: completionSchema.describe('Données de completion de la fiche'),
 });
@@ -233,7 +230,7 @@ export const ficheWithRelationsAndCollectiviteSchema =
   ficheWithRelationsSchema.extend({
     collectivite: collectiviteSchema
       .optional()
-      .describe('Collectivité à laquelle la fiche est rattachée'),
+      .describe("Collectivité à laquelle l'action est rattachée"),
   });
 export type FicheWithRelationsAndCollectivite = z.infer<
   typeof ficheWithRelationsAndCollectiviteSchema

@@ -47,7 +47,7 @@ const ExportFicheActionGroupeesButton = ({
   const [isDataRequested, setIsDataRequested] = useState(false);
   const [content, setContent] = useState<JSX.Element[] | undefined>(undefined);
 
-  const fileName = `fiches-actions-${collectiviteId}-${Date.now()}`;
+  const fileName = `actions-${collectiviteId}-${Date.now()}`;
 
   useEffect(() => {
     if (content?.length === fichesIds.length) {

@@ -178,7 +178,7 @@ const PersonnesDropdown = (props: Props) => {
               deleteModal: {
                 title: 'Supprimer un tag pilote',
                 message:
-                  'En confirmant la suppression, cela supprimera également l’association de ce tag aux fiches action, indicateurs et mesures des référentiels.',
+                  'En confirmant la suppression, cela supprimera également l’association de ce tag aux actions, indicateurs et mesures des référentiels.',
               },
             }
           : undefined

@@ -26,7 +26,7 @@ export default async function FicheDetailPage({
   );
 
   if (!fiche) {
-    return <div>Fiche non trouvée</div>;
+    return <div>Action non trouvée</div>;
   }
   return <FicheAction fiche={fiche} />;
 }

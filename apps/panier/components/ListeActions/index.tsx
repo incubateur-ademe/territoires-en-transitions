@@ -64,8 +64,8 @@ const ListeActions = ({
   const actionsDejaImportees = panier.importees;
   if (actionsDejaImportees.length) {
     tabsList.push({
-      label: 'Fiches déjà importées',
-      labelOne: 'Fiche déjà importée',
+      label: 'Actions déjà importées',
+      labelOne: 'Action déjà importée',
       shortName: 'importees',
       status: 'importees',
     });
@@ -118,10 +118,9 @@ const ListeActions = ({
                             outil numérique
                           </Button>
                           aux côtés des actions en cours et à venir pour
-                          constituer et piloter un plan d'action sur l'outil
-                          numérique. Il vous suffit de cocher la case "Ajouter
-                          les actions classées “réalisées” au niveau du panier à
-                          droite.
+                          constituer et piloter un plan sur l'outil numérique.
+                          Il vous suffit de cocher la case "Ajouter les actions
+                          classées “réalisées” au niveau du panier à droite.
                         </div>
                       ) : (
                         <div className="inline">
@@ -146,7 +145,7 @@ const ListeActions = ({
                   <Alert
                     className="mb-4"
                     state="info"
-                    title="Ces fiches action ont déjà été ajoutées à votre plan d’action sur l’outil numérique territoires en transitions, retrouvez les dans votre onglet connecté Plans d’action"
+                    title="Ces actions ont déjà été ajoutées à votre plan sur l’outil numérique territoires en transitions, retrouvez les dans votre onglet connecté Plans"
                   />
                 )}
 

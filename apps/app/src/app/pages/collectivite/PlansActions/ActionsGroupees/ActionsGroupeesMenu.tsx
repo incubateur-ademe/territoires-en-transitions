@@ -40,7 +40,7 @@ const ExportButton = ({
   if (tooManyFichesToExportPDF) {
     return (
       <Button variant="outlined" size="xs" disabled icon="alert-fill">
-        {`Export limité à ${MAX_NB_OF_FICHES_IN_PDF} fiches`}
+        {`Export limité à ${MAX_NB_OF_FICHES_IN_PDF} actions`}
       </Button>
     );
   }

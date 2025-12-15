@@ -160,9 +160,7 @@ export default class FicheActionPermissionsService {
   ): Promise<FicheAccessMode | null> {
     const fiche = await this.getFicheFromId(ficheId);
     if (!fiche) {
-      throw new NotFoundException(
-        `Fiche action non trouvée pour l'id ${ficheId}`
-      );
+      throw new NotFoundException(`Action non trouvée pour l'id ${ficheId}`);
     }
 
     // Check direct permissions first
@@ -211,9 +209,7 @@ export default class FicheActionPermissionsService {
   ): Promise<boolean> {
     const fiche = await this.getFicheFromId(ficheId);
     if (!fiche) {
-      throw new NotFoundException(
-        `Fiche action non trouvée pour l'id ${ficheId}`
-      );
+      throw new NotFoundException(`Action non trouvée pour l'id ${ficheId}`);
     }
 
     // Check direct permissions first
@@ -235,9 +231,7 @@ export default class FicheActionPermissionsService {
   ): Promise<FicheAccessMode | null> {
     const fiche = await this.getFicheFromId(ficheId);
     if (!fiche) {
-      throw new NotFoundException(
-        `Fiche action non trouvée pour l'id ${ficheId}`
-      );
+      throw new NotFoundException(`Action non trouvée pour l'id ${ficheId}`);
     }
 
     // Check direct permissions first

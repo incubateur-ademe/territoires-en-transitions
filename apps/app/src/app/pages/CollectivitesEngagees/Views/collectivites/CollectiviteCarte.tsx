@@ -84,7 +84,7 @@ export const CollectiviteCarte = ({ collectivite, isClickable }: Props) => {
             <span className="text-xs text-grey-9 font-normal">
               <Icon icon="folders-line" size="sm" className="mr-1.5" />
               <span className="font-bold">{nbPlans}</span>{' '}
-              {nbPlans > 1 ? "plans d'action" : "plan d'action"}
+              {nbPlans > 1 ? 'plans' : 'plan'}
             </span>
           </div>
 

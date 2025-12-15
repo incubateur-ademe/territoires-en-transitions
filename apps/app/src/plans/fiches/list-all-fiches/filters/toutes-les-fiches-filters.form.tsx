@@ -105,7 +105,7 @@ export const ToutesLesFichesFiltersForm = ({
           className="grid-cols-1 md:grid-cols-2 gap-x-8"
         >
           <div className="*:mb-4 first:!mb-0">
-            <Field title="Plans d'action">
+            <Field title="Plans">
               <Controller
                 name="planActionIds"
                 control={control}

@@ -35,7 +35,7 @@ export class DeleteFicheActionNotesRequestClass extends createZodDto(
 ) {}
 
 @ApiExcludeController()
-@ApiTags('Fiches action')
+@ApiTags('Actions')
 @ApiBearerAuth()
 @Controller('collectivites/:collectivite_id/fiches-action')
 export class FicheActionNoteController {

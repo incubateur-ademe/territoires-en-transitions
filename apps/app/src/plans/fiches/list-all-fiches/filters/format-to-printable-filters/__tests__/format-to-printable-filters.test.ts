@@ -50,7 +50,7 @@ describe('formatToPrintableFilters', () => {
     expect(result).toEqual([
       {
         key: 'restreint',
-        title: 'Fiche action en mode privé',
+        title: 'Action en mode privé',
         selectedFilters: ['true'],
         onlyShowCategory: true,
       },
@@ -105,7 +105,7 @@ describe('formatToPrintableFilters', () => {
       {
         key: 'hasIndicateurLies',
         title: filterLabels['hasIndicateurLies'],
-        selectedFilters: ['Fiches avec indicateurs'],
+        selectedFilters: ['Actions avec indicateurs'],
         onlyShowCategory: false,
       },
       {

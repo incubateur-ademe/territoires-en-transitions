@@ -28,8 +28,8 @@ export const DeleteFicheModal = ({
   return (
     <Modal
       openState={openState}
-      title="Supprimer la fiche"
-      subTitle={titre || 'Fiche sans titre'}
+      title="Supprimer l'action"
+      subTitle={titre || 'Action sans titre'}
       onClose={onClose}
       render={({ descriptionId }) => (
         // Texte d'avertissement
@@ -37,16 +37,16 @@ export const DeleteFicheModal = ({
           {isInMultipleAxes ? (
             <>
               <p className="mb-2">
-                Cette fiche action est présente dans plusieurs plans.
+                Cette action est présente dans plusieurs plans.
               </p>
               <p className="mb-0">
-                Souhaitez-vous vraiment supprimer cette fiche de tous les plans
+                Souhaitez-vous vraiment supprimer cette action de tous les plans
                 ?
               </p>
             </>
           ) : (
             <p className="mb-0">
-              Souhaitez-vous vraiment supprimer cette fiche action ?
+              Souhaitez-vous vraiment supprimer cette action ?
             </p>
           )}
         </div>
@@ -69,7 +69,7 @@ export const DeleteFicheModal = ({
       {/* Bouton d'ouverture de la modale */}
       <DeleteButton
         data-test="SupprimerFicheBouton"
-        title="Supprimer la fiche"
+        title="Supprimer l'action"
         variant={buttonVariant}
         size="xs"
         className={buttonClassName}

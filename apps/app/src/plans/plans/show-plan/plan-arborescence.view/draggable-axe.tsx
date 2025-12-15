@@ -204,7 +204,7 @@ export const DraggableAxe = ({
                 icon="file-add-line"
                 variant="grey"
                 size="xs"
-                title="Créer une fiche"
+                title="Créer une action"
                 onClick={() => {
                   setIsOpen(true);
                   createFicheResume();
@@ -272,7 +272,7 @@ export const DraggableAxe = ({
             childrenOfPlanNodes(axe, axes).length === 0 &&
             !isOver && (
               <div className="mb-4 px-2 text-sm italic text-gray-400">
-                Cet axe ne contient aucune fiche ni sous-axe
+                Cet axe ne contient aucune action ni sous-axe
               </div>
             )}
         </div>

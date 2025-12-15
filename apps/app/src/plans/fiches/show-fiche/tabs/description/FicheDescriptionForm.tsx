@@ -79,7 +79,7 @@ export const FicheDescriptionForm = ({
   return (
     <form id={formId} onSubmit={handleSubmit(handleSave)}>
       <FormSectionGrid>
-        <Field title="Nom de la fiche action" className="col-span-2">
+        <Field title="Nom de l'action" className="col-span-2">
           <Input type="text" {...register('titre')} />
         </Field>
 

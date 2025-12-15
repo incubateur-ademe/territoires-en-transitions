@@ -69,13 +69,13 @@ const Page = () => {
             <ScoreReferentielCard referentielId="eci" />
           </div>
         </Section>
-        {/** Plans d'action */}
+        {/** Plans */}
         <Section
-          title="Plans d’action"
+          title="Plans"
           links={[
             {
               href: makeTdbPlansEtActionsUrl({ collectiviteId }),
-              children: 'Voir le rapport complet plans d’action',
+              children: 'Voir le rapport complet plans',
             },
           ]}
         >
@@ -84,8 +84,8 @@ const Page = () => {
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 backdrop-blur-sm bg-white/65">
                 <h5 className="mb-0">
                   {isReadOnly
-                    ? "Aucun plan d'action n'a été déposé"
-                    : 'Vous n’avez pas encore créé de plan d’action !'}
+                    ? "Aucun plan n'a été déposé"
+                    : 'Vous n’avez pas encore créé de plan !'}
                 </h5>
                 {!isReadOnly && (
                   <Button
@@ -94,24 +94,24 @@ const Page = () => {
                     })}
                     size="sm"
                   >
-                    Créer un plan d’action
+                    Créer un plan
                   </Button>
                 )}
               </div>
               <div className="grid lg:grid-cols-3 gap-6">
                 <img
                   src={imagePlanPlaceholder.src}
-                  alt="suivi des plans d'action"
+                  alt="suivi des plans"
                   className="m-auto w-full"
                 />
                 <img
                   src={imageCountByStatutPlaceholder.src}
-                  alt="suivi des plans d'action"
+                  alt="suivi des plans"
                   className="m-auto w-full"
                 />
                 <img
                   src={imageCountByIndicateursPlaceholder.src}
-                  alt="suivi des plans d'action"
+                  alt="suivi des plans"
                   className="m-auto w-full"
                 />
               </div>

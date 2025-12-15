@@ -27,7 +27,7 @@ export const UpdatePlanModal = ({ plan, openState, defaultValues }: Props) => {
     <Modal
       dataTest="ModifierPlanTitreModale"
       openState={openState}
-      title="Modifier le plan d'action"
+      title="Modifier le plan"
       render={({ close }) => (
         <UpsertPlanForm
           formId={FORM_ID}
