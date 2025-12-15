@@ -14,9 +14,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EChartsOption } from 'echarts/types/dist/echarts';
 import { chunk } from 'es-toolkit';
 import { Response } from 'express';
-import { createWriteStream, mkdirSync, rmSync, writeFileSync } from 'fs';
+import { mkdirSync, rmSync, writeFileSync } from 'fs';
 import { imageSizeFromFile } from 'image-size/fromFile';
-import { ISizeCalculationResult } from 'image-size/types/interface';
 import { DateTime } from 'luxon';
 import * as path from 'path';
 import {
@@ -29,7 +28,6 @@ import {
 } from 'pptx-automizer';
 import { ElementInfo, XmlElement } from 'pptx-automizer/dist/types/xml-types';
 import slugify from 'slugify';
-import { Readable } from 'stream';
 import { CountByService } from '../../fiches/count-by/count-by.service';
 import { FicheWithRelations } from '../../fiches/list-fiches/fiche-action-with-relations.dto';
 import ListFichesService from '../../fiches/list-fiches/list-fiches.service';
@@ -47,8 +45,8 @@ import {
   ReportTemplateImagesEnum,
   ReportTemplateImagesType,
 } from './report-template-images.enum';
-import { ReportTemplateSlidesType } from './report-template-slides.enum';
 import { ReportTemplatesType } from './report-templates.enum';
+import { SlideGenerationArgs } from './slide-generation-args.dto';
 @Injectable()
 export class GenerateReportsService {
   private readonly logger = new Logger(GenerateReportsService.name);
@@ -63,8 +61,21 @@ export class GenerateReportsService {
 
   private readonly LOCALE = 'fr-FR';
   private readonly CHART_SCALE_FACTOR = 2;
-  private readonly NOT_DEFINED_VALUE = 'ND';
-  private readonly LOGO_FILE_NAME = 'logo.png';
+  private readonly NOT_DEFINED_VALUE = 'N/D';
+
+  /**
+   * TODO: to be moved to domain in order to support it
+   */
+  private readonly SUPPORTED_IMAGE_MIME_TYPES_TO_EXTENSION: Record<
+    string,
+    string
+  > = {
+    'image/png': 'png',
+    'image/jpeg': 'jpg',
+    'image/jpg': 'jpg',
+    'image/gif': 'gif',
+  };
+
   private readonly SLIDE_TEMPLATES_CONFIG: {
     [key in ReportTemplatesType]: ReportTemplateConfig;
   } = {
@@ -326,72 +337,51 @@ export class GenerateReportsService {
     };
   }
 
-  /**
-   *
-   * @param url
-   */
-  async downloadFile(url: string, targetFilePath: string) {
-    const res = await fetch(url);
-
-    if (!res.ok) {
-      throw new Error(`HTTP error! ${res.status}`);
-    }
-
-    if (!res.body) {
-      throw new Error('Response body is null');
-    }
-
-    const fileStream = createWriteStream(targetFilePath);
-
-    // Read from web ReadableStream and write to file
-    //const reader = res.body.getReader();
-
-    // @ts-ignore: TODO
-    Readable.fromWeb(res.body as unknown as ReadableStream<any>).pipe(
-      fileStream
-    );
-
-    // Wait for file stream to finish
-    await new Promise<void>((resolve, reject) => {
-      fileStream.on('finish', resolve);
-      fileStream.on('error', reject);
-    });
-
-    console.log('Download completed!');
-  }
-
   private async loadCollectiviteLogo(
     mediaDir: string,
-    presentation: Automizer
+    presentation: Automizer,
+    logoFileBase64?: string
   ) {
-    const logoFilePath = path.join(mediaDir, this.LOGO_FILE_NAME);
-    await this.downloadFile(
-      'https://www.agglopolys.fr/images/GBI_AGGLO/logo-agglopolys.png',
-      logoFilePath
-    );
-    presentation.loadMedia(this.LOGO_FILE_NAME);
+    if (!logoFileBase64) {
+      return null;
+    }
+
+    let mimeType = 'image/png'; // default
+    let base64Data = logoFileBase64;
+
+    if (logoFileBase64.startsWith('data:')) {
+      const [header, data] = logoFileBase64.split(',');
+      base64Data = data;
+      const mimeMatch = header.match(/data:([^;]+)/);
+      if (mimeMatch) {
+        mimeType = mimeMatch[1];
+      }
+    }
+
+    const extension =
+      this.SUPPORTED_IMAGE_MIME_TYPES_TO_EXTENSION[mimeType] || 'png';
+    const logoFileName = `${ReportTemplateImagesEnum.IMG_COLLECTIVITE_LOGO}.${extension}`;
+    const logoFilePath = path.join(mediaDir, logoFileName);
+
+    const buffer = Buffer.from(base64Data, 'base64');
+    writeFileSync(logoFilePath, new Uint8Array(buffer));
+    this.logger.log(`Logo saved from base64 data`);
+
+    presentation.loadMedia(logoFileName);
 
     const dimensions = await imageSizeFromFile(logoFilePath);
     this.logger.log(`Logo dimensions: ${JSON.stringify(dimensions)}`);
-    return dimensions;
+    return { dimensions, fileName: logoFileName };
   }
 
-  private addSlide(args: {
-    presentation: Automizer;
-    planGeneralInfo: ReportPlanGeneralInfo;
-    template: ReportTemplateConfig;
-    slideType: ReportTemplateSlidesType;
-    logoDimensions: { width: number; height: number };
-    callback?: (slide: ISlide) => Promise<void>;
-    extraTextReplacements?: any;
-  }) {
+  private addSlide(args: SlideGenerationArgs) {
     const {
       presentation,
       planGeneralInfo,
       extraTextReplacements,
       template,
       slideType,
-      logoDimensions,
+      logo,
       callback,
     } = args;
     presentation.addSlide(
@@ -402,15 +392,25 @@ export class GenerateReportsService {
 
         const allElements = await slide.getAllElements();
 
-        this.replaceImageInSlide(
-          slide,
-          presentation,
-          allElements,
-          ReportTemplateImagesEnum.IMG_COLLECTIVITE_LOGO,
-          this.LOGO_FILE_NAME,
-          logoDimensions,
-          'resize'
-        );
+        if (logo) {
+          this.replaceImageInSlide(
+            slide,
+            presentation,
+            allElements,
+            ReportTemplateImagesEnum.IMG_COLLECTIVITE_LOGO,
+            logo.fileName,
+            logo.dimensions,
+            'resize'
+          );
+        } else {
+          const imageElement = this.getImageElement(
+            allElements,
+            ReportTemplateImagesEnum.IMG_COLLECTIVITE_LOGO
+          );
+          if (imageElement) {
+            slide.removeElement(ReportTemplateImagesEnum.IMG_COLLECTIVITE_LOGO);
+          }
+        }
 
         // End with text replacements
         await this.replaceTextInSlide(slide, {
@@ -421,22 +421,14 @@ export class GenerateReportsService {
     );
   }
 
-  private async addPlanSummarySlide(args: {
-    presentation: Automizer;
-    mediaDir: string;
-    fiches: FicheWithRelations[];
-    planGeneralInfo: ReportPlanGeneralInfo;
-    template: ReportTemplateConfig;
-    logoDimensions: ISizeCalculationResult;
-  }) {
-    const {
-      presentation,
-      mediaDir,
-      fiches,
-      planGeneralInfo,
-      template,
-      logoDimensions,
-    } = args;
+  private async addPlanSummarySlide(
+    args: Omit<SlideGenerationArgs, 'slideType'> & {
+      mediaDir: string;
+      fiches: FicheWithRelations[];
+    }
+  ) {
+    const { presentation, mediaDir, fiches, planGeneralInfo, template, logo } =
+      args;
 
     const statutCountBy = await this.countByService.countByPropertyWithFiches(
       fiches,
@@ -452,7 +444,7 @@ export class GenerateReportsService {
       presentation,
       planGeneralInfo,
       template,
-      logoDimensions,
+      logo,
       slideType: 'summary_slide',
       callback: async (slide) => {
         const allElements = await slide.getAllElements();
@@ -485,16 +477,13 @@ export class GenerateReportsService {
     fiches: FicheWithRelations[];
     planGeneralInfo: ReportPlanGeneralInfo;
     template: ReportTemplateConfig;
-    logoDimensions: ISizeCalculationResult;
+    logo: {
+      dimensions: { width: number; height: number };
+      fileName: string;
+    } | null;
   }): Promise<CountByForEntityResponseType[]> {
-    const {
-      presentation,
-      mediaDir,
-      fiches,
-      planGeneralInfo,
-      template,
-      logoDimensions,
-    } = args;
+    const { presentation, mediaDir, fiches, planGeneralInfo, template, logo } =
+      args;
 
     const statutCountByForEachAxe =
       await this.countByService.countByPropertyForEachAxeWithFiches(
@@ -529,7 +518,7 @@ export class GenerateReportsService {
       presentation,
       planGeneralInfo,
       template,
-      logoDimensions,
+      logo,
       slideType: 'progression_slide',
       callback: async (slide) => {
         const allElements = await slide.getAllElements();
@@ -558,7 +547,10 @@ export class GenerateReportsService {
     fiches: FicheWithRelations[];
     planGeneralInfo: ReportPlanGeneralInfo;
     template: ReportTemplateConfig;
-    logoDimensions: ISizeCalculationResult;
+    logo: {
+      dimensions: { width: number; height: number };
+      fileName: string;
+    } | null;
   }) {
     const {
       presentation,
@@ -569,7 +561,7 @@ export class GenerateReportsService {
       fiches,
       planGeneralInfo,
       template,
-      logoDimensions,
+      logo,
     } = args;
 
     if (!template.slides.axe_summary_slide) {
@@ -586,7 +578,7 @@ export class GenerateReportsService {
       presentation,
       planGeneralInfo,
       template,
-      logoDimensions,
+      logo,
       slideType: 'axe_summary_slide',
       extraTextReplacements: axeGeneralInfo,
       callback: async (slide) => {
@@ -709,26 +701,17 @@ export class GenerateReportsService {
     };
   }
 
-  private async addFicheInfosSlides(args: {
-    presentation: Automizer;
-    planGeneralInfo: ReportPlanGeneralInfo;
-    ficheTextReplacementsInfo: ReportFicheInfo;
-    logoDimensions: {
-      width: number;
-      height: number;
-    };
-    template: ReportTemplateConfig;
-    mediaDir: string;
-    fiche: FicheWithRelations;
-  }) {
+  private async addFicheInfosSlides(
+    args: Omit<SlideGenerationArgs, 'slideType'> & {
+      ficheTextReplacementsInfo: ReportFicheInfo;
+    }
+  ) {
     const {
       presentation,
       planGeneralInfo,
       ficheTextReplacementsInfo,
-      logoDimensions,
+      logo,
       template,
-      mediaDir,
-      fiche,
     } = args;
 
     if (!template.slides.fiche_summary_no_picture_slide) {
@@ -739,7 +722,7 @@ export class GenerateReportsService {
       presentation,
       template,
       planGeneralInfo,
-      logoDimensions,
+      logo,
       slideType: 'fiche_summary_no_picture_slide',
       extraTextReplacements: ficheTextReplacementsInfo,
       callback: async (slide) => {
@@ -750,27 +733,22 @@ export class GenerateReportsService {
     });
   }
 
-  private async addFicheIndicateursSlides(args: {
-    presentation: Automizer;
-    collectivite: CollectiviteAvecType;
-    personnalisationReponses: PersonnalisationReponsesPayload;
-    planGeneralInfo: ReportPlanGeneralInfo;
-    ficheTextReplacementsInfo: ReportFicheInfo;
-    logoDimensions: {
-      width: number;
-      height: number;
-    };
-    template: ReportTemplateConfig;
-    mediaDir: string;
-    fiche: FicheWithRelations;
-  }) {
+  private async addFicheIndicateursSlides(
+    args: Omit<SlideGenerationArgs, 'slideType'> & {
+      collectivite: CollectiviteAvecType;
+      personnalisationReponses: PersonnalisationReponsesPayload;
+      mediaDir: string;
+      ficheTextReplacementsInfo: ReportFicheInfo;
+      fiche: FicheWithRelations;
+    }
+  ) {
     const {
       presentation,
       collectivite,
       planGeneralInfo,
       personnalisationReponses,
       ficheTextReplacementsInfo,
-      logoDimensions,
+      logo,
       template,
       mediaDir,
       fiche,
@@ -803,7 +781,7 @@ export class GenerateReportsService {
           presentation,
           template,
           planGeneralInfo,
-          logoDimensions,
+          logo,
           slideType: 'fiche_indicateurs_slide',
           extraTextReplacements: ficheTextReplacementsInfo,
           callback: async (slide) => {
@@ -903,23 +881,24 @@ export class GenerateReportsService {
         .loadRoot(templateConfig.templatePath)
         .load(templateConfig.templatePath, templateConfig.key);
 
-      const logoDimensions = await this.loadCollectiviteLogo(
+      const logo = await this.loadCollectiviteLogo(
         mediaDir,
-        presentation
+        presentation,
+        request.logoFile
       );
 
       this.addSlide({
         presentation,
         planGeneralInfo,
         template: templateConfig,
-        logoDimensions,
+        logo,
         slideType: 'title_slide',
       });
       this.addSlide({
         presentation,
         planGeneralInfo,
         template: templateConfig,
-        logoDimensions,
+        logo,
         slideType: 'table_of_contents_slide',
         callback: async (slide) => {
           await this.replaceTextInSlide(slide, {
@@ -931,7 +910,7 @@ export class GenerateReportsService {
         presentation,
         planGeneralInfo,
         template: templateConfig,
-        logoDimensions,
+        logo,
         slideType: 'overview_section_slide',
       });
 
@@ -941,7 +920,7 @@ export class GenerateReportsService {
         fiches,
         planGeneralInfo,
         template: templateConfig,
-        logoDimensions,
+        logo,
       });
 
       const statutCountByForEachAxe = await this.addPlanProgressSlide({
@@ -950,14 +929,14 @@ export class GenerateReportsService {
         fiches,
         planGeneralInfo,
         template: templateConfig,
-        logoDimensions,
+        logo,
       });
 
       this.addSlide({
         presentation,
         planGeneralInfo,
         template: templateConfig,
-        logoDimensions,
+        logo,
         slideType: 'axes_section_slide',
       });
 
@@ -980,7 +959,7 @@ export class GenerateReportsService {
           fiches: fiches,
           planGeneralInfo,
           template: templateConfig,
-          logoDimensions,
+          logo,
         });
 
         const axeFilteredFiches = filteredFiches.filter((fiche) =>
@@ -995,9 +974,7 @@ export class GenerateReportsService {
             planGeneralInfo,
             ficheTextReplacementsInfo,
             template: templateConfig,
-            logoDimensions,
-            mediaDir,
-            fiche,
+            logo,
           });
 
           await this.addFicheIndicateursSlides({
@@ -1007,7 +984,7 @@ export class GenerateReportsService {
             planGeneralInfo,
             ficheTextReplacementsInfo,
             template: templateConfig,
-            logoDimensions,
+            logo,
             mediaDir,
             fiche,
           });
@@ -1026,7 +1003,7 @@ export class GenerateReportsService {
       error = GenerateReportErrorType.SERVER_ERROR;
     } finally {
       if (mediaDir) {
-        //rmSync(mediaDir, { recursive: true });
+        rmSync(mediaDir, { recursive: true });
       }
     }
 

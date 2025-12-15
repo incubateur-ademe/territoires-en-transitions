@@ -1,7 +1,12 @@
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Plan } from '@/domain/plans';
 import { Modal, ModalFooterOKCancel } from '@/ui';
 import { PropsWithChildren } from 'react';
-import { GenerateReportForm } from './generate-report.form';
+import {
+  GenerateReportForm,
+  GenerateReportFormArgs,
+} from './generate-report.form';
+import { useGenerateReport } from './use-generate-report';
 
 export type GenerateReportPlanModalProps = {
   plan: Plan;
@@ -11,32 +16,46 @@ export const GenerateReportPlanModal = ({
   plan,
   children,
 }: PropsWithChildren<GenerateReportPlanModalProps>) => {
+  const { mutate: generateReport, isPending: isGenerating } =
+    useGenerateReport();
+
   return (
     <Modal
       title="Télécharger le rapport de mon plan au format PowerPoint"
       size="md"
       render={({ descriptionId, close }) => (
         <div id={descriptionId} className="space-y-6">
-          <GenerateReportForm formId={FORM_ID} plan={plan} />
-          {/*
-          {isLoading && (
-            <p className="text-grey-7">{`Import en cours, cela peut prendre quelques secondes.`}</p>
-          )}
-          {errorMessage && (
-            <p
-              className="text-red-600"
-              dangerouslySetInnerHTML={{ __html: errorMessage }}
-            />
-          )}*/}
+          <GenerateReportForm
+            formId={FORM_ID}
+            plan={plan}
+            onSubmit={(data: GenerateReportFormArgs) => {
+              generateReport(data, {
+                onSuccess: () => {
+                  console.log('success');
+                  close();
+                },
+              });
+            }}
+            disabled={isGenerating}
+          />
         </div>
       )}
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnCancelProps={{
             onClick: close,
+            disabled: isGenerating,
           }}
           btnOKProps={{
-            children: 'Télécharger',
+            disabled: isGenerating,
+            children: isGenerating ? (
+              <>
+                <SpinnerLoader />
+                Génération en cours
+              </>
+            ) : (
+              'Télécharger'
+            ),
             form: FORM_ID,
           }}
         />

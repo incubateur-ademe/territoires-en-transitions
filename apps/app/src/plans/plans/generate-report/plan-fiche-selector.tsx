@@ -86,7 +86,7 @@ export function PlanFicheSelector({
       onChange={onChange}
       disabled={disabled}
       isLoading={isLoading}
-      placeholder={isLoading ? 'Chargement...' : 'Sélectionner des fiches'}
+      placeholder={isLoading ? 'Chargement...' : 'Sélectionner des actions'}
     />
   );
 }

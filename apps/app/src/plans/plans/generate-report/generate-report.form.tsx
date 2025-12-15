@@ -1,23 +1,32 @@
-import { usePlanTypeListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
-import {
-  Plan,
-  ReportGenerationRequest,
-  reportGenerationRequestSchema,
-} from '@/domain/plans';
+import { Plan, reportGenerationRequestSchema } from '@/domain/plans';
 import { Checkbox, Field, Input } from '@/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
+import { z } from 'zod';
 
 import { Controller, useForm } from 'react-hook-form';
 import { PlanFicheSelector } from './plan-fiche-selector';
 
+// Form schema that accepts File for logoFile (will be converted to base64 before sending)
+const generateReportFormSchema = reportGenerationRequestSchema.extend({
+  logoFile: z.file().optional(),
+});
+
+export type GenerateReportFormArgs = z.infer<typeof generateReportFormSchema>;
+
 type GenerateReportFormProps = {
   formId?: string;
   plan: Plan;
+  disabled?: boolean;
+  onSubmit: (data: GenerateReportFormArgs) => void;
 };
 
-export function GenerateReportForm({ formId, plan }: GenerateReportFormProps) {
-  const { options: planTypesOptions } = usePlanTypeListe();
+export function GenerateReportForm({
+  formId,
+  plan,
+  disabled,
+  onSubmit,
+}: GenerateReportFormProps) {
   const [includeAllFiches, setIncludeAllFiches] = useState(true);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -28,9 +37,10 @@ export function GenerateReportForm({ formId, plan }: GenerateReportFormProps) {
     setValue,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<ReportGenerationRequest>({
-    resolver: zodResolver(reportGenerationRequestSchema),
+  } = useForm<GenerateReportFormArgs>({
+    resolver: zodResolver(generateReportFormSchema),
     mode: 'onChange',
+    disabled,
     defaultValues: {
       collectiviteId: plan.collectiviteId,
       planId: plan.id,
@@ -58,12 +68,12 @@ export function GenerateReportForm({ formId, plan }: GenerateReportFormProps) {
     <form
       id={formId}
       onSubmit={handleSubmit(async (data) => {
-        console.log(data);
+        onSubmit(data);
       })}
-      className="flex flex-col gap-6"
+      className="flex flex-col gap-8"
     >
       <Field
-        title="Fichier Excel"
+        title="Ajoutez le logo de votre collectivité"
         message={errors.logoFile?.message}
         state={errors.logoFile?.message ? 'error' : 'default'}
       >
@@ -94,10 +104,10 @@ export function GenerateReportForm({ formId, plan }: GenerateReportFormProps) {
           )}
         />
       </Field>
-      <Field title="Fiches à inclure">
-        <div className="flex flex-col gap-4">
+      <Field title="Actions à ajouter au rapport">
+        <div className="flex flex-col gap-4 mt-2">
           <Checkbox
-            label="Toutes les fiches"
+            label="Toutes les actions"
             checked={includeAllFiches}
             onChange={(e) => {
               const checked = e.target.checked;
