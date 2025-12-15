@@ -83,6 +83,7 @@ export function PlanFicheSelector({
       options={options}
       values={values}
       isSearcheable
+      multiple={true}
       onChange={onChange}
       disabled={disabled}
       isLoading={isLoading}

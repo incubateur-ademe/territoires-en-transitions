@@ -31,7 +31,6 @@ export const GenerateReportPlanModal = ({
             onSubmit={(data: GenerateReportFormArgs) => {
               generateReport(data, {
                 onSuccess: () => {
-                  console.log('success');
                   close();
                 },
               });

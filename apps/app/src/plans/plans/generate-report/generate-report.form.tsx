@@ -96,6 +96,7 @@ export function GenerateReportForm({
               )}
               <Input
                 type="file"
+                disabled={disabled}
                 accept=".png,.jpg,.jpeg"
                 displaySize="md"
                 onChange={(e) => field.onChange(e.target.files?.[0] ?? null)}
@@ -109,6 +110,7 @@ export function GenerateReportForm({
           <Checkbox
             label="Toutes les actions"
             checked={includeAllFiches}
+            disabled={disabled}
             onChange={(e) => {
               const checked = e.target.checked;
               setIncludeAllFiches(checked);
@@ -124,6 +126,7 @@ export function GenerateReportForm({
               render={({ field }) => {
                 return (
                   <PlanFicheSelector
+                    disabled={disabled}
                     collectiviteId={plan.collectiviteId}
                     planId={plan.id}
                     values={field.value ?? undefined}
