@@ -20,7 +20,7 @@ export const CreatePlanButton = ({
   return (
     <Modal
       size="lg"
-      title="Créer un plan d'action"
+      title="Créer un plan"
       render={() => (
         <CreatePlanOptionLinksList
           collectiviteId={collectiviteId}

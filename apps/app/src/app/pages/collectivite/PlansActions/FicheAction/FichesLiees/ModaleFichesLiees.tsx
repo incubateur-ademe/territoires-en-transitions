@@ -31,10 +31,10 @@ const ModaleFichesLiees = ({
   return (
     <Modal
       openState={{ isOpen, setIsOpen }}
-      title="Lier une fiche action"
+      title="Lier une action"
       size="lg"
       render={({ descriptionId }) => (
-        <Field fieldId={descriptionId} title="Fiches action">
+        <Field fieldId={descriptionId} title="Actions">
           <FichesActionsDropdown
             ficheCouranteId={currentFicheId}
             values={linkedFicheIdsState.map((id) => id.toString())}

@@ -132,7 +132,7 @@ export const CollectivitesHeader = ({
               {
                 id: 'plans',
                 'data-test': 'ToggleVuePlan',
-                children: "Plans d'action",
+                children: 'Plans',
                 icon: view === 'plans' ? 'list-check' : 'list-unordered',
                 onClick: () => handleChangeView('plans'),
               },
@@ -145,7 +145,7 @@ export const CollectivitesHeader = ({
               options={[
                 { label: 'Collectivités', value: 'collectivites' },
                 { label: 'Référentiels', value: 'referentiels' },
-                { label: "Plans d'action", value: 'plans' },
+                { label: 'Plans', value: 'plans' },
               ]}
               onChange={(value) =>
                 value && handleChangeView(value as RecherchesViewParam)

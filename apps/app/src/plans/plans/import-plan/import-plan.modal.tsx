@@ -15,7 +15,7 @@ export const ImportPlanModal = ({
 
   return (
     <Modal
-      title="Importer un plan d'action"
+      title="Importer un plan"
       size="md"
       render={({ descriptionId, close }) => (
         <div id={descriptionId} className="space-y-6">

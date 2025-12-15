@@ -75,7 +75,7 @@ const SchedulerBase = ({ events, isLoading }: SchedulerProps) => {
       emptyText={
         isLoading
           ? 'Chargement ...'
-          : 'Aucune fiche action ne correspond à votre recherche'
+          : 'Aucune action ne correspond à votre recherche'
       }
       /** Disabled features */
       // Attention: Si on réactive les intéractions, il faut probablement désactiver

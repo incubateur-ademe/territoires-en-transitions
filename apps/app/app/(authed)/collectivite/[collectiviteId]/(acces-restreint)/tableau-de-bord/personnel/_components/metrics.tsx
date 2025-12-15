@@ -54,7 +54,7 @@ const Metrics = () => {
     {
       isVisibleWithPermissions: (perms) => hasPermission(perms, 'plans.read'),
       getCount: () => metrics?.plans.count || 0,
-      getTitle: (count) => `Plan${count > 1 ? 's' : ''} d'action`,
+      getTitle: (count) => `Plan${count > 1 ? 's' : ''}`,
       link: ({ count }) => {
         if (count > 0) {
           return {

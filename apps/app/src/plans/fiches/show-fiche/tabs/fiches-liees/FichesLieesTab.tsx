@@ -45,7 +45,7 @@ export const FichesLieesTab = ({
       <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-5">
         {/* Titre et bouton d'édition */}
         <div className="flex justify-between">
-          <h5 className="text-primary-8 mb-0">Fiches action liées</h5>
+          <h5 className="text-primary-8 mb-0">Actions liées</h5>
           {!isReadonly && (
             <Button
               icon={!isEditLoading ? 'link' : undefined}
@@ -55,7 +55,7 @@ export const FichesLieesTab = ({
               onClick={() => setIsModalOpen(true)}
             >
               {isEditLoading && <SpinnerLoader className="!h-4" />}
-              Lier une fiche action
+              Lier une action
             </Button>
           )}
         </div>
@@ -63,20 +63,20 @@ export const FichesLieesTab = ({
         <SharedFicheLinkedResourcesAlert
           fiche={fiche}
           currentCollectiviteId={currentCollectiviteId}
-          sharedDataTitle="Fiches associées"
-          sharedDataDescription="Les fiches actions affichées correspondent à celles de cette collectivité."
+          sharedDataTitle="Actions associées"
+          sharedDataDescription="Les actions affichées correspondent à celles de cette collectivité."
         />
 
-        {/* Liste des fiches actions liées */}
+        {/* Liste des actions liées */}
         {!isLoading && isEmpty ? (
           <EmptyCard
             picto={(props) => <FichePicto {...props} />}
-            title="Aucune fiche action de vos plans d'actions n'est liée !"
-            subTitle="Ici vous pouvez faire référence à d’autres fiches actions de vos plans"
+            title="Aucune action de vos plans n'est liée !"
+            subTitle="Ici vous pouvez faire référence à d’autres actions de vos plans"
             isReadonly={isReadonly}
             actions={[
               {
-                children: 'Lier une fiche action',
+                children: 'Lier une action',
                 icon: 'link',
                 onClick: () => setIsModalOpen(true),
               },

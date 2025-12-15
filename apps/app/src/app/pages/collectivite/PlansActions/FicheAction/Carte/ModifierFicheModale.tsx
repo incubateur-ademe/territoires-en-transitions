@@ -45,11 +45,11 @@ const ModifierFicheModale = ({ initialFiche, isOpen, setIsOpen }: Props) => {
         setIsOpen,
       }}
       onClose={() => setFiche(initialFiche)}
-      title="Modifier la fiche action"
+      title="Modifier l'action"
       render={({ close }) => {
         return (
           <div className="flex flex-col gap-6">
-            <Field title="Nom de la fiche action">
+            <Field title="Nom de l'action">
               <Input
                 data-test="FicheNomInput"
                 type="text"

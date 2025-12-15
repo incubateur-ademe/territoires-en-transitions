@@ -21,7 +21,7 @@ const ModalDeleteEtape = ({ openState, etapeId, fiche }: Props) => {
       openState={openState}
       fiche={fiche}
       title="Supprimer l’étape"
-      description="Cette étape sera supprimée définitivement de la fiche action. Souhaitez-vous vraiment supprimer cette étape ?"
+      description="Cette étape sera supprimée définitivement de l'action. Souhaitez-vous vraiment supprimer cette étape ?"
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnOKProps={{

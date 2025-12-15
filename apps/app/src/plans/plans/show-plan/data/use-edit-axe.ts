@@ -4,7 +4,7 @@ import { useSupabase, useTRPC } from '@tet/api';
 import { Plan, PlanNode, PlanType } from '@tet/domain/plans';
 
 /**
- * Édite un axe dans un plan d'action
+ * Édite un axe dans un plan
  */
 export const useEditAxe = (planId: number) => {
   const queryClient = useQueryClient();

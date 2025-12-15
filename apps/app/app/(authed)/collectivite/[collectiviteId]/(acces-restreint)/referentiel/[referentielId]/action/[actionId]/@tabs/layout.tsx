@@ -114,7 +114,7 @@ function ActionLayout({
                 actionId,
                 actionVue: 'fiches',
               })}
-              label="Fiches action"
+              label="Actions"
               icon="article-line"
             />
 

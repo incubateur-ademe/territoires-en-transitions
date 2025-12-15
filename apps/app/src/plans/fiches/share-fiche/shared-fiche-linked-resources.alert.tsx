@@ -23,7 +23,7 @@ export const SharedFicheLinkedResourcesAlert = ({
   return (
     <>
       <h6 className="text-sm leading-4 text-primary-9 uppercase mb-4">
-        {`${sharedDataTitle} à la collectivité de ${fiche.collectiviteNom} qui partage cette fiche`}
+        {`${sharedDataTitle} à la collectivité de ${fiche.collectiviteNom} qui partage cette action`}
       </h6>
       <Alert
         rounded
@@ -31,7 +31,7 @@ export const SharedFicheLinkedResourcesAlert = ({
         title={
           <>
             <span>
-              Cette fiche action vous a été partagée par la collectivité
+              Cette action vous a été partagée par la collectivité
               {` "${fiche.collectiviteNom}"`}.{` ${sharedDataDescription}`}
             </span>
             <span>

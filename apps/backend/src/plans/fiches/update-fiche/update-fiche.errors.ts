@@ -14,15 +14,15 @@ export const updateFicheErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
   specificErrors: {
     SELF_REFERENCE: {
       code: 'BAD_REQUEST',
-      message: 'La fiche ne peut pas se référencer elle-même',
+      message: "L'action ne peut pas se référencer elle-même",
     },
     PARENT_NOT_FOUND: {
       code: 'BAD_REQUEST',
-      message: 'La fiche ne peut pas référencer une fiche inexistante',
+      message: "L'action ne peut pas référencer une action inexistante",
     },
     FICHE_NOT_FOUND: {
       code: 'NOT_FOUND',
-      message: 'Fiche non trouvée',
+      message: 'Action non trouvée',
     },
   },
 };

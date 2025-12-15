@@ -2,7 +2,7 @@
 
 ## Description
 
-Ce module permet de constituer une base d’actions adaptées aux compétences d'une collectivité et d'initier un plan d’action pilotable à partir de cette sélection.
+Ce module permet de constituer une base d’actions adaptées aux compétences d'une collectivité et d'initier un plan pilotable à partir de cette sélection.
 
 Ce module utilise [Next.js](https://nextjs.org/).
 

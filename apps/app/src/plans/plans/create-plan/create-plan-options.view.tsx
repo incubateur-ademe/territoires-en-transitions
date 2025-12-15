@@ -9,7 +9,7 @@ export const CreatePlanOptionsView = () => {
 
   return (
     <div className="text-center">
-      <h3 className="mb-4">Créer un plan d’action</h3>
+      <h3 className="mb-4">Créer un plan</h3>
       <p className="text-lg text-grey-6">Vous souhaitez</p>
       <CreatePlanOptionLinksList
         collectiviteId={collectiviteId}

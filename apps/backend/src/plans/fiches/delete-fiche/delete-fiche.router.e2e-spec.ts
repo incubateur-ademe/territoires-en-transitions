@@ -67,7 +67,7 @@ describe('Delete Fiche Action', () => {
       // Verify fiche is no longer returned by the get() method
       await expect(
         caller.plans.fiches.get({ id: testFicheId })
-      ).rejects.toThrow(`Aucune fiche action trouvée avec l'id ${testFicheId}`);
+      ).rejects.toThrow(`Aucune action trouvée avec l'id ${testFicheId}`);
 
       // Verify fiche still exists in database but with the "deleted" flag
       const [row1] = await db.db
@@ -131,9 +131,7 @@ describe('Delete Fiche Action', () => {
       // Verify fiche no longer exists in database
       await expect(
         caller.plans.fiches.get({ id: anotherFicheId })
-      ).rejects.toThrow(
-        `Aucune fiche action trouvée avec l'id ${anotherFicheId}`
-      );
+      ).rejects.toThrow(`Aucune action trouvée avec l'id ${anotherFicheId}`);
     });
 
     test('Successfully delete a fiche and sub-fiche (hard delete)', async () => {
@@ -183,9 +181,7 @@ describe('Delete Fiche Action', () => {
 
       await expect(
         caller.plans.fiches.delete({ ficheId: nonExistingFicheId })
-      ).rejects.toThrow(
-        `Fiche action non trouvée pour l'id ${nonExistingFicheId}`
-      );
+      ).rejects.toThrow(`Action non trouvée pour l'id ${nonExistingFicheId}`);
     });
   });
 

@@ -1,4 +1,4 @@
--- Ajoute les fonctionnalités pour tester les plans d'action et indicateurs
+-- Ajoute les fonctionnalités pour tester les plans et indicateurs
 
 select test.create_copy('public', 'fiche_action');
 select test.create_copy('public', 'axe');

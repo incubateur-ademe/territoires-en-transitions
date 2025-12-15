@@ -61,7 +61,7 @@ export const FichesListCellActions = ({ fiche }: Props) => {
                 <AdditionalMenuInfo
                   icon="lock-fill"
                   iconClassName="text-primary-7"
-                  label="Fiche en accès restreint"
+                  label="Action en accès restreint"
                 />
               )}
             </div>

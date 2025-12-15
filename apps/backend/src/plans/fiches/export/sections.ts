@@ -40,11 +40,11 @@ const PRESENTATION: Section = {
     ...Array.from({ length: maxDepth }).map((_, i) => ({
       colLabel: getDepthLabel(i + 1),
       cellValue: ({ path, depth, nom }: PlanRow) =>
-        depth === 0 && i === 0 ? '(Fiche non classée)' : [...path, nom][i],
+        depth === 0 && i === 0 ? '(Action non classée)' : [...path, nom][i],
       excludeFromDocx: true,
     })),
     {
-      colLabel: 'Titre de la fiche action',
+      colLabel: "Titre de l'action",
       cellValue: ({ fiche }: PlanRow) => fiche?.titre,
       excludeFromDocx: true,
     },
@@ -80,7 +80,7 @@ const ACCES: Section = {
   sectionLabel: 'Gestion des accès',
   cols: () => [
     {
-      colLabel: 'Confidentialité de la fiche',
+      colLabel: "Confidentialité de l'action",
       cellValue: ({ fiche }) => (fiche?.restreint ? 'Oui' : 'Non'),
     },
   ],
@@ -244,7 +244,7 @@ const INFO_LIEES: Section = {
   sectionLabel: 'Autres informations liées',
   cols: () => [
     {
-      colLabel: 'Fiches action',
+      colLabel: 'Actions',
       cellValue: ({ fiche }) => getNames(fiche?.fichesLiees),
     },
     {

@@ -46,7 +46,7 @@ const getStatutsChartOption = (
   });
 };
 
-/** Affichage des statuts des FA dans la carte d'un plan d'action */
+/** Affichage des statuts des FA dans la carte d'un plan */
 export const Statuts = ({
   statuts,
   fichesCount,
@@ -73,7 +73,7 @@ export const Statuts = ({
     return (
       <Tooltip
         openingDelay={0}
-        label={<div className="font-normal">Aucune fiche dans ce plan</div>}
+        label={<div className="font-normal">Aucune action dans ce plan</div>}
       >
         <PlanStatutsBar className="bg-grey-1 border border-grey-4" />
       </Tooltip>
@@ -99,8 +99,7 @@ export const Statuts = ({
           {/** Si contient uniquement des fiches sans statut */}
           {fichesCount === statuts['null']?.count && (
             <div className="font-normal">
-              Complétez les statuts de vos fiches action pour voir la
-              répartition
+              Complétez les statuts de vos actions pour voir la répartition
             </div>
           )}
         </div>

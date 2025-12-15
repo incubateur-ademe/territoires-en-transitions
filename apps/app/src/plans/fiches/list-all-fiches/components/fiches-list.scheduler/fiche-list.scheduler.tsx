@@ -53,8 +53,8 @@ const MenuAide = () => (
       description={
         <div className="flex flex-col gap-3 mt-0.5 pr-8">
           <p className="mb-0 text-sm">
-            Les fiches n&apos;ayant ni date de début, ni date de fin ne sont pas
-            affichées
+            Les actions n&apos;ayant ni date de début, ni date de fin ne sont
+            pas affichées
           </p>
           <div className="h-px bg-primary-3" />
           <p className="mb-0 font-bold text-info-1">

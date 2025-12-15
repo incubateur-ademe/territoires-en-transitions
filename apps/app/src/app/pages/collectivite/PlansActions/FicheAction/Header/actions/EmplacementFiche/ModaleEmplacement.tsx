@@ -19,7 +19,7 @@ const ModaleEmplacement = ({ fiche, isReadonly }: ModaleEmplacementProps) => {
   return (
     <Modal
       dataTest="RangerFicheModale"
-      title="Ranger la fiche dans un ou plusieurs plans d’action"
+      title="Ranger l'action dans un ou plusieurs plans"
       size="xl"
       onClose={() => setActiveTab(0)}
       render={({ descriptionId }) => (
@@ -42,7 +42,7 @@ const ModaleEmplacement = ({ fiche, isReadonly }: ModaleEmplacementProps) => {
       <Button
         data-test="BoutonRangerFiche"
         icon="folder-2-line"
-        title="Ranger la fiche dans un plan d’action"
+        title="Ranger l'action dans un plan"
         variant="grey"
         size="xs"
         className="h-fit"

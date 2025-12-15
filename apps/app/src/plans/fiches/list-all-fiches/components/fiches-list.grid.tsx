@@ -44,7 +44,7 @@ export const FichesListGrid = ({
     return (
       <EmptyCard
         picto={(props) => <PictoExpert {...props} />}
-        title="Aucune fiche action ne correspond à votre recherche"
+        title="Aucune action ne correspond à votre recherche"
         variant="transparent"
       />
     );

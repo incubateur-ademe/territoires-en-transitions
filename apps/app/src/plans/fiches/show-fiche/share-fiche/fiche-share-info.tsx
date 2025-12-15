@@ -24,7 +24,7 @@ export const getFicheActionShareText = (
   }
 
   return fiche.collectiviteId === collectiviteId
-    ? `Cette fiche est partagée en édition avec ${
+    ? `Cette action est partagée en édition avec ${
         fiche.sharedWithCollectivites?.length === 1
           ? `la collectivité ${fiche.sharedWithCollectivites[0].nom}`
           : `la collectivité ${fiche.sharedWithCollectivites[0].nom} et ${
@@ -33,7 +33,7 @@ export const getFicheActionShareText = (
                 : `${fiche.sharedWithCollectivites?.length - 1} autres`
             }`
       }`
-    : `Cette fiche vous est partagée en édition par la collectivité ${fiche.collectiviteNom}`;
+    : `Cette action vous est partagée en édition par la collectivité ${fiche.collectiviteNom}`;
 };
 
 export const FicheActionShareInfoText = ({
@@ -50,7 +50,7 @@ export const FicheActionShareInfoText = ({
   if (fiche.collectiviteId === collectiviteId) {
     return (
       <span>
-        Cette fiche est partagée en édition avec{' '}
+        Cette action est partagée en édition avec{' '}
         <Tooltip
           label={`Partagée avec les collectivités : ${fiche.sharedWithCollectivites
             .map((c) => c.nom)
@@ -72,7 +72,7 @@ export const FicheActionShareInfoText = ({
 
   return (
     <span>
-      Cette fiche vous est partagée en édition par la collectivité{' '}
+      Cette action vous est partagée en édition par la collectivité{' '}
       <span className="font-extrabold">{fiche.collectiviteNom}</span>
     </span>
   );

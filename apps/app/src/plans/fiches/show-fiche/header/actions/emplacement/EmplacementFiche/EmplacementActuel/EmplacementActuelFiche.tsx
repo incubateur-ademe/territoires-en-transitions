@@ -38,8 +38,8 @@ const EmplacementActuelFiche = ({ fiche }: EmplacementActuelFicheProps) => {
         {nbEmplacements !== 0
           ? `${nbEmplacements} emplacement${
               nbEmplacements > 1 ? 's' : ''
-            } sélectionné${nbEmplacements > 1 ? 's' : ''} pour cette fiche`
-          : "Cette fiche n'a pas encore d'emplacement sélectionné"}
+            } sélectionné${nbEmplacements > 1 ? 's' : ''} pour cette action`
+          : "Cette action n'a pas encore d'emplacement sélectionné"}
       </h6>
 
       {/* Liste des emplacements */}

@@ -306,7 +306,7 @@ export default class TableauDeBordCollectiviteService {
         options: {
           countByProperty: 'statut',
           filtre: {
-            // Le filtre par défaut se base sur tous les plans d'actions de la collectivité
+            // Le filtre par défaut se base sur tous les plans de la collectivité
             planActionIds,
           },
         },
@@ -329,7 +329,7 @@ export default class TableauDeBordCollectiviteService {
         options: {
           countByProperty: 'priorite',
           filtre: {
-            // Le filtre par défaut se base sur tous les plans d'actions de la collectivité
+            // Le filtre par défaut se base sur tous les plans de la collectivité
             planActionIds,
           },
         },
@@ -354,7 +354,7 @@ export default class TableauDeBordCollectiviteService {
         options: {
           countByProperty: 'pilotes',
           filtre: {
-            // Le filtre par défaut se base sur tous les plans d'actions de la collectivité
+            // Le filtre par défaut se base sur tous les plans de la collectivité
             planActionIds,
           },
         },
@@ -379,7 +379,7 @@ export default class TableauDeBordCollectiviteService {
         options: {
           countByProperty: 'indicateurs',
           filtre: {
-            // Le filtre par défaut se base sur tous les plans d'actions de la collectivité
+            // Le filtre par défaut se base sur tous les plans de la collectivité
             planActionIds,
           },
         },

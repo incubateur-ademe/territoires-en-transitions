@@ -21,22 +21,22 @@ export const FILTRE_DATE_DE_FIN_PREVISIONNELLE_OPTIONS = [
 ];
 
 export const INDICATEURS_OPTIONS = [
-  { label: 'Fiches avec indicateurs', value: WITH },
-  { label: 'Fiches sans indicateurs', value: WITHOUT },
+  { label: 'Actions avec indicateurs', value: WITH },
+  { label: 'Actions sans indicateurs', value: WITHOUT },
 ];
 
 export const NOTES_PROPERTIES: Record<
   NotesOption,
   { label: string; value: NotesOption }
 > = {
-  WITH: { label: 'Fiches avec notes', value: WITH },
-  WITHOUT: { label: 'Fiches sans notes', value: WITHOUT },
+  WITH: { label: 'Actions avec notes', value: WITH },
+  WITHOUT: { label: 'Actions sans notes', value: WITHOUT },
   WITH_RECENT: {
-    label: 'Fiches avec notes récentes (< 1 an)',
+    label: 'Actions avec notes récentes (< 1 an)',
     value: WITH_RECENT,
   },
   WITHOUT_RECENT: {
-    label: 'Fiches sans notes récentes (> 1 an)',
+    label: 'Actions sans notes récentes (> 1 an)',
     value: WITHOUT_RECENT,
   },
 };
@@ -49,8 +49,8 @@ export const MESURES_LIEES_OPTIONS = [
 ];
 
 export const BUDGET_OPTIONS = [
-  { label: 'Fiches avec budget', value: WITH },
-  { label: 'Fiches sans budget', value: WITHOUT },
+  { label: 'Actions avec budget', value: WITH },
+  { label: 'Actions sans budget', value: WITHOUT },
 ];
 
 export const TYPE_PERIODE_OPTIONS = Object.entries(typePeriodLabels).map(

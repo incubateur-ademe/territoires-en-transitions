@@ -47,10 +47,10 @@ const getLabelAndCount = (label: string, count: number | undefined) => {
 };
 
 const viewTitleByType: Record<FicheActionViewType, string> = {
-  all: 'Toutes les fiches',
-  classifiees: 'Fiches des plans',
-  'non-classifiees': 'Fiches hors plan',
-  'mes-fiches': 'Mes fiches',
+  all: 'Toutes les actions',
+  classifiees: 'Actions des plans',
+  'non-classifiees': 'Actions hors plan',
+  'mes-fiches': 'Mes actions',
 };
 
 const ToutesLesFichesActionContent = () => {
@@ -105,7 +105,7 @@ const ToutesLesFichesActionContent = () => {
   return (
     <>
       <Header
-        title="Toutes les fiches"
+        title="Toutes les actions"
         actionButtons={
           <VisibleWhen
             condition={
@@ -113,7 +113,7 @@ const ToutesLesFichesActionContent = () => {
             }
           >
             <Button size="sm" onClick={() => createFicheAction()}>
-              {"Créer une fiche d'action"}
+              {'Créer une action'}
             </Button>
           </VisibleWhen>
         }

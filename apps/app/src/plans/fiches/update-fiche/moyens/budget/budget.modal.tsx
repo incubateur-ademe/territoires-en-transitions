@@ -177,7 +177,7 @@ export const BudgetModal = ({
                   />
                   <Divider className="-mb-6" />
                   <Checkbox
-                    label="Le budget prévisionnel total renseigné s’étale sur toute la durée du plan d’action"
+                    label="Le budget prévisionnel total renseigné s’étale sur toute la durée du plan"
                     checked={isFullPlan}
                     onChange={(evt) => setIsFullPlan(evt.currentTarget.checked)}
                   />

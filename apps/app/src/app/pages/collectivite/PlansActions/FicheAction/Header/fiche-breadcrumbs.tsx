@@ -36,7 +36,7 @@ const OtherPlansBreadcrumbs = ({
         iconPosition="right"
         onClick={() => setIsOpen((prevState) => !prevState)}
       >
-        Autre{s} emplacement{s} pour cette fiche
+        Autre{s} emplacement{s} pour cette action
       </Button>
 
       <VisibleWhen condition={isOpen}>

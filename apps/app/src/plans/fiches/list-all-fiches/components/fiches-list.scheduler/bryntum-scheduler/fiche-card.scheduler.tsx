@@ -135,7 +135,7 @@ export const FicheCardScheduler = ({
               data-test="EditerFicheBouton"
               id={`fiche-${fiche.id}-edit-button`}
               icon="edit-line"
-              title="Modifier la fiche"
+              title="Modifier l'action"
               variant="grey"
               size="xs"
               onClick={() => setIsEditOpen(!isEditOpen)}

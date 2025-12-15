@@ -100,9 +100,9 @@ const NouvelEmplacementFiche = ({
   return (
     <div className="flex flex-col gap-8">
       {/* Message d'info */}
-      <Alert title="Le contenu de la fiche sera mis à jour de manière synchronisée quel que soit l’emplacement" />
+      <Alert title="Le contenu de l'action sera mis à jour de manière synchronisée quel que soit l’emplacement" />
 
-      {/* Arborescence des plans d'action disponibles */}
+      {/* Arborescence des plans disponibles */}
       {plans && plans.length > 0 ? (
         <div className="border border-grey-3 rounded-lg grid grid-flow-col auto-cols-[16rem] overflow-x-auto divide-x-[0.5px] divide-primary-3 py-3">
           <ColonneTableauEmplacement
@@ -126,7 +126,7 @@ const NouvelEmplacementFiche = ({
         </div>
       ) : (
         <span className="text-primary-9 text-sm font-bold">
-          {"Il n'existe aucun plan auquel rattacher cette fiche"}
+          {"Il n'existe aucun plan auquel rattacher cette action"}
         </span>
       )}
 

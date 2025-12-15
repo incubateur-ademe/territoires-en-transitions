@@ -13,7 +13,7 @@ const fetchPlanTypeListe = async (supabase: DBClient) => {
   return data;
 };
 
-/** Renvoie la liste complète des types possibles de plan d'action */
+/** Renvoie la liste complète des types possibles de plan */
 export const usePlanTypeListe = () => {
   const supabase = useSupabase();
   const { data } = useQuery({

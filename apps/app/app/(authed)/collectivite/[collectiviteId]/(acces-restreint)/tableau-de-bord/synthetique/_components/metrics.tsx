@@ -69,7 +69,7 @@ const Metrics = () => {
             }
           />
           <MetricCard
-            title={`Plan${plansCount > 1 ? 's' : ''} d'action`}
+            title={`Plan${plansCount > 1 ? 's' : ''}`}
             count={plansCount}
             link={
               plansCount > 0
@@ -90,7 +90,7 @@ const Metrics = () => {
             }
           />
           <MetricCard
-            title={`Fiche${fichesCount > 1 ? 's' : ''} action`}
+            title={`Action${fichesCount > 1 ? 's' : ''}`}
             count={fichesCount}
             link={
               fichesCount > 0
@@ -98,7 +98,7 @@ const Metrics = () => {
                     href: makeCollectiviteToutesLesFichesUrl({
                       collectiviteId,
                     }),
-                    children: 'Voir les fiches',
+                    children: 'Voir les actions',
                   }
                 : undefined
             }

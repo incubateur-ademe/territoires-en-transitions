@@ -42,7 +42,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
     );
 
     expect(moduleList?.[0]).toMatchObject({
-      titre: /plans d'action/i,
+      titre: /plans/i,
       type: 'plan-action.list',
       options: expect.any(Object),
     });
@@ -92,7 +92,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
     );
 
     expect(moduleList?.[0]).toMatchObject({
-      titre: /plans d'action/i,
+      titre: /plans/i,
       type: 'plan-action.list',
       options: expect.any(Object),
     });

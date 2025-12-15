@@ -109,7 +109,7 @@ export const ficheActionForCountBySchema = z.object({
       })
     )
     .nullable()
-    .describe("Plans d'action"),
+    .describe('Plans'),
   referents: z
     .array(
       z.object({

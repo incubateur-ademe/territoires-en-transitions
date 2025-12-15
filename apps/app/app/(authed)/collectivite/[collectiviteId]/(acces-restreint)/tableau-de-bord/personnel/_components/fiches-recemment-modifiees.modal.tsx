@@ -50,7 +50,7 @@ const FichesRecemmentModifieesModal = ({
       title={module.titre}
       render={() => (
         <FormSection title="Filtrer sur :" className="!grid-cols-1">
-          <Field title="Plans d'action">
+          <Field title="Plans">
             <PlansActionDropdown
               values={filtreState.planActionIds}
               onChange={({ plans }) =>

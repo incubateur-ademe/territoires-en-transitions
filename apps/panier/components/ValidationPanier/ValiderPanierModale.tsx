@@ -1,3 +1,9 @@
+import StepperValidation from '@/panier/components/Stepper/StepperValidation';
+import {
+  useCollectiviteContext,
+  usePanierContext,
+  useUserContext,
+} from '@/panier/providers';
 import {
   PanierAPI,
   getAuthPaths,
@@ -5,12 +11,6 @@ import {
   getRejoindreCollectivitePath,
   useSupabase,
 } from '@tet/api';
-import StepperValidation from '@/panier/components/Stepper/StepperValidation';
-import {
-  useCollectiviteContext,
-  usePanierContext,
-  useUserContext,
-} from '@/panier/providers';
 import { CollectiviteAccess } from '@tet/domain/users';
 import {
   Button,
@@ -32,8 +32,8 @@ const ValiderPanierModale = () => {
   const contenu = panier?.inpanier ?? [];
 
   const steps = [
-    "Je crée mon plan et retrouve l'ensemble des fiches actions sélectionnées dans mon panier. ",
-    'Je modifie les fiches à ma guise et invite mes collaborateurs à contribuer en ligne.',
+    "Je crée mon plan et retrouve l'ensemble des actions sélectionnées dans mon panier. ",
+    'Je modifie les actions à ma guise et invite mes collaborateurs à contribuer en ligne.',
   ];
 
   !user &&
@@ -98,7 +98,7 @@ const ModeDeconnecte = () => {
 
 /**
  * Bascule entre `connecté et rattaché` et `connecté pas rattaché`
- * selon s'il est possible de créer un plan d'action dans une collectivité.
+ * selon s'il est possible de créer un plan dans une collectivité.
  */
 const ModeConnecte = () => {
   const supabase = useSupabase();
@@ -135,7 +135,7 @@ const ModeConnectePasRattache = () => {
  *
  * Affiche
  * - la liste déroulante de mes collectivités ou ma seule collectivité
- * - le bouton "Créer le plan d’action”
+ * - le bouton "Créer le plan”
  *
  * @param collectivites La liste des collectivités pour lesquels un plan peut être créé
  */
@@ -194,7 +194,7 @@ const ModeConnecteRattache = ({
         />
       </Field>
       <Button onClick={handleOnClick} disabled={!collectiviteId}>
-        {"Créer le plan d'action"}
+        {'Créer le plan'}
       </Button>
     </>
   );

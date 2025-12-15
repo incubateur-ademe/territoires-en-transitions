@@ -43,11 +43,11 @@ const FichesLiees = ({
       {isEmpty ? (
         <EmptyCard
           picto={(props) => <FichePicto {...props} />}
-          title="Aucune fiche action de vos plans d'actions n'est liée !"
+          title="Aucune action de vos plans n'est liée !"
           isReadonly={isReadonly}
           actions={[
             {
-              children: 'Lier une fiche action',
+              children: 'Lier une action',
               icon: 'link',
               onClick: () => setIsModalOpen(true),
             },
@@ -57,7 +57,7 @@ const FichesLiees = ({
       ) : (
         <div className="bg-white p-10 border border-grey-3 rounded-xl">
           <div className="flex justify-between items-center flex-wrap mb-5">
-            <h6 className="text-lg mb-0">Fiches action liées</h6>
+            <h6 className="text-lg mb-0">Actions liées</h6>
             {!isReadonly && (
               <Button
                 icon="link"
@@ -65,7 +65,7 @@ const FichesLiees = ({
                 className="w-fit"
                 onClick={() => setIsModalOpen(true)}
               >
-                Lier une fiche action
+                Lier une action
               </Button>
             )}
           </div>

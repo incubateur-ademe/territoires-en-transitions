@@ -14,9 +14,9 @@ export class ListFichesPom {
     });
     this.fichesCarte = page.locator('[data-test="FicheActionCarte"]');
     this.noFicheHeading = page.getByRole('heading', {
-      name: 'Aucune fiche action ne',
+      name: 'Aucune action ne',
     });
-    this.title = page.getByRole('heading', { name: 'Toutes les fiches' });
+    this.title = page.getByRole('heading', { name: 'Toutes les actions' });
 
     this.filterButton = page.getByRole('button', { name: 'Filtrer' });
   }

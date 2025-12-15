@@ -118,7 +118,7 @@ export default class RecherchesService {
   }
 
   /**
-   * Get view for "Plans d'action" tab
+   * Get view for "Plans" tab
    * @param filters
    */
   async plans(

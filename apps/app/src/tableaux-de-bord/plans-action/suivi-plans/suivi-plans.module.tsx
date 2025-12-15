@@ -20,7 +20,7 @@ type Props = {
 };
 
 const MAX_PLANS_TO_DISPLAY = 3;
-/** Module pour l'avancement des plans d'action */
+/** Module pour l'avancement des plans */
 export const SuiviPlansModule = ({ module }: Props) => {
   const { titre, options, defaultKey } = module;
 
@@ -30,7 +30,7 @@ export const SuiviPlansModule = ({ module }: Props) => {
     limit: MAX_PLANS_TO_DISPLAY,
   });
 
-  /** Nb fiches action par statut affiché en donuts ou en ligne */
+  /** Nb actions par statut affiché en donuts ou en ligne */
   const [display, setDisplay] = useState<PlanCardDisplay>('row');
 
   return (

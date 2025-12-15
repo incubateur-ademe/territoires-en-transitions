@@ -19,18 +19,17 @@ export const CommentCaMarche = () => (
         faites ou en cours et retrouvez les toutes au sein de votre plan
         d&apos;action.
       </p>
-      <li>Validez votre panier et créez votre plan d&apos;action</li>
+      <li>Validez votre panier et créez votre plan</li>
       <p className="font-normal">
         Confirmez votre sélection, créez un compte, et accédez à votre plan
-        d&apos;action pilotable directement sur la plateforme Territoires en
-        Transitions.
+        pilotable directement sur la plateforme Territoires en Transitions.
       </p>
       <li>Pilotez et suivez votre plan</li>
       <p className="font-normal">
         Utilisez la plateforme comme espace de travail collaboratif pour gérer
-        votre plan d&apos;action en y ajoutant des indicateurs de suivi. Suivez
-        la progression de vos actions grâce au tableau de bord et invitez vos
-        collègues pour travailler sur une plateforme unique.
+        votre plan en y ajoutant des indicateurs de suivi. Suivez la progression
+        de vos actions grâce au tableau de bord et invitez vos collègues pour
+        travailler sur une plateforme unique.
       </p>
     </ul>
   </>

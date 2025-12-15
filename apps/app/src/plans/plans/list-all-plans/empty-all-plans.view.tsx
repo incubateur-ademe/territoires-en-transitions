@@ -13,10 +13,10 @@ export const EmptyAllPlansView = ({
   return (
     <EmptyCard
       picto={() => <PictoDashboard height="160" width="160" />}
-      title="Vous n'avez pas encore crée de plan d'action !"
+      title="Vous n'avez pas encore crée de plan !"
       description={[
-        "Vous pouvez créer votre plan d'action, qu'il soit déjà voté ou encore en cours d'élaboration.",
-        'Les fiches seront modifiables à tout moment et vous pourrez les piloter depuis cette page !',
+        "Vous pouvez créer votre plan, qu'il soit déjà voté ou encore en cours d'élaboration.",
+        'Les actions seront modifiables à tout moment et vous pourrez les piloter depuis cette page !',
       ]}
       actions={[
         <CreatePlanButton
@@ -25,7 +25,7 @@ export const EmptyAllPlansView = ({
           panierId={panierId}
           size="xl"
         >
-          <h5 className="text-white mb-0">{"Créer un plan d'action"}</h5>
+          <h5 className="text-white mb-0">{'Créer un plan'}</h5>
         </CreatePlanButton>,
       ]}
     />

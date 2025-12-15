@@ -128,7 +128,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
             ) : undefined}
 
             {displayFichesLieesVisiteOrPermission ? (
-              <Tab label="Fiches action">
+              <Tab label="Actions">
                 <FichesLiees
                   definition={definition}
                   isReadonly={isReadOnly}

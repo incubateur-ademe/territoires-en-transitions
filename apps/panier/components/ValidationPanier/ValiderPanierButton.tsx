@@ -7,9 +7,9 @@ import { useState } from 'react';
 import ValiderPanierModale from './ValiderPanierModale';
 
 /**
- * Le bouton “Valider la création” du panier d'action
+ * Le bouton “Valider la création” du panier
  *
- * Contrôle la modale de "Création de plan d’action”
+ * Contrôle la modale de "Création de plan”
  * Si le paramètre `modale` est égal à `creation` la modale est initialement ouverte
  */
 const ValiderPanierButton = ({ disabled }: { disabled?: boolean }) => {
@@ -32,7 +32,7 @@ const ValiderPanierButton = ({ disabled }: { disabled?: boolean }) => {
           });
         }}
       >
-        Créer un plan d’action
+        Créer un plan
       </Button>
       <Modal
         size="lg"

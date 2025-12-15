@@ -160,7 +160,7 @@ describe('UpdateFicheService', () => {
         })
       ).rejects.toThrow(
         expect.objectContaining({
-          message: `Fiche action non trouvée pour l'id 121212`,
+          message: `Action non trouvée pour l'id 121212`,
         })
       );
     });

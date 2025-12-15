@@ -22,7 +22,7 @@ export const CreatePlanOptionLinksList = ({
     <div data-test="choix-creation-plan" className="flex gap-4">
       <Link
         variant="primary"
-        title="Créer un plan d’action"
+        title="Créer un plan"
         subTitle="directement sur la plateforme"
         icon={<CreatePlanPicto />}
         url={makeCollectivitePlansActionsCreerUrl({
@@ -33,7 +33,7 @@ export const CreatePlanOptionLinksList = ({
         }}
       />
       <Link
-        title="Importer un plan d’action"
+        title="Importer un plan"
         subTitle="à partir d’un modèle"
         icon={<ImportPlanPicto />}
         url={makeCollectivitePlansActionsImporterUrl({
@@ -44,7 +44,7 @@ export const CreatePlanOptionLinksList = ({
         }}
       />
       <Link
-        title="Initier votre plan d’action"
+        title="Initier votre plan"
         subTitle="grâce aux “Actions à Impact”"
         icon={<CreateWithActions />}
         url={makeCollectivitePanierUrl({

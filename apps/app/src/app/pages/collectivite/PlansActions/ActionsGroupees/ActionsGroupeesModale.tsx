@@ -16,7 +16,7 @@ const ActionsGroupeesModale = ({
   return (
     <Modal
       {...props}
-      subTitle={`pour toutes les fiches sélectionnées`}
+      subTitle={`pour toutes les actions sélectionnées`}
       render={({ descriptionId }) => (
         <FormSectionGrid formSectionId={descriptionId}>
           {children}

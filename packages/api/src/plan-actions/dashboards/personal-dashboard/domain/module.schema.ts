@@ -162,7 +162,7 @@ export async function getDefaultModule(
           'indicateurs-de-suivi-de-mes-plans'
         ],
       options: {
-        // Le filtre par défaut affiche les indicateurs liés à tous les plans d'actions de la collectivité
+        // Le filtre par défaut affiche les indicateurs liés à tous les plans de la collectivité
         filtre: {
           planActionIds,
         },

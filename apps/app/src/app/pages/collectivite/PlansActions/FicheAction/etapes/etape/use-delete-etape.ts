@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 
 /**
- * Charge les étapes d'une fiche action
+ * Charge les étapes d'une fiche
  */
 export const useDeleteEtape = () => {
   const trpc = useTRPC();

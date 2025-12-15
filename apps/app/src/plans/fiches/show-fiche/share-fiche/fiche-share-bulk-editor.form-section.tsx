@@ -27,7 +27,7 @@ export const FicheShareBulkEditorFormSection = ({
       <Field
         title="Donner l'accès aux collectivités suivantes :"
         state="info"
-        message="Les administrateurs et éditeurs de cette collectivité pourront éditer ces fiches"
+        message="Les administrateurs et éditeurs de cette collectivité pourront éditer ces actions"
       >
         <MultipleCollectiviteSelector
           collectivites={collectivitesToAdd}
@@ -37,7 +37,7 @@ export const FicheShareBulkEditorFormSection = ({
       <Field
         title="Retirer l'accès aux collectivités suivantes :"
         state="info"
-        message="Les administrateurs et éditeurs de ces collectivité ne pourront plus éditer ces fiches"
+        message="Les administrateurs et éditeurs de ces collectivité ne pourront plus éditer ces actions"
       >
         <MultipleCollectiviteSelector
           collectivites={collectivitesToRemove}

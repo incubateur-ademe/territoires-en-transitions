@@ -1,5 +1,5 @@
 /**
- * Export d'un plan d'action au format Word
+ * Export d'un plan au format Word
  */
 import { Plan, PlanRow } from '@tet/backend/plans/fiches/plan-actions.service';
 import { formatDate } from '@tet/backend/utils/excel/export-excel.utils';
@@ -95,7 +95,7 @@ const getParagraphes = (sections: Sections, row: PlanRow): Paragraph[] => {
       style: 'Title',
     }),
     NormalText(
-      depth === 0 ? '(Fiche non classée)' : [...path, nom].join(' > ')
+      depth === 0 ? '(Action non classée)' : [...path, nom].join(' > ')
     ),
   ];
 

@@ -21,7 +21,7 @@ export const ModaleEmplacement = ({
         setIsOpen: onClose,
       }}
       dataTest="RangerFicheModale"
-      title="Ranger la fiche dans un ou plusieurs plans d’action"
+      title="Ranger l'action dans un ou plusieurs plans"
       size="xl"
       onClose={() => {
         setActiveTab(0);

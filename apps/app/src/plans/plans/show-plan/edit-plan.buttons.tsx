@@ -47,7 +47,7 @@ export const EditPlanButtons = ({
       </Button>
       <VisibleWhen condition={availableActions.includes('createFicheResume')}>
         <Button size="xs" onClick={() => createFicheResume()}>
-          Créer une fiche action
+          Créer une action
         </Button>
       </VisibleWhen>
     </div>

@@ -44,7 +44,7 @@ export const AllPlansView = ({ collectiviteId, panierId }: Props) => {
                 collectiviteId={collectiviteId}
                 panierId={panierId}
               >
-                {"Créer un plan d'action"}
+                {'Créer un plan'}
               </CreatePlanButton>
             </VisibleWhen>
             <ImportPlanButton collectiviteId={collectiviteId} />

@@ -277,9 +277,9 @@ export class PanierAPI {
   }
 
   /**
-   * Crée un plan d'action pour la collectivité à partir d'un panier
+   * Crée un plan pour la collectivité à partir d'un panier
    *
-   * Renvoi l'id du plan d'action créé.
+   * Renvoi l'id du plan créé.
    *
    * On pourra alors rediriger l'utilisateur vers le plan nouvellement créé.
    *

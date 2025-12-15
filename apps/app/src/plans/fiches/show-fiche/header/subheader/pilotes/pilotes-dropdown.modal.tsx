@@ -34,7 +34,7 @@ export const PilotesDropdownModal = ({
       fiche={fiche}
       onClose={onClose}
       openState={{ isOpen: true, setIsOpen: () => {} }}
-      title="Pilotes du projet"
+      title="Pilotes de l'action"
       size="lg"
       render={({ descriptionId }) => (
         <FormSectionGrid formSectionId={descriptionId}>

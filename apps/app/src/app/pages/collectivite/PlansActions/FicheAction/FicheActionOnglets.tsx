@@ -77,7 +77,7 @@ const FicheActionOnglets = ({
       render: () => <MoyensView isReadonly={isReadonly} fiche={fiche} />,
     },
     {
-      label: 'Fiches action liées',
+      label: 'Actions liées',
       isVisible:
         hasPermission(permissions, 'plans.fiches.read') ||
         (!niveauAcces &&

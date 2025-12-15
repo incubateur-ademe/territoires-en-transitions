@@ -31,7 +31,7 @@ export const StatusDropdownModal = ({
       fiche={fiche}
       onClose={onClose}
       openState={{ isOpen: true, setIsOpen: () => {} }}
-      title="Statut de la fiche action"
+      title="Statut de l'action"
       size="lg"
       render={({ descriptionId }) => (
         <FormSectionGrid formSectionId={descriptionId}>
