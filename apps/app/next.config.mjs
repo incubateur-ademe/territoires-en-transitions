@@ -88,7 +88,46 @@ const nextConfig = {
         source: '/phtr/:path*',
         destination: 'https://eu.i.posthog.com/:path*',
       },
+      {
+        source: '/phtr-static/:path*',
+        destination: 'https://eu-assets.i.posthog.com/static/:path*',
+      },
     ];
+  },
+
+  async redirects() {
+    return [
+      {
+        source: '/collectivite/:collectiviteId/plans/fiches/:ficheId*',
+        destination: '/collectivite/:collectiviteId/plans/actions/:ficheId*',
+        permanent: true,
+      },
+      {
+        source: '/collectivite/:collectiviteId/plans/:planId/fiches/:ficheId*',
+        destination: '/collectivite/:collectiviteId/plans/:planId/actions/:ficheId*',
+        permanent: true,
+      },
+      {
+        source: '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/mes-fiches/:path*',
+        destination: '/collectivite/:collectiviteId/plans/actions/mes-actions/:path*',
+        permanent: true,
+      },
+      {
+        source: '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/classifiees/:path*',
+        destination: '/collectivite/:collectiviteId/plans/actions/dans-plan/:path*',
+        permanent: true,
+      },
+      {
+        source: '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/non-classifiees/:path*',
+        destination: '/collectivite/:collectiviteId/plans/actions/hors-plan/:path*',
+        permanent: true,
+      },
+      {
+        source: '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/:path*',
+        destination: '/collectivite/:collectiviteId/plans/actions/:path*',
+        permanent: true,
+      },
+    ]
   },
 
   // https://nextjs.org/docs/app/api-reference/config/next-config-js/poweredByHeader

@@ -12,10 +12,10 @@ import {
 } from './use-fiche-action-filters-data';
 
 export type FicheActionViewType =
-  | 'classifiees'
-  | 'non-classifiees'
+  | 'dans-plan'
+  | 'hors-plan'
   | 'all'
-  | 'mes-fiches';
+  | 'mes-actions';
 
 type FicheActionFiltersContextType = {
   filters: FormFilters;
@@ -97,7 +97,7 @@ export const FicheActionFiltersProvider = ({
   ficheType = 'all',
 }: {
   children: ReactNode;
-  ficheType?: 'classifiees' | 'non-classifiees' | 'all' | 'mes-fiches';
+  ficheType?: FicheActionViewType;
 }) => {
   const tracker = useEventTracker();
   const { lookupConfig } = useFicheActionFiltersData();
@@ -109,16 +109,16 @@ export const FicheActionFiltersProvider = ({
   const basicFiltersRaw: Partial<FormFilters> = {
     // noPlan is not in the search parameters, so we handle it here using the props
     noPlan: {
-      'non-classifiees': true,
-      classifiees: false,
+      'dans-plan': true,
+      'hors-plan': false,
       all: undefined,
-      'mes-fiches': undefined,
+      'mes-actions': undefined,
     }[ficheType],
     utilisateurPiloteIds: {
-      'non-classifiees': undefined,
-      classifiees: undefined,
+      'dans-plan': undefined,
+      'hors-plan': undefined,
       all: undefined,
-      'mes-fiches': [user.id],
+      'mes-actions': [user.id],
     }[ficheType],
   };
 

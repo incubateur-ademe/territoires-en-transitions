@@ -82,7 +82,7 @@ const Metrics = () => {
           ? {
               href: makeCollectiviteToutesLesFichesUrl({
                 collectiviteId,
-                ficheViewType: 'mes-fiches',
+                ficheViewType: 'mes-actions',
               }),
               children: 'Voir les actions',
             }

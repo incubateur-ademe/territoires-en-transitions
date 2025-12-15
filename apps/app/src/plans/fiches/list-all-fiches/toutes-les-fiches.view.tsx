@@ -48,9 +48,9 @@ const getLabelAndCount = (label: string, count: number | undefined) => {
 
 const viewTitleByType: Record<FicheActionViewType, string> = {
   all: 'Toutes les actions',
-  classifiees: 'Actions des plans',
-  'non-classifiees': 'Actions hors plan',
-  'mes-fiches': 'Mes actions',
+  'dans-plan': 'Actions des plans',
+  'hors-plan': 'Actions hors plan',
+  'mes-actions': 'Mes actions',
 };
 
 const ToutesLesFichesActionContent = () => {
@@ -81,24 +81,27 @@ const ToutesLesFichesActionContent = () => {
         permissions,
         'plans.fiches.read_public'
       ),
-      type: 'classifiees',
-      label: getLabelAndCount(viewTitleByType.classifiees, countFichesClassees),
+      type: 'dans-plan',
+      label: getLabelAndCount(
+        viewTitleByType['dans-plan'],
+        countFichesClassees
+      ),
     },
     {
       isVisibleWithPermissions: hasPermission(
         permissions,
         'plans.fiches.read_public'
       ),
-      type: 'non-classifiees',
+      type: 'hors-plan',
       label: getLabelAndCount(
-        viewTitleByType['non-classifiees'],
+        viewTitleByType['hors-plan'],
         countFichesNonClassees
       ),
     },
     {
       isVisibleWithPermissions: hasPermission(permissions, 'plans.fiches.read'),
-      type: 'mes-fiches',
-      label: getLabelAndCount(viewTitleByType['mes-fiches'], undefined),
+      type: 'mes-actions',
+      label: getLabelAndCount(viewTitleByType['mes-actions'], undefined),
     },
   ];
 
