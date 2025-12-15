@@ -3,6 +3,7 @@ import { countByDateSlots } from '@tet/backend/plans/fiches/count-by/count-by-da
 import { countByArrayValues } from '@tet/backend/plans/fiches/count-by/utils/count-by-array-value';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ficheActionResultatsAttenduValues } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
+import { TagWithCollectiviteId } from '@tet/domain/collectivites';
 import {
   CountByPropertyEnumType,
   FicheWithRelations,
@@ -21,10 +22,12 @@ import {
   SANS_STATUT_LABEL,
   SANS_STRUCTURE_TAG_LABEL,
   SANS_THEMATIQUE_LABEL,
+  Statut,
   cibleEnumValues,
   participationCitoyenneEnumValues,
   prioriteEnumValues,
   statutEnumValues,
+  statutFicheActionToColor,
 } from '@tet/domain/plans';
 import {
   CountByForEntityResponseType,

@@ -1,8 +1,8 @@
-import { LineSeriesOption } from 'echarts/types/dist/echarts';
 import {
   IndicateurValeurType,
   IndicateurValeurTypeEnum,
-} from '../shared/models/indicateur-valeur-type.enum';
+} from '@tet/domain/indicateurs';
+import { LineSeriesOption } from 'echarts/types/dist/echarts';
 import { COLLECTIVITE_SOURCE_ID } from '../valeurs/valeurs.constants';
 
 export type ChartLineStyle = Pick<

@@ -1,8 +1,8 @@
-import { CollectivitesModule } from '@/backend/collectivites/collectivites.module';
-import { PersonnalisationsModule } from '@/backend/collectivites/personnalisations/personnalisations.module';
-import { IndicateursModule } from '@/backend/indicateurs/indicateurs.module';
-import { EchartsModule } from '@/backend/utils/echarts/echarts.module';
 import { Module } from '@nestjs/common';
+import { CollectivitesModule } from '@tet/backend/collectivites/collectivites.module';
+import { PersonnalisationsModule } from '@tet/backend/collectivites/personnalisations/personnalisations.module';
+import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
+import { EchartsModule } from '@tet/backend/utils/echarts/echarts.module';
 import { FichesModule } from '../../fiches/fiches.module';
 import { PlanModule } from '../plans.module';
 import { GenerateReportsController } from './generate-reports.controller';

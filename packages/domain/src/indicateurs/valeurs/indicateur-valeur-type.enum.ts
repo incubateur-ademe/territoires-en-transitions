@@ -1,4 +1,4 @@
-import { createEnumObject } from '@/backend/utils/enum.utils';
+import { createEnumObject } from '@tet/domain/utils';
 
 /**
  * Les cibles/seuils sont des valeurs de référence réglementaires associées à la définition d'un indicateur.

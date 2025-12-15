@@ -1,6 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { FicheWithRelations } from '../../fiches/list-fiches/fiche-action-with-relations.dto';
-import { StatutEnum } from '../../fiches/shared/models/fiche-action.table';
+import { FicheWithRelations, StatutEnum } from '@tet/domain/plans';
 import { PlanProgressRules } from './plan-progress.rules';
 
 describe('PlanProgressRules', () => {

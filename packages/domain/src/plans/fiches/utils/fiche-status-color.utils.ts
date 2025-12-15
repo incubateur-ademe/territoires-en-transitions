@@ -1,7 +1,7 @@
-import { preset } from '@/backend/notifications/templates/components/preset';
-import { Statut } from './shared/models/fiche-action.table';
+import { preset } from '../../../utils/preset';
+import { SANS_STATUT_LABEL } from '../../labels';
+import { Statut } from '../statut.enum.schema';
 
-export const SANS_STATUT_LABEL = 'Sans statut';
 /** Correspondance entre les statuts et couleurs associées */
 export const statutFicheActionToColor: Record<
   Statut | 'NC' | typeof SANS_STATUT_LABEL,

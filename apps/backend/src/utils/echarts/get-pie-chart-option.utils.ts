@@ -2,12 +2,12 @@
  * TODO: to be shared with app
  */
 
+import type { CountByResponseType } from '@tet/domain/utils';
 import type {
   EChartsOption,
   PieSeriesOption,
 } from 'echarts/types/dist/echarts';
 import { cloneDeep } from 'es-toolkit';
-import { CountByResponseType } from '../count-by.dto';
 
 type Args = {
   displayItemsLabel: boolean;

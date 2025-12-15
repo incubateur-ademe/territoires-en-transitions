@@ -40,6 +40,7 @@ import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.tabl
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { sqlAuthorOrNull } from '@tet/backend/users/models/author.utils';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { getISOFormatDateQuery } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   Collectivite,
@@ -667,8 +668,8 @@ export default class ListFichesService {
             type: string;
             unite: string;
             annee?: number | null;
-            budgetPrevisionnel?: string | null;
-            budgetReel?: string | null;
+            budgetPrevisionnel?: number | null;
+            budgetReel?: number | null;
             estEtale?: boolean;
           }[]
         >`array_agg

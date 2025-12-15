@@ -7,6 +7,7 @@ export * from './html-to-text';
 export * from './modified-since.enum';
 export * from './number.utils';
 export * from './pagination.schema';
+export * from './preset';
 export * from './version.models';
 export * from './webhooks/webhook-configuration.schema';
 export * from './webhooks/webhook-message.schema';

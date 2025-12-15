@@ -1,16 +1,28 @@
-import { CollectiviteAvecType } from '@/backend/collectivites/identite-collectivite.dto';
-import { PersonnalisationReponsesPayload } from '@/backend/collectivites/personnalisations/models/get-personnalisation-reponses.response';
-import PersonnalisationsService from '@/backend/collectivites/personnalisations/services/personnalisations-service';
-import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { IndicateurChartService } from '@/backend/indicateurs/charts/indicateur-chart.service';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { CountByForEntityResponseType } from '@/backend/utils/count-by.dto';
-import { EchartsService } from '@/backend/utils/echarts/echarts.service';
-import { getHorizontalStackedBarChartOption } from '@/backend/utils/echarts/get-horizontal-stackedbar-chart-option.utils';
-import { getPieChartOption } from '@/backend/utils/echarts/get-pie-chart-option.utils';
-import { getErrorMessage } from '@/backend/utils/get-error-message';
-import { MethodResult } from '@/backend/utils/result.type';
 import { Injectable, Logger } from '@nestjs/common';
+import PersonnalisationsService from '@tet/backend/collectivites/personnalisations/services/personnalisations-service';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { IndicateurChartService } from '@tet/backend/indicateurs/charts/indicateur-chart.service';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { EchartsService } from '@tet/backend/utils/echarts/echarts.service';
+import { getHorizontalStackedBarChartOption } from '@tet/backend/utils/echarts/get-horizontal-stackedbar-chart-option.utils';
+import { getPieChartOption } from '@tet/backend/utils/echarts/get-pie-chart-option.utils';
+import { MethodResult } from '@tet/backend/utils/result.type';
+import {
+  CollectiviteAvecType,
+  PersonnalisationReponsesPayload,
+} from '@tet/domain/collectivites';
+import {
+  FicheWithRelations,
+  Plan,
+  PlanNode,
+  ReportGenerationInput,
+  Statut,
+  StatutEnum,
+} from '@tet/domain/plans';
+import {
+  CountByForEntityResponseType,
+  getErrorMessage,
+} from '@tet/domain/utils';
 import { EChartsOption } from 'echarts/types/dist/echarts';
 import { chunk } from 'es-toolkit';
 import { Response } from 'express';
@@ -28,15 +40,12 @@ import {
 } from 'pptx-automizer';
 import { ElementInfo, XmlElement } from 'pptx-automizer/dist/types/xml-types';
 import slugify from 'slugify';
+import { ReportTemplatesType } from '../../../../../../packages/domain/src/plans/plans/generate-report/report-templates.enum';
 import { CountByService } from '../../fiches/count-by/count-by.service';
-import { FicheWithRelations } from '../../fiches/list-fiches/fiche-action-with-relations.dto';
 import ListFichesService from '../../fiches/list-fiches/list-fiches.service';
-import { StatutEnum } from '../../fiches/shared/models/fiche-action.table';
-import { Plan, PlanNode } from '../plans.schema';
 import { PlanService } from '../plans.service';
 import { PlanProgressRules } from '../progress/plan-progress.rules';
 import { GenerateReportErrorType } from './generate-report.errors';
-import { ReportGenerationRequest } from './generate-report.request';
 import { ReportAxeGeneralInfo } from './report-axe-general-info.dto';
 import { ReportFicheInfo } from './report-fiche-info.dto';
 import { ReportPlanGeneralInfo } from './report-plan-general-info.dto';
@@ -45,7 +54,6 @@ import {
   ReportTemplateImagesEnum,
   ReportTemplateImagesType,
 } from './report-template-images.enum';
-import { ReportTemplatesType } from './report-templates.enum';
 import { SlideGenerationArgs } from './slide-generation-args.dto';
 @Injectable()
 export class GenerateReportsService {
@@ -497,7 +505,7 @@ export class GenerateReportsService {
       return statutCountByForEachAxe;
     }
 
-    const orderedStatuts: string[] = [
+    const orderedStatuts: (Statut | 'null')[] = [
       'null', // pour les fiches sans statut
       StatutEnum.A_DISCUTER,
       StatutEnum.A_VENIR,
@@ -624,7 +632,7 @@ export class GenerateReportsService {
   }
 
   async generateAndDownloadPlanReport(
-    request: ReportGenerationRequest,
+    request: ReportGenerationInput,
     user: AuthenticatedUser,
     res: Response
   ) {
@@ -818,7 +826,7 @@ export class GenerateReportsService {
   }
 
   async generatePlanReport(
-    request: ReportGenerationRequest,
+    request: ReportGenerationInput,
     user: AuthenticatedUser
   ): Promise<
     MethodResult<

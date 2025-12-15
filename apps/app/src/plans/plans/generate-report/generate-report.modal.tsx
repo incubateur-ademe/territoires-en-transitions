@@ -1,6 +1,6 @@
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Plan } from '@/domain/plans';
-import { Modal, ModalFooterOKCancel } from '@/ui';
+import { Plan } from '@tet/domain/plans';
+import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import { PropsWithChildren } from 'react';
 import {
   GenerateReportForm,

@@ -1,6 +1,6 @@
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import { FicheWithRelations } from '@/domain/plans';
-import { OptionSection, SelectMultiple } from '@/ui';
+import { FicheWithRelations } from '@tet/domain/plans';
+import { OptionSection, SelectMultiple } from '@tet/ui';
 
 type PlanFicheSelectorProps = {
   collectiviteId: number;

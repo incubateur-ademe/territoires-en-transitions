@@ -1,10 +1,12 @@
 import * as z from 'zod/mini';
 
-const budgetTypes = ['investissement', 'fonctionnement'] as const;
-const budgetTypeSchema = z.enum(budgetTypes);
+export const budgetTypes = ['investissement', 'fonctionnement'] as const;
+export const budgetTypeSchema = z.enum(budgetTypes);
+export type BudgetType = z.infer<typeof budgetTypeSchema>;
 
-const budgetUnites = ['HT', 'ETP'] as const;
-const budgetUniteSchema = z.enum(budgetUnites);
+export const budgetUnites = ['HT', 'ETP'] as const;
+export const budgetUniteSchema = z.enum(budgetUnites);
+export type BudgetUnite = z.infer<typeof budgetUniteSchema>;
 
 export const ficheBudgetSchema = z.object({
   id: z.number(),

@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { FicheWithRelations } from '../../fiches/list-fiches/fiche-action-with-relations.dto';
+import { FicheWithRelations } from '@tet/domain/plans';
 import { ComputeBudgetRules } from './compute-budget.rules';
 
 describe('ComputeBudgetRules', () => {

@@ -1,7 +1,7 @@
 import z from 'zod';
 import { ReportTemplates } from './report-templates.enum';
 
-export const reportGenerationRequestSchema = z.object({
+export const reportGenerationInputSchema = z.object({
   collectiviteId: z.number(),
   planId: z.number(),
   ficheIds: z.array(z.number()).optional(),
@@ -9,6 +9,4 @@ export const reportGenerationRequestSchema = z.object({
   logoFile: z.string().optional(), // Base64 encoded file (data URL format)
 });
 
-export type ReportGenerationRequest = z.infer<
-  typeof reportGenerationRequestSchema
->;
+export type ReportGenerationInput = z.infer<typeof reportGenerationInputSchema>;

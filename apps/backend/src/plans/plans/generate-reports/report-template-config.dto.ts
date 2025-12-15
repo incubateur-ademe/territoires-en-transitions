@@ -1,5 +1,5 @@
+import { ReportTemplatesType } from '../../../../../../packages/domain/src/plans/plans/generate-report/report-templates.enum';
 import { ReportTemplateSlidesType } from './report-template-slides.enum';
-import { ReportTemplatesType } from './report-templates.enum';
 
 export interface ReportTemplateConfig {
   key: ReportTemplatesType;

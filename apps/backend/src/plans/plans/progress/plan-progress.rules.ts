@@ -1,7 +1,6 @@
-import { roundTo } from '@/backend/utils/number.utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { FicheWithRelations } from '../../fiches/list-fiches/fiche-action-with-relations.dto';
-import { StatutEnum } from '../../fiches/shared/models/fiche-action.table';
+import { FicheWithRelations, StatutEnum } from '@tet/domain/plans';
+import { roundTo } from '@tet/domain/utils';
 
 @Injectable()
 export class PlanProgressRules {

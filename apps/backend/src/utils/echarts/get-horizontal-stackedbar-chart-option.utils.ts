@@ -2,11 +2,11 @@
  * TODO: to be shared with app
  */
 
+import type { CountByForEntityResponseType } from '@tet/domain/utils';
 import type {
   BarSeriesOption,
   EChartsOption,
 } from 'echarts/types/dist/echarts';
-import { CountByForEntityResponseType } from '../count-by.dto';
 
 type Args = {
   countByResponses: CountByForEntityResponseType[];

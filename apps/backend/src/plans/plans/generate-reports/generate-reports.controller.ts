@@ -1,16 +1,16 @@
-import { TokenInfo } from '@/backend/users/decorators/token-info.decorators';
-import { AuthenticatedUser } from '@/backend/users/models/auth.models';
-import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
-import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import { ApiExcludeController, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
+import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
+import type { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
+import { reportGenerationInputSchema } from '@tet/domain/plans';
+import type { Response } from 'express';
 import { createZodDto } from 'nestjs-zod';
-import { reportGenerationRequestSchema } from './generate-report.request';
 import { GenerateReportsService } from './generate-reports.service';
 
-class ReportGenerationRequestClass extends createZodDto(
-  reportGenerationRequestSchema
+class ReportGenerationInputClass extends createZodDto(
+  reportGenerationInputSchema
 ) {}
 
 @ApiExcludeController()
@@ -28,7 +28,7 @@ export class GenerateReportsController {
     description: 'Generate a report for a specific plan of a collectivité',
   })
   async generatePlanReport(
-    @Body() request: ReportGenerationRequestClass,
+    @Body() request: ReportGenerationInputClass,
     @Res() res: Response,
     @TokenInfo() user: AuthenticatedUser
   ) {

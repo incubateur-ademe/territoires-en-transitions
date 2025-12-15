@@ -1,10 +1,6 @@
-import {
-  BudgetType,
-  BudgetUnite,
-} from '@/backend/plans/fiches/fiche-action-budget/budget.types';
-import { FicheWithRelations } from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
-import { roundTo } from '@/backend/utils/number.utils';
 import { Injectable } from '@nestjs/common';
+import { BudgetType, BudgetUnite, FicheWithRelations } from '@tet/domain/plans';
+import { roundTo } from '@tet/domain/utils';
 import { ComputeBudgetOutput } from './compute-budget.output';
 
 @Injectable()

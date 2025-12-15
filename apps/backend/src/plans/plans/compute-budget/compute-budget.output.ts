@@ -1,7 +1,4 @@
-import {
-  BudgetType,
-  BudgetUnite,
-} from '../../fiches/fiche-action-budget/budget.types';
+import { BudgetType, BudgetUnite } from '@tet/domain/plans';
 
 export type ComputeBudgetOutput = {
   [key in BudgetType]: {

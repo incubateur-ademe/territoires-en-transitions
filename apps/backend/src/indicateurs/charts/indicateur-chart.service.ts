@@ -1,9 +1,17 @@
-import { CollectiviteAvecType } from '@/backend/collectivites/identite-collectivite.dto';
-import { PersonnalisationReponsesPayload } from '@/backend/collectivites/personnalisations/models/get-personnalisation-reponses.response';
-import { preset } from '@/backend/notifications/templates/components/preset';
-import { AuthUser } from '@/backend/users/models/auth.models';
-import { makeLegendData } from '@/backend/utils/echarts/chart-legend.utils';
 import { Injectable, Logger } from '@nestjs/common';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { makeLegendData } from '@tet/backend/utils/echarts/chart-legend.utils';
+import {
+  CollectiviteAvecType,
+  PersonnalisationReponsesPayload,
+} from '@tet/domain/collectivites';
+import {
+  INDICATEUR_VALEUR_TYPE_LABEL,
+  IndicateurAvecValeursParSource,
+  IndicateurValeurType,
+  IndicateurValeurTypeEnum,
+} from '@tet/domain/indicateurs';
+import { preset } from '@tet/domain/utils';
 import {
   DatasetComponentOption,
   EChartsOption,
@@ -11,13 +19,7 @@ import {
 } from 'echarts/types/dist/echarts';
 import { isNil } from 'es-toolkit';
 import { DateTime } from 'luxon';
-import {
-  INDICATEUR_VALEUR_TYPE_LABEL,
-  IndicateurValeurType,
-  IndicateurValeurTypeEnum,
-} from '../shared/models/indicateur-valeur-type.enum';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
-import { IndicateurAvecValeursParSource } from '../valeurs/indicateur-valeur.table';
 import { ValeursMoyenneDTO } from '../valeurs/valeurs-moyenne.dto';
 import ValeursMoyenneService from '../valeurs/valeurs-moyenne.service';
 import { ValeursReferenceDTO } from '../valeurs/valeurs-reference.dto';

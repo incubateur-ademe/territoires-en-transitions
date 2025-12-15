@@ -1,4 +1,4 @@
-import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { integer, pgView, text } from 'drizzle-orm/pg-core';
 import { axeTable } from './axe.table';
 import { ficheActionTable } from './fiche-action.table';
