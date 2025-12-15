@@ -57,3 +57,13 @@ export const fillAndSubmitLoginForm = async (
 
   await page.getByRole('button', { name: 'Valider' }).click();
 };
+
+// génère l'email et le password d'un utilisateur prédéfini
+export function getTestUser(userName: string) {
+  const letter = userName.slice(1, userName.indexOf('l'));
+  const dd = `d${letter}d${letter}`;
+  return {
+    email: `${userName}@${dd}.com`,
+    password: `${userName}${dd}`,
+  };
+}
