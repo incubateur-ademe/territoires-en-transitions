@@ -1,16 +1,16 @@
 import { expect } from '@playwright/test';
-import { testWithUsers as test } from '../../../users/users.fixture';
+import { testWithFiches as test } from '../fiches.fixture';
 import { FilterFichesPom } from './filter-fiches.pom';
 import { ListFichesPom } from './list-fiches.pom';
 
 test.describe('Liste des fiches', () => {
-  test.beforeEach(async ({ page, users }) => {
-    const { user, collectivite } = await users.addCollectiviteAndUserWithLogin(
-      page.context()
-    );
+  test.beforeEach(async ({ page, collectivites, fiches }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
 
     console.log(`Create fiches`);
-    const createdFicheIds = await user.createFiches([
+    const createdFicheIds = await fiches.create(user, [
       {
         titre: 'Fiche test',
         collectiviteId: collectivite.data.id,

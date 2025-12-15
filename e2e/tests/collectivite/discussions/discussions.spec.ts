@@ -1,20 +1,22 @@
-import { testWithUsers as test } from '../../users/users.fixture';
+import { testWithDiscussions } from './discussions.fixture';
 import { DiscussionsPom } from './discussions.pom';
 import { FilterDiscussionsPom } from './filter-discussions.pom';
+
+const test = testWithDiscussions;
 
 test.describe('Discussions', () => {
   let collectiviteId: number;
   const referentielId = 'cae';
   const actionId = 'cae_1.1.1';
 
-  test.beforeEach(async ({ page, users }) => {
-    const { user, collectivite } = await users.addCollectiviteAndUserWithLogin(
-      page.context()
-    );
+  test.beforeEach(async ({ collectivites, discussions }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
     collectiviteId = collectivite.data.id;
 
     console.log(`Create discussions`);
-    const createdDiscussionIds = await user.createDiscussions([
+    const createdDiscussionIds = await discussions.create(user, [
       {
         actionId: 'cae_1.1.1',
         collectiviteId: collectivite.data.id,
