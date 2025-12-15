@@ -22,7 +22,7 @@ export const NotClassifiedFicheBreadcrumbs = ({
             router.push(
               makeCollectiviteToutesLesFichesUrl({
                 collectiviteId,
-                ficheViewType: 'non-classifiees',
+                ficheViewType: 'hors-plan',
               })
             );
           },

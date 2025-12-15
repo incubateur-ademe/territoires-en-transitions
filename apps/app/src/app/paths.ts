@@ -115,18 +115,15 @@ export const collectiviteJournalPath = `${collectivitePath}/historique`;
 
 const ficheParam = 'ficheUid';
 const planParam = 'planUid';
-const axeParam = 'axeUid';
 export const collectivitePlansActionsBasePath = `${collectivitePath}/plans`;
 export const collectivitePlansActionsNouveauPath = `${collectivitePlansActionsBasePath}/nouveau`;
 export const collectivitePlansActionsCreerPath = `${collectivitePlansActionsBasePath}/creer`;
 export const collectivitePlansActionsImporterPath = `${collectivitePlansActionsBasePath}/importer`;
 export const collectivitePlansActionsListPath = `${collectivitePlansActionsBasePath}`;
 export const collectivitePlanActionPath = `${collectivitePlansActionsListPath}/:${planParam}`;
-export const collectivitePlanActionFichePath = `${collectivitePlanActionPath}/fiches/:${ficheParam}`;
-export const collectivitePlanActionAxePath = `${collectivitePlanActionPath}/:${axeParam}`;
-export const collectivitePlanActionAxeFichePath = `${collectivitePlanActionAxePath}/fiche/:${ficheParam}`;
-export const collectiviteToutesLesFichesPath = `${collectivitePlansActionsBasePath}/fiches/toutes-les-fiches`;
-export const collectiviteFicheNonClasseePath = `${collectivitePlansActionsBasePath}/fiches/:${ficheParam}`;
+export const collectivitePlanActionFichePath = `${collectivitePlanActionPath}/actions/:${ficheParam}`;
+export const collectiviteToutesLesFichesPath = `${collectivitePlansActionsBasePath}/actions`;
+export const collectiviteFicheNonClasseePath = `${collectivitePlansActionsBasePath}/actions/:${ficheParam}`;
 
 // TDB = tableau de bord PA
 const tdbPlansEtActionsPath = `${collectivitePlansActionsBasePath}/tableau-de-bord`;
