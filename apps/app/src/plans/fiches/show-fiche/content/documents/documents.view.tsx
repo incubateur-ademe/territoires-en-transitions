@@ -1,37 +1,24 @@
-import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { SharedFicheLinkedResourcesAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
 import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { useCollectiviteId } from '@tet/api/collectivites';
-import { FicheWithRelations } from '@tet/domain/plans';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
+import { useFicheContext } from '../../context/fiche-context';
 import { useAddAnnexe } from '../../data/useAddAnnexe';
 import { useAnnexesFicheAction } from '../../data/useAnnexesFicheAction';
 import DocumentPicto from './DocumentPicto';
 import ModaleAjoutDocument from './ModaleAjoutDocument';
 
-type DocumentsProps = {
-  isReadonly: boolean;
-  collectiviteId: number;
-  fiche: FicheWithRelations;
-};
-
-export const DocumentsView = (props: DocumentsProps) => {
-  const currentCollectiviteId = useCollectiviteId();
-  const { fiche, collectiviteId } = props;
-
-  const isSharedWithCurrentCollectivite = isFicheSharedWithCollectivite(
-    fiche,
-    currentCollectiviteId
-  );
-  const isReadonly = isSharedWithCurrentCollectivite || props.isReadonly;
+export const DocumentsView = () => {
+  const { isReadonly, fiche } = useFicheContext();
+  const collectivite = useCurrentCollectivite();
 
   const ficheId = fiche.id;
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: documents, isLoading: isLoadingDocuments } =
-    useAnnexesFicheAction(collectiviteId, ficheId);
+    useAnnexesFicheAction(collectivite.collectiviteId, ficheId);
   const { isLoading, isError, addFileFromLib, addLink } = useAddAnnexe(ficheId);
 
   const isEmpty = !documents || documents.length === 0;
@@ -57,7 +44,7 @@ export const DocumentsView = (props: DocumentsProps) => {
 
       <SharedFicheLinkedResourcesAlert
         fiche={fiche}
-        currentCollectiviteId={currentCollectiviteId}
+        currentCollectiviteId={collectivite.collectiviteId}
         sharedDataTitle="Documents associées"
         sharedDataDescription="Les documents affichées correspondent à ceux de cette collectivité."
       />

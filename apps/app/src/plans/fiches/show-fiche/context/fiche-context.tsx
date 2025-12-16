@@ -4,21 +4,27 @@ import {
   IndicateurDefinitionListItem,
   useListIndicateurDefinitions,
 } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
-import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import {
+  isFicheEditableByCollectiviteUser,
+  isFicheSharedWithCollectivite,
+} from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { createContext, ReactNode, useContext, useState } from 'react';
-import { useUpdateFiche } from '../../update-fiche/data/use-update-fiche';
+import {
+  UpdateFiche,
+  useUpdateFiche,
+} from '../../update-fiche/data/use-update-fiche';
 
 type IndicateurActionMode = 'creating' | 'associating' | 'none';
 
-type FicheContextValue = {
+export type FicheContextValue = {
   fiche: FicheWithRelations;
   isReadonly: boolean;
   planId?: number;
-  updateFiche: ReturnType<typeof useUpdateFiche>['mutate'];
+  updateFiche: UpdateFiche;
   isUpdatePending: boolean;
   selectedIndicateurs: IndicateurDefinitionListItem[];
   updateIndicateurs: (
@@ -29,6 +35,7 @@ type FicheContextValue = {
   canCreateIndicateur: boolean;
   indicateurAction: IndicateurActionMode;
   toggleIndicateurAction: (action: IndicateurActionMode) => void;
+  isFicheShared: boolean;
 };
 
 const FicheContext = createContext<FicheContextValue | null>(null);
@@ -56,9 +63,14 @@ export const FicheProvider = ({
   const user = useUser();
   const { mutate: updateFiche, isPending: isUpdatePending } = useUpdateFiche();
 
+  const isFicheShared = isFicheSharedWithCollectivite(
+    fiche,
+    collectivite.collectiviteId
+  );
   const isReadonly =
     collectivite.isReadOnly ||
-    !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id);
+    !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id) ||
+    isFicheShared === true;
 
   const {
     data: { data: selectedIndicateurs = [] } = {},
@@ -127,6 +139,7 @@ export const FicheProvider = ({
         canUpdateIndicateur,
         indicateurAction,
         toggleIndicateurAction,
+        isFicheShared,
       }}
     >
       {children}

@@ -1,4 +1,3 @@
-import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Tab as TabUI, Tabs as TabsUI } from '@tet/ui';
@@ -23,25 +22,12 @@ const TabContent = ({ children }: { children: React.ReactNode }) => {
   );
 };
 export const Content = () => {
-  const {
-    fiche,
-    isReadonly: globalIsReadonly,
-
-    isUpdatePending,
-  } = useFicheContext();
+  const { fiche, selectedIndicateurs } = useFicheContext();
   const collectivite = useCurrentCollectivite();
-  const { collectiviteId, niveauAcces, permissions } = collectivite;
-
-  const { selectedIndicateurs } = useFicheContext();
+  const { niveauAcces, permissions } = collectivite;
   const widgetCommunsFlagEnabled = useFeatureFlagEnabled(
     'is-widget-communs-enabled'
   );
-  const cannotBeModifiedBecauseFicheIsShared = isFicheSharedWithCollectivite(
-    fiche,
-    collectivite.collectiviteId
-  );
-
-  const isReadonly = cannotBeModifiedBecauseFicheIsShared || globalIsReadonly;
 
   const tabDescriptors: Array<{
     id: string;
@@ -74,7 +60,7 @@ export const Content = () => {
       label: 'Étapes',
       render: (
         <TabContent>
-          <Etapes isReadonly={isReadonly} fiche={fiche} />
+          <Etapes />
         </TabContent>
       ),
     },
@@ -83,7 +69,7 @@ export const Content = () => {
       label: 'Notes',
       render: (
         <TabContent>
-          <NotesView isReadonly={isReadonly} fiche={fiche} />
+          <NotesView />
         </TabContent>
       ),
     },
@@ -92,7 +78,7 @@ export const Content = () => {
       label: 'Moyens',
       render: (
         <TabContent>
-          <MoyensView isReadonly={isReadonly} fiche={fiche} />
+          <MoyensView />
         </TabContent>
       ),
     },
@@ -103,14 +89,7 @@ export const Content = () => {
         hasPermission(permissions, 'plans.fiches.read') ||
         (!niveauAcces &&
           hasPermission(permissions, 'plans.fiches.read_public')),
-      render: (
-        <FichesLieesTab
-          isReadonly={isReadonly}
-          collectivite={collectivite}
-          isEditLoading={isUpdatePending}
-          fiche={fiche}
-        />
-      ),
+      render: <FichesLieesTab />,
     },
     {
       id: 'mesures-liees',
@@ -119,24 +98,12 @@ export const Content = () => {
         hasPermission(permissions, 'referentiels.read') ||
         (!niveauAcces &&
           hasPermission(permissions, 'referentiels.read_public')),
-      render: (
-        <MesuresLieesView
-          isReadonly={isReadonly}
-          isEditLoading={isUpdatePending}
-          fiche={fiche}
-        />
-      ),
+      render: <MesuresLieesView />,
     },
     {
       id: 'documents',
       label: 'Documents',
-      render: (
-        <DocumentsView
-          isReadonly={isReadonly}
-          collectiviteId={collectiviteId}
-          fiche={fiche}
-        />
-      ),
+      render: <DocumentsView />,
     },
     {
       id: 'services-liees',

@@ -1,11 +1,10 @@
 import { SharedFicheLinkedResourcesAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { useCollectiviteId } from '@tet/api/collectivites';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
-import { FicheWithRelations } from '@tet/domain/plans';
-import { CollectiviteAccess } from '@tet/domain/users';
 import { Button, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
+import { useFicheContext } from '../../context/fiche-context';
 import {
   useFichesActionLiees,
   useUpdateFichesActionLiees,
@@ -14,25 +13,15 @@ import { FichePicto } from './FichePicto';
 import { FichesLieesListe } from './FichesLieesListe';
 import { ModaleFichesLiees } from './ModaleFichesLiees';
 
-type FichesLieesTabProps = {
-  isReadonly: boolean;
-  isEditLoading: boolean;
-  fiche: FicheWithRelations;
-  collectivite: CollectiviteAccess;
-};
-
-export const FichesLieesTab = ({
-  isReadonly,
-  isEditLoading,
-  fiche,
-  collectivite,
-}: FichesLieesTabProps) => {
-  const currentCollectiviteId = useCollectiviteId();
+export const FichesLieesTab = () => {
+  const { isReadonly, fiche, isUpdatePending } = useFicheContext();
+  const collectivite = useCurrentCollectivite();
+  const { collectiviteId } = collectivite;
   const user = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { fiches: fichesLiees, isLoading } = useFichesActionLiees({
     ficheId: fiche.id,
-    collectiviteId: collectivite.collectiviteId,
+    collectiviteId,
   });
   const { mutate: updateFichesActionLiees } = useUpdateFichesActionLiees(
     fiche.id
@@ -47,13 +36,13 @@ export const FichesLieesTab = ({
         <h5 className="text-primary-8 mb-0">Fiches action liées</h5>
         {!isReadonly && (
           <Button
-            icon={!isEditLoading ? 'link' : undefined}
+            icon={!isUpdatePending ? 'link' : undefined}
             size="xs"
             variant="outlined"
-            disabled={isEditLoading}
+            disabled={isUpdatePending}
             onClick={() => setIsModalOpen(true)}
           >
-            {isEditLoading && <SpinnerLoader className="!h-4" />}
+            {isUpdatePending && <SpinnerLoader className="!h-4" />}
             Lier une fiche action
           </Button>
         )}
@@ -61,7 +50,7 @@ export const FichesLieesTab = ({
 
       <SharedFicheLinkedResourcesAlert
         fiche={fiche}
-        currentCollectiviteId={currentCollectiviteId}
+        currentCollectiviteId={collectiviteId}
         sharedDataTitle="Fiches associées"
         sharedDataDescription="Les fiches actions affichées correspondent à celles de cette collectivité."
       />

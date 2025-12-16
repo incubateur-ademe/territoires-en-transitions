@@ -1,4 +1,4 @@
-import { FicheWithRelations } from '@tet/domain/plans';
+import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
 import { Button, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
 import { useDeleteNote } from '../../data/use-delete-note';
@@ -8,12 +8,8 @@ import { NoteCreationModal } from './note-creation.modal';
 import NoteCard from './note.card';
 import NotificationPicto from './notification.picto';
 
-type NotesViewProps = {
-  isReadonly: boolean;
-  fiche: FicheWithRelations;
-};
-
-export const NotesView = ({ fiche, isReadonly }: NotesViewProps) => {
+export const NotesView = () => {
+  const { fiche, isReadonly } = useFicheContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { mutate: updateNotes } = useUpsertNote(fiche);
   const { mutate: deleteNote } = useDeleteNote(fiche);

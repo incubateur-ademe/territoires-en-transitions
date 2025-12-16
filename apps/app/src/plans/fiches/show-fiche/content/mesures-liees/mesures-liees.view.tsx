@@ -3,30 +3,17 @@ import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-con
 import ActionPicto from '@/app/ui/pictogrammes/ActionPicto';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { FicheWithRelations } from '@tet/domain/plans';
 import { Button, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
 import { MesuresLieesListe } from './mesures-liees.list';
 import { MesuresLieesModal } from './mesures-liees.modal';
 
-type MesuresLieesViewProps = {
-  isReadonly: boolean;
-  isEditLoading: boolean;
-  fiche: FicheWithRelations;
-};
-
-export const MesuresLieesView = ({
-  isReadonly,
-  isEditLoading,
-  fiche,
-}: MesuresLieesViewProps) => {
-  const currentCollectiviteId = useCollectiviteId();
+export const MesuresLieesView = () => {
+  const { isReadonly, fiche, updateFiche, isUpdatePending } = useFicheContext();
+  const collectiviteId = useCollectiviteId();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { updateFiche } = useFicheContext();
-
   const { mesures } = fiche;
-
   const isEmpty = !mesures || mesures.length === 0;
 
   return (
@@ -36,20 +23,20 @@ export const MesuresLieesView = ({
         <h5 className="text-primary-8 mb-0">Mesures des référentiels liées</h5>
         {!isReadonly && !isLoading && (
           <Button
-            icon={!isEditLoading ? 'link' : undefined}
+            icon={!isUpdatePending ? 'link' : undefined}
             size="xs"
             variant="outlined"
-            disabled={isEditLoading}
+            disabled={isUpdatePending}
             onClick={() => setIsModalOpen(true)}
           >
-            {isEditLoading && <SpinnerLoader className="!h-4" />}
+            {isUpdatePending && <SpinnerLoader className="!h-4" />}
             Lier une mesure des référentiels
           </Button>
         )}
       </div>
       <SharedFicheLinkedResourcesAlert
         fiche={fiche}
-        currentCollectiviteId={currentCollectiviteId}
+        currentCollectiviteId={collectiviteId}
         sharedDataTitle="Mesures des référentiels liées"
         sharedDataDescription="Les mesures des référentiels liées affichées correspondent à celles de cette collectivité."
       />

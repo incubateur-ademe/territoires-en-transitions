@@ -1,17 +1,12 @@
-import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { FicheBudget, FicheWithRelations } from '@tet/domain/plans';
+import { FicheBudget } from '@tet/domain/plans';
 import { EmptyCard } from '@tet/ui';
 import { useState } from 'react';
 import { useGetBudget } from '../../../update-fiche/data/use-get-budget';
 import { MoneyPicto } from '../../components/MoneyPicto';
+import { useFicheContext } from '../../context/fiche-context';
 import { MoyensContent } from './moyens.content';
 import { MoyensModals, type ModalType } from './moyens.modals';
-
-type MoyensViewProps = {
-  isReadonly: boolean;
-  fiche: FicheWithRelations;
-};
 
 type EmptyMoyensViewProps = {
   isReadonly: boolean;
@@ -63,9 +58,9 @@ const isBudgetEmpty = (budgets: FicheBudget[]) => {
   );
 };
 
-export const MoyensView = ({ isReadonly, fiche }: MoyensViewProps) => {
+export const MoyensView = () => {
+  const { isReadonly, fiche, updateFiche } = useFicheContext();
   const [openModalType, setOpenModalType] = useState<ModalType>(null);
-  const { mutate: updateFiche } = useUpdateFiche();
 
   const { financeurs, financements } = fiche;
   const { data: budgets, isLoading: isBudgetLoading } = useGetBudget({
