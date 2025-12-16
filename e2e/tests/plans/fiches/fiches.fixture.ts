@@ -13,7 +13,7 @@ class FichesFactory extends FixtureFactory {
   }
 
   /**
-   * Crée des fiches et stocke leurs IDs pour le cleanup
+   * Crée des fiches
    */
   async create(user: UserFixture, fiches: FicheCreate[]): Promise<number[]> {
     const trpcClient = user.getTrpcClient();
@@ -52,7 +52,7 @@ export const testWithFiches = testWithCollectivites.extend<{
 }>({
   fiches: async ({ collectivites }, use) => {
     const fiches = new FichesFactory();
-    collectivites.registerCleanupFunc(fiches.cleanupByCollectiviteId);
+    collectivites.registerCleanupFunc(fiches);
     await use(fiches);
   },
 });

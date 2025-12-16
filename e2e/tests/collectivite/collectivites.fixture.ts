@@ -1,6 +1,7 @@
 import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.fixture';
 import { TestUserArgs } from '@tet/backend/users/users/users.fixture';
 import { Collectivite } from '@tet/domain/collectivites';
+import { FixtureFactory } from 'tests/shared/fixture-factory.interface';
 import { testWithUsers, Users } from 'tests/users/users.fixture';
 import { databaseService } from '../shared/database.service';
 
@@ -95,8 +96,9 @@ class CollectiviteFactory {
     return { collectivite, user };
   };
 
-  registerCleanupFunc = (cleanupFunc: CollectiviteCleanupFunc) => {
-    this.cleanupFuncs.push(cleanupFunc);
+  registerCleanupFunc = (factory: FixtureFactory) => {
+    console.log(`register cleanup function for ${factory.constructor.name}`);
+    this.cleanupFuncs.push(factory.cleanupByCollectiviteId);
   };
 }
 
