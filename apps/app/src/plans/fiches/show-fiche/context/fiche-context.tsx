@@ -2,7 +2,6 @@ import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fich
 import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
-import { PermissionOperation } from '@tet/domain/users';
 import { createContext, ReactNode, useContext } from 'react';
 import { useUpdateFiche } from '../../update-fiche/data/use-update-fiche';
 
@@ -10,10 +9,8 @@ export type FicheContextValue = {
   fiche: FicheWithRelations;
   isReadonly: boolean;
   planId?: number;
-  permissions: PermissionOperation[];
-  collectiviteId: number;
   updateFiche: ReturnType<typeof useUpdateFiche>['mutate'];
-  isEditLoading: boolean;
+  isUpdatePending: boolean;
 };
 
 const FicheContext = createContext<FicheContextValue | null>(null);
@@ -38,9 +35,8 @@ export const FicheProvider = ({
   children,
 }: FicheProviderProps) => {
   const collectivite = useCurrentCollectivite();
-  const { collectiviteId, permissions } = collectivite;
   const user = useUser();
-  const { mutate: updateFiche, isPending: isEditLoading } = useUpdateFiche();
+  const { mutate: updateFiche, isPending: isUpdatePending } = useUpdateFiche();
 
   const isReadonly =
     collectivite.isReadOnly ||
@@ -52,10 +48,8 @@ export const FicheProvider = ({
         fiche,
         isReadonly,
         planId,
-        permissions,
-        collectiviteId,
         updateFiche,
-        isEditLoading,
+        isUpdatePending,
       }}
     >
       {children}

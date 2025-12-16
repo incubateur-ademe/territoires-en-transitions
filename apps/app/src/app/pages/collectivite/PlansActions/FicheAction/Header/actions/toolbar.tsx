@@ -9,10 +9,10 @@ type Props = {
   fiche: Fiche;
   permissions: PermissionOperation[];
   collectiviteId: number;
-  onDeleteRedirectPath: () => void;
+  onDeleteCallback: () => void;
 };
 
-const Toolbar = ({ fiche, permissions, onDeleteRedirectPath }: Props) => {
+const Toolbar = ({ fiche, permissions, onDeleteCallback }: Props) => {
   return (
     <div className="flex gap-4 lg:mt-3.5">
       {hasPermission(permissions, 'plans.mutate') && (
@@ -24,7 +24,7 @@ const Toolbar = ({ fiche, permissions, onDeleteRedirectPath }: Props) => {
       <DeleteOrRemoveFicheSharingModal
         fiche={fiche}
         buttonClassName="!border-error-1 hover:!border-error-1"
-        onDeleteCallback={onDeleteRedirectPath}
+        onDeleteCallback={onDeleteCallback}
       />
     </div>
   );
