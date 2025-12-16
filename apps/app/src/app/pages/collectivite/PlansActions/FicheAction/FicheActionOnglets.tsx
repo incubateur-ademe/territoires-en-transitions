@@ -1,5 +1,5 @@
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { MoyensView } from '@/app/plans/fiches/update-fiche/moyens/moyens.view';
+import { MoyensView } from '@/app/plans/fiches/show-fiche/content/moyens/moyens.view';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { ENV } from '@tet/api/environmentVariables';
 

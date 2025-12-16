@@ -1,12 +1,12 @@
 import { RichTextView } from '@/app/plans/fiches/show-fiche/components/RichTextView';
+import { FicheWithRelations } from '@tet/domain/plans';
 import { Badge, Button } from '@tet/ui';
 import { useState } from 'react';
-import { Fiche } from '../data/use-get-fiche';
 import ModaleIndicateursHeader from './ModaleIndicateursHeader';
 
 type IndicateursHeaderProps = {
   isReadonly: boolean;
-  fiche: Fiche;
+  fiche: FicheWithRelations;
 };
 
 const IndicateursHeader = ({ isReadonly, fiche }: IndicateursHeaderProps) => {

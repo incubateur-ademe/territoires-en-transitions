@@ -1,7 +1,13 @@
 import classNames from 'classnames';
-import {Children, cloneElement, ReactElement, useState, useEffect} from 'react';
+import {
+  Children,
+  cloneElement,
+  ReactElement,
+  useEffect,
+  useState,
+} from 'react';
 
-import {Icon} from '../Icon';
+import { Icon } from '../Icon';
 
 export type TabSize = 'xs' | 'sm' | 'md';
 
@@ -21,6 +27,13 @@ type TabsProps = {
   defaultActiveTab?: number;
   /** Appelée quand l'onglet actif change */
   onChange?: (activeTab: number) => void;
+  /**
+   * Permet de choisir le layout des onglets lorsque l'écran est trop petit.
+   * @default 'scroll'
+   * @description 'scroll' : permet de faire un scroll horizontal des onglets
+   * @description 'wrap' : permet de faire un wrap des onglets (en plusieurs lignes)
+   */
+  layoutOnOverflow?: 'scroll' | 'wrap';
 };
 
 /**
@@ -35,6 +48,7 @@ export const Tabs = ({
   defaultActiveTab = 0,
   size = 'md',
   onChange,
+  layoutOnOverflow = 'scroll',
 }: TabsProps) => {
   const [activeTab, setActiveTab] = useState(defaultActiveTab);
 
@@ -65,7 +79,14 @@ export const Tabs = ({
     <div className={classNames(className)} data-test={dataTest}>
       <ul
         className={classNames(
-          'inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full !list-none',
+          'flex rounded-lg bg-grey-2 p-2 gap-x-3 w-full list-none justify-start',
+          {
+            // Wrap layout (default): allows multi-line
+            'flex-wrap justify-start gap-y-2': layoutOnOverflow === 'wrap',
+            // Scroll layout: single line with horizontal scroll
+            'flex-nowrap overflow-x-auto justify-center':
+              layoutOnOverflow === 'scroll',
+          },
           tabsListClassName
         )}
         role="tablist"

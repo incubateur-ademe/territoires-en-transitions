@@ -1,7 +1,7 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { Badge } from '@tet/ui';
 import classNames from 'classnames';
-import { RichTextView } from '../../../../../../plans/fiches/update-fiche/components/RichTextView';
+import { RichTextView } from '../../../../../../plans/fiches/show-fiche/components/RichTextView';
 import ModaleDescription from './ModaleDescription';
 
 type FicheActionDescriptionProps = {
