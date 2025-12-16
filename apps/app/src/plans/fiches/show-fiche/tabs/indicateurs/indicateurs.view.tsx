@@ -1,3 +1,4 @@
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { useFicheContext } from '../../context/fiche-context';
 import IndicateursAssocies from './IndicateursAssocies';
@@ -9,8 +10,9 @@ type IndicateursViewProps = {
 };
 
 export const IndicateursView = (props: IndicateursViewProps) => {
-  const { updateFiche, fiche, isReadonly, permissions, collectiviteId } =
-    useFicheContext();
+  const { updateFiche, fiche, isReadonly } = useFicheContext();
+  const { collectiviteId, permissions } = useCurrentCollectivite();
+
   return (
     <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-5">
       <IndicateursHeader {...props} />

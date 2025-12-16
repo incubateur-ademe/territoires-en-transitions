@@ -71,7 +71,7 @@ export const Header = ({
           fiche={fiche}
           permissions={permissions}
           collectiviteId={collectiviteId}
-          onDeleteRedirectPath={() => router.push(redirectPathAfterDelete)}
+          onDeleteCallback={() => router.push(redirectPathAfterDelete)}
         />
       </div>
 

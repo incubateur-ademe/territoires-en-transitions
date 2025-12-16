@@ -2,6 +2,7 @@ import {
   makeCollectivitePlanActionUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { useRouter } from 'next/navigation';
 import { useFicheContext } from '../../context/fiche-context';
@@ -19,8 +20,8 @@ export const EditionModalRenderer = ({
 }: EditionModalRendererProps) => {
   const router = useRouter();
   const { currentModal, closeModal } = useEditionModalManager();
-  const { updateFiche, collectiviteId, isEditLoading } = useFicheContext();
-
+  const { updateFiche, isUpdatePending } = useFicheContext();
+  const collectiviteId = useCollectiviteId();
   const redirectPathAfterDelete = planId
     ? makeCollectivitePlanActionUrl({
         collectiviteId,
@@ -45,7 +46,7 @@ export const EditionModalRenderer = ({
       onClose={closeModal}
       redirectPathAfterDelete={redirectPathAfterDelete}
       updateFiche={updateFiche}
-      isEditLoading={isEditLoading}
+      isEditLoading={isUpdatePending}
       router={router}
     />
   );

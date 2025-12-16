@@ -27,20 +27,18 @@ export const Tabs = ({ className }: TabsProps) => {
   const {
     fiche,
     isReadonly: globalIsReadonly,
-    collectiviteId,
-    permissions,
-    isEditLoading,
+
+    isUpdatePending,
   } = useFicheContext();
   const collectivite = useCurrentCollectivite();
-  const { niveauAcces } = collectivite;
+  const { collectiviteId, niveauAcces, permissions } = collectivite;
 
   const widgetCommunsFlagEnabled = useFeatureFlagEnabled(
     'is-widget-communs-enabled'
   );
-
   const cannotBeModifiedBecauseFicheIsShared = isFicheSharedWithCollectivite(
     fiche,
-    collectiviteId
+    collectivite.collectiviteId
   );
 
   const isReadonly = cannotBeModifiedBecauseFicheIsShared || globalIsReadonly;
@@ -79,7 +77,7 @@ export const Tabs = ({ className }: TabsProps) => {
         <FichesLieesTab
           isReadonly={isReadonly}
           collectivite={collectivite}
-          isEditLoading={isEditLoading}
+          isEditLoading={isUpdatePending}
           fiche={fiche}
         />
       ),
@@ -93,7 +91,7 @@ export const Tabs = ({ className }: TabsProps) => {
       render: () => (
         <MesuresLieesView
           isReadonly={isReadonly}
-          isEditLoading={isEditLoading}
+          isEditLoading={isUpdatePending}
           fiche={fiche}
         />
       ),

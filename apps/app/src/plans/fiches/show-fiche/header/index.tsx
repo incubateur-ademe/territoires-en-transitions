@@ -1,4 +1,5 @@
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { VisibleWhen } from '@tet/ui';
 import { useFicheContext } from '../context/fiche-context';
 import { Breadcrumbs } from './breadcrumbs';
@@ -13,14 +14,8 @@ const Divider = () => {
 };
 
 export const Header = () => {
-  const {
-    fiche,
-    isReadonly,
-    planId,
-    collectiviteId,
-    permissions,
-    updateFiche,
-  } = useFicheContext();
+  const { fiche, isReadonly, planId, updateFiche } = useFicheContext();
+  const { collectiviteId, permissions } = useCurrentCollectivite();
   const { titre, axes } = fiche;
 
   const updateTitle = (titre: string | null) =>

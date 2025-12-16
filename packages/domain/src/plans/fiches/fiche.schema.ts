@@ -105,7 +105,7 @@ export const completionSchema = z.object({
   ficheId: z.number(),
   fields: z.array(
     z.object({
-      field: z.enum([...completionFields]),
+      field: z.enum(completionFields),
       isCompleted: z.boolean(),
     })
   ),
