@@ -7,7 +7,7 @@ BEGIN;
 DROP TRIGGER IF EXISTS save_history ON public.fiche_action;
 DROP FUNCTION historique.save_fiche_action();
 DROP FUNCTION public.plan_action_export(id integer);
-DROP FUNCTION private.plan_action_export(id integer);
+DROP FUNCTION IF EXISTS private.plan_action_export(id integer);
 
 DROP TRIGGER IF EXISTS upsert ON public.fiches_action;
 DROP VIEW public.fiches_action;
