@@ -86,20 +86,19 @@ const FichesLiees = ({
                         ficheIds: ficheIds.filter((id) => id !== ficheId),
                       })
               }
+              displayHeader={false}
             />
           </FicheActionFiltersProvider>
         </div>
       )}
 
-      {isModalOpen && (
-        <ModaleFichesLiees
-          isOpen={isModalOpen && !isReadonly}
-          setIsOpen={setIsModalOpen}
-          currentFicheId={null}
-          linkedFicheIds={ficheIds}
-          updateLinkedFicheIds={(ficheIds) => updateIndicateur({ ficheIds })}
-        />
-      )}
+      <ModaleFichesLiees
+        isOpen={isModalOpen && !isReadonly}
+        setIsOpen={setIsModalOpen}
+        currentFicheId={null}
+        linkedFicheIds={ficheIds}
+        updateLinkedFicheIds={(ficheIds) => updateIndicateur({ ficheIds })}
+      />
     </>
   );
 };
