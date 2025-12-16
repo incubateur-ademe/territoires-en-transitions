@@ -26,19 +26,29 @@ test.describe('Liste des fiches', () => {
     await listFichesPom.goto();
   });
 
-  test('Recherche texte', async ({ listFichesPom }) => {
+  test('Recherche texte', async ({ listFichesPom, ficheCardPom }) => {
     await listFichesPom.expectFichesCount(2);
     await listFichesPom.search('toto');
     await expect(listFichesPom.noFicheHeading).toBeVisible();
 
     await listFichesPom.search('test');
     await listFichesPom.expectFichesCount(1);
+
+    await ficheCardPom.expectTitre('Fiche test');
+    await ficheCardPom.expectStatut('En cours');
   });
 
-  test('Filtrer par statut', async ({ listFichesPom, filterFichesPom }) => {
+  test('Filtrer par statut', async ({
+    listFichesPom,
+    filterFichesPom,
+    ficheCardPom,
+  }) => {
     await listFichesPom.expectFichesCount(2);
     await listFichesPom.openFilter();
     await filterFichesPom.selectStatut('À venir');
     await listFichesPom.expectFichesCount(1);
+
+    await ficheCardPom.expectTitre('Deuxième fiche');
+    await ficheCardPom.expectStatut('À venir');
   });
 });
