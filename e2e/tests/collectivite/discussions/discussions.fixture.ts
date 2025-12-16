@@ -5,6 +5,8 @@ import { databaseService } from 'tests/shared/database.service';
 import { FixtureFactory } from 'tests/shared/fixture-factory.interface';
 import { UserFixture } from 'tests/users/users.fixture';
 import { testWithCollectivites } from '../collectivites.fixture';
+import { DiscussionsPom } from './discussions.pom';
+import { FilterDiscussionsPom } from './filter-discussions.pom';
 
 export class DiscussionsFixture extends FixtureFactory {
   constructor() {
@@ -46,10 +48,20 @@ export class DiscussionsFixture extends FixtureFactory {
 
 export const testWithDiscussions = testWithCollectivites.extend<{
   discussions: DiscussionsFixture;
+  discussionsPom: DiscussionsPom;
+  filterDiscussionsPom: FilterDiscussionsPom;
 }>({
   discussions: async ({ collectivites }, use) => {
     const discussions = new DiscussionsFixture();
     collectivites.registerCleanupFunc(discussions);
     await use(discussions);
+  },
+  discussionsPom: async ({ page }, use) => {
+    const discussionsPom = new DiscussionsPom(page);
+    await use(discussionsPom);
+  },
+  filterDiscussionsPom: async ({ page }, use) => {
+    const filterDiscussionsPom = new FilterDiscussionsPom(page);
+    await use(filterDiscussionsPom);
   },
 });

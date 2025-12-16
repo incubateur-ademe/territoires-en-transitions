@@ -1,6 +1,4 @@
 import { testWithDiscussions } from './discussions.fixture';
-import { DiscussionsPom } from './discussions.pom';
-import { FilterDiscussionsPom } from './filter-discussions.pom';
 
 const test = testWithDiscussions;
 
@@ -42,28 +40,28 @@ test.describe('Discussions', () => {
     console.log('createdDiscussionIds', createdDiscussionIds);
   });
 
-  test('Ouvrir le panneau de discussion', async ({ page }) => {
-    const discussionsPom = new DiscussionsPom(page);
+  test('Ouvrir le panneau de discussion', async ({ discussionsPom }) => {
     await discussionsPom.goto(collectiviteId, referentielId, actionId);
     await discussionsPom.expectDiscussionPanelVisible();
   });
 
-  test('Fermer un commentaire', async ({ page }) => {
-    const discussionsPom = new DiscussionsPom(page);
+  test('Fermer un commentaire', async ({
+    discussionsPom,
+    filterDiscussionsPom,
+  }) => {
     await discussionsPom.goto(collectiviteId, referentielId, actionId);
-
-    const filterDiscussionsPom = new FilterDiscussionsPom(page);
 
     await filterDiscussionsPom.closeFirstComment();
     await discussionsPom.expectDiscussionPanelVisible();
     await discussionsPom.expectedDiscussionCount(3);
   });
 
-  test('Filtrer par statut - tous les commentaires', async ({ page }) => {
-    const discussionsPom = new DiscussionsPom(page);
+  test('Filtrer par statut - tous les commentaires', async ({
+    discussionsPom,
+    filterDiscussionsPom,
+  }) => {
     await discussionsPom.goto(collectiviteId, referentielId, actionId);
 
-    const filterDiscussionsPom = new FilterDiscussionsPom(page);
     // Par défaut, seuls les commentaires ouverts sont affichés
     await filterDiscussionsPom.selectStatus('Tous les commentaires');
     // Le panneau doit rester visible avec tous les commentaires
@@ -71,52 +69,53 @@ test.describe('Discussions', () => {
     await discussionsPom.expectedDiscussionCount(4);
   });
 
-  test('Filtrer par statut - commentaires ouverts', async ({ page }) => {
-    const discussionsPom = new DiscussionsPom(page);
+  test('Filtrer par statut - commentaires ouverts', async ({
+    discussionsPom,
+    filterDiscussionsPom,
+  }) => {
     await discussionsPom.goto(collectiviteId, referentielId, actionId);
 
-    const filterDiscussionsPom = new FilterDiscussionsPom(page);
     await filterDiscussionsPom.closeFirstComment();
     await filterDiscussionsPom.selectStatus('Commentaires ouverts');
     await discussionsPom.expectDiscussionPanelVisible();
     await discussionsPom.expectedDiscussionCount(3);
   });
 
-  test('Filtrer par statut - commentaires fermés', async ({ page }) => {
-    const discussionsPom = new DiscussionsPom(page);
+  test('Filtrer par statut - commentaires fermés', async ({
+    discussionsPom,
+    filterDiscussionsPom,
+  }) => {
     await discussionsPom.goto(collectiviteId, referentielId, actionId);
 
-    const filterDiscussionsPom = new FilterDiscussionsPom(page);
     await filterDiscussionsPom.closeFirstComment();
     await filterDiscussionsPom.selectStatus('Commentaires fermés');
     await discussionsPom.expectDiscussionPanelVisible();
     await discussionsPom.expectedDiscussionCount(1);
   });
 
-  test('Filtrer par mesure', async ({ page }) => {
-    const discussionsPom = new DiscussionsPom(page);
+  test('Filtrer par mesure', async ({
+    discussionsPom,
+    filterDiscussionsPom,
+  }) => {
     await discussionsPom.goto(collectiviteId, referentielId, actionId);
 
-    const filterDiscussionsPom = new FilterDiscussionsPom(page);
     await filterDiscussionsPom.filterAction('1.1.1.2');
     await discussionsPom.expectDiscussionPanelVisible();
     await discussionsPom.expectedDiscussionCount(1);
   });
 
   test('Ouverture du panneau de discussion sur un sous-action', async ({
-    page,
+    discussionsPom,
+    filterDiscussionsPom,
   }) => {
-    const discussionsPom = new DiscussionsPom(page);
     await discussionsPom.goto(collectiviteId, referentielId, actionId);
 
-    const filterDiscussionsPom = new FilterDiscussionsPom(page);
     await filterDiscussionsPom.clickOnSubAction('1.1.1.2');
     await discussionsPom.expectDiscussionPanelVisible();
     await discussionsPom.expectedDiscussionCount(1);
   });
 
-  test("Ouvrir l'onglet Commentaires", async ({ page }) => {
-    const discussionsPom = new DiscussionsPom(page);
+  test("Ouvrir l'onglet Commentaires", async ({ discussionsPom }) => {
     await discussionsPom.gotoCommentairesTab(collectiviteId, referentielId);
     await discussionsPom.expectCommentairesTabVisible();
   });
