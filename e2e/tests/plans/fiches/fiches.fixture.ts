@@ -6,6 +6,7 @@ import { testWithCollectivites } from 'tests/collectivite/collectivites.fixture'
 import { databaseService } from 'tests/shared/database.service';
 import { FixtureFactory } from 'tests/shared/fixture-factory.interface';
 import { UserFixture } from 'tests/users/users.fixture';
+import { FicheCardPom } from './list-fiches/fiche-card.pom';
 import { FilterFichesPom } from './list-fiches/filter-fiches.pom';
 import { ListFichesPom } from './list-fiches/list-fiches.pom';
 
@@ -53,6 +54,7 @@ export const testWithFiches = testWithCollectivites.extend<{
   fiches: FichesFactory;
   filterFichesPom: FilterFichesPom;
   listFichesPom: ListFichesPom;
+  ficheCardPom: FicheCardPom;
 }>({
   fiches: async ({ collectivites }, use) => {
     const fiches = new FichesFactory();
@@ -66,5 +68,9 @@ export const testWithFiches = testWithCollectivites.extend<{
   listFichesPom: async ({ page }, use) => {
     const listFichesPom = new ListFichesPom(page);
     await use(listFichesPom);
+  },
+  ficheCardPom: async ({ page }, use) => {
+    const ficheCardPom = new FicheCardPom(page);
+    await use(ficheCardPom);
   },
 });
