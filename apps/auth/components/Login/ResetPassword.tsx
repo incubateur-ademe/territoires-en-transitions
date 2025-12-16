@@ -12,14 +12,17 @@ import { z } from 'zod';
 import { PasswordStrengthMeter } from '../../components/PasswordStrengthMeter';
 import { LoginData, LoginPropsWithState } from './type';
 
+const validationSchema = z.object({
+  password: z.string().refine((value) => value.length >= 8, {
+    error: 'Le mot de passe doit comporter au moins 8 caractères',
+  }),
+  email: z.email({
+    error: 'Un email valide est requis',
+  }),
+});
+
 /** Gestionnaire d'état pour le formulaire */
 const useResetPassword = (email: string) => {
-  const validationSchema = z.object({
-    password: z.string().refine((value) => value.length >= 8, {
-      error: 'Le mot de passe doit comporter au moins 8 caractères',
-    }),
-  });
-
   return useForm({
     reValidateMode: 'onChange',
     resolver: zodResolver(validationSchema),

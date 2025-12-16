@@ -1,4 +1,7 @@
-import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import {
+  isFicheEditableByCollectiviteUser,
+  isFicheSharedWithCollectivite,
+} from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
@@ -40,7 +43,8 @@ export const FicheProvider = ({
 
   const isReadonly =
     collectivite.isReadOnly ||
-    !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id);
+    !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id) ||
+    isFicheSharedWithCollectivite(fiche, collectivite.collectiviteId);
 
   return (
     <FicheContext.Provider

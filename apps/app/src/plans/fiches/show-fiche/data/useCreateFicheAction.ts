@@ -1,5 +1,5 @@
 'use client';
-import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
+import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { DBClient, useSupabase } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -41,8 +41,8 @@ export const useCreateFicheAction = () => {
         queryKey: ['axe_fiches', null],
       });
       if (data.id) {
-        const url = makeCollectiviteFicheNonClasseeUrl({
-          collectiviteId,
+        const url = makeCollectiviteActionUrl({
+          collectiviteId: collectiviteId,
           ficheUid: data.id.toString(),
         });
         router.push(url);

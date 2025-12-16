@@ -7,8 +7,10 @@ export function isFicheSharedWithCollectivite(
   fiche: Pick<FicheListItem, 'sharedWithCollectivites'>,
   collectiviteId: number
 ) {
-  return fiche.sharedWithCollectivites?.some(
-    (sharing) => sharing.id === collectiviteId
+  return (
+    fiche.sharedWithCollectivites?.some(
+      (sharing) => sharing.id === collectiviteId
+    ) ?? false
   );
 }
 

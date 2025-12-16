@@ -1,5 +1,5 @@
+import { BaseUpdateFicheModal } from '@/app/plans/fiches/show-fiche/components/base-update-fiche.modal';
 import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
-import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { ModalFooterOKCancel } from '@tet/ui';

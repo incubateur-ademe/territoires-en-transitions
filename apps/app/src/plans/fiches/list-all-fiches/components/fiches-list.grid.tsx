@@ -1,8 +1,5 @@
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
-import {
-  makeCollectiviteFicheNonClasseeUrl,
-  makeCollectivitePlanActionFicheUrl,
-} from '@/app/app/paths';
+import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
@@ -68,18 +65,10 @@ export const FichesListGrid = ({
               selectedFicheIds === 'all' ||
               !!selectedFicheIds?.includes(fiche.id)
             }
-            link={
-              fiche.plans?.[0]?.id
-                ? makeCollectivitePlanActionFicheUrl({
-                    collectiviteId: collectivite?.collectiviteId,
-                    ficheUid: fiche.id.toString(),
-                    planActionUid: fiche.plans?.[0]?.id.toString(),
-                  })
-                : makeCollectiviteFicheNonClasseeUrl({
-                    collectiviteId: collectivite?.collectiviteId,
-                    ficheUid: fiche.id.toString(),
-                  })
-            }
+            link={makeCollectiviteActionUrl({
+              collectiviteId: collectivite?.collectiviteId,
+              ficheUid: fiche.id.toString(),
+            })}
             currentCollectivite={collectivite}
             currentUserId={currentUserId}
           />

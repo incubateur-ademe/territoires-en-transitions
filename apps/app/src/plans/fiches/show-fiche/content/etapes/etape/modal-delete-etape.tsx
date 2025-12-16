@@ -1,0 +1,47 @@
+import { ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
+
+import { BaseUpdateFicheModal } from '../../../components/base-update-fiche.modal';
+import { Fiche } from '../../../data/use-get-fiche';
+import { useEtapesDispatch } from '../etapes-context';
+import { useDeleteEtape } from './use-delete-etape';
+
+type Props = {
+  openState: OpenState;
+  etapeId: number;
+  fiche: Fiche;
+};
+
+const ModalDeleteEtape = ({ openState, etapeId, fiche }: Props) => {
+  const dispatchEtapes = useEtapesDispatch();
+  const { mutate: deleteEtape } = useDeleteEtape();
+
+  return (
+    <BaseUpdateFicheModal
+      openState={openState}
+      fiche={fiche}
+      title="Supprimer l’étape"
+      description="Cette étape sera supprimée définitivement de l'action. Souhaitez-vous vraiment supprimer cette étape ?"
+      renderFooter={({ close }) => (
+        <ModalFooterOKCancel
+          btnOKProps={{
+            children: 'Confirmer',
+            onClick: () => {
+              deleteEtape({ etapeId });
+              dispatchEtapes({
+                type: 'delete',
+                payload: { etapeId },
+              });
+              close();
+            },
+          }}
+          btnCancelProps={{
+            onClick: () => close(),
+          }}
+        />
+      )}
+    />
+  );
+};
+
+export default ModalDeleteEtape;

@@ -99,32 +99,57 @@ const nextConfig = {
     return [
       {
         source: '/collectivite/:collectiviteId/plans/fiches/:ficheId*',
-        destination: '/collectivite/:collectiviteId/plans/actions/:ficheId*',
+        destination: '/collectivite/:collectiviteId/actions/:ficheId*',
         permanent: true,
       },
       {
         source: '/collectivite/:collectiviteId/plans/:planId/fiches/:ficheId*',
-        destination: '/collectivite/:collectiviteId/plans/:planId/actions/:ficheId*',
+        destination: '/collectivite/:collectiviteId/actions/:ficheId*',
         permanent: true,
       },
       {
         source: '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/mes-fiches/:path*',
-        destination: '/collectivite/:collectiviteId/plans/actions/mes-actions/:path*',
+        destination: '/collectivite/:collectiviteId/actions/mes-actions/:path*',
         permanent: true,
       },
       {
         source: '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/classifiees/:path*',
-        destination: '/collectivite/:collectiviteId/plans/actions/dans-plan/:path*',
+        destination: '/collectivite/:collectiviteId/actions/dans-plan/:path*',
         permanent: true,
       },
       {
         source: '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/non-classifiees/:path*',
-        destination: '/collectivite/:collectiviteId/plans/actions/hors-plan/:path*',
+        destination: '/collectivite/:collectiviteId/actions/hors-plan/:path*',
         permanent: true,
       },
       {
         source: '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/:path*',
-        destination: '/collectivite/:collectiviteId/plans/actions/:path*',
+        destination: '/collectivite/:collectiviteId/actions/:path*',
+        permanent: true,
+      },
+      {
+        source: '/collectivite/:collectiviteId/plans/actions/mes-actions/:path*',
+        destination: '/collectivite/:collectiviteId/actions/mes-actions/:path*',
+        permanent: true,
+      },
+      {
+        source: '/collectivite/:collectiviteId/plans/actions/dans-plan/:path*',
+        destination: '/collectivite/:collectiviteId/actions/dans-plan/:path*',
+        permanent: true,
+      },
+      {
+        source: '/collectivite/:collectiviteId/plans/actions/hors-plan/:path*',
+        destination: '/collectivite/:collectiviteId/actions/hors-plan/:path*',
+        permanent: true,
+      },
+      {
+        source: '/collectivite/:collectiviteId/plans/:planId/actions/:actionId*',
+        destination: '/collectivite/:collectiviteId/actions/:actionId*',
+        permanent: true,
+      },
+      {
+        source: '/collectivite/:collectiviteId/plans/actions/:actionId*',
+        destination: '/collectivite/:collectiviteId/actions/:actionId*',
         permanent: true,
       },
     ]

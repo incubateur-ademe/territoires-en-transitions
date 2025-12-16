@@ -1,5 +1,4 @@
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
@@ -7,6 +6,7 @@ import { Field, FormSectionGrid, ModalFooterOKCancel } from '@tet/ui';
 import { isEqual } from 'es-toolkit/predicate';
 import { useState } from 'react';
 import { Fiche } from '../data/use-get-fiche';
+import BaseUpdateFicheModal from '../FicheActionPlanning/base-update-fiche-modal';
 
 type ModalePilotesProps = {
   isOpen: boolean;

@@ -7,11 +7,11 @@ import { FicheWithRelations } from '@tet/domain/plans';
 import { Event, useEventTracker } from '@tet/ui';
 import { mapValues } from 'es-toolkit';
 import { createElement, useEffect, useState } from 'react';
+import { useGetEtapes } from '../../../../content/etapes/use-get-etapes';
 import { useGetFicheNotes } from '../../../../data/use-get-fiche-notes';
 import { useAnnexesFicheActionInfos } from '../../../../data/useAnnexesFicheActionInfos';
 import { useFichesActionLiees } from '../../../../data/useFichesActionLiees';
 import { useFicheActionChemins } from '../../../../data/usePlanActionChemin';
-import { useGetEtapes } from '../../../../tabs/etapes/use-get-etapes';
 import FicheActionPdf from './FicheActionPdf/FicheActionPdf';
 import { TSectionsValues, sectionsInitValue } from './utils';
 

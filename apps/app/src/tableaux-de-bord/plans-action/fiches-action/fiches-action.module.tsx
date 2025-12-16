@@ -1,5 +1,5 @@
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
-import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
+import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
@@ -87,8 +87,8 @@ export const FichesActionModule = ({
             key={fiche.id}
             ficheAction={fiche}
             isEditable
-            link={getFichePageUrlForCollectivite({
-              fiche,
+            link={makeCollectiviteActionUrl({
+              ficheUid: fiche.id.toString(),
               collectiviteId: collectivite.collectiviteId,
             })}
           />

@@ -1,9 +1,9 @@
 import Link from 'next/link';
 
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
-import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
+import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
 import { Button } from '@tet/ui';
 
 type Props = {
@@ -17,9 +17,9 @@ export const FichesListCellTitle = ({ title, fiche }: Props) => {
   const isReadOnly =
     !!fiche.restreint && currentCollectivite.niveauAcces === null;
 
-  const href = getFichePageUrlForCollectivite({
-    fiche,
-    collectiviteId: fiche.collectiviteId,
+  const href = makeCollectiviteActionUrl({
+    collectiviteId: currentCollectivite.collectiviteId,
+    ficheUid: fiche.id.toString(),
   });
 
   if (title) {

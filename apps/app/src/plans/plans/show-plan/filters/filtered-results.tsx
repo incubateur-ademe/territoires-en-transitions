@@ -1,6 +1,6 @@
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import FicheActionCardSkeleton from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
-import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
+import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import {
   CurrentFiltersKeys,
@@ -28,12 +28,10 @@ const FilteredResultsEmpty = () => {
 };
 
 const FilteredResultsList = ({
-  planId,
   collectivite,
   filteredResults,
   currentUserId,
 }: {
-  planId: number;
   collectivite: CollectiviteAccess;
   filteredResults: FicheListItem[];
   currentUserId: string;
@@ -44,9 +42,8 @@ const FilteredResultsList = ({
         <FicheActionCard
           key={fiche.id}
           ficheAction={fiche}
-          link={makeCollectivitePlanActionFicheUrl({
+          link={makeCollectiviteActionUrl({
             collectiviteId: collectivite.collectiviteId,
-            planActionUid: planId.toString(),
             ficheUid: fiche.id.toString(),
           })}
           currentCollectivite={collectivite}
@@ -58,16 +55,11 @@ const FilteredResultsList = ({
 };
 
 type Props = {
-  planId: number;
   collectivite: CollectiviteAccess;
   currentUserId: string;
 };
 
-export const FilteredResults = ({
-  planId,
-  collectivite,
-  currentUserId,
-}: Props) => {
+export const FilteredResults = ({ collectivite, currentUserId }: Props) => {
   const {
     filters,
     isLoading,
@@ -126,7 +118,6 @@ export const FilteredResults = ({
         <>
           <VisibleWhen condition={hasFilteredContent}>
             <FilteredResultsList
-              planId={planId}
               collectivite={collectivite}
               filteredResults={filteredResults}
               currentUserId={currentUserId}

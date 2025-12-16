@@ -59,7 +59,6 @@ export const NestedDroppableContainers = ({
           collectivite={collectivite}
           isDndActive={active !== null}
           ficheIds={plan.fiches}
-          planId={plan.id}
           axeId={plan.id}
         />
       )}

@@ -1,4 +1,4 @@
-import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
+import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { dropAnimation } from '@/app/plans/plans/show-plan/plan-arborescence.view';
 import { useTRPC } from '@tet/api';
 
@@ -191,7 +191,7 @@ export const useCreateFicheResume = (args: Args) => {
       });
 
       if (actionId) {
-        const url = makeCollectiviteFicheNonClasseeUrl({
+        const url = makeCollectiviteActionUrl({
           collectiviteId,
           ficheUid: newFiche.id.toString(),
         });

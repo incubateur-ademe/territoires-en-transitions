@@ -1,5 +1,5 @@
 import FicheActionCardSkeleton from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
-import { getFichePageUrlForCollectivite } from '@/app/plans/fiches/get-fiche/get-fiche-page-url.util';
+import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { CollectiviteAccess } from '@tet/domain/users';
 import classNames from 'classnames';
@@ -39,9 +39,9 @@ const FichesLieesListe = ({
               <FicheActionCard
                 key={fiche.id}
                 ficheAction={fiche}
-                link={getFichePageUrlForCollectivite({
+                link={makeCollectiviteActionUrl({
                   collectiviteId: collectivite.collectiviteId,
-                  fiche,
+                  ficheUid: fiche.id.toString(),
                 })}
                 onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
                 currentCollectivite={collectivite}

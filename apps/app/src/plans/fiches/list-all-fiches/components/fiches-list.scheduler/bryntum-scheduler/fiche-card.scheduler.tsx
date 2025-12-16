@@ -6,10 +6,7 @@ import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/Ba
 import { FicheActionCardProps } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import ModifierFicheModale from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/ModifierFicheModale';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import {
-  makeCollectiviteFicheNonClasseeUrl,
-  makeCollectivitePlanActionFicheUrl,
-} from '@/app/app/paths';
+import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { DeleteOrRemoveFicheSharingModal } from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
@@ -54,16 +51,10 @@ export const FicheCardScheduler = ({
   // on clique sur le contenu qui est dans la carte.
   // On fait cela pour garder le click droit "ouvrir dans un nouvel onglet" partout
   // où l'utilisateur s'attend à pouvoir cliquer.
-  const href = fiche.plans?.[0]?.id
-    ? makeCollectivitePlanActionFicheUrl({
-        collectiviteId: currentCollectivite.collectiviteId,
-        ficheUid: fiche.id.toString(),
-        planActionUid: fiche.plans[0].id.toString(),
-      })
-    : makeCollectiviteFicheNonClasseeUrl({
-        collectiviteId: currentCollectivite.collectiviteId,
-        ficheUid: fiche.id.toString(),
-      });
+  const href = makeCollectiviteActionUrl({
+    collectiviteId: currentCollectivite.collectiviteId,
+    ficheUid: fiche.id.toString(),
+  });
 
   const canUpdate = isFicheEditableByCollectiviteUser(
     fiche,
