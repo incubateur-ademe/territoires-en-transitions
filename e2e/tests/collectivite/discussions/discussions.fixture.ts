@@ -49,7 +49,7 @@ export const testWithDiscussions = testWithCollectivites.extend<{
 }>({
   discussions: async ({ collectivites }, use) => {
     const discussions = new DiscussionsFixture();
-    collectivites.registerCleanupFunc(discussions.cleanupByCollectiviteId);
+    collectivites.registerCleanupFunc(discussions);
     await use(discussions);
   },
 });
