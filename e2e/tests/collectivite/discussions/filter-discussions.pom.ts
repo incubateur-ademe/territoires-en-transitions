@@ -1,11 +1,10 @@
 import { Locator, Page } from '@playwright/test';
 
 export class FilterDiscussionsPom {
-  readonly page: Page;
   readonly statusSelect: Locator;
   readonly orderBySelect: Locator;
 
-  constructor(page: Page) {
+  constructor(readonly page: Page) {
     this.page = page;
     const discussionPanel = page.locator(
       '[data-test="ActionDiscussionsPanel"]'

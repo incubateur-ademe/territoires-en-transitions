@@ -1,12 +1,11 @@
 import { expect, Locator, Page } from '@playwright/test';
 
 export class DiscussionsPom {
-  readonly page: Page;
   readonly discussionPanel: Locator;
   readonly discussionButton: Locator;
   readonly commentItem: Locator;
 
-  constructor(page: Page) {
+  constructor(readonly page: Page) {
     this.page = page;
     this.discussionPanel = page.locator('[data-test="ActionDiscussionsPanel"]');
     this.discussionButton = page.locator(

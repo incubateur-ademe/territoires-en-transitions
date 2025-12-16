@@ -2,10 +2,9 @@ import { Locator, Page } from '@playwright/test';
 import { Statut } from '@tet/domain/plans';
 
 export class FilterFichesPom {
-  readonly page: Page;
   readonly statutsSelector: Locator;
 
-  constructor(page: Page) {
+  constructor(readonly page: Page) {
     this.page = page;
     this.statutsSelector = page.locator('[data-test="statuts"]');
   }

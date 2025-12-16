@@ -1,10 +1,8 @@
 import { expect } from '@playwright/test';
 import { testWithFiches as test } from '../fiches.fixture';
-import { FilterFichesPom } from './filter-fiches.pom';
-import { ListFichesPom } from './list-fiches.pom';
 
 test.describe('Liste des fiches', () => {
-  test.beforeEach(async ({ page, collectivites, fiches }) => {
+  test.beforeEach(async ({ page, collectivites, fiches, listFichesPom }) => {
     const { collectivite, user } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
     });
@@ -25,14 +23,10 @@ test.describe('Liste des fiches', () => {
     page.goto('/');
 
     console.log('createdFicheIds', createdFicheIds);
-
-    const listFichesPom = new ListFichesPom(page);
     await listFichesPom.goto();
   });
 
-  test('Recherche texte', async ({ page }) => {
-    const listFichesPom = new ListFichesPom(page);
-
+  test('Recherche texte', async ({ listFichesPom }) => {
     await listFichesPom.expectFichesCount(2);
     await listFichesPom.search('toto');
     await expect(listFichesPom.noFicheHeading).toBeVisible();
@@ -41,13 +35,9 @@ test.describe('Liste des fiches', () => {
     await listFichesPom.expectFichesCount(1);
   });
 
-  test('Filtrer par statut', async ({ page }) => {
-    const listFichesPom = new ListFichesPom(page);
-
+  test('Filtrer par statut', async ({ listFichesPom, filterFichesPom }) => {
     await listFichesPom.expectFichesCount(2);
     await listFichesPom.openFilter();
-
-    const filterFichesPom = new FilterFichesPom(page);
     await filterFichesPom.selectStatut('À venir');
     await listFichesPom.expectFichesCount(1);
   });

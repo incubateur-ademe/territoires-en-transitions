@@ -1,14 +1,13 @@
 import { expect, Locator, Page } from '@playwright/test';
+
 export class ListFichesPom {
-  readonly page: Page;
   readonly searchInput: Locator;
   readonly fichesCarte: Locator;
   readonly noFicheHeading: Locator;
   readonly filterButton: Locator;
   readonly title: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(readonly page: Page) {
     this.searchInput = page.getByRole('searchbox', {
       name: 'Rechercher par nom ou',
     });
