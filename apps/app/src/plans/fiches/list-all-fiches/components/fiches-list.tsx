@@ -1,5 +1,4 @@
 import ActionsGroupeesMenu from '@/app/app/pages/collectivite/PlansActions/ActionsGroupees/ActionsGroupeesMenu';
-import { FiltersMenuButton } from '@/app/plans/fiches/list-all-fiches/filters/filters-menu.button';
 import { CustomFilterBadges } from '@/app/ui/lists/filter-badges/use-filters-to-badges';
 
 import { FichesListEmpty } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.empty';
@@ -10,16 +9,7 @@ import {
   useListFiches,
 } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import {
-  ButtonGroup,
-  Checkbox,
-  Event,
-  Input,
-  Pagination,
-  Select,
-  useEventTracker,
-  VisibleWhen,
-} from '@tet/ui';
+import { Pagination, useEventTracker } from '@tet/ui';
 import classNames from 'classnames';
 import { isEqual } from 'es-toolkit';
 import { useState } from 'react';
@@ -38,7 +28,7 @@ import { useSearchFiches } from '../hooks/use-search-fiches';
 import { useSelectFiches } from '../hooks/use-select-fiches';
 import { useSortFiches } from '../hooks/use-sort-fiches';
 import { FichesListTable } from './fiches-list.table/fiches-list.table';
-import { FilterBadges } from './filter-badges';
+import { HeaderFicheList } from './header-fiche-list';
 
 const fichesPerPageByView: Record<FicheActionViewOptions, number> = {
   grid: 15,
@@ -56,6 +46,7 @@ type Props = {
   containerClassName?: string;
   displayEditionMenu?: boolean;
   onUnlink?: (ficheId: number) => void;
+  displayHeader?: boolean;
 };
 
 const isSearchActive = (
@@ -75,6 +66,7 @@ export const FichesList = ({
   permissions,
   containerClassName,
   displayEditionMenu = false,
+  displayHeader = true,
   onUnlink,
   filters,
 }: Props) => {
@@ -168,128 +160,30 @@ export const FichesList = ({
         containerClassName
       )}
     >
-      <div className="relative bg-inherit">
-        <div className="relative z-[1] bg-inherit flex flex-wrap justify-between items-center gap-4 py-6 border-y border-primary-3">
-          <div className="flex gap-x-8 gap-y-4 items-center">
-            <Select
-              options={sortOptions}
-              onChange={(selectedOption) =>
-                handleSortChange(`${selectedOption}`)
-              }
-              values={sort.field}
-              customItem={(v) => <span className="text-grey-8">{v.label}</span>}
-              disabled={sortOptions.length === 1}
-              small
-            />
-
-            <VisibleWhen condition={isGroupedActionsEnabled}>
-              <Checkbox
-                label="Actions groupées"
-                variant="switch"
-                labelClassname="text-sm text-grey-7 font-normal whitespace-nowrap"
-                checked={isGroupedActionsModeActive}
-                onChange={(evt) => {
-                  toggleGroupedActionsMode(evt.currentTarget.checked);
-                }}
-                disabled={isLoading}
-              />
-            </VisibleWhen>
-          </div>
-
-          <div className="flex gap-x-8 gap-y-4">
-            <Input
-              type="search"
-              className="w-full"
-              onChange={(e) => handleSearchChange(e.target.value)}
-              onSearch={(v) => {
-                handleSearchSubmit(v);
-                resetPagination();
-              }}
-              value={search}
-              containerClassname="w-full xl:w-80"
-              placeholder="Rechercher par nom ou description"
-              displaySize="sm"
-            />
-
-            <ButtonGroup
-              activeButtonId={view}
-              size="sm"
-              buttons={[
-                {
-                  id: 'grid',
-                  icon: 'grid-line',
-                  children: 'Carte',
-                  onClick: () => {
-                    handleChangeView('grid');
-                    trackEvent(Event.fiches.listChangeView.grid);
-                  },
-                },
-                {
-                  id: 'table',
-                  icon: 'menu-line',
-                  children: 'Tableau',
-                  onClick: () => {
-                    handleChangeView('table');
-                    trackEvent(Event.fiches.listChangeView.table);
-                  },
-                },
-                {
-                  id: 'scheduler',
-                  icon: 'calendar-line',
-                  children: 'Calendrier',
-                  onClick: () => {
-                    handleChangeView('scheduler');
-                    trackEvent(Event.fiches.listChangeView.calendar);
-                  },
-                },
-              ].filter((button) => !(isReadOnly && button.id === 'scheduler'))}
-            />
-
-            <FiltersMenuButton />
-          </div>
-        </div>
-
-        <VisibleWhen
-          condition={isGroupedActionsModeActive && isGroupedActionsEnabled}
-        >
-          <div
-            className={classNames(
-              'relative flex justify-between py-5 border-b border-primary-3 transition-all duration-500',
-              {
-                '-translate-y-full -mb-16': !isGroupedActionsModeActive,
-                'translate-y-0 mb-0': isGroupedActionsModeActive,
-              }
-            )}
-          >
-            <div className="flex items-center gap-4">
-              <Checkbox
-                label="Sélectionner toutes les actions"
-                checked={isSelectAllMode}
-                onChange={(evt) => handleSelectAll(evt.currentTarget.checked)}
-                disabled={isLoading || !fiches?.length}
-              />
-            </div>
-            <div className="text-grey-7 font-medium">
-              <span className="text-primary-9">{`${
-                isSelectAllMode ? countTotal : selectedFicheIds.length || 0
-              } action${
-                (isSelectAllMode ? countTotal : selectedFicheIds.length) > 1
-                  ? 's'
-                  : ''
-              } sélectionnée${
-                (isSelectAllMode ? countTotal : selectedFicheIds.length) > 1
-                  ? 's'
-                  : ''
-              }`}</span>
-              {` / ${countTotal} action${
-                countTotal ? (countTotal > 1 ? 's' : '') : ''
-              }`}
-            </div>
-          </div>
-        </VisibleWhen>
-      </div>
-
-      <FilterBadges />
+      {displayHeader ? (
+        <HeaderFicheList
+          sort={sort}
+          sortOptions={sortOptions}
+          handleSortChange={handleSortChange}
+          isGroupedActionsEnabled={isGroupedActionsEnabled}
+          isGroupedActionsModeActive={isGroupedActionsModeActive}
+          toggleGroupedActionsMode={toggleGroupedActionsMode}
+          isLoading={isLoading}
+          search={search}
+          handleSearchChange={handleSearchChange}
+          handleSearchSubmit={handleSearchSubmit}
+          resetPagination={resetPagination}
+          view={view}
+          handleChangeView={handleChangeView}
+          trackEvent={trackEvent}
+          isReadOnly={isReadOnly}
+          isSelectAllMode={isSelectAllMode}
+          handleSelectAll={handleSelectAll}
+          selectedFicheIds={selectedFicheIds}
+          countTotal={countTotal}
+          fiches={fiches}
+        />
+      ) : null}
 
       {/** Listes des fiches, affichage en fonction de la vue sélectionnée */}
 
@@ -341,7 +235,7 @@ export const FichesList = ({
         filters={filtersWithSearch}
         sort={[{ field: sort.field, direction: sort.direction }]}
         fichesCountExportedToPDF={
-          selectedFicheIds == 'all' ? countTotal : selectedFicheIds.length
+          selectedFicheIds === 'all' ? countTotal : selectedFicheIds.length
         }
       />
     </div>
