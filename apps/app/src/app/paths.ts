@@ -1,5 +1,6 @@
 import type { ReferentielId } from '@tet/domain/referentiels';
 import { FicheActionViewType } from '../plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
+import { FicheSectionId } from '../plans/fiches/show-fiche/content/type';
 
 export const signInPath = `/login`;
 export const signUpPath = `/signup`;
@@ -112,7 +113,7 @@ export const collectiviteUsersTagsPath = `${collectiviteUsersPath}/tags`;
 
 export const collectiviteBibliothequePath = `${collectivitePath}/bibliotheque`;
 export const collectiviteJournalPath = `${collectivitePath}/historique`;
-
+const collectiviteActionsPath = `${collectivitePath}/actions`;
 const ficheParam = 'ficheUid';
 const planParam = 'planUid';
 export const collectivitePlansActionsBasePath = `${collectivitePath}/plans`;
@@ -121,9 +122,8 @@ export const collectivitePlansActionsCreerPath = `${collectivitePlansActionsBase
 export const collectivitePlansActionsImporterPath = `${collectivitePlansActionsBasePath}/importer`;
 export const collectivitePlansActionsListPath = `${collectivitePlansActionsBasePath}`;
 export const collectivitePlanActionPath = `${collectivitePlansActionsListPath}/:${planParam}`;
-export const collectivitePlanActionFichePath = `${collectivitePlanActionPath}/actions/:${ficheParam}`;
-export const collectiviteToutesLesFichesPath = `${collectivitePlansActionsBasePath}/actions`;
-export const collectiviteFicheNonClasseePath = `${collectivitePlansActionsBasePath}/actions/:${ficheParam}`;
+export const collectiviteToutesLesFichesPath = `${collectiviteActionsPath}`;
+export const collectiviteActionPath = `${collectiviteActionsPath}/:${ficheParam}/:content`;
 
 // TDB = tableau de bord PA
 const tdbPlansEtActionsPath = `${collectivitePlansActionsBasePath}/tableau-de-bord`;
@@ -369,30 +369,19 @@ export const makeCollectiviteToutesLesFichesUrl = ({
     .concat(ficheViewType && ficheViewType !== 'all' ? `/${ficheViewType}` : '')
     .concat(searchParams ? `?${searchParams}` : '');
 
-export const makeCollectiviteFicheNonClasseeUrl = ({
+export const makeCollectiviteActionUrl = ({
   collectiviteId,
   ficheUid,
+  content,
 }: {
   collectiviteId: number;
   ficheUid: string;
+  content?: FicheSectionId;
 }) =>
-  collectiviteFicheNonClasseePath
+  collectiviteActionPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${ficheParam}`, ficheUid);
-
-export const makeCollectivitePlanActionFicheUrl = ({
-  collectiviteId,
-  ficheUid,
-  planActionUid,
-}: {
-  collectiviteId: number;
-  ficheUid: string;
-  planActionUid: string;
-}) =>
-  collectivitePlanActionFichePath
-    .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${planParam}`, planActionUid)
-    .replace(`:${ficheParam}`, ficheUid);
+    .replace(`:${ficheParam}`, ficheUid)
+    .replace(':content', content ?? 'details');
 
 export const OPEN_AXES_KEY_SEARCH_PARAMETER = 'openAxes';
 export const makeCollectivitePlanActionUrl = ({

@@ -1,6 +1,6 @@
+import { BaseUpdateFicheModal } from '@/app/plans/fiches/show-fiche/components/base-update-fiche.modal';
 import { StatusBadge } from '@/app/plans/fiches/show-fiche/components/status.badge';
 import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
-import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { ficheActionStatutOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { FicheWithRelations, Statut } from '@tet/domain/plans';
 import { Field, FormSectionGrid, ModalFooterOKCancel, Select } from '@tet/ui';

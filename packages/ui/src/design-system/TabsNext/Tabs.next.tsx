@@ -5,6 +5,7 @@ import { Route } from 'next';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { createContext, ReactNode, useContext } from 'react';
+import { cn } from '../../utils/cn';
 import { Icon, IconValue } from '../Icon';
 import { Tooltip } from '../Tooltip';
 import { TabSize } from '../Tabs/Tabs';
@@ -70,7 +71,7 @@ export const TabsList = ({
 }) => {
   return (
     <ul
-      className={classNames(
+      className={cn(
         'inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full !list-none',
         className
       )}
@@ -99,7 +100,7 @@ export const TabsTab = (props: TabProps) => {
 
   const link = (
     <Link
-      className={classNames(
+      className={cn(
         // styles communs
         'flex items-center px-3 py-1 font-bold w-max bg-none',
         // variante au survol
@@ -127,7 +128,7 @@ export const TabsTab = (props: TabProps) => {
         <Icon
           icon={props.icon}
           size={size}
-          className={classNames('mr-1', props.iconClassName)}
+          className={cn('mr-1', props.iconClassName)}
         />
       )}
       {props.label}
@@ -135,7 +136,7 @@ export const TabsTab = (props: TabProps) => {
         <Icon
           icon={props.icon}
           size={size}
-          className={classNames('ml-1', props.iconClassName)}
+          className={cn('ml-1', props.iconClassName)}
         />
       ) : (
         props.tooltip && (
@@ -144,7 +145,6 @@ export const TabsTab = (props: TabProps) => {
       )}
     </Link>
   );
-
   return (
     <li role="presentation" className="p-0">
       {props.tooltip ? <Tooltip label={props.tooltip}>{link}</Tooltip> : link}

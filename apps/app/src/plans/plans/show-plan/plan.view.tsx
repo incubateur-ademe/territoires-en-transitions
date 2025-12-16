@@ -132,7 +132,6 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
           <VisibleWhen condition={isFiltered}>
             <FilteredResults
               collectivite={currentCollectivite}
-              planId={rootAxe.id}
               currentUserId={user.id}
             />
           </VisibleWhen>

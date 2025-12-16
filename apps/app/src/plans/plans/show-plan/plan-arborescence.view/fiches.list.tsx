@@ -1,4 +1,4 @@
-import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
+import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { useUser } from '@tet/api/users';
 import { CollectiviteAccess } from '@tet/domain/users';
 import classNames from 'classnames';
@@ -10,7 +10,6 @@ type Props = {
   /** est-ce qu'il y a une élément actif (drag) */
   isDndActive: boolean;
   ficheIds: number[];
-  planId: number;
   axeId: number;
   collectivite: CollectiviteAccess;
 };
@@ -18,7 +17,6 @@ type Props = {
 export const FichesList = ({
   isDndActive,
   ficheIds,
-  planId,
   axeId,
   collectivite,
 }: Props) => {
@@ -64,9 +62,8 @@ export const FichesList = ({
               editKeysToInvalidate={[['axe_fiches', axeId, ficheIds]]}
               url={
                 fiche.id
-                  ? makeCollectivitePlanActionFicheUrl({
+                  ? makeCollectiviteActionUrl({
                       collectiviteId: fiche.collectiviteId,
-                      planActionUid: planId.toString(),
                       ficheUid: fiche.id.toString(),
                     })
                   : undefined

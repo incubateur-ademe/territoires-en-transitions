@@ -253,7 +253,6 @@ export const DraggableAxe = ({
               collectivite={collectivite}
               isDndActive={active !== null}
               ficheIds={axe.fiches}
-              planId={rootAxe.id}
               axeId={axe.id}
             />
           )}

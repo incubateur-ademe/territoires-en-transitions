@@ -40,6 +40,7 @@ export * from './design-system/Picto/PictoPadlock';
 export * from './design-system/Picto/PictoWarning';
 export * from './design-system/RadioButton';
 export * from './design-system/RichTextEditor';
+export * from './design-system/RichTextView';
 export * from './design-system/Select';
 export * from './design-system/SideMenu';
 export * from './design-system/Spacer';

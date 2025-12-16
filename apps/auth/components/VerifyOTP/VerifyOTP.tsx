@@ -47,12 +47,14 @@ const messageByType: Record<VerifyType, string> = {
   reset_password: 'Pour changer de mot de passe',
 };
 
+const validationSchema = z.object({
+  otp: z.string().refine(validateOTP),
+  email: z.email({
+    error: 'Un email valide est requis',
+  }),
+});
 /** Gestionnaire d'état pour le formulaire de vérification du jeton OTP */
 const useVerifyOTP = (email: string, otp: string) => {
-  const validationSchema = z.object({
-    otp: z.string().refine(validateOTP),
-  });
-
   return useForm({
     resolver: zodResolver(validationSchema),
     defaultValues: {

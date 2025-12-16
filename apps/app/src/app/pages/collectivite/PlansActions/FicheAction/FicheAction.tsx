@@ -24,6 +24,7 @@ import { Header } from './Header';
 type FicheActionProps = {
   fiche: Fiche;
   planId?: number;
+  children?: React.ReactNode;
 };
 
 const FicheActionLegacy = ({
@@ -137,11 +138,16 @@ const FicheActionLegacy = ({
 export const FicheAction = ({
   fiche: initialFiche,
   planId,
+  children,
 }: FicheActionProps) => {
   const isImprovedUiEnabled = useImprovedFicheActionUiEnabled();
 
   if (isImprovedUiEnabled) {
-    return <FicheActionImprovedView fiche={initialFiche} planId={planId} />;
+    return (
+      <FicheActionImprovedView fiche={initialFiche}>
+        {children}
+      </FicheActionImprovedView>
+    );
   }
 
   return <FicheActionLegacy fiche={initialFiche} planId={planId} />;
