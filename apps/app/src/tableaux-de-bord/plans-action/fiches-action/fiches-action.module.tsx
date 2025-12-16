@@ -40,9 +40,7 @@ export const FichesActionModule = ({
   const { fiches, count, isLoading } = useListFiches(
     collectivite.collectiviteId,
     {
-      filters: {
-        ...module.options.filtre,
-      },
+      filters: module.options.filtre,
       queryOptions: {
         sort: getSort(),
         limit: MAX_DISPLAYED_FICHE_ACTIONS,

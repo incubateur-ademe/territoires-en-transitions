@@ -1252,7 +1252,9 @@ export default class ListFichesService {
     entityIdColumn: T['columns'][keyof T['columns']],
     entityIds: number[] | string[] | undefined
   ): SQLWrapper | undefined {
-    if (isNil(entityIds)) {
+    // Ignore si undefined/null ou si le tableau est vide
+    // Un tableau vide signifie "pas de filtre" plutôt que "chercher des valeurs vides"
+    if (isNil(entityIds) || entityIds.length === 0) {
       return;
     }
     const linkedEntityQuery = this.databaseService.db

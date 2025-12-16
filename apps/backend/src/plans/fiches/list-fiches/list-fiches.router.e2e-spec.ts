@@ -198,6 +198,71 @@ describe('Filtres sur les fiches actions', () => {
     }
   });
 
+  test('Fetch avec tableaux vides dans les filtres pilotes doit être équivalent à aucun filtre', async () => {
+    const caller = router.createCaller({ user: yoloDodo });
+
+    // Récupérer toutes les fiches sans filtre
+    const { data: fichesWithoutFilter } = await caller.plans.fiches.listFiches({
+      collectiviteId: COLLECTIVITE_ID,
+      filters: {},
+    });
+
+    if (!fichesWithoutFilter) {
+      expect.fail();
+    }
+
+    // Récupérer les fiches avec des tableaux vides pour personnePiloteIds
+    const { data: fichesWithEmptyPersonnePiloteIds } =
+      await caller.plans.fiches.listFiches({
+        collectiviteId: COLLECTIVITE_ID,
+        filters: {
+          personnePiloteIds: [],
+        },
+      });
+
+    // Récupérer les fiches avec des tableaux vides pour utilisateurPiloteIds
+    const { data: fichesWithEmptyUtilisateurPiloteIds } =
+      await caller.plans.fiches.listFiches({
+        collectiviteId: COLLECTIVITE_ID,
+        filters: {
+          utilisateurPiloteIds: [],
+        },
+      });
+
+    // Récupérer les fiches avec les deux tableaux vides
+    const { data: fichesWithBothEmptyArrays } =
+      await caller.plans.fiches.listFiches({
+        collectiviteId: COLLECTIVITE_ID,
+        filters: {
+          personnePiloteIds: [],
+          utilisateurPiloteIds: [],
+        },
+      });
+
+    // Les résultats doivent être identiques (même nombre de fiches et mêmes IDs)
+    expect(fichesWithEmptyPersonnePiloteIds?.length).toBe(
+      fichesWithoutFilter.length
+    );
+    expect(fichesWithEmptyUtilisateurPiloteIds?.length).toBe(
+      fichesWithoutFilter.length
+    );
+    expect(fichesWithBothEmptyArrays?.length).toBe(fichesWithoutFilter.length);
+
+    // Vérifier que les IDs sont les mêmes (dans le même ordre)
+    const idsWithoutFilter = fichesWithoutFilter.map((f) => f.id).sort();
+    const idsWithEmptyPersonne = fichesWithEmptyPersonnePiloteIds
+      ?.map((f) => f.id)
+      .sort();
+    const idsWithEmptyUtilisateur = fichesWithEmptyUtilisateurPiloteIds
+      ?.map((f) => f.id)
+      .sort();
+    const idsWithBothEmpty = fichesWithBothEmptyArrays?.map((f) => f.id).sort();
+
+    expect(idsWithEmptyPersonne).toEqual(idsWithoutFilter);
+    expect(idsWithEmptyUtilisateur).toEqual(idsWithoutFilter);
+    expect(idsWithBothEmpty).toEqual(idsWithoutFilter);
+  });
+
   test('Fetch avec filtre sur un service', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 

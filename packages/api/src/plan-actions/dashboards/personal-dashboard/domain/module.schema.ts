@@ -63,8 +63,10 @@ export const moduleFichesSchema = z.object({
   }),
 });
 
-export const moduleFicheActionsSelectSchema =
-  moduleCommonSchemaSelect.merge(moduleFichesSchema);
+export const moduleFicheActionsSelectSchema = z.object({
+  ...moduleCommonSchemaSelect.shape,
+  ...moduleFichesSchema.shape,
+});
 
 // Use z.output to get type boolean for properties handled with `castToBoolean`.
 export type ModuleFicheActionsSelect = z.output<
