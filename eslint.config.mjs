@@ -3,12 +3,20 @@ import nxPlugin from '@nx/eslint-plugin';
 import tseslint from 'typescript-eslint';
 
 // Increase max listeners to prevent warning in Nx monorepo with multiple ESLint plugins
-// eslint-disable-next-line no-undef
+
 process.setMaxListeners(20);
 
 export default [
   {
-    ignores: ['**/dist/**', 'out-tsc', '.next', 'next-env.d.ts', '.tsc-trace', '**/e2e-cypress-deprecated/**'],
+    ignores: [
+      '**/dist/**',
+      'out-tsc',
+      '.next',
+      'next-env.d.ts',
+      '.tsc-trace',
+      '**/e2e-cypress-deprecated/**',
+      '**/playwright-report/**',
+    ],
   },
   ...nxPlugin.configs['flat/base'],
   ...nxPlugin.configs['flat/typescript'],
