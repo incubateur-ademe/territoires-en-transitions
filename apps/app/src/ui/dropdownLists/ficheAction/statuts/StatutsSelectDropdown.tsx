@@ -6,6 +6,7 @@ import { Select, SelectProps } from '@tet/ui';
 type Props = Omit<SelectProps, 'values' | 'onChange' | 'options'> & {
   values?: Statut | null;
   onChange: (statut: Statut) => void;
+  size?: 'md' | 'sm';
 };
 
 const StatutsSelectDropdown = (props: Props) => {
@@ -16,7 +17,10 @@ const StatutsSelectDropdown = (props: Props) => {
       dataTest={props.dataTest ?? 'statuts'}
       options={ficheActionStatutOptions}
       onChange={(statut) => props.onChange(statut as Statut)}
-      customItem={(item) => <BadgeStatut statut={item.value as Statut} />}
+      placeholder="Sélectionner un statut"
+      customItem={(item) => (
+        <BadgeStatut statut={item.value as Statut} size={props.size} />
+      )}
     />
   );
 };
