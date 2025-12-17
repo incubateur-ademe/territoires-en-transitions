@@ -1,9 +1,9 @@
 import { flexRender, Table as TableProps } from '@tanstack/react-table';
+import { Fragment } from 'react';
 
 import { EmptyCardProps } from '../../components/EmptyCard/EmptyCard';
 
 import { Table } from './table';
-import { TableCell } from './table.cell';
 import { TableEmpty } from './table.empty';
 import { TableHead } from './table.head';
 import { TableLoading, TableLoadingProps } from './table.loading';
@@ -29,9 +29,14 @@ export const ReactTable = ({
       <TableHead>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) =>
-              flexRender(header.column.columnDef.header, header.getContext())
-            )}
+            {headerGroup.headers.map((header) => (
+              <Fragment key={header.id}>
+                {flexRender(
+                  header.column.columnDef.header,
+                  header.getContext()
+                )}
+              </Fragment>
+            ))}
           </tr>
         ))}
       </TableHead>
@@ -51,9 +56,9 @@ export const ReactTable = ({
           table.getRowModel().rows.map((row) => (
             <TableRow key={row.id} className="text-sm">
               {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
+                <Fragment key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
+                </Fragment>
               ))}
             </TableRow>
           ))
