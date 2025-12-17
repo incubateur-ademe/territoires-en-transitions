@@ -8,7 +8,7 @@ import { FicheWithRelations } from '@tet/domain/plans';
 import { PermissionOperation } from '@tet/domain/users';
 import { Divider, Icon } from '@tet/ui';
 import { format } from 'date-fns';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { FicheActionCompletionStatus } from '../FicheActionCompletion/fiche-action-completion';
 import Toolbar from './actions/toolbar';
 import { FicheBreadcrumbs } from './fiche-breadcrumbs';
