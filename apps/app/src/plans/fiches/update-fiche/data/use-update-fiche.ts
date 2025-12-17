@@ -10,6 +10,7 @@ type Args = Partial<{
 }>;
 
 export type UpdateFicheInput = RouterInput['plans']['fiches']['update'];
+export type UpdateFiche = ReturnType<typeof useUpdateFiche>['mutate'];
 
 export const useUpdateFiche = (args?: Args) => {
   const collectiviteId = useCollectiviteId();

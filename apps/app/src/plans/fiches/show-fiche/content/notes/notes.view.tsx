@@ -1,4 +1,4 @@
-import { FicheWithRelations } from '@tet/domain/plans';
+import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
 import { Button, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
 import { useDeleteNote } from '../../data/use-delete-note';
@@ -8,12 +8,8 @@ import { NoteCreationModal } from './note-creation.modal';
 import NoteCard from './note.card';
 import NotificationPicto from './notification.picto';
 
-type NotesViewProps = {
-  isReadonly: boolean;
-  fiche: FicheWithRelations;
-};
-
-export const NotesView = ({ fiche, isReadonly }: NotesViewProps) => {
+export const NotesView = () => {
+  const { fiche, isReadonly } = useFicheContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { mutate: updateNotes } = useUpsertNote(fiche);
   const { mutate: deleteNote } = useDeleteNote(fiche);
@@ -38,7 +34,7 @@ export const NotesView = ({ fiche, isReadonly }: NotesViewProps) => {
           size="xs"
         />
       ) : (
-        <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-5">
+        <>
           <div className="flex justify-between">
             <h5 className="text-primary-8 mb-0">Notes</h5>
             {!isReadonly && (
@@ -70,7 +66,7 @@ export const NotesView = ({ fiche, isReadonly }: NotesViewProps) => {
                 />
               ))}
           </div>
-        </div>
+        </>
       )}
 
       {!isReadonly && isModalOpen && (

@@ -1,7 +1,7 @@
 import { SharedFicheUpdateAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-update.alert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Checkbox } from '@tet/ui';
-import { Fiche } from '../../data/use-get-fiche';
+import { useFicheContext } from '../../context/fiche-context';
 import { EtapeTextarea, useUpsertEtape } from './etape';
 import {
   EtapesProvider,
@@ -11,13 +11,8 @@ import {
 import EtapesList from './etapes-list';
 import { useGetEtapes } from './use-get-etapes';
 
-type Props = {
-  fiche: Fiche;
-  isReadonly: boolean;
-};
-
-export const Etapes = (props: Props) => {
-  const { fiche } = props;
+export const Etapes = () => {
+  const { fiche } = useFicheContext();
 
   const { data, isLoading } = useGetEtapes(fiche.id);
 
@@ -33,7 +28,7 @@ export const Etapes = (props: Props) => {
 
   return (
     <EtapesProvider initialState={{ etapes }}>
-      <EtapesWithContext {...props} />
+      <EtapesWithContext />
     </EtapesProvider>
   );
 };
@@ -48,7 +43,8 @@ export const Etapes = (props: Props) => {
  * Voir cette discussion pour plus d'infos: https://github.com/clauderic/dnd-kit/issues/921#issuecomment-1591744314
  * Essai avec <DragOverlay /> sans succès.
  */
-const EtapesWithContext = ({ fiche, isReadonly }: Props) => {
+const EtapesWithContext = () => {
+  const { fiche, isReadonly } = useFicheContext();
   const { etapes } = useEtapesState();
 
   const dispatchEtapes = useEtapesDispatch();
@@ -76,7 +72,7 @@ const EtapesWithContext = ({ fiche, isReadonly }: Props) => {
 
   /** Liste des étapes */
   return (
-    <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8">
+    <>
       <h5 className="mb-3 text-primary-8">
         Étapes {etapes.length > 0 && `${etapesRealiseesCount}/${etapes.length}`}
       </h5>
@@ -98,6 +94,6 @@ const EtapesWithContext = ({ fiche, isReadonly }: Props) => {
           />
         </div>
       )}
-    </div>
+    </>
   );
 };
