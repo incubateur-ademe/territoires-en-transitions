@@ -1,4 +1,5 @@
 import { expect, Locator, Page } from '@playwright/test';
+import { DropdownPersonnePom } from 'tests/shared/dropdown.pom';
 
 export class CreatePlanPom {
   readonly nomInput: Locator;
@@ -6,6 +7,8 @@ export class CreatePlanPom {
   readonly submitButton: Locator;
   readonly title: Locator;
   readonly cancelButton: Locator;
+  readonly pilotesDropdown: DropdownPersonnePom;
+  readonly referentsDropdown: DropdownPersonnePom;
 
   constructor(public readonly page: Page) {
     this.page = page;
@@ -18,10 +21,14 @@ export class CreatePlanPom {
     this.cancelButton = page.getByRole('button', {
       name: "Revenir à l'étape précédente",
     });
+    this.pilotesDropdown = new DropdownPersonnePom(page, 'Personne pilote');
+    this.referentsDropdown = new DropdownPersonnePom(page, 'Élu·e référent·e');
   }
 
   async goto(collectiviteId: number) {
-    await this.page.goto(`/collectivite/${collectiviteId}/plans/creer`);
+    await this.page.goto(`/collectivite/${collectiviteId}/plans/creer`, {
+      waitUntil: 'domcontentloaded',
+    });
     await expect(this.title).toBeVisible();
   }
 
@@ -34,6 +41,14 @@ export class CreatePlanPom {
     // Sélectionner l'option par son label
     const option = this.page.getByRole('button', { name: typeLabel });
     await option.click();
+  }
+
+  async selectPilote(piloteNom: string) {
+    await this.pilotesDropdown.selectOption(piloteNom);
+  }
+
+  async selectReferent(referentNom: string) {
+    await this.referentsDropdown.selectOption(referentNom);
   }
 
   async submit() {

@@ -1,4 +1,4 @@
-import { testWithPlans as test } from '../plans.fixture';
+import { test } from 'tests/main.fixture';
 
 test.describe("Édition d'un plan d'action", () => {
   test("Éditer le nom d'un plan", async ({
@@ -108,5 +108,42 @@ test.describe("Édition d'un plan d'action", () => {
 
     await ficheCardPom.expectSansTitre();
     await ficheCardPom.expectStatut('À venir');
+  });
+
+  test("Éditer le pilote et le référent d'un plan", async ({
+    collectivites,
+    plans,
+    editPlanPom,
+    personneTags,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+
+    const planNom = 'Plan avec pilote et référent modifiables';
+
+    const planId = await plans.create(user, {
+      nom: planNom,
+      collectiviteId: collectivite.data.id,
+    });
+
+    const piloteTag = await personneTags.createPersonneTag({
+      collectiviteId: collectivite.data.id,
+      nom: 'Jean Dupont - Pilote',
+    });
+
+    const referentTag = await personneTags.createPersonneTag({
+      collectiviteId: collectivite.data.id,
+      nom: 'Marie Martin - Référente',
+    });
+
+    await editPlanPom.goto(collectivite.data.id, planId);
+    await editPlanPom.expectPlanTitle(planNom);
+
+    // Ajouter un pilote et un référent initiaux
+    await editPlanPom.editPlanPilote(piloteTag.nom);
+    await editPlanPom.editPlanReferent(referentTag.nom);
+    await editPlanPom.expectPiloteExists(piloteTag.nom);
+    await editPlanPom.expectReferentExists(referentTag.nom);
   });
 });

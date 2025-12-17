@@ -1,6 +1,4 @@
-import { testWithDiscussions } from './discussions.fixture';
-
-const test = testWithDiscussions;
+import { test } from 'tests/main.fixture';
 
 test.describe('Discussions', () => {
   let collectiviteId: number;
