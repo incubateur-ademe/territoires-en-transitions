@@ -57,6 +57,12 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
         currentUserId={currentUserId}
         fiches={fiches}
         isLoading={isLoading}
+        onUnlink={(ficheId) =>
+          updateFichesActionLiees({
+            fiches: fiches,
+            fiches_liees: fiches.filter((f) => f.id !== ficheId),
+          })
+        }
       />
     </div>
   );
