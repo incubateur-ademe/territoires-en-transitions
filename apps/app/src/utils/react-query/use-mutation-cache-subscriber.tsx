@@ -26,6 +26,9 @@ export const useMutationCacheSubscriber = (
       }
       const status = mutation?.state.status;
       const mutationKey = mutation?.options.mutationKey;
+      const meta = mutation?.options.meta as
+        | Record<string, string | number | boolean>
+        | undefined;
       const submittedAt = mutation?.state.submittedAt;
 
       // Create cache key from mutationKey + status
@@ -40,7 +43,7 @@ export const useMutationCacheSubscriber = (
 
       // Add to cache and execute callback
       cache.add(cacheKey);
-      callback({ status, mutationKey });
+      callback({ status, mutationKey, meta });
     },
     [callback]
   );
