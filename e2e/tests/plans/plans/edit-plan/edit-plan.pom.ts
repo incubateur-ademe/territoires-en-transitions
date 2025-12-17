@@ -1,4 +1,5 @@
 import { expect, Locator, Page } from '@playwright/test';
+import { DropdownPersonnePom } from 'tests/shared/dropdown.pom';
 
 export class EditPlanPom {
   readonly planTitle: Locator;
@@ -114,6 +115,32 @@ export class EditPlanPom {
     await this.submitEditPlanModal(modal);
   }
 
+  /**
+   * Édite le pilote d'un plan
+   */
+  async editPlanPilote(piloteNom: string) {
+    const modal = await this.openEditPlanModal();
+    const pilotesDropdown = new DropdownPersonnePom(
+      this.page,
+      'Personne pilote'
+    );
+    await pilotesDropdown.selectOption(piloteNom);
+    await this.submitEditPlanModal(modal);
+  }
+
+  /**
+   * Édite le référent d'un plan
+   */
+  async editPlanReferent(referentNom: string) {
+    const modal = await this.openEditPlanModal();
+    const referentsDropdown = new DropdownPersonnePom(
+      this.page,
+      'Élu·e référent·e'
+    );
+    await referentsDropdown.selectOption(referentNom);
+    await this.submitEditPlanModal(modal);
+  }
+
   getAxeByName(name: string) {
     return this.page.locator('[data-test="Axe"]').filter({
       hasText: name,
@@ -210,5 +237,27 @@ export class EditPlanPom {
       hasText: ficheTitre,
     });
     await expect(fiche).toBeVisible();
+  }
+
+  /**
+   * Vérifie qu'un pilote est affiché dans les métadonnées du plan
+   * @param piloteNom - Le nom du pilote à vérifier
+   */
+  async expectPiloteExists(piloteNom: string) {
+    // Les pilotes sont affichés dans PlanMetadata avec PiloteOrReferentLabel
+    // On cherche le texte du pilote dans la section des métadonnées
+    const pilote = this.page.getByText(piloteNom);
+    await expect(pilote).toBeVisible();
+  }
+
+  /**
+   * Vérifie qu'un référent est affiché dans les métadonnées du plan
+   * @param referentNom - Le nom du référent à vérifier
+   */
+  async expectReferentExists(referentNom: string) {
+    // Les référents sont affichés dans PlanMetadata avec PiloteOrReferentLabel
+    // On cherche le texte du référent dans la section des métadonnées
+    const referent = this.page.getByText(referentNom);
+    await expect(referent).toBeVisible();
   }
 }
