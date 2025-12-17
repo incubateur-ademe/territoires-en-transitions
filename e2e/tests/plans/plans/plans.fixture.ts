@@ -29,10 +29,10 @@ class PlansFactory extends FixtureFactory {
 
   async createAxe(
     user: UserFixture,
-    axe: RouterInput['plans']['plans']['createAxe']
+    axe: RouterInput['plans']['axes']['create']
   ): Promise<number> {
     const trpcClient = user.getTrpcClient();
-    const createdAxe = await trpcClient.plans.plans.createAxe.mutate(axe);
+    const createdAxe = await trpcClient.plans.axes.create.mutate(axe);
     console.log('Create axe', createdAxe.id);
     return createdAxe.id;
   }
