@@ -2,7 +2,7 @@ import { FicheWithRelations } from '@tet/domain/plans';
 import { Field, ModalFooterOKCancel, RichTextEditor } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
-import { BaseUpdateFicheModal } from '../../../components/base-update-fiche.modal';
+import BaseUpdateFicheModal from '../../FicheActionPlanning/base-update-fiche-modal';
 
 type FinancementsModalProps = {
   openState: OpenState;

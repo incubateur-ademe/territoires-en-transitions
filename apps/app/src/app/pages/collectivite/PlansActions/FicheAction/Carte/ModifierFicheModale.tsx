@@ -1,5 +1,4 @@
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
@@ -16,6 +15,7 @@ import {
 } from '@tet/ui';
 import { format } from 'date-fns';
 import { useRef, useState } from 'react';
+import BaseUpdateFicheModal from '../FicheActionPlanning/base-update-fiche-modal';
 
 type Props = {
   initialFiche: FicheListItem;

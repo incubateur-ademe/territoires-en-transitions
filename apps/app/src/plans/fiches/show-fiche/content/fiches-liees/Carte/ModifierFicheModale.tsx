@@ -1,4 +1,3 @@
-import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
@@ -15,6 +14,7 @@ import {
 } from '@tet/ui';
 import { format } from 'date-fns';
 import { useRef, useState } from 'react';
+import { BaseUpdateFicheModal } from '../../../components/base-update-fiche.modal';
 import { useFicheContext } from '../../../context/fiche-context';
 import {
   useFicheActionAddPilote,

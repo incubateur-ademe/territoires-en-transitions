@@ -1,7 +1,7 @@
 import { ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 
-import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
+import { BaseUpdateFicheModal } from '../../../components/base-update-fiche.modal';
 import { Fiche } from '../../../data/use-get-fiche';
 import { useEtapesDispatch } from '../etapes-context';
 import { useDeleteEtape } from './use-delete-etape';

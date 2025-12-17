@@ -4,8 +4,8 @@ import { ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { isEqual } from 'es-toolkit';
 import { useState } from 'react';
+import BaseUpdateFicheModal from '../../FicheActionPlanning/base-update-fiche-modal';
 import { FinanceursInput } from './financeurs.input';
-import { BaseUpdateFicheModal } from '../../../components/base-update-fiche.modal';
 
 type FinanceursModalProps = {
   openState: OpenState;

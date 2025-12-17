@@ -19,4 +19,5 @@ const BaseUpdateFicheModal = (props: BaseUpdateFicheModalProps) => {
     />
   );
 };
+
 export default BaseUpdateFicheModal;

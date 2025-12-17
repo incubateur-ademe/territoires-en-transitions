@@ -1,4 +1,4 @@
-import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
+import { BaseUpdateFicheModal } from '@/app/plans/fiches/show-fiche/components/base-update-fiche.modal';
 import {
   AddPreuveModal,
   TAddPreuveModalHandlers,

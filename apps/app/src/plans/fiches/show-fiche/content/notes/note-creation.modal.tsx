@@ -1,4 +1,3 @@
-import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { FicheWithRelations } from '@tet/domain/plans';
 import {
   Alert,
@@ -10,6 +9,7 @@ import {
   Select,
 } from '@tet/ui';
 import { useState } from 'react';
+import { BaseUpdateFicheModal } from '../../components/base-update-fiche.modal';
 import { EditedNote } from '../../data/use-upsert-note';
 import { getYearsOptions } from '../../utils';
 

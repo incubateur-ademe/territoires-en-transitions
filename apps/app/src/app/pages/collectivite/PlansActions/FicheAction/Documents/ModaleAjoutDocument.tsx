@@ -1,9 +1,9 @@
-import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import {
   AddPreuveModal,
   TAddPreuveModalHandlers,
 } from '@/app/referentiels/preuves/AddPreuveModal';
 import { FicheWithRelations } from '@tet/domain/plans';
+import BaseUpdateFicheModal from '../FicheActionPlanning/base-update-fiche-modal';
 
 type ModaleAjoutDocumentProps = {
   handlers: TAddPreuveModalHandlers;

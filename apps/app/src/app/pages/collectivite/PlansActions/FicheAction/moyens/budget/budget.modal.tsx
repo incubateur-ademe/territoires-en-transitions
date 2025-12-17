@@ -8,7 +8,7 @@ import {
 import { ButtonGroup, Checkbox, Divider, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
-import { BaseUpdateFicheModal } from '../../../components/base-update-fiche.modal';
+import BaseUpdateFicheModal from '../../FicheActionPlanning/base-update-fiche-modal';
 import { DetailedBudgetForm } from './detailed-budget-form';
 import { ExtendedBudgetForm } from './extended-budget-form';
 
