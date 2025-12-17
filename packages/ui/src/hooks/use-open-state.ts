@@ -4,9 +4,15 @@ import { OpenState } from '../utils/types';
 
 /** Hook to manage open state when a component can be controlled or uncontrolled */
 export const useOpenState = (openState?: OpenState) => {
-  const isControlled = !!openState;
   const [open, setOpen] = useState(false);
+
+  const isControlled = !!openState;
+
   const isOpen = isControlled ? openState.isOpen : open;
+
+  const setIsOpen = isControlled
+    ? openState.setIsOpen
+    : (isOpen: boolean) => setOpen(isOpen);
 
   const toggleIsOpen = () => {
     if (isControlled) {
@@ -18,6 +24,7 @@ export const useOpenState = (openState?: OpenState) => {
 
   return {
     isOpen,
+    setIsOpen,
     toggleIsOpen,
   };
 };
