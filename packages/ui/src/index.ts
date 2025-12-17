@@ -32,6 +32,7 @@ export * from './design-system/Footer';
 export * from './design-system/FormSection';
 export * from './design-system/Header';
 export * from './design-system/Icon';
+export * from './design-system/inline-edit';
 export * from './design-system/Input';
 export * from './design-system/Modal';
 export * from './design-system/Notification';
