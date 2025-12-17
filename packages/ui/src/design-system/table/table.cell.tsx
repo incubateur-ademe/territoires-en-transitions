@@ -1,12 +1,46 @@
 import { cn } from '../../utils/cn';
 
-type Props = React.HTMLAttributes<HTMLTableCellElement>;
+import { InlineEditWrapper, InlineEditWrapperProps } from '../inline-edit';
 
-export const TableCell = ({ className, ...props }: Props) => {
+export type TableCellProps = React.TdHTMLAttributes<HTMLTableCellElement>;
+
+type Props = TableCellProps & {
+  edit?: Omit<InlineEditWrapperProps, 'children'>;
+  canEdit?: boolean;
+};
+
+export const TableCell = ({
+  className,
+  children,
+  edit,
+  canEdit,
+  ...props
+}: Props) => {
+  if (edit && canEdit) {
+    return (
+      <InlineEditWrapper {...edit}>
+        <Cell
+          {...props}
+          className={cn('-outline-offset-2 bg-primary-5', className)}
+        >
+          {children}
+        </Cell>
+      </InlineEditWrapper>
+    );
+  }
+
   return (
-    <td
-      {...props}
-      className={cn('px-4 py-3 text-left !bg-transparent', className)}
-    />
+    <Cell className={className} {...props}>
+      {children}
+    </Cell>
   );
 };
+
+const Cell = ({ className, children, ...props }: TableCellProps) => (
+  <td
+    {...props}
+    className={cn('px-4 py-3 text-left !bg-transparent', className)}
+  >
+    {children}
+  </td>
+);
