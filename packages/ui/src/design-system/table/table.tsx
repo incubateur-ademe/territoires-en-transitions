@@ -7,5 +7,10 @@ type Props = React.HTMLAttributes<HTMLTableElement>;
  *  Set column widths via `HeaderCell` components in columns definition.
  */
 export const Table = ({ className, ...props }: Props) => {
-  return <table className={cn('table-fixed w-full', className)} {...props} />;
+  return (
+    <table
+      className={cn('table-fixed w-full bg-white', className)}
+      {...props}
+    />
+  );
 };
