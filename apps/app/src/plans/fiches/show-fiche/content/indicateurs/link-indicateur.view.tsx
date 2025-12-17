@@ -11,7 +11,7 @@ import { useUser } from '@tet/api';
 import { Checkbox, Field, Icon, Input, Tooltip } from '@tet/ui';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import SelectIndicateursGrid from './SelectIndicateursGrid';
+import { IndicateursSelectionList } from './indicateurs-selection.list';
 
 type Props = {
   selectedIndicateurs: IndicateurDefinitionListItem[] | null | undefined;
@@ -131,7 +131,7 @@ export const LinkIndicateursView = ({
           <>0 indicateur sélectionné</>
         )}
       </div>
-      <SelectIndicateursGrid
+      <IndicateursSelectionList
         definitions={definitions}
         isLoading={isDefinitionsLoading}
         selectedIndicateurs={selectedIndicateursState}

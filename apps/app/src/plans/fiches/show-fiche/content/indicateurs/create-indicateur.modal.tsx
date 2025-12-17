@@ -9,7 +9,7 @@ type ModaleCreerIndicateurProps = {
   isFavoriCollectivite?: boolean;
 };
 
-export const ModaleCreerIndicateur = ({
+export const CreateIndicateurModal = ({
   isOpen,
   setIsOpen,
   fiche,

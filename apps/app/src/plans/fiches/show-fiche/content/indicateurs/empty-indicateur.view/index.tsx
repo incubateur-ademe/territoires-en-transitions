@@ -1,7 +1,7 @@
 import { EmptyCard } from '@tet/ui';
-import { useFicheContext } from '../../context/fiche-context';
-import DatavizPicto from './DatavizPicto';
-import { ActionButtons } from './action.buttons';
+import { useFicheContext } from '../../../context/fiche-context';
+import { ActionButtons } from '../action.buttons';
+import { DatavizPicto } from './dataviz.picto';
 
 export const EmptyIndicateursView = () => {
   const { isReadonly } = useFicheContext();

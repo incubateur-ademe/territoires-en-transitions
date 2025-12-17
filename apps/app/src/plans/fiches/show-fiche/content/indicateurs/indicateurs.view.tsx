@@ -7,9 +7,9 @@ import { Button, SideMenu } from '@tet/ui';
 import { useFicheContext } from '../../context/fiche-context';
 import { SharedFicheLinkedResourcesAlert } from '../../share-fiche/shared-fiche-linked-resources.alert';
 import { ActionButtons } from './action.buttons';
-import { EmptyIndicateursView } from './empty-indicateurs.view';
-import { ModaleCreerIndicateur } from './ModaleCreerIndicateur';
-import { LinkIndicateursView } from './SideMenu/link-indicateur.view';
+import { CreateIndicateurModal } from './create-indicateur.modal';
+import { EmptyIndicateursView } from './empty-indicateur.view';
+import { IndicateursSelectionList } from './indicateurs-selection.list';
 
 export const IndicateursView = () => {
   const {
@@ -42,7 +42,7 @@ export const IndicateursView = () => {
         sharedDataTitle="Indicateurs associés"
         sharedDataDescription="Les indicateurs et les données affichées correspondent à ceux de cette collectivité."
       />
-      <ModaleCreerIndicateur
+      <CreateIndicateurModal
         isOpen={indicateurAction === 'creating'}
         setIsOpen={() => toggleIndicateurAction('creating')}
         fiche={fiche}
@@ -52,7 +52,7 @@ export const IndicateursView = () => {
         isOpen={indicateurAction === 'associating'}
         setIsOpen={() => toggleIndicateurAction('associating')}
       >
-        <LinkIndicateursView
+        <IndicateursSelectionList
           selectedIndicateurs={selectedIndicateurs}
           onSelect={(indicateur) => updateIndicateurs(indicateur)}
         />
