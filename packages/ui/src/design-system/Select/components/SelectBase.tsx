@@ -1,9 +1,10 @@
 import { Placement } from '@floating-ui/react';
 import * as Sentry from '@sentry/nextjs';
-import classNames from 'classnames';
 import { Fragment, Ref, forwardRef, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
+import { cn } from '../../../utils/cn';
+import { OpenState } from '../../../utils/types';
 import { Badge, BadgeSize, BadgeState } from '../../Badge';
 import { Icon } from '../../Icon';
 import { Tooltip } from '../../Tooltip';
@@ -45,7 +46,7 @@ export type SelectProps = {
    * @deprecated Peut entrainer des problèmes d'affichage pour des valeurs avec beaucoup de texte ou des selecteurs pas très large. Déconseillé de mettre une value supérieure à 1 tant que ce n'est pas géré correctement.
    */
   maxBadgesToShow?: number;
-
+  openState?: OpenState;
   /** Active la multi sélection */
   multiple?: boolean;
   /** Permet la recherche dans la liste d'option */
@@ -80,9 +81,12 @@ export type SelectProps = {
   containerWidthMatchButton?: boolean;
   /** z-index custom pour le dropdown */
   dropdownZindex?: number;
+  /** Affiche les options à la suite du bouton d'ouverture, sans élément flottant */
+  displayOptionsWithoutFloater?: boolean;
+  /** ClassName pour le bouton d'ouverture */
+  buttonClassName?: string;
   /** Affiche une version plus petite du sélecteur */
   small?: boolean;
-
   /** Signale que l'on est dans le cas du composant <SelectBadge/> */
   isBadgeSelect?: boolean;
   /** Permet de modifier la taille des badges */
@@ -114,6 +118,7 @@ export const SelectBase = (props: SelectProps) => {
     dataTest,
     values,
     maxBadgesToShow,
+    openState,
     options,
     onChange,
     createProps,
@@ -131,6 +136,8 @@ export const SelectBase = (props: SelectProps) => {
     parentId,
     containerWidthMatchButton = true,
     dropdownZindex,
+    displayOptionsWithoutFloater,
+    buttonClassName,
     disabled = false,
     small = false,
     isBadgeSelect = false,
@@ -214,6 +221,7 @@ export const SelectBase = (props: SelectProps) => {
     : undefined;
   return (
     <DropdownFloater
+      openState={openState}
       parentId={parentId}
       placement={isBadgeSelect && !placement ? 'bottom-start' : placement}
       offsetValue={0}
@@ -221,6 +229,7 @@ export const SelectBase = (props: SelectProps) => {
       containerClassName={isBadgeSelect ? '!border-t rounded-t-lg mt-1' : ''}
       dropdownZindex={dropdownZindex}
       disabled={disabled}
+      displayOptionsWithoutFloater={displayOptionsWithoutFloater}
       render={({ close }) => (
         <div data-test={dataTest && `${dataTest}-options`}>
           {/** Bouton de création d'une option */}
@@ -290,6 +299,8 @@ export const SelectBase = (props: SelectProps) => {
         inputValue={inputValue}
         onSearch={handleInputChange}
         multiple={multiple}
+        buttonClassName={buttonClassName}
+        displayOptionsWithoutFloater={displayOptionsWithoutFloater}
         customItem={customItem}
         showCustomItemInBadges={showCustomItemInBadges}
         placeholder={placeholder}
@@ -325,6 +336,7 @@ const SelectButton = forwardRef(
       onSearch,
       createProps,
       multiple,
+      buttonClassName,
       customItem,
       showCustomItemInBadges,
       placeholder,
@@ -334,6 +346,7 @@ const SelectButton = forwardRef(
       badgeSize,
       valueToBadgeState,
       optionsAreCaseSensitive,
+      displayOptionsWithoutFloater,
       ...props
     }: Omit<SelectButtonProps, 'values'> & { values?: OptionValue[] },
     ref?: Ref<HTMLButtonElement>
@@ -413,13 +426,15 @@ const SelectButton = forwardRef(
         data-test={dataTest}
         aria-expanded={isOpen}
         aria-label="ouvrir le menu"
-        className={classNames(
+        className={cn(
           'rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden',
           {
             'rounded-b-none': isOpen,
             'w-full': !isBadgeSelect,
             'border-none rounded-none w-fit': isBadgeSelect,
-          }
+          },
+          { 'border-0 border-b': displayOptionsWithoutFloater },
+          buttonClassName
         )}
         disabled={disabled}
         type="button"
@@ -460,7 +475,7 @@ const SelectButton = forwardRef(
           />
         ) : (
           <div
-            className={classNames('flex px-4', {
+            className={cn('flex px-4', {
               'min-h-[2.5rem] py-1': small,
               'min-h-[3rem] py-2': !small,
             })}
@@ -475,7 +490,7 @@ const SelectButton = forwardRef(
                 /** Si pas de valeur et que la recherche n'est pas activée, on affiche un placeholder */
                 !isSearcheable && (
                   <span
-                    className={classNames(
+                    className={cn(
                       'my-auto text-left text-grey-6 line-clamp-1 text-xs',
                       { '!text-grey-5': disabled }
                     )}
@@ -499,7 +514,7 @@ const SelectButton = forwardRef(
                   <input
                     data-test={`${dataTest}-input`}
                     type="text"
-                    className={classNames(
+                    className={cn(
                       'w-full text-sm outline-0 placeholder:text-grey-6 placeholder:text-xs',
                       { 'py-1': values }
                     )}
@@ -524,7 +539,7 @@ const SelectButton = forwardRef(
             <Icon
               icon="arrow-down-s-line"
               size="sm"
-              className={classNames(
+              className={cn(
                 'mt-2 ml-auto text-primary-9',
                 { 'rotate-180': isOpen },
                 { '!text-grey-5': disabled }
