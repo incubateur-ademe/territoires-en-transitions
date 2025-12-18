@@ -109,8 +109,8 @@ export const FicheActionFiltersProvider = ({
   const basicFiltersRaw: Partial<FormFilters> = {
     // noPlan is not in the search parameters, so we handle it here using the props
     noPlan: {
-      'dans-plan': true,
-      'hors-plan': false,
+      'dans-plan': false,
+      'hors-plan': true,
       all: undefined,
       'mes-actions': undefined,
     }[ficheType],
