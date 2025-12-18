@@ -4,7 +4,7 @@ import { NoteYearsDropdown } from '@/app/ui/dropdownLists/ficheAction/notes/note
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
-import { InstanceGouvernanceDropdown } from '@/app/ui/dropdownLists/instance-gouvernance.dropdown';
+import { InstanceGouvernanceDropdown } from '@/app/plans/fiches/shared/dropdowns/instance-gouvernance.dropdown';
 import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {

@@ -1,3 +1,4 @@
+import { useListInstanceGouvernanceTags } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-instance-gouvernance-tags';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { useFinanceursListe } from '@/app/ui/dropdownLists/FinanceursDropdown/useFinanceursListe';
 import { usePartenairesListe } from '@/app/ui/dropdownLists/PartenairesDropdown/usePartenairesListe';
@@ -29,6 +30,8 @@ export const useFicheActionFiltersData = () => {
   const { data: structures } = useStructuresListe();
   const { data: partenaires } = usePartenairesListe();
   const { data: tags } = useTagsSuiviPersoListe();
+  const { instanceGouvernanceTags } =
+    useListInstanceGouvernanceTags(collectiviteId);
 
   const personneOptions = useMemo(() => {
     return (
@@ -97,6 +100,11 @@ export const useFicheActionFiltersData = () => {
         key: 'id',
         valueKey: 'nom',
       },
+      instanceGouvernanceIds: {
+        items: instanceGouvernanceTags,
+        key: 'id',
+        valueKey: 'nom',
+      },
       notes: {
         items: NOTES_OPTIONS,
         key: 'value',
@@ -112,6 +120,7 @@ export const useFicheActionFiltersData = () => {
       structures,
       partenaires,
       tags,
+      instanceGouvernanceTags,
     ]
   );
 
