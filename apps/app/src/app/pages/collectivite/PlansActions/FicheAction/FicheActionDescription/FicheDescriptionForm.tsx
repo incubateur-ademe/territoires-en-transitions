@@ -6,13 +6,17 @@ import { getMaxLengthMessage } from '@/app/utils/formatUtils';
 import { FormSectionGrid } from '@tet/ui';
 
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { SelectTagsGeneric } from '@/app/ui/dropdownLists/tags';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { RichTextEditor, SelectFilter } from '@tet/ui';
 import { Controller, useForm } from 'react-hook-form';
+import { useCreateInstanceGouvernanceTag } from '../data/use-create-instance-gouvernance-tag';
+import { useDeleteInstanceGouvernance } from '../data/use-delete-instance-gouvernance';
 import { Fiche } from '../data/use-get-fiche';
-
+import { useListInstanceGouvernanceTags } from '../data/use-list-instance-gouvernance-tags';
+import { useUpdateInstanceGouvernanceTag } from '../data/use-update-instance-gouvernance-tag';
 const DESCRIPTION_MAX_LENGTH = 20000;
-const INSTANCES_MAX_LENGTH = 10000;
 
 export type FicheUpdatePayload = Pick<
   Fiche,
@@ -37,13 +41,25 @@ export const FicheDescriptionForm = ({
   onSubmit: (fiche: FicheUpdatePayload) => void;
   formId: string;
 }) => {
+  const collectiviteId = useCollectiviteId();
   const { handleSubmit, register, control, setValue, watch } =
     useForm<FicheWithRelations>({
       defaultValues: fiche,
     });
 
-  const { thematiques, description, instanceGouvernance, sousThematiques } =
-    watch();
+  const { instanceGouvernanceTags } =
+    useListInstanceGouvernanceTags(collectiviteId);
+
+  const { mutate: createInstanceGouvernanceTag } =
+    useCreateInstanceGouvernanceTag(collectiviteId);
+
+  const { mutate: deleteInstanceGouvernance } =
+    useDeleteInstanceGouvernance(collectiviteId);
+
+  const { mutate: updateInstanceGouvernanceTag } =
+    useUpdateInstanceGouvernanceTag(collectiviteId);
+
+  const { thematiques, description, sousThematiques } = watch();
 
   const {
     sousThematiqueOptions,
@@ -163,27 +179,34 @@ export const FicheDescriptionForm = ({
           />
         </Field>
 
-        <Field
-          title="Instances de gouvernance"
-          className="col-span-2"
-          state={
-            instanceGouvernance?.length === INSTANCES_MAX_LENGTH
-              ? 'info'
-              : 'default'
-          }
-          message={getMaxLengthMessage(
-            instanceGouvernance ?? '',
-            INSTANCES_MAX_LENGTH,
-            true
-          )}
-        >
+        <Field title="Instances de gouvernance" className="col-span-2">
           <Controller
             control={control}
             name="instanceGouvernance"
             render={({ field }) => (
-              <RichTextEditor
-                initialValue={fiche.instanceGouvernance || ''}
-                onChange={(value) => field.onChange(value)}
+              <SelectTagsGeneric
+                tags={instanceGouvernanceTags}
+                values={field.value}
+                onChange={(tags) => field.onChange(tags)}
+                onDelete={({ id }) =>
+                  deleteInstanceGouvernance({
+                    id,
+                    collectiviteId,
+                  })
+                }
+                onCreate={(tag) =>
+                  createInstanceGouvernanceTag({
+                    ...tag,
+                    actionId: fiche.id,
+                  })
+                }
+                onUpdate={(tag) =>
+                  updateInstanceGouvernanceTag({
+                    id: tag.id,
+                    collectiviteId,
+                    nom: tag.nom,
+                  })
+                }
               />
             )}
           />
