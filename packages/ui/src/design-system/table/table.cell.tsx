@@ -19,10 +19,7 @@ export const TableCell = ({
   if (edit && canEdit) {
     return (
       <InlineEditWrapper {...edit}>
-        <Cell
-          {...props}
-          className={cn('-outline-offset-2 bg-primary-5', className)}
-        >
+        <Cell {...props} className={cn('-outline-offset-2', className)}>
           {children}
         </Cell>
       </InlineEditWrapper>
