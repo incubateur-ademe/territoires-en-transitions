@@ -1,5 +1,6 @@
 import { SHARE_ICON } from '@/app/plans/fiches/share-fiche/fiche-share-info';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { TagWithCollectiviteId } from '@tet/domain/collectivites';
 import {
   Option,
   OptionValue,
@@ -7,23 +8,21 @@ import {
   SelectMultipleProps,
 } from '@tet/ui';
 
-type Tag = {
-  id: number;
-  nom: string;
-  collectiviteId: number;
-};
 type SelectTagsGenericProps = Omit<
   SelectMultipleProps,
   'options' | 'onChange' | 'placeholder' | 'values'
 > & {
-  values: Tag[] | null | undefined;
-  tags: Tag[];
+  values: TagWithCollectiviteId[] | null | undefined;
+  tags: TagWithCollectiviteId[];
   placeholder?: string | ((isEditionAllowed: boolean) => string);
-  onCreate?: (params: Omit<Tag, 'id'>) => Promise<Tag>;
-  onUpdate?: (params: Tag) => Promise<Tag>;
+  onCreate?: (
+    params: Omit<TagWithCollectiviteId, 'id'>
+  ) => Promise<TagWithCollectiviteId>;
+  onUpdate?: (params: TagWithCollectiviteId) => Promise<TagWithCollectiviteId>;
   onDelete?: (args: { id: number }) => void;
-  onCreateSuccess?: (newItem: Tag) => void;
-  onChange: (selectedTags: Tag[]) => void;
+  onCreateSuccess?: (newItem: TagWithCollectiviteId) => void;
+  onChange: (selectedTags: TagWithCollectiviteId[]) => void;
+  canEditTags?: boolean;
 };
 
 export const SelectTagsGeneric = ({
@@ -34,6 +33,7 @@ export const SelectTagsGeneric = ({
   onUpdate,
   onDelete,
   onCreateSuccess,
+  canEditTags = true,
   ...props
 }: SelectTagsGenericProps) => {
   const collectivite = useCurrentCollectivite();
@@ -56,7 +56,8 @@ export const SelectTagsGeneric = ({
     collectivite.niveauAcces !== null &&
     (onCreate !== undefined ||
       onUpdate !== undefined ||
-      onDelete !== undefined);
+      onDelete !== undefined) &&
+    canEditTags !== false;
 
   const computedPlaceholder =
     typeof placeholder === 'string'

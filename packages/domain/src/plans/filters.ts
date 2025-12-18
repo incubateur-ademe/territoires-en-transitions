@@ -140,6 +140,12 @@ export const listFichesRequestFiltersSchema = z
       .describe(
         'Liste des identifiants des tags libres séparées par des virgules'
       ),
+    instanceGouvernanceIds: z
+      .array(z.coerce.number())
+      .optional()
+      .describe(
+        "Liste des identifiants de tags de l'instance de gouvernance séparés par des virgules"
+      ),
 
     noReferent: z.coerce.boolean().optional(),
     personneReferenteIds: z
