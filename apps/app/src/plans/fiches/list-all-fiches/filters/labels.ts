@@ -26,6 +26,7 @@ export const filterLabels: Record<FilterKeys, string> = {
   partenaireIds: 'Partenaire',
   cibles: 'Cible',
   libreTagsIds: 'Tags personnalisés',
+  instanceGouvernanceIds: 'Instance de gouvernance',
   thematiqueIds: 'Thématique',
   structurePiloteIds: 'Structure pilote',
   servicePiloteIds: 'Direction ou service pilote',
