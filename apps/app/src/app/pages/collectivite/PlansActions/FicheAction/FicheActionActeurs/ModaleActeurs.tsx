@@ -1,5 +1,4 @@
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
@@ -19,6 +18,7 @@ import {
 } from '@tet/ui';
 import { isEqual } from 'es-toolkit/predicate';
 import { useState } from 'react';
+import BaseUpdateFicheModal from '../FicheActionPlanning/base-update-fiche-modal';
 
 type ModaleActeursProps = {
   isOpen: boolean;

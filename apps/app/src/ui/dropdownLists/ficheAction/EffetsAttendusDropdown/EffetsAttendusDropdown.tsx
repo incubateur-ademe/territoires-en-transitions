@@ -13,6 +13,7 @@ type EffetsAttendusDropdownProps = Omit<
 const EffetsAttendusDropdown = ({
   values,
   onChange,
+  ...props
 }: EffetsAttendusDropdownProps) => {
   const { data: options } = useEffetsAttendus();
   if (!options?.length) return;
@@ -29,6 +30,7 @@ const EffetsAttendusDropdown = ({
           ) as EffetAttendu[],
         })
       }
+      {...props}
     />
   );
 };

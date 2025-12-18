@@ -1,5 +1,4 @@
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { MoyensView } from '@/app/plans/fiches/update-fiche/moyens/moyens.view';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { ENV } from '@tet/api/environmentVariables';
 
@@ -14,6 +13,7 @@ import Etapes from './etapes';
 import FichesLieesTab from './FichesLiees/FichesLieesTab';
 import IndicateursTab from './Indicateurs/IndicateursTab';
 import { MesuresLieesView } from './mesures-liees/mesures-liees.view';
+import { MoyensView } from './moyens/moyens.view';
 import { NotesView } from './notes/notes.view';
 
 type TabDescriptor = {

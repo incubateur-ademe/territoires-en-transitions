@@ -1,6 +1,6 @@
-import { RichTextView } from '@/app/plans/fiches/update-fiche/components/RichTextView';
 import { Badge, Button } from '@tet/ui';
 import { useState } from 'react';
+import { RichTextView } from '../components/RichTextView';
 import { Fiche } from '../data/use-get-fiche';
 import ModaleIndicateursHeader from './ModaleIndicateursHeader';
 

@@ -1,4 +1,3 @@
-import BaseUpdateFicheModal from '@/app/plans/fiches/update-fiche/base-update-fiche.modal';
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import MiseEnOeuvreDropdown from '@/app/ui/dropdownLists/ficheAction/MiseEnOeuvreDropdown/MiseEnOeuvreDropdown';
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
@@ -17,6 +16,8 @@ import {
 } from '@tet/ui';
 import { isEqual } from 'es-toolkit/predicate';
 import { useEffect, useRef, useState } from 'react';
+import BaseUpdateFicheModal from './base-update-fiche-modal';
+
 type ModalePlanningProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
