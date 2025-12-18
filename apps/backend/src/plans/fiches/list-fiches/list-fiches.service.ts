@@ -4,6 +4,7 @@ import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/m
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { financeurTagTable } from '@tet/backend/collectivites/tags/financeur-tag.table';
+import { instanceGouvernanceTable } from '@tet/backend/collectivites/tags/instance-gouvernance.table';
 import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
 import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-tag.table';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
@@ -92,6 +93,7 @@ import { Result } from '../../../utils/result.type';
 import { ficheActionEtapeTable } from '../fiche-action-etape/fiche-action-etape.table';
 import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
+import { ficheActionInstanceGouvernanceTable } from '../shared/models/fiche-action-instance-gouvernance';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import { ficheRecursiveAxeView } from '../shared/models/fiche-recursive-axe.view';
 import { checkCompletion } from './completion';
@@ -357,6 +359,38 @@ export default class ListFichesService {
     return query
       .groupBy(ficheActionStructureTagTable.ficheId)
       .as('ficheActionStructureTags');
+  }
+
+  private getFicheActionInstanceGouvernanceQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
+      .select({
+        ficheId: ficheActionInstanceGouvernanceTable.ficheId,
+        instanceGouvernance: sql<
+          {
+            id: number;
+            nom: string;
+            collectiviteId: number;
+            createdAt: string | null;
+            createdBy: string | null;
+          }[]
+        >`json_agg(to_jsonb(${instanceGouvernanceTable}.*))`.as(
+          'instance_de_gouvernance'
+        ),
+      })
+      .from(ficheActionInstanceGouvernanceTable)
+      .innerJoin(
+        instanceGouvernanceTable,
+        eq(
+          instanceGouvernanceTable.id,
+          ficheActionInstanceGouvernanceTable.instanceGouvernanceId
+        )
+      );
+
+    query.where(inArray(ficheActionInstanceGouvernanceTable.ficheId, ficheIds));
+
+    return query
+      .groupBy(ficheActionInstanceGouvernanceTable.ficheId)
+      .as('ficheActionInstanceGouvernance');
   }
 
   private getFicheActionPartenaireTagsQuery(ficheIds: number[]) {
@@ -921,6 +955,8 @@ export default class ListFichesService {
       this.getFicheActionEffetsAttendusQuery(ficheIds);
     const ficheActionStructureTags =
       this.getFicheActionStructureTagsQuery(ficheIds);
+    const ficheActionInstanceGouvernance =
+      this.getFicheActionInstanceGouvernanceQuery(ficheIds);
     const ficheActionLibreTags = this.getFicheActionLibreTagsQuery(ficheIds);
     const ficheActionPilotes = this.getFicheActionPilotesQuery(ficheIds);
     const ficheActionServices = this.getFicheActionServicesQuery(ficheIds);
@@ -966,6 +1002,7 @@ export default class ListFichesService {
         indicateurs: ficheActionIndicateurs.indicateurs,
         sousThematiques: ficheActionSousThematiques.sousThematiques,
         structures: ficheActionStructureTags.structureTags,
+        instanceGouvernance: ficheActionInstanceGouvernance.instanceGouvernance,
         financeurs: ficheActionFinanceurTags.financeurTags,
         effetsAttendus: ficheActionEffetsAttendus.effetsAttendus,
         referents: ficheActionReferent.referents,
@@ -1001,6 +1038,10 @@ export default class ListFichesService {
       .leftJoin(
         ficheActionStructureTags,
         eq(ficheActionStructureTags.ficheId, ficheActionTable.id)
+      )
+      .leftJoin(
+        ficheActionInstanceGouvernance,
+        eq(ficheActionInstanceGouvernance.ficheId, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionFinanceurTags,
