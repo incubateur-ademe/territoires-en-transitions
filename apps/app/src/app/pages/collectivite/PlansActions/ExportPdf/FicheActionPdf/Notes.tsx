@@ -78,7 +78,7 @@ export const Notes = ({ notes, years }: NotesProps) => {
   return (
     <>
       <Divider className="mt-2" />
-      <Stack>
+      <Stack wrap={false}>
         <Title variant="h5" className="text-primary-8 uppercase">
           Notes
         </Title>
