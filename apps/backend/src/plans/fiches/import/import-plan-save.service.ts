@@ -73,7 +73,6 @@ export class ImportPlanSaveService {
           dateFin: fiche.dateFin,
           ameliorationContinue: fiche.ameliorationContinue,
           calendrier: fiche.calendrier,
-          instanceGouvernance: fiche.gouvernance,
           participationCitoyenneType: fiche.participation,
         },
         { tx, user }
