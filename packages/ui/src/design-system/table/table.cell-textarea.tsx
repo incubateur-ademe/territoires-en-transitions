@@ -1,7 +1,6 @@
 import classNames from 'classnames';
 
 import { useEffect, useRef } from 'react';
-import { useTextareaEnterToSubmit } from '../Textarea';
 import { TextareaBase, TextareaBaseProps } from '../Textarea/textarea.base';
 
 type Props = TextareaBaseProps & {
@@ -28,13 +27,11 @@ export const TableCellTextarea = ({
     return () => clearTimeout(timer);
   }, []);
 
-  const { handleEnterToSubmit } = useTextareaEnterToSubmit(closeEditing);
-
   return (
     <TextareaBase
       {...props}
       ref={textareaRef}
-      onKeyDown={handleEnterToSubmit}
+      onEnterKeyDown={closeEditing}
       className={classNames(
         'px-4 py-3 text-sm placeholder:text-sm resize-none',
         className
