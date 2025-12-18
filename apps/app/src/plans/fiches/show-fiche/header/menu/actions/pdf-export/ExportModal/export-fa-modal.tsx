@@ -29,7 +29,11 @@ const ExportFicheModalWrapper = ({
   openState?: ModalProps['openState'];
   onClose?: () => void;
   disabled?: boolean;
-  submitButton: (close: () => void) => React.ReactNode;
+  submitButton: (
+    close: () => void,
+    options: typeof sectionsInitValue,
+    setOptions: (options: typeof sectionsInitValue) => void
+  ) => React.ReactNode;
   onClick?: () => void;
   children?: React.ReactElement;
 }) => {
@@ -39,7 +43,7 @@ const ExportFicheModalWrapper = ({
       openState={openState}
       onClose={onClose}
       title="Exporter en PDF"
-      subTitle="Paramètres de l’export"
+      subTitle="Paramètres de l'export"
       size="xl"
       render={() => (
         <ExportFicheActionTable options={options} setOptions={setOptions} />
@@ -49,7 +53,7 @@ const ExportFicheModalWrapper = ({
           <Button variant="outlined" onClick={close}>
             Annuler
           </Button>
-          {submitButton(close)}
+          {submitButton(close, options, setOptions)}
         </ModalFooter>
       )}
     >
@@ -65,8 +69,6 @@ export const ExportFicheModal = ({
   fiche: FicheWithRelations;
   onClose?: () => void;
 }) => {
-  const [options, setOptions] = useState(sectionsInitValue);
-
   return (
     <ExportFicheModalWrapper
       openState={{
@@ -74,7 +76,7 @@ export const ExportFicheModal = ({
         setIsOpen: () => {},
       }}
       onClose={onClose}
-      submitButton={(close) => (
+      submitButton={(close, options, setOptions) => (
         <ExportFicheActionButton
           fiche={fiche}
           options={options}
@@ -101,7 +103,6 @@ export const ExportMultipleFichesModal = ({
   filters: Filters;
   sort?: SortOptions;
 }) => {
-  const [options, setOptions] = useState(sectionsInitValue);
   const [fichesIds, setFichesIds] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const tracker = useEventTracker();
@@ -127,7 +128,7 @@ export const ExportMultipleFichesModal = ({
   return (
     <ExportFicheModalWrapper
       onClick={fetchSelectedFichesIds}
-      submitButton={(close) => (
+      submitButton={(close, options, setOptions) => (
         <ExportFicheActionGroupeesButton
           fichesIds={fichesIds}
           options={options}

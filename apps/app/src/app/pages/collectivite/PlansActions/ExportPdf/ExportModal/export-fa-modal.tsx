@@ -19,14 +19,18 @@ const ExportFicheModalWrapper = ({
   onClick,
 }: {
   disabled?: boolean;
-  children: (close: () => void) => React.ReactNode;
+  children: (
+    close: () => void,
+    options: typeof sectionsInitValue,
+    setOptions: (options: typeof sectionsInitValue) => void
+  ) => React.ReactNode;
   onClick?: () => void;
 }) => {
   const [options, setOptions] = useState(sectionsInitValue);
   return (
     <Modal
       title="Exporter en PDF"
-      subTitle="Paramètres de l’export"
+      subTitle="Paramètres de l'export"
       size="xl"
       render={() => (
         <ExportFicheActionTable options={options} setOptions={setOptions} />
@@ -36,7 +40,7 @@ const ExportFicheModalWrapper = ({
           <Button variant="outlined" onClick={close}>
             Annuler
           </Button>
-          {children(close)}
+          {children(close, options, setOptions)}
         </ModalFooter>
       )}
     >
@@ -58,11 +62,9 @@ export const ExportFicheModal = ({
   disabled?: boolean;
   fiche: Fiche;
 }) => {
-  const [options, setOptions] = useState(sectionsInitValue);
-
   return (
     <ExportFicheModalWrapper disabled={disabled}>
-      {(close) => (
+      {(close, options, setOptions) => (
         <ExportFicheActionButton
           fiche={fiche}
           options={options}
@@ -88,7 +90,6 @@ export const ExportMultipleFichesModal = ({
   filters: Filters;
   sort?: SortOptions;
 }) => {
-  const [options, setOptions] = useState(sectionsInitValue);
   const [fichesIds, setFichesIds] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const tracker = useEventTracker();
@@ -116,7 +117,7 @@ export const ExportMultipleFichesModal = ({
       disabled={disabled || isLoading}
       onClick={fetchSelectedFichesIds}
     >
-      {(close) => (
+      {(close, options, setOptions) => (
         <ExportFicheActionGroupeesButton
           fichesIds={fichesIds}
           options={options}
