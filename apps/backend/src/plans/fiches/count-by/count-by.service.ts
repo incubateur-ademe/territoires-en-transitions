@@ -1,5 +1,12 @@
 import { countByDateSlots } from '@/backend/plans/fiches/count-by/count-by-date-slots.enum';
 import { countByArrayValues } from '@/backend/plans/fiches/count-by/utils/count-by-array-value';
+import {
+  ciblesEnumValues,
+  ficheActionResultatsAttenduValues,
+  participationCitoyenneEnumValues,
+  prioriteEnumValues,
+  statutsEnumValues,
+} from '@/backend/plans/fiches/domain/fiche.types';
 import ListFichesService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ListFichesRequestFilters } from '@/backend/plans/fiches/shared/filters/filters.request';
 import {
@@ -18,13 +25,6 @@ import {
   SANS_STRUCTURE_TAG_LABEL,
   SANS_THEMATIQUE_LABEL,
 } from '@/backend/plans/fiches/shared/labels';
-import {
-  ciblesEnumValues,
-  ficheActionResultatsAttenduValues,
-  participationCitoyenneEnumValues,
-  prioriteEnumValues,
-  statutsEnumValues,
-} from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import {
   CountByRecordGeneralType,
   CountByResponseType,

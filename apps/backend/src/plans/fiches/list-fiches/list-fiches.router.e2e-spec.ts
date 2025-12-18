@@ -18,10 +18,7 @@ import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/f
 import { ficheActionSousThematiqueTable } from '@/backend/plans/fiches/shared/models/fiche-action-sous-thematique.table';
 import { ficheActionStructureTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-structure-tag.table';
 import { ficheActionThematiqueTable } from '@/backend/plans/fiches/shared/models/fiche-action-thematique.table';
-import {
-  ficheActionTable,
-  statutsEnumSchema,
-} from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { sousThematiqueTable } from '@/backend/shared/thematiques/sous-thematique.table';
 import { thematiqueTable } from '@/backend/shared/thematiques/thematique.table';
 import {
@@ -34,7 +31,7 @@ import {
 import { AuthenticatedUser } from '@/backend/users/models/auth.models';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { eq, inArray } from 'drizzle-orm';
-import { StatutEnum } from '../shared/models/fiche-action.table';
+import { StatutEnum, statutsEnumSchema } from '../domain/fiche.types';
 
 let router: FichesRouter;
 let yoloDodo: AuthenticatedUser;
@@ -654,8 +651,8 @@ describe('Filtres sur les fiches actions', () => {
       .insert(ficheActionTable)
       .values({
         titre: 'Test budget prévisionnel',
-        budgetPrevisionnel: '50000',
         collectiviteId: COLLECTIVITE_ID,
+        budgetPrevisionnel: '50000',
       })
       .returning();
     const testFicheId = fiche.id;

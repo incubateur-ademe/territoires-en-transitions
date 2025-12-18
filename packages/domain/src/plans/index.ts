@@ -1,6 +1,7 @@
 export * from '@/backend/plans/fiches/bulk-edit/bulk-edit.input';
 export * from '@/backend/plans/fiches/count-by/count-by-property-options.enum';
 export * from '@/backend/plans/fiches/count-by/count-by.types';
+export * from '@/backend/plans/fiches/domain/fiche.types';
 export * from '@/backend/plans/fiches/fiche-action-etape/fiche-action-etape.table';
 export * from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
 export * from '@/backend/plans/fiches/list-fiches/fiche-action-with-relations.dto';
