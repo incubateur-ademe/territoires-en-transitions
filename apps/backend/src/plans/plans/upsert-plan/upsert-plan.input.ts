@@ -8,13 +8,17 @@ import {
 /**
  * Schéma pour créer un plan
  */
-export const baseCreatePlanSchema = baseCreateAxeOrPlanSchema;
+export const baseCreatePlanSchema = baseCreateAxeOrPlanSchema.extend({
+  typeId: z.number().optional(),
+});
 export type BaseCreatePlanInput = z.infer<typeof baseCreatePlanSchema>;
 
 /**
  * Schéma pour mettre à jour un plan
  */
-export const baseUpdatePlanSchema = baseUpdateAxeOrPlanSchema;
+export const baseUpdatePlanSchema = baseUpdateAxeOrPlanSchema.extend({
+  typeId: z.number().optional(),
+});
 export type BaseUpdatePlanInput = z.infer<typeof baseUpdatePlanSchema>;
 
 /**
