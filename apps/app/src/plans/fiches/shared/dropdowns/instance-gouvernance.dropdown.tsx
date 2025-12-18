@@ -3,7 +3,7 @@ import { useDeleteInstanceGouvernance } from '@/app/app/pages/collectivite/Plans
 import { useListInstanceGouvernanceTags } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-instance-gouvernance-tags';
 import { useUpdateInstanceGouvernanceTag } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-instance-gouvernance-tag';
 import { InstanceGouvernance } from '@tet/domain/collectivites';
-import { SelectTagsGeneric } from './tags';
+import { SelectTagsGeneric } from '@/app/ui/dropdownLists/tags';
 
 type LightInstanceGouvernance = Omit<
   InstanceGouvernance,

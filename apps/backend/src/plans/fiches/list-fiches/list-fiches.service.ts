@@ -333,6 +333,37 @@ export default class ListFichesService {
       .as('ficheActionLibreTags');
   }
 
+  private getFicheActionInstanceGouvernanceTagsQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
+      .select({
+        ficheId: ficheActionInstanceGouvernanceTable.ficheId,
+        instanceGouvernanceIds: sql<
+          number[]
+        >`array_agg(${ficheActionInstanceGouvernanceTable.instanceGouvernanceId})`.as(
+          'instance_gouvernance_ids'
+        ),
+        instanceGouvernanceTags: sql<
+          Tag[]
+        >`array_agg(json_build_object('id', ${ficheActionInstanceGouvernanceTable.instanceGouvernanceId}, 'nom', ${instanceGouvernanceTable.nom} ))`.as(
+          'instance_gouvernance_tags'
+        ),
+      })
+      .from(ficheActionInstanceGouvernanceTable)
+      .leftJoin(
+        instanceGouvernanceTable,
+        eq(
+          instanceGouvernanceTable.id,
+          ficheActionInstanceGouvernanceTable.instanceGouvernanceId
+        )
+      );
+
+    query.where(inArray(ficheActionInstanceGouvernanceTable.ficheId, ficheIds));
+
+    return query
+      .groupBy(ficheActionInstanceGouvernanceTable.ficheId)
+      .as('ficheActionInstanceGouvernanceTags');
+  }
+
   private getFicheActionStructureTagsQuery(ficheIds: number[]) {
     const query = this.databaseService.db
       .select({
@@ -958,6 +989,8 @@ export default class ListFichesService {
     const ficheActionInstanceGouvernance =
       this.getFicheActionInstanceGouvernanceQuery(ficheIds);
     const ficheActionLibreTags = this.getFicheActionLibreTagsQuery(ficheIds);
+    const ficheActionInstanceGouvernanceTags =
+      this.getFicheActionInstanceGouvernanceTagsQuery(ficheIds);
     const ficheActionPilotes = this.getFicheActionPilotesQuery(ficheIds);
     const ficheActionServices = this.getFicheActionServicesQuery(ficheIds);
     const ficheActionAxes = this.getFicheActionAxesQuery(
@@ -1017,6 +1050,8 @@ export default class ListFichesService {
         docs: ficheActionDocs.docs,
         budgets: ficheActionBudgets.budgets,
         actionImpactId: actionImpactActionTable.actionImpactId,
+        instanceGouvernanceTags:
+          ficheActionInstanceGouvernanceTags.instanceGouvernanceTags,
       })
       .from(ficheActionTable)
       .leftJoin(
@@ -1050,6 +1085,10 @@ export default class ListFichesService {
       .leftJoin(
         ficheActionLibreTags,
         eq(ficheActionLibreTags.ficheId, ficheActionTable.id)
+      )
+      .leftJoin(
+        ficheActionInstanceGouvernanceTags,
+        eq(ficheActionInstanceGouvernanceTags.ficheId, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionThematiques,
@@ -1647,6 +1686,15 @@ export default class ListFichesService {
         ficheActionFinanceurTagTable.ficheId,
         ficheActionFinanceurTagTable.financeurTagId,
         filters.financeurIds
+      )
+    );
+
+    conditions.push(
+      this.getHasIdentifiedLinkedEntityCondition(
+        ficheActionInstanceGouvernanceTable,
+        ficheActionInstanceGouvernanceTable.ficheId,
+        ficheActionInstanceGouvernanceTable.instanceGouvernanceId,
+        filters.instanceGouvernanceIds
       )
     );
 
