@@ -172,18 +172,16 @@ export const FicheDescriptionForm = ({
               ? 'info'
               : 'default'
           }
-          message={getMaxLengthMessage(
-            instanceGouvernance ?? '',
-            INSTANCES_MAX_LENGTH,
-            true
-          )}
         >
           <Controller
             control={control}
             name="instanceGouvernance"
             render={({ field }) => (
               <RichTextEditor
-                initialValue={fiche.instanceGouvernance || ''}
+                initialValue={
+                  fiche.instanceGouvernance?.map((tag) => tag.nom).join(', ') ??
+                  ''
+                }
                 onChange={(value) => field.onChange(value)}
               />
             )}
