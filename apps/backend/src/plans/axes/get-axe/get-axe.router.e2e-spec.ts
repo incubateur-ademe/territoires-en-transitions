@@ -155,7 +155,7 @@ describe('Récupérer un axe', () => {
       });
 
       // Créer un axe avec des indicateurs
-      const createdAxe = await caller.plans.axes.upsert({
+      const createdAxe = await caller.plans.axes.create({
         nom: 'Axe avec indicateurs à récupérer',
         collectiviteId: collectivite.id,
         planId,

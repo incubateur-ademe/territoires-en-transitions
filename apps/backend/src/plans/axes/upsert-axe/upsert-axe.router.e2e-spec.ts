@@ -220,7 +220,7 @@ describe('Créer ou modifier un axe', () => {
         indicateurs: [{ id: indicateur1Id }, { id: indicateur2Id }],
       };
 
-      const createdAxe = await caller.plans.axes.upsert(axeInput);
+      const createdAxe = await caller.plans.axes.create(axeInput);
       const axeId = createdAxe.id;
 
       onTestFinished(async () => {
@@ -244,7 +244,7 @@ describe('Créer ou modifier un axe', () => {
       const caller = router.createCaller({ user: editorUser });
 
       // Créer un axe sans indicateurs
-      const createdAxe = await caller.plans.axes.upsert({
+      const createdAxe = await caller.plans.axes.create({
         nom: 'Axe sans indicateurs',
         collectiviteId: collectivite.id,
         planId,
@@ -290,7 +290,7 @@ describe('Créer ou modifier un axe', () => {
       });
 
       // Ajouter des indicateurs à l'axe
-      await caller.plans.axes.upsert({
+      await caller.plans.axes.update({
         id: axeId,
         collectiviteId: collectivite.id,
         indicateurs: [{ id: indicateur1Id }, { id: indicateur2Id }],
@@ -337,7 +337,7 @@ describe('Créer ou modifier un axe', () => {
       });
 
       // Créer un axe avec des indicateurs
-      const createdAxe = await caller.plans.axes.upsert({
+      const createdAxe = await caller.plans.axes.create({
         nom: 'Axe avec indicateurs à supprimer',
         collectiviteId: collectivite.id,
         planId,
@@ -359,7 +359,7 @@ describe('Créer ou modifier un axe', () => {
       expect(axeIndicateurs).toHaveLength(2);
 
       // Supprimer tous les indicateurs (passer un tableau vide)
-      await caller.plans.axes.upsert({
+      await caller.plans.axes.update({
         id: axeId,
         collectiviteId: collectivite.id,
         indicateurs: [],
@@ -423,7 +423,7 @@ describe('Créer ou modifier un axe', () => {
       });
 
       // Créer un axe avec les indicateurs initiaux
-      const createdAxe = await caller.plans.axes.upsert({
+      const createdAxe = await caller.plans.axes.create({
         nom: 'Axe avec indicateurs à remplacer',
         collectiviteId: collectivite.id,
         planId,
@@ -448,7 +448,7 @@ describe('Créer ou modifier un axe', () => {
       );
 
       // Remplacer par de nouveaux indicateurs
-      await caller.plans.axes.upsert({
+      await caller.plans.axes.update({
         id: axeId,
         collectiviteId: collectivite.id,
         indicateurs: [{ id: indicateur3Id }, { id: indicateur4Id }],
