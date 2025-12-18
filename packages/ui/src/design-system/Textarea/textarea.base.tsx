@@ -11,11 +11,12 @@ import { cn } from '../../utils/cn';
 
 export type TextareaBaseProps = ComponentPropsWithRef<'textarea'> & {
   autoresize?: boolean;
+  onEnterKeyDown?: () => void;
 };
 
 export const TextareaBase = forwardRef(
   (
-    { autoresize = true, ...props }: TextareaBaseProps,
+    { autoresize = true, onEnterKeyDown, ...props }: TextareaBaseProps,
     ref?: React.Ref<HTMLTextAreaElement | null>
   ) => {
     const [localValue, setLocalValue] = useState(props.value);
@@ -48,11 +49,21 @@ export const TextareaBase = forwardRef(
       }
     }, [props.autoFocus]);
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (!!onEnterKeyDown && e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        onEnterKeyDown?.();
+      }
+
+      props.onKeyDown?.(e);
+    };
+
     return (
       <textarea
         {...props}
         ref={localRef}
         onChange={handleChange}
+        onKeyDown={handleKeyDown}
         className={cn(
           'outline-none',
           { 'resize-none': autoresize },
