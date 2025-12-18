@@ -6,7 +6,7 @@ import { getMaxLengthMessage } from '@/app/utils/formatUtils';
 import { FormSectionGrid } from '@tet/ui';
 
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { InstanceGouvernanceDropdown } from '@/app/ui/dropdownLists/instance-gouvernance.dropdown';
+import { InstanceGouvernanceDropdown } from '@/app/plans/fiches/shared/dropdowns/instance-gouvernance.dropdown';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { RichTextEditor, SelectFilter } from '@tet/ui';
