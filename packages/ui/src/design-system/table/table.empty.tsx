@@ -21,7 +21,7 @@ export const TableEmpty = ({
   size = 'xs',
   ...props
 }: Props) => (
-  <TableRow>
+  <TableRow className="border-b-0">
     <td colSpan={columnIds.length}>
       <EmptyCard
         {...props}

@@ -7,7 +7,7 @@ import {
 import { useState } from 'react';
 import { Badge } from '../../Badge';
 import { Checkbox } from '../../Checkbox';
-import { TableHeaderCell } from '../index';
+import { TableCell, TableHeaderCell } from '../index';
 import { ReactTable } from '../react-table';
 import { FakeVueTabulaireAction, fakeVueTabulaireData } from './fixtures';
 
@@ -26,19 +26,29 @@ const columns = [
       </TableHeaderCell>
     ),
     cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onChange={row.getToggleSelectedHandler()}
-      />
+      <TableCell>
+        <Checkbox
+          checked={row.getIsSelected()}
+          onChange={row.getToggleSelectedHandler()}
+        />
+      </TableCell>
     ),
   }),
   columnHelper.accessor('title', {
     header: () => <TableHeaderCell title="Titre" />,
-    cell: (info) => <div className="line-clamp-2">{info.getValue()}</div>,
+    cell: (info) => (
+      <TableCell>
+        <div className="line-clamp-2">{info.getValue()}</div>
+      </TableCell>
+    ),
   }),
   columnHelper.accessor('description', {
     header: () => <TableHeaderCell title="Description" />,
-    cell: (info) => <div className="line-clamp-2">{info.getValue()}</div>,
+    cell: (info) => (
+      <TableCell>
+        <div className="line-clamp-2">{info.getValue()}</div>
+      </TableCell>
+    ),
   }),
   columnHelper.accessor('statut', {
     header: (header) => (
@@ -48,18 +58,21 @@ const columns = [
         title="Statut"
       />
     ),
-    cell: (info) =>
-      info.getValue() ? (
-        <Badge state="info" title={info.getValue()} size="sm" />
-      ) : (
-        <span className="italic text-sm text-grey-6">
-          Sélectionner un statut
-        </span>
-      ),
+    cell: (info) => (
+      <TableCell>
+        {info.getValue() ? (
+          <Badge state="info" title={info.getValue()} size="sm" />
+        ) : (
+          <span className="italic text-sm text-grey-6">
+            Sélectionner un statut
+          </span>
+        )}
+      </TableCell>
+    ),
   }),
   columnHelper.accessor('pilotes', {
     header: () => <TableHeaderCell className="w-32" title="Pilotes" />,
-    cell: (info) => info.getValue(),
+    cell: (info) => <TableCell>{info.getValue()}</TableCell>,
   }),
   columnHelper.accessor('dateDeFin', {
     header: (header) => (
@@ -69,7 +82,7 @@ const columns = [
         title="Date de fin"
       />
     ),
-    cell: (info) => info.getValue(),
+    cell: (info) => <TableCell>{info.getValue()}</TableCell>,
   }),
 ];
 
