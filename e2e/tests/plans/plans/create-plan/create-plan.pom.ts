@@ -16,7 +16,7 @@ export class CreatePlanPom {
     this.typeSelect = page.locator('[data-test="Type"]');
     this.submitButton = page.getByRole('button', { name: 'Valider' });
     this.title = page.getByRole('heading', {
-      name: "Créer un plan d'action",
+      name: 'Créer un plan',
     });
     this.cancelButton = page.getByRole('button', {
       name: "Revenir à l'étape précédente",
