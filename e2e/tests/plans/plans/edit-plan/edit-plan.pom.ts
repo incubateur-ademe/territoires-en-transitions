@@ -17,7 +17,7 @@ export class EditPlanPom {
     this.addAxeButton = page.locator('[data-test="AjouterAxe"]');
     this.modifierPlanButton = page.locator('[data-test="ModifierPlanBouton"]');
     this.createFicheButton = page.getByRole('button', {
-      name: 'Créer une fiche action',
+      name: 'Créer une action',
     });
   }
 
@@ -217,9 +217,9 @@ export class EditPlanPom {
 
       const axe = this.getAxeByName(axeNom);
 
-      // le bouton "Créer une fiche" dans l'axe apparaît au survol
+      // le bouton "Créer une action" dans l'axe apparaît au survol
       await axe.hover();
-      const addFicheButton = axe.locator('button[title="Créer une fiche"]');
+      const addFicheButton = axe.locator('button[title="Créer une action"]');
 
       await addFicheButton.click();
     } else {
