@@ -2,12 +2,18 @@ import { expect, Locator, Page } from '@playwright/test';
 
 export class DiscussionsPom {
   readonly discussionPanel: Locator;
+  readonly commentsTabPanel: Locator;
   readonly discussionButton: Locator;
   readonly commentItem: Locator;
 
   constructor(readonly page: Page) {
     this.page = page;
-    this.discussionPanel = page.locator('[data-test="ActionDiscussionsPanel"]');
+    this.discussionPanel = page.locator(
+      '[data-test="ActionCommentsSidePanelContent"]'
+    );
+    this.commentsTabPanel = page.locator(
+      '[data-test="ActionCommentsTabContent"]'
+    );
     this.discussionButton = page.locator(
       '[data-test="ActionDiscussionsButton"]'
     );
@@ -41,6 +47,6 @@ export class DiscussionsPom {
   }
 
   async expectCommentairesTabVisible() {
-    await expect(this.discussionPanel).toBeVisible();
+    await expect(this.commentsTabPanel).toBeVisible();
   }
 }

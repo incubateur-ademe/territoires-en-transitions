@@ -7,7 +7,7 @@ export class FilterDiscussionsPom {
   constructor(readonly page: Page) {
     this.page = page;
     const discussionPanel = page.locator(
-      '[data-test="ActionDiscussionsPanel"]'
+      '[data-test="ActionCommentsSidePanelContent"]'
     );
     // The selects are within the panel - using more specific selectors
     this.orderBySelect = discussionPanel
@@ -48,7 +48,7 @@ export class FilterDiscussionsPom {
   async filterAction(actionId: string) {
     await this.page
       .locator('button')
-      .filter({ hasText: 'Mesures et toutes les sous-mesures' })
+      .filter({ hasText: actionId.substring(0, 4) })
       .first()
       .click();
     await this.page
