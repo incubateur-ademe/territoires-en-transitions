@@ -176,6 +176,7 @@ groups:
     - fiche_action_action
     - fiche_action_axe
     - fiche_action_thematique
+    - fiche_action_budget
     - fiche_action_sous_thematique
     - fiche_action_financeur_tag
     - fiche_action_service_tag
