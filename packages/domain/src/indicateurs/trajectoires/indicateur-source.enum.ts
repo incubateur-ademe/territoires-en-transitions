@@ -4,4 +4,5 @@ export enum IndicateurSourceEnum {
   PCAET = 'pcaet',
   CITEPA = 'citepa',
   ALDO = 'aldo',
+  SNBC = 'snbc',
 }
