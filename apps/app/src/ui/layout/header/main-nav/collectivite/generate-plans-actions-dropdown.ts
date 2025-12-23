@@ -18,21 +18,21 @@ export const generatePlansActionsDropdown = ({
   dataTest: 'nav-pa',
   links: [
     {
-      children: 'Tableau de bord Plans & Actions',
+      children: 'Tableau de bord',
       dataTest: 'pa-tdb',
       href: makeTdbPlansEtActionsUrl({
         collectiviteId,
       }),
     },
     {
-      children: 'Tous les plans',
+      children: 'Plans',
       dataTest: 'pa-tous',
       href: makeCollectivitePlansActionsListUrl({
         collectiviteId,
       }),
     },
     {
-      children: 'Toutes les actions',
+      children: 'Actions',
       dataTest: 'pa-fa-toutes',
       href: makeCollectiviteToutesLesFichesUrl({
         collectiviteId,
