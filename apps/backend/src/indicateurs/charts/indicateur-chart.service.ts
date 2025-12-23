@@ -539,6 +539,7 @@ export class IndicateurChartService {
     args: IndicateurChartInput & {
       collectiviteAvecType?: CollectiviteAvecType;
       personnalisationReponses?: PersonnalisationReponsesPayload;
+      chartSize?: { width: number; height: number };
     },
     user?: AuthUser
   ): Promise<{
@@ -558,6 +559,7 @@ export class IndicateurChartService {
       includeReferenceValeurs,
       includeMoyenne,
       includeSegmentation,
+      chartSize,
     } = args;
 
     if (!indicateurId && !identifiantReferentiel) {
@@ -579,44 +581,53 @@ export class IndicateurChartService {
           }
         );
 
-    const indicateurValeurs = await this.indicateurValeursService
-      .listIndicateurValeurs({
-        collectiviteId,
-        indicateurIds: [definition.id],
-        sources: sources?.map((s) => s.sourceId),
-      })
-      .then((result) => result.indicateurs[0]);
-
-    const valeursReference = includeReferenceValeurs
-      ? await this.valeurReferenceService
-          .getValeursReference({
-            collectiviteId,
-            indicateurIds: [definition.id],
-            collectiviteAvecType,
-            personnalisationReponses,
-          })
-          .then((result) =>
-            result.find((v) => v?.indicateurId === indicateurId)
-          )
-      : null;
-
-    const valeursMoyenneCollectivites = includeMoyenne
-      ? await this.valeursMoyenneService.getMoyenneCollectivites(
-          {
-            collectiviteId,
-            indicateurId: definition.id,
-          },
-          user
-        )
-      : null;
-
-    const indicateurSegmentation = includeSegmentation
-      ? await this.getIndicateursSegmentationValeurs(
+    // Parallelize all independent queries
+    const [
+      indicateurValeurs,
+      valeursReference,
+      valeursMoyenneCollectivites,
+      indicateurSegmentation,
+    ] = await Promise.all([
+      // Always fetch indicateur valeurs
+      this.indicateurValeursService
+        .listIndicateurValeurs({
           collectiviteId,
-          definition,
-          includeSegmentation
-        )
-      : null;
+          indicateurIds: [definition.id],
+          sources: sources?.map((s) => s.sourceId),
+        })
+        .then((result) => result.indicateurs[0]),
+      // Conditionally fetch reference valeurs
+      includeReferenceValeurs
+        ? this.valeurReferenceService
+            .getValeursReference({
+              collectiviteId,
+              indicateurIds: [definition.id],
+              collectiviteAvecType,
+              personnalisationReponses,
+            })
+            .then((result) =>
+              result.find((v) => v?.indicateurId === definition.id)
+            )
+        : Promise.resolve(null),
+      // Conditionally fetch moyenne collectivites
+      includeMoyenne
+        ? this.valeursMoyenneService.getMoyenneCollectivites(
+            {
+              collectiviteId,
+              indicateurId: definition.id,
+            },
+            user
+          )
+        : Promise.resolve(null),
+      // Conditionally fetch segmentation
+      includeSegmentation
+        ? this.getIndicateursSegmentationValeurs(
+            collectiviteId,
+            definition,
+            includeSegmentation
+          )
+        : Promise.resolve(null),
+    ]);
     const chartData = this.getChartData({
       indicateurValeurs,
       valeursReference,
@@ -624,6 +635,10 @@ export class IndicateurChartService {
       sourcesFilter: sources,
       segmentation: indicateurSegmentation,
     });
+
+    if (chartSize?.width) {
+      this.adjustOptionsWithWidth(chartData, chartSize.width);
+    }
 
     return {
       indicateurValeurs,
