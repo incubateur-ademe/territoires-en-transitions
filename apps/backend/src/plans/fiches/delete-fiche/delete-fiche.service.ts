@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { eq, or } from 'drizzle-orm';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
@@ -18,11 +19,14 @@ export class DeleteFicheService {
     ficheId,
     deleteMode,
     user,
+    transaction,
   }: {
     ficheId: number;
     user: AuthenticatedUser;
     deleteMode?: 'soft' | 'hard';
+    transaction?: Transaction;
   }): Promise<{ success: boolean; error?: string }> {
+    const db = transaction || this.databaseService.db;
     await this.fichePermissionService.canDeleteFiche(ficheId, user);
 
     const ficheIdCondition = or(
@@ -32,11 +36,9 @@ export class DeleteFicheService {
 
     try {
       if (deleteMode === 'hard') {
-        await this.databaseService.db
-          .delete(ficheActionTable)
-          .where(ficheIdCondition);
+        await db.delete(ficheActionTable).where(ficheIdCondition);
       } else {
-        await this.databaseService.db
+        await db
           .update(ficheActionTable)
           .set({
             deleted: true,

@@ -11,7 +11,7 @@ export const useDeleteAxe = (
   const router = useRouter();
   const trpc = useTRPC();
   const { mutateAsync: deleteAxe } = useMutation(
-    trpc.plans.plans.deleteAxe.mutationOptions()
+    trpc.plans.axes.delete.mutationOptions()
   );
 
   return useMutation({

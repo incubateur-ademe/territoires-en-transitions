@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import { UpdatePlanRequest } from '@tet/domain/plans';
 
 export const useUpdatePlan = ({
   collectiviteId,
@@ -15,17 +14,7 @@ export const useUpdatePlan = ({
   );
 
   const { mutateAsync } = useMutation({
-    mutationFn: async (plan: UpdatePlanRequest) => {
-      const result = await updatePlanMutation({
-        id: plan.id,
-        nom: plan.nom || '',
-        collectiviteId: plan.collectiviteId,
-        typeId: plan.typeId || undefined,
-        referents: plan.referents || undefined,
-        pilotes: plan.pilotes || undefined,
-      });
-      return result;
-    },
+    mutationFn: updatePlanMutation,
     meta: { disableToast: true },
     onSuccess: async (data) => {
       await queryClient.invalidateQueries({

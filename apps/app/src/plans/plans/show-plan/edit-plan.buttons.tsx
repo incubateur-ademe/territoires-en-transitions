@@ -20,6 +20,7 @@ export const EditPlanButtons = ({
   const { mutate: addAxe } = useUpsertAxe({
     parentAxe: currentAxe ?? plan,
     planId: plan.id,
+    mutationKey: ['create_axe'],
   });
   const { mutate: createFicheResume } = useCreateFicheResume({
     collectiviteId,
