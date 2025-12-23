@@ -6,6 +6,7 @@ type CreateFicheInput =
   inferRouterInputs<AppRouter>['plans']['fiches']['create']['fiche'] & {
     axeId?: number;
     pilotes?: { userId: string }[];
+    indicateurs?: { id: number }[];
   };
 
 type FicheId = number;
@@ -17,16 +18,17 @@ export async function createFicheAndCleanupFunction({
   caller: ReturnType<TrpcRouter['createCaller']>;
   ficheInput: CreateFicheInput;
 }): Promise<{ ficheId: FicheId; ficheCleanup: () => Promise<void> }> {
-  const { axeId, pilotes, ...ficheProps } = ficheInput;
+  const { axeId, pilotes, indicateurs, ...ficheProps } = ficheInput;
   const fiche = await caller.plans.fiches.create({ fiche: ficheProps });
   const ficheId = fiche.id;
 
-  if (axeId || pilotes?.length) {
+  if (axeId || pilotes?.length || indicateurs?.length) {
     await caller.plans.fiches.update({
       ficheId,
       ficheFields: {
         axes: axeId ? [{ id: axeId }] : undefined,
         pilotes,
+        indicateurs,
       },
       isNotificationEnabled: true,
     });
