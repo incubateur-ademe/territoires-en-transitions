@@ -49,6 +49,7 @@ export function GenerateReportForm({
       planId: plan.id,
       templateKey: 'general_bilan_template',
       ficheIds: undefined,
+      includeFicheIndicateursSlides: true,
     },
   });
 

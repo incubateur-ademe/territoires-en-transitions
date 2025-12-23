@@ -74,7 +74,7 @@ export class GenerateReportsService {
   private readonly logger = new Logger(GenerateReportsService.name);
 
   /** PowerPoint EMU precision (1 px = 9525 EMU) */
-  private readonly EMU_PER_PX = 914400 / 96; // 9525
+  private readonly EMU_PER_PX = 914400 / 96;
 
   /** Convert EMU → pixels */
   private emuToPx(emu: number): number {
@@ -331,7 +331,7 @@ export class GenerateReportsService {
     const elementPxHeight =
       this.emuToPx(imageElement.position.cy) * this.CHART_SCALE_FACTOR;
     this.logger.log(
-      `Image element ${imageElementName} size: ${elementPxWidth}x${elementPxHeight}`
+      `Image element ${imageElementName} size: ${elementPxWidth}x${elementPxHeight} pixels (EMU: ${imageElement.position.cx}x${imageElement.position.cy})`
     );
 
     adjustChartOptionWithSize?.(chartOption, elementPxWidth, elementPxHeight);
@@ -929,7 +929,7 @@ export class GenerateReportsService {
     });
   }
 
-  private async addFicheInfosSlides(
+  private addFicheInfosSlides(
     args: Omit<SlideGenerationArgs, 'slideType'> & {
       ficheTextReplacementsInfo: ReportFicheInfo;
       fiche: FicheWithRelations;
@@ -995,51 +995,51 @@ export class GenerateReportsService {
     });
   }
 
-  private async addFicheIndicateursSlides(
+  private addFicheIndicateursSlides(
     args: Omit<SlideGenerationArgs, 'slideType'> & {
-      collectivite: CollectiviteAvecType;
-      personnalisationReponses: PersonnalisationReponsesPayload;
-      mediaDir: string;
       ficheTextReplacementsInfo: ReportFicheInfo;
       fiche: FicheWithRelations;
+      indicateurChartImageFiles: {
+        indicateurId: number;
+        imageFile: string;
+      }[];
     }
   ) {
     const {
       presentation,
-      collectivite,
       planGeneralInfo,
-      personnalisationReponses,
       ficheTextReplacementsInfo,
       logo,
       template,
-      mediaDir,
       fiche,
+      indicateurChartImageFiles,
     } = args;
     if (!template.slides.fiche_indicateurs_slide) {
       return;
     }
 
-    const indicateurWithValeursAndChartData = await Promise.all(
-      fiche.indicateurs?.map((indicateur) =>
-        this.indicateurChartService.getIndicateurValeursAndChartData({
-          collectiviteId: fiche.collectiviteId,
-          indicateurId: indicateur.id,
-          collectiviteAvecType: collectivite,
-          personnalisationReponses,
-          includeReferenceValeurs: true,
-          includeMoyenne: false,
-          includeSegmentation: {},
+    const ficheIndicateurChartImageFiles =
+      fiche.indicateurs
+        ?.map((indicateur) => {
+          const imageFile = indicateurChartImageFiles.find(
+            (imageFile) => imageFile.indicateurId === indicateur.id
+          );
+          if (!imageFile) {
+            this.logger.error(
+              `Image file not found for indicateur ${indicateur.id}`
+            );
+            return null;
+          }
+          return imageFile;
         })
-      ) ?? []
-    );
-
-    if (indicateurWithValeursAndChartData.length) {
-      const indicateurWithValeursAndChartDataChunks = chunk(
-        indicateurWithValeursAndChartData,
+        .filter((imageFile) => imageFile !== null) ?? [];
+    if (ficheIndicateurChartImageFiles.length) {
+      const ficheIndicateurChartImageFilesChunks = chunk(
+        ficheIndicateurChartImageFiles,
         template.max_fiche_indicateurs_per_slide
       );
 
-      for (const indicateurWithValeursAndChartDataChunk of indicateurWithValeursAndChartDataChunks) {
+      for (const ficheIndicateurChartImageFilesChunk of ficheIndicateurChartImageFilesChunks) {
         this.addSlide({
           presentation,
           template,
@@ -1050,34 +1050,35 @@ export class GenerateReportsService {
           callback: async (slide) => {
             const allElements = await slide.getAllElements();
 
-            await Promise.all(
-              indicateurWithValeursAndChartDataChunk.map(
-                (indicateurWithValeursAndChartData, iIndicateur) => {
-                  const imageName = `${
-                    ReportTemplateImagesEnum.IMG_FICHE_INDICATEUR_CHART_
-                  }${iIndicateur + 1}`;
-                  return this.renderChartToImageInSlide(
-                    slide,
-                    presentation,
-                    mediaDir,
-                    allElements,
-                    imageName,
-                    indicateurWithValeursAndChartData.chartData,
-                    'cover',
-                    `fiche_${fiche.id}_chart_${indicateurWithValeursAndChartData.indicateurValeurs.definition.id}`,
-                    (chartOption, width) => {
-                      this.indicateurChartService.adjustOptionsWithWidth(
-                        chartOption,
-                        width
-                      );
-                    }
-                  );
+            ficheIndicateurChartImageFilesChunk.forEach(
+              (ficheIndicateurChartImageFile, iIndicateur) => {
+                const imageName = `${
+                  ReportTemplateImagesEnum.IMG_FICHE_INDICATEUR_CHART_
+                }${iIndicateur + 1}`;
+                const imageElement = this.getImageElement(
+                  allElements,
+                  imageName
+                );
+                if (!imageElement) {
+                  this.logger.error(`Image element not found for ${imageName}`);
+                  return;
                 }
-              )
+                slide.modifyElement(imageName, [
+                  (element: XmlElement, relation?: XmlElement) => {
+                    if (!relation) {
+                      return;
+                    }
+                    ModifyImageHelper.setRelationTargetCover(
+                      ficheIndicateurChartImageFile.imageFile,
+                      presentation
+                    )(element, relation);
+                  },
+                ]);
+              }
             );
 
             for (
-              let iIndicateur = indicateurWithValeursAndChartDataChunk.length;
+              let iIndicateur = ficheIndicateurChartImageFilesChunk.length;
               iIndicateur < template.max_fiche_indicateurs_per_slide;
               iIndicateur++
             ) {
@@ -1184,6 +1185,114 @@ export class GenerateReportsService {
     });
   }
 
+  private async getIndicateurChartSize(
+    templateConfig: ReportTemplateConfig,
+    outputDir: string,
+    mediaDir: string
+  ): Promise<{ width: number; height: number } | null> {
+    if (!templateConfig.slides['fiche_indicateurs_slide']) {
+      return null;
+    }
+    // TODO: find a better way to get the size of the indicateur chart size to be used
+    // For now, we generate a temporary presentation to get the size of the indicateur chart
+
+    const automizer = new Automizer({
+      templateDir: path.join(__dirname, 'docs'),
+      autoImportSlideMasters: false,
+      outputDir: outputDir,
+      mediaDir,
+      removeExistingSlides: true,
+      showIntegrityInfo: false,
+      assertRelatedContents: true,
+      cleanup: false,
+      compression: 7,
+    });
+
+    let indicateurChartSize: { width: number; height: number } | null = null;
+
+    const presentation = automizer
+      .loadRoot(templateConfig.templatePath)
+      .load(templateConfig.templatePath, templateConfig.key)
+      .addSlide(
+        templateConfig.key,
+        templateConfig.slides['fiche_indicateurs_slide'],
+        async (slide) => {
+          const allElements = await slide.getAllElements();
+          const firstIndicateurImageName = `${ReportTemplateImagesEnum.IMG_FICHE_INDICATEUR_CHART_}1`;
+          const imageElement = this.getImageElement(
+            allElements,
+            firstIndicateurImageName
+          );
+          if (!imageElement) {
+            this.logger.error(
+              `Image element not found ${firstIndicateurImageName}`
+            );
+            return null;
+          }
+          indicateurChartSize = {
+            width:
+              this.emuToPx(imageElement.position.cx ?? 0) *
+              this.CHART_SCALE_FACTOR,
+            height:
+              this.emuToPx(imageElement.position.cy ?? 0) *
+              this.CHART_SCALE_FACTOR,
+          };
+          this.logger.log(
+            `Indicateur chart size: ${indicateurChartSize.width}x${indicateurChartSize.height} pixels`
+          );
+        }
+      );
+
+    await presentation.write('indicateurs.pptx');
+    return indicateurChartSize;
+  }
+
+  private async writeIndicateurChartImageFileAndLoadMedia(args: {
+    presentation: Automizer;
+    mediaDir: string;
+    indicateurId: number;
+    collectivite: CollectiviteAvecType;
+    personnalisationReponses: PersonnalisationReponsesPayload;
+    chartSize: { width: number; height: number };
+  }) {
+    const {
+      presentation,
+
+      mediaDir,
+      indicateurId,
+      collectivite,
+      personnalisationReponses,
+      chartSize,
+    } = args;
+
+    const { chartData } =
+      await this.indicateurChartService.getIndicateurValeursAndChartData({
+        collectiviteId: collectivite.id,
+        indicateurId,
+        collectiviteAvecType: collectivite,
+        personnalisationReponses,
+        includeReferenceValeurs: true,
+        includeMoyenne: false,
+        includeSegmentation: {},
+        chartSize,
+      });
+
+    const buffer = await this.echartsService.renderToPngBuffer({
+      width: chartSize.width,
+      height: chartSize.height,
+      options: chartData,
+    });
+    const imageFile = `indicateur_chart_${indicateurId}.png`;
+    writeFileSync(`${mediaDir}/${imageFile}`, buffer as Uint8Array);
+
+    presentation.loadMedia(imageFile);
+
+    return {
+      indicateurId,
+      imageFile,
+    };
+  }
+
   async generatePlanReport(
     request: ReportGenerationInput,
     user: AuthenticatedUser
@@ -1251,7 +1360,7 @@ export class GenerateReportsService {
         showIntegrityInfo: false, // WARNING: changing this to true throw some weird errors on generated images not beeing found
         assertRelatedContents: true,
         cleanup: true,
-        compression: 9,
+        compression: 7,
         verbosity: 1,
         statusTracker: (status: StatusTracker) => {
           this.logger.log(status.info + ' (' + status.share + '%)');
@@ -1326,6 +1435,42 @@ export class GenerateReportsService {
         `Fiches to be included in the report: ${filteredFiches.length}`
       );
 
+      const filteredFichesIndicateurs = Array.from(
+        new Set(
+          filteredFiches
+            .map(
+              (fiche) =>
+                fiche.indicateurs?.map((indicateur) => indicateur.id) || []
+            )
+            .flat()
+        )
+      );
+      // Get the size of the indicateur chart to be used
+      // Allow to parallelize the writing of the indicateur chart image files
+      const indicateurChartSize = await this.getIndicateurChartSize(
+        templateConfig,
+        outputDir,
+        mediaDir
+      );
+
+      let indicateurChartImageFiles: {
+        indicateurId: number;
+        imageFile: string;
+      }[] = [];
+      if (request.includeFicheIndicateursSlides && indicateurChartSize) {
+        indicateurChartImageFiles = await Promise.all(
+          filteredFichesIndicateurs?.map((indicateurId) =>
+            this.writeIndicateurChartImageFileAndLoadMedia({
+              indicateurId,
+              collectivite,
+              personnalisationReponses,
+              presentation,
+              mediaDir,
+              chartSize: indicateurChartSize,
+            })
+          ) ?? []
+        );
+      }
       for (const axe of axes) {
         await this.addAxesSummarySlide({
           presentation,
@@ -1348,7 +1493,7 @@ export class GenerateReportsService {
           const ficheTextReplacementsInfo =
             this.getFicheTextReplacementsInfos(fiche);
 
-          await this.addFicheInfosSlides({
+          this.addFicheInfosSlides({
             ...slideGenerationArgs,
             ficheTextReplacementsInfo,
             fiche,
@@ -1357,11 +1502,9 @@ export class GenerateReportsService {
           if (request.includeFicheIndicateursSlides) {
             await this.addFicheIndicateursSlides({
               ...slideGenerationArgs,
-              collectivite,
-              personnalisationReponses,
               ficheTextReplacementsInfo,
-              mediaDir,
               fiche,
+              indicateurChartImageFiles,
             });
           }
         }
