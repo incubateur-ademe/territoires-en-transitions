@@ -74,9 +74,16 @@ export class GenerateReportsService {
   private readonly logger = new Logger(GenerateReportsService.name);
 
   /** PowerPoint EMU precision (1 px = 9525 EMU) */
-  private readonly EMU_PER_PX = 914400 / 96; // 9525
+  private readonly EMU_PER_PX = 914400 / 96;
 
-  private logTiming(operation: string, startTime: number, details?: object) {
+  private timingCategories: Map<string, number> = new Map();
+
+  private logTiming(
+    operation: string,
+    startTime: number,
+    details?: object,
+    category?: string
+  ) {
     const duration = performance.now() - startTime;
     const message = `[TIMING] ${operation} took ${duration.toFixed(2)}ms`;
     if (details) {
@@ -84,6 +91,49 @@ export class GenerateReportsService {
     } else {
       this.logger.log(message);
     }
+
+    // Aggregate timing by category
+    const categoryKey =
+      category || this.extractCategoryFromOperation(operation);
+    const currentTotal = this.timingCategories.get(categoryKey) || 0;
+    this.timingCategories.set(categoryKey, currentTotal + duration);
+    return duration;
+  }
+
+  private extractCategoryFromOperation(operation: string): string {
+    // Remove dynamic parts like fiche titles, axe names, etc.
+    // Examples:
+    // "Fiche info slide for {title}" -> "Fiche info slide"
+    // "Axe summary slide for {name}" -> "Axe summary slide"
+    // "Chart rendering to PNG ({name})" -> "Chart rendering to PNG"
+    return operation
+      .replace(/\s+for\s+.*$/, '')
+      .replace(/\s+\([^)]*\)$/, '')
+      .trim();
+  }
+
+  private logAggregatedTimings(totalTime: number) {
+    if (this.timingCategories.size === 0) {
+      return;
+    }
+
+    this.logger.log('[TIMING] === Aggregated timings by category ===');
+    const sortedCategories = Array.from(this.timingCategories.entries())
+      .sort((a, b) => b[1] - a[1]) // Sort by duration descending
+      .map(([category, total]) => ({
+        category,
+        total: total.toFixed(2),
+        percentage: ((total / totalTime) * 100).toFixed(1),
+      }));
+
+    sortedCategories.forEach(({ category, total, percentage }) => {
+      this.logger.log(`[TIMING] ${category}: ${total}ms (${percentage}%)`);
+    });
+    this.logger.log(`[TIMING] Total: ${totalTime.toFixed(2)}ms`);
+    this.logger.log('[TIMING] ========================================');
+
+    // Clear the map for next report generation
+    this.timingCategories.clear();
   }
 
   /** Convert EMU → pixels */
@@ -341,7 +391,7 @@ export class GenerateReportsService {
     const elementPxHeight =
       this.emuToPx(imageElement.position.cy) * this.CHART_SCALE_FACTOR;
     this.logger.log(
-      `Image element ${imageElementName} size: ${elementPxWidth}x${elementPxHeight}`
+      `Image element ${imageElementName} size: ${elementPxWidth}x${elementPxHeight} pixels (EMU: ${imageElement.position.cx}x${imageElement.position.cy})`
     );
 
     adjustChartOptionWithSize?.(chartOption, elementPxWidth, elementPxHeight);
@@ -358,7 +408,8 @@ export class GenerateReportsService {
       {
         width: elementPxWidth,
         height: elementPxHeight,
-      }
+      },
+      'Chart rendering to PNG'
     );
     const imageFile = `${
       imageFilePrefix ? `${imageFilePrefix}_` : ''
@@ -977,7 +1028,7 @@ export class GenerateReportsService {
     });
   }
 
-  private async addFicheInfosSlides(
+  private addFicheInfosSlides(
     args: Omit<SlideGenerationArgs, 'slideType'> & {
       ficheTextReplacementsInfo: ReportFicheInfo;
       fiche: FicheWithRelations;
@@ -1043,59 +1094,51 @@ export class GenerateReportsService {
     });
   }
 
-  private async addFicheIndicateursSlides(
+  private addFicheIndicateursSlides(
     args: Omit<SlideGenerationArgs, 'slideType'> & {
-      collectivite: CollectiviteAvecType;
-      personnalisationReponses: PersonnalisationReponsesPayload;
-      mediaDir: string;
       ficheTextReplacementsInfo: ReportFicheInfo;
       fiche: FicheWithRelations;
+      indicateurChartImageFiles: {
+        indicateurId: number;
+        imageFile: string;
+      }[];
     }
   ) {
     const {
       presentation,
-      collectivite,
       planGeneralInfo,
-      personnalisationReponses,
       ficheTextReplacementsInfo,
       logo,
       template,
-      mediaDir,
       fiche,
+      indicateurChartImageFiles,
     } = args;
     if (!template.slides.fiche_indicateurs_slide) {
       return;
     }
 
-    const indicateursDataStartTime = performance.now();
-    const indicateurWithValeursAndChartData = await Promise.all(
-      fiche.indicateurs?.map((indicateur) =>
-        this.indicateurChartService.getIndicateurValeursAndChartData({
-          collectiviteId: fiche.collectiviteId,
-          indicateurId: indicateur.id,
-          collectiviteAvecType: collectivite,
-          personnalisationReponses,
-          includeReferenceValeurs: true,
-          includeMoyenne: false,
-          includeSegmentation: {},
+    const ficheIndicateurChartImageFiles =
+      fiche.indicateurs
+        ?.map((indicateur) => {
+          const imageFile = indicateurChartImageFiles.find(
+            (imageFile) => imageFile.indicateurId === indicateur.id
+          );
+          if (!imageFile) {
+            this.logger.error(
+              `Image file not found for indicateur ${indicateur.id}`
+            );
+            return null;
+          }
+          return imageFile;
         })
-      ) ?? []
-    );
-    this.logTiming(
-      `Fiche indicateurs: chart data retrieval for ${fiche.titre}`,
-      indicateursDataStartTime,
-      {
-        indicateursCount: indicateurWithValeursAndChartData.length,
-      }
-    );
-
-    if (indicateurWithValeursAndChartData.length) {
-      const indicateurWithValeursAndChartDataChunks = chunk(
-        indicateurWithValeursAndChartData,
+        .filter((imageFile) => imageFile !== null) ?? [];
+    if (ficheIndicateurChartImageFiles.length) {
+      const ficheIndicateurChartImageFilesChunks = chunk(
+        ficheIndicateurChartImageFiles,
         template.max_fiche_indicateurs_per_slide
       );
 
-      for (const indicateurWithValeursAndChartDataChunk of indicateurWithValeursAndChartDataChunks) {
+      for (const ficheIndicateurChartImageFilesChunk of ficheIndicateurChartImageFilesChunks) {
         this.addSlide({
           presentation,
           template,
@@ -1106,34 +1149,35 @@ export class GenerateReportsService {
           callback: async (slide) => {
             const allElements = await slide.getAllElements();
 
-            await Promise.all(
-              indicateurWithValeursAndChartDataChunk.map(
-                (indicateurWithValeursAndChartData, iIndicateur) => {
-                  const imageName = `${
-                    ReportTemplateImagesEnum.IMG_FICHE_INDICATEUR_CHART_
-                  }${iIndicateur + 1}`;
-                  return this.renderChartToImageInSlide(
-                    slide,
-                    presentation,
-                    mediaDir,
-                    allElements,
-                    imageName,
-                    indicateurWithValeursAndChartData.chartData,
-                    'cover',
-                    `fiche_${fiche.id}_chart_${indicateurWithValeursAndChartData.indicateurValeurs.definition.id}`,
-                    (chartOption, width) => {
-                      this.indicateurChartService.adjustOptionsWithWidth(
-                        chartOption,
-                        width
-                      );
-                    }
-                  );
+            ficheIndicateurChartImageFilesChunk.forEach(
+              (ficheIndicateurChartImageFile, iIndicateur) => {
+                const imageName = `${
+                  ReportTemplateImagesEnum.IMG_FICHE_INDICATEUR_CHART_
+                }${iIndicateur + 1}`;
+                const imageElement = this.getImageElement(
+                  allElements,
+                  imageName
+                );
+                if (!imageElement) {
+                  this.logger.error(`Image element not found for ${imageName}`);
+                  return;
                 }
-              )
+                slide.modifyElement(imageName, [
+                  (element: XmlElement, relation?: XmlElement) => {
+                    if (!relation) {
+                      return;
+                    }
+                    ModifyImageHelper.setRelationTargetCover(
+                      ficheIndicateurChartImageFile.imageFile,
+                      presentation
+                    )(element, relation);
+                  },
+                ]);
+              }
             );
 
             for (
-              let iIndicateur = indicateurWithValeursAndChartDataChunk.length;
+              let iIndicateur = ficheIndicateurChartImageFilesChunk.length;
               iIndicateur < template.max_fiche_indicateurs_per_slide;
               iIndicateur++
             ) {
@@ -1173,7 +1217,6 @@ export class GenerateReportsService {
     const chartsDataStartTime = performance.now();
     const charts = await Promise.all(
       this.DONNEES_TERRITORIALES_INDICATEURS.map(async (configuration) => {
-        const chartDataStartTime = performance.now();
         const { chartData } =
           await this.indicateurChartService.getIndicateurValeursAndChartData({
             collectiviteId: args.collectivite.id,
@@ -1181,10 +1224,6 @@ export class GenerateReportsService {
             sources: configuration.sources,
             includeSegmentation: configuration.segmentation,
           });
-        this.logTiming(
-          `Données territoriales: chart data for ${configuration.identifiantReferentiel}`,
-          chartDataStartTime
-        );
         return {
           configuration,
           chartData,
@@ -1253,6 +1292,114 @@ export class GenerateReportsService {
     });
   }
 
+  private async getIndicateurChartSize(
+    templateConfig: ReportTemplateConfig,
+    outputDir: string,
+    mediaDir: string
+  ): Promise<{ width: number; height: number } | null> {
+    if (!templateConfig.slides['fiche_indicateurs_slide']) {
+      return null;
+    }
+    // TODO: find a better way to get the size of the indicateur chart size to be used
+    // For now, we generate a temporary presentation to get the size of the indicateur chart
+
+    const automizer = new Automizer({
+      templateDir: path.join(__dirname, 'docs'),
+      autoImportSlideMasters: false,
+      outputDir: outputDir,
+      mediaDir,
+      removeExistingSlides: true,
+      showIntegrityInfo: false,
+      assertRelatedContents: true,
+      cleanup: false,
+      compression: 7,
+    });
+
+    let indicateurChartSize: { width: number; height: number } | null = null;
+
+    const presentation = automizer
+      .loadRoot(templateConfig.templatePath)
+      .load(templateConfig.templatePath, templateConfig.key)
+      .addSlide(
+        templateConfig.key,
+        templateConfig.slides['fiche_indicateurs_slide'],
+        async (slide) => {
+          const allElements = await slide.getAllElements();
+          const firstIndicateurImageName = `${ReportTemplateImagesEnum.IMG_FICHE_INDICATEUR_CHART_}1`;
+          const imageElement = this.getImageElement(
+            allElements,
+            firstIndicateurImageName
+          );
+          if (!imageElement) {
+            this.logger.error(
+              `Image element not found ${firstIndicateurImageName}`
+            );
+            return null;
+          }
+          indicateurChartSize = {
+            width:
+              this.emuToPx(imageElement.position.cx ?? 0) *
+              this.CHART_SCALE_FACTOR,
+            height:
+              this.emuToPx(imageElement.position.cy ?? 0) *
+              this.CHART_SCALE_FACTOR,
+          };
+          this.logger.log(
+            `Indicateur chart size: ${indicateurChartSize.width}x${indicateurChartSize.height} pixels`
+          );
+        }
+      );
+
+    await presentation.write('indicateurs.pptx');
+    return indicateurChartSize;
+  }
+
+  private async writeIndicateurChartImageFileAndLoadMedia(args: {
+    presentation: Automizer;
+    mediaDir: string;
+    indicateurId: number;
+    collectivite: CollectiviteAvecType;
+    personnalisationReponses: PersonnalisationReponsesPayload;
+    chartSize: { width: number; height: number };
+  }) {
+    const {
+      presentation,
+
+      mediaDir,
+      indicateurId,
+      collectivite,
+      personnalisationReponses,
+      chartSize,
+    } = args;
+
+    const { chartData } =
+      await this.indicateurChartService.getIndicateurValeursAndChartData({
+        collectiviteId: collectivite.id,
+        indicateurId,
+        collectiviteAvecType: collectivite,
+        personnalisationReponses,
+        includeReferenceValeurs: true,
+        includeMoyenne: false,
+        includeSegmentation: {},
+        chartSize,
+      });
+
+    const buffer = await this.echartsService.renderToPngBuffer({
+      width: chartSize.width,
+      height: chartSize.height,
+      options: chartData,
+    });
+    const imageFile = `indicateur_chart_${indicateurId}.png`;
+    writeFileSync(`${mediaDir}/${imageFile}`, buffer as Uint8Array);
+
+    presentation.loadMedia(imageFile);
+
+    return {
+      indicateurId,
+      imageFile,
+    };
+  }
+
   async generatePlanReport(
     request: ReportGenerationInput,
     user: AuthenticatedUser
@@ -1263,6 +1410,8 @@ export class GenerateReportsService {
     >
   > {
     const overallStartTime = performance.now();
+    // Reset timing categories for this report generation
+    this.timingCategories.clear();
     let mediaDir = '';
     let outputDir = '';
     let reportPath = '';
@@ -1330,7 +1479,7 @@ export class GenerateReportsService {
         showIntegrityInfo: false, // WARNING: changing this to true throw some weird errors on generated images not beeing found
         assertRelatedContents: true,
         cleanup: true,
-        compression: 9,
+        compression: 7,
         verbosity: 1,
         statusTracker: (status: StatusTracker) => {
           this.logger.log(status.info + ' (' + status.share + '%)');
@@ -1424,6 +1573,57 @@ export class GenerateReportsService {
         `Fiches to be included in the report: ${filteredFiches.length}`
       );
 
+      const filteredFichesIndicateurs = Array.from(
+        new Set(
+          filteredFiches
+            .map(
+              (fiche) =>
+                fiche.indicateurs?.map((indicateur) => indicateur.id) || []
+            )
+            .flat()
+        )
+      );
+      const indicateurChartSizeStartTime = performance.now();
+      // Get the size of the indicateur chart to be used
+      // Allow to parallelize the writing of the indicateur chart image files
+      const indicateurChartSize = await this.getIndicateurChartSize(
+        templateConfig,
+        outputDir,
+        mediaDir
+      );
+      this.logTiming(
+        `Indicateur chart size retrieval`,
+        indicateurChartSizeStartTime,
+        undefined,
+        'Indicateur chart size retrieval'
+      );
+      const indicateursDataStartTime = performance.now();
+
+      let indicateurChartImageFiles: {
+        indicateurId: number;
+        imageFile: string;
+      }[] = [];
+      if (request.includeFicheIndicateursSlides && indicateurChartSize) {
+        indicateurChartImageFiles = await Promise.all(
+          filteredFichesIndicateurs?.map((indicateurId) =>
+            this.writeIndicateurChartImageFileAndLoadMedia({
+              indicateurId,
+              collectivite,
+              personnalisationReponses,
+              presentation,
+              mediaDir,
+              chartSize: indicateurChartSize,
+            })
+          ) ?? []
+        );
+      }
+      this.logTiming(
+        `Fiche indicateurs: chart data retrieval & image file writing`,
+        indicateursDataStartTime,
+        undefined,
+        'Fiche indicateurs: chart data retrieval & image file writing'
+      );
+
       const axesAndFichesStartTime = performance.now();
       for (const axe of axes) {
         const axeSlideStartTime = performance.now();
@@ -1440,7 +1640,12 @@ export class GenerateReportsService {
           template: templateConfig,
           logo,
         });
-        this.logTiming(`Axe summary slide for ${axe.nom}`, axeSlideStartTime);
+        this.logTiming(
+          `Axe summary slide for ${axe.nom}`,
+          axeSlideStartTime,
+          undefined,
+          'Axe summary slide'
+        );
 
         const axeFilteredFiches = filteredFiches.filter((fiche) =>
           fiche.axes?.some((a) => a.id === axe.id)
@@ -1451,29 +1656,31 @@ export class GenerateReportsService {
           const ficheTextReplacementsInfo =
             this.getFicheTextReplacementsInfos(fiche);
 
-          await this.addFicheInfosSlides({
+          this.addFicheInfosSlides({
             ...slideGenerationArgs,
             ficheTextReplacementsInfo,
             fiche,
           });
           this.logTiming(
             `Fiche info slide for ${fiche.titre}`,
-            ficheInfoStartTime
+            ficheInfoStartTime,
+            undefined,
+            'Fiche info slide'
           );
 
           if (request.includeFicheIndicateursSlides) {
             const ficheIndicateursStartTime = performance.now();
-            await this.addFicheIndicateursSlides({
+            this.addFicheIndicateursSlides({
               ...slideGenerationArgs,
-              collectivite,
-              personnalisationReponses,
               ficheTextReplacementsInfo,
-              mediaDir,
               fiche,
+              indicateurChartImageFiles,
             });
             this.logTiming(
               `Fiche indicateurs slides for ${fiche.titre}`,
-              ficheIndicateursStartTime
+              ficheIndicateursStartTime,
+              undefined,
+              'Fiche indicateurs slides'
             );
           }
         }
@@ -1503,12 +1710,20 @@ export class GenerateReportsService {
       this.logger.log(`Report summary: ${JSON.stringify(reportSummary)}`);
       reportPath = path.join(outputDir, reportName);
       this.logger.log(`Report path: ${reportPath}`);
-      this.logTiming('Total report generation', overallStartTime);
+      const totalTime = this.logTiming(
+        'Total report generation',
+        overallStartTime
+      );
+      this.logAggregatedTimings(totalTime);
     } catch (err) {
       this.logger.error(
         `Error generating plan report: ${getErrorMessage(err)}`
       );
-      this.logTiming('Total report generation (failed)', overallStartTime);
+      const totalTime = this.logTiming(
+        'Total report generation (failed)',
+        overallStartTime
+      );
+      this.logAggregatedTimings(totalTime);
       error = GenerateReportErrorType.SERVER_ERROR;
     } finally {
       if (mediaDir) {
