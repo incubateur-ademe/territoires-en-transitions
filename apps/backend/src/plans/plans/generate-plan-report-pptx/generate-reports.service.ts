@@ -76,6 +76,16 @@ export class GenerateReportsService {
   /** PowerPoint EMU precision (1 px = 9525 EMU) */
   private readonly EMU_PER_PX = 914400 / 96; // 9525
 
+  private logTiming(operation: string, startTime: number, details?: object) {
+    const duration = performance.now() - startTime;
+    const message = `[TIMING] ${operation} took ${duration.toFixed(2)}ms`;
+    if (details) {
+      this.logger.log(`${message} - ${JSON.stringify(details)}`);
+    } else {
+      this.logger.log(message);
+    }
+  }
+
   /** Convert EMU → pixels */
   private emuToPx(emu: number): number {
     return Math.round(emu / this.EMU_PER_PX);
@@ -336,15 +346,26 @@ export class GenerateReportsService {
 
     adjustChartOptionWithSize?.(chartOption, elementPxWidth, elementPxHeight);
 
+    const chartRenderStartTime = performance.now();
     const buffer = await this.echartsService.renderToPngBuffer({
       width: elementPxWidth,
       height: elementPxHeight,
       options: chartOption,
     });
+    this.logTiming(
+      `Chart rendering to PNG (${imageElementName})`,
+      chartRenderStartTime,
+      {
+        width: elementPxWidth,
+        height: elementPxHeight,
+      }
+    );
     const imageFile = `${
       imageFilePrefix ? `${imageFilePrefix}_` : ''
     }${imageElementName}.png`;
+    const fileWriteStartTime = performance.now();
     writeFileSync(`${mediaDir}/${imageFile}`, buffer as Uint8Array);
+    this.logTiming(`Image file write (${imageFile})`, fileWriteStartTime);
     presentation.loadMedia(imageFile);
     this.logger.log(`Image file loaded: ${imageFile}`);
 
@@ -383,7 +404,10 @@ export class GenerateReportsService {
       GenerateReportErrorType
     >
   > {
+    const getPlanDataStartTime = performance.now();
+    const planStartTime = performance.now();
     const plan = await this.planService.findById(planId, user);
+    this.logTiming('Plan findById', planStartTime);
     if (!plan.success) {
       return {
         success: false,
@@ -391,15 +415,26 @@ export class GenerateReportsService {
       };
     }
 
+    const collectiviteStartTime = performance.now();
     const collectivite = await this.collectiviteService.getCollectiviteAvecType(
       plan.data.collectiviteId
     );
+    this.logTiming(
+      'Collectivite getCollectiviteAvecType',
+      collectiviteStartTime
+    );
 
+    const personnalisationsStartTime = performance.now();
     const personnalisationReponses =
       await this.personnalisationsService.getPersonnalisationReponses(
         plan.data.collectiviteId
       );
+    this.logTiming(
+      'Personnalisations getPersonnalisationReponses',
+      personnalisationsStartTime
+    );
 
+    const fichesStartTime = performance.now();
     const fiches = await this.fichesService.listFichesQuery(
       plan.data.collectiviteId,
       {
@@ -410,7 +445,9 @@ export class GenerateReportsService {
         limit: 'all',
       }
     );
-
+    this.logTiming('Fiches listFichesQuery', fichesStartTime, {
+      count: fiches.count,
+    });
     this.logger.log(`Found ${fiches.count} fiches for plan ${planId}`);
 
     const indicateursCount = new Set(
@@ -464,6 +501,10 @@ export class GenerateReportsService {
     };
 
     this.logger.log(`Plan general info: ${JSON.stringify(planGeneralInfo)}`);
+    this.logTiming('getPlanData total', getPlanDataStartTime, {
+      fichesCount: fiches.count,
+      axesCount: axes.length,
+    });
 
     return {
       success: true,
@@ -579,11 +620,13 @@ export class GenerateReportsService {
     const { presentation, mediaDir, fiches, planGeneralInfo, template, logo } =
       args;
 
+    const countByStartTime = performance.now();
     const statutCountBy = await this.countByService.countByPropertyWithFiches(
       fiches,
       'statut',
       {}
     );
+    this.logTiming('Plan summary: countBy statut', countByStartTime);
     const statutPieChartOption = getPieChartOption({
       displayItemsLabel: true,
       countByResponse: statutCountBy,
@@ -638,6 +681,7 @@ export class GenerateReportsService {
     const { presentation, mediaDir, fiches, planGeneralInfo, template, logo } =
       args;
 
+    const countByForEachAxeStartTime = performance.now();
     const statutCountByForEachAxe =
       await this.countByService.countByPropertyForEachAxeWithFiches(
         planGeneralInfo.PLAN_ID,
@@ -645,6 +689,10 @@ export class GenerateReportsService {
         'statut',
         {}
       );
+    this.logTiming(
+      'Plan progress: countByForEachAxe statut',
+      countByForEachAxeStartTime
+    );
 
     if (!template.slides.progression_slide) {
       return statutCountByForEachAxe;
@@ -1019,6 +1067,7 @@ export class GenerateReportsService {
       return;
     }
 
+    const indicateursDataStartTime = performance.now();
     const indicateurWithValeursAndChartData = await Promise.all(
       fiche.indicateurs?.map((indicateur) =>
         this.indicateurChartService.getIndicateurValeursAndChartData({
@@ -1031,6 +1080,13 @@ export class GenerateReportsService {
           includeSegmentation: {},
         })
       ) ?? []
+    );
+    this.logTiming(
+      `Fiche indicateurs: chart data retrieval for ${fiche.titre}`,
+      indicateursDataStartTime,
+      {
+        indicateursCount: indicateurWithValeursAndChartData.length,
+      }
     );
 
     if (indicateurWithValeursAndChartData.length) {
@@ -1114,8 +1170,10 @@ export class GenerateReportsService {
       slideType: 'donnees_territoriales_section_slide',
     });
 
+    const chartsDataStartTime = performance.now();
     const charts = await Promise.all(
       this.DONNEES_TERRITORIALES_INDICATEURS.map(async (configuration) => {
+        const chartDataStartTime = performance.now();
         const { chartData } =
           await this.indicateurChartService.getIndicateurValeursAndChartData({
             collectiviteId: args.collectivite.id,
@@ -1123,11 +1181,22 @@ export class GenerateReportsService {
             sources: configuration.sources,
             includeSegmentation: configuration.segmentation,
           });
+        this.logTiming(
+          `Données territoriales: chart data for ${configuration.identifiantReferentiel}`,
+          chartDataStartTime
+        );
         return {
           configuration,
           chartData,
         };
       })
+    );
+    this.logTiming(
+      'Données territoriales: all charts data retrieval',
+      chartsDataStartTime,
+      {
+        count: charts.length,
+      }
     );
     this.logger.log(`Retrieved charts data for donnees territoriales`);
 
@@ -1193,6 +1262,7 @@ export class GenerateReportsService {
       GenerateReportErrorType
     >
   > {
+    const overallStartTime = performance.now();
     let mediaDir = '';
     let outputDir = '';
     let reportPath = '';
@@ -1203,9 +1273,13 @@ export class GenerateReportsService {
     );
 
     try {
+      const templateConfigStartTime = performance.now();
       const templateConfig = this.SLIDE_TEMPLATES_CONFIG[request.templateKey];
+      this.logTiming('Template config retrieval', templateConfigStartTime);
 
+      const planDataStartTime = performance.now();
       const planDataResult = await this.getPlanData(request.planId, user);
+      this.logTiming('Plan data retrieval', planDataStartTime);
       if (!planDataResult.success) {
         return {
           success: false,
@@ -1222,6 +1296,7 @@ export class GenerateReportsService {
         personnalisationReponses,
       } = planDataResult.data;
 
+      const permissionStartTime = performance.now();
       const isAllowed = await this.permissionService.isAllowed(
         user,
         PermissionOperationEnum['PLANS.READ'],
@@ -1229,6 +1304,7 @@ export class GenerateReportsService {
         plan.collectiviteId,
         true
       );
+      this.logTiming('Permission check', permissionStartTime);
       if (!isAllowed) {
         return {
           success: false,
@@ -1236,12 +1312,15 @@ export class GenerateReportsService {
         };
       }
 
+      const setupStartTime = performance.now();
       const generationId = crypto.randomUUID();
       mediaDir = path.join(__dirname, `media/${generationId}`);
       outputDir = path.join(__dirname, `output/${generationId}`);
       mkdirSync(mediaDir, { recursive: true });
       mkdirSync(outputDir, { recursive: true });
+      this.logTiming('Directory setup', setupStartTime);
 
+      const automizerStartTime = performance.now();
       const automizer = new Automizer({
         templateDir: path.join(__dirname, 'docs'),
         autoImportSlideMasters: true,
@@ -1261,12 +1340,15 @@ export class GenerateReportsService {
       const presentation = automizer
         .loadRoot(templateConfig.templatePath)
         .load(templateConfig.templatePath, templateConfig.key);
+      this.logTiming('Automizer initialization', automizerStartTime);
 
+      const logoStartTime = performance.now();
       const logo = await this.loadCollectiviteLogo(
         mediaDir,
         presentation,
         request.logoFile
       );
+      this.logTiming('Logo loading', logoStartTime);
 
       const slideGenerationArgs: Omit<SlideGenerationArgs, 'slideType'> = {
         presentation,
@@ -1275,6 +1357,7 @@ export class GenerateReportsService {
         logo,
       };
 
+      const initialSlidesStartTime = performance.now();
       this.addSlide({
         ...slideGenerationArgs,
         slideType: 'title_slide',
@@ -1292,32 +1375,47 @@ export class GenerateReportsService {
         ...slideGenerationArgs,
         slideType: 'overview_section_slide',
       });
+      this.logTiming(
+        'Initial slides (title, TOC, overview)',
+        initialSlidesStartTime
+      );
 
+      const planSummaryStartTime = performance.now();
       await this.addPlanSummarySlide({
         ...slideGenerationArgs,
         mediaDir,
         fiches,
       });
+      this.logTiming('Plan summary slide', planSummaryStartTime);
 
+      const planProgressStartTime = performance.now();
       const statutCountByForEachAxe = await this.addPlanProgressSlide({
         ...slideGenerationArgs,
         mediaDir,
         fiches,
       });
+      this.logTiming('Plan progress slide', planProgressStartTime);
 
       if (plan.type?.type === this.PCAET_TYPE) {
+        const donneesTerritorialesStartTime = performance.now();
         await this.addDonneesTerritorialesSlides({
           ...slideGenerationArgs,
           mediaDir,
           collectivite,
           personnalisationReponses,
         });
+        this.logTiming(
+          'Données territoriales slides',
+          donneesTerritorialesStartTime
+        );
       }
 
+      const axesSectionStartTime = performance.now();
       this.addSlide({
         ...slideGenerationArgs,
         slideType: 'axes_section_slide',
       });
+      this.logTiming('Axes section slide', axesSectionStartTime);
 
       const filteredFiches = request.ficheIds
         ? fiches.filter((fiche) => request.ficheIds?.includes(fiche.id))
@@ -1326,7 +1424,9 @@ export class GenerateReportsService {
         `Fiches to be included in the report: ${filteredFiches.length}`
       );
 
+      const axesAndFichesStartTime = performance.now();
       for (const axe of axes) {
+        const axeSlideStartTime = performance.now();
         await this.addAxesSummarySlide({
           presentation,
           mediaDir,
@@ -1340,11 +1440,14 @@ export class GenerateReportsService {
           template: templateConfig,
           logo,
         });
+        this.logTiming(`Axe summary slide for ${axe.nom}`, axeSlideStartTime);
 
         const axeFilteredFiches = filteredFiches.filter((fiche) =>
           fiche.axes?.some((a) => a.id === axe.id)
         );
+        const fichesForAxeStartTime = performance.now();
         for (const fiche of axeFilteredFiches) {
+          const ficheInfoStartTime = performance.now();
           const ficheTextReplacementsInfo =
             this.getFicheTextReplacementsInfos(fiche);
 
@@ -1353,8 +1456,13 @@ export class GenerateReportsService {
             ficheTextReplacementsInfo,
             fiche,
           });
+          this.logTiming(
+            `Fiche info slide for ${fiche.titre}`,
+            ficheInfoStartTime
+          );
 
           if (request.includeFicheIndicateursSlides) {
+            const ficheIndicateursStartTime = performance.now();
             await this.addFicheIndicateursSlides({
               ...slideGenerationArgs,
               collectivite,
@@ -1363,24 +1471,44 @@ export class GenerateReportsService {
               mediaDir,
               fiche,
             });
+            this.logTiming(
+              `Fiche indicateurs slides for ${fiche.titre}`,
+              ficheIndicateursStartTime
+            );
           }
         }
+        this.logTiming(
+          `All fiches for axe ${axe.nom} (${axeFilteredFiches.length} fiches)`,
+          fichesForAxeStartTime
+        );
       }
+      this.logTiming(
+        `All axes and fiches slides (${axes.length} axes)`,
+        axesAndFichesStartTime
+      );
 
+      const ressourcesSlideStartTime = performance.now();
       this.addSlide({
         ...slideGenerationArgs,
         slideType: 'ressources_slide',
       });
+      this.logTiming('Ressources slide', ressourcesSlideStartTime);
 
+      const writeReportStartTime = performance.now();
       reportName = this.getReportName(planGeneralInfo);
       const reportSummary = await automizer.write(reportName);
+      this.logTiming('Report file writing', writeReportStartTime, {
+        reportName,
+      });
       this.logger.log(`Report summary: ${JSON.stringify(reportSummary)}`);
       reportPath = path.join(outputDir, reportName);
       this.logger.log(`Report path: ${reportPath}`);
+      this.logTiming('Total report generation', overallStartTime);
     } catch (err) {
       this.logger.error(
         `Error generating plan report: ${getErrorMessage(err)}`
       );
+      this.logTiming('Total report generation (failed)', overallStartTime);
       error = GenerateReportErrorType.SERVER_ERROR;
     } finally {
       if (mediaDir) {
