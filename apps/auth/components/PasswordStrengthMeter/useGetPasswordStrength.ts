@@ -1,16 +1,18 @@
 'use client';
 
-import {zxcvbn, zxcvbnOptions} from '@zxcvbn-ts/core';
-import {useEffect} from 'react';
+import { zxcvbn, zxcvbnOptions } from '@zxcvbn-ts/core';
+import { useEffect } from 'react';
 
 // certains mots spécifiques du site qui vont faire baisser le score du mdp
 const UNSAFE_WORDS = ['ademe', 'tet', 'territoire', 'transition'];
+
+const PASSWORD_MIN_STRENGTH = 4;
 
 /**
  * Charge les options et expose la fonction permettant de contrôler la
  * robustesse des mots de passe.
  */
-export const useGetPasswordStrength = () => {
+const useGetPasswordStrength = () => {
   useEffect(() => {
     loadOptions();
   }, []);
@@ -58,3 +60,14 @@ const getPasswordStrength = (
   const userInputs = [...otherValues, ...UNSAFE_WORDS];
   return zxcvbn(password, userInputs);
 };
+
+/**
+ * Vérifie si le score est suffisant pour le mot de passe
+ */
+const isScoreStrongEnough = (password: string, otherValues: string[]) => {
+  const score = getPasswordStrength(password, otherValues)?.score || 0;
+
+  return score >= PASSWORD_MIN_STRENGTH;
+};
+
+export { isScoreStrongEnough, PASSWORD_MIN_STRENGTH, useGetPasswordStrength };

@@ -7,7 +7,10 @@ import {
   LoginData,
   LoginView,
 } from '../../components/Login';
-import { useGetPasswordStrength } from '../../components/PasswordStrengthMeter/useGetPasswordStrength';
+import {
+  isScoreStrongEnough,
+  useGetPasswordStrength,
+} from '../../components/PasswordStrengthMeter/useGetPasswordStrength';
 import { ResendFunction, VerifyOTPData } from '../../components/VerifyOTP';
 
 /**
@@ -241,5 +244,6 @@ export const useLoginState = ({
     isLoading,
     setIsLoading,
     getPasswordStrength,
+    isScoreStrongEnough,
   };
 };
