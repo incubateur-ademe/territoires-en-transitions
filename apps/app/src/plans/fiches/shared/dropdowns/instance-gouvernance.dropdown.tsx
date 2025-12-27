@@ -1,0 +1,84 @@
+import { useCreateInstanceGouvernanceTag } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-create-instance-gouvernance-tag';
+import { useDeleteInstanceGouvernance } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-delete-instance-gouvernance';
+import { useListInstanceGouvernanceTags } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-instance-gouvernance-tags';
+import { useUpdateInstanceGouvernanceTag } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-instance-gouvernance-tag';
+import { InstanceGouvernance } from '@tet/domain/collectivites';
+import { SelectTagsGeneric } from '@/app/ui/dropdownLists/tags';
+
+type LightInstanceGouvernance = Omit<
+  InstanceGouvernance,
+  'createdAt' | 'createdBy'
+>;
+
+type GenericProps = {
+  collectiviteId: number;
+  values?: number[] | null;
+  onChange: (tags: LightInstanceGouvernance[]) => void;
+};
+type Props = GenericProps &
+  (
+    | { canEditTags?: true; ficheId: number }
+    | { canEditTags: false; ficheId?: null }
+  );
+export const InstanceGouvernanceDropdown = ({
+  canEditTags = true,
+  collectiviteId,
+  values,
+  onChange,
+  ficheId,
+}: Props) => {
+  const { instanceGouvernanceTags } =
+    useListInstanceGouvernanceTags(collectiviteId);
+  const { mutate: createInstanceGouvernanceTag } =
+    useCreateInstanceGouvernanceTag(collectiviteId);
+  const { mutate: updateInstanceGouvernanceTag } =
+    useUpdateInstanceGouvernanceTag(collectiviteId);
+  const { mutate: deleteInstanceGouvernance } =
+    useDeleteInstanceGouvernance(collectiviteId);
+
+  const selectedTags = (values ?? [])
+    .map((id) => instanceGouvernanceTags.find((tag) => tag.id === id))
+    .filter((tag): tag is InstanceGouvernance => tag !== undefined);
+
+  return (
+    <SelectTagsGeneric
+      tags={instanceGouvernanceTags}
+      values={selectedTags}
+      onChange={(tags) => onChange(tags)}
+      canEditTags={canEditTags}
+      onDelete={({ id }) =>
+        deleteInstanceGouvernance({
+          id,
+          collectiviteId,
+        })
+      }
+      onCreate={
+        ficheId
+          ? async (tag) => {
+              const result = await createInstanceGouvernanceTag({
+                ...tag,
+                actionId: ficheId,
+              });
+              return {
+                id: result.id,
+                nom: result.nom,
+                collectiviteId: result.collectiviteId,
+              };
+            }
+          : undefined
+      }
+      onUpdate={async (tag) => {
+        const result = await updateInstanceGouvernanceTag({
+          id: tag.id,
+          collectiviteId,
+          nom: tag.nom,
+        });
+        return {
+          id: result.id,
+          nom: result.nom,
+          collectiviteId: result.collectiviteId,
+        };
+      }}
+    />
+  );
+};

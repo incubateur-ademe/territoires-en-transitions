@@ -26,9 +26,9 @@ export type TrpcErrorHandlerConfig<SpecificError extends string> = {
  * Crée l'enum combinant les codes erreur communs et ceux fournis
  */
 export function createErrorsEnum<SpecificError extends string>(
-  specificErrors: readonly [SpecificError, ...SpecificError[]]
+  specificErrors?: readonly [SpecificError, ...SpecificError[]]
 ) {
-  return createEnumObject([...specificErrors, ...commonErrors]);
+  return createEnumObject([...(specificErrors || []), ...commonErrors]);
 }
 
 /**

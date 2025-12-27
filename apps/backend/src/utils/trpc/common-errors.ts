@@ -8,6 +8,7 @@ export const commonErrors = [
   'SERVER_ERROR',
   'UNAUTHORIZED',
   'DATABASE_ERROR',
+  'NOT_FOUND',
 ] as const;
 export const CommonErrorEnum = createEnumObject(commonErrors);
 export type CommonError = (typeof commonErrors)[number];
@@ -27,5 +28,9 @@ export const COMMON_ERROR_CONFIG: ErrorConfigMap<CommonError> = {
   DATABASE_ERROR: {
     code: 'INTERNAL_SERVER_ERROR' as const,
     message: "Une erreur de base de données s'est produite",
+  },
+  NOT_FOUND: {
+    code: 'NOT_FOUND' as const,
+    message: "La ressource demandée n'existe pas",
   },
 };

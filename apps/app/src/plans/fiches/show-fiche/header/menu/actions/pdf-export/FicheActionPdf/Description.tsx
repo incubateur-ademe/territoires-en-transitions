@@ -81,7 +81,7 @@ const Description = ({ fiche }: { fiche: FicheWithRelations }) => {
 
         <Section
           title="Instances de gouvernance :"
-          value={instanceGouvernance}
+          value={instanceGouvernance?.map((tag) => tag.nom).join(', ') ?? ''}
         />
       </Stack>
     </Card>

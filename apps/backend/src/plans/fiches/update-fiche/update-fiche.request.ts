@@ -5,6 +5,7 @@ import {
   partenaireTagSchema,
   serviceTagSchema,
   structureTagSchema,
+  instanceGouvernanceTagSchema,
 } from '@tet/domain/collectivites';
 import { indicateurDefinitionSchema } from '@tet/domain/indicateurs';
 import { axeSchema, ficheSchema, ficheSchemaUpdate } from '@tet/domain/plans';
@@ -70,6 +71,10 @@ export const updateFicheRequestSchema = ficheSchemaUpdate.extend({
   fichesLiees: ficheSchema.pick({ id: true }).array().nullish(),
   effetsAttendus: effetAttenduSchema.pick({ id: true }).array().nullish(),
   libreTags: libreTagSchema.pick({ id: true }).array().nullish(),
+  instanceGouvernance: instanceGouvernanceTagSchema
+    .pick({ id: true })
+    .array()
+    .nullish(),
 });
 
 export type UpdateFicheRequest = z.infer<typeof updateFicheRequestSchema>;
