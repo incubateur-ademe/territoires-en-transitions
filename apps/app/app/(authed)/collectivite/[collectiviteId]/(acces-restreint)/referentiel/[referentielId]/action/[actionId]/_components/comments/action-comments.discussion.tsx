@@ -2,8 +2,8 @@ import { canCreateDiscussion } from '@/app/referentiels/actions/comments/helpers
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { DiscussionWithMessages } from '@tet/domain/collectivites';
 import classNames from 'classnames';
-import ActionCommentInput from './action-comments.input';
 import ActionCommentsItemsList from './action-comments.items-list';
+import ActionNewDiscussionInput from './action-new-discussion-input';
 import { useAddDiscussion } from './hooks/use-add-discussion';
 
 export type Props = {
@@ -42,7 +42,10 @@ const ActionCommentDiscussion = ({
           className={classNames({ 'ml-10': discussion.messages.length > 0 })}
         >
           {canCreateDiscussion(currentCollectivite) && (
-            <ActionCommentInput placeholder="Répondre" onSave={handleSave} />
+            <ActionNewDiscussionInput
+              placeholder="Répondre"
+              onSave={handleSave}
+            />
           )}
         </div>
       )}

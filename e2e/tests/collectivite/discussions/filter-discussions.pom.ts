@@ -7,7 +7,7 @@ export class FilterDiscussionsPom {
   constructor(readonly page: Page) {
     this.page = page;
     const discussionPanel = page.locator(
-      '[data-test="ActionDiscussionsPanel"]'
+      '[data-test="ActionCommentsSidePanelContent"]'
     );
     // The selects are within the panel - using more specific selectors
     this.orderBySelect = discussionPanel
@@ -20,16 +20,10 @@ export class FilterDiscussionsPom {
 
   async closeFirstComment() {
     await this.page
-      .locator('button')
-      .filter({ hasNotText: 'Commentaires ouverts' })
-      .filter({ hasText: 'Ouvert' })
+      .getByText('Troisième commentaire sur la mesure')
       .first()
-      .click();
-    await this.page
-      .locator('button')
-      .filter({ hasText: 'Fermé' })
-      .first()
-      .click();
+      .hover();
+    await this.page.getByRole('button', { name: 'Fermer' }).first().click();
   }
 
   async selectStatus(status: string) {
@@ -54,7 +48,7 @@ export class FilterDiscussionsPom {
   async filterAction(actionId: string) {
     await this.page
       .locator('button')
-      .filter({ hasText: 'Mesures et toutes les sous-mesures' })
+      .filter({ hasText: actionId.substring(0, 4) })
       .first()
       .click();
     await this.page

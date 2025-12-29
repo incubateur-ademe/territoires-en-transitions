@@ -8,9 +8,9 @@ import { usePrevAndNextActionLinks } from '@/app/referentiels/actions/use-prev-a
 import { ReferentielProvider } from '@/app/referentiels/referentiel-context';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { isSousMesure, ReferentielId } from '@tet/domain/referentiels';
-import ActionCommentsPanel from '../action-comments.panel';
+import ActionCommentsSidePanelContent from '../action-comments-side-panel-content';
 
-// Component that wraps ActionCommentsPanel with ActionProvider and computes actionsAndSubActionsTitleList
+// Component that wraps ActionCommentsSidePanelContent with ActionProvider and computes actionsAndSubActionsTitleList
 function ActionCommentsPanelWrapper({
   referentielId,
   parentActionId,
@@ -35,8 +35,7 @@ function ActionCommentsPanelWrapper({
     : getActionsAndSubActions(action);
 
   return (
-    <ActionCommentsPanel
-      isDisplayedAsPanel={true}
+    <ActionCommentsSidePanelContent
       parentActionId={parentActionId}
       actionId={actionId}
       referentielId={referentielId}
