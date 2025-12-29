@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/nextjs';
+import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Badge } from '../Badge';
 import { Button } from '../Button';
 import { Card } from './Card';

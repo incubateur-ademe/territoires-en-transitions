@@ -1,5 +1,5 @@
 import { Dataset } from '@/app/ui/charts/echarts';
-import { Meta, StoryObj } from '@storybook/nextjs';
+import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { roundTo } from '@tet/domain/utils';
 import { GrapheSecteur } from './GrapheSecteur';
 

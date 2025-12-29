@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/nextjs';
+import { Meta } from '@storybook/nextjs-vite';
 import { ValiderAuditModal } from './valider-audit.button';
 
 export default {
