@@ -57,9 +57,10 @@ jobs:
     uses: ./.github/workflows/test-db-deploy.yml
     secrets: inherit
 
-  test-package-ui:
+  storybook:
     needs: [test-syntax]
-    uses: ./.github/workflows/test-package-ui.yml
+    uses: ./.github/workflows/ci-storybook.yml
+    secrets: inherit
 
   test-app:
     needs: [test-syntax]
