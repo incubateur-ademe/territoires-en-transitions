@@ -11,7 +11,7 @@ import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/Ba
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
 import { CollectiviteAccess } from '@tet/domain/users';
-import { ReactTable, TableHeaderCell } from '@tet/ui';
+import { ReactTable, TableCell, TableHeaderCell } from '@tet/ui';
 import { FichesListCellActions } from './cells/fiches-list.cell-actions';
 import { FichesListCellCheckbox } from './cells/fiches-list.cell-checkbox';
 import { FichesListCellDateFin } from './cells/fiches-list.cell-date-fin';
@@ -34,61 +34,90 @@ const columns = [
     id: 'select',
     header: () => <TableHeaderCell className="w-12" />,
     cell: ({ row, table }) => (
-      <FichesListCellCheckbox
-        ficheId={row.original.id}
-        selectAction={() => table.options.meta?.selectAction(row.original.id)}
-        selectedFicheIds={table.options.meta?.selectedFicheIds}
-      />
+      <TableCell>
+        <FichesListCellCheckbox
+          ficheId={row.original.id}
+          selectAction={() => table.options.meta?.selectAction(row.original.id)}
+          selectedFicheIds={table.options.meta?.selectedFicheIds}
+        />
+      </TableCell>
     ),
   }),
 
   columnHelper.accessor('titre', {
     header: () => <TableHeaderCell title="Titre" />,
     cell: (info) => (
-      <FichesListCellTitle title={info.getValue()} fiche={info.row.original} />
+      <TableCell>
+        <FichesListCellTitle
+          title={info.getValue()}
+          fiche={info.row.original}
+        />
+      </TableCell>
     ),
   }),
 
   columnHelper.accessor('plans', {
     header: () => <TableHeaderCell title="Plan" className="w-40 xl:w-60" />,
-    cell: (info) => <FichesListCellPlans plans={info.getValue()} />,
+    cell: (info) => (
+      <TableCell>
+        <FichesListCellPlans plans={info.getValue()} />
+      </TableCell>
+    ),
   }),
 
   columnHelper.accessor('statut', {
     header: () => <TableHeaderCell title="Statut" className="w-32" />,
     cell: (info) => {
       const statut = info.getValue();
-      return statut && <BadgeStatut statut={statut} size="sm" />;
+      return (
+        <TableCell>
+          {statut && <BadgeStatut statut={statut} size="sm" />}
+        </TableCell>
+      );
     },
   }),
 
   columnHelper.accessor('pilotes', {
     header: () => <TableHeaderCell title="Pilote" className="w-44" />,
-    cell: (info) => <FichesListCellPilotes pilotes={info.getValue()} />,
+    cell: (info) => (
+      <TableCell>
+        <FichesListCellPilotes pilotes={info.getValue()} />
+      </TableCell>
+    ),
   }),
 
   columnHelper.accessor('priorite', {
     header: () => <TableHeaderCell title="Priorité" className="w-24" />,
     cell: (info) => {
       const priorite = info.getValue();
-      return priorite && <BadgePriorite priorite={priorite} size="sm" />;
+      return (
+        <TableCell>
+          {priorite && <BadgePriorite priorite={priorite} size="sm" />}
+        </TableCell>
+      );
     },
   }),
 
   columnHelper.accessor('dateFin', {
     header: () => <TableHeaderCell title="Date de fin" className="w-32" />,
     cell: (info) => (
-      <FichesListCellDateFin
-        dateFin={info.getValue()}
-        statut={info.row.original.statut}
-      />
+      <TableCell>
+        <FichesListCellDateFin
+          dateFin={info.getValue()}
+          statut={info.row.original.statut}
+        />
+      </TableCell>
     ),
   }),
 
   columnHelper.display({
     id: 'actions',
     header: () => <TableHeaderCell className="w-16" icon="more-2-line" />,
-    cell: (info) => <FichesListCellActions fiche={info.row.original} />,
+    cell: (info) => (
+      <TableCell>
+        <FichesListCellActions fiche={info.row.original} />
+      </TableCell>
+    ),
   }),
 ];
 
