@@ -23,9 +23,5 @@ export default defineConfig(({ mode }) => ({
     include: ['src/**/*.{test,spec,e2e-spec}.{ts,mts,cts}'],
 
     reporters: ['default'],
-    coverage: {
-      reportsDirectory: '../../coverage/apps/backend',
-      provider: 'v8',
-    },
   },
 }));
