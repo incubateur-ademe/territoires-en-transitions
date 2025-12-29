@@ -1,0 +1,41 @@
+name: ci-storybook
+
+permissions:
+  contents: read
+  # pull-requests: write
+
+on:
+  workflow_call:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  publish-storybook:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/pnpm-install
+      - name: Publish Storybook to Chromatic, if necessary
+        run: pnpm nx affected -t chromatic -- --ci --project-token=${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+
+  test-storybook:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/pnpm-install
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Build Storybook
+        run: pnpm nx build-storybook ui -- --quiet
+      - run: |
+          pnpx concurrently -k -s first -n "SB,TEST" \
+            "pnpx http-server ./packages/ui/storybook-static --port 6007 --silent" \
+            "pnpx wait-on tcp:127.0.0.1:6007 && pnpm nx test-storybook ui --url http://127.0.0.1:6007"
+
