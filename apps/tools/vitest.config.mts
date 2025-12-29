@@ -24,9 +24,5 @@ export default defineConfig(({ mode }) => ({
     ],
 
     reporters: ['default'],
-    coverage: {
-      reportsDirectory: '../coverage/apps/tools',
-      provider: 'v8',
-    },
   },
 }));

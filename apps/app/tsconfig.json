@@ -4,15 +4,6 @@
   "include": [],
   "references": [
     {
-      "path": "../../packages/ui"
-    },
-    {
-      "path": "../../packages/domain"
-    },
-    {
-      "path": "../../packages/api"
-    },
-    {
       "path": "./tsconfig.project.json"
     }
   ]
