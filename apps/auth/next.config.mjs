@@ -3,11 +3,6 @@
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
-  // This avoids warnings when ProjectGraph isn't cached during build
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-
   typescript: {
     // We safely disable the internal type checking of Next.js because
     // all apps are type checked during the first steps of our CI.

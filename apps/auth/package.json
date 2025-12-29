@@ -2,17 +2,15 @@
   "name": "@tet/auth",
   "nx": {
     "name": "auth",
-    "projectType": "application",
     "targets": {
       "dev": {
-        "options": {
-          "port": 3003
-        }
-      },
-      "start": {
-        "options": {
-          "port": 3003
-        }
+        "executor": "@nx/next:server",
+          "options": {
+            "buildTarget": "auth:build",
+            "dev": true,
+            "port": 3003,
+            "webpack": true
+          }
       }
     }
   }

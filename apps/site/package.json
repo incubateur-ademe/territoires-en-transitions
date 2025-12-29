@@ -1,14 +1,14 @@
 {
-  "name": "@/app",
+  "name": "@tet/site",
   "nx": {
-    "name": "app",
+    "name": "site",
     "targets": {
       "dev": {
         "executor": "@nx/next:server",
         "options": {
-          "buildTarget": "app:build",
+          "buildTarget": "site:build",
           "dev": true,
-          "port": 3000,
+          "port": 3001,
           "webpack": true
         }
       }
