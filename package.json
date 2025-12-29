@@ -193,6 +193,7 @@
     "@storybook/addon-docs": "10.1.10",
     "@storybook/nextjs-vite": "10.1.10",
     "@storybook/test-runner": "0.24.2",
+    "@strapi/typescript-utils": "5.33.1",
     "@svgr/webpack": "8.1.0",
     "@swc/cli": "0.7.8",
     "@swc/core": "1.13.5",
