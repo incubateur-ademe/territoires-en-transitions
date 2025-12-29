@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/nextjs';
+import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Badge, BadgesContainer } from './index';
 
 const meta: Meta<typeof BadgesContainer> = {

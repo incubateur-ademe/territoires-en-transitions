@@ -1,5 +1,5 @@
 import { INDICATEURS_TRAJECTOIRE } from '@/app/indicateurs/trajectoires/trajectoire-constants';
-import { Meta, StoryObj } from '@storybook/nextjs';
+import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { roundTo } from '@tet/domain/utils';
 import { GrapheTousSecteurs } from './GrapheTousSecteurs';
 

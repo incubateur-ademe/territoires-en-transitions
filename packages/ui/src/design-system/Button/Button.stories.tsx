@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/nextjs';
+import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useRef } from 'react';
 
 import DoubleCheckIcon from '../../assets/DoubleCheckIcon';

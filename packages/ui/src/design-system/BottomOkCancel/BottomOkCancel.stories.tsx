@@ -1,5 +1,5 @@
 import { action } from 'storybook/actions';
-import { Meta, StoryObj } from '@storybook/nextjs';
+import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { BottomOkCancel } from './BottomOkCancel';
 
 const meta: Meta<typeof BottomOkCancel> = {

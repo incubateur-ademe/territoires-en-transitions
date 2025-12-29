@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/nextjs';
+import { Meta } from '@storybook/nextjs-vite';
 import { avancementToLabel } from '../../app/labels';
 import { actionAvancementColors } from '../../app/theme';
 import ProgressBar from './progress-bar';
