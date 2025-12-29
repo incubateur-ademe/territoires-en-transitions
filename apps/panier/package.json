@@ -1,14 +1,14 @@
 {
-  "name": "@/app",
+  "name": "@tet/panier",
   "nx": {
-    "name": "app",
+    "name": "panier",
     "targets": {
       "dev": {
         "executor": "@nx/next:server",
         "options": {
-          "buildTarget": "app:build",
+          "buildTarget": "panier:build",
           "dev": true,
-          "port": 3000,
+          "port": 3002,
           "webpack": true
         }
       }
