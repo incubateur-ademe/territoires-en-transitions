@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
  * Ref: https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy
  *
  */
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   // génère un id à chaque requête
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
 
@@ -15,66 +15,37 @@ export function middleware(request: NextRequest) {
   // Ref: https://github.com/vercel/next.js/issues/14221
   const scriptSrc =
     process.env.NODE_ENV === 'production'
-      ? `'self' 'nonce-${nonce}' 'strict-dynamic'`
+      ? //      https://github.com/vercel/next.js/discussions/54152
+        //      ? `'self' 'nonce-${nonce}'`
+        `'self' 'unsafe-inline'` // TODO: supprimer cette ligne et rétablir la précédente
       : `'self' 'unsafe-eval' 'unsafe-inline'`;
 
   // on autorise les styles `unsafe-inline` à cause notamment d'un problème avec le commposant next/image
   // Ref: https://github.com/vercel/next.js/issues/45184
   const styleSrc = `'self' 'unsafe-inline'`;
 
-  const googleWithFloodlight = {
-    imgSrc:
-      'https://ad.doubleclick.net https://ade.googlesyndication.com https://adservice.google.com https://www.googletagmanager.com',
-    connectSrc:
-      'www.googletagmanager.com https://pagead2.googlesyndication.com https://www.google.com https://www.googleadservices.com https://ad.doubleclick.net',
-    frameSrc: 'https://td.doubleclick.net https://www.googletagmanager.com',
-  };
-
   // options de la politique de sécurité
   const cspHeader = `
     default-src 'self';
-    script-src ${scriptSrc}
-      *.axept.io
-      *.posthog.com
-      client.crisp.chat
-      *.googletagmanager.com
-      *.adform.net
-      https://snap.licdn.com;
+    script-src ${scriptSrc} *.axept.io *.posthog.com client.crisp.chat;
     style-src ${styleSrc} client.crisp.chat;
-    img-src 'self' blob: data:
-      ytimg.com
-      px.ads.linkedin.com
-      ${googleWithFloodlight.imgSrc}
-      *.seadform.net
-      server.adform.net
-      https://axeptio.imgix.net
-      https://favicons.axept.io
-      https://image.crisp.chat
-      https://client.crisp.chat
-      https://px4.ads.linkedin.com
-      ${process.env.NEXT_PUBLIC_STRAPI_URL?.replace(
-        'strapiapp',
-        'media.strapiapp'
-      )};
+    img-src 'self' blob: data: axeptio.imgix.net image.crisp.chat client.crisp.chat;
     font-src 'self' client.crisp.chat;
     object-src 'none';
     connect-src 'self'
-      ${process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''}
-      ${process.env.NEXT_PUBLIC_STRAPI_URL ?? ''}
+      ${process.env.NEXT_PUBLIC_SUPABASE_URL}
+      ${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace('http', 'ws')}
       ws://${request.nextUrl.host}
-      *.posthog.com
-      *.axept.io
+      ws://127.0.0.1:54321
       client.crisp.chat
       wss://client.relay.crisp.chat
       wss://stream.relay.crisp.chat
-      https://px.ads.linkedin.com
-      ${googleWithFloodlight.connectSrc};
+      *.posthog.com
+      *.axept.io;
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
-    frame-src youtube.com www.youtube.com dailymotion.com www.dailymotion.com *.adform.net ${
-      googleWithFloodlight.frameSrc
-    };
+    frame-src 'none';
     block-all-mixed-content;
     upgrade-insecure-requests;
 `;

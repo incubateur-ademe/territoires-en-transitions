@@ -78,6 +78,3 @@ keyfile.json
 .github/instructions/nx.instructions.md
 .pnpm-store
 
-# Next.js generated files
-apps/app/next-env.d.ts
-apps/auth/next-env.d.ts
