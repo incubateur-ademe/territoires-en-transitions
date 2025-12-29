@@ -1,4 +1,4 @@
-import { Preview } from '@storybook/nextjs';
+import { Preview } from '@storybook/nextjs-vite';
 
 // charge les styles globaux
 import '../app/global.css';
