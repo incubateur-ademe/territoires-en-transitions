@@ -22,9 +22,5 @@ export default defineConfig({
     env: loadEnv('', process.cwd(), ''),
 
     reporters: ['default'],
-    coverage: {
-      reportsDirectory: '../../coverage/packages/api',
-      provider: 'v8',
-    },
   },
 });
