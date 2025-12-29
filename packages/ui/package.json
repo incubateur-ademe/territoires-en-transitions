@@ -17,6 +17,18 @@
     }
   },
   "nx": {
-    "name": "ui"
+    "name": "ui",
+    "targets": {
+      "chromatic": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "chromatic --project-token=${CHROMATIC_PROJECT_TOKEN}",
+          "cwd": "packages/ui"
+        },
+        "dependsOn": [
+          "build-storybook"
+        ]
+      }
+    }
   }
 }

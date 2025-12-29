@@ -16,6 +16,12 @@
       "!{projectRoot}/tsconfig.storybook.json",
       "!{projectRoot}/eslint.config.mjs"
     ],
+    "storybook": [
+      "default",
+      "{projectRoot}/**/.storybook/**/*",
+      "{projectRoot}/**/*.stories.@(ts|tsx)",
+      "{projectRoot}/**/tsconfig.storybook.json"
+    ],
     "sharedGlobals": []
   },
   "neverConnectToCloud": true,
@@ -23,8 +29,15 @@
     "enabled": true
   },
   "targetDefaults": {
+    "build": {
+      "cache": true
+    },
     "test": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "cache": true
+    },
+    "build-storybook": {
+      "cache": true
     },
     "@nx/js:tsc": {
       "cache": true
