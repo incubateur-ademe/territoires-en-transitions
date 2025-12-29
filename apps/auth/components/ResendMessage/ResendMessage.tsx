@@ -6,6 +6,8 @@ import { z } from 'zod';
 import { ResendFunction, VerifyType } from '../VerifyOTP';
 
 type ResendMessageProps = {
+  /** Texte du bouton */
+  buttonText?: string;
   /** Adresse par défaut à laquelle renvoyer le message */
   email: string;
   /** Indique un chargement un cours */
@@ -16,6 +18,8 @@ type ResendMessageProps = {
   onResend: ResendFunction;
   /** Type de vérification */
   type: VerifyType;
+  /** Indique que l'email doit être demandé à l'utilisateur */
+  askForEmail?: boolean;
 };
 
 /**
@@ -23,7 +27,15 @@ type ResendMessageProps = {
  * d'email d'un nouveau compte ou la réninitialisation d'un mot de passe.
  */
 export const ResendMessage = (props: ResendMessageProps) => {
-  const { email, isLoading, isOpened = false, onResend, type } = props;
+  const {
+    buttonText,
+    email,
+    isLoading,
+    isOpened = false,
+    onResend,
+    type,
+    askForEmail = true,
+  } = props;
   const validationSchema = z.object({
     email: z.email({
       error: 'Un email valide est requis',
@@ -40,10 +52,24 @@ export const ResendMessage = (props: ResendMessageProps) => {
 
   const eventTracker = useEventTracker();
 
+  const handleResend = (opened: boolean) => {
+    if (askForEmail) {
+      setOpened(opened);
+    } else {
+      resend();
+    }
+  };
+
+  const resend = () => {
+    onResend({ type, email: emailValue });
+    setOpened(false);
+    eventTracker(Event.auth.submitResendMessage);
+  };
+
   return (
     <div>
-      <Button variant="underlined" onClick={() => setOpened(!opened)}>
-        {"Vous n'avez pas reçu de message ?"}
+      <Button variant="underlined" onClick={() => handleResend(!opened)}>
+        {buttonText || "Vous n'avez pas reçu de message ?"}
       </Button>
 
       {opened && (
@@ -63,9 +89,7 @@ export const ResendMessage = (props: ResendMessageProps) => {
                 title: 'Envoyer',
                 disabled: isLoading || !formState.isValid,
                 onClick: () => {
-                  onResend({ type, email: emailValue });
-                  setOpened(false);
-                  eventTracker(Event.auth.submitResendMessage);
+                  resend();
                 },
               },
             }}
