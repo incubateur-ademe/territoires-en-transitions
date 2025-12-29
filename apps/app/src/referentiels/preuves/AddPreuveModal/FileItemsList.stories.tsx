@@ -1,4 +1,4 @@
-import {StoryFn, Meta} from '@storybook/nextjs';
+import {StoryFn, Meta} from '@storybook/nextjs-vite';
 import {FileItemsList, TFileItemsListProps} from './FileItemsList';
 import {fileItemMocks} from './FileItem.stories';
 
