@@ -1,0 +1,7 @@
+{
+  "$schema": "https://www.chromatic.com/config-file.schema.json",
+  "autoAcceptChanges": "main",
+  "onlyChanged": true,
+  "storybookBuildDir": "storybook-static"
+}
+
