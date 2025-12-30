@@ -26,7 +26,7 @@ export const isActiveNavLink = ({
   href: string;
   pathname?: string;
   urlPrefix?: string[];
-}) => href !== '/' && (pathname === href || pathIncludes(pathname, urlPrefix));
+}) => pathname === href || pathIncludes(pathname, urlPrefix);
 
 export const isActiveNavDropdown = ({
   links,
@@ -34,5 +34,4 @@ export const isActiveNavDropdown = ({
 }: {
   links: string[];
   pathname?: string;
-}) =>
-  links.findIndex((href) => href !== '/' && pathname?.includes(href)) !== -1;
+}) => links.findIndex((href) => pathname?.includes(href)) !== -1;
