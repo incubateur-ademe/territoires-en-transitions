@@ -1,6 +1,5 @@
-import Modal from '@/app/ui/shared/floating-ui/Modal';
 import { Etoile } from '@tet/domain/referentiels';
-import { Alert, Button } from '@tet/ui';
+import { Alert, Button, Modal } from '@tet/ui';
 import { MessageCompletudeECi } from './MessageCompletudeECi';
 import { numLabels } from './numLabels';
 import { TCycleLabellisation } from './useCycleLabellisation';
@@ -84,8 +83,10 @@ export const DemandeLabellisationModal = (
 
   return (
     <Modal
-      externalOpen={opened}
-      setExternalOpen={setOpened}
+      openState={{
+        isOpen: opened,
+        setIsOpen: setOpened,
+      }}
       size="lg"
       render={({ close }) => (
         <DemandeLabellisationModalContent {...props} onClose={close} />
@@ -115,7 +116,7 @@ export const DemandeLabellisationModalContent = (
   const canSubmit = referentiel && etoiles;
 
   return (
-    <div className="p-7 flex flex-col" data-test="DemandeLabellisationModal">
+    <div className="flex flex-col" data-test="DemandeLabellisationModal">
       <h3>{getTitle(etoiles)}</h3>
       <div className="w-full">
         {status === 'non_demandee' && isLoading ? 'Envoi en cours...' : null}
