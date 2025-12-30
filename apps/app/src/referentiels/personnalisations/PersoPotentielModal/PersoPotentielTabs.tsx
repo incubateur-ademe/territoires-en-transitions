@@ -1,8 +1,4 @@
-/**
- * Affiche le dialogue de personnalisation du potentiel de points d'une sous-action
- */
-
-import { Tab, Tabs } from '@/app/ui/shared/Tabs';
+import { Tab, Tabs } from '@tet/ui';
 import {
   PersoPotentielDoc,
   TPersoPotentielDocProps,
@@ -23,15 +19,18 @@ export const PersoPotentielTabs = ({
   onChange,
 }: TPersoPotentielTabsProps) => {
   return (
-    <Tabs defaultActiveTab={defaultActiveTab}>
-      <Tab label="Personnalisation du potentiel" icon="settings-5">
+    <Tabs
+      defaultActiveTab={defaultActiveTab}
+      tabPanelClassName="p-6 border border-grey-3 rounded-lg"
+    >
+      <Tab label="Personnalisation du potentiel" icon="settings-5-line">
         <PersoPotentielQR
           actionDef={actionDef}
           questionReponses={questionReponses}
           onChange={onChange}
         />
       </Tab>
-      <Tab label="Règles applicables" icon="information">
+      <Tab label="Règles applicables" icon="information-line">
         <PersoPotentielDoc actionDef={actionDef} regles={regles} />
       </Tab>
     </Tabs>

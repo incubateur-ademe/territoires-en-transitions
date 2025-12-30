@@ -35,7 +35,7 @@ export const PersoPotentielQR = ({
 }: TPersoPotentielQRProps) => {
   return (
     <div data-test="PersoPotentielQR">
-      <div className="ml-0 max-w-fit pl-4 pr-8 py-4 shadow-[inset_0.25rem_0_0_0_rgb(244,196,71)] border border-secondary-1">
+      <div className="ml-0 mb-4 max-w-fit pl-4 pr-8 py-4 shadow-[inset_0.25rem_0_0_0_rgb(244,196,71)] border border-secondary-1">
         <PointsPotentiels actionId={actionDef.id} />
       </div>
       <QuestionReponseList

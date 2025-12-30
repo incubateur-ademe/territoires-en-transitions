@@ -1,8 +1,9 @@
+import { useState } from 'react';
+
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
-import Modal from '@/app/ui/shared/floating-ui/Modal';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
-import { Button } from '@tet/ui';
+import { Button, Modal } from '@tet/ui';
 import { useQuestionsReponses } from '../PersoReferentielThematique/useQuestionsReponses';
 import { PersoPotentielTabs } from './PersoPotentielTabs';
 import { PointsPotentiels } from './points-potentiels.label';
@@ -21,7 +22,11 @@ export type TPersoPotentielButtonProps = {
  */
 export const PersoPotentiel = ({ actionDef }: TPersoPotentielButtonProps) => {
   const { id: actionId, type, identifiant, nom } = actionDef;
+
   const collectiviteId = useCollectiviteId();
+
+  const [isOpen, setIsOpen] = useState(false);
+
   const qr = useQuestionsReponses({ action_ids: [actionId] });
   const regles = useRegles(actionId);
   const handleChange = useChangeReponseHandler(collectiviteId, [
@@ -29,43 +34,41 @@ export const PersoPotentiel = ({ actionDef }: TPersoPotentielButtonProps) => {
   ]);
 
   return (
-    <div
-      data-test="PersoPotentiel"
-      className="flex items-center"
-      onClick={(event) => event.stopPropagation()}
-    >
-      <PointsPotentiels actionId={actionId} />
-
-      <Modal
-        size="lg"
-        render={() => (
-          <div className="p-7 flex flex-col" data-test="PersoPotentielDlg">
-            <h3>Personnaliser le potentiel de points</h3>
-            <span className="mb-6 font-bold">
-              {type[0].toUpperCase() + type.slice(1)} {identifiant} : {nom}
-            </span>
-            <div className="w-full">
-              {qr && collectiviteId ? (
-                <PersoPotentielTabs
-                  actionDef={actionDef}
-                  questionReponses={qr}
-                  regles={regles}
-                  onChange={handleChange}
-                />
-              ) : null}
-            </div>
-          </div>
-        )}
+    <>
+      <div
+        data-test="PersoPotentiel"
+        className="flex items-center"
+        onClick={(event) => event.stopPropagation()}
       >
+        <PointsPotentiels actionId={actionId} />
+
         <Button
           className="ml-2"
           variant="underlined"
           size="sm"
           icon="settings-5-line"
+          onClick={() => setIsOpen(true)}
         >
           Personnaliser
         </Button>
-      </Modal>
-    </div>
+      </div>
+      <Modal
+        dataTest="PersoPotentielDlg"
+        size="lg"
+        openState={{ isOpen, setIsOpen }}
+        title="Personnaliser le potentiel de points"
+        subTitle={`${
+          type[0].toUpperCase() + type.slice(1)
+        } ${identifiant} : ${nom}`}
+        render={() => (
+          <PersoPotentielTabs
+            actionDef={actionDef}
+            questionReponses={qr}
+            regles={regles}
+            onChange={handleChange}
+          />
+        )}
+      />
+    </>
   );
 };

@@ -4,8 +4,8 @@
  */
 
 import { referentielToName } from '@/app/app/labels';
-import { Tab, Tabs } from '@/app/ui/shared/Tabs';
 import { ReferentielId } from '@tet/domain/referentiels';
+import { Tab, Tabs } from '@tet/ui';
 import { PreuvesTable } from './PreuvesTable';
 import { useTableData } from './useTableData';
 
@@ -22,7 +22,7 @@ const PreuvesTab = (props: {
 
 export const PreuvesTabs = () => {
   return (
-    <Tabs>
+    <Tabs tabsListClassName="justify-start">
       {REFERENTIELS.map((referentielId) => {
         return (
           <Tab
