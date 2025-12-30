@@ -31,7 +31,7 @@ describe('Export plan', () => {
         .split('"')[1]
     );
 
-    const body = response.body as Buffer;
+    const body = response.body as ArrayBuffer;
     // décommenter pour écrire le fichier (et vérifier son contenu manuellement)
     //writeFileSync(fileName, body);
 
