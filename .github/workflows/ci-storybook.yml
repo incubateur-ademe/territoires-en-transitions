@@ -1,48 +1,86 @@
-name: ci-storybook
+name: CI Storybook
 
 permissions:
   contents: read
   actions: read
 
 on:
-  workflow_call:
+  push:
+    paths:
+      - 'packages/ui/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  publish-storybook:
+
+  build-storybook:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: pnpm install
+        if: ${{ !env.ACT }}
+        uses: ./.github/actions/pnpm-install
         with:
-          # We need to fetch all branches and commits so that Nx affected has a base to compare against.
+          bryntum_access_token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+
+      - name: Build Storybook
+        run: pnpm nx build-storybook ui -- --quiet
+
+      - name: Upload storybook build
+        uses: actions/upload-artifact@v4
+        with:
+          name: storybook-static
+          path: packages/ui/storybook-static
+          retention-days: 1
+
+
+  publish-storybook:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    needs: [build-storybook]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # We need to fetch all branches and commits so that Chromatic can compare git changes with the base.
           fetch-depth: 0
-          # Optional, but recommended: reduce the size of the checkout with tree filtering, see https://github.blog/open-source/git/get-up-to-speed-with-partial-clone-and-shallow-clone/
-          filter: tree:0
-
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4.4.0
-
-
-      - run: |
-          echo "NX_BASE: ${{ env.NX_BASE }}"
-          echo "NX_HEAD: ${{ env.NX_HEAD }}"
 
       - uses: ./.github/actions/pnpm-install
 
-      - name: Publish Storybook to Chromatic, if necessary
-        run: pnpm nx affected -t chromatic -- --ci --project-token=${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+      - name: Download storybook build
+        uses: actions/download-artifact@v4
+        with:
+          name: storybook-static
+          path: packages/ui/storybook-static
+
+      - name: Publish to Chromatic
+        # The `exitZeroOnChanges: false` option in `chromatic.config.json` will fail the workflow if UI changes are found.
+        # Once the changes are accepted on Chromatic, re-run the CI workflow to make it succeed.
+        run: pnpm nx chromatic ui -- --ci --project-token=${{ secrets.CHROMATIC_PROJECT_TOKEN }}
 
   test-storybook:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
+    needs: [build-storybook]
+
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/pnpm-install
+
+      - name: Download storybook build
+        uses: actions/download-artifact@v4
+        with:
+          name: storybook-static
+          path: packages/ui/storybook-static
+
       - run: pnpm exec playwright install --with-deps chromium
-      - name: Build Storybook
-        run: pnpm nx build-storybook ui -- --quiet
       - run: |
           pnpx concurrently -k -s first -n "SB,TEST" \
             "pnpx http-server ./packages/ui/storybook-static --port 6007 --silent" \

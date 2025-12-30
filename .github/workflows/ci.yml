@@ -1,8 +1,7 @@
-name: Intégration continue
+name: CI
 
 permissions:
   contents: read
-  # actions: read
 
 on:
   workflow_dispatch:
@@ -57,11 +56,6 @@ jobs:
     needs: [init-db]
     uses: ./.github/workflows/test-db-deploy.yml
     secrets: inherit
-
-  # storybook:
-  #   needs: [test-syntax]
-  #   uses: ./.github/workflows/ci-storybook.yml
-  #   secrets: inherit
 
   test-app:
     needs: [test-syntax]
