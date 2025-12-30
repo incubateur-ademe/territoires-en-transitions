@@ -11,6 +11,13 @@
           "port": 3001,
           "webpack": true
         }
+      },
+      "build": {
+        "executor": "@nx/next:build",
+        "options": {
+          "outputPath": "apps/site/.next",
+          "webpack": true
+        }
       }
     }
   }
