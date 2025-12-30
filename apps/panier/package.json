@@ -11,6 +11,13 @@
           "port": 3002,
           "webpack": true
         }
+      },
+      "build": {
+        "executor": "@nx/next:build",
+        "options": {
+          "outputPath": "apps/panier/.next",
+          "webpack": true
+        }
       }
     }
   }
