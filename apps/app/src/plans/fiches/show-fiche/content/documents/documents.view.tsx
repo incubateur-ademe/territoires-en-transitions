@@ -1,5 +1,6 @@
 import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 import { useState } from 'react';
 import { useFicheContext } from '../../context/fiche-context';
@@ -10,6 +11,7 @@ import ModaleAjoutDocument from './ModaleAjoutDocument';
 
 export const DocumentsView = () => {
   const { fiche, isReadonly, documents } = useFicheContext();
+  const collectivite = useCurrentCollectivite();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { isLoading, addFileFromLib, addLink } = useAddAnnexe(fiche.id);
 
@@ -17,10 +19,13 @@ export const DocumentsView = () => {
     <>
       <LinkedResources.Root>
         <LinkedResources.SharedAlert
+          fiche={fiche}
+          collectiviteId={collectivite.collectiviteId}
           title="Documents associés"
           description="Les documents affichés correspondent à ceux de cette collectivité."
         />
         <LinkedResources.Empty
+          isReadonly={isReadonly}
           picto={(props) => <DocumentPicto {...props} />}
           title="Aucun document n'est associé à cette action !"
           subTitle="Centraliser l'ensemble des informations associées à l'action en déposant les documents liés"

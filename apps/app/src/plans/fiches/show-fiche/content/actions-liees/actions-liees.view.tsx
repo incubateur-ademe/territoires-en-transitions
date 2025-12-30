@@ -20,10 +20,13 @@ export const ActionsLieesView = () => {
     <>
       <LinkedResources.Root>
         <LinkedResources.SharedAlert
+          fiche={fiche}
+          collectiviteId={collectivite.collectiviteId}
           title="Fiches associées"
           description="Les actions affichées correspondent à celles de cette collectivité."
         />
         <LinkedResources.Empty
+          isReadonly={isReadonly}
           picto={(props) => <FichePicto {...props} />}
           title="Cette action n'est liée à aucune autre action"
           subTitle="Lier une action"
