@@ -5,15 +5,21 @@ import {
   useListIndicateurDefinitions,
 } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
 import {
+  FicheListItem,
+  useListFiches,
+} from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import {
   isFicheEditableByCollectiviteUser,
   isFicheSharedWithCollectivite,
 } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { createContext, ReactNode, useContext, useState } from 'react';
 import { useUpdateFiche } from '../../update-fiche/data/use-update-fiche';
+import { useAnnexesFicheAction } from '../data/useAnnexesFicheAction';
 
 type IndicateurActionMode = 'creating' | 'associating' | 'none';
 
@@ -32,6 +38,10 @@ export type FicheContextValue = {
   canCreateIndicateur: boolean;
   indicateurAction: IndicateurActionMode;
   toggleIndicateurAction: (action: IndicateurActionMode) => void;
+  documents: TPreuve[] | undefined;
+  isLoadingDocuments: boolean;
+  fichesLiees: FicheListItem[];
+  isLoadingFichesLiees: boolean;
 };
 
 const FicheContext = createContext<FicheContextValue | null>(null);
@@ -64,6 +74,16 @@ export const FicheProvider = ({
     collectivite.isReadOnly ||
     !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id) ||
     isFicheSharedWithCollectivite(fiche, collectivite.collectiviteId);
+
+  const { data: documents, isLoading: isLoadingDocuments } =
+    useAnnexesFicheAction(collectivite.collectiviteId, fiche.id);
+
+  const { fiches: fichesLiees, isLoading: isLoadingFichesLiees } =
+    useListFiches(collectivite.collectiviteId, {
+      filters: {
+        linkedFicheIds: [fiche.id],
+      },
+    });
 
   const {
     data: { data: selectedIndicateurs = [] } = {},
@@ -132,6 +152,10 @@ export const FicheProvider = ({
         canUpdateIndicateur,
         indicateurAction,
         toggleIndicateurAction,
+        documents,
+        isLoadingDocuments,
+        fichesLiees,
+        isLoadingFichesLiees,
       }}
     >
       {children}
