@@ -71,16 +71,6 @@ describe('InstanceGouvernanceRouter', () => {
 
     const ficheId = fiche.id;
 
-    onTestFinished(async () => {
-      // Nettoyage des liens et de la fiche
-      await db.db
-        .delete(ficheActionInstanceGouvernanceTable)
-        .where(eq(ficheActionInstanceGouvernanceTable.ficheId, ficheId));
-      await db.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, ficheId));
-    });
-
     const createInput: CreateInput = {
       collectiviteId: COLLECTIVITE_ID,
       actionId: ficheId,
@@ -98,21 +88,6 @@ describe('InstanceGouvernanceRouter', () => {
     });
 
     const createdId = created.id;
-
-    // Nettoyage de l'instance de gouvernance créée
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionInstanceGouvernanceTable)
-        .where(
-          eq(
-            ficheActionInstanceGouvernanceTable.instanceGouvernanceId,
-            createdId
-          )
-        );
-      await db.db
-        .delete(instanceGouvernanceTable)
-        .where(eq(instanceGouvernanceTable.id, createdId));
-    });
 
     // Vérifie que l'instance apparaît bien dans la liste
     const listInput: ListInput = {
@@ -159,6 +134,27 @@ describe('InstanceGouvernanceRouter', () => {
         eq(ficheActionInstanceGouvernanceTable.instanceGouvernanceId, createdId)
       );
     expect(remainingLinks.length).toBe(0);
+
+    onTestFinished(async () => {
+      // Nettoyage des liens et de la fiche
+      await db.db
+        .delete(ficheActionInstanceGouvernanceTable)
+        .where(eq(ficheActionInstanceGouvernanceTable.ficheId, ficheId));
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, ficheId));
+      await db.db
+        .delete(ficheActionInstanceGouvernanceTable)
+        .where(
+          eq(
+            ficheActionInstanceGouvernanceTable.instanceGouvernanceId,
+            createdId
+          )
+        );
+      await db.db
+        .delete(instanceGouvernanceTable)
+        .where(eq(instanceGouvernanceTable.id, createdId));
+    });
   });
 
   test('update: happy path', async () => {
