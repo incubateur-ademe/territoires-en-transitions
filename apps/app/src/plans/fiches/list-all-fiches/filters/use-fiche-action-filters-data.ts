@@ -1,4 +1,3 @@
-import { useListInstanceGouvernanceTags } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-instance-gouvernance-tags';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { useFinanceursListe } from '@/app/ui/dropdownLists/FinanceursDropdown/useFinanceursListe';
 import { usePartenairesListe } from '@/app/ui/dropdownLists/PartenairesDropdown/usePartenairesListe';
@@ -10,6 +9,7 @@ import { useTagsSuiviPersoListe } from '@/app/ui/dropdownLists/TagsSuiviPersoDro
 import { useGetThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useMemo } from 'react';
+import { useListInstanceGouvernanceTags } from '../../show-fiche/data/use-list-instance-gouvernance-tags';
 import { NOTES_OPTIONS } from './options';
 import { FilterKeys } from './types';
 
