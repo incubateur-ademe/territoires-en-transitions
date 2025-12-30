@@ -150,7 +150,7 @@ export class ImportPlanService {
     // Retrieves and creates useful data
     const memoryData = await this.fetchData(collectiviteId);
 
-    await workbook.xlsx.load(fileBuffer);
+    await workbook.xlsx.load(fileBuffer.buffer);
     const worksheet = this.getDataWorksheet(workbook);
     if (!worksheet) {
       errors.push(`<strong>L'onglet des données n'a pas été trouvé.</strong>`);
