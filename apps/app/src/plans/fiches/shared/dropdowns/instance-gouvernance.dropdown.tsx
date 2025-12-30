@@ -1,9 +1,9 @@
-import { useCreateInstanceGouvernanceTag } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-create-instance-gouvernance-tag';
-import { useDeleteInstanceGouvernance } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-delete-instance-gouvernance';
-import { useListInstanceGouvernanceTags } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-list-instance-gouvernance-tags';
-import { useUpdateInstanceGouvernanceTag } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-update-instance-gouvernance-tag';
-import { InstanceGouvernance } from '@tet/domain/collectivites';
 import { SelectTagsGeneric } from '@/app/ui/dropdownLists/tags';
+import { InstanceGouvernance } from '@tet/domain/collectivites';
+import { useCreateInstanceGouvernanceTag } from '../../show-fiche/data/use-create-instance-gouvernance-tag';
+import { useDeleteInstanceGouvernance } from '../../show-fiche/data/use-delete-instance-gouvernance-tag';
+import { useListInstanceGouvernanceTags } from '../../show-fiche/data/use-list-instance-gouvernance-tags';
+import { useUpdateInstanceGouvernanceTag } from '../../show-fiche/data/use-update-instance-gouvernance-tag';
 
 type LightInstanceGouvernance = Omit<
   InstanceGouvernance,
