@@ -142,7 +142,7 @@ export const FicheAction = ({
 }: FicheActionProps) => {
   const isImprovedUiEnabled = useImprovedFicheActionUiEnabled();
 
-  if (isImprovedUiEnabled || true) {
+  if (isImprovedUiEnabled) {
     return (
       <FicheActionImprovedView fiche={initialFiche}>
         {children}

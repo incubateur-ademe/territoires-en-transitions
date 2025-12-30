@@ -1,18 +1,20 @@
 import { SharedFicheLinkedResourcesAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { FicheWithRelations } from '@tet/domain/plans';
 import { EmptyCard } from '@tet/ui';
 import { Children, ComponentProps, isValidElement, ReactNode } from 'react';
-import { useFicheContext } from '../context/fiche-context';
 
 type AlertProps = {
   title: string;
   description: string;
+  fiche: FicheWithRelations;
+  collectiviteId: number;
 };
 
 type EmptyProps = Omit<
   ComponentProps<typeof EmptyCard>,
   'size' | 'variant' | 'isReadonly'
->;
+> & { isReadonly: boolean };
 
 type ContentProps<T> = {
   data: T[] | undefined;
@@ -30,9 +32,6 @@ Empty.displayName = 'LinkedResources.Empty';
 Content.displayName = 'LinkedResources.Content';
 
 function Root({ children }: { children: ReactNode }) {
-  const { fiche, isReadonly } = useFicheContext();
-
-  // Extract props from slot children
   let alertProps: AlertProps | undefined;
   let emptyProps: EmptyProps | undefined;
   let contentProps: ContentProps<unknown> | undefined;
@@ -69,7 +68,7 @@ function Root({ children }: { children: ReactNode }) {
           {...emptyProps}
           size="md"
           variant="transparent"
-          isReadonly={isReadonly}
+          isReadonly={emptyProps.isReadonly}
         />
       );
     }
@@ -96,8 +95,8 @@ function Root({ children }: { children: ReactNode }) {
     <>
       {alertProps && (
         <SharedFicheLinkedResourcesAlert
-          fiche={fiche}
-          currentCollectiviteId={fiche.collectiviteId}
+          fiche={alertProps.fiche}
+          currentCollectiviteId={alertProps.collectiviteId}
           sharedDataTitle={alertProps.title}
           sharedDataDescription={alertProps.description}
         />
