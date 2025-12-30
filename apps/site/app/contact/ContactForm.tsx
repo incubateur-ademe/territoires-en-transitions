@@ -5,6 +5,7 @@ import {
   Button,
   Field,
   FormSectionGrid,
+  Icon,
   Input,
   OptionValue,
   Select,
@@ -247,18 +248,19 @@ const ContactForm = () => {
           '!bg-error-1': status === 'error',
         })}
       >
-        <div className="flex items-center">
-          <div
-            className={`flex mr-3 ${classNames({
-              'fr-icon-check-line': status === 'success',
-              'fr-icon-close-line': status === 'error',
-            })}`}
-          />
-          {status === 'success'
-            ? 'Votre message a bien été envoyé'
-            : status === 'error'
-            ? "Une erreur est survenue lors de l'envoi de votre message"
-            : ''}
+        <div className="flex items-center gap-3">
+          {status === 'success' && (
+            <>
+              <Icon icon="check-line" />
+              Votre message a bien été envoyé
+            </>
+          )}
+          {status === 'error' && (
+            <>
+              <Icon icon="close-line" />
+              Une erreur est survenue lors de l'envoi de votre message
+            </>
+          )}
         </div>
       </ToastFloater>
     </>
