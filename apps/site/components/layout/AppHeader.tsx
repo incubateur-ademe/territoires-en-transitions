@@ -2,7 +2,11 @@
 
 import { getAuthPaths } from '@tet/api';
 import { ENV } from '@tet/api/environmentVariables';
-import { TerritoiresEnTransitionsLogo } from '@tet/ui';
+import {
+  AnchorButtonProps,
+  Button,
+  TerritoiresEnTransitionsLogo,
+} from '@tet/ui';
 import classNames from 'classnames';
 import Link from 'next/dist/client/link';
 import Image from 'next/image';
@@ -59,42 +63,41 @@ function Links() {
   const pathName = usePathname();
   const isFAQ = pathName.startsWith('/faq');
 
+  const SecondaryLink = ({ children, ...props }: AnchorButtonProps) => (
+    <Button
+      className="py-1.5 px-2"
+      variant="white"
+      size="sm"
+      iconPosition="left"
+      {...props}
+    >
+      {children}
+    </Button>
+  );
+
   return (
-    <ul className="fr-btns-group">
+    <ul className="flex items-center gap-2">
       <li>
-        <a
+        <SecondaryLink
           href="/faq"
-          className={classNames('fr-btn', {
-            'fr-icon-question-line': !isFAQ,
-            'fr-icon-question-fill': isFAQ,
-          })}
+          icon={isFAQ ? 'question-fill' : 'question-line'}
         >
           FAQ
-        </a>
+        </SecondaryLink>
       </li>
       <li>
-        <a
-          href={authPaths?.signUp}
-          target="_blank"
-          rel="noopener noreferrer"
-          // after:!w-0 after:!m-0 permettent de masquer l'icône
-          // external ajoutée par le dsfr
-          className="fr-btn fr-icon-add-circle-line after:!w-0 after:!m-0"
-        >
+        <SecondaryLink href={authPaths?.signUp} external icon="add-circle-line">
           Créer un compte
-        </a>
+        </SecondaryLink>
       </li>
       <li>
-        <a
+        <SecondaryLink
           href={authPaths?.login}
-          target="_blank"
-          rel="noopener noreferrer"
-          // after:!w-0 after:!m-0 permettent de masquer l'icône
-          // external ajoutée par le dsfr
-          className="fr-btn fr-icon-account-line after:!w-0 after:!m-0"
+          external
+          icon="account-circle-line"
         >
           Se connecter
-        </a>
+        </SecondaryLink>
       </li>
     </ul>
   );
