@@ -14,7 +14,7 @@ import { FicheSectionId } from './type';
 
 export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
-  const { fiche, indicateurs, documents, fichesLiees } = useFicheContext();
+  const { fiche, indicateurs, documents, fichesLiees, notes } = useFicheContext();
   const collectivite = useCurrentCollectivite();
   const { niveauAcces, permissions } = collectivite;
 
@@ -46,7 +46,7 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
       id: 'etapes',
     },
     {
-      label: 'Notes',
+      label: `Notes ${notes.list.length > 0 ? `(${notes.list.length})` : ''}`,
       id: 'notes',
     },
     {

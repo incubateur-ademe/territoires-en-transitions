@@ -16,9 +16,12 @@ import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
-import { FicheWithRelations } from '@tet/domain/plans';
+import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
 import { createContext, ReactNode, useContext, useState } from 'react';
 import { useUpdateFiche } from '../../update-fiche/data/use-update-fiche';
+import { useDeleteNote } from '../data/use-delete-note';
+import { useGetFicheNotes } from '../data/use-get-fiche-notes';
+import { EditedNote, useUpsertNote } from '../data/use-upsert-note';
 import { useAnnexesFicheAction } from '../data/useAnnexesFicheAction';
 import { useUpdateFichesActionLiees } from '../data/useFichesActionLiees';
 
@@ -45,6 +48,13 @@ type IndicateursState = {
   toggleAction: (action: IndicateurActionMode) => void;
 };
 
+type NotesState = {
+  list: FicheNote[];
+  isLoading: boolean;
+  upsert: (note: EditedNote) => Promise<unknown>;
+  delete: ({ id }: { id: number }) => Promise<unknown>;
+};
+
 export type FicheContextValue = {
   fiche: FicheWithRelations;
   isReadonly: boolean;
@@ -54,6 +64,7 @@ export type FicheContextValue = {
   fichesLiees: FichesLieesState;
   documents: DocumentsState;
   indicateurs: IndicateursState;
+  notes: NotesState;
 };
 
 const FicheContext = createContext<FicheContextValue | null>(null);
@@ -171,6 +182,19 @@ export const FicheProvider = ({
     toggleAction: toggleIndicateurAction,
   };
 
+  const { data: notesList = [], isLoading: isLoadingNotes } =
+    useGetFicheNotes(fiche);
+
+  const { mutateAsync: upsertNote } = useUpsertNote(fiche);
+  const { mutateAsync: deleteNote } = useDeleteNote(fiche);
+
+  const notes: NotesState = {
+    list: notesList,
+    isLoading: isLoadingNotes,
+    upsert: upsertNote,
+    delete: deleteNote,
+  };
+
   return (
     <FicheContext.Provider
       value={{
@@ -182,6 +206,7 @@ export const FicheProvider = ({
         fichesLiees,
         documents,
         indicateurs,
+        notes,
       }}
     >
       {children}

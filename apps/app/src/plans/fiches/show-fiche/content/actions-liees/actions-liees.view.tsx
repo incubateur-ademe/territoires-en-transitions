@@ -2,7 +2,7 @@ import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
-import { Button } from '@tet/ui';
+import { Button, VisibleWhen } from '@tet/ui';
 import { useState } from 'react';
 import { useFicheContext } from '../../context/fiche-context';
 import { LinkedResources } from '../linked-resources-layout';
@@ -42,7 +42,7 @@ export const ActionsLieesView = () => {
           data={fichesLiees.list}
           isLoading={fichesLiees.isLoading}
           actions={
-            !isReadonly && (
+            <VisibleWhen condition={!isReadonly}>
               <Button
                 icon={!isUpdating ? 'link' : undefined}
                 size="xs"
@@ -53,7 +53,7 @@ export const ActionsLieesView = () => {
                 {isUpdating && <SpinnerLoader className="!h-4" />}
                 Lier une fiche action
               </Button>
-            )
+            </VisibleWhen>
           }
         >
           {(ficheAction) => (

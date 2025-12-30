@@ -1,7 +1,7 @@
 import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Button } from '@tet/ui';
+import { Button, VisibleWhen } from '@tet/ui';
 import { useState } from 'react';
 import { useFicheContext } from '../../context/fiche-context';
 import { useAddAnnexe } from '../../data/useAddAnnexe';
@@ -40,7 +40,7 @@ export const DocumentsView = () => {
           data={documents.list}
           isLoading={documents.isLoading}
           actions={
-            !isReadonly && (
+            <VisibleWhen condition={!isReadonly}>
               <Button
                 icon={!isLoading ? 'file-download-line' : undefined}
                 size="xs"
@@ -51,7 +51,7 @@ export const DocumentsView = () => {
                 {isLoading && <SpinnerLoader className="!h-4" />}
                 Ajouter un document
               </Button>
-            )
+            </VisibleWhen>
           }
         >
           {(doc) => (
