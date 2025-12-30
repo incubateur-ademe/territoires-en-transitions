@@ -11,22 +11,13 @@ import { DatavizPicto } from './empty-view/dataviz-picto';
 import { IndicateursSideMenu } from './side-menu';
 
 export const IndicateursView = () => {
-  const {
-    updateIndicateurs,
-    selectedIndicateurs,
-    isLoadingIndicateurs,
-    canUpdateIndicateur,
-    indicateurAction,
-    toggleIndicateurAction,
-    isReadonly,
-    fiche,
-  } = useFicheContext();
+  const { fiche, isReadonly, indicateurs } = useFicheContext();
 
   return (
     <>
       <CreateIndicateurModal
-        isOpen={indicateurAction === 'creating'}
-        setIsOpen={() => toggleIndicateurAction('creating')}
+        isOpen={indicateurs.action === 'creating'}
+        setIsOpen={() => indicateurs.toggleAction('creating')}
         fiche={fiche}
       />
 
@@ -44,8 +35,8 @@ export const IndicateursView = () => {
           actions={[<ActionButtons key="actions" />]}
         />
         <LinkedResources.Content
-          data={selectedIndicateurs}
-          isLoading={isLoadingIndicateurs}
+          data={indicateurs.list}
+          isLoading={indicateurs.isLoading}
           actions={<ActionButtons />}
         >
           {(indicateur: IndicateurDefinitionListItem) => (
@@ -54,7 +45,7 @@ export const IndicateursView = () => {
               readonly={isReadonly}
               definition={indicateur}
               externalCollectiviteId={fiche.collectiviteId}
-              isEditable={canUpdateIndicateur(indicateur)}
+              isEditable={indicateurs.canUpdate(indicateur)}
               href={makeCollectiviteIndicateursUrl({
                 collectiviteId: fiche.collectiviteId,
                 indicateurView: getIndicateurGroup(
@@ -65,12 +56,12 @@ export const IndicateursView = () => {
               })}
               selectState={{
                 selected: true,
-                setSelected: (i) => updateIndicateurs(i),
+                setSelected: (i) => indicateurs.update(i),
               }}
               otherMenuActions={(indicateur) => [
                 <Button
                   key={indicateur.id}
-                  onClick={() => updateIndicateurs(indicateur)}
+                  onClick={() => indicateurs.update(indicateur)}
                   icon="link-unlink"
                   title="Dissocier l'indicateur"
                   size="xs"

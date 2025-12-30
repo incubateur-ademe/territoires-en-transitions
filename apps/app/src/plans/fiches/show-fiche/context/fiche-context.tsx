@@ -20,28 +20,40 @@ import { FicheWithRelations } from '@tet/domain/plans';
 import { createContext, ReactNode, useContext, useState } from 'react';
 import { useUpdateFiche } from '../../update-fiche/data/use-update-fiche';
 import { useAnnexesFicheAction } from '../data/useAnnexesFicheAction';
+import { useUpdateFichesActionLiees } from '../data/useFichesActionLiees';
 
 type IndicateurActionMode = 'creating' | 'associating' | 'none';
+
+type FichesLieesState = {
+  list: FicheListItem[];
+  isLoading: boolean;
+  update: (linkedFicheIds: number[]) => void;
+};
+
+type DocumentsState = {
+  list: TPreuve[] | undefined;
+  isLoading: boolean;
+};
+
+type IndicateursState = {
+  list: IndicateurDefinitionListItem[];
+  isLoading: boolean;
+  update: (indicateur: IndicateurDefinitionListItem) => Promise<void>;
+  canUpdate: (indicateur: IndicateurDefinition) => boolean;
+  canCreate: boolean;
+  action: IndicateurActionMode;
+  toggleAction: (action: IndicateurActionMode) => void;
+};
 
 export type FicheContextValue = {
   fiche: FicheWithRelations;
   isReadonly: boolean;
   planId?: number;
-  updateFiche: ReturnType<typeof useUpdateFiche>['mutate'];
-  isUpdatePending: boolean;
-  selectedIndicateurs: IndicateurDefinitionListItem[];
-  updateIndicateurs: (
-    indicateur: IndicateurDefinitionListItem
-  ) => Promise<void>;
-  isLoadingIndicateurs: boolean;
-  canUpdateIndicateur: (indicateur: IndicateurDefinition) => boolean;
-  canCreateIndicateur: boolean;
-  indicateurAction: IndicateurActionMode;
-  toggleIndicateurAction: (action: IndicateurActionMode) => void;
-  documents: TPreuve[] | undefined;
-  isLoadingDocuments: boolean;
-  fichesLiees: FicheListItem[];
-  isLoadingFichesLiees: boolean;
+  update: ReturnType<typeof useUpdateFiche>['mutate'];
+  isUpdating: boolean;
+  fichesLiees: FichesLieesState;
+  documents: DocumentsState;
+  indicateurs: IndicateursState;
 };
 
 const FicheContext = createContext<FicheContextValue | null>(null);
@@ -67,26 +79,38 @@ export const FicheProvider = ({
 }: FicheProviderProps) => {
   const collectivite = useCurrentCollectivite();
   const user = useUser();
-  const { mutateAsync: updateFiche, isPending: isUpdatePending } =
-    useUpdateFiche();
+  const { mutateAsync: updateFiche, isPending: isUpdating } = useUpdateFiche();
 
   const isReadonly =
     collectivite.isReadOnly ||
     !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id) ||
     isFicheSharedWithCollectivite(fiche, collectivite.collectiviteId);
 
-  const { data: documents, isLoading: isLoadingDocuments } =
+  const { data: documentsList, isLoading: isLoadingDocuments } =
     useAnnexesFicheAction(collectivite.collectiviteId, fiche.id);
 
-  const { fiches: fichesLiees, isLoading: isLoadingFichesLiees } =
+  const documents: DocumentsState = {
+    list: documentsList,
+    isLoading: isLoadingDocuments,
+  };
+
+  const { fiches: fichesLieesList, isLoading: isLoadingFichesLiees } =
     useListFiches(collectivite.collectiviteId, {
       filters: {
         linkedFicheIds: [fiche.id],
       },
     });
 
+  const { mutate: updateFichesLiees } = useUpdateFichesActionLiees(fiche.id);
+
+  const fichesLiees: FichesLieesState = {
+    list: fichesLieesList,
+    isLoading: isLoadingFichesLiees,
+    update: updateFichesLiees,
+  };
+
   const {
-    data: { data: selectedIndicateurs = [] } = {},
+    data: { data: indicateursList = [] } = {},
     isLoading: isLoadingIndicateurs,
   } = useListIndicateurDefinitions(
     {
@@ -102,7 +126,7 @@ export const FicheProvider = ({
   const updateIndicateurs = async (
     indicateur: IndicateurDefinitionListItem
   ) => {
-    const currentIndicateurs = selectedIndicateurs ?? [];
+    const currentIndicateurs = indicateursList ?? [];
     const isIndicateurAlreadyLinked =
       currentIndicateurs.some((i) => i.id === indicateur.id) ?? false;
 
@@ -122,6 +146,7 @@ export const FicheProvider = ({
     collectivite.permissions,
     'indicateurs.definitions.create'
   );
+
   const canUpdateIndicateur = (indicateur: IndicateurDefinition) =>
     canUpdateIndicateurDefinition(
       collectivite.permissions,
@@ -129,12 +154,21 @@ export const FicheProvider = ({
       user.id
     );
 
-  const [indicateurAction, setIndicateurAction] = useState<
-    'creating' | 'associating' | 'none'
-  >('none');
+  const [indicateurAction, setIndicateurAction] =
+    useState<IndicateurActionMode>('none');
 
   const toggleIndicateurAction = (action: IndicateurActionMode) => {
     setIndicateurAction(action === indicateurAction ? 'none' : action);
+  };
+
+  const indicateurs: IndicateursState = {
+    list: indicateursList,
+    isLoading: isLoadingIndicateurs,
+    update: updateIndicateurs,
+    canUpdate: canUpdateIndicateur,
+    canCreate: canCreateIndicateur,
+    action: indicateurAction,
+    toggleAction: toggleIndicateurAction,
   };
 
   return (
@@ -143,19 +177,11 @@ export const FicheProvider = ({
         fiche,
         isReadonly,
         planId,
-        updateFiche,
-        isUpdatePending,
-        selectedIndicateurs,
-        updateIndicateurs,
-        isLoadingIndicateurs,
-        canCreateIndicateur,
-        canUpdateIndicateur,
-        indicateurAction,
-        toggleIndicateurAction,
-        documents,
-        isLoadingDocuments,
+        update: updateFiche,
+        isUpdating,
         fichesLiees,
-        isLoadingFichesLiees,
+        documents,
+        indicateurs,
       }}
     >
       {children}

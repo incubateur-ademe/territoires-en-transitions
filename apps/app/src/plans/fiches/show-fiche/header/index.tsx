@@ -14,12 +14,12 @@ const Divider = () => {
 };
 
 export const Header = () => {
-  const { fiche, isReadonly, planId, updateFiche } = useFicheContext();
+  const { fiche, isReadonly, planId, update } = useFicheContext();
   const { collectiviteId, permissions } = useCurrentCollectivite();
   const { titre, axes } = fiche;
 
   const updateTitle = (titre: string | null) =>
-    updateFiche({
+    update({
       ficheId: fiche.id,
       ficheFields: { titre },
     });

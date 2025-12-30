@@ -9,7 +9,7 @@ type EmplacementActuelFicheProps = {
 
 const EmplacementActuelFiche = ({ fiche }: EmplacementActuelFicheProps) => {
   const collectiviteId = useCollectiviteId();
-  const { updateFiche } = useFicheContext();
+  const { update } = useFicheContext();
 
   const filteredAxes = fiche.axes?.filter(
     (axe) => axe.collectiviteId === collectiviteId
@@ -23,7 +23,7 @@ const EmplacementActuelFiche = ({ fiche }: EmplacementActuelFicheProps) => {
         .map((currentAxe) => ({
           id: currentAxe.id,
         })) || [];
-    updateFiche({
+    update({
       ficheId: fiche.id,
       ficheFields: {
         axes: updatedAxes,

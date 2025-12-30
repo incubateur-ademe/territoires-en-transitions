@@ -5,26 +5,16 @@ import { useUser } from '@tet/api/users';
 import { Button } from '@tet/ui';
 import { useState } from 'react';
 import { useFicheContext } from '../../context/fiche-context';
-import { useUpdateFichesActionLiees } from '../../data/useFichesActionLiees';
 import { LinkedResources } from '../linked-resources-layout';
 import { FicheActionCard } from './Carte/FicheActionCard';
 import { FichePicto } from './FichePicto';
 import { ModaleFichesLiees } from './ModaleFichesLiees';
 
 export const ActionsLieesView = () => {
-  const {
-    fiche,
-    isReadonly,
-    isUpdatePending,
-    fichesLiees,
-    isLoadingFichesLiees,
-  } = useFicheContext();
+  const { fiche, isReadonly, isUpdating, fichesLiees } = useFicheContext();
   const collectivite = useCurrentCollectivite();
   const user = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { mutate: updateFichesActionLiees } = useUpdateFichesActionLiees(
-    fiche.id
-  );
 
   return (
     <>
@@ -46,18 +36,18 @@ export const ActionsLieesView = () => {
           ]}
         />
         <LinkedResources.Content
-          data={fichesLiees}
-          isLoading={isLoadingFichesLiees}
+          data={fichesLiees.list}
+          isLoading={fichesLiees.isLoading}
           actions={
             !isReadonly && (
               <Button
-                icon={!isUpdatePending ? 'link' : undefined}
+                icon={!isUpdating ? 'link' : undefined}
                 size="xs"
                 variant="outlined"
-                disabled={isUpdatePending}
+                disabled={isUpdating}
                 onClick={() => setIsModalOpen(true)}
               >
-                {isUpdatePending && <SpinnerLoader className="!h-4" />}
+                {isUpdating && <SpinnerLoader className="!h-4" />}
                 Lier une fiche action
               </Button>
             )
@@ -75,8 +65,8 @@ export const ActionsLieesView = () => {
                 isReadonly
                   ? undefined
                   : () =>
-                      updateFichesActionLiees(
-                        fichesLiees
+                      fichesLiees.update(
+                        fichesLiees.list
                           .filter((f) => f.id !== ficheAction.id)
                           .map((f) => f.id)
                       )
@@ -92,9 +82,9 @@ export const ActionsLieesView = () => {
         isOpen={isModalOpen && !isReadonly}
         setIsOpen={setIsModalOpen}
         currentFicheId={fiche.id}
-        linkedFicheIds={fichesLiees.map((f) => f.id)}
+        linkedFicheIds={fichesLiees.list.map((f) => f.id)}
         updateLinkedFicheIds={(linkedficheIds) =>
-          updateFichesActionLiees(linkedficheIds)
+          fichesLiees.update(linkedficheIds)
         }
       />
     </>

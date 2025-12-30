@@ -9,8 +9,7 @@ import DocumentPicto from './DocumentPicto';
 import ModaleAjoutDocument from './ModaleAjoutDocument';
 
 export const DocumentsView = () => {
-  const { fiche, isReadonly, documents, isLoadingDocuments } =
-    useFicheContext();
+  const { fiche, isReadonly, documents } = useFicheContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { isLoading, addFileFromLib, addLink } = useAddAnnexe(fiche.id);
 
@@ -33,8 +32,8 @@ export const DocumentsView = () => {
           ]}
         />
         <LinkedResources.Content
-          data={documents}
-          isLoading={isLoadingDocuments}
+          data={documents.list}
+          isLoading={documents.isLoading}
           actions={
             !isReadonly && (
               <Button

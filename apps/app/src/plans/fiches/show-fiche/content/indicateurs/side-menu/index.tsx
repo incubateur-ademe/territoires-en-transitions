@@ -3,21 +3,16 @@ import { useFicheContext } from '../../../context/fiche-context';
 import { LinkIndicateursView } from './link-indicateur.view';
 
 export const IndicateursSideMenu = () => {
-  const {
-    indicateurAction,
-    toggleIndicateurAction,
-    selectedIndicateurs,
-    updateIndicateurs,
-  } = useFicheContext();
+  const { indicateurs } = useFicheContext();
   return (
     <SideMenu
       title="Lier des indicateurs"
-      isOpen={indicateurAction === 'associating'}
-      setIsOpen={() => toggleIndicateurAction('associating')}
+      isOpen={indicateurs.action === 'associating'}
+      setIsOpen={() => indicateurs.toggleAction('associating')}
     >
       <LinkIndicateursView
-        selectedIndicateurs={selectedIndicateurs}
-        onSelect={(indicateur) => updateIndicateurs(indicateur)}
+        selectedIndicateurs={indicateurs.list}
+        onSelect={(indicateur) => indicateurs.update(indicateur)}
       />
     </SideMenu>
   );
