@@ -24,7 +24,7 @@ const formatList = <T,>(
 };
 
 export const Acteurs = (): JSX.Element => {
-  const { fiche, isReadonly, updateFiche } = useFicheContext();
+  const { fiche, isReadonly, update } = useFicheContext();
 
   const { control, watch, handleSubmit } = useForm<ActeursFormValues>({
     resolver: zodResolver(acteursFormSchema),
@@ -49,12 +49,12 @@ export const Acteurs = (): JSX.Element => {
       fieldName: keyof ActeursFormValues
     ) => {
       const currentValue = formValues[fieldName];
-      await updateFiche({
+      await update({
         ficheId: fiche.id,
         ficheFields: { [fieldName]: currentValue },
       });
     },
-    [updateFiche, fiche.id]
+    [update, fiche.id]
   );
 
   useEffect(() => {

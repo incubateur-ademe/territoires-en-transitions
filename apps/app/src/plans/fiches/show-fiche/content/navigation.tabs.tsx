@@ -14,8 +14,7 @@ import { FicheSectionId } from './type';
 
 export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
-  const { fiche, selectedIndicateurs, documents, fichesLiees } =
-    useFicheContext();
+  const { fiche, indicateurs, documents, fichesLiees } = useFicheContext();
   const collectivite = useCurrentCollectivite();
   const { niveauAcces, permissions } = collectivite;
 
@@ -34,7 +33,7 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
     },
     {
       label: `Indicateurs de suivi ${
-        selectedIndicateurs.length > 0 ? `(${selectedIndicateurs.length})` : ''
+        indicateurs.list.length > 0 ? `(${indicateurs.list.length})` : ''
       }`,
       isVisible:
         hasPermission(permissions, 'indicateurs.definitions.read') ||
@@ -56,7 +55,7 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
     },
     {
       label: `Actions liées${
-        fichesLiees.length > 0 ? ` (${fichesLiees.length})` : ''
+        fichesLiees.list.length > 0 ? ` (${fichesLiees.list.length})` : ''
       }`,
       isVisible:
         hasPermission(permissions, 'plans.fiches.read') ||
@@ -74,7 +73,9 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
     },
     {
       label: `Documents${
-        documents && documents.length > 0 ? ` (${documents.length})` : ''
+        documents.list && documents.list.length > 0
+          ? ` (${documents.list.length})`
+          : ''
       }`,
       id: 'documents',
     },

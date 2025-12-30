@@ -18,7 +18,7 @@ const NouvelEmplacementFiche = ({
 }: NouvelEmplacementFicheProps) => {
   const plansProfondeur = usePlanActionProfondeur();
 
-  const { updateFiche } = useFicheContext();
+  const { update } = useFicheContext();
 
   // Tableau contenant les ids des axes de la fiche
   const ficheAxesIds = (fiche.axes ?? []).map((axe) => axe.id);
@@ -85,7 +85,7 @@ const NouvelEmplacementFiche = ({
       updatedAxes.push({
         id: axe.id,
       });
-      updateFiche({
+      update({
         ficheId: fiche.id,
         ficheFields: {
           axes: updatedAxes,
