@@ -164,12 +164,6 @@ describe('formatToPrintableFilters', () => {
         onlyShowCategory: false,
       },
       {
-        key: 'instanceGouvernanceIds',
-        title: filterLabels['instanceGouvernanceIds'],
-        selectedFilters: ['1'],
-        onlyShowCategory: false,
-      },
-      {
         key: 'statuts',
         title: filterLabels['statuts'],
         selectedFilters: ['À venir'],
@@ -209,6 +203,12 @@ describe('formatToPrintableFilters', () => {
         key: 'anneesNotes',
         title: filterLabels['anneesNotes'],
         selectedFilters: ['2023'],
+        onlyShowCategory: false,
+      },
+      {
+        key: 'instanceGouvernanceIds',
+        title: filterLabels['instanceGouvernanceIds'],
+        selectedFilters: ['1'],
         onlyShowCategory: false,
       },
       {
