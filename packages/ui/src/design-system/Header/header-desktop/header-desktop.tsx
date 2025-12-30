@@ -42,7 +42,10 @@ const HeaderDesktop = ({
         {!!secondaryNav && (
           <nav className="flex gap-2">
             {secondaryNav.map((item, i) => (
-              <HeaderDesktopSecondaryNavItem key={i} item={item} />
+              <HeaderDesktopSecondaryNavItem
+                key={i}
+                item={{ ...item, className: cn('py-2 px-4', item.className) }}
+              />
             ))}
           </nav>
         )}
