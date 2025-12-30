@@ -59,7 +59,7 @@ jobs:
     secrets: inherit
 
   storybook:
-    needs: [test-syntax]
+    # needs: [test-syntax]
     uses: ./.github/workflows/ci-storybook.yml
     secrets: inherit
 

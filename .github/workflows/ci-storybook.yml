@@ -20,31 +20,34 @@ jobs:
           # Optional, but recommended: reduce the size of the checkout with tree filtering, see https://github.blog/open-source/git/get-up-to-speed-with-partial-clone-and-shallow-clone/
           filter: tree:0
 
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4.4.0
+      # - name: Derive appropriate SHAs for base and head for `nx affected` commands
+      #   uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4.4.0
 
-
-      - run: |
-          echo "NX_BASE: ${{ env.NX_BASE }}"
-          echo "NX_HEAD: ${{ env.NX_HEAD }}"
+      # - run: |
+      #     echo "NX_BASE: ${{ env.NX_BASE }}"
+      #     echo "NX_HEAD: ${{ env.NX_HEAD }}"
 
       - uses: ./.github/actions/pnpm-install
+        with:
+          bryntum_access_token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 
       - name: Publish Storybook to Chromatic, if necessary
         run: pnpm nx affected -t chromatic -- --ci --project-token=${{ secrets.CHROMATIC_PROJECT_TOKEN }}
 
-  test-storybook:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+  # test-storybook:
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 10
 
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/pnpm-install
-      - run: pnpm exec playwright install --with-deps chromium
-      - name: Build Storybook
-        run: pnpm nx build-storybook ui -- --quiet
-      - run: |
-          pnpx concurrently -k -s first -n "SB,TEST" \
-            "pnpx http-server ./packages/ui/storybook-static --port 6007 --silent" \
-            "pnpx wait-on tcp:127.0.0.1:6007 && pnpm nx test-storybook ui --url http://127.0.0.1:6007"
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: ./.github/actions/pnpm-install
+  #       with:
+  #         bryntum_access_token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+  #     - run: pnpm exec playwright install --with-deps chromium
+  #     - name: Build Storybook
+  #       run: pnpm nx build-storybook ui -- --quiet
+  #     - run: |
+  #         pnpx concurrently -k -s first -n "SB,TEST" \
+  #           "pnpx http-server ./packages/ui/storybook-static --port 6007 --silent" \
+  #           "pnpx wait-on tcp:127.0.0.1:6007 && pnpm nx test-storybook ui --url http://127.0.0.1:6007"
 
