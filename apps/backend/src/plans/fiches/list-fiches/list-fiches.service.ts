@@ -338,10 +338,10 @@ export default class ListFichesService {
         >`array_agg(${ficheActionInstanceGouvernanceTable.instanceGouvernanceId})`.as(
           'instance_gouvernance_ids'
         ),
-        instanceGouvernanceTags: sql<
+        instanceGouvernance: sql<
           Tag[]
         >`array_agg(json_build_object('id', ${ficheActionInstanceGouvernanceTable.instanceGouvernanceId}, 'nom', ${instanceGouvernanceTable.nom} ))`.as(
-          'instance_gouvernance_tags'
+          'instance_gouvernance'
         ),
       })
       .from(ficheActionInstanceGouvernanceTable)
@@ -357,7 +357,7 @@ export default class ListFichesService {
 
     return query
       .groupBy(ficheActionInstanceGouvernanceTable.ficheId)
-      .as('ficheActionInstanceGouvernanceTags');
+      .as('ficheActionInstanceGouvernance');
   }
 
   private getFicheActionStructureTagsQuery(ficheIds: number[]) {
@@ -954,8 +954,6 @@ export default class ListFichesService {
     const ficheActionInstanceGouvernance =
       this.getFicheActionInstanceGouvernanceQuery(ficheIds);
     const ficheActionLibreTags = this.getFicheActionLibreTagsQuery(ficheIds);
-    const ficheActionInstanceGouvernanceTags =
-      this.getFicheActionInstanceGouvernanceTagsQuery(ficheIds);
     const ficheActionPilotes = this.getFicheActionPilotesQuery(ficheIds);
     const ficheActionServices = this.getFicheActionServicesQuery(ficheIds);
     const ficheActionAxes = this.getFicheActionAxesQuery(ficheIds);
@@ -1009,8 +1007,6 @@ export default class ListFichesService {
         docs: ficheActionDocs.docs,
         budgets: ficheActionBudgets.budgets,
         actionImpactId: actionImpactActionTable.actionImpactId,
-        instanceGouvernanceTags:
-          ficheActionInstanceGouvernanceTags.instanceGouvernanceTags,
       })
       .from(ficheActionTable)
       .leftJoin(
@@ -1044,10 +1040,6 @@ export default class ListFichesService {
       .leftJoin(
         ficheActionLibreTags,
         eq(ficheActionLibreTags.ficheId, ficheActionTable.id)
-      )
-      .leftJoin(
-        ficheActionInstanceGouvernanceTags,
-        eq(ficheActionInstanceGouvernanceTags.ficheId, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionThematiques,

@@ -6,7 +6,6 @@ import {
   tagSchema,
   tagWithCollectiviteIdSchema,
 } from '../../collectivites';
-import { instanceGouvernanceTagSchema } from '../../collectivites/instance-gouvernance.schema';
 import {
   effetAttenduSchema,
   idNameSchema,
@@ -125,7 +124,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .describe('Élu·e référent·e'),
   libreTags: z.array(tagSchema).nullable().describe('Tags personnalisés'),
   instanceGouvernance: z
-    .array(instanceGouvernanceTagSchema)
+    .array(tagSchema)
     .nullable()
     .describe('Instance de gouvernance'),
   financeurs: financeurSchema.array().nullable().describe('Financeurs'),
