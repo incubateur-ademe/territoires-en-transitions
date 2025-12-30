@@ -24,10 +24,7 @@
         "options": {
           "command": "chromatic --project-token=${CHROMATIC_PROJECT_TOKEN}",
           "cwd": "packages/ui"
-        },
-        "dependsOn": [
-          "build-storybook"
-        ]
+        }
       }
     }
   }

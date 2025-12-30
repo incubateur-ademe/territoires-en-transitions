@@ -1,4 +1,4 @@
-import { Meta, StoryFn } from '@storybook/nextjs';
+import { Meta, StoryFn } from '@storybook/nextjs-vite';
 import {
   DEFAULT_OPTIONS_WITH_NON_CONCERNE,
   SelectActionStatut,

@@ -10,7 +10,7 @@ import { updateSessionOrRedirect } from './src/supabase/middleware';
  * Ref: https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy
  *
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const url = getRequestUrl(request);
 
   // Génère un id unique à chaque requête

@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/nextjs';
+import { Meta } from '@storybook/nextjs-vite';
 import { action } from 'storybook/actions';
 import { TUpdateMembre } from '../../../../../../../src/app/pages/collectivite/Users/types';
 import { ConfirmerChangementNiveau } from './ConfirmerChangementNiveau';

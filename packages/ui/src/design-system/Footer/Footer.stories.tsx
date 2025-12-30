@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/nextjs';
+import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { APP_BASE_URL, SITE_BASE_URL } from '../../utils/constants';
 import { Footer } from './Footer';
 

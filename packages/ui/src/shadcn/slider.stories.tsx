@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/nextjs';
+import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
 import { Slider } from './slider';
 
