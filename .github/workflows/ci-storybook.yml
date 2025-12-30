@@ -31,6 +31,9 @@ jobs:
         with:
           bryntum_access_token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
 
+      - name: Build Storybook
+        run: pnpm nx build-storybook ui -- --quiet
+
       - name: Publish Storybook to Chromatic, if necessary
         run: pnpm nx affected -t chromatic -- --ci --project-token=${{ secrets.CHROMATIC_PROJECT_TOKEN }}
 
