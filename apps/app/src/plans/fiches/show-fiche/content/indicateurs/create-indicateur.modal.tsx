@@ -2,19 +2,19 @@ import IndicateurPersoNouveau from '@/app/app/pages/collectivite/Indicateurs/Ind
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Modal } from '@tet/ui';
 
-type ModaleCreerIndicateurProps = {
+type CreateIndicateurModalProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
   fiche?: FicheWithRelations;
   isFavoriCollectivite?: boolean;
 };
 
-const ModaleCreerIndicateur = ({
+export const CreateIndicateurModal = ({
   isOpen,
   setIsOpen,
   fiche,
   isFavoriCollectivite,
-}: ModaleCreerIndicateurProps) => {
+}: CreateIndicateurModalProps) => {
   return (
     <Modal
       openState={{ isOpen, setIsOpen }}
@@ -30,5 +30,3 @@ const ModaleCreerIndicateur = ({
     />
   );
 };
-
-export default ModaleCreerIndicateur;
