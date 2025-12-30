@@ -7,6 +7,7 @@ import {
   useState,
 } from 'react';
 
+import { cn } from '../../utils/cn';
 import { Icon } from '../Icon';
 
 export type TabSize = 'xs' | 'sm' | 'md';
@@ -76,9 +77,9 @@ export const Tabs = ({
   );
 
   return (
-    <div className={classNames(className)} data-test={dataTest}>
+    <div className={cn(className)} data-test={dataTest}>
       <ul
-        className={classNames(
+        className={cn(
           'flex rounded-lg bg-grey-2 p-2 gap-x-3 w-full list-none justify-start',
           {
             // Wrap layout (default): allows multi-line
