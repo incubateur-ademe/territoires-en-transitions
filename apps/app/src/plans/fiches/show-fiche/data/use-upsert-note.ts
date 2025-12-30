@@ -1,5 +1,5 @@
-import { useApiClient } from '@/app/utils/use-api-client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
 
 export type EditedNote = Pick<FicheNote, 'note'> & {
@@ -9,32 +9,35 @@ export type EditedNote = Pick<FicheNote, 'note'> & {
 
 export const useUpsertNote = ({
   id: ficheId,
-  collectiviteId,
-}: Pick<FicheWithRelations, 'id' | 'collectiviteId'>) => {
-  const api = useApiClient();
+}: Pick<FicheWithRelations, 'id'>) => {
+  const trpc = useTRPC();
   const queryClient = useQueryClient();
 
-  // TODO: use trpc
-  return useMutation({
-    mutationKey: ['upsert_note'],
-    mutationFn: async ({ id, note, year }: EditedNote) => {
-      return api.put({
-        route: `/collectivites/${collectiviteId}/fiches-action/${ficheId}/notes`,
-        params: {
-          notes: [
-            { id, note, dateNote: new Date(`${year}-01-01`).toISOString() },
-          ],
+  const mutation = useMutation(
+    trpc.plans.fiches.notes.upsert.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: trpc.plans.fiches.get.queryKey({ id: ficheId }),
+        });
+        queryClient.invalidateQueries({
+          queryKey: trpc.plans.fiches.notes.list.queryKey({ ficheId }),
+        });
+      },
+    }),
+    queryClient
+  );
+
+  return {
+    ...mutation,
+    mutateAsync: async ({ id, note, year }: EditedNote) => {
+      return mutation.mutateAsync({
+        ficheId,
+        note: {
+          id,
+          note,
+          dateNote: new Date(`${year}-01-01`).toISOString(),
         },
       });
     },
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['fiche_action', ficheId.toString()],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['fiche_action_notes', collectiviteId, ficheId],
-      });
-    },
-  });
+  };
 };

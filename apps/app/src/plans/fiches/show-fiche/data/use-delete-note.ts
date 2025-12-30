@@ -1,31 +1,33 @@
-import { useApiClient } from '@/app/utils/use-api-client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Fiche } from '@tet/domain/plans';
+import { useTRPC } from '@tet/api';
+import { FicheWithRelations } from '@tet/domain/plans';
 
 export type DeletedNote = { id: number };
 
 export const useDeleteNote = ({
   id: ficheId,
-  collectiviteId,
-}: Pick<Fiche, 'id' | 'collectiviteId'>) => {
-  const api = useApiClient();
+}: Pick<FicheWithRelations, 'id'>) => {
+  const trpc = useTRPC();
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async ({ id }: DeletedNote) => {
-      return api.delete({
-        route: `/collectivites/${collectiviteId}/fiches-action/${ficheId}/note`,
-        params: { id },
-      });
-    },
+  const mutation = useMutation(
+    trpc.plans.fiches.notes.delete.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: trpc.plans.fiches.get.queryKey({ id: ficheId }),
+        });
+        queryClient.invalidateQueries({
+          queryKey: trpc.plans.fiches.notes.list.queryKey({ ficheId }),
+        });
+      },
+    }),
+    queryClient
+  );
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['fiche_action', ficheId.toString()],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['fiche_action_notes', collectiviteId, ficheId],
-      });
+  return {
+    ...mutation,
+    mutateAsync: async ({ id }: DeletedNote) => {
+      return mutation.mutateAsync({ ficheId, noteId: id });
     },
-  });
+  };
 };
