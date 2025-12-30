@@ -1,6 +1,5 @@
 import DownloadCanvasButton from '@/app/ui/buttons/DownloadCanvasButton';
-import Modal from '@/app/ui/shared/floating-ui/Modal';
-import { Button } from '@tet/ui';
+import { Button, Modal } from '@tet/ui';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
 import BarChart, { BarChartProps } from './BarChart';
@@ -222,8 +221,10 @@ const ChartCard = ({
         {chartInfo?.expandable && (
           <Modal
             size="xl"
-            externalOpen={isModalOpen}
-            setExternalOpen={setIsModalOpen}
+            openState={{
+              isOpen: isModalOpen,
+              setIsOpen: setIsModalOpen,
+            }}
             render={() => (
               <ChartCardModalContent
                 chart={chart}

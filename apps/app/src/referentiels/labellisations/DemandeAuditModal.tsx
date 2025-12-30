@@ -1,6 +1,5 @@
-import Modal from '@/app/ui/shared/floating-ui/Modal';
 import { SujetDemande } from '@tet/domain/referentiels';
-import { Alert, Button, RadioButton } from '@tet/ui';
+import { Alert, Button, Modal, RadioButton } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import {
@@ -26,8 +25,10 @@ export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
 
   return (
     <Modal
-      externalOpen={opened}
-      setExternalOpen={setOpened}
+      openState={{
+        isOpen: opened,
+        setIsOpen: setOpened,
+      }}
       size="lg"
       render={({ close }) => (
         <DemandeAuditModalContent {...props} onClose={close} />
@@ -59,7 +60,7 @@ export const DemandeAuditModalContent = (
   const asterique = aide ? '*' : '';
 
   return (
-    <div className="p-7 flex flex-col" data-test="DemandeAuditModal">
+    <div className="flex flex-col" data-test="DemandeAuditModal">
       <h3>Demander un audit</h3>
       <div className="w-full">
         {status === 'non_demandee' && isLoading ? 'Envoi en cours...' : null}
