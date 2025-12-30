@@ -1,5 +1,5 @@
-import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
-import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
+import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import { FichesList } from '@/app/plans/fiches/list-all-fiches/components/fiches-list';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { FicheActionFiltersProvider } from '@/app/plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
@@ -32,9 +32,7 @@ const FichesLiees = ({
 
   const ficheIds = fiches.map((f) => f.id);
 
-  const { mutate: updateIndicateur } = useUpdateIndicateurDefinition(
-    definition.id
-  );
+  const { mutate: updateIndicateur } = useUpdateIndicateur(definition.id);
 
   const isEmpty = ficheIds.length === 0;
 

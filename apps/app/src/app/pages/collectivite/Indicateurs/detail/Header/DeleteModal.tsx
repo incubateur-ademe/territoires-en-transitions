@@ -1,5 +1,5 @@
-import { useDeleteIndicateurDefinition } from '@/app/indicateurs/definitions/use-delete-indicateur-definition';
-import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
+import { useDeleteIndicateurDefinition } from '@/app/indicateurs/indicateurs/use-delete-indicateur-definition';
+import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 

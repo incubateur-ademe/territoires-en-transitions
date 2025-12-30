@@ -7,11 +7,11 @@ import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/Indic
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { IndicateursListNoResults } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-empty';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
-import { canUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/indicateur-definition-authorization.utils';
+import { canUpdateIndicateurDefinition } from '@/app/indicateurs/indicateurs/indicateur-definition-authorization.utils';
 import {
   ListDefinitionsInputFilters,
-  useListIndicateurDefinitions,
-} from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
+  useListIndicateurs,
+} from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { CustomFilterBadges } from '@/app/ui/lists/filter-badges';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
@@ -61,8 +61,9 @@ const IndicateursListe = (props: Props) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const { data: { data: definitions, count = 0 } = {}, isPending } =
-    useListIndicateurDefinitions(
+    useListIndicateurs(
       {
+        collectiviteId,
         filters,
         queryOptions: {
           page: currentPage,

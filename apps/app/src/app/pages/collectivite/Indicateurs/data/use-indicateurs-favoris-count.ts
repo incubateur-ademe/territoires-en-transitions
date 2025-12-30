@@ -8,7 +8,7 @@ export const useIndicateursFavorisCount = () => {
   const trpc = useTRPC();
 
   return useQuery(
-    trpc.indicateurs.definitions.getFavorisCount.queryOptions({
+    trpc.indicateurs.indicateurs.getFavorisCount.queryOptions({
       collectiviteId,
     })
   );

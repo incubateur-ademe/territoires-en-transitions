@@ -23,7 +23,7 @@ export class ScoreIndicatifRouter {
       .query(async ({ ctx, input }) => {
         await this.permissionService.isAllowed(
           ctx.user,
-          'indicateurs.definitions.read',
+          'indicateurs.indicateurs.read',
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );

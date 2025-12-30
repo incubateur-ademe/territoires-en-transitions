@@ -1,11 +1,11 @@
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
-import { canUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/indicateur-definition-authorization.utils';
+import { canUpdateIndicateurDefinition } from '@/app/indicateurs/indicateurs/indicateur-definition-authorization.utils';
 import {
   IndicateurDefinitionListItem,
-  useListIndicateurDefinitions,
-} from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
+  useListIndicateurs,
+} from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
@@ -49,16 +49,12 @@ const IndicateursAssocies = ({
   const tracker = useEventTracker();
 
   const { data: { data: selectedIndicateurs } = {}, isLoading } =
-    useListIndicateurDefinitions(
-      {
-        filters: {
-          ficheIds: [fiche.id],
-        },
+    useListIndicateurs({
+      collectiviteId: fiche.collectiviteId,
+      filters: {
+        ficheIds: [fiche.id],
       },
-      {
-        doNotAddCollectiviteId: true,
-      }
-    );
+    });
 
   const updateIndicateurs = (indicateur: IndicateurDefinitionListItem) => {
     // Check si l'indicateur est déjà associé
@@ -75,7 +71,7 @@ const IndicateursAssocies = ({
 
   const canCreateIndicateur = hasPermission(
     permissions,
-    'indicateurs.definitions.create'
+    'indicateurs.indicateurs.create'
   );
 
   return (

@@ -1,5 +1,5 @@
 import { indicateursNameToParams } from '@/app/app/pages/collectivite/Indicateurs/lists/utils';
-import { ListDefinitionsInputFilters } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
+import { ListDefinitionsInputFilters } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import {
   listDefinitionsInputFiltersSchema,
   ListDefinitionsInputSort,

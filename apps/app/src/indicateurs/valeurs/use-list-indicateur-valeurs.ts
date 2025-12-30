@@ -15,7 +15,12 @@ export type IndicateurValeurGroupee = {
 export type ListIndicateurValeurOuput =
   RouterOutput['indicateurs']['valeurs']['list'];
 
-type ListInput = RouterInput['indicateurs']['valeurs']['list'];
+type ListInput = Omit<
+  RouterInput['indicateurs']['valeurs']['list'],
+  'collectiviteId'
+> & {
+  collectiviteId?: number;
+};
 
 /** Charge toutes les valeurs associées à un indicateur id (ou à un ou plusieurs identifiants d'indicateurs prédéfinis) */
 export const useListIndicateurValeurs = (

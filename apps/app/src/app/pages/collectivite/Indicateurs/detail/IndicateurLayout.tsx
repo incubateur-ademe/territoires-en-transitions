@@ -1,6 +1,6 @@
-import { canUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/indicateur-definition-authorization.utils';
-import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
-import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
+import { canUpdateIndicateurDefinition } from '@/app/indicateurs/indicateurs/indicateur-definition-authorization.utils';
+import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import Markdown from '@/app/ui/Markdown';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -24,9 +24,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
     description,
   } = definition;
 
-  const { mutate: updateIndicateur } = useUpdateIndicateurDefinition(
-    definition.id
-  );
+  const { mutate: updateIndicateur } = useUpdateIndicateur(definition.id);
   const { id } = useUser();
 
   const { collectiviteId, permissions, niveauAcces } = useCurrentCollectivite();

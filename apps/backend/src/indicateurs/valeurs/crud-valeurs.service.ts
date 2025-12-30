@@ -59,19 +59,20 @@ import {
 } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
-import { DefinitionListItem } from '../definitions/list-definitions/list-definitions.output';
-import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
-import { ListDefinitionsHavingComputedValueRepository } from '../definitions/list-platform-predefined-definitions/list-definitions-having-computed-value.repository';
+import { ListCollectiviteDefinitionsRepository } from '../definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
+import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
+import { IndicateurListItem } from '../indicateurs/list-indicateurs/list-indicateurs.output';
+import { ListIndicateursService } from '../indicateurs/list-indicateurs/list-indicateurs.service';
 import { indicateurSourceMetadonneeTable } from '../shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '../shared/models/indicateur-source.table';
 import { DeleteIndicateursValeursRequestType } from './delete-indicateur-valeurs.request';
 import { DeleteValeurIndicateur } from './delete-valeur-indicateur.request';
-import { GetIndicateursValeursInputType } from './get-indicateur-valeurs.input';
 import { GetIndicateursValeursResponse } from './get-indicateur-valeurs.response';
 import {
   IndicateurValeurAvecMetadonnesDefinition,
   indicateurValeurTable,
 } from './indicateur-valeur.table';
+import { ListIndicateurValeursInput } from './list-indicateur-valeurs.input';
 import { UpsertValeurIndicateur } from './upsert-valeur-indicateur.request';
 
 type IndicateurValeurInsert = IndicateurValeurCreate;
@@ -93,14 +94,15 @@ export default class CrudValeursService {
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
     private readonly collectiviteService: CollectivitesService,
-    private readonly indicateurDefinitionService: ListDefinitionsService,
-    private readonly listDefinitionsHavingComputedValueRepository: ListDefinitionsHavingComputedValueRepository,
+    private readonly listCollectiviteDefinitionsRepository: ListCollectiviteDefinitionsRepository,
+    private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
+    private readonly listIndicateursService: ListIndicateursService,
     private readonly updateIndicateurService: UpdateDefinitionService,
     private readonly computeValeursService: ComputeValeursService
   ) {}
 
   private getIndicateurValeursSqlConditions(
-    options: GetIndicateursValeursInputType
+    options: ListIndicateurValeursInput
   ): (SQLWrapper | SQL)[] {
     const conditions: (SQLWrapper | SQL)[] = [];
     if (options.collectiviteId) {
@@ -163,7 +165,7 @@ export default class CrudValeursService {
    * @param options
    */
   async getIndicateursValeurs(
-    options: GetIndicateursValeursInputType,
+    options: ListIndicateurValeursInput,
     ignoreDedoublonnage?: boolean
   ) {
     this.logger.log(
@@ -270,8 +272,8 @@ export default class CrudValeursService {
     return { indicateurValeurIdsSupprimes: deletedIds };
   }
 
-  async getIndicateurValeursGroupees(
-    options: GetIndicateursValeursInputType,
+  async listIndicateurValeurs(
+    options: ListIndicateurValeursInput,
     user?: AuthUser
   ): Promise<GetIndicateursValeursResponse> {
     const { collectiviteId, indicateurIds, identifiantsReferentiel } = options;
@@ -279,41 +281,34 @@ export default class CrudValeursService {
     // Vérifie les droits
     let hasPermissionLecture;
     if (user) {
-      if (collectiviteId) {
-        const collectivitePrivate = await this.collectiviteService.isPrivate(
-          collectiviteId
+      const collectivitePrivate = await this.collectiviteService.isPrivate(
+        collectiviteId
+      );
+      hasPermissionLecture = await this.permissionService.isAllowed(
+        user,
+        'indicateurs.valeurs.read',
+        ResourceType.COLLECTIVITE,
+        collectiviteId,
+        true
+      );
+      const hasPermissionVisite = await this.permissionService.isAllowed(
+        user,
+        'indicateurs.valeurs.read_public',
+        ResourceType.COLLECTIVITE,
+        collectiviteId,
+        true
+      );
+      const accesRestreintRequis = collectivitePrivate && !hasPermissionLecture;
+      if (accesRestreintRequis || !hasPermissionVisite) {
+        throw new ForbiddenException(
+          `Droits insuffisants, l'utilisateur ${
+            user.id
+          } n'a pas l'autorisation ${
+            accesRestreintRequis
+              ? 'indicateurs.valeurs.read'
+              : 'indicateurs.valeurs.read_public'
+          } sur la ressource Collectivité ${collectiviteId}`
         );
-        hasPermissionLecture = await this.permissionService.isAllowed(
-          user,
-          'indicateurs.valeurs.read',
-          ResourceType.COLLECTIVITE,
-          collectiviteId,
-          true
-        );
-        const hasPermissionVisite = await this.permissionService.isAllowed(
-          user,
-          'indicateurs.valeurs.read_public',
-          ResourceType.COLLECTIVITE,
-          collectiviteId,
-          true
-        );
-        const accesRestreintRequis =
-          collectivitePrivate && !hasPermissionLecture;
-        if (accesRestreintRequis || !hasPermissionVisite) {
-          throw new ForbiddenException(
-            `Droits insuffisants, l'utilisateur ${
-              user.id
-            } n'a pas l'autorisation ${
-              accesRestreintRequis
-                ? 'indicateurs.valeurs.read'
-                : 'indicateurs.valeurs.read_public'
-            } sur la ressource Collectivité ${collectiviteId}`
-          );
-        }
-      } else {
-        // Check if has service role
-        this.permissionService.hasServiceRole(user);
-        hasPermissionLecture = true;
       }
     } else {
       // Appelé par un service account, on suppose que les droits sont déjà vérifiés
@@ -333,20 +328,12 @@ export default class CrudValeursService {
       confidentiel: v.confidentiel,
     }));
 
-    const { data: uniqueIndicateurDefinitions } =
-      await this.indicateurDefinitionService.listDefinitions(
+    const uniqueIndicateurDefinitions =
+      await this.listCollectiviteDefinitionsRepository.listCollectiviteDefinitions(
         {
-          collectiviteId,
-          filters: {
-            identifiantsReferentiel: options.identifiantsReferentiel,
-            indicateurIds: options.indicateurIds,
-          },
-          queryOptions: {
-            page: 1,
-            limit: 10000, // No pagination
-          },
-        },
-        user
+          indicateurIds: options.indicateurIds,
+          identifiantsReferentiel: options.identifiantsReferentiel,
+        }
       );
 
     options.identifiantsReferentiel?.forEach((identifiant) => {
@@ -442,7 +429,7 @@ export default class CrudValeursService {
       });
     }
     return {
-      count: indicateurValeurs.length,
+      count: indicateurValeurGroupeesParSource.length,
       indicateurs: indicateurValeurGroupeesParSource,
     };
   }
@@ -450,7 +437,7 @@ export default class CrudValeursService {
   async canMutateValeur(
     user: AuthUser,
     collectiviteId: number,
-    indicateurDefinition: DefinitionListItem,
+    indicateur: IndicateurListItem,
     doNotThrow?: boolean
   ): Promise<boolean> {
     const permissions = await this.permissionService.listPermissions(
@@ -464,7 +451,7 @@ export default class CrudValeursService {
     }
 
     if (permissions.has('indicateurs.valeurs.mutate_piloted_by_me')) {
-      if (indicateurDefinition.pilotes?.some((p) => p.userId === user.id)) {
+      if (indicateur.pilotes?.some((p) => p.userId === user.id)) {
         return true;
       }
     }
@@ -487,20 +474,23 @@ export default class CrudValeursService {
    * objectif (et pareil pour les commentaires).
    */
   async upsertValeur(data: UpsertValeurIndicateur, user: AuthUser) {
-    const { collectiviteId } = data;
-    const indicateurDefinition =
-      await this.indicateurDefinitionService.getDefinition(data.indicateurId);
+    const { collectiviteId, indicateurId } = data;
 
-    await this.canMutateValeur(user, collectiviteId, indicateurDefinition);
+    const indicateur = await this.listIndicateursService.getIndicateur({
+      collectiviteId,
+      indicateurId,
+    });
+
+    await this.canMutateValeur(user, collectiviteId, indicateur);
 
     this.logger.log(`Upsert valeur with data ${JSON.stringify(data)}`);
 
     if (user.role === AuthRole.AUTHENTICATED && user.id) {
       if (!isNil(data.resultat)) {
-        data.resultat = roundTo(data.resultat, indicateurDefinition.precision);
+        data.resultat = roundTo(data.resultat, indicateur.precision);
       }
       if (!isNil(data.objectif)) {
-        data.objectif = roundTo(data.objectif, indicateurDefinition.precision);
+        data.objectif = roundTo(data.objectif, indicateur.precision);
       }
 
       const now = new Date().toISOString();
@@ -566,7 +556,7 @@ export default class CrudValeursService {
         const calculatedIndicateurValeurToUpsert =
           await this.computeValeursService.updateCalculatedIndicateurValeurs(
             [upsertedIndicateurValeur],
-            [indicateurDefinition]
+            [indicateur]
           );
         this.logger.log(
           `${calculatedIndicateurValeurToUpsert.length} valeurs d'indicateurs calculées`
@@ -580,7 +570,7 @@ export default class CrudValeursService {
 
       // update indicateur definition modifiedBy field
       await this.updateIndicateurService.updateDefinitionModifiedFields({
-        indicateurId: indicateurDefinition.id,
+        indicateurId: indicateur.id,
         collectiviteId,
         user,
       });
@@ -592,10 +582,12 @@ export default class CrudValeursService {
   async deleteValeurIndicateur(data: DeleteValeurIndicateur, user: AuthUser) {
     const { collectiviteId, indicateurId, id } = data;
 
-    const indicateurDefinition =
-      await this.indicateurDefinitionService.getDefinition(indicateurId);
+    const indicateur = await this.listIndicateursService.getIndicateur({
+      indicateurId,
+      collectiviteId,
+    });
 
-    await this.canMutateValeur(user, collectiviteId, indicateurDefinition);
+    await this.canMutateValeur(user, collectiviteId, indicateur);
 
     if (user.role === AuthRole.AUTHENTICATED && user.id) {
       await this.databaseService.db
@@ -619,8 +611,7 @@ export default class CrudValeursService {
 
   async upsertIndicateurValeurs(
     indicateurValeurs: IndicateurValeurInsert[],
-    user: AuthenticatedUser | undefined,
-    disableCalculAuto?: boolean
+    user: AuthenticatedUser | undefined
   ): Promise<IndicateurValeurWithIdentifiant[]> {
     const collectiviteIds = [
       ...new Set(indicateurValeurs.map((v) => v.collectiviteId)),
@@ -652,8 +643,8 @@ export default class CrudValeursService {
       ...new Set(indicateurValeurs.map((v) => v.indicateurId)),
     ];
     const indicateurDefinitions =
-      await this.indicateurDefinitionService.listIndicateurDefinitions(
-        indicateurIds
+      await this.listCollectiviteDefinitionsRepository.listCollectiviteDefinitions(
+        { indicateurIds }
       );
     const indicateurDefinitionsById = keyBy(
       indicateurDefinitions,
@@ -888,7 +879,7 @@ export default class CrudValeursService {
       }
     });
 
-    if (indicateurValeursResultat.length && !disableCalculAuto) {
+    if (indicateurValeursResultat.length) {
       const calculatedIndicateursResultatToUpsert =
         await this.computeValeursService.updateCalculatedIndicateurValeurs(
           indicateurValeursResultat
@@ -924,7 +915,7 @@ export default class CrudValeursService {
 
     if (!forComputedIndicateurDefinitions) {
       forComputedIndicateurDefinitions =
-        await this.listDefinitionsHavingComputedValueRepository.listDefinitionsHavingComputedValue();
+        await this.listPlatformDefinitionsRepository.listPlatformDefinitionsHavingComputedValue();
     }
     this.logger.log(
       `Recompute all calculated indicateur valeurs for collectivite ${
@@ -1030,7 +1021,7 @@ export default class CrudValeursService {
 
     if (!computedIndicateurDefinitions) {
       computedIndicateurDefinitions =
-        await this.listDefinitionsHavingComputedValueRepository.listDefinitionsHavingComputedValue();
+        await this.listPlatformDefinitionsRepository.listPlatformDefinitionsHavingComputedValue();
     }
 
     const computedIndicateurValeurs =

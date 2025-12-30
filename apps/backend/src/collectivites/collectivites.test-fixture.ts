@@ -1,5 +1,5 @@
 import { withOnTestFinished } from '../utils/test-fixture.utils';
-import { createGroupement as createGroupementBase } from './shared/models/groupement.fixture';
+import { createGroupement as createGroupementBase } from './shared/models/groupement.test-fixture';
 import { createCategorieTag as createCategorieTagBase } from './tags/categorie-tag.fixture';
 import { createPersonneTag as createPersonneTagBase } from './tags/personnes/personne-tag.fixture';
 import { createServiceTag as createServiceTagBase } from './tags/service-tag.fixture';

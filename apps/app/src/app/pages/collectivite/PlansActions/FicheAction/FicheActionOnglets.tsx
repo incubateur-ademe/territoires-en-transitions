@@ -51,9 +51,9 @@ const FicheActionOnglets = ({
     {
       label: 'Indicateurs de suivi',
       isVisible:
-        hasPermission(permissions, 'indicateurs.definitions.read') ||
+        hasPermission(permissions, 'indicateurs.indicateurs.read') ||
         (!niveauAcces &&
-          hasPermission(permissions, 'indicateurs.definitions.read_public')),
+          hasPermission(permissions, 'indicateurs.indicateurs.read_public')),
       render: () => (
         <IndicateursTab
           isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}

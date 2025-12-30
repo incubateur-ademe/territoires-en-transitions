@@ -6,12 +6,12 @@ import {
   makeCollectiviteIndicateursListUrl,
   makeCollectiviteIndicateursUrl,
 } from '@/app/app/paths';
-import { useListIndicateurDefinitions } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
+import { useListIndicateurs } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
-import { ButtonProps, MenuAction } from '@tet/ui';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ModuleIndicateursSelect } from '@tet/api/plan-actions';
+import { ButtonProps, MenuAction } from '@tet/ui';
 
 type Props = {
   module: ModuleIndicateursSelect;
@@ -36,8 +36,9 @@ export const IndicateursModule = ({
 
   const { collectiviteId } = useCurrentCollectivite();
 
-  const { data: listIndicateursData, isLoading } = useListIndicateurDefinitions(
+  const { data: listIndicateursData, isLoading } = useListIndicateurs(
     {
+      collectiviteId,
       filters: module.options.filtre,
       queryOptions: {
         sort: [{ field: 'estRempli', direction: 'desc' }],

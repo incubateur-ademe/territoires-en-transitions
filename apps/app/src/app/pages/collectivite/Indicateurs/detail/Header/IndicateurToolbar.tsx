@@ -1,5 +1,5 @@
-import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
-import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
+import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { PermissionOperation } from '@tet/domain/users';
 import { Button, Tooltip, VisibleWhen } from '@tet/ui';
@@ -30,9 +30,7 @@ const IndicateurToolbar = ({
 
   const { estFavori } = definition;
 
-  const { mutate: updateIndicateur } = useUpdateIndicateurDefinition(
-    definition.id
-  );
+  const { mutate: updateIndicateur } = useUpdateIndicateur(definition.id);
 
   return (
     <>
@@ -79,7 +77,7 @@ const IndicateurToolbar = ({
         <VisibleWhen
           condition={
             isPerso &&
-            hasPermission(permissions, 'indicateurs.definitions.delete')
+            hasPermission(permissions, 'indicateurs.indicateurs.delete')
           }
         >
           <DeleteModal {...{ definition, isPending }} />

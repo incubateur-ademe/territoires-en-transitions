@@ -75,7 +75,7 @@ describe('createIndicateurPerso', () => {
     } satisfies CreateIndicateurDefinitionInput;
 
     const caller = router.createCaller({ user: yoloDodo });
-    const indicateurId = await caller.indicateurs.definitions.create(data);
+    const indicateurId = await caller.indicateurs.indicateurs.create(data);
 
     expect(indicateurId).toBeDefined();
     expect(typeof indicateurId).toBe('number');
@@ -137,13 +137,13 @@ describe('createIndicateurPerso', () => {
     };
 
     const caller = router.createCaller({ user: yoloDodo });
-    const indicateurId = await caller.indicateurs.definitions.create(data);
+    const indicateurId = await caller.indicateurs.indicateurs.create(data);
 
     expect(indicateurId).toBeDefined();
     expect(typeof indicateurId).toBe('number');
 
     onTestFinished(async () => {
-      await caller.indicateurs.definitions.delete({
+      await caller.indicateurs.indicateurs.delete({
         indicateurId,
         collectiviteId: data.collectiviteId,
       });
@@ -199,12 +199,12 @@ describe('createIndicateurPerso', () => {
     };
 
     const caller = router.createCaller({ user: yoloDodo });
-    const indicateurId = await caller.indicateurs.definitions.create(data);
+    const indicateurId = await caller.indicateurs.indicateurs.create(data);
 
     expect(indicateurId).toBeDefined();
 
     onTestFinished(async () => {
-      await caller.indicateurs.definitions.delete({
+      await caller.indicateurs.indicateurs.delete({
         indicateurId,
         collectiviteId: data.collectiviteId,
       });
@@ -213,7 +213,7 @@ describe('createIndicateurPerso', () => {
     // Verify the modified_* fields are set by using the list service
     const {
       data: [indicateur],
-    } = await caller.indicateurs.definitions.list({
+    } = await caller.indicateurs.indicateurs.list({
       collectiviteId,
       filters: {
         indicateurIds: [indicateurId],
@@ -240,7 +240,7 @@ describe('createIndicateurPerso', () => {
     const caller = router.createCaller({ user: yoloDodo });
 
     await expect(
-      caller.indicateurs.definitions.create(data)
+      caller.indicateurs.indicateurs.create(data)
     ).rejects.toThrowError(/Droits insuffisants/);
   });
 });

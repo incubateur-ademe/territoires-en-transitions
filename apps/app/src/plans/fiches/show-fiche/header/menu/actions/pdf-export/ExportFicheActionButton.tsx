@@ -1,4 +1,4 @@
-import { useListIndicateurDefinitions } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
+import { useListIndicateurs } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { useGetBudget } from '@/app/plans/fiches/update-fiche/data/use-get-budget';
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
@@ -34,8 +34,9 @@ export const FicheActionPdfContent = ({
   const {
     data: { data: indicateursListe } = {},
     isLoading: isLoadingIndicateurs,
-  } = useListIndicateurDefinitions(
+  } = useListIndicateurs(
     {
+      collectiviteId,
       filters: {
         indicateurIds: fiche.indicateurs?.map((ind) => ind.id),
       },

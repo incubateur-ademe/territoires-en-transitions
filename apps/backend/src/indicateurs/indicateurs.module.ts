@@ -1,10 +1,4 @@
 import { Module } from '@nestjs/common';
-import { HandleDefinitionFichesService } from '@tet/backend/indicateurs/definitions/handle-definition-fiches/handle-definition-fiches.service';
-import { HandleDefinitionPilotesService } from '@tet/backend/indicateurs/definitions/handle-definition-pilotes/handle-definition-pilotes.service';
-import { HandleDefinitionServicesService } from '@tet/backend/indicateurs/definitions/handle-definition-services/handle-definition-services.service';
-import { HandleDefinitionThematiquesService } from '@tet/backend/indicateurs/definitions/handle-definition-thematiques/handle-definition-thematiques.service';
-import { IndicateurDefinitionsRouter } from '@tet/backend/indicateurs/definitions/indicateur-definitions.router';
-import { IndicateursListDefinitionsController } from '@tet/backend/indicateurs/definitions/list-definitions/list-definitions.controller';
 import CreateDefinitionService from '@tet/backend/indicateurs/definitions/mutate-definition/create-definition.service';
 import { MutateDefinitionRouter } from '@tet/backend/indicateurs/definitions/mutate-definition/mutate-definition.router';
 import { IndicateursRouter } from '@tet/backend/indicateurs/indicateurs.router';
@@ -18,17 +12,22 @@ import PersonnalisationsExpressionService from '../collectivites/personnalisatio
 import PersonnalisationsService from '../collectivites/personnalisations/services/personnalisations-service';
 import { AuthModule } from '../users/auth.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
-import { ListDefinitionsRouter } from './definitions/list-definitions/list-definitions.router';
-import { ListDefinitionsService } from './definitions/list-definitions/list-definitions.service';
-import { ListDefinitionIdsRepository } from './definitions/list-platform-predefined-definitions/list-definition-ids.repository';
-import { ListDefinitionsHavingComputedValueRepository } from './definitions/list-platform-predefined-definitions/list-definitions-having-computed-value.repository';
-import { ListDefinitionsLightRepository } from './definitions/list-platform-predefined-definitions/list-definitions-light.repository';
+import { ListCollectiviteDefinitionsRepository } from './definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
+import { ListPlatformDefinitionsController } from './definitions/list-platform-definitions/list-platform-definitions.controller';
+import { ListPlatformDefinitionsRepository } from './definitions/list-platform-definitions/list-platform-definitions.repository';
 import { DeleteDefinitionService } from './definitions/mutate-definition/delete-definition.service';
 import { UpdateDefinitionService } from './definitions/mutate-definition/update-definition.service';
-import { ExportIndicateursController } from './export-indicateurs/export-indicateurs.controller';
-import ExportIndicateursService from './export-indicateurs/export-indicateurs.service';
 import { ImportIndicateurDefinitionController } from './import-indicateurs/import-indicateur-definition.controller';
 import ImportIndicateurDefinitionService from './import-indicateurs/import-indicateur-definition.service';
+import { ExportIndicateursController } from './indicateurs/export-indicateurs/export-indicateurs.controller';
+import ExportIndicateursService from './indicateurs/export-indicateurs/export-indicateurs.service';
+import { HandleDefinitionFichesService } from './indicateurs/handle-definition-fiches/handle-definition-fiches.service';
+import { HandleDefinitionPilotesService } from './indicateurs/handle-definition-pilotes/handle-definition-pilotes.service';
+import { HandleDefinitionServicesService } from './indicateurs/handle-definition-services/handle-definition-services.service';
+import { HandleDefinitionThematiquesService } from './indicateurs/handle-definition-thematiques/handle-definition-thematiques.service';
+import { ListIndicateursController } from './indicateurs/list-indicateurs/list-indicateurs.controller';
+import { ListIndicateursRouter } from './indicateurs/list-indicateurs/list-indicateurs.router';
+import { ListIndicateursService } from './indicateurs/list-indicateurs/list-indicateurs.service';
 import { IndicateurSourcesRouter } from './sources/indicateur-sources.router';
 import IndicateurSourcesService from './sources/indicateur-sources.service';
 import { TrajectoireLeviersService } from './trajectoire-leviers/trajectoire-leviers.service';
@@ -45,14 +44,11 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
 
 // Sub-domain indicateurs.definitions
 const DEFINITIONS_PROVIDERS = [
-  IndicateurDefinitionsRouter,
+  ListIndicateursService,
+  ListIndicateursRouter,
 
-  ListDefinitionsService,
-  ListDefinitionsRouter,
-
-  ListDefinitionIdsRepository,
-  ListDefinitionsLightRepository,
-  ListDefinitionsHavingComputedValueRepository,
+  ListPlatformDefinitionsRepository,
+  ListCollectiviteDefinitionsRepository,
 
   CreateDefinitionService,
   UpdateDefinitionService,
@@ -99,9 +95,8 @@ const DEFINITIONS_PROVIDERS = [
     ...DEFINITIONS_PROVIDERS,
   ],
   exports: [
-    ListDefinitionsService,
-    ListDefinitionIdsRepository,
-    ListDefinitionsLightRepository,
+    ListPlatformDefinitionsRepository,
+    ListIndicateursService,
 
     IndicateurExpressionService,
     CrudValeursService,
@@ -113,7 +108,8 @@ const DEFINITIONS_PROVIDERS = [
   ],
   controllers: [
     IndicateursValeursController,
-    IndicateursListDefinitionsController,
+    ListIndicateursController,
+    ListPlatformDefinitionsController,
     ImportIndicateurDefinitionController,
     ExportIndicateursController,
     TrajectoiresController,

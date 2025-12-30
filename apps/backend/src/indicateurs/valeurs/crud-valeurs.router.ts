@@ -5,9 +5,9 @@ import { ResourceType } from '@tet/backend/users/authorizations/resource-type.en
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import IndicateurValeursService from './crud-valeurs.service';
 import { deleteValeurIndicateurSchema } from './delete-valeur-indicateur.request';
-import { getIndicateursValeursInputSchema } from './get-indicateur-valeurs.input';
 import { getMoyenneCollectivitesRequestSchema } from './get-moyenne-collectivites.request';
 import { getValeursReferenceRequestSchema } from './get-valeurs-reference.request';
+import { listIndicateurValeursInputSchema } from './list-indicateur-valeurs.input';
 import { upsertValeurIndicateurSchema } from './upsert-valeur-indicateur.request';
 import ValeursMoyenneService from './valeurs-moyenne.service';
 import ValeursReferenceService from './valeurs-reference.service';
@@ -24,9 +24,9 @@ export class IndicateurValeursRouter {
 
   router = this.trpc.router({
     list: this.trpc.authedOrServiceRoleProcedure
-      .input(getIndicateursValeursInputSchema)
+      .input(listIndicateurValeursInputSchema)
       .query(({ ctx, input }) => {
-        return this.service.getIndicateurValeursGroupees(input, ctx.user);
+        return this.service.listIndicateurValeurs(input, ctx.user);
       }),
     upsert: this.trpc.authedProcedure
       .input(upsertValeurIndicateurSchema)

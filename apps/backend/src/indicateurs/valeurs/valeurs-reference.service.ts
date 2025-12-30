@@ -11,7 +11,7 @@ import { groupBy, isNil } from 'es-toolkit';
 import PersonnalisationsExpressionService from '../../collectivites/personnalisations/services/personnalisations-expression.service';
 import PersonnalisationsService from '../../collectivites/personnalisations/services/personnalisations-service';
 import { DatabaseService } from '../../utils/database/database.service';
-import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
+import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
 import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';
 
 @Injectable()
@@ -21,7 +21,7 @@ export default class ValeursReferenceService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly collectivitesService: CollectivitesService,
-    private readonly listDefinitionsService: ListDefinitionsService,
+    private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
     private readonly personnalisationsService: PersonnalisationsService,
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService
   ) {}
@@ -69,9 +69,9 @@ export default class ValeursReferenceService {
 
     // les définitions des indicateurs
     const definitions =
-      await this.listDefinitionsService.listIndicateurDefinitions(
-        indicateurIds
-      );
+      await this.listPlatformDefinitionsRepository.listPlatformDefinitions({
+        indicateurIds,
+      });
 
     return definitions.map((definition) =>
       this.getValeursReferenceIndicateur(

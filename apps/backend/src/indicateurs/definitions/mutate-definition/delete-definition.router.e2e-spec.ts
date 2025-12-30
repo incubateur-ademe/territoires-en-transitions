@@ -34,7 +34,7 @@ describe('DeleteIndicateurDefinitionRouter', () => {
   test('should delete perso indicator successfully', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
-    const indicateurId = await caller.indicateurs.definitions.create({
+    const indicateurId = await caller.indicateurs.indicateurs.create({
       collectiviteId,
       titre: 'Test Personal Indicator to Delete',
       unite: 'kg',
@@ -51,7 +51,7 @@ describe('DeleteIndicateurDefinitionRouter', () => {
     expect(createdIndicateur.collectiviteId).toBe(collectiviteId);
 
     // Delete the indicator
-    await caller.indicateurs.definitions.delete({
+    await caller.indicateurs.indicateurs.delete({
       indicateurId,
       collectiviteId,
     });
@@ -70,7 +70,7 @@ describe('DeleteIndicateurDefinitionRouter', () => {
     const caller = router.createCaller({ user: yoloDodo });
 
     await expect(
-      caller.indicateurs.definitions.delete({
+      caller.indicateurs.indicateurs.delete({
         indicateurId: 99999, // Non-existent ID
         collectiviteId,
       })
@@ -91,7 +91,7 @@ describe('DeleteIndicateurDefinitionRouter', () => {
 
     // Try to delete with unauthorized collectivite
     await expect(
-      caller.indicateurs.definitions.delete({
+      caller.indicateurs.indicateurs.delete({
         indicateurId,
         collectiviteId: 999, // Non-existent or unauthorized collectivite
       })
@@ -121,7 +121,7 @@ describe('DeleteIndicateurDefinitionRouter', () => {
 
     // Try to delete a non-perso indicator
     await expect(
-      caller.indicateurs.definitions.delete({
+      caller.indicateurs.indicateurs.delete({
         indicateurId: indicateurPredefini.id,
         collectiviteId,
       })
@@ -146,7 +146,7 @@ describe('DeleteIndicateurDefinitionRouter', () => {
 
     // Try to delete with different collectivite ID
     await expect(
-      caller.indicateurs.definitions.delete({
+      caller.indicateurs.indicateurs.delete({
         indicateurId,
         collectiviteId: 999, // Different collectivite
       })

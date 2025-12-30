@@ -34,7 +34,7 @@ export default class CreateDefinitionService {
   ) {
     await this.permissionService.isAllowed(
       user,
-      'indicateurs.definitions.create',
+      'indicateurs.indicateurs.create',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

@@ -1,4 +1,4 @@
-import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
+import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Alert } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';

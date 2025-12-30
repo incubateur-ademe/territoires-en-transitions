@@ -1,5 +1,5 @@
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
-import { useGetIndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
+import { useGetIndicateur } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import Markdown from '@/app/ui/Markdown';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {
@@ -220,10 +220,7 @@ const ScoreIndicatifModalIndicateurTabs = (
   );
   const { identifiantReferentiel, titre, unite } = indicateur || {};
   const collectiviteId = useCollectiviteId();
-  const { data: definition } = useGetIndicateurDefinition(
-    indicateurId,
-    collectiviteId
-  );
+  const { data: definition } = useGetIndicateur(indicateurId, collectiviteId);
   const indicateurURL = makeCollectiviteIndicateursUrl({
     collectiviteId,
     indicateurView: 'cae',

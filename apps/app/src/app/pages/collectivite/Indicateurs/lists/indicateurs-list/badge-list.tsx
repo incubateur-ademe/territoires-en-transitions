@@ -1,7 +1,7 @@
 import {
   IndicateurDefinitionListItem,
   ListDefinitionsInputFilters,
-} from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
+} from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,

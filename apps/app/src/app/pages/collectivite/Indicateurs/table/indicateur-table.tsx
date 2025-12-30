@@ -1,4 +1,4 @@
-import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
+import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { Button, ButtonGroup } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useEffect, useState } from 'react';

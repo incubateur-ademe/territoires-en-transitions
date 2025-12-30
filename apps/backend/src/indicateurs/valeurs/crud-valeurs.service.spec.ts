@@ -11,9 +11,10 @@ import {
 import { cloneDeep } from 'es-toolkit';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { DatabaseService } from '../../utils/database/database.service';
-import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
-import { ListDefinitionsHavingComputedValueRepository } from '../definitions/list-platform-predefined-definitions/list-definitions-having-computed-value.repository';
+import { ListCollectiviteDefinitionsRepository } from '../definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
+import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
 import { UpdateDefinitionService } from '../definitions/mutate-definition/update-definition.service';
+import { ListIndicateursService } from '../indicateurs/list-indicateurs/list-indicateurs.service';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from './crud-valeurs.service';
 import IndicateurExpressionService from './indicateur-expression.service';
@@ -32,8 +33,9 @@ describe('Indicateurs → crud-valeurs.service', () => {
           token === DatabaseService ||
           token === PermissionService ||
           token === CollectivitesService ||
-          token === ListDefinitionsService ||
-          token === ListDefinitionsHavingComputedValueRepository ||
+          token === ListCollectiviteDefinitionsRepository ||
+          token === ListPlatformDefinitionsRepository ||
+          token === ListIndicateursService ||
           token === IndicateurExpressionService ||
           token === UpdateDefinitionService ||
           token === IndicateurSourcesService ||

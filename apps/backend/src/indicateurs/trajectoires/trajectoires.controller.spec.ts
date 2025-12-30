@@ -60,7 +60,7 @@ describe('Téléchargement de la trajectoire SNBC', () => {
     // Restauration de la valeur d'indicateur
     const response = await request(app.getHttpServer())
       .get(
-        `/indicateurs?identifiantsReferentiel=cae_1.e&collectiviteId=4936&sources=rare`
+        `/indicateurs/valeurs?identifiantsReferentiel=cae_1.e&collectiviteId=4936&sources=rare`
       )
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200);
@@ -83,7 +83,7 @@ describe('Téléchargement de la trajectoire SNBC', () => {
       ],
     };
     await request(app.getHttpServer())
-      .post('/indicateurs')
+      .post('/indicateurs/valeurs')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .send(restaureIndicateurValeurPayload)
       .expect(201);
@@ -332,7 +332,7 @@ describe('Téléchargement de la trajectoire SNBC', () => {
       ],
     };
     await request(app.getHttpServer())
-      .post('/indicateurs')
+      .post('/indicateurs/valeurs')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .send(indicateurValeurPayload)
       .expect(201);

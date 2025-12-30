@@ -1,5 +1,5 @@
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
-import { useCreateIndicateurDefinition } from '@/app/indicateurs/definitions/use-create-indicateur-definition';
+import { useCreateIndicateurDefinition } from '@/app/indicateurs/indicateurs/use-create-indicateur-definition';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCollectiviteId } from '@tet/api/collectivites';

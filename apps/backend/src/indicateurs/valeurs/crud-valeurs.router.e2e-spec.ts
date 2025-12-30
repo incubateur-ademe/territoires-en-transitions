@@ -419,7 +419,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     ).rejects.toThrowError(/Droits insuffisants/);
 
     const indicateurDefinitionResult =
-      await adminCaller.indicateurs.definitions.list({
+      await adminCaller.indicateurs.indicateurs.list({
         collectiviteId,
         filters: {
           indicateurIds: [indicateurId],
@@ -429,7 +429,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     const pilotes = indicateur.pilotes || [];
 
     // now set it as pilote
-    await adminCaller.indicateurs.definitions.update({
+    await adminCaller.indicateurs.indicateurs.update({
       indicateurId,
       collectiviteId,
       indicateurFields: {
@@ -453,7 +453,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     });
 
     // Remove the user from pilote & delete the value to be able to delete the user
-    await adminCaller.indicateurs.definitions.update({
+    await adminCaller.indicateurs.indicateurs.update({
       indicateurId,
       collectiviteId,
       indicateurFields: {

@@ -34,9 +34,9 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
     {
       label: 'Indicateurs de suivi',
       isVisible:
-        hasPermission(permissions, 'indicateurs.definitions.read') ||
+        hasPermission(permissions, 'indicateurs.indicateurs.read') ||
         (!niveauAcces &&
-          hasPermission(permissions, 'indicateurs.definitions.read_public')),
+          hasPermission(permissions, 'indicateurs.indicateurs.read_public')),
       id: 'indicateurs',
     },
     {
