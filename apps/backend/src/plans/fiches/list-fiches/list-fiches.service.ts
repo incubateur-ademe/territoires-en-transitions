@@ -11,7 +11,7 @@ import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.tab
 import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag.table';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { ficheActionBudgetTable } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
-import { ficheActionNoteTable } from '@tet/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
+import { ficheActionNoteTable } from '@tet/backend/plans/fiches/fiche-action-note/table';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import {
   ListFichesSortValue,
