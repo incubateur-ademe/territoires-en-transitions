@@ -34,8 +34,8 @@ jobs:
       - name: Build Storybook
         run: pnpm nx build-storybook ui -- --quiet
 
-      - name: Publish Storybook to Chromatic, if necessary
-        run: pnpm nx affected -t chromatic -- --ci --project-token=${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+      - name: Publish Storybook to Chromatic
+        run: pnpm nx chromatic ui -- --ci --project-token=${{ secrets.CHROMATIC_PROJECT_TOKEN }}
 
   # test-storybook:
   #   runs-on: ubuntu-latest
