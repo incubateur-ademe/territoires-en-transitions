@@ -48,16 +48,28 @@ describe('Indicateurs', () => {
   });
 
   it(`Lecture sans acces`, async () => {
-    // on peut lire les valeurs en mode visite
-    const response = await request(app.getHttpServer())
+    // interdit sans filtre
+    const withoutFilterResponse = await request(app.getHttpServer())
+      .get(`/indicateurs/valeurs?collectiviteId=${collectiviteId}`)
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .expect(400);
+
+    expect(withoutFilterResponse.body).toMatchObject({
+      error: 'Bad Request',
+      message: 'indicateurIds or identifiantsReferentiel required',
+      statusCode: 400,
+    });
+
+    // accessible en mode public
+    const onlyOneValueResponse = await request(app.getHttpServer())
       .get(
-        `/indicateurs?collectiviteId=${collectiviteId}&identifiantsReferentiel=cae_1.a`
+        `/indicateurs/valeurs?collectiviteId=${collectiviteId}&identifiantsReferentiel=cae_1.a`
       )
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200);
 
-    expect(response.body).toMatchObject({
-      count: expect.any(Number),
+    expect(onlyOneValueResponse.body).toMatchObject({
+      count: 1,
       indicateurs: expect.any(Array),
     });
 
@@ -69,7 +81,7 @@ describe('Indicateurs', () => {
 
     return request(app.getHttpServer())
       .get(
-        `/indicateurs?collectiviteId=${collectiviteId}&identifiantsReferentiel=cae_1.a`
+        `/indicateurs/valeurs?collectiviteId=${collectiviteId}&identifiantsReferentiel=cae_1.a`
       )
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(403)
@@ -80,29 +92,17 @@ describe('Indicateurs', () => {
       });
   });
 
-  it(`Lecture sans collectivite nécessite un accès service role`, async () => {
-    // on peut lire les valeurs en mode visite
-    await request(app.getHttpServer())
-      .get(`/indicateurs?identifiantsReferentiel=cae_1.a`)
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
-      .expect(403)
-      .expect({
-        error: 'Forbidden',
-        message:
-          "Droits insuffisants, l'utilisateur n'a pas le rôle service_role",
-        statusCode: 403,
-      });
-
+  it(`Lecture sans collectivite est interdit`, async () => {
     const response = await request(app.getHttpServer())
-      .get(`/indicateurs?identifiantsReferentiel=cae_1.a&sources=collectivite`)
-      .set('Authorization', `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`)
-      .expect(200);
-
+      .get(`/indicateurs/valeurs?identifiantsReferentiel=cae_1.a`)
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .expect(400);
     expect(response.body).toMatchObject({
-      count: expect.any(Number),
-      indicateurs: expect.any(Array),
+      message: 'Validation failed',
+      statusCode: 400,
+      errors: expect.any(Array),
     });
-  }, 10000);
+  });
 
   it(`Ecriture sans acces (uniquement lecture sur un des deux)`, () => {
     const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
@@ -124,7 +124,7 @@ describe('Indicateurs', () => {
       ],
     };
     return request(app.getHttpServer())
-      .post('/indicateurs')
+      .post('/indicateurs/valeurs')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .send(indicateurValeurPayload)
       .expect(403)
@@ -181,14 +181,21 @@ describe('Indicateurs', () => {
       ],
     };
     const response = await request(app.getHttpServer())
-      .post('/indicateurs')
+      .post('/indicateurs/valeurs')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .send(indicateurValeurPayload)
       .expect(201);
+
     const upserIndicateurValeursResponse: UpsertIndicateursValeursResponse =
       response.body;
     expect(upserIndicateurValeursResponse.valeurs).toBeInstanceOf(Array);
-    expect(upserIndicateurValeursResponse.valeurs.length).greaterThanOrEqual(3);
+
+    const nbCalculatedValues = 1;
+    const nbUpsertedValues =
+      indicateurValeurPayload.valeurs.length + nbCalculatedValues;
+    expect(upserIndicateurValeursResponse.valeurs.length).greaterThanOrEqual(
+      nbUpsertedValues
+    );
     expect(upserIndicateurValeursResponse.valeurs[0]).toMatchObject({
       collectiviteId: paysDuLaonCollectiviteId,
       dateValeur: '2015-01-01',
@@ -249,7 +256,7 @@ describe('Indicateurs', () => {
       ],
     };
     const responseCae1k = await request(app.getHttpServer())
-      .post('/indicateurs')
+      .post('/indicateurs/valeurs')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .send(indicateurValeurCae1kPayload)
       .expect(201);
@@ -270,7 +277,7 @@ describe('Indicateurs', () => {
 
     // now if we write again the cae_1.f value, we should not have the cae_1.k value
     const responseAfterManualInsert = await request(app.getHttpServer())
-      .post('/indicateurs')
+      .post('/indicateurs/valeurs')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .send(indicateurValeurPayload)
       .expect(201);
@@ -343,7 +350,7 @@ describe('Indicateurs', () => {
     };
 
     const response = await request(app.getHttpServer())
-      .post('/indicateurs')
+      .post('/indicateurs/valeurs')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .send(indicateurValeurPayload)
       .expect(201);
@@ -423,7 +430,7 @@ describe('Indicateurs', () => {
     };
 
     const response = await request(app.getHttpServer())
-      .post('/indicateurs')
+      .post('/indicateurs/valeurs')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .send(indicateurValeurPayload)
       .expect(201);
@@ -484,7 +491,7 @@ describe('Indicateurs', () => {
 
     // restore the population value
     await request(app.getHttpServer())
-      .post('/indicateurs')
+      .post('/indicateurs/valeurs')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .send({
         valeurs: [
@@ -512,7 +519,7 @@ describe('Indicateurs', () => {
     };
 
     const response = await request(app.getHttpServer())
-      .post('/indicateurs')
+      .post('/indicateurs/valeurs')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .send(indicateurValeurPayload)
       .expect(201);
@@ -572,7 +579,7 @@ describe('Indicateurs', () => {
     };
 
     const responseAfterPopulationUpdate = await request(app.getHttpServer())
-      .post('/indicateurs')
+      .post('/indicateurs/valeurs')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .send(indicateurPopulationValeurPayload)
       .expect(201);
@@ -619,7 +626,7 @@ describe('Indicateurs', () => {
 
     // restore the population value
     await request(app.getHttpServer())
-      .post('/indicateurs')
+      .post('/indicateurs/valeurs')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .send({
         valeurs: [

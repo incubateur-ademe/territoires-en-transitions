@@ -1,7 +1,7 @@
 import {
   IndicateurDefinitionListItem,
-  useListIndicateurDefinitions,
-} from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
+  useListIndicateurs,
+} from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { useListIndicateurValeurs } from '@/app/indicateurs/valeurs/use-list-indicateur-valeurs';
 import { getAnnee, PALETTE_LIGHT } from '@/app/ui/charts/echarts';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -90,8 +90,9 @@ export const useIndicateurChartInfo = ({
   const {
     data: { data: definitionEnfants } = {},
     isLoading: isLoadingEnfants,
-  } = useListIndicateurDefinitions(
+  } = useListIndicateurs(
     {
+      collectiviteId: dataCollectiviteId,
       filters: {
         indicateurIds,
       },

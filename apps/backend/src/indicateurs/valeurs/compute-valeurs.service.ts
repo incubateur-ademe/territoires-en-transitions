@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
-import { ListDefinitionsService } from '@tet/backend/indicateurs/definitions/list-definitions/list-definitions.service';
-import { ListDefinitionsHavingComputedValueRepository } from '@tet/backend/indicateurs/definitions/list-platform-predefined-definitions/list-definitions-having-computed-value.repository';
 import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceSourceCalculTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-source-calcul.table';
 import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
@@ -29,6 +27,7 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
+import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
 
 type IndicateurValeurInsert = IndicateurValeurCreate;
 
@@ -43,8 +42,7 @@ export default class ComputeValeursService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly indicateurDefinitionService: ListDefinitionsService,
-    private readonly listDefinitionsHavingComputedValueRepository: ListDefinitionsHavingComputedValueRepository,
+    private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
     private readonly indicateurSourceService: IndicateurSourcesService,
     private readonly indicateurExpressionService: IndicateurExpressionService
   ) {}
@@ -100,7 +98,7 @@ export default class ComputeValeursService {
   ): Promise<string[]> {
     if (!forComputedIndicateurDefinitions) {
       forComputedIndicateurDefinitions =
-        await this.listDefinitionsHavingComputedValueRepository.listDefinitionsHavingComputedValue();
+        await this.listPlatformDefinitionsRepository.listPlatformDefinitionsHavingComputedValue();
     }
 
     this.logger.log(
@@ -625,18 +623,18 @@ export default class ComputeValeursService {
 
     if (!sourceIndicateurDefinitions.length) {
       sourceIndicateurDefinitions =
-        await this.indicateurDefinitionService.listIndicateurDefinitions(
-          indicateurIds
-        );
+        await this.listPlatformDefinitionsRepository.listPlatformDefinitions({
+          indicateurIds,
+        });
     } else {
       const missingIds = indicateurIds.filter(
         (id) => !sourceIndicateurDefinitions.find((d) => d.id === id)
       );
       if (missingIds.length) {
         const missingIndicateurDefinitions =
-          await this.indicateurDefinitionService.listIndicateurDefinitions(
-            missingIds
-          );
+          await this.listPlatformDefinitionsRepository.listPlatformDefinitions({
+            indicateurIds: missingIds,
+          });
         sourceIndicateurDefinitions.push(...missingIndicateurDefinitions);
       }
     }
@@ -662,8 +660,10 @@ export default class ComputeValeursService {
     });
 
     const computedIndicateurDefinitions =
-      await this.listDefinitionsHavingComputedValueRepository.listDefinitionsHavingComputedValue(
-        { identifiantReferentiels: Object.values(indicateurIdToIdentifiant) }
+      await this.listPlatformDefinitionsRepository.listPlatformDefinitionsHavingComputedValue(
+        {
+          identifiantsReferentiel: Object.values(indicateurIdToIdentifiant),
+        }
       );
 
     if (computedIndicateurDefinitions.length) {
@@ -749,12 +749,12 @@ export default class ComputeValeursService {
           false
         );
 
-        computedIndicateurValeurs.push(
-          ...this.computeCalculatedIndicateurValeur(
-            computedIndicateurDefinition,
-            relatedSourceIndicateurValeursByDate
-          )
+        const calculateValeur = this.computeCalculatedIndicateurValeur(
+          computedIndicateurDefinition,
+          relatedSourceIndicateurValeursByDate
         );
+
+        computedIndicateurValeurs.push(...calculateValeur);
       });
       return computedIndicateurValeurs;
     }

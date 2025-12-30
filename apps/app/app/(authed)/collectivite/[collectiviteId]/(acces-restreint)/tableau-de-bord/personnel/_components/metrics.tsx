@@ -90,7 +90,7 @@ const Metrics = () => {
     },
     {
       isVisibleWithPermissions: (perms) =>
-        hasPermission(perms, 'indicateurs.definitions.read'),
+        hasPermission(perms, 'indicateurs.indicateurs.read'),
       getCount: () => metrics?.indicateurs.piloteCount || 0,
       getTitle: (count) =>
         `Indicateur${count > 1 ? 's' : ''} piloté${count > 1 ? 's' : ''}`,

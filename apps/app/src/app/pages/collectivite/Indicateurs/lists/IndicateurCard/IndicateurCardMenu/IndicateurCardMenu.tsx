@@ -1,4 +1,4 @@
-import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
+import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import { ButtonMenu, MenuAction } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 export type ChartDownloadSettings = {
@@ -21,8 +21,7 @@ const IndicateurCardMenu = ({
   indicateurId,
   chartDownloadSettings,
 }: Props) => {
-  const { mutate: updateIndicateur } =
-    useUpdateIndicateurDefinition(indicateurId);
+  const { mutate: updateIndicateur } = useUpdateIndicateur(indicateurId);
 
   const toggleEstFavori = (newValue: boolean) => {
     updateIndicateur({ estFavori: newValue });

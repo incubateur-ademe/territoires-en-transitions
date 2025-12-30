@@ -17,7 +17,7 @@ export default async function Page({
   const { collectiviteId } = await params;
 
   const count = await getQueryClient().fetchQuery(
-    trpcInServerComponent.indicateurs.definitions.getMesIndicateursCount.queryOptions(
+    trpcInServerComponent.indicateurs.indicateurs.getMesIndicateursCount.queryOptions(
       {
         collectiviteId,
       }

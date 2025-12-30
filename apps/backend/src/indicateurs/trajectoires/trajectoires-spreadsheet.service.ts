@@ -19,8 +19,7 @@ import GroupementsService from '../../collectivites/services/groupements.service
 import { AuthUser } from '../../users/models/auth.models';
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
-import { ListDefinitionsLightRepository } from '../definitions/list-platform-predefined-definitions/list-definitions-light.repository';
-import IndicateurSourcesService from '../sources/indicateur-sources.service';
+import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
 import {
   CalculTrajectoireRequestType,
@@ -39,8 +38,7 @@ export default class TrajectoiresSpreadsheetService {
 
   constructor(
     private readonly configService: ConfigurationService,
-    private readonly indicateurSourcesService: IndicateurSourcesService,
-    private readonly indicateursServiceLightRepo: ListDefinitionsLightRepository,
+    private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
     private readonly valeursService: CrudValeursService,
     private readonly trajectoiresDataService: TrajectoiresDataService,
     private readonly sheetService: SheetService,
@@ -271,7 +269,7 @@ export default class TrajectoiresSpreadsheetService {
     );
 
     const indicateurResultatDefinitions =
-      await this.indicateursServiceLightRepo.listDefinitionsLight({
+      await this.listPlatformDefinitionsRepository.listPlatformDefinitions({
         identifiantsReferentiel:
           this.trajectoiresDataService.SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL.filter(
             (identifiant) => identifiant !== ''
@@ -628,7 +626,7 @@ export default class TrajectoiresSpreadsheetService {
     );
 
     const indicateurDefinitions =
-      await this.indicateursServiceLightRepo.listDefinitionsLight({
+      await this.listPlatformDefinitionsRepository.listPlatformDefinitions({
         identifiantsReferentiel:
           this.trajectoiresDataService
             .SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL,

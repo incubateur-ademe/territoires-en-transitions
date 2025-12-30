@@ -1,4 +1,4 @@
-import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
+import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { TAxeRow } from '@/app/types/alias';
 import { Paragraph, Stack, Title } from '@/app/ui/export-pdf/components';
 import { RouterOutput } from '@tet/api';

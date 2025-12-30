@@ -298,7 +298,7 @@ export class TrajectoireLeviersService {
       `Récupération des indicateurs de la trajectoire de la collectivité ${input.collectiviteId} (source SNBC)`
     );
     const indicateurValeursObjectifs2030 =
-      await this.indicateursService.getIndicateurValeursGroupees(
+      await this.indicateursService.listIndicateurValeurs(
         {
           collectiviteId: collectivite.id,
           identifiantsReferentiel: TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,
@@ -310,7 +310,7 @@ export class TrajectoireLeviersService {
       );
 
     const indicateurValeursObjectifs2019 =
-      await this.indicateursService.getIndicateurValeursGroupees(
+      await this.indicateursService.listIndicateurValeurs(
         {
           collectiviteId: collectivite.id,
           identifiantsReferentiel: TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,
@@ -335,7 +335,7 @@ export class TrajectoireLeviersService {
 
     // Maintenant on récupère les valeurs résultats pour ces sources
     const indicateurValeursResultats2019 =
-      await this.indicateursService.getIndicateurValeursGroupees(
+      await this.indicateursService.listIndicateurValeurs(
         {
           collectiviteId: collectivite.id,
           identifiantsReferentiel: TRAJECTOIRE_LEVIERS_INDICATEURS_IDENTIFIANTS,

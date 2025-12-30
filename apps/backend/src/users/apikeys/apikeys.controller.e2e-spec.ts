@@ -1,10 +1,10 @@
+import { INestApplication } from '@nestjs/common';
 import { UpsertIndicateursValeursRequest } from '@tet/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.request';
 import { getAuthUser, getServiceRoleUser, getTestApp } from '@tet/backend/test';
 import { GenerateTokenRequest } from '@tet/backend/users/apikeys/generate-token.request';
 import { GenerateTokenResponse } from '@tet/backend/users/apikeys/generate-token.response';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { INestApplication } from '@nestjs/common';
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { default as request } from 'supertest';
 
@@ -56,7 +56,7 @@ describe('Oauth controller test', () => {
       ],
     };
     await request(app.getHttpServer())
-      .post('/indicateurs')
+      .post('/indicateurs/valeurs')
       .set('Authorization', `Bearer ${accessToken}`)
       .send(indicateurValeurPayload)
       .expect(201);
@@ -73,7 +73,7 @@ describe('Oauth controller test', () => {
       ],
     };
     await request(app.getHttpServer())
-      .post('/indicateurs')
+      .post('/indicateurs/valeurs')
       .set('Authorization', `Bearer ${accessToken}`)
       .send(indicateurValeurForbiddenPayload)
       .expect(403)
@@ -125,8 +125,8 @@ describe('Oauth controller test', () => {
     const result = await caller.users.apikeys.create({
       userId: yoloDodoUser.id,
       permissions: [
-        PermissionOperationEnum['INDICATEURS.DEFINITIONS.READ'],
-        PermissionOperationEnum['INDICATEURS.DEFINITIONS.READ_PUBLIC'],
+        PermissionOperationEnum['INDICATEURS.INDICATEURS.READ'],
+        PermissionOperationEnum['INDICATEURS.INDICATEURS.READ_PUBLIC'],
         PermissionOperationEnum['INDICATEURS.VALEURS.READ'],
         PermissionOperationEnum['INDICATEURS.VALEURS.READ_PUBLIC'],
       ],
@@ -162,7 +162,7 @@ describe('Oauth controller test', () => {
       ],
     };
     await request(app.getHttpServer())
-      .post('/indicateurs')
+      .post('/indicateurs/valeurs')
       .set('Authorization', `Bearer ${accessToken}`)
       .send(indicateurValeurPayload)
       .expect(403)
@@ -174,7 +174,7 @@ describe('Oauth controller test', () => {
       });
 
     const readResponse = await request(app.getHttpServer())
-      .get('/indicateurs?collectiviteId=4936&indicateurIds=4')
+      .get('/indicateurs/valeurs?collectiviteId=4936&indicateurIds=4')
       .set('Authorization', `Bearer ${accessToken}`);
 
     expect(readResponse.body).toMatchObject({

@@ -1,5 +1,5 @@
-import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
-import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
+import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
@@ -23,9 +23,7 @@ const EditModal = ({ openState, definition }: Props) => {
   const pilotes = definition.pilotes || [];
   const services = definition.services || [];
 
-  const { mutate: updateIndicateur } = useUpdateIndicateurDefinition(
-    definition.id
-  );
+  const { mutate: updateIndicateur } = useUpdateIndicateur(definition.id);
 
   // TODO refacto : use react-hook-form
 

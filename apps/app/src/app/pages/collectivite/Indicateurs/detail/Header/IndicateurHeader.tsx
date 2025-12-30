@@ -1,4 +1,4 @@
-import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
+import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { PermissionOperation } from '@tet/domain/users';
@@ -61,7 +61,7 @@ const IndicateurHeader = ({
           <VisibleWhen
             condition={hasPermission(
               permissions,
-              'indicateurs.definitions.read_public'
+              'indicateurs.indicateurs.read_public'
             )}
           >
             <CheminIndicateur

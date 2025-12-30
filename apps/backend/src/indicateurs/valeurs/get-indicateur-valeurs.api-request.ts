@@ -5,7 +5,6 @@ export const getIndicateursValeursApiRequestSchema = z
     collectiviteId: z.coerce
       .number()
       .int()
-      .optional()
       .describe('Identifiant de la collectivité'),
     indicateurIds: z.coerce
       .string()

@@ -5,7 +5,7 @@ import {
   IndicateurViewParamOption,
   makeCollectiviteIndicateursUrl,
 } from '@/app/app/paths';
-import { IndicateurDefinitionListItem } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
+import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 

@@ -19,7 +19,7 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
       <div className="flex justify-between max-sm:flex-col gap-y-4">
         <h2 className="mb-0 mr-auto">Listes d&apos;indicateurs</h2>
         {!isReadOnly &&
-          hasPermission(permissions, 'indicateurs.definitions.create') && (
+          hasPermission(permissions, 'indicateurs.indicateurs.create') && (
             <>
               <Button
                 data-test="create-perso"

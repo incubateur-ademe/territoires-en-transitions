@@ -12,7 +12,7 @@ export const useDeleteIndicateurValeur = () => {
         if (collectiviteId && indicateurId) {
           // recharge les infos complémentaires associées à l'indicateur
           queryClient.invalidateQueries({
-            queryKey: trpc.indicateurs.definitions.list.queryKey({
+            queryKey: trpc.indicateurs.indicateurs.list.queryKey({
               collectiviteId,
             }),
           });

@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetIndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
+import { useGetIndicateur } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { INDICATEUR_TRAJECTOIRE_IDENTFIANTS } from '@/app/indicateurs/trajectoires/trajectoire-constants';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -16,7 +16,7 @@ type Props = {
 export const IndicateurDetail = ({ dataTest, indicateurId }: Props) => {
   const collectiviteId = useCollectiviteId();
 
-  const { data: definition, isLoading } = useGetIndicateurDefinition(
+  const { data: definition, isLoading } = useGetIndicateur(
     indicateurId,
     collectiviteId
   );

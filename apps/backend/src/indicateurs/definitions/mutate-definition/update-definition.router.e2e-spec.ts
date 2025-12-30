@@ -57,11 +57,11 @@ describe('UpdateIndicateurDefinitionRouter', () => {
         },
       };
 
-      await caller.indicateurs.definitions.update(updateData);
+      await caller.indicateurs.indicateurs.update(updateData);
 
       const {
         data: [updatedIndicateur],
-      } = await caller.indicateurs.definitions.list({
+      } = await caller.indicateurs.indicateurs.list({
         collectiviteId,
         filters: {
           indicateurIds: [indicateurId],
@@ -105,11 +105,11 @@ describe('UpdateIndicateurDefinitionRouter', () => {
         },
       };
 
-      await caller.indicateurs.definitions.update(updateData);
+      await caller.indicateurs.indicateurs.update(updateData);
 
       const {
         data: [updatedIndicateur],
-      } = await caller.indicateurs.definitions.list({
+      } = await caller.indicateurs.indicateurs.list({
         collectiviteId,
         filters: {
           indicateurIds: [indicateurId],
@@ -156,11 +156,11 @@ describe('UpdateIndicateurDefinitionRouter', () => {
         },
       };
 
-      await caller.indicateurs.definitions.update(updateData);
+      await caller.indicateurs.indicateurs.update(updateData);
 
       const {
         data: [updatedIndicateur],
-      } = await caller.indicateurs.definitions.list({
+      } = await caller.indicateurs.indicateurs.list({
         collectiviteId,
         filters: {
           indicateurIds: [indicateurId],
@@ -194,7 +194,7 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       const caller = router.createCaller({ user: yoloDodo });
 
       await expect(
-        caller.indicateurs.definitions.update(updateData)
+        caller.indicateurs.indicateurs.update(updateData)
       ).rejects.toThrow();
     });
 
@@ -218,7 +218,7 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       };
 
       await expect(
-        caller.indicateurs.definitions.update(updateData)
+        caller.indicateurs.indicateurs.update(updateData)
       ).rejects.toThrow();
     });
   });
@@ -258,11 +258,11 @@ describe('UpdateIndicateurDefinitionRouter', () => {
         },
       };
 
-      await caller.indicateurs.definitions.update(updateData);
+      await caller.indicateurs.indicateurs.update(updateData);
 
       const {
         data: [updatedIndicateur],
-      } = await caller.indicateurs.definitions.list({
+      } = await caller.indicateurs.indicateurs.list({
         collectiviteId,
         filters: {
           indicateurIds: [indicateurId],
@@ -315,7 +315,7 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       // The service should throw an error because it only allows updating perso indicators
       // (those with collectiviteId set)
       await expect(
-        caller.indicateurs.definitions.update(updateData)
+        caller.indicateurs.indicateurs.update(updateData)
       ).rejects.toThrow();
     });
   });

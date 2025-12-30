@@ -135,7 +135,7 @@ const Metrics = () => {
                     children: 'Voir les indicateurs',
                   }
                 : isReadOnly ||
-                  !hasPermission(permissions, 'indicateurs.definitions.create')
+                  !hasPermission(permissions, 'indicateurs.indicateurs.create')
                 ? undefined
                 : {
                     onClick: () => setIsNewIndicateurOpen(true),

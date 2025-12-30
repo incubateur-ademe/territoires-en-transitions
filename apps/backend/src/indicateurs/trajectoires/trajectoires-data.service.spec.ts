@@ -4,7 +4,6 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { IndicateurValeur } from '@tet/domain/indicateurs';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
-import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
 import TrajectoiresDataService from './trajectoires-data.service';
@@ -21,7 +20,6 @@ describe('TrajectoiresDataService test', () => {
         if (
           token === CollectivitesService ||
           token === IndicateurSourcesService ||
-          token === ListDefinitionsService ||
           token === CrudValeursService ||
           token === PermissionService ||
           token === ListCollectivitesService

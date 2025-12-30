@@ -110,7 +110,7 @@ const Modules = () => {
         m.type === 'indicateur.list' &&
         m.defaultKey === 'indicateurs-dont-je-suis-pilote',
       isVisibleWithPermissions: (permissions) =>
-        hasPermission(permissions, 'indicateurs.definitions.read'),
+        hasPermission(permissions, 'indicateurs.indicateurs.read'),
       render: (module) => (
         <IndicateursDontJeSuisLePiloteModule
           key={module.defaultKey}

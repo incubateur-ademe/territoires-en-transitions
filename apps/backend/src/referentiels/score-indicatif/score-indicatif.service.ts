@@ -74,7 +74,7 @@ export class ScoreIndicatifService {
       return [];
     }
     const valeursGroupees =
-      await this.indicateurValeursService.getIndicateurValeursGroupees(
+      await this.indicateurValeursService.listIndicateurValeurs(
         {
           collectiviteId: input.collectiviteId,
           indicateurIds,

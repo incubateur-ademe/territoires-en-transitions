@@ -1,6 +1,6 @@
 'use client';
 
-import { useListIndicateurDefinitions } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
+import { useListIndicateurs } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import IndicateurChartsGrid from '@/app/referentiels/action.show/IndicateurChartsGrid';
 import { useActionId } from '@/app/referentiels/actions/action-context';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -12,7 +12,8 @@ export default function Page() {
   const mesureId = useActionId();
 
   const { data: { data: indicateursLies } = {}, isLoading } =
-    useListIndicateurDefinitions({
+    useListIndicateurs({
+      collectiviteId: collectivite.collectiviteId,
       filters: {
         mesureId,
       },

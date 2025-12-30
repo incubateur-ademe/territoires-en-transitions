@@ -7,8 +7,7 @@ import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
 import VersionService from '@tet/backend/utils/version/version.service';
 import { cloneDeep } from 'es-toolkit';
 import { DatabaseService } from '../../utils/database/database.service';
-import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
-import { ListDefinitionsLightRepository } from '../definitions/list-platform-predefined-definitions/list-definitions-light.repository';
+import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
 import {
   sampleImportIndicateurDefinition,
   sampleImportIndicateurDefinition2,
@@ -29,8 +28,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
         if (
           token === DatabaseService ||
           token === ConfigurationService ||
-          token === ListDefinitionsService ||
-          token === ListDefinitionsLightRepository ||
+          token === ListPlatformDefinitionsRepository ||
           token === SheetService ||
           token === CrudValeursService
         ) {

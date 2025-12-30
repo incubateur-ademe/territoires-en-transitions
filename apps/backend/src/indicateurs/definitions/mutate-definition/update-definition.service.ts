@@ -8,13 +8,12 @@ import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { and, eq, isNotNull } from 'drizzle-orm';
-import { HandleDefinitionFichesService } from '../handle-definition-fiches/handle-definition-fiches.service';
-import { HandleDefinitionPilotesService } from '../handle-definition-pilotes/handle-definition-pilotes.service';
-import { HandleDefinitionServicesService } from '../handle-definition-services/handle-definition-services.service';
-import { HandleDefinitionThematiquesService } from '../handle-definition-thematiques/handle-definition-thematiques.service';
+import { HandleDefinitionFichesService } from '../../indicateurs/handle-definition-fiches/handle-definition-fiches.service';
+import { HandleDefinitionPilotesService } from '../../indicateurs/handle-definition-pilotes/handle-definition-pilotes.service';
+import { HandleDefinitionServicesService } from '../../indicateurs/handle-definition-services/handle-definition-services.service';
+import { HandleDefinitionThematiquesService } from '../../indicateurs/handle-definition-thematiques/handle-definition-thematiques.service';
+import { ListIndicateursService } from '../../indicateurs/list-indicateurs/list-indicateurs.service';
 import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
-import { DefinitionListItem } from '../list-definitions/list-definitions.output';
-import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
 
 @Injectable()
 export class UpdateDefinitionService {
@@ -23,17 +22,17 @@ export class UpdateDefinitionService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
-    private readonly listDefinitionsService: ListDefinitionsService,
+    private readonly listIndicateursService: ListIndicateursService,
     private readonly handleDefinitionFichesService: HandleDefinitionFichesService,
     private readonly handleDefinitionPilotesService: HandleDefinitionPilotesService,
     private readonly handleDefinitionServicesService: HandleDefinitionServicesService,
     private readonly handleDefinitionThematiquesService: HandleDefinitionThematiquesService
   ) {}
 
-  async canUpdateDefinition(
+  private async canUpdateDefinition(
     user: AuthUser,
     collectiviteId: number,
-    indicateurDefinition: DefinitionListItem,
+    indicateurId: number,
     doNotThrow?: boolean
   ): Promise<boolean> {
     const permissions = await this.permissionService.listPermissions(
@@ -41,12 +40,19 @@ export class UpdateDefinitionService {
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
-    if (permissions.has('indicateurs.definitions.update')) {
+    if (permissions.has('indicateurs.indicateurs.update')) {
       return true;
     }
 
-    if (permissions.has('indicateurs.definitions.update_piloted_by_me')) {
-      if (indicateurDefinition.pilotes?.some((p) => p.userId === user.id)) {
+    if (permissions.has('indicateurs.indicateurs.update_piloted_by_me')) {
+      const pilotes =
+        await this.handleDefinitionPilotesService.listIndicateurPilotes({
+          indicateurId,
+          collectiviteId,
+          user,
+        });
+
+      if (pilotes.some((p) => p.userId === user.id)) {
         return true;
       }
     }
@@ -54,7 +60,7 @@ export class UpdateDefinitionService {
     if (!doNotThrow) {
       this.permissionService.throwForbiddenException(
         user,
-        'indicateurs.definitions.update',
+        'indicateurs.indicateurs.update',
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -70,9 +76,7 @@ export class UpdateDefinitionService {
     }: UpdateIndicateurDefinitionInput,
     user: AuthUser
   ): Promise<void> {
-    const indicateurDefinition =
-      await this.listDefinitionsService.getDefinition(indicateurId);
-    await this.canUpdateDefinition(user, collectiviteId, indicateurDefinition);
+    await this.canUpdateDefinition(user, collectiviteId, indicateurId);
 
     this.logger.log(
       `Mise à jour de l'indicateur dont l'id est ${indicateurId}`

@@ -14,8 +14,7 @@ import {
   CreateIndicateurActionType,
   indicateurActionTable,
 } from '@tet/backend/indicateurs/definitions/indicateur-action.table';
-import { ListDefinitionIdsRepository } from '@tet/backend/indicateurs/definitions/list-platform-predefined-definitions/list-definition-ids.repository';
-import { ListDefinitionsLightRepository } from '@tet/backend/indicateurs/definitions/list-platform-predefined-definitions/list-definitions-light.repository';
+import { ListPlatformDefinitionsRepository } from '@tet/backend/indicateurs/definitions/list-platform-definitions/list-platform-definitions.repository';
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
 import { ReferencedIndicateur } from '@tet/backend/indicateurs/valeurs/referenced-indicateur.dto';
 import ImportPreuveReglementaireDefinitionService from '@tet/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
@@ -99,8 +98,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     private readonly database: DatabaseService,
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly indicateurExpressionService: IndicateurExpressionService,
-    private readonly indicateurDefinitionsLightRepo: ListDefinitionsLightRepository,
-    private readonly listDefinitionIdsRepository: ListDefinitionIdsRepository,
+    private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
     private readonly importPreuveReglementaireDefinitionService: ImportPreuveReglementaireDefinitionService,
     private readonly listPersonnalisationQuestionsService: ListPersonnalisationQuestionsService,
     private readonly referentielService: GetReferentielService,
@@ -456,7 +454,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         ({ identifiant }) => identifiant
       );
       const indicateurIdParIdentifiant =
-        await this.listDefinitionIdsRepository.listDefinitionIdsByIdentifiantReferentiels(
+        await this.listPlatformDefinitionsRepository.listPlatformDefinitionIdsByIdentifiantReferentiels(
           identifiants
         );
       createIndicateurActions = indicateurIdentifiants
@@ -732,7 +730,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       ...references.flatMap((ref) => ref.indicateurs),
     ]);
     const indicateurIdParIdentifiant =
-      await this.listDefinitionIdsRepository.listDefinitionIdsByIdentifiantReferentiels(
+      await this.listPlatformDefinitionsRepository.listPlatformDefinitionIdsByIdentifiantReferentiels(
         identifiants
       );
 
@@ -805,7 +803,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       );
 
       const definitions =
-        await this.indicateurDefinitionsLightRepo.listDefinitionsLight({
+        await this.listPlatformDefinitionsRepository.listPlatformDefinitions({
           indicateurIds,
         });
 

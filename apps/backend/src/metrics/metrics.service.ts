@@ -1,4 +1,4 @@
-import { ListDefinitionsService } from '@tet/backend/indicateurs/definitions/list-definitions/list-definitions.service';
+import { Injectable, Logger } from '@nestjs/common';
 import { CollectiviteMetricsResponse } from '@tet/backend/metrics/collectivite-metrics.response';
 import { PersonalMetricsResponse } from '@tet/backend/metrics/personal-metrics.response';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
@@ -8,9 +8,9 @@ import { ListActionsService } from '@tet/backend/referentiels/list-actions/list-
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
-import { Injectable, Logger } from '@nestjs/common';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { PermissionOperationEnum } from '@tet/domain/users';
+import { ListIndicateursService } from '../indicateurs/indicateurs/list-indicateurs/list-indicateurs.service';
 import { LabellisationRecord } from '../referentiels/labellisations/list-labellisations.api-response';
 
 @Injectable()
@@ -22,7 +22,7 @@ export default class MetricsService {
     private readonly listLabellisationService: ListLabellisationsService,
     private readonly planActionsService: PlanActionsService,
     private readonly listFichesService: ListFichesService,
-    private readonly listDefinitionsService: ListDefinitionsService,
+    private readonly listIndicateursService: ListIndicateursService,
     private readonly listActionsService: ListActionsService
   ) {}
 
@@ -95,7 +95,7 @@ export default class MetricsService {
     );
 
     promises.push(
-      this.listDefinitionsService
+      this.listIndicateursService
         .getFavorisCount({ collectiviteId }, user)
         .then((favorisCount) => {
           response.indicateurs.favoris = favorisCount;
@@ -104,7 +104,7 @@ export default class MetricsService {
     );
 
     promises.push(
-      this.listDefinitionsService
+      this.listIndicateursService
         .getPersonnalisesCount({ collectiviteId }, user)
         .then((personnalisesCount) => {
           response.indicateurs.personnalises = personnalisesCount;
@@ -174,7 +174,7 @@ export default class MetricsService {
     );
 
     promises.push(
-      this.listDefinitionsService
+      this.listIndicateursService
         .getMesIndicateursCount({ collectiviteId }, user)
         .then((piloteCount) => {
           response.indicateurs.piloteCount = piloteCount;

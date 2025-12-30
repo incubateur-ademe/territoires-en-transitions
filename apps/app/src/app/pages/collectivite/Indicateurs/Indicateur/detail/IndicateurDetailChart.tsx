@@ -1,4 +1,4 @@
-import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
+import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import { Button, EmptyCard } from '@tet/ui';
 import classNames from 'classnames';

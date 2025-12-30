@@ -4,10 +4,11 @@ import {
   getFiltersForMyIndicateurs,
   IndicateurDefinitionListItem,
   ListDefinitionsInputFilters,
-  useListIndicateurDefinitions,
-} from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
+  useListIndicateurs,
+} from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { useUser } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { Checkbox, Field, Icon, Input, Tooltip } from '@tet/ui';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -20,6 +21,8 @@ type Props = {
 
 export const Content = ({ selectedIndicateurs, onSelect }: Props) => {
   const user = useUser();
+  const collectiviteId = useCollectiviteId();
+
   const { setValue, watch } = useForm<
     ListDefinitionsInputFilters & {
       searchText: string;
@@ -30,7 +33,8 @@ export const Content = ({ selectedIndicateurs, onSelect }: Props) => {
   const { searchText, searchTextDebounced, ...filters } = watch();
 
   const { data: { data: definitions } = {}, isPending: isDefinitionsLoading } =
-    useListIndicateurDefinitions({
+    useListIndicateurs({
+      collectiviteId,
       filters: { ...filters, text: searchTextDebounced },
     });
 

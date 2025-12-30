@@ -1,5 +1,5 @@
-import { IndicateurDefinitionListItem } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
-import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
+import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
@@ -38,9 +38,7 @@ const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
     ?.map((p) => p.userId || p.tagId?.toString())
     .filter((pilote) => !!pilote) as string[];
 
-  const { mutate: updateIndicateur } = useUpdateIndicateurDefinition(
-    indicateur.id
-  );
+  const { mutate: updateIndicateur } = useUpdateIndicateur(indicateur.id);
 
   return (
     <Modal

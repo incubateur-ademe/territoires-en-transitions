@@ -1,7 +1,7 @@
 'use client';
 
 import IndicateursListView from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/indicateurs-list-view';
-import { getFiltersForIndicateurClefs } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
+import { getFiltersForIndicateurClefs } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 
 export default function Page() {
   return (

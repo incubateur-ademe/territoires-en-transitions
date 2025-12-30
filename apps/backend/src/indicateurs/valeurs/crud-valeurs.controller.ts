@@ -1,8 +1,7 @@
-import { Body, Controller, Get, Logger, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
-  ApiExcludeEndpoint,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -33,52 +32,10 @@ class GetIndicateursValeursResponseClass extends createZodDto(
 @ApiBearerAuth()
 @Controller()
 export class IndicateursValeursController {
-  private readonly logger = new Logger(IndicateursValeursController.name);
-
   constructor(private readonly service: CrudValeursService) {}
 
-  /**
-   * @deprecated Not removed because used by the datascientists for now
-   * @param request
-   * @param tokenInfo
-   * @returns
-   */
-  @ApiUsage([ApiUsageEnum.APP, ApiUsageEnum.DATA_PIPELINE_ANALYSIS])
-  @ApiExcludeEndpoint()
-  @Get('indicateurs')
-  @ApiResponse({ type: GetIndicateursValeursResponseClass })
-  async deprecatedGetIndicateurValeurs(
-    @Query() request: GetIndicateursValeursApiRequestClass,
-    @TokenInfo() tokenInfo: AuthenticatedUser
-  ): Promise<GetIndicateursValeursResponseClass> {
-    return this.service.getIndicateurValeursGroupees(request, tokenInfo);
-  }
-
-  /**
-   * @deprecated Not removed because used by the datascientists for now
-   * @param request
-   * @param tokenInfo
-   * @returns
-   */
-  @ApiUsage([ApiUsageEnum.APP, ApiUsageEnum.DATA_PIPELINE_ANALYSIS])
-  @ApiExcludeEndpoint()
-  @Post('indicateurs')
-  @ApiCreatedResponse({
-    type: UpsertIndicateursValeursRequest,
-  })
-  async deprecatedUpsertIndicateurValeurs(
-    @Body() request: UpsertIndicateursValeursRequest,
-    @TokenInfo() tokenInfo: AuthenticatedUser
-  ): Promise<UpsertIndicateursValeursResponse> {
-    const upsertedValeurs = await this.service.upsertIndicateurValeurs(
-      request.valeurs,
-      tokenInfo
-    );
-    return { valeurs: upsertedValeurs };
-  }
-
   @ApiUsage([ApiUsageEnum.EXTERNAL_API])
-  @Get('indicateur-valeurs')
+  @Get('indicateurs/valeurs')
   @ApiOperation({
     summary:
       "Récupération des valeurs d'un ou plusieurs indicateurs d'une collectivité.",
@@ -94,11 +51,11 @@ export class IndicateursValeursController {
     @Query() request: GetIndicateursValeursApiRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetIndicateursValeursResponseClass> {
-    return this.service.getIndicateurValeursGroupees(request, tokenInfo);
+    return this.service.listIndicateurValeurs(request, tokenInfo);
   }
 
   @ApiUsage([ApiUsageEnum.EXTERNAL_API])
-  @Post('indicateur-valeurs')
+  @Post('indicateurs/valeurs')
   @ApiOperation({
     summary: "Création ou mise à jour des valeurs d'indicateur(s).",
     description:

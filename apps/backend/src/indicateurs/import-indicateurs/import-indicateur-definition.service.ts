@@ -32,7 +32,7 @@ import BaseSpreadsheetImporterService from '../../shared/services/base-spreadshe
 import ConfigurationService from '../../utils/config/configuration.service';
 import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
 import SheetService from '../../utils/google-sheets/sheet.service';
-import { ListDefinitionsLightRepository } from '../definitions/list-platform-predefined-definitions/list-definitions-light.repository';
+import { ListPlatformDefinitionsRepository } from '../definitions/list-platform-definitions/list-platform-definitions.repository';
 import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';
 import IndicateurExpressionService from '../valeurs/indicateur-expression.service';
 import {
@@ -45,7 +45,7 @@ import {
 } from './import-indicateur-objectif.dto';
 
 type GetReferentielIndicateurDefinitionsReturnType = Awaited<
-  ReturnType<ListDefinitionsLightRepository['listDefinitionsLight']>
+  ReturnType<ListPlatformDefinitionsRepository['listPlatformDefinitions']>
 >;
 
 @Injectable()
@@ -64,7 +64,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
 
   constructor(
     private readonly configurationService: ConfigurationService,
-    private readonly indicateurDefinitionsLightRepo: ListDefinitionsLightRepository,
+    private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
     private readonly indicateurExpressionService: IndicateurExpressionService,
     private readonly databaseService: DatabaseService,
     private readonly crudValeursService: CrudValeursService,
@@ -96,7 +96,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     identifiantsRecalcules: string[];
   }> {
     const indicateurDefinitions =
-      await this.indicateurDefinitionsLightRepo.listDefinitionsLight({
+      await this.listPlatformDefinitionsRepository.listPlatformDefinitions({
         identifiantsReferentiel: ['cae_1.a'],
       });
 
@@ -113,7 +113,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     const sheetRange = this.getIndicateurDefinitionsSheetRange();
 
     const existingDefinitionsData =
-      await this.indicateurDefinitionsLightRepo.listDefinitionsLight();
+      await this.listPlatformDefinitionsRepository.listPlatformDefinitions();
 
     const indicateurDefinitionsData =
       await this.sheetService.getDataFromSheet<ImportIndicateurDefinitionType>(
@@ -597,6 +597,6 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     });
 
     // We query again the db to get indicateurs with parents, etc.
-    return this.indicateurDefinitionsLightRepo.listDefinitionsLight();
+    return this.listPlatformDefinitionsRepository.listPlatformDefinitions();
   }
 }

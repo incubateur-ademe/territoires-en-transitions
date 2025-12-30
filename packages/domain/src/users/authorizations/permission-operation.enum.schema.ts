@@ -42,12 +42,12 @@ export const PermissionOperations = [
   'plans.fiches.import',
 
   // Indicateurs
-  'indicateurs.definitions.read',
-  'indicateurs.definitions.read_public',
-  'indicateurs.definitions.create',
-  'indicateurs.definitions.update',
-  'indicateurs.definitions.update_piloted_by_me',
-  'indicateurs.definitions.delete',
+  'indicateurs.indicateurs.read',
+  'indicateurs.indicateurs.read_public',
+  'indicateurs.indicateurs.create',
+  'indicateurs.indicateurs.update',
+  'indicateurs.indicateurs.update_piloted_by_me',
+  'indicateurs.indicateurs.delete',
   'indicateurs.valeurs.read',
   'indicateurs.valeurs.read_public',
   'indicateurs.valeurs.mutate',

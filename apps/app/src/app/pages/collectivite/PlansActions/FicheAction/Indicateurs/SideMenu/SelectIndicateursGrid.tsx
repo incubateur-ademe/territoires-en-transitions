@@ -1,7 +1,7 @@
 import IndicateurCard, {
   IndicateurCardProps,
 } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
-import { IndicateurDefinitionListItem } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
+import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
 

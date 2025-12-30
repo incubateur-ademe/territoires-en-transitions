@@ -4,7 +4,7 @@ import { Fragment, useState } from 'react';
 import IndicateurCardMenu, {
   ChartDownloadSettings,
 } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/IndicateurCardMenu';
-import { IndicateurDefinitionListItem } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
+import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { Button, VisibleWhen } from '@tet/ui';
 import IndicateurCardEditModal from './IndicateurCardEditModal';
 

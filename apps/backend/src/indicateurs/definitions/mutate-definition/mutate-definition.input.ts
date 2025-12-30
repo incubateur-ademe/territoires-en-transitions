@@ -3,7 +3,7 @@ import { indicateurDefinitionSchemaCreate } from '@tet/domain/indicateurs';
 import { thematiqueSchema } from '@tet/domain/shared';
 import z from 'zod';
 import * as zm from 'zod/mini';
-import { upsertIndicateurDefinitionPilotesInputSchema } from '../handle-definition-pilotes/handle-definition-pilotes.input';
+import { upsertIndicateurDefinitionPilotesInputSchema } from '../../indicateurs/handle-definition-pilotes/handle-definition-pilotes.input';
 
 export const createIndicateurDefinitionInputSchema = z.object({
   titre: indicateurDefinitionSchemaCreate.shape.titre,

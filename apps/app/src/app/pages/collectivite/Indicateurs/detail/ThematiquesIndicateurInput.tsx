@@ -1,5 +1,5 @@
-import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
-import { useUpdateIndicateurDefinition } from '@/app/indicateurs/definitions/use-update-indicateur-definition';
+import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { Field } from '@tet/ui';
 
@@ -11,9 +11,7 @@ type Props = {
 export const ThematiquesIndicateurInput = ({ definition, disabled }: Props) => {
   const thematiques = definition.thematiques || [];
 
-  const { mutate: updateIndicateur } = useUpdateIndicateurDefinition(
-    definition.id
-  );
+  const { mutate: updateIndicateur } = useUpdateIndicateur(definition.id);
 
   const handleOnChange = (selectedThematiqueIds: number[]) => {
     updateIndicateur({

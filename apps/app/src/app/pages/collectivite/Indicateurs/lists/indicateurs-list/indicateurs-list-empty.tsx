@@ -83,7 +83,7 @@ const IndicateursListEmptyCustom = ({ listId }: { listId: EmptyListId }) => {
 
   if (
     !isReadOnly &&
-    hasPermission(permissions, 'indicateurs.definitions.create') &&
+    hasPermission(permissions, 'indicateurs.indicateurs.create') &&
     listId === 'perso'
   ) {
     actions[0].variant = 'outlined';

@@ -1,5 +1,5 @@
 import { referentielToName } from '@/app/app/labels';
-import { IndicateurDefinition } from '@/app/indicateurs/definitions/use-get-indicateur-definition';
+import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { Divider, Icon } from '@tet/ui';
 import classNames from 'classnames';

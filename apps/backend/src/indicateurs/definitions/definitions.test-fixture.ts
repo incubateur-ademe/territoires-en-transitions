@@ -6,7 +6,7 @@ import { UpsertValeurIndicateur } from '../valeurs/upsert-valeur-indicateur.requ
 import { UpdateIndicateurDefinitionInput } from './mutate-definition/mutate-definition.input';
 
 type CreateIndicateurDefinitionInput =
-  inferRouterInputs<AppRouter>['indicateurs']['definitions']['create'];
+  inferRouterInputs<AppRouter>['indicateurs']['indicateurs']['create'];
 
 type AllowedInput = Pick<CreateIndicateurDefinitionInput, 'collectiviteId'> &
   Partial<Omit<CreateIndicateurDefinitionInput, 'collectiviteId'>> &
@@ -31,7 +31,7 @@ export async function createIndicateurPerso({
     'ficheId',
   ] as const;
 
-  const indicateurId = await caller.indicateurs.definitions.create({
+  const indicateurId = await caller.indicateurs.indicateurs.create({
     ...pick(indicateurData, createFields),
     titre: indicateurData.titre ?? 'Fixture titre',
   });
@@ -39,7 +39,7 @@ export async function createIndicateurPerso({
   const updateFields = omit(indicateurData, createFields);
 
   if (Object.keys(updateFields).length > 0) {
-    await caller.indicateurs.definitions.update({
+    await caller.indicateurs.indicateurs.update({
       indicateurId,
       collectiviteId: indicateurData.collectiviteId,
       indicateurFields: updateFields,
@@ -59,7 +59,7 @@ export async function createIndicateurPerso({
   }
 
   onTestFinished(async () => {
-    await caller.indicateurs.definitions.delete({
+    await caller.indicateurs.indicateurs.delete({
       indicateurId,
       collectiviteId: indicateurData.collectiviteId,
     });
