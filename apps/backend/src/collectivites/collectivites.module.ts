@@ -1,4 +1,4 @@
-import { Logger, Module } from '@nestjs/common';
+import { forwardRef, Logger, Module } from '@nestjs/common';
 import { CollectiviteCrudRouter } from '@tet/backend/collectivites/collectivite-crud/collectivite-crud.router';
 import CollectiviteCrudService from '@tet/backend/collectivites/collectivite-crud/collectivite-crud.service';
 import { CreateDocumentRouter } from '@tet/backend/collectivites/documents/create-document/create-document.router';
@@ -24,6 +24,10 @@ import { DocumentsRouter } from './documents/documents.router';
 import DocumentService from './documents/services/document.service';
 import { ListCategoriesRouter } from './handle-categories/list-categories.router';
 import ListCategoriesService from './handle-categories/list-categories.service';
+import { CreateInstanceGouvernanceAndLinkToFicheApplicationService } from './handle-instance-gouvernance/create-instance-gouvernance-and-link-to-fiche.application-service';
+import { InstanceGouvernanceRepository } from './handle-instance-gouvernance/handle-instance-gouvernance.repository';
+import { InstanceGouvernanceRouter } from './handle-instance-gouvernance/handle-instance-gouvernance.router';
+import { InstanceGouvernanceService } from './handle-instance-gouvernance/handle-instance-gouvernance.service';
 import { ListCollectivitesRouter } from './list-collectivites/list-collectivites.router';
 import ListCollectivitesService from './list-collectivites/list-collectivites.service';
 import { CollectiviteMembresRouter } from './membres/membres.router';
@@ -33,9 +37,10 @@ import CollectivitesService from './services/collectivites.service';
 import GroupementsService from './services/groupements.service';
 import { PersonnesService } from './services/personnes.service';
 import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
+import { FichesModule } from '@tet/backend/plans/fiches/fiches.module';
 
 @Module({
-  imports: [TableauDeBordModule],
+  imports: [TableauDeBordModule, forwardRef(() => FichesModule)],
   providers: [
     CollectivitesRouter,
     CollectivitesService,
@@ -67,6 +72,10 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     DiscussionDomainService,
     DiscussionQueryService,
     ListDiscussionService,
+    InstanceGouvernanceRouter,
+    InstanceGouvernanceService,
+    InstanceGouvernanceRepository,
+    CreateInstanceGouvernanceAndLinkToFicheApplicationService,
     {
       provide: Logger,
       useValue: new Logger('DiscussionApplicationService'),
@@ -101,6 +110,7 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     DiscussionRouter,
     DiscussionApplicationService,
     DiscussionDomainService,
+    InstanceGouvernanceRouter,
   ],
   controllers: [CollectiviteController, DocumentController],
 })
