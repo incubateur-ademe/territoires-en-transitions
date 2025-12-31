@@ -17,10 +17,10 @@ type EmptyProps = Omit<
 > & { isReadonly: boolean };
 
 type ContentProps<T> = {
-  data: T[] | undefined;
+  data: T[];
   isLoading: boolean;
   actions?: ReactNode;
-  children: (item: T) => ReactNode;
+  children: ((item: T) => ReactNode) | JSX.Element;
 };
 
 const SharedAlert = (_props: AlertProps) => null;
@@ -31,28 +31,35 @@ SharedAlert.displayName = 'LinkedResources.SharedAlert';
 Empty.displayName = 'LinkedResources.Empty';
 Content.displayName = 'LinkedResources.Content';
 
+const extractProps = (children: ReactNode) => {
+  const { alertProps, emptyProps, contentProps } = Children.toArray(children)
+    .filter(isValidElement)
+    .reduce<{
+      alertProps?: AlertProps;
+      emptyProps?: EmptyProps;
+      contentProps?: ContentProps<unknown>;
+    }>((acc, child) => {
+      const displayName = (child.type as { displayName?: string }).displayName;
+
+      if (displayName === SharedAlert.displayName) {
+        return { ...acc, alertProps: child.props as AlertProps };
+      }
+      if (displayName === Empty.displayName) {
+        return { ...acc, emptyProps: child.props as EmptyProps };
+      }
+      if (displayName === Content.displayName) {
+        return { ...acc, contentProps: child.props as ContentProps<unknown> };
+      }
+      return acc;
+    }, {});
+  return { alertProps, emptyProps, contentProps };
+};
+
 function Root({ children }: { children: ReactNode }) {
-  let alertProps: AlertProps | undefined;
-  let emptyProps: EmptyProps | undefined;
-  let contentProps: ContentProps<unknown> | undefined;
-
-  Children.forEach(children, (child) => {
-    if (!isValidElement(child)) return;
-
-    const displayName = (child.type as { displayName?: string }).displayName;
-
-    if (displayName === SharedAlert.displayName) {
-      alertProps = child.props as AlertProps;
-    } else if (displayName === Empty.displayName) {
-      emptyProps = child.props as EmptyProps;
-    } else if (displayName === Content.displayName) {
-      contentProps = child.props as ContentProps<unknown>;
-    }
-  });
-
-  const data = contentProps?.data;
+  const { alertProps, emptyProps, contentProps } = extractProps(children);
+  const { isLoading, data } = contentProps || {};
   const isEmpty = !data || data.length === 0;
-  const isLoading = contentProps?.isLoading || false;
+
   const renderBody = () => {
     if (isLoading) {
       return (
@@ -74,6 +81,11 @@ function Root({ children }: { children: ReactNode }) {
     }
 
     if (data && contentProps) {
+      const isRenderFunction = typeof contentProps.children === 'function';
+      const renderFn = isRenderFunction
+        ? (contentProps.children as (item: unknown) => ReactNode)
+        : null;
+
       return (
         <>
           {contentProps.actions && (
@@ -81,9 +93,15 @@ function Root({ children }: { children: ReactNode }) {
               {contentProps.actions}
             </div>
           )}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
-            {data.map(contentProps.children)}
-          </div>
+          {isRenderFunction && renderFn ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
+              {data.map((item, index) => (
+                <div key={index}>{renderFn(item)}</div>
+              ))}
+            </div>
+          ) : (
+            contentProps.children
+          )}
         </>
       );
     }
@@ -111,11 +129,22 @@ function Root({ children }: { children: ReactNode }) {
  *
  * @example
  * ```tsx
+ * // With data - component handles grid layout
  * <LinkedResources.Root>
- *   <LinkedResources.SharedAlert title="..." description="..." />
- *   <LinkedResources.Empty picto={...} title="..." actions={[...]} />
  *   <LinkedResources.Content data={documents} isLoading={isLoading} actions={<Button>Add</Button>}>
  *     {(doc) => <DocCard key={doc.id} doc={doc} />}
+ *   </LinkedResources.Content>
+ * </LinkedResources.Root>
+ *
+ * // Without data - user handles layout (grid, table, whatever)
+ * <LinkedResources.Root>
+ *   <LinkedResources.Content>
+ *     <table>
+ *       <thead>...</thead>
+ *       <tbody>
+ *         {notes.map(note => <tr>...</tr>)}
+ *       </tbody>
+ *     </table>
  *   </LinkedResources.Content>
  * </LinkedResources.Root>
  * ```

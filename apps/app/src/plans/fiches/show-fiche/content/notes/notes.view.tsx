@@ -1,22 +1,17 @@
-import { Button, VisibleWhen } from '@tet/ui';
 import { useState } from 'react';
 import { useFicheContext } from '../../context/fiche-context';
 import { LinkedResources } from '../linked-resources-layout';
 import { NoteCreationModal } from './note-creation.modal';
-import NoteCard from './note.card';
+import { NoteEditionModal } from './note-edition.modal';
+import { NotesTable } from './notes-table';
 import NotificationPicto from './notification.picto';
 
 export const NotesView = () => {
   const { fiche, isReadonly, notes } = useFicheContext();
+  const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const sortedNotes = notes.list
-    ? [...notes.list].sort(
-        (a, b) =>
-          new Date(b.dateNote).getTime() - new Date(a.dateNote).getTime()
-      )
-    : [];
-
+  const editingNote = notes.list?.find((note) => note.id === editingNoteId);
   return (
     <>
       <LinkedResources.Root>
@@ -32,39 +27,39 @@ export const NotesView = () => {
           ]}
         />
         <LinkedResources.Content
-          data={sortedNotes}
           isLoading={notes.isLoading}
-          actions={
-            <VisibleWhen condition={!isReadonly}>
-              <Button
-                icon="add-line"
-                size="xs"
-                variant="outlined"
-                onClick={() => setIsModalOpen(true)}
-              >
-                Ajouter une note
-              </Button>
-            </VisibleWhen>
-          }
+          data={notes.list || []}
         >
-          {(note) => (
-            <NoteCard
-              key={`${note.dateNote}-${note.id}`}
-              fiche={fiche}
-              note={note}
-              onEdit={notes.upsert}
-              onDelete={notes.delete}
-            />
-          )}
+          <NotesTable
+            notes={notes.list || []}
+            fiche={fiche}
+            isReadonly={isReadonly}
+            onCreateNote={notes.upsert}
+            onDeleteNote={notes.delete}
+            onSetEditingNoteId={setEditingNoteId}
+          />
         </LinkedResources.Content>
       </LinkedResources.Root>
-
       {!isReadonly && isModalOpen && (
         <NoteCreationModal
           fiche={fiche}
-          isOpen={isModalOpen && !isReadonly}
+          isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}
           onEdit={notes.upsert}
+        />
+      )}
+      {editingNote && (
+        <NoteEditionModal
+          key={editingNote.id}
+          fiche={fiche}
+          editedNote={editingNote}
+          onEdit={notes.upsert}
+          isOpen={editingNote !== undefined}
+          setIsOpen={(isOpen) => {
+            if (!isOpen) {
+              setEditingNoteId(null);
+            }
+          }}
         />
       )}
     </>
