@@ -6,8 +6,8 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { FicheNote, FicheNoteUpsert } from '@tet/domain/plans';
 import { aliasedTable, and, desc, eq } from 'drizzle-orm';
-import { ficheActionNoteTable } from './table';
-import type { NoteResult } from './types';
+import { ficheActionNoteTable } from './fiche-action-note.table';
+import type { NoteResult } from './fiche-action-note.types';
 
 @Injectable()
 export class FicheActionNoteRepository {
