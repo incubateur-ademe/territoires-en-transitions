@@ -1,43 +1,36 @@
 import { Injectable } from '@nestjs/common';
 import { ficheActionInstanceGouvernanceTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-instance-gouvernance';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   InstanceGouvernance,
   instanceGouvernanceTagSchema,
 } from '@tet/domain/collectivites';
 import { eq } from 'drizzle-orm';
 import { instanceGouvernanceTable } from '../tags/instance-gouvernance.table';
-import { Result } from './result';
+import { Result } from './handle-instance-gouvernance.result';
 
 @Injectable()
 export class InstanceGouvernanceRepository {
   constructor(private readonly databaseService: DatabaseService) {}
   async create({
     nom,
-    actionId,
     collectiviteId,
     userId,
+    tx,
   }: {
     nom: string;
-    actionId: number;
     collectiviteId: number;
     userId: string;
+    tx?: Transaction;
   }): Promise<Result<InstanceGouvernance>> {
     try {
-      const result = await this.databaseService.db.transaction(async (tx) => {
-        const [instanceGouvernance] = await tx
-          .insert(instanceGouvernanceTable)
-          .values({ nom, collectiviteId, createdBy: userId })
-          .returning();
-
-        await tx.insert(ficheActionInstanceGouvernanceTable).values({
-          ficheId: actionId,
-          instanceGouvernanceId: instanceGouvernance.id,
-          createdBy: userId,
-        });
-        return instanceGouvernance;
-      });
-      const parsedResult = instanceGouvernanceTagSchema.safeParse(result);
+      const [instanceGouvernance] = await (tx ?? this.databaseService.db)
+        .insert(instanceGouvernanceTable)
+        .values({ nom, collectiviteId, createdBy: userId })
+        .returning();
+      const parsedResult =
+        instanceGouvernanceTagSchema.safeParse(instanceGouvernance);
       if (!parsedResult.success) {
         return {
           success: false,

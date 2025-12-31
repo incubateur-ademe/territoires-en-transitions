@@ -1,13 +1,16 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 
 export const useCreateInstanceGouvernanceTag = (collectiviteId: number) => {
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const { mutateAsync, isPending } = useMutation(
-    trpc.collectivites.instanceGouvernance.create.mutationOptions({
+    trpc.collectivites.tags.instanceGouvernance.create.mutationOptions({
       onSuccess: () => {
-        trpc.collectivites.instanceGouvernance.list.queryKey({
-          collectiviteId,
+        queryClient.invalidateQueries({
+          queryKey: trpc.collectivites.tags.instanceGouvernance.list.queryKey({
+            collectiviteId,
+          }),
         });
       },
     })

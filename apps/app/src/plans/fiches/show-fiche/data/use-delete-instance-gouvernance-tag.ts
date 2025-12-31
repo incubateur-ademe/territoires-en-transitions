@@ -5,10 +5,10 @@ export const useDeleteInstanceGouvernance = (collectiviteId: number) => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const { mutateAsync, isPending } = useMutation(
-    trpc.collectivites.instanceGouvernance.delete.mutationOptions({
+    trpc.collectivites.tags.instanceGouvernance.delete.mutationOptions({
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: trpc.collectivites.instanceGouvernance.list.queryKey({
+          queryKey: trpc.collectivites.tags.instanceGouvernance.list.queryKey({
             collectiviteId,
           }),
         });

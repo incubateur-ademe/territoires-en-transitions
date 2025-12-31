@@ -24,9 +24,9 @@ import DocumentService from './documents/document.service';
 import { DocumentsRouter } from './documents/documents.router';
 import { ListCategoriesRouter } from './handle-categories/list-categories.router';
 import ListCategoriesService from './handle-categories/list-categories.service';
-import { InstanceGouvernanceRepository } from './instance-gouvernance/repository';
-import { InstanceGouvernanceRouter } from './instance-gouvernance/router';
-import { InstanceGouvernanceService } from './instance-gouvernance/service';
+import { InstanceGouvernanceRepository } from './handle-instance-gouvernance/handle-instance-gouvernance.repository';
+import { InstanceGouvernanceRouter } from './handle-instance-gouvernance/handle-instance-gouvernance.router';
+import { InstanceGouvernanceService } from './handle-instance-gouvernance/handle-instance-gouvernance.service';
 import { ListCollectivitesRouter } from './list-collectivites/list-collectivites.router';
 import ListCollectivitesService from './list-collectivites/list-collectivites.service';
 import { CollectiviteMembresRouter } from './membres/membres.router';
@@ -108,6 +108,7 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     DiscussionApplicationService,
     DiscussionDomainService,
     InstanceGouvernanceRouter,
+    InstanceGouvernanceService,
   ],
   controllers: [CollectiviteController, DocumentController],
 })

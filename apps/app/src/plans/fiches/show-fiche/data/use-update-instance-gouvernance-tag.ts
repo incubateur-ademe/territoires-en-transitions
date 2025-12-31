@@ -5,10 +5,10 @@ export const useUpdateInstanceGouvernanceTag = (collectiviteId: number) => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const { mutateAsync, isPending } = useMutation(
-    trpc.collectivites.instanceGouvernance.update.mutationOptions({
+    trpc.collectivites.tags.instanceGouvernance.update.mutationOptions({
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: trpc.collectivites.instanceGouvernance.list.queryKey({
+          queryKey: trpc.collectivites.tags.instanceGouvernance.list.queryKey({
             collectiviteId,
           }),
         });

@@ -38,7 +38,7 @@ export const SelectTagsGeneric = ({
 }: SelectTagsGenericProps) => {
   const collectivite = useCurrentCollectivite();
   const collectiviteId = collectivite.collectiviteId;
-
+  console.log({ tags });
   const options: Option[] = tags.map((tag) => ({
     value: tag.id,
     label: tag.nom,
