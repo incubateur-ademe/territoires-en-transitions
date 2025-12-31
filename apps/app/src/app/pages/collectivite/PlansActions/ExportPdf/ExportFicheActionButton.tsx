@@ -1,5 +1,6 @@
 import { useGetEtapes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/etapes/use-get-etapes';
 import { useListIndicateurDefinitions } from '@/app/indicateurs/definitions/use-list-indicateur-definitions';
+import { useGetFicheNotes } from '@/app/plans/fiches/show-fiche/data/use-get-fiche-notes';
 import { useGetBudget } from '@/app/plans/fiches/update-fiche/data/use-get-budget';
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
@@ -8,7 +9,6 @@ import { FicheWithRelations } from '@tet/domain/plans';
 import { Event, useEventTracker } from '@tet/ui';
 import { mapValues } from 'es-toolkit';
 import { createElement, useEffect, useState } from 'react';
-import { useGetFicheNotes } from '../FicheAction/data/use-get-fiche-notes';
 import { useAnnexesFicheActionInfos } from '../FicheAction/data/useAnnexesFicheActionInfos';
 import { useFichesActionLiees } from '../FicheAction/data/useFichesActionLiees';
 import { useFicheActionChemins } from '../PlanAction/data/usePlanActionChemin';

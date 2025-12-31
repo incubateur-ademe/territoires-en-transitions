@@ -1,4 +1,5 @@
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
+import { EditedNote } from '@/app/plans/fiches/show-fiche/data/use-upsert-note';
 import { FicheWithRelations } from '@tet/domain/plans';
 import {
   Alert,
@@ -10,7 +11,6 @@ import {
   Select,
 } from '@tet/ui';
 import { useState } from 'react';
-import { EditedNote } from '../data/use-upsert-note';
 import BaseUpdateFicheModal from '../FicheActionPlanning/base-update-fiche-modal';
 
 type NoteCreationModalProps = {
