@@ -3,8 +3,8 @@ import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-actio
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { FicheNote, FicheNoteUpsert } from '@tet/domain/plans';
-import { FicheActionNoteRepository } from './repository';
-import { NoteResult } from './types';
+import { NoteResult } from './fiche-action-note.types';
+import { FicheActionNoteRepository } from './fiche-action-note.repository';
 
 @Injectable()
 export class FicheActionNoteService {

@@ -7,7 +7,7 @@ import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { count, eq, or, sql } from 'drizzle-orm';
-import { ficheActionNoteTable } from '../../fiches/fiche-action-note/table';
+import { ficheActionNoteTable } from '../../fiches/fiche-action-note/fiche-action-note_table';
 import { CompletionField } from './completion-analytics.dto';
 import { getCompletion } from './domain/plan.completion-calculator';
 
