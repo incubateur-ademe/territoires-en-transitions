@@ -4,9 +4,9 @@ import { useTRPC } from '@tet/api';
 export const useCreateInstanceGouvernanceTag = (collectiviteId: number) => {
   const trpc = useTRPC();
   const { mutateAsync, isPending } = useMutation(
-    trpc.collectivites.instanceGouvernance.create.mutationOptions({
+    trpc.collectivites.tags.instanceGouvernance.create.mutationOptions({
       onSuccess: () => {
-        trpc.collectivites.instanceGouvernance.list.queryKey({
+        trpc.collectivites.tags.instanceGouvernance.list.queryKey({
           collectiviteId,
         });
       },

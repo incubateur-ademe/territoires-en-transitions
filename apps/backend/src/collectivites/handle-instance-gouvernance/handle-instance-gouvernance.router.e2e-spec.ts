@@ -17,16 +17,16 @@ import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 
 type CreateInput = inferProcedureInput<
-  AppRouter['collectivites']['instanceGouvernance']['create']
+  AppRouter['collectivites']['tags']['instanceGouvernance']['create']
 >;
 type ListInput = inferProcedureInput<
-  AppRouter['collectivites']['instanceGouvernance']['list']
+  AppRouter['collectivites']['tags']['instanceGouvernance']['list']
 >;
 type DeleteInput = inferProcedureInput<
-  AppRouter['collectivites']['instanceGouvernance']['delete']
+  AppRouter['collectivites']['tags']['instanceGouvernance']['delete']
 >;
 type UpdateInput = inferProcedureInput<
-  AppRouter['collectivites']['instanceGouvernance']['update']
+  AppRouter['collectivites']['tags']['instanceGouvernance']['update']
 >;
 
 const COLLECTIVITE_ID = YOLO_DODO.collectiviteId.admin;
@@ -52,7 +52,7 @@ describe('InstanceGouvernanceRouter', () => {
     };
 
     await expect(async () => {
-      await caller.collectivites.instanceGouvernance.list(input);
+      await caller.collectivites.tags.instanceGouvernance.list(input);
     }).rejects.toThrowError();
   });
 
@@ -73,11 +73,11 @@ describe('InstanceGouvernanceRouter', () => {
 
     const createInput: CreateInput = {
       collectiviteId: COLLECTIVITE_ID,
-      actionId: ficheId,
+      ficheId,
       nom: 'Comité de pilotage test',
     };
 
-    const created = await caller.collectivites.instanceGouvernance.create(
+    const created = await caller.collectivites.tags.instanceGouvernance.create(
       createInput
     );
 
@@ -94,7 +94,7 @@ describe('InstanceGouvernanceRouter', () => {
       collectiviteId: COLLECTIVITE_ID,
     };
 
-    const listed = await caller.collectivites.instanceGouvernance.list(
+    const listed = await caller.collectivites.tags.instanceGouvernance.list(
       listInput
     );
 
@@ -114,7 +114,7 @@ describe('InstanceGouvernanceRouter', () => {
       collectiviteId: COLLECTIVITE_ID,
     };
 
-    const deleted = await caller.collectivites.instanceGouvernance.delete(
+    const deleted = await caller.collectivites.tags.instanceGouvernance.delete(
       deleteInput
     );
 
@@ -206,7 +206,7 @@ describe('InstanceGouvernanceRouter', () => {
       nom: 'Instance mise à jour',
     };
 
-    const updated = await caller.collectivites.instanceGouvernance.update(
+    const updated = await caller.collectivites.tags.instanceGouvernance.update(
       updateInput
     );
 
@@ -230,12 +230,12 @@ describe('InstanceGouvernanceRouter', () => {
 
     const input: CreateInput = {
       collectiviteId: 9999,
-      actionId: 1,
+      ficheId: 1,
       nom: 'Instance non autorisée',
     };
 
     await expect(async () => {
-      await caller.collectivites.instanceGouvernance.create(input);
+      await caller.collectivites.tags.instanceGouvernance.create(input);
     }).rejects.toThrowError();
   });
 });

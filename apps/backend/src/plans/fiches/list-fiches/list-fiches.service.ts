@@ -329,37 +329,6 @@ export default class ListFichesService {
       .as('ficheActionLibreTags');
   }
 
-  private getFicheActionInstanceGouvernanceTagsQuery(ficheIds: number[]) {
-    const query = this.databaseService.db
-      .select({
-        ficheId: ficheActionInstanceGouvernanceTable.ficheId,
-        instanceGouvernanceIds: sql<
-          number[]
-        >`array_agg(${ficheActionInstanceGouvernanceTable.instanceGouvernanceId})`.as(
-          'instance_gouvernance_ids'
-        ),
-        instanceGouvernance: sql<
-          Tag[]
-        >`array_agg(json_build_object('id', ${ficheActionInstanceGouvernanceTable.instanceGouvernanceId}, 'nom', ${instanceGouvernanceTable.nom} ))`.as(
-          'instance_gouvernance'
-        ),
-      })
-      .from(ficheActionInstanceGouvernanceTable)
-      .leftJoin(
-        instanceGouvernanceTable,
-        eq(
-          instanceGouvernanceTable.id,
-          ficheActionInstanceGouvernanceTable.instanceGouvernanceId
-        )
-      );
-
-    query.where(inArray(ficheActionInstanceGouvernanceTable.ficheId, ficheIds));
-
-    return query
-      .groupBy(ficheActionInstanceGouvernanceTable.ficheId)
-      .as('ficheActionInstanceGouvernance');
-  }
-
   private getFicheActionStructureTagsQuery(ficheIds: number[]) {
     const query = this.databaseService.db
       .select({
