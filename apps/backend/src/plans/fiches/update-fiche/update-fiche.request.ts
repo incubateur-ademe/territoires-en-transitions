@@ -1,12 +1,12 @@
 import {
   collectiviteSchema,
   financeurTagSchema,
+  instanceGouvernanceTagSchema,
   libreTagSchema,
   partenaireTagSchema,
   personneIdSchema,
   serviceTagSchema,
   structureTagSchema,
-  instanceGouvernanceTagSchema,
 } from '@tet/domain/collectivites';
 import { indicateurDefinitionSchema } from '@tet/domain/indicateurs';
 import { axeSchema, ficheSchema, ficheSchemaUpdate } from '@tet/domain/plans';
@@ -73,3 +73,9 @@ export const updateFicheRequestSchema = ficheSchemaUpdate.extend({
 });
 
 export type UpdateFicheRequest = z.infer<typeof updateFicheRequestSchema>;
+
+export const createInstanceGouvernanceAndLinkToFicheInputSchema = z.object({
+  nom: z.string().min(1),
+  ficheId: z.number(),
+  collectiviteId: z.number(),
+});

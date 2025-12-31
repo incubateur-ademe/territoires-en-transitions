@@ -2,11 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
 import { InstanceGouvernance } from '@tet/domain/collectivites';
 import { PermissionOperationEnum } from '@tet/domain/users';
-import { InstanceGouvernanceRepository } from './repository';
-import { Result } from './result';
+import { InstanceGouvernanceRepository } from './handle-instance-gouvernance.repository';
+import { Result } from './handle-instance-gouvernance.result';
 
 @Injectable()
 export class InstanceGouvernanceService {
@@ -18,27 +19,15 @@ export class InstanceGouvernanceService {
 
   async create(request: {
     nom: string;
-    actionId: number;
     collectiviteId: number;
     user: AuthenticatedUser;
+    tx?: Transaction;
   }): Promise<Result<InstanceGouvernance>> {
-    const isAllowed = await this.permissionService.isAllowed(
-      request.user,
-      PermissionOperationEnum['PLANS.FICHES.UPDATE'],
-      ResourceType.COLLECTIVITE,
-      request.collectiviteId
-    );
-    if (!isAllowed) {
-      return {
-        success: false,
-        error: CommonErrorEnum.UNAUTHORIZED,
-      };
-    }
     const result = await this.instanceGouvernanceRepository.create({
       nom: request.nom,
-      actionId: request.actionId,
       collectiviteId: request.collectiviteId,
       userId: request.user.id,
+      tx: request.tx,
     });
     if (result.success === false) {
       this.logger.error({

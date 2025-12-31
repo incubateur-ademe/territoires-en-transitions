@@ -26,6 +26,7 @@ import { FicheActionEtapeService } from './fiche-action-etape/fiche-action-etape
 import FicheActionPermissionsService from './fiche-action-permissions.service';
 import { ImportPlanModule } from './import/import-plan.module';
 import { NotifyPiloteService } from './notify-pilote/notify-pilote.service';
+import { CreateInstanceGouvernanceAndLinkToFicheApplicationService } from './update-fiche/create-instance-gouvernance-and-link-to-fiche.application-service';
 import { UpdateFicheRouter } from './update-fiche/update-fiche.router';
 import UpdateFicheService from './update-fiche/update-fiche.service';
 
@@ -60,6 +61,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     CreateFicheRouter,
     FichesRouter,
     NotifyPiloteService,
+    CreateInstanceGouvernanceAndLinkToFicheApplicationService,
   ],
   exports: [
     FicheActionPermissionsService,
@@ -86,6 +88,8 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
 
     DeleteFicheService,
     DeleteFicheRouter,
+
+    CreateInstanceGouvernanceAndLinkToFicheApplicationService,
   ],
   controllers: [ExportPlanController, FicheActionNoteController],
 })

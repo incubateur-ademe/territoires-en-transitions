@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import {
-  createInstanceGouvernanceRequestSchema,
-  deleteInstanceGouvernanceRequestSchema,
-  listInstanceGouvernanceRequestSchema,
-  updateInstanceGouvernanceRequestSchema,
-} from './request';
-import { InstanceGouvernanceService } from './service';
+  createInstanceGouvernanceInputSchema,
+  deleteInstanceGouvernanceInputSchema,
+  listInstanceGouvernanceInputSchema,
+  updateInstanceGouvernanceInputSchema,
+} from './handle-instance-gouvernance.input';
+import { InstanceGouvernanceService } from './handle-instance-gouvernance.service';
 
 @Injectable()
 export class InstanceGouvernanceRouter {
@@ -20,16 +20,17 @@ export class InstanceGouvernanceRouter {
 
   router = this.trpc.router({
     create: this.trpc.authedProcedure
-      .input(createInstanceGouvernanceRequestSchema)
+      .input(createInstanceGouvernanceInputSchema)
       .mutation(async ({ input, ctx }) => {
         const result = await this.instanceGouvernanceService.create({
-          ...input,
+          nom: input.nom,
+          collectiviteId: input.collectiviteId,
           user: ctx.user,
         });
         return this.getResultDataOrThrowError(result);
       }),
     list: this.trpc.authedProcedure
-      .input(listInstanceGouvernanceRequestSchema)
+      .input(listInstanceGouvernanceInputSchema)
       .query(async ({ input, ctx }) => {
         const result = await this.instanceGouvernanceService.list({
           collectiviteId: input.collectiviteId,
@@ -38,7 +39,7 @@ export class InstanceGouvernanceRouter {
         return this.getResultDataOrThrowError(result);
       }),
     delete: this.trpc.authedProcedure
-      .input(deleteInstanceGouvernanceRequestSchema)
+      .input(deleteInstanceGouvernanceInputSchema)
       .mutation(async ({ input, ctx }) => {
         const result = await this.instanceGouvernanceService.delete({
           id: input.id,
@@ -48,7 +49,7 @@ export class InstanceGouvernanceRouter {
         return this.getResultDataOrThrowError(result);
       }),
     update: this.trpc.authedProcedure
-      .input(updateInstanceGouvernanceRequestSchema)
+      .input(updateInstanceGouvernanceInputSchema)
       .mutation(async ({ input, ctx }) => {
         const result = await this.instanceGouvernanceService.update({
           id: input.id,

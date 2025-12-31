@@ -57,13 +57,9 @@ export const InstanceGouvernanceDropdown = ({
           ? async (tag) => {
               const result = await createInstanceGouvernanceTag({
                 ...tag,
-                actionId: ficheId,
+                ficheId,
               });
-              return {
-                id: result.id,
-                nom: result.nom,
-                collectiviteId: result.collectiviteId,
-              };
+              return result;
             }
           : undefined
       }
@@ -73,11 +69,7 @@ export const InstanceGouvernanceDropdown = ({
           collectiviteId,
           nom: tag.nom,
         });
-        return {
-          id: result.id,
-          nom: result.nom,
-          collectiviteId: result.collectiviteId,
-        };
+        return result;
       }}
     />
   );

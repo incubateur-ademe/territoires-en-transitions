@@ -3,21 +3,28 @@ import { isAuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import z from 'zod';
+import { CreateInstanceGouvernanceAndLinkToFicheApplicationService } from './create-instance-gouvernance-and-link-to-fiche.application-service';
 import { updateFicheErrorConfig } from './update-fiche.errors';
-import { updateFicheRequestSchema } from './update-fiche.request';
+import {
+  createInstanceGouvernanceAndLinkToFicheInputSchema,
+  updateFicheRequestSchema,
+} from './update-fiche.request';
 import UpdateFicheService from './update-fiche.service';
 
 const updateFicheInput = z.object({
   ficheId: z.number(),
   ficheFields: updateFicheRequestSchema,
   isNotificationEnabled: z.boolean().optional(),
+  createInstanceGouvernanceAndLinkToFiche:
+    createInstanceGouvernanceAndLinkToFicheInputSchema.optional(),
 });
 
 @Injectable()
 export class UpdateFicheRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: UpdateFicheService
+    private readonly service: UpdateFicheService,
+    private readonly createInstanceGouvernanceAndLinkToFicheApplicationService: CreateInstanceGouvernanceAndLinkToFicheApplicationService
   ) {}
 
   private readonly getResultDataOrThrowError = createTrpcErrorHandler(
@@ -35,6 +42,18 @@ export class UpdateFicheRouter {
           ...input,
           user: ctx.user,
         });
+        return this.getResultDataOrThrowError(result);
+      }),
+    createInstanceGouvernanceAndLinkToFiche: this.trpc.authedProcedure
+      .input(createInstanceGouvernanceAndLinkToFicheInputSchema)
+      .mutation(async ({ input, ctx }) => {
+        const result =
+          await this.createInstanceGouvernanceAndLinkToFicheApplicationService.execute(
+            {
+              ...input,
+              user: ctx.user,
+            }
+          );
         return this.getResultDataOrThrowError(result);
       }),
   });
