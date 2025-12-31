@@ -4,14 +4,14 @@ import { CreateFicheService } from '@tet/backend/plans/fiches/create-fiche/creat
 import { ExportPlanController } from '@tet/backend/plans/fiches/export/export-plan.controller';
 import { FicheActionBudgetRouter } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.router';
 import { FicheActionBudgetService } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.service';
-import { FicheActionNoteController } from '@tet/backend/plans/fiches/fiche-action-note/fiche-action-note.controller';
-import FicheActionNoteService from '@tet/backend/plans/fiches/fiche-action-note/fiche-action-note.service';
-import { FichesRouter } from '@tet/backend/plans/fiches/fiches.router';
+import { FicheActionNoteRouter } from '@tet/backend/plans/fiches/fiche-action-note/router';
+import { FichesRouter } from '@tet/back@tet/backend/plans/fiches/fiche-action-note/fiche-action-note-router
 import { ListFichesRouter } from '@tet/backend/plans/fiches/list-fiches/list-fiches.router';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import PlanActionsService from '@tet/backend/plans/fiches/plan-actions.service';
 import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-fiche.service';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
+import { FicheActionNoteRepository } from 'dist/plans/fiches/fiche-action-note/fiche-action-note.repository';
 import { CollectivitesModule } from '../../collectivites/collectivites.module';
 import { BulkEditRouter } from './bulk-edit/bulk-edit.router';
 import { BulkEditService } from './bulk-edit/bulk-edit.service';
@@ -23,6 +23,7 @@ import { DeleteFicheService } from './delete-fiche/delete-fiche.service';
 import { ExportService } from './export/export.service';
 import { FicheActionEtapeRouter } from './fiche-action-etape/fiche-action-etape.router';
 import { FicheActionEtapeService } from './fiche-action-etape/fiche-action-etape.service';
+import { FicheActionNoteService } from './fiche-action-note/fiche-action-note.service';
 import FicheActionPermissionsService from './fiche-action-permissions.service';
 import { ImportPlanModule } from './import/import-plan.module';
 import { NotifyPiloteService } from './notify-pilote/notify-pilote.service';
@@ -55,7 +56,9 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     ExportService,
     FicheActionBudgetService,
     FicheActionBudgetRouter,
+    FicheActionNoteRepository,
     FicheActionNoteService,
+    FicheActionNoteRouter,
     CreateFicheService,
     CreateFicheRouter,
     FichesRouter,
@@ -72,6 +75,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     FicheActionBudgetService,
     FicheActionBudgetRouter,
     FicheActionNoteService,
+    FicheActionNoteRouter,
 
     FichesRouter,
 
@@ -87,6 +91,6 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     DeleteFicheService,
     DeleteFicheRouter,
   ],
-  controllers: [ExportPlanController, FicheActionNoteController],
+  controllers: [ExportPlanController],
 })
 export class FichesModule {}

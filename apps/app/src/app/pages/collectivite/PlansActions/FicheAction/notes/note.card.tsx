@@ -1,9 +1,9 @@
+import { DeletedNote } from '@/app/plans/fiches/show-fiche/data/use-delete-note';
+import { EditedNote } from '@/app/plans/fiches/show-fiche/data/use-upsert-note';
 import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
 import { Button, Card, Icon, RichTextEditor } from '@tet/ui';
 import { format } from 'date-fns';
 import { useState } from 'react';
-import { DeletedNote } from '../data/use-delete-note';
-import { EditedNote } from '../data/use-upsert-note';
 import { NoteDeletionModal } from './note-deletion.modal';
 import { NoteEditionModal } from './note-edition.modal';
 

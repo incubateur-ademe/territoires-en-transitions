@@ -1,9 +1,9 @@
+import { useDeleteNote } from '@/app/plans/fiches/show-fiche/data/use-delete-note';
+import { useGetFicheNotes } from '@/app/plans/fiches/show-fiche/data/use-get-fiche-notes';
+import { useUpsertNote } from '@/app/plans/fiches/show-fiche/data/use-upsert-note';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Button, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
-import { useDeleteNote } from '../data/use-delete-note';
-import { useGetFicheNotes } from '../data/use-get-fiche-notes';
-import { useUpsertNote } from '../data/use-upsert-note';
 import { NoteCreationModal } from './note-creation.modal';
 import NoteCard from './note.card';
 import NotificationPicto from './notification.picto';
@@ -15,8 +15,8 @@ type NotesViewProps = {
 
 export const NotesView = ({ fiche, isReadonly }: NotesViewProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { mutate: updateNotes } = useUpsertNote(fiche);
-  const { mutate: deleteNote } = useDeleteNote(fiche);
+  const { mutateAsync: updateNote } = useUpsertNote(fiche);
+  const { mutateAsync: deleteNote } = useDeleteNote(fiche);
   const { data: notesData } = useGetFicheNotes(fiche);
 
   const notes = notesData || [];
@@ -65,7 +65,7 @@ export const NotesView = ({ fiche, isReadonly }: NotesViewProps) => {
                   key={`${note.dateNote}-${index}`}
                   fiche={fiche}
                   note={note}
-                  onEdit={updateNotes}
+                  onEdit={updateNote}
                   onDelete={deleteNote}
                 />
               ))}
@@ -78,7 +78,7 @@ export const NotesView = ({ fiche, isReadonly }: NotesViewProps) => {
           fiche={fiche}
           isOpen={isModalOpen && !isReadonly}
           setIsOpen={setIsModalOpen}
-          onEdit={updateNotes}
+          onEdit={updateNote}
         />
       )}
     </>

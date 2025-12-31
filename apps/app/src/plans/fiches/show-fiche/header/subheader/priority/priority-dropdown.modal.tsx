@@ -16,10 +16,10 @@ export const PriorityDropdownModal = ({
 }: PriorityDropdownModalProps) => {
   const [updatedPriority, setUpdatedPriority] = useState(fiche.priorite);
   const [isLoading, setIsLoading] = useState(false);
-  const { updateFiche } = useFicheContext();
+  const { update } = useFicheContext();
 
   const handleSave = async () => {
-    return updateFiche({
+    return update({
       ficheId: fiche.id,
       ficheFields: { priorite: updatedPriority },
     });
