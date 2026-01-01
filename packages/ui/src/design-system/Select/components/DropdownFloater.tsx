@@ -41,6 +41,7 @@ type DropdownFloaterProps = {
   containerClassName?: string;
   /** z-index custom pour le dropdown */
   dropdownZindex?: number;
+  displayOptionsWithoutFloater?: boolean;
   'data-test'?: string;
   disabled?: boolean;
 };
@@ -57,6 +58,7 @@ export const DropdownFloater = ({
   disabled,
   containerClassName,
   dropdownZindex,
+  displayOptionsWithoutFloater = false,
   'data-test': dataTest,
 }: DropdownFloaterProps) => {
   const { isOpen, toggleIsOpen } = useOpenState(openState);
@@ -119,48 +121,56 @@ export const DropdownFloater = ({
           ...children.props,
         })
       )}
-      <FloatingNode id={nodeId}>
-        {isOpen && (
-          <FloaterContent parentId={parentId} parentNodeId={parentNodeId}>
-            <FloatingFocusManager
-              context={context}
-              initialFocus={-1}
-              modal={parentNodeId ? true : false}
-            >
-              <div
-                data-test={dataTest}
-                {...getFloatingProps({
-                  ref: refs.setFloating,
-                  style: {
-                    position: strategy,
-                    top: y,
-                    left: x,
-                    // Applique uniquement le z-index quand le dropdown
-                    // n'est pas contenu dans un autre floater (ex. modale)
-                    zIndex: dropdownZindex
-                      ? dropdownZindex
-                      : parentNodeId
-                      ? preset.theme.extend.zIndex.dropdown
-                      : 1,
-                  },
-                })}
+      {displayOptionsWithoutFloater ? (
+        isOpen && (
+          <div {...getFloatingProps({ ref: refs.setFloating })}>
+            {render({ close: () => toggleIsOpen() })}
+          </div>
+        )
+      ) : (
+        <FloatingNode id={nodeId}>
+          {isOpen && (
+            <FloaterContent parentId={parentId} parentNodeId={parentNodeId}>
+              <FloatingFocusManager
+                context={context}
+                initialFocus={-1}
+                modal={parentNodeId ? true : false}
               >
                 <div
-                  className={classNames(
-                    'overflow-y-auto bg-white rounded-b-lg border border-grey-4 border-t-0',
-                    containerClassName
-                  )}
-                  style={{ maxHeight: maxHeight - 16, minHeight }}
-                >
-                  {render({
-                    close: () => toggleIsOpen(),
+                  data-test={dataTest}
+                  {...getFloatingProps({
+                    ref: refs.setFloating,
+                    style: {
+                      position: strategy,
+                      top: y,
+                      left: x,
+                      // Applique uniquement le z-index quand le dropdown
+                      // n'est pas contenu dans un autre floater (ex. modale)
+                      zIndex: dropdownZindex
+                        ? dropdownZindex
+                        : parentNodeId
+                        ? preset.theme.extend.zIndex.dropdown
+                        : 1,
+                    },
                   })}
+                >
+                  <div
+                    className={classNames(
+                      'overflow-y-auto bg-white rounded-b-lg border border-grey-4 border-t-0',
+                      containerClassName
+                    )}
+                    style={{ maxHeight: maxHeight - 16, minHeight }}
+                  >
+                    {render({
+                      close: () => toggleIsOpen(),
+                    })}
+                  </div>
                 </div>
-              </div>
-            </FloatingFocusManager>
-          </FloaterContent>
-        )}
-      </FloatingNode>
+              </FloatingFocusManager>
+            </FloaterContent>
+          )}
+        </FloatingNode>
+      )}
     </>
   );
 };
