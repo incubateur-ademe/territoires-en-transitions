@@ -922,3 +922,4 @@ referentiel/add_demande_associated_collectivite_id 2025-11-25T15:05:19Z System A
 
 plan_action/remove-default-fiche-title 2025-12-09T14:49:55Z Marc Rutkowski <marc@attractive-media.fr> # Supprime la valeur par défaut pour le titre d'une fiche action
 notes_complementaires_column_deletion 2025-11-18T13:57:03Z System Administrator <root@Host-002.lan> # Suppression des "notes_complémentaires"
+plan_action/add_fiche_recursive_axe_view 2025-11-26T10:23:50Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Ajout d'une vue pour avoir tous les axes d'une fiche y compris les parents

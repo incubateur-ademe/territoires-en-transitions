@@ -13,6 +13,7 @@ import PersonnalisationsService from '../../collectivites/personnalisations/serv
 import { DatabaseService } from '../../utils/database/database.service';
 import { ListDefinitionsService } from '../definitions/list-definitions/list-definitions.service';
 import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';
+import { ValeursReferenceDTO } from './valeurs-reference.dto';
 
 @Injectable()
 export default class ValeursReferenceService {
@@ -95,13 +96,14 @@ export default class ValeursReferenceService {
     >,
     collectiviteInfo: CollectiviteAvecType,
     reponses: PersonnalisationReponsesPayload
-  ) {
+  ): ValeursReferenceDTO | null {
     const {
       id: indicateurId,
       identifiantReferentiel,
       exprCible,
       exprSeuil,
       libelleCibleSeuil,
+      unite,
     } = definition;
     const valeurObjectifs = valeursOBjectifsParIndicateurId[indicateurId];
     if (exprCible === null && exprSeuil === null && !valeurObjectifs?.length) {
@@ -152,6 +154,7 @@ export default class ValeursReferenceService {
     return {
       indicateurId,
       identifiantReferentiel,
+      unite,
       libelle: libelleCibleSeuil,
       cible: typeof cible === 'number' ? cible : null,
       seuil: typeof seuil === 'number' ? seuil : null,

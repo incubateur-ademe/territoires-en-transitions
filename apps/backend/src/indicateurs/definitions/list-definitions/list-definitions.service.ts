@@ -550,6 +550,21 @@ export class ListDefinitionsService {
     return indicateurDefinitions;
   }
 
+  async getDefinitionByIdentifiantReferentiel(
+    identifiantReferentiel: string
+  ): Promise<DefinitionListItem> {
+    const indicateurDefinitions = await this.listDefinitions({
+      filters: { identifiantsReferentiel: [identifiantReferentiel] },
+      queryOptions: { page: 1, limit: 1 },
+    });
+    if (indicateurDefinitions.data.length === 0) {
+      throw new BadRequestException(
+        `Indicateur definition not found for identifiant referentiel ${identifiantReferentiel}`
+      );
+    }
+    return indicateurDefinitions.data[0];
+  }
+
   async getDefinition(indicateurId: number): Promise<DefinitionListItem> {
     const indicateurDefinitions = await this.listDefinitions({
       filters: { indicateurIds: [indicateurId] },
