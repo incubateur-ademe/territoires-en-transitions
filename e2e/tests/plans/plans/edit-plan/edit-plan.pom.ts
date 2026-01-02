@@ -51,28 +51,6 @@ export class EditPlanPom {
     await expect(this.emptyPlanMessage).toBeHidden();
   }
 
-  async addAxe(axeNom: string) {
-    await this.addAxeButton.click();
-    // Attendre que l'input du titre de l'axe soit visible
-    const axeInput = this.page.locator('[data-test="TitreAxeInput"]').last();
-    await expect(axeInput).toBeVisible();
-    // Remplir le titre de l'axe
-    await axeInput.fill(axeNom);
-    // Appuyer sur Entrée ou faire blur pour sauvegarder
-    await axeInput.blur();
-  }
-
-  async expectAxeExists(axeNom: string) {
-    // Vérifier qu'un axe avec ce nom existe
-    const axe = this.page
-      .locator('[data-test="Axe"]')
-      .filter({
-        hasText: axeNom,
-      })
-      .last();
-    await expect(axe).toBeVisible();
-  }
-
   /**
    * Ouvre la modale d'édition du plan et retourne le locator de la modale
    */
@@ -141,71 +119,6 @@ export class EditPlanPom {
     await this.submitEditPlanModal(modal);
   }
 
-  getAxeByName(name: string) {
-    return this.page.locator('[data-test="Axe"]').filter({
-      hasText: name,
-    });
-  }
-
-  getAxeInputByName(name: string) {
-    return this.page.locator('[data-test="Axe"] textarea').getByText(name);
-  }
-
-  /**
-   * Édite le nom d'un axe en cliquant sur son input
-   */
-  async editAxeNom(ancienNom: string, nouveauNom: string) {
-    // Trouver l'axe par son nom
-    const axe = this.getAxeInputByName(ancienNom);
-
-    // Clic et attend que l'input soit éditable
-    await axe.click();
-    await axe.isEditable();
-    await axe.fill(nouveauNom);
-
-    await expect(this.getAxeInputByName(ancienNom)).toBeHidden();
-    await expect(this.getAxeInputByName(nouveauNom)).toBeVisible();
-  }
-
-  /**
-   * Déplie un axe pour voir ses sous-axes et fiches
-   */
-  async expandAxe(axeNom: string) {
-    const axe = this.getAxeByName(axeNom);
-    await expect(axe).toBeVisible();
-
-    const expandButton = axe.locator('[data-test="BoutonDeplierAxe"]');
-    await expandButton.click();
-  }
-
-  /**
-   * Ajoute un sous-axe à un axe existant
-   */
-  async addSousAxe(parentAxeNom: string, sousAxeNom: string) {
-    // D'abord déplier l'axe parent pour voir le bouton d'ajout
-    await this.expandAxe(parentAxeNom);
-
-    const parentAxe = this.getAxeByName(parentAxeNom);
-
-    // Le bouton "Créer un sous-titre" apparaît au survol de l'axe
-    await parentAxe.hover();
-
-    // Chercher le bouton "Créer un sous-titre" dans l'axe (apparaît au survol avec title="Créer un sous-titre")
-    const addSousAxeButton = parentAxe.locator(
-      'button[title="Créer un sous-titre"]'
-    );
-
-    await addSousAxeButton.click();
-
-    // Attendre que l'input du titre du sous-axe soit visible
-    const sousAxeInput = this.page.locator('textarea:focus');
-    await expect(sousAxeInput).toBeVisible();
-
-    // Remplir le titre du sous-axe
-    await sousAxeInput.fill(sousAxeNom);
-    await sousAxeInput.blur();
-  }
-
   /**
    * Ajoute une fiche action au plan ou à un axe
    * @param ficheTitre - Titre de la fiche (optionnel)
@@ -213,9 +126,14 @@ export class EditPlanPom {
    */
   async addFiche(axeNom?: string) {
     if (axeNom) {
-      await this.expandAxe(axeNom);
+      // Déplier l'axe si nécessaire
+      const axe = this.page.locator('[data-test="Axe"]').filter({
+        hasText: axeNom,
+      });
+      await expect(axe).toBeVisible();
 
-      const axe = this.getAxeByName(axeNom);
+      const expandButton = axe.locator('[data-test="BoutonDeplierAxe"]');
+      await expandButton.click();
 
       // le bouton "Créer une action" dans l'axe apparaît au survol
       await axe.hover();
