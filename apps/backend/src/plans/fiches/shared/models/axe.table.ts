@@ -17,6 +17,7 @@ import { planActionTypeTable } from './plan-action-type.table';
 export const axeTable = pgTable('axe', {
   id: serial('id').primaryKey(),
   nom: text('nom'),
+  description: text('description'),
   collectiviteId: integer('collectivite_id')
     .notNull()
     .references(() => collectiviteTable.id),
