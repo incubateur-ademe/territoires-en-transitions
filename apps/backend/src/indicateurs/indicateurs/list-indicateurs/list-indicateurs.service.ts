@@ -375,6 +375,22 @@ export class ListIndicateursService {
       .as('indicateurAxes');
   }
 
+  private getIndicateurDefinitionAxePlansQuery() {
+    return this.databaseService.db
+      .select({
+        indicateurId: axeIndicateurTable.indicateurId,
+        planIds: sql<
+          number[]
+        >`array_agg(DISTINCT COALESCE(${axeTable.plan}, ${axeTable.id})) FILTER (WHERE ${axeTable.id} IS NOT NULL)`.as(
+          'axe_plan_ids'
+        ),
+      })
+      .from(axeIndicateurTable)
+      .leftJoin(axeTable, eq(axeTable.id, axeIndicateurTable.axeId))
+      .groupBy(axeIndicateurTable.indicateurId)
+      .as('indicateurAxePlans');
+  }
+
   private getGroupementCollectivitesQuery() {
     return this.databaseService.db
       .select({
@@ -630,6 +646,12 @@ export class ListIndicateursService {
 
     if (filters.planIds?.length) {
       whereConditions.push(
+        or(
+          arrayOverlapsPatched(indicateurFicheActions.planIds, filters.planIds),
+          arrayOverlapsPatched(indicateurAxePlans.planIds, filters.planIds)
+        )
+      );
+    }
 
     if (filters.axeIds?.length) {
       whereConditions.push(
@@ -852,6 +874,11 @@ export class ListIndicateursService {
       .leftJoin(
         indicateurAxes,
         eq(indicateurAxes.indicateurId, indicateurDefinitionTable.id)
+      )
+      // Axes plans
+      .leftJoin(
+        indicateurAxePlans,
+        eq(indicateurAxePlans.indicateurId, indicateurDefinitionTable.id)
       )
       // open data
       .leftJoin(
