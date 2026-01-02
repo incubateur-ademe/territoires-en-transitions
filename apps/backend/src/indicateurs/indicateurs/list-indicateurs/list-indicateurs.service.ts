@@ -5,6 +5,7 @@ import { indicateurCollectiviteTable } from '@tet/backend/indicateurs/definition
 import { indicateurPiloteTable } from '@tet/backend/indicateurs/shared/models/indicateur-pilote.table';
 import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
+import { axeIndicateurTable } from '@tet/backend/plans/fiches/shared/models/axe-indicateur.table';
 import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
@@ -361,6 +362,19 @@ export class ListIndicateursService {
       .as('indicateurFicheIds');
   }
 
+  private getIndicateurDefinitionAxesQuery() {
+    return this.databaseService.db
+      .select({
+        indicateurId: axeIndicateurTable.indicateurId,
+        axeIds: sql<number[]>`array_agg(${axeIndicateurTable.axeId})`.as(
+          'axe_ids'
+        ),
+      })
+      .from(axeIndicateurTable)
+      .groupBy(axeIndicateurTable.indicateurId)
+      .as('indicateurAxes');
+  }
+
   private getGroupementCollectivitesQuery() {
     return this.databaseService.db
       .select({
@@ -500,6 +514,8 @@ export class ListIndicateursService {
     });
     const indicateurFicheActions =
       this.getIndicateurDefinitionFichesQuery(collectiviteId);
+    const indicateurAxes = this.getIndicateurDefinitionAxesQuery();
+    const indicateurAxePlans = this.getIndicateurDefinitionAxePlansQuery();
     const indicateurEnfants =
       this.getIndicateurDefinitionEnfantsQuery(collectiviteId);
     const indicateurParents = this.getIndicateurDefinitionParentsQuery();
@@ -525,6 +541,7 @@ export class ListIndicateursService {
       filters.mesureId !== undefined ||
       filters.estFavori ||
       filters.ficheIds?.length ||
+      filters.axeIds?.length ||
       filters.utilisateurPiloteIds?.length;
 
     if (!withChildrenActive) {
@@ -613,7 +630,10 @@ export class ListIndicateursService {
 
     if (filters.planIds?.length) {
       whereConditions.push(
-        arrayOverlapsPatched(indicateurFicheActions.planIds, filters.planIds)
+
+    if (filters.axeIds?.length) {
+      whereConditions.push(
+        arrayOverlapsPatched(indicateurAxes.axeIds, filters.axeIds)
       );
     }
 
@@ -827,6 +847,11 @@ export class ListIndicateursService {
       .leftJoin(
         indicateurFicheActions,
         eq(indicateurFicheActions.indicateurId, indicateurDefinitionTable.id)
+      )
+      // Axes
+      .leftJoin(
+        indicateurAxes,
+        eq(indicateurAxes.indicateurId, indicateurDefinitionTable.id)
       )
       // open data
       .leftJoin(
