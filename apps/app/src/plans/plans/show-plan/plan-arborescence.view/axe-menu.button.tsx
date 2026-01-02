@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { checkAxeHasFiche } from '../../utils';
 import { DeletePlanOrAxeModal } from '../actions/delete-axe-or-plan.modal';
 import { useCreateAxe } from '../data/use-create-axe';
+import { useUpdateAxe } from '../data/use-update-axe';
 
 type Props = {
   axe: PlanNode;
@@ -25,12 +26,16 @@ export const AxeMenuButton = (props: Props) => {
     rootAxe,
     indicateursPanelOpenState,
   } = props;
-  //const hasDescription = false; // TODO: tester axe.description
+  const hasDescription = axe.description !== null;
 
   const { mutateAsync: createAxe } = useCreateAxe({
     collectiviteId: collectivite.collectiviteId,
     planId: rootAxe.id,
     parentAxe: axe,
+  });
+  const { mutateAsync: updateAxe } = useUpdateAxe({
+    axe,
+    collectiviteId: collectivite.collectiviteId,
   });
   const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
 
@@ -42,14 +47,17 @@ export const AxeMenuButton = (props: Props) => {
         axeOpenState.setIsOpen(true);
         indicateursPanelOpenState.setIsOpen(true);
       },
-    } /*
+    },
     {
       label: hasDescription
         ? 'Supprimer la description'
         : 'Ajouter une description',
       icon: 'file-text-line',
-      onClick: () => {},
-    },*/,
+      onClick: () => {
+        axeOpenState.setIsOpen(true);
+        updateAxe({ ...axe, description: hasDescription ? null : '' });
+      },
+    },
     {
       label: 'Créer un axe',
       icon: 'folder-add-line',
