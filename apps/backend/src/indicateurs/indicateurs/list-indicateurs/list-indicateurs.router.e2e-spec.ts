@@ -17,6 +17,7 @@ import { IndicateurDefinition } from '@tet/domain/indicateurs';
 import { inferProcedureInput } from '@trpc/server';
 import { eq, inArray } from 'drizzle-orm';
 import z from 'zod';
+import { axeIndicateurTable } from '../../../plans/fiches/shared/models/axe-indicateur.table';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../../utils/trpc/trpc.router';
 import { createIndicateurPerso } from '../../definitions/definitions.test-fixture';
@@ -612,6 +613,199 @@ describe('ListIndicateursRouter', () => {
       expect(result).toContainEqual(
         expect.objectContaining({ id: indicateurIdLinkedToNestedAxe })
       );
+    });
+
+    test('filtre par planIds - remonte les indicateurs liés directement aux axes', async () => {
+      const caller = router.createCaller({ user: yoloDodoUser });
+
+      const plan = await createPlan({
+        caller,
+        planData: {
+          collectiviteId: 1,
+          nom: 'Plan Test Axes',
+        },
+      });
+
+      const axe = await createAxe({
+        caller,
+        axeData: {
+          collectiviteId: 1,
+          nom: 'Axe Test',
+          planId: plan.id,
+          parent: plan.id,
+        },
+      });
+
+      const indicateurIdLinkedToAxe = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: 1,
+          titre: 'Indicateur lié à axe',
+        },
+      });
+
+      await database.db.insert(axeIndicateurTable).values({
+        indicateurId: indicateurIdLinkedToAxe,
+        axeId: axe.id,
+      });
+
+      onTestFinished(async () => {
+        await database.db
+          .delete(axeIndicateurTable)
+          .where(eq(axeIndicateurTable.indicateurId, indicateurIdLinkedToAxe));
+      });
+
+      const input: Input = {
+        collectiviteId: 1,
+        filters: {
+          planIds: [plan.id],
+        },
+      };
+
+      const { data: result } = await caller.indicateurs.indicateurs.list(input);
+
+      expect(result).toContainEqual(
+        expect.objectContaining({ id: indicateurIdLinkedToAxe })
+      );
+    });
+
+    test('filtre par axeIds', async () => {
+      const caller = router.createCaller({ user: yoloDodoUser });
+
+      const plan = await createPlan({
+        caller,
+        planData: {
+          collectiviteId: 1,
+          nom: 'Plan Test AxeIds',
+        },
+      });
+
+      const axe1 = await createAxe({
+        caller,
+        axeData: {
+          collectiviteId: 1,
+          nom: 'Axe 1 Test',
+          planId: plan.id,
+          parent: plan.id,
+        },
+      });
+
+      const axe2 = await createAxe({
+        caller,
+        axeData: {
+          collectiviteId: 1,
+          nom: 'Axe 2 Test',
+          planId: plan.id,
+          parent: plan.id,
+        },
+      });
+
+      const indicateurId1 = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: 1,
+          titre: 'Indicateur avec axe 1',
+        },
+      });
+
+      const indicateurId2 = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: 1,
+          titre: 'Indicateur avec axe 2',
+        },
+      });
+
+      const indicateurId3 = await createIndicateurPerso({
+        caller,
+        indicateurData: {
+          collectiviteId: 1,
+          titre: 'Indicateur sans axe',
+        },
+      });
+
+      // Associer les indicateurs aux axes
+      await database.db.insert(axeIndicateurTable).values([
+        {
+          indicateurId: indicateurId1,
+          axeId: axe1.id,
+        },
+        {
+          indicateurId: indicateurId2,
+          axeId: axe2.id,
+        },
+      ]);
+
+      onTestFinished(async () => {
+        await database.db
+          .delete(axeIndicateurTable)
+          .where(
+            inArray(axeIndicateurTable.indicateurId, [
+              indicateurId1,
+              indicateurId2,
+            ])
+          );
+      });
+
+      // Tester le filtre avec un seul axe
+      const input = {
+        collectiviteId: 1,
+        filters: {
+          axeIds: [axe1.id],
+        },
+      };
+
+      const { data: result } = await caller.indicateurs.indicateurs.list(input);
+
+      expect(result.length).toBeGreaterThanOrEqual(1);
+      expect(result).toContainEqual(
+        expect.objectContaining({ id: indicateurId1 })
+      );
+      expect(result).not.toContainEqual(
+        expect.objectContaining({ id: indicateurId3 })
+      );
+
+      // Tester le filtre avec plusieurs axes
+      const inputMultiple = {
+        collectiviteId: 1,
+        filters: {
+          axeIds: [axe1.id, axe2.id],
+        },
+      };
+
+      const { data: resultMultiple } =
+        await caller.indicateurs.indicateurs.list(inputMultiple);
+
+      expect(resultMultiple.length).toBeGreaterThanOrEqual(2);
+      expect(resultMultiple).toContainEqual(
+        expect.objectContaining({ id: indicateurId1 })
+      );
+      expect(resultMultiple).toContainEqual(
+        expect.objectContaining({ id: indicateurId2 })
+      );
+      expect(resultMultiple).not.toContainEqual(
+        expect.objectContaining({ id: indicateurId3 })
+      );
+
+      // Tester avec un axe qui n'a pas d'indicateur associé
+      const axeSansIndicateur = await createAxe({
+        caller,
+        axeData: {
+          collectiviteId: 1,
+          nom: 'Axe sans indicateur',
+          planId: plan.id,
+          parent: plan.id,
+        },
+      });
+
+      const { data: resultVide } = await caller.indicateurs.indicateurs.list({
+        collectiviteId: 1,
+        filters: {
+          axeIds: [axeSansIndicateur.id],
+        },
+      });
+
+      expect(resultVide.length).toBe(0);
     });
 
     test('filtre par mesureId', async () => {
