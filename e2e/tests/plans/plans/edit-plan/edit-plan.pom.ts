@@ -178,4 +178,40 @@ export class EditPlanPom {
     const referent = this.page.getByText(referentNom);
     await expect(referent).toBeVisible();
   }
+
+  /**
+   * Récupère le bouton "Ouvrir/Fermer tous les axes/sous-axes"
+   */
+  getToggleAllAxesButton() {
+    return this.page.locator('[data-test="ToggleAllAxes"]');
+  }
+
+  /**
+   * Clique sur le bouton "Ouvrir/Fermer tous les axes/sous-axes"
+   */
+  async toggleAllAxes() {
+    const button = this.getToggleAllAxesButton();
+    await expect(button).toBeVisible();
+    await button.click();
+  }
+
+  /**
+   * Vérifie que le bouton "Ouvrir/Fermer tous les axes/sous-axes" affiche "Fermer"
+   * (indique que tous les axes sont fermés, cliquer va les ouvrir)
+   */
+  async expectToggleAllAxesButtonShowsOpen() {
+    const button = this.getToggleAllAxesButton();
+    await expect(button).toBeVisible();
+    await expect(button).toContainText('Fermer tous les axes/sous-axes');
+  }
+
+  /**
+   * Vérifie que le bouton "Ouvrir/Fermer tous les axes/sous-axes" affiche "Ouvrir"
+   * (indique que tous les axes sont ouverts, cliquer va les fermer)
+   */
+  async expectToggleAllAxesButtonShowsClose() {
+    const button = this.getToggleAllAxesButton();
+    await expect(button).toBeVisible();
+    await expect(button).toContainText('Ouvrir tous les axes/sous-axes');
+  }
 }
