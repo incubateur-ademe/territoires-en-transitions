@@ -3,9 +3,6 @@ import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
-import { DeletePlanOrAxeModal } from '@/app/plans/plans/show-plan/actions/delete-axe-or-plan.modal';
-import { useEditAxe } from '@/app/plans/plans/show-plan/data/use-edit-axe';
-import { useUpsertAxe } from '@/app/plans/plans/show-plan/data/use-upsert-axe';
 import { useToggleAxe } from '@/app/plans/plans/show-plan/plan-arborescence.view/use-toggle-axe';
 import IconDrag from '@/app/ui/icons/IconDrag';
 import { PlanNode } from '@tet/domain/plans';
@@ -13,8 +10,10 @@ import { CollectiviteAccess } from '@tet/domain/users';
 import { Button, Icon } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { useCreateFicheResume } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
-import { generateTitle } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import { checkAxeHasFiche, childrenOfPlanNodes } from '../../utils';
+import { childrenOfPlanNodes } from '../../utils';
+import { useAxeIndicateurs } from '../data/use-axe-indicateurs';
+import { useUpdateAxe } from '../data/use-update-axe';
+import { AxeIndicateursList } from './axe-indicateurs-list';
 import { AxeSkeleton } from './axe-skeleton';
 import { AxeTitleInput } from './axe-title.input';
 import { FichesList } from './fiches.list';
@@ -32,13 +31,8 @@ type Props = {
   collectivite: CollectiviteAccess;
 };
 
-export const DraggableAxe = ({
-  rootAxe,
-  axe,
-  axes,
-  isReadonly,
-  collectivite,
-}: Props) => {
+export const DraggableAxe = (props: Props) => {
+  const { rootAxe, axe, axes, isReadonly, collectivite } = props;
   const canDrag =
     collectivite?.niveauAcces === 'admin' ||
     collectivite?.niveauAcces === 'edition';
@@ -46,19 +40,18 @@ export const DraggableAxe = ({
   const uniqueId = `axe-${axe.id}`;
   const axeRef = useRef<HTMLDivElement>(null);
 
-  const { mutate: addAxe } = useUpsertAxe({
-    parentAxe: axe,
-    planId: rootAxe.id,
-  });
-
+  const collectiviteId = collectivite.collectiviteId;
   const { mutate: createFicheResume } = useCreateFicheResume({
-    collectiviteId: collectivite.collectiviteId,
+    collectiviteId,
     axeId: axe.id,
     planId: rootAxe.id,
     axeFichesIds: axe.fiches,
   });
 
-  const { mutate: updatePlan } = useEditAxe(rootAxe.id);
+  const { mutate: updateAxe } = useUpdateAxe({
+    axe,
+    collectiviteId,
+  });
 
   const {
     isOver,
