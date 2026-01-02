@@ -77,6 +77,7 @@ export class ListAxesRepository {
         parents AS (
           SELECT id,
                  COALESCE(nom, '') AS nom,
+                 description,
                  0 AS depth,
                  ARRAY[]::integer[] AS ancestors,
                  '0 ' || COALESCE(nom, '') AS sort_path
@@ -87,6 +88,7 @@ export class ListAxesRepository {
 
           SELECT a.id,
                  a.nom,
+                 a.description,
                  depth + 1,
                  ancestors || a.parent,
                  parents.sort_path || ' ' || depth + 1 || ' ' || COALESCE(a.nom, '')
@@ -101,7 +103,7 @@ export class ListAxesRepository {
           JOIN fiche_action_axe faa ON a.id = faa.axe_id
           GROUP BY a.id
         )
-      SELECT id, nom, fiches, ancestors, depth, sort_path
+      SELECT id, nom, description, fiches, ancestors, depth, sort_path
       FROM parents
       LEFT JOIN fiches USING (id)
       ORDER BY naturalsort(sort_path);
