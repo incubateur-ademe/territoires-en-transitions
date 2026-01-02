@@ -1,13 +1,15 @@
 import { Alert, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { useDeleteAxe } from '../data/use-delete-axe';
 import { useDeletePlan } from '../data/use-delete-plan';
 
 type Props = {
-  children: JSX.Element;
+  children?: JSX.Element;
   planId: number;
   axeId: number;
   axeHasFiche: boolean;
   redirectURL?: string;
+  openState?: OpenState;
 };
 
 export const DeletePlanOrAxeModal = ({
@@ -16,6 +18,7 @@ export const DeletePlanOrAxeModal = ({
   axeId,
   axeHasFiche,
   redirectURL,
+  openState,
 }: Props) => {
   const isPlan = axeId === planId;
 
@@ -29,6 +32,7 @@ export const DeletePlanOrAxeModal = ({
       title={`Souhaitez-vous vraiment supprimer ce ${
         isPlan ? 'plan' : 'titre/axe'
       } ?`}
+      openState={openState}
       description={
         axeHasFiche
           ? undefined
