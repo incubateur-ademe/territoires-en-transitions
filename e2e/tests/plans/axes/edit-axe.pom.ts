@@ -145,7 +145,9 @@ export class EditAxePom {
     await axeMenuButton.click();
 
     // Cliquer sur l'élément de menu avec le titre donné
-    const menuItem = this.page.getByRole('button', { name: title });
+    const menuItem = this.page
+      .locator('[data-floating-ui-portal]')
+      .getByRole('button', { name: title });
     await menuItem.click();
   }
 
@@ -299,5 +301,61 @@ export class EditAxePom {
   async expectDescriptionNotVisible(axeNom: string) {
     const editor = this.getDescriptionEditor(axeNom);
     await expect(editor).toBeHidden();
+  }
+
+  /**
+   * Déplace un axe vers un nouvel emplacement
+   * @param axeNom - Le nom de l'axe à déplacer
+   * @param nouvelAxeParentNom - Le nom de l'axe parent de destination
+   */
+  async moveAxe(planNom: string, axeNom: string, nouvelAxeParentNom: string) {
+    // Ouvrir le menu de l'axe et cliquer sur "Déplacer"
+    await this.clickOnAxeMenuItem(axeNom, 'Déplacer');
+
+    // Attendre que le modal soit visible
+    const modal = this.page.locator('[data-test="move-axe-modal"]');
+    await expect(modal).toBeVisible();
+
+    // Sélectionner le plan et l'axe parent de destination dans le modal
+    const planTargetButton = modal.getByRole('button', {
+      name: planNom,
+    });
+    await expect(planTargetButton).toBeVisible();
+    await planTargetButton.click();
+
+    const targetAxeButton = modal.getByRole('button', {
+      name: nouvelAxeParentNom,
+    });
+    await expect(targetAxeButton).toBeVisible();
+    await targetAxeButton.click();
+
+    // Valider le déplacement
+    const submitButton = modal.getByRole('button', { name: 'Valider' });
+    await submitButton.click();
+
+    // Attendre que le modal se ferme
+    await expect(modal).toBeHidden();
+  }
+
+  /**
+   * Vérifie qu'un axe est un sous-axe d'un autre axe
+   * @param sousAxeNom - Le nom du sous-axe à vérifier
+   * @param parentAxeNom - Le nom de l'axe parent
+   */
+  async expectAxeIsSubAxeOf(sousAxeNom: string, parentAxeNom: string) {
+    // S'assurer que l'axe parent est ouvert pour voir ses sous-axes
+    await this.expectAxeIsOpen(parentAxeNom);
+
+    // Vérifier que le sous-axe existe et est visible
+    await this.expectAxeExists(sousAxeNom);
+
+    // Vérifier que le sous-axe est bien à l'intérieur de l'axe parent
+    const parentAxe = this.getAxeByName(parentAxeNom);
+
+    // Vérifier que le sous-axe est dans le conteneur des enfants de l'axe parent
+    const sousAxeInContainer = parentAxe
+      .locator('[data-test="Axe"]')
+      .filter({ hasText: sousAxeNom });
+    await expect(sousAxeInContainer).toBeVisible();
   }
 }
