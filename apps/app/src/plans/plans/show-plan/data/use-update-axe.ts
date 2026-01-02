@@ -43,6 +43,13 @@ export const useUpdateAxe = ({
           filters: { axeIds: [data.id] },
         }),
       });
+      if (axe.description === null && data.description === '') {
+        await waitForMarkup(`#axe-desc-${data.id} div[contenteditable]`).then(
+          (el) => {
+            (el as HTMLInputElement)?.focus?.();
+          }
+        );
+      }
     },
   });
 };
