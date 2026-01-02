@@ -4,7 +4,8 @@ import { z } from 'zod';
  * Champs communs pour créer un axe ou un plan
  */
 export const baseCreateAxeOrPlanSchema = z.object({
-  nom: z.string().optional(),
+  nom: z.string().nullish(),
+  description: z.string().nullish(),
   collectiviteId: z.number().positive("L'ID de la collectivité est requis"),
 });
 
