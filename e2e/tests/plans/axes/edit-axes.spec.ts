@@ -206,4 +206,51 @@ test.describe("Édition d'axes dans un plan d'action", () => {
     // Vérifier que la description n'apparaît plus
     await editAxePom.expectDescriptionNotVisible(axeNom);
   });
+
+  test('Déplacer un axe vers un autre axe', async ({
+    collectivites,
+    plans,
+    editPlanPom,
+    editAxePom,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+
+    const planNom = "Plan avec déplacement d'axe";
+    const axeParentNom = 'Axe parent';
+    const axeADeplacerNom = 'Axe à déplacer';
+
+    // Crée le plan et deux axes au niveau racine
+    const planId = await plans.create(user, {
+      nom: planNom,
+      collectiviteId: collectivite.data.id,
+    });
+    await plans.createAxe(user, {
+      nom: axeParentNom,
+      collectiviteId: collectivite.data.id,
+      planId,
+      parent: planId,
+    });
+    await plans.createAxe(user, {
+      nom: axeADeplacerNom,
+      collectiviteId: collectivite.data.id,
+      planId,
+      parent: planId,
+    });
+
+    await editPlanPom.goto(collectivite.data.id, planId);
+    await editAxePom.expectAxeExists(axeParentNom);
+    await editAxePom.expectAxeExists(axeADeplacerNom);
+
+    // Déplacer l'axe sous l'axe parent
+    await editAxePom.moveAxe(planNom, axeADeplacerNom, axeParentNom);
+
+    // Vérifier que les axes existent toujours
+    await editAxePom.expectAxeExists(axeParentNom);
+    await editAxePom.expectAxeExists(axeADeplacerNom);
+
+    // Vérifier que l'axe a bien été déplacé en tant que sous-axe
+    await editAxePom.expectAxeIsSubAxeOf(axeADeplacerNom, axeParentNom);
+  });
 });
