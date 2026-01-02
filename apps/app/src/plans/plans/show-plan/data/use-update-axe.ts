@@ -7,7 +7,9 @@ import { PlanNode } from '@tet/domain/plans';
 type UpdateAxe = Omit<
   RouterInput['plans']['axes']['update'],
   'id' | 'collectiviteId' | 'parent'
->;
+> & {
+  parent?: number | null;
+};
 
 export const useUpdateAxe = ({
   collectiviteId,
@@ -24,10 +26,11 @@ export const useUpdateAxe = ({
   );
 
   return useMutation({
-    mutationFn: (data: UpdateAxe) => {
+    mutationFn: ({ parent, ...data }: UpdateAxe) => {
       return updateAxe({
         id: axe.id,
         collectiviteId,
+        parent: parent ?? undefined,
         ...data,
       });
     },
