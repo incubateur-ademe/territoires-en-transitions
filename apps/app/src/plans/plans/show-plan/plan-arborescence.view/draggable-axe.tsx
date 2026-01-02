@@ -1,11 +1,8 @@
 import { DragOverlay, useDraggable, useDroppable } from '@dnd-kit/core';
 import classNames from 'classnames';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { DeletePlanOrAxeModal } from '@/app/plans/plans/show-plan/actions/delete-axe-or-plan.modal';
-import { useEditAxe } from '@/app/plans/plans/show-plan/data/use-edit-axe';
-import { useUpsertAxe } from '@/app/plans/plans/show-plan/data/use-upsert-axe';
 import { useToggleAxe } from '@/app/plans/plans/show-plan/plan-arborescence.view/use-toggle-axe';
 import IconDrag from '@/app/ui/icons/IconDrag';
 import { PlanNode } from '@tet/domain/plans';
@@ -13,8 +10,12 @@ import { CollectiviteAccess } from '@tet/domain/users';
 import { Button, Icon } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { useCreateFicheResume } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
-import { generateTitle } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import { checkAxeHasFiche, childrenOfPlanNodes } from '../../utils';
+import { childrenOfPlanNodes } from '../../utils';
+import { useAxeIndicateurs } from '../data/use-axe-indicateurs';
+import { useUpdateAxe } from '../data/use-update-axe';
+import { AxeIndicateursList } from './axe-indicateurs-list';
+import { AxeIndicateursPanel } from './axe-indicateurs-panel';
+import { AxeMenuButton } from './axe-menu.button';
 import { AxeSkeleton } from './axe-skeleton';
 import { AxeTitleInput } from './axe-title.input';
 import { FichesList } from './fiches.list';
@@ -32,13 +33,8 @@ type Props = {
   collectivite: CollectiviteAccess;
 };
 
-export const DraggableAxe = ({
-  rootAxe,
-  axe,
-  axes,
-  isReadonly,
-  collectivite,
-}: Props) => {
+export const DraggableAxe = (props: Props) => {
+  const { rootAxe, axe, axes, isReadonly, collectivite } = props;
   const canDrag =
     collectivite?.niveauAcces === 'admin' ||
     collectivite?.niveauAcces === 'edition';
@@ -46,20 +42,18 @@ export const DraggableAxe = ({
   const uniqueId = `axe-${axe.id}`;
   const axeRef = useRef<HTMLDivElement>(null);
 
-  const { mutate: addAxe } = useUpsertAxe({
-    collectiviteId: collectivite.collectiviteId,
-    parentAxe: axe,
-    planId: rootAxe.id,
-  });
-
+  const collectiviteId = collectivite.collectiviteId;
   const { mutate: createFicheResume } = useCreateFicheResume({
-    collectiviteId: collectivite.collectiviteId,
+    collectiviteId,
     axeId: axe.id,
     planId: rootAxe.id,
     axeFichesIds: axe.fiches,
   });
 
-  const { mutate: updatePlan } = useEditAxe(rootAxe.id);
+  const { mutate: updateAxe } = useUpdateAxe({
+    axe,
+    collectiviteId,
+  });
 
   const {
     isOver,
@@ -103,6 +97,18 @@ export const DraggableAxe = ({
 
   const { isOpen, setIsOpen, shouldScroll } = useToggleAxe(axe.id, axes);
 
+  const { selectedIndicateurs, toggleIndicateur } = useAxeIndicateurs({
+    axe,
+    collectiviteId,
+    enabled: isOpen,
+  });
+
+  const [isOpenPanelIndicateurs, setIsOpenPanelIndicateurs] = useState(false);
+  const indicateursPanelOpenState = {
+    isOpen: isOpenPanelIndicateurs,
+    setIsOpen: setIsOpenPanelIndicateurs,
+  };
+
   useEffect(() => {
     isOver && active?.id !== over?.id && setIsOpen(true);
   }, [active?.id, isOver, over?.id, setIsOpen]);
@@ -139,7 +145,7 @@ export const DraggableAxe = ({
                   size="lg"
                   className={classNames('mr-2', axeFontColor)}
                 />
-                {generateTitle(axe.nom)}
+                {axe.nom || 'Sans titre'}
               </div>
             </div>
           </DragOverlay>,
@@ -195,46 +201,35 @@ export const DraggableAxe = ({
             isOpen={isOpen}
             isReadonly={isReadonly}
             onEdit={(nom) => {
-              updatePlan({ ...axe, nom, type: null });
+              updateAxe({ nom });
             }}
             fontColor={axeFontColor}
           />
           {!isReadonly && (
-            <div className="invisible group-hover:visible flex items-center gap-3 mt-1 ml-3">
-              <Button
-                icon="file-add-line"
-                variant="grey"
-                size="xs"
-                title="Créer une action"
-                onClick={() => {
-                  setIsOpen(true);
-                  createFicheResume();
-                }}
-              />
-              <Button
-                icon="folder-add-line"
-                variant="grey"
-                size="xs"
-                title="Créer un sous-titre"
-                onClick={() => {
-                  setIsOpen(true);
-                  addAxe();
-                }}
-              />
-              <DeletePlanOrAxeModal
-                planId={rootAxe.id}
-                axeId={axe.id}
-                axeHasFiche={checkAxeHasFiche(axe, axes)}
-              >
+            <>
+              <div className="invisible group-hover:visible flex items-center gap-3 ml-3 min-w-max">
                 <Button
-                  dataTest="SupprimerAxeBouton"
-                  icon="delete-bin-line"
                   variant="grey"
                   size="xs"
-                  title="Supprimer ce titre"
+                  title="Créer une action"
+                  onClick={() => {
+                    setIsOpen(true);
+                    createFicheResume();
+                  }}
+                >
+                  Créer une action
+                </Button>
+                <AxeMenuButton
+                  {...props}
+                  axeOpenState={{ isOpen, setIsOpen }}
+                  indicateursPanelOpenState={indicateursPanelOpenState}
                 />
-              </DeletePlanOrAxeModal>
-            </div>
+              </div>
+              <AxeIndicateursPanel
+                {...props}
+                openState={indicateursPanelOpenState}
+              />
+            </>
           )}
         </div>
         {isDroppable && (
@@ -254,6 +249,21 @@ export const DraggableAxe = ({
               axeId={axe.id}
               planId={rootAxe.id}
             />
+          )}
+          {selectedIndicateurs?.length > 0 && (
+            <>
+              <p className="text-grey-8 text-sm mt-4 mb-1">
+                <Icon icon="link" className="mr-2" />
+                Indicateurs liés
+              </p>
+              <AxeIndicateursList
+                indicateurs={selectedIndicateurs}
+                isEditable={!isReadonly}
+                isReadonly={isReadonly}
+                onToggleSelection={(indicateur) => toggleIndicateur(indicateur)}
+                collectiviteId={collectiviteId}
+              />
+            </>
           )}
           {childrenOfPlanNodes(axe, axes).map((axe: PlanNode) => (
             <DraggableAxe

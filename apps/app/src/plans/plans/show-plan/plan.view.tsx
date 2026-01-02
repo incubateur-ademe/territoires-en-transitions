@@ -16,8 +16,8 @@ import { checkAxeHasFiche } from '../utils';
 import { Actions } from './actions';
 import { CompletionAlert } from './completion/completion.alert';
 import { ContentPanelWithHeader } from './content-panel-with-header';
+import { useCreateAxe } from './data/use-create-axe';
 import { useGetPlan } from './data/use-get-plan';
-import { useUpsertAxe } from './data/use-upsert-axe';
 import { FiltersMenuButton } from './filters';
 import { FilteredResults } from './filters/filtered-results';
 import {
@@ -62,11 +62,10 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
     initialData: initialPlanData,
   });
 
-  const { mutate: addAxe } = useUpsertAxe({
+  const { mutate: addAxe } = useCreateAxe({
     collectiviteId,
     parentAxe: { id: plan.id, depth: 0 },
     planId: plan.id,
-    mutationKey: ['create_axe'],
   });
 
   const { mutate: createFiche } = useCreateFicheResume({

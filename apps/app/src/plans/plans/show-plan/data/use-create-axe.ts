@@ -5,16 +5,14 @@ import { useTRPC } from '@tet/api';
 import { Plan, PlanNode } from '@tet/domain/plans';
 import { planNodeFactory, sortPlanNodes } from '../../utils';
 
-export const useUpsertAxe = ({
+export const useCreateAxe = ({
+  collectiviteId,
   parentAxe,
   planId,
-  collectiviteId,
-  mutationKey,
 }: {
+  collectiviteId: number;
   parentAxe: Pick<PlanNode, 'id' | 'depth'>;
   planId: number;
-  collectiviteId: number;
-  mutationKey?: string[];
 }) => {
   const queryClient = useQueryClient();
   const trpc = useTRPC();
@@ -22,26 +20,15 @@ export const useUpsertAxe = ({
   const { mutateAsync: createAxe } = useMutation(
     trpc.plans.axes.create.mutationOptions()
   );
-  const { mutateAsync: updateAxe } = useMutation(
-    trpc.plans.axes.update.mutationOptions()
-  );
 
   return useMutation({
-    mutationKey,
-    mutationFn: (axe: { id?: number; nom: string } | void) => {
-      const dataToUpsert = {
-        nom: axe?.nom ?? '',
+    mutationFn: () => {
+      return createAxe({
         collectiviteId,
+        nom: '',
         planId,
         parent: parentAxe.id,
-      };
-
-      return axe && 'id' in axe && typeof axe.id === 'number'
-        ? updateAxe({
-            id: axe.id,
-            ...dataToUpsert,
-          })
-        : createAxe(dataToUpsert);
+      });
     },
     meta: { disableToast: true },
     onMutate: async () => {
@@ -83,6 +70,11 @@ export const useUpsertAxe = ({
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: trpc.plans.plans.get.queryKey({ planId }),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: trpc.indicateurs.indicateurs.list.queryKey({
+            filters: { axeIds: [data.id] },
+          }),
         }),
       ]);
       await waitForMarkup(`#axe-${data.id}`).then((el) => {
