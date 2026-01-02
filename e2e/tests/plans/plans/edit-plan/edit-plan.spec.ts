@@ -146,4 +146,223 @@ test.describe("Édition d'un plan d'action", () => {
     await editPlanPom.expectPiloteExists(piloteTag.nom);
     await editPlanPom.expectReferentExists(referentTag.nom);
   });
+
+  test("Ouvrir tous les axes/sous-axes d'un plan", async ({
+    collectivites,
+    plans,
+    editPlanPom,
+    editAxePom,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+
+    const planNom = 'Plan avec axes et sous-axes';
+    const axe1Nom = 'Axe 1';
+    const axe2Nom = 'Axe 2';
+    const sousAxe1Nom = 'Sous-axe 1.1';
+    const sousAxe2Nom = 'Sous-axe 1.2';
+
+    const planId = await plans.create(user, {
+      nom: planNom,
+      collectiviteId: collectivite.data.id,
+    });
+
+    // Créer deux axes de niveau 1
+    const axe1Id = await plans.createAxe(user, {
+      nom: axe1Nom,
+      collectiviteId: collectivite.data.id,
+      planId,
+      parent: planId,
+    });
+
+    await plans.createAxe(user, {
+      nom: axe2Nom,
+      collectiviteId: collectivite.data.id,
+      planId,
+      parent: planId,
+    });
+
+    // Créer deux sous-axes sous l'axe 1
+    await plans.createAxe(user, {
+      nom: sousAxe1Nom,
+      collectiviteId: collectivite.data.id,
+      planId,
+      parent: axe1Id,
+    });
+
+    await plans.createAxe(user, {
+      nom: sousAxe2Nom,
+      collectiviteId: collectivite.data.id,
+      planId,
+      parent: axe1Id,
+    });
+
+    await editPlanPom.goto(collectivite.data.id, planId);
+    await editPlanPom.expectPlanTitle(planNom);
+
+    // Vérifier que le bouton existe et affiche "Fermer" (tous les axes sont fermés, cliquer va les ouvrir)
+    await editPlanPom.expectToggleAllAxesButtonShowsClose();
+
+    // Vérifier que les axes sont fermés initialement
+    await editAxePom.expectAxeIsClosed(axe1Nom);
+    await editAxePom.expectAxeIsClosed(axe2Nom);
+
+    // Cliquer sur le bouton pour ouvrir tous les axes
+    await editPlanPom.toggleAllAxes();
+
+    // Vérifier que le bouton affiche maintenant "Ouvrir" (tous les axes sont ouverts, cliquer va les fermer)
+    await editPlanPom.expectToggleAllAxesButtonShowsOpen();
+
+    // Vérifier que tous les axes sont maintenant ouverts
+    await editAxePom.expectAxeIsOpen(axe1Nom);
+    await editAxePom.expectAxeIsOpen(axe2Nom);
+
+    // Vérifier que les sous-axes sont visibles (car leur parent est ouvert)
+    await editAxePom.expectAxeIsVisible(sousAxe1Nom);
+    await editAxePom.expectAxeIsVisible(sousAxe2Nom);
+  });
+
+  test("Fermer tous les axes/sous-axes d'un plan", async ({
+    collectivites,
+    plans,
+    editPlanPom,
+    editAxePom,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+
+    const planNom = 'Plan avec axes à fermer';
+    const axe1Nom = 'Axe 1';
+    const axe2Nom = 'Axe 2';
+    const sousAxe1Nom = 'Sous-axe 1.1';
+
+    const planId = await plans.create(user, {
+      nom: planNom,
+      collectiviteId: collectivite.data.id,
+    });
+
+    // Créer deux axes de niveau 1
+    const axe1Id = await plans.createAxe(user, {
+      nom: axe1Nom,
+      collectiviteId: collectivite.data.id,
+      planId,
+      parent: planId,
+    });
+
+    await plans.createAxe(user, {
+      nom: axe2Nom,
+      collectiviteId: collectivite.data.id,
+      planId,
+      parent: planId,
+    });
+
+    // Créer un sous-axe sous l'axe 1
+    await plans.createAxe(user, {
+      nom: sousAxe1Nom,
+      collectiviteId: collectivite.data.id,
+      planId,
+      parent: axe1Id,
+    });
+
+    await editPlanPom.goto(collectivite.data.id, planId);
+    await editPlanPom.expectPlanTitle(planNom);
+
+    // Ouvrir tous les axes d'abord
+    await editPlanPom.toggleAllAxes();
+    await editPlanPom.expectToggleAllAxesButtonShowsOpen();
+    await editAxePom.expectAxeIsOpen(axe1Nom);
+    await editAxePom.expectAxeIsOpen(axe2Nom);
+
+    // Cliquer sur le bouton pour fermer tous les axes
+    await editPlanPom.toggleAllAxes();
+
+    // Vérifier que le bouton affiche maintenant "Fermer" (tous les axes sont fermés)
+    await editPlanPom.expectToggleAllAxesButtonShowsClose();
+
+    // Vérifier que tous les axes sont maintenant fermés
+    await editAxePom.expectAxeIsClosed(axe1Nom);
+    await editAxePom.expectAxeIsClosed(axe2Nom);
+  });
+
+  test("Basculer l'état d'ouverture/fermeture de tous les axes plusieurs fois", async ({
+    collectivites,
+    plans,
+    editPlanPom,
+    editAxePom,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+
+    const planNom = 'Plan avec basculement multiple';
+    const axe1Nom = 'Axe 1';
+    const axe2Nom = 'Axe 2';
+    const sousAxe1Nom = 'Sous-axe 1.1';
+    const sousAxe2Nom = 'Sous-axe 1.2';
+
+    const planId = await plans.create(user, {
+      nom: planNom,
+      collectiviteId: collectivite.data.id,
+    });
+
+    // Créer deux axes de niveau 1
+    const axe1Id = await plans.createAxe(user, {
+      nom: axe1Nom,
+      collectiviteId: collectivite.data.id,
+      planId,
+      parent: planId,
+    });
+
+    await plans.createAxe(user, {
+      nom: axe2Nom,
+      collectiviteId: collectivite.data.id,
+      planId,
+      parent: planId,
+    });
+
+    // Créer deux sous-axes sous l'axe 1
+    await plans.createAxe(user, {
+      nom: sousAxe1Nom,
+      collectiviteId: collectivite.data.id,
+      planId,
+      parent: axe1Id,
+    });
+
+    await plans.createAxe(user, {
+      nom: sousAxe2Nom,
+      collectiviteId: collectivite.data.id,
+      planId,
+      parent: axe1Id,
+    });
+
+    await editPlanPom.goto(collectivite.data.id, planId);
+    await editPlanPom.expectPlanTitle(planNom);
+
+    // État initial : tous fermés
+    await editPlanPom.expectToggleAllAxesButtonShowsClose();
+    await editAxePom.expectAxeIsClosed(axe1Nom);
+    await editAxePom.expectAxeIsClosed(axe2Nom);
+
+    // Première bascule : ouvrir tous
+    await editPlanPom.toggleAllAxes();
+    await editPlanPom.expectToggleAllAxesButtonShowsOpen();
+    await editAxePom.expectAxeIsOpen(axe1Nom);
+    await editAxePom.expectAxeIsOpen(axe2Nom);
+
+    // Deuxième bascule : fermer tous
+    await editPlanPom.toggleAllAxes();
+    await editPlanPom.expectToggleAllAxesButtonShowsClose();
+    await editAxePom.expectAxeIsClosed(axe1Nom);
+    await editAxePom.expectAxeIsClosed(axe2Nom);
+
+    // Troisième bascule : ouvrir tous à nouveau
+    await editPlanPom.toggleAllAxes();
+    await editPlanPom.expectToggleAllAxesButtonShowsOpen();
+    await editAxePom.expectAxeIsOpen(axe1Nom);
+    await editAxePom.expectAxeIsOpen(axe2Nom);
+    await editAxePom.expectAxeIsVisible(sousAxe1Nom);
+    await editAxePom.expectAxeIsVisible(sousAxe2Nom);
+  });
 });
