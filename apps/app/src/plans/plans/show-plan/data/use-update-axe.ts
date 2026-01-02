@@ -1,3 +1,4 @@
+import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { RouterInput, useTRPC } from '@tet/api';
@@ -31,7 +32,12 @@ export const useUpdateAxe = ({
       });
     },
     meta: { disableToast: true },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({
+        queryKey: trpc.plans.plans.get.queryKey({
+          planId: data.plan ?? undefined,
+        }),
+      });
       queryClient.invalidateQueries({
         queryKey: trpc.indicateurs.indicateurs.list.queryKey({
           filters: { axeIds: [data.id] },
