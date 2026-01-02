@@ -5,6 +5,7 @@ import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import { checkAxeHasFiche } from '../../utils';
 import { DeletePlanOrAxeModal } from '../actions/delete-axe-or-plan.modal';
+import { MoveAxeModal } from '../actions/move-axe.modal';
 import { useCreateAxe } from '../data/use-create-axe';
 import { useUpdateAxe } from '../data/use-update-axe';
 
@@ -38,6 +39,7 @@ export const AxeMenuButton = (props: Props) => {
     collectiviteId: collectivite.collectiviteId,
   });
   const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
+  const [isOpenMoveModal, setIsOpenMoveModal] = useState(false);
 
   const menuActions: MenuAction[] = [
     {
@@ -66,11 +68,13 @@ export const AxeMenuButton = (props: Props) => {
         createAxe();
       },
     },
-    /*{
+    {
       label: 'Déplacer',
       icon: 'drag-move-2-line',
-      onClick: () => {},
-    },*/
+      onClick: () => {
+        setIsOpenMoveModal(true);
+      },
+    },
     {
       label: 'Supprimer',
       icon: 'delete-bin-2-line',
@@ -98,6 +102,16 @@ export const AxeMenuButton = (props: Props) => {
         openState={{
           isOpen: isOpenDeleteModal,
           setIsOpen: setIsOpenDeleteModal,
+        }}
+      />
+      <MoveAxeModal
+        collectiviteId={collectivite.collectiviteId}
+        axe={axe}
+        rootAxe={rootAxe}
+        axes={axes}
+        openState={{
+          isOpen: isOpenMoveModal,
+          setIsOpen: setIsOpenMoveModal,
         }}
       />
     </>
