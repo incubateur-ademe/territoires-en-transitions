@@ -164,4 +164,46 @@ test.describe("Édition d'axes dans un plan d'action", () => {
     await editAxePom.expectIndicateurLinkedToAxe(axeNom, indicateurTitre2);
     await editAxePom.expectIndicateurNotLinkedToAxe(axeNom, indicateurTitre1);
   });
+
+  test('Ajouter une description à un axe', async ({
+    collectivites,
+    plans,
+    editPlanPom,
+    editAxePom,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+
+    const planNom = 'Plan avec axe et description';
+    const axeNom = 'Axe avec description';
+    const description = "Ceci est une description de test pour l'axe";
+
+    const planId = await plans.create(user, {
+      nom: planNom,
+      collectiviteId: collectivite.data.id,
+    });
+
+    await editPlanPom.goto(collectivite.data.id, planId);
+
+    // Créer un axe
+    await editAxePom.addAxe(axeNom);
+    await editAxePom.expectAxeExists(axeNom);
+
+    // Ajouter une description à l'axe
+    await editAxePom.addDescriptionToAxe(axeNom);
+    await editAxePom.expectDescriptionEditorVisible(axeNom);
+
+    // Écrire la description
+    await editAxePom.fillDescription(axeNom, description);
+
+    // Vérifier que la description est sauvegardée
+    await editAxePom.expectDescriptionContains(axeNom, description);
+
+    // Supprimer la description
+    await editAxePom.removeDescriptionFromAxe(axeNom);
+
+    // Vérifier que la description n'apparaît plus
+    await editAxePom.expectDescriptionNotVisible(axeNom);
+  });
 });
