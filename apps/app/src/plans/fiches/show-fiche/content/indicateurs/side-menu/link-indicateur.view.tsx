@@ -5,7 +5,10 @@ import {
   ListDefinitionsInputFilters,
   useListIndicateurs,
 } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
-import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
+import {
+  FicheContextValue,
+  useFicheContext,
+} from '@/app/plans/fiches/show-fiche/context/fiche-context';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { useUser } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -15,6 +18,14 @@ import { IndicateursSelectorGrid } from './indicateurs-selector.grid';
 
 export const LinkIndicateursView = () => {
   const { indicateurs } = useFicheContext();
+  return <LinkIndicateursViewBase indicateurs={indicateurs} />;
+};
+
+export const LinkIndicateursViewBase = ({
+  indicateurs,
+}: {
+  indicateurs: Pick<FicheContextValue['indicateurs'], 'list' | 'update'>;
+}) => {
   const selectedIndicateurs = indicateurs.list;
   const onSelect = indicateurs.update;
   const user = useUser();
