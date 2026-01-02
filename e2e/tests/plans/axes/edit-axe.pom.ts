@@ -200,4 +200,70 @@ export class EditAxePom {
     );
     await expect(indicateur).toBeHidden();
   }
+
+  /**
+   * Ouvre le menu d'un axe et clique sur "Ajouter une description"
+   * @param axeNom - Le nom de l'axe auquel ajouter une description
+   */
+  async addDescriptionToAxe(axeNom: string) {
+    await this.clickOnAxeMenuItem(axeNom, 'Ajouter une description');
+  }
+
+  /**
+   * Récupère l'éditeur de description d'un axe
+   * @param axeNom - Le nom de l'axe
+   */
+  private getDescriptionEditor(axeNom: string) {
+    const axe = this.getAxeByName(axeNom);
+    // Le RichTextEditor crée un élément contenteditable dans un div avec l'id axe-desc-{id}
+    return axe.locator('[id^="axe-desc-"] div[contenteditable="true"]').first();
+  }
+
+  /**
+   * Vérifie que l'éditeur de description est visible pour un axe
+   * @param axeNom - Le nom de l'axe
+   */
+  async expectDescriptionEditorVisible(axeNom: string) {
+    const editor = this.getDescriptionEditor(axeNom);
+    await expect(editor).toBeVisible();
+  }
+
+  /**
+   * Remplit la description d'un axe
+   * @param axeNom - Le nom de l'axe
+   * @param description - Le texte de la description à saisir
+   */
+  async fillDescription(axeNom: string, description: string) {
+    const editor = this.getDescriptionEditor(axeNom);
+    await editor.click();
+    await editor.fill(description);
+  }
+
+  /**
+   * Vérifie qu'un axe contient une description avec le texte attendu
+   * @param axeNom - Le nom de l'axe
+   * @param expectedText - Le texte attendu dans la description
+   */
+  async expectDescriptionContains(axeNom: string, expectedText: string) {
+    const editor = this.getDescriptionEditor(axeNom);
+    await expect(editor).toBeVisible();
+    await expect(editor).toContainText(expectedText);
+  }
+
+  /**
+   * Supprime la description d'un axe
+   * @param axeNom - Le nom de l'axe
+   */
+  async removeDescriptionFromAxe(axeNom: string) {
+    await this.clickOnAxeMenuItem(axeNom, 'Supprimer la description');
+  }
+
+  /**
+   * Vérifie qu'un axe n'a pas de description visible
+   * @param axeNom - Le nom de l'axe
+   */
+  async expectDescriptionNotVisible(axeNom: string) {
+    const editor = this.getDescriptionEditor(axeNom);
+    await expect(editor).toBeHidden();
+  }
 }
