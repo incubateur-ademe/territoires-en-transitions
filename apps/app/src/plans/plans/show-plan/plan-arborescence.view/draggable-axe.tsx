@@ -7,7 +7,7 @@ import { useToggleAxe } from '@/app/plans/plans/show-plan/plan-arborescence.view
 import IconDrag from '@/app/ui/icons/IconDrag';
 import { PlanNode } from '@tet/domain/plans';
 import { CollectiviteAccess } from '@tet/domain/users';
-import { Button, Icon } from '@tet/ui';
+import { Button, Icon, RichTextEditor, RichTextView } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { useCreateFicheResume } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
 import { childrenOfPlanNodes } from '../../utils';
@@ -50,7 +50,7 @@ export const DraggableAxe = (props: Props) => {
     axeFichesIds: axe.fiches,
   });
 
-  const { mutate: updateAxe } = useUpdateAxe({
+  const { mutateAsync: updateAxe } = useUpdateAxe({
     axe,
     collectiviteId,
   });
@@ -241,17 +241,29 @@ export const DraggableAxe = (props: Props) => {
       {/** Fiches et sous-axes */}
       {!isDragging && isOpen && (
         <div className="flex flex-col ml-12">
-          {axe.fiches && axe.fiches.length > 0 && (
-            <FichesList
-              collectivite={collectivite}
-              isDndActive={active !== null}
-              ficheIds={axe.fiches}
-              axeId={axe.id}
-            />
+          {axe.description !== null && (
+            <>
+              <p className="text-grey-8 text-sm mt-4 mb-2">
+                <Icon icon="file-text-line" className="mr-2" />
+                Description
+              </p>
+              {isReadonly ? (
+                axe.description ? (
+                  <RichTextView content={axe.description} />
+                ) : null
+              ) : (
+                <RichTextEditor
+                  id={`axe-desc-${axe.id}`}
+                  className="border-0 focus-within:border"
+                  initialValue={axe.description}
+                  onChange={(value) => updateAxe({ description: value })}
+                />
+              )}
+            </>
           )}
           {selectedIndicateurs?.length > 0 && (
             <>
-              <p className="text-grey-8 text-sm mt-4 mb-1">
+              <p className="text-grey-8 text-sm mt-4 mb-2">
                 <Icon icon="link" className="mr-2" />
                 Indicateurs liés
               </p>
@@ -261,6 +273,20 @@ export const DraggableAxe = (props: Props) => {
                 isReadonly={isReadonly}
                 onToggleSelection={(indicateur) => toggleIndicateur(indicateur)}
                 collectiviteId={collectiviteId}
+              />
+            </>
+          )}
+          {axe.fiches?.length > 0 && (
+            <>
+              <p className="text-grey-8 text-sm mt-4 mb-2">
+                <Icon icon="file-line" className="mr-2" />
+                Actions
+              </p>
+              <FichesList
+                collectivite={collectivite}
+                isDndActive={active !== null}
+                ficheIds={axe.fiches}
+                axeId={axe.id}
               />
             </>
           )}
