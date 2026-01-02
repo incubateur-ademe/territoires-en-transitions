@@ -98,26 +98,30 @@ export class EditAxePom {
   }
 
   /**
+   * Ouvre le menu d'un axe et clique sur un élément de menu
+   * @param axeNom - Le nom de l'axe
+   * @param title - Le titre de l'élément de menu à cliquer
+   */
+  private async clickOnAxeMenuItem(axeNom: string, title: string) {
+    const axe = this.getAxeByName(axeNom);
+
+    // Ouvrir le menu "..." (apparaît au survol de l'axe)
+    await axe.hover({ position: { x: 0, y: 0 } });
+    const axeMenuButton = axe.locator('button[title="Editer cet axe"]');
+    await axeMenuButton.click();
+
+    // Cliquer sur l'élément de menu avec le titre donné
+    const menuItem = this.page.getByRole('button', { name: title });
+    await menuItem.click();
+  }
+
+  /**
    * Ouvre le panneau pour lier un indicateur à un axe
    * @param axeNom - Le nom de l'axe auquel ajouter un indicateur
    */
   async openLinkIndicateurPanel(axeNom: string) {
-    // Déplier l'axe si nécessaire
-    await this.expandAxe(axeNom);
-
-    const axe = this.getAxeByName(axeNom);
-
-    // Ouvrir le menu "..." (apparaît au survol de l'axe)
-    await axe.hover();
-    const axeMenuButton = axe.locator('button[title="Editer cet axe"]');
-    await axeMenuButton.click();
-
     // Cliquer sur "Lier un indicateur"
-    const linkIndicateurButton = this.page.getByRole('button', {
-      name: 'Lier un indicateur',
-    });
-
-    await linkIndicateurButton.click();
+    await this.clickOnAxeMenuItem(axeNom, 'Lier un indicateur');
 
     // Attendre que le panneau latéral soit ouvert
     const sideMenu = this.getIndicateursPanel();
