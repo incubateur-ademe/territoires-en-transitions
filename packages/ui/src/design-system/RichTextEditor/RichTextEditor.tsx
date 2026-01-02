@@ -20,6 +20,7 @@ import { SuggestionMenu } from './SuggestionMenu';
 
 type RichTextEditorProps = {
   className?: string;
+  id?: string;
   initialValue?: string;
   placeholder?: string;
   disabled?: boolean;
@@ -61,6 +62,7 @@ function createEditorSchema() {
 
 export default function RichTextEditor({
   className,
+  id,
   initialValue,
   placeholder,
   disabled = false,
@@ -153,6 +155,7 @@ export default function RichTextEditor({
 
   return (
     <BlockNoteView
+      id={id}
       editor={editor}
       theme="light"
       formattingToolbar={false}
