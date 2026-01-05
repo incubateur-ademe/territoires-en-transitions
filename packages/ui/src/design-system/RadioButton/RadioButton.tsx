@@ -49,8 +49,7 @@ export const RadioButton = forwardRef(
           border-grey-6 checked:!border-transparent checked:disabled:!border-grey-4
           bg-white checked:bg-primary checked:hover:bg-primary-8 checked:disabled:bg-primary-5
             flex justify-center items-center
-            checked:before:icon-circle-fill checked:before:block checked:before:w-fit checked:before:h-fit
-            text-white text-[0.625rem] leading-[0.625rem]`,
+            checked:before:w-2 checked:before:h-2 checked:before:bg-white checked:before:rounded-full`,
             className
           )}
           {...remainingProps}
