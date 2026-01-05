@@ -1,9 +1,7 @@
-import { OPEN_AXES_KEY_SEARCH_PARAMETER } from '@/app/app/paths';
 import { PlanNode } from '@tet/domain/plans';
 import { groupBy, maxBy } from 'es-toolkit';
-import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs';
 import React, { useState } from 'react';
-import { getChildrenAxeIds } from './get-children-axe-ids';
+import { usePlanAxesContext } from './plan-axes.context';
 
 function findAxesWithUniqueDepth(
   groupedAxes: Record<number, PlanNode[]>
@@ -63,31 +61,18 @@ export const useToggleAxe = (
   shouldScroll: boolean;
 } => {
   const [firstRender, setFirstRender] = useState(true);
-  const [openAxes, setOpenAxes] = useQueryState(
-    OPEN_AXES_KEY_SEARCH_PARAMETER,
-    parseAsArrayOf(parseAsInteger).withDefault([])
-  );
+  const {
+    openAxes,
+    setIsOpen: setIsOpenInContext,
+    isToggleAllActive,
+  } = usePlanAxesContext();
 
   const [shouldScroll, setShouldScroll] = useState(false);
 
   const setIsOpen = (isOpen: boolean): void => {
-    let newAxeIds: number[];
-    if (isOpen === true) {
-      const isAxeAlreadyOpen = openAxes.includes(axeId);
-      newAxeIds = isAxeAlreadyOpen ? openAxes : [...openAxes, axeId];
-      setOpenAxes(newAxeIds);
-      return;
-    }
-
-    const currentAxe = axes.find((axe) => axe.id === axeId);
-    if (!currentAxe) return;
-
-    const childrenAxeIds = getChildrenAxeIds(currentAxe, axes);
-    const axesToRemove = [axeId, ...childrenAxeIds];
-
-    newAxeIds = openAxes.filter((id: number) => !axesToRemove.includes(id));
-    setOpenAxes(newAxeIds);
+    setIsOpenInContext(axeId, isOpen);
   };
+
   const isAxeOpen = openAxes.includes(axeId);
 
   React.useEffect(() => {
@@ -95,9 +80,10 @@ export const useToggleAxe = (
       return;
     }
     const canBeScrolledTo = getCanBeScrolledTo(axeId, axes, openAxes);
-    setShouldScroll(isAxeOpen && canBeScrolledTo);
+    // Désactiver le scroll si un toggle global vient d'avoir lieu
+    setShouldScroll(isAxeOpen && canBeScrolledTo && !isToggleAllActive);
     setFirstRender(false);
-  }, [axeId, axes, firstRender, isAxeOpen, openAxes]);
+  }, [axeId, axes, firstRender, isAxeOpen, openAxes, isToggleAllActive]);
 
   return {
     isOpen: isAxeOpen,
