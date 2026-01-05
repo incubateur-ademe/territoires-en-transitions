@@ -153,37 +153,12 @@ export const preset = {
         // TODO: à supprimer si on trouve une meilleure solution
         'close-circle-fill': `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='rgba(106,106,244,1)'%3E%3Cpath d='M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 10.5858L9.17157 7.75736L7.75736 9.17157L10.5858 12L7.75736 14.8284L9.17157 16.2426L12 13.4142L14.8284 16.2426L16.2426 14.8284L13.4142 12L16.2426 9.17157L14.8284 7.75736L12 10.5858Z'%3E%3C/path%3E%3C/svg%3E");`,
       },
-      // AJOUTÉ POUR LE COMPOSANT CHECKBOX
-      // Les classes 'ri-*' génère la règle css `content: <value>;` et il
-      // semblerait que `content-['\\<value>']` ne fonctionne pas comme attendu (bug tw ?).
-      // En définissant les codes voulues ici (cf remixicon.css) et en utilisant
-      // un plugin custom (voir ci-dessous) on peut utiliser une classe telle
-      // que `icon-<value>` qui fixe la valeur de la variable css
-      // `--tw-content`.
-      RemixIcon: {
-        'check-line': '\\eb7b',
-        'circle-fill': '\\f3c1',
-      },
     },
   },
   plugins: [
     plugin(({ addVariant }) => {
       // pour cibler le bouton de ràz des input.search
       addVariant('search-reset', '&::-webkit-search-cancel-button');
-    }),
-
-    // permet de définir la valeur de `--tw-content` à partir d'un code
-    // remix-icon défini dans le thème (voir ci-dessus `theme.RemixIcon`)
-    plugin(function ({ matchComponents, theme }) {
-      matchComponents(
-        {
-          icon: (value) => ({
-            'font-family': 'remixicon',
-            '--tw-content': `"${value}"`,
-          }),
-        },
-        { values: theme('RemixIcon') }
-      );
     }),
   ],
 } satisfies Config;
