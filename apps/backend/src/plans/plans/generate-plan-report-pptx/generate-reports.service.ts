@@ -20,9 +20,9 @@ import {
 } from '@tet/domain/indicateurs';
 import {
   FicheWithRelations,
+  GenerateReportInput,
   Plan,
   PlanNode,
-  ReportGenerationInput,
   ReportTemplatesType,
   Statut,
   StatutEnum,
@@ -54,10 +54,14 @@ import ListFichesService from '../../fiches/list-fiches/list-fiches.service';
 import { ComputeBudgetRules } from '../compute-budget/compute-budget.rules';
 import { GetPlanService } from '../get-plan/get-plan.service';
 import { PlanProgressRules } from '../progress/plan-progress.rules';
-import { GenerateReportErrorType } from './generate-report.errors';
+import {
+  GenerateReportError,
+  GenerateReportErrorEnum,
+} from './generate-reports.errors';
 import { IndicateurTerritorialSlideConfiguration } from './indicateur-territorial-slide-configuration.dto';
 import { ReportAxeGeneralInfo } from './report-axe-general-info.dto';
 import { ReportFicheInfo } from './report-fiche-info.dto';
+import { ReportGenerationRepository } from './report-generation.repository';
 import { ReportPlanGeneralInfo } from './report-plan-general-info.dto';
 import { ReportTemplateConfig } from './report-template-config.dto';
 import { ReportTemplateGroupsEnum } from './report-template-groups.enum';
@@ -172,9 +176,6 @@ export class GenerateReportsService {
     statut: 'Statut',
   };
 
-  /**
-   * TODO: to be moved to another package in order to use it in the frontend
-   */
   private readonly SUPPORTED_IMAGE_MIME_TYPES_TO_EXTENSION: Record<
     string,
     string
@@ -224,7 +225,8 @@ export class GenerateReportsService {
     private readonly personnalisationsService: PersonnalisationsService,
     private readonly computeBudgetRules: ComputeBudgetRules,
     private readonly permissionService: PermissionService,
-    private readonly getUrlService: GetUrlService
+    private readonly getUrlService: GetUrlService,
+    private readonly reportGenerationRepository: ReportGenerationRepository
   ) {}
 
   private async replaceTextInSlide(
@@ -380,7 +382,7 @@ export class GenerateReportsService {
         planGeneralInfo: ReportPlanGeneralInfo;
         personnalisationReponses: PersonnalisationReponsesPayload;
       },
-      GenerateReportErrorType
+      GenerateReportError
     >
   > {
     const plan = await this.planService.getPlan({ planId }, user);
@@ -798,14 +800,14 @@ export class GenerateReportsService {
   }
 
   async generateAndDownloadPlanReport(
-    request: ReportGenerationInput,
+    request: GenerateReportInput,
     user: AuthenticatedUser,
     res: Response
   ) {
     const reportResult = await this.generatePlanReport(request, user);
     if (!reportResult.success) {
       const status =
-        reportResult.error === GenerateReportErrorType.UNAUTHORIZED ? 403 : 500;
+        reportResult.error === GenerateReportErrorEnum.UNAUTHORIZED ? 403 : 500;
       res.status(status).json(reportResult);
       return;
     }
@@ -1294,58 +1296,75 @@ export class GenerateReportsService {
   }
 
   async generatePlanReport(
-    request: ReportGenerationInput,
+    request: GenerateReportInput,
     user: AuthenticatedUser
   ): Promise<
     MethodResult<
       { reportName: string; reportPath: string; outputDir: string },
-      GenerateReportErrorType
+      GenerateReportError
     >
   > {
     let mediaDir = '';
     let outputDir = '';
     let reportPath = '';
     let reportName = '';
-    let error: GenerateReportErrorType | undefined;
+    let error: GenerateReportError | undefined;
     this.logger.log(
       `Generating plan report for plan ${request.planId} with template ${request.templateKey}`
     );
 
-    try {
-      const templateConfig = this.SLIDE_TEMPLATES_CONFIG[request.templateKey];
+    const templateConfig = this.SLIDE_TEMPLATES_CONFIG[request.templateKey];
 
-      const planDataResult = await this.getPlanData(request.planId, user);
-      if (!planDataResult.success) {
-        return {
-          success: false,
-          error: planDataResult.error,
-        };
-      }
-      const {
-        plan,
-        axes,
-        sousAxesByAxe,
-        fiches,
-        planGeneralInfo,
-        collectivite,
-        personnalisationReponses,
-      } = planDataResult.data;
+    const planDataResult = await this.getPlanData(request.planId, user);
+    if (!planDataResult.success) {
+      return {
+        success: false,
+        error: planDataResult.error,
+      };
+    }
+    const {
+      plan,
+      axes,
+      sousAxesByAxe,
+      fiches,
+      planGeneralInfo,
+      collectivite,
+      personnalisationReponses,
+    } = planDataResult.data;
 
-      const isAllowed = await this.permissionService.isAllowed(
-        user,
-        PermissionOperationEnum['PLANS.READ'],
-        ResourceType.COLLECTIVITE,
-        plan.collectiviteId,
-        true
+    const isAllowed = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['PLANS.READ'],
+      ResourceType.COLLECTIVITE,
+      plan.collectiviteId,
+      true
+    );
+    if (!isAllowed) {
+      return {
+        success: false,
+        error: 'UNAUTHORIZED',
+      };
+    }
+
+    // Create report generation entity at the beginning
+    const createResult = await this.reportGenerationRepository.create(
+      request,
+      'processing'
+    );
+
+    if (!createResult.success) {
+      this.logger.error(
+        `Failed to create report generation entity: ${createResult.error}`
       );
-      if (!isAllowed) {
-        return {
-          success: false,
-          error: 'UNAUTHORIZED',
-        };
-      }
+      return createResult;
+    }
 
-      const generationId = crypto.randomUUID();
+    const generationId = createResult.data.id;
+    this.logger.log(
+      `Created report generation entity with id: ${generationId}`
+    );
+
+    try {
       mediaDir = path.join(__dirname, `media/${generationId}`);
       outputDir = path.join(__dirname, `output/${generationId}`);
       mkdirSync(mediaDir, { recursive: true });
@@ -1520,11 +1539,29 @@ export class GenerateReportsService {
       this.logger.log(`Report summary: ${JSON.stringify(reportSummary)}`);
       reportPath = path.join(outputDir, reportName);
       this.logger.log(`Report path: ${reportPath}`);
+
+      // Update status to completed at the end
+      await this.reportGenerationRepository.update(generationId, {
+        status: 'completed',
+        errorMessage: null,
+      });
+      this.logger.log(
+        `Updated report generation ${generationId} status to completed`
+      );
     } catch (err) {
       this.logger.error(
         `Error generating plan report: ${getErrorMessage(err)}`
       );
-      error = GenerateReportErrorType.SERVER_ERROR;
+      error = GenerateReportErrorEnum.SERVER_ERROR;
+
+      // Update status to failed with error message
+      await this.reportGenerationRepository.update(generationId, {
+        status: 'failed',
+        errorMessage: getErrorMessage(err),
+      });
+      this.logger.log(
+        `Updated report generation ${generationId} status to failed`
+      );
     } finally {
       if (mediaDir) {
         rmSync(mediaDir, { recursive: true });

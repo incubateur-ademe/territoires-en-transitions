@@ -8,6 +8,7 @@ import { FichesModule } from '../../fiches/fiches.module';
 import { PlanModule } from '../plans.module';
 import { GenerateReportsController } from './generate-reports.controller';
 import { GenerateReportsService } from './generate-reports.service';
+import { ReportGenerationRepository } from './report-generation.repository';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { GenerateReportsService } from './generate-reports.service';
     IndicateursModule,
     EchartsModule,
   ],
-  providers: [GenerateReportsService],
+  providers: [GenerateReportsService, ReportGenerationRepository],
   exports: [GenerateReportsService],
   controllers: [GenerateReportsController],
 })

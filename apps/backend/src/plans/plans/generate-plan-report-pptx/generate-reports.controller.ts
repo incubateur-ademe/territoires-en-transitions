@@ -4,13 +4,13 @@ import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
-import { reportGenerationInputSchema } from '@tet/domain/plans';
+import { generateReportInputSchema } from '@tet/domain/plans';
 import type { Response } from 'express';
 import { createZodDto } from 'nestjs-zod';
 import { GenerateReportsService } from './generate-reports.service';
 
-class ReportGenerationInputClass extends createZodDto(
-  reportGenerationInputSchema
+class GenerateReportInputClass extends createZodDto(
+  generateReportInputSchema
 ) {}
 
 @ApiExcludeController()
@@ -28,7 +28,7 @@ export class GenerateReportsController {
     description: 'Generate a report for a specific plan of a collectivité',
   })
   async generatePlanReport(
-    @Body() request: ReportGenerationInputClass,
+    @Body() request: GenerateReportInputClass,
     @Res() res: Response,
     @TokenInfo() user: AuthenticatedUser
   ) {
