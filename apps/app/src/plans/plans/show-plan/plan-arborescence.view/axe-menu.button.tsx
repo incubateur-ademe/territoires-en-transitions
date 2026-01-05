@@ -8,6 +8,7 @@ import { DeletePlanOrAxeModal } from '../actions/delete-axe-or-plan.modal';
 import { MoveAxeModal } from '../actions/move-axe.modal';
 import { useCreateAxe } from '../data/use-create-axe';
 import { useUpdateAxe } from '../data/use-update-axe';
+import { PlanDisplayOptionsEnum, usePlanOptions } from './plan-options.context';
 
 type Props = {
   axe: PlanNode;
@@ -29,6 +30,8 @@ export const AxeMenuButton = (props: Props) => {
   } = props;
   const hasDescription = axe.description !== null;
 
+  const { isOptionEnabled } = usePlanOptions();
+
   const { mutateAsync: createAxe } = useCreateAxe({
     collectiviteId: collectivite.collectiviteId,
     planId: rootAxe.id,
@@ -42,24 +45,28 @@ export const AxeMenuButton = (props: Props) => {
   const [isOpenMoveModal, setIsOpenMoveModal] = useState(false);
 
   const menuActions: MenuAction[] = [
-    {
-      label: 'Lier un indicateur',
-      icon: 'line-chart-line',
-      onClick: () => {
-        axeOpenState.setIsOpen(true);
-        indicateursPanelOpenState.setIsOpen(true);
-      },
-    },
-    {
-      label: hasDescription
-        ? 'Supprimer la description'
-        : 'Ajouter une description',
-      icon: 'file-text-line',
-      onClick: () => {
-        axeOpenState.setIsOpen(true);
-        updateAxe({ ...axe, description: hasDescription ? null : '' });
-      },
-    },
+    isOptionEnabled(PlanDisplayOptionsEnum.INDICATEURS)
+      ? {
+          label: 'Lier un indicateur',
+          icon: 'line-chart-line',
+          onClick: () => {
+            axeOpenState.setIsOpen(true);
+            indicateursPanelOpenState.setIsOpen(true);
+          },
+        }
+      : null,
+    isOptionEnabled(PlanDisplayOptionsEnum.DESCRIPTION)
+      ? {
+          label: hasDescription
+            ? 'Supprimer la description'
+            : 'Ajouter une description',
+          icon: 'file-text-line',
+          onClick: () => {
+            axeOpenState.setIsOpen(true);
+            updateAxe({ ...axe, description: hasDescription ? null : '' });
+          },
+        }
+      : null,
     {
       label: 'Créer un axe',
       icon: 'folder-add-line',
@@ -82,7 +89,7 @@ export const AxeMenuButton = (props: Props) => {
         setIsOpenDeleteModal(true);
       },
     },
-  ];
+  ].filter((item) => item !== null);
 
   return (
     <>
