@@ -924,3 +924,4 @@ plan_action/remove-default-fiche-title 2025-12-09T14:49:55Z Marc Rutkowski <marc
 notes_complementaires_column_deletion 2025-11-18T13:57:03Z System Administrator <root@Host-002.lan> # Suppression des "notes_complémentaires"
 plan_action/add_fiche_recursive_axe_view 2025-11-26T10:23:50Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Ajout d'une vue pour avoir tous les axes d'une fiche y compris les parents
 plan_action/add_report_generation_table 2026-01-05T14:33:48Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Ajout de la table report generation
+@v4.93.0 2026-01-05T19:33:56Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # generation de rapports
