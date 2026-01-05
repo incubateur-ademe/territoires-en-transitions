@@ -51,31 +51,71 @@ const success = <T>(value: T): { success: true; value: T } => ({ success: true, 
 const failure = <E>(error: E): { success: false; error: E } => ({ success: false, error });
 ```
 
-### Erreurs typées
+### Erreurs typées et gestion des erreurs tRPC
 
-Les erreurs doivent être des classes avec un tag `_tag` pour permettre le pattern matching :
+Les codes erreur tRPC sont [standardisés](https://trpc.io/docs/server/error-handling#error-codes) (type `TRPCError` exporté par `@trpc/server`) et ne doivent pas être confondus avec le code erreur interne renvoyé à travers ce pattern `Result`.
+
+Pour faciliter la définition de codes erreur internes typés et la gestion des erreurs tRPC, un utilitaire `createTrpcErrorHandler` ainsi qu'une enum `CommonErrorEnum` et la configuration `COMMON_ERROR_CONFIG` associée permettent de :
+
+- faciliter le partage des codes erreur et messages pour les erreurs communes telles que les erreurs de droits d'accès pour lesquelles on veut toujours renvoyer le même code et message
+- faciliter la définition des erreurs spécifiques
+- co-localiser la définition du code erreur interne avec celle du code erreur tRPC et du message associé
+
+Exemple de création d'une configuration d'erreur spécifique, ici pour la fonctionnalité plans/axes/list-axes (fichier `apps/backend/src/plans/axes/list-axes/list-axes.errors.ts`)
 
 ```typescript
-// Types d'erreurs métier explicites
-class InvalidPlanName extends Error {
-  readonly _tag = 'InvalidPlanName';
-  constructor(public readonly name: string) {
-    super(`Invalid plan name: "${name}"`);
-    this.name = 'InvalidPlanName';
-  }
-}
+import {
+  createErrorsEnum,
+  TrpcErrorHandlerConfig,
+} from '@tet/backend/utils/trpc/trpc-error-handler';
 
-class MissingPcaetReferent extends Error {
-  readonly _tag = 'MissingPcaetReferent';
-  constructor() {
-    super('Un plan PCAET doit avoir au moins un référent');
-    this.name = 'MissingPcaetReferent';
-  }
-}
+const specificErrors = ['LIST_AXES_ERROR'] as const;
+type SpecificError = (typeof specificErrors)[number];
 
-// Union type pour toutes les erreurs possibles
-type CreatePlanError = InvalidPlanName | MissingPcaetReferent;
+export const listAxesErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
+  specificErrors: {
+    LIST_AXES_ERROR: {
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'La récupération de la liste des axes a échoué',
+    },
+  },
+};
+
+export const ListAxesErrorEnum = createErrorsEnum(specificErrors);
+export type ListAxesError = keyof typeof ListAxesErrorEnum;
 ```
+
+Usage dans le routeur pour convertir le code interne en erreur tRPC lorsqu'une erreur se produit (ou renvoyer le résultat si pas d'erreur) :
+
+```typescript
+export class ListAxesRouter {
+  // ...
+  private readonly getResultDataOrThrowError =
+    createTrpcErrorHandler(listAxesErrorConfig);
+
+  router = this.trpc.router({
+    list: this.trpc.authedProcedure
+      .input(listAxesInputSchema)
+      .query(async ({ input, ctx }) => {
+        const result = await this.listAxesService.listAxes(input, ctx.user);
+        return this.getResultDataOrThrowError(result);
+      }),
+// ...
+```
+
+Usage dans le service du type `ListAxesError` exporté par la configuration pour typer le retour d'une méthode :
+
+```typescript
+async listAxes(
+  input: ListAxesInput,
+  user: AuthenticatedUser,
+  tx?: Transaction
+): Promise<Result<ListAxesOutput, ListAxesError>> {
+  //...
+}
+```
+
+On fait le compromis ici de co-localiser la définition des codes erreur internes avec la définition des erreurs tRPC associées pour simplifier la maintenance et la lisibilité.
 
 ## Conséquences
 
