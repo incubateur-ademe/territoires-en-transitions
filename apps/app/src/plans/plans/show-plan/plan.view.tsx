@@ -28,6 +28,7 @@ import {
   addAxeButtonProps,
   createFicheResumeButtonProps,
 } from './plan-actions.button-props';
+import { PlanOptionsButton } from './plan-arborescence.view/plan-options.button';
 import { PlanStatus } from './plan-status.chart';
 
 const PlanMetadata = ({ plan }: { plan: Plan }) => {
@@ -169,6 +170,7 @@ const PlanViewContent = ({
           title="Détail du plan"
           headerActionButtons={
             <>
+              <PlanOptionsButton />
               <VisibleWhen condition={hasAxesToExpand && !isFiltered}>
                 <Button
                   size="xs"
