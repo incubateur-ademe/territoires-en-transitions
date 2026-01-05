@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plan, reportGenerationInputSchema } from '@tet/domain/plans';
+import { Plan, generateReportInputSchema } from '@tet/domain/plans';
 import { Checkbox, Field, Input } from '@tet/ui';
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
@@ -8,7 +8,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { PlanFicheSelector } from './plan-fiche-selector';
 
 // Form schema that accepts File for logoFile (will be converted to base64 before sending)
-const generateReportFormSchema = reportGenerationInputSchema
+const generateReportFormSchema = generateReportInputSchema
   .extend({
     logoFile: z.instanceof(File).optional().nullable(),
   })

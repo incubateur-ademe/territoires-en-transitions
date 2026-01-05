@@ -17,7 +17,7 @@ export class EchartsService {
    * @returns
    */
   async getEcharts(): Promise<any> {
-    const echarts = await (eval(`import('echarts')`) as Promise<any>);
+    const echarts = await import('echarts');
     return echarts;
   }
 

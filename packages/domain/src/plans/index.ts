@@ -17,6 +17,8 @@ export * from './labels';
 export * from './paniers/action-impact.schema';
 export * from './plans/flat-axe.schema';
 export * from './plans/generate-report/generate-report.input';
+export * from './plans/generate-report/report-generation-status.enum';
+export * from './plans/generate-report/report-generation.schema';
 export * from './plans/generate-report/report-templates.enum';
 export * from './plans/plan-type.schema';
 export * from './plans/plan.schema';
