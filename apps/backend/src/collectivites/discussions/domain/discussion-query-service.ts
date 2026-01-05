@@ -17,7 +17,7 @@ import {
   sql,
   SQLWrapper,
 } from 'drizzle-orm';
-import { Result } from '../infrastructure/discussion.results';
+import { DiscussionResult } from '../infrastructure/discussion.results';
 import {
   discussionMessageTable,
   discussionTable,
@@ -38,7 +38,7 @@ export class DiscussionQueryService {
 
   async findByDiscussionIds(
     discussionIds: number[]
-  ): Promise<Result<DiscussionMessage[]>> {
+  ): Promise<DiscussionResult<DiscussionMessage[]>> {
     try {
       const discussionMessages = await this.databaseService.db
         .select({
@@ -77,7 +77,7 @@ export class DiscussionQueryService {
     referentielId: ReferentielId,
     filters?: ListDiscussionsRequestFilters,
     options?: QueryOptionsType
-  ): Promise<Result<DiscussionsListType>> {
+  ): Promise<DiscussionResult<DiscussionsListType>> {
     const conditions: (SQL | SQLWrapper | undefined)[] = [
       eq(discussionTable.collectiviteId, collectiviteId),
       like(discussionTable.actionId, `${referentielId}%`),

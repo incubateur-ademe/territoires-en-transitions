@@ -1,5 +1,4 @@
+import { MethodResult } from '@tet/backend/utils/result.type';
 import { DiscussionError } from '../domain/discussion.errors';
 
-export type Result<T, E = DiscussionError> =
-  | { success: true; data: T }
-  | { success: false; error: E };
+export type DiscussionResult<T, E = DiscussionError> = MethodResult<T, E>;

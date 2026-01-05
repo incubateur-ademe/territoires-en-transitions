@@ -6,7 +6,7 @@ import {
   DiscussionWithMessages,
 } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { Result } from '../infrastructure/discussion.results';
+import { DiscussionResult } from '../infrastructure/discussion.results';
 import {
   DiscussionsMessagesListType,
   DiscussionWithActionName,
@@ -28,7 +28,7 @@ export class ListDiscussionService {
     referentielId: ReferentielId,
     filters?: ListDiscussionsRequestFilters,
     options?: QueryOptionsType
-  ): Promise<Result<DiscussionsMessagesListType, DiscussionError>> {
+  ): Promise<DiscussionResult<DiscussionsMessagesListType, DiscussionError>> {
     try {
       const discussionsResult =
         await this.discussionQueryService.listDiscussions(
@@ -53,8 +53,10 @@ export class ListDiscussionService {
 
       // Fetch all messages for these discussions in a single query (avoiding N+1)
       const discussionIds: number[] = discussions.map((d: Discussion) => d.id);
-      const discussionMessages: Result<DiscussionMessage[], DiscussionError> =
-        await this.discussionQueryService.findByDiscussionIds(discussionIds);
+      const discussionMessages: DiscussionResult<
+        DiscussionMessage[],
+        DiscussionError
+      > = await this.discussionQueryService.findByDiscussionIds(discussionIds);
 
       if (!discussionMessages.success) {
         this.logger.error(

@@ -11,7 +11,7 @@ import {
   DiscussionErrorEnum,
 } from '../domain/discussion.errors';
 import { ListDiscussionService } from '../domain/list-discussion-service';
-import { Result } from '../infrastructure/discussion.results';
+import { DiscussionResult } from '../infrastructure/discussion.results';
 import {
   CreateDiscussionData,
   CreateDiscussionRequest,
@@ -37,7 +37,7 @@ export class DiscussionApplicationService {
   async createDiscussion(
     discussion: CreateDiscussionRequest,
     user: AuthUser
-  ): Promise<Result<CreateDiscussionResponse, DiscussionError>> {
+  ): Promise<DiscussionResult<CreateDiscussionResponse, DiscussionError>> {
     const hasPermission = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
@@ -74,7 +74,7 @@ export class DiscussionApplicationService {
   async deleteDiscussionAndDiscussionMessage(
     input: DeleteDiscussionAndDiscussionMessageRequest,
     user: AuthUser
-  ): Promise<Result<void, DiscussionError>> {
+  ): Promise<DiscussionResult<void, DiscussionError>> {
     const { collectiviteId, discussionId } = input;
     const hasPermission = await this.permissionService.isAllowed(
       user,
@@ -102,7 +102,7 @@ export class DiscussionApplicationService {
   async deleteDiscussionMessage(
     input: DeleteDiscussionMessageRequest,
     user: AuthUser
-  ): Promise<Result<void, DiscussionError>> {
+  ): Promise<DiscussionResult<void, DiscussionError>> {
     const { collectiviteId, messageId, discussionId } = input;
     const hasPermission = await this.permissionService.isAllowed(
       user,
@@ -132,7 +132,7 @@ export class DiscussionApplicationService {
   async listDiscussionsWithMessages(
     input: ListDiscussionsRequest,
     user: AuthUser
-  ): Promise<Result<DiscussionsMessagesListType, DiscussionError>> {
+  ): Promise<DiscussionResult<DiscussionsMessagesListType, DiscussionError>> {
     const { collectiviteId, referentielId, filters, options } = input;
     this.logger.log(
       `Lister les discussions pour la collectivité ${collectiviteId} referentiel ${referentielId} ${
@@ -185,7 +185,7 @@ export class DiscussionApplicationService {
   async updateDiscussion(
     input: UpdateDiscussionRequest,
     user: AuthUser
-  ): Promise<Result<Discussion, DiscussionError>> {
+  ): Promise<DiscussionResult<Discussion, DiscussionError>> {
     const { collectiviteId, discussionId, status } = input;
     const hasPermission = await this.permissionService.isAllowed(
       user,
@@ -213,7 +213,7 @@ export class DiscussionApplicationService {
   async updateDiscussionMessage(
     input: UpdateDiscussionMessageRequest,
     user: AuthUser
-  ): Promise<Result<DiscussionMessage, DiscussionError>> {
+  ): Promise<DiscussionResult<DiscussionMessage, DiscussionError>> {
     const { collectiviteId, messageId, message } = input;
     const hasPermission = await this.permissionService.isAllowed(
       user,

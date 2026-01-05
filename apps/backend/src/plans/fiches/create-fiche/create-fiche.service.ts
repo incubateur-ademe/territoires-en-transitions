@@ -21,7 +21,7 @@ import { Fiche, FicheCreate } from '@tet/domain/plans';
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { UpdateFicheRequest } from '../update-fiche/update-fiche.request';
 import UpdateFicheService from '../update-fiche/update-fiche.service';
-import { Result } from './create-fiche.result';
+import { CreateFicheResult } from './create-fiche.result';
 
 @Injectable()
 export class CreateFicheService {
@@ -48,7 +48,7 @@ export class CreateFicheService {
       tx?: Transaction;
       user: AuthenticatedUser;
     }
-  ): Promise<Result<Fiche>> {
+  ): Promise<CreateFicheResult<Fiche>> {
     this.logger.log(
       `Création de la fiche ${fiche.titre} pour la collectivité ${fiche.collectiviteId}`
     );
