@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import UploadDocumentService from '@tet/backend/collectivites/documents/upload-document/upload-document.service';
 import PersonnalisationsService from '@tet/backend/collectivites/personnalisations/services/personnalisations-service';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { IndicateurChartService } from '@tet/backend/indicateurs/charts/indicateur-chart.service';
@@ -226,7 +227,8 @@ export class GenerateReportsService {
     private readonly computeBudgetRules: ComputeBudgetRules,
     private readonly permissionService: PermissionService,
     private readonly getUrlService: GetUrlService,
-    private readonly reportGenerationRepository: ReportGenerationRepository
+    private readonly reportGenerationRepository: ReportGenerationRepository,
+    private readonly uploadDocumentService: UploadDocumentService
   ) {}
 
   private async replaceTextInSlide(
@@ -1541,10 +1543,33 @@ export class GenerateReportsService {
       reportPath = path.join(outputDir, reportName);
       this.logger.log(`Report path: ${reportPath}`);
 
+      const uploadResult = await this.uploadDocumentService.uploadLocalFile(
+        {
+          collectiviteId: collectivite.id,
+          hash: generationId,
+          filename: reportName,
+          confidentiel: false,
+        },
+        reportPath,
+        user
+      );
+      if (!uploadResult.success) {
+        await this.reportGenerationRepository.update(generationId, {
+          status: 'failed',
+          errorMessage: uploadResult.error,
+          fileId: null,
+        });
+        return {
+          success: false,
+          error: uploadResult.error,
+        };
+      }
+
       // Update status to completed at the end
       await this.reportGenerationRepository.update(generationId, {
         status: 'completed',
         errorMessage: null,
+        fileId: uploadResult.data.id,
       });
       this.logger.log(
         `Updated report generation ${generationId} status to completed`
@@ -1559,6 +1584,7 @@ export class GenerateReportsService {
       await this.reportGenerationRepository.update(generationId, {
         status: 'failed',
         errorMessage: getErrorMessage(err),
+        fileId: null,
       });
       this.logger.log(
         `Updated report generation ${generationId} status to failed`

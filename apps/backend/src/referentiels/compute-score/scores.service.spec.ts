@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import DocumentService from '@tet/backend/collectivites/documents/services/document.service';
+import DocumentService from '@tet/backend/collectivites/documents/document.service';
 import { CorrelatedActionWithScore } from '@tet/backend/referentiels/correlated-actions/referentiel-action-origine-with-score.dto';
 import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
