@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import { AxeLight } from '@tet/domain/plans';
 import { eq } from 'drizzle-orm';
 import { axeTable } from '../../fiches/shared/models/axe.table';
@@ -16,7 +16,7 @@ export class GetAxeRepository {
   async getAxe(
     axeId: number,
     tx?: Transaction
-  ): Promise<MethodResult<AxeLight, GetAxeError>> {
+  ): Promise<Result<AxeLight, GetAxeError>> {
     try {
       const result = await (tx || this.databaseService.db)
         .select()

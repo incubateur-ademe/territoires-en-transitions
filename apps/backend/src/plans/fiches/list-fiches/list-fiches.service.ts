@@ -86,7 +86,7 @@ import {
 } from 'drizzle-orm';
 import { PgColumn, TableConfig } from 'drizzle-orm/pg-core';
 import { isNil } from 'es-toolkit';
-import { MethodResult } from '../../../utils/result.type';
+import { Result } from '../../../utils/result.type';
 import { ficheActionEtapeTable } from '../fiche-action-etape/fiche-action-etape.table';
 import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
@@ -696,7 +696,7 @@ export default class ListFichesService {
     addCollectiviteData?: boolean,
     user?: AuthUser
   ): Promise<
-    MethodResult<FicheWithRelations | FicheWithRelationsAndCollectivite, string>
+    Result<FicheWithRelations | FicheWithRelationsAndCollectivite, string>
   > {
     this.logger.log(`Récupération de la fiche action ${ficheId}`);
 

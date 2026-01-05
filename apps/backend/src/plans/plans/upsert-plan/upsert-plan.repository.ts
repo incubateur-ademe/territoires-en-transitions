@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import { PersonneId } from '@tet/domain/collectivites';
 import { eq } from 'drizzle-orm';
 import { UpsertAxeBaseRepository } from '../../axes/upsert-axe/upsert-axe-base.repository';
@@ -42,7 +42,7 @@ export class UpsertPlanRepository extends UpsertAxeBaseRepository<
     referents: PersonneId[] | null,
     userId: string,
     tx: Transaction
-  ): Promise<MethodResult<undefined, UpsertPlanError>> {
+  ): Promise<Result<undefined, UpsertPlanError>> {
     try {
       // Supprime toutes les relations existantes liées au plan
       await tx
@@ -87,7 +87,7 @@ export class UpsertPlanRepository extends UpsertAxeBaseRepository<
     pilotes: PersonneId[] | null,
     userId: string,
     tx: Transaction
-  ): Promise<MethodResult<undefined, UpsertPlanError>> {
+  ): Promise<Result<undefined, UpsertPlanError>> {
     try {
       // Supprime toutes les relations existantes liées au plan
       await tx

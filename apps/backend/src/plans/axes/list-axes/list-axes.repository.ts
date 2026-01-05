@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import { AxeLight, FlatAxe, flatAxeSchema, PlanNode } from '@tet/domain/plans';
 import { and, asc, desc, eq, getTableColumns, sql } from 'drizzle-orm';
 import z from 'zod';
@@ -24,7 +24,7 @@ export class ListAxesRepository {
   async listChildren(
     input: ListAxesInput,
     tx?: Transaction
-  ): Promise<MethodResult<ListAxesOutput, ListAxesError>> {
+  ): Promise<Result<ListAxesOutput, ListAxesError>> {
     const { collectiviteId, parentId, limit, page, sort } = input;
 
     try {
@@ -69,7 +69,7 @@ export class ListAxesRepository {
   async listChildrenRecursively(
     input: ListAxesInput,
     tx?: Transaction
-  ): Promise<MethodResult<PlanNode[], ListAxesError>> {
+  ): Promise<Result<PlanNode[], ListAxesError>> {
     try {
       const { parentId, collectiviteId } = input;
       const result = await (tx || this.databaseService.db).execute(sql`
@@ -151,7 +151,7 @@ export class ListAxesRepository {
 
   private sanitizeAxes(
     unsafeAxes: Record<string, unknown>[]
-  ): MethodResult<PlanNode[], ListAxesError> {
+  ): Result<PlanNode[], ListAxesError> {
     const sanitizedResult = z.array(flatAxeSchema).safeParse(unsafeAxes);
     if (!sanitizedResult.success) {
       this.logger.log(`sanitizeAxes error: ${sanitizedResult.error.message}`);

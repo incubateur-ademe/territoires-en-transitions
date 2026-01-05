@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import { inArray } from 'drizzle-orm';
 import { axeTable } from '../../fiches/shared/models/axe.table';
 import { DeleteAxeError, DeleteAxeErrorEnum } from './delete-axe.errors';
@@ -15,7 +15,7 @@ export class DeleteAxeRepository {
   async deleteAxes(
     axeIds: number[],
     tx?: Transaction
-  ): Promise<MethodResult<void, DeleteAxeError>> {
+  ): Promise<Result<void, DeleteAxeError>> {
     if (axeIds.length === 0) {
       return {
         success: true,

@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import { AxeLight } from '@tet/domain/plans';
 import { eq } from 'drizzle-orm';
 
@@ -35,7 +35,7 @@ export abstract class UpsertAxeBaseRepository<
     input: TCreateInput,
     userId: string,
     tx?: Transaction
-  ): Promise<MethodResult<AxeLight, TError>> {
+  ): Promise<Result<AxeLight, TError>> {
     try {
       const result = await (tx ?? this.databaseService.db)
         .insert(axeTable)
@@ -78,7 +78,7 @@ export abstract class UpsertAxeBaseRepository<
     input: TUpdateInput,
     userId: string,
     tx?: Transaction
-  ): Promise<MethodResult<AxeLight, TError>> {
+  ): Promise<Result<AxeLight, TError>> {
     try {
       const { id, ...otherProps } = input;
       const result = await (tx ?? this.databaseService.db)

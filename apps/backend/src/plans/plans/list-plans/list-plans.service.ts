@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import { Plan } from '@tet/domain/plans';
 import { ListAxesService } from '../../axes/list-axes/list-axes.service';
 import { GetPlanRepository } from '../get-plan/get-plan.repository';
@@ -26,7 +26,7 @@ export class ListPlansService {
     input: ListPlansInput,
     user: AuthenticatedUser,
     tx?: Transaction
-  ): Promise<MethodResult<ListPlansOutput, ListPlansError>> {
+  ): Promise<Result<ListPlansOutput, ListPlansError>> {
     const isAllowed = await this.getPlanService.checkPermission(
       input.collectiviteId,
       user

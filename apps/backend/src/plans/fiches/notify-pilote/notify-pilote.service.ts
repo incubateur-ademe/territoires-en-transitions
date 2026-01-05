@@ -14,7 +14,7 @@ import {
 } from '@tet/backend/utils/notifications/models/notification.table';
 import { NotifiedOnEnum } from '@tet/backend/utils/notifications/models/notified-on.enum';
 import { NotificationsService } from '@tet/backend/utils/notifications/notifications.service';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import { PersonneTagOrUserWithContacts } from '@tet/domain/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { and, eq, inArray, not } from 'drizzle-orm';
@@ -31,7 +31,7 @@ export type UserWithEmail = Omit<
   userId: string;
   email: string;
 };
-type UpsertNotificationsResult = MethodResult<
+type UpsertNotificationsResult = Result<
   // nombre de notifications insérées
   { count: number },
   string
@@ -248,7 +248,7 @@ export class NotifyPiloteService {
    */
   private async getPiloteNotificationTemplateData(
     notification: Notification
-  ): Promise<MethodResult<NotifyPiloteProps, string>> {
+  ): Promise<Result<NotifyPiloteProps, string>> {
     const { createdBy, notificationData } = notification;
     const { data, success, error } =
       onUpdateFichePiloteNotificationDataSchema.safeParse(notificationData);

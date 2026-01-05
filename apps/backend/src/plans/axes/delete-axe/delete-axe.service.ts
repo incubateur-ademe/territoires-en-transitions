@@ -3,7 +3,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { GetAxeService } from '../get-axe/get-axe.service';
 import { ListAxesService } from '../list-axes/list-axes.service';
@@ -26,7 +26,7 @@ export class DeleteAxeService {
     input: DeleteAxeInput,
     user: AuthenticatedUser,
     tx?: Transaction
-  ): Promise<MethodResult<void, DeleteAxeError>> {
+  ): Promise<Result<void, DeleteAxeError>> {
     // Récupérer l'axe pour obtenir le collectiviteId
     const axeResult = await this.getAxeService.getAxe(
       { axeId: input.axeId },

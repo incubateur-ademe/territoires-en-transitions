@@ -1,4 +1,4 @@
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import { ReactNode } from 'react';
 import { Notification } from './notification.table';
 
@@ -12,7 +12,7 @@ export type GetNotificationContent = NotificationTemplate & {
   content: ReactNode;
 };
 
-export type GetNotificationContentResult = MethodResult<
+export type GetNotificationContentResult = Result<
   GetNotificationContent,
   string
 >;

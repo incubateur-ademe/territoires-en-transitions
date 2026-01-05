@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import { and, eq } from 'drizzle-orm';
 import { axeTable } from '../../fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '../../fiches/shared/models/fiche-action-axe.table';
@@ -15,7 +15,7 @@ export class DeletePlanRepository {
   async deletePlanAndChildrenAxes(
     planId: number,
     tx: Transaction
-  ): Promise<MethodResult<{ impactedFicheIds: number[] }, DeletePlanError>> {
+  ): Promise<Result<{ impactedFicheIds: number[] }, DeletePlanError>> {
     const childAxesResult = await this.getChildAxesRecursively(planId, tx);
     if (!childAxesResult.success) {
       return {
@@ -60,7 +60,7 @@ export class DeletePlanRepository {
   private async getChildAxesRecursively(
     axeId: number,
     tx: Transaction
-  ): Promise<MethodResult<number[], DeletePlanError>> {
+  ): Promise<Result<number[], DeletePlanError>> {
     try {
       const children = await tx
         .select({ id: axeTable.id })
@@ -96,7 +96,7 @@ export class DeletePlanRepository {
   private async deleteAxeDataOnly(
     axeId: number,
     tx: Transaction
-  ): Promise<MethodResult<{ impactedFicheIds: number[] }, DeletePlanError>> {
+  ): Promise<Result<{ impactedFicheIds: number[] }, DeletePlanError>> {
     try {
       const associatedFiches = await tx
         .select({ ficheId: ficheActionAxeTable.ficheId })

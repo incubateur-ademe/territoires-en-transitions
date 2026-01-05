@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 
@@ -33,7 +33,7 @@ export class EmailService {
    * Envoi un email HTML
    */
   async sendEmail(email: Email): Promise<
-    MethodResult<
+    Result<
       { messageId: string },
       {
         messageId: string;
@@ -111,7 +111,7 @@ export class EmailService {
   /**
    * Charge et vérifie la configuration
    */
-  private getConfig(): MethodResult<SMTPOptions, string> {
+  private getConfig(): Result<SMTPOptions, string> {
     const url = this.configurationService.get('SMTP_URL');
     const pass = this.configurationService.get('SMTP_KEY');
     if (!url || !pass) {
