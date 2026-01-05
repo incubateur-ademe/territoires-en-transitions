@@ -7,7 +7,7 @@ import {
   DiscussionMessage,
   DiscussionStatus,
 } from '@tet/domain/collectivites';
-import { Result } from '../infrastructure/discussion.results';
+import { DiscussionResult } from '../infrastructure/discussion.results';
 import {
   CreateDiscussionData,
   CreateDiscussionMessageResponse,
@@ -26,8 +26,8 @@ export class DiscussionDomainService {
   async createOrUpdateDiscussion(
     discussionData: CreateDiscussionData,
     tx?: Transaction
-  ): Promise<Result<CreateDiscussionResponse, DiscussionError>> {
-    let discussion: Result<Discussion, DiscussionError>;
+  ): Promise<DiscussionResult<CreateDiscussionResponse, DiscussionError>> {
+    let discussion: DiscussionResult<Discussion, DiscussionError>;
 
     if (!discussionData.discussionId) {
       discussion = await this.discussionRepository.create(discussionData);
@@ -54,7 +54,7 @@ export class DiscussionDomainService {
         };
       }
     }
-    const discussionMessage: Result<
+    const discussionMessage: DiscussionResult<
       CreateDiscussionMessageResponse,
       DiscussionError
     > = await this.discussionRepository.createDiscussionMessage(
@@ -94,7 +94,7 @@ export class DiscussionDomainService {
 
   async deleteDiscussionAndDiscussionMessage(
     discussionId: number
-  ): Promise<Result<void, DiscussionError>> {
+  ): Promise<DiscussionResult<void, DiscussionError>> {
     return await this.discussionRepository.deleteDiscussionAndDiscussionMessage(
       discussionId
     );
@@ -102,7 +102,7 @@ export class DiscussionDomainService {
   async deleteDiscussionMessage(
     messageId: number,
     discussionId: number
-  ): Promise<Result<void, DiscussionError>> {
+  ): Promise<DiscussionResult<void, DiscussionError>> {
     // Vérifier si le commentaire est le dernier commentaire de la discussion
     const countMessages =
       await this.discussionRepository.countMessagesDiscussionsByDiscussionId(
@@ -129,7 +129,7 @@ export class DiscussionDomainService {
   async updateDiscussion(
     discussionId: number,
     status: DiscussionStatus
-  ): Promise<Result<Discussion, DiscussionError>> {
+  ): Promise<DiscussionResult<Discussion, DiscussionError>> {
     const result = await this.discussionRepository.update(discussionId, status);
     if (!result.success) {
       this.logger.error(
@@ -146,7 +146,7 @@ export class DiscussionDomainService {
   async updateDiscussionMessage(
     messageId: number,
     message: string
-  ): Promise<Result<DiscussionMessage, DiscussionError>> {
+  ): Promise<DiscussionResult<DiscussionMessage, DiscussionError>> {
     const result = await this.discussionRepository.updateDiscussionMessage(
       messageId,
       message

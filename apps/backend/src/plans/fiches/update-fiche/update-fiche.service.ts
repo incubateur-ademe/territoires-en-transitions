@@ -37,7 +37,7 @@ import { ficheActionThematiqueTable } from '../shared/models/fiche-action-themat
 import { ficheActionTable } from '../shared/models/fiche-action.table';
 import { UpdateFicheError, UpdateFicheErrorEnum } from './update-fiche.errors';
 import { UpdateFicheRequest } from './update-fiche.request';
-import { Result } from './update-fiche.result';
+import { UpdateFicheResult } from './update-fiche.result';
 
 type ColumnType = Column<
   ColumnBaseConfig<ColumnDataType, string>,
@@ -83,7 +83,7 @@ export default class UpdateFicheService {
     isNotificationEnabled?: boolean;
     user: AuthenticatedUser;
     tx?: Transaction;
-  }): Promise<Result<FicheWithRelations, UpdateFicheError>> {
+  }): Promise<UpdateFicheResult<FicheWithRelations, UpdateFicheError>> {
     await this.fichePermissionService.canWriteFiche(ficheId, user);
 
     this.logger.log(`Mise à jour de la fiche action dont l'id est ${ficheId}`);
@@ -138,7 +138,7 @@ export default class UpdateFicheService {
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<
-      Result<{ previousFiche: FicheWithRelations }, UpdateFicheError>
+      UpdateFicheResult<{ previousFiche: FicheWithRelations }, UpdateFicheError>
     > => {
       const resultGetExistingFiche =
         await this.ficheActionListService.getFicheById(ficheId, false, user);

@@ -18,7 +18,7 @@ import {
 import { ReferentielId } from '@tet/domain/referentiels';
 import { and, count, eq, getTableColumns, like } from 'drizzle-orm';
 import { DiscussionErrorEnum } from '../domain/discussion.errors';
-import { Result } from './discussion.results';
+import { DiscussionResult } from './discussion.results';
 import { discussionMessageTable, discussionTable } from './discussion.table';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
   async findByCollectiviteIdAndReferentielId(
     collectiviteId: number,
     referentielId: ReferentielId
-  ): Promise<Result<Discussion[]>> {
+  ): Promise<DiscussionResult<Discussion[]>> {
     const discussions = await this.databaseService.db
       .select({
         ...getTableColumns(discussionTable),
@@ -54,10 +54,10 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
   create: (
     discussion: CreateDiscussionData,
     tx?: Transaction
-  ) => Promise<Result<Discussion>> = async (
+  ) => Promise<DiscussionResult<Discussion>> = async (
     discussion,
     tx
-  ): Promise<Result<Discussion>> => {
+  ): Promise<DiscussionResult<Discussion>> => {
     try {
       const discussionToCreate: DiscussionCreate = {
         collectiviteId: discussion.collectiviteId,
@@ -101,7 +101,7 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
   async createDiscussionMessage(
     discussionMessage: DiscussionMessageCreate,
     tx?: Transaction
-  ): Promise<Result<CreateDiscussionMessageResponse>> {
+  ): Promise<DiscussionResult<CreateDiscussionMessageResponse>> {
     try {
       const result = await (tx ?? this.databaseService.db)
         .insert(discussionMessageTable)
@@ -142,7 +142,7 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
     }
   }
 
-  async findById(id: number): Promise<Result<Discussion>> {
+  async findById(id: number): Promise<DiscussionResult<Discussion>> {
     try {
       const result = await this.databaseService.db
         .select()
@@ -171,7 +171,7 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
 
   async countMessagesDiscussionsByDiscussionId(
     discussionId: number
-  ): Promise<Result<number>> {
+  ): Promise<DiscussionResult<number>> {
     try {
       const result = await this.databaseService.db
         .select({ count: count() })
@@ -189,7 +189,7 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
   async update(
     discussionId: number,
     status: DiscussionStatus
-  ): Promise<Result<Discussion>> {
+  ): Promise<DiscussionResult<Discussion>> {
     try {
       const result = await this.databaseService.db
         .update(discussionTable)
@@ -223,7 +223,7 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
   async deleteDiscussionAndDiscussionMessage(
     discussionId: number,
     tx?: Transaction
-  ): Promise<Result<void>> {
+  ): Promise<DiscussionResult<void>> {
     try {
       console.log(
         `Suppression des messages de discussion pour la discussion ${discussionId}`
@@ -248,7 +248,9 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
       };
     }
   }
-  async deleteDiscussionMessage(messageId: number): Promise<Result<void>> {
+  async deleteDiscussionMessage(
+    messageId: number
+  ): Promise<DiscussionResult<void>> {
     try {
       await this.databaseService.db
         .delete(discussionMessageTable)
@@ -265,7 +267,7 @@ export class DiscussionRepositoryImpl implements DiscussionRepository {
   async updateDiscussionMessage(
     messageId: number,
     message: string
-  ): Promise<Result<DiscussionMessage>> {
+  ): Promise<DiscussionResult<DiscussionMessage>> {
     try {
       const result = await this.databaseService.db
         .update(discussionMessageTable)

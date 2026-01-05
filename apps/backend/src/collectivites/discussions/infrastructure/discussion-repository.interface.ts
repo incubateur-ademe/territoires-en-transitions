@@ -10,36 +10,38 @@ import {
   DiscussionStatus,
 } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { Result } from './discussion.results';
+import { DiscussionResult } from './discussion.results';
 
 export interface DiscussionRepository {
   create: (
     discussion: CreateDiscussionData,
     tx?: Transaction
-  ) => Promise<Result<Discussion>>;
+  ) => Promise<DiscussionResult<Discussion>>;
   createDiscussionMessage: (
     discussionMessage: DiscussionMessageCreate,
     tx?: Transaction
-  ) => Promise<Result<CreateDiscussionMessageResponse>>;
-  findById: (id: number) => Promise<Result<Discussion>>;
+  ) => Promise<DiscussionResult<CreateDiscussionMessageResponse>>;
+  findById: (id: number) => Promise<DiscussionResult<Discussion>>;
   findByCollectiviteIdAndReferentielId: (
     collectiviteId: number,
     referentielId: ReferentielId
-  ) => Promise<Result<Discussion[]>>;
+  ) => Promise<DiscussionResult<Discussion[]>>;
   countMessagesDiscussionsByDiscussionId: (
     discussionId: number
-  ) => Promise<Result<number>>;
+  ) => Promise<DiscussionResult<number>>;
   update: (
     discussionId: number,
     status: DiscussionStatus
-  ) => Promise<Result<Discussion>>;
+  ) => Promise<DiscussionResult<Discussion>>;
   deleteDiscussionAndDiscussionMessage: (
     discussionId: number,
     tx?: Transaction
-  ) => Promise<Result<void>>;
-  deleteDiscussionMessage: (messageId: number) => Promise<Result<void>>;
+  ) => Promise<DiscussionResult<void>>;
+  deleteDiscussionMessage: (
+    messageId: number
+  ) => Promise<DiscussionResult<void>>;
   updateDiscussionMessage: (
     messageId: number,
     message: string
-  ) => Promise<Result<DiscussionMessage>>;
+  ) => Promise<DiscussionResult<DiscussionMessage>>;
 }
