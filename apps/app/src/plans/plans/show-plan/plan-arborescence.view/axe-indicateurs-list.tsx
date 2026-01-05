@@ -9,6 +9,7 @@ type Props = {
   indicateurs: IndicateurDefinitionListItem[];
   isReadonly: boolean;
   isEditable: boolean;
+  hideChart: boolean;
   onToggleSelection: (indicateur: IndicateurDefinitionListItem) => void;
 };
 
@@ -18,6 +19,7 @@ export const AxeIndicateursList = (props: Props) => {
     indicateurs,
     isReadonly,
     isEditable,
+    hideChart,
     onToggleSelection,
   } = props;
 
@@ -30,6 +32,7 @@ export const AxeIndicateursList = (props: Props) => {
           definition={indicateur}
           externalCollectiviteId={externalCollectiviteId}
           isEditable={isEditable}
+          hideChart={hideChart}
           href={makeCollectiviteIndicateursUrl({
             collectiviteId: externalCollectiviteId,
             indicateurView: getIndicateurGroup(
