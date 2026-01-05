@@ -8,6 +8,24 @@ export class EditAxePom {
     this.addAxeButton = page.locator('[data-test="AjouterAxe"]');
   }
 
+  // libellés des sections affichés dans un axe
+  sectionLabels = {
+    description: 'Description',
+    indicateurs: 'Indicateurs liés',
+    actions: 'Actions',
+  } as const;
+
+  async getSection(
+    axeNom: string,
+    sectionNom: keyof typeof this.sectionLabels
+  ) {
+    const axe = this.getAxeByName(axeNom);
+    const section = axe.getByText(this.sectionLabels[sectionNom], {
+      exact: true,
+    });
+    return { axe, section };
+  }
+
   async addAxe(axeNom: string) {
     await this.addAxeButton.click();
     // Attendre que l'input du titre de l'axe soit visible
@@ -132,11 +150,11 @@ export class EditAxePom {
   }
 
   /**
-   * Ouvre le menu d'un axe et clique sur un élément de menu
+   * Ouvre le menu d'un axe et renvoi l'élément de menu voulu
    * @param axeNom - Le nom de l'axe
    * @param title - Le titre de l'élément de menu à cliquer
    */
-  private async clickOnAxeMenuItem(axeNom: string, title: string) {
+  async getAxeMenuItem(axeNom: string, title: string) {
     const axe = this.getAxeByName(axeNom);
 
     // Ouvrir le menu "..." (apparaît au survol de l'axe)
@@ -144,11 +162,34 @@ export class EditAxePom {
     const axeMenuButton = axe.locator('button[title="Editer cet axe"]');
     await axeMenuButton.click();
 
-    // Cliquer sur l'élément de menu avec le titre donné
-    const menuItem = this.page
+    return this.page
       .locator('[data-floating-ui-portal]')
       .getByRole('button', { name: title });
+  }
+
+  /**
+   * Ouvre le menu d'un axe et clique sur un élément de menu
+   * @param axeNom - Le nom de l'axe
+   * @param title - Le titre de l'élément de menu à cliquer
+   */
+  async clickOnAxeMenuItem(axeNom: string, title: string) {
+    const menuItem = await this.getAxeMenuItem(axeNom, title);
     await menuItem.click();
+  }
+
+  async expectAxeMenuItemIsVisible(axeNom: string, title: string) {
+    const menuItem = await this.getAxeMenuItem(axeNom, title);
+    await expect(menuItem).toBeVisible();
+    // ferme le menu en cliquant ailleurs
+    await this.page.mouse.click(0, 0);
+  }
+
+  async expectAxeMenuItemIsDisabled(axeNom: string, title: string) {
+    const menuItem = await this.getAxeMenuItem(axeNom, title);
+    await expect(menuItem).toBeVisible();
+    await expect(menuItem).toBeDisabled();
+    // ferme le menu en cliquant ailleurs
+    await this.page.mouse.click(0, 0);
   }
 
   /**
@@ -357,5 +398,112 @@ export class EditAxePom {
       .locator('[data-test="Axe"]')
       .filter({ hasText: sousAxeNom });
     await expect(sousAxeInContainer).toBeVisible();
+  }
+
+  /**
+   * Vérifie que la section Description est visible dans un axe
+   * @param axeNom - Le nom de l'axe
+   * @param axeDescription - Le texte de la description attendu
+   */
+  async getDescriptionSection(axeNom: string, axeDescription: string) {
+    const { axe, section } = await this.getSection(axeNom, 'description');
+    const description = axe.getByText(axeDescription, { exact: true });
+    return { axe, section, description };
+  }
+  async expectDescriptionSectionVisible(
+    axeNom: string,
+    axeDescription: string
+  ) {
+    const { section, description } = await this.getDescriptionSection(
+      axeNom,
+      axeDescription
+    );
+    await expect(section).toBeVisible();
+    await expect(description).toBeVisible();
+  }
+
+  /**
+   * Vérifie que la section Description n'est pas visible dans un axe
+   * @param axeNom - Le nom de l'axe
+   * @param axeDescription - Le texte de la description à vérifier
+   */
+  async expectDescriptionSectionNotVisible(
+    axeNom: string,
+    axeDescription: string
+  ) {
+    const { section, description } = await this.getDescriptionSection(
+      axeNom,
+      axeDescription
+    );
+    await expect(section).toBeHidden();
+    await expect(description).toBeHidden();
+  }
+
+  /**
+   * Vérifie que la section Indicateurs liés est visible dans un axe
+   * @param axeNom - Le nom de l'axe
+   */
+  async expectIndicateursSectionVisible(axeNom: string) {
+    const { section } = await this.getSection(axeNom, 'indicateurs');
+    await expect(section).toBeVisible();
+  }
+
+  /**
+   * Vérifie que la section Indicateurs liés n'est pas visible dans un axe
+   * @param axeNom - Le nom de l'axe
+   */
+  async expectIndicateursSectionNotVisible(axeNom: string) {
+    const { section } = await this.getSection(axeNom, 'indicateurs');
+    await expect(section).toBeHidden();
+  }
+
+  /**
+   * Vérifie que le graphique des indicateurs est visible dans un axe
+   * @param axeNom - Le nom de l'axe
+   */
+  async expectIndicateursChartVisible(axeNom: string) {
+    const { section } = await this.getSection(axeNom, 'indicateurs');
+    const chart = section
+      .locator('..')
+      .locator('[data-test^="chart-"]')
+      .first();
+    await expect(chart).toBeVisible();
+    // l'indicateur affiché est créé pour le test et n'a pas de données : on
+    // vérifie juste que le placeholder svg est présent
+    await expect(chart.locator('svg').first()).toBeVisible();
+  }
+
+  /**
+   * Vérifie que le graphique des indicateurs n'est pas visible dans un axe
+   * @param axeNom - Le nom de l'axe
+   */
+  async expectIndicateursChartNotVisible(axeNom: string) {
+    const { section } = await this.getSection(axeNom, 'indicateurs');
+    const chart = section
+      .locator('..')
+      .locator('[data-test^="chart-"]')
+      .first();
+    await expect(chart).toBeVisible();
+    // l'indicateur affiché est créé pour le test et n'a pas de données : on
+    // vérifie juste que le placeholder svg n'est pas présent
+    await expect(chart.locator('svg').first()).toBeHidden();
+  }
+
+  /**
+   * Vérifie que la section Actions est visible dans un axe
+   * @param axeNom - Le nom de l'axe
+   */
+  async expectActionsSectionVisible(axeNom: string) {
+    const { section } = await this.getSection(axeNom, 'actions');
+    await expect(section).toBeVisible();
+  }
+
+  /**
+   * Vérifie que la section Actions n'est pas visible dans un axe
+   * @param axeNom - Le nom de l'axe
+   */
+  async expectActionsSectionNotVisible(axeNom: string) {
+    const { section } = await this.getSection(axeNom, 'actions');
+    await expect(section).toBeHidden();
   }
 }

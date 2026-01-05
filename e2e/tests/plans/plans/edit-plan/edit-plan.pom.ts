@@ -214,4 +214,79 @@ export class EditPlanPom {
     await expect(button).toBeVisible();
     await expect(button).toContainText('Ouvrir tous les axes/sous-axes');
   }
+
+  /**
+   * Ouvre le menu des options d'affichage du plan
+   */
+  private async openPlanOptionsMenu() {
+    const optionsButton = this.page.locator(
+      '[data-test="plan-options.button"]'
+    );
+    await expect(optionsButton).toBeVisible();
+    await optionsButton.click();
+    // Attendre que le menu soit visible (dans le FloatingPortal)
+    // Le menu contient les checkboxes avec les labels "Description", "Indicateurs", etc.
+    const menu = this.page.locator('[data-floating-ui-focusable]').last();
+    await expect(menu).toBeVisible();
+    return menu;
+  }
+
+  /**
+   * Ferme le menu des options d'affichage en cliquant en dehors
+   */
+  private async closePlanOptionsMenu() {
+    // Cliquer en dehors du menu pour le fermer
+    await this.page.mouse.click(0, 0);
+  }
+
+  /**
+   * Active ou désactive une option d'affichage du plan
+   * @param optionLabel - Le label de l'option (ex: "Description", "Indicateurs", etc.)
+   */
+  async togglePlanDisplayOption(optionLabel: string) {
+    const menu = await this.openPlanOptionsMenu();
+    const checkbox = menu
+      .locator('label')
+      .filter({ hasText: optionLabel })
+      .first();
+    await expect(checkbox).toBeVisible();
+    await checkbox.click();
+    await this.closePlanOptionsMenu();
+  }
+
+  /**
+   * Vérifie qu'une option d'affichage est cochée
+   * @param optionLabel - Le label de l'option à vérifier
+   */
+  async expectPlanDisplayOptionIsChecked(optionLabel: string) {
+    const menu = await this.openPlanOptionsMenu();
+    const checkbox = menu.getByRole('checkbox', { name: optionLabel }).first();
+    await expect(checkbox).toBeVisible();
+    await expect(checkbox).toBeChecked();
+    await this.closePlanOptionsMenu();
+  }
+
+  /**
+   * Vérifie qu'une option d'affichage est décochée
+   * @param optionLabel - Le label de l'option à vérifier
+   */
+  async expectPlanDisplayOptionIsUnchecked(optionLabel: string) {
+    const menu = await this.openPlanOptionsMenu();
+    const checkbox = menu.getByRole('checkbox', { name: optionLabel }).first();
+    await expect(checkbox).toBeVisible();
+    await expect(checkbox).not.toBeChecked();
+    await this.closePlanOptionsMenu();
+  }
+
+  /**
+   * Vérifie qu'une option d'affichage est désactivée (disabled)
+   * @param optionLabel - Le label de l'option à vérifier
+   */
+  async expectPlanDisplayOptionIsDisabled(optionLabel: string) {
+    const menu = await this.openPlanOptionsMenu();
+    const checkbox = menu.getByRole('checkbox', { name: optionLabel }).first();
+    await expect(checkbox).toBeVisible();
+    await expect(checkbox).toBeDisabled();
+    await this.closePlanOptionsMenu();
+  }
 }
