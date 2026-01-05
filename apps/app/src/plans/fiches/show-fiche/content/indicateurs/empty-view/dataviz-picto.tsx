@@ -1,4 +1,4 @@
-const DatavizPicto = ({
+export const DatavizPicto = ({
   className,
   width = '135',
   height = '134',
@@ -97,5 +97,3 @@ const DatavizPicto = ({
     />
   </svg>
 );
-
-export default DatavizPicto;

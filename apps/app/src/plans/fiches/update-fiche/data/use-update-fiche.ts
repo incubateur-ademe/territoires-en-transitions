@@ -68,8 +68,19 @@ export const useUpdateFiche = (args?: Args) => {
               ficheIds: [ficheId],
             },
           }),
-          () => {
-            return (ficheFields.indicateurs as any) ?? [];
+          (previous) => {
+            return {
+              ...(previous ?? {
+                count: 0,
+                pageCount: 0,
+                pageSize: 0,
+                page: 0,
+                data: [],
+              }),
+              data: (previous?.data ?? []).filter((i) =>
+                ficheFields.indicateurs?.find((f) => f.id === i.id)
+              ),
+            };
           }
         );
       }
