@@ -1,5 +1,6 @@
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { isNil } from 'es-toolkit';
 
 import { RouterInput, useTRPC } from '@tet/api';
 import { PlanNode } from '@tet/domain/plans';
@@ -32,18 +33,29 @@ export const useUpdateAxe = ({
       });
     },
     meta: { disableToast: true },
-    onSuccess: async (data) => {
-      await queryClient.invalidateQueries({
-        queryKey: trpc.plans.plans.get.queryKey({
-          planId: data.plan ?? undefined,
-        }),
-      });
-      queryClient.invalidateQueries({
-        queryKey: trpc.indicateurs.indicateurs.list.queryKey({
-          filters: { axeIds: [data.id] },
-        }),
-      });
-      if (axe.description === null && data.description === '') {
+    onSuccess: async (data, variables) => {
+      const hasSetDescription =
+        axe.description === null && data.description === '';
+      const hasChangeDescription =
+        axe.description !== data.description &&
+        !isNil(axe.description) &&
+        !isNil(data.description);
+
+      if (!hasChangeDescription) {
+        await queryClient.invalidateQueries({
+          queryKey: trpc.plans.plans.get.queryKey({
+            planId: data.plan ?? undefined,
+          }),
+        });
+      }
+      if (variables.indicateurs) {
+        queryClient.invalidateQueries({
+          queryKey: trpc.indicateurs.indicateurs.list.queryKey({
+            filters: { axeIds: [data.id] },
+          }),
+        });
+      }
+      if (hasSetDescription) {
         await waitForMarkup(`#axe-desc-${data.id} div[contenteditable]`).then(
           (el) => {
             (el as HTMLInputElement)?.focus?.();
