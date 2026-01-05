@@ -12,7 +12,7 @@ import { reportGenerationTable } from './report-generation.entity';
 
 export type UpdateReportGenerationInput = Pick<
   ReportGeneration,
-  'status' | 'errorMessage'
+  'status' | 'errorMessage' | 'fileId'
 >;
 
 @Injectable()
