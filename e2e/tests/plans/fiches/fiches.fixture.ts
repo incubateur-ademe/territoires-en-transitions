@@ -18,11 +18,21 @@ class FichesFactory extends FixtureFactory {
   /**
    * Crée des fiches
    */
-  async create(user: UserFixture, fiches: FicheCreate[]): Promise<number[]> {
+  async create(
+    user: UserFixture,
+    fiches: Array<FicheCreate & { axeId?: number }>
+  ): Promise<number[]> {
     const trpcClient = user.getTrpcClient();
     const createdFichesPromises = fiches.map((fiche) => {
       console.log('Create fiche', fiche);
-      return trpcClient.plans.fiches.create.mutate({ fiche });
+      return trpcClient.plans.fiches.create.mutate({
+        fiche,
+        ficheFields: fiche.axeId
+          ? {
+              axes: [{ id: fiche.axeId }],
+            }
+          : undefined,
+      });
     });
     const createdFiches = await Promise.all(createdFichesPromises);
     const createdFicheIds = createdFiches.map((fiche) => fiche.id);
