@@ -387,19 +387,33 @@ export const makeCollectiviteActionUrl = ({
     .concat(planId ? `?planId=${planId}` : '');
 
 export const OPEN_AXES_KEY_SEARCH_PARAMETER = 'openAxes';
+export const PLAN_DISPLAY_OPTIONS_PARAMETER = 'options';
 export const makeCollectivitePlanActionUrl = ({
   collectiviteId,
   planActionUid,
   openAxes,
+  options,
 }: {
   collectiviteId: number;
   planActionUid: string;
   openAxes?: number[];
+  options?: string[];
 }) =>
   collectivitePlanActionPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${planParam}`, planActionUid)
-    .concat(`?${OPEN_AXES_KEY_SEARCH_PARAMETER}=${openAxes?.join(',')}`);
+    .concat(
+      [
+        openAxes?.length
+          ? `?${OPEN_AXES_KEY_SEARCH_PARAMETER}=${openAxes?.join(',')}`
+          : '',
+        options?.length
+          ? `${PLAN_DISPLAY_OPTIONS_PARAMETER}=${options?.join(',')}`
+          : '',
+      ]
+        .filter((s) => !!s)
+        .join('&')
+    );
 
 export const makeReferentielRootUrl = ({
   collectiviteId,
