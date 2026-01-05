@@ -20,6 +20,7 @@ import { AxeMenuButton } from './axe-menu.button';
 import { AxeSkeleton } from './axe-skeleton';
 import { AxeTitleInput } from './axe-title.input';
 import { FichesList } from './fiches.list';
+import { PlanDisplayOptionsEnum, usePlanOptions } from './plan-options.context';
 
 export type AxeDndData = {
   type: 'axe';
@@ -104,6 +105,8 @@ export const DraggableAxe = (props: Props) => {
     collectiviteId,
     enabled: (isOpen && entry?.isIntersecting) || false,
   });
+
+  const { isOptionEnabled } = usePlanOptions();
 
   const [isOpenPanelIndicateurs, setIsOpenPanelIndicateurs] = useState(false);
   const indicateursPanelOpenState = {
@@ -243,55 +246,65 @@ export const DraggableAxe = (props: Props) => {
       {/** Fiches et sous-axes */}
       {!isDragging && isOpen && (
         <div className="flex flex-col ml-12">
-          {axe.description !== null && (
-            <>
-              <p className="text-grey-8 text-sm mt-4 mb-2">
-                <Icon icon="file-text-line" className="mr-2" />
-                Description
-              </p>
-              {isReadonly ? (
-                axe.description ? (
-                  <RichTextView content={axe.description} />
-                ) : null
-              ) : (
-                <RichTextEditor
-                  id={`axe-desc-${axe.id}`}
-                  className="border-0 focus-within:border"
-                  initialValue={axe.description}
-                  onChange={(value) => updateAxe({ description: value })}
+          {axe.description !== null &&
+            isOptionEnabled(PlanDisplayOptionsEnum.DESCRIPTION) && (
+              <>
+                <p className="text-grey-8 text-sm mt-4 mb-2">
+                  <Icon icon="file-text-line" className="mr-2" />
+                  Description
+                </p>
+                {isReadonly ? (
+                  axe.description ? (
+                    <RichTextView content={axe.description} />
+                  ) : null
+                ) : (
+                  <RichTextEditor
+                    id={`axe-desc-${axe.id}`}
+                    className="border-0 focus-within:border"
+                    initialValue={axe.description}
+                    onChange={(value) => updateAxe({ description: value })}
+                  />
+                )}
+              </>
+            )}
+          {isOptionEnabled(PlanDisplayOptionsEnum.INDICATEURS) &&
+            selectedIndicateurs?.length > 0 && (
+              <>
+                <p className="text-grey-8 text-sm mt-4 mb-2">
+                  <Icon icon="link" className="mr-2" />
+                  Indicateurs liés
+                </p>
+                <AxeIndicateursList
+                  indicateurs={selectedIndicateurs}
+                  isEditable={!isReadonly}
+                  isReadonly={isReadonly}
+                  hideChart={
+                    !isOptionEnabled(
+                      PlanDisplayOptionsEnum.GRAPHIQUE_INDICATEURS
+                    )
+                  }
+                  onToggleSelection={(indicateur) =>
+                    toggleIndicateur(indicateur)
+                  }
+                  collectiviteId={collectiviteId}
                 />
-              )}
-            </>
-          )}
-          {selectedIndicateurs?.length > 0 && (
-            <>
-              <p className="text-grey-8 text-sm mt-4 mb-2">
-                <Icon icon="link" className="mr-2" />
-                Indicateurs liés
-              </p>
-              <AxeIndicateursList
-                indicateurs={selectedIndicateurs}
-                isEditable={!isReadonly}
-                isReadonly={isReadonly}
-                onToggleSelection={(indicateur) => toggleIndicateur(indicateur)}
-                collectiviteId={collectiviteId}
-              />
-            </>
-          )}
-          {axe.fiches?.length > 0 && (
-            <>
-              <p className="text-grey-8 text-sm mt-4 mb-2">
-                <Icon icon="file-line" className="mr-2" />
-                Actions
-              </p>
-              <FichesList
-                collectivite={collectivite}
-                isDndActive={active !== null}
-                ficheIds={axe.fiches}
-                axeId={axe.id}
-              />
-            </>
-          )}
+              </>
+            )}
+          {axe.fiches?.length > 0 &&
+            isOptionEnabled(PlanDisplayOptionsEnum.ACTIONS) && (
+              <>
+                <p className="text-grey-8 text-sm mt-4 mb-2">
+                  <Icon icon="file-line" className="mr-2" />
+                  Actions
+                </p>
+                <FichesList
+                  collectivite={collectivite}
+                  isDndActive={active !== null}
+                  ficheIds={axe.fiches}
+                  axeId={axe.id}
+                />
+              </>
+            )}
           {childrenOfPlanNodes(axe, axes).map((axe: PlanNode) => (
             <DraggableAxe
               key={axe.id}
