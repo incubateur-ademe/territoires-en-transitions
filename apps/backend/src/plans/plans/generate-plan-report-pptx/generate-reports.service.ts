@@ -9,7 +9,7 @@ import { EchartsService } from '@tet/backend/utils/echarts/echarts.service';
 import { getHorizontalStackedBarChartOption } from '@tet/backend/utils/echarts/get-horizontal-stackedbar-chart-option.utils';
 import { getPieChartOption } from '@tet/backend/utils/echarts/get-pie-chart-option.utils';
 import GetUrlService from '@tet/backend/utils/get-url.service';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import {
   CollectiviteAvecType,
   PersonnalisationReponsesPayload,
@@ -372,7 +372,7 @@ export class GenerateReportsService {
     planId: number,
     user: AuthenticatedUser
   ): Promise<
-    MethodResult<
+    Result<
       {
         plan: Plan;
         collectivite: CollectiviteAvecType;
@@ -1299,7 +1299,7 @@ export class GenerateReportsService {
     request: GenerateReportInput,
     user: AuthenticatedUser
   ): Promise<
-    MethodResult<
+    Result<
       { reportName: string; reportPath: string; outputDir: string },
       GenerateReportError
     >

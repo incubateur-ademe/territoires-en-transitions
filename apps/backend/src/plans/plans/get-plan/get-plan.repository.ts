@@ -3,7 +3,7 @@ import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/pers
 import { dcpTable as userTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import { Personne } from '@tet/domain/collectivites';
 import { AxeLight, PlanType } from '@tet/domain/plans';
 import { and, eq, isNull, sql } from 'drizzle-orm';
@@ -24,7 +24,7 @@ export class GetPlanRepository {
   async getPlan(
     planId: number,
     tx?: Transaction
-  ): Promise<MethodResult<GetPlanOutput, GetPlanError>> {
+  ): Promise<Result<GetPlanOutput, GetPlanError>> {
     try {
       const result = await (tx || this.databaseService.db)
         .select({
@@ -71,7 +71,7 @@ export class GetPlanRepository {
   async getReferents(
     planId: number,
     tx?: Transaction
-  ): Promise<MethodResult<Personne[], GetPlanError>> {
+  ): Promise<Result<Personne[], GetPlanError>> {
     try {
       const referents = await (tx || this.databaseService.db)
         .select({
@@ -106,7 +106,7 @@ export class GetPlanRepository {
   async getPilotes(
     planId: number,
     tx?: Transaction
-  ): Promise<MethodResult<Personne[], GetPlanError>> {
+  ): Promise<Result<Personne[], GetPlanError>> {
     try {
       const pilotes = await (tx || this.databaseService.db)
         .select({

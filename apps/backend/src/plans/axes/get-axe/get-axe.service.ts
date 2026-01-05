@@ -4,7 +4,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import { AxeLight } from '@tet/domain/plans';
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { GetAxeError, GetAxeErrorEnum } from './get-axe.errors';
@@ -25,7 +25,7 @@ export class GetAxeService {
     input: GetAxeInput,
     user: AuthenticatedUser,
     tx?: Transaction
-  ): Promise<MethodResult<AxeLight, GetAxeError>> {
+  ): Promise<Result<AxeLight, GetAxeError>> {
     // récupèrer l'axe pour obtenir la collectivité
     const axeResult = await this.getAxeRepository.getAxe(input.axeId, tx);
     if (!axeResult.success) {

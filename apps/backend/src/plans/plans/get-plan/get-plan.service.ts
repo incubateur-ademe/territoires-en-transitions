@@ -5,7 +5,7 @@ import { ResourceType } from '@tet/backend/users/authorizations/resource-type.en
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import { Plan } from '@tet/domain/plans';
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { ListAxesService } from '../../axes/list-axes/list-axes.service';
@@ -29,10 +29,10 @@ export class GetPlanService {
     input: GetPlanInput,
     user: AuthenticatedUser,
     tx?: Transaction
-  ): Promise<MethodResult<Plan, GetPlanError>> {
+  ): Promise<Result<Plan, GetPlanError>> {
     const executeInTransaction = async (
       transaction: Transaction
-    ): Promise<MethodResult<Plan, GetPlanError>> => {
+    ): Promise<Result<Plan, GetPlanError>> => {
       const { planId } = input;
 
       const planResult = await this.getPlanRepository.getPlan(

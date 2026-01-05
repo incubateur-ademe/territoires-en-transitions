@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import {
   GenerateReportInput,
   ReportGeneration,
@@ -25,7 +25,7 @@ export class ReportGenerationRepository {
     input: GenerateReportInput,
     status: ReportGenerationStatus = 'pending'
   ): Promise<
-    MethodResult<
+    Result<
       { id: string },
       typeof GenerateReportErrorEnum.CREATE_REPORT_GENERATION_ERROR
     >
@@ -66,7 +66,7 @@ export class ReportGenerationRepository {
     id: string,
     input: UpdateReportGenerationInput
   ): Promise<
-    MethodResult<
+    Result<
       undefined,
       typeof GenerateReportErrorEnum.UPDATE_REPORT_GENERATION_ERROR
     >

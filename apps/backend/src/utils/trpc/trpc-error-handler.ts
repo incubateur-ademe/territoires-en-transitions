@@ -1,6 +1,6 @@
 import { createEnumObject } from '@tet/domain/utils';
 import { TRPCError } from '@trpc/server';
-import { MethodResult } from '../result.type';
+import { Result } from '../result.type';
 import {
   COMMON_ERROR_CONFIG,
   CommonError,
@@ -70,7 +70,7 @@ export function createTrpcErrorHandler<SpecificError extends string>(
    * Renvoi les données résultat ou lance la TRPCError appropriée
    */
   return function getResultDataOrThrowError<Data>(
-    result: MethodResult<Data, HandledError>
+    result: Result<Data, HandledError>
   ): Data | never {
     if (result.success) {
       return result.data;

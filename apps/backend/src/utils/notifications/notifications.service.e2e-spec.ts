@@ -5,7 +5,7 @@ import { getTestDatabase } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { EmailService } from '@tet/backend/utils/email/email.service';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import { eq } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 import React from 'react';
@@ -113,7 +113,7 @@ describe('NotificationsService', () => {
       sendEmail: vi.fn().mockResolvedValue({
         success: true,
         data: { messageId: 'test-message-id' },
-      } as MethodResult<{ messageId: string }, never>),
+      } as Result<{ messageId: string }, never>),
     };
 
     // Crée l'app de test avec le EmailService mocké

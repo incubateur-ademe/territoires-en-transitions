@@ -4,7 +4,7 @@ import { ResourceType } from '@tet/backend/users/authorizations/resource-type.en
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import { AxeLight } from '@tet/domain/plans';
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { UpsertAxeError, UpsertAxeErrorEnum } from './upsert-axe.errors';
@@ -29,7 +29,7 @@ export class UpsertAxeService {
     axe: UpsertAxeInput,
     user: AuthenticatedUser,
     tx?: Transaction
-  ): Promise<MethodResult<AxeLight, UpsertAxeError>> {
+  ): Promise<Result<AxeLight, UpsertAxeError>> {
     const isAllowed = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['PLANS.MUTATE'],
@@ -46,7 +46,7 @@ export class UpsertAxeService {
 
     const executeInTransaction = async (
       transaction: Transaction
-    ): Promise<MethodResult<AxeLight, UpsertAxeError>> => {
+    ): Promise<Result<AxeLight, UpsertAxeError>> => {
       const axeProps = axe;
       const updateAxeProps = baseUpdateAxeSchema.safeParse(axeProps);
 

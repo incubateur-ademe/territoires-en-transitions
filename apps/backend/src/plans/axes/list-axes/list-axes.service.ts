@@ -4,7 +4,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import { PlanNode } from '@tet/domain/plans';
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { ListAxesError, ListAxesErrorEnum } from './list-axes.errors';
@@ -25,7 +25,7 @@ export class ListAxesService {
     input: ListAxesInput,
     user: AuthenticatedUser,
     tx?: Transaction
-  ): Promise<MethodResult<ListAxesOutput, ListAxesError>> {
+  ): Promise<Result<ListAxesOutput, ListAxesError>> {
     const isAllowed = await this.checkPermission(input.collectiviteId, user);
     if (!isAllowed) {
       return {
@@ -41,7 +41,7 @@ export class ListAxesService {
     input: ListAxesInput,
     user: AuthenticatedUser,
     tx?: Transaction
-  ): Promise<MethodResult<PlanNode[], ListAxesError>> {
+  ): Promise<Result<PlanNode[], ListAxesError>> {
     const isAllowed = await this.checkPermission(input.collectiviteId, user);
     if (!isAllowed) {
       return {
