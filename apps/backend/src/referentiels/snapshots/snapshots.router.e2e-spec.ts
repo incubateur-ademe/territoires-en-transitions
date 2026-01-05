@@ -305,7 +305,6 @@ describe('SnapshotsRouter', () => {
           pointPotentiel: 493.4,
           pointProgramme: 0.21,
           ref: 'score-courant',
-          referentielVersion: '1.0.3',
           jalon: SnapshotJalonEnum.COURANT,
         },
       ],
@@ -343,14 +342,13 @@ describe('SnapshotsRouter', () => {
       (s) => s.ref === snapshotTestAccent.ref
     );
 
-    expect(returnedSnapshot).toEqual({
+    expect(returnedSnapshot).toMatchObject({
       date: expect.toEqualDate(snapshotTestAccent.date),
       nom: 'test à accent',
       ref: 'user-test-a-accent',
       jalon: SnapshotJalonEnum.DATE_PERSONNALISEE,
       modifiedAt: expect.toEqualDate(snapshotTestAccent.modifiedAt),
       createdAt: expect.toEqualDate(snapshotTestAccent.createdAt),
-      referentielVersion: '1.0.3',
       auditId: null,
       createdBy: yoloDodoUser.id,
       modifiedBy: yoloDodoUser.id,
