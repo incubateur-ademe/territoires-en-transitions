@@ -5,7 +5,7 @@ import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/us
 import { useDemoMode } from '@/app/users/demo-mode-support-provider';
 import { useCollectiviteContext } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
-import { Header as HeaderTet } from '@tet/ui';
+import { DSFRCompliancyComponent, Header as HeaderTet } from '@tet/ui';
 import { makeMainNav } from './main-nav/make-main-nav';
 import { makeSecondaryNav } from './make-secondary-nav';
 
@@ -44,9 +44,7 @@ export const Header = () => {
         })}
         secondaryNav={makeSecondaryNav(user)}
       />
-      {/** La classe "fr-header__brand" doit restée présente car
-       * nécessaire pour valider l'utilisation du DSFR dans dashlord */}
-      <div className="fr-header__brand h-0 w-0 m-0" />
+      <DSFRCompliancyComponent />
     </>
   );
 };

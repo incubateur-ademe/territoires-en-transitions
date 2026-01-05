@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 
 import { getAuthPaths } from '@tet/api';
 import { ENV } from '@tet/api/environmentVariables';
-import { Header as HeaderTet } from '@tet/ui';
+import { DSFRCompliancyComponent, Header as HeaderTet } from '@tet/ui';
 
 export const Header = () => {
   const authPaths = getAuthPaths(ENV.app_url ?? '');
@@ -67,9 +67,7 @@ export const Header = () => {
           },
         ]}
       />
-      {/** La classe "fr-header__brand" doit restée présente car
-       * nécessaire pour valider l'utilisation du DSFR dans dashlord */}
-      <div className="fr-header__brand h-0 w-0 m-0" />
+      <DSFRCompliancyComponent />
     </>
   );
 };
