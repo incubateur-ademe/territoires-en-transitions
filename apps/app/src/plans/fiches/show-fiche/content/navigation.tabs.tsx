@@ -14,7 +14,7 @@ import { FicheSectionId } from './type';
 
 export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
-  const { fiche } = useFicheContext();
+  const { fiche, selectedIndicateurs } = useFicheContext();
   const collectivite = useCurrentCollectivite();
   const { niveauAcces, permissions } = collectivite;
 
@@ -32,7 +32,9 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
       id: 'details',
     },
     {
-      label: 'Indicateurs de suivi',
+      label: `Indicateurs de suivi ${
+        selectedIndicateurs.length > 0 ? `(${selectedIndicateurs.length})` : ''
+      }`,
       isVisible:
         hasPermission(permissions, 'indicateurs.indicateurs.read') ||
         (!niveauAcces &&
@@ -98,7 +100,7 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
       <TabsList className="flex justify-start gap-2 md:gap-3">
         {tabsToDisplay}
       </TabsList>
-      <TabsPanel>{children}</TabsPanel>
+      <TabsPanel className="border-none">{children}</TabsPanel>
     </TabsUI>
   );
 };

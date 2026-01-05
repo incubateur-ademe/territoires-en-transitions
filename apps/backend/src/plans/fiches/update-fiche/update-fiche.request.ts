@@ -7,6 +7,7 @@ import {
   serviceTagSchema,
   structureTagSchema,
 } from '@tet/domain/collectivites';
+
 import { indicateurDefinitionSchema } from '@tet/domain/indicateurs';
 import { axeSchema, ficheSchema, ficheSchemaUpdate } from '@tet/domain/plans';
 import { actionRelationSchema } from '@tet/domain/referentiels';

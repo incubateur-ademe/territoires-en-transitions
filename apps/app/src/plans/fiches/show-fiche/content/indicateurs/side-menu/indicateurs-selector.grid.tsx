@@ -12,10 +12,8 @@ type Props = {
   onSelect: (indicateur: IndicateurDefinitionListItem) => void;
 };
 
-/** Affiche une grille de graphiques d'indicateur */
-const SelectIndicateursGrid = (props: Props) => {
+export const IndicateursSelectorGrid = (props: Props) => {
   const { definitions, isLoading, selectedIndicateurs, onSelect } = props;
-
   return (
     <>
       {/** Loading */}
@@ -84,5 +82,3 @@ const IndicateurChartContainer = (
     </div>
   );
 };
-
-export default SelectIndicateursGrid;
