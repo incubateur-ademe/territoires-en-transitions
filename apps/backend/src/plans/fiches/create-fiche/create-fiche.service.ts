@@ -19,7 +19,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Fiche, FicheCreate } from '@tet/domain/plans';
 import { PermissionOperationEnum } from '@tet/domain/users';
-import { UpdateFicheRequest } from '../update-fiche/update-fiche.request';
+import { UpdateFicheInput } from '../update-fiche/update-fiche.request';
 import UpdateFicheService from '../update-fiche/update-fiche.service';
 import { Result } from './create-fiche.result';
 
@@ -44,7 +44,7 @@ export class CreateFicheService {
       tx,
       user,
     }: {
-      ficheFields?: Omit<UpdateFicheRequest, 'id'>;
+      ficheFields?: Omit<UpdateFicheInput, 'id'>;
       tx?: Transaction;
       user: AuthenticatedUser;
     }
