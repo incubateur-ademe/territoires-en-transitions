@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 
 import { useToggleAxe } from '@/app/plans/plans/show-plan/plan-arborescence.view/use-toggle-axe';
 import IconDrag from '@/app/ui/icons/IconDrag';
+import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
 import { PlanNode } from '@tet/domain/plans';
 import { CollectiviteAccess } from '@tet/domain/users';
 import { Button, Icon, RichTextEditor, RichTextView } from '@tet/ui';
@@ -97,10 +98,11 @@ export const DraggableAxe = (props: Props) => {
 
   const { isOpen, setIsOpen, shouldScroll } = useToggleAxe(axe.id, axes);
 
+  const { ref: intersectionRef, entry } = useIntersectionObserver();
   const { selectedIndicateurs, toggleIndicateur } = useAxeIndicateurs({
     axe,
     collectiviteId,
-    enabled: isOpen,
+    enabled: (isOpen && entry?.isIntersecting) || false,
   });
 
   const [isOpenPanelIndicateurs, setIsOpenPanelIndicateurs] = useState(false);
@@ -160,7 +162,7 @@ export const DraggableAxe = (props: Props) => {
           { 'bg-bf925': isDroppable }
         )}
       >
-        <div className="flex items-start">
+        <div className="flex items-start" ref={intersectionRef}>
           {/** Drag handle */}
           {canDrag && !isDragging && (
             <div className="absolute top-0 -left-10 w-10 h-16 flex">
