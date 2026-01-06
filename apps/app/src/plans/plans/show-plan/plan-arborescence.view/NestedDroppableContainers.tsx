@@ -60,6 +60,7 @@ export const NestedDroppableContainers = ({
           isDndActive={active !== null}
           ficheIds={plan.fiches}
           axeId={plan.id}
+          planId={plan.id}
         />
       )}
       {childrenOfPlanNodes(plan, axes).map((axe) => (

@@ -12,11 +12,13 @@ import { Header } from './header';
 type FicheActionImprovedProps = {
   fiche: FicheWithRelations;
   children?: React.ReactNode;
+  planId?: number;
 };
 
 export const FicheActionImprovedView = ({
   fiche: initialFiche,
   children: content,
+  planId,
 }: FicheActionImprovedProps) => {
   const { data: fiche, error } = useGetFiche({
     id: initialFiche.id,
@@ -35,7 +37,7 @@ export const FicheActionImprovedView = ({
   }
 
   return (
-    <FicheProvider fiche={fiche}>
+    <FicheProvider fiche={fiche} planId={planId}>
       <div className="w-full bg-grey-2">
         <div className="flex flex-col w-full px-2 mx-auto xl:max-w-7xl 2xl:max-w-8xl">
           <Header />
