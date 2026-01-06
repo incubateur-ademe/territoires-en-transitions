@@ -81,9 +81,8 @@ export class PermissionService {
 
     // Récupère les autorisations des rôles de l'utilisateur
     for (const role of roles) {
-      permissionsByRole[role].forEach((permission) =>
-        operations.add(permission)
-      );
+      const permissions = permissionsByRole[role];
+      permissions.forEach((permission) => operations.add(permission));
     }
 
     this.logger.log(

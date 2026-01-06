@@ -2,9 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ImportPlanCleanService } from '@tet/backend/plans/fiches/import/import-plan-clean.service';
 import { ImportPlanFetchService } from '@tet/backend/plans/fiches/import/import-plan-fetch.service';
 import { ImportPlanSaveService } from '@tet/backend/plans/fiches/import/import-plan-save.service';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { PersonneId, TagEnum, TagType } from '@tet/domain/collectivites';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import ExcelJS from 'exceljs';
 import { UpsertPlanService } from '../../plans/upsert-plan/upsert-plan.service';
 import {
@@ -75,6 +78,7 @@ export class ImportPlanService {
   private readonly logger = new Logger(ImportPlanService.name);
   constructor(
     private readonly databaseService: DatabaseService,
+    private readonly permissions: PermissionService,
     private readonly fetch: ImportPlanFetchService,
     private readonly save: ImportPlanSaveService,
     private readonly clean: ImportPlanCleanService,
@@ -99,14 +103,30 @@ export class ImportPlanService {
    * @param planType
    */
   async import(
-    user: AuthenticatedUser,
-    file: string,
-    collectiviteId: number,
-    planName: string,
-    planType?: number,
-    pilotes?: PersonneId[],
-    referents?: PersonneId[]
+    {
+      file,
+      collectiviteId,
+      planName,
+      planType,
+      pilotes,
+      referents,
+    }: {
+      file: string;
+      collectiviteId: number;
+      planName: string;
+      planType?: number;
+      pilotes?: PersonneId[];
+      referents?: PersonneId[];
+    },
+    user: AuthenticatedUser
   ): Promise<boolean> {
+    await this.permissions.isAllowed(
+      user,
+      PermissionOperationEnum['PLANS.FICHES.IMPORT'],
+      ResourceType.PLATEFORME,
+      null
+    );
+
     const plan: PlanImport = {
       nom: planName,
       typeId: planType,

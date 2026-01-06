@@ -1,14 +1,12 @@
+import { Injectable } from '@nestjs/common';
 import { utilisateurSupportTable } from '@tet/backend/users/authorizations/roles/utilisateur-support.table';
 import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles/utilisateur-verifie.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { Injectable, Logger } from '@nestjs/common';
 import { eq, sql } from 'drizzle-orm';
 
 @Injectable()
 export class RoleUpdateService {
-  private readonly logger = new Logger(RoleUpdateService.name);
-
   constructor(private readonly databaseService: DatabaseService) {}
 
   /**
