@@ -9,7 +9,6 @@ import { SharedFicheLinkedResourcesAlert } from '../../share-fiche/shared-fiche-
 import { ActionButtons } from './action.buttons';
 import { CreateIndicateurModal } from './create-indicateur.modal';
 import { EmptyIndicateursView } from './empty-view/empty-indicateurs.view';
-import { IndicateursSideMenu } from './side-menu';
 
 export const IndicateursView = () => {
   const {
@@ -47,8 +46,6 @@ export const IndicateursView = () => {
         setIsOpen={() => toggleIndicateurAction('creating')}
         fiche={fiche}
       />
-
-      <IndicateursSideMenu />
 
       {showEmptyView ? (
         <EmptyIndicateursView />

@@ -7,11 +7,11 @@ const CreateIndicateurButton = ({
 }: {
   toggleAction: () => void;
 }) => {
-  const { isReadonly, canCreateIndicateur } = useFicheContext();
+  const { canCreateIndicateur } = useFicheContext();
 
   const tracker = useEventTracker();
 
-  if (canCreateIndicateur === false || isReadonly) {
+  if (canCreateIndicateur === false) {
     return null;
   }
 
@@ -48,7 +48,11 @@ const AssociateIndicateursButton = ({
 };
 
 export const ActionButtons = () => {
-  const { toggleIndicateurAction } = useFicheContext();
+  const { toggleIndicateurAction, isReadonly } = useFicheContext();
+
+  if (isReadonly) {
+    return null;
+  }
 
   return (
     <>
