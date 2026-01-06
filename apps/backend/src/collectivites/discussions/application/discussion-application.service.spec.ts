@@ -54,8 +54,6 @@ describe('DiscussionApplicationService', () => {
 
     mockPermissionService = {
       isAllowed: vi.fn(),
-      hasSupportRole: vi.fn(),
-      hasADEMERole: vi.fn(),
     };
 
     mockRoleService = {

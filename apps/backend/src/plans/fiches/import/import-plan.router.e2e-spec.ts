@@ -1,6 +1,7 @@
+import { INestApplication } from '@nestjs/common';
 import { getAuthUser, getTestApp, getTestRouter } from '@tet/backend/test';
-import { RoleUpdateService } from '@tet/backend/users/authorizations/roles/role-update.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addAndEnableUserSupportMode } from '@tet/backend/users/users/users.test-fixture';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { inferProcedureInput } from '@trpc/server';
 import * as fs from 'node:fs';
@@ -28,17 +29,15 @@ const pathToInput = async ({
 describe('Test import PA', () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
-  let roleUpdateService: RoleUpdateService;
+  let app: INestApplication;
 
   beforeAll(async () => {
     router = await getTestRouter();
     yoloDodoUser = await getAuthUser();
-    const app = await getTestApp();
-    roleUpdateService = app.get(RoleUpdateService);
+    app = await getTestApp();
   });
 
   test('Test utilisateur non support', async () => {
-    await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
     const caller = router.createCaller({ user: yoloDodoUser });
     const pathName = './resources/nouveau-plan-valide.xlsx';
     const input = await pathToInput({ pathName, collectiviteId: 1 });
@@ -48,13 +47,16 @@ describe('Test import PA', () => {
   });
 
   test('Utilisateur support même sans droits sur la collectivité doit pouvoir importer le plan', async () => {
-    await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
+    const caller = router.createCaller({ user: yoloDodoUser });
 
-    onTestFinished(async () => {
-      await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
+    const { cleanup } = await addAndEnableUserSupportMode({
+      app,
+      caller,
+      userId: yoloDodoUser.id,
     });
 
-    const caller = router.createCaller({ user: yoloDodoUser });
+    onTestFinished(cleanup);
+
     const pathName = './resources/nouveau-plan-valide.xlsx';
     const input = await pathToInput({ pathName, collectiviteId: 50 });
 
@@ -63,12 +65,16 @@ describe('Test import PA', () => {
   });
 
   test('Test erreur budget', async () => {
-    await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
-    onTestFinished(async () => {
-      await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const { cleanup } = await addAndEnableUserSupportMode({
+      app,
+      caller,
+      userId: yoloDodoUser.id,
     });
 
-    const caller = router.createCaller({ user: yoloDodoUser });
+    onTestFinished(cleanup);
+
     const pathName = './resources/Plan_erreur_montant.xlsx';
     const input = await pathToInput({ pathName });
     await expect(() => caller.plans.fiches.import(input)).rejects.toThrowError(
@@ -82,12 +88,16 @@ describe('Test import PA', () => {
   });
 
   test('Test erreur colonne', async () => {
-    await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
-    onTestFinished(async () => {
-      await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const { cleanup } = await addAndEnableUserSupportMode({
+      app,
+      caller,
+      userId: yoloDodoUser.id,
     });
 
-    const caller = router.createCaller({ user: yoloDodoUser });
+    onTestFinished(cleanup);
+
     const pathName = './resources/Plan_erreur_colonnes.xlsx';
     const input = await pathToInput({ pathName });
     await expect(() => caller.plans.fiches.import(input)).rejects

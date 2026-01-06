@@ -1,21 +1,21 @@
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { CollectiviteMembresService } from '@tet/backend/collectivites/membres/membres.service';
 import { PersonneTagService } from '@tet/backend/collectivites/tags/personnes/personne-tag.service';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/roles/private-utilisateur-droit.table';
-import { RoleUpdateService } from '@tet/backend/users/authorizations/roles/role-update.service';
 import { CreateInvitationInput } from '@tet/backend/users/invitations/create-invitation.input';
 import { invitationPersonneTagTable } from '@tet/backend/users/invitations/invitation-personne-tag.table';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { invitationTable } from '@tet/backend/users/models/invitation.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, inArray, sql } from 'drizzle-orm';
+import { UpdateUserRoleService } from '../authorizations/update-user-role/update-user-role.service';
 
 @Injectable()
 export class InvitationService {
@@ -25,7 +25,7 @@ export class InvitationService {
     private readonly databaseService: DatabaseService,
     private readonly personneTagService: PersonneTagService,
     private readonly membresService: CollectiviteMembresService,
-    private readonly roleUpdateService: RoleUpdateService
+    private readonly roleUpdateService: UpdateUserRoleService
   ) {}
 
   async createInvitation(

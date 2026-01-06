@@ -21,6 +21,7 @@ export type DCP = {
 export interface UserDetails extends Omit<User, 'email'>, DCP {
   // email: string;
   isSupport: boolean;
+  isSupportModeEnabled: boolean;
   collectivites: CollectiviteAccess[];
   isVerified: boolean;
 }

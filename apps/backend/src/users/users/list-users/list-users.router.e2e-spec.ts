@@ -26,6 +26,7 @@ const expectedYoulouDoudouUserInfoResponse: Omit<
   prenom: 'Youlou',
   telephone: null,
   isSupport: false,
+  isSupportModeEnabled: false,
   isVerified: true,
   collectivites: [
     {

@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '@tet/backend/app.module';
 import { getTestDatabase } from '@tet/backend/test';
-import { addTestUser } from '@tet/backend/users/users/users.fixture';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { EmailService } from '@tet/backend/utils/email/email.service';
 import { Result } from '@tet/backend/utils/result.type';

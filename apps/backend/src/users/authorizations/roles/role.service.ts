@@ -1,3 +1,4 @@
+import { Injectable, Logger } from '@nestjs/common';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
 import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
@@ -5,7 +6,6 @@ import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authoriza
 import { AuthRole, AuthUser } from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { Injectable, Logger } from '@nestjs/common';
 import {
   AuditRole,
   CollectiviteAccess,
@@ -235,16 +235,23 @@ export class RoleService {
   }
 
   /**
-   * Vérifie si l'utilisateur a un rôle support
+   * Vérifie si l'utilisateur a un rôle support actif
    * @param userId identifiant de l'utilisateur
-   * @return vrai si l'utilisateur a un rôle support
+   * @return vrai si l'utilisateur a un rôle support ET que le mode support est actif
    */
   private async isSupport(userId: string): Promise<boolean> {
     const result = await this.databaseService.db
       .select()
       .from(utilisateurSupportTable)
-      .where(eq(utilisateurSupportTable.userId, userId));
-    return (result.length && result[0]?.support) || false;
+      .where(eq(utilisateurSupportTable.userId, userId))
+      .limit(1)
+      .then((data) => data[0]);
+
+    if (!result) {
+      return false;
+    }
+
+    return result.isSupport && result.isSupportModeEnabled;
   }
 
   /**

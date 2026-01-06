@@ -3,7 +3,7 @@ import { AppRouter } from '@tet/api';
 import {
   addTestUser,
   TestUserArgs,
-} from '@tet/backend/users/users/users.fixture';
+} from '@tet/backend/users/users/users.test-fixture';
 import { Dcp } from '@tet/domain/users';
 import { TRPCClient } from '@trpc/client';
 import assert from 'assert';

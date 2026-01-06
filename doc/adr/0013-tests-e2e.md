@@ -124,7 +124,7 @@ Il est souvent nécessaire de placer la base de données dans un état spécifiq
 
 - Les tests doivent être autant que possible isolés les uns des autres en créant (et supprimant) les données de test associées (collectivité, utilisateur, etc). En d'autre termes, les données de seed ne doivent pas sauf exception être utilisées.
 - L'utilisation des endpoints tRPC est à privilégier au maximum lorsque cela est possible. 
-- En revanche, lorsque la logique est purement propre aux tests (ex: création de collectivité de tests ce qui n'a pas de sens d'être exposé en tRPC), l'utilisation de fonctions typescript utilisant drizzle est recommandée. Ces fonctions seront placées dans la partie backend et exposées dans le domaine afin de pouvoir être utilisées à la fois dans les tests backend et dans les tests e2e (exemple: [création de collectivité de test](../../apps/backend/src/collectivites/fixtures/collectivites.fixtures.ts))
+- En revanche, lorsque la logique est purement propre aux tests (ex: création de collectivité de tests ce qui n'a pas de sens d'être exposé en tRPC), l'utilisation de fonctions typescript utilisant drizzle est recommandée. Ces fonctions seront placées dans la partie backend et exposées dans le domaine afin de pouvoir être utilisées à la fois dans les tests backend et dans les tests e2e (exemple: [création de collectivité de test](../../apps/backend/src/collectivites/fixtures/collectivites.test-fixtures.ts))
 
 L'accès aux endpoints tRPC est facilité par un [fixture service](../../e2e/tests/users/users.fixture.ts) mettant à disposition des fonctions permettant la mise en place de données de test et leur suppression automatique.
 
