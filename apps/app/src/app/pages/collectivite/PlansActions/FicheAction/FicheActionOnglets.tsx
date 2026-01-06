@@ -69,7 +69,7 @@ const FicheActionOnglets = ({
     {
       label: 'Notes',
       isVisible: true,
-      render: () => <NotesView isReadonly={isReadonly} fiche={fiche} />,
+      render: () => <NotesView />,
     },
     {
       label: 'Moyens',

@@ -1,9 +1,11 @@
-import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
+import {
+  FicheNote,
+  FicheNoteUpsert,
+  FicheWithRelations,
+} from '@tet/domain/plans';
 import { Button, Card, Icon, RichTextEditor } from '@tet/ui';
 import { format } from 'date-fns';
 import { useState } from 'react';
-import { DeletedNote } from '../data/use-delete-note';
-import { EditedNote } from '../data/use-upsert-note';
 import { NoteDeletionModal } from './note-deletion.modal';
 import { NoteEditionModal } from './note-edition.modal';
 
@@ -11,8 +13,8 @@ type NoteCardProps = {
   isReadonly?: boolean;
   fiche: FicheWithRelations;
   note: FicheNote;
-  onEdit: (editedNote: EditedNote) => void;
-  onDelete: (deletedNote: DeletedNote) => void;
+  onEdit: (editedNote: FicheNoteUpsert) => void;
+  onDelete: (noteToDeleteId: number) => void;
 };
 
 const NoteCard = ({

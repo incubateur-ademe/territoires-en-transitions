@@ -15,9 +15,10 @@ import {
   TableConfig,
 } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
-import { isNil } from 'es-toolkit';
+import { isNil, partition } from 'es-toolkit';
 import { toCamel } from 'ts-case-convert';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
+import { ficheActionNoteTable } from '../fiche-action-note/fiche-action-note.table';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
 import { NotifyPiloteService } from '../notify-pilote/notify-pilote.service';
 import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
@@ -103,6 +104,7 @@ export default class UpdateFicheService {
       fichesLiees,
       effetsAttendus,
       libreTags,
+      notes,
       sharedWithCollectivites,
       tempsDeMiseEnOeuvre,
       ...unsafeFicheAction
@@ -373,6 +375,67 @@ export default class UpdateFicheService {
             )
             .returning();
         }
+      }
+
+      if (notes) {
+        const [maybeNotesToUpdate, notesToCreate] = partition(
+          notes,
+          (note) => note.id !== undefined
+        );
+
+        const notesToDelete = (existingFicheAction.notes ?? [])?.filter(
+          (note) => !notes.some((n) => n.id === note.id)
+        );
+
+        await Promise.all(
+          notesToDelete?.map(async (note) => {
+            await transaction
+              .delete(ficheActionNoteTable)
+              .where(eq(ficheActionNoteTable.id, note.id as number));
+          })
+        );
+
+        const notesToUpdate = maybeNotesToUpdate.filter((note) => {
+          const existingNote = existingFicheAction.notes?.find(
+            (n) => n.id === note.id
+          );
+          if (!existingNote) {
+            return false;
+          }
+          const mustBeUpdated =
+            existingNote.dateNote !== note.dateNote ||
+            existingNote.note !== note.note;
+          return mustBeUpdated;
+        });
+
+        await Promise.all(
+          notesToUpdate.map(async (note) => {
+            await transaction
+              .update(ficheActionNoteTable)
+              .set({
+                note: note.note,
+                dateNote: note.dateNote,
+                modifiedBy: user.id,
+                modifiedAt: new Date().toISOString(),
+              })
+              .where(eq(ficheActionNoteTable.id, note.id as number));
+          })
+        );
+
+        await Promise.all(
+          notesToCreate.map(async (note) => {
+            await transaction
+              .insert(ficheActionNoteTable)
+              .values({
+                ficheId: ficheId,
+                dateNote: note.dateNote,
+                note: note.note,
+                createdBy: user.id,
+                modifiedBy: user.id,
+              })
+              .returning();
+          })
+        );
       }
 
       if (sharedWithCollectivites !== undefined) {

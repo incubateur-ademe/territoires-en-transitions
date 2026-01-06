@@ -585,6 +585,51 @@ describe('UpdateFicheService', () => {
       });
     });
 
+    it('should update notes relations in the database', async () => {
+      const data: UpdateFicheRequest = {
+        notes: [
+          {
+            dateNote: '2024-01-15T00:00:00.000Z',
+            note: 'Première note de suivi',
+          },
+          {
+            dateNote: '2024-02-20T00:00:00.000Z',
+            note: 'Deuxième note importante',
+          },
+        ],
+      };
+
+      const fiche = await updateFiche(data);
+
+      expect(fiche.notes).toHaveLength(2);
+      expect(fiche.notes).toContainEqual(
+        expect.objectContaining({
+          dateNote: '2024-01-15',
+          note: 'Première note de suivi',
+        })
+      );
+      expect(fiche.notes).toContainEqual(
+        expect.objectContaining({
+          dateNote: '2024-02-20',
+          note: 'Deuxième note importante',
+        })
+      );
+
+      // Test updating with empty array
+      const emptyData: UpdateFicheRequest = {
+        notes: [],
+      };
+      const ficheWithEmptyNotes = await updateFiche(emptyData);
+      expect(ficheWithEmptyNotes.notes).toBeNull();
+
+      // Test updating with null
+      const nullData: UpdateFicheRequest = {
+        notes: null,
+      };
+      const ficheWithNullNotes = await updateFiche(nullData);
+      expect(ficheWithNullNotes.notes).toBeNull();
+    });
+
     it('should add and remove a parent relation between two fiches', async () => {
       const [parentFiche] = await db.db
         .insert(ficheActionTable)

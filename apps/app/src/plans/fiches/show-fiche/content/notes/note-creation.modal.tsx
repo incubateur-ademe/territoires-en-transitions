@@ -1,4 +1,4 @@
-import { FicheWithRelations } from '@tet/domain/plans';
+import { FicheNoteUpsert, FicheWithRelations } from '@tet/domain/plans';
 import {
   Alert,
   Button,
@@ -10,14 +10,13 @@ import {
 } from '@tet/ui';
 import { useState } from 'react';
 import { BaseUpdateFicheModal } from '../../components/base-update-fiche.modal';
-import { EditedNote } from '../../data/use-upsert-note';
 import { getYearsOptions } from '../../utils';
 
 type NoteCreationModalProps = {
   isOpen: boolean;
   fiche: FicheWithRelations;
   setIsOpen: (opened: boolean) => void;
-  onEdit: (editedNote: EditedNote) => void;
+  onEdit: (editedNote: FicheNoteUpsert) => void;
 };
 
 export const NoteCreationModal = ({
@@ -33,7 +32,7 @@ export const NoteCreationModal = ({
 
   const handleSave = () => {
     if (note !== undefined && note.trim().length > 0 && year !== undefined) {
-      onEdit({ note, year });
+      onEdit({ note, dateNote: `${year}-01-01` });
     }
   };
 

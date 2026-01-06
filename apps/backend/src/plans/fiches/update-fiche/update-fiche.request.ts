@@ -9,7 +9,12 @@ import {
 } from '@tet/domain/collectivites';
 
 import { indicateurDefinitionSchema } from '@tet/domain/indicateurs';
-import { axeSchema, ficheSchema, ficheSchemaUpdate } from '@tet/domain/plans';
+import {
+  axeSchema,
+  ficheNoteUpsertSchema,
+  ficheSchema,
+  ficheSchemaUpdate,
+} from '@tet/domain/plans';
 import { actionRelationSchema } from '@tet/domain/referentiels';
 import {
   effetAttenduSchema,
@@ -66,6 +71,7 @@ export const updateFicheRequestSchema = ficheSchemaUpdate.extend({
   fichesLiees: ficheSchema.pick({ id: true }).array().nullish(),
   effetsAttendus: effetAttenduSchema.pick({ id: true }).array().nullish(),
   libreTags: libreTagSchema.pick({ id: true }).array().nullish(),
+  notes: z.array(ficheNoteUpsertSchema).nullish(),
 });
 
 export type UpdateFicheRequest = z.infer<typeof updateFicheRequestSchema>;

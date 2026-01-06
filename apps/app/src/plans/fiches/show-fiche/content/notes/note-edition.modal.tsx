@@ -1,4 +1,8 @@
-import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
+import {
+  FicheNote,
+  FicheNoteUpsert,
+  FicheWithRelations,
+} from '@tet/domain/plans';
 import {
   Field,
   FormSectionGrid,
@@ -8,7 +12,6 @@ import {
 } from '@tet/ui';
 import { useState } from 'react';
 import { BaseUpdateFicheModal } from '../../components/base-update-fiche.modal';
-import { EditedNote } from '../../data/use-upsert-note';
 import { getYearsOptions } from '../../utils';
 
 type NoteEditionModalProps = {
@@ -16,7 +19,7 @@ type NoteEditionModalProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
   editedNote: FicheNote;
-  onEdit: (editedNote: EditedNote) => void;
+  onEdit: (editedNote: FicheNoteUpsert) => void;
 };
 
 export const NoteEditionModal = ({
@@ -33,13 +36,16 @@ export const NoteEditionModal = ({
     new Date(editedNote.dateNote).getFullYear()
   );
   const [note, setNote] = useState<string>(editedNote.note);
-
   const handleSave = () => {
     if (
       note.trim().length > 0 &&
       (note !== editedNote.note || year !== initialYear)
     ) {
-      onEdit({ id: editedNote.id, note, year });
+      onEdit({
+        ...editedNote,
+        note,
+        dateNote: `${year}-01-01`,
+      });
     }
   };
 
@@ -47,9 +53,11 @@ export const NoteEditionModal = ({
     <BaseUpdateFicheModal
       openState={{ isOpen, setIsOpen }}
       fiche={fiche}
-      title="Modifier la note"
+      title="Modifier la noteeee"
       subTitle={`Note ${year}${
-        editedNote.createdAt ? ` créée par ${editedNote.createdBy}` : ''
+        editedNote.createdBy
+          ? ` créée par ${editedNote.createdBy.prenom} ${editedNote.createdBy.nom}`
+          : ''
       }`}
       size="lg"
       render={({ descriptionId }) => (

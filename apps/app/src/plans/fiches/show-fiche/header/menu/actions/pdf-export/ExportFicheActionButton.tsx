@@ -8,7 +8,6 @@ import { Event, useEventTracker } from '@tet/ui';
 import { mapValues } from 'es-toolkit';
 import { createElement, useEffect, useState } from 'react';
 import { useGetEtapes } from '../../../../content/etapes/use-get-etapes';
-import { useGetFicheNotes } from '../../../../data/use-get-fiche-notes';
 import { useAnnexesFicheActionInfos } from '../../../../data/useAnnexesFicheActionInfos';
 import { useFichesActionLiees } from '../../../../data/useFichesActionLiees';
 import { useFicheActionChemins } from '../../../../data/usePlanActionChemin';
@@ -31,20 +30,18 @@ export const FicheActionPdfContent = ({
     (fiche.axes ?? []).map((axe) => axe.id)
   );
 
-  const {
-    data: { data: indicateursListe } = {},
-    isLoading: isLoadingIndicateurs,
-  } = useListIndicateurs(
-    {
-      collectiviteId,
-      filters: {
-        indicateurIds: fiche.indicateurs?.map((ind) => ind.id),
+  const { data: indicateursListe, isLoading: isLoadingIndicateurs } =
+    useListIndicateurs(
+      {
+        collectiviteId,
+        filters: {
+          indicateurIds: fiche.indicateurs?.map((ind) => ind.id),
+        },
       },
-    },
-    {
-      enabled: options.indicateurs.isChecked && !!fiche.indicateurs?.length,
-    }
-  );
+      {
+        enabled: options.indicateurs.isChecked && !!fiche.indicateurs?.length,
+      }
+    );
 
   const { fiches: fichesLiees, isLoading: isLoadingFichesLiees } =
     useFichesActionLiees({
@@ -64,11 +61,6 @@ export const FicheActionPdfContent = ({
   const { data: annexes, isLoading: isLoadingAnnexes } =
     useAnnexesFicheActionInfos(fiche.id, options.documents.isChecked);
 
-  const { data: notes, isLoading: isLoadingNotes } = useGetFicheNotes(
-    fiche,
-    options.notes.isChecked
-  );
-
   const { data: etapes, isLoading: isLoadingEtapes } = useGetEtapes(
     fiche.id,
     options.etapes.isChecked
@@ -84,7 +76,6 @@ export const FicheActionPdfContent = ({
     isLoadingActionsLiees ||
     isLoadingAxes ||
     isLoadingAnnexes ||
-    isLoadingNotes ||
     isLoadingEtapes ||
     isLoadingBudget;
 
@@ -102,7 +93,7 @@ export const FicheActionPdfContent = ({
           fichesLiees,
           actionsLiees: fiche?.mesures?.length ? actionsLiees ?? [] : [],
           annexes,
-          notes,
+          notes: fiche?.notes ?? [],
           budgets,
         })
       );

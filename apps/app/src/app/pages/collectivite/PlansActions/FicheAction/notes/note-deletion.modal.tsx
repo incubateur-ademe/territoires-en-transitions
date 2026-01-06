@@ -1,7 +1,7 @@
+import { DeletedNote } from '@/app/plans/fiches/show-fiche/data/use-delete-note';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
 import { ModalFooterOKCancel } from '@tet/ui';
-import { DeletedNote } from '../data/use-delete-note';
 import BaseUpdateFicheModal from '../FicheActionPlanning/base-update-fiche-modal';
 
 type NoteDeletionModalProps = {

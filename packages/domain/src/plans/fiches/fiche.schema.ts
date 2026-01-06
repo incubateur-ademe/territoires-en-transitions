@@ -14,6 +14,7 @@ import {
   thematiqueSchema,
 } from '../../shared';
 import { cibleEnumValues } from './cible.enum.schema';
+import { ficheNoteSchema } from './fiche-note.schema';
 import { participationCitoyenneEnumValues } from './participation-citoyenne.enum.schema';
 import { piliersEciEnumSchema } from './pilier-eci.enum.schema';
 import { prioriteEnumValues } from './priorite.enum.schema';
@@ -177,14 +178,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .array()
     .nullable()
     .describe('Etapes'),
-  notes: z
-    .object({
-      note: z.string(),
-      dateNote: z.string(),
-    })
-    .array()
-    .nullable()
-    .describe('Notes'),
+  notes: z.array(ficheNoteSchema).nullable().describe('Notes'),
   mesures: z
     .object({
       id: z.string(),

@@ -1,5 +1,5 @@
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
-import { FicheWithRelations } from '@tet/domain/plans';
+import { FicheNoteUpsert, FicheWithRelations } from '@tet/domain/plans';
 import {
   Alert,
   Button,
@@ -10,14 +10,13 @@ import {
   Select,
 } from '@tet/ui';
 import { useState } from 'react';
-import { EditedNote } from '../data/use-upsert-note';
 import BaseUpdateFicheModal from '../FicheActionPlanning/base-update-fiche-modal';
 
 type NoteCreationModalProps = {
   isOpen: boolean;
   fiche: FicheWithRelations;
   setIsOpen: (opened: boolean) => void;
-  onEdit: (editedNote: EditedNote) => void;
+  onEdit: (editedNote: FicheNoteUpsert) => void;
 };
 
 export const NoteCreationModal = ({
@@ -33,7 +32,7 @@ export const NoteCreationModal = ({
 
   const handleSave = () => {
     if (note !== undefined && note.trim().length > 0 && year !== undefined) {
-      onEdit({ note, year });
+      onEdit({ note, dateNote: `${year}-01-01` });
     }
   };
 
