@@ -23,7 +23,7 @@ enum ColumnNames {
   Axe = 'Axe (x)',
   SousAxe = 'Sous-axe (x.x)',
   SousSousAxe = 'Sous-sous axe (x.x.x)',
-  TitreFicheAction = 'Titre de la fiche action',
+  TitreFicheAction = "Titre de l'action",
   Descriptif = 'Descriptif',
   InstancesGouvernance = 'Instances de gouvernance',
   Objectifs = 'Objectifs',
@@ -51,10 +51,10 @@ enum ColumnNames {
   DateFin = 'Date de fin',
   ActionAmeliorationContinue = 'Action en amélioration continue',
   Calendrier = 'Calendrier',
-  ActionsLiees = 'Actions liées',
-  FichesPlansLiees = 'Fiches des plans liées',
+  ActionsLiees = 'Mesures liées',
+  FichesPlansLiees = 'Actions des plans liées',
   Notes = 'Notes',
-  EtapesFicheAction = 'Etapes de la fiche action',
+  EtapesFicheAction = "Etapes de l'action",
   DocumentsLiens = 'Documents et liens',
 }
 
