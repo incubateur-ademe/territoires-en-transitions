@@ -124,6 +124,7 @@ export default class SheetService {
     const copyOptions: drive_v3.Params$Resource$Files$Copy = {
       auth: authClient,
       fileId: fileId,
+      supportsAllDrives: true,
       requestBody: {
         name: copyTitle,
         parents: parents,
