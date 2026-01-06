@@ -1,5 +1,5 @@
-import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.fixture';
-import { TestUserArgs } from '@tet/backend/users/users/users.fixture';
+import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { TestUserArgs } from '@tet/backend/users/users/users.test-fixture';
 import { Collectivite } from '@tet/domain/collectivites';
 import { FixtureFactory } from 'tests/shared/fixture-factory.interface';
 import { testWithUsers, Users } from 'tests/users/users.fixture';

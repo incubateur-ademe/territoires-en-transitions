@@ -3,7 +3,7 @@ import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/model
 import {
   addTestUser,
   TestUserArgs,
-} from '@tet/backend/users/users/users.fixture';
+} from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import {
   Collectivite,

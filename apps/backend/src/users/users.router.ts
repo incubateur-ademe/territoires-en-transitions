@@ -1,6 +1,7 @@
-import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { ApikeysRouter } from './apikeys/apikeys.router';
+import { UpdateUserRoleRouter } from './authorizations/update-user-role/update-user-role.router';
 import { InvitationsRouter } from './invitations/invitations.router';
 import { ListUsersService } from './users/list-users/list-users.service';
 import {
@@ -15,12 +16,14 @@ export class UsersRouter {
     private readonly listUsersService: ListUsersService,
     private readonly updateUserService: UpdateUserService,
     private readonly invitationRouter: InvitationsRouter,
-    private readonly apikeysRouter: ApikeysRouter
+    private readonly apikeysRouter: ApikeysRouter,
+    private readonly updateUserRoleRouter: UpdateUserRoleRouter
   ) {}
 
   router = this.trpc.router({
     invitations: this.invitationRouter.router,
     apikeys: this.apikeysRouter.router,
+    authorizations: this.trpc.mergeRouters(this.updateUserRoleRouter.router),
 
     getDetails: this.trpc.authedProcedure.query(({ ctx: { user } }) =>
       this.listUsersService.getUserWithAccesses(user)

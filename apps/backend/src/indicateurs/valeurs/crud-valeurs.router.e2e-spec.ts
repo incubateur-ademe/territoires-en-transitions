@@ -4,7 +4,7 @@ import {
   getCollectiviteIdBySiren,
   getIndicateurIdByIdentifiant,
 } from '@tet/backend/test';
-import { addTestUser } from '@tet/backend/users/users/users.fixture';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { and, eq } from 'drizzle-orm';

@@ -1,8 +1,10 @@
+import { INestApplication } from '@nestjs/common';
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles/utilisateur-verifie.table';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import {
   CollectiviteAccessLevel,
   CollectiviteAccessLevelEnum,
@@ -10,6 +12,7 @@ import {
 } from '@tet/domain/users';
 import assert from 'assert';
 import { and, count, eq, sql } from 'drizzle-orm';
+import { UpdateUserRoleService } from '../authorizations/update-user-role/update-user-role.service';
 
 export type TestUserArgs = {
   collectiviteId?: number | null;
@@ -138,4 +141,72 @@ export async function addTestUser(
 const VOWELS = ['a', 'e', 'i', 'o', 'u', 'y'];
 function randomVowel() {
   return VOWELS[Math.floor(Math.random() * (VOWELS.length - 1))];
+}
+
+export async function addUserRoleSupport({
+  app,
+  userId,
+  isSupport = true,
+}: {
+  app: INestApplication;
+  userId: string;
+  isSupport?: boolean;
+}) {
+  const updateRoleService = app.get(UpdateUserRoleService);
+  await updateRoleService.setIsSupport(userId, isSupport);
+
+  const cleanup = async () => {
+    await updateRoleService.setIsSupport(userId, false);
+  };
+
+  return {
+    cleanup,
+  };
+}
+
+export async function enableUserSupportMode({
+  caller,
+}: {
+  caller: ReturnType<TrpcRouter['createCaller']>;
+}) {
+  await caller.users.authorizations.toggleSupportMode({
+    isEnabled: true,
+  });
+
+  const cleanup = async () => {
+    await caller.users.authorizations.toggleSupportMode({
+      isEnabled: false,
+    });
+  };
+
+  return {
+    cleanup,
+  };
+}
+
+export async function addAndEnableUserSupportMode({
+  app,
+  caller,
+  userId,
+}: {
+  app: INestApplication;
+  caller: ReturnType<TrpcRouter['createCaller']>;
+  userId: string;
+}) {
+  const { cleanup: cleanupAddUserRoleSupport } = await addUserRoleSupport({
+    app,
+    userId,
+  });
+  const { cleanup: cleanupEnableUserSupportMode } = await enableUserSupportMode(
+    { caller }
+  );
+
+  const cleanup = async () => {
+    await cleanupEnableUserSupportMode();
+    await cleanupAddUserRoleSupport();
+  };
+
+  return {
+    cleanup,
+  };
 }

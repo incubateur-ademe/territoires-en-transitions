@@ -42,18 +42,17 @@ export const makeCollectiviteNav = ({
   user,
   currentCollectivite,
   collectivites,
-  isDemoMode,
   panierId,
 }: {
   user: UserWithCollectiviteAccesses;
   currentCollectivite: CollectiviteAccess;
   collectivites: CollectiviteAccess[];
-  isDemoMode: boolean;
   panierId?: string;
 }): HeaderProps['mainNav'] => {
   const collectiviteId = currentCollectivite.collectiviteId;
 
-  const isSupport = user.isSupport && !isDemoMode;
+  // Le support est actif si l'utilisateur a le rôle support ET que le mode support est actif
+  const isSupport = user.isSupport && user.isSupportModeEnabled;
 
   const isVisitor = getIsVisitor({
     niveauAcces: currentCollectivite.niveauAcces,

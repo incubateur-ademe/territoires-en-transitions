@@ -14,9 +14,7 @@ export const UserProviderStoreClient = ({
   const { user, setUser } = useUserContext();
 
   useEffect(() => {
-    if (newUser.id !== user?.id) {
-      setUser(newUser);
-    }
+    setUser(newUser);
   }, [newUser, user, setUser]);
 
   return children;

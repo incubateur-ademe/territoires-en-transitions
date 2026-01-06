@@ -4,15 +4,13 @@ import {
   ImportPlanModal,
   ImportPlanProps,
 } from '@/app/plans/plans/import-plan/import-plan.modal';
-import { useDemoMode } from '@/app/users/demo-mode-support-provider';
-import { useUser } from '@tet/api/users';
+import { useSupportMode } from '@/app/users/authorizations/support-mode/support-mode.provider';
 import { Button } from '@tet/ui';
 
 export const ImportPlanButton = ({ collectiviteId }: ImportPlanProps) => {
-  const user = useUser();
-  const isDemoMode = useDemoMode();
+  const { isSupportModeEnabled } = useSupportMode();
 
-  if (user.isSupport === false || isDemoMode.isDemoMode === true) {
+  if (!isSupportModeEnabled) {
     return null;
   }
 

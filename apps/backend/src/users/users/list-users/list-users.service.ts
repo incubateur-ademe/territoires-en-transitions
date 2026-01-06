@@ -1,12 +1,12 @@
-import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
-import { AuthUser } from '@tet/backend/users/models/auth.models';
-import { dcpTable } from '@tet/backend/users/models/dcp.table';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { UserWithCollectiviteAccesses } from '@tet/domain/users';
 import { and, eq, inArray, sql, SQL, SQLWrapper } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
@@ -63,7 +63,8 @@ export class ListUsersService {
         telephone: dcpTable.telephone,
         cguAccepteesLe: dcpTable.cguAccepteesLe,
         isVerified: sql<boolean>`coalesce(${utilisateurVerifieTable.verifie}, false)`,
-        isSupport: sql<boolean>`coalesce(${utilisateurSupportTable.support}, false)`,
+        isSupport: sql<boolean>`coalesce(${utilisateurSupportTable.isSupport}, false)`,
+        isSupportModeEnabled: sql<boolean>`coalesce(${utilisateurSupportTable.isSupportModeEnabled}, false) AND coalesce(${utilisateurSupportTable.isSupport}, false)`,
       })
       .from(authUsersTable)
       .innerJoin(dcpTable, eq(dcpTable.userId, authUsersTable.id))

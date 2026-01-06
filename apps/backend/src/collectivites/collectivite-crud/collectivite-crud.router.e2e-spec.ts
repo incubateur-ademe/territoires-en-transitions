@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import {
@@ -6,8 +7,11 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
-import { RoleUpdateService } from '@tet/backend/users/authorizations/roles/role-update.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import {
+  addAndEnableUserSupportMode,
+  addUserRoleSupport,
+} from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { collectiviteTypeEnum } from '@tet/domain/collectivites';
@@ -23,19 +27,23 @@ const sirenEPCI = '255600793';
 describe('Test upsert collectivite', () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
+  let app: INestApplication;
   let databaseService: DatabaseService;
-  let roleUpdateService: RoleUpdateService;
 
   beforeAll(async () => {
     router = await getTestRouter();
     yoloDodoUser = await getAuthUser();
-    const app = await getTestApp();
+    app = await getTestApp();
     databaseService = await getTestDatabase(app);
-    roleUpdateService = app.get(RoleUpdateService);
   });
 
-  test('Test utilisateur non support', async () => {
-    await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
+  test('Test utilisateur support mais sans le mode support actif', async () => {
+    const { cleanup } = await addUserRoleSupport({
+      app,
+      userId: yoloDodoUser.id,
+    });
+    onTestFinished(cleanup);
+
     const caller = router.createCaller({ user: yoloDodoUser });
     const input: upsertInput = {
       type: collectiviteTypeEnum.EPCI,
@@ -51,8 +59,16 @@ describe('Test upsert collectivite', () => {
   });
 
   test('Test upsert', async () => {
-    await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
     const caller = router.createCaller({ user: yoloDodoUser });
+
+    const { cleanup } = await addAndEnableUserSupportMode({
+      app,
+      caller,
+      userId: yoloDodoUser.id,
+    });
+
+    onTestFinished(cleanup);
+
     const input: upsertInput = {
       type: collectiviteTypeEnum.EPCI,
       siren: sirenEPCI,
@@ -77,7 +93,6 @@ describe('Test upsert collectivite', () => {
 
     onTestFinished(async () => {
       try {
-        await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
         const [col] = await databaseService.db
           .select({ id: collectiviteTable.id })
           .from(collectiviteTable)
@@ -96,8 +111,16 @@ describe('Test upsert collectivite', () => {
 
   describe('Test getAdditionalInformation', async () => {
     test('EPCI', async () => {
-      await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
       const caller = router.createCaller({ user: yoloDodoUser });
+
+      const { cleanup } = await addAndEnableUserSupportMode({
+        app,
+        caller,
+        userId: yoloDodoUser.id,
+      });
+
+      onTestFinished(cleanup);
+
       const input: upsertInput = {
         type: collectiviteTypeEnum.EPCI,
         siren: sirenEPCI,
@@ -115,18 +138,18 @@ describe('Test upsert collectivite', () => {
         natureInsee: 'SMF',
         population: 176457,
       });
-      onTestFinished(async () => {
-        try {
-          await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
-        } catch (error) {
-          console.error('Erreur lors de la remise à zéro des données.', error);
-        }
-      });
     });
 
     test('Commune', async () => {
-      await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
       const caller = router.createCaller({ user: yoloDodoUser });
+      const { cleanup } = await addAndEnableUserSupportMode({
+        app,
+        caller,
+        userId: yoloDodoUser.id,
+      });
+
+      onTestFinished(cleanup);
+
       const input: upsertInput = {
         type: collectiviteTypeEnum.COMMUNE,
         communeCode: '01001',
@@ -143,18 +166,18 @@ describe('Test upsert collectivite', () => {
         departementCode: '01',
         population: 798,
       });
-      onTestFinished(async () => {
-        try {
-          await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
-        } catch (error) {
-          console.error('Erreur lors de la remise à zéro des données.', error);
-        }
-      });
     });
 
     test('Département', async () => {
-      await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
       const caller = router.createCaller({ user: yoloDodoUser });
+
+      const { cleanup } = await addAndEnableUserSupportMode({
+        app,
+        caller,
+        userId: yoloDodoUser.id,
+      });
+      onTestFinished(cleanup);
+
       const input: upsertInput = {
         type: collectiviteTypeEnum.DEPARTEMENT,
         departementCode: '31',
@@ -170,18 +193,18 @@ describe('Test upsert collectivite', () => {
         regionCode: '76',
         population: 1423290,
       });
-      onTestFinished(async () => {
-        try {
-          await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
-        } catch (error) {
-          console.error('Erreur lors de la remise à zéro des données.', error);
-        }
-      });
     });
 
     test('Region', async () => {
-      await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
       const caller = router.createCaller({ user: yoloDodoUser });
+
+      const { cleanup } = await addAndEnableUserSupportMode({
+        app,
+        caller,
+        userId: yoloDodoUser.id,
+      });
+      onTestFinished(cleanup);
+
       const input: upsertInput = {
         type: collectiviteTypeEnum.REGION,
         regionCode: '76',
@@ -195,13 +218,6 @@ describe('Test upsert collectivite', () => {
         regionCode: '76',
         nom: 'Occitanie',
         population: 6057827,
-      });
-      onTestFinished(async () => {
-        try {
-          await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
-        } catch (error) {
-          console.error('Erreur lors de la remise à zéro des données.', error);
-        }
       });
     });
   });

@@ -7,9 +7,7 @@ import { ReactNode, useEffect } from 'react';
 import { Header } from '@/app/ui/layout/header/header';
 import { SidePanel } from '@/app/ui/layout/side-panel/side-panel';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
-import { useDemoMode } from '@/app/users/demo-mode-support-provider';
-import { useUser } from '@tet/api/users';
-import { Alert, Checkbox, FooterTeT, useOnlineStatus } from '@tet/ui';
+import { Alert, FooterTeT, useOnlineStatus } from '@tet/ui';
 
 /**
  * Permet de faire matcher la largeur du panneau avec son emplacement dans la grille.
@@ -28,11 +26,7 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
 
   const pathname = usePathname();
 
-  const user = useUser();
-
   const isOnline = useOnlineStatus();
-
-  const { isDemoMode, toggleDemoMode } = useDemoMode();
 
   useEffect(() => {
     // A chaque changement de page, on ferme le panneau sauf si la page suivante
@@ -46,13 +40,15 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
   return (
     <>
       {!isOnline && (
-        <Alert
-          className="sticky top-0 z-tooltip"
-          state="error"
-          customIcon="cloud-off-line"
-          title="Erreur de connexion réseau. Veuillez attendre que votre connexion soit rétablie pour utiliser l'application."
-        />
+        <div className="sticky top-0 z-tooltip">
+          <Alert
+            state="error"
+            customIcon="cloud-off-line"
+            title="Erreur de connexion réseau. Veuillez attendre que votre connexion soit rétablie pour utiliser l'application."
+          />
+        </div>
       )}
+
       <Header />
       {/** min-h-screen ici afin que le footer soit toujours sous le viewport.
        * Idéalement il faudrait enlever la hauteur du header, mais c'est rajouter de la complexité pour pas grand chose. */}
@@ -77,18 +73,6 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
         {panel.isOpen && <SidePanel />}
       </div>
       <FooterTeT id="footer" />
-      {user.isSupport && (
-        <div className="w-full max-w-8xl mx-auto px-4 pb-4">
-          <Checkbox
-            key="checkbox-demo-mode"
-            variant="switch"
-            label="Mode démo"
-            labelClassname="text-sm font-bold"
-            checked={isDemoMode}
-            onChange={toggleDemoMode}
-          />
-        </div>
-      )}
     </>
   );
 };

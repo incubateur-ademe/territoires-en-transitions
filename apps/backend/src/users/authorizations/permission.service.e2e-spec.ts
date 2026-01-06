@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import {
@@ -8,11 +9,10 @@ import {
 } from '@tet/backend/test';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
-import { RoleUpdateService } from '@tet/backend/users/authorizations/roles/role-update.service';
+import { UpdateUserRoleService } from '@tet/backend/users/authorizations/update-user-role/update-user-role.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { INestApplication } from '@nestjs/common';
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 
@@ -22,13 +22,13 @@ describe('Gestion des droits', () => {
   let yoloDodoUser: AuthenticatedUser;
   let youlouDoudouUser: AuthenticatedUser;
   let databaseService: DatabaseService;
-  let roleUpdateService: RoleUpdateService;
+  let roleUpdateService: UpdateUserRoleService;
   let collectiviteService: CollectivitesService;
 
   beforeAll(async () => {
     app = await getTestApp();
     permissionService = app.get(PermissionService);
-    roleUpdateService = app.get(RoleUpdateService);
+    roleUpdateService = app.get(UpdateUserRoleService);
     collectiviteService = app.get(CollectivitesService);
     yoloDodoUser = await getAuthUser();
     youlouDoudouUser = await getAuthUser(YOULOU_DOUDOU);
@@ -143,26 +143,7 @@ describe('Gestion des droits', () => {
         )
       ).toBeFalsy();
     });
-    test('Support sur une collectivité -> OK', async () => {
-      await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
-      expect(
-        await permissionService.isAllowed(
-          yoloDodoUser,
-          PermissionOperationEnum['COLLECTIVITES.READ'],
-          ResourceType.COLLECTIVITE,
-          20,
-          true
-        )
-      ).toBeTruthy();
 
-      onTestFinished(async () => {
-        try {
-          await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
-        } catch (error) {
-          console.error('Erreur lors de la remise à zéro des données.', error);
-        }
-      });
-    });
     test('Auditeur sur sa collectivité audité -> OK', async () => {
       expect(
         await permissionService.isAllowed(

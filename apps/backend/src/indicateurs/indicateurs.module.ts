@@ -8,7 +8,7 @@ import ComputeValeursService from '@tet/backend/indicateurs/valeurs/compute-vale
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { PersonnalisationsModule } from '../collectivites/personnalisations/personnalisations.module';
-import { AuthModule } from '../users/auth.module';
+import { AuthModule } from '../users/users.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { IndicateurChartService } from './charts/indicateur-chart.service';
 import { ListCollectiviteDefinitionsRepository } from './definitions/list-collectivite-definitions/list-collectivite-definitions.repository';
