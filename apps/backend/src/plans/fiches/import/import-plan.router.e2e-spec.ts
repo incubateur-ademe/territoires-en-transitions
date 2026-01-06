@@ -8,11 +8,17 @@ import path from 'path';
 
 type inputType = inferProcedureInput<AppRouter['plans']['fiches']['import']>;
 
-const pathToInput = async (pathName: string): Promise<inputType> => {
+const pathToInput = async ({
+  pathName,
+  collectiviteId = 1,
+}: {
+  pathName: string;
+  collectiviteId?: number;
+}): Promise<inputType> => {
   const filePath = path.resolve(__dirname, pathName);
   const buff = fs.readFileSync(filePath);
   return {
-    collectiviteId: 1,
+    collectiviteId,
     planName: 'import test',
     planType: 1,
     file: buff.toString('base64'),
@@ -41,16 +47,19 @@ describe('Test import PA', () => {
     ).rejects.toThrowError();
   });
 
-  test('Test nouveau plan', async () => {
+  test('Utilisateur support même sans droits sur la collectivité doit pouvoir importer le plan', async () => {
     await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
-    // TODO reset les données créés lors de l'import (plans, fiches, tags)
+
     onTestFinished(async () => {
-      try {
-        await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
-      } catch (error) {
-        console.error('Erreur lors de la remise à zéro des données.', error);
-      }
+      await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
     });
+
+    const caller = router.createCaller({ user: yoloDodoUser });
+    const pathName = './resources/nouveau-plan-valide.xlsx';
+    const input = await pathToInput({ pathName, collectiviteId: 50 });
+
+    const result = await caller.plans.fiches.import(input);
+    expect(result).toBe(true);
   });
 
   test('Test erreur budget', async () => {
@@ -61,7 +70,7 @@ describe('Test import PA', () => {
 
     const caller = router.createCaller({ user: yoloDodoUser });
     const pathName = './resources/Plan_erreur_montant.xlsx';
-    const input = await pathToInput(pathName);
+    const input = await pathToInput({ pathName });
     await expect(() => caller.plans.fiches.import(input)).rejects.toThrowError(
       `<strong>Erreur(s) rencontrée(s) dans le fichier Excel :</strong></br>
       <ul>
@@ -80,7 +89,7 @@ describe('Test import PA', () => {
 
     const caller = router.createCaller({ user: yoloDodoUser });
     const pathName = './resources/Plan_erreur_colonnes.xlsx';
-    const input = await pathToInput(pathName);
+    const input = await pathToInput({ pathName });
     await expect(() => caller.plans.fiches.import(input)).rejects
       .toThrowError(`<strong>Erreur rencontrée dans le fichier Excel :</strong><br>
           La colonne <em>Q</em> devrait être "<strong>Financeur 1</strong>" et non "<strong>Budget prévisionnel total € HT</strong>"<br><br>
