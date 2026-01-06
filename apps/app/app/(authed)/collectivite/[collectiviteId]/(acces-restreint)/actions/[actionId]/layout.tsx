@@ -17,6 +17,7 @@ export default async function FicheDetailPage({
   children?: ReactNode;
   params: Promise<{
     actionId: string;
+    planId?: number;
   }>;
 }) {
   const rawParams = await params;

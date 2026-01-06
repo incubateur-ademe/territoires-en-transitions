@@ -11,6 +11,7 @@ type Props = {
   isDndActive: boolean;
   ficheIds: number[];
   axeId: number;
+  planId?: number;
   collectivite: CollectiviteAccess;
 };
 
@@ -18,6 +19,7 @@ export const FichesList = ({
   isDndActive,
   ficheIds,
   axeId,
+  planId,
   collectivite,
 }: Props) => {
   const user = useUser();
@@ -65,6 +67,7 @@ export const FichesList = ({
                   ? makeCollectiviteActionUrl({
                       collectiviteId: fiche.collectiviteId,
                       ficheUid: fiche.id.toString(),
+                      planId,
                     })
                   : undefined
               }

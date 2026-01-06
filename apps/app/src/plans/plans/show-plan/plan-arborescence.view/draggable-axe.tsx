@@ -254,6 +254,7 @@ export const DraggableAxe = ({
               isDndActive={active !== null}
               ficheIds={axe.fiches}
               axeId={axe.id}
+              planId={rootAxe.id}
             />
           )}
           {childrenOfPlanNodes(axe, axes).map((axe: PlanNode) => (

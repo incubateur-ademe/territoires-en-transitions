@@ -12,6 +12,7 @@ import { ErrorPage } from '@/app/utils/error/error.page';
 import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
+import { parseAsInteger, useQueryStates } from 'nuqs';
 import { Fiche, useGetFiche } from './data/use-get-fiche';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
 import { FicheActionDescription } from './FicheActionDescription/FicheActionDescription';
@@ -137,14 +138,15 @@ const FicheActionLegacy = ({
 
 export const FicheAction = ({
   fiche: initialFiche,
-  planId,
   children,
-}: FicheActionProps) => {
+}: Omit<FicheActionProps, 'planId'>) => {
   const isImprovedUiEnabled = useImprovedFicheActionUiEnabled();
+  const [params] = useQueryStates({ planId: parseAsInteger });
+  const planId = params.planId || undefined;
 
   if (isImprovedUiEnabled) {
     return (
-      <FicheActionImprovedView fiche={initialFiche}>
+      <FicheActionImprovedView fiche={initialFiche} planId={planId}>
         {children}
       </FicheActionImprovedView>
     );

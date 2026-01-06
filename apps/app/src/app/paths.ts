@@ -373,15 +373,18 @@ export const makeCollectiviteActionUrl = ({
   collectiviteId,
   ficheUid,
   content,
+  planId,
 }: {
   collectiviteId: number;
   ficheUid: string;
   content?: FicheSectionId;
+  planId?: number;
 }) =>
   collectiviteActionPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${ficheParam}`, ficheUid)
-    .replace(':content', content ?? 'details');
+    .replace(':content', content ?? 'details')
+    .concat(planId ? `?planId=${planId}` : '');
 
 export const OPEN_AXES_KEY_SEARCH_PARAMETER = 'openAxes';
 export const makeCollectivitePlanActionUrl = ({
