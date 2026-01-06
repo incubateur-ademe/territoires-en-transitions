@@ -2,12 +2,11 @@ import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
 import { ModalFooterOKCancel } from '@tet/ui';
 import { BaseUpdateFicheModal } from '../../components/base-update-fiche.modal';
-import { DeletedNote } from '../../data/use-delete-note';
 
 type NoteDeletionModalProps = {
   fiche: FicheWithRelations;
   editedNote: FicheNote;
-  onDelete: (deletedNote: DeletedNote) => void;
+  onDelete: (deletedNoteId: number) => void;
 };
 
 export const NoteDeletionModal = ({
@@ -21,7 +20,9 @@ export const NoteDeletionModal = ({
       fiche={fiche}
       title="Supprimer la note"
       subTitle={`Note ${year}${
-        editedNote.createdAt ? ` créée par ${editedNote.createdBy}` : ''
+        editedNote.createdBy
+          ? ` créée par ${editedNote.createdBy.prenom} ${editedNote.createdBy.nom}`
+          : ''
       }`}
       render={({ descriptionId }) => (
         <div id={descriptionId}>
@@ -37,7 +38,7 @@ export const NoteDeletionModal = ({
           btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
-              onDelete({ id: editedNote.id });
+              onDelete(editedNote.id);
               close();
             },
           }}

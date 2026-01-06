@@ -49,6 +49,7 @@ import {
   TagWithCollectiviteId,
 } from '@tet/domain/collectivites';
 import {
+  FicheNote,
   FicheWithRelations,
   FicheWithRelationsAndCollectivite,
   Financeur,
@@ -528,19 +529,38 @@ export default class ListFichesService {
   }
 
   private getFicheActionNotesQuery(ficheIds: number[]) {
+    const dcpCreatedBy = aliasedTable(dcpTable, 'dcpNoteCreatedBy');
+    const dcpModifiedBy = aliasedTable(dcpTable, 'dcpNoteModifiedBy');
+
     const query = this.databaseService.db
       .select({
         ficheId: ficheActionNoteTable.ficheId,
-        notes: sql<
-          { note: string; dateNote: string }[]
-        >`array_agg(json_build_object('note', ${ficheActionNoteTable.note}, 'dateNote', ${ficheActionNoteTable.dateNote}))`.as(
-          'notes'
-        ),
+        notes: sql<FicheNote[]>`array_agg(json_build_object(
+          'note', ${ficheActionNoteTable.note},
+          'dateNote', ${ficheActionNoteTable.dateNote},
+          'id', ${ficheActionNoteTable.id},
+          'createdAt', ${ficheActionNoteTable.createdAt},
+          'modifiedAt', ${ficheActionNoteTable.modifiedAt},
+          'createdBy', CASE WHEN ${ficheActionNoteTable.createdBy} IS NULL THEN NULL
+            ELSE json_build_object('id', ${ficheActionNoteTable.createdBy}, 'prenom', ${dcpCreatedBy.prenom}, 'nom', ${dcpCreatedBy.nom})
+          END,
+          'modifiedBy', CASE WHEN ${ficheActionNoteTable.modifiedBy} IS NULL THEN NULL
+            ELSE json_build_object('id', ${ficheActionNoteTable.modifiedBy}, 'prenom', ${dcpModifiedBy.prenom}, 'nom', ${dcpModifiedBy.nom})
+          END
+        ))`.as('notes'),
         anneesNotes: sql<
           string[]
         >`array_agg(${ficheActionNoteTable.dateNote})`.as('annees_notes'),
       })
-      .from(ficheActionNoteTable);
+      .from(ficheActionNoteTable)
+      .leftJoin(
+        dcpCreatedBy,
+        eq(dcpCreatedBy.userId, ficheActionNoteTable.createdBy)
+      )
+      .leftJoin(
+        dcpModifiedBy,
+        eq(dcpModifiedBy.userId, ficheActionNoteTable.modifiedBy)
+      );
 
     query.where(inArray(ficheActionNoteTable.ficheId, ficheIds));
 

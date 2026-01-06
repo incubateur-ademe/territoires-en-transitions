@@ -1,92 +1,68 @@
-import { SharedFicheLinkedResourcesAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
 import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { useCollectiviteId } from '@tet/api/collectivites';
-import { Button, EmptyCard } from '@tet/ui';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Button, VisibleWhen } from '@tet/ui';
 import { useState } from 'react';
 import { useFicheContext } from '../../context/fiche-context';
 import { useAddAnnexe } from '../../data/useAddAnnexe';
-import { useAnnexesFicheAction } from '../../data/useAnnexesFicheAction';
+import { ContentLayout } from '../content-layout';
 import DocumentPicto from './DocumentPicto';
 import ModaleAjoutDocument from './ModaleAjoutDocument';
 
 export const DocumentsView = () => {
-  const { fiche, isReadonly } = useFicheContext();
-  const collectiviteId = useCollectiviteId();
-
-  const ficheId = fiche.id;
+  const { fiche, isReadonly, documents } = useFicheContext();
+  const collectivite = useCurrentCollectivite();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const { data: documents, isLoading: isLoadingDocuments } =
-    useAnnexesFicheAction(collectiviteId, ficheId);
-  const { isLoading, isError, addFileFromLib, addLink } = useAddAnnexe(ficheId);
-
-  const isEmpty = !documents || documents.length === 0;
+  const { isLoading, addFileFromLib, addLink } = useAddAnnexe(fiche.id);
 
   return (
     <>
-      <div className="flex justify-between">
-        <h5 className="text-primary-8 mb-0">Documents</h5>
-        {!isReadonly && !isError && (
-          <Button
-            icon={!isLoading ? 'file-download-line' : undefined}
-            size="xs"
-            variant="outlined"
-            disabled={isLoading || isLoadingDocuments}
-            onClick={() => setIsModalOpen(true)}
-          >
-            {isLoading && <SpinnerLoader className="!h-4" />}
-            Ajouter un document
-          </Button>
-        )}
-      </div>
-
-      <SharedFicheLinkedResourcesAlert
-        fiche={fiche}
-        currentCollectiviteId={collectiviteId}
-        sharedDataTitle="Documents associées"
-        sharedDataDescription="Les documents affichées correspondent à ceux de cette collectivité."
-      />
-
-      {isLoading ? (
-        <div className="h-[16rem] flex">
-          <SpinnerLoader className="m-auto" />
-        </div>
-      ) : isEmpty ? (
-        <EmptyCard
-          picto={(props) => <DocumentPicto {...props} />}
-          title="Aucun document ajouté"
+      <ContentLayout.Root>
+        <ContentLayout.SharedAlert
+          fiche={fiche}
+          collectiviteId={collectivite.collectiviteId}
+          title="Documents associés"
+          description="Les documents affichés correspondent à ceux de cette collectivité."
+        />
+        <ContentLayout.Empty
           isReadonly={isReadonly}
+          picto={(props) => <DocumentPicto {...props} />}
+          title="Aucun document n'est associé à cette action !"
+          subTitle="Centraliser l'ensemble des informations associées à l'action en déposant les documents liés"
           actions={[
             {
               children: 'Ajouter un document',
               onClick: () => setIsModalOpen(true),
             },
           ]}
-          size="xs"
         />
-      ) : (
-        <>
-          {/* Liste des documents */}
-          {isError ? (
-            <span className="text-primary-9 text-sm text-center">
-              Impossible de charger les documents...
-            </span>
-          ) : (
-            <div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {documents.map((doc) => (
-                  <CarteDocument
-                    key={doc.id}
-                    isReadonly={isReadonly}
-                    document={doc}
-                  />
-                ))}
-              </div>
-            </div>
+        <ContentLayout.Content
+          data={documents.list}
+          isLoading={documents.isLoading}
+          actions={
+            <VisibleWhen condition={!isReadonly}>
+              <Button
+                icon={!isLoading ? 'file-download-line' : undefined}
+                size="xs"
+                variant="outlined"
+                disabled={isLoading}
+                onClick={() => setIsModalOpen(true)}
+              >
+                {isLoading && <SpinnerLoader className="!h-4" />}
+                Ajouter un document
+              </Button>
+            </VisibleWhen>
+          }
+        >
+          {(doc) => (
+            <CarteDocument
+              key={doc.id}
+              isReadonly={isReadonly}
+              document={doc}
+            />
           )}
-        </>
-      )}
+        </ContentLayout.Content>
+      </ContentLayout.Root>
 
       {!isReadonly && (
         <ModaleAjoutDocument

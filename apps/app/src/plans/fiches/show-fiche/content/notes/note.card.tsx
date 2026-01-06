@@ -1,17 +1,19 @@
-import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
+import {
+  FicheNote,
+  FicheNoteUpsert,
+  FicheWithRelations,
+} from '@tet/domain/plans';
 import { Button, Card, Icon, RichTextEditor } from '@tet/ui';
 import { format } from 'date-fns';
 import { useState } from 'react';
-import { DeletedNote } from '../../data/use-delete-note';
-import { EditedNote } from '../../data/use-upsert-note';
 import { NoteDeletionModal } from './note-deletion.modal';
 import { NoteEditionModal } from './note-edition.modal';
 
 type NoteSuiviCardProps = {
   fiche: FicheWithRelations;
   note: FicheNote;
-  onEdit: (editedNote: EditedNote) => void;
-  onDelete: (deletedNote: DeletedNote) => void;
+  onEdit: (editedNote: FicheNoteUpsert) => void;
+  onDelete: (deletedNote: number) => void;
 };
 
 const NoteCard = ({ fiche, note, onEdit, onDelete }: NoteSuiviCardProps) => {
@@ -24,7 +26,7 @@ const NoteCard = ({ fiche, note, onEdit, onDelete }: NoteSuiviCardProps) => {
         <>
           <Button
             icon="edit-line"
-            title="Modifier la note"
+            title="Modifier la notee"
             variant="grey"
             size="xs"
             onClick={() => setIsModalOpen(true)}
@@ -58,17 +60,23 @@ const NoteCard = ({ fiche, note, onEdit, onDelete }: NoteSuiviCardProps) => {
         <div className="flex gap-2">
           <span className="text-grey-8 text-sm font-normal">
             <Icon icon="user-line" size="sm" className="mr-1" />
-            Créée par {note.createdBy} le{' '}
-            {format(new Date(note.createdAt), 'dd/MM/yyyy')}
+            Créée par{' '}
+            {note.createdBy
+              ? `${note.createdBy.prenom} ${note.createdBy.nom}`
+              : 'inconnu'}{' '}
+            le {format(new Date(note.createdAt), 'dd/MM/yyyy')}
           </span>
           {note.modifiedAt && note.modifiedAt !== note.createdAt && (
             <>
               <div className="w-[1px] h-4 bg-grey-5" />
               <span className="text-grey-8 text-sm font-normal">
                 <Icon icon="edit-line" size="sm" className="mr-1" />
-                Modifiée{note.modifiedBy ? ` par ${note.modifiedBy}` : ''}
+                Modifiée
+                {note.modifiedBy
+                  ? ` par ${note.modifiedBy.prenom} ${note.modifiedBy.nom}`
+                  : ''}{' '}
                 {note.modifiedAt
-                  ? ` le ${format(new Date(note.modifiedAt), 'dd/MM/yyyy')}`
+                  ? `le ${format(new Date(note.modifiedAt), 'dd/MM/yyyy')}`
                   : ''}
               </span>
             </>

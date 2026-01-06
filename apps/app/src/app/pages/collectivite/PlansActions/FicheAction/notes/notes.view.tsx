@@ -1,27 +1,33 @@
-import { FicheWithRelations } from '@tet/domain/plans';
+import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
+import { FicheNoteUpsert } from '@tet/domain/plans';
 import { Button, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
-import { useDeleteNote } from '../data/use-delete-note';
-import { useGetFicheNotes } from '../data/use-get-fiche-notes';
-import { useUpsertNote } from '../data/use-upsert-note';
 import { NoteCreationModal } from './note-creation.modal';
 import NoteCard from './note.card';
 import NotificationPicto from './notification.picto';
 
-type NotesViewProps = {
-  isReadonly: boolean;
-  fiche: FicheWithRelations;
-};
-
-export const NotesView = ({ fiche, isReadonly }: NotesViewProps) => {
+export const NotesView = () => {
+  const { fiche, isReadonly, update } = useFicheContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { mutate: updateNotes } = useUpsertNote(fiche);
-  const { mutate: deleteNote } = useDeleteNote(fiche);
-  const { data: notesData } = useGetFicheNotes(fiche);
-
-  const notes = notesData || [];
+  const notes = fiche.notes || [];
   const isEmpty = notes.length === 0;
 
+  const updateNote = (note: FicheNoteUpsert) => {
+    update({
+      ficheId: fiche.id,
+      ficheFields: {
+        notes: [...notes, note],
+      },
+    });
+  };
+  const deleteNote = (noteId: number) => {
+    update({
+      ficheId: fiche.id,
+      ficheFields: {
+        notes: notes.filter((note) => note.id !== noteId),
+      },
+    });
+  };
   return (
     <>
       {isEmpty ? (
@@ -65,8 +71,10 @@ export const NotesView = ({ fiche, isReadonly }: NotesViewProps) => {
                   key={`${note.dateNote}-${index}`}
                   fiche={fiche}
                   note={note}
-                  onEdit={updateNotes}
-                  onDelete={deleteNote}
+                  onEdit={updateNote}
+                  onDelete={(id) => {
+                    deleteNote(id);
+                  }}
                 />
               ))}
           </div>
@@ -78,7 +86,7 @@ export const NotesView = ({ fiche, isReadonly }: NotesViewProps) => {
           fiche={fiche}
           isOpen={isModalOpen && !isReadonly}
           setIsOpen={setIsModalOpen}
-          onEdit={updateNotes}
+          onEdit={updateNote}
         />
       )}
     </>

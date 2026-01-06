@@ -4,8 +4,6 @@ import { CreateFicheService } from '@tet/backend/plans/fiches/create-fiche/creat
 import { ExportPlanController } from '@tet/backend/plans/fiches/export/export-plan.controller';
 import { FicheActionBudgetRouter } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.router';
 import { FicheActionBudgetService } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.service';
-import { FicheActionNoteController } from '@tet/backend/plans/fiches/fiche-action-note/fiche-action-note.controller';
-import FicheActionNoteService from '@tet/backend/plans/fiches/fiche-action-note/fiche-action-note.service';
 import { FichesRouter } from '@tet/backend/plans/fiches/fiches.router';
 import { ListFichesRouter } from '@tet/backend/plans/fiches/list-fiches/list-fiches.router';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
@@ -55,7 +53,6 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     ExportService,
     FicheActionBudgetService,
     FicheActionBudgetRouter,
-    FicheActionNoteService,
     CreateFicheService,
     CreateFicheRouter,
     FichesRouter,
@@ -71,7 +68,6 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     BulkEditRouter,
     FicheActionBudgetService,
     FicheActionBudgetRouter,
-    FicheActionNoteService,
 
     FichesRouter,
 
@@ -87,6 +83,6 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     DeleteFicheService,
     DeleteFicheRouter,
   ],
-  controllers: [ExportPlanController, FicheActionNoteController],
+  controllers: [ExportPlanController],
 })
 export class FichesModule {}
