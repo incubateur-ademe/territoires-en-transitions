@@ -1,5 +1,5 @@
 import { getAuthUser, getTestApp, getTestRouter } from '@tet/backend/test';
-import { RoleUpdateService } from '@tet/backend/users/authorizations/roles/role-update.service';
+import { UpdateUserRoleService } from '@tet/backend/users/authorizations/update-user-role/update-user-role.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { inferProcedureInput } from '@trpc/server';
@@ -28,13 +28,13 @@ const pathToInput = async ({
 describe('Test import PA', () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
-  let roleUpdateService: RoleUpdateService;
+  let roleUpdateService: UpdateUserRoleService;
 
   beforeAll(async () => {
     router = await getTestRouter();
     yoloDodoUser = await getAuthUser();
     const app = await getTestApp();
-    roleUpdateService = app.get(RoleUpdateService);
+    roleUpdateService = app.get(UpdateUserRoleService);
   });
 
   test('Test utilisateur non support', async () => {

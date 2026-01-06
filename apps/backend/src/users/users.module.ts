@@ -1,17 +1,18 @@
+import { Global, Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtModule } from '@nestjs/jwt';
 import { ApikeysController } from '@tet/backend/users/apikeys/apikeys.controller';
 import { ApikeysRouter } from '@tet/backend/users/apikeys/apikeys.router';
 import { ApikeysService } from '@tet/backend/users/apikeys/apikeys.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { RoleUpdateService } from '@tet/backend/users/authorizations/roles/role-update.service';
 import { RoleService } from '@tet/backend/users/authorizations/roles/role.service';
 import { InvitationService } from '@tet/backend/users/invitations/invitation.service';
 import { InvitationsRouter } from '@tet/backend/users/invitations/invitations.router';
 import { ListUsersController } from '@tet/backend/users/users/list-users/list-users.controller';
-import { Global, Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtModule } from '@nestjs/jwt';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
+import { UpdateUserRoleRouter } from './authorizations/update-user-role/update-user-role.router';
+import { UpdateUserRoleService } from './authorizations/update-user-role/update-user-role.service';
 import { ConvertJwtToAuthUserService } from './convert-jwt-to-auth-user.service';
 import { AuthGuard } from './guards/auth.guard';
 import { UsersRouter } from './users.router';
@@ -39,7 +40,7 @@ import { UpdateUserService } from './users/update-user/update-user.service';
     },
     PermissionService,
     RoleService,
-    RoleUpdateService,
+    UpdateUserRoleService,
 
     ListUsersService,
     UpdateUserService,
@@ -52,11 +53,12 @@ import { UpdateUserService } from './users/update-user/update-user.service';
 
     InvitationService,
     InvitationsRouter,
+
+    UpdateUserRoleRouter,
   ],
   exports: [
     PermissionService,
     RoleService,
-    RoleUpdateService,
     ListUsersService,
     UsersRouter,
     ConvertJwtToAuthUserService,

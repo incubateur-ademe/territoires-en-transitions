@@ -2,7 +2,6 @@ import { usePathname } from 'next/navigation';
 
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
-import { useDemoMode } from '@/app/users/demo-mode-support-provider';
 import { useCollectiviteContext } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { DSFRCompliancyComponent, Header as HeaderTet } from '@tet/ui';
@@ -15,8 +14,6 @@ export const Header = () => {
   const pathname = usePathname();
 
   const user = useUser();
-
-  const { isDemoMode } = useDemoMode();
 
   const { collectivite } = useCollectiviteContext();
 
@@ -39,7 +36,6 @@ export const Header = () => {
         mainNav={makeMainNav({
           user,
           currentCollectivite: collectivite,
-          isDemoMode,
           panierId: panier?.panierId,
         })}
         secondaryNav={makeSecondaryNav(user)}

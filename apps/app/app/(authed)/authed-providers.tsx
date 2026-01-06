@@ -1,7 +1,7 @@
 'use client';
 
 import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
-import { DemoModeProvider } from '@/app/users/demo-mode-support-provider';
+import { SupportModeProvider } from '@/app/users/authorizations/support-mode/support-mode.provider';
 import { NPSTracker } from '@/app/utils/nps/nps-tracker';
 import { Toasters } from '@/app/utils/toast/toasters';
 import { CollectiviteProvider } from '@tet/api/collectivites';
@@ -24,12 +24,12 @@ export function AuthedProviders({
   return (
     <UserProviderStoreClient user={user}>
       <CollectiviteProvider user={user}>
-        <DemoModeProvider>
+        <SupportModeProvider>
           <Toasters />
           <NPSTracker />
           <AccepterCGUModal />
           {children}
-        </DemoModeProvider>
+        </SupportModeProvider>
       </CollectiviteProvider>
       <Stonly />
     </UserProviderStoreClient>

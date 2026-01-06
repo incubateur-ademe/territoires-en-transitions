@@ -16,6 +16,7 @@ export const UserWithCollectiviteAccessesSchema = z.object({
   newEmail: z.string().optional().nullable(),
   isVerified: z.boolean(),
   isSupport: z.boolean(),
+  isSupportModeEnabled: z.boolean(),
   collectivites: z.array(collectiviteAccessSchema),
 });
 

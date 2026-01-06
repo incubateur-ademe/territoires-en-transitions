@@ -6,5 +6,8 @@ export const utilisateurSupportTable = pgTable('utilisateur_support', {
     .primaryKey()
     .notNull()
     .references(() => dcpTable.userId, { onDelete: 'cascade' }),
-  support: boolean('support').default(false).notNull(),
+  isSupport: boolean('support').default(false).notNull(),
+  isSupportModeEnabled: boolean('is_support_mode_enabled')
+    .default(false)
+    .notNull(),
 });
