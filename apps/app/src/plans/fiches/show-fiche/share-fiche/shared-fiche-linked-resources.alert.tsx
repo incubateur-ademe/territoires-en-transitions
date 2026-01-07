@@ -26,7 +26,6 @@ export const SharedFicheLinkedResourcesAlert = ({
         {`${sharedDataTitle} à la collectivité de ${fiche.collectiviteNom} qui partage cette action`}
       </h6>
       <Alert
-        rounded
         className="mb-4"
         title={
           <>

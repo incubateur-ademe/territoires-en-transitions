@@ -17,7 +17,6 @@ export const SharedFicheUpdateAlert = ({
   return (
     <>
       <Alert
-        rounded
         state="warning"
         className="mb-4"
         title={`Attention vous éditez directement l'action de la collectivité "${fiche.collectiviteNom}" qui vous l'a partagée en écriture`}

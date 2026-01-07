@@ -74,10 +74,7 @@ export const DownloadScoreModal = ({
         render={() => (
           <div className="space-y-6">
             {hasEMTSnapshots ? (
-              <Alert
-                description="Il n'est pas possible de sélectionner les sauvegardes issues de labellisations dont l'audit n'a pas été réalisé sur Territoires en Transitions."
-                rounded
-              />
+              <Alert description="Il n'est pas possible de sélectionner les sauvegardes issues de labellisations dont l'audit n'a pas été réalisé sur Territoires en Transitions." />
             ) : null}
 
             <fieldset>
