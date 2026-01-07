@@ -18,11 +18,11 @@ export const PilotesDropdownModal = ({
   onClose,
 }: PilotesDropdownModalProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
-  const { updateFiche } = useFicheContext();
+  const { update } = useFicheContext();
 
   const handleSave = () => {
     if (!isEqual(fiche, editedFiche)) {
-      updateFiche({
+      update({
         ficheId: fiche.id,
         ficheFields: { pilotes: editedFiche.pilotes },
       });

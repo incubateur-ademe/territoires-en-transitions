@@ -1,3 +1,4 @@
+import { Button } from '@tet/ui';
 import { useState } from 'react';
 import { useFicheContext } from '../../context/fiche-context';
 import { ContentLayout } from '../content-layout';
@@ -16,10 +17,15 @@ export const NotesView = () => {
           picto={(props) => <NotificationPicto {...props} />}
           title="Aucune note n'est renseignée"
           actions={[
-            {
-              children: 'Ajouter une note',
-              onClick: () => setIsModalOpen(true),
-            },
+            <Button
+              icon="add-line"
+              onClick={() => {
+                setIsModalOpen(true);
+              }}
+              size="md"
+            >
+              Ajouter une note
+            </Button>,
           ]}
         />
         <ContentLayout.Content data={notes.list}>

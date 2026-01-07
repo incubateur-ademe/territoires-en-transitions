@@ -18,11 +18,11 @@ export const MesuresLieesModal = ({
   const ficheMesureIds = fiche.mesures?.map((mesure) => mesure.id);
   const [editedMesureIds, setEditedMesureIds] = useState(ficheMesureIds);
 
-  const { updateFiche } = useFicheContext();
+  const { update } = useFicheContext();
 
   const handleSave = () => {
     if (!isEqual(ficheMesureIds, editedMesureIds)) {
-      updateFiche({
+      update({
         ficheId: fiche.id,
         ficheFields: {
           mesures: editedMesureIds?.map((id) => ({ id })),

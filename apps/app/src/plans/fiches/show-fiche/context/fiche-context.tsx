@@ -139,7 +139,7 @@ export const FicheProvider = ({
       ? currentIndicateurs.filter((i) => i.id !== indicateur.id)
       : [...currentIndicateurs, indicateur];
 
-    return updateFiche({
+    await updateFiche({
       ficheId: fiche.id,
       ficheFields: {
         indicateurs: updatedIndicateurs,

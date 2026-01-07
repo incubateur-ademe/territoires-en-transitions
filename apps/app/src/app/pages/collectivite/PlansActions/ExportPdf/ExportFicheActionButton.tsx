@@ -30,7 +30,7 @@ export const FicheActionPdfContent = ({
     (fiche.axes ?? []).map((axe) => axe.id)
   );
 
-  const { data: indicateursListe = [], isLoading: isLoadingIndicateurs } =
+  const { data: indicateursListe, isLoading: isLoadingIndicateurs } =
     useListIndicateurs(
       {
         collectiviteId,
@@ -88,7 +88,7 @@ export const FicheActionPdfContent = ({
           chemins: (axes ?? [])
             .map((a) => a.chemin)
             .filter((chemin) => chemin !== null),
-          indicateursListe,
+          indicateursListe: indicateursListe?.data ?? [],
           etapes,
           fichesLiees,
           actionsLiees: fiche?.mesures?.length ? actionsLiees ?? [] : [],

@@ -1,5 +1,4 @@
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
-import { EditedNote } from '@/app/plans/fiches/show-fiche/data/use-upsert-note';
 import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
 import {
   Field,
@@ -16,7 +15,7 @@ type NoteEditionModalProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
   editedNote: FicheNote;
-  onEdit: (editedNote: EditedNote) => void;
+  onEdit: (editedNote: { id?: number; note: string; dateNote: number }) => void;
 };
 
 export const NoteEditionModal = ({
@@ -39,7 +38,11 @@ export const NoteEditionModal = ({
       note.trim().length > 0 &&
       (note !== editedNote.note || year !== initialYear)
     ) {
-      onEdit({ id: editedNote.id, note, year });
+      onEdit({
+        id: editedNote.id,
+        note,
+        dateNote: year,
+      });
     }
   };
 

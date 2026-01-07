@@ -14,7 +14,7 @@ import { FichesLieesListe } from './FichesLieesListe';
 import { ModaleFichesLiees } from './ModaleFichesLiees';
 
 export const ActionsLieesView = () => {
-  const { fiche, isReadonly, isUpdatePending } = useFicheContext();
+  const { fiche, isReadonly, isUpdating } = useFicheContext();
   const currentCollectivite = useCurrentCollectivite();
   const user = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,13 +35,13 @@ export const ActionsLieesView = () => {
         <h5 className="text-primary-8 mb-0">Action liées</h5>
         {!isReadonly && (
           <Button
-            icon={!isUpdatePending ? 'link' : undefined}
+            icon={!isUpdating ? 'link' : undefined}
             size="xs"
             variant="outlined"
-            disabled={isUpdatePending}
+            disabled={isUpdating}
             onClick={() => setIsModalOpen(true)}
           >
-            {isUpdatePending && <SpinnerLoader className="!h-4" />}
+            {isUpdating && <SpinnerLoader className="!h-4" />}
             Lier une action
           </Button>
         )}

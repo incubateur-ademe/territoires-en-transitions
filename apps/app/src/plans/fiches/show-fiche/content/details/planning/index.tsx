@@ -24,7 +24,7 @@ const TempsDeMiseEnOeuvre = ({
 };
 
 export const Planning = () => {
-  const { fiche, isReadonly, updateFiche } = useFicheContext();
+  const { fiche, isReadonly, update } = useFicheContext();
 
   const { renderToast, setToast } = useBaseToast();
 
@@ -47,12 +47,12 @@ export const Planning = () => {
       fieldName: keyof PlanningFormValues
     ) => {
       const currentValue = formValues[fieldName as keyof PlanningFormValues];
-      await updateFiche({
+      await update({
         ficheId: fiche.id,
         ficheFields: { [fieldName]: currentValue },
       });
     },
-    [updateFiche, fiche.id]
+    [update, fiche.id]
   );
 
   useEffect(() => {

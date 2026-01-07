@@ -36,6 +36,29 @@ type EditableNoteRowProps = {
   onDeleteNote: (noteToDeleteId: number) => Promise<void>;
 };
 
+const useNoteRowForm = ({
+  initialYear,
+  initialDescription,
+}: {
+  initialYear: number;
+  initialDescription: string;
+}) => {
+  const form = useForm<NoteFormValues>({
+    resolver: standardSchemaResolver(noteFormSchema),
+    defaultValues: { year: initialYear, description: initialDescription },
+  });
+
+  React.useEffect(() => {
+    form.reset({ year: initialYear, description: initialDescription });
+  }, [initialYear, initialDescription, form]);
+
+  return form;
+};
+
+const isValidNote = (note: EditableNoteRowProps['note']): note is FicheNote => {
+  return 'id' in note && note.id !== undefined;
+};
+
 export const NoteRow = ({
   note,
   fiche,
@@ -45,26 +68,15 @@ export const NoteRow = ({
 }: EditableNoteRowProps) => {
   const initialYear = new Date(note.dateNote).getFullYear();
   const initialDescription = htmlToText(note.note);
-  const { yearsOptions } = getYearsOptions();
 
-  const { control, handleSubmit, watch, reset } = useForm<NoteFormValues>({
-    resolver: standardSchemaResolver(noteFormSchema),
-    defaultValues: {
-      year: initialYear,
-      description: initialDescription,
-    },
+  const { yearsOptions } = getYearsOptions();
+  const { control, handleSubmit, watch, reset } = useNoteRowForm({
+    initialYear,
+    initialDescription,
   });
 
-  React.useEffect(() => {
-    reset({
-      year: initialYear,
-      description: initialDescription,
-    });
-  }, [initialYear, initialDescription, reset]);
-
   const currentRowValue = watch();
-  const isNewNote = !('id' in note);
-
+  const isNewNote = !isValidNote(note);
   const onSubmit = async (data: NoteFormValues) => {
     const hasChanges =
       data.description !== initialDescription || data.year !== initialYear;
@@ -72,7 +84,7 @@ export const NoteRow = ({
     if (!hasChanges) return;
 
     await onUpsertNote({
-      id: 'id' in note ? note.id : undefined,
+      id: isNewNote ? undefined : note.id,
       dateNote: data.year,
       note: data.description,
     });
@@ -141,11 +153,11 @@ export const NoteRow = ({
         )}
       </TableCell>
       <TableCell className="text-sm text-primary-10 align-top border-b border-gray-5">
-        {'id' in note && <MetadataNoteView note={note} />}
+        {!isNewNote && <MetadataNoteView note={note} />}
       </TableCell>
       <VisibleWhen condition={!isReadonly}>
         <TableCell className="text-right border-b border-gray-5">
-          {'id' in note && (
+          {!isNewNote && (
             <div className="invisible group-hover:visible">
               <NoteDeletionModal
                 fiche={fiche}

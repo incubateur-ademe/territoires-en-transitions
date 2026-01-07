@@ -1,27 +1,47 @@
-import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
-import { FicheNoteUpsert } from '@tet/domain/plans';
+import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
+import { FicheWithRelations } from '@tet/domain/plans';
 import { Button, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
 import { NoteCreationModal } from './note-creation.modal';
 import NoteCard from './note.card';
 import NotificationPicto from './notification.picto';
 
-export const NotesView = () => {
-  const { fiche, isReadonly, update } = useFicheContext();
+type NotesViewProps = {
+  isReadonly: boolean;
+  fiche: FicheWithRelations;
+};
+
+export const NotesView = ({ isReadonly, fiche }: NotesViewProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const notes = fiche.notes || [];
   const isEmpty = notes.length === 0;
 
-  const updateNote = (note: FicheNoteUpsert) => {
-    update({
+  const { mutate: updateFiche } = useUpdateFiche();
+  const updateNote = (rawNoteToUpsert: {
+    id?: number;
+    note: string;
+    dateNote: number;
+  }) => {
+    const noteToUpsert = {
+      ...rawNoteToUpsert,
+      dateNote: `${rawNoteToUpsert.dateNote}-01-01`,
+    };
+    const notes =
+      noteToUpsert.id === undefined
+        ? [...(fiche.notes ?? []), noteToUpsert]
+        : fiche.notes?.map((note) =>
+            note.id === noteToUpsert.id ? noteToUpsert : note
+          );
+
+    updateFiche({
       ficheId: fiche.id,
       ficheFields: {
-        notes: [...notes, note],
+        notes,
       },
     });
   };
   const deleteNote = (noteId: number) => {
-    update({
+    updateFiche({
       ficheId: fiche.id,
       ficheFields: {
         notes: notes.filter((note) => note.id !== noteId),
@@ -66,9 +86,9 @@ export const NotesView = () => {
                   new Date(b.dateNote).getTime() -
                   new Date(a.dateNote).getTime()
               )
-              .map((note, index) => (
+              .map((note) => (
                 <NoteCard
-                  key={`${note.dateNote}-${index}`}
+                  key={note.id}
                   fiche={fiche}
                   note={note}
                   onEdit={updateNote}
