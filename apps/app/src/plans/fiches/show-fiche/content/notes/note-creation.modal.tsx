@@ -70,17 +70,6 @@ export const NoteCreationModal = ({
       renderFooter={({ close }) => (
         <ModalFooter variant="right">
           <Button
-            variant="outlined"
-            disabled={!year || !note?.trim()}
-            onClick={() => {
-              handleSave();
-              setYear(undefined);
-              setNote('');
-            }}
-          >
-            Valider et créer une nouvelle note
-          </Button>
-          <Button
             type="submit"
             disabled={!year || !note?.trim()}
             onClick={() => {
