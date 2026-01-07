@@ -94,7 +94,6 @@ export const SaveScoreModal = ({
             <Alert
               description="Vous pouvez figer les scores et textes renseignés dans le référentiel à la fin de l'état des lieux initial (ex: Etat-des-lieux-initial) ou à un autre moment clé (ex: pre-visite-annuelle), etc.
 Une sauvegarde sera automatiquement réalisée lors du démarrage d'un audit et lors de la clôture d'un audit. Une sauvegarde sera également prochainement proposée lors du dépôt du rapport de visite annuelle."
-              rounded
             />
             {/* Choix entre 'Date d'aujourd'hui' et 'A une date antérieure' */}
             <ButtonGroup

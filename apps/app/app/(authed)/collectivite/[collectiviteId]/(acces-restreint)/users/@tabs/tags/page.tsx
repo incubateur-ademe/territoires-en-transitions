@@ -23,7 +23,6 @@ export default function TagsPage() {
   return (
     <>
       <Alert
-        rounded
         state="info"
         description="Dans cette vue, apparaissent uniquement les tags pilotes qui n'ont pas déjà été associés à des comptes utilisateurs. Si vous souhaitez modifier les informations d'un utilisateur, cela se fait dans l'onglet Informations utilisateurs."
         className="mb-4"

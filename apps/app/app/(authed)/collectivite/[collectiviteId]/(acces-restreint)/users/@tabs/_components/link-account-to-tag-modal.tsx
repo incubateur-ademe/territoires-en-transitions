@@ -49,10 +49,7 @@ const LinkAccountToTagModal = ({ openState, collectiviteId, user }: Props) => {
       subTitle={`${user.prenom} ${user.nom} ${user.email}`}
       render={() => (
         <>
-          <Alert
-            rounded
-            description="Vous pouvez associer ce compte utilisateur à un ou plusieurs tags afin que les actions, indicateurs et mesures des référentiels soient associés à cet utilisateur."
-          />
+          <Alert description="Vous pouvez associer ce compte utilisateur à un ou plusieurs tags afin que les actions, indicateurs et mesures des référentiels soient associés à cet utilisateur." />
           <Field title="Associer ce compte utilisateur à un ou plusieurs tags">
             <SelectMultiple
               options={options}
