@@ -32,7 +32,6 @@ export const NoteDeletionModal = ({
           </p>
         </div>
       )}
-      // Boutons pour valider / annuler la suppression
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnCancelProps={{ onClick: close }}
@@ -45,7 +44,6 @@ export const NoteDeletionModal = ({
         />
       )}
     >
-      {/* Bouton d'ouverture de la modale */}
       <DeleteButton title="Supprimer la note" size="xs" />
     </BaseUpdateFicheModal>
   );

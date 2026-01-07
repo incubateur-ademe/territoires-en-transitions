@@ -51,8 +51,8 @@ type NotesState = {
   list: FicheNote[];
   upsert: (
     noteToUpsert: Omit<FicheNoteUpsert, 'dateNote'> & { dateNote: number }
-  ) => Promise<unknown>;
-  delete: (noteToDeleteId: number) => Promise<unknown>;
+  ) => Promise<void>;
+  delete: (noteToDeleteId: number) => Promise<void>;
 };
 
 export type FicheContextValue = {
@@ -139,7 +139,7 @@ export const FicheProvider = ({
       ? currentIndicateurs.filter((i) => i.id !== indicateur.id)
       : [...currentIndicateurs, indicateur];
 
-    await updateFiche({
+    return updateFiche({
       ficheId: fiche.id,
       ficheFields: {
         indicateurs: updatedIndicateurs,
@@ -177,36 +177,35 @@ export const FicheProvider = ({
 
   const notes: NotesState = {
     list: fiche.notes ?? [],
-    upsert: (noteToUpsert) => {
+    upsert: async (noteToUpsert) => {
       const formattedDateNote = `${noteToUpsert.dateNote}-01-01`;
       const formattedNoteToUpsert = {
         ...noteToUpsert,
         dateNote: formattedDateNote,
       };
-      if (noteToUpsert.id === undefined) {
-        return updateFiche({
-          ficheId: fiche.id,
-          ficheFields: {
-            notes: [...(fiche.notes ?? []), formattedNoteToUpsert],
-          },
-        });
-      }
-      return updateFiche({
+
+      const notes =
+        noteToUpsert.id === undefined
+          ? [...(fiche.notes ?? []), formattedNoteToUpsert]
+          : fiche.notes?.map((note) =>
+              note.id === noteToUpsert.id ? formattedNoteToUpsert : note
+            );
+
+      await updateFiche({
         ficheId: fiche.id,
         ficheFields: {
-          notes: fiche.notes?.map((note) =>
-            note.id === noteToUpsert.id ? noteToUpsert : note
-          ),
+          notes,
         },
       });
     },
-    delete: (noteId: number) =>
-      updateFiche({
+    delete: async (noteId: number) => {
+      await updateFiche({
         ficheId: fiche.id,
         ficheFields: {
           notes: fiche.notes?.filter((note) => note.id !== noteId),
         },
-      }),
+      });
+    },
   };
 
   return (
