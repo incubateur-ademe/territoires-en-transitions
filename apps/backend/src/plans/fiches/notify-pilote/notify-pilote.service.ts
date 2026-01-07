@@ -4,7 +4,6 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { ListUsersService } from '@tet/backend/users/users/list-users/list-users.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import GetUrlService from '@tet/backend/utils/get-url.service';
 import { NotificationStatusEnum } from '@tet/backend/utils/notifications/models/notification-status.enum';
 import { GetNotificationContentResult } from '@tet/backend/utils/notifications/models/notification-template.dto';
 import {
@@ -21,6 +20,7 @@ import { and, eq, inArray, not } from 'drizzle-orm';
 import { differenceBy, isNil } from 'es-toolkit';
 import { DatabaseError } from 'pg';
 import { z } from 'zod';
+import GetPlanUrlService from '../../utils/get-plan-url.service';
 import { NotifyPiloteEmail } from './notify-pilote.email';
 import { NotifyPiloteProps } from './notify-pilote.props';
 
@@ -61,7 +61,7 @@ export class NotifyPiloteService {
     private readonly listFichesService: ListFichesService,
     private readonly listUsersService: ListUsersService,
     private readonly notificationsService: NotificationsService,
-    private readonly getUrlService: GetUrlService
+    private readonly getPlanUrlService: GetPlanUrlService
   ) {
     this.notificationsService.registerContentGenerator(
       NotifiedOnEnum.UPDATE_FICHE_PILOTE,
@@ -308,7 +308,7 @@ export class NotifyPiloteService {
         dateFin: fiche.dateFin,
         description: fiche.description,
         isSousAction: !!fiche.parentId,
-        actionUrl: this.getUrlService.getFicheUrl({
+        actionUrl: this.getPlanUrlService.getFicheUrl({
           collectiviteId: fiche.collectiviteId,
           ficheId: fiche.id,
           parentId: fiche.parentId,

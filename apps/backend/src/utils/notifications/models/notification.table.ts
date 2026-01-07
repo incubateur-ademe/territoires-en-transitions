@@ -32,6 +32,7 @@ export const notificationTable = notificationsSchema.table('notification', {
   sendTo: uuid('send_to')
     .references(() => authUsersTable.id)
     .notNull(),
+  sendAfter: timestamp('send_after', TIMESTAMP_OPTIONS),
   sentAt: timestamp('sent_at', TIMESTAMP_OPTIONS),
   sentToEmail: text('sent_to_email'),
   errorMessage: text('error_message'),

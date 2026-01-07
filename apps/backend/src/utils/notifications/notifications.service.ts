@@ -1,17 +1,23 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { render } from '@react-email/components';
-import { and, eq, lt } from 'drizzle-orm';
+import { getErrorMessage } from '@tet/domain/utils';
+import { and, eq, lt, sql } from 'drizzle-orm';
 import { DateTime, DurationLike } from 'luxon';
 import { DatabaseService } from '../database/database.service';
 import { EmailService } from '../email/email.service';
+import { MethodResult } from '../result.type';
+import { CommonErrorEnum } from '../trpc/common-errors';
 import { NotificationStatusEnum } from './models/notification-status.enum';
 import {
   GetNotificationContent,
   NotificationContentGenerator,
 } from './models/notification-template.dto';
-import { Notification, notificationTable } from './models/notification.table';
+import {
+  Notification,
+  NotificationInsert,
+  notificationTable,
+} from './models/notification.table';
 import { NotifiedOnType } from './models/notified-on.enum';
-import { SendPendingNotificationsInput } from './models/send-pending-notifications.input';
 
 const DEFAULT_DELAY_BEFORE_SENDING: DurationLike = { minutes: 15 };
 const MAX_SEND_RETRIES = 5;
@@ -38,16 +44,53 @@ export class NotificationsService {
     this.registeredGenerator[notifiedOn] = generator;
   }
 
+  async createPendingNotification(
+    notification: NotificationInsert,
+    delayBeforeSending?: DurationLike
+  ): Promise<
+    MethodResult<Notification, typeof CommonErrorEnum.DATABASE_ERROR>
+  > {
+    const result = await this.createPendingNotifications(
+      [notification],
+      delayBeforeSending
+    );
+    return result.success ? { success: true, data: result.data[0] } : result;
+  }
+
+  async createPendingNotifications(
+    notifications: NotificationInsert[],
+    delayBeforeSending?: DurationLike
+  ): Promise<
+    MethodResult<Notification[], typeof CommonErrorEnum.DATABASE_ERROR>
+  > {
+    const now = DateTime.now();
+    const sendAfter = (delayBeforeSending ? now.plus(delayBeforeSending) : now)
+      .toUTC()
+      .toString();
+    try {
+      notifications.forEach((notification) => {
+        notification.status = NotificationStatusEnum.PENDING;
+        notification.sendAfter = sendAfter;
+      });
+      const createdNotifications = await this.databaseService.db
+        .insert(notificationTable)
+        .values(notifications)
+        .returning();
+      return { success: true, data: createdNotifications };
+    } catch (error) {
+      this.logger.error(
+        `Error creating pending notifications: ${getErrorMessage(error)}`
+      );
+      return { success: false, error: 'DATABASE_ERROR' };
+    }
+  }
+
   /**
    * Charge et envoi les notifications
    */
-  async sendPendingNotifications(input?: SendPendingNotificationsInput) {
+  async sendPendingNotifications() {
     try {
-      const pendingNotifications = await this.getPendingNotificationsToSend(
-        input?.delayInSeconds
-          ? { seconds: input.delayInSeconds }
-          : DEFAULT_DELAY_BEFORE_SENDING
-      );
+      const pendingNotifications = await this.getPendingNotificationsToSend();
       if (pendingNotifications.length > 0) {
         this.logger.log(`Sending ${pendingNotifications.length} notifications`);
         await Promise.all(
@@ -135,9 +178,11 @@ export class NotificationsService {
    * - et le nombre de retries maximum n'est pas atteint
    * - et qui ont été ajouté depuis plus d'un certain délai
    */
-  private getPendingNotificationsToSend(delayBeforeSending: DurationLike) {
-    const now = DateTime.now();
-    const minCreatedAt = now.minus(delayBeforeSending).toUTC().toString();
+  private getPendingNotificationsToSend() {
+    const now = DateTime.now().toUTC().toString();
+    this.logger.log(
+      `Getting pending notifications with sendAfter before: ${now}`
+    );
 
     return this.databaseService.db
       .select()
@@ -146,7 +191,10 @@ export class NotificationsService {
         and(
           eq(notificationTable.status, NotificationStatusEnum.PENDING),
           lt(notificationTable.retries, MAX_SEND_RETRIES),
-          lt(notificationTable.createdAt, minCreatedAt)
+          lt(
+            sql`COALESCE(${notificationTable.sendAfter}, ${notificationTable.createdAt})`,
+            now
+          )
         )
       );
   }

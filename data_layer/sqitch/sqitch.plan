@@ -927,3 +927,4 @@ plan_action/add_report_generation_table 2026-01-05T14:33:48Z System Administrato
 @v4.93.0 2026-01-05T19:33:56Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # generation de rapports
 
 utilisateur/add-is-active-column-to-utilisateur-support 2026-01-06T20:15:39Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Add is_active column
+plan_action/add_report_notifications 2026-01-06T15:45:26Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Ajoute les notifications pour les rapports

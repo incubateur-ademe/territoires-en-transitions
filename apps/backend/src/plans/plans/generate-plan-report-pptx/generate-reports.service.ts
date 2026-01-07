@@ -9,7 +9,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { EchartsService } from '@tet/backend/utils/echarts/echarts.service';
 import { getHorizontalStackedBarChartOption } from '@tet/backend/utils/echarts/get-horizontal-stackedbar-chart-option.utils';
 import { getPieChartOption } from '@tet/backend/utils/echarts/get-pie-chart-option.utils';
-import GetUrlService from '@tet/backend/utils/get-url.service';
+import { NotifiedOnEnum } from '@tet/backend/utils/notifications/models/notified-on.enum';
 import { Result } from '@tet/backend/utils/result.type';
 import {
   CollectiviteAvecType,
@@ -52,6 +52,7 @@ import { ElementInfo, XmlElement } from 'pptx-automizer/dist/types/xml-types';
 import slugify from 'slugify';
 import { CountByService } from '../../fiches/count-by/count-by.service';
 import ListFichesService from '../../fiches/list-fiches/list-fiches.service';
+import GetPlanUrlService from '../../utils/get-plan-url.service';
 import { ComputeBudgetRules } from '../compute-budget/compute-budget.rules';
 import { GetPlanService } from '../get-plan/get-plan.service';
 import { PlanProgressRules } from '../progress/plan-progress.rules';
@@ -60,6 +61,7 @@ import {
   GenerateReportErrorEnum,
 } from './generate-reports.errors';
 import { IndicateurTerritorialSlideConfiguration } from './indicateur-territorial-slide-configuration.dto';
+import { NotifyReportService } from './notify-report.service';
 import { ReportAxeGeneralInfo } from './report-axe-general-info.dto';
 import { ReportFicheInfo } from './report-fiche-info.dto';
 import { ReportGenerationRepository } from './report-generation.repository';
@@ -226,9 +228,10 @@ export class GenerateReportsService {
     private readonly personnalisationsService: PersonnalisationsService,
     private readonly computeBudgetRules: ComputeBudgetRules,
     private readonly permissionService: PermissionService,
-    private readonly getUrlService: GetUrlService,
+    private readonly getPlanUrlService: GetPlanUrlService,
     private readonly reportGenerationRepository: ReportGenerationRepository,
-    private readonly uploadDocumentService: UploadDocumentService
+    private readonly uploadDocumentService: UploadDocumentService,
+    private readonly notifyReportService: NotifyReportService
   ) {}
 
   private async replaceTextInSlide(
@@ -815,6 +818,9 @@ export class GenerateReportsService {
       return;
     }
 
+    res.status(200).json(reportResult);
+
+    /*
     res.attachment(reportResult.data.reportName);
     res.set('Access-Control-Expose-Headers', 'Content-Disposition');
     res.sendFile(reportResult.data.reportPath, (error) => {
@@ -830,6 +836,7 @@ export class GenerateReportsService {
         rmSync(reportResult.data.outputDir, { recursive: true });
       }
     });
+    */
   }
 
   private getFicheTextReplacementsInfos(
@@ -970,7 +977,7 @@ export class GenerateReportsService {
             ReportTemplateTextsEnum.TXT_FICHE_FILL_MISSING_INFO_LINK
           );
           if (fillFicheElement) {
-            const ficheUrl = this.getUrlService.getFicheUrl({
+            const ficheUrl = this.getPlanUrlService.getFicheUrl({
               collectiviteId: fiche.collectiviteId,
               planId: planGeneralInfo.PLAN_ID,
               ficheId: fiche.id,
@@ -1298,6 +1305,47 @@ export class GenerateReportsService {
     };
   }
 
+  private async handleReportGenerationError(
+    reportInfo: {
+      collectiviteId: number;
+      generationId: string;
+      planId: number;
+      userId: string;
+      reportName: string;
+    },
+    mediaDir: string,
+    error: GenerateReportError
+  ): Promise<{ success: false; error: GenerateReportError }> {
+    const { generationId, collectiviteId, planId, userId, reportName } =
+      reportInfo;
+
+    await this.reportGenerationRepository.update(generationId, {
+      status: 'failed',
+      errorMessage: error,
+      fileId: null,
+    });
+
+    await this.notifyReportService.createReportNotification(
+      NotifiedOnEnum.GENERATE_PLAN_REPORT_FAILED,
+      {
+        collectiviteId: collectiviteId,
+        planId: planId,
+        createdBy: userId,
+        reportId: generationId,
+        reportName: reportName,
+      }
+    );
+
+    if (mediaDir) {
+      rmSync(mediaDir, { recursive: true });
+    }
+
+    return {
+      success: false,
+      error: error,
+    };
+  }
+
   async generatePlanReport(
     request: GenerateReportInput,
     user: AuthenticatedUser
@@ -1311,7 +1359,6 @@ export class GenerateReportsService {
     let outputDir = '';
     let reportPath = '';
     let reportName = '';
-    let error: GenerateReportError | undefined;
     this.logger.log(
       `Generating plan report for plan ${request.planId} with template ${request.templateKey}`
     );
@@ -1352,6 +1399,7 @@ export class GenerateReportsService {
     // Create report generation entity at the beginning
     const createResult = await this.reportGenerationRepository.create(
       request,
+      user,
       'processing'
     );
 
@@ -1554,15 +1602,17 @@ export class GenerateReportsService {
         user
       );
       if (!uploadResult.success) {
-        await this.reportGenerationRepository.update(generationId, {
-          status: 'failed',
-          errorMessage: uploadResult.error,
-          fileId: null,
-        });
-        return {
-          success: false,
-          error: uploadResult.error,
-        };
+        return this.handleReportGenerationError(
+          {
+            generationId,
+            collectiviteId: collectivite.id,
+            planId: request.planId,
+            userId: user.id,
+            reportName: reportName,
+          },
+          mediaDir,
+          uploadResult.error
+        );
       }
 
       // Update status to completed at the end
@@ -1574,35 +1624,58 @@ export class GenerateReportsService {
       this.logger.log(
         `Updated report generation ${generationId} status to completed`
       );
+
+      const createdNotification =
+        await this.notifyReportService.createReportNotification(
+          NotifiedOnEnum.GENERATE_PLAN_REPORT_COMPLETED,
+          {
+            collectiviteId: collectivite.id,
+            planId: request.planId,
+            createdBy: user.id,
+            reportId: generationId,
+            reportName: reportName,
+          }
+        );
+
+      if (!createdNotification.success) {
+        return this.handleReportGenerationError(
+          {
+            generationId,
+            collectiviteId: collectivite.id,
+            planId: request.planId,
+            userId: user.id,
+            reportName: reportName,
+          },
+          mediaDir,
+          GenerateReportErrorEnum.CREATE_NOTIFICATION_ERROR
+        );
+      }
+
+      if (mediaDir) {
+        rmSync(mediaDir, { recursive: true });
+      }
     } catch (err) {
       this.logger.error(
         `Error generating plan report: ${getErrorMessage(err)}`
       );
-      error = GenerateReportErrorEnum.SERVER_ERROR;
+      const error = GenerateReportErrorEnum.SERVER_ERROR;
 
-      // Update status to failed with error message
-      await this.reportGenerationRepository.update(generationId, {
-        status: 'failed',
-        errorMessage: getErrorMessage(err),
-        fileId: null,
-      });
-      this.logger.log(
-        `Updated report generation ${generationId} status to failed`
+      return this.handleReportGenerationError(
+        {
+          generationId,
+          collectiviteId: collectivite.id,
+          planId: request.planId,
+          userId: user.id,
+          reportName: reportName,
+        },
+        mediaDir,
+        error
       );
-    } finally {
-      if (mediaDir) {
-        rmSync(mediaDir, { recursive: true });
-      }
     }
 
-    return error
-      ? {
-          success: false,
-          error: error,
-        }
-      : {
-          success: true,
-          data: { reportName, reportPath, outputDir },
-        };
+    return {
+      success: true,
+      data: { reportName, reportPath, outputDir },
+    };
   }
 }
