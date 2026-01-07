@@ -145,8 +145,7 @@ const PlanViewContent = ({
       </VisibleWhen>
       <VisibleWhen condition={!isPlanEmpty}>
         <ContentPanelWithHeader
-          title="Détail du plan"
-          headerActionButtons={
+          headerActionButtonsLeft={
             <>
               <PlanOptionsButton />
               <VisibleWhen condition={hasAxesToExpand && !isFiltered}>
@@ -163,6 +162,10 @@ const PlanViewContent = ({
                     : 'Fermer tous les axes/sous-axes'}
                 </Button>
               </VisibleWhen>
+            </>
+          }
+          headerActionButtonsRight={
+            <div className="flex gap-6">
               <VisibleWhen
                 condition={
                   currentCollectivite.isReadOnly === false &&
@@ -182,7 +185,7 @@ const PlanViewContent = ({
               <VisibleWhen condition={axeHasFiches}>
                 <FiltersMenuButton />
               </VisibleWhen>
-            </>
+            </div>
           }
         >
           <VisibleWhen condition={!isFiltered}>
