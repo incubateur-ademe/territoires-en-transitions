@@ -1,9 +1,5 @@
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
-import {
-  FicheNote,
-  FicheNoteUpsert,
-  FicheWithRelations,
-} from '@tet/domain/plans';
+import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
 import { Button, cn, Icon, Select, Textarea } from '@tet/ui';
 import { format } from 'date-fns';
 import { htmlToText } from 'html-to-text';
@@ -17,7 +13,7 @@ type NotesTableProps = {
   notes: FicheNote[];
   fiche: FicheWithRelations;
   isReadonly: boolean;
-  onCreateNote: (editedNote: FicheNoteUpsert) => void;
+  onCreateNote: (editedNote: { note: string; dateNote: number }) => void;
   onDeleteNote: (noteToDeleteId: number) => void;
   onSetEditingNoteId: (id: number | null) => void;
 };
@@ -169,7 +165,7 @@ export const NotesTable = ({
 const CreateNewNoteRow = ({
   onCreateNote,
 }: {
-  onCreateNote: (editedNote: FicheNoteUpsert) => void;
+  onCreateNote: (editedNote: { note: string; dateNote: number }) => void;
 }) => {
   const { yearsOptions, currentYear } = getYearsOptions();
 
@@ -185,7 +181,7 @@ const CreateNewNoteRow = ({
     if (data.year === undefined) return;
     onCreateNote({
       note: data.description,
-      dateNote: `${data.year}-01-01`,
+      dateNote: data.year,
     });
     reset({
       year: undefined,
