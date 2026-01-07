@@ -8,7 +8,13 @@ import IconDrag from '@/app/ui/icons/IconDrag';
 import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
 import { PlanNode } from '@tet/domain/plans';
 import { CollectiviteAccess } from '@tet/domain/users';
-import { Button, Icon, RichTextEditor, RichTextView } from '@tet/ui';
+import {
+  Button,
+  Icon,
+  RichTextEditor,
+  RichTextView,
+  VisibleWhen,
+} from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { useCreateFicheResume } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
 import { childrenOfPlanNodes } from '../../utils';
@@ -132,19 +138,27 @@ export const DraggableAxe = (props: Props) => {
     return <AxeSkeleton />;
   }
   const axeFontColor = 'text-primary-8';
+  const sousAxes = childrenOfPlanNodes(axe, axes);
+  const isMainAxe = axe.depth === 1;
+
   return (
     <div
       ref={axeRef}
       data-test="Axe"
       id={`axe-${axe.id}`}
-      className="relative flex flex-col"
+      className={cn('relative flex flex-col border', {
+        'rounded-md': isOpen,
+        'rounded-lg': !isOpen,
+        'border-grey-4': !isMainAxe || !isOpen,
+        'border-primary-4': isMainAxe && isOpen,
+      })}
     >
       {/** Drag overlay */}
       {isDragging &&
         createPortal(
           <DragOverlay dropAnimation={null}>
             <div className="opacity-80 cursor-grabbing">
-              <div className="flex items-start w-[30rem] ml-4 p-2 rounded bg-white border border-gray-200">
+              <div className="flex items-start w-[30rem] ml-4 p-2 bg-white border border-gray-200">
                 <Icon
                   icon="arrow-right-s-line"
                   size="lg"
@@ -159,11 +173,11 @@ export const DraggableAxe = (props: Props) => {
       {/** Header */}
       <div
         ref={droppableRef}
-        className={classNames(
-          'relative py-3 pr-4 pl-2',
-          { group: !isOver },
-          { 'bg-bf925': isDroppable }
-        )}
+        className={classNames('relative py-2 pr-4 pl-2', {
+          group: !isOver,
+          'bg-bf925': isDroppable,
+          'hover:bg-grey-2': !isOpen,
+        })}
       >
         <div className="flex items-start" ref={intersectionRef}>
           {/** Drag handle */}
@@ -212,7 +226,7 @@ export const DraggableAxe = (props: Props) => {
           />
           {!isReadonly && (
             <>
-              <div className="invisible group-hover:visible flex items-center gap-3 ml-3 min-w-max">
+              <div className="invisible group-hover:visible flex self-center gap-3 ml-3 min-w-max">
                 <Button
                   variant="grey"
                   size="xs"
@@ -245,7 +259,7 @@ export const DraggableAxe = (props: Props) => {
       </div>
       {/** Fiches et sous-axes */}
       {!isDragging && isOpen && (
-        <div className="flex flex-col ml-12">
+        <div className="flex flex-col px-4 pb-2">
           {axe.description !== null &&
             isOptionEnabled(PlanDisplayOptionsEnum.DESCRIPTION) && (
               <>
@@ -293,7 +307,7 @@ export const DraggableAxe = (props: Props) => {
           {axe.fiches?.length > 0 &&
             isOptionEnabled(PlanDisplayOptionsEnum.ACTIONS) && (
               <>
-                <p className="text-grey-8 text-sm mt-4 mb-2">
+                <p className="text-grey-8 text-sm mt-2 mb-0">
                   <Icon icon="file-line" className="mr-2" />
                   Actions
                 </p>
@@ -305,19 +319,23 @@ export const DraggableAxe = (props: Props) => {
                 />
               </>
             )}
-          {childrenOfPlanNodes(axe, axes).map((axe: PlanNode) => (
-            <DraggableAxe
-              key={axe.id}
-              rootAxe={rootAxe}
-              axe={axe}
-              axes={axes}
-              isReadonly={isReadonly}
-              collectivite={collectivite}
-            />
-          ))}
+          <VisibleWhen condition={sousAxes.length > 0}>
+            <div className="flex flex-col gap-2 mb-2">
+              {sousAxes.map((axe: PlanNode) => (
+                <DraggableAxe
+                  key={axe.id}
+                  rootAxe={rootAxe}
+                  axe={axe}
+                  axes={axes}
+                  isReadonly={isReadonly}
+                  collectivite={collectivite}
+                />
+              ))}
+            </div>
+          </VisibleWhen>
           {/** Empty state */}
           {(!axe.fiches || axe.fiches.length === 0) &&
-            childrenOfPlanNodes(axe, axes).length === 0 &&
+            sousAxes.length === 0 &&
             !isOver && (
               <div className="mb-4 px-2 text-sm italic text-gray-400">
                 Cet axe ne contient aucune action ni sous-axe

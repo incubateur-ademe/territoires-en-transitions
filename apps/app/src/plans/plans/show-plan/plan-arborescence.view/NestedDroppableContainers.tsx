@@ -42,7 +42,7 @@ export const NestedDroppableContainers = ({
       active.data.current.axeId !== plan.id);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-2">
       {isDroppable && (
         <div
           ref={droppableRef}
