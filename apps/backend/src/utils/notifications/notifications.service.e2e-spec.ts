@@ -194,9 +194,7 @@ describe('NotificationsService', () => {
       notificationData: { test: 'data2' },
     });
 
-    await notificationsService.sendPendingNotifications({
-      delayInSeconds: DEFAULT_DELAY_SECONDS,
-    });
+    await notificationsService.sendPendingNotifications();
 
     expect(generatorMock).toHaveBeenCalledTimes(2);
     expect(generatorMock).toHaveBeenCalledWith(
@@ -245,9 +243,7 @@ describe('NotificationsService', () => {
       entityId: 'test-entity-no-generator',
     });
 
-    await notificationsService.sendPendingNotifications({
-      delayInSeconds: DEFAULT_DELAY_SECONDS,
-    });
+    await notificationsService.sendPendingNotifications();
 
     expect(emailServiceMock.sendEmail).not.toHaveBeenCalled();
   });
@@ -261,9 +257,7 @@ describe('NotificationsService', () => {
       entityId: 'test-entity-error',
     });
 
-    await notificationsService.sendPendingNotifications({
-      delayInSeconds: DEFAULT_DELAY_SECONDS,
-    });
+    await notificationsService.sendPendingNotifications();
 
     expect(generatorMock).toHaveBeenCalledTimes(1);
     expect(emailServiceMock.sendEmail).not.toHaveBeenCalled();
@@ -278,9 +272,7 @@ describe('NotificationsService', () => {
       entityId: 'test-entity-status',
     });
 
-    await notificationsService.sendPendingNotifications({
-      delayInSeconds: DEFAULT_DELAY_SECONDS,
-    });
+    await notificationsService.sendPendingNotifications();
 
     const updatedNotification = await databaseService.db
       .select()
