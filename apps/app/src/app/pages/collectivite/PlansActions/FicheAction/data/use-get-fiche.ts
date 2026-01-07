@@ -12,7 +12,7 @@ export function useGetFiche({
   initialData?: FicheWithRelations;
 }) {
   const trpc = useTRPC();
-  return useQuery(
+  const { data, ...other } = useQuery(
     trpc.plans.fiches.get.queryOptions(
       {
         id,
@@ -22,4 +22,13 @@ export function useGetFiche({
       }
     )
   );
+  return {
+    data: data
+      ? {
+          ...data,
+          axes: data.axes?.filter((axe) => axe.axeLevel === 1) || null,
+        }
+      : data,
+    ...other,
+  };
 }

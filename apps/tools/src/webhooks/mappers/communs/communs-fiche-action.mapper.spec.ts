@@ -20,6 +20,7 @@ describe('CommunsFicheActionMapper', () => {
           parentId: null,
           planId: null,
           collectiviteId,
+          axeLevel: 1,
         },
       ],
       libreTags: null,
