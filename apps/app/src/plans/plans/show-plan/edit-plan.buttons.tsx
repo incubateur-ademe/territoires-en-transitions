@@ -30,7 +30,7 @@ export const EditPlanButtons = ({
   });
   const canAddAxe = availableActions.includes('addAxe');
   return (
-    <div className="flex items-center gap-6">
+    <div className="flex items-center gap-4">
       <Button
         disabled={!canAddAxe}
         dataTest="AjouterAxe"
@@ -38,7 +38,7 @@ export const EditPlanButtons = ({
         variant="outlined"
         onClick={() => canAddAxe && createAxe()}
       >
-        Ajouter un nouveau titre/axe
+        Créer un axe
       </Button>
       <VisibleWhen condition={availableActions.includes('createFicheResume')}>
         <Button size="xs" onClick={() => createFicheResume()}>
