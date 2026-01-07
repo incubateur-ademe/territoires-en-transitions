@@ -377,66 +377,13 @@ export default class UpdateFicheService {
         }
       }
 
-      if (notes) {
-        const [maybeNotesToUpdate, notesToCreate] = partition(
-          notes,
-          (note) => note.id !== undefined
-        );
-
-        const notesToDelete = (existingFicheAction.notes ?? [])?.filter(
-          (note) => !notes.some((n) => n.id === note.id)
-        );
-
-        await Promise.all(
-          notesToDelete?.map(async (note) => {
-            await transaction
-              .delete(ficheActionNoteTable)
-              .where(eq(ficheActionNoteTable.id, note.id as number));
-          })
-        );
-
-        const notesToUpdate = maybeNotesToUpdate.filter((note) => {
-          const existingNote = existingFicheAction.notes?.find(
-            (n) => n.id === note.id
-          );
-          if (!existingNote) {
-            return false;
-          }
-          const mustBeUpdated =
-            existingNote.dateNote !== note.dateNote ||
-            existingNote.note !== note.note;
-          return mustBeUpdated;
-        });
-
-        await Promise.all(
-          notesToUpdate.map(async (note) => {
-            await transaction
-              .update(ficheActionNoteTable)
-              .set({
-                note: note.note,
-                dateNote: note.dateNote,
-                modifiedBy: user.id,
-                modifiedAt: new Date().toISOString(),
-              })
-              .where(eq(ficheActionNoteTable.id, note.id as number));
-          })
-        );
-
-        await Promise.all(
-          notesToCreate.map(async (note) => {
-            await transaction
-              .insert(ficheActionNoteTable)
-              .values({
-                ficheId: ficheId,
-                dateNote: note.dateNote,
-                note: note.note,
-                createdBy: user.id,
-                modifiedBy: user.id,
-              })
-              .returning();
-          })
-        );
-      }
+      await this.updateNotes({
+        ficheId,
+        notes,
+        existingFicheAction,
+        user,
+        transaction,
+      });
 
       if (sharedWithCollectivites !== undefined) {
         const collectiviteIds =
@@ -499,6 +446,89 @@ export default class UpdateFicheService {
       success: true,
       data: updatedFiche,
     };
+  }
+
+  private async updateNotes({
+    ficheId,
+    notes,
+    existingFicheAction,
+    user,
+    transaction,
+  }: {
+    ficheId: number;
+    notes: UpdateFicheRequest['notes'];
+    existingFicheAction: FicheWithRelations;
+    user: AuthenticatedUser;
+    transaction: Transaction;
+  }) {
+    if (!notes) {
+      return;
+    }
+
+    const notesToDelete = (existingFicheAction.notes ?? []).filter(
+      (note) => !notes.some((n) => n.id === note.id)
+    );
+
+    if (notesToDelete.length > 0) {
+      await Promise.all(
+        notesToDelete.map(async (note) => {
+          await transaction
+            .delete(ficheActionNoteTable)
+            .where(eq(ficheActionNoteTable.id, note.id as number));
+        })
+      );
+    }
+
+    const [maybeNotesToUpdate, notesToCreate] = partition(
+      notes,
+      (note) => note.id !== undefined
+    );
+
+    const notesToUpdate = maybeNotesToUpdate.filter((note) => {
+      const existingNoteInDB = existingFicheAction.notes?.find(
+        (n) => n.id === note.id
+      );
+      if (!existingNoteInDB) {
+        return false;
+      }
+      const mustBeUpdated =
+        existingNoteInDB.dateNote !== note.dateNote ||
+        existingNoteInDB.note !== note.note;
+      return mustBeUpdated;
+    });
+
+    if (notesToUpdate.length > 0) {
+      await Promise.all(
+        notesToUpdate.map(async (note) => {
+          await transaction
+            .update(ficheActionNoteTable)
+            .set({
+              note: note.note,
+              dateNote: note.dateNote,
+              modifiedBy: user.id,
+              modifiedAt: new Date().toISOString(),
+            })
+            .where(eq(ficheActionNoteTable.id, note.id as number));
+        })
+      );
+    }
+
+    if (notesToCreate.length > 0) {
+      await Promise.all(
+        notesToCreate.map(async (note) => {
+          await transaction
+            .insert(ficheActionNoteTable)
+            .values({
+              ficheId: ficheId,
+              dateNote: note.dateNote,
+              note: note.note,
+              createdBy: user.id,
+              modifiedBy: user.id,
+            })
+            .returning();
+        })
+      );
+    }
   }
 
   /**
