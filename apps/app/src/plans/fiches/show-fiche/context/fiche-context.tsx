@@ -49,7 +49,9 @@ type IndicateursState = {
 type IndicateurActionMode = 'creating' | 'associating' | 'none';
 type NotesState = {
   list: FicheNote[];
-  upsert: (noteToUpsert: FicheNoteUpsert) => Promise<unknown>;
+  upsert: (
+    noteToUpsert: Omit<FicheNoteUpsert, 'dateNote'> & { dateNote: number }
+  ) => Promise<unknown>;
   delete: (noteToDeleteId: number) => Promise<unknown>;
 };
 
@@ -175,12 +177,17 @@ export const FicheProvider = ({
 
   const notes: NotesState = {
     list: fiche.notes ?? [],
-    upsert: (noteToUpsert: FicheNoteUpsert) => {
+    upsert: (noteToUpsert) => {
+      const formattedDateNote = `${noteToUpsert.dateNote}-01-01`;
+      const formattedNoteToUpsert = {
+        ...noteToUpsert,
+        dateNote: formattedDateNote,
+      };
       if (noteToUpsert.id === undefined) {
         return updateFiche({
           ficheId: fiche.id,
           ficheFields: {
-            notes: [...(fiche.notes ?? []), noteToUpsert],
+            notes: [...(fiche.notes ?? []), formattedNoteToUpsert],
           },
         });
       }

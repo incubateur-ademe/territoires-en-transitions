@@ -1,4 +1,4 @@
-import { FicheNoteUpsert, FicheWithRelations } from '@tet/domain/plans';
+import { FicheWithRelations } from '@tet/domain/plans';
 import {
   Alert,
   Button,
@@ -16,7 +16,7 @@ type NoteCreationModalProps = {
   isOpen: boolean;
   fiche: FicheWithRelations;
   setIsOpen: (opened: boolean) => void;
-  onEdit: (editedNote: FicheNoteUpsert) => void;
+  onEdit: (editedNote: { note: string; dateNote: number }) => void;
 };
 
 export const NoteCreationModal = ({
@@ -32,7 +32,7 @@ export const NoteCreationModal = ({
 
   const handleSave = () => {
     if (note !== undefined && note.trim().length > 0 && year !== undefined) {
-      onEdit({ note, dateNote: `${year}-01-01` });
+      onEdit({ note, dateNote: year });
     }
   };
 
