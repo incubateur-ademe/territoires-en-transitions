@@ -4,12 +4,16 @@ import { PiloteOrReferentLabel } from '@/app/plans/plans/components/PiloteOrRefe
 import { EmptyPlanView } from '@/app/plans/plans/show-plan/empty-plan.view';
 import { usePlanFilters } from '@/app/plans/plans/show-plan/filters/plan-filters.context';
 import { PlanArborescence } from '@/app/plans/plans/show-plan/plan-arborescence.view';
+import {
+  PlanAxesProvider,
+  usePlanAxesContext,
+} from '@/app/plans/plans/show-plan/plan-arborescence.view/plan-axes.context';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
-import { Plan } from '@tet/domain/plans';
-import { Spacer, VisibleWhen } from '@tet/ui';
+import { Plan, PlanNode } from '@tet/domain/plans';
+import { Button, Spacer, VisibleWhen } from '@tet/ui';
 import { Header } from '../components/header';
 import { checkAxeHasFiche } from '../utils';
 import { Actions } from './actions';
@@ -54,6 +58,8 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
     initialData: initialPlanData,
   });
   const rootAxe = plan.axes.find((axe) => axe.parent === null);
+  const hasAxesToExpand = plan.axes.some((axe) => axe.depth > 0);
+
   if (!rootAxe) {
     return <div>Plan non trouvé</div>;
   }
@@ -64,6 +70,47 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
   const hasFiches = rootAxe.fiches && rootAxe.fiches.length > 0;
   const hasAxes = plan.axes.some((axe) => axe.depth > 0);
   const isPlanEmpty = !hasFiches && !hasAxes;
+
+  return (
+    <PlanAxesProvider rootAxe={rootAxe} axes={plan.axes}>
+      <PlanViewContent
+        plan={plan}
+        rootAxe={rootAxe}
+        planNameOrFallback={planNameOrFallback}
+        axeHasFiches={axeHasFiches}
+        hasAxesToExpand={hasAxesToExpand}
+        isPlanEmpty={isPlanEmpty}
+        currentCollectivite={currentCollectivite}
+        user={user}
+        isFiltered={isFiltered}
+      />
+    </PlanAxesProvider>
+  );
+};
+
+const PlanViewContent = ({
+  plan,
+  rootAxe,
+  planNameOrFallback,
+  axeHasFiches,
+  hasAxesToExpand,
+  isPlanEmpty,
+  currentCollectivite,
+  user,
+  isFiltered,
+}: {
+  plan: Plan;
+  rootAxe: PlanNode;
+  planNameOrFallback: string;
+  axeHasFiches: boolean;
+  hasAxesToExpand: boolean;
+  isPlanEmpty: boolean;
+  currentCollectivite: ReturnType<typeof useCurrentCollectivite>;
+  user: ReturnType<typeof useUser>;
+  isFiltered: boolean;
+}) => {
+  const { areAllClosed, toggleAll } = usePlanAxesContext();
+
   return (
     <div className="w-full">
       <Header
@@ -100,6 +147,20 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
           title="Détail du plan"
           headerActionButtons={
             <>
+              <VisibleWhen condition={hasAxesToExpand && !isFiltered}>
+                <Button
+                  size="xs"
+                  variant="outlined"
+                  icon={areAllClosed ? 'arrow-down-line' : 'arrow-up-line'}
+                  iconPosition="right"
+                  onClick={toggleAll}
+                  dataTest="ToggleAllAxes"
+                >
+                  {areAllClosed
+                    ? 'Ouvrir tous les axes/sous-axes'
+                    : 'Fermer tous les axes/sous-axes'}
+                </Button>
+              </VisibleWhen>
               <VisibleWhen
                 condition={
                   currentCollectivite.isReadOnly === false &&

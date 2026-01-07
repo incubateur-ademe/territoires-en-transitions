@@ -31,9 +31,43 @@ export class EditAxePom {
   }
 
   getAxeByName(name: string) {
-    return this.page.locator('[data-test="Axe"]').filter({
-      hasText: name,
-    });
+    return this.page
+      .locator('[data-test="Axe"]')
+      .filter({
+        hasText: name,
+      })
+      .first();
+  }
+
+  /**
+   * Vérifie qu'un axe est ouvert (déplié)
+   * Un axe est ouvert si son bouton de déplier a la classe "rotate-90"
+   */
+  async expectAxeIsOpen(axeNom: string) {
+    const axe = this.getAxeByName(axeNom);
+    await expect(axe).toBeVisible();
+    const expandButton = axe.locator('[data-test="BoutonDeplierAxe"]').first();
+    await expect(expandButton).toHaveClass(/rotate-90/);
+  }
+
+  /**
+   * Vérifie qu'un axe est fermé (replié)
+   * Un axe est fermé si son bouton de déplier n'a pas la classe "rotate-90"
+   */
+  async expectAxeIsClosed(axeNom: string) {
+    const axe = this.getAxeByName(axeNom);
+    await expect(axe).toBeVisible();
+    const expandButton = axe.locator('[data-test="BoutonDeplierAxe"]').first();
+    await expect(expandButton).not.toHaveClass(/rotate-90/);
+  }
+
+  /**
+   * Vérifie qu'un axe est visible (même s'il est dans un parent replié, il peut être présent dans le DOM mais caché)
+   * Pour vérifier qu'un sous-axe est vraiment visible, il faut que son parent soit ouvert
+   */
+  async expectAxeIsVisible(axeNom: string) {
+    const axe = this.getAxeByName(axeNom);
+    await expect(axe).toBeVisible();
   }
 
   getAxeInputByName(name: string) {
