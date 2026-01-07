@@ -1,7 +1,7 @@
 import { StatutsDropdown } from './status.dropdown';
 
 import { SANS_PILOTE_LABEL, SANS_REFERENT_LABEL } from '@tet/domain/plans';
-import { Field, SelectFilter } from '@tet/ui';
+import { Alert, Field, SelectFilter } from '@tet/ui';
 import { usePlanFilters } from '../plan-filters.context';
 import { PrioriteDropdown } from './priorites.dropdown';
 
@@ -11,6 +11,7 @@ export const Menu = () => {
 
   return (
     <div className="flex flex-col gap-4">
+      <Alert title="Les filtres s'appliquent uniquement sur les actions" />
       <Field title={getFilterLabel('pilotes')}>
         <SelectFilter
           values={filters.pilotes ?? []}
