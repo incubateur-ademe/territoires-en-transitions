@@ -1,6 +1,8 @@
 'use client';
 
 import { Button } from '@tet/ui';
+import { useQueryState } from 'nuqs';
+import { useEffect } from 'react';
 import {
   GenerateReportPlanModal,
   GenerateReportPlanModalProps,
@@ -10,10 +12,18 @@ import { useGeneratePptxPlanReportEnabled } from './use-generate-pptx-plan-repor
 export const GenerateReportButton = ({
   plan,
 }: GenerateReportPlanModalProps) => {
+  const [downloadReportId, setDownloadReportId] =
+    useQueryState('downloadReportId');
+
   const isGeneratePptxPlanReportEnabled = useGeneratePptxPlanReportEnabled();
   if (!isGeneratePptxPlanReportEnabled) {
     return null;
   }
+
+  useEffect(() => {
+    if (downloadReportId) {
+    }
+  }, [downloadReportId]);
 
   return (
     <GenerateReportPlanModal plan={plan}>

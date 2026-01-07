@@ -11,6 +11,7 @@ import PlanActionsService from '@tet/backend/plans/fiches/plan-actions.service';
 import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-fiche.service';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { CollectivitesModule } from '../../collectivites/collectivites.module';
+import { PlansUtilsModule } from '../utils/plans-utils.module';
 import { BulkEditRouter } from './bulk-edit/bulk-edit.router';
 import { BulkEditService } from './bulk-edit/bulk-edit.service';
 import { CountByRouter } from './count-by/count-by.router';
@@ -29,6 +30,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
 
 @Module({
   imports: [
+    PlansUtilsModule,
     forwardRef(() => CollectivitesModule),
     ImportPlanModule,
     NotificationsModule,

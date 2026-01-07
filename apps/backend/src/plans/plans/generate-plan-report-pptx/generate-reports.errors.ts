@@ -8,6 +8,7 @@ const GenerateReportSpecificErrors = [
   'CREATE_REPORT_GENERATION_ERROR',
   'UPDATE_REPORT_GENERATION_ERROR',
   'PLAN_NOT_FOUND',
+  'CREATE_NOTIFICATION_ERROR',
   ...UploadDocumentSpecificErrors,
 ] as const;
 type GenerateReportSpecificError =
@@ -35,6 +36,11 @@ export const generateReportErrorConfig: TrpcErrorHandlerConfig<GenerateReportSpe
       UPLOAD_STORAGE_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
         message: "Une erreur est survenue lors de l'upload du rapport généré",
+      },
+      CREATE_NOTIFICATION_ERROR: {
+        code: 'INTERNAL_SERVER_ERROR',
+        message:
+          'Une erreur est survenue lors de la création de la notification',
       },
     },
   };

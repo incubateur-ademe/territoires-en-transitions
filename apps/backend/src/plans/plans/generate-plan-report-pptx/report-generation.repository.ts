@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Result } from '@tet/backend/utils/result.type';
 import {
@@ -23,6 +24,7 @@ export class ReportGenerationRepository {
 
   async create(
     input: GenerateReportInput,
+    user: AuthenticatedUser,
     status: ReportGenerationStatus = 'pending'
   ): Promise<
     Result<
@@ -36,6 +38,7 @@ export class ReportGenerationRepository {
         .values({
           planId: input.planId,
           templateRef: input.templateKey,
+          createdBy: user.id,
           status: status,
           options: {
             ficheIds: input.ficheIds,

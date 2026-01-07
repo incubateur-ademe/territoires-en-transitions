@@ -1,5 +1,9 @@
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
-import { createdAt, modifiedAt } from '@tet/backend/utils/column.utils';
+import {
+  createdAt,
+  createdBy,
+  modifiedAt,
+} from '@tet/backend/utils/column.utils';
 import {
   ReportGenerationOptions,
   ReportGenerationStatus,
@@ -17,6 +21,7 @@ export const reportGenerationTable = pgTable('plan_report_generation', {
   options: jsonb('options').$type<ReportGenerationOptions>(),
   status: text('status').notNull().$type<ReportGenerationStatus>(),
   errorMessage: text('error_message'),
+  createdBy,
   createdAt,
   modifiedAt,
 });
