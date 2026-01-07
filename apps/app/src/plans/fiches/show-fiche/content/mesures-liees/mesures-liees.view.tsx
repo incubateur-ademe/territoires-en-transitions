@@ -9,11 +9,11 @@ import { MesuresLieesListe } from './mesures-liees.list';
 import { MesuresLieesModal } from './mesures-liees.modal';
 
 export const MesuresLieesView = () => {
-  const { fiche, isReadonly, isUpdatePending } = useFicheContext();
+  const { fiche, isReadonly, isUpdating } = useFicheContext();
   const currentCollectiviteId = useCollectiviteId();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { updateFiche } = useFicheContext();
+  const { update } = useFicheContext();
 
   const { mesures } = fiche;
 
@@ -26,13 +26,13 @@ export const MesuresLieesView = () => {
         <h5 className="text-primary-8 mb-0">Mesures des référentiels liées</h5>
         {!isReadonly && !isLoading && (
           <Button
-            icon={!isUpdatePending ? 'link' : undefined}
+            icon={!isUpdating ? 'link' : undefined}
             size="xs"
             variant="outlined"
-            disabled={isUpdatePending}
+            disabled={isUpdating}
             onClick={() => setIsModalOpen(true)}
           >
-            {isUpdatePending && <SpinnerLoader className="!h-4" />}
+            {isUpdating && <SpinnerLoader className="!h-4" />}
             Lier une mesure des référentiels
           </Button>
         )}
@@ -67,7 +67,7 @@ export const MesuresLieesView = () => {
           className="md:!grid-cols-2 lg:!grid-cols-1 xl:!grid-cols-2"
           onLoad={setIsLoading}
           onUnlink={(mesureId) =>
-            updateFiche({
+            update({
               ficheId: fiche.id,
               ficheFields: {
                 mesures: mesures.filter((mesure) => mesure.id !== mesureId),

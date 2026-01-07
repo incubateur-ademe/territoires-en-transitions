@@ -4,27 +4,26 @@ import { useFicheContext } from '../context/fiche-context';
 import { LinkIndicateursView } from './indicateurs/side-menu/link-indicateur.view';
 
 export const SidePanel = () => {
-  const { indicateurAction, selectedIndicateurs, updateIndicateurs } =
-    useFicheContext();
+  const { indicateurs } = useFicheContext();
   const { setPanel } = useSidePanel();
 
   useEffect(() => {
-    if (indicateurAction === 'associating') {
+    if (indicateurs.action === 'associating') {
       setPanel({
         type: 'open',
         title: 'Lier des indicateurs',
         content: (
           <LinkIndicateursView
-            selectedIndicateurs={selectedIndicateurs}
-            onSelect={(indicateur) => updateIndicateurs(indicateur)}
+            selectedIndicateurs={indicateurs.list}
+            onSelect={(indicateur) => indicateurs.update(indicateur)}
           />
         ),
       });
     }
-    if (indicateurAction === 'none') {
+    if (indicateurs.action === 'none') {
       setPanel({ type: 'close' });
     }
-  }, [indicateurAction, setPanel, selectedIndicateurs, updateIndicateurs]);
+  }, [setPanel, indicateurs.action]);
 
   return null;
 };

@@ -4,14 +4,14 @@ import { useFicheContext } from '../../context/fiche-context';
 
 const CreateIndicateurButton = ({
   toggleAction,
+  canCreateIndicateur,
 }: {
   toggleAction: () => void;
+  canCreateIndicateur: boolean;
 }) => {
-  const { canCreateIndicateur } = useFicheContext();
-
   const tracker = useEventTracker();
 
-  if (canCreateIndicateur === false) {
+  if (canCreateIndicateur) {
     return null;
   }
 
@@ -48,7 +48,7 @@ const AssociateIndicateursButton = ({
 };
 
 export const ActionButtons = () => {
-  const { toggleIndicateurAction, isReadonly } = useFicheContext();
+  const { indicateurs, isReadonly } = useFicheContext();
 
   if (isReadonly) {
     return null;
@@ -57,10 +57,11 @@ export const ActionButtons = () => {
   return (
     <>
       <CreateIndicateurButton
-        toggleAction={() => toggleIndicateurAction('creating')}
+        toggleAction={() => indicateurs.toggleAction('creating')}
+        canCreateIndicateur={indicateurs.canCreate}
       />
       <AssociateIndicateursButton
-        toggleAction={() => toggleIndicateurAction('associating')}
+        toggleAction={() => indicateurs.toggleAction('associating')}
       />
     </>
   );

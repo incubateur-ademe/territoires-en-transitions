@@ -1,10 +1,6 @@
-import {
-  FicheNote,
-  FicheNoteUpsert,
-  FicheWithRelations,
-} from '@tet/domain/plans';
-import { Button, Card, Icon, RichTextEditor } from '@tet/ui';
-import { format } from 'date-fns';
+import { MetadataNoteView } from '@/app/plans/fiches/show-fiche/content/notes/metadata-note.view';
+import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
+import { Button, Card, RichTextEditor } from '@tet/ui';
 import { useState } from 'react';
 import { NoteDeletionModal } from './note-deletion.modal';
 import { NoteEditionModal } from './note-edition.modal';
@@ -13,7 +9,7 @@ type NoteCardProps = {
   isReadonly?: boolean;
   fiche: FicheWithRelations;
   note: FicheNote;
-  onEdit: (editedNote: FicheNoteUpsert) => void;
+  onEdit: (editedNote: { id?: number; note: string; dateNote: number }) => void;
   onDelete: (noteToDeleteId: number) => void;
 };
 
@@ -65,25 +61,8 @@ const NoteCard = ({
           className="border-none !px-0 !bg-transparent"
           initialValue={note.note}
         />
-
-        <div className="flex gap-2">
-          <span className="text-grey-8 text-sm font-normal">
-            <Icon icon="user-line" size="sm" className="mr-1" />
-            Créée par {note.createdBy} le{' '}
-            {format(new Date(note.createdAt), 'dd/MM/yyyy')}
-          </span>
-          {note.modifiedAt && note.modifiedAt !== note.createdAt && (
-            <>
-              <div className="w-[1px] h-4 bg-grey-5" />
-              <span className="text-grey-8 text-sm font-normal">
-                <Icon icon="edit-line" size="sm" className="mr-1" />
-                Modifiée{note.modifiedBy ? ` par ${note.modifiedBy}` : ''}
-                {note.modifiedAt
-                  ? ` le ${format(new Date(note.modifiedAt), 'dd/MM/yyyy')}`
-                  : ''}
-              </span>
-            </>
-          )}
+        <div className="flex justify-end items-end flex-col align-bottom font-normal text-sm">
+          <MetadataNoteView note={note} />
         </div>
       </Card>
     </div>

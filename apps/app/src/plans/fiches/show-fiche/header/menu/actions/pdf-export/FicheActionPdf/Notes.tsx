@@ -38,7 +38,8 @@ const NotesContent = ({ note }: NotesCardProps) => {
         <Stack gap={1} direction="row" className="items-center">
           <UserIcon fill={colors.grey[8]} />
           <Paragraph className="text-[0.6rem] text-grey-8">
-            Créée le {format(new Date(createdAt), 'dd/MM/yyyy')} par {createdBy}
+            Créée le {format(new Date(createdAt), 'dd/MM/yyyy')} par{' '}
+            {createdBy ? `${createdBy.prenom} ${createdBy.nom}` : ''}
           </Paragraph>
         </Stack>
 
@@ -50,7 +51,7 @@ const NotesContent = ({ note }: NotesCardProps) => {
               <EditIcon fill={colors.grey[8]} />
               <Paragraph className="text-[0.6rem] text-grey-8">
                 Modifiée le {format(new Date(modifiedAt), 'dd/MM/yyyy')} par{' '}
-                {modifiedBy}
+                {modifiedBy ? `${modifiedBy.prenom} ${modifiedBy.nom}` : ''}
               </Paragraph>
             </Stack>
           </>

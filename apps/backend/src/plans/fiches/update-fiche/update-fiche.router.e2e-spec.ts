@@ -589,11 +589,11 @@ describe('UpdateFicheService', () => {
       const data: UpdateFicheRequest = {
         notes: [
           {
-            dateNote: '2024-01-15T00:00:00.000Z',
+            dateNote: '2024-01-15',
             note: 'Première note de suivi',
           },
           {
-            dateNote: '2024-02-20T00:00:00.000Z',
+            dateNote: '2024-02-20',
             note: 'Deuxième note importante',
           },
         ],

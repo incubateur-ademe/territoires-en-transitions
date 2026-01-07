@@ -37,7 +37,7 @@ export const DocumentsView = () => {
           ]}
         />
         <ContentLayout.Content
-          data={documents.list}
+          data={documents.list ?? []}
           isLoading={documents.isLoading}
           actions={
             <VisibleWhen condition={!isReadonly}>

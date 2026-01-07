@@ -10,7 +10,7 @@ import { DescriptionFormValues } from './description-schema';
 import { getFieldLabel } from './labels';
 
 export const Description = () => {
-  const { fiche, isReadonly, updateFiche } = useFicheContext();
+  const { fiche, isReadonly, update } = useFicheContext();
   const { control, watch, getValues, setValue } =
     useForm<DescriptionFormValues>({
       defaultValues: {
@@ -42,14 +42,14 @@ export const Description = () => {
   useEffect(() => {
     const subscription = watch((_formValues, { name }) => {
       if (name) {
-        updateFiche({
+        update({
           ficheId: fiche.id,
           ficheFields: { [name]: getValues(name) },
         });
       }
     });
     return () => subscription.unsubscribe();
-  }, [watch, updateFiche, fiche.id, getValues]);
+  }, [watch, update, fiche.id, getValues]);
 
   return (
     <>

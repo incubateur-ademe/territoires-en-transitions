@@ -17,10 +17,10 @@ export const StatusDropdownModal = ({
 }: StatusDropdownModalProps) => {
   const [updatedStatus, setUpdatedStatus] = useState(fiche.statut);
   const [isLoading, setIsLoading] = useState(false);
-  const { updateFiche } = useFicheContext();
+  const { update } = useFicheContext();
 
   const handleSave = async () => {
-    return updateFiche({
+    return update({
       ficheId: fiche.id,
       ficheFields: { statut: updatedStatus },
     });

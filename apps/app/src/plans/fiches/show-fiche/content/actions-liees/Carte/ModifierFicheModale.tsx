@@ -38,7 +38,7 @@ const ModifierFicheModale = ({
   setIsOpen,
   keysToInvalidate,
 }: Props) => {
-  const { updateFiche } = useFicheContext();
+  const { update } = useFicheContext();
 
   const { mutate: addPilotes } = useFicheActionAddPilote(keysToInvalidate);
   const { mutate: removeUserPilotes } =
@@ -223,7 +223,7 @@ const ModifierFicheModale = ({
                     );
                     removeUserPilotes(pilotesUser);
                   }
-                  updateFiche({ ficheId: fiche.id, ficheFields: fiche });
+                  update({ ficheId: fiche.id, ficheFields: fiche });
                   close();
                 },
               }}

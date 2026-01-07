@@ -20,7 +20,7 @@ export const EditionModalRenderer = ({
 }: EditionModalRendererProps) => {
   const router = useRouter();
   const { currentModal, closeModal } = useEditionModalManager();
-  const { updateFiche, isUpdatePending } = useFicheContext();
+  const { update, isUpdating } = useFicheContext();
   const collectiviteId = useCollectiviteId();
   const redirectPathAfterDelete = planId
     ? makeCollectivitePlanActionUrl({
@@ -45,8 +45,8 @@ export const EditionModalRenderer = ({
       planId={planId}
       onClose={closeModal}
       redirectPathAfterDelete={redirectPathAfterDelete}
-      updateFiche={updateFiche}
-      isEditLoading={isUpdatePending}
+      updateFiche={update}
+      isEditLoading={isUpdating}
       router={router}
     />
   );

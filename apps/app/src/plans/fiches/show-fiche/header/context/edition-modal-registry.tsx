@@ -16,7 +16,7 @@ export type EditionModalRendererContext = {
   planId?: number;
   onClose: () => void;
   redirectPathAfterDelete: string;
-  updateFiche: FicheContextValue['updateFiche'];
+  updateFiche: FicheContextValue['update'];
   isEditLoading: boolean;
   router: AppRouterInstance;
 };
