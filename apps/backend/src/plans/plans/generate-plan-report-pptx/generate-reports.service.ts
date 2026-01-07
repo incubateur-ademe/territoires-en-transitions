@@ -1,3 +1,4 @@
+import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, Logger } from '@nestjs/common';
 import UploadDocumentService from '@tet/backend/collectivites/documents/upload-document/upload-document.service';
 import PersonnalisationsService from '@tet/backend/collectivites/personnalisations/services/personnalisations-service';
@@ -24,6 +25,7 @@ import {
   GenerateReportInput,
   Plan,
   PlanNode,
+  ReportGeneration,
   ReportTemplatesType,
   Statut,
   StatutEnum,
@@ -33,9 +35,9 @@ import {
   CountByForEntityResponseType,
   getErrorMessage,
 } from '@tet/domain/utils';
+import { Queue } from 'bullmq';
 import { EChartsOption } from 'echarts/types/dist/echarts';
 import { chunk, isNil } from 'es-toolkit';
-import { Response } from 'express';
 import { mkdirSync, rmSync, writeFileSync } from 'fs';
 import { imageSizeFromFile } from 'image-size/fromFile';
 import { DateTime } from 'luxon';
@@ -76,6 +78,7 @@ import { ReportTemplateSlidesEnum } from './report-template-slides.enum';
 import { ReportTemplateTextsEnum } from './report-template-texts.enum';
 import { SlideGenerationArgs } from './slide-generation-args.dto';
 
+export const PLAN_REPORT_GENERATION_QUEUE_NAME = 'plan_report_generation';
 @Injectable()
 export class GenerateReportsService {
   private readonly logger = new Logger(GenerateReportsService.name);
@@ -231,7 +234,9 @@ export class GenerateReportsService {
     private readonly getPlanUrlService: GetPlanUrlService,
     private readonly reportGenerationRepository: ReportGenerationRepository,
     private readonly uploadDocumentService: UploadDocumentService,
-    private readonly notifyReportService: NotifyReportService
+    private readonly notifyReportService: NotifyReportService,
+    @InjectQueue(PLAN_REPORT_GENERATION_QUEUE_NAME)
+    private readonly planReportGenerationQueue: Queue
   ) {}
 
   private async replaceTextInSlide(
@@ -373,10 +378,7 @@ export class GenerateReportsService {
       : this.NOT_DEFINED_VALUE;
   }
 
-  private async getPlanData(
-    planId: number,
-    user: AuthenticatedUser
-  ): Promise<
+  private async getPlanData(planId: number): Promise<
     Result<
       {
         plan: Plan;
@@ -390,7 +392,7 @@ export class GenerateReportsService {
       GenerateReportError
     >
   > {
-    const plan = await this.planService.getPlan({ planId }, user);
+    const plan = await this.planService.getPlan({ planId });
     if (!plan.success) {
       return {
         success: false,
@@ -795,48 +797,14 @@ export class GenerateReportsService {
     });
   }
 
-  private getReportName(planGeneralInfo: ReportPlanGeneralInfo): string {
-    return `${slugify(
-      `Rapport_${planGeneralInfo.COLLECTIVITE_NOM}_${planGeneralInfo.PLAN_NOM}`,
-      {
-        replacement: ' ',
-        remove: /[*+~.()'"!:@]/g,
-      }
-    )}.pptx`;
-  }
-
-  async generateAndDownloadPlanReport(
-    request: GenerateReportInput,
-    user: AuthenticatedUser,
-    res: Response
-  ) {
-    const reportResult = await this.generatePlanReport(request, user);
-    if (!reportResult.success) {
-      const status =
-        reportResult.error === GenerateReportErrorEnum.UNAUTHORIZED ? 403 : 500;
-      res.status(status).json(reportResult);
-      return;
-    }
-
-    res.status(200).json(reportResult);
-
-    /*
-    res.attachment(reportResult.data.reportName);
-    res.set('Access-Control-Expose-Headers', 'Content-Disposition');
-    res.sendFile(reportResult.data.reportPath, (error) => {
-      if (error) {
-        this.logger.error(`Error sending file: ${getErrorMessage(error)}`);
-      } else {
-        this.logger.log(`Report sent successfully`);
-      }
-      if (reportResult.data.outputDir) {
-        this.logger.log(
-          `Removing output directory: ${reportResult.data.outputDir}`
-        );
-        rmSync(reportResult.data.outputDir, { recursive: true });
-      }
-    });
-    */
+  private getReportName(
+    collectivite: CollectiviteAvecType,
+    plan: Plan
+  ): string {
+    return `${slugify(`Rapport_${collectivite.nom}_${plan.nom}`, {
+      replacement: ' ',
+      remove: /[*+~.()'"!:@]/g,
+    })}.pptx`;
   }
 
   private getFicheTextReplacementsInfos(
@@ -1305,6 +1273,19 @@ export class GenerateReportsService {
     };
   }
 
+  private async cleanGenerationFiles(mediaDir: string, outputDir: string) {
+    this.logger.log(
+      `Cleaning generation files in ${mediaDir} and ${outputDir}`
+    );
+
+    if (mediaDir) {
+      rmSync(mediaDir, { recursive: true });
+    }
+    if (outputDir) {
+      rmSync(outputDir, { recursive: true });
+    }
+  }
+
   private async handleReportGenerationError(
     reportInfo: {
       collectiviteId: number;
@@ -1314,6 +1295,7 @@ export class GenerateReportsService {
       reportName: string;
     },
     mediaDir: string,
+    outputDir: string,
     error: GenerateReportError
   ): Promise<{ success: false; error: GenerateReportError }> {
     const { generationId, collectiviteId, planId, userId, reportName } =
@@ -1336,9 +1318,7 @@ export class GenerateReportsService {
       }
     );
 
-    if (mediaDir) {
-      rmSync(mediaDir, { recursive: true });
-    }
+    await this.cleanGenerationFiles(mediaDir, outputDir);
 
     return {
       success: false,
@@ -1346,47 +1326,33 @@ export class GenerateReportsService {
     };
   }
 
-  async generatePlanReport(
-    request: GenerateReportInput,
+  async get(
+    reportId: string,
     user: AuthenticatedUser
-  ): Promise<
-    Result<
-      { reportName: string; reportPath: string; outputDir: string },
-      GenerateReportError
-    >
-  > {
-    let mediaDir = '';
-    let outputDir = '';
-    let reportPath = '';
-    let reportName = '';
-    this.logger.log(
-      `Generating plan report for plan ${request.planId} with template ${request.templateKey}`
+  ): Promise<Result<ReportGeneration, GenerateReportError>> {
+    const reportGenerationResult = await this.reportGenerationRepository.get(
+      reportId
     );
+    if (!reportGenerationResult.success) {
+      return reportGenerationResult;
+    }
 
-    const templateConfig = this.SLIDE_TEMPLATES_CONFIG[request.templateKey];
-
-    const planDataResult = await this.getPlanData(request.planId, user);
-    if (!planDataResult.success) {
+    const plan = await this.planService.getPlan(
+      { planId: reportGenerationResult.data.planId },
+      user
+    );
+    if (!plan.success) {
       return {
         success: false,
-        error: planDataResult.error,
+        error: 'PLAN_NOT_FOUND',
       };
     }
-    const {
-      plan,
-      axes,
-      sousAxesByAxe,
-      fiches,
-      planGeneralInfo,
-      collectivite,
-      personnalisationReponses,
-    } = planDataResult.data;
 
     const isAllowed = await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['PLANS.READ'],
       ResourceType.COLLECTIVITE,
-      plan.collectiviteId,
+      plan.data.collectiviteId,
       true
     );
     if (!isAllowed) {
@@ -1396,11 +1362,58 @@ export class GenerateReportsService {
       };
     }
 
-    // Create report generation entity at the beginning
+    return {
+      success: true,
+      data: reportGenerationResult.data,
+    };
+  }
+
+  async createPendingPlanReportGeneration(
+    request: GenerateReportInput,
+    user: AuthenticatedUser
+  ): Promise<Result<ReportGeneration, GenerateReportError>> {
+    this.logger.log(
+      `Creating pending plan report generation for plan ${request.planId} with template ${request.templateKey}`
+    );
+
+    // Get plan to check permissions
+    const plan = await this.planService.getPlan(
+      { planId: request.planId },
+      user
+    );
+    if (!plan.success) {
+      return {
+        success: false,
+        error: 'PLAN_NOT_FOUND',
+      };
+    }
+
+    const isAllowed = await this.permissionService.isAllowed(
+      user,
+      PermissionOperationEnum['PLANS.READ'],
+      ResourceType.COLLECTIVITE,
+      plan.data.collectiviteId,
+      true
+    );
+    if (!isAllowed) {
+      return {
+        success: false,
+        error: 'UNAUTHORIZED',
+      };
+    }
+
+    const collectivite = await this.collectiviteService.getCollectiviteAvecType(
+      plan.data.collectiviteId
+    );
+
+    const reportName = this.getReportName(collectivite, plan.data);
+
+    // Create report generation entity with pending status
     const createResult = await this.reportGenerationRepository.create(
       request,
+      reportName,
       user,
-      'processing'
+      'pending'
     );
 
     if (!createResult.success) {
@@ -1411,6 +1424,84 @@ export class GenerateReportsService {
     }
 
     const generationId = createResult.data.id;
+    this.logger.log(
+      `Created report generation entity with id: ${generationId}, pushing to queue`
+    );
+
+    // Push to queue
+    await this.planReportGenerationQueue.add(
+      'generate-plan-report',
+      {
+        generationId,
+        request,
+        userId: user.id,
+      },
+      {
+        jobId: generationId,
+      }
+    );
+
+    return {
+      success: true,
+      data: createResult.data,
+    };
+  }
+
+  async generatePlanReport(
+    generationId: string,
+    request: GenerateReportInput,
+    userId: string
+  ): Promise<Result<{ reportId: string }, GenerateReportError>> {
+    let mediaDir = '';
+    let outputDir = '';
+    let reportPath = '';
+    this.logger.log(
+      `Generating plan report for generation ${generationId}, plan ${request.planId} with template ${request.templateKey}`
+    );
+
+    const reportGeneration = await this.reportGenerationRepository.get(
+      generationId
+    );
+    if (!reportGeneration.success) {
+      return reportGeneration;
+    }
+
+    const reportName = reportGeneration.data.name;
+
+    // Update status to processing
+    await this.reportGenerationRepository.update(generationId, {
+      status: 'processing',
+      errorMessage: null,
+      fileId: null,
+    });
+
+    const templateConfig = this.SLIDE_TEMPLATES_CONFIG[request.templateKey];
+
+    const planDataResult = await this.getPlanData(request.planId);
+    if (!planDataResult.success) {
+      return this.handleReportGenerationError(
+        {
+          generationId,
+          collectiviteId: 0, // Will be set from planDataResult if available
+          planId: request.planId,
+          userId: userId,
+          reportName: '',
+        },
+        mediaDir,
+        outputDir,
+        planDataResult.error
+      );
+    }
+
+    const {
+      plan,
+      axes,
+      sousAxesByAxe,
+      fiches,
+      planGeneralInfo,
+      collectivite,
+      personnalisationReponses,
+    } = planDataResult.data;
     this.logger.log(
       `Created report generation entity with id: ${generationId}`
     );
@@ -1585,7 +1676,6 @@ export class GenerateReportsService {
         slideType: 'ressources_slide',
       });
 
-      reportName = this.getReportName(planGeneralInfo);
       const reportSummary = await automizer.write(reportName);
       this.logger.log(`Report summary: ${JSON.stringify(reportSummary)}`);
       reportPath = path.join(outputDir, reportName);
@@ -1598,8 +1688,7 @@ export class GenerateReportsService {
           filename: reportName,
           confidentiel: false,
         },
-        reportPath,
-        user
+        reportPath
       );
       if (!uploadResult.success) {
         return this.handleReportGenerationError(
@@ -1607,10 +1696,11 @@ export class GenerateReportsService {
             generationId,
             collectiviteId: collectivite.id,
             planId: request.planId,
-            userId: user.id,
+            userId: userId,
             reportName: reportName,
           },
           mediaDir,
+          outputDir,
           uploadResult.error
         );
       }
@@ -1631,7 +1721,7 @@ export class GenerateReportsService {
           {
             collectiviteId: collectivite.id,
             planId: request.planId,
-            createdBy: user.id,
+            createdBy: userId,
             reportId: generationId,
             reportName: reportName,
           }
@@ -1643,17 +1733,16 @@ export class GenerateReportsService {
             generationId,
             collectiviteId: collectivite.id,
             planId: request.planId,
-            userId: user.id,
+            userId: userId,
             reportName: reportName,
           },
           mediaDir,
+          outputDir,
           GenerateReportErrorEnum.CREATE_NOTIFICATION_ERROR
         );
       }
 
-      if (mediaDir) {
-        rmSync(mediaDir, { recursive: true });
-      }
+      await this.cleanGenerationFiles(mediaDir, outputDir);
     } catch (err) {
       this.logger.error(
         `Error generating plan report: ${getErrorMessage(err)}`
@@ -1665,17 +1754,18 @@ export class GenerateReportsService {
           generationId,
           collectiviteId: collectivite.id,
           planId: request.planId,
-          userId: user.id,
+          userId: userId,
           reportName: reportName,
         },
         mediaDir,
+        outputDir,
         error
       );
     }
 
     return {
       success: true,
-      data: { reportName, reportPath, outputDir },
+      data: { reportId: generationId },
     };
   }
 }
