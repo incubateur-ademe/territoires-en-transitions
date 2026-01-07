@@ -1,14 +1,14 @@
-import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   Injectable,
   InternalServerErrorException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   BibliothequeFichier,
   BibliothequeFichierCreate,
@@ -28,19 +28,21 @@ export class CreateDocumentService {
 
   async createDocument(
     document: BibliothequeFichierCreate,
-    user: AuthenticatedUser
+    user?: AuthenticatedUser
   ): Promise<BibliothequeFichier> {
     this.logger.log(
       `Création du document ${document.filename} pour la collectivité ${document.collectiviteId}`
     );
 
-    await this.permissionService.isAllowed(
-      user,
-      'collectivites.documents.create',
-      ResourceType.COLLECTIVITE,
-      document.collectiviteId,
-      true
-    );
+    if (user) {
+      await this.permissionService.isAllowed(
+        user,
+        'collectivites.documents.create',
+        ResourceType.COLLECTIVITE,
+        document.collectiviteId,
+        true
+      );
+    }
 
     const existingStorageObject = await this.databaseService.db
       .select({ id: storageObjectTable.id })

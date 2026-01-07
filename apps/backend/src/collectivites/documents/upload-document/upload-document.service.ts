@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import SupabaseService from '@tet/backend/utils/database/supabase.service';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import {
   BibliothequeFichier,
   BibliothequeFichierCreate,
@@ -31,10 +31,7 @@ export default class UploadDocumentService {
   async getCollectiviteBucketId(
     collectiviteId: number
   ): Promise<
-    MethodResult<
-      string,
-      typeof UploadDocumentErrorEnum.COLLECTIVITE_BUCKET_NOT_FOUND
-    >
+    Result<string, typeof UploadDocumentErrorEnum.COLLECTIVITE_BUCKET_NOT_FOUND>
   > {
     const buckets = await this.databaseService.db
       .select({ bucketId: collectiviteBucketTable.bucketId })
@@ -55,8 +52,8 @@ export default class UploadDocumentService {
   async uploadLocalFile(
     document: BibliothequeFichierCreate,
     localFilePath: string,
-    user: AuthenticatedUser
-  ): Promise<MethodResult<BibliothequeFichier, UploadDocumentError>> {
+    user?: AuthenticatedUser
+  ): Promise<Result<BibliothequeFichier, UploadDocumentError>> {
     const bucketResult = await this.getCollectiviteBucketId(
       document.collectiviteId
     );

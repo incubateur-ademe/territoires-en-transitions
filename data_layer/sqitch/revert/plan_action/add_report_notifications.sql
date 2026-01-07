@@ -15,4 +15,7 @@ DROP COLUMN IF EXISTS send_after;
 ALTER TABLE plan_report_generation
 DROP COLUMN IF EXISTS created_by;
 
+ALTER TABLE plan_report_generation
+DROP COLUMN IF EXISTS name;
+
 COMMIT;

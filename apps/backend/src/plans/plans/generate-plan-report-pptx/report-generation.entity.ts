@@ -13,6 +13,7 @@ import { axeTable } from '../../fiches/shared/models/axe.table';
 
 export const reportGenerationTable = pgTable('plan_report_generation', {
   id: uuid('id').primaryKey().defaultRandom(),
+  name: text('name').notNull(),
   planId: integer('plan_id')
     .notNull()
     .references(() => axeTable.id, { onDelete: 'cascade' }),

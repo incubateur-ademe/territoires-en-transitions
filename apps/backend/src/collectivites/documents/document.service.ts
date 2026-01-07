@@ -7,7 +7,7 @@ import {
 import { COLLECTIVITE_ID_ROUTE_PARAM } from '@tet/backend/collectivites/shared/models/collectivite-api.constants';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
 import SupabaseService from '@tet/backend/utils/database/supabase.service';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import { PreuveDto, PreuveTypeEnum } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
@@ -115,10 +115,7 @@ export default class DocumentService {
   async getCollectiviteBucketId(
     collectiviteId: number
   ): Promise<
-    MethodResult<
-      string,
-      typeof UploadDocumentErrorEnum.COLLECTIVITE_BUCKET_NOT_FOUND
-    >
+    Result<string, typeof UploadDocumentErrorEnum.COLLECTIVITE_BUCKET_NOT_FOUND>
   > {
     const buckets = await this.databaseService.db
       .select({ bucketId: collectiviteBucketTable.bucketId })
