@@ -18,6 +18,7 @@ import { PersonneTagOrUserWithContacts } from '@tet/domain/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { and, eq, inArray, not } from 'drizzle-orm';
 import { differenceBy, isNil } from 'es-toolkit';
+import { DurationLike } from 'luxon';
 import { DatabaseError } from 'pg';
 import { z } from 'zod';
 import GetPlanUrlService from '../../utils/get-plan-url.service';
@@ -51,6 +52,8 @@ type OnUpdateFichePiloteNotificationInsert = Omit<
 > & {
   notificationData: OnUpdateFichePiloteNotificationData;
 };
+
+const DEFAULT_DELAY_BEFORE_SENDING: DurationLike = { minutes: 15 };
 
 @Injectable()
 export class NotifyPiloteService {
@@ -160,9 +163,10 @@ export class NotifyPiloteService {
             notificationData: { ficheId, piloteId: pilote.userId },
           }));
       if (notificationsToInsert.length > 0) {
-        await transaction
-          .insert(notificationTable)
-          .values(notificationsToInsert);
+        await this.notificationsService.createPendingNotifications(
+          notificationsToInsert,
+          DEFAULT_DELAY_BEFORE_SENDING
+        );
 
         insertedCount = notificationsToInsert.length;
       }

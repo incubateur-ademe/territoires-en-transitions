@@ -4,8 +4,9 @@ import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, lt, sql } from 'drizzle-orm';
 import { DateTime, DurationLike } from 'luxon';
 import { DatabaseService } from '../database/database.service';
+import { Transaction } from '../database/transaction.utils';
 import { EmailService } from '../email/email.service';
-import { MethodResult } from '../result.type';
+import { Result } from '../result.type';
 import { CommonErrorEnum } from '../trpc/common-errors';
 import { NotificationStatusEnum } from './models/notification-status.enum';
 import {
@@ -19,7 +20,6 @@ import {
 } from './models/notification.table';
 import { NotifiedOnType } from './models/notified-on.enum';
 
-const DEFAULT_DELAY_BEFORE_SENDING: DurationLike = { minutes: 15 };
 const MAX_SEND_RETRIES = 5;
 
 @Injectable()
@@ -47,9 +47,7 @@ export class NotificationsService {
   async createPendingNotification(
     notification: NotificationInsert,
     delayBeforeSending?: DurationLike
-  ): Promise<
-    MethodResult<Notification, typeof CommonErrorEnum.DATABASE_ERROR>
-  > {
+  ): Promise<Result<Notification, typeof CommonErrorEnum.DATABASE_ERROR>> {
     const result = await this.createPendingNotifications(
       [notification],
       delayBeforeSending
@@ -59,10 +57,9 @@ export class NotificationsService {
 
   async createPendingNotifications(
     notifications: NotificationInsert[],
-    delayBeforeSending?: DurationLike
-  ): Promise<
-    MethodResult<Notification[], typeof CommonErrorEnum.DATABASE_ERROR>
-  > {
+    delayBeforeSending?: DurationLike,
+    tx?: Transaction
+  ): Promise<Result<Notification[], typeof CommonErrorEnum.DATABASE_ERROR>> {
     const now = DateTime.now();
     const sendAfter = (delayBeforeSending ? now.plus(delayBeforeSending) : now)
       .toUTC()
@@ -72,7 +69,7 @@ export class NotificationsService {
         notification.status = NotificationStatusEnum.PENDING;
         notification.sendAfter = sendAfter;
       });
-      const createdNotifications = await this.databaseService.db
+      const createdNotifications = await (tx ?? this.databaseService.db)
         .insert(notificationTable)
         .values(notifications)
         .returning();

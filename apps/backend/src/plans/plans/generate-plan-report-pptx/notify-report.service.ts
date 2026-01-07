@@ -8,7 +8,7 @@ import {
 } from '@tet/backend/utils/notifications/models/notification.table';
 import { NotifiedOnEnum } from '@tet/backend/utils/notifications/models/notified-on.enum';
 import { NotificationsService } from '@tet/backend/utils/notifications/notifications.service';
-import { MethodResult } from '@tet/backend/utils/result.type';
+import { Result } from '@tet/backend/utils/result.type';
 import { DownloadPlanReportQueryParams } from '@tet/domain/plans';
 import { z } from 'zod';
 import GetPlanUrlService from '../../utils/get-plan-url.service';
@@ -149,7 +149,7 @@ export class NotifyReportService {
     notification: Notification,
     notificationType: ReportNotifiedOn
   ): Promise<
-    MethodResult<
+    Result<
       {
         emailProps: NotifyReportFailedProps;
         notificationData: ReportNotificationData;

@@ -27,7 +27,7 @@ export class GetPlanService {
 
   async getPlan(
     input: GetPlanInput,
-    user: AuthenticatedUser,
+    user?: AuthenticatedUser,
     tx?: Transaction
   ): Promise<Result<Plan, GetPlanError>> {
     const executeInTransaction = async (
@@ -44,12 +44,14 @@ export class GetPlanService {
       }
       const plan = planResult.data;
 
-      const isAllowed = await this.checkPermission(plan.collectiviteId, user);
-      if (!isAllowed) {
-        return {
-          success: false,
-          error: GetPlanErrorEnum.UNAUTHORIZED,
-        };
+      if (user) {
+        const isAllowed = await this.checkPermission(plan.collectiviteId, user);
+        if (!isAllowed) {
+          return {
+            success: false,
+            error: GetPlanErrorEnum.UNAUTHORIZED,
+          };
+        }
       }
 
       const axesResult = await this.listAxesService.listAxesRecursively(

@@ -27,7 +27,6 @@ const TEST_SUBJECT = 'Test Subject';
 const TEST_CONTENT = 'Test Content';
 const DEFAULT_DELAY_MINUTES = 20;
 const RECENT_DELAY_MINUTES = 5;
-const DEFAULT_DELAY_SECONDS = 0;
 
 describe('NotificationsService', () => {
   let app: INestApplication;

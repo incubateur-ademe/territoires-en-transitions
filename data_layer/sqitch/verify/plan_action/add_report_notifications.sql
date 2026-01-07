@@ -6,7 +6,8 @@ SELECT send_after
 FROM notifications.notification
 WHERE false;
 
-SELECT created_by
+SELECT created_by,
+name
 FROM plan_report_generation
 WHERE false;
 

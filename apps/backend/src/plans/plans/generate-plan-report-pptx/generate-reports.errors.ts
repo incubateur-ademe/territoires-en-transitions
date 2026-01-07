@@ -6,6 +6,7 @@ import {
 
 const GenerateReportSpecificErrors = [
   'CREATE_REPORT_GENERATION_ERROR',
+  'GET_REPORT_GENERATION_ERROR',
   'UPDATE_REPORT_GENERATION_ERROR',
   'PLAN_NOT_FOUND',
   'CREATE_NOTIFICATION_ERROR',
@@ -20,6 +21,10 @@ export const generateReportErrorConfig: TrpcErrorHandlerConfig<GenerateReportSpe
       CREATE_REPORT_GENERATION_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
         message: 'La création du job de génération du rapport a échoué',
+      },
+      GET_REPORT_GENERATION_ERROR: {
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'La récupération du job de génération du rapport a échoué',
       },
       UPDATE_REPORT_GENERATION_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
