@@ -1,12 +1,15 @@
 import { useDeleteFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-delete-fiche';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
-import { Modal, ModalFooterOKCancel } from '@tet/ui';
+import { Alert, cn, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
-import { FicheListItem } from '../list-all-fiches/data/use-list-fiches';
+import {
+  FicheListItem,
+  useListFiches,
+} from '../list-all-fiches/data/use-list-fiches';
 
 type DeleteFicheModalProps = {
   openState?: OpenState;
-  fiche: Pick<FicheListItem, 'id' | 'titre' | 'plans'>;
+  fiche: FicheListItem;
   buttonVariant?: 'white' | 'grey';
   buttonClassName?: string;
   onDeleteCallback?: () => void;
@@ -22,8 +25,17 @@ export const DeleteFicheModal = ({
   onClose,
 }: DeleteFicheModalProps) => {
   const { id, titre, plans } = fiche;
-  const isInMultipleAxes = !!plans && plans.length > 1;
+
   const { mutate: deleteFiche } = useDeleteFiche({ onDeleteCallback });
+
+  const { count: countSousActions } = useListFiches(fiche.collectiviteId, {
+    filters: { parentsId: [fiche.id] },
+    queryOptions: { limit: 1, page: 1 },
+  });
+
+  const isInMultipleAxes = !!plans && plans.length > 1;
+
+  const hasSousActions = countSousActions > 0;
 
   return (
     <Modal
@@ -33,21 +45,29 @@ export const DeleteFicheModal = ({
       onClose={onClose}
       render={({ descriptionId }) => (
         // Texte d'avertissement
-        <div id={descriptionId} data-test="supprimer-fiche-modale">
-          {isInMultipleAxes ? (
-            <>
-              <p className="mb-2">
-                Cette action est présente dans plusieurs plans.
-              </p>
-              <p className="mb-0">
-                Souhaitez-vous vraiment supprimer cette action de tous les plans
-                ?
-              </p>
-            </>
-          ) : (
-            <p className="mb-0">
-              Souhaitez-vous vraiment supprimer cette action ?
-            </p>
+        <div
+          id={descriptionId}
+          data-test="supprimer-fiche-modale"
+          className="flex flex-col gap-2"
+        >
+          <span
+            className={cn('text-center', {
+              'mb-4': isInMultipleAxes || hasSousActions,
+            })}
+          >
+            Souhaitez-vous vraiment supprimer cette action ?
+          </span>
+          {isInMultipleAxes && (
+            <Alert
+              state="warning"
+              description="Cette action est partagée entre plusieurs plans et sera supprimée partout."
+            />
+          )}
+          {hasSousActions && (
+            <Alert
+              state="warning"
+              description="Cette action contient des sous-actions qui seront également supprimées."
+            />
           )}
         </div>
       )}
