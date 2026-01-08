@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/nextjs';
 import { useState } from 'react';
 import { Button } from '../Button';
-import { Alert, ControlledAlert } from './Alert';
+import { Alert } from './Alert';
 
 const meta: Meta<typeof Alert> = {
   component: Alert,
@@ -31,10 +31,6 @@ export const Success: Story = {
 
 export const Warning: Story = {
   args: { state: 'warning' },
-};
-
-export const WithClosingButton: Story = {
-  render: (args) => <ControlledAlert {...args} />,
 };
 
 export const ControlledByParent: Story = {
