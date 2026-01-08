@@ -48,7 +48,6 @@ const Contact = async () => {
           title={`Tél. : ${data.telephone}`}
           description={data.horaires}
           customIcon="phone-fill"
-          rounded
         />
       )}
 
