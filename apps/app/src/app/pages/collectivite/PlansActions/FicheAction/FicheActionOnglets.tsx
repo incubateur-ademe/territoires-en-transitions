@@ -1,6 +1,8 @@
+import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { ENV } from '@tet/api/environmentVariables';
 
+import { SousActionTable } from '@/app/plans/sous-actions/list/table/sous-action.table';
 import { ServicesWidget } from '@betagouv/les-communs-widget';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
@@ -8,7 +10,6 @@ import { AppEnvironment } from '@tet/domain/utils';
 import { Tab, Tabs } from '@tet/ui';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
 import { DocumentsView } from './Documents/documents.view';
-import Etapes from './etapes';
 import FichesLieesTab from './FichesLiees/FichesLieesTab';
 import IndicateursTab from './Indicateurs/IndicateursTab';
 import { MesuresLieesView } from './mesures-liees/mesures-liees.view';
@@ -47,6 +48,11 @@ const FicheActionOnglets = ({
     collectiviteId
   );
 
+  const { count: countSousActions } = useListFiches(
+    collectivite.collectiviteId,
+    { filters: { parentsId: [fiche.id] }, queryOptions: { limit: 1, page: 1 } }
+  );
+
   const tabDescriptors: TabDescriptor[] = [
     {
       label: 'Indicateurs de suivi',
@@ -61,9 +67,9 @@ const FicheActionOnglets = ({
       ),
     },
     {
-      label: 'Étapes',
+      label: `Sous-actions (${countSousActions})`,
       isVisible: true,
-      render: () => <Etapes isReadonly={isReadonly} fiche={fiche} />,
+      render: () => <SousActionTable />,
     },
     {
       label: 'Notes',

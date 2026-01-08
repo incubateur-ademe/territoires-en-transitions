@@ -1,7 +1,7 @@
 const FICHE_SECTIONS = [
   'details',
   'indicateurs',
-  'etapes',
+  'sous-actions',
   'notes',
   'moyens',
   'actions-liees',
