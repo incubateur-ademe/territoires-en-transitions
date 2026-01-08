@@ -49,7 +49,6 @@ const MenuAide = () => (
     text="Aide"
   >
     <Alert
-      rounded
       description={
         <div className="flex flex-col gap-3 mt-0.5 pr-8">
           <p className="mb-0 text-sm">

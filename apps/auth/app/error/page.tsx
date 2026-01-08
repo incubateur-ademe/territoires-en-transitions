@@ -8,7 +8,6 @@ const ErrorPage = () => {
       description="Une erreur est survenue. Veuillez contacter le support"
       title="Erreur"
       state="error"
-      fullPageWidth
     />
   );
 };

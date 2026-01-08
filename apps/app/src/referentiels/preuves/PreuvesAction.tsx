@@ -92,7 +92,6 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
             withSubActions ? 'action' : 'sous-action'
           } du référentiel.`}
           className="mb-5"
-          rounded
         />
       )}
 
