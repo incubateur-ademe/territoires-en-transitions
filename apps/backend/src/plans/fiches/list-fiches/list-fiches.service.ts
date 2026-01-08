@@ -723,17 +723,16 @@ export default class ListFichesService {
 
     const { data: fichesAction } = await this.listFichesQuery(null, {
       ficheIds: [ficheId],
-      withChildren: true,
     });
+    const ficheAction = fichesAction[0];
 
-    if (!fichesAction?.length) {
+    if (!ficheAction) {
       return {
         success: false,
         error: `Aucune action trouvée avec l'id ${ficheId}`,
       };
     }
 
-    const ficheAction = fichesAction[0];
     if (user) {
       await this.fichePermissionService.canReadFicheObject(ficheAction, user);
     }
