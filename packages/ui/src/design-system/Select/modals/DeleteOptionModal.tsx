@@ -26,7 +26,6 @@ export const DeleteOptionModal = ({
         <Alert
           title="Souhaitez-vous vraiment supprimer cette option de votre collectivité ?"
           description={message ?? undefined}
-          rounded
         />
       )}
       renderFooter={({ close }) => (

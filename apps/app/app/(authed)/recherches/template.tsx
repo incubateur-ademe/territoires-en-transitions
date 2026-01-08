@@ -15,10 +15,9 @@ export default function Template({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Alert
-        fullPageWidth
         state="info"
         title="Pour accéder à plus de détails sur chacune des collectivités engagées dans le programme, vous devez être membre d’au moins une collectivité."
-        className="border-b border-b-info-3"
+        className="mb-10"
         footer={
           <Button
             dataTest="btn-AssocierCollectivite"
