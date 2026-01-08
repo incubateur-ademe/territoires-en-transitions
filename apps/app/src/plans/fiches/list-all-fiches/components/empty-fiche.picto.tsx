@@ -1,4 +1,4 @@
-const EmptyFichePicto = ({
+export const EmptyFichePicto = ({
   className,
   width = '135',
   height = '134',
@@ -61,5 +61,3 @@ const EmptyFichePicto = ({
     </svg>
   );
 };
-
-export default EmptyFichePicto;

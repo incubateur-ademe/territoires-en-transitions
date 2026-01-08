@@ -7,14 +7,16 @@ import {
   TabsTab,
   Tabs as TabsUI,
 } from '@tet/ui/design-system/TabsNext/index';
-import { usePathname } from 'next/navigation';
+import { useSelectedLayoutSegment } from 'next/navigation';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
 import { useFicheContext } from '../context/fiche-context';
-import { FicheSectionId } from './type';
+import { FicheSectionId, isFicheSectionId } from './type';
 
 export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
-  const pathname = usePathname();
-  const { fiche, indicateurs } = useFicheContext();
+  const rawActiveTab = useSelectedLayoutSegment();
+  const activeTab =
+    rawActiveTab && isFicheSectionId(rawActiveTab) ? rawActiveTab : 'details';
+  const { fiche, indicateurs, actionsLiees } = useFicheContext();
   const collectivite = useCurrentCollectivite();
   const { niveauAcces, permissions } = collectivite;
 
@@ -58,7 +60,9 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
       id: 'moyens',
     },
     {
-      label: 'Actions liées',
+      label: `Actions liées ${
+        actionsLiees.list.length > 0 ? `(${actionsLiees.list.length})` : ''
+      }`,
       isVisible:
         hasPermission(permissions, 'plans.fiches.read') ||
         (!niveauAcces &&
@@ -95,7 +99,7 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
           ficheUid: fiche.id.toString(),
           content: tab.id,
         })}
-        isActive={pathname.endsWith(tab.id)}
+        isActive={activeTab === tab.id}
       />
     ));
 

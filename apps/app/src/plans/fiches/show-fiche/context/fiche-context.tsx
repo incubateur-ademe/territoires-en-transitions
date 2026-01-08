@@ -20,15 +20,21 @@ import {
   FicheNoteUpsert,
   FicheWithRelations,
 } from '@tet/domain/plans';
-import { createContext, ReactNode, useContext, useState } from 'react';
+import React, {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+} from 'react';
 import { useUpdateFiche } from '../../update-fiche/data/use-update-fiche';
 import { useAnnexesFicheAction } from '../data/useAnnexesFicheAction';
 import { useUpdateFichesActionLiees } from '../data/useFichesActionLiees';
 
-type FichesLieesState = {
+type ActionsLieesState = {
   list: FicheListItem[];
   isLoading: boolean;
   update: (linkedFicheIds: number[]) => void;
+  updateActionLiee: (fiche: FicheListItem) => void;
 };
 
 type DocumentsState = {
@@ -42,11 +48,8 @@ type IndicateursState = {
   update: (indicateur: IndicateurDefinitionListItem) => Promise<void>;
   canUpdate: (indicateur: IndicateurDefinitionListItem) => boolean;
   canCreate: boolean;
-  action: IndicateurActionMode;
-  toggleAction: (action: IndicateurActionMode) => void;
 };
 
-type IndicateurActionMode = 'creating' | 'associating' | 'none';
 type NotesState = {
   list: FicheNote[];
   upsert: (
@@ -61,7 +64,7 @@ export type FicheContextValue = {
   planId?: number;
   update: ReturnType<typeof useUpdateFiche>['mutate'];
   isUpdating: boolean;
-  fichesLiees: FichesLieesState;
+  actionsLiees: ActionsLieesState;
   documents: DocumentsState;
   indicateurs: IndicateursState;
   notes: NotesState;
@@ -115,11 +118,32 @@ export const FicheProvider = ({
 
   const { mutate: updateFichesLiees } = useUpdateFichesActionLiees(fiche.id);
 
-  const fichesLiees: FichesLieesState = {
-    list: fichesLieesList,
-    isLoading: isLoadingFichesLiees,
-    update: updateFichesLiees,
-  };
+  const updateActionLiee = useCallback(
+    (ficheToToggle: FicheListItem) => {
+      const currentFiches = fichesLieesList;
+      const isFicheAlreadyLinked =
+        currentFiches.some((f) => f.id === ficheToToggle.id) ?? false;
+
+      const updatedFicheIds = isFicheAlreadyLinked
+        ? currentFiches
+            .filter((f) => f.id !== ficheToToggle.id)
+            .map((f) => f.id)
+        : [...currentFiches, ficheToToggle].map((f) => f.id);
+
+      updateFichesLiees(updatedFicheIds);
+    },
+    [fichesLieesList, updateFichesLiees]
+  );
+
+  const fichesLiees: ActionsLieesState = React.useMemo(
+    () => ({
+      list: fichesLieesList,
+      isLoading: isLoadingFichesLiees,
+      update: updateFichesLiees,
+      updateActionLiee,
+    }),
+    [fichesLieesList, isLoadingFichesLiees, updateFichesLiees, updateActionLiee]
+  );
 
   const { data, isLoading: isLoadingIndicateurs } = useListIndicateurs({
     collectiviteId: fiche.collectiviteId,
@@ -127,53 +151,59 @@ export const FicheProvider = ({
       ficheIds: [fiche.id],
     },
   });
-  const indicateursList = data?.data ?? [];
-  const updateIndicateurs = async (
-    indicateur: IndicateurDefinitionListItem
-  ) => {
-    const currentIndicateurs = indicateursList;
-    const isIndicateurAlreadyLinked =
-      currentIndicateurs.some((i) => i.id === indicateur.id) ?? false;
 
-    const updatedIndicateurs = isIndicateurAlreadyLinked
-      ? currentIndicateurs.filter((i) => i.id !== indicateur.id)
-      : [...currentIndicateurs, indicateur];
+  const indicateursList = React.useMemo(() => data?.data ?? [], [data]);
 
-    await updateFiche({
-      ficheId: fiche.id,
-      ficheFields: {
-        indicateurs: updatedIndicateurs,
-      },
-    });
-  };
+  const updateIndicateurs = React.useCallback(
+    async (indicateur: IndicateurDefinitionListItem) => {
+      const currentIndicateurs = indicateursList;
+      const isIndicateurAlreadyLinked =
+        currentIndicateurs.some((i) => i.id === indicateur.id) ?? false;
+
+      const updatedIndicateurs = isIndicateurAlreadyLinked
+        ? currentIndicateurs.filter((i) => i.id !== indicateur.id)
+        : [...currentIndicateurs, indicateur];
+
+      await updateFiche({
+        ficheId: fiche.id,
+        ficheFields: {
+          indicateurs: updatedIndicateurs,
+        },
+      });
+    },
+    [fiche.id, indicateursList, updateFiche]
+  );
 
   const canCreateIndicateur = hasPermission(
     collectivite.permissions,
     'indicateurs.indicateurs.create'
   );
-  const canUpdateIndicateur = (indicateur: IndicateurDefinitionListItem) =>
-    canUpdateIndicateurDefinition(
-      collectivite.permissions,
-      indicateur,
-      user.id
-    );
+  const canUpdateIndicateur = React.useCallback(
+    (indicateur: IndicateurDefinitionListItem) =>
+      canUpdateIndicateurDefinition(
+        collectivite.permissions,
+        indicateur,
+        user.id
+      ),
+    [collectivite.permissions, user.id]
+  );
 
-  const [indicateurAction, setIndicateurAction] =
-    useState<IndicateurActionMode>('none');
-
-  const toggleIndicateurAction = (action: IndicateurActionMode) => {
-    setIndicateurAction(action === indicateurAction ? 'none' : action);
-  };
-
-  const indicateurs: IndicateursState = {
-    list: indicateursList,
-    isLoading: isLoadingIndicateurs,
-    update: updateIndicateurs,
-    canUpdate: canUpdateIndicateur,
-    canCreate: canCreateIndicateur,
-    action: indicateurAction,
-    toggleAction: toggleIndicateurAction,
-  };
+  const indicateurs: IndicateursState = React.useMemo(
+    () => ({
+      list: indicateursList,
+      isLoading: isLoadingIndicateurs,
+      update: updateIndicateurs,
+      canUpdate: canUpdateIndicateur,
+      canCreate: canCreateIndicateur,
+    }),
+    [
+      indicateursList,
+      isLoadingIndicateurs,
+      updateIndicateurs,
+      canUpdateIndicateur,
+      canCreateIndicateur,
+    ]
+  );
 
   const notes: NotesState = {
     list: fiche.notes ?? [],
@@ -216,7 +246,7 @@ export const FicheProvider = ({
         planId,
         update: updateFiche,
         isUpdating: isUpdatePending,
-        fichesLiees,
+        actionsLiees: fichesLiees,
         documents,
         indicateurs,
         notes,
