@@ -38,7 +38,7 @@ export const ControlledByParent: Story = {
     const [isOpen, setIsOpen] = useState(true);
 
     return isOpen ? (
-      <Alert {...args} isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      <Alert {...args} />
     ) : (
       <Button variant="outlined" onClick={() => setIsOpen(true)}>
         Ouvrir l'alerte
