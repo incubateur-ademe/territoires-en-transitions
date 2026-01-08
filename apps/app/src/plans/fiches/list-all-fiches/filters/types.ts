@@ -19,6 +19,7 @@ export type Filters = Omit<
   | 'texteNomOuDescription'
   | 'parentsId'
   | 'withChildren'
+  | 'withAxesAncestors'
 >;
 export type FilterKeys = keyof Filters | 'sort';
 

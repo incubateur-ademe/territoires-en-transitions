@@ -389,7 +389,10 @@ export default class ListFichesService {
       .as('ficheActionPartenaireTags');
   }
 
-  private getFicheActionAxesQuery(ficheIds: number[]) {
+  private getFicheActionAxesQuery(
+    ficheIds: number[],
+    withAxesAncestors?: boolean
+  ) {
     const query = this.databaseService.db
       .select({
         ficheId: ficheRecursiveAxeView.ficheId,
@@ -407,7 +410,12 @@ export default class ListFichesService {
       })
       .from(ficheRecursiveAxeView);
 
-    query.where(inArray(ficheRecursiveAxeView.ficheId, ficheIds));
+    const filterByFicheId = inArray(ficheRecursiveAxeView.ficheId, ficheIds);
+    query.where(
+      withAxesAncestors
+        ? filterByFicheId
+        : and(filterByFicheId, eq(ficheRecursiveAxeView.axeLevel, 1))
+    );
 
     return query.groupBy(ficheRecursiveAxeView.ficheId).as('ficheActionAxes');
   }
@@ -912,7 +920,10 @@ export default class ListFichesService {
     const ficheActionLibreTags = this.getFicheActionLibreTagsQuery(ficheIds);
     const ficheActionPilotes = this.getFicheActionPilotesQuery(ficheIds);
     const ficheActionServices = this.getFicheActionServicesQuery(ficheIds);
-    const ficheActionAxes = this.getFicheActionAxesQuery(ficheIds);
+    const ficheActionAxes = this.getFicheActionAxesQuery(
+      ficheIds,
+      filters?.withAxesAncestors
+    );
     const ficheActionPlans = this.getFicheActionPlansQuery(ficheIds);
     const ficheActionEtapes = this.getFicheActionEtapesQuery(ficheIds);
     const ficheActionNotes = this.getFicheActionNotesQuery(ficheIds);
