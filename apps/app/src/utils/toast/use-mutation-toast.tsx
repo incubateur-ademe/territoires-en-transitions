@@ -37,10 +37,15 @@ export const useMutationToast = () => {
         return;
       }
 
-      if ((status === 'success' || status === 'error') && !meta?.disableToast) {
-        const message = (meta?.[status] as string) || DEFAULT_MESSAGE[status];
-        const hideDuration = (meta?.autoHideDuration as number) || undefined;
-        setToast(status, message, hideDuration);
+      if (!meta?.disableToast) {
+        if (
+          (status === 'success' && !meta?.disableSuccess) ||
+          (status === 'error' && !meta?.disableError)
+        ) {
+          const message = (meta?.[status] as string) || DEFAULT_MESSAGE[status];
+          const hideDuration = (meta?.autoHideDuration as number) || undefined;
+          setToast(status, message, hideDuration);
+        }
       }
     },
     [setToast]
