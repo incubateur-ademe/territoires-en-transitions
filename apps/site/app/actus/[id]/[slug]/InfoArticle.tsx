@@ -6,10 +6,7 @@ type InfoArticleProps = {
 };
 
 const InfoArticle = ({ texte }: InfoArticleProps) => (
-  <Alert
-    description={<Markdown texte={texte} className="py-6 px-8" />}
-    noIcon
-  />
+  <Alert description={<Markdown texte={texte} className="py-6 px-8" />} />
 );
 
 export default InfoArticle;
