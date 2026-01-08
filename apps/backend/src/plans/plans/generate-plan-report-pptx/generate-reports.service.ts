@@ -407,6 +407,7 @@ export class GenerateReportsService {
       {
         planActionIds: [planId],
         withChildren: true,
+        withAxesAncestors: true,
       },
       {
         limit: 'all',

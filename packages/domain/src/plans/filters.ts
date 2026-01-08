@@ -212,6 +212,12 @@ export const listFichesRequestFiltersSchema = z
       .describe(
         'Inclut les sous-actions dans les résultats. Par défaut, les sous-actions sont exclues. Mutuellement exclusif avec `parentsId`.'
       ),
+    withAxesAncestors: z.coerce
+      .boolean()
+      .optional()
+      .describe(
+        'Inclut dans le champs `axes` les axes auxquels la fiche est rattachée et tous leurs antécédents. Par défaut seulement les axes auxquels la fiche est rattachée sont remontés.'
+      ),
   })
   .refine((data) => !(data.parentsId && data.withChildren), {
     message:
