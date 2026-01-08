@@ -37,12 +37,8 @@ export const FicheActionImprovedView = ({
 
   return (
     <FicheProvider fiche={fiche} planId={planId}>
-      <div className="w-full bg-grey-2">
-        <div className="flex flex-col w-full px-2 mx-auto xl:max-w-7xl 2xl:max-w-8xl">
-          <Header />
-          <NavigationTabs>{content}</NavigationTabs>
-        </div>
-      </div>
+      <Header />
+      <NavigationTabs>{content}</NavigationTabs>
     </FicheProvider>
   );
 };
