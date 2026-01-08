@@ -1,7 +1,7 @@
 export type FicheSectionId =
   | 'details'
   | 'indicateurs'
-  | 'etapes'
+  | 'sous-actions'
   | 'notes'
   | 'moyens'
   | 'actions-liees'
