@@ -1,7 +1,7 @@
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
-import EmptyFichePicto from '@/app/app/pages/collectivite/PlansActions/FicheAction/FichesLiees/EmptyFichePicto';
 import { useCreatePlan } from '@/app/plans/plans/show-plan/data/use-create-plan';
 import { EmptyCard } from '@tet/ui';
+import { EmptyFichePicto } from './empty-fiche.picto';
 
 export const FichesListEmpty = ({
   isReadOnly,

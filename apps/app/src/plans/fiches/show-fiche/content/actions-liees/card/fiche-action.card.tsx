@@ -1,6 +1,4 @@
 import { Completion } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { DeleteOrRemoveFicheSharingModal } from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { getFicheActionPlanForCollectivite } from '@/app/plans/fiches/shared/fiche-action-plans.utils';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
@@ -9,7 +7,6 @@ import { FicheWithRelations } from '@tet/domain/plans';
 import { CollectiviteAccess } from '@tet/domain/users';
 import { Button, Card, Checkbox, Notification, Tooltip } from '@tet/ui';
 import classNames from 'classnames';
-import { useState } from 'react';
 import { CompletionStatus } from '../../../components/completion.badge';
 import { PriorityBadge } from '../../../components/priority.badge';
 import { StatusBadge } from '../../../components/status.badge';
@@ -18,8 +15,7 @@ import {
   getFicheActionShareText,
 } from '../../../share-fiche/fiche-share-info';
 import { generateTitle } from '../../../utils';
-import FicheActionFooterInfo from './FicheActionFooterInfo';
-import ModifierFicheModale from './ModifierFicheModale';
+import FicheActionFooterInfo from './fiche-action.footer';
 
 export type FicheActionCardProps = {
   /** Contenu de la carte fiche action */
@@ -54,16 +50,11 @@ export const FicheActionCard = ({
   link,
   openInNewTab,
   isEditable = false,
-  editKeysToInvalidate,
   isSelected = false,
   onUnlink,
   onSelect,
-  onToggleOpen,
   currentCollectivite,
-  currentUserId,
 }: FicheActionCardProps) => {
-  const [isEditOpen, setIsEditOpen] = useState(false);
-
   const carteId = `fiche-${ficheAction.id}`;
 
   const collectivitePlans = getFicheActionPlanForCollectivite(
@@ -72,17 +63,6 @@ export const FicheActionCard = ({
   );
   const isNotClickable =
     currentCollectivite.niveauAcces === null && !!ficheAction.restreint;
-
-  const canUpdate = isFicheEditableByCollectiviteUser(
-    ficheAction,
-    currentCollectivite,
-    currentUserId
-  );
-
-  const toggleOpen = (isOpen: boolean) => {
-    setIsEditOpen(isOpen);
-    onToggleOpen?.(isOpen);
-  };
 
   return (
     <div className="relative group h-full">
@@ -97,30 +77,6 @@ export const FicheActionCard = ({
               size="xs"
               onClick={onUnlink}
             />
-          )}
-          {isEditable && canUpdate && !onSelect && (
-            <>
-              <>
-                {isEditOpen && (
-                  <ModifierFicheModale
-                    initialFiche={ficheAction}
-                    isOpen={isEditOpen}
-                    setIsOpen={() => toggleOpen(!isEditOpen)}
-                    keysToInvalidate={editKeysToInvalidate}
-                  />
-                )}
-                <Button
-                  data-test="EditerFicheBouton"
-                  id={`fiche-${ficheAction.id}-edit-button`}
-                  icon="edit-line"
-                  title="Modifier l'action"
-                  variant="grey"
-                  size="xs"
-                  onClick={() => toggleOpen(!isEditOpen)}
-                />
-              </>
-              <DeleteOrRemoveFicheSharingModal fiche={ficheAction} />
-            </>
           )}
         </div>
       )}

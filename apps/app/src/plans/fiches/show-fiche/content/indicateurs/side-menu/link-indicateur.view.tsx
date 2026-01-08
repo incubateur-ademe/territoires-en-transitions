@@ -2,27 +2,21 @@ import { INDICATEUR_LABELS } from '@/app/app/pages/collectivite/Indicateurs/cons
 import {
   getFiltersForIndicateurClefs,
   getFiltersForMyIndicateurs,
-  IndicateurDefinitionListItem,
   ListDefinitionsInputFilters,
   useListIndicateurs,
 } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { useUser } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Checkbox, Field, Icon, Input, Tooltip } from '@tet/ui';
-import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IndicateursSelectorGrid } from './indicateurs-selector.grid';
 
-type Props = {
-  selectedIndicateurs: IndicateurDefinitionListItem[] | null | undefined;
-  onSelect: (indicateur: IndicateurDefinitionListItem) => void;
-};
-
-export const LinkIndicateursView = ({
-  selectedIndicateurs,
-  onSelect,
-}: Props) => {
+export const LinkIndicateursView = () => {
+  const { indicateurs } = useFicheContext();
+  const selectedIndicateurs = indicateurs.list;
+  const onSelect = indicateurs.update;
   const user = useUser();
   const collectiviteId = useCollectiviteId();
 
@@ -40,13 +34,6 @@ export const LinkIndicateursView = ({
       collectiviteId,
       filters: { ...filters, text: searchTextDebounced },
     });
-
-  const [selectedIndicateursState, setSelectedIndicateursState] =
-    useState(selectedIndicateurs);
-
-  useEffect(() => {
-    setSelectedIndicateursState(selectedIndicateurs);
-  }, [selectedIndicateurs]);
 
   return (
     <div className="p-4">
@@ -125,11 +112,11 @@ export const LinkIndicateursView = ({
       </div>
       <hr className="p-0 my-6 w-full h-px" />
       <div className="mb-4 font-bold">
-        {selectedIndicateursState ? (
+        {selectedIndicateurs ? (
           <>
-            {selectedIndicateursState.length} indicateur
-            {selectedIndicateursState.length > 1 && 's'} sélectionné
-            {selectedIndicateursState.length > 1 && 's'}
+            {selectedIndicateurs.length} indicateur
+            {selectedIndicateurs.length > 1 && 's'} sélectionné
+            {selectedIndicateurs.length > 1 && 's'}
           </>
         ) : (
           <>0 indicateur sélectionné</>
@@ -138,7 +125,7 @@ export const LinkIndicateursView = ({
       <IndicateursSelectorGrid
         definitions={definitions}
         isLoading={isDefinitionsLoading}
-        selectedIndicateurs={selectedIndicateursState}
+        selectedIndicateurs={selectedIndicateurs}
         onSelect={onSelect}
       />
     </div>

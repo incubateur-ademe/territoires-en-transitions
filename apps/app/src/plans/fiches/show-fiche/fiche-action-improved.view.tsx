@@ -4,7 +4,6 @@ import { FicheNoAccessPage } from '@/app/plans/fiches/get-fiche/fiche-no-access.
 import { ErrorPage } from '@/app/utils/error/error.page';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { NavigationTabs } from './content/navigation.tabs';
-import { SidePanel } from './content/side-panel';
 import { FicheProvider } from './context/fiche-context';
 import { useGetFiche } from './data/use-get-fiche';
 import { Header } from './header';
@@ -44,7 +43,6 @@ export const FicheActionImprovedView = ({
           <NavigationTabs>{content}</NavigationTabs>
         </div>
       </div>
-      <SidePanel />
     </FicheProvider>
   );
 };
