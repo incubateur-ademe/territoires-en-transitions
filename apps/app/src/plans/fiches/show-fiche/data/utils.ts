@@ -52,16 +52,7 @@ export const ficheResumeFactory = ({
     modifiedAt: new Date().toISOString(),
     sharedWithCollectivites: [],
     axes: axeId
-      ? [
-          {
-            id: axeId,
-            collectiviteId,
-            nom: '',
-            parentId: null,
-            planId: null,
-            axeLevel: 0,
-          },
-        ]
+      ? [{ id: axeId, collectiviteId, nom: '', parentId: null, planId: null }]
       : null,
     description: null,
     piliersEci: null,

@@ -163,7 +163,6 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
       collectiviteId: z.number(),
       parentId: z.number().nullable(),
       planId: z.number().nullable(),
-      axeLevel: z.number(),
     })
     .array()
     .nullable()

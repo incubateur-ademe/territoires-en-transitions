@@ -400,7 +400,6 @@ export default class ListFichesService {
             collectiviteId: number;
             parentId: number | null;
             planId: number | null;
-            axeLevel: number;
           }[]
         >`array_agg(json_build_object('id', ${ficheRecursiveAxeView.id}, 'nom', ${ficheRecursiveAxeView.nom}, 'collectiviteId', ${ficheRecursiveAxeView.collectiviteId}, 'parentId', ${ficheRecursiveAxeView.parentId}, 'planId', ${ficheRecursiveAxeView.planId}, 'axeLevel', ${ficheRecursiveAxeView.axeLevel}))`.as(
           'axes'
