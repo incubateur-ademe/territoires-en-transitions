@@ -6,7 +6,7 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
-import { RoleUpdateService } from '@tet/backend/users/authorizations/roles/role-update.service';
+import { UpdateUserRoleService } from '@tet/backend/users/authorizations/update-user-role/update-user-role.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -24,14 +24,14 @@ describe('Test upsert collectivite', () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
   let databaseService: DatabaseService;
-  let roleUpdateService: RoleUpdateService;
+  let roleUpdateService: UpdateUserRoleService;
 
   beforeAll(async () => {
     router = await getTestRouter();
     yoloDodoUser = await getAuthUser();
     const app = await getTestApp();
     databaseService = await getTestDatabase(app);
-    roleUpdateService = app.get(RoleUpdateService);
+    roleUpdateService = app.get(UpdateUserRoleService);
   });
 
   test('Test utilisateur non support', async () => {

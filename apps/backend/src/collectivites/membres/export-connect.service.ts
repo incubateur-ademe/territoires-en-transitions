@@ -138,7 +138,7 @@ export class ExportConnectService {
           notIlike(authUsersTable.email, '%beta.gouv.fr%'),
           notIlike(authUsersTable.email, '%+%'),
           eq(utilisateurVerifieTable.verifie, true),
-          ne(utilisateurSupportTable.support, true)
+          ne(utilisateurSupportTable.isSupport, true)
         )
       )
       .as('utilisateurs');

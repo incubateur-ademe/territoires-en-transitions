@@ -10,14 +10,12 @@ import { makeRoleEditionActionsIndicateursNav } from './collectivite/make-role-e
 type Props = {
   user: UserWithCollectiviteAccesses;
   currentCollectivite: CollectiviteAccess | null;
-  isDemoMode: boolean;
   panierId?: string;
 };
 
 export const makeMainNav = ({
   user,
   currentCollectivite,
-  isDemoMode,
   panierId,
 }: Props): HeaderProps['mainNav'] => {
   const hasToCompleteRegistration =
@@ -46,7 +44,6 @@ export const makeMainNav = ({
       user,
       currentCollectivite,
       collectivites: user.collectivites,
-      isDemoMode,
       panierId,
     });
   }

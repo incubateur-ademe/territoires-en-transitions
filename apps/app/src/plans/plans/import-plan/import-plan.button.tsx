@@ -4,15 +4,16 @@ import {
   ImportPlanModal,
   ImportPlanProps,
 } from '@/app/plans/plans/import-plan/import-plan.modal';
-import { useDemoMode } from '@/app/users/demo-mode-support-provider';
+import { useSupportMode } from '@/app/users/authorizations/support-mode/support-mode.provider';
 import { useUser } from '@tet/api/users';
 import { Button } from '@tet/ui';
 
 export const ImportPlanButton = ({ collectiviteId }: ImportPlanProps) => {
   const user = useUser();
-  const isDemoMode = useDemoMode();
+  const { isSupportModeEnabled: isSupportModeActive } = useSupportMode();
 
-  if (user.isSupport === false || isDemoMode.isDemoMode === true) {
+  // Le bouton est visible uniquement si l'utilisateur a le rôle support ET que le mode support est actif
+  if (user.isSupport === false || !isSupportModeActive) {
     return null;
   }
 
