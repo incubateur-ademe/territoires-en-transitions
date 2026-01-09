@@ -1,4 +1,4 @@
-import { ReactQueryAndTRPCProvider, SupabaseProvider } from '@tet/api';
+import { SupabaseProvider, TrpcWithReactQueryProvider } from '@tet/api';
 import { UserProvider } from '@tet/api/users';
 import { getCookieOptions } from '@tet/api/utils/supabase/cookie-options';
 import { Header, PostHogProvider } from '@tet/ui';
@@ -43,7 +43,7 @@ export default async function RootLayout({
         <div className="flex flex-col grow">
           <SupabaseProvider cookieOptions={supabaseCookieOptions}>
             <UserProvider>
-              <ReactQueryAndTRPCProvider>
+              <TrpcWithReactQueryProvider>
                 <PostHogProvider
                   config={{
                     host: process.env.POSTHOG_HOST,
@@ -55,7 +55,7 @@ export default async function RootLayout({
                     <div className="grow">{children}</div>
                   </div>
                 </PostHogProvider>
-              </ReactQueryAndTRPCProvider>
+              </TrpcWithReactQueryProvider>
             </UserProvider>
           </SupabaseProvider>
         </div>

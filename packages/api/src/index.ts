@@ -7,4 +7,4 @@ export * from './utils/get-request-url';
 export * from './utils/isAllowedOrigin';
 export * from './utils/pathUtils';
 export * from './utils/supabase/use-supabase';
-export * from './utils/trpc/client';
+export * from './utils/trpc/trpc-with-react-query.provider';

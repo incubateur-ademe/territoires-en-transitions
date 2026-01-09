@@ -39,7 +39,7 @@ export const config = {
   ],
 };
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const headers = new Headers(request.headers);
 
   // Add the current path to the headers to get it available in RSCs
@@ -148,3 +148,4 @@ function redirectToAuthDomain(
   const authUrl = getAuthUrl(pathname, searchParams, originHostname);
   return NextResponse.redirect(authUrl);
 }
+

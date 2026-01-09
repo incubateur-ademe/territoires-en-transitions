@@ -1,7 +1,12 @@
 import { Session } from '@supabase/supabase-js';
 import { ENV } from '../../environmentVariables';
 
-export function getAuthHeaders(session: Session | null) {
+export type AuthHeaders = {
+  authorization: string;
+  apikey: string;
+};
+
+export function getAuthHeaders(session: Session | null): AuthHeaders {
   if (!session) {
     return {
       authorization: `Bearer ${ENV.supabase_anon_key}`,

@@ -1,4 +1,4 @@
-import { Meta, StoryFn } from '@storybook/nextjs';
+import { Meta, StoryFn } from '@storybook/nextjs-vite';
 import { CritereScore, TCritereScoreProps } from './CritereScore';
 import fixture from './fixture.json';
 import { TLabellisationParcours } from './types';

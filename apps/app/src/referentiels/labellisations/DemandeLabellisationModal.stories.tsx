@@ -1,5 +1,5 @@
 import React from 'react';
-import {StoryFn, Meta} from '@storybook/nextjs';
+import {StoryFn, Meta} from '@storybook/nextjs-vite';
 import {action} from 'storybook/actions';
 import {
   DemandeLabellisationModalContent,

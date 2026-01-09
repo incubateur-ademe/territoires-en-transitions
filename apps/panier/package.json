@@ -1,21 +1,21 @@
 {
-  "name": "@tet/auth",
+  "name": "@tet/panier",
   "nx": {
-    "name": "auth",
+    "name": "panier",
     "targets": {
       "dev": {
         "executor": "@nx/next:server",
         "options": {
-          "buildTarget": "auth:build",
+          "buildTarget": "panier:build",
           "dev": true,
-          "port": 3003,
+          "port": 3002,
           "webpack": true
         }
       },
       "build": {
         "executor": "@nx/next:build",
         "options": {
-          "outputPath": "apps/auth/.next",
+          "outputPath": "apps/panier/.next",
           "webpack": true
         }
       }

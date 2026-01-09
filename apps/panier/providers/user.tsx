@@ -1,7 +1,7 @@
 'use client';
 
-import { useSupabase } from '@tet/api';
 import { User } from '@supabase/supabase-js';
+import { useSupabase } from '@tet/api';
 import {
   Dispatch,
   SetStateAction,
@@ -52,9 +52,5 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  return (
-    <UserContext.Provider value={{ user, setUser }}>
-      {children}
-    </UserContext.Provider>
-  );
+  return <UserContext value={{ user, setUser }}>{children}</UserContext>;
 };

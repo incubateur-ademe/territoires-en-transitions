@@ -5,11 +5,6 @@ import { withSentryConfig } from '@sentry/nextjs';
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
-  eslint: {
-    // This avoids warnings when ProjectGraph isn't cached during build
-    ignoreDuringBuilds: true,
-  },
-
   typescript: {
     // We safely disable the internal type checking of Next.js because
     // all apps are type checked during the first steps of our CI.
@@ -184,7 +179,7 @@ const sentryConfig = {
 
   // Uncomment to route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
   // This can increase your server load as well as your hosting bill.
-  // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
+  // Note: Check that the configured route will not match with your Next.js proxy, otherwise reporting of client-
   // side errors will fail.
   // tunnelRoute: "/monitoring",
 
@@ -192,13 +187,11 @@ const sentryConfig = {
   hideSourceMaps: false,
 
   // Automatically tree-shake Sentry logger statements to reduce bundle size
-  disableLogger: true,
-
-  // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
-  // See the following for more information:
-  // https://docs.sentry.io/product/crons/
-  // https://vercel.com/docs/cron-jobs
-  automaticVercelMonitors: false,
+  webpack : {
+    treeshake: {
+      removeDebugLogging: true,
+    }
+  }
 };
 
 
