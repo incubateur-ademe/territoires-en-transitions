@@ -1,4 +1,4 @@
-import { ReactQueryAndTRPCProvider, SupabaseProvider } from '@tet/api';
+import { SupabaseProvider, TrpcWithReactQueryProvider } from '@tet/api';
 import { UserProvider } from '@tet/api/users';
 import { getCookieOptions } from '@tet/api/utils/supabase/cookie-options';
 import { PostHogProvider } from '@tet/ui';
@@ -23,7 +23,7 @@ export default async function RootProviders({
             key: process.env.POSTHOG_KEY,
           }}
         >
-          <ReactQueryAndTRPCProvider>
+          <TrpcWithReactQueryProvider>
             <NuqsAdapter>
               {/* L'utilisation de overflow-hidden ou overflow-auto sur le container
 empêche l'utilisation de la propriété sticky dans l'app, ne pas l'utiliser sur cette div */}
@@ -31,7 +31,7 @@ empêche l'utilisation de la propriété sticky dans l'app, ne pas l'utiliser su
                 {children}
               </div>
             </NuqsAdapter>
-          </ReactQueryAndTRPCProvider>
+          </TrpcWithReactQueryProvider>
         </PostHogProvider>
 
         <ThirdPartyProviders />
