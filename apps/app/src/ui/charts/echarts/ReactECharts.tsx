@@ -15,7 +15,7 @@ import type {
   SetOptionOpts,
 } from 'echarts';
 import { getInstanceByDom, init } from 'echarts';
-import type { CSSProperties } from 'react';
+import type { CSSProperties, JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
 
 const { colors } = preset.theme.extend;

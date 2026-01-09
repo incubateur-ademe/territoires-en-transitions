@@ -100,17 +100,17 @@ const Page = () => {
               </div>
               <div className="grid lg:grid-cols-3 gap-6">
                 <img
-                  src={imagePlanPlaceholder.src}
+                  src={imagePlanPlaceholder}
                   alt="suivi des plans"
                   className="m-auto w-full"
                 />
                 <img
-                  src={imageCountByStatutPlaceholder.src}
+                  src={imageCountByStatutPlaceholder}
                   alt="suivi des plans"
                   className="m-auto w-full"
                 />
                 <img
-                  src={imageCountByIndicateursPlaceholder.src}
+                  src={imageCountByIndicateursPlaceholder}
                   alt="suivi des plans"
                   className="m-auto w-full"
                 />

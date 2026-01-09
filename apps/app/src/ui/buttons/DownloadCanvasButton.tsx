@@ -1,9 +1,9 @@
 import { Button, ButtonProps } from '@tet/ui';
 import html2canvas from 'html2canvas';
-import { MouseEvent, RefObject } from 'react';
+import { JSX, MouseEvent, RefObject } from 'react';
 
 type DownloadCanvasButtonProps = {
-  containerRef: RefObject<HTMLElement>;
+  containerRef: RefObject<HTMLElement | null>;
   fileName: string;
   fileType: 'png' | 'jpg' | 'jpeg';
 } & ButtonProps;

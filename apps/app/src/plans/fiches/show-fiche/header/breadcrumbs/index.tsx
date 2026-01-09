@@ -1,6 +1,6 @@
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Button, VisibleWhen } from '@tet/ui';
-import { useState } from 'react';
+import { JSX, useState } from 'react';
 import { Breadcrumbs as BasicBreadcrumbs } from './basic-breadcrumbs';
 
 type Axe = Pick<

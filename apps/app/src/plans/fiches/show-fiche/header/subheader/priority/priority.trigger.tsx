@@ -1,6 +1,8 @@
 import { PriorityBadge } from '@/app/plans/fiches/show-fiche/components/priority.badge';
 import { Priorite } from '@tet/domain/plans';
+import { JSX } from 'react';
 import { useEditionModalManager } from '../../context/edition-modal-manager-context';
+
 export const Priority = ({
   priority,
 }: {

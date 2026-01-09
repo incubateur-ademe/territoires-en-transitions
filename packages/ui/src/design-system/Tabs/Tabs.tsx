@@ -24,7 +24,7 @@ type TabsProps = {
   /** Taille des boutons */
   size?: TabSize;
   /** Onglets */
-  children: ReactElement<TabProps>[];
+  children: (ReactElement<TabProps> | undefined)[];
   /** Index (base 0) de l'onglet actif */
   defaultActiveTab?: number;
   /** Appelée quand l'onglet actif change */

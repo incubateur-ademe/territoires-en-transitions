@@ -1,6 +1,7 @@
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Modal } from '@tet/ui';
+import { JSX } from 'react';
 
 const By = ({ prenom, nom }: { prenom?: string; nom?: string }) => {
   if (!prenom && !nom) {

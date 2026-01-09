@@ -1,4 +1,5 @@
 import { Alert, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { JSX } from 'react';
 import { useDeleteAxe } from '../data/use-delete-axe';
 import { useDeletePlan } from '../data/use-delete-plan';
 

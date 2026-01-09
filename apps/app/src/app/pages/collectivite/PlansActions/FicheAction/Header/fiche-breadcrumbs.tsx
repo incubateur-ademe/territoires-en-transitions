@@ -1,5 +1,5 @@
 import { Button, VisibleWhen } from '@tet/ui';
-import { useState } from 'react';
+import { JSX, useState } from 'react';
 import { Fiche } from '../data/use-get-fiche';
 import { ClassifiedFicheBreadcrumbs } from './classified-fiche-breadcrumbs';
 import { NotClassifiedFicheBreadcrumbs } from './not-classified-fiche-breadcrumbs';

@@ -1,6 +1,7 @@
 import Markdown from '@/app/ui/Markdown';
 import { Valeur } from '@tet/api/indicateurs/domain/valeur.schema';
 import { Tooltip } from '@tet/ui';
+import { JSX } from 'react';
 
 type DataSourceTooltipProps = {
   metadonnee: NonNullable<Valeur['source']>;

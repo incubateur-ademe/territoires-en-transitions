@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { JSX } from 'react';
 import { Row } from 'react-table';
 
 type RowRendererFactory = <T extends Record<string, unknown>>(
