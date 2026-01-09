@@ -43,8 +43,8 @@ export const DemoModeProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <DemoModeContext.Provider value={{ isDemoMode, toggleDemoMode }}>
+    <DemoModeContext value={{ isDemoMode, toggleDemoMode }}>
       {children}
-    </DemoModeContext.Provider>
+    </DemoModeContext>
   );
 };

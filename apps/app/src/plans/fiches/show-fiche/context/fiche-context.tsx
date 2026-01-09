@@ -209,7 +209,7 @@ export const FicheProvider = ({
   };
 
   return (
-    <FicheContext.Provider
+    <FicheContext
       value={{
         fiche,
         isReadonly,
@@ -223,6 +223,6 @@ export const FicheProvider = ({
       }}
     >
       {children}
-    </FicheContext.Provider>
+    </FicheContext>
   );
 };

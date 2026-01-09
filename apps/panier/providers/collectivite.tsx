@@ -56,8 +56,8 @@ export const CollectiviteProvider = ({
   }, []);
 
   return (
-    <CollectiviteContext.Provider value={{ collectiviteId, setCollectiviteId }}>
+    <CollectiviteContext value={{ collectiviteId, setCollectiviteId }}>
       {children}
-    </CollectiviteContext.Provider>
+    </CollectiviteContext>
   );
 };
