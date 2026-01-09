@@ -54,7 +54,7 @@ export function SupportModeProvider({
   };
 
   return (
-    <SupportModeContext.Provider
+    <SupportModeContext
       value={{
         isSupportModeEnabled,
         isPending,
@@ -74,6 +74,6 @@ export function SupportModeProvider({
           <ToggleSupportModeCheckbox />
         </div>
       )}
-    </SupportModeContext.Provider>
+    </SupportModeContext>
   );
 }

@@ -199,7 +199,7 @@ export const FicheActionFiltersProvider = ({
     });
   };
   return (
-    <FicheActionFiltersContext.Provider
+    <FicheActionFiltersContext
       value={{
         filters: formFilters,
         readonlyFilters: basicFilters,
@@ -213,7 +213,7 @@ export const FicheActionFiltersProvider = ({
       }}
     >
       {children}
-    </FicheActionFiltersContext.Provider>
+    </FicheActionFiltersContext>
   );
 };
 

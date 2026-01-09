@@ -35,8 +35,6 @@ export const PanierProvider = ({ children }: { children: React.ReactNode }) => {
   const [panier, setPanier] = useState(contextDefaultValue.panier);
 
   return (
-    <PanierContext.Provider value={{ panier, setPanier }}>
-      {children}
-    </PanierContext.Provider>
+    <PanierContext value={{ panier, setPanier }}>{children}</PanierContext>
   );
 };

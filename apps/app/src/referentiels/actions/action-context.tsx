@@ -37,7 +37,7 @@ export function ActionProvider({
   const actionDefinition = actions.find((a) => a.id === actionId);
 
   return (
-    <ActionContext.Provider
+    <ActionContext
       value={{
         actionId,
         action,
@@ -45,7 +45,7 @@ export function ActionProvider({
       }}
     >
       {children}
-    </ActionContext.Provider>
+    </ActionContext>
   );
 }
 

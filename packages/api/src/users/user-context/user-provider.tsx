@@ -83,8 +83,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   }, [supabase.auth]);
 
   return (
-    <UserContext.Provider value={{ user, setUser, session }}>
-      {children}
-    </UserContext.Provider>
+    <UserContext value={{ user, setUser, session }}>{children}</UserContext>
   );
 };

@@ -79,11 +79,7 @@ export const SidePanelProvider = ({ children }: { children: ReactNode }) => {
     },
   };
 
-  return (
-    <PanelContext.Provider value={contextValue}>
-      {children}
-    </PanelContext.Provider>
-  );
+  return <PanelContext value={contextValue}>{children}</PanelContext>;
 };
 
 export const useSidePanel = (): PanelContextType => {
