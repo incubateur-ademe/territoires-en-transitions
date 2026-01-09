@@ -27,7 +27,6 @@ const TEST_SUBJECT = 'Test Subject';
 const TEST_CONTENT = 'Test Content';
 const DEFAULT_DELAY_MINUTES = 20;
 const RECENT_DELAY_MINUTES = 5;
-const DEFAULT_DELAY_SECONDS = 0;
 
 describe('NotificationsService', () => {
   let app: INestApplication;
@@ -194,9 +193,7 @@ describe('NotificationsService', () => {
       notificationData: { test: 'data2' },
     });
 
-    await notificationsService.sendPendingNotifications({
-      delayInSeconds: DEFAULT_DELAY_SECONDS,
-    });
+    await notificationsService.sendPendingNotifications();
 
     expect(generatorMock).toHaveBeenCalledTimes(2);
     expect(generatorMock).toHaveBeenCalledWith(
@@ -245,9 +242,7 @@ describe('NotificationsService', () => {
       entityId: 'test-entity-no-generator',
     });
 
-    await notificationsService.sendPendingNotifications({
-      delayInSeconds: DEFAULT_DELAY_SECONDS,
-    });
+    await notificationsService.sendPendingNotifications();
 
     expect(emailServiceMock.sendEmail).not.toHaveBeenCalled();
   });
@@ -261,9 +256,7 @@ describe('NotificationsService', () => {
       entityId: 'test-entity-error',
     });
 
-    await notificationsService.sendPendingNotifications({
-      delayInSeconds: DEFAULT_DELAY_SECONDS,
-    });
+    await notificationsService.sendPendingNotifications();
 
     expect(generatorMock).toHaveBeenCalledTimes(1);
     expect(emailServiceMock.sendEmail).not.toHaveBeenCalled();
@@ -278,9 +271,7 @@ describe('NotificationsService', () => {
       entityId: 'test-entity-status',
     });
 
-    await notificationsService.sendPendingNotifications({
-      delayInSeconds: DEFAULT_DELAY_SECONDS,
-    });
+    await notificationsService.sendPendingNotifications();
 
     const updatedNotification = await databaseService.db
       .select()

@@ -47,9 +47,8 @@ export class CronConsumerService extends WorkerHost {
             );
           break;
         case 'send-notifications':
-          result = await this.cronNotificationsService.sendPendingNotifications(
-            job.data
-          );
+          result =
+            await this.cronNotificationsService.sendPendingNotifications();
           break;
         default:
           result = this.handlerNotFound(job.name);

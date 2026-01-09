@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Result } from '@tet/backend/utils/result.type';
 import {
@@ -12,7 +13,7 @@ import { reportGenerationTable } from './report-generation.entity';
 
 export type UpdateReportGenerationInput = Pick<
   ReportGeneration,
-  'status' | 'errorMessage'
+  'status' | 'errorMessage' | 'fileId'
 >;
 
 @Injectable()
@@ -23,10 +24,12 @@ export class ReportGenerationRepository {
 
   async create(
     input: GenerateReportInput,
+    name: string,
+    user: AuthenticatedUser,
     status: ReportGenerationStatus = 'pending'
   ): Promise<
     Result<
-      { id: string },
+      ReportGeneration,
       typeof GenerateReportErrorEnum.CREATE_REPORT_GENERATION_ERROR
     >
   > {
@@ -35,7 +38,9 @@ export class ReportGenerationRepository {
         .insert(reportGenerationTable)
         .values({
           planId: input.planId,
+          name,
           templateRef: input.templateKey,
+          createdBy: user.id,
           status: status,
           options: {
             ficheIds: input.ficheIds,
@@ -43,11 +48,11 @@ export class ReportGenerationRepository {
             includeFicheIndicateursSlides: input.includeFicheIndicateursSlides,
           },
         })
-        .returning({ id: reportGenerationTable.id });
+        .returning();
 
       return {
         success: true,
-        data: { id: result.id },
+        data: result,
       };
     } catch (error) {
       this.logger.error(
@@ -93,6 +98,42 @@ export class ReportGenerationRepository {
       return {
         success: false,
         error: GenerateReportErrorEnum.UPDATE_REPORT_GENERATION_ERROR,
+      };
+    }
+  }
+
+  async get(
+    id: string
+  ): Promise<
+    Result<
+      ReportGeneration,
+      typeof GenerateReportErrorEnum.GET_REPORT_GENERATION_ERROR
+    >
+  > {
+    try {
+      const result = await this.databaseService.db
+        .select()
+        .from(reportGenerationTable)
+        .where(eq(reportGenerationTable.id, id));
+      if (!result.length) {
+        return {
+          success: false,
+          error: GenerateReportErrorEnum.GET_REPORT_GENERATION_ERROR,
+        };
+      }
+      return {
+        success: true,
+        data: result[0],
+      };
+    } catch (error) {
+      this.logger.error(
+        `Error getting report generation ${id}: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
+      return {
+        success: false,
+        error: GenerateReportErrorEnum.GET_REPORT_GENERATION_ERROR,
       };
     }
   }
