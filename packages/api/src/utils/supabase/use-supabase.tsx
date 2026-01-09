@@ -16,11 +16,7 @@ export const SupabaseProvider = ({
 }) => {
   const [supabaseClient] = useState(createClient(cookieOptions));
 
-  return (
-    <SupabaseContext.Provider value={supabaseClient}>
-      {children}
-    </SupabaseContext.Provider>
-  );
+  return <SupabaseContext value={supabaseClient}>{children}</SupabaseContext>;
 };
 
 export const useSupabase = () => {

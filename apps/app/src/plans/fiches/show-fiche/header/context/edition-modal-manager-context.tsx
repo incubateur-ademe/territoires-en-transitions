@@ -40,10 +40,10 @@ export const EditionModalManagerProvider = ({
   const isModalOpen = (modal: ModalType) => currentModal === modal;
 
   return (
-    <EditionModalManagerContext.Provider
+    <EditionModalManagerContext
       value={{ currentModal, openModal, closeModal, isModalOpen }}
     >
       {children}
-    </EditionModalManagerContext.Provider>
+    </EditionModalManagerContext>
   );
 };

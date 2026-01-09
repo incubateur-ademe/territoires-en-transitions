@@ -123,11 +123,9 @@ export const EtapesProvider = ({
 }) => {
   const [state, dispatch] = useReducer(etapesReducer, initialState);
   return (
-    <StateContext.Provider value={state}>
-      <DispatchContext.Provider value={dispatch}>
-        {children}
-      </DispatchContext.Provider>
-    </StateContext.Provider>
+    <StateContext value={state}>
+      <DispatchContext value={dispatch}>{children}</DispatchContext>
+    </StateContext>
   );
 };
 

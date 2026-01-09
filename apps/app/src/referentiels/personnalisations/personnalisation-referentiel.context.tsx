@@ -23,9 +23,9 @@ export const PersonnalisationProvider = ({
   ]);
 
   return (
-    <PersonnalisationContext.Provider value={{ referentiels, setReferentiels }}>
+    <PersonnalisationContext value={{ referentiels, setReferentiels }}>
       {children}
-    </PersonnalisationContext.Provider>
+    </PersonnalisationContext>
   );
 };
 

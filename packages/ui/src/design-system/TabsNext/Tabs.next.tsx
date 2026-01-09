@@ -51,7 +51,7 @@ export function Tabs({
 const TabsContext = createContext<TabsContextProps>({});
 
 function TabsProvider({ children, ...props }: { children: ReactNode }) {
-  return <TabsContext.Provider value={props}>{children}</TabsContext.Provider>;
+  return <TabsContext value={props}>{children}</TabsContext>;
 }
 
 function useTabsContext() {
