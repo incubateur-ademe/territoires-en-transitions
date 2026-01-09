@@ -5,7 +5,7 @@ import '../app/global.css';
 // surcharge les styles pour la zone de prévisualisation
 import './preview.css';
 
-import { ReactQueryAndTRPCProvider, SupabaseProvider } from '@tet/api';
+import { SupabaseProvider, TrpcWithReactQueryProvider } from '@tet/api';
 import { CollectiviteProvider } from '@tet/api/collectivites';
 import { UserProvider } from '@tet/api/users';
 import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
@@ -47,11 +47,11 @@ const preview: Preview = {
     (Story) => (
       <SupabaseProvider cookieOptions={null}>
         <UserProvider>
-          <ReactQueryAndTRPCProvider>
+          <TrpcWithReactQueryProvider>
             <CollectiviteProvider user={user}>
               <Story />
             </CollectiviteProvider>
-          </ReactQueryAndTRPCProvider>
+          </TrpcWithReactQueryProvider>
         </UserProvider>
       </SupabaseProvider>
     ),
