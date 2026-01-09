@@ -3,6 +3,8 @@ import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-con
 import { ficheActionNiveauPrioriteOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { isPriorite, Priorite } from '@tet/domain/plans';
 import { InlineEditWrapper, Select } from '@tet/ui';
+import { JSX } from 'react';
+
 export const Priority = ({
   priority,
 }: {

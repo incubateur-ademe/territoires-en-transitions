@@ -1,4 +1,5 @@
 import { FicheWithRelations } from '@tet/domain/plans';
+import { JSX } from 'react';
 import { CompletionStatus } from '../../components/completion.badge';
 import { AccessManagementBadges } from './access-management.badges';
 import { Pilotes } from './pilotes';

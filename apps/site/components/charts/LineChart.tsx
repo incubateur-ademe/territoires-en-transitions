@@ -1,4 +1,5 @@
 import { ResponsiveLine, SliceTooltipProps } from '@nivo/line';
+import { JSX } from 'react';
 import { defaultColors, theme } from './chartsTheme';
 import LineChartTooltip from './LineChartTooltip';
 import { axisBottomAsDate, axisLeftMiddleLabel } from './utils';

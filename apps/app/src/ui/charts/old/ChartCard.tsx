@@ -1,7 +1,7 @@
 import DownloadCanvasButton from '@/app/ui/buttons/DownloadCanvasButton';
 import { Button, Modal } from '@tet/ui';
 import classNames from 'classnames';
-import { useRef, useState } from 'react';
+import { JSX, useRef, useState } from 'react';
 import BarChart, { BarChartProps } from './BarChart';
 
 export const Legend = ({

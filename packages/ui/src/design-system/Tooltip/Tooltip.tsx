@@ -1,12 +1,12 @@
 import {
-  FloatingArrow,
-  FloatingPortal,
-  Placement,
-  ReferenceType,
   arrow,
   autoUpdate,
   flip,
+  FloatingArrow,
+  FloatingPortal,
   offset,
+  Placement,
+  ReferenceType,
   shift,
   useClick,
   useDismiss,
@@ -17,7 +17,7 @@ import {
   useRole,
 } from '@floating-ui/react';
 import classNames from 'classnames';
-import { cloneElement, useCallback, useRef, useState } from 'react';
+import { cloneElement, JSX, useCallback, useRef, useState } from 'react';
 import { preset } from '../../tailwind-preset';
 
 const colorTheme = preset.theme.extend.colors;

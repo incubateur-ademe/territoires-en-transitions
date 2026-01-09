@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { useState } from 'react';
+import { JSX, useState } from 'react';
 
 import { referentielToName } from '@/app/app/labels';
 import { ReferentielOfIndicateur } from '@/app/referentiels/litterals';

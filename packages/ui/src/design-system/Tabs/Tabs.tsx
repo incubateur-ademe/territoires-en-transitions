@@ -9,6 +9,7 @@ import {
 
 import { cn } from '../../utils/cn';
 import { Icon } from '../Icon';
+import { TabProps } from './Tab';
 
 export type TabSize = 'xs' | 'sm' | 'md';
 
@@ -23,7 +24,7 @@ type TabsProps = {
   /** Taille des boutons */
   size?: TabSize;
   /** Onglets */
-  children: (ReactElement | undefined)[];
+  children: (ReactElement<TabProps> | undefined)[];
   /** Index (base 0) de l'onglet actif */
   defaultActiveTab?: number;
   /** Appelée quand l'onglet actif change */
@@ -69,7 +70,7 @@ export const Tabs = ({
   // copie le contenu des panneaux en ajoutant les props nécessaire
   const children = childrenBase.filter(Boolean);
   const tabsPanel = Children.toArray(children).map((child, index) =>
-    cloneElement(child as ReactElement, {
+    cloneElement(child as ReactElement<TabProps>, {
       activeTab,
       index,
       className: tabPanelClassName,

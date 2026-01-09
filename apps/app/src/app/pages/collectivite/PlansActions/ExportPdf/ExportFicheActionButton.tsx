@@ -7,7 +7,7 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Event, useEventTracker } from '@tet/ui';
 import { mapValues } from 'es-toolkit';
-import { createElement, useEffect, useState } from 'react';
+import { createElement, JSX, useEffect, useState } from 'react';
 import { useAnnexesFicheActionInfos } from '../FicheAction/data/useAnnexesFicheActionInfos';
 import { useFichesActionLiees } from '../FicheAction/data/useFichesActionLiees';
 import { useFicheActionChemins } from '../PlanAction/data/usePlanActionChemin';

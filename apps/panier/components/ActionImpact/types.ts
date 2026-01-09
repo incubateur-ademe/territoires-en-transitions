@@ -6,6 +6,7 @@ import {
   ActionImpactTypologie,
   ActionReferentiel,
 } from '@tet/api';
+import { JSX } from 'react';
 
 type LinkType = {
   url: string;

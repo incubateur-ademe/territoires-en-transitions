@@ -4,6 +4,7 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PersonneId, personneIdSchema } from '@tet/domain/collectivites';
 import { Button, Field, Input, Select, VisibleWhen } from '@tet/ui';
+import { JSX } from 'react';
 
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';

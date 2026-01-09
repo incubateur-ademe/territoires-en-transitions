@@ -4,7 +4,7 @@ import { BarDatum } from '@nivo/bar';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { Breadcrumbs, Button, Event, useEventTracker } from '@tet/ui';
-import { useEffect, useState } from 'react';
+import { JSX, useEffect, useState } from 'react';
 import { TableOptions } from 'react-table';
 import { getIndexTitles } from '../utils';
 import ChartCard from './ChartCard';

@@ -1,4 +1,5 @@
 import { Tooltip } from '@tet/ui';
+import { JSX } from 'react';
 
 type TooltipRestreintProps = {
   children: JSX.Element;

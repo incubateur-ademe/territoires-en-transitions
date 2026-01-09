@@ -1,6 +1,7 @@
 import { roundTo } from '@tet/domain/utils';
 import { Badge } from '@tet/ui';
 import classNames from 'classnames';
+import { JSX } from 'react';
 
 export type ProgressBarType = {
   dataTest?: string;

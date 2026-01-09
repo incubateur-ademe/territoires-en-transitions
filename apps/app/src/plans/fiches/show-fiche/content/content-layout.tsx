@@ -2,7 +2,13 @@ import { SharedFicheLinkedResourcesAlert } from '@/app/plans/fiches/share-fiche/
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { EmptyCard } from '@tet/ui';
-import { Children, ComponentProps, isValidElement, ReactNode } from 'react';
+import {
+  Children,
+  ComponentProps,
+  isValidElement,
+  JSX,
+  ReactNode,
+} from 'react';
 
 type AlertProps = {
   title: string;

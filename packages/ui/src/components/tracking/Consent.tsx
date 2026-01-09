@@ -1,3 +1,5 @@
+import { JSX } from 'react';
+
 declare global {
   interface Window {
     axeptioSettings: { clientId: string; userCookiesDomain: string };

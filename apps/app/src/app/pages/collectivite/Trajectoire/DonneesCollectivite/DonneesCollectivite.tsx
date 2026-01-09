@@ -9,6 +9,7 @@ import { useComputeTrajectoire } from '../use-trajectoire';
 import { Secteur, TableauDonnees } from './TableauDonnees';
 import { tabsProperties } from './tabs-properties';
 import { useDonneesSectorisees } from './useDonneesSectorisees';
+import { JSX } from 'react';
 
 export type DonneesCollectiviteProps = {
   modalProps: RenderProps;

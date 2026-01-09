@@ -1,4 +1,4 @@
-import { forwardRef, HTMLAttributes, Ref } from 'react';
+import { forwardRef, HTMLAttributes, JSX, Ref } from 'react';
 import { cn } from '../../utils/cn';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
