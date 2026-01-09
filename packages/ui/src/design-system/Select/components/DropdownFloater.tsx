@@ -1,11 +1,11 @@
 import {
+  autoUpdate,
   FloatingFocusManager,
   FloatingNode,
   FloatingPortal,
+  offset,
   OffsetOptions,
   Placement,
-  autoUpdate,
-  offset,
   shift,
   size,
   useClick,
@@ -16,7 +16,7 @@ import {
   useInteractions,
 } from '@floating-ui/react';
 import classNames from 'classnames';
-import { cloneElement, useState } from 'react';
+import { cloneElement, JSX, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { useOpenState } from '../../../hooks/use-open-state';
 import { preset } from '../../../tailwind-preset';

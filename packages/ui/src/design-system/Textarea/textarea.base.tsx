@@ -30,7 +30,7 @@ export const TextareaBase = forwardRef(
 
     const localRef = useRef<HTMLTextAreaElement>(null);
 
-    useImperativeHandle(ref, () => localRef.current);
+    useImperativeHandle(ref, () => localRef.current as HTMLTextAreaElement);
 
     /** Autoresize - Adjust the height of the textarea to fit its content */
     useLayoutEffect(() => {

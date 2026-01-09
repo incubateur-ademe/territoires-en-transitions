@@ -12,7 +12,7 @@ import {
   useFloating,
   useInteractions,
 } from '@floating-ui/react';
-import { cloneElement, useState } from 'react';
+import { cloneElement, JSX, useState } from 'react';
 
 type DropdownFloaterProps = {
   children: JSX.Element;

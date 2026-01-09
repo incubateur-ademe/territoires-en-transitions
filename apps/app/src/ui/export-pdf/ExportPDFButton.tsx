@@ -2,7 +2,7 @@ import { useBaseToast } from '@/app/utils/toast/use-base-toast';
 import { usePDF } from '@react-pdf/renderer';
 import * as Sentry from '@sentry/nextjs';
 import { Button, ButtonProps } from '@tet/ui';
-import { useEffect, useState } from 'react';
+import { JSX, useEffect, useState } from 'react';
 import { saveBlob } from '../../referentiels/preuves/Bibliotheque/saveBlob';
 import DocumentToExport from './DocumentToExport';
 

@@ -12,7 +12,7 @@ import {
   useRole,
 } from '@floating-ui/react';
 import classNames from 'classnames';
-import { RefObject, cloneElement } from 'react';
+import { JSX, RefObject, cloneElement } from 'react';
 
 import { useOpenState } from '../../hooks/use-open-state';
 import { preset } from '../../tailwind-preset';
@@ -40,7 +40,7 @@ export type RenderProps = {
   /** l'id à la description pour l'accessibilité */
   descriptionId: string;
   /** Référence du container de la modale */
-  ref: RefObject<HTMLElement>;
+  ref: RefObject<HTMLElement | null>;
 };
 
 /** Types des props du composant générique Modal */

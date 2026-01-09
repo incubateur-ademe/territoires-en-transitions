@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { JSX } from 'react';
 
 import { Icon } from '../Icon';
 import { FieldState } from './Field';
