@@ -7,7 +7,7 @@ import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/Struct
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@tet/ui';
-import { useCallback, useEffect } from 'react';
+import { JSX, useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import FranceIcon from '../../../../../plans/components/france-icon.svg';
 import { useFicheContext } from '../../../context/fiche-context';

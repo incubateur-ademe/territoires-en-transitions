@@ -3,6 +3,7 @@ import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-con
 import { ficheActionStatutOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { isStatut, Statut } from '@tet/domain/plans';
 import { InlineEditWrapper, Select } from '@tet/ui';
+import { JSX } from 'react';
 
 export const Status = ({ status }: { status: Statut | null }): JSX.Element => {
   const { fiche, isReadonly, isUpdating, update } = useFicheContext();

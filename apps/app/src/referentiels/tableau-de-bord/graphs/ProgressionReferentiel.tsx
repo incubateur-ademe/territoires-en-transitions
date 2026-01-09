@@ -7,6 +7,7 @@ import { ReferentielId } from '@tet/domain/referentiels';
 import { TableOptions } from 'react-table';
 import { ProgressionRow } from '../../DEPRECATED_scores.types';
 import { getFormattedScore } from '../utils';
+import { JSX } from 'react';
 
 // Définition des couleurs des graphes
 const customColors = {

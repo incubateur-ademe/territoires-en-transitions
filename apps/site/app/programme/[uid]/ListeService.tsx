@@ -2,6 +2,7 @@ import ThumbnailsList from '@/site/components/galleries/ThumbnailsList';
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
 import classNames from 'classnames';
+import { JSX } from 'react';
 import ListeGallerieService from './ListeGallerieService';
 import ListeGrilleService from './ListeGrilleService';
 import ListeVerticaleService from './ListeVerticaleService';

@@ -5,6 +5,7 @@ import { Grid } from '@/app/app/pages/CollectivitesEngagees/Views/Grid';
 import { MAX_NUMBER_OF_CARDS_PER_PAGE } from '@/app/app/pages/CollectivitesEngagees/data/get-filter-properties';
 import { RecherchesViewParam } from '@/app/app/paths';
 import { CollectiviteEngagee } from '@tet/api';
+import { JSX } from 'react';
 import FiltersColonne from '../Filters/FiltersColonne';
 import { initialFilters, SetFilters } from '../data/filters';
 import { CollectivitesHeader } from '../header/collectivites-header';

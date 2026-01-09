@@ -595,7 +595,7 @@ importers:
         specifier: 3.7.1
         version: 3.7.1
       '@types/mailparser':
-        specifier: 3.4.6
+        specifier: ^3.4.6
         version: 3.4.6
       '@types/mime-types':
         specifier: ^3.0.1
@@ -1485,7 +1485,6 @@ packages:
 
   '@bryntum/scheduler-lib@1.0.0':
     resolution: {integrity: sha512-3Bd95kUaPsEJL+M7X2G5iV+7eNeSEPiFDX/U6Aucy5VeZDIuFFW+YTq4NVCVrzfs2wxeh5IRwW7fJC2mKv/hFw==}
-    engines: {node: '>=0.10.0'}
 
   '@bryntum/scheduler-react@6.3.1':
     resolution: {integrity: sha512-tqdu0Zz2wk7ou7vmM4g1m6xSNYrrtiMaBxd8v/DInVRsVGM2ZO9F6X6jisjF29CzUGAak+nI6H+GH02AkXBPYw==}

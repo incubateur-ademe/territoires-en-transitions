@@ -1,6 +1,7 @@
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { Icon } from '@tet/ui';
 import classNames from 'classnames';
+import { JSX } from 'react';
 
 type ScoreDisplayProps = {
   score: number | null;

@@ -1,8 +1,8 @@
-import {IconValue} from '../Icon';
+import { IconValue } from '../Icon';
 
 type TabChildren = React.ReactNode[] | React.ReactNode | string;
 
-interface TabProps {
+export interface TabProps {
   /** Permet d'ajuster les styles du conteneur */
   className?: string;
   /** Contenu de l'onglet */

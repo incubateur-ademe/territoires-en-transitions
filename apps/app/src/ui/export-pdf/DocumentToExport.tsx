@@ -1,4 +1,5 @@
 import { Document, Image, Page, Text, View } from '@react-pdf/renderer';
+import { JSX } from 'react';
 import { styles } from './styles';
 
 type DocumentToExportProps = {

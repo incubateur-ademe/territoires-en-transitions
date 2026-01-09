@@ -11,7 +11,7 @@ import {
   useFloating,
   useInteractions,
 } from '@floating-ui/react';
-import { cloneElement, useState } from 'react';
+import { cloneElement, HTMLAttributes, useState } from 'react';
 
 import { useOpenState } from '../../hooks/use-open-state';
 import { cn } from '../../utils/cn';
@@ -19,7 +19,7 @@ import { OpenState } from '../../utils/types';
 
 export type InlineEditWrapperProps = {
   children:
-    | React.ReactElement
+    | React.ReactElement<HTMLAttributes<HTMLElement>>
     | ((props: React.ComponentProps<'button'>) => React.ReactNode);
   renderOnEdit: ({ openState }: { openState: OpenState }) => React.ReactNode;
   openState?: OpenState;

@@ -17,6 +17,7 @@ import {
 } from '@/app/ui/export-pdf/components';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { getOptionLabel, preset } from '@tet/ui';
+import { JSX } from 'react';
 
 const { colors } = preset.theme.extend;
 

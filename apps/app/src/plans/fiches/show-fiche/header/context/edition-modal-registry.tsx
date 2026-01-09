@@ -1,6 +1,7 @@
 import { DeleteOrRemoveFicheSharingModal } from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { JSX } from 'react';
 import { FicheContextValue } from '../../context/fiche-context';
 import { ModaleEmplacement } from '../actions/emplacement/EmplacementFiche/ModaleEmplacement';
 import { AccessRightsManagementModal } from '../menu/actions/acces/access-rights-management.modal';

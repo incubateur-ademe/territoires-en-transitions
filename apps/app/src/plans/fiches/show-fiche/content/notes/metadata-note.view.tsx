@@ -1,6 +1,7 @@
 import { FicheNote } from '@tet/domain/plans';
 import { Icon } from '@tet/ui';
 import { format } from 'date-fns';
+import { JSX } from 'react';
 
 type MetadataNoteViewProps = {
   user: { nom: string; prenom: string } | null;
