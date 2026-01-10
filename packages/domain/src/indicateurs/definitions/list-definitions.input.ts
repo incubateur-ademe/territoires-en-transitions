@@ -13,6 +13,7 @@ export const listDefinitionsInputFiltersSchema = z.object({
   personnePiloteIds: z.number().int().array().optional(),
   serviceIds: z.number().int().array().optional(),
   planIds: z.number().int().array().optional(),
+  axeIds: z.number().int().array().optional(),
   mesureId: z.string().optional(),
   categorieNoms: z.string().array().optional(),
   participationScore: z.boolean().optional(),

@@ -90,6 +90,7 @@ test.describe("Création d'un plan d'action", () => {
     collectivites,
     plans,
     editPlanPom,
+    editAxePom,
   }) => {
     const { collectivite, user } = await collectivites.addCollectiviteAndUser({
       userArgs: { autoLogin: true },
@@ -107,7 +108,7 @@ test.describe("Création d'un plan d'action", () => {
     await editPlanPom.expectPlanIsEmpty();
 
     const axeNom = 'Axe de test';
-    await editPlanPom.addAxe(axeNom);
-    await editPlanPom.expectAxeExists(axeNom);
+    await editAxePom.addAxe(axeNom);
+    await editAxePom.expectAxeExists(axeNom);
   });
 });
