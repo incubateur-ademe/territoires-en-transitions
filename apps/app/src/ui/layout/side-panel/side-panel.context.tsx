@@ -1,7 +1,13 @@
 'use client';
 
 import { AnchorButtonProps } from '@tet/ui';
-import React, { createContext, ReactNode, useContext, useReducer } from 'react';
+import React, {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useReducer,
+} from 'react';
 
 type Panel = {
   isPersistentWithNextPath?: (path: string) => boolean;
@@ -23,7 +29,10 @@ type PanelState = Panel & {
 
 type PanelContextType = {
   panel: PanelState;
-  setPanel: (action: PanelAction) => void;
+  setPanel: (
+    action: PanelAction,
+    onChangeCallback?: (type: PanelAction['type']) => void
+  ) => void;
   setTitle: (title: string) => void;
 };
 
@@ -52,9 +61,19 @@ export const SidePanelProvider = ({ children }: { children: ReactNode }) => {
     title: '',
   });
 
+  const setPanel = useCallback(
+    (
+      action: PanelAction,
+      onChangeCallback?: (type: PanelAction['type']) => void
+    ) => {
+      dispatch(action);
+      onChangeCallback?.(action.type);
+    },
+    []
+  );
   const contextValue: PanelContextType = {
     panel,
-    setPanel: dispatch,
+    setPanel,
     setTitle: (title: string) => {
       dispatch({ type: 'setTitle', title });
     },
@@ -67,10 +86,11 @@ export const SidePanelProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useSidePanel = () => {
+export const useSidePanel = (): PanelContextType => {
   const context = useContext(PanelContext);
   if (!context) {
     throw new Error('usePanel doit être utilisé dans PanelProvider');
   }
+
   return context;
 };

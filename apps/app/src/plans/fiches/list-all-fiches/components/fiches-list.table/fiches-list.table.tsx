@@ -11,7 +11,7 @@ import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/Ba
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
 import { CollectiviteAccess } from '@tet/domain/users';
-import { ReactTable, TableCell, TableHeaderCell } from '@tet/ui';
+import { Button, ReactTable, TableCell, TableHeaderCell } from '@tet/ui';
 import { FichesListCellActions } from './cells/fiches-list.cell-actions';
 import { FichesListCellCheckbox } from './cells/fiches-list.cell-checkbox';
 import { FichesListCellDateFin } from './cells/fiches-list.cell-date-fin';
@@ -24,6 +24,7 @@ declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData> {
     selectedFicheIds: number[] | 'all';
     selectAction: (ficheId: number) => void;
+    onUnlink?: (ficheId: number) => void;
   }
 }
 
@@ -40,6 +41,24 @@ const columns = [
           selectAction={() => table.options.meta?.selectAction(row.original.id)}
           selectedFicheIds={table.options.meta?.selectedFicheIds}
         />
+      </TableCell>
+    ),
+  }),
+
+  columnHelper.display({
+    id: 'unlink',
+    header: () => <TableHeaderCell className="w-12" />,
+    cell: ({ row, table }) => (
+      <TableCell>
+        {table.options.meta?.onUnlink && (
+          <Button
+            onClick={() => table.options.meta?.onUnlink?.(row.original.id)}
+            icon="link-unlink"
+            title="Dissocier l'action"
+            size="xs"
+            variant="grey"
+          />
+        )}
       </TableCell>
     ),
   }),
@@ -113,9 +132,9 @@ const columns = [
   columnHelper.display({
     id: 'actions',
     header: () => <TableHeaderCell className="w-16" icon="more-2-line" />,
-    cell: (info) => (
+    cell: ({ row }) => (
       <TableCell>
-        <FichesListCellActions fiche={info.row.original} />
+        <FichesListCellActions fiche={row.original} />
       </TableCell>
     ),
   }),
@@ -128,6 +147,7 @@ type Props = {
   isGroupedActionsOn: boolean;
   selectedFicheIds: number[] | 'all';
   handleSelectFiche: (ficheId: number) => void;
+  onUnlink?: (ficheId: number) => void;
 };
 
 export const FichesListTable = ({
@@ -137,6 +157,7 @@ export const FichesListTable = ({
   isGroupedActionsOn,
   handleSelectFiche,
   selectedFicheIds,
+  onUnlink,
 }: Props) => {
   const [columnVisibility, setColumnVisibility] = useState({});
 
@@ -151,13 +172,17 @@ export const FichesListTable = ({
     meta: {
       selectedFicheIds,
       selectAction: (ficheId: number) => handleSelectFiche(ficheId),
+      onUnlink,
     },
   });
 
   useEffect(() => {
+    const showUnlinkColumn = !!onUnlink;
+    const showActionsColumn = !collectivite.isReadOnly && !showUnlinkColumn;
     table.getColumn('select')?.toggleVisibility(isGroupedActionsOn);
-    table.getColumn('actions')?.toggleVisibility(!collectivite.isReadOnly);
-  }, [collectivite.isReadOnly, isGroupedActionsOn, table]);
+    table.getColumn('unlink')?.toggleVisibility(showUnlinkColumn);
+    table.getColumn('actions')?.toggleVisibility(showActionsColumn);
+  }, [collectivite.isReadOnly, isGroupedActionsOn, onUnlink, table]);
 
   return (
     <div className="p-4 pt-2 lg:p-8 lg:pt-4 bg-white rounded-xl border border-grey-3">

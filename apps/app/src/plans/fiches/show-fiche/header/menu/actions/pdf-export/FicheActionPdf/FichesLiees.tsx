@@ -179,30 +179,24 @@ const FichesLiees = ({ fichesLiees }: FichesLieesProps) => {
   const otherFichesList = fichesLiees.slice(2);
 
   return (
-    <>
-      <Divider className="mt-2" />
-      <Stack gap={2.5}>
-        <Stack wrap={false}>
-          <Title variant="h5" className="text-primary-8 uppercase">
-            Actions liées
-          </Title>
-          {firstFichesList.length > 0 && (
-            <Stack gap={2.5} direction="row" className="flex-wrap">
-              {firstFichesList.map((ficheLiee) => (
-                <FicheLieeCard key={ficheLiee.id} ficheLiee={ficheLiee} />
-              ))}
-            </Stack>
-          )}
-        </Stack>
-        {otherFichesList.length > 0 && (
+    <Stack gap={2.5}>
+      <Stack wrap={false}>
+        {firstFichesList.length > 0 && (
           <Stack gap={2.5} direction="row" className="flex-wrap">
-            {otherFichesList.map((ficheLiee) => (
+            {firstFichesList.map((ficheLiee) => (
               <FicheLieeCard key={ficheLiee.id} ficheLiee={ficheLiee} />
             ))}
           </Stack>
         )}
       </Stack>
-    </>
+      {otherFichesList.length > 0 && (
+        <Stack gap={2.5} direction="row" className="flex-wrap">
+          {otherFichesList.map((ficheLiee) => (
+            <FicheLieeCard key={ficheLiee.id} ficheLiee={ficheLiee} />
+          ))}
+        </Stack>
+      )}
+    </Stack>
   );
 };
 

@@ -1,6 +1,7 @@
 import { Button, useEventTracker } from '@tet/ui';
 import { Event } from '@tet/ui/components/tracking/posthog-events';
 import { useFicheContext } from '../../context/fiche-context';
+import { useFicheSidePanel } from '../use-fiche-side-panel';
 
 const CreateIndicateurButton = ({
   toggleAction,
@@ -11,7 +12,7 @@ const CreateIndicateurButton = ({
 }) => {
   const tracker = useEventTracker();
 
-  if (canCreateIndicateur) {
+  if (canCreateIndicateur === false) {
     return null;
   }
 
@@ -47,8 +48,13 @@ const AssociateIndicateursButton = ({
   );
 };
 
-export const ActionButtons = () => {
-  const { indicateurs, isReadonly } = useFicheContext();
+export const ActionButtons = ({
+  toggleCreateIndicateurModal,
+}: {
+  toggleCreateIndicateurModal: () => void;
+}) => {
+  const { indicateurs, isReadonly, fiche } = useFicheContext();
+  const { openPanel } = useFicheSidePanel();
 
   if (isReadonly) {
     return null;
@@ -57,11 +63,11 @@ export const ActionButtons = () => {
   return (
     <>
       <CreateIndicateurButton
-        toggleAction={() => indicateurs.toggleAction('creating')}
+        toggleAction={toggleCreateIndicateurModal}
         canCreateIndicateur={indicateurs.canCreate}
       />
       <AssociateIndicateursButton
-        toggleAction={() => indicateurs.toggleAction('associating')}
+        toggleAction={() => openPanel('indicateurs', fiche)}
       />
     </>
   );

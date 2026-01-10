@@ -3,6 +3,7 @@ import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lis
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
+import { useState } from 'react';
 import { useFicheContext } from '../../context/fiche-context';
 import { SharedFicheLinkedResourcesAlert } from '../../share-fiche/shared-fiche-linked-resources.alert';
 import { ContentLayout } from '../content-layout';
@@ -13,6 +14,8 @@ import { DatavizPicto } from './empty-view/dataviz-picto';
 export const IndicateursView = () => {
   const { indicateurs, isReadonly, fiche } = useFicheContext();
   const collectivite = useCurrentCollectivite();
+  const [isCreateIndicateurModalOpen, setIsCreateIndicateurModalOpen] =
+    useState(false);
 
   return (
     <>
@@ -23,8 +26,8 @@ export const IndicateursView = () => {
         sharedDataDescription="Les indicateurs et les données affichées correspondent à ceux de cette collectivité."
       />
       <CreateIndicateurModal
-        isOpen={indicateurs.action === 'creating'}
-        setIsOpen={() => indicateurs.toggleAction('creating')}
+        isOpen={isCreateIndicateurModalOpen}
+        setIsOpen={setIsCreateIndicateurModalOpen}
         fiche={fiche}
       />
 
@@ -40,12 +43,25 @@ export const IndicateursView = () => {
           picto={(props) => <DatavizPicto {...props} />}
           title="Aucun indicateur associé !"
           subTitle="Mesurez les résultats et l'impact de l'action grâce à des indicateurs"
-          actions={[<ActionButtons key="actions" />]}
+          actions={[
+            <ActionButtons
+              key="actions"
+              toggleCreateIndicateurModal={() =>
+                setIsCreateIndicateurModalOpen((prev) => !prev)
+              }
+            />,
+          ]}
         />
         <ContentLayout.Content
           data={indicateurs.list}
           isLoading={indicateurs.isLoading}
-          actions={<ActionButtons />}
+          actions={
+            <ActionButtons
+              toggleCreateIndicateurModal={() =>
+                setIsCreateIndicateurModalOpen((prev) => !prev)
+              }
+            />
+          }
         >
           {(indicateur) => (
             <IndicateurCard

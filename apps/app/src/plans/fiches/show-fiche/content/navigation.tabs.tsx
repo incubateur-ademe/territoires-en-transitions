@@ -14,7 +14,7 @@ import { FicheSectionId } from './type';
 
 export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
-  const { fiche, indicateurs } = useFicheContext();
+  const { fiche, indicateurs, actionsLiees } = useFicheContext();
   const collectivite = useCurrentCollectivite();
   const { niveauAcces, permissions } = collectivite;
 
@@ -58,7 +58,9 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
       id: 'moyens',
     },
     {
-      label: 'Actions liées',
+      label: `Actions liées ${
+        actionsLiees.list.length > 0 ? `(${actionsLiees.list.length})` : ''
+      }`,
       isVisible:
         hasPermission(permissions, 'plans.fiches.read') ||
         (!niveauAcces &&
