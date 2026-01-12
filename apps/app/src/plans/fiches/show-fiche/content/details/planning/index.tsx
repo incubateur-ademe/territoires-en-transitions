@@ -2,25 +2,35 @@ import MiseEnOeuvreDropdown from '@/app/ui/dropdownLists/ficheAction/MiseEnOeuvr
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { useBaseToast } from '@/app/utils/toast/use-base-toast';
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
-import { FicheWithRelations } from '@tet/domain/plans';
-import type { TempsDeMiseEnOeuvre } from '@tet/domain/shared';
-import { Checkbox, Input, TextareaBase } from '@tet/ui';
+import { isFicheOnTime } from '@tet/domain/plans';
+import {
+  cn,
+  Icon,
+  InlineEditWrapper,
+  Input,
+  Select,
+  TextareaBase,
+} from '@tet/ui';
 import { format } from 'date-fns';
 import { useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useFicheContext } from '../../../context/fiche-context';
-import { TemporaryEditableItem } from '../layout';
+import { InlineEditableItem } from '../editable-item';
 import { planningFormSchema, PlanningFormValues } from './planning-schema';
 
-const TempsDeMiseEnOeuvre = ({
-  tempsDeMiseEnOeuvre,
+const DisplayDateValue = ({
+  value,
+  hasError,
 }: {
-  tempsDeMiseEnOeuvre: FicheWithRelations['tempsDeMiseEnOeuvre'];
+  value: string | undefined;
+  hasError?: boolean;
 }) => {
-  if (!tempsDeMiseEnOeuvre || tempsDeMiseEnOeuvre.nom === null) {
+  if (!value) {
     return <span className="text-grey-7">À renseigner</span>;
   }
-  return <span className="text-primary-10">{tempsDeMiseEnOeuvre.nom}</span>;
+  return (
+    <span className={hasError ? 'text-error-3' : 'text-grey-8'}>{value}</span>
+  );
 };
 
 export const Planning = () => {
@@ -28,7 +38,7 @@ export const Planning = () => {
 
   const { renderToast, setToast } = useBaseToast();
 
-  const { control, watch, formState, setValue, handleSubmit, subscribe } =
+  const { control, watch, formState, handleSubmit, subscribe } =
     useForm<PlanningFormValues>({
       resolver: standardSchemaResolver(planningFormSchema),
       mode: 'onChange',
@@ -89,96 +99,155 @@ export const Planning = () => {
   return (
     <>
       {renderToast()}
-
+      <div className="text-sm leading-6 font-regular gap-4 mb-1 flex items-center">
+        <div className="w-12 h-12 bg-primary-1 rounded-full self-start flex items-center justify-center flex-none text-primary-8">
+          <Icon icon="calendar-line" />
+        </div>
+        <div className="flex flex-col">
+          <div className="text-primary-10">
+            Date de début et de fin prévisionnelle
+          </div>
+          <div className="flex items-center gap-2">
+            <Controller
+              control={control}
+              name="dateDebut"
+              render={({ field }) => (
+                <InlineEditWrapper
+                  disabled={isReadonly}
+                  renderOnEdit={({ openState }) => (
+                    <div className="min-w-[200px] p-3">
+                      <Input
+                        type="date"
+                        min="1900-01-01"
+                        max="2100-01-01"
+                        autoFocus
+                        value={
+                          field.value ? format(field.value, 'yyyy-MM-dd') : ''
+                        }
+                        onChange={(e) => {
+                          field.onChange(
+                            e.target.value ? new Date(e.target.value) : null
+                          );
+                        }}
+                        onBlur={() => openState.setIsOpen(false)}
+                        onKeyDown={(evt) => {
+                          if (evt.key === 'Enter' || evt.key === 'Escape') {
+                            openState.setIsOpen(false);
+                          }
+                        }}
+                      />
+                    </div>
+                  )}
+                >
+                  <span
+                    className={cn({
+                      'cursor-pointer hover:opacity-80 transition-opacity':
+                        !isReadonly,
+                    })}
+                  >
+                    <DisplayDateValue
+                      value={
+                        field.value
+                          ? getTextFormattedDate({
+                              date: format(field.value, 'yyyy-MM-dd'),
+                            })
+                          : undefined
+                      }
+                    />
+                  </span>
+                </InlineEditWrapper>
+              )}
+            />
+            <Icon icon="arrow-right-line" className="text-grey-6" />
+            <Controller
+              control={control}
+              name="dateFin"
+              render={({ field, formState }) => {
+                const ameliorationContinue = watch('ameliorationContinue');
+                const isDateFinEditable = !isReadonly && !ameliorationContinue;
+                return (
+                  <InlineEditWrapper
+                    disabled={!isDateFinEditable}
+                    renderOnEdit={({ openState }) => (
+                      <div className="min-w-[200px] p-3">
+                        <Input
+                          type="date"
+                          min="1900-01-01"
+                          max="2100-01-01"
+                          autoFocus
+                          value={
+                            field.value ? format(field.value, 'yyyy-MM-dd') : ''
+                          }
+                          onChange={(e) => {
+                            field.onChange(
+                              e.target.value ? new Date(e.target.value) : null
+                            );
+                          }}
+                          onBlur={() => openState.setIsOpen(false)}
+                          onKeyDown={(evt) => {
+                            if (evt.key === 'Enter' || evt.key === 'Escape') {
+                              openState.setIsOpen(false);
+                            }
+                          }}
+                        />
+                        {formState.errors.dateFin?.message && (
+                          <div className="text-error-3 text-xs mt-1">
+                            {formState.errors.dateFin.message}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  >
+                    <span
+                      className={cn({
+                        'cursor-pointer hover:opacity-80 transition-opacity':
+                          isDateFinEditable,
+                        'cursor-not-allowed opacity-50': !isDateFinEditable,
+                      })}
+                    >
+                      <DisplayDateValue
+                        value={
+                          field.value
+                            ? getTextFormattedDate({
+                                date: format(field.value, 'yyyy-MM-dd'),
+                              })
+                            : undefined
+                        }
+                        hasError={
+                          !!formState.errors.dateFin?.message ||
+                          !isFicheOnTime({
+                            dateFin: field.value
+                              ? format(field.value, 'yyyy-MM-dd')
+                              : null,
+                            statut: fiche.statut,
+                          })
+                        }
+                      />
+                    </span>
+                  </InlineEditWrapper>
+                );
+              }}
+            />
+          </div>
+        </div>
+      </div>
       <Controller
+        name="tempsDeMiseEnOeuvre"
         control={control}
-        name="dateDebut"
         render={({ field }) => (
-          <TemporaryEditableItem
-            icon="calendar-line"
-            label="Date de début et de fin prévisionnelle"
-            value={
-              field.value
-                ? getTextFormattedDate({
-                    date: format(field.value, 'yyyy-MM-dd'),
-                  })
-                : undefined
-            }
+          <InlineEditableItem
+            icon="time-line"
+            label="Temps de mise en œuvre"
+            value={field.value?.nom ?? null}
             isReadonly={isReadonly}
-            editComponent={(onBlur) => (
-              <Input
-                type="date"
-                min="1900-01-01"
-                max="2100-01-01"
-                autoFocus
-                value={field.value ? format(field.value, 'yyyy-MM-dd') : ''}
-                onChange={(e) => {
-                  field.onChange(
-                    e.target.value ? new Date(e.target.value) : null
-                  );
+            renderOnEdit={({ openState }) => (
+              <MiseEnOeuvreDropdown
+                values={field.value ?? null}
+                onChange={(tempsDeMiseEnOeuvre) => {
+                  field.onChange(tempsDeMiseEnOeuvre);
+                  openState.setIsOpen(false);
                 }}
-                onBlur={onBlur}
               />
-            )}
-          />
-        )}
-      />
-      <Controller
-        control={control}
-        name="dateFin"
-        render={({ field, formState }) => (
-          <TemporaryEditableItem
-            icon="calendar-check-line"
-            label="Date de fin"
-            error={formState.errors.dateFin?.message}
-            value={
-              field.value
-                ? getTextFormattedDate({
-                    date: format(field.value, 'yyyy-MM-dd'),
-                  })
-                : undefined
-            }
-            isReadonly={isReadonly}
-            editComponent={(onBlur) => (
-              <Input
-                type="date"
-                min="1900-01-01"
-                max="2100-01-01"
-                autoFocus
-                value={field.value ? format(field.value, 'yyyy-MM-dd') : ''}
-                onChange={(e) => {
-                  field.onChange(
-                    e.target.value ? new Date(e.target.value) : null
-                  );
-                }}
-                onBlur={onBlur}
-              />
-            )}
-          />
-        )}
-      />
-      <TemporaryEditableItem
-        icon="time-line"
-        label="Temps de mise en œuvre"
-        value={
-          <TempsDeMiseEnOeuvre
-            tempsDeMiseEnOeuvre={watch('tempsDeMiseEnOeuvre')}
-          />
-        }
-        isReadonly={isReadonly}
-        editComponent={() => (
-          <Controller
-            name="tempsDeMiseEnOeuvre"
-            control={control}
-            render={({ field }) => (
-              <div className="flex-1">
-                <MiseEnOeuvreDropdown
-                  values={field.value ?? null}
-                  onChange={(tempsDeMiseEnOeuvre) =>
-                    field.onChange(tempsDeMiseEnOeuvre)
-                  }
-                />
-              </div>
             )}
           />
         )}
@@ -188,51 +257,56 @@ export const Planning = () => {
         control={control}
         name="ameliorationContinue"
         render={({ field }) => (
-          <TemporaryEditableItem
+          <InlineEditableItem
             icon="loop-left-line"
-            label="L'action se répète tous les ans, sans date de fin prévisionnelle"
-            value={field.value ? 'Oui' : 'Non'}
+            value={
+              field.value
+                ? "L'action se répète tous les ans, sans date de fin prévisionnelle"
+                : "L'action ne se répète pas tous les ans"
+            }
             isReadonly={isReadonly}
-            editComponent={(onBlur) => {
-              return (
-                <Checkbox
-                  checked={field.value ?? false}
-                  onChange={(e) => {
-                    const isChecked = e.target.checked;
-                    if (isChecked) {
-                      setValue('dateFin', null, {
-                        shouldValidate: true,
-                        shouldDirty: true,
-                      });
-                    }
-                    field.onChange(isChecked);
-                  }}
-                  onBlur={() => {
-                    onBlur();
-                    field.onBlur();
-                  }}
-                />
-              );
-            }}
+            renderOnEdit={({ openState }) => (
+              <Select
+                options={[
+                  {
+                    value: 'true',
+                    label:
+                      "L'action se répète tous les ans, sans date de fin prévisionnelle",
+                  },
+                  {
+                    value: 'false',
+                    label: "L'action ne se répète pas tous les ans",
+                  },
+                ]}
+                values={field.value ? 'true' : 'false'}
+                onChange={(value) => {
+                  const isChecked = value === 'true';
+                  field.onChange(isChecked);
+                  openState.setIsOpen(false);
+                }}
+                buttonClassName="border-0 border-b"
+                displayOptionsWithoutFloater
+                openState={openState}
+              />
+            )}
           />
         )}
       />
-      <TemporaryEditableItem
-        icon="time-line"
-        label="Éléments de calendrier"
-        value={fiche.calendrier}
-        isReadonly={isReadonly}
-        editComponent={(onBlur) => (
-          <Controller
-            name="calendrier"
-            control={control}
-            render={({ field }) => (
+      <Controller
+        name="calendrier"
+        control={control}
+        render={({ field }) => (
+          <InlineEditableItem
+            icon="time-line"
+            label="Éléments de calendrier"
+            value={fiche.calendrier}
+            isReadonly={isReadonly}
+            renderOnEdit={() => (
               <TextareaBase
                 tabIndex={0}
                 autoFocus
                 value={field.value ?? ''}
                 onChange={(value) => field.onChange(value)}
-                onBlur={onBlur}
               />
             )}
           />
