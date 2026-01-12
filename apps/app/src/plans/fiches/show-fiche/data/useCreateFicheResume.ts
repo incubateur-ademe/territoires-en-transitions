@@ -1,5 +1,4 @@
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
-import { dropAnimation } from '@/app/plans/plans/show-plan/plan-arborescence.view';
 import { DBClient, useSupabase, useTRPC } from '@tet/api';
 
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
@@ -209,7 +208,8 @@ export const useCreateFicheResume = (args: Args) => {
 
       waitForMarkup(`#fiche-${newFiche.id}`).then(() => {
         // scroll au niveau de la nouvelle fiche créée
-        dropAnimation(`fiche-${newFiche.id}`);
+        const element = document.getElementById(`fiche-${newFiche.id}`);
+        element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       });
 
       if (actionId) {

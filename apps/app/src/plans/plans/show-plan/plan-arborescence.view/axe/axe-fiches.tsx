@@ -18,7 +18,6 @@ export const AxeFiches = () => {
       <AxeSectionTitle name="fiches" />
       <FichesList
         collectivite={collectivite}
-        isDndActive={false}
         ficheIds={axe.fiches}
         axeId={axe.id}
         planId={rootAxe.id}
