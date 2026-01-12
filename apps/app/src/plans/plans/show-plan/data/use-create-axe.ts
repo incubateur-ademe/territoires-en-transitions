@@ -4,6 +4,7 @@ import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { useTRPC } from '@tet/api';
 import { Plan, PlanNode } from '@tet/domain/plans';
 import { planNodeFactory, sortPlanNodes } from '../../utils';
+import { AxeCreatedEvent } from '../plan-arborescence.view/axe/axe.context';
 
 export const useCreateAxe = ({
   collectiviteId,
@@ -77,11 +78,13 @@ export const useCreateAxe = ({
           }),
         }),
       ]);
-      await waitForMarkup(`#axe-${data.id}`).then((el) => {
-        // scroll au niveau du nouvel axe créé
-        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        // donne le focus à son titre
-        document.getElementById(`axe-titre-${data.id}`)?.focus();
+      await waitForMarkup(`#axe-${data.id}`).then(() => {
+        // émet un événement pour signaler que le nouvel axe a été créé
+        // (va déclencher le passage en mode édition du titre)
+        const event = new CustomEvent(AxeCreatedEvent, {
+          detail: { axeId: data.id },
+        });
+        window.dispatchEvent(event);
       });
     },
   });
