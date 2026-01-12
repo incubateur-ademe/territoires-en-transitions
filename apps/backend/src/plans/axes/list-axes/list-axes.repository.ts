@@ -101,6 +101,8 @@ export class ListAxesRepository {
                   array_agg(faa.fiche_id) AS fiches
           FROM parents a
           JOIN fiche_action_axe faa ON a.id = faa.axe_id
+          JOIN fiche_action fa on fa.id = faa.fiche_id
+          WHERE fa.deleted = false
           GROUP BY a.id
         )
       SELECT id, nom, description, fiches, ancestors, depth, sort_path
