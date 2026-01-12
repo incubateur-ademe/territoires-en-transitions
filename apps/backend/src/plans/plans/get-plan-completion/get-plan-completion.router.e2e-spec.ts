@@ -470,5 +470,268 @@ describe('GetPlanCompletionRouter tests', () => {
         expect(notesDeSuiviCompletion.count).toEqual(1);
       }
     });
+
+    it('should not count soft deleted fiches in completion counters', async () => {
+      const caller = router.createCaller({ user: yoloDodoUser });
+
+      // Créer une fiche normale incomplète
+      const [ficheNormale] = await databaseService.db
+        .insert(ficheActionTable)
+        .values({
+          titre: null,
+          description: 'Description complète',
+          statut: 'En cours',
+          collectiviteId: testCollectiviteId,
+          createdAt: twoYearsAgo.toISOString(),
+          deleted: false,
+        })
+        .returning();
+
+      // Créer une fiche soft deleted incomplète
+      const [ficheSoftDeleted] = await databaseService.db
+        .insert(ficheActionTable)
+        .values({
+          titre: null,
+          description: 'Description complète',
+          statut: 'En cours',
+          collectiviteId: testCollectiviteId,
+          createdAt: twoYearsAgo.toISOString(),
+          deleted: true,
+        })
+        .returning();
+
+      // Associer les deux fiches au plan
+      await databaseService.db.insert(ficheActionAxeTable).values([
+        { ficheId: ficheNormale.id, axeId: testPlanId },
+        { ficheId: ficheSoftDeleted.id, axeId: testPlanId },
+      ]);
+
+      const result = await caller.plans.plans.getPlanCompletion({
+        planId: testPlanId,
+      });
+
+      // Seule la fiche normale devrait être comptée
+      expect(result.find((f) => f.name === 'titre')?.count).toBe(1);
+      expect(
+        result.find((f) => f.name === 'description')?.count
+      ).toBeUndefined();
+      expect(result.find((f) => f.name === 'statut')?.count).toBeUndefined();
+    });
+
+    it('should return empty array when all fiches are soft deleted', async () => {
+      const caller = router.createCaller({ user: yoloDodoUser });
+
+      // Créer uniquement des fiches soft deleted
+      const [fiche1] = await databaseService.db
+        .insert(ficheActionTable)
+        .values({
+          titre: null,
+          description: null,
+          statut: null,
+          collectiviteId: testCollectiviteId,
+          createdAt: twoYearsAgo.toISOString(),
+          deleted: true,
+        })
+        .returning();
+
+      const [fiche2] = await databaseService.db
+        .insert(ficheActionTable)
+        .values({
+          titre: null,
+          description: null,
+          statut: null,
+          collectiviteId: testCollectiviteId,
+          createdAt: twoYearsAgo.toISOString(),
+          deleted: true,
+        })
+        .returning();
+
+      // Associer les fiches au plan
+      await databaseService.db.insert(ficheActionAxeTable).values([
+        { ficheId: fiche1.id, axeId: testPlanId },
+        { ficheId: fiche2.id, axeId: testPlanId },
+      ]);
+
+      const result = await caller.plans.plans.getPlanCompletion({
+        planId: testPlanId,
+      });
+
+      // Aucune fiche ne devrait être comptée car toutes sont soft deleted
+      expect(result).toEqual([]);
+    });
+
+    it('should correctly count mixed normal and soft deleted fiches', async () => {
+      const caller = router.createCaller({ user: yoloDodoUser });
+
+      // Créer 2 fiches normales incomplètes
+      const [ficheNormale1] = await databaseService.db
+        .insert(ficheActionTable)
+        .values({
+          titre: null,
+          description: 'Description complète',
+          statut: 'En cours',
+          collectiviteId: testCollectiviteId,
+          createdAt: twoYearsAgo.toISOString(),
+          deleted: false,
+        })
+        .returning();
+
+      const [ficheNormale2] = await databaseService.db
+        .insert(ficheActionTable)
+        .values({
+          titre: null,
+          description: null,
+          statut: null,
+          collectiviteId: testCollectiviteId,
+          createdAt: twoYearsAgo.toISOString(),
+          deleted: false,
+        })
+        .returning();
+
+      // Créer 2 fiches soft deleted incomplètes
+      const [ficheSoftDeleted1] = await databaseService.db
+        .insert(ficheActionTable)
+        .values({
+          titre: null,
+          description: 'Description complète',
+          statut: 'En cours',
+          collectiviteId: testCollectiviteId,
+          createdAt: twoYearsAgo.toISOString(),
+          deleted: true,
+        })
+        .returning();
+
+      const [ficheSoftDeleted2] = await databaseService.db
+        .insert(ficheActionTable)
+        .values({
+          titre: null,
+          description: null,
+          statut: null,
+          collectiviteId: testCollectiviteId,
+          createdAt: twoYearsAgo.toISOString(),
+          deleted: true,
+        })
+        .returning();
+
+      // Associer toutes les fiches au plan
+      await databaseService.db.insert(ficheActionAxeTable).values([
+        { ficheId: ficheNormale1.id, axeId: testPlanId },
+        { ficheId: ficheNormale2.id, axeId: testPlanId },
+        { ficheId: ficheSoftDeleted1.id, axeId: testPlanId },
+        { ficheId: ficheSoftDeleted2.id, axeId: testPlanId },
+      ]);
+
+      const result = await caller.plans.plans.getPlanCompletion({
+        planId: testPlanId,
+      });
+
+      // Seules les 2 fiches normales devraient être comptées
+      expect(result.find((f) => f.name === 'titre')?.count).toBe(2);
+      expect(result.find((f) => f.name === 'description')?.count).toBe(1);
+      expect(result.find((f) => f.name === 'statut')?.count).toBe(1);
+      expect(result.find((f) => f.name === 'pilotes')?.count).toBe(2);
+      expect(result.find((f) => f.name === 'indicateurs')?.count).toBe(2);
+      expect(result.find((f) => f.name === 'budgets')?.count).toBe(2);
+      expect(result.find((f) => f.name === 'suiviRecent')?.count).toBe(2);
+    });
+
+    it('should not count soft deleted fiches in suiviRecent calculation', async () => {
+      const caller = router.createCaller({ user: yoloDodoUser });
+
+      // Créer une fiche normale ancienne avec note ancienne
+      const [ficheNormale] = await databaseService.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Titre complet',
+          description: 'Description complète',
+          statut: 'En cours',
+          objectifs: 'Objectifs définis',
+          collectiviteId: testCollectiviteId,
+          createdAt: twoYearsAgo.toISOString(),
+          deleted: false,
+        })
+        .returning();
+
+      // Créer une fiche soft deleted ancienne avec note ancienne
+      const [ficheSoftDeleted] = await databaseService.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Titre complet',
+          description: 'Description complète',
+          statut: 'En cours',
+          objectifs: 'Objectifs définis',
+          collectiviteId: testCollectiviteId,
+          createdAt: twoYearsAgo.toISOString(),
+          deleted: true,
+        })
+        .returning();
+
+      // Ajouter des pilotes, indicateurs et budgets pour compléter les fiches
+      await databaseService.db.insert(ficheActionPiloteTable).values([
+        { ficheId: ficheNormale.id, userId: yoloDodoUser.id },
+        { ficheId: ficheSoftDeleted.id, userId: yoloDodoUser.id },
+      ]);
+
+      await databaseService.db.insert(ficheActionIndicateurTable).values([
+        { ficheId: ficheNormale.id, indicateurId: 1 },
+        { ficheId: ficheSoftDeleted.id, indicateurId: 1 },
+      ]);
+
+      await databaseService.db.insert(ficheActionBudgetTable).values([
+        {
+          ficheId: ficheNormale.id,
+          type: 'investissement',
+          unite: 'HT',
+          budgetPrevisionnel: 1000,
+        },
+        {
+          ficheId: ficheSoftDeleted.id,
+          type: 'investissement',
+          unite: 'HT',
+          budgetPrevisionnel: 1000,
+        },
+      ]);
+
+      // Ajouter des notes anciennes aux deux fiches
+      await databaseService.db.insert(ficheActionNoteTable).values([
+        {
+          ficheId: ficheNormale.id,
+          dateNote: '2024-01-01',
+          note: 'Note ancienne',
+          modifiedAt: twoYearsAgo.toISOString(),
+          createdAt: twoYearsAgo.toISOString(),
+          modifiedBy: yoloDodoUser.id,
+          createdBy: yoloDodoUser.id,
+        },
+        {
+          ficheId: ficheSoftDeleted.id,
+          dateNote: '2024-01-01',
+          note: 'Note ancienne',
+          modifiedAt: twoYearsAgo.toISOString(),
+          createdAt: twoYearsAgo.toISOString(),
+          modifiedBy: yoloDodoUser.id,
+          createdBy: yoloDodoUser.id,
+        },
+      ]);
+
+      // Associer les fiches au plan
+      await databaseService.db.insert(ficheActionAxeTable).values([
+        { ficheId: ficheNormale.id, axeId: testPlanId },
+        { ficheId: ficheSoftDeleted.id, axeId: testPlanId },
+      ]);
+
+      const result = await caller.plans.plans.getPlanCompletion({
+        planId: testPlanId,
+      });
+
+      // Seule la fiche normale devrait être comptée dans suiviRecent
+      const notesDeSuiviCompletion = result.find(
+        (field) => field.name === 'suiviRecent'
+      );
+      expect(notesDeSuiviCompletion).toBeDefined();
+      if (notesDeSuiviCompletion) {
+        expect(notesDeSuiviCompletion.count).toEqual(1);
+      }
+    });
   });
 });
