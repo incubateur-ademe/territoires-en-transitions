@@ -16,7 +16,6 @@ export const PlanTree = ({ plan, axes, collectivite }: Props) => {
       {/** Fiches à la racine du plan */}
       <FichesList
         collectivite={collectivite}
-        isDndActive={false}
         ficheIds={plan.fiches}
         axeId={plan.id}
         planId={plan.id}
