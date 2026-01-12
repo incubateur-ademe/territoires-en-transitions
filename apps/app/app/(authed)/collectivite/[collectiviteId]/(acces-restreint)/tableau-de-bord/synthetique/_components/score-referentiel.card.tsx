@@ -80,7 +80,7 @@ const ScoreReferentielCard = ({ referentielId }: Props) => {
         {isEmpty ? (
           /* eslint-disable-next-line @next/next/no-img-element */
           <img
-            src={imagePlaceholder}
+            src={imagePlaceholder.src}
             alt="graphique évolution score référentiel"
             className="grow object-center"
           />
