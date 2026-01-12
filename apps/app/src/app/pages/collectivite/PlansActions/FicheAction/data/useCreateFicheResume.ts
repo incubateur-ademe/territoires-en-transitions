@@ -2,7 +2,10 @@ import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { dropAnimation } from '@/app/plans/plans/show-plan/plan-arborescence.view';
 import { useTRPC } from '@tet/api';
 
-import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import {
+  FicheListItem,
+  ListFichesOutput,
+} from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plan } from '@tet/domain/plans';
@@ -67,6 +70,15 @@ export const useCreateFicheResume = (args: Args) => {
       });
       await queryClient.cancelQueries({ queryKey: axe_fiches_key });
 
+      if (axeId) {
+        await queryClient.cancelQueries({
+          queryKey: trpcClient.plans.fiches.listFiches.queryKey({
+            collectiviteId,
+            filters: { axesId: [axeId] },
+          }),
+        });
+      }
+
       const previousData = [
         [
           trpcClient.plans.plans.get.queryKey({ planId }),
@@ -91,6 +103,32 @@ export const useCreateFicheResume = (args: Args) => {
         }
       );
 
+      // mise à jour optimiste du cache listFiches avec le filtre axesId
+      if (axeId) {
+        queryClient.setQueryData(
+          trpcClient.plans.fiches.listFiches.queryKey({
+            collectiviteId,
+            filters: { axesId: [axeId] },
+          }),
+          (old: ListFichesOutput | undefined) => {
+            if (!old) {
+              return {
+                data: [tempFiche],
+                count: 1,
+                nextPage: null,
+                nbOfPages: 1,
+              };
+            }
+            return {
+              ...old,
+              data: [tempFiche, ...old.data],
+              count: old.count + 1,
+              nbOfPages: old.nbOfPages,
+            };
+          }
+        );
+      }
+
       queryClient.setQueryData(
         trpcClient.plans.plans.get.queryKey({ planId }),
         (old): Plan | undefined => {
@@ -105,12 +143,6 @@ export const useCreateFicheResume = (args: Args) => {
               };
             }
             return a;
-          });
-
-          queryClient.invalidateQueries({
-            queryKey: trpcClient.plans.fiches.listFiches.queryKey({
-              collectiviteId,
-            }),
           });
           return {
             ...old,
@@ -147,6 +179,33 @@ export const useCreateFicheResume = (args: Args) => {
         }
       );
 
+      // Mise à jour du cache listFiches avec le filtre axesId pour rafraîchir immédiatement FichesList
+      if (axeId) {
+        queryClient.setQueryData(
+          trpcClient.plans.fiches.listFiches.queryKey({
+            collectiviteId,
+            filters: { axesId: [axeId] },
+          }),
+          (old: ListFichesOutput | undefined) => {
+            if (!old) {
+              return {
+                data: [newFiche],
+                count: 1,
+                nextPage: null,
+                nbOfPages: 1,
+              };
+            }
+            const updatedData = old.data.map((f) =>
+              f.id === TEMPORARY_ID ? newFiche : f
+            );
+            return {
+              ...old,
+              data: sortFichesResume(updatedData),
+            };
+          }
+        );
+      }
+
       // On récupère la fiche renvoyer par le serveur pour la remplacer dans le cache avant invalidation
       queryClient.setQueryData(
         trpcClient.plans.plans.get.queryKey({ planId }),
@@ -180,6 +239,12 @@ export const useCreateFicheResume = (args: Args) => {
         queryClient.invalidateQueries({ queryKey: axe_fiches_key }),
         queryClient.invalidateQueries({
           queryKey: trpcClient.plans.fiches.countBy.queryKey({
+            collectiviteId,
+          }),
+        }),
+        // Invalide toutes les queries listFiches pour cette collectivité
+        queryClient.invalidateQueries({
+          queryKey: trpcClient.plans.fiches.listFiches.queryKey({
             collectiviteId,
           }),
         }),
