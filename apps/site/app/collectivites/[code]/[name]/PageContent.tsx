@@ -1,6 +1,7 @@
 'use client';
 
 import { Tab, Tabs } from '@tet/ui';
+import { JSX } from 'react';
 
 type PageContentType = {
   indicateurs: JSX.Element | null;
