@@ -11,6 +11,7 @@ type DeleteFicheModalProps = {
   buttonClassName?: string;
   onDeleteCallback?: () => void;
   onClose?: () => void;
+  hideButton?: boolean;
 };
 
 export const DeleteFicheModal = ({
@@ -20,6 +21,7 @@ export const DeleteFicheModal = ({
   buttonClassName,
   onDeleteCallback,
   onClose,
+  hideButton = false,
 }: DeleteFicheModalProps) => {
   const { id, titre, plans } = fiche;
   const isInMultipleAxes = !!plans && plans.length > 1;
@@ -67,13 +69,15 @@ export const DeleteFicheModal = ({
       )}
     >
       {/* Bouton d'ouverture de la modale */}
-      <DeleteButton
-        data-test="SupprimerFicheBouton"
-        title="Supprimer l'action"
-        variant={buttonVariant}
-        size="xs"
-        className={buttonClassName}
-      />
+      {hideButton ? undefined : (
+        <DeleteButton
+          data-test="SupprimerFicheBouton"
+          title="Supprimer l'action"
+          variant={buttonVariant}
+          size="xs"
+          className={buttonClassName}
+        />
+      )}
     </Modal>
   );
 };
