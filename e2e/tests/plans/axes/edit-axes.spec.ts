@@ -101,7 +101,7 @@ test.describe("Édition d'axes dans un plan d'action", () => {
     await editAxePom.expectAxeExists(axeNom);
 
     // Ajouter une fiche action dans l'axe spécifique
-    await editPlanPom.addFiche(axeNom);
+    await editAxePom.addFiche(axeNom);
 
     await ficheCardPom.expectSansTitre();
     await ficheCardPom.expectStatut('À venir');
