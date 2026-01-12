@@ -1,14 +1,15 @@
+import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
+import FicheActionCardSkeleton from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
+import {
+  isFicheEditableByCollectiviteUser,
+  isFicheSharedWithCollectivite,
+} from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { useUser } from '@tet/api/users';
 import { CollectiviteAccess } from '@tet/domain/users';
-import classNames from 'classnames';
-import FicheActionCardSkeleton from '../../../../app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { useListFiches } from '../../../fiches/list-all-fiches/data/use-list-fiches';
-import { DraggableFicheCard } from './draggable-fiche.card';
 
 type Props = {
-  /** est-ce qu'il y a une élément actif (drag) */
-  isDndActive: boolean;
   ficheIds: number[];
   axeId: number;
   planId?: number;
@@ -16,7 +17,6 @@ type Props = {
 };
 
 export const FichesList = ({
-  isDndActive,
   ficheIds,
   axeId,
   planId,
@@ -35,11 +35,7 @@ export const FichesList = ({
 
   if (isLoading) {
     return (
-      <div
-        className={classNames('grid grid-cols-2 gap-6', {
-          'my-2': !isDndActive,
-        })}
-      >
+      <div className="grid grid-cols-2 gap-6">
         {ficheIds.map((id) => (
           <FicheActionCardSkeleton key={id} />
         ))}
@@ -48,21 +44,25 @@ export const FichesList = ({
   }
 
   return (
-    <div
-      className={classNames('grid grid-cols-2 gap-6', { 'my-2': !isDndActive })}
-    >
+    <div className={'grid grid-cols-2 gap-6 my-2'}>
       {fiches.map((fiche) => {
         if (fiche.id < 0) {
           return <FicheActionCardSkeleton key={fiche.id} />;
         } else {
+          const isReadonly =
+            collectivite.isReadOnly ||
+            !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id) ||
+            isFicheSharedWithCollectivite(fiche, collectivite.collectiviteId);
           return (
-            <DraggableFicheCard
-              collectivite={collectivite}
+            <FicheActionCard
+              currentCollectivite={collectivite}
               currentUserId={user.id}
               key={fiche.id}
-              fiche={fiche}
+              ficheAction={fiche}
               editKeysToInvalidate={[['axe_fiches', axeId, ficheIds]]}
-              url={
+              isEditable={!isReadonly}
+              isMoveable
+              link={
                 fiche.id
                   ? makeCollectiviteActionUrl({
                       collectiviteId: fiche.collectiviteId,
