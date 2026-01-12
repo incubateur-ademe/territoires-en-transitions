@@ -4,11 +4,11 @@ import { TProfondeurAxe } from '@/app/plans/plans/types';
 import { checkAxeExistInPlanProfondeur } from '@/app/plans/plans/utils';
 import { Alert, Button } from '@tet/ui';
 import { useState } from 'react';
-import { Fiche } from '../../../../data/use-get-fiche';
+import { FicheEmplacement } from '../ModaleEmplacement';
 import ColonneTableauEmplacement from './ColonneTableauEmplacement';
 
 type NouvelEmplacementFicheProps = {
-  fiche: Fiche;
+  fiche: FicheEmplacement;
   onSave: () => void;
 };
 
