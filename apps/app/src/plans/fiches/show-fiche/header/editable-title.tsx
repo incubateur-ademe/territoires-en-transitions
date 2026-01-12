@@ -1,5 +1,5 @@
-import { Button, Input } from '@tet/ui';
-import { useEffect, useState } from 'react';
+import { InlineEditWrapper, Input } from '@tet/ui';
+import { useState } from 'react';
 
 type EditableTitleProps = {
   title: string | null;
@@ -12,58 +12,35 @@ export const EditableTitle = ({
   isReadonly,
   onUpdate,
 }: EditableTitleProps) => {
-  const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(initialTitle);
-
-  useEffect(() => setEditedTitle(initialTitle), [initialTitle]);
-
-  const handleChangeMode = () => {
-    setIsEditing((prevState) => !prevState);
-    if (isEditing) {
-      const titleToSave = editedTitle?.trim() ?? null;
-      if (titleToSave !== initialTitle) {
-        onUpdate(titleToSave?.length ? titleToSave : null);
-        setEditedTitle(titleToSave);
-      }
-    }
-  };
-
   return (
-    <div
-      className="w-full flex justify-between items-start mb-2 group cursor-text"
-      data-test="TitreFiche"
-      onClick={() => !isReadonly && !isEditing && handleChangeMode()}
+    <InlineEditWrapper
+      disabled={isReadonly}
+      onClose={() => onUpdate(editedTitle)}
+      renderOnEdit={({ openState }) => (
+        <div className="w-full">
+          <Input
+            value={editedTitle ?? ''}
+            autoFocus
+            onChange={(evt) => setEditedTitle(evt.target.value)}
+            onBlur={() => {
+              onUpdate(editedTitle);
+              openState.setIsOpen(false);
+            }}
+            onKeyDown={(evt) => {
+              if (evt.key === 'Enter') {
+                onUpdate(editedTitle);
+                openState.setIsOpen(false);
+              }
+            }}
+            type="text"
+            containerClassname="w-full"
+            className="text-3xl"
+          />
+        </div>
+      )}
     >
-      {isEditing ? (
-        <Input
-          value={editedTitle ?? ''}
-          autoFocus
-          onChange={(evt) => setEditedTitle(evt.target.value)}
-          onBlur={handleChangeMode}
-          onKeyDown={(evt) => evt.key === 'Enter' && handleChangeMode()}
-          type="text"
-          containerClassname="w-full"
-          className="text-3xl"
-          icon={{
-            buttonProps: {
-              icon: 'save-3-fill',
-              onClick: handleChangeMode,
-              title: 'Sauvegarder',
-            },
-          }}
-        />
-      ) : (
-        <h1 className="mt-1.5 mb-2">{editedTitle ?? 'Sans titre'}</h1>
-      )}
-      {!isEditing && !isReadonly && (
-        <Button
-          icon="edit-line"
-          variant="grey"
-          size="xs"
-          className="mt-3.5 invisible group-hover:visible"
-          onClick={handleChangeMode}
-        />
-      )}
-    </div>
+      <h1 data-test="TitreFiche">{initialTitle ?? 'Sans titre'}</h1>
+    </InlineEditWrapper>
   );
 };
