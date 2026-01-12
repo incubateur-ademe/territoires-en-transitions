@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import {
@@ -18,6 +17,7 @@ import Section from './_components/section';
 import { SuiviPlansModule } from './_components/suivi-plans.module';
 
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
+import Image from 'next/image';
 import imageCountByIndicateursPlaceholder from './_components/action-countby-indicateurs-placeholder.png';
 import imageCountByStatutPlaceholder from './_components/action-countby-statut-placeholder.png';
 import imagePlanPlaceholder from './_components/suivi-plans-placeholder.png';
@@ -99,18 +99,18 @@ const Page = () => {
                 )}
               </div>
               <div className="grid lg:grid-cols-3 gap-6">
-                <img
-                  src={imagePlanPlaceholder.src}
+                <Image
+                  src={imagePlanPlaceholder}
                   alt="suivi des plans"
                   className="m-auto w-full"
                 />
-                <img
-                  src={imageCountByStatutPlaceholder.src}
+                <Image
+                  src={imageCountByStatutPlaceholder}
                   alt="suivi des plans"
                   className="m-auto w-full"
                 />
-                <img
-                  src={imageCountByIndicateursPlaceholder.src}
+                <Image
+                  src={imageCountByIndicateursPlaceholder}
                   alt="suivi des plans"
                   className="m-auto w-full"
                 />

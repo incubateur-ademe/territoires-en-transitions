@@ -6,10 +6,7 @@
     "tsBuildInfoFile": "out-tsc/lib/tsconfig.lib.tsbuildinfo",
     "types": [
       "node",
-      "@nx/react/typings/cssmodule.d.ts",
-      "@nx/react/typings/image.d.ts",
       "next",
-      "@nx/next/typings/image.d.ts"
     ]
   },
   "exclude": [

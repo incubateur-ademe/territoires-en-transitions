@@ -8,6 +8,7 @@ import { ReferentielId } from '@tet/domain/referentiels';
 import { Button } from '@tet/ui';
 
 import { ScoreTotalEvolutionsChart } from '@/app/referentiels/comparisons/evolutions-score-total.chart';
+import Image from 'next/image';
 import imagePlaceholder from './score-referentiel-placeholder.png';
 
 type Props = {
@@ -78,9 +79,8 @@ const ScoreReferentielCard = ({ referentielId }: Props) => {
         </div>
         {/** Graph */}
         {isEmpty ? (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
-            src={imagePlaceholder.src}
+          <Image
+            src={imagePlaceholder}
             alt="graphique évolution score référentiel"
             className="grow object-center"
           />
