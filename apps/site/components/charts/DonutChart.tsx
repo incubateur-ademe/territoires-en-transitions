@@ -2,26 +2,7 @@
 
 import { getFormattedNumber } from '@/site/src/utils/getFormattedNumber';
 import { PieTooltipProps, ResponsivePie } from '@nivo/pie';
-import { animated } from '@react-spring/web';
 import { defaultColors, theme as localTheme } from './chartsTheme';
-
-/**
- * Découpe le label pour l'affichage sur plusieurs lignes
- */
-const splitLabel = (label: string) => {
-  const newLabel = [];
-  let currentLabel = label;
-
-  while (currentLabel?.length > 0) {
-    let newContent = currentLabel.slice(0, 5);
-    const contentEnd = currentLabel.slice(5).split(' ')[0];
-    newContent += contentEnd;
-    newLabel.push(newContent);
-    currentLabel = currentLabel.slice(newContent.length);
-  }
-
-  return newLabel;
-};
 
 /**
  * Conversion d'une valeur en %
@@ -118,9 +99,6 @@ export type DonutChartProps = {
   zoomEffect?: boolean;
   displayPercentageValue?: boolean;
   onlyDisplayPercentageValue?: boolean;
-  displayValueInArcLinkLabel?: boolean;
-  arcLinkLabelOnSeveralLines?: boolean;
-  arcLinkLabelFontSize?: number;
   invertedDisplay?: boolean;
   startAngle?: number;
   spaceBetweenPads?: boolean;
@@ -142,9 +120,6 @@ const DonutChart = ({
   zoomEffect = true,
   displayPercentageValue = false,
   onlyDisplayPercentageValue = false,
-  displayValueInArcLinkLabel = true,
-  arcLinkLabelOnSeveralLines = true,
-  arcLinkLabelFontSize = 11,
   invertedDisplay = false,
   startAngle = 0,
   spaceBetweenPads = false,
@@ -182,85 +157,6 @@ const DonutChart = ({
       arcLinkLabelsTextOffset={5}
       arcLinkLabelsTextColor="#2A2A62"
       arcLinkLabelsColor={{ from: 'color' }}
-      arcLinkLabelComponent={(datum) => {
-        const splitedLabel = splitLabel(datum.label);
-        return (
-          <animated.g opacity={datum.style.opacity}>
-            <animated.path
-              fill="none"
-              stroke={datum.style.linkColor}
-              strokeWidth={datum.style.thickness}
-              d={datum.style.path}
-              offset={10}
-            />
-            {arcLinkLabelOnSeveralLines ? (
-              splitedLabel.slice(0, 2).map((segment, i) => (
-                <animated.text
-                  y={i * 12}
-                  key={`arcLinkLabel_segment_${segment}`}
-                  transform={datum.style.textPosition}
-                  textAnchor={datum.style.textAnchor}
-                  dominantBaseline="center"
-                  style={{
-                    fontFamily: '"Marianne", arial, sans-serif',
-                    fontWeight: 600,
-                    fontSize: arcLinkLabelFontSize,
-                    fill: '#2A2A62',
-                  }}
-                >
-                  {splitedLabel.length > 2 && i === 1
-                    ? `${segment}...`
-                    : segment}
-                </animated.text>
-              ))
-            ) : (
-              <animated.text
-                y={0}
-                transform={datum.style.textPosition}
-                textAnchor={datum.style.textAnchor}
-                dominantBaseline="center"
-                style={{
-                  fontFamily: '"Marianne", arial, sans-serif',
-                  fontWeight: 600,
-                  fontSize: arcLinkLabelFontSize,
-                  fill: '#2A2A62',
-                }}
-              >
-                {datum.label}
-              </animated.text>
-            )}
-            {displayValueInArcLinkLabel && (
-              <animated.text
-                y={splitedLabel.length < 2 ? splitedLabel.length * 12 + 6 : 30}
-                transform={datum.style.textPosition}
-                textAnchor={datum.style.textAnchor}
-                dominantBaseline="center"
-                style={{
-                  fontFamily: '"Marianne", arial, sans-serif',
-                  fontWeight: 600,
-                  fontSize: arcLinkLabelFontSize,
-                  fill: '#5555C3',
-                }}
-              >
-                {displayPercentageValue || onlyDisplayPercentageValue
-                  ? `${getPercentage(
-                      datum.datum.value,
-                      localData.map((d) => d.value)
-                    )} %`
-                  : `${
-                      datum.datum.value < 1
-                        ? getAbsolute(
-                            datum.datum.value,
-                            decimals < 2 ? 2 : decimals
-                          )
-                        : getAbsolute(datum.datum.value, decimals)
-                    } ${unit}
-                ${!!unit && datum.datum.value > 1 && !unitSingular ? 's' : ''}`}
-              </animated.text>
-            )}
-          </animated.g>
-        );
-      }}
       enableArcLabels={false}
       animate={true}
       tooltip={(datum) =>
