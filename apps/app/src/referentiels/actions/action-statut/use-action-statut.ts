@@ -1,4 +1,5 @@
 import { useAudit, useIsAuditeur } from '@/app/referentiels/audits/useAudit';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { DBClient, useSupabase } from '@tet/api';
 import {
@@ -10,6 +11,7 @@ import {
   StatutAvancement,
   getReferentielIdFromActionId,
 } from '@tet/domain/referentiels';
+import { PermissionOperationEnum } from '@tet/domain/users';
 import { omit } from 'es-toolkit';
 import { objectToCamel, objectToSnake } from 'ts-case-convert';
 import { useScore, useSnapshotComputeAndUpdate } from '../../use-snapshot';
@@ -135,16 +137,23 @@ export const useTasksStatus = (tasksIds: string[]) => {
  * Détermine si l'utilisateur a le droit de modifier le statut d'une action
  */
 export const useEditActionStatutIsDisabled = (actionId: string) => {
-  const { isReadOnly } = useCurrentCollectivite();
+  const { permissions } = useCurrentCollectivite();
   const { data: audit } = useAudit();
   const isAuditeur = useIsAuditeur();
 
   const score = useScore(actionId);
 
-  return Boolean(
-    isReadOnly ||
-      !score ||
-      score.desactive ||
-      (audit && (!isAuditeur || audit.valide))
+  if (!score || score.desactive) {
+    return true;
+  }
+
+  if (audit && isAuditeur) {
+    // Si auditeur, on peut modifier sauf si l'audit est validé
+    return audit.valide;
+  }
+
+  return !hasPermission(
+    permissions,
+    PermissionOperationEnum['REFERENTIELS.MUTATE']
   );
 };
