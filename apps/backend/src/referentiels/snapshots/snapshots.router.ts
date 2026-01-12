@@ -76,7 +76,7 @@ export class SnapshotsRouter {
         );
       }),
 
-    forceRecompute: this.trpc.authedProcedure
+    forceRecompute: this.trpc.authedOrServiceRoleProcedure
       .input(
         z.object({
           referentielId: referentielIdEnumSchema,
