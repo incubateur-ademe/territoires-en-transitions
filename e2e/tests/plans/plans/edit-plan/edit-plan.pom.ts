@@ -120,30 +120,11 @@ export class EditPlanPom {
   }
 
   /**
-   * Ajoute une fiche action au plan ou à un axe
+   * Ajoute une fiche action à la racine du plan
    * @param ficheTitre - Titre de la fiche (optionnel)
-   * @param axeNom - Nom de l'axe dans lequel ajouter la fiche (optionnel, si non fourni, ajoute au plan racine)
    */
-  async addFiche(axeNom?: string) {
-    if (axeNom) {
-      // Déplier l'axe si nécessaire
-      const axe = this.page.locator('[data-test="Axe"]').filter({
-        hasText: axeNom,
-      });
-      await expect(axe).toBeVisible();
-
-      const expandButton = axe.locator('[data-test="BoutonDeplierAxe"]');
-      await expandButton.click();
-
-      // le bouton "Créer une action" dans l'axe apparaît au survol
-      await axe.hover();
-      const addFicheButton = axe.locator('button[title="Créer une action"]');
-
-      await addFicheButton.click();
-    } else {
-      // Ajouter la fiche au plan racine
-      await this.createFicheButton.click();
-    }
+  async addFiche() {
+    await this.createFicheButton.click();
   }
 
   /**

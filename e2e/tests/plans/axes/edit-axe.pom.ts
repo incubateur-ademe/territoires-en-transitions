@@ -39,22 +39,18 @@ export class EditAxePom {
 
   async expectAxeExists(axeNom: string) {
     // Vérifier qu'un axe avec ce nom existe
-    const axe = this.page
-      .locator('[data-test="Axe"]')
-      .filter({
-        hasText: axeNom,
-      })
-      .last();
+    const axe = this.getAxeByName(axeNom);
     await expect(axe).toBeVisible();
   }
 
   getAxeByName(name: string) {
     return this.page
       .locator('[data-test="Axe"]')
-      .filter({
-        hasText: name,
+      .getByRole('heading', {
+        name,
       })
-      .first();
+      .first()
+      .locator('..');
   }
 
   /**
@@ -64,8 +60,7 @@ export class EditAxePom {
   async expectAxeIsOpen(axeNom: string) {
     const axe = this.getAxeByName(axeNom);
     await expect(axe).toBeVisible();
-    const expandButton = axe.locator('[data-test="BoutonDeplierAxe"]').first();
-    await expect(expandButton).toHaveClass(/rotate-90/);
+    await expect(axe.locator('[data-test="axe-detail"]').first()).toBeVisible();
   }
 
   /**
@@ -75,8 +70,7 @@ export class EditAxePom {
   async expectAxeIsClosed(axeNom: string) {
     const axe = this.getAxeByName(axeNom);
     await expect(axe).toBeVisible();
-    const expandButton = axe.locator('[data-test="BoutonDeplierAxe"]').first();
-    await expect(expandButton).not.toHaveClass(/rotate-90/);
+    await expect(axe.locator('[data-test="axe-detail"]').first()).toBeHidden();
   }
 
   /**
@@ -88,24 +82,35 @@ export class EditAxePom {
     await expect(axe).toBeVisible();
   }
 
-  getAxeInputByName(name: string) {
-    return this.page.locator('[data-test="Axe"] textarea').getByText(name);
-  }
-
   /**
-   * Édite le nom d'un axe en cliquant sur son input
+   * Édite le nom d'un axe
    */
   async editAxeNom(ancienNom: string, nouveauNom: string) {
-    // Trouver l'axe par son nom
-    const axe = this.getAxeInputByName(ancienNom);
+    const axe = this.getAxeByName(ancienNom);
 
-    // Clic et attend que l'input soit éditable
-    await axe.click();
-    await axe.isEditable();
-    await axe.fill(nouveauNom);
+    // initialement le champ de saisie est désactivé
+    const titreInput = axe.locator('textarea');
+    await expect(titreInput).toBeDisabled();
+    await expect(titreInput).not.toBeFocused();
 
-    await expect(this.getAxeInputByName(ancienNom)).toBeHidden();
-    await expect(this.getAxeInputByName(nouveauNom)).toBeVisible();
+    // entre en mode "édition"
+    await this.clickOnAxeMenuItem(ancienNom, 'Modifier le titre');
+
+    // attend que l'input soit éditable
+    await expect(titreInput).toBeEnabled();
+    await expect(titreInput).toBeFocused();
+
+    // fait la saisie
+    await titreInput.fill(nouveauNom);
+    await expect(axe).toBeHidden();
+
+    // sort du champ et vérifie que le titre a été renommé
+    const axeRenamed = this.getAxeByName(nouveauNom);
+    const axeRenamedInput = axeRenamed.locator('textarea');
+    await axeRenamedInput.press('Enter');
+    await expect(axeRenamed).toBeVisible();
+    await expect(axeRenamedInput).not.toBeFocused();
+    await expect(axeRenamedInput).toBeDisabled();
   }
 
   /**
@@ -115,33 +120,19 @@ export class EditAxePom {
     const axe = this.getAxeByName(axeNom);
     await expect(axe).toBeVisible();
 
-    const expandButton = axe.locator('[data-test="BoutonDeplierAxe"]');
-    await expandButton.click();
+    const axeHeading = axe.getByRole('heading').first();
+    await axeHeading.click();
   }
 
   /**
    * Ajoute un sous-axe à un axe existant
    */
   async addSousAxe(parentAxeNom: string, sousAxeNom: string) {
-    // D'abord déplier l'axe parent pour voir le bouton d'ajout
-    await this.expandAxe(parentAxeNom);
-
-    const parentAxe = this.getAxeByName(parentAxeNom);
-
-    // ouvrir le menu "..." (apparaît au survol de l'axe)
-    await parentAxe.hover();
-    const axeMenuButton = parentAxe.locator('button[title="Editer cet axe"]');
-    await axeMenuButton.click();
-
-    // Chercher le bouton "Créer un axe"
-    const addSousAxeButton = this.page.getByRole('button', {
-      name: 'Créer un axe',
-    });
-
-    await addSousAxeButton.click();
+    await this.clickOnAxeMenuItem(parentAxeNom, 'Créer un axe');
 
     // Attendre que l'input du titre du sous-axe soit visible
-    const sousAxeInput = this.page.locator('textarea:focus');
+    const parentAxe = this.getAxeByName(parentAxeNom);
+    const sousAxeInput = parentAxe.locator('textarea:focus');
     await expect(sousAxeInput).toBeVisible();
 
     // Remplir le titre du sous-axe
@@ -155,10 +146,10 @@ export class EditAxePom {
    * @param title - Le titre de l'élément de menu à cliquer
    */
   async getAxeMenuItem(axeNom: string, title: string) {
-    const axe = this.getAxeByName(axeNom);
+    const axe = this.getAxeByName(axeNom).getByRole('heading').first();
 
     // Ouvrir le menu "..." (apparaît au survol de l'axe)
-    await axe.hover({ position: { x: 0, y: 0 } });
+    await axe.hover();
     const axeMenuButton = axe.locator('button[title="Editer cet axe"]');
     await axeMenuButton.click();
 
@@ -248,6 +239,8 @@ export class EditAxePom {
     const axe = this.getAxeByName(axeNom);
 
     // Vérifier que la section "Indicateurs liés" existe
+    await axe.scrollIntoViewIfNeeded();
+    await expect(axe).toBeInViewport();
     const indicateursSection = axe.getByText('Indicateurs liés').locator('..');
     await expect(indicateursSection).toBeVisible();
 
@@ -332,6 +325,14 @@ export class EditAxePom {
    */
   async removeDescriptionFromAxe(axeNom: string) {
     await this.clickOnAxeMenuItem(axeNom, 'Supprimer la description');
+  }
+
+  async addFiche(axeNom: string) {
+    const axeHeading = this.getAxeByName(axeNom).getByRole('heading').first();
+
+    // clic sur le bouton "Créer une action" (apparaît au survol de l'axe)
+    await axeHeading.hover();
+    await axeHeading.getByRole('button', { name: 'Créer une action' }).click();
   }
 
   /**
