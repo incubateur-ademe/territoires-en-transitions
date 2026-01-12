@@ -5,6 +5,7 @@
     "targets": {
       "dev": {
         "executor": "@nx/next:server",
+        "dependsOn": ["^build"],
         "options": {
           "buildTarget": "app:build",
           "dev": true,
@@ -14,6 +15,7 @@
       },
       "build": {
         "executor": "@nx/next:build",
+        "dependsOn": ["^build"],
         "options": {
           "outputPath": "apps/app/.next",
           "webpack": true
