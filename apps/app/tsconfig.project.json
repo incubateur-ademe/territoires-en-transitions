@@ -11,6 +11,7 @@
     // "declaration": false,
     "types": [
       "node",
+      "@nx/next/typings/image.d.ts"
     ],
     "allowJs": true,
     "plugins": [
