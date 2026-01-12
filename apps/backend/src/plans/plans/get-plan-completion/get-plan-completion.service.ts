@@ -119,7 +119,8 @@ export class GetPlanCompletionService {
         },
       })
       .from(ficheActionTable)
-      .innerJoin(fichesInPlan, eq(ficheActionTable.id, fichesInPlan.ficheId));
+      .innerJoin(fichesInPlan, eq(ficheActionTable.id, fichesInPlan.ficheId))
+      .where(eq(ficheActionTable.deleted, false));
 
     return result[0];
   }
