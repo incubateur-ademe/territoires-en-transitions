@@ -4,7 +4,6 @@ import { useCreateFicheResume } from '@/app/app/pages/collectivite/PlansActions/
 import { PiloteOrReferentLabel } from '@/app/plans/plans/components/PiloteOrReferentLabel';
 import { EmptyPlanView } from '@/app/plans/plans/show-plan/empty-plan.view';
 import { usePlanFilters } from '@/app/plans/plans/show-plan/filters/plan-filters.context';
-import { PlanArborescence } from '@/app/plans/plans/show-plan/plan-arborescence.view';
 import {
   PlanAxesProvider,
   usePlanAxesContext,
@@ -29,6 +28,7 @@ import {
   createFicheResumeButtonProps,
 } from './plan-actions.button-props';
 import { PlanOptionsButton } from './plan-arborescence.view/plan-options.button';
+import { PlanTree } from './plan-arborescence.view/plan-tree';
 import { PlanStatus } from './plan-status.chart';
 
 const PlanMetadata = ({ plan }: { plan: Plan }) => {
@@ -212,7 +212,7 @@ const PlanViewContent = ({
           }
         >
           <VisibleWhen condition={!isFiltered}>
-            <PlanArborescence
+            <PlanTree
               plan={rootAxe}
               axes={plan.axes}
               collectivite={currentCollectivite}
