@@ -4,11 +4,13 @@ import { Fiche } from '../../../data/use-get-fiche';
 import EmplacementActuelFiche from './EmplacementActuel/EmplacementActuelFiche';
 import NouvelEmplacementFiche from './NouvelEmplacement/NouvelEmplacementFiche';
 
+export type FicheEmplacement = Pick<Fiche, 'id' | 'axes'>;
+
 /**
  * Bouton + modale pour le déplacement de la fiche action
  */
 type ModaleEmplacementProps = {
-  fiche: Fiche;
+  fiche: FicheEmplacement;
   isReadonly?: boolean;
 };
 
