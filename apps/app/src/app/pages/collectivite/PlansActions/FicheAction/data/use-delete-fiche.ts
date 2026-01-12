@@ -20,6 +20,9 @@ export const useDeleteFiche = ({
             collectiviteId,
           }),
         });
+        queryClient.invalidateQueries({
+          queryKey: trpc.plans.plans.get.queryKey(),
+        });
 
         onDeleteCallback?.();
       },
