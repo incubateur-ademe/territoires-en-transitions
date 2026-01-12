@@ -24,6 +24,7 @@ export class ReportGenerationRepository {
 
   async create(
     input: GenerateReportInput,
+    collectiviteId: number,
     name: string,
     user: AuthenticatedUser,
     status: ReportGenerationStatus = 'pending'
@@ -37,6 +38,7 @@ export class ReportGenerationRepository {
       const [result] = await this.databaseService.db
         .insert(reportGenerationTable)
         .values({
+          collectiviteId: collectiviteId,
           planId: input.planId,
           name,
           templateRef: input.templateKey,

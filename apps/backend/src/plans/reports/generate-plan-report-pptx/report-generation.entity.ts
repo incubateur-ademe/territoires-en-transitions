@@ -1,4 +1,5 @@
 import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/models/bibliotheque-fichier.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import {
   createdAt,
   createdBy,
@@ -14,6 +15,9 @@ import { axeTable } from '../../fiches/shared/models/axe.table';
 export const reportGenerationTable = pgTable('plan_report_generation', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
+  collectiviteId: integer('collectivite_id')
+    .notNull()
+    .references(() => collectiviteTable.id, { onDelete: 'cascade' }),
   planId: integer('plan_id')
     .notNull()
     .references(() => axeTable.id, { onDelete: 'cascade' }),

@@ -9,11 +9,10 @@ import {
 import { NotifiedOnEnum } from '@tet/backend/utils/notifications/models/notified-on.enum';
 import { NotificationsService } from '@tet/backend/utils/notifications/notifications.service';
 import { Result } from '@tet/backend/utils/result.type';
-import { DownloadPlanReportQueryParams } from '@tet/domain/plans';
 import { z } from 'zod';
 import GetPlanUrlService from '../../utils/get-plan-url.service';
 import NotifyReportCompletedEmail from './notify-report-completed.email';
-import NotifyReportFailedEmail from './notify-report-failed.email';
+import { NotifyReportFailedEmail } from './notify-report-failed.email';
 import { NotifyReportFailedProps } from './notify-report-failed.props';
 import { NotifyReportError } from './notify-report.errors';
 
@@ -36,8 +35,8 @@ type ReportNotificationDataInsert = Omit<
 };
 
 export type ReportNotifiedOn =
-  | typeof NotifiedOnEnum.GENERATE_PLAN_REPORT_COMPLETED
-  | typeof NotifiedOnEnum.GENERATE_PLAN_REPORT_FAILED;
+  | (typeof NotifiedOnEnum)['PLANS.REPORTS.GENERATE_PLAN_REPORT_COMPLETED']
+  | (typeof NotifiedOnEnum)['PLANS.REPORTS.GENERATE_PLAN_REPORT_FAILED'];
 
 @Injectable()
 export class NotifyReportService {
@@ -49,12 +48,12 @@ export class NotifyReportService {
     private readonly getPlanUrlService: GetPlanUrlService
   ) {
     this.notificationsService.registerContentGenerator(
-      NotifiedOnEnum.GENERATE_PLAN_REPORT_COMPLETED,
+      NotifiedOnEnum['PLANS.REPORTS.GENERATE_PLAN_REPORT_COMPLETED'],
       (notification: Notification) =>
         this.getCompletedReportNotificationContent(notification)
     );
     this.notificationsService.registerContentGenerator(
-      NotifiedOnEnum.GENERATE_PLAN_REPORT_FAILED,
+      NotifiedOnEnum['PLANS.REPORTS.GENERATE_PLAN_REPORT_FAILED'],
       (notification: Notification) =>
         this.getFailedReportNotificationContent(notification)
     );
@@ -86,7 +85,7 @@ export class NotifyReportService {
     // charge les données
     const ret = await this.getReportNotificationTemplateData(
       notification,
-      'generate_plan_report_completed'
+      NotifiedOnEnum['PLANS.REPORTS.GENERATE_PLAN_REPORT_COMPLETED']
     );
     if (!ret.success) {
       this.logger.log(`getReportNotificationTemplateData error: ${ret.error}`);
@@ -94,13 +93,10 @@ export class NotifyReportService {
     }
     const templateData = ret.data;
 
-    const queryParams: DownloadPlanReportQueryParams = {
-      downloadReportId: templateData.notificationData.reportId,
-    };
-    const reportUrl = this.getPlanUrlService.getPlanUrl({
+    const reportUrl = this.getPlanUrlService.getPlanDownloadReportUrl({
       collectiviteId: templateData.notificationData.collectiviteId,
       planId: templateData.notificationData.planId,
-      queryParams,
+      reportId: templateData.notificationData.reportId,
     });
 
     const { sendToEmail, subject } = templateData.emailProps;
@@ -123,7 +119,7 @@ export class NotifyReportService {
     // charge les données
     const ret = await this.getReportNotificationTemplateData(
       notification,
-      'generate_plan_report_failed'
+      NotifiedOnEnum['PLANS.REPORTS.GENERATE_PLAN_REPORT_FAILED']
     );
     if (!ret.success) {
       this.logger.log(`getReportNotificationTemplateData error: ${ret.error}`);
@@ -181,7 +177,8 @@ export class NotifyReportService {
     const emailProps: NotifyReportFailedProps = {
       sendToEmail: createdByUser.email,
       subject:
-        notificationType === NotifiedOnEnum.GENERATE_PLAN_REPORT_COMPLETED
+        notificationType ===
+        NotifiedOnEnum['PLANS.REPORTS.GENERATE_PLAN_REPORT_COMPLETED']
           ? `Votre rapport de plan a été généré avec succès`
           : `Erreur lors de la génération du rapport de plan`,
       reportName: data.reportName,

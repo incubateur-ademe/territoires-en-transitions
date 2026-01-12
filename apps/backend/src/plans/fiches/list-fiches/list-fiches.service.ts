@@ -495,6 +495,8 @@ export default class ListFichesService {
             json_build_object(
               'tagId', ${ficheActionPiloteTable.tagId},
               'userId', ${ficheActionPiloteTable.userId},
+              'prenom', ${dcpTable.prenom},
+              'nomFamille', ${dcpTable.nom},
               'nom',
               CASE
                 WHEN ${ficheActionPiloteTable.userId} IS NOT NULL THEN CONCAT(${dcpTable.prenom}, ' ', ${dcpTable.nom})

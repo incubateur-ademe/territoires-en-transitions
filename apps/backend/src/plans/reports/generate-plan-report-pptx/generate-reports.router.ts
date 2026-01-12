@@ -3,16 +3,14 @@ import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handl
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { generateReportInputSchema } from '@tet/domain/plans';
 import z from 'zod';
+import { GenerateReportsApplicationService } from './generate-reports.application-service';
 import { generateReportErrorConfig } from './generate-reports.errors';
-import { GenerateReportsService } from './generate-reports.service';
-import { ReportGenerationRepository } from './report-generation.repository';
 
 @Injectable()
 export class GenerateReportsRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly generateReportsService: GenerateReportsService,
-    private readonly reportGenerationRepository: ReportGenerationRepository
+    private readonly generateReportsApplicationService: GenerateReportsApplicationService
   ) {}
 
   private readonly getResultDataOrThrowError = createTrpcErrorHandler(
@@ -24,7 +22,7 @@ export class GenerateReportsRouter {
       .input(generateReportInputSchema)
       .mutation(async ({ input, ctx }) => {
         const result =
-          await this.generateReportsService.createPendingPlanReportGeneration(
+          await this.generateReportsApplicationService.createPendingPlanReportGeneration(
             input,
             ctx.user
           );
@@ -33,7 +31,7 @@ export class GenerateReportsRouter {
     get: this.trpc.authedProcedure
       .input(z.object({ reportId: z.string() }))
       .query(async ({ input, ctx }) => {
-        const result = await this.generateReportsService.get(
+        const result = await this.generateReportsApplicationService.get(
           input.reportId,
           ctx.user
         );

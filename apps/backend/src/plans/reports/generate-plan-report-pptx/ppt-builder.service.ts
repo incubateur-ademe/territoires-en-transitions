@@ -1,16 +1,10 @@
-import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, Logger } from '@nestjs/common';
-import UploadDocumentService from '@tet/backend/collectivites/documents/upload-document/upload-document.service';
 import PersonnalisationsService from '@tet/backend/collectivites/personnalisations/services/personnalisations-service';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { IndicateurChartService } from '@tet/backend/indicateurs/charts/indicateur-chart.service';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { EchartsService } from '@tet/backend/utils/echarts/echarts.service';
 import { getHorizontalStackedBarChartOption } from '@tet/backend/utils/echarts/get-horizontal-stackedbar-chart-option.utils';
 import { getPieChartOption } from '@tet/backend/utils/echarts/get-pie-chart-option.utils';
-import { NotifiedOnEnum } from '@tet/backend/utils/notifications/models/notified-on.enum';
 import { Result } from '@tet/backend/utils/result.type';
 import {
   CollectiviteAvecType,
@@ -25,20 +19,16 @@ import {
   GenerateReportInput,
   Plan,
   PlanNode,
-  ReportGeneration,
-  ReportTemplatesType,
   Statut,
   StatutEnum,
 } from '@tet/domain/plans';
-import { PermissionOperationEnum } from '@tet/domain/users';
 import {
   CountByForEntityResponseType,
   getErrorMessage,
 } from '@tet/domain/utils';
-import { Queue } from 'bullmq';
 import { EChartsOption } from 'echarts/types/dist/echarts';
 import { chunk, isNil } from 'es-toolkit';
-import { mkdirSync, rmSync, writeFileSync } from 'fs';
+import { writeFileSync } from 'fs';
 import { imageSizeFromFile } from 'image-size/fromFile';
 import { DateTime } from 'luxon';
 import * as path from 'path';
@@ -51,22 +41,16 @@ import {
   StatusTracker,
 } from 'pptx-automizer';
 import { ElementInfo, XmlElement } from 'pptx-automizer/dist/types/xml-types';
-import slugify from 'slugify';
 import { CountByService } from '../../fiches/count-by/count-by.service';
 import ListFichesService from '../../fiches/list-fiches/list-fiches.service';
+import { ComputeBudgetRules } from '../../plans/compute-budget/compute-budget.rules';
+import { GetPlanService } from '../../plans/get-plan/get-plan.service';
+import { PlanProgressRules } from '../../plans/progress/plan-progress.rules';
 import GetPlanUrlService from '../../utils/get-plan-url.service';
-import { ComputeBudgetRules } from '../compute-budget/compute-budget.rules';
-import { GetPlanService } from '../get-plan/get-plan.service';
-import { PlanProgressRules } from '../progress/plan-progress.rules';
-import {
-  GenerateReportError,
-  GenerateReportErrorEnum,
-} from './generate-reports.errors';
+import { GenerateReportErrorEnum } from './generate-reports.errors';
 import { IndicateurTerritorialSlideConfiguration } from './indicateur-territorial-slide-configuration.dto';
-import { NotifyReportService } from './notify-report.service';
 import { ReportAxeGeneralInfo } from './report-axe-general-info.dto';
 import { ReportFicheInfo } from './report-fiche-info.dto';
-import { ReportGenerationRepository } from './report-generation.repository';
 import { ReportPlanGeneralInfo } from './report-plan-general-info.dto';
 import { ReportTemplateConfig } from './report-template-config.dto';
 import { ReportTemplateGroupsEnum } from './report-template-groups.enum';
@@ -78,10 +62,9 @@ import { ReportTemplateSlidesEnum } from './report-template-slides.enum';
 import { ReportTemplateTextsEnum } from './report-template-texts.enum';
 import { SlideGenerationArgs } from './slide-generation-args.dto';
 
-export const PLAN_REPORT_GENERATION_QUEUE_NAME = 'plan_report_generation';
 @Injectable()
-export class GenerateReportsService {
-  private readonly logger = new Logger(GenerateReportsService.name);
+export class PptBuilderService {
+  private readonly logger = new Logger(PptBuilderService.name);
 
   /** PowerPoint EMU precision (1 px = 9525 EMU) */
   private readonly EMU_PER_PX = 914400 / 96;
@@ -90,6 +73,7 @@ export class GenerateReportsService {
   private emuToPx(emu: number): number {
     return Math.round(emu / this.EMU_PER_PX);
   }
+
   private readonly DONNEES_TERRITORIALES_INDICATEURS: IndicateurTerritorialSlideConfiguration[] =
     [
       {
@@ -161,6 +145,7 @@ export class GenerateReportsService {
         },
       },
     ];
+
   private readonly LOCALE = 'fr-FR';
   private readonly CHART_SCALE_FACTOR = 2;
   private readonly NOT_DEFINED_VALUE = 'N/D';
@@ -192,52 +177,264 @@ export class GenerateReportsService {
     'image/gif': 'gif',
   };
 
-  private readonly SLIDE_TEMPLATES_CONFIG: {
-    [key in ReportTemplatesType]: ReportTemplateConfig;
-  } = {
-    general_bilan_template: {
-      key: 'general_bilan_template',
-      templatePath: 'template_bilan.pptx',
-      title: 'Template de présentation de bilans annuels',
-      default: true,
-      slides: {
-        title_slide: 1,
-        table_of_contents_slide: 2,
-        overview_section_slide: 3,
-        summary_slide: 4,
-        progression_slide: 5,
-        donnees_territoriales_section_slide: 6,
-        emissions_ges_slide: 7,
-        consommations_finales_slide: 8,
-        production_renouvelable_slide: 9,
-        axes_section_slide: 10,
-        axe_summary_slide: 11,
-        fiche_summary_slide: 12,
-        fiche_indicateurs_slide: 13,
-        ressources_slide: 14,
-      },
-      max_fiche_indicateurs_per_slide: 3,
-    },
-  };
-
   constructor(
-    private readonly fichesService: ListFichesService,
     private readonly echartsService: EchartsService,
     private readonly countByService: CountByService,
-    private readonly planService: GetPlanService,
-    private readonly collectiviteService: CollectivitesService,
     private readonly planProgressRules: PlanProgressRules,
     private readonly indicateurChartService: IndicateurChartService,
-    private readonly personnalisationsService: PersonnalisationsService,
     private readonly computeBudgetRules: ComputeBudgetRules,
-    private readonly permissionService: PermissionService,
     private readonly getPlanUrlService: GetPlanUrlService,
-    private readonly reportGenerationRepository: ReportGenerationRepository,
-    private readonly uploadDocumentService: UploadDocumentService,
-    private readonly notifyReportService: NotifyReportService,
-    @InjectQueue(PLAN_REPORT_GENERATION_QUEUE_NAME)
-    private readonly planReportGenerationQueue: Queue
+    private readonly planService: GetPlanService,
+    private readonly collectiviteService: CollectivitesService,
+    private readonly personnalisationsService: PersonnalisationsService,
+    private readonly fichesService: ListFichesService
   ) {}
+
+  async buildPresentation(args: {
+    mediaDir: string;
+    outputDir: string;
+    reportName: string;
+    templateConfig: ReportTemplateConfig;
+    request: GenerateReportInput;
+  }): Promise<
+    Result<
+      {
+        reportPath: string;
+      },
+      | typeof GenerateReportErrorEnum.PLAN_NOT_FOUND
+      | typeof GenerateReportErrorEnum.DATABASE_ERROR
+    >
+  > {
+    const { mediaDir, outputDir, reportName, templateConfig, request } = args;
+    const planDataResult = await this.getPlanData(request.planId);
+    if (!planDataResult.success) {
+      return {
+        success: false,
+        error: planDataResult.error,
+      };
+    }
+
+    const {
+      plan,
+      axes,
+      sousAxesByAxe,
+      fiches,
+      planGeneralInfo,
+      collectivite,
+      personnalisationReponses,
+    } = planDataResult.data;
+
+    try {
+      const automizer = new Automizer({
+        templateDir: path.join(__dirname, 'docs'),
+        autoImportSlideMasters: true,
+        outputDir: outputDir,
+        mediaDir,
+        removeExistingSlides: true,
+        showIntegrityInfo: false, // WARNING: changing this to true throw some weird errors on generated images not beeing found
+        assertRelatedContents: true,
+        cleanup: true,
+        compression: 7,
+        verbosity: 1,
+        statusTracker: (status: StatusTracker) => {
+          this.logger.log(status.info + ' (' + status.share + '%)');
+        },
+      });
+
+      const presentation = automizer
+        .loadRoot(templateConfig.templatePath)
+        .load(templateConfig.templatePath, templateConfig.key);
+
+      const logo = await this.loadCollectiviteLogo(
+        mediaDir,
+        presentation,
+        request.logoFile
+      );
+
+      const slideGenerationArgs: Omit<SlideGenerationArgs, 'slideType'> = {
+        presentation,
+        planGeneralInfo,
+        template: templateConfig,
+        logo,
+      };
+
+      this.addSlide({
+        ...slideGenerationArgs,
+        slideType: 'title_slide',
+      });
+      this.addSlide({
+        ...slideGenerationArgs,
+        slideType: 'table_of_contents_slide',
+        callback: async (slide) => {
+          await this.replaceTextInSlide(slide, {
+            AXE_NOMS: axes.map((axe) => axe.nom ?? '').join('\n'),
+          });
+        },
+      });
+      this.addSlide({
+        ...slideGenerationArgs,
+        slideType: 'overview_section_slide',
+      });
+
+      await this.addPlanSummarySlide({
+        ...slideGenerationArgs,
+        mediaDir,
+        fiches,
+      });
+
+      const statutCountByForEachAxe = await this.addPlanProgressSlide({
+        ...slideGenerationArgs,
+        mediaDir,
+        fiches,
+      });
+
+      if (
+        statutCountByForEachAxe.find(
+          (countBy) => countBy.id === this.countByService.NO_AXE_ID
+        )
+      ) {
+        axes.push({
+          id: this.countByService.NO_AXE_ID,
+          nom: this.countByService.NO_AXE_NOM,
+          parent: plan.id,
+          fiches: fiches
+            .filter(
+              (fiche) =>
+                !fiche.axes?.some((axe) => axe.parentId === request.planId)
+            )
+            .map((fiche) => fiche.id),
+          depth: 0,
+        });
+        this.logger.log(JSON.stringify(axes, null, 2));
+      }
+
+      if (plan.type?.type === this.PCAET_TYPE) {
+        await this.addDonneesTerritorialesSlides({
+          ...slideGenerationArgs,
+          mediaDir,
+          collectivite,
+          personnalisationReponses,
+        });
+      }
+
+      this.addSlide({
+        ...slideGenerationArgs,
+        slideType: 'axes_section_slide',
+      });
+
+      const filteredFiches = request.ficheIds
+        ? fiches.filter((fiche) => request.ficheIds?.includes(fiche.id))
+        : fiches;
+      this.logger.log(
+        `Fiches to be included in the report: ${filteredFiches.length}`
+      );
+
+      const filteredFichesIndicateurs = Array.from(
+        new Set(
+          filteredFiches
+            .map(
+              (fiche) =>
+                fiche.indicateurs?.map((indicateur) => indicateur.id) || []
+            )
+            .flat()
+        )
+      );
+      // Get the size of the indicateur chart to be used
+      // Allow to parallelize the writing of the indicateur chart image files
+      const indicateurChartSize = await this.getIndicateurChartSize(
+        templateConfig,
+        outputDir,
+        mediaDir
+      );
+
+      let indicateurChartImageFiles: {
+        indicateurId: number;
+        imageFile: string;
+        totalValeursCount: number;
+      }[] = [];
+      if (request.includeFicheIndicateursSlides && indicateurChartSize) {
+        indicateurChartImageFiles = await Promise.all(
+          filteredFichesIndicateurs?.map((indicateurId) =>
+            this.writeIndicateurChartImageFileAndLoadMedia({
+              indicateurId,
+              collectivite,
+              personnalisationReponses,
+              presentation,
+              mediaDir,
+              chartSize: indicateurChartSize,
+            })
+          ) ?? []
+        );
+      }
+      for (const axe of axes) {
+        await this.addAxesSummarySlide({
+          presentation,
+          mediaDir,
+          axe,
+          sousAxes: sousAxesByAxe[axe.id],
+          statutCountBy: statutCountByForEachAxe.find(
+            (countBy) => countBy.id === axe.id
+          ),
+          fiches: fiches,
+          planGeneralInfo,
+          template: templateConfig,
+          logo,
+        });
+
+        const axeFilteredFiches = filteredFiches.filter((fiche) =>
+          axe.id === this.countByService.NO_AXE_ID
+            ? !fiche.axes?.some((a) => a.parentId === plan.id)
+            : fiche.axes?.some((a) => a.id === axe.id)
+        );
+        for (const fiche of axeFilteredFiches) {
+          const ficheTextReplacementsInfo =
+            this.getFicheTextReplacementsInfos(fiche);
+
+          this.addFicheInfosSlides({
+            ...slideGenerationArgs,
+            ficheTextReplacementsInfo,
+            fiche,
+          });
+
+          if (request.includeFicheIndicateursSlides) {
+            this.addFicheIndicateursSlides({
+              ...slideGenerationArgs,
+              ficheTextReplacementsInfo,
+              fiche,
+              indicateurChartImageFiles,
+            });
+          }
+        }
+      }
+
+      if (plan.type?.type === this.PCAET_TYPE) {
+        this.addSlide({
+          ...slideGenerationArgs,
+          slideType: 'ressources_slide',
+        });
+      }
+
+      const reportSummary = await automizer.write(reportName);
+      this.logger.log(`Report summary: ${JSON.stringify(reportSummary)}`);
+      const reportPath = path.join(outputDir, reportName);
+      this.logger.log(`Report path: ${reportPath}`);
+
+      return {
+        success: true,
+        data: {
+          reportPath,
+        },
+      };
+    } catch (error) {
+      this.logger.error(
+        `Error building presentation: ${getErrorMessage(error)}`
+      );
+      return {
+        success: false,
+        error: 'DATABASE_ERROR',
+      };
+    }
+  }
 
   private async replaceTextInSlide(
     slide: ISlide,
@@ -277,10 +474,10 @@ export class GenerateReportsService {
       );
       return;
     }
-    const newHeight =
-      (imageElement.position.cx * imageDimensions.height) /
-      imageDimensions.width;
-    const diffHeight = newHeight - imageElement.position.cy;
+    const newWidth =
+      (imageElement.position.cy * imageDimensions.width) /
+      imageDimensions.height;
+    const diffWidth = newWidth - imageElement.position.cx;
 
     slide.modifyElement(
       imageElement.name,
@@ -298,8 +495,8 @@ export class GenerateReportsService {
           ]
         : [
             ModifyShapeHelper.updatePosition({
-              h: diffHeight,
-              y: (-1 * diffHeight) / 2,
+              w: diffWidth,
+              x: (-1 * diffWidth) / 2,
             }),
             (element: XmlElement, relation?: XmlElement) => {
               if (!relation) {
@@ -378,7 +575,7 @@ export class GenerateReportsService {
       : this.NOT_DEFINED_VALUE;
   }
 
-  private async getPlanData(planId: number): Promise<
+  async getPlanData(planId: number): Promise<
     Result<
       {
         plan: Plan;
@@ -389,104 +586,121 @@ export class GenerateReportsService {
         planGeneralInfo: ReportPlanGeneralInfo;
         personnalisationReponses: PersonnalisationReponsesPayload;
       },
-      GenerateReportError
+      | typeof GenerateReportErrorEnum.PLAN_NOT_FOUND
+      | typeof GenerateReportErrorEnum.DATABASE_ERROR
     >
   > {
-    const plan = await this.planService.getPlan({ planId });
-    if (!plan.success) {
+    try {
+      const plan = await this.planService.getPlan({ planId });
+      if (!plan.success) {
+        return {
+          success: false,
+          error: 'PLAN_NOT_FOUND',
+        };
+      }
+
+      const collectivite =
+        await this.collectiviteService.getCollectiviteAvecType(
+          plan.data.collectiviteId
+        );
+
+      const personnalisationReponses =
+        await this.personnalisationsService.getPersonnalisationReponses(
+          plan.data.collectiviteId
+        );
+
+      const fiches = await this.fichesService.listFichesQuery(
+        plan.data.collectiviteId,
+        {
+          planActionIds: [planId],
+          withChildren: true,
+          withAxesAncestors: true,
+        },
+        {
+          limit: 'all',
+        }
+      );
+
+      this.logger.log(`Found ${fiches.count} fiches for plan ${planId}`);
+
+      const indicateurs = Array.from(
+        new Set(
+          fiches.data
+            .map((fiche) =>
+              fiche.indicateurs?.map((indicateur) => indicateur.id)
+            )
+            .filter((indicateur) => indicateur)
+            .flat()
+        )
+      );
+
+      const axes = plan.data.axes
+        .filter((axe) => axe.parent === planId)
+        .sort((a, b) =>
+          (a.nom ?? '').localeCompare(b.nom ?? '', this.LOCALE, {
+            sensitivity: 'base',
+            numeric: true,
+          })
+        );
+
+      const sousAxesByAxe = plan.data.axes.reduce<Record<number, PlanNode[]>>(
+        (acc, axe) => {
+          if (axe.parent && axes.some((a) => a.id === axe.parent)) {
+            acc[axe.parent] = (acc[axe.parent] ?? []).concat(axe);
+          }
+          return acc;
+        },
+        {}
+      );
+
+      const budget = this.computeBudgetRules.computeBudget(fiches.data);
+      const planGeneralInfo: ReportPlanGeneralInfo = {
+        PLAN_ID: planId,
+        PLAN_PROGRESS: this.planProgressRules.computeProgress(fiches.data),
+        COLLECTIVITE_NOM: collectivite.nom || '',
+        PLAN_NOM: plan.data.nom || '',
+        PLAN_TYPE: plan.data.type?.type || '',
+        REPORT_DATE: new Intl.DateTimeFormat(this.LOCALE, {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        }).format(new Date()),
+        INDICATEURS_COUNT: indicateurs.length,
+        FICHES_COUNT: fiches.count,
+        SOUS_FICHES_COUNT: 0,
+        AXES_COUNT: axes.length,
+        PLAN_BUDGET_FONCTIONNEMENT: this.formatBudget(
+          budget.fonctionnement.HT.budgetPrevisionnel
+        ),
+        PLAN_BUDGET_INVESTISSEMENT: this.formatBudget(
+          budget.investissement.HT.budgetPrevisionnel
+        ),
+        PLAN_BUDGET_TOTAL: this.formatBudget(
+          budget.total.HT.budgetPrevisionnel
+        ),
+      };
+
+      this.logger.log(`Plan general info: ${JSON.stringify(planGeneralInfo)}`);
+
+      return {
+        success: true,
+        data: {
+          collectivite,
+          personnalisationReponses,
+          plan: plan.data,
+          axes,
+          sousAxesByAxe,
+          fiches: fiches.data,
+          planGeneralInfo,
+        },
+      };
+    } catch (error) {
+      this.logger.error(`Error getting plan data: ${getErrorMessage(error)}`);
       return {
         success: false,
-        error: 'PLAN_NOT_FOUND',
+        error: 'DATABASE_ERROR',
       };
     }
-
-    const collectivite = await this.collectiviteService.getCollectiviteAvecType(
-      plan.data.collectiviteId
-    );
-
-    const personnalisationReponses =
-      await this.personnalisationsService.getPersonnalisationReponses(
-        plan.data.collectiviteId
-      );
-
-    const fiches = await this.fichesService.listFichesQuery(
-      plan.data.collectiviteId,
-      {
-        planActionIds: [planId],
-        withChildren: true,
-        withAxesAncestors: true,
-      },
-      {
-        limit: 'all',
-      }
-    );
-
-    this.logger.log(`Found ${fiches.count} fiches for plan ${planId}`);
-
-    const indicateursCount = new Set(
-      fiches.data
-        .map((fiche) => fiche.indicateurs?.map((indicateur) => indicateur.id))
-        .flat()
-    ).size;
-
-    const axes = plan.data.axes
-      .filter((axe) => axe.parent === planId)
-      .sort((a, b) =>
-        (a.nom ?? '').localeCompare(b.nom ?? '', this.LOCALE, {
-          sensitivity: 'base',
-          numeric: true,
-        })
-      );
-
-    const sousAxesByAxe = plan.data.axes.reduce<Record<number, PlanNode[]>>(
-      (acc, axe) => {
-        if (axe.parent && axes.some((a) => a.id === axe.parent)) {
-          acc[axe.parent] = (acc[axe.parent] ?? []).concat(axe);
-        }
-        return acc;
-      },
-      {}
-    );
-
-    const budget = this.computeBudgetRules.computeBudget(fiches.data);
-    const planGeneralInfo: ReportPlanGeneralInfo = {
-      PLAN_ID: planId,
-      PLAN_PROGRESS: this.planProgressRules.computeProgress(fiches.data),
-      COLLECTIVITE_NOM: collectivite.nom || '',
-      PLAN_NOM: plan.data.nom || '',
-      PLAN_TYPE: plan.data.type?.type || '',
-      REPORT_DATE: new Intl.DateTimeFormat(this.LOCALE, {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      }).format(new Date()),
-      INDICATEURS_COUNT: indicateursCount,
-      FICHES_COUNT: fiches.count,
-      SOUS_FICHES_COUNT: 0,
-      AXES_COUNT: axes.length,
-      PLAN_BUDGET_FONCTIONNEMENT: this.formatBudget(
-        budget.fonctionnement.HT.budgetPrevisionnel
-      ),
-      PLAN_BUDGET_INVESTISSEMENT: this.formatBudget(
-        budget.investissement.HT.budgetPrevisionnel
-      ),
-      PLAN_BUDGET_TOTAL: this.formatBudget(budget.total.HT.budgetPrevisionnel),
-    };
-
-    this.logger.log(`Plan general info: ${JSON.stringify(planGeneralInfo)}`);
-
-    return {
-      success: true,
-      data: {
-        collectivite,
-        personnalisationReponses,
-        plan: plan.data,
-        axes,
-        sousAxesByAxe,
-        fiches: fiches.data,
-        planGeneralInfo,
-      },
-    };
   }
 
   private async loadCollectiviteLogo(
@@ -742,7 +956,12 @@ export class GenerateReportsService {
       return;
     }
 
-    const axeGeneralInfo = this.getAxeGeneralInfo(axe, sousAxes, fiches);
+    const axeGeneralInfo = this.getAxeGeneralInfo(
+      planGeneralInfo.PLAN_ID,
+      axe,
+      sousAxes,
+      fiches
+    );
 
     this.logger.log(
       `Axe ${axe.nom} general info: ${JSON.stringify(axeGeneralInfo)}`
@@ -797,16 +1016,6 @@ export class GenerateReportsService {
     });
   }
 
-  private getReportName(
-    collectivite: CollectiviteAvecType,
-    plan: Plan
-  ): string {
-    return `${slugify(`Rapport_${collectivite.nom}_${plan.nom}`, {
-      replacement: ' ',
-      remove: /[*+~.()'"!:@]/g,
-    })}.pptx`;
-  }
-
   private getFicheTextReplacementsInfos(
     fiche: FicheWithRelations
   ): ReportFicheInfo {
@@ -836,8 +1045,15 @@ export class GenerateReportsService {
     return {
       FICHE_TITRE: fiche.titre ?? '',
       FICHE_PILOTES:
-        fiche.pilotes?.map((pilote) => pilote.nom ?? '').join(', ') ??
-        this.NOT_DEFINED_VALUE,
+        fiche.pilotes
+          ?.map((pilote) => {
+            return pilote.prenom && pilote.nomFamille
+              ? `${pilote.prenom.substring(0, 1).toUpperCase()}. ${
+                  pilote.nomFamille
+                }`
+              : pilote.nom ?? '';
+          })
+          .join(', ') ?? this.NOT_DEFINED_VALUE,
       FICHE_PERIODE: `${dateDebut} -> ${dateFin}`,
       FICHE_DATE_DEBUT: dateDebut,
       FICHE_DATE_FIN: dateFin,
@@ -853,17 +1069,25 @@ export class GenerateReportsService {
   }
 
   private getAxeGeneralInfo(
+    planId: number,
     axe: PlanNode,
     sousAxes: PlanNode[] | undefined,
     fiches: FicheWithRelations[]
   ): ReportAxeGeneralInfo {
     const axeFilteredFiches = fiches.filter(
-      (fiche) => !fiche.parentId && fiche.axes?.some((a) => a.id === axe.id)
+      (fiche) =>
+        !fiche.parentId &&
+        fiche.axes?.some((a) =>
+          axe.id === this.countByService.NO_AXE_ID
+            ? !fiche.axes?.some((a) => a.parentId === planId)
+            : a.id === axe.id
+        )
     );
     this.logger.log(`Axe ${axe.nom} has ${axeFilteredFiches.length} fiches`);
     const indicateursCount = new Set(
       axeFilteredFiches
         .map((fiche) => fiche.indicateurs?.map((indicateur) => indicateur.id))
+        .filter((indicateur) => indicateur)
         .flat()
     ).size;
 
@@ -982,6 +1206,7 @@ export class GenerateReportsService {
       indicateurChartImageFiles: {
         indicateurId: number;
         imageFile: string;
+        totalValeursCount: number;
       }[];
     }
   ) {
@@ -1054,6 +1279,19 @@ export class GenerateReportsService {
                     )(element, relation);
                   },
                 ]);
+
+                if (ficheIndicateurChartImageFile.totalValeursCount > 0) {
+                  const noDataTextElementName = `${
+                    ReportTemplateTextsEnum.TXT_FICHE_INDICATEUR_NO_DATA_
+                  }${iIndicateur + 1}`;
+                  const noDataTextElement = this.getElementByName(
+                    allElements,
+                    noDataTextElementName
+                  );
+                  if (noDataTextElement) {
+                    slide.removeElement(noDataTextElementName);
+                  }
+                }
               }
             );
 
@@ -1234,10 +1472,13 @@ export class GenerateReportsService {
     collectivite: CollectiviteAvecType;
     personnalisationReponses: PersonnalisationReponsesPayload;
     chartSize: { width: number; height: number };
-  }) {
+  }): Promise<{
+    indicateurId: number;
+    imageFile: string;
+    totalValeursCount: number;
+  }> {
     const {
       presentation,
-
       mediaDir,
       indicateurId,
       collectivite,
@@ -1245,7 +1486,7 @@ export class GenerateReportsService {
       chartSize,
     } = args;
 
-    const { chartData } =
+    const { chartData, indicateurValeurs } =
       await this.indicateurChartService.getIndicateurValeursAndChartData({
         collectiviteId: collectivite.id,
         indicateurId,
@@ -1270,502 +1511,7 @@ export class GenerateReportsService {
     return {
       indicateurId,
       imageFile,
-    };
-  }
-
-  private async cleanGenerationFiles(mediaDir: string, outputDir: string) {
-    this.logger.log(
-      `Cleaning generation files in ${mediaDir} and ${outputDir}`
-    );
-
-    if (mediaDir) {
-      rmSync(mediaDir, { recursive: true });
-    }
-    if (outputDir) {
-      rmSync(outputDir, { recursive: true });
-    }
-  }
-
-  private async handleReportGenerationError(
-    reportInfo: {
-      collectiviteId: number;
-      generationId: string;
-      planId: number;
-      userId: string;
-      reportName: string;
-    },
-    mediaDir: string,
-    outputDir: string,
-    error: GenerateReportError
-  ): Promise<{ success: false; error: GenerateReportError }> {
-    const { generationId, collectiviteId, planId, userId, reportName } =
-      reportInfo;
-
-    await this.reportGenerationRepository.update(generationId, {
-      status: 'failed',
-      errorMessage: error,
-      fileId: null,
-    });
-
-    await this.notifyReportService.createReportNotification(
-      NotifiedOnEnum.GENERATE_PLAN_REPORT_FAILED,
-      {
-        collectiviteId: collectiviteId,
-        planId: planId,
-        createdBy: userId,
-        reportId: generationId,
-        reportName: reportName,
-      }
-    );
-
-    await this.cleanGenerationFiles(mediaDir, outputDir);
-
-    return {
-      success: false,
-      error: error,
-    };
-  }
-
-  async get(
-    reportId: string,
-    user: AuthenticatedUser
-  ): Promise<Result<ReportGeneration, GenerateReportError>> {
-    const reportGenerationResult = await this.reportGenerationRepository.get(
-      reportId
-    );
-    if (!reportGenerationResult.success) {
-      return reportGenerationResult;
-    }
-
-    const plan = await this.planService.getPlan(
-      { planId: reportGenerationResult.data.planId },
-      user
-    );
-    if (!plan.success) {
-      return {
-        success: false,
-        error: 'PLAN_NOT_FOUND',
-      };
-    }
-
-    const isAllowed = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['PLANS.READ'],
-      ResourceType.COLLECTIVITE,
-      plan.data.collectiviteId,
-      true
-    );
-    if (!isAllowed) {
-      return {
-        success: false,
-        error: 'UNAUTHORIZED',
-      };
-    }
-
-    return {
-      success: true,
-      data: reportGenerationResult.data,
-    };
-  }
-
-  async createPendingPlanReportGeneration(
-    request: GenerateReportInput,
-    user: AuthenticatedUser
-  ): Promise<Result<ReportGeneration, GenerateReportError>> {
-    this.logger.log(
-      `Creating pending plan report generation for plan ${request.planId} with template ${request.templateKey}`
-    );
-
-    // Get plan to check permissions
-    const plan = await this.planService.getPlan(
-      { planId: request.planId },
-      user
-    );
-    if (!plan.success) {
-      return {
-        success: false,
-        error: 'PLAN_NOT_FOUND',
-      };
-    }
-
-    const isAllowed = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['PLANS.READ'],
-      ResourceType.COLLECTIVITE,
-      plan.data.collectiviteId,
-      true
-    );
-    if (!isAllowed) {
-      return {
-        success: false,
-        error: 'UNAUTHORIZED',
-      };
-    }
-
-    const collectivite = await this.collectiviteService.getCollectiviteAvecType(
-      plan.data.collectiviteId
-    );
-
-    const reportName = this.getReportName(collectivite, plan.data);
-
-    // Create report generation entity with pending status
-    const createResult = await this.reportGenerationRepository.create(
-      request,
-      reportName,
-      user,
-      'pending'
-    );
-
-    if (!createResult.success) {
-      this.logger.error(
-        `Failed to create report generation entity: ${createResult.error}`
-      );
-      return createResult;
-    }
-
-    const generationId = createResult.data.id;
-    this.logger.log(
-      `Created report generation entity with id: ${generationId}, pushing to queue`
-    );
-
-    // Push to queue
-    await this.planReportGenerationQueue.add(
-      'generate-plan-report',
-      {
-        generationId,
-        request,
-        userId: user.id,
-      },
-      {
-        jobId: generationId,
-      }
-    );
-
-    return {
-      success: true,
-      data: createResult.data,
-    };
-  }
-
-  async generatePlanReport(
-    generationId: string,
-    request: GenerateReportInput,
-    userId: string
-  ): Promise<Result<{ reportId: string }, GenerateReportError>> {
-    let mediaDir = '';
-    let outputDir = '';
-    let reportPath = '';
-    this.logger.log(
-      `Generating plan report for generation ${generationId}, plan ${request.planId} with template ${request.templateKey}`
-    );
-
-    const reportGeneration = await this.reportGenerationRepository.get(
-      generationId
-    );
-    if (!reportGeneration.success) {
-      return reportGeneration;
-    }
-
-    const reportName = reportGeneration.data.name;
-
-    // Update status to processing
-    await this.reportGenerationRepository.update(generationId, {
-      status: 'processing',
-      errorMessage: null,
-      fileId: null,
-    });
-
-    const templateConfig = this.SLIDE_TEMPLATES_CONFIG[request.templateKey];
-
-    const planDataResult = await this.getPlanData(request.planId);
-    if (!planDataResult.success) {
-      return this.handleReportGenerationError(
-        {
-          generationId,
-          collectiviteId: 0, // Will be set from planDataResult if available
-          planId: request.planId,
-          userId: userId,
-          reportName: '',
-        },
-        mediaDir,
-        outputDir,
-        planDataResult.error
-      );
-    }
-
-    const {
-      plan,
-      axes,
-      sousAxesByAxe,
-      fiches,
-      planGeneralInfo,
-      collectivite,
-      personnalisationReponses,
-    } = planDataResult.data;
-    this.logger.log(
-      `Created report generation entity with id: ${generationId}`
-    );
-
-    try {
-      mediaDir = path.join(__dirname, `media/${generationId}`);
-      outputDir = path.join(__dirname, `output/${generationId}`);
-      mkdirSync(mediaDir, { recursive: true });
-      mkdirSync(outputDir, { recursive: true });
-
-      const automizer = new Automizer({
-        templateDir: path.join(__dirname, 'docs'),
-        autoImportSlideMasters: true,
-        outputDir: outputDir,
-        mediaDir,
-        removeExistingSlides: true,
-        showIntegrityInfo: false, // WARNING: changing this to true throw some weird errors on generated images not beeing found
-        assertRelatedContents: true,
-        cleanup: true,
-        compression: 7,
-        verbosity: 1,
-        statusTracker: (status: StatusTracker) => {
-          this.logger.log(status.info + ' (' + status.share + '%)');
-        },
-      });
-
-      const presentation = automizer
-        .loadRoot(templateConfig.templatePath)
-        .load(templateConfig.templatePath, templateConfig.key);
-
-      const logo = await this.loadCollectiviteLogo(
-        mediaDir,
-        presentation,
-        request.logoFile
-      );
-
-      const slideGenerationArgs: Omit<SlideGenerationArgs, 'slideType'> = {
-        presentation,
-        planGeneralInfo,
-        template: templateConfig,
-        logo,
-      };
-
-      this.addSlide({
-        ...slideGenerationArgs,
-        slideType: 'title_slide',
-      });
-      this.addSlide({
-        ...slideGenerationArgs,
-        slideType: 'table_of_contents_slide',
-        callback: async (slide) => {
-          await this.replaceTextInSlide(slide, {
-            AXE_NOMS: axes.map((axe) => axe.nom ?? '').join('\n'),
-          });
-        },
-      });
-      this.addSlide({
-        ...slideGenerationArgs,
-        slideType: 'overview_section_slide',
-      });
-
-      await this.addPlanSummarySlide({
-        ...slideGenerationArgs,
-        mediaDir,
-        fiches,
-      });
-
-      const statutCountByForEachAxe = await this.addPlanProgressSlide({
-        ...slideGenerationArgs,
-        mediaDir,
-        fiches,
-      });
-
-      if (plan.type?.type === this.PCAET_TYPE) {
-        await this.addDonneesTerritorialesSlides({
-          ...slideGenerationArgs,
-          mediaDir,
-          collectivite,
-          personnalisationReponses,
-        });
-      }
-
-      this.addSlide({
-        ...slideGenerationArgs,
-        slideType: 'axes_section_slide',
-      });
-
-      const filteredFiches = request.ficheIds
-        ? fiches.filter((fiche) => request.ficheIds?.includes(fiche.id))
-        : fiches;
-      this.logger.log(
-        `Fiches to be included in the report: ${filteredFiches.length}`
-      );
-
-      const filteredFichesIndicateurs = Array.from(
-        new Set(
-          filteredFiches
-            .map(
-              (fiche) =>
-                fiche.indicateurs?.map((indicateur) => indicateur.id) || []
-            )
-            .flat()
-        )
-      );
-      // Get the size of the indicateur chart to be used
-      // Allow to parallelize the writing of the indicateur chart image files
-      const indicateurChartSize = await this.getIndicateurChartSize(
-        templateConfig,
-        outputDir,
-        mediaDir
-      );
-
-      let indicateurChartImageFiles: {
-        indicateurId: number;
-        imageFile: string;
-      }[] = [];
-      if (request.includeFicheIndicateursSlides && indicateurChartSize) {
-        indicateurChartImageFiles = await Promise.all(
-          filteredFichesIndicateurs?.map((indicateurId) =>
-            this.writeIndicateurChartImageFileAndLoadMedia({
-              indicateurId,
-              collectivite,
-              personnalisationReponses,
-              presentation,
-              mediaDir,
-              chartSize: indicateurChartSize,
-            })
-          ) ?? []
-        );
-      }
-      for (const axe of axes) {
-        await this.addAxesSummarySlide({
-          presentation,
-          mediaDir,
-          axe,
-          sousAxes: sousAxesByAxe[axe.id],
-          statutCountBy: statutCountByForEachAxe.find(
-            (countBy) => countBy.id === axe.id
-          ),
-          fiches: fiches,
-          planGeneralInfo,
-          template: templateConfig,
-          logo,
-        });
-
-        const axeFilteredFiches = filteredFiches.filter((fiche) =>
-          fiche.axes?.some((a) => a.id === axe.id)
-        );
-        for (const fiche of axeFilteredFiches) {
-          const ficheTextReplacementsInfo =
-            this.getFicheTextReplacementsInfos(fiche);
-
-          this.addFicheInfosSlides({
-            ...slideGenerationArgs,
-            ficheTextReplacementsInfo,
-            fiche,
-          });
-
-          if (request.includeFicheIndicateursSlides) {
-            await this.addFicheIndicateursSlides({
-              ...slideGenerationArgs,
-              ficheTextReplacementsInfo,
-              fiche,
-              indicateurChartImageFiles,
-            });
-          }
-        }
-      }
-
-      this.addSlide({
-        ...slideGenerationArgs,
-        slideType: 'ressources_slide',
-      });
-
-      const reportSummary = await automizer.write(reportName);
-      this.logger.log(`Report summary: ${JSON.stringify(reportSummary)}`);
-      reportPath = path.join(outputDir, reportName);
-      this.logger.log(`Report path: ${reportPath}`);
-
-      const uploadResult = await this.uploadDocumentService.uploadLocalFile(
-        {
-          collectiviteId: collectivite.id,
-          hash: generationId,
-          filename: reportName,
-          confidentiel: false,
-        },
-        reportPath
-      );
-      if (!uploadResult.success) {
-        return this.handleReportGenerationError(
-          {
-            generationId,
-            collectiviteId: collectivite.id,
-            planId: request.planId,
-            userId: userId,
-            reportName: reportName,
-          },
-          mediaDir,
-          outputDir,
-          uploadResult.error
-        );
-      }
-
-      // Update status to completed at the end
-      await this.reportGenerationRepository.update(generationId, {
-        status: 'completed',
-        errorMessage: null,
-        fileId: uploadResult.data.id,
-      });
-      this.logger.log(
-        `Updated report generation ${generationId} status to completed`
-      );
-
-      const createdNotification =
-        await this.notifyReportService.createReportNotification(
-          NotifiedOnEnum.GENERATE_PLAN_REPORT_COMPLETED,
-          {
-            collectiviteId: collectivite.id,
-            planId: request.planId,
-            createdBy: userId,
-            reportId: generationId,
-            reportName: reportName,
-          }
-        );
-
-      if (!createdNotification.success) {
-        return this.handleReportGenerationError(
-          {
-            generationId,
-            collectiviteId: collectivite.id,
-            planId: request.planId,
-            userId: userId,
-            reportName: reportName,
-          },
-          mediaDir,
-          outputDir,
-          GenerateReportErrorEnum.CREATE_NOTIFICATION_ERROR
-        );
-      }
-
-      await this.cleanGenerationFiles(mediaDir, outputDir);
-    } catch (err) {
-      this.logger.error(
-        `Error generating plan report: ${getErrorMessage(err)}`
-      );
-      const error = GenerateReportErrorEnum.SERVER_ERROR;
-
-      return this.handleReportGenerationError(
-        {
-          generationId,
-          collectiviteId: collectivite.id,
-          planId: request.planId,
-          userId: userId,
-          reportName: reportName,
-        },
-        mediaDir,
-        outputDir,
-        error
-      );
-    }
-
-    return {
-      success: true,
-      data: { reportId: generationId },
+      totalValeursCount: indicateurValeurs.totalValeursCount,
     };
   }
 }

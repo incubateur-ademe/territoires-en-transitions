@@ -31,5 +31,3 @@ export const NotifyReportFailedEmail = (
 NotifyReportFailedEmail.PreviewProps = {
   reportName: 'Rapport_CA de Blois Agglopolys_PCAET 2019-2025.pptx',
 };
-
-export default NotifyReportFailedEmail;

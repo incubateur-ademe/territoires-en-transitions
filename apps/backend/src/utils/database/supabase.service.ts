@@ -1,6 +1,20 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { createClient } from '@supabase/supabase-js';
+import { CreateDocumentErrorEnum } from '@tet/backend/collectivites/documents/create-document/create-document.errors';
 import ConfigurationService from '../config/configuration.service';
+import { Result } from '../result.type';
+
+type FileBody =
+  | ArrayBuffer
+  | ArrayBufferView
+  | Blob
+  | Buffer
+  | File
+  | FormData
+  | NodeJS.ReadableStream
+  | ReadableStream<Uint8Array>
+  | URLSearchParams
+  | string;
 
 @Injectable()
 export default class SupabaseService {
@@ -15,5 +29,39 @@ export default class SupabaseService {
       supabaseUrl,
       configService.get('SUPABASE_SERVICE_ROLE_KEY')
     );
+  }
+
+  async saveInStorage(args: {
+    bucket: string;
+    path: string;
+    file: FileBody;
+    mimeType?: string;
+  }): Promise<
+    Result<
+      {
+        id: string;
+        path: string;
+        fullPath: string;
+      },
+      typeof CreateDocumentErrorEnum.UPLOAD_STORAGE_ERROR
+    >
+  > {
+    const { bucket, path, file, mimeType } = args;
+    const { data, error } = await this.client.storage
+      .from(bucket)
+      .upload(path, file, {
+        contentType: mimeType,
+      });
+    if (error) {
+      this.logger.error(`Error saving file in storage: ${error.message}`);
+      return {
+        success: false,
+        error: 'UPLOAD_STORAGE_ERROR',
+      };
+    }
+    return {
+      success: true,
+      data: data,
+    };
   }
 }

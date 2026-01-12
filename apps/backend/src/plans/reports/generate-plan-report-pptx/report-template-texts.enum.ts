@@ -4,6 +4,7 @@ export const ReportTemplateTexts = [
   'txt_axe_no_fiche_info',
   'txt_fiche_fill_missing_info_link',
   'txt_fiche_statut_',
+  'txt_fiche_indicateur_no_data_',
   'txt_fiche_statut_EN_COURS',
   'txt_fiche_statut_REALISE',
   'txt_fiche_statut_A_VENIR',

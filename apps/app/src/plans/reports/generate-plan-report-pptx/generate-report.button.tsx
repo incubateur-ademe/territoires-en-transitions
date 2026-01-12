@@ -1,7 +1,6 @@
 'use client';
 
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useBaseToast } from '@/app/utils/toast/use-base-toast';
 import { useApiClient } from '@/app/utils/use-api-client';
 import { useQuery } from '@tanstack/react-query';
@@ -50,9 +49,13 @@ export const GenerateReportButton = ({
   });
 
   const downloadReport = useCallback(
-    async (collectiviteId: number, reportGenerationId: string) => {
+    async (
+      collectiviteId: number,
+      reportGenerationId: string,
+      onSuccess: (filename: string) => void,
+      onFailure: (error: unknown) => void
+    ) => {
       try {
-        setToast('info', 'Téléchargement du rapport en cours...');
         const { blob, filename } = await apiClient.getAsBlob({
           route: `/collectivites/${collectiviteId}/documents/${reportGenerationId}/download`,
         });
@@ -60,18 +63,10 @@ export const GenerateReportButton = ({
         if (filename && blob) {
           saveBlob(blob, filename);
         }
-        setToast(
-          'success',
-          `Le rapport ${filename} a été téléchargé avec succès`
-        );
+        onSuccess(filename ?? '');
       } catch (error) {
         console.error(error);
-        setToast(
-          'error',
-          `Une erreur est survenue lors du téléchargement du rapport: ${getErrorMessage(
-            error
-          )}`
-        );
+        onFailure(error);
       }
     },
     [apiClient, setToast]
@@ -81,12 +76,34 @@ export const GenerateReportButton = ({
   useEffect(() => {
     if (!reportStatus || !pendingReportId) return;
 
-    if (reportStatus.status === ReportGenerationStatusEnum.COMPLETED) {
-      if (reportStatus.fileId) {
-        downloadReport(collectiviteId, reportStatus.id);
-        setPendingReportId(null);
-      }
-    } else if (reportStatus.status === ReportGenerationStatusEnum.FAILED) {
+    const fileCanBeDownloaded =
+      reportStatus.status === ReportGenerationStatusEnum.COMPLETED &&
+      reportStatus.fileId;
+    if (fileCanBeDownloaded) {
+      setToast('info', 'Téléchargement du rapport en cours...');
+      downloadReport(
+        collectiviteId,
+        reportStatus.id,
+        (fileName) => {
+          setToast(
+            'success',
+            `Le rapport ${fileName} a été téléchargé avec succès`
+          );
+          setPendingReportId(null);
+        },
+        (error) => {
+          setToast(
+            'error',
+            `Une erreur est survenue lors du téléchargement du rapport: ${getErrorMessage(
+              error
+            )}`
+          );
+          setPendingReportId(null);
+        }
+      );
+    }
+
+    if (reportStatus.status === ReportGenerationStatusEnum.FAILED) {
       setToast(
         'error',
         `La génération du rapport a échoué: ${
@@ -111,12 +128,10 @@ export const GenerateReportButton = ({
           variant="white"
           size="sm"
           className="py-1.5"
+          loading={!!pendingReportId}
           disabled={!!pendingReportId}
         >
-          <>
-            {pendingReportId ? <SpinnerLoader /> : null}
-            Générer un rapport
-          </>
+          Générer un rapport
         </Button>
       </GenerateReportPlanModal>
       {renderToast()}

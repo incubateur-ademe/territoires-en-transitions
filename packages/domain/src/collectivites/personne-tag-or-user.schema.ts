@@ -15,6 +15,8 @@ export type PersonneTagOrUser = z.infer<typeof personneTagOrUserSchema>;
 
 export const personneTagOrUserSchemaWithContacts =
   personneTagOrUserSchema.extend({
+    prenom: z.string().optional().nullable(),
+    nomFamille: z.string().optional().nullable(),
     email: z.string().optional().nullable(),
     telephone: z.string().optional().nullable(),
   });

@@ -7,7 +7,8 @@ FROM notifications.notification
 WHERE false;
 
 SELECT created_by,
-name
+name,
+collectivite_id
 FROM plan_report_generation
 WHERE false;
 

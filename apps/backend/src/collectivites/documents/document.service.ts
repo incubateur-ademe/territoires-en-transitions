@@ -7,7 +7,6 @@ import {
 import { COLLECTIVITE_ID_ROUTE_PARAM } from '@tet/backend/collectivites/shared/models/collectivite-api.constants';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
 import SupabaseService from '@tet/backend/utils/database/supabase.service';
-import { Result } from '@tet/backend/utils/result.type';
 import { PreuveDto, PreuveTypeEnum } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
@@ -29,7 +28,6 @@ import { preuveActionTable } from './models/preuve-action.table';
 import { preuveComplementaireTable } from './models/preuve-complementaire.table';
 import { preuveReglementaireDefinitionTable } from './models/preuve-reglementaire-definition.table';
 import { preuveReglementaireTable } from './models/preuve-reglementaire.table';
-import { UploadDocumentErrorEnum } from './upload-document/upload-document.errors';
 
 @Injectable()
 export default class DocumentService {
@@ -109,27 +107,6 @@ export default class DocumentService {
     return {
       fileName: fichier[0].filename || hashId,
       blob: data,
-    };
-  }
-
-  async getCollectiviteBucketId(
-    collectiviteId: number
-  ): Promise<
-    Result<string, typeof UploadDocumentErrorEnum.COLLECTIVITE_BUCKET_NOT_FOUND>
-  > {
-    const buckets = await this.databaseService.db
-      .select({ bucketId: collectiviteBucketTable.bucketId })
-      .from(collectiviteBucketTable)
-      .where(eq(collectiviteBucketTable.collectiviteId, collectiviteId));
-    if (!buckets?.length) {
-      return {
-        success: false,
-        error: UploadDocumentErrorEnum.COLLECTIVITE_BUCKET_NOT_FOUND,
-      };
-    }
-    return {
-      success: true,
-      data: buckets[0].bucketId,
     };
   }
 

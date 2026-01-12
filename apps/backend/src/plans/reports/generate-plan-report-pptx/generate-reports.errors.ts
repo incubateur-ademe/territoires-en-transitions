@@ -1,4 +1,4 @@
-import { UploadDocumentSpecificErrors } from '@tet/backend/collectivites/documents/upload-document/upload-document.errors';
+import { CreateDocumentErrorEnum } from '@tet/backend/collectivites/documents/create-document/create-document.errors';
 import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
@@ -9,8 +9,9 @@ const GenerateReportSpecificErrors = [
   'GET_REPORT_GENERATION_ERROR',
   'UPDATE_REPORT_GENERATION_ERROR',
   'PLAN_NOT_FOUND',
+  'PPT_BUILDER_ERROR',
   'CREATE_NOTIFICATION_ERROR',
-  ...UploadDocumentSpecificErrors,
+  CreateDocumentErrorEnum.UPLOAD_STORAGE_ERROR,
 ] as const;
 type GenerateReportSpecificError =
   (typeof GenerateReportSpecificErrors)[number];
@@ -34,10 +35,6 @@ export const generateReportErrorConfig: TrpcErrorHandlerConfig<GenerateReportSpe
         code: 'NOT_FOUND',
         message: "Le plan n'a pas été trouvé",
       },
-      COLLECTIVITE_BUCKET_NOT_FOUND: {
-        code: 'NOT_FOUND',
-        message: "Le bucket de la collectivité n'a pas été trouvé",
-      },
       UPLOAD_STORAGE_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
         message: "Une erreur est survenue lors de l'upload du rapport généré",
@@ -46,6 +43,11 @@ export const generateReportErrorConfig: TrpcErrorHandlerConfig<GenerateReportSpe
         code: 'INTERNAL_SERVER_ERROR',
         message:
           'Une erreur est survenue lors de la création de la notification',
+      },
+      PPT_BUILDER_ERROR: {
+        code: 'INTERNAL_SERVER_ERROR',
+        message:
+          'Une erreur est survenue lors de la construction du rapport PowerPoint',
       },
     },
   };

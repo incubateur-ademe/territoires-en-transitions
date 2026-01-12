@@ -22,7 +22,6 @@ import { DiscussionRepositoryImpl } from './discussions/infrastructure/discussio
 import { DiscussionRouter } from './discussions/presentation/discussion.router';
 import DocumentService from './documents/document.service';
 import { DocumentsRouter } from './documents/documents.router';
-import UploadDocumentService from './documents/upload-document/upload-document.service';
 import { ListCategoriesRouter } from './handle-categories/list-categories.router';
 import ListCategoriesService from './handle-categories/list-categories.service';
 import { ListCollectivitesRouter } from './list-collectivites/list-collectivites.router';
@@ -51,7 +50,6 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     CreateDocumentRouter,
     DocumentsRouter,
     DocumentService,
-    UploadDocumentService,
     TagService,
     PersonneTagService,
     PersonneTagRouter,
@@ -90,7 +88,6 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     CreateDocumentService,
     CreateDocumentRouter,
     DocumentService,
-    UploadDocumentService,
     DocumentsRouter,
     TagService,
     ListCollectivitesService,
