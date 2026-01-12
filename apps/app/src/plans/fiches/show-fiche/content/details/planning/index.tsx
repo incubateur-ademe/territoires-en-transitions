@@ -2,7 +2,7 @@ import MiseEnOeuvreDropdown from '@/app/ui/dropdownLists/ficheAction/MiseEnOeuvr
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { useBaseToast } from '@/app/utils/toast/use-base-toast';
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
-import { FicheWithRelations, isFicheOnTime } from '@tet/domain/plans';
+import { FicheWithRelations } from '@tet/domain/plans';
 import type { TempsDeMiseEnOeuvre } from '@tet/domain/shared';
 import { Checkbox, Input, TextareaBase } from '@tet/ui';
 import { format } from 'date-fns';
@@ -96,7 +96,7 @@ export const Planning = () => {
         render={({ field }) => (
           <TemporaryEditableItem
             icon="calendar-line"
-            label="Date de début"
+            label="Date de début et de fin prévisionnelle"
             value={
               field.value
                 ? getTextFormattedDate({
@@ -216,18 +216,6 @@ export const Planning = () => {
             }}
           />
         )}
-      />
-      <TemporaryEditableItem
-        icon="timer-line"
-        label="L'action est en retard"
-        value={
-          isFicheOnTime(fiche) ? (
-            'Non'
-          ) : (
-            <span className="text-error-1">Oui</span>
-          )
-        }
-        isReadonly={true}
       />
       <TemporaryEditableItem
         icon="time-line"
