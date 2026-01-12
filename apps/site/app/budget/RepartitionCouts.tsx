@@ -1,7 +1,6 @@
 'use client';
 
 import { defaultVarColors } from '@/site/components/charts/chartsTheme';
-import { useEffect, useState } from 'react';
 import DonutChart from '../../components/charts/DonutChart';
 import { TTableauBudget } from './utils';
 
@@ -26,20 +25,6 @@ const getChartData = (data: { [key: string]: { [key: string]: number } }) => {
 
 const RepartitionCouts = ({ titre, data }: RepartitionCoutsProps) => {
   const chartData = getChartData(data.tableau);
-  const [windowWidth, setWindowWidth] = useState<number | undefined>();
-
-  const smBreakpoint = 640; // 640px = breakpoint sm dans tailwind
-
-  useEffect(() => {
-    const setWidth = () => setWindowWidth(window.innerWidth);
-
-    // Initialisation de windowWith au chargement de la page
-    setWidth();
-
-    // Détecte le changement de taille de la fenêtre
-    window.addEventListener('resize', setWidth);
-    return () => window.removeEventListener('resize', setWidth);
-  }, []);
 
   return (
     <>
@@ -57,15 +42,8 @@ const RepartitionCouts = ({ titre, data }: RepartitionCoutsProps) => {
           onlyDisplayPercentageValue
           invertedDisplay
           spaceBetweenPads
-          displayValueInArcLinkLabel={false}
-          arcLinkLabelOnSeveralLines={
-            windowWidth && windowWidth > smBreakpoint ? false : true
-          }
           startAngle={-10}
           arcLinkLabelsSkipAngle={15}
-          arcLinkLabelFontSize={
-            windowWidth && windowWidth > smBreakpoint ? 14 : undefined
-          }
         />
       </div>
     </>
