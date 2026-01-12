@@ -28,11 +28,13 @@ export const Header = () => {
     <EditionModalManagerProvider>
       <div className="w-full mb-6" data-test="fiche-header">
         <div className="flex flex-col-reverse gap-4 lg:flex-row lg:items-start">
-          <EditableTitle
-            title={titre}
-            isReadonly={isReadonly}
-            onUpdate={updateTitle}
-          />
+          <div className="flex-1">
+            <EditableTitle
+              title={titre}
+              isReadonly={isReadonly}
+              onUpdate={updateTitle}
+            />
+          </div>
 
           <Menu permissions={permissions} />
         </div>

@@ -6,9 +6,6 @@ export type ModalType =
   | 'deleting'
   | 'accessRightsManagement'
   | 'activityLog'
-  | 'pilotes'
-  | 'status'
-  | 'priority'
   | 'none';
 
 type EditionModalManagerContextValue = {

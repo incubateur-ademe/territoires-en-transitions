@@ -3,7 +3,7 @@ import { Notification, VisibleWhen } from '@tet/ui';
 import {
   getFicheActionShareIcon,
   getFicheActionShareText,
-} from '../../../../share-fiche/fiche-share-info';
+} from '../../../share-fiche/fiche-share-info';
 
 const PrivateFicheBadge = () => {
   return (

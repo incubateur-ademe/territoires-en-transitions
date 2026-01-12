@@ -6,14 +6,14 @@ const Title = ({ children }: { children: React.ReactNode }) => (
 );
 
 export const Panel = ({
-  title,
+  title = '',
   children,
 }: {
-  title: string;
+  title?: string;
   children: React.ReactNode;
 }) => (
   <div className="rounded-[10px] bg-white border border-grey-3 p-8 w-full">
-    <Title>{title}</Title>
+    {title && <Title>{title}</Title>}
     <form className="mt-4 flex flex-col gap-4">{children}</form>
   </div>
 );

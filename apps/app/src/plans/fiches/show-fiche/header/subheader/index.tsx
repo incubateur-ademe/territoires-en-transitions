@@ -1,9 +1,9 @@
 import { FicheWithRelations } from '@tet/domain/plans';
 import { CompletionStatus } from '../../components/completion.badge';
-import { AccessManagementBadges } from './access-management/access-management.badges';
-import { Pilotes } from './pilotes/pilotes.trigger';
-import { Priority } from './priority/priority.trigger';
-import { Status } from './status/status.trigger';
+import { AccessManagementBadges } from './access-management.badges';
+import { Pilotes } from './pilotes';
+import { Priority } from './priority';
+import { Status } from './status';
 
 const Separator = () => {
   return <div className="w-[1px] h-5 bg-grey-5" />;

@@ -25,7 +25,8 @@ const OtherPlansBreadcrumbs = ({
   collectiviteId: number;
 }): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
-  const s = plans.length > 1 ? 's' : '';
+  const N = plans.length;
+  const s = N > 1 ? 's' : '';
   return (
     <div className="mt-4 flex flex-col gap-2">
       <Button
@@ -35,7 +36,7 @@ const OtherPlansBreadcrumbs = ({
         iconPosition="right"
         onClick={() => setIsOpen((prevState) => !prevState)}
       >
-        Autre{s} emplacement{s} pour cette fiche
+        {N > 1 ? N : ''} autre{s} emplacement{s} pour cette action{s}
       </Button>
 
       <VisibleWhen condition={isOpen}>
