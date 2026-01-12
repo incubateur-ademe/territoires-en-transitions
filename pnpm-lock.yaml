@@ -137,9 +137,6 @@ importers:
       '@react-pdf/renderer':
         specifier: 4.3.0
         version: 4.3.0(react@19.2.3)
-      '@react-spring/web':
-        specifier: 9.7.5
-        version: 9.7.5(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@sentry/core':
         specifier: 10.32.1
         version: 10.32.1
