@@ -25,7 +25,7 @@ export const FichesList = ({
   const user = useUser();
   const { fiches, isLoading } = useListFiches(collectivite.collectiviteId, {
     filters: {
-      ficheIds,
+      axesId: [axeId],
     },
     queryOptions: {
       sort: [{ field: 'titre', direction: 'asc' }],
