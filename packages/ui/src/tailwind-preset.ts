@@ -7,6 +7,9 @@ export const preset = {
   theme: {
     maxHeight: { '80vh': '80vh' },
     extend: {
+      fontFamily: {
+        sans: ['Marianne', 'arial', 'sans-serif'],
+      },
       colors: {
         // Anciennes couleurs, à modifier avec l'harmonisation
         // des composants entre app et site

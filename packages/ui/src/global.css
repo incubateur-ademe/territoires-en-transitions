@@ -6,12 +6,85 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Marianne';
+  src: url('./assets/fonts/Marianne-Light.woff2') format('woff2'),
+    url('./assets/fonts/Marianne-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Marianne';
+  src: url('./assets/fonts/Marianne-Light_Italic.woff2') format('woff2'),
+    url('./assets/fonts/Marianne-Light_Italic.woff') format('woff');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Marianne';
+  src: url('./assets/fonts/Marianne-Regular.woff2') format('woff2'),
+    url('./assets/fonts/Marianne-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Marianne';
+  src: url('./assets/fonts/Marianne-Regular_Italic.woff2') format('woff2'),
+    url('./assets/fonts/Marianne-Regular_Italic.woff') format('woff');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Marianne';
+  src: url('./assets/fonts/Marianne-Medium.woff2') format('woff2'),
+    url('./assets/fonts/Marianne-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Marianne';
+  src: url('./assets/fonts/Marianne-Medium_Italic.woff2') format('woff2'),
+    url('./assets/fonts/Marianne-Medium_Italic.woff') format('woff');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Marianne';
+  src: url('./assets/fonts/Marianne-Bold.woff2') format('woff2'),
+    url('./assets/fonts/Marianne-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Marianne';
+  src: url('./assets/fonts/Marianne-Bold_Italic.woff2') format('woff2'),
+    url('./assets/fonts/Marianne-Bold_Italic.woff') format('woff');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
 /*** Mise en forme DS Territoires en Transitions ***/
 @layer base {
   * {
     box-sizing: border-box;
     padding: 0;
     margin: 0;
+  }
+
+  body {
+    font-family: 'Marianne', arial, sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
   }
 
   html,
@@ -112,24 +185,16 @@
 }
 
 @layer components {
-  .paragraphe-12,
   .paragraphe-14,
   .paragraphe-16,
   .paragraphe-18,
   .paragraphe-22,
-  .paragraphe-12 > p,
   .paragraphe-14 > p,
   .paragraphe-16 > p,
   .paragraphe-18 > p,
   .paragraphe-22 > p {
     font-weight: 400;
     @apply text-primary-10;
-  }
-
-  .paragraphe-12,
-  .paragraphe-12 > p {
-    font-size: 12px;
-    line-height: 18px;
   }
 
   .paragraphe-14,
@@ -184,45 +249,5 @@
   .paragraphe-medium,
   .paragraphe-medium > p {
     font-weight: 500;
-  }
-
-  .fr-checkbox-group input[type='checkbox']:checked + label::before {
-    @apply bg-primary-7;
-  }
-
-  .fr-checkbox-group input[type='checkbox'] + label::before {
-    background-image: radial-gradient(
-        at 5px 4px,
-        transparent 4px,
-        theme('colors.primary.7') 4px,
-        theme('colors.primary.7') 5px,
-        transparent 6px
-      ),
-      linear-gradient(theme('colors.primary.7'), theme('colors.primary.7')),
-      radial-gradient(
-        at calc(100% - 5px) 4px,
-        transparent 4px,
-        theme('colors.primary.7') 4px,
-        theme('colors.primary.7') 5px,
-        transparent 6px
-      ),
-      linear-gradient(theme('colors.primary.7'), theme('colors.primary.7')),
-      radial-gradient(
-        at calc(100% - 5px) calc(100% - 4px),
-        transparent 4px,
-        theme('colors.primary.7') 4px,
-        theme('colors.primary.7') 5px,
-        transparent 6px
-      ),
-      linear-gradient(theme('colors.primary.7'), theme('colors.primary.7')),
-      radial-gradient(
-        at 5px calc(100% - 4px),
-        transparent 4px,
-        theme('colors.primary.7') 4px,
-        theme('colors.primary.7') 5px,
-        transparent 6px
-      ),
-      linear-gradient(theme('colors.primary.7'), theme('colors.primary.7')),
-      var(--data-uri-svg);
   }
 }
