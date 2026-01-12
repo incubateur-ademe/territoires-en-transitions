@@ -12,6 +12,7 @@ type DeleteOrRemoveFicheSharingModalProps = {
   buttonClassName?: string;
   onDeleteCallback?: () => void;
   onClose?: () => void;
+  hideButton?: boolean;
 };
 
 export const DeleteOrRemoveFicheSharingModal = ({
@@ -21,6 +22,7 @@ export const DeleteOrRemoveFicheSharingModal = ({
   buttonClassName,
   onDeleteCallback,
   onClose,
+  hideButton = false,
 }: DeleteOrRemoveFicheSharingModalProps) => {
   const { sharedWithCollectivites } = fiche;
   const { collectiviteId, permissions } = useCurrentCollectivite();
@@ -43,6 +45,7 @@ export const DeleteOrRemoveFicheSharingModal = ({
         buttonVariant={buttonVariant}
         buttonClassName={buttonClassName}
         onClose={onClose}
+        hideButton={hideButton}
       />
     );
   }
@@ -55,6 +58,7 @@ export const DeleteOrRemoveFicheSharingModal = ({
       buttonClassName={buttonClassName}
       onDeleteCallback={onDeleteCallback}
       onClose={onClose}
+      hideButton={hideButton}
     />
   );
 };
