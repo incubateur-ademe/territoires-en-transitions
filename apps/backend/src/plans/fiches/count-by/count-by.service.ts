@@ -42,7 +42,10 @@ import { isArrayCountByProperty } from './count-by.types';
 export class CountByService {
   private readonly logger = new Logger(CountByService.name);
 
-  private readonly NULL_VALUE_KEY = 'null';
+  public readonly NULL_VALUE_KEY = 'null';
+
+  public readonly NO_AXE_ID = -1;
+  public readonly NO_AXE_NOM = 'Actions sans axe';
 
   constructor(private readonly ficheActionListService: ListFichesService) {}
 
@@ -404,18 +407,33 @@ export class CountByService {
     const axes = Object.values(
       fiches
         .map((fiche) => fiche.axes?.find((axe) => axe.parentId === planId))
-        .reduce((acc: Record<number, TagWithCollectiviteId>, axe) => {
-          if (axe && !acc[axe.id]) {
-            acc[axe.id] = axe;
-          }
-          return acc;
-        }, {})
+        .reduce(
+          (
+            acc: Record<number, Pick<TagWithCollectiviteId, 'id' | 'nom'>>,
+            axe
+          ) => {
+            if (!axe) {
+              acc[this.NO_AXE_ID] = {
+                id: this.NO_AXE_ID,
+                nom: this.NO_AXE_NOM,
+              };
+            } else if (axe && !acc[axe.id]) {
+              acc[axe.id] = axe;
+            }
+            return acc;
+          },
+          {}
+        )
     );
 
     return await Promise.all(
       axes.map(async (axe) => {
         const countByResponse = await this.countByPropertyWithFiches(
-          fiches.filter((fiche) => fiche.axes?.some((a) => a.id === axe.id)),
+          fiches.filter((fiche) =>
+            axe.id === this.NO_AXE_ID
+              ? !fiche.axes?.some((a) => a.parentId === planId)
+              : fiche.axes?.some((a) => a.id === axe.id)
+          ),
           countByProperty,
           filters
         );

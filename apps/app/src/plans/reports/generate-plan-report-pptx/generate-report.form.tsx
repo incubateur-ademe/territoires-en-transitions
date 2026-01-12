@@ -8,9 +8,18 @@ import { Controller, useForm } from 'react-hook-form';
 import { PlanFicheSelector } from './plan-fiche-selector';
 
 // Form schema that accepts File for logoFile (will be converted to base64 before sending)
+const MAX_FILE_SIZE_MB = 1;
+const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024; // 2 Mo en bytes
+
 const generateReportFormSchema = generateReportInputSchema
   .extend({
-    logoFile: z.instanceof(File).optional().nullable(),
+    logoFile: z
+      .instanceof(File)
+      .optional()
+      .nullable()
+      .refine((file) => !file || file.size <= MAX_FILE_SIZE, {
+        message: `Le fichier ne doit pas dépasser ${MAX_FILE_SIZE_MB} Mo`,
+      }),
   })
   .partial({
     templateKey: true,
@@ -39,6 +48,7 @@ export function GenerateReportForm({
     handleSubmit,
     control,
     setValue,
+    setError,
     watch,
     formState: { errors },
   } = useForm<GenerateReportFormArgs>({
@@ -78,6 +88,7 @@ export function GenerateReportForm({
     >
       <Field
         title="Ajoutez le logo de votre collectivité"
+        hint={`Taille max : ${MAX_FILE_SIZE_MB} Mo. Formats : jpeg, jpg, png`}
         message={errors.logoFile?.message}
         state={errors.logoFile?.message ? 'error' : 'default'}
       >
@@ -103,7 +114,20 @@ export function GenerateReportForm({
                 disabled={disabled}
                 accept=".png,.jpg,.jpeg"
                 displaySize="md"
-                onChange={(e) => field.onChange(e.target.files?.[0] ?? null)}
+                onChange={(e) => {
+                  const file = e.target.files?.[0] ?? null;
+                  if (file && file.size > MAX_FILE_SIZE) {
+                    // Réinitialiser le champ de fichier
+                    e.target.value = '';
+                    // Définir l'erreur explicitement
+                    setError('logoFile', {
+                      type: 'manual',
+                      message: `Le fichier ne doit pas dépasser ${MAX_FILE_SIZE_MB} Mo`,
+                    });
+                  } else {
+                    field.onChange(file);
+                  }
+                }}
               />
             </>
           )}

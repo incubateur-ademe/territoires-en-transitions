@@ -8,7 +8,7 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Plan } from '@tet/domain/plans';
 import { Button, DEPRECATED_ButtonMenu, Icon, Tooltip } from '@tet/ui';
 import { useState } from 'react';
-import { GenerateReportButton } from '../../generate-plan-report-pptx/generate-report.button';
+import { GenerateReportButton } from '../../../reports/generate-plan-report-pptx/generate-report.button';
 import { useExportPlanAction } from '../data/use-export-plan';
 import { UpdatePlanModal } from './update-plan.modal';
 

@@ -6,17 +6,18 @@ import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
 import { AuthModule } from '@tet/backend/users/users.module';
 import { EchartsModule } from '@tet/backend/utils/echarts/echarts.module';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
-import { FichesModule } from '../../fiches/fiches.module';
-import { PlansUtilsModule } from '../../utils/plans-utils.module';
-import { PlanModule } from '../plans.module';
-import { GenerateReportsRouter } from './generate-reports.router';
+import { FichesModule } from '../fiches/fiches.module';
+import { PlanModule } from '../plans/plans.module';
+import { PlansUtilsModule } from '../utils/plans-utils.module';
 import {
-  GenerateReportsService,
+  GenerateReportsApplicationService,
   PLAN_REPORT_GENERATION_QUEUE_NAME,
-} from './generate-reports.service';
-import { GenerateReportsWorker } from './generate-reports.worker';
-import { NotifyReportService } from './notify-report.service';
-import { ReportGenerationRepository } from './report-generation.repository';
+} from './generate-plan-report-pptx/generate-reports.application-service';
+import { GenerateReportsRouter } from './generate-plan-report-pptx/generate-reports.router';
+import { GenerateReportsWorker } from './generate-plan-report-pptx/generate-reports.worker';
+import { NotifyReportService } from './generate-plan-report-pptx/notify-report.service';
+import { PptBuilderService } from './generate-plan-report-pptx/ppt-builder.service';
+import { ReportGenerationRepository } from './generate-plan-report-pptx/report-generation.repository';
 
 @Module({
   imports: [
@@ -34,12 +35,13 @@ import { ReportGenerationRepository } from './report-generation.repository';
     NotificationsModule,
   ],
   providers: [
-    GenerateReportsService,
+    GenerateReportsApplicationService,
     GenerateReportsRouter,
     ReportGenerationRepository,
     NotifyReportService,
     GenerateReportsWorker,
+    PptBuilderService,
   ],
-  exports: [GenerateReportsService, GenerateReportsRouter],
+  exports: [GenerateReportsApplicationService, GenerateReportsRouter],
 })
-export class GenerateReportsModule {}
+export class ReportsModule {}

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { DownloadPlanReportQueryParams } from '@tet/domain/plans';
 import ConfigurationService from '../../utils/config/configuration.service';
 
 @Injectable()
@@ -20,9 +21,9 @@ export default class GetPlanUrlService {
     parentId: number | null;
   }) {
     const appUrl = this.configService.get('APP_URL');
-    return `${appUrl}/collectivite/${collectiviteId}/plans${
-      planId ? `/${planId}` : ''
-    }/fiches/${parentId ? `${parentId}#${ficheId}` : ficheId}`;
+    return `${appUrl}/collectivite/${collectiviteId}/fiches/${
+      parentId ? `${parentId}#${ficheId}` : ficheId
+    }/details${planId ? `?planId=${planId}` : ''}`;
   }
 
   getPlanUrl({
@@ -41,5 +42,20 @@ export default class GetPlanUrlService {
     return `${appUrl}/collectivite/${collectiviteId}/plans/${planId}${
       queryParams ? `?${queryParamsString}` : ''
     }`;
+  }
+
+  getPlanDownloadReportUrl({
+    collectiviteId,
+    planId,
+    reportId,
+  }: {
+    collectiviteId: number;
+    planId: number;
+    reportId: string;
+  }) {
+    const queryParams: DownloadPlanReportQueryParams = {
+      downloadReportId: reportId,
+    };
+    return this.getPlanUrl({ collectiviteId, planId, queryParams });
   }
 }

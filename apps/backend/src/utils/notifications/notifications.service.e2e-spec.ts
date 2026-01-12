@@ -26,7 +26,6 @@ const TEST_EMAIL = 'test@example.com';
 const TEST_SUBJECT = 'Test Subject';
 const TEST_CONTENT = 'Test Content';
 const DEFAULT_DELAY_MINUTES = 20;
-const RECENT_DELAY_MINUTES = 5;
 
 describe('NotificationsService', () => {
   let app: INestApplication;
@@ -76,7 +75,7 @@ describe('NotificationsService', () => {
     userId: string,
     options: {
       entityId: string;
-      delayMinutes?: number;
+      sendAfter?: DateTime;
       status?: NotificationStatusType;
       notifiedOn?: NotifiedOnType;
       notificationData?: Record<string, unknown>;
@@ -84,24 +83,23 @@ describe('NotificationsService', () => {
   ) => {
     const {
       entityId,
-      delayMinutes = DEFAULT_DELAY_MINUTES,
       status = NotificationStatusEnum.PENDING,
       notifiedOn = NotifiedOnEnum.UPDATE_FICHE_PILOTE,
       notificationData = { test: 'data' },
     } = options;
 
+    const now = DateTime.now();
+    const sendAfter = options.sendAfter ? options.sendAfter : now;
     return await databaseService.db
       .insert(notificationTable)
       .values({
         entityId,
         sendTo: userId,
+        sendAfter: sendAfter.toUTC().toSQL(),
         status,
         notifiedOn,
         notificationData,
-        createdAt: DateTime.now()
-          .minus({ minutes: delayMinutes })
-          .toUTC()
-          .toSQL(),
+        createdAt: now.toUTC().toSQL(),
       })
       .returning();
   };
@@ -226,7 +224,7 @@ describe('NotificationsService', () => {
 
     await createTestNotification(userId, {
       entityId: 'test-entity-recent',
-      delayMinutes: RECENT_DELAY_MINUTES,
+      sendAfter: DateTime.now().plus({ minutes: DEFAULT_DELAY_MINUTES }),
     });
 
     await notificationsService.sendPendingNotifications();

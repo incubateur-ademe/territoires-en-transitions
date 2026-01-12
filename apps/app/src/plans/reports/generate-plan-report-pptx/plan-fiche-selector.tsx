@@ -1,6 +1,6 @@
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { FicheWithRelations } from '@tet/domain/plans';
-import { OptionSection, SelectMultiple } from '@tet/ui';
+import { ITEM_ALL, Option, OptionSection, SelectMultiple } from '@tet/ui';
 
 type PlanFicheSelectorProps = {
   collectiviteId: number;
@@ -22,8 +22,9 @@ const sortOptions: Intl.CollatorOptions = {
 
 const getFichesWithAxesSections = (
   planId: number,
-  fiches?: FicheWithRelations[]
-): OptionSection[] => {
+  fiches?: FicheWithRelations[],
+  hasSelectedValues?: boolean
+): (OptionSection | Option)[] => {
   if (!fiches || fiches.length === 0) {
     return [];
   }
@@ -56,7 +57,13 @@ const getFichesWithAxesSections = (
     return a.title.localeCompare(b.title, undefined, sortOptions);
   });
 
-  return sortedAxeSections;
+  const itemAllOption = {
+    label: hasSelectedValues
+      ? 'Désélectionner toutes les actions'
+      : 'Sélectionner toutes les actions',
+    value: ITEM_ALL,
+  };
+  return [itemAllOption, ...sortedAxeSections];
 };
 
 export function PlanFicheSelector({
@@ -76,7 +83,11 @@ export function PlanFicheSelector({
     },
   });
 
-  const options = getFichesWithAxesSections(planId, fiches);
+  const options = getFichesWithAxesSections(
+    planId,
+    fiches,
+    Boolean(values?.length)
+  );
 
   return (
     <SelectMultiple
@@ -84,7 +95,20 @@ export function PlanFicheSelector({
       values={values}
       isSearcheable
       multiple={true}
-      onChange={onChange}
+      onChange={(args) => {
+        if (args.selectedValue === ITEM_ALL) {
+          if (!values?.length) {
+            onChange({
+              selectedValue: ITEM_ALL,
+              values: fiches.map((fiche) => fiche.id),
+            });
+          } else {
+            onChange({ selectedValue: ITEM_ALL });
+          }
+        } else {
+          onChange(args);
+        }
+      }}
       disabled={disabled}
       isLoading={isLoading}
       placeholder={isLoading ? 'Chargement...' : 'Sélectionner des actions'}

@@ -4,9 +4,9 @@ import { ContextStoreService } from '@tet/backend/utils/context/context.service'
 import { GenerateReportInput } from '@tet/domain/plans';
 import { Job } from 'bullmq';
 import {
-  GenerateReportsService,
+  GenerateReportsApplicationService,
   PLAN_REPORT_GENERATION_QUEUE_NAME,
-} from './generate-reports.service';
+} from './generate-reports.application-service';
 
 interface PlanReportGenerationJobData {
   generationId: string;
@@ -19,7 +19,7 @@ export class GenerateReportsWorker extends WorkerHost {
   private readonly logger = new Logger(GenerateReportsWorker.name);
 
   constructor(
-    private readonly generateReportsService: GenerateReportsService,
+    private readonly generateReportsService: GenerateReportsApplicationService,
     private readonly contextStoreService: ContextStoreService
   ) {
     super();

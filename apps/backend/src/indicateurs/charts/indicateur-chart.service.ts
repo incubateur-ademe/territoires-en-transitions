@@ -61,6 +61,8 @@ export class IndicateurChartService {
   private readonly BOTTOM_LEGEND_LINE_HEIGHT = 40;
   private readonly LEGEND_ITEM_WIDTH = 300;
   private readonly TITLE_LEFT_MARGIN = 28;
+  private readonly TITLE_FONT_SIZE = 24;
+  private readonly TITLE_SUBTEXT_FONT_SIZE = 18;
 
   constructor(
     private readonly listIndicateursService: ListIndicateursService,
@@ -628,6 +630,7 @@ export class IndicateurChartService {
           )
         : Promise.resolve(null),
     ]);
+
     const chartData = this.getChartData({
       indicateurValeurs,
       valeursReference,
@@ -770,6 +773,7 @@ export class IndicateurChartService {
       },
       yAxis: {
         type: 'value' as const,
+        splitLine: { show: false },
         axisLabel: {
           color: colors.primary['9'],
           formatter: (value: number) => NumFormat.format(value),
@@ -783,10 +787,12 @@ export class IndicateurChartService {
         textStyle: {
           color: colors.primary['9'],
           overflow: 'break',
+          fontSize: this.TITLE_FONT_SIZE,
         },
         subtextStyle: {
           color: colors.grey['6'],
           fontWeight: 500,
+          fontSize: this.TITLE_SUBTEXT_FONT_SIZE,
         },
       },
     };

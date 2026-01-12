@@ -306,6 +306,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               borneMin: null,
               borneMax: null,
             } as IndicateurDefinition,
+            totalValeursCount: 3,
             sources: {
               rare: {
                 source: 'rare',
@@ -368,6 +369,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               borneMin: null,
               borneMax: null,
             } as IndicateurDefinition,
+            totalValeursCount: 1,
             sources: {
               snbc: {
                 source: 'snbc',

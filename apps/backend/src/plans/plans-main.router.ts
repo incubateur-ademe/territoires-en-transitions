@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { AxesRouter } from './axes/axes.router';
 import { FichesRouter } from './fiches/fiches.router';
-import { GenerateReportsRouter } from './plans/generate-plan-report-pptx/generate-reports.router';
 import { PlanRouter } from './plans/plans.router';
+import { GenerateReportsRouter } from './reports/generate-plan-report-pptx/generate-reports.router';
 
 @Injectable()
 export class PlanMainRouter {
