@@ -13,6 +13,7 @@ type RemoveSharingModalProps = {
   buttonClassName?: string;
   onDeleteCallback?: () => void;
   onClose?: () => void;
+  hideButton?: boolean;
 };
 
 export const RemoveSharingModal = ({
@@ -22,6 +23,7 @@ export const RemoveSharingModal = ({
   buttonClassName,
   onDeleteCallback,
   onClose,
+  hideButton = false,
 }: RemoveSharingModalProps) => {
   const { id, titre, collectiviteNom } = fiche;
   const collectiviteId = useCollectiviteId();
@@ -68,17 +70,19 @@ export const RemoveSharingModal = ({
       )}
     >
       {/* Bouton d'ouverture de la modale */}
-      <Button
-        data-test="RemoveSharingFicheBouton"
-        title="Retirer le partage"
-        size="xs"
-        icon="indeterminate-circle-line"
-        variant={buttonVariant ?? 'grey'}
-        className={classNames(
-          '!text-error-1 hover:!text-[#db4f4f]',
-          buttonClassName
-        )}
-      />
+      {hideButton ? undefined : (
+        <Button
+          data-test="RemoveSharingFicheBouton"
+          title="Retirer le partage"
+          size="xs"
+          icon="indeterminate-circle-line"
+          variant={buttonVariant ?? 'grey'}
+          className={classNames(
+            '!text-error-1 hover:!text-[#db4f4f]',
+            buttonClassName
+          )}
+        />
+      )}
     </Modal>
   );
 };
