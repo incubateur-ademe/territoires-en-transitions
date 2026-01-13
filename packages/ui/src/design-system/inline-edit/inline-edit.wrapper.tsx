@@ -90,7 +90,7 @@ export const InlineEditWrapper = ({
   return (
     <>
       {isChildrenFunction
-        ? children({ ...inlineProps })
+        ? children({ disabled, ...inlineProps })
         : cloneElement(children, inlineProps)}
       {renderOnEdit && isOpen && (
         <FloatingPortal>

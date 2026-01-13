@@ -24,7 +24,6 @@ export const Priority = ({
                   priorite: isPriorite(value) ? value : null,
                 },
               });
-              openState.setIsOpen(false);
             }}
             customItem={(item) => (
               <PriorityBadge
@@ -39,9 +38,11 @@ export const Priority = ({
         </div>
       )}
     >
-      <button type="button">
-        <PriorityBadge priority={priority} />
-      </button>
+      {(props) => (
+        <button type="button" {...props}>
+          <PriorityBadge priority={priority} />
+        </button>
+      )}
     </InlineEditWrapper>
   );
 };

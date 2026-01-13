@@ -5,7 +5,7 @@ import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/ut
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
 import { SANS_PILOTE_LABEL } from '@tet/domain/plans';
-import { InlineEditWrapper } from '@tet/ui';
+import { cn, InlineEditWrapper } from '@tet/ui';
 import PiloteIcon from '../../../../plans/components/pilote-icon.svg';
 
 type PilotesTriggerProps = {
@@ -18,8 +18,8 @@ export const Pilotes = ({ personnes }: PilotesTriggerProps) => {
   return (
     <InlineEditWrapper
       disabled={isReadonly}
-      renderOnEdit={({ openState }) => (
-        <div className="p-3 min-w-[360px]">
+      renderOnEdit={() => (
+        <div className="min-w-[360px]">
           <PersonnesDropdown
             dataTest="personnes-pilotes"
             collectiviteIds={getFicheAllEditorCollectiviteIds(fiche)}
@@ -31,33 +31,36 @@ export const Pilotes = ({ personnes }: PilotesTriggerProps) => {
                 ficheId: fiche.id,
                 ficheFields: { pilotes: personnes },
               });
-              openState.setIsOpen(false);
             }}
-            additionalKeysToInvalidate={[['fiche_action', fiche.id.toString()]]}
           />
         </div>
       )}
     >
-      <button
-        className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
-        type="button"
-        disabled={isReadonly}
-      >
-        <PiloteIcon className="w-4 h-4" />
-        {personnes.length > 0 ? (
-          <>
-            Pilotes:
-            <ListWithTooltip
-              className="text-sm text-grey-8 font-normal flex"
-              list={personnes.map((p) => p.nom)}
-            />
-          </>
-        ) : (
-          <span className="text-sm text-grey-8 font-normal">
-            {SANS_PILOTE_LABEL}
-          </span>
-        )}
-      </button>
+      {(props) => (
+        <button
+          type="button"
+          {...props}
+          className={cn(
+            props.className,
+            'flex items-center gap-2 hover:opacity-80 transition-opacity'
+          )}
+        >
+          <PiloteIcon className="w-4 h-4" />
+          {personnes.length > 0 ? (
+            <>
+              Pilotes:
+              <ListWithTooltip
+                className="text-sm text-grey-8 font-normal flex"
+                list={personnes.map((p) => p.nom)}
+              />
+            </>
+          ) : (
+            <span className="text-sm text-grey-8 font-normal">
+              {SANS_PILOTE_LABEL}
+            </span>
+          )}
+        </button>
+      )}
     </InlineEditWrapper>
   );
 };
