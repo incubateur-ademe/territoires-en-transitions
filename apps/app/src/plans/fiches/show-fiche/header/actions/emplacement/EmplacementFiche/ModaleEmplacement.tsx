@@ -31,7 +31,7 @@ export const ModaleEmplacement = ({
         <div id={descriptionId}>
           <Tabs defaultActiveTab={activeTab} onChange={setActiveTab}>
             <Tab label="Emplacement actuel">
-              <EmplacementActuelFiche fiche={fiche} />
+              <EmplacementActuelFiche />
             </Tab>
             <Tab label="Nouvel emplacement">
               <NouvelEmplacementFiche
