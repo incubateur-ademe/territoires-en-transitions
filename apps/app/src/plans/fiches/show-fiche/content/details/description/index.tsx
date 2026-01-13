@@ -1,31 +1,15 @@
 import EffetsAttendusDropdown from '@/app/ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import { useGetThematiqueAndSousThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
-import { RichTextEditor, RichTextView, SelectMultiple } from '@tet/ui';
+import { RichTextView, SelectMultiple } from '@tet/ui';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { RichTextEditorWithDebounce } from '../../../components/rich-text-editor-with-debounce';
 import { useFicheContext } from '../../../context/fiche-context';
 import { InlineEditableItem } from '../editable-item';
 import { DescriptionFormValues } from './description-schema';
 import { getFieldLabel } from './labels';
 
-const RichTextEditorWithDebounce = ({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-}) => {
-  return (
-    <RichTextEditor
-      initialValue={value}
-      onChange={onChange}
-      //500 seems like a valid debounce to allow a correct editing.
-      //using 0 leads to unwanted text trimming when used in a controller
-      debounceDelayOnChange={500}
-    />
-  );
-};
 export const Description = () => {
   const { fiche, isReadonly, update } = useFicheContext();
   const { control, watch, getValues, setValue } =

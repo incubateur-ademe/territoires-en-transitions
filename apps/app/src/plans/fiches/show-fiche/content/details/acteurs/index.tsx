@@ -6,10 +6,11 @@ import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropd
 import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Input, Textarea } from '@tet/ui';
+import { Input, RichTextView } from '@tet/ui';
 import { useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import FranceIcon from '../../../../../plans/components/france-icon.svg';
+import { RichTextEditorWithDebounce } from '../../../components/rich-text-editor-with-debounce';
 import { useFicheContext } from '../../../context/fiche-context';
 import { InlineEditableItem } from '../editable-item';
 import { acteursFormSchema, ActeursFormValues } from './acteurs-schema';
@@ -226,27 +227,20 @@ export const Acteurs = (): JSX.Element => {
           <InlineEditableItem
             icon="shake-hands-line"
             label={getFieldLabel('participationCitoyenne', field.value)}
-            value={field.value}
+            value={
+              <RichTextView
+                content={field.value}
+                textColor="grey"
+                placeholder="À renseigner"
+                autoSize
+              />
+            }
             isReadonly={isReadonly}
-            renderOnEdit={({ openState }) => (
-              <>
-                <Textarea
-                  tabIndex={0}
-                  autoFocus
-                  value={field.value ?? ''}
-                  onChange={(value) => field.onChange(value)}
-                  placeholder="Détaillez la participation citoyenne"
-                />
-                <div className="flex justify-end mt-2">
-                  <button
-                    type="button"
-                    className="text-sm text-primary-8 hover:underline"
-                    onClick={() => openState.setIsOpen(false)}
-                  >
-                    Fermer
-                  </button>
-                </div>
-              </>
+            renderOnEdit={() => (
+              <RichTextEditorWithDebounce
+                value={field.value ?? ''}
+                onChange={(value) => field.onChange(value)}
+              />
             )}
           />
         )}
