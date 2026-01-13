@@ -36,7 +36,7 @@ export const finaliserMonInscriptionUrl = `/finaliser-mon-inscription`;
 export const recherchesReferentielsUrl = `${recherchesPath}/referentiels`;
 export const recherchesPlansUrl = `${recherchesPath}/plans`;
 export const ajouterCollectiviteUrl = `/ajouter-collectivite`;
-
+export const importerPlanUrl = `/plans/import`;
 export const ancienRecherchesPath = '/toutes_collectivites';
 
 // Utilisé après le login ou lorsqu'on clique sur le logo en étant connecté.
