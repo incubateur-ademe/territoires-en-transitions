@@ -70,7 +70,7 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
       id: 'actions-liees',
     },
     {
-      label: 'Mesures des référentiels liées',
+      label: 'Mesures liées',
       isVisible:
         hasPermission(permissions, 'referentiels.read') ||
         (!niveauAcces &&

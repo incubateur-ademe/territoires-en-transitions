@@ -16,6 +16,8 @@ type RichTextViewProps = {
   textColor?: 'white' | 'grey';
   /** Libellé du placeholder */
   placeholder?: string;
+  /** Si true, l'éditeur prend la hauteur nécessaire pour afficher tout le contenu sans troncature */
+  autoSize?: boolean;
 };
 
 export const RichTextView = ({
@@ -23,6 +25,7 @@ export const RichTextView = ({
   maxHeight = 'lg',
   textColor = 'white',
   placeholder = 'Non renseignés',
+  autoSize = false,
 }: RichTextViewProps) => {
   const [showLess, setShowLess] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
@@ -31,7 +34,8 @@ export const RichTextView = ({
   // (pas assez de place en hauteur pour l'afficher) OU que le bouton 'voir plus"
   // à été cliqué et que donc le contenu n'est plus tronqué mais peut l'être
   // à nouveau.
-  const showButton = isTruncated || showLess;
+  // Si autoSize est activé, on n'affiche jamais le bouton
+  const showButton = !autoSize && (isTruncated || showLess);
 
   return (
     <div className="flex-auto flex-col">
@@ -39,14 +43,14 @@ export const RichTextView = ({
         <RichTextEditor
           disabled
           className={cn('!bg-transparent border-none !p-0', {
-            'overflow-hidden': !showLess,
-            'max-h-[23rem]': !showLess && maxHeight === 'lg',
-            'max-h-[8rem]': !showLess && maxHeight === 'sm',
+            'overflow-hidden': !autoSize && !showLess,
+            'max-h-[23rem]': !autoSize && !showLess && maxHeight === 'lg',
+            'max-h-[8rem]': !autoSize && !showLess && maxHeight === 'sm',
             '!text-grey-1': textColor === 'white',
             '!text-grey-8': textColor === 'grey',
           })}
           initialValue={content}
-          setIsTruncated={setIsTruncated}
+          setIsTruncated={autoSize ? undefined : setIsTruncated}
         />
       ) : (
         <span
