@@ -925,3 +925,5 @@ notes_complementaires_column_deletion 2025-11-18T13:57:03Z System Administrator 
 plan_action/add_fiche_recursive_axe_view 2025-11-26T10:23:50Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Ajout d'une vue pour avoir tous les axes d'une fiche y compris les parents
 plan_action/add_report_generation_table 2026-01-05T14:33:48Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Ajout de la table report generation
 @v4.93.0 2026-01-05T19:33:56Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # generation de rapports
+
+plan_action/axe_indicateur 2025-11-18T13:34:39Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute le lien entre indicateur et axe d'un plan d'action

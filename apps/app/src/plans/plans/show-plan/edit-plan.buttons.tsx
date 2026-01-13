@@ -2,7 +2,7 @@
 import { useCreateFicheResume } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
 import { PlanNode } from '@tet/domain/plans';
 import { Button, VisibleWhen } from '@tet/ui';
-import { useUpsertAxe } from './data/use-upsert-axe';
+import { useCreateAxe } from './data/use-create-axe';
 
 type Props = {
   plan: PlanNode;
@@ -17,10 +17,10 @@ export const EditPlanButtons = ({
   collectiviteId,
   availableActions = ['addAxe', 'createFicheResume'],
 }: Props) => {
-  const { mutate: addAxe } = useUpsertAxe({
+  const { mutate: createAxe } = useCreateAxe({
+    collectiviteId,
     parentAxe: currentAxe ?? plan,
     planId: plan.id,
-    mutationKey: ['create_axe'],
   });
   const { mutate: createFicheResume } = useCreateFicheResume({
     collectiviteId,
@@ -36,13 +36,7 @@ export const EditPlanButtons = ({
         dataTest="AjouterAxe"
         size="xs"
         variant="outlined"
-        onClick={() =>
-          canAddAxe &&
-          addAxe({
-            collectivite_id: collectiviteId,
-            parent: currentAxe?.id ?? plan.id,
-          })
-        }
+        onClick={() => canAddAxe && createAxe()}
       >
         Ajouter un nouveau titre/axe
       </Button>
