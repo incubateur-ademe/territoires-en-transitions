@@ -25,30 +25,32 @@ const columnHelper = createColumnHelper<FicheWithRelations>();
 const columns = [
   columnHelper.accessor('titre', {
     header: () => <TableHeaderCell title="Titre" className="w-80" />,
-    cell: (info) => <SousActionCellTitle fiche={info.row.original} />,
+    cell: (info) => <SousActionCellTitle sousAction={info.row.original} />,
   }),
   columnHelper.accessor('description', {
     header: () => (
       <TableHeaderCell title="Description" className="max-2xl:w-[32rem]" />
     ),
-    cell: (info) => <SousActionCellDescription fiche={info.row.original} />,
+    cell: (info) => (
+      <SousActionCellDescription sousAction={info.row.original} />
+    ),
   }),
   columnHelper.accessor('statut', {
     header: () => <TableHeaderCell title="Statut" className="w-48" />,
-    cell: (info) => <SousActionCellStatut fiche={info.row.original} />,
+    cell: (info) => <SousActionCellStatut sousAction={info.row.original} />,
   }),
   columnHelper.accessor('pilotes', {
     header: () => <TableHeaderCell title="Pilotes" className="w-52" />,
-    cell: (info) => <SousActionCellPilotes fiche={info.row.original} />,
+    cell: (info) => <SousActionCellPilotes sousAction={info.row.original} />,
   }),
   columnHelper.accessor('dateFin', {
     header: () => <TableHeaderCell title="Date de fin" className="w-32" />,
-    cell: (info) => <SousActionCellDate fiche={info.row.original} />,
+    cell: (info) => <SousActionCellDate sousAction={info.row.original} />,
   }),
   columnHelper.display({
     id: 'actions',
     header: () => <TableHeaderCell className="w-16" icon="more-2-line" />,
-    cell: (info) => <SousActionCellActions fiche={info.row.original} />,
+    cell: (info) => <SousActionCellActions sousAction={info.row.original} />,
   }),
 ];
 

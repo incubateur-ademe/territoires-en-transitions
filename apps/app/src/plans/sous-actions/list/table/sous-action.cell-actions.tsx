@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { SousActionDeleteModal } from '../../sous-action.delete-modal';
 
 type Props = {
-  fiche: FicheWithRelations;
+  sousAction: FicheWithRelations;
 };
 
-export const SousActionCellActions = ({ fiche }: Props) => {
+export const SousActionCellActions = ({ sousAction }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -20,7 +20,10 @@ export const SousActionCellActions = ({ fiche }: Props) => {
         onClick={() => setIsOpen(true)}
         title="Supprimer la sous-action"
       />
-      <SousActionDeleteModal id={fiche.id} openState={{ isOpen, setIsOpen }} />
+      <SousActionDeleteModal
+        id={sousAction.id}
+        openState={{ isOpen, setIsOpen }}
+      />
     </TableCell>
   );
 };
