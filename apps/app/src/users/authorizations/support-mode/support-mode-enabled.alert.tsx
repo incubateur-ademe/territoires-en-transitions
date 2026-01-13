@@ -11,7 +11,7 @@ export function SupportModeEnabledAlert() {
           <ToggleSupportModeCheckbox />
           <span>
             Vous avez des permissions administrateur sur toutes les
-            collectivités. Agissez avec précaution.
+            collectivités. Prudence ⛑️
           </span>
         </div>
       }
