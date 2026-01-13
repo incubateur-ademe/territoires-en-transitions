@@ -59,23 +59,33 @@ export const Breadcrumbs = ({
   axes,
   planId,
 }: FichesBreadcrumbsProps) => {
-  const currentPlanAxe = axes.find((a) => a.planId === planId);
-  const otherPlansWhereFicheIsLocated = axes.filter(
-    (axe) =>
-      axe.id !== currentPlanAxe?.id && axe.collectiviteId === collectiviteId
+  const plansWhereFicheIsLocated = axes.filter(
+    (axe) => axe.collectiviteId === collectiviteId
   );
-  const isFicheInOtherPlans = otherPlansWhereFicheIsLocated.length > 0;
 
+  const currentPlanAxe = plansWhereFicheIsLocated.find(
+    (axe) => axe.planId === planId
+  );
+  const otherPlansWhereFicheIsLocated = plansWhereFicheIsLocated.filter(
+    (axe) => axe.id !== currentPlanAxe?.id
+  );
+
+  const plansToDisplay = [
+    currentPlanAxe,
+    ...otherPlansWhereFicheIsLocated,
+  ].filter((axe): axe is Axe => axe !== undefined);
+
+  const [firstPlan, ...otherPlans] = plansToDisplay;
   return (
     <>
       <BasicBreadcrumbs
         title={title}
         collectiviteId={collectiviteId}
-        planId={currentPlanAxe?.id}
+        planId={firstPlan?.id}
       />
-      <VisibleWhen condition={isFicheInOtherPlans}>
+      <VisibleWhen condition={plansToDisplay.length > 1}>
         <OtherPlansBreadcrumbs
-          plans={otherPlansWhereFicheIsLocated}
+          plans={otherPlans}
           title={title}
           collectiviteId={collectiviteId}
         />
