@@ -27,21 +27,29 @@ export const InlineEditableItem = ({
   isReadonly,
   renderOnEdit,
 }: {
-  icon: string | React.ReactNode;
-  label?: string;
+  icon?: string | React.ReactNode;
+  label?: string | React.ReactNode;
   value: string | React.ReactNode | undefined | null;
   isReadonly: boolean;
   renderOnEdit: (args: {
     openState: { isOpen: boolean; setIsOpen: (v: boolean) => void };
   }) => React.ReactNode;
 }) => {
-  const IconComponent = typeof icon === 'string' ? <Icon icon={icon} /> : icon;
+  const IconComponent = icon ? (
+    typeof icon === 'string' ? (
+      <Icon icon={icon} />
+    ) : (
+      icon
+    )
+  ) : null;
 
   return (
     <div className="text-sm leading-6 font-regular gap-4 mb-1 flex items-center">
-      <div className="w-12 h-12 bg-primary-1 rounded-full self-start flex items-center justify-center flex-none text-primary-8 ">
-        {IconComponent}
-      </div>
+      {IconComponent && (
+        <div className="w-12 h-12 bg-primary-1 rounded-full self-start flex items-center justify-center flex-none text-primary-8 ">
+          {IconComponent}
+        </div>
+      )}
       <div className="flex flex-col self-start">
         {label && <div className="text-primary-10">{label}</div>}
         <InlineEditWrapper

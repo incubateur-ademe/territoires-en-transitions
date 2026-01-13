@@ -10,6 +10,9 @@ import { InlineEditableItem } from '../editable-item';
 import { DescriptionFormValues } from './description-schema';
 import { getFieldLabel } from './labels';
 
+const MainTitle = ({ children }: { children: React.ReactNode }) => {
+  return <div className="text-primary-10 font-bold text-lg">{children}</div>;
+};
 export const Description = () => {
   const { fiche, isReadonly, update } = useFicheContext();
   const { control, watch, getValues, setValue } =
@@ -59,8 +62,11 @@ export const Description = () => {
         control={control}
         render={({ field }) => (
           <InlineEditableItem
-            icon="todo-line"
-            label={getFieldLabel('description', fiche.description)}
+            label={
+              <MainTitle>
+                {getFieldLabel('description', fiche.description)}
+              </MainTitle>
+            }
             value={
               <RichTextView
                 content={fiche.description}
@@ -84,8 +90,11 @@ export const Description = () => {
         control={control}
         render={({ field }) => (
           <InlineEditableItem
-            icon="todo-line"
-            label={getFieldLabel('objectifs', fiche.objectifs)}
+            label={
+              <MainTitle>
+                {getFieldLabel('objectifs', fiche.objectifs)}
+              </MainTitle>
+            }
             value={
               <RichTextView
                 content={fiche.objectifs}
