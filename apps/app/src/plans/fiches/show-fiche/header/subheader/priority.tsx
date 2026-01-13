@@ -17,7 +17,7 @@ export const Priority = ({
           <Select
             options={ficheActionNiveauPrioriteOptions}
             values={priority ?? undefined}
-            onChange={async (value) => {
+            onChange={(value) => {
               update({
                 ficheId: fiche.id,
                 ficheFields: {
@@ -28,9 +28,7 @@ export const Priority = ({
             }}
             customItem={(item) => (
               <PriorityBadge
-                priority={
-                  item.value === 'null' ? null : (item.value as Priorite)
-                }
+                priority={isPriorite(item.value) ? item.value : null}
               />
             )}
             buttonClassName="border-0 border-b"
