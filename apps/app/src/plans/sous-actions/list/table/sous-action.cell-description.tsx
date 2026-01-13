@@ -16,15 +16,15 @@ const getTitle = (
 };
 
 type Props = {
-  fiche: FicheWithRelations;
+  sousAction: FicheWithRelations;
 };
 
-export const SousActionCellDescription = ({ fiche }: Props) => {
-  const [value, setValue] = useState(fiche.description);
+export const SousActionCellDescription = ({ sousAction }: Props) => {
+  const [value, setValue] = useState(sousAction.description);
 
   const isEmpty = !value || value.trim().length === 0;
 
-  const hasChanged = !isEqual(value, fiche.description);
+  const hasChanged = !isEqual(value, sousAction.description);
 
   const { mutate: updateFiche } = useUpdateFiche();
 
@@ -36,7 +36,7 @@ export const SousActionCellDescription = ({ fiche }: Props) => {
         onClose: () =>
           hasChanged &&
           updateFiche({
-            ficheId: fiche.id,
+            ficheId: sousAction.id,
             ficheFields: { description: value?.trim() },
           }),
         renderOnEdit: ({ openState }) => (

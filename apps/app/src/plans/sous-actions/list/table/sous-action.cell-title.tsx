@@ -7,15 +7,15 @@ import { cn, TableCell, TableCellTextarea } from '@tet/ui';
 import { isEqual } from 'es-toolkit';
 
 type Props = {
-  fiche: FicheWithRelations;
+  sousAction: FicheWithRelations;
 };
 
-export const SousActionCellTitle = ({ fiche }: Props) => {
-  const [value, setValue] = useState(fiche.titre);
+export const SousActionCellTitle = ({ sousAction }: Props) => {
+  const [value, setValue] = useState(sousAction.titre);
 
   const isEmpty = !value || value.trim().length === 0;
 
-  const hasChanged = !isEqual(value, fiche.titre);
+  const hasChanged = !isEqual(value, sousAction.titre);
 
   const { mutate: updateFiche } = useUpdateFiche();
 
@@ -27,7 +27,7 @@ export const SousActionCellTitle = ({ fiche }: Props) => {
         onClose: () =>
           hasChanged &&
           updateFiche({
-            ficheId: fiche.id,
+            ficheId: sousAction.id,
             ficheFields: { titre: value?.trim() },
           }),
         renderOnEdit: ({ openState }) => (

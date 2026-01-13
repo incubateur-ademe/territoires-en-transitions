@@ -6,10 +6,10 @@ import { FicheWithRelations } from '@tet/domain/plans';
 import { TableCell } from '@tet/ui';
 
 type Props = {
-  fiche: FicheWithRelations;
+  sousAction: FicheWithRelations;
 };
 
-export const SousActionCellPilotes = ({ fiche }: Props) => {
+export const SousActionCellPilotes = ({ sousAction }: Props) => {
   const { mutate: updateFiche } = useUpdateFiche();
 
   return (
@@ -19,10 +19,10 @@ export const SousActionCellPilotes = ({ fiche }: Props) => {
         renderOnEdit: ({ openState }) => (
           <div className="w-80">
             <PersonnesDropdown
-              values={fiche.pilotes?.map((p) => getPersonneStringId(p))}
+              values={sousAction.pilotes?.map((p) => getPersonneStringId(p))}
               onChange={(pilotes) => {
                 updateFiche({
-                  ficheId: fiche.id,
+                  ficheId: sousAction.id,
                   ficheFields: { pilotes: pilotes.personnes },
                 });
               }}
@@ -33,10 +33,10 @@ export const SousActionCellPilotes = ({ fiche }: Props) => {
         ),
       }}
     >
-      {fiche.pilotes && fiche.pilotes.length > 0 ? (
+      {sousAction.pilotes && sousAction.pilotes.length > 0 ? (
         <ListWithTooltip
-          title={fiche.pilotes[0].nom}
-          list={fiche.pilotes.map((p) => p.nom)}
+          title={sousAction.pilotes[0].nom}
+          list={sousAction.pilotes.map((p) => p.nom)}
           className="text-grey-8"
           renderFirstItem={(item) => (
             <span className="max-w-48 line-clamp-1 text-primary-9">{item}</span>

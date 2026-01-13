@@ -5,10 +5,10 @@ import { FicheWithRelations } from '@tet/domain/plans';
 import { TableCell } from '@tet/ui';
 
 type Props = {
-  fiche: FicheWithRelations;
+  sousAction: FicheWithRelations;
 };
 
-export const SousActionCellStatut = ({ fiche }: Props) => {
+export const SousActionCellStatut = ({ sousAction }: Props) => {
   const { mutate: updateFiche } = useUpdateFiche();
 
   return (
@@ -17,10 +17,10 @@ export const SousActionCellStatut = ({ fiche }: Props) => {
       edit={{
         renderOnEdit: ({ openState }) => (
           <StatutsSelectDropdown
-            values={fiche.statut}
+            values={sousAction.statut}
             onChange={(statut) => {
               updateFiche({
-                ficheId: fiche.id,
+                ficheId: sousAction.id,
                 ficheFields: {
                   statut: statut || null,
                 },
@@ -33,8 +33,8 @@ export const SousActionCellStatut = ({ fiche }: Props) => {
         ),
       }}
     >
-      {fiche.statut ? (
-        <BadgeStatut statut={fiche.statut} size="sm" />
+      {sousAction.statut ? (
+        <BadgeStatut statut={sousAction.statut} size="sm" />
       ) : (
         <span className="text-grey-6">Sélectionner un statut</span>
       )}
