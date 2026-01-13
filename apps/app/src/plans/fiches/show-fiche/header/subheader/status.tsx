@@ -1,7 +1,7 @@
 import { StatusBadge } from '@/app/plans/fiches/show-fiche/components/status.badge';
 import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
 import { ficheActionStatutOptions } from '@/app/ui/dropdownLists/listesStatiques';
-import { Statut } from '@tet/domain/plans';
+import { isStatut, Statut } from '@tet/domain/plans';
 import { InlineEditWrapper, Select } from '@tet/ui';
 
 export const Status = ({ status }: { status: Statut | null }): JSX.Element => {
@@ -16,18 +16,16 @@ export const Status = ({ status }: { status: Statut | null }): JSX.Element => {
             options={ficheActionStatutOptions}
             values={status ?? undefined}
             onChange={async (value) => {
-              await update({
+              update({
                 ficheId: fiche.id,
                 ficheFields: {
-                  statut: value === 'null' ? null : (value as Statut),
+                  statut: isStatut(value) ? value : null,
                 },
               });
               openState.setIsOpen(false);
             }}
             customItem={(item) => (
-              <StatusBadge
-                status={item.value === 'null' ? null : (item.value as Statut)}
-              />
+              <StatusBadge status={isStatut(item.value) ? item.value : null} />
             )}
             buttonClassName="border-0 border-b"
             displayOptionsWithoutFloater
