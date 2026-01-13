@@ -16,7 +16,6 @@ export const permissionsByRole: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['PLANS.READ_PUBLIC'],
   ],
   [UserRole.SUPPORT]: [
-    // Permissions de base SUPPORT
     PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
     PermissionOperationEnum['COLLECTIVITES.READ'],
     PermissionOperationEnum['COLLECTIVITES.MUTATE'],
@@ -49,8 +48,6 @@ export const permissionsByRole: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['REFERENTIELS.MUTATE'],
     PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.READ'],
     PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
-    // Note: Les permissions ADMIN sont déjà incluses ci-dessus.
-    // Le rôle SUPPORT a maintenant toutes les permissions ADMIN + les permissions spécifiques SUPPORT (MUTATE, IMPORT).
   ],
   [UserRole.ADEME]: [
     PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],

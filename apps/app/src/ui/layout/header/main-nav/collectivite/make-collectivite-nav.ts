@@ -1,6 +1,7 @@
 import {
   ajouterCollectiviteUrl,
   getRechercheViewUrl,
+  importerPlanUrl,
   makeCollectiviteAccueilUrl,
   makeCollectiviteModifierUrl,
 } from '@/app/app/paths';
@@ -52,7 +53,7 @@ export const makeCollectiviteNav = ({
   const collectiviteId = currentCollectivite.collectiviteId;
 
   // Le support est actif si l'utilisateur a le rôle support ET que le mode support est actif
-  const isSupport = user.isSupport && user.isSupportModeEnabled;
+  const isSupport = user.isSupportModeEnabled;
 
   const isVisitor = getIsVisitor({
     niveauAcces: currentCollectivite.niveauAcces,
@@ -105,6 +106,10 @@ export const makeCollectiviteNav = ({
       hideWhenNotSupport: true,
       children: 'Support',
       links: [
+        {
+          children: 'Importer un plan',
+          href: importerPlanUrl,
+        },
         {
           children: 'Ajouter une collectivité',
           href: ajouterCollectiviteUrl,
