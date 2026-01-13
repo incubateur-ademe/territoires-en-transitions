@@ -1,6 +1,5 @@
 'use client';
 import { CreatePlanButton } from '@/app/plans/plans/create-plan/components/create-plan.button';
-import { ImportPlanButton } from '@/app/plans/plans/import-plan/import-plan.button';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { EmptyAllPlansVisitorView } from '@/app/plans/plans/list-all-plans/empty-all-plans-visitor.view';
 import { EmptyAllPlansView } from '@/app/plans/plans/list-all-plans/empty-all-plans.view';
@@ -47,7 +46,6 @@ export const AllPlansView = ({ collectiviteId, panierId }: Props) => {
                 {'Créer un plan'}
               </CreatePlanButton>
             </VisibleWhen>
-            <ImportPlanButton collectiviteId={collectiviteId} />
           </div>
         }
       />
