@@ -1,4 +1,3 @@
-import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import { getFormattedNumber } from '@/app/utils/formatUtils';
 import { FicheBudgetCreate } from '@tet/domain/plans';
 import { Button, Field, Input, OptionValue, Select } from '@tet/ui';
@@ -6,6 +5,7 @@ import classNames from 'classnames';
 import { noop } from 'es-toolkit';
 import { useEffect } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { getYearsOptions } from '../../../utils';
 
 type DetailedBudgetFormProps = {
   budgets: FicheBudgetCreate[];

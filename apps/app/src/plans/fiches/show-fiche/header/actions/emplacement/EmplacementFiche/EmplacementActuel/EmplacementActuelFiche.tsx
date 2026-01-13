@@ -1,15 +1,10 @@
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useFicheContext } from '../../../../../context/fiche-context';
 import CheminEmplacement from './CheminEmplacement';
 
-type EmplacementActuelFicheProps = {
-  fiche: Fiche;
-};
-
-const EmplacementActuelFiche = ({ fiche }: EmplacementActuelFicheProps) => {
+const EmplacementActuelFiche = () => {
   const collectiviteId = useCollectiviteId();
-  const { update } = useFicheContext();
+  const { update, fiche } = useFicheContext();
 
   const filteredAxes = fiche.axes?.filter(
     (axe) => axe.collectiviteId === collectiviteId
