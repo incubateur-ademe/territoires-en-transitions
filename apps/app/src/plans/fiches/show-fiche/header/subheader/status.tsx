@@ -15,7 +15,7 @@ export const Status = ({ status }: { status: Statut | null }): JSX.Element => {
           <Select
             options={ficheActionStatutOptions}
             values={status ?? undefined}
-            onChange={async (value) => {
+            onChange={(value) => {
               update({
                 ficheId: fiche.id,
                 ficheFields: {
