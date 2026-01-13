@@ -1,14 +1,31 @@
 import EffetsAttendusDropdown from '@/app/ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import { useGetThematiqueAndSousThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
-import { SelectMultiple, Textarea } from '@tet/ui';
+import { RichTextEditor, RichTextView, SelectMultiple } from '@tet/ui';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useFicheContext } from '../../../context/fiche-context';
-import { TemporaryEditableItem } from '../layout';
+import { InlineEditableItem } from '../editable-item';
 import { DescriptionFormValues } from './description-schema';
 import { getFieldLabel } from './labels';
 
+const RichTextEditorWithDebounce = ({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) => {
+  return (
+    <RichTextEditor
+      initialValue={value}
+      onChange={onChange}
+      //500 seems like a valid debounce to allow a correct editing.
+      //using 0 leads to unwanted text trimming when used in a controller
+      debounceDelayOnChange={500}
+    />
+  );
+};
 export const Description = () => {
   const { fiche, isReadonly, update } = useFicheContext();
   const { control, watch, getValues, setValue } =
@@ -53,147 +70,168 @@ export const Description = () => {
 
   return (
     <>
-      <TemporaryEditableItem
-        icon="todo-line"
-        label={getFieldLabel('description', fiche.description)}
-        value={fiche.description}
-        isReadonly={isReadonly}
-        editComponent={(onBlur) => (
-          <Controller
-            name="description"
-            control={control}
-            render={({ field }) => (
-              <Textarea
-                tabIndex={0}
-                autoFocus
+      <Controller
+        name="description"
+        control={control}
+        render={({ field }) => (
+          <InlineEditableItem
+            icon="todo-line"
+            label={getFieldLabel('description', fiche.description)}
+            value={
+              <RichTextView
+                content={fiche.description}
+                textColor="grey"
+                placeholder="À renseigner"
+                autoSize
+              />
+            }
+            isReadonly={isReadonly}
+            renderOnEdit={() => (
+              <RichTextEditorWithDebounce
                 value={field.value ?? ''}
                 onChange={(value) => field.onChange(value)}
-                onBlur={onBlur}
               />
             )}
           />
         )}
       />
-      <TemporaryEditableItem
-        icon="line-chart-line"
-        label={getFieldLabel('effetsAttendus', fiche.effetsAttendus)}
-        value={
-          fiche.effetsAttendus
-            ? fiche.effetsAttendus.map((effet) => effet.nom).join(', ')
-            : undefined
-        }
-        isReadonly={isReadonly}
-        editComponent={() => (
-          <Controller
-            name="effetsAttendus"
-            control={control}
-            render={({ field }) => (
-              <div className="flex-1">
+      <Controller
+        name="objectifs"
+        control={control}
+        render={({ field }) => (
+          <InlineEditableItem
+            icon="todo-line"
+            label={getFieldLabel('objectifs', fiche.objectifs)}
+            value={
+              <RichTextView
+                content={fiche.objectifs}
+                textColor="grey"
+                placeholder="À renseigner"
+                autoSize
+              />
+            }
+            isReadonly={isReadonly}
+            renderOnEdit={() => (
+              <RichTextEditorWithDebounce
+                value={field.value ?? ''}
+                onChange={(value) => field.onChange(value)}
+              />
+            )}
+          />
+        )}
+      />
+      <div className="grid grid-cols-2 gap-4">
+        <Controller
+          name="effetsAttendus"
+          control={control}
+          render={({ field }) => (
+            <InlineEditableItem
+              icon="line-chart-line"
+              label={getFieldLabel('effetsAttendus', fiche.effetsAttendus)}
+              value={
+                fiche.effetsAttendus
+                  ? fiche.effetsAttendus.map((effet) => effet.nom).join(', ')
+                  : undefined
+              }
+              isReadonly={isReadonly}
+              renderOnEdit={({ openState }) => (
                 <EffetsAttendusDropdown
                   values={field.value ?? undefined}
-                  onChange={({ effets }) => field.onChange(effets)}
+                  onChange={({ effets }) => {
+                    field.onChange(effets);
+                    openState.setIsOpen(false);
+                  }}
                 />
-              </div>
-            )}
-          />
-        )}
-      />
-      <TemporaryEditableItem
-        icon="todo-line"
-        label={getFieldLabel('objectifs', fiche.objectifs)}
-        value={fiche.objectifs}
-        isReadonly={isReadonly}
-        editComponent={(onBlur) => (
-          <Controller
-            name="objectifs"
-            control={control}
-            render={({ field }) => (
-              <Textarea
-                tabIndex={0}
-                autoFocus
-                value={field.value ?? ''}
-                onChange={(value) => field.onChange(value)}
-                onBlur={onBlur}
-              />
-            )}
-          />
-        )}
-      />
-      <TemporaryEditableItem
-        icon="folder-line"
-        label={getFieldLabel('thematiques', selectedThematiques)}
-        value={
-          selectedThematiques?.map((thematique) => thematique.nom).join(', ') ??
-          undefined
-        }
-        isReadonly={isReadonly}
-        editComponent={() => (
-          <Controller
-            name="thematiques"
-            control={control}
-            render={({ field }) => (
-              <SelectMultiple
-                options={thematiqueOptions}
-                values={field.value?.map((thematique) => thematique.id)}
-                onChange={({ values }) =>
-                  field.onChange(
-                    thematiqueListe.filter((thematique) =>
-                      values?.some((v) => v === thematique.id)
-                    )
-                  )
-                }
-              />
-            )}
-          />
-        )}
-      />
-      <TemporaryEditableItem
-        icon="folders-line"
-        label={getFieldLabel('sousThematiques', selectedSousThematiques)}
-        value={
-          selectedSousThematiques
-            ?.map((sousThematique) => sousThematique.nom)
-            .join(', ') ?? undefined
-        }
-        isReadonly={isReadonly}
-        editComponent={() => (
-          <Controller
-            name="sousThematiques"
-            control={control}
-            render={({ field }) => (
-              <SelectMultiple
-                options={sousThematiqueOptions}
-                values={field.value?.map((sousThematique) => sousThematique.id)}
-                onChange={({ values }) =>
-                  field.onChange(
-                    sousThematiqueListe.filter((sousThematique) =>
-                      values?.some((v) => v === sousThematique.id)
-                    )
-                  )
-                }
-              />
-            )}
-          />
-        )}
-      />
-      <TemporaryEditableItem
-        icon="bookmark-line"
-        label={getFieldLabel('libreTags', selectedLibreTags)}
-        value={selectedLibreTags?.map((tag) => tag.nom).join(', ') ?? undefined}
-        isReadonly={isReadonly}
-        editComponent={() => (
-          <Controller
-            name="libreTags"
-            control={control}
-            render={({ field }) => (
-              <TagsSuiviPersoDropdown
-                values={(field.value ?? []).map((tag) => tag.id)}
-                onChange={({ libresTag }) => field.onChange(libresTag)}
-              />
-            )}
-          />
-        )}
-      />
+              )}
+            />
+          )}
+        />
+        <Controller
+          name="thematiques"
+          control={control}
+          render={({ field }) => (
+            <InlineEditableItem
+              icon="folder-line"
+              label={getFieldLabel('thematiques', selectedThematiques)}
+              value={
+                selectedThematiques
+                  ?.map((thematique) => thematique.nom)
+                  .join(', ') ?? undefined
+              }
+              isReadonly={isReadonly}
+              renderOnEdit={({ openState }) => (
+                <SelectMultiple
+                  options={thematiqueOptions}
+                  values={field.value?.map((thematique) => thematique.id)}
+                  onChange={({ values }) => {
+                    field.onChange(
+                      thematiqueListe.filter((thematique) =>
+                        values?.some((v) => v === thematique.id)
+                      )
+                    );
+                    openState.setIsOpen(false);
+                  }}
+                />
+              )}
+            />
+          )}
+        />
+        <Controller
+          name="sousThematiques"
+          control={control}
+          render={({ field }) => (
+            <InlineEditableItem
+              icon="folders-line"
+              label={getFieldLabel('sousThematiques', selectedSousThematiques)}
+              value={
+                selectedSousThematiques
+                  ?.map((sousThematique) => sousThematique.nom)
+                  .join(', ') ?? undefined
+              }
+              isReadonly={isReadonly}
+              renderOnEdit={({ openState }) => (
+                <SelectMultiple
+                  options={sousThematiqueOptions}
+                  values={field.value?.map(
+                    (sousThematique) => sousThematique.id
+                  )}
+                  onChange={({ values }) => {
+                    field.onChange(
+                      sousThematiqueListe.filter((sousThematique) =>
+                        values?.some((v) => v === sousThematique.id)
+                      )
+                    );
+                    openState.setIsOpen(false);
+                  }}
+                />
+              )}
+            />
+          )}
+        />
+        <Controller
+          name="libreTags"
+          control={control}
+          render={({ field }) => (
+            <InlineEditableItem
+              icon="bookmark-line"
+              label={getFieldLabel('libreTags', selectedLibreTags)}
+              value={
+                selectedLibreTags?.map((tag) => tag.nom).join(', ') ?? undefined
+              }
+              isReadonly={isReadonly}
+              renderOnEdit={({ openState }) => (
+                <TagsSuiviPersoDropdown
+                  values={(field.value ?? []).map((tag) => tag.id)}
+                  onChange={({ libresTag }) => {
+                    field.onChange(libresTag);
+                    openState.setIsOpen(false);
+                  }}
+                />
+              )}
+            />
+          )}
+        />
+      </div>
     </>
   );
 };

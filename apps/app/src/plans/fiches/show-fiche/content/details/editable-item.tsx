@@ -42,7 +42,7 @@ export const InlineEditableItem = ({
       <div className="w-12 h-12 bg-primary-1 rounded-full self-start flex items-center justify-center flex-none text-primary-8 ">
         {IconComponent}
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col self-start">
         {label && <div className="text-primary-10">{label}</div>}
         <InlineEditWrapper
           disabled={isReadonly}
