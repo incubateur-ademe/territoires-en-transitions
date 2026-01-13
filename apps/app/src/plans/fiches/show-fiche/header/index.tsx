@@ -27,7 +27,7 @@ export const Header = () => {
   return (
     <EditionModalManagerProvider>
       <div className="w-full mb-6" data-test="fiche-header">
-        <div className="flex flex-col-reverse gap-4 lg:flex-row lg:items-start">
+        <div className="flex gap-4 flex-row lg:items-start">
           <div className="flex-1">
             <EditableTitle
               title={titre}
