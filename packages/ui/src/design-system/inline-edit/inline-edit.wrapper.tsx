@@ -18,7 +18,9 @@ import { cn } from '../../utils/cn';
 import { OpenState } from '../../utils/types';
 
 export type InlineEditWrapperProps = {
-  children: React.ReactElement;
+  children:
+    | React.ReactElement
+    | ((props: React.ComponentProps<'button'>) => React.ReactNode);
   renderOnEdit: ({ openState }: { openState: OpenState }) => React.ReactNode;
   openState?: OpenState;
   onClose?: () => void;
@@ -74,21 +76,22 @@ export const InlineEditWrapper = ({
     useDismiss(context),
   ]);
 
+  const isChildrenFunction = typeof children === 'function';
+  const inlineProps = getReferenceProps({
+    ref: refs.setReference,
+    tabIndex: disabled ? undefined : 0,
+    ...(isChildrenFunction ? {} : children.props),
+    className: cn(
+      'cursor-pointer',
+      { 'cursor-default': disabled },
+      isChildrenFunction ? undefined : children.props.className
+    ),
+  });
   return (
     <>
-      {cloneElement(
-        children,
-        getReferenceProps({
-          ref: refs.setReference,
-          tabIndex: disabled ? undefined : 0,
-          ...children.props,
-          className: cn(
-            'cursor-pointer',
-            { 'cursor-default': disabled },
-            children.props.className
-          ),
-        })
-      )}
+      {isChildrenFunction
+        ? children({ ...inlineProps })
+        : cloneElement(children, inlineProps)}
       {renderOnEdit && isOpen && (
         <FloatingPortal>
           <FloatingOverlay lockScroll />
