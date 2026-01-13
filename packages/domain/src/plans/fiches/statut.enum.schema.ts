@@ -23,4 +23,8 @@ export const statutEnumValues = [
 ] as const;
 
 export const statutEnumSchema = z.enum(statutEnumValues);
+export const isStatut = (maybeStatut: unknown): maybeStatut is Statut =>
+  typeof maybeStatut === 'string' &&
+  statutEnumValues.includes(maybeStatut as Statut);
+
 export type Statut = z.infer<typeof statutEnumSchema>;
