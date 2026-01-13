@@ -38,7 +38,7 @@ export const Planning = () => {
 
   const { renderToast, setToast } = useBaseToast();
 
-  const { control, watch, formState, handleSubmit, subscribe } =
+  const { control, watch, formState, handleSubmit, subscribe, setValue } =
     useForm<PlanningFormValues>({
       resolver: standardSchemaResolver(planningFormSchema),
       mode: 'onChange',
@@ -50,6 +50,8 @@ export const Planning = () => {
         calendrier: fiche.calendrier,
       },
     });
+
+  const ameliorationContinue = watch('ameliorationContinue');
 
   const onSubmit = useCallback(
     async (
@@ -163,39 +165,31 @@ export const Planning = () => {
               control={control}
               name="dateFin"
               render={({ field, formState }) => {
-                const ameliorationContinue = watch('ameliorationContinue');
                 const isDateFinEditable = !isReadonly && !ameliorationContinue;
                 return (
                   <InlineEditWrapper
                     disabled={!isDateFinEditable}
                     renderOnEdit={({ openState }) => (
-                      <div className="min-w-[200px] p-3">
-                        <Input
-                          type="date"
-                          min="1900-01-01"
-                          max="2100-01-01"
-                          autoFocus
-                          value={
-                            field.value ? format(field.value, 'yyyy-MM-dd') : ''
+                      <Input
+                        type="date"
+                        min="1900-01-01"
+                        max="2100-01-01"
+                        autoFocus
+                        value={
+                          field.value ? format(field.value, 'yyyy-MM-dd') : ''
+                        }
+                        onChange={(e) => {
+                          field.onChange(
+                            e.target.value ? new Date(e.target.value) : null
+                          );
+                        }}
+                        onBlur={() => openState.setIsOpen(false)}
+                        onKeyDown={(evt) => {
+                          if (evt.key === 'Enter' || evt.key === 'Escape') {
+                            openState.setIsOpen(false);
                           }
-                          onChange={(e) => {
-                            field.onChange(
-                              e.target.value ? new Date(e.target.value) : null
-                            );
-                          }}
-                          onBlur={() => openState.setIsOpen(false)}
-                          onKeyDown={(evt) => {
-                            if (evt.key === 'Enter' || evt.key === 'Escape') {
-                              openState.setIsOpen(false);
-                            }
-                          }}
-                        />
-                        {formState.errors.dateFin?.message && (
-                          <div className="text-error-3 text-xs mt-1">
-                            {formState.errors.dateFin.message}
-                          </div>
-                        )}
-                      </div>
+                        }}
+                      />
                     )}
                   >
                     <span
@@ -282,6 +276,13 @@ export const Planning = () => {
                 onChange={(value) => {
                   const isChecked = value === 'true';
                   field.onChange(isChecked);
+                  // If amélioration continue is enabled, clear dateFin
+                  if (isChecked) {
+                    setValue('dateFin', null, {
+                      shouldValidate: true,
+                      shouldDirty: false,
+                    });
+                  }
                   openState.setIsOpen(false);
                 }}
                 buttonClassName="border-0 border-b"
