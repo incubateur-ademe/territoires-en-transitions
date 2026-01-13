@@ -1,7 +1,7 @@
 import { PriorityBadge } from '@/app/plans/fiches/show-fiche/components/priority.badge';
 import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
 import { ficheActionNiveauPrioriteOptions } from '@/app/ui/dropdownLists/listesStatiques';
-import { Priorite } from '@tet/domain/plans';
+import { isPriorite, Priorite } from '@tet/domain/plans';
 import { InlineEditWrapper, Select } from '@tet/ui';
 export const Priority = ({
   priority,
@@ -18,10 +18,10 @@ export const Priority = ({
             options={ficheActionNiveauPrioriteOptions}
             values={priority ?? undefined}
             onChange={async (value) => {
-              await update({
+              update({
                 ficheId: fiche.id,
                 ficheFields: {
-                  priorite: value === 'null' ? null : (value as Priorite),
+                  priorite: isPriorite(value) ? value : null,
                 },
               });
               openState.setIsOpen(false);
