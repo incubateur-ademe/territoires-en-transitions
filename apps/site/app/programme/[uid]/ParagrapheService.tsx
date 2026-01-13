@@ -3,6 +3,7 @@ import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import classNames from 'classnames';
+import { JSX } from 'react';
 import { ParagrapheData } from './types';
 
 const ParagrapheService = ({

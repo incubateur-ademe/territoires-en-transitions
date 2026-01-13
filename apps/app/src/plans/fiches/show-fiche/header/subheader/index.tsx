@@ -4,6 +4,7 @@ import { AccessManagementBadges } from './access-management/access-management.ba
 import { Pilotes } from './pilotes/pilotes.trigger';
 import { Priority } from './priority/priority.trigger';
 import { Status } from './status/status.trigger';
+import { JSX } from 'react';
 
 const Separator = () => {
   return <div className="w-[1px] h-5 bg-grey-5" />;

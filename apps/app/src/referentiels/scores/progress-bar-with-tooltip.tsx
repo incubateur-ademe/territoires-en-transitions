@@ -1,6 +1,7 @@
 import { roundTo } from '@tet/domain/utils';
 import { Tooltip } from '@tet/ui';
 import ProgressBar, { ProgressBarType } from './progress-bar';
+import { JSX } from 'react';
 
 type ProgressBarTooltipContentProps = {
   score: { label: string; value: number; color: string }[];

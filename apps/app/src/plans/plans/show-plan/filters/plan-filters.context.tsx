@@ -147,7 +147,7 @@ export const PlanFiltersProvider = ({
   };
 
   return (
-    <PlanFiltersContext.Provider
+    <PlanFiltersContext
       value={{
         filters,
         setFilters,
@@ -164,7 +164,7 @@ export const PlanFiltersProvider = ({
       }}
     >
       {children}
-    </PlanFiltersContext.Provider>
+    </PlanFiltersContext>
   );
 };
 

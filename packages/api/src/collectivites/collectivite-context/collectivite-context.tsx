@@ -70,7 +70,7 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
   }
 
   return (
-    <CollectiviteContext.Provider
+    <CollectiviteContext
       value={{
         collectiviteId: collectivite?.collectiviteId,
         collectivite,
@@ -78,7 +78,7 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
       }}
     >
       {children}
-    </CollectiviteContext.Provider>
+    </CollectiviteContext>
   );
 }
 

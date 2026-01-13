@@ -1,0 +1,26 @@
+{
+  "name": "@tet/site",
+  "nx": {
+    "name": "site",
+    "targets": {
+      "dev": {
+        "executor": "@nx/next:server",
+        "dependsOn": ["^build"],
+        "options": {
+          "buildTarget": "site:build",
+          "dev": true,
+          "port": 3001,
+          "webpack": true
+        }
+      },
+      "build": {
+        "executor": "@nx/next:build",
+        "dependsOn": ["^build"],
+        "options": {
+          "outputPath": "apps/site/.next",
+          "webpack": true
+        }
+      }
+    }
+  }
+}

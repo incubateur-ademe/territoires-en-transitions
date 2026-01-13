@@ -26,11 +26,9 @@ export function ReferentielProvider({
   });
 
   return (
-    <ReferentielContext.Provider
-      value={{ referentielId, referentielDefinition }}
-    >
+    <ReferentielContext value={{ referentielId, referentielDefinition }}>
       {children}
-    </ReferentielContext.Provider>
+    </ReferentielContext>
   );
 }
 

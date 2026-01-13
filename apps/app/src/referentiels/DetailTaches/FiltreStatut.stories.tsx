@@ -1,4 +1,4 @@
-import { Meta} from '@storybook/nextjs';
+import { Meta} from '@storybook/nextjs-vite';
 import {FiltreStatut} from './FiltreStatut';
 
 export default {

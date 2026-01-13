@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/nextjs';
+import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Button } from '../Button';
 import { ModalFooter, ModalFooterSection } from './ModalFooter';
 

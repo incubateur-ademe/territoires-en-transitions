@@ -1,7 +1,7 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { Checkbox, Divider } from '@tet/ui';
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { JSX, useEffect, useState } from 'react';
 import { ActionJustificationField } from '../action/action.justification-field';
 import TaskCard from './task-card';
 

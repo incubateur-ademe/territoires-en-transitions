@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Meta, StoryObj} from '@storybook/nextjs';
+import {Meta, StoryObj} from '@storybook/nextjs-vite';
 import {Checkbox} from './Checkbox';
 
 const meta: Meta<typeof Checkbox> = {

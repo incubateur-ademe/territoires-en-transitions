@@ -1,4 +1,4 @@
-import {Meta, StoryObj} from '@storybook/nextjs';
+import {Meta, StoryObj} from '@storybook/nextjs-vite';
 import {CollectiviteSelectionnee} from './CollectiviteSelectionnee';
 
 const meta: Meta<typeof CollectiviteSelectionnee> = {

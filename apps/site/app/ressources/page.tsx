@@ -4,6 +4,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import path from 'path';
 import Markdown from 'react-markdown';
+import { JSX } from 'react';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {

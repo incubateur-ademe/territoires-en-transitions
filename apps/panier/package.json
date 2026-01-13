@@ -1,0 +1,26 @@
+{
+  "name": "@tet/panier",
+  "nx": {
+    "name": "panier",
+    "targets": {
+      "dev": {
+        "executor": "@nx/next:server",
+        "dependsOn": ["^build"],
+        "options": {
+          "buildTarget": "panier:build",
+          "dev": true,
+          "port": 3002,
+          "webpack": true
+        }
+      },
+      "build": {
+        "executor": "@nx/next:build",
+        "dependsOn": ["^build"],
+        "options": {
+          "outputPath": "apps/panier/.next",
+          "webpack": true
+        }
+      }
+    }
+  }
+}

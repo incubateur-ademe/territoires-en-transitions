@@ -1,6 +1,26 @@
 {
   "name": "@/app",
   "nx": {
-    "name": "app"
+    "name": "app",
+    "targets": {
+      "dev": {
+        "executor": "@nx/next:server",
+        "dependsOn": ["^build"],
+        "options": {
+          "buildTarget": "app:build",
+          "dev": true,
+          "port": 3000,
+          "webpack": true
+        }
+      },
+      "build": {
+        "executor": "@nx/next:build",
+        "dependsOn": ["^build"],
+        "options": {
+          "outputPath": "apps/app/.next",
+          "webpack": true
+        }
+      }
+    }
   }
 }

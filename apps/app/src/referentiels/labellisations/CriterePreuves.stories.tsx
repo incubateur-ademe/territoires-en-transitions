@@ -1,4 +1,4 @@
-import {StoryFn, Meta} from '@storybook/nextjs';
+import {StoryFn, Meta} from '@storybook/nextjs-vite';
 import {CriterePreuves, TCriterePreuvesProps} from './CriterePreuves';
 import fixture from './fixture.json';
 

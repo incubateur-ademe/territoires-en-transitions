@@ -5,7 +5,7 @@ import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { Button, Event, useEventTracker } from '@tet/ui';
-import { useState } from 'react';
+import { JSX, useState } from 'react';
 import { TableOptions } from 'react-table';
 import { ProgressionRow } from '../../DEPRECATED_scores.types';
 import { AccueilCard } from '../AccueilCard';
