@@ -7,11 +7,11 @@ import { FicheWithRelations, isFicheOnTime } from '@tet/domain/plans';
 import { cn, Icon, Input, TableCell } from '@tet/ui';
 
 type Props = {
-  fiche: FicheWithRelations;
+  sousAction: FicheWithRelations;
 };
 
-export const SousActionCellDate = ({ fiche }: Props) => {
-  const initialDate = fiche.dateFin ?? '';
+export const SousActionCellDate = ({ sousAction }: Props) => {
+  const initialDate = sousAction.dateFin ?? '';
 
   const [value, setValue] = useState(initialDate);
 
@@ -24,8 +24,8 @@ export const SousActionCellDate = ({ fiche }: Props) => {
   const hasChanged = !isEqual(new Date(value), new Date(initialDate));
 
   const isLate = !isFicheOnTime({
-    dateFin: fiche.dateFin,
-    statut: fiche.statut,
+    dateFin: sousAction.dateFin,
+    statut: sousAction.statut,
   });
 
   return (
@@ -35,7 +35,7 @@ export const SousActionCellDate = ({ fiche }: Props) => {
         onClose: () =>
           hasChanged &&
           updateFiche({
-            ficheId: fiche.id,
+            ficheId: sousAction.id,
             ficheFields: {
               dateFin: isValidDate ? value : null,
             },
@@ -53,14 +53,14 @@ export const SousActionCellDate = ({ fiche }: Props) => {
         ),
       }}
     >
-      {fiche.dateFin ? (
+      {sousAction.dateFin ? (
         <span
           className={cn('flex items-baseline gap-2 text-primary-9', {
             'text-error-1': isLate,
           })}
         >
           <Icon icon="calendar-line" size="sm" />
-          {format(new Date(fiche.dateFin), 'dd/MM/yyyy')}
+          {format(new Date(sousAction.dateFin), 'dd/MM/yyyy')}
         </span>
       ) : (
         <div className="text-center text-grey-6">-</div>
