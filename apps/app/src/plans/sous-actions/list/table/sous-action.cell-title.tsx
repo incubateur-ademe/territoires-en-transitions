@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { cn, TableCell, TableCellTextarea } from '@tet/ui';
 import { isEqual } from 'es-toolkit';
@@ -11,6 +12,8 @@ type Props = {
 };
 
 export const SousActionCellTitle = ({ sousAction }: Props) => {
+  const { isReadOnly } = useCurrentCollectivite();
+
   const [value, setValue] = useState(sousAction.titre);
 
   const isEmpty = !value || value.trim().length === 0;
@@ -22,7 +25,7 @@ export const SousActionCellTitle = ({ sousAction }: Props) => {
   return (
     <TableCell
       className="align-top"
-      canEdit
+      canEdit={!isReadOnly}
       edit={{
         onClose: () =>
           hasChanged &&

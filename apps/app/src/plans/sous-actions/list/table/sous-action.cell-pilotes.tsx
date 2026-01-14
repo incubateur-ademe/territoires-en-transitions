@@ -2,6 +2,7 @@ import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { TableCell } from '@tet/ui';
 
@@ -10,11 +11,13 @@ type Props = {
 };
 
 export const SousActionCellPilotes = ({ sousAction }: Props) => {
+  const { isReadOnly } = useCurrentCollectivite();
+
   const { mutate: updateFiche } = useUpdateFiche();
 
   return (
     <TableCell
-      canEdit
+      canEdit={!isReadOnly}
       edit={{
         renderOnEdit: ({ openState }) => (
           <div className="w-80">
@@ -43,7 +46,9 @@ export const SousActionCellPilotes = ({ sousAction }: Props) => {
           )}
         />
       ) : (
-        <span className="text-grey-6">Sélectionner des pilotes</span>
+        <span className="text-grey-6">
+          {isReadOnly ? '' : 'Sélectionner des pilotes'}
+        </span>
       )}
     </TableCell>
   );

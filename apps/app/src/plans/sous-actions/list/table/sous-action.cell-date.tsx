@@ -3,6 +3,7 @@ import { isEqual } from 'es-toolkit';
 import { useRef, useState } from 'react';
 
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations, isFicheOnTime } from '@tet/domain/plans';
 import { cn, Icon, Input, TableCell } from '@tet/ui';
 
@@ -11,6 +12,8 @@ type Props = {
 };
 
 export const SousActionCellDate = ({ sousAction }: Props) => {
+  const { isReadOnly } = useCurrentCollectivite();
+
   const initialDate = sousAction.dateFin ?? '';
 
   const [value, setValue] = useState(initialDate);
@@ -30,7 +33,7 @@ export const SousActionCellDate = ({ sousAction }: Props) => {
 
   return (
     <TableCell
-      canEdit
+      canEdit={!isReadOnly}
       edit={{
         onClose: () =>
           hasChanged &&
@@ -63,7 +66,9 @@ export const SousActionCellDate = ({ sousAction }: Props) => {
           {format(new Date(sousAction.dateFin), 'dd/MM/yyyy')}
         </span>
       ) : (
-        <div className="text-center text-grey-6">-</div>
+        <div className="text-center text-grey-6">
+          {isReadOnly ? '' : 'Sélectionner une date'}
+        </div>
       )}
     </TableCell>
   );
