@@ -97,7 +97,7 @@ const MoveFicheModal = ({
 }: MoveFicheModalProps) => {
   const collectiviteId = useCollectiviteId();
   const { plans } = useListPlans(collectiviteId);
-  const { mutate: updateFiche } = useUpdateFiche();
+  const { mutateAsync: updateFiche } = useUpdateFiche({ invalidatePlanId: planId });
 
   const { currentPlan, currentAxeInPlan } = findCurrentPlanAndAxe(
     plans,
@@ -107,7 +107,12 @@ const MoveFicheModal = ({
   );
 
   // gestion de la sélection d'un emplacement
-  const { selectedAxes, setSelectedAxes, handleSelectAxe } = useSelectAxes();
+  const {
+    selectedAxes,
+    setSelectedAxes,
+    handleSelectAxe,
+    openParentAxesAndScrollToElement,
+  } = useSelectAxes();
 
   // pour éviter de faire l'initialisation en boucle
   const initSelectionKeyRef = useRef<string | null>(null);
@@ -134,8 +139,33 @@ const MoveFicheModal = ({
     setSelectedAxes,
   ]);
 
+  // évite de conserver l'état après la fermeture du dialogue
+  useEffect(() => {
+    if (!openState.isOpen) {
+      initSelectionKeyRef.current = null;
+    }
+  }, [openState.isOpen]);
+
+  // scroll automatique horizontal jusqu'à l'axe sélectionné après l'initialisation
+  useEffect(() => {
+    if (openState.isOpen && selectedAxes.length > 0) {
+      // le setTimeout permet d'attendre que la mise à jour de 'selectedAxes' soit terminée
+      // et que les colonnes soient bien affichées avant de scroller
+      setTimeout(() => {
+        const lastSelectedAxe = selectedAxes[selectedAxes.length - 1];
+        const element = document.getElementById(
+          lastSelectedAxe.axe.id.toString()
+        );
+
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', inline: 'end' });
+        }
+      }, 0);
+    }
+  }, [openState.isOpen, selectedAxes]);
+
   // sauvegarde du déplacement de la fiche
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!selectedAxes.length) {
       return;
     }
@@ -160,14 +190,15 @@ const MoveFicheModal = ({
     // ajoute le nouvel axe du plan courant
     const updatedAxes = [...axesFromOtherPlans, { id: newAxeId }];
 
-    updateFiche({
+    await updateFiche({
       ficheId: fiche.id,
       ficheFields: {
         axes: updatedAxes,
       },
     });
 
-    setSelectedAxes([]);
+    openParentAxesAndScrollToElement(`fiche-${fiche.id}`);
+
     openState.setIsOpen(false);
   };
 
