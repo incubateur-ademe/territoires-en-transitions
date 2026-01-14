@@ -2,9 +2,9 @@ import { TProfondeurAxe } from '@/app/plans/plans/types';
 import { checkAxeExistInPlanProfondeur } from '@/app/plans/plans/utils';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Alert, Button } from '@tet/ui';
-import { useState } from 'react';
 import { useFicheContext } from '../../../../../context/fiche-context';
 import { usePlanActionProfondeur } from '../../../../../data/usePlanActionProfondeur';
+import { useSelectAxes } from '../use-select-axes';
 import { ColonneTableauEmplacement } from './ColonneTableauEmplacement';
 
 type NouvelEmplacementFicheProps = {
@@ -29,29 +29,18 @@ const NouvelEmplacementFiche = ({
       !ficheAxesIds.some((id) => checkAxeExistInPlanProfondeur(plan.plan, id))
   );
 
-  // L'axe sélectionné et ceux dont il est l'enfant
-  const [selectedAxes, setSelectedAxes] = useState<TProfondeurAxe[]>([]);
+  // gestion de la sélection d'un emplacement
+  const {
+    selectedAxes,
+    setSelectedAxes,
+    handleSelectAxe: handleSelectAxeBase,
+  } = useSelectAxes();
 
   // Gestion de la sélection d'un nouvel axe
   const handleSelectAxe = (selectedAxe: TProfondeurAxe) => {
     const selectedDepth = selectedAxe.profondeur;
     const currentDepth = selectedAxes.length - 1;
-    const isAlreadySelected = selectedAxes.some(
-      (axe) => axe.axe.id === selectedAxe.axe.id
-    );
-
-    const newSelectedAxes = [
-      ...selectedAxes.filter((axe) => axe.profondeur < selectedDepth),
-    ];
-
-    if (
-      !isAlreadySelected ||
-      (isAlreadySelected && selectedDepth < currentDepth)
-    ) {
-      newSelectedAxes.push(selectedAxe);
-    }
-
-    setSelectedAxes(newSelectedAxes);
+    handleSelectAxeBase(selectedAxe);
 
     setTimeout(() => {
       // Le setTimeout permet d'attendre que la mise à jour de 'selectedAxes' soit terminée
