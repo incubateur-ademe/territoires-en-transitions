@@ -57,6 +57,9 @@ export default defineConfig({
 
     // Viewport used for all pages in the context.
     viewport: { width: 1280, height: 1024 },
+
+    // Test Id prefix
+    testIdAttribute: 'data-test',
   },
   projects: [
     {
