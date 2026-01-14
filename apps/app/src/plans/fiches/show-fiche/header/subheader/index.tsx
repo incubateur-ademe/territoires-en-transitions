@@ -23,7 +23,9 @@ export const SubHeader = ({
       <Separator />
 
       <Status status={fiche.statut} />
+      <Separator />
       <Priority priority={fiche.priorite} />
+      <Separator />
       {completion ? <CompletionStatus completion={completion} /> : null}
       <AccessManagementBadges fiche={fiche} collectiviteId={collectiviteId} />
     </div>

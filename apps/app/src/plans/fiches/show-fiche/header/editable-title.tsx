@@ -40,7 +40,9 @@ export const EditableTitle = ({
         </div>
       )}
     >
-      <h1 data-test="TitreFiche">{initialTitle ?? 'Sans titre'}</h1>
+      <h1 data-test="TitreFiche" className="mb-0">
+        {initialTitle ?? 'Sans titre'}
+      </h1>
     </InlineEditWrapper>
   );
 };

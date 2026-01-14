@@ -27,7 +27,7 @@ export const Header = () => {
   return (
     <EditionModalManagerProvider>
       <div className="w-full mb-6" data-test="fiche-header">
-        <div className="flex gap-4 flex-row lg:items-start">
+        <div className="flex gap-4 flex-row lg:items-start mb-3">
           <div className="flex-1">
             <EditableTitle
               title={titre}
@@ -46,11 +46,12 @@ export const Header = () => {
             axes={axes ?? []}
             planId={planId}
           />
-          <Divider />
         </VisibleWhen>
+        <Divider />
         <SubHeader fiche={fiche} collectiviteId={collectiviteId} />
-        <EditionModalRenderer fiche={fiche} planId={planId} />
+        <Divider />
       </div>
+      <EditionModalRenderer fiche={fiche} planId={planId} />
     </EditionModalManagerProvider>
   );
 };

@@ -38,11 +38,7 @@ export const Priority = ({
         </div>
       )}
     >
-      {(props) => (
-        <button type="button" {...props}>
-          <PriorityBadge priority={priority} />
-        </button>
-      )}
+      <PriorityBadge priority={priority} />
     </InlineEditWrapper>
   );
 };

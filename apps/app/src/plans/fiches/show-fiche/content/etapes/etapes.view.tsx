@@ -11,6 +11,7 @@ import EtapesList from './etapes-list';
 import { useGetEtapes } from './use-get-etapes';
 
 import { useFicheContext } from '../../context/fiche-context';
+import { ContentLayout } from '../content-layout';
 
 export const EtapesView = () => {
   const { fiche } = useFicheContext();
@@ -27,9 +28,13 @@ export const EtapesView = () => {
   }
 
   return (
-    <EtapesProvider initialState={{ etapes }}>
-      <EtapesWithContext />
-    </EtapesProvider>
+    <ContentLayout.Root>
+      <ContentLayout.Content data={[]}>
+        <EtapesProvider initialState={{ etapes }}>
+          <EtapesWithContext />
+        </EtapesProvider>
+      </ContentLayout.Content>
+    </ContentLayout.Root>
   );
 };
 

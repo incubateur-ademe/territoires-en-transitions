@@ -34,11 +34,7 @@ export const Status = ({ status }: { status: Statut | null }): JSX.Element => {
         </div>
       )}
     >
-      {(props) => (
-        <button type="button" {...props}>
-          <StatusBadge status={status} />
-        </button>
-      )}
+      <StatusBadge status={status} />
     </InlineEditWrapper>
   );
 };
