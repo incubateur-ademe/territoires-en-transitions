@@ -1243,6 +1243,7 @@ export default class CrudValeursService {
         const IndicateurAvecValeursParSource: IndicateurAvecValeursParSource = {
           definition: indicateurDefinition as IndicateurDefinition,
           totalValeursCount: valeurs.length,
+          totalFilledValeursCount: valeurs.filter((v) => !isNil(v.resultat) || !isNil(v.objectif)).length,
           sources: sourceMap,
         };
         return IndicateurAvecValeursParSource;

@@ -1,8 +1,58 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ChartRenderRequestType } from '@tet/domain/utils';
-import { createCanvas } from 'canvas';
+import { createCanvas, registerFont } from 'canvas';
 import type { ECharts, EChartsOption } from 'echarts/types/dist/echarts';
 import { NextFunction, Response } from 'express';
+import path from 'node:path';
+
+
+registerFont(path.join(__dirname, './fonts/Poppins-Regular.ttf'), {
+  family: 'Poppins',
+  weight: '400',
+  style: 'normal',
+});
+
+registerFont(path.join(__dirname, './fonts/Poppins-Italic.ttf'), {
+  family: 'Poppins',
+  weight: '400',
+  style: 'italic',
+});
+
+registerFont(path.join(__dirname, './fonts/Poppins-Medium.ttf'), {
+  family: 'Poppins',
+  weight: '500',
+  style: 'normal',
+});
+
+registerFont(path.join(__dirname, './fonts/Poppins-MediumItalic.ttf'), {
+  family: 'Poppins',
+  weight: '500',
+  style: 'italic',
+});
+
+registerFont(path.join(__dirname, './fonts/Poppins-SemiBold.ttf'), {
+  family: 'Poppins',
+  weight: '600',
+  style: 'normal',
+});
+
+registerFont(path.join(__dirname, './fonts/Poppins-SemiBoldItalic.ttf'), {
+  family: 'Poppins',
+  weight: '600',
+  style: 'italic',
+});
+
+registerFont(path.join(__dirname, './fonts/Poppins-Bold.ttf'), {
+  family: 'Poppins',
+  weight: '700',
+  style: 'normal',
+});
+
+registerFont(path.join(__dirname, './fonts/Poppins-BoldItalic.ttf'), {
+  family: 'Poppins',
+  weight: '700',
+  style: 'italic',
+});
 
 @Injectable()
 export class EchartsService {

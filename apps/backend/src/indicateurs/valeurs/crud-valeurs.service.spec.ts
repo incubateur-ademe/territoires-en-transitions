@@ -281,6 +281,24 @@ describe('Indicateurs → crud-valeurs.service', () => {
           calculAuto: false,
           calculAutoIdentifiantsManquants: null,
         },
+        {
+          id: 10264,
+          collectiviteId: 4936,
+          indicateurId: 456,
+          dateValeur: '2010-01-01',
+          metadonneeId: null,
+          resultat: null,
+          resultatCommentaire: null,
+          objectif: null,
+          objectifCommentaire: null,
+          estimation: null,
+          modifiedAt: '2020-08-14T14:10:18.891Z',
+          createdAt: '2020-08-14T14:10:18.891Z',
+          modifiedBy: null,
+          createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
+        },
       ];
       const indicateurValeursGroupees =
         indicateurService.groupeIndicateursValeursParIndicateurEtSource(
@@ -306,7 +324,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
               borneMin: null,
               borneMax: null,
             } as IndicateurDefinition,
-            totalValeursCount: 3,
+            totalValeursCount: 4,
+            totalFilledValeursCount: 3,
             sources: {
               rare: {
                 source: 'rare',
@@ -349,6 +368,11 @@ describe('Indicateurs → crud-valeurs.service', () => {
                 valeurs: [
                   {
                     id: 10264,
+                    dateValeur: '2010-01-01',
+                    collectiviteId: 4936,
+                  },
+                  {
+                    id: 10264,
                     dateValeur: '2015-01-01',
                     resultat: 625,
                     collectiviteId: 4936,
@@ -370,6 +394,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               borneMax: null,
             } as IndicateurDefinition,
             totalValeursCount: 1,
+            totalFilledValeursCount: 1,
             sources: {
               snbc: {
                 source: 'snbc',
