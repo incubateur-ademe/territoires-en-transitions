@@ -1,9 +1,7 @@
-import { OPEN_AXES_KEY_SEARCH_PARAMETER } from '@/app/app/paths';
 import { TProfondeurAxe } from '@/app/plans/plans/types';
 import { PlanNode } from '@tet/domain/plans';
 import { Alert, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
-import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs';
 import { ColonneTableauEmplacement } from '../../../fiches/show-fiche/header/actions/emplacement/EmplacementFiche/NouvelEmplacement/ColonneTableauEmplacement';
 import { useSelectAxes } from '../../../fiches/show-fiche/header/actions/emplacement/EmplacementFiche/use-select-axes';
 import { useUpdateAxe } from '../data/use-update-axe';
@@ -53,12 +51,6 @@ export const MoveAxeModal = ({
 }: Props) => {
   const { mutateAsync: updateAxe } = useUpdateAxe({ axe, collectiviteId });
 
-  // Gestion de l'état d'ouverture des axes dans l'arborescence principale
-  const [openAxes, setOpenAxes] = useQueryState(
-    OPEN_AXES_KEY_SEARCH_PARAMETER,
-    parseAsArrayOf(parseAsInteger).withDefault([])
-  );
-
   // IDs des axes invalides (l'axe actuel et tous ses descendants)
   const invalidAxeIds = [axe.id, ...getChildrenAxeIds(axe, axes)];
 
@@ -74,7 +66,12 @@ export const MoveAxeModal = ({
   const canMove = filteredPlan !== null;
 
   // gestion de la sélection d'un emplacement
-  const { selectedAxes, setSelectedAxes, handleSelectAxe } = useSelectAxes();
+  const {
+    selectedAxes,
+    setSelectedAxes,
+    handleSelectAxe,
+    openParentAxesAndScrollToElement,
+  } = useSelectAxes();
 
   // Sauvegarde du déplacement de l'axe
   const handleSave = async () => {
@@ -82,22 +79,10 @@ export const MoveAxeModal = ({
 
     const { axe: targetAxe } = selectedAxes[selectedAxes.length - 1];
 
-    // ouvre les parents de l'axe déplacé pour que le scroll fonctionne
-    const axesToOpen = [
-      ...new Set([...openAxes, ...selectedAxes.map((a) => a.axe.id)]),
-    ];
-    setOpenAxes(axesToOpen);
+    openParentAxesAndScrollToElement(`axe-${axe.id}`);
 
     setSelectedAxes([]);
     openState.setIsOpen(false);
-
-    // scroll vers le nouvel emplacement de l'axe
-    setTimeout(() => {
-      const element = document.getElementById(axe.id.toString());
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', inline: 'end' });
-      }
-    }, 100);
 
     await updateAxe({
       parent: targetAxe.id,
