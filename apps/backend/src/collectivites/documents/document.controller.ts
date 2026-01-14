@@ -1,17 +1,17 @@
-import { COLLECTIVITE_ID_PARAM_KEY } from '@tet/backend/collectivites/collectivite-api.constants';
-import { DOCUMENT_ID_PARAM_KEY } from '@tet/backend/collectivites/documents/models/document-api.constants';
-import DocumentService from '@tet/backend/collectivites/documents/services/document.service';
-import { AllowAnonymousAccess } from '@tet/backend/users/decorators/allow-anonymous-access.decorator';
-import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
-import type { AuthUser } from '@tet/backend/users/models/auth.models';
-import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
-import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import { Controller, Get, Next, Param, Res } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiExcludeController,
   ApiOkResponse,
 } from '@nestjs/swagger';
+import { COLLECTIVITE_ID_PARAM_KEY } from '@tet/backend/collectivites/collectivite-api.constants';
+import DocumentService from '@tet/backend/collectivites/documents/document.service';
+import { DOCUMENT_ID_PARAM_KEY } from '@tet/backend/collectivites/documents/models/document-api.constants';
+import { AllowAnonymousAccess } from '@tet/backend/users/decorators/allow-anonymous-access.decorator';
+import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
+import type { AuthUser } from '@tet/backend/users/models/auth.models';
+import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import type { NextFunction, Response } from 'express';
 import { Readable } from 'stream';
 

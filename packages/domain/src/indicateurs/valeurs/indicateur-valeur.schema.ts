@@ -86,6 +86,7 @@ export const indicateurValeursGroupeeParSourceSchema = z.object({
 
 export const indicateurAvecValeursParSourceSchema = z.object({
   definition: indicateurDefinitionSchema,
+  totalValeursCount: z.number(),
   sources: z.record(z.string(), indicateurValeursGroupeeParSourceSchema),
 });
 

@@ -13,7 +13,9 @@ export type ReportGenerationOptions = z.infer<
 
 export const reportGenerationSchema = z.object({
   id: z.uuid(),
+  collectiviteId: z.number(),
   planId: z.number(),
+  name: z.string(),
   templateRef: z.string(),
   fileId: z.number().nullable(),
   options: reportGenerationOptionsSchema.nullable(),

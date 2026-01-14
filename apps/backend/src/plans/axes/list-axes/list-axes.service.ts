@@ -39,15 +39,17 @@ export class ListAxesService {
 
   async listAxesRecursively(
     input: ListAxesInput,
-    user: AuthenticatedUser,
+    user?: AuthenticatedUser,
     tx?: Transaction
   ): Promise<Result<PlanNode[], ListAxesError>> {
-    const isAllowed = await this.checkPermission(input.collectiviteId, user);
-    if (!isAllowed) {
-      return {
-        success: false,
-        error: ListAxesErrorEnum.UNAUTHORIZED,
-      };
+    if (user) {
+      const isAllowed = await this.checkPermission(input.collectiviteId, user);
+      if (!isAllowed) {
+        return {
+          success: false,
+          error: ListAxesErrorEnum.UNAUTHORIZED,
+        };
+      }
     }
 
     return this.listAxesRepository.listChildrenRecursively(input, tx);

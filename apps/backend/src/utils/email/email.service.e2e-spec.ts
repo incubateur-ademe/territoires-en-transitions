@@ -9,6 +9,7 @@ type SMTPConfig = {
   smtpUrl?: string;
   smtpKey?: string;
   smtpFrom?: string;
+  smtpToEmailWhitelist?: string[];
 };
 
 type SMTPServerOptions = {
@@ -49,6 +50,9 @@ describe('EmailService e2e', () => {
         }
         if (key === 'SMTP_FROM') {
           return config.smtpFrom || 'test@example.com';
+        }
+        if (key === 'SMTP_TO_EMAIL_WHITELIST') {
+          return config.smtpToEmailWhitelist;
         }
         return undefined;
       },
@@ -241,7 +245,7 @@ describe('EmailService e2e', () => {
       }
     });
 
-    it('devrait accepter une configuration SMTP valide et envoyer un email', async () => {
+    it('devrait accepter une configuration SMTP valide et envoyer un email si pas de whitelist', async () => {
       emailService = await createTestModule({
         smtpUrl: `smtp://testuser@127.0.0.1:${smtpPort}`,
         smtpKey: 'testpassword',
@@ -264,6 +268,54 @@ describe('EmailService e2e', () => {
       expect(receivedEmail.subject).toBe('Test Email');
       expect(receivedEmail.html).toContain('Ceci est un test');
       expect(receivedEmail.from).toContain('sender@example.com');
+    });
+
+    it('devrait accepter une configuration SMTP valide et envoyer un email si une whitelist est définie et que le destinataire est dans la whitelist', async () => {
+      emailService = await createTestModule({
+        smtpUrl: `smtp://testuser@127.0.0.1:${smtpPort}`,
+        smtpKey: 'testpassword',
+        smtpFrom: 'sender@example.com',
+        smtpToEmailWhitelist: ['recipient@example.com'],
+      });
+
+      const result = await emailService.sendEmail({
+        to: 'recipient@example.com',
+        subject: 'Test Email',
+        html: '<p>Ceci est un test</p>',
+      });
+
+      expect(result).toBeDefined();
+      expect(result.success).toBe(true);
+      expect(receivedEmails.length).toBeGreaterThan(0);
+
+      const receivedEmail = receivedEmails[receivedEmails.length - 1];
+      expect(receivedEmail).toBeDefined();
+      expect(receivedEmail.to).toContain('recipient@example.com');
+      expect(receivedEmail.subject).toBe('Test Email');
+      expect(receivedEmail.html).toContain('Ceci est un test');
+      expect(receivedEmail.from).toContain('sender@example.com');
+    });
+
+    it("devrait accepter une configuration SMTP valide et ne pas envoyer un email si une whitelist est définie et que le destinataire n'est pas dans la whitelist", async () => {
+      emailService = await createTestModule({
+        smtpUrl: `smtp://testuser@127.0.0.1:${smtpPort}`,
+        smtpKey: 'testpassword',
+        smtpFrom: 'sender@example.com',
+        smtpToEmailWhitelist: ['otherrecipient@example.com'],
+      });
+
+      const result = await emailService.sendEmail({
+        to: 'recipient@example.com',
+        subject: 'Test Email',
+        html: '<p>Ceci est un test</p>',
+      });
+
+      expect(result).toBeDefined();
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.status).toBe('not-whitelisted');
+      }
+      expect(receivedEmails.length).toBe(0);
     });
 
     it('devrait lancer une erreur en production si la config est manquante', async () => {

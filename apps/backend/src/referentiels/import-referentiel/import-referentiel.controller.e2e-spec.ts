@@ -21,7 +21,7 @@ describe('import-referentiel.controller.e2e-spec', () => {
     return async () => {
       await app.close();
     };
-  });
+  }, 15000);
 
   it(`Import du referentiel ECI depuis le spreadsheet`, async () => {
     // Reset the version

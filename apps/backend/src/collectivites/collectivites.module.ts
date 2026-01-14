@@ -20,8 +20,8 @@ import { DiscussionQueryService } from './discussions/domain/discussion-query-se
 import { ListDiscussionService } from './discussions/domain/list-discussion-service';
 import { DiscussionRepositoryImpl } from './discussions/infrastructure/discussion.repository.impl';
 import { DiscussionRouter } from './discussions/presentation/discussion.router';
+import DocumentService from './documents/document.service';
 import { DocumentsRouter } from './documents/documents.router';
-import DocumentService from './documents/services/document.service';
 import { ListCategoriesRouter } from './handle-categories/list-categories.router';
 import ListCategoriesService from './handle-categories/list-categories.service';
 import { ListCollectivitesRouter } from './list-collectivites/list-collectivites.router';

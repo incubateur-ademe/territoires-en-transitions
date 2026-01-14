@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { makeLegendData } from '@tet/backend/utils/echarts/chart-legend.utils';
+import { CHART_FONT_FAMILY } from '@tet/backend/utils/echarts/get-horizontal-stackedbar-chart-option.utils';
 import {
   CollectiviteAvecType,
   PersonnalisationReponsesPayload,
@@ -61,6 +62,8 @@ export class IndicateurChartService {
   private readonly BOTTOM_LEGEND_LINE_HEIGHT = 40;
   private readonly LEGEND_ITEM_WIDTH = 300;
   private readonly TITLE_LEFT_MARGIN = 28;
+  private readonly TITLE_FONT_SIZE = 24;
+  private readonly TITLE_SUBTEXT_FONT_SIZE = 18;
 
   constructor(
     private readonly listIndicateursService: ListIndicateursService,
@@ -628,6 +631,7 @@ export class IndicateurChartService {
           )
         : Promise.resolve(null),
     ]);
+
     const chartData = this.getChartData({
       indicateurValeurs,
       valeursReference,
@@ -729,6 +733,9 @@ export class IndicateurChartService {
     const series = allDatasetsAndSeries.map((ds) => ds.serie);
 
     const chartOptions: EChartsOption = {
+      textStyle: {
+        fontFamily: CHART_FONT_FAMILY,
+      },
       dataset,
       series,
       grid: {
@@ -747,6 +754,7 @@ export class IndicateurChartService {
         bottom: 0,
         textStyle: {
           color: colors.primary['9'],
+          fontFamily: CHART_FONT_FAMILY,
           fontWeight: 500,
           fontSize: 14,
           lineHeight: 20,
@@ -761,6 +769,7 @@ export class IndicateurChartService {
         maxInterval: 12 * 365 * 24 * 50 * 60 * 1000,
         minInterval: 365 * 24 * 50 * 60 * 1000,
         axisLabel: {
+          fontFamily: CHART_FONT_FAMILY,
           formatter: '{yyyy}',
           color: colors.primary['9'],
           showMinLabel: true,
@@ -770,7 +779,9 @@ export class IndicateurChartService {
       },
       yAxis: {
         type: 'value' as const,
+        splitLine: { show: false },
         axisLabel: {
+          fontFamily: CHART_FONT_FAMILY,
           color: colors.primary['9'],
           formatter: (value: number) => NumFormat.format(value),
         },
@@ -783,10 +794,12 @@ export class IndicateurChartService {
         textStyle: {
           color: colors.primary['9'],
           overflow: 'break',
+          fontSize: this.TITLE_FONT_SIZE,
         },
         subtextStyle: {
           color: colors.grey['6'],
           fontWeight: 500,
+          fontSize: this.TITLE_SUBTEXT_FONT_SIZE,
         },
       },
     };

@@ -8,6 +8,7 @@ import type {
   PieSeriesOption,
 } from 'echarts/types/dist/echarts';
 import { cloneDeep } from 'es-toolkit';
+import { CHART_FONT_FAMILY } from './get-horizontal-stackedbar-chart-option.utils';
 
 type Args = {
   displayItemsLabel: boolean;
@@ -79,6 +80,9 @@ export const getPieChartOption = ({
   return {
     legend: {
       show: false,
+    },
+    textStyle: {
+      fontFamily: CHART_FONT_FAMILY,
     },
     title: {
       left: 'center',
