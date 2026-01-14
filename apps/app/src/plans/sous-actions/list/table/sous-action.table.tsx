@@ -36,11 +36,11 @@ const columns = [
     ),
   }),
   columnHelper.accessor('statut', {
-    header: () => <TableHeaderCell title="Statut" className="w-48" />,
+    header: () => <TableHeaderCell title="Statut" className="w-32" />,
     cell: (info) => <SousActionCellStatut sousAction={info.row.original} />,
   }),
   columnHelper.accessor('pilotes', {
-    header: () => <TableHeaderCell title="Pilotes" className="w-52" />,
+    header: () => <TableHeaderCell title="Pilotes" className="w-40" />,
     cell: (info) => <SousActionCellPilotes sousAction={info.row.original} />,
   }),
   columnHelper.accessor('dateFin', {

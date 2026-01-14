@@ -66,9 +66,7 @@ export const SousActionCellDate = ({ sousAction }: Props) => {
           {format(new Date(sousAction.dateFin), 'dd/MM/yyyy')}
         </span>
       ) : (
-        <div className="text-center text-grey-6">
-          {isReadOnly ? '' : 'Sélectionner une date'}
-        </div>
+        <div className="text-center text-grey-6">{isReadOnly ? '' : '–'}</div>
       )}
     </TableCell>
   );
