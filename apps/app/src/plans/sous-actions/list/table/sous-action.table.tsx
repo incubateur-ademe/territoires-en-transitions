@@ -84,6 +84,7 @@ export const SousActionTable = () => {
     columns,
     data: sousActions,
     manualSorting: true,
+    getRowId: (row) => row.id.toString(),
     state: {
       columnVisibility,
       sorting,
