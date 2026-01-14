@@ -132,6 +132,13 @@ export const backendConfigurationSchema = z.object({
     .optional()
     .default('Territoires en Transitions <contact@territoiresentransitions.fr>')
     .describe('SMTP sender name and address'),
+  SMTP_TO_EMAIL_WHITELIST: z
+    .string()
+    .transform((val) => val.split(',').map((v) => v.trim()))
+    .optional()
+    .describe(
+      'List of email addresses that are allowed to receive emails sent by the SMTP server'
+    ),
 });
 export type BackendConfigurationType = z.infer<
   typeof backendConfigurationSchema

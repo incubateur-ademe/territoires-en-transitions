@@ -36,12 +36,31 @@ export class EmailService {
     Result<
       { messageId: string },
       {
-        messageId: string;
-        status: 'pending' | 'rejected' | 'unknown';
+        messageId: string | null;
+        status: 'pending' | 'rejected' | 'unknown' | 'not-whitelisted';
         errorMessage: string;
       }
     >
   > {
+    const smtpToEmailWhitelist = this.configurationService.get(
+      'SMTP_TO_EMAIL_WHITELIST'
+    );
+    if (smtpToEmailWhitelist && !smtpToEmailWhitelist.includes(email.to)) {
+      this.logger.log(
+        `Email ${
+          email.to
+        } not whitelisted (whitelist: ${smtpToEmailWhitelist.join(', ')})`
+      );
+      return {
+        success: false,
+        error: {
+          status: 'not-whitelisted',
+          messageId: null,
+          errorMessage: 'Email not whitelisted',
+        },
+      };
+    }
+
     const transporter = this.getTransport();
     try {
       const info = await transporter.sendMail({
@@ -49,7 +68,10 @@ export class EmailService {
         from: this.configurationService.get('SMTP_FROM'),
       });
       if (info.accepted.includes(email.to)) {
-        return { success: true, data: { messageId: info.messageId } };
+        return {
+          success: true,
+          data: { messageId: info.messageId },
+        };
       }
       // info.pending: addresses that received a temporary failure
       const isPending = info.pending.includes(email.to);
