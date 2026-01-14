@@ -38,9 +38,7 @@ export const SousActionCellStatut = ({ sousAction }: Props) => {
       {sousAction.statut ? (
         <BadgeStatut statut={sousAction.statut} size="sm" />
       ) : (
-        <span className="text-grey-6">
-          {isReadOnly ? '' : 'Sélectionner un statut'}
-        </span>
+        <span className="text-grey-6">{isReadOnly ? '' : 'Sélectionner'}</span>
       )}
     </TableCell>
   );
