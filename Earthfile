@@ -291,7 +291,7 @@ node-fr:
     ENV LANG fr_FR.UTF-8
     RUN apt-get update && apt-get install -y locales dumb-init && rm -rf /var/lib/apt/lists/* && locale-gen "fr_FR.UTF-8"
 
-    RUN apt-get update && apt-get install -y build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+    RUN apt-get update && apt-get install -y build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev fontconfig fonts-liberation
 
     ENV PNPM_HOME="/pnpm"
     ENV PATH="$PNPM_HOME:$PATH"
