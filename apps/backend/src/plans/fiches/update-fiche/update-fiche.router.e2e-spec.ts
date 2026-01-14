@@ -13,7 +13,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CibleEnum, PiliersEciEnum, StatutEnum } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
-import { describe, expect } from 'vitest';
+import { describe, expect, onTestFinished } from 'vitest';
 import {
   actionsFixture,
   axesFixture,
@@ -244,6 +244,77 @@ describe('UpdateFicheService', () => {
       const ficheWithNullData = await updateFiche(nullData);
 
       expect(ficheWithNullData).toMatchObject(nullData);
+    });
+
+    test('should update a sous-fiche (fiche with parentId referencing a parent fiche)', async () => {
+      // Crée une fiche parente (parentId = null)
+      const [parentFiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Fiche parente pour sous-fiche',
+          collectiviteId,
+        })
+        .returning();
+
+      // Crée une sous-fiche (parentId = parentFiche.id)
+      const [sousFiche] = await db.db
+        .insert(ficheActionTable)
+        .values({
+          titre: 'Sous-fiche initiale',
+          collectiviteId,
+          parentId: parentFiche.id,
+        })
+        .returning();
+
+      onTestFinished(async () => {
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, sousFiche.id));
+        await db.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, parentFiche.id));
+      });
+
+      // Vérifie que la sous-fiche a bien un parentId
+      expect(sousFiche.parentId).toBe(parentFiche.id);
+
+      // Met à jour la sous-fiche avec différents champs
+      const caller = router.createCaller({ user: yoloDodo });
+      const updateData: UpdateFicheRequest = {
+        titre: 'Sous-fiche mise à jour',
+        description: 'Description de la sous-fiche mise à jour',
+        statut: StatutEnum.EN_COURS,
+        budgetPrevisionnel: '50000',
+      };
+
+      await caller.update({
+        ficheId: sousFiche.id,
+        ficheFields: updateData,
+      });
+
+      // Récupère la fiche mise à jour
+      const updatedFiche = await caller.get({
+        id: sousFiche.id,
+      });
+
+      // Vérifie que les champs ont été mis à jour
+      expect(updatedFiche.titre).toBe('Sous-fiche mise à jour');
+      expect(updatedFiche.description).toBe(
+        'Description de la sous-fiche mise à jour'
+      );
+      expect(updatedFiche.statut).toBe(StatutEnum.EN_COURS);
+      expect(updatedFiche.budgetPrevisionnel).toBe('50000');
+
+      // Vérifie que le parentId est toujours présent et correct
+      expect(updatedFiche.parentId).toBe(parentFiche.id);
+
+      // Vérifie que la fiche parente existe toujours et a un parentId null
+      const [parentFicheAfterUpdate] = await db.db
+        .select()
+        .from(ficheActionTable)
+        .where(eq(ficheActionTable.id, parentFiche.id));
+
+      expect(parentFicheAfterUpdate.parentId).toBeNull();
     });
   });
 
