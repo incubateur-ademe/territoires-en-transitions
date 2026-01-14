@@ -122,7 +122,6 @@ export const GenerateReportButton = ({
     <>
       <GenerateReportPlanModal
         plan={plan}
-        onGenerationStarted={(reportId) => setPendingReportId(reportId)}
       >
         <Button
           variant="white"

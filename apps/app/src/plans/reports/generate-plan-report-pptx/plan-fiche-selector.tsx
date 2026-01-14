@@ -76,10 +76,12 @@ export function PlanFicheSelector({
   const { fiches, isLoading } = useListFiches(collectiviteId, {
     filters: {
       planActionIds: [planId],
+      withAxesAncestors: true,
     },
     queryOptions: {
       limit: 'all',
       sort: [{ field: 'titre', direction: 'asc' }],
+      
     },
   });
 

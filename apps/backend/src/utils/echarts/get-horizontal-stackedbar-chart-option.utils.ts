@@ -2,6 +2,8 @@
  * TODO: to be shared with app
  */
 
+export const CHART_FONT_FAMILY = 'Poppins';
+
 import type { CountByForEntityResponseType } from '@tet/domain/utils';
 import type {
   BarSeriesOption,
@@ -69,13 +71,18 @@ export const getHorizontalStackedBarChartOption = ({
     })
     .filter((series): series is BarSeriesOption => series !== null);
 
-  return {
+  const option: EChartsOption = {
+    textStyle: {
+      fontFamily: CHART_FONT_FAMILY,
+    },
     grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
+      top: 70,
+      left: 70,
+      right: 70,
+      bottom: 35,
       containLabel: true,
     },
+
     tooltip: {
       trigger: 'axis',
       axisPointer: {
@@ -83,7 +90,9 @@ export const getHorizontalStackedBarChartOption = ({
         type: 'shadow', // 'shadow' as default; can also be 'line' or 'shadow'
       },
     },
-    legend: {},
+    legend: {
+      top: 10
+    },
     xAxis: {
       type: 'value',
     },
@@ -92,10 +101,13 @@ export const getHorizontalStackedBarChartOption = ({
       data: categoryData,
       axisLabel: {
         fontSize: 24,
-        width: 400,
+        fontFamily: CHART_FONT_FAMILY,
+        width: 450,
         overflow: 'break',
       },
     },
     series: barSeries,
   };
+
+  return option;
 };

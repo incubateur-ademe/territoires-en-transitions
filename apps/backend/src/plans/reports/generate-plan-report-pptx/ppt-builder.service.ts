@@ -350,7 +350,7 @@ export class PptBuilderService {
       let indicateurChartImageFiles: {
         indicateurId: number;
         imageFile: string;
-        totalValeursCount: number;
+        totalFilledValeursCount: number;
       }[] = [];
       if (request.includeFicheIndicateursSlides && indicateurChartSize) {
         indicateurChartImageFiles = await Promise.all(
@@ -1206,7 +1206,7 @@ export class PptBuilderService {
       indicateurChartImageFiles: {
         indicateurId: number;
         imageFile: string;
-        totalValeursCount: number;
+        totalFilledValeursCount: number;
       }[];
     }
   ) {
@@ -1280,7 +1280,7 @@ export class PptBuilderService {
                   },
                 ]);
 
-                if (ficheIndicateurChartImageFile.totalValeursCount > 0) {
+                if (ficheIndicateurChartImageFile.totalFilledValeursCount > 0) {
                   const noDataTextElementName = `${
                     ReportTemplateTextsEnum.TXT_FICHE_INDICATEUR_NO_DATA_
                   }${iIndicateur + 1}`;
@@ -1475,7 +1475,7 @@ export class PptBuilderService {
   }): Promise<{
     indicateurId: number;
     imageFile: string;
-    totalValeursCount: number;
+    totalFilledValeursCount: number;
   }> {
     const {
       presentation,
@@ -1511,7 +1511,7 @@ export class PptBuilderService {
     return {
       indicateurId,
       imageFile,
-      totalValeursCount: indicateurValeurs.totalValeursCount,
+      totalFilledValeursCount: indicateurValeurs.totalFilledValeursCount,
     };
   }
 }

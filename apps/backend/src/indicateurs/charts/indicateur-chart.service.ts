@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { makeLegendData } from '@tet/backend/utils/echarts/chart-legend.utils';
+import { CHART_FONT_FAMILY } from '@tet/backend/utils/echarts/get-horizontal-stackedbar-chart-option.utils';
 import {
   CollectiviteAvecType,
   PersonnalisationReponsesPayload,
@@ -732,6 +733,9 @@ export class IndicateurChartService {
     const series = allDatasetsAndSeries.map((ds) => ds.serie);
 
     const chartOptions: EChartsOption = {
+      textStyle: {
+        fontFamily: CHART_FONT_FAMILY,
+      },
       dataset,
       series,
       grid: {
@@ -750,6 +754,7 @@ export class IndicateurChartService {
         bottom: 0,
         textStyle: {
           color: colors.primary['9'],
+          fontFamily: CHART_FONT_FAMILY,
           fontWeight: 500,
           fontSize: 14,
           lineHeight: 20,
@@ -764,6 +769,7 @@ export class IndicateurChartService {
         maxInterval: 12 * 365 * 24 * 50 * 60 * 1000,
         minInterval: 365 * 24 * 50 * 60 * 1000,
         axisLabel: {
+          fontFamily: CHART_FONT_FAMILY,
           formatter: '{yyyy}',
           color: colors.primary['9'],
           showMinLabel: true,
@@ -775,6 +781,7 @@ export class IndicateurChartService {
         type: 'value' as const,
         splitLine: { show: false },
         axisLabel: {
+          fontFamily: CHART_FONT_FAMILY,
           color: colors.primary['9'],
           formatter: (value: number) => NumFormat.format(value),
         },

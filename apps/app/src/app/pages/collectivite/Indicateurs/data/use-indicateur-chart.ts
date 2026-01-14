@@ -195,9 +195,7 @@ export const useIndicateurChartInfo = ({
   // détermine si l'indicateur a au moins une valeur
   const valeursReference = sourceFilter.valeursReference;
   const hasValeur =
-    data.valeurs.objectifs.annees.length +
-      data.valeurs.resultats.annees.length >
-      0 ||
+    (rawData?.totalFilledValeursCount ?? 0) > 0 ||
     !!segments?.length ||
     !!moyenne?.valeurs?.length ||
     (valeursReference &&

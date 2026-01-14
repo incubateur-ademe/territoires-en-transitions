@@ -24,7 +24,7 @@ export const GenerateReportPlanModal = ({
 
   return (
     <Modal
-      title="Télécharger le rapport de mon plan au format PowerPoint"
+      title={reportId ? "Génération de votre rapport en cours" : "Télécharger le rapport de mon plan au format PowerPoint"}
       size="md"
       onClose={() => {
         setReportId(null);

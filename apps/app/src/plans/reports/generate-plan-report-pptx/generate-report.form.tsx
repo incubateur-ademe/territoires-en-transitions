@@ -144,6 +144,8 @@ export function GenerateReportForm({
               setIncludeAllFiches(checked);
               if (checked) {
                 setValue('ficheIds', undefined);
+              } else {
+                setValue('ficheIds', []);
               }
             }}
           />
