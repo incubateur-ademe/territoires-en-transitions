@@ -46,7 +46,7 @@ export type SelectProps = {
    * @deprecated Peut entrainer des problèmes d'affichage pour des valeurs avec beaucoup de texte ou des selecteurs pas très large. Déconseillé de mettre une value supérieure à 1 tant que ce n'est pas géré correctement.
    */
   maxBadgesToShow?: number;
-  openState?: OpenState;
+  openState?: OpenState | { isOpen: boolean };
   /** Active la multi sélection */
   multiple?: boolean;
   /** Permet la recherche dans la liste d'option */
@@ -97,6 +97,7 @@ export type SelectProps = {
     { state: BadgeState; light?: boolean }
   >;
   optionsAreCaseSensitive?: boolean;
+  alwaysOpen?: boolean;
 };
 
 /**
@@ -221,7 +222,13 @@ export const SelectBase = (props: SelectProps) => {
     : undefined;
   return (
     <DropdownFloater
-      openState={openState}
+      openState={{
+        isOpen: openState?.isOpen ?? false,
+        setIsOpen:
+          openState && 'setIsOpen' in openState
+            ? openState.setIsOpen
+            : () => {},
+      }}
       parentId={parentId}
       placement={isBadgeSelect && !placement ? 'bottom-start' : placement}
       offsetValue={0}

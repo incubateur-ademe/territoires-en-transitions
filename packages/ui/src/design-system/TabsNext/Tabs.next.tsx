@@ -160,12 +160,7 @@ export const TabsPanel = ({
   className?: string;
 }) => {
   return (
-    <div
-      className={cn(
-        'grow flex flex-col p-7 border border-grey-3 bg-white rounded-lg',
-        className
-      )}
-    >
+    <div className={cn('grow flex flex-col p-7 rounded-lg', className)}>
       {children}
     </div>
   );

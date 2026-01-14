@@ -13,16 +13,24 @@ type RichTextViewProps = {
   /** Hauteur maximum affichée avant que le contenu soit tronqué */
   maxHeight?: 'sm' | 'lg';
   /** Couleur du texte */
-  textColor?: 'white' | 'grey';
+  textColor?: 'white' | 'grey' | 'primary';
+  textSize?: 'xs' | 'sm' | 'md' | 'lg';
   /** Libellé du placeholder */
   placeholder?: string;
+  /** Si true, l'éditeur prend la hauteur nécessaire pour afficher tout le contenu sans troncature */
+  autoSize?: boolean;
+  /** Classes supplémentaires appliquées au texte (contenu) */
+  textClassName?: string;
 };
 
 export const RichTextView = ({
   content,
   maxHeight = 'lg',
   textColor = 'white',
+  textSize = 'md',
   placeholder = 'Non renseignés',
+  autoSize = false,
+  textClassName,
 }: RichTextViewProps) => {
   const [showLess, setShowLess] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
@@ -31,28 +39,36 @@ export const RichTextView = ({
   // (pas assez de place en hauteur pour l'afficher) OU que le bouton 'voir plus"
   // à été cliqué et que donc le contenu n'est plus tronqué mais peut l'être
   // à nouveau.
-  const showButton = isTruncated || showLess;
+  // Si autoSize est activé, on n'affiche jamais le bouton
+  const showButton = !autoSize && (isTruncated || showLess);
 
   return (
     <div className="flex-auto flex-col">
       {content?.length ? (
         <RichTextEditor
           disabled
-          className={cn('!bg-transparent border-none !p-0', {
-            'overflow-hidden': !showLess,
-            'max-h-[23rem]': !showLess && maxHeight === 'lg',
-            'max-h-[8rem]': !showLess && maxHeight === 'sm',
-            '!text-grey-1': textColor === 'white',
-            '!text-grey-8': textColor === 'grey',
-          })}
+          variant="flat"
+          className={cn(
+            {
+              'overflow-hidden': !autoSize && !showLess,
+              'max-h-[23rem]':
+                !autoSize && !showLess && maxHeight === 'lg',
+              'max-h-[8rem]':
+                !autoSize && !showLess && maxHeight === 'sm',
+            },
+            textClassName
+          )}
           initialValue={content}
-          setIsTruncated={setIsTruncated}
+          setIsTruncated={autoSize ? undefined : setIsTruncated}
+          textSize={textSize}
+          textColor={textColor}
         />
       ) : (
         <span
           className={cn('text-sm', {
-            '!text-grey-1': textColor === 'white',
-            '!text-grey-7': textColor === 'grey',
+            'text-grey-1': textColor === 'white',
+            'text-grey-7': textColor === 'grey',
+            'text-primary-9': textColor === 'primary',
           })}
         >
           {placeholder}
@@ -63,8 +79,9 @@ export const RichTextView = ({
           variant="underlined"
           size="xs"
           className={cn('ml-auto', {
-            '!text-grey-2 !border-grey-2': textColor === 'white',
-            '!text-primary-8 !border-primary-8': textColor === 'grey',
+            'text-grey-2 border-grey-2': textColor === 'white',
+            'text-primary-8 border-primary-8': textColor === 'grey',
+            'text-primary-9 border-primary-9': textColor === 'primary',
           })}
           onClick={() => setShowLess((prevState) => !prevState)}
         >

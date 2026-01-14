@@ -89,7 +89,7 @@ function Root({ children }: { children: ReactNode }) {
       return (
         <>
           {contentProps.actions && (
-            <div className="flex justify-end gap-2 mb-4">
+            <div className="flex justify-end gap-2 mb-6">
               {contentProps.actions}
             </div>
           )}
@@ -110,7 +110,7 @@ function Root({ children }: { children: ReactNode }) {
   };
 
   return (
-    <>
+    <div className="bg-white p-7 rounded-[10px]">
       {alertProps && (
         <SharedFicheLinkedResourcesAlert
           fiche={alertProps.fiche}
@@ -120,7 +120,7 @@ function Root({ children }: { children: ReactNode }) {
         />
       )}
       {renderBody()}
-    </>
+    </div>
   );
 }
 

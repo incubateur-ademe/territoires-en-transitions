@@ -25,9 +25,10 @@ const OtherPlansBreadcrumbs = ({
   collectiviteId: number;
 }): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
-  const s = plans.length > 1 ? 's' : '';
+  const plansCount = plans.length;
+  const s = plansCount > 1 ? 's' : '';
   return (
-    <div className="mt-4 flex flex-col gap-2">
+    <div className="mt-1 flex flex-col gap-2">
       <Button
         variant="underlined"
         size="sm"
@@ -35,7 +36,8 @@ const OtherPlansBreadcrumbs = ({
         iconPosition="right"
         onClick={() => setIsOpen((prevState) => !prevState)}
       >
-        Autre{s} emplacement{s} pour cette fiche
+        {plansCount > 1 ? plansCount : ''} autre{s} emplacement{s} pour cette
+        action{s}
       </Button>
 
       <VisibleWhen condition={isOpen}>
@@ -58,23 +60,33 @@ export const Breadcrumbs = ({
   axes,
   planId,
 }: FichesBreadcrumbsProps) => {
-  const currentPlanAxe = axes.find((a) => a.planId === planId);
-  const otherPlansWhereFicheIsLocated = axes.filter(
-    (axe) =>
-      axe.id !== currentPlanAxe?.id && axe.collectiviteId === collectiviteId
+  const plansWhereFicheIsLocated = axes.filter(
+    (axe) => axe.collectiviteId === collectiviteId
   );
-  const isFicheInOtherPlans = otherPlansWhereFicheIsLocated.length > 0;
 
+  const currentPlanAxe = plansWhereFicheIsLocated.find(
+    (axe) => axe.planId === planId
+  );
+  const otherPlansWhereFicheIsLocated = plansWhereFicheIsLocated.filter(
+    (axe) => axe.id !== currentPlanAxe?.id
+  );
+
+  const plansToDisplay = [
+    currentPlanAxe,
+    ...otherPlansWhereFicheIsLocated,
+  ].filter((axe): axe is Axe => axe !== undefined);
+
+  const [firstPlan, ...otherPlans] = plansToDisplay;
   return (
     <>
       <BasicBreadcrumbs
         title={title}
         collectiviteId={collectiviteId}
-        planId={currentPlanAxe?.id}
+        planId={firstPlan?.id}
       />
-      <VisibleWhen condition={isFicheInOtherPlans}>
+      <VisibleWhen condition={plansToDisplay.length > 1}>
         <OtherPlansBreadcrumbs
-          plans={otherPlansWhereFicheIsLocated}
+          plans={otherPlans}
           title={title}
           collectiviteId={collectiviteId}
         />

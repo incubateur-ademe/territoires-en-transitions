@@ -4,22 +4,17 @@ import { OpenState } from '../utils/types';
 
 /** Hook to manage open state when a component can be controlled or uncontrolled */
 export const useOpenState = (openState?: OpenState) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(openState?.isOpen ?? false);
 
-  const isControlled = !!openState;
+  const isControlled = !!openState?.setIsOpen;
 
   const isOpen = isControlled ? openState.isOpen : open;
 
-  const setIsOpen = isControlled
-    ? openState.setIsOpen
-    : (isOpen: boolean) => setOpen(isOpen);
+  const setIsOpen = openState?.setIsOpen ? openState.setIsOpen : setOpen;
 
   const toggleIsOpen = () => {
-    if (isControlled) {
-      openState.setIsOpen(!openState.isOpen);
-    } else {
-      setOpen(!open);
-    }
+    const currentState = isControlled ? openState.isOpen : open;
+    setIsOpen(!currentState);
   };
 
   return {
