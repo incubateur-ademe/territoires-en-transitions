@@ -46,9 +46,7 @@ export const SousActionCellPilotes = ({ sousAction }: Props) => {
           )}
         />
       ) : (
-        <span className="text-grey-6">
-          {isReadOnly ? '' : 'Sélectionner des pilotes'}
-        </span>
+        <span className="text-grey-6">{isReadOnly ? '' : 'Sélectionner'}</span>
       )}
     </TableCell>
   );
