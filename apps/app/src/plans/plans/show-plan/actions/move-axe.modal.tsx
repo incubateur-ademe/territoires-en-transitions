@@ -1,15 +1,14 @@
 import { OPEN_AXES_KEY_SEARCH_PARAMETER } from '@/app/app/paths';
 import { TProfondeurAxe } from '@/app/plans/plans/types';
-import { TAxeRow } from '@/app/types/alias';
 import { PlanNode } from '@tet/domain/plans';
 import { Alert, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs';
-import { useState } from 'react';
 import { ColonneTableauEmplacement } from '../../../fiches/show-fiche/header/actions/emplacement/EmplacementFiche/NouvelEmplacement/ColonneTableauEmplacement';
-import { childrenOfPlanNodes } from '../../utils';
+import { useSelectAxes } from '../../../fiches/show-fiche/header/actions/emplacement/EmplacementFiche/use-select-axes';
 import { useUpdateAxe } from '../data/use-update-axe';
 import { getChildrenAxeIds } from '../plan-arborescence.view/get-children-axe-ids';
+import { planNodeToProfondeurAxe } from './utils';
 
 type Props = {
   collectiviteId: number;
@@ -17,28 +16,6 @@ type Props = {
   rootAxe: PlanNode;
   axes: PlanNode[];
   openState: OpenState;
-};
-
-/**
- * Convertit un PlanNode en TProfondeurAxe récursivement
- */
-const planNodeToProfondeurAxe = (
-  node: PlanNode,
-  allAxes: PlanNode[]
-): TProfondeurAxe => {
-  const children = childrenOfPlanNodes(node, allAxes);
-
-  // Créer un objet TAxeRow minimal avec seulement les propriétés nécessaires
-  const axeRow: TAxeRow = {
-    id: node.id,
-    nom: node.nom,
-  } as TAxeRow;
-
-  return {
-    axe: axeRow,
-    profondeur: node.depth,
-    enfants: children.map((child) => planNodeToProfondeurAxe(child, allAxes)),
-  };
 };
 
 /**
@@ -96,30 +73,8 @@ export const MoveAxeModal = ({
   // On peut déplacer si le plan filtré existe (même s'il n'a pas d'enfants, on peut déplacer à la racine)
   const canMove = filteredPlan !== null;
 
-  // L'axe sélectionné et ceux dont il est l'enfant
-  const [selectedAxes, setSelectedAxes] = useState<TProfondeurAxe[]>([]);
-
-  // Gestion de la sélection d'un nouvel axe
-  const handleSelectAxe = (selectedAxe: TProfondeurAxe) => {
-    const selectedDepth = selectedAxe.profondeur;
-    const currentDepth = selectedAxes.length - 1;
-    const isAlreadySelected = selectedAxes.some(
-      (axe) => axe.axe.id === selectedAxe.axe.id
-    );
-
-    const newSelectedAxes = [
-      ...selectedAxes.filter((axe) => axe.profondeur < selectedDepth),
-    ];
-
-    if (
-      !isAlreadySelected ||
-      (isAlreadySelected && selectedDepth < currentDepth)
-    ) {
-      newSelectedAxes.push(selectedAxe);
-    }
-
-    setSelectedAxes(newSelectedAxes);
-  };
+  // gestion de la sélection d'un emplacement
+  const { selectedAxes, setSelectedAxes, handleSelectAxe } = useSelectAxes();
 
   // Sauvegarde du déplacement de l'axe
   const handleSave = async () => {
