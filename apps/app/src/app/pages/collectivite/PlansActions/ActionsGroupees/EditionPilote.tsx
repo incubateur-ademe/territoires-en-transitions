@@ -1,6 +1,6 @@
+import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
+import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { BulkEditRequest } from '@/app/plans/fiches/list-all-fiches/data/use-bulk-fiches-edit';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
 import { Button, Event, Field, useEventTracker } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
@@ -47,14 +47,14 @@ const ModaleEditionPilote = ({
     >
       <>
         <Field title="Ajouter une personne pilote" className="col-span-2">
-          <PersonnesDropdown
+          <PersonneTagDropdown
             values={pilotesToAdd?.map((p) => getPersonneStringId(p))}
             placeholder="Sélectionnez ou créez un pilote"
             onChange={({ personnes }) => setPilotesToAdd(personnes)}
           />
         </Field>
         <Field title="Dissocier une personne pilote" className="col-span-2">
-          <PersonnesDropdown
+          <PersonneTagDropdown
             disableEdition
             values={pilotesToRemove?.map((p) => getPersonneStringId(p))}
             placeholder="Sélectionnez un ou plusieurs pilotes"

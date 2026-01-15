@@ -1,5 +1,5 @@
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
+import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { TableCell } from '@tet/ui';
@@ -21,8 +21,9 @@ export const SousActionPilotesCell = ({ sousAction }: Props) => {
       edit={{
         renderOnEdit: ({ openState }) => (
           <div className="w-80">
-            <PersonnesDropdown
+            <PersonneTagDropdown
               inlineEdit
+              openState={openState}
               values={sousAction.pilotes?.map((p) => getPersonneStringId(p))}
               onChange={(pilotes) => {
                 updateSousAction({
@@ -30,7 +31,6 @@ export const SousActionPilotesCell = ({ sousAction }: Props) => {
                   ficheFields: { pilotes: pilotes.personnes },
                 });
               }}
-              openState={openState}
             />
           </div>
         ),

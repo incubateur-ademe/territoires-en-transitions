@@ -1,5 +1,5 @@
+import FinanceurTagDropdown from '@/app/collectivites/tags/financeur-tag.dropdown';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { TableCell } from '@tet/ui';
 import { useMemo } from 'react';
@@ -55,17 +55,16 @@ export const FinanceurNameCell = ({
             control={control}
             name="financeurTagId"
             render={({ field: { onChange, value } }) => (
-              <FinanceursDropdown
+              <FinanceurTagDropdown
                 collectiviteIds={collectiviteIds}
                 values={value ? [value] : undefined}
                 disabledOptionsIds={availableIdsForThisRow}
-                onChange={async ({ selectedFinanceur }) => {
+                onChange={({ selectedValue: selectedFinanceur }) => {
                   if (selectedFinanceur) {
                     onChange(selectedFinanceur.id);
                     openState.setIsOpen(false);
                   }
                 }}
-                placeholder="Sélectionner ou créer un financeur"
                 openState={openState}
                 inlineEdit
               />

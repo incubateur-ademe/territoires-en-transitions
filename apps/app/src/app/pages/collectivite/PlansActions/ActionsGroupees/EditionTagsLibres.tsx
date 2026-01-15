@@ -1,5 +1,5 @@
+import { LibreTagDropdown } from '@/app/collectivites/tags/libre-tag.dropdown';
 import { BulkEditRequest } from '@/app/plans/fiches/list-all-fiches/data/use-bulk-fiches-edit';
-import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import { Tag } from '@tet/domain/collectivites';
 import { Button, Event, Field, useEventTracker } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
@@ -33,9 +33,9 @@ const ModaleEditionTagsLibres = ({
       }}
     >
       <Field title="Tags" className="col-span-2">
-        <TagsSuiviPersoDropdown
+        <LibreTagDropdown
           values={tags?.map((t) => t.id)}
-          onChange={({ libresTag }) => setTags(libresTag)}
+          onChange={({ values }) => setTags(values)}
         />
       </Field>
     </ActionsGroupeesModale>

@@ -1,7 +1,7 @@
+import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
+import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import { Thematique } from '@tet/domain/shared';
@@ -47,7 +47,7 @@ const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
       render={() => (
         <div className="flex flex-col gap-6">
           <Field title="Personne pilote :">
-            <PersonnesDropdown
+            <PersonneTagDropdown
               values={pilotesValues}
               onChange={({ personnes }) =>
                 setState({
@@ -58,9 +58,9 @@ const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
             />
           </Field>
           <Field title="Direction ou service pilote :">
-            <ServicesPilotesDropdown
+            <ServiceTagDropdown
               values={state.services.map((s) => s.id)}
-              onChange={({ services }) =>
+              onChange={({ values: services }) =>
                 setState({
                   ...state,
                   services,

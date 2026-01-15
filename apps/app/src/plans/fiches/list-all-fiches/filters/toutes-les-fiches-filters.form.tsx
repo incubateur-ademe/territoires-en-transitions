@@ -1,24 +1,23 @@
-import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
-import { InstanceGouvernanceDropdown } from '@/app/plans/fiches/shared/dropdowns/instance-gouvernance.dropdown';
-import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
-import { NoteYearsDropdown } from '@/app/ui/dropdownLists/ficheAction/notes/note-years.dropdown';
-import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
-import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
-import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
-import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import FinanceurTagDropdown from '@/app/collectivites/tags/financeur-tag.dropdown';
+import { InstanceGouvernanceTagDropdown } from '@/app/collectivites/tags/instance-gouvernance-tag.dropdown';
+import { LibreTagDropdown } from '@/app/collectivites/tags/libre-tag.dropdown';
+import { PartenaireTagDropdown } from '@/app/collectivites/tags/partenaire-tag.dropdown';
+import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import {
   getPilotesValues,
   getReferentsValues,
   splitPilotePersonnesAndUsers,
   splitReferentPersonnesAndUsers,
-} from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+} from '@/app/collectivites/tags/personnes.utils';
+import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
+import { StructureTagDropdown } from '@/app/collectivites/tags/structure-tag.dropdown';
+import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
+import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
+import { NoteYearsDropdown } from '@/app/ui/dropdownLists/ficheAction/notes/note-years.dropdown';
+import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
+import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
-import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
-import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import { useCollectiviteId } from '@tet/api/collectivites';
 import { ListFichesRequestFilters as Filtres } from '@tet/domain/plans';
 import {
   Checkbox,
@@ -61,7 +60,6 @@ export const ToutesLesFichesFiltersForm = ({
   readonlyFilters?: Partial<FormFilters>;
   setFilters: (filters: Partial<FormFilters>) => void;
 }) => {
-  const collectiviteId = useCollectiviteId();
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
   const shareFicheEnabled = useShareFicheEnabled();
@@ -124,7 +122,7 @@ export const ToutesLesFichesFiltersForm = ({
                 name="personnePiloteIds"
                 control={control}
                 render={({ field }) => (
-                  <PersonnesDropdown
+                  <PersonneTagDropdown
                     values={pilotes}
                     disabled={
                       !isNil(readonlyFilters.personnePiloteIds) ||
@@ -153,10 +151,10 @@ export const ToutesLesFichesFiltersForm = ({
                 name="servicePiloteIds"
                 control={control}
                 render={({ field }) => (
-                  <ServicesPilotesDropdown
+                  <ServiceTagDropdown
                     values={field.value}
                     disabled={!isNil(readonlyFilters.servicePiloteIds)}
-                    onChange={({ services }) => {
+                    onChange={({ values: services }) => {
                       const serviceIds =
                         services.length > 0
                           ? services.map((s) => s.id)
@@ -173,13 +171,13 @@ export const ToutesLesFichesFiltersForm = ({
                 name="structurePiloteIds"
                 control={control}
                 render={({ field }) => (
-                  <StructuresDropdown
+                  <StructureTagDropdown
                     values={field.value}
                     disabled={!isNil(readonlyFilters.structurePiloteIds)}
-                    onChange={({ structures }) => {
+                    onChange={({ values }) => {
                       const structureIds =
-                        structures.length > 0
-                          ? structures.map((s) => s.id)
+                        values.length > 0
+                          ? values.map((s) => s.id)
                           : EMPTY_ARRAY_VALUE;
                       field.onChange(structureIds);
                     }}
@@ -193,13 +191,13 @@ export const ToutesLesFichesFiltersForm = ({
                 name="libreTagsIds"
                 control={control}
                 render={({ field }) => (
-                  <TagsSuiviPersoDropdown
+                  <LibreTagDropdown
                     values={field.value}
                     disabled={!isNil(readonlyFilters.libreTagsIds)}
-                    onChange={({ libresTag }) => {
+                    onChange={({ values }) => {
                       const tagIds =
-                        libresTag.length > 0
-                          ? libresTag.map((t) => t.id)
+                        values.length > 0
+                          ? values.map((t) => t.id)
                           : EMPTY_ARRAY_VALUE;
                       field.onChange(tagIds);
                     }}
@@ -212,11 +210,12 @@ export const ToutesLesFichesFiltersForm = ({
                 name="instanceGouvernanceIds"
                 control={control}
                 render={({ field }) => (
-                  <InstanceGouvernanceDropdown
-                    collectiviteId={collectiviteId}
+                  <InstanceGouvernanceTagDropdown
                     values={field.value}
-                    onChange={(tags) => field.onChange(tags.map((t) => t.id))}
-                    canEditTags={false}
+                    onChange={({ values }) =>
+                      field.onChange(values.map((t) => t.id))
+                    }
+                    disableEdition={true}
                   />
                 )}
               />
@@ -227,7 +226,7 @@ export const ToutesLesFichesFiltersForm = ({
                 name="personneReferenteIds"
                 control={control}
                 render={({ field }) => (
-                  <PersonnesDropdown
+                  <PersonneTagDropdown
                     values={referents}
                     disabled={
                       !isNil(readonlyFilters.personneReferenteIds) ||
@@ -352,10 +351,10 @@ export const ToutesLesFichesFiltersForm = ({
                 name="financeurIds"
                 control={control}
                 render={({ field }) => (
-                  <FinanceursDropdown
+                  <FinanceurTagDropdown
                     values={field.value}
                     disabled={!isNil(readonlyFilters.financeurIds)}
-                    onChange={({ financeurs }) => {
+                    onChange={({ values: financeurs }) => {
                       const financeurIds =
                         financeurs.length > 0
                           ? financeurs.map((f) => f.id)
@@ -371,13 +370,13 @@ export const ToutesLesFichesFiltersForm = ({
                 name="partenaireIds"
                 control={control}
                 render={({ field }) => (
-                  <PartenairesDropdown
+                  <PartenaireTagDropdown
                     values={field.value}
                     disabled={!isNil(readonlyFilters.partenaireIds)}
-                    onChange={({ partenaires }) => {
+                    onChange={({ values }) => {
                       const partenaireIds =
-                        partenaires.length > 0
-                          ? partenaires.map((p) => p.id)
+                        values.length > 0
+                          ? values.map((p) => p.id)
                           : EMPTY_ARRAY_VALUE;
                       field.onChange(partenaireIds);
                     }}

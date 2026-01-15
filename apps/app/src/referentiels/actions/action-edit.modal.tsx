@@ -1,6 +1,9 @@
 import { isEqual } from 'es-toolkit';
 import { useState } from 'react';
 
+import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
+import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
 import {
   useDeleteMesurePilotes,
   useUpsertMesurePilotes,
@@ -9,9 +12,6 @@ import {
   useDeleteMesureServicesPilotes,
   useUpsertMesureServicesPilotes,
 } from '@/app/referentiels/actions/use-mesure-services-pilotes';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
-import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
@@ -98,7 +98,7 @@ const ActionEditModal = ({
         <>
           {/* Personnes pilote */}
           <Field title="Personne pilote" className="col-span-2">
-            <PersonnesDropdown
+            <PersonneTagDropdown
               placeholder="Sélectionnez ou créez un pilote"
               values={editedPilotes?.map((p) => getPersonneStringId(p))}
               onChange={({ personnes }) => {
@@ -109,10 +109,9 @@ const ActionEditModal = ({
 
           {/* Directions ou services pilote */}
           <Field title="Direction ou service pilote" className="col-span-2">
-            <ServicesPilotesDropdown
-              placeholder="Sélectionnez ou créez un pilote"
+            <ServiceTagDropdown
               values={editedServices?.map((s) => s.id)}
-              onChange={({ services }) => setEditedServices(services)}
+              onChange={({ values: services }) => setEditedServices(services)}
             />
           </Field>
         </>

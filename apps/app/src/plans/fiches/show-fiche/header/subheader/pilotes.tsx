@@ -1,7 +1,7 @@
+import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
+import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
 import { SANS_PILOTE_LABEL } from '@tet/domain/plans';
@@ -22,7 +22,7 @@ export const Pilotes = ({ personnes }: PilotesTriggerProps) => {
         disabled={isReadonly}
         renderOnEdit={({ openState }) => (
           <div className="w-72">
-            <PersonnesDropdown
+            <PersonneTagDropdown
               inlineEdit
               openState={openState}
               dataTest="personnes-pilotes"

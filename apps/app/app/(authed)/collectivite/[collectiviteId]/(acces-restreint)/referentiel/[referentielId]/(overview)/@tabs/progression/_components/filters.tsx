@@ -1,9 +1,9 @@
 import { Field, FormSection } from '@tet/ui';
 
+import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
+import { splitPilotePersonnesAndUsers } from '@/app/collectivites/tags/personnes.utils';
+import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
 import { ActionListFilters } from '@/app/referentiels/actions/use-list-actions';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { splitPilotePersonnesAndUsers } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
-import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 
 type Props = {
   filters: ActionListFilters;
@@ -23,7 +23,7 @@ const Filters = ({ filters, setFilters }: Props) => {
     <div className="w-full sm:w-[28rem] lg:gap-12 p-4 lg:p-8">
       <FormSection title="Filtrer :" className="!grid-cols-1">
         <Field title="Personne pilote :">
-          <PersonnesDropdown
+          <PersonneTagDropdown
             values={pilotes.length ? pilotes : undefined}
             onChange={({ personnes }) => {
               setFilters({
@@ -34,12 +34,12 @@ const Filters = ({ filters, setFilters }: Props) => {
           />
         </Field>
         <Field title="Direction ou service pilote :">
-          <ServicesPilotesDropdown
+          <ServiceTagDropdown
             values={filters?.servicePiloteIds}
-            onChange={({ services }) => {
+            onChange={({ values }) => {
               setFilters({
                 ...filters,
-                servicePiloteIds: services.map((s) => s.id),
+                servicePiloteIds: values.map((s) => s.id),
               });
             }}
           />

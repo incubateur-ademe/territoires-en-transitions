@@ -90,9 +90,9 @@ export const ficheSchema = z.object({
   tempsDeMiseEnOeuvre: z.number().nullable(),
   majTermine: z.boolean().nullable(),
   createdAt: z.iso.datetime().describe('Date de création'),
-  createdBy: z.string().nullable(),
+  createdBy: z.nullable(z.uuid()),
   modifiedAt: z.string().describe('Date de modification'),
-  modifiedBy: z.string().nullable(),
+  modifiedBy: z.nullable(z.uuid()),
   restreint: z.boolean().nullable().describe('Confidentialité'),
 });
 
