@@ -1,3 +1,4 @@
+import { naturalSort } from '@/app/utils/naturalSort';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RouterInput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -45,9 +46,15 @@ export const useUpdateSousAction = (args?: Args) => {
         (previous: ListFichesOutput) => {
           return {
             ...previous,
-            data: (previous.data ?? []).map((fiche) =>
-              fiche.id === ficheId ? { ...fiche, ...ficheFields } : fiche
-            ),
+            data: (previous.data ?? [])
+              .map((fiche) =>
+                fiche.id === ficheId ? { ...fiche, ...ficheFields } : fiche
+              )
+              .sort((a, b) => {
+                if (!a.titre) return -1;
+                if (!b.titre) return 1;
+                return naturalSort(a.titre, b.titre);
+              }),
           };
         }
       );
