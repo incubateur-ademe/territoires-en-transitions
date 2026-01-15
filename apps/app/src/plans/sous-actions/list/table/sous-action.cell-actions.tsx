@@ -21,7 +21,7 @@ export const SousActionCellActions = ({ sousAction }: Props) => {
         title="Supprimer la sous-action"
       />
       <SousActionDeleteModal
-        id={sousAction.id}
+        sousAction={sousAction}
         openState={{ isOpen, setIsOpen }}
       />
     </TableCell>

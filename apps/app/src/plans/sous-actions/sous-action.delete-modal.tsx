@@ -1,14 +1,15 @@
 import { useDeleteFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-delete-fiche';
+import { FicheWithRelations } from '@tet/domain/plans';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 
 type DeleteFicheModalProps = {
-  id: number;
+  sousAction: FicheWithRelations;
   openState: OpenState;
 };
 
 export const SousActionDeleteModal = ({
-  id,
+  sousAction,
   openState,
 }: DeleteFicheModalProps) => {
   const { mutate: deleteFiche } = useDeleteFiche({});
@@ -17,8 +18,9 @@ export const SousActionDeleteModal = ({
     <Modal
       openState={openState}
       title="Supprimer la sous-action"
+      subTitle={sousAction.titre ?? undefined}
       render={({ descriptionId }) => (
-        <div id={descriptionId} className="text-center">
+        <div id={descriptionId} className="flex flex-col gap-6 text-center">
           Êtes-vous sûr de vouloir supprimer cette sous-action ?
         </div>
       )}
@@ -27,7 +29,7 @@ export const SousActionDeleteModal = ({
           btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
-              deleteFiche({ ficheId: id });
+              deleteFiche({ ficheId: sousAction.id });
               close();
             },
           }}
