@@ -47,7 +47,9 @@ export const ImportPlanModal = ({
           {errorMessage && (
             <p
               className="text-red-600"
-              dangerouslySetInnerHTML={{ __html: errorMessage }}
+              dangerouslySetInnerHTML={{
+                __html: errorMessage.replace(/\n/g, '<br />'),
+              }}
             />
           )}
         </div>
