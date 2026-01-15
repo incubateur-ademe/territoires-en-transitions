@@ -29,7 +29,7 @@ export const TableHeaderCell = ({
           <Icon
             icon={icon}
             size={children ? 'sm' : 'md'}
-            className={cn({ 'm-auto': !children })}
+            className={cn({ 'm-auto': !children && !title })}
           />
         )}
         {title && <span className="uppercase">{title}</span>}
