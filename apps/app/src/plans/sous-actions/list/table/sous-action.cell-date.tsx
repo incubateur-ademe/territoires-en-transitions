@@ -2,10 +2,10 @@ import { format, isValid } from 'date-fns';
 import { isEqual } from 'es-toolkit';
 import { useRef, useState } from 'react';
 
-import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations, isFicheOnTime } from '@tet/domain/plans';
 import { cn, Icon, Input, TableCell } from '@tet/ui';
+import { useUpdateSousAction } from '../../data/use-update-sous-action';
 
 type Props = {
   sousAction: FicheWithRelations;
@@ -18,7 +18,7 @@ export const SousActionCellDate = ({ sousAction }: Props) => {
 
   const [value, setValue] = useState(initialDate);
 
-  const { mutate: updateFiche } = useUpdateFiche();
+  const { mutate: updateSousAction } = useUpdateSousAction();
 
   const refDateFin = useRef<HTMLInputElement>(null);
 
@@ -37,7 +37,7 @@ export const SousActionCellDate = ({ sousAction }: Props) => {
       edit={{
         onClose: () =>
           hasChanged &&
-          updateFiche({
+          updateSousAction({
             ficheId: sousAction.id,
             ficheFields: {
               dateFin: isValidDate ? value : null,
