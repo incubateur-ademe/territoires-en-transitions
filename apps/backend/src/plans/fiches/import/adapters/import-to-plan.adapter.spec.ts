@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { PlanImport } from '../import-plan.dto';
+import { PlanImport } from '../import-plan.input';
 import { ResolvedFicheEntities } from '../resolvers/entity-resolver.service';
 import { FicheImport } from '../schemas/fiche-import.schema';
 import { adaptImportToPlanCreation } from './import-to-plan.adapter';
@@ -133,8 +133,6 @@ describe('adaptImportToPlanCreation', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error).toContain('No resolved entities found');
-      expect(result.error).toContain('Fiche 2');
-      expect(result.error).toContain('Axe 2 > Missing');
     }
   });
 
@@ -338,8 +336,6 @@ describe('adaptImportToPlanCreation', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error).toContain('No resolved entities found');
-      expect(result.error).toContain('Fiche sans axe');
-      expect(result.error).toContain('axis path: no axes');
     }
   });
 });

@@ -1,13 +1,12 @@
-import { failure, success } from '@tet/backend/shared/types/result';
 import {
   AuthenticatedUser,
   AuthRole,
 } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { success } from '@tet/backend/utils/result.type';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { PlanErrorType } from '../plans.errors';
-import { PlanAggregateCreationRequest } from '../types/plan-aggregate-creation.types';
 import { PlanAggregateService } from './upsert-plan-aggregate.service';
+import { PlanAggregateCreationInput } from './upsert-plan-aggregate.types';
 
 describe('PlanAggregateService', () => {
   let service: PlanAggregateService;
@@ -53,7 +52,7 @@ describe('PlanAggregateService', () => {
   });
 
   describe('create', () => {
-    const createValidRequest = (): PlanAggregateCreationRequest => ({
+    const createValidRequest = (): PlanAggregateCreationInput => ({
       collectiviteId: 1,
       nom: 'Mon Plan Test',
       typeId: 1,

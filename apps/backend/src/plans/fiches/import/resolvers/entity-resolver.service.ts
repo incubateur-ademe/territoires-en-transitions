@@ -100,7 +100,6 @@ export class EntityResolverService {
     const results = await Promise.all(
       fiches.map(async (fiche) => {
         const result = await this.resolveSingleFiche(fiche, resolvers, tx);
-        console.log('result', result);
         if (!result.success) {
           return result;
         }

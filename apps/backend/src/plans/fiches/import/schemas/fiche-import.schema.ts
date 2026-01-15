@@ -1,15 +1,15 @@
-import {
-  ciblesEnumValues,
-  participationCitoyenneEnumValues,
-  Priorite,
-  prioriteEnumValues,
-  statutsEnumValues,
-} from '@tet/backend/plans/fiches/domain/fiche.types';
 import { ParsedRow } from '@tet/backend/plans/fiches/import/parsers/excel-parser';
 import { richTextPreprocessor } from '@tet/backend/plans/fiches/import/utils/rich-text.utils';
 import { failure, Result, success } from '@tet/backend/shared/types/result';
 import { getFuse } from '@tet/backend/utils/fuse/fuse.utils';
 import { TagEnum } from '@tet/domain/collectivites';
+import {
+  cibleEnumValues,
+  participationCitoyenneEnumValues,
+  Priorite,
+  prioriteEnumValues,
+  statutEnumValues,
+} from '@tet/domain/plans';
 import { z } from 'zod';
 
 const regexEspace = /\\t|\\r|\\n/;
@@ -138,13 +138,13 @@ export const ficheImportSchema = z.object({
     .string()
     .optional()
     .transform((val) => {
-      return fuzzyMatchEnum(val, ciblesEnumValues);
+      return fuzzyMatchEnum(val, cibleEnumValues);
     }),
   status: z
     .string()
     .optional()
     .transform((val) => {
-      return fuzzyMatchEnum(val, statutsEnumValues);
+      return fuzzyMatchEnum(val, statutEnumValues);
     }),
   pilotes: listSchema,
   referents: listSchema,

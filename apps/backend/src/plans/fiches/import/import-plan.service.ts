@@ -126,13 +126,11 @@ export class ImportPlanService {
         );
 
         if (!planCreationResult.success) {
-          tx.rollback();
           return failure(new PlanCreationError(planCreationResult.error));
         }
 
         return success(true);
       } catch (error) {
-        tx.rollback();
         this.logger.error('Error during import transaction:', error);
         return failure(new TransactionError(error));
       }

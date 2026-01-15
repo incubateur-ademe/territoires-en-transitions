@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { importRequestSchema } from '@tet/backend/plans/fiches/import/import-plan.request';
+import { importPlanInputSchema } from '@tet/backend/plans/fiches/import/import-plan.input';
 import { ImportPlanService } from '@tet/backend/plans/fiches/import/import-plan.service';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { TRPCError } from '@trpc/server';
@@ -13,7 +13,7 @@ export class ImportPlanRouter {
 
   router = this.trpc.router({
     import: this.trpc.authedProcedure
-      .input(importRequestSchema)
+      .input(importPlanInputSchema)
       .mutation(async ({ input, ctx }) => {
         const result = await this.service.import(
           ctx.user,

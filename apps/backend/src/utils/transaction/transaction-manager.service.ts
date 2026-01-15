@@ -56,15 +56,4 @@ export class TransactionManager {
     }
     return success(result.data[0]);
   }
-
-  /**
-   * Create a transaction scope that can be used to group multiple operations
-   * @param operations Operations to execute in the transaction
-   * @returns A function that executes the operations in a transaction
-   */
-  createTransactionScope<T, E = string>(
-    operations: TransactionOperation<T, E>[]
-  ): () => Promise<Result<T[], E>> {
-    return () => this.executeTransaction(operations);
-  }
 }

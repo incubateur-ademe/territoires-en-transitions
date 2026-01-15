@@ -11,17 +11,14 @@ import { isNil } from 'es-toolkit';
 const validateBasicFields = (
   fiche: FicheImport
 ): Result<true, ImportErrors> => {
-  // Title validation
   if (!fiche.titre?.trim()) {
     return failure(new InvalidFicheTitre(fiche.titre || ''));
   }
 
-  // Date validation
   if (fiche.dateDebut && fiche.dateFin && fiche.dateDebut > fiche.dateFin) {
     return failure(new InvalidDateRange(fiche.dateDebut, fiche.dateFin));
   }
 
-  // Budget validation
   if (isNil(fiche.budget) === false && fiche.budget < 0) {
     return failure(
       new InvalidBudget(fiche.budget, 'Le budget ne peut pas être négatif')

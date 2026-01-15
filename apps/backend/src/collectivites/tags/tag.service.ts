@@ -80,10 +80,10 @@ export class TagService {
       .returning();
 
     if (!result) {
-      // happens when the tag already exists and the onConflictDoNothing is used
-      const existingTag = await (tx ?? this.databaseService.db)
+      // handle case where the tag already exists and the onConflictDoNothing is used
+      const [existingTag] = await (tx ?? this.databaseService.db)
         .select()
-        .from(tagTypeTable[tagType])
+        .from(table)
         .where(
           and(
             eq((table as any).nom, tag.nom),
@@ -91,14 +91,11 @@ export class TagService {
           )
         )
         .limit(1);
-      return existingTag[0] as TagWithCollectiviteId;
+
+      return existingTag as TagWithCollectiviteId;
     }
 
-    return {
-      nom: result.nom as string,
-      collectiviteId: result.collectiviteId as number,
-      id: result.id as number,
-    };
+    return result as TagWithCollectiviteId;
   }
 
   /**

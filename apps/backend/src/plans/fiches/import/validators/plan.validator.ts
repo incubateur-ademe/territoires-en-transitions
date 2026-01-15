@@ -1,4 +1,3 @@
-import { PlanImport } from '@tet/backend/plans/fiches/import/import-plan.dto';
 import {
   ImportErrors,
   InvalidPlanType,
@@ -9,6 +8,7 @@ import {
   Result,
   success,
 } from '@tet/backend/shared/types/result';
+import { PlanImport } from '../import-plan.input';
 import { validateFiche } from './fiche.validator';
 
 function validatePlanData(plan: PlanImport): Result<true, ImportErrors> {

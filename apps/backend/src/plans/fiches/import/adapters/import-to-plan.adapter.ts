@@ -1,10 +1,5 @@
-import { PlanImport } from '@tet/backend/plans/fiches/import/import-plan.dto';
 import { ResolvedFicheEntities } from '@tet/backend/plans/fiches/import/resolvers/entity-resolver.service';
-import { PlanAggregateCreationRequest } from '@tet/backend/plans/plans/types/plan-aggregate-creation.types';
-import {
-  PlanAggregateError,
-  PlanAggregateErrorType,
-} from '@tet/backend/plans/plans/upsert-plan-aggregate/upsert-plan-aggregate.errors';
+import { PlanAggregateCreationInput } from '@tet/backend/plans/plans/upsert-plan-aggregate/upsert-plan-aggregate.types';
 import {
   combineResults,
   failure,
@@ -13,6 +8,7 @@ import {
 } from '@tet/backend/shared/types/result';
 import { isPersonneId } from '@tet/domain/collectivites';
 import { isEqual } from 'es-toolkit';
+import { PlanImport } from '../import-plan.input';
 import { toFicheWithRelations } from './fiche-with-relations.adapter';
 
 /**
@@ -37,7 +33,7 @@ export function adaptImportToPlanCreation(
   planImport: PlanImport,
   resolvedEntities: ResolvedFicheEntities[],
   collectiviteId: number
-): Result<PlanAggregateCreationRequest, PlanAggregateErrorType> {
+): Result<PlanAggregateCreationInput, string> {
   const fichesWithPaths = planImport.fiches.map((ficheImport) => {
     const resolvedEntity = resolvedEntities.find(
       (entity) =>
@@ -46,7 +42,7 @@ export function adaptImportToPlanCreation(
     );
 
     if (!resolvedEntity) {
-      return failure(PlanAggregateError.INVALID_PLAN_DATA);
+      return failure('No resolved entities found');
     }
 
     return success({
@@ -56,10 +52,10 @@ export function adaptImportToPlanCreation(
   });
   const fichesWithPathsResults = combineResults(fichesWithPaths);
   if (!fichesWithPathsResults.success) {
-    return failure(PlanAggregateError.INVALID_PLAN_DATA);
+    return failure(fichesWithPathsResults.error);
   }
 
-  const planCreationRequest: PlanAggregateCreationRequest = {
+  const planCreationRequest: PlanAggregateCreationInput = {
     collectiviteId,
     nom: planImport.nom,
     typeId: planImport.typeId,

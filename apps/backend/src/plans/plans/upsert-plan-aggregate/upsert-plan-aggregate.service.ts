@@ -11,7 +11,6 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { UpsertAxeError } from '../../axes/upsert-axe/upsert-axe.errors';
 import { UpsertAxeService } from '../../axes/upsert-axe/upsert-axe.service';
 import { PlanError, PlanErrorType } from '../plans.errors';
-import { PlanAggregateCreationRequest } from '../types/plan-aggregate-creation.types';
 import { UpsertPlanError } from '../upsert-plan/upsert-plan.errors';
 import { UpsertPlanService } from '../upsert-plan/upsert-plan.service';
 import {
@@ -20,6 +19,7 @@ import {
   findParentAxeId,
   validatePlanAggregate,
 } from './upsert-plan-aggregate.operations';
+import { PlanAggregateCreationInput } from './upsert-plan-aggregate.types';
 
 /**
  * Plan Aggregate Service (Domain Service)
@@ -110,7 +110,7 @@ export class PlanAggregateService {
    * @returns Result with created plan ID
    */
   async create(
-    request: PlanAggregateCreationRequest,
+    request: PlanAggregateCreationInput,
     user: AuthenticatedUser,
     tx: Transaction
   ): Promise<Result<number, PlanError | UpsertAxeError | UpsertPlanError>> {

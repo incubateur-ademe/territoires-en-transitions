@@ -1,12 +1,5 @@
-/**
- * Plan Domain Types
- *
- * Types métier pour le domaine Plan, validés avec Zod.
- * Ces types représentent les concepts métier purs,
- * sans dépendances vers l'infrastructure ou les frameworks.
- */
-
 import { z } from 'zod';
+import { FicheWithRelationsCreation } from '../../fiches/list-fiches/fiche-action-with-relations.dto';
 
 export const PlanParticipantSchema = z
   .object({
@@ -54,4 +47,21 @@ export interface UniqueAxe {
   fullPath: string;
   depth: number;
   parentPath?: string[];
+}
+
+export interface PlanAggregateCreationInput {
+  collectiviteId: number;
+  nom: string;
+  typeId?: number;
+  pilotes?: Array<{ tagId: number | null; userId: string | null }>;
+  referents?: Array<{ tagId: number | null; userId: string | null }>;
+  fiches: FicheWithRelationsAndAxisPath[];
+}
+
+/**
+ * A fiche with its axis path for hierarchical organization
+ */
+export interface FicheWithRelationsAndAxisPath {
+  axisPath?: string[];
+  fiche: FicheWithRelationsCreation;
 }

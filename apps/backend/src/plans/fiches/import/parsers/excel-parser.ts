@@ -123,7 +123,7 @@ function parseWorksheet(worksheet: ExcelJS.Worksheet): PlanDataParsedFromExcel {
 
   worksheet.eachRow((row, rowNumber) => {
     if (rowNumber < FIRST_DATA_ROW) return; // Skip header rows
-    const [ignoredFirstColumn, ...rowData] = row.values as unknown[];
+    const [_ignoredFirstColumn, ...rowData] = row.values as unknown[];
     rows.push(parseRow(rowData));
   });
 
@@ -156,7 +156,7 @@ export async function parsePlanExcel(
 
     const parsedData = parseWorksheet(worksheet);
     return success(parsedData);
-  } catch (error) {
+  } catch {
     return failure({
       message: 'Une erreur est survenue lors de la lecture du fichier Excel',
     });
