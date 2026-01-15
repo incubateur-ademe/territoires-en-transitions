@@ -19,6 +19,7 @@ import { useOpenState } from '../../hooks/use-open-state';
 import { cn } from '../../utils/cn';
 import { OpenState } from '../../utils/types';
 import { Icon } from '../Icon';
+import { Tooltip } from '../Tooltip';
 import { Button } from './Button';
 import { ButtonProps } from './types';
 
@@ -28,6 +29,10 @@ export type MenuAction = {
   icon?: string;
   /** True par défaut */
   isVisible?: boolean;
+  // item désactivé
+  disabled?: boolean;
+  // texte pour une infobulle
+  tooltip?: string;
 };
 
 type Props = {
@@ -156,18 +161,27 @@ export const ButtonMenu = ({ menu, withArrow, children, ...props }: Props) => {
   );
 };
 
-const MenuAction = ({ icon, label, onClick, isVisible = true }: MenuAction) => {
+const MenuAction = ({
+  icon,
+  label,
+  onClick,
+  isVisible = true,
+  disabled,
+  tooltip,
+}: MenuAction) => {
   if (!isVisible) {
     return null;
   }
 
-  return (
+  const btn = (
     <button
       className="flex items-baseline gap-3 py-2 px-3 text-primary-9 text-sm text-left rounded hover:!bg-primary-1"
       onClick={onClick}
+      disabled={disabled}
     >
       {icon && <Icon icon={icon} size="sm" className="-mt-0.5" />}
       {label}
     </button>
   );
+  return tooltip ? <Tooltip label={tooltip}>{btn}</Tooltip> : btn;
 };

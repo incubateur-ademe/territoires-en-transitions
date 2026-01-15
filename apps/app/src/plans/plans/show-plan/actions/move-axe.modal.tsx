@@ -49,7 +49,7 @@ export const MoveAxeModal = ({
   axes,
   openState,
 }: Props) => {
-  const { mutateAsync: updateAxe } = useUpdateAxe({ axe, collectiviteId });
+  const { mutateAsync: updateAxe } = useUpdateAxe({ axe, collectiviteId, planId: rootAxe.id });
 
   // IDs des axes invalides (l'axe actuel et tous ses descendants)
   const invalidAxeIds = [axe.id, ...getChildrenAxeIds(axe, axes)];
@@ -98,7 +98,7 @@ export const MoveAxeModal = ({
       render={({ descriptionId }) => (
         <div id={descriptionId} className="flex flex-col gap-8">
           {/* Message d'info */}
-          <Alert title="Sélectionnez le nouvel emplacement pour cet axe" />
+          <Alert title="Sélectionnez l'emplacement de cet axe" />
 
           {/* Arborescence des axes disponibles */}
           {canMove && filteredPlan ? (

@@ -33,7 +33,7 @@ export const AxeIndicateurs = () => {
   return (
     <section>
       <AxeSectionTitle name="indicateurs" />
-      <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-3">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-3 pt-4">
         {selectedIndicateurs.map((indicateur) => {
           const collectiviteId = collectivite.collectiviteId;
           return (

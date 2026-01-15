@@ -9,7 +9,7 @@ export const AxeFiches = () => {
   const isEnabled =
     isOpen && planOptions.isOptionEnabled(PlanDisplayOptionsEnum.ACTIONS);
 
-  if (!isEnabled) {
+  if (!isEnabled || !axe.fiches.length) {
     return null;
   }
 
