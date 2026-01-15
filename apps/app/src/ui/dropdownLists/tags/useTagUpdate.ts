@@ -1,7 +1,7 @@
 import { QueryKey, useMutation, useQueryClient } from '@tanstack/react-query';
-import { TableTag, useSupabase } from '@tet/api';
+import { TableTag, useTRPC } from '@tet/api';
 import { TagUpdate } from '@tet/domain/collectivites';
-import { objectToSnake } from 'ts-case-convert';
+import { tableTagToTagType } from './tag-utils';
 
 type Args = {
   key: QueryKey;
@@ -17,15 +17,24 @@ export const useTagUpdate = ({
   onSuccess,
 }: Args) => {
   const queryClient = useQueryClient();
-  const supabase = useSupabase();
+  const trpc = useTRPC();
+
+  const { mutateAsync: updateTagMutation } = useMutation(
+    trpc.collectivites.tags.mutate.update.mutationOptions()
+  );
 
   return useMutation({
     mutationFn: async (tag: TagUpdate) => {
-      if (tag.id)
-        await supabase
-          .from(tagTableName)
-          .update(objectToSnake(tag))
-          .eq('id', tag.id);
+      if (!tag.id || !tag.collectiviteId) {
+        throw new Error('Tag id and collectiviteId are required');
+      }
+      const tagType = tableTagToTagType(tagTableName);
+      return await updateTagMutation({
+        tagType,
+        id: tag.id,
+        nom: tag.nom,
+        collectiviteId: tag.collectiviteId,
+      });
     },
 
     onMutate: async (tag) => {

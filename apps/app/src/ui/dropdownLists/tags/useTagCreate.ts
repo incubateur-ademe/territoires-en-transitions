@@ -3,9 +3,9 @@ import {
   useQueryClient,
   type QueryKey,
 } from '@tanstack/react-query';
-import { CollectiviteTag, TableTag, useSupabase } from '@tet/api';
+import { CollectiviteTag, TableTag, useTRPC } from '@tet/api';
 import { TagCreate } from '@tet/domain/collectivites';
-import { objectToSnake } from 'ts-case-convert';
+import { tableTagToTagType } from './tag-utils';
 
 type Tag = CollectiviteTag;
 
@@ -23,12 +23,22 @@ export const useTagCreate = ({
   onSuccess,
 }: Args) => {
   const queryClient = useQueryClient();
-  const supabase = useSupabase();
+  const trpc = useTRPC();
+
+  const { mutateAsync: createTagMutation } = useMutation(
+    trpc.collectivites.tags.mutate.create.mutationOptions()
+  );
 
   return useMutation({
     mutationKey: ['create_tag'],
-    mutationFn: async (tag: TagCreate) =>
-      await supabase.from(tagTableName).insert(objectToSnake(tag)).select(),
+    mutationFn: async (tag: TagCreate) => {
+      const tagType = tableTagToTagType(tagTableName);
+      return await createTagMutation({
+        tagType,
+        nom: tag.nom,
+        collectiviteId: tag.collectiviteId,
+      });
+    },
     onMutate: async (tag) => {
       await queryClient.cancelQueries({ queryKey: key });
 
