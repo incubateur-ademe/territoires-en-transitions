@@ -90,8 +90,9 @@ export class TagService {
    * @param tagType
    */
   async deleteTag(tagId: number, tagType: TagType): Promise<void> {
+    const table = tagTypeTable[tagType];
     await this.databaseService.db
-      .delete(tagTypeTable[tagType])
-      .where(eq(serviceTagTable.id, tagId));
+      .delete(table)
+      .where(eq(table.id, tagId));
   }
 }

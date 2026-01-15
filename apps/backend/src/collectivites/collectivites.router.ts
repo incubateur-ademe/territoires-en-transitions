@@ -3,13 +3,15 @@ import { CollectiviteCrudRouter } from '@tet/backend/collectivites/collectivite-
 import { DiscussionRouter } from '@tet/backend/collectivites/discussions/presentation/discussion.router';
 import { ImportCollectiviteRelationsRouter } from '@tet/backend/collectivites/import-collectivite-relations/import-collectivite-relations.router';
 import { RecherchesRouter } from '@tet/backend/collectivites/recherches/recherches.router';
-import { TrpcService } from '../utils/trpc/trpc.service';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { DocumentsRouter } from './documents/documents.router';
 import { ListCategoriesRouter } from './handle-categories/list-categories.router';
 import { ListCollectivitesRouter } from './list-collectivites/list-collectivites.router';
 import { CollectiviteMembresRouter } from './membres/membres.router';
 import { PersonnesRouter } from './personnes.router';
 import { TableauDeBordCollectiviteRouter } from './tableau-de-bord/tableau-de-bord-collectivite.router';
+import { ListTagsRouter } from './tags/list-tags/list-tags.router';
+import { MutateTagRouter } from './tags/mutate-tag/mutate-tag.router';
 import { PersonneTagRouter } from './tags/personnes/personne-tag.router';
 @Injectable()
 export class CollectivitesRouter {
@@ -24,6 +26,8 @@ export class CollectivitesRouter {
     private readonly upsertRouter: CollectiviteCrudRouter,
     private readonly recherchesRouter: RecherchesRouter,
     private readonly personneTagRouter: PersonneTagRouter,
+    private readonly mutateTagRouter: MutateTagRouter,
+    private readonly listTagsRouter: ListTagsRouter,
     private readonly importCollectiviteRelationsRouter: ImportCollectiviteRelationsRouter,
     private readonly discussionRouter: DiscussionRouter
   ) {}
@@ -43,6 +47,8 @@ export class CollectivitesRouter {
     recherches: this.recherchesRouter.router,
     tags: {
       personnes: this.personneTagRouter.router,
+      mutate: this.mutateTagRouter.router,
+      list: this.listTagsRouter.router,
     },
   });
 }
