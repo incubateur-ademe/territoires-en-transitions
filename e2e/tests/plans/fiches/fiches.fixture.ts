@@ -80,7 +80,7 @@ export const testWithFiches = testWithCollectivites.extend<{
     await use(listFichesPom);
   },
   ficheCardPom: async ({ page }, use) => {
-    const ficheCardPom = new FicheCardPom(page);
+    const ficheCardPom = new FicheCardPom({ page });
     await use(ficheCardPom);
   },
 });
