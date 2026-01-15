@@ -18,6 +18,7 @@ import FichesDontJeSuisLePiloteModal from './fiches-dont-je-suis-le-pilote.modal
 import { FilteredFichesByModule } from './filtered-fiche-by-module';
 import { IndicateursDontJeSuisLePiloteModule } from './indicateurs-dont-je-suis-le-pilote.module';
 import MesuresDontJeSuisLePiloteModule from './mesures-dont-je-suis-le-pilote.module';
+import { SousActionsDontJeSuisLePiloteModule } from './sous-actions-dont-je-suis-le-pilote.module';
 
 type ModuleDescriptor = {
   match: (module: Pick<ModuleSelect, 'defaultKey' | 'type'>) => boolean;
@@ -26,6 +27,7 @@ type ModuleDescriptor = {
 };
 const orderedModules: PersonalDefaultModuleKeys[] = [
   'actions-dont-je-suis-pilote',
+  'sous-actions-dont-je-suis-pilote',
   'indicateurs-dont-je-suis-pilote',
   'mesures-dont-je-suis-pilote',
 ] as const;
@@ -79,12 +81,29 @@ const Modules = () => {
     {
       match: (m) =>
         m.type === 'fiche_action.list' &&
+        m.defaultKey === 'sous-actions-dont-je-suis-pilote',
+      isVisibleWithPermissions: (permissions) =>
+        hasPermission(permissions, 'plans.fiches.read'),
+      render: () => {
+        if (noPlanAndCanCreatePlan) {
+          // We already display the placeholder to create a plan,
+          // so we don't need to display the list of fiche actions module.
+          return null;
+        }
+
+        return <SousActionsDontJeSuisLePiloteModule />;
+      },
+    },
+    {
+      match: (m) =>
+        m.type === 'fiche_action.list' &&
         m.defaultKey === 'actions-dont-je-suis-pilote',
       isVisibleWithPermissions: (permissions) =>
         hasPermission(permissions, 'plans.fiches.read'),
       render: (module) => {
         if (noPlanAndCanCreatePlan) {
-          // We already display the placeholder to create a plan, so we don't need to display the list of fiche actions module.
+          // We already display the placeholder to create a plan,
+          // so we don't need to display the list of fiche actions module.
           return null;
         }
 
