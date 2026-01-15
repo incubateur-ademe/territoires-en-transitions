@@ -1,9 +1,9 @@
 import { Field, FormSection } from '@tet/ui';
 
+import { splitPilotePersonnesAndUsers } from '@/app/collectivites/tags/personnes.utils';
+import SelectPersonnesCombobox from '@/app/collectivites/tags/select-personnes.combobox';
+import SelectServicesPilotesCombobox from '@/app/collectivites/tags/select-service-pilotes.combobox';
 import { ActionListFilters } from '@/app/referentiels/actions/use-list-actions';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { splitPilotePersonnesAndUsers } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
-import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 
 type Props = {
   filters: ActionListFilters;
@@ -23,7 +23,7 @@ const Filters = ({ filters, setFilters }: Props) => {
     <div className="w-full sm:w-[28rem] lg:gap-12 p-4 lg:p-8">
       <FormSection title="Filtrer :" className="!grid-cols-1">
         <Field title="Personne pilote :">
-          <PersonnesDropdown
+          <SelectPersonnesCombobox
             values={pilotes.length ? pilotes : undefined}
             onChange={({ personnes }) => {
               setFilters({
@@ -34,7 +34,7 @@ const Filters = ({ filters, setFilters }: Props) => {
           />
         </Field>
         <Field title="Direction ou service pilote :">
-          <ServicesPilotesDropdown
+          <SelectServicesPilotesCombobox
             values={filters?.servicePiloteIds}
             onChange={({ services }) => {
               setFilters({

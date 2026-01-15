@@ -1,5 +1,5 @@
 import { usePlanTypeListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import SelectPersonnesCombobox from '@/app/collectivites/tags/select-personnes.combobox';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PersonneId, personneIdSchema } from '@tet/domain/collectivites';
@@ -157,7 +157,7 @@ export function UpsertPlanForm({
           name="pilotes"
           control={control}
           render={({ field }) => (
-            <PersonnesDropdown
+            <SelectPersonnesCombobox
               dataTest="create-plan-pilote"
               values={field.value
                 ?.map((p) => p.tagId?.toString() ?? p.userId?.toString())
@@ -179,7 +179,7 @@ export function UpsertPlanForm({
           name="referents"
           control={control}
           render={({ field }) => (
-            <PersonnesDropdown
+            <SelectPersonnesCombobox
               dataTest="create-plan-referent"
               values={field.value
                 ?.map((r) => r.tagId?.toString() ?? r.userId?.toString())

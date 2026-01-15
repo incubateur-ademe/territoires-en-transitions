@@ -1,5 +1,5 @@
+import SelectFinanceursCombobox from '@/app/collectivites/tags/select-financeurs.combobox';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { TableCell } from '@tet/ui';
 import { useMemo } from 'react';
@@ -55,7 +55,7 @@ export const FinanceurNameCell = ({
             control={control}
             name="financeurTagId"
             render={({ field: { onChange, value } }) => (
-              <FinanceursDropdown
+              <SelectFinanceursCombobox
                 collectiviteIds={collectiviteIds}
                 values={value ? [value] : undefined}
                 disabledOptionsIds={availableIdsForThisRow}

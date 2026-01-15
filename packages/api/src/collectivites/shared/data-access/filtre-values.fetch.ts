@@ -61,7 +61,7 @@ export async function filtreValuesFetch({
 
     if (filtre.servicePiloteIds?.length) {
       relatedTables.add(
-        'servicePilotes:service_tag!service_tag_collectivite_id_fkey!inner(*)'
+        'servicePilotes:service_tag!service_tag_collectivite_id_fkey!inner(id, nom, collectivite_id)'
       );
     }
 
@@ -70,11 +70,15 @@ export async function filtreValuesFetch({
     }
 
     if (filtre.financeurIds?.length) {
-      relatedTables.add('financeurs:financeur_tag!inner(*)');
+      relatedTables.add(
+        'financeurs:financeur_tag!inner(id, nom, collectivite_id)'
+      );
     }
 
     if (filtre.partenaireIds?.length) {
-      relatedTables.add('partenaires:partenaire_tag!inner(*)');
+      relatedTables.add(
+        'partenaires:partenaire_tag!inner(id, nom, collectivite_id)'
+      );
     }
 
     if (relatedTables.size === 0) {
