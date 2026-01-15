@@ -2,6 +2,7 @@ import { useCreateFicheResume } from '@/app/app/pages/collectivite/PlansActions/
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
+import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { PlanNode } from '@tet/domain/plans';
 import { CollectiviteAccess } from '@tet/domain/users';
 import {
@@ -19,6 +20,7 @@ import { usePlanOptions } from '../plan-options.context';
 import { useToggleAxe } from '../use-toggle-axe';
 
 export const AxeCreatedEvent = 'axe-created';
+export const AxeDescriptionCreatedEvent = 'axe-description-created';
 
 export type AxeContextValue = {
   updateAxe: ReturnType<typeof useUpdateAxe>;
@@ -84,6 +86,7 @@ export const AxeProvider = (props: AxeProviderProps) => {
   const updateAxe = useUpdateAxe({
     axe,
     collectiviteId,
+    planId: rootAxe.id,
   });
 
   const createFicheResume = useCreateFicheResume({
@@ -107,6 +110,7 @@ export const AxeProvider = (props: AxeProviderProps) => {
   const { selectedIndicateurs, toggleIndicateur } = useAxeIndicateurs({
     axe,
     collectiviteId,
+    planId: rootAxe.id,
     enabled: (isOpen && entry?.isIntersecting) || false,
   });
 
@@ -136,6 +140,33 @@ export const AxeProvider = (props: AxeProviderProps) => {
       );
     };
   }, [axe.id, isOpen, setIsOpen, setIsOpenEditTitle, collectivite.isReadOnly]);
+
+  // écoute l'événement de création de la description pour activer l'édition
+  useEffect(() => {
+    const handleDescriptionCreated = (
+      event: CustomEvent<{ axeId: number }>
+    ) => {
+      if (event.detail.axeId === axe.id && !collectivite.isReadOnly) {
+        // ouvre l'axe s'il n'est pas déjà ouvert
+        if (!isOpen) {
+          setIsOpen(true);
+        }
+        waitForMarkup(`#axe-desc-${axe.id} div[contenteditable]`).then((el) => {
+          (el as HTMLInputElement)?.focus?.();
+        });
+      }
+    };
+    window.addEventListener(
+      AxeDescriptionCreatedEvent,
+      handleDescriptionCreated as EventListener
+    );
+    return () => {
+      window.removeEventListener(
+        AxeDescriptionCreatedEvent,
+        handleDescriptionCreated as EventListener
+      );
+    };
+  }, [axe.id, isOpen, setIsOpen, collectivite.isReadOnly]);
 
   return (
     <AxeContext.Provider

@@ -13,6 +13,10 @@ type DeleteOrRemoveFicheSharingModalProps = {
   onDeleteCallback?: () => void;
   onClose?: () => void;
   hideButton?: boolean;
+  /** ID du plan pour la mise à jour optimiste (optionnel) */
+  planId?: number;
+  /** ID de l'axe pour la mise à jour optimiste (optionnel) */
+  axeId?: number;
 };
 
 export const DeleteOrRemoveFicheSharingModal = ({
@@ -23,6 +27,8 @@ export const DeleteOrRemoveFicheSharingModal = ({
   onDeleteCallback,
   onClose,
   hideButton = false,
+  planId,
+  axeId,
 }: DeleteOrRemoveFicheSharingModalProps) => {
   const { sharedWithCollectivites } = fiche;
   const { collectiviteId, permissions } = useCurrentCollectivite();
@@ -59,6 +65,8 @@ export const DeleteOrRemoveFicheSharingModal = ({
       onDeleteCallback={onDeleteCallback}
       onClose={onClose}
       hideButton={hideButton}
+      planId={planId}
+      axeId={axeId}
     />
   );
 };
