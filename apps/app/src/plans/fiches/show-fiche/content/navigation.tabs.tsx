@@ -9,6 +9,7 @@ import {
 } from '@tet/ui/design-system/TabsNext/index';
 import { useSelectedLayoutSegment } from 'next/navigation';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
+import { useListFiches } from '../../list-all-fiches/data/use-list-fiches';
 import { useFicheContext } from '../context/fiche-context';
 import { FicheSectionId, isFicheSectionId } from './type';
 
@@ -19,6 +20,11 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
   const { fiche, indicateurs, actionsLiees } = useFicheContext();
   const collectivite = useCurrentCollectivite();
   const { niveauAcces, permissions } = collectivite;
+
+  const { count: countSousActions } = useListFiches(
+    collectivite.collectiviteId,
+    { filters: { parentsId: [fiche.id] }, queryOptions: { limit: 1, page: 1 } }
+  );
 
   const widgetCommunsFlagEnabled = useFeatureFlagEnabled(
     'is-widget-communs-enabled'
@@ -44,8 +50,9 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
       id: 'indicateurs',
     },
     {
-      label: 'Étapes',
-      id: 'etapes',
+      label: `Sous-actions (${countSousActions})`,
+      isVisible: true,
+      id: 'sous-actions',
     },
     {
       label: `Notes ${

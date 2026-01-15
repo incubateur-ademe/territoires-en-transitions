@@ -730,17 +730,16 @@ export default class ListFichesService {
 
     const { data: fichesAction } = await this.listFichesQuery(null, {
       ficheIds: [ficheId],
-      withChildren: true,
     });
+    const ficheAction = fichesAction[0];
 
-    if (!fichesAction?.length) {
+    if (!ficheAction) {
       return {
         success: false,
         error: `Aucune action trouvée avec l'id ${ficheId}`,
       };
     }
 
-    const ficheAction = fichesAction[0];
     if (user) {
       await this.fichePermissionService.canReadFicheObject(ficheAction, user);
     }
@@ -1782,8 +1781,9 @@ export default class ListFichesService {
     if (filters.parentsId?.length) {
       // Si `parentsId` est spécifié, on ne retourne que les sous-fiches associées aux parents spécifiés
       conditions.push(inArray(ficheActionTable.parentId, filters.parentsId));
-    } else if (!filters.withChildren) {
+    } else if (!filters.withChildren && !filters.ficheIds?.length) {
       // Par défaut, on exclut toutes les sous-fiches sauf si `withChildren` est activé
+      // OU si on filtre par ficheIds (pour permettre de récupérer une sous-fiche par son ID)
       conditions.push(isNull(ficheActionTable.parentId));
     }
 

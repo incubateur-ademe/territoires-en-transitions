@@ -1,0 +1,73 @@
+import { format, isValid } from 'date-fns';
+import { isEqual } from 'es-toolkit';
+import { useRef, useState } from 'react';
+
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { FicheWithRelations, isFicheOnTime } from '@tet/domain/plans';
+import { cn, Icon, Input, TableCell } from '@tet/ui';
+import { useUpdateSousAction } from '../../data/use-update-sous-action';
+
+type Props = {
+  sousAction: FicheWithRelations;
+};
+
+export const SousActionCellDate = ({ sousAction }: Props) => {
+  const { isReadOnly } = useCurrentCollectivite();
+
+  const initialDate = sousAction.dateFin ?? '';
+
+  const [value, setValue] = useState(initialDate);
+
+  const { mutate: updateSousAction } = useUpdateSousAction();
+
+  const refDateFin = useRef<HTMLInputElement>(null);
+
+  const isValidDate = isValid(new Date(value));
+
+  const hasChanged = !isEqual(new Date(value), new Date(initialDate));
+
+  const isLate = !isFicheOnTime({
+    dateFin: sousAction.dateFin,
+    statut: sousAction.statut,
+  });
+
+  return (
+    <TableCell
+      canEdit={!isReadOnly}
+      edit={{
+        onClose: () =>
+          hasChanged &&
+          updateSousAction({
+            ficheId: sousAction.id,
+            ficheFields: {
+              dateFin: isValidDate ? value : null,
+            },
+          }),
+        renderOnEdit: () => (
+          <Input
+            ref={refDateFin}
+            containerClassname="grow border-none"
+            className="w-40 border-grey-3 p-1"
+            type="date"
+            autoFocus
+            value={value && format(new Date(value), 'yyyy-MM-dd')}
+            onChange={(e) => setValue(e.target.value)}
+          />
+        ),
+      }}
+    >
+      {sousAction.dateFin ? (
+        <span
+          className={cn('flex items-baseline gap-2 text-primary-9', {
+            'text-error-1': isLate,
+          })}
+        >
+          <Icon icon="calendar-line" size="sm" />
+          {format(new Date(sousAction.dateFin), 'dd/MM/yyyy')}
+        </span>
+      ) : (
+        <div className="text-center text-grey-6">{isReadOnly ? '' : '–'}</div>
+      )}
+    </TableCell>
+  );
+};
