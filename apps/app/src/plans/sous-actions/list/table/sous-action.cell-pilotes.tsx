@@ -1,10 +1,10 @@
-import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { TableCell } from '@tet/ui';
+import { useUpdateSousAction } from '../../data/use-update-sous-action';
 
 type Props = {
   sousAction: FicheWithRelations;
@@ -13,7 +13,7 @@ type Props = {
 export const SousActionCellPilotes = ({ sousAction }: Props) => {
   const { isReadOnly } = useCurrentCollectivite();
 
-  const { mutate: updateFiche } = useUpdateFiche();
+  const { mutate: updateSousAction } = useUpdateSousAction();
 
   return (
     <TableCell
@@ -24,7 +24,7 @@ export const SousActionCellPilotes = ({ sousAction }: Props) => {
             <PersonnesDropdown
               values={sousAction.pilotes?.map((p) => getPersonneStringId(p))}
               onChange={(pilotes) => {
-                updateFiche({
+                updateSousAction({
                   ficheId: sousAction.id,
                   ficheFields: { pilotes: pilotes.personnes },
                 });
