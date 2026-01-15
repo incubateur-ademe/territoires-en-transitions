@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
-import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { cn, TableCell, TableCellTextarea } from '@tet/ui';
 import { isEqual } from 'es-toolkit';
+import { useUpdateSousAction } from '../../data/use-update-sous-action';
 
 const getTitle = (
   description: FicheWithRelations['description'],
@@ -29,7 +29,7 @@ export const SousActionCellDescription = ({ sousAction }: Props) => {
 
   const hasChanged = !isEqual(value, sousAction.description);
 
-  const { mutate: updateFiche } = useUpdateFiche();
+  const { mutate: updateSousAction } = useUpdateSousAction();
 
   return (
     <TableCell
@@ -38,7 +38,7 @@ export const SousActionCellDescription = ({ sousAction }: Props) => {
       edit={{
         onClose: () =>
           hasChanged &&
-          updateFiche({
+          updateSousAction({
             ficheId: sousAction.id,
             ficheFields: { description: value?.trim() },
           }),

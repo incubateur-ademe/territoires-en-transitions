@@ -1,9 +1,9 @@
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
-import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { TableCell } from '@tet/ui';
+import { useUpdateSousAction } from '../../data/use-update-sous-action';
 
 type Props = {
   sousAction: FicheWithRelations;
@@ -11,17 +11,18 @@ type Props = {
 
 export const SousActionCellStatut = ({ sousAction }: Props) => {
   const { isReadOnly } = useCurrentCollectivite();
-  const { mutate: updateFiche } = useUpdateFiche();
+  const { mutate: updateSousAction } = useUpdateSousAction();
 
   return (
     <TableCell
+      className="py-0"
       canEdit={!isReadOnly}
       edit={{
         renderOnEdit: ({ openState }) => (
           <StatutsSelectDropdown
             values={sousAction.statut}
             onChange={(statut) => {
-              updateFiche({
+              updateSousAction({
                 ficheId: sousAction.id,
                 ficheFields: {
                   statut: statut || null,
