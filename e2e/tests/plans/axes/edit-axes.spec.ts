@@ -1,5 +1,6 @@
 import { mergeTests } from '@playwright/test';
 import { testWithIndicateurs } from 'tests/indicateurs/indicateurs.fixture';
+import { FicheCardPom } from '../fiches/list-fiches/fiche-card.pom';
 import { testWithPlans } from '../plans/plans.fixture';
 
 const test = mergeTests(testWithPlans, testWithIndicateurs);
@@ -252,5 +253,146 @@ test.describe("Édition d'axes dans un plan d'action", () => {
 
     // Vérifier que l'axe a bien été déplacé en tant que sous-axe
     await editAxePom.expectAxeIsSubAxeOf(axeADeplacerNom, axeParentNom);
+  });
+
+  test("Déplacer une fiche d'un axe vers un autre", async ({
+    collectivites,
+    plans,
+    fiches,
+    editPlanPom,
+    editAxePom,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+
+    const planNom = 'Plan avec déplacement de fiche';
+    const axeSourceNom = 'Axe source';
+    const axeDestinationNom = 'Axe destination';
+    const ficheTitre = 'Fiche à déplacer';
+
+    const planId = await plans.create(user, {
+      nom: planNom,
+      collectiviteId: collectivite.data.id,
+    });
+
+    // Créer deux axes au niveau racine
+    const axeSourceId = await plans.createAxe(user, {
+      nom: axeSourceNom,
+      collectiviteId: collectivite.data.id,
+      planId,
+      parent: planId,
+    });
+    await plans.createAxe(user, {
+      nom: axeDestinationNom,
+      collectiviteId: collectivite.data.id,
+      planId,
+      parent: planId,
+    });
+
+    // Créer une fiche dans l'axe source
+    await fiches.create(user, [
+      {
+        titre: ficheTitre,
+        collectiviteId: collectivite.data.id,
+        axeId: axeSourceId,
+      },
+    ]);
+
+    await editPlanPom.goto(collectivite.data.id, planId);
+
+    // Vérifier que la fiche est dans l'axe source
+    await editAxePom.expectAxeExists(axeSourceNom);
+    await editAxePom.expandAxe(axeSourceNom);
+    const axeSource = editAxePom.getAxeByName(axeSourceNom);
+    const ficheCardSource = new FicheCardPom({
+      page: editPlanPom.page,
+      axeParent: axeSource,
+      ficheTitre,
+    });
+    await ficheCardSource.expectVisible();
+
+    // Déplacer la fiche vers l'axe destination
+    await ficheCardSource.moveFicheToAxe(planNom, axeDestinationNom);
+
+    // Vérifier que la fiche n'est plus dans l'axe source
+    await editAxePom.expandAxe(axeSourceNom);
+    await ficheCardSource.expectHidden();
+
+    // Vérifier que la fiche est maintenant dans l'axe destination
+    await editAxePom.expectAxeExists(axeDestinationNom);
+    const axeDestination = editAxePom.getAxeByName(axeDestinationNom);
+    const ficheCardDestination = new FicheCardPom({
+      page: editPlanPom.page,
+      axeParent: axeDestination,
+      ficheTitre,
+    });
+    await ficheCardDestination.expectVisible();
+  });
+
+  test("Déplacer une fiche d'un axe vers la racine du plan", async ({
+    collectivites,
+    plans,
+
+    fiches, // requis pour enregistrer le cleanup des fiches
+    editPlanPom,
+    editAxePom,
+  }) => {
+    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
+      userArgs: { autoLogin: true },
+    });
+
+    const planNom = 'Plan avec déplacement vers racine';
+    const axeNom = 'Axe source';
+    const ficheTitre = 'Fiche à déplacer vers racine';
+
+    const planId = await plans.create(user, {
+      nom: planNom,
+      collectiviteId: collectivite.data.id,
+    });
+
+    // Créer un axe au niveau racine
+    const axeId = await plans.createAxe(user, {
+      nom: axeNom,
+      collectiviteId: collectivite.data.id,
+      planId,
+      parent: planId,
+    });
+
+    // Créer une fiche dans l'axe
+    await fiches.create(user, [
+      {
+        titre: ficheTitre,
+        collectiviteId: collectivite.data.id,
+        axeId: axeId,
+      },
+    ]);
+
+    await editPlanPom.goto(collectivite.data.id, planId);
+
+    // Vérifier que la fiche est dans l'axe
+    await editAxePom.expectAxeExists(axeNom);
+    await editAxePom.expandAxe(axeNom);
+    const axeParent = editAxePom.getAxeByName(axeNom);
+    const ficheCardAxe = new FicheCardPom({
+      page: editPlanPom.page,
+      axeParent,
+      ficheTitre,
+    });
+    await ficheCardAxe.expectVisible();
+
+    // Déplacer la fiche vers la racine du plan (sans spécifier d'axe)
+    await ficheCardAxe.moveFicheToAxe(planNom);
+
+    // Vérifier que la fiche n'est plus dans l'axe source
+    await editAxePom.expandAxe(axeNom);
+    await ficheCardAxe.expectHidden();
+
+    // Vérifier que la fiche est maintenant à la racine du plan
+    const ficheCardPlan = new FicheCardPom({
+      page: editPlanPom.page,
+      ficheTitre,
+    });
+    await ficheCardPlan.expectVisible();
   });
 });
