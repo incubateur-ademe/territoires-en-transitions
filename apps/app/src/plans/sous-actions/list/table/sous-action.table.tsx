@@ -6,13 +6,15 @@ import {
 } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
 
-import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
 import PictoAction from '@/app/ui/pictogrammes/PictoAction';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
-import { Button, ReactTable, TableHeaderCell } from '@tet/ui';
-import { useCreateSousAction } from '../../data/use-create-sous-action';
+import {
+  EmptyCardProps,
+  ReactTable,
+  TableHeaderCell,
+  TableLoadingProps,
+} from '@tet/ui';
+import { SousActionCellActionParente } from './sous-action.cell-action-parente';
 import { SousActionCellActions } from './sous-action.cell-actions';
 import { SousActionCellDate } from './sous-action.cell-date';
 import { SousActionCellDescription } from './sous-action.cell-description';
@@ -35,6 +37,12 @@ const columns = [
       <SousActionCellDescription sousAction={info.row.original} />
     ),
   }),
+  columnHelper.accessor('parentId', {
+    header: () => <TableHeaderCell title="Action parente" className="w-64" />,
+    cell: (info) => (
+      <SousActionCellActionParente parentId={info.row.original.parentId} />
+    ),
+  }),
   columnHelper.accessor('statut', {
     header: () => <TableHeaderCell title="Statut" className="w-32" />,
     cell: (info) => <SousActionCellStatut sousAction={info.row.original} />,
@@ -54,31 +62,30 @@ const columns = [
   }),
 ];
 
-export const SousActionTable = () => {
-  const collectivite = useCurrentCollectivite();
+type Props = {
+  sousActions: FicheWithRelations[];
+  isLoading?: boolean;
+  isEmpty?: boolean;
+  createSousFiche?: () => void;
+  hiddenColumns?: (keyof FicheWithRelations | 'actions')[];
+  nbLoadingRows?: TableLoadingProps['nbOfRows'];
+  emptyCard?: EmptyCardProps;
+  isReadOnly?: boolean;
+};
 
-  const { fiche } = useFicheContext();
-
-  const { mutate: createSousFiche } = useCreateSousAction(fiche.id);
-
-  const { fiches: sousActions, isLoading } = useListFiches(
-    collectivite.collectiviteId,
-    {
-      filters: {
-        parentsId: [fiche.id],
-      },
-      queryOptions: {
-        sort: [{ field: 'titre', direction: 'asc' }],
-        limit: 'all',
-      },
-    }
-  );
-
+export const SousActionTable = ({
+  sousActions,
+  isLoading,
+  isEmpty,
+  createSousFiche,
+  hiddenColumns,
+  nbLoadingRows = 3,
+  isReadOnly,
+  emptyCard,
+}: Props) => {
   const [columnVisibility, setColumnVisibility] = useState({});
 
   const [sorting, setSorting] = useState<SortingState>([]);
-
-  const isEmpty = sousActions.length === 0;
 
   const table = useReactTable({
     columns,
@@ -95,42 +102,35 @@ export const SousActionTable = () => {
   });
 
   useEffect(() => {
-    table.getColumn('actions')?.toggleVisibility(!collectivite.isReadOnly);
-  }, [collectivite.isReadOnly, table]);
+    table.getColumn('actions')?.toggleVisibility(!isReadOnly);
+    hiddenColumns?.forEach((column) => {
+      table.getColumn(column)?.toggleVisibility(false);
+    });
+  }, [isReadOnly, table, hiddenColumns]);
 
   return (
-    <div className="p-2 bg-white rounded-lg border border-grey-3 overflow-x-auto">
-      <ReactTable
-        table={table}
-        isLoading={isLoading}
-        nbLoadingRows={3}
-        isEmpty={isEmpty}
-        emptyCard={{
+    <ReactTable
+      table={table}
+      isLoading={isLoading}
+      nbLoadingRows={nbLoadingRows}
+      isEmpty={isEmpty}
+      emptyCard={
+        emptyCard ?? {
           picto: (props) => <PictoAction {...props} />,
           title: 'Aucune sous-action pour le moment',
           description:
             'Décomposez votre action en tâches concrètes pour faciliter son suivi et son pilotage.',
-          actions: collectivite.isReadOnly
+          actions: isReadOnly
             ? undefined
             : [
                 {
-                  onClick: () => createSousFiche(),
+                  onClick: () => createSousFiche?.(),
                   children: 'Ajouter une sous-action',
                   icon: 'add-line',
                 },
               ],
-        }}
-      />
-      {!isEmpty && !collectivite.isReadOnly && (
-        <Button
-          className="m-4"
-          icon="add-line"
-          size="xs"
-          onClick={() => createSousFiche()}
-        >
-          Ajouter une sous-action
-        </Button>
-      )}
-    </div>
+        }
+      }
+    />
   );
 };

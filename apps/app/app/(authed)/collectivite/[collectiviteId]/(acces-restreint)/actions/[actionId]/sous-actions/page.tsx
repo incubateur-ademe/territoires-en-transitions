@@ -1,7 +1,7 @@
 'use client';
 
-import { SousActionTable } from '@/app/plans/sous-actions/list/table/sous-action.table';
+import { SousActionsView } from '@/app/plans/fiches/show-fiche/content/sous-actions/sous-actions.view';
 
 export default function Page() {
-  return <SousActionTable />;
+  return <SousActionsView />;
 }
