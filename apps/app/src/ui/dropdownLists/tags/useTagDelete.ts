@@ -1,5 +1,7 @@
 import { QueryKey, useMutation, useQueryClient } from '@tanstack/react-query';
-import { CollectiviteTag, TableTag, useSupabase } from '@tet/api';
+import { CollectiviteTag, TableTag, useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { tableTagToTagType } from './tag-utils';
 
 type Tag = CollectiviteTag;
 
@@ -17,11 +19,24 @@ export const useDeleteTag = ({
   onSuccess,
 }: Args) => {
   const queryClient = useQueryClient();
-  const supabase = useSupabase();
+  const trpc = useTRPC();
+  const collectiviteId = useCollectiviteId();
+
+  const { mutateAsync: deleteTagMutation } = useMutation(
+    trpc.collectivites.tags.mutate.delete.mutationOptions()
+  );
 
   return useMutation({
     mutationFn: async (tag_id: number) => {
-      await supabase.from(tagTableName).delete().eq('id', tag_id);
+      if (!collectiviteId) {
+        throw new Error('Collectivité ID is required');
+      }
+      const tagType = tableTagToTagType(tagTableName);
+      return await deleteTagMutation({
+        tagType,
+        id: tag_id,
+        collectiviteId,
+      });
     },
 
     onMutate: async (tag_id) => {
