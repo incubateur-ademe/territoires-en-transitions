@@ -1,6 +1,14 @@
 import { expect, Locator, Page } from '@playwright/test';
 
+interface FicheCardPomOptions {
+  page: Page;
+  ficheTitre?: string;
+  index?: number;
+  axeParent?: Locator;
+}
+
 export class FicheCardPom {
+  readonly page: Page;
   readonly card: Locator;
   readonly titre: Locator;
   readonly statutBadge: Locator;
@@ -11,21 +19,28 @@ export class FicheCardPom {
 
   /**
    * Crée une instance pour une carte réprésentant une fiche action
-   * @param page - La page Playwright
-   * @param ficheTitre - Le titre de la fiche (optionnel, pour filtrer parmi plusieurs cartes)
-   * @param index - L'index de la carte dans la liste (optionnel, par défaut 0)
+   * @param options - Options pour créer l'instance
+   * @param options.page - La page Playwright
+   * @param options.ficheTitre - Le titre de la fiche (optionnel, pour filtrer parmi plusieurs cartes)
+   * @param options.index - L'index de la carte dans la liste (optionnel, par défaut 0)
+   * @param options.axeParent - Le locator de l'axe parent (optionnel, si fourni, les cartes seront recherchées dans cet axe plutôt que dans toute la page)
    */
-  constructor(readonly page: Page, ficheTitre?: string, index = 0) {
-    this.page = page;
+  constructor(options: FicheCardPomOptions) {
+    this.page = options.page;
+
+    // Utiliser axeParent si fourni, sinon utiliser page
+    const parentLocator = options.axeParent ?? options.page;
 
     // Sélectionner la carte spécifique
-    if (ficheTitre) {
-      this.card = page
+    if (options.ficheTitre) {
+      this.card = parentLocator
         .locator('[data-test="FicheActionCarte"]')
-        .filter({ hasText: ficheTitre })
+        .filter({ hasText: options.ficheTitre })
         .first();
     } else {
-      this.card = page.locator('[data-test="FicheActionCarte"]').nth(index);
+      this.card = parentLocator
+        .locator('[data-test="FicheActionCarte"]')
+        .nth(options.index ?? 0);
     }
 
     // Éléments de la carte
@@ -110,11 +125,62 @@ export class FicheCardPom {
   async expectVisible() {
     await expect(this.card).toBeVisible();
   }
+  async expectHidden() {
+    await expect(this.card).toBeHidden();
+  }
 
   /**
    * Vérifie que la carte contient le texte spécifié
    */
   async expectContainsText(text: string) {
     await expect(this.card).toContainText(text);
+  }
+
+  /**
+   * Ouvre le menu de la fiche et clique sur "Déplacer"
+   */
+  async openMoveMenu() {
+    await this.card.hover();
+    const menuButton = this.card
+      .locator('..')
+      .getByTestId('fiche-card-options');
+    await menuButton.click();
+    await this.page
+      .locator('[data-floating-ui-portal]')
+      .getByRole('button', { name: 'Déplacer' })
+      .click();
+  }
+
+  /**
+   * Déplace une fiche vers un axe spécifique
+   * @param planNom - Le nom du plan contenant l'axe de destination
+   * @param axeNom - Le nom de l'axe de destination (optionnel, si non fourni, déplace à la racine du plan)
+   */
+  async moveFicheToAxe(planNom: string, axeNom?: string) {
+    // Ouvre le menu de la fiche et clique sur "Déplacer"
+    await this.openMoveMenu();
+
+    // Attend que la modale soit visible
+    const modal = this.page.getByTestId('move-fiche.modal');
+    await expect(modal).toBeVisible();
+
+    // Sélectionne le plan de destination
+    const planTargetButton = modal.getByText(planNom);
+    await expect(planTargetButton).toBeVisible();
+    await planTargetButton.click();
+
+    // Si un axe est spécifié, sélectionne l'axe de destination
+    if (axeNom) {
+      const targetAxeButton = modal.getByText(axeNom);
+      await expect(targetAxeButton).toBeVisible();
+      await targetAxeButton.click();
+    }
+
+    // Valide le déplacement
+    const submitButton = modal.getByRole('button', { name: 'Valider' });
+    await submitButton.click();
+
+    // Attend que la modale se ferme
+    await expect(modal).toBeHidden();
   }
 }

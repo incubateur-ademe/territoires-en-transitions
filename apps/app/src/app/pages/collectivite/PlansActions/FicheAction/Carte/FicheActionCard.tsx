@@ -156,6 +156,7 @@ const FicheActionCard = ({
                     />
                   )}
                   <ButtonMenu
+                    dataTest="fiche-card-options"
                     title="Plus d'options"
                     icon="more-line"
                     variant="grey"
