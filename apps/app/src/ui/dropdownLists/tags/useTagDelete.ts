@@ -1,50 +1,63 @@
-import { QueryKey, useMutation, useQueryClient } from '@tanstack/react-query';
-import { CollectiviteTag, TableTag, useSupabase } from '@tet/api';
-
-type Tag = CollectiviteTag;
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { TagType, TagWithCollectiviteId } from '@tet/domain/collectivites';
 
 type Args = {
-  key: QueryKey;
-  tagTableName: TableTag;
-  keysToInvalidate?: QueryKey[];
+  tagType: TagType;
   onSuccess?: () => void;
 };
 
-export const useDeleteTag = ({
-  key,
-  tagTableName,
-  keysToInvalidate,
-  onSuccess,
-}: Args) => {
+export const useDeleteTag = ({ tagType, onSuccess }: Args) => {
   const queryClient = useQueryClient();
-  const supabase = useSupabase();
+  const trpc = useTRPC();
+  const collectiviteId = useCollectiviteId();
+
+  const { mutateAsync: deleteTagMutation } = useMutation(
+    trpc.collectivites.tags.delete.mutationOptions()
+  );
 
   return useMutation({
-    mutationFn: async (tag_id: number) => {
-      await supabase.from(tagTableName).delete().eq('id', tag_id);
+    mutationFn: async (tagId: number) => {
+      return await deleteTagMutation({
+        tagType,
+        id: tagId,
+        collectiviteId,
+      });
     },
 
-    onMutate: async (tag_id) => {
-      await queryClient.cancelQueries({ queryKey: key });
-
-      const previousdata: { tags: Tag[] } | undefined =
-        queryClient.getQueryData(key);
-
-      queryClient.setQueryData(key, (old?: Tag[]) => {
-        return old ? old.filter((v: Tag) => v.id !== tag_id) : [];
+    onMutate: async (tagId) => {
+      const listTagsQueryKey = trpc.collectivites.tags.list.queryKey({
+        collectiviteId,
+        tagType,
       });
+
+      await queryClient.cancelQueries({ queryKey: listTagsQueryKey });
+
+      const previousdata: TagWithCollectiviteId[] | undefined =
+        queryClient.getQueryData(listTagsQueryKey);
+
+      queryClient.setQueryData(
+        listTagsQueryKey,
+        (old?: TagWithCollectiviteId[]) => {
+          return old ? old.filter((v) => v.id !== tagId) : [];
+        }
+      );
 
       return { previousdata };
     },
 
     onSettled: (data, err, args, context) => {
+      const listTagsQueryKey = trpc.collectivites.tags.list.queryKey({
+        collectiviteId,
+        tagType,
+      });
+
       if (err) {
-        queryClient.setQueryData(key, context?.previousdata);
+        queryClient.setQueryData(listTagsQueryKey, context?.previousdata);
       }
-      queryClient.invalidateQueries({ queryKey: key });
-      keysToInvalidate?.forEach((key) =>
-        queryClient.invalidateQueries({ queryKey: key })
-      );
+
+      queryClient.invalidateQueries({ queryKey: listTagsQueryKey });
     },
 
     onSuccess: () => onSuccess?.(),

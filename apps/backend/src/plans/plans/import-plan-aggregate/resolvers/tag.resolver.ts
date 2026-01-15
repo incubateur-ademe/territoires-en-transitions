@@ -1,4 +1,5 @@
-import { TagService } from '@tet/backend/collectivites/tags/tag.service';
+import { ListTagsService } from '@tet/backend/collectivites/tags/list-tags/list-tags.service';
+import { MutateTagService } from '@tet/backend/collectivites/tags/mutate-tag/mutate-tag.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { getFuse } from '@tet/backend/utils/fuse/fuse.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
@@ -21,6 +22,7 @@ export type FuseKey = string | { name: string; weight: number };
  * @param collectiviteId - The collectivité ID
  * @param tagService - The tag service
  * @param tagType - The type of tag to resolve
+ * @param user - Utilisateur authentifié pour la vérification des permissions
  * @param searchKeys - The keys to use for fuzzy search (defaults to ['nom'])
  * @returns An object with a getOrCreate function
  *
@@ -51,14 +53,23 @@ export type FuseKey = string | { name: string; weight: number };
  */
 export async function createTagResolver(
   collectiviteId: number,
-  tagService: TagService,
+  listTagsService: ListTagsService,
+  mutateTagService: MutateTagService,
   tagType: TagType,
   searchKeys: FuseKey[] = ['nom'],
   tx?: Transaction
 ): Promise<{
   getOrCreate: (name: string, tx: Transaction) => Promise<Result<Tag, string>>;
 }> {
-  const tags = await tagService.getTags(collectiviteId, tagType, tx);
+  const tagsResult = await listTagsService.listTags(
+    { collectiviteId, tagType },
+    { tx }
+  );
+
+  if (!tagsResult.success) {
+    throw new Error(tagsResult.error);
+  }
+  const tags = tagsResult.data;
 
   const Fuse = await getFuse();
   const searchEngine = new Fuse(tags, {
@@ -71,13 +82,13 @@ export async function createTagResolver(
     name: string,
     tx: Transaction
   ): Promise<Result<Tag, string>> => {
-    return tagService.saveTag(
+    return mutateTagService.createTag(
       {
         nom: name,
         collectiviteId,
+        tagType,
       },
-      tagType,
-      tx
+      { tx }
     );
   };
 

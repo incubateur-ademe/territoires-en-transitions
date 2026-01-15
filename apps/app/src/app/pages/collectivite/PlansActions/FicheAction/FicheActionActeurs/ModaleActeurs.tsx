@@ -32,8 +32,6 @@ const ModaleActeurs = ({ isOpen, setIsOpen, fiche }: ModaleActeursProps) => {
 
   const tracker = useEventTracker();
 
-  const ficheActionInvalidationKeys = [['fiche_action', fiche.id.toString()]];
-
   const handleSave = () => {
     if (!isEqual(fiche, editedFiche)) {
       updateFiche({
@@ -73,7 +71,6 @@ const ModaleActeurs = ({ isOpen, setIsOpen, fiche }: ModaleActeursProps) => {
                   services,
                 }))
               }
-              additionalKeysToInvalidate={ficheActionInvalidationKeys}
             />
           </Field>
 
@@ -88,7 +85,6 @@ const ModaleActeurs = ({ isOpen, setIsOpen, fiche }: ModaleActeursProps) => {
                   structures,
                 }))
               }
-              additionalKeysToInvalidate={ficheActionInvalidationKeys}
             />
           </Field>
 
@@ -104,7 +100,6 @@ const ModaleActeurs = ({ isOpen, setIsOpen, fiche }: ModaleActeursProps) => {
                   referents: personnes,
                 }))
               }
-              additionalKeysToInvalidate={ficheActionInvalidationKeys}
             />
           </Field>
 
@@ -119,7 +114,6 @@ const ModaleActeurs = ({ isOpen, setIsOpen, fiche }: ModaleActeursProps) => {
                   partenaires,
                 }))
               }
-              additionalKeysToInvalidate={ficheActionInvalidationKeys}
             />
           </Field>
 

@@ -1,5 +1,4 @@
-import { QueryKey } from '@tanstack/react-query';
-import { TagWithCollectiviteId } from '@tet/domain/collectivites';
+import { TagEnum, TagWithCollectiviteId } from '@tet/domain/collectivites';
 import { SelectMultipleProps } from '@tet/ui';
 import SelectTags from '../tags/SelectTags';
 import { usePartenairesListe } from './usePartenairesListe';
@@ -20,7 +19,6 @@ type PartenairesDropdownProps = Omit<
     partenaires: TagWithCollectiviteId[];
     selectedPartenaire: TagWithCollectiviteId;
   }) => void;
-  additionalKeysToInvalidate?: QueryKey[];
 };
 
 const PartenairesDropdown = (props: PartenairesDropdownProps) => {
@@ -32,9 +30,7 @@ const PartenairesDropdown = (props: PartenairesDropdownProps) => {
       placeholder={(isEditionAllowed) =>
         `Sélectionner ${isEditionAllowed ? 'ou créer ' : ''}un partenaire`
       }
-      queryKey={['partenaires']}
-      tagTableName="partenaire_tag"
-      additionalKeysToInvalidate={props.additionalKeysToInvalidate}
+      tagType={TagEnum.Partenaire}
       optionsListe={data}
       refetchOptions={refetch}
       onChange={({ values, selectedValue }) => {

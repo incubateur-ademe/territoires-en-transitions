@@ -2,10 +2,10 @@ import { SHARE_ICON } from '@/app/plans/fiches/share-fiche/fiche-share-info';
 import { useTagCreate } from '@/app/ui/dropdownLists/tags/useTagCreate';
 import { useDeleteTag } from '@/app/ui/dropdownLists/tags/useTagDelete';
 import { useTagUpdate } from '@/app/ui/dropdownLists/tags/useTagUpdate';
-import { QueryKey, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { RouterOutput, useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { PersonneTagOrUser } from '@tet/domain/collectivites';
+import { PersonneTagOrUser, TagEnum } from '@tet/domain/collectivites';
 import {
   Option,
   OptionValue,
@@ -33,7 +33,6 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   }) => void;
   disabledOptionsIds?: string[];
   disableEdition?: boolean;
-  additionalKeysToInvalidate?: QueryKey[];
 };
 
 /** Sélecteur de personnes de la collectivité */
@@ -41,7 +40,6 @@ const PersonnesDropdown = ({
   collectiviteIds,
   disabledOptionsIds,
   disableEdition = false,
-  additionalKeysToInvalidate,
   onChange,
   values,
   dataTest,
@@ -87,25 +85,21 @@ const PersonnesDropdown = ({
     ) ?? [];
 
   const { mutate: updateTag } = useTagUpdate({
-    key: ['personnes', collectiviteId],
-    tagTableName: 'personne_tag',
-    keysToInvalidate: additionalKeysToInvalidate,
+    tagType: TagEnum.Personne,
     onSuccess: () => {
       refetch();
     },
   });
 
   const { mutate: deleteTag } = useDeleteTag({
-    key: ['personnes', collectiviteId],
-    tagTableName: 'personne_tag',
+    tagType: TagEnum.Personne,
     onSuccess: () => {
       refetch();
     },
   });
 
   const { data: newTag, mutate: createTag } = useTagCreate({
-    key: ['personnes', collectiviteId],
-    tagTableName: 'personne_tag',
+    tagType: TagEnum.Personne,
     onSuccess: () => {
       refetch();
 
@@ -117,15 +111,15 @@ const PersonnesDropdown = ({
     },
   });
 
-  const newTagId = newTag?.data?.[0].id;
+  const newTagId = newTag?.id;
 
   /** Utilise useEffect pour récupérer le nouvel id
    * du tag créé afin d'appliquer le onChange */
   useEffect(() => {
-    if (newTag?.data) {
+    if (newTag) {
       const tag: PersonneTagOrUser = {
         collectiviteId,
-        nom: newTag.data[0].nom,
+        nom: newTag.nom,
         tagId: newTagId ?? null,
         userId: null,
       };
@@ -162,7 +156,6 @@ const PersonnesDropdown = ({
                   .map((p) => p.tagId.toString()) ?? [],
               onUpdate: (tagId, tagName) => {
                 updateTag({
-                  collectiviteId,
                   id: parseInt(tagId as string),
                   nom: tagName,
                 });
@@ -180,7 +173,6 @@ const PersonnesDropdown = ({
               },
               onCreate: (inputValue) =>
                 createTag({
-                  collectiviteId,
                   nom: inputValue,
                 }),
               updateModal: {

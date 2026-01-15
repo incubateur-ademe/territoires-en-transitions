@@ -1,55 +1,63 @@
-import {
-  useMutation,
-  useQueryClient,
-  type QueryKey,
-} from '@tanstack/react-query';
-import { CollectiviteTag, TableTag, useSupabase } from '@tet/api';
-import { TagCreate } from '@tet/domain/collectivites';
-import { objectToSnake } from 'ts-case-convert';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { RouterInput, useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { TagType, TagWithCollectiviteId } from '@tet/domain/collectivites';
 
-type Tag = CollectiviteTag;
+type TagInput = Pick<RouterInput['collectivites']['tags']['create'], 'nom'>;
 
 type Args = {
-  key: QueryKey;
-  tagTableName: TableTag;
-  keysToInvalidate?: QueryKey[];
+  tagType: TagType;
   onSuccess?: () => void;
 };
 
-export const useTagCreate = ({
-  key,
-  tagTableName,
-  keysToInvalidate,
-  onSuccess,
-}: Args) => {
+export const useTagCreate = ({ tagType, onSuccess }: Args) => {
   const queryClient = useQueryClient();
-  const supabase = useSupabase();
+  const trpc = useTRPC();
+  const collectiviteId = useCollectiviteId();
+
+  const { mutateAsync: createTagMutation } = useMutation(
+    trpc.collectivites.tags.create.mutationOptions()
+  );
 
   return useMutation({
-    mutationKey: ['create_tag'],
-    mutationFn: async (tag: TagCreate) =>
-      await supabase.from(tagTableName).insert(objectToSnake(tag)).select(),
+    mutationFn: async (tag: TagInput) => {
+      return await createTagMutation({
+        tagType,
+        nom: tag.nom,
+        collectiviteId,
+      });
+    },
     onMutate: async (tag) => {
-      await queryClient.cancelQueries({ queryKey: key });
+      const listTagsQueryKey = trpc.collectivites.tags.list.queryKey({
+        collectiviteId,
+        tagType,
+      });
 
-      const previousdata: { tags: Tag[] } | undefined =
-        queryClient.getQueryData(key);
+      await queryClient.cancelQueries({
+        queryKey: listTagsQueryKey,
+      });
 
-      queryClient.setQueryData(key, (old?: TagCreate[]) => {
-        return old ? [tag, ...old] : [tag];
+      const previousdata: TagWithCollectiviteId[] | undefined =
+        queryClient.getQueryData(listTagsQueryKey);
+
+      queryClient.setQueryData(listTagsQueryKey, (old) => {
+        const newTag = { ...tag, collectiviteId, id: -1 };
+        return old ? [newTag, ...old] : [newTag];
       });
 
       return { previousdata };
     },
     onSettled: (data, err, args, context) => {
+      const listTagsQueryKey = trpc.collectivites.tags.list.queryKey({
+        collectiviteId,
+        tagType,
+      });
+
       if (err) {
-        queryClient.setQueryData(key, context?.previousdata);
+        queryClient.setQueryData(listTagsQueryKey, context?.previousdata);
       }
 
-      queryClient.invalidateQueries({ queryKey: key });
-      keysToInvalidate?.forEach((key) =>
-        queryClient.invalidateQueries({ queryKey: key })
-      );
+      queryClient.invalidateQueries({ queryKey: listTagsQueryKey });
     },
     onSuccess: () => onSuccess?.(),
   });

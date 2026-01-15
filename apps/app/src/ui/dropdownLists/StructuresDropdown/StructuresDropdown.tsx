@@ -1,5 +1,4 @@
-import { QueryKey } from '@tanstack/react-query';
-import { TagWithCollectiviteId } from '@tet/domain/collectivites';
+import { TagEnum, TagWithCollectiviteId } from '@tet/domain/collectivites';
 import { SelectMultipleProps } from '@tet/ui';
 import SelectTags from '../tags/SelectTags';
 import { useStructuresListe } from './useStructuresListe';
@@ -20,7 +19,6 @@ type StructuresDropdownProps = Omit<
     structures: TagWithCollectiviteId[];
     selectedStructure: TagWithCollectiviteId;
   }) => void;
-  additionalKeysToInvalidate?: QueryKey[];
 };
 
 const StructuresDropdown = (props: StructuresDropdownProps) => {
@@ -34,9 +32,7 @@ const StructuresDropdown = (props: StructuresDropdownProps) => {
           isEditionAllowed ? 'ou créer ' : ''
         }une structure pilote`
       }
-      queryKey={['structures']}
-      tagTableName="structure_tag"
-      additionalKeysToInvalidate={props.additionalKeysToInvalidate}
+      tagType={TagEnum.Structure}
       optionsListe={data}
       refetchOptions={refetch}
       onChange={({ values, selectedValue }) => {

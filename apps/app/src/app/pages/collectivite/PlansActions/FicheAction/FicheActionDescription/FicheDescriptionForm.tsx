@@ -131,9 +131,6 @@ export const FicheDescriptionForm = ({
                 collectiviteIds={getFicheAllEditorCollectiviteIds(fiche)}
                 values={(field.value ?? []).map((t) => t.id)}
                 onChange={({ libresTag }) => field.onChange(libresTag)}
-                additionalKeysToInvalidate={[
-                  ['fiche_action', fiche.id.toString()],
-                ]}
               />
             )}
           />

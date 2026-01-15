@@ -1,4 +1,4 @@
-import { TagWithCollectiviteId } from '@tet/domain/collectivites';
+import { TagEnum, TagWithCollectiviteId } from '@tet/domain/collectivites';
 import { SelectMultipleProps } from '@tet/ui';
 import SelectTags from '../tags/SelectTags';
 import { useFinanceursListe } from './useFinanceursListe';
@@ -28,8 +28,7 @@ const FinanceursDropdown = (props: FinanceursDropdownProps) => {
   return (
     <SelectTags
       {...props}
-      queryKey={['financeurs']}
-      tagTableName="financeur_tag"
+      tagType={TagEnum.Financeur}
       optionsListe={data}
       disabledOptionsIds={props.disabledOptionsIds}
       userCreatedOptionsIds={(data ?? [])

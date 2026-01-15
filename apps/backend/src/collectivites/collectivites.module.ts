@@ -11,9 +11,14 @@ import { ImportCollectiviteRelationsService } from '@tet/backend/collectivites/i
 import { ExportConnectService } from '@tet/backend/collectivites/membres/sync-membres-with-crm-connect/export-connect.service';
 import { RecherchesRouter } from '@tet/backend/collectivites/recherches/recherches.router';
 import RecherchesService from '@tet/backend/collectivites/recherches/recherches.service';
+import { ListTagsRepository } from '@tet/backend/collectivites/tags/list-tags/list-tags.repository';
+import { ListTagsRouter } from '@tet/backend/collectivites/tags/list-tags/list-tags.router';
+import { ListTagsService } from '@tet/backend/collectivites/tags/list-tags/list-tags.service';
+import { MutateTagRepository } from '@tet/backend/collectivites/tags/mutate-tag/mutate-tag.repository';
+import { MutateTagRouter } from '@tet/backend/collectivites/tags/mutate-tag/mutate-tag.router';
+import { MutateTagService } from '@tet/backend/collectivites/tags/mutate-tag/mutate-tag.service';
 import { PersonneTagRouter } from '@tet/backend/collectivites/tags/personnes/personne-tag.router';
 import { PersonneTagService } from '@tet/backend/collectivites/tags/personnes/personne-tag.service';
-import { TagService } from '@tet/backend/collectivites/tags/tag.service';
 import { CollectiviteController } from './collectivite.controller';
 import { CollectivitesRouter } from './collectivites.router';
 import { DiscussionApplicationService } from './discussions/application/discussion-application.service';
@@ -68,12 +73,17 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     UpdateDocumentRouter,
     DocumentsRouter,
     DocumentService,
-    TagService,
     PersonneTagService,
     PersonneTagRouter,
     PersonnalisationsRouter,
     SetPersonnalisationReponseRouter,
     SetPersonnalisationReponseService,
+    MutateTagService,
+    MutateTagRepository,
+    MutateTagRouter,
+    ListTagsService,
+    ListTagsRepository,
+    ListTagsRouter,
     ListCollectivitesRouter,
     ListCollectivitesService,
     CollectiviteCrudService,
@@ -115,9 +125,14 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     UpdateDocumentRouter,
     DocumentService,
     DocumentsRouter,
-    TagService,
     ListCollectivitesService,
     PersonneTagService,
+    MutateTagService,
+    MutateTagRepository,
+    MutateTagRouter,
+    ListTagsService,
+    ListTagsRepository,
+    ListTagsRouter,
     CollectiviteCrudService,
     CollectiviteCrudRouter,
     RecherchesService,

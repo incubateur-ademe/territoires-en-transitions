@@ -1,5 +1,6 @@
 import { ListMembresService } from '@tet/backend/collectivites/membres/list-membres/list-membres.service';
-import { TagService } from '@tet/backend/collectivites/tags/tag.service';
+import { ListTagsService } from '@tet/backend/collectivites/tags/list-tags/list-tags.service';
+import { MutateTagService } from '@tet/backend/collectivites/tags/mutate-tag/mutate-tag.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { getFuse } from '@tet/backend/utils/fuse/fuse.utils';
 import { Result, failure, success } from '@tet/backend/utils/result.type';
@@ -14,13 +15,17 @@ type CreateTagFn = (
 export const createPersonneResolver = async (
   collectiviteId: number,
   listMembresService: ListMembresService,
-  tagService: TagService,
+  listTagsService: ListTagsService,
+  mutateTagService: MutateTagService,
   tx?: Transaction
 ) => {
   const Fuse = await getFuse();
-  const [members, tags] = await Promise.all([
+  const [members, tagsResult] = await Promise.all([
     listMembresService.list({ collectiviteId }, { tx }),
-    tagService.getTags(collectiviteId, TagEnum.Personne, tx),
+    listTagsService.listTags(
+      { collectiviteId, tagType: TagEnum.Personne },
+      { tx }
+    ),
   ]);
   const searchMembers = new Fuse(members.membres, {
     keys: [
@@ -30,6 +35,13 @@ export const createPersonneResolver = async (
     threshold: 0.3,
     ignoreLocation: true,
   });
+
+  if (!tagsResult.success) {
+    throw new Error(tagsResult.error);
+  }
+
+  const tags = tagsResult.data;
+
   const searchTags = new Fuse(tags, {
     keys: ['nom'],
     threshold: 0.3,
@@ -37,13 +49,9 @@ export const createPersonneResolver = async (
   });
 
   const createTag: CreateTagFn = async (name, collectiviteId, tx) => {
-    return tagService.saveTag(
-      {
-        nom: name,
-        collectiviteId,
-      },
-      TagEnum.Personne,
-      tx
+    return mutateTagService.createTag(
+      { nom: name, collectiviteId, tagType: TagEnum.Personne },
+      { tx }
     );
   };
 
@@ -79,5 +87,6 @@ export const createPersonneResolver = async (
 
     return success({ tagId: created.data.id });
   };
+
   return { getOrCreatePersonne };
 };

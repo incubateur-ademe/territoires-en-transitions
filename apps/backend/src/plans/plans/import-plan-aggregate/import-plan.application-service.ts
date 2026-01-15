@@ -72,8 +72,8 @@ export class ImportPlanApplicationService {
           await this.resolveEntityService.resolveFicheEntities(
             collectiviteId,
             planResult.data.fiches,
-            tx,
-            user
+            user,
+            tx
           );
 
         if (!resolvedEntitiesResult.success) {

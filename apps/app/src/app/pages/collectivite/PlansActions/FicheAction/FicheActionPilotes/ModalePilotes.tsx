@@ -48,9 +48,6 @@ const ModalePilotes = ({ isOpen, setIsOpen, fiche }: ModalePilotesProps) => {
                   pilotes: personnes,
                 }))
               }
-              additionalKeysToInvalidate={[
-                ['fiche_action', fiche.id.toString()],
-              ]}
             />
           </Field>
         </FormSectionGrid>

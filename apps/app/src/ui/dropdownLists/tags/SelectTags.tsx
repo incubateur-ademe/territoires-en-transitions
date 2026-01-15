@@ -1,23 +1,18 @@
 import { SHARE_ICON } from '@/app/plans/fiches/share-fiche/fiche-share-info';
-import { QueryKey } from '@tanstack/react-query';
-import { TableTag } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { TagWithCollectiviteId } from '@tet/domain/collectivites';
+import { TagType, TagWithCollectiviteId } from '@tet/domain/collectivites';
 import {
   Option,
   OptionValue,
   SelectFilter,
   SelectMultipleProps,
 } from '@tet/ui';
-import { objectToCamel } from 'ts-case-convert';
 import { useDeleteTag, useTagCreate, useTagUpdate } from '.';
 type SelectTagsProps = Omit<
   SelectMultipleProps,
   'options' | 'onChange' | 'placeholder'
 > & {
-  queryKey: QueryKey;
-  additionalKeysToInvalidate?: QueryKey[];
-  tagTableName: TableTag;
+  tagType: TagType;
   optionsListe?: TagWithCollectiviteId[];
   userCreatedOptionsIds?: number[];
   disableOptionsForOtherCollectivites?: boolean;
@@ -36,9 +31,7 @@ type SelectTagsProps = Omit<
 };
 
 const SelectTags = ({
-  queryKey,
-  additionalKeysToInvalidate,
-  tagTableName,
+  tagType,
   optionsListe,
   userCreatedOptionsIds,
   disableOptionsForOtherCollectivites,
@@ -87,27 +80,21 @@ const SelectTags = ({
   // ***
 
   const { mutate: createTag } = useTagCreate({
-    key: [queryKey, collectiviteId],
-    tagTableName,
+    tagType,
     onSuccess: refetchOptions,
   });
 
   const handleTagCreate = (tagName: string) => {
     createTag(
       {
-        collectiviteId,
         nom: tagName,
       },
       {
-        onSuccess: (data) => {
-          const row = data?.data?.[0];
-          if (row) {
-            const tag = objectToCamel(row) as TagWithCollectiviteId;
-            props.onChange({
-              values: [tag, ...getSelectedValues(props.values)],
-              selectedValue: tag,
-            });
-          }
+        onSuccess: (tag) => {
+          props.onChange({
+            values: [tag, ...getSelectedValues(props.values)],
+            selectedValue: tag,
+          });
         },
       }
     );
@@ -118,15 +105,12 @@ const SelectTags = ({
   // ***
 
   const { mutate: updateTag } = useTagUpdate({
-    key: [queryKey, collectiviteId],
-    tagTableName,
-    keysToInvalidate: additionalKeysToInvalidate,
+    tagType,
     onSuccess: refetchOptions,
   });
 
   const handleTagUpdate = (tagId: OptionValue, tagName: string) => {
     updateTag({
-      collectiviteId,
       id: parseInt(tagId as string),
       nom: tagName,
     });
@@ -137,8 +121,7 @@ const SelectTags = ({
   // ***
 
   const { mutate: deleteTag } = useDeleteTag({
-    key: [queryKey, collectiviteId],
-    tagTableName,
+    tagType,
     onSuccess: refetchOptions,
   });
 

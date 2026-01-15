@@ -1,42 +1,50 @@
-import { QueryKey, useMutation, useQueryClient } from '@tanstack/react-query';
-import { TableTag, useSupabase } from '@tet/api';
-import { TagUpdate } from '@tet/domain/collectivites';
-import { objectToSnake } from 'ts-case-convert';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { RouterInput, useTRPC } from '@tet/api';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { TagType, TagWithCollectiviteId } from '@tet/domain/collectivites';
+
+type TagInput = Omit<
+  RouterInput['collectivites']['tags']['update'],
+  'collectiviteId' | 'tagType'
+>;
 
 type Args = {
-  key: QueryKey;
-  tagTableName: TableTag;
-  keysToInvalidate?: QueryKey[];
+  tagType: TagType;
   onSuccess?: () => void;
 };
 
-export const useTagUpdate = ({
-  key,
-  tagTableName,
-  keysToInvalidate,
-  onSuccess,
-}: Args) => {
+export const useTagUpdate = ({ tagType, onSuccess }: Args) => {
   const queryClient = useQueryClient();
-  const supabase = useSupabase();
+  const trpc = useTRPC();
+  const collectiviteId = useCollectiviteId();
+
+  const { mutateAsync: updateTagMutation } = useMutation(
+    trpc.collectivites.tags.update.mutationOptions()
+  );
 
   return useMutation({
-    mutationFn: async (tag: TagUpdate) => {
-      if (tag.id)
-        await supabase
-          .from(tagTableName)
-          .update(objectToSnake(tag))
-          .eq('id', tag.id);
+    mutationFn: async (tag: TagInput) => {
+      return await updateTagMutation({
+        tagType,
+        id: tag.id,
+        nom: tag.nom,
+        collectiviteId,
+      });
     },
 
     onMutate: async (tag) => {
-      await queryClient.cancelQueries({ queryKey: key });
+      const listTagsQueryKey = trpc.collectivites.tags.list.queryKey({
+        collectiviteId,
+        tagType,
+      });
+      await queryClient.cancelQueries({ queryKey: listTagsQueryKey });
 
-      const previousdata: { tags: TagUpdate[] } | undefined =
-        queryClient.getQueryData(key);
+      const previousdata: TagWithCollectiviteId[] | undefined =
+        queryClient.getQueryData(listTagsQueryKey);
 
-      queryClient.setQueryData(key, (old?: TagUpdate[]) => {
+      queryClient.setQueryData(listTagsQueryKey, (old) => {
         return old
-          ? old.map((v: TagUpdate) => (v.id === tag.id ? tag : v))
+          ? old.map((v) => (v.id === tag.id ? { ...v, ...tag } : v))
           : [];
       });
 
@@ -44,13 +52,16 @@ export const useTagUpdate = ({
     },
 
     onSettled: (data, err, args, context) => {
-      if (err) {
-        queryClient.setQueryData(key, context?.previousdata);
-      }
-      queryClient.invalidateQueries({ queryKey: key });
-      keysToInvalidate?.forEach((key) => {
-        queryClient.invalidateQueries({ queryKey: key });
+      const listTagsQueryKey = trpc.collectivites.tags.list.queryKey({
+        collectiviteId,
+        tagType,
       });
+
+      if (err) {
+        queryClient.setQueryData(listTagsQueryKey, context?.previousdata);
+      }
+
+      queryClient.invalidateQueries({ queryKey: listTagsQueryKey });
     },
 
     onSuccess: () => onSuccess?.(),

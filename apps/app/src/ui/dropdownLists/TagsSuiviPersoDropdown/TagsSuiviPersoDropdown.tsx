@@ -1,5 +1,4 @@
-import { QueryKey } from '@tanstack/react-query';
-import { Tag } from '@tet/domain/collectivites';
+import { Tag, TagEnum } from '@tet/domain/collectivites';
 import { SelectMultipleProps } from '@tet/ui';
 import SelectTags from '../tags/SelectTags';
 import { useTagsSuiviPersoListe } from './useTagsSuiviPersoListe';
@@ -20,7 +19,6 @@ type TagsSuiviPersoDropdownProps = Omit<
     libresTag: Tag[];
     selectedLibreTag: Tag;
   }) => void;
-  additionalKeysToInvalidate?: QueryKey[];
 };
 
 const TagsSuiviPersoDropdown = (props: TagsSuiviPersoDropdownProps) => {
@@ -32,9 +30,7 @@ const TagsSuiviPersoDropdown = (props: TagsSuiviPersoDropdownProps) => {
       placeholder={(isEditionAllowed) =>
         `Sélectionner ${isEditionAllowed ? 'ou créer ' : ''}un tag`
       }
-      queryKey={['tags_suivi_perso']}
-      tagTableName="libre_tag"
-      additionalKeysToInvalidate={props.additionalKeysToInvalidate}
+      tagType={TagEnum.Libre}
       optionsListe={data}
       refetchOptions={refetch}
       onChange={({ values, selectedValue }) => {

@@ -1,5 +1,4 @@
-import { QueryKey } from '@tanstack/react-query';
-import { TagWithCollectiviteId } from '@tet/domain/collectivites';
+import { TagEnum, TagWithCollectiviteId } from '@tet/domain/collectivites';
 import { SelectMultipleProps } from '@tet/ui';
 import SelectTags from '../tags/SelectTags';
 import { useServicesPilotesListe } from './useServicesPilotesListe';
@@ -23,7 +22,6 @@ type ServicesPilotesDropdownProps = Omit<
     selectedService: TagWithCollectiviteId;
   }) => void;
   disabledOptionsIds?: number[];
-  additionalKeysToInvalidate?: QueryKey[];
   disableEdition?: boolean;
 };
 
@@ -34,9 +32,7 @@ const ServicesPilotesDropdown = (props: ServicesPilotesDropdownProps) => {
     <SelectTags
       {...props}
       dataTest={props.dataTest ?? 'ServicePilote'}
-      queryKey={['services_pilotes']}
-      tagTableName="service_tag"
-      additionalKeysToInvalidate={props.additionalKeysToInvalidate}
+      tagType={TagEnum.Service}
       optionsListe={data}
       refetchOptions={refetch}
       onChange={({ values, selectedValue }) => {

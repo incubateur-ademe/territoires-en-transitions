@@ -1,27 +1,28 @@
-import { useQuery } from '@tanstack/react-query';
-import { useSupabase } from '@tet/api';
+import { useQueries } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { TagWithCollectiviteId } from '@tet/domain/collectivites';
-import { objectToCamel } from 'ts-case-convert';
+import { TagEnum } from '@tet/domain/collectivites';
 
 export const useTagsSuiviPersoListe = (collectiviteIds?: number[]) => {
   const collectiviteId = useCollectiviteId();
-  const supabase = useSupabase();
+  const trpc = useTRPC();
 
-  return useQuery({
-    queryKey: ['tags_suivi_perso', collectiviteId],
-    queryFn: async () => {
-      const { error, data } = await supabase
-        .from('libre_tag')
-        .select()
-        .in('collectivite_id', collectiviteIds ?? [collectiviteId])
-        .order('nom');
+  const ids = [...new Set([collectiviteId, ...(collectiviteIds ?? [])])];
 
-      if (error) {
-        throw new Error(error.message);
-      }
+  const queries = ids.map((id) =>
+    trpc.collectivites.tags.list.queryOptions({
+      tagType: TagEnum.Libre,
+      collectiviteId: id,
+    })
+  );
 
-      return objectToCamel(data) as TagWithCollectiviteId[];
-    },
-  });
+  const results = useQueries({ queries });
+
+  const data = results.flatMap((result) => result.data ?? []);
+  const refetch = () => Promise.all(results.map((result) => result.refetch()));
+
+  return {
+    data,
+    refetch,
+  };
 };

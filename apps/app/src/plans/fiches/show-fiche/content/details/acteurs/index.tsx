@@ -43,7 +43,6 @@ export const Acteurs = (): JSX.Element => {
   });
 
   const allFicheCollectiviteIds = getFicheAllEditorCollectiviteIds(fiche);
-  const ficheActionInvalidationKeys = [['fiche_action', fiche.id.toString()]];
 
   const onSubmit = useCallback(
     async (
@@ -88,7 +87,6 @@ export const Acteurs = (): JSX.Element => {
                 onChange={({ services }) => {
                   field.onChange(services);
                 }}
-                additionalKeysToInvalidate={ficheActionInvalidationKeys}
               />
             )}
           />
@@ -111,7 +109,6 @@ export const Acteurs = (): JSX.Element => {
                 onChange={({ structures }) => {
                   field.onChange(structures);
                 }}
-                additionalKeysToInvalidate={ficheActionInvalidationKeys}
               />
             )}
           />
@@ -136,7 +133,6 @@ export const Acteurs = (): JSX.Element => {
                 onChange={({ personnes }) => {
                   field.onChange(personnes);
                 }}
-                additionalKeysToInvalidate={ficheActionInvalidationKeys}
               />
             )}
           />
@@ -181,7 +177,6 @@ export const Acteurs = (): JSX.Element => {
                 onChange={({ partenaires }) => {
                   field.onChange(partenaires);
                 }}
-                additionalKeysToInvalidate={ficheActionInvalidationKeys}
               />
             )}
           />

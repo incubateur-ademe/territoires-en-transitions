@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InstanceGouvernanceService } from '@tet/backend/collectivites/handle-instance-gouvernance/handle-instance-gouvernance.service';
 import { ListMembresService } from '@tet/backend/collectivites/membres/list-membres/list-membres.service';
-import { TagService } from '@tet/backend/collectivites/tags/tag.service';
+import { ListTagsService } from '@tet/backend/collectivites/tags/list-tags/list-tags.service';
+import { MutateTagService } from '@tet/backend/collectivites/tags/mutate-tag/mutate-tag.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
@@ -41,7 +42,8 @@ export interface ResolvedFicheEntities {
 export class ResolveEntityService {
   constructor(
     private readonly listMembresService: ListMembresService,
-    private readonly tagService: TagService,
+    private readonly listTagsService: ListTagsService,
+    private readonly mutateTagService: MutateTagService,
     private readonly instanceGouvernanceService: InstanceGouvernanceService
   ) {}
 
@@ -57,18 +59,20 @@ export class ResolveEntityService {
   async resolveFicheEntities(
     collectiviteId: number,
     fiches: ImportFicheInput[],
-    tx: Transaction,
-    user: AuthenticatedUser
+    user: AuthenticatedUser,
+    tx: Transaction
   ): Promise<Result<ResolvedFicheEntities[], string>> {
     const { getOrCreatePersonne } = await createPersonneResolver(
       collectiviteId,
       this.listMembresService,
-      this.tagService,
+      this.listTagsService,
+      this.mutateTagService,
       tx
     );
     const { getOrCreate: getOrCreateStructure } = await createTagResolver(
       collectiviteId,
-      this.tagService,
+      this.listTagsService,
+      this.mutateTagService,
       TagEnum.Structure,
       undefined,
       tx
@@ -76,7 +80,8 @@ export class ResolveEntityService {
 
     const { getOrCreate: getOrCreateFinanceur } = await createTagResolver(
       collectiviteId,
-      this.tagService,
+      this.listTagsService,
+      this.mutateTagService,
       TagEnum.Financeur,
       undefined,
       tx
@@ -84,7 +89,8 @@ export class ResolveEntityService {
 
     const { getOrCreate: getOrCreateService } = await createTagResolver(
       collectiviteId,
-      this.tagService,
+      this.listTagsService,
+      this.mutateTagService,
       TagEnum.Service,
       undefined,
       tx
@@ -92,7 +98,8 @@ export class ResolveEntityService {
 
     const { getOrCreate: getOrCreatePartenaire } = await createTagResolver(
       collectiviteId,
-      this.tagService,
+      this.listTagsService,
+      this.mutateTagService,
       TagEnum.Partenaire,
       undefined,
       tx
