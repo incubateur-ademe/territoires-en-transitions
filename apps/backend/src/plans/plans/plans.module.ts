@@ -28,6 +28,7 @@ import { ListPlansRouter } from './list-plans/list-plans.router';
 import { ListPlansService } from './list-plans/list-plans.service';
 import { PlanRouter } from './plans.router';
 import { PlanProgressRules } from './progress/plan-progress.rules';
+import { PlanAggregateService } from './upsert-plan-aggregate/upsert-plan-aggregate.service';
 import { UpsertPlanRepository } from './upsert-plan/upsert-plan.repository';
 import { UpsertPlanRouter } from './upsert-plan/upsert-plan.router';
 import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
@@ -68,10 +69,13 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     PlanProgressRules,
     ComputeBudgetRules,
     PlanRouter,
+    PlanAggregateService,
   ],
   exports: [
     PlanRouter,
     UpsertPlanService,
+    UpsertAxeService,
+    PlanAggregateService,
     ListPlansService,
     GetPlanService,
     PlanProgressRules,

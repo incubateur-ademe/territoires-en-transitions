@@ -1,15 +1,11 @@
-import {
-  CibleEnum,
-  FicheCreate,
-  PiliersEciEnum,
-  StatutEnum,
-} from '@tet/domain/plans';
+import { CibleEnum, FicheCreate, StatutEnum } from '@tet/domain/plans';
+import { piliersEciEnumType } from '../../domain/fiche.types';
 
 export const ficheActionFixture: FicheCreate = {
   id: 9999,
   titre: 'Test Fiche Action',
   description: 'patati',
-  piliersEci: [PiliersEciEnum.APPROVISIONNEMENT_DURABLE],
+  piliersEci: [piliersEciEnumType.APPROVISIONNEMENT_DURABLE],
   objectifs: 'Diminution des émissions de carbone',
   cibles: [CibleEnum.AGENTS, CibleEnum.GRAND_PUBLIC],
   ressources: 'Service digitaux',

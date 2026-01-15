@@ -24,6 +24,7 @@ import { FicheActionEtapeService } from './fiche-action-etape/fiche-action-etape
 import FicheActionPermissionsService from './fiche-action-permissions.service';
 import { ImportPlanModule } from './import/import-plan.module';
 import { NotifyPiloteService } from './notify-pilote/notify-pilote.service';
+import { FicheService } from './services/fiche.service';
 import { UpdateFicheRouter } from './update-fiche/update-fiche.router';
 import UpdateFicheService from './update-fiche/update-fiche.service';
 
@@ -34,6 +35,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     NotificationsModule,
   ],
   providers: [
+    FicheService,
     PlanActionsService,
     FicheActionPermissionsService,
     ShareFicheService,
@@ -59,6 +61,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     NotifyPiloteService,
   ],
   exports: [
+    FicheService,
     FicheActionPermissionsService,
     AxeService,
     PlanActionsService,
@@ -68,7 +71,6 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     BulkEditRouter,
     FicheActionBudgetService,
     FicheActionBudgetRouter,
-
     FichesRouter,
 
     ListFichesService,

@@ -26,7 +26,7 @@ const pathToInput = async ({
   };
 };
 
-describe('Test import PA', () => {
+describe("Test import Plan d'action", () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
   let app: INestApplication;
@@ -39,11 +39,9 @@ describe('Test import PA', () => {
 
   test('Test utilisateur non support', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
-    const pathName = './resources/nouveau-plan-valide.xlsx';
-    const input = await pathToInput({ pathName, collectiviteId: 1 });
-    await expect(() =>
-      caller.plans.fiches.import(input)
-    ).rejects.toThrowError();
+    const pathName = './__fixtures__/nouveau-plan-valide.xlsx';
+    const input = await pathToInput({ pathName, collectiviteId: 50 });
+    await expect(caller.plans.fiches.import(input)).rejects.toThrowError();
   });
 
   test('Utilisateur support même sans droits sur la collectivité doit pouvoir importer le plan', async () => {
@@ -57,9 +55,39 @@ describe('Test import PA', () => {
 
     onTestFinished(cleanup);
 
-    const pathName = './resources/nouveau-plan-valide.xlsx';
+    const pathName = './__fixtures__/nouveau-plan-valide.xlsx';
     const input = await pathToInput({ pathName, collectiviteId: 50 });
 
+    const result = await caller.plans.fiches.import(input);
+    expect(result).toBe(true);
+  });
+
+  test('Test import plan sans axes', async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const { cleanup } = await addAndEnableUserSupportMode({
+      app,
+      caller,
+      userId: yoloDodoUser.id,
+    });
+    onTestFinished(cleanup);
+    const pathName = './__fixtures__/plan_sans_axes.xlsx';
+    const input = await pathToInput({ pathName, collectiviteId: 50 });
+    const result = await caller.plans.fiches.import(input);
+    expect(result).toBe(true);
+  });
+
+  test('Test import plan avec une seule fiche', async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const { cleanup } = await addAndEnableUserSupportMode({
+      app,
+      caller,
+      userId: yoloDodoUser.id,
+    });
+    onTestFinished(cleanup);
+    const pathName = './__fixtures__/one_fiche_plan.xlsx';
+    const input = await pathToInput({ pathName, collectiviteId: 50 });
     const result = await caller.plans.fiches.import(input);
     expect(result).toBe(true);
   });
@@ -75,15 +103,11 @@ describe('Test import PA', () => {
 
     onTestFinished(cleanup);
 
-    const pathName = './resources/Plan_erreur_montant.xlsx';
+    const pathName = './__fixtures__/plan_budget_issue.xlsx';
     const input = await pathToInput({ pathName });
-    await expect(() => caller.plans.fiches.import(input)).rejects.toThrowError(
-      `<strong>Erreur(s) rencontrée(s) dans le fichier Excel :</strong></br>
-      <ul>
-      <li><strong>Ligne 4 :</strong> Error: Le montant "<em>Entre 200 et 500</em>" est incorrect, les montants ne doivent contenir que des chiffres.</li>
-      </ul>
-      <br><br>
-      Merci de la/les corriger avant de retenter un import.`
+    await expect(caller.plans.fiches.import(input)).rejects.toThrowError(
+      `Erreur lors de la transformation des données :
+ Colonne budget: Un nombre est attendu`
     );
   });
 
@@ -98,14 +122,10 @@ describe('Test import PA', () => {
 
     onTestFinished(cleanup);
 
-    const pathName = './resources/Plan_erreur_colonnes.xlsx';
+    const pathName = './__fixtures__/plan_column_order_issue.xlsx';
     const input = await pathToInput({ pathName });
-    await expect(() => caller.plans.fiches.import(input)).rejects
-      .toThrowError(`<strong>Erreur rencontrée dans le fichier Excel :</strong><br>
-          La colonne <em>Q</em> devrait être "<strong>Financeur 1</strong>" et non "<strong>Budget prévisionnel total € HT</strong>"<br><br>
-          <strong>Les colonnes attendues sont :</strong> <pre>Axe (x),Sous-axe (x.x),Sous-sous axe (x.x.x),Titre de l'action,Descriptif,Instances de gouvernance,Objectifs,Indicateurs liés,Structure pilote,Moyens humains et techniques,Partenaires,Direction ou service pilote,Personne pilote,Élu·e référent·e,Participation Citoyenne,Financements,Financeur 1,Montant € HT,Financeur 2,Montant € HT,Financeur 3,Montant € HT,Budget prévisionnel total € HT,Statut,Niveau de priorité,Date de début,Date de fin,Action en amélioration continue,Calendrier,Mesures liées,Actions des plans liées,Notes,Etapes de l'action,Documents et liens</pre><br>
-          <strong>Les colonnes données sont   :</strong> <pre>Axe (x),Sous-axe (x.x), Sous-sous axe (x.x.x),Titre de l'action,Descriptif,Instances de gouvernance,Objectifs,Indicateurs liés,Structure pilote,Moyens humains et techniques,Partenaires ,Direction ou service pilote,Personne pilote,Élu·e référent·e ,Participation Citoyenne,Financements,Budget prévisionnel total € HT,Financeur 1,Montant € HT,Financeur 2,Montant € HT,Financeur 3,Montant € HT,Statut ,Niveau de priorité,Date de début,Date de fin,Action en amélioration continue,Calendrier,Mesures liées,Actions des plans liées,Notes,Etapes de l'action,Documents et liens</pre><br><br>
-
-          Merci de la corriger avant de retenter un import.`);
+    await expect(caller.plans.fiches.import(input)).rejects.toThrowError(
+      `Erreur lors de la lecture du fichier Excel : La colonne B devrait être "Sous-axe (x.x)" et non "Sous-sous axe (x.x.x)"`
+    );
   });
 });
