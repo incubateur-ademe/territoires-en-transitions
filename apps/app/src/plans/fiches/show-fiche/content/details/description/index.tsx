@@ -1,5 +1,5 @@
+import { LibreTagDropdown } from '@/app/collectivites/tags/libre-tag.dropdown';
 import EffetsAttendusDropdown from '@/app/ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
-import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import { useGetThematiqueAndSousThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
 import {
   cn,
@@ -167,12 +167,12 @@ export const Description = () => {
               }
               isReadonly={isReadonly}
               renderOnEdit={({ openState }) => (
-                <TagsSuiviPersoDropdown
+                <LibreTagDropdown
                   inlineEdit
                   openState={openState}
                   values={(field.value ?? []).map((tag) => tag.id)}
-                  onChange={({ libresTag }) => {
-                    field.onChange(libresTag);
+                  onChange={({ values }) => {
+                    field.onChange(values);
                   }}
                 />
               )}

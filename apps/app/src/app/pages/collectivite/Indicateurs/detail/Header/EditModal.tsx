@@ -1,8 +1,8 @@
+import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
+import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
-import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import { Field, FormSectionGrid, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
@@ -63,7 +63,7 @@ const EditModal = ({ openState, definition }: Props) => {
         <FormSectionGrid formSectionId={descriptionId}>
           {/* Personnes pilote */}
           <Field title="Personne pilote" className="col-span-2">
-            <PersonnesDropdown
+            <PersonneTagDropdown
               placeholder="Sélectionnez ou créez un pilote"
               values={editedPilotes?.map((p) => getPersonneStringId(p))}
               onChange={({ personnes }) => {
@@ -74,10 +74,9 @@ const EditModal = ({ openState, definition }: Props) => {
 
           {/* Directions ou services pilote */}
           <Field title="Direction ou service pilote" className="col-span-2">
-            <ServicesPilotesDropdown
-              placeholder="Sélectionnez ou créez une direction ou un service pilote"
+            <ServiceTagDropdown
               values={editedServices?.map((s) => s.id)}
-              onChange={({ services }) => setEditedServices(services)}
+              onChange={({ values: services }) => setEditedServices(services)}
             />
           </Field>
         </FormSectionGrid>

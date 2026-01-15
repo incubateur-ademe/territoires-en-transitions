@@ -1,9 +1,9 @@
 import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
+import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
-import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
 import { useSupabase } from '@tet/api';
@@ -19,7 +19,6 @@ import {
   useEventTracker,
 } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
-
 type Props = {
   module: ModuleIndicateursSelect;
   openState: OpenState;
@@ -60,9 +59,9 @@ const IndicateursDontJeSuisLePiloteModal = ({
             />
           </Field>
           <Field title="Direction ou service pilote de l'indicateur :">
-            <ServicesPilotesDropdown
+            <ServiceTagDropdown
               values={filtreState?.serviceIds}
-              onChange={({ services }) => {
+              onChange={({ values: services }) => {
                 setFiltreState({
                   ...filtreState,
                   serviceIds: services.map((s) => s.id),
@@ -102,7 +101,7 @@ const IndicateursDontJeSuisLePiloteModal = ({
             />
           </Field>
           <Field title="Pilote de l'indicateur :">
-            <PersonnesDropdown
+            <PersonneTagDropdown
               values={[userId]}
               onChange={() => null}
               disabled

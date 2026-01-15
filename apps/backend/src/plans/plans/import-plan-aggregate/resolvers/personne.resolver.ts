@@ -1,5 +1,7 @@
 import { ListMembresService } from '@tet/backend/collectivites/membres/list-membres/list-membres.service';
-import { TagService } from '@tet/backend/collectivites/tags/tag.service';
+import { ListTagsService } from '@tet/backend/collectivites/tags/list-tags/list-tags.service';
+import { MutateTagService } from '@tet/backend/collectivites/tags/mutate-tag/mutate-tag.service';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { getFuse } from '@tet/backend/utils/fuse/fuse.utils';
 import { Result, failure, success } from '@tet/backend/utils/result.type';
@@ -8,19 +10,24 @@ import { Tag, TagEnum } from '@tet/domain/collectivites';
 type CreateTagFn = (
   name: string,
   collectiviteId: number,
-  tx: Transaction
+  user: AuthenticatedUser
 ) => Promise<Result<Tag, string>>;
 
 export const createPersonneResolver = async (
   collectiviteId: number,
   listMembresService: ListMembresService,
-  tagService: TagService,
-  tx?: Transaction
+  listTagsService: ListTagsService,
+  mutateTagService: MutateTagService,
+  user: AuthenticatedUser,
+  tx: Transaction
 ) => {
   const Fuse = await getFuse();
-  const [members, tags] = await Promise.all([
+  const [members, tagsResult] = await Promise.all([
     listMembresService.list({ collectiviteId }, { tx }),
-    tagService.getTags(collectiviteId, TagEnum.Personne, tx),
+    listTagsService.listTags(
+      { collectiviteId, tagType: TagEnum.Personne },
+      { tx }
+    ),
   ]);
   const searchMembers = new Fuse(members.membres, {
     keys: [
@@ -30,26 +37,28 @@ export const createPersonneResolver = async (
     threshold: 0.3,
     ignoreLocation: true,
   });
+
+  if (!tagsResult.success) {
+    throw new Error(tagsResult.error);
+  }
+
+  const tags = tagsResult.data;
+
   const searchTags = new Fuse(tags, {
     keys: ['nom'],
     threshold: 0.3,
     ignoreLocation: true,
   });
 
-  const createTag: CreateTagFn = async (name, collectiviteId, tx) => {
-    return tagService.saveTag(
-      {
-        nom: name,
-        collectiviteId,
-      },
-      TagEnum.Personne,
-      tx
+  const createTag: CreateTagFn = async (name, collectiviteId, user) => {
+    return mutateTagService.createTag(
+      { nom: name, collectiviteId, tagType: TagEnum.Personne },
+      { user, isUserTrusted: true, tx }
     );
   };
 
   const getOrCreatePersonne = async (
-    name: string,
-    tx: Transaction
+    name: string
   ): Promise<
     Result<
       | { userId?: undefined; tagId: number }
@@ -67,7 +76,7 @@ export const createPersonneResolver = async (
       return success({ tagId: foundTag.id });
     }
 
-    const created = await createTag(name, collectiviteId, tx);
+    const created = await createTag(name, collectiviteId, user);
     if (!created.success) {
       return failure(created.error);
     }
@@ -79,5 +88,6 @@ export const createPersonneResolver = async (
 
     return success({ tagId: created.data.id });
   };
+
   return { getOrCreatePersonne };
 };

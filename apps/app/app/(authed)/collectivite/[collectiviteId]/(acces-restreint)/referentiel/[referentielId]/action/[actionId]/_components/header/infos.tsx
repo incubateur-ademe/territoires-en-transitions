@@ -1,3 +1,6 @@
+import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
+import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
 import {
   useDeleteMesurePilotes,
   useUpsertMesurePilotes,
@@ -6,9 +9,6 @@ import {
   useDeleteMesureServicesPilotes,
   useUpsertMesureServicesPilotes,
 } from '@/app/referentiels/actions/use-mesure-services-pilotes';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
-import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
@@ -56,7 +56,7 @@ export const Infos = ({ actionId, pilotes, services, isReadOnly }: Props) => {
       <InlineEditWrapper
         disabled={isReadOnly}
         renderOnEdit={({ openState }) => (
-          <PersonnesDropdown
+          <PersonneTagDropdown
             dataTest="action-header-pilote-dropdown"
             buttonClassName="border-none"
             dropdownZindex={1000}
@@ -96,11 +96,11 @@ export const Infos = ({ actionId, pilotes, services, isReadOnly }: Props) => {
       <InlineEditWrapper
         disabled={isReadOnly}
         renderOnEdit={({ openState }) => (
-          <ServicesPilotesDropdown
+          <ServiceTagDropdown
             dataTest="action-header-service-dropdown"
             dropdownZindex={1000}
             values={services?.map((s) => s.id) ?? []}
-            onChange={({ services: newServices }) => {
+            onChange={({ values: newServices }) => {
               if (newServices.length === 0) {
                 deleteServices({ collectiviteId, mesureId: actionId });
               } else {

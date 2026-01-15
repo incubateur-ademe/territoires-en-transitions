@@ -1,5 +1,5 @@
+import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
 import { BulkEditRequest } from '@/app/plans/fiches/list-all-fiches/data/use-bulk-fiches-edit';
-import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import { TagWithCollectiviteId } from '@tet/domain/collectivites';
 import { Button, Event, Field, useEventTracker } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
@@ -43,21 +43,19 @@ const ModaleEditionService = ({
           title="Ajouter une direction ou service pilote"
           className="col-span-2"
         >
-          <ServicesPilotesDropdown
+          <ServiceTagDropdown
             values={servicesToAdd?.map((s) => s.id)}
-            placeholder="Sélectionnez ou créez une direction ou service pilote"
-            onChange={({ services }) => setServicesToAdd(services)}
+            onChange={({ values: services }) => setServicesToAdd(services)}
           />
         </Field>
         <Field
           title="Dissocier une direction ou service pilote"
           className="col-span-2"
         >
-          <ServicesPilotesDropdown
+          <ServiceTagDropdown
             disableEdition
             values={servicesToRemove?.map((s) => s.id)}
-            placeholder="Sélectionnez une ou plusieurs directions ou services pilotes"
-            onChange={({ services }) => setServicesToRemove(services)}
+            onChange={({ values: services }) => setServicesToRemove(services)}
           />
         </Field>
       </>

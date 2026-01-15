@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { TagService } from '@tet/backend/collectivites/tags/tag.service';
+import { MutateTagService } from '@tet/backend/collectivites/tags/mutate-tag/mutate-tag.service';
 import { CreateFicheService } from '@tet/backend/plans/fiches/create-fiche/create-fiche.service';
 import { GetPlanService } from '@tet/backend/plans/plans/get-plan/get-plan.service';
 import { UpsertPlanService } from '@tet/backend/plans/plans/upsert-plan/upsert-plan.service';
@@ -31,7 +31,7 @@ export class CheckoutService {
     private readonly upsertPlanService: UpsertPlanService,
     private readonly getPlanService: GetPlanService,
     private readonly createFicheService: CreateFicheService,
-    private readonly tagService: TagService
+    private readonly mutateTagService: MutateTagService
   ) {}
 
   async execute(
@@ -95,10 +95,13 @@ export class CheckoutService {
       ];
       const tagResults = await Promise.all(
         uniquePartenaireNoms.map((nom) =>
-          this.tagService.saveTag(
-            { nom, collectiviteId: input.collectiviteId },
-            TagEnum.Partenaire,
-            transaction
+          this.mutateTagService.createTag(
+            {
+              nom,
+              collectiviteId: input.collectiviteId,
+              tagType: TagEnum.Partenaire,
+            },
+            { user, isUserTrusted: true, tx: transaction }
           )
         )
       );

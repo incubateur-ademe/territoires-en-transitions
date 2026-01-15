@@ -14,9 +14,14 @@ import { ImportCollectiviteRelationsService } from '@tet/backend/collectivites/i
 import { ExportConnectService } from '@tet/backend/collectivites/membres/sync-membres-with-crm-connect/export-connect.service';
 import { RecherchesRouter } from '@tet/backend/collectivites/recherches/recherches.router';
 import RecherchesService from '@tet/backend/collectivites/recherches/recherches.service';
+import { ListTagsRepository } from '@tet/backend/collectivites/tags/list-tags/list-tags.repository';
+import { ListTagsRouter } from '@tet/backend/collectivites/tags/list-tags/list-tags.router';
+import { ListTagsService } from '@tet/backend/collectivites/tags/list-tags/list-tags.service';
+import { MutateTagRepository } from '@tet/backend/collectivites/tags/mutate-tag/mutate-tag.repository';
+import { MutateTagRouter } from '@tet/backend/collectivites/tags/mutate-tag/mutate-tag.router';
+import { MutateTagService } from '@tet/backend/collectivites/tags/mutate-tag/mutate-tag.service';
 import { PersonneTagRouter } from '@tet/backend/collectivites/tags/personnes/personne-tag.router';
 import { PersonneTagService } from '@tet/backend/collectivites/tags/personnes/personne-tag.service';
-import { TagService } from '@tet/backend/collectivites/tags/tag.service';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { CollectiviteController } from './collectivite.controller';
 import { CollectivitesCoreModule } from './collectivites-core.module';
@@ -31,9 +36,7 @@ import DocumentService from './documents/document.service';
 import { DocumentsRouter } from './documents/documents.router';
 import { ListCategoriesRouter } from './handle-categories/list-categories.router';
 import ListCategoriesService from './handle-categories/list-categories.service';
-import { InstanceGouvernanceRepository } from './handle-instance-gouvernance/handle-instance-gouvernance.repository';
-import { InstanceGouvernanceRouter } from './handle-instance-gouvernance/handle-instance-gouvernance.router';
-import { InstanceGouvernanceService } from './handle-instance-gouvernance/handle-instance-gouvernance.service';
+
 import { ListCollectivitesRouter } from './list-collectivites/list-collectivites.router';
 import ListCollectivitesService from './list-collectivites/list-collectivites.service';
 import { ListMembresService } from './membres/list-membres/list-membres.service';
@@ -75,9 +78,14 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     UpdateDocumentRouter,
     DocumentsRouter,
     DocumentService,
-    TagService,
     PersonneTagService,
     PersonneTagRouter,
+    MutateTagService,
+    MutateTagRepository,
+    MutateTagRouter,
+    ListTagsService,
+    ListTagsRepository,
+    ListTagsRouter,
     ListCollectivitesRouter,
     ListCollectivitesService,
     CollectiviteCrudService,
@@ -95,9 +103,6 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     DiscussionDomainService,
     DiscussionQueryService,
     ListDiscussionService,
-    InstanceGouvernanceRouter,
-    InstanceGouvernanceService,
-    InstanceGouvernanceRepository,
     {
       provide: Logger,
       useValue: new Logger('DiscussionApplicationService'),
@@ -122,9 +127,14 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     UpdateDocumentRouter,
     DocumentService,
     DocumentsRouter,
-    TagService,
     ListCollectivitesService,
     PersonneTagService,
+    MutateTagService,
+    MutateTagRepository,
+    MutateTagRouter,
+    ListTagsService,
+    ListTagsRepository,
+    ListTagsRouter,
     CollectiviteCrudService,
     CollectiviteCrudRouter,
     RecherchesService,
@@ -137,8 +147,6 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     DiscussionRouter,
     DiscussionApplicationService,
     DiscussionDomainService,
-    InstanceGouvernanceRouter,
-    InstanceGouvernanceService,
   ],
   controllers: [CollectiviteController, DocumentController],
 })

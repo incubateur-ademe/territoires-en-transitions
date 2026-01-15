@@ -70,9 +70,9 @@ describe('Export plan', () => {
       'Agriculture et alimentation',
       'Non',
       'À venir',
-      'Ultra service\nGiga service',
-      'Ultra structure\nGiga structure',
-      'Ultra partenaire\nGiga partenaire',
+      'Giga service\nUltra service',
+      'Giga structure\nUltra structure',
+      'Giga partenaire\nUltra partenaire',
       expect.stringMatching(/\d{2}\/\d{2}\/\d{4}/),
       expect.stringMatching(/\d{2}\/\d{2}\/\d{4}/),
       expect.any(String), // pilote name (peut varier selon les données)

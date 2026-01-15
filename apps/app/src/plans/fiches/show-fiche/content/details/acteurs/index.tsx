@@ -1,10 +1,10 @@
+import { InstanceGouvernanceTagDropdown } from '@/app/collectivites/tags/instance-gouvernance-tag.dropdown';
+import { PartenaireTagDropdown } from '@/app/collectivites/tags/partenaire-tag.dropdown';
+import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
+import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
+import { StructureTagDropdown } from '@/app/collectivites/tags/structure-tag.dropdown';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { InstanceGouvernanceDropdown } from '@/app/plans/fiches/shared/dropdowns/instance-gouvernance.dropdown';
-import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
-import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import { ficheActionParticipationOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -43,7 +43,6 @@ export const Acteurs = (): JSX.Element => {
   });
 
   const allFicheCollectiviteIds = getFicheAllEditorCollectiviteIds(fiche);
-  const ficheActionInvalidationKeys = [['fiche_action', fiche.id.toString()]];
 
   const onSubmit = useCallback(
     async (
@@ -80,16 +79,14 @@ export const Acteurs = (): JSX.Element => {
             value={formatList(field.value, (s) => s.nom)}
             isReadonly={isReadonly}
             renderOnEdit={({ openState }) => (
-              <ServicesPilotesDropdown
+              <ServiceTagDropdown
                 inlineEdit
                 openState={openState}
-                placeholder="Sélectionner ou créer un pilote"
                 collectiviteIds={allFicheCollectiviteIds}
                 values={field.value?.map((s) => s.id) ?? []}
-                onChange={({ services }) => {
+                onChange={({ values: services }) => {
                   field.onChange(services);
                 }}
-                additionalKeysToInvalidate={ficheActionInvalidationKeys}
               />
             )}
           />
@@ -105,15 +102,14 @@ export const Acteurs = (): JSX.Element => {
             value={formatList(field.value, (s) => s.nom)}
             isReadonly={isReadonly}
             renderOnEdit={({ openState }) => (
-              <StructuresDropdown
+              <StructureTagDropdown
                 inlineEdit
                 openState={openState}
                 values={field.value?.map((s) => s.id) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
-                onChange={({ structures }) => {
-                  field.onChange(structures);
+                onChange={({ values }) => {
+                  field.onChange(values);
                 }}
-                additionalKeysToInvalidate={ficheActionInvalidationKeys}
               />
             )}
           />
@@ -130,7 +126,7 @@ export const Acteurs = (): JSX.Element => {
             value={formatList(field.value, (r) => r.nom || 'Sans nom')}
             isReadonly={isReadonly}
             renderOnEdit={({ openState }) => (
-              <PersonnesDropdown
+              <PersonneTagDropdown
                 inlineEdit
                 openState={openState}
                 values={field.value?.map((r) => getPersonneStringId(r)) ?? []}
@@ -139,7 +135,6 @@ export const Acteurs = (): JSX.Element => {
                 onChange={({ personnes }) => {
                   field.onChange(personnes);
                 }}
-                additionalKeysToInvalidate={ficheActionInvalidationKeys}
               />
             )}
           />
@@ -156,13 +151,12 @@ export const Acteurs = (): JSX.Element => {
             value={formatList(field.value, (t) => t.nom)}
             isReadonly={isReadonly}
             renderOnEdit={({ openState }) => (
-              <InstanceGouvernanceDropdown
+              <InstanceGouvernanceTagDropdown
                 inlineEdit
                 openState={openState}
-                collectiviteId={fiche.collectiviteId}
                 values={field.value?.map((t) => t.id) ?? []}
-                onChange={(tags) => field.onChange(tags)}
-                ficheId={fiche.id}
+                collectiviteIds={allFicheCollectiviteIds}
+                onChange={({ values }) => field.onChange(values)}
               />
             )}
           />
@@ -179,15 +173,14 @@ export const Acteurs = (): JSX.Element => {
             value={formatList(field.value, (p) => p.nom)}
             isReadonly={isReadonly}
             renderOnEdit={({ openState }) => (
-              <PartenairesDropdown
-                openState={openState}
+              <PartenaireTagDropdown
                 inlineEdit
+                openState={openState}
                 values={field.value?.map((p) => p.id) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
-                onChange={({ partenaires }) => {
-                  field.onChange(partenaires);
+                onChange={({ values }) => {
+                  field.onChange(values);
                 }}
-                additionalKeysToInvalidate={ficheActionInvalidationKeys}
               />
             )}
           />

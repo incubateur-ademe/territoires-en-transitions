@@ -4,7 +4,7 @@ import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/m
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { financeurTagTable } from '@tet/backend/collectivites/tags/financeur-tag.table';
-import { instanceGouvernanceTagTable } from '@tet/backend/collectivites/tags/instance-gouvernance.table';
+import { instanceGouvernanceTagTable } from '@tet/backend/collectivites/tags/instance-gouvernance-tag.table';
 import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
 import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-tag.table';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
@@ -20,7 +20,6 @@ import {
 } from '@tet/backend/plans/fiches/list-fiches/list-fiches.request';
 import { ficheActionSharingTable } from '@tet/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
-import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
 import { ficheActionEffetAttenduTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-effet-attendu.table';
 import { ficheActionFinanceurTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-financeur-tag.table';
 import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
@@ -33,6 +32,7 @@ import { ficheActionSousThematiqueTable } from '@tet/backend/plans/fiches/shared
 import { ficheActionStructureTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-structure-tag.table';
 import { ficheActionThematiqueTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-thematique.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
+import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
 import { actionImpactActionTable } from '@tet/backend/plans/paniers/models/action-impact-action.table';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { effetAttenduTable } from '@tet/backend/shared/effet-attendu/effet-attendu.table';
@@ -136,7 +136,7 @@ export default class ListFichesService {
         ),
         sousThematiques: sql<
           SousThematique[]
-        >`array_agg(json_build_object('id', ${ficheActionSousThematiqueTable.thematiqueId}, 'nom', ${sousThematiqueTable.nom}, 'thematiqueId', ${sousThematiqueTable.thematiqueId} ))`.as(
+        >`array_agg(json_build_object('id', ${ficheActionSousThematiqueTable.thematiqueId}, 'nom', ${sousThematiqueTable.nom}, 'thematiqueId', ${sousThematiqueTable.thematiqueId} ) ORDER BY ${sousThematiqueTable.nom} ASC)`.as(
           'sous_thematiques'
         ),
       })
@@ -164,7 +164,7 @@ export default class ListFichesService {
         ),
         thematiques: sql<
           Tag[]
-        >`array_agg(json_build_object('id', ${ficheActionThematiqueTable.thematiqueId}, 'nom', ${thematiqueTable.nom} ))`.as(
+        >`array_agg(json_build_object('id', ${ficheActionThematiqueTable.thematiqueId}, 'nom', ${thematiqueTable.nom} ) ORDER BY ${thematiqueTable.nom} ASC)`.as(
           'thematiques'
         ),
       })
@@ -269,7 +269,7 @@ export default class ListFichesService {
         ),
         effetsAttendus: sql<
           EffetAttendu[]
-        >`array_agg(json_build_object('id', ${ficheActionEffetAttenduTable.effetAttenduId}, 'nom', ${effetAttenduTable.nom}, 'notice', ${effetAttenduTable.notice} ))`.as(
+        >`array_agg(json_build_object('id', ${ficheActionEffetAttenduTable.effetAttenduId}, 'nom', ${effetAttenduTable.nom}, 'notice', ${effetAttenduTable.notice} ) ORDER BY ${effetAttenduTable.nom} ASC)`.as(
           'effets_attendus'
         ),
       })
@@ -298,16 +298,18 @@ export default class ListFichesService {
         >`array_agg(${ficheActionFinanceurTagTable.financeurTagId})`.as(
           'financeur_tag_ids'
         ),
-        financeurTags: sql<Financeur[]>`array_agg(json_build_object(
-          'financeurTagId', ${ficheActionFinanceurTagTable.financeurTagId},
-          'ficheId', ${ficheActionFinanceurTagTable.ficheId},
-          'montantTtc', ${ficheActionFinanceurTagTable.montantTtc},
-          'financeurTag', json_build_object(
-            'id', ${financeurTagTable.id},
-            'nom', ${financeurTagTable.nom}
+        financeurTags: sql<Financeur[]>`array_agg(
+          json_build_object(
+            'financeurTagId', ${ficheActionFinanceurTagTable.financeurTagId},
+            'ficheId', ${ficheActionFinanceurTagTable.ficheId},
+            'montantTtc', ${ficheActionFinanceurTagTable.montantTtc},
+            'financeurTag', json_build_object(
+              'id', ${financeurTagTable.id},
+              'nom', ${financeurTagTable.nom}
+            )
           )
-          )
-          )`.as('financeur_tags'),
+          ORDER BY ${financeurTagTable.nom} ASC
+        )`.as('financeur_tags'),
       })
       .from(ficheActionFinanceurTagTable)
       .leftJoin(
@@ -333,7 +335,7 @@ export default class ListFichesService {
         ),
         libreTags: sql<
           Tag[]
-        >`array_agg(json_build_object('id', ${ficheActionLibreTagTable.libreTagId}, 'nom', ${libreTagTable.nom} ))`.as(
+        >`array_agg(json_build_object('id', ${ficheActionLibreTagTable.libreTagId}, 'nom', ${libreTagTable.nom} ) ORDER BY ${libreTagTable.nom} ASC)`.as(
           'libre_tags'
         ),
       })
@@ -364,7 +366,7 @@ export default class ListFichesService {
         ),
         structureTags: sql<
           Tag[]
-        >`array_agg(json_build_object('id', ${ficheActionStructureTagTable.structureTagId}, 'nom', ${structureTagTable.nom} ))`.as(
+        >`array_agg(json_build_object('id', ${ficheActionStructureTagTable.structureTagId}, 'nom', ${structureTagTable.nom} ) ORDER BY ${structureTagTable.nom} ASC)`.as(
           'structure_tags'
         ),
       })
@@ -396,7 +398,7 @@ export default class ListFichesService {
             createdAt: string | null;
             createdBy: string | null;
           }[]
-        >`json_agg(to_jsonb(${instanceGouvernanceTagTable}.*))`.as(
+        >`json_agg(to_jsonb(${instanceGouvernanceTagTable}.*) ORDER BY ${instanceGouvernanceTagTable.nom} ASC)`.as(
           'instance_de_gouvernance'
         ),
       })
@@ -427,7 +429,7 @@ export default class ListFichesService {
         ficheId: ficheActionPartenaireTagTable.ficheId,
         partenaireTagIds: sql<
           number[]
-        >`array_agg(${ficheActionPartenaireTagTable.partenaireTagId})`.as(
+        >`array_agg(${ficheActionPartenaireTagTable.partenaireTagId} ORDER BY ${partenaireTagTable.nom} ASC)`.as(
           'partenaire_tag_ids'
         ),
         partenaireTags: sql<Tag[]>`
@@ -436,6 +438,7 @@ export default class ListFichesService {
                 'id', ${ficheActionPartenaireTagTable.partenaireTagId},
                 'nom', ${partenaireTagTable.nom}
               )
+              ORDER BY ${partenaireTagTable.nom} ASC
             )
           `.as('partenaire_tags'),
       })
@@ -528,7 +531,7 @@ export default class ListFichesService {
         ),
         services: sql<
           TagWithCollectiviteId[]
-        >`array_agg(json_build_object('id', ${serviceTagTable.id}, 'nom', ${serviceTagTable.nom}, 'collectiviteId', ${serviceTagTable.collectiviteId}))`.as(
+        >`array_agg(json_build_object('id', ${serviceTagTable.id}, 'nom', ${serviceTagTable.nom}, 'collectiviteId', ${serviceTagTable.collectiviteId}) ORDER BY ${serviceTagTable.nom} ASC)`.as(
           'services'
         ),
       })

@@ -465,7 +465,6 @@ export class CountByService {
         });
       return this.countByPropertyWithFiches(fiches, countByProperty, filters);
     } catch (error) {
-      console.log('error', error);
       this.logger.error(error);
       throw error;
     }

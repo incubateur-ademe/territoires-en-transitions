@@ -1,4 +1,4 @@
-import { useFinanceursListe } from '@/app/ui/dropdownLists/FinanceursDropdown/useFinanceursListe';
+import { useListFinanceurs } from '@/app/collectivites/tags/use-list-financeurs';
 import { FicheWithRelations, Financeur } from '@tet/domain/plans';
 import { useCallback, useMemo } from 'react';
 import { useUpdateFiche } from '../../../update-fiche/data/use-update-fiche';
@@ -11,9 +11,9 @@ export const useFicheFinanceurs = (
   const { mutate: updateFiche } = useUpdateFiche();
 
   const financeurs = useMemo(() => fiche.financeurs ?? [], [fiche.financeurs]);
-  const financeursList = useFinanceursListe(
-    getFicheAllEditorCollectiviteIds(fiche)
-  );
+  const financeursList = useListFinanceurs({
+    collectiviteIds: getFicheAllEditorCollectiviteIds(fiche),
+  });
   const upsertFinanceur = useCallback(
     async (data: { financeurTagId: number; montantTtc: number }) => {
       const financeurTag = financeursList.data?.find(

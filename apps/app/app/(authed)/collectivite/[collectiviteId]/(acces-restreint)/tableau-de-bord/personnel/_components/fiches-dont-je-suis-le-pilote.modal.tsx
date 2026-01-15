@@ -1,9 +1,9 @@
 import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
+import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import { useSupabase } from '@tet/api';
 import { ModuleFicheActionsSelect, modulesSave } from '@tet/api/plan-actions';
@@ -83,7 +83,7 @@ const FichesDontJeSuisLePiloteModal = ({
             </Field>
           </FormSectionGrid>
           <Field title="Personne pilote">
-            <PersonnesDropdown
+            <PersonneTagDropdown
               values={[userId]}
               onChange={() => null}
               disabled

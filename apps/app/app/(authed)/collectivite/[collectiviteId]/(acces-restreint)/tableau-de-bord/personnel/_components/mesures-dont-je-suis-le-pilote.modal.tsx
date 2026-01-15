@@ -1,7 +1,7 @@
 import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { RouterInput, useSupabase } from '@tet/api';
 import { ModuleMesuresSelect, modulesSave } from '@tet/api/plan-actions';
 import { useUser } from '@tet/api/users';
@@ -69,7 +69,7 @@ const MesuresDontJeSuisLePiloteModal = ({
             />
           </Field>
           <Field title="Personne pilote">
-            <PersonnesDropdown
+            <PersonneTagDropdown
               values={[userId]}
               onChange={() => null}
               disabled

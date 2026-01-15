@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { instanceGouvernanceTagTable } from '@tet/backend/collectivites/tags/instance-gouvernance-tag.table';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-fiche.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -23,17 +24,16 @@ import {
 import { PgTable } from 'drizzle-orm/pg-core';
 import { isNil, partition } from 'es-toolkit';
 import { toCamel } from 'ts-case-convert';
-import { instanceGouvernanceTagTable } from '../../../collectivites/tags/instance-gouvernance.table';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { ficheActionNoteTable } from '../fiche-action-note/fiche-action-note.table';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
 import { NotifyPiloteService } from '../notify-pilote/notify-pilote.service';
+import { ficheActionActionImpactTable } from '../shared/models/fiche-action-action-impact.table';
 import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
 import { ficheActionEffetAttenduTable } from '../shared/models/fiche-action-effet-attendu.table';
 import { ficheActionFinanceurTagTable } from '../shared/models/fiche-action-financeur-tag.table';
 import { ficheActionIndicateurTable } from '../shared/models/fiche-action-indicateur.table';
-import { ficheActionActionImpactTable } from '../shared/models/fiche-action-action-impact.table';
 import { ficheActionInstanceGouvernanceTableTag } from '../shared/models/fiche-action-instance-gouvernance';
 import { ficheActionLibreTagTable } from '../shared/models/fiche-action-libre-tag.table';
 import { ficheActionLienTable } from '../shared/models/fiche-action-lien.table';

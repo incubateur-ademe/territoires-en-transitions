@@ -48,33 +48,37 @@ values ('Permis vélo CM2 école TET 2020-2024',
 ;
 alter table fiche_action enable trigger save_history;
 
-select private.ajouter_thematique(1, 'Activités économiques');
-select private.ajouter_thematique(2, 'Activités économiques');
-select private.ajouter_thematique(3, 'Activités économiques');
-select private.ajouter_thematique(4, 'Activités économiques');
-select private.ajouter_thematique(5, 'Activités économiques');
-select private.ajouter_thematique(6, 'Activités économiques');
-select private.ajouter_thematique(7, 'Activités économiques');
-select private.ajouter_thematique(8, 'Activités économiques');
-select private.ajouter_thematique(9, 'Activités économiques');
-select private.ajouter_thematique(10, 'Activités économiques');
-select private.ajouter_thematique(11, 'Activités économiques');
-select private.ajouter_thematique(12, 'Activités économiques');
-select private.ajouter_thematique(13, 'Activités économiques');
+insert into fiche_action_thematique (fiche_id, thematique_id)
+values
+       (1, 1),
+       (2, 1),
+       (3, 1),
+       (4, 1),
+       (5, 1),
+       (6, 1),
+       (7, 1),
+       (8, 1),
+       (9, 1),
+       (10, 1),
+       (11, 1),
+       (12, 1),
+       (13, 1);
 
-select private.ajouter_sous_thematique(1, 1);
-select private.ajouter_sous_thematique(2, 1);
-select private.ajouter_sous_thematique(3, 1);
-select private.ajouter_sous_thematique(4, 1);
-select private.ajouter_sous_thematique(5, 1);
-select private.ajouter_sous_thematique(6, 1);
-select private.ajouter_sous_thematique(7, 1);
-select private.ajouter_sous_thematique(8, 1);
-select private.ajouter_sous_thematique(9, 1);
-select private.ajouter_sous_thematique(10, 1);
-select private.ajouter_sous_thematique(11, 1);
-select private.ajouter_sous_thematique(12, 1);
-select private.ajouter_sous_thematique(13, 1);
+insert into fiche_action_sous_thematique (fiche_id, thematique_id)
+values
+       (1, 1),
+       (2, 1),
+       (3, 1),
+       (4, 1),
+       (5, 1),
+       (6, 1),
+       (7, 1),
+       (8, 1),
+       (9, 1),
+       (10, 1),
+       (11, 1),
+       (12, 1),
+       (13, 1);
 
 insert into fiche_action_axe(fiche_id, axe_id)
 values
@@ -91,90 +95,142 @@ values
 (11, 14),
 (12, 13);
 
-select private.ajouter_partenaire(1, (select pt.*::partenaire_tag from (select null as id, 'Super partenaire' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_partenaire(1, (select pt.*::partenaire_tag from (select null as id, 'Ultra partenaire' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_partenaire(2, (select pt.*::partenaire_tag from (select null as id, 'Giga partenaire' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_partenaire(3, (select pt.*::partenaire_tag from (select null as id, 'Super partenaire' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_partenaire(4, (select pt.*::partenaire_tag from (select null as id, 'Ultra partenaire' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_partenaire(5, (select pt.*::partenaire_tag from (select null as id, 'Giga partenaire' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_partenaire(6, (select pt.*::partenaire_tag from (select null as id, 'Super partenaire' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_partenaire(7, (select pt.*::partenaire_tag from (select null as id, 'Ultra partenaire' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_partenaire(7, (select pt.*::partenaire_tag from (select null as id, 'Giga partenaire' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_partenaire(8, (select pt.*::partenaire_tag from (select null as id, 'Super partenaire' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_partenaire(9, (select pt.*::partenaire_tag from (select null as id, 'Ultra partenaire' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_partenaire(10, (select pt.*::partenaire_tag from (select null as id, 'Giga partenaire' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_partenaire(11, (select pt.*::partenaire_tag from (select null as id, 'Giga partenaire' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_partenaire(11, (select pt.*::partenaire_tag from (select null as id, 'Super partenaire' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_partenaire(12, (select pt.*::partenaire_tag from (select null as id, 'Ultra partenaire' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_partenaire(13, (select pt.*::partenaire_tag from (select null as id, 'Giga partenaire' as nom, 1 as collectivite_id) pt limit 1));
+-- Partenaires
+insert into partenaire_tag (nom, collectivite_id)
+values ('Super partenaire', 1),
+       ('Ultra partenaire', 1),
+       ('Giga partenaire', 1)
+on conflict (nom, collectivite_id) do nothing;
 
-select private.ajouter_structure(1, (select pt.*::structure_tag from (select null as id, 'Super structure' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_structure(1, (select pt.*::structure_tag from (select null as id, 'Ultra structure' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_structure(2, (select pt.*::structure_tag from (select null as id, 'Giga structure' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_structure(3, (select pt.*::structure_tag from (select null as id, 'Super structure' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_structure(4, (select pt.*::structure_tag from (select null as id, 'Ultra structure' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_structure(5, (select pt.*::structure_tag from (select null as id, 'Giga structure' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_structure(6, (select pt.*::structure_tag from (select null as id, 'Super structure' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_structure(7, (select pt.*::structure_tag from (select null as id, 'Ultra structure' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_structure(7, (select pt.*::structure_tag from (select null as id, 'Giga structure' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_structure(8, (select pt.*::structure_tag from (select null as id, 'Super structure' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_structure(9, (select pt.*::structure_tag from (select null as id, 'Ultra structure' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_structure(10, (select pt.*::structure_tag from (select null as id, 'Giga structure' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_structure(11, (select pt.*::structure_tag from (select null as id, 'Giga structure' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_structure(11, (select pt.*::structure_tag from (select null as id, 'Super structure' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_structure(12, (select pt.*::structure_tag from (select null as id, 'Ultra structure' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_structure(13, (select pt.*::structure_tag from (select null as id, 'Giga structure' as nom, 1 as collectivite_id) pt limit 1));
+insert into fiche_action_partenaire_tag (fiche_id, partenaire_tag_id)
+values
+    (1, (select id from partenaire_tag where nom = 'Super partenaire' and collectivite_id = 1)),
+    (1, (select id from partenaire_tag where nom = 'Ultra partenaire' and collectivite_id = 1)),
+    (2, (select id from partenaire_tag where nom = 'Giga partenaire' and collectivite_id = 1)),
+    (3, (select id from partenaire_tag where nom = 'Super partenaire' and collectivite_id = 1)),
+    (4, (select id from partenaire_tag where nom = 'Ultra partenaire' and collectivite_id = 1)),
+    (5, (select id from partenaire_tag where nom = 'Giga partenaire' and collectivite_id = 1)),
+    (6, (select id from partenaire_tag where nom = 'Super partenaire' and collectivite_id = 1)),
+    (7, (select id from partenaire_tag where nom = 'Ultra partenaire' and collectivite_id = 1)),
+    (7, (select id from partenaire_tag where nom = 'Giga partenaire' and collectivite_id = 1)),
+    (8, (select id from partenaire_tag where nom = 'Super partenaire' and collectivite_id = 1)),
+    (9, (select id from partenaire_tag where nom = 'Ultra partenaire' and collectivite_id = 1)),
+    (10, (select id from partenaire_tag where nom = 'Giga partenaire' and collectivite_id = 1)),
+    (11, (select id from partenaire_tag where nom = 'Giga partenaire' and collectivite_id = 1)),
+    (11, (select id from partenaire_tag where nom = 'Super partenaire' and collectivite_id = 1)),
+    (12, (select id from partenaire_tag where nom = 'Ultra partenaire' and collectivite_id = 1)),
+    (13, (select id from partenaire_tag where nom = 'Giga partenaire' and collectivite_id = 1));
 
-select private.ajouter_service(1, (select pt.*::service_tag from (select null as id, 'Super service' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_service(1, (select pt.*::service_tag from (select null as id, 'Ultra service' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_service(2, (select pt.*::service_tag from (select null as id, 'Giga service' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_service(3, (select pt.*::service_tag from (select null as id, 'Super service' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_service(4, (select pt.*::service_tag from (select null as id, 'Ultra service' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_service(5, (select pt.*::service_tag from (select null as id, 'Giga service' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_service(6, (select pt.*::service_tag from (select null as id, 'Super service' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_service(7, (select pt.*::service_tag from (select null as id, 'Ultra service' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_service(7, (select pt.*::service_tag from (select null as id, 'Giga service' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_service(8, (select pt.*::service_tag from (select null as id, 'Super service' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_service(9, (select pt.*::service_tag from (select null as id, 'Ultra service' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_service(10, (select pt.*::service_tag from (select null as id, 'Giga service' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_service(11, (select pt.*::service_tag from (select null as id, 'Giga service' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_service(11, (select pt.*::service_tag from (select null as id, 'Super service' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_service(12, (select pt.*::service_tag from (select null as id, 'Ultra service' as nom, 1 as collectivite_id) pt limit 1));
-select private.ajouter_service(13, (select pt.*::service_tag from (select null as id, 'Giga service' as nom, 1 as collectivite_id) pt limit 1));
+-- Structures
+insert into structure_tag (nom, collectivite_id)
+values ('Super structure', 1),
+       ('Ultra structure', 1),
+       ('Giga structure', 1)
+on conflict (nom, collectivite_id) do nothing;
 
-select private.ajouter_pilote(1, (select pe.*::personne from (select 'Lou Piote' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
-select private.ajouter_pilote(1, (select pe.*::personne from (select null as nom, 1 as collectivite_id, null as tag_id, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9' as user_id) pe limit 1));
-select private.ajouter_pilote(2, (select pe.*::personne from (select 'Lou Piote' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
-select private.ajouter_pilote(3, (select pe.*::personne from (select 'Harry Cot' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
-select private.ajouter_pilote(4, (select pe.*::personne from (select 'Harry Cot' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
+insert into fiche_action_structure_tag (fiche_id, structure_tag_id)
+values
+    (1, (select id from structure_tag where nom = 'Super structure' and collectivite_id = 1)),
+    (1, (select id from structure_tag where nom = 'Ultra structure' and collectivite_id = 1)),
+    (2, (select id from structure_tag where nom = 'Giga structure' and collectivite_id = 1)),
+    (3, (select id from structure_tag where nom = 'Super structure' and collectivite_id = 1)),
+    (4, (select id from structure_tag where nom = 'Ultra structure' and collectivite_id = 1)),
+    (5, (select id from structure_tag where nom = 'Giga structure' and collectivite_id = 1)),
+    (6, (select id from structure_tag where nom = 'Super structure' and collectivite_id = 1)),
+    (7, (select id from structure_tag where nom = 'Ultra structure' and collectivite_id = 1)),
+    (7, (select id from structure_tag where nom = 'Giga structure' and collectivite_id = 1)),
+    (8, (select id from structure_tag where nom = 'Super structure' and collectivite_id = 1)),
+    (9, (select id from structure_tag where nom = 'Ultra structure' and collectivite_id = 1)),
+    (10, (select id from structure_tag where nom = 'Giga structure' and collectivite_id = 1)),
+    (11, (select id from structure_tag where nom = 'Giga structure' and collectivite_id = 1)),
+    (11, (select id from structure_tag where nom = 'Super structure' and collectivite_id = 1)),
+    (12, (select id from structure_tag where nom = 'Ultra structure' and collectivite_id = 1)),
+    (13, (select id from structure_tag where nom = 'Giga structure' and collectivite_id = 1));
 
-select private.ajouter_referent(1, (select pe.*::personne from (select 'Harry Cot' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
-select private.ajouter_referent(2, (select pe.*::personne from (select null as nom, 1 as collectivite_id, null as tag_id, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9' as user_id) pe limit 1));
-select private.ajouter_referent(4, (select pe.*::personne from (select 'Lou Piote' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
-select private.ajouter_referent(5, (select pe.*::personne from (select 'Harry Cot' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
-select private.ajouter_referent(6, (select pe.*::personne from (select 'Harry Cot' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
+-- Services
+insert into service_tag (nom, collectivite_id)
+values ('Super service', 1),
+       ('Ultra service', 1),
+       ('Giga service', 1)
+on conflict (nom, collectivite_id) do nothing;
 
-select private.ajouter_action(1, 'eci_2.1');
-select private.ajouter_action(2, 'eci_2.1');
-select private.ajouter_action(3, 'eci_2.1');
-select private.ajouter_action(4, 'eci_2.1');
-select private.ajouter_action(5, 'eci_2.1');
+insert into fiche_action_service_tag (fiche_id, service_tag_id)
+values
+    (1, (select id from service_tag where nom = 'Super service' and collectivite_id = 1)),
+    (1, (select id from service_tag where nom = 'Ultra service' and collectivite_id = 1)),
+    (2, (select id from service_tag where nom = 'Giga service' and collectivite_id = 1)),
+    (3, (select id from service_tag where nom = 'Super service' and collectivite_id = 1)),
+    (4, (select id from service_tag where nom = 'Ultra service' and collectivite_id = 1)),
+    (5, (select id from service_tag where nom = 'Giga service' and collectivite_id = 1)),
+    (6, (select id from service_tag where nom = 'Super service' and collectivite_id = 1)),
+    (7, (select id from service_tag where nom = 'Ultra service' and collectivite_id = 1)),
+    (7, (select id from service_tag where nom = 'Giga service' and collectivite_id = 1)),
+    (8, (select id from service_tag where nom = 'Super service' and collectivite_id = 1)),
+    (9, (select id from service_tag where nom = 'Ultra service' and collectivite_id = 1)),
+    (10, (select id from service_tag where nom = 'Giga service' and collectivite_id = 1)),
+    (11, (select id from service_tag where nom = 'Giga service' and collectivite_id = 1)),
+    (11, (select id from service_tag where nom = 'Super service' and collectivite_id = 1)),
+    (12, (select id from service_tag where nom = 'Ultra service' and collectivite_id = 1)),
+    (13, (select id from service_tag where nom = 'Giga service' and collectivite_id = 1));
+
+-- Pilotes et référents
+insert into personne_tag (nom, collectivite_id)
+values ('Lou Piote', 1),
+       ('Harry Cot', 1)
+on conflict (nom, collectivite_id) do nothing;
+
+insert into fiche_action_pilote (fiche_id, user_id, tag_id)
+values
+    (1, null, (select id from personne_tag where nom = 'Lou Piote' and collectivite_id = 1)),
+    (1, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid, null),
+    (2, null, (select id from personne_tag where nom = 'Lou Piote' and collectivite_id = 1)),
+    (3, null, (select id from personne_tag where nom = 'Harry Cot' and collectivite_id = 1)),
+    (4, null, (select id from personne_tag where nom = 'Harry Cot' and collectivite_id = 1));
+
+insert into fiche_action_referent (fiche_id, user_id, tag_id)
+values
+    (1, null, (select id from personne_tag where nom = 'Harry Cot' and collectivite_id = 1)),
+    (2, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid, null),
+    (4, null, (select id from personne_tag where nom = 'Lou Piote' and collectivite_id = 1)),
+    (5, null, (select id from personne_tag where nom = 'Harry Cot' and collectivite_id = 1)),
+    (6, null, (select id from personne_tag where nom = 'Harry Cot' and collectivite_id = 1));
+
+insert into fiche_action_action (fiche_id, action_id)
+values
+    (1, 'eci_2.1'),
+    (2, 'eci_2.1'),
+    (3, 'eci_2.1'),
+    (4, 'eci_2.1'),
+    (5, 'eci_2.1');
 
 insert into personne_tag (nom, collectivite_id)
 values ('Yo Low', 1),
-       ('Judes Low', 1);
+       ('Judes Low', 1)
+on conflict (nom, collectivite_id) do nothing;
 
 insert into structure_tag (nom, collectivite_id)
 values ('Disneyland', 1),
-       ('Parc Estérix', 1);
+       ('Parc Estérix', 1)
+on conflict (nom, collectivite_id) do nothing;
 
 insert into partenaire_tag (nom, collectivite_id)
 values ('Particulier', 1),
-       ('Particulière', 1);
+       ('Particulière', 1)
+on conflict (nom, collectivite_id) do nothing;
 
-select private.ajouter_financeur(1,(select pt.*::financeur_montant from (select (select fi::financeur_tag from (select null as id, 'Balthazar Picsou' as nom, 1 as collectivite_id) fi) as financeur, 10000 as montant_ttc, null as id) pt limit 1));
-select private.ajouter_financeur(1,(select pt.*::financeur_montant from (select (select fi::financeur_tag from (select null as id, 'Smaug' as nom, 1 as collectivite_id) fi) as financeur, 500 as montant_ttc, null as id) pt limit 1));
-select private.ajouter_financeur(2,(select pt.*::financeur_montant from (select (select fi::financeur_tag from (select null as id, 'Balthazar Picsou' as nom, 1 as collectivite_id) fi) as financeur, 20000 as montant_ttc, null as id) pt limit 1));
-select private.ajouter_financeur(2,(select pt.*::financeur_montant from (select (select fi::financeur_tag from (select null as id, 'Ras al Ghul' as nom, 1 as collectivite_id) fi) as financeur, 2000 as montant_ttc, null as id) pt limit 1));
-select private.ajouter_financeur(3,(select pt.*::financeur_montant from (select (select fi::financeur_tag from (select null as id, 'Smaug' as nom, 1 as collectivite_id) fi) as financeur, 3000 as montant_ttc, null as id) pt limit 1));
-select private.ajouter_financeur(4, (select pt.*::financeur_montant from (select (select fi::financeur_tag from (select null as id, 'Tony Stark' as nom, 1 as collectivite_id) fi) as financeur, 999 as montant_ttc, null as id) pt limit 1));
+-- Financeurs
+insert into financeur_tag (nom, collectivite_id)
+values ('Balthazar Picsou', 1),
+       ('Smaug', 1),
+       ('Ras al Ghul', 1),
+       ('Tony Stark', 1)
+on conflict (nom, collectivite_id) do nothing;
+
+insert into fiche_action_financeur_tag (fiche_id, financeur_tag_id, montant_ttc)
+values
+    (1, (select id from financeur_tag where nom = 'Balthazar Picsou' and collectivite_id = 1), 10000),
+    (1, (select id from financeur_tag where nom = 'Smaug' and collectivite_id = 1), 500),
+    (2, (select id from financeur_tag where nom = 'Balthazar Picsou' and collectivite_id = 1), 20000),
+    (2, (select id from financeur_tag where nom = 'Ras al Ghul' and collectivite_id = 1), 2000),
+    (3, (select id from financeur_tag where nom = 'Smaug' and collectivite_id = 1), 3000),
+    (4, (select id from financeur_tag where nom = 'Tony Stark' and collectivite_id = 1), 999);
