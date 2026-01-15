@@ -17,6 +17,7 @@ const moduleTypeSchema = z.enum([
 ]);
 
 export const personalDefaultModuleKeysSchema = z.enum([
+  'sous-actions-dont-je-suis-pilote',
   'indicateurs-de-suivi-de-mes-plans',
   'indicateurs-dont-je-suis-pilote',
   'actions-dont-je-suis-pilote',
@@ -142,6 +143,23 @@ export async function getDefaultModule(
           utilisateurPiloteIds: [userId],
         },
       },
+      createdAt: now,
+      modifiedAt: now,
+    } as ModuleFicheActionsSelect;
+  }
+
+  if (
+    defaultKey ===
+    personalDefaultModuleKeysSchema.enum['sous-actions-dont-je-suis-pilote']
+  ) {
+    return {
+      id: crypto.randomUUID(),
+      userId,
+      collectiviteId,
+      titre: 'Sous actions pilotées',
+      type: 'fiche_action.list',
+      defaultKey,
+      options: {},
       createdAt: now,
       modifiedAt: now,
     } as ModuleFicheActionsSelect;
