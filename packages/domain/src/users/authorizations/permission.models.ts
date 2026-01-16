@@ -4,7 +4,7 @@ import {
 } from './permission-operation.enum.schema';
 import {
   AuditRole,
-  CollectiviteRoleEnum,
+  CollectiviteRole,
   PlatformRole,
   UserRole,
 } from './user-role.enum.schema';
@@ -67,7 +67,7 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     PermissionOperationEnum['PLANS.READ_PUBLIC'],
     PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.READ'],
   ],
-  [CollectiviteRoleEnum.LECTURE]: [
+  [CollectiviteRole.LECTURE]: [
     PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
     PermissionOperationEnum['COLLECTIVITES.READ'],
     PermissionOperationEnum['COLLECTIVITES.MEMBRES.READ'],
@@ -85,7 +85,7 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.READ'],
     PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
   ],
-  [CollectiviteRoleEnum.EDITION_FICHES_INDICATEURS]: [
+  [CollectiviteRole.EDITION_FICHES_INDICATEURS]: [
     PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
     PermissionOperationEnum['COLLECTIVITES.READ'],
     PermissionOperationEnum['COLLECTIVITES.TAGS.READ'],
@@ -101,7 +101,7 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     PermissionOperationEnum['INDICATEURS.VALEURS.READ'],
     PermissionOperationEnum['INDICATEURS.VALEURS.MUTATE_PILOTED_BY_ME'],
   ],
-  [CollectiviteRoleEnum.EDITION]: [
+  [CollectiviteRole.EDITION]: [
     PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
     PermissionOperationEnum['COLLECTIVITES.READ'],
     PermissionOperationEnum['COLLECTIVITES.MEMBRES.MUTATE'],
@@ -132,7 +132,7 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.READ'],
     PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
   ],
-  [CollectiviteRoleEnum.ADMIN]: [
+  [CollectiviteRole.ADMIN]: [
     PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
     PermissionOperationEnum['COLLECTIVITES.READ'],
     PermissionOperationEnum['COLLECTIVITES.TABLEAU-DE-BORD.MUTATE'],

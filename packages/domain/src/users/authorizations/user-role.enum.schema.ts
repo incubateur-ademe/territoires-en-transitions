@@ -14,7 +14,7 @@ export type PlatformRole = (typeof PlatformRole)[keyof typeof PlatformRole];
 
 //
 
-export const CollectiviteRoleEnum = {
+export const CollectiviteRole = {
   LECTURE: 'lecture',
   EDITION_FICHES_INDICATEURS: 'edition_fiches_indicateurs',
   EDITION: 'edition',
@@ -22,16 +22,16 @@ export const CollectiviteRoleEnum = {
 } as const;
 
 export type CollectiviteRole =
-  (typeof CollectiviteRoleEnum)[keyof typeof CollectiviteRoleEnum];
+  (typeof CollectiviteRole)[keyof typeof CollectiviteRole];
 
 export const collectiviteRoleEnumValues = [
-  CollectiviteRoleEnum.LECTURE,
-  CollectiviteRoleEnum.EDITION_FICHES_INDICATEURS,
-  CollectiviteRoleEnum.EDITION,
-  CollectiviteRoleEnum.ADMIN,
+  CollectiviteRole.LECTURE,
+  CollectiviteRole.EDITION_FICHES_INDICATEURS,
+  CollectiviteRole.EDITION,
+  CollectiviteRole.ADMIN,
 ] as const;
 
-export const collectiviteRoleSchema = z.enum(CollectiviteRoleEnum);
+export const collectiviteRoleSchema = z.enum(CollectiviteRole);
 
 //
 

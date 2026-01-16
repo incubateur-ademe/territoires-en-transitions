@@ -10,7 +10,7 @@ import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import {
   AuditRole,
-  CollectiviteRoleEnum,
+  CollectiviteRole,
   permissionsByRole,
   PlatformRole,
 } from '@tet/domain/users';
@@ -35,7 +35,7 @@ describe('GetUserPermissions', () => {
       databaseService,
       {
         user: {
-          accessLevel: CollectiviteRoleEnum.EDITION,
+          accessLevel: CollectiviteRole.EDITION,
         },
       }
     );
@@ -72,8 +72,8 @@ describe('GetUserPermissions', () => {
         collectiviteId: collectivite.id,
         collectiviteNom: collectivite.nom,
         collectiviteAccesRestreint: false,
-        roles: new Set([CollectiviteRoleEnum.EDITION]),
-        permissions: new Set(permissionsByRole[CollectiviteRoleEnum.EDITION]),
+        roles: new Set([CollectiviteRole.EDITION]),
+        permissions: new Set(permissionsByRole[CollectiviteRole.EDITION]),
       },
     ]);
 

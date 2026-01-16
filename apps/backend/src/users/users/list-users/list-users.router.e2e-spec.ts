@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import {
-  CollectiviteRoleEnum,
+  CollectiviteRole,
   permissionsByRole,
   PlatformRole,
   UserWithRolesAndPermissions,
@@ -37,27 +37,15 @@ const expectedYoulouDoudouUserInfoResponse: UserWithRolesAndPermissions = {
       collectiviteId: 1,
       collectiviteNom: 'Ambérieu-en-Bugey',
       collectiviteAccesRestreint: false,
-      roles: [CollectiviteRoleEnum.EDITION],
-      permissions: [
-        ...new Set(permissionsByRole[CollectiviteRoleEnum.EDITION]),
-      ],
-
-      // accesRestreint: false,
-      // isRoleAuditeur: true,
-      // isReadOnly: false,
-      // isSimplifiedView: false,
+      roles: [CollectiviteRole.EDITION],
+      permissions: [...new Set(permissionsByRole[CollectiviteRole.EDITION])],
     },
     {
       collectiviteId: 2,
       collectiviteNom: 'Arbent',
       collectiviteAccesRestreint: false,
-      roles: [CollectiviteRoleEnum.EDITION],
-      permissions: [
-        ...new Set(permissionsByRole[CollectiviteRoleEnum.EDITION]),
-      ],
-      // isRoleAuditeur: false,
-      // isReadOnly: false,
-      // isSimplifiedView: false,
+      roles: [CollectiviteRole.EDITION],
+      permissions: [...new Set(permissionsByRole[CollectiviteRole.EDITION])],
     },
   ],
   audits: expect.any(Array),

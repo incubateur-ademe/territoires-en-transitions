@@ -11,7 +11,6 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CibleEnum, PiliersEciEnum, StatutEnum } from '@tet/domain/plans';
-import { CollectiviteRoleEnum } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { describe, expect } from 'vitest';
 import {
@@ -47,6 +46,7 @@ import { ficheActionStructureTagTable } from '../shared/models/fiche-action-stru
 import { ficheActionThematiqueTable } from '../shared/models/fiche-action-thematique.table';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
 import { UpdateFicheRequest } from './update-fiche.request';
+import { CollectiviteRole } from '@tet/domain/users';
 
 const collectiviteId = 1;
 const ficheId = 9999;
@@ -768,7 +768,7 @@ describe('UpdateFicheService', () => {
     test('User with limited edition rights on collectivite can update fiche only if he is pilote', async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectiviteId,
-        accessLevel: CollectiviteRoleEnum.EDITION_FICHES_INDICATEURS,
+        accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
       });
 
       const adminCaller = router.createCaller({ user: yoloDodo });

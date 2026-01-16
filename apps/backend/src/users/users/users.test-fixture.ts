@@ -4,7 +4,7 @@ import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { CollectiviteRole, CollectiviteRoleEnum, Dcp } from '@tet/domain/users';
+import { CollectiviteRole, Dcp } from '@tet/domain/users';
 import assert from 'assert';
 import { and, count, eq, sql } from 'drizzle-orm';
 import { UpdateUserRoleService } from '../authorizations/update-user-role/update-user-role.service';
@@ -23,7 +23,7 @@ export async function addTestUser(
   { db }: DatabaseServiceInterface,
   { collectiviteId, accessLevel, cguAcceptees }: TestUserArgs = {
     collectiviteId: null,
-    accessLevel: CollectiviteRoleEnum.EDITION,
+    accessLevel: CollectiviteRole.EDITION,
     cguAcceptees: true,
   }
 ): Promise<{

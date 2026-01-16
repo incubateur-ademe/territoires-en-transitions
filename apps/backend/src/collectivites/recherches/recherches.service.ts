@@ -25,7 +25,7 @@ import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { collectiviteTypeEnum } from '@tet/domain/collectivites';
 import { SnapshotJalonEnum } from '@tet/domain/referentiels';
-import { CollectiviteRoleEnum } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import { getTableName, sql } from 'drizzle-orm';
 
 /** Type of view */
@@ -53,7 +53,7 @@ export default class RecherchesService {
     // Create the query
     const query = `WITH ${this.getFilteredCollectivitesQuery(filters)},
     ${this.getContactsQuery(
-      `pud.${utilisateurCollectiviteAccessTable.accessLevel.name} = '${CollectiviteRoleEnum.ADMIN}'`
+      `pud.${utilisateurCollectiviteAccessTable.accessLevel.name} = '${CollectiviteRole.ADMIN}'`
     )}
     SELECT  c.collectiviteId as "collectiviteId",
             c.collectiviteNom as "collectiviteNom",
@@ -125,7 +125,7 @@ export default class RecherchesService {
     filters: FiltersRequest
   ): Promise<{ count: number; items: RecherchesPlan[] }> {
     // Create the where condition for contacts
-    const whereConditionContacts = `(pud.${utilisateurCollectiviteAccessTable.accessLevel.name} = '${CollectiviteRoleEnum.ADMIN}' OR pud.${utilisateurCollectiviteAccessTable.accessLevel.name} = '${CollectiviteRoleEnum.EDITION}')`;
+    const whereConditionContacts = `(pud.${utilisateurCollectiviteAccessTable.accessLevel.name} = '${CollectiviteRole.ADMIN}' OR pud.${utilisateurCollectiviteAccessTable.accessLevel.name} = '${CollectiviteRole.EDITION}')`;
 
     // Create the query
     const query = `WITH ${this.getFilteredCollectivitesQuery(filters)},

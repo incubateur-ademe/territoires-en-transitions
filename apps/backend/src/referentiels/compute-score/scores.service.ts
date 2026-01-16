@@ -34,7 +34,6 @@ import {
 } from '@tet/domain/referentiels';
 import {
   CollectiviteRole,
-  CollectiviteRoleEnum,
   PermissionOperationEnum,
   ResourceType,
 } from '@tet/domain/users';
@@ -121,13 +120,13 @@ export default class ScoresService {
     collectiviteId: number,
     referentielId: ReferentielId,
     tokenInfo?: InternalAuthUser,
-    niveauAccesMinimum = CollectiviteRoleEnum.LECTURE
+    niveauAccesMinimum = CollectiviteRole.LECTURE
   ): Promise<CollectiviteAvecType> {
     // Check read access if a date is given (historical data)
     if (tokenInfo) {
       await this.permissionService.isAllowed(
         tokenInfo,
-        niveauAccesMinimum === CollectiviteRoleEnum.LECTURE
+        niveauAccesMinimum === CollectiviteRole.LECTURE
           ? PermissionOperationEnum['REFERENTIELS.READ']
           : PermissionOperationEnum['REFERENTIELS.MUTATE'],
         ResourceType.COLLECTIVITE,
@@ -1205,13 +1204,13 @@ export default class ScoresService {
       }
     }
 
-    const niveauAccess: CollectiviteRole = CollectiviteRoleEnum.LECTURE;
+    const niveauAccess: CollectiviteRole = CollectiviteRole.LECTURE;
     // if (parameters.snapshot) {
     //   niveauAccess = CollectiviteAccessLevel.EDITION;
     // }
 
     let collectiviteInfo: undefined | CollectiviteAvecType;
-    if (!noCheck && niveauAccess !== CollectiviteRoleEnum.LECTURE) {
+    if (!noCheck && niveauAccess !== CollectiviteRole.LECTURE) {
       // Lecture allowed for anonymous access
       collectiviteInfo = await this.checkCollectiviteAndReferentielWithAccess(
         collectiviteId,

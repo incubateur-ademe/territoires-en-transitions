@@ -1,5 +1,5 @@
 import { createdAt, modifiedAt } from '@tet/backend/utils/column.utils';
-import { CollectiviteRoleEnum } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import { boolean, integer, pgTable, serial, uuid } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { invitationTable } from '../models/invitation.table';
@@ -18,7 +18,7 @@ export const utilisateurCollectiviteAccessTable = pgTable(
     isActive: boolean('active').notNull(),
     accessLevel: collectiviteRolePgEnum('niveau_acces')
       .notNull()
-      .default(CollectiviteRoleEnum.LECTURE),
+      .default(CollectiviteRole.LECTURE),
     invitationId: uuid('invitation_id').references(() => invitationTable.id),
   }
 );

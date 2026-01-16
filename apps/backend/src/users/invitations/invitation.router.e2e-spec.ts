@@ -13,7 +13,7 @@ import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { invitationTable } from '@tet/backend/users/models/invitation.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { CollectiviteRoleEnum } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, isNotNull, ne } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 import { utilisateurCollectiviteAccessTable } from '../authorizations/utilisateur-collectivite-access.table';
@@ -36,7 +36,7 @@ describe('Test les invitations', () => {
       caller.users.invitations.create({
         collectiviteId: 200,
         email: 'test@test.fr',
-        accessLevel: CollectiviteRoleEnum.EDITION,
+        accessLevel: CollectiviteRole.EDITION,
         tagIds: [10],
       })
     ).rejects.toThrowError();
@@ -48,7 +48,7 @@ describe('Test les invitations', () => {
       caller.users.invitations.create({
         collectiviteId: 1,
         email: 'yolo@dodo.com',
-        accessLevel: CollectiviteRoleEnum.EDITION,
+        accessLevel: CollectiviteRole.EDITION,
         tagIds: [10],
       })
     ).rejects.toThrowError(
@@ -82,7 +82,7 @@ describe('Test les invitations', () => {
     const invitation = await caller.users.invitations.create({
       collectiviteId: 1,
       email: 'yulu@dudu.com',
-      accessLevel: CollectiviteRoleEnum.EDITION,
+      accessLevel: CollectiviteRole.EDITION,
       tagIds: [1],
     });
     // Retourne null quand il y a un rattachement sans création d'invitation
@@ -147,7 +147,7 @@ describe('Test les invitations', () => {
     const invitation = await caller.users.invitations.create({
       collectiviteId: 1,
       email: 'test@test.fr',
-      accessLevel: CollectiviteRoleEnum.EDITION,
+      accessLevel: CollectiviteRole.EDITION,
       tagIds: [1, 10],
     });
     // Retourne l'identifiant de l'invitation
@@ -205,7 +205,7 @@ describe('Test les invitations', () => {
     const [invitationAdded] = await databaseService.db
       .insert(invitationTable)
       .values({
-        accessLevel: CollectiviteRoleEnum.ADMIN,
+        accessLevel: CollectiviteRole.ADMIN,
         email: 'yolo@dodo.com',
         collectiviteId: 1,
         createdBy: yoloDodoUser.id,
@@ -302,7 +302,7 @@ describe('Test les invitations', () => {
     const [invitationAdded] = await databaseService.db
       .insert(invitationTable)
       .values({
-        accessLevel: CollectiviteRoleEnum.EDITION,
+        accessLevel: CollectiviteRole.EDITION,
         email: 'pending@test.fr',
         collectiviteId: 1,
         createdBy: yoloDodoUser.id,
@@ -377,7 +377,7 @@ describe('Test les invitations', () => {
     const [firstInvitation] = await databaseService.db
       .insert(invitationTable)
       .values({
-        accessLevel: CollectiviteRoleEnum.EDITION,
+        accessLevel: CollectiviteRole.EDITION,
         email: 'first@test.fr',
         collectiviteId: 1,
         createdBy: yoloDodoUser.id,
@@ -402,7 +402,7 @@ describe('Test les invitations', () => {
       caller.users.invitations.create({
         collectiviteId: 1,
         email: 'second@test.fr',
-        accessLevel: CollectiviteRoleEnum.EDITION,
+        accessLevel: CollectiviteRole.EDITION,
         tagIds: [1], // Même tag que la première invitation
       })
     ).rejects.toThrowError(
@@ -432,7 +432,7 @@ describe('Test les invitations', () => {
     const [firstInvitation] = await databaseService.db
       .insert(invitationTable)
       .values({
-        accessLevel: CollectiviteRoleEnum.EDITION,
+        accessLevel: CollectiviteRole.EDITION,
         email: 'first@test.fr',
         collectiviteId: 1,
         createdBy: yoloDodoUser.id,
@@ -462,7 +462,7 @@ describe('Test les invitations', () => {
     const secondInvitation = await caller.users.invitations.create({
       collectiviteId: 1,
       email: 'second@test.fr',
-      accessLevel: CollectiviteRoleEnum.EDITION,
+      accessLevel: CollectiviteRole.EDITION,
       tagIds: [1], // Même tag, mais l'invitation précédente est inactive
     });
 
