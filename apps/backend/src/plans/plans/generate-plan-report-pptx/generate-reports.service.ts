@@ -3,7 +3,6 @@ import PersonnalisationsService from '@tet/backend/collectivites/personnalisatio
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { IndicateurChartService } from '@tet/backend/indicateurs/charts/indicateur-chart.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { EchartsService } from '@tet/backend/utils/echarts/echarts.service';
 import { getHorizontalStackedBarChartOption } from '@tet/backend/utils/echarts/get-horizontal-stackedbar-chart-option.utils';
@@ -27,7 +26,7 @@ import {
   Statut,
   StatutEnum,
 } from '@tet/domain/plans';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import {
   CountByForEntityResponseType,
   getErrorMessage,

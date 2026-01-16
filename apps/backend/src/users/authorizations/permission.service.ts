@@ -1,14 +1,19 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
-import { PermissionOperation, permissionsByRole } from '@tet/domain/users';
+import {
+  hasPermission,
+  PermissionOperation,
+  ResourceType,
+} from '@tet/domain/users';
 import { AuthRole, AuthUser } from '../models/auth.models';
-import { RoleService } from './roles/role.service';
+import { GetUserRolesAndPermissionsService } from './get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 
 @Injectable()
 export class PermissionService {
   private readonly logger = new Logger(PermissionService.name);
 
-  constructor(private readonly roleService: RoleService) {}
+  constructor(
+    private readonly getUserPermissionsService: GetUserRolesAndPermissionsService
+  ) {}
 
   hasServiceRole(
     user: AuthUser | null | undefined,
@@ -25,41 +30,6 @@ export class PermissionService {
     } else {
       return true;
     }
-  }
-
-  async listPermissions(
-    user: AuthUser,
-    resourceType: ResourceType,
-    resourceId: number | null
-  ): Promise<Set<PermissionOperation>> {
-    // Récupère les rôles de l'utilisateur pour la ressource donnée
-    const roles = await this.roleService.getUserRoles(
-      user,
-      resourceType,
-      resourceId
-    );
-
-    const operations: Set<PermissionOperation> = new Set();
-    if (roles.length == 0) {
-      this.logger.log(
-        `L'utilisateur ${user.id} n'a pas de rôles sur la ressource ${resourceType} ${resourceId}`
-      );
-      return operations;
-    }
-
-    // Récupère les autorisations des rôles de l'utilisateur
-    for (const role of roles) {
-      const permissions = permissionsByRole[role];
-      permissions.forEach((permission) => operations.add(permission));
-    }
-
-    this.logger.log(
-      `L'utilisateur ${user.id} possède les autorisations ${JSON.stringify([
-        ...operations,
-      ])} sur la ressource ${resourceType} ${resourceId}`
-    );
-
-    return operations;
   }
 
   throwForbiddenException(
@@ -115,15 +85,38 @@ export class PermissionService {
       }
     }
 
-    const permissions = await this.listPermissions(
-      user,
-      resourceType,
-      resourceId
+    if (!user.id) {
+      if (!doNotThrow) {
+        this.throwForbiddenException(user, operation, resourceType, resourceId);
+      }
+
+      return false;
+    }
+
+    const userPermissionsResult =
+      await this.getUserPermissionsService.getUserRolesAndPermissions({
+        userId: user.id,
+      });
+
+    if (!userPermissionsResult.success) {
+      if (!doNotThrow) {
+        this.throwForbiddenException(user, operation, resourceType, resourceId);
+      }
+
+      return false;
+    }
+
+    const hasPermissionResult = hasPermission(
+      userPermissionsResult.data,
+      operation,
+      resourceType === ResourceType.COLLECTIVITE && resourceId
+        ? { collectiviteId: resourceId }
+        : resourceType === ResourceType.AUDIT && resourceId
+        ? { auditId: resourceId }
+        : undefined
     );
 
-    // Vérifie si l'opération demandée est dans la liste des autorisations de l'utilisateur
-    const hasTheRight = permissions.has(operation);
-    if (!hasTheRight) {
+    if (!hasPermissionResult) {
       this.logger.log(
         `L'utilisateur ${user.id} ne possède pas l'autorisation ${operation} sur la ressource ${resourceType} ${resourceId}`
       );
@@ -136,6 +129,6 @@ export class PermissionService {
       );
     }
 
-    return hasTheRight;
+    return hasPermissionResult;
   }
 }

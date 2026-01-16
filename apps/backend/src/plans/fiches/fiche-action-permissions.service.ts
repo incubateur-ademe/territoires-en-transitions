@@ -10,15 +10,17 @@ import {
 } from '@tet/backend/plans/fiches/share-fiches/fiche-access-mode.enum';
 import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-fiche.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Fiche, FicheWithRelations } from '@tet/domain/plans';
 import {
+  hasPermission,
   type PermissionOperation,
   PermissionOperationEnum,
+  ResourceType,
 } from '@tet/domain/users';
 import { and, eq, getTableColumns, isNotNull, sql } from 'drizzle-orm';
-import { AuthUser } from '../../users/models/auth.models';
+import { GetUserRolesAndPermissionsService } from '../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
+import { AuthenticatedUser, AuthUser } from '../../users/models/auth.models';
 import { ficheActionPiloteTable } from './shared/models/fiche-action-pilote.table';
 import { ficheActionTable } from './shared/models/fiche-action.table';
 
@@ -28,6 +30,7 @@ export default class FicheActionPermissionsService {
 
   constructor(
     private readonly permissionService: PermissionService,
+    private readonly getUserPermissionsService: GetUserRolesAndPermissionsService,
     private readonly databaseService: DatabaseService,
     private readonly shareFicheService: ShareFicheService
   ) {}
@@ -104,8 +107,7 @@ export default class FicheActionPermissionsService {
   private async isAllowedByFicheIdSharings(
     fiche: Pick<Fiche, 'id' | 'collectiviteId'>,
     operation: PermissionOperation,
-    tokenInfo: AuthUser,
-    doNotThrow?: boolean
+    tokenInfo: AuthUser
   ): Promise<FicheAccessMode | null> {
     const sharings = await this.shareFicheService.listFicheSharings(fiche.id);
 
@@ -123,8 +125,7 @@ export default class FicheActionPermissionsService {
     return this.isAllowedByFicheSharings(
       ficheWithSharings,
       operation,
-      tokenInfo,
-      doNotThrow
+      tokenInfo
     );
   }
 
@@ -155,8 +156,7 @@ export default class FicheActionPermissionsService {
   /** Détermine si un utilisateur peut lire une fiche */
   async canReadFiche(
     ficheId: number,
-    tokenInfo: AuthUser,
-    doNotThrow?: boolean
+    tokenInfo: AuthUser
   ): Promise<FicheAccessMode | null> {
     const fiche = await this.getFicheFromId(ficheId);
     if (!fiche) {
@@ -174,12 +174,7 @@ export default class FicheActionPermissionsService {
       return FicheAccessModeEnum.DIRECT;
     }
 
-    return this.isAllowedByFicheIdSharings(
-      fiche,
-      operation,
-      tokenInfo,
-      doNotThrow
-    );
+    return this.isAllowedByFicheIdSharings(fiche, operation, tokenInfo);
   }
 
   getReadFichePermission(fiche: Pick<Fiche, 'restreint'>): PermissionOperation {
@@ -226,36 +221,45 @@ export default class FicheActionPermissionsService {
   /** Détermine si un utilisateur peut modifier une fiche */
   async canWriteFiche(
     ficheId: number,
-    user: AuthUser,
-    doNotThrow?: boolean
+    user: AuthenticatedUser
   ): Promise<FicheAccessMode | null> {
     const fiche = await this.getFicheFromId(ficheId);
     if (!fiche) {
       throw new NotFoundException(`Action non trouvée pour l'id ${ficheId}`);
     }
 
-    // Check direct permissions first
-    const permissions = await this.permissionService.listPermissions(
-      user,
-      ResourceType.COLLECTIVITE,
-      fiche.collectiviteId
-    );
-    if (permissions.has('plans.fiches.update')) {
+    const userPermissionsResult =
+      await this.getUserPermissionsService.getUserRolesAndPermissions({
+        userId: user.id,
+      });
+
+    if (!userPermissionsResult.success) {
+      throw new ForbiddenException(
+        `Droits insuffisants, l'utilisateur ${user.id} n'a pas les droits pour modifier la fiche ${ficheId}`
+      );
+    }
+
+    const userPermissions = userPermissionsResult.data;
+
+    if (
+      hasPermission(userPermissions, 'plans.fiches.update', {
+        collectiviteId: fiche.collectiviteId,
+      })
+    ) {
       return FicheAccessModeEnum.DIRECT;
     }
 
-    if (user.id && permissions.has('plans.fiches.update_piloted_by_me')) {
+    if (
+      hasPermission(userPermissions, 'plans.fiches.update_piloted_by_me', {
+        collectiviteId: fiche.collectiviteId,
+      })
+    ) {
       const piloteUserIds = await this.getPiloteUserIdsForFiche(ficheId);
       if (piloteUserIds.includes(user.id)) {
         return FicheAccessModeEnum.DIRECT;
       }
     }
 
-    return this.isAllowedByFicheIdSharings(
-      fiche,
-      'plans.fiches.update',
-      user,
-      doNotThrow
-    );
+    return this.isAllowedByFicheIdSharings(fiche, 'plans.fiches.update', user);
   }
 }

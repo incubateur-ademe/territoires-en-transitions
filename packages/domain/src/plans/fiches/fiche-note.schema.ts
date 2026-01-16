@@ -2,7 +2,7 @@ import * as z from 'zod';
 import { dcpSchema } from '../../users';
 
 export const authorSchema = z.object({
-  id: dcpSchema.shape.userId,
+  id: dcpSchema.shape.id,
   nom: dcpSchema.shape.nom,
   prenom: dcpSchema.shape.prenom,
 });

@@ -5,7 +5,7 @@ import {
   getIndicateurIdByIdentifiant,
 } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
-import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { and, eq } from 'drizzle-orm';
 import { getTestApp } from '../../../test/app-utils';
@@ -384,7 +384,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
 
     const { user, cleanup } = await addTestUser(databaseService, {
       collectiviteId: collectiviteId,
-      accessLevel: CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS,
+      accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
     });
     onTestFinished(async () => {
       await cleanup();

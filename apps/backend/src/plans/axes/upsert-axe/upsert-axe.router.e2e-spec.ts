@@ -11,7 +11,7 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
-import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import { onTestFinished } from 'vitest';
 
 describe('Upsert Axe', () => {
@@ -29,7 +29,7 @@ describe('Upsert Axe', () => {
 
     const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(db, {
       user: {
-        accessLevel: CollectiviteAccessLevelEnum.ADMIN,
+        accessLevel: CollectiviteRole.ADMIN,
       },
     });
 
@@ -136,7 +136,7 @@ describe('Upsert Axe', () => {
     test('User with lecture rights on collectivite cannot create axe', async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteAccessLevelEnum.LECTURE,
+        accessLevel: CollectiviteRole.LECTURE,
       });
 
       onTestFinished(async () => {
@@ -159,7 +159,7 @@ describe('Upsert Axe', () => {
     test('User with limited edition rights on collectivite cannot create axe', async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS,
+        accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
       });
 
       onTestFinished(async () => {

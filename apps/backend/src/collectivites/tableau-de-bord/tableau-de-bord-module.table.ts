@@ -37,7 +37,7 @@ export const tableauDeBordModuleTable = pgTable(
       .onDelete('restrict'),
     foreignKey({
       columns: [table.userId],
-      foreignColumns: [dcpTable.userId],
+      foreignColumns: [dcpTable.id],
       name: 'tableau_de_bord_module_user_id_fkey',
     })
       .onUpdate('cascade')

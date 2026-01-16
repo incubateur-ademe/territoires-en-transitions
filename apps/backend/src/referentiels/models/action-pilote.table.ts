@@ -24,7 +24,7 @@ export const actionPiloteTable = pgTable(
     tagId: integer('tag_id').references(() => personneTagTable.id, {
       onDelete: 'cascade',
     }),
-    userId: uuid('user_id').references(() => dcpTable.userId, {
+    userId: uuid('user_id').references(() => dcpTable.id, {
       onDelete: 'cascade',
     }),
   },
