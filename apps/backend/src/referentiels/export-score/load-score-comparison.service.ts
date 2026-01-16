@@ -503,7 +503,7 @@ export class LoadScoreComparisonService {
           nom: dcpTable.nom,
         })
         .from(auditeurTable)
-        .leftJoin(dcpTable, eq(dcpTable.userId, auditeurTable.auditeur))
+        .leftJoin(dcpTable, eq(dcpTable.id, auditeurTable.auditeur))
         .where(eq(auditeurTable.auditId, auditId));
 
       if (!auditeurs.length) {

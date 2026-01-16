@@ -1,12 +1,10 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
-import { RoleService } from '@tet/backend/users/authorizations/roles/role.service';
 import { AuthRole, AuthUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { discussionStatus } from '@tet/domain/collectivites';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { DiscussionDomainService } from '../domain/discussion-domain-service';
 import { DiscussionErrorEnum } from '../domain/discussion.errors';
@@ -23,7 +21,6 @@ describe('DiscussionApplicationService', () => {
   let mockDiscussionDomainService: Partial<DiscussionDomainService>;
   let mockListDiscussionService: Partial<ListDiscussionService>;
   let mockPermissionService: Partial<PermissionService>;
-  let mockRoleService: Partial<RoleService>;
   let mockDatabaseService: Partial<DatabaseService>;
   let mockLogger: Partial<Logger>;
 
@@ -56,10 +53,6 @@ describe('DiscussionApplicationService', () => {
       isAllowed: vi.fn(),
     };
 
-    mockRoleService = {
-      getUserRoles: vi.fn(),
-    };
-
     mockDatabaseService = {
       db: {
         transaction: vi.fn((callback) => callback({})),
@@ -89,10 +82,6 @@ describe('DiscussionApplicationService', () => {
         {
           provide: DatabaseService,
           useValue: mockDatabaseService as DatabaseService,
-        },
-        {
-          provide: RoleService,
-          useValue: mockRoleService as RoleService,
         },
         {
           provide: Logger,
@@ -402,7 +391,6 @@ describe('DiscussionApplicationService', () => {
       };
 
       vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
-      vi.mocked(mockRoleService.getUserRoles)?.mockResolvedValue([]);
       vi.mocked(
         mockDiscussionDomainService.updateDiscussion
       )?.mockResolvedValue(mockResponse);
@@ -441,7 +429,6 @@ describe('DiscussionApplicationService', () => {
       };
 
       vi.mocked(mockPermissionService.isAllowed)?.mockResolvedValue(true);
-      vi.mocked(mockRoleService.getUserRoles)?.mockResolvedValue([]);
       vi.mocked(
         mockDiscussionDomainService.updateDiscussion
       )?.mockResolvedValue(mockResponse);

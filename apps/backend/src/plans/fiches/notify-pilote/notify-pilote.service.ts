@@ -282,16 +282,18 @@ export class NotifyPiloteService {
       }
       ficheParente = getParentResult.data;
     }
-    const createdByUser = await this.listUsersService.getUserInfoById(
-      createdBy
-    );
+    const createdByUser = await this.listUsersService.getUserBasicInfo({
+      userId: createdBy,
+    });
     if (!createdByUser) {
       return {
         success: false,
         error: "Auteur de l'assignation du pilote non trouvé",
       };
     }
-    const pilote = await this.listUsersService.getUserInfoById(piloteId);
+    const pilote = await this.listUsersService.getUserBasicInfo({
+      userId: piloteId,
+    });
     if (!pilote) {
       return { success: false, error: 'Pilote non trouvé' };
     }

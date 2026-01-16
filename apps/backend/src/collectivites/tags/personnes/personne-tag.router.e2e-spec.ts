@@ -12,7 +12,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { invitationTable } from '@tet/backend/users/models/invitation.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import { eq, inArray, isNotNull, ne } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 
@@ -43,7 +43,7 @@ describe('Test PersonneTagService', () => {
     const [invitationAdded] = await databaseService.db
       .insert(invitationTable)
       .values({
-        accessLevel: CollectiviteAccessLevelEnum.EDITION,
+        accessLevel: CollectiviteRole.EDITION,
         email: 'test@test.fr',
         collectiviteId: 1,
         createdBy: yoloDodoUser.id,

@@ -40,7 +40,7 @@ describe('NotificationsService', () => {
   // Helpers pour créer des données de test
   const createTestUser = async () => {
     const { user, cleanup } = await addTestUser(databaseService);
-    const userId = user.userId;
+    const userId = user.id;
     testUsers.push({ userId, cleanup });
     return userId;
   };

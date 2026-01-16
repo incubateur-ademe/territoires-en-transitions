@@ -4,8 +4,8 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ServiceTag } from '@tet/domain/collectivites';
+import { ResourceType } from '@tet/domain/users';
 import { and, eq, notInArray, sql } from 'drizzle-orm';
-import { ResourceType } from '../../../users/authorizations/resource-type.enum';
 import { indicateurServiceTagTable } from './indicateur-service-tag.table';
 
 @Injectable()

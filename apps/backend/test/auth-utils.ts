@@ -40,7 +40,7 @@ export async function getAuthToken(
 
 export function getAuthUserFromDcp(dcp: Dcp): AuthenticatedUser {
   return {
-    id: dcp.userId,
+    id: dcp.id,
     role: AuthRole.AUTHENTICATED,
     isAnonymous: false,
     jwtPayload: {
@@ -57,7 +57,7 @@ export function getAuthUserFromDcp(dcp: Dcp): AuthenticatedUser {
 
 export async function getAuthUser(
   credentials: SignInWithPasswordCredentials = YOLO_DODO
-) {
+): Promise<AuthenticatedUser> {
   const {
     data: { user, session },
   } = await signInWith(credentials);

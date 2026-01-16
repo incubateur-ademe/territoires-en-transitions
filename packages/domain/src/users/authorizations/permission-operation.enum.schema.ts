@@ -52,6 +52,9 @@ export const PermissionOperations = [
   'indicateurs.valeurs.read_public',
   'indicateurs.valeurs.mutate',
   'indicateurs.valeurs.mutate_piloted_by_me',
+
+  // Utilisateurs
+  'users.authorizations.mutate_support_mode',
 ] as const;
 
 export const permissionOperationEnumSchema = z.enum(PermissionOperations);

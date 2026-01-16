@@ -7,13 +7,12 @@ import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/
 import { ficheActionReferentTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-referent.table';
 import { actionPiloteTable } from '@tet/backend/referentiels/models/action-pilote.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { invitationPersonneTagTable } from '@tet/backend/users/invitations/invitation-personne-tag.table';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { invitationTable } from '@tet/backend/users/models/invitation.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { AnyColumn, and, eq, getTableName, inArray, sql } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
 

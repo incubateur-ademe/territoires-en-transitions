@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ListActionsService } from '@tet/backend/referentiels/list-actions/list-actions.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
@@ -9,7 +8,7 @@ import {
   getReferentielIdFromActionId,
   MesureAuditStatutEnum,
 } from '@tet/domain/referentiels';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, asc, eq, inArray, sql } from 'drizzle-orm';
 import { GetAuditEnCoursRepository } from '../get-audit-en-cours/get-audit-en-cours.repository';
 import {

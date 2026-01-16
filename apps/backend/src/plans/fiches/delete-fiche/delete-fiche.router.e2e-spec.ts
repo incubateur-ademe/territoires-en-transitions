@@ -11,7 +11,7 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
-import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import { eq, inArray } from 'drizzle-orm';
 import { createFicheAndCleanupFunction } from '../fiches.test-fixture';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
@@ -30,7 +30,7 @@ describe('Delete Fiche Action', () => {
     db = await getTestDatabase(app);
     const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(db, {
       user: {
-        accessLevel: CollectiviteAccessLevelEnum.ADMIN,
+        accessLevel: CollectiviteRole.ADMIN,
       },
     });
     collectivite = testCollectiviteAndUserResult.collectivite;
@@ -202,7 +202,7 @@ describe('Delete Fiche Action', () => {
     test('User with lecture rights on collectivite cannot delete fiche', async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteAccessLevelEnum.LECTURE,
+        accessLevel: CollectiviteRole.LECTURE,
       });
 
       onTestFinished(async () => {
@@ -216,14 +216,14 @@ describe('Delete Fiche Action', () => {
       await expect(
         caller.plans.fiches.delete({ ficheId: testFicheId })
       ).rejects.toThrow(
-        `Droits insuffisants, l'utilisateur ${user.userId} n'a pas l'autorisation plans.fiches.delete sur la ressource Collectivité ${collectivite.id}`
+        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation plans.fiches.delete sur la ressource Collectivité ${collectivite.id}`
       );
     });
 
     test('User with limited edition rights on collectivite cannot delete fiche', async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS,
+        accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
       });
 
       onTestFinished(async () => {
@@ -237,7 +237,7 @@ describe('Delete Fiche Action', () => {
       await expect(
         caller.plans.fiches.delete({ ficheId: testFicheId })
       ).rejects.toThrow(
-        `Droits insuffisants, l'utilisateur ${user.userId} n'a pas l'autorisation plans.fiches.delete sur la ressource Collectivité ${collectivite.id}`
+        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation plans.fiches.delete sur la ressource Collectivité ${collectivite.id}`
       );
     });
   });

@@ -1,7 +1,6 @@
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { Injectable } from '@nestjs/common';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { TrpcService } from '../utils/trpc/trpc.service';
 import {
   listRequestSchema,

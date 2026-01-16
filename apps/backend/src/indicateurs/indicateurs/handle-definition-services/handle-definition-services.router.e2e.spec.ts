@@ -9,7 +9,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import { describe, expect } from 'vitest';
 import { createIndicateurPerso } from '../../definitions/definitions.test-fixture';
 
@@ -161,7 +161,7 @@ describe('IndicateurDefinitionServiceRouter', () => {
 
     const { user, cleanup } = await addTestUser(db, {
       collectiviteId: collectiviteId,
-      accessLevel: CollectiviteAccessLevelEnum.LECTURE,
+      accessLevel: CollectiviteRole.LECTURE,
     });
     onTestFinished(async () => {
       await cleanup();
@@ -200,7 +200,7 @@ describe('IndicateurDefinitionServiceRouter', () => {
 
     const { user, cleanup } = await addTestUser(db, {
       collectiviteId: collectiviteId,
-      accessLevel: CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS,
+      accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
     });
     onTestFinished(async () => {
       await cleanup();

@@ -1,13 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import {
   CollectiviteAvecType,
   IdentiteCollectivite,
   PersonnalisationRegle,
   PersonnalisationReponsesPayload,
 } from '@tet/domain/collectivites';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, asc, desc, eq, like, lte, SQL, SQLWrapper } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { DatabaseService } from '../../../utils/database/database.service';

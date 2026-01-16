@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 import ComputeValeursService from '@tet/backend/indicateurs/valeurs/compute-valeurs.service';
+import { GetUserRolesAndPermissionsService } from '@tet/backend/users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import {
   IndicateurAvecValeurs,
@@ -40,7 +41,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           token === IndicateurExpressionService ||
           token === UpdateDefinitionService ||
           token === IndicateurSourcesService ||
-          token === ComputeValeursService
+          token === ComputeValeursService ||
+          token === GetUserRolesAndPermissionsService
         ) {
           return {};
         }

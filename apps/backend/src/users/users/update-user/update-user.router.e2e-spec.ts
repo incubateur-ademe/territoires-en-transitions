@@ -1,14 +1,14 @@
+import { INestApplication } from '@nestjs/common';
 import { getAuthUser, getTestApp, YOLO_DODO } from '@tet/backend/test';
 import { UsersRouter } from '@tet/backend/users/users.router';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { INestApplication } from '@nestjs/common';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../models/auth.models';
 import { dcpTable } from '../../models/dcp.table';
 
-type Input = inferProcedureInput<AppRouter['users']['update']>;
+type Input = inferProcedureInput<AppRouter['users']['users']['update']>;
 
 describe('UserRouter', () => {
   let app: INestApplication;
@@ -20,7 +20,7 @@ describe('UserRouter', () => {
     return databaseService.db
       .select()
       .from(dcpTable)
-      .where(eq(dcpTable.userId, userId))
+      .where(eq(dcpTable.id, userId))
       .then((res) => res[0]);
   }
 
@@ -47,7 +47,7 @@ describe('UserRouter', () => {
     };
 
     // change les infos une première fois
-    await caller.update(input);
+    await caller.users.update(input);
 
     const user = await getUserFromDb(yoloDodoUser.id);
 
@@ -57,7 +57,7 @@ describe('UserRouter', () => {
     expect(user.telephone).toBe(input.telephone);
 
     // reset les infos
-    await caller.update({
+    await caller.users.update({
       prenom: initialUserInfo.prenom,
       nom: initialUserInfo.nom,
       telephone: initialUserInfo.telephone as string,
