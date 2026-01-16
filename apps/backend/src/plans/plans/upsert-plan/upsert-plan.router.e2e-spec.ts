@@ -12,7 +12,7 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
-import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
+import { CollectiviteRoleEnum } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 import { planPiloteTable } from '../../fiches/shared/models/plan-pilote.table';
@@ -32,7 +32,7 @@ describe('Créer ou modifier un plan', () => {
 
     const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(db, {
       user: {
-        accessLevel: CollectiviteAccessLevelEnum.ADMIN,
+        accessLevel: CollectiviteRoleEnum.ADMIN,
       },
     });
 
@@ -121,7 +121,7 @@ describe('Créer ou modifier un plan', () => {
     test('Un utilisateur avec des droits de lecture sur la collectivité ne peut pas créer un plan', async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteAccessLevelEnum.LECTURE,
+        accessLevel: CollectiviteRoleEnum.LECTURE,
       });
 
       onTestFinished(async () => {
@@ -142,7 +142,7 @@ describe('Créer ou modifier un plan', () => {
     test("Un utilisateur avec des droits d'édition limités sur la collectivité ne peut pas créer un plan", async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS,
+        accessLevel: CollectiviteRoleEnum.EDITION_FICHES_INDICATEURS,
       });
 
       onTestFinished(async () => {

@@ -1,9 +1,9 @@
-import { getTestApp, signInWith, YOLO_DODO } from '@tet/backend/test';
 import { INestApplication } from '@nestjs/common';
+import { getTestApp, signInWith, YOLO_DODO } from '@tet/backend/test';
 import {
-  CollectiviteAccessLevelEnum,
+  CollectiviteRoleEnum,
   permissionsByRole,
-  UserWithCollectiviteAccesses,
+  UserWithRolesAndPermissions,
 } from '@tet/domain/users';
 import request from 'supertest';
 
@@ -35,7 +35,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200);
 
-    const userInfoResponse: UserWithCollectiviteAccesses = response.body;
+    const userInfoResponse: UserWithRolesAndPermissions = response.body;
 
     expect(userInfoResponse).toMatchObject({
       id: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
@@ -50,7 +50,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           collectiviteId: 1,
           nom: 'Ambérieu-en-Bugey',
           niveauAcces: 'admin',
-          permissions: permissionsByRole[CollectiviteAccessLevelEnum.ADMIN],
+          permissions: permissionsByRole[CollectiviteRoleEnum.ADMIN],
           accesRestreint: false,
           isRoleAuditeur: false,
           isReadOnly: false,
@@ -59,7 +59,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           collectiviteId: 2,
           nom: 'Arbent',
           niveauAcces: 'edition',
-          permissions: permissionsByRole[CollectiviteAccessLevelEnum.EDITION],
+          permissions: permissionsByRole[CollectiviteRoleEnum.EDITION],
           accesRestreint: false,
           isRoleAuditeur: false,
           isReadOnly: false,
@@ -68,7 +68,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           collectiviteId: 3895,
           nom: 'CA Annonay Rhône Agglo',
           niveauAcces: 'lecture',
-          permissions: permissionsByRole[CollectiviteAccessLevelEnum.LECTURE],
+          permissions: permissionsByRole[CollectiviteRoleEnum.LECTURE],
           accesRestreint: false,
           isRoleAuditeur: false,
           isReadOnly: true,
@@ -77,7 +77,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           collectiviteId: 3812,
           nom: 'CA du Bassin de Bourg-en-Bresse',
           niveauAcces: 'edition',
-          permissions: permissionsByRole[CollectiviteAccessLevelEnum.EDITION],
+          permissions: permissionsByRole[CollectiviteRoleEnum.EDITION],
           accesRestreint: false,
           isRoleAuditeur: false,
           isReadOnly: false,
@@ -86,7 +86,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           collectiviteId: 3829,
           nom: 'CA du Pays de Laon',
           niveauAcces: 'edition',
-          permissions: permissionsByRole[CollectiviteAccessLevelEnum.EDITION],
+          permissions: permissionsByRole[CollectiviteRoleEnum.EDITION],
           accesRestreint: false,
           isRoleAuditeur: false,
           isReadOnly: false,
@@ -95,7 +95,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           collectiviteId: 4936,
           nom: 'Eurométropole de Strasbourg',
           niveauAcces: 'edition',
-          permissions: permissionsByRole[CollectiviteAccessLevelEnum.EDITION],
+          permissions: permissionsByRole[CollectiviteRoleEnum.EDITION],
           accesRestreint: false,
           isRoleAuditeur: false,
           isReadOnly: false,

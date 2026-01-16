@@ -1,9 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import {
-  AuditRole,
-  CollectiviteAccessLevelEnum,
+  CollectiviteRoleEnum,
   permissionsByRole,
-  UserWithCollectiviteAccesses,
+  PlatformRole,
+  UserWithRolesAndPermissions,
 } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { sql } from 'drizzle-orm';
@@ -14,60 +14,56 @@ import { DatabaseService } from '../../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../../utils/trpc/trpc.router';
 import { AuthenticatedUser } from '../../models/auth.models';
 
-type Input = inferProcedureInput<AppRouter['users']['get']>;
+type Input = inferProcedureInput<
+  AppRouter['users']['users']['getWithRolesAndPermissionsByEmail']
+>;
 
-const expectedYoulouDoudouUserInfoResponse: Omit<
-  UserWithCollectiviteAccesses,
-  'cguAccepteesLe'
-> = {
+const expectedYoulouDoudouUserInfoResponse: UserWithRolesAndPermissions = {
   id: '5f407fc6-3634-45ff-a988-301e9088096a',
   email: 'youlou@doudou.com',
   nom: 'Doudou',
   prenom: 'Youlou',
   telephone: null,
-  isSupport: false,
-  isSupportModeEnabled: false,
-  isVerified: true,
+  cguAccepteesLe: expect.any(String),
+  roles: [PlatformRole.CONNECTE, PlatformRole.VERIFIE],
+  permissions: [
+    ...new Set([
+      ...permissionsByRole[PlatformRole.CONNECTE],
+      ...permissionsByRole[PlatformRole.VERIFIE],
+    ]),
+  ],
   collectivites: [
     {
       collectiviteId: 1,
-      nom: 'Ambérieu-en-Bugey',
-      niveauAcces: CollectiviteAccessLevelEnum.EDITION,
+      collectiviteNom: 'Ambérieu-en-Bugey',
+      collectiviteAccesRestreint: false,
+      roles: [CollectiviteRoleEnum.EDITION],
       permissions: [
-        ...new Set([
-          ...permissionsByRole[CollectiviteAccessLevelEnum.EDITION],
-          ...permissionsByRole[AuditRole.AUDITEUR],
-        ]),
+        ...new Set(permissionsByRole[CollectiviteRoleEnum.EDITION]),
       ],
-      accesRestreint: false,
-      isRoleAuditeur: true,
-      isReadOnly: false,
-      isSimplifiedView: false,
+
+      // accesRestreint: false,
+      // isRoleAuditeur: true,
+      // isReadOnly: false,
+      // isSimplifiedView: false,
     },
     {
       collectiviteId: 2,
-      nom: 'Arbent',
-      accesRestreint: false,
-      niveauAcces: CollectiviteAccessLevelEnum.EDITION,
-      permissions: permissionsByRole[CollectiviteAccessLevelEnum.EDITION],
-      isRoleAuditeur: false,
-      isReadOnly: false,
-      isSimplifiedView: false,
-    },
-    {
-      collectiviteId: 10,
-      nom: 'La Boisse',
-      accesRestreint: false,
-      niveauAcces: null,
-      permissions: permissionsByRole[AuditRole.AUDITEUR],
-      isRoleAuditeur: true,
-      isReadOnly: false,
-      isSimplifiedView: false,
+      collectiviteNom: 'Arbent',
+      collectiviteAccesRestreint: false,
+      roles: [CollectiviteRoleEnum.EDITION],
+      permissions: [
+        ...new Set(permissionsByRole[CollectiviteRoleEnum.EDITION]),
+      ],
+      // isRoleAuditeur: false,
+      // isReadOnly: false,
+      // isSimplifiedView: false,
     },
   ],
+  audits: expect.any(Array),
 };
 
-describe('UserRouter', () => {
+describe('ListUsersRouter', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let databaseService: DatabaseService;
@@ -99,9 +95,9 @@ describe('UserRouter', () => {
 
     // `rejects` is necessary to handle exception in async function
     // See https://vitest.dev/api/expect.html#tothrowerror
-    await expect(() => caller.users.get(input)).rejects.toThrowError(
-      /Not service role/i
-    );
+    await expect(() =>
+      caller.users.users.getWithRolesAndPermissionsByEmail(input)
+    ).rejects.toThrowError(/Not service role/i);
   });
 
   test('Utilisation avec un compte de service', async () => {
@@ -111,19 +107,18 @@ describe('UserRouter', () => {
     const input: Input = {
       email: 'youlou@doudou.com',
     };
-    const userInfoResponse = await caller.users.get(input);
+    const userInfoResponse =
+      await caller.users.users.getWithRolesAndPermissionsByEmail(input);
 
-    expect(userInfoResponse?.user).toMatchObject(
-      expectedYoulouDoudouUserInfoResponse
-    );
+    expect(userInfoResponse).toEqual(expectedYoulouDoudouUserInfoResponse);
   });
 
   test('Un utilisateur peut accéder à ses informations', async () => {
     const caller = router.createCaller({ user: youlouDoudouUser });
 
-    const userInfoResponse = await caller.users.getDetails();
+    const userInfoResponse = await caller.users.users.get();
 
-    expect(userInfoResponse?.user).toMatchObject(
+    expect(userInfoResponse).toMatchObject(
       expectedYoulouDoudouUserInfoResponse
     );
   });

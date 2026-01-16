@@ -1,11 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { TagWithCollectiviteId } from '@tet/domain/collectivites';
 import { ActionId } from '@tet/domain/referentiels';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, eq, inArray } from 'drizzle-orm';
 import { PermissionService } from '../../users/authorizations/permission.service';
 import { DatabaseService } from '../../utils/database/database.service';

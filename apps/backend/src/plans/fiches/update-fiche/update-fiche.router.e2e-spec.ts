@@ -11,7 +11,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CibleEnum, PiliersEciEnum, StatutEnum } from '@tet/domain/plans';
-import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
+import { CollectiviteRoleEnum } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { describe, expect } from 'vitest';
 import {
@@ -768,7 +768,7 @@ describe('UpdateFicheService', () => {
     test('User with limited edition rights on collectivite can update fiche only if he is pilote', async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectiviteId,
-        accessLevel: CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS,
+        accessLevel: CollectiviteRoleEnum.EDITION_FICHES_INDICATEURS,
       });
 
       const adminCaller = router.createCaller({ user: yoloDodo });
@@ -789,13 +789,13 @@ describe('UpdateFicheService', () => {
           ficheFields: { titre: 'Tentative de mise à jour sans droits' },
         })
       ).rejects.toThrow(
-        `Droits insuffisants, l'utilisateur ${user.userId} n'a pas l'autorisation plans.fiches.update sur la ressource Collectivité ${collectiviteId}`
+        `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation plans.fiches.update sur la ressource Collectivité ${collectiviteId}`
       );
 
       // Udpate to add it as pilote
       await adminCaller.update({
         ficheId: ficheId,
-        ficheFields: { pilotes: [{ tagId: 1, userId: user.userId }] },
+        ficheFields: { pilotes: [{ tagId: 1, userId: user.id }] },
       });
 
       // Update should now succeed

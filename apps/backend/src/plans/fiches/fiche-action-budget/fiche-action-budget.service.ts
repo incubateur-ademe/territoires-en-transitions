@@ -3,7 +3,10 @@ import { ficheActionBudgetTable } from '@tet/backend/plans/fiches/fiche-action-b
 import { getBudgetsRequest } from '@tet/backend/plans/fiches/fiche-action-budget/get-budgets.request';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
-import { AuthUser } from '@tet/backend/users/models/auth.models';
+import {
+  AuthenticatedUser,
+  AuthUser,
+} from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { FicheBudget, FicheBudgetCreate } from '@tet/domain/plans';
 import { and, eq, isNotNull, isNull } from 'drizzle-orm';
@@ -17,7 +20,7 @@ export class FicheActionBudgetService {
 
   async upsert(
     budgets: FicheBudgetCreate[],
-    user: AuthUser
+    user: AuthenticatedUser
   ): Promise<FicheBudget[]> {
     // Check que les budgets ont la même fiche action
     if (budgets.length === 0) {
@@ -61,7 +64,7 @@ export class FicheActionBudgetService {
     });
   }
 
-  async delete(budgets: FicheBudget[], user: AuthUser) {
+  async delete(budgets: FicheBudget[], user: AuthenticatedUser) {
     // Check que les budgets ont la même fiche action
     if (budgets.length === 0) {
       return;

@@ -7,7 +7,6 @@ import {
 import DocumentService from '@tet/backend/collectivites/documents/services/document.service';
 import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import {
   CollectiviteAvecType,
   PersonnalisationReponsesPayload,
@@ -34,9 +33,10 @@ import {
   TreeOfActionsIncludingScore,
 } from '@tet/domain/referentiels';
 import {
-  CollectiviteAccessLevel,
-  CollectiviteAccessLevelEnum,
+  CollectiviteRole,
+  CollectiviteRoleEnum,
   PermissionOperationEnum,
+  ResourceType,
 } from '@tet/domain/users';
 import { roundTo } from '@tet/domain/utils';
 import {
@@ -121,13 +121,13 @@ export default class ScoresService {
     collectiviteId: number,
     referentielId: ReferentielId,
     tokenInfo?: InternalAuthUser,
-    niveauAccesMinimum = CollectiviteAccessLevelEnum.LECTURE
+    niveauAccesMinimum = CollectiviteRoleEnum.LECTURE
   ): Promise<CollectiviteAvecType> {
     // Check read access if a date is given (historical data)
     if (tokenInfo) {
       await this.permissionService.isAllowed(
         tokenInfo,
-        niveauAccesMinimum === CollectiviteAccessLevelEnum.LECTURE
+        niveauAccesMinimum === CollectiviteRoleEnum.LECTURE
           ? PermissionOperationEnum['REFERENTIELS.READ']
           : PermissionOperationEnum['REFERENTIELS.MUTATE'],
         ResourceType.COLLECTIVITE,
@@ -1205,14 +1205,13 @@ export default class ScoresService {
       }
     }
 
-    const niveauAccess: CollectiviteAccessLevel =
-      CollectiviteAccessLevelEnum.LECTURE;
+    const niveauAccess: CollectiviteRole = CollectiviteRoleEnum.LECTURE;
     // if (parameters.snapshot) {
     //   niveauAccess = CollectiviteAccessLevel.EDITION;
     // }
 
     let collectiviteInfo: undefined | CollectiviteAvecType;
-    if (!noCheck && niveauAccess !== CollectiviteAccessLevelEnum.LECTURE) {
+    if (!noCheck && niveauAccess !== CollectiviteRoleEnum.LECTURE) {
       // Lecture allowed for anonymous access
       collectiviteInfo = await this.checkCollectiviteAndReferentielWithAccess(
         collectiviteId,
