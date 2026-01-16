@@ -29,7 +29,7 @@ class CollectiviteFixture {
     if (userArgs?.autoLogin) {
       await user.login();
     }
-    this.usersCreated.push(user.data.userId);
+    this.usersCreated.push(user.data.id);
     return user;
   }
 

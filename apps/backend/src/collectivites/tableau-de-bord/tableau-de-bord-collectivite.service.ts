@@ -3,7 +3,6 @@ import { GetTableauDeBordModuleRequestType } from '@tet/backend/collectivites/ta
 import { tableauDeBordModuleTable } from '@tet/backend/collectivites/tableau-de-bord/tableau-de-bord-module.table';
 import { ListPlansService } from '@tet/backend/plans/plans/list-plans/list-plans.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import {
   AuthenticatedUser,
   AuthUser,
@@ -16,7 +15,7 @@ import {
   collectiviteModuleSchemaCreate,
   collectiviteModuleTypeEnumSchema,
 } from '@tet/domain/collectivites/tableau-de-bord';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, eq, isNull, sql, SQL, SQLWrapper } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 

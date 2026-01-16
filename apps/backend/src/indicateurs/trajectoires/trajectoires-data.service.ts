@@ -6,7 +6,6 @@ import {
 import ListCollectivitesService from '@tet/backend/collectivites/list-collectivites/list-collectivites.service';
 import { COLLECTIVITE_SOURCE_LABEL } from '@tet/backend/indicateurs/valeurs/valeurs.constants';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import {
   CollectiviteResume,
   CollectiviteType,
@@ -27,7 +26,7 @@ import {
   IndicateurValeur,
   VerificationTrajectoireStatus,
 } from '@tet/domain/indicateurs';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { flatten, isEqual, isNil, maxBy, uniq } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { AuthUser } from '../../users/models/auth.models';

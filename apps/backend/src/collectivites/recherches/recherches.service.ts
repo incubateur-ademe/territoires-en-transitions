@@ -20,12 +20,12 @@ import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/
 import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
 import { labellisationTable } from '@tet/backend/referentiels/labellisations/labellisation.table';
 import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.table';
-import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { collectiviteTypeEnum } from '@tet/domain/collectivites';
 import { SnapshotJalonEnum } from '@tet/domain/referentiels';
-import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import { getTableName, sql } from 'drizzle-orm';
 
 /** Type of view */
@@ -53,7 +53,7 @@ export default class RecherchesService {
     // Create the query
     const query = `WITH ${this.getFilteredCollectivitesQuery(filters)},
     ${this.getContactsQuery(
-      `pud.${utilisateurCollectiviteAccessTable.accessLevel.name} = '${CollectiviteAccessLevelEnum.ADMIN}'`
+      `pud.${utilisateurCollectiviteAccessTable.accessLevel.name} = '${CollectiviteRole.ADMIN}'`
     )}
     SELECT  c.collectiviteId as "collectiviteId",
             c.collectiviteNom as "collectiviteNom",
@@ -125,7 +125,7 @@ export default class RecherchesService {
     filters: FiltersRequest
   ): Promise<{ count: number; items: RecherchesPlan[] }> {
     // Create the where condition for contacts
-    const whereConditionContacts = `(pud.${utilisateurCollectiviteAccessTable.accessLevel.name} = '${CollectiviteAccessLevelEnum.ADMIN}' OR pud.${utilisateurCollectiviteAccessTable.accessLevel.name} = '${CollectiviteAccessLevelEnum.EDITION}')`;
+    const whereConditionContacts = `(pud.${utilisateurCollectiviteAccessTable.accessLevel.name} = '${CollectiviteRole.ADMIN}' OR pud.${utilisateurCollectiviteAccessTable.accessLevel.name} = '${CollectiviteRole.EDITION}')`;
 
     // Create the query
     const query = `WITH ${this.getFilteredCollectivitesQuery(filters)},
@@ -520,7 +520,7 @@ export default class RecherchesService {
     }
       JOIN ${getTableName(dcpTable)} dcp
         ON pud.${utilisateurCollectiviteAccessTable.userId.name} = dcp.${
-      dcpTable.userId.name
+      dcpTable.id.name
     }
       JOIN filteredCollectivites c
         ON pud.${

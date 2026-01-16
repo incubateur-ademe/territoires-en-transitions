@@ -6,7 +6,6 @@ import {
 import { CollectiviteMembresService } from '@tet/backend/collectivites/membres/membres.service';
 import { PersonneTagService } from '@tet/backend/collectivites/tags/personnes/personne-tag.service';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
-import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { CreateInvitationInput } from '@tet/backend/users/invitations/create-invitation.input';
 import { invitationPersonneTagTable } from '@tet/backend/users/invitations/invitation-personne-tag.table';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -16,6 +15,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { UpdateUserRoleService } from '../authorizations/update-user-role/update-user-role.service';
+import { utilisateurCollectiviteAccessTable } from '../authorizations/utilisateur-collectivite-access.table';
 
 @Injectable()
 export class InvitationService {
@@ -42,7 +42,7 @@ export class InvitationService {
     if (invitedUser) {
       // Si l'utilisateur existe déjà, vérifie s'il est déjà attaché à la collectivité
       const isMember = await this.membresService.isActiveMember({
-        userId: invitedUser.userId,
+        userId: invitedUser.id,
         collectiviteId: invitation.collectiviteId,
       });
       // S'il est déjà attaché, erreur, sinon, on le rattache ou le réactive
@@ -56,7 +56,7 @@ export class InvitationService {
           await trx
             .insert(utilisateurCollectiviteAccessTable)
             .values({
-              userId: invitedUser.userId,
+              userId: invitedUser.id,
               collectiviteId: invitation.collectiviteId,
               isActive: true,
               accessLevel: invitation.accessLevel,
@@ -77,7 +77,7 @@ export class InvitationService {
           // Relie les tags donnés
           if (invitation.tagIds && invitation.tagIds.length > 0) {
             await this.personneTagService.convertTagsToUser(
-              invitedUser.userId,
+              invitedUser.id,
               invitation.tagIds,
               invitation.collectiviteId,
               user,

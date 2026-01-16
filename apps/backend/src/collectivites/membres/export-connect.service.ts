@@ -3,7 +3,7 @@ import { exportConnectTable } from '@tet/backend/collectivites/membres/export-co
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { membreTable } from '@tet/backend/collectivites/shared/models/membre.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
@@ -203,7 +203,7 @@ export class ExportConnectService {
       })
       .from(collectivites)
       .leftJoin(utilisateurs, eq(utilisateurs.userId, collectivites.userId))
-      .leftJoin(dcpTable, eq(dcpTable.userId, utilisateurs.userId))
+      .leftJoin(dcpTable, eq(dcpTable.id, utilisateurs.userId))
       .leftJoin(
         membreTable,
         and(

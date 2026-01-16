@@ -5,46 +5,35 @@ import {
   getTestRouter,
   YOLO_DODO,
 } from '@tet/backend/test';
-import {
-  AuthenticatedUser,
-  AuthUser,
-} from '@tet/backend/users/models/auth.models';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { UserRole } from '@tet/domain/users';
+import { PlatformRole } from '@tet/domain/users';
 import { addUserRoleSupport } from '../../users/users.test-fixture';
-import { ResourceType } from '../resource-type.enum';
-import { RoleService } from '../roles/role.service';
 
 describe('UpdateUserRole', () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
-  let roleService: RoleService;
   let app: INestApplication;
 
   beforeAll(async () => {
     router = await getTestRouter();
     yoloDodoUser = await getAuthUser(YOLO_DODO);
     app = await getTestApp();
-    roleService = app.get(RoleService);
   });
 
   describe('Rôle Support', () => {
     async function expectUserToHaveRoleSupportEnabled(
-      user: AuthUser,
+      caller: ReturnType<typeof router.createCaller>,
       enabled = true
     ) {
-      const userRolesInitial = await roleService.getUserRoles(
-        user,
-        ResourceType.PLATEFORME,
-        null
-      );
-      expect(userRolesInitial.includes(UserRole.SUPPORT)).toBe(enabled);
+      const user = await caller.users.users.get();
+      expect(user.roles.includes(PlatformRole.SUPER_ADMIN)).toBe(enabled);
     }
 
     test('Active le mode support pour un utilisateur avec le rôle support', async () => {
       const caller = router.createCaller({ user: yoloDodoUser });
 
-      await expectUserToHaveRoleSupportEnabled(yoloDodoUser, false);
+      await expectUserToHaveRoleSupportEnabled(caller, false);
 
       const { cleanup } = await addUserRoleSupport({
         app,
@@ -53,26 +42,26 @@ describe('UpdateUserRole', () => {
 
       onTestFinished(cleanup);
 
-      const { user: userBefore } = await caller.users.getDetails();
+      const userBefore = await caller.users.users.get();
 
-      expect(userBefore.isSupport).toBe(true);
-      expect(userBefore.isSupportModeEnabled).toBe(false);
+      expect(userBefore.roles).toContain(PlatformRole.SUPPORT);
+      expect(userBefore.roles).not.toContain(PlatformRole.SUPER_ADMIN);
 
-      await expectUserToHaveRoleSupportEnabled(yoloDodoUser, false);
+      await expectUserToHaveRoleSupportEnabled(caller, false);
 
-      await caller.users.authorizations.toggleSupportMode({
+      await caller.users.authorizations.toggleSuperAdminRole({
         isEnabled: true,
       });
 
-      const { user: userAfter } = await caller.users.getDetails();
+      const userAfter = await caller.users.users.get();
 
-      expect(userAfter.isSupport).toBe(true);
-      expect(userAfter.isSupportModeEnabled).toBe(true);
+      expect(userAfter.roles).toContain(PlatformRole.SUPPORT);
+      expect(userAfter.roles).toContain(PlatformRole.SUPER_ADMIN);
 
-      await expectUserToHaveRoleSupportEnabled(yoloDodoUser, true);
+      await expectUserToHaveRoleSupportEnabled(caller, true);
 
       onTestFinished(async () => {
-        await caller.users.authorizations.toggleSupportMode({
+        await caller.users.authorizations.toggleSuperAdminRole({
           isEnabled: false,
         });
       });
@@ -81,17 +70,17 @@ describe('UpdateUserRole', () => {
     test("Ne peut pas activer le mode support si l'utilisateur n'a pas le rôle support", async () => {
       const caller = router.createCaller({ user: yoloDodoUser });
 
-      await expectUserToHaveRoleSupportEnabled(yoloDodoUser, false);
+      await expectUserToHaveRoleSupportEnabled(caller, false);
 
       await expect(
-        caller.users.authorizations.toggleSupportMode({
+        caller.users.authorizations.toggleSuperAdminRole({
           isEnabled: true,
         })
       ).rejects.toThrowError(
         /L'utilisateur doit avoir le rôle support pour activer le mode support/
       );
 
-      await expectUserToHaveRoleSupportEnabled(yoloDodoUser, false);
+      await expectUserToHaveRoleSupportEnabled(caller, false);
     });
   });
 });

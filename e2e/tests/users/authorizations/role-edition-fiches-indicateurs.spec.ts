@@ -34,7 +34,7 @@ test.describe('Role edition fiches indicateurs', () => {
 
     console.log(
       `Add pilotes ${
-        limitedEditionUser.data.userId
+        limitedEditionUser.data.id
       } to fiches with ids ${createdFicheIds.join(',')} for collectivite ${
         collectivite.data.id
       }`
@@ -43,7 +43,7 @@ test.describe('Role edition fiches indicateurs', () => {
       collectiviteId: collectivite.data.id,
       ficheIds: createdFicheIds,
       pilotes: {
-        add: [{ userId: limitedEditionUser.data.userId }],
+        add: [{ userId: limitedEditionUser.data.id }],
       },
     };
     await fiches.bulkEdit(adminUser, bulkEditRequest);

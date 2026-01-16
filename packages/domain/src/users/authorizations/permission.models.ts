@@ -1,13 +1,17 @@
-import { CollectiviteAccessLevelEnum } from './collectivite-access-level.enum.schema';
 import {
   PermissionOperation,
   PermissionOperationEnum,
 } from './permission-operation.enum.schema';
-import { AuditRole, Role, UserRole } from './role.enum.schema';
+import {
+  AuditRole,
+  CollectiviteRole,
+  PlatformRole,
+  UserRole,
+} from './user-role.enum.schema';
 
-export const permissionsByRole: Record<Role, PermissionOperation[]> = {
-  [UserRole.CONNECTE]: [],
-  [UserRole.VERIFIE]: [
+export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
+  [PlatformRole.CONNECTED]: [],
+  [PlatformRole.VERIFIED]: [
     PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
     PermissionOperationEnum['REFERENTIELS.READ_PUBLIC'],
     PermissionOperationEnum['PLANS.FICHES.READ_PUBLIC'],
@@ -15,7 +19,10 @@ export const permissionsByRole: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['INDICATEURS.VALEURS.READ_PUBLIC'],
     PermissionOperationEnum['PLANS.READ_PUBLIC'],
   ],
-  [UserRole.SUPPORT]: [
+  [PlatformRole.SUPPORT]: [
+    PermissionOperationEnum['USERS.AUTHORIZATIONS.MUTATE_SUPPORT_MODE'],
+  ],
+  [PlatformRole.SUPER_ADMIN]: [
     PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
     PermissionOperationEnum['COLLECTIVITES.READ'],
     PermissionOperationEnum['COLLECTIVITES.MUTATE'],
@@ -49,7 +56,7 @@ export const permissionsByRole: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.READ'],
     PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
   ],
-  [UserRole.ADEME]: [
+  [PlatformRole.ADEME]: [
     PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
     PermissionOperationEnum['REFERENTIELS.READ_PUBLIC'],
     PermissionOperationEnum['PLANS.FICHES.READ_PUBLIC'],
@@ -60,7 +67,7 @@ export const permissionsByRole: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['PLANS.READ_PUBLIC'],
     PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.READ'],
   ],
-  [CollectiviteAccessLevelEnum.LECTURE]: [
+  [CollectiviteRole.LECTURE]: [
     PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
     PermissionOperationEnum['COLLECTIVITES.READ'],
     PermissionOperationEnum['COLLECTIVITES.MEMBRES.READ'],
@@ -78,7 +85,7 @@ export const permissionsByRole: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.READ'],
     PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
   ],
-  [CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS]: [
+  [CollectiviteRole.EDITION_FICHES_INDICATEURS]: [
     PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
     PermissionOperationEnum['COLLECTIVITES.READ'],
     PermissionOperationEnum['COLLECTIVITES.TAGS.READ'],
@@ -94,7 +101,7 @@ export const permissionsByRole: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['INDICATEURS.VALEURS.READ'],
     PermissionOperationEnum['INDICATEURS.VALEURS.MUTATE_PILOTED_BY_ME'],
   ],
-  [CollectiviteAccessLevelEnum.EDITION]: [
+  [CollectiviteRole.EDITION]: [
     PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
     PermissionOperationEnum['COLLECTIVITES.READ'],
     PermissionOperationEnum['COLLECTIVITES.MEMBRES.MUTATE'],
@@ -125,7 +132,7 @@ export const permissionsByRole: Record<Role, PermissionOperation[]> = {
     PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.READ'],
     PermissionOperationEnum['REFERENTIELS.DISCUSSIONS.MUTATE'],
   ],
-  [CollectiviteAccessLevelEnum.ADMIN]: [
+  [CollectiviteRole.ADMIN]: [
     PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
     PermissionOperationEnum['COLLECTIVITES.READ'],
     PermissionOperationEnum['COLLECTIVITES.TABLEAU-DE-BORD.MUTATE'],

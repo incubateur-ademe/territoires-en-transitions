@@ -1,10 +1,10 @@
-import { collectiviteAccessLevelSchema } from '@tet/domain/users';
+import { collectiviteRoleSchema } from '@tet/domain/users';
 import { z } from 'zod';
 
 export const createInvitationInputSchema = z.object({
   collectiviteId: z.number(),
   email: z.string(),
-  accessLevel: collectiviteAccessLevelSchema,
+  accessLevel: collectiviteRoleSchema,
   tagIds: z.number().array().optional(),
 });
 

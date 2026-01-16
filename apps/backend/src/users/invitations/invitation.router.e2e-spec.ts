@@ -7,16 +7,16 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
-import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { invitationPersonneTagTable } from '@tet/backend/users/invitations/invitation-personne-tag.table';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { invitationTable } from '@tet/backend/users/models/invitation.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, isNotNull, ne } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
+import { utilisateurCollectiviteAccessTable } from '../authorizations/utilisateur-collectivite-access.table';
 
 describe('Test les invitations', () => {
   let router: TrpcRouter;
@@ -36,7 +36,7 @@ describe('Test les invitations', () => {
       caller.users.invitations.create({
         collectiviteId: 200,
         email: 'test@test.fr',
-        accessLevel: CollectiviteAccessLevelEnum.EDITION,
+        accessLevel: CollectiviteRole.EDITION,
         tagIds: [10],
       })
     ).rejects.toThrowError();
@@ -48,7 +48,7 @@ describe('Test les invitations', () => {
       caller.users.invitations.create({
         collectiviteId: 1,
         email: 'yolo@dodo.com',
-        accessLevel: CollectiviteAccessLevelEnum.EDITION,
+        accessLevel: CollectiviteRole.EDITION,
         tagIds: [10],
       })
     ).rejects.toThrowError(
@@ -71,7 +71,7 @@ describe('Test les invitations', () => {
       .from(utilisateurCollectiviteAccessTable)
       .where(
         and(
-          eq(utilisateurCollectiviteAccessTable.userId, yulu.userId),
+          eq(utilisateurCollectiviteAccessTable.userId, yulu.id),
           eq(utilisateurCollectiviteAccessTable.collectiviteId, 1)
         )
       );
@@ -82,7 +82,7 @@ describe('Test les invitations', () => {
     const invitation = await caller.users.invitations.create({
       collectiviteId: 1,
       email: 'yulu@dudu.com',
-      accessLevel: CollectiviteAccessLevelEnum.EDITION,
+      accessLevel: CollectiviteRole.EDITION,
       tagIds: [1],
     });
     // Retourne null quand il y a un rattachement sans création d'invitation
@@ -94,7 +94,7 @@ describe('Test les invitations', () => {
       .from(utilisateurCollectiviteAccessTable)
       .where(
         and(
-          eq(utilisateurCollectiviteAccessTable.userId, yulu.userId),
+          eq(utilisateurCollectiviteAccessTable.userId, yulu.id),
           eq(utilisateurCollectiviteAccessTable.collectiviteId, 1)
         )
       );
@@ -105,7 +105,7 @@ describe('Test les invitations', () => {
     const pilotes = await databaseService.db
       .select()
       .from(ficheActionPiloteTable)
-      .where(eq(ficheActionPiloteTable.userId, yulu.userId));
+      .where(eq(ficheActionPiloteTable.userId, yulu.id));
     expect(pilotes.length).toBe(2);
 
     onTestFinished(async () => {
@@ -114,16 +114,16 @@ describe('Test les invitations', () => {
           .delete(utilisateurCollectiviteAccessTable)
           .where(
             and(
-              eq(utilisateurCollectiviteAccessTable.userId, yulu.userId),
+              eq(utilisateurCollectiviteAccessTable.userId, yulu.id),
               eq(utilisateurCollectiviteAccessTable.collectiviteId, 1)
             )
           );
         await databaseService.db
           .delete(ficheActionPiloteTable)
-          .where(eq(ficheActionPiloteTable.userId, yulu.userId));
+          .where(eq(ficheActionPiloteTable.userId, yulu.id));
         await databaseService.db
           .delete(ficheActionReferentTable)
-          .where(eq(ficheActionReferentTable.userId, yulu.userId));
+          .where(eq(ficheActionReferentTable.userId, yulu.id));
         await databaseService.db
           .insert(personneTagTable)
           .values([{ id: 1, nom: 'Lou Piote', collectiviteId: 1 }]);
@@ -147,7 +147,7 @@ describe('Test les invitations', () => {
     const invitation = await caller.users.invitations.create({
       collectiviteId: 1,
       email: 'test@test.fr',
-      accessLevel: CollectiviteAccessLevelEnum.EDITION,
+      accessLevel: CollectiviteRole.EDITION,
       tagIds: [1, 10],
     });
     // Retourne l'identifiant de l'invitation
@@ -205,7 +205,7 @@ describe('Test les invitations', () => {
     const [invitationAdded] = await databaseService.db
       .insert(invitationTable)
       .values({
-        accessLevel: CollectiviteAccessLevelEnum.ADMIN,
+        accessLevel: CollectiviteRole.ADMIN,
         email: 'yolo@dodo.com',
         collectiviteId: 1,
         createdBy: yoloDodoUser.id,
@@ -302,7 +302,7 @@ describe('Test les invitations', () => {
     const [invitationAdded] = await databaseService.db
       .insert(invitationTable)
       .values({
-        accessLevel: CollectiviteAccessLevelEnum.EDITION,
+        accessLevel: CollectiviteRole.EDITION,
         email: 'pending@test.fr',
         collectiviteId: 1,
         createdBy: yoloDodoUser.id,
@@ -377,7 +377,7 @@ describe('Test les invitations', () => {
     const [firstInvitation] = await databaseService.db
       .insert(invitationTable)
       .values({
-        accessLevel: CollectiviteAccessLevelEnum.EDITION,
+        accessLevel: CollectiviteRole.EDITION,
         email: 'first@test.fr',
         collectiviteId: 1,
         createdBy: yoloDodoUser.id,
@@ -402,7 +402,7 @@ describe('Test les invitations', () => {
       caller.users.invitations.create({
         collectiviteId: 1,
         email: 'second@test.fr',
-        accessLevel: CollectiviteAccessLevelEnum.EDITION,
+        accessLevel: CollectiviteRole.EDITION,
         tagIds: [1], // Même tag que la première invitation
       })
     ).rejects.toThrowError(
@@ -432,7 +432,7 @@ describe('Test les invitations', () => {
     const [firstInvitation] = await databaseService.db
       .insert(invitationTable)
       .values({
-        accessLevel: CollectiviteAccessLevelEnum.EDITION,
+        accessLevel: CollectiviteRole.EDITION,
         email: 'first@test.fr',
         collectiviteId: 1,
         createdBy: yoloDodoUser.id,
@@ -462,7 +462,7 @@ describe('Test les invitations', () => {
     const secondInvitation = await caller.users.invitations.create({
       collectiviteId: 1,
       email: 'second@test.fr',
-      accessLevel: CollectiviteAccessLevelEnum.EDITION,
+      accessLevel: CollectiviteRole.EDITION,
       tagIds: [1], // Même tag, mais l'invitation précédente est inactive
     });
 
