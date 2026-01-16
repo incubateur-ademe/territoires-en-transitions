@@ -2,10 +2,9 @@ import { Injectable } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { listActionSummariesRequestSchema } from '@tet/backend/referentiels/list-actions/list-action-summaries.request';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { listActionsRequestSchema } from '@tet/domain/referentiels';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { ListActionsService } from './list-actions.service';
 
 @Injectable()

@@ -6,7 +6,7 @@ import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Thematique } from '@tet/domain/shared';
 import { and, asc, eq, notInArray } from 'drizzle-orm';
-import { ResourceType } from '../../../users/authorizations/resource-type.enum';
+import { ResourceType } from '@tet/domain/users';
 
 @Injectable()
 export class HandleDefinitionThematiquesService {

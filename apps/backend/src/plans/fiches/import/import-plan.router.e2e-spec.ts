@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { getAuthUser, getTestApp, getTestRouter } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { addAndEnableUserSupportMode } from '@tet/backend/users/users/users.test-fixture';
+import { addAndEnableUserSuperAdminMode } from '@tet/backend/users/users/users.test-fixture';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { inferProcedureInput } from '@trpc/server';
 import * as fs from 'node:fs';
@@ -49,7 +49,7 @@ describe('Test import PA', () => {
   test('Utilisateur support même sans droits sur la collectivité doit pouvoir importer le plan', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
-    const { cleanup } = await addAndEnableUserSupportMode({
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,
       caller,
       userId: yoloDodoUser.id,
@@ -67,7 +67,7 @@ describe('Test import PA', () => {
   test('Test erreur budget', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
-    const { cleanup } = await addAndEnableUserSupportMode({
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,
       caller,
       userId: yoloDodoUser.id,
@@ -90,7 +90,7 @@ describe('Test import PA', () => {
   test('Test erreur colonne', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
-    const { cleanup } = await addAndEnableUserSupportMode({
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,
       caller,
       userId: yoloDodoUser.id,

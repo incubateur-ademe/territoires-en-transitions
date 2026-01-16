@@ -3,11 +3,10 @@ import { ImportPlanCleanService } from '@tet/backend/plans/fiches/import/import-
 import { ImportPlanFetchService } from '@tet/backend/plans/fiches/import/import-plan-fetch.service';
 import { ImportPlanSaveService } from '@tet/backend/plans/fiches/import/import-plan-save.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { PersonneId, TagEnum, TagType } from '@tet/domain/collectivites';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import ExcelJS from 'exceljs';
 import { UpsertPlanService } from '../../plans/upsert-plan/upsert-plan.service';
 import {

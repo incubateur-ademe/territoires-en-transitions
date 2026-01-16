@@ -4,7 +4,7 @@ import { PgColumn } from 'drizzle-orm/pg-core';
 import * as z from 'zod/mini';
 
 export const authorSchema = z.object({
-  id: dcpSchema.shape.userId,
+  id: dcpSchema.shape.id,
   nom: dcpSchema.shape.nom,
   prenom: dcpSchema.shape.prenom,
 });

@@ -1,12 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
 import { ActionId } from '@tet/domain/referentiels';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { PermissionService } from '../../users/authorizations/permission.service';
 import { DatabaseService } from '../../utils/database/database.service';
@@ -49,7 +48,7 @@ export class HandleMesurePilotesService {
         `,
       })
       .from(actionPiloteTable)
-      .leftJoin(dcpTable, eq(dcpTable.userId, actionPiloteTable.userId))
+      .leftJoin(dcpTable, eq(dcpTable.id, actionPiloteTable.userId))
       .leftJoin(
         personneTagTable,
         eq(personneTagTable.id, actionPiloteTable.tagId)

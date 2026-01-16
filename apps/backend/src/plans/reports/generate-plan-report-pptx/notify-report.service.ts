@@ -164,9 +164,9 @@ export class NotifyReportService {
       return { success: false, error: 'PARSING_NOTIFICATION_DATA_ERROR' };
     }
 
-    const createdByUser = await this.listUsersService.getUserInfoById(
-      data.createdBy
-    );
+    const createdByUser = await this.listUsersService.getUserBasicInfo({
+      userId: data.createdBy,
+    });
     if (!createdByUser) {
       return {
         success: false,

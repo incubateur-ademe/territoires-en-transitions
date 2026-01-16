@@ -3,13 +3,13 @@ import { ImportPersonnalisationQuestionController } from '@tet/backend/collectiv
 import ImportPersonnalisationQuestionService from '@tet/backend/collectivites/personnalisations/import-personnalisation-questions/import-personnalisation-question.service';
 import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import { SheetModule } from '@tet/backend/utils/google-sheets/sheet.module';
-import { AuthModule } from '../../users/users.module';
+import { UsersModule } from '../../users/users.module';
 import { CollectivitesModule } from '../collectivites.module';
 import PersonnalisationsExpressionService from './services/personnalisations-expression.service';
 import PersonnalisationsService from './services/personnalisations-service';
 
 @Module({
-  imports: [CollectivitesModule, AuthModule, SheetModule],
+  imports: [CollectivitesModule, UsersModule, SheetModule],
   providers: [
     PersonnalisationsExpressionService,
     PersonnalisationsService,

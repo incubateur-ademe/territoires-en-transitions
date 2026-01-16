@@ -9,7 +9,7 @@ import {
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import {
-  addAndEnableUserSupportMode,
+  addAndEnableUserSuperAdminMode,
   addUserRoleSupport,
 } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -61,7 +61,7 @@ describe('Test upsert collectivite', () => {
   test('Test upsert', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
-    const { cleanup } = await addAndEnableUserSupportMode({
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,
       caller,
       userId: yoloDodoUser.id,
@@ -113,7 +113,7 @@ describe('Test upsert collectivite', () => {
     test('EPCI', async () => {
       const caller = router.createCaller({ user: yoloDodoUser });
 
-      const { cleanup } = await addAndEnableUserSupportMode({
+      const { cleanup } = await addAndEnableUserSuperAdminMode({
         app,
         caller,
         userId: yoloDodoUser.id,
@@ -142,7 +142,7 @@ describe('Test upsert collectivite', () => {
 
     test('Commune', async () => {
       const caller = router.createCaller({ user: yoloDodoUser });
-      const { cleanup } = await addAndEnableUserSupportMode({
+      const { cleanup } = await addAndEnableUserSuperAdminMode({
         app,
         caller,
         userId: yoloDodoUser.id,
@@ -171,7 +171,7 @@ describe('Test upsert collectivite', () => {
     test('Département', async () => {
       const caller = router.createCaller({ user: yoloDodoUser });
 
-      const { cleanup } = await addAndEnableUserSupportMode({
+      const { cleanup } = await addAndEnableUserSuperAdminMode({
         app,
         caller,
         userId: yoloDodoUser.id,
@@ -198,7 +198,7 @@ describe('Test upsert collectivite', () => {
     test('Region', async () => {
       const caller = router.createCaller({ user: yoloDodoUser });
 
-      const { cleanup } = await addAndEnableUserSupportMode({
+      const { cleanup } = await addAndEnableUserSuperAdminMode({
         app,
         caller,
         userId: yoloDodoUser.id,

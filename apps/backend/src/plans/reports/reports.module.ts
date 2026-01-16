@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { CollectivitesModule } from '@tet/backend/collectivites/collectivites.module';
 import { PersonnalisationsModule } from '@tet/backend/collectivites/personnalisations/personnalisations.module';
 import { IndicateursModule } from '@tet/backend/indicateurs/indicateurs.module';
-import { AuthModule } from '@tet/backend/users/users.module';
+import { UsersModule } from '@tet/backend/users/users.module';
 import { EchartsModule } from '@tet/backend/utils/echarts/echarts.module';
 import { NotificationsModule } from '@tet/backend/utils/notifications/notifications.module';
 import { FichesModule } from '../fiches/fiches.module';
@@ -25,7 +25,7 @@ import { ReportGenerationRepository } from './generate-plan-report-pptx/report-g
       name: PLAN_REPORT_GENERATION_QUEUE_NAME,
     }),
     PlansUtilsModule,
-    AuthModule,
+    UsersModule,
     CollectivitesModule,
     PersonnalisationsModule,
     PlanModule,

@@ -282,7 +282,7 @@ export class ListActionsService {
           eq(actionPiloteTable.collectiviteId, collectiviteId)
         )
       )
-      .leftJoin(dcpTable, eq(dcpTable.userId, actionPiloteTable.userId))
+      .leftJoin(dcpTable, eq(dcpTable.id, actionPiloteTable.userId))
       .leftJoin(
         personneTagTable,
         eq(personneTagTable.id, actionPiloteTable.tagId)

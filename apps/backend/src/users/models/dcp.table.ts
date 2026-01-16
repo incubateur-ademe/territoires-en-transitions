@@ -9,7 +9,7 @@ import {
 import { createdAt, modifiedAt } from '../../utils/column.utils';
 
 export const dcpTable = pgTable('dcp', {
-  userId: uuid('user_id').primaryKey().notNull(), // TODO .references(() => users.id),
+  id: uuid('user_id').primaryKey().notNull(), // TODO .references(() => users.id),
   nom: text('nom').notNull(),
   prenom: text('prenom').notNull(),
   email: text('email').notNull(),

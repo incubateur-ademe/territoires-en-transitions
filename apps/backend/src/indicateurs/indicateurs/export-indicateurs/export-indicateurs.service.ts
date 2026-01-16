@@ -1,12 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import {
   IndicateurDefinition,
   IndicateurDefinitionAvecEnfants,
   IndicateurSourceMetadonnee,
 } from '@tet/domain/indicateurs';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { format } from 'date-fns';
 import { uniq } from 'es-toolkit';
 import { Workbook } from 'exceljs';

@@ -1,6 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
@@ -8,7 +7,7 @@ import {
   getReferentielIdFromActionId,
   ScoreSnapshot,
 } from '@tet/domain/referentiels';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { sql } from 'drizzle-orm';
 import z from 'zod';
 import { isErrorWithCause } from '../../utils/nest/errors.utils';

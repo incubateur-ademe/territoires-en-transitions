@@ -235,7 +235,7 @@ export default class ListFichesService {
         personneTagTable,
         eq(personneTagTable.id, ficheActionReferentTable.tagId)
       )
-      .leftJoin(dcpTable, eq(dcpTable.userId, ficheActionReferentTable.userId));
+      .leftJoin(dcpTable, eq(dcpTable.id, ficheActionReferentTable.userId));
 
     query.where(inArray(ficheActionReferentTable.ficheId, ficheIds));
 
@@ -514,7 +514,7 @@ export default class ListFichesService {
         personneTagTable,
         eq(personneTagTable.id, ficheActionPiloteTable.tagId)
       )
-      .leftJoin(dcpTable, eq(dcpTable.userId, ficheActionPiloteTable.userId));
+      .leftJoin(dcpTable, eq(dcpTable.id, ficheActionPiloteTable.userId));
 
     query.where(inArray(ficheActionPiloteTable.ficheId, ficheIds));
 
@@ -567,11 +567,11 @@ export default class ListFichesService {
       .from(ficheActionNoteTable)
       .leftJoin(
         dcpCreatedBy,
-        eq(dcpCreatedBy.userId, ficheActionNoteTable.createdBy)
+        eq(dcpCreatedBy.id, ficheActionNoteTable.createdBy)
       )
       .leftJoin(
         dcpModifiedBy,
-        eq(dcpModifiedBy.userId, ficheActionNoteTable.modifiedBy)
+        eq(dcpModifiedBy.id, ficheActionNoteTable.modifiedBy)
       );
 
     query.where(inArray(ficheActionNoteTable.ficheId, ficheIds));
@@ -927,7 +927,7 @@ export default class ListFichesService {
           nomColumn: dcpTable.nom,
         }),
         modifiedBy: sqlAuthorOrNull({
-          userIdColumn: dcpModifiedBy.userId,
+          userIdColumn: dcpModifiedBy.id,
           prenomColumn: dcpModifiedBy.prenom,
           nomColumn: dcpModifiedBy.nom,
         }),
@@ -1041,10 +1041,10 @@ export default class ListFichesService {
         ficheActionBudgets,
         eq(ficheActionBudgets.ficheId, ficheActionTable.id)
       )
-      .leftJoin(dcpTable, eq(dcpTable.userId, ficheActionTable.createdBy))
+      .leftJoin(dcpTable, eq(dcpTable.id, ficheActionTable.createdBy))
       .leftJoin(
         dcpModifiedBy,
-        eq(dcpModifiedBy.userId, ficheActionTable.modifiedBy)
+        eq(dcpModifiedBy.id, ficheActionTable.modifiedBy)
       )
       .leftJoin(
         tempsDeMiseEnOeuvreTable,

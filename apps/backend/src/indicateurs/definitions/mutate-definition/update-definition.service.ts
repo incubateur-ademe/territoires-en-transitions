@@ -1,18 +1,26 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
 import { UpdateIndicateurDefinitionInput } from '@tet/backend/indicateurs/definitions/mutate-definition/mutate-definition.input';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
-import { AuthUser } from '@tet/backend/users/models/auth.models';
+import {
+  AuthenticatedUser,
+  AuthUser,
+} from '@tet/backend/users/models/auth.models';
 import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { hasPermission, ResourceType } from '@tet/domain/users';
 import { and, eq, isNotNull } from 'drizzle-orm';
+import { GetUserRolesAndPermissionsService } from '../../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import { HandleDefinitionFichesService } from '../../indicateurs/handle-definition-fiches/handle-definition-fiches.service';
 import { HandleDefinitionPilotesService } from '../../indicateurs/handle-definition-pilotes/handle-definition-pilotes.service';
 import { HandleDefinitionServicesService } from '../../indicateurs/handle-definition-services/handle-definition-services.service';
 import { HandleDefinitionThematiquesService } from '../../indicateurs/handle-definition-thematiques/handle-definition-thematiques.service';
-import { ListIndicateursService } from '../../indicateurs/list-indicateurs/list-indicateurs.service';
 import { indicateurCollectiviteTable } from '../indicateur-collectivite.table';
 
 @Injectable()
@@ -21,8 +29,8 @@ export class UpdateDefinitionService {
 
   constructor(
     private readonly databaseService: DatabaseService,
+    private readonly getUserPermissionsService: GetUserRolesAndPermissionsService,
     private readonly permissionService: PermissionService,
-    private readonly listIndicateursService: ListIndicateursService,
     private readonly handleDefinitionFichesService: HandleDefinitionFichesService,
     private readonly handleDefinitionPilotesService: HandleDefinitionPilotesService,
     private readonly handleDefinitionServicesService: HandleDefinitionServicesService,
@@ -30,21 +38,43 @@ export class UpdateDefinitionService {
   ) {}
 
   private async canUpdateDefinition(
-    user: AuthUser,
+    user: AuthenticatedUser,
     collectiviteId: number,
     indicateurId: number,
     doNotThrow?: boolean
   ): Promise<boolean> {
-    const permissions = await this.permissionService.listPermissions(
-      user,
-      ResourceType.COLLECTIVITE,
-      collectiviteId
-    );
-    if (permissions.has('indicateurs.indicateurs.update')) {
+    const userPermissionsResult =
+      await this.getUserPermissionsService.getUserRolesAndPermissions({
+        userId: user.id,
+      });
+
+    if (!userPermissionsResult.success) {
+      if (!doNotThrow) {
+        throw new ForbiddenException(
+          `Droits insuffisants, l'utilisateur ${user.id} n'a pas les droits pour mettre à jour l'indicateur ${indicateurId} de la collectivité ${collectiviteId}`
+        );
+      }
+
+      return false;
+    }
+
+    const userPermissions = userPermissionsResult.data;
+
+    if (
+      hasPermission(userPermissions, 'indicateurs.indicateurs.update', {
+        collectiviteId,
+      })
+    ) {
       return true;
     }
 
-    if (permissions.has('indicateurs.indicateurs.update_piloted_by_me')) {
+    if (
+      hasPermission(
+        userPermissions,
+        'indicateurs.indicateurs.update_piloted_by_me',
+        { collectiviteId }
+      )
+    ) {
       const pilotes =
         await this.handleDefinitionPilotesService.listIndicateurPilotes({
           indicateurId,
@@ -74,7 +104,7 @@ export class UpdateDefinitionService {
       collectiviteId,
       indicateurFields,
     }: UpdateIndicateurDefinitionInput,
-    user: AuthUser
+    user: AuthenticatedUser
   ): Promise<void> {
     await this.canUpdateDefinition(user, collectiviteId, indicateurId);
 

@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { sql } from 'drizzle-orm';
 import { getTestApp } from '../../../test/app-utils';
@@ -56,7 +56,7 @@ describe('CollectiviteMembresRouter', () => {
     await databaseService.db.insert(invitationTable).values({
       collectiviteId: 1,
       email: 'test@test.com',
-      accessLevel: CollectiviteAccessLevelEnum.EDITION,
+      accessLevel: CollectiviteRole.EDITION,
       createdBy: yoloDodoUser.id,
     });
 
@@ -71,7 +71,7 @@ describe('CollectiviteMembresRouter', () => {
     // la ligne correspondant à l'invitation est en début de liste
     expect(result2[0].invitationId).not.toBeNull();
     expect(result2[0].userId).toBeNull();
-    expect(result2[0].niveauAcces).toEqual(CollectiviteAccessLevelEnum.EDITION);
+    expect(result2[0].niveauAcces).toEqual(CollectiviteRole.EDITION);
   });
 
   test("ne peut pas lister les membres si on n'est pas authentifié", async () => {

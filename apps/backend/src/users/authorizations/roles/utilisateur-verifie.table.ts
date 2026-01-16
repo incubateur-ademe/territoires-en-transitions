@@ -5,6 +5,6 @@ export const utilisateurVerifieTable = pgTable('utilisateur_verifie', {
   userId: uuid('user_id')
     .primaryKey()
     .notNull()
-    .references(() => dcpTable.userId, { onDelete: 'cascade' }),
+    .references(() => dcpTable.id, { onDelete: 'cascade' }),
   verifie: boolean('verifie').default(false).notNull(),
 });

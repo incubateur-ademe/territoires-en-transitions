@@ -1,5 +1,5 @@
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Injectable } from '@nestjs/common';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { AuthenticatedUser } from '../../models/auth.models';
@@ -33,7 +33,7 @@ export class UpdateUserService {
       await this.db
         .update(dcpTable)
         .set(userAttributes)
-        .where(eq(dcpTable.userId, user.id));
+        .where(eq(dcpTable.id, user.id));
     }
   }
 }

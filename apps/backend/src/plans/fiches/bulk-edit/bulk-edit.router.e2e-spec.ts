@@ -13,7 +13,7 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { PrioriteEnum, StatutEnum } from '@tet/domain/plans';
-import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { inArray, sql } from 'drizzle-orm';
 import { createFiche } from '../fiches.test-fixture';
@@ -528,7 +528,7 @@ describe('BulkEditRouter', () => {
     const ficheIds = await generateFicheIds(caller);
     const { user, cleanup } = await addTestUser(db, {
       collectiviteId: COLLECTIVITE_ID,
-      accessLevel: CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS,
+      accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
     });
     onTestFinished(async () => {
       await cleanup();

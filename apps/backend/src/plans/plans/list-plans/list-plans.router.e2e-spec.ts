@@ -11,7 +11,7 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
-import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import { onTestFinished } from 'vitest';
 
 describe('Lister les plans', () => {
@@ -28,7 +28,7 @@ describe('Lister les plans', () => {
 
     const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(db, {
       user: {
-        accessLevel: CollectiviteAccessLevelEnum.ADMIN,
+        accessLevel: CollectiviteRole.ADMIN,
       },
       collectivite: {
         accesRestreint: true,
@@ -367,7 +367,7 @@ describe('Lister les plans', () => {
     test('Un utilisateur avec des droits de lecture sur la collectivité peut lister les plans', async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteAccessLevelEnum.LECTURE,
+        accessLevel: CollectiviteRole.LECTURE,
       });
 
       onTestFinished(async () => {
@@ -402,7 +402,7 @@ describe('Lister les plans', () => {
     test("Un utilisateur avec des droits d'édition limités sur la collectivité ne peut pas lister les plans", async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS,
+        accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
       });
 
       onTestFinished(async () => {

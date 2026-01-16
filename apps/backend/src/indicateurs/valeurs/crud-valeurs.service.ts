@@ -10,7 +10,6 @@ import { UpdateDefinitionService } from '@tet/backend/indicateurs/definitions/mu
 import ComputeValeursService from '@tet/backend/indicateurs/valeurs/compute-valeurs.service';
 import { DEFAULT_ROUNDING_PRECISION } from '@tet/backend/indicateurs/valeurs/valeurs.constants';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { getISOFormatDateQuery } from '@tet/backend/utils/column.utils';
 import {
   COLLECTIVITE_SOURCE_ID,
@@ -26,7 +25,11 @@ import {
   IndicateurValeursGroupeeParSource,
   IndicateurValeurWithIdentifiant,
 } from '@tet/domain/indicateurs';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import {
+  hasPermission,
+  PermissionOperationEnum,
+  ResourceType,
+} from '@tet/domain/users';
 import { getErrorMessage, roundTo } from '@tet/domain/utils';
 import {
   and,
@@ -52,6 +55,7 @@ import {
   omitBy,
   partition,
 } from 'es-toolkit';
+import { GetUserRolesAndPermissionsService } from '../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import {
   AuthenticatedUser,
   AuthRole,
@@ -93,6 +97,7 @@ export default class CrudValeursService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
+    private readonly getUserPermissionsService: GetUserRolesAndPermissionsService,
     private readonly collectiviteService: CollectivitesService,
     private readonly listCollectiviteDefinitionsRepository: ListCollectiviteDefinitionsRepository,
     private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
@@ -435,35 +440,49 @@ export default class CrudValeursService {
   }
 
   async canMutateValeur(
-    user: AuthUser,
+    user: AuthenticatedUser,
     collectiviteId: number,
-    indicateur: IndicateurListItem,
-    doNotThrow?: boolean
+    indicateur: IndicateurListItem
   ): Promise<boolean> {
-    const permissions = await this.permissionService.listPermissions(
+    const userPermissionsResult =
+      await this.getUserPermissionsService.getUserRolesAndPermissions({
+        userId: user.id,
+      });
+
+    if (!userPermissionsResult.success) {
+      throw new ForbiddenException(
+        `Droits insuffisants, l'utilisateur ${user.id} n'a pas les droits pour muter la valeur de l'indicateur ${indicateur.id} de la collectivité ${collectiviteId}`
+      );
+    }
+
+    const userPermissions = userPermissionsResult.data;
+
+    if (
+      hasPermission(userPermissions, 'indicateurs.valeurs.mutate', {
+        collectiviteId,
+      })
+    ) {
+      return true;
+    }
+
+    if (
+      hasPermission(
+        userPermissions,
+        'indicateurs.valeurs.mutate_piloted_by_me',
+        { collectiviteId }
+      ) &&
+      indicateur.pilotes?.some((p) => p.userId === user.id)
+    ) {
+      return true;
+    }
+
+    this.permissionService.throwForbiddenException(
       user,
+      'indicateurs.valeurs.mutate',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
 
-    if (permissions.has('indicateurs.valeurs.mutate')) {
-      return true;
-    }
-
-    if (permissions.has('indicateurs.valeurs.mutate_piloted_by_me')) {
-      if (indicateur.pilotes?.some((p) => p.userId === user.id)) {
-        return true;
-      }
-    }
-
-    if (!doNotThrow) {
-      this.permissionService.throwForbiddenException(
-        user,
-        'indicateurs.valeurs.mutate',
-        ResourceType.COLLECTIVITE,
-        collectiviteId
-      );
-    }
     return false;
   }
 
@@ -473,7 +492,7 @@ export default class CrudValeursService {
    * donc de mettre à jour la colonne resultat indépendamment de la valeur
    * objectif (et pareil pour les commentaires).
    */
-  async upsertValeur(data: UpsertValeurIndicateur, user: AuthUser) {
+  async upsertValeur(data: UpsertValeurIndicateur, user: AuthenticatedUser) {
     const { collectiviteId, indicateurId } = data;
 
     const indicateur = await this.listIndicateursService.getIndicateur({
@@ -579,7 +598,10 @@ export default class CrudValeursService {
     }
   }
 
-  async deleteValeurIndicateur(data: DeleteValeurIndicateur, user: AuthUser) {
+  async deleteValeurIndicateur(
+    data: DeleteValeurIndicateur,
+    user: AuthenticatedUser
+  ) {
     const { collectiviteId, indicateurId, id } = data;
 
     const indicateur = await this.listIndicateursService.getIndicateur({

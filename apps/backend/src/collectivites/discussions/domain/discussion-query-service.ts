@@ -51,10 +51,7 @@ export class DiscussionQueryService {
           >`CASE WHEN ${userTable.prenom} IS NULL AND ${userTable.nom} IS NULL THEN NULL ELSE TRIM(COALESCE(${userTable.prenom}, '')) END`,
         })
         .from(discussionMessageTable)
-        .leftJoin(
-          userTable,
-          eq(discussionMessageTable.createdBy, userTable.userId)
-        )
+        .leftJoin(userTable, eq(discussionMessageTable.createdBy, userTable.id))
         .orderBy(asc(discussionMessageTable.createdAt))
         .where(inArray(discussionMessageTable.discussionId, discussionIds));
       return {

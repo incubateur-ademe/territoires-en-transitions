@@ -78,7 +78,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       collectiviteId: COLLECTIVITE_ID,
     });
 
-    testUsers.push({ userId: user.userId, cleanup });
+    testUsers.push({ userId: user.id, cleanup });
     return user;
   }
 
@@ -125,7 +125,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     await caller.plans.fiches.update({
       ficheId,
       ficheFields: {
-        pilotes: [{ userId: user1.userId }, { userId: user2.userId }],
+        pilotes: [{ userId: user1.id }, { userId: user2.id }],
       },
       isNotificationEnabled: true,
     });
@@ -138,26 +138,26 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
         expect.objectContaining({
           entityId: String(ficheId),
           status: NotificationStatusEnum.PENDING,
-          sendTo: user1.userId,
+          sendTo: user1.id,
           sentAt: null,
           sentToEmail: null,
           errorMessage: null,
           createdBy: yoloDodo.id,
           createdAt: expect.any(String),
           notifiedOn: NotifiedOnEnum.UPDATE_FICHE_PILOTE,
-          notificationData: { ficheId, piloteId: user1.userId },
+          notificationData: { ficheId, piloteId: user1.id },
         }),
         expect.objectContaining({
           entityId: String(ficheId),
           status: NotificationStatusEnum.PENDING,
-          sendTo: user2.userId,
+          sendTo: user2.id,
           sentAt: null,
           sentToEmail: null,
           errorMessage: null,
           createdBy: yoloDodo.id,
           createdAt: expect.any(String),
           notifiedOn: NotifiedOnEnum.UPDATE_FICHE_PILOTE,
-          notificationData: { ficheId, piloteId: user2.userId },
+          notificationData: { ficheId, piloteId: user2.id },
         }),
       ])
     );
@@ -180,7 +180,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     await caller.plans.fiches.update({
       ficheId,
       ficheFields: {
-        pilotes: [{ userId: user1.userId }, { userId: user2.userId }],
+        pilotes: [{ userId: user1.id }, { userId: user2.id }],
       },
       isNotificationEnabled: true,
     });
@@ -224,7 +224,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     await caller.plans.fiches.update({
       ficheId,
       ficheFields: {
-        pilotes: [{ userId: user1.userId }, { userId: user2.userId }],
+        pilotes: [{ userId: user1.id }, { userId: user2.id }],
       },
       isNotificationEnabled: true,
     });
@@ -245,17 +245,17 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     // ajoute manuellement une notification pour user3 (qui ne sera plus assigné)
     await databaseService.db.insert(notificationTable).values({
       entityId: String(ficheId),
-      sendTo: user3.userId,
+      sendTo: user3.id,
       status: NotificationStatusEnum.PENDING,
       notifiedOn: NotifiedOnEnum.UPDATE_FICHE_PILOTE,
-      notificationData: { ficheId, piloteId: user3.userId },
+      notificationData: { ficheId, piloteId: user3.id },
     });
 
     // retire user2 et user3, garde seulement user1
     await caller.plans.fiches.update({
       ficheId,
       ficheFields: {
-        pilotes: [{ userId: user1.userId }],
+        pilotes: [{ userId: user1.id }],
       },
       isNotificationEnabled: true,
     });
@@ -272,7 +272,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     // vérifie que les notifications pour user2 et user3 ont été supprimées
     notifications = await getNotificationsForFiche(ficheId);
     expect(notifications).toHaveLength(1);
-    expect(notifications[0].sendTo).toBe(user1.userId);
+    expect(notifications[0].sendTo).toBe(user1.id);
   });
 
   test('supprime toutes les notifications pending si plus aucun pilote affecté', async () => {
@@ -292,7 +292,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     await caller.plans.fiches.update({
       ficheId,
       ficheFields: {
-        pilotes: [{ userId: user1.userId }, { userId: user2.userId }],
+        pilotes: [{ userId: user1.id }, { userId: user2.id }],
       },
       isNotificationEnabled: true,
     });
@@ -350,7 +350,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     await caller.plans.fiches.update({
       ficheId,
       ficheFields: {
-        pilotes: [{ userId: user1.userId }],
+        pilotes: [{ userId: user1.id }],
       },
       isNotificationEnabled: true,
     });
@@ -369,7 +369,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     await caller.plans.fiches.update({
       ficheId,
       ficheFields: {
-        pilotes: [{ userId: user2.userId }, { userId: user3.userId }],
+        pilotes: [{ userId: user2.id }, { userId: user3.id }],
       },
       isNotificationEnabled: true,
     });
@@ -378,7 +378,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     const notifications = await getNotificationsForFiche(ficheId);
     expect(notifications).toHaveLength(2);
     expect(notifications.map((n) => n.sendTo).sort()).toEqual(
-      [user2.userId, user3.userId].sort()
+      [user2.id, user3.id].sort()
     );
   });
 });

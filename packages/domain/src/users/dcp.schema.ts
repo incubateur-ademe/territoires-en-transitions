@@ -1,7 +1,7 @@
 import * as z from 'zod/mini';
 
 export const dcpSchema = z.object({
-  userId: z.uuid(),
+  id: z.uuid(),
   nom: z.string(),
   prenom: z.string(),
   email: z.string(),

@@ -23,8 +23,8 @@ import TrajectoiresDataService from '@tet/backend/indicateurs/trajectoires/traje
 import CrudValeursService from '@tet/backend/indicateurs/valeurs/crud-valeurs.service';
 import { GetIndicateursValeursResponse } from '@tet/backend/indicateurs/valeurs/get-indicateur-valeurs.response';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { ResourceType } from '@tet/domain/users';
 import { roundTo } from '@tet/domain/utils';
 import { isNil, sum, sumBy } from 'es-toolkit';
 

@@ -1,10 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { GetAxeErrorEnum } from '../get-axe/get-axe.errors';
 import { GetAxeService } from '../get-axe/get-axe.service';
 import { ListAxesService } from '../list-axes/list-axes.service';

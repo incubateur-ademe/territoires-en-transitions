@@ -1,4 +1,4 @@
-import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/roles/private-utilisateur-droit.table';
+import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import {

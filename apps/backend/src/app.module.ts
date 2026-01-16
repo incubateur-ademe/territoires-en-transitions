@@ -11,7 +11,7 @@ import { MetricsModule } from './metrics/metrics.module';
 import { PlanMainModule } from './plans/plans-main.module';
 import { ReferentielsModule } from './referentiels/referentiels.module';
 import { SharedModule } from './shared/shared.module';
-import { AuthModule } from './users/users.module';
+import { UsersModule } from './users/users.module';
 import configuration from './utils/config/configuration';
 import { ConfigurationModule } from './utils/config/configuration.module';
 import ConfigurationService from './utils/config/configuration.service';
@@ -67,7 +67,7 @@ const appLogger = new Logger('AppModule');
     SheetModule,
     CollectivitesModule,
     IndicateursModule,
-    AuthModule,
+    UsersModule,
     PlanMainModule,
     PersonnalisationsModule,
     ReferentielsModule,
