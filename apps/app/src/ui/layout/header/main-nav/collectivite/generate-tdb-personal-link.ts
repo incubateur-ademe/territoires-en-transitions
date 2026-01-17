@@ -1,4 +1,5 @@
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
+import { isVisitor } from '@tet/domain/users';
 import { CollectiviteNavLink } from './make-collectivite-nav';
 
 export const generateTdbPersonalLink = ({
@@ -6,7 +7,7 @@ export const generateTdbPersonalLink = ({
 }: {
   collectiviteId: number;
 }): CollectiviteNavLink => ({
-  hideWhenVisitor: true,
+  isVisibleWhen: (user) => !isVisitor(user, { collectiviteId }),
   children: 'Mon suivi personnel',
   dataTest: 'tdb-perso',
   href: makeTdbCollectiviteUrl({

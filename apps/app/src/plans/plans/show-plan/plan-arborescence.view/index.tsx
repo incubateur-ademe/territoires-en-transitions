@@ -11,7 +11,7 @@ import { PlanNode } from '@tet/domain/plans';
 import { NestedDroppableContainers } from './NestedDroppableContainers';
 
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
-import { CollectiviteAccess } from '@tet/domain/users';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { useDragAxe } from '@/app/plans/plans/show-plan/data/use-drag-axe';
@@ -20,7 +20,7 @@ import './dropAnimation.css';
 interface Props {
   plan: PlanNode;
   axes: PlanNode[];
-  collectivite: CollectiviteAccess;
+  collectivite: CollectiviteCurrent;
 }
 
 export const PlanArborescence = ({ plan, axes, collectivite }: Props) => {

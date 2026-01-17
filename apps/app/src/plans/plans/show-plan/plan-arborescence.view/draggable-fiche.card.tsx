@@ -1,7 +1,7 @@
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { DragOverlay, useDraggable } from '@dnd-kit/core';
 import { QueryKey } from '@tanstack/react-query';
-import { CollectiviteAccess } from '@tet/domain/users';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -16,7 +16,7 @@ type Props = {
   url?: string;
   fiche: FicheListItem;
   editKeysToInvalidate?: QueryKey[];
-  collectivite: CollectiviteAccess;
+  collectivite: CollectiviteCurrent;
   currentUserId: string;
 };
 

@@ -1,6 +1,6 @@
 import { makeReferentielActionUrl } from '@/app/app/paths';
 import { type ActionDetailed } from '@/app/referentiels/use-snapshot';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import {
   discussionOrderByEnum,
   discussionStatus,
@@ -10,7 +10,6 @@ import {
   isSousMesure as isSousMesureDomain,
   ReferentielId,
 } from '@tet/domain/referentiels';
-import { CollectiviteAccess } from '@tet/domain/users';
 
 /**
  * Recursively extracts all actionId and nom properties from actionsEnfant
@@ -124,10 +123,9 @@ export const sortDiscussions = (
 };
 
 export const canCreateDiscussion = (
-  currentCollectivite: CollectiviteAccess
+  currentCollectivite: CollectiviteCurrent
 ) => {
-  return hasPermission(
-    currentCollectivite.permissions,
+  return currentCollectivite.hasCollectivitePermission(
     'referentiels.discussions.mutate'
   );
 };

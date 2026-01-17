@@ -5,10 +5,13 @@ import {
   makeCollectiviteAccueilUrl,
   makeCollectiviteModifierUrl,
 } from '@/app/app/paths';
-import { getIsVisitor } from '@/app/users/authorizations/use-is-visitor';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import {
-  CollectiviteAccess,
-  UserWithCollectiviteAccesses,
+  hasRole,
+  isVisitor,
+  PlatformRole,
+  UserRolesAndPermissions,
+  UserWithRolesAndPermissions,
 } from '@tet/domain/users';
 import {
   HeaderProps,
@@ -25,9 +28,10 @@ import { generatePlansActionsDropdown } from './generate-plans-actions-dropdown'
 import { generateTdbDropdown } from './generate-tdb-dropdown';
 
 type AddtionalProps = {
-  hideWhenConfidential?: boolean;
-  hideWhenVisitor?: boolean;
-  hideWhenNotSupport?: boolean;
+  isVisibleWhen?: (
+    user: UserRolesAndPermissions,
+    accesRestreint: boolean
+  ) => boolean;
 };
 
 export type CollectiviteNavLink = NavLink & AddtionalProps;
@@ -42,50 +46,30 @@ export type CollectiviteNavItem = CollectiviteNavLink | CollectiviteNavDropdown;
 export const makeCollectiviteNav = ({
   user,
   currentCollectivite,
-  collectivites,
   panierId,
 }: {
-  user: UserWithCollectiviteAccesses;
-  currentCollectivite: CollectiviteAccess;
-  collectivites: CollectiviteAccess[];
+  user: UserWithRolesAndPermissions;
+  currentCollectivite: CollectiviteCurrent;
   panierId?: string;
 }): HeaderProps['mainNav'] => {
-  const collectiviteId = currentCollectivite.collectiviteId;
-
-  // Le support est actif si l'utilisateur a le rôle support ET que le mode support est actif
-  const isSupport = user.isSupportModeEnabled;
-
-  const isVisitor = getIsVisitor({
-    niveauAcces: currentCollectivite.niveauAcces,
-    isSupport,
-    isAuditeur: currentCollectivite.isRoleAuditeur,
-  });
-
-  const isConfidential = isVisitor && currentCollectivite.accesRestreint;
+  const { collectiviteId, collectiviteAccesRestreint } = currentCollectivite;
 
   const filterItems = (items: CollectiviteNavItem[]): NavItem[] =>
     items
-      .filter((item) => {
-        if (item.hideWhenConfidential && isConfidential) return false;
-        if (item.hideWhenVisitor && isVisitor) return false;
-        if (item.hideWhenNotSupport && !isSupport) return false;
-        return true;
-      })
-      .map(
-        ({
-          hideWhenConfidential,
-          hideWhenVisitor,
-          hideWhenNotSupport,
-          ...item
-        }) =>
-          isNavDropdown(item)
-            ? { ...item, links: filterItems(item.links) as NavLink[] }
-            : { ...item }
+      .filter((item) =>
+        item.isVisibleWhen
+          ? item.isVisibleWhen(user, collectiviteAccesRestreint)
+          : true
+      )
+      .map((item) =>
+        isNavDropdown(item)
+          ? { ...item, links: filterItems(item.links) as NavLink[] }
+          : { ...item }
       );
 
   const startItems: CollectiviteNavItem[] = [
     {
-      hideWhenVisitor: true,
+      isVisibleWhen: (user) => !isVisitor(user, { collectiviteId }),
       icon: 'home-4-line',
       href: makeCollectiviteAccueilUrl({ collectiviteId }),
       dataTest: 'nav-home',
@@ -103,7 +87,7 @@ export const makeCollectiviteNav = ({
       }),
     },
     {
-      hideWhenNotSupport: true,
+      isVisibleWhen: (user) => hasRole(user, PlatformRole.SUPER_ADMIN),
       children: 'Support',
       links: [
         {
@@ -126,7 +110,7 @@ export const makeCollectiviteNav = ({
 
   const endItems: CollectiviteNavItem[] = [
     generateParametresDropdown({ collectiviteId }),
-    generateCollectiviteNavItem(collectivites, currentCollectivite),
+    generateCollectiviteNavItem(user, currentCollectivite),
   ];
 
   return {

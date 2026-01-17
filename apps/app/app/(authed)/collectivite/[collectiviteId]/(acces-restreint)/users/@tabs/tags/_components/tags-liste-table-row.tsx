@@ -1,6 +1,6 @@
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { useDeleteTag, useTagUpdate } from '@/app/ui/dropdownLists/tags';
-import { CollectiviteAccessLevel } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import {
   Badge,
   Button,
@@ -23,7 +23,7 @@ import LinkTagToAccountModal from './link-tag-to-account-modal';
 type TagsListeTableRowProps = {
   tag: Tag;
   collectiviteId: number;
-  currentUserAccess: CollectiviteAccessLevel;
+  currentUserAccess: CollectiviteRole;
   sendData?: SendInvitationData;
   sendInvitation: (args: SendInvitationArgs) => void;
   refetch: () => void;

@@ -6,7 +6,7 @@ import {
   CurrentFiltersKeys,
   usePlanFilters,
 } from '@/app/plans/plans/show-plan/filters/plan-filters.context';
-import { CollectiviteAccess } from '@tet/domain/users';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { FilterBadges, FilterCategory, Spacer, VisibleWhen } from '@tet/ui';
 
 const ficheListGridClassName = 'grid md:grid-cols-2 gap-4';
@@ -32,7 +32,7 @@ const FilteredResultsList = ({
   filteredResults,
   currentUserId,
 }: {
-  collectivite: CollectiviteAccess;
+  collectivite: CollectiviteCurrent;
   filteredResults: FicheListItem[];
   currentUserId: string;
 }) => {
@@ -55,7 +55,7 @@ const FilteredResultsList = ({
 };
 
 type Props = {
-  collectivite: CollectiviteAccess;
+  collectivite: CollectiviteCurrent;
   currentUserId: string;
 };
 

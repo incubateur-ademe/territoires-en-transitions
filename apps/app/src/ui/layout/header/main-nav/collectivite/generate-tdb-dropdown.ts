@@ -1,4 +1,5 @@
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
+import { isVisitor } from '@tet/domain/users';
 import { generateTdbPersonalLink } from './generate-tdb-personal-link';
 import { CollectiviteNavItem } from './make-collectivite-nav';
 
@@ -7,7 +8,8 @@ export const generateTdbDropdown = ({
 }: {
   collectiviteId: number;
 }): CollectiviteNavItem => ({
-  hideWhenConfidential: true,
+  isVisibleWhen: (user, accesRestreint) =>
+    !(accesRestreint && isVisitor(user, { collectiviteId })),
   children: 'Tableaux de bord',
   dataTest: 'nav-tdb',
   links: [

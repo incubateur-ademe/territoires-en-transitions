@@ -1,5 +1,4 @@
 import { useAudit, useIsAuditeur } from '@/app/referentiels/audits/useAudit';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { DBClient, useSupabase } from '@tet/api';
 import {
@@ -137,7 +136,7 @@ export const useTasksStatus = (tasksIds: string[]) => {
  * Détermine si l'utilisateur a le droit de modifier le statut d'une action
  */
 export const useEditActionStatutIsDisabled = (actionId: string) => {
-  const { permissions } = useCurrentCollectivite();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
   const { data: audit } = useAudit();
   const isAuditeur = useIsAuditeur();
 
@@ -152,8 +151,7 @@ export const useEditActionStatutIsDisabled = (actionId: string) => {
     return audit.valide;
   }
 
-  return !hasPermission(
-    permissions,
+  return !hasCollectivitePermission(
     PermissionOperationEnum['REFERENTIELS.MUTATE']
   );
 };

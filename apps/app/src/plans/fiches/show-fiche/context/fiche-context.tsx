@@ -12,7 +12,6 @@ import {
   isFicheSharedWithCollectivite,
 } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import {
@@ -174,18 +173,17 @@ export const FicheProvider = ({
     [fiche.id, indicateursList, updateFiche]
   );
 
-  const canCreateIndicateur = hasPermission(
-    collectivite.permissions,
+  const canCreateIndicateur = collectivite.hasCollectivitePermission(
     'indicateurs.indicateurs.create'
   );
   const canUpdateIndicateur = React.useCallback(
     (indicateur: IndicateurDefinitionListItem) =>
       canUpdateIndicateurDefinition(
-        collectivite.permissions,
+        collectivite.hasCollectivitePermission,
         indicateur,
         user.id
       ),
-    [collectivite.permissions, user.id]
+    [collectivite.hasCollectivitePermission, user.id]
   );
 
   const indicateurs: IndicateursState = React.useMemo(

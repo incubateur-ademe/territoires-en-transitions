@@ -1,11 +1,17 @@
 'use client';
 
 import {
+  AuditRole,
   CollectiviteAccess,
-  UserWithCollectiviteAccesses,
+  CollectiviteRole,
+  hasCollectiviteRole,
+  hasPermission,
+  PermissionOperation,
+  UserWithRolesAndPermissions
 } from '@tet/domain/users';
 import { createContext, ReactNode, useState } from 'react';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
+import { CollectiviteCurrent } from './collectivite-provider.no-ssr';
 
 const STORAGE_KEY_PREFIX = 'tet_collectivite';
 
@@ -15,7 +21,7 @@ type StoredCollectivite = {
 
 type ContextProps = {
   collectiviteId: number | undefined;
-  collectivite: CollectiviteAccess | null;
+  collectivite: CollectiviteCurrent | null;
   setCollectivite: (collectivite: CollectiviteAccess) => void;
 };
 
@@ -25,7 +31,7 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
   user,
   children,
 }: {
-  user: Pick<UserWithCollectiviteAccesses, 'collectivites' | 'id'>;
+  user: UserWithRolesAndPermissions;
   children: ReactNode;
 }) {
   const defaultCollectivite =
@@ -69,11 +75,37 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
     }
   }
 
+  const toCollectivite = (
+    collectivite: CollectiviteAccess
+  ): CollectiviteCurrent => {
+    const hasRoleAuditeur = hasCollectiviteRole(collectivite, AuditRole.AUDITEUR);
+
+    return {
+      ...collectivite,
+
+      nom: collectivite.collectiviteNom,
+      accesRestreint: collectivite.collectiviteAccesRestreint,
+
+      niveauAcces: collectivite.role,
+      isReadOnly:
+        collectivite.role === CollectiviteRole.LECTURE && !hasRoleAuditeur,
+      isSimplifiedView:
+        collectivite.role === CollectiviteRole.EDITION_FICHES_INDICATEURS,
+
+      isRoleAuditeur: hasRoleAuditeur,
+
+      hasCollectivitePermission: (permission: PermissionOperation) =>
+        hasPermission(user, permission, {
+          collectiviteId: collectivite.collectiviteId,
+        }),
+    };
+  };
+
   return (
     <CollectiviteContext
       value={{
         collectiviteId: collectivite?.collectiviteId,
-        collectivite,
+        collectivite: collectivite ? toCollectivite(collectivite) : null,
         setCollectivite,
       }}
     >
@@ -85,3 +117,13 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
 function getStorageKey(userId: string) {
   return `${STORAGE_KEY_PREFIX}_${userId}`;
 }
+
+// accesRestreint: collectivite.access_restreint || false,
+//     isReadOnly:
+//       (collectivite.niveau_acces === null ||
+//         collectivite.niveau_acces === CollectiviteRoleEnum.LECTURE) &&
+//       !collectivite.est_auditeur,
+//     isSimplifiedView:
+//       collectivite.niveau_acces ===
+//       CollectiviteRoleEnum.EDITION_FICHES_INDICATEURS,
+//   };

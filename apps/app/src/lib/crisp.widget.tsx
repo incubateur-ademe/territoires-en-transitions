@@ -1,7 +1,7 @@
 'use client';
 
 import { useSubscribeToUserAuthEvents } from '@tet/api/users/user-context/use-subscribe-to-user-auth-events';
-import { UserWithCollectiviteAccesses } from '@tet/domain/users';
+import { UserWithRolesAndPermissions } from '@tet/domain/users';
 import { Crisp } from 'crisp-sdk-web';
 import { useEffect } from 'react';
 
@@ -22,7 +22,7 @@ const identifyCrispUser = ({
   nom,
   prenom,
   email,
-}: UserWithCollectiviteAccesses) => {
+}: UserWithRolesAndPermissions) => {
   if (nom && prenom) {
     Crisp.user.setNickname(`${prenom} ${nom}`);
   }

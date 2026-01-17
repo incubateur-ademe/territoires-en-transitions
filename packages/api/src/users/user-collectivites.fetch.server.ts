@@ -1,7 +1,5 @@
 import 'server-only';
 
-import { CollectiviteAccess } from '@tet/domain/users';
-import { toCollectiviteAccess } from '../collectivites';
 import { DBClient } from '../typeUtils';
 
 // charge les collectivités associées au compte de l'utilisateur courant
@@ -11,9 +9,7 @@ import { DBClient } from '../typeUtils';
  * @param supabase
  * @returns
  */
-export const fetchUserCollectivites = async (
-  supabase: DBClient
-): Promise<CollectiviteAccess[]> => {
+export const fetchUserCollectivites = async (supabase: DBClient) => {
   const query = supabase.from('mes_collectivites').select();
 
   const { error, data } = await query;
@@ -22,5 +18,5 @@ export const fetchUserCollectivites = async (
     throw new Error(error.message);
   }
 
-  return data.map(toCollectiviteAccess);
+  return data;
 };

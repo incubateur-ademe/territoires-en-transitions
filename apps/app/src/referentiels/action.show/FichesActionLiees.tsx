@@ -1,5 +1,4 @@
 import FichesActionsDropdown from '@/app/ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { Button, Field } from '@tet/ui';
@@ -35,7 +34,7 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
   return (
     <div className="flex flex-col gap-8">
       {!isReadonly &&
-        hasPermission(collectivite.permissions, 'plans.fiches.create') && (
+        collectivite.hasCollectivitePermission( 'plans.fiches.create') && (
           <Button icon="add-line" size="sm" onClick={() => createFicheResume()}>
             Créer une action
           </Button>

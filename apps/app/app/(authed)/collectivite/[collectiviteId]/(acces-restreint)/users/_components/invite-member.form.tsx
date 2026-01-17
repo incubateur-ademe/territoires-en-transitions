@@ -1,9 +1,6 @@
 import { useAccessLevels } from '@/app/users/authorizations/use-access-levels';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  CollectiviteAccessLevel,
-  collectiviteAccessLevelSchema,
-} from '@tet/domain/users';
+import { CollectiviteRole, collectiviteRoleSchema } from '@tet/domain/users';
 import {
   Field,
   Input,
@@ -20,14 +17,14 @@ const validationSchema = z.object({
   email: z.email({
     error: 'Un email valide est requis',
   }),
-  niveau: collectiviteAccessLevelSchema,
+  niveau: collectiviteRoleSchema,
   tagIds: z.number().array().optional(),
 });
 type FormData = z.infer<typeof validationSchema>;
 
 export type Props = {
   /** Niveau de l'utilisateur sur la collectivité */
-  niveauAcces: CollectiviteAccessLevel;
+  niveauAcces: CollectiviteRole;
   /** Fonction appelée à l'envoi du formulaire */
   onSubmit: SubmitHandler<FormData>;
   /** Fonction appelée à l'annulation du formulaire */
