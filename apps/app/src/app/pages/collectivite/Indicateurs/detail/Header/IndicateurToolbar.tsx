@@ -1,6 +1,5 @@
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { PermissionOperation } from '@tet/domain/users';
 import { Button, Tooltip, VisibleWhen } from '@tet/ui';
 import classNames from 'classnames';
@@ -11,15 +10,15 @@ import EditModal from './EditModal';
 
 type Props = {
   definition: IndicateurDefinition;
-  permissions: PermissionOperation[];
+  hasCollectivitePermission: (permission: PermissionOperation) => boolean;
   isPerso?: boolean;
   className?: string;
 };
 
 const IndicateurToolbar = ({
   definition,
+  hasCollectivitePermission,
   isPerso = false,
-  permissions,
   className,
 }: Props) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -77,7 +76,7 @@ const IndicateurToolbar = ({
         <VisibleWhen
           condition={
             isPerso &&
-            hasPermission(permissions, 'indicateurs.indicateurs.delete')
+            hasCollectivitePermission('indicateurs.indicateurs.delete')
           }
         >
           <DeleteModal {...{ definition, isPending }} />

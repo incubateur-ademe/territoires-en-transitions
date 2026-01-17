@@ -1,24 +1,22 @@
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { PermissionOperation } from '@tet/domain/users';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { useState } from 'react';
 import { FicheActionViewOptions } from './use-select-fiche-view';
 
 export const useSelectFiches = ({
   view,
   currentPage,
-  isReadOnly,
-  permissions,
+  collectivite,
 }: {
   view: FicheActionViewOptions;
   currentPage: number;
-  isReadOnly: boolean;
-  permissions: PermissionOperation[];
+  collectivite: CollectiviteCurrent;
 }) => {
+  const { hasCollectivitePermission, isReadOnly } = collectivite;
   // TODO: to be improved with a more granular permission check > can export in pdf. But for now ok.
   const isGroupedActionsEnabled =
     !isReadOnly &&
     view !== 'scheduler' &&
-    hasPermission(permissions, 'plans.fiches.bulk_update');
+    hasCollectivitePermission('plans.fiches.bulk_update');
 
   const [previousPage, setPreviousPage] = useState(currentPage);
   const [isGroupedActionsModeActive, setIsGroupedActionsModeActive] =

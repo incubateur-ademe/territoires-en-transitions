@@ -1,4 +1,4 @@
-import { CollectiviteAccessLevel } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import {
   DEPRECATED_Table,
   DEPRECATED_TBody,
@@ -17,7 +17,7 @@ import TagsListeTableRow from './tags-liste-table-row';
 
 export type TagsListeTableProps = {
   collectiviteId: number;
-  currentUserAccess: CollectiviteAccessLevel;
+  currentUserAccess: CollectiviteRole;
   sendData?: SendInvitationData;
   sendInvitation: (args: SendInvitationArgs) => void;
 };

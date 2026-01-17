@@ -11,7 +11,7 @@ import {
 import { useAccessLevels } from '@/app/users/authorizations/use-access-levels';
 import { MembreFonction } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { CollectiviteAccessLevel } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import BadgeAcces from '../../_components/badge-acces';
 
 /**
@@ -89,14 +89,14 @@ export const ChampsInterventionDropdown = ({
   </div>
 );
 
-export type TAccesDropdownOption = CollectiviteAccessLevel;
+export type TAccesDropdownOption = CollectiviteRole;
 
 const AccessDropdownLabel = ({
   option,
   currentUserAccess,
 }: {
   option: TAccesDropdownOption;
-  currentUserAccess: CollectiviteAccessLevel;
+  currentUserAccess: CollectiviteRole;
 }) => {
   if (currentUserAccess === 'admin')
     return (
@@ -114,7 +114,7 @@ const AccessDropdownLabel = ({
 };
 
 type TAccesDropdownProps = {
-  currentUserAccess: CollectiviteAccessLevel;
+  currentUserAccess: CollectiviteRole;
   value: TAccesDropdownOption;
   onSelect: (value: TAccesDropdownOption) => void;
 };
@@ -137,11 +137,11 @@ export const AccesDropdown = ({
         onSelect={onSelect}
         options={accessLevelsOptions}
         renderSelection={(value) => (
-          <BadgeAcces acces={value as CollectiviteAccessLevel} size="sm" />
+          <BadgeAcces acces={value as CollectiviteRole} size="sm" />
         )}
         renderOption={(option) => (
           <AccessDropdownLabel
-            option={option.value as CollectiviteAccessLevel}
+            option={option.value as CollectiviteRole}
             currentUserAccess={currentUserAccess}
           />
         )}

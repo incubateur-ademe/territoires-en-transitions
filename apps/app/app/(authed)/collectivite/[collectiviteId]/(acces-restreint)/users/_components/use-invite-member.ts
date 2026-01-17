@@ -5,7 +5,7 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import { useUserSession } from '@tet/api/users';
 import { getAuthHeaders } from '@tet/api/utils/supabase/get-auth-headers';
-import { UserWithCollectiviteAccesses } from '@tet/domain/users';
+import { UserWithRolesAndPermissions } from '@tet/domain/users';
 
 export type SendInvitationArgs = {
   email: string;
@@ -26,7 +26,7 @@ export type SendInvitationData =
 export const useSendInvitation = (
   collectiviteId: number,
   collectiviteName: string,
-  user: UserWithCollectiviteAccesses
+  user: UserWithRolesAndPermissions
 ) => {
   const session = useUserSession();
 

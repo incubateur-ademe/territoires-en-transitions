@@ -11,7 +11,6 @@ import {
   getRejoindreCollectivitePath,
   useSupabase,
 } from '@tet/api';
-import { CollectiviteAccess } from '@tet/domain/users';
 import {
   Button,
   Divider,
@@ -142,7 +141,7 @@ const ModeConnectePasRattache = () => {
 const ModeConnecteRattache = ({
   collectivites,
 }: {
-  collectivites: CollectiviteAccess[];
+  collectivites: Array<{ collectiviteId: number; nom: string }>;
 }) => {
   const tracker = useEventTracker();
   const { panier } = usePanierContext();

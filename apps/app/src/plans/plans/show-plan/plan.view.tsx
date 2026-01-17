@@ -5,7 +5,6 @@ import { EmptyPlanView } from '@/app/plans/plans/show-plan/empty-plan.view';
 import { usePlanFilters } from '@/app/plans/plans/show-plan/filters/plan-filters.context';
 import { PlanArborescence } from '@/app/plans/plans/show-plan/plan-arborescence.view';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { Plan } from '@tet/domain/plans';
@@ -48,6 +47,8 @@ type Props = {
 export const PlanView = ({ plan: initialPlanData }: Props) => {
   const currentCollectivite = useCurrentCollectivite();
   const user = useUser();
+
+  const { hasCollectivitePermission } = currentCollectivite;
 
   const { isFiltered } = usePlanFilters();
   const plan = useGetPlan(initialPlanData.id, {
@@ -103,7 +104,7 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
               <VisibleWhen
                 condition={
                   currentCollectivite.isReadOnly === false &&
-                  hasPermission(currentCollectivite.permissions, 'plans.mutate')
+                  hasCollectivitePermission('plans.mutate')
                 }
               >
                 <EditPlanButtons

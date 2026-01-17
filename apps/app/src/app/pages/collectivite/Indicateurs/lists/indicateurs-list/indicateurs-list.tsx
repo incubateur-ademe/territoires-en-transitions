@@ -52,7 +52,7 @@ const IndicateursListe = (props: Props) => {
     renderSettings,
   } = props;
 
-  const { collectiviteId, permissions } = useCurrentCollectivite();
+  const { collectiviteId, hasCollectivitePermission } = useCurrentCollectivite();
   const { id: currentUserId } = useUser();
 
   const { displayGraphs, sortBy, currentPage, ...filters } = searchParams;
@@ -154,7 +154,7 @@ const IndicateursListe = (props: Props) => {
                 isEditable={isEditable}
                 readonly={
                   !canUpdateIndicateurDefinition(
-                    permissions,
+                    hasCollectivitePermission,
                     definition,
                     currentUserId
                   )

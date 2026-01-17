@@ -8,8 +8,8 @@ import { useEditAxe } from '@/app/plans/plans/show-plan/data/use-edit-axe';
 import { useUpsertAxe } from '@/app/plans/plans/show-plan/data/use-upsert-axe';
 import { useToggleAxe } from '@/app/plans/plans/show-plan/plan-arborescence.view/use-toggle-axe';
 import IconDrag from '@/app/ui/icons/IconDrag';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { PlanNode } from '@tet/domain/plans';
-import { CollectiviteAccess } from '@tet/domain/users';
 import { Button, Icon } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { useCreateFicheResume } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
@@ -29,7 +29,7 @@ type Props = {
   rootAxe: PlanNode;
   axes: PlanNode[];
   isReadonly: boolean;
-  collectivite: CollectiviteAccess;
+  collectivite: CollectiviteCurrent;
 };
 
 export const DraggableAxe = ({

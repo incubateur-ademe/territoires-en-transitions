@@ -1,6 +1,6 @@
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
-import { CollectiviteAccess } from '@tet/domain/users';
 import classNames from 'classnames';
 import FicheActionCardSkeleton from '../../../../app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { useListFiches } from '../../../fiches/list-all-fiches/data/use-list-fiches';
@@ -12,7 +12,7 @@ type Props = {
   ficheIds: number[];
   axeId: number;
   planId?: number;
-  collectivite: CollectiviteAccess;
+  collectivite: CollectiviteCurrent;
 };
 
 export const FichesList = ({

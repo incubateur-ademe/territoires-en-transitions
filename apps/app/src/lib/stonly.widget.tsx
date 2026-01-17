@@ -2,7 +2,7 @@
 
 import { ENV } from '@tet/api/environmentVariables';
 import { useSubscribeToUserAuthEvents } from '@tet/api/users/user-context/use-subscribe-to-user-auth-events';
-import { UserWithCollectiviteAccesses } from '@tet/domain/users';
+import { UserWithRolesAndPermissions } from '@tet/domain/users';
 import Script from 'next/script';
 
 export default function StonlyWidget() {
@@ -26,7 +26,7 @@ e.onreadystatechange=function(){4===e.readyState&&(g.src=n+"stonly-widget.js?v="
   );
 }
 
-const identifyStonlyUser = (user: UserWithCollectiviteAccesses) => {
+const identifyStonlyUser = (user: UserWithRolesAndPermissions) => {
   if ('StonlyWidget' in window && typeof window.StonlyWidget === 'function') {
     window.StonlyWidget('identify', user.id);
   }

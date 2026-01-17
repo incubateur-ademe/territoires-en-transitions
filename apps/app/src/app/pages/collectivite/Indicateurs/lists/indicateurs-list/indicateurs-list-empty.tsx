@@ -4,7 +4,6 @@ import {
   makeCollectiviteTousLesIndicateursUrl,
 } from '@/app/app/paths';
 import PictoDataViz from '@/app/ui/pictogrammes/PictoDataViz';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ButtonProps, EmptyCard, Event, useEventTracker } from '@tet/ui';
 import { useRouter } from 'next/navigation';
@@ -61,7 +60,8 @@ export const IndicateursListEmpty = ({
 /** Affiche un message particulier en fonction de la liste concernée */
 const IndicateursListEmptyCustom = ({ listId }: { listId: EmptyListId }) => {
   const tracker = useEventTracker();
-  const { collectiviteId, isReadOnly, permissions } = useCurrentCollectivite();
+  const { collectiviteId, isReadOnly, hasCollectivitePermission } =
+    useCurrentCollectivite();
 
   const router = useRouter();
 
@@ -83,7 +83,7 @@ const IndicateursListEmptyCustom = ({ listId }: { listId: EmptyListId }) => {
 
   if (
     !isReadOnly &&
-    hasPermission(permissions, 'indicateurs.indicateurs.create') &&
+    hasCollectivitePermission('indicateurs.indicateurs.create') &&
     listId === 'perso'
   ) {
     actions[0].variant = 'outlined';

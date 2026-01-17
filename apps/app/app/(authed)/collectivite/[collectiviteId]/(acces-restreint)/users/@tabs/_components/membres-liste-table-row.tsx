@@ -4,7 +4,7 @@ import {
   TUpdateMembre,
 } from '@/app/app/pages/collectivite/Users/types';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
-import { CollectiviteAccessLevel } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import {
   Badge,
   Button,
@@ -29,7 +29,7 @@ import {
 export type TMembreListTableRowProps = {
   collectiviteId: number;
   currentUserId: string;
-  currentUserAccess: CollectiviteAccessLevel;
+  currentUserAccess: CollectiviteRole;
   membre: Membre;
   updateMembre: TUpdateMembre;
   sendInvitation: (args: SendInvitationArgs) => void;
