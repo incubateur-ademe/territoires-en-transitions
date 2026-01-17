@@ -4,6 +4,7 @@ import {
   makeCollectiviteToutesLesFichesUrl,
   makeTdbPlansEtActionsUrl,
 } from '@/app/app/paths';
+import { isVisitor } from '@tet/domain/users';
 import { CollectiviteNavItem } from './make-collectivite-nav';
 
 export const generatePlansActionsDropdown = ({
@@ -13,7 +14,8 @@ export const generatePlansActionsDropdown = ({
   collectiviteId: number;
   panierId?: string;
 }): CollectiviteNavItem => ({
-  hideWhenConfidential: true,
+  visibleWhen: (user, accesRestreint) =>
+    !(accesRestreint && isVisitor(user, { collectiviteId })),
   children: 'Plans & Actions',
   dataTest: 'nav-pa',
   links: [

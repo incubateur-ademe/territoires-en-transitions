@@ -1,10 +1,14 @@
 import { Completion } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { getFicheActionPlanForCollectivite } from '@/app/plans/fiches/shared/fiche-action-plans.utils';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { getModifiedSince } from '@/app/utils/formatUtils';
 import { QueryKey } from '@tanstack/react-query';
+import {
+  CollectiviteCurrent,
+  useCurrentCollectivite,
+} from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
-import { CollectiviteAccess } from '@tet/domain/users';
 import { Button, Card, Checkbox, Notification, Tooltip } from '@tet/ui';
 import classNames from 'classnames';
 import { CompletionStatus } from '../../../components/completion.badge';
@@ -39,7 +43,7 @@ export type FicheActionCardProps = {
   /** Exécuté à l'ouverture et à la fermeture de la fiche action */
   onToggleOpen?: (isOpen: boolean) => void;
   /** Id de la collectivité */
-  currentCollectivite: CollectiviteAccess;
+  currentCollectivite: CollectiviteCurrent;
   /** Id de l'utilisateur */
   currentUserId: string;
 };
@@ -61,8 +65,14 @@ export const FicheActionCard = ({
     ficheAction,
     currentCollectivite.collectiviteId
   );
-  const isNotClickable =
-    currentCollectivite.niveauAcces === null && !!ficheAction.restreint;
+
+  const { permissions } = useCurrentCollectivite();
+  console.log(permissions);
+
+  const isNotClickable = !hasPermission(permissions, 'plans.fiches.read');
+
+  // const isNotClickable =
+  //   currentCollectivite.niveauAcces === null && !!ficheAction.restreint;
 
   return (
     <div className="relative group h-full">

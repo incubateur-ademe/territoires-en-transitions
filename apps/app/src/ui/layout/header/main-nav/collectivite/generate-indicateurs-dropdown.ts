@@ -2,6 +2,7 @@ import {
   makeCollectiviteIndicateursListUrl,
   makeCollectiviteTrajectoirelUrl,
 } from '@/app/app/paths';
+import { isVisitor } from '@tet/domain/users';
 import { CollectiviteNavItem } from './make-collectivite-nav';
 
 export const generateIndicateursDropdown = ({
@@ -9,7 +10,8 @@ export const generateIndicateursDropdown = ({
 }: {
   collectiviteId: number;
 }): CollectiviteNavItem => ({
-  hideWhenConfidential: true,
+  visibleWhen: (user, accesRestreint) =>
+    !(accesRestreint && isVisitor(user, { collectiviteId })),
   children: 'Indicateurs',
   dataTest: 'nav-ind',
   links: [

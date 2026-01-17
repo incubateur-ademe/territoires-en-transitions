@@ -10,9 +10,10 @@ import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fich
 import { DeleteOrRemoveFicheSharingModal } from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { getFicheActionPlanForCollectivite } from '@/app/plans/fiches/shared/fiche-action-plans.utils';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { getModifiedSince } from '@/app/utils/formatUtils';
 import { QueryKey } from '@tanstack/react-query';
-import { CollectiviteAccess } from '@tet/domain/users';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { Button, Card, Checkbox, Notification, Tooltip } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -45,7 +46,7 @@ export type FicheActionCardProps = {
   /** Exécuté à l'ouverture et à la fermeture de la fiche action */
   onToggleOpen?: (isOpen: boolean) => void;
   /** Id de la collectivité */
-  currentCollectivite: CollectiviteAccess;
+  currentCollectivite: CollectiviteCurrent;
   /** Id de l'utilisateur */
   currentUserId: string;
 };
@@ -72,8 +73,14 @@ const FicheActionCard = ({
     ficheAction,
     currentCollectivite.collectiviteId
   );
-  const isNotClickable =
-    currentCollectivite.niveauAcces === null && !!ficheAction.restreint;
+
+  const { permissions } = currentCollectivite;
+  console.log(permissions);
+
+  const isNotClickable = !hasPermission(permissions, 'plans.fiches.read');
+
+  // const isNotClickable =
+  //   currentCollectivite.niveauAcces === null && !!ficheAction.restreint;
 
   const canUpdate = isFicheEditableByCollectiviteUser(
     ficheAction,
