@@ -601,29 +601,25 @@ export class NotionBugCreatorService {
       this.logger.log(`Looking for user with email ${userEmail}`);
       const userWithPermissions = await this.trpcClientService
         .getClient()
-        .users.get.query({ email: userEmail });
+        .users.users.getWithRolesAndPermissionsByEmail.query({
+          email: userEmail,
+        });
 
       collectivitesString =
-        userWithPermissions?.user?.collectivites
-          ?.map(
+        userWithPermissions.collectivites
+          .map(
             (collectiviteAccess) =>
-              `${collectiviteAccess.collectiviteId} (${collectiviteAccess.nom})`
+              `${collectiviteAccess.collectiviteId} (${collectiviteAccess.collectiviteNom})`
           )
           .join(', ') || null;
-      if (userWithPermissions?.user?.collectivites?.length === 1) {
-        collectiviteId =
-          userWithPermissions.user.collectivites[0].collectiviteId;
+      if (userWithPermissions.collectivites.length === 1) {
+        collectiviteId = userWithPermissions.collectivites[0].collectiviteId;
         this.logger.log(
           `Only one permission, extracted collectivite id ${collectiviteId}`
         );
-      } else if (
-        userWithPermissions?.user?.collectivites?.length &&
-        userWithPermissions.user.collectivites.length > 1
-      ) {
+      } else if (userWithPermissions.collectivites.length > 1) {
         this.logger.log(
-          `Permissions: ${JSON.stringify(
-            userWithPermissions.user?.collectivites || []
-          )}`
+          `Permissions: ${JSON.stringify(userWithPermissions.collectivites)}`
         );
         this.logger.log(
           `Multiple permissions, too risky to guess the right collectivite id`

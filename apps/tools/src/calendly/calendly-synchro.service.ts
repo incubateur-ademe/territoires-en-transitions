@@ -117,9 +117,10 @@ export class CalendlySynchroService {
       );
       if (newContacts.length) {
         // vérifie si ils sont déjà dans la plateforme
-        const existingUsers = await this.trpcClient.users.getAll.query({
-          emails: newContacts,
-        });
+        const existingUsers =
+          await this.trpcClient.users.users.listByEmails.query({
+            emails: newContacts,
+          });
         const existingUsersByEmail = keyBy(existingUsers, (u) => u.email);
 
         newContacts.forEach((newContact) => {
