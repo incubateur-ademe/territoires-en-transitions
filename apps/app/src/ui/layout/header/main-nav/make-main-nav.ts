@@ -1,15 +1,18 @@
 import { finaliserMonInscriptionUrl } from '@/app/app/paths';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import {
-  CollectiviteAccess,
-  UserWithCollectiviteAccesses,
+  CollectiviteRole,
+  hasRole,
+  PlatformRole,
+  UserWithRolesAndPermissions,
 } from '@tet/domain/users';
 import { HeaderProps } from '@tet/ui';
 import { makeCollectiviteNav } from './collectivite/make-collectivite-nav';
 import { makeRoleEditionActionsIndicateursNav } from './collectivite/make-role-edition-actions-indicateurs-nav';
 
 type Props = {
-  user: UserWithCollectiviteAccesses;
-  currentCollectivite: CollectiviteAccess | null;
+  user: UserWithRolesAndPermissions;
+  currentCollectivite: CollectiviteCurrent | null;
   panierId?: string;
 };
 
@@ -19,7 +22,7 @@ export const makeMainNav = ({
   panierId,
 }: Props): HeaderProps['mainNav'] => {
   const hasToCompleteRegistration =
-    !user.isVerified && user.collectivites.length === 0;
+    !hasRole(user, PlatformRole.VERIFIE) && user.collectivites.length === 0;
 
   if (hasToCompleteRegistration) {
     return {
@@ -33,17 +36,18 @@ export const makeMainNav = ({
   }
 
   if (currentCollectivite) {
-    if (currentCollectivite.isSimplifiedView) {
+    if (
+      currentCollectivite.role === CollectiviteRole.EDITION_FICHES_INDICATEURS
+    ) {
       return makeRoleEditionActionsIndicateursNav({
+        user,
         currentCollectivite,
-        collectivites: user.collectivites,
       });
     }
 
     return makeCollectiviteNav({
       user,
       currentCollectivite,
-      collectivites: user.collectivites,
       panierId,
     });
   }

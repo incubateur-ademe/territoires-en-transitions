@@ -1,4 +1,4 @@
-import { UserWithCollectiviteAccesses } from '@tet/domain/users';
+import { UserWithRolesAndPermissions } from '@tet/domain/users';
 import { useState } from 'react';
 import { useUserContext } from './user-provider';
 
@@ -6,12 +6,12 @@ export function useSubscribeToUserAuthEvents({
   onSignIn: onSignedIn,
   onSignOut: onSignedOut,
 }: {
-  onSignIn?: (user: UserWithCollectiviteAccesses) => void;
+  onSignIn?: (user: UserWithRolesAndPermissions) => void;
   onSignOut?: () => void;
 }) {
   const { user: authedUser } = useUserContext();
 
-  const [user, setUser] = useState<UserWithCollectiviteAccesses | null>(null);
+  const [user, setUser] = useState<UserWithRolesAndPermissions | null>(null);
 
   if (authedUser && user !== authedUser) {
     setUser(authedUser);

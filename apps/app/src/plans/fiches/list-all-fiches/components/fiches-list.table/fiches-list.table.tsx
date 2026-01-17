@@ -9,8 +9,8 @@ import { useEffect, useState } from 'react';
 import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
-import { CollectiviteAccess } from '@tet/domain/users';
 import { Button, ReactTable, TableCell, TableHeaderCell } from '@tet/ui';
 import { FichesListCellActions } from './cells/fiches-list.cell-actions';
 import { FichesListCellCheckbox } from './cells/fiches-list.cell-checkbox';
@@ -143,7 +143,7 @@ const columns = [
 ];
 
 type Props = {
-  collectivite: CollectiviteAccess;
+  collectivite: CollectiviteCurrent;
   fiches: FicheWithRelationsAndCollectivite[];
   isLoading: boolean;
   isGroupedActionsOn: boolean;

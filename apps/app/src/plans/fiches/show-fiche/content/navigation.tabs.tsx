@@ -1,5 +1,4 @@
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   TabsList,
@@ -17,8 +16,8 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
   const activeTab =
     rawActiveTab && isFicheSectionId(rawActiveTab) ? rawActiveTab : 'details';
   const { fiche, indicateurs, actionsLiees } = useFicheContext();
-  const collectivite = useCurrentCollectivite();
-  const { niveauAcces, permissions } = collectivite;
+
+  const { collectiviteId, hasPermission } = useCurrentCollectivite();
 
   const widgetCommunsFlagEnabled = useFeatureFlagEnabled(
     'is-widget-communs-enabled'
@@ -38,9 +37,8 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
         indicateurs.list.length > 0 ? `(${indicateurs.list.length})` : ''
       }`,
       isVisible:
-        hasPermission(permissions, 'indicateurs.indicateurs.read') ||
-        (!niveauAcces &&
-          hasPermission(permissions, 'indicateurs.indicateurs.read_public')),
+        hasPermission('indicateurs.indicateurs.read') ||
+        hasPermission('indicateurs.indicateurs.read_public'),
       id: 'indicateurs',
     },
     {
@@ -64,17 +62,15 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
         actionsLiees.list.length > 0 ? `(${actionsLiees.list.length})` : ''
       }`,
       isVisible:
-        hasPermission(permissions, 'plans.fiches.read') ||
-        (!niveauAcces &&
-          hasPermission(permissions, 'plans.fiches.read_public')),
+        hasPermission('plans.fiches.read') ||
+        hasPermission('plans.fiches.read_public'),
       id: 'actions-liees',
     },
     {
       label: 'Mesures des référentiels liées',
       isVisible:
-        hasPermission(permissions, 'referentiels.read') ||
-        (!niveauAcces &&
-          hasPermission(permissions, 'referentiels.read_public')),
+        hasPermission('referentiels.read') ||
+        hasPermission('referentiels.read_public'),
       id: 'mesures-liees',
     },
     {
@@ -95,7 +91,7 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
         key={tab.id}
         label={tab.label}
         href={makeCollectiviteActionUrl({
-          collectiviteId: collectivite.collectiviteId,
+          collectiviteId,
           ficheUid: fiche.id.toString(),
           content: tab.id,
         })}

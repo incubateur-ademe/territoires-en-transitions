@@ -1,7 +1,7 @@
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
-import { CollectiviteAccess } from '@tet/domain/users';
 
 export function isFicheSharedWithCollectivite(
   fiche: Pick<FicheWithRelations, 'sharedWithCollectivites'>,
@@ -14,7 +14,7 @@ export function isFicheSharedWithCollectivite(
 
 export function isFicheEditableByCollectiviteUser(
   fiche: FicheShareProperties & Pick<FicheWithRelations, 'pilotes'>,
-  currentCollectivite: CollectiviteAccess,
+  currentCollectivite: CollectiviteCurrent,
   userId?: string
 ) {
   return (

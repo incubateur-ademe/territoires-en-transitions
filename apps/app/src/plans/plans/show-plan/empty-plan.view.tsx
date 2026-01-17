@@ -1,6 +1,6 @@
 import PictoAction from '@/app/ui/pictogrammes/PictoAction';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { PlanNode } from '@tet/domain/plans';
-import { CollectiviteAccess } from '@tet/domain/users';
 import { EmptyCard } from '@tet/ui';
 import { EditPlanButtons } from './edit-plan.buttons';
 
@@ -8,7 +8,7 @@ export const EmptyPlanView = ({
   currentCollectivite,
   plan,
 }: {
-  currentCollectivite: CollectiviteAccess;
+  currentCollectivite: CollectiviteCurrent;
   plan: PlanNode;
 }) => {
   return (
