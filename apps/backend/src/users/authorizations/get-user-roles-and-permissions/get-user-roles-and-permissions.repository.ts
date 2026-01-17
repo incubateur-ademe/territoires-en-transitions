@@ -27,6 +27,8 @@ export type CollectiviteRolesRow = {
 export type AuditRolesRow = {
   auditId: number;
   collectiviteId: number;
+  collectiviteNom: string;
+  collectiviteAccesRestreint: boolean;
 };
 
 @Injectable()
@@ -99,9 +101,12 @@ export class GetUserRolesAndPermissionsRepository {
       .select({
         auditId: auditTable.id,
         collectiviteId: auditTable.collectiviteId,
+        collectiviteNom: collectiviteTable.nom,
+        collectiviteAccesRestreint: sql<boolean>`coalesce(${collectiviteTable.accesRestreint}, false)`,
       })
       .from(auditeurTable)
       .innerJoin(auditTable, eq(auditTable.id, auditeurTable.auditId))
+      .innerJoin(collectiviteTable, eq(collectiviteTable.id, auditTable.collectiviteId))
       .where(
         and(eq(auditeurTable.auditeur, userId), eq(auditTable.clos, false))
       );

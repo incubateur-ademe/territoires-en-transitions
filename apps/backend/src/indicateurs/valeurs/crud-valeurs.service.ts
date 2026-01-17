@@ -26,9 +26,9 @@ import {
   IndicateurValeurWithIdentifiant,
 } from '@tet/domain/indicateurs';
 import {
+  hasPermission,
   PermissionOperationEnum,
   ResourceType,
-  UserPermissionRule,
 } from '@tet/domain/users';
 import { getErrorMessage, roundTo } from '@tet/domain/utils';
 import {
@@ -458,23 +458,19 @@ export default class CrudValeursService {
     const userPermissions = userPermissionsResult.data;
 
     if (
-      UserPermissionRule.hasPermission({
-        userPermissions,
-        resourceType: ResourceType.COLLECTIVITE,
-        resourceId: collectiviteId,
-        operation: 'indicateurs.valeurs.mutate',
+      hasPermission(userPermissions, 'indicateurs.valeurs.mutate', {
+        collectiviteId,
       })
     ) {
       return true;
     }
 
     if (
-      UserPermissionRule.hasPermission({
+      hasPermission(
         userPermissions,
-        resourceType: ResourceType.COLLECTIVITE,
-        resourceId: collectiviteId,
-        operation: 'indicateurs.valeurs.mutate_piloted_by_me',
-      }) &&
+        'indicateurs.valeurs.mutate_piloted_by_me',
+        { collectiviteId }
+      ) &&
       indicateur.pilotes?.some((p) => p.userId === user.id)
     ) {
       return true;

@@ -1,8 +1,8 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import {
+  hasPermission,
   PermissionOperation,
   ResourceType,
-  UserPermissionRule,
 } from '@tet/domain/users';
 import { AuthRole, AuthUser } from '../models/auth.models';
 import { GetUserRolesAndPermissionsService } from './get-user-roles-and-permissions/get-user-roles-and-permissions.service';
@@ -106,14 +106,17 @@ export class PermissionService {
       return false;
     }
 
-    const hasPermission = UserPermissionRule.hasPermission({
-      userPermissions: userPermissionsResult.data,
-      resourceType,
-      resourceId,
+    const hasPermissionResult = hasPermission(
+      userPermissionsResult.data,
       operation,
-    });
+      resourceType === ResourceType.COLLECTIVITE && resourceId
+        ? { collectiviteId: resourceId }
+        : resourceType === ResourceType.AUDIT && resourceId
+        ? { auditId: resourceId }
+        : undefined
+    );
 
-    if (!hasPermission) {
+    if (!hasPermissionResult) {
       this.logger.log(
         `L'utilisateur ${user.id} ne possède pas l'autorisation ${operation} sur la ressource ${resourceType} ${resourceId}`
       );
@@ -126,6 +129,6 @@ export class PermissionService {
       );
     }
 
-    return hasPermission;
+    return hasPermissionResult;
   }
 }

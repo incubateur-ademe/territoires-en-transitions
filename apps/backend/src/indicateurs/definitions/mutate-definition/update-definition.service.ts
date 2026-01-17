@@ -14,7 +14,7 @@ import {
 import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { ResourceType, UserPermissionRule } from '@tet/domain/users';
+import { hasPermission, ResourceType } from '@tet/domain/users';
 import { and, eq, isNotNull } from 'drizzle-orm';
 import { GetUserRolesAndPermissionsService } from '../../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import { HandleDefinitionFichesService } from '../../indicateurs/handle-definition-fiches/handle-definition-fiches.service';
@@ -61,23 +61,19 @@ export class UpdateDefinitionService {
     const userPermissions = userPermissionsResult.data;
 
     if (
-      UserPermissionRule.hasPermission({
-        userPermissions,
-        resourceType: ResourceType.COLLECTIVITE,
-        resourceId: collectiviteId,
-        operation: 'indicateurs.indicateurs.update',
+      hasPermission(userPermissions, 'indicateurs.indicateurs.update', {
+        collectiviteId,
       })
     ) {
       return true;
     }
 
     if (
-      UserPermissionRule.hasPermission({
+      hasPermission(
         userPermissions,
-        resourceType: ResourceType.COLLECTIVITE,
-        resourceId: collectiviteId,
-        operation: 'indicateurs.indicateurs.update_piloted_by_me',
-      })
+        'indicateurs.indicateurs.update_piloted_by_me',
+        { collectiviteId }
+      )
     ) {
       const pilotes =
         await this.handleDefinitionPilotesService.listIndicateurPilotes({

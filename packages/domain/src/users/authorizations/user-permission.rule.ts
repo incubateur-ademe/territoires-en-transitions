@@ -1,65 +1,140 @@
 import { PermissionOperation } from './permission-operation.enum.schema';
-import { ResourceType } from './resource-type.enum.schema';
-import { UserRolesAndPermissions } from './user-roles-and-permissions.schema';
+import {
+  AuditRole,
+  CollectiviteRole,
+  isAuditRole,
+  isCollectiviteRole,
+  isPlatformRole,
+  PlatformRole,
+} from './user-role.enum.schema';
+import { CollectiviteRolesAndPermissions, UserRolesAndPermissions } from './user-roles-and-permissions.schema';
 
-function hasPermission({
-  userPermissions,
-  resourceType = ResourceType.PLATEFORME,
-  resourceId,
-  operation,
-}: {
-  userPermissions: UserRolesAndPermissions | null;
-  resourceType: ResourceType;
-  resourceId: number | null;
-  operation: PermissionOperation;
-}): boolean {
-  if (!userPermissions) {
+export function hasPermission(
+  user: UserRolesAndPermissions | null,
+  operation: PermissionOperation,
+  resource: { collectiviteId?: number; auditId?: number } = {}
+): boolean {
+  if (!user) {
     return false;
   }
 
-  const hasPermissionForPlatform =
-    userPermissions.permissions.includes(operation);
+  const hasPermissionForPlatform = user.permissions.includes(operation);
 
-  if (resourceType === ResourceType.PLATEFORME) {
+  if (!resource.collectiviteId && !resource.auditId) {
     return hasPermissionForPlatform;
   }
 
-  const hasPermissionForCollectivite = userPermissions.collectivites.some(
-    (collectivite) =>
-      collectivite.collectiviteId === resourceId &&
-      collectivite.permissions.includes(operation)
-  );
+  if (resource.collectiviteId) {
+    const hasPermissionForCollectivite = user.collectivites.some(
+      (collectivite) =>
+        collectivite.collectiviteId === resource.collectiviteId &&
+        collectivite.permissions.includes(operation)
+    );
 
-  if (resourceType === ResourceType.COLLECTIVITE) {
     return hasPermissionForCollectivite || hasPermissionForPlatform;
   }
 
-  const hasPermissionForAudit = userPermissions.audits.some(
-    (audit) =>
-      audit.auditId === resourceId && audit.permissions.includes(operation)
-  );
+  if (resource.auditId) {
+    const hasPermissionForAudit = user.collectivites.some(
+      (collectivite) =>
+        collectivite.audits.some(
+          (audit) =>
+            audit.auditId === resource.auditId &&
+            audit.permissions.includes(operation)
+        )
+    );
 
-  if (resourceType === ResourceType.AUDIT) {
     return hasPermissionForAudit || hasPermissionForPlatform;
   }
 
   return false;
 }
 
-// function hasPermissionCombination({
-//   userPermissions,
-//   resourceType = ResourceType.PLATEFORME,
-//   resourceId,
-//   operations,
-// }: {
-//   userPermissions: UserPermissions | null;
-//   resourceType: ResourceType;
-//   resourceId: number | null;
-//   operation: PermissionOperationCombination;
-// }): boolean {
-//   return true;
-// }
+export function hasRole(
+  user: UserRolesAndPermissions,
+  role: PlatformRole | CollectiviteRole | AuditRole,
+  resource: { collectiviteId?: number; auditId?: number } = {}
+): boolean {
+  if (isPlatformRole(role)) {
+    return user.roles.includes(role);
+  }
+
+  if (isCollectiviteRole(role) && resource.collectiviteId) {
+    return user.collectivites.some(
+      (collectivite) =>
+        collectivite.collectiviteId === resource.collectiviteId &&
+        collectivite.role === role
+    );
+  }
+
+  if (isAuditRole(role)) {
+    if (resource.auditId) {
+      return user.collectivites.some(
+        (collectivite) =>
+          collectivite.audits.some(
+            (audit) =>
+              audit.auditId === resource.auditId &&
+              audit.role === role
+          )
+      );
+    }
+    if (resource.collectiviteId) {
+      return user.collectivites.some((collectivite) =>
+        collectivite.collectiviteId === resource.collectiviteId &&
+        collectivite.audits.some((audit) => audit.role === role)
+      );
+    }
+  }
+
+  return false;
+}
+
+export function hasCollectiviteRole(
+  collectivite: CollectiviteRolesAndPermissions,
+  role: CollectiviteRole | AuditRole,
+): boolean {
+  if (isCollectiviteRole(role)) {
+    return collectivite.role === role;
+  }
+
+  if (isAuditRole(role)) {
+    return collectivite.audits.some((audit) => audit.role === role);
+  }
+
+  return false;
+}
+
+export function hasAnyCollectiviteRole(
+  user: UserRolesAndPermissions,
+  { collectiviteId }: { collectiviteId?: number } = {}
+) {
+  if (collectiviteId) {
+    return user.collectivites.some(
+      (collectivite) =>
+        collectivite.collectiviteId === collectiviteId &&
+        collectivite.role !== null
+    );
+  }
+
+  return user.collectivites.some((collectivite) => collectivite.role !== null);
+}
+
+export function isVisitor(
+  user: UserRolesAndPermissions,
+  { collectiviteId }: { collectiviteId: number }
+): boolean {
+  if (hasRole(user, PlatformRole.SUPPORT_MODE_ENABLED)) {
+    return false;
+  }
+
+  if (hasAnyCollectiviteRole(user, { collectiviteId })) {
+    return false;
+  }
+
+  return true;
+}
 
 export const UserPermissionRule = {
   hasPermission,
+  hasRole,
 };

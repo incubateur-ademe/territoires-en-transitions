@@ -37,18 +37,21 @@ const expectedYoulouDoudouUserInfoResponse: UserWithRolesAndPermissions = {
       collectiviteId: 1,
       collectiviteNom: 'Ambérieu-en-Bugey',
       collectiviteAccesRestreint: false,
-      roles: [CollectiviteRole.EDITION],
+      role: CollectiviteRole.EDITION,
       permissions: [...new Set(permissionsByRole[CollectiviteRole.EDITION])],
+
+      audits: expect.any(Array),
     },
     {
       collectiviteId: 2,
       collectiviteNom: 'Arbent',
       collectiviteAccesRestreint: false,
-      roles: [CollectiviteRole.EDITION],
+      role: CollectiviteRole.EDITION,
       permissions: [...new Set(permissionsByRole[CollectiviteRole.EDITION])],
+
+      audits: expect.any(Array),
     },
   ],
-  audits: expect.any(Array),
 };
 
 describe('ListUsersRouter', () => {

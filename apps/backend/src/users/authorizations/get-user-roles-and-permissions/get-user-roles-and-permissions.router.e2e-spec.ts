@@ -74,15 +74,14 @@ describe('GetUserPermissions', () => {
         collectiviteAccesRestreint: false,
         roles: new Set([CollectiviteRole.EDITION]),
         permissions: new Set(permissionsByRole[CollectiviteRole.EDITION]),
-      },
-    ]);
 
-    expect(result.audits).toEqual([
-      {
-        auditId: audit.id,
-        collectiviteId: collectivite.id,
-        roles: new Set([AuditRole.AUDITEUR]),
-        permissions: new Set(permissionsByRole[AuditRole.AUDITEUR]),
+        audits: [
+          {
+            auditId: audit.id,
+            roles: new Set([AuditRole.AUDITEUR]),
+            permissions: new Set(permissionsByRole[AuditRole.AUDITEUR]),
+          },
+        ],
       },
     ]);
   });

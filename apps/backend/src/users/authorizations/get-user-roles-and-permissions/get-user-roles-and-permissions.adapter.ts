@@ -1,12 +1,15 @@
 import {
   AuditRole,
+  AuditRolesAndPermissions,
   CollectiviteRole,
+  CollectiviteRolesAndPermissions,
   PermissionOperation,
   permissionsByRole,
   PlatformRole,
   UserRolesAndPermissions,
-  userRolesAndPermissionsSchema,
+  userRolesAndPermissionsSchema
 } from '@tet/domain/users';
+import { groupBy } from 'es-toolkit';
 import {
   AuditRolesRow,
   CollectiviteRolesRow,
@@ -23,6 +26,58 @@ function buildUniquePermissionsSet(
   ];
 }
 
+function toAuditRolesAndPermissions(audit: AuditRolesRow): AuditRolesAndPermissions {
+  return {
+    auditId: audit.auditId,
+    role: AuditRole.AUDITEUR,
+    permissions: buildUniquePermissionsSet([AuditRole.AUDITEUR]),
+  };
+}
+
+function toCollectiviteRolesAndPermissions(
+  collectiviteRows: CollectiviteRolesRow[],
+  auditRows: AuditRolesRow[],
+): CollectiviteRolesAndPermissions[] {
+  // Group audits by collectiviteId
+  const auditsByCollectiviteId = groupBy(
+    auditRows,
+    (audit) => audit.collectiviteId
+  );
+
+  // Create a set of collectiviteIds for quick lookup
+  const collectiviteIds = new Set(
+    collectiviteRows.map((collectivite) => collectivite.collectiviteId)
+  );
+
+  // Process collectivites that exist in collectiviteRoles
+  const collectivites = collectiviteRows.map((collectivite) => {
+    const audits = auditsByCollectiviteId[collectivite.collectiviteId] ?? [];
+    return {
+      ...collectivite,
+      permissions: buildUniquePermissionsSet([collectivite.role]),
+      audits: audits.map(toAuditRolesAndPermissions),
+    };
+  });
+
+  // Process audits whose collectiviteId doesn't exist in collectiviteRoles
+  const collectivitesFromAuditsOnly = Object.entries(auditsByCollectiviteId)
+    .filter(([collectiviteId]) => !collectiviteIds.has(Number(collectiviteId)))
+    .map(([, audits]) => {
+      // Use the first audit's collectivite info (they all have the same collectiviteId)
+      const [audit] = audits;
+      return {
+        collectiviteId: audit.collectiviteId,
+        collectiviteNom: audit.collectiviteNom,
+        collectiviteAccesRestreint: audit.collectiviteAccesRestreint,
+        role: null,
+        permissions: [],
+        audits: audits.map(toAuditRolesAndPermissions),
+      };
+    });
+
+  return [...collectivites, ...collectivitesFromAuditsOnly];
+}
+
 export function toUserRolesAndPermissions({
   platformRolesRow,
   collectiviteRolesRows,
@@ -32,38 +87,29 @@ export function toUserRolesAndPermissions({
   collectiviteRolesRows: CollectiviteRolesRow[];
   auditRolesRows: AuditRolesRow[];
 }): UserRolesAndPermissions {
+  const optionalPlatformRoles = [
+    [platformRolesRow.isVerified, PlatformRole.VERIFIE],
+    [platformRolesRow.isSupport, PlatformRole.SUPPORT],
+    [platformRolesRow.isSupportModeEnabled, PlatformRole.SUPPORT_MODE_ENABLED],
+    [platformRolesRow.isAdeme, PlatformRole.ADEME],
+  ] satisfies Array<[boolean, PlatformRole]>;
+
   const platformRoles = [
     PlatformRole.CONNECTE,
 
-    ...(platformRolesRow.isVerified ? [PlatformRole.VERIFIE] : []),
-    ...(platformRolesRow.isSupport ? [PlatformRole.SUPPORT] : []),
-    ...(platformRolesRow.isSupportModeEnabled
-      ? [PlatformRole.SUPPORT_MODE_ENABLED]
-      : []),
-    ...(platformRolesRow.isAdeme ? [PlatformRole.ADEME] : []),
+    ...optionalPlatformRoles
+      .filter(([isEnabled]) => isEnabled)
+      .map(([, role]) => role),
   ];
 
-  const collectiviteRoles = collectiviteRolesRows.map(
-    ({ role, ...collectivite }) => ({
-      ...collectivite,
-      roles: [role],
-      permissions: buildUniquePermissionsSet([role]),
-    })
-  );
 
-  const auditRoles = auditRolesRows.map(({ auditId, collectiviteId }) => ({
-    auditId,
-    collectiviteId,
-    roles: [AuditRole.AUDITEUR],
-    permissions: buildUniquePermissionsSet([AuditRole.AUDITEUR]),
-  }));
 
-  const userPermissions = {
+
+  const userPermissions: UserRolesAndPermissions = {
     roles: platformRoles,
     permissions: buildUniquePermissionsSet(platformRoles),
 
-    collectivites: collectiviteRoles,
-    audits: auditRoles,
+    collectivites: toCollectiviteRolesAndPermissions(collectiviteRolesRows, auditRolesRows),
   };
 
   return userRolesAndPermissionsSchema.parse(userPermissions);

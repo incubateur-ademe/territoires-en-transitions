@@ -13,10 +13,10 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Fiche, FicheWithRelations } from '@tet/domain/plans';
 import {
+  hasPermission,
   type PermissionOperation,
   PermissionOperationEnum,
   ResourceType,
-  UserPermissionRule,
 } from '@tet/domain/users';
 import { and, eq, getTableColumns, isNotNull, sql } from 'drizzle-orm';
 import { GetUserRolesAndPermissionsService } from '../../users/authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
@@ -242,22 +242,16 @@ export default class FicheActionPermissionsService {
     const userPermissions = userPermissionsResult.data;
 
     if (
-      UserPermissionRule.hasPermission({
-        userPermissions,
-        resourceType: ResourceType.COLLECTIVITE,
-        resourceId: fiche.collectiviteId,
-        operation: 'plans.fiches.update',
+      hasPermission(userPermissions, 'plans.fiches.update', {
+        collectiviteId: fiche.collectiviteId,
       })
     ) {
       return FicheAccessModeEnum.DIRECT;
     }
 
     if (
-      UserPermissionRule.hasPermission({
-        userPermissions,
-        resourceType: ResourceType.COLLECTIVITE,
-        resourceId: fiche.collectiviteId,
-        operation: 'plans.fiches.update_piloted_by_me',
+      hasPermission(userPermissions, 'plans.fiches.update_piloted_by_me', {
+        collectiviteId: fiche.collectiviteId,
       })
     ) {
       const piloteUserIds = await this.getPiloteUserIdsForFiche(ficheId);
