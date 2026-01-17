@@ -23,7 +23,6 @@
           "outputPath": "packages/domain/dist",
           "main": "packages/domain/src/index.ts",
           "tsConfig": "packages/domain/tsconfig.lib.json",
-          "skipTypeCheck": true,
           "stripLeadingPaths": true
         }
       }
