@@ -1,12 +1,12 @@
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { CollectiviteAccessLevel } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import { useParams } from 'next/navigation';
 
 export function useGetDefaultEventProperties() {
   const params = useParams();
 
   let collectiviteId: number | undefined;
-  let niveauAcces: CollectiviteAccessLevel | null | undefined;
+  let niveauAcces: CollectiviteRole | null | undefined;
   let role: 'auditeur' | null | undefined;
 
   try {

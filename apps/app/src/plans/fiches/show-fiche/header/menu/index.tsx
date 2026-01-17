@@ -1,17 +1,13 @@
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { PermissionOperation } from '@tet/domain/users';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ButtonMenu, Icon } from '@tet/ui';
 import {
   ModalType,
   useEditionModalManager,
 } from '../context/edition-modal-manager-context';
 
-type MenuProps = {
-  permissions: PermissionOperation[];
-};
-
-export const Menu = ({ permissions }: MenuProps) => {
+export const Menu = () => {
   const { openModal } = useEditionModalManager();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
 
   const actions: Array<{
     id: ModalType;
@@ -21,13 +17,13 @@ export const Menu = ({ permissions }: MenuProps) => {
   }> = [
     {
       id: 'emplacement',
-      isVisible: hasPermission(permissions, 'plans.mutate'),
+      isVisible: hasCollectivitePermission('plans.mutate'),
       icon: 'folder-2-line',
       label: "Mutualiser l'action dans d'autres plans",
     },
     {
       id: 'accessRightsManagement',
-      isVisible: hasPermission(permissions, 'plans.fiches.update'),
+      isVisible: hasCollectivitePermission('plans.fiches.update'),
       icon: 'lock-line',
       label: "Gérer les droits d'accès de l'action",
     },
@@ -43,7 +39,7 @@ export const Menu = ({ permissions }: MenuProps) => {
     },
     {
       id: 'deleting',
-      isVisible: hasPermission(permissions, 'plans.fiches.delete'),
+      isVisible: hasCollectivitePermission('plans.fiches.delete'),
       icon: 'delete-bin-6-line',
       label: "Supprimer l'action",
     },

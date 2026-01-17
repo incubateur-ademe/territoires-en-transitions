@@ -1,7 +1,4 @@
-import {
-  CollectiviteAccessLevel,
-  CollectiviteAccessLevelEnum,
-} from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import { getAccessLevelLabel } from './permission-access-level.utils';
 import { useIsAccessEditionFichesIndicateursEnabled } from './use-is-access-edition-fiches-indicateurs-enabled';
 
@@ -17,30 +14,28 @@ export const useAccessLevels = (props: UseAccessLevelsProps) => {
 
   const accessLevels: {
     isVisible: boolean;
-    value: CollectiviteAccessLevel;
+    value: CollectiviteRole;
     label: string;
   }[] = [
     {
       isVisible: allowAdmin || false,
-      value: CollectiviteAccessLevelEnum.ADMIN,
-      label: getAccessLevelLabel(CollectiviteAccessLevelEnum.ADMIN),
+      value: CollectiviteRole.ADMIN,
+      label: getAccessLevelLabel(CollectiviteRole.ADMIN),
     },
     {
       isVisible: true,
-      value: CollectiviteAccessLevelEnum.EDITION,
-      label: getAccessLevelLabel(CollectiviteAccessLevelEnum.EDITION),
+      value: CollectiviteRole.EDITION,
+      label: getAccessLevelLabel(CollectiviteRole.EDITION),
     },
     {
       isVisible: isAccessEditionFichesIndicateursEnabled || false,
-      value: CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS,
-      label: getAccessLevelLabel(
-        CollectiviteAccessLevelEnum.EDITION_FICHES_INDICATEURS
-      ),
+      value: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+      label: getAccessLevelLabel(CollectiviteRole.EDITION_FICHES_INDICATEURS),
     },
     {
       isVisible: true,
-      value: CollectiviteAccessLevelEnum.LECTURE,
-      label: getAccessLevelLabel(CollectiviteAccessLevelEnum.LECTURE),
+      value: CollectiviteRole.LECTURE,
+      label: getAccessLevelLabel(CollectiviteRole.LECTURE),
     },
   ].filter((level) => level.isVisible);
 

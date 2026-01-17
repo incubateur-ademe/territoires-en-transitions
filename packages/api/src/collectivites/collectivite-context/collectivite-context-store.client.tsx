@@ -1,6 +1,6 @@
 'use client';
 
-import { CollectiviteAccess } from '@tet/domain/users';
+import { CollectiviteRolesAndPermissions } from '@tet/domain/users';
 import { ReactNode, useEffect } from 'react';
 import { useCollectiviteContext } from './collectivite-provider.no-ssr';
 
@@ -9,7 +9,7 @@ export const CollectiviteProviderStoreClient = ({
   collectivite: newCollectivite,
 }: {
   children: ReactNode;
-  collectivite: CollectiviteAccess;
+  collectivite: CollectiviteRolesAndPermissions;
 }) => {
   const { collectivite, setCollectivite } = useCollectiviteContext();
 

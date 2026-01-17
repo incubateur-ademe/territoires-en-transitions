@@ -1,9 +1,8 @@
 import { useCreateFicheResume } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { PlanNode } from '@tet/domain/plans';
-import { CollectiviteAccess } from '@tet/domain/users';
 import {
   createContext,
   ReactNode,
@@ -67,7 +66,7 @@ type AxeProviderProps = {
   axe: PlanNode;
   rootAxe: PlanNode;
   axes: PlanNode[];
-  collectivite: CollectiviteAccess;
+  collectivite: CollectiviteCurrent;
   children: ReactNode;
 };
 
@@ -77,7 +76,7 @@ export const AxeProvider = (props: AxeProviderProps) => {
   const collectiviteId = collectivite.collectiviteId;
   const isReadOnly =
     collectivite.isReadOnly ||
-    !hasPermission(collectivite.permissions, 'plans.mutate');
+    !collectivite.hasCollectivitePermission('plans.mutate');
 
   const updateAxe = useUpdateAxe({
     axe,

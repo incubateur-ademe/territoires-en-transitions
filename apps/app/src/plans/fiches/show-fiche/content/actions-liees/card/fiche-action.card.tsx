@@ -3,8 +3,8 @@ import { getFicheActionPlanForCollectivite } from '@/app/plans/fiches/shared/fic
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
 import { QueryKey } from '@tanstack/react-query';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
-import { CollectiviteAccess } from '@tet/domain/users';
 import { Button, Card, Checkbox, Notification, Tooltip } from '@tet/ui';
 import classNames from 'classnames';
 import { CompletionStatus } from '../../../components/completion.badge';
@@ -39,7 +39,7 @@ export type FicheActionCardProps = {
   /** Exécuté à l'ouverture et à la fermeture de la fiche action */
   onToggleOpen?: (isOpen: boolean) => void;
   /** Id de la collectivité */
-  currentCollectivite: CollectiviteAccess;
+  currentCollectivite: CollectiviteCurrent;
   /** Id de l'utilisateur */
   currentUserId: string;
 };
@@ -61,8 +61,10 @@ export const FicheActionCard = ({
     ficheAction,
     currentCollectivite.collectiviteId
   );
+
   const isNotClickable =
-    currentCollectivite.niveauAcces === null && !!ficheAction.restreint;
+    !!ficheAction.restreint &&
+    !currentCollectivite.hasCollectivitePermission('plans.fiches.read');
 
   return (
     <div className="relative group h-full">

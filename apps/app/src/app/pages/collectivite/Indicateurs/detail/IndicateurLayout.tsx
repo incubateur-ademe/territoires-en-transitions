@@ -2,7 +2,6 @@ import { canUpdateIndicateurDefinition } from '@/app/indicateurs/indicateurs/ind
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import Markdown from '@/app/ui/Markdown';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { Tab, Tabs } from '@tet/ui';
@@ -27,10 +26,10 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
   const { mutate: updateIndicateur } = useUpdateIndicateur(definition.id);
   const { id } = useUser();
 
-  const { collectiviteId, permissions, niveauAcces } = useCurrentCollectivite();
+  const { collectiviteId, hasCollectivitePermission, niveauAcces } = useCurrentCollectivite();
 
   const isReadOnly = !canUpdateIndicateurDefinition(
-    permissions,
+    hasCollectivitePermission,
     definition,
     id
   );
@@ -63,18 +62,18 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
   const enfantsIds = enfants?.map(({ id }) => id) || [];
 
   const displayFichesLieesVisiteOrPermission =
-    hasPermission(permissions, 'plans.fiches.read') ||
-    (!niveauAcces && hasPermission(permissions, 'plans.fiches.read_public'));
+    hasCollectivitePermission('plans.fiches.read') ||
+    (!niveauAcces && hasCollectivitePermission('plans.fiches.read_public'));
   const displayMesuresLieesVisiteOrPermissionForReferenceIndicateur =
     !definition.estPerso &&
-    (hasPermission(permissions, 'referentiels.read') ||
-      (!niveauAcces && hasPermission(permissions, 'referentiels.read_public')));
+    (hasCollectivitePermission('referentiels.read') ||
+      (!niveauAcces && hasCollectivitePermission('referentiels.read_public')));
 
   return (
     <>
       <IndicateurHeader
         collectiviteId={collectiviteId}
-        permissions={permissions}
+        hasCollectivitePermission={hasCollectivitePermission}
         definition={definition}
         isReadonly={isReadOnly}
         isPerso={definition.estPerso}
@@ -129,9 +128,6 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
               <Tab label="Actions">
                 <FichesLiees
                   definition={definition}
-                  isReadonly={isReadOnly}
-                  permissions={permissions}
-                  collectiviteId={collectiviteId}
                 />
               </Tab>
             ) : undefined}

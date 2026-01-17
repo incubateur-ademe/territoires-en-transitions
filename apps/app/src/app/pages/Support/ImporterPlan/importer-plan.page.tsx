@@ -2,15 +2,15 @@
 
 import { useImportPlan } from '@/app/plans/plans/import-plan/data/use-import-plan';
 import { UpsertPlanForm } from '@/app/plans/plans/upsert-plan/upsert-plan.form';
-import { useSupportMode } from '@/app/users/authorizations/support-mode/support-mode.provider';
+import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
 import { useCollectiviteId } from '@tet/api/collectivites';
 
 export const ImporterPlanPage = () => {
   const collectiviteId = useCollectiviteId();
-  const { isSupportModeEnabled } = useSupportMode();
+  const { isSuperAdminRoleEnabled } = useSuperAdminMode();
   const { mutate: importPlan, isLoading, errorMessage } = useImportPlan();
 
-  if (!isSupportModeEnabled) {
+  if (!isSuperAdminRoleEnabled) {
     return null;
   }
 

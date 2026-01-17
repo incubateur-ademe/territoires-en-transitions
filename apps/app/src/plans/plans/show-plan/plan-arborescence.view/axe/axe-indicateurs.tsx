@@ -3,7 +3,6 @@ import IndicateurCard, {
 } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
 import { Button } from '@tet/ui';
 import { PlanDisplayOptionsEnum } from '../plan-options.context';
@@ -20,8 +19,7 @@ export const AxeIndicateurs = () => {
     providerProps,
   } = useAxeContext();
   const { collectivite } = providerProps;
-  const isEditable = hasPermission(
-    collectivite.permissions,
+  const isEditable = collectivite.hasCollectivitePermission(
     'indicateurs.indicateurs.update'
   );
 

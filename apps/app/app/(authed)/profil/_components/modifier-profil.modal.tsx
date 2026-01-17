@@ -6,7 +6,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { useUpdateEmail } from '@/app/users/use-update-email';
-import { UserWithCollectiviteAccesses } from '@tet/domain/users';
+import { UserWithRolesAndPermissions } from '@tet/domain/users';
 import {
   Field,
   FormSectionGrid,
@@ -35,7 +35,7 @@ const validationSchema = z.object({
 type FormTypes = z.infer<typeof validationSchema>;
 
 type Props = {
-  user: UserWithCollectiviteAccesses;
+  user: UserWithRolesAndPermissions;
   isEmailConfirmed: boolean;
   children: JSX.Element;
 };
@@ -58,7 +58,7 @@ export const ModifierProfilModal = ({
       prenom: user.prenom,
       nom: user.nom,
       // Les string vides permettent de résoudre un conflit de types pour handleSubmit.
-      // Le schema de validation attend des valeurs alors que UserWithCollectiviteAccesses a le numéro
+      // Le schema de validation attend des valeurs alors que UserWithRolesAndPermissions a le numéro
       // de tel et l'email en undefined.
       // Une string vide ne sera jamais envoyée car
       // la validation du formulaire ne passe pas validationSchema.

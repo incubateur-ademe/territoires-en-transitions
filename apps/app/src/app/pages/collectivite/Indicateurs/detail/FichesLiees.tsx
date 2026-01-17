@@ -3,7 +3,7 @@ import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-in
 import { FichesList } from '@/app/plans/fiches/list-all-fiches/components/fiches-list';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { FicheActionFiltersProvider } from '@/app/plans/fiches/list-all-fiches/filters/fiche-action-filters-context';
-import { PermissionOperation } from '@tet/domain/users';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
 import FichePicto from '../../PlansActions/FicheAction/FichesLiees/FichePicto';
@@ -11,17 +11,12 @@ import ModaleFichesLiees from '../../PlansActions/FicheAction/FichesLiees/Modale
 
 type Props = {
   definition: IndicateurDefinition;
-  isReadonly: boolean;
-  permissions: PermissionOperation[];
-  collectiviteId: number;
 };
 
 const FichesLiees = ({
   definition,
-  isReadonly,
-  permissions,
-  collectiviteId,
 }: Props) => {
+  const { isReadOnly, collectiviteId } = useCurrentCollectivite();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { fiches } = useListFiches(collectiviteId, {
@@ -42,7 +37,7 @@ const FichesLiees = ({
         <EmptyCard
           picto={(props) => <FichePicto {...props} />}
           title="Aucune action de vos plans n'est liée !"
-          isReadonly={isReadonly}
+          isReadonly={isReadOnly}
           actions={[
             {
               children: 'Lier une action',
@@ -56,7 +51,7 @@ const FichesLiees = ({
         <div className="bg-white p-10 border border-grey-3 rounded-xl">
           <div className="flex justify-between items-center flex-wrap mb-5">
             <h6 className="text-lg mb-0">Actions liées</h6>
-            {!isReadonly && (
+            {!isReadOnly && (
               <Button
                 icon="link"
                 size="xs"
@@ -73,11 +68,9 @@ const FichesLiees = ({
                 indicateurIds: [definition.id],
                 sort: 'titre',
               }}
-              permissions={permissions}
-              isReadOnly={isReadonly}
               containerClassName="bg-white"
               onUnlink={
-                isReadonly
+                isReadOnly
                   ? undefined
                   : (ficheId) =>
                       updateIndicateur({
@@ -91,7 +84,7 @@ const FichesLiees = ({
       )}
 
       <ModaleFichesLiees
-        isOpen={isModalOpen && !isReadonly}
+        isOpen={isModalOpen && !isReadOnly}
         setIsOpen={setIsModalOpen}
         currentFicheId={null}
         linkedFicheIds={ficheIds}

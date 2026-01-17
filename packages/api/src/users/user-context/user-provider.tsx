@@ -1,7 +1,7 @@
 'use client';
 
 import { Session } from '@supabase/supabase-js';
-import { UserWithCollectiviteAccesses } from '@tet/domain/users';
+import { UserWithRolesAndPermissions } from '@tet/domain/users';
 import {
   createContext,
   ReactNode,
@@ -12,8 +12,8 @@ import {
 import { useSupabase } from '../../utils/supabase/use-supabase';
 
 type UserContextProps = {
-  user: UserWithCollectiviteAccesses | null;
-  setUser: (user: UserWithCollectiviteAccesses | null) => void;
+  user: UserWithRolesAndPermissions | null;
+  setUser: (user: UserWithRolesAndPermissions | null) => void;
 
   session: Session | null;
 };
@@ -50,7 +50,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const supabase = useSupabase();
 
   const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<UserWithCollectiviteAccesses | null>(null);
+  const [user, setUser] = useState<UserWithRolesAndPermissions | null>(null);
 
   useEffect(() => {
     // Fetch initial session immediately on mount so we don't wait for the async callback race

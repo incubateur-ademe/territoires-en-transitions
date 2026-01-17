@@ -1,6 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { CollectiviteAccess } from '@tet/domain/users';
-import { toCollectiviteAccess } from '../collectivites/fetch-current-collectivite';
+import { objectToCamel } from 'ts-case-convert';
 import { Database } from '../typeUtils';
 import {
   ActionImpactDetails,
@@ -302,7 +301,7 @@ export class PanierAPI {
    * La liste des collectivités dans lesquelles on peut
    * créer un plan à partir d'un panier.
    */
-  async mesCollectivites(): Promise<CollectiviteAccess[]> {
+  async mesCollectivites() {
     const { data, error } = await this.supabase
       .from('mes_collectivites')
       .select(
@@ -312,6 +311,10 @@ export class PanierAPI {
 
     if (error) throw error;
 
-    return data.map(toCollectiviteAccess);
+    return objectToCamel(data).map((collectivite) => ({
+      ...collectivite,
+      collectiviteId: collectivite.collectiviteId as number,
+      nom: collectivite.nom as string,
+    }));
   }
 }

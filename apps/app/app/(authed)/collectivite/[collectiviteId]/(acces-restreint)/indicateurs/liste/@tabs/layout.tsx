@@ -12,14 +12,14 @@ import { ReactNode } from 'react';
 import { TabsListParams } from './tabs-list';
 
 export default function Layout({ children }: { children: ReactNode }) {
-  const { collectiviteId, permissions } = useCurrentCollectivite();
+  const { collectiviteId, hasCollectivitePermission } = useCurrentCollectivite();
 
   return (
     <Tabs className="grow flex flex-col">
       <TabsList className="!justify-start pl-0 mt-6 flex-nowrap">
         {TabsListParams.map(
-          ({ listId, isVisibleWithPermissions, ...other }) => {
-            if (!isVisibleWithPermissions(permissions)) {
+          ({ listId, visibleWithPermission, ...other }) => {
+            if (!hasCollectivitePermission(visibleWithPermission)) {
               return null;
             }
 

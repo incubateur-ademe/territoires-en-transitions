@@ -21,7 +21,6 @@ import {
 } from '../hooks/use-select-fiche-view';
 
 import { useUser } from '@tet/api/users';
-import { PermissionOperation } from '@tet/domain/users';
 import { useCountFiches } from '../hooks/use-count-fiches';
 import { useManageFichesPagination } from '../hooks/use-manage-fiches-pagination';
 import { useSearchFiches } from '../hooks/use-search-fiches';
@@ -41,8 +40,6 @@ type Props = {
   customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;
   defaultSort?: SortValue;
-  isReadOnly?: boolean;
-  permissions: PermissionOperation[];
   containerClassName?: string;
   displayEditionMenu?: boolean;
   onUnlink?: (ficheId: number) => void;
@@ -62,8 +59,6 @@ const isSearchActive = (
 
 export const FichesList = ({
   defaultSort = 'titre',
-  isReadOnly,
-  permissions,
   containerClassName,
   displayEditionMenu = false,
   displayHeader = true,
@@ -73,6 +68,7 @@ export const FichesList = ({
   const trackEvent = useEventTracker();
 
   const collectivite = useCurrentCollectivite();
+  const { isReadOnly } = collectivite;
 
   const { view, setView } = useSelectFichesView('grid');
 
@@ -129,8 +125,7 @@ export const FichesList = ({
   } = useSelectFiches({
     view,
     currentPage,
-    isReadOnly: isReadOnly ?? false,
-    permissions,
+    collectivite,
   });
 
   const searchIsActive = isSearchActive(filters, debouncedSearch);

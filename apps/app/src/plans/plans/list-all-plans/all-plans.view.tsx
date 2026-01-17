@@ -3,7 +3,6 @@ import { CreatePlanButton } from '@/app/plans/plans/create-plan/components/creat
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { ListPlansEmptyCard } from '@/app/plans/plans/list-all-plans/list-plans.empty-card';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Spacer, VisibleWhen } from '@tet/ui';
 import { useQueryStates } from 'nuqs';
@@ -20,7 +19,7 @@ type Props = {
 
 export const AllPlansView = ({ panierId }: Props) => {
   const collectivite = useCurrentCollectivite();
-  const collectiviteId = collectivite.collectiviteId;
+  const { collectiviteId, hasCollectivitePermission } = collectivite;
 
   const [sortParams, setSortParams] = useQueryStates(sortURLParametersParser, {
     urlKeys: sortURLParametersNames,
@@ -40,8 +39,7 @@ export const AllPlansView = ({ panierId }: Props) => {
           <div className="flex gap-2">
             <VisibleWhen
               condition={
-                plansAvailable &&
-                hasPermission(collectivite.permissions, 'plans.mutate')
+                plansAvailable && hasCollectivitePermission('plans.mutate')
               }
             >
               <CreatePlanButton

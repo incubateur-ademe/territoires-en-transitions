@@ -1,5 +1,5 @@
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { PlanNode } from '@tet/domain/plans';
-import { CollectiviteAccess } from '@tet/domain/users';
 import { childrenOfPlanNodes } from '../../utils';
 import { Axe } from './axe/axe';
 import { FichesList } from './fiches.list';
@@ -8,7 +8,7 @@ import { PlanDisplayOptionsEnum, usePlanOptions } from './plan-options.context';
 interface Props {
   plan: PlanNode;
   axes: PlanNode[];
-  collectivite: CollectiviteAccess;
+  collectivite: CollectiviteCurrent;
 }
 
 export const PlanTree = ({ plan, axes, collectivite }: Props) => {

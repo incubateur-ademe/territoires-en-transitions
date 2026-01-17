@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import { UserWithCollectiviteAccesses } from '@tet/domain/users';
+import { UserWithRolesAndPermissions } from '@tet/domain/users';
 import { useSendInvitation } from './use-invite-member';
 
 export type InvitationData =
@@ -15,7 +15,7 @@ export type InvitationData =
 export const useCreateInvitation = (
   collectiviteId: number,
   collectiviteNom: string,
-  user: UserWithCollectiviteAccesses,
+  user: UserWithRolesAndPermissions,
   onResponse: (data: InvitationData) => void
 ) => {
   const queryClient = useQueryClient();

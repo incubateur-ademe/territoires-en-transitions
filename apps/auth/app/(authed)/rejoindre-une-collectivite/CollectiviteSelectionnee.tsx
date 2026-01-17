@@ -1,4 +1,5 @@
 import { useUser } from '@tet/api';
+import { hasRole, PlatformRole } from '@tet/domain/users';
 import { Alert, Button, Icon, useCopyToClipboard } from '@tet/ui';
 import { CollectiviteInfo } from './useRejoindreUneCollectivite';
 
@@ -9,7 +10,7 @@ type Props = {
 export const CollectiviteSelectionnee = ({ collectivite }: Props) => {
   const { copy } = useCopyToClipboard();
 
-  const { isVerified } = useUser();
+  const user = useUser();
 
   if (!collectivite) return;
 
@@ -52,7 +53,8 @@ export const CollectiviteSelectionnee = ({ collectivite }: Props) => {
           </tbody>
         </table>
       )}
-      {isVerified && (
+
+      {hasRole(user, PlatformRole.VERIFIED) && (
         <Button target="_blank" href={url} variant="outlined" className="mt-6">
           En attendant l’accès, visitez le profil de cette collectivité
         </Button>

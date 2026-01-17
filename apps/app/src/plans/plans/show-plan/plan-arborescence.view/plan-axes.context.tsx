@@ -1,10 +1,11 @@
 'use client';
 
 import { OPEN_AXES_KEY_SEARCH_PARAMETER } from '@/app/app/paths';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
+import {
+  CollectiviteCurrent,
+  useCurrentCollectivite,
+} from '@tet/api/collectivites';
 import { Plan, PlanNode } from '@tet/domain/plans';
-import { CollectiviteAccess } from '@tet/domain/users';
 import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs';
 import React, {
   createContext,
@@ -20,7 +21,7 @@ import { getChildrenAxeIds } from './get-children-axe-ids';
 import { PlanDisplayOptionsEnum, usePlanOptions } from './plan-options.context';
 
 type PlanAxesContextValue = {
-  collectivite: CollectiviteAccess;
+  collectivite: CollectiviteCurrent;
   plan: Plan;
   updatePlan: ReturnType<typeof useUpdatePlan>['mutate'];
   rootAxe: PlanNode;
@@ -72,9 +73,7 @@ export const PlanAxesProvider = ({
 
   const allAxeIds = rootAxe ? getChildrenAxeIds(rootAxe, axes) : [];
   const areAllClosed = openAxes.length === 0;
-  const isReadOnly =
-    collectivite.isReadOnly ||
-    !hasPermission(collectivite.permissions, 'plans.mutate');
+  const isReadOnly = !collectivite.hasCollectivitePermission('plans.mutate');
 
   // Nettoyer le flag après un court délai
   useEffect(() => {

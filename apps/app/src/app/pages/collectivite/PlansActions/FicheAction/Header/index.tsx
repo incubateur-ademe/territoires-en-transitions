@@ -2,10 +2,8 @@ import {
   makeCollectivitePlanActionUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { useCollectiviteId } from '@tet/api/collectivites';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
-import { PermissionOperation } from '@tet/domain/users';
 import { Divider, Icon } from '@tet/ui';
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
@@ -17,7 +15,6 @@ import TitreFiche from './TitreFiche';
 type FicheActionHeaderProps = {
   fiche: FicheWithRelations;
   isReadonly: boolean;
-  permissions: PermissionOperation[];
   updateTitle: (value: string | null) => void;
   planId?: number;
 };
@@ -26,7 +23,6 @@ export const Header = ({
   fiche,
   updateTitle,
   isReadonly,
-  permissions,
   planId,
 }: FicheActionHeaderProps) => {
   const {
@@ -39,7 +35,8 @@ export const Header = ({
     completion,
   } = fiche;
   const router = useRouter();
-  const collectiviteId = useCollectiviteId();
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
 
   const displayCreationInfo = createdBy || createdAt;
   const displayModificationInfo =
@@ -69,14 +66,13 @@ export const Header = ({
         {/* Actions génériques de la fiche action */}
         <Toolbar
           fiche={fiche}
-          permissions={permissions}
-          collectiviteId={collectiviteId}
+          hasCollectivitePermission={hasCollectivitePermission}
           onDeleteCallback={() => router.push(redirectPathAfterDelete)}
         />
       </div>
 
       {/* Fils d'ariane avec emplacements de la fiche */}
-      {hasPermission(permissions, 'plans.read_public') && (
+      {hasCollectivitePermission('plans.read_public') && (
         <FicheBreadcrumbs
           titre={titre ?? 'Sans titre'}
           collectiviteId={collectiviteId}

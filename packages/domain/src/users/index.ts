@@ -1,5 +1,4 @@
 export * from './apikeys/user-api-keys.schema';
-export * from './authorizations/collectivite-access.schema';
 export * from './authorizations/permission-operation.enum.schema';
 export * from './authorizations/permission.models';
 export * from './authorizations/resource-type.enum.schema';
