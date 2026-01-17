@@ -18,7 +18,7 @@ export const TabsListParams: TabParams[] = [
   {
     listId: 'perso',
     label: INDICATEUR_LABELS.personalized.plural,
-    visibleWithPermission: 'indicateurs.indicateurs.read',
+    visibleWithPermission: 'indicateurs.indicateurs.read_confidentiel',
   },
   {
     listId: 'collectivite',

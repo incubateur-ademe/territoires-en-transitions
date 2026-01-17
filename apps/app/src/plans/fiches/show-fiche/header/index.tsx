@@ -9,7 +9,7 @@ import { Menu } from './menu';
 import { SubHeader } from './subheader';
 
 const Divider = ({ className }: { className?: string | undefined }) => {
-  return <div className={cn("border-b bg-primary-3 my-3", className)} />;
+  return <div className={cn('border-b bg-primary-3 my-3', className)} />;
 };
 
 export const Header = () => {
@@ -39,9 +39,7 @@ export const Header = () => {
           <Menu />
         </div>
 
-        <VisibleWhen
-          condition={hasCollectivitePermission('plans.read_confidentiel')}
-        >
+        <VisibleWhen condition={hasCollectivitePermission('plans.read')}>
           <Breadcrumbs
             title={titre ?? 'Sans titre'}
             collectiviteId={collectiviteId}

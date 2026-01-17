@@ -75,7 +75,9 @@ const FicheActionCard = ({
 
   const isNotClickable =
     !!ficheAction.restreint &&
-    !currentCollectivite.hasCollectivitePermission('plans.fiches.read');
+    !currentCollectivite.hasCollectivitePermission(
+      'plans.fiches.read_confidentiel'
+    );
 
   const canUpdate = isFicheEditableByCollectiviteUser(
     ficheAction,
