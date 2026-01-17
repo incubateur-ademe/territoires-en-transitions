@@ -1,9 +1,25 @@
 'use client';
 
-import { CollectiviteAccess } from '@tet/domain/users';
+import {
+  CollectiviteRole,
+  CollectiviteRolesAndPermissions,
+  PermissionOperation,
+} from '@tet/domain/users';
 import dynamic from 'next/dynamic';
 import { useContext } from 'react';
 import { CollectiviteContext } from './collectivite-context';
+
+export interface CollectiviteCurrent extends CollectiviteRolesAndPermissions {
+  nom: string;
+  accesRestreint: boolean;
+
+  niveauAcces: CollectiviteRole | null;
+  isRoleAuditeur: boolean;
+  isReadOnly: boolean;
+  isSimplifiedView: boolean;
+
+  hasCollectivitePermission: (permission: PermissionOperation) => boolean;
+}
 
 export const CollectiviteProvider = dynamic(
   () =>
@@ -33,7 +49,7 @@ export function useCollectiviteId(): number {
 }
 
 /** À utiliser lorsque la collectivité est garantie */
-export function useCurrentCollectivite(): CollectiviteAccess {
+export function useCurrentCollectivite(): CollectiviteCurrent {
   const context = useCollectiviteContext();
   if (!context.collectivite) {
     throw new Error('currentCollectivite is not defined yet');

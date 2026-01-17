@@ -1,10 +1,9 @@
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { ENV } from '@tet/api/environmentVariables';
 
 import { ServicesWidget } from '@betagouv/les-communs-widget';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
-import { CollectiviteAccess } from '@tet/domain/users';
 import { AppEnvironment } from '@tet/domain/utils';
 import { Tab, Tabs } from '@tet/ui';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
@@ -27,7 +26,7 @@ type FicheActionOngletsProps = {
   isEditLoading: boolean;
   isReadonly: boolean;
   className?: string;
-  collectivite: CollectiviteAccess;
+  collectivite: CollectiviteCurrent;
 };
 
 const FicheActionOnglets = ({
@@ -37,7 +36,7 @@ const FicheActionOnglets = ({
   className,
   collectivite,
 }: FicheActionOngletsProps) => {
-  const { collectiviteId, permissions, niveauAcces } = collectivite;
+  const { collectiviteId, niveauAcces, hasCollectivitePermission } = collectivite;
   const widgetCommunsFlagEnabled = useFeatureFlagEnabled(
     'is-widget-communs-enabled'
   );
@@ -51,9 +50,9 @@ const FicheActionOnglets = ({
     {
       label: 'Indicateurs de suivi',
       isVisible:
-        hasPermission(permissions, 'indicateurs.indicateurs.read') ||
+        hasCollectivitePermission('indicateurs.indicateurs.read') ||
         (!niveauAcces &&
-          hasPermission(permissions, 'indicateurs.indicateurs.read_public')),
+          hasCollectivitePermission('indicateurs.indicateurs.read_public')),
       render: () => (
         <IndicateursTab
           isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
@@ -79,9 +78,9 @@ const FicheActionOnglets = ({
     {
       label: 'Actions liées',
       isVisible:
-        hasPermission(permissions, 'plans.fiches.read') ||
+        hasCollectivitePermission('plans.fiches.read') ||
         (!niveauAcces &&
-          hasPermission(permissions, 'plans.fiches.read_public')),
+          hasCollectivitePermission('plans.fiches.read_public')),
       render: () => (
         <FichesLieesTab
           isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
@@ -94,9 +93,9 @@ const FicheActionOnglets = ({
     {
       label: 'Mesures des référentiels liées',
       isVisible:
-        hasPermission(permissions, 'referentiels.read') ||
+        hasCollectivitePermission('referentiels.read') ||
         (!niveauAcces &&
-          hasPermission(permissions, 'referentiels.read_public')),
+          hasCollectivitePermission('referentiels.read_public')),
       render: () => (
         <MesuresLieesView
           isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}

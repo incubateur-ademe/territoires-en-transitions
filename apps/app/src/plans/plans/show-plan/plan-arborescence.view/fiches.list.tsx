@@ -5,15 +5,15 @@ import {
   isFicheEditableByCollectiviteUser,
   isFicheSharedWithCollectivite,
 } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
-import { CollectiviteAccess } from '@tet/domain/users';
 import { useListFiches } from '../../../fiches/list-all-fiches/data/use-list-fiches';
 
 type Props = {
   ficheIds: number[];
   axeId: number;
   planId?: number;
-  collectivite: CollectiviteAccess;
+  collectivite: CollectiviteCurrent;
 };
 
 export const FichesList = ({

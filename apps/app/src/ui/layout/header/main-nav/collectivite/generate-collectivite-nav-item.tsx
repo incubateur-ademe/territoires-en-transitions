@@ -1,14 +1,20 @@
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
-import { CollectiviteAccess } from '@tet/domain/users';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
+import {
+  AuditRole,
+  CollectiviteRolesAndPermissions,
+  hasCollectiviteRole,
+  UserRolesAndPermissions,
+} from '@tet/domain/users';
 import { NavItem, Tooltip } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 
 export const generateCollectiviteNavItem = (
-  collectivites: CollectiviteAccess[],
-  currentCollectivite: CollectiviteAccess
+  user: UserRolesAndPermissions,
+  currentCollectivite: CollectiviteCurrent
 ): NavItem => {
-  const listCollectivites = collectivites.filter(
+  const listCollectivites = user.collectivites.filter(
     ({ collectiviteId }) =>
       collectiviteId !== currentCollectivite.collectiviteId
   );
@@ -40,7 +46,7 @@ const CollectiviteWithBadge = ({
   collectivite,
   isActive,
 }: {
-  collectivite: CollectiviteAccess;
+  collectivite: CollectiviteRolesAndPermissions;
   isActive?: boolean;
 }) => {
   return (
@@ -49,19 +55,19 @@ const CollectiviteWithBadge = ({
         'justify-between': !isActive,
       })}
     >
-      <Tooltip label={collectivite.nom} withArrow={false}>
+      <Tooltip label={collectivite.collectiviteNom} withArrow={false}>
         <span
           className={cn(
             'lg:max-w-[8rem] xl:max-w-[16rem] 2xl:max-w-[20rem] line-clamp-1',
             { 'font-bold': isActive }
           )}
         >
-          {collectivite.nom}
+          {collectivite.collectiviteNom}
         </span>
       </Tooltip>
       <BadgeNiveauAcces
-        acces={collectivite.niveauAcces}
-        isAuditeur={collectivite.isRoleAuditeur}
+        acces={collectivite.role}
+        isAuditeur={hasCollectiviteRole(collectivite, AuditRole.AUDITEUR)}
       />
     </div>
   );

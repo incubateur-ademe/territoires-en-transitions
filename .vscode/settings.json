@@ -13,7 +13,7 @@
   },
   "typescript.preferences.importModuleSpecifier": "shortest",
   "typescript.tsdk": "node_modules/typescript/lib",
-"typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.enablePromptUseWorkspaceTsdk": true,
   "nxConsole.generateAiAgentRules": true,
   "eslint.enable": true,
   "eslint.useFlatConfig": true

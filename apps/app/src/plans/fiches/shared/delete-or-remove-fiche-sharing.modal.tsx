@@ -1,6 +1,5 @@
 import { RemoveSharingModal } from '@/app/plans/fiches/share-fiche/remove-sharing.modal';
 import { DeleteFicheModal } from '@/app/plans/fiches/shared/delete-fiche.modal';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { OpenState } from '@tet/ui/utils/types';
 import { FicheListItem } from '../list-all-fiches/data/use-list-fiches';
@@ -31,12 +30,12 @@ export const DeleteOrRemoveFicheSharingModal = ({
   axeId,
 }: DeleteOrRemoveFicheSharingModalProps) => {
   const { sharedWithCollectivites } = fiche;
-  const { collectiviteId, permissions } = useCurrentCollectivite();
+  const { collectiviteId, hasCollectivitePermission } = useCurrentCollectivite();
 
   const isShared = sharedWithCollectivites?.some(
     (sharing) => sharing.id === collectiviteId
   );
-  const hasDeletePermission = hasPermission(permissions, 'plans.fiches.delete');
+  const hasDeletePermission = hasCollectivitePermission('plans.fiches.delete');
 
   if (!hasDeletePermission) {
     return null;

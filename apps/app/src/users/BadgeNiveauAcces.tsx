@@ -1,10 +1,10 @@
 import { getAccessLevelLabel } from '@/app/users/authorizations/permission-access-level.utils';
-import { CollectiviteAccessLevel } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import { Badge, BadgeSize } from '@tet/ui';
 import classNames from 'classnames';
 
 type Props = {
-  acces: CollectiviteAccessLevel | null;
+  acces: CollectiviteRole | null;
   isAuditeur?: boolean;
   size?: BadgeSize;
   className?: string;

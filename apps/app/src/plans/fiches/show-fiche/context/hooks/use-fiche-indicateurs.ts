@@ -3,17 +3,13 @@ import {
   IndicateurDefinitionListItem,
   useListIndicateurs,
 } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { PermissionOperation } from '@tet/domain/users';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { useCallback, useMemo } from 'react';
 import { useUpdateFiche } from '../../../update-fiche/data/use-update-fiche';
 import { IndicateursState } from '../types';
 
 export const useFicheIndicateurs = (
-  collectivite: {
-    collectiviteId: number;
-    permissions: PermissionOperation[];
-  },
+  collectivite: CollectiviteCurrent,
   ficheId: number,
   userId: string
 ): IndicateursState => {
@@ -46,19 +42,18 @@ export const useFicheIndicateurs = (
     [ficheId, list, updateFiche]
   );
 
-  const canCreate = hasPermission(
-    collectivite.permissions,
+  const canCreate = collectivite.hasCollectivitePermission(
     'indicateurs.indicateurs.create'
   );
 
   const canUpdate = useCallback(
     (indicateur: IndicateurDefinitionListItem) =>
       canUpdateIndicateurDefinition(
-        collectivite.permissions,
+        collectivite.hasCollectivitePermission,
         indicateur,
         userId
       ),
-    [collectivite.permissions, userId]
+    [collectivite.hasCollectivitePermission, userId]
   );
 
   return useMemo(

@@ -3,7 +3,7 @@ import {
   useCollectiviteMembres,
 } from '@/app/app/pages/collectivite/Users/useCollectiviteMembres';
 import { useUpdateCollectiviteMembre } from '@/app/app/pages/collectivite/Users/useUpdateCollectiviteMembre';
-import { CollectiviteAccessLevel } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import {
   DEPRECATED_Table,
   DEPRECATED_TBody,
@@ -21,7 +21,7 @@ import MembresListeTableRow from './membres-liste-table-row';
 export type MembreListTableProps = {
   collectiviteId: number;
   currentUserId: string;
-  currentUserAccess: CollectiviteAccessLevel;
+  currentUserAccess: CollectiviteRole;
   sendInvitation: (args: SendInvitationArgs) => void;
 };
 

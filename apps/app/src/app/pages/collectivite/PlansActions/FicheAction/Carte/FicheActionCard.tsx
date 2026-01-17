@@ -13,7 +13,7 @@ import MoveFicheModal from '@/app/plans/plans/show-plan/actions/move-fiche.modal
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
 import { QueryKey } from '@tanstack/react-query';
-import { CollectiviteAccess } from '@tet/domain/users';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import {
   Button,
   ButtonMenu,
@@ -55,7 +55,7 @@ export type FicheActionCardProps = {
   /** Exécuté à l'ouverture et à la fermeture de la fiche action */
   onToggleOpen?: (isOpen: boolean) => void;
   /** Id de la collectivité */
-  currentCollectivite: CollectiviteAccess;
+  currentCollectivite: CollectiviteCurrent;
   /** Id de l'utilisateur */
   currentUserId: string;
   /** ID du plan pour la mise à jour optimiste de la suppression (optionnel) */
@@ -91,8 +91,10 @@ const FicheActionCard = ({
     ficheAction,
     currentCollectivite.collectiviteId
   );
+
   const isNotClickable =
-    currentCollectivite.niveauAcces === null && !!ficheAction.restreint;
+    !!ficheAction.restreint &&
+    !currentCollectivite.hasCollectivitePermission('plans.fiches.read_public');
 
   const canUpdate = isFicheEditableByCollectiviteUser(
     ficheAction,

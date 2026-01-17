@@ -1,8 +1,8 @@
 import { profilPath } from '@/app/app/paths';
 import { signOutUser } from '@tet/api/utils/supabase/sign-out-user.server';
-import { UserWithCollectiviteAccesses } from '@tet/domain/users';
+import { hasRole, PlatformRole, UserWithRolesAndPermissions } from '@tet/domain/users';
 
-export const makeSecondaryNav = (user: UserWithCollectiviteAccesses) => {
+export const makeSecondaryNav = (user: UserWithRolesAndPermissions) => {
   return [
     {
       children: 'Aide',
@@ -15,7 +15,7 @@ export const makeSecondaryNav = (user: UserWithCollectiviteAccesses) => {
       className: 'max-w-80',
       children: user.prenom,
       icon: `${
-        user.isSupport ? 'customer-service-line' : 'account-circle-line'
+        hasRole(user, PlatformRole.SUPPORT) ? 'customer-service-line' : 'account-circle-line'
       }`,
       links: [
         {

@@ -1,11 +1,11 @@
 'use client';
 
 import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
-import { SupportModeProvider } from '@/app/users/authorizations/support-mode/support-mode.provider';
+import { SuperAdminModeProvider } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
 import { NPSTracker } from '@/app/utils/nps/nps-tracker';
 import { CollectiviteProvider } from '@tet/api/collectivites';
 import { UserProviderStoreClient } from '@tet/api/users';
-import { UserWithCollectiviteAccesses } from '@tet/domain/users';
+import { UserWithRolesAndPermissions } from '@tet/domain/users';
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
 
@@ -17,17 +17,17 @@ export function AuthedProviders({
   user,
   children,
 }: {
-  user: UserWithCollectiviteAccesses;
+  user: UserWithRolesAndPermissions;
   children: ReactNode;
 }) {
   return (
     <UserProviderStoreClient user={user}>
       <CollectiviteProvider user={user}>
-        <SupportModeProvider>
+        <SuperAdminModeProvider>
           <NPSTracker />
           <AccepterCGUModal />
           {children}
-        </SupportModeProvider>
+        </SuperAdminModeProvider>
       </CollectiviteProvider>
       <Stonly />
     </UserProviderStoreClient>

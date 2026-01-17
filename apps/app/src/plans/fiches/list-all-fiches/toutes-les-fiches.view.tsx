@@ -2,7 +2,6 @@
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { Header } from '@/app/plans/plans/components/header';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, Spacer, VisibleWhen } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
@@ -54,7 +53,7 @@ const viewTitleByType: Record<FicheActionViewType, string> = {
 };
 
 const ToutesLesFichesActionContent = () => {
-  const { collectiviteId, isReadOnly, permissions } = useCurrentCollectivite();
+  const { collectiviteId, isReadOnly, hasCollectivitePermission } = useCurrentCollectivite();
   const { countFichesNonClassees, countFichesClassees, countTotalFiches } =
     useCountFiches();
   const { mutate: createFicheAction } = useCreateFicheAction();
@@ -69,16 +68,14 @@ const ToutesLesFichesActionContent = () => {
     isVisibleWithPermissions: boolean;
   }[] = [
     {
-      isVisibleWithPermissions: hasPermission(
-        permissions,
+      isVisibleWithPermissions: hasCollectivitePermission(
         'plans.fiches.read_public'
       ),
       type: 'all',
       label: getLabelAndCount(viewTitleByType.all, countTotalFiches),
     },
     {
-      isVisibleWithPermissions: hasPermission(
-        permissions,
+      isVisibleWithPermissions: hasCollectivitePermission(
         'plans.fiches.read_public'
       ),
       type: 'dans-plan',
@@ -88,8 +85,7 @@ const ToutesLesFichesActionContent = () => {
       ),
     },
     {
-      isVisibleWithPermissions: hasPermission(
-        permissions,
+      isVisibleWithPermissions: hasCollectivitePermission(
         'plans.fiches.read_public'
       ),
       type: 'hors-plan',
@@ -99,7 +95,7 @@ const ToutesLesFichesActionContent = () => {
       ),
     },
     {
-      isVisibleWithPermissions: hasPermission(permissions, 'plans.fiches.read'),
+      isVisibleWithPermissions: hasCollectivitePermission('plans.fiches.read'),
       type: 'mes-actions',
       label: getLabelAndCount(viewTitleByType['mes-actions'], undefined),
     },
@@ -112,7 +108,7 @@ const ToutesLesFichesActionContent = () => {
         actionButtons={
           <VisibleWhen
             condition={
-              !isReadOnly && hasPermission(permissions, 'plans.fiches.create')
+              !isReadOnly && hasCollectivitePermission('plans.fiches.create')
             }
           >
             <Button size="sm" onClick={() => createFicheAction()}>
@@ -148,8 +144,6 @@ const ToutesLesFichesActionContent = () => {
       <div className="min-h-[44rem] flex flex-col gap-8">
         <FichesList
           defaultSort="titre"
-          isReadOnly={isReadOnly}
-          permissions={permissions}
           displayEditionMenu
           filters={filters}
         />

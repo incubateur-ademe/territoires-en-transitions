@@ -1,5 +1,5 @@
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { PlanNode } from '@tet/domain/plans';
-import { CollectiviteAccess } from '@tet/domain/users';
 import { cn } from '@tet/ui';
 import { useEffect, useRef } from 'react';
 import { AxeDescription } from './axe-description';
@@ -14,7 +14,7 @@ type Props = {
   axe: PlanNode;
   rootAxe: PlanNode;
   axes: PlanNode[];
-  collectivite: CollectiviteAccess;
+  collectivite: CollectiviteCurrent;
 };
 
 export const Axe = (props: Props) => {

@@ -10,9 +10,7 @@ import { Event, EventName, useEventTracker } from '@tet/ui';
 
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { ListPlansEmptyCard } from '@/app/plans/plans/list-all-plans/list-plans.empty-card';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { PermissionOperation } from '@tet/domain/users';
 import { useTdbPersoFetchModules } from '../_hooks/use-tdb-perso-fetch-modules';
 import FichesDontJeSuisLePiloteModal from './fiches-dont-je-suis-le-pilote.modal';
 import { FilteredFichesByModule } from './filtered-fiche-by-module';
@@ -21,7 +19,7 @@ import MesuresDontJeSuisLePiloteModule from './mesures-dont-je-suis-le-pilote.mo
 
 type ModuleDescriptor = {
   match: (module: Pick<ModuleSelect, 'defaultKey' | 'type'>) => boolean;
-  isVisibleWithPermissions: (permissions?: PermissionOperation[]) => boolean;
+  isVisible: boolean;
   render: (module: ModuleSelect) => React.ReactNode | null;
 };
 const orderedModules: PersonalDefaultModuleKeys[] = [
@@ -47,13 +45,17 @@ const Modules = () => {
   const tracker = useEventTracker();
 
   const currentCollectivite = useCurrentCollectivite();
-  const { collectiviteId, niveauAcces, permissions, isSimplifiedView } =
-    currentCollectivite;
+  const {
+    collectiviteId,
+    niveauAcces,
+    hasCollectivitePermission,
+    isSimplifiedView,
+  } = currentCollectivite;
 
   const { totalCount: plansCount } = useListPlans(collectiviteId);
 
   const noPlanAndCanCreatePlan =
-    plansCount === 0 && hasPermission(permissions, 'plans.mutate');
+    plansCount === 0 && hasCollectivitePermission('plans.mutate');
 
   // In order to simplify UI, we don't allow to edit modules for edition_fiches_indicateurs users
   // Later maybe generalized
@@ -82,8 +84,7 @@ const Modules = () => {
       match: (m) =>
         m.type === 'fiche_action.list' &&
         m.defaultKey === 'actions-dont-je-suis-pilote',
-      isVisibleWithPermissions: (permissions) =>
-        hasPermission(permissions, 'plans.fiches.read'),
+      isVisible: hasCollectivitePermission('plans.fiches.read'),
       render: (module) => {
         if (noPlanAndCanCreatePlan) {
           // We already display the placeholder to create a plan, so we don't need to display the list of fiche actions module.
@@ -111,8 +112,7 @@ const Modules = () => {
       match: (m) =>
         m.type === 'indicateur.list' &&
         m.defaultKey === 'indicateurs-dont-je-suis-pilote',
-      isVisibleWithPermissions: (permissions) =>
-        hasPermission(permissions, 'indicateurs.indicateurs.read'),
+      isVisible: hasCollectivitePermission('indicateurs.indicateurs.read'),
       render: (module) => (
         <IndicateursDontJeSuisLePiloteModule
           key={module.defaultKey}
@@ -123,8 +123,7 @@ const Modules = () => {
     },
     {
       match: (m) => m.type === 'mesure.list',
-      isVisibleWithPermissions: (permissions) =>
-        hasPermission(permissions, 'referentiels.read'),
+      isVisible: hasCollectivitePermission('referentiels.read'),
       render: (module) => (
         <MesuresDontJeSuisLePiloteModule
           key={module.defaultKey}
@@ -144,7 +143,7 @@ const Modules = () => {
       .map((module) => {
         if (!module) return null;
         const d = modulesDescriptors.find((x) => x.match(module));
-        if (!d || !d.isVisibleWithPermissions(permissions)) return null;
+        if (!d || !d.isVisible) return null;
         return d.render(module);
       })
       .filter(Boolean),

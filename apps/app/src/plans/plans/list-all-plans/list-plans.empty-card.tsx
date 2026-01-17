@@ -1,7 +1,6 @@
 'use client';
 import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { CollectiviteAccess } from '@tet/domain/users';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { EmptyCard } from '@tet/ui';
 import { useState } from 'react';
 import { CreatePlanModal } from '../create-plan/create-plan.modal';
@@ -17,12 +16,12 @@ export const ListPlansEmptyCard = ({
   collectivite,
   panierId,
 }: {
-  collectivite: CollectiviteAccess;
+  collectivite: CollectiviteCurrent;
   panierId?: string;
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  if (!hasPermission(collectivite.permissions, 'plans.mutate')) {
+  if (!collectivite.hasCollectivitePermission('plans.mutate')) {
     return <ListPlansVisitorEmptyCard />;
   }
 

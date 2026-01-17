@@ -1,10 +1,10 @@
 import { useToastContext } from '@/app/utils/toast/toast-context';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { useUser } from '@tet/api/users';
 import {
-  CollectiviteAccess,
-  UserWithCollectiviteAccesses,
-} from '@tet/domain/users';
+  CollectiviteCurrent,
+  useCurrentCollectivite,
+} from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
+import { UserWithRolesAndPermissions } from '@tet/domain/users';
 import { Modal } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useEffect, useState } from 'react';
@@ -14,8 +14,8 @@ import { SendInvitationData } from './use-invite-member';
 
 type InvitationModalProps = {
   openState: OpenState;
-  collectivite: CollectiviteAccess;
-  currentUser: UserWithCollectiviteAccesses;
+  collectivite: CollectiviteCurrent;
+  currentUser: UserWithRolesAndPermissions;
   sendData?: SendInvitationData;
   tagIds?: number[];
 };
@@ -27,7 +27,7 @@ const InvitationModal = ({
   sendData,
   tagIds,
 }: InvitationModalProps) => {
-  const { collectiviteId, nom: collectiviteNom, niveauAcces } = collectivite;
+  const { collectiviteId, collectiviteNom, niveauAcces } = collectivite;
 
   const [data, setData] = useState<InvitationData>();
 

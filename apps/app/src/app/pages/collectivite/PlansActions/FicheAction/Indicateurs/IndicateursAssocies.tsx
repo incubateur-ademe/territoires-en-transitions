@@ -10,7 +10,6 @@ import {
 import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import {
@@ -37,7 +36,7 @@ const IndicateursAssocies = ({
   fiche,
 }: IndicateursAssociesProps) => {
   const { mutate: updateFiche } = useUpdateFiche();
-  const { collectiviteId: currentCollectiviteId, permissions } =
+  const { collectiviteId: currentCollectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
   const { id: userId } = useUser();
 
@@ -72,8 +71,7 @@ const IndicateursAssocies = ({
     });
   };
 
-  const canCreateIndicateur = hasPermission(
-    permissions,
+  const canCreateIndicateur = hasCollectivitePermission(
     'indicateurs.indicateurs.create'
   );
 
@@ -151,7 +149,7 @@ const IndicateursAssocies = ({
                 definition={indicateur}
                 externalCollectiviteId={fiche.collectiviteId}
                 isEditable={canUpdateIndicateurDefinition(
-                  permissions,
+                  hasCollectivitePermission,
                   indicateur,
                   userId
                 )}

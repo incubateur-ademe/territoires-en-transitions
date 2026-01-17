@@ -1,4 +1,3 @@
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { cn, VisibleWhen } from '@tet/ui';
 import { useFicheContext } from '../context/fiche-context';
@@ -15,7 +14,8 @@ const Divider = ({ className }: { className?: string | undefined }) => {
 
 export const Header = () => {
   const { fiche, isReadonly, planId, update } = useFicheContext();
-  const { collectiviteId, permissions } = useCurrentCollectivite();
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
   const { titre, axes } = fiche;
 
   const updateTitle = (titre: string | null) =>
@@ -36,12 +36,10 @@ export const Header = () => {
             />
           </div>
 
-          <Menu permissions={permissions} />
+          <Menu />
         </div>
 
-        <VisibleWhen
-          condition={hasPermission(permissions, 'plans.read_public')}
-        >
+        <VisibleWhen condition={hasCollectivitePermission('plans.read_public')}>
           <Breadcrumbs
             title={titre ?? 'Sans titre'}
             collectiviteId={collectiviteId}

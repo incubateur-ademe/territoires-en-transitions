@@ -1,6 +1,5 @@
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { CollectiviteAccess } from '@tet/domain/users';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { FicheListItem } from '../list-all-fiches/data/use-list-fiches';
 
 export function isFicheSharedWithCollectivite(
@@ -16,20 +15,20 @@ export function isFicheSharedWithCollectivite(
 
 export function isFicheEditableByCollectiviteUser(
   fiche: FicheShareProperties & Pick<FicheListItem, 'pilotes'>,
-  currentCollectivite: CollectiviteAccess,
+  { collectiviteId, isReadOnly, hasCollectivitePermission }: CollectiviteCurrent,
   userId?: string
 ) {
+
   return (
-    !currentCollectivite.isReadOnly &&
-    (hasPermission(currentCollectivite.permissions, 'plans.fiches.update') ||
+    !isReadOnly &&
+    (hasCollectivitePermission('plans.fiches.update') ||
       (userId &&
-        hasPermission(
-          currentCollectivite.permissions,
+        hasCollectivitePermission(
           'plans.fiches.update_piloted_by_me'
         ) &&
         fiche.pilotes?.some((pilote) => pilote.userId === userId))) &&
-    (fiche.collectiviteId === currentCollectivite.collectiviteId ||
-      isFicheSharedWithCollectivite(fiche, currentCollectivite.collectiviteId))
+    (fiche.collectiviteId === collectiviteId ||
+      isFicheSharedWithCollectivite(fiche, collectiviteId))
   );
 }
 

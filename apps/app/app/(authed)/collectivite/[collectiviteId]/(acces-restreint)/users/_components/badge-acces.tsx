@@ -1,10 +1,10 @@
-import { CollectiviteAccessLevel } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import { Badge, BadgeProps, IconValue } from '@tet/ui';
 import classNames from 'classnames';
 
 import { getAccessLevelLabel } from '@/app/users/authorizations/permission-access-level.utils';
 
-const niveauAccesToIcon: Record<CollectiviteAccessLevel, IconValue> = {
+const niveauAccesToIcon: Record<CollectiviteRole, IconValue> = {
   admin: 'user-star-line',
   edition: 'edit-line',
   edition_fiches_indicateurs: 'edit-line',
@@ -15,7 +15,7 @@ type BadgeAccesProps = Omit<
   BadgeProps,
   'title' | 'icon' | 'iconPosition' | 'state' | 'uppercase' | 'className'
 > & {
-  acces?: CollectiviteAccessLevel;
+  acces?: CollectiviteRole;
   className?: string;
 };
 

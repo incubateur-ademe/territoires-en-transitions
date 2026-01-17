@@ -1,9 +1,8 @@
 'use client';
 import { useCreateFicheResume } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
 import PictoAction from '@/app/ui/pictogrammes/PictoAction';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { PlanNode } from '@tet/domain/plans';
-import { CollectiviteAccess } from '@tet/domain/users';
 import { EmptyCard } from '@tet/ui';
 import { useCreateAxe } from './data/use-create-axe';
 
@@ -11,7 +10,7 @@ export const EmptyPlanView = ({
   currentCollectivite,
   plan,
 }: {
-  currentCollectivite: CollectiviteAccess;
+  currentCollectivite: CollectiviteCurrent;
   plan: PlanNode;
 }) => {
   const { mutate: addAxe } = useCreateAxe({
@@ -27,7 +26,7 @@ export const EmptyPlanView = ({
     axeFichesIds: plan.fiches,
   });
 
-  if (!hasPermission(currentCollectivite.permissions, 'plans.mutate')) {
+  if (!currentCollectivite.hasCollectivitePermission('plans.mutate')) {
     return (
       <EmptyCard
         picto={(props) => <PictoAction {...props} />}

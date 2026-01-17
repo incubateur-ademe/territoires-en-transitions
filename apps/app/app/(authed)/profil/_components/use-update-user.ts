@@ -7,7 +7,7 @@ export const useUpdateUser = () => {
   const trpc = useTRPC();
 
   return useMutation(
-    trpc.users.update.mutationOptions({
+    trpc.users.users.update.mutationOptions({
       onSuccess: () => {
         router.refresh();
       },

@@ -2,12 +2,12 @@ import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheActi
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
-import { CollectiviteAccess } from '@tet/domain/users';
 import { EmptyCard } from '@tet/ui';
 
 type Props = {
-  collectivite: CollectiviteAccess;
+  collectivite: CollectiviteCurrent;
   currentUserId: string;
   fiches: FicheWithRelationsAndCollectivite[];
   isLoading: boolean;

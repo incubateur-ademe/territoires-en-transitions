@@ -1,4 +1,5 @@
 import { getUser } from '@tet/api/users/user-details.fetch.server';
+import { hasPermission } from '@tet/domain/users';
 import { VisibleWhen } from '@tet/ui';
 import { ReactNode } from 'react';
 import { z } from 'zod';
@@ -18,13 +19,10 @@ export default async function Layout({
   const collectiviteId = z.coerce.number().parse(unsafeCollectiviteId);
 
   const user = await getUser();
-  const collectivite = user.collectivites.find(
-    (c) => c.collectiviteId === collectiviteId
-  );
 
-  const canInvite =
-    collectivite?.niveauAcces === 'admin' ||
-    collectivite?.niveauAcces === 'edition';
+  const canInvite = hasPermission(user, 'collectivites.membres.mutate', {
+    collectiviteId,
+  });
 
   return (
     <>

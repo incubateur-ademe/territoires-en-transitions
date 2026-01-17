@@ -7,8 +7,7 @@ import {
   usePlanAxesContext,
 } from '@/app/plans/plans/show-plan/plan-arborescence.view/plan-axes.context';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { useUser } from '@tet/api';
+import { useUser } from '@tet/api/users';
 import { Plan } from '@tet/domain/plans';
 import { Button, Spacer, VisibleWhen } from '@tet/ui';
 import { CompletionAlert } from './completion/completion.alert';
@@ -117,7 +116,7 @@ const PlanViewContent = () => {
                 condition={
                   !isReadOnly &&
                   isActionsVisible &&
-                  hasPermission(collectivite.permissions, 'plans.mutate')
+                  collectivite.hasCollectivitePermission('plans.mutate')
                 }
               >
                 <div className="flex items-center gap-6">

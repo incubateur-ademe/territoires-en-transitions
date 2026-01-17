@@ -1,18 +1,19 @@
-import { CollectiviteAccess } from '@tet/domain/users';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
+import { UserRolesAndPermissions } from '@tet/domain/users';
 import { HeaderProps } from '@tet/ui';
 import { generateCollectiviteNavItem } from './generate-collectivite-nav-item';
 import { generateTdbPersonalLink } from './generate-tdb-personal-link';
 import { CollectiviteNavItem } from './make-collectivite-nav';
 
-export const makeRoleEditionActionsIndicateursNav = ({
+export const makeSimplifiedViewNav = ({
+  user,
   currentCollectivite,
-  collectivites,
 }: {
-  currentCollectivite: CollectiviteAccess;
-  collectivites: CollectiviteAccess[];
+  user: UserRolesAndPermissions;
+  currentCollectivite: CollectiviteCurrent;
 }): HeaderProps['mainNav'] => {
   const endItems: CollectiviteNavItem[] = [
-    generateCollectiviteNavItem(collectivites, currentCollectivite),
+    generateCollectiviteNavItem(user, currentCollectivite),
   ];
 
   return {
