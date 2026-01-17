@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PersonneTagService } from '@tet/backend/collectivites/tags/personnes/personne-tag.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { z } from 'zod';
 import { PermissionService } from '../../../users/authorizations/permission.service';
 

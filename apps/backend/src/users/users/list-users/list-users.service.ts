@@ -1,127 +1,67 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
-import { AuthUser } from '@tet/backend/users/models/auth.models';
-import { dcpTable } from '@tet/backend/users/models/dcp.table';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { UserWithCollectiviteAccesses } from '@tet/domain/users';
-import { and, eq, inArray, sql, SQL, SQLWrapper } from 'drizzle-orm';
-import { isNil } from 'es-toolkit';
-import z from 'zod';
-import { RoleService } from '../../authorizations/roles/role.service';
-import { utilisateurSupportTable } from '../../authorizations/roles/utilisateur-support.table';
-import { utilisateurVerifieTable } from '../../authorizations/roles/utilisateur-verifie.table';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Dcp, UserInfo, UserWithRolesAndPermissions } from '@tet/domain/users';
+import { pick } from 'es-toolkit';
+import { GetUserRolesAndPermissionsService } from '../../authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
+import { ListUsersRepository } from './list-users.repository';
+
+export type BasicUserInfo = Pick<Dcp, 'id' | 'email' | 'nom' | 'prenom'>;
+
+type EitherUserIdOrEmail =
+  | { userId: string; email?: undefined }
+  | {
+      userId?: undefined;
+      email: string;
+    };
 
 @Injectable()
 export class ListUsersService {
-  private db = this.database.db;
   constructor(
-    private readonly database: DatabaseService,
-    private readonly roleService: RoleService
+    private readonly listUsersRepository: ListUsersRepository,
+    private readonly getUserPermissionsService: GetUserRolesAndPermissionsService
   ) {}
 
-  readonly getInputSchema = z.object({
-    email: z.string(),
-  });
+  async getUserBasicInfo({
+    userId,
+  }: {
+    userId: string;
+  }): Promise<BasicUserInfo | null> {
+    const [user] = await this.listUsersRepository.listUserInfosBy({ userId });
 
-  async getUserWithAccesses(user: AuthUser) {
-    if (user.role !== 'authenticated' || isNil(user.id)) {
-      throw new ForbiddenException(
-        'Uniquement accessible pour utilisateurs authentifiés'
-      );
-    }
-
-    const userInfo: UserWithCollectiviteAccesses =
-      await this.getUserWithAccessesById(user.id);
-    return { user: userInfo };
-  }
-
-  private async getUserInfoByEmail(email: string) {
-    const users = await this.getUsersInfoByEmail([email]);
-    return users?.[0] || null;
-  }
-
-  async getUserInfoById(userId: string) {
-    const users = await this.getUsersInfoBy([eq(dcpTable.userId, userId)]);
-    return users?.[0] || null;
-  }
-
-  private async getUsersInfoByEmail(emails: string[]) {
-    return this.getUsersInfoBy([inArray(dcpTable.email, emails)]);
-  }
-
-  private async getUsersInfoBy(where: (SQLWrapper | SQL)[]) {
-    return this.db
-      .select({
-        id: dcpTable.userId,
-        email: dcpTable.email,
-        nom: dcpTable.nom,
-        prenom: dcpTable.prenom,
-        telephone: dcpTable.telephone,
-        cguAccepteesLe: dcpTable.cguAccepteesLe,
-        isVerified: sql<boolean>`coalesce(${utilisateurVerifieTable.verifie}, false)`,
-        isSupport: sql<boolean>`coalesce(${utilisateurSupportTable.isSupport}, false)`,
-        isSupportModeEnabled: sql<boolean>`coalesce(${utilisateurSupportTable.isSupportModeEnabled}, false) AND coalesce(${utilisateurSupportTable.isSupport}, false)`,
-      })
-      .from(authUsersTable)
-      .innerJoin(dcpTable, eq(dcpTable.userId, authUsersTable.id))
-      .leftJoin(
-        utilisateurSupportTable,
-        eq(utilisateurSupportTable.userId, authUsersTable.id)
-      )
-      .leftJoin(
-        utilisateurVerifieTable,
-        eq(utilisateurVerifieTable.userId, authUsersTable.id)
-      )
-      .where(and(...where));
-  }
-
-  readonly getAllInputSchema = z.object({
-    emails: z.string().array(),
-  });
-
-  async usersInfoByEmail({ emails }: z.infer<typeof this.getAllInputSchema>) {
-    return this.getUsersInfoByEmail(emails);
-  }
-
-  private async getUserWithAccessesById(userId: string) {
-    const userInfo: Omit<UserWithCollectiviteAccesses, 'collectivites'> | null =
-      await this.getUserInfoById(userId);
-
-    if (!userInfo) {
-      throw new NotFoundException(`Utilisateur avec l'ID ${userId} non trouvé`);
-    }
-
-    const collectiviteAccesses = await this.roleService.getCollectiviteAccesses(
-      userInfo.id
-    );
-
-    return {
-      ...userInfo,
-      collectivites: collectiviteAccesses || [],
-    };
-  }
-
-  async getUserWithAccessesByEmail(email: string) {
-    const userInfo: Omit<UserWithCollectiviteAccesses, 'collectivites'> | null =
-      await this.getUserInfoByEmail(email);
-
-    if (!userInfo) {
+    if (!user) {
       return null;
     }
 
-    const collectiviteAccesses = await this.roleService.getCollectiviteAccesses(
-      userInfo.id
+    return pick(user, ['id', 'email', 'nom', 'prenom']);
+  }
+
+  async getUserWithRolesAndPermissionsBy({
+    userId,
+    email,
+  }: EitherUserIdOrEmail): Promise<UserWithRolesAndPermissions> {
+    const [userInfo] = await this.listUsersRepository.listUserInfosBy(
+      userId !== undefined ? { userId } : { emails: [email] }
     );
 
+    if (!userInfo) {
+      throw new NotFoundException(`Utilisateur ${userId || email} non trouvé`);
+    }
+
+    const userPermissionsResult =
+      await this.getUserPermissionsService.getUserRolesAndPermissions({
+        userId: userInfo.id,
+      });
+
+    if (!userPermissionsResult.success) {
+      throw new NotFoundException(`Utilisateur ${userId || email} non trouvé`);
+    }
+
     return {
-      user: {
-        ...userInfo,
-        collectivites: collectiviteAccesses || [],
-      },
+      ...userInfo,
+      ...userPermissionsResult.data,
     };
+  }
+
+  async listUsersInfoBy({ emails }: { emails: string[] }): Promise<UserInfo[]> {
+    return this.listUsersRepository.listUserInfosBy({ emails });
   }
 }

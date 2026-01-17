@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useUser } from '@tet/api/users';
+import { hasPermission, hasRole, PlatformRole } from '@tet/domain/users';
 import { noop } from 'es-toolkit';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useContext } from 'react';
@@ -39,7 +40,7 @@ export function SupportModeProvider({
   const trpc = useTRPC();
   const router = useRouter();
 
-  const isSupportModeEnabled = user.isSupportModeEnabled ?? false;
+  const isSupportModeEnabled = hasRole(user, PlatformRole.SUPPORT_MODE_ENABLED);
 
   const { mutate: toggleSupportMode, isPending } = useMutation(
     trpc.users.authorizations.toggleSupportMode.mutationOptions({
@@ -69,7 +70,7 @@ export function SupportModeProvider({
 
       {children}
 
-      {user.isSupport && (
+      {hasPermission(user, 'users.authorizations.mutate_support_mode') && (
         <div className="w-full max-w-8xl mx-auto px-4 pb-4">
           <ToggleSupportModeCheckbox />
         </div>

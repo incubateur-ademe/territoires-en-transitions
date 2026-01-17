@@ -1,18 +1,18 @@
-import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   Injectable,
   InternalServerErrorException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   BibliothequeFichier,
   BibliothequeFichierCreate,
 } from '@tet/domain/collectivites';
+import { ResourceType } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
 import { bibliothequeFichierTable } from '../models/bibliotheque-fichier.table';
 import { storageObjectTable } from '../models/storage-object.table';

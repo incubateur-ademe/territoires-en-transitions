@@ -3,8 +3,8 @@ import { hasPermission } from '@/app/users/authorizations/permission-access-leve
 import { ENV } from '@tet/api/environmentVariables';
 
 import { ServicesWidget } from '@betagouv/les-communs-widget';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
-import { CollectiviteAccess } from '@tet/domain/users';
 import { AppEnvironment } from '@tet/domain/utils';
 import { Tab, Tabs } from '@tet/ui';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
@@ -27,7 +27,7 @@ type FicheActionOngletsProps = {
   isEditLoading: boolean;
   isReadonly: boolean;
   className?: string;
-  collectivite: CollectiviteAccess;
+  collectivite: CollectiviteCurrent;
 };
 
 const FicheActionOnglets = ({

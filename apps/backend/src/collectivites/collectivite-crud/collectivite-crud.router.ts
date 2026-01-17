@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import CollectiviteCrudService from '@tet/backend/collectivites/collectivite-crud/collectivite-crud.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import {
   collectiviteUpdateNICSchema,
   collectiviteUpsertSchema,
 } from '@tet/domain/collectivites';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { z } from 'zod';
 
 @Injectable()

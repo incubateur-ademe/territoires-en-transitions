@@ -3,6 +3,7 @@ import {
   makeCollectiviteJournalUrl,
   makeCollectiviteUsersUrl,
 } from '@/app/app/paths';
+import { isVisitor } from '@tet/domain/users';
 import { CollectiviteNavItem } from './make-collectivite-nav';
 
 export const generateParametresDropdown = ({
@@ -10,7 +11,8 @@ export const generateParametresDropdown = ({
 }: {
   collectiviteId: number;
 }): CollectiviteNavItem => ({
-  hideWhenConfidential: true,
+  visibleWhen: (user, accesRestreint) =>
+    !(accesRestreint && isVisitor(user, { collectiviteId })),
   children: 'Paramètres',
   dataTest: 'nav-params',
   links: [

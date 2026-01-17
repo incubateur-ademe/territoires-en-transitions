@@ -8,12 +8,11 @@ import {
   YOULOU_DOUDOU,
 } from '@tet/backend/test';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { UpdateUserRoleService } from '@tet/backend/users/authorizations/update-user-role/update-user-role.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 
 describe('Gestion des droits', () => {
@@ -223,7 +222,7 @@ describe('Gestion des droits', () => {
       await databaseService.db
         .update(dcpTable)
         .set({ email: 'yolo@ademe.fr' })
-        .where(eq(dcpTable.userId, yoloDodoUser.id));
+        .where(eq(dcpTable.id, yoloDodoUser.id));
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
@@ -239,7 +238,7 @@ describe('Gestion des droits', () => {
           await databaseService.db
             .update(dcpTable)
             .set({ email: 'yolo@dodo.com' })
-            .where(eq(dcpTable.userId, yoloDodoUser.id));
+            .where(eq(dcpTable.id, yoloDodoUser.id));
         } catch (error) {
           console.error('Erreur lors de la remise à zéro des données.', error);
         }
