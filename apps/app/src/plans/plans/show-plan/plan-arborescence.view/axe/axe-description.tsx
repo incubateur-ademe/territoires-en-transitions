@@ -28,7 +28,12 @@ export const AxeDescription = () => {
           id={`axe-desc-${axe.id}`}
           className="border-0 focus-within:border"
           initialValue={axe.description}
-          onChange={(value) => updateAxe.mutateAsync({ description: value })}
+          onChange={(value) => {
+            if (value !== axe.description) {
+              return updateAxe.mutateAsync({ description: value });
+            }
+          }}
+          debounceDelayOnChange={1000}
         />
       )}
     </section>

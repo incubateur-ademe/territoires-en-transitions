@@ -15,9 +15,11 @@ type UpdateAxe = Omit<
 export const useUpdateAxe = ({
   collectiviteId,
   axe,
+  planId,
 }: {
   collectiviteId: number;
   axe: PlanNode;
+  planId: number;
 }) => {
   const queryClient = useQueryClient();
   const trpc = useTRPC();
@@ -36,6 +38,51 @@ export const useUpdateAxe = ({
       });
     },
     meta: { disableToast: true },
+    onMutate: async (variables) => {
+      // annule les requêtes en cours pour éviter les conflits
+      if (planId) {
+        await queryClient.cancelQueries({
+          queryKey: trpc.plans.plans.get.queryKey({ planId }),
+        });
+      }
+
+      // sauvegarde les données précédentes pour le rollback en cas d'erreur
+      const previousPlan = planId
+        ? queryClient.getQueryData(trpc.plans.plans.get.queryKey({ planId }))
+        : undefined;
+
+      // mise à jour optimiste : met à jour l'axe dans plans.plans.get
+      if (planId) {
+        queryClient.setQueryData(
+          trpc.plans.plans.get.queryKey({ planId }),
+          (old) => {
+            if (!old) {
+              return undefined;
+            }
+
+            const updatedAxes = old.axes.map((a) => {
+              if (a.id === axe.id) {
+                return {
+                  ...a,
+                  nom: variables.nom ?? a.nom,
+                  description: variables.description === null ? null : variables.description ?? a.description,
+                  parent: variables.parent !== undefined ? variables.parent : a.parent,
+                };
+              }
+              return a;
+            });
+
+
+            return {
+              ...old,
+              axes: updatedAxes,
+            };
+          }
+        );
+      }
+
+      return { previousPlan, planId };
+    },
     onSuccess: async (data, variables) => {
       const hasSetDescription =
         axe.description === null && data.description === '';
@@ -63,6 +110,19 @@ export const useUpdateAxe = ({
           (el) => {
             (el as HTMLInputElement)?.focus?.();
           }
+        );
+      }
+    },
+    onError: (err, variables, context) => {
+      // rollback : restaure les données précédentes en cas d'erreur
+      if (!context) return;
+
+      const { previousPlan, planId } = context;
+
+      if (planId && previousPlan) {
+        queryClient.setQueryData(
+          trpc.plans.plans.get.queryKey({ planId }),
+          previousPlan
         );
       }
     },
