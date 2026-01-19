@@ -12,6 +12,7 @@ import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Fiche, FicheWithRelations } from '@tet/domain/plans';
 import {
   type PermissionOperation,
@@ -30,11 +31,11 @@ export default class FicheActionPermissionsService {
     private readonly permissionService: PermissionService,
     private readonly databaseService: DatabaseService,
     private readonly shareFicheService: ShareFicheService
-  ) {}
+  ) { }
 
   /** Renvoi une fiche à partir de son id */
-  async getFicheFromId(ficheId: number) {
-    const rows = await this.databaseService.db
+  async getFicheFromId(ficheId: number, tx?: Transaction) {
+    const rows = await (tx || this.databaseService.db)
       .select({
         ...getTableColumns(ficheActionTable),
       })
@@ -131,14 +132,16 @@ export default class FicheActionPermissionsService {
   async canReadFicheObject(
     fiche: FicheWithRelations,
     tokenInfo: AuthUser,
-    doNotThrow?: boolean
+    doNotThrow?: boolean,
+    tx?: Transaction
   ): Promise<FicheAccessMode | null> {
     // Check direct permissions first
     const operation = this.getReadFichePermission(fiche);
     const hasDirectPermission = await this.hasReadFichePermission(
       fiche,
       tokenInfo,
-      true
+      true,
+      tx
     );
     if (hasDirectPermission) {
       return FicheAccessModeEnum.DIRECT;
@@ -156,7 +159,7 @@ export default class FicheActionPermissionsService {
   async canReadFiche(
     ficheId: number,
     tokenInfo: AuthUser,
-    doNotThrow?: boolean
+    doNotThrow?: boolean,
   ): Promise<FicheAccessMode | null> {
     const fiche = await this.getFicheFromId(ficheId);
     if (!fiche) {
@@ -191,14 +194,16 @@ export default class FicheActionPermissionsService {
   hasReadFichePermission(
     fiche: Pick<Fiche, 'collectiviteId' | 'restreint'>,
     tokenInfo: AuthUser,
-    doNotThrow?: boolean
+    doNotThrow?: boolean,
+    tx?: Transaction
   ): Promise<boolean> {
     return this.permissionService.isAllowed(
       tokenInfo,
       this.getReadFichePermission(fiche),
       ResourceType.COLLECTIVITE,
       fiche.collectiviteId,
-      doNotThrow
+      doNotThrow,
+      tx
     );
   }
 
@@ -227,9 +232,15 @@ export default class FicheActionPermissionsService {
   async canWriteFiche(
     ficheId: number,
     user: AuthUser,
-    doNotThrow?: boolean
+    {
+      doNotThrow = false,
+      tx,
+    }: {
+      doNotThrow?: boolean;
+      tx?: Transaction;
+    } = {},
   ): Promise<FicheAccessMode | null> {
-    const fiche = await this.getFicheFromId(ficheId);
+    const fiche = await this.getFicheFromId(ficheId, tx);
     if (!fiche) {
       throw new NotFoundException(`Action non trouvée pour l'id ${ficheId}`);
     }

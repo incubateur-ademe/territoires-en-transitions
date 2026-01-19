@@ -774,8 +774,8 @@ describe('Filtres sur les fiches actions', () => {
       .insert(ficheActionTable)
       .values({
         titre: 'Test budget prévisionnel',
-        budgetPrevisionnel: '50000',
         collectiviteId: COLLECTIVITE_ID,
+        budgetPrevisionnel: '50000',
       })
       .returning();
     const testFicheId = fiche.id;

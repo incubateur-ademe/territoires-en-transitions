@@ -31,7 +31,7 @@ export class CreateFicheService {
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
     private readonly updateFicheService: UpdateFicheService
-  ) {}
+  ) { }
 
   /**
    * Crée une fiche action
@@ -61,39 +61,46 @@ export class CreateFicheService {
         fiche.collectiviteId
       );
     }
+    try {
+      const [createdFiche] = await (tx || this.databaseService.db)
+        .insert(ficheActionTable)
+        .values(fiche)
+        .returning();
 
-    const [createdFiche] = await (tx || this.databaseService.db)
-      .insert(ficheActionTable)
-      .values(fiche)
-      .returning();
-
-    const ficheId = createdFiche.id;
-    if (!ficheId) {
-      return {
-        success: false,
-        error: `Échec de création de la fiche`,
-      };
-    }
-
-    if (
-      ficheFields &&
-      Object.values(ficheFields).filter((v) => v !== undefined).length
-    ) {
-      const result = await this.updateFicheService.updateFiche({
-        ficheId,
-        ficheFields,
-        user,
-      });
-
-      if (!result.success) {
+      const ficheId = createdFiche.id;
+      if (!ficheId) {
         return {
           success: false,
-          error: `Échec de la mise à jour de la fiche: ${result.error}`,
+          error: `Échec de création de la fiche`,
         };
       }
-    }
 
-    return { success: true, data: createdFiche };
+      if (
+        ficheFields &&
+        Object.values(ficheFields).filter((v) => v !== undefined).length
+      ) {
+        const result = await this.updateFicheService.updateFiche({
+          ficheId,
+          ficheFields,
+          user,
+          tx,
+        });
+        if (!result.success) {
+          return {
+            success: false,
+            error: `Échec de la mise à jour de la fiche: ${result.error}`,
+          };
+        }
+      }
+
+      return { success: true, data: createdFiche };
+    } catch (error) {
+      this.logger.error(`Error creating fiche:`, error);
+      return {
+        success: false,
+        error: `Échec de création de la fiche: ${error}`,
+      };
+    }
   }
 
   /**

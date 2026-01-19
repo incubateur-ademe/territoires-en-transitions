@@ -15,7 +15,9 @@ import {
 } from '../../shared';
 import { cibleEnumValues } from './cible.enum.schema';
 import { ficheNoteSchema } from './fiche-note.schema';
-import { participationCitoyenneEnumValues } from './participation-citoyenne.enum.schema';
+import {
+  participationCitoyenneEnumValues
+} from './participation-citoyenne.enum.schema';
 import { piliersEciEnumSchema } from './pilier-eci.enum.schema';
 import { prioriteEnumValues } from './priorite.enum.schema';
 import { statutEnumValues } from './statut.enum.schema';

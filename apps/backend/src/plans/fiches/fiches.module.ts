@@ -70,7 +70,6 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     BulkEditRouter,
     FicheActionBudgetService,
     FicheActionBudgetRouter,
-
     FichesRouter,
 
     ListFichesService,

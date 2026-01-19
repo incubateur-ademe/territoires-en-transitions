@@ -6,6 +6,7 @@ import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authoriza
 import { AuthRole, AuthUser } from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   AuditRole,
   CollectiviteAccess,
@@ -23,12 +24,13 @@ import { utilisateurVerifieTable } from './utilisateur-verifie.table';
 export class RoleService {
   private readonly logger = new Logger(RoleService.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseService) { }
 
   async getUserRoles(
     user: AuthUser,
     resourceType: ResourceType,
-    resourceId: number | null
+    resourceId: number | null,
+    tx?: Transaction
   ): Promise<Role[]> {
     this.logger.log(
       `Récupération des rôles de l'utilisateur ${user.id} sur la ressource ${resourceType} ${resourceId}`
@@ -62,6 +64,7 @@ export class RoleService {
         const droits = await this.listActiveCollectiviteAccessLevels({
           userId: user.id,
           collectiviteId: resourceId,
+          tx,
         });
 
         roles.push(...new Set(droits.map((droit) => droit.accessLevel)));
@@ -94,8 +97,7 @@ export class RoleService {
     }
 
     this.logger.log(
-      `L'utilisateur ${
-        user.id
+      `L'utilisateur ${user.id
       } possède le(s) rôle(s) ${roles.toString()} sur la ressource ${resourceType} ${resourceId}`
     );
 
@@ -141,15 +143,15 @@ export class RoleService {
     const accessesWithAuditeurRoleUpdated = accesses.map((access) =>
       collectiviteIdsWhereUserIsAuditeur.has(access.collectiviteId)
         ? {
-            ...access,
-            isRoleAuditeur: true,
-            permissions: [
-              ...new Set([
-                ...(access.permissions || []),
-                ...permissionsByRole['auditeur'],
-              ]),
-            ],
-          }
+          ...access,
+          isRoleAuditeur: true,
+          permissions: [
+            ...new Set([
+              ...(access.permissions || []),
+              ...permissionsByRole['auditeur'],
+            ]),
+          ],
+        }
         : access
     );
 
@@ -195,11 +197,13 @@ export class RoleService {
   async listActiveCollectiviteAccessLevels({
     userId,
     collectiviteId,
+    tx,
   }: {
     userId: string;
     collectiviteId?: number;
+    tx?: Transaction;
   }): Promise<UtilisateurCollectiviteAccess[]> {
-    const query = this.databaseService.db
+    const query = (tx || this.databaseService.db)
       .select({
         ...getTableColumns(utilisateurCollectiviteAccessTable),
         collectiviteNom: collectiviteTable.nom,

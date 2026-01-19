@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { importRequestSchema } from '@tet/backend/plans/fiches/import/import-plan.request';
+import { importPlanInputSchema } from '@tet/backend/plans/fiches/import/import-plan.input';
 import { ImportPlanService } from '@tet/backend/plans/fiches/import/import-plan.service';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
+import { TRPCError } from '@trpc/server';
 
 @Injectable()
 export class ImportPlanRouter {
@@ -12,9 +13,26 @@ export class ImportPlanRouter {
 
   router = this.trpc.router({
     import: this.trpc.authedProcedure
-      .input(importRequestSchema)
+      .input(importPlanInputSchema)
       .mutation(async ({ input, ctx }) => {
-        return this.service.import(input, ctx.user);
+        const result = await this.service.import(
+          ctx.user,
+          input.file,
+          input.collectiviteId,
+          input.planName,
+          input.planType,
+          input.pilotes,
+          input.referents
+        );
+
+        if (!result.success) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: result.error.message,
+          });
+        }
+
+        return result.data;
       }),
   });
 }
