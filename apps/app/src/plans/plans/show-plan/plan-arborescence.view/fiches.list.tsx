@@ -23,7 +23,7 @@ export const FichesList = ({
   collectivite,
 }: Props) => {
   const user = useUser();
-  const { fiches, isLoading } = useListFiches(collectivite.collectiviteId, {
+  const { fiches } = useListFiches(collectivite.collectiviteId, {
     filters: {
       axesId: [axeId],
     },
@@ -33,49 +33,40 @@ export const FichesList = ({
     },
   });
 
-  if (isLoading) {
-    return (
-      <div className="grid grid-cols-2 gap-6">
-        {ficheIds.map((id) => (
-          <FicheActionCardSkeleton key={id} />
-        ))}
-      </div>
-    );
-  }
-
   return (
     <div className={'grid grid-cols-2 gap-6 my-2'}>
-      {fiches.map((fiche) => {
-        if (fiche.id < 0) {
-          return <FicheActionCardSkeleton key={fiche.id} />;
-        } else {
-          const isReadonly =
-            collectivite.isReadOnly ||
-            !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id) ||
-            isFicheSharedWithCollectivite(fiche, collectivite.collectiviteId);
-          return (
-            <FicheActionCard
-              currentCollectivite={collectivite}
-              currentUserId={user.id}
-              key={fiche.id}
-              ficheAction={fiche}
-              editKeysToInvalidate={[['axe_fiches', axeId, ficheIds]]}
-              isEditable={!isReadonly}
-              isMoveable
-              planId={planId}
-              axeId={axeId}
-              link={
-                fiche.id
-                  ? makeCollectiviteActionUrl({
-                      collectiviteId: fiche.collectiviteId,
-                      ficheUid: fiche.id.toString(),
-                      planId,
-                    })
-                  : undefined
-              }
-            />
-          );
+      {ficheIds.map((ficheId, i) => {
+        const fiche =
+          (ficheId > 0 && fiches.find((f) => f.id === ficheId)) || null;
+        if (!fiche) {
+          return <FicheActionCardSkeleton key={i} />;
         }
+        const isReadonly =
+          collectivite.isReadOnly ||
+          !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id) ||
+          isFicheSharedWithCollectivite(fiche, collectivite.collectiviteId);
+        return (
+          <FicheActionCard
+            currentCollectivite={collectivite}
+            currentUserId={user.id}
+            key={fiche.id}
+            ficheAction={fiche}
+            editKeysToInvalidate={[['axe_fiches', axeId, ficheIds]]}
+            isEditable={!isReadonly}
+            isMoveable
+            planId={planId}
+            axeId={axeId}
+            link={
+              fiche.id
+                ? makeCollectiviteActionUrl({
+                    collectiviteId: fiche.collectiviteId,
+                    ficheUid: fiche.id.toString(),
+                    planId,
+                  })
+                : undefined
+            }
+          />
+        );
       })}
     </div>
   );
