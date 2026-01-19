@@ -26,7 +26,7 @@ runs:
   steps:
     - uses: supabase/setup-cli@v1
       with:
-        version: latest
+        version: 2.58.5
 
     - name: Try to restore db volume
       id: restore
