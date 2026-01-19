@@ -84,6 +84,7 @@ export const AxeProvider = (props: AxeProviderProps) => {
   const updateAxe = useUpdateAxe({
     axe,
     collectiviteId,
+    planId: rootAxe.id,
   });
 
   const createFicheResume = useCreateFicheResume({
@@ -107,6 +108,7 @@ export const AxeProvider = (props: AxeProviderProps) => {
   const { selectedIndicateurs, toggleIndicateur } = useAxeIndicateurs({
     axe,
     collectiviteId,
+    planId: rootAxe.id,
     enabled: (isOpen && entry?.isIntersecting) || false,
   });
 
