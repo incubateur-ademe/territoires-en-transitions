@@ -62,6 +62,8 @@ export const FichesList = ({
               editKeysToInvalidate={[['axe_fiches', axeId, ficheIds]]}
               isEditable={!isReadonly}
               isMoveable
+              planId={planId}
+              axeId={axeId}
               link={
                 fiche.id
                   ? makeCollectiviteActionUrl({
