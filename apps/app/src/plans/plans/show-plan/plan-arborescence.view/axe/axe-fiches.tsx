@@ -1,4 +1,3 @@
-import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { FichesList } from '../fiches.list';
 import { PlanDisplayOptionsEnum } from '../plan-options.context';
 import { AxeSectionTitle } from './axe-section-title';
@@ -10,22 +9,13 @@ export const AxeFiches = () => {
   const isEnabled =
     isOpen && planOptions.isOptionEnabled(PlanDisplayOptionsEnum.ACTIONS);
 
-  const { count, isLoading } = useListFiches(
-    collectivite.collectiviteId,
-    {
-      filters: { axesId: [axe.id] },
-      queryOptions: { limit: 1 },
-    },
-    isEnabled
-  );
-
-  if (!isEnabled || (!isLoading && !count)) {
+  if (!isEnabled || !axe.fiches.length) {
     return null;
   }
 
   return (
     <section>
-      {!isLoading && <AxeSectionTitle name="fiches" />}
+      <AxeSectionTitle name="fiches" />
       <FichesList
         collectivite={collectivite}
         ficheIds={axe.fiches}
