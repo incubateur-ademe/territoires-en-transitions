@@ -12,10 +12,12 @@ import { useUpdateAxe } from './use-update-axe';
 export function useAxeIndicateurs({
   axe,
   collectiviteId,
+  planId,
   enabled,
 }: {
   axe: PlanNode;
   collectiviteId: number;
+  planId: number;
   enabled: boolean;
 }) {
   const { data } = useListIndicateurs(
@@ -27,6 +29,7 @@ export function useAxeIndicateurs({
   const { mutateAsync: updateAxe } = useUpdateAxe({
     collectiviteId,
     axe,
+    planId
   });
 
   const toggleIndicateur = async (indicateur: IndicateurDefinitionListItem) => {
