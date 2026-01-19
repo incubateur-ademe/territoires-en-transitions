@@ -1,7 +1,5 @@
 import {
   makeCollectiviteIndicateursListUrl,
-  makeCollectivitePlansActionsListUrl,
-  makeCollectivitePlansActionsNouveauUrl,
   makeCollectiviteToutesLesFichesUrl,
   makeTdbCollectiviteUrl,
 } from '@/app/app/paths';
@@ -20,7 +18,7 @@ type MetricDescriptor = {
   isVisibleWithPermissions: (permissions?: PermissionOperation[]) => boolean;
   getCount: () => number;
   getTitle: (count: number) => string;
-  link: (args: {
+  link?: (args: {
     count: number;
     permissions?: PermissionOperation[];
   }) => MetricCardProps['link'];
@@ -40,7 +38,7 @@ function getMetricsToDisplay(
       {
         title: metricDescriptor.getTitle(count),
         count,
-        link: metricDescriptor.link({ count, permissions }),
+        link: metricDescriptor.link?.({ count, permissions }),
       },
     ];
   });
@@ -51,26 +49,6 @@ const Metrics = () => {
   const { data: metrics, isLoading } = useTdbPersoFetchMetrics();
 
   const metricDescriptors: MetricDescriptor[] = [
-    {
-      isVisibleWithPermissions: (perms) => hasPermission(perms, 'plans.read'),
-      getCount: () => metrics?.plans.count || 0,
-      getTitle: (count) => `Plan${count > 1 ? 's' : ''}`,
-      link: ({ count }) => {
-        if (count > 0) {
-          return {
-            href: makeCollectivitePlansActionsListUrl({ collectiviteId }),
-            children: 'Voir tous les plans',
-          };
-        }
-        if (hasPermission(permissions, 'plans.mutate')) {
-          return {
-            href: makeCollectivitePlansActionsNouveauUrl({ collectiviteId }),
-            children: 'Créer un plan',
-          };
-        }
-        return undefined;
-      },
-    },
     {
       isVisibleWithPermissions: (perms) =>
         hasPermission(perms, 'plans.fiches.read'),
@@ -87,6 +65,13 @@ const Metrics = () => {
               children: 'Voir les actions',
             }
           : undefined,
+    },
+    {
+      isVisibleWithPermissions: (perms) =>
+        hasPermission(perms, 'plans.fiches.read'),
+      getCount: () => metrics?.plans.piloteSubFichesCount || 0,
+      getTitle: (count) =>
+        `Sous action${count > 1 ? 's' : ''} pilotée${count > 1 ? 's' : ''}`,
     },
     {
       isVisibleWithPermissions: (perms) =>
