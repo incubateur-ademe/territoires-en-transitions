@@ -1,5 +1,4 @@
 import { useCreateSousAction } from '@/app/plans/sous-actions/data/use-create-sous-action';
-import { sortSousActionsByTitleOrCreationDateWithoutTitle } from '@/app/plans/sous-actions/data/utils';
 import { SousActionTable } from '@/app/plans/sous-actions/list/table/sous-action.table';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
@@ -20,21 +19,18 @@ export const SousActionsView = () => {
         parentsId: [fiche.id],
       },
       queryOptions: {
-        sort: [{ field: 'titre', direction: 'asc' }],
+        sort: [{ field: 'created_at', direction: 'asc' }],
         limit: 'all',
       },
     }
   );
 
-  const sortedSousActions =
-    sortSousActionsByTitleOrCreationDateWithoutTitle(sousActions);
-
-  const isEmpty = sortedSousActions.length === 0;
+  const isEmpty = sousActions.length === 0;
 
   return (
     <div className="p-2 bg-white rounded-lg border border-grey-3 overflow-x-auto">
       <SousActionTable
-        sousActions={sortedSousActions}
+        sousActions={sousActions}
         isLoading={isLoading}
         isEmpty={isEmpty}
         createSousFiche={createSousFiche}

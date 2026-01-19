@@ -23,7 +23,7 @@ export const SousActionsDontJeSuisLePiloteModule = () => {
         withChildren: true,
       },
       queryOptions: {
-        sort: [{ field: 'titre', direction: 'asc' }],
+        sort: [{ field: 'created_at', direction: 'asc' }],
         page: currentPage,
         limit: LIMIT,
       },
