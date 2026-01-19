@@ -30,11 +30,12 @@ import {
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { withOnTestFinished } from '@tet/backend/utils/test-fixture.utils';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { StatutEnum } from '@tet/domain/plans';
 import { eq, inArray } from 'drizzle-orm';
 import { uniq } from 'es-toolkit';
-import { createFiche } from '../fiches.test-fixture';
+import { createFiche, createFiches } from '../fiches.test-fixture';
 
 let router: TrpcRouter;
 let yoloDodo: AuthenticatedUser;
@@ -69,61 +70,89 @@ describe('Filtres sur les fiches actions', () => {
     expect(ids).toEqual(uniqueIds);
   });
 
-  test('Order by title en natural sort', async () => {
+  test('Order by title en natural sort including NULL values', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
-    await db.db
-      .delete(ficheActionTable)
-      .where(inArray(ficheActionTable.id, [9999, 9998, 9997, 9996]));
+    // insert des fiches avec des titres différents contenant une numérotation
+    const { ficheIds } = await withOnTestFinished(createFiches)({
+      caller,
+      ficheInputs: [
+        {
 
-    // insert 3 fiches avec des titres différents contenant une numérotation
-    await db.db.insert(ficheActionTable).values([
-      {
-        id: 9999,
-        titre: '1 - Fiche-test 1',
-        collectiviteId: COLLECTIVITE_ID,
-      },
-      {
-        id: 9998,
-        titre: '2 - Fiche-test 2',
-        collectiviteId: COLLECTIVITE_ID,
-      },
-      {
-        id: 9997,
-        titre: '10 - Fiche-test 3',
-        collectiviteId: COLLECTIVITE_ID,
-      },
-      {
-        id: 9996,
-        titre: '11 - Fiche-test 4',
-        collectiviteId: COLLECTIVITE_ID,
-      },
-    ]);
-
-    onTestFinished(async () => {
-      await db.db
-        .delete(ficheActionTable)
-        .where(inArray(ficheActionTable.id, [9999, 9998, 9997, 9996]));
+          titre: '11 - Fiche-test 4',
+          collectiviteId: COLLECTIVITE_ID,
+        },
+        {
+          titre: '10 - Fiche-test 3',
+          collectiviteId: COLLECTIVITE_ID,
+        },
+        {
+          titre: null,
+          collectiviteId: COLLECTIVITE_ID,
+        },
+        {
+          titre: '2 - Fiche-test 2',
+          collectiviteId: COLLECTIVITE_ID,
+        },
+        {
+          titre: '1 - Fiche-test 1',
+          collectiviteId: COLLECTIVITE_ID,
+        },
+        {
+          titre: 'Z - Last title',
+          collectiviteId: COLLECTIVITE_ID,
+        },
+        {
+          titre: null,
+          collectiviteId: COLLECTIVITE_ID,
+        },
+        {
+          titre: 'A - First title',
+          collectiviteId: COLLECTIVITE_ID,
+        },
+      ],
     });
 
-    const { data: fiches } = await caller.plans.fiches.listFiches({
+
+    const { data: fichesAsc } = await caller.plans.fiches.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
-        texteNomOuDescription: 'Fiche-test',
+        ficheIds,
       },
       queryOptions: {
         sort: [{ field: 'titre', direction: 'asc' }],
-        page: 1,
-        limit: 3,
+        limit: 'all',
       },
     });
 
-    expect(fiches).toBeDefined();
-    expect(fiches?.length).toBe(3);
+    const expectedOrderedTitles = ['1 - Fiche-test 1', '2 - Fiche-test 2', '10 - Fiche-test 3', '11 - Fiche-test 4', 'A - First title', 'Z - Last title', null, null];
 
-    expect(fiches?.[0].titre).toBe('1 - Fiche-test 1');
-    expect(fiches?.[1].titre).toBe('2 - Fiche-test 2');
-    expect(fiches?.[2].titre).toBe('10 - Fiche-test 3');
+    const titlesAsc = fichesAsc.map((f) => f.titre);
+    expect(titlesAsc).toEqual(expectedOrderedTitles);
+
+    // Now update the last fiche with null title
+    await caller.plans.fiches.update({
+      ficheId: fichesAsc[7].id,
+      ficheFields: {
+        statut: StatutEnum.EN_RETARD,
+      },
+    });
+
+    const { data: fichesAscUpdated } = await caller.plans.fiches.listFiches({
+      collectiviteId: COLLECTIVITE_ID,
+      filters: {
+        ficheIds,
+      },
+      queryOptions: {
+        sort: [{ field: 'titre', direction: 'asc' }],
+        limit: 'all',
+      },
+    });
+
+    expect(fichesAscUpdated.map((f) => f.titre)).toEqual(expectedOrderedTitles);
+
+    expect(fichesAscUpdated[7].titre).toBeNull();
+    expect(fichesAscUpdated[7].statut).toBe(StatutEnum.EN_RETARD);
   });
 
   test('Fetch avec filtre sur une personne', async () => {
