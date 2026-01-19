@@ -58,6 +58,10 @@ export type FicheActionCardProps = {
   currentCollectivite: CollectiviteAccess;
   /** Id de l'utilisateur */
   currentUserId: string;
+  /** ID du plan pour la mise à jour optimiste de la suppression (optionnel) */
+  planId?: number;
+  /** ID de l'axe pour la mise à jour optimiste de la suppression (optionnel) */
+  axeId?: number;
 };
 
 const FicheActionCard = ({
@@ -74,6 +78,8 @@ const FicheActionCard = ({
   onToggleOpen,
   currentCollectivite,
   currentUserId,
+  planId,
+  axeId,
 }: FicheActionCardProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -143,6 +149,8 @@ const FicheActionCard = ({
                       setIsOpen: setIsDeleteModalOpen,
                     }}
                     hideButton
+                    planId={planId}
+                    axeId={axeId}
                   />
                   {isMoveModalOpen && collectivitePlans.length > 0 && (
                     <MoveFicheModal
@@ -178,7 +186,11 @@ const FicheActionCard = ({
                   />
                 </>
               ) : (
-                <DeleteOrRemoveFicheSharingModal fiche={ficheAction} />
+                <DeleteOrRemoveFicheSharingModal
+                  fiche={ficheAction}
+                  planId={planId}
+                  axeId={axeId}
+                />
               )}
             </>
           )}
