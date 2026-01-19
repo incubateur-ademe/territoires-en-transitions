@@ -5,8 +5,8 @@ import {
 
 export const accessLevelLabels: Record<CollectiviteAccessLevel, string> = {
   admin: 'Admin',
-  edition: 'Éditeur complet',
-  edition_fiches_indicateurs: 'Éditeur actions & indicateurs',
+  edition: 'Éditeur',
+  edition_fiches_indicateurs: 'Contributeur',
   lecture: 'Lecteur',
 };
 
@@ -19,7 +19,7 @@ export const accessLevelDescriptions: Record<CollectiviteAccessLevel, string> =
     admin: 'Peut entièrement configurer et éditer',
     edition: 'Peut éditer et inviter de nouveaux membres',
     edition_fiches_indicateurs:
-      'Peut consulter et éditer les actions et indicateurs dont il est pilote',
+      'Peut éditer uniquement les actions & indicateurs dont il est le pilote',
     lecture: 'Peut uniquement consulter',
   };
 
