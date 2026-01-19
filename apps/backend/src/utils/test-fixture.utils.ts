@@ -1,24 +1,27 @@
 import { onTestFinished } from 'vitest';
 
-// signature des générateurs de fixture
-export type CreateTestFixture<Input, Output> = (
-  input: Input
-) => Promise<TestFixtureOutput<Output>>;
-
-interface TestFixtureOutput<Output> {
-  data: Output;
+interface Cleanup {
   cleanup: () => Promise<void>;
 }
 
-// wrap un générateur de fixture dans le `onTestFinished`de vitest
-export function withOnTestFinished<Input, Output>(
-  create: CreateTestFixture<Input, Output>
-): (input: Input) => Promise<Output> {
-  return async (input: Input): Promise<Output> => {
-    const { data, cleanup } = await create(input);
+// signature des générateurs de fixture
+type CreateFixtureFn<Input, Output extends Cleanup> = (
+  input: Input
+) => Promise<Output>;
+
+
+
+// wrap un générateur de fixture dans le `onTestFinished` de vitest
+export function withOnTestFinished<Input, FixtureOutput extends Cleanup>(
+  create: CreateFixtureFn<Input, FixtureOutput>
+): (input: Input) => Promise<Omit<FixtureOutput, 'cleanup'>> {
+  return async (input: Input) => {
+    const { cleanup, ...data } = await create(input);
+
     onTestFinished(async () => {
       await cleanup();
     });
+
     return data;
   };
 }

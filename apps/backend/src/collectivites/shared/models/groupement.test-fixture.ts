@@ -39,7 +39,7 @@ export async function createGroupement({
       .where(eq(groupementTable.id, groupement.id));
   };
 
-  return { data: groupement, cleanup };
+  return { ...groupement, cleanup };
 }
 
 export async function addCollectiviteToGroupement({

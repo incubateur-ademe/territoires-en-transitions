@@ -16,7 +16,7 @@ class PersonneTagsFixture extends FixtureFactory {
    * Crée des tags personne
    */
   async createPersonneTag(tagData: PersonneTagAllowedInput) {
-    const { data } = await createPersonneTag({
+    const data  = await createPersonneTag({
       database: databaseService,
       tagData,
     });
