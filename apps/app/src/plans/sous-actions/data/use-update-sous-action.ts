@@ -1,9 +1,9 @@
-import { naturalSort } from '@/app/utils/naturalSort';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RouterInput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
 import { ListFichesOutput } from '../../fiches/list-all-fiches/data/use-list-fiches';
+import { sortSousActionsByTitleOrCreationDateWithoutTitle } from './utils';
 
 type Args = Partial<{
   onUpdateCallback: () => void;
@@ -46,15 +46,11 @@ export const useUpdateSousAction = (args?: Args) => {
         (previous: ListFichesOutput) => {
           return {
             ...previous,
-            data: (previous.data ?? [])
-              .map((fiche) =>
+            data: sortSousActionsByTitleOrCreationDateWithoutTitle(
+              (previous.data ?? []).map((fiche) =>
                 fiche.id === ficheId ? { ...fiche, ...ficheFields } : fiche
               )
-              .sort((a, b) => {
-                if (!a.titre) return -1;
-                if (!b.titre) return 1;
-                return naturalSort(a.titre, b.titre);
-              }),
+            ),
           };
         }
       );
