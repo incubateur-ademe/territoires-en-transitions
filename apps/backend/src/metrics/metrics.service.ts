@@ -133,7 +133,7 @@ export default class MetricsService {
 
     const response: PersonalMetricsResponse = {
       plans: {
-        count: 0,
+        piloteSubFichesCount: 0,
         piloteFichesCount: 0,
         piloteFichesIndicateursCount: 0,
       },
@@ -148,17 +148,19 @@ export default class MetricsService {
     const promises: Promise<void>[] = [];
 
     promises.push(
-      this.planActionsService.count(collectiviteId).then((count) => {
-        response.plans.count = count;
-        return;
-      })
-    );
-
-    promises.push(
       this.listFichesService
         .countPiloteFiches(collectiviteId, user)
         .then((count) => {
           response.plans.piloteFichesCount = count;
+          return;
+        })
+    );
+
+    promises.push(
+      this.listFichesService
+        .countPiloteSubFiches(collectiviteId, user)
+        .then((count) => {
+          response.plans.piloteSubFichesCount = count;
           return;
         })
     );
