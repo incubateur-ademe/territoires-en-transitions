@@ -28,7 +28,7 @@ export async function createCategorieTag({
       .where(eq(categorieTagTable.id, categorie.id));
   };
 
-  return { data: categorie, cleanup };
+  return { ...categorie, cleanup };
 }
 
 export async function cleanupByCollectiviteId(

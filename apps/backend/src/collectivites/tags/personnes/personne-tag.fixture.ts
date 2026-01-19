@@ -25,7 +25,7 @@ export async function createPersonneTag({
       .where(eq(personneTagTable.id, personne.id));
   };
 
-  return { data: personne, cleanup };
+  return { ...personne, cleanup };
 }
 
 export async function cleanupByCollectiviteId(

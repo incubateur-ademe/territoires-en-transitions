@@ -25,7 +25,7 @@ export async function createServiceTag({
       .where(eq(serviceTagTable.id, service.id));
   };
 
-  return { data: service, cleanup };
+  return { ...service, cleanup };
 }
 
 export async function cleanupByCollectiviteId(
