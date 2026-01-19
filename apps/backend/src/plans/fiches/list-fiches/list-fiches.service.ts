@@ -66,6 +66,7 @@ import {
   aliasedTable,
   and,
   arrayOverlaps,
+  asc,
   Column,
   count,
   desc,
@@ -83,7 +84,7 @@ import {
   sql,
   SQL,
   SQLWrapper,
-  Table,
+  Table
 } from 'drizzle-orm';
 import { PgColumn, TableConfig } from 'drizzle-orm/pg-core';
 import { isNil } from 'es-toolkit';
@@ -862,16 +863,17 @@ export default class ListFichesService {
       queryOptions.sort.forEach((sort) => {
         const column = sortColumn[sort.field];
 
-        const columnWithCollation =
-          column === ficheActionTable.titre
-            ? sql`${column} collate numeric_with_case_and_accent_insensitive`
-            : column;
+        if (column === ficheActionTable.titre) {
+          const orderByWithCollation = sql`${column} collate numeric_with_case_and_accent_insensitive ${sort.direction === 'asc' ? sql`asc` : sql`desc`} nulls last`;
 
-        ficheIdsQuery.orderBy(
-          sort.direction === 'asc'
-            ? columnWithCollation
-            : desc(columnWithCollation)
-        );
+          ficheIdsQuery.orderBy(
+            orderByWithCollation,
+            // Prevent nulls (at the end) to be randomly reordered when updated
+            asc(ficheActionTable.createdAt)
+          );
+        } else {
+          ficheIdsQuery.orderBy(sort.direction === 'asc' ? column : desc(column));
+        }
       });
     }
 

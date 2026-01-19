@@ -35,7 +35,6 @@ export async function createFicheAndCleanupFunction({
   }
 
   const ficheCleanup = async () => {
-    console.log(`Cleanup fiche ${ficheId}`);
     await caller.plans.fiches.delete({
       ficheId,
       deleteMode: 'hard',
@@ -43,6 +42,27 @@ export async function createFicheAndCleanupFunction({
   };
 
   return { ficheId, ficheCleanup };
+}
+
+export async function createFiches({
+  caller,
+  ficheInputs,
+}: {
+  caller: ReturnType<TrpcRouter['createCaller']>;
+  ficheInputs: CreateFicheInput[];
+}): Promise<{ ficheIds: FicheId[]; cleanup: () => Promise<void> }> {
+  const fiches = await Promise.all(ficheInputs.map(async (ficheInput) => {
+    return await createFicheAndCleanupFunction({ caller, ficheInput });
+  }));
+
+  const ficheIds = fiches.map((fiche) => fiche.ficheId);
+  const cleanup = async () => {
+    await Promise.all(fiches.map(async (fiche) => {
+      await fiche.ficheCleanup();
+    }));
+  };
+
+  return { ficheIds, cleanup };
 }
 
 export async function createFiche({
