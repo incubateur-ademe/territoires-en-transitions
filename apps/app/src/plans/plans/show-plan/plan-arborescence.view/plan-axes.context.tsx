@@ -1,7 +1,10 @@
 'use client';
 
 import { OPEN_AXES_KEY_SEARCH_PARAMETER } from '@/app/app/paths';
-import { PlanNode } from '@tet/domain/plans';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Plan, PlanNode } from '@tet/domain/plans';
+import { CollectiviteAccess } from '@tet/domain/users';
 import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs';
 import React, {
   createContext,
@@ -10,31 +13,48 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { checkAxeHasFiche } from '../../utils';
+import { useUpdatePlan } from '../data/use-update-plan';
+import { usePlanFilters } from '../filters/plan-filters.context';
 import { getChildrenAxeIds } from './get-children-axe-ids';
 import { PlanDisplayOptionsEnum, usePlanOptions } from './plan-options.context';
 
 type PlanAxesContextValue = {
+  collectivite: CollectiviteAccess;
+  plan: Plan;
+  updatePlan: ReturnType<typeof useUpdatePlan>['mutate'];
+  rootAxe: PlanNode;
   openAxes: number[];
   setIsOpen: (axeId: number, isOpen: boolean) => void;
   toggleAll: () => void;
   areAllClosed: boolean;
+  hasAxesToExpand: boolean;
+  isReadOnly: boolean;
   isToggleAllActive: boolean;
   isActionsVisible: boolean;
+  isFiltered: boolean;
+  isPlanEmpty: boolean;
+  axeHasFiches: boolean;
 };
 
 const PlanAxesContext = createContext<PlanAxesContextValue | null>(null);
 
 type PlanAxesProviderProps = {
   children: React.ReactNode;
-  rootAxe: PlanNode | null | undefined;
-  axes: PlanNode[];
+  plan: Plan;
+  rootAxe: PlanNode;
 };
 
 export const PlanAxesProvider = ({
   children,
+  plan,
   rootAxe,
-  axes,
 }: PlanAxesProviderProps) => {
+  const collectivite = useCurrentCollectivite();
+  const { mutate: updatePlan } = useUpdatePlan({
+    collectiviteId: collectivite.collectiviteId,
+  });
+
   const [openAxes, setOpenAxes] = useQueryState(
     OPEN_AXES_KEY_SEARCH_PARAMETER,
     parseAsArrayOf(parseAsInteger).withDefault([])
@@ -42,8 +62,19 @@ export const PlanAxesProvider = ({
   const [isToggleAllActive, setIsToggleAllActive] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const axes = plan.axes;
+  const hasAxesToExpand = axes.some((axe) => axe.depth > 0) || false;
+  const axeHasFiches = rootAxe ? checkAxeHasFiche(rootAxe, plan.axes) : false;
+
+  const hasFiches = rootAxe?.fiches && rootAxe.fiches.length > 0;
+  const hasAxes = plan.axes.some((axe) => axe.depth > 0);
+  const isPlanEmpty = !hasFiches && !hasAxes;
+
   const allAxeIds = rootAxe ? getChildrenAxeIds(rootAxe, axes) : [];
   const areAllClosed = openAxes.length === 0;
+  const isReadOnly =
+    collectivite.isReadOnly ||
+    !hasPermission(collectivite.permissions, 'plans.mutate');
 
   // Nettoyer le flag après un court délai
   useEffect(() => {
@@ -101,13 +132,24 @@ export const PlanAxesProvider = ({
     PlanDisplayOptionsEnum.ACTIONS
   );
 
+  const { isFiltered } = usePlanFilters();
+
   const value: PlanAxesContextValue = {
+    collectivite,
+    isReadOnly,
+    plan,
+    updatePlan,
+    rootAxe,
+    hasAxesToExpand,
     openAxes,
     setIsOpen,
     toggleAll,
     areAllClosed,
     isToggleAllActive,
     isActionsVisible,
+    isFiltered,
+    isPlanEmpty,
+    axeHasFiches,
   };
 
   return (
