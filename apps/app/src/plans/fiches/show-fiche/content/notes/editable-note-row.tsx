@@ -1,6 +1,6 @@
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
 import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
-import { Select, TableCell, TableCellTextarea, VisibleWhen } from '@tet/ui';
+import { Select, TableCell, TableCellTextarea, TableRow, VisibleWhen } from '@tet/ui';
 import { htmlToText } from 'html-to-text';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -93,7 +93,7 @@ export const NoteRow = ({
   };
 
   return (
-    <tr className="border-b border-gray-200 hover:bg-gray-50 group">
+    <TableRow className="border-b border-gray-200 hover:bg-gray-50 group">
       <TableCell
         className="font-bold text-primary-9 text-sm border-b border-gray-5"
         canEdit={!isReadonly}
@@ -171,6 +171,6 @@ export const NoteRow = ({
           )}
         </TableCell>
       </VisibleWhen>
-    </tr>
+    </TableRow>
   );
 };
