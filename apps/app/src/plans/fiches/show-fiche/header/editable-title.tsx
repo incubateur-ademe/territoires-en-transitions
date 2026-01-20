@@ -1,13 +1,17 @@
-import { Button, Input } from '@tet/ui';
+import { Button, cn, Input } from '@tet/ui';
 import { useEffect, useState } from 'react';
 
 type EditableTitleProps = {
+  className?: string;
+  containerClassName?: string;
   title: string | null;
   isReadonly: boolean;
   onUpdate: (value: string | null) => void;
 };
 
 export const EditableTitle = ({
+  className,
+  containerClassName,
   title: initialTitle,
   isReadonly,
   onUpdate,
@@ -30,7 +34,10 @@ export const EditableTitle = ({
 
   return (
     <div
-      className="w-full flex justify-between items-start mb-2 group cursor-text"
+      className={cn(
+        'w-full flex justify-between items-start mb-2 group cursor-text',
+        containerClassName
+      )}
       data-test="TitreFiche"
       onClick={() => !isReadonly && !isEditing && handleChangeMode()}
     >
@@ -43,7 +50,7 @@ export const EditableTitle = ({
           onKeyDown={(evt) => evt.key === 'Enter' && handleChangeMode()}
           type="text"
           containerClassname="w-full"
-          className="text-3xl"
+          className={cn('text-3xl', className)}
           icon={{
             buttonProps: {
               icon: 'save-3-fill',
@@ -53,7 +60,9 @@ export const EditableTitle = ({
           }}
         />
       ) : (
-        <h1 className="mt-1.5 mb-2">{editedTitle ?? 'Sans titre'}</h1>
+        <h1 className={cn('mt-1.5 mb-2', className)}>
+          {editedTitle ?? 'Sans titre'}
+        </h1>
       )}
       {!isEditing && !isReadonly && (
         <Button
