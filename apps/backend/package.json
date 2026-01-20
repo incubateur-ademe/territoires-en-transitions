@@ -8,7 +8,7 @@
     "./*": {
       "types": "./dist/*.d.ts",
       "import": "./dist/*.js",
-      "default": "./src/*.ts"
+      "default": "./dist/*.js"
     }
   }
 }

@@ -8,12 +8,14 @@
     "dev": {
       "command": "nest start --watch",
       "// debug": "nest start --debug --watch",
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "apps/tools"
       }
     },
     "build": {
       "command": "nest build",
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "apps/tools"
       }
