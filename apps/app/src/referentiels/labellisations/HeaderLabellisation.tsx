@@ -55,8 +55,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
       </h2>
       {status === 'non_demandee' && !isAuditeur ? (
         <>
-          {/* {etoiles === 1 && !isCOT ? ( */}
-          <Button
+          {etoiles === 1 && isCOT ? (<Button
             className="mb-4"
             dataTest="1ereEtoileCOT"
             size="sm"
@@ -64,7 +63,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
             onClick={() => setOpened_1ereEtoileCOT(true)}
           >
             Demander la première étoile
-          </Button>
+          </Button>) : null}
           <Button
             dataTest="SubmitDemandeBtn"
             size="sm"
