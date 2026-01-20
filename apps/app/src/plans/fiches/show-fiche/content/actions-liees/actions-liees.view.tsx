@@ -34,7 +34,7 @@ export const ActionsLieesView = () => {
         isReadonly={isReadonly}
         picto={(props) => <FichePicto {...props} />}
         title="Cette action n'est liée à aucune autre action"
-        subTitle="Lier des actions pour les regrouper et faciliter leur gestion"
+        subTitle="Ici vous pouvez faire référence à d’autres actions de vos plans"
         actions={[
           {
             children: 'Lier une action',
