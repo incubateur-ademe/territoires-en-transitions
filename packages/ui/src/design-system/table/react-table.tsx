@@ -9,9 +9,10 @@ import { TableHead } from './table.head';
 import { TableLoading, TableLoadingProps } from './table.loading';
 import { TableRow } from './table.row';
 
-type Props = {
+export type ReactTableProps = {
   table: TableProps<any>;
-  isLoading?: boolean;
+  isLoading?: boolean; // Pour afficher uniquement des loading rows
+  isLoadingNewRow?: boolean; // Pour afficher un loading row en plus des rows existants
   nbLoadingRows?: TableLoadingProps['nbOfRows'];
   isEmpty?: boolean;
   emptyCard?: EmptyCardProps;
@@ -20,10 +21,11 @@ type Props = {
 export const ReactTable = ({
   table,
   isLoading,
+  isLoadingNewRow,
   isEmpty,
   emptyCard,
   nbLoadingRows,
-}: Props) => {
+}: ReactTableProps) => {
   return (
     <Table>
       <TableHead>
@@ -62,6 +64,12 @@ export const ReactTable = ({
               ))}
             </TableRow>
           ))
+        )}
+        {isLoadingNewRow && (
+          <TableLoading
+            columnIds={table.getVisibleFlatColumns().map((col) => col.id)}
+            nbOfRows={1}
+          />
         )}
       </tbody>
     </Table>
