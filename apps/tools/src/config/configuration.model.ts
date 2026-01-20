@@ -84,6 +84,11 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .min(1)
     .describe("Jeton d'accès à l'API Calendly"),
   ENABLE_CRON_JOBS: z.coerce.boolean().describe('Activer les cron jobs'),
+  CRON_JOBS_FILTER: z
+    .string()
+    .optional()
+    .transform((val) => val?.split(',').map((v) => v.trim()))
+    .describe('Filtre pour les cron jobs'),
   SIRENE_API_KEY: z.string().min(1).describe("Clé pour accéder à l'API SIRENE"),
   SIRENE_API_URL: z.string().min(1).describe("URL de l'API SIRENE"),
   CONNECT_URL: z.string().min(1).describe("Adresse de l'API Connect"),
