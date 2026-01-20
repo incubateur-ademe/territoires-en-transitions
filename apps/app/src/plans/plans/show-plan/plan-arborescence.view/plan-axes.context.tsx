@@ -3,8 +3,15 @@
 import { OPEN_AXES_KEY_SEARCH_PARAMETER } from '@/app/app/paths';
 import { PlanNode } from '@tet/domain/plans';
 import { parseAsArrayOf, parseAsInteger, useQueryState } from 'nuqs';
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { getChildrenAxeIds } from './get-children-axe-ids';
+import { PlanDisplayOptionsEnum, usePlanOptions } from './plan-options.context';
 
 type PlanAxesContextValue = {
   openAxes: number[];
@@ -12,6 +19,7 @@ type PlanAxesContextValue = {
   toggleAll: () => void;
   areAllClosed: boolean;
   isToggleAllActive: boolean;
+  isActionsVisible: boolean;
 };
 
 const PlanAxesContext = createContext<PlanAxesContextValue | null>(null);
@@ -88,12 +96,18 @@ export const PlanAxesProvider = ({
     }
   };
 
+  const planOptions = usePlanOptions();
+  const isActionsVisible = planOptions.isOptionEnabled(
+    PlanDisplayOptionsEnum.ACTIONS
+  );
+
   const value: PlanAxesContextValue = {
     openAxes,
     setIsOpen,
     toggleAll,
     areAllClosed,
     isToggleAllActive,
+    isActionsVisible,
   };
 
   return (
@@ -112,4 +126,3 @@ export const usePlanAxesContext = () => {
   }
   return context;
 };
-

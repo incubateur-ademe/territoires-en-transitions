@@ -1,4 +1,5 @@
-import { Button, cn, Icon } from '@tet/ui';
+import { Button, cn, Icon, Tooltip } from '@tet/ui';
+import { PlanDisplayOptionsEnum } from '../plan-options.context';
 import { AxeIndicateursPanel } from './axe-indicateurs.panel';
 import { AxeMenuButton } from './axe-menu.button';
 import { AxeTitleInput } from './axe-title.input';
@@ -15,6 +16,7 @@ export const AxeHeader = () => {
     isOpenPanelIndicateurs,
     isOpenEditTitle,
     setIsOpenEditTitle,
+    planOptions,
     providerProps,
   } = useAxeContext();
   const { axe } = providerProps;
@@ -84,17 +86,24 @@ export const AxeHeader = () => {
         {!isReadOnly && (
           <>
             <div className="invisible group-hover/heading:visible group-focus-within/title:visible flex self-center gap-3 ml-3 min-w-max">
-              <Button
-                variant="grey"
-                size="xs"
-                title="Créer une action"
-                onClick={() => {
-                  setIsOpen(true);
-                  createFicheResume.mutateAsync();
-                }}
-              >
-                Créer une action
-              </Button>
+              {planOptions.isOptionEnabled(PlanDisplayOptionsEnum.ACTIONS) ? (
+                <Button
+                  variant="grey"
+                  size="xs"
+                  onClick={() => {
+                    setIsOpen(true);
+                    createFicheResume.mutateAsync();
+                  }}
+                >
+                  Créer une action
+                </Button>
+              ) : (
+                <Tooltip label="Les actions sont masquées dans l’affichage global">
+                  <Button disabled variant="grey" size="xs">
+                    Créer une action
+                  </Button>
+                </Tooltip>
+              )}
               <AxeMenuButton />
             </div>
             <AxeIndicateursPanel />
