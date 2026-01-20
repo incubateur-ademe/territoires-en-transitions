@@ -30,7 +30,7 @@ export const JOBS_CONFIG = [
   },
   {
     name: 'send-notifications',
-    cronExpression: CronExpression.EVERY_5_MINUTES,
+    cronExpression: CronExpression.EVERY_MINUTE,
     data: {},
   },
 ] as const;
