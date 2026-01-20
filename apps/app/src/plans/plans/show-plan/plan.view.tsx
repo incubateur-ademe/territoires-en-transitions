@@ -58,10 +58,10 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
   const plan = useGetPlan(initialPlanData.id, {
     initialData: initialPlanData,
   });
-  const rootAxe = plan.axes.find((axe) => axe.parent === null);
-  const hasAxesToExpand = plan.axes.some((axe) => axe.depth > 0);
+  const rootAxe = plan?.axes.find((axe) => axe.parent === null);
+  const hasAxesToExpand = plan?.axes.some((axe) => axe.depth > 0) || false;
 
-  if (!rootAxe) {
+  if (!plan || !rootAxe) {
     return <div>Plan non trouvé</div>;
   }
   const axeHasFiches = rootAxe ? checkAxeHasFiche(rootAxe, plan.axes) : false;
@@ -110,7 +110,7 @@ const PlanViewContent = ({
   user: ReturnType<typeof useUser>;
   isFiltered: boolean;
 }) => {
-  const { areAllClosed, toggleAll } = usePlanAxesContext();
+  const { areAllClosed, toggleAll, isActionsVisible } = usePlanAxesContext();
 
   return (
     <div className="w-full">
@@ -175,6 +175,7 @@ const PlanViewContent = ({
                 <EditPlanButtons
                   plan={rootAxe}
                   collectiviteId={currentCollectivite.collectiviteId}
+                  isActionsVisible={isActionsVisible}
                   availableActions={
                     isFiltered
                       ? ['createFicheResume']
