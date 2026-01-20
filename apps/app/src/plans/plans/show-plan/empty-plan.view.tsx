@@ -22,6 +22,7 @@ export const EmptyPlanView = ({
           plan={plan}
           currentAxe={plan}
           collectiviteId={currentCollectivite.collectiviteId}
+          isActionsVisible
         />,
       ]}
     />
