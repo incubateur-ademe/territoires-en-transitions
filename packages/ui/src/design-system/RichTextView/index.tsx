@@ -13,19 +13,24 @@ type RichTextViewProps = {
   /** Hauteur maximum affichée avant que le contenu soit tronqué */
   maxHeight?: 'sm' | 'lg';
   /** Couleur du texte */
-  textColor?: 'white' | 'grey';
+  textColor?: 'white' | 'grey' | 'primary';
+  textSize?: 'xs' | 'sm' | 'base' | 'md' | 'lg';
   /** Libellé du placeholder */
   placeholder?: string;
   /** Si true, l'éditeur prend la hauteur nécessaire pour afficher tout le contenu sans troncature */
   autoSize?: boolean;
+  /** Classes supplémentaires appliquées au texte (contenu) */
+  textClassName?: string;
 };
 
 export const RichTextView = ({
   content,
   maxHeight = 'lg',
   textColor = 'white',
+  textSize = 'md',
   placeholder = 'Non renseignés',
   autoSize = false,
+  textClassName,
 }: RichTextViewProps) => {
   const [showLess, setShowLess] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
@@ -42,21 +47,24 @@ export const RichTextView = ({
       {content?.length ? (
         <RichTextEditor
           disabled
-          className={cn('!bg-transparent border-none !p-0', {
-            'overflow-hidden': !autoSize && !showLess,
-            'max-h-[23rem]': !autoSize && !showLess && maxHeight === 'lg',
-            'max-h-[8rem]': !autoSize && !showLess && maxHeight === 'sm',
-            '!text-grey-1': textColor === 'white',
-            '!text-grey-8': textColor === 'grey',
-          })}
+          className={cn(
+            {
+              'overflow-hidden': !autoSize && !showLess,
+              'max-h-[23rem]': !autoSize && !showLess && maxHeight === 'lg',
+              'max-h-[8rem]': !autoSize && !showLess && maxHeight === 'sm',
+            },
+            textClassName
+          )}
           initialValue={content}
           setIsTruncated={autoSize ? undefined : setIsTruncated}
+          contentStyle={{ size: textSize, color: textColor }}
         />
       ) : (
         <span
           className={cn('text-sm', {
-            '!text-grey-1': textColor === 'white',
-            '!text-grey-7': textColor === 'grey',
+            'text-grey-1': textColor === 'white',
+            'text-grey-7': textColor === 'grey',
+            'text-primary-9': textColor === 'primary',
           })}
         >
           {placeholder}
@@ -67,8 +75,9 @@ export const RichTextView = ({
           variant="underlined"
           size="xs"
           className={cn('ml-auto', {
-            '!text-grey-2 !border-grey-2': textColor === 'white',
-            '!text-primary-8 !border-primary-8': textColor === 'grey',
+            'text-grey-2 border-grey-2': textColor === 'white',
+            'text-primary-8 border-primary-8': textColor === 'grey',
+            'text-primary-9 border-primary-9': textColor === 'primary',
           })}
           onClick={() => setShowLess((prevState) => !prevState)}
         >

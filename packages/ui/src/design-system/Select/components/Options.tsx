@@ -144,6 +144,7 @@ const Option = ({
       <button
         type="button"
         data-test={option.value}
+        aria-label={option.label}
         className={classNames(
           'flex items-start w-full p-2 pr-6 text-left text-sm',
           { 'hover:!bg-primary-0': !disabled }

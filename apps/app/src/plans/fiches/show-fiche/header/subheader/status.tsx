@@ -22,7 +22,6 @@ export const Status = ({ status }: { status: Statut | null }): JSX.Element => {
                   statut: isStatut(value) ? value : null,
                 },
               });
-              openState.setIsOpen(false);
             }}
             customItem={(item) => (
               <StatusBadge status={isStatut(item.value) ? item.value : null} />
@@ -35,9 +34,7 @@ export const Status = ({ status }: { status: Statut | null }): JSX.Element => {
         </div>
       )}
     >
-      <button type="button">
-        <StatusBadge status={status} />
-      </button>
+      <StatusBadge status={status} />
     </InlineEditWrapper>
   );
 };

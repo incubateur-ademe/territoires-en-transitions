@@ -1,6 +1,6 @@
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { VisibleWhen } from '@tet/ui';
+import { cn, VisibleWhen } from '@tet/ui';
 import { useFicheContext } from '../context/fiche-context';
 import { Breadcrumbs } from './breadcrumbs';
 import { EditionModalManagerProvider } from './context/edition-modal-manager-context';
@@ -9,8 +9,8 @@ import { EditableTitle } from './editable-title';
 import { Menu } from './menu';
 import { SubHeader } from './subheader';
 
-const Divider = () => {
-  return <div className="border-b bg-primary-3 my-3" />;
+const Divider = ({ className }: { className?: string | undefined }) => {
+  return <div className={cn("border-b bg-primary-3 my-3", className)} />;
 };
 
 export const Header = () => {
@@ -26,8 +26,8 @@ export const Header = () => {
 
   return (
     <EditionModalManagerProvider>
-      <div className="w-full mb-6" data-test="fiche-header">
-        <div className="flex gap-4 flex-row lg:items-start">
+      <div className="w-full" data-test="fiche-header">
+        <div className="flex gap-4 flex-row lg:items-start mb-3">
           <div className="flex-1">
             <EditableTitle
               title={titre}
@@ -46,11 +46,12 @@ export const Header = () => {
             axes={axes ?? []}
             planId={planId}
           />
-          <Divider />
         </VisibleWhen>
+        <Divider />
         <SubHeader fiche={fiche} collectiviteId={collectiviteId} />
-        <EditionModalRenderer fiche={fiche} planId={planId} />
+        <Divider className="mb-0" />
       </div>
+      <EditionModalRenderer fiche={fiche} planId={planId} />
     </EditionModalManagerProvider>
   );
 };

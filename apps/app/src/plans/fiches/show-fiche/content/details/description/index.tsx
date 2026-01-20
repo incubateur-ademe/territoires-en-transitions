@@ -1,7 +1,7 @@
 import EffetsAttendusDropdown from '@/app/ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import { useGetThematiqueAndSousThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
-import { RichTextView, SelectMultiple } from '@tet/ui';
+import { cn, SelectMultiple, Spacer } from '@tet/ui';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { RichTextEditorWithDebounce } from '../../../components/rich-text-editor-with-debounce';
@@ -10,6 +10,24 @@ import { InlineEditableItem } from '../editable-item';
 import { DescriptionFormValues } from './description-schema';
 import { getFieldLabel } from './labels';
 
+const MainTitle = ({
+  children,
+  size = 'large',
+}: {
+  children: React.ReactNode;
+  size?: 'large' | 'normal';
+}) => {
+  return (
+    <div
+      className={cn('text-primary-10 font-bold text-lg', {
+        'text-base': size === 'normal',
+        'font-normal': size === 'normal',
+      })}
+    >
+      {children}
+    </div>
+  );
+};
 export const Description = () => {
   const { fiche, isReadonly, update } = useFicheContext();
   const { control, watch, getValues, setValue } =
@@ -58,58 +76,50 @@ export const Description = () => {
         name="description"
         control={control}
         render={({ field }) => (
-          <InlineEditableItem
-            icon="todo-line"
-            label={getFieldLabel('description', fiche.description)}
-            value={
-              <RichTextView
-                content={fiche.description}
-                textColor="grey"
-                placeholder="À renseigner"
-                autoSize
-              />
-            }
-            isReadonly={isReadonly}
-            renderOnEdit={() => (
-              <RichTextEditorWithDebounce
-                value={field.value ?? ''}
-                onChange={(value) => field.onChange(value)}
-              />
-            )}
-          />
+          <div className="flex flex-col gap-4">
+            <MainTitle>
+              {getFieldLabel('description', fiche.description)}
+            </MainTitle>
+            <RichTextEditorWithDebounce
+              contentStyle={{
+                size: 'sm',
+                color: 'primary',
+              }}
+              value={field.value ?? ''}
+              onChange={(value) => {
+                field.onChange(value);
+              }}
+            />
+          </div>
         )}
       />
       <Controller
         name="objectifs"
         control={control}
         render={({ field }) => (
-          <InlineEditableItem
-            icon="todo-line"
-            label={getFieldLabel('objectifs', fiche.objectifs)}
-            value={
-              <RichTextView
-                content={fiche.objectifs}
-                textColor="grey"
-                placeholder="À renseigner"
-                autoSize
-              />
-            }
-            isReadonly={isReadonly}
-            renderOnEdit={() => (
-              <RichTextEditorWithDebounce
-                value={field.value ?? ''}
-                onChange={(value) => field.onChange(value)}
-              />
-            )}
-          />
+          <div className="flex flex-col gap-1">
+            <MainTitle size="normal">
+              {`${getFieldLabel('objectifs', fiche.objectifs)} : `}
+            </MainTitle>
+            <RichTextEditorWithDebounce
+              contentStyle={{
+                size: 'sm',
+                color: 'primary',
+              }}
+              value={field.value ?? ''}
+              onChange={field.onChange}
+            />
+          </div>
         )}
       />
+      <Spacer height={2} />
       <div className="grid grid-cols-2 gap-4">
         <Controller
           name="effetsAttendus"
           control={control}
           render={({ field }) => (
             <InlineEditableItem
+              small
               icon="line-chart-line"
               label={getFieldLabel('effetsAttendus', fiche.effetsAttendus)}
               value={
@@ -118,12 +128,12 @@ export const Description = () => {
                   : undefined
               }
               isReadonly={isReadonly}
-              renderOnEdit={({ openState }) => (
+              renderOnEdit={() => (
                 <EffetsAttendusDropdown
+                  openState={{ isOpen: true }}
                   values={field.value ?? undefined}
                   onChange={({ effets }) => {
                     field.onChange(effets);
-                    openState.setIsOpen(false);
                   }}
                 />
               )}
@@ -135,6 +145,7 @@ export const Description = () => {
           control={control}
           render={({ field }) => (
             <InlineEditableItem
+              small
               icon="folder-line"
               label={getFieldLabel('thematiques', selectedThematiques)}
               value={
@@ -143,8 +154,9 @@ export const Description = () => {
                   .join(', ') ?? undefined
               }
               isReadonly={isReadonly}
-              renderOnEdit={({ openState }) => (
+              renderOnEdit={() => (
                 <SelectMultiple
+                  openState={{ isOpen: true }}
                   options={thematiqueOptions}
                   values={field.value?.map((thematique) => thematique.id)}
                   onChange={({ values }) => {
@@ -153,7 +165,6 @@ export const Description = () => {
                         values?.some((v) => v === thematique.id)
                       )
                     );
-                    openState.setIsOpen(false);
                   }}
                 />
               )}
@@ -165,6 +176,7 @@ export const Description = () => {
           control={control}
           render={({ field }) => (
             <InlineEditableItem
+              small
               icon="folders-line"
               label={getFieldLabel('sousThematiques', selectedSousThematiques)}
               value={
@@ -173,19 +185,19 @@ export const Description = () => {
                   .join(', ') ?? undefined
               }
               isReadonly={isReadonly}
-              renderOnEdit={({ openState }) => (
+              renderOnEdit={() => (
                 <SelectMultiple
                   options={sousThematiqueOptions}
                   values={field.value?.map(
                     (sousThematique) => sousThematique.id
                   )}
+                  openState={{ isOpen: true }}
                   onChange={({ values }) => {
                     field.onChange(
                       sousThematiqueListe.filter((sousThematique) =>
                         values?.some((v) => v === sousThematique.id)
                       )
                     );
-                    openState.setIsOpen(false);
                   }}
                 />
               )}
@@ -197,18 +209,19 @@ export const Description = () => {
           control={control}
           render={({ field }) => (
             <InlineEditableItem
+              small
               icon="bookmark-line"
               label={getFieldLabel('libreTags', selectedLibreTags)}
               value={
                 selectedLibreTags?.map((tag) => tag.nom).join(', ') ?? undefined
               }
               isReadonly={isReadonly}
-              renderOnEdit={({ openState }) => (
+              renderOnEdit={() => (
                 <TagsSuiviPersoDropdown
+                  openState={{ isOpen: true }}
                   values={(field.value ?? []).map((tag) => tag.id)}
                   onChange={({ libresTag }) => {
                     field.onChange(libresTag);
-                    openState.setIsOpen(false);
                   }}
                 />
               )}

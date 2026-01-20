@@ -266,7 +266,7 @@ describe('BulkEditRouter', () => {
     const input1: Input = {
       collectiviteId: COLLECTIVITE_ID,
       ficheIds,
-      priorite: PrioriteEnum.Élevé,
+      priorite: PrioriteEnum.ÉLEVÉ,
     };
 
     const result = await caller.plans.fiches.bulkEdit(input1);
