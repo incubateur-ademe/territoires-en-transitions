@@ -91,7 +91,9 @@ const Modules = () => {
           return null;
         }
 
-        return <SousActionsDontJeSuisLePiloteModule />;
+        return (
+          <SousActionsDontJeSuisLePiloteModule key="sous-actions-dont-je-suis-pilote" />
+        );
       },
     },
     {
