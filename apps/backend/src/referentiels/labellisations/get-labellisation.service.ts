@@ -5,19 +5,23 @@ import {
 } from '@nestjs/common';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { Result } from '@tet/backend/utils/result.type';
+import { CommonError } from '@tet/backend/utils/trpc/common-errors';
 import {
   ActionScoreFinal,
+  ConditionFichiers,
   Etoile,
   EtoileEnum,
   findActionById,
+  getParcoursLabellisationStatus,
   getParentIdFromActionId,
   getScoreRatios,
   Labellisation,
   LabellisationAudit,
-  LabellisationCritere,
   LabellisationDemande,
+  ParcoursLabellisation,
   ReferentielId,
-  ScoresPayload,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
 import { and, desc, eq, getTableColumns, lte, not, sql } from 'drizzle-orm';
@@ -33,9 +37,6 @@ import { etoileDefinitionTable } from './etoile-definition.table';
 import { labellisationDemandeTable } from './labellisation-demande.table';
 import { LabellisationService } from './labellisation.service';
 import { labellisationTable } from './labellisation.table';
-
-type ConditionFichiers = { atteint: boolean };
-
 type TLabellisationAndDemandeAndAudit = {
   labellisation: ObjectToSnake<
     Labellisation & { prochaine_etoile: Etoile | null }
@@ -44,34 +45,6 @@ type TLabellisationAndDemandeAndAudit = {
   demande: ObjectToSnake<LabellisationDemande> | null;
   isCot: boolean;
   conditionFichiers: ConditionFichiers;
-};
-
-type ParcoursLabellisation = {
-  etoiles: Etoile;
-  completude_ok: boolean;
-  critere_score: LabellisationCritere;
-  criteres_action: ObjectToSnake<
-    Omit<
-      EtoileActionConditionDefinition,
-      'minRealiseScore' | 'minProgrammeScore'
-    > & {
-      atteint: boolean;
-      rempli: boolean;
-      proportionFait: number;
-      proportionProgramme: number;
-      statut_ou_score: string;
-    }
-  >[];
-
-  rempli: boolean;
-  labellisation:
-    | (ObjectToSnake<Labellisation> & { prochaine_etoile: Etoile | null })
-    | null;
-  demande: ObjectToSnake<LabellisationDemande> | null;
-  audit: ObjectToSnake<LabellisationAudit> | null;
-  isCot: boolean;
-  conditionFichiers: ConditionFichiers;
-  score: ScoresPayload['scores']['score'];
 };
 
 @Injectable()
@@ -140,6 +113,36 @@ export class GetLabellisationService {
       .where(eq(sql`${subQuery.etoile}::varchar::integer`, subQuery.maxEtoile));
 
     return await query;
+  }
+
+  async getDemande(
+    demandeId: number,
+    tx?: Transaction
+  ): Promise<Result<LabellisationDemande, CommonError>> {
+    try {
+      const demande = await (tx ?? this.db)
+        .select()
+        .from(labellisationDemandeTable)
+        .where(eq(labellisationDemandeTable.id, demandeId))
+        .limit(1);
+
+      if (!demande.length) {
+        return {
+          success: false,
+          error: 'NOT_FOUND',
+        };
+      }
+      return {
+        success: true,
+        data: demande[0],
+      };
+    } catch (error) {
+      this.logger.error(error);
+      return {
+        success: false,
+        error: 'DATABASE_ERROR',
+      };
+    }
   }
 
   /**
@@ -520,13 +523,17 @@ from s_etoile s
       etoiles: etoileCible.etoile,
     };
 
+    const status = getParcoursLabellisationStatus({ demande, audit });
+
     return {
+      collectivite_id: collectiviteId,
+      referentiel: referentielId,
+      status,
       etoiles: etoileCible.etoile,
       completude_ok: scoresOverview.isCompleted,
 
       critere_score: critereScore,
       criteres_action: criteresAction.map(objectToSnake),
-
       rempli:
         critereScore.atteint &&
         criteresAction.every((c) => c.atteint) &&

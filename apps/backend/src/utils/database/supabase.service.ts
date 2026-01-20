@@ -51,6 +51,7 @@ export default class SupabaseService {
       .from(bucket)
       .upload(path, file, {
         contentType: mimeType,
+        upsert: true,
       });
     if (error) {
       this.logger.error(`Error saving file in storage: ${error.message}`);

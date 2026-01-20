@@ -43,4 +43,3 @@ export const preuveSchemaEssential = z.pick(preuveSchema, {
 });
 
 export type PreuveEssential = z.infer<typeof preuveSchemaEssential>;
-

@@ -7,6 +7,9 @@ import { expect } from 'vitest';
 export const ISO_8601_DATE_TIME_REGEX =
   /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/;
 
+export const ISO_OR_SQL_DATE_TIME_REGEX =
+  /\d{4}-[01]\d-[0-3]\d[ T][0-2]\d:[0-5]\d:[0-5]\d(\.\d+)?([+-][0-2]\d:[0-5]\d|Z)?/;
+
 export interface CustomMatchers<R = unknown> {
   toEqualDate: (expected: string) => R;
   toThrowTrpcHttpError: (error: HttpException) => Promise<R>;

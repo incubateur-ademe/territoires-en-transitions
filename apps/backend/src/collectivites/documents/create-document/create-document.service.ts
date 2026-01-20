@@ -11,6 +11,7 @@ import {
   BibliothequeFichierCreate,
 } from '@tet/domain/collectivites';
 import { getErrorMessage } from '@tet/domain/utils';
+import { createHash } from 'crypto';
 import { and, eq } from 'drizzle-orm';
 import { readFile } from 'fs/promises';
 import * as mime from 'mime-types';
@@ -20,6 +21,9 @@ import {
   CreateDocumentError,
   CreateDocumentErrorEnum,
 } from './create-document.errors';
+
+// Type for multer file upload
+type MulterFile = Express.Multer.File;
 
 @Injectable()
 export class CreateDocumentService {
@@ -99,6 +103,65 @@ export class CreateDocumentService {
     }
 
     return await this.createDocument(document, user);
+  }
+
+  async uploadBuffer(
+    collectiviteId: number,
+    file: MulterFile,
+    isConfidentiel: boolean,
+    user?: AuthenticatedUser
+  ): Promise<Result<BibliothequeFichier, CreateDocumentError>> {
+    if (user) {
+      const isAllowed = await this.permissionService.isAllowed(
+        user,
+        'collectivites.documents.create',
+        ResourceType.COLLECTIVITE,
+        collectiviteId,
+        true
+      );
+      if (!isAllowed) {
+        return {
+          success: false,
+          error: 'UNAUTHORIZED',
+        };
+      }
+    }
+
+    const filename = file.originalname || 'uploaded-file';
+    const mimeType = file.mimetype || mime.lookup(filename) || undefined;
+
+    const bucketResult = await this.getCollectiviteBucketId(collectiviteId);
+    if (!bucketResult.success) {
+      return bucketResult;
+    }
+    const bucketId = bucketResult.data;
+
+    // Compute SHA-256 hash from buffer
+    const hash = createHash('sha256').update(file.buffer).digest('hex');
+
+    this.logger.log(
+      `Uploading buffer with mime type ${mimeType} to bucket ${bucketId} with hash ${hash}`
+    );
+
+    const saveResult = await this.supabaseService.saveInStorage({
+      bucket: bucketId,
+      path: hash,
+      file: file.buffer,
+      mimeType,
+    });
+    if (!saveResult.success) {
+      return saveResult;
+    }
+
+    return await this.createDocument(
+      {
+        collectiviteId,
+        confidentiel: isConfidentiel,
+        hash,
+        filename,
+      },
+      user
+    );
   }
 
   async createDocument(

@@ -9,6 +9,7 @@ export * from './discussion.schema';
 export * from './documents/bibliotheque-fichier.schema';
 export * from './documents/preuve-audit.schema';
 export * from './documents/preuve-complementaire.schema';
+export * from './documents/preuve-labellisation-with-fichier.schema';
 export * from './documents/preuve-labellisation.schema';
 export * from './documents/preuve-rapport.schema';
 export * from './documents/preuve-reglementaire-definition.schema';
