@@ -5,6 +5,11 @@
   "main": "./dist/main.js",
   "exports": {
     "./package.json": "./package.json",
+    "./*.test-fixture": {
+      "types": "./out-tsc/spec/src/*.test-fixture.d.ts",
+      "import": "./out-tsc/spec/src/*.test-fixture.js",
+      "default": "./out-tsc/spec/src/*.test-fixture.js"
+    },
     "./*": {
       "types": "./dist/*.d.ts",
       "import": "./dist/*.js",
