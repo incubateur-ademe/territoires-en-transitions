@@ -17,7 +17,7 @@ export class CrispService {
   private readonly crispClient: Crisp;
 
   private readonly TICKET_REGEXP =
-    /^ticket(?:\s*(\d*)([jh]))?(?:\s*:\s*(.*))?/i;
+    /^(ticket|support)(?:\s*(\d*)([jh]))?(?:\s*:\s*(.*))?/i;
   private readonly DEFAULT_TICKET_DAYS = 2;
 
   private readonly FEEDBACK_REGEXP = /^feedback(?:\s*(\d*)([jh]))?/i;
@@ -131,19 +131,27 @@ export class CrispService {
     ticketMatch: RegExpMatchArray
   ) {
     try {
-      const delay =
+      const isSupport =
         ticketMatch.length >= 1 && ticketMatch[1]
-          ? parseInt(ticketMatch[1])
+          ? ticketMatch[1].toLowerCase() === 'support'
+          : false;
+      const delay =
+        ticketMatch.length >= 2 && ticketMatch[2]
+          ? parseInt(ticketMatch[2])
           : this.DEFAULT_TICKET_DAYS;
       const delayUnit: 'j' | 'h' =
-        ticketMatch.length >= 2 && ticketMatch[2]
-          ? (ticketMatch[2].toLowerCase() as 'j' | 'h')
+        ticketMatch.length >= 3 && ticketMatch[3]
+          ? (ticketMatch[3].toLowerCase() as 'j' | 'h')
           : 'j';
 
-      const ticketTitle = ticketMatch.length >= 3 ? ticketMatch[3] : null;
+      const ticketTitle = ticketMatch.length >= 4 ? ticketMatch[4] : null;
 
       this.logger.log(
-        `Ticket found in message received for session ${sessionId} on website ${websiteId}: ${ticketMatch[0]} (delay ${delay}${delayUnit}, title ${ticketTitle})`
+        `Ticket found in message received for session ${sessionId} on website ${websiteId}: ${
+          ticketMatch[0]
+        } (type ${
+          isSupport ? 'support' : 'bug'
+        }, delay ${delay}${delayUnit}, title ${ticketTitle})`
       );
 
       const session: CrispSession =
@@ -160,17 +168,18 @@ export class CrispService {
         delayUnit
       );
 
-      const { bug, created } =
-        await this.notionBugCreatorService.createBugFromCrispSession(
+      const { ticket, created } =
+        await this.notionBugCreatorService.createTicketFromCrispSession(
           session,
           filteredMessages,
-          ticketTitle
+          ticketTitle,
+          isSupport
         );
 
       if (created) {
         this.logger.log(
           `Sending ticket note for session ${sessionId} on website ${websiteId} with ticket URL ${
-            bug.url || bug.id
+            ticket.url || ticket.id
           }`
         );
         await this.crispClient.website.sendMessageInConversation(
@@ -180,16 +189,16 @@ export class CrispService {
             type: 'note',
             from: 'operator',
             origin: 'chat',
-            content: `Url du ticket: ${bug.url || bug.id}`,
+            content: `Url du ticket: ${ticket.url || ticket.id}`,
           }
         );
       } else {
         this.logger.log(
-          `Ticket already exists for session ${sessionId} on website ${websiteId}: ${bug.url}, do not send note`
+          `Ticket already exists for session ${sessionId} on website ${websiteId}: ${ticket.url}, do not send note`
         );
       }
 
-      return { type: 'ticket', url: bug.url, created };
+      return { type: 'ticket', url: ticket.url, created };
     } catch (error) {
       this.logger.error(error);
       this.logger.error(

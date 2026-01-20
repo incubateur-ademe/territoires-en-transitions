@@ -258,9 +258,9 @@ export class NotionBugCreatorService {
     }
   }
 
-  async getTemplateProperties(): Promise<TemplateProperties> {
+  async getTemplateProperties(templateId: string): Promise<TemplateProperties> {
     const templatePage = (await this.notion.pages.retrieve({
-      page_id: this.configurationService.get('NOTION_BUG_TEMPLATE_ID'),
+      page_id: templateId,
     })) as PageObjectResponse;
 
     const templateProperties: TemplateProperties = {
@@ -319,7 +319,7 @@ export class NotionBugCreatorService {
     return templateProperties;
   }
 
-  getNotionBugFromCrispSession(
+  getNotionTicketFromCrispSession(
     session: CrispSession,
     database: GetDatabaseResponse,
     collectiviteId: number | null,
@@ -330,7 +330,9 @@ export class NotionBugCreatorService {
       ...templateProperties,
       parent: {
         type: 'database_id',
-        database_id: this.configurationService.get('NOTION_BUG_DATABASE_ID'),
+        database_id: this.configurationService.get(
+          'NOTION_BUG_SUPPORT_DATABASE_ID'
+        ),
       },
       properties: {
         ...templateProperties.properties,
@@ -575,18 +577,27 @@ export class NotionBugCreatorService {
     return [];
   }
 
-  async createBugFromCrispSession(
+  async createTicketFromCrispSession(
     session: CrispSession,
     messages: CrispSessionMessage[],
     ticketTitle: string | null,
-    checkExistingBug = true
+    isSupport: boolean,
+    checkExistingTicket = true
   ) {
     const database = await this.notion.databases.retrieve({
-      database_id: this.configurationService.get('NOTION_BUG_DATABASE_ID'),
+      database_id: this.configurationService.get(
+        'NOTION_BUG_SUPPORT_DATABASE_ID'
+      ),
     });
 
-    const existingBugs = await this.notion.databases.query({
-      database_id: this.configurationService.get('NOTION_BUG_DATABASE_ID'),
+    const ticketTemplateId = this.configurationService.get(
+      isSupport ? 'NOTION_SUPPORT_TEMPLATE_ID' : 'NOTION_BUG_TEMPLATE_ID'
+    );
+
+    const existingTickets = await this.notion.databases.query({
+      database_id: this.configurationService.get(
+        'NOTION_BUG_SUPPORT_DATABASE_ID'
+      ),
       filter: this.getNotionPropertyEqualsFilter(
         database,
         'Conversation Crisp',
@@ -629,16 +640,18 @@ export class NotionBugCreatorService {
       this.logger.warn(`No email found in session, skipping user lookup`);
     }
 
-    if (checkExistingBug && existingBugs.results.length > 0) {
-      const existingBug = existingBugs.results[0] as PageObjectResponse;
+    if (checkExistingTicket && existingTickets.results.length > 0) {
+      const existingTicket = existingTickets.results[0] as PageObjectResponse;
       this.logger.log(
-        `Bug already exists for session ${session.session_id}, returning existing bug with url ${existingBug.url}`
+        `Ticket already exists for session ${session.session_id}, returning existing ticket with url ${existingTicket.url}`
       );
 
-      return { bug: existingBug, created: false };
+      return { ticket: existingTicket, created: false };
     } else {
-      const templateProperties = await this.getTemplateProperties();
-      const notionBug = this.getNotionBugFromCrispSession(
+      const templateProperties = await this.getTemplateProperties(
+        ticketTemplateId
+      );
+      const notionTicket = this.getNotionTicketFromCrispSession(
         session,
         database,
         collectiviteId,
@@ -646,15 +659,15 @@ export class NotionBugCreatorService {
         templateProperties
       );
 
-      const createdBug = (await this.notion.pages.create(
-        notionBug
+      const createdTicket = (await this.notion.pages.create(
+        notionTicket
       )) as PageObjectResponse;
       this.logger.log(
-        `Bug created for session ${session.session_id} with url ${createdBug.url}`
+        `Ticket created for session ${session.session_id} with url ${createdTicket.url}`
       );
 
       const existingBlocksResponse = await this.notion.blocks.children.list({
-        block_id: createdBug.id,
+        block_id: createdTicket.id,
       });
       let existingBlocks: BlockObjectResponse[] =
         existingBlocksResponse.results as BlockObjectResponse[];
@@ -664,8 +677,8 @@ export class NotionBugCreatorService {
         this.logger.log(`The bug is empty, creating a copy from the template`);
 
         existingBlocks = await this.createBlocksFromTemplate(
-          createdBug.id,
-          this.configurationService.get('NOTION_BUG_TEMPLATE_ID'),
+          createdTicket.id,
+          ticketTemplateId,
           session,
           collectivitesString
         );
@@ -673,7 +686,7 @@ export class NotionBugCreatorService {
 
       await this.fillMessageBlock(existingBlocks, messages);
 
-      return { bug: createdBug, created: true };
+      return { ticket: createdTicket, created: true };
     }
   }
 

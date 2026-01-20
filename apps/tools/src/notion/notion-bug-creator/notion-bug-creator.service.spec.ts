@@ -1,7 +1,7 @@
-import { TrpcClientService } from '../../utils/trpc/trpc-client.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ToolsAutomationApiConfigurationType } from '../../config/configuration.model';
 import ConfigurationService from '../../config/configuration.service';
+import { TrpcClientService } from '../../utils/trpc/trpc-client.service';
 import { NotionBugCreatorService } from './notion-bug-creator.service';
 import { crispSessionSample } from './samples/crisp-session.sample';
 import { ticketDatabaseSample } from './samples/ticket-database.sample';
@@ -17,9 +17,9 @@ describe('NotionBugCreatorService', () => {
         if (token === ConfigurationService) {
           return {
             get(key: keyof ToolsAutomationApiConfigurationType) {
-              if (key === 'NOTION_BUG_DATABASE_ID') {
+              if (key === 'NOTION_BUG_SUPPORT_DATABASE_ID') {
                 return 'notionDatabaseId';
-              } else if (key === 'NOTION_BUG_EPIC_ID') {
+              } else if (key === 'NOTION_BUG_SUPPORT_EPIC_ID') {
                 return 'notionEpicId';
               }
             },
@@ -31,9 +31,9 @@ describe('NotionBugCreatorService', () => {
     service = module.get<NotionBugCreatorService>(NotionBugCreatorService);
   });
 
-  describe('getNotionBugFromCrispSession', () => {
+  describe('getNotionTicketFromCrispSession', () => {
     test('Standard test', () => {
-      const notionBug = service.getNotionBugFromCrispSession(
+      const notionBug = service.getNotionTicketFromCrispSession(
         crispSessionSample,
         ticketDatabaseSample,
         null,
