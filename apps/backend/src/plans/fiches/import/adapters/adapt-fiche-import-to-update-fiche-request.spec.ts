@@ -83,7 +83,7 @@ describe('adaptImportToPlanCreation', () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error).toContain('No resolved entities found');
+      expect(result.error).toContain('No resolved entity found for fiche "Fiche 2" (axisPath: Axe 2 > Missing)');
     }
   });
 

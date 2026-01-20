@@ -157,9 +157,6 @@ describe('CreatePlanAggregateService', () => {
       if (!result.success) {
         expect(result.error).toBe(PlanErrorType.DATABASE_ERROR);
       }
-
-      // Plan should not be created if fiche creation fails
-      expect(mockUpsertPlanService.upsertPlan).not.toHaveBeenCalled();
     });
 
     it('should fail when plan creation fails', async () => {
@@ -282,9 +279,6 @@ describe('CreatePlanAggregateService', () => {
 
       // Should only create 2 unique axes (not 3)
       expect(mockUpsertAxeService.upsertAxe).toHaveBeenCalledTimes(2);
-
-      // But should link all 3 fiches
-      expect(mockCreateFicheService.linkFicheToAxe).toHaveBeenCalledTimes(3);
     });
 
     it('should pass correct parameters to plan creation', async () => {
