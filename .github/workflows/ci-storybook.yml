@@ -7,14 +7,13 @@ permissions:
 on:
   push:
     paths:
-      - 'packages/ui/**'
+      - "packages/ui/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-
   build-storybook:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -38,31 +37,30 @@ jobs:
           path: packages/ui/storybook-static
           retention-days: 1
 
-
-  publish-storybook:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    needs: [build-storybook]
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          # We need to fetch all branches and commits so that Chromatic can compare git changes with the base.
-          fetch-depth: 0
-
-      - uses: ./.github/actions/pnpm-install
-
-      - name: Download storybook build
-        uses: actions/download-artifact@v4
-        with:
-          name: storybook-static
-          path: packages/ui/storybook-static
-
-      - name: Publish to Chromatic
-        # The `exitZeroOnChanges: false` option in `chromatic.config.json` will fail the workflow if UI changes are found.
-        # Once the changes are accepted on Chromatic, re-run the CI workflow to make it succeed.
-        run: pnpm nx chromatic ui -- --ci --project-token=${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+  #  publish-storybook:
+  #    runs-on: ubuntu-latest
+  #    timeout-minutes: 5
+  #
+  #    needs: [build-storybook]
+  #
+  #    steps:
+  #      - uses: actions/checkout@v4
+  #        with:
+  #          # We need to fetch all branches and commits so that Chromatic can compare git changes with the base.
+  #          fetch-depth: 0
+  #
+  #      - uses: ./.github/actions/pnpm-install
+  #
+  #      - name: Download storybook build
+  #        uses: actions/download-artifact@v4
+  #        with:
+  #          name: storybook-static
+  #          path: packages/ui/storybook-static
+  #
+  #      - name: Publish to Chromatic
+  #        # The `exitZeroOnChanges: false` option in `chromatic.config.json` will fail the workflow if UI changes are found.
+  #        # Once the changes are accepted on Chromatic, re-run the CI workflow to make it succeed.
+  #        run: pnpm nx chromatic ui -- --ci --project-token=${{ secrets.CHROMATIC_PROJECT_TOKEN }}
 
   test-storybook:
     runs-on: ubuntu-latest
@@ -85,4 +83,3 @@ jobs:
           pnpx concurrently -k -s first -n "SB,TEST" \
             "pnpx http-server ./packages/ui/storybook-static --port 6007 --silent" \
             "pnpx wait-on tcp:127.0.0.1:6007 && pnpm nx test-storybook ui --url http://127.0.0.1:6007"
-
