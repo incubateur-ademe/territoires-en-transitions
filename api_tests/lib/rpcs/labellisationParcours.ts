@@ -1,5 +1,6 @@
-import { supabase } from '../supabase.ts';
+import { Etoile } from '@tet/domain/referentiels';
 import { Database } from '../database.types.ts';
+import { supabase } from '../supabase.ts';
 
 export type TEtoiles = Database['labellisation']['Enums']['etoile'];
 
@@ -20,7 +21,7 @@ export type TLabellisationParcours = {
   /** Référentiel concerné */
   referentiel: Database['public']['Enums']['referentiel'];
   /** Nombre d'étoiles atteignables */
-  etoiles: TEtoiles;
+  etoiles: Etoile;
   /** Vrai si le critère de remplissage du référentiel est rempli */
   completude_ok: boolean;
   /** Critères liés aux actions à remplir */
@@ -57,7 +58,7 @@ type TCritereAction = {
    ou fait") */
   statut_ou_score: string;
   /** Etoile pour laquelle le critère est requis */
-  etoile: TEtoiles;
+  etoile: Etoile;
 };
 
 /** Critère lié au score de la collectivité pour un référentiel */

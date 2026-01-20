@@ -108,7 +108,7 @@ const getTitle = (etoile: Etoile | undefined): string => {
 export const DemandeLabellisationModalContent = (
   props: TDemandeLabellisationModalProps & { onClose: () => void }
 ) => {
-  const { isLoading, envoiDemande } = useEnvoiDemande();
+  const { isPending: isLoading, mutate: envoiDemande } = useEnvoiDemande();
   const { parcoursLabellisation, onClose } = props;
   const { parcours, status } = parcoursLabellisation;
   const { collectivite_id, referentiel, etoiles } = parcours || {};
@@ -141,7 +141,7 @@ export const DemandeLabellisationModalContent = (
                 onClick={() => {
                   if (canSubmit && collectivite_id) {
                     envoiDemande({
-                      collectivite_id,
+                      collectiviteId: collectivite_id,
                       referentiel,
                       etoiles,
                       sujet: 'labellisation',

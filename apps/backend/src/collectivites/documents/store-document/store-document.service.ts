@@ -11,19 +11,23 @@ import {
 } from '@tet/domain/collectivites';
 import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
+import { createHash } from 'crypto';
 import { and, eq } from 'drizzle-orm';
 import { readFile } from 'fs/promises';
 import * as mime from 'mime-types';
 import { bibliothequeFichierTable } from '../models/bibliotheque-fichier.table';
 import { storageObjectTable } from '../models/storage-object.table';
 import {
-  CreateDocumentError,
-  CreateDocumentErrorEnum,
-} from './create-document.errors';
+  StoreDocumentError,
+  StoreDocumentErrorEnum,
+} from './store-document.errors';
+
+// Type for multer file upload
+type MulterFile = Express.Multer.File;
 
 @Injectable()
-export class CreateDocumentService {
-  private readonly logger = new Logger(CreateDocumentService.name);
+export class StoreDocumentService {
+  private readonly logger = new Logger(StoreDocumentService.name);
 
   constructor(
     private readonly databaseService: DatabaseService,
@@ -34,7 +38,7 @@ export class CreateDocumentService {
   async getCollectiviteBucketId(
     collectiviteId: number
   ): Promise<
-    Result<string, typeof CreateDocumentErrorEnum.COLLECTIVITE_BUCKET_NOT_FOUND>
+    Result<string, typeof StoreDocumentErrorEnum.COLLECTIVITE_BUCKET_NOT_FOUND>
   > {
     const buckets = await this.databaseService.db
       .select({ bucketId: collectiviteBucketTable.bucketId })
@@ -43,7 +47,7 @@ export class CreateDocumentService {
     if (!buckets?.length) {
       return {
         success: false,
-        error: CreateDocumentErrorEnum.COLLECTIVITE_BUCKET_NOT_FOUND,
+        error: StoreDocumentErrorEnum.COLLECTIVITE_BUCKET_NOT_FOUND,
       };
     }
     return {
@@ -56,7 +60,7 @@ export class CreateDocumentService {
     document: BibliothequeFichierCreate,
     localFilePath: string,
     user?: AuthenticatedUser
-  ): Promise<Result<BibliothequeFichier, CreateDocumentError>> {
+  ): Promise<Result<BibliothequeFichier, StoreDocumentError>> {
     if (user) {
       const isAllowed = await this.permissionService.isAllowed(
         user,
@@ -98,13 +102,79 @@ export class CreateDocumentService {
       return saveResult;
     }
 
-    return await this.createDocument(document, user);
+    return await this.storeDocument(document, user);
   }
 
-  async createDocument(
+  async uploadBuffer(
+    collectiviteId: number,
+    file: MulterFile,
+    isConfidentiel: boolean,
+    user?: AuthenticatedUser
+  ): Promise<Result<BibliothequeFichier, StoreDocumentError>> {
+    if (user) {
+      const isAllowed = await this.permissionService.isAllowed(
+        user,
+        'collectivites.documents.create',
+        ResourceType.COLLECTIVITE,
+        collectiviteId,
+        true
+      );
+      if (!isAllowed) {
+        return {
+          success: false,
+          error: 'UNAUTHORIZED',
+        };
+      }
+    }
+
+    if (!file.buffer) {
+      return {
+        success: false,
+        error: 'INVALID_FILE',
+      };
+    }
+
+    const filename = file.originalname || 'uploaded-file';
+    const mimeType = file.mimetype || mime.lookup(filename) || undefined;
+
+    const bucketResult = await this.getCollectiviteBucketId(collectiviteId);
+    if (!bucketResult.success) {
+      return bucketResult;
+    }
+    const bucketId = bucketResult.data;
+
+    // Compute SHA-256 hash from buffer
+    const hash = createHash('sha256').update(file.buffer).digest('hex');
+
+    this.logger.log(
+      `Uploading buffer with mime type ${mimeType} to bucket ${bucketId} with hash ${hash}`
+    );
+
+    const saveResult = await this.supabaseService.saveInStorage({
+      bucket: bucketId,
+      path: hash,
+      file: file.buffer,
+      mimeType,
+    });
+    if (!saveResult.success) {
+      return saveResult;
+    }
+
+    return await this.storeDocument(
+      {
+        collectiviteId,
+        confidentiel: isConfidentiel,
+        hash,
+        filename,
+      },
+      user
+    );
+  }
+
+  async storeDocument(
     document: BibliothequeFichierCreate,
     user?: AuthenticatedUser
-  ): Promise<Result<BibliothequeFichier, CreateDocumentError>> {
+  ): Promise<Result<BibliothequeFichier, StoreDocumentError>> {
     this.logger.log(
       `Création du document ${document.filename} pour la collectivité ${document.collectiviteId}`
     );
@@ -170,7 +240,7 @@ export class CreateDocumentService {
       );
       return {
         success: false,
-        error: 'CREATE_DOCUMENT_ERROR',
+        error: 'STORE_DOCUMENT_ERROR',
       };
     }
   }

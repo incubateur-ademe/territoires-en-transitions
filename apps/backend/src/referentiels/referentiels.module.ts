@@ -26,12 +26,18 @@ import { HandleMesuresServicesRouter } from './handle-mesure-services/handle-mes
 import { HandleMesureServicesService } from './handle-mesure-services/handle-mesure-services.service';
 import { ImportReferentielController } from './import-referentiel/import-referentiel.controller';
 import { ImportReferentielService } from './import-referentiel/import-referentiel.service';
+import { CreatePreuveRouter } from './labellisations/create-preuve/create-preuve.router';
+import { CreatePreuveService } from './labellisations/create-preuve/create-preuve.service';
 import { GetAuditEnCoursRepository } from './labellisations/get-audit-en-cours/get-audit-en-cours.repository';
 import { GetLabellisationRouter } from './labellisations/get-labellisation.router';
 import { GetLabellisationService } from './labellisations/get-labellisation.service';
 import { HandleMesureAuditStatutRouter } from './labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.router';
 import { HandleMesureAuditStatutService } from './labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.service';
 import { LabellisationService } from './labellisations/labellisation.service';
+import { ListePreuvesRouter } from './labellisations/liste-preuves/liste-preuves.router';
+import { ListePreuvesService } from './labellisations/liste-preuves/liste-preuves.service';
+import { RequestLabellisationRouter } from './labellisations/request-labellisation/request-labellisation.router';
+import { RequestLabellisationService } from './labellisations/request-labellisation/request-labellisation.service';
 import { StartAuditRouter } from './labellisations/start-audit/start-audit.router';
 import { StartAuditService } from './labellisations/start-audit/start-audit.service';
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
@@ -83,6 +89,12 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     GetAuditEnCoursRepository,
     StartAuditService,
     StartAuditRouter,
+    RequestLabellisationService,
+    RequestLabellisationRouter,
+    CreatePreuveService,
+    CreatePreuveRouter,
+    ListePreuvesService,
+    ListePreuvesRouter,
     ValidateAuditService,
     ValidateAuditRouter,
     HandleMesureAuditStatutService,

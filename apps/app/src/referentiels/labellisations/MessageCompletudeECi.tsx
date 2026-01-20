@@ -1,10 +1,10 @@
+import { ParcoursLabellisation } from '@tet/domain/referentiels';
 import { Alert } from '@tet/ui';
-import { TLabellisationParcours } from './types';
 
 export const MessageCompletudeECi = ({
   parcours,
 }: {
-  parcours: TLabellisationParcours | null;
+  parcours: ParcoursLabellisation | null;
 }) => {
   const { referentiel, etoiles } = parcours || {};
 

@@ -1,9 +1,9 @@
 import { Logger, Module } from '@nestjs/common';
 import { CollectiviteCrudRouter } from '@tet/backend/collectivites/collectivite-crud/collectivite-crud.router';
 import CollectiviteCrudService from '@tet/backend/collectivites/collectivite-crud/collectivite-crud.service';
-import { CreateDocumentRouter } from '@tet/backend/collectivites/documents/create-document/create-document.router';
-import { CreateDocumentService } from '@tet/backend/collectivites/documents/create-document/create-document.service';
 import { DocumentController } from '@tet/backend/collectivites/documents/document.controller';
+import { StoreDocumentRouter } from '@tet/backend/collectivites/documents/store-document/store-document.router';
+import { StoreDocumentService } from '@tet/backend/collectivites/documents/store-document/store-document.service';
 import { ImportCollectiviteRelationsRouter } from '@tet/backend/collectivites/import-collectivite-relations/import-collectivite-relations.router';
 import { ImportCollectiviteRelationsService } from '@tet/backend/collectivites/import-collectivite-relations/import-collectivite-relations.service';
 import { ExportConnectService } from '@tet/backend/collectivites/membres/export-connect.service';
@@ -46,8 +46,8 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     PersonnesRouter,
     ListCategoriesService,
     ListCategoriesRouter,
-    CreateDocumentService,
-    CreateDocumentRouter,
+    StoreDocumentService,
+    StoreDocumentRouter,
     DocumentsRouter,
     DocumentService,
     TagService,
@@ -85,8 +85,8 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     PersonnesRouter,
     ListCategoriesService,
     ListCategoriesRouter,
-    CreateDocumentService,
-    CreateDocumentRouter,
+    StoreDocumentService,
+    StoreDocumentRouter,
     DocumentService,
     DocumentsRouter,
     TagService,

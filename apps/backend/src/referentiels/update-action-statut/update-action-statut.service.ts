@@ -1,8 +1,14 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
+  ActionStatutCreate,
   actionStatutSchemaCreate,
   getReferentielIdFromActionId,
   ScoreSnapshot,
@@ -23,6 +29,14 @@ export type UpsertActionStatutRequest = z.infer<
   typeof upsertActionStatutRequestSchema
 >;
 
+export const upsertActionStatutsRequestSchema = z.object({
+  actionStatuts: z.array(actionStatutSchemaCreate).min(1),
+});
+
+export type UpsertActionStatutsRequest = z.infer<
+  typeof upsertActionStatutsRequestSchema
+>;
+
 @Injectable()
 export class UpdateActionStatutService {
   private readonly logger = new Logger(UpdateActionStatutService.name);
@@ -33,27 +47,56 @@ export class UpdateActionStatutService {
     private readonly snapshotsService: SnapshotsService
   ) {}
 
-  async upsertActionStatut(
-    request: UpsertActionStatutRequest,
+  async upsertActionStatuts(
+    actionStatuts: ActionStatutCreate[],
     user: AuthUser
   ): Promise<ScoreSnapshot> {
+    if (actionStatuts.length === 0) {
+      throw new BadRequestException('No action statuts to update');
+    }
+    const collectiviteId = actionStatuts[0].collectiviteId;
+    const referentielId = getReferentielIdFromActionId(
+      actionStatuts[0].actionId
+    );
+
     // Check user access
     await this.permissionService.isAllowed(
       user,
       PermissionOperationEnum['REFERENTIELS.MUTATE'],
       ResourceType.COLLECTIVITE,
-      request.actionStatut.collectiviteId
+      collectiviteId
     );
 
-    const referentielId = getReferentielIdFromActionId(
-      request.actionStatut.actionId
-    );
+    // TODO: check parcours
+    const seenActionIds = new Set<string>();
+    for (const actionStatut of actionStatuts) {
+      const key = `${actionStatut.collectiviteId}:${actionStatut.actionId}`;
+      if (seenActionIds.has(key)) {
+        throw new BadRequestException(
+          `Action ${actionStatut.actionId} en double dans la requête`
+        );
+      }
+      seenActionIds.add(key);
+      actionStatut.modifiedBy = user.id;
+      const actionReferentielId = getReferentielIdFromActionId(
+        actionStatut.actionId
+      );
+      if (actionReferentielId !== referentielId) {
+        throw new BadRequestException(
+          `Action ${actionStatut.actionId} is not in the same referentiel as the other actions`
+        );
+      }
+      if (actionStatut.collectiviteId !== collectiviteId) {
+        throw new BadRequestException(
+          `Action ${actionStatut.actionId} is not in the same collectivite as the other actions`
+        );
+      }
+    }
 
-    request.actionStatut.modifiedBy = user.id;
     try {
       await this.databaseService.db
         .insert(actionStatutTable)
-        .values(request.actionStatut)
+        .values(actionStatuts)
         .onConflictDoUpdate({
           target: [
             actionStatutTable.collectiviteId,
@@ -79,7 +122,10 @@ export class UpdateActionStatutService {
           PgIntegrityConstraintViolation.ForeignKeyViolation &&
         error.cause.constraint === 'action_statut_action_id_fkey'
       ) {
-        const errorMessage = `L'action ${request.actionStatut.actionId} n'existe pas pour le referentiel ${referentielId}`;
+        const errorMessage =
+          actionStatuts.length > 1
+            ? `Une ou plusieurs actions n'existent pas pour le referentiel ${referentielId}`
+            : `L'action ${actionStatuts[0].actionId} n'existe pas pour le referentiel ${referentielId}`;
         this.logger.warn(errorMessage);
         throw new NotFoundException(errorMessage);
       }
@@ -89,7 +135,7 @@ export class UpdateActionStatutService {
     }
 
     return this.snapshotsService.computeAndUpsert({
-      collectiviteId: request.actionStatut.collectiviteId,
+      collectiviteId,
       referentielId,
       user,
     });
