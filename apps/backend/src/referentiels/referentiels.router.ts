@@ -4,8 +4,11 @@ import { TrpcService } from '../utils/trpc/trpc.service';
 import { GetReferentielDefinitionRouter } from './definitions/get-referentiel-definition/get-referentiel-definition.router';
 import { HandleMesurePilotesRouter } from './handle-mesure-pilotes/handle-mesure-pilotes.router';
 import { HandleMesuresServicesRouter } from './handle-mesure-services/handle-mesure-services.router';
+import { CreatePreuveRouter } from './labellisations/create-preuve/create-preuve.router';
 import { GetLabellisationRouter } from './labellisations/get-labellisation.router';
 import { HandleMesureAuditStatutRouter } from './labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.router';
+import { ListePreuvesRouter } from './labellisations/liste-preuves/liste-preuves.router';
+import { RequestLabellisationRouter } from './labellisations/request-labellisation/request-labellisation.router';
 import { StartAuditRouter } from './labellisations/start-audit/start-audit.router';
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
 import { ListActionsRouter } from './list-actions/list-actions.router';
@@ -20,7 +23,10 @@ export class ReferentielsRouter {
     private readonly scoreSnapshotsRouter: SnapshotsRouter,
     private readonly getLabellisation: GetLabellisationRouter,
     private readonly startAudit: StartAuditRouter,
+    private readonly requestLabellisation: RequestLabellisationRouter,
+    private readonly createPreuve: CreatePreuveRouter,
     private readonly validateAudit: ValidateAuditRouter,
+    private readonly listePreuves: ListePreuvesRouter,
     private readonly assignPilotesRouter: HandleMesurePilotesRouter,
     private readonly assignServicesRouter: HandleMesuresServicesRouter,
     private readonly scoreIndicatifRouter: ScoreIndicatifRouter,
@@ -41,9 +47,12 @@ export class ReferentielsRouter {
 
     labellisations: this.trpc.mergeRouters(
       this.startAudit.router,
+      this.requestLabellisation.router,
+      this.createPreuve.router,
       this.validateAudit.router,
       this.getLabellisation.router,
-      this.handleMesureAuditStatutRouter.router
+      this.handleMesureAuditStatutRouter.router,
+      this.listePreuves.router
     ),
 
     definitions: this.getReferentielDefinitionRouter.router,

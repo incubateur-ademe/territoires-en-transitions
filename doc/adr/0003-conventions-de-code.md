@@ -173,11 +173,9 @@ Voici les domaines et sous-scopes définis actuellement :
    - `personnalisations`
    - `documents`
 3. `referentiels`
-   - `scores`
-     - `snapshots`
-   - `evaluations`
-     - `audits`
-     - `labelisations`
+   - `définitions`: définitions des référentiels et des actions
+   - `scores`: statuts des actions (participants au score), score des référentiels et snapshots (= scores sauvegardés)
+   - `labellisations`: regroupe sous le terme labellisation les audits cot sans labellisation et les labellisations (1 à 5 étoiles)
 4. `indicateurs`
    - `trajectoires`
 5. `plans`

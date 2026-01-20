@@ -1,6 +1,6 @@
 import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, Logger } from '@nestjs/common';
-import { CreateDocumentService } from '@tet/backend/collectivites/documents/create-document/create-document.service';
+import { StoreDocumentService } from '@tet/backend/collectivites/documents/store-document/store-document.service';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -66,7 +66,7 @@ export class GenerateReportsApplicationService {
     private readonly collectiviteService: CollectivitesService,
     private readonly permissionService: PermissionService,
     private readonly reportGenerationRepository: ReportGenerationRepository,
-    private readonly createDocumentService: CreateDocumentService,
+    private readonly storeDocumentService: StoreDocumentService,
     private readonly notifyReportService: NotifyReportService,
     private readonly pptBuilderService: PptBuilderService,
     @InjectQueue(PLAN_REPORT_GENERATION_QUEUE_NAME)
@@ -323,7 +323,7 @@ export class GenerateReportsApplicationService {
         );
       }
 
-      const uploadResult = await this.createDocumentService.uploadLocalFile(
+      const uploadResult = await this.storeDocumentService.uploadLocalFile(
         {
           collectiviteId: collectiviteId,
           hash: generationId,

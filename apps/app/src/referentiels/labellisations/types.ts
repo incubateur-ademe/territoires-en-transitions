@@ -53,5 +53,5 @@ type TCritereAction = {
       ou fait") */
   statut_ou_score: string;
   /** Etoile pour laquelle le critère est requis */
-  etoile: Etoile;
+  etoile: number;
 };

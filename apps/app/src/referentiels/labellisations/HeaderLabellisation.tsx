@@ -51,47 +51,47 @@ function ApplyAuditButton({
 
   return (
     <>
-      {etoiles === 1 && isCOT && (
-        <Button
-          className="mb-4"
-          dataTest="1ereEtoileCOT"
-          size="sm"
-          disabled={!peutDemander1ereEtoileCOT}
-          onClick={() => setOpened_1ereEtoileCOT(true)}
-        >
-          Demander la première étoile
-        </Button>
+      {status === 'non_demandee' && (
+        <>
+          {etoiles === 1 && isCOT && (
+            <Button
+              className="mb-4"
+              dataTest="1ereEtoileCOT"
+              size="sm"
+              disabled={!peutDemander1ereEtoileCOT}
+              onClick={() => setOpened_1ereEtoileCOT(true)}
+            >
+              Demander la première étoile
+            </Button>
+          )}
+          <Button
+            dataTest="SubmitDemandeBtn"
+            size="sm"
+            disabled={!canSubmitDemande}
+            onClick={() => setOpened(true)}
+          >
+            {etoiles === 1 && !isCOT
+              ? 'Demander la première étoile'
+              : 'Demander un audit'}
+          </Button>
+        </>
       )}
-      <Button
-        dataTest="SubmitDemandeBtn"
-        size="sm"
-        disabled={!canSubmitDemande}
-        onClick={() => setOpened(true)}
-      >
-        {etoiles === 1 && !isCOT
-          ? 'Demander la première étoile'
-          : 'Demander un audit'}
-      </Button>
-
-      {status === 'non_demandee' ||
-        (status === 'demande_envoyee' && (
-          <>
-            <DemandeModal
-              parcoursLabellisation={parcoursLabellisation}
-              isCOT={isCOT}
-              opened={opened}
-              setOpened={setOpened}
-            />
-            {etoiles === 1 && isCOT && (
-              <DemandeLabellisationModal
-                parcoursLabellisation={parcoursLabellisation}
-                opened={opened_1ereEtoileCOT}
-                setOpened={setOpened_1ereEtoileCOT}
-                isCOT={isCOT}
-              />
-            )}
-          </>
-        ))}
+      <>
+        <DemandeModal
+          parcoursLabellisation={parcoursLabellisation}
+          isCOT={isCOT}
+          opened={opened}
+          setOpened={setOpened}
+        />
+        {etoiles === 1 && isCOT && (
+          <DemandeLabellisationModal
+            parcoursLabellisation={parcoursLabellisation}
+            opened={opened_1ereEtoileCOT}
+            setOpened={setOpened_1ereEtoileCOT}
+            isCOT={isCOT}
+          />
+        )}
+      </>
     </>
   );
 }
@@ -133,7 +133,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
           : `${numLabels[etoiles]} étoile`}
       </h2>
 
-      {canMutateReferentiel && status === 'non_demandee' && !isAuditeur && (
+      {canMutateReferentiel && !isAuditeur && (
         <ApplyAuditButton
           parcoursLabellisation={parcoursLabellisation}
           parcours={parcours}

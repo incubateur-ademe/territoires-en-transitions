@@ -40,7 +40,7 @@ export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
 export const DemandeAuditModalContent = (
   props: TDemandeLabellisationModalProps & { onClose: () => void }
 ) => {
-  const { isLoading, envoiDemande } = useEnvoiDemande();
+  const { isPending: isLoading, mutate: envoiDemande } = useEnvoiDemande();
   const { parcoursLabellisation, onClose, isCOT } = props;
   const { parcours, status, labellisable } = parcoursLabellisation;
   const { collectivite_id, referentiel, etoiles } = parcours || {};
@@ -52,7 +52,7 @@ export const DemandeAuditModalContent = (
   // on doit afficher un meesage d'aide si la collectivité est non labellisable
   // car le critère fichier n'est pas atteint
   const aide =
-    !labellisable && !preuves?.length ? (
+    !labellisable && preuves?.data && !preuves.data.length ? (
       <p className="text-sm">
         * Pour passer en CNL penser à joindre les documents de labellisation.
       </p>
@@ -115,8 +115,8 @@ export const DemandeAuditModalContent = (
                 onClick={() => {
                   if (sujet && collectivite_id && referentiel) {
                     envoiDemande({
-                      collectivite_id,
-                      etoiles: etoiles ?? null,
+                      collectiviteId: collectivite_id,
+                      etoiles: sujet === 'cot' ? null : etoiles ?? null,
                       referentiel,
                       sujet,
                     });

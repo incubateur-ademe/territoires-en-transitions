@@ -6,7 +6,7 @@ import { testWithUsers, Users } from 'tests/users/users.fixture';
 import { databaseService } from '../shared/database.service';
 
 type CollectiviteAndUserArgs = {
-  collectiviteArgs?: Partial<Collectivite>;
+  collectiviteArgs?: Partial<Collectivite> & { isCOT?: boolean };
   userArgs?: Omit<TestUserArgs, 'collectiviteId'> &
     ({ autoLogin?: boolean } | undefined);
 };
@@ -70,6 +70,13 @@ class CollectiviteFactory {
     );
   };
 
+  getCollectivite = (index = 0) => {
+    if (index < 0 || index >= this.createdCollectivites.length) {
+      throw new Error(`Collectivite index ${index} out of bounds`);
+    }
+    return this.createdCollectivites[index].collectivite;
+  };
+
   // ajoute une collectivité
   addCollectivite = async (
     collectiviteArgs: CollectiviteAndUserArgs['collectiviteArgs']
@@ -112,6 +119,7 @@ export const testWithCollectivites = testWithUsers.extend<{
       addCollectivite,
       addCollectiviteAndUser,
       registerCleanupFunc,
+      getCollectivite,
       removeAll,
     } = new CollectiviteFactory(users);
 
@@ -119,6 +127,7 @@ export const testWithCollectivites = testWithUsers.extend<{
       addCollectivite,
       addCollectiviteAndUser,
       registerCleanupFunc,
+      getCollectivite,
     });
     await removeAll();
   },

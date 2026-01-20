@@ -1,4 +1,4 @@
-import { CreateDocumentErrorEnum } from '@tet/backend/collectivites/documents/create-document/create-document.errors';
+import { StoreDocumentErrorEnum } from '@tet/backend/collectivites/documents/store-document/store-document.errors';
 import {
   createErrorsEnum,
   TrpcErrorHandlerConfig,
@@ -11,7 +11,7 @@ const GenerateReportSpecificErrors = [
   'PLAN_NOT_FOUND',
   'PPT_BUILDER_ERROR',
   'CREATE_NOTIFICATION_ERROR',
-  CreateDocumentErrorEnum.UPLOAD_STORAGE_ERROR,
+  StoreDocumentErrorEnum.UPLOAD_STORAGE_ERROR,
 ] as const;
 type GenerateReportSpecificError =
   (typeof GenerateReportSpecificErrors)[number];

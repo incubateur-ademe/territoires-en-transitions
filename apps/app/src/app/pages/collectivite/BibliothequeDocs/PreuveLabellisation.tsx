@@ -1,8 +1,7 @@
 import { referentielToName } from '@/app/app/labels';
-import { getParcoursStatus } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
 import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
-import { Etoile, ReferentielId } from '@tet/domain/referentiels';
+import { Etoile, getParcoursLabellisationStatus, ReferentielId } from '@tet/domain/referentiels';
 import { Fragment } from 'react';
 import { useIsAuditAuditeur } from '../../../../referentiels/audits/useAudit';
 import { numLabels } from '../../../../referentiels/labellisations/numLabels';
@@ -137,7 +136,7 @@ const getCycleInfo = (preuves: TPreuveAuditEtLabellisation[]) => {
   const d = audit?.date_fin || audit?.date_debut || demande?.date;
   const date = d ? new Date(d) : new Date();
   const annee = date.getFullYear();
-  const status = getParcoursStatus({ demande, audit });
+  const status = getParcoursLabellisationStatus({ demande, audit });
   const timestamp = date.getTime();
 
   const etoile = demande?.etoiles;

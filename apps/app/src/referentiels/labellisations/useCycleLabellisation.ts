@@ -1,8 +1,11 @@
-import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
-import { TPreuveLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
-import { usePreuves } from '@/app/referentiels/preuves/usePreuves';
+import { useQuery } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { ReferentielId } from '@tet/domain/referentiels';
+import {
+  ParcoursLabellisation,
+  ParcoursLabellisationStatus,
+  ReferentielId,
+} from '@tet/domain/referentiels';
 import { useIsAuditeur } from '../audits/useAudit';
 import { useCarteIdentite } from '../personnalisations/PersoReferentielThematique/useCarteIdentite';
 import { useLabellisationParcours } from './useLabellisationParcours';
@@ -10,8 +13,8 @@ import { usePeutCommencerAudit } from './usePeutCommencerAudit';
 
 // données du cycle de labellisation/audit actuel d'une collectivité
 export type TCycleLabellisation = {
-  parcours: TLabellisationParcours | null;
-  status: TCycleLabellisationStatus;
+  parcours: ParcoursLabellisation | null;
+  status: ParcoursLabellisationStatus;
   isAuditeur: boolean;
   isCOT: boolean;
   labellisable: boolean;
@@ -19,13 +22,6 @@ export type TCycleLabellisation = {
   peutCommencerAudit: boolean;
   peutDemander1ereEtoileCOT: boolean;
 };
-
-// état consolidé du cycle de labellisation/audit
-export type TCycleLabellisationStatus =
-  | 'non_demandee'
-  | 'demande_envoyee'
-  | 'audit_en_cours'
-  | 'audit_valide';
 
 /**
  * Renvoie les données de labellisation/audit de la collectivité courante
@@ -45,6 +41,7 @@ export const useCycleLabellisation = (
   });
 
   const { completude_ok, rempli, etoiles, conditionFichiers } = parcours || {};
+  const status = parcours?.status || 'non_demandee';
 
   // vérifie si l'utilisateur courant peut commencer l'audit
   const peutCommencerAudit = usePeutCommencerAudit({
@@ -53,7 +50,6 @@ export const useCycleLabellisation = (
   });
 
   // états dérivés
-  const status = getParcoursStatus(parcours);
   const isCOT = Boolean(identite?.is_cot);
 
   const peutDemanderEtoileBase = Boolean(
@@ -96,30 +92,12 @@ export const useCycleLabellisation = (
 };
 
 // charge les documents de labellisation
-export const usePreuvesLabellisation = (demande_id?: number) =>
-  usePreuves({
-    demande_id,
-    disabled: !demande_id,
-    preuve_types: ['labellisation'],
-  }) as TPreuveLabellisation[];
-// détermine l'état consolidé du cycle
-type TDemandeEtOuAudit = Pick<TLabellisationParcours, 'demande' | 'audit'>;
-
-export const getParcoursStatus = (
-  demandeEtOuAudit: TDemandeEtOuAudit | null | undefined
-): TCycleLabellisationStatus => {
-  if (!demandeEtOuAudit) {
-    return 'non_demandee';
-  }
-  const { demande, audit } = demandeEtOuAudit;
-  if (audit?.valide) {
-    return 'audit_valide';
-  }
-  if (audit?.date_debut && !audit?.valide) {
-    return 'audit_en_cours';
-  }
-  if (demande && !demande.en_cours) {
-    return 'demande_envoyee';
-  }
-  return 'non_demandee';
+export const usePreuvesLabellisation = (demande_id?: number) => {
+  const trpc = useTRPC();
+  return useQuery(
+    trpc.referentiels.labellisations.listPreuvesLabellisation.queryOptions(
+      { demandeId: demande_id ?? 0 },
+      { enabled: Boolean(demande_id) }
+    )
+  );
 };

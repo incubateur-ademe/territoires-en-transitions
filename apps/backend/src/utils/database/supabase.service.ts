@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { createClient } from '@supabase/supabase-js';
-import { CreateDocumentErrorEnum } from '@tet/backend/collectivites/documents/create-document/create-document.errors';
+import { StoreDocumentErrorEnum } from '@tet/backend/collectivites/documents/store-document/store-document.errors';
 import ConfigurationService from '../config/configuration.service';
 import { Result } from '../result.type';
 
@@ -43,7 +43,7 @@ export default class SupabaseService {
         path: string;
         fullPath: string;
       },
-      typeof CreateDocumentErrorEnum.UPLOAD_STORAGE_ERROR
+      typeof StoreDocumentErrorEnum.UPLOAD_STORAGE_ERROR
     >
   > {
     const { bucket, path, file, mimeType } = args;
@@ -51,6 +51,7 @@ export default class SupabaseService {
       .from(bucket)
       .upload(path, file, {
         contentType: mimeType,
+        upsert: true,
       });
     if (error) {
       this.logger.error(`Error saving file in storage: ${error.message}`);

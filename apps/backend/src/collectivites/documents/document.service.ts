@@ -6,9 +6,12 @@ import {
 } from '@nestjs/common';
 import { COLLECTIVITE_ID_ROUTE_PARAM } from '@tet/backend/collectivites/shared/models/collectivite-api.constants';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { AuthUser } from '@tet/backend/users/models/auth.models';
 import SupabaseService from '@tet/backend/utils/database/supabase.service';
 import { PreuveDto, PreuveTypeEnum } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
+import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import {
   and,
@@ -33,10 +36,12 @@ import { preuveReglementaireTable } from './models/preuve-reglementaire.table';
 export default class DocumentService {
   private readonly logger = new Logger(DocumentService.name);
   static DOWNLOAD_ROUTE = `collectivites/${COLLECTIVITE_ID_ROUTE_PARAM}/documents/${DOCUMENT_ID_ROUTE_PARAM}/download`;
+  static UPLOAD_ROUTE = `collectivites/${COLLECTIVITE_ID_ROUTE_PARAM}/documents/upload`;
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly supabaseService: SupabaseService
+    private readonly supabaseService: SupabaseService,
+    private readonly permissionService: PermissionService
   ) {}
 
   getDownloadUrl(
@@ -65,7 +70,8 @@ export default class DocumentService {
 
   async downloadFile(
     collectiviteId: number,
-    hashId: string
+    hashId: string,
+    user: AuthUser
   ): Promise<{ fileName: string; blob: Blob }> {
     const fichier = await this.databaseService.db
       .select({
@@ -89,7 +95,17 @@ export default class DocumentService {
       );
     }
 
-    const bucketId = fichier[0].bucketId || '';
+    const document = fichier[0];
+    await this.permissionService.isAllowed(
+      user,
+      document.confidentiel
+        ? 'collectivites.documents.read_confidentiel'
+        : 'collectivites.documents.read',
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+
+    const bucketId = document.bucketId || '';
     this.logger.log(`Downloading file ${hashId} from bucket ${bucketId}`);
 
     const { data, error } = await this.supabaseService.client.storage

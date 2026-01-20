@@ -16,12 +16,14 @@ export const PermissionOperations = [
   'collectivites.tags.mutate',
   // Documents
   'collectivites.documents.read',
+  'collectivites.documents.read_confidentiel',
   'collectivites.documents.create',
 
   // Référentiels
   'referentiels.read',
   'referentiels.read_confidentiel',
   'referentiels.mutate',
+  'referentiels.labellisations.request',
   'referentiels.audit',
   'referentiels.discussions.read',
   'referentiels.discussions.mutate',

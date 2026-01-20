@@ -3,16 +3,16 @@ import {
   TrpcErrorHandlerConfig,
 } from '@tet/backend/utils/trpc/trpc-error-handler';
 
-export const CreateDocumentSpecificErrors = [
+export const StoreDocumentSpecificErrors = [
   'COLLECTIVITE_BUCKET_NOT_FOUND',
   'UPLOAD_STORAGE_ERROR',
-  'CREATE_DOCUMENT_ERROR',
+  'STORE_DOCUMENT_ERROR',
   'STORAGE_OBJECT_NOT_FOUND',
+  'INVALID_FILE',
 ] as const;
-type CreateDocumentSpecificError =
-  (typeof CreateDocumentSpecificErrors)[number];
+type StoreDocumentSpecificError = (typeof StoreDocumentSpecificErrors)[number];
 
-export const createDocumentErrorConfig: TrpcErrorHandlerConfig<CreateDocumentSpecificError> =
+export const storeDocumentErrorConfig: TrpcErrorHandlerConfig<StoreDocumentSpecificError> =
   {
     specificErrors: {
       STORAGE_OBJECT_NOT_FOUND: {
@@ -28,15 +28,19 @@ export const createDocumentErrorConfig: TrpcErrorHandlerConfig<CreateDocumentSpe
         code: 'INTERNAL_SERVER_ERROR',
         message: "Une erreur est survenue lors de l'upload du fichier",
       },
-      CREATE_DOCUMENT_ERROR: {
+      STORE_DOCUMENT_ERROR: {
         code: 'INTERNAL_SERVER_ERROR',
         message:
           'Une erreur est survenue lors de la création du document dans la base de données',
       },
+      INVALID_FILE: {
+        code: 'BAD_REQUEST',
+        message: 'Le fichier est invalide',
+      },
     },
   };
 
-export const CreateDocumentErrorEnum = createErrorsEnum(
-  CreateDocumentSpecificErrors
+export const StoreDocumentErrorEnum = createErrorsEnum(
+  StoreDocumentSpecificErrors
 );
-export type CreateDocumentError = keyof typeof CreateDocumentErrorEnum;
+export type StoreDocumentError = keyof typeof StoreDocumentErrorEnum;

@@ -3,7 +3,8 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import { useSupabase } from '@tet/api';
+import { useSupabase, useTRPC } from '@tet/api';
+import { ReferentielId } from '@tet/domain/referentiels';
 
 // on peut ajouter une preuve sous forme de...
 type TFileOrLink =
@@ -60,23 +61,34 @@ export const useAddPreuveComplementaire = () => {
 };
 
 /** Ajoute une preuve à une demande de labellisation */
-type TAddPreuveLabellisationArgs = {
-  collectivite_id: number;
-  demande_id: number;
-} & TFileOrLink;
-export const useAddPreuveLabellisation = () => {
-  const supabase = useSupabase();
+export const useAddPreuveLabellisation = (
+  collectiviteId: number,
+  referentielId: ReferentielId
+) => {
   const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (preuve: TAddPreuveLabellisationArgs) =>
-      supabase.from('preuve_labellisation').insert(preuve),
+  const trpc = useTRPC();
 
-    onSuccess: (data, variables) => {
-      invalidateQueries(queryClient, variables.collectivite_id, {
-        invalidateParcours: true,
-      });
-    },
-  });
+  return useMutation(
+    trpc.referentiels.labellisations.createLabellisationPreuve.mutationOptions({
+      onSettled: (_data, _error, variables) => {
+        invalidateQueries(queryClient, collectiviteId, {
+          invalidateParcours: true,
+        });
+        queryClient.invalidateQueries({
+          queryKey:
+            trpc.referentiels.labellisations.listPreuvesLabellisation.queryKey({
+              demandeId: variables.demandeId,
+            }),
+        });
+        queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.labellisations.getParcours.queryKey({
+            collectiviteId,
+            referentielId,
+          }),
+        });
+      },
+    })
+  );
 };
 
 /** Ajoute un rapport d'audit */
