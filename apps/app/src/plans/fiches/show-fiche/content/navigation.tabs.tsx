@@ -16,7 +16,7 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
   const rawActiveTab = useSelectedLayoutSegment();
   const activeTab =
     rawActiveTab && isFicheSectionId(rawActiveTab) ? rawActiveTab : 'details';
-  const { fiche, indicateurs, actionsLiees } = useFicheContext();
+  const { fiche, indicateurs, actionsLiees, documents } = useFicheContext();
   const collectivite = useCurrentCollectivite();
   const { niveauAcces, permissions } = collectivite;
 
@@ -34,7 +34,7 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
       id: 'details',
     },
     {
-      label: `Indicateurs de suivi ${
+      label: `Indicateurs ${
         indicateurs.list.length > 0 ? `(${indicateurs.list.length})` : ''
       }`,
       isVisible:
@@ -78,7 +78,9 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
       id: 'mesures-liees',
     },
     {
-      label: 'Documents',
+      label: `Documents ${
+        documents.list && documents.list.length > 0 ? `(${documents.list.length})` : ''
+      }`,
       id: 'documents',
     },
     {
