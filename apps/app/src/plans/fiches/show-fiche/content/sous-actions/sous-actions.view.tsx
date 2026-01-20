@@ -10,7 +10,8 @@ export const SousActionsView = () => {
 
   const { fiche } = useFicheContext();
 
-  const { mutate: createSousFiche } = useCreateSousAction(fiche.id);
+  const { mutate: createSousFiche, isPending: isLoadingCreate } =
+    useCreateSousAction(fiche.id);
 
   const { fiches: sousActions, isLoading } = useListFiches(
     collectivite.collectiviteId,
@@ -36,6 +37,7 @@ export const SousActionsView = () => {
         createSousFiche={createSousFiche}
         hiddenColumns={['parentId']}
         isReadOnly={collectivite.isReadOnly}
+        isLoadingNewRow={isLoadingCreate}
       />
       {!isEmpty && !collectivite.isReadOnly && (
         <Button
