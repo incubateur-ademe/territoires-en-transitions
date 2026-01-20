@@ -8,12 +8,7 @@ import { useEffect, useState } from 'react';
 
 import PictoAction from '@/app/ui/pictogrammes/PictoAction';
 import { FicheWithRelations } from '@tet/domain/plans';
-import {
-  EmptyCardProps,
-  ReactTable,
-  TableHeaderCell,
-  TableLoadingProps,
-} from '@tet/ui';
+import { ReactTable, ReactTableProps, TableHeaderCell } from '@tet/ui';
 import { SousActionCellActionParente } from './sous-action.cell-action-parente';
 import { SousActionCellActions } from './sous-action.cell-actions';
 import { SousActionCellDate } from './sous-action.cell-date';
@@ -62,14 +57,10 @@ const columns = [
   }),
 ];
 
-type Props = {
+type Props = Omit<ReactTableProps, 'table'> & {
   sousActions: FicheWithRelations[];
-  isLoading?: boolean;
-  isEmpty?: boolean;
   createSousFiche?: () => void;
   hiddenColumns?: (keyof FicheWithRelations | 'actions')[];
-  nbLoadingRows?: TableLoadingProps['nbOfRows'];
-  emptyCard?: EmptyCardProps;
   isReadOnly?: boolean;
 };
 
@@ -80,6 +71,7 @@ export const SousActionTable = ({
   createSousFiche,
   hiddenColumns,
   nbLoadingRows = 3,
+  isLoadingNewRow,
   isReadOnly,
   emptyCard,
 }: Props) => {
@@ -113,6 +105,7 @@ export const SousActionTable = ({
       table={table}
       isLoading={isLoading}
       nbLoadingRows={nbLoadingRows}
+      isLoadingNewRow={isLoadingNewRow}
       isEmpty={isEmpty}
       emptyCard={
         emptyCard ?? {
