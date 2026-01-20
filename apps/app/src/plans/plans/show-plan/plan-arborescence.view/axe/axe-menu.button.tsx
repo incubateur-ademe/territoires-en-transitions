@@ -42,28 +42,36 @@ export const AxeMenuButton = () => {
   }
 
   const menuActions: MenuAction[] = [
-    isOptionEnabled(PlanDisplayOptionsEnum.INDICATEURS)
-      ? {
-        label: 'Lier un indicateur',
-        icon: 'line-chart-line',
-        onClick: () => {
-          setIsOpen(true);
-          setIsOpenPanelIndicateurs(true);
-        },
-      }
-      : null,
-    isOptionEnabled(PlanDisplayOptionsEnum.DESCRIPTION)
-      ? {
-        label: hasDescription
-          ? 'Supprimer la description'
-          : 'Ajouter une description',
-        icon: 'file-text-line',
-        onClick: () => {
-          setIsOpen(true);
-          updateAxe({ ...axe, description: hasDescription ? null : '' });
-        },
-      }
-      : null,
+    {
+      ...(isOptionEnabled(PlanDisplayOptionsEnum.INDICATEURS)
+        ? {}
+        : {
+            disabled: true,
+            tooltip: 'Les indicateurs sont masqués dans l’affichage global',
+          }),
+      label: 'Lier un indicateur',
+      icon: 'line-chart-line',
+      onClick: () => {
+        setIsOpen(true);
+        setIsOpenPanelIndicateurs(true);
+      },
+    },
+    {
+      ...(isOptionEnabled(PlanDisplayOptionsEnum.DESCRIPTION)
+        ? {}
+        : {
+            disabled: true,
+            tooltip: 'Les descriptions sont masquées dans l’affichage global',
+          }),
+      label: hasDescription
+        ? 'Supprimer la description'
+        : 'Ajouter une description',
+      icon: 'file-text-line',
+      onClick: () => {
+        setIsOpen(true);
+        updateAxe({ ...axe, description: hasDescription ? null : '' });
+      },
+    },
     {
       label: 'Modifier le titre',
       icon: 'edit-line',

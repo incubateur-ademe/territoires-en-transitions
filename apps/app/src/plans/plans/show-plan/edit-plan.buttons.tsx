@@ -1,7 +1,7 @@
 'use client';
 import { useCreateFicheResume } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
 import { PlanNode } from '@tet/domain/plans';
-import { Button, VisibleWhen } from '@tet/ui';
+import { Button, Tooltip, VisibleWhen } from '@tet/ui';
 import { useCreateAxe } from './data/use-create-axe';
 
 type Props = {
@@ -9,6 +9,7 @@ type Props = {
   currentAxe?: PlanNode;
   collectiviteId: number;
   availableActions?: ('addAxe' | 'createFicheResume')[];
+  isActionsVisible: boolean;
 };
 
 export const EditPlanButtons = ({
@@ -16,6 +17,7 @@ export const EditPlanButtons = ({
   currentAxe,
   collectiviteId,
   availableActions = ['addAxe', 'createFicheResume'],
+  isActionsVisible,
 }: Props) => {
   const { mutate: createAxe } = useCreateAxe({
     collectiviteId,
@@ -41,9 +43,17 @@ export const EditPlanButtons = ({
         Créer un axe
       </Button>
       <VisibleWhen condition={availableActions.includes('createFicheResume')}>
-        <Button size="xs" onClick={() => createFicheResume()}>
-          Créer une action
-        </Button>
+        {isActionsVisible ? (
+          <Button size="xs" onClick={() => createFicheResume()}>
+            Créer une action
+          </Button>
+        ) : (
+          <Tooltip label="Les actions sont masquées dans l’affichage global">
+            <Button size="xs" disabled>
+              Créer une action
+            </Button>
+          </Tooltip>
+        )}
       </VisibleWhen>
     </div>
   );
