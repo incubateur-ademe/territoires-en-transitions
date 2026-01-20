@@ -26,7 +26,7 @@ export class TrpcClientService {
     });
   }
 
-  getClient() {
+  getClient(): TRPCClient<AppRouter> {
     return this.client;
   }
 }
