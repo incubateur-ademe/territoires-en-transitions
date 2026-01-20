@@ -1,8 +1,5 @@
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
-import {
-  PlanListItem,
-  useListPlans,
-} from '@/app/plans/plans/list-all-plans/data/use-list-plans';
+import { PlanListItem } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { TProfondeurAxe } from '@/app/plans/plans/types';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
@@ -11,6 +8,7 @@ import { OpenState } from '@tet/ui/utils/types';
 import { useEffect, useRef } from 'react';
 import { ColonneTableauEmplacement } from '../../../fiches/show-fiche/header/actions/emplacement/EmplacementFiche/NouvelEmplacement/ColonneTableauEmplacement';
 import { useSelectAxes } from '../../../fiches/show-fiche/header/actions/emplacement/EmplacementFiche/use-select-axes';
+import { useGetPlan } from '../data/use-get-plan';
 import { planNodeToProfondeurAxe } from './utils';
 
 type FicheEmplacement = Pick<FicheWithRelations, 'id' | 'axes'>;
@@ -96,15 +94,14 @@ const MoveFicheModal = ({
   openState,
 }: MoveFicheModalProps) => {
   const collectiviteId = useCollectiviteId();
-  const { plans } = useListPlans(collectiviteId);
-  const { mutateAsync: updateFiche } = useUpdateFiche({ invalidatePlanId: planId });
+  const plan = useGetPlan(planId);
+  const { mutateAsync: updateFiche } = useUpdateFiche({
+    invalidatePlanId: planId,
+  });
 
-  const { currentPlan, currentAxeInPlan } = findCurrentPlanAndAxe(
-    plans,
-    planId,
-    fiche,
-    collectiviteId
-  );
+  const planAndAxe =
+    plan && findCurrentPlanAndAxe([plan], planId, fiche, collectiviteId);
+  const { currentPlan, currentAxeInPlan } = planAndAxe || {};
 
   // gestion de la sélection d'un emplacement
   const {
