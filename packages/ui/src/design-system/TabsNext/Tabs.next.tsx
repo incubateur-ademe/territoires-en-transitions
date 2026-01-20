@@ -72,7 +72,7 @@ export const TabsList = ({
   return (
     <ul
       className={cn(
-        'inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full !list-none',
+        'inline-flex flex-wrap gap-y-6 justify-center rounded-lg bg-grey-2 p-2 gap-3 md:gap-6 w-full !list-none m-0',
         className
       )}
       role="tablist"
@@ -160,12 +160,7 @@ export const TabsPanel = ({
   className?: string;
 }) => {
   return (
-    <div
-      className={cn(
-        'grow flex flex-col p-7 border border-grey-3 bg-white rounded-lg',
-        className
-      )}
-    >
+    <div className={cn('grow flex flex-col rounded-lg', className)}>
       {children}
     </div>
   );

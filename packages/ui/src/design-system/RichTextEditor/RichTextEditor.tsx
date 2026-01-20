@@ -29,6 +29,11 @@ type RichTextEditorProps = {
   onChange?: (html: string) => void;
   /** Appelé quand l'affichage du contenu initial est tronqué (par une règle css max-height) */
   setIsTruncated?: (truncated: boolean) => void;
+  contentStyle?: {
+    size?: 'xs' | 'sm' | 'base' | 'md' | 'lg';
+    color?: 'white' | 'grey' | 'primary';
+  };
+  unstyled?: boolean;
 };
 
 // utilisé pour convertir en html les liens présents dans les contenus texte existants
@@ -68,7 +73,23 @@ export default function RichTextEditor({
   debounceDelayOnChange = 0,
   onChange,
   setIsTruncated,
+  contentStyle,
+  unstyled = false,
 }: RichTextEditorProps) {
+  const { size = 'base', color = 'grey' } = contentStyle ?? {};
+  const contentColor = {
+    white: 'text-grey-1',
+    grey: 'text-grey-8',
+    primary: 'text-primary-9',
+  }[color];
+
+  const contentSize = {
+    xs: 'text-xs',
+    sm: 'text-sm',
+    base: 'text-base',
+    md: 'text-md',
+    lg: 'text-lg',
+  }[size];
   const editorOptions: BlockNoteEditor['options'] = {
     // schéma de données géré par l'éditeur
     schema: createEditorSchema(),
@@ -89,12 +110,21 @@ export default function RichTextEditor({
       editor: {
         // force l'activation du correcteur orthographique du navigateur ?
         spellcheck: 'true',
-        // styles du container
-        // (le `!outline-none` est requis pour annuler une règle du dsfr)
         class: cn(
-          '!outline-none min-h-20 !px-6 py-3 border border-solid rounded-lg bg-grey-1 focus-within:border-primary-5 [&_.bn-inline-content]:font-[Marianne]',
+          // (le `!outline-none` est requis pour annuler une règle du dsfr)
+          '!outline-none',
+          unstyled
+            ? '!p-0'
+            : '!px-6 py-3 border border-solid rounded-lg bg-grey-1 focus-within:border-primary-5',
           className
         ),
+      },
+      inlineContent: {
+        //"it's a pain but usage of ! is mandatory to override the default blocknote styles"
+        class: `!${contentSize} !${contentColor} font-[Marianne]`,
+      },
+      blockContent: {
+        class: '!p-0',
       },
     },
   };

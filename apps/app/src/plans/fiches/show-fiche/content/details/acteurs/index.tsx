@@ -6,13 +6,12 @@ import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropd
 import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Input, RichTextView } from '@tet/ui';
+import { Input } from '@tet/ui';
 import { useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import FranceIcon from '../../../../../plans/components/france-icon.svg';
-import { RichTextEditorWithDebounce } from '../../../components/rich-text-editor-with-debounce';
 import { useFicheContext } from '../../../context/fiche-context';
-import { InlineEditableItem } from '../editable-item';
+import { EditableRichTextView, InlineEditableItem } from '../editable-item';
 import { acteursFormSchema, ActeursFormValues } from './acteurs-schema';
 import { getFieldLabel } from './labels';
 
@@ -78,14 +77,14 @@ export const Acteurs = (): JSX.Element => {
             label={getFieldLabel('services', field.value)}
             value={formatList(field.value, (s) => s.nom)}
             isReadonly={isReadonly}
-            renderOnEdit={({ openState }) => (
+            renderOnEdit={() => (
               <ServicesPilotesDropdown
+                openState={{ isOpen: true }}
                 placeholder="Sélectionnez ou créez un pilote"
                 collectiviteIds={allFicheCollectiviteIds}
                 values={field.value?.map((s) => s.id) ?? []}
                 onChange={({ services }) => {
                   field.onChange(services);
-                  openState.setIsOpen(false);
                 }}
                 additionalKeysToInvalidate={ficheActionInvalidationKeys}
               />
@@ -102,13 +101,13 @@ export const Acteurs = (): JSX.Element => {
             label={getFieldLabel('structures', field.value)}
             value={formatList(field.value, (s) => s.nom)}
             isReadonly={isReadonly}
-            renderOnEdit={({ openState }) => (
+            renderOnEdit={() => (
               <StructuresDropdown
+                openState={{ isOpen: true }}
                 values={field.value?.map((s) => s.id) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
                 onChange={({ structures }) => {
                   field.onChange(structures);
-                  openState.setIsOpen(false);
                 }}
                 additionalKeysToInvalidate={ficheActionInvalidationKeys}
               />
@@ -126,14 +125,14 @@ export const Acteurs = (): JSX.Element => {
             label={getFieldLabel('referents', field.value)}
             value={formatList(field.value, (r) => r.nom || 'Sans nom')}
             isReadonly={isReadonly}
-            renderOnEdit={({ openState }) => (
+            renderOnEdit={() => (
               <PersonnesDropdown
+                openState={{ isOpen: true }}
                 values={field.value?.map((r) => getPersonneStringId(r)) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
                 placeholder="Sélectionnez ou créez un·e élu·e référent·e"
                 onChange={({ personnes }) => {
                   field.onChange(personnes);
-                  openState.setIsOpen(false);
                 }}
                 additionalKeysToInvalidate={ficheActionInvalidationKeys}
               />
@@ -183,13 +182,13 @@ export const Acteurs = (): JSX.Element => {
             label={getFieldLabel('partenaires', field.value)}
             value={formatList(field.value, (p) => p.nom)}
             isReadonly={isReadonly}
-            renderOnEdit={({ openState }) => (
+            renderOnEdit={() => (
               <PartenairesDropdown
+                openState={{ isOpen: true }}
                 values={field.value?.map((p) => p.id) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
                 onChange={({ partenaires }) => {
                   field.onChange(partenaires);
-                  openState.setIsOpen(false);
                 }}
                 additionalKeysToInvalidate={ficheActionInvalidationKeys}
               />
@@ -207,12 +206,12 @@ export const Acteurs = (): JSX.Element => {
             label={getFieldLabel('cibles', field.value)}
             value={field.value?.join(', ')}
             isReadonly={isReadonly}
-            renderOnEdit={({ openState }) => (
+            renderOnEdit={() => (
               <CiblesDropdown
+                openState={{ isOpen: true }}
                 values={field.value ?? []}
                 onChange={({ cibles }) => {
                   field.onChange(cibles);
-                  openState.setIsOpen(false);
                 }}
               />
             )}
@@ -224,24 +223,12 @@ export const Acteurs = (): JSX.Element => {
         control={control}
         name="participationCitoyenne"
         render={({ field }) => (
-          <InlineEditableItem
+          <EditableRichTextView
             icon="shake-hands-line"
             label={getFieldLabel('participationCitoyenne', field.value)}
-            value={
-              <RichTextView
-                content={field.value}
-                textColor="grey"
-                placeholder="À renseigner"
-                autoSize
-              />
-            }
+            value={field.value ?? ''}
             isReadonly={isReadonly}
-            renderOnEdit={() => (
-              <RichTextEditorWithDebounce
-                value={field.value ?? ''}
-                onChange={(value) => field.onChange(value)}
-              />
-            )}
+            onChange={field.onChange}
           />
         )}
       />

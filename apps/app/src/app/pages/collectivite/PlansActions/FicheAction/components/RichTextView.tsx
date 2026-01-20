@@ -31,7 +31,6 @@ export const RichTextView = ({
   // à été cliqué et que donc le contenu n'est plus tronqué mais peut l'être
   // à nouveau.
   const showButton = isTruncated || showLess;
-
   return (
     <div className="flex-auto flex-col">
       {content?.length ? (
@@ -41,11 +40,10 @@ export const RichTextView = ({
             'overflow-hidden': !showLess,
             'max-h-[23rem]': !showLess && maxHeight === 'lg',
             'max-h-[8rem]': !showLess && maxHeight === 'sm',
-            '!text-grey-1': textColor === 'white',
-            '!text-grey-8': textColor === 'grey',
           })}
           initialValue={content}
           setIsTruncated={setIsTruncated}
+          contentStyle={{ color: textColor }}
         />
       ) : (
         <span

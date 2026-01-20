@@ -3,6 +3,7 @@
 import { FicheNoAccessPage } from '@/app/plans/fiches/get-fiche/fiche-no-access.page';
 import { ErrorPage } from '@/app/utils/error/error.page';
 import { FicheWithRelations } from '@tet/domain/plans';
+import { Spacer } from '@tet/ui';
 import { NavigationTabs } from './content/navigation.tabs';
 import { FicheProvider } from './context/fiche-context';
 import { useGetFiche } from './data/use-get-fiche';
@@ -40,6 +41,7 @@ export const FicheActionImprovedView = ({
       <div className="w-full bg-grey-2">
         <div className="flex flex-col w-full px-2 mx-auto xl:max-w-7xl 2xl:max-w-8xl">
           <Header />
+          <Spacer height={1.5} />
           <NavigationTabs>{content}</NavigationTabs>
         </div>
       </div>

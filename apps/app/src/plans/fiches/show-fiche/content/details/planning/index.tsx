@@ -106,7 +106,7 @@ export const Planning = () => {
           <Icon icon="calendar-line" />
         </div>
         <div className="flex flex-col">
-          <div className="text-primary-10">
+          <div className="text-primary-10 text-base">
             Date de début et de fin prévisionnelle
           </div>
           <div className="flex items-center gap-2">
@@ -117,28 +117,25 @@ export const Planning = () => {
                 <InlineEditWrapper
                   disabled={isReadonly}
                   renderOnEdit={({ openState }) => (
-                    <div className="min-w-[200px] p-3">
-                      <Input
-                        type="date"
-                        min="1900-01-01"
-                        max="2100-01-01"
-                        autoFocus
-                        value={
-                          field.value ? format(field.value, 'yyyy-MM-dd') : ''
+                    <Input
+                      type="date"
+                      min="1900-01-01"
+                      max="2100-01-01"
+                      autoFocus
+                      value={
+                        field.value ? format(field.value, 'yyyy-MM-dd') : ''
+                      }
+                      onChange={(e) => {
+                        field.onChange(
+                          e.target.value ? new Date(e.target.value) : null
+                        );
+                      }}
+                      onKeyDown={(evt) => {
+                        if (evt.key === 'Enter' || evt.key === 'Escape') {
+                          openState.setIsOpen(false);
                         }
-                        onChange={(e) => {
-                          field.onChange(
-                            e.target.value ? new Date(e.target.value) : null
-                          );
-                        }}
-                        onBlur={() => openState.setIsOpen(false)}
-                        onKeyDown={(evt) => {
-                          if (evt.key === 'Enter' || evt.key === 'Escape') {
-                            openState.setIsOpen(false);
-                          }
-                        }}
-                      />
-                    </div>
+                      }}
+                    />
                   )}
                 >
                   <span
@@ -183,7 +180,7 @@ export const Planning = () => {
                             e.target.value ? new Date(e.target.value) : null
                           );
                         }}
-                        onBlur={() => openState.setIsOpen(false)}
+                        onBlur={() => openState.setIsOpen?.(false)}
                         onKeyDown={(evt) => {
                           if (evt.key === 'Enter' || evt.key === 'Escape') {
                             openState.setIsOpen(false);
@@ -234,12 +231,12 @@ export const Planning = () => {
             label="Temps de mise en œuvre"
             value={field.value?.nom ?? null}
             isReadonly={isReadonly}
-            renderOnEdit={({ openState }) => (
+            renderOnEdit={() => (
               <MiseEnOeuvreDropdown
+                openState={{ isOpen: true }}
                 values={field.value ?? null}
                 onChange={(tempsDeMiseEnOeuvre) => {
                   field.onChange(tempsDeMiseEnOeuvre);
-                  openState.setIsOpen(false);
                 }}
               />
             )}

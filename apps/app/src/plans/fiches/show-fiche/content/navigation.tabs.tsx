@@ -1,6 +1,7 @@
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { Spacer } from '@tet/ui';
 import {
   TabsList,
   TabsPanel,
@@ -107,9 +108,10 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <TabsUI>
-      <TabsList className="flex justify-start gap-2 md:gap-3">
+      <TabsList className="flex justify-start gap-2 md:gap-3 m-0 p-0">
         {tabsToDisplay}
       </TabsList>
+      <Spacer height={1.5} />
       <TabsPanel className="border-none">{children}</TabsPanel>
     </TabsUI>
   );

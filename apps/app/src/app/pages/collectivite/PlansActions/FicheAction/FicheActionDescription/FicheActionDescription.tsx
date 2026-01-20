@@ -82,12 +82,16 @@ export const FicheActionDescription = ({
 
       <div className="text-inherit">
         <Title>{"Description de l'action :"}</Title>
-        <RichTextView content={description} placeholder="Non renseigné" />
+        <RichTextView
+          content={description}
+          placeholder="Non renseigné"
+          textColor="white"
+        />
       </div>
 
       <div>
         <Title>Instances de gouvernance :</Title>
-        <RichTextView content={instanceGouvernance} />
+        <RichTextView content={instanceGouvernance} textColor="white" />
       </div>
     </div>
   );
