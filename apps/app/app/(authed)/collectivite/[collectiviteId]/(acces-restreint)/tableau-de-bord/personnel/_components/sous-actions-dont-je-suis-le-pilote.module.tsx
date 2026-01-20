@@ -1,6 +1,7 @@
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { SousActionTable } from '@/app/plans/sous-actions/list/table/sous-action.table';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
+import PictoAction from '@/app/ui/pictogrammes/PictoAction';
 import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Pagination } from '@tet/ui';
@@ -36,24 +37,37 @@ export const SousActionsDontJeSuisLePiloteModule = () => {
   const isEmpty = sousActions.length === 0;
 
   return (
-    <Module title="Sous actions pilotées" isEmpty={false} isLoading={false}>
-      <SousActionTable
-        sousActions={sousActions}
-        isLoading={isLoading}
-        isEmpty={isEmpty}
-        hiddenColumns={['pilotes', 'actions']}
-        nbLoadingRows={LIMIT}
-        emptyCard={{ description: 'Aucune sous-action pilotée pour le moment' }}
-      />
-      {!isEmpty && (
-        <Pagination
-          className="mx-auto mt-6"
-          selectedPage={currentPage}
-          nbOfElements={count}
-          maxElementsPerPage={LIMIT}
-          onChange={setCurrentPage}
+    <Module
+      title="Sous actions pilotées"
+      isEmpty={isEmpty}
+      isLoading={false}
+      symbole={<PictoAction className="w-16 h-16" />}
+      filters={{ utilisateurPiloteIds: [userId] }}
+    >
+      <div className="h-full overflow-x-auto">
+        <SousActionTable
+          sousActions={sousActions}
+          isLoading={isLoading}
+          isEmpty={isEmpty}
+          hiddenColumns={['pilotes', 'actions']}
+          nbLoadingRows={LIMIT}
+          emptyCard={{
+            className: 'min-h-[9rem]',
+            title: 'Aucune sous-action pilotée pour le moment',
+            description: undefined,
+            actions: undefined,
+          }}
         />
-      )}
+        {!isEmpty && (
+          <Pagination
+            className="mx-auto mt-6"
+            selectedPage={currentPage}
+            nbOfElements={count}
+            maxElementsPerPage={LIMIT}
+            onChange={setCurrentPage}
+          />
+        )}
+      </div>
     </Module>
   );
 };

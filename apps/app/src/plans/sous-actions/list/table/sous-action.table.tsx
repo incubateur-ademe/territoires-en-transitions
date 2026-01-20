@@ -107,23 +107,22 @@ export const SousActionTable = ({
       nbLoadingRows={nbLoadingRows}
       isLoadingNewRow={isLoadingNewRow}
       isEmpty={isEmpty}
-      emptyCard={
-        emptyCard ?? {
-          picto: (props) => <PictoAction {...props} />,
-          title: 'Aucune sous-action pour le moment',
-          description:
-            'Décomposez votre action en tâches concrètes pour faciliter son suivi et son pilotage.',
-          actions: isReadOnly
-            ? undefined
-            : [
-                {
-                  onClick: () => createSousFiche?.(),
-                  children: 'Ajouter une sous-action',
-                  icon: 'add-line',
-                },
-              ],
-        }
-      }
+      emptyCard={{
+        picto: (props) => <PictoAction {...props} />,
+        title: 'Aucune sous-action pour le moment',
+        description:
+          'Décomposez votre action en tâches concrètes pour faciliter son suivi et son pilotage.',
+        actions: isReadOnly
+          ? undefined
+          : [
+              {
+                onClick: () => createSousFiche?.(),
+                children: 'Ajouter une sous-action',
+                icon: 'add-line',
+              },
+            ],
+        ...emptyCard,
+      }}
     />
   );
 };
