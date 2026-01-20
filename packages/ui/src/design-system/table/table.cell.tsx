@@ -7,6 +7,7 @@ export type TableCellProps = React.TdHTMLAttributes<HTMLTableCellElement>;
 type Props = TableCellProps & {
   edit?: Omit<InlineEditWrapperProps, 'children'>;
   canEdit?: boolean;
+  onClose?: () => void;
 };
 
 export const TableCell = ({
@@ -14,11 +15,12 @@ export const TableCell = ({
   children,
   edit,
   canEdit,
+  onClose,
   ...props
 }: Props) => {
   if (edit && canEdit) {
     return (
-      <InlineEditWrapper {...edit}>
+      <InlineEditWrapper {...edit} onClose={onClose}>
         <Cell
           {...props}
           data-inline-edit={canEdit ? 'true' : undefined}

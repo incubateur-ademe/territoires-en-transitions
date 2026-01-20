@@ -126,6 +126,9 @@ export const NoteRow = ({
       <TableCell
         className="text-primary-9 border-b border-gray-5"
         canEdit={!isReadonly}
+        onClose={() => {
+          handleSubmit(onSubmit)();
+        }}
         edit={{
           renderOnEdit: ({ openState }) => (
             <Controller
