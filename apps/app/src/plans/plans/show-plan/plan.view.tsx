@@ -43,7 +43,7 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
 const PlanViewContent = () => {
   const {
     collectivite,
-    canEditPlan,
+    isReadOnly,
     areAllClosed,
     toggleAll,
     isActionsVisible,
@@ -94,7 +94,7 @@ const PlanViewContent = () => {
           }
           headerActionButtonsRight={
             <div className="flex gap-6">
-              <VisibleWhen condition={canEditPlan}>
+              <VisibleWhen condition={!isReadOnly}>
                 <EditPlanButtons
                   plan={rootAxe}
                   collectiviteId={collectivite.collectiviteId}
