@@ -71,7 +71,7 @@ const Metrics = () => {
         hasPermission(perms, 'plans.fiches.read'),
       getCount: () => metrics?.plans.piloteSubFichesCount || 0,
       getTitle: (count) =>
-        `Sous action${count > 1 ? 's' : ''} pilotée${count > 1 ? 's' : ''}`,
+        `Sous-action${count > 1 ? 's' : ''} pilotée${count > 1 ? 's' : ''}`,
     },
     {
       isVisibleWithPermissions: (perms) =>
