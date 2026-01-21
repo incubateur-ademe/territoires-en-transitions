@@ -2,41 +2,39 @@
 import { Plan } from '@tet/domain/plans';
 import { EditableTitle } from '../../fiches/show-fiche/header/editable-title';
 import { PiloteOrReferentLabel } from '../components/PiloteOrReferentLabel';
-import { Actions } from './actions';
 import { useUpdatePlan } from './data/use-update-plan';
 import { usePlanAxesContext } from './plan-arborescence.view/plan-axes.context';
+import { PlanMenuButton } from './plan-menu.button';
 import { PlanStatus } from './plan-status.chart';
 
 export const PlanHeader = () => {
-  const { plan, rootAxe, canEditPlan, axeHasFiches } = usePlanAxesContext();
+  const { plan, rootAxe, isReadOnly, updatePlan } = usePlanAxesContext();
   const { id, collectiviteId } = plan;
-  const { mutate: updatePlan } = useUpdatePlan({ collectiviteId });
 
   return (
     <div className="flex flex-col">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <EditableTitle
-          className="text-2xl"
+          className="text-2xl leading-10 my-0"
           containerClassName="mb-0"
-          isReadonly={!canEditPlan}
+          isReadonly={isReadOnly}
           title={rootAxe.nom}
           onUpdate={(value) => {
             updatePlan({ id, collectiviteId, nom: value });
           }}
         />
-        <div>
-          <Actions plan={plan} axeHasFiches={axeHasFiches} />
-        </div>
+        <PlanMenuButton />
       </div>
       <div className="flex flex-col gap-2 grow">
-        <PlanMetadata plan={plan} />
+        <PlanMetadata />
         <PlanStatus planId={plan.id} />
       </div>
     </div>
   );
 };
 
-const PlanMetadata = ({ plan }: { plan: Plan }) => {
+const PlanMetadata = () => {
+  const { plan, isReadOnly, updatePlan } = usePlanAxesContext();
   return (
     <div className="flex items-center gap-2">
       <span className="text-sm uppercase text-grey-8 font-normal">
