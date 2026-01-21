@@ -17,7 +17,7 @@ export type BaseCreatePlanInput = z.infer<typeof baseCreatePlanSchema>;
  * Schéma pour mettre à jour un plan
  */
 export const baseUpdatePlanSchema = baseUpdateAxeOrPlanSchema.extend({
-  typeId: z.number().optional(),
+  typeId: z.number().nullish(),
 });
 export type BaseUpdatePlanInput = z.infer<typeof baseUpdatePlanSchema>;
 
