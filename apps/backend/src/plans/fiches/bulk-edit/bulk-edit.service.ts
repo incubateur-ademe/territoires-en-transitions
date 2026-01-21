@@ -11,6 +11,8 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { and, inArray, or, sql } from 'drizzle-orm';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
+import { ficheActionReferentTable } from '../shared/models/fiche-action-referent.table';
+import { ficheActionServiceTagTable } from '../shared/models/fiche-action-service-tag.table';
 import { BulkEditRequest } from './bulk-edit.input';
 
 @Injectable()
@@ -82,13 +84,21 @@ export class BulkEditService {
       }
     }
 
-    const { pilotes, libreTags, sharedWithCollectivites, ...plainValues } =
-      params;
+    const {
+      pilotes,
+      referents,
+      services,
+      libreTags,
+      sharedWithCollectivites,
+      ...plainValues
+    } = params;
 
     await this.db.transaction(async (tx) => {
       // Update modified and plain values
       if (
         pilotes !== undefined ||
+        referents !== undefined ||
+        services !== undefined ||
         libreTags !== undefined ||
         Object.keys(plainValues).length > 0
       ) {
@@ -166,6 +176,75 @@ export class BulkEditService {
               and(
                 inArray(ficheActionLibreTagTable.ficheId, actualFicheIds),
                 inArray(ficheActionLibreTagTable.libreTagId, ids)
+              )
+            );
+        }
+      }
+
+      // Update external relation `referents` (élus référents)
+      if (referents !== undefined) {
+        if (referents.add?.length) {
+          const values = actualFicheIds.flatMap((ficheId) => {
+            return (referents.add ?? []).map((referent) => ({
+              ficheId,
+              tagId: referent.tagId ?? null,
+              userId: referent.userId ?? null,
+            }));
+          });
+
+          await tx
+            .insert(ficheActionReferentTable)
+            .values(values)
+            .onConflictDoNothing();
+        }
+
+        if (referents.remove?.length) {
+          const tagIds = referents.remove
+            .filter((r) => r.tagId)
+            .map((r) => r.tagId) as number[];
+          const userIds = referents.remove
+            .filter((r) => r.userId)
+            .map((r) => r.userId) as string[];
+
+          await tx
+            .delete(ficheActionReferentTable)
+            .where(
+              and(
+                inArray(ficheActionReferentTable.ficheId, actualFicheIds),
+                or(
+                  inArray(ficheActionReferentTable.tagId, tagIds),
+                  inArray(ficheActionReferentTable.userId, userIds)
+                )
+              )
+            );
+        }
+      }
+
+      // Update external relation `services` (directions pilotes)
+      if (services !== undefined) {
+        if (services.add?.length) {
+          const values = actualFicheIds.flatMap((ficheId) => {
+            return (services.add ?? []).map((service) => ({
+              ficheId,
+              serviceTagId: service.id,
+            }));
+          });
+
+          await tx
+            .insert(ficheActionServiceTagTable)
+            .values(values)
+            .onConflictDoNothing();
+        }
+
+        if (services.remove?.length) {
+          const ids = services.remove.map((service) => service.id) as number[];
+
+          await tx
+            .delete(ficheActionServiceTagTable)
+            .where(
+              and(
+                inArray(ficheActionServiceTagTable.ficheId, actualFicheIds),
+                inArray(ficheActionServiceTagTable.serviceTagId, ids)
               )
             );
         }

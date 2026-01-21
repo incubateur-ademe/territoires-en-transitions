@@ -9,6 +9,8 @@ import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-f
 import EditionPilote from './EditionPilote';
 import EditionPlanning from './EditionPlanning';
 import EditionPriorite from './EditionPriorite';
+import EditionReferent from './EditionReferent';
+import EditionService from './EditionService';
 import EditionStatut from './EditionStatut';
 import EditionTagsLibres from './EditionTagsLibres';
 
@@ -80,6 +82,8 @@ const ActionsGroupeesMenu = ({
           <EditionPilote onUpdate={mutate('pilotes')} />
           <EditionStatut onUpdate={mutate('statut')} />
           <EditionPriorite onUpdate={mutate('priorite')} />
+          <EditionReferent onUpdate={mutate('referents')} />
+          <EditionService onUpdate={mutate('services')} />
           <EditionPlanning onUpdate={mutate('dateFin')} />
           <EditionTagsLibres onUpdate={mutate('libreTags')} />
           <ExportButton
