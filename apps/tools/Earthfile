@@ -7,7 +7,10 @@ build:
 
   RUN pnpm build:tools
 
-  SAVE ARTIFACT apps/tools/dist /dist AS LOCAL earthly-build/dist
+  SAVE ARTIFACT apps/tools/dist /tools-dist AS LOCAL earthly-build/dist
+  SAVE ARTIFACT apps/backend/dist /backend-dist AS LOCAL earthly-build/dist
+  SAVE ARTIFACT apps/backend/package.json /backend-package AS LOCAL earthly-build/dist
+  SAVE ARTIFACT packages/domain/dist /domain-dist AS LOCAL earthly-build/dist
 
 docker:
   FROM --pass-args ../../+prod-deps
@@ -25,7 +28,10 @@ docker:
 
   EXPOSE ${PORT}
 
-  COPY +build/dist ./dist
+  COPY +build/tools-dist ./dist
+  COPY +build/backend-package $BACKEND_DIR/package.json
+  COPY +build/backend-dist $BACKEND_DIR/dist
+  COPY +build/domain-dist $DOMAIN_DIR/dist
 
   CMD ["node", "dist/main.js"]
   SAVE IMAGE --push $DOCKER_IMAGE
