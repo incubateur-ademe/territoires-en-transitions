@@ -222,13 +222,7 @@ export const SelectBase = (props: SelectProps) => {
     : undefined;
   return (
     <DropdownFloater
-      openState={{
-        isOpen: openState?.isOpen ?? false,
-        setIsOpen:
-          openState && 'setIsOpen' in openState
-            ? openState.setIsOpen
-            : () => {},
-      }}
+      openState={openState}
       parentId={parentId}
       placement={isBadgeSelect && !placement ? 'bottom-start' : placement}
       offsetValue={0}

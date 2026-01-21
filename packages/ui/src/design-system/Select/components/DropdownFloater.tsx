@@ -28,7 +28,7 @@ type DropdownFloaterProps = {
   /** Permet de définir et d'afficher le contenu du dropdown */
   render: (data: { close: () => void }) => React.ReactNode;
   /** Permet de contrôler l'ouverture de la modale */
-  openState?: OpenState;
+  openState?: OpenState | { isOpen: boolean };
   /** Id du parent dans lequel doit être rendu le portal */
   parentId?: string;
   /** Où le dropdown doit apparaître par rapport à l'élement d'ouverture */
