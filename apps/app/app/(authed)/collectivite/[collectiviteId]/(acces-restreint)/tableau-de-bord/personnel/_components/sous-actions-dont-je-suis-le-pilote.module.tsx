@@ -16,20 +16,17 @@ export const SousActionsDontJeSuisLePiloteModule = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { fiches, count, isLoading } = useListFiches(
-    collectivite.collectiviteId,
-    {
-      filters: {
-        utilisateurPiloteIds: [userId],
-        withChildren: true,
-      },
-      queryOptions: {
-        sort: [{ field: 'created_at', direction: 'desc' }],
-        page: currentPage,
-        limit: LIMIT,
-      },
-    }
-  );
+  const { fiches, isLoading } = useListFiches(collectivite.collectiviteId, {
+    filters: {
+      utilisateurPiloteIds: [userId],
+      withChildren: true,
+    },
+    queryOptions: {
+      sort: [{ field: 'created_at', direction: 'desc' }],
+      page: currentPage,
+      limit: LIMIT,
+    },
+  });
 
   // Avec `withChildren` on récupère les sous-actions mais aussi les actions parentes
   const sousActions = fiches.filter((fiche) => fiche.parentId);
@@ -62,7 +59,7 @@ export const SousActionsDontJeSuisLePiloteModule = () => {
           <Pagination
             className="mx-auto mt-6"
             selectedPage={currentPage}
-            nbOfElements={count}
+            nbOfElements={sousActions.length}
             maxElementsPerPage={LIMIT}
             onChange={setCurrentPage}
           />
