@@ -1,12 +1,14 @@
 import { PlanNode } from '@tet/domain/plans';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { useRestreindreFiches } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/useRestreindreFiches';
 
 type Props = {
-  children: JSX.Element;
+  children?: JSX.Element;
   planId: number;
   axes: PlanNode[];
   restreindre: boolean;
+  openState?: OpenState;
 };
 
 /**
@@ -17,10 +19,12 @@ const RestreindreFichesModal = ({
   planId,
   axes,
   restreindre,
+  openState,
 }: Props) => {
   const { mutate: restreindrePlan } = useRestreindreFiches(axes);
   return (
     <Modal
+      openState={openState}
       textAlign="left"
       title={
         restreindre
