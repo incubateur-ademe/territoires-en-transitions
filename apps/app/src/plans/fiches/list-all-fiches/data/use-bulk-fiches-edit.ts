@@ -9,6 +9,8 @@ export type BulkEditRequest = RouterInput['plans']['fiches']['bulkEdit'];
 
 const events = {
   pilotes: Event.fiches.updatePilote.multiple,
+  referents: Event.fiches.updateReferent.multiple,
+  services: Event.fiches.updateService.multiple,
   statut: Event.fiches.updateStatut.multiple,
   priorite: Event.fiches.updatePriorite.multiple,
   dateFin: Event.fiches.updatePlanning.multiple,
@@ -48,6 +50,8 @@ export const useBulkFichesEdit = ({
         input: Pick<
           BulkEditRequest,
           | 'pilotes'
+          | 'referents'
+          | 'services'
           | 'statut'
           | 'priorite'
           | 'dateFin'

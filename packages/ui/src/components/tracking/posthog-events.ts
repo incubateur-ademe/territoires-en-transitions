@@ -62,6 +62,14 @@ export const Event = {
       one: 'associer_tags_perso',
       multiple: 'associer_tags_perso_groupe',
     },
+    updateReferent: {
+      one: 'editer_elu_referent',
+      multiple: 'editer_elu_referent_groupe',
+    },
+    updateService: {
+      one: 'editer_direction_pilote',
+      multiple: 'editer_direction_pilote_groupe',
+    },
     updateAcces: {
       one: 'collectivites_onglet_pa:editer_acces_click',
       multiple: 'collectivites_onglet_pa:editer_acces_groupe_click',

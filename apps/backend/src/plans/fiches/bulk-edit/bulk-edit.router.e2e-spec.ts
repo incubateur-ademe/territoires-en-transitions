@@ -19,6 +19,8 @@ import { inArray, sql } from 'drizzle-orm';
 import { createFiche } from '../fiches.test-fixture';
 import { ficheActionLibreTagTable } from '../shared/models/fiche-action-libre-tag.table';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
+import { ficheActionReferentTable } from '../shared/models/fiche-action-referent.table';
+import { ficheActionServiceTagTable } from '../shared/models/fiche-action-service-tag.table';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
 
 type Input = inferProcedureInput<AppRouter['plans']['fiches']['bulkEdit']>;
@@ -63,6 +65,29 @@ function getFichesWithLibreTags(db: DatabaseService, ficheIds: number[]) {
     .from(ficheActionLibreTagTable)
     .where(inArray(ficheActionLibreTagTable.ficheId, ficheIds))
     .groupBy(ficheActionLibreTagTable.ficheId);
+}
+
+function getFichesWithReferents(db: DatabaseService, ficheIds: number[]) {
+  return db.db
+    .select({
+      ficheId: ficheActionReferentTable.ficheId,
+      tagIds: sql`array_remove(array_agg(${ficheActionReferentTable.tagId}), NULL)`,
+      userIds: sql`array_remove(array_agg(${ficheActionReferentTable.userId}), NULL)`,
+    })
+    .from(ficheActionReferentTable)
+    .where(inArray(ficheActionReferentTable.ficheId, ficheIds))
+    .groupBy(ficheActionReferentTable.ficheId);
+}
+
+function getFichesWithServices(db: DatabaseService, ficheIds: number[]) {
+  return db.db
+    .select({
+      ficheId: ficheActionServiceTagTable.ficheId,
+      serviceTagIds: sql`array_remove(array_agg(${ficheActionServiceTagTable.serviceTagId}), NULL)`,
+    })
+    .from(ficheActionServiceTagTable)
+    .where(inArray(ficheActionServiceTagTable.ficheId, ficheIds))
+    .groupBy(ficheActionServiceTagTable.ficheId);
 }
 
 describe('BulkEditRouter', () => {
@@ -362,6 +387,121 @@ describe('BulkEditRouter', () => {
     for (const fiche of fiches2) {
       expect(fiche.ameliorationContinue).toBe(input2.ameliorationContinue);
     }
+  });
+
+  test('authenticated, bulk edit `referents` (élus référents)', async () => {
+    const caller = router.createCaller({ user: yoloDodo });
+    const ficheIds = await generateFicheIds(caller);
+    const input: Input = {
+      collectiviteId: COLLECTIVITE_ID,
+      ficheIds,
+      referents: {
+        add: [{ tagId: 1 }, { userId: yoloDodo.id }],
+      },
+    } satisfies Input;
+
+    const result = await caller.plans.fiches.bulkEdit(input);
+    expect(result).toBeUndefined();
+
+    // Verify that all fiches have been updated with referents
+    const fiches = await getFichesWithReferents(db, ficheIds);
+
+    for (const fiche of fiches) {
+      expect(fiche.tagIds).toContain(input.referents?.add?.[0]?.tagId);
+      expect(fiche.userIds).toContain(input.referents?.add?.[1]?.userId);
+    }
+
+    // Add again the same referents to check there is no conflict error
+    await caller.plans.fiches.bulkEdit(input);
+    expect(result).toBeUndefined();
+
+    // Remove one referent and add another one
+    const input2: Input = {
+      collectiviteId: COLLECTIVITE_ID,
+      ficheIds,
+      referents: {
+        add: [{ tagId: 3 }],
+        remove: [
+          { tagId: input.referents?.add?.[0]?.tagId },
+          { userId: yoloDodo.id },
+        ],
+      },
+    };
+
+    await caller.plans.fiches.bulkEdit(input2);
+    expect(result).toBeUndefined();
+
+    // Verify that all fiches have been updated with referents
+    const updatedFiches = await getFichesWithReferents(db, ficheIds);
+
+    for (const fiche of updatedFiches) {
+      expect(fiche.tagIds).toContain(input2.referents?.add?.[0]?.tagId);
+      expect(fiche.userIds).not.toContain(input.referents?.add?.[1]?.userId);
+      expect(fiche.tagIds).not.toContain(input2.referents?.remove?.[0]?.tagId);
+    }
+
+    // Delete inserted or existing referents after test
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionReferentTable)
+        .where(inArray(ficheActionReferentTable.ficheId, ficheIds));
+    });
+  });
+
+  test('authenticated, bulk edit `services` (directions pilotes)', async () => {
+    const caller = router.createCaller({ user: yoloDodo });
+    const ficheIds = await generateFicheIds(caller);
+
+    // Use existing service_tag ids (1 and 2 should exist in test data)
+    const input: Input = {
+      collectiviteId: COLLECTIVITE_ID,
+      ficheIds,
+      services: {
+        add: [{ id: 1 }],
+      },
+    } satisfies Input;
+
+    const result = await caller.plans.fiches.bulkEdit(input);
+    expect(result).toBeUndefined();
+
+    // Verify that all fiches have been updated with services
+    const fiches = await getFichesWithServices(db, ficheIds);
+
+    for (const fiche of fiches) {
+      expect(fiche.serviceTagIds).toContain(input.services?.add?.[0]?.id);
+    }
+
+    // Add again the same services to check there is no conflict error
+    await caller.plans.fiches.bulkEdit(input);
+    expect(result).toBeUndefined();
+
+    // Remove one service and add another one
+    const input2: Input = {
+      collectiviteId: COLLECTIVITE_ID,
+      ficheIds,
+      services: {
+        add: [{ id: 2 }],
+        remove: [{ id: input.services?.add?.[0]?.id ?? 0 }],
+      },
+    };
+
+    await caller.plans.fiches.bulkEdit(input2);
+    expect(result).toBeUndefined();
+
+    // Verify that all fiches have been updated with services
+    const updatedFiches = await getFichesWithServices(db, ficheIds);
+
+    for (const fiche of updatedFiches) {
+      expect(fiche.serviceTagIds).toContain(input2.services?.add?.[0]?.id);
+      expect(fiche.serviceTagIds).not.toContain(input.services?.add?.[0]?.id);
+    }
+
+    // Delete inserted or existing services after test
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionServiceTagTable)
+        .where(inArray(ficheActionServiceTagTable.ficheId, ficheIds));
+    });
   });
 
   test('authenticated, without access to some fiches', async () => {

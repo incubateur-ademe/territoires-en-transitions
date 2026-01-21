@@ -32,6 +32,12 @@ const commonFields = z.object({
     updateFicheRequestSchema.shape.sharedWithCollectivites.unwrap().unwrap()
   ),
   pilotes: listSchema(updateFicheRequestSchema.shape.pilotes.unwrap().unwrap()),
+  referents: listSchema(
+    updateFicheRequestSchema.shape.referents.unwrap().unwrap()
+  ),
+  services: listSchema(
+    updateFicheRequestSchema.shape.services.unwrap().unwrap()
+  ),
   libreTags: listSchema(
     updateFicheRequestSchema.shape.libreTags.unwrap().unwrap()
   ),
