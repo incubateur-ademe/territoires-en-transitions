@@ -8,6 +8,17 @@ export const budgetUnites = ['HT', 'ETP'] as const;
 export const budgetUniteSchema = z.enum(budgetUnites);
 export type BudgetUnite = z.infer<typeof budgetUniteSchema>;
 
+type BudgetTypeWithTotal = BudgetType | 'total';
+export type AggregatedBudget = { total: number; nbFiches: number };
+export type BudgetWithTotal = {
+  [key in BudgetTypeWithTotal]: {
+    [key in BudgetUnite]: {
+      budgetPrevisionnel: AggregatedBudget;
+      budgetReel: AggregatedBudget;
+    };
+  };
+};
+
 export const ficheBudgetSchema = z.object({
   id: z.number(),
   ficheId: z.number(),
