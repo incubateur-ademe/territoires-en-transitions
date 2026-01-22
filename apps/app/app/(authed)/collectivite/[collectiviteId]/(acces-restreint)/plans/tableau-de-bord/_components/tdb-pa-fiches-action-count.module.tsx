@@ -80,7 +80,6 @@ const TdbPaFichesActionCountModule = ({ module }: Props) => {
         filters={module.options.filtre}
         menuActions={{
           actions: getMenuActions(),
-          enableDownload: !collectivite.isReadOnly,
         }}
         emptyButtons={getEmptyButtons()}
         errorButtons={getEmptyButtons()}
