@@ -73,7 +73,7 @@ export const Acteurs = (): JSX.Element => {
         name="services"
         render={({ field }) => (
           <InlineEditableItem
-            icon="leaf-line"
+            icon="briefcase-line"
             label={getFieldLabel('services', field.value)}
             value={formatList(field.value, (s) => s.nom)}
             isReadonly={isReadonly}
