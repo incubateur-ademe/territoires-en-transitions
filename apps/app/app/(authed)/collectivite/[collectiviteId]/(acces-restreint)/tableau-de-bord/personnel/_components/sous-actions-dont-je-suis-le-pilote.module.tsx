@@ -48,12 +48,6 @@ export const SousActionsDontJeSuisLePiloteModule = () => {
           isEmpty={isEmpty}
           hiddenColumns={['pilotes', 'actions']}
           nbLoadingRows={LIMIT}
-          emptyCard={{
-            className: 'min-h-[9rem]',
-            title: 'Aucune sous-action pilotée pour le moment',
-            description: undefined,
-            actions: undefined,
-          }}
         />
         {!isEmpty && (
           <Pagination

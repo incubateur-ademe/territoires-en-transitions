@@ -1,6 +1,6 @@
 import { format, isValid } from 'date-fns';
 import { isEqual } from 'es-toolkit';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations, isFicheOnTime } from '@tet/domain/plans';
@@ -20,8 +20,6 @@ export const SousActionCellDate = ({ sousAction }: Props) => {
 
   const { mutate: updateSousAction } = useUpdateSousAction();
 
-  const refDateFin = useRef<HTMLInputElement>(null);
-
   const isValidDate = isValid(new Date(value));
 
   const hasChanged = !isEqual(new Date(value), new Date(initialDate));
@@ -35,17 +33,17 @@ export const SousActionCellDate = ({ sousAction }: Props) => {
     <TableCell
       canEdit={!isReadOnly}
       edit={{
-        onClose: () =>
-          hasChanged &&
+        onClose: () => {
+          hasChanged && isValidDate &&
           updateSousAction({
             ficheId: sousAction.id,
             ficheFields: {
-              dateFin: isValidDate ? value : null,
+              dateFin: value,
             },
-          }),
+          })
+        },
         renderOnEdit: () => (
           <Input
-            ref={refDateFin}
             containerClassname="grow border-none"
             className="w-40 border-grey-3 p-1"
             type="date"
