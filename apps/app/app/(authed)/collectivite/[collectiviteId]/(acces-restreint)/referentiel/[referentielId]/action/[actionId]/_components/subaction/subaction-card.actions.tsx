@@ -18,7 +18,7 @@ const SubactionCardActions = ({
 }: Props) => {
   const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
 
-  const collectivite = useCurrentCollectivite();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
 
   const {
     data: scoreIndicatifParActionId,
@@ -27,7 +27,10 @@ const SubactionCardActions = ({
   const scoreIndicatif = scoreIndicatifParActionId?.[actionId];
   const nbIndicateurs = scoreIndicatif?.indicateurs?.length || 0;
 
-  if (collectivite.isReadOnly || (!isDetailled && !haveScoreIndicatif))
+  if (
+    !hasCollectivitePermission('referentiels.mutate') ||
+    (!isDetailled && !haveScoreIndicatif)
+  )
     return null;
 
   return (

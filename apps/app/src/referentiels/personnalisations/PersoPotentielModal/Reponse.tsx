@@ -3,7 +3,6 @@ import {
   TReponse,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
 import { useDebouncedInput } from '@/app/ui/shared/useDebouncedInput';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, Field, Input, RadioButton as RadioButtonBase } from '@tet/ui';
 import classNames from 'classnames';
 import { FC, ReactNode } from 'react';
@@ -22,10 +21,9 @@ const ReponseContainer = ({
 );
 
 /** Affiche une réponse donnant le choix entre plusieurs énoncés */
-const ReponseChoix = ({ qr, onChange }: TQuestionReponseProps) => {
+const ReponseChoix = ({ qr, onChange, canEdit }: TQuestionReponseProps) => {
   const { id: questionId, choix, reponse } = qr;
   const choices = getFilteredChoices(reponse, choix || []);
-  const collectivite = useCurrentCollectivite();
 
   return (
     <ReponseContainer className="flex-col">
@@ -33,7 +31,7 @@ const ReponseChoix = ({ qr, onChange }: TQuestionReponseProps) => {
         return (
           <RadioButton
             key={questionId + choiceId}
-            disabled={collectivite.isReadOnly}
+            disabled={!canEdit}
             questionId={questionId}
             choiceId={choiceId}
             label={label}
@@ -47,20 +45,19 @@ const ReponseChoix = ({ qr, onChange }: TQuestionReponseProps) => {
 };
 
 /** Affiche une réponse donnant le choix entre oui et non */
-const ReponseBinaire = ({ qr, onChange }: TQuestionReponseProps) => {
+const ReponseBinaire = ({ qr, onChange, canEdit }: TQuestionReponseProps) => {
   const { id: questionId, reponse } = qr;
   const choices = getFilteredChoices(reponse, [
     { id: 'oui', label: 'Oui' },
     { id: 'non', label: 'Non' },
   ]);
-  const collectivite = useCurrentCollectivite();
 
   return (
     <ReponseContainer>
       {choices?.map(({ id: choiceId, label }) => (
         <RadioButton
           key={choiceId}
-          disabled={collectivite.isReadOnly}
+          disabled={!canEdit}
           questionId={questionId}
           choiceId={choiceId}
           label={label}
@@ -74,7 +71,11 @@ const ReponseBinaire = ({ qr, onChange }: TQuestionReponseProps) => {
 
 /** Affiche une réponse donnant lieu à la saisie d'une valeur entre 0 et 100 */
 const DEFAULT_RANGE = [0, 100];
-const ReponseProportion = ({ qr, onChange }: TQuestionReponseProps) => {
+const ReponseProportion = ({
+  qr,
+  onChange,
+  canEdit,
+}: TQuestionReponseProps) => {
   const { id: questionId, reponse } = qr;
   const [min, max] = DEFAULT_RANGE;
 
@@ -86,7 +87,6 @@ const ReponseProportion = ({ qr, onChange }: TQuestionReponseProps) => {
       onChange(proportion);
     }
   );
-  const collectivite = useCurrentCollectivite();
 
   return (
     <ReponseContainer className="flex-col">
@@ -97,7 +97,7 @@ const ReponseProportion = ({ qr, onChange }: TQuestionReponseProps) => {
       >
         <Input
           type="number"
-          disabled={collectivite.isReadOnly}
+          disabled={!canEdit}
           min={min}
           max={max}
           id={questionId}

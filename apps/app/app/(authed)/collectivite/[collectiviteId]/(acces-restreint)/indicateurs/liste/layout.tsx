@@ -10,31 +10,30 @@ import { ReactNode, useState } from 'react';
  * les onglets ("Indicateurs clés", etc.)
  */
 export default function Layout({ tabs }: { tabs: ReactNode }) {
-  const { isReadOnly, hasCollectivitePermission } = useCurrentCollectivite();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
   const [isNewIndicateurOpen, setIsNewIndicateurOpen] = useState(false);
 
   return (
     <>
       <div className="flex justify-between max-sm:flex-col gap-y-4">
         <h2 className="mb-0 mr-auto">Listes d&apos;indicateurs</h2>
-        {!isReadOnly &&
-          hasCollectivitePermission('indicateurs.indicateurs.create') && (
-            <>
-              <Button
-                data-test="create-perso"
-                size="sm"
-                onClick={() => setIsNewIndicateurOpen(true)}
-              >
-                Créer un indicateur
-              </Button>
-              {isNewIndicateurOpen && (
-                <ModaleCreerIndicateur
-                  isOpen={isNewIndicateurOpen}
-                  setIsOpen={setIsNewIndicateurOpen}
-                />
-              )}
-            </>
-          )}
+        {hasCollectivitePermission('indicateurs.indicateurs.create') && (
+          <>
+            <Button
+              data-test="create-perso"
+              size="sm"
+              onClick={() => setIsNewIndicateurOpen(true)}
+            >
+              Créer un indicateur
+            </Button>
+            {isNewIndicateurOpen && (
+              <ModaleCreerIndicateur
+                isOpen={isNewIndicateurOpen}
+                setIsOpen={setIsNewIndicateurOpen}
+              />
+            )}
+          </>
+        )}
       </div>
       {tabs}
     </>

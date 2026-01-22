@@ -22,7 +22,8 @@ type ActionCardProps = {
 
 export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
   const { actionId: id, identifiant, nom: title, description } = action;
-  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
 
   const referentiel = getReferentielIdFromActionId(id);
 
@@ -44,7 +45,7 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
             }}
           />
         )}
-        {!isReadOnly && (
+        {hasCollectivitePermission('referentiels.mutate') && (
           <Button
             icon="edit-line"
             title="Modifier"
