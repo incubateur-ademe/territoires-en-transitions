@@ -14,7 +14,8 @@ import { Button } from '@tet/ui';
 import { ReactNode } from 'react';
 
 export default function Layout({ tabs }: { tabs: ReactNode }) {
-  const { isReadOnly, collectiviteId } = useCurrentCollectivite();
+  const { hasCollectivitePermission, collectiviteId } =
+    useCurrentCollectivite();
   const referentielId = useReferentielId();
   const parcoursLabellisation = useCycleLabellisation(referentielId);
 
@@ -51,9 +52,9 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
               referentielId,
             })}
           >
-            {isReadOnly
-              ? 'Voir le référentiel'
-              : 'Mettre à jour le référentiel'}
+            {hasCollectivitePermission('referentiels.mutate')
+              ? 'Mettre à jour le référentiel'
+              : 'Voir le référentiel'}
           </Button>
         </div>
       </>

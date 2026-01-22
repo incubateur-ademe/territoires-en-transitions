@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
-import { useCollectiviteId } from '@tet/api/collectivites';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Button, Modal } from '@tet/ui';
 import { useQuestionsReponses } from '../PersoReferentielThematique/useQuestionsReponses';
@@ -23,7 +23,8 @@ export type TPersoPotentielButtonProps = {
 export const PersoPotentiel = ({ actionDef }: TPersoPotentielButtonProps) => {
   const { id: actionId, type, identifiant, nom } = actionDef;
 
-  const collectiviteId = useCollectiviteId();
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -66,6 +67,7 @@ export const PersoPotentiel = ({ actionDef }: TPersoPotentielButtonProps) => {
             questionReponses={qr}
             regles={regles}
             onChange={handleChange}
+            canEdit={hasCollectivitePermission('referentiels.mutate')}
           />
         )}
       />
