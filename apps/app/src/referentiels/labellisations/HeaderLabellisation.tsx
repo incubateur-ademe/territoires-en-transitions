@@ -1,6 +1,7 @@
 /**
  * Affiche l'en-tête de page contenant l'objectif et le bouton pour candidater
  */
+import { Etoile } from '@tet/domain/referentiels';
 import { Button } from '@tet/ui';
 import { useState } from 'react';
 import { TAuditeur, useAuditeurs } from '../audits/useAudit';
@@ -14,6 +15,24 @@ import { useStartAudit } from './useStartAudit';
 export type THeaderLabellisationProps = {
   parcoursLabellisation: TCycleLabellisation;
 };
+
+export function AchievableEtoilesButtonList(achievableEtoiles: Etoile[]) {
+  if (achievableEtoiles.length === 0) {
+    return null;
+  }
+
+  return achievableEtoiles.map((etoile) =>
+    etoile === 1 ? (
+      <Button key={etoile} size="sm">
+        Demander la première étoile
+      </Button>
+    ) : (
+      <Button key={etoile} size="sm">
+        Demander un audit pour la {numLabels[etoile]} étoile
+      </Button>
+    )
+  );
+}
 
 export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   const [opened, setOpened] = useState(false);
@@ -40,7 +59,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
     parcoursLabellisation,
     auditeurs
   );
-  const { etoiles, audit, completude_ok, labellisation } = parcours;
+  const { achievableEtoiles, audit, completude_ok, labellisation } = parcours;
   const canSubmitDemande = peutDemanderEtoile || (isCOT && completude_ok);
   const DemandeModal = isCOT ? DemandeAuditModal : DemandeLabellisationModal;
   const auditId = audit?.id;
@@ -51,26 +70,28 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
         Objectif :{' '}
         {labellisation && labellisation.etoiles === 5
           ? 'renouveler la labellisation'
-          : `${numLabels[etoiles]} étoile`}
+          : `une nouvelle étoile`}
       </h2>
       {status === 'non_demandee' && !isAuditeur ? (
         <>
-          {etoiles === 1 && isCOT ? (<Button
-            className="mb-4"
-            dataTest="1ereEtoileCOT"
-            size="sm"
-            disabled={!peutDemander1ereEtoileCOT}
-            onClick={() => setOpened_1ereEtoileCOT(true)}
-          >
-            Demander la première étoile
-          </Button>) : null}
+          {etoiles === 1 && isCOT ? (
+            <Button
+              className="mb-4"
+              dataTest="1ereEtoileCOT"
+              size="sm"
+              disabled={!peutDemander1ereEtoileCOT}
+              onClick={() => setOpened_1ereEtoileCOT(true)}
+            >
+              Demander la première étoile
+            </Button>
+          ) : null}
           <Button
             dataTest="SubmitDemandeBtn"
             size="sm"
             disabled={!canSubmitDemande}
             onClick={() => setOpened(true)}
           >
-            {etoiles === 1 && !isCOT
+            {!isCOT && etoiles === 1
               ? 'Demander la première étoile'
               : 'Demander un audit'}
           </Button>
@@ -107,14 +128,13 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
             opened={opened}
             setOpened={setOpened}
           />
-          {etoiles === 1 && isCOT ? (
-            <DemandeLabellisationModal
-              parcoursLabellisation={parcoursLabellisation}
-              opened={opened_1ereEtoileCOT}
-              setOpened={setOpened_1ereEtoileCOT}
-              isCOT={isCOT}
-            />
-          ) : null}
+
+          <DemandeLabellisationModal
+            parcoursLabellisation={parcoursLabellisation}
+            opened={opened_1ereEtoileCOT}
+            setOpened={setOpened_1ereEtoileCOT}
+            isCOT={isCOT}
+          />
         </>
       ) : null}
     </div>

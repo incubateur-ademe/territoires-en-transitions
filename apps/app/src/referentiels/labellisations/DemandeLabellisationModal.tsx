@@ -47,7 +47,7 @@ export const submittedAutresEtoiles =
   'Votre demande d’audit a bien été envoyée.';
 
 const getMessage = (parcours: TCycleLabellisation['parcours']) => {
-  const { etoiles, referentiel } = parcours || {};
+  const { achievableEtoiles: etoiles, referentiel } = parcours || {};
   if (!etoiles) {
     return null;
   }
@@ -111,7 +111,11 @@ export const DemandeLabellisationModalContent = (
   const { isLoading, envoiDemande } = useEnvoiDemande();
   const { parcoursLabellisation, onClose } = props;
   const { parcours, status } = parcoursLabellisation;
-  const { collectivite_id, referentiel, etoiles } = parcours || {};
+  const {
+    collectivite_id,
+    referentiel,
+    achievableEtoiles: etoiles,
+  } = parcours || {};
 
   const canSubmit = referentiel && etoiles;
 

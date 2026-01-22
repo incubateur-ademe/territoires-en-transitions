@@ -25,7 +25,7 @@ export type TCriterePreuvesProps = {
 
 export const CriterePreuves = (props: TCriterePreuvesProps) => {
   const { parcours, preuves, isCOT } = props;
-  const { demande, etoiles } = parcours;
+  const { demande, achievableEtoiles: etoiles } = parcours;
 
   // critère nécessitant l'ajout d'une ou plusieurs preuves
   const rempli = preuves.length > 0;
@@ -46,7 +46,7 @@ export const CriterePreuves = (props: TCriterePreuvesProps) => {
 
 const MessageCriterePreuve = (props: TCriterePreuvesProps) => {
   const { parcours } = props;
-  const { referentiel, etoiles } = parcours;
+  const { referentiel, achievableEtoiles: etoiles } = parcours;
 
   if (referentiel === 'eci' && etoiles !== 1) {
     return (

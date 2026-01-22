@@ -22,7 +22,7 @@ export type TLabellisationParcours = {
   /** Référentiel concerné */
   referentiel: ReferentielId;
   /** Nombre d'étoiles atteignables */
-  etoiles: Etoile;
+  achievableEtoiles: Etoile[];
   /** Vrai si le critère de remplissage du référentiel est rempli */
   completude_ok: boolean;
   /** Critères liés aux actions à remplir */

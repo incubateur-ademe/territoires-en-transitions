@@ -6,7 +6,7 @@ export const MessageCompletudeECi = ({
 }: {
   parcours: TLabellisationParcours | null;
 }) => {
-  const { referentiel, etoiles } = parcours || {};
+  const { referentiel, achievableEtoiles: etoiles } = parcours || {};
 
   return referentiel === 'eci' && etoiles !== 1 ? (
     <Alert

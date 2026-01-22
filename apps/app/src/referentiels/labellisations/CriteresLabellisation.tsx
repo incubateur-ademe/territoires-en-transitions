@@ -27,7 +27,7 @@ export type TCriteresLabellisationProps = {
  */
 export const CriteresLabellisation = (props: TCriteresLabellisationProps) => {
   const { parcours } = props;
-  const { etoiles, critere_score } = parcours;
+  const { achievableEtoiles: etoiles, critere_score } = parcours;
   const { atteint, score_a_realiser } = critere_score;
 
   return (

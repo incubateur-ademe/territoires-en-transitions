@@ -47,8 +47,8 @@ type TLabellisationAndDemandeAndAudit = {
 };
 
 type ParcoursLabellisation = {
-  etoiles: Etoile;
-  completude_ok: boolean;
+  achievableEtoiles: Etoile[];
+  isReferentielCompleted: boolean;
   critere_score: LabellisationCritere;
   criteres_action: ObjectToSnake<
     Omit<
@@ -496,16 +496,28 @@ from s_etoile s
         referentielId,
       });
 
-    const etoileCible = await this.getEtoileCible({
+    const minAchievableEtoile = Math.max(
+      EtoileEnum.CINQUIEME_ETOILE,
+      (labellisation?.etoiles ?? EtoileEnum.PREMIERE_ETOILE) + 1
+    ) as Etoile;
+
+    const maxAchievableEtoileDefinition = await this.getEtoileCible({
       currentEtoile: labellisation?.etoiles,
       nextEtoile: labellisation?.prochaine_etoile ?? undefined,
       scoreFait: scoreRatios?.ratioFait,
     });
 
+    const achievableEtoiles = Array.from(
+      {
+        length: maxAchievableEtoileDefinition.etoile - minAchievableEtoile + 1,
+      },
+      (_, index) => (minAchievableEtoile + index) as Etoile
+    );
+
     const actionConditionDefinitions =
       await this.listActionConditionDefinitions({
         referentielId,
-        etoileCible: etoileCible.etoile,
+        etoileCible: maxAchievableEtoileDefinition.etoile,
       });
 
     const criteresAction = actionConditionDefinitions
@@ -514,15 +526,22 @@ from s_etoile s
 
     // Équivalent de la fonction PG `labellisation.critere_score_global()`, basée sur `client_scores`.
     const critereScore = {
-      score_a_realiser: etoileCible.minRealiseScore,
+      score_a_realiser: maxAchievableEtoileDefinition.minRealiseScore,
       score_fait: scoreRatios.ratioFait,
-      atteint: scoreRatios.ratioFait >= etoileCible.minRealiseScore,
-      etoiles: etoileCible.etoile,
+      atteint:
+        scoreRatios.ratioFait >= maxAchievableEtoileDefinition.minRealiseScore,
+      etoiles: maxAchievableEtoileDefinition.etoile,
     };
 
+    const canApplyToEtoile = (etoile: Etoile) => {
+      
+
     return {
-      etoiles: etoileCible.etoile,
-      completude_ok: scoresOverview.isCompleted,
+      isReferentielCompleted: scoresOverview.isCompleted,
+      achievableEtoiles: achievableEtoiles.map((etoile) => ({
+        etoile,
+        canApply: canApplyToEtoile(etoile),
+      })),
 
       critere_score: critereScore,
       criteres_action: criteresAction.map(objectToSnake),

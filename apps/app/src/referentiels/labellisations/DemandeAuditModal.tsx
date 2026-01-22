@@ -43,7 +43,11 @@ export const DemandeAuditModalContent = (
   const { isLoading, envoiDemande } = useEnvoiDemande();
   const { parcoursLabellisation, onClose, isCOT } = props;
   const { parcours, status, labellisable } = parcoursLabellisation;
-  const { collectivite_id, referentiel, etoiles } = parcours || {};
+  const {
+    collectivite_id,
+    referentiel,
+    achievableEtoiles: etoiles,
+  } = parcours || {};
   const [sujet, setSujet] = useState<SujetDemande | null>(
     labellisable ? null : 'cot'
   );

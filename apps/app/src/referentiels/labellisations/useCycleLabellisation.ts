@@ -2,7 +2,7 @@ import { TLabellisationParcours } from '@/app/referentiels/labellisations/types'
 import { TPreuveLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { usePreuves } from '@/app/referentiels/preuves/usePreuves';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { ReferentielId } from '@tet/domain/referentiels';
+import { Etoile, ReferentielId } from '@tet/domain/referentiels';
 import { useIsAuditeur } from '../audits/useAudit';
 import { useCarteIdentite } from '../personnalisations/PersoReferentielThematique/useCarteIdentite';
 import { useLabellisationParcours } from './useLabellisationParcours';
@@ -43,7 +43,8 @@ export const useCycleLabellisation = (
     referentielId,
   });
 
-  const { completude_ok, rempli, etoiles, conditionFichiers } = parcours || {};
+  const { completude_ok, rempli, achievableEtoiles, conditionFichiers } =
+    parcours || {};
 
   // vérifie si l'utilisateur courant peut commencer l'audit
   const peutCommencerAudit = usePeutCommencerAudit({
@@ -58,12 +59,12 @@ export const useCycleLabellisation = (
   const peutDemanderEtoileBase = Boolean(
     // pas d'audit ou de labellisation demandée
     status === 'non_demandee' &&
-    // et le référentiel est rempli
-    completude_ok &&
-    // et tous les critères sont atteints
-    rempli &&
-    // et l'utilisateur a le droit requis
-    !isReadOnly
+      // et le référentiel est rempli
+      completude_ok &&
+      // et tous les critères sont atteints
+      rempli &&
+      // et l'utilisateur a le droit requis
+      !isReadOnly
   );
 
   // cas spéciaux pour les COT pour la première étoile : pas besoin de déposer un fichier
@@ -73,11 +74,26 @@ export const useCycleLabellisation = (
 
   // on peut demander une étoile si...
   // TODO: à mettre dans le backend et à tester unitairement
-  const peutDemanderEtoile = Boolean(peutDemanderEtoileBase &&
-    // Pour demander une labellisation, on doit avoir déposé un fichier même si on est un COT (sauf pour la première étoile)
-    conditionFichiers?.atteint
+  const peutDemanderEtoile = Boolean(
+    peutDemanderEtoileBase &&
+      // Pour demander une labellisation, on doit avoir déposé un fichier même si on est un COT (sauf pour la première étoile)
+      conditionFichiers?.atteint
   );
 
+// TODO à migrer en backend en logique métier pure
+function canApplyToEtoile(etoile: Etoile) {
+  const noExistingAuditOrLabellisation = status === 'non_demandee'
+  const referentielIsCompleted = completude_ok;
+  const
+
+  if (etoile === 1) {
+    const canApply = peutDemanderEtoileBase;
+    if (isCOT) {
+      return canApply;
+    }
+
+    return canApply && conditionFichiers?.atteint;
+}
 
   // on peut soumettre une demande de labellisation si...
   const labellisable = peutDemanderEtoile && etoiles !== 1;
@@ -91,8 +107,13 @@ export const useCycleLabellisation = (
     peutDemander1ereEtoileCOT,
     peutCommencerAudit,
     labellisable,
+    achievableEtoiles: (achievableEtoiles || []).map((etoile) => ({
+      etoile,
+      canApply: canApplyToEtoile(etoile),
+    })),
   };
 };
+
 
 // charge les documents de labellisation
 export const usePreuvesLabellisation = (demande_id?: number) =>
