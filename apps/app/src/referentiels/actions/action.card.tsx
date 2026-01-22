@@ -102,7 +102,7 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
             )}
             {action.services.length > 0 && (
               <ListWithTooltip
-                icon="leaf-line"
+                icon="briefcase-line"
                 title="Direction ou service pilote"
                 list={action.services.map((s) => s.nom ?? '')}
               />

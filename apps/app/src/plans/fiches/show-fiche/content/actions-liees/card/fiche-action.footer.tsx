@@ -75,7 +75,7 @@ const FicheActionFooterInfo = ({
           <ListWithTooltip
             title="Direction ou service pilote"
             list={services.map((s) => s.nom)}
-            icon="leaf-line"
+            icon="briefcase-line"
           />
         </>
       )}

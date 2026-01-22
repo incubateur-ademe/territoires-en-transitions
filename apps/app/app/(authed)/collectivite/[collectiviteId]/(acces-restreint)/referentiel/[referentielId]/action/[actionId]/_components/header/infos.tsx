@@ -34,7 +34,7 @@ const Infos = ({ openState, pilotes, services, isReadOnly }: Props) => {
           <ListWithTooltip
             title="Direction ou service pilote"
             list={services.map((s) => s.nom ?? '')}
-            icon="leaf-line"
+            icon="briefcase-line"
             hoveringColor="grey"
             onClick={() => openState.setIsOpen(true)}
             disabled={isReadOnly}
