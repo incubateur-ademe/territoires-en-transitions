@@ -39,7 +39,9 @@ export const Header = () => {
           <Menu />
         </div>
 
-        <VisibleWhen condition={hasCollectivitePermission('plans.read')}>
+        <VisibleWhen
+          condition={hasCollectivitePermission('plans.read_confidentiel')}
+        >
           <Breadcrumbs
             title={titre ?? 'Sans titre'}
             collectiviteId={collectiviteId}
