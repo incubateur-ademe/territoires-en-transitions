@@ -1106,6 +1106,42 @@ export default class ListFichesService {
     return { data: fichesWithCompletion, count };
   }
 
+  // version allégée de listFiches pour ne lire que les budgets
+  // (utilisée pour calculer le budget consolidé d'un plan)
+  async listFichesBudgetQuery(
+    collectiviteId: number | null,
+    filters?: ListFichesRequestFilters,
+    queryOptions?: QueryOptionsSchema
+  ): Promise<{
+    data: Pick<FicheWithRelations, 'id' | 'budgets'>[];
+    count: number;
+  }> {
+    const ficheIdsQuery = this.getFicheIdsQuery(
+      collectiviteId,
+      filters,
+      queryOptions
+    );
+    const ficheIdQueryResult = await ficheIdsQuery;
+    const ficheIds = ficheIdQueryResult.map((fiche) => fiche.id);
+    const count = ficheIdQueryResult[0]?.count ?? 0;
+    const ficheActionBudgets = this.getFicheActionBudgetsQuery(ficheIds);
+
+    const query = this.databaseService.db
+      .select({
+        id: ficheActionTable.id,
+        budgets: ficheActionBudgets.budgets,
+      })
+      .from(ficheActionTable)
+      .leftJoin(
+        ficheActionBudgets,
+        eq(ficheActionBudgets.ficheId, ficheActionTable.id)
+      )
+      .where(inArray(ficheActionTable.id, ficheIds));
+
+    const data = await query;
+    return { data, count };
+  }
+
   private getTimeColumn(typePeriode?: TypePeriodeEnum) {
     switch (typePeriode) {
       case 'creation':
