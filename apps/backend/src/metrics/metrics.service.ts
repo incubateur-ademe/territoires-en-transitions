@@ -8,7 +8,7 @@ import { ListActionsService } from '@tet/backend/referentiels/list-actions/list-
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { ResourceType } from '@tet/domain/users';
 import { ListIndicateursService } from '../indicateurs/indicateurs/list-indicateurs/list-indicateurs.service';
 import { LabellisationRecord } from '../referentiels/labellisations/list-labellisations.api-response';
 
@@ -34,7 +34,7 @@ export default class MetricsService {
   ): Promise<CollectiviteMetricsResponse> {
     await this.permissionsService.isAllowed(
       user,
-      PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
+      'collectivites.read',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -122,7 +122,7 @@ export default class MetricsService {
   ): Promise<PersonalMetricsResponse> {
     await this.permissionsService.isAllowed(
       user,
-      PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
+      'collectivites.read',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

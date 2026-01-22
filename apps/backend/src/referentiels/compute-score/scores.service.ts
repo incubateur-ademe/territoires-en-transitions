@@ -127,7 +127,7 @@ export default class ScoresService {
       await this.permissionService.isAllowed(
         tokenInfo,
         niveauAccesMinimum === CollectiviteRole.LECTURE
-          ? PermissionOperationEnum['REFERENTIELS.READ']
+          ? 'referentiels.read_confidentiel'
           : PermissionOperationEnum['REFERENTIELS.MUTATE'],
         ResourceType.COLLECTIVITE,
         collectiviteId

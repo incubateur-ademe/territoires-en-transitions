@@ -13,7 +13,7 @@ import {
   ReportGeneration,
   ReportTemplatesType,
 } from '@tet/domain/plans';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Queue } from 'bullmq';
 import { mkdirSync, rmSync } from 'fs';
@@ -169,7 +169,7 @@ export class GenerateReportsApplicationService {
 
     const isAllowed = await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['PLANS.READ'],
+      'plans.read_confidentiel',
       ResourceType.COLLECTIVITE,
       plan.data.collectiviteId,
       true
@@ -209,7 +209,7 @@ export class GenerateReportsApplicationService {
 
     const isAllowed = await this.permissionService.isAllowed(
       user,
-      PermissionOperationEnum['PLANS.READ'],
+      'plans.read_confidentiel',
       ResourceType.COLLECTIVITE,
       plan.data.collectiviteId,
       true

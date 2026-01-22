@@ -45,7 +45,7 @@ export class CollectiviteCrudRouter {
       .query(async ({ ctx, input }) => {
         await this.permission.isAllowed(
           ctx.user,
-          PermissionOperationEnum['COLLECTIVITES.READ'],
+          'collectivites.read_confidentiel',
           ResourceType.PLATEFORME,
           null
         );
@@ -56,7 +56,7 @@ export class CollectiviteCrudRouter {
       .query(async ({ ctx, input }) => {
         await this.permission.isAllowed(
           ctx.user,
-          PermissionOperationEnum['COLLECTIVITES.READ'],
+          'collectivites.read_confidentiel',
           ResourceType.PLATEFORME,
           null
         );
@@ -67,7 +67,7 @@ export class CollectiviteCrudRouter {
       .query(async ({ ctx, input }) => {
         await this.permission.isAllowed(
           ctx.user,
-          PermissionOperationEnum['COLLECTIVITES.READ'],
+          'collectivites.read_confidentiel',
           ResourceType.PLATEFORME,
           null
         );

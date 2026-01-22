@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { ResourceType } from '@tet/domain/users';
 import { TrpcService } from '../utils/trpc/trpc.service';
 import {
   listRequestSchema,
@@ -24,7 +24,7 @@ export class PersonnesRouter {
         // It's ok to load tags from all collectivites
         await this.permission.isAllowed(
           ctx.user,
-          PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
+          'collectivites.read',
           ResourceType.PLATEFORME,
           null
         );

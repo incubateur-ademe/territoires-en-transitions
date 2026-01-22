@@ -35,7 +35,8 @@ export const Header = ({
     completion,
   } = fiche;
   const router = useRouter();
-  const { collectiviteId, hasCollectivitePermission } = useCurrentCollectivite();
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
 
   const displayCreationInfo = createdBy || createdAt;
   const displayModificationInfo =
@@ -71,7 +72,7 @@ export const Header = ({
       </div>
 
       {/* Fils d'ariane avec emplacements de la fiche */}
-      {hasCollectivitePermission('plans.read') && (
+      {hasCollectivitePermission('plans.read_confidentiel') && (
         <FicheBreadcrumbs
           titre={titre ?? 'Sans titre'}
           collectiviteId={collectiviteId}

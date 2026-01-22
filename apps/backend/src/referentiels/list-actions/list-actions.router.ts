@@ -4,7 +4,7 @@ import { listActionSummariesRequestSchema } from '@tet/backend/referentiels/list
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { listActionsRequestSchema } from '@tet/domain/referentiels';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { ResourceType } from '@tet/domain/users';
 import { ListActionsService } from './list-actions.service';
 
 @Injectable()
@@ -29,8 +29,8 @@ export class ListActionsRouter {
         await this.permissions.isAllowed(
           user,
           collectivitePrivate
-            ? PermissionOperationEnum['REFERENTIELS.READ']
-            : PermissionOperationEnum['REFERENTIELS.READ_PUBLIC'],
+            ? 'referentiels.read_confidentiel'
+            : 'referentiels.read',
           ResourceType.COLLECTIVITE,
           collectiviteId
         );

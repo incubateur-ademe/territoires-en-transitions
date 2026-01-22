@@ -743,7 +743,7 @@ export default class TrajectoiresDataService {
 
     const isAllowedToRead = await this.permissionService.isAllowed(
       tokenInfo,
-      'indicateurs.valeurs.read_public',
+      'indicateurs.valeurs.read',
       ResourceType.COLLECTIVITE,
       request.collectiviteId,
       doNotThrowIfUnauthorized

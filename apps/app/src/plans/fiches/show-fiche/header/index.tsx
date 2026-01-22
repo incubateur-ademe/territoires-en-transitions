@@ -14,7 +14,8 @@ const Divider = ({ className }: { className?: string | undefined }) => {
 
 export const Header = () => {
   const { fiche, isReadonly, planId, update } = useFicheContext();
-  const { collectiviteId, hasCollectivitePermission } = useCurrentCollectivite();
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
   const { titre, axes } = fiche;
 
   const updateTitle = (titre: string | null) =>
@@ -38,7 +39,9 @@ export const Header = () => {
           <Menu />
         </div>
 
-        <VisibleWhen condition={hasCollectivitePermission('plans.read')}>
+        <VisibleWhen
+          condition={hasCollectivitePermission('plans.read_confidentiel')}
+        >
           <Breadcrumbs
             title={titre ?? 'Sans titre'}
             collectiviteId={collectiviteId}

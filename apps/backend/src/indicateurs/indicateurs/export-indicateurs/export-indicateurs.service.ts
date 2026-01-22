@@ -5,7 +5,7 @@ import {
   IndicateurDefinitionAvecEnfants,
   IndicateurSourceMetadonnee,
 } from '@tet/domain/indicateurs';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { ResourceType } from '@tet/domain/users';
 import { format } from 'date-fns';
 import { uniq } from 'es-toolkit';
 import { Workbook } from 'exceljs';
@@ -42,7 +42,7 @@ export default class ExportIndicateursService {
 
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperationEnum['PLANS.FICHES.READ'],
+      'plans.fiches.read_confidentiel',
       ResourceType.COLLECTIVITE,
       options.collectiviteId
     );
