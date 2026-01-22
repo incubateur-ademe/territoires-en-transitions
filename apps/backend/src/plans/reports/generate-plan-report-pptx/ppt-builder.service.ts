@@ -670,13 +670,13 @@ export class PptBuilderService {
         SOUS_FICHES_COUNT: 0,
         AXES_COUNT: axes.length,
         PLAN_BUDGET_FONCTIONNEMENT: this.formatBudget(
-          budget.fonctionnement.HT.budgetPrevisionnel
+          budget.fonctionnement.HT.budgetPrevisionnel.total
         ),
         PLAN_BUDGET_INVESTISSEMENT: this.formatBudget(
-          budget.investissement.HT.budgetPrevisionnel
+          budget.investissement.HT.budgetPrevisionnel.total
         ),
         PLAN_BUDGET_TOTAL: this.formatBudget(
-          budget.total.HT.budgetPrevisionnel
+          budget.total.HT.budgetPrevisionnel.total
         ),
       };
 
@@ -1057,12 +1057,14 @@ export class PptBuilderService {
       FICHE_PERIODE: `${dateDebut} -> ${dateFin}`,
       FICHE_DATE_DEBUT: dateDebut,
       FICHE_DATE_FIN: dateFin,
-      FICHE_BUDGET_TOTAL: this.formatBudget(budget.total.HT.budgetPrevisionnel),
+      FICHE_BUDGET_TOTAL: this.formatBudget(
+        budget.total.HT.budgetPrevisionnel.total
+      ),
       FICHE_BUDGET_FONCTIONNEMENT: this.formatBudget(
-        budget.fonctionnement.HT.budgetPrevisionnel
+        budget.fonctionnement.HT.budgetPrevisionnel.total
       ),
       FICHE_BUDGET_INVESTISSEMENT: this.formatBudget(
-        budget.investissement.HT.budgetPrevisionnel
+        budget.investissement.HT.budgetPrevisionnel.total
       ),
       MISSING_INFO: missingInfo,
     };
@@ -1101,12 +1103,14 @@ export class PptBuilderService {
       INDICATEURS_COUNT: indicateursCount,
       FICHES_COUNT: axeFilteredFiches.length,
       SOUS_FICHES_COUNT: 0,
-      AXE_BUDGET_TOTAL: this.formatBudget(budget.total.HT.budgetPrevisionnel),
+      AXE_BUDGET_TOTAL: this.formatBudget(
+        budget.total.HT.budgetPrevisionnel.total
+      ),
       AXE_BUDGET_FONCTIONNEMENT: this.formatBudget(
-        budget.fonctionnement.HT.budgetPrevisionnel
+        budget.fonctionnement.HT.budgetPrevisionnel.total
       ),
       AXE_BUDGET_INVESTISSEMENT: this.formatBudget(
-        budget.investissement.HT.budgetPrevisionnel
+        budget.investissement.HT.budgetPrevisionnel.total
       ),
     };
   }
