@@ -38,8 +38,9 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
         indicateurs.list.length > 0 ? `(${indicateurs.list.length})` : ''
       }`,
       isVisible:
-        hasCollectivitePermission('indicateurs.indicateurs.read') ||
-        hasCollectivitePermission('indicateurs.indicateurs.read_public'),
+        hasCollectivitePermission(
+          'indicateurs.indicateurs.read_confidentiel'
+        ) || hasCollectivitePermission('indicateurs.indicateurs.read'),
       id: 'indicateurs',
     },
     {
@@ -63,15 +64,15 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
         actionsLiees.list.length > 0 ? `(${actionsLiees.list.length})` : ''
       }`,
       isVisible:
-        hasCollectivitePermission('plans.fiches.read') ||
-        hasCollectivitePermission('plans.fiches.read_public'),
+        hasCollectivitePermission('plans.fiches.read_confidentiel') ||
+        hasCollectivitePermission('plans.fiches.read'),
       id: 'actions-liees',
     },
     {
       label: 'Mesures liées',
       isVisible:
-        hasCollectivitePermission('referentiels.read') ||
-        hasCollectivitePermission('referentiels.read_public'),
+        hasCollectivitePermission('referentiels.read_confidentiel') ||
+        hasCollectivitePermission('referentiels.read'),
       id: 'mesures-liees',
     },
     {

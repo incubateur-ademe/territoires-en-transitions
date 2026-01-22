@@ -291,14 +291,14 @@ export default class CrudValeursService {
       );
       hasPermissionLecture = await this.permissionService.isAllowed(
         user,
-        'indicateurs.valeurs.read',
+        'indicateurs.valeurs.read_confidentiel',
         ResourceType.COLLECTIVITE,
         collectiviteId,
         true
       );
       const hasPermissionVisite = await this.permissionService.isAllowed(
         user,
-        'indicateurs.valeurs.read_public',
+        'indicateurs.valeurs.read',
         ResourceType.COLLECTIVITE,
         collectiviteId,
         true
@@ -310,8 +310,8 @@ export default class CrudValeursService {
             user.id
           } n'a pas l'autorisation ${
             accesRestreintRequis
-              ? 'indicateurs.valeurs.read'
-              : 'indicateurs.valeurs.read_public'
+              ? 'indicateurs.valeurs.read_confidentiel'
+              : 'indicateurs.valeurs.read'
           } sur la ressource Collectivité ${collectiviteId}`
         );
       }
@@ -1265,7 +1265,9 @@ export default class CrudValeursService {
         const IndicateurAvecValeursParSource: IndicateurAvecValeursParSource = {
           definition: indicateurDefinition as IndicateurDefinition,
           totalValeursCount: valeurs.length,
-          totalFilledValeursCount: valeurs.filter((v) => !isNil(v.resultat) || !isNil(v.objectif)).length,
+          totalFilledValeursCount: valeurs.filter(
+            (v) => !isNil(v.resultat) || !isNil(v.objectif)
+          ).length,
           sources: sourceMap,
         };
         return IndicateurAvecValeursParSource;

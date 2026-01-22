@@ -49,7 +49,7 @@ export class IndicateurValeursRouter {
         // Vérifie les droits
         await this.permissionService.isAllowed(
           ctx.user,
-          'indicateurs.valeurs.read_public',
+          'indicateurs.valeurs.read',
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );

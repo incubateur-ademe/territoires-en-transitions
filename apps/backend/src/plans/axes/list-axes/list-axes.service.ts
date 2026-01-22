@@ -5,7 +5,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { PlanNode } from '@tet/domain/plans';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { ResourceType } from '@tet/domain/users';
 import { ListAxesError, ListAxesErrorEnum } from './list-axes.errors';
 import { ListAxesInput } from './list-axes.input';
 import { ListAxesOutput, ListAxesRepository } from './list-axes.repository';
@@ -64,9 +64,7 @@ export class ListAxesService {
 
     const isAllowed = await this.permissionService.isAllowed(
       user,
-      collectivitePrivate
-        ? PermissionOperationEnum['PLANS.READ']
-        : PermissionOperationEnum['PLANS.READ_PUBLIC'],
+      collectivitePrivate ? 'plans.read_confidentiel' : 'plans.read',
       ResourceType.COLLECTIVITE,
       collectiviteId,
       true

@@ -475,7 +475,7 @@ export class ListIndicateursService {
     if (user) {
       await this.permissionService.isAllowed(
         user,
-        'indicateurs.indicateurs.read_public',
+        'indicateurs.indicateurs.read',
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -898,7 +898,7 @@ export class ListIndicateursService {
     const { collectiviteId, indicateurId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      'indicateurs.indicateurs.read_public',
+      'indicateurs.indicateurs.read',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -957,7 +957,7 @@ export class ListIndicateursService {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      'indicateurs.indicateurs.read_public',
+      'indicateurs.indicateurs.read',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -985,7 +985,7 @@ export class ListIndicateursService {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      'indicateurs.indicateurs.read_public',
+      'indicateurs.indicateurs.read',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -1010,7 +1010,7 @@ export class ListIndicateursService {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      'indicateurs.indicateurs.read_public',
+      'indicateurs.indicateurs.read',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
