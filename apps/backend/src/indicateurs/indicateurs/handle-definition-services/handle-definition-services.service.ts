@@ -28,7 +28,7 @@ export class HandleDefinitionServicesService {
   }): Promise<ServiceTag[]> {
     await this.permissionService.isAllowed(
       user,
-      'indicateurs.indicateurs.read',
+      'indicateurs.indicateurs.read_confidentiel',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

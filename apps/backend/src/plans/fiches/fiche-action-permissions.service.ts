@@ -179,8 +179,8 @@ export default class FicheActionPermissionsService {
 
   getReadFichePermission(fiche: Pick<Fiche, 'restreint'>): PermissionOperation {
     return fiche.restreint
-      ? PermissionOperationEnum['PLANS.FICHES.READ']
-      : PermissionOperationEnum['PLANS.FICHES.READ_PUBLIC'];
+      ? 'plans.fiches.read_confidentiel'
+      : 'plans.fiches.read';
   }
 
   hasReadFichePermission(

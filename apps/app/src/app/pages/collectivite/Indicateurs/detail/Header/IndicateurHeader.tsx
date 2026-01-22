@@ -59,7 +59,7 @@ const IndicateurHeader = ({
 
           <VisibleWhen
             condition={hasCollectivitePermission(
-              'indicateurs.indicateurs.read_public'
+              'indicateurs.indicateurs.read'
             )}
           >
             <CheminIndicateur

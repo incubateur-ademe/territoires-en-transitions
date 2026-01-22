@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { TagWithCollectiviteId } from '@tet/domain/collectivites';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { ResourceType } from '@tet/domain/users';
 import { and, eq, inArray, isNull, or } from 'drizzle-orm';
 import { AuthUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
@@ -37,8 +37,8 @@ export default class ListCategoriesService {
     await this.permissionService.isAllowed(
       tokenInfo,
       collectivitePrivate
-        ? PermissionOperationEnum['COLLECTIVITES.READ']
-        : PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
+        ? 'collectivites.read_confidentiel'
+        : 'collectivites.read',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

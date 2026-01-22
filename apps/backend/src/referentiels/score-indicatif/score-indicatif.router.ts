@@ -22,7 +22,7 @@ export class ScoreIndicatifRouter {
       .query(async ({ ctx, input }) => {
         await this.permissionService.isAllowed(
           ctx.user,
-          'indicateurs.indicateurs.read',
+          'indicateurs.indicateurs.read_confidentiel',
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );
@@ -52,7 +52,7 @@ export class ScoreIndicatifRouter {
       .query(async ({ ctx, input }) => {
         await this.permissionService.isAllowed(
           ctx.user,
-          PermissionOperationEnum['COLLECTIVITES.READ'],
+          'collectivites.read_confidentiel',
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );

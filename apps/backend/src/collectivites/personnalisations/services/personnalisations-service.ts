@@ -6,7 +6,7 @@ import {
   PersonnalisationRegle,
   PersonnalisationReponsesPayload,
 } from '@tet/domain/collectivites';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { ResourceType } from '@tet/domain/users';
 import { and, asc, desc, eq, like, lte, SQL, SQLWrapper } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { DatabaseService } from '../../../utils/database/database.service';
@@ -98,7 +98,7 @@ export default class PersonnalisationsService {
     if (reponsesDate && tokenInfo) {
       await this.permissionService.isAllowed(
         tokenInfo,
-        PermissionOperationEnum['REFERENTIELS.READ'],
+        'referentiels.read_confidentiel',
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -167,7 +167,7 @@ export default class PersonnalisationsService {
     if (request.date && tokenInfo) {
       await this.permissionService.isAllowed(
         tokenInfo,
-        PermissionOperationEnum['REFERENTIELS.READ'],
+        'referentiels.read_confidentiel',
         ResourceType.COLLECTIVITE,
         collectiviteId
       );

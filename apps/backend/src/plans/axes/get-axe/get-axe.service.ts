@@ -5,7 +5,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { ResourceType } from '@tet/domain/users';
 import { GetAxeError, GetAxeErrorEnum } from './get-axe.errors';
 import { GetAxeInput } from './get-axe.input';
 import { GetAxeOutput } from './get-axe.output';
@@ -84,9 +84,7 @@ export class GetAxeService {
 
     const isAllowed = await this.permissionService.isAllowed(
       user,
-      collectivitePrivate
-        ? PermissionOperationEnum['PLANS.READ']
-        : PermissionOperationEnum['PLANS.READ_PUBLIC'],
+      collectivitePrivate ? 'plans.read_confidentiel' : 'plans.read',
       ResourceType.COLLECTIVITE,
       collectiviteId,
       true

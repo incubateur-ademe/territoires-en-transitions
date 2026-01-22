@@ -5,7 +5,6 @@ import { GenerateTokenRequest } from '@tet/backend/users/apikeys/generate-token.
 import { GenerateTokenResponse } from '@tet/backend/users/apikeys/generate-token.response';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { PermissionOperationEnum } from '@tet/domain/users';
 import { default as request } from 'supertest';
 
 describe('Oauth controller test', () => {
@@ -125,10 +124,10 @@ describe('Oauth controller test', () => {
     const result = await caller.users.apikeys.create({
       userId: yoloDodoUser.id,
       permissions: [
-        PermissionOperationEnum['INDICATEURS.INDICATEURS.READ'],
-        PermissionOperationEnum['INDICATEURS.INDICATEURS.READ_PUBLIC'],
-        PermissionOperationEnum['INDICATEURS.VALEURS.READ'],
-        PermissionOperationEnum['INDICATEURS.VALEURS.READ_PUBLIC'],
+        'indicateurs.indicateurs.read_confidentiel',
+        'indicateurs.indicateurs.read',
+        'indicateurs.valeurs.read_confidentiel',
+        'indicateurs.valeurs.read',
       ],
     });
 
