@@ -29,7 +29,9 @@ const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
           key={definition.id}
           definition={definition}
           view={view}
-          isReadOnly={collectivite.isReadOnly ?? false}
+          isReadOnly={
+            !collectivite.hasCollectivitePermission('referentiels.mutate')
+          }
           collectiviteId={collectivite.collectiviteId}
         />
       ))}

@@ -11,8 +11,8 @@ import { useAddPreuveToDemande } from './useAddPreuveToDemande';
 export const AddDocsButton = () => {
   const [opened, setOpened] = useState(false);
   const handlers = useAddPreuveToDemande();
-  const currentCollectivite = useCurrentCollectivite();
-  if (!currentCollectivite || currentCollectivite.isReadOnly) {
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+  if (!hasCollectivitePermission('referentiels.mutate')) {
     return null;
   }
 

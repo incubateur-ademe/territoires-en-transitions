@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  CollectiviteRole,
   CollectiviteRolesAndPermissions,
   PermissionOperation,
 } from '@tet/domain/users';
@@ -13,9 +12,7 @@ export interface CollectiviteCurrent extends CollectiviteRolesAndPermissions {
   nom: string;
   accesRestreint: boolean;
 
-  niveauAcces: CollectiviteRole | null;
   isRoleAuditeur: boolean;
-  isReadOnly: boolean;
   isSimplifiedView: boolean;
 
   hasCollectivitePermission: (permission: PermissionOperation) => boolean;

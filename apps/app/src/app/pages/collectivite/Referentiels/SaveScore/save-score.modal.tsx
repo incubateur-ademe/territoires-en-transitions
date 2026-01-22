@@ -151,12 +151,6 @@ Une sauvegarde sera automatiquement réalisée lors du démarrage d'un audit et 
             btnOKProps={{
               children: `Figer l'état des lieux`,
               onClick: () => {
-                // tracker('referentiels:scores:sauvegarde', {
-                //   collectiviteId,
-                //   niveauAcces,
-                //   role,
-                //   dateDuJour: selectedButton === 'now',
-                // });
                 handleSave();
                 tracker(Event.saveScore, {
                   dateDuJour: selectedButton === 'now',

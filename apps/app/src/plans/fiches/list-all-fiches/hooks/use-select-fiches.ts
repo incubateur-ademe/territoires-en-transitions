@@ -11,10 +11,9 @@ export const useSelectFiches = ({
   currentPage: number;
   collectivite: CollectiviteCurrent;
 }) => {
-  const { hasCollectivitePermission, isReadOnly } = collectivite;
+  const { hasCollectivitePermission } = collectivite;
   // TODO: to be improved with a more granular permission check > can export in pdf. But for now ok.
   const isGroupedActionsEnabled =
-    !isReadOnly &&
     view !== 'scheduler' &&
     hasCollectivitePermission('plans.fiches.bulk_update');
 

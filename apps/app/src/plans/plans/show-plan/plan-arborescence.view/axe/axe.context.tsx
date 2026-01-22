@@ -74,9 +74,7 @@ export const AxeProvider = (props: AxeProviderProps) => {
   const { children, ...providerProps } = props;
   const { axe, rootAxe, axes, collectivite } = providerProps;
   const collectiviteId = collectivite.collectiviteId;
-  const isReadOnly =
-    collectivite.isReadOnly ||
-    !collectivite.hasCollectivitePermission('plans.mutate');
+  const isReadOnly = !collectivite.hasCollectivitePermission('plans.mutate');
 
   const updateAxe = useUpdateAxe({
     axe,

@@ -9,18 +9,23 @@ import Modules from './modules';
 
 const PersonnelPage = () => {
   const { prenom } = useUser();
-  const { nom, isReadOnly } = useCurrentCollectivite();
+  const { nom, hasCollectivitePermission } = useCurrentCollectivite();
+  const canMutateCollectivite = hasCollectivitePermission(
+    'collectivites.mutate'
+  );
 
   return (
     <>
       <Header
         title={
-          isReadOnly
-            ? `Tableau de bord de la collectivité ${nom}`
-            : `Bonjour ${prenom}`
+          canMutateCollectivite
+            ? `Bonjour ${prenom}`
+            : `Tableau de bord de la collectivité ${nom}`
         }
         subtitle={
-          !isReadOnly ? 'Bienvenue sur Territoires en Transitions' : undefined
+          canMutateCollectivite
+            ? 'Bienvenue sur Territoires en Transitions'
+            : undefined
         }
         activeTab="personnel"
       />

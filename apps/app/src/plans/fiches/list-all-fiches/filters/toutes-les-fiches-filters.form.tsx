@@ -79,7 +79,9 @@ export const ToutesLesFichesFiltersForm = ({
 
   const collectivite = useCurrentCollectivite();
 
-  const isVisitor = collectivite.niveauAcces === null;
+  const canMutateCollectivite = collectivite.hasCollectivitePermission(
+    'collectivites.mutate'
+  );
 
   const onSubmit = (data: FormFilters) => {
     setFilters(data);
@@ -145,7 +147,7 @@ export const ToutesLesFichesFiltersForm = ({
                         uIds.length > 0 ? uIds : (EMPTY_ARRAY_VALUE as string[])
                       );
                     }}
-                    disableEdition={isVisitor}
+                    disableEdition={!canMutateCollectivite}
                   />
                 )}
               />
@@ -166,7 +168,7 @@ export const ToutesLesFichesFiltersForm = ({
                           : EMPTY_ARRAY_VALUE;
                       field.onChange(serviceIds);
                     }}
-                    disableEdition={isVisitor}
+                    disableEdition={!canMutateCollectivite}
                   />
                 )}
               />
@@ -236,7 +238,7 @@ export const ToutesLesFichesFiltersForm = ({
                         uIds.length > 0 ? uIds : (EMPTY_ARRAY_VALUE as string[])
                       );
                     }}
-                    disableEdition={isVisitor}
+                    disableEdition={!canMutateCollectivite}
                   />
                 )}
               />

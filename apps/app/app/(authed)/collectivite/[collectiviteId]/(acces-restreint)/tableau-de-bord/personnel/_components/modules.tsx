@@ -45,12 +45,8 @@ const Modules = () => {
   const tracker = useEventTracker();
 
   const currentCollectivite = useCurrentCollectivite();
-  const {
-    collectiviteId,
-    niveauAcces,
-    hasCollectivitePermission,
-    isSimplifiedView,
-  } = currentCollectivite;
+  const { collectiviteId, hasCollectivitePermission, isSimplifiedView } =
+    currentCollectivite;
 
   const { totalCount: plansCount } = useListPlans(collectiviteId);
 
@@ -59,7 +55,9 @@ const Modules = () => {
 
   // In order to simplify UI, we don't allow to edit modules for edition_fiches_indicateurs users
   // Later maybe generalized
-  const canEditModules = (niveauAcces && !isSimplifiedView) || false;
+  const canEditModules =
+    hasCollectivitePermission('collectivites.tableau-de-bord.mutate') &&
+    !isSimplifiedView;
 
   if (isLoading) {
     return (

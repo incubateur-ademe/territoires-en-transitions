@@ -57,7 +57,8 @@ const nameToParams: Record<keyof Params, string> = {
  * Affiche une trajectoire SNBC calculée
  */
 export const TrajectoireCalculee = () => {
-  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
 
   // State pour contrôler l'ouverture de la modale de recalcul
   const [isModalDataOpen, setIsModalDataOpen] = useState(false);
@@ -126,11 +127,14 @@ export const TrajectoireCalculee = () => {
   const selectedSecteurDataAvailable =
     selectedSecteur && valeursSecteur && valeursSecteur.source.length;
 
-  const recomputeButtonIsVisible = !(
-    isReadOnly ||
-    shouldShowDataPartiallyFilledWarning ||
-    selectedSecteurDataNotAvailable
+  const canMutateValeurs = hasCollectivitePermission(
+    'indicateurs.valeurs.mutate'
   );
+
+  const recomputeButtonIsVisible =
+    canMutateValeurs &&
+    !shouldShowDataPartiallyFilledWarning &&
+    !selectedSecteurDataNotAvailable;
 
   const comparezLaTrajectoireIsVisible =
     !isLoadingObjectifsResultats &&
@@ -284,9 +288,9 @@ export const TrajectoireCalculee = () => {
           }
         >
           <DonneesPartiellementDisponibles
-            disabled={isReadOnly}
+            disabled={!canMutateValeurs}
             description={
-              isReadOnly
+              !canMutateValeurs
                 ? "Il manque des données pour certains secteurs : un utilisateur en Edition ou Admin sur le profil de cette collectivité peut compléter les données manquantes pour l'année 2015 afin de finaliser le calcul"
                 : undefined
             }
@@ -298,7 +302,7 @@ export const TrajectoireCalculee = () => {
           <ComparezLaTrajectoire
             collectiviteId={collectiviteId}
             identifiantReferentiel={identifiant}
-            readonly={isReadOnly}
+            readonly={!canMutateValeurs}
           />
         </VisibleWhen>
 
@@ -348,11 +352,11 @@ export const TrajectoireCalculee = () => {
           <DonneesPartiellementDisponibles
             title="Données non disponibles"
             description={
-              isReadOnly
-                ? `Nous ne disposons pas encore des données nécessaires pour calculer la trajectoire SNBC territorialisée de ce secteur. Nous y travaillons activement et espérons vous fournir ces informations très prochainement. En attendant, un utilisateur en Edition ou Admin sur le profil de cette collectivité peut compléter les données déjà disponibles pour calculer la trajectoire pour l'ensemble des secteurs.`
-                : `Nous ne disposons pas encore des données nécessaires pour calculer la trajectoire SNBC territorialisée de ce secteur. Nous y travaillons activement et espérons vous fournir ces informations très prochainement. En attendant, vous pouvez calculer dès maintenant votre trajectoire pour l'ensemble des secteurs en complétant les données déjà disponibles.`
+              canMutateValeurs
+                ? `Nous ne disposons pas encore des données nécessaires pour calculer la trajectoire SNBC territorialisée de ce secteur. Nous y travaillons activement et espérons vous fournir ces informations très prochainement. En attendant, vous pouvez calculer dès maintenant votre trajectoire pour l'ensemble des secteurs en complétant les données déjà disponibles.`
+                : `Nous ne disposons pas encore des données nécessaires pour calculer la trajectoire SNBC territorialisée de ce secteur. Nous y travaillons activement et espérons vous fournir ces informations très prochainement. En attendant, un utilisateur en Edition ou Admin sur le profil de cette collectivité peut compléter les données déjà disponibles pour calculer la trajectoire pour l'ensemble des secteurs.`
             }
-            disabled={isReadOnly}
+            disabled={!canMutateValeurs}
             onOpenModal={() => setIsModalDataOpen(true)}
           />
         </VisibleWhen>

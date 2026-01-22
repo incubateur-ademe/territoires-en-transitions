@@ -8,20 +8,18 @@ import './preview.css';
 import { SupabaseProvider, TrpcWithReactQueryProvider } from '@tet/api';
 import { CollectiviteProvider } from '@tet/api/collectivites';
 import { UserProvider } from '@tet/api/users';
-import { CollectiviteAccessLevelEnum } from '@tet/domain/users';
+import { CollectiviteRole, permissionsByRole } from '@tet/domain/users';
 
 const user = {
   collectivites: [
     {
       collectiviteId: 1,
       nom: 'Amberieu-en-Bugey',
-      niveauAcces: CollectiviteAccessLevelEnum.EDITION,
-      role: null,
+      role: CollectiviteRole.EDITION,
       accesRestreint: false,
-      isReadOnly: false,
       isRoleAuditeur: false,
       isSimplifiedView: false,
-      permissions: [],
+      permissions: permissionsByRole[CollectiviteRole.EDITION],
     },
   ],
   id: '',

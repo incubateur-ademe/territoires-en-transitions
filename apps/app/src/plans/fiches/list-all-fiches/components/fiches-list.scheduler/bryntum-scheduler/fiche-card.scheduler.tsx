@@ -27,7 +27,10 @@ export const FicheCardScheduler = ({
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   const isNotClickable =
-    currentCollectivite.niveauAcces === null && !!fiche.restreint;
+    !!fiche.restreint &&
+    !currentCollectivite.hasCollectivitePermission(
+      'plans.fiches.read_confidentiel'
+    );
 
   const cardRef = useRef<HTMLAnchorElement>(null);
 

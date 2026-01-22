@@ -24,7 +24,7 @@ type FormData = z.infer<typeof validationSchema>;
 
 export type Props = {
   /** Niveau de l'utilisateur sur la collectivité */
-  niveauAcces: CollectiviteRole;
+  role: CollectiviteRole;
   /** Fonction appelée à l'envoi du formulaire */
   onSubmit: SubmitHandler<FormData>;
   /** Fonction appelée à l'annulation du formulaire */
@@ -39,8 +39,7 @@ export type Props = {
  * Affiche le panneau de création d'une invitation à rejoindre une collectivité
  */
 export const InviteMemberForm = (props: Props) => {
-  const { niveauAcces, onSubmit, onCancel, collectiviteId, defaultTagIds } =
-    props;
+  const { role, onSubmit, onCancel, collectiviteId, defaultTagIds } = props;
   const {
     control,
     formState: { isValid, isLoading },
@@ -52,7 +51,7 @@ export const InviteMemberForm = (props: Props) => {
   });
 
   const accessLevelsOptions = useAccessLevels({
-    allowAdmin: niveauAcces === 'admin',
+    allowAdmin: role === 'admin',
   });
 
   const { data: tags, isLoading: isLoadingTags } = useListTags(collectiviteId);

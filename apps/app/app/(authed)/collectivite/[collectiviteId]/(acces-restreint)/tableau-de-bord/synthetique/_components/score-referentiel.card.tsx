@@ -16,7 +16,8 @@ type Props = {
 };
 
 const ScoreReferentielCard = ({ referentielId }: Props) => {
-  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
   const { data, isLoading } = useListSnapshots({
     referentielId,
   });
@@ -40,7 +41,7 @@ const ScoreReferentielCard = ({ referentielId }: Props) => {
       {isEmpty && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 backdrop-blur-sm bg-white/65">
           <h5 className="mb-0">{referentielToName[referentielId]}</h5>
-          {!isReadOnly ? (
+          {hasCollectivitePermission('referentiels.mutate') ? (
             <Button
               href={makeReferentielUrl({ collectiviteId, referentielId })}
               size="sm"

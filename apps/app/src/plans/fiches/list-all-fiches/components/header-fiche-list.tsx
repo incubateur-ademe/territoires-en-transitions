@@ -71,9 +71,7 @@ export const HeaderFicheList = ({
                 handleSortChange(`${selectedOption}`)
               }
               values={sort.field}
-              customItem={(v) => (
-                <span className="text-grey-8">{v.label}</span>
-              )}
+              customItem={(v) => <span className="text-grey-8">{v.label}</span>}
               disabled={sortOptions.length === 1}
               small
             />
@@ -138,9 +136,7 @@ export const HeaderFicheList = ({
                     trackEvent(Event.fiches.listChangeView.calendar);
                   },
                 },
-              ].filter(
-                (button) => !(isReadOnly && button.id === 'scheduler')
-              )}
+              ].filter((button) => !(isReadOnly && button.id === 'scheduler'))}
             />
 
             <FiltersMenuButton />
@@ -163,9 +159,7 @@ export const HeaderFicheList = ({
               <Checkbox
                 label="Sélectionner toutes les actions"
                 checked={isSelectAllMode}
-                onChange={(evt) =>
-                  handleSelectAll(evt.currentTarget.checked)
-                }
+                onChange={(evt) => handleSelectAll(evt.currentTarget.checked)}
                 disabled={isLoading || !fiches?.length}
               />
             </div>
@@ -193,4 +187,3 @@ export const HeaderFicheList = ({
     </>
   );
 };
-

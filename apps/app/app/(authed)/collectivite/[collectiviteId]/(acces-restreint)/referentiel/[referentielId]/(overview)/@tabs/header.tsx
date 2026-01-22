@@ -11,9 +11,10 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 
 export const Header = ({ referentielId }: { referentielId: ReferentielId }) => {
-  const { collectiviteId, niveauAcces } = useCurrentCollectivite();
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
 
-  const haveEditionAccess = niveauAcces == 'edition' || niveauAcces == 'admin';
+  const haveEditionAccess = hasCollectivitePermission('referentiels.mutate');
 
   const actions = useReferentielDownToAction(referentielId);
 

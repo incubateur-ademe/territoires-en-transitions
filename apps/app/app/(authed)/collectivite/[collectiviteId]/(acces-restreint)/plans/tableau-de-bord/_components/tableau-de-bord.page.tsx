@@ -13,7 +13,9 @@ import TdbPaFichesActionCountModal from './tdb-pa-fiches-action-count.modal';
 export const TableauDeBordPage = () => {
   const collectivite = useCurrentCollectivite();
 
-  const isAdmin = collectivite.niveauAcces === 'admin';
+  const canEdit = collectivite.hasCollectivitePermission(
+    'collectivites.tableau-de-bord.mutate'
+  );
 
   const { plans } = useListPlans(collectivite.collectiviteId);
 
@@ -23,7 +25,7 @@ export const TableauDeBordPage = () => {
     <>
       <div className="flex justify-between items-start max-sm:flex-col gap-y-4">
         <h2 className="mb-4">Tableau de bord Plans & Actions</h2>
-        {isAdmin && (
+        {canEdit && (
           <>
             <Button size="sm" onClick={() => setIsAddModuleModalOpen(true)}>
               Ajouter un module personnalisé

@@ -33,7 +33,8 @@ export type TCycleLabellisationStatus =
 export const useCycleLabellisation = (
   referentielId: ReferentielId
 ): TCycleLabellisation => {
-  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
   const isAuditeur = useIsAuditeur();
   const identite = useCarteIdentite(collectiviteId);
 
@@ -58,12 +59,12 @@ export const useCycleLabellisation = (
   const peutDemanderEtoileBase = Boolean(
     // pas d'audit ou de labellisation demandée
     status === 'non_demandee' &&
-    // et le référentiel est rempli
-    completude_ok &&
-    // et tous les critères sont atteints
-    rempli &&
-    // et l'utilisateur a le droit requis
-    !isReadOnly
+      // et le référentiel est rempli
+      completude_ok &&
+      // et tous les critères sont atteints
+      rempli &&
+      // et l'utilisateur a le droit requis
+      hasCollectivitePermission('referentiels.mutate')
   );
 
   // cas spéciaux pour les COT pour la première étoile : pas besoin de déposer un fichier
@@ -73,11 +74,11 @@ export const useCycleLabellisation = (
 
   // on peut demander une étoile si...
   // TODO: à mettre dans le backend et à tester unitairement
-  const peutDemanderEtoile = Boolean(peutDemanderEtoileBase &&
-    // Pour demander une labellisation, on doit avoir déposé un fichier même si on est un COT (sauf pour la première étoile)
-    conditionFichiers?.atteint
+  const peutDemanderEtoile = Boolean(
+    peutDemanderEtoileBase &&
+      // Pour demander une labellisation, on doit avoir déposé un fichier même si on est un COT (sauf pour la première étoile)
+      conditionFichiers?.atteint
   );
-
 
   // on peut soumettre une demande de labellisation si...
   const labellisable = peutDemanderEtoile && etoiles !== 1;

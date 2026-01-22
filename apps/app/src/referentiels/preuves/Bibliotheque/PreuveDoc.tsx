@@ -10,15 +10,14 @@ export type TPreuveDocProps = {
 };
 
 const PreuveDoc = (props: TPreuveDocProps) => {
-  const currentCollectivite = useCurrentCollectivite();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
   return (
     <CarteDocument
       classComment={props.classComment}
       displayIdentifier={props.displayIdentifier}
       document={props.preuve}
       isReadonly={
-        !currentCollectivite ||
-        currentCollectivite.isReadOnly ||
+        !hasCollectivitePermission('referentiels.mutate') ||
         props.readonly ||
         false
       }

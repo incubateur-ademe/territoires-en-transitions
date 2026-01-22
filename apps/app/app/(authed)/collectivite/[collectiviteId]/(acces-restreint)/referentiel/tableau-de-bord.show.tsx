@@ -11,14 +11,15 @@ import {
 } from '@/app/referentiels/tableau-de-bord/referents/useMembres';
 import { useProgressionReferentiel } from '@/app/referentiels/tableau-de-bord/useProgressionReferentiel';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Button } from '@tet/ui';
+import { Button, VisibleWhen } from '@tet/ui';
 import { useState } from 'react';
 
 /**
  * Affiche la page d'accueil d'une collectivité
  */
 export const TableauDeBordShow = () => {
-  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
 
   const {
     caeTable: caeProgressionScore,
@@ -36,6 +37,8 @@ export const TableauDeBordShow = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const canMutateReferentiel = hasCollectivitePermission('referentiels.mutate');
+
   return (
     <>
       <div
@@ -43,13 +46,13 @@ export const TableauDeBordShow = () => {
         className="flex flex-row justify-between content-center pb-4 mb-4 border-b border-b-primary-3"
       >
         <h2 className="mb-0">{"Synthèse de l'état des lieux"}</h2>
-        {!isReadOnly && (
+        <VisibleWhen condition={canMutateReferentiel}>
           <Button size="sm" onClick={() => setIsModalOpen(true)}>
             {referents?.length
               ? 'Modifier les référents'
               : 'Renseigner les référents'}
           </Button>
-        )}
+        </VisibleWhen>
       </div>
       <div className="mb-8">
         <ReferentsList
@@ -71,7 +74,7 @@ export const TableauDeBordShow = () => {
           <ReferentielCardSkeleton />
         ) : (
           <ReferentielCard
-            isReadonly={isReadOnly}
+            isReadonly={!canMutateReferentiel}
             collectiviteId={collectiviteId}
             progressionScore={caeProgressionScore}
             repartitionPhases={caeRepartitionPhases}
@@ -85,7 +88,7 @@ export const TableauDeBordShow = () => {
           <ReferentielCardSkeleton />
         ) : (
           <ReferentielCard
-            isReadonly={isReadOnly}
+            isReadonly={!canMutateReferentiel}
             collectiviteId={collectiviteId}
             progressionScore={eciProgressionScore}
             repartitionPhases={eciRepartitionPhases}
@@ -96,13 +99,13 @@ export const TableauDeBordShow = () => {
         )}
       </div>
 
-      {!isReadOnly && isModalOpen && (
+      <VisibleWhen condition={canMutateReferentiel && isModalOpen}>
         <ModaleReferents
           collectiviteId={collectiviteId}
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}
         />
-      )}
+      </VisibleWhen>
     </>
   );
 };

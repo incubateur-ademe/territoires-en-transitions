@@ -54,7 +54,7 @@ export const BibliothequeDocs = ({
 };
 
 const BibliothequeDocsConnected = () => {
-  const { isReadOnly } = useCurrentCollectivite();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
   const preuves = usePreuvesParType({
     preuve_types: ['audit', 'labellisation', 'rapport'],
   });
@@ -66,7 +66,7 @@ const BibliothequeDocsConnected = () => {
     <BibliothequeDocs
       labellisationEtAudit={labellisationEtAudit}
       rapports={rapport}
-      isReadOnly={isReadOnly}
+      isReadOnly={!hasCollectivitePermission('referentiels.mutate')}
     />
   );
 };

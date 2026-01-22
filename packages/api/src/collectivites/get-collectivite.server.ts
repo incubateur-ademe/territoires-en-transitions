@@ -31,10 +31,6 @@ const fetchCollectiviteWhenVisiteMode = cache(
       })
     );
 
-    // trpcInServerComponent.users.authorizations.listCollectiviteAccesses.queryOptions({
-    // collectiviteId: collectivite.id
-    // })
-
     // Petit hack pour pouvoir faire coller le type de retour du endpoint trpc
     // avec `CollectiviteRolesAndPermissions`. Ce endpoint sert à la base pour le listing public
     // des collectivités. À voir si nécessaire à un moment de créer un endpoint plus spécifique
@@ -48,11 +44,6 @@ const fetchCollectiviteWhenVisiteMode = cache(
       role: null,
       permissions: [],
       audits: [],
-
-      // niveauAcces: null,
-      // isRoleAuditeur: false,
-      // isReadOnly: true,
-      // isSimplifiedView: false,
     };
   }
 );

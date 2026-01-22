@@ -1,7 +1,7 @@
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { QuestionReponseList } from '@/app/referentiels/personnalisations/PersoPotentielModal/PersoPotentielQR';
 import { useChangeReponseHandler } from '@/app/referentiels/personnalisations/PersoPotentielModal/useChangeReponseHandler';
-import { useCollectiviteId } from '@tet/api/collectivites';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Divider } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -42,7 +42,7 @@ const DonneesIndicateur = ({
     definition.identifiantReferentiel,
     chartInfo.sourceFilter.valeursReference?.drom ?? false
   );
-  const collectiviteId = useCollectiviteId();
+  const { collectiviteId } = useCurrentCollectivite();
   const handleChange = useChangeReponseHandler(collectiviteId, []);
 
   return (
@@ -74,6 +74,7 @@ const DonneesIndicateur = ({
           questionReponses={questionReponses}
           variant="indicateur"
           onChange={handleChange}
+          canEdit={!isReadonly}
         />
       )}
 
