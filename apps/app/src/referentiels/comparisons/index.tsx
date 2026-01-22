@@ -12,7 +12,8 @@ import { ScoreTotalEvolutionsChart } from './evolutions-score-total.chart';
 
 export const ScoreEvolutions = () => {
   const referentielId = useReferentielId();
-  const { isReadOnly, collectiviteId } = useCurrentCollectivite();
+  const { hasCollectivitePermission, collectiviteId } =
+    useCurrentCollectivite();
 
   const { data: snapshots } = useListSnapshots({
     referentielId,
@@ -72,7 +73,7 @@ export const ScoreEvolutions = () => {
         picto={(props) => <PictoDashboard {...props} />}
         title="Aucune version du référentiel à comparer !"
         description="Vous pouvez figer l'état des lieux maintenant ou à une date antérieure pour pouvoir comparer l'évolution du score entre plusieurs versions."
-        isReadonly={isReadOnly}
+        isReadonly={!hasCollectivitePermission('referentiels.mutate')}
         actions={[
           {
             children: "Figer l'état des lieux",

@@ -76,7 +76,9 @@ const SelectTags = ({
   const getSelectedValues = (values?: OptionValue[]) =>
     (optionsListe ?? []).filter((opt) => values?.some((v) => v === opt.id));
 
-  const isEditionAllowed = collectivite.niveauAcces !== null;
+  const isEditionAllowed = collectivite.hasCollectivitePermission(
+    'collectivites.mutate'
+  );
 
   // ***
   // Ajout d'un nouveau tag à la liste d'options

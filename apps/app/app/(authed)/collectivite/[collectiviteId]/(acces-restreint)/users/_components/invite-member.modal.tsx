@@ -27,7 +27,7 @@ const InvitationModal = ({
   sendData,
   tagIds,
 }: InvitationModalProps) => {
-  const { collectiviteId, collectiviteNom, niveauAcces } = collectivite;
+  const { collectiviteId, collectiviteNom, role } = collectivite;
 
   const [data, setData] = useState<InvitationData>();
 
@@ -66,7 +66,7 @@ const InvitationModal = ({
 
   return (
     <>
-      {openState.isOpen && niveauAcces && (
+      {openState.isOpen && role && (
         <Modal
           openState={openState}
           title="Inviter un membre"
@@ -74,7 +74,7 @@ const InvitationModal = ({
           render={({ close }) => (
             <InviteMemberForm
               collectiviteId={collectiviteId}
-              niveauAcces={niveauAcces}
+              role={role}
               defaultTagIds={tagIds}
               onCancel={close}
               onSubmit={({ email, niveau, tagIds }) => {
@@ -103,14 +103,6 @@ type InvitationModalConnectedProps = {
 export const InviteMemberModal = (props: InvitationModalConnectedProps) => {
   const user = useUser();
   const collectivite = useCurrentCollectivite();
-
-  if (
-    !user?.id ||
-    !collectivite.niveauAcces ||
-    collectivite.niveauAcces === 'lecture'
-  ) {
-    return null;
-  }
 
   return (
     <InvitationModal

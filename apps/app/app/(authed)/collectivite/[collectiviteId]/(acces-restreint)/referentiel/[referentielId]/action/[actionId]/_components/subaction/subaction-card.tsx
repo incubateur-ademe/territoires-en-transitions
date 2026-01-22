@@ -51,7 +51,7 @@ const SubActionCard = ({
   showJustifications,
   onClick,
 }: SubActionCardProps) => {
-  const { isReadOnly } = useCurrentCollectivite();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
 
   const ref = useRef<HTMLDivElement>(null);
 
@@ -134,9 +134,10 @@ const SubActionCard = ({
           isExpanded={isExpanded}
         />
 
-        {!isReadOnly && (isDetailled || subAction.haveScoreIndicatif) && (
-          <Divider color="light" className="-mb-4 mt-1" />
-        )}
+        {hasCollectivitePermission('referentiels.mutate') &&
+          (isDetailled || subAction.haveScoreIndicatif) && (
+            <Divider color="light" className="-mb-4 mt-1" />
+          )}
 
         {/* Actions */}
         <SubactionCardActions

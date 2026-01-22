@@ -20,7 +20,8 @@ import { useQuestionsReponses } from './useQuestionsReponses';
 import { useThematique } from './useThematique';
 
 export const PersoReferentielThematique = () => {
-  const { collectiviteId } = useCurrentCollectivite();
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
   const { referentiels } = usePersonnalisationReferentiels();
   const { thematiqueId } = useParams<{ thematiqueId: string }>();
   const thematique = useThematique(thematiqueId);
@@ -74,6 +75,7 @@ export const PersoReferentielThematique = () => {
         <QuestionReponseList
           questionReponses={qrList}
           onChange={handleChange}
+          canEdit={hasCollectivitePermission('referentiels.mutate')}
         />
         {/** Boutons fin de page retour au sommaire ou thématique suivante */}
         <div className="flex gap-4 pt-8">

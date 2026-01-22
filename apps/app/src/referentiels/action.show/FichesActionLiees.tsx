@@ -17,32 +17,35 @@ export type TFichesActionProps = {
 export const FichesActionLiees = (props: TFichesActionProps) => {
   const { actionId } = props;
   const collectivite = useCurrentCollectivite();
+  const { collectiviteId, hasCollectivitePermission } = collectivite;
+
   const { id: currentUserId } = useUser();
   const { data: fiches, isLoading } = useFichesActionLiees({
     actionId,
-    collectiviteId: collectivite.collectiviteId,
+    collectiviteId,
   });
   const { mutate: createFicheResume } = useCreateFicheResume({
     actionId,
     openInNewTab: true,
-    collectiviteId: collectivite.collectiviteId,
+    collectiviteId,
   });
   const { mutate: updateFichesActionLiees } =
     useUpdateFichesActionLiees(actionId);
-  const isReadonly = collectivite?.isReadOnly ?? false;
+
+  const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
+  const canCreateFiche = hasCollectivitePermission('plans.fiches.create');
 
   return (
     <div className="flex flex-col gap-8">
-      {!isReadonly &&
-        collectivite.hasCollectivitePermission( 'plans.fiches.create') && (
-          <Button icon="add-line" size="sm" onClick={() => createFicheResume()}>
-            Créer une action
-          </Button>
-        )}
+      {canCreateFiche && (
+        <Button icon="add-line" size="sm" onClick={() => createFicheResume()}>
+          Créer une action
+        </Button>
+      )}
 
       <Field title="Actions">
         <FichesActionsDropdown
-          disabled={isReadonly}
+          disabled={!canEditReferentiel}
           ficheCouranteId={null}
           values={fiches.map((f) => f.id.toString())}
           onChange={({ fiches: nouvellesFiches }) =>
@@ -56,11 +59,14 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
         currentUserId={currentUserId}
         fiches={fiches}
         isLoading={isLoading}
-        onUnlink={(ficheId) =>
-          updateFichesActionLiees({
-            fiches: fiches,
-            fiches_liees: fiches.filter((f) => f.id !== ficheId),
-          })
+        onUnlink={
+          canEditReferentiel
+            ? (ficheId) =>
+                updateFichesActionLiees({
+                  fiches: fiches,
+                  fiches_liees: fiches.filter((f) => f.id !== ficheId),
+                })
+            : undefined
         }
       />
     </div>

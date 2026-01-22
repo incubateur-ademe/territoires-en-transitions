@@ -45,10 +45,12 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
     ...otherProps
   } = props;
 
-  const { isReadOnly } = useCurrentCollectivite();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
+
   const showComplementaires =
-    !isReadOnly ||
-    (isReadOnly && complementaires && complementaires.length > 0);
+    canEditReferentiel ||
+    (!canEditReferentiel && complementaires && complementaires.length > 0);
 
   // groupe les preuves réglementaires par id de sous-action
   const reglementairesParActionId = reglementaires?.length

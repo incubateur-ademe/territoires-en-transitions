@@ -20,8 +20,8 @@ export function InviteMemberButton() {
 
   if (!user?.id || !collectivite.collectiviteId) return null;
 
-  const { niveauAcces } = collectivite;
-  const canInvite = niveauAcces === 'admin' || niveauAcces === 'edition';
+  const { hasCollectivitePermission } = collectivite;
+  const canInvite = hasCollectivitePermission('collectivites.membres.mutate');
 
   if (!canInvite) return null;
 

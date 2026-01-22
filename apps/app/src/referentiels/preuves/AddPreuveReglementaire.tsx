@@ -20,8 +20,9 @@ export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
   const [opened, setOpened] = useState(false);
   const { preuve_id, isDisabled } = props;
   const handlers = useAddPreuveReglementaireToAction(preuve_id);
-  const currentCollectivite = useCurrentCollectivite();
-  if (!currentCollectivite || currentCollectivite.isReadOnly) {
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+
+  if (!hasCollectivitePermission('referentiels.mutate')) {
     return null;
   }
 

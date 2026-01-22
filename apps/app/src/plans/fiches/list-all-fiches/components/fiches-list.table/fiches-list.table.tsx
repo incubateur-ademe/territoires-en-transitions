@@ -162,7 +162,7 @@ type Props = {
 );
 
 export const FichesListTable = ({
-  collectivite,
+  collectivite: { hasCollectivitePermission },
   fiches,
   isLoading,
   isGroupedActionsOn,
@@ -195,14 +195,15 @@ export const FichesListTable = ({
 
   useEffect(() => {
     const showUnlinkColumn = !!onUnlink;
-    const showActionsColumn = !collectivite.isReadOnly && !showUnlinkColumn;
+    const showActionsColumn =
+      hasCollectivitePermission('plans.fiches.update') && !showUnlinkColumn;
     table
       .getColumn('select')
       ?.toggleVisibility(enableSelection && isGroupedActionsOn);
     table.getColumn('unlink')?.toggleVisibility(showUnlinkColumn);
     table.getColumn('actions')?.toggleVisibility(showActionsColumn);
   }, [
-    collectivite.isReadOnly,
+    hasCollectivitePermission,
     enableSelection,
     isGroupedActionsOn,
     onUnlink,

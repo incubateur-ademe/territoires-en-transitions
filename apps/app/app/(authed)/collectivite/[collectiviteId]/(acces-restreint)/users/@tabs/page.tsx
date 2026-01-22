@@ -17,14 +17,14 @@ export default function MembresPage() {
 
   if (!user?.id || !collectivite.collectiviteId) return null;
 
-  const { collectiviteId, niveauAcces } = collectivite;
+  const { collectiviteId, role } = collectivite;
 
   return (
     <div className="p-7 border border-grey-3 bg-white rounded-lg">
       <MembreListTable
         collectiviteId={collectiviteId}
         currentUserId={user.id}
-        currentUserAccess={niveauAcces ?? 'lecture'}
+        currentUserAccess={role ?? 'lecture'}
         sendInvitation={sendInvitation}
       />
     </div>

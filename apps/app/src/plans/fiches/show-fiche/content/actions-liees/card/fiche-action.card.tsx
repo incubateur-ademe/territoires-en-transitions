@@ -3,6 +3,7 @@ import { getFicheActionPlanForCollectivite } from '@/app/plans/fiches/shared/fic
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
 import { QueryKey } from '@tanstack/react-query';
+import { useUser } from '@tet/api';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Button, Card, Checkbox, Notification, Tooltip } from '@tet/ui';
@@ -14,6 +15,7 @@ import {
   getFicheActionShareIcon,
   getFicheActionShareText,
 } from '../../../share-fiche/fiche-share-info';
+import { isFicheEditableByCollectiviteUser } from '../../../share-fiche/share-fiche.utils';
 import { generateTitle } from '../../../utils';
 import FicheActionFooterInfo from './fiche-action.footer';
 
@@ -68,10 +70,18 @@ export const FicheActionCard = ({
       'plans.fiches.read_confidentiel'
     );
 
+  const user = useUser();
+
+  const canUpdate = isFicheEditableByCollectiviteUser(
+    ficheAction,
+    currentCollectivite,
+    user.id
+  );
+
   return (
     <div className="relative group h-full">
       {/* Menu d'édition et de suppression */}
-      {!currentCollectivite.isReadOnly && (isEditable || onUnlink) && (
+      {canUpdate && (isEditable || onUnlink) && (
         <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
           {onUnlink && (
             <Button

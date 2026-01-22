@@ -68,7 +68,7 @@ export const FichesList = ({
   const trackEvent = useEventTracker();
 
   const collectivite = useCurrentCollectivite();
-  const { isReadOnly } = collectivite;
+  const { hasCollectivitePermission } = collectivite;
 
   const { view, setView } = useSelectFichesView('grid');
 
@@ -140,7 +140,9 @@ export const FichesList = ({
     countTotalCollectiviteFiches === 0 && !isLoading && !searchIsActive;
 
   if (noFichesAtAll) {
-    return <FichesListEmpty isReadOnly={isReadOnly ?? false} />;
+    return (
+      <FichesListEmpty hasCollectivitePermission={hasCollectivitePermission} />
+    );
   }
 
   return (
@@ -166,7 +168,7 @@ export const FichesList = ({
           view={view}
           handleChangeView={handleChangeView}
           trackEvent={trackEvent}
-          isReadOnly={isReadOnly}
+          isReadOnly={!hasCollectivitePermission('plans.fiches.update')}
           isSelectAllMode={isSelectAllMode}
           handleSelectAll={handleSelectAll}
           selectedFicheIds={selectedFicheIds}

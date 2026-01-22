@@ -62,13 +62,26 @@ const TrajectoireContent = (props: {
  * ne sont pas disponibles.
  */
 const DonneesNonDispo = () => {
-  const collectivite = useCurrentCollectivite();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const canMutateValeurs = hasCollectivitePermission(
+    'indicateurs.valeurs.mutate'
+  );
 
   return (
     <Card className="flex items-center my-16">
       <DbErrorPicto />
       <h2>Données disponibles insuffisantes pour le calcul</h2>
-      {collectivite?.isReadOnly ? (
+      {canMutateValeurs ? (
+        <p className="font-normal text-lg text-center">
+          Nous ne disposons pas encore des données suffisantes pour permettre le
+          calcul automatique de la trajectoire SNBC territorialisée de votre
+          collectivité. Vous pouvez néanmoins lancer un calcul en complétant les
+          données disponibles en open data avec vos propres données. Vous
+          pourrez ainsi visualiser facilement votre trajectoire SNBC
+          territorialisée et la comparer aux objectifs fixés et résultats
+          observés.
+        </p>
+      ) : (
         <p className="font-normal text-lg text-center">
           Nous ne disposons pas encore des données suffisantes pour permettre le
           calcul automatique de la trajectoire SNBC territorialisé de votre
@@ -83,24 +96,12 @@ const DonneesNonDispo = () => {
           territorialisée et la comparer aux objectifs fixés et résultats
           observés.
         </p>
-      ) : (
-        <p className="font-normal text-lg text-center">
-          Nous ne disposons pas encore des données suffisantes pour permettre le
-          calcul automatique de la trajectoire SNBC territorialisée de votre
-          collectivité. Vous pouvez néanmoins lancer un calcul en complétant les
-          données disponibles en open data avec vos propres données. Vous
-          pourrez ainsi visualiser facilement votre trajectoire SNBC
-          territorialisée et la comparer aux objectifs fixés et résultats
-          observés.
-        </p>
       )}
       <Modal
         size="xl"
         render={(props) => <DonneesCollectivite modalProps={props} />}
       >
-        <Button disabled={!collectivite || collectivite.isReadOnly}>
-          Compléter mes données
-        </Button>
+        <Button disabled={!canMutateValeurs}>Compléter mes données</Button>
       </Modal>
     </Card>
   );

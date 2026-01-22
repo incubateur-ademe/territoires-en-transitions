@@ -23,7 +23,9 @@ const TdbPaFichesActionCountModule = ({ module }: Props) => {
 
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
 
-  const canEdit = collectivite.niveauAcces === 'admin';
+  const canEdit = collectivite.hasCollectivitePermission(
+    'collectivites.tableau-de-bord.mutate'
+  );
 
   const canDelete = canEdit && !module.defaultKey;
 

@@ -22,6 +22,7 @@ export type TPersoPotentielQRProps = {
   questionReponses: TQuestionReponse[];
   /** Fonction appelée quand une réponse est modifiée */
   onChange: TChangeReponse;
+  canEdit: boolean;
 };
 
 /** Onglet "Personnalisation du potentiel"
@@ -32,6 +33,7 @@ export const PersoPotentielQR = ({
   actionDef,
   questionReponses,
   onChange,
+  canEdit,
 }: TPersoPotentielQRProps) => {
   return (
     <div data-test="PersoPotentielQR">
@@ -42,6 +44,7 @@ export const PersoPotentielQR = ({
         questionReponses={questionReponses}
         onChange={onChange}
         variant="modal"
+        canEdit={canEdit}
       />
     </div>
   );
@@ -55,6 +58,8 @@ export type TQuestionReponseProps = {
   /** Variante suivant que la liste est affichée dans une page Personnalisation
    * ou dans la modale de personnalisation (depuis une action) */
   variant?: 'modal' | 'indicateur' | undefined;
+
+  canEdit: boolean;
 };
 
 /** Affiche une question/réponse et son éventuel libellé d'aide */
@@ -122,11 +127,12 @@ export type TQuestionReponseListProps = {
   /** Variante suivant que la liste est affichée dans une page Personnalisation
    * ou dans la modale de personnalisation (depuis une action) */
   variant?: 'modal' | 'indicateur' | undefined;
+  canEdit: boolean;
 };
 
 /** Affiche la liste de questions/réponses */
 export const QuestionReponseList = (props: TQuestionReponseListProps) => {
-  const { className, questionReponses, variant, onChange } = props;
+  const { className, questionReponses, variant, onChange, canEdit } = props;
   return (
     <div className={classNames('flex flex-col gap-4', className)}>
       {questionReponses.map((qr, index) => {
@@ -135,6 +141,7 @@ export const QuestionReponseList = (props: TQuestionReponseListProps) => {
           <QuestionReponse
             key={id}
             qr={qr}
+            canEdit={canEdit}
             variant={variant}
             onChange={(reponse: TReponse) => onChange(qr, reponse)}
             hasProportionDescription={hasProportionDescription(

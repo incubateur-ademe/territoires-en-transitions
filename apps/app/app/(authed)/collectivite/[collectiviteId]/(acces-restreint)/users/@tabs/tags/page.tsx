@@ -18,7 +18,7 @@ export default function TagsPage() {
 
   if (!user?.id || !collectivite.collectiviteId) return null;
 
-  const { collectiviteId, niveauAcces } = collectivite;
+  const { collectiviteId, role } = collectivite;
 
   return (
     <>
@@ -30,7 +30,7 @@ export default function TagsPage() {
       <div className="p-7 border border-grey-3 bg-white rounded-lg">
         <TagsListeTable
           collectiviteId={collectiviteId}
-          currentUserAccess={niveauAcces ?? 'lecture'}
+          currentUserAccess={role ?? 'lecture'}
           sendData={sendData}
           sendInvitation={sendInvitation}
         />

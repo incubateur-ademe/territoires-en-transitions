@@ -88,9 +88,6 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
       nom: collectivite.collectiviteNom,
       accesRestreint: collectivite.collectiviteAccesRestreint,
 
-      niveauAcces: collectivite.role,
-      isReadOnly:
-        collectivite.role === CollectiviteRole.LECTURE && !hasRoleAuditeur,
       isSimplifiedView:
         collectivite.role === CollectiviteRole.EDITION_FICHES_INDICATEURS,
 

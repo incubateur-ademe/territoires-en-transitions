@@ -28,16 +28,18 @@ export const ActionHeader = ({
   action: ActionDetailed;
 }) => {
   const {
-    isReadOnly,
     nom: currentCollectiviteName,
     isRoleAuditeur,
-    niveauAcces,
+    hasCollectivitePermission,
+    role,
   } = useCurrentCollectivite();
 
   const { data: pilotes } = useListMesurePilotes(action.actionId);
   const { data: services } = useListMesureServicesPilotes(action.actionId);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
 
   return (
     <HeaderSticky
@@ -61,7 +63,7 @@ export const ActionHeader = ({
             >
               {action.identifiant} {action.nom}
             </h1>
-            {!isReadOnly && !isSticky && (
+            {canEditReferentiel && !isSticky && (
               <Button
                 className={classNames('max-lg:hidden mt-2 ml-auto', {
                   'mt-0 !py-1': isSticky,
@@ -78,7 +80,7 @@ export const ActionHeader = ({
               <div className="shrink-0 max-lg:hidden flex ml-auto">
                 <Badge
                   title={currentCollectiviteName}
-                  state={niveauAcces === null ? 'new' : 'info'}
+                  state={role === null ? 'new' : 'info'}
                   light
                   uppercase={false}
                   className="!rounded-r-none border-[0.5px] border-r-0 shrink-0"
@@ -86,7 +88,7 @@ export const ActionHeader = ({
                   trim={false}
                 />
                 <BadgeNiveauAcces
-                  acces={niveauAcces}
+                  acces={role}
                   isAuditeur={isRoleAuditeur}
                   className="!rounded-l-none border-[0.5px] border-l-0 shrink-0"
                 />
@@ -123,7 +125,7 @@ export const ActionHeader = ({
                   }}
                   pilotes={pilotes}
                   services={services}
-                  isReadOnly={isReadOnly}
+                  isReadOnly={!canEditReferentiel}
                 />
               )}
               <ActionAuditStatut

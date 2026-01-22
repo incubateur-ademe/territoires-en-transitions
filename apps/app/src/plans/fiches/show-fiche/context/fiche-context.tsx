@@ -63,7 +63,6 @@ export const FicheProvider = ({
 
   const isReadonly = useMemo(
     () =>
-      collectivite.isReadOnly ||
       !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id) ||
       isFicheSharedWithCollectivite(fiche, collectivite.collectiviteId),
     [collectivite, fiche, user.id]

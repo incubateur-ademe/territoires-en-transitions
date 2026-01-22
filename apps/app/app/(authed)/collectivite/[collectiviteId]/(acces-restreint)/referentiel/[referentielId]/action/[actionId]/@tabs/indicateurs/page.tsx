@@ -21,7 +21,10 @@ export default function Page() {
 
   // le contenu de l'onglet Indicateurs n'est pas affiché
   // si la collectivité est en accès restreint
-  if (collectivite.accesRestreint && collectivite.niveauAcces === null) {
+  if (
+    collectivite.accesRestreint &&
+    !collectivite.hasCollectivitePermission('referentiels.read_confidentiel')
+  ) {
     return null;
   }
 

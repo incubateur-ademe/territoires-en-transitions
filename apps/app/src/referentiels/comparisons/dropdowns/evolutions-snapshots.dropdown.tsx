@@ -44,12 +44,13 @@ export function EvolutionsSnapshotsDropdown<T extends SnapshotOption>({
   maxBadgesToShow,
   ...props
 }: SnapshotsDropdownProps<T>) {
-  const { isReadOnly } = useCurrentCollectivite();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
 
   const renderOptionWithIcons = (option: any) => {
     const isActive = values.some((v) => v.ref === option.value);
     const isNonEditable = checkNonEditable(option.value, options);
-    const isEditable = !isNonEditable && !isReadOnly;
+    const isEditable =
+      !isNonEditable && hasCollectivitePermission('referentiels.mutate');
 
     return (
       <div className="flex items-center justify-between w-full">

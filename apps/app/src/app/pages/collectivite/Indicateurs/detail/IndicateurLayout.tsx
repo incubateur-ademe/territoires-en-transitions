@@ -26,7 +26,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
   const { mutate: updateIndicateur } = useUpdateIndicateur(definition.id);
   const { id } = useUser();
 
-  const { collectiviteId, hasCollectivitePermission, niveauAcces } =
+  const { collectiviteId, hasCollectivitePermission, isSimplifiedView } =
     useCurrentCollectivite();
 
   const isReadOnly = !canUpdateIndicateurDefinition(
@@ -63,12 +63,12 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
   const enfantsIds = enfants?.map(({ id }) => id) || [];
 
   const displayFichesLieesVisiteOrPermission =
-    hasCollectivitePermission('plans.fiches.read_confidentiel') ||
-    (!niveauAcces && hasCollectivitePermission('plans.fiches.read'));
+    hasCollectivitePermission('plans.fiches.read') && !isSimplifiedView;
+
   const displayMesuresLieesVisiteOrPermissionForReferenceIndicateur =
     !definition.estPerso &&
-    (hasCollectivitePermission('referentiels.read_confidentiel') ||
-      (!niveauAcces && hasCollectivitePermission('referentiels.read')));
+    hasCollectivitePermission('referentiels.read') &&
+    !isSimplifiedView;
 
   return (
     <>

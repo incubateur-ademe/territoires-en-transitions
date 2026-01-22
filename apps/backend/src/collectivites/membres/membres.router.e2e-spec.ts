@@ -71,7 +71,7 @@ describe('CollectiviteMembresRouter', () => {
     // la ligne correspondant à l'invitation est en début de liste
     expect(result2[0].invitationId).not.toBeNull();
     expect(result2[0].userId).toBeNull();
-    expect(result2[0].niveauAcces).toEqual(CollectiviteRole.EDITION);
+    expect(result2[0].role).toEqual(CollectiviteRole.EDITION);
   });
 
   test("ne peut pas lister les membres si on n'est pas authentifié", async () => {
@@ -104,7 +104,7 @@ describe('CollectiviteMembresRouter', () => {
       nom: 'Didi',
       email: 'yili@didi.com',
       telephone: null,
-      niveauAcces: 'edition',
+      role: CollectiviteRole.EDITION,
       fonction: 'politique',
       detailsFonction: 'Politique YILI de cette collectivité',
       champIntervention: ['eci', 'cae'],
@@ -129,7 +129,7 @@ describe('CollectiviteMembresRouter', () => {
       nom: 'Didi',
       email: 'yili@didi.com',
       telephone: null,
-      niveauAcces: 'edition',
+      role: CollectiviteRole.EDITION,
       fonction: 'conseiller',
       detailsFonction: 'Yili le conseiller',
       champIntervention: ['eci', 'cae'],

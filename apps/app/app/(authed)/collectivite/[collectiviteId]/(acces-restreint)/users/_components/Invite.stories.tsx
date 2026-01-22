@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { CollectiviteRole } from '@tet/domain/users';
 import { action } from 'storybook/actions';
 import { InviteMemberForm } from './invite-member.form';
 
@@ -15,9 +16,9 @@ export default meta;
 type Story = StoryObj<typeof InviteMemberForm>;
 
 export const ModeEdition: Story = {
-  args: { niveauAcces: 'edition' },
+  args: { role: CollectiviteRole.EDITION },
 };
 
 export const ModeAdmin: Story = {
-  args: { niveauAcces: 'admin' },
+  args: { role: CollectiviteRole.ADMIN },
 };
