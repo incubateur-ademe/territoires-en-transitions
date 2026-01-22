@@ -59,7 +59,7 @@ const columns = [
 
 type Props = Omit<ReactTableProps, 'table'> & {
   sousActions: FicheWithRelations[];
-  createSousFiche?: () => void;
+  createSousAction?: () => void;
   hiddenColumns?: (keyof FicheWithRelations | 'actions')[];
   isReadOnly?: boolean;
 };
@@ -68,7 +68,7 @@ export const SousActionTable = ({
   sousActions,
   isLoading,
   isEmpty,
-  createSousFiche,
+  createSousAction,
   hiddenColumns,
   nbLoadingRows = 3,
   isLoadingNewRow,
@@ -116,7 +116,7 @@ export const SousActionTable = ({
           ? undefined
           : [
               {
-                onClick: () => createSousFiche?.(),
+                onClick: () => createSousAction?.(),
                 children: 'Ajouter une sous-action',
                 icon: 'add-line',
               },

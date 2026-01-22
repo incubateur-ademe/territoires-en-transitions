@@ -10,7 +10,7 @@ export const SousActionsView = () => {
 
   const { fiche } = useFicheContext();
 
-  const { mutate: createSousFiche, isPending: isLoadingCreate } =
+  const { mutate: createSousAction, isPending: isLoadingCreate } =
     useCreateSousAction(fiche.id);
 
   const { fiches: sousActions, isLoading } = useListFiches(
@@ -34,7 +34,7 @@ export const SousActionsView = () => {
         sousActions={sousActions}
         isLoading={isLoading}
         isEmpty={isEmpty}
-        createSousFiche={createSousFiche}
+        createSousAction={createSousAction}
         hiddenColumns={['parentId']}
         isReadOnly={collectivite.isReadOnly}
         isLoadingNewRow={isLoadingCreate}
@@ -44,7 +44,7 @@ export const SousActionsView = () => {
           className="m-4"
           icon="add-line"
           size="xs"
-          onClick={() => createSousFiche()}
+          onClick={() => createSousAction()}
         >
           Ajouter une sous-action
         </Button>
