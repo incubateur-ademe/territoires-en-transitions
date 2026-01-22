@@ -275,7 +275,7 @@ export class TrajectoireLeviersService {
 
     await this.permissionService.isAllowed(
       user,
-      'indicateurs.valeurs.read_public',
+      'indicateurs.valeurs.read',
       ResourceType.COLLECTIVITE,
       collectivite.id
     );

@@ -43,7 +43,7 @@ export default class TableauDeBordCollectiviteService {
   ): Promise<CollectiviteModule[]> {
     await this.permissionService.isAllowed(
       authUser,
-      PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
+      'collectivites.read',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -160,7 +160,7 @@ export default class TableauDeBordCollectiviteService {
   ): Promise<CollectiviteModule> {
     await this.permissionService.isAllowed(
       authUser,
-      PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
+      'collectivites.read',
       ResourceType.COLLECTIVITE,
       request.collectiviteId
     );

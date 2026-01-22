@@ -84,7 +84,7 @@ const Modules = () => {
       match: (m) =>
         m.type === 'fiche_action.list' &&
         m.defaultKey === 'actions-dont-je-suis-pilote',
-      isVisible: hasCollectivitePermission('plans.fiches.read'),
+      isVisible: hasCollectivitePermission('plans.fiches.read_confidentiel'),
       render: (module) => {
         if (noPlanAndCanCreatePlan) {
           // We already display the placeholder to create a plan, so we don't need to display the list of fiche actions module.
@@ -112,7 +112,9 @@ const Modules = () => {
       match: (m) =>
         m.type === 'indicateur.list' &&
         m.defaultKey === 'indicateurs-dont-je-suis-pilote',
-      isVisible: hasCollectivitePermission('indicateurs.indicateurs.read'),
+      isVisible: hasCollectivitePermission(
+        'indicateurs.indicateurs.read_confidentiel'
+      ),
       render: (module) => (
         <IndicateursDontJeSuisLePiloteModule
           key={module.defaultKey}
@@ -123,7 +125,7 @@ const Modules = () => {
     },
     {
       match: (m) => m.type === 'mesure.list',
-      isVisible: hasCollectivitePermission('referentiels.read'),
+      isVisible: hasCollectivitePermission('referentiels.read_confidentiel'),
       render: (module) => (
         <MesuresDontJeSuisLePiloteModule
           key={module.defaultKey}

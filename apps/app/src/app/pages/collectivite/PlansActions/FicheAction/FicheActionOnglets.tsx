@@ -36,7 +36,8 @@ const FicheActionOnglets = ({
   className,
   collectivite,
 }: FicheActionOngletsProps) => {
-  const { collectiviteId, niveauAcces, hasCollectivitePermission } = collectivite;
+  const { collectiviteId, niveauAcces, hasCollectivitePermission } =
+    collectivite;
   const widgetCommunsFlagEnabled = useFeatureFlagEnabled(
     'is-widget-communs-enabled'
   );
@@ -50,9 +51,11 @@ const FicheActionOnglets = ({
     {
       label: 'Indicateurs de suivi',
       isVisible:
-        hasCollectivitePermission('indicateurs.indicateurs.read') ||
+        hasCollectivitePermission(
+          'indicateurs.indicateurs.read_confidentiel'
+        ) ||
         (!niveauAcces &&
-          hasCollectivitePermission('indicateurs.indicateurs.read_public')),
+          hasCollectivitePermission('indicateurs.indicateurs.read')),
       render: () => (
         <IndicateursTab
           isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
@@ -78,9 +81,8 @@ const FicheActionOnglets = ({
     {
       label: 'Actions liées',
       isVisible:
-        hasCollectivitePermission('plans.fiches.read') ||
-        (!niveauAcces &&
-          hasCollectivitePermission('plans.fiches.read_public')),
+        hasCollectivitePermission('plans.fiches.read_confidentiel') ||
+        (!niveauAcces && hasCollectivitePermission('plans.fiches.read')),
       render: () => (
         <FichesLieesTab
           isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
@@ -93,9 +95,8 @@ const FicheActionOnglets = ({
     {
       label: 'Mesures des référentiels liées',
       isVisible:
-        hasCollectivitePermission('referentiels.read') ||
-        (!niveauAcces &&
-          hasCollectivitePermission('referentiels.read_public')),
+        hasCollectivitePermission('referentiels.read_confidentiel') ||
+        (!niveauAcces && hasCollectivitePermission('referentiels.read')),
       render: () => (
         <MesuresLieesView
           isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}

@@ -72,7 +72,7 @@ export const Header = ({
       </div>
 
       {/* Fils d'ariane avec emplacements de la fiche */}
-      {hasCollectivitePermission('plans.read_public') && (
+      {hasCollectivitePermission('plans.read') && (
         <FicheBreadcrumbs
           titre={titre ?? 'Sans titre'}
           collectiviteId={collectiviteId}

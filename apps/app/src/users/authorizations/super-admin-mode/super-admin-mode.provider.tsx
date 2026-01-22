@@ -70,7 +70,7 @@ export function SuperAdminModeProvider({
 
       {children}
 
-      {hasPermission(user, 'users.authorizations.mutate_support_mode') && (
+      {hasPermission(user, 'users.authorizations.mutate_super_admin_role') && (
         <div className="w-full max-w-8xl mx-auto px-4 pb-4">
           <ToggleSuperAdminModeCheckbox />
         </div>

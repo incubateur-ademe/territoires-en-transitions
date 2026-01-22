@@ -37,7 +37,7 @@ export class HandleMesureAuditStatutService {
   ): Promise<ListMesureAuditStatutsOutput> {
     await this.permissions.isAllowed(
       user,
-      PermissionOperationEnum['REFERENTIELS.READ_PUBLIC'],
+      'referentiels.read',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -93,7 +93,7 @@ export class HandleMesureAuditStatutService {
   ): Promise<GetMesureAuditStatutOutput> {
     await this.permissions.isAllowed(
       user,
-      PermissionOperationEnum['REFERENTIELS.READ'],
+      'referentiels.read_confidentiel',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

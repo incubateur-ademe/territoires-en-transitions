@@ -26,7 +26,8 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
   const { mutate: updateIndicateur } = useUpdateIndicateur(definition.id);
   const { id } = useUser();
 
-  const { collectiviteId, hasCollectivitePermission, niveauAcces } = useCurrentCollectivite();
+  const { collectiviteId, hasCollectivitePermission, niveauAcces } =
+    useCurrentCollectivite();
 
   const isReadOnly = !canUpdateIndicateurDefinition(
     hasCollectivitePermission,
@@ -62,12 +63,12 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
   const enfantsIds = enfants?.map(({ id }) => id) || [];
 
   const displayFichesLieesVisiteOrPermission =
-    hasCollectivitePermission('plans.fiches.read') ||
-    (!niveauAcces && hasCollectivitePermission('plans.fiches.read_public'));
+    hasCollectivitePermission('plans.fiches.read_confidentiel') ||
+    (!niveauAcces && hasCollectivitePermission('plans.fiches.read'));
   const displayMesuresLieesVisiteOrPermissionForReferenceIndicateur =
     !definition.estPerso &&
-    (hasCollectivitePermission('referentiels.read') ||
-      (!niveauAcces && hasCollectivitePermission('referentiels.read_public')));
+    (hasCollectivitePermission('referentiels.read_confidentiel') ||
+      (!niveauAcces && hasCollectivitePermission('referentiels.read')));
 
   return (
     <>
@@ -126,9 +127,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
 
             {displayFichesLieesVisiteOrPermission ? (
               <Tab label="Actions">
-                <FichesLiees
-                  definition={definition}
-                />
+                <FichesLiees definition={definition} />
               </Tab>
             ) : undefined}
 
