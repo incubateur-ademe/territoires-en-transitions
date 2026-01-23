@@ -39,6 +39,7 @@ export const EditableTitle = ({
           />
         </div>
       )}
+      data-test="plan-editable-title"
     >
       <h1 data-test="TitreFiche" className="mb-0">
         {initialTitle ?? 'Sans titre'}

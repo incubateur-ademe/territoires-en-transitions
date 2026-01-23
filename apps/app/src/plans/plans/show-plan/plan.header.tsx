@@ -83,10 +83,12 @@ const PlanMetadata = () => {
             icon="folder-2-line"
             label="Type"
             value={plan.type?.type}
+            dataTest="plan-header-type"
           />
         </InlineEditWrapper>
         {/** Pilotes */}
         <PlanMetadataItemPersonne
+          dataTest="plan-header-pilote"
           icon="user-line"
           isReadOnly={isReadOnly}
           label={{ one: 'Pilote', many: 'Pilotes' }}
@@ -95,6 +97,7 @@ const PlanMetadata = () => {
         />
         {/** Référents */}
         <PlanMetadataItemPersonne
+          dataTest="plan-header-referent"
           icon={<FranceIcon />}
           isReadOnly={isReadOnly}
           label={{ one: 'Élu·e référent·e', many: 'Élu·es référent·es' }}
@@ -105,12 +108,14 @@ const PlanMetadata = () => {
         />
         {/** Budget */}
         <PlanMetadataItemBudget
+          dataTest="plan-header-investissement"
           icon="bank-line"
           label="Budget d'investissement"
           budget={plan.budget?.investissement?.HT.budgetReel}
           totalFiches={plan.totalFiches}
         />
         <PlanMetadataItemBudget
+          dataTest="plan-header-fonctionnement"
           hideSeparator
           icon="money-euro-circle-line"
           label="Budget de fonctionnement"
@@ -121,16 +126,19 @@ const PlanMetadata = () => {
       {/** Compteurs axes/actions */}
       <PlanMetadataLine>
         <PlanMetadataItem
+          dataTest="plan-header-axes"
           icon="git-commit-line"
           label={{ one: 'Axe', many: 'Axes' }}
           value={nbAxes.isParent}
         />
         <PlanMetadataItem
+          dataTest="plan-header-sous-axes"
           icon="git-merge-line"
           label={{ one: 'Sous-axe', many: 'Sous-axes' }}
           value={nbAxes.isChild}
         />
         <PlanMetadataItem
+          dataTest="plan-header-actions"
           hideSeparator
           icon="file-text-line"
           label={{ one: 'Action', many: 'Actions' }}
@@ -148,6 +156,7 @@ const PlanMetadataLine = ({ children }: { children: ReactNode[] }) => (
 );
 
 type PlanMetadataItemProps = {
+  dataTest: string;
   interactive?: boolean;
   hideSeparator?: boolean;
   icon: IconValue;
@@ -156,6 +165,7 @@ type PlanMetadataItemProps = {
 } & React.HTMLAttributes<HTMLDivElement>;
 
 const PlanMetadataItem = ({
+  dataTest,
   interactive = false,
   hideSeparator = false,
   icon,
@@ -165,7 +175,11 @@ const PlanMetadataItem = ({
 }: PlanMetadataItemProps) => {
   // `{...props}` est nécessaire pour permettre le passage des props injectées par `InlineEditWrapper`
   return (
-    <div {...props} className={cn(props.className, 'flex items-center')}>
+    <div
+      {...props}
+      className={cn(props.className, 'flex items-center')}
+      data-test={dataTest}
+    >
       <div
         className={cn('flex items-center gap-2 py-1.5', {
           'hover:bg-grey-3 rounded px-2 -mx-2': interactive,
@@ -192,12 +206,14 @@ const PlanMetadataItem = ({
 };
 
 const PlanMetadataItemPersonne = ({
+  dataTest,
   icon,
   isReadOnly,
   label,
   personnes,
   onChange,
 }: {
+  dataTest: string;
   icon: IconValue;
   isReadOnly: boolean;
   label: { one: string; many: string };
@@ -210,18 +226,20 @@ const PlanMetadataItemPersonne = ({
       renderOnEdit={({ openState }) => {
         return (
           <PersonnesDropdown
+            dataTest={`${dataTest}-dropdown`}
             buttonClassName="border-none"
             values={personnes
               ?.map((p) => p.userId || p.tagId?.toString() || '')
               .filter(Boolean)}
             onChange={({ personnes }) => onChange(personnes)}
             openState={openState}
-            displayOptionsWithoutFloater
+            containerWidthMatchButton={false}
           />
         );
       }}
     >
       <PlanMetadataItem
+        dataTest={dataTest}
         interactive={!isReadOnly}
         icon={icon}
         label={personnes.length > 1 ? label.many : label.one}
@@ -239,12 +257,16 @@ const PlanMetadataItemPersonne = ({
 };
 
 const PlanMetadataItemBudget = ({
+  dataTest,
   hideSeparator,
   icon,
   label,
   budget,
   totalFiches,
-}: Pick<PlanMetadataItemProps, 'hideSeparator' | 'icon' | 'label'> & {
+}: Pick<
+  PlanMetadataItemProps,
+  'hideSeparator' | 'icon' | 'label' | 'dataTest'
+> & {
   budget: AggregatedBudget | undefined;
   totalFiches: number | undefined;
 }) => {
@@ -260,6 +282,7 @@ const PlanMetadataItemBudget = ({
       }
     >
       <PlanMetadataItem
+        dataTest={dataTest}
         hideSeparator={hideSeparator}
         icon={icon}
         label={label}
