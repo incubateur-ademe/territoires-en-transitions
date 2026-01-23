@@ -12,21 +12,7 @@ import {
   useEventTracker,
 } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
-import { DateTime } from 'luxon';
 import { useRef, useState } from 'react';
-
-const generateBeforeDate = (
-  date: string | null | undefined
-): string | undefined => {
-  if (!date) return undefined;
-
-  const result = DateTime.fromISO(date, { zone: 'Europe/Paris' })
-    .set({ hour: 23, minute: 59, second: 0 })
-    .toUTC()
-    .toISO();
-
-  return result ?? undefined;
-};
 
 const getDisplayedYear = (
   selectedButton: string,
@@ -72,7 +58,7 @@ export const SaveScoreModal = ({
         collectiviteId,
         referentielId,
         nom: finalNomVersion,
-        date: dateVersion ? generateBeforeDate(dateVersion) : undefined,
+        date: dateVersion === '' ? undefined : dateVersion,
       },
       {
         onSettled: () => {
@@ -151,12 +137,6 @@ Une sauvegarde sera automatiquement réalisée lors du démarrage d'un audit et 
             btnOKProps={{
               children: `Figer l'état des lieux`,
               onClick: () => {
-                // tracker('referentiels:scores:sauvegarde', {
-                //   collectiviteId,
-                //   niveauAcces,
-                //   role,
-                //   dateDuJour: selectedButton === 'now',
-                // });
                 handleSave();
                 tracker(Event.saveScore, {
                   dateDuJour: selectedButton === 'now',
