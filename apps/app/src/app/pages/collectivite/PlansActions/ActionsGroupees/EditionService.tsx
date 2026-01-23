@@ -80,7 +80,7 @@ const EditionService = ({ onUpdate }: EditionServiceProps) => {
         variant="outlined"
         onClick={() => setIsModalOpen(true)}
       >
-        Éditer la direction pilote
+        Éditer la direction ou service pilote
       </Button>
       {isModalOpen && (
         <ModaleEditionService
