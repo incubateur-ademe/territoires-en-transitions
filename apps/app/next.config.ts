@@ -1,10 +1,8 @@
 import { uuid4 } from '@sentry/core';
 import { withSentryConfig } from '@sentry/nextjs';
+import type { NextConfig } from 'next';
 
-/**
- * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
- **/
-const nextConfig = {
+const nextConfig: NextConfig = {
   typescript: {
     // We safely disable the internal type checking of Next.js because
     // all apps are type checked during the first steps of our CI.
@@ -14,8 +12,13 @@ const nextConfig = {
     tsconfigPath: 'tsconfig.app.json',
   },
 
+  transpilePackages: ['@tet/api', '@tet/domain', '@tet/ui'],
+
   experimental: {
     optimizePackageImports: [
+      '@tet/api',
+      '@tet/domain',
+      '@tet/ui',
       '@gouvfr/dsfr',
       'es-toolkit',
       'echarts',
@@ -37,7 +40,7 @@ const nextConfig = {
 
   webpack(config) {
     // Grab the existing rule that handles SVG imports
-    const fileLoaderRule = config.module.rules.find((rule) =>
+    const fileLoaderRule = config.module.rules.find((rule: any) =>
       rule.test?.test?.('.svg')
     );
 
@@ -103,27 +106,32 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/mes-fiches/:path*',
+        source:
+          '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/mes-fiches/:path*',
         destination: '/collectivite/:collectiviteId/actions/mes-actions/:path*',
         permanent: true,
       },
       {
-        source: '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/classifiees/:path*',
+        source:
+          '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/classifiees/:path*',
         destination: '/collectivite/:collectiviteId/actions/dans-plan/:path*',
         permanent: true,
       },
       {
-        source: '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/non-classifiees/:path*',
+        source:
+          '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/non-classifiees/:path*',
         destination: '/collectivite/:collectiviteId/actions/hors-plan/:path*',
         permanent: true,
       },
       {
-        source: '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/:path*',
+        source:
+          '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/:path*',
         destination: '/collectivite/:collectiviteId/actions/:path*',
         permanent: true,
       },
       {
-        source: '/collectivite/:collectiviteId/plans/actions/mes-actions/:path*',
+        source:
+          '/collectivite/:collectiviteId/plans/actions/mes-actions/:path*',
         destination: '/collectivite/:collectiviteId/actions/mes-actions/:path*',
         permanent: true,
       },
@@ -138,7 +146,8 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: '/collectivite/:collectiviteId/plans/:planId/actions/:actionId*',
+        source:
+          '/collectivite/:collectiviteId/plans/:planId/actions/:actionId*',
         destination: '/collectivite/:collectiviteId/actions/:actionId*',
         permanent: true,
       },
@@ -147,7 +156,7 @@ const nextConfig = {
         destination: '/collectivite/:collectiviteId/actions/:actionId*',
         permanent: true,
       },
-    ]
+    ];
   },
 
   // https://nextjs.org/docs/app/api-reference/config/next-config-js/poweredByHeader
@@ -187,12 +196,11 @@ const sentryConfig = {
   hideSourceMaps: false,
 
   // Automatically tree-shake Sentry logger statements to reduce bundle size
-  webpack : {
+  webpack: {
     treeshake: {
       removeDebugLogging: true,
-    }
-  }
+    },
+  },
 };
 
-
-export default withSentryConfig(nextConfig, sentryConfig) ;
+export default withSentryConfig(nextConfig, sentryConfig);
