@@ -110,3 +110,46 @@ export const WithCustomButton: Story = {
     ],
   },
 };
+
+export const WithHiddenAction: Story = {
+  args: {
+    ...Default.args,
+    title: 'Actions conditionnelles',
+    subTitle: "L'action secondaire est masquée",
+    actions: [
+      {
+        children: 'Action visible',
+        onClick: () => console.log('Action visible cliquée'),
+        variant: 'primary',
+      },
+      {
+        children: 'Action masquée',
+        onClick: () => console.log('Action masquée cliquée'),
+        variant: 'outlined',
+        isVisible: false,
+      },
+    ],
+  },
+};
+
+export const WithAllHiddenActions: Story = {
+  args: {
+    ...Default.args,
+    title: 'Actions conditionnelles',
+    subTitle: 'Aucune action visible',
+    actions: [
+      {
+        children: 'Action visible',
+        onClick: () => console.log('Action visible cliquée'),
+        variant: 'primary',
+        isVisible: false,
+      },
+      {
+        children: 'Action masquée',
+        onClick: () => console.log('Action masquée cliquée'),
+        variant: 'outlined',
+        isVisible: false,
+      },
+    ],
+  },
+};

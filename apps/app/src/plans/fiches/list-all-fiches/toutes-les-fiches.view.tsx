@@ -53,7 +53,7 @@ const viewTitleByType: Record<FicheActionViewType, string> = {
 };
 
 const ToutesLesFichesActionContent = () => {
-  const { collectiviteId, isReadOnly, hasCollectivitePermission } =
+  const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
   const { countFichesNonClassees, countFichesClassees, countTotalFiches } =
     useCountFiches();
@@ -104,9 +104,7 @@ const ToutesLesFichesActionContent = () => {
         title="Toutes les actions"
         actionButtons={
           <VisibleWhen
-            condition={
-              !isReadOnly && hasCollectivitePermission('plans.fiches.create')
-            }
+            condition={hasCollectivitePermission('plans.fiches.create')}
           >
             <Button size="sm" onClick={() => createFicheAction()}>
               {'Créer une action'}

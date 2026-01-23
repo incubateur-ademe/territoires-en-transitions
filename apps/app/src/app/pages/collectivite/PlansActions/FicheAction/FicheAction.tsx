@@ -54,9 +54,11 @@ const FicheActionLegacy = ({
     return null;
   }
 
-  const isReadonly =
-    collectivite.isReadOnly ||
-    !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id);
+  const isReadonly = !isFicheEditableByCollectiviteUser(
+    fiche,
+    collectivite,
+    user.id
+  );
 
   const handleUpdateAccess = ({
     restreint,

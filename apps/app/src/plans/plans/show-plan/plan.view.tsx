@@ -48,7 +48,7 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
   const currentCollectivite = useCurrentCollectivite();
   const user = useUser();
 
-  const { hasCollectivitePermission } = currentCollectivite;
+  const { collectiviteId, hasCollectivitePermission } = currentCollectivite;
 
   const { isFiltered } = usePlanFilters();
   const plan = useGetPlan(initialPlanData.id, {
@@ -70,7 +70,7 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
       <Header
         title={planNameOrFallback}
         actionButtons={
-          <VisibleWhen condition={currentCollectivite.isReadOnly === false}>
+          <VisibleWhen condition={hasCollectivitePermission('plans.mutate')}>
             <Actions plan={plan} axeHasFiches={axeHasFiches} />
           </VisibleWhen>
         }
@@ -83,10 +83,7 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
       </Header>
       <Spacer height={2} />
 
-      <CompletionAlert
-        collectiviteId={currentCollectivite.collectiviteId}
-        planId={plan.id}
-      />
+      <CompletionAlert collectiviteId={collectiviteId} planId={plan.id} />
 
       <VisibleWhen condition={isPlanEmpty}>
         <div className="h-[50vh]">
@@ -102,14 +99,11 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
           headerActionButtons={
             <>
               <VisibleWhen
-                condition={
-                  currentCollectivite.isReadOnly === false &&
-                  hasCollectivitePermission('plans.mutate')
-                }
+                condition={hasCollectivitePermission('plans.mutate')}
               >
                 <EditPlanButtons
                   plan={rootAxe}
-                  collectiviteId={currentCollectivite.collectiviteId}
+                  collectiviteId={collectiviteId}
                   availableActions={
                     isFiltered
                       ? ['createFicheResume']

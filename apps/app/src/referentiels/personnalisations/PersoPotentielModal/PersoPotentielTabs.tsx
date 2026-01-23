@@ -1,3 +1,4 @@
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Tab, Tabs } from '@tet/ui';
 import {
   PersoPotentielDoc,
@@ -18,6 +19,7 @@ export const PersoPotentielTabs = ({
   questionReponses,
   onChange,
 }: TPersoPotentielTabsProps) => {
+  const { hasCollectivitePermission } = useCurrentCollectivite();
   return (
     <Tabs
       defaultActiveTab={defaultActiveTab}
@@ -28,6 +30,7 @@ export const PersoPotentielTabs = ({
           actionDef={actionDef}
           questionReponses={questionReponses}
           onChange={onChange}
+          canEdit={hasCollectivitePermission('referentiels.mutate')}
         />
       </Tab>
       <Tab label="Règles applicables" icon="information-line">

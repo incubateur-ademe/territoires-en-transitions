@@ -9,9 +9,9 @@ import { useUpdateJustification } from './useUpdateJustification';
  * (ou un bouton pour affiche ce champ)
  */
 export const Justification = (props: TQuestionReponseProps) => {
-  const { qr } = props;
+  const { qr, canEdit } = props;
   const { reponse, justification, id } = qr;
-  const collectivite = useCurrentCollectivite();
+  const { collectiviteId } = useCurrentCollectivite();
   const [value, setValue] = useState(justification);
   const { mutate: updateJustification } = useUpdateJustification();
 
@@ -42,13 +42,13 @@ export const Justification = (props: TQuestionReponseProps) => {
             const newValue = value?.trim() || '';
             if (newValue !== (justification || ''))
               updateJustification({
-                collectivite_id: collectivite.collectiviteId,
+                collectivite_id: collectiviteId,
                 question_id: id,
                 texte: newValue,
                 modified_at: new Date().toISOString(),
               });
           }}
-          disabled={collectivite.isReadOnly}
+          disabled={!canEdit}
           autoFocus={!hasValue}
         />
       }

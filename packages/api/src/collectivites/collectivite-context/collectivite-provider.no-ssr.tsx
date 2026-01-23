@@ -15,7 +15,6 @@ export interface CollectiviteCurrent extends CollectiviteAccess {
 
   niveauAcces: CollectiviteRole | null;
   isRoleAuditeur: boolean;
-  isReadOnly: boolean;
   isSimplifiedView: boolean;
 
   hasCollectivitePermission: (permission: PermissionOperation) => boolean;

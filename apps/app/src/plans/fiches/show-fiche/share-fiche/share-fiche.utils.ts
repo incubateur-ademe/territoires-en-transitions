@@ -13,16 +13,13 @@ export function isFicheSharedWithCollectivite(
 
 export function isFicheEditableByCollectiviteUser(
   fiche: FicheShareProperties & Pick<FicheWithRelations, 'pilotes'>,
-  { collectiviteId, isReadOnly, hasCollectivitePermission }: CollectiviteCurrent,
+  { collectiviteId, hasCollectivitePermission }: CollectiviteCurrent,
   userId?: string
 ) {
   return (
-    !isReadOnly &&
     (hasCollectivitePermission('plans.fiches.update') ||
       (userId &&
-        hasCollectivitePermission(
-          'plans.fiches.update_piloted_by_me'
-        ) &&
+        hasCollectivitePermission('plans.fiches.update_piloted_by_me') &&
         fiche.pilotes?.some((pilote) => pilote.userId === userId))) &&
     (fiche.collectiviteId === collectiviteId ||
       isFicheSharedWithCollectivite(fiche, collectiviteId))

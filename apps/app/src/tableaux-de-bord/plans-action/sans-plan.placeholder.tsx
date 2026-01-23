@@ -7,7 +7,8 @@ import { useRouter } from 'next/navigation';
 /** Carte représentant l'état des tableaux de bord lorsque
  * la collectivité n'a pas encore de plan */
 export const SansPlanPlaceholder = () => {
-  const { isReadOnly, collectiviteId } = useCurrentCollectivite();
+  const { hasCollectivitePermission, collectiviteId } =
+    useCurrentCollectivite();
 
   const router = useRouter();
 
@@ -16,7 +17,7 @@ export const SansPlanPlaceholder = () => {
       picto={(props) => <PictoDashboard {...props} />}
       title="Vous n'avez pas encore créé de plan !"
       description="Vous pouvez créer votre plan, qu'il soit déjà voté ou encore en cours d'élaboration. Les actions seront modifiables à tout moment et vous pourrez les piloter depuis ce tableau de bord !"
-      isReadonly={isReadOnly}
+      isReadonly={!hasCollectivitePermission('plans.mutate')}
       actions={[
         {
           children: 'Créer un plan',

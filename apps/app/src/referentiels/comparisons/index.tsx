@@ -12,7 +12,8 @@ import { ScoreTotalEvolutionsChart } from './evolutions-score-total.chart';
 
 export const ScoreEvolutions = () => {
   const referentielId = useReferentielId();
-  const { isReadOnly, collectiviteId } = useCurrentCollectivite();
+  const { hasCollectivitePermission, collectiviteId } =
+    useCurrentCollectivite();
 
   const { data: snapshots } = useListSnapshots({
     referentielId,
@@ -70,7 +71,7 @@ export const ScoreEvolutions = () => {
         picto={(props) => <PictoDashboard {...props} />}
         title="Aucune version du référentiel n'est figée."
         description="Figer l'état des lieux vous permet de sauvegarder une version à une date donnée, afin de pouvoir comparer l'évolution du score sur plusieurs versions."
-        isReadonly={isReadOnly}
+        isReadonly={!hasCollectivitePermission('referentiels.mutate')}
         actions={[
           <SaveScoreButton
             key="before"

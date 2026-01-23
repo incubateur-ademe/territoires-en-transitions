@@ -19,9 +19,8 @@ import ModaleCreerIndicateur from '@/app/app/pages/collectivite/PlansActions/Fic
 import { useTdbCollectiviteFetchMetrics } from '../_hooks/use-tdb-collectivite-fetch-metrics';
 
 const Metrics = () => {
-  const collectivite = useCurrentCollectivite();
-  const { collectiviteId, isReadOnly, hasCollectivitePermission } =
-    collectivite;
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
 
   const { data: metrics, isLoading } = useTdbCollectiviteFetchMetrics();
 
@@ -79,14 +78,14 @@ const Metrics = () => {
                     }),
                     children: 'Voir tous les plans',
                   }
-                : isReadOnly
-                ? undefined
-                : {
+                : hasCollectivitePermission('plans.mutate')
+                ? {
                     href: makeCollectivitePlansActionsNouveauUrl({
                       collectiviteId,
                     }),
                     children: 'Créer un plan',
                   }
+                : undefined
             }
           />
           <MetricCard
@@ -134,16 +133,15 @@ const Metrics = () => {
                     }),
                     children: 'Voir les indicateurs',
                   }
-                : isReadOnly ||
-                  !hasCollectivitePermission('indicateurs.indicateurs.create')
-                ? undefined
-                : {
+                : hasCollectivitePermission('indicateurs.indicateurs.create')
+                ? {
                     onClick: () => setIsNewIndicateurOpen(true),
                     children: 'Créer un indicateur personnalisé',
                   }
+                : undefined
             }
           />
-          {!isReadOnly && isNewIndicateurOpen && (
+          {isNewIndicateurOpen && (
             <ModaleCreerIndicateur
               isOpen={isNewIndicateurOpen}
               setIsOpen={setIsNewIndicateurOpen}

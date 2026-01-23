@@ -69,7 +69,7 @@ export const NestedDroppableContainers = ({
           rootAxe={plan}
           axe={axe}
           axes={axes}
-          isReadonly={collectivite.isReadOnly}
+          isReadonly={!collectivite.hasCollectivitePermission('plans.mutate')}
           collectivite={collectivite}
         />
       ))}

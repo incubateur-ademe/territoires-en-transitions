@@ -33,7 +33,7 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
   );
 
   const currentCollectivite = useCurrentCollectivite();
-  if (!currentCollectivite || currentCollectivite.isReadOnly) {
+  if (!currentCollectivite.hasCollectivitePermission('referentiels.mutate')) {
     return null;
   }
 

@@ -96,7 +96,6 @@ export const FicheProvider = ({
     useUpdateFiche();
 
   const isReadonly =
-    collectivite.isReadOnly ||
     !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id) ||
     isFicheSharedWithCollectivite(fiche, collectivite.collectiviteId);
 

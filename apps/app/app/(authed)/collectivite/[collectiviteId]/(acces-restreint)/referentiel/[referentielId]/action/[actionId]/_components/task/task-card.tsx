@@ -15,7 +15,8 @@ type Props = {
 };
 
 const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
-  const { isReadOnly } = useCurrentCollectivite();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
 
   const [openDetailledModal, setOpenDetailledModal] = useState(false);
 
@@ -41,7 +42,7 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
       {/* Informations sur les scores indicatifs */}
       <ScoreIndicatifLibelle actionId={task.id} />
 
-      {!isReadOnly && (isDetailled || task.haveScoreIndicatif) && (
+      {canEditReferentiel && (isDetailled || task.haveScoreIndicatif) && (
         <Divider color="light" className="-mb-6 mt-auto" />
       )}
 
@@ -56,7 +57,7 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
       {/* Ajout de commentaire */}
       {showJustifications && (
         <>
-          {!isReadOnly && (isDetailled || task.haveScoreIndicatif) && (
+          {canEditReferentiel && (isDetailled || task.haveScoreIndicatif) && (
             <Divider color="light" className="-mb-6" />
           )}
 

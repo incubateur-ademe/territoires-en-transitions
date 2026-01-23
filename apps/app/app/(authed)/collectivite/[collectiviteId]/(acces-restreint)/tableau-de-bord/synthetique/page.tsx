@@ -24,21 +24,28 @@ import imagePlanPlaceholder from './_components/suivi-plans-placeholder.png';
 
 const Page = () => {
   const { prenom } = useUser();
-  const { collectiviteId, nom, isReadOnly } = useCurrentCollectivite();
+  const { collectiviteId, nom, hasCollectivitePermission } =
+    useCurrentCollectivite();
 
   const listPlansQuery = useListPlans(collectiviteId);
   const { totalCount: plansCount } = listPlansQuery;
+
+  const canMutateCollectivite = hasCollectivitePermission(
+    'collectivites.mutate'
+  );
 
   return (
     <>
       <Header
         title={
-          isReadOnly
-            ? `Tableau de bord de la collectivité ${nom}`
-            : `Bonjour ${prenom}`
+          canMutateCollectivite
+            ? `Bonjour ${prenom}`
+            : `Tableau de bord de la collectivité ${nom}`
         }
         subtitle={
-          !isReadOnly ? 'Bienvenue sur Territoires en Transitions' : undefined
+          canMutateCollectivite
+            ? 'Bienvenue sur Territoires en Transitions'
+            : undefined
         }
         // pageButtons={[
         //   {
@@ -83,11 +90,11 @@ const Page = () => {
             <ModuleContainer className="overflow-hidden !p-0">
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 backdrop-blur-sm bg-white/65">
                 <h5 className="mb-0">
-                  {isReadOnly
-                    ? "Aucun plan n'a été déposé"
-                    : 'Vous n’avez pas encore créé de plan !'}
+                  {canMutateCollectivite
+                    ? 'Vous n’avez pas encore créé de plan !'
+                    : "Aucun plan n'a été déposé"}
                 </h5>
-                {!isReadOnly && (
+                {canMutateCollectivite && (
                   <Button
                     href={makeCollectivitePlansActionsNouveauUrl({
                       collectiviteId,

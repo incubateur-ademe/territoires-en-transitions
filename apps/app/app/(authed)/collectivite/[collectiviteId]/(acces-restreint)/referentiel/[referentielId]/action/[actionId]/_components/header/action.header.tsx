@@ -28,16 +28,18 @@ export const ActionHeader = ({
   action: ActionDetailed;
 }) => {
   const {
-    isReadOnly,
     nom: currentCollectiviteName,
     isRoleAuditeur,
     niveauAcces,
+    hasCollectivitePermission,
   } = useCurrentCollectivite();
 
   const { data: pilotes } = useListMesurePilotes(action.actionId);
   const { data: services } = useListMesureServicesPilotes(action.actionId);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
 
   return (
     <HeaderSticky
@@ -61,7 +63,7 @@ export const ActionHeader = ({
             >
               {action.identifiant} {action.nom}
             </h1>
-            {!isReadOnly && !isSticky && (
+            {canEditReferentiel && !isSticky && (
               <Button
                 className={classNames('max-lg:hidden mt-2 ml-auto', {
                   'mt-0 !py-1': isSticky,
@@ -123,7 +125,7 @@ export const ActionHeader = ({
                   }}
                   pilotes={pilotes}
                   services={services}
-                  isReadOnly={isReadOnly}
+                  isReadOnly={!canEditReferentiel}
                 />
               )}
               <ActionAuditStatut

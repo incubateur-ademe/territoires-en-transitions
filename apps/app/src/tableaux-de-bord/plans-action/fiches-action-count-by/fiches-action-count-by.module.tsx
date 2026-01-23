@@ -30,8 +30,6 @@ type Props = {
   /** Actions disponnible dans le menu en haut à droite du module */
   menuActions?: {
     actions?: MenuAction[];
-    /** Ajoute automatiquement aux actions la possibilité de télécharger le graphique */
-    enableDownload?: boolean;
   };
   /** Bouton à afficher dans l'état vide */
   emptyButtons?: ButtonProps[];
@@ -84,28 +82,25 @@ export const FichesActionCountByModule = ({
   const { mutate: download } = useChartDownloader();
 
   const getMenuActions = () => {
-    const actions = [];
-    if (menuActions?.actions) {
-      actions.push(...menuActions.actions);
-    }
-    if (menuActions?.enableDownload) {
-      actions.push({
+    const actions = [
+      ...(menuActions?.actions ?? []),
+
+      {
         label: 'Télécharger',
         icon: 'download-line',
-        onClick: () => {
+        onClick: () =>
           download({
             format: 'png',
             name: titre,
             width: 900,
             height: 500,
             options: { ...chartOption, backgroundColor: '#ffffff' },
-          });
-        },
-      });
-    }
+          }),
+      },
+    ];
+
     return actions;
   };
-
   return (
     <Module
       title={titre}

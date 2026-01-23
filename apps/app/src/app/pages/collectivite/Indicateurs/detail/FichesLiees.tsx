@@ -13,10 +13,9 @@ type Props = {
   definition: IndicateurDefinition;
 };
 
-const FichesLiees = ({
-  definition,
-}: Props) => {
-  const { isReadOnly, collectiviteId } = useCurrentCollectivite();
+const FichesLiees = ({ definition }: Props) => {
+  const { hasCollectivitePermission, collectiviteId } =
+    useCurrentCollectivite();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { fiches } = useListFiches(collectiviteId, {
@@ -31,13 +30,17 @@ const FichesLiees = ({
 
   const isEmpty = ficheIds.length === 0;
 
+  const canUpdateIndicateur = hasCollectivitePermission(
+    'indicateurs.indicateurs.update'
+  );
+
   return (
     <>
       {isEmpty ? (
         <EmptyCard
           picto={(props) => <FichePicto {...props} />}
           title="Aucune action de vos plans n'est liée !"
-          isReadonly={isReadOnly}
+          isReadonly={!canUpdateIndicateur}
           actions={[
             {
               children: 'Lier une action',
@@ -51,7 +54,7 @@ const FichesLiees = ({
         <div className="bg-white p-10 border border-grey-3 rounded-xl">
           <div className="flex justify-between items-center flex-wrap mb-5">
             <h6 className="text-lg mb-0">Actions liées</h6>
-            {!isReadOnly && (
+            {canUpdateIndicateur && (
               <Button
                 icon="link"
                 size="xs"
@@ -70,12 +73,12 @@ const FichesLiees = ({
               }}
               containerClassName="bg-white"
               onUnlink={
-                isReadOnly
-                  ? undefined
-                  : (ficheId) =>
+                canUpdateIndicateur
+                  ? (ficheId) =>
                       updateIndicateur({
                         ficheIds: ficheIds.filter((id) => id !== ficheId),
                       })
+                  : undefined
               }
               displayHeader={false}
             />
@@ -84,7 +87,7 @@ const FichesLiees = ({
       )}
 
       <ModaleFichesLiees
-        isOpen={isModalOpen && !isReadOnly}
+        isOpen={isModalOpen}
         setIsOpen={setIsModalOpen}
         currentFicheId={null}
         linkedFicheIds={ficheIds}

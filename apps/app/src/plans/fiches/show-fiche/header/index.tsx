@@ -9,7 +9,7 @@ import { Menu } from './menu';
 import { SubHeader } from './subheader';
 
 const Divider = ({ className }: { className?: string | undefined }) => {
-  return <div className={cn("border-b bg-primary-3 my-3", className)} />;
+  return <div className={cn('border-b bg-primary-3 my-3', className)} />;
 };
 
 export const Header = () => {

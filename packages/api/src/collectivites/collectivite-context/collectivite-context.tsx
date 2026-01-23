@@ -7,7 +7,7 @@ import {
   hasCollectiviteRole,
   hasPermission,
   PermissionOperation,
-  UserWithRolesAndPermissions
+  UserWithRolesAndPermissions,
 } from '@tet/domain/users';
 import { createContext, ReactNode, useState } from 'react';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
@@ -78,7 +78,10 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
   const toCollectivite = (
     collectivite: CollectiviteAccess
   ): CollectiviteCurrent => {
-    const hasRoleAuditeur = hasCollectiviteRole(collectivite, AuditRole.AUDITEUR);
+    const hasRoleAuditeur = hasCollectiviteRole(
+      collectivite,
+      AuditRole.AUDITEUR
+    );
 
     return {
       ...collectivite,
@@ -87,8 +90,6 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
       accesRestreint: collectivite.collectiviteAccesRestreint,
 
       niveauAcces: collectivite.role,
-      isReadOnly:
-        collectivite.role === CollectiviteRole.LECTURE && !hasRoleAuditeur,
       isSimplifiedView:
         collectivite.role === CollectiviteRole.EDITION_FICHES_INDICATEURS,
 
