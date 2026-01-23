@@ -1,10 +1,9 @@
 import { uuid4 } from '@sentry/core';
+import type { SentryBuildOptions } from '@sentry/nextjs';
 import { withSentryConfig } from '@sentry/nextjs';
+import type { NextConfig } from 'next';
 
-/**
- * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
- **/
-const nextConfig = {
+const nextConfig: NextConfig = {
   typescript: {
     // We safely disable the internal type checking of Next.js because
     // all apps are type checked during the first steps of our CI.
@@ -14,8 +13,13 @@ const nextConfig = {
     tsconfigPath: 'tsconfig.app.json',
   },
 
+  transpilePackages: ['@tet/api', '@tet/domain', '@tet/ui'],
+
   experimental: {
     optimizePackageImports: [
+      '@tet/api',
+      '@tet/domain',
+      '@tet/ui',
       '@gouvfr/dsfr',
       'es-toolkit',
       'echarts',
@@ -37,7 +41,7 @@ const nextConfig = {
 
   webpack(config) {
     // Grab the existing rule that handles SVG imports
-    const fileLoaderRule = config.module.rules.find((rule) =>
+    const fileLoaderRule = config.module.rules.find((rule: any) =>
       rule.test?.test?.('.svg')
     );
 
@@ -103,27 +107,32 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/mes-fiches/:path*',
+        source:
+          '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/mes-fiches/:path*',
         destination: '/collectivite/:collectiviteId/actions/mes-actions/:path*',
         permanent: true,
       },
       {
-        source: '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/classifiees/:path*',
+        source:
+          '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/classifiees/:path*',
         destination: '/collectivite/:collectiviteId/actions/dans-plan/:path*',
         permanent: true,
       },
       {
-        source: '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/non-classifiees/:path*',
+        source:
+          '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/non-classifiees/:path*',
         destination: '/collectivite/:collectiviteId/actions/hors-plan/:path*',
         permanent: true,
       },
       {
-        source: '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/:path*',
+        source:
+          '/collectivite/:collectiviteId/plans/fiches/toutes-les-fiches/:path*',
         destination: '/collectivite/:collectiviteId/actions/:path*',
         permanent: true,
       },
       {
-        source: '/collectivite/:collectiviteId/plans/actions/mes-actions/:path*',
+        source:
+          '/collectivite/:collectiviteId/plans/actions/mes-actions/:path*',
         destination: '/collectivite/:collectiviteId/actions/mes-actions/:path*',
         permanent: true,
       },
@@ -138,7 +147,8 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: '/collectivite/:collectiviteId/plans/:planId/actions/:actionId*',
+        source:
+          '/collectivite/:collectiviteId/plans/:planId/actions/:actionId*',
         destination: '/collectivite/:collectiviteId/actions/:actionId*',
         permanent: true,
       },
@@ -147,7 +157,7 @@ const nextConfig = {
         destination: '/collectivite/:collectiviteId/actions/:actionId*',
         permanent: true,
       },
-    ]
+    ];
   },
 
   // https://nextjs.org/docs/app/api-reference/config/next-config-js/poweredByHeader
@@ -157,10 +167,9 @@ const nextConfig = {
   skipTrailingSlashRedirect: true,
 };
 
-const sentryConfig = {
-  // For all available options, see:
-  // https://github.com/getsentry/sentry-webpack-plugin#options
+const isProduction = process.env.NODE_ENV === 'production';
 
+const sentryConfig: SentryBuildOptions = {
   org: 'betagouv',
   project: 'territoires-en-transitions',
   sentryUrl: 'https://sentry.incubateur.net/',
@@ -171,28 +180,35 @@ const sentryConfig = {
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
 
-  // For all available options, see:
-  // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-
   // Upload a larger set of source maps for prettier stack traces (increases build time)
-  widenClientFileUpload: true,
-
-  // Uncomment to route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
-  // This can increase your server load as well as your hosting bill.
-  // Note: Check that the configured route will not match with your Next.js proxy, otherwise reporting of client-
-  // side errors will fail.
-  // tunnelRoute: "/monitoring",
+  widenClientFileUpload: isProduction,
 
   // Hides source maps from generated client bundles
-  hideSourceMaps: false,
+  sourcemaps: {
+    disable: !isProduction,
+  },
+
+  bundleSizeOptimizations: {
+    excludeDebugStatements: !isProduction,
+    excludeTracing: !isProduction,
+    excludeReplayShadowDom: !isProduction,
+    excludeReplayIframe: !isProduction,
+    excludeReplayWorker: !isProduction,
+  },
+
+  disableManifestInjection: !isProduction,
 
   // Automatically tree-shake Sentry logger statements to reduce bundle size
-  webpack : {
+  webpack: {
+    disableSentryConfig: !isProduction,
+    autoInstrumentServerFunctions: !isProduction,
+    autoInstrumentMiddleware: !isProduction,
+    autoInstrumentAppDirectory: !isProduction,
+
     treeshake: {
       removeDebugLogging: true,
-    }
-  }
+    },
+  },
 };
 
-
-export default withSentryConfig(nextConfig, sentryConfig) ;
+export default withSentryConfig(nextConfig, sentryConfig);
