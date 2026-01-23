@@ -38,7 +38,7 @@ export const EditableTitle = ({
         'w-full flex justify-between items-start mb-2 group cursor-text',
         containerClassName
       )}
-      data-test="TitreFiche"
+      data-test="plan-editable-title"
       onClick={() => !isReadonly && !isEditing && handleChangeMode()}
     >
       {isEditing ? (

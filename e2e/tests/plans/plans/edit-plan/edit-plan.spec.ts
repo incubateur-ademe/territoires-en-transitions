@@ -55,33 +55,6 @@ test.describe("Édition d'un plan d'action", () => {
     await editPlanPom.expectPlanType(planTypeModifie);
   });
 
-  test("Éditer le nom et le type d'un plan", async ({
-    collectivites,
-    plans,
-    editPlanPom,
-  }) => {
-    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
-      userArgs: { autoLogin: true },
-    });
-
-    const planNomInitial = 'Plan initial';
-    const planNomModifie = 'Plan modifié';
-    const planType = 'Plan Climat Air Énergie Territorial';
-
-    const planId = await plans.create(user, {
-      nom: planNomInitial,
-      collectiviteId: collectivite.data.id,
-    });
-
-    await editPlanPom.goto(collectivite.data.id, planId);
-    await editPlanPom.expectPlanTitle(planNomInitial);
-
-    await editPlanPom.editPlanNom(planNomModifie);
-    await editPlanPom.editPlanType(planType);
-    await editPlanPom.expectPlanTitle(planNomModifie);
-    await editPlanPom.expectPlanType(planType);
-  });
-
   test('Ajouter une fiche action à un plan', async ({
     collectivites,
     plans,

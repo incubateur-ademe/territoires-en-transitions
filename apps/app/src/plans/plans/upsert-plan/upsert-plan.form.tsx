@@ -154,6 +154,7 @@ export function UpsertPlanForm({
           control={control}
           render={({ field }) => (
             <PersonnesDropdown
+              dataTest="create-plan-pilote"
               values={field.value
                 ?.map((p) => p.tagId?.toString() ?? p.userId?.toString())
                 .filter((x): x is string => !!x)}
@@ -175,6 +176,7 @@ export function UpsertPlanForm({
           control={control}
           render={({ field }) => (
             <PersonnesDropdown
+              dataTest="create-plan-referent"
               values={field.value
                 ?.map((r) => r.tagId?.toString() ?? r.userId?.toString())
                 .filter((x): x is string => !!x)}
