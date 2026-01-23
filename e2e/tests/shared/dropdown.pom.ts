@@ -2,19 +2,7 @@ import { expect, Locator, Page } from '@playwright/test';
 import assert from 'assert';
 
 export class DropdownPom {
-  private dropdown: Locator;
-
-  constructor(
-    public readonly page: Page,
-    dropdownLabel: string,
-    dataTest: string
-  ) {
-    this.dropdown = this.page
-      .getByText(dropdownLabel)
-      .locator('..')
-      .locator('..')
-      .locator(dataTest);
-  }
+  constructor(public readonly page: Page, public readonly dropdown: Locator) {}
 
   async selectOption(optionName: string) {
     await this.dropdown.isVisible();
@@ -32,11 +20,5 @@ export class DropdownPom {
     const box = await this.dropdown.boundingBox();
     assert(box, 'Cannot get dropdown bounding box');
     await this.page.mouse.click(box.x - 10, box.y);
-  }
-}
-
-export class DropdownPersonnePom extends DropdownPom {
-  constructor(public readonly page: Page, dropdownLabel: string) {
-    super(page, dropdownLabel, '[data-test=personnes]');
   }
 }
