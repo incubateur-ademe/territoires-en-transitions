@@ -1,5 +1,5 @@
 import { expect, Locator, Page } from '@playwright/test';
-import { DropdownPersonnePom } from 'tests/shared/dropdown.pom';
+import { DropdownPom } from 'tests/shared/dropdown.pom';
 
 export class CreatePlanPom {
   readonly nomInput: Locator;
@@ -7,8 +7,8 @@ export class CreatePlanPom {
   readonly submitButton: Locator;
   readonly title: Locator;
   readonly cancelButton: Locator;
-  readonly pilotesDropdown: DropdownPersonnePom;
-  readonly referentsDropdown: DropdownPersonnePom;
+  readonly pilotesDropdown: DropdownPom;
+  readonly referentsDropdown: DropdownPom;
 
   constructor(public readonly page: Page) {
     this.page = page;
@@ -21,8 +21,14 @@ export class CreatePlanPom {
     this.cancelButton = page.getByRole('button', {
       name: "Revenir à l'étape précédente",
     });
-    this.pilotesDropdown = new DropdownPersonnePom(page, 'Personne pilote');
-    this.referentsDropdown = new DropdownPersonnePom(page, 'Élu·e référent·e');
+    this.pilotesDropdown = new DropdownPom(
+      page,
+      page.getByTestId('create-plan-pilote')
+    );
+    this.referentsDropdown = new DropdownPom(
+      page,
+      page.getByTestId('create-plan-referent')
+    );
   }
 
   async goto(collectiviteId: number) {

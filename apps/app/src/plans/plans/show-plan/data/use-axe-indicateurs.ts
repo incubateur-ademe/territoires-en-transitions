@@ -29,7 +29,7 @@ export function useAxeIndicateurs({
   const { mutateAsync: updateAxe } = useUpdateAxe({
     collectiviteId,
     axe,
-    planId
+    planId,
   });
 
   const toggleIndicateur = async (indicateur: IndicateurDefinitionListItem) => {
@@ -39,7 +39,7 @@ export function useAxeIndicateurs({
     // Ajoute ou retire l'indicateur de la liste
     const indicateurs = isAssocie
       ? selectedIndicateurs.filter((i) => i.id !== indicateur.id) ?? []
-      : [...selectedIndicateurs, { id: indicateur.id }];
+      : [...selectedIndicateurs, indicateur];
 
     await updateAxe({ ...axe, nom: axe.nom || '', indicateurs });
   };

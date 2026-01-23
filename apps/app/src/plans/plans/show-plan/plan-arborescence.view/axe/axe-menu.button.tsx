@@ -96,7 +96,7 @@ export const AxeMenuButton = () => {
     },
     {
       label: 'Supprimer',
-      icon: 'delete-bin-2-line',
+      icon: 'delete-bin-6-line',
       onClick: () => {
         setIsOpenDeleteModal(true);
       },

@@ -1,24 +1,42 @@
 import { expect, Locator, Page } from '@playwright/test';
-import { DropdownPersonnePom } from 'tests/shared/dropdown.pom';
+import { DropdownPom } from 'tests/shared/dropdown.pom';
 
 export class EditPlanPom {
-  readonly planTitle: Locator;
   readonly emptyPlanMessage: Locator;
   readonly addAxeButton: Locator;
-  readonly modifierPlanButton: Locator;
   readonly createFicheButton: Locator;
+  readonly header: {
+    title: Locator;
+    type: Locator;
+    pilote: Locator;
+    referent: Locator;
+    investissement: Locator;
+    fonctionnement: Locator;
+    axes: Locator;
+    sousAxes: Locator;
+    actions: Locator;
+  };
 
   constructor(public readonly page: Page) {
     this.page = page;
-    this.planTitle = page.locator('h2');
     this.emptyPlanMessage = page.getByRole('heading', {
       name: "Vous n'avez aucune action ni arborescence de plan",
     });
     this.addAxeButton = page.locator('[data-test="AjouterAxe"]');
-    this.modifierPlanButton = page.locator('[data-test="ModifierPlanBouton"]');
     this.createFicheButton = page.getByRole('button', {
       name: 'Créer une action',
     });
+    this.header = {
+      title: page.getByTestId('plan-editable-title'),
+      type: page.getByTestId('plan-header-type'),
+      pilote: page.getByTestId('plan-header-pilote'),
+      referent: page.getByTestId('plan-header-referent'),
+      investissement: page.getByTestId('plan-header-investissement'),
+      fonctionnement: page.getByTestId('plan-header-fonctionnement'),
+      axes: page.getByTestId('plan-header-axes'),
+      sousAxes: page.getByTestId('plan-header-sous-axes'),
+      actions: page.getByTestId('plan-header-actions'),
+    };
   }
 
   getPlanUrl(collectiviteId: number, planId: number): string {
@@ -28,11 +46,11 @@ export class EditPlanPom {
   async goto(collectiviteId: number, planId: number) {
     await this.page.goto(this.getPlanUrl(collectiviteId, planId));
     // Attendre que le titre soit visible pour confirmer que la page est chargée
-    await expect(this.planTitle).toBeVisible();
+    await expect(this.header.title).toBeVisible();
   }
 
   async expectPlanTitle(title: string) {
-    await expect(this.planTitle).toHaveText(title);
+    await expect(this.header.title).toHaveText(title);
   }
 
   async expectPlanType(type: string) {
@@ -52,16 +70,6 @@ export class EditPlanPom {
   }
 
   /**
-   * Ouvre la modale d'édition du plan et retourne le locator de la modale
-   */
-  private async openEditPlanModal() {
-    await this.modifierPlanButton.click();
-    const modal = this.page.locator('[data-test="ModifierPlanTitreModale"]');
-    await expect(modal).toBeVisible();
-    return modal;
-  }
-
-  /**
    * Valide et ferme la modale d'édition du plan
    */
   private async submitEditPlanModal(modal: Locator) {
@@ -74,49 +82,58 @@ export class EditPlanPom {
    * Édite le nom d'un plan
    */
   async editPlanNom(nom: string) {
-    const modal = await this.openEditPlanModal();
-    const nomInput = modal.locator('[data-test="PlanNomInput"]');
+    // clic sur le titre pour l'éditer
+    await this.header.title.click();
+    const nomInput = this.header.title.locator('input');
     await nomInput.clear();
     await nomInput.fill(nom);
-    await this.submitEditPlanModal(modal);
+    await nomInput.blur();
+  }
+
+  /**
+   * Ouvre le menu "..." et renvoi l'item voulu
+   */
+  async getMenuItem(axeNom: string, title: string) {
+    const menuButton = this.header.title.locator(
+      'button[title="Editer ce plan"]'
+    );
+    await menuButton.click();
+    return this.page
+      .locator('[data-floating-ui-portal]')
+      .getByRole('button', { name: title });
   }
 
   /**
    * Édite le type d'un plan
    */
   async editPlanType(type: string) {
-    const modal = await this.openEditPlanModal();
-    const typeSelect = modal.locator('[data-test="Type"]');
-    await typeSelect.click();
+    await this.header.type.click();
     const option = this.page.getByRole('button', { name: type });
     await option.click();
-    await this.submitEditPlanModal(modal);
   }
 
   /**
    * Édite le pilote d'un plan
    */
   async editPlanPilote(piloteNom: string) {
-    const modal = await this.openEditPlanModal();
-    const pilotesDropdown = new DropdownPersonnePom(
+    await this.header.pilote.click();
+    const pilotesDropdown = new DropdownPom(
       this.page,
-      'Personne pilote'
+      this.page.getByTestId('plan-header-pilote-dropdown')
     );
     await pilotesDropdown.selectOption(piloteNom);
-    await this.submitEditPlanModal(modal);
   }
 
   /**
    * Édite le référent d'un plan
    */
   async editPlanReferent(referentNom: string) {
-    const modal = await this.openEditPlanModal();
-    const referentsDropdown = new DropdownPersonnePom(
+    await this.header.referent.click();
+    const referentsDropdown = new DropdownPom(
       this.page,
-      'Élu·e référent·e'
+      this.page.getByTestId('plan-header-referent-dropdown')
     );
     await referentsDropdown.selectOption(referentNom);
-    await this.submitEditPlanModal(modal);
   }
 
   /**
@@ -143,9 +160,7 @@ export class EditPlanPom {
    * @param piloteNom - Le nom du pilote à vérifier
    */
   async expectPiloteExists(piloteNom: string) {
-    // Les pilotes sont affichés dans PlanMetadata avec PiloteOrReferentLabel
-    // On cherche le texte du pilote dans la section des métadonnées
-    const pilote = this.page.getByText(piloteNom);
+    const pilote = this.header.pilote.getByText(piloteNom);
     await expect(pilote).toBeVisible();
   }
 
@@ -154,9 +169,7 @@ export class EditPlanPom {
    * @param referentNom - Le nom du référent à vérifier
    */
   async expectReferentExists(referentNom: string) {
-    // Les référents sont affichés dans PlanMetadata avec PiloteOrReferentLabel
-    // On cherche le texte du référent dans la section des métadonnées
-    const referent = this.page.getByText(referentNom);
+    const referent = this.header.referent.getByText(referentNom);
     await expect(referent).toBeVisible();
   }
 

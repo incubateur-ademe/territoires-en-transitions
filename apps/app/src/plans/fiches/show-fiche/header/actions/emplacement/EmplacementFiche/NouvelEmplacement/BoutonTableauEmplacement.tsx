@@ -28,7 +28,7 @@ export const BoutonTableauEmplacement = ({
     <button
       id={id.toString()}
       className={classNames(
-        'transition-all font-medium text-sm text-left w-full py-2 px-4 rounded-lg flex items-center justify-between gap-2',
+        'transition-all font-medium text-sm text-left w-full py-2 px-4 rounded-lg flex items-center justify-between gap-2 scroll-me-64',
         {
           'bg-white text-primary-9 hover:!bg-primary-1':
             !isSelected && !containsSelectedAxe,

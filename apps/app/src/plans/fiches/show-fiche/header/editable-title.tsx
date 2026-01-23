@@ -1,13 +1,19 @@
-import { InlineEditWrapper, Input } from '@tet/ui';
+import { cn, InlineEditWrapper, Input } from '@tet/ui';
 import { useState } from 'react';
 
 type EditableTitleProps = {
+  dataTest?: string;
+  className?: string;
+  inputClassName?: string;
   title: string | null;
   isReadonly: boolean;
   onUpdate: (value: string | null) => void;
 };
 
 export const EditableTitle = ({
+  dataTest,
+  className,
+  inputClassName,
   title: initialTitle,
   isReadonly,
   onUpdate,
@@ -18,7 +24,7 @@ export const EditableTitle = ({
       disabled={isReadonly}
       onClose={() => onUpdate(editedTitle)}
       renderOnEdit={({ openState }) => (
-        <div className="w-full">
+        <div className="w-full" data-test={dataTest}>
           <Input
             value={editedTitle ?? ''}
             autoFocus
@@ -35,12 +41,12 @@ export const EditableTitle = ({
             }}
             type="text"
             containerClassname="w-full"
-            className="text-3xl"
+            className={cn('text-3xl', inputClassName)}
           />
         </div>
       )}
     >
-      <h1 data-test="TitreFiche" className="mb-0">
+      <h1 data-test={dataTest} className={cn('mb-0', className)}>
         {initialTitle ?? 'Sans titre'}
       </h1>
     </InlineEditWrapper>

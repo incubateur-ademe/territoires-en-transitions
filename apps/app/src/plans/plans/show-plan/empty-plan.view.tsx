@@ -1,10 +1,11 @@
 'use client';
 import { useCreateFicheResume } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
 import PictoAction from '@/app/ui/pictogrammes/PictoAction';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { PlanNode } from '@tet/domain/plans';
 import { CollectiviteAccess } from '@tet/domain/users';
 import { EmptyCard } from '@tet/ui';
-import { useUpsertAxe } from './data/use-upsert-axe';
+import { useCreateAxe } from './data/use-create-axe';
 
 export const EmptyPlanView = ({
   currentCollectivite,
@@ -13,11 +14,10 @@ export const EmptyPlanView = ({
   currentCollectivite: CollectiviteAccess;
   plan: PlanNode;
 }) => {
-  const { mutate: addAxe } = useUpsertAxe({
+  const { mutate: addAxe } = useCreateAxe({
     collectiviteId: currentCollectivite.collectiviteId,
     parentAxe: plan,
     planId: plan.id,
-    mutationKey: ['create_axe'],
   });
 
   const { mutate: createFicheResume } = useCreateFicheResume({
@@ -27,9 +27,17 @@ export const EmptyPlanView = ({
     axeFichesIds: plan.fiches,
   });
 
+  if (!hasPermission(currentCollectivite.permissions, 'plans.mutate')) {
+    return (
+      <EmptyCard
+        picto={(props) => <PictoAction {...props} />}
+        title="Cette collectivité n'a pas encore d'action ni d'arborescence de plan"
+      />
+    );
+  }
+
   return (
     <EmptyCard
-      picto={(props) => <PictoAction {...props} />}
       title="Vous n'avez aucune action ni arborescence de plan !"
       actions={[
         {
