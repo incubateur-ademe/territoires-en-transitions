@@ -7,7 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { getISOFormatDateQuery } from '@tet/backend/utils/column.utils';
+import { sqlToDate, sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { toSlug } from '@tet/backend/utils/string.utils';
 import { PersonnalisationReponsesPayload } from '@tet/domain/collectivites';
 import {
@@ -119,35 +119,12 @@ export class SnapshotsService {
     return { ref, nom };
   }
 
-  // getSnapshotInfoFromScoreResponse(
-  //   scoreResponse: ActionScoresPayload
-  // ): ScoreSnapshotCollectiviteInfoType {
-  //   return {
-  //     collectiviteId: scoreResponse.collectiviteId,
-  //     referentielId: scoreResponse.referentielId,
-  //     ref: scoreResponse.snapshot!.ref!,
-  //     nom: scoreResponse.snapshot!.nom,
-  //     date: scoreResponse.date,
-  //     jalon: scoreResponse.jalon,
-  //     pointFait: scoreResponse.scores.score.pointFait || 0,
-  //     pointProgramme: scoreResponse.scores.score.pointProgramme || 0,
-  //     pointPasFait: scoreResponse.scores.score.pointPasFait || 0,
-  //     pointPotentiel: scoreResponse.scores.score.pointPotentiel || 0,
-  //     referentielVersion: scoreResponse.referentielVersion,
-  //     auditId: scoreResponse.auditId || null,
-  //     createdAt: scoreResponse.snapshot!.createdAt,
-  //     createdBy: scoreResponse.snapshot!.createdBy,
-  //     modifiedAt: scoreResponse.snapshot!.modifiedAt,
-  //     modifiedBy: scoreResponse.snapshot!.modifiedBy,
-  //   };
-  // }
-
   /**
    * Upsert score snapshot: update always allowed
    * @param snapshot
    * @returns
    */
-  async upsertScoreSnapshot(
+  private async upsertScoreSnapshot(
     snapshot: ScoreSnapshotCreate
   ): Promise<ScoreSnapshot> {
     return await this.databaseService.db
@@ -235,7 +212,7 @@ export class SnapshotsService {
   /**
    * Insert with upsert only allowed if jalon is current score
    */
-  async insertSnapshotOrUpsertIfCurrentJalon(
+  private async insertSnapshotOrUpsertIfCurrentJalon(
     snapshot: ScoreSnapshotCreate
   ): Promise<ScoreSnapshot> {
     return this.databaseService.db
@@ -400,7 +377,10 @@ export class SnapshotsService {
         'Impossible de sauvegarder le snapshot de score'
       );
     }
-    scoreSnapshot.date = DateTime.fromSQL(scoreSnapshot.date).toISO() as string;
+
+    scoreSnapshot.date = DateTime.fromSQL(scoreSnapshot.date).toFormat(
+      'yyyy-MM-dd'
+    );
     scoreSnapshot.createdAt = DateTime.fromSQL(
       scoreSnapshot.createdAt
     ).toISO() as string;
@@ -444,9 +424,9 @@ export class SnapshotsService {
     let snapshot = await this.databaseService.db
       .select({
         ...getTableColumns(snapshotTable),
-        date: getISOFormatDateQuery(snapshotTable.date),
-        createdAt: getISOFormatDateQuery(snapshotTable.createdAt),
-        modifiedAt: getISOFormatDateQuery(snapshotTable.modifiedAt),
+        date: sqlToDate(snapshotTable.date),
+        createdAt: sqlToDateTimeISO(snapshotTable.createdAt),
+        modifiedAt: sqlToDateTimeISO(snapshotTable.modifiedAt),
       })
       .from(snapshotTable)
       .where(

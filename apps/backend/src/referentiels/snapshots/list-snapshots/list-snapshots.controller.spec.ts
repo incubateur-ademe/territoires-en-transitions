@@ -5,6 +5,7 @@ import { ListSnapshotsApiResponse } from '@tet/backend/referentiels/snapshots/li
 import {
   getAuthUser,
   getTestApp,
+  ISO_8601_DATE_REGEX,
   ISO_8601_DATE_TIME_REGEX,
   signInWith,
   YOLO_DODO,
@@ -96,7 +97,7 @@ describe('Api pour lister les snapshots', () => {
     expect(foundSnapshot).toMatchObject({
       ref: 'score-courant',
       nom: 'Score courant',
-      date: expect.stringMatching(ISO_8601_DATE_TIME_REGEX),
+      date: expect.stringMatching(ISO_8601_DATE_REGEX),
       jalon: SnapshotJalonEnum.COURANT,
       pointFait: expect.any(Number),
       pointProgramme: expect.any(Number),

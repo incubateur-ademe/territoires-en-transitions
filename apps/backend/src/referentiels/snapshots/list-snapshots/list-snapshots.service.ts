@@ -1,7 +1,7 @@
-import { LIST_DEFAULT_JALONS } from '@tet/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-query';
-import { getISOFormatDateQuery } from '@tet/backend/utils/column.utils';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Injectable } from '@nestjs/common';
+import { LIST_DEFAULT_JALONS } from '@tet/backend/referentiels/snapshots/list-snapshots/list-snapshots.api-query';
+import { sqlToDate, sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   referentielIdEnumSchema,
   ScoreSnapshot,
@@ -78,7 +78,7 @@ export class ListSnapshotsService {
     const columns = {
       ref: snapshotTable.ref,
       nom: snapshotTable.nom,
-      date: getISOFormatDateQuery(snapshotTable.date),
+      date: sqlToDate(snapshotTable.date),
       jalon: snapshotTable.jalon,
       pointFait: snapshotTable.pointFait,
       pointProgramme: snapshotTable.pointProgramme,
@@ -86,9 +86,9 @@ export class ListSnapshotsService {
       pointPotentiel: snapshotTable.pointPotentiel,
       referentielVersion: snapshotTable.referentielVersion,
       auditId: snapshotTable.auditId,
-      createdAt: getISOFormatDateQuery(snapshotTable.createdAt),
+      createdAt: sqlToDateTimeISO(snapshotTable.createdAt),
       createdBy: snapshotTable.createdBy,
-      modifiedAt: getISOFormatDateQuery(snapshotTable.modifiedAt),
+      modifiedAt: sqlToDateTimeISO(snapshotTable.modifiedAt),
       modifiedBy: snapshotTable.modifiedBy,
     } as const;
 

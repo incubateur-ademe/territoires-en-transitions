@@ -916,7 +916,8 @@ export default class ScoresService {
       like(table.actionId, `${referentielId}%`),
     ];
     if (date) {
-      actionStatutsConditions.push(lte(table.modifiedAt, date));
+      const endOfTheDay = DateTime.fromISO(date).endOf('day').toUTC().toISO();
+      actionStatutsConditions.push(lte(table.modifiedAt, endOfTheDay ?? date));
     }
     // TODO: colonne referentiel dans les actionStatutTable ?
     const referentielActionStatuts = await this.databaseService.db
@@ -979,7 +980,8 @@ export default class ScoresService {
       like(table.actionId, `${referentielId}%`),
     ];
     if (date) {
-      actionStatutsConditions.push(lte(table.modifiedAt, date));
+      const endOfTheDay = DateTime.fromISO(date).endOf('day').toUTC().toISO();
+      actionStatutsConditions.push(lte(table.modifiedAt, endOfTheDay ?? date));
     }
     // TODO: colonne referentiel dans les actionStatutTable ?
     const referentielActionStatutExplications = await this.databaseService.db

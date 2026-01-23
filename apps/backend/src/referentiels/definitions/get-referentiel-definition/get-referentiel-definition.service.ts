@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { referentielDefinitionTable } from '@tet/backend/referentiels/models/referentiel-definition.table';
-import { getISOFormatDateQuery } from '@tet/backend/utils/column.utils';
+import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import type { ReferentielId } from '@tet/domain/referentiels';
 import { eq, getTableColumns } from 'drizzle-orm';
@@ -18,10 +18,8 @@ export class GetReferentielDefinitionService {
     const referentielDefinitions = await this.databaseService.db
       .select({
         ...getTableColumns(referentielDefinitionTable),
-        createdAt: getISOFormatDateQuery(referentielDefinitionTable.createdAt),
-        modifiedAt: getISOFormatDateQuery(
-          referentielDefinitionTable.modifiedAt
-        ),
+        createdAt: sqlToDateTimeISO(referentielDefinitionTable.createdAt),
+        modifiedAt: sqlToDateTimeISO(referentielDefinitionTable.modifiedAt),
       })
       .from(referentielDefinitionTable);
 
@@ -36,10 +34,8 @@ export class GetReferentielDefinitionService {
     const referentielDefinitions = await this.databaseService.db
       .select({
         ...getTableColumns(referentielDefinitionTable),
-        createdAt: getISOFormatDateQuery(referentielDefinitionTable.createdAt),
-        modifiedAt: getISOFormatDateQuery(
-          referentielDefinitionTable.modifiedAt
-        ),
+        createdAt: sqlToDateTimeISO(referentielDefinitionTable.createdAt),
+        modifiedAt: sqlToDateTimeISO(referentielDefinitionTable.modifiedAt),
       })
       .from(referentielDefinitionTable)
       .where(eq(referentielDefinitionTable.id, referentielId))

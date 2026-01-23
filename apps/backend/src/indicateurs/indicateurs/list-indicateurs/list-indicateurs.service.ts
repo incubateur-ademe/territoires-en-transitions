@@ -11,7 +11,7 @@ import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { sqlAuthorOrNull } from '@tet/backend/users/models/author.utils';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
-import { getISOFormatDateQuery } from '@tet/backend/utils/column.utils';
+import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import { normalizeIdentifiantReferentiel } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
@@ -756,7 +756,7 @@ export class ListIndicateursService {
           'modifiedAt',
         ]),
 
-        createdAt: getISOFormatDateQuery(indicateurDefinitionTable.createdAt),
+        createdAt: sqlToDateTimeISO(indicateurDefinitionTable.createdAt),
 
         count: sql<number>`(count(*) over())::int`,
 
@@ -768,7 +768,7 @@ export class ListIndicateursService {
         commentaire: indicateurCollectiviteTable.commentaire,
         estConfidentiel: indicateurCollectiviteTable.confidentiel,
         estFavori: indicateurCollectiviteTable.favoris,
-        modifiedAt: getISOFormatDateQuery(
+        modifiedAt: sqlToDateTimeISO(
           sql`COALESCE(${indicateurCollectiviteTable.modifiedAt}, ${indicateurDefinitionTable.modifiedAt})`
         ),
         modifiedBy: sqlAuthorOrNull({

@@ -10,7 +10,7 @@ import { UpdateDefinitionService } from '@tet/backend/indicateurs/definitions/mu
 import ComputeValeursService from '@tet/backend/indicateurs/valeurs/compute-valeurs.service';
 import { DEFAULT_ROUNDING_PRECISION } from '@tet/backend/indicateurs/valeurs/valeurs.constants';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { getISOFormatDateQuery } from '@tet/backend/utils/column.utils';
+import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import {
   COLLECTIVITE_SOURCE_ID,
   IndicateurAvecValeurs,
@@ -189,20 +189,16 @@ export default class CrudValeursService {
               'createdAt',
               'modifiedAt',
             ]),
-            createdAt: getISOFormatDateQuery(indicateurValeurTable.createdAt),
-            modifiedAt: getISOFormatDateQuery(indicateurValeurTable.modifiedAt),
+            createdAt: sqlToDateTimeISO(indicateurValeurTable.createdAt),
+            modifiedAt: sqlToDateTimeISO(indicateurValeurTable.modifiedAt),
           },
           indicateur_definition: {
             ...omit(getTableColumns(indicateurDefinitionTable), [
               'createdAt',
               'modifiedAt',
             ]),
-            createdAt: getISOFormatDateQuery(
-              indicateurDefinitionTable.createdAt
-            ),
-            modifiedAt: getISOFormatDateQuery(
-              indicateurDefinitionTable.modifiedAt
-            ),
+            createdAt: sqlToDateTimeISO(indicateurDefinitionTable.createdAt),
+            modifiedAt: sqlToDateTimeISO(indicateurDefinitionTable.modifiedAt),
           },
           indicateur_source_metadonnee: getTableColumns(
             indicateurSourceMetadonneeTable

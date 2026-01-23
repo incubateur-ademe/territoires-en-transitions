@@ -45,8 +45,10 @@ export const serialIdPrimaryKey = {
  * @param dateTimeColumn
  * @returns
  */
-export function getISOFormatDateQuery(
-  dateTimeColumn: PgColumn | SQL
-): SQL<string> {
+export function sqlToDateTimeISO(dateTimeColumn: PgColumn | SQL): SQL<string> {
   return sql<string>`to_char(${dateTimeColumn}, 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')`;
+}
+
+export function sqlToDate(dateTimeColumn: PgColumn | SQL): SQL<string> {
+  return sql<string>`to_char(${dateTimeColumn}, 'YYYY-MM-DD')`;
 }

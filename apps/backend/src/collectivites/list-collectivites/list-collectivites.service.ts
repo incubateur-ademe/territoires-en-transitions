@@ -1,15 +1,15 @@
-import { ListCollectiviteApiResponse } from '@tet/backend/collectivites/list-collectivites/list-collectivites.api-response';
-import { ListCollectiviteInput } from '@tet/backend/collectivites/list-collectivites/list-collectivites.input';
-import { CollectiviteNatureType } from '@tet/backend/collectivites/shared/models/collectivite-banatic-type.table';
-import { collectiviteRelationsTable } from '@tet/backend/collectivites/shared/models/collectivite-relations.table';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { getISOFormatDateQuery } from '@tet/backend/utils/column.utils';
 import {
   BadRequestException,
   Injectable,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { ListCollectiviteApiResponse } from '@tet/backend/collectivites/list-collectivites/list-collectivites.api-response';
+import { ListCollectiviteInput } from '@tet/backend/collectivites/list-collectivites/list-collectivites.input';
+import { CollectiviteNatureType } from '@tet/backend/collectivites/shared/models/collectivite-banatic-type.table';
+import { collectiviteRelationsTable } from '@tet/backend/collectivites/shared/models/collectivite-relations.table';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import {
   CollectivitePublic,
   CollectiviteResume,
@@ -156,8 +156,8 @@ export default class ListCollectivitesService {
           }
         : {
             ...getTableColumns(collectiviteTable),
-            createdAt: getISOFormatDateQuery(collectiviteTable.createdAt),
-            modifiedAt: getISOFormatDateQuery(collectiviteTable.modifiedAt),
+            createdAt: sqlToDateTimeISO(collectiviteTable.createdAt),
+            modifiedAt: sqlToDateTimeISO(collectiviteTable.modifiedAt),
             type: sql<CollectiviteType>`${collectiviteTable.type}`,
             natureInsee: sql<CollectiviteNatureType>`${collectiviteTable.natureInsee}`,
             ...relationsFields,
