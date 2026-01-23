@@ -93,43 +93,44 @@ const FicheActionCard = ({
   return (
     <div className="relative group h-full">
       {/* Menu d'édition et de suppression */}
-      {!currentCollectivite.isReadOnly && (isEditable || onUnlink) && (
-        <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
-          {onUnlink && (
-            <Button
-              icon="link-unlink"
-              title="Dissocier l'action"
-              variant="grey"
-              size="xs"
-              onClick={onUnlink}
-            />
-          )}
-          {isEditable && canUpdate && !onSelect && (
-            <>
+      {currentCollectivite.hasCollectivitePermission('plans.fiches.update') &&
+        (isEditable || onUnlink) && (
+          <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
+            {onUnlink && (
+              <Button
+                icon="link-unlink"
+                title="Dissocier l'action"
+                variant="grey"
+                size="xs"
+                onClick={onUnlink}
+              />
+            )}
+            {isEditable && canUpdate && !onSelect && (
               <>
-                {isEditOpen && (
-                  <ModifierFicheModale
-                    initialFiche={ficheAction}
-                    isOpen={isEditOpen}
-                    setIsOpen={() => toggleOpen(!isEditOpen)}
-                    keysToInvalidate={editKeysToInvalidate}
+                <>
+                  {isEditOpen && (
+                    <ModifierFicheModale
+                      initialFiche={ficheAction}
+                      isOpen={isEditOpen}
+                      setIsOpen={() => toggleOpen(!isEditOpen)}
+                      keysToInvalidate={editKeysToInvalidate}
+                    />
+                  )}
+                  <Button
+                    data-test="EditerFicheBouton"
+                    id={`fiche-${ficheAction.id}-edit-button`}
+                    icon="edit-line"
+                    title="Modifier l'action"
+                    variant="grey"
+                    size="xs"
+                    onClick={() => toggleOpen(!isEditOpen)}
                   />
-                )}
-                <Button
-                  data-test="EditerFicheBouton"
-                  id={`fiche-${ficheAction.id}-edit-button`}
-                  icon="edit-line"
-                  title="Modifier l'action"
-                  variant="grey"
-                  size="xs"
-                  onClick={() => toggleOpen(!isEditOpen)}
-                />
+                </>
+                <DeleteOrRemoveFicheSharingModal fiche={ficheAction} />
               </>
-              <DeleteOrRemoveFicheSharingModal fiche={ficheAction} />
-            </>
-          )}
-        </div>
-      )}
+            )}
+          </div>
+        )}
 
       {/* Cadenas accès restreint */}
       {(ficheAction.restreint ||

@@ -71,19 +71,20 @@ export const FicheActionCard = ({
   return (
     <div className="relative group h-full">
       {/* Menu d'édition et de suppression */}
-      {!currentCollectivite.isReadOnly && (isEditable || onUnlink) && (
-        <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
-          {onUnlink && (
-            <Button
-              icon="link-unlink"
-              title="Dissocier l'action"
-              variant="grey"
-              size="xs"
-              onClick={onUnlink}
-            />
-          )}
-        </div>
-      )}
+      {currentCollectivite.hasCollectivitePermission('plans.fiches.update') &&
+        (isEditable || onUnlink) && (
+          <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
+            {onUnlink && (
+              <Button
+                icon="link-unlink"
+                title="Dissocier l'action"
+                variant="grey"
+                size="xs"
+                onClick={onUnlink}
+              />
+            )}
+          </div>
+        )}
 
       {/* Cadenas accès restreint */}
       {(ficheAction.restreint ||
