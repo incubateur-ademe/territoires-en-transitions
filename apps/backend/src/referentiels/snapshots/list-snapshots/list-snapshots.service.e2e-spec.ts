@@ -22,8 +22,6 @@ describe('ListSnapshotsService', () => {
       nom: 'Test trpc',
     });
 
-    const referentielScore = snapshot.scoresPayload;
-
     expect(snapshot.ref).toEqual('user-test-trpc');
 
     // get the list of snapshots
@@ -44,7 +42,7 @@ describe('ListSnapshotsService', () => {
     }
 
     const expectedSnapshot = {
-      date: expect.toEqualDate(referentielScore.date),
+      date: expect.toEqualDate(snapshot.date),
       nom: 'Test trpc',
       ref: 'user-test-trpc',
       jalon: SnapshotJalonEnum.DATE_PERSONNALISEE,

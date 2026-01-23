@@ -9,7 +9,7 @@ import {
   ListLabellisationApiResponse,
 } from '@tet/backend/referentiels/labellisations/list-labellisations.api-response';
 import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.table';
-import { getISOFormatDateQuery } from '@tet/backend/utils/column.utils';
+import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { roundTo } from '@tet/domain/utils';
@@ -48,7 +48,7 @@ export class ListLabellisationsService {
         associatedCollectiviteId:
           labellisationDemandeTable.associatedCollectiviteId,
         referentielId: snapshotTable.referentielId,
-        date: getISOFormatDateQuery(snapshotTable.date),
+        date: sqlToDateTimeISO(snapshotTable.date),
         pointFait: snapshotTable.pointFait,
         pointProgramme: snapshotTable.pointProgramme,
         pointPotentiel: snapshotTable.pointPotentiel,
@@ -130,7 +130,7 @@ export class ListLabellisationsService {
       await this.databaseService.db
         .select({
           ...getTableColumns(labellisationTable),
-          obtenueLe: getISOFormatDateQuery(labellisationTable.obtenueLe),
+          obtenueLe: sqlToDateTimeISO(labellisationTable.obtenueLe),
         })
         .from(labellisationTable)
         .where(inArray(labellisationTable.collectiviteId, collectiviteIds))

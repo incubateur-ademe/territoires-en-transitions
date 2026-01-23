@@ -40,7 +40,7 @@ import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.tabl
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { sqlAuthorOrNull } from '@tet/backend/users/models/author.utils';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
-import { getISOFormatDateQuery } from '@tet/backend/utils/column.utils';
+import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   Collectivite,
@@ -918,8 +918,8 @@ export default class ListFichesService {
     const query = this.databaseService.db
       .select({
         ...getTableColumns(ficheActionTable),
-        dateDebut: getISOFormatDateQuery(ficheActionTable.dateDebut),
-        dateFin: getISOFormatDateQuery(ficheActionTable.dateFin),
+        dateDebut: sqlToDateTimeISO(ficheActionTable.dateDebut),
+        dateFin: sqlToDateTimeISO(ficheActionTable.dateFin),
         collectiviteNom: collectiviteTable.nom,
         createdBy: sqlAuthorOrNull({
           userIdColumn: ficheActionTable.createdBy,
