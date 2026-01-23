@@ -1,7 +1,9 @@
 import { makeCollectivitePlansActionsListUrl } from '@/app/app/paths';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { ButtonMenu, Icon, MenuAction } from '@tet/ui';
+import { ButtonMenu, Icon, MenuAction, MenuSeparator } from '@tet/ui';
 import { useState } from 'react';
+import { GenerateReportPlanModal } from '../../reports/generate-plan-report-pptx/generate-report.modal';
+import { useIsPendingReport } from '../../reports/generate-plan-report-pptx/use-is-pending-report';
 import { DeletePlanOrAxeModal } from './actions/delete-axe-or-plan.modal';
 import RestreindreFichesModal from './actions/update-fiche-visibility.modal';
 import { useExportPlanAction } from './data/use-export-plan';
@@ -17,6 +19,14 @@ export const PlanMenuButton = () => {
     useState<RestreindreFicheState>('closed');
   const [isOpenDeletePlanModal, setIsOpenDeletePlanModal] = useState(false);
 
+  const [isOpenGenerateReportModal, setIsOpenGenerateReportModal] =
+    useState(false);
+  const {
+    isPending: isPendingGenerateReport,
+    renderToast,
+    isGeneratePptxPlanReportEnabled,
+  } = useIsPendingReport();
+
   const menuActions: MenuAction[] = [
     {
       label: "Rendre publique l'ensemble des actions",
@@ -27,14 +37,15 @@ export const PlanMenuButton = () => {
     },
     {
       label: "Rendre privé l'ensemble des actions",
-      icon: 'lock-unlock-fill',
+      icon: 'lock-fill',
       onClick: () => {
         setRestreindreFiche('private');
       },
     },
+    MenuSeparator,
     {
       label: 'Télécharger le plan (Excel)',
-      icon: 'download-line',
+      icon: 'file-excel-line',
       disabled: isPending,
       tooltip: isPending ? 'Export en cours' : undefined,
       onClick: () => {
@@ -43,13 +54,25 @@ export const PlanMenuButton = () => {
     },
     {
       label: 'Télécharger le plan (Word)',
-      icon: 'download-line',
+      icon: 'file-word-line',
       disabled: isPending,
       tooltip: isPending ? 'Export en cours' : undefined,
       onClick: () => {
         exportPlanAction('docx');
       },
     },
+    isGeneratePptxPlanReportEnabled
+      ? {
+          label: 'Générer un rapport',
+          icon: 'slideshow-line',
+          disabled: isPendingGenerateReport,
+          tooltip: isPendingGenerateReport ? 'Génération en cours' : undefined,
+          onClick: () => {
+            setIsOpenGenerateReportModal(true);
+          },
+        }
+      : null,
+    MenuSeparator,
     {
       label: 'Supprimer le plan',
       icon: 'delete-bin-6-line',
@@ -58,7 +81,7 @@ export const PlanMenuButton = () => {
         setIsOpenDeletePlanModal(true);
       },
     },
-  ];
+  ].filter(Boolean) as MenuAction[];
 
   return (
     <>
@@ -103,6 +126,16 @@ export const PlanMenuButton = () => {
           }}
         />
       )}
+      {isGeneratePptxPlanReportEnabled && isOpenGenerateReportModal && (
+        <GenerateReportPlanModal
+          plan={plan}
+          openState={{
+            isOpen: isOpenGenerateReportModal,
+            setIsOpen: setIsOpenGenerateReportModal,
+          }}
+        />
+      )}
+      {renderToast()}
     </>
   );
 };

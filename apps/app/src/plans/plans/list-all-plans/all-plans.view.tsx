@@ -3,6 +3,8 @@ import { CreatePlanButton } from '@/app/plans/plans/create-plan/components/creat
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { ListPlansEmptyCard } from '@/app/plans/plans/list-all-plans/list-plans.empty-card';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Spacer, VisibleWhen } from '@tet/ui';
 import { useQueryStates } from 'nuqs';
 import { Header } from '../components/header';
@@ -13,11 +15,13 @@ import {
 } from './plan-card-with-filters.list/sorting-parameters';
 
 type Props = {
-  collectiviteId: number;
-  panierId?: string;
+  panierId: string | undefined;
 };
 
-export const AllPlansView = ({ collectiviteId, panierId }: Props) => {
+export const AllPlansView = ({ panierId }: Props) => {
+  const collectivite = useCurrentCollectivite();
+  const collectiviteId = collectivite.collectiviteId;
+
   const [sortParams, setSortParams] = useQueryStates(sortURLParametersParser, {
     urlKeys: sortURLParametersNames,
   });
@@ -34,7 +38,12 @@ export const AllPlansView = ({ collectiviteId, panierId }: Props) => {
         title="Tous les plans"
         actionButtons={
           <div className="flex gap-2">
-            <VisibleWhen condition={!plansAvailable}>
+            <VisibleWhen
+              condition={
+                plansAvailable &&
+                hasPermission(collectivite.permissions, 'plans.mutate')
+              }
+            >
               <CreatePlanButton
                 collectiviteId={collectiviteId}
                 panierId={panierId}
@@ -50,10 +59,7 @@ export const AllPlansView = ({ collectiviteId, panierId }: Props) => {
       </VisibleWhen>
       <VisibleWhen condition={noPlanAvailable}>
         <Spacer height={3} />
-        <ListPlansEmptyCard
-          collectiviteId={collectiviteId}
-          panierId={panierId}
-        />
+        <ListPlansEmptyCard collectivite={collectivite} panierId={panierId} />
       </VisibleWhen>
       <VisibleWhen condition={plansAvailable}>
         <Spacer height={1} />

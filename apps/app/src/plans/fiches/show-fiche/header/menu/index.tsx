@@ -44,7 +44,7 @@ export const Menu = ({ permissions }: MenuProps) => {
     {
       id: 'deleting',
       isVisible: hasPermission(permissions, 'plans.fiches.delete'),
-      icon: 'delete-bin-2-line',
+      icon: 'delete-bin-6-line',
       label: "Supprimer l'action",
     },
   ];

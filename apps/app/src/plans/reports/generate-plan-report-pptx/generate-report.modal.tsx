@@ -1,5 +1,6 @@
 import { Plan } from '@tet/domain/plans';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { PropsWithChildren, useState } from 'react';
 import { GenerateReportPending } from './generate-report-pending';
 import {
@@ -10,12 +11,14 @@ import { useGenerateReport } from './use-generate-report';
 
 export type GenerateReportPlanModalProps = {
   plan: Plan;
+  openState?: OpenState;
   onGenerationStarted?: (reportId: string) => void;
 };
 const FORM_ID = 'generate-plan-report-form';
 export const GenerateReportPlanModal = ({
   plan,
   onGenerationStarted,
+  openState,
   children,
 }: PropsWithChildren<GenerateReportPlanModalProps>) => {
   const [reportId, setReportId] = useState<string | null>(null);
@@ -35,6 +38,7 @@ export const GenerateReportPlanModal = ({
       }}
       noCloseButton={isSubmittingGeneration}
       disableDismiss={isSubmittingGeneration}
+      openState={openState}
       render={({ descriptionId }) => (
         <div id={descriptionId} className="space-y-6">
           {reportId ? (

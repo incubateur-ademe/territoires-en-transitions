@@ -1,28 +1,28 @@
 'use client';
 import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
-import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
+import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
+import { CollectiviteAccess } from '@tet/domain/users';
 import { EmptyCard } from '@tet/ui';
 import { useState } from 'react';
 import { CreatePlanModal } from '../create-plan/create-plan.modal';
 
 const ListPlansVisitorEmptyCard = () => (
   <EmptyCard
-    picto={() => <PictoDashboard height="160" width="160" />}
+    picto={(props) => <PictoDashboard {...props} />}
     title="Cette collectivité n'a pas encore de plan"
   />
 );
 
 export const ListPlansEmptyCard = ({
-  collectiviteId,
+  collectivite,
   panierId,
 }: {
-  collectiviteId: number;
+  collectivite: CollectiviteAccess;
   panierId?: string;
 }) => {
-  const isVisitor = useIsVisitor();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  if (isVisitor) {
+  if (!hasPermission(collectivite.permissions, 'plans.mutate')) {
     return <ListPlansVisitorEmptyCard />;
   }
 
@@ -45,7 +45,7 @@ export const ListPlansEmptyCard = ({
 
       {isModalOpen && (
         <CreatePlanModal
-          collectiviteId={collectiviteId}
+          collectiviteId={collectivite.collectiviteId}
           panierId={panierId}
           openState={{
             isOpen: isModalOpen,

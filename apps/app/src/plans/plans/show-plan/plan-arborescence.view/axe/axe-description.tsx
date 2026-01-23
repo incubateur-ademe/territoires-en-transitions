@@ -1,4 +1,5 @@
-import { RichTextEditor, RichTextView } from '@tet/ui';
+import { cn, RichTextEditor } from '@tet/ui';
+import { isNil } from 'es-toolkit';
 import { PlanDisplayOptionsEnum } from '../plan-options.context';
 import { AxeSectionTitle } from './axe-section-title';
 import { useAxeContext } from './axe.context';
@@ -10,7 +11,7 @@ export const AxeDescription = () => {
 
   if (
     !isOpen ||
-    axe.description === null ||
+    isNil(axe.description) ||
     !planOptions.isOptionEnabled(PlanDisplayOptionsEnum.DESCRIPTION)
   ) {
     return null;
@@ -19,23 +20,20 @@ export const AxeDescription = () => {
   return (
     <section>
       <AxeSectionTitle name="description" />
-      {isReadOnly ? (
-        axe.description ? (
-          <RichTextView content={axe.description} />
-        ) : null
-      ) : (
-        <RichTextEditor
-          id={`axe-desc-${axe.id}`}
-          className="border-0 focus-within:border"
-          initialValue={axe.description}
-          onChange={(value) => {
-            if (value !== axe.description) {
-              return updateAxe.mutateAsync({ description: value });
-            }
-          }}
-          debounceDelayOnChange={1000}
-        />
-      )}
+      <RichTextEditor
+        disabled={isReadOnly}
+        id={`axe-desc-${axe.id}`}
+        className={cn('border-0 min-h-6', {
+          'focus-within:border': !isReadOnly,
+        })}
+        initialValue={axe.description}
+        onChange={(value) => {
+          if (value !== axe.description) {
+            return updateAxe.mutateAsync({ description: value });
+          }
+        }}
+        debounceDelayOnChange={1000}
+      />
     </section>
   );
 };
