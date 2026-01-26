@@ -124,7 +124,7 @@ const PlanMetadata = () => {
         />
       </PlanMetadataLine>
       {/** Compteurs axes/actions */}
-      <PlanMetadataLine>
+      <PlanMetadataLine className="text-grey-8">
         <PlanMetadataItem
           dataTest="plan-header-axes"
           icon="git-commit-line"
@@ -149,8 +149,19 @@ const PlanMetadata = () => {
   );
 };
 
-const PlanMetadataLine = ({ children }: { children: ReactNode[] }) => (
-  <div className="flex flex-wrap gap-x-4 gap-y-0 items-center text-sm leading-5 text-primary-9">
+const PlanMetadataLine = ({
+  children,
+  className,
+}: {
+  children: ReactNode[];
+  className?: string;
+}) => (
+  <div
+    className={cn(
+      'flex flex-wrap gap-x-4 gap-y-0 items-center text-sm leading-5 text-primary-9',
+      className
+    )}
+  >
     {children}
   </div>
 );
