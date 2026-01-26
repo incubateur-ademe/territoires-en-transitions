@@ -27,8 +27,9 @@ export const PlanHeader = () => {
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between gap-2">
         <EditableTitle
-          className="text-2xl leading-10 my-0"
-          containerClassName="mb-0 items-center [&_button]:mt-0 [&_input]:py-0"
+          className="text-2xl w-5/6"
+          inputClassName="text-2xl"
+          dataTest="plan-editable-title"
           isReadonly={isReadOnly}
           title={rootAxe.nom}
           onUpdate={(value) => {
