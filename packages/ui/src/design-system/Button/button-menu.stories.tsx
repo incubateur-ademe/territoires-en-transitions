@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/nextjs';
 
 import { Icon } from '../Icon';
-import { ButtonMenu } from './button-menu';
+import { ButtonMenu, MenuSeparator } from './button-menu';
 
 const actions = [
   {
@@ -84,6 +84,15 @@ export const OnlyCustomContent: Story = {
           Contenu personnalisé seul
         </div>
       ),
+    },
+  },
+};
+
+export const WithSeparator: Story = {
+  args: {
+    menu: {
+      className: 'max-w-none p-0',
+      actions: [actions[0], MenuSeparator, actions[1]],
     },
   },
 };
