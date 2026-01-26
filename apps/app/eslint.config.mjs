@@ -36,6 +36,12 @@ const config = [
         'error',
         {
           allow: ['../../packages/ui/src/tailwind-preset', '@/app'],
+          depConstraints: [
+            {
+              sourceTag: 'frontend',
+              bannedExternalImports: ['luxon'],
+            },
+          ],
         },
       ],
     },
