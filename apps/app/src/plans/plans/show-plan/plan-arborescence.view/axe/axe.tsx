@@ -60,13 +60,16 @@ const AxeContent = () => {
     >
       <AxeHeader />
       {isOpen && (
-        <div className="flex flex-col p-4 gap-4" data-test="axe-detail">
+        <div
+          className="flex flex-col pt-0 pb-4 px-4 gap-4"
+          data-test="axe-detail"
+        >
           <AxeDescription />
           <AxeIndicateurs />
           <AxeFiches />
           <AxeSousAxes />
           {!hasFiches && !hasSousAxes && (
-            <span className="px-6 py-0 text-sm italic text-grey-6">
+            <span className="px-6 pt-3 pb-0 text-sm italic text-grey-6">
               Cet axe ne contient aucune action ni sous-axe
             </span>
           )}

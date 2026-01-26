@@ -26,7 +26,7 @@ export const AxeDescription = () => {
       ) : (
         <RichTextEditor
           id={`axe-desc-${axe.id}`}
-          className="border-0 focus-within:border"
+          className="border-0 focus-within:border min-h-6"
           initialValue={axe.description}
           onChange={(value) => {
             if (value !== axe.description) {

@@ -24,8 +24,8 @@ export const PlanHeader = () => {
   const { id, collectiviteId } = plan;
 
   return (
-    <div className="flex flex-col">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center justify-between gap-2">
         <EditableTitle
           className="text-2xl leading-10 my-0"
           containerClassName="mb-0 items-center [&_button]:mt-0 [&_input]:py-0"
