@@ -8,7 +8,6 @@ import { useAxeContext } from './axe.context';
 export const AxeHeader = () => {
   const {
     createFicheResume,
-    intersectionRef,
     isMainAxe,
     isReadOnly,
     isOpen,
@@ -29,7 +28,6 @@ export const AxeHeader = () => {
   return (
     <div
       role="heading"
-      ref={intersectionRef}
       aria-level={axe.depth}
       className={cn(
         'relative py-2 pr-4 pl-2 overflow-hidden rounded-md hover:bg-grey-2 group/heading',
