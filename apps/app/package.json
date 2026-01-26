@@ -2,6 +2,7 @@
   "name": "@/app",
   "nx": {
     "name": "app",
+    "tags": ["frontend"],
     "targets": {
       "dev": {
         "executor": "@nx/next:server",
