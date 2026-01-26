@@ -39,7 +39,7 @@ export const FichesListCellActions = ({ fiche }: Props) => {
               },
             },
             {
-              icon: 'delete-bin-2-line',
+              icon: 'delete-bin-6-line',
               label: 'Supprimer l’action',
               onClick: () => {
                 setIsDeleteOpen(true);
