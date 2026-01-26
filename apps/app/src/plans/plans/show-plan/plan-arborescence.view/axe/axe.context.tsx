@@ -1,7 +1,6 @@
 import { useCreateFicheResume } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { PlanNode } from '@tet/domain/plans';
 import { CollectiviteAccess } from '@tet/domain/users';
@@ -36,9 +35,6 @@ export type AxeContextValue = {
   // état d'ouverture de l'axe
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-
-  // détection de la visibilité de l'axe à l'écran
-  intersectionRef: ReturnType<typeof useIntersectionObserver>['ref'];
 
   // indique qu'un effet doit être appliqué pour scroller jusqu'à l'axe
   shouldScroll: boolean;
@@ -105,13 +101,12 @@ export const AxeProvider = (props: AxeProviderProps) => {
   const planOptions = usePlanOptions();
 
   const { isOpen, setIsOpen, shouldScroll } = useToggleAxe(axe.id, axes);
-  const { ref: intersectionRef, entry } = useIntersectionObserver();
 
   const { selectedIndicateurs, toggleIndicateur } = useAxeIndicateurs({
     axe,
     collectiviteId,
     planId: rootAxe.id,
-    enabled: (isOpen && entry?.isIntersecting) || false,
+    enabled: isOpen,
   });
 
   const [isOpenPanelIndicateurs, setIsOpenPanelIndicateurs] = useState(false);
@@ -123,7 +118,7 @@ export const AxeProvider = (props: AxeProviderProps) => {
   // écoute l'événement de création d'axe pour activer l'édition du titre
   useEffect(() => {
     const handleAxeCreated = (event: CustomEvent<{ axeId: number }>) => {
-      if (event.detail.axeId === axe.id && !collectivite.isReadOnly) {
+      if (event.detail.axeId === axe.id && !isReadOnly) {
         // ouvre l'axe s'il n'est pas déjà ouvert
         if (!isOpen) {
           setIsOpen(true);
@@ -139,14 +134,14 @@ export const AxeProvider = (props: AxeProviderProps) => {
         handleAxeCreated as EventListener
       );
     };
-  }, [axe.id, isOpen, setIsOpen, setIsOpenEditTitle, collectivite.isReadOnly]);
+  }, [axe.id, isOpen, setIsOpen, setIsOpenEditTitle, isReadOnly]);
 
   // écoute l'événement de création de la description pour activer l'édition
   useEffect(() => {
     const handleDescriptionCreated = (
       event: CustomEvent<{ axeId: number }>
     ) => {
-      if (event.detail.axeId === axe.id && !collectivite.isReadOnly) {
+      if (event.detail.axeId === axe.id && !isReadOnly) {
         // ouvre l'axe s'il n'est pas déjà ouvert
         if (!isOpen) {
           setIsOpen(true);
@@ -166,7 +161,7 @@ export const AxeProvider = (props: AxeProviderProps) => {
         handleDescriptionCreated as EventListener
       );
     };
-  }, [axe.id, isOpen, setIsOpen, collectivite.isReadOnly]);
+  }, [axe.id, isOpen, setIsOpen, isReadOnly]);
 
   return (
     <AxeContext.Provider
@@ -181,7 +176,6 @@ export const AxeProvider = (props: AxeProviderProps) => {
         isOpen,
         setIsOpen,
         shouldScroll,
-        intersectionRef,
         selectedIndicateurs,
         toggleIndicateur,
         isOpenPanelIndicateurs,
