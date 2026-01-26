@@ -62,7 +62,6 @@ const PlanMetadata = () => {
           renderOnEdit={({ openState }) => {
             return (
               <Select
-                containerWidthMatchButton={false}
                 dataTest="plan-type-edit"
                 options={planTypesOptions ?? []}
                 values={plan.type?.id ?? undefined}
@@ -244,7 +243,6 @@ const PlanMetadataItemPersonne = ({
               .filter(Boolean)}
             onChange={({ personnes }) => onChange(personnes)}
             openState={openState}
-            containerWidthMatchButton={false}
           />
         );
       }}
