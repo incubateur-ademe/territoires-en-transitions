@@ -88,10 +88,10 @@ async function mergeWithDefaultModules(
       personalDefaultModuleKeysSchema.enum['actions-dont-je-suis-pilote']
     ) as ModuleSelect,
     fetchedModulesMap.get(
-      personalDefaultModuleKeysSchema.enum['sous-actions-dont-je-suis-pilote']
+      personalDefaultModuleKeysSchema.enum['mesures-dont-je-suis-pilote']
     ) as ModuleSelect,
     fetchedModulesMap.get(
-      personalDefaultModuleKeysSchema.enum['mesures-dont-je-suis-pilote']
+      personalDefaultModuleKeysSchema.enum['sous-actions-dont-je-suis-pilote']
     ) as ModuleSelect,
   ];
 }

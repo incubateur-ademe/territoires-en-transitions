@@ -16,7 +16,7 @@ const params = {
   planIds: [1, 12],
 };
 
-const numberOfModulesByDefault = 4;
+const numberOfModulesByDefault = 5;
 
 beforeEach(async () => {
   await resetModules(params);
@@ -105,6 +105,11 @@ test('Renvoie un module enregistré et les 2 autres par défaut', async () => {
       titre: expect.stringMatching(/mesures/i),
       type: 'mesure.list',
       defaultKey: expect.not.stringMatching(moduleDefaultKey),
+    },
+    {
+      titre: expect.stringMatching(/sous actions/i),
+      type: 'fiche_action.list',
+      options: expect.any(Object),
     },
   ]);
 });
