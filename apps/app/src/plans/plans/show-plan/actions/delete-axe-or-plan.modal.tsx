@@ -45,8 +45,10 @@ export const DeletePlanOrAxeModal = ({
           ? () => (
               <Alert
                 state="warning"
-              title="Attention : les actions liées à cet axe seront également supprimées !"
-              description="Les actions liées à un autre plan ou mutualisées ne seront pas impactées."
+                title={`Attention : les actions liées à ${
+                  isPlan ? 'ce plan' : 'cet axe'
+                } seront également supprimées !`}
+                description="Les actions liées à un autre plan ou mutualisées ne seront pas impactées."
               />
             )
           : undefined
