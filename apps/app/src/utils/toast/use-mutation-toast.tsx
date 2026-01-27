@@ -37,7 +37,10 @@ export const useMutationToast = (
         return;
       }
 
-      if ((status === 'success' || status === 'error') && !meta?.disableToast) {
+      if (
+        ((status === 'success' && meta?.success) || status === 'error') &&
+        !meta?.disableToast
+      ) {
         const message = (meta?.[status] as string) || DEFAULT_MESSAGE[status];
         const hideDuration = (meta?.autoHideDuration as number) || undefined;
         setToast(status, message, hideDuration);
