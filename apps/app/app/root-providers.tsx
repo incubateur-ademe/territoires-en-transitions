@@ -1,3 +1,4 @@
+import { ToastProvider } from '@/app/utils/toast/toast-context';
 import { SupabaseProvider, TrpcWithReactQueryProvider } from '@tet/api';
 import { UserProvider } from '@tet/api/users';
 import { getCookieOptions } from '@tet/api/utils/supabase/cookie-options';
@@ -25,11 +26,13 @@ export default async function RootProviders({
         >
           <TrpcWithReactQueryProvider>
             <NuqsAdapter>
-              {/* L'utilisation de overflow-hidden ou overflow-auto sur le container
+              <ToastProvider>
+                {/* L'utilisation de overflow-hidden ou overflow-auto sur le container
 empêche l'utilisation de la propriété sticky dans l'app, ne pas l'utiliser sur cette div */}
-              <div id="main" className="min-h-screen flex flex-col bg-grey-2">
-                {children}
-              </div>
+                <div id="main" className="min-h-screen flex flex-col bg-grey-2">
+                  {children}
+                </div>
+              </ToastProvider>
             </NuqsAdapter>
           </TrpcWithReactQueryProvider>
         </PostHogProvider>

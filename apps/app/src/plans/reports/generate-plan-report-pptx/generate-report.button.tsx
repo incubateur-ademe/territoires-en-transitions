@@ -1,7 +1,7 @@
 'use client';
 
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
-import { useBaseToast } from '@/app/utils/toast/use-base-toast';
+import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useApiClient } from '@/app/utils/use-api-client';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
@@ -24,7 +24,7 @@ export const GenerateReportButton = ({
 }: GenerateReportPlanModalProps) => {
   const trpc = useTRPC();
   const apiClient = useApiClient();
-  const { setToast, renderToast } = useBaseToast();
+  const { setToast } = useToastContext();
   const collectiviteId = useCollectiviteId();
   const [pendingReportId, setPendingReportId] =
     useQueryState('downloadReportId');
@@ -120,9 +120,7 @@ export const GenerateReportButton = ({
 
   return (
     <>
-      <GenerateReportPlanModal
-        plan={plan}
-      >
+      <GenerateReportPlanModal plan={plan}>
         <Button
           variant="white"
           size="sm"
@@ -133,7 +131,6 @@ export const GenerateReportButton = ({
           Générer un rapport
         </Button>
       </GenerateReportPlanModal>
-      {renderToast()}
     </>
   );
 };
