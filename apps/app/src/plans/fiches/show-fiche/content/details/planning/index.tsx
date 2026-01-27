@@ -1,6 +1,6 @@
 import MiseEnOeuvreDropdown from '@/app/ui/dropdownLists/ficheAction/MiseEnOeuvreDropdown/MiseEnOeuvreDropdown';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
-import { useBaseToast } from '@/app/utils/toast/use-base-toast';
+import { useToastContext } from '@/app/utils/toast/toast-context';
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
 import { isFicheOnTime } from '@tet/domain/plans';
 import {
@@ -36,7 +36,7 @@ const DisplayDateValue = ({
 export const Planning = () => {
   const { fiche, isReadonly, update } = useFicheContext();
 
-  const { renderToast, setToast } = useBaseToast();
+  const { setToast } = useToastContext();
 
   const { control, watch, formState, handleSubmit, subscribe, setValue } =
     useForm<PlanningFormValues>({
@@ -100,7 +100,6 @@ export const Planning = () => {
 
   return (
     <>
-      {renderToast()}
       <div className="text-sm leading-6 font-regular gap-4 mb-1 flex items-center">
         <div className="w-12 h-12 bg-primary-1 rounded-full self-start flex items-center justify-center flex-none text-primary-8">
           <Icon icon="calendar-line" />

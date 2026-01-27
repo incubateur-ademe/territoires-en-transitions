@@ -1,4 +1,4 @@
-import { useBaseToast } from '@/app/utils/toast/use-base-toast';
+import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import {
@@ -38,7 +38,7 @@ const InvitationModal = ({
     (data) => setData(data)
   );
 
-  const { setToast, renderToast } = useBaseToast();
+  const { setToast } = useToastContext();
 
   // affichage des notifications après l'ajout ou l'envoi de l'invitation
   useEffect(() => {
@@ -90,7 +90,6 @@ const InvitationModal = ({
           )}
         />
       )}
-      {renderToast()}
     </>
   );
 };

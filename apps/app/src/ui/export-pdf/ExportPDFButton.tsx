@@ -1,4 +1,4 @@
-import { useBaseToast } from '@/app/utils/toast/use-base-toast';
+import { useToastContext } from '@/app/utils/toast/toast-context';
 import { usePDF } from '@react-pdf/renderer';
 import * as Sentry from '@sentry/nextjs';
 import { Button, ButtonProps } from '@tet/ui';
@@ -47,7 +47,7 @@ const ExportPDFButton = ({
   const [isDownloadRequested, setIsDownloadRequested] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { setToast, renderToast } = useBaseToast();
+  const { setToast } = useToastContext();
 
   const handleDownloadRequest = () => {
     setIsDownloadRequested(true);
@@ -108,7 +108,6 @@ const ExportPDFButton = ({
       >
         {children}
       </Button>
-      {renderToast()}
     </>
   );
 };

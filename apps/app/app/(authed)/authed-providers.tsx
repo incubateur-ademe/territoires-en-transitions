@@ -3,7 +3,6 @@
 import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
 import { SupportModeProvider } from '@/app/users/authorizations/support-mode/support-mode.provider';
 import { NPSTracker } from '@/app/utils/nps/nps-tracker';
-import { Toasters } from '@/app/utils/toast/toasters';
 import { CollectiviteProvider } from '@tet/api/collectivites';
 import { UserProviderStoreClient } from '@tet/api/users';
 import { UserWithCollectiviteAccesses } from '@tet/domain/users';
@@ -25,7 +24,6 @@ export function AuthedProviders({
     <UserProviderStoreClient user={user}>
       <CollectiviteProvider user={user}>
         <SupportModeProvider>
-          <Toasters />
           <NPSTracker />
           <AccepterCGUModal />
           {children}
