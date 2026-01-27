@@ -10,6 +10,7 @@ import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { Button, Event, useEventTracker } from '@tet/ui';
 import Image from 'next/image';
+import Link from 'next/link';
 import { JSX } from 'react';
 import { TableOptions } from 'react-table';
 import { ProgressionRow } from '../../DEPRECATED_scores.types';
@@ -134,17 +135,17 @@ export const ScoreVide = ({
       <ul className="flex flex-wrap gap-4 mb-0">
         {tags.map((tag, index) => (
           <li key={index} className="pb-0">
-            <a
+            <Link
               href={makeReferentielUrl({
                 collectiviteId,
                 referentielId: referentiel,
                 referentielTab: 'progression',
                 axeId: tag.axeId,
               })}
-              className="text-[#ff5655] hover:!bg-[#ffcdc1] bg-[#fddfd8] rounded-full px-3 py-1 text-sm !bg-none"
+              className="text-[#ff5655] hover:bg-[#ffcdc1] bg-[#fddfd8] rounded-full px-3 py-1 text-sm"
             >
               {tag.label}
-            </a>
+            </Link>
           </li>
         ))}
       </ul>
