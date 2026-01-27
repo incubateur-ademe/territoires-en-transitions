@@ -145,12 +145,7 @@ export const FichesList = ({
     countTotalCollectiviteFiches === 0 && !isLoading && !searchIsActive;
 
   if (noFichesAtAll) {
-    return (
-      <FichesListEmpty
-        isReadOnly={isReadOnly ?? false}
-        collectiviteId={collectivite.collectiviteId}
-      />
-    );
+    return <FichesListEmpty isReadOnly={isReadOnly ?? false} />;
   }
 
   return (
