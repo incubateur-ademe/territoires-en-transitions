@@ -163,7 +163,7 @@ const MenuAction = ({ icon, label, onClick, isVisible = true }: MenuAction) => {
 
   return (
     <button
-      className="flex items-baseline gap-3 py-2 px-3 text-primary-9 text-sm text-left rounded hover:!bg-primary-1"
+      className="flex items-baseline gap-3 py-2 px-3 text-primary-9 text-sm text-left rounded hover:bg-primary-1"
       onClick={onClick}
     >
       {icon && <Icon icon={icon} size="sm" className="-mt-0.5" />}

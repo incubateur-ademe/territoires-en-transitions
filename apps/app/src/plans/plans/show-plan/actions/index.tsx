@@ -6,7 +6,7 @@ import RestreindreFichesModal from './update-fiche-visibility.modal';
 import { makeCollectivitePlansActionsListUrl } from '@/app/app/paths';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Plan } from '@tet/domain/plans';
-import { Button, DEPRECATED_ButtonMenu, Icon, Tooltip } from '@tet/ui';
+import { Button, ButtonMenu, Icon, Tooltip } from '@tet/ui';
 import { useState } from 'react';
 import { GenerateReportButton } from '../../../reports/generate-plan-report-pptx/generate-report.button';
 import { useExportPlanAction } from '../data/use-export-plan';
@@ -29,13 +29,14 @@ export const Actions = ({ axeHasFiches, plan }: Props) => {
 
   return (
     <div className="flex items-center gap-3 ml-auto">
-      <button
+      <Button
         data-test="ModifierPlanBouton"
-        className="py-1.5 px-4 text-sm text-primary font-bold bg-white rounded-lg"
+        variant="white"
+        size="xs"
         onClick={() => setIsModifierPlanModalOpen(true)}
       >
         Modifier
-      </button>
+      </Button>
       <GenerateReportButton plan={plan} />
       {isModifierPlanModalOpen && (
         <UpdatePlanModal
@@ -54,31 +55,21 @@ export const Actions = ({ axeHasFiches, plan }: Props) => {
             <SpinnerLoader />
           </div>
         ) : (
-          <DEPRECATED_ButtonMenu
+          <ButtonMenu
             dataTest="export-pa"
             disabled={isPending}
             title="Exporter"
             icon="download-line"
             variant="white"
             size="xs"
-          >
-            <div className="flex flex-col">
-              {EXPORT_OPTIONS.map((option, index) => (
-                <>
-                  <button
-                    key={option.value}
-                    className="py-2 px-3 text-sm text-primary-9 hover:!bg-primary-1"
-                    onClick={() => exportPlanAction(option.value as any)}
-                  >
-                    {option.label}
-                  </button>
-                  {index < EXPORT_OPTIONS.length - 1 && (
-                    <div className="h-[1px] bg-grey-4" />
-                  )}
-                </>
-              ))}
-            </div>
-          </DEPRECATED_ButtonMenu>
+            menu={{
+              actions: EXPORT_OPTIONS.map((option) => ({
+                label: option.label,
+                onClick: () => exportPlanAction(option.value as any),
+              })),
+              placement: 'bottom',
+            }}
+          />
         )
       ) : null}
       <DeletePlanOrAxeModal

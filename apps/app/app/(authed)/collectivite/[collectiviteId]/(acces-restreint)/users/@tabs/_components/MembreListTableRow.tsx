@@ -50,6 +50,7 @@ export const FonctionDropdown = ({
 }) => (
   <div data-test="fonction-dropdown">
     <SelectDropdown
+      buttonClassName="rounded-md hover:bg-grey-2"
       value={value}
       options={membreFonctions}
       onSelect={onChange}
@@ -75,6 +76,7 @@ export const ChampsInterventionDropdown = ({
       options={referentiels}
       onSelect={onChange}
       values={values}
+      buttonClassName="rounded-md hover:bg-grey-2"
       placeholderText="À renseigner"
       renderSelection={(values) => (
         <span className="mr-auto flex flex-col gap-2">

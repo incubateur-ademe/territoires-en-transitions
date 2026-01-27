@@ -240,7 +240,7 @@ export const SelectBase = (props: SelectProps) => {
               <button
                 type="button"
                 data-test={dataTest && `${dataTest}-creer-tag`}
-                className="flex gap-1 items-center w-full p-2 pr-6 text-left text-sm hover:!bg-primary-0 overflow-hidden"
+                className="flex gap-1 items-center w-full p-2 pr-6 text-left text-sm hover:bg-primary-0 overflow-hidden"
                 onClick={() => {
                   createProps.onCreate?.(inputValue);
                   handleInputChange('');
@@ -428,7 +428,7 @@ const SelectButton = forwardRef(
         aria-expanded={isOpen}
         aria-label="ouvrir le menu"
         className={cn(
-          'rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden',
+          'rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden',
           {
             'rounded-b-none': isOpen,
             'w-full': !isBadgeSelect,

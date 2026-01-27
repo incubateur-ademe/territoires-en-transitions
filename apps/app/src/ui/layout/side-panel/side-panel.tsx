@@ -20,7 +20,7 @@ export const SidePanel = () => {
           <div className="flex items-center border-b border-primary-3">
             {/* Fermer  */}
             <button
-              className="p-2 w-10 h-10"
+              className="p-2 w-10 h-10 hover:bg-grey-2"
               onClick={() => setPanel({ type: 'close' })}
               title="Fermer"
             >

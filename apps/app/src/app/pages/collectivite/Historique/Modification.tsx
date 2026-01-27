@@ -112,7 +112,7 @@ const Modification = ({
                 />
               </button>
               {isDetailsOpen && (
-                <div className="max-w-full p-2 mb-4 bg-gray-100">{detail}</div>
+                <div className="max-w-full p-2 mb-4">{detail}</div>
               )}
             </div>
           )}

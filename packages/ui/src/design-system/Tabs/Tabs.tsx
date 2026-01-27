@@ -103,7 +103,7 @@ export const Tabs = ({
                   // styles communs
                   'flex items-center px-3 py-1 font-bold w-max',
                   // variante au survol
-                  'hover:rounded-md hover:shadow-button hover:!bg-primary-2 hover:text-primary-9',
+                  'hover:rounded-md hover:shadow-button hover:bg-primary-2 hover:text-primary-9',
                   {
                     // variante de taille
                     'text-md': size === 'md',
