@@ -61,13 +61,13 @@ export function EvolutionsSnapshotsDropdown<T extends SnapshotOption>({
           {option.label}
         </span>
         {isEditable && (
-          <>
+          <div className="flex items-center gap-2">
             <UpdateSnapshotNameButton
               snapshotRef={option.value}
               snapshotName={option.label}
             />
             <DeleteSnapshotButton snapshotRef={option.value} />
-          </>
+          </div>
         )}
       </div>
     );

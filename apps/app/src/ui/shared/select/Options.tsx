@@ -95,7 +95,7 @@ const Option = <T extends string>({
   return (
     <button
       data-test={option.value}
-      className="flex items-center w-full p-2 text-left text-sm"
+      className="flex items-center w-full p-2 text-left text-sm hover:bg-grey-2"
       onClick={() => {
         if (values?.includes(option.value as T)) {
           // retrait d'une valeur

@@ -1,4 +1,4 @@
-import { Icon } from '@tet/ui';
+import { Button } from '@tet/ui';
 import { useState } from 'react';
 import { DeleteSnapshotModal } from './delete-snapshot.modal';
 
@@ -12,14 +12,16 @@ export const DeleteSnapshotButton = ({
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
-      <button
-        className="text-sm text-grey-8"
-        onClick={() => {
+      <Button
+        variant="white"
+        size="xs"
+        icon="delete-bin-line"
+        className="p-0.5"
+        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+          e.stopPropagation();
           setIsOpen(true);
         }}
-      >
-        <Icon icon="delete-bin-line" size="sm" className="mr-2" />
-      </button>
+      />
       {isOpen && (
         <DeleteSnapshotModal
           snapshotRef={snapshotRef}
