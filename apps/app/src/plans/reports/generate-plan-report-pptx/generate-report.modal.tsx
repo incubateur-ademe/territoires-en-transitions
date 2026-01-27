@@ -24,7 +24,11 @@ export const GenerateReportPlanModal = ({
 
   return (
     <Modal
-      title={reportId ? "Génération de votre rapport en cours" : "Télécharger le rapport de mon plan au format PowerPoint"}
+      title={
+        reportId
+          ? 'Génération de votre rapport en cours'
+          : 'Générer le rapport de mon plan au format PowerPoint'
+      }
       size="md"
       onClose={() => {
         setReportId(null);
@@ -75,7 +79,7 @@ export const GenerateReportPlanModal = ({
                   loading: isSubmittingGeneration,
                   children: isSubmittingGeneration
                     ? 'Génération en cours'
-                    : 'Télécharger',
+                    : 'Générer',
                   form: FORM_ID,
                 }
           }

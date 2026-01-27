@@ -179,7 +179,7 @@ export class NotifyReportService {
       subject:
         notificationType ===
         NotifiedOnEnum['PLANS.REPORTS.GENERATE_PLAN_REPORT_COMPLETED']
-          ? `Votre rapport de plan a été généré avec succès`
+          ? `Votre rapport de plan est prêt à être téléchargé`
           : `Erreur lors de la génération du rapport de plan`,
       reportName: data.reportName,
     };
