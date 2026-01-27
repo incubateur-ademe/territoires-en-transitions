@@ -1,4 +1,4 @@
-import { Badge, BadgeProps, Tooltip } from '@tet/ui';
+import { Badge, BadgeProps, InlineLink, Tooltip } from '@tet/ui';
 
 type Props = {
   size?: BadgeProps['size'];
@@ -12,11 +12,14 @@ const BadgeOpenData = ({ size }: Props) => {
       closingDelay={500}
       label={
         <div>
-          nous mettons à votre disposition automatiquement des données issues de
-          sources vérifiées (CEREMA, RARE, SINOE…){' '}
-          <a href="https://aide.territoiresentransitions.fr/fr/article/les-indicateurs-disponibles-en-open-data-1poyoso/">
+          Nous mettons à votre disposition automatiquement des données issues de
+          sources vérifiées (CEREMA, RARE, SINOE…).
+          <InlineLink
+            href="https://aide.territoiresentransitions.fr/fr/article/les-indicateurs-disponibles-en-open-data-1poyoso/"
+            openInNewTab
+          >
             en savoir plus
-          </a>
+          </InlineLink>
         </div>
       }
     >

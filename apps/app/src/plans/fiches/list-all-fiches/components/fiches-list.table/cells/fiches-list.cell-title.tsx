@@ -70,7 +70,7 @@ const FicheTitre = ({
   return (
     <Link
       title={ficheTitle}
-      className="font-bold text-primary-9 line-clamp-2 bg-none active:!bg-transparent hover:underline"
+      className="font-bold text-primary-9 line-clamp-2 bg-none hover:underline"
       href={href}
     >
       {ficheTitle}

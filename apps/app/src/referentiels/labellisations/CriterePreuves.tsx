@@ -5,6 +5,7 @@ import { referentielToName } from '@/app/app/labels';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
 import { TPreuveLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { InlineLink } from '@tet/ui';
 import { AddDocsButton } from './AddDocsButton';
 import { CritereRempli } from './CritereRempli';
 
@@ -112,17 +113,13 @@ const MessageParDefaut = (props: TCriterePreuvesProps) => {
   return (
     <li className="mb-2">
       Signer un{' '}
-      <a href="/Acte_engagement.docx" target="_blank" rel="noopener">
+      <InlineLink href="/Acte_engagement.docx" openInNewTab>
         acte d’engagement
-      </a>{' '}
+      </InlineLink>{' '}
       dans le programme affirmant votre adhésion{' '}
-      <a
-        href={REGLEMENTS[referentiel]}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <InlineLink href={REGLEMENTS[referentiel]} openInNewTab>
         au règlement du label
-      </a>
+      </InlineLink>
     </li>
   );
 };

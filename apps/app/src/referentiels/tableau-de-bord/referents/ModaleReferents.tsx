@@ -1,9 +1,14 @@
 import { membreFonctionToLabel } from '@/app/app/labels';
 import { makeCollectiviteUsersUrl } from '@/app/app/paths';
 import { type MembreFonction } from '@tet/domain/collectivites';
-import { Field, Modal, ModalFooterOKCancel, OptionValue } from '@tet/ui';
+import {
+  Field,
+  InlineLink,
+  Modal,
+  ModalFooterOKCancel,
+  OptionValue,
+} from '@tet/ui';
 import { pick } from 'es-toolkit';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import ReferentsDropdown from './ReferentsDropdown';
 import {
@@ -73,9 +78,9 @@ export const ModaleReferents = (props: ModaleReferentsProps) => {
             message={
               <span>
                 Etes-vous inscrit-e sur l&apos;espace collaboratif{' '}
-                <a href={URL_INTRADEME} target="_blank">
+                <InlineLink href={URL_INTRADEME} openInNewTab>
                   IntrADEME
-                </a>{' '}
+                </InlineLink>{' '}
                 des collectivités ? Envoyer un mail à {EMAIL_ADEME} ou via le
                 chat.
               </span>
@@ -154,8 +159,8 @@ const DropdownOrMessage = ({
   ) : (
     <p>
       Personne n’est identifié comme “{membreFonctionToLabel[fonction]}“ dans la{' '}
-      <Link href={makeCollectiviteUsersUrl({ collectiviteId })}>
+      <InlineLink href={makeCollectiviteUsersUrl({ collectiviteId })}>
         gestion des membres
-      </Link>
+      </InlineLink>
     </p>
   );

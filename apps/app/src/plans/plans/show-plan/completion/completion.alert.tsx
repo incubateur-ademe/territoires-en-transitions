@@ -45,11 +45,13 @@ export const CompletionAlert = ({
               </p>
               <p className="text-white text-sm mb-4">{description}</p>
 
-              <a href={getButtonLink(collectiviteId, planId)}>
-                <button className="bg-white text-gray-800 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors shadow-sm text-sm">
-                  {buttonLabel}
-                </button>
-              </a>
+              <Button
+                href={getButtonLink(collectiviteId, planId)}
+                variant="white"
+                size="sm"
+              >
+                {buttonLabel}
+              </Button>
             </div>
           </div>
 
