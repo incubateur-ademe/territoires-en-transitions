@@ -1,4 +1,5 @@
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { cn } from '@tet/ui';
 import { JSX, useCallback, useMemo } from 'react';
 import { TableInstance } from 'react-table';
 import { useReferentielId } from '../referentiel-context';
@@ -42,7 +43,11 @@ export const ReferentielTable: Table = (props) => {
   return (
     <div
       {...getTableProps()}
-      className={`referentiel-table ${referentielId} ${className || ''}`}
+      className={cn(
+        'referentiel-table bg-grey-4 border-grey-4',
+        referentielId,
+        className
+      )}
       data-test={dataTest}
     >
       <div className="header">
