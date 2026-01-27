@@ -23,7 +23,6 @@ import { ExportService } from './export/export.service';
 import { FicheActionEtapeRouter } from './fiche-action-etape/fiche-action-etape.router';
 import { FicheActionEtapeService } from './fiche-action-etape/fiche-action-etape.service';
 import FicheActionPermissionsService from './fiche-action-permissions.service';
-import { ImportPlanModule } from './import/import-plan.module';
 import { NotifyPiloteService } from './notify-pilote/notify-pilote.service';
 import { UpdateFicheRouter } from './update-fiche/update-fiche.router';
 import UpdateFicheService from './update-fiche/update-fiche.service';
@@ -32,7 +31,6 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
   imports: [
     PlansUtilsModule,
     forwardRef(() => CollectivitesModule),
-    ImportPlanModule,
     NotificationsModule,
   ],
   providers: [

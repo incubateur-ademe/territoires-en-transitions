@@ -8,6 +8,7 @@ import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.tab
 import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   TagCreate,
   TagEnum,
@@ -17,7 +18,10 @@ import {
 import { and, AnyColumn, eq } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
 
-const tagTypeTable: Record<TagType, PgTable & { collectiviteId: AnyColumn }> = {
+const tagTypeTable: Record<
+  TagType,
+  PgTable & { collectiviteId: AnyColumn; nom: AnyColumn }
+> = {
   [TagEnum.Financeur]: financeurTagTable,
   [TagEnum.Personne]: personneTagTable,
   [TagEnum.Partenaire]: partenaireTagTable,
@@ -70,32 +74,40 @@ export class TagService {
     tag: TagCreate,
     tagType: TagType,
     tx?: Transaction
-  ): Promise<TagWithCollectiviteId> {
+  ): Promise<Result<TagWithCollectiviteId, string>> {
     const table = tagTypeTable[tagType];
 
-    const [result] = await (tx ?? this.databaseService.db)
-      .insert(table)
-      .values({ nom: tag.nom, collectiviteId: tag.collectiviteId })
-      .onConflictDoNothing()
-      .returning();
-
-    if (!result) {
-      // handle case where the tag already exists and the onConflictDoNothing is used
-      const [existingTag] = await (tx ?? this.databaseService.db)
-        .select()
-        .from(table)
-        .where(
-          and(
-            eq((table as any).nom, tag.nom),
-            eq((table as any).collectiviteId, tag.collectiviteId)
-          )
+    const [existingTag] = await (tx ?? this.databaseService.db)
+      .select()
+      .from(table)
+      .where(
+        and(
+          eq(table.nom, tag.nom),
+          eq(table.collectiviteId, tag.collectiviteId)
         )
-        .limit(1);
+      )
+      .limit(1);
 
-      return existingTag as TagWithCollectiviteId;
+    if (existingTag) {
+      return success(existingTag as TagWithCollectiviteId);
     }
-
-    return result as TagWithCollectiviteId;
+    try {
+      const [result] = await (tx ?? this.databaseService.db)
+        .insert(table)
+        .values({ nom: tag.nom, collectiviteId: tag.collectiviteId })
+        .onConflictDoNothing()
+        .returning();
+      if (!result) {
+        return failure('Issue on tag creation');
+      }
+      return success(result as TagWithCollectiviteId);
+    } catch (error) {
+      return failure(
+        error instanceof Error
+          ? error.message
+          : 'An unknown error occurred during tag creation'
+      );
+    }
   }
 
   /**

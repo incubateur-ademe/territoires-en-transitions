@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { CollectiviteMembresService } from '@tet/backend/collectivites/membres/membres.service';
 import { TagService } from '@tet/backend/collectivites/tags/tag.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   combineResults,
   failure,
   Result,
   success,
-} from '@tet/backend/shared/types/result';
-import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+} from '@tet/backend/utils/result.type';
 import { Tag, TagEnum } from '@tet/domain/collectivites';
-import { FicheImport } from '../schemas/fiche-import.schema';
+import { ImportFicheInput } from '../schemas/import-fiche.input';
 import { createPersonneResolver } from './personne.resolver';
-import { createTagResolver } from './tag-resolver.factory';
+import { createTagResolver } from './tag.resolver';
 
 export type PersonOrTag = { userId?: string; tagId?: number };
 
@@ -42,7 +42,7 @@ export interface ResolvedFicheEntities {
  * Injectable service that can be easily mocked for testing.
  */
 @Injectable()
-export class EntityResolverService {
+export class ResolveEntityService {
   constructor(
     private readonly memberService: CollectiviteMembresService,
     private readonly tagService: TagService
@@ -58,7 +58,7 @@ export class EntityResolverService {
    */
   async resolveFicheEntities(
     collectiviteId: number,
-    fiches: FicheImport[],
+    fiches: ImportFicheInput[],
     tx: Transaction
   ): Promise<Result<ResolvedFicheEntities[], string>> {
     const { getOrCreatePersonne } = await createPersonneResolver(
@@ -112,72 +112,67 @@ export class EntityResolverService {
   }
 
   private async resolveSingleFiche(
-    fiche: FicheImport,
+    fiche: ImportFicheInput,
     resolvers: {
       getOrCreatePersonne: (
         name: string,
         tx: Transaction
-      ) => Promise<Result<PersonOrTag>>;
+      ) => Promise<Result<PersonOrTag, string>>;
       getOrCreateStructure: (
         name: string,
         tx: Transaction
-      ) => Promise<Result<Tag>>;
+      ) => Promise<Result<Tag, string>>;
       getOrCreateService: (
         name: string,
         tx: Transaction
-      ) => Promise<Result<Tag>>;
+      ) => Promise<Result<Tag, string>>;
       getOrCreateFinanceur: (
         name: string,
         tx: Transaction
-      ) => Promise<Result<Tag>>;
+      ) => Promise<Result<Tag, string>>;
       getOrCreatePartenaire: (
         name: string,
         tx: Transaction
-      ) => Promise<Result<Tag>>;
+      ) => Promise<Result<Tag, string>>;
     },
     tx: Transaction
   ): Promise<Result<ResolvedFicheEntities, string>> {
-    const [
-      pilotesResult,
-      referentsResult,
-      structuresResult,
-      servicesResult,
-      financeursResult,
-      partenairesResult,
-    ] = await Promise.all([
-      this.resolvePersons(fiche.pilotes, resolvers.getOrCreatePersonne, tx),
-      this.resolvePersons(fiche.referents, resolvers.getOrCreatePersonne, tx),
-      this.resolveSimpleEntities(
-        fiche.structures,
-        resolvers.getOrCreateStructure,
-        tx
-      ),
-      this.resolveSimpleEntities(
-        fiche.services,
-        resolvers.getOrCreateService,
-        tx
-      ),
-      this.resolveFinanceurs(
-        fiche.financeurs,
-        resolvers.getOrCreateFinanceur,
-        tx
-      ),
-      this.resolveSimpleEntities(
-        fiche.partenaires,
-        resolvers.getOrCreatePartenaire,
-        tx
-      ),
-    ]);
-
-    if (!pilotesResult.success) {
-      return pilotesResult;
-    }
-    if (!referentsResult.success) return referentsResult;
-    if (!structuresResult.success) return structuresResult;
-    if (!servicesResult.success) return servicesResult;
-    if (!financeursResult.success) return financeursResult;
-    if (!partenairesResult.success) return partenairesResult;
-
+    const pilotesResult = await this.resolvePersons(
+      fiche.pilotes,
+      resolvers.getOrCreatePersonne,
+      tx
+    );
+    if (!pilotesResult.success) return failure(pilotesResult.error);
+    const referentsResult = await this.resolvePersons(
+      fiche.referents,
+      resolvers.getOrCreatePersonne,
+      tx
+    );
+    if (!referentsResult.success) return failure(referentsResult.error);
+    const structuresResult = await this.resolveSimpleEntities(
+      fiche.structures,
+      resolvers.getOrCreateStructure,
+      tx
+    );
+    if (!structuresResult.success) return failure(structuresResult.error);
+    const servicesResult = await this.resolveSimpleEntities(
+      fiche.services,
+      resolvers.getOrCreateService,
+      tx
+    );
+    if (!servicesResult.success) return failure(servicesResult.error);
+    const financeursResult = await this.resolveFinanceurs(
+      fiche.financeurs,
+      resolvers.getOrCreateFinanceur,
+      tx
+    );
+    if (!financeursResult.success) return failure(financeursResult.error);
+    const partenairesResult = await this.resolveSimpleEntities(
+      fiche.partenaires,
+      resolvers.getOrCreatePartenaire,
+      tx
+    );
+    if (!partenairesResult.success) return failure(partenairesResult.error);
     return success({
       titre: fiche.titre,
       axisPath: fiche.axisPath,
@@ -233,7 +228,7 @@ export class EntityResolverService {
       tx: Transaction
     ) => Promise<Result<Tag, string>>,
     tx: Transaction
-    ): Promise<Result<Tag[], string>> {
+  ): Promise<Result<Tag[], string>> {
     // Use Set to ensure uniqueness of input names
     const uniqueEntities = Array.from(new Set(entities));
 

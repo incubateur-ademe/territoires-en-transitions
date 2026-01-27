@@ -6,7 +6,7 @@
  * Elles ne dépendent d'aucun service externe, base de données ou framework.
  */
 
-import { failure, Result, success } from '@tet/backend/shared/types/result';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { uniq } from 'es-toolkit';
 import {
   CreatePlanAggregateError,
@@ -18,7 +18,7 @@ import {
   CreatePlanAggregateValidation,
   PlanCreationData,
   PlanCreationDataSchema,
-  UniqueAxe
+  UniqueAxe,
 } from './create-plan-aggregate.types';
 
 const JOIN_CHAR = '::';

@@ -195,10 +195,9 @@ export function isClientError(error: ImportErrors): boolean {
       return false;
 
     default: {
-      /** With the follwing line if an Error is not handled
+      /** With the following line if an Error is not handled
        *  TS will raise an error
        **/
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const _: never = error;
       return false;
     }

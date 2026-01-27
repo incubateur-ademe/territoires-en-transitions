@@ -1,8 +1,8 @@
 import { CollectiviteMembresService } from '@tet/backend/collectivites/membres/membres.service';
 import { TagService } from '@tet/backend/collectivites/tags/tag.service';
-import { Result, failure, success } from '@tet/backend/shared/types/result';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { getFuse } from '@tet/backend/utils/fuse/fuse.utils';
+import { Result, failure, success } from '@tet/backend/utils/result.type';
 import { Tag, TagEnum } from '@tet/domain/collectivites';
 
 type CreateTagFn = (
@@ -36,19 +36,14 @@ export const createPersonneResolver = async (
   });
 
   const createTag: CreateTagFn = async (name, collectiviteId, tx) => {
-    try {
-      const created = await tagService.saveTag(
-        {
-          nom: name,
-          collectiviteId,
-        },
-        TagEnum.Personne,
-        tx
-      );
-      return success(created);
-    } catch (error) {
-      return failure(error instanceof Error ? error.message : 'undefined');
-    }
+    return tagService.saveTag(
+      {
+        nom: name,
+        collectiviteId,
+      },
+      TagEnum.Personne,
+      tx
+    );
   };
 
   const getOrCreatePersonne = async (

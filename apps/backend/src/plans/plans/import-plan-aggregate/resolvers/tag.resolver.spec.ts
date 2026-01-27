@@ -1,8 +1,9 @@
 import { TagService } from '@tet/backend/collectivites/tags/tag.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { failure, success } from '@tet/backend/utils/result.type';
 import { Tag, TagEnum } from '@tet/domain/collectivites';
 import { describe, expect, it, vi } from 'vitest';
-import { createTagResolver } from './tag-resolver.factory';
+import { createTagResolver } from './tag.resolver';
 
 // Mock Fuse
 vi.mock('@tet/backend/utils/fuse/fuse.utils', () => ({
@@ -43,11 +44,13 @@ describe('createTagResolver', () => {
     return {
       getTags: vi.fn().mockResolvedValue(existingTags),
       saveTag: vi.fn().mockImplementation((tagData) => {
-        return Promise.resolve({
-          id: Math.floor(Math.random() * 1000),
-          nom: tagData.nom,
-          collectiviteId: tagData.collectiviteId,
-        } as Tag);
+        return Promise.resolve(
+          success({
+            id: Math.floor(Math.random() * 1000),
+            nom: tagData.nom,
+            collectiviteId: tagData.collectiviteId,
+          })
+        );
       }),
     } as unknown as TagService;
   };
@@ -87,10 +90,15 @@ describe('createTagResolver', () => {
     );
 
     const result = await getOrCreate('Nouvelle Entité', mockTransaction);
-
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data).toEqual(expect.objectContaining({ id: expect.any(Number), nom: 'Nouvelle Entité', collectiviteId }));
+      expect(result.data).toEqual(
+        expect.objectContaining({
+          id: expect.any(Number),
+          nom: 'Nouvelle Entité',
+          collectiviteId,
+        })
+      );
       expect(mockTagService.saveTag).toHaveBeenCalledWith(
         { nom: 'Nouvelle Entité', collectiviteId },
         TagEnum.Financeur,
@@ -173,7 +181,7 @@ describe('createTagResolver', () => {
   it('should return failure when tag creation fails', async () => {
     const mockTagService = {
       getTags: vi.fn().mockResolvedValue([]),
-      saveTag: vi.fn().mockRejectedValue(new Error('Database error')),
+      saveTag: vi.fn().mockResolvedValue(failure('Database error')),
     } as unknown as TagService;
 
     const { getOrCreate } = await createTagResolver(

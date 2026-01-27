@@ -1,9 +1,9 @@
-import { failure, success } from '@tet/backend/shared/types/result';
 import {
   AuthenticatedUser,
   AuthRole,
 } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { failure, success } from '@tet/backend/utils/result.type';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PlanErrorType } from '../plans.errors';
 import { CreatePlanAggregateService } from './create-plan-aggregate.service';
@@ -198,7 +198,7 @@ describe('CreatePlanAggregateService', () => {
     });
 
     it('should handle complex multi-level hierarchy', async () => {
-          const request: CreatePlanAggregateInput = {
+      const request: CreatePlanAggregateInput = {
         collectiviteId: 1,
         nom: 'Complex Plan',
         fiches: [
@@ -310,7 +310,9 @@ describe('CreatePlanAggregateService', () => {
     it('should catch and handle unexpected errors', async () => {
       const request = createValidRequest();
 
-      mockCreateFicheService.createFiche.mockRejectedValue(new Error('Unexpected error'));
+      mockCreateFicheService.createFiche.mockRejectedValue(
+        new Error('Unexpected error')
+      );
 
       const result = await service.create(request, mockUser, mockTransaction);
 

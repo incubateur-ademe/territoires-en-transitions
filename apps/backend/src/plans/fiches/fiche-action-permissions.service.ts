@@ -31,11 +31,11 @@ export default class FicheActionPermissionsService {
     private readonly permissionService: PermissionService,
     private readonly databaseService: DatabaseService,
     private readonly shareFicheService: ShareFicheService
-  ) { }
+  ) {}
 
   /** Renvoi une fiche à partir de son id */
   async getFicheFromId(ficheId: number, tx?: Transaction) {
-    const rows = await (tx || this.databaseService.db)
+    const rows = await (tx ?? this.databaseService.db)
       .select({
         ...getTableColumns(ficheActionTable),
       })
@@ -159,7 +159,7 @@ export default class FicheActionPermissionsService {
   async canReadFiche(
     ficheId: number,
     tokenInfo: AuthUser,
-    doNotThrow?: boolean,
+    doNotThrow?: boolean
   ): Promise<FicheAccessMode | null> {
     const fiche = await this.getFicheFromId(ficheId);
     if (!fiche) {
@@ -238,7 +238,7 @@ export default class FicheActionPermissionsService {
     }: {
       doNotThrow?: boolean;
       tx?: Transaction;
-    } = {},
+    } = {}
   ): Promise<FicheAccessMode | null> {
     const fiche = await this.getFicheFromId(ficheId, tx);
     if (!fiche) {

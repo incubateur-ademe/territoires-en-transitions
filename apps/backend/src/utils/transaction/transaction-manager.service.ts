@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { failure, Result, success } from '@tet/backend/shared/types/result';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 
 export type TransactionOperation<T, E = string> = (
   tx: Transaction

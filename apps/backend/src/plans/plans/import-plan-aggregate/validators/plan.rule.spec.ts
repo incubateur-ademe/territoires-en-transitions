@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { PlanImport } from '../import-plan.input';
-import { FicheImport } from '../schemas/fiche-import.schema';
-import { validateImportedPlan } from './plan.validator';
+import { ImportPlanInput } from '../import-plan.input';
+import { ImportFicheInput } from '../schemas/import-fiche.input';
+import { validateImportPlanInput } from './plan.rule';
 
 describe('validateImportedPlan', () => {
-  const createValidPlan = (overrides?: Partial<PlanImport>): PlanImport => ({
+  const createValidPlan = (
+    overrides?: Partial<ImportPlanInput>
+  ): ImportPlanInput => ({
     nom: 'Mon Plan',
     typeId: 1,
     pilotes: [],
@@ -13,7 +15,9 @@ describe('validateImportedPlan', () => {
     ...overrides,
   });
 
-  const createValidFiche = (overrides?: Partial<FicheImport>): FicheImport =>
+  const createValidFiche = (
+    overrides?: Partial<ImportFicheInput>
+  ): ImportFicheInput =>
     ({
       axisPath: ['Axe 1'],
       titre: 'Fiche valide',
@@ -25,13 +29,13 @@ describe('validateImportedPlan', () => {
       financeurs: [],
       partenaires: [],
       ...overrides,
-    } as FicheImport);
+    } as ImportFicheInput);
 
   describe('Plan type validation', () => {
     it('should pass for a valid plan type', async () => {
       const plan = createValidPlan({ typeId: 1 });
 
-      const result = await validateImportedPlan(plan);
+      const result = await validateImportPlanInput(plan);
 
       expect(result.success).toBe(true);
     });
@@ -39,7 +43,7 @@ describe('validateImportedPlan', () => {
     it('should pass when typeId is undefined', async () => {
       const plan = createValidPlan({ typeId: undefined });
 
-      const result = await validateImportedPlan(plan);
+      const result = await validateImportPlanInput(plan);
 
       expect(result.success).toBe(true);
     });
@@ -47,7 +51,7 @@ describe('validateImportedPlan', () => {
     it('should fail for a negative plan type', async () => {
       const plan = createValidPlan({ typeId: -1 });
 
-      const result = await validateImportedPlan(plan);
+      const result = await validateImportPlanInput(plan);
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -62,7 +66,7 @@ describe('validateImportedPlan', () => {
     it('should fail for a non-integer plan type', async () => {
       const plan = createValidPlan({ typeId: 1.5 });
 
-      const result = await validateImportedPlan(plan);
+      const result = await validateImportPlanInput(plan);
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -73,7 +77,7 @@ describe('validateImportedPlan', () => {
     it('should pass for typeId of 0', async () => {
       const plan = createValidPlan({ typeId: 0 });
 
-      const result = await validateImportedPlan(plan);
+      const result = await validateImportPlanInput(plan);
 
       expect(result.success).toBe(true);
     });
@@ -83,7 +87,7 @@ describe('validateImportedPlan', () => {
     it('should pass for a plan with no fiches', async () => {
       const plan = createValidPlan({ fiches: [] });
 
-      const result = await validateImportedPlan(plan);
+      const result = await validateImportPlanInput(plan);
 
       expect(result.success).toBe(true);
     });
@@ -92,7 +96,7 @@ describe('validateImportedPlan', () => {
       const fiche = createValidFiche({ titre: 'Fiche 1' });
       const plan = createValidPlan({ fiches: [fiche] });
 
-      const result = await validateImportedPlan(plan);
+      const result = await validateImportPlanInput(plan);
 
       expect(result.success).toBe(true);
     });
@@ -105,7 +109,7 @@ describe('validateImportedPlan', () => {
       ];
       const plan = createValidPlan({ fiches });
 
-      const result = await validateImportedPlan(plan);
+      const result = await validateImportPlanInput(plan);
 
       expect(result.success).toBe(true);
     });
@@ -118,7 +122,7 @@ describe('validateImportedPlan', () => {
       ];
       const plan = createValidPlan({ fiches });
 
-      const result = await validateImportedPlan(plan);
+      const result = await validateImportPlanInput(plan);
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -133,7 +137,7 @@ describe('validateImportedPlan', () => {
       });
       const plan = createValidPlan({ fiches: [fiche] });
 
-      const result = await validateImportedPlan(plan);
+      const result = await validateImportPlanInput(plan);
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -145,7 +149,7 @@ describe('validateImportedPlan', () => {
       const fiche = createValidFiche({ budget: -1000 });
       const plan = createValidPlan({ fiches: [fiche] });
 
-      const result = await validateImportedPlan(plan);
+      const result = await validateImportPlanInput(plan);
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -162,7 +166,7 @@ describe('validateImportedPlan', () => {
         fiches: [fiche],
       });
 
-      const result = await validateImportedPlan(plan);
+      const result = await validateImportPlanInput(plan);
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -197,7 +201,7 @@ describe('validateImportedPlan', () => {
         fiches,
       });
 
-      const result = await validateImportedPlan(plan);
+      const result = await validateImportPlanInput(plan);
 
       expect(result.success).toBe(true);
     });

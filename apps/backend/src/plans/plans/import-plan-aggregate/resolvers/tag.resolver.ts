@@ -1,7 +1,7 @@
 import { TagService } from '@tet/backend/collectivites/tags/tag.service';
-import { failure, Result, success } from '@tet/backend/shared/types/result';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { getFuse } from '@tet/backend/utils/fuse/fuse.utils';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { Tag, TagType } from '@tet/domain/collectivites';
 
 /**
@@ -55,10 +55,7 @@ export async function createTagResolver(
   tagType: TagType,
   searchKeys: FuseKey[] = ['nom']
 ): Promise<{
-  getOrCreate: (
-    name: string,
-    tx: Transaction
-  ) => Promise<Result<Tag>>;
+  getOrCreate: (name: string, tx: Transaction) => Promise<Result<Tag, string>>;
 }> {
   const tags = await tagService.getTags(collectiviteId, tagType);
 
@@ -72,26 +69,21 @@ export async function createTagResolver(
   const createTag = async (
     name: string,
     tx: Transaction
-  ): Promise<Result<Tag>> => {
-    try {
-      const created = await tagService.saveTag(
-        {
-          nom: name,
-          collectiviteId,
-        },
-        tagType,
-        tx
-      );
-      return success(created);
-    } catch (error) {
-      return failure(error instanceof Error ? error.message : 'undefined');
-    }
+  ): Promise<Result<Tag, string>> => {
+    return tagService.saveTag(
+      {
+        nom: name,
+        collectiviteId,
+      },
+      tagType,
+      tx
+    );
   };
 
   const getOrCreate = async (
     name: string,
     tx: Transaction
-  ): Promise<Result<Tag>> => {
+  ): Promise<Result<Tag, string>> => {
     const foundTag = searchEngine.search(name)?.[0]?.item;
     if (foundTag) {
       return success(foundTag);

@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { importPlanInputSchema } from '@tet/backend/plans/fiches/import/import-plan.input';
-import { ImportPlanService } from '@tet/backend/plans/fiches/import/import-plan.service';
-import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { TRPCError } from '@trpc/server';
+import { TrpcService } from '../../../utils/trpc/trpc.service';
+import { ImportPlanApplicationService } from './import-plan.application-service';
+import { importPlanInputSchema } from './import-plan.input';
 
 @Injectable()
 export class ImportPlanRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: ImportPlanService
+    private readonly service: ImportPlanApplicationService
   ) {}
 
   router = this.trpc.router({

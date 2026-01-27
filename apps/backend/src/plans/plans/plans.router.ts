@@ -3,6 +3,7 @@ import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { DeletePlanRouter } from './delete-plan/delete-plan.router';
 import { GetPlanCompletionRouter } from './get-plan-completion/get-plan-completion.router';
 import { GetPlanRouter } from './get-plan/get-plan.router';
+import { ImportPlanRouter } from './import-plan-aggregate/import-plan.router';
 import { ListPlansRouter } from './list-plans/list-plans.router';
 import { UpsertPlanRouter } from './upsert-plan/upsert-plan.router';
 
@@ -14,7 +15,8 @@ export class PlanRouter {
     private readonly upsertPlanRouter: UpsertPlanRouter,
     private readonly getPlanRouter: GetPlanRouter,
     private readonly listPlansRouter: ListPlansRouter,
-    private readonly deletePlanRouter: DeletePlanRouter
+    private readonly deletePlanRouter: DeletePlanRouter,
+    private readonly importPlanRouter: ImportPlanRouter
   ) {}
 
   router = this.trpc.mergeRouters(
@@ -22,6 +24,7 @@ export class PlanRouter {
     this.upsertPlanRouter.router,
     this.getPlanRouter.router,
     this.listPlansRouter.router,
-    this.deletePlanRouter.router
+    this.deletePlanRouter.router,
+    this.importPlanRouter.router
   );
 }

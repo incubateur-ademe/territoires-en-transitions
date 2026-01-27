@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { UpdateFicheRequest } from '../../fiches/update-fiche/update-fiche.request';
+import { UpdateFicheInput } from '../../fiches/update-fiche/update-fiche.input';
 
 export const PlanParticipantSchema = z
   .object({
@@ -63,5 +63,5 @@ export interface CreatePlanAggregateInput {
  */
 export interface FicheWithRelationsAndAxisPath {
   axisPath?: string[];
-  fiche: Omit<UpdateFicheRequest, 'collectiviteId'>;
+  fiche: Omit<UpdateFicheInput, 'collectiviteId'>;
 }

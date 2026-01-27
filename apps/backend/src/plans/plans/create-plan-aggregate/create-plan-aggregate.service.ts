@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CreateFicheService } from '@tet/backend/plans/fiches/create-fiche/create-fiche.service';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   combineResults,
   failure,
   Result,
   success,
-} from '@tet/backend/shared/types/result';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+} from '@tet/backend/utils/result.type';
 import { FicheCreate } from '@tet/domain/plans';
 import { UpsertAxeError } from '../../axes/upsert-axe/upsert-axe.errors';
 import { UpsertAxeService } from '../../axes/upsert-axe/upsert-axe.service';
@@ -19,7 +19,7 @@ import {
   extractUniqueAxes,
   findParentAxeId,
   validatePlanAggregate,
-} from './create-plan-aggregate.operations';
+} from './create-plan-aggregate.rule';
 import { CreatePlanAggregateInput } from './create-plan-aggregate.types';
 
 /**
@@ -48,7 +48,7 @@ export class CreatePlanAggregateService {
     private readonly createFicheService: CreateFicheService,
     private readonly upsertAxeService: UpsertAxeService,
     private readonly upsertPlanService: UpsertPlanService
-  ) { }
+  ) {}
 
   /**
    * Creates a hierarchical structure of axes from axis paths
@@ -174,16 +174,28 @@ export class CreatePlanAggregateService {
       // Step 3: Create all fiches
       const createdFichesResults = await Promise.all(
         request.fiches.map(async (ficheWithPath) => {
-          const axeId = ficheWithPath.axisPath ? axeResult.data.get(axisFormatter.serialize(ficheWithPath.axisPath)) : createPlanResult.data.id;
+          const axeId = ficheWithPath.axisPath
+            ? axeResult.data.get(
+                axisFormatter.serialize(ficheWithPath.axisPath)
+              )
+            : createPlanResult.data.id;
           const ficheToCreate: FicheCreate = {
             ...ficheWithPath.fiche,
             collectiviteId: request.collectiviteId,
-            tempsDeMiseEnOeuvre: ficheWithPath.fiche.tempsDeMiseEnOeuvre?.id ?? null,
+            tempsDeMiseEnOeuvre:
+              ficheWithPath.fiche.tempsDeMiseEnOeuvre?.id ?? null,
           };
-          const createdFiche = await this.createFicheService.createFiche(ficheToCreate, {
-            ficheFields: { ...ficheWithPath.fiche, axes: axeId ? [{ id: axeId }] : undefined },
-            user, tx
-          });
+          const createdFiche = await this.createFicheService.createFiche(
+            ficheToCreate,
+            {
+              ficheFields: {
+                ...ficheWithPath.fiche,
+                axes: axeId ? [{ id: axeId }] : undefined,
+              },
+              user,
+              tx,
+            }
+          );
 
           if (!createdFiche.success) {
             return createdFiche;
@@ -197,7 +209,6 @@ export class CreatePlanAggregateService {
       );
 
       const fichesCreationResults = combineResults(createdFichesResults);
-      console.log({ fichesCreationResults })
       if (fichesCreationResults.success === false) {
         return failure(PlanErrorType.DATABASE_ERROR);
       }
@@ -206,49 +217,46 @@ export class CreatePlanAggregateService {
         .filter((f) => f.success)
         .map((f) => f.data);
 
-      console.log({ createdFiches })
+      // Step 4: Link fiches to their respective axes
+      const axeIdsByPath = axeResult.data;
+      const planId = createPlanResult.data.id;
 
-      // // Step 4: Link fiches to their respective axes
-      // const axeIdsByPath = axeResult.data;
-      // const planId = createPlanResult.data.id;
+      const linkedFiches = await Promise.all(
+        createdFiches.map((fiche) => {
+          if (!fiche.id) {
+            return null;
+          }
 
-      // const linkedFiches = await Promise.all(
-      //   createdFiches.map((fiche) => {
-      //     if (!fiche.id) {
-      //       return null;
-      //     }
+          // Get axe ID from the path, or use plan ID if no axe exists
+          const axeId = fiche.axisPath
+            ? axeIdsByPath.get(axisFormatter.serialize(fiche.axisPath))
+            : undefined;
 
-      //     // Get axe ID from the path, or use plan ID if no axe exists
-      //     const axeId = fiche.axisPath
-      //       ? axeIdsByPath.get(axisFormatter.serialize(fiche.axisPath))
-      //       : undefined;
+          // fiches without axe are linked directly to the plan
+          const parentAxeId = axeId ?? planId;
 
-      //     // fiches without axe are linked directly to the plan
-      //     const parentAxeId = axeId ?? planId;
+          return this.upsertAxeService.upsertAxe(
+            {
+              planId,
+              parent: parentAxeId,
+              collectiviteId: request.collectiviteId,
+              nom: fiche.axisPath?.[fiche.axisPath.length - 1] ?? '',
+            },
+            user,
+            tx
+          );
+        })
+      );
 
-      //     return this.upsertAxeService.upsertAxe(
-      //       {
-      //         planId,
-      //         parent: parentAxeId,
-      //         collectiviteId: request.collectiviteId,
-      //         nom: fiche.axisPath?.[fiche.axisPath.length - 1] ?? '',
-      //       },
-      //       user,
-      //       tx
-      //     );
-      //   })
-      // );
+      // Check if any fiche linking failed
+      const linkErrors = linkedFiches.filter((f) => f && !f.success);
+      if (linkErrors.length > 0) {
+        return failure(PlanErrorType.DATABASE_ERROR);
+      }
 
-      // // Check if any fiche linking failed
-      // const linkErrors = linkedFiches.filter((f) => f && !f.success);
-      // if (linkErrors.length > 0) {
-      //   return failure(PlanErrorType.DATABASE_ERROR);
-      // }
-
-      // this.logger.log(
-      //   `Successfully created plan ${request.nom} (ID: ${createPlanResult.data.id})`
-      // );
-      console.log("????")
+      this.logger.log(
+        `Successfully created plan ${request.nom} (ID: ${createPlanResult.data.id})`
+      );
       return { success: true, data: createPlanResult.data.id };
     } catch (error) {
       this.logger.error(`Error creating plan:`, error);

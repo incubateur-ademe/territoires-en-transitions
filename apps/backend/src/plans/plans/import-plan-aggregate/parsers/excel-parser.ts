@@ -1,14 +1,14 @@
-import { FicheImport } from '@tet/backend/plans/fiches/import/schemas/fiche-import.schema';
 import {
   combineResults,
   failure,
   Result,
   success,
-} from '@tet/backend/shared/types/result';
+} from '@tet/backend/utils/result.type';
 import ExcelJS from 'exceljs';
+import { ImportFicheInput } from '../schemas/import-fiche.input';
 
 type ColumnKeys =
-  | keyof Omit<FicheImport, 'axisPath'>
+  | keyof Omit<ImportFicheInput, 'axisPath'>
   | 'Axe'
   | 'SousAxe'
   | 'SousSousAxe'

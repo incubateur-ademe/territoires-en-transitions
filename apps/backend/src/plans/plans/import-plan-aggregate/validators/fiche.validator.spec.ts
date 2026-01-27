@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { FicheImport } from '../schemas/fiche-import.schema';
+import { ImportFicheInput } from '../schemas/import-fiche.input';
 import { validateFiche } from './fiche.validator';
-
 describe('validateFiche', () => {
-  const createValidFiche = (overrides?: Partial<FicheImport>): FicheImport =>
+  const createValidFiche = (
+    overrides?: Partial<ImportFicheInput>
+  ): ImportFicheInput =>
     ({
       axisPath: ['Axe 1'],
       titre: 'Fiche valide',
@@ -15,7 +16,7 @@ describe('validateFiche', () => {
       financeurs: [],
       partenaires: [],
       ...overrides,
-    } as FicheImport);
+    } as ImportFicheInput);
 
   describe('Title validation', () => {
     it('should pass for a valid title', async () => {

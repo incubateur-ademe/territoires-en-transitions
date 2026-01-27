@@ -1,7 +1,5 @@
-import { ParsedRow } from '@tet/backend/plans/fiches/import/parsers/excel-parser';
-import { richTextPreprocessor } from '@tet/backend/plans/fiches/import/utils/rich-text.utils';
-import { failure, Result, success } from '@tet/backend/shared/types/result';
 import { getFuse } from '@tet/backend/utils/fuse/fuse.utils';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TagEnum } from '@tet/domain/collectivites';
 import {
   cibleEnumValues,
@@ -11,6 +9,8 @@ import {
   statutEnumValues,
 } from '@tet/domain/plans';
 import { z } from 'zod';
+import { ParsedRow } from '../parsers/excel-parser';
+import { richTextPreprocessor } from '../utils/rich-text.utils';
 
 const regexEspace = /\\t|\\r|\\n/;
 
@@ -97,7 +97,7 @@ export const financeurSchema = z.object({
   montant: z.number(),
 });
 
-export const ficheImportSchema = z.object({
+export const importFicheInputSchema = z.object({
   id: z.number().optional(),
   axisPath: z.array(z.string()).optional(),
   titre: titleSchema.pipe(
@@ -152,11 +152,11 @@ export const ficheImportSchema = z.object({
   indicateurs: z.any(),
 });
 
-export type FicheImport = z.infer<typeof ficheImportSchema>;
+export type ImportFicheInput = z.infer<typeof importFicheInputSchema>;
 
 export const parseImportedFiche = async (
   data: ParsedRow
-): Promise<Result<FicheImport, string>> => {
+): Promise<Result<ImportFicheInput, string>> => {
   const validFinanceurs = [
     {
       nom: data.Financeur1,
@@ -178,7 +178,7 @@ export const parseImportedFiche = async (
 
   const hasAxes = axisPath.length > 0;
 
-  const result = await ficheImportSchema.safeParseAsync({
+  const result = await importFicheInputSchema.safeParseAsync({
     ...data,
     financeurs: validFinanceurs,
     axisPath: hasAxes ? axisPath : undefined,

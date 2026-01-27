@@ -1,15 +1,15 @@
+import { Result, failure, success } from '@tet/backend/utils/result.type';
+import { isNil } from 'es-toolkit';
 import {
   ImportErrors,
   InvalidBudget,
   InvalidDateRange,
   InvalidFicheTitre,
-} from '@tet/backend/plans/fiches/import/import.errors';
-import { FicheImport } from '@tet/backend/plans/fiches/import/schemas/fiche-import.schema';
-import { Result, failure, success } from '@tet/backend/shared/types/result';
-import { isNil } from 'es-toolkit';
+} from '../import.errors';
+import { ImportFicheInput } from '../schemas/import-fiche.input';
 
 const validateBasicFields = (
-  fiche: FicheImport
+  fiche: ImportFicheInput
 ): Result<true, ImportErrors> => {
   if (!fiche.titre?.trim()) {
     return failure(new InvalidFicheTitre(fiche.titre || ''));
@@ -29,7 +29,7 @@ const validateBasicFields = (
 };
 
 export async function validateFiche(
-  fiche: FicheImport
+  fiche: ImportFicheInput
 ): Promise<Result<void, ImportErrors>> {
   const basicResult = validateBasicFields(fiche);
   if (!basicResult.success) return basicResult;

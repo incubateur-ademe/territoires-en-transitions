@@ -37,7 +37,7 @@ import { ficheActionStructureTagTable } from '../shared/models/fiche-action-stru
 import { ficheActionThematiqueTable } from '../shared/models/fiche-action-thematique.table';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
 import { UpdateFicheError, UpdateFicheErrorEnum } from './update-fiche.errors';
-import { UpdateFicheRequest } from './update-fiche.request';
+import { UpdateFicheInput } from './update-fiche.input';
 import { UpdateFicheResult } from './update-fiche.result';
 
 type ColumnType = Column<
@@ -70,7 +70,7 @@ export default class UpdateFicheService {
     private readonly fichePermissionService: FicheActionPermissionsService,
     private readonly shareFicheService: ShareFicheService,
     private readonly notificationsFicheService: NotifyPiloteService
-  ) { }
+  ) {}
 
   async updateFiche({
     ficheId,
@@ -80,7 +80,7 @@ export default class UpdateFicheService {
     tx,
   }: {
     ficheId: number;
-    ficheFields: UpdateFicheRequest;
+    ficheFields: UpdateFicheInput;
     isNotificationEnabled?: boolean;
     user: AuthenticatedUser;
     tx?: Transaction;
@@ -142,7 +142,12 @@ export default class UpdateFicheService {
       UpdateFicheResult<{ ficheUpdated: FicheWithRelations }, UpdateFicheError>
     > => {
       const resultGetExistingFiche =
-        await this.ficheActionListService.getFicheById(ficheId, false, user, tx);
+        await this.ficheActionListService.getFicheById(
+          ficheId,
+          false,
+          user,
+          transaction
+        );
       if (!resultGetExistingFiche.success) {
         this.logger.error(resultGetExistingFiche.error);
         return {
@@ -400,7 +405,7 @@ export default class UpdateFicheService {
         ficheId,
         true,
         user,
-        transaction,
+        transaction
       );
       if (!updatedFiche.success) {
         return { success: false, error: UpdateFicheErrorEnum.FICHE_NOT_FOUND };
@@ -427,8 +432,8 @@ export default class UpdateFicheService {
     const resultUpdate = await (tx
       ? executeInTransaction(tx)
       : this.databaseService.db.transaction((newTx) =>
-        executeInTransaction(newTx)
-      ));
+          executeInTransaction(newTx)
+        ));
     if (!resultUpdate.success) {
       return { success: false, error: resultUpdate.error };
     }
@@ -453,7 +458,7 @@ export default class UpdateFicheService {
     transaction,
   }: {
     ficheId: number;
-    notes: UpdateFicheRequest['notes'];
+    notes: UpdateFicheInput['notes'];
     existingFicheAction: FicheWithRelations;
     user: AuthenticatedUser;
     transaction: Transaction;

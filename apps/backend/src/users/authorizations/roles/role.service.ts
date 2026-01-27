@@ -24,7 +24,7 @@ import { utilisateurVerifieTable } from './utilisateur-verifie.table';
 export class RoleService {
   private readonly logger = new Logger(RoleService.name);
 
-  constructor(private readonly databaseService: DatabaseService) { }
+  constructor(private readonly databaseService: DatabaseService) {}
 
   async getUserRoles(
     user: AuthUser,
@@ -97,7 +97,8 @@ export class RoleService {
     }
 
     this.logger.log(
-      `L'utilisateur ${user.id
+      `L'utilisateur ${
+        user.id
       } possède le(s) rôle(s) ${roles.toString()} sur la ressource ${resourceType} ${resourceId}`
     );
 
@@ -143,15 +144,15 @@ export class RoleService {
     const accessesWithAuditeurRoleUpdated = accesses.map((access) =>
       collectiviteIdsWhereUserIsAuditeur.has(access.collectiviteId)
         ? {
-          ...access,
-          isRoleAuditeur: true,
-          permissions: [
-            ...new Set([
-              ...(access.permissions || []),
-              ...permissionsByRole['auditeur'],
-            ]),
-          ],
-        }
+            ...access,
+            isRoleAuditeur: true,
+            permissions: [
+              ...new Set([
+                ...(access.permissions || []),
+                ...permissionsByRole['auditeur'],
+              ]),
+            ],
+          }
         : access
     );
 

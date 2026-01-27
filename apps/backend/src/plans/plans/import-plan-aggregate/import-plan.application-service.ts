@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CreatePlanAggregateService } from '@tet/backend/plans/plans/create-plan-aggregate/create-plan-aggregate.service';
-import { failure, Result, success } from '@tet/backend/shared/types/result';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import { PersonneId } from '@tet/domain/collectivites';
-import { adaptImportToPlanCreation } from './adapters/import-to-plan.adapter';
+import { importPlanInputToCreatePlanAggregateInput } from './adapters/import-plan-input-to-create-plan-aggregate-input';
 import {
   EntityResolutionError,
   ExcelParsingError,
@@ -14,34 +14,16 @@ import {
   TransformationError,
 } from './import.errors';
 import { parsePlanExcel } from './parsers/excel-parser';
-import { EntityResolverService } from './resolvers/entity-resolver.service';
+import { ResolveEntityService } from './resolvers/resolve-entity.service';
 import { transformToPlan } from './transformers/plan-transformer';
-import { validateImportedPlan } from './validators/plan.validator';
+import { validateImportPlanInput } from './validators/plan.rule';
 
-/**
- * Application Service: Plan Import
- *
- * Orchestrates the complete import workflow:
- * 1. Parse Excel file
- * 2. Transform to domain objects
- * 3. Validate business rules
- * 4. Resolve entities (find or create tags/users)
- * 5. Adapt import data to plan creation request
- * 6. Create plan aggregate
- *
- * This service is feature-specific (import) but delegates to:
- * - Generic domain service (PlanAggregateService)
- * - Pure adapters (no side effects, easily testable)
- * - Infrastructure services (EntityResolverService)
- *
- * All dependencies are injectable, making this service fully testable.
- */
 @Injectable()
-export class ImportPlanService {
-  private readonly logger = new Logger(ImportPlanService.name);
+export class ImportPlanApplicationService {
+  private readonly logger = new Logger(ImportPlanApplicationService.name);
 
   constructor(
-    private readonly entityResolver: EntityResolverService,
+    private readonly resolveEntityService: ResolveEntityService,
     private readonly transactionManager: TransactionManager,
     private readonly planAggregate: CreatePlanAggregateService
   ) {}
@@ -78,7 +60,7 @@ export class ImportPlanService {
     }
 
     // 3. Validate business rules
-    const validationResult = await validateImportedPlan(planResult.data);
+    const validationResult = await validateImportPlanInput(planResult.data);
     if (!validationResult.success) {
       return validationResult;
     }
@@ -91,7 +73,7 @@ export class ImportPlanService {
       try {
         // 4a. Resolve entities (find or create tags/users)
         const resolvedEntitiesResult =
-          await this.entityResolver.resolveFicheEntities(
+          await this.resolveEntityService.resolveFicheEntities(
             collectiviteId,
             planResult.data.fiches,
             tx
@@ -108,7 +90,7 @@ export class ImportPlanService {
         }
 
         // 4b. Adapt import data to plan creation request
-        const planCreationRequest = adaptImportToPlanCreation(
+        const planCreationRequest = importPlanInputToCreatePlanAggregateInput(
           planResult.data,
           resolvedEntitiesResult.data,
           collectiviteId

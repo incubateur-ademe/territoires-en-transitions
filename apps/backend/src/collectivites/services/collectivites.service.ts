@@ -30,7 +30,7 @@ export default class CollectivitesService {
     3000, 20000, 50000, 100000, 300000, 800000,
   ];
 
-  constructor(private readonly databaseService: DatabaseService) { }
+  constructor(private readonly databaseService: DatabaseService) {}
 
   getPopulationTags(population?: number): CollectivitePopulationTypeEnum[] {
     const populationTags: CollectivitePopulationTypeEnum[] = [];

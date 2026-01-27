@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { PlanImport } from '../import-plan.input';
-import { ResolvedFicheEntities } from '../resolvers/entity-resolver.service';
-import { FicheImport } from '../schemas/fiche-import.schema';
-import { adaptImportToPlanCreation } from './import-to-plan.adapter';
+import { ImportPlanInput } from '../import-plan.input';
+import { ResolvedFicheEntities } from '../resolvers/resolve-entity.service';
+import { ImportFicheInput } from '../schemas/import-fiche.input';
+import { importPlanInputToCreatePlanAggregateInput } from './import-plan-input-to-create-plan-aggregate-input';
 
-describe('adaptImportToPlanCreation', () => {
+describe('importFicheInputToUpdateFicheInput', () => {
   const collectiviteId = 42;
 
-  const createPlanImport = (overrides?: Partial<PlanImport>): PlanImport => ({
+  const createImportPlanInput = (
+    overrides?: Partial<ImportPlanInput>
+  ): ImportPlanInput => ({
     nom: 'Mon Plan de Test',
     typeId: 1,
     pilotes: [{ userId: 'pilot-1', tagId: null }],
@@ -16,11 +18,11 @@ describe('adaptImportToPlanCreation', () => {
       {
         axisPath: ['Axe 1'],
         titre: 'Fiche 1',
-      } as FicheImport,
+      } as ImportFicheInput,
       {
         axisPath: ['Axe 1', 'Sous-Axe 1'],
         titre: 'Fiche 2',
-      } as FicheImport,
+      } as ImportFicheInput,
     ],
     ...overrides,
   });
@@ -40,13 +42,13 @@ describe('adaptImportToPlanCreation', () => {
   });
 
   it('should successfully adapt a valid plan import to plan creation request', () => {
-    const planImport = createPlanImport();
+    const planImport = createImportPlanInput();
     const resolvedEntities = [
       createResolvedEntities({ axisPath: ['Axe 1'] }),
       createResolvedEntities({ axisPath: ['Axe 1', 'Sous-Axe 1'] }),
     ];
 
-    const result = adaptImportToPlanCreation(
+    const result = importPlanInputToCreatePlanAggregateInput(
       planImport,
       resolvedEntities,
       collectiviteId
@@ -59,23 +61,23 @@ describe('adaptImportToPlanCreation', () => {
   });
 
   it('should fail when a fiche has no corresponding resolved entities', () => {
-    const planImport = createPlanImport({
+    const planImport = createImportPlanInput({
       fiches: [
         {
           axisPath: ['Axe 1'],
           titre: 'Fiche 1',
-        } as FicheImport,
+        } as ImportFicheInput,
         {
           axisPath: ['Axe 2', 'Missing'],
           titre: 'Fiche 2',
-        } as FicheImport,
+        } as ImportFicheInput,
       ],
     });
 
     // Only one resolved entity, but two fiches
     const resolvedEntities = [createResolvedEntities({ axisPath: ['Axe 1'] })];
 
-    const result = adaptImportToPlanCreation(
+    const result = importPlanInputToCreatePlanAggregateInput(
       planImport,
       resolvedEntities,
       collectiviteId
@@ -83,21 +85,23 @@ describe('adaptImportToPlanCreation', () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error).toContain('No resolved entity found for fiche "Fiche 2" (axisPath: Axe 2 > Missing)');
+      expect(result.error).toContain(
+        'No resolved entity found for fiche "Fiche 2" (axisPath: Axe 2 > Missing)'
+      );
     }
   });
 
   it('should handle multiple fiches with the same axis path', () => {
-    const planImport = createPlanImport({
+    const planImport = createImportPlanInput({
       fiches: [
         {
           axisPath: ['Axe 1'],
           titre: 'Fiche 1',
-        } as FicheImport,
+        } as ImportFicheInput,
         {
           axisPath: ['Axe 1'],
           titre: 'Fiche 2',
-        } as FicheImport,
+        } as ImportFicheInput,
       ],
     });
 
@@ -106,7 +110,7 @@ describe('adaptImportToPlanCreation', () => {
       createResolvedEntities({ axisPath: ['Axe 1'] }), // Same path, potentially different entities
     ];
 
-    const result = adaptImportToPlanCreation(
+    const result = importPlanInputToCreatePlanAggregateInput(
       planImport,
       resolvedEntities,
       collectiviteId
@@ -121,7 +125,7 @@ describe('adaptImportToPlanCreation', () => {
   });
 
   it('should handle mixed fiches with and without axes', () => {
-    const ficheWithoutAxis: Partial<FicheImport> = {
+    const ficheWithoutAxis: Partial<ImportFicheInput> = {
       axisPath: undefined,
       titre: 'Fiche sans axe',
       structures: [],
@@ -131,7 +135,7 @@ describe('adaptImportToPlanCreation', () => {
       referents: [],
       financeurs: [],
     };
-    const ficheWithAxis: Partial<FicheImport> = {
+    const ficheWithAxis: Partial<ImportFicheInput> = {
       axisPath: ['Axe 1', 'Sous-Axe 1', 'Sous-Sous-Axe 1'],
       titre: 'Fiche avec sous-sous-axe',
       structures: [],
@@ -141,8 +145,11 @@ describe('adaptImportToPlanCreation', () => {
       referents: [],
       financeurs: [],
     };
-    const planImport = createPlanImport({
-      fiches: [ficheWithoutAxis as FicheImport, ficheWithAxis as FicheImport],
+    const planImport = createImportPlanInput({
+      fiches: [
+        ficheWithoutAxis as ImportFicheInput,
+        ficheWithAxis as ImportFicheInput,
+      ],
     });
 
     const resolvedEntities = [
@@ -156,7 +163,7 @@ describe('adaptImportToPlanCreation', () => {
       }),
     ];
 
-    const result = adaptImportToPlanCreation(
+    const result = importPlanInputToCreatePlanAggregateInput(
       planImport,
       resolvedEntities,
       collectiviteId
@@ -171,5 +178,4 @@ describe('adaptImportToPlanCreation', () => {
       expect(result.data.fiches[1].fiche.titre).toBe(ficheWithAxis.titre);
     }
   });
-
 });

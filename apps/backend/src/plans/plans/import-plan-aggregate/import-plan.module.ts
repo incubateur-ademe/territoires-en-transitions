@@ -1,12 +1,12 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '@tet/backend/collectivites/collectivites.module';
 import { FichesModule } from '@tet/backend/plans/fiches/fiches.module';
-import { ImportPlanRouter } from '@tet/backend/plans/fiches/import/import-plan.router';
-import { ImportPlanService } from '@tet/backend/plans/fiches/import/import-plan.service';
-import { EntityResolverService } from '@tet/backend/plans/fiches/import/resolvers/entity-resolver.service';
+import { ResolveEntityService } from '@tet/backend/plans/plans/import-plan-aggregate/resolvers/resolve-entity.service';
 import { PlanModule } from '@tet/backend/plans/plans/plans.module';
 import { SharedModule } from '@tet/backend/shared/shared.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
+import { ImportPlanApplicationService } from './import-plan.application-service';
+import { ImportPlanRouter } from './import-plan.router';
 
 @Module({
   imports: [
@@ -18,10 +18,10 @@ import { TransactionModule } from '@tet/backend/utils/transaction/transaction.mo
   ],
 
   providers: [
-    ImportPlanService,
+    ImportPlanApplicationService,
     ImportPlanRouter,
-    EntityResolverService,
+    ResolveEntityService,
   ],
-  exports: [ImportPlanService, ImportPlanRouter],
+  exports: [ImportPlanRouter],
 })
 export class ImportPlanModule {}

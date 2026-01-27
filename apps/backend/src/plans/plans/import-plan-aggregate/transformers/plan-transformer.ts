@@ -1,13 +1,13 @@
-import { ParsedRow } from '@tet/backend/plans/fiches/import/parsers/excel-parser';
 import {
-    combineResults,
-    failure,
-    Result,
-    success,
-} from '@tet/backend/shared/types/result';
+  combineResults,
+  failure,
+  Result,
+  success,
+} from '@tet/backend/utils/result.type';
 import { PersonneId } from '@tet/domain/collectivites';
-import { PlanImport } from '../import-plan.input';
-import { parseImportedFiche } from '../schemas/fiche-import.schema';
+import { ImportPlanInput } from '../import-plan.input';
+import { ParsedRow } from '../parsers/excel-parser';
+import { parseImportedFiche } from '../schemas/import-fiche.input';
 
 export async function transformToPlan(
   rows: ParsedRow[],
@@ -15,9 +15,9 @@ export async function transformToPlan(
   planType: number | undefined,
   pilotes: PersonneId[] | undefined,
   referents: PersonneId[] | undefined
-): Promise<Result<PlanImport, string>> {
+): Promise<Result<ImportPlanInput, string>> {
   try {
-    const plan: PlanImport = {
+    const plan: ImportPlanInput = {
       nom: planName,
       typeId: planType,
       fiches: [],

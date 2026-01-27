@@ -1,7 +1,7 @@
-import { ResolvedFicheEntities } from '@tet/backend/plans/fiches/import/resolvers/entity-resolver.service';
-import { FicheImport } from '@tet/backend/plans/fiches/import/schemas/fiche-import.schema';
+import { UpdateFicheInput } from '@tet/backend/plans/fiches/update-fiche/update-fiche.input';
 import { isParticipationCitoyenne } from '@tet/domain/plans';
-import { UpdateFicheRequest } from '../../update-fiche/update-fiche.request';
+import { ResolvedFicheEntities } from '../resolvers/resolve-entity.service';
+import { ImportFicheInput } from '../schemas/import-fiche.input';
 /**
  * Adapter: FicheImport → UpdateFicheRequest
  *
@@ -12,11 +12,11 @@ import { UpdateFicheRequest } from '../../update-fiche/update-fiche.request';
  * @param collectiviteId - The collectivité ID
  * @returns A UpdateFicheRequest ready for persistence
  */
-export function adaptFicheImportToUpdateFicheRequest(
-  fiche: FicheImport,
+export function importFicheInputToUpdateFicheInput(
+  fiche: ImportFicheInput,
   resolvedEntities: ResolvedFicheEntities,
   collectiviteId: number
-): UpdateFicheRequest {
+): UpdateFicheInput {
   return {
     collectiviteId,
     titre: fiche.titre,
@@ -32,12 +32,14 @@ export function adaptFicheImportToUpdateFicheRequest(
     dateFin: fiche.dateFin?.toISOString() ?? null,
     calendrier: fiche.calendrier,
     instanceGouvernance: fiche.instanceGouvernance,
-    participationCitoyenne: isParticipationCitoyenne(fiche.participation ?? '') ? fiche.participation : null,
+    participationCitoyenne: isParticipationCitoyenne(fiche.participation ?? '')
+      ? fiche.participation
+      : null,
     structures: resolvedEntities.structures,
     pilotes: resolvedEntities.pilotes,
     referents: resolvedEntities.referents,
     services: resolvedEntities.services,
-    financeurs: resolvedEntities.financeurs.map(financeur => ({
+    financeurs: resolvedEntities.financeurs.map((financeur) => ({
       financeurTag: { id: financeur.id, nom: financeur.nom },
       montantTtc: financeur.montant,
     })),
