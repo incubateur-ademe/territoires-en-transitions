@@ -41,9 +41,7 @@ const sizeClasses = {
   },
 };
 
-export type EmptyCardAction =
-  | (ButtonProps & { isVisible?: boolean })
-  | React.ReactElement<ButtonProps>;
+export type EmptyCardAction = ButtonProps & { isVisible?: boolean };
 
 export type EmptyCardProps = {
   /** Pictogramme en en-tête de la carte */
@@ -108,19 +106,15 @@ export const EmptyCard = ({
   className,
   dataTest,
 }: EmptyCardProps) => {
-  const visibleActions = actions.flatMap((action) => {
-    if (React.isValidElement(action)) {
-      return [action];
-    }
-
-    if (action.isVisible === false) {
-      return [];
-    }
-
-    // Destructure pour exclure isVisible des props du Button
-    const { isVisible, ...buttonProps } = action;
-    return [<Button size={sizeClasses[size].buttonSize} {...buttonProps} />];
-  });
+  const visibleActionButtons = actions
+    .filter((action) => {
+      return action.isVisible === undefined || action.isVisible;
+    })
+    .map((action) => {
+      // Destructure pour exclure les props non natives au Button
+      const { isVisible, ...buttonProps } = action;
+      return <Button size={sizeClasses[size].buttonSize} {...buttonProps} />;
+    });
 
   return (
     <div
@@ -191,12 +185,12 @@ export const EmptyCard = ({
       </div>
 
       {/* Boutons */}
-      {!isReadonly && visibleActions.length > 0 && (
+      {!isReadonly && visibleActionButtons.length > 0 && (
         <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2">
-          {visibleActions.map((action, index) => (
+          {visibleActionButtons.map((action, index) => (
             <React.Fragment key={index}>
               {action}
-              {index % 2 !== 0 && index !== visibleActions.length - 1 && (
+              {index % 2 !== 0 && index !== visibleActionButtons.length - 1 && (
                 <div className="basis-full h-0" />
               )}
             </React.Fragment>
