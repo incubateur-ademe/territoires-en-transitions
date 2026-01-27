@@ -25,7 +25,5 @@ export default async function PlansListPage({
     collectiviteId
   );
 
-  return (
-    <AllPlansView collectiviteId={collectiviteId} panierId={panier?.panierId} />
-  );
+  return <AllPlansView panierId={panier?.panierId} />;
 }

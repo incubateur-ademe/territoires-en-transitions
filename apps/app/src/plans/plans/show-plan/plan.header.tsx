@@ -36,7 +36,7 @@ export const PlanHeader = () => {
             updatePlan({ id, collectiviteId, nom: value });
           }}
         />
-        <PlanMenuButton />
+        {!isReadOnly && <PlanMenuButton />}
       </div>
       <div className="flex flex-col gap-2">
         <PlanMetadata />
@@ -79,7 +79,7 @@ const PlanMetadata = () => {
           }}
         >
           <PlanMetadataItem
-            interactive
+            interactive={!isReadOnly}
             icon="folder-2-line"
             label="Type"
             value={plan.type?.type}
