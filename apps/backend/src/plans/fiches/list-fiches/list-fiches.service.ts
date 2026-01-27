@@ -730,7 +730,11 @@ export default class ListFichesService {
     return { success: true, data: ficheAction };
   }
 
-  async countPiloteFiches(collectiviteId: number, user: AuthUser) {
+  async countPiloteFiches(
+    collectiviteId: number,
+    user: AuthUser,
+    subFiches = false
+  ) {
     if (!user.id) {
       throw new BadRequestException(
         `Seulement supporté pour les utilisateurs authentifiés`
@@ -751,7 +755,9 @@ export default class ListFichesService {
           eq(ficheActionTable.collectiviteId, collectiviteId),
           eq(ficheActionPiloteTable.userId, user.id),
           eq(ficheActionTable.deleted, false),
-          isNull(ficheActionTable.parentId)
+          subFiches
+            ? isNotNull(ficheActionTable.parentId)
+            : isNull(ficheActionTable.parentId)
         )
       );
 
@@ -1415,7 +1421,7 @@ export default class ListFichesService {
     if (filters.ficheIds?.length) {
       const ficheIdsConditions = [
         inArray(ficheActionTable.id, filters.ficheIds),
-        filters.withChildren
+        filters.withChildren && !filters.onlyChildren
           ? inArray(ficheActionTable.parentId, filters.ficheIds)
           : null,
       ].filter((c) => c !== null);
@@ -1768,9 +1774,12 @@ export default class ListFichesService {
     if (filters.parentsId?.length) {
       // Si `parentsId` est spécifié, on ne retourne que les sous-fiches associées aux parents spécifiés
       conditions.push(inArray(ficheActionTable.parentId, filters.parentsId));
-    } else if (!filters.withChildren) {
-      // Par défaut, on exclut toutes les sous-fiches sauf si `withChildren` est activé
+    } else if (!filters.withChildren && !filters.onlyChildren) {
+      // Par défaut, on exclut toutes les sous-fiches sauf si `withChildren` ou `onlyChildren` est activé
       conditions.push(isNull(ficheActionTable.parentId));
+    } else if (filters.onlyChildren) {
+      // et si `onlyChildren` est spécifié on n'inclut que les sous-fiches
+      conditions.push(isNotNull(ficheActionTable.parentId));
     }
 
     return conditions;
