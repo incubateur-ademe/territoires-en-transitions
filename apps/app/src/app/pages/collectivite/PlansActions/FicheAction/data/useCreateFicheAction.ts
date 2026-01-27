@@ -23,6 +23,13 @@ export const useCreateFicheAction = () => {
       queryClient.invalidateQueries({
         queryKey: ['axe_fiches', null],
       });
+
+      queryClient.invalidateQueries({
+        queryKey: trpcClient.plans.fiches.listFiches.queryKey({
+          collectiviteId,
+        }),
+      });
+
       if (data.id) {
         const url = makeCollectiviteActionUrl({
           collectiviteId,
