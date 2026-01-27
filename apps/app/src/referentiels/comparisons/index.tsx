@@ -4,7 +4,7 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Badge, EmptyCard } from '@tet/ui';
 import { useEffect, useState } from 'react';
-import SaveScoreButton from '../../app/pages/collectivite/Referentiels/SaveScore/save-score.button';
+import { SaveScoreModal } from '../../app/pages/collectivite/Referentiels/SaveScore/save-score.modal';
 import PictoDashboard from '../../ui/pictogrammes/PictoDashboard';
 import { useReferentielId } from '../referentiel-context';
 import { useListSnapshots } from '../use-snapshot';
@@ -22,6 +22,8 @@ export const ScoreEvolutions = () => {
   const [selectedSnapshots, setSelectedSnapshots] = useState<typeof snapshots>(
     []
   );
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (snapshots) {
@@ -65,30 +67,31 @@ export const ScoreEvolutions = () => {
   }
 
   return (
-    <div className="flex items-center justify-center">
+    <>
       <EmptyCard
         picto={(props) => <PictoDashboard {...props} />}
-        title="Aucune version du référentiel n'est figée."
-        description="Figer l'état des lieux vous permet de sauvegarder une version à une date donnée, afin de pouvoir comparer l'évolution du score sur plusieurs versions."
+        title="Aucune version du référentiel à comparer !"
+        description="Vous pouvez figer l'état des lieux maintenant ou à une date antérieure pour pouvoir comparer l'évolution du score entre plusieurs versions."
         isReadonly={isReadOnly}
         actions={[
-          <SaveScoreButton
-            key="before"
-            referentielId={referentielId}
-            collectiviteId={collectiviteId}
-            label="Figer l'état des lieux à une date antérieure"
-            when="before"
-            variant="outlined"
-          />,
-          <SaveScoreButton
-            key="after"
-            referentielId={referentielId}
-            collectiviteId={collectiviteId}
-            label="Figer l'état des lieux"
-            variant="primary"
-          />,
+          {
+            children: "Figer l'état des lieux",
+            icon: 'camera-line',
+            onClick: () => setIsModalOpen(true),
+            dataTest: 'referentiels.snapshots.figer-referentiel-button',
+          },
         ]}
       />
-    </div>
+      {isModalOpen && (
+        <SaveScoreModal
+          collectiviteId={collectiviteId}
+          referentielId={referentielId}
+          openState={{
+            isOpen: isModalOpen,
+            setIsOpen: setIsModalOpen,
+          }}
+        />
+      )}
+    </>
   );
 };
