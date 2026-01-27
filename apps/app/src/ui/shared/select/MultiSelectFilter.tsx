@@ -9,7 +9,6 @@ import { getIsAllSelected, getOptions } from './commons';
 export const MultiSelectFilter = <T extends string>({
   values,
   options,
-  buttonClassName,
   placeholderText,
   onSelect,
   renderSelection,
@@ -45,7 +44,7 @@ export const MultiSelectFilter = <T extends string>({
   return (
     <MultiSelectDropdown
       data-test={dataTest}
-      buttonClassName={buttonClassName}
+      buttonClassName="hover:bg-grey-3"
       values={values}
       options={options}
       onSelect={handleChange}

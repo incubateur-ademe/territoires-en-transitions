@@ -83,7 +83,7 @@ export const OptionMenu = ({
               <>
                 <button
                   onClick={() => setIsEditOpen(true)}
-                  className="flex items-center w-full py-2 pr-4 pl-3 text-xs text-grey-8"
+                  className="flex items-center w-full py-2 pr-4 pl-3 text-xs text-grey-8 hover:bg-grey-2"
                   type="button"
                 >
                   <Icon icon="edit-line" size="xs" className="mr-2" />
@@ -112,7 +112,7 @@ export const OptionMenu = ({
               <>
                 <button
                   onClick={() => setIsDeleteOpen(true)}
-                  className="flex items-center w-full py-2 pr-4 pl-3 text-xs text-grey-8"
+                  className="flex items-center w-full py-2 pr-4 pl-3 text-xs text-grey-8 hover:bg-grey-2"
                   type="button"
                 >
                   <Icon icon="delete-bin-6-line" size="xs" className="mr-2" />
