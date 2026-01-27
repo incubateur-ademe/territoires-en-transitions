@@ -112,10 +112,7 @@ export const Button = forwardRef<
       <Link
         {...anchorProps}
         ref={ref as Ref<HTMLAnchorElement>}
-        // bg-none permet d'effacer un style dsfr appliqué à la balise <a/>
-        // after:hidden supprime l'icône external par défaut du dsfr
         className={cn(
-          'bg-none after:hidden',
           { [buttonClassname]: variant !== 'unstyled' },
           {
             'flex-row-reverse':

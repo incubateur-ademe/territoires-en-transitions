@@ -2,12 +2,12 @@
 import { useRouter } from 'next/navigation';
 import { Fragment } from 'react';
 
-import { ExternalLink } from '@/app/ui/externalLink/ExternalLink';
 import {
   Button,
   DEPRECATED_ButtonMenu,
   Event,
   Icon,
+  InlineLink,
   useEventTracker,
 } from '@tet/ui';
 
@@ -70,21 +70,21 @@ export const RequestPlanImportView = () => {
         <ul className="mb-0">
           <li>
             Suivez une démo post import{' '}
-            <ExternalLink
-              href={
-                'https://calendly.com/territoiresentransitions/demo-optimisation-pilotage-actions'
-              }
-              text={'en cliquant ici.'}
-            />
+            <InlineLink
+              href="https://calendly.com/territoiresentransitions/demo-optimisation-pilotage-actions"
+              openInNewTab
+            >
+              en cliquant ici.
+            </InlineLink>
           </li>
           <li>
             Consultez notre article sur les prochaines étapes{' '}
-            <ExternalLink
-              href={
-                'https://aide.territoiresentransitions.fr/fr/article/plan-daction-en-ligne-les-prochaines-etapes-lx9mnb'
-              }
-              text={'en cliquant ici.'}
-            />
+            <InlineLink
+              href="https://aide.territoiresentransitions.fr/fr/article/plan-daction-en-ligne-les-prochaines-etapes-lx9mnb"
+              openInNewTab
+            >
+              en cliquant ici.
+            </InlineLink>
           </li>
         </ul>
         <div className="h-[1px] my-8 bg-gray-300" />
@@ -92,19 +92,21 @@ export const RequestPlanImportView = () => {
         <ul className="mb-0">
           <li>
             Visualisez une vidéo de présentation du fichier d'import{' '}
-            <ExternalLink
-              href={'https://www.youtube.com/watch?v=o0M4VdQ8bEc'}
-              text={'en cliquant ici.'}
-            />
+            <InlineLink
+              href="https://www.youtube.com/watch?v=o0M4VdQ8bEc"
+              openInNewTab
+            >
+              en cliquant ici.
+            </InlineLink>
           </li>
           <li>
             Prenez un rendez-vous individuel avec notre équipe{' '}
-            <ExternalLink
-              href={
-                'https://calendly.com/territoiresentransitions/entretien-support-plan-d-action'
-              }
-              text={'en cliquant ici.'}
-            />
+            <InlineLink
+              href="https://calendly.com/territoiresentransitions/entretien-support-plan-d-action"
+              openInNewTab
+            >
+              en cliquant ici.
+            </InlineLink>
           </li>
         </ul>
         <div className="h-[1px] my-8 bg-gray-300" />

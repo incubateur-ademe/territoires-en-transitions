@@ -221,6 +221,7 @@ const ActionCommentItem = ({
                     collectiviteId
                   )}
                   target="_blank"
+                  rel="noreferrer noopener"
                   className="after:hidden bg-none"
                 >
                   <ActionCommentTitle title={title} />

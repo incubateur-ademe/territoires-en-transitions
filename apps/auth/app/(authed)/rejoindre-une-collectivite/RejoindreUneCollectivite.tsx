@@ -6,6 +6,7 @@ import {
   Field,
   FieldMessage,
   FormSectionGrid,
+  InlineLink,
   Input,
   ModalFooterOKCancel,
   Select,
@@ -111,9 +112,9 @@ export const RejoindreUneCollectivite = (
                 </div>
                 <div>
                   Envoyez un email à{' '}
-                  <a href="mailto:contact@territoiresentransitions.fr">
+                  <InlineLink href="mailto:contact@territoiresentransitions.fr">
                     contact@territoiresentransitions.fr
-                  </a>{' '}
+                  </InlineLink>{' '}
                   avec le nom de la collectivité et son numéro SIREN pour que
                   nous puissions vous aider.
                 </div>
