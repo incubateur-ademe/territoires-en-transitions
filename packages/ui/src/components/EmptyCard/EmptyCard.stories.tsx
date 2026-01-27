@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { Button } from '../../design-system/Button';
 import { EmptyCard } from './EmptyCard';
 
 const meta = {
@@ -86,28 +85,6 @@ export const Transparent: Story = {
   args: {
     ...Default.args,
     variant: 'transparent',
-  },
-};
-
-export const WithCustomButton: Story = {
-  args: {
-    ...Default.args,
-    actions: [
-      <Button
-        key="custom-button"
-        variant="outlined"
-        onClick={() => console.log('Custom button clicked')}
-      >
-        Bouton d'action secondaire
-      </Button>,
-      <Button
-        key="custom-button"
-        variant="primary"
-        onClick={() => console.log('Custom button clicked')}
-      >
-        Bouton d'action principale
-      </Button>,
-    ],
   },
 };
 

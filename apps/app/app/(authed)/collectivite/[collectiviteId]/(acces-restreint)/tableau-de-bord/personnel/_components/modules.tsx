@@ -9,7 +9,7 @@ import {
 import { Event, EventName, useEventTracker } from '@tet/ui';
 
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
-import { SansPlanPlaceholder } from '@/app/tableaux-de-bord/plans-action/sans-plan.placeholder';
+import { ListPlansEmptyCard } from '@/app/plans/plans/list-all-plans/list-plans.empty-card';
 import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { PermissionOperation } from '@tet/domain/users';
@@ -134,7 +134,9 @@ const Modules = () => {
   ];
 
   const moduleComponents: (React.ReactNode | null)[] = [
-    noPlanAndCanCreatePlan ? <SansPlanPlaceholder key="sans-plan" /> : null,
+    noPlanAndCanCreatePlan ? (
+      <ListPlansEmptyCard key="sans-plan" collectiviteId={collectiviteId} />
+    ) : null,
     ...orderedModules
       .map((key) => modules.find((m) => m.defaultKey === key))
       .map((module) => {

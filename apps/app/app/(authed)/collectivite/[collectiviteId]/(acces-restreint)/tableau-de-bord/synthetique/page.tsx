@@ -85,7 +85,7 @@ const Page = () => {
                 <h5 className="mb-0">
                   {isReadOnly
                     ? "Aucun plan n'a été déposé"
-                    : 'Vous n’avez pas encore créé de plan !'}
+                    : "Vous n'avez pas encore créé de plan !"}
                 </h5>
                 {!isReadOnly && (
                   <Button

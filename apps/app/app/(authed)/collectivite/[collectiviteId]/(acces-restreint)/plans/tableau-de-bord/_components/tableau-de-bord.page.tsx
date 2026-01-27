@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 
-import { SansPlanPlaceholder } from '@/app/tableaux-de-bord/plans-action/sans-plan.placeholder';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
+import { ListPlansEmptyCard } from '@/app/plans/plans/list-all-plans/list-plans.empty-card';
 import Modules from './modules';
 import TdbPaFichesActionCountModal from './tdb-pa-fiches-action-count.modal';
 
@@ -44,7 +44,11 @@ export const TableauDeBordPage = () => {
         collectivité et peut être modifié par les administrateurs.
       </p>
       {/** Contenu principal */}
-      {plans.length === 0 ? <SansPlanPlaceholder /> : <Modules />}
+      {plans.length === 0 ? (
+        <ListPlansEmptyCard collectiviteId={collectivite.collectiviteId} />
+      ) : (
+        <Modules />
+      )}
     </>
   );
 };
