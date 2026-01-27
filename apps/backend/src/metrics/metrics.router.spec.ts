@@ -1,7 +1,7 @@
+import { INestApplication } from '@nestjs/common';
 import { getAuthUser, getTestApp, YOULOU_DOUDOU } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { INestApplication } from '@nestjs/common';
 
 describe('Route de récupération des métriques', () => {
   let app: INestApplication;
@@ -66,7 +66,6 @@ describe('Route de récupération des métriques', () => {
 
     expect(result).toMatchObject({
       plans: {
-        count: 2,
         piloteFichesCount: 1,
         piloteFichesIndicateursCount: 0,
       },

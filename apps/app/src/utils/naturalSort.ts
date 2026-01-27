@@ -10,7 +10,7 @@ const regex = /0*([0-9]+)|([^0-9]+)/g;
  */
 function comparable(text: string): string {
   return [...text.matchAll(regex)]
-    .map(m =>
+    .map((m) =>
       m[2]
         ? m[2]
         : m[0].length.toString().length.toString() +
@@ -24,8 +24,8 @@ function comparable(text: string): string {
  * La fonction de comparaison utilisée par la fonction "sort".
  */
 export function naturalSort(a: string, b: string) {
-  const ca = comparable(a);
-  const cb = comparable(b);
+  const ca = comparable(a.toLowerCase());
+  const cb = comparable(b.toLowerCase());
   if (ca < cb) {
     return -1;
   }
