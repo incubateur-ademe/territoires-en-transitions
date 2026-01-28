@@ -516,7 +516,7 @@ const SelectButton = forwardRef(
                     data-test={`${dataTest}-input`}
                     type="text"
                     className={cn(
-                      'w-full text-sm outline-0 placeholder:text-grey-6 placeholder:text-xs',
+                      'w-full text-sm bg-inherit outline-0 placeholder:text-grey-6 placeholder:text-xs',
                       { 'py-1': values }
                     )}
                     value={inputValue}

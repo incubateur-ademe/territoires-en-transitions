@@ -87,10 +87,24 @@
     -webkit-text-size-adjust: 100%;
   }
 
-  html,
-  body {
-    max-width: 100vw;
-    min-height: 100vh;
+  a:not([href]),
+  button:disabled,
+  input:disabled,
+  input[type='checkbox']:disabled,
+  input[type='checkbox']:disabled + label,
+  input[type='radio']:disabled,
+  input[type='radio']:disabled + label,
+  input[type='file']:disabled,
+  input[type='range']:disabled,
+  input[type='button']:disabled,
+  input[type='image']:disabled,
+  input[type='reset']:disabled,
+  input[type='submit']:disabled,
+  select:disabled,
+  textarea:disabled,
+  video:not([href])[controls],
+  audio:not([href])[controls] {
+    cursor: not-allowed;
   }
 
   /* Evite les problèmes d'alignement lors de l'utilisation de html2canvas */
