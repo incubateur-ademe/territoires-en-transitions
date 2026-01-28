@@ -1,6 +1,5 @@
-import { cn, Icon, InlineEditWrapper } from '@tet/ui';
-import { noop } from 'es-toolkit';
-import { RichTextEditorWithDebounce } from '../../components/rich-text-editor-with-debounce';
+import { cn, Icon, InlineEditWrapper, RichTextEditor } from '@tet/ui';
+import { useMemo } from 'react';
 
 const DisplayValue = ({
   value,
@@ -62,6 +61,10 @@ export const EditableRichTextView = ({
   small?: boolean;
   onChange: (value: string) => void;
 }) => {
+  // RichTextEditor behaves strangely when controlled hence
+  // only the initial value is used on first mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const initialValue = useMemo(() => value, []);
   return (
     <div className="text-sm leading-6 font-regular gap-4 mb-1 flex items-start">
       <IconComponent icon={icon} small={small} />
@@ -71,9 +74,11 @@ export const EditableRichTextView = ({
         ) : (
           label
         )}
-        <RichTextEditorWithDebounce
-          value={value}
-          onChange={isReadonly ? noop : onChange}
+        <RichTextEditor
+          unstyled
+          disabled={isReadonly}
+          initialValue={initialValue}
+          onChange={onChange}
         />
       </div>
     </div>

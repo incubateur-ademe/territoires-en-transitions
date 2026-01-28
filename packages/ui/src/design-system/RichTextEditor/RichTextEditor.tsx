@@ -34,6 +34,7 @@ type RichTextEditorProps = {
     color?: 'white' | 'grey' | 'primary';
   };
   unstyled?: boolean;
+  onBlur?: () => void;
 };
 
 // utilisé pour convertir en html les liens présents dans les contenus texte existants
@@ -75,6 +76,7 @@ export default function RichTextEditor({
   setIsTruncated,
   contentStyle,
   unstyled = false,
+  onBlur,
 }: RichTextEditorProps) {
   const { size = 'base', color = 'grey' } = contentStyle ?? {};
   const contentColor = {
@@ -189,6 +191,7 @@ export default function RichTextEditor({
       slashMenu={false}
       sideMenu={false}
       editable={!disabled}
+      onBlur={onBlur}
       onChange={(ed, { getChanges }) => {
         const changes = getChanges();
         // appelle le callback seulement la 1ère initialisation du contenu

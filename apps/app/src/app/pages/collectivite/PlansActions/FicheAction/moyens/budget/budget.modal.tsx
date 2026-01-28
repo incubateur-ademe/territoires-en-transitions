@@ -111,7 +111,11 @@ export const BudgetModal = ({
       (elt) => !newBudgets.find((b) => b.id === elt.id)
     );
 
-    if (budgetsToDelete.length > 0) deleteBudgets(budgetsToDelete);
+    if (budgetsToDelete.length > 0)
+      deleteBudgets({
+        ficheId,
+        budgetsIds: budgetsToDelete.map((elt) => elt.id),
+      });
     if (newBudgets.length > 0) createBudgets(newBudgets);
   };
 

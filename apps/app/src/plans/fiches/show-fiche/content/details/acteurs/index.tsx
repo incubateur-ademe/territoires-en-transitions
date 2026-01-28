@@ -26,19 +26,21 @@ const formatList = <T,>(
 export const Acteurs = (): JSX.Element => {
   const { fiche, isReadonly, update } = useFicheContext();
 
-  const { control, watch, handleSubmit } = useForm<ActeursFormValues>({
-    resolver: zodResolver(acteursFormSchema),
-    mode: 'onChange',
-    defaultValues: {
-      services: fiche.services ?? null,
-      structures: fiche.structures ?? null,
-      referents: fiche.referents ?? null,
-      partenaires: fiche.partenaires ?? null,
-      cibles: fiche.cibles ?? null,
-      instanceGouvernance: fiche.instanceGouvernance ?? null,
-      participationCitoyenne: fiche.participationCitoyenne ?? null,
-    },
-  });
+  const { control, watch, handleSubmit, setValue } = useForm<ActeursFormValues>(
+    {
+      resolver: zodResolver(acteursFormSchema),
+      mode: 'onChange',
+      defaultValues: {
+        services: fiche.services ?? null,
+        structures: fiche.structures ?? null,
+        referents: fiche.referents ?? null,
+        partenaires: fiche.partenaires ?? null,
+        cibles: fiche.cibles ?? null,
+        instanceGouvernance: fiche.instanceGouvernance ?? null,
+        participationCitoyenne: fiche.participationCitoyenne ?? null,
+      },
+    }
+  );
 
   const allFicheCollectiviteIds = getFicheAllEditorCollectiviteIds(fiche);
   const ficheActionInvalidationKeys = [['fiche_action', fiche.id.toString()]];
@@ -219,18 +221,15 @@ export const Acteurs = (): JSX.Element => {
         )}
       />
 
-      <Controller
-        control={control}
-        name="participationCitoyenne"
-        render={({ field }) => (
-          <EditableRichTextView
-            icon="shake-hands-line"
-            label={getFieldLabel('participationCitoyenne', field.value)}
-            value={field.value ?? ''}
-            isReadonly={isReadonly}
-            onChange={field.onChange}
-          />
+      <EditableRichTextView
+        icon="shake-hands-line"
+        label={getFieldLabel(
+          'participationCitoyenne',
+          fiche.participationCitoyenne
         )}
+        value={fiche.participationCitoyenne ?? ''}
+        isReadonly={isReadonly}
+        onChange={(html) => setValue('participationCitoyenne', html)}
       />
     </>
   );

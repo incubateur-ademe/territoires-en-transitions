@@ -53,7 +53,7 @@ export type EmptyCardProps = {
   /** Liste de tags, affichés sous la description */
   tags?: string[];
   /** Conditionne le background et le border color de la carte */
-  variant?: 'primary' | 'transparent';
+  variant?: 'primary' | 'transparent' | 'grey';
   /** Conditionne la taille de la carte et de ses éléments */
   size?: EmptyCardSize;
   /** CTAs de la carte, liste de boutons ou d'objets ButtonProps  */
@@ -111,6 +111,7 @@ export const EmptyCard = ({
         {
           'bg-primary-0 border-primary-4': variant === 'primary',
           'bg-transparent border-transparent': variant === 'transparent',
+          'bg-white border-grey-4': variant === 'grey',
         },
         sizeClasses[size].container,
         className

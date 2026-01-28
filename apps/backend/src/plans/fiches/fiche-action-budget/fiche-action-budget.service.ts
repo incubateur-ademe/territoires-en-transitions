@@ -3,10 +3,14 @@ import { ficheActionBudgetTable } from '@tet/backend/plans/fiches/fiche-action-b
 import { getBudgetsRequest } from '@tet/backend/plans/fiches/fiche-action-budget/get-budgets.request';
 import FicheActionPermissionsService from '@tet/backend/plans/fiches/fiche-action-permissions.service';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
-import { AuthUser } from '@tet/backend/users/models/auth.models';
+import {
+  AuthenticatedUser,
+  AuthUser,
+} from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { FicheBudget, FicheBudgetCreate } from '@tet/domain/plans';
-import { and, eq, isNotNull, isNull } from 'drizzle-orm';
+import { and, eq, inArray, isNotNull, isNull } from 'drizzle-orm';
 
 @Injectable()
 export class FicheActionBudgetService {
@@ -15,14 +19,84 @@ export class FicheActionBudgetService {
     private readonly ficheService: FicheActionPermissionsService
   ) {}
 
+  private async findExistingBudgetById(
+    id: number,
+    trx: Transaction
+  ): Promise<FicheBudget | undefined> {
+    const [budget] = await trx
+      .select()
+      .from(ficheActionBudgetTable)
+      .where(eq(ficheActionBudgetTable.id, id))
+      .limit(1);
+    return budget;
+  }
+
+  private async updateBudget(
+    budget: Omit<FicheBudgetCreate, 'id'> & { id: number },
+    trx: Transaction
+  ): Promise<FicheBudget> {
+    const [updated] = await trx
+      .update(ficheActionBudgetTable)
+      .set(budget)
+      .where(eq(ficheActionBudgetTable.id, budget.id))
+      .returning();
+    return updated;
+  }
+
+  private async insertBudget(
+    budget: FicheBudgetCreate,
+    trx: Transaction
+  ): Promise<FicheBudget> {
+    try {
+      const [inserted] = await trx
+        .insert(ficheActionBudgetTable)
+        .values({ ...budget, annee: budget.annee ?? null })
+        .returning();
+      return inserted;
+    } catch (error) {
+      console.error('Error inserting budget');
+      console.error(error);
+      throw error;
+    }
+  }
+
+  private async upsertSingleBudget(
+    budget: FicheBudgetCreate,
+    trx: Transaction
+  ): Promise<FicheBudget> {
+    const id = budget.id;
+    if (id === undefined) {
+      return this.insertBudget(budget, trx);
+    }
+    const existingBudget = await this.findExistingBudgetById(id, trx);
+    if (!existingBudget) {
+      return this.insertBudget(budget, trx);
+    }
+    return this.updateBudget({ ...existingBudget, ...budget }, trx);
+  }
+
+  private async updateFicheModifiedAt(
+    ficheId: number,
+    userId: string,
+    trx: Transaction
+  ): Promise<void> {
+    await trx
+      .update(ficheActionTable)
+      .set({
+        modifiedBy: userId,
+        modifiedAt: new Date().toISOString(),
+      })
+      .where(eq(ficheActionTable.id, ficheId));
+  }
+
   async upsert(
     budgets: FicheBudgetCreate[],
-    user: AuthUser
+    user: AuthenticatedUser
   ): Promise<FicheBudget[]> {
-    // Check que les budgets ont la même fiche action
     if (budgets.length === 0) {
       return [];
     }
+
     const ficheId = budgets[0].ficheId;
     if (!budgets.every((budget) => budget.ficheId === ficheId)) {
       throw new Error('Budgets from the same call must have the same ficheId.');
@@ -30,67 +104,44 @@ export class FicheActionBudgetService {
 
     await this.ficheService.canWriteFiche(ficheId, user);
 
-    return await this.databaseService.db.transaction(async (trx) => {
-      const budgetsToReturn: FicheBudget[] = [];
+    return this.databaseService.db.transaction(async (trx) => {
+      console.log('budgets', budgets);
+      const budgetsToReturn = await Promise.all(
+        budgets.map((budget) => this.upsertSingleBudget(budget, trx))
+      );
 
-      for (const budget of budgets) {
-        // Insertion ou mise à jour du budget avec `RETURNING`
-        const [result] = await trx
-          .insert(ficheActionBudgetTable)
-          .values(budget)
-          .onConflictDoUpdate({
-            target: [ficheActionBudgetTable.id],
-            set: {
-              budgetPrevisionnel: budget.budgetPrevisionnel,
-              budgetReel: budget.budgetReel,
-              estEtale: budget.estEtale,
-            },
-          })
-          .returning();
-
-        budgetsToReturn.push(result);
-      }
-
-      // Met à jour la table fiche action
-      await trx
-        .update(ficheActionTable)
-        .set({ modifiedBy: user.id, modifiedAt: new Date().toISOString() })
-        .where(eq(ficheActionTable.id, ficheId));
+      await this.updateFicheModifiedAt(ficheId, user.id, trx);
 
       return budgetsToReturn;
     });
   }
 
-  async delete(budgets: FicheBudget[], user: AuthUser) {
-    // Check que les budgets ont la même fiche action
-    if (budgets.length === 0) {
+  async delete(ficheId: number, budgetsIds: number[], user: AuthenticatedUser) {
+    if (budgetsIds.length === 0) {
       return;
     }
-    const ficheId = budgets[0].ficheId;
-    if (!budgets.every((budget) => budget.ficheId === ficheId)) {
-      throw new Error('Budgets from the same call must have the same ficheId.');
+
+    const budgets = await this.databaseService.db
+      .select()
+      .from(ficheActionBudgetTable)
+      .where(
+        and(
+          eq(ficheActionBudgetTable.ficheId, ficheId),
+          inArray(ficheActionBudgetTable.id, budgetsIds)
+        )
+      );
+
+    if (budgets.length !== budgetsIds.length) {
+      throw new Error('Some budgets were not found.');
     }
 
     return this.databaseService.db.transaction(async (trx) => {
       await this.ficheService.canWriteFiche(ficheId, user);
-      for (const budget of budgets) {
-        if (budget.id) {
-          await trx
-            .delete(ficheActionBudgetTable)
-            .where(eq(ficheActionBudgetTable.id, budget.id));
-        } else {
-          throw new Error('A given budget has no identifier');
-        }
-      }
 
-      // Met à jour la table fiche action
       await trx
-        .update(ficheActionTable)
-        .set({
-          modifiedBy: user?.id,
-          modifiedAt: new Date().toISOString(),
-        })
-        .where(eq(ficheActionTable.id, ficheId));
+        .delete(ficheActionBudgetTable)
+        .where(inArray(ficheActionBudgetTable.id, budgetsIds));
+      await this.updateFicheModifiedAt(ficheId, user.id, trx);
     });
   }
 

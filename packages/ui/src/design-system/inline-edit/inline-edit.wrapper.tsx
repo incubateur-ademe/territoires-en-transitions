@@ -42,7 +42,6 @@ export const InlineEditWrapper = ({
 
   const handleOpenChange = (open: boolean) => {
     if (disabled) return;
-
     if (!open && onClose) {
       onClose();
     }

@@ -1,10 +1,9 @@
 import EffetsAttendusDropdown from '@/app/ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import { useGetThematiqueAndSousThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
-import { cn, SelectMultiple, Spacer } from '@tet/ui';
+import { cn, RichTextEditor, SelectMultiple, Spacer } from '@tet/ui';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { RichTextEditorWithDebounce } from '../../../components/rich-text-editor-with-debounce';
 import { useFicheContext } from '../../../context/fiche-context';
 import { InlineEditableItem } from '../editable-item';
 import { DescriptionFormValues } from './description-schema';
@@ -72,27 +71,18 @@ export const Description = () => {
 
   return (
     <>
-      <Controller
-        name="description"
-        control={control}
-        render={({ field }) => (
-          <div className="flex flex-col gap-4">
-            <MainTitle>
-              {getFieldLabel('description', fiche.description)}
-            </MainTitle>
-            <RichTextEditorWithDebounce
-              contentStyle={{
-                size: 'sm',
-                color: 'primary',
-              }}
-              value={field.value ?? ''}
-              onChange={(value) => {
-                field.onChange(value);
-              }}
-            />
-          </div>
-        )}
-      />
+      <div className="flex flex-col gap-4">
+        <MainTitle>{getFieldLabel('description', fiche.description)}</MainTitle>
+        <RichTextEditor
+          unstyled
+          contentStyle={{
+            size: 'sm',
+            color: 'primary',
+          }}
+          initialValue={fiche.description ?? ''}
+          onChange={(html) => setValue('description', html)}
+        />
+      </div>
       <Controller
         name="objectifs"
         control={control}
@@ -101,12 +91,13 @@ export const Description = () => {
             <MainTitle size="normal">
               {`${getFieldLabel('objectifs', fiche.objectifs)} : `}
             </MainTitle>
-            <RichTextEditorWithDebounce
+            <RichTextEditor
+              unstyled
               contentStyle={{
                 size: 'sm',
                 color: 'primary',
               }}
-              value={field.value ?? ''}
+              initialValue={fiche.description ?? ''}
               onChange={field.onChange}
             />
           </div>

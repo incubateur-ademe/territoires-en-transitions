@@ -1,62 +1,26 @@
-import { canUpdateIndicateurDefinition } from '@/app/indicateurs/indicateurs/indicateur-definition-authorization.utils';
-import {
-  IndicateurDefinitionListItem,
-  useListIndicateurs,
-} from '@/app/indicateurs/indicateurs/use-list-indicateurs';
-import {
-  FicheListItem,
-  useListFiches,
-} from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import {
   isFicheEditableByCollectiviteUser,
   isFicheSharedWithCollectivite,
 } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
-import {
-  FicheNote,
-  FicheNoteUpsert,
-  FicheWithRelations,
-} from '@tet/domain/plans';
-import React, {
-  createContext,
-  ReactNode,
-  useCallback,
-  useContext,
-} from 'react';
+import { FicheWithRelations } from '@tet/domain/plans';
+import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { useUpdateFiche } from '../../update-fiche/data/use-update-fiche';
-import { useAnnexesFicheAction } from '../data/useAnnexesFicheAction';
-import { useUpdateFichesActionLiees } from '../data/useFichesActionLiees';
-
-type ActionsLieesState = {
-  list: FicheListItem[];
-  isLoading: boolean;
-  update: (linkedFicheIds: number[]) => void;
-  updateActionLiee: (fiche: FicheListItem) => void;
-};
-
-type DocumentsState = {
-  list: TPreuve[] | undefined;
-  isLoading: boolean;
-};
-
-type IndicateursState = {
-  list: IndicateurDefinitionListItem[];
-  isLoading: boolean;
-  update: (indicateur: IndicateurDefinitionListItem) => Promise<void>;
-  canUpdate: (indicateur: IndicateurDefinitionListItem) => boolean;
-  canCreate: boolean;
-};
-
-type NotesState = {
-  list: FicheNote[];
-  upsert: (
-    noteToUpsert: Omit<FicheNoteUpsert, 'dateNote'> & { dateNote: number }
-  ) => Promise<void>;
-  delete: (noteToDeleteId: number) => Promise<void>;
-};
+import { useFicheActionsLiees } from './hooks/use-fiche-actions-liees';
+import { useFicheBudgets } from './hooks/use-fiche-budgets';
+import { useFicheDocuments } from './hooks/use-fiche-documents';
+import { useFicheFinanceurs } from './hooks/use-fiche-financeurs';
+import { useFicheIndicateurs } from './hooks/use-fiche-indicateurs';
+import { useFicheNotes } from './hooks/use-fiche-notes';
+import {
+  ActionsLieesState,
+  BudgetsState,
+  DocumentsState,
+  FinanceursState,
+  IndicateursState,
+  NotesState,
+} from './types';
 
 export type FicheContextValue = {
   fiche: FicheWithRelations;
@@ -68,6 +32,8 @@ export type FicheContextValue = {
   documents: DocumentsState;
   indicateurs: IndicateursState;
   notes: NotesState;
+  budgets: BudgetsState;
+  financeurs: FinanceursState;
 };
 
 const FicheContext = createContext<FicheContextValue | null>(null);
@@ -93,166 +59,58 @@ export const FicheProvider = ({
 }: FicheProviderProps) => {
   const collectivite = useCurrentCollectivite();
   const user = useUser();
-  const { mutateAsync: updateFiche, isPending: isUpdatePending } =
-    useUpdateFiche();
+  const { mutate: updateFiche, isPending: isUpdatePending } = useUpdateFiche();
 
-  const isReadonly =
-    collectivite.isReadOnly ||
-    !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id) ||
-    isFicheSharedWithCollectivite(fiche, collectivite.collectiviteId);
-
-  const { data: documentsList, isLoading: isLoadingDocuments } =
-    useAnnexesFicheAction(collectivite.collectiviteId, fiche.id);
-
-  const documents: DocumentsState = {
-    list: documentsList,
-    isLoading: isLoadingDocuments,
-  };
-
-  const { fiches: fichesLieesList, isLoading: isLoadingFichesLiees } =
-    useListFiches(collectivite.collectiviteId, {
-      filters: {
-        linkedFicheIds: [fiche.id],
-      },
-    });
-
-  const { mutate: updateFichesLiees } = useUpdateFichesActionLiees(fiche.id);
-
-  const updateActionLiee = useCallback(
-    (ficheToToggle: FicheListItem) => {
-      const currentFiches = fichesLieesList;
-      const isFicheAlreadyLinked =
-        currentFiches.some((f) => f.id === ficheToToggle.id) ?? false;
-
-      const updatedFicheIds = isFicheAlreadyLinked
-        ? currentFiches
-            .filter((f) => f.id !== ficheToToggle.id)
-            .map((f) => f.id)
-        : [...currentFiches, ficheToToggle].map((f) => f.id);
-
-      updateFichesLiees(updatedFicheIds);
-    },
-    [fichesLieesList, updateFichesLiees]
+  const isReadonly = useMemo(
+    () =>
+      collectivite.isReadOnly ||
+      !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id) ||
+      isFicheSharedWithCollectivite(fiche, collectivite.collectiviteId),
+    [collectivite, fiche, user.id]
   );
 
-  const fichesLiees: ActionsLieesState = React.useMemo(
+  const documents = useFicheDocuments(collectivite.collectiviteId, fiche.id);
+  const actionsLiees = useFicheActionsLiees(
+    collectivite.collectiviteId,
+    fiche.id
+  );
+  const indicateurs = useFicheIndicateurs(collectivite, fiche.id, user.id);
+  const notes = useFicheNotes(fiche);
+  const budgets = useFicheBudgets(fiche);
+  const financeurs = useFicheFinanceurs(fiche);
+
+  const contextValue: FicheContextValue = useMemo(
     () => ({
-      list: fichesLieesList,
-      isLoading: isLoadingFichesLiees,
-      update: updateFichesLiees,
-      updateActionLiee,
-    }),
-    [fichesLieesList, isLoadingFichesLiees, updateFichesLiees, updateActionLiee]
-  );
-
-  const { data, isLoading: isLoadingIndicateurs } = useListIndicateurs({
-    collectiviteId: fiche.collectiviteId,
-    filters: {
-      ficheIds: [fiche.id],
-    },
-  });
-
-  const indicateursList = React.useMemo(() => data?.data ?? [], [data]);
-
-  const updateIndicateurs = React.useCallback(
-    async (indicateur: IndicateurDefinitionListItem) => {
-      const currentIndicateurs = indicateursList;
-      const isIndicateurAlreadyLinked =
-        currentIndicateurs.some((i) => i.id === indicateur.id) ?? false;
-
-      const updatedIndicateurs = isIndicateurAlreadyLinked
-        ? currentIndicateurs.filter((i) => i.id !== indicateur.id)
-        : [...currentIndicateurs, indicateur];
-
-      await updateFiche({
-        ficheId: fiche.id,
-        ficheFields: {
-          indicateurs: updatedIndicateurs,
-        },
-      });
-    },
-    [fiche.id, indicateursList, updateFiche]
-  );
-
-  const canCreateIndicateur = hasPermission(
-    collectivite.permissions,
-    'indicateurs.indicateurs.create'
-  );
-  const canUpdateIndicateur = React.useCallback(
-    (indicateur: IndicateurDefinitionListItem) =>
-      canUpdateIndicateurDefinition(
-        collectivite.permissions,
-        indicateur,
-        user.id
-      ),
-    [collectivite.permissions, user.id]
-  );
-
-  const indicateurs: IndicateursState = React.useMemo(
-    () => ({
-      list: indicateursList,
-      isLoading: isLoadingIndicateurs,
-      update: updateIndicateurs,
-      canUpdate: canUpdateIndicateur,
-      canCreate: canCreateIndicateur,
+      fiche,
+      isReadonly,
+      planId,
+      update: updateFiche,
+      isUpdating: isUpdatePending,
+      actionsLiees,
+      documents,
+      indicateurs,
+      notes,
+      budgets,
+      financeurs,
     }),
     [
-      indicateursList,
-      isLoadingIndicateurs,
-      updateIndicateurs,
-      canUpdateIndicateur,
-      canCreateIndicateur,
+      fiche,
+      isReadonly,
+      planId,
+      updateFiche,
+      isUpdatePending,
+      actionsLiees,
+      documents,
+      indicateurs,
+      notes,
+      budgets,
+      financeurs,
     ]
   );
 
-  const notes: NotesState = {
-    list: fiche.notes ?? [],
-    upsert: async (noteToUpsert) => {
-      const formattedDateNote = `${noteToUpsert.dateNote}-01-01`;
-      const formattedNoteToUpsert = {
-        ...noteToUpsert,
-        dateNote: formattedDateNote,
-      };
-
-      const notes =
-        noteToUpsert.id === undefined
-          ? [...(fiche.notes ?? []), formattedNoteToUpsert]
-          : fiche.notes?.map((note) =>
-              note.id === noteToUpsert.id ? formattedNoteToUpsert : note
-            );
-
-      await updateFiche({
-        ficheId: fiche.id,
-        ficheFields: {
-          notes,
-        },
-      });
-    },
-    delete: async (noteId: number) => {
-      await updateFiche({
-        ficheId: fiche.id,
-        ficheFields: {
-          notes: fiche.notes?.filter((note) => note.id !== noteId),
-        },
-      });
-    },
-  };
-
   return (
-    <FicheContext
-      value={{
-        fiche,
-        isReadonly,
-        planId,
-        update: updateFiche,
-        isUpdating: isUpdatePending,
-        actionsLiees: fichesLiees,
-        documents,
-        indicateurs,
-        notes,
-      }}
-    >
+    <FicheContext.Provider value={contextValue}>
       {children}
-    </FicheContext>
+    </FicheContext.Provider>
   );
 };
