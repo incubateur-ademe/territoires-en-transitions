@@ -43,7 +43,7 @@ export const NotifyPiloteEmail = (
             {actionTitre && <li>Action parente : {actionTitre}</li>}
           </>
         ) : (
-          <li>Action : {actionTitre}</li>
+          <li>Action : {actionTitre || 'Sans titre'}</li>
         )}
         {planNom && <li>Plan : {planNom}</li>}
         {dateFin && <li>Date de fin : {dateFin}</li>}
