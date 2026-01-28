@@ -50,7 +50,7 @@ export const SubActionCardsList = ({
                 <h6 className="mb-0 text-sm">
                   {phaseToLabel[phase].toUpperCase()}
                 </h6>
-                <Divider color="light" className="mt-2" />
+                <Divider className="mt-2 mb-6" />
 
                 <div>
                   <div className={classNames('grid gap-7')}>

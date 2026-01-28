@@ -1,26 +1,27 @@
-import classNames from 'classnames';
+import { cn } from '../../utils/cn';
 
-type DividerProps = {
-  /** Permet de modifier la couleur par défaut */
-  color?: 'light' | 'medium' | 'grey';
-  /** Permet d'ajuster le style */
+type Props = {
   className?: string;
-  // todo? ajout d'une orientation et d'un variant
+  color?: 'grey' | 'primary';
+  orientation?: 'horizontal' | 'vertical';
 };
 
-/**
- * Renvoie un <hr /> stylisé avec le thème du design system
- */
-
-export const Divider = ({ color = 'light', className }: DividerProps) => {
+export const Divider = ({
+  color = 'grey',
+  orientation = 'horizontal',
+  className,
+}: Props) => {
   return (
     <hr
-      className={classNames(
-        'w-full bg-gradient-to-r',
+      aria-orientation={orientation}
+      className={cn(
         {
-          'from-primary-3 to-primary-3': color === 'light',
-          'from-primary-5 to-primary-5': color === 'medium',
-          'from-grey-4 to-grey-4': color === 'grey',
+          'border-grey-4': color === 'grey',
+          'border-primary-3': color === 'primary',
+        },
+        {
+          'border-t w-full': orientation === 'horizontal',
+          'border-l w-px h-full': orientation === 'vertical',
         },
         className
       )}

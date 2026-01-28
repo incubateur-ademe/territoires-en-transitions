@@ -147,7 +147,7 @@ const Option = ({
         aria-label={option.label}
         className={classNames(
           'flex items-start w-full p-2 pr-6 text-left text-sm',
-          { 'hover:!bg-primary-0': !disabled }
+          { 'hover:bg-primary-0': !disabled }
         )}
         onClick={(e) => {
           e.stopPropagation();

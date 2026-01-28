@@ -132,7 +132,7 @@ export const BudgetModal = ({
         size="xl"
         render={() => (
           <div>
-            <Divider className="pb-4" />
+            <Divider color="primary" className="pb-4" />
 
             {/* Options */}
             <div className="w-full flex max-sm:flex-col justify-between items-center gap-4">
@@ -163,7 +163,7 @@ export const BudgetModal = ({
                 />
               </div>
             </div>
-            <Divider className="mt-4" />
+            <Divider color="primary" className="my-4" />
 
             {/* Formulaire */}
             <div className="flex flex-col gap-6">
@@ -182,7 +182,7 @@ export const BudgetModal = ({
                     budgets={extendedBudgetDataForm}
                     onFormChange={setExtendedBudgetDataForm}
                   />
-                  <Divider className="-mb-6" />
+                  <Divider color="primary" />
                   <Checkbox
                     label="Le budget prévisionnel total renseigné s’étale sur toute la durée du plan"
                     checked={isFullPlan}
@@ -190,7 +190,7 @@ export const BudgetModal = ({
                   />
                 </>
               )}
-              <Divider className="-mb-6" />
+              <Divider color="primary" />
             </div>
           </div>
         )}

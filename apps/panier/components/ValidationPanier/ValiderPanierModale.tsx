@@ -62,7 +62,7 @@ const ValiderPanierModale = () => {
           Vous pouvez maintenant créer un plan, pour retrouver et modifier ces
           actions sur notre outil Territoires en Transitions.
         </span>
-        <Divider color="medium" className="mt-8 !w-1/2" />
+        <Divider className="mt-8 mb-6 !w-1/2" />
         <StepperValidation className="w-5/6 mt-2" steps={steps} />
       </div>
       {user ? <ModeConnecte /> : <ModeDeconnecte />}

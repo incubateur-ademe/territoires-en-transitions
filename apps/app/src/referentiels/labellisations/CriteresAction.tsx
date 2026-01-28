@@ -2,7 +2,7 @@ import { referentielToName } from '@/app/app/labels';
 import { makeReferentielTacheUrl } from '@/app/app/paths';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import { getIdentifiantFromActionId } from '@tet/domain/referentiels';
-import { Icon } from '@tet/ui';
+import { Button, Icon } from '@tet/ui';
 import classNames from 'classnames';
 import './CriteresAction.css';
 
@@ -40,8 +40,8 @@ export const CritereActionTable = (props: TCriteresActionTable) => {
   const { criteres_action } = parcours;
 
   return (
-    <div className="critere-action-table">
-      <table>
+    <div className="critere-action-table border-grey-4">
+      <table className="bg-grey-4">
         <thead>
           <tr>
             <th className="pl-10" colSpan={3}>
@@ -80,7 +80,7 @@ const CritereActionRow = (
   });
 
   return (
-    <tr>
+    <tr className="bg-white">
       <td className="text-center w-[56px]">
         <Icon
           icon="checkbox-circle-fill"
@@ -95,14 +95,15 @@ const CritereActionRow = (
         <span>{getIdentifiantFromActionId(action_id)}</span>
       </td>
       <td className="pl-4 pr-8">
-        <a
+        <Button
           href={pathname}
-          target="_blank"
-          className="hover:underline"
-          rel="noreferrer"
+          external
+          variant="underlined"
+          className="text-grey-8 border-b-grey-8 hover:border-b-grey-9 hover:text-grey-9"
+          size="sm"
         >
           {formulation}
-        </a>
+        </Button>
       </td>
       <td>{statut_ou_score}</td>
     </tr>

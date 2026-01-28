@@ -94,7 +94,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
 
             <Divider />
 
-            <Field title="Résultat" className="-mt-8">
+            <Field title="Résultat">
               <InputValue
                 value={resultat ?? ''}
                 onChange={(value) => setValeur({ ...valeur, resultat: value })}
@@ -111,7 +111,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
 
             <Divider />
 
-            <Field title="Objectif" className="-mt-8">
+            <Field title="Objectif">
               <InputValue
                 value={objectif ?? ''}
                 onChange={(value) => setValeur({ ...valeur, objectif: value })}

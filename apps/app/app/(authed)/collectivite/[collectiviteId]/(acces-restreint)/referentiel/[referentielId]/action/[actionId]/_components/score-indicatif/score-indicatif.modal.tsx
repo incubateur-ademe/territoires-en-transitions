@@ -103,7 +103,9 @@ const ScoreIndicatifModalIndicateurs = (
 
   return (
     <div>
-      <h3 className="text-center">Renseigner les données des indicateurs</h3>
+      <h3 className="text-center mb-6">
+        Renseigner les données des indicateurs
+      </h3>
       <Alert
         className="border-8 border-info-2 rounded-lg"
         state="info"
@@ -184,7 +186,7 @@ const ScoreIndicatifModalIndicateurCard = (
       <span>
         {titre} <span className="text-grey-6">({unite})</span>
       </span>
-      <Divider />
+      <Divider color="primary" className="mb-6" />
       <ul className="font-normal list-disc pl-4">
         <li>
           <LibelleValeurSelectionnee

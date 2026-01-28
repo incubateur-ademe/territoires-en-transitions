@@ -41,9 +41,7 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
       {/* Informations sur les scores indicatifs */}
       <ScoreIndicatifLibelle actionId={task.id} />
 
-      {!isReadOnly && (isDetailled || task.haveScoreIndicatif) && (
-        <Divider color="light" className="-mb-6 mt-auto" />
-      )}
+      {!isReadOnly && (isDetailled || task.haveScoreIndicatif) && <Divider />}
 
       {/* Actions */}
       <SubactionCardActions
@@ -57,7 +55,7 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
       {showJustifications && (
         <>
           {!isReadOnly && (isDetailled || task.haveScoreIndicatif) && (
-            <Divider color="light" className="-mb-6" />
+            <Divider />
           )}
 
           <ActionJustificationField

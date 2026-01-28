@@ -80,8 +80,8 @@ const HeaderDesktopDropdown = ({
       <button
         ref={refs.setReference}
         {...getReferenceProps()}
-        className={cn('flex items-center gap-2 p-4 hover:!bg-primary-1', {
-          'bg-primary-3 hover:!bg-primary-3': isOpen,
+        className={cn('flex items-center gap-2 p-4 hover:bg-primary-1', {
+          'bg-primary-3 hover:bg-primary-3': isOpen,
           'border-solid border-b-2 border-t-0 border-x-0 border-primary-9':
             isActive,
         })}

@@ -62,7 +62,7 @@ function ActionDetailPage({ action }: { action: ActionDefinitionSummary }) {
           />
         </div>
 
-        <Divider color="grey" className="mt-6" />
+        <Divider className="my-6" />
 
         {/* Explications sur l'état d'avancement */}
         {showJustifications && (

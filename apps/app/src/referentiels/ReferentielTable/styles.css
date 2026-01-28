@@ -2,6 +2,9 @@
   --color-primary: #433eba;
   --color-secondary: #6a6af4;
   --color-pill: #e3e3fd;
+  --background-disabled-grey: #dddddd;
+  --text-disabled-grey: #929292;
+  --background-alt-grey: #f9f9f9;
   margin-bottom: 32px;
   border-radius: 8px;
   border-width: 8px;

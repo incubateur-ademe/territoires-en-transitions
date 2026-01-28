@@ -48,7 +48,7 @@ const FiltersColonne = ({ vue, filters, setFilters }: Props) => {
             variant="outlined"
             size="sm"
           />
-          <h4>Filtrer</h4>
+          <h4 className="mb-6">Filtrer</h4>
         </div>
 
         {/* Filtres */}

@@ -1,7 +1,6 @@
 import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
-import { isFicheSharedWithCollectivite } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { Alert } from '@tet/ui';
-import Link from 'next/link';
+import { Alert, InlineLink } from '@tet/ui';
+import { isFicheSharedWithCollectivite } from './share-fiche.utils';
 
 type SharedFicheLinkedResourcesAlertProps = {
   fiche: Fiche;
@@ -35,13 +34,12 @@ export const SharedFicheLinkedResourcesAlert = ({
             </span>
             <span>
               Vous souhaitez des améliorations ?{' '}
-              <Link
-                href={'https://calendar.app.google/j5uQrkt13xLZRBSDA'}
-                target={'_blank'}
-                rel={'noopener noreferrer'}
+              <InlineLink
+                href="https://calendar.app.google/j5uQrkt13xLZRBSDA"
+                openInNewTab
               >
                 Échangez avec nous
-              </Link>{' '}
+              </InlineLink>{' '}
               - Votre avis façonne le produit.
             </span>
           </>

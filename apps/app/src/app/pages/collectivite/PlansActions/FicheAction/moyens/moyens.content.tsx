@@ -8,7 +8,7 @@ import { RessourcesEditableView } from './ressources/ressources.editable-view';
 
 const Section = ({ children }: { children: React.ReactNode }) => (
   <div>
-    <Divider />
+    <Divider color="primary" className="mb-6" />
     {children}
   </div>
 );
