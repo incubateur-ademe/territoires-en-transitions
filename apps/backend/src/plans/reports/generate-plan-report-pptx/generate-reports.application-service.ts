@@ -3,7 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { CreateDocumentService } from '@tet/backend/collectivites/documents/create-document/create-document.service';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { NotifiedOnEnum } from '@tet/backend/utils/notifications/models/notified-on.enum';
 import { Result } from '@tet/backend/utils/result.type';
@@ -14,7 +13,7 @@ import {
   ReportGeneration,
   ReportTemplatesType,
 } from '@tet/domain/plans';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { Queue } from 'bullmq';
 import { mkdirSync, rmSync } from 'fs';

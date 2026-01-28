@@ -1,7 +1,7 @@
 import FicheActionCardSkeleton from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import { CollectiviteAccess } from '@tet/domain/users';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import classNames from 'classnames';
 import FicheActionCard from '../Carte/FicheActionCard';
 
@@ -9,7 +9,7 @@ type FichesLieesListeProps = {
   fiches: FicheListItem[];
   className?: string;
   onUnlink?: (ficheId: number) => void;
-  collectivite: CollectiviteAccess;
+  collectivite: CollectiviteCurrent;
   currentUserId: string;
   isLoading?: boolean;
 };

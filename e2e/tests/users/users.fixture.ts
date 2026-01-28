@@ -73,7 +73,7 @@ class UserFactory {
   removeSome = async (userIds: string[]) => {
     const [usersToDelete, usersToKeep] = partition(
       this.usersFixtureCreated,
-      (u) => userIds.includes(u.data.userId)
+      (u) => userIds.includes(u.data.id)
     );
     if (usersToDelete?.length) {
       await Promise.all(usersToDelete?.map(async (user) => user.cleanup()));

@@ -6,10 +6,9 @@ import PlanActionsService from '@tet/backend/plans/fiches/plan-actions.service';
 import { ListLabellisationsService } from '@tet/backend/referentiels/labellisations/list-labellisations.service';
 import { ListActionsService } from '@tet/backend/referentiels/list-actions/list-actions.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { ListIndicateursService } from '../indicateurs/indicateurs/list-indicateurs/list-indicateurs.service';
 import { LabellisationRecord } from '../referentiels/labellisations/list-labellisations.api-response';
 

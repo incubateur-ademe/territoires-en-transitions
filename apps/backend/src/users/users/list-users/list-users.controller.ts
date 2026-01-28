@@ -1,18 +1,18 @@
-import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
-import type { AuthUser } from '@tet/backend/users/models/auth.models';
-import { ListUsersService } from '@tet/backend/users/users/list-users/list-users.service';
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UnauthorizedException } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { UserWithCollectiviteAccessesSchema } from '@tet/domain/users';
+import { TokenInfo } from '@tet/backend/users/decorators/token-info.decorators';
+import type { AuthUser } from '@tet/backend/users/models/auth.models';
+import { ListUsersService } from '@tet/backend/users/users/list-users/list-users.service';
+import { userWithRolesAndPermissionsSchema } from '@tet/domain/users';
 import { createZodDto } from 'nestjs-zod';
 
-class UserWithCollectiviteAccessesClass extends createZodDto(
-  UserWithCollectiviteAccessesSchema
+class UserWithRolesAndPermissionsClass extends createZodDto(
+  userWithRolesAndPermissionsSchema
 ) {}
 
 @ApiBearerAuth()
@@ -28,13 +28,19 @@ export class ListUsersController {
   })
   @ApiOkResponse({
     description:
-      "Les informations de l'utilisateur connecté, y compris ses permissions.",
-    type: UserWithCollectiviteAccessesClass,
+      "Les informations de l'utilisateur connecté, y compris ses rôles et permissions.",
+    type: UserWithRolesAndPermissionsClass,
   })
-  async getUserWithCollectiviteAccesses(
+  async getUserWithRolesAndPermissions(
     @TokenInfo() user: AuthUser
-  ): Promise<UserWithCollectiviteAccessesClass> {
-    const userInfo = await this.usersService.getUserWithAccesses(user);
-    return userInfo.user;
+  ): Promise<UserWithRolesAndPermissionsClass> {
+    if (!user.id) {
+      throw new UnauthorizedException('Utilisateur non authentifié');
+    }
+
+    const userInfo = await this.usersService.getUserWithRolesAndPermissionsBy({
+      userId: user.id,
+    });
+    return userInfo;
   }
 }

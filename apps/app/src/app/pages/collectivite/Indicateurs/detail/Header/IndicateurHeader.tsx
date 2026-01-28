@@ -1,6 +1,5 @@
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { PermissionOperation } from '@tet/domain/users';
 import { VisibleWhen } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
@@ -12,7 +11,7 @@ import IndicateurToolbar from './IndicateurToolbar';
 type Props = {
   collectiviteId: number;
   definition: IndicateurDefinition;
-  permissions: PermissionOperation[];
+  hasCollectivitePermission: (permission: PermissionOperation) => boolean;
   isReadonly: boolean;
   isPerso: boolean;
   composeSansAgregation: boolean;
@@ -21,7 +20,7 @@ type Props = {
 
 const IndicateurHeader = ({
   collectiviteId,
-  permissions,
+  hasCollectivitePermission,
   definition,
   isReadonly,
   isPerso,
@@ -52,15 +51,14 @@ const IndicateurHeader = ({
             {/* Actions sur l'indicateur */}
             {!isReadonly && (
               <IndicateurToolbar
-                {...{ definition, isPerso, permissions }}
+                {...{ definition, isPerso, hasCollectivitePermission }}
                 className={cn('ml-auto', { '!mt-0': isSticky })}
               />
             )}
           </div>
 
           <VisibleWhen
-            condition={hasPermission(
-              permissions,
+            condition={hasCollectivitePermission(
               'indicateurs.indicateurs.read_public'
             )}
           >

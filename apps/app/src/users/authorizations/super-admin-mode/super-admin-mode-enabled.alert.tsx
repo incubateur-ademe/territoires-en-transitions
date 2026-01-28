@@ -1,14 +1,14 @@
 import { Alert } from '@tet/ui';
-import { ToggleSupportModeCheckbox } from './toggle-support-mode.checkbox';
+import { ToggleSuperAdminModeCheckbox } from './toggle-super-admin-mode.checkbox';
 
-export function SupportModeEnabledAlert() {
+export function SuperAdminModeEnabledAlert() {
   return (
     <Alert
       state="error"
       customIcon="alarm-warning-fill"
       title={
         <div className="flex gap-5">
-          <ToggleSupportModeCheckbox />
+          <ToggleSuperAdminModeCheckbox />
           <span>
             Vous avez des permissions administrateur sur toutes les
             collectivités. Prudence ⛑️

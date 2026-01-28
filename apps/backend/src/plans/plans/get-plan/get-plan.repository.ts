@@ -83,7 +83,7 @@ export class GetPlanRepository {
           tagName: personneTagTable.nom,
         })
         .from(planReferentTable)
-        .leftJoin(userTable, eq(planReferentTable.userId, userTable.userId))
+        .leftJoin(userTable, eq(planReferentTable.userId, userTable.id))
         .leftJoin(
           personneTagTable,
           eq(planReferentTable.tagId, personneTagTable.id)
@@ -118,7 +118,7 @@ export class GetPlanRepository {
           tagName: personneTagTable.nom,
         })
         .from(planPiloteTable)
-        .leftJoin(userTable, eq(planPiloteTable.userId, userTable.userId))
+        .leftJoin(userTable, eq(planPiloteTable.userId, userTable.id))
         .leftJoin(
           personneTagTable,
           eq(planPiloteTable.tagId, personneTagTable.id)

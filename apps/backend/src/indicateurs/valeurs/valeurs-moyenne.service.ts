@@ -17,8 +17,8 @@ import { DatabaseService } from '../../utils/database/database.service';
 
 import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
 import { indicateurSourceTable } from '@tet/backend/indicateurs/shared/models/indicateur-source.table';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { ResourceType } from '@tet/domain/users';
 import { indicateurValeurTable } from '../valeurs/indicateur-valeur.table';
 import { GetMoyenneCollectivitesRequest } from './get-moyenne-collectivites.request';
 import { ValeursMoyenneDTO } from './valeurs-moyenne.dto';

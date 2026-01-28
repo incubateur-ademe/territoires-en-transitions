@@ -1,7 +1,6 @@
 'use client';
 
 import ModaleCreerIndicateur from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 import { ReactNode, useState } from 'react';
@@ -11,7 +10,7 @@ import { ReactNode, useState } from 'react';
  * les onglets ("Indicateurs clés", etc.)
  */
 export default function Layout({ tabs }: { tabs: ReactNode }) {
-  const { isReadOnly, permissions } = useCurrentCollectivite();
+  const { isReadOnly, hasCollectivitePermission } = useCurrentCollectivite();
   const [isNewIndicateurOpen, setIsNewIndicateurOpen] = useState(false);
 
   return (
@@ -19,7 +18,7 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
       <div className="flex justify-between max-sm:flex-col gap-y-4">
         <h2 className="mb-0 mr-auto">Listes d&apos;indicateurs</h2>
         {!isReadOnly &&
-          hasPermission(permissions, 'indicateurs.indicateurs.create') && (
+          hasCollectivitePermission('indicateurs.indicateurs.create') && (
             <>
               <Button
                 data-test="create-perso"

@@ -1,22 +1,18 @@
 import { INestApplication } from '@nestjs/common';
-import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/roles/private-utilisateur-droit.table';
 import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles/utilisateur-verifie.table';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import {
-  CollectiviteAccessLevel,
-  CollectiviteAccessLevelEnum,
-  Dcp,
-} from '@tet/domain/users';
+import { CollectiviteRole, Dcp } from '@tet/domain/users';
 import assert from 'assert';
 import { and, count, eq, sql } from 'drizzle-orm';
 import { UpdateUserRoleService } from '../authorizations/update-user-role/update-user-role.service';
+import { utilisateurCollectiviteAccessTable } from '../authorizations/utilisateur-collectivite-access.table';
 
 export type TestUserArgs = {
   collectiviteId?: number | null;
-  accessLevel?: CollectiviteAccessLevel;
+  accessLevel?: CollectiviteRole;
   cguAcceptees?: boolean;
 };
 
@@ -27,7 +23,7 @@ export async function addTestUser(
   { db }: DatabaseServiceInterface,
   { collectiviteId, accessLevel, cguAcceptees }: TestUserArgs = {
     collectiviteId: null,
-    accessLevel: CollectiviteAccessLevelEnum.EDITION,
+    accessLevel: CollectiviteRole.EDITION,
     cguAcceptees: true,
   }
 ): Promise<{
@@ -78,7 +74,7 @@ export async function addTestUser(
     .insert(dcpTable)
     .values([
       {
-        userId,
+        id: userId,
         nom,
         prenom,
         email,
@@ -109,7 +105,7 @@ export async function addTestUser(
   // cleanup
   const cleanup = async () => {
     console.log(`Cleanup user ${userId}`);
-    await db.delete(dcpTable).where(eq(dcpTable.userId, userId));
+    await db.delete(dcpTable).where(eq(dcpTable.id, userId));
     await db
       .delete(utilisateurVerifieTable)
       .where(eq(utilisateurVerifieTable.userId, userId));
@@ -164,17 +160,17 @@ export async function addUserRoleSupport({
   };
 }
 
-export async function enableUserSupportMode({
+export async function enableUserSuperAdminMode({
   caller,
 }: {
   caller: ReturnType<TrpcRouter['createCaller']>;
 }) {
-  await caller.users.authorizations.toggleSupportMode({
+  await caller.users.authorizations.toggleSuperAdminRole({
     isEnabled: true,
   });
 
   const cleanup = async () => {
-    await caller.users.authorizations.toggleSupportMode({
+    await caller.users.authorizations.toggleSuperAdminRole({
       isEnabled: false,
     });
   };
@@ -184,7 +180,7 @@ export async function enableUserSupportMode({
   };
 }
 
-export async function addAndEnableUserSupportMode({
+export async function addAndEnableUserSuperAdminMode({
   app,
   caller,
   userId,
@@ -197,12 +193,11 @@ export async function addAndEnableUserSupportMode({
     app,
     userId,
   });
-  const { cleanup: cleanupEnableUserSupportMode } = await enableUserSupportMode(
-    { caller }
-  );
+  const { cleanup: cleanupEnableUserSuperAdminMode } =
+    await enableUserSuperAdminMode({ caller });
 
   const cleanup = async () => {
-    await cleanupEnableUserSupportMode();
+    await cleanupEnableUserSuperAdminMode();
     await cleanupAddUserRoleSupport();
   };
 

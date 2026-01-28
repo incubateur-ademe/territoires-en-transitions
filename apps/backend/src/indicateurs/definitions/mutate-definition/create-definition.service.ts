@@ -4,9 +4,9 @@ import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/
 import { indicateurThematiqueTable } from '@tet/backend/indicateurs/shared/models/indicateur-thematique.table';
 import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { ResourceType } from '@tet/domain/users';
 import { AuthUser } from '../../../users/models/auth.models';
 import { CreateIndicateurDefinitionInput } from './mutate-definition.input';
 

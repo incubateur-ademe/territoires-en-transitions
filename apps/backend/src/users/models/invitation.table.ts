@@ -13,7 +13,7 @@ import {
   createdBy,
   TIMESTAMP_OPTIONS,
 } from '../../utils/column.utils';
-import { collectiviteAccessLevelPgEnum } from '../authorizations/roles/permission-level.column';
+import { collectiviteRolePgEnum } from '../authorizations/roles/collectivite-role.column';
 
 export const utilisateurSchema = pgSchema('utilisateur');
 
@@ -22,7 +22,7 @@ export const invitationTable = utilisateurSchema.table('invitation', {
     .primaryKey()
     .notNull()
     .default(sql`gen_random_uuid()`),
-  accessLevel: collectiviteAccessLevelPgEnum('niveau').notNull(),
+  accessLevel: collectiviteRolePgEnum('niveau').notNull(),
   email: text('email').notNull(),
   collectiviteId: integer('collectivite_id')
     .notNull()

@@ -1,6 +1,23 @@
 import { act, renderHook } from '@testing-library/react';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { describe, expect, it } from 'vitest';
 import { useSelectFiches } from './use-select-fiches';
+
+const mockCollectivite: CollectiviteCurrent = {
+  collectiviteId: 1,
+  collectiviteNom: 'Test Collectivite',
+  collectiviteAccesRestreint: false,
+  role: null,
+  nom: 'Test Collectivite',
+  accesRestreint: false,
+  niveauAcces: null,
+  isRoleAuditeur: false,
+  isReadOnly: false,
+  isSimplifiedView: false,
+  hasCollectivitePermission: () => false,
+  permissions: [],
+  audits: [],
+};
 
 describe('useFicheActionSelection', () => {
   describe('Grouped actions mode', () => {
@@ -9,8 +26,7 @@ describe('useFicheActionSelection', () => {
         useSelectFiches({
           view: 'grid',
           currentPage: 1,
-          isReadOnly: false,
-          permissions: [],
+          collectivite: mockCollectivite,
         })
       );
 
@@ -35,8 +51,7 @@ describe('useFicheActionSelection', () => {
         useSelectFiches({
           view: 'grid',
           currentPage: 1,
-          isReadOnly: false,
-          permissions: [],
+          collectivite: mockCollectivite,
         })
       );
 
@@ -56,8 +71,7 @@ describe('useFicheActionSelection', () => {
         useSelectFiches({
           view: 'grid',
           currentPage: 1,
-          isReadOnly: false,
-          permissions: [],
+          collectivite: mockCollectivite,
         })
       );
 
@@ -79,8 +93,7 @@ describe('useFicheActionSelection', () => {
         useSelectFiches({
           view: 'grid',
           currentPage: 1,
-          isReadOnly: false,
-          permissions: [],
+          collectivite: mockCollectivite,
         })
       );
 
@@ -98,8 +111,7 @@ describe('useFicheActionSelection', () => {
         useSelectFiches({
           view: 'grid',
           currentPage: 1,
-          isReadOnly: false,
-          permissions: [],
+          collectivite: mockCollectivite,
         })
       );
 
@@ -124,8 +136,7 @@ describe('useFicheActionSelection', () => {
         useSelectFiches({
           view: 'grid',
           currentPage: 1,
-          isReadOnly: false,
-          permissions: [],
+          collectivite: mockCollectivite,
         })
       );
 
@@ -151,8 +162,7 @@ describe('useFicheActionSelection', () => {
           useSelectFiches({
             view: 'grid',
             currentPage,
-            isReadOnly: false,
-            permissions: [],
+            collectivite: mockCollectivite,
           }),
         { initialProps: 1 }
       );
@@ -175,8 +185,7 @@ describe('useFicheActionSelection', () => {
           useSelectFiches({
             view: 'grid',
             currentPage,
-            isReadOnly: false,
-            permissions: [],
+            collectivite: mockCollectivite,
           }),
         { initialProps: 1 }
       );
@@ -209,8 +218,7 @@ describe('useFicheActionSelection', () => {
         useSelectFiches({
           view: 'grid',
           currentPage: 1,
-          isReadOnly: false,
-          permissions: [],
+          collectivite: mockCollectivite,
         })
       );
 
@@ -234,8 +242,7 @@ describe('useFicheActionSelection', () => {
         useSelectFiches({
           view: 'grid',
           currentPage: 1,
-          isReadOnly: false,
-          permissions: [],
+          collectivite: mockCollectivite,
         })
       );
 
@@ -259,8 +266,7 @@ describe('useFicheActionSelection', () => {
           useSelectFiches({
             view: 'grid',
             currentPage,
-            isReadOnly: false,
-            permissions: [],
+            collectivite: mockCollectivite,
           }),
         { initialProps: 1 }
       );

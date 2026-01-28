@@ -1,6 +1,7 @@
 import { UnverifiedUserCard } from '@/app/users/unverified-user-card';
 import { CollectiviteProviderStore } from '@tet/api/collectivites/index.server';
 import { getUser } from '@tet/api/users/user-details.fetch.server';
+import { hasRole, PlatformRole } from '@tet/domain/users';
 import { ReactNode } from 'react';
 import z from 'zod';
 
@@ -24,7 +25,7 @@ export default async function Layout({
   // In this case, they can see their collectivite informations.
   // Here, we want to make sure that an unverified user cannot see other collectivites informations.
   const userNotAllowedToVisitCollectivite =
-    !user.isVerified && userIsNotInCollectivite;
+    !hasRole(user, PlatformRole.VERIFIED) && userIsNotInCollectivite;
 
   return (
     <CollectiviteProviderStore collectiviteId={collectiviteId}>

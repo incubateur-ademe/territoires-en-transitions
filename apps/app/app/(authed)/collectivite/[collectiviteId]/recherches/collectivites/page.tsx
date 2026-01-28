@@ -1,6 +1,7 @@
 import { CollectivitesView } from '@/app/app/pages/CollectivitesEngagees/Views/collectivites/CollectivitesView';
 import { UnverifiedUserCard } from '@/app/users/unverified-user-card';
 import { getUser } from '@tet/api/users/user-details.fetch.server';
+import { hasRole, PlatformRole } from '@tet/domain/users';
 import { notFound } from 'next/navigation';
 import z from 'zod';
 
@@ -11,7 +12,7 @@ export default async function Page({
 }) {
   const user = await getUser();
 
-  if (!user.isVerified) {
+  if (!hasRole(user, PlatformRole.VERIFIED)) {
     return <UnverifiedUserCard />;
   }
 

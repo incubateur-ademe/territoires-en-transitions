@@ -76,7 +76,6 @@ const FicheActionLegacy = ({
           <Header
             fiche={fiche}
             isReadonly={isReadonly}
-            permissions={collectivite.permissions}
             updateTitle={(titre) =>
               updateFiche({
                 ficheId: fiche.id,

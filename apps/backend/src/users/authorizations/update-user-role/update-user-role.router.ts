@@ -17,14 +17,14 @@ export class UpdateUserRoleRouter {
   ) {}
 
   router = this.trpc.router({
-    toggleSupportMode: this.trpc.authedProcedure
+    toggleSuperAdminRole: this.trpc.authedProcedure
       .input(
         z.object({
           isEnabled: z.boolean(),
         })
       )
       .mutation(async ({ input, ctx: { user } }) => {
-        const result = await this.roleUpdateService.toggleSupportMode({
+        const result = await this.roleUpdateService.toggleSuperAdminRole({
           userId: user.id,
           isEnabled: input.isEnabled,
         });

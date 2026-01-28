@@ -7,13 +7,13 @@ import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { sqlAuthorOrNull } from '@tet/backend/users/models/author.utils';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { getISOFormatDateQuery } from '@tet/backend/utils/column.utils';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import { normalizeIdentifiantReferentiel } from '@tet/domain/referentiels';
+import { ResourceType } from '@tet/domain/users';
 import assert from 'assert';
 import {
   aliasedTable,
@@ -285,7 +285,7 @@ export class ListIndicateursService {
         ),
       })
       .from(indicateurPiloteTable)
-      .leftJoin(dcpTable, eq(dcpTable.userId, indicateurPiloteTable.userId))
+      .leftJoin(dcpTable, eq(dcpTable.id, indicateurPiloteTable.userId))
       .leftJoin(
         personneTagTable,
         eq(personneTagTable.id, indicateurPiloteTable.tagId)
@@ -840,7 +840,7 @@ export class ListIndicateursService {
       )
       .leftJoin(
         dcpTable,
-        eq(dcpTable.userId, indicateurCollectiviteTable.modifiedBy)
+        eq(dcpTable.id, indicateurCollectiviteTable.modifiedBy)
       )
       .where(and(...whereConditions));
 

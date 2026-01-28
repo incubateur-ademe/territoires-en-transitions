@@ -1,12 +1,11 @@
 import { INDICATEUR_LABELS } from '@/app/app/pages/collectivite/Indicateurs/constants';
 import { IndicateursListParamOption } from '@/app/app/paths';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
 import { PermissionOperation } from '@tet/domain/users';
 import { TabProps } from '@tet/ui/design-system/TabsNext/index';
 
 type TabParams = Omit<TabProps, 'href'> & {
   listId: IndicateursListParamOption;
-  isVisibleWithPermissions: (permissions: PermissionOperation[]) => boolean;
+  visibleWithPermission: PermissionOperation;
 };
 
 /** Liste des onglets et de leurs paramètres */
@@ -14,20 +13,17 @@ export const TabsListParams: TabParams[] = [
   {
     listId: 'cles',
     label: INDICATEUR_LABELS.keys.plural,
-    isVisibleWithPermissions: (permissions) =>
-      hasPermission(permissions, 'indicateurs.indicateurs.read_public'),
+    visibleWithPermission: 'indicateurs.indicateurs.read_public',
   },
   {
     listId: 'perso',
     label: INDICATEUR_LABELS.personalized.plural,
-    isVisibleWithPermissions: (permissions) =>
-      hasPermission(permissions, 'indicateurs.indicateurs.read_public'),
+    visibleWithPermission: 'indicateurs.indicateurs.read_public',
   },
   {
     listId: 'collectivite',
     label: INDICATEUR_LABELS.favorites.plural,
-    isVisibleWithPermissions: (permissions) =>
-      hasPermission(permissions, 'indicateurs.indicateurs.read_public'),
+    visibleWithPermission: 'indicateurs.indicateurs.read_public',
     icon: 'star-fill',
     iconClassName: 'text-secondary-1',
     tooltip: INDICATEUR_LABELS.favorites.tooltip,
@@ -35,14 +31,12 @@ export const TabsListParams: TabParams[] = [
   {
     listId: 'mes-indicateurs',
     label: INDICATEUR_LABELS.myIndicateurs.plural,
-    isVisibleWithPermissions: (permissions) =>
-      hasPermission(permissions, 'indicateurs.indicateurs.read'),
+    visibleWithPermission: 'indicateurs.indicateurs.read',
     tooltip: INDICATEUR_LABELS.myIndicateurs.tooltip,
   },
   {
     listId: 'tous',
     label: INDICATEUR_LABELS.all.plural,
-    isVisibleWithPermissions: (permissions) =>
-      hasPermission(permissions, 'indicateurs.indicateurs.read_public'),
+    visibleWithPermission: 'indicateurs.indicateurs.read_public',
   },
 ];

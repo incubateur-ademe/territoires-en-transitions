@@ -12,7 +12,7 @@ import { getFicheActionPlanForCollectivite } from '@/app/plans/fiches/shared/fic
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
 import { QueryKey } from '@tanstack/react-query';
-import { CollectiviteAccess } from '@tet/domain/users';
+import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { Button, Card, Checkbox, Notification, Tooltip } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -45,7 +45,7 @@ export type FicheActionCardProps = {
   /** Exécuté à l'ouverture et à la fermeture de la fiche action */
   onToggleOpen?: (isOpen: boolean) => void;
   /** Id de la collectivité */
-  currentCollectivite: CollectiviteAccess;
+  currentCollectivite: CollectiviteCurrent;
   /** Id de l'utilisateur */
   currentUserId: string;
 };
@@ -72,8 +72,10 @@ const FicheActionCard = ({
     ficheAction,
     currentCollectivite.collectiviteId
   );
+
   const isNotClickable =
-    currentCollectivite.niveauAcces === null && !!ficheAction.restreint;
+    !!ficheAction.restreint &&
+    !currentCollectivite.hasCollectivitePermission('plans.fiches.read_public');
 
   const canUpdate = isFicheEditableByCollectiviteUser(
     ficheAction,

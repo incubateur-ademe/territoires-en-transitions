@@ -115,7 +115,7 @@ async function main() {
 
         // Create corresponding dcp entry only if user was just created
         await tx.insert(dcpTable).values({
-          userId: systemUserId,
+          id: systemUserId,
           email: SYSTEM_USER_EMAIL,
           prenom: 'Territoires',
           nom: 'en Transition',
@@ -138,7 +138,7 @@ async function main() {
       }>(sql`
         SELECT id, notes_complementaires, created_at, modified_at
         FROM fiche_action
-        WHERE notes_complementaires IS NOT NULL 
+        WHERE notes_complementaires IS NOT NULL
           AND TRIM(notes_complementaires) != ''
       `);
 

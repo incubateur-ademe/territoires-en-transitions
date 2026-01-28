@@ -32,7 +32,7 @@ export class UpdateUserRoleService {
    * @param userId identifiant de l'utilisateur
    * @param isActive vrai pour activer le mode support, faux pour le désactiver
    */
-  async toggleSupportMode({
+  async toggleSuperAdminRole({
     userId,
     isEnabled,
   }: {
@@ -60,7 +60,7 @@ export class UpdateUserRoleService {
 
     await this.databaseService.db
       .update(utilisateurSupportTable)
-      .set({ isSupportModeEnabled: isEnabled })
+      .set({ isSuperAdminRoleEnabled: isEnabled })
       .where(eq(utilisateurSupportTable.userId, userId));
 
     return {

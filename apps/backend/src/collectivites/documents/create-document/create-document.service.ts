@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import SupabaseService from '@tet/backend/utils/database/supabase.service';
@@ -10,6 +9,7 @@ import {
   BibliothequeFichier,
   BibliothequeFichierCreate,
 } from '@tet/domain/collectivites';
+import { ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { and, eq } from 'drizzle-orm';
 import { readFile } from 'fs/promises';
