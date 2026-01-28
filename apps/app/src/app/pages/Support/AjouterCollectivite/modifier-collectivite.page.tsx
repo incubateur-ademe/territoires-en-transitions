@@ -69,7 +69,7 @@ export const ModifierCollectivitePage = () => {
 
   return (
     <>
-      <h2>Modifier la collectivité</h2>
+      <h2 className="mb-6">Modifier la collectivité</h2>
       <hr />
       <div className="space-y-6">
         <div className="grid grid-cols-[auto_1fr] items-start gap-4">

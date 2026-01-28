@@ -17,7 +17,7 @@ export const AllerPlusLoin = () => {
   return (
     <div>
       <div className="text-center">
-        <h3>Aller plus loin</h3>
+        <h3 className="mb-6">Aller plus loin</h3>
       </div>
       <h6 className="mb-4 text-base">
         Téléchargez le fichier Excel de calcul pour comprendre le détail des

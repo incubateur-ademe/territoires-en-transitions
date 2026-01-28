@@ -104,7 +104,7 @@ export const AjouterCollectivitePage = () => {
 
   return (
     <>
-      <h2>Ajouter une collectivité</h2>
+      <h2 className="mb-6">Ajouter une collectivité</h2>
       <hr />
       <div className="flex items-start gap-4">
         <CollectiviteTypeField

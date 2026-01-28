@@ -14,7 +14,7 @@ const Landing = () => {
         containerClassName="bg-white"
       >
         <div className="lg:w-2/3">
-          <h1>
+          <h1 className="mb-6">
             Faites vivre{' '}
             <span className="text-primary">la transition écologique</span> sur
             votre territoire.

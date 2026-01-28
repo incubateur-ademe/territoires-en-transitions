@@ -51,7 +51,7 @@ export const ModaleActionImpact = (props: ModaleActionImpactProps) => {
             />
             {!!actionsLiees?.length && (
               <div className="mt-4">
-                <h6 className="text-primary-10 text-base font-bold">
+                <h6 className="text-primary-10 text-base font-bold mb-6">
                   Mesures des référentiels liés :
                 </h6>
                 <div className={'grid lg:grid-cols-2 xl:grid-cols-3 gap-3'}>
