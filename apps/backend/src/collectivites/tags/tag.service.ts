@@ -97,10 +97,23 @@ export class TagService {
         .values({ nom: tag.nom, collectiviteId: tag.collectiviteId })
         .onConflictDoNothing()
         .returning();
-      if (!result) {
-        return failure('Issue on tag creation');
+      const conflictOnCreation = result === undefined;
+
+      if (conflictOnCreation === false) {
+        return success(result as TagWithCollectiviteId);
       }
-      return success(result as TagWithCollectiviteId);
+
+      const [createdTag] = await (tx ?? this.databaseService.db)
+        .select()
+        .from(table)
+        .where(
+          and(
+            eq(table.nom, tag.nom),
+            eq(table.collectiviteId, tag.collectiviteId)
+          )
+        )
+        .limit(1);
+      return success(createdTag as TagWithCollectiviteId);
     } catch (error) {
       return failure(
         error instanceof Error
