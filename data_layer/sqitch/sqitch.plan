@@ -930,3 +930,4 @@ utilisateur/add-is-active-column-to-utilisateur-support 2026-01-06T20:15:39Z Fre
 plan_action/add_report_notifications 2026-01-06T15:45:26Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Ajoute les notifications pour les rapports
 @v4.95.0 2026-01-20T12:11:27Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Ajoute is_active column pour le support, Ajoute les notifications pour les rapports
 
+creation_dune_table_instance_de_gouvernance 2025-12-17T13:16:12Z System Administrator <root@Host-002.lan> # Création de la table instance de gouvernance

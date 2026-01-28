@@ -1,3 +1,4 @@
+import { tagSchema } from '@tet/domain/collectivites';
 import { Cible } from '@tet/domain/plans';
 import { z } from 'zod';
 
@@ -7,7 +8,7 @@ export const acteursFormSchema = z.object({
   referents: z.array(z.any()).nullable(),
   partenaires: z.array(z.any()).nullable(),
   cibles: z.array(z.custom<Cible>()).nullable(),
-  instanceGouvernance: z.string().nullable(),
+  instanceGouvernance: z.array(tagSchema).nullable(),
   participationCitoyenne: z.string().nullable(),
 });
 

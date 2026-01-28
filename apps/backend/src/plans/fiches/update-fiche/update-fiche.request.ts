@@ -1,6 +1,7 @@
 import {
   collectiviteSchema,
   financeurTagSchema,
+  instanceGouvernanceTagSchema,
   libreTagSchema,
   partenaireTagSchema,
   personneIdSchema,
@@ -72,6 +73,16 @@ export const updateFicheRequestSchema = ficheSchemaUpdate.extend({
   effetsAttendus: effetAttenduSchema.pick({ id: true }).array().nullish(),
   libreTags: libreTagSchema.pick({ id: true }).array().nullish(),
   notes: z.array(ficheNoteUpsertSchema).nullish(),
+  instanceGouvernance: instanceGouvernanceTagSchema
+    .pick({ id: true })
+    .array()
+    .nullish(),
 });
 
 export type UpdateFicheRequest = z.infer<typeof updateFicheRequestSchema>;
+
+export const createInstanceGouvernanceAndLinkToFicheInputSchema = z.object({
+  nom: z.string().min(1),
+  ficheId: z.number(),
+  collectiviteId: z.number(),
+});
