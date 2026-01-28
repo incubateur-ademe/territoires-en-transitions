@@ -362,7 +362,7 @@ export class ListIndicateursService {
       .as('indicateurFicheIds');
   }
 
-  private getIndicateurDefinitionAxesQuery() {
+  private getIndicateurDefinitionAxesQuery(collectiviteId: number) {
     return this.databaseService.db
       .select({
         indicateurId: axeIndicateurTable.indicateurId,
@@ -373,11 +373,13 @@ export class ListIndicateursService {
         ),
       })
       .from(axeIndicateurTable)
+      .leftJoin(axeTable, eq(axeTable.id, axeIndicateurTable.axeId))
+      .where(eq(axeTable.collectiviteId, collectiviteId))
       .groupBy(axeIndicateurTable.indicateurId)
       .as('indicateurAxes');
   }
 
-  private getIndicateurDefinitionAxePlansQuery() {
+  private getIndicateurDefinitionAxePlansQuery(collectiviteId: number) {
     return this.databaseService.db
       .select({
         indicateurId: axeIndicateurTable.indicateurId,
@@ -389,6 +391,7 @@ export class ListIndicateursService {
       })
       .from(axeIndicateurTable)
       .leftJoin(axeTable, eq(axeTable.id, axeIndicateurTable.axeId))
+      .where(eq(axeTable.collectiviteId, collectiviteId))
       .groupBy(axeIndicateurTable.indicateurId)
       .as('indicateurAxePlans');
   }
@@ -532,8 +535,10 @@ export class ListIndicateursService {
     });
     const indicateurFicheActions =
       this.getIndicateurDefinitionFichesQuery(collectiviteId);
-    const indicateurAxes = this.getIndicateurDefinitionAxesQuery();
-    const indicateurAxePlans = this.getIndicateurDefinitionAxePlansQuery();
+    const indicateurAxes =
+      this.getIndicateurDefinitionAxesQuery(collectiviteId);
+    const indicateurAxePlans =
+      this.getIndicateurDefinitionAxePlansQuery(collectiviteId);
     const indicateurEnfants =
       this.getIndicateurDefinitionEnfantsQuery(collectiviteId);
     const indicateurParents = this.getIndicateurDefinitionParentsQuery();
