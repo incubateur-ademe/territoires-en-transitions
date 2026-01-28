@@ -8,7 +8,7 @@ import {
 import { ButtonGroup, Checkbox, Divider, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
-import BaseUpdateFicheModal from '../../FicheActionPlanning/base-update-fiche-modal';
+import { BaseUpdateFicheModal } from '../../../components/base-update-fiche.modal';
 import { DetailedBudgetForm } from './detailed-budget-form';
 import { ExtendedBudgetForm } from './extended-budget-form';
 
@@ -111,11 +111,7 @@ export const BudgetModal = ({
       (elt) => !newBudgets.find((b) => b.id === elt.id)
     );
 
-    if (budgetsToDelete.length > 0)
-      deleteBudgets({
-        ficheId,
-        budgetsIds: budgetsToDelete.map((elt) => elt.id),
-      });
+    if (budgetsToDelete.length > 0) deleteBudgets(budgetsToDelete);
     if (newBudgets.length > 0) createBudgets(newBudgets);
   };
 

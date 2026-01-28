@@ -12,7 +12,7 @@ import {
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { useUser } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { Checkbox, Field, Icon, Input, Tooltip } from '@tet/ui';
+import { Checkbox, Divider, Field, Icon, Input, Tooltip } from '@tet/ui';
 import { useForm } from 'react-hook-form';
 import { IndicateursSelectorGrid } from './indicateurs-selector.grid';
 
@@ -121,7 +121,7 @@ export const LinkIndicateursViewBase = ({
           </div>
         </Tooltip>
       </div>
-      <hr className="p-0 my-6 w-full h-px" />
+      <Divider color="primary" className="my-6" />
       <div className="mb-4 font-bold">
         {selectedIndicateurs ? (
           <>

@@ -9,7 +9,7 @@ import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Badge, Button, Divider } from '@tet/ui';
+import { Badge, Button } from '@tet/ui';
 import classNames from 'classnames';
 import ActionNavigation from './action.navigation';
 import { ActionBreadcrumb } from './breadcrum/action.breadcrumb';
@@ -113,8 +113,6 @@ export const ActionHeader = ({
             )}
           >
             <Score actionDefinition={actionDefinition} />
-
-            <Divider className="lg:hidden -mb-6" />
 
             <div className="flex max-sm:flex-col gap-3 sm:items-center w-fit">
               {action && (

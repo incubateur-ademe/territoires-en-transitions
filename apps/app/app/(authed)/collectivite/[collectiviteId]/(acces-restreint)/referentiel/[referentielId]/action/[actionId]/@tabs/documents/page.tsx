@@ -17,7 +17,7 @@ export default function Page() {
     <section className="flex flex-col gap-5">
       <DownloadDocs action={actionDefinition} className="ml-auto" />
 
-      <Divider color="grey" className="-mb-6" />
+      <Divider />
 
       <ActionPreuvePanel withSubActions showWarning action={actionDefinition} />
     </section>

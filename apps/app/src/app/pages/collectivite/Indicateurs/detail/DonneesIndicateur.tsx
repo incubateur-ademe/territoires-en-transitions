@@ -92,7 +92,7 @@ const DonneesIndicateur = ({
           'invisible h-0': !chartInfo.hasValeur,
         })}
       >
-        <Divider />
+        <Divider color="primary" className="mb-6" />
 
         {/* Tableau */}
         <IndicateurValuesTabs
@@ -105,7 +105,7 @@ const DonneesIndicateur = ({
           }}
         />
 
-        <Divider className="mt-6" />
+        <Divider color="primary" className="my-6" />
       </div>
 
       {definition.estPerso && (

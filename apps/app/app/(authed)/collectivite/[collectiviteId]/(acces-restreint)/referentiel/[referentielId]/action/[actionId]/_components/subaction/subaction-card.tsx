@@ -136,7 +136,7 @@ const SubActionCard = ({
 
         {hasCollectivitePermission('referentiels.mutate') &&
           (isDetailled || subAction.haveScoreIndicatif) && (
-            <Divider color="light" className="-mb-4 mt-1" />
+            <Divider className="mt-1 mb-2" />
           )}
 
         {/* Actions */}
@@ -167,7 +167,7 @@ const SubActionCard = ({
         {/* Infos complémentaires */}
         {isPanelFlagEnabled && preuvesCount > 0 && (
           <div className="mt-auto flex flex-col gap-2">
-            <Divider color="light" className="-mb-6 mt-auto" />
+            <Divider className="mt-auto" />
             <div className="text-xs text-grey-8">
               <span>
                 {preuvesCount} document{preuvesCount > 1 ? 's' : ''}
@@ -197,6 +197,7 @@ const SubActionCard = ({
                 id={`Tâches-${subAction.id}`}
                 dataTest={`TâchesPanel-${subAction.identifiant}`}
                 title="Tâches"
+                containerClassname="border-b-0"
                 content={
                   <TaskCardsList
                     className="mt-2"
@@ -213,7 +214,7 @@ const SubActionCard = ({
         )}
         {!isVisitor && (
           <>
-            <Divider color="light" className="-mb-6 mt-auto" />
+            <Divider className="mt-auto" />
 
             <Button
               variant="underlined"

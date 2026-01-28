@@ -14,7 +14,7 @@ import {
   useGetAdditionalInformationCollectivite,
 } from '@/app/app/pages/Support/AjouterCollectivite/use-get-additional-information-collectivite';
 import { useSaveCollectivite } from '@/app/app/pages/Support/AjouterCollectivite/use-save-collectivite';
-import { Button, Field, Input, InputNumber } from '@tet/ui';
+import { Button, Divider, Field, Input, InputNumber } from '@tet/ui';
 import { useState } from 'react';
 
 const statusSearch = {
@@ -105,7 +105,7 @@ export const AjouterCollectivitePage = () => {
   return (
     <>
       <h2 className="mb-6">Ajouter une collectivité</h2>
-      <hr />
+      <Divider color="primary" className="mb-6" />
       <div className="flex items-start gap-4">
         <CollectiviteTypeField
           type={collectivite.type ?? collectiviteType.Commune}
@@ -161,7 +161,7 @@ export const AjouterCollectivitePage = () => {
           {"Cherche la collectivité dans les données de l'INSEE 2020"}
         </p>
       )}
-      <hr />
+      <Divider color="primary" className="mb-6" />
       <div className="space-y-6">
         {status === statusSearch.none &&
           collectivite.type !== collectiviteType.Test && (

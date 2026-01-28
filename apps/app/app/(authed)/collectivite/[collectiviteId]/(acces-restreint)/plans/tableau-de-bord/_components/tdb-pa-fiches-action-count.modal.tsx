@@ -2,7 +2,6 @@ import { cloneDeep } from 'es-toolkit';
 import { useState } from 'react';
 
 import {
-  Divider,
   Event,
   Field,
   FormSection,
@@ -122,7 +121,6 @@ const TdbPaFichesActionCountModal = ({ openState, module }: Props) => {
                   />
                 </Field>
               </FormSection>
-              <Divider />
             </>
           );
         } else {

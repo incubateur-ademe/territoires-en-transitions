@@ -154,7 +154,7 @@ export const InfoActionImpact = ({
         </div>
       )}
 
-      <Divider className="mt-4" />
+      <Divider className="mt-4 mb-6" />
 
       {/* REX */}
       <div className="mt-2">
