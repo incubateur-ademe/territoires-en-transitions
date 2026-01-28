@@ -29,18 +29,6 @@ export interface ResolvedFicheEntities {
   partenaires: Array<Tag>;
 }
 
-/**
- * Infrastructure Service: Entity Resolution
- *
- * Responsible for resolving string references from Excel to database entities.
- * This includes:
- * - Finding or creating tags for structures, services, financeurs, partenaires
- * - Finding or creating user/tag references for pilotes and referents
- *
- * This service orchestrates multiple resolvers and ensures uniqueness of resolved entities.
- *
- * Injectable service that can be easily mocked for testing.
- */
 @Injectable()
 export class ResolveEntityService {
   constructor(
