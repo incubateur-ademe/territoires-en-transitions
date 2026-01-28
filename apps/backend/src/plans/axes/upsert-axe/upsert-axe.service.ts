@@ -67,7 +67,7 @@ export class UpsertAxeService {
           );
         } else {
           this.logger.log(
-            `Parsing error detected ${createAxeProps.error.cause}`
+            `Parsing error detected ${createAxeProps.error.message}`
           );
           return { success: false, error: UpsertAxeErrorEnum.CREATE_AXE_ERROR };
         }
