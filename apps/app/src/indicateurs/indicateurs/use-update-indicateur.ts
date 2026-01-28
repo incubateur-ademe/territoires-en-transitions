@@ -1,3 +1,4 @@
+import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RouterInput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -9,6 +10,7 @@ export const useUpdateIndicateur = (indicateurId: number) => {
   const collectiviteId = useCollectiviteId();
   const queryClient = useQueryClient();
   const trpc = useTRPC();
+  const { setToast } = useToastContext();
 
   const mutationOptions = trpc.indicateurs.indicateurs.update.mutationOptions();
 
@@ -31,6 +33,7 @@ export const useUpdateIndicateur = (indicateurId: number) => {
       });
 
       if (variables.estFavori) {
+        setToast('success', 'L’indicateur a bien été ajouté aux favoris');
         queryClient.invalidateQueries({
           queryKey: trpc.indicateurs.indicateurs.getFavorisCount.queryKey({
             collectiviteId,
@@ -50,7 +53,6 @@ export const useUpdateIndicateur = (indicateurId: number) => {
       }
     },
     meta: {
-      success: "L'indicateur a été mis à jour",
       error: "L'indicateur n'a pas pu être mis à jour",
     },
   });
