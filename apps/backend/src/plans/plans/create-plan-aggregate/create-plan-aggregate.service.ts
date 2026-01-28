@@ -213,47 +213,6 @@ export class CreatePlanAggregateService {
         return failure(PlanErrorType.DATABASE_ERROR);
       }
 
-      const createdFiches = createdFichesResults
-        .filter((f) => f.success)
-        .map((f) => f.data);
-
-      // Step 4: Link fiches to their respective axes
-      const axeIdsByPath = axeResult.data;
-      const planId = createPlanResult.data.id;
-
-      const linkedFiches = await Promise.all(
-        createdFiches.map((fiche) => {
-          if (!fiche.id) {
-            return null;
-          }
-
-          // Get axe ID from the path, or use plan ID if no axe exists
-          const axeId = fiche.axisPath
-            ? axeIdsByPath.get(axisFormatter.serialize(fiche.axisPath))
-            : undefined;
-
-          // fiches without axe are linked directly to the plan
-          const parentAxeId = axeId ?? planId;
-
-          return this.upsertAxeService.upsertAxe(
-            {
-              planId,
-              parent: parentAxeId,
-              collectiviteId: request.collectiviteId,
-              nom: fiche.axisPath?.[fiche.axisPath.length - 1] ?? '',
-            },
-            user,
-            tx
-          );
-        })
-      );
-
-      // Check if any fiche linking failed
-      const linkErrors = linkedFiches.filter((f) => f && !f.success);
-      if (linkErrors.length > 0) {
-        return failure(PlanErrorType.DATABASE_ERROR);
-      }
-
       this.logger.log(
         `Successfully created plan ${request.nom} (ID: ${createPlanResult.data.id})`
       );

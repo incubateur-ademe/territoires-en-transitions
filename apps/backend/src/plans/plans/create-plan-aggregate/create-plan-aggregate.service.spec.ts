@@ -321,5 +321,78 @@ describe('CreatePlanAggregateService', () => {
         expect(result.error).toBe(PlanErrorType.DATABASE_ERROR);
       }
     });
+
+    it('should attach multiple fiches without axes to the plan root without creating any axes', async () => {
+      const request: CreatePlanAggregateInput = {
+        collectiviteId: 1,
+        nom: 'Mon Plan Test',
+        typeId: 1,
+        pilotes: [{ userId: 'pilot-1', tagId: null }],
+        referents: [{ userId: null, tagId: 100 }],
+        fiches: [
+          {
+            axisPath: undefined, // Fiche without axe
+            fiche: {
+              titre: 'Fiche 1 sans axe',
+              pilotes: [],
+              referents: [],
+            },
+          },
+          {
+            axisPath: undefined, // Another fiche without axe
+            fiche: {
+              titre: 'Fiche 2 sans axe',
+              pilotes: [],
+              referents: [],
+            },
+          },
+          {
+            axisPath: undefined, // Third fiche without axe
+            fiche: {
+              titre: 'Fiche 3 sans axe',
+              pilotes: [],
+              referents: [],
+            },
+          },
+          {
+            axisPath: ['Axe 1'], // Fiche with axe
+            fiche: {
+              titre: 'Fiche 4 avec axe',
+              pilotes: [],
+              referents: [],
+            },
+          },
+        ],
+      };
+
+      mockUpsertPlanService.upsertPlan.mockResolvedValueOnce(
+        success({
+          id: 100,
+          nom: 'Mon Plan Test',
+          collectiviteId: 1,
+        })
+      );
+
+      // Mock axe creation for "Axe 1"
+      mockUpsertAxeService.upsertAxe.mockResolvedValueOnce(
+        success({ id: 201, nom: 'Axe 1' })
+      );
+
+      // Mock all 4 fiche creations
+      mockCreateFicheService.createFiche
+        .mockResolvedValueOnce(success({ id: 1 }))
+        .mockResolvedValueOnce(success({ id: 2 }))
+        .mockResolvedValueOnce(success({ id: 3 }))
+        .mockResolvedValueOnce(success({ id: 4 }));
+
+      const result = await service.create(request, mockUser, mockTransaction);
+
+      expect(result.success).toBe(true);
+
+      // One axe should be created for "Axe 1"
+      expect(mockUpsertAxeService.upsertAxe).toHaveBeenCalledTimes(1);
+
+      expect(mockCreateFicheService.createFiche).toHaveBeenCalledTimes(4);
+    });
   });
 });
