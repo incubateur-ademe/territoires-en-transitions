@@ -33,7 +33,7 @@ export const BibliothequeDocs = ({
       ) : null}
 
       <section data-test="rapports">
-        <h2>Rapports de visite annuelle</h2>
+        <h2 className="mb-6">Rapports de visite annuelle</h2>
         {!isReadOnly && <AddRapportVisite />}
         {isReadOnly && (!rapports || rapports.length === 0) && (
           <p>{"Aucun rapport de visite annuelle n'a été ajouté."}</p>
@@ -46,7 +46,7 @@ export const BibliothequeDocs = ({
       </section>
 
       <section className="mt-8">
-        <h2>Documents</h2>
+        <h2 className="mb-6">Documents</h2>
         <PreuvesTabs />
       </section>
     </div>

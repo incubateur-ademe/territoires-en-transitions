@@ -1,7 +1,7 @@
 export const CommentCaMarche = () => (
   <>
-    <h3 className="text-primary-8">Comment ça marche ? </h3>
-    <ul className="list-decimal list-outside text-lg text-primary-10 font-bold pl-5">
+    <h3 className="text-primary-8 mb-6">Comment ça marche ? </h3>
+    <ul className="list-decimal list-outside text-lg text-primary-10 font-bold pl-5 mb-6">
       <li>Explorez les actions disponibles</li>
       <p className="font-normal">
         Parcourez la liste d&apos;actions pour découvrir celles qui

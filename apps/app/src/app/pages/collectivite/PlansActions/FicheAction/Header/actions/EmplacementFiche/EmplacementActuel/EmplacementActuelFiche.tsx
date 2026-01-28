@@ -34,7 +34,7 @@ const EmplacementActuelFiche = ({ fiche }: EmplacementActuelFicheProps) => {
   return (
     <div>
       {/* Indique le nombre d'emplacements actuel */}
-      <h6 className="text-sm">
+      <h6 className="text-sm mb-6">
         {nbEmplacements !== 0
           ? `${nbEmplacements} emplacement${
               nbEmplacements > 1 ? 's' : ''

@@ -48,8 +48,8 @@ export const CriteresLabellisation = (props: TCriteresLabellisationProps) => {
         votre candidature à la ${numLabels[etoiles]} étoile.`}
         />
       ) : null}
-      <h2>Critères de labellisation</h2>
-      <ul>
+      <h2 className="mb-6">Critères de labellisation</h2>
+      <ul className="mb-6">
         <CritereCompletude {...props} />
         {etoiles !== 1 ? <CritereScore {...props} /> : null}
         <CriteresAction {...props} />

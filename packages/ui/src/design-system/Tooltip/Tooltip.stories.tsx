@@ -1,5 +1,5 @@
-import {Meta, StoryObj} from '@storybook/nextjs-vite';
-import {Tooltip} from './Tooltip';
+import { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { Tooltip } from './Tooltip';
 
 const meta: Meta<typeof Tooltip> = {
   component: Tooltip,
@@ -162,7 +162,7 @@ export const CustomContent: Story = {
     <Tooltip
       label={
         <div className="w-52">
-          <h6>Titre</h6>
+          <h6 className="mb-6">Titre</h6>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin
             viverra erat non luctus porta.

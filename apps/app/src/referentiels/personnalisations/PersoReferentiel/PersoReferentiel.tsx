@@ -27,8 +27,8 @@ const PersoReferentiel = () => {
   return (
     <div data-test="personnalisation">
       <div className="flex flex-col items-center">
-        <h1>Personnalisation des référentiels</h1>
-        <h3>{nom}</h3>
+        <h1 className="mb-6">Personnalisation des référentiels</h1>
+        <h3 className="mb-6">{nom}</h3>
       </div>
       <p className="text-lg mb-7">
         Les actions proposées dans les référentiels Climat Air Énergie et
@@ -63,7 +63,7 @@ const PersoReferentiel = () => {
       </div>
       {/** Liste des thématiques */}
       {thematiques?.length > 0 && (
-        <ul className="w-full border pl-0 mt-8">
+        <ul className="w-full border pl-0 mt-8 mb-6">
           {thematiques.map((item) => (
             <li
               key={item.id}

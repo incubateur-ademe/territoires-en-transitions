@@ -26,7 +26,7 @@ export const PreuvesLabellisation = ({
             .sort((a, b) => b.info.timestamp - a.info.timestamp);
           return (
             <Fragment key={referentiel}>
-              <h2>
+              <h2 className="mb-6">
                 {"Documents d'audit et de labellisation - Référentiel "}
                 {referentielToName[referentiel as ReferentielId]}
               </h2>

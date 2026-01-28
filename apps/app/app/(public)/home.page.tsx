@@ -11,7 +11,7 @@ export const HomePage = () => {
       className="pt-20 bg-gradient-to-b from-primary-1 to-white"
     >
       <div className="flex flex-col items-center max-w-6xl mx-auto px-6 text-center">
-        <h1 className="text-primary-9">À vous de jouer !</h1>
+        <h1 className="text-primary-9 mb-6">À vous de jouer !</h1>
         <p className="my-4 text-lg text-primary-10">
           Territoires en Transitions est un service numérique gratuit et open
           source destiné à toutes les collectivités. Que vous soyez engagé ou

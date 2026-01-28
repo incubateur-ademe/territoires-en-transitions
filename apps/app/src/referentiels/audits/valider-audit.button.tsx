@@ -54,7 +54,7 @@ export const ValiderAuditModal = ({
 
   return (
     <div data-test="ValiderAuditModal">
-      <h4>{"Valider l'audit"}</h4>
+      <h4 className="mb-6">{"Valider l'audit"}</h4>
       <p>
         Pour clôturer l’audit, merci de joindre votre rapport définitif
         (disponible dans la bibliothèque de documents et visible par les membres

@@ -5,11 +5,11 @@ import {
   IndicateurAvecValeursParSource,
 } from '@tet/domain/indicateurs';
 import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@tet/ui';
+import { JSX } from 'react';
 import { useComputeTrajectoire } from '../use-trajectoire';
 import { Secteur, TableauDonnees } from './TableauDonnees';
 import { tabsProperties } from './tabs-properties';
 import { useDonneesSectorisees } from './useDonneesSectorisees';
-import { JSX } from 'react';
 
 export type DonneesCollectiviteProps = {
   modalProps: RenderProps;
@@ -101,7 +101,7 @@ export const DonneesCollectivite = ({
     });
   return (
     <div className="text-center">
-      <h3>Recalculer la trajectoire</h3>
+      <h3 className="mb-6">Recalculer la trajectoire</h3>
       <p>
         Vous pouvez lancer un calcul de la trajectoire SNBC territorialisée en
         complétant les données ci-après. Les données à entrer sont les résultats
