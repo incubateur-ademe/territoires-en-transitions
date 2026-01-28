@@ -53,7 +53,8 @@ const viewTitleByType: Record<FicheActionViewType, string> = {
 };
 
 const ToutesLesFichesActionContent = () => {
-  const { collectiviteId, isReadOnly, hasCollectivitePermission } = useCurrentCollectivite();
+  const { collectiviteId, isReadOnly, hasCollectivitePermission } =
+    useCurrentCollectivite();
   const { countFichesNonClassees, countFichesClassees, countTotalFiches } =
     useCountFiches();
   const { mutate: createFicheAction } = useCreateFicheAction();
@@ -68,16 +69,12 @@ const ToutesLesFichesActionContent = () => {
     isVisibleWithPermissions: boolean;
   }[] = [
     {
-      isVisibleWithPermissions: hasCollectivitePermission(
-        'plans.fiches.read_public'
-      ),
+      isVisibleWithPermissions: hasCollectivitePermission('plans.fiches.read'),
       type: 'all',
       label: getLabelAndCount(viewTitleByType.all, countTotalFiches),
     },
     {
-      isVisibleWithPermissions: hasCollectivitePermission(
-        'plans.fiches.read_public'
-      ),
+      isVisibleWithPermissions: hasCollectivitePermission('plans.fiches.read'),
       type: 'dans-plan',
       label: getLabelAndCount(
         viewTitleByType['dans-plan'],
@@ -85,9 +82,7 @@ const ToutesLesFichesActionContent = () => {
       ),
     },
     {
-      isVisibleWithPermissions: hasCollectivitePermission(
-        'plans.fiches.read_public'
-      ),
+      isVisibleWithPermissions: hasCollectivitePermission('plans.fiches.read'),
       type: 'hors-plan',
       label: getLabelAndCount(
         viewTitleByType['hors-plan'],
@@ -95,7 +90,9 @@ const ToutesLesFichesActionContent = () => {
       ),
     },
     {
-      isVisibleWithPermissions: hasCollectivitePermission('plans.fiches.read'),
+      isVisibleWithPermissions: hasCollectivitePermission(
+        'plans.fiches.read_confidentiel'
+      ),
       type: 'mes-actions',
       label: getLabelAndCount(viewTitleByType['mes-actions'], undefined),
     },
@@ -142,11 +139,7 @@ const ToutesLesFichesActionContent = () => {
       <Spacer height={1} />
 
       <div className="min-h-[44rem] flex flex-col gap-8">
-        <FichesList
-          defaultSort="titre"
-          displayEditionMenu
-          filters={filters}
-        />
+        <FichesList defaultSort="titre" displayEditionMenu filters={filters} />
       </div>
     </>
   );

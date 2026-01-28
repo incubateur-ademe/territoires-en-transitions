@@ -13,17 +13,17 @@ export const TabsListParams: TabParams[] = [
   {
     listId: 'cles',
     label: INDICATEUR_LABELS.keys.plural,
-    visibleWithPermission: 'indicateurs.indicateurs.read_public',
+    visibleWithPermission: 'indicateurs.indicateurs.read',
   },
   {
     listId: 'perso',
     label: INDICATEUR_LABELS.personalized.plural,
-    visibleWithPermission: 'indicateurs.indicateurs.read_public',
+    visibleWithPermission: 'indicateurs.indicateurs.read',
   },
   {
     listId: 'collectivite',
     label: INDICATEUR_LABELS.favorites.plural,
-    visibleWithPermission: 'indicateurs.indicateurs.read_public',
+    visibleWithPermission: 'indicateurs.indicateurs.read',
     icon: 'star-fill',
     iconClassName: 'text-secondary-1',
     tooltip: INDICATEUR_LABELS.favorites.tooltip,
@@ -31,12 +31,12 @@ export const TabsListParams: TabParams[] = [
   {
     listId: 'mes-indicateurs',
     label: INDICATEUR_LABELS.myIndicateurs.plural,
-    visibleWithPermission: 'indicateurs.indicateurs.read',
+    visibleWithPermission: 'indicateurs.indicateurs.read_confidentiel',
     tooltip: INDICATEUR_LABELS.myIndicateurs.tooltip,
   },
   {
     listId: 'tous',
     label: INDICATEUR_LABELS.all.plural,
-    visibleWithPermission: 'indicateurs.indicateurs.read_public',
+    visibleWithPermission: 'indicateurs.indicateurs.read',
   },
 ];

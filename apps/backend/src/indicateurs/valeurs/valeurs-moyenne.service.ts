@@ -66,8 +66,8 @@ export default class ValeursMoyenneService {
       await this.permissionService.isAllowed(
         user,
         collectivitePrivate
-          ? 'indicateurs.indicateurs.read'
-          : 'indicateurs.indicateurs.read_public',
+          ? 'indicateurs.indicateurs.read_confidentiel'
+          : 'indicateurs.indicateurs.read',
         ResourceType.COLLECTIVITE,
         collectiviteId
       );

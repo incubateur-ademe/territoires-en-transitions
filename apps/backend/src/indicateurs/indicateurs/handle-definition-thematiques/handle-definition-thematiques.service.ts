@@ -5,8 +5,8 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Thematique } from '@tet/domain/shared';
-import { and, asc, eq, notInArray } from 'drizzle-orm';
 import { ResourceType } from '@tet/domain/users';
+import { and, asc, eq, notInArray } from 'drizzle-orm';
 
 @Injectable()
 export class HandleDefinitionThematiquesService {
@@ -28,7 +28,7 @@ export class HandleDefinitionThematiquesService {
   }): Promise<Thematique[]> {
     await this.permissionService.isAllowed(
       user,
-      'indicateurs.indicateurs.read',
+      'indicateurs.indicateurs.read_confidentiel',
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

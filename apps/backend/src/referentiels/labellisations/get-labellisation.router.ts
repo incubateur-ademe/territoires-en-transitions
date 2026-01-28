@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { referentielIdEnumSchema } from '@tet/domain/referentiels';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { ResourceType } from '@tet/domain/users';
 import z from 'zod';
 import { GetLabellisationService } from './get-labellisation.service';
 
@@ -26,7 +26,7 @@ export class GetLabellisationRouter {
         async ({ input: { collectiviteId, referentielId }, ctx: { user } }) => {
           await this.permissions.isAllowed(
             user,
-            PermissionOperationEnum['COLLECTIVITES.READ_PUBLIC'],
+            'collectivites.read',
             ResourceType.COLLECTIVITE,
             collectiviteId
           );

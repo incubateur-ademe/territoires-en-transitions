@@ -47,7 +47,7 @@ const Metrics = () => {
 
   const metricDescriptors: MetricDescriptor[] = [
     {
-      isVisible: hasCollectivitePermission('plans.read'),
+      isVisible: hasCollectivitePermission('plans.read_confidentiel'),
       getCount: () => metrics?.plans.count || 0,
       getTitle: (count) => `Plan${count > 1 ? 's' : ''}`,
       link: ({ count }) => {
@@ -67,7 +67,7 @@ const Metrics = () => {
       },
     },
     {
-      isVisible: hasCollectivitePermission('plans.fiches.read'),
+      isVisible: hasCollectivitePermission('plans.fiches.read_confidentiel'),
       getCount: () => metrics?.plans.piloteFichesCount || 0,
       getTitle: (count) =>
         `Action${count > 1 ? 's' : ''} pilotée${count > 1 ? 's' : ''}`,
@@ -83,7 +83,9 @@ const Metrics = () => {
           : undefined,
     },
     {
-      isVisible: hasCollectivitePermission('indicateurs.indicateurs.read'),
+      isVisible: hasCollectivitePermission(
+        'indicateurs.indicateurs.read_confidentiel'
+      ),
       getCount: () => metrics?.indicateurs.piloteCount || 0,
       getTitle: (count) =>
         `Indicateur${count > 1 ? 's' : ''} piloté${count > 1 ? 's' : ''}`,
@@ -99,7 +101,7 @@ const Metrics = () => {
           : undefined,
     },
     {
-      isVisible: hasCollectivitePermission('referentiels.read'),
+      isVisible: hasCollectivitePermission('referentiels.read_confidentiel'),
       getCount: () => metrics?.referentiels.piloteMesuresCount || 0,
       getTitle: (count) =>
         `Mesure${count > 0 ? 's' : ''} pilotée${count > 0 ? 's' : ''}`,

@@ -6,7 +6,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { Plan } from '@tet/domain/plans';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { ResourceType } from '@tet/domain/users';
 import { ListAxesService } from '../../axes/list-axes/list-axes.service';
 import { GetPlanError, GetPlanErrorEnum } from './get-plan.errors';
 import { GetPlanInput } from './get-plan.input';
@@ -106,9 +106,7 @@ export class GetPlanService {
 
     const isAllowed = await this.permissionService.isAllowed(
       user,
-      collectivitePrivate
-        ? PermissionOperationEnum['PLANS.READ']
-        : PermissionOperationEnum['PLANS.READ_PUBLIC'],
+      collectivitePrivate ? 'plans.read_confidentiel' : 'plans.read',
       ResourceType.COLLECTIVITE,
       collectiviteId,
       true
