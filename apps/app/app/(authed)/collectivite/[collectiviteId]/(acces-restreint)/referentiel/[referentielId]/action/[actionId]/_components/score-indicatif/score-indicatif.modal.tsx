@@ -186,7 +186,7 @@ const ScoreIndicatifModalIndicateurCard = (
       <span>
         {titre} <span className="text-grey-6">({unite})</span>
       </span>
-      <Divider />
+      <Divider color="primary" className="mb-6" />
       <ul className="font-normal list-disc pl-4">
         <li>
           <LibelleValeurSelectionnee

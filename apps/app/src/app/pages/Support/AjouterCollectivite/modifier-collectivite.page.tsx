@@ -14,7 +14,7 @@ import {
   useSelectCollectivite,
 } from '@/app/app/pages/Support/AjouterCollectivite/use-select-collectivite';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { Button, Field, Input, InputNumber } from '@tet/ui';
+import { Button, Divider, Field, Input, InputNumber } from '@tet/ui';
 import { useEffect, useState } from 'react';
 
 export const ModifierCollectivitePage = () => {
@@ -70,7 +70,7 @@ export const ModifierCollectivitePage = () => {
   return (
     <>
       <h2 className="mb-6">Modifier la collectivité</h2>
-      <hr />
+      <Divider color="primary" className="mb-6" />
       <div className="space-y-6">
         <div className="grid grid-cols-[auto_1fr] items-start gap-4">
           <CollectiviteTypeField

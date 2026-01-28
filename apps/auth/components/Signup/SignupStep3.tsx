@@ -4,6 +4,7 @@ import {
   CGU_URL,
   Checkbox,
   DCP_URL,
+  Divider,
   Event,
   Field,
   FieldMessage,
@@ -95,7 +96,7 @@ export const SignupStep3 = (props: SignupPropsWithState) => {
             <Input id="telephone" type="tel" {...register('telephone')} />
           </Field>
         </FormSectionGrid>
-        <hr className="mt-5" />
+        <Divider className="my-6" />
         <Checkbox
           data-test="accept-cgu"
           className="font-medium"

@@ -2,7 +2,7 @@ import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-
 import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { Field, Input, Spacer } from '@tet/ui';
+import { Divider, Field, Input, Spacer } from '@tet/ui';
 import { Controller, useForm } from 'react-hook-form';
 import { FichesSelectorGrid } from './fiches-selector.grid';
 
@@ -72,7 +72,7 @@ export const LinkFichesView = () => {
           />
         </Field>
       </div>
-      <hr className="p-0 my-6 w-full h-px" />
+      <Divider color="primary" className="my-6" />
       <div className="mb-4 text-sm">
         {isLoading ? (
           <span className="text-grey-6">Chargement...</span>

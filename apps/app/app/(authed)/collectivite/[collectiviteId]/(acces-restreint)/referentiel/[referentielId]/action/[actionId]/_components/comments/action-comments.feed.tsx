@@ -126,9 +126,7 @@ const ActionCommentFeed = ({
                 isDisplayedAsPanel={isDisplayedAsPanel}
               />
               {orderBy !== discussionOrderByEnum.ACTION_ID &&
-                orderBy !== discussionOrderByEnum.CREATED_BY && (
-                  <Divider className="-mb-6" />
-                )}
+                orderBy !== discussionOrderByEnum.CREATED_BY && <Divider />}
             </Fragment>
           );
         })

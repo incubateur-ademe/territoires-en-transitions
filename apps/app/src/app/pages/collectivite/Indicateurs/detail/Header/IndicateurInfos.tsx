@@ -129,6 +129,6 @@ export const IndicateurInfos = ({
       )}
     </>
   ) : (
-    !isSticky && <Divider className="!p-0 h-px" />
+    !isSticky && <Divider />
   );
 };

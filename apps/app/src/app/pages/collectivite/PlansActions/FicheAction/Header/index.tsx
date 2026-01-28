@@ -127,7 +127,7 @@ export const Header = ({
           )}
         </div>
       ) : (
-        <Divider className="mt-4" />
+        <Divider color="primary" className="mt-4" />
       )}
     </div>
   );
