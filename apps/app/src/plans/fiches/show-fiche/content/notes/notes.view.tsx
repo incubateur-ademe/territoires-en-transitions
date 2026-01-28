@@ -1,33 +1,12 @@
-import { Button } from '@tet/ui';
-import { useState } from 'react';
 import { useFicheContext } from '../../context/fiche-context';
 import { ContentLayout } from '../content-layout';
-import { NoteCreationModal } from './note-creation.modal';
 import { NotesTable } from './notes.table';
-import NotificationPicto from './notification.picto';
 
 export const NotesView = () => {
   const { fiche, isReadonly, notes } = useFicheContext();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <>
       <ContentLayout.Root>
-        <ContentLayout.Empty
-          isReadonly={isReadonly}
-          picto={(props) => <NotificationPicto {...props} />}
-          title="Aucune note n'est renseignée"
-          actions={[
-            <Button
-              icon="add-line"
-              onClick={() => {
-                setIsModalOpen(true);
-              }}
-              size="md"
-            >
-              Ajouter une note
-            </Button>,
-          ]}
-        />
         <ContentLayout.Content data={notes.list}>
           <NotesTable
             notes={notes.list || []}
@@ -38,14 +17,6 @@ export const NotesView = () => {
           />
         </ContentLayout.Content>
       </ContentLayout.Root>
-      {!isReadonly && isModalOpen && (
-        <NoteCreationModal
-          fiche={fiche}
-          isOpen={isModalOpen}
-          setIsOpen={setIsModalOpen}
-          onEdit={notes.upsert}
-        />
-      )}
     </>
   );
 };

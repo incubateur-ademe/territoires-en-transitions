@@ -73,7 +73,10 @@ describe('Route CRUD des budgets des fiches actions', () => {
 
     // Test suppression
     await expect(() =>
-      caller.plans.fiches.budgets.delete([budget])
+      caller.plans.fiches.budgets.delete({
+        ficheId: fiche.id,
+        budgetsIds: [budget.id],
+      })
     ).rejects.toThrowError();
 
     onTestFinished(async () => {
@@ -244,12 +247,16 @@ describe('Route CRUD des budgets des fiches actions', () => {
     ).rejects.toThrowError();
 
     // Suppression
-    await caller.plans.fiches.budgets.delete([upsertTot, upsert2020]);
+    await caller.plans.fiches.budgets.delete({
+      ficheId,
+      budgetsIds: [upsertTot.id, upsert2020.id],
+    });
 
     await expect(() =>
-      caller.plans.fiches.budgets.delete([
-        { ...upsertTot, id: null as unknown as number },
-      ])
+      caller.plans.fiches.budgets.delete({
+        ficheId,
+        budgetsIds: [upsertTot.id, upsert2020.id],
+      })
     ).rejects.toThrowError();
 
     const result4 = await caller.plans.fiches.budgets.list({ ficheId });

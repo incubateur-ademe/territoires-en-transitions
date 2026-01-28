@@ -1,6 +1,12 @@
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
 import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
-import { Select, TableCell, TableCellTextarea, TableRow, VisibleWhen } from '@tet/ui';
+import {
+  RichTextEditor,
+  Select,
+  TableCell,
+  TableRow,
+  VisibleWhen,
+} from '@tet/ui';
 import { htmlToText } from 'html-to-text';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -10,6 +16,7 @@ import { MetadataNoteView } from './metadata-note.view';
 import { NoteDeletionModal } from './note-deletion.modal';
 
 const noteFormSchema = z.object({
+  id: z.number(),
   year: z
     .number({
       error: "L'année est requise",
@@ -25,7 +32,7 @@ const noteFormSchema = z.object({
 type NoteFormValues = z.infer<typeof noteFormSchema>;
 
 type EditableNoteRowProps = {
-  note: FicheNote | { dateNote: string; note: string };
+  note: FicheNote;
   fiche: FicheWithRelations;
   isReadonly: boolean;
   onUpsertNote: (editedNote: {
@@ -36,29 +43,6 @@ type EditableNoteRowProps = {
   onDeleteNote: (noteToDeleteId: number) => Promise<void>;
 };
 
-const useNoteRowForm = ({
-  initialYear,
-  initialDescription,
-}: {
-  initialYear: number;
-  initialDescription: string;
-}) => {
-  const form = useForm<NoteFormValues>({
-    resolver: standardSchemaResolver(noteFormSchema),
-    defaultValues: { year: initialYear, description: initialDescription },
-  });
-
-  React.useEffect(() => {
-    form.reset({ year: initialYear, description: initialDescription });
-  }, [initialYear, initialDescription, form]);
-
-  return form;
-};
-
-const isValidNote = (note: EditableNoteRowProps['note']): note is FicheNote => {
-  return 'id' in note && note.id !== undefined;
-};
-
 export const NoteRow = ({
   note,
   fiche,
@@ -66,31 +50,25 @@ export const NoteRow = ({
   onUpsertNote,
   onDeleteNote,
 }: EditableNoteRowProps) => {
-  const initialYear = new Date(note.dateNote).getFullYear();
-  const initialDescription = htmlToText(note.note);
-
   const { yearsOptions } = getYearsOptions();
-  const { control, handleSubmit, watch, reset } = useNoteRowForm({
-    initialYear,
-    initialDescription,
+  const { control, handleSubmit, watch, setValue } = useForm<NoteFormValues>({
+    resolver: standardSchemaResolver(noteFormSchema),
+    defaultValues: {
+      id: note.id,
+      year: new Date(note.dateNote).getFullYear(),
+      description: htmlToText(note.note),
+    },
   });
 
-  const currentRowValue = watch();
-  const isNewNote = !isValidNote(note);
-  const onSubmit = async (data: NoteFormValues) => {
-    const hasChanges =
-      data.description !== initialDescription || data.year !== initialYear;
-
-    if (!hasChanges) return;
-
-    await onUpsertNote({
-      id: isNewNote ? undefined : note.id,
-      dateNote: data.year,
-      note: data.description,
-    });
-
-    if (isNewNote) reset();
-  };
+  const submitNote = React.useCallback(async () => {
+    await handleSubmit(async (data) => {
+      await onUpsertNote({
+        id: note.id,
+        dateNote: data.year,
+        note: data.description,
+      });
+    })();
+  }, [handleSubmit, onUpsertNote, note.id]);
 
   return (
     <TableRow className="border-b border-gray-200 hover:bg-gray-50 group">
@@ -98,6 +76,7 @@ export const NoteRow = ({
         className="font-bold text-primary-9 text-sm border-b border-gray-5"
         canEdit={!isReadonly}
         edit={{
+          onClose: submitNote,
           renderOnEdit: ({ openState }) => (
             <Controller
               control={control}
@@ -109,7 +88,6 @@ export const NoteRow = ({
                   onChange={(selectedYear) => {
                     if (selectedYear) {
                       onChange(selectedYear as number);
-                      handleSubmit(onSubmit)();
                       openState.setIsOpen(false);
                     }
                   }}
@@ -121,54 +99,29 @@ export const NoteRow = ({
           ),
         }}
       >
-        {currentRowValue.year}
+        {watch('year')}
       </TableCell>
-      <TableCell
-        className="text-primary-9 border-b border-gray-5"
-        canEdit={!isReadonly}
-        onClose={() => {
-          handleSubmit(onSubmit)();
-        }}
-        edit={{
-          renderOnEdit: ({ openState }) => (
-            <Controller
-              control={control}
-              name="description"
-              render={({ field: { onChange, value } }) => (
-                <TableCellTextarea
-                  value={value}
-                  onChange={(e) => onChange(e.target.value)}
-                  closeEditing={() => {
-                    handleSubmit(onSubmit)();
-                    openState.setIsOpen(false);
-                  }}
-                  placeholder="Saisir une description"
-                />
-              )}
-            />
-          ),
-        }}
-      >
-        {currentRowValue.description.trim().length > 0 ? (
-          <span className="line-clamp-2">{currentRowValue.description}</span>
-        ) : (
-          <span className="italic text-grey-6">Saisir une description</span>
-        )}
+      <TableCell className="text-primary-9 border-b border-gray-5">
+        <RichTextEditor
+          unstyled
+          initialValue={htmlToText(note.note)}
+          onChange={(html) => setValue('description', html)}
+          onBlur={submitNote}
+          debounceDelayOnChange={500}
+        />
       </TableCell>
       <TableCell className="text-sm text-primary-10 align-top border-b border-gray-5">
-        {!isNewNote && <MetadataNoteView note={note} />}
+        <MetadataNoteView note={note} />
       </TableCell>
       <VisibleWhen condition={!isReadonly}>
         <TableCell className="text-right border-b border-gray-5">
-          {!isNewNote && (
-            <div className="invisible group-hover:visible">
-              <NoteDeletionModal
-                fiche={fiche}
-                editedNote={note}
-                onDelete={onDeleteNote}
-              />
-            </div>
-          )}
+          <div className="invisible group-hover:visible">
+            <NoteDeletionModal
+              fiche={fiche}
+              editedNote={note}
+              onDelete={onDeleteNote}
+            />
+          </div>
         </TableCell>
       </VisibleWhen>
     </TableRow>
