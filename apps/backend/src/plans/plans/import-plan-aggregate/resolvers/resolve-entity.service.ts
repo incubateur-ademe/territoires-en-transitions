@@ -125,42 +125,47 @@ export class ResolveEntityService {
     },
     tx: Transaction
   ): Promise<Result<ResolvedFicheEntities, string>> {
-    const pilotesResult = await this.resolvePersons(
-      fiche.pilotes,
-      resolvers.getOrCreatePersonne,
-      tx
-    );
-    if (!pilotesResult.success) return failure(pilotesResult.error);
-    const referentsResult = await this.resolvePersons(
-      fiche.referents,
-      resolvers.getOrCreatePersonne,
-      tx
-    );
-    if (!referentsResult.success) return failure(referentsResult.error);
-    const structuresResult = await this.resolveSimpleEntities(
-      fiche.structures,
-      resolvers.getOrCreateStructure,
-      tx
-    );
-    if (!structuresResult.success) return failure(structuresResult.error);
-    const servicesResult = await this.resolveSimpleEntities(
-      fiche.services,
-      resolvers.getOrCreateService,
-      tx
-    );
-    if (!servicesResult.success) return failure(servicesResult.error);
-    const financeursResult = await this.resolveFinanceurs(
-      fiche.financeurs,
-      resolvers.getOrCreateFinanceur,
-      tx
-    );
-    if (!financeursResult.success) return failure(financeursResult.error);
-    const partenairesResult = await this.resolveSimpleEntities(
-      fiche.partenaires,
-      resolvers.getOrCreatePartenaire,
-      tx
-    );
-    if (!partenairesResult.success) return failure(partenairesResult.error);
+    const [
+      pilotesResult,
+      referentsResult,
+      structuresResult,
+      servicesResult,
+      financeursResult,
+      partenairesResult,
+    ] = await Promise.all([
+      this.resolvePersons(fiche.pilotes, resolvers.getOrCreatePersonne, tx),
+      this.resolvePersons(fiche.referents, resolvers.getOrCreatePersonne, tx),
+      this.resolveSimpleEntities(
+        fiche.structures,
+        resolvers.getOrCreateStructure,
+        tx
+      ),
+      this.resolveSimpleEntities(
+        fiche.services,
+        resolvers.getOrCreateService,
+        tx
+      ),
+      this.resolveFinanceurs(
+        fiche.financeurs,
+        resolvers.getOrCreateFinanceur,
+        tx
+      ),
+      this.resolveSimpleEntities(
+        fiche.partenaires,
+        resolvers.getOrCreatePartenaire,
+        tx
+      ),
+    ]);
+
+    if (!pilotesResult.success) {
+      return pilotesResult;
+    }
+    if (!referentsResult.success) return referentsResult;
+    if (!structuresResult.success) return structuresResult;
+    if (!servicesResult.success) return servicesResult;
+    if (!financeursResult.success) return financeursResult;
+    if (!partenairesResult.success) return partenairesResult;
+
     return success({
       titre: fiche.titre,
       axisPath: fiche.axisPath,
