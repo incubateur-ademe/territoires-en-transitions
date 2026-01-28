@@ -16,7 +16,7 @@ export const ImporterPlanPage = () => {
 
   return (
     <div className="max-w-xl">
-      <h2>Importer un plan</h2>
+      <h2 className="mb-6">Importer un plan</h2>
       <div className="space-y-6 border border-grey-3 rounded-lg p-6 bg-white">
         <UpsertPlanForm
           includeFileUpload

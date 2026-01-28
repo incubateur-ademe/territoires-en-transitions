@@ -117,7 +117,7 @@ export const DemandeLabellisationModalContent = (
 
   return (
     <div className="flex flex-col" data-test="DemandeLabellisationModal">
-      <h3>{getTitle(etoiles)}</h3>
+      <h3 className="mb-6">{getTitle(etoiles)}</h3>
       <div className="w-full">
         {status === 'non_demandee' && isLoading ? 'Envoi en cours...' : null}
         {status === 'demande_envoyee' ? (

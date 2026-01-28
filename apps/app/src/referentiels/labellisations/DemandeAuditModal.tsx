@@ -61,7 +61,7 @@ export const DemandeAuditModalContent = (
 
   return (
     <div className="flex flex-col" data-test="DemandeAuditModal">
-      <h3>Demander un audit</h3>
+      <h3 className="mb-6">Demander un audit</h3>
       <div className="w-full">
         {status === 'non_demandee' && isLoading ? 'Envoi en cours...' : null}
         {status === 'demande_envoyee' ? (

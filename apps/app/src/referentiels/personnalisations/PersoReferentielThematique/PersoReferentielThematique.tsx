@@ -56,7 +56,7 @@ export const PersoReferentielThematique = () => {
         {/** Identité de la collectivité */}
         {thematiqueId === 'identite' && identite && (
           <>
-            <h3>Informations administratives officielles</h3>
+            <h3 className="mb-6">Informations administratives officielles</h3>
             <CarteIdentite identite={identite} />
             <h3 className="mt-6 mb-0">
               Questions pour la personnalisation des référentiels

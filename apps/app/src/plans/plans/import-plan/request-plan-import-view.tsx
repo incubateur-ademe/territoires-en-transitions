@@ -66,7 +66,7 @@ export const RequestPlanImportView = () => {
         <div className="h-[1px] my-8 bg-gray-300" />
 
         <div className="mb-1 text-sm">Étape 4</div>
-        <h6>{"Une fois l'import réalisé"}</h6>
+        <h6 className="mb-4">{"Une fois l'import réalisé"}</h6>
         <ul className="mb-0">
           <li>
             Suivez une démo post import{' '}

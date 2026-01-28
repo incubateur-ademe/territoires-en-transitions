@@ -158,7 +158,7 @@ export const InfoActionImpact = ({
 
       {/* REX */}
       <div className="mt-2">
-        <h6 className="text-primary-10 text-base font-bold">
+        <h6 className="text-primary-10 text-base font-bold mb-6">
           D’autres collectivités l’ont fait :
         </h6>
         <div className="flex gap-x-8 gap-y-3 flex-wrap pb-8">
@@ -178,7 +178,7 @@ export const InfoActionImpact = ({
 
       {/* Subventions mobilisables */}
       <div className="mt-2">
-        <h6 className="text-primary-10 text-base font-bold">
+        <h6 className="text-primary-10 text-base font-bold mb-6">
           Subventions mobilisables :{' '}
           <InfoTooltip
             activatedBy="click"

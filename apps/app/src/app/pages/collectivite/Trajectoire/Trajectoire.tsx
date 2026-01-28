@@ -70,7 +70,7 @@ const DonneesNonDispo = () => {
   return (
     <Card className="flex items-center my-16">
       <DbErrorPicto />
-      <h2>Données disponibles insuffisantes pour le calcul</h2>
+      <h2 className="mb-6">Données disponibles insuffisantes pour le calcul</h2>
       {canMutateValeurs ? (
         <p className="font-normal text-lg text-center">
           Nous ne disposons pas encore des données suffisantes pour permettre le
@@ -149,7 +149,7 @@ const Presentation = () => {
     <div className="flex flex-col">
       <div className="flex flex-row gap-14">
         <div className="w-3/5">
-          <h1>
+          <h1 className="mb-6">
             Calculez votre trajectoire de transition bas-carbone avec la méthode
             développée par l’ADEME.
           </h1>
