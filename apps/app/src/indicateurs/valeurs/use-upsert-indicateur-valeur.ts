@@ -1,3 +1,4 @@
+import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { ListIndicateurValeurOuput } from './use-list-indicateur-valeurs';
@@ -5,10 +6,15 @@ import { ListIndicateurValeurOuput } from './use-list-indicateur-valeurs';
 export const useUpsertIndicateurValeur = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
+  const { setToast } = useToastContext();
+
   return useMutation(
     trpc.indicateurs.valeurs.upsert.mutationOptions({
-      onSuccess: (newValeur, variables) => {
+      onSuccess: (_, variables) => {
         const { collectiviteId, indicateurId } = variables;
+        if (!variables.id) {
+          setToast('success', 'La valeur a été ajoutée');
+        }
 
         // recharge les infos complémentaires associées à l'indicateur
         queryClient.invalidateQueries({
@@ -39,9 +45,11 @@ export const useUpsertIndicateurValeur = () => {
           }),
         });
       },
-      meta: {
-        success: 'La valeur a été mise à jour',
-        error: "La valeur n'a pas pu être mise à jour",
+      onError: (_, variables) => {
+        setToast(
+          'error',
+          `La valeur n'a pas pu être ${variables.id ? 'modifiée' : 'ajoutée'}`
+        );
       },
     })
   );

@@ -13,7 +13,6 @@ export const useCreateIndicateurDefinition = (options?: {
   return useMutation(
     trpc.indicateurs.indicateurs.create.mutationOptions({
       meta: {
-        success: "L'indicateur est enregistré",
         error: "L'indicateur n'a pas été enregistré",
       },
       onSuccess: (indicateurId, { collectiviteId, ficheId }) => {
