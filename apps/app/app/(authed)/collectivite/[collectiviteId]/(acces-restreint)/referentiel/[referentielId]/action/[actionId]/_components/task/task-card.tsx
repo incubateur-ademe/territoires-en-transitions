@@ -43,7 +43,7 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
       <ScoreIndicatifLibelle actionId={task.id} />
 
       {canEditReferentiel && (isDetailled || task.haveScoreIndicatif) && (
-        <Divider color="light" className="-mb-6 mt-auto" />
+        <Divider />
       )}
 
       {/* Actions */}
@@ -58,7 +58,7 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
       {showJustifications && (
         <>
           {canEditReferentiel && (isDetailled || task.haveScoreIndicatif) && (
-            <Divider color="light" className="-mb-6" />
+            <Divider />
           )}
 
           <ActionJustificationField

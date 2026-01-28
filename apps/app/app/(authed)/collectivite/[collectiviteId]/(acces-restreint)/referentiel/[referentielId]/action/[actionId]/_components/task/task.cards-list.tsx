@@ -1,5 +1,5 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
-import { Checkbox, Divider } from '@tet/ui';
+import { Checkbox } from '@tet/ui';
 import classNames from 'classnames';
 import { JSX, useEffect, useState } from 'react';
 import { ActionJustificationField } from '../action/action.justification-field';
@@ -39,21 +39,17 @@ const TaskCardsList = ({
   return (
     <div>
       {displayJustificationCheckbox && (
-        <div className="flex flex-col">
-          {/* Affichage des justifications */}
-          <Checkbox
-            variant="switch"
-            label="Afficher l’état d’avancement"
-            labelClassname="text-grey-7"
-            checked={showJustifications}
-            onChange={(evt) => {
-              setShowJustififcations(evt.currentTarget.checked);
-              setShouldShowJustifications?.(evt.currentTarget.checked);
-            }}
-          />
-
-          <Divider color="grey" className="mt-6" />
-        </div>
+        <Checkbox
+          variant="switch"
+          label="Afficher l’état d’avancement"
+          labelClassname="text-grey-7"
+          containerClassname="mb-6"
+          checked={showJustifications}
+          onChange={(evt) => {
+            setShowJustififcations(evt.currentTarget.checked);
+            setShouldShowJustifications?.(evt.currentTarget.checked);
+          }}
+        />
       )}
 
       {showJustifications && subActionId && (

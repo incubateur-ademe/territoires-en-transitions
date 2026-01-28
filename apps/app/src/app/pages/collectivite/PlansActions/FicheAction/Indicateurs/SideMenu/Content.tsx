@@ -9,7 +9,7 @@ import {
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
-import { Checkbox, Field, Icon, Input, Tooltip } from '@tet/ui';
+import { Checkbox, Divider, Field, Icon, Input, Tooltip } from '@tet/ui';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import SelectIndicateursGrid from './SelectIndicateursGrid';
@@ -120,7 +120,7 @@ export const Content = ({ selectedIndicateurs, onSelect }: Props) => {
           </div>
         </Tooltip>
       </div>
-      <hr className="p-0 my-6 w-full h-px" />
+      <Divider className="my-6" />
       <div className="mb-4 font-bold">
         {selectedIndicateursState ? (
           <>

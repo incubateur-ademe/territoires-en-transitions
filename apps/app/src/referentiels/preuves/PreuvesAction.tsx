@@ -81,7 +81,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
                     />
                     {(showComplementaires ||
                       (idx !== preuvesParDefinitionId.length - 1 &&
-                        !showComplementaires)) && <Divider color="light" />}
+                        !showComplementaires)) && <Divider className="mb-6" />}
                   </Fragment>
                 )
               );

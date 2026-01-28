@@ -136,7 +136,7 @@ export const FicheActionPlanning = ({
           </div>
 
           {(!!statut || !!niveauPriorite || !!ameliorationContinue) && (
-            <Divider className="-mb-5" />
+            <Divider />
           )}
 
           {/* Statut et niveau de priorité */}
@@ -164,7 +164,7 @@ export const FicheActionPlanning = ({
           {/* Justification si l'action est en pause ou abandonnée */}
           {!!justificationCalendrier && (
             <>
-              <Divider className="-mb-5" />
+              <Divider />
               <p className="text-sm text-primary-10 text-left leading-[22px] whitespace-pre-wrap mb-0">
                 {isFullJustification || !isJustificationTruncated
                   ? justificationCalendrier

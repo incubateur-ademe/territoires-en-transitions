@@ -78,7 +78,7 @@ const IndicateursAssocies = ({
   return (
     <>
       <div>
-        <Divider />
+        <Divider color="primary" className="mb-6" />
 
         {/* Titre et boutons d'ajout des indicateurs */}
         {!isFicheSharedWithCollectivite(fiche, currentCollectiviteId) && (
