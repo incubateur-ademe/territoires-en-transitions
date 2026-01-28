@@ -77,33 +77,23 @@ export class TagService {
   ): Promise<Result<TagWithCollectiviteId, string>> {
     const table = tagTypeTable[tagType];
 
-    const [existingTag] = await (tx ?? this.databaseService.db)
-      .select()
-      .from(table)
-      .where(
-        and(
-          eq(table.nom, tag.nom),
-          eq(table.collectiviteId, tag.collectiviteId)
-        )
-      )
-      .limit(1);
-
-    if (existingTag) {
-      return success(existingTag as TagWithCollectiviteId);
-    }
     try {
+      // Try to insert the tag directly with onConflictDoNothing
+      // This handles the race condition better than check-then-insert
       const [result] = await (tx ?? this.databaseService.db)
         .insert(table)
         .values({ nom: tag.nom, collectiviteId: tag.collectiviteId })
         .onConflictDoNothing()
         .returning();
-      const conflictOnCreation = result === undefined;
-
-      if (conflictOnCreation === false) {
+      
+      // If onConflictDoNothing() returns a result, the tag was successfully created
+      if (result) {
         return success(result as TagWithCollectiviteId);
       }
 
-      const [createdTag] = await (tx ?? this.databaseService.db)
+      // If result is undefined, it means there was a conflict (tag already exists or created by concurrent operation)
+      // Fetch the existing tag
+      const [existingTag] = await (tx ?? this.databaseService.db)
         .select()
         .from(table)
         .where(
@@ -113,11 +103,18 @@ export class TagService {
           )
         )
         .limit(1);
-      return success(createdTag as TagWithCollectiviteId);
+      
+      if (!existingTag) {
+        return failure(
+          `Tag "${tag.nom}" not found after conflict resolution. This may indicate a database constraint issue.`
+        );
+      }
+      
+      return success(existingTag as TagWithCollectiviteId);
     } catch (error) {
       return failure(
         error instanceof Error
-          ? error.message
+          ? `Database error during tag creation for "${tag.nom}": ${error.message}`
           : 'An unknown error occurred during tag creation'
       );
     }
