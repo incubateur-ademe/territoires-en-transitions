@@ -3,7 +3,7 @@
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { useCreatePlan } from '@/app/plans/plans/show-plan/data/use-create-plan';
 import { UpsertPlanForm } from '@/app/plans/plans/upsert-plan/upsert-plan.form';
-import { useBaseToast } from '@/app/utils/toast/use-base-toast';
+import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { PersonneId } from '@tet/domain/collectivites';
 import { Button, Icon } from '@tet/ui';
@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 const useGetCreatePlanFunction = () => {
   const collectiviteId = useCollectiviteId();
   const router = useRouter();
-  const { setToast, renderToast } = useBaseToast();
+  const { setToast } = useToastContext();
 
   const { mutate: createPlanAction } = useCreatePlan({
     collectiviteId,
@@ -56,13 +56,11 @@ const useGetCreatePlanFunction = () => {
   return {
     handleSubmit,
     handleGoBack,
-    renderToast,
   };
 };
 
 export const CreatePlanView = () => {
-  const { handleSubmit, handleGoBack, renderToast } =
-    useGetCreatePlanFunction();
+  const { handleSubmit, handleGoBack } = useGetCreatePlanFunction();
 
   return (
     <div className="flex flex-col">
@@ -87,7 +85,6 @@ export const CreatePlanView = () => {
           />
         </div>
       </div>
-      {renderToast()}
     </div>
   );
 };

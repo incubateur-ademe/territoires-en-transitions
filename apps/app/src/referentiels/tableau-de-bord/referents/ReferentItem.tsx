@@ -1,5 +1,5 @@
 import { referentielToName } from '@/app/app/labels';
-import { useBaseToast } from '@/app/utils/toast/use-base-toast';
+import { useToastContext } from '@/app/utils/toast/toast-context';
 import { Icon, Tooltip, useCopyToClipboard } from '@tet/ui';
 import { CollectiviteMembre } from './useMembres';
 
@@ -13,7 +13,7 @@ export type ReferentItemProps = {
 export const ReferentItem = (props: ReferentItemProps) => {
   const { membre } = props;
   const { copy } = useCopyToClipboard();
-  const { setToast, renderToast } = useBaseToast();
+  const { setToast } = useToastContext();
 
   return (
     <Tooltip
@@ -52,7 +52,6 @@ export const ReferentItem = (props: ReferentItemProps) => {
       >
         {membre.prenom} {membre.nom}{' '}
         <Icon icon="mail-line" className="text-grey-5" />
-        {renderToast()}
       </div>
     </Tooltip>
   );

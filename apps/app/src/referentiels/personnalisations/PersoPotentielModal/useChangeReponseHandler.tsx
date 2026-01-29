@@ -45,7 +45,7 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
     });
     const ret = await supabase.rpc('save_reponse', {
       json: newReponse,
-    } as any);
+    });
     if (ret?.error) {
       throw Error(ret.error.message);
     }
@@ -57,7 +57,6 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
     mutationFn: saveReponse,
 
     meta: {
-      success: 'La personnalisation du potentiel est enregistrée',
       error: "La personnalisation du potentiel n'a pas été enregistrée",
     },
 

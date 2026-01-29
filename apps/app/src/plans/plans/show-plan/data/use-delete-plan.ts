@@ -17,6 +17,9 @@ export const useDeletePlan = (planId: number, redirectURL?: string) => {
     mutationFn: async () => {
       await deletePlan({ planId });
     },
+    meta: {
+      success: 'Le plan a bien été supprimé',
+    },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: trpc.plans.plans.list.queryKey({

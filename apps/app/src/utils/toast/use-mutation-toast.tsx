@@ -17,9 +17,9 @@ const DEFAULT_MESSAGE = {
  * avec un message par défaut si l'on a pas spécifié de message dans l'objet "meta" des options de "useMutation".
  * Passer "disableToast" à true dans l'objet "meta" si l'on ne veut pas afficher de toast.
  */
-export const useMutationToast = () => {
-  const { renderToast, setToast } = useBaseToast();
-
+export const useMutationToast = (
+  setToast: ReturnType<typeof useBaseToast>['setToast']
+) => {
   const handleMutation = useCallback(
     ({
       status,
@@ -37,7 +37,10 @@ export const useMutationToast = () => {
         return;
       }
 
-      if ((status === 'success' || status === 'error') && !meta?.disableToast) {
+      if (
+        ((status === 'success' && meta?.success) || status === 'error') &&
+        !meta?.disableToast
+      ) {
         const message = (meta?.[status] as string) || DEFAULT_MESSAGE[status];
         const hideDuration = (meta?.autoHideDuration as number) || undefined;
         setToast(status, message, hideDuration);
@@ -49,6 +52,4 @@ export const useMutationToast = () => {
   useMutationCacheSubscriber(({ status, meta }) => {
     handleMutation({ status, meta });
   });
-
-  return { renderToast };
 };

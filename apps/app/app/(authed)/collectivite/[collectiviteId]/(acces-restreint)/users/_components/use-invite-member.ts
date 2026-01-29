@@ -48,7 +48,7 @@ export const useSendInvitation = (
       // envoi le mail d'invitation
       const invitePath = `${process.env.NEXT_PUBLIC_AUTH_URL}/invite`;
       const { prenom, nom, email: emailFrom } = user;
-      const { status } = await fetch(invitePath, {
+      const result = await fetch(invitePath, {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -62,8 +62,12 @@ export const useSendInvitation = (
           urlType,
         }),
       });
-      if (status > 200) {
-        return { error: "Echec de l'envoi d'email", sent: false as const };
+      if (!result.ok) {
+        return {
+          error:
+            "L'invitation à rejoindre la collectivité n'a pas pu être envoyée",
+          sent: false as const,
+        };
       }
       return {
         email,
