@@ -8,7 +8,7 @@ import { NotifyReportFailedProps } from './notify-report-failed.props';
 export const NotifyReportFailedEmail = (
   props: NotifyReportFailedProps
 ): React.ReactNode => {
-  const { reportName } = props;
+  const { reportName, sendToEmail } = props;
 
   return (
     <EmailContainer>
@@ -22,7 +22,7 @@ export const NotifyReportFailedEmail = (
 
       <Text>L&apos;équipe Territoires en Transitions</Text>
 
-      <Footer />
+      <Footer toEmail={sendToEmail} />
     </EmailContainer>
   );
 };
