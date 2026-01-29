@@ -11,7 +11,7 @@ export const upsertSnapshotInputSchema = z.object({
   referentielId: referentielIdEnumSchema,
   nom: z.string().optional(),
   ref: z.string().optional(),
-  date: z.iso.datetime().optional(),
+  date: z.iso.date().optional(),
   jalon: snapshotJalonEnumSchema.optional(),
   auditId: z.number().int().optional(),
 });

@@ -22,7 +22,7 @@ const SaveScoreButton = ({
   return (
     <>
       <Button
-        icon="save-3-line"
+        icon="camera-line"
         variant={variant}
         size="sm"
         className="whitespace-nowrap"

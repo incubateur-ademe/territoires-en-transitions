@@ -79,7 +79,7 @@ describe('SnapshotsRouter', () => {
 
   test("Création d'un snapshot avec nom et date spécifique", async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
-    const snapshotDate = '2024-09-21T21:59:00.000Z';
+    const snapshotDate = '2024-09-21';
     const snapshotNom = 'Test snapshot avec date';
 
     const input = {
@@ -115,7 +115,7 @@ describe('SnapshotsRouter', () => {
 
   test("Création d'un snapshot avec un score indicatif sur une action", async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
-    const snapshotDate = '2024-09-21T21:59:00.000Z';
+    const snapshotDate = '2024-09-21';
     const snapshotNom = 'Test snapshot avec date';
 
     const input = {
@@ -343,7 +343,7 @@ describe('SnapshotsRouter', () => {
     );
 
     expect(returnedSnapshot).toMatchObject({
-      date: expect.toEqualDate(snapshotTestAccent.date),
+      date: snapshotTestAccent.date,
       nom: 'test à accent',
       ref: 'user-test-a-accent',
       jalon: SnapshotJalonEnum.DATE_PERSONNALISEE,
@@ -391,7 +391,7 @@ describe('SnapshotsRouter', () => {
         collectiviteId: 1,
         referentielId: ReferentielIdEnum.CAE,
         nom: 'test date personnalisée',
-        date: '2019-01-01T00:00:01Z',
+        date: '2019-01-01',
       });
 
     onTestFinished(async () => {
@@ -410,7 +410,7 @@ describe('SnapshotsRouter', () => {
     const { actionsEnfant, ...referentielScoreWithoutActionsEnfant } =
       referentielScores.scores;
 
-    expect(referentielScores.date).toBe('2019-01-01T00:00:01Z');
+    expect(referentielScores.date).toBe('2019-01-01');
     expect(actionsEnfant.length).toBe(6);
 
     const { actionsEnfant: expectedActionEnfant, ...expectedCaeRoot } = {
@@ -506,7 +506,7 @@ describe('SnapshotsRouter', () => {
       referentielId: ReferentielIdEnum.CAE,
       collectiviteId: 1,
       nom: 'Test avec un nom',
-      date: '2024-09-21T21:59:00.000Z',
+      date: '2024-09-21',
     };
 
     const snapshot = await caller.referentiels.snapshots.computeAndUpsert(
