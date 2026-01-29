@@ -50,7 +50,7 @@ export class GetAxeRepository {
     }
   }
 
-  async geIndicateurs(
+  async getAxeIndicateurs(
     axeId: number,
     tx?: Transaction
   ): Promise<Result<Indicateur[], GetAxeError>> {

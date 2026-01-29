@@ -12,8 +12,8 @@ import {
   useState,
 } from 'react';
 import { childrenOfPlanNodes } from '../../../utils';
-import { useAxeIndicateurs } from '../../data/use-axe-indicateurs';
 import { useCreateAxe } from '../../data/use-create-axe';
+import { useListAxeIndicateurs } from '../../data/use-list-axe-indicateurs';
 import { useUpdateAxe } from '../../data/use-update-axe';
 import { usePlanOptions } from '../plan-options.context';
 import { useToggleAxe } from '../use-toggle-axe';
@@ -102,7 +102,7 @@ export const AxeProvider = (props: AxeProviderProps) => {
 
   const { isOpen, setIsOpen, shouldScroll } = useToggleAxe(axe.id, axes);
 
-  const { selectedIndicateurs, toggleIndicateur } = useAxeIndicateurs({
+  const { selectedIndicateurs, toggleIndicateur } = useListAxeIndicateurs({
     axe,
     collectiviteId,
     planId: rootAxe.id,

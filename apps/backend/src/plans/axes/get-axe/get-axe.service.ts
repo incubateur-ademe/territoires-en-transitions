@@ -51,7 +51,7 @@ export class GetAxeService {
         };
       }
 
-      const indicateursResult = await this.getAxeRepository.geIndicateurs(
+      const indicateursResult = await this.getAxeRepository.getAxeIndicateurs(
         axe.id,
         transaction
       );

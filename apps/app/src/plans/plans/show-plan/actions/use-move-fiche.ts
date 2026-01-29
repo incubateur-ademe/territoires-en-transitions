@@ -7,7 +7,7 @@ import { OpenState } from '@tet/ui/utils/types';
 import { useEffect, useRef } from 'react';
 import { useSelectAxes } from '../../../fiches/show-fiche/header/actions/emplacement/EmplacementFiche/use-select-axes';
 import { useGetPlan } from '../data/use-get-plan';
-import { planNodeToProfondeurAxe } from './utils';
+import { planNodeToProfondeurAxe } from './plan-node-to-profondeur-axe.adapter';
 
 type FicheEmplacement = Pick<FicheWithRelations, 'id' | 'axes'>;
 

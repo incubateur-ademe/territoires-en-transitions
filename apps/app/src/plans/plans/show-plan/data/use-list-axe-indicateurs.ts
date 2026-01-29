@@ -9,7 +9,7 @@ import { useUpdateAxe } from './use-update-axe';
  * Charge la liste des indicateurs associés à un axe et fourni une
  * fonction pour mettre à jour celle-ci
  */
-export function useAxeIndicateurs({
+export function useListAxeIndicateurs({
   axe,
   collectiviteId,
   planId,
