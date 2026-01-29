@@ -1,8 +1,5 @@
 import { indicateurDefinitionTable } from '@tet/backend/indicateurs/definitions/indicateur-definition.table';
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { createSelectSchema } from 'drizzle-zod';
-import z from 'zod';
 import { axeTable } from './axe.table';
 
 export const axeIndicateurTable = pgTable(
@@ -18,10 +15,3 @@ export const axeIndicateurTable = pgTable(
   },
   (table) => [primaryKey({ columns: [table.indicateurId, table.axeId] })]
 );
-
-export type AxeIndicateur = InferSelectModel<typeof axeIndicateurTable>;
-export type CreateAxeIndicateur = InferInsertModel<typeof axeIndicateurTable>;
-
-export const axeIndicateurSchema = createSelectSchema(axeIndicateurTable);
-
-export type AxeIndicateurSchema = z.infer<typeof axeIndicateurSchema>;

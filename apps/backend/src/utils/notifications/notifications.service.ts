@@ -1,6 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { render } from '@react-email/components';
-import { getErrorMessage } from '@tet/domain/utils';
+import {
+  getErrorMessage,
+  Notification,
+  NotificationInsert,
+  NotificationStatusEnum,
+  NotifiedOn,
+} from '@tet/domain/utils';
 import { and, eq, lt, sql } from 'drizzle-orm';
 import { DateTime, DurationLike } from 'luxon';
 import { DatabaseService } from '../database/database.service';
@@ -8,17 +14,11 @@ import { Transaction } from '../database/transaction.utils';
 import { EmailService } from '../email/email.service';
 import { Result } from '../result.type';
 import { CommonErrorEnum } from '../trpc/common-errors';
-import { NotificationStatusEnum } from './models/notification-status.enum';
 import {
   GetNotificationContent,
   NotificationContentGenerator,
 } from './models/notification-template.dto';
-import {
-  Notification,
-  NotificationInsert,
-  notificationTable,
-} from './models/notification.table';
-import { NotifiedOnType } from './models/notified-on.enum';
+import { notificationTable } from './models/notification.table';
 
 const MAX_SEND_RETRIES = 5;
 
@@ -26,7 +26,7 @@ const MAX_SEND_RETRIES = 5;
 export class NotificationsService {
   private readonly logger = new Logger(NotificationsService.name);
   private registeredGenerator: Partial<
-    Record<NotifiedOnType, NotificationContentGenerator>
+    Record<NotifiedOn, NotificationContentGenerator>
   > = {};
 
   constructor(
@@ -38,7 +38,7 @@ export class NotificationsService {
    * Enregistre un générateur de contenu de notification
    */
   registerContentGenerator(
-    notifiedOn: NotifiedOnType,
+    notifiedOn: NotifiedOn,
     generator: NotificationContentGenerator
   ) {
     this.registeredGenerator[notifiedOn] = generator;

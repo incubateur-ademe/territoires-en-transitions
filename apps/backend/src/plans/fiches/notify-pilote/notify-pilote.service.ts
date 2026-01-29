@@ -4,18 +4,18 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { ListUsersService } from '@tet/backend/users/users/list-users/list-users.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { NotificationStatusEnum } from '@tet/backend/utils/notifications/models/notification-status.enum';
 import { GetNotificationContentResult } from '@tet/backend/utils/notifications/models/notification-template.dto';
-import {
-  Notification,
-  NotificationInsert,
-  notificationTable,
-} from '@tet/backend/utils/notifications/models/notification.table';
-import { NotifiedOnEnum } from '@tet/backend/utils/notifications/models/notified-on.enum';
+import { notificationTable } from '@tet/backend/utils/notifications/models/notification.table';
 import { NotificationsService } from '@tet/backend/utils/notifications/notifications.service';
 import { Result } from '@tet/backend/utils/result.type';
 import { PersonneTagOrUserWithContacts } from '@tet/domain/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
+import {
+  Notification,
+  NotificationInsert,
+  NotificationStatusEnum,
+  NotifiedOnEnum,
+} from '@tet/domain/utils';
 import { and, eq, inArray, not } from 'drizzle-orm';
 import { differenceBy, isNil } from 'es-toolkit';
 import { DurationLike } from 'luxon';
