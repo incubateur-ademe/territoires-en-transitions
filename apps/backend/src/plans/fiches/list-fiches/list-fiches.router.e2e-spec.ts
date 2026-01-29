@@ -78,7 +78,6 @@ describe('Filtres sur les fiches actions', () => {
       caller,
       ficheInputs: [
         {
-
           titre: '11 - Fiche-test 4',
           collectiviteId: COLLECTIVITE_ID,
         },
@@ -113,7 +112,6 @@ describe('Filtres sur les fiches actions', () => {
       ],
     });
 
-
     const { data: fichesAsc } = await caller.plans.fiches.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
@@ -125,7 +123,16 @@ describe('Filtres sur les fiches actions', () => {
       },
     });
 
-    const expectedOrderedTitles = ['1 - Fiche-test 1', '2 - Fiche-test 2', '10 - Fiche-test 3', '11 - Fiche-test 4', 'A - First title', 'Z - Last title', null, null];
+    const expectedOrderedTitles = [
+      '1 - Fiche-test 1',
+      '2 - Fiche-test 2',
+      '10 - Fiche-test 3',
+      '11 - Fiche-test 4',
+      'A - First title',
+      'Z - Last title',
+      null,
+      null,
+    ];
 
     const titlesAsc = fichesAsc.map((f) => f.titre);
     expect(titlesAsc).toEqual(expectedOrderedTitles);

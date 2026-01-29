@@ -24,6 +24,8 @@ import { FicheActionEtapeRouter } from './fiche-action-etape/fiche-action-etape.
 import { FicheActionEtapeService } from './fiche-action-etape/fiche-action-etape.service';
 import FicheActionPermissionsService from './fiche-action-permissions.service';
 import { ImportPlanModule } from './import/import-plan.module';
+import { ListFichesBelongingToPlansRepository } from './list-fiches/list-fiches-belonging-to-plans.repository';
+import { ListFichesBudgetRepository } from './list-fiches/list-fiches-budget.repository';
 import { NotifyPiloteService } from './notify-pilote/notify-pilote.service';
 import { UpdateFicheRouter } from './update-fiche/update-fiche.router';
 import UpdateFicheService from './update-fiche/update-fiche.service';
@@ -40,6 +42,8 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
     FicheActionPermissionsService,
     ShareFicheService,
     AxeService,
+    ListFichesBudgetRepository,
+    ListFichesBelongingToPlansRepository,
     ListFichesService,
     ListFichesRouter,
     CountByService,
@@ -75,6 +79,7 @@ import UpdateFicheService from './update-fiche/update-fiche.service';
 
     ListFichesService,
     ListFichesRouter,
+    ListFichesBudgetRepository,
     CountByService,
     CreateFicheService,
     CreateFicheRouter,

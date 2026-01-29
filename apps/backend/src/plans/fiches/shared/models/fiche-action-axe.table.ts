@@ -5,12 +5,12 @@ import { ficheActionTable } from './fiche-action.table';
 export const ficheActionAxeTable = pgTable(
   'fiche_action_axe',
   {
-    ficheId: integer('fiche_id').references(() => ficheActionTable.id),
-    axeId: integer('axe_id').references(() => axeTable.id),
+    ficheId: integer('fiche_id')
+      .notNull()
+      .references(() => ficheActionTable.id),
+    axeId: integer('axe_id')
+      .notNull()
+      .references(() => axeTable.id),
   },
-  (table) => {
-    return {
-      pk: primaryKey({ columns: [table.ficheId, table.axeId] }),
-    };
-  }
+  (table) => [primaryKey({ columns: [table.ficheId, table.axeId] })]
 );
