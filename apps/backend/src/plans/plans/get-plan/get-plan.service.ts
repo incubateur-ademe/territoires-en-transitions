@@ -9,6 +9,8 @@ import { Result } from '@tet/backend/utils/result.type';
 import { Plan } from '@tet/domain/plans';
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { ListAxesService } from '../../axes/list-axes/list-axes.service';
+import ListFichesService from '../../fiches/list-fiches/list-fiches.service';
+import { ComputeBudgetRules } from '../compute-budget/compute-budget.rules';
 import { GetPlanError, GetPlanErrorEnum } from './get-plan.errors';
 import { GetPlanInput } from './get-plan.input';
 import { GetPlanRepository } from './get-plan.repository';
@@ -21,6 +23,8 @@ export class GetPlanService {
     private readonly collectivite: CollectivitesService,
     private readonly databaseService: DatabaseService,
     private readonly listAxesService: ListAxesService,
+    private readonly listFichesService: ListFichesService,
+    private readonly computeBudgetRules: ComputeBudgetRules,
     private readonly getPlanRepository: GetPlanRepository,
     private readonly permissionService: PermissionService
   ) {}
@@ -79,6 +83,14 @@ export class GetPlanService {
         return pilotesResult;
       }
 
+      const fiches = await this.listFichesService.listFichesBudgetQuery(
+        null,
+        { planActionIds: [planId] },
+        { limit: 'all' }
+      );
+
+      const budget = this.computeBudgetRules.computeBudget(fiches.data);
+
       return {
         success: true,
         data: {
@@ -86,6 +98,8 @@ export class GetPlanService {
           axes: axesResult.data,
           referents: referentsResult.data,
           pilotes: pilotesResult.data,
+          budget,
+          totalFiches: fiches.data.length,
         },
       };
     };

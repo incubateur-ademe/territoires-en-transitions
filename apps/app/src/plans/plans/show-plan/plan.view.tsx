@@ -1,114 +1,104 @@
 'use client';
 
-import { PiloteOrReferentLabel } from '@/app/plans/plans/components/PiloteOrReferentLabel';
 import { EmptyPlanView } from '@/app/plans/plans/show-plan/empty-plan.view';
-import { usePlanFilters } from '@/app/plans/plans/show-plan/filters/plan-filters.context';
-import { PlanArborescence } from '@/app/plans/plans/show-plan/plan-arborescence.view';
+import {
+  PlanAxesProvider,
+  usePlanAxesContext,
+} from '@/app/plans/plans/show-plan/plan-arborescence.view/plan-axes.context';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
-import { hasPermission } from '@/app/users/authorizations/permission-access-level.utils';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { useUser } from '@tet/api/users';
+import { useUser } from '@tet/api';
 import { Plan } from '@tet/domain/plans';
-import { Spacer, VisibleWhen } from '@tet/ui';
-import { Header } from '../components/header';
-import { checkAxeHasFiche } from '../utils';
-import { Actions } from './actions';
+import { Button, Spacer, VisibleWhen } from '@tet/ui';
 import { CompletionAlert } from './completion/completion.alert';
 import { ContentPanelWithHeader } from './content-panel-with-header';
 import { useGetPlan } from './data/use-get-plan';
 import { EditPlanButtons } from './edit-plan.buttons';
 import { FiltersMenuButton } from './filters';
 import { FilteredResults } from './filters/filtered-results';
-import { PlanStatus } from './plan-status.chart';
-
-const PlanMetadata = ({ plan }: { plan: Plan }) => {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="text-sm uppercase text-grey-8 font-normal">
-        {plan.type?.type || 'Sans type'}
-      </span>
-      <VisibleWhen condition={plan.pilotes.length > 0}>
-        <div className="border-l-2 border-gray-200 px-2">
-          <PiloteOrReferentLabel icon="pilote" personnes={plan.pilotes} />
-        </div>
-      </VisibleWhen>
-      <VisibleWhen condition={plan.referents.length > 0}>
-        <div className="border-l-2 border-gray-200 px-2">
-          <PiloteOrReferentLabel icon="france" personnes={plan.referents} />
-        </div>
-      </VisibleWhen>
-    </div>
-  );
-};
+import { PlanOptionsButton } from './plan-arborescence.view/plan-options.button';
+import { PlanTree } from './plan-arborescence.view/plan-tree';
+import { PlanHeader } from './plan.header';
 
 type Props = {
   plan: Plan;
 };
 
 export const PlanView = ({ plan: initialPlanData }: Props) => {
-  const currentCollectivite = useCurrentCollectivite();
-  const user = useUser();
-
-  const { isFiltered } = usePlanFilters();
   const plan = useGetPlan(initialPlanData.id, {
     initialData: initialPlanData,
   });
-  const rootAxe = plan.axes.find((axe) => axe.parent === null);
-  if (!rootAxe) {
+  const rootAxe = plan?.axes.find((axe) => axe.parent === null);
+
+  if (!plan || !rootAxe) {
     return <div>Plan non trouvé</div>;
   }
-  const axeHasFiches = rootAxe ? checkAxeHasFiche(rootAxe, plan.axes) : false;
 
-  const planNameOrFallback = rootAxe?.nom ?? 'Sans titre';
+  return (
+    <PlanAxesProvider plan={plan} rootAxe={rootAxe}>
+      <PlanViewContent />
+    </PlanAxesProvider>
+  );
+};
 
-  const hasFiches = rootAxe.fiches && rootAxe.fiches.length > 0;
-  const hasAxes = plan.axes.some((axe) => axe.depth > 0);
-  const isPlanEmpty = !hasFiches && !hasAxes;
+const PlanViewContent = () => {
+  const {
+    collectivite,
+    isReadOnly,
+    areAllClosed,
+    toggleAll,
+    isActionsVisible,
+    plan,
+    rootAxe,
+    axeHasFiches,
+    hasAxesToExpand,
+    isPlanEmpty,
+    isFiltered,
+  } = usePlanAxesContext();
+  const user = useUser();
+
   return (
     <div className="w-full">
-      <Header
-        title={planNameOrFallback}
-        actionButtons={
-          <VisibleWhen condition={currentCollectivite.isReadOnly === false}>
-            <Actions plan={plan} axeHasFiches={axeHasFiches} />
-          </VisibleWhen>
-        }
-      >
-        <div className="flex flex-col gap-2 grow">
-          <PlanMetadata plan={plan} />
-
-          <PlanStatus planId={plan.id} />
-        </div>
-      </Header>
+      <PlanHeader />
       <Spacer height={2} />
 
       <CompletionAlert
-        collectiviteId={currentCollectivite.collectiviteId}
+        collectiviteId={collectivite.collectiviteId}
         planId={plan.id}
       />
 
       <VisibleWhen condition={isPlanEmpty}>
         <div className="h-[50vh]">
-          <EmptyPlanView
-            currentCollectivite={currentCollectivite}
-            plan={rootAxe}
-          />
+          <EmptyPlanView currentCollectivite={collectivite} plan={rootAxe} />
         </div>
       </VisibleWhen>
       <VisibleWhen condition={!isPlanEmpty}>
         <ContentPanelWithHeader
-          title="Détail du plan"
-          headerActionButtons={
+          headerActionButtonsLeft={
             <>
-              <VisibleWhen
-                condition={
-                  currentCollectivite.isReadOnly === false &&
-                  hasPermission(currentCollectivite.permissions, 'plans.mutate')
-                }
-              >
+              <PlanOptionsButton />
+              <VisibleWhen condition={hasAxesToExpand && !isFiltered}>
+                <Button
+                  size="xs"
+                  variant="outlined"
+                  icon={areAllClosed ? 'arrow-down-line' : 'arrow-up-line'}
+                  iconPosition="right"
+                  onClick={toggleAll}
+                  dataTest="ToggleAllAxes"
+                >
+                  {areAllClosed
+                    ? 'Ouvrir tous les axes/sous-axes'
+                    : 'Fermer tous les axes/sous-axes'}
+                </Button>
+              </VisibleWhen>
+            </>
+          }
+          headerActionButtonsRight={
+            <div className="flex gap-6">
+              <VisibleWhen condition={!isReadOnly}>
                 <EditPlanButtons
                   plan={rootAxe}
-                  collectiviteId={currentCollectivite.collectiviteId}
+                  collectiviteId={collectivite.collectiviteId}
+                  isActionsVisible={isActionsVisible}
                   availableActions={
                     isFiltered
                       ? ['createFicheResume']
@@ -119,19 +109,19 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
               <VisibleWhen condition={axeHasFiches}>
                 <FiltersMenuButton />
               </VisibleWhen>
-            </>
+            </div>
           }
         >
           <VisibleWhen condition={!isFiltered}>
-            <PlanArborescence
+            <PlanTree
               plan={rootAxe}
               axes={plan.axes}
-              collectivite={currentCollectivite}
+              collectivite={collectivite}
             />
           </VisibleWhen>
           <VisibleWhen condition={isFiltered}>
             <FilteredResults
-              collectivite={currentCollectivite}
+              collectivite={collectivite}
               currentUserId={user.id}
             />
           </VisibleWhen>

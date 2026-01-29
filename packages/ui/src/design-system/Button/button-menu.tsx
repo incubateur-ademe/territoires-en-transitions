@@ -19,16 +19,24 @@ import { useOpenState } from '../../hooks/use-open-state';
 import { cn } from '../../utils/cn';
 import { OpenState } from '../../utils/types';
 import { Icon } from '../Icon';
+import { Tooltip } from '../Tooltip';
 import { Button } from './Button';
 import { ButtonProps } from './types';
 
-export type MenuAction = {
+export const MenuSeparator = Symbol('menu-separator');
+
+type MenuItem = {
   label: string;
   onClick: () => void;
   icon?: string;
   /** True par défaut */
   isVisible?: boolean;
+  // item désactivé
+  disabled?: boolean;
+  // texte pour une infobulle
+  tooltip?: string;
 };
+export type MenuAction = MenuItem | typeof MenuSeparator;
 
 type Props = {
   menu: {
@@ -131,16 +139,20 @@ export const ButtonMenu = ({ menu, withArrow, children, ...props }: Props) => {
             {startContent}
             {actions && (
               <div className="flex flex-col">
-                {actions.map((action) => (
-                  <MenuAction
-                    key={action.label}
-                    {...action}
-                    onClick={() => {
-                      toggleIsOpen();
-                      action.onClick();
-                    }}
-                  />
-                ))}
+                {actions.map((action) =>
+                  action === MenuSeparator ? (
+                    <MenuActionSeparator />
+                  ) : (
+                    <MenuActionItem
+                      key={action.label}
+                      {...action}
+                      onClick={() => {
+                        toggleIsOpen();
+                        action.onClick();
+                      }}
+                    />
+                  )
+                )}
               </div>
             )}
             {endContent && (
@@ -156,18 +168,29 @@ export const ButtonMenu = ({ menu, withArrow, children, ...props }: Props) => {
   );
 };
 
-const MenuAction = ({ icon, label, onClick, isVisible = true }: MenuAction) => {
+const MenuActionSeparator = () => <div className="h-px m-2 bg-grey-4" />;
+
+const MenuActionItem = ({
+  icon,
+  label,
+  onClick,
+  isVisible = true,
+  disabled,
+  tooltip,
+}: MenuItem) => {
   if (!isVisible) {
     return null;
   }
 
-  return (
+  const btn = (
     <button
       className="flex items-baseline gap-3 py-2 px-3 text-primary-9 text-sm text-left rounded hover:!bg-primary-1"
       onClick={onClick}
+      disabled={disabled}
     >
       {icon && <Icon icon={icon} size="sm" className="-mt-0.5" />}
       {label}
     </button>
   );
+  return tooltip ? <Tooltip label={tooltip}>{btn}</Tooltip> : btn;
 };

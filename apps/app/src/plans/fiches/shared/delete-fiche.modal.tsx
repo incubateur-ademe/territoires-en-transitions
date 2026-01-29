@@ -11,6 +11,11 @@ type DeleteFicheModalProps = {
   buttonClassName?: string;
   onDeleteCallback?: () => void;
   onClose?: () => void;
+  hideButton?: boolean;
+  /** ID du plan pour la mise à jour optimiste (optionnel) */
+  planId?: number;
+  /** ID de l'axe pour la mise à jour optimiste (optionnel) */
+  axeId?: number;
 };
 
 export const DeleteFicheModal = ({
@@ -20,10 +25,17 @@ export const DeleteFicheModal = ({
   buttonClassName,
   onDeleteCallback,
   onClose,
+  hideButton = false,
+  planId,
+  axeId,
 }: DeleteFicheModalProps) => {
   const { id, titre, plans } = fiche;
   const isInMultipleAxes = !!plans && plans.length > 1;
-  const { mutate: deleteFiche } = useDeleteFiche({ onDeleteCallback });
+  const { mutate: deleteFiche } = useDeleteFiche({
+    onDeleteCallback,
+    planId,
+    axeId,
+  });
 
   return (
     <Modal
@@ -67,13 +79,15 @@ export const DeleteFicheModal = ({
       )}
     >
       {/* Bouton d'ouverture de la modale */}
-      <DeleteButton
-        data-test="SupprimerFicheBouton"
-        title="Supprimer l'action"
-        variant={buttonVariant}
-        size="xs"
-        className={buttonClassName}
-      />
+      {hideButton ? undefined : (
+        <DeleteButton
+          data-test="SupprimerFicheBouton"
+          title="Supprimer l'action"
+          variant={buttonVariant}
+          size="xs"
+          className={buttonClassName}
+        />
+      )}
     </Modal>
   );
 };

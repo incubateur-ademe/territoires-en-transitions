@@ -1,24 +1,42 @@
 import { expect, Locator, Page } from '@playwright/test';
-import { DropdownPersonnePom } from 'tests/shared/dropdown.pom';
+import { DropdownPom } from 'tests/shared/dropdown.pom';
 
 export class EditPlanPom {
-  readonly planTitle: Locator;
   readonly emptyPlanMessage: Locator;
   readonly addAxeButton: Locator;
-  readonly modifierPlanButton: Locator;
   readonly createFicheButton: Locator;
+  readonly header: {
+    title: Locator;
+    type: Locator;
+    pilote: Locator;
+    referent: Locator;
+    investissement: Locator;
+    fonctionnement: Locator;
+    axes: Locator;
+    sousAxes: Locator;
+    actions: Locator;
+  };
 
   constructor(public readonly page: Page) {
     this.page = page;
-    this.planTitle = page.locator('h2');
     this.emptyPlanMessage = page.getByRole('heading', {
       name: "Vous n'avez aucune action ni arborescence de plan",
     });
     this.addAxeButton = page.locator('[data-test="AjouterAxe"]');
-    this.modifierPlanButton = page.locator('[data-test="ModifierPlanBouton"]');
     this.createFicheButton = page.getByRole('button', {
       name: 'Créer une action',
     });
+    this.header = {
+      title: page.getByTestId('plan-editable-title'),
+      type: page.getByTestId('plan-header-type'),
+      pilote: page.getByTestId('plan-header-pilote'),
+      referent: page.getByTestId('plan-header-referent'),
+      investissement: page.getByTestId('plan-header-investissement'),
+      fonctionnement: page.getByTestId('plan-header-fonctionnement'),
+      axes: page.getByTestId('plan-header-axes'),
+      sousAxes: page.getByTestId('plan-header-sous-axes'),
+      actions: page.getByTestId('plan-header-actions'),
+    };
   }
 
   getPlanUrl(collectiviteId: number, planId: number): string {
@@ -28,11 +46,11 @@ export class EditPlanPom {
   async goto(collectiviteId: number, planId: number) {
     await this.page.goto(this.getPlanUrl(collectiviteId, planId));
     // Attendre que le titre soit visible pour confirmer que la page est chargée
-    await expect(this.planTitle).toBeVisible();
+    await expect(this.header.title).toBeVisible();
   }
 
   async expectPlanTitle(title: string) {
-    await expect(this.planTitle).toHaveText(title);
+    await expect(this.header.title).toHaveText(title);
   }
 
   async expectPlanType(type: string) {
@@ -51,38 +69,6 @@ export class EditPlanPom {
     await expect(this.emptyPlanMessage).toBeHidden();
   }
 
-  async addAxe(axeNom: string) {
-    await this.addAxeButton.click();
-    // Attendre que l'input du titre de l'axe soit visible
-    const axeInput = this.page.locator('[data-test="TitreAxeInput"]').last();
-    await expect(axeInput).toBeVisible();
-    // Remplir le titre de l'axe
-    await axeInput.fill(axeNom);
-    // Appuyer sur Entrée ou faire blur pour sauvegarder
-    await axeInput.blur();
-  }
-
-  async expectAxeExists(axeNom: string) {
-    // Vérifier qu'un axe avec ce nom existe
-    const axe = this.page
-      .locator('[data-test="Axe"]')
-      .filter({
-        hasText: axeNom,
-      })
-      .last();
-    await expect(axe).toBeVisible();
-  }
-
-  /**
-   * Ouvre la modale d'édition du plan et retourne le locator de la modale
-   */
-  private async openEditPlanModal() {
-    await this.modifierPlanButton.click();
-    const modal = this.page.locator('[data-test="ModifierPlanTitreModale"]');
-    await expect(modal).toBeVisible();
-    return modal;
-  }
-
   /**
    * Valide et ferme la modale d'édition du plan
    */
@@ -96,136 +82,66 @@ export class EditPlanPom {
    * Édite le nom d'un plan
    */
   async editPlanNom(nom: string) {
-    const modal = await this.openEditPlanModal();
-    const nomInput = modal.locator('[data-test="PlanNomInput"]');
+    // clic sur le titre pour l'éditer
+    await this.header.title.click();
+    const nomInput = this.header.title.locator('input');
     await nomInput.clear();
     await nomInput.fill(nom);
-    await this.submitEditPlanModal(modal);
+    await nomInput.blur();
+  }
+
+  /**
+   * Ouvre le menu "..." et renvoi l'item voulu
+   */
+  async getMenuItem(axeNom: string, title: string) {
+    const menuButton = this.header.title.locator(
+      'button[title="Editer ce plan"]'
+    );
+    await menuButton.click();
+    return this.page
+      .locator('[data-floating-ui-portal]')
+      .getByRole('button', { name: title });
   }
 
   /**
    * Édite le type d'un plan
    */
   async editPlanType(type: string) {
-    const modal = await this.openEditPlanModal();
-    const typeSelect = modal.locator('[data-test="Type"]');
-    await typeSelect.click();
+    await this.header.type.click();
     const option = this.page.getByRole('button', { name: type });
     await option.click();
-    await this.submitEditPlanModal(modal);
   }
 
   /**
    * Édite le pilote d'un plan
    */
   async editPlanPilote(piloteNom: string) {
-    const modal = await this.openEditPlanModal();
-    const pilotesDropdown = new DropdownPersonnePom(
+    await this.header.pilote.click();
+    const pilotesDropdown = new DropdownPom(
       this.page,
-      'Personne pilote'
+      this.page.getByTestId('plan-header-pilote-dropdown')
     );
     await pilotesDropdown.selectOption(piloteNom);
-    await this.submitEditPlanModal(modal);
   }
 
   /**
    * Édite le référent d'un plan
    */
   async editPlanReferent(referentNom: string) {
-    const modal = await this.openEditPlanModal();
-    const referentsDropdown = new DropdownPersonnePom(
+    await this.header.referent.click();
+    const referentsDropdown = new DropdownPom(
       this.page,
-      'Élu·e référent·e'
+      this.page.getByTestId('plan-header-referent-dropdown')
     );
     await referentsDropdown.selectOption(referentNom);
-    await this.submitEditPlanModal(modal);
-  }
-
-  getAxeByName(name: string) {
-    return this.page.locator('[data-test="Axe"]').filter({
-      hasText: name,
-    });
-  }
-
-  getAxeInputByName(name: string) {
-    return this.page.locator('[data-test="Axe"] textarea').getByText(name);
   }
 
   /**
-   * Édite le nom d'un axe en cliquant sur son input
-   */
-  async editAxeNom(ancienNom: string, nouveauNom: string) {
-    // Trouver l'axe par son nom
-    const axe = this.getAxeInputByName(ancienNom);
-
-    // Clic et attend que l'input soit éditable
-    await axe.click();
-    await axe.isEditable();
-    await axe.fill(nouveauNom);
-
-    await expect(this.getAxeInputByName(ancienNom)).toBeHidden();
-    await expect(this.getAxeInputByName(nouveauNom)).toBeVisible();
-  }
-
-  /**
-   * Déplie un axe pour voir ses sous-axes et fiches
-   */
-  async expandAxe(axeNom: string) {
-    const axe = this.getAxeByName(axeNom);
-    await expect(axe).toBeVisible();
-
-    const expandButton = axe.locator('[data-test="BoutonDeplierAxe"]');
-    await expandButton.click();
-  }
-
-  /**
-   * Ajoute un sous-axe à un axe existant
-   */
-  async addSousAxe(parentAxeNom: string, sousAxeNom: string) {
-    // D'abord déplier l'axe parent pour voir le bouton d'ajout
-    await this.expandAxe(parentAxeNom);
-
-    const parentAxe = this.getAxeByName(parentAxeNom);
-
-    // Le bouton "Créer un sous-titre" apparaît au survol de l'axe
-    await parentAxe.hover();
-
-    // Chercher le bouton "Créer un sous-titre" dans l'axe (apparaît au survol avec title="Créer un sous-titre")
-    const addSousAxeButton = parentAxe.locator(
-      'button[title="Créer un sous-titre"]'
-    );
-
-    await addSousAxeButton.click();
-
-    // Attendre que l'input du titre du sous-axe soit visible
-    const sousAxeInput = this.page.locator('textarea:focus');
-    await expect(sousAxeInput).toBeVisible();
-
-    // Remplir le titre du sous-axe
-    await sousAxeInput.fill(sousAxeNom);
-    await sousAxeInput.blur();
-  }
-
-  /**
-   * Ajoute une fiche action au plan ou à un axe
+   * Ajoute une fiche action à la racine du plan
    * @param ficheTitre - Titre de la fiche (optionnel)
-   * @param axeNom - Nom de l'axe dans lequel ajouter la fiche (optionnel, si non fourni, ajoute au plan racine)
    */
-  async addFiche(axeNom?: string) {
-    if (axeNom) {
-      await this.expandAxe(axeNom);
-
-      const axe = this.getAxeByName(axeNom);
-
-      // le bouton "Créer une action" dans l'axe apparaît au survol
-      await axe.hover();
-      const addFicheButton = axe.locator('button[title="Créer une action"]');
-
-      await addFicheButton.click();
-    } else {
-      // Ajouter la fiche au plan racine
-      await this.createFicheButton.click();
-    }
+  async addFiche() {
+    await this.createFicheButton.click();
   }
 
   /**
@@ -244,9 +160,7 @@ export class EditPlanPom {
    * @param piloteNom - Le nom du pilote à vérifier
    */
   async expectPiloteExists(piloteNom: string) {
-    // Les pilotes sont affichés dans PlanMetadata avec PiloteOrReferentLabel
-    // On cherche le texte du pilote dans la section des métadonnées
-    const pilote = this.page.getByText(piloteNom);
+    const pilote = this.header.pilote.getByText(piloteNom);
     await expect(pilote).toBeVisible();
   }
 
@@ -255,9 +169,118 @@ export class EditPlanPom {
    * @param referentNom - Le nom du référent à vérifier
    */
   async expectReferentExists(referentNom: string) {
-    // Les référents sont affichés dans PlanMetadata avec PiloteOrReferentLabel
-    // On cherche le texte du référent dans la section des métadonnées
-    const referent = this.page.getByText(referentNom);
+    const referent = this.header.referent.getByText(referentNom);
     await expect(referent).toBeVisible();
+  }
+
+  /**
+   * Récupère le bouton "Ouvrir/Fermer tous les axes/sous-axes"
+   */
+  getToggleAllAxesButton() {
+    return this.page.locator('[data-test="ToggleAllAxes"]');
+  }
+
+  /**
+   * Clique sur le bouton "Ouvrir/Fermer tous les axes/sous-axes"
+   */
+  async toggleAllAxes() {
+    const button = this.getToggleAllAxesButton();
+    await expect(button).toBeVisible();
+    await button.click();
+  }
+
+  /**
+   * Vérifie que le bouton "Ouvrir/Fermer tous les axes/sous-axes" affiche "Fermer"
+   * (indique que tous les axes sont fermés, cliquer va les ouvrir)
+   */
+  async expectToggleAllAxesButtonShowsOpen() {
+    const button = this.getToggleAllAxesButton();
+    await expect(button).toBeVisible();
+    await expect(button).toContainText('Fermer tous les axes/sous-axes');
+  }
+
+  /**
+   * Vérifie que le bouton "Ouvrir/Fermer tous les axes/sous-axes" affiche "Ouvrir"
+   * (indique que tous les axes sont ouverts, cliquer va les fermer)
+   */
+  async expectToggleAllAxesButtonShowsClose() {
+    const button = this.getToggleAllAxesButton();
+    await expect(button).toBeVisible();
+    await expect(button).toContainText('Ouvrir tous les axes/sous-axes');
+  }
+
+  /**
+   * Ouvre le menu des options d'affichage du plan
+   */
+  private async openPlanOptionsMenu() {
+    const optionsButton = this.page.locator(
+      '[data-test="plan-options.button"]'
+    );
+    await expect(optionsButton).toBeVisible();
+    await optionsButton.click();
+    // Attendre que le menu soit visible (dans le FloatingPortal)
+    // Le menu contient les checkboxes avec les labels "Description", "Indicateurs", etc.
+    const menu = this.page.locator('[data-floating-ui-focusable]').last();
+    await expect(menu).toBeVisible();
+    return menu;
+  }
+
+  /**
+   * Ferme le menu des options d'affichage en cliquant en dehors
+   */
+  private async closePlanOptionsMenu() {
+    // Cliquer en dehors du menu pour le fermer
+    await this.page.mouse.click(0, 0);
+  }
+
+  /**
+   * Active ou désactive une option d'affichage du plan
+   * @param optionLabel - Le label de l'option (ex: "Description", "Indicateurs", etc.)
+   */
+  async togglePlanDisplayOption(optionLabel: string) {
+    const menu = await this.openPlanOptionsMenu();
+    const checkbox = menu
+      .locator('label')
+      .filter({ hasText: optionLabel })
+      .first();
+    await expect(checkbox).toBeVisible();
+    await checkbox.click();
+    await this.closePlanOptionsMenu();
+  }
+
+  /**
+   * Vérifie qu'une option d'affichage est cochée
+   * @param optionLabel - Le label de l'option à vérifier
+   */
+  async expectPlanDisplayOptionIsChecked(optionLabel: string) {
+    const menu = await this.openPlanOptionsMenu();
+    const checkbox = menu.getByRole('checkbox', { name: optionLabel }).first();
+    await expect(checkbox).toBeVisible();
+    await expect(checkbox).toBeChecked();
+    await this.closePlanOptionsMenu();
+  }
+
+  /**
+   * Vérifie qu'une option d'affichage est décochée
+   * @param optionLabel - Le label de l'option à vérifier
+   */
+  async expectPlanDisplayOptionIsUnchecked(optionLabel: string) {
+    const menu = await this.openPlanOptionsMenu();
+    const checkbox = menu.getByRole('checkbox', { name: optionLabel }).first();
+    await expect(checkbox).toBeVisible();
+    await expect(checkbox).not.toBeChecked();
+    await this.closePlanOptionsMenu();
+  }
+
+  /**
+   * Vérifie qu'une option d'affichage est désactivée (disabled)
+   * @param optionLabel - Le label de l'option à vérifier
+   */
+  async expectPlanDisplayOptionIsDisabled(optionLabel: string) {
+    const menu = await this.openPlanOptionsMenu();
+    const checkbox = menu.getByRole('checkbox', { name: optionLabel }).first();
+    await expect(checkbox).toBeVisible();
+    await expect(checkbox).toBeDisabled();
+    await this.closePlanOptionsMenu();
   }
 }

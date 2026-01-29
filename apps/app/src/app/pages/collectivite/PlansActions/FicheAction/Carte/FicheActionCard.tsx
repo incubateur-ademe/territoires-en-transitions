@@ -9,11 +9,19 @@ import {
 import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { DeleteOrRemoveFicheSharingModal } from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
 import { getFicheActionPlanForCollectivite } from '@/app/plans/fiches/shared/fiche-action-plans.utils';
+import MoveFicheModal from '@/app/plans/plans/show-plan/actions/move-fiche.modal';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
 import { QueryKey } from '@tanstack/react-query';
 import { CollectiviteAccess } from '@tet/domain/users';
-import { Button, Card, Checkbox, Notification, Tooltip } from '@tet/ui';
+import {
+  Button,
+  ButtonMenu,
+  Card,
+  Checkbox,
+  Notification,
+  Tooltip,
+} from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import BadgePriorite from '../../components/BadgePriorite';
@@ -35,6 +43,8 @@ export type FicheActionCardProps = {
   openInNewTab?: boolean;
   /** Permet d'afficher le menu d'options de la carte */
   isEditable?: boolean;
+  /** Affiche le bouton "déplacer" */
+  isMoveable?: boolean;
   editKeysToInvalidate?: QueryKey[];
   /** Etat sélectionné ou non de la fiche */
   isSelected?: boolean;
@@ -48,6 +58,10 @@ export type FicheActionCardProps = {
   currentCollectivite: CollectiviteAccess;
   /** Id de l'utilisateur */
   currentUserId: string;
+  /** ID du plan pour la mise à jour optimiste de la suppression (optionnel) */
+  planId?: number;
+  /** ID de l'axe pour la mise à jour optimiste de la suppression (optionnel) */
+  axeId?: number;
 };
 
 const FicheActionCard = ({
@@ -56,6 +70,7 @@ const FicheActionCard = ({
   link,
   openInNewTab,
   isEditable = false,
+  isMoveable = false,
   editKeysToInvalidate,
   isSelected = false,
   onUnlink,
@@ -63,8 +78,12 @@ const FicheActionCard = ({
   onToggleOpen,
   currentCollectivite,
   currentUserId,
+  planId,
+  axeId,
 }: FicheActionCardProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
 
   const carteId = `fiche-${ficheAction.id}`;
 
@@ -121,7 +140,58 @@ const FicheActionCard = ({
                   onClick={() => toggleOpen(!isEditOpen)}
                 />
               </>
-              <DeleteOrRemoveFicheSharingModal fiche={ficheAction} />
+              {isMoveable ? (
+                <>
+                  <DeleteOrRemoveFicheSharingModal
+                    fiche={ficheAction}
+                    openState={{
+                      isOpen: isDeleteModalOpen,
+                      setIsOpen: setIsDeleteModalOpen,
+                    }}
+                    hideButton
+                    planId={planId}
+                    axeId={axeId}
+                  />
+                  {isMoveModalOpen && collectivitePlans.length > 0 && (
+                    <MoveFicheModal
+                      fiche={ficheAction}
+                      planId={collectivitePlans[0].id}
+                      isReadonly={currentCollectivite.isReadOnly}
+                      openState={{
+                        isOpen: isMoveModalOpen,
+                        setIsOpen: setIsMoveModalOpen,
+                      }}
+                    />
+                  )}
+                  <ButtonMenu
+                    dataTest="fiche-card-options"
+                    title="Plus d'options"
+                    icon="more-line"
+                    variant="grey"
+                    size="xs"
+                    menu={{
+                      actions: [
+                        {
+                          label: 'Déplacer',
+                          icon: 'drag-move-2-line',
+                          onClick: () => setIsMoveModalOpen(true),
+                        },
+                        {
+                          label: 'Supprimer',
+                          icon: 'delete-bin-6-line',
+                          onClick: () => setIsDeleteModalOpen(true),
+                        },
+                      ],
+                    }}
+                  />
+                </>
+              ) : (
+                <DeleteOrRemoveFicheSharingModal
+                  fiche={ficheAction}
+                  planId={planId}
+                  axeId={axeId}
+                />
+              )}
             </>
           )}
         </div>

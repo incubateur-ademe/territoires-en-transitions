@@ -1,16 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { BudgetType, BudgetUnite, FicheWithRelations } from '@tet/domain/plans';
+import {
+  AggregatedBudget,
+  BudgetType,
+  BudgetUnite,
+  BudgetWithTotal,
+  FicheWithRelations,
+} from '@tet/domain/plans';
 import { roundTo } from '@tet/domain/utils';
-import { ComputeBudgetOutput } from './compute-budget.output';
 
 @Injectable()
 export class ComputeBudgetRules {
-  computeAggregatedBudget(
+  private computeAggregatedBudget(
     fiches: Pick<FicheWithRelations, 'budgets'>[],
     budgetType: BudgetType | null,
     unite: BudgetUnite,
     budgetProperty: 'budgetPrevisionnel' | 'budgetReel'
-  ): number {
+  ): AggregatedBudget {
+    let nbFiches = 0;
     const budget = fiches?.reduce((acc, fiche) => {
       const budgets = fiche.budgets || [];
       const budgetsByType = budgets.filter(
@@ -20,9 +26,12 @@ export class ComputeBudgetRules {
       const budget = budgetsByType.reduce((acc, budget) => {
         return acc + (budget[budgetProperty] || 0);
       }, 0);
+      if (budget) {
+        nbFiches++;
+      }
       return acc + budget;
     }, 0);
-    return roundTo(budget || 0, 2);
+    return { total: roundTo(budget || 0, 2), nbFiches };
   }
 
   /**
@@ -34,8 +43,8 @@ export class ComputeBudgetRules {
    */
   computeBudget(
     fiches: Pick<FicheWithRelations, 'budgets'>[]
-  ): ComputeBudgetOutput {
-    const result: ComputeBudgetOutput = {
+  ): BudgetWithTotal {
+    const result: BudgetWithTotal = {
       investissement: {
         HT: {
           budgetPrevisionnel: this.computeAggregatedBudget(

@@ -1,14 +1,16 @@
 import { Alert, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
 import { JSX } from 'react';
 import { useDeleteAxe } from '../data/use-delete-axe';
 import { useDeletePlan } from '../data/use-delete-plan';
 
 type Props = {
-  children: JSX.Element;
+  children?: JSX.Element;
   planId: number;
   axeId: number;
   axeHasFiche: boolean;
   redirectURL?: string;
+  openState?: OpenState;
 };
 
 export const DeletePlanOrAxeModal = ({
@@ -17,6 +19,7 @@ export const DeletePlanOrAxeModal = ({
   axeId,
   axeHasFiche,
   redirectURL,
+  openState,
 }: Props) => {
   const isPlan = axeId === planId;
 
@@ -30,6 +33,7 @@ export const DeletePlanOrAxeModal = ({
       title={`Souhaitez-vous vraiment supprimer ce ${
         isPlan ? 'plan' : 'titre/axe'
       } ?`}
+      openState={openState}
       description={
         axeHasFiche
           ? undefined
@@ -42,8 +46,10 @@ export const DeletePlanOrAxeModal = ({
           ? () => (
               <Alert
                 state="warning"
-                title="Attention : les actions liées à ce titre/axe seront également supprimées !"
-                description="Les actions liées à un autre niveau ou mutualisées dans un autre plan seront cependant conservées à cet autre emplacement."
+                title={`Attention : les actions liées à ${
+                  isPlan ? 'ce plan' : 'cet axe'
+                } seront également supprimées !`}
+                description="Les actions liées à un autre plan ou mutualisées ne seront pas impactées."
               />
             )
           : undefined

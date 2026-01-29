@@ -20,32 +20,32 @@ describe('ComputeBudgetRules', () => {
       expect(result).toEqual({
         investissement: {
           HT: {
-            budgetPrevisionnel: 0,
-            budgetReel: 0,
+            budgetPrevisionnel: { total: 0, nbFiches: 0 },
+            budgetReel: { total: 0, nbFiches: 0 },
           },
           ETP: {
-            budgetPrevisionnel: 0,
-            budgetReel: 0,
+            budgetPrevisionnel: { total: 0, nbFiches: 0 },
+            budgetReel: { total: 0, nbFiches: 0 },
           },
         },
         fonctionnement: {
           HT: {
-            budgetPrevisionnel: 0,
-            budgetReel: 0,
+            budgetPrevisionnel: { total: 0, nbFiches: 0 },
+            budgetReel: { total: 0, nbFiches: 0 },
           },
           ETP: {
-            budgetPrevisionnel: 0,
-            budgetReel: 0,
+            budgetPrevisionnel: { total: 0, nbFiches: 0 },
+            budgetReel: { total: 0, nbFiches: 0 },
           },
         },
         total: {
           HT: {
-            budgetPrevisionnel: 0,
-            budgetReel: 0,
+            budgetPrevisionnel: { total: 0, nbFiches: 0 },
+            budgetReel: { total: 0, nbFiches: 0 },
           },
           ETP: {
-            budgetPrevisionnel: 0,
-            budgetReel: 0,
+            budgetPrevisionnel: { total: 0, nbFiches: 0 },
+            budgetReel: { total: 0, nbFiches: 0 },
           },
         },
       });
@@ -90,32 +90,32 @@ describe('ComputeBudgetRules', () => {
       expect(result).toEqual({
         investissement: {
           HT: {
-            budgetPrevisionnel: 3000,
-            budgetReel: 2100,
+            budgetPrevisionnel: { total: 3000, nbFiches: 2 },
+            budgetReel: { total: 2100, nbFiches: 2 },
           },
           ETP: {
-            budgetPrevisionnel: 0,
-            budgetReel: 0,
+            budgetPrevisionnel: { total: 0, nbFiches: 0 },
+            budgetReel: { total: 0, nbFiches: 0 },
           },
         },
         fonctionnement: {
           HT: {
-            budgetPrevisionnel: 0,
-            budgetReel: 0,
+            budgetPrevisionnel: { total: 0, nbFiches: 0 },
+            budgetReel: { total: 0, nbFiches: 0 },
           },
           ETP: {
-            budgetPrevisionnel: 0,
-            budgetReel: 0,
+            budgetPrevisionnel: { total: 0, nbFiches: 0 },
+            budgetReel: { total: 0, nbFiches: 0 },
           },
         },
         total: {
           HT: {
-            budgetPrevisionnel: 3000,
-            budgetReel: 2100,
+            budgetPrevisionnel: { total: 3000, nbFiches: 2 },
+            budgetReel: { total: 2100, nbFiches: 2 },
           },
           ETP: {
-            budgetPrevisionnel: 0,
-            budgetReel: 0,
+            budgetPrevisionnel: { total: 0, nbFiches: 0 },
+            budgetReel: { total: 0, nbFiches: 0 },
           },
         },
       });
@@ -199,32 +199,32 @@ describe('ComputeBudgetRules', () => {
       expect(result).toEqual({
         investissement: {
           HT: {
-            budgetPrevisionnel: 3000,
-            budgetReel: 2300,
+            budgetPrevisionnel: { total: 3000, nbFiches: 2 },
+            budgetReel: { total: 2300, nbFiches: 2 },
           },
           ETP: {
-            budgetPrevisionnel: 2.5,
-            budgetReel: 2.0,
+            budgetPrevisionnel: { total: 2.5, nbFiches: 1 },
+            budgetReel: { total: 2.0, nbFiches: 1 },
           },
         },
         fonctionnement: {
           HT: {
-            budgetPrevisionnel: 800,
-            budgetReel: 800,
+            budgetPrevisionnel: { total: 800, nbFiches: 2 },
+            budgetReel: { total: 800, nbFiches: 2 },
           },
           ETP: {
-            budgetPrevisionnel: 2.0,
-            budgetReel: 1.8,
+            budgetPrevisionnel: { total: 2.0, nbFiches: 2 },
+            budgetReel: { total: 1.8, nbFiches: 2 },
           },
         },
         total: {
           HT: {
-            budgetPrevisionnel: 3800,
-            budgetReel: 3100,
+            budgetPrevisionnel: { total: 3800, nbFiches: 3 },
+            budgetReel: { total: 3100, nbFiches: 3 },
           },
           ETP: {
-            budgetPrevisionnel: 4.5,
-            budgetReel: 3.8,
+            budgetPrevisionnel: { total: 4.5, nbFiches: 3 },
+            budgetReel: { total: 3.8, nbFiches: 3 },
           },
         },
       });

@@ -1,14 +1,15 @@
+import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
+import FicheActionCardSkeleton from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
+import {
+  isFicheEditableByCollectiviteUser,
+  isFicheSharedWithCollectivite,
+} from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { useUser } from '@tet/api/users';
 import { CollectiviteAccess } from '@tet/domain/users';
-import classNames from 'classnames';
-import FicheActionCardSkeleton from '../../../../app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
 import { useListFiches } from '../../../fiches/list-all-fiches/data/use-list-fiches';
-import { DraggableFicheCard } from './draggable-fiche.card';
 
 type Props = {
-  /** est-ce qu'il y a une élément actif (drag) */
-  isDndActive: boolean;
   ficheIds: number[];
   axeId: number;
   planId?: number;
@@ -16,16 +17,15 @@ type Props = {
 };
 
 export const FichesList = ({
-  isDndActive,
   ficheIds,
   axeId,
   planId,
   collectivite,
 }: Props) => {
   const user = useUser();
-  const { fiches, isLoading } = useListFiches(collectivite.collectiviteId, {
+  const { fiches } = useListFiches(collectivite.collectiviteId, {
     filters: {
-      ficheIds,
+      axesId: [axeId],
     },
     queryOptions: {
       sort: [{ field: 'titre', direction: 'asc' }],
@@ -33,47 +33,40 @@ export const FichesList = ({
     },
   });
 
-  if (isLoading) {
-    return (
-      <div
-        className={classNames('grid grid-cols-2 gap-6', {
-          'my-2': !isDndActive,
-        })}
-      >
-        {ficheIds.map((id) => (
-          <FicheActionCardSkeleton key={id} />
-        ))}
-      </div>
-    );
-  }
-
   return (
-    <div
-      className={classNames('grid grid-cols-2 gap-6', { 'my-2': !isDndActive })}
-    >
-      {fiches.map((fiche) => {
-        if (fiche.id < 0) {
-          return <FicheActionCardSkeleton key={fiche.id} />;
-        } else {
-          return (
-            <DraggableFicheCard
-              collectivite={collectivite}
-              currentUserId={user.id}
-              key={fiche.id}
-              fiche={fiche}
-              editKeysToInvalidate={[['axe_fiches', axeId, ficheIds]]}
-              url={
-                fiche.id
-                  ? makeCollectiviteActionUrl({
-                      collectiviteId: fiche.collectiviteId,
-                      ficheUid: fiche.id.toString(),
-                      planId,
-                    })
-                  : undefined
-              }
-            />
-          );
+    <div className={'grid grid-cols-2 gap-6 my-2'}>
+      {ficheIds.map((ficheId, i) => {
+        const fiche =
+          (ficheId > 0 && fiches.find((f) => f.id === ficheId)) || null;
+        if (!fiche) {
+          return <FicheActionCardSkeleton key={i} />;
         }
+        const isReadonly =
+          collectivite.isReadOnly ||
+          !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id) ||
+          isFicheSharedWithCollectivite(fiche, collectivite.collectiviteId);
+        return (
+          <FicheActionCard
+            currentCollectivite={collectivite}
+            currentUserId={user.id}
+            key={fiche.id}
+            ficheAction={fiche}
+            editKeysToInvalidate={[['axe_fiches', axeId, ficheIds]]}
+            isEditable={!isReadonly}
+            isMoveable
+            planId={planId}
+            axeId={axeId}
+            link={
+              fiche.id
+                ? makeCollectiviteActionUrl({
+                    collectiviteId: fiche.collectiviteId,
+                    ficheUid: fiche.id.toString(),
+                    planId,
+                  })
+                : undefined
+            }
+          />
+        );
       })}
     </div>
   );

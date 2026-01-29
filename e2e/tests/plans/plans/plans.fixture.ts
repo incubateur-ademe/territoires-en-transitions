@@ -6,6 +6,7 @@ import { testWithFiches } from 'tests/plans/fiches/fiches.fixture';
 import { databaseService } from 'tests/shared/database.service';
 import { FixtureFactory } from 'tests/shared/fixture-factory.interface';
 import { UserFixture } from 'tests/users/users.fixture';
+import { EditAxePom } from '../axes/edit-axe.pom';
 import { CreatePlanPom } from './create-plan/create-plan.pom';
 import { EditPlanPom } from './edit-plan/edit-plan.pom';
 
@@ -56,6 +57,7 @@ export const testWithPlans = testWithFiches.extend<{
   plans: PlansFactory;
   createPlanPom: CreatePlanPom;
   editPlanPom: EditPlanPom;
+  editAxePom: EditAxePom;
 }>({
   plans: async ({ collectivites }, use) => {
     const plans = new PlansFactory();
@@ -68,6 +70,10 @@ export const testWithPlans = testWithFiches.extend<{
   },
   editPlanPom: async ({ page }, use) => {
     const showPlanPom = new EditPlanPom(page);
+    await use(showPlanPom);
+  },
+  editAxePom: async ({ page }, use) => {
+    const showPlanPom = new EditAxePom(page);
     await use(showPlanPom);
   },
 });
