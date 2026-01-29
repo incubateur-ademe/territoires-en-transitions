@@ -1,5 +1,5 @@
-import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
+import { ParcoursLabellisation } from '@tet/domain/referentiels';
 import { Tooltip } from '@tet/ui';
 import { JSX } from 'react';
 import ScoreShow from '../../scores/score.show';
@@ -8,7 +8,7 @@ import { GreyStar, RedStar } from './Star';
 export const NIVEAUX = [1, 2, 3, 4, 5];
 
 type LabellisationInfoProps = {
-  parcours: TLabellisationParcours | null;
+  parcours: ParcoursLabellisation | null;
   score: {
     realises: number;
     programmes: number;

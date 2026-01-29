@@ -1,9 +1,9 @@
 'use client';
 
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
-import { TPreuveLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Alert } from '@tet/ui';
+import { TPreuveLabellisation } from '../preuves/Bibliotheque/types';
 import { useReferentielId } from '../referentiel-context';
 import { CritereCompletude } from './CritereCompletude';
 import { CriterePreuves } from './CriterePreuves';
@@ -63,13 +63,13 @@ const CriteresLabellisationConnected = () => {
   const collectiviteId = useCollectiviteId();
   const referentiel = useReferentielId();
   const { parcours, isCOT } = useCycleLabellisation(referentiel);
-  const preuves = usePreuvesLabellisation(parcours?.demande?.id);
+  const { data: preuves } = usePreuvesLabellisation(parcours?.demande?.id);
 
   return collectiviteId && parcours ? (
     <CriteresLabellisation
       collectiviteId={collectiviteId}
       parcours={parcours}
-      preuves={preuves}
+      preuves={(preuves ?? []) as unknown as TPreuveLabellisation[]} // TODO: remove this when front is completely updated
       isCOT={isCOT}
     />
   ) : null;

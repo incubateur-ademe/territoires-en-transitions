@@ -1,5 +1,5 @@
-import { supabase } from '../supabase.ts';
 import { Database } from '../database.types.ts';
+import { supabase } from '../supabase.ts';
 
 export type TEtoiles = Database['labellisation']['Enums']['etoile'];
 
@@ -57,7 +57,7 @@ type TCritereAction = {
    ou fait") */
   statut_ou_score: string;
   /** Etoile pour laquelle le critère est requis */
-  etoile: TEtoiles;
+  etoile: number;
 };
 
 /** Critère lié au score de la collectivité pour un référentiel */

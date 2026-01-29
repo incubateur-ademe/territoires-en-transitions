@@ -70,6 +70,13 @@ class UserFactory {
     return userFixture;
   };
 
+  getUser = async (index = 0) => {
+    if (index < 0 || index >= this.usersFixtureCreated.length) {
+      throw new Error(`User index ${index} out of bounds`);
+    }
+    return this.usersFixtureCreated[index];
+  };
+
   removeSome = async (userIds: string[]) => {
     const [usersToDelete, usersToKeep] = partition(
       this.usersFixtureCreated,
@@ -92,8 +99,10 @@ export const testWithUsers = test.extend<{
   users: Users;
 }>({
   users: async ({ context }, use) => {
-    const { addUser, removeSome, removeAll } = new UserFactory(context);
-    await use({ addUser, removeSome });
+    const { addUser, removeSome, getUser, removeAll } = new UserFactory(
+      context
+    );
+    await use({ addUser, removeSome, getUser });
     await removeAll();
   },
 });

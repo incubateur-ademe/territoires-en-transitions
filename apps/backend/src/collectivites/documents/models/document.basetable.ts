@@ -13,5 +13,5 @@ export const DocumentBase = {
   commentaire: text('commentaire'),
   modifiedAt,
   modifiedBy,
-  lien: jsonb('lien'),
+  lien: jsonb('lien').$type<any>(),
 };

@@ -1,8 +1,6 @@
 import { TAddFileFromLib } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
 import { useAddPreuveLabellisation } from '@/app/referentiels/preuves/useAddPreuves';
-import { DBClient, useSupabase } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { LabellisationDemande, ReferentielId } from '@tet/domain/referentiels';
 import { useReferentielId } from '../referentiel-context';
 import { useCycleLabellisation } from './useCycleLabellisation';
 
@@ -14,58 +12,26 @@ type TAddDocs = () => {
 /** Renvoie les gestionnaires d'événements du dialogue d'ajout de
  * fichiers au parcours de labellisation en cours */
 export const useAddPreuveToDemande: TAddDocs = () => {
-  const collectivite_id = useCollectiviteId();
-  const referentiel = useReferentielId();
-  const { mutate: addPreuve } = useAddPreuveLabellisation();
-  const { parcours } = useCycleLabellisation(referentiel);
-  const supabase = useSupabase();
+  const collectiviteId = useCollectiviteId();
+  const referentielId = useReferentielId();
+  const { parcours } = useCycleLabellisation(referentielId);
+  const { mutateAsync: addPreuve } = useAddPreuveLabellisation(
+    collectiviteId,
+    referentielId
+  );
 
   // associe un fichier de la bibliothèque à la demande
-  const addFileFromLib: TAddFileFromLib = async (fichier_id) => {
-    if (collectivite_id) {
-      const args = {
-        collectivite_id,
+  const addFileFromLib: TAddFileFromLib = async (fichierId) => {
+    if (collectiviteId && referentielId && parcours?.demande?.id) {
+      await addPreuve({
+        fichierId,
         commentaire: '',
-        fichier_id,
-      };
-
-      const demande_id = parcours?.demande?.id;
-      if (demande_id) {
-        addPreuve({ ...args, demande_id });
-      } else {
-        const demande = await createDemande(
-          supabase,
-          collectivite_id,
-          referentiel
-        );
-        if (demande?.id) {
-          addPreuve({ ...args, demande_id: demande.id });
-        }
-      }
+        demandeId: parcours?.demande?.id,
+      });
     }
   };
+
   return {
     addFileFromLib,
   };
-};
-
-// charge la demande (ou la crée) associée au parcours de labellisation d'une
-// collectivité pour un référentiel et un niveau
-const createDemande = async (
-  supabase: DBClient,
-  collectivite_id: number | null,
-  referentiel: ReferentielId | null
-) => {
-  if (!collectivite_id || !referentiel) {
-    return null;
-  }
-  const { error, data } = await supabase
-    .rpc('labellisation_demande', {
-      collectivite_id,
-      referentiel,
-    })
-    .select();
-
-  // cast retour de la rpc car le typage généré n'est pas bon (tableau au lieu d'élément unique)
-  return error || !data ? null : (data as unknown as LabellisationDemande);
 };

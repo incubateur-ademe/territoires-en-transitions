@@ -1,4 +1,5 @@
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
+import { ReferentielId } from '@tet/domain/referentiels';
 import {
   doublePrecision,
   integer,
@@ -15,6 +16,7 @@ export const etoileActionConditionDefinitionTable = pgTable(
     etoile: etoileToInteger('etoile').notNull(),
     priorite: integer('prio').notNull(),
     referentielId: varchar('referentiel', { length: 30 })
+      .$type<ReferentielId>()
       .notNull()
       .references(() => referentielDefinitionTable.id),
     actionId: varchar('action_id', { length: 30 })

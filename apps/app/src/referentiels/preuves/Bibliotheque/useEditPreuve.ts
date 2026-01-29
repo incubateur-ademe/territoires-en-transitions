@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSupabase } from '@tet/api';
+import { useSupabase, useTRPC } from '@tet/api';
 import { invalidateQueries } from '../useAddPreuves';
 import { TEditHandlers, TPreuve } from './types';
 import { useEditFilenameState, useEditState } from './useEditState';
@@ -64,6 +64,7 @@ const tableOfType = ({ preuve_type }: TPreuve) =>
 const useRemovePreuve = () => {
   const supabase = useSupabase();
   const queryClient = useQueryClient();
+  const trpc = useTRPC();
   return useMutation({
     mutationFn: async (preuve: TPreuve) => {
       const { id } = preuve;
@@ -74,6 +75,21 @@ const useRemovePreuve = () => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: false,
       });
+      if (variables.demande?.id) {
+        queryClient.invalidateQueries({
+          queryKey:
+            trpc.referentiels.labellisations.listPreuvesLabellisation.queryKey({
+              demandeId: variables.demande.id,
+            }),
+        });
+
+        queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.labellisations.getParcours.queryKey({
+            collectiviteId: variables.demande.collectivite_id,
+            referentielId: variables.demande.referentiel,
+          }),
+        });
+      }
     },
   });
 };

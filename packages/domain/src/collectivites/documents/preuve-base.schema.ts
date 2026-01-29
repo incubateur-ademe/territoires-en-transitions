@@ -9,5 +9,12 @@ export const preuveBaseSchema = z.object({
   commentaire: z.nullable(z.string()),
   modifiedAt: z.iso.datetime(),
   modifiedBy: z.nullable(z.uuid()),
-  lien: z.nullable(z.json()),
+  lien: z.nullable(
+    z.object({
+      url: z.string(),
+      titre: z.string(),
+    })
+  ),
 });
+
+export type PreuveBase = z.infer<typeof preuveBaseSchema>;

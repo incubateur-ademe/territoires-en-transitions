@@ -1,0 +1,16 @@
+---
+name: comply-adr
+description: This is a rule to apply by default architecture decision record
+---
+
+# Overview
+
+When applicable, please refer to following architecture decision record:
+
+- [Code conventions](../../doc/adr/0003-conventions-de-code.md)
+- [Architecture backend de services Domain-Driven Design](../../doc/adr/0011-architecture-service-ddd.md)
+- [Pattern result](../../doc/adr/0012-pattern-result.md)
+
+In particular, pay attention to:
+
+- Pattern result for publicly available backend service methods.
