@@ -9,7 +9,7 @@ import { NotifyReportCompletedProps } from './notify-report-completed.props';
 export const NotifyReportCompletedEmail = (
   props: NotifyReportCompletedProps
 ): React.ReactNode => {
-  const { reportName, reportUrl } = props;
+  const { reportName, reportUrl, sendToEmail } = props;
 
   return (
     <EmailContainer>
@@ -24,7 +24,7 @@ export const NotifyReportCompletedEmail = (
         <CTAButton href={reportUrl}>Télécharger le rapport →</CTAButton>
       </Section>
 
-      <Footer />
+      <Footer toEmail={sendToEmail} />
     </EmailContainer>
   );
 };
