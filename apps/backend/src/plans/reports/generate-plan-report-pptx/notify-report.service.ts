@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ListUsersService } from '@tet/backend/users/users/list-users/list-users.service';
-import { NotificationStatusEnum } from '@tet/backend/utils/notifications/models/notification-status.enum';
 import { GetNotificationContentResult } from '@tet/backend/utils/notifications/models/notification-template.dto';
+import { NotificationsService } from '@tet/backend/utils/notifications/notifications.service';
+import { Result } from '@tet/backend/utils/result.type';
 import {
   Notification,
   NotificationInsert,
-} from '@tet/backend/utils/notifications/models/notification.table';
-import { NotifiedOnEnum } from '@tet/backend/utils/notifications/models/notified-on.enum';
-import { NotificationsService } from '@tet/backend/utils/notifications/notifications.service';
-import { Result } from '@tet/backend/utils/result.type';
+  NotificationStatusEnum,
+  NotifiedOnEnum,
+} from '@tet/domain/utils';
 import { z } from 'zod';
 import GetPlanUrlService from '../../utils/get-plan-url.service';
 import NotifyReportCompletedEmail from './notify-report-completed.email';

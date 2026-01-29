@@ -7,10 +7,9 @@ import {
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { NotificationStatusEnum } from '@tet/backend/utils/notifications/models/notification-status.enum';
 import { notificationTable } from '@tet/backend/utils/notifications/models/notification.table';
-import { NotifiedOnEnum } from '@tet/backend/utils/notifications/models/notified-on.enum';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { NotificationStatusEnum, NotifiedOnEnum } from '@tet/domain/utils';
 import { eq, inArray } from 'drizzle-orm';
 import { describe, expect, test } from 'vitest';
 import { createFiche } from '../fiches.test-fixture';
