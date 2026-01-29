@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { CreateFicheError } from '@tet/backend/plans/fiches/create-fiche/create-fiche.result';
 import { CreateFicheService } from '@tet/backend/plans/fiches/create-fiche/create-fiche.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -114,7 +115,12 @@ export class CreatePlanAggregateService {
     request: CreatePlanAggregateInput,
     user: AuthenticatedUser,
     tx: Transaction
-  ): Promise<Result<number, PlanError | UpsertAxeError | UpsertPlanError>> {
+  ): Promise<
+    Result<
+      number,
+      PlanError | UpsertAxeError | UpsertPlanError | CreateFicheError
+    >
+  > {
     try {
       this.logger.log(
         `Creating plan ${request.nom} for collectivité ${request.collectiviteId}`
@@ -210,7 +216,7 @@ export class CreatePlanAggregateService {
 
       const fichesCreationResults = combineResults(createdFichesResults);
       if (fichesCreationResults.success === false) {
-        return failure(PlanErrorType.DATABASE_ERROR);
+        return fichesCreationResults;
       }
 
       this.logger.log(
@@ -218,11 +224,14 @@ export class CreatePlanAggregateService {
       );
       return { success: true, data: createPlanResult.data.id };
     } catch (error) {
-      this.logger.error(`Error creating plan:`, error);
-      return {
-        success: false,
-        error: PlanErrorType.DATABASE_ERROR,
-      };
+      this.logger.error(
+        `Unexpected error creating plan ${request.nom}:`,
+        error instanceof Error ? error.stack : error
+      );
+      return failure(
+        PlanErrorType.DATABASE_ERROR,
+        error instanceof Error ? error : new Error(String(error))
+      );
     }
   }
 }

@@ -7,9 +7,10 @@ export const success = <Data>(data: Data): Result<Data, never> => ({
   success: true,
   data,
 });
-export const failure = <ServiceError>(
-  error: ServiceError
-): Result<never, ServiceError> => ({ success: false, error });
+export const failure = <ServiceError, Cause extends Error = Error>(
+  error: ServiceError,
+  cause?: Cause
+): Result<never, ServiceError> => ({ success: false, error, cause });
 
 export const combineResults = <Data, ServiceError>(
   results: Result<Data, ServiceError>[]

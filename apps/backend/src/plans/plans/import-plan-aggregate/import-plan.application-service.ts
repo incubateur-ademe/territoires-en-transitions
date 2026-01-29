@@ -37,10 +37,6 @@ export class ImportPlanApplicationService {
     pilotes?: PersonneId[],
     referents?: PersonneId[]
   ): Promise<Result<boolean, ImportErrors>> {
-    this.logger.log(
-      `Starting import: ${planName} (type: ${planType}) for collectivité ${collectiviteId}`
-    );
-
     // 1. Parse Excel file
     const parsedRows = await parsePlanExcel(file);
     if (!parsedRows.success) {

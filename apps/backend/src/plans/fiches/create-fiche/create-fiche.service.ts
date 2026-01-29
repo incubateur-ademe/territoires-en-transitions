@@ -17,6 +17,7 @@ import { ResourceType } from '@tet/backend/users/authorizations/resource-type.en
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { failure } from '@tet/backend/utils/result.type';
 import { Fiche, FicheCreate } from '@tet/domain/plans';
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { UpdateFicheInput } from '../update-fiche/update-fiche.input';
@@ -69,12 +70,8 @@ export class CreateFicheService {
 
       const ficheId = createdFiche.id;
       if (!ficheId) {
-        return {
-          success: false,
-          error: `Échec de création de la fiche`,
-        };
+        return failure(`Échec de création de la fiche`);
       }
-
       if (
         ficheFields &&
         Object.values(ficheFields).filter((v) => v !== undefined).length
@@ -86,20 +83,17 @@ export class CreateFicheService {
           tx,
         });
         if (!result.success) {
-          return {
-            success: false,
-            error: `Échec de la mise à jour de la fiche: ${result.error}`,
-          };
+          return failure('Échec de la mise à jour de la fiche', result.cause);
         }
       }
 
       return { success: true, data: createdFiche };
     } catch (error) {
       this.logger.error(`Error creating fiche:`, error);
-      return {
-        success: false,
-        error: `Échec de création de la fiche: ${error}`,
-      };
+      return failure(
+        'Échec de création de la fiche',
+        error instanceof Error ? error : new Error(String(error))
+      );
     }
   }
 

@@ -27,7 +27,7 @@ export class ImportPlanRouter {
 
         if (!result.success) {
           throw new TRPCError({
-            code: 'BAD_REQUEST',
+            code: 'INTERNAL_SERVER_ERROR',
             message: result.error.message,
           });
         }
