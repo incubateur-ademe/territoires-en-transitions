@@ -206,6 +206,12 @@ export const listFichesRequestFiltersSchema = z
       .describe(
         'Liste uniquement les sous-actions associées aux actions parentes spécifiées. Exclut automatiquement les actions parentes et les autres sous-actions. Mutuellement exclusif avec `withChildren`.'
       ),
+    onlyChildren: z.coerce
+      .boolean()
+      .optional()
+      .describe(
+        "Inclut uniquement les sous-actions dans les résultats. `withChildren` n'a pas besoin d'être spécifié."
+      ),
     withChildren: z.coerce
       .boolean()
       .optional()

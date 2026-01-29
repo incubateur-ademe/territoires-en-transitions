@@ -18,6 +18,7 @@ export type Filters = Omit<
   | 'modifiedSince'
   | 'texteNomOuDescription'
   | 'parentsId'
+  | 'onlyChildren'
   | 'withChildren'
   | 'withAxesAncestors'
 >;

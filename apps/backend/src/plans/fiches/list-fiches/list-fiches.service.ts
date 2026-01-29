@@ -84,7 +84,7 @@ import {
   sql,
   SQL,
   SQLWrapper,
-  Table
+  Table,
 } from 'drizzle-orm';
 import { PgColumn, TableConfig } from 'drizzle-orm/pg-core';
 import { isNil } from 'es-toolkit';
@@ -759,7 +759,11 @@ export default class ListFichesService {
     return { success: true, data: ficheAction };
   }
 
-  async countPiloteFiches(collectiviteId: number, user: AuthUser) {
+  async countPiloteFiches(
+    collectiviteId: number,
+    user: AuthUser,
+    subFiches = false
+  ) {
     if (!user.id) {
       throw new BadRequestException(
         `Seulement supporté pour les utilisateurs authentifiés`
@@ -780,7 +784,9 @@ export default class ListFichesService {
           eq(ficheActionTable.collectiviteId, collectiviteId),
           eq(ficheActionPiloteTable.userId, user.id),
           eq(ficheActionTable.deleted, false),
-          isNull(ficheActionTable.parentId)
+          subFiches
+            ? isNotNull(ficheActionTable.parentId)
+            : isNull(ficheActionTable.parentId)
         )
       );
 
@@ -864,7 +870,9 @@ export default class ListFichesService {
         const column = sortColumn[sort.field];
 
         if (column === ficheActionTable.titre) {
-          const orderByWithCollation = sql`${column} collate numeric_with_case_and_accent_insensitive ${sort.direction === 'asc' ? sql`asc` : sql`desc`} nulls last`;
+          const orderByWithCollation = sql`${column} collate numeric_with_case_and_accent_insensitive ${
+            sort.direction === 'asc' ? sql`asc` : sql`desc`
+          } nulls last`;
 
           ficheIdsQuery.orderBy(
             orderByWithCollation,
@@ -872,7 +880,9 @@ export default class ListFichesService {
             asc(ficheActionTable.createdAt)
           );
         } else {
-          ficheIdsQuery.orderBy(sort.direction === 'asc' ? column : desc(column));
+          ficheIdsQuery.orderBy(
+            sort.direction === 'asc' ? column : desc(column)
+          );
         }
       });
     }
@@ -1433,7 +1443,7 @@ export default class ListFichesService {
     if (filters.ficheIds?.length) {
       const ficheIdsConditions = [
         inArray(ficheActionTable.id, filters.ficheIds),
-        filters.withChildren
+        filters.withChildren && !filters.onlyChildren
           ? inArray(ficheActionTable.parentId, filters.ficheIds)
           : null,
       ].filter((c) => c !== null);
@@ -1786,9 +1796,12 @@ export default class ListFichesService {
     if (filters.parentsId?.length) {
       // Si `parentsId` est spécifié, on ne retourne que les sous-fiches associées aux parents spécifiés
       conditions.push(inArray(ficheActionTable.parentId, filters.parentsId));
-    } else if (!filters.withChildren) {
-      // Par défaut, on exclut toutes les sous-fiches sauf si `withChildren` est activé
+    } else if (!filters.withChildren && !filters.onlyChildren) {
+      // Par défaut, on exclut toutes les sous-fiches sauf si `withChildren` ou `onlyChildren` est activé
       conditions.push(isNull(ficheActionTable.parentId));
+    } else if (filters.onlyChildren) {
+      // et si `onlyChildren` est spécifié on n'inclut que les sous-fiches
+      conditions.push(isNotNull(ficheActionTable.parentId));
     }
 
     return conditions;
