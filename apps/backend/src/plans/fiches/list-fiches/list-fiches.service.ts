@@ -84,7 +84,7 @@ import {
   sql,
   SQL,
   SQLWrapper,
-  Table
+  Table,
 } from 'drizzle-orm';
 import { PgColumn, TableConfig } from 'drizzle-orm/pg-core';
 import { isNil } from 'es-toolkit';
@@ -95,6 +95,7 @@ import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import { ficheRecursiveAxeView } from '../shared/models/fiche-recursive-axe.view';
 import { checkCompletion } from './completion';
+import { ListFichesBudgetRepository } from './list-fiches-budget.repository';
 
 type FicheWithoutCompletion = Omit<FicheWithRelations, 'completion'>;
 
@@ -112,7 +113,8 @@ export default class ListFichesService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly collectiviteService: CollectivitesService,
-    private readonly fichePermissionService: FicheActionPermissionsService
+    private readonly fichePermissionService: FicheActionPermissionsService,
+    private readonly listFichesBudgetRepository: ListFichesBudgetRepository
   ) {}
 
   private getFicheActionSousThematiquesQuery(ficheIds: number[]) {
@@ -688,40 +690,6 @@ export default class ListFichesService {
     return query.groupBy(annexeTable.ficheId).as('ficheActionDocs');
   }
 
-  private getFicheActionBudgetsQuery(ficheIds: number[]) {
-    const query = this.databaseService.db
-      .select({
-        ficheId: ficheActionBudgetTable.ficheId,
-        budgets: sql<
-          {
-            id: number;
-            ficheId: number;
-            type: string;
-            unite: string;
-            annee?: number | null;
-            budgetPrevisionnel?: number | null;
-            budgetReel?: number | null;
-            estEtale?: boolean;
-          }[]
-        >`array_agg
-        (json_build_object(
-          'id', ${ficheActionBudgetTable.id},
-          'type', ${ficheActionBudgetTable.type},
-          'unite', ${ficheActionBudgetTable.unite},
-          'annee', ${ficheActionBudgetTable.annee},
-          'budgetPrevisionnel', ${ficheActionBudgetTable.budgetPrevisionnel},
-          'budgetReel', ${ficheActionBudgetTable.budgetReel},
-          'estEtale', ${ficheActionBudgetTable.estEtale}))`.as('budgets'),
-      })
-      .from(ficheActionBudgetTable);
-
-    query.where(inArray(ficheActionBudgetTable.ficheId, ficheIds));
-
-    return query
-      .groupBy(ficheActionBudgetTable.ficheId)
-      .as('ficheActionBudgets');
-  }
-
   async getFicheById(
     ficheId: number,
     addCollectiviteData?: boolean,
@@ -864,7 +832,9 @@ export default class ListFichesService {
         const column = sortColumn[sort.field];
 
         if (column === ficheActionTable.titre) {
-          const orderByWithCollation = sql`${column} collate numeric_with_case_and_accent_insensitive ${sort.direction === 'asc' ? sql`asc` : sql`desc`} nulls last`;
+          const orderByWithCollation = sql`${column} collate numeric_with_case_and_accent_insensitive ${
+            sort.direction === 'asc' ? sql`asc` : sql`desc`
+          } nulls last`;
 
           ficheIdsQuery.orderBy(
             orderByWithCollation,
@@ -872,7 +842,9 @@ export default class ListFichesService {
             asc(ficheActionTable.createdAt)
           );
         } else {
-          ficheIdsQuery.orderBy(sort.direction === 'asc' ? column : desc(column));
+          ficheIdsQuery.orderBy(
+            sort.direction === 'asc' ? column : desc(column)
+          );
         }
       });
     }
@@ -936,7 +908,10 @@ export default class ListFichesService {
       this.getFicheActionFichesLieesQuery(ficheIds);
     const ficheActionDocs = this.getFicheActionsDocsQuery(ficheIds);
     const ficheActionSharings = this.getFicheActionSharingsQuery(ficheIds);
-    const ficheActionBudgets = this.getFicheActionBudgetsQuery(ficheIds);
+    const ficheActionBudgets =
+      this.listFichesBudgetRepository.listFicheBudgetsByFicheId({
+        ficheIds,
+      });
 
     const dcpModifiedBy = aliasedTable(dcpTable, 'dcpModifiedBy');
 
@@ -1106,42 +1081,6 @@ export default class ListFichesService {
     return { data: fichesWithCompletion, count };
   }
 
-  // version allégée de listFiches pour ne lire que les budgets
-  // (utilisée pour calculer le budget consolidé d'un plan)
-  async listFichesBudgetQuery(
-    collectiviteId: number | null,
-    filters?: ListFichesRequestFilters,
-    queryOptions?: QueryOptionsSchema
-  ): Promise<{
-    data: Pick<FicheWithRelations, 'id' | 'budgets'>[];
-    count: number;
-  }> {
-    const ficheIdsQuery = this.getFicheIdsQuery(
-      collectiviteId,
-      filters,
-      queryOptions
-    );
-    const ficheIdQueryResult = await ficheIdsQuery;
-    const ficheIds = ficheIdQueryResult.map((fiche) => fiche.id);
-    const count = ficheIdQueryResult[0]?.count ?? 0;
-    const ficheActionBudgets = this.getFicheActionBudgetsQuery(ficheIds);
-
-    const query = this.databaseService.db
-      .select({
-        id: ficheActionTable.id,
-        budgets: ficheActionBudgets.budgets,
-      })
-      .from(ficheActionTable)
-      .leftJoin(
-        ficheActionBudgets,
-        eq(ficheActionBudgets.ficheId, ficheActionTable.id)
-      )
-      .where(inArray(ficheActionTable.id, ficheIds));
-
-    const data = await query;
-    return { data, count };
-  }
-
   private getTimeColumn(typePeriode?: TypePeriodeEnum) {
     switch (typePeriode) {
       case 'creation':
@@ -1191,6 +1130,7 @@ export default class ListFichesService {
     const planQuery = this.databaseService.db
       .select({
         ficheId: ficheActionAxeTable.ficheId,
+        planId: axeTable.plan,
       })
       .from(ficheActionAxeTable)
       .leftJoin(axeTable, eq(ficheActionAxeTable.axeId, axeTable.id))

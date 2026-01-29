@@ -9,7 +9,7 @@ import { Result } from '@tet/backend/utils/result.type';
 import { Plan } from '@tet/domain/plans';
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { ListAxesService } from '../../axes/list-axes/list-axes.service';
-import ListFichesService from '../../fiches/list-fiches/list-fiches.service';
+import { ListFichesBudgetRepository } from '../../fiches/list-fiches/list-fiches-budget.repository';
 import { ComputeBudgetRules } from '../compute-budget/compute-budget.rules';
 import { GetPlanError, GetPlanErrorEnum } from './get-plan.errors';
 import { GetPlanInput } from './get-plan.input';
@@ -23,7 +23,7 @@ export class GetPlanService {
     private readonly collectivite: CollectivitesService,
     private readonly databaseService: DatabaseService,
     private readonly listAxesService: ListAxesService,
-    private readonly listFichesService: ListFichesService,
+    private readonly listFichesBudgetRepository: ListFichesBudgetRepository,
     private readonly computeBudgetRules: ComputeBudgetRules,
     private readonly getPlanRepository: GetPlanRepository,
     private readonly permissionService: PermissionService
@@ -83,13 +83,12 @@ export class GetPlanService {
         return pilotesResult;
       }
 
-      const fiches = await this.listFichesService.listFichesBudgetQuery(
-        null,
-        { planActionIds: [planId] },
-        { limit: 'all' }
-      );
+      const fiches =
+        await this.listFichesBudgetRepository.listFicheBudgetsBelongingToPlan({
+          planId,
+        });
 
-      const budget = this.computeBudgetRules.computeBudget(fiches.data);
+      const budget = this.computeBudgetRules.computeBudget(fiches);
 
       return {
         success: true,
@@ -99,7 +98,7 @@ export class GetPlanService {
           referents: referentsResult.data,
           pilotes: pilotesResult.data,
           budget,
-          totalFiches: fiches.data.length,
+          totalFiches: fiches.length,
         },
       };
     };
