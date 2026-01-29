@@ -8,7 +8,8 @@ import {
 /**
  * Schéma pour créer un plan
  */
-export const baseCreatePlanSchema = baseCreateAxeOrPlanSchema.extend({
+export const baseCreatePlanSchema = z.object({
+  ...baseCreateAxeOrPlanSchema.shape,
   typeId: z.number().optional(),
 });
 export type BaseCreatePlanInput = z.infer<typeof baseCreatePlanSchema>;
@@ -16,7 +17,8 @@ export type BaseCreatePlanInput = z.infer<typeof baseCreatePlanSchema>;
 /**
  * Schéma pour mettre à jour un plan
  */
-export const baseUpdatePlanSchema = baseUpdateAxeOrPlanSchema.extend({
+export const baseUpdatePlanSchema = z.object({
+  ...baseUpdateAxeOrPlanSchema.shape,
   typeId: z.number().nullish(),
 });
 export type BaseUpdatePlanInput = z.infer<typeof baseUpdatePlanSchema>;
