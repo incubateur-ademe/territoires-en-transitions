@@ -1,10 +1,11 @@
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
   collectiviteBanaticSubType,
   CollectiviteBanaticType,
   collectiviteBanaticTypeTable,
 } from '@tet/backend/collectivites/shared/models/collectivite-banatic-type.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   Collectivite,
   CollectiviteAvecType,
@@ -103,12 +104,12 @@ export default class CollectivitesService {
     };
   }
 
-  async getCollectivite(collectiviteId: number) {
+  async getCollectivite(collectiviteId: number, tx?: Transaction) {
     this.logger.log(
       `Récupération de la collectivite avec l'identifiant ${collectiviteId}`
     );
 
-    const collectiviteByIdResult = await this.databaseService.db
+    const collectiviteByIdResult = await (tx || this.databaseService.db)
       .select()
       .from(collectiviteTable)
       .leftJoin(

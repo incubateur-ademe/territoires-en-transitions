@@ -4,12 +4,12 @@ import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handl
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import z from 'zod';
 import { updateFicheErrorConfig } from './update-fiche.errors';
-import { updateFicheRequestSchema } from './update-fiche.request';
+import { updateFicheInputSchema } from './update-fiche.input';
 import UpdateFicheService from './update-fiche.service';
 
 const updateFicheInput = z.object({
   ficheId: z.number(),
-  ficheFields: updateFicheRequestSchema,
+  ficheFields: updateFicheInputSchema,
   isNotificationEnabled: z.boolean().optional(),
 });
 
@@ -32,7 +32,9 @@ export class UpdateFicheRouter {
           throw new Error('Service role user cannot update fiche');
         }
         const result = await this.service.updateFiche({
-          ...input,
+          ficheId: input.ficheId,
+          ficheFields: input.ficheFields,
+          isNotificationEnabled: input.isNotificationEnabled,
           user: ctx.user,
         });
         return this.getResultDataOrThrowError(result);

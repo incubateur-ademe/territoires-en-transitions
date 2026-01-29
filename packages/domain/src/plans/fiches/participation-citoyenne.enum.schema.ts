@@ -15,3 +15,7 @@ export const participationCitoyenneEnumSchema = z.enum(
 export type ParticipationCitoyenne = z.infer<
   typeof participationCitoyenneEnumSchema
 >;
+
+export const isParticipationCitoyenne = (value: string): value is ParticipationCitoyenne => {
+  return participationCitoyenneEnumValues.includes(value as typeof participationCitoyenneEnumValues[number]);
+};

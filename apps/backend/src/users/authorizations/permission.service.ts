@@ -3,12 +3,13 @@ import { ResourceType } from '@tet/backend/users/authorizations/resource-type.en
 import { PermissionOperation, permissionsByRole } from '@tet/domain/users';
 import { AuthRole, AuthUser } from '../models/auth.models';
 import { RoleService } from './roles/role.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 
 @Injectable()
 export class PermissionService {
   private readonly logger = new Logger(PermissionService.name);
 
-  constructor(private readonly roleService: RoleService) {}
+  constructor(private readonly roleService: RoleService) { }
 
   hasServiceRole(
     user: AuthUser | null | undefined,
@@ -30,13 +31,15 @@ export class PermissionService {
   async listPermissions(
     user: AuthUser,
     resourceType: ResourceType,
-    resourceId: number | null
+    resourceId: number | null,
+    tx?: Transaction
   ): Promise<Set<PermissionOperation>> {
     // Récupère les rôles de l'utilisateur pour la ressource donnée
     const roles = await this.roleService.getUserRoles(
       user,
       resourceType,
-      resourceId
+      resourceId,
+      tx
     );
 
     const operations: Set<PermissionOperation> = new Set();
@@ -86,7 +89,8 @@ export class PermissionService {
     operation: PermissionOperation,
     resourceType: ResourceType,
     resourceId: number | null,
-    doNotThrow?: boolean
+    doNotThrow?: boolean,
+    tx?: Transaction
   ): Promise<boolean> {
     this.logger.log(
       `Vérification que l'utilisateur ${user.id} possède l'autorisation ${operation} sur la ressource ${resourceType} ${resourceId}`
@@ -118,7 +122,8 @@ export class PermissionService {
     const permissions = await this.listPermissions(
       user,
       resourceType,
-      resourceId
+      resourceId,
+      tx
     );
 
     // Vérifie si l'opération demandée est dans la liste des autorisations de l'utilisateur

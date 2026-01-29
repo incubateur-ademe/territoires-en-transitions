@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -17,8 +17,6 @@ import { UpsertAxeRepository } from './upsert-axe.repository';
 
 @Injectable()
 export class UpsertAxeService {
-  private readonly logger = new Logger(UpsertAxeService.name);
-
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,

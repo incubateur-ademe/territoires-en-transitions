@@ -11,7 +11,7 @@ export * from './fiches/pilier-eci.enum.schema';
 export * from './fiches/priorite.enum.schema';
 export * from './fiches/statut.enum.schema';
 export * from './fiches/utils/fiche-status-color.utils';
-export * from './fiches/utils/fiche.validator';
+export * from './fiches/utils/fiche.rule';
 export * from './filters';
 export * from './labels';
 export * from './paniers/action-impact.schema';

@@ -6,6 +6,7 @@ import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authoriza
 import { AuthRole, AuthUser } from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   AuditRole,
   CollectiviteAccess,
@@ -28,7 +29,8 @@ export class RoleService {
   async getUserRoles(
     user: AuthUser,
     resourceType: ResourceType,
-    resourceId: number | null
+    resourceId: number | null,
+    tx?: Transaction
   ): Promise<Role[]> {
     this.logger.log(
       `Récupération des rôles de l'utilisateur ${user.id} sur la ressource ${resourceType} ${resourceId}`
@@ -62,6 +64,7 @@ export class RoleService {
         const droits = await this.listActiveCollectiviteAccessLevels({
           userId: user.id,
           collectiviteId: resourceId,
+          tx,
         });
 
         roles.push(...new Set(droits.map((droit) => droit.accessLevel)));
@@ -195,11 +198,13 @@ export class RoleService {
   async listActiveCollectiviteAccessLevels({
     userId,
     collectiviteId,
+    tx,
   }: {
     userId: string;
     collectiviteId?: number;
+    tx?: Transaction;
   }): Promise<UtilisateurCollectiviteAccess[]> {
-    const query = this.databaseService.db
+    const query = (tx || this.databaseService.db)
       .select({
         ...getTableColumns(utilisateurCollectiviteAccessTable),
         collectiviteNom: collectiviteTable.nom,
