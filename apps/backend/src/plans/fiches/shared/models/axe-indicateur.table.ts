@@ -8,13 +8,14 @@ import { axeTable } from './axe.table';
 export const axeIndicateurTable = pgTable(
   'axe_indicateur',
   {
-    indicateurId: integer('indicateur_id').references(
-      () => indicateurDefinitionTable.id,
-      { onDelete: 'cascade' }
-    ),
-    axeId: integer('axe_id').references(() => axeTable.id, {
-      onDelete: 'cascade',
-    }),
+    indicateurId: integer('indicateur_id')
+      .notNull()
+      .references(() => indicateurDefinitionTable.id, { onDelete: 'cascade' }),
+    axeId: integer('axe_id')
+      .notNull()
+      .references(() => axeTable.id, {
+        onDelete: 'cascade',
+      }),
   },
   (table) => [primaryKey({ columns: [table.indicateurId, table.axeId] })]
 );
