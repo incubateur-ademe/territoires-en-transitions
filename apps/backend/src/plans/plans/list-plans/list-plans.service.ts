@@ -83,7 +83,7 @@ export class ListPlansService {
         const pilotes = pilotesResult.success ? pilotesResult.data : [];
 
         // Récupérer le type via getPlan qui inclut le type
-        const planResult = await this.getPlanRepository.getPlan(planId, tx);
+        const planResult = await this.getPlanRepository.getPlan({ planId }, tx);
         const type = planResult.success ? planResult.data.type : null;
 
         return {
