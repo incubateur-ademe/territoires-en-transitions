@@ -41,6 +41,10 @@ const sizeClasses = {
   },
 };
 
+export type EmptyCardAction =
+  | (ButtonProps & { isVisible?: boolean })
+  | React.ReactElement<ButtonProps>;
+
 export type EmptyCardProps = {
   /** Pictogramme en en-tête de la carte */
   picto?: (props: PictoProps) => React.ReactNode;
@@ -56,9 +60,9 @@ export type EmptyCardProps = {
   variant?: 'primary' | 'transparent' | 'grey';
   /** Conditionne la taille de la carte et de ses éléments */
   size?: EmptyCardSize;
-  /** CTAs de la carte, liste de boutons ou d'objets ButtonProps  */
-  actions?: (ButtonProps | React.ReactElement)[];
-  /** Conditionne l'affichage des CTA */
+  /** CTAs de la carte, liste de boutons ou d'objets ButtonProps. Chaque action peut avoir une propriété `isVisible` pour conditionnement individuel */
+  actions?: EmptyCardAction[];
+  /** Conditionne l'affichage de tous les CTA */
   isReadonly?: boolean;
   /** Permet l'ajout de classNames custom */
   className?: string;
@@ -104,6 +108,20 @@ export const EmptyCard = ({
   className,
   dataTest,
 }: EmptyCardProps) => {
+  const visibleActions = actions.flatMap((action) => {
+    if (React.isValidElement(action)) {
+      return [action];
+    }
+
+    if (action.isVisible === false) {
+      return [];
+    }
+
+    // Destructure pour exclure isVisible des props du Button
+    const { isVisible, ...buttonProps } = action;
+    return [<Button size={sizeClasses[size].buttonSize} {...buttonProps} />];
+  });
+
   return (
     <div
       className={classNames(
@@ -173,19 +191,12 @@ export const EmptyCard = ({
       </div>
 
       {/* Boutons */}
-      {!isReadonly && (
+      {!isReadonly && visibleActions.length > 0 && (
         <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2">
-          {actions.map((action, index) => (
+          {visibleActions.map((action, index) => (
             <React.Fragment key={index}>
-              {React.isValidElement(action) ? (
-                action
-              ) : (
-                <Button
-                  size={sizeClasses[size].buttonSize}
-                  {...(action as ButtonProps)}
-                />
-              )}
-              {index % 2 !== 0 && index !== actions.length - 1 && (
+              {action}
+              {index % 2 !== 0 && index !== visibleActions.length - 1 && (
                 <div className="basis-full h-0" />
               )}
             </React.Fragment>
