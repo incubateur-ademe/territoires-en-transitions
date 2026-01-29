@@ -139,9 +139,9 @@ export const ButtonMenu = ({ menu, withArrow, children, ...props }: Props) => {
             {startContent}
             {actions && (
               <div className="flex flex-col">
-                {actions.map((action) =>
+                {actions.map((action, index) =>
                   action === MenuSeparator ? (
-                    <MenuActionSeparator />
+                    <MenuActionSeparator key={index} />
                   ) : (
                     <MenuActionItem
                       key={action.label}
