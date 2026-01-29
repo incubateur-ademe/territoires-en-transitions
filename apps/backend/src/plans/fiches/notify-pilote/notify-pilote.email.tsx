@@ -6,8 +6,6 @@ import { formatDate } from '@tet/backend/utils/notifications/components/format-d
 import * as React from 'react';
 import { NotifyPiloteProps } from './notify-pilote.props';
 
-const DESCRIPTION_MAX_LENGTH = 200;
-
 /** Génère le contenu de la notification envoyée quand un pilote est attribué à une fiche */
 export const NotifyPiloteEmail = (
   props: NotifyPiloteProps
@@ -15,16 +13,22 @@ export const NotifyPiloteEmail = (
   const {
     assignedTo,
     assignedBy,
-    sousActionTitre,
-    actionTitre,
-    planNom,
-    description,
-    actionUrl,
-    isSousAction,
+    assignedAction,
+    sendToEmail,
+    unsubscribeUrl,
   } = props;
 
+  const {
+    sousActionTitre,
+    actionTitre,
+    actionDateFin,
+    planNom,
+    actionUrl,
+    isSousAction,
+  } = assignedAction;
+
   const actionType = isSousAction ? 'la sous-action' : "l'action";
-  const dateFin = formatDate(props.dateFin);
+  const dateFin = formatDate(actionDateFin);
 
   return (
     <EmailContainer>
@@ -39,29 +43,37 @@ export const NotifyPiloteEmail = (
       <ul>
         {isSousAction ? (
           <>
-            <li>Sous-action : {sousActionTitre || 'Sans titre'}</li>
-            {actionTitre && <li>Action parente : {actionTitre}</li>}
+            <li>
+              <b>Sous-action</b> : {sousActionTitre || 'Sans titre'}
+            </li>
+            {actionTitre && (
+              <li>
+                <b>Action parente</b> : {actionTitre}
+              </li>
+            )}
           </>
         ) : (
-          <li>Action : {actionTitre || 'Sans titre'}</li>
+          <li>
+            <b>Action</b> : {actionTitre || 'Sans titre'}
+          </li>
         )}
-        {planNom && <li>Plan : {planNom}</li>}
-        {dateFin && <li>Date de fin : {dateFin}</li>}
+        {planNom && (
+          <li>
+            <b>Plan</b> : {planNom}
+          </li>
+        )}
+        {dateFin && (
+          <li>
+            <b>Date de fin</b> : {dateFin}
+          </li>
+        )}
       </ul>
-
-      {description && (
-        <Text>
-          {description.length > DESCRIPTION_MAX_LENGTH
-            ? `${description.substring(0, DESCRIPTION_MAX_LENGTH)}...`
-            : description}
-        </Text>
-      )}
 
       <Section className="my-8 text-center">
         <CTAButton href={actionUrl}>Voir {actionType} →</CTAButton>
       </Section>
 
-      <Footer />
+      <Footer toEmail={sendToEmail} unsubscribeUrl={unsubscribeUrl} />
     </EmailContainer>
   );
 };
@@ -70,13 +82,16 @@ export const NotifyPiloteEmail = (
 NotifyPiloteEmail.PreviewProps = {
   assignedTo: "<prénom de l'assigné>",
   assignedBy: "<prénom de l'assigneur>",
-  actionTitre: "<nom de l'action>",
-  sousActionTitre: '<nom de la sous-action>',
-  planNom: '<nom du plan>',
-  dateFin: '2025-11-20T17:02:19.958Z',
-  description: '<courte description si disponible>',
-  actionUrl: 'https://app.territoiresentransitions.fr',
-  isSousAction: true,
+  assignedAction: {
+    planNom: '<nom du plan>',
+    actionTitre: "<nom de l'action>",
+    actionDateFin: '2025-11-20T17:02:19.958Z',
+    actionUrl: 'https://app.territoiresentransitions.fr',
+    sousActionTitre: '<nom de la sous-action>',
+    isSousAction: true,
+  },
+  sendToEmail: "<email de l'assigné>",
+  unsubscribeUrl: 'https://app.territoiresentransitions.fr',
 };
 
 export default NotifyPiloteEmail;
