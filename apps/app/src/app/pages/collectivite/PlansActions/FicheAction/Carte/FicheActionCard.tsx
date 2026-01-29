@@ -155,7 +155,7 @@ const FicheActionCard = ({
                   {isMoveModalOpen && collectivitePlans.length > 0 && (
                     <MoveFicheModal
                       fiche={ficheAction}
-                      planId={collectivitePlans[0].id}
+                      planId={planId ?? collectivitePlans[0].id}
                       isReadonly={currentCollectivite.isReadOnly}
                       openState={{
                         isOpen: isMoveModalOpen,
