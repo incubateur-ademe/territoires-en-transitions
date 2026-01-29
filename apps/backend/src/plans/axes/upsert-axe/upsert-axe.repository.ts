@@ -34,7 +34,7 @@ export class UpsertAxeRepository extends UpsertAxeBaseRepository<
    * @param indicateurs liste des indicateurs à associer
    * @param tx transaction
    */
-  async setIndicateurs(
+  async setAxeIndicateurs(
     axeId: number,
     indicateurs: { id: number }[] | null,
     tx: Transaction

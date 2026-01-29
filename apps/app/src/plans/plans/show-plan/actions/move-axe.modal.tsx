@@ -6,7 +6,7 @@ import { ColonneTableauEmplacement } from '../../../fiches/show-fiche/header/act
 import { useSelectAxes } from '../../../fiches/show-fiche/header/actions/emplacement/EmplacementFiche/use-select-axes';
 import { useUpdateAxe } from '../data/use-update-axe';
 import { getChildrenAxeIds } from '../plan-arborescence.view/get-children-axe-ids';
-import { planNodeToProfondeurAxe } from './utils';
+import { planNodeToProfondeurAxe } from './plan-node-to-profondeur-axe.adapter';
 
 type Props = {
   collectiviteId: number;
@@ -49,7 +49,11 @@ export const MoveAxeModal = ({
   axes,
   openState,
 }: Props) => {
-  const { mutateAsync: updateAxe } = useUpdateAxe({ axe, collectiviteId, planId: rootAxe.id });
+  const { mutateAsync: updateAxe } = useUpdateAxe({
+    axe,
+    collectiviteId,
+    planId: rootAxe.id,
+  });
 
   // IDs des axes invalides (l'axe actuel et tous ses descendants)
   const invalidAxeIds = [axe.id, ...getChildrenAxeIds(axe, axes)];
