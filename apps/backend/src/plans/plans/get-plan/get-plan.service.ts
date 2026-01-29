@@ -37,10 +37,10 @@ export class GetPlanService {
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<Result<Plan, GetPlanError>> => {
-      const { planId } = input;
+      const { collectiviteId, planId } = input;
 
       const planResult = await this.getPlanRepository.getPlan(
-        planId,
+        { planId, collectiviteId },
         transaction
       );
       if (!planResult.success) {

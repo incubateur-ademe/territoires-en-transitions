@@ -180,6 +180,27 @@ describe('Récupérer un plan', () => {
         })
       ).rejects.toThrow();
     });
+
+    test("Échec de récupération d'un plan quand le collectiviteId ne correspond pas au plan", async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const createdPlan = await caller.plans.plans.create({
+        nom: 'Plan pour test mismatch collectivite',
+        collectiviteId: collectivite.id,
+      });
+
+      onTestFinished(async () => {
+        await caller.plans.plans.delete({ planId: createdPlan.id });
+      });
+
+      // Essayer de récupérer le plan avec le collectiviteId d'une autre collectivité
+      await expect(
+        caller.plans.plans.get({
+          planId: createdPlan.id,
+          collectiviteId: createdPlan.collectiviteId + 1,
+        })
+      ).rejects.toThrow("Le plan demandé n'a pas été trouvé");
+    });
   });
 
   describe("Récupérer un plan - Droits d'accès", () => {

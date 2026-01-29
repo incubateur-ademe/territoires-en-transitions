@@ -22,9 +22,15 @@ export class GetPlanRepository {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async getPlan(
-    planId: number,
+    { planId, collectiviteId }: { planId: number; collectiviteId?: number },
     tx?: Transaction
   ): Promise<Result<GetPlanOutput, GetPlanError>> {
+    const whereConditions = [
+      eq(axeTable.id, planId),
+      isNull(axeTable.parent),
+      collectiviteId ? eq(axeTable.collectiviteId, collectiviteId) : undefined,
+    ];
+
     try {
       const result = await (tx || this.databaseService.db)
         .select({
@@ -41,7 +47,7 @@ export class GetPlanRepository {
           type: planActionTypeTable,
         })
         .from(axeTable)
-        .where(and(eq(axeTable.id, planId), isNull(axeTable.parent)))
+        .where(and(...whereConditions))
         .leftJoin(
           planActionTypeTable,
           eq(axeTable.typeId, planActionTypeTable.id)

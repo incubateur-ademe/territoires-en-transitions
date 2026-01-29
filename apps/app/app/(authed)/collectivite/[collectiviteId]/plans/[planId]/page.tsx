@@ -7,12 +7,13 @@ import { z } from 'zod';
 
 const parametersSchema = z.object({
   planId: z.coerce.number(),
+  collectiviteId: z.coerce.number(),
 });
 
 export default async function PlanPage({
   params,
 }: {
-  params: Promise<{ planId: number }>;
+  params: Promise<{ planId: number; collectiviteId: number }>;
 }) {
   const { success, data } = parametersSchema.safeParse(await params);
   if (!success) {
@@ -22,6 +23,7 @@ export default async function PlanPage({
   const plan = await getQueryClient().fetchQuery(
     trpcInServerComponent.plans.plans.get.queryOptions({
       planId: data.planId,
+      collectiviteId: data.collectiviteId,
     })
   );
 
