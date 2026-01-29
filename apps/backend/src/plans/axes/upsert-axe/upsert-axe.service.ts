@@ -84,7 +84,7 @@ export class UpsertAxeService {
 
       if (indicateurs === null || indicateurs) {
         const setIndicateursResult =
-          await this.upsertAxeRepository.setIndicateurs(
+          await this.upsertAxeRepository.setAxeIndicateurs(
             result.data.id,
             indicateurs,
             transaction
