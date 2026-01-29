@@ -10,7 +10,7 @@ import { Menu } from './menu';
 import { SubHeader } from './subheader';
 
 const Divider = ({ className }: { className?: string | undefined }) => {
-  return <div className={cn("border-b bg-primary-3 my-3", className)} />;
+  return <div className={cn('border-b bg-primary-3 my-3', className)} />;
 };
 
 export const Header = () => {
@@ -39,7 +39,9 @@ export const Header = () => {
           <Menu permissions={permissions} />
         </div>
 
-        <VisibleWhen condition={hasPermission(permissions, 'plans.read')}>
+        <VisibleWhen
+          condition={hasPermission(permissions, 'plans.read_public')}
+        >
           <Breadcrumbs
             title={titre ?? 'Sans titre'}
             collectiviteId={collectiviteId}
