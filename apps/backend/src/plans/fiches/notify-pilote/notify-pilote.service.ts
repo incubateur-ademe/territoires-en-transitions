@@ -16,12 +16,14 @@ import {
   NotificationStatusEnum,
   NotifiedOnEnum,
 } from '@tet/domain/utils';
-import { and, eq, inArray, not } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 import { differenceBy, isNil } from 'es-toolkit';
-import { DurationLike } from 'luxon';
+import { DateTime, DurationLike } from 'luxon';
 import { DatabaseError } from 'pg';
 import { z } from 'zod';
 import GetPlanUrlService from '../../utils/get-plan-url.service';
+import { NotifyPiloteMultiFichesEmail } from './notify-pilote-multi-fiches.email';
+import { NotifyPiloteMultiFichesProps } from './notify-pilote-multi-fiches.props';
 import { NotifyPiloteEmail } from './notify-pilote.email';
 import { NotifyPiloteProps } from './notify-pilote.props';
 
@@ -40,7 +42,7 @@ type UpsertNotificationsResult = Result<
 
 /** Format des données pour le champ `notificationData`  */
 const onUpdateFichePiloteNotificationDataSchema = z.object({
-  ficheId: z.number(),
+  ficheIds: z.array(z.number()),
   piloteId: z.uuid(),
 });
 type OnUpdateFichePiloteNotificationData = z.infer<
@@ -101,75 +103,60 @@ export class NotifyPiloteService {
     let insertedCount = 0;
 
     const executeInTransaction = async (transaction: Transaction) => {
-      // supprime les notifications pending destinés aux utilisateurs qui ne
-      // sont plus assignés comme pilote de la fiche
+      // récupère les IDs des pilotes actuels
       const currentPiloteUserIds =
         updatedFiche.pilotes
           ?.filter((p) => p.userId)
           .map((p) => p.userId as string) ?? [];
 
-      const pendingPiloteNotificationConditions = [
-        eq(notificationTable.entityId, String(ficheId)),
-        eq(notificationTable.status, NotificationStatusEnum.PENDING),
-        eq(notificationTable.notifiedOn, NotifiedOnEnum.UPDATE_FICHE_PILOTE),
-      ];
+      // récupère toutes les notifications pending pour cette fiche
+      const allPendingNotificationsForFiche = await transaction
+        .select()
+        .from(notificationTable)
+        .where(
+          and(
+            eq(notificationTable.status, NotificationStatusEnum.PENDING),
+            eq(
+              notificationTable.notifiedOn,
+              NotifiedOnEnum.UPDATE_FICHE_PILOTE
+            ),
+            sql`${notificationTable.notificationData}->'ficheIds' @> '${sql.raw(
+              JSON.stringify([ficheId])
+            )}'::jsonb`
+          )
+        );
 
-      if (currentPiloteUserIds.length > 0) {
-        await transaction
-          .delete(notificationTable)
-          .where(
-            and(
-              ...pendingPiloteNotificationConditions,
-              not(inArray(notificationTable.sendTo, currentPiloteUserIds))
-            )
-          );
-      } else {
-        // si aucun pilote avec userId, supprime toutes les notifications pending pour cette fiche
-        await transaction
-          .delete(notificationTable)
-          .where(and(...pendingPiloteNotificationConditions));
-      }
+      // nettoie les notifications pour les pilotes qui ne sont plus assignés
+      await this.cleanupNotificationsForRemovedPilotes(
+        transaction,
+        ficheId,
+        currentPiloteUserIds,
+        allPendingNotificationsForFiche
+      );
 
       if (!pilotes.length) {
         return;
       }
 
-      // vérifie quelles notifications existent déjà
+      // récupère les notifications existantes pour les nouveaux pilotes
       const userIds = pilotes.map((p) => p.userId);
-      const existingNotifications = await transaction
-        .select({ userId: notificationTable.sendTo })
-        .from(notificationTable)
-        .where(
-          and(
-            ...pendingPiloteNotificationConditions,
-            inArray(notificationTable.sendTo, userIds)
-          )
-        );
+      const existingNotificationsByUserId =
+        await this.getExistingNotificationsForPilotes(transaction, userIds);
 
-      const existingUserIds = new Set(
-        existingNotifications.map((n) => n.userId)
+      // calcule la date d'envoi
+      const sendAfter = this.calculateSendAfterDate();
+
+      // met à jour ou crée les notifications pour les nouveaux pilotes
+      const result = await this.updateOrCreateNotificationsForPilotes(
+        transaction,
+        pilotes,
+        ficheId,
+        user,
+        existingNotificationsByUserId,
+        sendAfter
       );
 
-      // insère uniquement les notifications qui n'existent pas encore
-      const notificationsToInsert: OnUpdateFichePiloteNotificationInsert[] =
-        pilotes
-          .filter((pilote) => !existingUserIds.has(pilote.userId))
-          .map((pilote) => ({
-            createdBy: user.id,
-            entityId: String(ficheId),
-            status: NotificationStatusEnum.PENDING,
-            sendTo: pilote.userId,
-            notifiedOn: NotifiedOnEnum.UPDATE_FICHE_PILOTE,
-            notificationData: { ficheId, piloteId: pilote.userId },
-          }));
-      if (notificationsToInsert.length > 0) {
-        await this.notificationsService.createPendingNotifications(
-          notificationsToInsert,
-          DEFAULT_DELAY_BEFORE_SENDING
-        );
-
-        insertedCount = notificationsToInsert.length;
-      }
+      insertedCount = result.insertedCount;
     };
 
     try {
@@ -186,7 +173,151 @@ export class NotifyPiloteService {
       return { success: false, error: (error as DatabaseError).message };
     }
 
-    return { success: true, data: { count: insertedCount } };
+    return {
+      success: true,
+      data: { count: insertedCount },
+    };
+  }
+
+  /**
+   * Nettoie les notifications pour les pilotes qui ne sont plus assignés à la fiche
+   */
+  private async cleanupNotificationsForRemovedPilotes(
+    transaction: Transaction,
+    ficheId: number,
+    currentPiloteUserIds: string[],
+    allPendingNotificationsForFiche: Notification[]
+  ): Promise<void> {
+    // détermine les notifications à traiter
+    const notificationsToProcess =
+      currentPiloteUserIds.length > 0
+        ? // filtre les notifications pour les utilisateurs qui ne sont plus pilotes
+          allPendingNotificationsForFiche.filter(
+            (n) => !currentPiloteUserIds.includes(n.sendTo)
+          )
+        : // si aucun pilote avec userId, traite toutes les notifications
+          allPendingNotificationsForFiche;
+
+    // traite chaque notification
+    for (const notification of notificationsToProcess) {
+      const notificationData = notification.notificationData as {
+        ficheIds: number[];
+        piloteId: string;
+      };
+      const updatedFicheIds = notificationData.ficheIds.filter(
+        (id) => id !== ficheId
+      );
+
+      if (updatedFicheIds.length === 0) {
+        // supprime la notification si plus aucune fiche
+        await transaction
+          .delete(notificationTable)
+          .where(eq(notificationTable.id, notification.id));
+      } else {
+        // met à jour la notification en retirant ce ficheId
+        await transaction
+          .update(notificationTable)
+          .set({
+            notificationData: {
+              ficheIds: updatedFicheIds,
+              piloteId: notificationData.piloteId,
+            },
+          })
+          .where(eq(notificationTable.id, notification.id));
+      }
+    }
+  }
+
+  /**
+   * Récupère les notifications existantes pour les pilotes donnés
+   */
+  private async getExistingNotificationsForPilotes(
+    transaction: Transaction,
+    piloteUserIds: string[]
+  ): Promise<Map<string, Notification>> {
+    const existingNotifications = await transaction
+      .select()
+      .from(notificationTable)
+      .where(
+        and(
+          eq(notificationTable.status, NotificationStatusEnum.PENDING),
+          eq(notificationTable.notifiedOn, NotifiedOnEnum.UPDATE_FICHE_PILOTE),
+          inArray(notificationTable.sendTo, piloteUserIds)
+        )
+      );
+
+    return new Map(existingNotifications.map((n) => [n.sendTo, n]));
+  }
+
+  /**
+   * Calcule la date d'envoi de la notification
+   */
+  private calculateSendAfterDate(): string {
+    return DateTime.now().plus(DEFAULT_DELAY_BEFORE_SENDING).toUTC().toString();
+  }
+
+  /**
+   * Met à jour ou crée les notifications pour les pilotes nouvellement assignés
+   */
+  private async updateOrCreateNotificationsForPilotes(
+    transaction: Transaction,
+    pilotes: UserWithEmail[],
+    ficheId: number,
+    user: AuthenticatedUser,
+    existingNotificationsByUserId: Map<string, Notification>,
+    sendAfter: string
+  ): Promise<{ insertedCount: number }> {
+    let insertedCount = 0;
+
+    for (const pilote of pilotes) {
+      const existingNotification = existingNotificationsByUserId.get(
+        pilote.userId
+      );
+
+      if (existingNotification) {
+        // met à jour la notification existante
+        const notificationData = existingNotification.notificationData as {
+          ficheIds: number[];
+          piloteId: string;
+        };
+        const ficheIds = [...new Set([...notificationData.ficheIds, ficheId])]; // évite les doublons
+
+        await transaction
+          .update(notificationTable)
+          .set({
+            notificationData: {
+              ficheIds,
+              piloteId: pilote.userId,
+            },
+            sendAfter,
+          })
+          .where(eq(notificationTable.id, existingNotification.id));
+      } else {
+        // crée une nouvelle notification
+        const notificationsToInsert: OnUpdateFichePiloteNotificationInsert[] = [
+          {
+            createdBy: user.id,
+            status: NotificationStatusEnum.PENDING,
+            sendTo: pilote.userId,
+            notifiedOn: NotifiedOnEnum.UPDATE_FICHE_PILOTE,
+            notificationData: {
+              ficheIds: [ficheId],
+              piloteId: pilote.userId,
+            },
+          },
+        ];
+
+        await this.notificationsService.createPendingNotifications(
+          notificationsToInsert,
+          DEFAULT_DELAY_BEFORE_SENDING,
+          transaction
+        );
+
+        insertedCount++;
+      }
+    }
+
+    return { insertedCount };
   }
 
   /**
@@ -236,12 +367,23 @@ export class NotifyPiloteService {
 
     const templateData = ret.data;
     const { sendToEmail, subject } = templateData;
+
+    // utilise le template approprié selon le nombre de fiches
+    const isMultiFiches =
+      'assignedActions' in templateData &&
+      templateData.assignedActions.length > 1;
+    const content = isMultiFiches
+      ? NotifyPiloteMultiFichesEmail(
+          templateData as NotifyPiloteMultiFichesProps
+        )
+      : NotifyPiloteEmail(templateData as NotifyPiloteProps);
+
     return {
       success: true,
       data: {
         sendToEmail,
         subject,
-        content: NotifyPiloteEmail(templateData),
+        content,
       },
     };
   }
@@ -252,7 +394,7 @@ export class NotifyPiloteService {
    */
   private async getPiloteNotificationTemplateData(
     notification: Notification
-  ): Promise<Result<NotifyPiloteProps, string>> {
+  ): Promise<Result<NotifyPiloteProps | NotifyPiloteMultiFichesProps, string>> {
     const { createdBy, notificationData } = notification;
     const { data, success, error } =
       onUpdateFichePiloteNotificationDataSchema.safeParse(notificationData);
@@ -265,22 +407,21 @@ export class NotifyPiloteService {
         error: "Auteur de l'assignation du pilote non identifié",
       };
     }
-    const { ficheId, piloteId } = data;
+    const { ficheIds, piloteId } = data;
 
-    const result = await this.listFichesService.getFicheById(ficheId);
-    if (!result.success) {
-      return { success: false, error: 'Action non trouvée' };
-    }
-    const fiche = result.data;
-    let ficheParente;
-    if (fiche.parentId) {
-      const getParentResult = await this.listFichesService.getFicheById(
-        fiche.parentId
-      );
-      if (!getParentResult.success) {
-        return { success: false, error: 'Action parente non trouvée' };
+    // charge toutes les fiches
+    const fiches: FicheWithRelations[] = [];
+    const result = await this.listFichesService.listFichesQuery(
+      null,
+      { ficheIds, withChildren: true },
+      { limit: 'all' }
+    );
+    for (const ficheId of ficheIds) {
+      const fiche = result.data.find((f) => f.id === ficheId);
+      if (!fiche) {
+        return { success: false, error: `Action ${ficheId} non trouvée` };
       }
-      ficheParente = getParentResult.data;
+      fiches.push(fiche);
     }
     const createdByUser = await this.listUsersService.getUserBasicInfo({
       userId: createdBy,
@@ -298,28 +439,82 @@ export class NotifyPiloteService {
       return { success: false, error: 'Pilote non trouvé' };
     }
 
-    const plan = fiche.plans?.[0];
+    // si une seule fiche, utilise le format simple
+    if (fiches.length === 1) {
+      const fiche = fiches[0];
+      let ficheParente;
+      if (fiche.parentId) {
+        const getParentResult = await this.listFichesService.getFicheById(
+          fiche.parentId
+        );
+        if (!getParentResult.success) {
+          return { success: false, error: 'Action parente non trouvée' };
+        }
+        ficheParente = getParentResult.data;
+      }
+
+      const plan = fiche.plans?.[0];
+      return {
+        success: true,
+        data: {
+          sendToEmail: pilote.email,
+          subject: `Vous avez été assigné(e) à une ${
+            fiche.parentId ? 'sous-' : ''
+          }action sur Territoires en Transitions`,
+          assignedTo: pilote.nom,
+          assignedBy: [createdByUser.prenom, createdByUser.nom].join(' '),
+          assignedAction: {
+            actionTitre: ficheParente ? ficheParente.titre : fiche.titre,
+            sousActionTitre: ficheParente ? fiche.titre : '',
+            planNom: plan?.nom || null,
+            actionDateFin: fiche.dateFin,
+            isSousAction: !!fiche.parentId,
+            actionUrl: this.getPlanUrlService.getFicheUrl({
+              collectiviteId: fiche.collectiviteId,
+              ficheId: fiche.id,
+              parentId: fiche.parentId,
+              planId: plan?.id || null,
+            }),
+          },
+        },
+      };
+    }
+
+    // plusieurs fiches : utilise le format multi-fiches
+    const assignedActions = await Promise.all(
+      fiches.map(async (fiche) => {
+        const plan = fiche.plans?.[0];
+        let actionTitre = fiche.titre;
+        if (fiche.parentId) {
+          const getParentResult = await this.listFichesService.getFicheById(
+            fiche.parentId
+          );
+          if (getParentResult.success) {
+            actionTitre = getParentResult.data.titre;
+          }
+        }
+
+        return {
+          actionTitre: actionTitre || null,
+          actionUrl: this.getPlanUrlService.getFicheUrl({
+            collectiviteId: fiche.collectiviteId,
+            ficheId: fiche.id,
+            parentId: fiche.parentId,
+            planId: plan?.id || null,
+          }),
+          planNom: plan?.nom || null,
+        };
+      })
+    );
+
     return {
       success: true,
       data: {
         sendToEmail: pilote.email,
-        subject: `Vous avez été assigné(e) à une ${
-          fiche.parentId ? 'sous-' : ''
-        }action sur Territoires en Transitions`,
+        subject:
+          'Vous avez été assigné(e) à plusieurs actions sur Territoires en Transitions',
         assignedTo: pilote.nom,
-        assignedBy: [createdByUser.prenom, createdByUser.nom].join(' '),
-        actionTitre: ficheParente ? ficheParente.titre : fiche.titre,
-        sousActionTitre: ficheParente ? fiche.titre : '',
-        planNom: plan?.nom || null,
-        dateFin: fiche.dateFin,
-        description: fiche.description,
-        isSousAction: !!fiche.parentId,
-        actionUrl: this.getPlanUrlService.getFicheUrl({
-          collectiviteId: fiche.collectiviteId,
-          ficheId: fiche.id,
-          parentId: fiche.parentId,
-          planId: plan?.id || null,
-        }),
+        assignedActions,
       },
     };
   }
