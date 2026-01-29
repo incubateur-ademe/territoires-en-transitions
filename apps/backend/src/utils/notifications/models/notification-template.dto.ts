@@ -1,6 +1,6 @@
 import { Result } from '@tet/backend/utils/result.type';
+import { type Notification } from '@tet/domain/utils';
 import { ReactNode } from 'react';
-import { Notification } from './notification.table';
 
 /**  Interface commune aux notifications */
 export interface NotificationTemplate {

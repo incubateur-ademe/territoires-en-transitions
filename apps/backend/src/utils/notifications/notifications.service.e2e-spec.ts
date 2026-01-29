@@ -6,19 +6,20 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { EmailService } from '@tet/backend/utils/email/email.service';
 import { Result } from '@tet/backend/utils/result.type';
+import {
+  NotificationStatusEnum,
+  NotifiedOn,
+  NotifiedOnEnum,
+  type NotificationStatus,
+} from '@tet/domain/utils';
 import { eq } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 import React from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { ContextStoreService } from '../context/context.service';
 import { CustomZodValidationPipe } from '../nest/custom-zod-validation.pipe';
-import {
-  NotificationStatusEnum,
-  NotificationStatusType,
-} from './models/notification-status.enum';
 import { NotificationContentGenerator } from './models/notification-template.dto';
 import { notificationTable } from './models/notification.table';
-import { NotifiedOnEnum, NotifiedOnType } from './models/notified-on.enum';
 import { NotificationsService } from './notifications.service';
 
 // Constantes pour les données de test
@@ -66,7 +67,7 @@ describe('NotificationsService', () => {
 
   const registerGenerator = (
     generator: NotificationContentGenerator,
-    notifiedOn: NotifiedOnType = NotifiedOnEnum.UPDATE_FICHE_PILOTE
+    notifiedOn: NotifiedOn = NotifiedOnEnum.UPDATE_FICHE_PILOTE
   ) => {
     notificationsService.registerContentGenerator(notifiedOn, generator);
   };
@@ -76,8 +77,8 @@ describe('NotificationsService', () => {
     options: {
       entityId: string;
       sendAfter?: DateTime;
-      status?: NotificationStatusType;
-      notifiedOn?: NotifiedOnType;
+      status?: NotificationStatus;
+      notifiedOn?: NotifiedOn;
       notificationData?: Record<string, unknown>;
     }
   ) => {

@@ -5,7 +5,6 @@ import CollectivitesService from '@tet/backend/collectivites/services/collectivi
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { NotifiedOnEnum } from '@tet/backend/utils/notifications/models/notified-on.enum';
 import { Result } from '@tet/backend/utils/result.type';
 import { CollectiviteAvecType } from '@tet/domain/collectivites';
 import {
@@ -15,7 +14,7 @@ import {
   ReportTemplatesType,
 } from '@tet/domain/plans';
 import { PermissionOperationEnum } from '@tet/domain/users';
-import { getErrorMessage } from '@tet/domain/utils';
+import { getErrorMessage, NotifiedOnEnum } from '@tet/domain/utils';
 import { Queue } from 'bullmq';
 import { mkdirSync, rmSync } from 'fs';
 import * as path from 'path';

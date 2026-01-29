@@ -6,6 +6,7 @@ export * from './enum.utils';
 export * from './get-error-message';
 export * from './html-to-text';
 export * from './modified-since.enum';
+export * from './notifications';
 export * from './number.utils';
 export * from './pagination.schema';
 export * from './preset';
