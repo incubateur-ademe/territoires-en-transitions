@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { TAxeInsert } from '@/app/types/alias';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { useTRPC } from '@tet/api';
 import { Plan, PlanNode } from '@tet/domain/plans';
@@ -9,10 +8,12 @@ import { planNodeFactory, sortPlanNodes } from '../../utils';
 export const useUpsertAxe = ({
   parentAxe,
   planId,
+  collectiviteId,
   mutationKey,
 }: {
   parentAxe: Pick<PlanNode, 'id' | 'depth'>;
   planId: number;
+  collectiviteId: number;
   mutationKey?: string[];
 }) => {
   const queryClient = useQueryClient();
@@ -27,14 +28,15 @@ export const useUpsertAxe = ({
 
   return useMutation({
     mutationKey,
-    mutationFn: (axe: TAxeInsert) => {
+    mutationFn: (axe: { id?: number; nom: string } | void) => {
       const dataToUpsert = {
-        nom: axe.nom ?? '',
-        collectiviteId: axe.collectivite_id,
+        nom: axe?.nom ?? '',
+        collectiviteId,
         planId,
         parent: parentAxe.id,
       };
-      return 'id' in axe && typeof axe.id === 'number'
+
+      return axe && 'id' in axe && typeof axe.id === 'number'
         ? updateAxe({
             id: axe.id,
             ...dataToUpsert,

@@ -1,5 +1,6 @@
 'use client';
 
+import { useCreateFicheResume } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
 import { PiloteOrReferentLabel } from '@/app/plans/plans/components/PiloteOrReferentLabel';
 import { EmptyPlanView } from '@/app/plans/plans/show-plan/empty-plan.view';
 import { usePlanFilters } from '@/app/plans/plans/show-plan/filters/plan-filters.context';
@@ -9,16 +10,20 @@ import { hasPermission } from '@/app/users/authorizations/permission-access-leve
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { Plan } from '@tet/domain/plans';
-import { Spacer, VisibleWhen } from '@tet/ui';
+import { Button, Spacer, VisibleWhen } from '@tet/ui';
 import { Header } from '../components/header';
 import { checkAxeHasFiche } from '../utils';
 import { Actions } from './actions';
 import { CompletionAlert } from './completion/completion.alert';
 import { ContentPanelWithHeader } from './content-panel-with-header';
 import { useGetPlan } from './data/use-get-plan';
-import { EditPlanButtons } from './edit-plan.buttons';
+import { useUpsertAxe } from './data/use-upsert-axe';
 import { FiltersMenuButton } from './filters';
 import { FilteredResults } from './filters/filtered-results';
+import {
+  addAxeButtonProps,
+  createFicheResumeButtonProps,
+} from './plan-actions.button-props';
 import { PlanStatus } from './plan-status.chart';
 
 const PlanMetadata = ({ plan }: { plan: Plan }) => {
@@ -47,16 +52,35 @@ type Props = {
 
 export const PlanView = ({ plan: initialPlanData }: Props) => {
   const currentCollectivite = useCurrentCollectivite();
+  const { collectiviteId } = currentCollectivite;
+
   const user = useUser();
 
   const { isFiltered } = usePlanFilters();
+
   const plan = useGetPlan(initialPlanData.id, {
     initialData: initialPlanData,
   });
+
+  const { mutate: addAxe } = useUpsertAxe({
+    collectiviteId,
+    parentAxe: { id: plan.id, depth: 0 },
+    planId: plan.id,
+    mutationKey: ['create_axe'],
+  });
+
+  const { mutate: createFiche } = useCreateFicheResume({
+    collectiviteId,
+    axeId: plan.id,
+    planId: plan.id,
+  });
+
   const rootAxe = plan.axes.find((axe) => axe.parent === null);
+
   if (!rootAxe) {
     return <div>Plan non trouvé</div>;
   }
+
   const axeHasFiches = rootAxe ? checkAxeHasFiche(rootAxe, plan.axes) : false;
 
   const planNameOrFallback = rootAxe?.nom ?? 'Sans titre';
@@ -106,15 +130,16 @@ export const PlanView = ({ plan: initialPlanData }: Props) => {
                   hasPermission(currentCollectivite.permissions, 'plans.mutate')
                 }
               >
-                <EditPlanButtons
-                  plan={rootAxe}
-                  collectiviteId={currentCollectivite.collectiviteId}
-                  availableActions={
-                    isFiltered
-                      ? ['createFicheResume']
-                      : ['addAxe', 'createFicheResume']
-                  }
-                />
+                <div className="flex items-center gap-6">
+                  {!isFiltered && (
+                    <Button {...addAxeButtonProps} onClick={() => addAxe()} />
+                  )}
+
+                  <Button
+                    {...createFicheResumeButtonProps}
+                    onClick={() => createFiche()}
+                  />
+                </div>
               </VisibleWhen>
               <VisibleWhen condition={axeHasFiches}>
                 <FiltersMenuButton />
