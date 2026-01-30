@@ -47,6 +47,7 @@ export const DraggableAxe = ({
   const axeRef = useRef<HTMLDivElement>(null);
 
   const { mutate: addAxe } = useUpsertAxe({
+    collectiviteId: collectivite.collectiviteId,
     parentAxe: axe,
     planId: rootAxe.id,
   });
@@ -217,10 +218,7 @@ export const DraggableAxe = ({
                 title="Créer un sous-titre"
                 onClick={() => {
                   setIsOpen(true);
-                  addAxe({
-                    collectivite_id: collectivite.collectiviteId,
-                    parent: axe.id,
-                  });
+                  addAxe();
                 }}
               />
               <DeletePlanOrAxeModal

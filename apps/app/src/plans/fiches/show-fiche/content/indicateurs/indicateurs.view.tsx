@@ -2,20 +2,32 @@ import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/Indic
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Button } from '@tet/ui';
+import { Button, useEventTracker } from '@tet/ui';
+import { Event } from '@tet/ui/components/tracking/posthog-events';
 import { useState } from 'react';
 import { useFicheContext } from '../../context/fiche-context';
 import { SharedFicheLinkedResourcesAlert } from '../../share-fiche/shared-fiche-linked-resources.alert';
 import { ContentLayout } from '../content-layout';
-import { ActionButtons } from './action.buttons';
+import { useFicheSidePanel } from '../use-fiche-side-panel';
 import { CreateIndicateurModal } from './create-indicateur.modal';
 import { DatavizPicto } from './empty-view/dataviz-picto';
+import {
+  createIndicateurButtonProps,
+  linkIndicateursButtonProps,
+} from './indcateur-actions.button-props';
 
 export const IndicateursView = () => {
   const { indicateurs, isReadonly, fiche } = useFicheContext();
   const collectivite = useCurrentCollectivite();
   const [isCreateIndicateurModalOpen, setIsCreateIndicateurModalOpen] =
     useState(false);
+  const { openPanel } = useFicheSidePanel();
+  const tracker = useEventTracker();
+
+  const toggleCreateIndicateurModal = () => {
+    tracker(Event.indicateurs.createIndicateurPerso);
+    setIsCreateIndicateurModalOpen((prev) => !prev);
+  };
 
   return (
     <>
@@ -44,23 +56,36 @@ export const IndicateursView = () => {
           title="Aucun indicateur associé !"
           subTitle="Mesurez les résultats et l'impact de l'action grâce à des indicateurs"
           actions={[
-            <ActionButtons
-              key="actions"
-              toggleCreateIndicateurModal={() =>
-                setIsCreateIndicateurModalOpen((prev) => !prev)
-              }
-            />,
+            {
+              ...createIndicateurButtonProps,
+              onClick: toggleCreateIndicateurModal,
+              isVisible: indicateurs.canCreate,
+            },
+            {
+              ...linkIndicateursButtonProps,
+              onClick: () => openPanel('indicateurs', fiche),
+            },
           ]}
         />
         <ContentLayout.Content
           data={indicateurs.list}
           isLoading={indicateurs.isLoading}
           actions={
-            <ActionButtons
-              toggleCreateIndicateurModal={() =>
-                setIsCreateIndicateurModalOpen((prev) => !prev)
-              }
-            />
+            <>
+              {indicateurs.canCreate && (
+                <Button
+                  {...createIndicateurButtonProps}
+                  onClick={toggleCreateIndicateurModal}
+                />
+              )}
+
+              {!isReadonly && (
+                <Button
+                  {...linkIndicateursButtonProps}
+                  onClick={() => openPanel('indicateurs', fiche)}
+                />
+              )}
+            </>
           }
         >
           {(indicateur) => (
