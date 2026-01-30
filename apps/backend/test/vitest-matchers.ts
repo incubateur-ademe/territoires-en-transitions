@@ -27,7 +27,7 @@ expect.extend({
     const receivedDate = received.includes(' ')
       ? DateTime.fromSQL(received)
       : DateTime.fromISO(received);
-    const expectedDate = received.includes(' ')
+    const expectedDate = expected.includes(' ')
       ? DateTime.fromSQL(expected)
       : DateTime.fromISO(expected);
 
