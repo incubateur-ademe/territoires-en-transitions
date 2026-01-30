@@ -46,8 +46,10 @@ const Modules = () => {
   const { data: modules, isLoading } = useTdbPersoFetchModules();
   const tracker = useEventTracker();
 
+  const currentCollectivite = useCurrentCollectivite();
   const { collectiviteId, niveauAcces, permissions, isSimplifiedView } =
-    useCurrentCollectivite();
+    currentCollectivite;
+
   const { totalCount: plansCount } = useListPlans(collectiviteId);
 
   const noPlanAndCanCreatePlan =
@@ -135,7 +137,7 @@ const Modules = () => {
 
   const moduleComponents: (React.ReactNode | null)[] = [
     noPlanAndCanCreatePlan ? (
-      <ListPlansEmptyCard key="sans-plan" collectiviteId={collectiviteId} />
+      <ListPlansEmptyCard key="sans-plan" collectivite={currentCollectivite} />
     ) : null,
     ...orderedModules
       .map((key) => modules.find((m) => m.defaultKey === key))

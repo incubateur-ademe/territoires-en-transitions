@@ -45,7 +45,7 @@ export const TableauDeBordPage = () => {
       </p>
       {/** Contenu principal */}
       {plans.length === 0 ? (
-        <ListPlansEmptyCard collectiviteId={collectivite.collectiviteId} />
+        <ListPlansEmptyCard collectivite={collectivite} />
       ) : (
         <Modules />
       )}
