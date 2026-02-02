@@ -730,11 +730,7 @@ export default class ListFichesService {
     return { success: true, data: ficheAction };
   }
 
-  async countPiloteFiches(
-    collectiviteId: number,
-    user: AuthUser,
-    subFiches = false
-  ) {
+  async countPiloteFiches(collectiviteId: number, user: AuthUser) {
     if (!user.id) {
       throw new BadRequestException(
         `Seulement supporté pour les utilisateurs authentifiés`
@@ -755,9 +751,7 @@ export default class ListFichesService {
           eq(ficheActionTable.collectiviteId, collectiviteId),
           eq(ficheActionPiloteTable.userId, user.id),
           eq(ficheActionTable.deleted, false),
-          subFiches
-            ? isNotNull(ficheActionTable.parentId)
-            : isNull(ficheActionTable.parentId)
+          isNull(ficheActionTable.parentId)
         )
       );
 
