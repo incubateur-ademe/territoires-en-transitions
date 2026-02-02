@@ -23,12 +23,12 @@ const Cell = ({
 }: {
   parentId: NonNullable<FicheWithRelations['parentId']>;
 }) => {
-  const currentCollectivite = useCurrentCollectivite();
+  const { collectiviteId } = useCurrentCollectivite();
 
   const { data: parent } = useGetFiche({ id: parentId });
 
   const href = makeCollectiviteActionUrl({
-    collectiviteId: currentCollectivite.collectiviteId,
+    collectiviteId,
     ficheUid: parentId.toString(),
   });
 
