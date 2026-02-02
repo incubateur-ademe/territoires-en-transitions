@@ -10,13 +10,15 @@ type Props = {
 };
 
 export const SousActionCellStatut = ({ sousAction }: Props) => {
-  const { isReadOnly } = useCurrentCollectivite();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
   const { mutate: updateSousAction } = useUpdateSousAction();
+
+  const canMutate = hasCollectivitePermission('plans.fiches.update');
 
   return (
     <TableCell
       className="py-0"
-      canEdit={!isReadOnly}
+      canEdit={canMutate}
       edit={{
         renderOnEdit: ({ openState }) => (
           <StatutsSelectDropdown
@@ -39,7 +41,7 @@ export const SousActionCellStatut = ({ sousAction }: Props) => {
       {sousAction.statut ? (
         <BadgeStatut statut={sousAction.statut} size="sm" />
       ) : (
-        <span className="text-grey-6">{isReadOnly ? '' : 'Sélectionner'}</span>
+        <span className="text-grey-6">{canMutate ? 'Sélectionner' : ''}</span>
       )}
     </TableCell>
   );

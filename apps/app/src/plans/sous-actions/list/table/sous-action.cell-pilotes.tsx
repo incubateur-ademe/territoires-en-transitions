@@ -11,13 +11,15 @@ type Props = {
 };
 
 export const SousActionCellPilotes = ({ sousAction }: Props) => {
-  const { isReadOnly } = useCurrentCollectivite();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+
+  const canMutate = hasCollectivitePermission('plans.fiches.update');
 
   const { mutate: updateSousAction } = useUpdateSousAction();
 
   return (
     <TableCell
-      canEdit={!isReadOnly}
+      canEdit={canMutate}
       edit={{
         renderOnEdit: ({ openState }) => (
           <div className="w-80">
@@ -46,7 +48,7 @@ export const SousActionCellPilotes = ({ sousAction }: Props) => {
           )}
         />
       ) : (
-        <span className="text-grey-6">{isReadOnly ? '' : 'Sélectionner'}</span>
+        <span className="text-grey-6">{canMutate ? 'Sélectionner' : ''}</span>
       )}
     </TableCell>
   );

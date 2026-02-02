@@ -21,7 +21,9 @@ type Props = {
 };
 
 export const SousActionCellDescription = ({ sousAction }: Props) => {
-  const { isReadOnly } = useCurrentCollectivite();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+
+  const canMutate = hasCollectivitePermission('plans.fiches.update');
 
   const [value, setValue] = useState(sousAction.description);
 
@@ -34,7 +36,7 @@ export const SousActionCellDescription = ({ sousAction }: Props) => {
   return (
     <TableCell
       className="align-top"
-      canEdit={!isReadOnly}
+      canEdit={canMutate}
       edit={{
         onClose: () =>
           hasChanged &&
@@ -59,7 +61,7 @@ export const SousActionCellDescription = ({ sousAction }: Props) => {
         })}
         title={getTitle(value, 'Sans description')}
       >
-        {getTitle(value, isReadOnly ? '' : 'Saisir une description')}
+        {getTitle(value, canMutate ? 'Saisir une description' : '')}
       </span>
     </TableCell>
   );
