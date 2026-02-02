@@ -16,7 +16,7 @@ type MetricDescriptor = {
   isVisible: boolean;
   getCount: () => number;
   getTitle: (count: number) => string;
-  link: (args: { count: number }) => MetricCardProps['link'];
+  link?: (args: { count: number }) => MetricCardProps['link'];
 };
 
 function getMetricsToDisplay(
@@ -32,7 +32,7 @@ function getMetricsToDisplay(
       {
         title: metricDescriptor.getTitle(count),
         count,
-        link: metricDescriptor.link({ count }),
+        link: metricDescriptor.link?.({ count }),
       },
     ];
   });
@@ -59,6 +59,12 @@ const Metrics = () => {
               children: 'Voir les actions',
             }
           : undefined,
+    },
+    {
+      isVisible: hasCollectivitePermission('plans.fiches.read_confidentiel'),
+      getCount: () => metrics?.plans.piloteSubFichesCount || 0,
+      getTitle: (count) =>
+        `Sous-action${count > 1 ? 's' : ''} pilotée${count > 1 ? 's' : ''}`,
     },
     {
       isVisible: hasCollectivitePermission(
