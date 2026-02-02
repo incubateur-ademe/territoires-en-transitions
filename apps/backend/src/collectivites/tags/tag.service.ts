@@ -8,16 +8,20 @@ import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.tab
 import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   TagCreate,
   TagEnum,
   TagType,
   TagWithCollectiviteId,
 } from '@tet/domain/collectivites';
-import { AnyColumn, eq } from 'drizzle-orm';
+import { and, AnyColumn, eq } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
 
-const tagTypeTable: Record<TagType, PgTable & { collectiviteId: AnyColumn }> = {
+const tagTypeTable: Record<
+  TagType,
+  PgTable & { collectiviteId: AnyColumn; nom: AnyColumn }
+> = {
   [TagEnum.Financeur]: financeurTagTable,
   [TagEnum.Personne]: personneTagTable,
   [TagEnum.Partenaire]: partenaireTagTable,
@@ -70,18 +74,50 @@ export class TagService {
     tag: TagCreate,
     tagType: TagType,
     tx?: Transaction
-  ): Promise<TagWithCollectiviteId> {
-    const [result] = await (tx ?? this.databaseService.db)
-      .insert(tagTypeTable[tagType])
-      .values({ nom: tag.nom, collectiviteId: tag.collectiviteId })
-      .onConflictDoNothing()
-      .returning();
+  ): Promise<Result<TagWithCollectiviteId, string>> {
+    const table = tagTypeTable[tagType];
 
-    return {
-      nom: result.nom as string,
-      collectiviteId: result.collectiviteId as number,
-      id: result.id as number,
-    };
+    try {
+      // Try to insert the tag directly with onConflictDoNothing
+      // This handles the race condition better than check-then-insert
+      const [result] = await (tx ?? this.databaseService.db)
+        .insert(table)
+        .values({ nom: tag.nom, collectiviteId: tag.collectiviteId })
+        .onConflictDoNothing()
+        .returning();
+      
+      // If onConflictDoNothing() returns a result, the tag was successfully created
+      if (result) {
+        return success(result as TagWithCollectiviteId);
+      }
+
+      // If result is undefined, it means there was a conflict (tag already exists or created by concurrent operation)
+      // Fetch the existing tag
+      const [existingTag] = await (tx ?? this.databaseService.db)
+        .select()
+        .from(table)
+        .where(
+          and(
+            eq(table.nom, tag.nom),
+            eq(table.collectiviteId, tag.collectiviteId)
+          )
+        )
+        .limit(1);
+      
+      if (!existingTag) {
+        return failure(
+          `Tag "${tag.nom}" not found after conflict resolution. This may indicate a database constraint issue.`
+        );
+      }
+      
+      return success(existingTag as TagWithCollectiviteId);
+    } catch (error) {
+      return failure(
+        error instanceof Error
+          ? `Database error during tag creation for "${tag.nom}": ${error.message}`
+          : 'An unknown error occurred during tag creation'
+      );
+    }
   }
 
   /**

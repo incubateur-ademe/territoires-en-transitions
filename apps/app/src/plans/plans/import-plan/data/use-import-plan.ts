@@ -10,7 +10,7 @@ export const useImportPlan = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const trpc = useTRPC();
   const { mutateAsync, isPending } = useMutation(
-    trpc.plans.fiches.import.mutationOptions({
+    trpc.plans.plans.import.mutationOptions({
       onSuccess: () => {
         setErrorMessage(null);
         queryClient.invalidateQueries({

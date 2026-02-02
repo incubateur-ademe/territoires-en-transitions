@@ -21,4 +21,7 @@ export const piliersEciEnumValues = [
 ] as const;
 
 export const piliersEciEnumSchema = z.enum(piliersEciEnumValues);
+export const isPilierEci = (value: string): value is PilierEci => {
+  return piliersEciEnumValues.includes(value as typeof piliersEciEnumValues[number]);
+};
 export type PilierEci = z.infer<typeof piliersEciEnumSchema>;

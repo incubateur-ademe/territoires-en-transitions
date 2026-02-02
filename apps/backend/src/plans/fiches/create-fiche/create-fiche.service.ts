@@ -18,7 +18,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Fiche, FicheCreate } from '@tet/domain/plans';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
-import { UpdateFicheRequest } from '../update-fiche/update-fiche.request';
+import { UpdateFicheInput } from '../update-fiche/update-fiche.input';
 import UpdateFicheService from '../update-fiche/update-fiche.service';
 import { CreateFicheResult } from './create-fiche.result';
 
@@ -43,7 +43,7 @@ export class CreateFicheService {
       tx,
       user,
     }: {
-      ficheFields?: Omit<UpdateFicheRequest, 'id'>;
+      ficheFields?: Omit<UpdateFicheInput, 'id'>;
       tx?: Transaction;
       user: AuthenticatedUser;
     }
@@ -60,39 +60,46 @@ export class CreateFicheService {
         fiche.collectiviteId
       );
     }
+    try {
+      const [createdFiche] = await (tx || this.databaseService.db)
+        .insert(ficheActionTable)
+        .values(fiche)
+        .returning();
 
-    const [createdFiche] = await (tx || this.databaseService.db)
-      .insert(ficheActionTable)
-      .values(fiche)
-      .returning();
-
-    const ficheId = createdFiche.id;
-    if (!ficheId) {
-      return {
-        success: false,
-        error: `Échec de création de la fiche`,
-      };
-    }
-
-    if (
-      ficheFields &&
-      Object.values(ficheFields).filter((v) => v !== undefined).length
-    ) {
-      const result = await this.updateFicheService.updateFiche({
-        ficheId,
-        ficheFields,
-        user,
-      });
-
-      if (!result.success) {
+      const ficheId = createdFiche.id;
+      if (!ficheId) {
         return {
           success: false,
-          error: `Échec de la mise à jour de la fiche: ${result.error}`,
+          error: `Échec de création de la fiche`,
         };
       }
-    }
 
-    return { success: true, data: createdFiche };
+      if (
+        ficheFields &&
+        Object.values(ficheFields).filter((v) => v !== undefined).length
+      ) {
+        const result = await this.updateFicheService.updateFiche({
+          ficheId,
+          ficheFields,
+          user,
+          tx,
+        });
+        if (!result.success) {
+          return {
+            success: false,
+            error: `Échec de la mise à jour de la fiche: ${result.error}`,
+          };
+        }
+      }
+
+      return { success: true, data: createdFiche };
+    } catch (error) {
+      this.logger.error(`Error creating fiche:`, error);
+      return {
+        success: false,
+        error: `Échec de création de la fiche: ${error}`,
+      };
+    }
   }
 
   /**

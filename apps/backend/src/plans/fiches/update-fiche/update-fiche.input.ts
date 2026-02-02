@@ -34,7 +34,7 @@ const financeurWithMontantSchema = z.object({
   montantTtc: z.number().nullish(),
 });
 
-export const updateFicheRequestSchema = ficheSchemaUpdate.extend({
+export const updateFicheInputSchema = ficheSchemaUpdate.extend({
   budgetPrevisionnel: z
     .string()
     .transform((val) => val.toString())
@@ -74,4 +74,4 @@ export const updateFicheRequestSchema = ficheSchemaUpdate.extend({
   notes: z.array(ficheNoteUpsertSchema).nullish(),
 });
 
-export type UpdateFicheRequest = z.infer<typeof updateFicheRequestSchema>;
+export type UpdateFicheInput = z.infer<typeof updateFicheInputSchema>;

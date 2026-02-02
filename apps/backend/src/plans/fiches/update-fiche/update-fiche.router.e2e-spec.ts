@@ -11,6 +11,7 @@ import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CibleEnum, PiliersEciEnum, StatutEnum } from '@tet/domain/plans';
+import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { describe, expect } from 'vitest';
 import {
@@ -45,8 +46,7 @@ import { ficheActionSousThematiqueTable } from '../shared/models/fiche-action-so
 import { ficheActionStructureTagTable } from '../shared/models/fiche-action-structure-tag.table';
 import { ficheActionThematiqueTable } from '../shared/models/fiche-action-thematique.table';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
-import { UpdateFicheRequest } from './update-fiche.request';
-import { CollectiviteRole } from '@tet/domain/users';
+import { UpdateFicheInput } from './update-fiche.input';
 
 const collectiviteId = 1;
 const ficheId = 9999;
@@ -85,7 +85,7 @@ describe('UpdateFicheService', () => {
     test('should return 400 when invalid numeric type are provided', async () => {
       const caller = router.createCaller({ user: yoloDodo });
 
-      const data: UpdateFicheRequest = {
+      const data: UpdateFicheInput = {
         budgetPrevisionnel: 'invalid_number',
       };
 
@@ -107,7 +107,7 @@ describe('UpdateFicheService', () => {
     test('should return 400 for invalid date format in dateDebut', async () => {
       const caller = router.createCaller({ user: yoloDodo });
 
-      const data: UpdateFicheRequest = { dateDebut: 'not-a-date' };
+      const data: UpdateFicheInput = { dateDebut: 'not-a-date' };
 
       await expect(() =>
         caller.update({
@@ -134,8 +134,7 @@ describe('UpdateFicheService', () => {
       await expect(() =>
         caller.update({
           ficheId,
-          // @ts-expect-error invalid type on purpose
-          ficheFields: data,
+          ficheFields: data as unknown as UpdateFicheInput,
         })
       ).rejects.toThrow(
         expect.objectContaining({
@@ -149,7 +148,7 @@ describe('UpdateFicheService', () => {
       const caller = router.createCaller({ user: yoloDodo });
 
       const nonExistentFicheActionId = 121212;
-      const data: UpdateFicheRequest = {
+      const data: UpdateFicheInput = {
         titre: 'New Titre',
       };
 
@@ -166,7 +165,7 @@ describe('UpdateFicheService', () => {
     });
 
     test('should update fiche action fields', async () => {
-      const data: UpdateFicheRequest = {
+      const data: UpdateFicheInput = {
         collectiviteId: 1,
         titre: 'Construire des pistes cyclables',
         description:
@@ -219,7 +218,7 @@ describe('UpdateFicheService', () => {
       });
 
       // Reset fields to null
-      const nullData: UpdateFicheRequest = {
+      const nullData: UpdateFicheInput = {
         titre: null,
         description: null,
         dateDebut: null,
@@ -250,7 +249,7 @@ describe('UpdateFicheService', () => {
 
   describe('Update relations', () => {
     test('should update the axes relations in the database', async () => {
-      const data: UpdateFicheRequest = {
+      const data: UpdateFicheInput = {
         axes: [{ id: 1 }, { id: 2 }],
       };
 
@@ -263,7 +262,7 @@ describe('UpdateFicheService', () => {
     });
 
     test('should update the thematiques relations in the database', async () => {
-      const data: UpdateFicheRequest = {
+      const data: UpdateFicheInput = {
         thematiques: [{ id: 1 }, { id: 2 }],
       };
 
@@ -278,7 +277,7 @@ describe('UpdateFicheService', () => {
     });
 
     test('should update the sousThematiques relations in the database', async () => {
-      const data: UpdateFicheRequest = {
+      const data: UpdateFicheInput = {
         sousThematiques: [{ id: 3 }, { id: 4 }],
       };
 
@@ -312,7 +311,7 @@ describe('UpdateFicheService', () => {
     test('should update the partenaires relations in the database', async () => {
       const caller = router.createCaller({ user: yoloDodo });
 
-      const ficheFields: UpdateFicheRequest = {
+      const ficheFields: UpdateFicheInput = {
         partenaires: [{ id: 1 }, { id: 2 }],
       };
 
@@ -371,7 +370,7 @@ describe('UpdateFicheService', () => {
     });
 
     it('should update the structures relations in the database', async () => {
-      const data: UpdateFicheRequest = {
+      const data: UpdateFicheInput = {
         structures: [{ id: 1 }, { id: 2 }],
       };
 
@@ -395,7 +394,7 @@ describe('UpdateFicheService', () => {
     });
 
     it('should update the pilotes relations in the database', async () => {
-      const data: UpdateFicheRequest = {
+      const data: UpdateFicheInput = {
         pilotes: [
           {
             tagId: 1,
@@ -434,7 +433,7 @@ describe('UpdateFicheService', () => {
     });
 
     it('should update the financeurs relations in the database', async () => {
-      const data: UpdateFicheRequest = {
+      const data: UpdateFicheInput = {
         financeurs: [
           {
             financeurTag: { id: 1 },
@@ -464,7 +463,7 @@ describe('UpdateFicheService', () => {
     });
 
     it('should update the actions relations in the database', async () => {
-      const data: UpdateFicheRequest = {
+      const data: UpdateFicheInput = {
         mesures: [{ id: 'cae_1.1.1' }, { id: 'cae_1.1.2' }],
       };
 
@@ -483,7 +482,7 @@ describe('UpdateFicheService', () => {
     });
 
     it('should update the indicateurs relations in the database', async () => {
-      const data: UpdateFicheRequest = {
+      const data: UpdateFicheInput = {
         indicateurs: [{ id: 1 }, { id: 2 }],
       };
 
@@ -502,7 +501,7 @@ describe('UpdateFicheService', () => {
     });
 
     it('should update the services relations in the database', async () => {
-      const data: UpdateFicheRequest = {
+      const data: UpdateFicheInput = {
         services: [{ id: 1 }, { id: 2 }],
       };
 
@@ -521,7 +520,7 @@ describe('UpdateFicheService', () => {
     });
 
     it('should update the fiches liees relations in the database', async () => {
-      const data: UpdateFicheRequest = {
+      const data: UpdateFicheInput = {
         fichesLiees: [{ id: 1 }, { id: 2 }],
       };
 
@@ -540,7 +539,7 @@ describe('UpdateFicheService', () => {
     });
 
     it('should update the resultats attendus relations in the database', async () => {
-      const data: UpdateFicheRequest = {
+      const data: UpdateFicheInput = {
         effetsAttendus: [{ id: 21 }, { id: 22 }],
       };
 
@@ -564,7 +563,7 @@ describe('UpdateFicheService', () => {
         .insert(libreTagTable)
         .values([{ id: 2, nom: 'Tag 2', collectiviteId }]);
 
-      const data: UpdateFicheRequest = {
+      const data: UpdateFicheInput = {
         libreTags: [{ id: 1 }, { id: 2 }],
       };
       const fiche = await updateFiche(data);
@@ -586,7 +585,7 @@ describe('UpdateFicheService', () => {
     });
 
     it('should update notes relations in the database', async () => {
-      const data: UpdateFicheRequest = {
+      const data: UpdateFicheInput = {
         notes: [
           {
             dateNote: '2024-01-15',
@@ -616,14 +615,14 @@ describe('UpdateFicheService', () => {
       );
 
       // Test updating with empty array
-      const emptyData: UpdateFicheRequest = {
+      const emptyData: UpdateFicheInput = {
         notes: [],
       };
       const ficheWithEmptyNotes = await updateFiche(emptyData);
       expect(ficheWithEmptyNotes.notes).toBeNull();
 
       // Test updating with null
-      const nullData: UpdateFicheRequest = {
+      const nullData: UpdateFicheInput = {
         notes: null,
       };
       const ficheWithNullNotes = await updateFiche(nullData);
@@ -690,7 +689,7 @@ describe('UpdateFicheService', () => {
 
   describe('Access Rights', () => {
     test('should return 401 if an invalid token is provided', async () => {
-      const data: UpdateFicheRequest = {
+      const data: UpdateFicheInput = {
         titre: 'Tentative de mise à jour sans droits',
       };
 
@@ -719,7 +718,7 @@ describe('UpdateFicheService', () => {
           .where(eq(ficheActionTable.id, 10000));
       });
 
-      const data: UpdateFicheRequest = {
+      const data: UpdateFicheInput = {
         titre: 'Construire des pistes cyclables',
       };
 
@@ -744,7 +743,7 @@ describe('UpdateFicheService', () => {
           .where(eq(ficheActionTable.id, 10000));
       });
 
-      const data: UpdateFicheRequest = {
+      const data: UpdateFicheInput = {
         titre: 'Titre mis à jour par une utilisatrice autorisée',
       };
 
@@ -904,7 +903,7 @@ describe('UpdateFicheService', () => {
     });
   }
 
-  async function updateFiche(data: UpdateFicheRequest) {
+  async function updateFiche(data: UpdateFicheInput) {
     const caller = router.createCaller({ user: yoloDodo });
 
     await caller.update({

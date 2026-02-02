@@ -42,6 +42,7 @@ import { sqlAuthorOrNull } from '@tet/backend/users/models/author.utils';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   Collectivite,
   PersonneTagOrUserWithContacts,
@@ -117,8 +118,8 @@ export default class ListFichesService {
     private readonly listFichesBudgetRepository: ListFichesBudgetRepository
   ) {}
 
-  private getFicheActionSousThematiquesQuery(ficheIds: number[]) {
-    const query = this.databaseService.db
+  private getFicheActionSousThematiquesQuery(ficheIds: number[], tx?: Transaction) {
+    const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionSousThematiqueTable.ficheId,
         sousThematiqueIds: sql<
@@ -145,8 +146,8 @@ export default class ListFichesService {
       .as('ficheActionSousThematiques');
   }
 
-  private getFicheActionThematiquesQuery(ficheIds: number[]) {
-    const query = this.databaseService.db
+  private getFicheActionThematiquesQuery(ficheIds: number[], tx?: Transaction) {
+    const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionThematiqueTable.ficheId,
         thematiqueIds: sql<
@@ -173,8 +174,8 @@ export default class ListFichesService {
       .as('ficheActionThematiques');
   }
 
-  private getFicheActionIndicateursQuery(ficheIds: number[]) {
-    const query = this.databaseService.db
+  private getFicheActionIndicateursQuery(ficheIds: number[], tx?: Transaction) {
+    const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionIndicateurTable.ficheId,
         indicateurIds: sql<
@@ -210,8 +211,8 @@ export default class ListFichesService {
       .as('ficheActionIndicateurs');
   }
 
-  private getFicheActionReferentTagsQuery(ficheIds: number[]) {
-    const query = this.databaseService.db
+  private getFicheActionReferentTagsQuery(ficheIds: number[], tx?: Transaction) {
+    const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionReferentTable.ficheId,
         referentTagIds: sql<
@@ -244,8 +245,8 @@ export default class ListFichesService {
       .as('ficheActionReferents');
   }
 
-  private getFicheActionEffetsAttendusQuery(ficheIds: number[]) {
-    const query = this.databaseService.db
+  private getFicheActionEffetsAttendusQuery(ficheIds: number[], tx?: Transaction) {
+    const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionEffetAttenduTable.ficheId,
         effetAttenduIds: sql<
@@ -272,8 +273,8 @@ export default class ListFichesService {
       .as('ficheActionEffetsAttendus');
   }
 
-  private getFicheActionFinanceurTagsQuery(ficheIds: number[]) {
-    const query = this.databaseService.db
+  private getFicheActionFinanceurTagsQuery(ficheIds: number[], tx?: Transaction) {
+    const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionFinanceurTagTable.ficheId,
         financeurTagIds: sql<
@@ -305,8 +306,8 @@ export default class ListFichesService {
       .as('ficheActionFinanceurTags');
   }
 
-  private getFicheActionLibreTagsQuery(ficheIds: number[]) {
-    const query = this.databaseService.db
+  private getFicheActionLibreTagsQuery(ficheIds: number[], tx?: Transaction) {
+    const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionLibreTagTable.ficheId,
         libreTagIds: sql<
@@ -333,8 +334,8 @@ export default class ListFichesService {
       .as('ficheActionLibreTags');
   }
 
-  private getFicheActionStructureTagsQuery(ficheIds: number[]) {
-    const query = this.databaseService.db
+  private getFicheActionStructureTagsQuery(ficheIds: number[], tx?: Transaction) {
+    const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionStructureTagTable.ficheId,
         structureTagIds: sql<
@@ -361,8 +362,8 @@ export default class ListFichesService {
       .as('ficheActionStructureTags');
   }
 
-  private getFicheActionPartenaireTagsQuery(ficheIds: number[]) {
-    const query = this.databaseService.db
+  private getFicheActionPartenaireTagsQuery(ficheIds: number[], tx?: Transaction) {
+    const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionPartenaireTagTable.ficheId,
         partenaireTagIds: sql<
@@ -394,9 +395,10 @@ export default class ListFichesService {
 
   private getFicheActionAxesQuery(
     ficheIds: number[],
-    withAxesAncestors?: boolean
+    withAxesAncestors?: boolean,
+    tx?: Transaction
   ) {
-    const query = this.databaseService.db
+    const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheRecursiveAxeView.ficheId,
         axes: sql<
@@ -423,11 +425,11 @@ export default class ListFichesService {
     return query.groupBy(ficheRecursiveAxeView.ficheId).as('ficheActionAxes');
   }
 
-  private getFicheActionPlansQuery(ficheIds: number[]) {
+  private getFicheActionPlansQuery(ficheIds: number[], tx?: Transaction) {
     const planTable = aliasedTable(axeTable, 'plan_table');
     const parentAxeTable = aliasedTable(axeTable, 'parent_axe_table');
 
-    const query = this.databaseService.db
+    const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionAxeTable.ficheId,
         plans: sql<
@@ -452,8 +454,8 @@ export default class ListFichesService {
     return query.groupBy(ficheActionAxeTable.ficheId).as('ficheActionPlans');
   }
 
-  private getFicheActionServicesQuery(ficheIds: number[]) {
-    const query = this.databaseService.db
+  private getFicheActionServicesQuery(ficheIds: number[], tx?: Transaction) {
+    const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionServiceTagTable.ficheId,
         serviceTagIds: sql<
@@ -480,8 +482,8 @@ export default class ListFichesService {
       .as('ficheActionServiceTag');
   }
 
-  private getFicheActionPilotesQuery(ficheIds: number[]) {
-    const query = this.databaseService.db
+  private getFicheActionPilotesQuery(ficheIds: number[], tx?: Transaction) {
+    const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionPiloteTable.ficheId,
         piloteTagIds: sql<
@@ -523,8 +525,8 @@ export default class ListFichesService {
       .as('ficheActionPilotes');
   }
 
-  private getFicheActionEtapesQuery(ficheIds: number[]) {
-    const query = this.databaseService.db
+  private getFicheActionEtapesQuery(ficheIds: number[], tx?: Transaction) {
+    const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionEtapeTable.ficheId,
         etapes: sql<
@@ -540,11 +542,11 @@ export default class ListFichesService {
     return query.groupBy(ficheActionEtapeTable.ficheId).as('ficheActionEtapes');
   }
 
-  private getFicheActionNotesQuery(ficheIds: number[]) {
+  private getFicheActionNotesQuery(ficheIds: number[], tx?: Transaction) {
     const dcpCreatedBy = aliasedTable(dcpTable, 'dcpNoteCreatedBy');
     const dcpModifiedBy = aliasedTable(dcpTable, 'dcpNoteModifiedBy');
 
-    const query = this.databaseService.db
+    const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionNoteTable.ficheId,
         notes: sql<FicheNote[]>`array_agg(json_build_object(
@@ -579,8 +581,8 @@ export default class ListFichesService {
     return query.groupBy(ficheActionNoteTable.ficheId).as('ficheActionNotes');
   }
 
-  private getFicheActionMesuresQuery(ficheIds: number[]) {
-    const query = this.databaseService.db
+  private getFicheActionMesuresQuery(ficheIds: number[], tx?: Transaction) {
+    const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionActionTable.ficheId,
         mesureId: sql<
@@ -610,8 +612,8 @@ export default class ListFichesService {
       .as('ficheActionMesures');
   }
 
-  private getFicheActionSharingsQuery(ficheIds: number[]) {
-    const query = this.databaseService.db
+  private getFicheActionSharingsQuery(ficheIds: number[], tx?: Transaction) {
+    const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionSharingTable.ficheId,
         sharedWithCollectiviteIds: sql<
@@ -641,8 +643,8 @@ export default class ListFichesService {
       .as('ficheActionSharings');
   }
 
-  private getFicheActionFichesLieesQuery(ficheIds: number[]) {
-    const query = this.databaseService.db
+  private getFicheActionFichesLieesQuery(ficheIds: number[], tx?: Transaction) {
+    const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionLienTable.ficheUne,
         fichesLiees: sql<
@@ -669,8 +671,8 @@ export default class ListFichesService {
       .as('ficheActionFichesLiees');
   }
 
-  private getFicheActionsDocsQuery(ficheIds: number[]) {
-    const query = this.databaseService.db
+  private getFicheActionsDocsQuery(ficheIds: number[], tx?: Transaction) {
+    const query = (tx || this.databaseService.db)
       .select({
         ficheId: annexeTable.ficheId,
         docs: sql<
@@ -693,7 +695,8 @@ export default class ListFichesService {
   async getFicheById(
     ficheId: number,
     addCollectiviteData?: boolean,
-    user?: AuthUser
+    user?: AuthUser,
+    tx?: Transaction,
   ): Promise<
     Result<FicheWithRelations | FicheWithRelationsAndCollectivite, string>
   > {
@@ -702,7 +705,7 @@ export default class ListFichesService {
     const { data: fichesAction } = await this.listFichesQuery(null, {
       ficheIds: [ficheId],
       withChildren: true,
-    });
+    }, undefined, tx);
 
     if (!fichesAction?.length) {
       return {
@@ -710,15 +713,15 @@ export default class ListFichesService {
         error: `Aucune action trouvée avec l'id ${ficheId}`,
       };
     }
-
     const ficheAction = fichesAction[0];
     if (user) {
-      await this.fichePermissionService.canReadFicheObject(ficheAction, user);
+      await this.fichePermissionService.canReadFicheObject(ficheAction, user, undefined, tx);
     }
 
     if (addCollectiviteData) {
       const collectivite = await this.collectiviteService.getCollectivite(
-        ficheAction.collectiviteId
+        ficheAction.collectiviteId,
+        tx
       );
       (ficheAction as FicheWithRelationsAndCollectivite).collectivite =
         collectivite.collectivite as Collectivite;
@@ -798,13 +801,13 @@ export default class ListFichesService {
   private getFicheIdsQuery(
     collectiviteId: number | null,
     filters?: ListFichesRequestFilters,
-    queryOptions?: QueryOptionsSchema
+    queryOptions?: QueryOptionsSchema,
+    tx?: Transaction
   ) {
     if (filters && Object.keys(filters).length > 0) {
       const filterSummary = this.formatLogs(filters);
       this.logger.log(
-        `Récupération des fiches action pour la collectivité ${collectiviteId} ${
-          filterSummary ? `(filtre(s) appliqué(s): ${filterSummary})` : ''
+        `Récupération des fiches action pour la collectivité ${collectiviteId} ${filterSummary ? `(filtre(s) appliqué(s): ${filterSummary})` : ''
         }`
       );
     } else {
@@ -818,7 +821,7 @@ export default class ListFichesService {
       filters
     );
 
-    const ficheIdsQuery = this.databaseService.db
+    const ficheIdsQuery = (tx || this.databaseService.db)
       .select({
         id: ficheActionTable.id,
         count: sql<number>`(count(*) over())::int`,
@@ -864,7 +867,8 @@ export default class ListFichesService {
   async listFichesQuery(
     collectiviteId: number | null,
     filters?: ListFichesRequestFilters,
-    queryOptions?: QueryOptionsSchema
+    queryOptions?: QueryOptionsSchema,
+    tx?: Transaction
   ): Promise<{
     data: FicheWithRelations[];
     count: number;
@@ -872,38 +876,40 @@ export default class ListFichesService {
     const ficheIdsQuery = this.getFicheIdsQuery(
       collectiviteId,
       filters,
-      queryOptions
+      queryOptions,
+      tx
     );
     const ficheIdQueryResult = await ficheIdsQuery;
     const ficheIds = ficheIdQueryResult.map((fiche) => fiche.id);
     const count = ficheIdQueryResult[0]?.count ?? 0;
 
     const ficheActionPartenaireTags =
-      this.getFicheActionPartenaireTagsQuery(ficheIds);
+      this.getFicheActionPartenaireTagsQuery(ficheIds, tx);
     const ficheActionThematiques =
-      this.getFicheActionThematiquesQuery(ficheIds);
+      this.getFicheActionThematiquesQuery(ficheIds, tx);
     const ficheActionSousThematiques =
-      this.getFicheActionSousThematiquesQuery(ficheIds);
+      this.getFicheActionSousThematiquesQuery(ficheIds, tx);
     const ficheActionFinanceurTags =
-      this.getFicheActionFinanceurTagsQuery(ficheIds);
+      this.getFicheActionFinanceurTagsQuery(ficheIds, tx);
     const ficheActionIndicateurs =
-      this.getFicheActionIndicateursQuery(ficheIds);
+      this.getFicheActionIndicateursQuery(ficheIds, tx);
     const ficheActionReferent = this.getFicheActionReferentTagsQuery(ficheIds);
     const ficheActionEffetsAttendus =
-      this.getFicheActionEffetsAttendusQuery(ficheIds);
+      this.getFicheActionEffetsAttendusQuery(ficheIds, tx);
     const ficheActionStructureTags =
-      this.getFicheActionStructureTagsQuery(ficheIds);
-    const ficheActionLibreTags = this.getFicheActionLibreTagsQuery(ficheIds);
-    const ficheActionPilotes = this.getFicheActionPilotesQuery(ficheIds);
-    const ficheActionServices = this.getFicheActionServicesQuery(ficheIds);
+      this.getFicheActionStructureTagsQuery(ficheIds, tx);
+    const ficheActionLibreTags = this.getFicheActionLibreTagsQuery(ficheIds, tx);
+    const ficheActionPilotes = this.getFicheActionPilotesQuery(ficheIds, tx);
+    const ficheActionServices = this.getFicheActionServicesQuery(ficheIds, tx);
     const ficheActionAxes = this.getFicheActionAxesQuery(
       ficheIds,
-      filters?.withAxesAncestors
+      filters?.withAxesAncestors,
+      tx
     );
-    const ficheActionPlans = this.getFicheActionPlansQuery(ficheIds);
-    const ficheActionEtapes = this.getFicheActionEtapesQuery(ficheIds);
-    const ficheActionNotes = this.getFicheActionNotesQuery(ficheIds);
-    const ficheActionMesures = this.getFicheActionMesuresQuery(ficheIds);
+    const ficheActionPlans = this.getFicheActionPlansQuery(ficheIds, tx);
+    const ficheActionEtapes = this.getFicheActionEtapesQuery(ficheIds, tx);
+    const ficheActionNotes = this.getFicheActionNotesQuery(ficheIds, tx);
+    const ficheActionMesures = this.getFicheActionMesuresQuery(ficheIds, tx);
     const ficheActionFichesLiees =
       this.getFicheActionFichesLieesQuery(ficheIds);
     const ficheActionDocs = this.getFicheActionsDocsQuery(ficheIds);
@@ -915,7 +921,7 @@ export default class ListFichesService {
 
     const dcpModifiedBy = aliasedTable(dcpTable, 'dcpModifiedBy');
 
-    const query = this.databaseService.db
+    const query = (tx || this.databaseService.db)
       .select({
         ...getTableColumns(ficheActionTable),
         dateDebut: sqlToDateTimeISO(ficheActionTable.dateDebut),
@@ -1811,8 +1817,7 @@ export default class ListFichesService {
   }> {
     const filterSummary = filters ? this.formatLogs(filters) : '';
     this.logger.log(
-      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${
-        filterSummary ? `(${filterSummary})` : ''
+      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${filterSummary ? `(${filterSummary})` : ''
       }`
     );
     const { data, count } = await this.listFichesQuery(
