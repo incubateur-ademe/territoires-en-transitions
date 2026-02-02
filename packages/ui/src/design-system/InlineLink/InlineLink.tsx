@@ -21,8 +21,13 @@ export const InlineLink = ({ openInNewTab, className, ...props }: Props) => {
         className
       )}
     >
-      {props.children}{' '}
-      {openInNewTab && <span className="ri-external-link-line" />}
+      {props.children}
+      {openInNewTab && (
+        <>
+          {' '}
+          <span className="ri-external-link-line" />
+        </>
+      )}
     </NextLink>
   );
 };
