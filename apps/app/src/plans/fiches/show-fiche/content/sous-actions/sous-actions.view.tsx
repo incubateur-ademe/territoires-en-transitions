@@ -28,6 +28,7 @@ export const SousActionsView = () => {
   const isEmpty = sousActions.length === 0;
 
   const canMutate = hasCollectivitePermission('plans.fiches.update');
+  const canCreate = hasCollectivitePermission('plans.fiches.create');
 
   return (
     <ContentLayout.Root>
@@ -42,7 +43,7 @@ export const SousActionsView = () => {
             isReadOnly={!canMutate}
             isLoadingNewRow={isLoadingCreate}
           />
-          {!isEmpty && canMutate && (
+          {!isEmpty && canCreate && (
             <Button
               className="m-4"
               icon="add-line"
