@@ -31,6 +31,12 @@ export const personneIdSchema = personneTagOrUserSchema.pick({
 });
 export type PersonneId = z.infer<typeof personneIdSchema>;
 
+export const isPersonneId = (
+  personne: PersonneId
+): personne is { userId: string; tagId: number } => {
+  return personne.userId !== null || personne.tagId !== null;
+};
+
 export const personneSchema = personneIdSchema.extend({
   tagName: z.string().nullish(),
   userName: z.string().nullish(),

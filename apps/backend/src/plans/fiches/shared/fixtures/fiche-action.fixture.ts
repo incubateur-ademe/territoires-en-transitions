@@ -1,9 +1,4 @@
-import {
-  CibleEnum,
-  FicheCreate,
-  PiliersEciEnum,
-  StatutEnum,
-} from '@tet/domain/plans';
+import { CibleEnum, FicheCreate, PiliersEciEnum, StatutEnum } from '@tet/domain/plans';
 
 export const ficheActionFixture: FicheCreate = {
   id: 9999,

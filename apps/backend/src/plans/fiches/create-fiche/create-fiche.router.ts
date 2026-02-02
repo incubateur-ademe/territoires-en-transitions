@@ -3,12 +3,12 @@ import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { ficheSchemaCreate } from '@tet/domain/plans';
 import { TRPCError } from '@trpc/server';
 import z from 'zod';
-import { updateFicheRequestSchema } from '../update-fiche/update-fiche.request';
+import { updateFicheInputSchema } from '../update-fiche/update-fiche.input';
 import { CreateFicheService } from './create-fiche.service';
 
 const createFicheInput = z.object({
   fiche: ficheSchemaCreate,
-  ficheFields: updateFicheRequestSchema.optional(),
+  ficheFields: updateFicheInputSchema.optional(),
 });
 
 @Injectable()

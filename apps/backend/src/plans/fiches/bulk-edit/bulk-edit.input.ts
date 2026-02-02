@@ -1,6 +1,6 @@
-import { updateFicheRequestSchema } from '@tet/backend/plans/fiches/update-fiche/update-fiche.request';
 import { ficheSchema, listFichesRequestFiltersSchema } from '@tet/domain/plans';
 import z from 'zod';
+import { updateFicheInputSchema } from '../update-fiche/update-fiche.input';
 
 // Utility function to create a sub-schema for array field in the input body
 function listSchema<T extends z.ZodTypeAny>(schema: T) {
@@ -29,17 +29,15 @@ const commonFields = z.object({
   // dateFin: ficheSchema.shape.dateFin.optional(),
   // ameliorationContinue: ficheSchema.shape.ameliorationContinue.optional(),
   sharedWithCollectivites: listSchema(
-    updateFicheRequestSchema.shape.sharedWithCollectivites.unwrap().unwrap()
+    updateFicheInputSchema.shape.sharedWithCollectivites.unwrap().unwrap()
   ),
-  pilotes: listSchema(updateFicheRequestSchema.shape.pilotes.unwrap().unwrap()),
+  pilotes: listSchema(updateFicheInputSchema.shape.pilotes.unwrap().unwrap()),
   referents: listSchema(
-    updateFicheRequestSchema.shape.referents.unwrap().unwrap()
+    updateFicheInputSchema.shape.referents.unwrap().unwrap()
   ),
-  services: listSchema(
-    updateFicheRequestSchema.shape.services.unwrap().unwrap()
-  ),
+  services: listSchema(updateFicheInputSchema.shape.services.unwrap().unwrap()),
   libreTags: listSchema(
-    updateFicheRequestSchema.shape.libreTags.unwrap().unwrap()
+    updateFicheInputSchema.shape.libreTags.unwrap().unwrap()
   ),
 });
 

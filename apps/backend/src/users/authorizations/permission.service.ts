@@ -1,4 +1,5 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   hasPermission,
   PermissionOperation,
@@ -56,11 +57,9 @@ export class PermissionService {
     operation: PermissionOperation,
     resourceType: ResourceType,
     resourceId: number | null,
-    doNotThrow?: boolean
+    doNotThrow?: boolean,
+    tx?: Transaction
   ): Promise<boolean> {
-    this.logger.log(
-      `Vérification que l'utilisateur ${user.id} possède l'autorisation ${operation} sur la ressource ${resourceType} ${resourceId}`
-    );
     if (user.role === AuthRole.SERVICE_ROLE) {
       // Le service rôle a tous les droits
       return true;
@@ -96,6 +95,7 @@ export class PermissionService {
     const userPermissionsResult =
       await this.getUserPermissionsService.getUserRolesAndPermissions({
         userId: user.id,
+        tx,
       });
 
     if (!userPermissionsResult.success) {

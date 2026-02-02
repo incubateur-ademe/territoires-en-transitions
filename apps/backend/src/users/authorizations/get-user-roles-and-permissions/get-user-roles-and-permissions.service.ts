@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import { UserRolesAndPermissions } from '@tet/domain/users';
 import { toUserRolesAndPermissions } from './get-user-roles-and-permissions.adapter';
@@ -12,13 +13,13 @@ export class GetUserRolesAndPermissionsService {
 
   async getUserRolesAndPermissions({
     userId,
+    tx,
   }: {
     userId: string;
+    tx?: Transaction;
   }): Promise<Result<UserRolesAndPermissions, NotFoundException>> {
     const platformRoles =
-      await this.getUserPermissionsRepository.getPlatformRoles({
-        userId,
-      });
+      await this.getUserPermissionsRepository.getPlatformRoles(userId, tx);
 
     if (!platformRoles) {
       return {

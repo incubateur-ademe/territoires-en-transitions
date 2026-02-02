@@ -37,7 +37,7 @@ import { ficheActionStructureTagTable } from '../shared/models/fiche-action-stru
 import { ficheActionThematiqueTable } from '../shared/models/fiche-action-thematique.table';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
 import { UpdateFicheError, UpdateFicheErrorEnum } from './update-fiche.errors';
-import { UpdateFicheRequest } from './update-fiche.request';
+import { UpdateFicheInput } from './update-fiche.input';
 import { UpdateFicheResult } from './update-fiche.result';
 
 type ColumnType = Column<
@@ -80,15 +80,13 @@ export default class UpdateFicheService {
     tx,
   }: {
     ficheId: number;
-    ficheFields: UpdateFicheRequest;
+    ficheFields: UpdateFicheInput;
     isNotificationEnabled?: boolean;
     user: AuthenticatedUser;
     tx?: Transaction;
   }): Promise<UpdateFicheResult<FicheWithRelations, UpdateFicheError>> {
-    await this.fichePermissionService.canWriteFiche(ficheId, user);
-
+    await this.fichePermissionService.canWriteFiche(ficheId, user, tx);
     this.logger.log(`Mise à jour de la fiche action dont l'id est ${ficheId}`);
-
     const {
       axes,
       thematiques,
@@ -126,7 +124,8 @@ export default class UpdateFicheService {
         await this.ficheActionListService.getFicheById(
           unsafeFicheAction.parentId,
           false,
-          user
+          user,
+          tx
         );
       if (!resultGetParentFiche.success) {
         this.logger.error(resultGetParentFiche.error);
@@ -140,10 +139,15 @@ export default class UpdateFicheService {
     const executeInTransaction = async (
       transaction: Transaction
     ): Promise<
-      UpdateFicheResult<{ previousFiche: FicheWithRelations }, UpdateFicheError>
+      UpdateFicheResult<{ ficheUpdated: FicheWithRelations }, UpdateFicheError>
     > => {
       const resultGetExistingFiche =
-        await this.ficheActionListService.getFicheById(ficheId, false, user);
+        await this.ficheActionListService.getFicheById(
+          ficheId,
+          false,
+          user,
+          transaction
+        );
       if (!resultGetExistingFiche.success) {
         this.logger.error(resultGetExistingFiche.error);
         return {
@@ -396,10 +400,30 @@ export default class UpdateFicheService {
         );
       }
 
+      // Recharge la fiche mise à jour
+      const updatedFiche = await this.ficheActionListService.getFicheById(
+        ficheId,
+        true,
+        user,
+        transaction
+      );
+      if (!updatedFiche.success) {
+        return { success: false, error: UpdateFicheErrorEnum.FICHE_NOT_FOUND };
+      }
+
+      // Ajoute les notifications pour les pilotes nouvellement associés à une sous-fiche
+      if (isNotificationEnabled) {
+        await this.notificationsFicheService.upsertPiloteNotifications({
+          updatedFiche: updatedFiche.data,
+          previousFiche: existingFicheAction,
+          user,
+        });
+      }
+
       return {
         success: true,
         data: {
-          previousFiche: existingFicheAction,
+          ficheUpdated: updatedFiche.data,
         },
       };
     };
@@ -413,29 +437,7 @@ export default class UpdateFicheService {
     if (!resultUpdate.success) {
       return { success: false, error: resultUpdate.error };
     }
-
-    // Recharge la fiche mise à jour
-    const resultUpdated = await this.ficheActionListService.getFicheById(
-      ficheId,
-      true,
-      user
-    );
-    if (!resultUpdated.success) {
-      return { success: false, error: UpdateFicheErrorEnum.FICHE_NOT_FOUND };
-    }
-
-    const updatedFiche = resultUpdated.data;
-
-    // Ajoute les notifications pour les pilotes nouvellement associés à une sous-fiche
-    if (isNotificationEnabled) {
-      const { previousFiche } = resultUpdate.data;
-      await this.notificationsFicheService.upsertPiloteNotifications({
-        updatedFiche,
-        previousFiche,
-        user,
-      });
-    }
-
+    const updatedFiche = resultUpdate.data.ficheUpdated;
     await this.webhookService.sendWebhookNotification(
       ApplicationSousScopesEnum.FICHES,
       `${ficheId}`,
@@ -456,7 +458,7 @@ export default class UpdateFicheService {
     transaction,
   }: {
     ficheId: number;
-    notes: UpdateFicheRequest['notes'];
+    notes: UpdateFicheInput['notes'];
     existingFicheAction: FicheWithRelations;
     user: AuthenticatedUser;
     transaction: Transaction;

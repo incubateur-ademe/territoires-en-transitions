@@ -7,6 +7,7 @@ import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, sql } from 'drizzle-orm';
 
@@ -33,16 +34,13 @@ export type AuditRolesRow = {
 
 @Injectable()
 export class GetUserRolesAndPermissionsRepository {
-  private readonly db = this.databaseService.db;
-
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async getPlatformRoles({
-    userId,
-  }: {
-    userId: string;
-  }): Promise<PlatformRolesRow | null> {
-    const [user] = await this.db
+  async getPlatformRoles(
+    userId: string,
+    tx?: Transaction
+  ): Promise<PlatformRolesRow | null> {
+    const [user] = await (tx ?? this.databaseService.db)
       .select({
         isVerified: sql<boolean>`coalesce(${utilisateurVerifieTable.verifie}, false)`,
         isSupport: sql<boolean>`coalesce(${utilisateurSupportTable.isSupport}, false)`,
@@ -66,10 +64,12 @@ export class GetUserRolesAndPermissionsRepository {
 
   async getCollectiviteRoles({
     userId,
+    tx,
   }: {
     userId: string;
+    tx?: Transaction;
   }): Promise<CollectiviteRolesRow[]> {
-    return this.db
+    return (tx ?? this.databaseService.db)
       .select({
         collectiviteId: utilisateurCollectiviteAccessTable.collectiviteId,
         collectiviteNom: collectiviteTable.nom,
@@ -95,10 +95,12 @@ export class GetUserRolesAndPermissionsRepository {
 
   async getAuditRoles({
     userId,
+    tx,
   }: {
     userId: string;
+    tx?: Transaction;
   }): Promise<AuditRolesRow[]> {
-    return this.db
+    return (tx ?? this.databaseService.db)
       .select({
         auditId: auditTable.id,
         collectiviteId: auditTable.collectiviteId,

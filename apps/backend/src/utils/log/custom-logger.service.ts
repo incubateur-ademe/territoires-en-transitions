@@ -13,27 +13,27 @@ export const getDefaultLoggerOptions = (): Options => {
     formatters:
       process.env.NODE_ENV === 'production'
         ? {
-            bindings(bindings) {
-              return { host: bindings.hostname };
-            },
-            level: (label, number) => {
-              return {
-                severity_number: number,
-                status: label,
-              };
-            },
-          }
+          bindings(bindings) {
+            return { host: bindings.hostname };
+          },
+          level: (label, number) => {
+            return {
+              severity_number: number,
+              status: label,
+            };
+          },
+        }
         : undefined,
     transport:
       process.env.NODE_ENV === 'production'
         ? undefined // Default configuration to console in json
         : {
-            target: 'pino-pretty',
-            options: {
-              singleLine: true,
-              colorize: true,
-            },
+          target: 'pino-pretty',
+          options: {
+            singleLine: true,
+            colorize: true,
           },
+        },
   };
 };
 /**
@@ -46,7 +46,7 @@ export class CustomLogger implements LoggerService {
     private readonly contextStoreService: ContextStoreService,
     private readonly config: Options,
     @Optional() private logger = pino(config)
-  ) {}
+  ) { }
 
   verbose(message: any, ...optionalParams: any[]) {
     this.call('trace', message, ...optionalParams);

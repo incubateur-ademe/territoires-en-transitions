@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '@tet/backend/collectivites/collectivites.module';
+import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { AxeModule } from '../axes/axe.module';
 import { DeleteAxeRepository } from '../axes/delete-axe/delete-axe.repository';
 import { DeleteAxeRouter } from '../axes/delete-axe/delete-axe.router';
@@ -23,6 +24,10 @@ import { GetPlanCompletionService } from './get-plan-completion/get-plan-complet
 import { GetPlanRepository } from './get-plan/get-plan.repository';
 import { GetPlanRouter } from './get-plan/get-plan.router';
 import { GetPlanService } from './get-plan/get-plan.service';
+import { CreatePlanAggregateService } from './create-plan-aggregate/create-plan-aggregate.service';
+import { ImportPlanApplicationService } from './import-plan-aggregate/import-plan.application-service';
+import { ImportPlanRouter } from './import-plan-aggregate/import-plan.router';
+import { ResolveEntityService } from './import-plan-aggregate/resolvers/resolve-entity.service';
 import { ListPlansRepository } from './list-plans/list-plans.repository';
 import { ListPlansRouter } from './list-plans/list-plans.router';
 import { ListPlansService } from './list-plans/list-plans.service';
@@ -37,6 +42,7 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     forwardRef(() => CollectivitesModule),
     forwardRef(() => FichesModule),
     AxeModule,
+    TransactionModule,
   ],
   providers: [
     GetPlanCompletionService,
@@ -68,10 +74,15 @@ import { UpsertPlanService } from './upsert-plan/upsert-plan.service';
     PlanProgressRules,
     ComputeBudgetRules,
     PlanRouter,
+    CreatePlanAggregateService,
+    ImportPlanApplicationService,
+    ImportPlanRouter,
+    ResolveEntityService,
   ],
   exports: [
     PlanRouter,
     UpsertPlanService,
+    UpsertAxeService,
     ListPlansService,
     GetPlanService,
     PlanProgressRules,
