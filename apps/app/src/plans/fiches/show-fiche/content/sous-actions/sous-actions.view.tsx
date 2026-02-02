@@ -4,6 +4,7 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 import { useListFiches } from '../../../list-all-fiches/data/use-list-fiches';
 import { useFicheContext } from '../../context/fiche-context';
+import { ContentLayout } from '../content-layout';
 
 export const SousActionsView = () => {
   const { hasCollectivitePermission, collectiviteId } =
@@ -29,26 +30,30 @@ export const SousActionsView = () => {
   const canMutate = hasCollectivitePermission('plans.fiches.update');
 
   return (
-    <div className="p-2 bg-white rounded-lg border border-grey-3 overflow-x-auto">
-      <SousActionTable
-        sousActions={sousActions}
-        isLoading={isLoading}
-        isEmpty={isEmpty}
-        createSousAction={createSousAction}
-        hiddenColumns={['parentId']}
-        isReadOnly={!canMutate}
-        isLoadingNewRow={isLoadingCreate}
-      />
-      {!isEmpty && canMutate && (
-        <Button
-          className="m-4"
-          icon="add-line"
-          size="xs"
-          onClick={() => createSousAction()}
-        >
-          Ajouter une sous-action
-        </Button>
-      )}
-    </div>
+    <ContentLayout.Root>
+      <ContentLayout.Content data={[]}>
+        <div className="p-2 bg-white rounded-lg border border-grey-3">
+          <SousActionTable
+            sousActions={sousActions}
+            isLoading={isLoading}
+            isEmpty={isEmpty}
+            createSousAction={createSousAction}
+            hiddenColumns={['parentId']}
+            isReadOnly={!canMutate}
+            isLoadingNewRow={isLoadingCreate}
+          />
+          {!isEmpty && canMutate && (
+            <Button
+              className="m-4"
+              icon="add-line"
+              size="xs"
+              onClick={() => createSousAction()}
+            >
+              Ajouter une sous-action
+            </Button>
+          )}
+        </div>
+      </ContentLayout.Content>
+    </ContentLayout.Root>
   );
 };

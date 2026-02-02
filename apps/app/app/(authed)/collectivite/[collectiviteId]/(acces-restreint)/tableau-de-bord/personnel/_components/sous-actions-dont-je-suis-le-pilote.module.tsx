@@ -41,7 +41,7 @@ export const SousActionsDontJeSuisLePiloteModule = () => {
       symbole={<PictoAction className="w-16 h-16" />}
       filters={{ utilisateurPiloteIds: [userId] }}
     >
-      <div className="h-full overflow-x-auto">
+      <div className="h-full">
         <SousActionTable
           sousActions={sousActions}
           isLoading={isLoading}
