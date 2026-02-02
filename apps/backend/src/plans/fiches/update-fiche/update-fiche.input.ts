@@ -1,6 +1,7 @@
 import {
   collectiviteSchema,
   financeurTagSchema,
+  instanceGouvernanceTagSchema,
   libreTagSchema,
   partenaireTagSchema,
   personneIdSchema,
@@ -72,6 +73,10 @@ export const updateFicheInputSchema = ficheSchemaUpdate.extend({
   effetsAttendus: effetAttenduSchema.pick({ id: true }).array().nullish(),
   libreTags: libreTagSchema.pick({ id: true }).array().nullish(),
   notes: z.array(ficheNoteUpsertSchema).nullish(),
+  instanceGouvernance: instanceGouvernanceTagSchema
+    .pick({ id: true })
+    .array()
+    .nullish(),
 });
 
 export type UpdateFicheInput = z.infer<typeof updateFicheInputSchema>;

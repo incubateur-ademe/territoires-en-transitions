@@ -936,3 +936,4 @@ preuve_modify_by_with_api 2026-01-28T12:24:14Z System Administrator <root@MacBoo
 @v4.97.0 2026-02-09T10:16:59Z Marc Rutkowski <marc@attractive-media.fr> # Tag le plan en v4.97.0
 
 referentiel/historique_modified_by 2026-02-16T15:14:16Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Conserve le modified_by si auth.uid() n'est pas renseigné
+creation_dune_table_instance_de_gouvernance 2025-12-17T13:16:12Z System Administrator <root@Host-002.lan> # Création de la table instance de gouvernance

@@ -1,7 +1,16 @@
 import { INestApplication } from '@nestjs/common';
-import { getAuthUser, getTestApp, getTestRouter } from '@tet/backend/test';
+import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
+import {
+  getAuthUser,
+  getTestApp,
+  getTestDatabase,
+  getTestRouter,
+} from '@tet/backend/test';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { eq } from 'drizzle-orm';
 import * as fs from 'node:fs';
 import path from 'path';
+import { onTestFinished } from 'vitest';
 import z from 'zod';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { addAndEnableUserSuperAdminMode } from '../../../users/users/users.test-fixture';
@@ -29,11 +38,17 @@ describe("Test import Plan d'action", () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
   let app: INestApplication;
+  let databaseService: DatabaseService;
 
   beforeAll(async () => {
     router = await getTestRouter();
     yoloDodoUser = await getAuthUser();
     app = await getTestApp();
+    databaseService = await getTestDatabase(app);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test('Test utilisateur non support', async () => {
@@ -126,5 +141,30 @@ describe("Test import Plan d'action", () => {
     await expect(caller.plans.plans.import(input)).rejects.toThrowError(
       `Erreur lors de la lecture du fichier Excel : La colonne B devrait être "Sous-axe (x.x)" et non "Sous-sous axe (x.x.x)"`
     );
+  });
+
+  test('Test import plan avec instances de gouvernance', async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: yoloDodoUser.id,
+    });
+
+    onTestFinished(cleanup);
+
+    const pathName = './__fixtures__/one_fiche_plan.xlsx';
+    const input = await pathToInput({ pathName, collectiviteId: 50 });
+    const result = await caller.plans.plans.import(input);
+    expect(result).toBe(true);
+
+    // Vérifier que les instances de gouvernance sont bien liées aux fiches
+    const fiches = await databaseService.db
+      .select()
+      .from(ficheActionTable)
+      .where(eq(ficheActionTable.collectiviteId, 50));
+
+    expect(fiches.length).toBeGreaterThan(0);
   });
 });

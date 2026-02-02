@@ -67,11 +67,16 @@ export const createPersonneResolver = async (
     }
 
     const created = await createTag(name, collectiviteId, tx);
-    if (created.success) {
-      return success({ tagId: created.data.id });
+    if (!created.success) {
+      return failure(created.error);
     }
 
-    return failure(created.error);
+    // Add the newly created tag to the local collection and update the Fuse index
+    const newTag = { ...created.data, collectiviteId };
+    tags.push(newTag);
+    searchTags.setCollection(tags);
+
+    return success({ tagId: created.data.id });
   };
   return { getOrCreatePersonne };
 };

@@ -91,7 +91,9 @@ export const FicheActionDescription = ({
 
       <div>
         <Title>Instances de gouvernance :</Title>
-        <RichTextView content={instanceGouvernance} textColor="white" />
+        <RichTextView
+          content={instanceGouvernance?.map((tag) => tag.nom).join(', ') ?? ''}
+        />
       </div>
     </div>
   );

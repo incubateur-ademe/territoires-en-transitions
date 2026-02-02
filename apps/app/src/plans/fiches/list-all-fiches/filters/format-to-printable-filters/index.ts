@@ -165,6 +165,21 @@ const createCustomTagFilterCategory = (
   };
 };
 
+const createInstanceGouvernanceTagFilterCategory = (
+  filters: FormFilters,
+  getFilterValuesLabels: (key: FilterKeys, values: any[]) => string[]
+): FilterCategory<FilterKeys> => {
+  return {
+    key: 'instanceGouvernanceIds',
+    title: getFilterLabel('instanceGouvernanceIds'),
+    selectedFilters: getFilterValuesLabels(
+      'instanceGouvernanceIds',
+      filters.instanceGouvernanceIds ?? []
+    ),
+    onlyShowCategory: false,
+  };
+};
+
 const createReferentFilterCategory = (
   filters: FormFilters,
   getFilterValuesLabels: (key: FilterKeys, values: any[]) => string[]
@@ -237,6 +252,12 @@ const processFilterEntry = (
   }
   if (key === 'libreTagsIds') {
     return createCustomTagFilterCategory(filters, getFilterValuesLabels);
+  }
+  if (key === 'instanceGouvernanceIds') {
+    return createInstanceGouvernanceTagFilterCategory(
+      filters,
+      getFilterValuesLabels
+    );
   }
   return createDefaultFilterCategory(key, value, getFilterValuesLabels);
 };
