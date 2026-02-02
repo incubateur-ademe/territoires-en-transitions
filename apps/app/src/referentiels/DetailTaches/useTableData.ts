@@ -131,19 +131,21 @@ export const useTableData: UseTableData = () => {
     sousActionsTotal,
     updateStatut: (actionId: string, avancement: string) => {
       saveActionStatut({
-        collectiviteId,
-        actionId,
-        // TODO: Move this logic to the backend
-        avancement:
-          avancement === StatutAvancementEnum.NON_CONCERNE
-            ? StatutAvancementEnum.NON_RENSEIGNE
-            : (avancement as StatutAvancement),
-        avancementDetaille:
-          avancement === StatutAvancementEnum.DETAILLE
-            ? [0.25, 0.5, 0.25]
-            : undefined,
-        concerne:
-          avancement === StatutAvancementEnum.NON_CONCERNE ? false : true,
+        actionStatut: {
+          collectiviteId,
+          actionId,
+          // TODO: Move this logic to the backend
+          avancement:
+            avancement === StatutAvancementEnum.NON_CONCERNE
+              ? StatutAvancementEnum.NON_RENSEIGNE
+              : (avancement as StatutAvancement),
+          avancementDetaille:
+            avancement === StatutAvancementEnum.DETAILLE
+              ? [0.25, 0.5, 0.25]
+              : undefined,
+          concerne:
+            avancement === StatutAvancementEnum.NON_CONCERNE ? false : true,
+        },
       });
     },
   };

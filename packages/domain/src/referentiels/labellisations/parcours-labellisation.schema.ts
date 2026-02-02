@@ -48,4 +48,8 @@ export type ParcoursLabellisation = {
   isCot: boolean;
   conditionFichiers: ConditionFichiers;
   score: ScoresPayload['scores']['score'];
+  auditeurs: {
+    userId: string;
+    nom: string;
+  }[];
 };

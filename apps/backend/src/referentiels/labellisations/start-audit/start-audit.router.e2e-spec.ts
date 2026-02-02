@@ -11,11 +11,9 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { ReferentielIdEnum, SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { eq } from 'drizzle-orm';
+import { createAuditWithOnTestFinished } from '../../referentiels.test-fixture';
 import { snapshotTable } from '../../snapshots/snapshot.table';
-import {
-  addAuditeurPermission,
-  createAudit,
-} from '../labellisations.test-fixture';
+import { addAuditeurPermission } from '../labellisations.test-fixture';
 
 const RANDOM_COLLECTIVITE_ID = 19;
 
@@ -40,7 +38,7 @@ describe('StartAuditRouter', () => {
   test('un auditeur peut lancer un audit', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
-    const { audit } = await createAudit({
+    const { audit } = await createAuditWithOnTestFinished({
       databaseService: db,
       collectiviteId: RANDOM_COLLECTIVITE_ID,
       referentielId: ReferentielIdEnum.CAE,

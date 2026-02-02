@@ -10,9 +10,11 @@ import {
   TreeOfActionsIncludingScore,
 } from '@tet/domain/referentiels';
 import { TRPCClient } from '@trpc/client';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { chunk } from 'es-toolkit';
 import { auditTable } from '../labellisations/audit.table';
+import { auditeurTable } from '../labellisations/auditeur.table';
+import { mesureAuditStatutTable } from '../labellisations/handle-mesure-audit-statut/mesure-audit-statut.table';
 import { labellisationDemandeTable } from '../labellisations/labellisation-demande.table';
 import { actionStatutTable } from '../models/action-statut.table';
 import { snapshotTable } from '../snapshots/snapshot.table';
@@ -224,6 +226,43 @@ export async function cleanupReferentielActionStatutsAndLabellisations(
   console.log(
     `${snapshotRet.length} snapshots removed from collectivite ${collectiviteId}`
   );
+
+  // Remove auditeur
+  // Delete join not available https://github.com/drizzle-team/drizzle-orm/issues/3100
+  const audits = await databaseService.db
+    .select()
+    .from(auditTable)
+    .where(eq(auditTable.collectiviteId, collectiviteId));
+  console.log(
+    `${audits.length} audits found for collectivite ${collectiviteId}`
+  );
+  if (audits.length > 0) {
+    const auditeursRet = await databaseService.db
+      .delete(auditeurTable)
+      .where(
+        inArray(
+          auditeurTable.auditId,
+          audits.map((audit) => audit.id)
+        )
+      )
+      .returning();
+    console.log(
+      `${auditeursRet.length} auditeurs removed from collectivite ${collectiviteId}`
+    );
+
+    const mesureAuditStatutsRet = await databaseService.db
+      .delete(mesureAuditStatutTable)
+      .where(
+        inArray(
+          mesureAuditStatutTable.auditId,
+          audits.map((audit) => audit.id)
+        )
+      )
+      .returning();
+    console.log(
+      `${mesureAuditStatutsRet.length} mesure audit statuts removed from collectivite ${collectiviteId}`
+    );
+  }
 
   const auditRet = await databaseService.db
     .delete(auditTable)

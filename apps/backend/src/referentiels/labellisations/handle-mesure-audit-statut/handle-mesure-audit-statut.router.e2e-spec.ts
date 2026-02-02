@@ -14,10 +14,8 @@ import {
   MesureAuditStatutEnum,
   ReferentielIdEnum,
 } from '@tet/domain/referentiels';
-import {
-  addAuditeurPermission,
-  createAudit,
-} from '../labellisations.test-fixture';
+import { createAuditWithOnTestFinished } from '../../referentiels.test-fixture';
+import { addAuditeurPermission } from '../labellisations.test-fixture';
 import { mesureAuditStatutTable } from './mesure-audit-statut.table';
 
 describe('MesureAuditStatutRouter : règles métier', () => {
@@ -56,14 +54,14 @@ describe('MesureAuditStatutRouter : règles métier', () => {
       })
     ).rejects.toThrow('Aucun audit en cours trouvé');
 
-    const { audit: auditEnCours } = await createAudit({
+    const { audit: auditEnCours } = await createAuditWithOnTestFinished({
       databaseService,
       collectiviteId: YOLO_DODO.collectiviteId.edition,
       referentielId,
     });
 
     // Ajoute le droit d'auditeur sur l'audit en cours
-    addAuditeurPermission({
+    await addAuditeurPermission({
       databaseService,
       auditId: auditEnCours.id,
       userId: user.id,
@@ -125,14 +123,14 @@ describe('MesureAuditStatutRouter : règles métier', () => {
     const caller = router.createCaller({ user });
 
     // Simule un audit clos et un audit en cours pour la même mesure
-    const { audit: auditClos } = await createAudit({
+    const { audit: auditClos } = await createAuditWithOnTestFinished({
       databaseService,
       collectiviteId: YOLO_DODO.collectiviteId.edition,
       referentielId,
       clos: true,
     });
 
-    const { audit: auditEnCours } = await createAudit({
+    const { audit: auditEnCours } = await createAuditWithOnTestFinished({
       databaseService,
       collectiviteId: YOLO_DODO.collectiviteId.edition,
       referentielId,
@@ -218,7 +216,7 @@ describe('MesureAuditStatutRouter : permissions', () => {
     const user = await getAuthUser(YOLO_DODO);
     const caller = router.createCaller({ user });
 
-    await createAudit({
+    await createAuditWithOnTestFinished({
       databaseService,
       collectiviteId,
       referentielId,
@@ -236,7 +234,7 @@ describe('MesureAuditStatutRouter : permissions', () => {
     const user = await getAuthUser(); // YOLO_DODO n'est pas auditeur sur collectiviteId fictif
     const caller = router.createCaller({ user });
 
-    await createAudit({
+    await createAuditWithOnTestFinished({
       databaseService,
       collectiviteId,
       referentielId,

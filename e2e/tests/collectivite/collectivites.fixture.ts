@@ -1,6 +1,7 @@
 import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { TestUserArgs } from '@tet/backend/users/users/users.test-fixture';
 import { Collectivite } from '@tet/domain/collectivites';
+import { CollectiviteRole } from '@tet/domain/users';
 import { FixtureFactory } from 'tests/shared/fixture-factory.interface';
 import { testWithUsers, Users } from 'tests/users/users.fixture';
 import { databaseService } from '../shared/database.service';
@@ -13,7 +14,7 @@ type CollectiviteAndUserArgs = {
 
 type CollectiviteCleanupFunc = (collectiviteId: number) => Promise<void>;
 
-class CollectiviteFixture {
+export class CollectiviteFixture {
   constructor(
     private readonly users: Users,
     public readonly data: Collectivite
@@ -32,6 +33,38 @@ class CollectiviteFixture {
     this.usersCreated.push(user.data.id);
     return user;
   }
+
+  getUserId = (userIndex = 0) => {
+    if (userIndex < 0 || userIndex >= this.usersCreated.length) {
+      throw new Error(`User index ${userIndex} out of bounds`);
+    }
+    return this.usersCreated[userIndex];
+  };
+
+  getUser = (userIndex = 0) => {
+    if (userIndex < 0 || userIndex >= this.usersCreated.length) {
+      throw new Error(`User index ${userIndex} out of bounds`);
+    }
+    const userId = this.usersCreated[userIndex];
+    return this.users.getUserById(userId);
+  };
+
+  setUserCollectiviteRole = async (role: CollectiviteRole, userIndex = 0) => {
+    const userId = this.getUserId(userIndex);
+    await this.users.setUserCollectiviteRole({
+      userId,
+      collectiviteId: this.data.id,
+      role,
+    });
+  };
+
+  deleteUserCollectiviteRole = async (userIndex = 0) => {
+    const userId = this.getUserId(userIndex);
+    await this.users.deleteUserCollectiviteRole({
+      userId,
+      collectiviteId: this.data.id,
+    });
+  };
 
   // supprime tous les utilisateurs
   async cleanupUsers() {

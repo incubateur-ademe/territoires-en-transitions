@@ -8,7 +8,7 @@ import {
   getReferentielIdFromActionId,
   MesureAuditStatutEnum,
 } from '@tet/domain/referentiels';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { ResourceType } from '@tet/domain/users';
 import { and, asc, eq, inArray, sql } from 'drizzle-orm';
 import { GetAuditEnCoursRepository } from '../get-audit-en-cours/get-audit-en-cours.repository';
 import {
@@ -146,7 +146,7 @@ export class HandleMesureAuditStatutService {
     // Vérification des droits : auditeur sur l'audit courant
     await this.permissions.isAllowed(
       user,
-      PermissionOperationEnum['REFERENTIELS.AUDIT'],
+      'referentiels.labellisations.mutate_audit_statut',
       ResourceType.AUDIT,
       auditId
     );

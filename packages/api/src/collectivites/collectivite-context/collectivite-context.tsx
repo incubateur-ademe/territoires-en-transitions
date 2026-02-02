@@ -77,10 +77,9 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
   const toCollectiviteCurrent = (
     collectivite: CollectiviteRolesAndPermissions
   ): CollectiviteCurrent => {
-    const hasRoleAuditeur = hasCollectiviteRole(
-      collectivite,
-      AuditRole.AUDITEUR
-    );
+    const hasRoleAuditeur =
+      hasCollectiviteRole(collectivite, AuditRole.AUDITEUR) ||
+      hasCollectiviteRole(collectivite, AuditRole.AUDITEUR_AUDIT_NON_DEMARRE);
 
     return {
       ...collectivite,

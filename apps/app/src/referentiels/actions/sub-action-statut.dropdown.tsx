@@ -148,9 +148,11 @@ export const SubActionStatutDropdown = ({
         setLocalAvancement('detaille');
         setLocalAvancementDetaille(undefined);
         saveActionStatut({
-          ...argsToSave,
-          avancement: 'non_renseigne',
-          avancementDetaille: undefined,
+          actionStatut: {
+            ...argsToSave,
+            avancement: 'non_renseigne',
+            avancementDetaille: undefined,
+          },
         });
 
         setOpenSubActionModal(true);
@@ -158,7 +160,9 @@ export const SubActionStatutDropdown = ({
       } else {
         setLocalAvancement('detaille');
         setLocalAvancementDetaille(avancement_detaille);
-        saveActionStatut(argsToSave);
+        saveActionStatut({
+          actionStatut: argsToSave,
+        });
 
         setOpenScoreDetaille(true);
         openDetailledState?.setIsOpen(true);
@@ -170,11 +174,13 @@ export const SubActionStatutDropdown = ({
 
       // Sauvegarde du nouveau statut
       saveActionStatut({
-        ...argsToSave,
-        avancementDetaille:
-          actionDefinition.type === ActionTypeEnum.SOUS_ACTION
-            ? localAvancementDetaille
-            : avancement_detaille,
+        actionStatut: {
+          ...argsToSave,
+          avancementDetaille:
+            actionDefinition.type === ActionTypeEnum.SOUS_ACTION
+              ? localAvancementDetaille
+              : avancement_detaille,
+        },
       });
     }
   };

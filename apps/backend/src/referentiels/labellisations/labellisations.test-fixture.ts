@@ -1,22 +1,24 @@
 import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
-import { mesureAuditStatutTable } from '@tet/backend/referentiels/labellisations/handle-mesure-audit-statut/mesure-audit-statut.table';
+import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { eq } from 'drizzle-orm';
-import { onTestFinished } from 'vitest';
+import { and, eq } from 'drizzle-orm';
+import { cleanupReferentielActionStatutsAndLabellisations } from '../update-action-statut/referentiel-action-statut.test-fixture';
 import { labellisationDemandeTable } from './labellisation-demande.table';
 
 export async function createAudit({
   databaseService,
   collectiviteId,
   referentielId,
+  dateDebut = new Date('2025-01-01').toISOString(),
   clos = false,
   withDemande = false,
 }: {
   databaseService: DatabaseService;
   collectiviteId: number;
   referentielId: ReferentielId;
+  dateDebut?: string | null;
   clos?: boolean;
   withDemande?: boolean;
 }) {
@@ -40,33 +42,20 @@ export async function createAudit({
       collectiviteId,
       referentielId,
       demandeId: demande ? demande.id : null,
-      dateDebut: new Date('2025-01-01').toISOString(),
+      dateDebut: dateDebut,
       clos,
       dateFin: clos ? new Date().toISOString() : null,
     })
     .returning();
 
-  onTestFinished(async () => {
-    await databaseService.db
-      .delete(auditeurTable)
-      .where(eq(auditeurTable.auditId, audit.id));
+  const cleanup = async () => {
+    cleanupReferentielActionStatutsAndLabellisations(
+      databaseService,
+      collectiviteId
+    );
+  };
 
-    await databaseService.db
-      .delete(mesureAuditStatutTable)
-      .where(eq(mesureAuditStatutTable.auditId, audit.id));
-
-    await databaseService.db
-      .delete(auditTable)
-      .where(eq(auditTable.id, audit.id));
-
-    if (demande) {
-      await databaseService.db
-        .delete(labellisationDemandeTable)
-        .where(eq(labellisationDemandeTable.id, demande.id));
-    }
-  });
-
-  return { audit, demande };
+  return { audit, demande, cleanup };
 }
 
 export async function addAuditeurPermission({
@@ -74,7 +63,7 @@ export async function addAuditeurPermission({
   auditId,
   userId,
 }: {
-  databaseService: DatabaseService;
+  databaseService: DatabaseServiceInterface;
   auditId: number;
   userId: string;
 }) {
@@ -83,4 +72,18 @@ export async function addAuditeurPermission({
     auditId,
     auditeur: userId,
   });
+  console.log(`Auditeur ${userId} added to audit ${auditId}`);
+
+  return {
+    cleanup: async () => {
+      await databaseService.db
+        .delete(auditeurTable)
+        .where(
+          and(
+            eq(auditeurTable.auditId, auditId),
+            eq(auditeurTable.auditeur, userId)
+          )
+        );
+    },
+  };
 }
