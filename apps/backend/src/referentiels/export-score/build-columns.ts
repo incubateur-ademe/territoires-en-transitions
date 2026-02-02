@@ -409,10 +409,11 @@ function buildScoreRowUtils(
     // on force donc ici la valeur exportée pour corriger cela
     value = value && value > 1 ? 1 : value;
 
-    // le score en % "Faits/Programmé/Pas Fait” d'un axe/sous-axe/mesure est
+    // le score en % "Faits/Programmé/Pas Fait” d'un référentiel/axe/sous-axe/mesure est
     // calculé à partir des points "Faits/Programmé/Pas Fait” et du potentiel de
-    // cet axe/sous-axe/mesures
+    // cet référentiel/axe/sous-axe/mesures
     if (
+      scoreRow.actionType === ActionTypeEnum.REFERENTIEL ||
       scoreRow.actionType === ActionTypeEnum.AXE ||
       scoreRow.actionType === ActionTypeEnum.SOUS_AXE ||
       scoreRow.actionType === ActionTypeEnum.ACTION
@@ -448,10 +449,11 @@ function buildScoreRowUtils(
     // valeur en point (résultat initial pour la formule)
     const value = score[`point${type}`] ?? null;
 
-    // les points "Faits/Programmé/Pas Fait" de l'axe/sous-axe/mesure sont la
+    // les points "Faits/Programmé/Pas Fait" de référentiel/l'axe/sous-axe/mesure sont la
     // somme des points "Faits/Programmé/Pas Fait" des
-    // sous-axes/mesures/sous-mesures
+    // axes/sous-axes/mesures/sous-mesures
     if (
+      scoreRow.actionType === ActionTypeEnum.REFERENTIEL ||
       scoreRow.actionType === ActionTypeEnum.AXE ||
       scoreRow.actionType === ActionTypeEnum.SOUS_AXE ||
       scoreRow.actionType === ActionTypeEnum.ACTION
