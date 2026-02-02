@@ -80,6 +80,42 @@ describe('Referentiels scoring routes', () => {
       ])
     );
 
+    // vérifie le total du référentiel
+    const row8 = ws?.getRow(8);
+    expect(row8?.values).toEqual([
+      undefined,
+      'Total',
+      '',
+      undefined,
+      '',
+      500,
+      500,
+      {
+        formula: 'G9+G71+G151+G261+G307',
+      },
+      {
+        formula: 'IFERROR(G8/F8,"")',
+      },
+      {
+        formula: 'I9+I71+I151+I261+I307',
+      },
+      {
+        formula: 'IFERROR(I8/F8,"")',
+      },
+      {
+        formula: 'K9+K71+K151+K261+K307',
+      },
+      {
+        formula: 'IFERROR(K8/F8,"")',
+      },
+      '',
+      '',
+      '',
+      '',
+      undefined,
+      '',
+    ]);
+
     // vérifie un axe
     const row9 = ws?.getRow(9);
     expect(row9?.values).toEqual([
@@ -166,7 +202,7 @@ describe('Referentiels scoring routes', () => {
     ]);
 
     // vérifie la taille
-    const expectedExportSize = 54.51;
+    const expectedExportSize = 55.1;
     const exportFileSize = parseInt(
       responseSnapshotExport.headers['content-length']
     );
@@ -251,6 +287,43 @@ Pourcentage indicatif Fait en 2020 de 100% calculé si 300 kg/hab en 2020 (sourc
     expect(rowIndex1).toBeGreaterThan(0);
     const nextRow = firstRows?.[(rowIndex1 || 0) + 1];
     expect((nextRow?.values as CellValue[])?.[1]).toEqual('1.2.3.2.2');
+
+    // vérifie le total du référentiel
+    const row8 = ws?.getRow(8);
+    expect(row8?.values).toEqual([
+      undefined,
+      'Total',
+      '',
+      undefined,
+      '',
+      500,
+      496,
+      {
+        formula: 'G9+G300+G519+G724+G980+G1117',
+      },
+      {
+        formula: 'IFERROR(G8/F8,"")',
+      },
+      {
+        formula: 'I9+I300+I519+I724+I980+I1117',
+      },
+      {
+        formula: 'IFERROR(I8/F8,"")',
+      },
+      {
+        formula: 'K9+K300+K519+K724+K980+K1117',
+      },
+      {
+        formula: 'IFERROR(K8/F8,"")',
+      },
+      '',
+      '',
+      undefined,
+      '',
+      '',
+      undefined,
+      '',
+    ]);
 
     // vérifie un axe
     const row9 = ws?.getRow(9);
