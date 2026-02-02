@@ -2752,61 +2752,35 @@ test("Fetch avec parentsId combiné avec d'autres filtres", async () => {
 test('Fetch avec onlyChildren liste toutes les sous-fiches mais exclut les fiches parentes', async () => {
   const caller = router.createCaller({ user: yoloDodo });
 
-  const [parentFiche1] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Parent 1 onlyChildren',
-      collectiviteId: COLLECTIVITE_ID,
-    })
-    .returning();
-
-  const [parentFiche2] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Parent 2 onlyChildren',
-      collectiviteId: COLLECTIVITE_ID,
-    })
-    .returning();
-
-  const [subFiche1] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Sous-fiche Parent 1 onlyChildren',
-      collectiviteId: COLLECTIVITE_ID,
-      parentId: parentFiche1.id,
-    })
-    .returning();
-
-  const [subFiche2] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Sous-fiche Parent 2 onlyChildren',
-      collectiviteId: COLLECTIVITE_ID,
-      parentId: parentFiche2.id,
-    })
-    .returning();
-
-  const [ficheSansParent] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Fiche sans parent onlyChildren',
-      collectiviteId: COLLECTIVITE_ID,
-    })
-    .returning();
-
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionTable)
-      .where(
-        inArray(ficheActionTable.id, [
-          subFiche1.id,
-          subFiche2.id,
-          parentFiche1.id,
-          parentFiche2.id,
-          ficheSansParent.id,
-        ])
-      );
+  const { ficheIds } = await withOnTestFinished(createFiches)({
+    caller,
+    ficheInputs: [
+      { titre: 'Parent 1 onlyChildren', collectiviteId: COLLECTIVITE_ID },
+      { titre: 'Parent 2 onlyChildren', collectiviteId: COLLECTIVITE_ID },
+    ],
   });
+  const [parentFiche1Id, parentFiche2Id] = ficheIds;
+
+  const { ficheIds: subFicheIds } = await withOnTestFinished(createFiches)({
+    caller,
+    ficheInputs: [
+      {
+        titre: 'Sous-fiche Parent 1 onlyChildren',
+        collectiviteId: COLLECTIVITE_ID,
+        parentId: parentFiche1Id,
+      },
+      {
+        titre: 'Sous-fiche Parent 2 onlyChildren',
+        collectiviteId: COLLECTIVITE_ID,
+        parentId: parentFiche2Id,
+      },
+      {
+        titre: 'Fiche sans parent onlyChildren',
+        collectiviteId: COLLECTIVITE_ID,
+      },
+    ],
+  });
+  const [subFiche1Id, subFiche2Id, ficheSansParentId] = subFicheIds;
 
   // Avec onlyChildren, seules les sous-fiches doivent apparaître
   const { data: fichesOnlyChildren } = await caller.plans.fiches.listFiches({
@@ -2818,14 +2792,14 @@ test('Fetch avec onlyChildren liste toutes les sous-fiches mais exclut les fiche
 
   expect(fichesOnlyChildren).toContainEqual(
     expect.objectContaining({
-      id: subFiche1.id,
+      id: subFiche1Id,
       titre: 'Sous-fiche Parent 1 onlyChildren',
     })
   );
 
   expect(fichesOnlyChildren).toContainEqual(
     expect.objectContaining({
-      id: subFiche2.id,
+      id: subFiche2Id,
       titre: 'Sous-fiche Parent 2 onlyChildren',
     })
   );
@@ -2833,20 +2807,20 @@ test('Fetch avec onlyChildren liste toutes les sous-fiches mais exclut les fiche
   // Les fiches parentes ne doivent pas apparaître
   expect(fichesOnlyChildren).not.toContainEqual(
     expect.objectContaining({
-      id: parentFiche1.id,
+      id: parentFiche1Id,
     })
   );
 
   expect(fichesOnlyChildren).not.toContainEqual(
     expect.objectContaining({
-      id: parentFiche2.id,
+      id: parentFiche2Id,
     })
   );
 
   // Les fiches sans parent ne doivent pas apparaître
   expect(fichesOnlyChildren).not.toContainEqual(
     expect.objectContaining({
-      id: ficheSansParent.id,
+      id: ficheSansParentId,
     })
   );
 });
@@ -2854,52 +2828,37 @@ test('Fetch avec onlyChildren liste toutes les sous-fiches mais exclut les fiche
 test('Fetch avec onlyChildren et parentsId liste uniquement les sous-fiches des parents spécifiés', async () => {
   const caller = router.createCaller({ user: yoloDodo });
 
-  const [parentFiche1] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Parent 1 onlyChildren parentsId',
-      collectiviteId: COLLECTIVITE_ID,
-    })
-    .returning();
-
-  const [parentFiche2] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Parent 2 onlyChildren parentsId',
-      collectiviteId: COLLECTIVITE_ID,
-    })
-    .returning();
-
-  const [subFiche1] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Sous-fiche Parent 1 onlyChildren parentsId',
-      collectiviteId: COLLECTIVITE_ID,
-      parentId: parentFiche1.id,
-    })
-    .returning();
-
-  const [subFiche2] = await db.db
-    .insert(ficheActionTable)
-    .values({
-      titre: 'Sous-fiche Parent 2 onlyChildren parentsId',
-      collectiviteId: COLLECTIVITE_ID,
-      parentId: parentFiche2.id,
-    })
-    .returning();
-
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionTable)
-      .where(
-        inArray(ficheActionTable.id, [
-          subFiche1.id,
-          subFiche2.id,
-          parentFiche1.id,
-          parentFiche2.id,
-        ])
-      );
+  const { ficheIds } = await withOnTestFinished(createFiches)({
+    caller,
+    ficheInputs: [
+      {
+        titre: 'Parent 1 onlyChildren parentsId',
+        collectiviteId: COLLECTIVITE_ID,
+      },
+      {
+        titre: 'Parent 2 onlyChildren parentsId',
+        collectiviteId: COLLECTIVITE_ID,
+      },
+    ],
   });
+  const [parentFiche1Id, parentFiche2Id] = ficheIds;
+
+  const { ficheIds: subFicheIds } = await withOnTestFinished(createFiches)({
+    caller,
+    ficheInputs: [
+      {
+        titre: 'Sous-fiche Parent 1 onlyChildren parentsId',
+        collectiviteId: COLLECTIVITE_ID,
+        parentId: parentFiche1Id,
+      },
+      {
+        titre: 'Sous-fiche Parent 2 onlyChildren parentsId',
+        collectiviteId: COLLECTIVITE_ID,
+        parentId: parentFiche2Id,
+      },
+    ],
+  });
+  const [suFiche1Id, subFiche2Id] = subFicheIds;
 
   // Avec onlyChildren et parentsId pour parentFiche1, seules ses sous-fiches doivent apparaître
   const { data: fichesOnlyChildrenParentsId } =
@@ -2907,13 +2866,13 @@ test('Fetch avec onlyChildren et parentsId liste uniquement les sous-fiches des 
       collectiviteId: COLLECTIVITE_ID,
       filters: {
         onlyChildren: true,
-        parentsId: [parentFiche1.id],
+        parentsId: [parentFiche1Id],
       },
     });
 
   expect(fichesOnlyChildrenParentsId).toContainEqual(
     expect.objectContaining({
-      id: subFiche1.id,
+      id: suFiche1Id,
       titre: 'Sous-fiche Parent 1 onlyChildren parentsId',
     })
   );
@@ -2921,21 +2880,21 @@ test('Fetch avec onlyChildren et parentsId liste uniquement les sous-fiches des 
   // Le parent ne doit pas apparaître
   expect(fichesOnlyChildrenParentsId).not.toContainEqual(
     expect.objectContaining({
-      id: parentFiche1.id,
+      id: parentFiche1Id,
     })
   );
 
   // L'autre parent ne doit pas apparaître
   expect(fichesOnlyChildrenParentsId).not.toContainEqual(
     expect.objectContaining({
-      id: parentFiche2.id,
+      id: parentFiche2Id,
     })
   );
 
   // Les sous-fiches des autres parents ne doivent pas apparaître
   expect(fichesOnlyChildrenParentsId).not.toContainEqual(
     expect.objectContaining({
-      id: subFiche2.id,
+      id: subFiche2Id,
     })
   );
 });
@@ -2943,30 +2902,20 @@ test('Fetch avec onlyChildren et parentsId liste uniquement les sous-fiches des 
 test('Fetch avec onlyChildren ignore withChildren', async () => {
   const caller = router.createCaller({ user: yoloDodo });
 
-  const [parentFiche] = await db.db
-    .insert(ficheActionTable)
-    .values({
+  const parentFicheId = await createFiche({
+    caller,
+    ficheInput: {
       titre: 'Parent onlyChildren withChildren',
       collectiviteId: COLLECTIVITE_ID,
-    })
-    .returning();
-
-  const [subFiche] = await db.db
-    .insert(ficheActionTable)
-    .values({
+    },
+  });
+  const subFicheId = await createFiche({
+    caller,
+    ficheInput: {
       titre: 'Sous-fiche onlyChildren withChildren',
       collectiviteId: COLLECTIVITE_ID,
-      parentId: parentFiche.id,
-    })
-    .returning();
-
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, subFiche.id));
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, parentFiche.id));
+      parentId: parentFicheId,
+    },
   });
 
   // Avec onlyChildren seul
@@ -2995,27 +2944,27 @@ test('Fetch avec onlyChildren ignore withChildren', async () => {
   // Seule la sous-fiche doit apparaître dans les deux cas
   expect(fichesOnlyChildren).toContainEqual(
     expect.objectContaining({
-      id: subFiche.id,
+      id: subFicheId,
       titre: 'Sous-fiche onlyChildren withChildren',
     })
   );
 
   expect(fichesOnlyChildren).not.toContainEqual(
     expect.objectContaining({
-      id: parentFiche.id,
+      id: parentFicheId,
     })
   );
 
   expect(fichesOnlyChildrenWithChildren).toContainEqual(
     expect.objectContaining({
-      id: subFiche.id,
+      id: subFicheId,
       titre: 'Sous-fiche onlyChildren withChildren',
     })
   );
 
   expect(fichesOnlyChildrenWithChildren).not.toContainEqual(
     expect.objectContaining({
-      id: parentFiche.id,
+      id: parentFicheId,
     })
   );
 });
