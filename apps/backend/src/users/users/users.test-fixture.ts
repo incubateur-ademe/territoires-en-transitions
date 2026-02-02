@@ -205,3 +205,57 @@ export async function addAndEnableUserSuperAdminMode({
     cleanup,
   };
 }
+
+export async function setUserCollectiviteRole(
+  { db }: DatabaseServiceInterface,
+  {
+    userId,
+    collectiviteId,
+    role,
+  }: {
+    userId: string;
+    collectiviteId: number;
+    role: CollectiviteRole;
+  }
+) {
+  await db
+    .insert(utilisateurCollectiviteAccessTable)
+    .values([
+      {
+        userId,
+        collectiviteId,
+        accessLevel: role,
+        isActive: true,
+      },
+    ])
+    .onConflictDoUpdate({
+      target: [
+        utilisateurCollectiviteAccessTable.userId,
+        utilisateurCollectiviteAccessTable.collectiviteId,
+      ],
+      set: {
+        accessLevel: role,
+        isActive: true,
+      },
+    });
+
+  console.log(`User ${userId} collectivite ${collectiviteId} role ${role} set`);
+}
+
+export async function deleteUserCollectiviteRole(
+  { db }: DatabaseServiceInterface,
+  { userId, collectiviteId }: { userId: string; collectiviteId: number }
+) {
+  await db
+    .delete(utilisateurCollectiviteAccessTable)
+    .where(
+      and(
+        eq(utilisateurCollectiviteAccessTable.userId, userId),
+        eq(utilisateurCollectiviteAccessTable.collectiviteId, collectiviteId)
+      )
+    )
+    .returning()
+    .then(([u]) => u);
+
+  console.log(`User ${userId} collectivite ${collectiviteId} role deleted`);
+}

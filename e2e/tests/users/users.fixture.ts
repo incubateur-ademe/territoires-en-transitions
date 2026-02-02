@@ -2,9 +2,11 @@ import test, { BrowserContext } from '@playwright/test';
 import { AppRouter } from '@tet/api';
 import {
   addTestUser,
+  deleteUserCollectiviteRole,
+  setUserCollectiviteRole,
   TestUserArgs,
 } from '@tet/backend/users/users/users.test-fixture';
-import { Dcp } from '@tet/domain/users';
+import { CollectiviteRole, Dcp } from '@tet/domain/users';
 import { TRPCClient } from '@trpc/client';
 import assert from 'assert';
 import { partition } from 'es-toolkit';
@@ -70,11 +72,48 @@ class UserFactory {
     return userFixture;
   };
 
-  getUser = async (index = 0) => {
-    if (index < 0 || index >= this.usersFixtureCreated.length) {
-      throw new Error(`User index ${index} out of bounds`);
+  setUserCollectiviteRole = async ({
+    userId,
+    collectiviteId,
+    role,
+  }: {
+    userId: string;
+    collectiviteId: number;
+    role: CollectiviteRole;
+  }) => {
+    await setUserCollectiviteRole(databaseService, {
+      userId,
+      collectiviteId,
+      role,
+    });
+  };
+
+  deleteUserCollectiviteRole = async ({
+    userId,
+    collectiviteId,
+  }: {
+    userId: string;
+    collectiviteId: number;
+  }) => {
+    await deleteUserCollectiviteRole(databaseService, {
+      userId,
+      collectiviteId,
+    });
+  };
+
+  getUser = (userIndex = 0) => {
+    if (userIndex < 0 || userIndex >= this.usersFixtureCreated.length) {
+      throw new Error(`User index ${userIndex} out of bounds`);
     }
-    return this.usersFixtureCreated[index];
+    return this.usersFixtureCreated[userIndex];
+  };
+
+  getUserById = (userId: string): UserFixture => {
+    const user = this.usersFixtureCreated.find((u) => u.data.id === userId);
+    if (!user) {
+      throw new Error(`User with id ${userId} not found`);
+    }
+    return user;
   };
 
   removeSome = async (userIds: string[]) => {
@@ -99,10 +138,23 @@ export const testWithUsers = test.extend<{
   users: Users;
 }>({
   users: async ({ context }, use) => {
-    const { addUser, removeSome, getUser, removeAll } = new UserFactory(
-      context
-    );
-    await use({ addUser, removeSome, getUser });
+    const {
+      addUser,
+      removeSome,
+      getUser,
+      getUserById,
+      removeAll,
+      setUserCollectiviteRole,
+      deleteUserCollectiviteRole,
+    } = new UserFactory(context);
+    await use({
+      addUser,
+      removeSome,
+      getUser,
+      getUserById,
+      setUserCollectiviteRole,
+      deleteUserCollectiviteRole,
+    });
     await removeAll();
   },
 });

@@ -1,19 +1,19 @@
-import { useAudit, useIsAuditeur } from '@/app/referentiels/audits/useAudit';
+import { useIsAuditeur } from '@/app/referentiels/audits/useAudit';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { DBClient, useSupabase } from '@tet/api';
+import { DBClient, useSupabase, useTRPC } from '@tet/api';
 import {
   useCollectiviteId,
   useCurrentCollectivite,
 } from '@tet/api/collectivites';
 import {
-  ActionStatutCreate,
   StatutAvancement,
-  getReferentielIdFromActionId,
+  canUpdateActionStatutWithoutPermissionCheck,
 } from '@tet/domain/referentiels';
 import { PermissionOperationEnum } from '@tet/domain/users';
-import { omit } from 'es-toolkit';
-import { objectToCamel, objectToSnake } from 'ts-case-convert';
-import { useScore, useSnapshotComputeAndUpdate } from '../../use-snapshot';
+import { objectToCamel } from 'ts-case-convert';
+import { useLabellisationParcours } from '../../labellisations/useLabellisationParcours';
+import { useReferentielId } from '../../referentiel-context';
+import { useScore } from '../../use-snapshot';
 
 /**
  * Charge le statut d'une action
@@ -68,35 +68,30 @@ async function fetchCollectiviteActionStatuts(
 /**
  * Met à jour le statut d'une action
  */
-// TODO-SNAPSHOT
 export const useSaveActionStatut = () => {
   const collectiviteId = useCollectiviteId();
+  const referentielId = useReferentielId();
   const queryClient = useQueryClient();
-  const supabase = useSupabase();
 
-  const { computeScoreAndUpdateCurrentSnapshot } =
-    useSnapshotComputeAndUpdate();
+  const trpc = useTRPC();
 
-  const { isPending, mutate: saveActionStatut } = useMutation({
-    mutationFn: async (statut: ActionStatutCreate) => {
-      return supabase
-        .from('action_statut')
-        .upsert([objectToSnake(omit(statut, ['modifiedAt', 'modifiedBy']))], {
-          onConflict: 'collectivite_id,action_id',
+  const { isPending, mutate: saveActionStatut } = useMutation(
+    trpc.referentiels.actions.updateStatut.mutationOptions({
+      onSuccess: () => {
+        // Invalidate cache for all action statuts
+        queryClient.invalidateQueries({
+          queryKey: ['action_statut', collectiviteId],
         });
-    },
-    onSuccess: (_, statut) => {
-      // Invalidate cache for all action statuts
-      queryClient.invalidateQueries({
-        queryKey: ['action_statut', collectiviteId],
-      });
 
-      computeScoreAndUpdateCurrentSnapshot({
-        collectiviteId,
-        referentielId: getReferentielIdFromActionId(statut.actionId),
-      });
-    },
-  });
+        queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.snapshots.getCurrent.queryKey({
+            collectiviteId,
+            referentielId,
+          }),
+        });
+      },
+    })
+  );
 
   return {
     isLoading: isPending,
@@ -136,20 +131,27 @@ export const useTasksStatus = (tasksIds: string[]) => {
  * Détermine si l'utilisateur a le droit de modifier le statut d'une action
  */
 export const useEditActionStatutIsDisabled = (actionId: string) => {
-  const { hasCollectivitePermission } = useCurrentCollectivite();
-  const { data: audit } = useAudit();
+  const { hasCollectivitePermission, collectiviteId } =
+    useCurrentCollectivite();
+  const referentielId = useReferentielId();
+  const parcours = useLabellisationParcours({
+    collectiviteId: collectiviteId,
+    referentielId: referentielId,
+  });
   const isAuditeur = useIsAuditeur();
 
   const score = useScore(actionId);
-
-  if (!score || score.desactive) {
+  if (!score) {
     return true;
   }
 
-  if (audit) {
-    // Pendant un audit, on ne pas modifier si on n'est pas auditeur ou que l'audit est validé
-    // TODO: passer l'edit côté backend et vérifier ça
-    return !isAuditeur || audit.valide;
+  const canUpdateResult = canUpdateActionStatutWithoutPermissionCheck({
+    actions: [{ actionId, desactive: score.desactive }],
+    parcoursStatus: parcours?.status,
+    isAuditeur,
+  });
+  if (!canUpdateResult.canUpdate) {
+    return true;
   }
 
   return !hasCollectivitePermission(

@@ -91,11 +91,17 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     'collectivites.tags.mutate',
     'collectivites.documents.create',
   ],
+  [AuditRole.AUDITEUR_AUDIT_NON_DEMARRE]: [
+    ...collectiviteLecturePermissions,
+
+    'referentiels.labellisations.start_audit',
+  ],
   [AuditRole.AUDITEUR]: [
     ...collectiviteLecturePermissions,
 
-    'referentiels.audit',
     'referentiels.mutate',
+    'referentiels.labellisations.validate_audit',
+    'referentiels.labellisations.mutate_action_audit_statut',
 
     'collectivites.documents.create',
     'indicateurs.indicateurs.create',

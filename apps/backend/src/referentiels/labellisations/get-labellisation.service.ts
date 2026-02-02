@@ -4,6 +4,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
+import { createdByNom, dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
@@ -28,6 +29,7 @@ import { and, desc, eq, getTableColumns, lte, not, sql } from 'drizzle-orm';
 import { ObjectToSnake, objectToSnake } from 'ts-case-convert';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { auditTable } from './audit.table';
+import { auditeurTable } from './auditeur.table';
 import { cotTable } from './cot.table';
 import {
   EtoileActionConditionDefinition,
@@ -43,6 +45,10 @@ type TLabellisationAndDemandeAndAudit = {
   > | null;
   audit: ObjectToSnake<LabellisationAudit> | null;
   demande: ObjectToSnake<LabellisationDemande> | null;
+  auditeurs: {
+    userId: string;
+    nom: string;
+  }[];
   isCot: boolean;
   conditionFichiers: ConditionFichiers;
 };
@@ -160,6 +166,10 @@ export class GetLabellisationService {
   ): Promise<{
     audit: ObjectToSnake<LabellisationAudit>;
     demande: ObjectToSnake<LabellisationDemande>;
+    auditeurs: {
+      userId: string;
+      nom: string;
+    }[];
   }> {
     return this.db.transaction(async (tx) => {
       // Function labellisation.current_audit
@@ -187,6 +197,15 @@ export class GetLabellisationService {
       if (!currentAudit) {
         throw new InternalServerErrorException(`Audit non trouvé`);
       }
+
+      const auditeursResult = await tx
+        .select({
+          userId: auditeurTable.auditeur,
+          nom: createdByNom,
+        })
+        .from(auditeurTable)
+        .leftJoin(dcpTable, eq(auditeurTable.auditeur, dcpTable.id))
+        .where(eq(auditeurTable.auditId, currentAudit.id));
 
       // Function labellisation.current_demande
       let currentDemande: LabellisationDemande | null = null;
@@ -250,6 +269,7 @@ export class GetLabellisationService {
           sujet: currentDemande.sujet,
           associated_collectivite_id: currentDemande.associatedCollectiviteId,
         },
+        auditeurs: auditeursResult,
       };
     });
   }
@@ -296,16 +316,18 @@ export class GetLabellisationService {
       referentielId,
     });
 
-    const { audit, demande } = await this.getOrCreateCurrentAuditAndDemande(
-      collectiviteId,
-      referentielId
-    );
+    const { audit, demande, auditeurs } =
+      await this.getOrCreateCurrentAuditAndDemande(
+        collectiviteId,
+        referentielId
+      );
 
     const conditionFichiers = await this.getConditionFichiers(demande.id);
 
     return {
       audit,
       demande,
+      auditeurs,
       labellisation: currentLabellisation,
       conditionFichiers: conditionFichiers ?? {
         referentiel: referentielId,
@@ -496,11 +518,17 @@ from s_etoile s
       // referentiel: 'cae',
     };
 
-    const { labellisation, demande, audit, isCot, conditionFichiers } =
-      await this.getLabellisationAndDemandeAndAudit({
-        collectiviteId,
-        referentielId,
-      });
+    const {
+      labellisation,
+      demande,
+      audit,
+      auditeurs,
+      isCot,
+      conditionFichiers,
+    } = await this.getLabellisationAndDemandeAndAudit({
+      collectiviteId,
+      referentielId,
+    });
 
     const etoileCible = await this.getEtoileCible({
       currentEtoile: labellisation?.etoiles,
@@ -545,7 +573,7 @@ from s_etoile s
       labellisation,
       demande,
       audit,
-
+      auditeurs,
       score,
 
       isCot,

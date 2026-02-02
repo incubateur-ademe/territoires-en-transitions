@@ -10,24 +10,20 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   ActionStatutCreate,
   actionStatutSchemaCreate,
+  canUpdateActionStatutWithoutPermissionCheck,
+  findActionById,
   getReferentielIdFromActionId,
   ScoreSnapshot,
 } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { getErrorMessage } from '@tet/domain/utils';
 import { sql } from 'drizzle-orm';
 import z from 'zod';
 import { isErrorWithCause } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
+import { GetLabellisationService } from '../labellisations/get-labellisation.service';
 import { actionStatutTable } from '../models/action-statut.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
-
-export const upsertActionStatutRequestSchema = z.object({
-  actionStatut: actionStatutSchemaCreate,
-});
-
-export type UpsertActionStatutRequest = z.infer<
-  typeof upsertActionStatutRequestSchema
->;
 
 export const upsertActionStatutsRequestSchema = z.object({
   actionStatuts: z.array(actionStatutSchemaCreate).min(1),
@@ -44,7 +40,8 @@ export class UpdateActionStatutService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
-    private readonly snapshotsService: SnapshotsService
+    private readonly snapshotsService: SnapshotsService,
+    private readonly getLabellisationService: GetLabellisationService
   ) {}
 
   async upsertActionStatuts(
@@ -67,7 +64,6 @@ export class UpdateActionStatutService {
       collectiviteId
     );
 
-    // TODO: check parcours
     const seenActionIds = new Set<string>();
     for (const actionStatut of actionStatuts) {
       const key = `${actionStatut.collectiviteId}:${actionStatut.actionId}`;
@@ -77,7 +73,6 @@ export class UpdateActionStatutService {
         );
       }
       seenActionIds.add(key);
-      actionStatut.modifiedBy = user.id;
       const actionReferentielId = getReferentielIdFromActionId(
         actionStatut.actionId
       );
@@ -93,10 +88,51 @@ export class UpdateActionStatutService {
       }
     }
 
+    const parcours =
+      await this.getLabellisationService.getParcoursLabellisation({
+        collectiviteId,
+        referentielId,
+      });
+    const currentScore = await this.snapshotsService.get(
+      collectiviteId,
+      referentielId
+    );
+    const isAuditeur = parcours.auditeurs.some(
+      (auditeur) => auditeur.userId === user.id
+    );
+
+    const actionsWithDesactive = actionStatuts.map((actionStatut) => {
+      try {
+        return {
+          actionId: actionStatut.actionId,
+          desactive: findActionById(
+            currentScore.scoresPayload.scores,
+            actionStatut.actionId
+          ).score.desactive,
+        };
+      } catch (error) {
+        throw new BadRequestException(getErrorMessage(error));
+      }
+    });
+
+    const canUpdateResult = canUpdateActionStatutWithoutPermissionCheck({
+      parcoursStatus: parcours.status,
+      actions: actionsWithDesactive,
+      isAuditeur: isAuditeur,
+    });
+    if (!canUpdateResult.canUpdate) {
+      throw new BadRequestException(canUpdateResult.reason);
+    }
+
     try {
       await this.databaseService.db
         .insert(actionStatutTable)
-        .values(actionStatuts)
+        .values(
+          actionStatuts.map((actionStatut) => ({
+            ...actionStatut,
+            modifiedBy: user.id,
+          }))
+        )
         .onConflictDoUpdate({
           target: [
             actionStatutTable.collectiviteId,

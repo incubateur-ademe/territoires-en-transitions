@@ -10,7 +10,7 @@ test.describe('Request labellisation collectivité non COT', () => {
       userArgs: { autoLogin: true },
     });
 
-    page.goto('/');
+    await page.goto('/');
   });
 
   test('Request labellisation 1ère étoile CAE pas possible si référentiel non rempli', async ({

@@ -24,7 +24,9 @@ export const PermissionOperations = [
   'referentiels.read_confidentiel',
   'referentiels.mutate',
   'referentiels.labellisations.request',
-  'referentiels.audit',
+  'referentiels.labellisations.start_audit',
+  'referentiels.labellisations.validate_audit',
+  'referentiels.labellisations.mutate_action_audit_statut',
   'referentiels.discussions.read',
   'referentiels.discussions.mutate',
 

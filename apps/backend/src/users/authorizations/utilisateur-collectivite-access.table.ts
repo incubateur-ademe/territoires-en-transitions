@@ -1,6 +1,13 @@
 import { createdAt, modifiedAt } from '@tet/backend/utils/column.utils';
 import { CollectiviteRole } from '@tet/domain/users';
-import { boolean, integer, pgTable, serial, uuid } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  integer,
+  pgTable,
+  serial,
+  uniqueIndex,
+  uuid,
+} from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { invitationTable } from '../models/invitation.table';
 import { collectiviteRolePgEnum } from './roles/collectivite-role.column';
@@ -20,5 +27,8 @@ export const utilisateurCollectiviteAccessTable = pgTable(
       .notNull()
       .default(CollectiviteRole.LECTURE),
     invitationId: uuid('invitation_id').references(() => invitationTable.id),
-  }
+  },
+  (t) => [
+    uniqueIndex('unique_user_collectivite').on(t.userId, t.collectiviteId),
+  ]
 );

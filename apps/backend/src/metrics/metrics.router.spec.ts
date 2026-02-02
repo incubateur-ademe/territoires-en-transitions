@@ -33,9 +33,11 @@ describe('Route de récupération des métriques', () => {
         user: youlouDoudouUser,
       });
 
-      await auditeurCaller.referentiels.labellisations.startAudit({
-        auditId: parcours.audit.id,
-      });
+      if (!parcours.audit.date_debut) {
+        await auditeurCaller.referentiels.labellisations.startAudit({
+          auditId: parcours.audit.id,
+        });
+      }
 
       await auditeurCaller.referentiels.labellisations.validateAudit({
         auditId: parcours.audit.id,

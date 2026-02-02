@@ -104,7 +104,12 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
 
   const canMutateReferentiel = hasCollectivitePermission('referentiels.mutate');
-  const canAuditReferentiel = hasCollectivitePermission('referentiels.audit');
+  const canStartAuditReferentiel = hasCollectivitePermission(
+    'referentiels.labellisations.start_audit'
+  );
+  const canValidateAuditReferentiel = hasCollectivitePermission(
+    'referentiels.labellisations.validate_audit'
+  );
 
   const { parcoursLabellisation } = props;
   const { parcours, status, isAuditeur, peutCommencerAudit } =
@@ -140,7 +145,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
         />
       )}
 
-      {canAuditReferentiel && audit && peutCommencerAudit && (
+      {canStartAuditReferentiel && audit && peutCommencerAudit && (
         <StartAuditButton auditId={audit.id} />
       )}
 
@@ -150,7 +155,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
         </p>
       )}
 
-      {canAuditReferentiel && audit && status === 'audit_en_cours' && (
+      {canValidateAuditReferentiel && audit && status === 'audit_en_cours' && (
         <ValiderAuditButton auditId={audit.id} demandeId={audit.demande_id} />
       )}
     </div>

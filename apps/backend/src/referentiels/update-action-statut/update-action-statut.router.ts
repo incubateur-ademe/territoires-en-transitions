@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
+import { actionStatutSchemaCreate } from '@tet/domain/referentiels';
 import {
   UpdateActionStatutService,
-  upsertActionStatutRequestSchema,
   upsertActionStatutsRequestSchema,
 } from './update-action-statut.service';
 
@@ -15,9 +15,9 @@ export class UpdateActionStatutRouter {
 
   router = this.trpc.router({
     updateStatut: this.trpc.authedProcedure
-      .input(upsertActionStatutRequestSchema)
+      .input(actionStatutSchemaCreate)
       .mutation(({ input, ctx }) => {
-        return this.service.upsertActionStatuts([input.actionStatut], ctx.user);
+        return this.service.upsertActionStatuts([input], ctx.user);
       }),
 
     updateStatuts: this.trpc.authedProcedure

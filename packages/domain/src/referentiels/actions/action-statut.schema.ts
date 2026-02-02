@@ -13,10 +13,14 @@ export const actionStatutSchema = z.object({
 
 export type ActionStatut = z.infer<typeof actionStatutSchema>;
 
-export const actionStatutSchemaCreate = z.partial(actionStatutSchema, {
-  avancementDetaille: true,
-  modifiedBy: true,
-  modifiedAt: true,
-});
+export const actionStatutSchemaCreate = z.omit(
+  z.partial(actionStatutSchema, {
+    avancementDetaille: true,
+  }),
+  {
+    modifiedBy: true,
+    modifiedAt: true,
+  }
+);
 
 export type ActionStatutCreate = z.infer<typeof actionStatutSchemaCreate>;

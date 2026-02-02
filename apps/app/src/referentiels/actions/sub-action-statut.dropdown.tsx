@@ -158,7 +158,9 @@ export const SubActionStatutDropdown = ({
       } else {
         setLocalAvancement('detaille');
         setLocalAvancementDetaille(avancement_detaille);
-        saveActionStatut(argsToSave);
+        saveActionStatut({
+          ...argsToSave,
+        });
 
         setOpenScoreDetaille(true);
         openDetailledState?.setIsOpen(true);
