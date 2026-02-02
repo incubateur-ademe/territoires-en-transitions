@@ -311,5 +311,5 @@ describe('Calcul de trajectoire SNBC', () => {
 
   afterAll(async () => {
     await app.close();
-  }, 15000);
+  }, 30000);
 });

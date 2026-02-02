@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
-import { createAudit } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
+import { createAuditWithOnTestFinished } from '@tet/backend/referentiels/referentiels.test-fixture';
+
 import {
   getAuthUser,
   getTestApp,
@@ -38,7 +39,7 @@ describe('ValidateAuditRouter', () => {
   test('un auditeur peut valider un audit', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
-    const { audit } = await createAudit({
+    const { audit } = await createAuditWithOnTestFinished({
       databaseService: db,
       collectiviteId: RANDOM_COLLECTIVITE_ID,
       referentielId: ReferentielIdEnum.CAE,

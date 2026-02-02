@@ -15,6 +15,7 @@ import {
 import { Dcp } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { eq } from 'drizzle-orm';
+import { DatabaseError } from 'pg';
 import { bibliothequeFichierTable } from '../documents/models/bibliotheque-fichier.table';
 import { collectiviteTable } from '../shared/models/collectivite.table';
 
@@ -70,19 +71,33 @@ export async function addTestCollectivite(
 
     const cleanup = async () => {
       if (collectiviteId) {
-        console.log(`Cleanup collectivite ${collectiviteId}`);
-        await databaseService.db
-          .delete(bibliothequeFichierTable)
-          .where(eq(bibliothequeFichierTable.collectiviteId, collectiviteId));
-        await databaseService.db
-          .delete(collectiviteBucketTable)
-          .where(eq(collectiviteBucketTable.collectiviteId, collectiviteId));
-        await databaseService.db
-          .delete(cotTable)
-          .where(eq(cotTable.collectiviteId, collectiviteId));
-        await databaseService.db
-          .delete(collectiviteTable)
-          .where(eq(collectiviteTable.id, collectiviteId));
+        try {
+          console.log(`Cleanup collectivite ${collectiviteId}`);
+          await databaseService.db
+            .delete(bibliothequeFichierTable)
+            .where(eq(bibliothequeFichierTable.collectiviteId, collectiviteId));
+          await databaseService.db
+            .delete(collectiviteBucketTable)
+            .where(eq(collectiviteBucketTable.collectiviteId, collectiviteId));
+          await databaseService.db
+            .delete(cotTable)
+            .where(eq(cotTable.collectiviteId, collectiviteId));
+          await databaseService.db
+            .delete(collectiviteTable)
+            .where(eq(collectiviteTable.id, collectiviteId));
+        } catch (error) {
+          if (error instanceof DatabaseError) {
+            console.error(
+              `Database error: ${error.code} (${error.constraint}) - ${error.detail}`
+            );
+          }
+          console.error(
+            `Error cleaning up collectivite ${collectiviteId}: ${getErrorMessage(
+              error
+            )}`
+          );
+          throw error;
+        }
       }
     };
     return { collectivite: result, cleanup };

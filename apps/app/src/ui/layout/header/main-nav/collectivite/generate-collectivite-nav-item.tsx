@@ -2,9 +2,8 @@ import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import {
-  AuditRole,
   CollectiviteRolesAndPermissions,
-  hasCollectiviteRole,
+  isUserAuditeur,
   UserRolesAndPermissions,
 } from '@tet/domain/users';
 import { NavItem, Tooltip } from '@tet/ui';
@@ -67,7 +66,7 @@ const CollectiviteWithBadge = ({
       </Tooltip>
       <BadgeNiveauAcces
         acces={collectivite.role}
-        isAuditeur={hasCollectiviteRole(collectivite, AuditRole.AUDITEUR)}
+        isAuditeur={isUserAuditeur(collectivite)}
       />
     </div>
   );

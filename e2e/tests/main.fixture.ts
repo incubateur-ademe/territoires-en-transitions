@@ -5,6 +5,7 @@ import { testWithPersonneTags } from './collectivite/tags/personne-tags.fixture'
 import { testWithIndicateurs } from './indicateurs/indicateurs.fixture';
 import { testWithFiches } from './plans/fiches/fiches.fixture';
 import { testWithPlans } from './plans/plans/plans.fixture';
+import { testWithReferentiels } from './referentiels/referentiels.fixture';
 
 export const test = mergeTests(
   testWithCollectivites,
@@ -12,5 +13,6 @@ export const test = mergeTests(
   testWithDiscussions,
   testWithPlans,
   testWithFiches,
-  testWithIndicateurs
+  testWithIndicateurs,
+  testWithReferentiels
 );

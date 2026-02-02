@@ -1,6 +1,7 @@
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { StatutAvancement } from '@tet/domain/referentiels';
 import { Checkbox } from '@tet/ui';
+import { omit } from 'es-toolkit';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { AVANCEMENT_DETAILLE_PAR_STATUT } from '../../utils';
@@ -82,7 +83,7 @@ const AvancementDetailleSliderAutoSave = ({
       });
     } else {
       saveActionStatut({
-        ...statut,
+        ...(statut ? omit(statut, ['modifiedAt', 'modifiedBy']) : {}),
         actionId,
         collectiviteId,
         avancement: 'non_renseigne',

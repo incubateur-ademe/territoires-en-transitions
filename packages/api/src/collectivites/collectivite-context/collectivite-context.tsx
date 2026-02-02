@@ -1,11 +1,10 @@
 'use client';
 
 import {
-  AuditRole,
   CollectiviteRole,
   CollectiviteRolesAndPermissions,
-  hasCollectiviteRole,
   hasPermission,
+  isUserAuditeur,
   PermissionOperation,
   UserWithRolesAndPermissions,
 } from '@tet/domain/users';
@@ -77,11 +76,6 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
   const toCollectiviteCurrent = (
     collectivite: CollectiviteRolesAndPermissions
   ): CollectiviteCurrent => {
-    const hasRoleAuditeur = hasCollectiviteRole(
-      collectivite,
-      AuditRole.AUDITEUR
-    );
-
     return {
       ...collectivite,
 
@@ -91,7 +85,7 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
       isSimplifiedView:
         collectivite.role === CollectiviteRole.EDITION_FICHES_INDICATEURS,
 
-      isRoleAuditeur: hasRoleAuditeur,
+      isRoleAuditeur: isUserAuditeur(collectivite),
 
       hasCollectivitePermission: (permission: PermissionOperation) =>
         hasPermission(user, permission, {

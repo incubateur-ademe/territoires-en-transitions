@@ -134,6 +134,13 @@ export function isUserVisitor(
   return true;
 }
 
+export function isUserAuditeur(user: CollectiviteRolesAndPermissions): boolean {
+  return (
+    hasCollectiviteRole(user, AuditRole.AUDITEUR) ||
+    hasCollectiviteRole(user, AuditRole.AUDITEUR_AUDIT_NON_DEMARRE)
+  );
+}
+
 export const UserPermissionRule = {
   hasPermission,
   hasRole,
