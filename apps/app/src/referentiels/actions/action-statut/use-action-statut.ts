@@ -147,9 +147,10 @@ export const useEditActionStatutIsDisabled = (actionId: string) => {
     return true;
   }
 
-  if (audit && isAuditeur) {
-    // Si auditeur, on peut modifier sauf si l'audit est validé
-    return audit.valide;
+  if (audit) {
+    // Pendant un audit, on ne pas modifier si on n'est pas auditeur ou que l'audit est validé
+    // TODO: passer l'edit côté backend et vérifier ça
+    return !isAuditeur || audit.valide;
   }
 
   return !hasPermission(
