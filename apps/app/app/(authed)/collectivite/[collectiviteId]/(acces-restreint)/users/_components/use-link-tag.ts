@@ -13,6 +13,9 @@ export const useLinkTag = () => {
             collectiviteId: variables.collectiviteId,
           }),
         }),
+      meta: {
+        success: 'Modification enregistrée',
+      },
     })
   );
 };
