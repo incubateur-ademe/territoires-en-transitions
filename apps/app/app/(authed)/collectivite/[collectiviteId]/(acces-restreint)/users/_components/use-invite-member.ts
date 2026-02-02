@@ -2,6 +2,7 @@ import {
   makeCollectiviteAccueilUrl,
   makeInvitationLandingPath,
 } from '@/app/app/paths';
+import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useMutation } from '@tanstack/react-query';
 import { useUserSession } from '@tet/api/users';
 import { getAuthHeaders } from '@tet/api/utils/supabase/get-auth-headers';
@@ -29,6 +30,7 @@ export const useSendInvitation = (
   user: UserWithRolesAndPermissions
 ) => {
   const session = useUserSession();
+  const { setToast } = useToastContext();
 
   return useMutation({
     mutationFn: async ({
@@ -48,11 +50,11 @@ export const useSendInvitation = (
       // envoi le mail d'invitation
       const invitePath = `${process.env.NEXT_PUBLIC_AUTH_URL}/invite`;
       const { prenom, nom, email: emailFrom } = user;
-      const result = await fetch(invitePath, {
+      return fetch(invitePath, {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          ...(await getAuthHeaders(session)),
+          ...getAuthHeaders(session),
         },
         body: JSON.stringify({
           to: email,
@@ -62,21 +64,17 @@ export const useSendInvitation = (
           urlType,
         }),
       });
-      if (!result.ok) {
-        return {
-          error:
-            "L'invitation à rejoindre la collectivité n'a pas pu être envoyée",
-          sent: false as const,
-        };
-      }
-      return {
-        email,
-        sent: true as const,
-      };
     },
-
+    onSuccess: async (data, variables) => {
+      if (data.ok && variables.invitationId) {
+        setToast(
+          'success',
+          "L'invitation à rejoindre la collectivité a été envoyée"
+        );
+      }
+    },
     meta: {
-      disableToast: true,
+      error: "L'invitation à rejoindre la collectivité n'a pas pu être envoyée",
     },
   });
 };

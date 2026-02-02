@@ -10,7 +10,7 @@ export default function TagsPage() {
   const user = useUser();
   const collectivite = useCurrentCollectivite();
 
-  const { data: sendData, mutate: sendInvitation } = useSendInvitation(
+  const { mutate: sendInvitation } = useSendInvitation(
     collectivite.collectiviteId,
     collectivite.nom,
     user
@@ -31,7 +31,6 @@ export default function TagsPage() {
         <TagsListeTable
           collectiviteId={collectiviteId}
           currentUserAccess={role ?? 'lecture'}
-          sendData={sendData}
           sendInvitation={sendInvitation}
         />
       </div>

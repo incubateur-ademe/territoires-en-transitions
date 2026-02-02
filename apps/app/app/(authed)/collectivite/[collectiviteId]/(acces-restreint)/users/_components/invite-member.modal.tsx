@@ -1,4 +1,3 @@
-import { useToastContext } from '@/app/utils/toast/toast-context';
 import {
   CollectiviteCurrent,
   useCurrentCollectivite,
@@ -7,16 +6,13 @@ import { useUser } from '@tet/api/users';
 import { UserWithRolesAndPermissions } from '@tet/domain/users';
 import { Modal } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
-import { useEffect, useState } from 'react';
 import { InviteMemberForm } from './invite-member.form';
-import { InvitationData, useCreateInvitation } from './use-create-invitation';
-import { SendInvitationData } from './use-invite-member';
+import { useCreateInvitation } from './use-create-invitation';
 
 type InvitationModalProps = {
   openState: OpenState;
   collectivite: CollectiviteCurrent;
   currentUser: UserWithRolesAndPermissions;
-  sendData?: SendInvitationData;
   tagIds?: number[];
 };
 
@@ -24,45 +20,15 @@ const InvitationModal = ({
   openState,
   collectivite,
   currentUser,
-  sendData,
   tagIds,
 }: InvitationModalProps) => {
   const { collectiviteId, collectiviteNom, role } = collectivite;
 
-  const [data, setData] = useState<InvitationData>();
-
   const { mutate: createInvitation } = useCreateInvitation(
     collectiviteId,
     collectiviteNom,
-    currentUser,
-    (data) => setData(data)
+    currentUser
   );
-
-  const { setToast } = useToastContext();
-
-  // affichage des notifications après l'ajout ou l'envoi de l'invitation
-  useEffect(() => {
-    if (!data) return;
-    if (data.added) {
-      setToast(
-        'success',
-        'Nouveau membre ajouté avec succès à la collectivité !'
-      );
-    } else if (data.invitationId) {
-      setToast('success', mailSentMessage(collectiviteNom, data.email));
-    } else if (data.error) {
-      setToast('info', data.error);
-    }
-  }, [data?.added, data?.error]);
-
-  // affichage de la notification après le renvoi d'une invitation
-  useEffect(() => {
-    if (sendData?.sent && sendData?.email) {
-      setToast('success', mailSentMessage(collectiviteNom, sendData.email));
-    } else if (sendData?.error) {
-      setToast('error', sendData.error);
-    }
-  }, [sendData?.sent, sendData?.email, sendData?.error]);
 
   return (
     <>
@@ -96,7 +62,6 @@ const InvitationModal = ({
 
 type InvitationModalConnectedProps = {
   openState: OpenState;
-  sendData?: SendInvitationData;
   tagIds?: number[];
 };
 
@@ -112,7 +77,3 @@ export const InviteMemberModal = (props: InvitationModalConnectedProps) => {
     />
   );
 };
-
-// formate le message affiché après l'envoi d'un email
-const mailSentMessage = (collectiviteNom: string, email: string): string =>
-  `L'invitation à rejoindre la collectivité ${collectiviteNom} a bien été envoyée à ${email}`;
