@@ -4,6 +4,7 @@ import { bibliothequeFichierTable } from '@tet/backend/collectivites/documents/m
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { financeurTagTable } from '@tet/backend/collectivites/tags/financeur-tag.table';
+import { instanceGouvernanceTable } from '@tet/backend/collectivites/tags/instance-gouvernance.table';
 import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
 import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-tag.table';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
@@ -93,6 +94,7 @@ import { Result } from '../../../utils/result.type';
 import { ficheActionEtapeTable } from '../fiche-action-etape/fiche-action-etape.table';
 import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
+import { ficheActionInstanceGouvernanceTable } from '../shared/models/fiche-action-instance-gouvernance';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import { ficheRecursiveAxeView } from '../shared/models/fiche-recursive-axe.view';
 import { checkCompletion } from './completion';
@@ -118,7 +120,10 @@ export default class ListFichesService {
     private readonly listFichesBudgetRepository: ListFichesBudgetRepository
   ) {}
 
-  private getFicheActionSousThematiquesQuery(ficheIds: number[], tx?: Transaction) {
+  private getFicheActionSousThematiquesQuery(
+    ficheIds: number[],
+    tx?: Transaction
+  ) {
     const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionSousThematiqueTable.ficheId,
@@ -211,7 +216,10 @@ export default class ListFichesService {
       .as('ficheActionIndicateurs');
   }
 
-  private getFicheActionReferentTagsQuery(ficheIds: number[], tx?: Transaction) {
+  private getFicheActionReferentTagsQuery(
+    ficheIds: number[],
+    tx?: Transaction
+  ) {
     const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionReferentTable.ficheId,
@@ -245,7 +253,10 @@ export default class ListFichesService {
       .as('ficheActionReferents');
   }
 
-  private getFicheActionEffetsAttendusQuery(ficheIds: number[], tx?: Transaction) {
+  private getFicheActionEffetsAttendusQuery(
+    ficheIds: number[],
+    tx?: Transaction
+  ) {
     const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionEffetAttenduTable.ficheId,
@@ -273,7 +284,10 @@ export default class ListFichesService {
       .as('ficheActionEffetsAttendus');
   }
 
-  private getFicheActionFinanceurTagsQuery(ficheIds: number[], tx?: Transaction) {
+  private getFicheActionFinanceurTagsQuery(
+    ficheIds: number[],
+    tx?: Transaction
+  ) {
     const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionFinanceurTagTable.ficheId,
@@ -334,7 +348,10 @@ export default class ListFichesService {
       .as('ficheActionLibreTags');
   }
 
-  private getFicheActionStructureTagsQuery(ficheIds: number[], tx?: Transaction) {
+  private getFicheActionStructureTagsQuery(
+    ficheIds: number[],
+    tx?: Transaction
+  ) {
     const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionStructureTagTable.ficheId,
@@ -362,7 +379,42 @@ export default class ListFichesService {
       .as('ficheActionStructureTags');
   }
 
-  private getFicheActionPartenaireTagsQuery(ficheIds: number[], tx?: Transaction) {
+  private getFicheActionInstanceGouvernanceQuery(ficheIds: number[]) {
+    const query = this.databaseService.db
+      .select({
+        ficheId: ficheActionInstanceGouvernanceTable.ficheId,
+        instanceGouvernance: sql<
+          {
+            id: number;
+            nom: string;
+            collectiviteId: number;
+            createdAt: string | null;
+            createdBy: string | null;
+          }[]
+        >`json_agg(to_jsonb(${instanceGouvernanceTable}.*))`.as(
+          'instance_de_gouvernance'
+        ),
+      })
+      .from(ficheActionInstanceGouvernanceTable)
+      .innerJoin(
+        instanceGouvernanceTable,
+        eq(
+          instanceGouvernanceTable.id,
+          ficheActionInstanceGouvernanceTable.instanceGouvernanceId
+        )
+      );
+
+    query.where(inArray(ficheActionInstanceGouvernanceTable.ficheId, ficheIds));
+
+    return query
+      .groupBy(ficheActionInstanceGouvernanceTable.ficheId)
+      .as('ficheActionInstanceGouvernance');
+  }
+
+  private getFicheActionPartenaireTagsQuery(
+    ficheIds: number[],
+    tx?: Transaction
+  ) {
     const query = (tx || this.databaseService.db)
       .select({
         ficheId: ficheActionPartenaireTagTable.ficheId,
@@ -696,16 +748,21 @@ export default class ListFichesService {
     ficheId: number,
     addCollectiviteData?: boolean,
     user?: AuthUser,
-    tx?: Transaction,
+    tx?: Transaction
   ): Promise<
     Result<FicheWithRelations | FicheWithRelationsAndCollectivite, string>
   > {
     this.logger.log(`Récupération de la fiche action ${ficheId}`);
 
-    const { data: fichesAction } = await this.listFichesQuery(null, {
-      ficheIds: [ficheId],
-      withChildren: true,
-    }, undefined, tx);
+    const { data: fichesAction } = await this.listFichesQuery(
+      null,
+      {
+        ficheIds: [ficheId],
+        withChildren: true,
+      },
+      undefined,
+      tx
+    );
 
     if (!fichesAction?.length) {
       return {
@@ -715,7 +772,12 @@ export default class ListFichesService {
     }
     const ficheAction = fichesAction[0];
     if (user) {
-      await this.fichePermissionService.canReadFicheObject(ficheAction, user, undefined, tx);
+      await this.fichePermissionService.canReadFicheObject(
+        ficheAction,
+        user,
+        undefined,
+        tx
+      );
     }
 
     if (addCollectiviteData) {
@@ -807,7 +869,8 @@ export default class ListFichesService {
     if (filters && Object.keys(filters).length > 0) {
       const filterSummary = this.formatLogs(filters);
       this.logger.log(
-        `Récupération des fiches action pour la collectivité ${collectiviteId} ${filterSummary ? `(filtre(s) appliqué(s): ${filterSummary})` : ''
+        `Récupération des fiches action pour la collectivité ${collectiviteId} ${
+          filterSummary ? `(filtre(s) appliqué(s): ${filterSummary})` : ''
         }`
       );
     } else {
@@ -883,24 +946,44 @@ export default class ListFichesService {
     const ficheIds = ficheIdQueryResult.map((fiche) => fiche.id);
     const count = ficheIdQueryResult[0]?.count ?? 0;
 
-    const ficheActionPartenaireTags =
-      this.getFicheActionPartenaireTagsQuery(ficheIds, tx);
-    const ficheActionThematiques =
-      this.getFicheActionThematiquesQuery(ficheIds, tx);
-    const ficheActionSousThematiques =
-      this.getFicheActionSousThematiquesQuery(ficheIds, tx);
-    const ficheActionFinanceurTags =
-      this.getFicheActionFinanceurTagsQuery(ficheIds, tx);
-    const ficheActionIndicateurs =
-      this.getFicheActionIndicateursQuery(ficheIds, tx);
+    const ficheActionPartenaireTags = this.getFicheActionPartenaireTagsQuery(
+      ficheIds,
+      tx
+    );
+    const ficheActionThematiques = this.getFicheActionThematiquesQuery(
+      ficheIds,
+      tx
+    );
+    const ficheActionSousThematiques = this.getFicheActionSousThematiquesQuery(
+      ficheIds,
+      tx
+    );
+    const ficheActionFinanceurTags = this.getFicheActionFinanceurTagsQuery(
+      ficheIds,
+      tx
+    );
+    const ficheActionIndicateurs = this.getFicheActionIndicateursQuery(
+      ficheIds,
+      tx
+    );
     const ficheActionReferent = this.getFicheActionReferentTagsQuery(ficheIds);
-    const ficheActionEffetsAttendus =
-      this.getFicheActionEffetsAttendusQuery(ficheIds, tx);
-    const ficheActionStructureTags =
-      this.getFicheActionStructureTagsQuery(ficheIds, tx);
-    const ficheActionLibreTags = this.getFicheActionLibreTagsQuery(ficheIds, tx);
+    const ficheActionEffetsAttendus = this.getFicheActionEffetsAttendusQuery(
+      ficheIds,
+      tx
+    );
+    const ficheActionStructureTags = this.getFicheActionStructureTagsQuery(
+      ficheIds,
+      tx
+    );
+    const ficheActionLibreTags = this.getFicheActionLibreTagsQuery(
+      ficheIds,
+      tx
+    );
     const ficheActionPilotes = this.getFicheActionPilotesQuery(ficheIds, tx);
     const ficheActionServices = this.getFicheActionServicesQuery(ficheIds, tx);
+    this.getFicheActionStructureTagsQuery(ficheIds);
+    const ficheActionInstanceGouvernance =
+      this.getFicheActionInstanceGouvernanceQuery(ficheIds);
     const ficheActionAxes = this.getFicheActionAxesQuery(
       ficheIds,
       filters?.withAxesAncestors,
@@ -947,6 +1030,7 @@ export default class ListFichesService {
         indicateurs: ficheActionIndicateurs.indicateurs,
         sousThematiques: ficheActionSousThematiques.sousThematiques,
         structures: ficheActionStructureTags.structureTags,
+        instanceGouvernance: ficheActionInstanceGouvernance.instanceGouvernance,
         financeurs: ficheActionFinanceurTags.financeurTags,
         effetsAttendus: ficheActionEffetsAttendus.effetsAttendus,
         referents: ficheActionReferent.referents,
@@ -982,6 +1066,10 @@ export default class ListFichesService {
       .leftJoin(
         ficheActionStructureTags,
         eq(ficheActionStructureTags.ficheId, ficheActionTable.id)
+      )
+      .leftJoin(
+        ficheActionInstanceGouvernance,
+        eq(ficheActionInstanceGouvernance.ficheId, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionFinanceurTags,
@@ -1591,6 +1679,15 @@ export default class ListFichesService {
       )
     );
 
+    conditions.push(
+      this.getHasIdentifiedLinkedEntityCondition(
+        ficheActionInstanceGouvernanceTable,
+        ficheActionInstanceGouvernanceTable.ficheId,
+        ficheActionInstanceGouvernanceTable.instanceGouvernanceId,
+        filters.instanceGouvernanceIds
+      )
+    );
+
     const servicePiloteConditions: (SQLWrapper | SQL | undefined)[] = [];
     servicePiloteConditions.push(
       this.getHasNoLinkedEntityCondition(
@@ -1820,7 +1917,8 @@ export default class ListFichesService {
   }> {
     const filterSummary = filters ? this.formatLogs(filters) : '';
     this.logger.log(
-      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${filterSummary ? `(${filterSummary})` : ''
+      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} ${
+        filterSummary ? `(${filterSummary})` : ''
       }`
     );
     const { data, count } = await this.listFichesQuery(
