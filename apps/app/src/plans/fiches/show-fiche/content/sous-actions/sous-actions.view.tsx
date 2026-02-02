@@ -14,18 +14,15 @@ export const SousActionsView = () => {
   const { mutate: createSousAction, isPending: isLoadingCreate } =
     useCreateSousAction(fiche.id);
 
-  const { fiches: sousActions, isLoading } = useListFiches(
-    collectivite.collectiviteId,
-    {
-      filters: {
-        parentsId: [fiche.id],
-      },
-      queryOptions: {
-        sort: [{ field: 'created_at', direction: 'asc' }],
-        limit: 'all',
-      },
-    }
-  );
+  const { fiches: sousActions, isLoading } = useListFiches(collectiviteId, {
+    filters: {
+      parentsId: [fiche.id],
+    },
+    queryOptions: {
+      sort: [{ field: 'created_at', direction: 'asc' }],
+      limit: 'all',
+    },
+  });
 
   const isEmpty = sousActions.length === 0;
 

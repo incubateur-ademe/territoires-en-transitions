@@ -21,10 +21,10 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
 
-  const { count: countSousActions } = useListFiches(
-    collectivite.collectiviteId,
-    { filters: { parentsId: [fiche.id] }, queryOptions: { limit: 1, page: 1 } }
-  );
+  const { count: countSousActions } = useListFiches(collectiviteId, {
+    filters: { parentsId: [fiche.id] },
+    queryOptions: { limit: 1, page: 1 },
+  });
 
   const widgetCommunsFlagEnabled = useFeatureFlagEnabled(
     'is-widget-communs-enabled'
