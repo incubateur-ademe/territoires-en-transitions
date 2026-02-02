@@ -8,24 +8,19 @@ import {
   DEPRECATED_TRow,
 } from '@tet/ui';
 import classNames from 'classnames';
-import {
-  SendInvitationArgs,
-  SendInvitationData,
-} from '../../../_components/use-invite-member';
+import { SendInvitationArgs } from '../../../_components/use-invite-member';
 import { Tag, useListTags } from '../../../_components/use-list-tags';
 import TagsListeTableRow from './tags-liste-table-row';
 
 export type TagsListeTableProps = {
   collectiviteId: number;
   currentUserAccess: CollectiviteRole;
-  sendData?: SendInvitationData;
   sendInvitation: (args: SendInvitationArgs) => void;
 };
 
 export const TagsListeTable = ({
   collectiviteId,
   currentUserAccess,
-  sendData,
   sendInvitation,
 }: TagsListeTableProps) => {
   const { data, isLoading, refetch } = useListTags(collectiviteId);
@@ -90,7 +85,6 @@ export const TagsListeTable = ({
                   tag={tag}
                   collectiviteId={collectiviteId}
                   currentUserAccess={currentUserAccess}
-                  sendData={sendData}
                   sendInvitation={sendInvitation}
                   refetch={refetch}
                 />

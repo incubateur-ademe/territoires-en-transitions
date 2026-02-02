@@ -13,10 +13,7 @@ import {
 import classNames from 'classnames';
 import { useState } from 'react';
 import { InviteMemberModal } from '../../../_components/invite-member.modal';
-import {
-  SendInvitationArgs,
-  SendInvitationData,
-} from '../../../_components/use-invite-member';
+import { SendInvitationArgs } from '../../../_components/use-invite-member';
 import { Tag } from '../../../_components/use-list-tags';
 import LinkTagToAccountModal from './link-tag-to-account-modal';
 
@@ -24,7 +21,6 @@ type TagsListeTableRowProps = {
   tag: Tag;
   collectiviteId: number;
   currentUserAccess: CollectiviteRole;
-  sendData?: SendInvitationData;
   sendInvitation: (args: SendInvitationArgs) => void;
   refetch: () => void;
 };
@@ -33,7 +29,6 @@ const TagsListeTableRow = ({
   tag,
   collectiviteId,
   currentUserAccess,
-  sendData,
   sendInvitation,
   refetch,
 }: TagsListeTableRowProps) => {
@@ -152,7 +147,6 @@ const TagsListeTableRow = ({
           isOpen: isInviteModalOpen,
           setIsOpen: setIsInviteModalOpen,
         }}
-        sendData={sendData}
         tagIds={[tag.tagId]}
       />
 
