@@ -12,7 +12,9 @@ type Props = {
 };
 
 export const SousActionCellDate = ({ sousAction }: Props) => {
-  const { isReadOnly } = useCurrentCollectivite();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+
+  const canMutate = hasCollectivitePermission('plans.fiches.update');
 
   const initialDate = sousAction.dateFin ?? '';
 
@@ -31,16 +33,17 @@ export const SousActionCellDate = ({ sousAction }: Props) => {
 
   return (
     <TableCell
-      canEdit={!isReadOnly}
+      canEdit={canMutate}
       edit={{
         onClose: () => {
-          hasChanged && isValidDate &&
-          updateSousAction({
-            ficheId: sousAction.id,
-            ficheFields: {
-              dateFin: value,
-            },
-          })
+          hasChanged &&
+            isValidDate &&
+            updateSousAction({
+              ficheId: sousAction.id,
+              ficheFields: {
+                dateFin: value,
+              },
+            });
         },
         renderOnEdit: () => (
           <Input
@@ -64,7 +67,7 @@ export const SousActionCellDate = ({ sousAction }: Props) => {
           {format(new Date(sousAction.dateFin), 'dd/MM/yyyy')}
         </span>
       ) : (
-        <div className="text-center text-grey-6">{isReadOnly ? '' : '–'}</div>
+        <div className="text-center text-grey-6">{canMutate ? '–' : ''}</div>
       )}
     </TableCell>
   );

@@ -84,8 +84,7 @@ const Modules = () => {
       match: (m) =>
         m.type === 'fiche_action.list' &&
         m.defaultKey === 'sous-actions-dont-je-suis-pilote',
-      isVisibleWithPermissions: (permissions) =>
-        hasPermission(permissions, 'plans.fiches.read'),
+      isVisible: hasCollectivitePermission('plans.fiches.read_confidentiel'),
       render: () => {
         if (noPlanAndCanCreatePlan) {
           // We already display the placeholder to create a plan,

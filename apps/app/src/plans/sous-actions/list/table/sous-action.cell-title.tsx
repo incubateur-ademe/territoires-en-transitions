@@ -12,7 +12,9 @@ type Props = {
 };
 
 export const SousActionCellTitle = ({ sousAction }: Props) => {
-  const { isReadOnly } = useCurrentCollectivite();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+
+  const canMutate = hasCollectivitePermission('plans.fiches.update');
 
   const [value, setValue] = useState(sousAction.titre);
 
@@ -25,7 +27,7 @@ export const SousActionCellTitle = ({ sousAction }: Props) => {
   return (
     <TableCell
       className="align-top"
-      canEdit={!isReadOnly}
+      canEdit={canMutate}
       edit={{
         onClose: () =>
           hasChanged &&

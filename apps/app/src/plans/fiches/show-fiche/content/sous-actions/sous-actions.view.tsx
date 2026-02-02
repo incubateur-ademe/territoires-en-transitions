@@ -6,7 +6,8 @@ import { useListFiches } from '../../../list-all-fiches/data/use-list-fiches';
 import { useFicheContext } from '../../context/fiche-context';
 
 export const SousActionsView = () => {
-  const collectivite = useCurrentCollectivite();
+  const { hasCollectivitePermission, collectiviteId } =
+    useCurrentCollectivite();
 
   const { fiche } = useFicheContext();
 
@@ -28,6 +29,8 @@ export const SousActionsView = () => {
 
   const isEmpty = sousActions.length === 0;
 
+  const canMutate = hasCollectivitePermission('plans.fiches.update');
+
   return (
     <div className="p-2 bg-white rounded-lg border border-grey-3 overflow-x-auto">
       <SousActionTable
@@ -36,10 +39,10 @@ export const SousActionsView = () => {
         isEmpty={isEmpty}
         createSousAction={createSousAction}
         hiddenColumns={['parentId']}
-        isReadOnly={collectivite.isReadOnly}
+        isReadOnly={!canMutate}
         isLoadingNewRow={isLoadingCreate}
       />
-      {!isEmpty && !collectivite.isReadOnly && (
+      {!isEmpty && canMutate && (
         <Button
           className="m-4"
           icon="add-line"
