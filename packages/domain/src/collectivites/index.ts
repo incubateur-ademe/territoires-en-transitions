@@ -19,6 +19,7 @@ export * from './documents/preuve.schema';
 export * from './export-connect.schema';
 export * from './financeur-tag.schema';
 export * from './identite-collectivite.schema';
+export * from './instance-gouvernance.schema';
 export * from './libre-tag.schema';
 export * from './membre.schema';
 export * from './partenaire-tag.schema';

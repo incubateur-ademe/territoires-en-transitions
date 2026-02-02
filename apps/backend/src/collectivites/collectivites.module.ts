@@ -24,6 +24,9 @@ import DocumentService from './documents/document.service';
 import { DocumentsRouter } from './documents/documents.router';
 import { ListCategoriesRouter } from './handle-categories/list-categories.router';
 import ListCategoriesService from './handle-categories/list-categories.service';
+import { InstanceGouvernanceRepository } from './handle-instance-gouvernance/handle-instance-gouvernance.repository';
+import { InstanceGouvernanceRouter } from './handle-instance-gouvernance/handle-instance-gouvernance.router';
+import { InstanceGouvernanceService } from './handle-instance-gouvernance/handle-instance-gouvernance.service';
 import { ListCollectivitesRouter } from './list-collectivites/list-collectivites.router';
 import ListCollectivitesService from './list-collectivites/list-collectivites.service';
 import { CollectiviteMembresRouter } from './membres/membres.router';
@@ -67,6 +70,9 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     DiscussionDomainService,
     DiscussionQueryService,
     ListDiscussionService,
+    InstanceGouvernanceRouter,
+    InstanceGouvernanceService,
+    InstanceGouvernanceRepository,
     {
       provide: Logger,
       useValue: new Logger('DiscussionApplicationService'),
@@ -101,6 +107,8 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     DiscussionRouter,
     DiscussionApplicationService,
     DiscussionDomainService,
+    InstanceGouvernanceRouter,
+    InstanceGouvernanceService,
   ],
   controllers: [CollectiviteController, DocumentController],
 })

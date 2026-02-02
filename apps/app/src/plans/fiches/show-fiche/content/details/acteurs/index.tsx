@@ -1,4 +1,5 @@
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { InstanceGouvernanceDropdown } from '@/app/plans/fiches/shared/dropdowns/instance-gouvernance.dropdown';
 import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
@@ -7,7 +8,7 @@ import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/Struct
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import { ficheActionParticipationOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Input, Select } from '@tet/ui';
+import { Select } from '@tet/ui';
 import { JSX, useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import FranceIcon from '../../../../../plans/components/france-icon.svg';
@@ -149,25 +150,14 @@ export const Acteurs = (): JSX.Element => {
           <InlineEditableItem
             icon="user-star-line"
             label={getFieldLabel('instanceGouvernance', field.value)}
-            value={field.value ?? undefined}
+            value={formatList(field.value, (t) => t.nom)}
             isReadonly={isReadonly}
-            renderOnEdit={({ openState }) => (
-              <Input
-                containerClassname="w-full"
-                type="text"
-                autoFocus
-                value={field.value ?? ''}
-                onChange={(e) => field.onChange(e.target.value || null)}
-                onBlur={() => openState.setIsOpen(false)}
-                onKeyDown={(evt) => {
-                  if (evt.key === 'Enter') {
-                    openState.setIsOpen(false);
-                  }
-                  if (evt.key === 'Escape') {
-                    openState.setIsOpen(false);
-                  }
-                }}
-                placeholder="Instance de gouvernance"
+            renderOnEdit={() => (
+              <InstanceGouvernanceDropdown
+                collectiviteId={fiche.collectiviteId}
+                values={field.value?.map((t) => t.id) ?? []}
+                onChange={(tags) => field.onChange(tags)}
+                ficheId={fiche.id}
               />
             )}
           />

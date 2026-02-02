@@ -91,6 +91,9 @@ export async function createTagResolver(
 
     const created = await createTag(name, tx);
     if (created.success) {
+      // Add the newly created tag to the local collection and update the Fuse index
+      tags.push({ ...created.data, collectiviteId });
+      searchEngine.setCollection(tags);
       return success(created.data);
     }
 

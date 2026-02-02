@@ -1,4 +1,5 @@
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
+import { InstanceGouvernanceDropdown } from '@/app/plans/fiches/shared/dropdowns/instance-gouvernance.dropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import { NoteYearsDropdown } from '@/app/ui/dropdownLists/ficheAction/notes/note-years.dropdown';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
@@ -17,6 +18,7 @@ import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropd
 import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { ListFichesRequestFilters as Filtres } from '@tet/domain/plans';
 import {
   Checkbox,
@@ -59,6 +61,7 @@ export const ToutesLesFichesFiltersForm = ({
   readonlyFilters?: Partial<FormFilters>;
   setFilters: (filters: Partial<FormFilters>) => void;
 }) => {
+  const collectiviteId = useCollectiviteId();
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
   const shareFicheEnabled = useShareFicheEnabled();
@@ -200,6 +203,20 @@ export const ToutesLesFichesFiltersForm = ({
                           : EMPTY_ARRAY_VALUE;
                       field.onChange(tagIds);
                     }}
+                  />
+                )}
+              />
+            </Field>
+            <Field title={getFilterLabel('instanceGouvernanceIds')}>
+              <Controller
+                name="instanceGouvernanceIds"
+                control={control}
+                render={({ field }) => (
+                  <InstanceGouvernanceDropdown
+                    collectiviteId={collectiviteId}
+                    values={field.value}
+                    onChange={(tags) => field.onChange(tags.map((t) => t.id))}
+                    canEditTags={false}
                   />
                 )}
               />

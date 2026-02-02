@@ -6,6 +6,7 @@ import { RecherchesRouter } from '@tet/backend/collectivites/recherches/recherch
 import { TrpcService } from '../utils/trpc/trpc.service';
 import { DocumentsRouter } from './documents/documents.router';
 import { ListCategoriesRouter } from './handle-categories/list-categories.router';
+import { InstanceGouvernanceRouter } from './handle-instance-gouvernance/handle-instance-gouvernance.router';
 import { ListCollectivitesRouter } from './list-collectivites/list-collectivites.router';
 import { CollectiviteMembresRouter } from './membres/membres.router';
 import { PersonnesRouter } from './personnes.router';
@@ -25,7 +26,8 @@ export class CollectivitesRouter {
     private readonly recherchesRouter: RecherchesRouter,
     private readonly personneTagRouter: PersonneTagRouter,
     private readonly importCollectiviteRelationsRouter: ImportCollectiviteRelationsRouter,
-    private readonly discussionRouter: DiscussionRouter
+    private readonly discussionRouter: DiscussionRouter,
+    private readonly instanceGouvernanceRouter: InstanceGouvernanceRouter
   ) {}
 
   router = this.trpc.router({
@@ -43,6 +45,7 @@ export class CollectivitesRouter {
     recherches: this.recherchesRouter.router,
     tags: {
       personnes: this.personneTagRouter.router,
+      instanceGouvernance: this.instanceGouvernanceRouter.router,
     },
   });
 }

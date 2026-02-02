@@ -184,6 +184,32 @@ describe('validateFiche', () => {
     });
   });
 
+  describe('Instance governance validation', () => {
+    it('should pass for a fiche with instance governance', async () => {
+      const fiche = createValidFiche({
+        instanceGouvernance: ['Comité de pilotage'],
+      });
+
+      const result = await validateFiche(fiche);
+
+      expect(result.success).toBe(true);
+    });
+
+    it('should pass for a fiche with multiple instance governance values', async () => {
+      const fiche = createValidFiche({
+        instanceGouvernance: [
+          'Comité de pilotage',
+          'Conseil municipal',
+          'Commission de suivi',
+        ],
+      });
+
+      const result = await validateFiche(fiche);
+
+      expect(result.success).toBe(true);
+    });
+  });
+
   describe('Multiple validation errors', () => {
     it('should return the first validation error encountered', async () => {
       const fiche = createValidFiche({
@@ -216,6 +242,7 @@ describe('validateFiche', () => {
         services: ['Service B'],
         financeurs: [{ nom: 'ADEME', montant: 25000 }],
         partenaires: ['Partenaire C'],
+        instanceGouvernance: ['Comité de pilotage', 'Conseil municipal'],
       });
 
       const result = await validateFiche(fiche);

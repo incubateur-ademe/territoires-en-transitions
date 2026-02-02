@@ -9,6 +9,7 @@ import { useTagsSuiviPersoListe } from '@/app/ui/dropdownLists/TagsSuiviPersoDro
 import { useGetThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useMemo } from 'react';
+import { useListInstanceGouvernanceTags } from '../../show-fiche/data/use-list-instance-gouvernance-tags';
 import { NOTES_OPTIONS } from './options';
 import { FilterKeys } from './types';
 
@@ -29,6 +30,8 @@ export const useFicheActionFiltersData = () => {
   const { data: structures } = useStructuresListe();
   const { data: partenaires } = usePartenairesListe();
   const { data: tags } = useTagsSuiviPersoListe();
+  const { instanceGouvernanceTags } =
+    useListInstanceGouvernanceTags(collectiviteId);
 
   const personneOptions = useMemo(() => {
     return (
@@ -97,6 +100,11 @@ export const useFicheActionFiltersData = () => {
         key: 'id',
         valueKey: 'nom',
       },
+      instanceGouvernanceIds: {
+        items: instanceGouvernanceTags,
+        key: 'id',
+        valueKey: 'nom',
+      },
       notes: {
         items: NOTES_OPTIONS,
         key: 'value',
@@ -112,6 +120,7 @@ export const useFicheActionFiltersData = () => {
       structures,
       partenaires,
       tags,
+      instanceGouvernanceTags,
     ]
   );
 

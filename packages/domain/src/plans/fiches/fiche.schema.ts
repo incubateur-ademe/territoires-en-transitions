@@ -47,10 +47,6 @@ export const ficheSchema = z.object({
     .nullable()
     .describe('Action se répète tous les ans'),
   calendrier: z.string().nullable().describe('Calendrier'),
-  instanceGouvernance: z
-    .string()
-    .nullable()
-    .describe('Instance de gouvernance'),
   participationCitoyenne: z
     .string()
     .nullable()
@@ -130,6 +126,10 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .nullable()
     .describe('Élu·e référent·e'),
   libreTags: z.array(tagSchema).nullable().describe('Tags personnalisés'),
+  instanceGouvernance: z
+    .array(tagSchema)
+    .nullable()
+    .describe('Instance de gouvernance'),
   financeurs: financeurSchema.array().nullable().describe('Financeurs'),
   sousThematiques: sousThematiqueSchema
     .array()
