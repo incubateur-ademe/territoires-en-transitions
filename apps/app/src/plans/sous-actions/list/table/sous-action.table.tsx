@@ -101,28 +101,30 @@ export const SousActionTable = ({
   }, [isReadOnly, table, hiddenColumns]);
 
   return (
-    <ReactTable
-      table={table}
-      isLoading={isLoading}
-      nbLoadingRows={nbLoadingRows}
-      isLoadingNewRow={isLoadingNewRow}
-      isEmpty={isEmpty}
-      emptyCard={{
-        picto: (props) => <PictoAction {...props} />,
-        title: 'Aucune sous-action pour le moment',
-        description:
-          'Décomposez votre action en tâches concrètes pour faciliter son suivi et son pilotage.',
-        actions: isReadOnly
-          ? undefined
-          : [
-              {
-                onClick: () => createSousAction?.(),
-                children: 'Ajouter une sous-action',
-                icon: 'add-line',
-              },
-            ],
-        ...emptyCard,
-      }}
-    />
+    <div className="max-2xl:overflow-x-auto">
+      <ReactTable
+        table={table}
+        isLoading={isLoading}
+        nbLoadingRows={nbLoadingRows}
+        isLoadingNewRow={isLoadingNewRow}
+        isEmpty={isEmpty}
+        emptyCard={{
+          picto: (props) => <PictoAction {...props} />,
+          title: 'Aucune sous-action pour le moment',
+          description:
+            'Décomposez votre action en tâches concrètes pour faciliter son suivi et son pilotage.',
+          actions: isReadOnly
+            ? undefined
+            : [
+                {
+                  onClick: () => createSousAction?.(),
+                  children: 'Ajouter une sous-action',
+                  icon: 'add-line',
+                },
+              ],
+          ...emptyCard,
+        }}
+      />
+    </div>
   );
 };
