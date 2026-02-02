@@ -28,7 +28,10 @@ export const ScoreRatioBadge = ({
   const roundPointPotentiel = roundTo(pointPotentiel, 1);
 
   return (
-    <div className={classNames('flex', className)}>
+    <div
+      data-test={`scoreRatio-${actionId}`}
+      className={classNames('flex', className)}
+    >
       {pointPotentiel === 0 ? (
         <Badge
           title="0 point"

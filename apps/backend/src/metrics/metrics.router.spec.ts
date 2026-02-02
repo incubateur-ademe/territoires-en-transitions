@@ -1,7 +1,7 @@
+import { INestApplication } from '@nestjs/common';
 import { getAuthUser, getTestApp, YOULOU_DOUDOU } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { INestApplication } from '@nestjs/common';
 
 describe('Route de récupération des métriques', () => {
   let app: INestApplication;
@@ -33,9 +33,11 @@ describe('Route de récupération des métriques', () => {
         user: youlouDoudouUser,
       });
 
-      await auditeurCaller.referentiels.labellisations.startAudit({
-        auditId: parcours.audit.id,
-      });
+      if (!parcours.audit.date_debut) {
+        await auditeurCaller.referentiels.labellisations.startAudit({
+          auditId: parcours.audit.id,
+        });
+      }
 
       await auditeurCaller.referentiels.labellisations.validateAudit({
         auditId: parcours.audit.id,

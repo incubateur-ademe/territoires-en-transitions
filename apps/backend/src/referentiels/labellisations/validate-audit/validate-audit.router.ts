@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
-import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
+import { ResourceType } from '@tet/domain/users';
 import z from 'zod';
 import { ValidateAuditService } from './validate-audit.service';
 
@@ -19,7 +19,7 @@ export class ValidateAuditRouter {
       .mutation(async ({ input: { auditId }, ctx: { user } }) => {
         await this.permissions.isAllowed(
           user,
-          PermissionOperationEnum['REFERENTIELS.AUDIT'],
+          'referentiels.labellisations.validate_audit',
           ResourceType.AUDIT,
           auditId
         );

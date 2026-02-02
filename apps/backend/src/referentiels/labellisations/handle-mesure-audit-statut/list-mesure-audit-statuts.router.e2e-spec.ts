@@ -12,10 +12,8 @@ import {
   ActionTypeEnum,
   MesureAuditStatutEnum,
 } from '@tet/domain/referentiels';
-import {
-  addAuditeurPermission,
-  createAudit,
-} from '../labellisations.test-fixture';
+import { createAuditWithOnTestFinished } from '../../referentiels.test-fixture';
+import { addAuditeurPermission } from '../labellisations.test-fixture';
 import { mesureAuditStatutTable } from './mesure-audit-statut.table';
 
 const collectiviteId = 34 as const;
@@ -36,7 +34,7 @@ describe('listMesureAuditStatuts.router', () => {
   test('should return all measures with their audit status, including measures without defined statuses', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
-    const { audit: auditEnCours } = await createAudit({
+    const { audit: auditEnCours } = await createAuditWithOnTestFinished({
       databaseService,
       collectiviteId,
       referentielId,

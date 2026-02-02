@@ -10,6 +10,7 @@ import { DISABLE_AUTO_REFETCH } from '@tet/api/utils/react-query/query-options';
 import {
   ReferentielException,
   ReferentielId,
+  findActionById,
   getReferentielIdFromActionId,
 } from '@tet/domain/referentiels';
 import { useReferentielId } from './referentiel-context';
@@ -78,7 +79,7 @@ export function useAction(actionId: string, externalCollectiviteId?: number) {
   });
 
   const toAction = (snapshot: Snapshot) => {
-    const subAction = findByActionId(snapshot.scoresPayload.scores, actionId);
+    const subAction = findActionById(snapshot.scoresPayload.scores, actionId);
 
     if (subAction === null) {
       throw new ReferentielException(`Action not found: '${actionId}'`);
@@ -183,31 +184,4 @@ export function useEtatLieuxHasStarted(referentielId: ReferentielId) {
 
   const { score } = snapshot.scoresPayload.scores;
   return { started: score.completedTachesCount > 0, isLoading, isError };
-}
-
-// TODO move this in an helper function in shared domain
-// (also check it doesn't exist already)
-function findByActionId(
-  action: ActionDetailed | undefined,
-  actionId: string
-): ActionDetailed | null {
-  if (!action) {
-    return null;
-  }
-
-  // Check if current object has the target actionId
-  if (action.actionId === actionId) {
-    return action;
-  }
-
-  // Search through actionsEnfant (children)
-  for (const childAction of action.actionsEnfant) {
-    const result = findByActionId(childAction, actionId);
-    if (result) {
-      return result;
-    }
-  }
-
-  // No match is found
-  return null;
 }

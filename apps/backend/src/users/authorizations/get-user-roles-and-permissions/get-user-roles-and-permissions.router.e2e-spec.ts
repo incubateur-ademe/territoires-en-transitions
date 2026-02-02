@@ -1,9 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import {
-  addAuditeurPermission,
-  createAudit,
-} from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
+import { addAuditeurPermission } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
+import { createAuditWithOnTestFinished } from '@tet/backend/referentiels/referentiels.test-fixture';
 import { getAuthUser, getTestApp } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -30,7 +28,7 @@ describe('GetUserPermissions', () => {
     await app.close();
   });
 
-  test('Retourne les permissions pour un utilisateur ', async () => {
+  test('Retourne les permissions pour un auditeur audit démarré ', async () => {
     const { collectivite, user, cleanup } = await addTestCollectiviteAndUser(
       databaseService,
       {
@@ -41,7 +39,7 @@ describe('GetUserPermissions', () => {
     );
     onTestFinished(cleanup);
 
-    const { audit } = await createAudit({
+    const { audit } = await createAuditWithOnTestFinished({
       databaseService,
       collectiviteId: collectivite.id,
       referentielId: ReferentielIdEnum.CAE,
@@ -79,6 +77,63 @@ describe('GetUserPermissions', () => {
             auditId: audit.id,
             role: AuditRole.AUDITEUR,
             permissions: permissionsByRole[AuditRole.AUDITEUR],
+          },
+        ],
+      },
+    ]);
+  });
+
+  test('Retourne les permissions pour un auditeur audit non démarré ', async () => {
+    const { collectivite, user, cleanup } = await addTestCollectiviteAndUser(
+      databaseService,
+      {
+        user: {
+          accessLevel: CollectiviteRole.EDITION,
+        },
+      }
+    );
+    onTestFinished(cleanup);
+
+    const { audit } = await createAuditWithOnTestFinished({
+      databaseService,
+      collectiviteId: collectivite.id,
+      referentielId: ReferentielIdEnum.CAE,
+      dateDebut: null,
+    });
+
+    await addAuditeurPermission({
+      databaseService,
+      auditId: audit.id,
+      userId: user.id,
+    });
+
+    const caller = router.createCaller({ user: await getAuthUser(user) });
+
+    const result = await caller.users.users.get();
+
+    expect(result.roles).toEqual([
+      PlatformRole.CONNECTED,
+      PlatformRole.VERIFIED,
+    ]);
+    expect(result.permissions).toEqual([
+      ...permissionsByRole[PlatformRole.CONNECTED],
+      ...permissionsByRole[PlatformRole.VERIFIED],
+    ]);
+
+    expect(result.collectivites).toEqual([
+      {
+        collectiviteId: collectivite.id,
+        collectiviteNom: collectivite.nom,
+        collectiviteAccesRestreint: false,
+        role: CollectiviteRole.EDITION,
+        permissions: permissionsByRole[CollectiviteRole.EDITION],
+
+        audits: [
+          {
+            auditId: audit.id,
+            role: AuditRole.AUDITEUR_AUDIT_NON_DEMARRE,
+            permissions:
+              permissionsByRole[AuditRole.AUDITEUR_AUDIT_NON_DEMARRE],
           },
         ],
       },

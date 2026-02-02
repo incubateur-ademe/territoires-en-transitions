@@ -65,6 +65,7 @@ describe('Api pour lister les labellisations des collectivités', () => {
     });
 
     // Finalise l'audit si nécessaire
+    // TODO: change the test to create a new collectivite
     if (
       parcours.audit?.id &&
       (!parcours.audit?.valide || !parcours.audit?.date_fin)
@@ -73,9 +74,11 @@ describe('Api pour lister les labellisations des collectivités', () => {
         user: youlouDoudouUser,
       });
 
-      await auditeurCaller.labellisations.startAudit({
-        auditId: parcours.audit.id,
-      });
+      if (!parcours.audit.date_debut) {
+        await auditeurCaller.labellisations.startAudit({
+          auditId: parcours.audit.id,
+        });
+      }
 
       await auditeurCaller.labellisations.validateAudit({
         auditId: parcours.audit.id,

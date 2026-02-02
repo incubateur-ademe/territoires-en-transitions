@@ -29,10 +29,13 @@ function buildUniquePermissionsSet(
 function toAuditRolesAndPermissions(
   audit: AuditRolesRow
 ): AuditRolesAndPermissions {
+  const role = audit.auditDateDebut
+    ? AuditRole.AUDITEUR
+    : AuditRole.AUDITEUR_AUDIT_NON_DEMARRE;
   return {
     auditId: audit.auditId,
-    role: AuditRole.AUDITEUR,
-    permissions: buildUniquePermissionsSet([AuditRole.AUDITEUR]),
+    role,
+    permissions: buildUniquePermissionsSet([role]),
   };
 }
 

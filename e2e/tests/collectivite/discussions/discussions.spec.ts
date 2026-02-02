@@ -5,38 +5,47 @@ test.describe('Discussions', () => {
   const referentielId = 'cae';
   const actionId = 'cae_1.1.1';
 
-  test.beforeEach(async ({ collectivites, discussions }) => {
-    const { collectivite, user } = await collectivites.addCollectiviteAndUser({
-      userArgs: { autoLogin: true },
-    });
-    collectiviteId = collectivite.data.id;
+  test.beforeEach(
+    async ({
+      collectivites,
+      discussions,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      referentiels,
+    }) => {
+      const { collectivite, user } = await collectivites.addCollectiviteAndUser(
+        {
+          userArgs: { autoLogin: true },
+        }
+      );
+      collectiviteId = collectivite.data.id;
 
-    console.log(`Create discussions`);
-    const createdDiscussionIds = await discussions.create(user, [
-      {
-        actionId: 'cae_1.1.1',
-        collectiviteId: collectivite.data.id,
-        message: 'Premier commentaire sur la mesure 1.1.1',
-      },
-      {
-        actionId: 'cae_1.1.1',
-        collectiviteId: collectivite.data.id,
-        message: 'Deuxième commentaire sur la mesure 1.1.1',
-      },
-      {
-        actionId: 'cae_1.1.1',
-        collectiviteId: collectivite.data.id,
-        message: 'Troisième commentaire sur la mesure 1.1.1',
-      },
-      {
-        actionId: 'cae_1.1.1.2',
-        collectiviteId: collectivite.data.id,
-        message: 'Troisième commentaire sur la mesure 1.1.1',
-      },
-    ]);
+      console.log(`Create discussions`);
+      const createdDiscussionIds = await discussions.create(user, [
+        {
+          actionId: 'cae_1.1.1',
+          collectiviteId: collectivite.data.id,
+          message: 'Premier commentaire sur la mesure 1.1.1',
+        },
+        {
+          actionId: 'cae_1.1.1',
+          collectiviteId: collectivite.data.id,
+          message: 'Deuxième commentaire sur la mesure 1.1.1',
+        },
+        {
+          actionId: 'cae_1.1.1',
+          collectiviteId: collectivite.data.id,
+          message: 'Troisième commentaire sur la mesure 1.1.1',
+        },
+        {
+          actionId: 'cae_1.1.1.2',
+          collectiviteId: collectivite.data.id,
+          message: 'Troisième commentaire sur la mesure 1.1.1',
+        },
+      ]);
 
-    console.log('createdDiscussionIds', createdDiscussionIds);
-  });
+      console.log('createdDiscussionIds', createdDiscussionIds);
+    }
+  );
 
   test('Ouvrir le panneau de discussion', async ({ discussionsPom }) => {
     await discussionsPom.goto(collectiviteId, referentielId, actionId);

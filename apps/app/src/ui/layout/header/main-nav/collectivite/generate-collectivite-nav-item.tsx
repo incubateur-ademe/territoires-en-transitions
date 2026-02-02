@@ -67,7 +67,13 @@ const CollectiviteWithBadge = ({
       </Tooltip>
       <BadgeNiveauAcces
         acces={collectivite.role}
-        isAuditeur={hasCollectiviteRole(collectivite, AuditRole.AUDITEUR)}
+        isAuditeur={
+          hasCollectiviteRole(collectivite, AuditRole.AUDITEUR) ||
+          hasCollectiviteRole(
+            collectivite,
+            AuditRole.AUDITEUR_AUDIT_NON_DEMARRE
+          )
+        }
       />
     </div>
   );

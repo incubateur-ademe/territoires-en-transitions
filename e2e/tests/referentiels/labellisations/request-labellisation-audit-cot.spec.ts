@@ -8,7 +8,7 @@ test.describe('Request labellisation audit collectivité COT', () => {
       userArgs: { autoLogin: true },
       collectiviteArgs: { isCOT: true },
     });
-    page.goto('/');
+    await page.goto('/');
   });
 
   test('Demande de labellisation 1ère étoile et audit CAE impossible si référentiel non rempli', async ({
