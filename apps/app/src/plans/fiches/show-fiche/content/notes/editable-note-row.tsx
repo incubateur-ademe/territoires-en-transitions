@@ -110,20 +110,20 @@ export const NoteRow = ({
           debounceDelayOnChange={500}
         />
       </TableCell>
-      <TableCell className="text-sm text-primary-10 align-top border-b border-gray-5">
+      <TableCell className="relative text-sm text-primary-10 align-top border-b border-gray-5">
         <MetadataNoteView note={note} />
+        <VisibleWhen condition={!isReadonly}>
+          <TableCell className=" absolute top-0 right-0 text-right border-b border-gray-5">
+            <div className="invisible group-hover:visible">
+              <NoteDeletionModal
+                fiche={fiche}
+                editedNote={note}
+                onDelete={onDeleteNote}
+              />
+            </div>
+          </TableCell>
+        </VisibleWhen>
       </TableCell>
-      <VisibleWhen condition={!isReadonly}>
-        <TableCell className="text-right border-b border-gray-5">
-          <div className="invisible group-hover:visible">
-            <NoteDeletionModal
-              fiche={fiche}
-              editedNote={note}
-              onDelete={onDeleteNote}
-            />
-          </div>
-        </TableCell>
-      </VisibleWhen>
     </TableRow>
   );
 };

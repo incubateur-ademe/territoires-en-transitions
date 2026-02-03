@@ -101,9 +101,8 @@ export const NoteTableNewRow = ({
           }}
         />
       </TableCell>
-      <TableCell className="text-sm text-primary-10 align-top border-b border-gray-5" />
       <TableCell className="text-right border-b border-gray-5 w-[100px]">
-        <div className="flex gap-2">
+        <div className="flex justify-end gap-2">
           <Button
             size="xs"
             variant="outlined"

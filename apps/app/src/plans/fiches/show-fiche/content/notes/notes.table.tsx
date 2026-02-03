@@ -52,10 +52,9 @@ export const NotesTable = ({
         <table className="w-full table-fixed border-separate border-spacing-0 border border-gray-3 bg-grey-1 rounded-lg overflow-hidden [&_tbody_tr:nth-child(even)]:bg-grey-2">
           <thead>
             <tr className="border-b border-gray-300">
-              <HeaderCell className="w-[125px]">Année</HeaderCell>
-              <HeaderCell className="w-[400px]">Description</HeaderCell>
-              <HeaderCell className="w-[300px]">Auteur/Date</HeaderCell>
-              <HeaderCell className="w-[80px]" />
+              <HeaderCell className="w-1/4">Année</HeaderCell>
+              <HeaderCell className="w-1/2">Description</HeaderCell>
+              <HeaderCell className="w-1/4">Auteur/Date</HeaderCell>
             </tr>
           </thead>
           <tbody>
