@@ -10,7 +10,7 @@ type Props = {
   parentId?: FicheWithRelations['parentId'];
 };
 
-export const SousActionCellActionParente = ({ parentId }: Props) => {
+export const SousActionActionParenteCell = ({ parentId }: Props) => {
   return (
     <TableCell>
       {parentId ? <Cell parentId={parentId} /> : <Placeholder />}
@@ -26,6 +26,8 @@ const Cell = ({
   const { collectiviteId } = useCurrentCollectivite();
 
   const { data: parent } = useGetFiche({ id: parentId });
+
+  console.log({ parentId, parent });
 
   const href = makeCollectiviteActionUrl({
     collectiviteId,

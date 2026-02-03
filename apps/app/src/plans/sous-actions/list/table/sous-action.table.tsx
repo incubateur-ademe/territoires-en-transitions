@@ -9,51 +9,51 @@ import { useEffect, useState } from 'react';
 import PictoAction from '@/app/ui/pictogrammes/PictoAction';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { ReactTable, ReactTableProps, TableHeaderCell } from '@tet/ui';
-import { SousActionCellActionParente } from './sous-action.cell-action-parente';
-import { SousActionCellActions } from './sous-action.cell-actions';
-import { SousActionCellDate } from './sous-action.cell-date';
-import { SousActionCellDescription } from './sous-action.cell-description';
-import { SousActionCellPilotes } from './sous-action.cell-pilotes';
-import { SousActionCellStatut } from './sous-action.cell-statut';
-import { SousActionCellTitle } from './sous-action.cell-title';
+import { SousActionActionParenteCell } from './sous-action.action-parente.cell';
+import { SousActionActionsCell } from './sous-action.actions.cell';
+import { SousActionDateCell } from './sous-action.date.cell';
+import { SousActionDescriptionCell } from './sous-action.description.cell';
+import { SousActionPilotesCell } from './sous-action.pilotes.cell';
+import { SousActionStatutCell } from './sous-action.statut.cell';
+import { SousActionTitleCell } from './sous-action.title.cell';
 
 const columnHelper = createColumnHelper<FicheWithRelations>();
 
 const columns = [
   columnHelper.accessor('titre', {
     header: () => <TableHeaderCell title="Titre" className="w-80" />,
-    cell: (info) => <SousActionCellTitle sousAction={info.row.original} />,
+    cell: (info) => <SousActionTitleCell sousAction={info.row.original} />,
   }),
   columnHelper.accessor('description', {
     header: () => (
       <TableHeaderCell title="Description" className="max-2xl:w-[32rem]" />
     ),
     cell: (info) => (
-      <SousActionCellDescription sousAction={info.row.original} />
+      <SousActionDescriptionCell sousAction={info.row.original} />
     ),
   }),
   columnHelper.accessor('parentId', {
     header: () => <TableHeaderCell title="Action parente" className="w-64" />,
     cell: (info) => (
-      <SousActionCellActionParente parentId={info.row.original.parentId} />
+      <SousActionActionParenteCell parentId={info.row.original.parentId} />
     ),
   }),
   columnHelper.accessor('statut', {
     header: () => <TableHeaderCell title="Statut" className="w-32" />,
-    cell: (info) => <SousActionCellStatut sousAction={info.row.original} />,
+    cell: (info) => <SousActionStatutCell sousAction={info.row.original} />,
   }),
   columnHelper.accessor('pilotes', {
     header: () => <TableHeaderCell title="Pilotes" className="w-40" />,
-    cell: (info) => <SousActionCellPilotes sousAction={info.row.original} />,
+    cell: (info) => <SousActionPilotesCell sousAction={info.row.original} />,
   }),
   columnHelper.accessor('dateFin', {
     header: () => <TableHeaderCell title="Date de fin" className="w-32" />,
-    cell: (info) => <SousActionCellDate sousAction={info.row.original} />,
+    cell: (info) => <SousActionDateCell sousAction={info.row.original} />,
   }),
   columnHelper.display({
     id: 'actions',
     header: () => <TableHeaderCell className="w-16" icon="more-2-line" />,
-    cell: (info) => <SousActionCellActions sousAction={info.row.original} />,
+    cell: (info) => <SousActionActionsCell sousAction={info.row.original} />,
   }),
 ];
 
