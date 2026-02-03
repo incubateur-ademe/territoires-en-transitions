@@ -85,7 +85,7 @@ const Modules = () => {
         m.type === 'fiche_action.list' &&
         m.defaultKey === 'sous-actions-dont-je-suis-pilote',
       isVisible: hasCollectivitePermission('plans.fiches.read_confidentiel'),
-      render: () => {
+      render: (module) => {
         if (noPlanAndCanCreatePlan) {
           // We already display the placeholder to create a plan,
           // so we don't need to display the list of fiche actions module.
@@ -93,7 +93,10 @@ const Modules = () => {
         }
 
         return (
-          <SousActionsDontJeSuisLePiloteModule key="sous-actions-dont-je-suis-pilote" />
+          <SousActionsDontJeSuisLePiloteModule
+            key="sous-actions-dont-je-suis-pilote"
+            module={module as ModuleFicheActionsSelect}
+          />
         );
       },
     },

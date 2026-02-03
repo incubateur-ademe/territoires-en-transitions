@@ -17,10 +17,9 @@ const moduleTypeSchema = z.enum([
 ]);
 
 export const personalDefaultModuleKeysSchema = z.enum([
-  'sous-actions-dont-je-suis-pilote',
-  'indicateurs-de-suivi-de-mes-plans',
-  'indicateurs-dont-je-suis-pilote',
   'actions-dont-je-suis-pilote',
+  'sous-actions-dont-je-suis-pilote',
+  'indicateurs-dont-je-suis-pilote',
   'mesures-dont-je-suis-pilote',
 ]);
 
@@ -48,11 +47,12 @@ export const moduleIndicateursSchema = z.object({
   }),
 });
 
-export const moduleIndicateursSelectSchema = moduleCommonSchemaSelect.merge(
-  moduleIndicateursSchema
-);
+export const moduleIndicateursSelectSchema = z.object({
+  ...moduleCommonSchemaSelect.shape,
+  ...moduleIndicateursSchema.shape,
+});
 
-export type ModuleIndicateursSelect = z.input<
+export type ModuleIndicateursSelect = z.output<
   typeof moduleIndicateursSelectSchema
 >;
 
@@ -115,7 +115,6 @@ export type Filtre = ListDefinitionsInputFilters | ListFichesRequestFilters;
 type Props = {
   collectiviteId: number;
   userId: string;
-  getPlanActionIds: () => Promise<number[]>;
 };
 
 /**
@@ -123,7 +122,7 @@ type Props = {
  */
 export async function getDefaultModule(
   defaultKey: string,
-  { userId, collectiviteId, getPlanActionIds }: Props
+  { userId, collectiviteId }: Props
 ) {
   const now = new Date().toISOString();
 
@@ -142,10 +141,12 @@ export async function getDefaultModule(
         filtre: {
           utilisateurPiloteIds: [userId],
         },
+        page: 1,
+        limit: 4,
       },
       createdAt: now,
       modifiedAt: now,
-    } as ModuleFicheActionsSelect;
+    } satisfies ModuleFicheActionsSelect;
   }
 
   if (
@@ -159,39 +160,17 @@ export async function getDefaultModule(
       titre: 'Sous actions pilotées',
       type: 'fiche_action.list',
       defaultKey,
-      options: {},
-      createdAt: now,
-      modifiedAt: now,
-    } as ModuleFicheActionsSelect;
-  }
-
-  if (
-    defaultKey ===
-    personalDefaultModuleKeysSchema.enum['indicateurs-de-suivi-de-mes-plans']
-  ) {
-    const planActionIds = await getPlanActionIds();
-
-    return {
-      id: crypto.randomUUID(),
-      userId,
-      collectiviteId,
-      titre: 'Indicateurs de suivi de mes plans',
-      type: 'indicateur.list',
-      defaultKey:
-        personalDefaultModuleKeysSchema.enum[
-          'indicateurs-de-suivi-de-mes-plans'
-        ],
       options: {
-        // Le filtre par défaut affiche les indicateurs liés à tous les plans de la collectivité
         filtre: {
-          planActionIds,
+          utilisateurPiloteIds: [userId],
+          onlyChildren: true,
         },
         page: 1,
-        limit: 4,
+        limit: 10,
       },
       createdAt: now,
       modifiedAt: now,
-    } as ModuleIndicateursSelect;
+    } satisfies ModuleFicheActionsSelect;
   }
 
   if (
@@ -211,11 +190,11 @@ export async function getDefaultModule(
           utilisateurPiloteIds: [userId],
         },
         page: 1,
-        limit: 4,
+        limit: 3,
       },
       createdAt: now,
       modifiedAt: now,
-    } as ModuleIndicateursSelect;
+    } satisfies ModuleIndicateursSelect;
   }
 
   if (
@@ -239,7 +218,7 @@ export async function getDefaultModule(
       },
       createdAt: now,
       modifiedAt: now,
-    } as ModuleMesuresSelect;
+    } satisfies ModuleMesuresSelect;
   }
 
   throw new Error(
