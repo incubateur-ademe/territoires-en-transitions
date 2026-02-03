@@ -1,7 +1,7 @@
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Button, TableCell } from '@tet/ui';
 import { useState } from 'react';
-import { SousActionDeleteModal } from '../../sous-action.delete-modal';
+import { DeleteSousActionModal } from '../../delete-sous-action.modal';
 
 type Props = {
   sousAction: FicheWithRelations;
@@ -20,7 +20,7 @@ export const SousActionActionsCell = ({ sousAction }: Props) => {
         onClick={() => setIsOpen(true)}
         title="Supprimer la sous-action"
       />
-      <SousActionDeleteModal
+      <DeleteSousActionModal
         sousAction={sousAction}
         openState={{ isOpen, setIsOpen }}
       />
