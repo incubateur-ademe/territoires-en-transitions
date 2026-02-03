@@ -1,5 +1,5 @@
-import { ExportFicheModal } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
 import { DeleteOrRemoveFicheSharingModal } from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
+import { ExportFicheModal } from '@/app/plans/fiches/show-fiche/header/menu/actions/pdf-export/ExportModal/export-fa-modal';
 import { PermissionOperation } from '@tet/domain/users';
 import { Fiche } from '../../data/use-get-fiche';
 import ModaleEmplacement from './EmplacementFiche/ModaleEmplacement';
@@ -10,7 +10,11 @@ type Props = {
   onDeleteCallback: () => void;
 };
 
-const Toolbar = ({ fiche, hasCollectivitePermission, onDeleteCallback }: Props) => {
+const Toolbar = ({
+  fiche,
+  hasCollectivitePermission,
+  onDeleteCallback,
+}: Props) => {
   return (
     <div className="flex gap-4 lg:mt-3.5">
       {hasCollectivitePermission('plans.mutate') && (
