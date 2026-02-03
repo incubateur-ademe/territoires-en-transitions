@@ -11,7 +11,7 @@ type Props = {
   sousAction: FicheWithRelations;
 };
 
-export const SousActionCellDate = ({ sousAction }: Props) => {
+export const SousActionDateCell = ({ sousAction }: Props) => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
 
   const canMutate = hasCollectivitePermission('plans.fiches.update');

@@ -9,7 +9,7 @@ type Props = {
   sousAction: FicheWithRelations;
 };
 
-export const SousActionCellStatut = ({ sousAction }: Props) => {
+export const SousActionStatutCell = ({ sousAction }: Props) => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
   const { mutate: updateSousAction } = useUpdateSousAction();
 

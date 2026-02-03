@@ -7,7 +7,7 @@ type Props = {
   sousAction: FicheWithRelations;
 };
 
-export const SousActionCellActions = ({ sousAction }: Props) => {
+export const SousActionActionsCell = ({ sousAction }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

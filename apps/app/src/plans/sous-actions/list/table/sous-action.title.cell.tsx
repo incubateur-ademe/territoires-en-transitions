@@ -1,35 +1,26 @@
 import { useState } from 'react';
 
+import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { cn, TableCell, TableCellTextarea } from '@tet/ui';
 import { isEqual } from 'es-toolkit';
 import { useUpdateSousAction } from '../../data/use-update-sous-action';
 
-const getTitle = (
-  description: FicheWithRelations['description'],
-  altText: string
-) => {
-  if (description && description.trim().length > 0) {
-    return description;
-  }
-  return altText;
-};
-
 type Props = {
   sousAction: FicheWithRelations;
 };
 
-export const SousActionCellDescription = ({ sousAction }: Props) => {
+export const SousActionTitleCell = ({ sousAction }: Props) => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
 
   const canMutate = hasCollectivitePermission('plans.fiches.update');
 
-  const [value, setValue] = useState(sousAction.description);
+  const [value, setValue] = useState(sousAction.titre);
 
   const isEmpty = !value || value.trim().length === 0;
 
-  const hasChanged = !isEqual(value, sousAction.description);
+  const hasChanged = !isEqual(value, sousAction.titre);
 
   const { mutate: updateSousAction } = useUpdateSousAction();
 
@@ -42,26 +33,26 @@ export const SousActionCellDescription = ({ sousAction }: Props) => {
           hasChanged &&
           updateSousAction({
             ficheId: sousAction.id,
-            ficheFields: { description: value?.trim() },
+            ficheFields: { titre: value?.trim() },
           }),
         renderOnEdit: ({ openState }) => (
           <TableCellTextarea
             value={value ?? undefined}
             onChange={(e) => setValue(e.target.value)}
             closeEditing={() => openState.setIsOpen(false)}
-            className="text-primary-9"
-            placeholder="Saisir une description"
+            className="font-medium text-primary-9"
+            placeholder="Saisir un titre"
           />
         ),
       }}
     >
       <span
-        className={cn('line-clamp-3 text-primary-9', {
+        className={cn('line-clamp-3 font-medium text-primary-9', {
           'text-grey-6': isEmpty,
         })}
-        title={getTitle(value, 'Sans description')}
+        title={generateTitle(value)}
       >
-        {getTitle(value, canMutate ? 'Saisir une description' : '')}
+        {generateTitle(value)}
       </span>
     </TableCell>
   );

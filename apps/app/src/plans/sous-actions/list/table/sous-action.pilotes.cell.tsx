@@ -10,7 +10,7 @@ type Props = {
   sousAction: FicheWithRelations;
 };
 
-export const SousActionCellPilotes = ({ sousAction }: Props) => {
+export const SousActionPilotesCell = ({ sousAction }: Props) => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
 
   const canMutate = hasCollectivitePermission('plans.fiches.update');
