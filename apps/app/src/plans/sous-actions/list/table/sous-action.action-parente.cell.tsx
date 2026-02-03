@@ -27,8 +27,6 @@ const Cell = ({
 
   const { data: parent } = useGetFiche({ id: parentId });
 
-  console.log({ parentId, parent });
-
   const href = makeCollectiviteActionUrl({
     collectiviteId,
     ficheUid: parentId.toString(),
