@@ -119,13 +119,15 @@ export const Description = () => {
               }
               isReadonly={isReadonly}
               renderOnEdit={() => (
-                <EffetsAttendusDropdown
-                  openState={{ isOpen: true }}
-                  values={field.value ?? undefined}
-                  onChange={({ effets }) => {
-                    field.onChange(effets);
-                  }}
-                />
+                <div className="w-full max-w-[400px]">
+                  <EffetsAttendusDropdown
+                    openState={{ isOpen: true }}
+                    values={field.value ?? undefined}
+                    onChange={({ effets }) => {
+                      field.onChange(effets);
+                    }}
+                  />
+                </div>
               )}
             />
           )}
