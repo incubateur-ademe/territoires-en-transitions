@@ -63,8 +63,8 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
       id: 'notes',
     },
     {
-      label: 'Moyens',
-      id: 'moyens',
+      label: 'Budget',
+      id: 'budget',
     },
     {
       label: `Actions liées ${
