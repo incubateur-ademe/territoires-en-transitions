@@ -1,7 +1,8 @@
+import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
 import { Button, RichTextEditor, Select, TableCell, TableRow } from '@tet/ui';
 import { htmlToText } from 'html-to-text';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { getYearsOptions } from '../../utils';
@@ -55,6 +56,15 @@ export const NoteTableNewRow = ({
 
   const { control, handleSubmit, reset, setValue, formState } = form;
 
+  const editorId = `note-editor-${editorKey}`;
+
+  // Focus the editor when it mounts or when editorKey changes
+  useEffect(() => {
+    waitForMarkup(`#${editorId} div[contenteditable]`).then((el) => {
+      (el as HTMLElement)?.focus?.();
+    });
+  }, [editorId]);
+
   const onSubmit = React.useCallback(
     async (data: NoteFormValues) => {
       await onUpsertNote({
@@ -90,6 +100,7 @@ export const NoteTableNewRow = ({
       <TableCell className="text-primary-9 border-b border-gray-5">
         <RichTextEditor
           key={editorKey}
+          id={editorId}
           unstyled
           initialValue={''}
           onChange={(html) =>
