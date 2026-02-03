@@ -1,3 +1,5 @@
+@import '@gouvfr/dsfr/dist/dsfr.min.css';
+
 /* feuille de styles globale fourni par le module partagé */
 @import '@tet/ui/global.css';
 
