@@ -47,7 +47,7 @@ export const ActionsLieesView = () => {
         data={actionsLiees.list}
         isLoading={actionsLiees.isLoading}
         actions={
-          <div className="flex gap-4 items-center">
+          <>
             {viewSwitcherComponent}
             <VisibleWhen condition={!isReadonly}>
               <Button
@@ -58,7 +58,7 @@ export const ActionsLieesView = () => {
                 Lier une action
               </Button>
             </VisibleWhen>
-          </div>
+          </>
         }
       >
         {view === 'grid' ? (

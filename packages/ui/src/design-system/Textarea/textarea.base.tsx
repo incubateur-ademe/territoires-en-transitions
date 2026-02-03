@@ -12,11 +12,17 @@ import { cn } from '../../utils/cn';
 export type TextareaBaseProps = ComponentPropsWithRef<'textarea'> & {
   autoresize?: boolean;
   onEnterKeyDown?: () => void;
+  dataTest?: string;
 };
 
 export const TextareaBase = forwardRef(
   (
-    { autoresize = true, onEnterKeyDown, ...props }: TextareaBaseProps,
+    {
+      autoresize = true,
+      onEnterKeyDown,
+      dataTest,
+      ...props
+    }: TextareaBaseProps,
     ref?: React.Ref<HTMLTextAreaElement | null>
   ) => {
     const [localValue, setLocalValue] = useState(props.value);
@@ -60,6 +66,7 @@ export const TextareaBase = forwardRef(
 
     return (
       <textarea
+        data-test={dataTest}
         {...props}
         ref={localRef}
         onChange={handleChange}

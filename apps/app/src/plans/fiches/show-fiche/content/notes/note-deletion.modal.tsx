@@ -1,6 +1,5 @@
-import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
-import { ModalFooterOKCancel } from '@tet/ui';
+import { Button, ModalFooterOKCancel } from '@tet/ui';
 import { BaseUpdateFicheModal } from '../../components/base-update-fiche.modal';
 
 type NoteDeletionModalProps = {
@@ -44,7 +43,13 @@ export const NoteDeletionModal = ({
         />
       )}
     >
-      <DeleteButton title="Supprimer la note" size="xs" />
+      <Button
+        icon="delete-bin-line"
+        variant="white"
+        size="xs"
+        className="text-grey-6"
+        title="Supprimer la note"
+      />
     </BaseUpdateFicheModal>
   );
 };

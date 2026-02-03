@@ -27,6 +27,7 @@ type ContentProps<T> = {
   isLoading?: boolean;
   actions?: ReactNode;
   children: ((item: T) => ReactNode) | JSX.Element;
+  byPassEmptyView?: boolean;
 };
 
 const SharedAlert = (_props: AlertProps) => null;
@@ -63,8 +64,12 @@ const extractProps = (children: ReactNode) => {
 
 function Root({ children }: { children: ReactNode }) {
   const { alertProps, emptyProps, contentProps } = extractProps(children);
-  const { isLoading = false, data } = contentProps || {};
-  const isEmpty = !data || data.length === 0;
+  const {
+    isLoading = false,
+    data,
+    byPassEmptyView = false,
+  } = contentProps || {};
+  const isEmpty = data?.length === 0 && byPassEmptyView === false;
 
   const renderBody = () => {
     if (isLoading) {
@@ -79,7 +84,7 @@ function Root({ children }: { children: ReactNode }) {
       return (
         <EmptyCard
           {...emptyProps}
-          size="md"
+          size="xs"
           variant="transparent"
           isReadonly={emptyProps.isReadonly}
         />

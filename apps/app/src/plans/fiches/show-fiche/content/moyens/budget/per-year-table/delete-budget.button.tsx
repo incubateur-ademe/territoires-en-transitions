@@ -1,6 +1,5 @@
-import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { FicheWithRelations } from '@tet/domain/plans';
-import { ModalFooterOKCancel } from '@tet/ui';
+import { Button, ModalFooterOKCancel } from '@tet/ui';
 import { useState } from 'react';
 import { BaseUpdateFicheModal } from '../../../../components/base-update-fiche.modal';
 
@@ -21,13 +20,14 @@ export const DeleteBudgetButton = ({
 
   return (
     <>
-      <div className="invisible group-hover:visible">
-        <DeleteButton
-          title="Supprimer le budget"
-          size="xs"
-          onClick={() => setIsOpen(true)}
-        />
-      </div>
+      <Button
+        icon="delete-bin-line"
+        size="xs"
+        variant="white"
+        className="text-grey-6"
+        onClick={() => setIsOpen(true)}
+        title="Supprimer le budget"
+      />
       {isOpen && (
         <BaseUpdateFicheModal
           fiche={fiche}

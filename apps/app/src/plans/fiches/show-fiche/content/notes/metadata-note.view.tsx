@@ -17,7 +17,7 @@ const MetadataNoteViewLabel = ({
   const user = maybeUser ? `${maybeUser.prenom} ${maybeUser.nom}` : 'Inconnu';
   const label = action === 'created' ? 'Créée' : 'Modifiée';
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1 text-xs">
       <Icon icon="user-line" size="sm" className="text-grey-8" />
       <span>
         {`${label} par ${user} le ${format(new Date(date), 'dd/MM/yyyy')}`}

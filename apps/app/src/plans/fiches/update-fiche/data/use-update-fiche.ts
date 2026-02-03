@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RouterInput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { useUser } from '@tet/api/users';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
 import { ListFichesOutput } from '../../list-all-fiches/data/use-list-fiches';
 
@@ -15,6 +16,7 @@ export const useUpdateFiche = (args?: Args) => {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
+  const user = useUser();
   const isNotificationEnabled = useFeatureFlagEnabled(
     'is-notification-enabled'
   );
@@ -42,7 +44,30 @@ export const useUpdateFiche = (args?: Args) => {
 
       // Optimistically update when updating the fiche from the detail page of a fiche
       queryClient.setQueryData(queryKeyOfGetFiche, (old: any) => {
-        return old?.id === ficheId ? { ...old, ...ficheFields } : old;
+        if (old?.id !== ficheId) return old;
+
+        const mergedFicheFields = { ...ficheFields };
+
+        if (ficheFields.notes) {
+          mergedFicheFields.notes = ficheFields.notes.map((newNote: any) => {
+            if (newNote.id === undefined) return newNote;
+            const existingNote = old.notes?.find(
+              (n: any) => n.id === newNote.id
+            );
+            if (!existingNote) return newNote;
+            return {
+              ...newNote,
+              createdAt: existingNote.createdAt,
+              createdBy: existingNote.createdBy,
+              modifiedAt: new Date().toISOString(),
+              modifiedBy: user
+                ? { id: user.id, nom: user.nom, prenom: user.prenom }
+                : existingNote.modifiedBy,
+            };
+          });
+        }
+
+        return { ...old, ...mergedFicheFields };
       });
 
       // Optimistically update all caches of list of fiches
@@ -55,6 +80,7 @@ export const useUpdateFiche = (args?: Args) => {
             return {
               data: [{ ...ficheFields, id: ficheId }],
             };
+
           return {
             ...previous,
             data: (previous.data ?? []).map((fiche) =>
@@ -63,6 +89,61 @@ export const useUpdateFiche = (args?: Args) => {
           };
         }
       );
+
+      let newListActionsKey: unknown[] | undefined;
+      if (ficheFields.mesures) {
+        const oldFiche = previousFiche as
+          | { mesures?: { id: string }[] }
+          | undefined;
+        const oldActionIds = oldFiche?.mesures?.map((m) => m.id) ?? [];
+        const newActionIds = ficheFields.mesures.map((m) => m.id);
+        const oldListActionsKey =
+          trpc.referentiels.actions.listActions.queryKey({
+            collectiviteId,
+            filters: { actionIds: oldActionIds },
+          });
+        newListActionsKey = trpc.referentiels.actions.listActions.queryKey({
+          collectiviteId,
+          filters: { actionIds: newActionIds },
+        });
+        const oldList = (queryClient.getQueryData(oldListActionsKey) ?? []) as {
+          actionId: string;
+          identifiant?: string;
+          nom?: string;
+          referentiel?: string;
+          pilotes?: unknown[];
+          services?: unknown[];
+        }[];
+
+        const addedIds = newActionIds.filter(
+          (id) => !oldActionIds.includes(id)
+        );
+        const removedIds = oldActionIds.filter(
+          (id) => !newActionIds.includes(id)
+        );
+
+        let newList = [...oldList];
+
+        if (removedIds.length > 0) {
+          newList = newList.filter((a) => !removedIds.includes(a.actionId));
+        }
+        if (addedIds.length > 0) {
+          const placeholders = addedIds.map((actionId) => {
+            const [referentiel = 'cae', identifiantPart] = actionId.split('_');
+            return {
+              actionId,
+              identifiant: identifiantPart ?? actionId,
+              nom: 'Chargement…',
+              referentiel,
+              pilotes: [] as unknown[],
+              services: [] as unknown[],
+            };
+          });
+          newList = [...newList, ...placeholders];
+        }
+
+        queryClient.setQueryData(newListActionsKey, newList);
+      }
 
       if (ficheFields.indicateurs) {
         queryClient.setQueryData(
@@ -90,15 +171,18 @@ export const useUpdateFiche = (args?: Args) => {
       }
 
       // Return a context object with the snapshotted value
-      return { previousFiche };
+      return { previousFiche, newListActionsKey };
     },
     // If the mutation fails, use the context returned from onMutate to rollback
-    onError: (error, { ficheId }, context) => {
+    onError: (error, { ficheId, ficheFields }, context) => {
       const queryKeyOfGetFiche = trpc.plans.fiches.get.queryKey({
         id: ficheId,
       });
 
       queryClient.setQueryData(queryKeyOfGetFiche, context?.previousFiche);
+      if (ficheFields.mesures && context?.newListActionsKey) {
+        queryClient.removeQueries({ queryKey: context.newListActionsKey });
+      }
     },
     // Always refetch after error or success:
     onSettled: (result, error, { ficheId, ficheFields }) => {
@@ -116,6 +200,16 @@ export const useUpdateFiche = (args?: Args) => {
             filters: {
               ficheIds: [ficheId],
             },
+          }),
+        });
+      }
+
+      if (ficheFields.mesures) {
+        const newActionIds = ficheFields.mesures.map((m) => m.id);
+        queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.actions.listActions.queryKey({
+            collectiviteId,
+            filters: { actionIds: newActionIds },
           }),
         });
       }

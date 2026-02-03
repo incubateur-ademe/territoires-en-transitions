@@ -1,11 +1,11 @@
 import { ContentLayout } from '../content-layout';
-import { MoyensContent } from './moyens.content';
+import { BudgetContent } from './budget.content';
 
-export const MoyensView = () => {
+export const BudgetView = () => {
   return (
     <ContentLayout.Root>
       <ContentLayout.Content data={[]}>
-        <MoyensContent />
+        <BudgetContent />
       </ContentLayout.Content>
     </ContentLayout.Root>
   );

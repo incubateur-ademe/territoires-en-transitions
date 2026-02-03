@@ -1,100 +1,178 @@
-import { Button, cn, Spacer, TableHead, TableRow, VisibleWhen } from '@tet/ui';
-import { useMemo, useState } from 'react';
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { Financeur } from '@tet/domain/plans';
+import { Button, ReactTable, TableHeaderCell } from '@tet/ui';
+import { useCallback, useMemo } from 'react';
 import { useFicheContext } from '../../../context/fiche-context';
-import { FinanceurTableNewRow } from './financeur-table-new-row';
-import { FinanceurTableRow } from './financeur-table-row';
+import { emptyViewsProps } from '../empty-view';
+import { FinanceurActionsCell } from './financeur-actions.cell';
+import { FinanceurFormProvider } from './financeur-form.context';
+import { FinanceurMontantCell } from './financeur-montant.cell';
+import { FinanceurNameCell } from './financeur-name.cell';
+import { DraftFinanceurRowFormValues, FinanceurRowFormValues } from './types';
+import { useDraftFinanceurs } from './use-draft-financeurs';
 
-const HeaderCell = ({
-  children,
-  className,
-}: {
-  children?: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <th
-      className={cn(
-        'text-left uppercase text-sm text-grey-9 font-medium py-3 pl-4 bg-white border-b border-gray-4',
-        className
-      )}
-    >
-      {children}
-    </th>
-  );
-};
+const columnHelper = createColumnHelper<Financeur | Partial<Financeur>>();
 
 export const FinanceursTable = () => {
   const { fiche, isReadonly, financeurs: financeursState } = useFicheContext();
-  const [isAddingFinanceur, setIsAddingFinanceur] = useState(
-    !financeursState.list.length
-  );
+  const { draftFinanceurs, updateDraftFinanceur, deleteDraftFinanceur } =
+    useDraftFinanceurs(fiche.id);
 
   const usedFinanceurIds = useMemo(
     () => financeursState.list.map((f) => f.financeurTagId),
     [financeursState.list]
   );
 
-  const handleUpsertFinanceur = async (data: {
-    financeurTagId: number;
-    montantTtc: number;
-    financeurTag: { id: number; nom: string; collectiviteId: number };
-  }) => {
-    await financeursState.upsert(data);
-    setIsAddingFinanceur(false);
+  const tableData = useMemo(() => {
+    return [...financeursState.list, ...(draftFinanceurs ?? [])];
+  }, [financeursState.list, draftFinanceurs]);
+
+  const handleUpsertFinanceur = async (data: FinanceurRowFormValues) => {
+    await financeursState.upsert({
+      financeurTagId: data.financeurTagId,
+      montantTtc: data.montantTtc,
+    });
   };
 
-  const handleDeleteFinanceur = async (financeurTagId: number) => {
-    await financeursState.delete(financeurTagId);
+  const handleDeleteFinanceur = useCallback(
+    async ({
+      financeurTagId,
+      draftId,
+    }: {
+      financeurTagId: number | undefined;
+      draftId: string | undefined;
+    }) => {
+      if (draftId) {
+        deleteDraftFinanceur(draftId);
+      } else if (financeurTagId) {
+        await financeursState.delete(financeurTagId);
+      }
+    },
+    [deleteDraftFinanceur, financeursState]
+  );
+
+  const handleCreateDraftFinanceur = () => {
+    const draftFinanceur: DraftFinanceurRowFormValues = {
+      ficheId: fiche.id,
+      financeurTagId: undefined,
+      montantTtc: undefined,
+      draftId: `draft-${Date.now()}`,
+    };
+    updateDraftFinanceur(draftFinanceur);
   };
+
+  const columns = useMemo(
+    () => [
+      columnHelper.display({
+        id: 'financeur',
+        header: () => <TableHeaderCell title="Financeurs" className="w-3/6" />,
+        cell: () => (
+          <FinanceurNameCell
+            fiche={fiche}
+            availableFinanceurIds={usedFinanceurIds}
+          />
+        ),
+      }),
+      columnHelper.display({
+        id: 'montant',
+        header: () => (
+          <TableHeaderCell
+            title="Montant de subvention obtenu"
+            className="w-2/6"
+          />
+        ),
+        cell: () => <FinanceurMontantCell />,
+      }),
+      columnHelper.display({
+        id: 'actions',
+        header: () => <TableHeaderCell icon="more-2-line" />,
+        cell: () => (
+          <FinanceurActionsCell
+            fiche={fiche}
+            onDeleteFinanceur={(args) => {
+              return handleDeleteFinanceur({
+                draftId: args.draftId,
+                financeurTagId: args.financeurTagId,
+              });
+            }}
+          />
+        ),
+      }),
+    ],
+    [fiche, usedFinanceurIds, handleDeleteFinanceur]
+  );
+
+  const table = useReactTable({
+    columns,
+    data: tableData,
+    getRowId: (row) => {
+      return 'draftId' in row
+        ? (row.draftId as string)
+        : `${row.financeurTagId}`;
+    },
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  const isEmpty = tableData.length === 0;
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full table-fixed border-separate border-spacing-0 border border-gray-3 bg-grey-1 rounded-lg overflow-hidden [&_tbody_tr:nth-child(even)]:bg-grey-2">
-        <TableHead>
-          <TableRow>
-            <HeaderCell className="w-3/6">Financeurs</HeaderCell>
-            <HeaderCell className="w-2/6">
-              Montant de subvention obtenu
-            </HeaderCell>
-            <HeaderCell className="w-1/6" />
-          </TableRow>
-        </TableHead>
-        <tbody>
-          {financeursState.list.map((financeur) => (
-            <FinanceurTableRow
-              key={financeur.financeurTagId}
-              financeur={financeur}
-              fiche={fiche}
-              isReadonly={isReadonly}
-              availableFinanceurIds={usedFinanceurIds.filter(
-                (id) => id !== financeur.financeurTagId
-              )}
-              onUpsertFinanceur={handleUpsertFinanceur}
-              onDeleteFinanceur={handleDeleteFinanceur}
-            />
-          ))}
-          <VisibleWhen condition={!isReadonly && isAddingFinanceur}>
-            <FinanceurTableNewRow
-              key="new"
-              fiche={fiche}
-              availableFinanceurIds={usedFinanceurIds}
-              onUpsertFinanceur={handleUpsertFinanceur}
-              onCancel={() => setIsAddingFinanceur(false)}
-            />
-          </VisibleWhen>
-        </tbody>
-      </table>
-      <VisibleWhen condition={!isReadonly}>
-        <Spacer height={1} />
+    <div className="p-2 bg-white rounded-lg border border-grey-3">
+      <div className="max-2xl:overflow-x-auto">
+        <ReactTable
+          table={table}
+          isEmpty={isEmpty}
+          rowWrapper={({ row, children }) => {
+            const financeur = row.original as
+              | Financeur
+              | DraftFinanceurRowFormValues;
+
+            return (
+              <FinanceurFormProvider
+                financeur={financeur}
+                isReadonly={isReadonly}
+                onUpsertFinanceur={handleUpsertFinanceur}
+                onCancel={() =>
+                  'draftId' in row.original
+                    ? deleteDraftFinanceur(row.original.draftId as string)
+                    : undefined
+                }
+                onDraftFinanceurChange={updateDraftFinanceur}
+                onDeleteDraftFinanceur={deleteDraftFinanceur}
+              >
+                {children}
+              </FinanceurFormProvider>
+            );
+          }}
+          emptyCard={{
+            ...emptyViewsProps.financeurs,
+            actions: isReadonly
+              ? undefined
+              : [
+                  {
+                    onClick: handleCreateDraftFinanceur,
+                    children: 'Ajouter un financeur',
+                    icon: 'add-line',
+                    variant: 'outlined',
+                  },
+                ],
+          }}
+        />
+      </div>
+      {!isReadonly && tableData.length !== 0 && (
         <Button
-          size="xs"
+          className="m-4"
           icon="add-line"
+          size="xs"
+          onClick={handleCreateDraftFinanceur}
           variant="outlined"
-          onClick={() => setIsAddingFinanceur((prev) => !prev)}
         >
           Ajouter un financeur
         </Button>
-      </VisibleWhen>
+      )}
     </div>
   );
 };

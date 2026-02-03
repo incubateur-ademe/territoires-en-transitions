@@ -106,7 +106,7 @@ export const Planning = () => {
         </div>
         <div className="flex flex-col">
           <div className="text-primary-10 text-base">
-            Date de début et de fin prévisionnelle
+            Date de début et de fin prévisionnelle :
           </div>
           <div className="flex items-center gap-2">
             <Controller
@@ -179,7 +179,6 @@ export const Planning = () => {
                             e.target.value ? new Date(e.target.value) : null
                           );
                         }}
-                        onBlur={() => openState.setIsOpen?.(false)}
                         onKeyDown={(evt) => {
                           if (evt.key === 'Enter' || evt.key === 'Escape') {
                             openState.setIsOpen(false);
@@ -228,11 +227,11 @@ export const Planning = () => {
           <InlineEditableItem
             icon="time-line"
             label="Temps de mise en œuvre"
-            value={field.value?.nom ?? null}
+            value={field.value?.nom ?? undefined}
             isReadonly={isReadonly}
-            renderOnEdit={() => (
+            renderOnEdit={({ openState }) => (
               <MiseEnOeuvreDropdown
-                openState={{ isOpen: true }}
+                openState={openState}
                 values={field.value ?? null}
                 onChange={(tempsDeMiseEnOeuvre) => {
                   field.onChange(tempsDeMiseEnOeuvre);
@@ -296,7 +295,7 @@ export const Planning = () => {
           <InlineEditableItem
             icon="time-line"
             label="Éléments de calendrier"
-            value={fiche.calendrier}
+            value={fiche.calendrier ?? undefined}
             isReadonly={isReadonly}
             renderOnEdit={() => (
               <TextareaBase

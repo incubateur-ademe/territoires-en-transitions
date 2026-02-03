@@ -7,6 +7,7 @@ export class EditPlanPom {
   readonly createFicheButton: Locator;
   readonly header: {
     title: Locator;
+    editableTitle: Locator;
     type: Locator;
     pilote: Locator;
     referent: Locator;
@@ -27,7 +28,8 @@ export class EditPlanPom {
       name: 'Créer une action',
     });
     this.header = {
-      title: page.getByTestId('plan-editable-title'),
+      title: page.locator('h1[data-test="plan-editable-title"]'),
+      editableTitle: page.locator('textarea[data-test="plan-editable-title"]'),
       type: page.getByTestId('plan-header-type'),
       pilote: page.getByTestId('plan-header-pilote'),
       referent: page.getByTestId('plan-header-referent'),
@@ -84,7 +86,8 @@ export class EditPlanPom {
   async editPlanNom(nom: string) {
     // clic sur le titre pour l'éditer
     await this.header.title.click();
-    const nomInput = this.header.title.locator('input');
+    const nomInput = this.header.editableTitle;
+
     await nomInput.clear();
     await nomInput.fill(nom);
     await nomInput.blur();
