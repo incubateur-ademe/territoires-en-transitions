@@ -40,10 +40,14 @@ export const DeleteFicheModal = ({
     axeId,
   });
 
-  const { count: countSousActions } = useListFiches(fiche.collectiviteId, {
-    filters: { parentsId: [fiche.id] },
-    queryOptions: { limit: 1, page: 1 },
-  });
+  const { count: countSousActions } = useListFiches(
+    fiche.collectiviteId,
+    {
+      filters: { parentsId: [fiche.id] },
+      queryOptions: { limit: 1, page: 1 },
+    },
+    openState?.isOpen
+  );
 
   const isInMultipleAxes = !!plans && plans.length > 1;
 
