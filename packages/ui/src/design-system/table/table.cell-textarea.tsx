@@ -8,6 +8,7 @@ type Props = TextareaBaseProps & {
 };
 
 export const TableCellTextarea = ({
+  dataTest,
   className,
   closeEditing,
   ...props
@@ -29,6 +30,7 @@ export const TableCellTextarea = ({
 
   return (
     <TextareaBase
+      dataTest={dataTest}
       {...props}
       ref={textareaRef}
       onEnterKeyDown={closeEditing}

@@ -96,7 +96,6 @@ export type SelectProps = {
     { state: BadgeState; light?: boolean }
   >;
   optionsAreCaseSensitive?: boolean;
-  alwaysOpen?: boolean;
 };
 
 /**
@@ -514,7 +513,7 @@ const SelectButton = forwardRef(
                     data-test={`${dataTest}-input`}
                     type="text"
                     className={cn(
-                      'w-full text-sm bg-inherit outline-0 placeholder:text-grey-6 placeholder:text-xs',
+                      'w-full text-sm bg-inherit outline-0 placeholder:text-grey-6 placeholder:text-xs outline-offset-4',
                       { 'py-1': values }
                     )}
                     value={inputValue}

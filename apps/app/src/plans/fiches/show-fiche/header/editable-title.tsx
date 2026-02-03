@@ -1,4 +1,4 @@
-import { cn, InlineEditWrapper, Input } from '@tet/ui';
+import { cn, InlineEditWrapper, TableCellTextarea } from '@tet/ui';
 import { useState } from 'react';
 
 type EditableTitleProps = {
@@ -18,36 +18,46 @@ export const EditableTitle = ({
   isReadonly,
   onUpdate,
 }: EditableTitleProps) => {
-  const [editedTitle, setEditedTitle] = useState(initialTitle);
+  const [title, setTitle] = useState(initialTitle);
+  const updateOrFallback = (value: string | null) => {
+    const TITLE_FALLBACK = 'Sans titre';
+    if (value === null || value.trim() === '') {
+      setTitle(TITLE_FALLBACK);
+    } else {
+      setTitle(value);
+    }
+  };
   return (
     <InlineEditWrapper
+      floatingMatchReferenceHeight={false}
       disabled={isReadonly}
-      onClose={() => onUpdate(editedTitle)}
+      onClose={() => updateOrFallback(title)}
       renderOnEdit={({ openState }) => (
-        <div className="w-full" data-test={dataTest}>
-          <Input
-            value={editedTitle ?? ''}
-            autoFocus
-            onChange={(evt) => setEditedTitle(evt.target.value)}
-            onBlur={() => {
-              onUpdate(editedTitle);
+        <TableCellTextarea
+          dataTest={dataTest}
+          value={title ?? undefined}
+          autoFocus
+          onChange={(evt) => setTitle(evt.target.value)}
+          onBlur={() => {
+            onUpdate(title);
+            openState.setIsOpen(false);
+          }}
+          onKeyDown={(evt) => {
+            if (evt.key === 'Enter') {
+              onUpdate(title);
               openState.setIsOpen(false);
-            }}
-            onKeyDown={(evt) => {
-              if (evt.key === 'Enter') {
-                onUpdate(editedTitle);
-                openState.setIsOpen(false);
-              }
-            }}
-            type="text"
-            containerClassname="w-full"
-            className={cn('text-3xl', inputClassName)}
-          />
-        </div>
+            }
+          }}
+          className={inputClassName}
+          rows={1}
+        />
       )}
     >
-      <h1 data-test={dataTest} className={cn('mb-0', className)}>
-        {initialTitle ?? 'Sans titre'}
+      <h1
+        data-test={dataTest}
+        className={cn('mb-0 text-[2rem] leading-tight', className)}
+      >
+        {title}
       </h1>
     </InlineEditWrapper>
   );

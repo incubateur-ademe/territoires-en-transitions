@@ -2,10 +2,11 @@ import { SVGProps } from 'react';
 export const InvestmentPicto = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={68}
-    height={68}
-    fill="none"
     {...props}
+    width={props.width ?? 68}
+    height={props.height ?? 68}
+    viewBox="0 0 68 68"
+    fill="none"
   >
     <path
       fill="#C3C3FB"

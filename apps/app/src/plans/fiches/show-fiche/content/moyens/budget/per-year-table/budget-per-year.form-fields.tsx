@@ -33,6 +33,10 @@ export const BudgetPerYearYearSelect = ({
         }}
         placeholder={placeholder}
         openState={openState}
+        showCustomItemInBadges={true}
+        customItem={(option) => (
+          <div className="text-sm text-grey-9">{option.label}</div>
+        )}
       />
     )}
   />
@@ -46,6 +50,7 @@ type BudgetPerYearInputFieldProps = {
   placeholder: string;
   inputClassName?: string;
   errorClassName?: string;
+  onKeyDown?: (evt: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 export const BudgetPerYearInputField = ({
@@ -56,6 +61,7 @@ export const BudgetPerYearInputField = ({
   placeholder,
   inputClassName,
   errorClassName,
+  onKeyDown,
 }: BudgetPerYearInputFieldProps) => (
   <Controller
     control={control}
@@ -72,10 +78,11 @@ export const BudgetPerYearInputField = ({
         placeholder={placeholder}
         value={value?.toString() ?? ''}
         onValueChange={({ floatValue, value: raw }) =>
-          onChange(raw === '' ? undefined : floatValue ?? undefined)
+          onChange(raw === '' ? null : floatValue ?? null)
         }
         name={name}
         ref={ref}
+        onKeyDown={onKeyDown}
       />
     )}
   />

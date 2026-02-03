@@ -1,6 +1,8 @@
-import { Financeur, FicheWithRelations } from '@tet/domain/plans';
+import { useFinanceursListe } from '@/app/ui/dropdownLists/FinanceursDropdown/useFinanceursListe';
+import { FicheWithRelations, Financeur } from '@tet/domain/plans';
 import { useCallback, useMemo } from 'react';
 import { useUpdateFiche } from '../../../update-fiche/data/use-update-fiche';
+import { getFicheAllEditorCollectiviteIds } from '../../share-fiche/share-fiche.utils';
 import { FinanceursState } from '../types';
 
 export const useFicheFinanceurs = (
@@ -9,18 +11,24 @@ export const useFicheFinanceurs = (
   const { mutate: updateFiche } = useUpdateFiche();
 
   const financeurs = useMemo(() => fiche.financeurs ?? [], [fiche.financeurs]);
-
+  const financeursList = useFinanceursListe(
+    getFicheAllEditorCollectiviteIds(fiche)
+  );
   const upsertFinanceur = useCallback(
-    async (data: {
-      financeurTagId: number;
-      montantTtc: number;
-      financeurTag: { id: number; nom: string; collectiviteId: number };
-    }) => {
+    async (data: { financeurTagId: number; montantTtc: number }) => {
+      const financeurTag = financeursList.data?.find(
+        (f) => f.id === data.financeurTagId
+      );
+
+      if (!financeurTag) {
+        throw new Error('Financeur tag not found');
+      }
+
       const updatedFinanceur: Financeur = {
         ficheId: fiche.id,
         financeurTagId: data.financeurTagId,
         montantTtc: data.montantTtc,
-        financeurTag: data.financeurTag,
+        financeurTag,
       };
 
       const isExisting = financeurs.some(
@@ -38,7 +46,7 @@ export const useFicheFinanceurs = (
         ficheFields: { financeurs: updatedFinanceurs },
       });
     },
-    [fiche.id, financeurs, updateFiche]
+    [fiche.id, financeurs, financeursList.data, updateFiche]
   );
 
   const deleteFinanceur = useCallback(
@@ -55,12 +63,19 @@ export const useFicheFinanceurs = (
     [fiche.id, financeurs, updateFiche]
   );
 
+  const getFinanceurName = useCallback(
+    (financeurTagId: number) => {
+      return financeursList.data?.find((f) => f.id === financeurTagId)?.nom;
+    },
+    [financeursList.data]
+  );
   return useMemo(
     () => ({
       list: financeurs,
       upsert: upsertFinanceur,
       delete: deleteFinanceur,
+      getFinanceurName,
     }),
-    [financeurs, upsertFinanceur, deleteFinanceur]
+    [financeurs, upsertFinanceur, deleteFinanceur, getFinanceurName]
   );
 };

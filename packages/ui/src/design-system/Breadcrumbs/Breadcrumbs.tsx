@@ -45,10 +45,7 @@ export const Breadcrumbs = ({
         const disabled = !isClickable || isLastAndNotClickableElement;
 
         return (
-          <div
-            key={button.label}
-            className="flex items-center shrink-0 gap-x-1"
-          >
+          <div key={button.label} className="flex items-center gap-x-1">
             <Button
               disabled={disabled}
               className={classNames(

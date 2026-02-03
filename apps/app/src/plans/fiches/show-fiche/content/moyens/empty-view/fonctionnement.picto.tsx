@@ -2,10 +2,10 @@ import { SVGProps } from 'react';
 export const FonctionnementPicto = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={68}
-    height={68}
-    fill="none"
     {...props}
+    width={props.width ?? 68}
+    height={props.height ?? 68}
+    fill="none"
   >
     <path
       fill="#A5A5F8"

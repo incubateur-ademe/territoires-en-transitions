@@ -1,17 +1,16 @@
-import DeleteButton from '@/app/ui/buttons/DeleteButton';
-import { FicheWithRelations, Financeur } from '@tet/domain/plans';
-import { ModalFooterOKCancel } from '@tet/ui';
+import { FicheWithRelations } from '@tet/domain/plans';
+import { Button, ModalFooterOKCancel, VisibleWhen } from '@tet/ui';
 import { useState } from 'react';
 import { BaseUpdateFicheModal } from '../../../components/base-update-fiche.modal';
 
 type DeleteFinanceurButtonProps = {
-  financeur: Financeur;
+  financeurName: string;
   onDelete: () => void;
   fiche: FicheWithRelations;
 };
 
 export const DeleteFinanceurButton = ({
-  financeur,
+  financeurName,
   onDelete,
   fiche,
 }: DeleteFinanceurButtonProps) => {
@@ -19,18 +18,19 @@ export const DeleteFinanceurButton = ({
 
   return (
     <>
-      <div className="invisible group-hover:visible">
-        <DeleteButton
-          title="Supprimer le financeur"
-          size="xs"
-          onClick={() => setIsOpen(true)}
-        />
-      </div>
-      {isOpen && (
+      <Button
+        icon="delete-bin-line"
+        variant="white"
+        size="xs"
+        className="text-grey-6"
+        onClick={() => setIsOpen(true)}
+        title="Supprimer le financeur"
+      />
+      <VisibleWhen condition={isOpen}>
         <BaseUpdateFicheModal
           fiche={fiche}
           title="Supprimer le financeur"
-          subTitle={financeur.financeurTag.nom}
+          subTitle={financeurName}
           openState={{ isOpen, setIsOpen }}
           render={({ descriptionId }) => (
             <div id={descriptionId}>
@@ -52,7 +52,7 @@ export const DeleteFinanceurButton = ({
             />
           )}
         />
-      )}
+      </VisibleWhen>
     </>
   );
 };

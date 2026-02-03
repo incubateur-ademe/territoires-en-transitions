@@ -16,17 +16,18 @@ type FichesBreadcrumbsProps = {
 };
 
 const OtherPlansBreadcrumbs = ({
-  plans,
+  axes,
   title,
   collectiviteId,
 }: {
-  plans: Axe[];
+  axes: Axe[];
+  planId?: number;
   title: string;
   collectiviteId: number;
 }): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
-  const plansCount = plans.length;
-  const s = plansCount > 1 ? 's' : '';
+  const axesCount = axes.length;
+  const s = axesCount > 1 ? 's' : '';
   return (
     <div className="mt-1 flex flex-col gap-2">
       <Button
@@ -36,16 +37,17 @@ const OtherPlansBreadcrumbs = ({
         iconPosition="right"
         onClick={() => setIsOpen((prevState) => !prevState)}
       >
-        {plansCount > 1 ? plansCount : ''} autre{s} emplacement{s} pour cette
+        {axesCount > 1 ? axesCount : ''} autre{s} emplacement{s} pour cette
         action{s}
       </Button>
 
       <VisibleWhen condition={isOpen}>
-        {plans.map((plan, index) => (
+        {axes.map((axe, index) => (
           <BasicBreadcrumbs
             key={index}
             title={title}
-            planId={plan.id}
+            axeId={axe.id}
+            planId={axe.planId ?? undefined}
             collectiviteId={collectiviteId}
           />
         ))}
@@ -67,26 +69,28 @@ export const Breadcrumbs = ({
   const currentPlanAxe = plansWhereFicheIsLocated.find(
     (axe) => axe.planId === planId
   );
-  const otherPlansWhereFicheIsLocated = plansWhereFicheIsLocated.filter(
+  const otherAxesWhereFicheIsLocated = plansWhereFicheIsLocated.filter(
     (axe) => axe.id !== currentPlanAxe?.id
   );
 
-  const plansToDisplay = [
+  const axesToDisplay = [
     currentPlanAxe,
-    ...otherPlansWhereFicheIsLocated,
+    ...otherAxesWhereFicheIsLocated,
   ].filter((axe): axe is Axe => axe !== undefined);
 
-  const [firstPlan, ...otherPlans] = plansToDisplay;
+  const [firstAxe, ...otherAxes] = axesToDisplay;
+
   return (
     <>
       <BasicBreadcrumbs
         title={title}
         collectiviteId={collectiviteId}
-        planId={firstPlan?.id}
+        axeId={firstAxe?.id}
+        planId={planId ?? firstAxe?.planId ?? undefined}
       />
-      <VisibleWhen condition={plansToDisplay.length > 1}>
+      <VisibleWhen condition={axesToDisplay.length > 1}>
         <OtherPlansBreadcrumbs
-          plans={otherPlans}
+          axes={otherAxes}
           title={title}
           collectiviteId={collectiviteId}
         />

@@ -7,6 +7,7 @@ import IndicateurCardMenu, {
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { Button, VisibleWhen } from '@tet/ui';
 import IndicateurCardEditModal from './IndicateurCardEditModal';
+import { getIndicateurMenuActions } from './menu-actions';
 
 type Props = {
   definition: IndicateurDefinitionListItem;
@@ -27,6 +28,12 @@ const IndicateurCardOptions = ({
 }: Props) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const menuActions = getIndicateurMenuActions({
+    isEditable,
+    isFavoriCollectivite,
+    isChartVisible: chartDownloadSettings.showTrigger,
+  }).filter((action) => action.isVisible);
 
   return (
     <div
@@ -59,16 +66,17 @@ const IndicateurCardOptions = ({
           />
         )}
       </VisibleWhen>
-      <IndicateurCardMenu
-        indicateurId={definition.id}
-        isFavoriCollectivite={isFavoriCollectivite}
-        chartDownloadSettings={chartDownloadSettings}
-        isEditable={isEditable}
-        openState={{
-          isOpen: isMenuOpen,
-          setIsOpen: () => setIsMenuOpen(!isMenuOpen),
-        }}
-      />
+      <VisibleWhen condition={menuActions.length > 0}>
+        <IndicateurCardMenu
+          menuActions={menuActions}
+          indicateurId={definition.id}
+          chartDownloadSettings={chartDownloadSettings}
+          openState={{
+            isOpen: isMenuOpen,
+            setIsOpen: () => setIsMenuOpen(!isMenuOpen),
+          }}
+        />
+      </VisibleWhen>
     </div>
   );
 };

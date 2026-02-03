@@ -1,15 +1,12 @@
 import { cn, Icon, InlineEditWrapper, RichTextEditor } from '@tet/ui';
 import { useMemo } from 'react';
 
-const DisplayValue = ({
-  value,
-}: {
-  value: string | React.ReactNode | undefined | null;
-}) => {
-  if (!value || typeof value === 'string') {
-    return <div className="text-grey-8 ">{value || 'À renseigner'}</div>;
-  }
-  return value;
+const DisplayValue = ({ value }: { value?: string | React.ReactNode }) => {
+  return typeof value === 'string' || !value ? (
+    <span>{value ?? 'À renseigner'}</span>
+  ) : (
+    value
+  );
 };
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
@@ -96,18 +93,25 @@ export const InlineEditableItem = ({
   small?: boolean;
   icon?: string | React.ReactNode;
   label?: string | React.ReactNode;
-  value: string | React.ReactNode | undefined | null;
+  value?: string | React.ReactNode;
   isReadonly: boolean;
   renderOnEdit: (args: {
     openState: { isOpen: boolean; setIsOpen: (v: boolean) => void };
   }) => React.ReactNode;
 }) => {
+  const hasLabel = !!label && typeof label === 'string';
   return (
     <div className="text-sm leading-6 font-regular gap-4 mb-1 flex items-start">
       <IconComponent icon={icon} small={small} />
-      <div className="flex flex-col">
+      <div
+        className={cn('flex flex-col self-stretch', {
+          'justify-center': !hasLabel,
+        })}
+      >
         {typeof label === 'string' ? (
-          <div className="text-primary-10 text-base">{`${label} : `}</div>
+          <div className="text-primary-10 text-base flex items-center gap-1">
+            {`${label} : `}
+          </div>
         ) : (
           label
         )}

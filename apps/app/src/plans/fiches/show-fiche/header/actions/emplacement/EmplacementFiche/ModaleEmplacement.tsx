@@ -21,7 +21,7 @@ export const ModaleEmplacement = ({
         setIsOpen: onClose,
       }}
       dataTest="RangerFicheModale"
-      title="Mutualiser l'action dans d'autres plans"
+      title="Mutualiser l'action dans un autre plan"
       size="xl"
       onClose={() => {
         setActiveTab(0);
