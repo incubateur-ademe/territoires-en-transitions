@@ -1,6 +1,5 @@
 import { QueryKey, useQuery } from '@tanstack/react-query';
 
-import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { useSupabase } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { moduleFetch, PersonalDefaultModuleKeys } from '@tet/api/plan-actions';
@@ -18,9 +17,6 @@ export const useTdbPersoFetchSingle = (
 
   const collectiviteId = useCollectiviteId();
 
-  const { plans } = useListPlans(collectiviteId);
-  const planIds = plans.map((plan) => plan.id);
-
   return useQuery({
     queryKey: getQueryKey(defaultModuleKey),
     queryFn: async () => {
@@ -37,7 +33,6 @@ export const useTdbPersoFetchSingle = (
         collectiviteId,
         userId,
         defaultModuleKey,
-        planIds,
       });
     },
   });

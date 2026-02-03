@@ -23,8 +23,6 @@ type Props = {
   bottomLinkListId?: IndicateursListParamOption;
 };
 
-const MAX_DISPLAYED_INDICATEURS = 3;
-
 /** Module pour afficher des indicateurs en fonctions de filtres spécifiques */
 export const IndicateursModule = ({
   module,
@@ -42,8 +40,8 @@ export const IndicateursModule = ({
       filters: module.options.filtre,
       queryOptions: {
         sort: [{ field: 'estRempli', direction: 'desc' }],
-        limit: MAX_DISPLAYED_INDICATEURS,
-        page: 1,
+        limit: module.options.limit,
+        page: module.options.page,
       },
     },
     { disableAutoRefresh: false }
@@ -53,17 +51,15 @@ export const IndicateursModule = ({
   const totalCount = listIndicateursData?.count || 0;
 
   const getBottomLinks = (): ButtonProps[] => {
-    return totalCount >= MAX_DISPLAYED_INDICATEURS
+    return totalCount > module.options.limit
       ? [
           {
             size: 'sm',
             variant: 'grey',
             children: `Afficher ${
-              totalCount === MAX_DISPLAYED_INDICATEURS + 1
+              totalCount === module.options.limit + 1
                 ? '1 autre indicateur'
-                : `les ${
-                    totalCount - MAX_DISPLAYED_INDICATEURS
-                  } autres indicateurs`
+                : `les ${totalCount - module.options.limit} autres indicateurs`
             }`,
             href: `${makeCollectiviteIndicateursListUrl({
               collectiviteId,

@@ -71,7 +71,6 @@ async function mergeWithDefaultModules(
 
     const defaultModule = await getDefaultModule(defaultKey, {
       ...props,
-      getPlanActionIds: () => Promise.resolve(props.planIds),
     });
 
     fetchedModulesMap.set(defaultKey, defaultModule);
@@ -79,19 +78,16 @@ async function mergeWithDefaultModules(
 
   return [
     fetchedModulesMap.get(
-      personalDefaultModuleKeysSchema.enum['indicateurs-de-suivi-de-mes-plans']
-    ) as ModuleSelect,
-    fetchedModulesMap.get(
       personalDefaultModuleKeysSchema.enum['indicateurs-dont-je-suis-pilote']
     ) as ModuleSelect,
     fetchedModulesMap.get(
       personalDefaultModuleKeysSchema.enum['actions-dont-je-suis-pilote']
     ) as ModuleSelect,
     fetchedModulesMap.get(
-      personalDefaultModuleKeysSchema.enum['mesures-dont-je-suis-pilote']
+      personalDefaultModuleKeysSchema.enum['sous-actions-dont-je-suis-pilote']
     ) as ModuleSelect,
     fetchedModulesMap.get(
-      personalDefaultModuleKeysSchema.enum['sous-actions-dont-je-suis-pilote']
+      personalDefaultModuleKeysSchema.enum['mesures-dont-je-suis-pilote']
     ) as ModuleSelect,
   ];
 }
