@@ -8,7 +8,7 @@ type DeleteFicheModalProps = {
   openState: OpenState;
 };
 
-export const SousActionDeleteModal = ({
+export const DeleteSousActionModal = ({
   sousAction,
   openState,
 }: DeleteFicheModalProps) => {
