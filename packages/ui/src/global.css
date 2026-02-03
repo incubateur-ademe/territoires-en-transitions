@@ -1,5 +1,3 @@
-/* @import '@gouvfr/dsfr/dist/dsfr.min.css'; */
-
 @import 'remixicon/fonts/remixicon.css';
 
 @tailwind base;
@@ -100,9 +98,7 @@
   input[type='reset']:disabled,
   input[type='submit']:disabled,
   select:disabled,
-  textarea:disabled,
-  video:not([href])[controls],
-  audio:not([href])[controls] {
+  textarea:disabled {
     cursor: not-allowed;
   }
 
