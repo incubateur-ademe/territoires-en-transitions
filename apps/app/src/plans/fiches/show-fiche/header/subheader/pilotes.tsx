@@ -7,6 +7,7 @@ import { PersonneTagOrUser } from '@tet/domain/collectivites';
 import { SANS_PILOTE_LABEL } from '@tet/domain/plans';
 import { cn, InlineEditWrapper } from '@tet/ui';
 import PiloteIcon from '../../../../plans/components/pilote-icon.svg';
+import { forceOpenSelect } from '../../utils';
 
 type PilotesTriggerProps = {
   personnes: PersonneTagOrUser[];
@@ -19,8 +20,9 @@ export const Pilotes = ({ personnes }: PilotesTriggerProps) => {
     <InlineEditWrapper
       disabled={isReadonly}
       renderOnEdit={() => (
-        <div className="min-w-[360px]">
+        <div className="max-w-[280px]">
           <PersonnesDropdown
+            openState={forceOpenSelect}
             dataTest="personnes-pilotes"
             collectiviteIds={getFicheAllEditorCollectiviteIds(fiche)}
             values={fiche.pilotes?.map((p) => getPersonneStringId(p))}
