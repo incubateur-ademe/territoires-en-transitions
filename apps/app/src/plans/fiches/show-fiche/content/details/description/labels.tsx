@@ -10,6 +10,7 @@ const FIELD_LABELS: Record<
   },
   effetsAttendus: {
     singular: 'Effet attendu',
+    plural: 'Effets attendus',
   },
   objectifs: {
     singular: 'Objectif',

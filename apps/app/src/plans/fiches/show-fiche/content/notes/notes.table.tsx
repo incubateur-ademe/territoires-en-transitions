@@ -42,7 +42,7 @@ export const NotesTable = ({
   onUpsertNote,
   onDeleteNote,
 }: NotesTableProps) => {
-  const [isAddingNote, setIsAddingNote] = useState(false);
+  const [isAddingNote, setIsAddingNote] = useState(notes.length === 0);
   const sortedNotes = [...notes].sort(
     (a, b) => new Date(b.dateNote).getTime() - new Date(a.dateNote).getTime()
   );
