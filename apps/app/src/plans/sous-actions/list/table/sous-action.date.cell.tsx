@@ -1,5 +1,4 @@
-import { format, isValid } from 'date-fns';
-import { isEqual } from 'es-toolkit';
+import { format, isEqual, isValid } from 'date-fns';
 import { useState } from 'react';
 
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -37,11 +36,10 @@ export const SousActionDateCell = ({ sousAction }: Props) => {
       edit={{
         onClose: () => {
           hasChanged &&
-            isValidDate &&
             updateSousAction({
               ficheId: sousAction.id,
               ficheFields: {
-                dateFin: value,
+                dateFin: isValidDate ? value : null,
               },
             });
         },
