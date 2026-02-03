@@ -3,6 +3,18 @@
 /* feuille de styles globale fourni par le module partagé */
 @import '@tet/ui/global.css';
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+ol {
+  margin-bottom: 1.5rem;
+}
+
 /*** CSS spécifique au site ***/
 @media (min-width: 78em) {
   .fr-container,
