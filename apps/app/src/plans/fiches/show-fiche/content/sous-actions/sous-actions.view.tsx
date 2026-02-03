@@ -38,7 +38,7 @@ export const SousActionsView = () => {
             sousActions={sousActions}
             isLoading={isLoading}
             isEmpty={isEmpty}
-            createSousAction={createSousAction}
+            createSousAction={canCreate ? createSousAction : undefined}
             hiddenColumns={['parentId']}
             isReadOnly={!canMutate}
             isLoadingNewRow={isLoadingCreate}
