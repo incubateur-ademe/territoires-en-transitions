@@ -5,9 +5,11 @@ import { UserWithRolesAndPermissions } from '@tet/domain/users';
 import { Crisp } from 'crisp-sdk-web';
 import { useEffect } from 'react';
 
+const ONE_DAY_IN_SECONDS = 1 * 24 * 60 * 60;
+
 export function CrispWidget({ websiteId }: { websiteId: string }) {
   useEffect(() => {
-    Crisp.configure(websiteId);
+    Crisp.configure(websiteId, { cookieExpire: ONE_DAY_IN_SECONDS });
   }, [websiteId]);
 
   useSubscribeToUserAuthEvents({
@@ -23,15 +25,16 @@ const identifyCrispUser = ({
   prenom,
   email,
 }: UserWithRolesAndPermissions) => {
-  if (nom && prenom) {
-    Crisp.user.setNickname(`${prenom} ${nom}`);
-  }
-
   if (email) {
     Crisp.user.setEmail(email);
+  }
+
+  if (nom && prenom) {
+    Crisp.user.setNickname(`${prenom} ${nom}`);
   }
 };
 
 const resetCrispUser = () => {
+  Crisp.setTokenId();
   Crisp.session.reset();
 };
