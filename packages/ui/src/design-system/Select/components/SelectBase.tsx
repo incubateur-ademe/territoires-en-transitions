@@ -428,7 +428,7 @@ const SelectButton = forwardRef(
         aria-expanded={isOpen}
         aria-label="ouvrir le menu"
         className={cn(
-          'rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden',
+          'rounded-lg border border-solid border-grey-4 disabled:border-grey-3 bg-grey-1 hover:!bg-primary-0 disabled:hover:!bg-grey-1 overflow-hidden',
           {
             'rounded-b-none': isOpen,
             'w-full': !isBadgeSelect,
