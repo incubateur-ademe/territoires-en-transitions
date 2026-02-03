@@ -15,6 +15,7 @@ import { format } from 'date-fns';
 import { useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useFicheContext } from '../../../context/fiche-context';
+import { forceOpenSelect } from '../../../utils';
 import { InlineEditableItem } from '../editable-item';
 import { planningFormSchema, PlanningFormValues } from './planning-schema';
 
@@ -232,7 +233,7 @@ export const Planning = () => {
             isReadonly={isReadonly}
             renderOnEdit={() => (
               <MiseEnOeuvreDropdown
-                openState={{ isOpen: true }}
+                openState={forceOpenSelect}
                 values={field.value ?? null}
                 onChange={(tempsDeMiseEnOeuvre) => {
                   field.onChange(tempsDeMiseEnOeuvre);
@@ -283,7 +284,7 @@ export const Planning = () => {
                 }}
                 buttonClassName="border-0 border-b"
                 displayOptionsWithoutFloater
-                openState={openState}
+                openState={forceOpenSelect}
               />
             )}
           />

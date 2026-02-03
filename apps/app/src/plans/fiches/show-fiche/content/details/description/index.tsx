@@ -5,6 +5,7 @@ import { cn, RichTextEditor, SelectMultiple } from '@tet/ui';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useFicheContext } from '../../../context/fiche-context';
+import { forceOpenSelect } from '../../../utils';
 import { InlineEditableItem } from '../editable-item';
 import { DescriptionFormValues } from './description-schema';
 import { getFieldLabel } from './labels';
@@ -121,7 +122,7 @@ export const Description = () => {
               renderOnEdit={() => (
                 <div className="w-full max-w-[400px]">
                   <EffetsAttendusDropdown
-                    openState={{ isOpen: true }}
+                    openState={forceOpenSelect}
                     values={field.value ?? undefined}
                     onChange={({ effets }) => {
                       field.onChange(effets);
@@ -148,7 +149,7 @@ export const Description = () => {
               isReadonly={isReadonly}
               renderOnEdit={() => (
                 <SelectMultiple
-                  openState={{ isOpen: true }}
+                  openState={forceOpenSelect}
                   options={thematiqueOptions}
                   values={field.value?.map((thematique) => thematique.id)}
                   onChange={({ values }) => {
@@ -183,7 +184,7 @@ export const Description = () => {
                   values={field.value?.map(
                     (sousThematique) => sousThematique.id
                   )}
-                  openState={{ isOpen: true }}
+                  openState={forceOpenSelect}
                   onChange={({ values }) => {
                     field.onChange(
                       sousThematiqueListe.filter((sousThematique) =>
@@ -210,7 +211,7 @@ export const Description = () => {
               isReadonly={isReadonly}
               renderOnEdit={() => (
                 <TagsSuiviPersoDropdown
-                  openState={{ isOpen: true }}
+                  openState={forceOpenSelect}
                   values={(field.value ?? []).map((tag) => tag.id)}
                   onChange={({ libresTag }) => {
                     field.onChange(libresTag);

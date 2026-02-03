@@ -11,6 +11,7 @@ import { JSX, useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import FranceIcon from '../../../../../plans/components/france-icon.svg';
 import { useFicheContext } from '../../../context/fiche-context';
+import { forceOpenSelect } from '../../../utils';
 import { EditableRichTextView, InlineEditableItem } from '../editable-item';
 import { acteursFormSchema, ActeursFormValues } from './acteurs-schema';
 import { getFieldLabel } from './labels';
@@ -81,7 +82,7 @@ export const Acteurs = (): JSX.Element => {
             isReadonly={isReadonly}
             renderOnEdit={() => (
               <ServicesPilotesDropdown
-                openState={{ isOpen: true }}
+                openState={forceOpenSelect}
                 placeholder="Sélectionnez ou créez un pilote"
                 collectiviteIds={allFicheCollectiviteIds}
                 values={field.value?.map((s) => s.id) ?? []}
@@ -105,7 +106,7 @@ export const Acteurs = (): JSX.Element => {
             isReadonly={isReadonly}
             renderOnEdit={() => (
               <StructuresDropdown
-                openState={{ isOpen: true }}
+                openState={forceOpenSelect}
                 values={field.value?.map((s) => s.id) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
                 onChange={({ structures }) => {
@@ -129,7 +130,7 @@ export const Acteurs = (): JSX.Element => {
             isReadonly={isReadonly}
             renderOnEdit={() => (
               <PersonnesDropdown
-                openState={{ isOpen: true }}
+                openState={forceOpenSelect}
                 values={field.value?.map((r) => getPersonneStringId(r)) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
                 placeholder="Sélectionnez ou créez un·e élu·e référent·e"
@@ -186,7 +187,7 @@ export const Acteurs = (): JSX.Element => {
             isReadonly={isReadonly}
             renderOnEdit={() => (
               <PartenairesDropdown
-                openState={{ isOpen: true }}
+                openState={forceOpenSelect}
                 values={field.value?.map((p) => p.id) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
                 onChange={({ partenaires }) => {
@@ -210,7 +211,7 @@ export const Acteurs = (): JSX.Element => {
             isReadonly={isReadonly}
             renderOnEdit={() => (
               <CiblesDropdown
-                openState={{ isOpen: true }}
+                openState={forceOpenSelect}
                 values={field.value ?? []}
                 onChange={({ cibles }) => {
                   field.onChange(cibles);
