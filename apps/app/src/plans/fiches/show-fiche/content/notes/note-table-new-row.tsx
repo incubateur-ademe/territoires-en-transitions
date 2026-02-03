@@ -1,5 +1,6 @@
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
 import { Button, RichTextEditor, Select, TableCell, TableRow } from '@tet/ui';
+import { htmlToText } from 'html-to-text';
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -15,7 +16,12 @@ const noteFormSchema = z.object({
       new Date().getFullYear() + 10,
       "L'année ne peut pas être dans plus de 10 ans"
     ),
-  description: z.string().min(1, 'La description est requise'),
+  description: z
+    .string()
+    .min(1, 'La description est requise')
+    .refine((val) => htmlToText(val).length > 0, {
+      message: 'La description est requise',
+    }),
 });
 
 type NoteFormValues = z.infer<typeof noteFormSchema>;
@@ -43,9 +49,11 @@ export const NoteTableNewRow = ({
   const form = useForm<NoteFormValues>({
     resolver: standardSchemaResolver(noteFormSchema),
     defaultValues: { year: currentYear, description: '' },
+    mode: 'onChange',
+    reValidateMode: 'onChange',
   });
 
-  const { control, handleSubmit, reset, setValue } = form;
+  const { control, handleSubmit, reset, setValue, formState } = form;
 
   const onSubmit = React.useCallback(
     async (data: NoteFormValues) => {
@@ -84,7 +92,9 @@ export const NoteTableNewRow = ({
           key={editorKey}
           unstyled
           initialValue={''}
-          onChange={(html) => setValue('description', html)}
+          onChange={(html) =>
+            setValue('description', html, { shouldValidate: true })
+          }
           contentStyle={{
             size: 'sm',
             color: 'primary',
@@ -99,6 +109,7 @@ export const NoteTableNewRow = ({
             variant="outlined"
             type="submit"
             onClick={handleSubmit(onSubmit)}
+            disabled={!formState.isValid}
             icon="save-line"
           />
           <Button
