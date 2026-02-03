@@ -12,7 +12,7 @@ const params = {
   planIds: [],
 };
 
-const numberOfModulesByDefault = 5;
+const numberOfModulesByDefault = 4;
 
 beforeEach(async () => {
   await resetModules(params);

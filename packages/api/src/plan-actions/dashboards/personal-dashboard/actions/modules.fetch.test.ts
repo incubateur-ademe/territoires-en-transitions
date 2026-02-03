@@ -16,7 +16,7 @@ const params = {
   planIds: [1, 12],
 };
 
-const numberOfModulesByDefault = 5;
+const numberOfModulesByDefault = 4;
 
 beforeEach(async () => {
   await resetModules(params);
@@ -27,7 +27,7 @@ beforeEach(async () => {
   };
 });
 
-test("Renvoie les 5 modules par défaut si aucun n'a été précédemment enregistré", async () => {
+test("Renvoie les 4 modules par défaut si aucun n'a été précédemment enregistré", async () => {
   const { data } = await modulesFetch(params);
 
   expect(data).toHaveLength(numberOfModulesByDefault);
@@ -41,8 +41,8 @@ test("Renvoie les 5 modules par défaut si aucun n'a été précédemment enregi
   });
 
   expect(data?.[1]).toMatchObject({
-    titre: /indicateurs/i,
-    type: 'indicateur.list',
+    titre: /sous actions/i,
+    type: 'fiche_action.list',
     options: expect.objectContaining({
       filtre: expect.any(Object),
     }),
@@ -95,21 +95,16 @@ test('Renvoie un module enregistré et les 2 autres par défaut', async () => {
       type: 'indicateur.list',
       options: expect.any(Object),
     },
-    {
-      titre: expect.stringMatching(/indicateurs/i),
-      type: 'indicateur.list',
-      options: expect.any(Object),
-    },
     myModule,
-    {
-      titre: expect.stringMatching(/mesures/i),
-      type: 'mesure.list',
-      defaultKey: expect.not.stringMatching(moduleDefaultKey),
-    },
     {
       titre: expect.stringMatching(/sous actions/i),
       type: 'fiche_action.list',
       options: expect.any(Object),
+    },
+    {
+      titre: expect.stringMatching(/mesures/i),
+      type: 'mesure.list',
+      defaultKey: expect.not.stringMatching(moduleDefaultKey),
     },
   ]);
 });
