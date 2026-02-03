@@ -1,7 +1,7 @@
 import EffetsAttendusDropdown from '@/app/ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import { useGetThematiqueAndSousThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
-import { cn, RichTextEditor, SelectMultiple, Spacer } from '@tet/ui';
+import { cn, RichTextEditor, SelectMultiple } from '@tet/ui';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useFicheContext } from '../../../context/fiche-context';
@@ -71,7 +71,7 @@ export const Description = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col">
         <MainTitle>{getFieldLabel('description', fiche.description)}</MainTitle>
         <RichTextEditor
           unstyled
@@ -103,8 +103,7 @@ export const Description = () => {
           </div>
         )}
       />
-      <Spacer height={2} />
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 mt-4">
         <Controller
           name="effetsAttendus"
           control={control}
