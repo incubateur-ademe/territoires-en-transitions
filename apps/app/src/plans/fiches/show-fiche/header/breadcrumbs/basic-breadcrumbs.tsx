@@ -53,7 +53,7 @@ const useGetBreadcrumbsLinks = ({
   if (!planId) {
     return [
       {
-        label: 'Actions non classées',
+        label: 'Action non classée',
         href: makeCollectiviteToutesLesFichesUrl({
           collectiviteId,
           ficheViewType: 'hors-plan',
