@@ -16,7 +16,7 @@ export const SIDE_PANEL_CONFIG: Record<
   SidePanelConfig
 > = {
   indicateurs: {
-    title: 'Lier des indicateurs',
+    title: 'Lier des indicateurs existants',
     content: (fiche) => (
       <FicheProvider fiche={fiche}>
         <LinkIndicateursView />
