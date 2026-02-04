@@ -25,8 +25,6 @@ export const useUpdateSousAction = (args?: Args) => {
       return mutationOptions.mutationFn?.({ ...input, isNotificationEnabled });
     },
 
-    meta: { disableSuccess: true },
-
     onMutate: async ({ ficheId, ficheFields }) => {
       const queryKeyOfListSousActions = trpc.plans.fiches.listFiches.queryKey({
         collectiviteId,
@@ -42,7 +40,11 @@ export const useUpdateSousAction = (args?: Args) => {
         trpc.plans.fiches.listFiches.queryFilter({
           collectiviteId,
         }),
-        (previous: ListFichesOutput) => {
+        (previous: ListFichesOutput | undefined) => {
+          if (!previous)
+            return {
+              data: [{ ...ficheFields, id: ficheId }],
+            };
           return {
             ...previous,
             data: (previous.data ?? []).map((fiche) =>
@@ -58,6 +60,9 @@ export const useUpdateSousAction = (args?: Args) => {
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: trpc.plans.fiches.listFiches.queryKey(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: trpc.metrics.personal.queryKey(),
       });
     },
 
