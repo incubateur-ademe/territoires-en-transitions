@@ -5,6 +5,7 @@ import {
   getTestDatabase,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { UserPreferencesService } from '@tet/backend/users/preferences/user-preferences.service';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { notificationTable } from '@tet/backend/utils/notifications/models/notification.table';
@@ -27,6 +28,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
   let editorUser: AuthenticatedUser;
   let notifyPiloteService: NotifyPiloteService;
   let listFichesService: ListFichesService;
+  let userPreferencesService: UserPreferencesService;
   let testCollectiviteAndUserCleanup: () => Promise<void>;
 
   const testUsers: Array<{ userId: string; cleanup: () => Promise<void> }> = [];
@@ -38,6 +40,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     router = await app.get(TrpcRouter);
     notifyPiloteService = app.get(NotifyPiloteService);
     listFichesService = app.get(ListFichesService);
+    userPreferencesService = app.get(UserPreferencesService);
 
     const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(
       databaseService,
@@ -63,7 +66,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     for (const user of testUsers) {
       await databaseService.db
         .delete(notificationTable)
-        .where(eq(notificationTable.sendTo, user.id));
+        .where(eq(notificationTable.sendTo, user.userId));
     }
 
     // Nettoyer les pilotes de test
@@ -435,7 +438,6 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       ficheInput: { collectiviteId: collectivite.id },
     });
     testFicheIds.push(ficheId3);
-    const previousFiche3 = await getFicheWithRelations(ficheId3);
 
     // assigne user1 à fiche1 → notification créée
     await caller.plans.fiches.update({
@@ -537,5 +539,400 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       // vérifie que le contenu contient les deux fiches (via le template multi-fiches)
       expect(contentResult.data.content).toBeDefined();
     }
+  });
+
+  describe('Incidence des préférences utilisateur', () => {
+    test('filtre les actions lors de la génération du contenu si isNotifyPiloteActionEnabled est désactivé', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const user1 = await createTestUser();
+      const user1Auth = getAuthUserFromDcp(user1);
+
+      // crée une fiche (action, pas de parentId) et assigne user1 comme pilote
+      const ficheId = await createFiche({
+        caller,
+        ficheInput: { collectiviteId: collectivite.id },
+      });
+      testFicheIds.push(ficheId);
+
+      await caller.plans.fiches.update({
+        ficheId,
+        ficheFields: {
+          pilotes: [{ userId: user1.id }],
+        },
+        isNotificationEnabled: true,
+      });
+
+      // vérifie qu'une notification a été créée
+      const notifications = await getNotificationsForUser(user1.id);
+      expect(notifications).toHaveLength(1);
+
+      // désactive les notifications pour les actions
+      await userPreferencesService.updateUserPreferences(user1Auth, {
+        utils: {
+          notifications: {
+            isNotifyPiloteActionEnabled: false,
+            isNotifyPiloteSousActionEnabled: true,
+          },
+        },
+      });
+
+      // vérifie que getPiloteNotificationContent retourne une erreur car toutes les fiches sont filtrées
+      const contentResult =
+        await notifyPiloteService.getPiloteNotificationContent(
+          notifications[0]
+        );
+      expect(contentResult.success).toBe(false);
+      if (!contentResult.success) {
+        expect(contentResult.error).toContain(
+          'Echec de préparation des données'
+        );
+      }
+    });
+
+    test('filtre les sous-actions lors de la génération du contenu si isNotifyPiloteSousActionEnabled est désactivé', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const user1 = await createTestUser();
+      const user1Auth = getAuthUserFromDcp(user1);
+
+      // crée une fiche parente
+      const parentFicheId = await createFiche({
+        caller,
+        ficheInput: { collectiviteId: collectivite.id },
+      });
+      testFicheIds.push(parentFicheId);
+
+      // crée une sous-action (fiche avec parentId)
+      const sousActionId = await createFiche({
+        caller,
+        ficheInput: { collectiviteId: collectivite.id },
+      });
+      testFicheIds.push(sousActionId);
+
+      // définit la sous-action avec parentId
+      await caller.plans.fiches.update({
+        ficheId: sousActionId,
+        ficheFields: {
+          parentId: parentFicheId,
+        },
+        isNotificationEnabled: false, // pas de notification lors de la création du parentId
+      });
+
+      // assigne user1 comme pilote de la sous-action
+      await caller.plans.fiches.update({
+        ficheId: sousActionId,
+        ficheFields: {
+          pilotes: [{ userId: user1.id }],
+        },
+        isNotificationEnabled: true,
+      });
+
+      // vérifie qu'une notification a été créée
+      const notifications = await getNotificationsForUser(user1.id);
+      expect(notifications).toHaveLength(1);
+
+      // désactive les notifications pour les sous-actions
+      await userPreferencesService.updateUserPreferences(user1Auth, {
+        utils: {
+          notifications: {
+            isNotifyPiloteActionEnabled: true,
+            isNotifyPiloteSousActionEnabled: false,
+          },
+        },
+      });
+
+      // vérifie que getPiloteNotificationContent retourne une erreur car toutes les fiches sont filtrées
+      const contentResult =
+        await notifyPiloteService.getPiloteNotificationContent(
+          notifications[0]
+        );
+      expect(contentResult.success).toBe(false);
+      if (!contentResult.success) {
+        expect(contentResult.error).toContain(
+          'Echec de préparation des données'
+        );
+      }
+    });
+
+    test('retourne une erreur lors de la génération du contenu si les deux préférences sont désactivées', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const user1 = await createTestUser();
+      const user1Auth = getAuthUserFromDcp(user1);
+
+      // crée une fiche (action) et assigne user1 comme pilote
+      const ficheId = await createFiche({
+        caller,
+        ficheInput: { collectiviteId: collectivite.id },
+      });
+      testFicheIds.push(ficheId);
+
+      await caller.plans.fiches.update({
+        ficheId,
+        ficheFields: {
+          pilotes: [{ userId: user1.id }],
+        },
+        isNotificationEnabled: true,
+      });
+
+      // vérifie qu'une notification a été créée
+      const notifications = await getNotificationsForUser(user1.id);
+      expect(notifications).toHaveLength(1);
+
+      // désactive toutes les notifications
+      await userPreferencesService.updateUserPreferences(user1Auth, {
+        utils: {
+          notifications: {
+            isNotifyPiloteActionEnabled: false,
+            isNotifyPiloteSousActionEnabled: false,
+          },
+        },
+      });
+
+      // vérifie que getPiloteNotificationContent retourne une erreur
+      const contentResult =
+        await notifyPiloteService.getPiloteNotificationContent(
+          notifications[0]
+        );
+      expect(contentResult.success).toBe(false);
+      if (!contentResult.success) {
+        expect(contentResult.error).toContain(
+          'Notification pilote désactivée globalement'
+        );
+      }
+    });
+
+    test('getPiloteNotificationContent retourne une erreur si les préférences désactivent toutes les notifications', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const user1 = await createTestUser();
+      const user1Auth = getAuthUserFromDcp(user1);
+
+      // crée une fiche et assigne user1 comme pilote (notification créée)
+      const ficheId = await createFiche({
+        caller,
+        ficheInput: { collectiviteId: collectivite.id },
+      });
+      testFicheIds.push(ficheId);
+
+      await caller.plans.fiches.update({
+        ficheId,
+        ficheFields: {
+          pilotes: [{ userId: user1.id }],
+        },
+        isNotificationEnabled: true,
+      });
+
+      // vérifie qu'une notification a été créée
+      const notifications = await getNotificationsForUser(user1.id);
+      expect(notifications).toHaveLength(1);
+
+      // désactive toutes les notifications après la création
+      await userPreferencesService.updateUserPreferences(user1Auth, {
+        utils: {
+          notifications: {
+            isNotifyPiloteActionEnabled: false,
+            isNotifyPiloteSousActionEnabled: false,
+          },
+        },
+      });
+
+      // vérifie que getPiloteNotificationContent retourne une erreur
+      const contentResult =
+        await notifyPiloteService.getPiloteNotificationContent(
+          notifications[0]
+        );
+      expect(contentResult.success).toBe(false);
+      if (!contentResult.success) {
+        expect(contentResult.error).toContain(
+          'Notification pilote désactivée globalement'
+        );
+      }
+    });
+
+    test('filtre les fiches selon les préférences lors de la génération du contenu', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const user1 = await createTestUser();
+      const user1Auth = getAuthUserFromDcp(user1);
+
+      // crée une action et une sous-action
+      const actionId = await createFiche({
+        caller,
+        ficheInput: { collectiviteId: collectivite.id },
+      });
+      testFicheIds.push(actionId);
+
+      const parentFicheId = await createFiche({
+        caller,
+        ficheInput: { collectiviteId: collectivite.id },
+      });
+      testFicheIds.push(parentFicheId);
+
+      const sousActionId = await createFiche({
+        caller,
+        ficheInput: { collectiviteId: collectivite.id },
+      });
+      testFicheIds.push(sousActionId);
+
+      // définit la sous-action
+      await caller.plans.fiches.update({
+        ficheId: sousActionId,
+        ficheFields: {
+          parentId: parentFicheId,
+        },
+        isNotificationEnabled: false,
+      });
+
+      // assigne user1 à l'action et à la sous-action
+      await caller.plans.fiches.update({
+        ficheId: actionId,
+        ficheFields: {
+          pilotes: [{ userId: user1.id }],
+        },
+        isNotificationEnabled: true,
+      });
+
+      await caller.plans.fiches.update({
+        ficheId: sousActionId,
+        ficheFields: {
+          pilotes: [{ userId: user1.id }],
+        },
+        isNotificationEnabled: true,
+      });
+
+      // vérifie qu'une notification a été créée avec les deux fiches
+      const notifications = await getNotificationsForUser(user1.id);
+      expect(notifications).toHaveLength(1);
+      expect(notifications[0].notificationData).toEqual({
+        ficheIds: expect.arrayContaining([actionId, sousActionId]),
+        piloteId: user1.id,
+      });
+
+      // désactive uniquement les notifications pour les sous-actions
+      await userPreferencesService.updateUserPreferences(user1Auth, {
+        utils: {
+          notifications: {
+            isNotifyPiloteActionEnabled: true,
+            isNotifyPiloteSousActionEnabled: false,
+          },
+        },
+      });
+
+      // vérifie que getPiloteNotificationContent filtre la sous-action
+      const contentResult =
+        await notifyPiloteService.getPiloteNotificationContent(
+          notifications[0]
+        );
+      expect(contentResult.success).toBe(true);
+      if (contentResult.success) {
+        // vérifie que le sujet correspond à une seule action (pas "plusieurs actions")
+        expect(contentResult.data.subject).toBe(
+          'Vous avez été assigné(e) à une action sur Territoires en Transitions'
+        );
+        // vérifie que le contenu ne mentionne que l'action, pas la sous-action
+        expect(contentResult.data.content).toBeDefined();
+        expect(contentResult.data.content).not.toContain('sous-action');
+      }
+    });
+
+    test('crée une notification pour une action même si les sous-actions sont désactivées', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const user1 = await createTestUser();
+      const user1Auth = getAuthUserFromDcp(user1);
+
+      // désactive uniquement les notifications pour les sous-actions
+      await userPreferencesService.updateUserPreferences(user1Auth, {
+        utils: {
+          notifications: {
+            isNotifyPiloteActionEnabled: true,
+            isNotifyPiloteSousActionEnabled: false,
+          },
+        },
+      });
+
+      // crée une fiche (action, pas de parentId)
+      const ficheId = await createFiche({
+        caller,
+        ficheInput: { collectiviteId: collectivite.id },
+      });
+      testFicheIds.push(ficheId);
+
+      // assigne user1 comme pilote
+      await caller.plans.fiches.update({
+        ficheId,
+        ficheFields: {
+          pilotes: [{ userId: user1.id }],
+        },
+        isNotificationEnabled: true,
+      });
+
+      // vérifie qu'une notification a été créée
+      const notifications = await getNotificationsForUser(user1.id);
+      expect(notifications).toHaveLength(1);
+      expect(notifications[0].notificationData).toEqual({
+        ficheIds: [ficheId],
+        piloteId: user1.id,
+      });
+    });
+
+    test('crée une notification pour une sous-action même si les actions sont désactivées', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const user1 = await createTestUser();
+      const user1Auth = getAuthUserFromDcp(user1);
+
+      // désactive uniquement les notifications pour les actions
+      await userPreferencesService.updateUserPreferences(user1Auth, {
+        utils: {
+          notifications: {
+            isNotifyPiloteActionEnabled: false,
+            isNotifyPiloteSousActionEnabled: true,
+          },
+        },
+      });
+
+      // crée une fiche parente
+      const parentFicheId = await createFiche({
+        caller,
+        ficheInput: { collectiviteId: collectivite.id },
+      });
+      testFicheIds.push(parentFicheId);
+
+      // crée une sous-action
+      const sousActionId = await createFiche({
+        caller,
+        ficheInput: { collectiviteId: collectivite.id },
+      });
+      testFicheIds.push(sousActionId);
+
+      // définit la sous-action avec parentId
+      await caller.plans.fiches.update({
+        ficheId: sousActionId,
+        ficheFields: {
+          parentId: parentFicheId,
+        },
+        isNotificationEnabled: false,
+      });
+
+      // assigne user1 comme pilote de la sous-action
+      await caller.plans.fiches.update({
+        ficheId: sousActionId,
+        ficheFields: {
+          pilotes: [{ userId: user1.id }],
+        },
+        isNotificationEnabled: true,
+      });
+
+      // vérifie qu'une notification a été créée
+      const notifications = await getNotificationsForUser(user1.id);
+      expect(notifications).toHaveLength(1);
+      expect(notifications[0].notificationData).toEqual({
+        ficheIds: [sousActionId],
+        piloteId: user1.id,
+      });
+    });
   });
 });
