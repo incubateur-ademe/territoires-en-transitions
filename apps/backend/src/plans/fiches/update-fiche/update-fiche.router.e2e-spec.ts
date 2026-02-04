@@ -280,7 +280,7 @@ describe('UpdateFicheService', () => {
 
       // Met à jour la sous-fiche avec différents champs
       const caller = router.createCaller({ user: yoloDodo });
-      const updateData: UpdateFicheRequest = {
+      const updateData: UpdateFicheInput = {
         titre: 'Sous-fiche mise à jour',
         description: 'Description de la sous-fiche mise à jour',
         statut: StatutEnum.EN_COURS,
