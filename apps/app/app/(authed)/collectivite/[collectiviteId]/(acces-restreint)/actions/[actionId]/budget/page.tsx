@@ -1,6 +1,6 @@
 'use client';
-import { MoyensView } from '@/app/plans/fiches/show-fiche/content/moyens/moyens.view';
+import { BudgetView } from '@/app/plans/fiches/show-fiche/content/moyens/budget';
 
 export default function Page() {
-  return <MoyensView />;
+  return <BudgetView />;
 }
