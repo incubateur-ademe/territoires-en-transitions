@@ -30,7 +30,6 @@ export function importFicheInputToUpdateFicheInput(
     priorite: fiche.priorite,
     dateDebut: fiche.dateDebut?.toISOString() ?? null,
     dateFin: fiche.dateFin?.toISOString() ?? null,
-    calendrier: fiche.calendrier,
     instanceGouvernance: fiche.instanceGouvernance,
     participationCitoyenne: isParticipationCitoyenne(fiche.participation ?? '')
       ? fiche.participation

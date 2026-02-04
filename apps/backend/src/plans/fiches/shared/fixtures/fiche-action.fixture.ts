@@ -1,4 +1,9 @@
-import { CibleEnum, FicheCreate, PiliersEciEnum, StatutEnum } from '@tet/domain/plans';
+import {
+  CibleEnum,
+  FicheCreate,
+  PiliersEciEnum,
+  StatutEnum,
+} from '@tet/domain/plans';
 
 export const ficheActionFixture: FicheCreate = {
   id: 9999,
@@ -15,7 +20,6 @@ export const ficheActionFixture: FicheCreate = {
   dateDebut: null,
   dateFin: null,
   ameliorationContinue: false,
-  calendrier: 'Calendrier à préciser',
   majTermine: true,
   collectiviteId: 1,
   createdAt: '2024-11-08T09:09:16Z',
