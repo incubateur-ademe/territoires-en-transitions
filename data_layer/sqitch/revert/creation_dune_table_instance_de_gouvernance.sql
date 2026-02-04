@@ -2,7 +2,7 @@
 
 BEGIN;
 
-DROP TABLE fiche_action_instance_de_gouvernance;
-DROP TABLE instance_de_gouvernance;
+DROP TABLE fiche_action_instance_de_gouvernance_tag;
+DROP TABLE instance_de_gouvernance_tag;
 
 COMMIT;

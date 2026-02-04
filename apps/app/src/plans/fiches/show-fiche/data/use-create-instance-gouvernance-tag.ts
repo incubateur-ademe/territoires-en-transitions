@@ -1,10 +1,23 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useTRPC } from '@tet/api';
+import { RouterInput, useTRPC } from '@tet/api';
+import { useUpdateFiche } from '../../update-fiche/data/use-update-fiche';
 
-export const useCreateInstanceGouvernanceTag = (collectiviteId: number) => {
+type CreateInstanceGouvernanceInput =
+  RouterInput['collectivites']['tags']['instanceGouvernance']['create'];
+
+type ExtendedInput = CreateInstanceGouvernanceInput & {
+  ficheId?: number;
+};
+
+export const useCreateInstanceGouvernanceTag = (
+  collectiviteId: number,
+  ficheId?: number
+) => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const { mutateAsync, isPending } = useMutation(
+  const { mutateAsync: updateFiche } = useUpdateFiche();
+
+  const createTagMutation = useMutation(
     trpc.collectivites.tags.instanceGouvernance.create.mutationOptions({
       onSuccess: () => {
         queryClient.invalidateQueries({
@@ -16,8 +29,39 @@ export const useCreateInstanceGouvernanceTag = (collectiviteId: number) => {
     })
   );
 
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: async (input: ExtendedInput) => {
+      const { ficheId: inputFicheId, ...createInput } = input;
+      const targetFicheId = inputFicheId ?? ficheId;
+
+      const createdTag = await createTagMutation.mutateAsync(createInput);
+
+      if (targetFicheId) {
+        const currentFiche = await queryClient.fetchQuery(
+          trpc.plans.fiches.get.queryOptions({ id: targetFicheId })
+        );
+
+        const existingTags = currentFiche?.instanceGouvernance || [];
+
+        const updatedTags = [
+          ...existingTags.map((tag) => ({ id: tag.id })),
+          { id: createdTag.id },
+        ];
+
+        await updateFiche({
+          ficheId: targetFicheId,
+          ficheFields: {
+            instanceGouvernance: updatedTags,
+          },
+        });
+      }
+
+      return createdTag;
+    },
+  });
+
   return {
     mutate: mutateAsync,
-    isPending,
+    isPending: isPending || createTagMutation.isPending,
   };
 };

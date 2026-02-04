@@ -83,9 +83,8 @@ export class TagService {
       const [result] = await (tx ?? this.databaseService.db)
         .insert(table)
         .values({ nom: tag.nom, collectiviteId: tag.collectiviteId })
-        .onConflictDoNothing()
         .returning();
-      
+
       // If onConflictDoNothing() returns a result, the tag was successfully created
       if (result) {
         return success(result as TagWithCollectiviteId);
@@ -103,13 +102,13 @@ export class TagService {
           )
         )
         .limit(1);
-      
+
       if (!existingTag) {
         return failure(
           `Tag "${tag.nom}" not found after conflict resolution. This may indicate a database constraint issue.`
         );
       }
-      
+
       return success(existingTag as TagWithCollectiviteId);
     } catch (error) {
       return failure(
