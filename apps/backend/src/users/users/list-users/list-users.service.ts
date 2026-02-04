@@ -34,6 +34,10 @@ export class ListUsersService {
     return pick(user, ['id', 'email', 'nom', 'prenom']);
   }
 
+  async getUserPreferences({ userId }: { userId: string }) {
+    return this.listUsersRepository.getUserPreferencesByUserId(userId);
+  }
+
   async getUserWithRolesAndPermissionsBy({
     userId,
     email,
