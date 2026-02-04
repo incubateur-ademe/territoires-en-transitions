@@ -5,14 +5,15 @@ import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/ut
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
+import { ficheActionParticipationOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Input } from '@tet/ui';
+import { Input, Select } from '@tet/ui';
 import { JSX, useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import FranceIcon from '../../../../../plans/components/france-icon.svg';
 import { useFicheContext } from '../../../context/fiche-context';
 import { forceOpenSelect } from '../../../utils';
-import { EditableRichTextView, InlineEditableItem } from '../editable-item';
+import { InlineEditableItem } from '../editable-item';
 import { acteursFormSchema, ActeursFormValues } from './acteurs-schema';
 import { getFieldLabel } from './labels';
 
@@ -27,21 +28,19 @@ const formatList = <T,>(
 export const Acteurs = (): JSX.Element => {
   const { fiche, isReadonly, update } = useFicheContext();
 
-  const { control, watch, handleSubmit, setValue } = useForm<ActeursFormValues>(
-    {
-      resolver: zodResolver(acteursFormSchema),
-      mode: 'onChange',
-      defaultValues: {
-        services: fiche.services ?? null,
-        structures: fiche.structures ?? null,
-        referents: fiche.referents ?? null,
-        partenaires: fiche.partenaires ?? null,
-        cibles: fiche.cibles ?? null,
-        instanceGouvernance: fiche.instanceGouvernance ?? null,
-        participationCitoyenne: fiche.participationCitoyenne ?? null,
-      },
-    }
-  );
+  const { control, watch, handleSubmit } = useForm<ActeursFormValues>({
+    resolver: zodResolver(acteursFormSchema),
+    mode: 'onChange',
+    defaultValues: {
+      services: fiche.services ?? null,
+      structures: fiche.structures ?? null,
+      referents: fiche.referents ?? null,
+      partenaires: fiche.partenaires ?? null,
+      cibles: fiche.cibles ?? null,
+      instanceGouvernance: fiche.instanceGouvernance ?? null,
+      participationCitoyenne: fiche.participationCitoyenne ?? null,
+    },
+  });
 
   const allFicheCollectiviteIds = getFicheAllEditorCollectiviteIds(fiche);
   const ficheActionInvalidationKeys = [['fiche_action', fiche.id.toString()]];
@@ -222,15 +221,32 @@ export const Acteurs = (): JSX.Element => {
         )}
       />
 
-      <EditableRichTextView
-        icon="shake-hands-line"
-        label={getFieldLabel(
-          'participationCitoyenne',
-          fiche.participationCitoyenne
-        )}
-        value={fiche.participationCitoyenne ?? ''}
-        isReadonly={isReadonly}
-        onChange={(html) => setValue('participationCitoyenne', html)}
+      <Controller
+        control={control}
+        name="participationCitoyenne"
+        render={({ field }) => {
+          const selectedOption = ficheActionParticipationOptions.find(
+            (option) => option.value === field.value
+          );
+          return (
+            <InlineEditableItem
+              icon="shake-hands-line"
+              label={getFieldLabel('participationCitoyenne', field.value)}
+              value={selectedOption?.label}
+              isReadonly={isReadonly}
+              renderOnEdit={() => (
+                <Select
+                  openState={forceOpenSelect}
+                  options={ficheActionParticipationOptions}
+                  values={field.value ?? undefined}
+                  onChange={(participation) => {
+                    field.onChange(participation ?? null);
+                  }}
+                />
+              )}
+            />
+          );
+        }}
       />
     </>
   );
