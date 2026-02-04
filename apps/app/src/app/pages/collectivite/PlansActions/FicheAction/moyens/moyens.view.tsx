@@ -8,7 +8,7 @@ import { MoneyPicto } from '../components/MoneyPicto';
 import { MoyensContent } from './moyens.content';
 import { MoyensModals, type ModalType } from './moyens.modals';
 
-type MoyensViewProps = {
+type BudgetViewProps = {
   isReadonly: boolean;
   fiche: FicheWithRelations;
 };
@@ -63,7 +63,7 @@ const isBudgetEmpty = (budgets: FicheBudget[]) => {
   );
 };
 
-export const MoyensView = ({ isReadonly, fiche }: MoyensViewProps) => {
+export const MoyensView = ({ isReadonly, fiche }: BudgetViewProps) => {
   const [openModalType, setOpenModalType] = useState<ModalType>(null);
   const { mutate: updateFiche } = useUpdateFiche();
 
