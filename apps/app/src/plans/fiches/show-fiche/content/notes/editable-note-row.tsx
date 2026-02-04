@@ -113,7 +113,7 @@ export const NoteRow = ({
       <TableCell className="relative text-sm text-primary-10 align-top border-b border-gray-5">
         <MetadataNoteView note={note} />
         <VisibleWhen condition={!isReadonly}>
-          <TableCell className=" absolute top-0 right-0 text-right border-b border-gray-5">
+          <div className="absolute top-0 right-0 text-right border-b border-gray-5">
             <div className="invisible group-hover:visible">
               <NoteDeletionModal
                 fiche={fiche}
@@ -121,7 +121,7 @@ export const NoteRow = ({
                 onDelete={onDeleteNote}
               />
             </div>
-          </TableCell>
+          </div>
         </VisibleWhen>
       </TableCell>
     </TableRow>
