@@ -1,5 +1,7 @@
+import { UserPreferences } from '@tet/domain/users';
 import {
   boolean,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -22,4 +24,5 @@ export const dcpTable = pgTable('dcp', {
     withTimezone: true,
     mode: 'string',
   }),
+  preferences: jsonb('preferences').$type<UserPreferences>(),
 });
