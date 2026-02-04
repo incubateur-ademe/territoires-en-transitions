@@ -1,6 +1,8 @@
+import { UserPreferences } from '@tet/domain/users';
 import { sql } from 'drizzle-orm';
 import {
   boolean,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -23,6 +25,7 @@ export const dcpTable = pgTable('dcp', {
     withTimezone: true,
     mode: 'string',
   }),
+  preferences: jsonb('preferences').$type<UserPreferences>(),
 });
 
 export const createdByNom = sql<string>`CASE
