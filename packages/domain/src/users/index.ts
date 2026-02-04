@@ -7,4 +7,5 @@ export * from './authorizations/user-role.enum.schema';
 export * from './authorizations/user-roles-and-permissions.schema';
 export * from './dcp.schema';
 export * from './user-info.schema';
+export * from './user-preferences.schema';
 export * from './user-with-roles-and-permissions.schema';

@@ -1,4 +1,8 @@
 import * as z from 'zod/mini';
+import {
+  defaultUserPreferences,
+  userPreferencesSchema,
+} from './user-preferences.schema';
 
 export const dcpSchema = z.object({
   id: z.uuid(),
@@ -11,6 +15,7 @@ export const dcpSchema = z.object({
   modifiedAt: z.nullable(z.string()),
   telephone: z.nullable(z.string()),
   cguAccepteesLe: z.nullable(z.string()),
+  preferences: z._default(userPreferencesSchema, defaultUserPreferences),
 });
 
 export type Dcp = z.infer<typeof dcpSchema>;
