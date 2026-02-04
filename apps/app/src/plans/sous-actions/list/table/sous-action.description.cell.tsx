@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { cn, TableCell, TableCellTextarea } from '@tet/ui';
@@ -21,9 +23,15 @@ type Props = {
 };
 
 export const SousActionDescriptionCell = ({ sousAction }: Props) => {
-  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const collectivite = useCurrentCollectivite();
 
-  const canMutate = hasCollectivitePermission('plans.fiches.update');
+  const { id: userId } = useUser();
+
+  const canUpdate = isFicheEditableByCollectiviteUser(
+    sousAction,
+    collectivite,
+    userId
+  );
 
   const [value, setValue] = useState(sousAction.description);
 
@@ -36,7 +44,7 @@ export const SousActionDescriptionCell = ({ sousAction }: Props) => {
   return (
     <TableCell
       className="align-top"
-      canEdit={canMutate}
+      canEdit={canUpdate}
       edit={{
         onClose: () =>
           hasChanged &&
@@ -61,7 +69,7 @@ export const SousActionDescriptionCell = ({ sousAction }: Props) => {
         })}
         title={getTitle(value, 'Sans description')}
       >
-        {getTitle(value, canMutate ? 'Saisir une description' : '')}
+        {getTitle(value, canUpdate ? 'Saisir une description' : '')}
       </span>
     </TableCell>
   );

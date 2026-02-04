@@ -1,5 +1,7 @@
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
+import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
+import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { TableCell } from '@tet/ui';
@@ -10,15 +12,22 @@ type Props = {
 };
 
 export const SousActionStatutCell = ({ sousAction }: Props) => {
-  const { hasCollectivitePermission } = useCurrentCollectivite();
-  const { mutate: updateSousAction } = useUpdateSousAction();
+  const collectivite = useCurrentCollectivite();
 
-  const canMutate = hasCollectivitePermission('plans.fiches.update');
+  const { id: userId } = useUser();
+
+  const canUpdate = isFicheEditableByCollectiviteUser(
+    sousAction,
+    collectivite,
+    userId
+  );
+
+  const { mutate: updateSousAction } = useUpdateSousAction();
 
   return (
     <TableCell
       className="py-0"
-      canEdit={canMutate}
+      canEdit={canUpdate}
       edit={{
         renderOnEdit: ({ openState }) => (
           <StatutsSelectDropdown
@@ -41,7 +50,7 @@ export const SousActionStatutCell = ({ sousAction }: Props) => {
       {sousAction.statut ? (
         <BadgeStatut statut={sousAction.statut} size="sm" />
       ) : (
-        <span className="text-grey-6">{canMutate ? 'Sélectionner' : ''}</span>
+        <span className="text-grey-6">{canUpdate ? 'Sélectionner' : ''}</span>
       )}
     </TableCell>
   );

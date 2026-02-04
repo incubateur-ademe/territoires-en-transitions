@@ -1,6 +1,8 @@
+import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
+import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { TableCell } from '@tet/ui';
@@ -11,15 +13,21 @@ type Props = {
 };
 
 export const SousActionPilotesCell = ({ sousAction }: Props) => {
-  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const collectivite = useCurrentCollectivite();
 
-  const canMutate = hasCollectivitePermission('plans.fiches.update');
+  const { id: userId } = useUser();
+
+  const canUpdate = isFicheEditableByCollectiviteUser(
+    sousAction,
+    collectivite,
+    userId
+  );
 
   const { mutate: updateSousAction } = useUpdateSousAction();
 
   return (
     <TableCell
-      canEdit={canMutate}
+      canEdit={canUpdate}
       edit={{
         renderOnEdit: ({ openState }) => (
           <div className="w-80">
@@ -48,7 +56,7 @@ export const SousActionPilotesCell = ({ sousAction }: Props) => {
           )}
         />
       ) : (
-        <span className="text-grey-6">{canMutate ? 'Sélectionner' : ''}</span>
+        <span className="text-grey-6">{canUpdate ? 'Sélectionner' : ''}</span>
       )}
     </TableCell>
   );
