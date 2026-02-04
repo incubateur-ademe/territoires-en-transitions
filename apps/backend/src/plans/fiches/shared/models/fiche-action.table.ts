@@ -80,7 +80,6 @@ export const ficheActionTable = pgTable('fiche_action', {
   dateDebut: timestamp('date_debut', TIMESTAMP_OPTIONS),
   dateFin: timestamp('date_fin_provisoire', TIMESTAMP_OPTIONS),
   ameliorationContinue: boolean('amelioration_continue'),
-  calendrier: varchar('calendrier', { length: 10000 }),
   instanceGouvernance: text('instance_gouvernance'),
   participationCitoyenne: text('participation_citoyenne'),
   participationCitoyenneType: varchar('participation_citoyenne_type', {

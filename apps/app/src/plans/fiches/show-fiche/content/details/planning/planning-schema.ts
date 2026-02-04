@@ -18,7 +18,6 @@ export const planningFormSchema = z
       .nullable(),
     tempsDeMiseEnOeuvre: z.custom<TempsDeMiseEnOeuvre>().nullable(),
     ameliorationContinue: z.boolean().nullable(),
-    calendrier: z.string().nullable(),
   })
   .refine(
     (data) => {

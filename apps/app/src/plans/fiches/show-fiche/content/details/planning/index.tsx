@@ -3,14 +3,7 @@ import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
 import { isFicheOnTime } from '@tet/domain/plans';
-import {
-  cn,
-  Icon,
-  InlineEditWrapper,
-  Input,
-  Select,
-  TextareaBase,
-} from '@tet/ui';
+import { cn, Icon, InlineEditWrapper, Input, Select } from '@tet/ui';
 import { format } from 'date-fns';
 import { useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -47,7 +40,6 @@ export const Planning = () => {
         dateFin: fiche.dateFin ? new Date(fiche.dateFin ?? '') : null,
         tempsDeMiseEnOeuvre: fiche.tempsDeMiseEnOeuvre,
         ameliorationContinue: fiche.ameliorationContinue ?? false,
-        calendrier: fiche.calendrier,
       },
     });
 
@@ -284,26 +276,6 @@ export const Planning = () => {
                 buttonClassName="border-0 border-b"
                 displayOptionsWithoutFloater
                 openState={openState}
-              />
-            )}
-          />
-        )}
-      />
-      <Controller
-        name="calendrier"
-        control={control}
-        render={({ field }) => (
-          <InlineEditableItem
-            icon="time-line"
-            label="Éléments de calendrier"
-            value={fiche.calendrier}
-            isReadonly={isReadonly}
-            renderOnEdit={() => (
-              <TextareaBase
-                tabIndex={0}
-                autoFocus
-                value={field.value ?? ''}
-                onChange={(value) => field.onChange(value)}
               />
             )}
           />

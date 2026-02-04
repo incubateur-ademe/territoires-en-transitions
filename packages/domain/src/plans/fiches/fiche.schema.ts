@@ -15,9 +15,7 @@ import {
 } from '../../shared';
 import { cibleEnumValues } from './cible.enum.schema';
 import { ficheNoteSchema } from './fiche-note.schema';
-import {
-  participationCitoyenneEnumValues
-} from './participation-citoyenne.enum.schema';
+import { participationCitoyenneEnumValues } from './participation-citoyenne.enum.schema';
 import { piliersEciEnumSchema } from './pilier-eci.enum.schema';
 import { prioriteEnumValues } from './priorite.enum.schema';
 import { statutEnumValues } from './statut.enum.schema';
@@ -46,7 +44,6 @@ export const ficheSchema = z.object({
     .boolean()
     .nullable()
     .describe('Action se répète tous les ans'),
-  calendrier: z.string().nullable().describe('Calendrier'),
   instanceGouvernance: z
     .string()
     .nullable()

@@ -15,7 +15,6 @@ import Indicateurs from './Indicateurs';
 import { Moyens } from './Moyens';
 import { Notes } from './Notes';
 import Acteurs from './components/acteurs';
-import Calendrier from './components/calendrier';
 import { Chemins, Infos, Statuts } from './components/header';
 
 export type FicheActionPdfExtendedProps = {
@@ -69,10 +68,6 @@ const FicheActionPdf = ({
       {sections.intro.isChecked && <Description fiche={fiche} />}
 
       {sections.acteurs.isChecked && <Acteurs fiche={fiche} />}
-
-      {sections.planning.isChecked && (
-        <Calendrier justificationCalendrier={fiche.calendrier} />
-      )}
 
       {sections.indicateurs.isChecked && (
         <Indicateurs fiche={fiche} indicateursListe={indicateursListe} />
