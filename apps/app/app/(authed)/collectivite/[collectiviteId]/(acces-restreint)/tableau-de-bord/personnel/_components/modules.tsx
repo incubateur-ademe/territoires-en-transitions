@@ -8,6 +8,7 @@ import {
 } from '@tet/api/plan-actions';
 import { Event, EventName, useEventTracker } from '@tet/ui';
 
+import { useImprovedFicheActionUiEnabled } from '@/app/plans/fiches/show-fiche';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { ListPlansEmptyCard } from '@/app/plans/plans/list-all-plans/list-plans.empty-card';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -23,6 +24,7 @@ type ModuleDescriptor = {
   isVisible: boolean;
   render: (module: ModuleSelect) => React.ReactNode | null;
 };
+
 const orderedModules: PersonalDefaultModuleKeys[] = [
   'actions-dont-je-suis-pilote',
   'sous-actions-dont-je-suis-pilote',
@@ -45,6 +47,8 @@ const FICHES_MODULE_PROPERTIES: Partial<
 const Modules = () => {
   const { data: modules, isLoading } = useTdbPersoFetchModules();
   const tracker = useEventTracker();
+
+  const isImprovedFicheActionUiEnabled = useImprovedFicheActionUiEnabled();
 
   const currentCollectivite = useCurrentCollectivite();
   const { collectiviteId, hasCollectivitePermission, isSimplifiedView } =
@@ -84,7 +88,9 @@ const Modules = () => {
       match: (m) =>
         m.type === 'fiche_action.list' &&
         m.defaultKey === 'sous-actions-dont-je-suis-pilote',
-      isVisible: hasCollectivitePermission('plans.fiches.read_confidentiel'),
+      isVisible:
+        hasCollectivitePermission('plans.fiches.read_confidentiel') &&
+        isImprovedFicheActionUiEnabled === true,
       render: (module) => {
         if (noPlanAndCanCreatePlan) {
           // We already display the placeholder to create a plan,
