@@ -102,10 +102,15 @@ export const InlineEditableItem = ({
     openState: { isOpen: boolean; setIsOpen: (v: boolean) => void };
   }) => React.ReactNode;
 }) => {
+  const hasLabel = !!label && typeof label === 'string';
   return (
     <div className="text-sm leading-6 font-regular gap-4 mb-1 flex items-start">
       <IconComponent icon={icon} small={small} />
-      <div className="flex flex-col">
+      <div
+        className={cn('flex flex-col self-stretch', {
+          'justify-center': !hasLabel,
+        })}
+      >
         {typeof label === 'string' ? (
           <div className="text-primary-10 text-base">{`${label} : `}</div>
         ) : (
