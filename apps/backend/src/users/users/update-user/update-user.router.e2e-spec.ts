@@ -3,6 +3,7 @@ import { getAuthUser, getTestApp, YOLO_DODO } from '@tet/backend/test';
 import { UsersRouter } from '@tet/backend/users/users.router';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { defaultUserPreferences } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../models/auth.models';
@@ -68,5 +69,37 @@ describe('UserRouter', () => {
     expect(userReseted.prenom).toBe(initialUserInfo.prenom);
     expect(userReseted.nom).toBe(initialUserInfo.nom);
     expect(userReseted.telephone).toBe(initialUserInfo.telephone);
+  });
+
+  test("Mettre à jour les préférences de l'utilisateur", async () => {
+    const caller = userRouter.createCaller({ user: yoloDodoUser });
+
+    const input = {
+      utils: {
+        notifications: {
+          isNotifyPiloteActionEnabled: false,
+          isNotifyPiloteSousActionEnabled: false,
+        },
+      },
+    };
+
+    // met à jour les préférences (différentes des prefs par défaut)
+    expect(input).not.toMatchObject(defaultUserPreferences);
+    const result = await caller.users.updatePreferences(input);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data).toMatchObject(input);
+    }
+
+    // vérifie que les préférences ont bien été mises à jour dans la base de données
+    const user = await getUserFromDb(yoloDodoUser.id);
+    expect(user.preferences).toBeDefined();
+    expect(user.preferences).toMatchObject(input);
+
+    // restaure les préférences par défaut
+    await caller.users.updatePreferences(defaultUserPreferences);
+
+    const userReseted = await getUserFromDb(yoloDodoUser.id);
+    expect(userReseted.preferences).toMatchObject(defaultUserPreferences);
   });
 });
