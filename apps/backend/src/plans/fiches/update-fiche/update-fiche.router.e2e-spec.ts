@@ -186,7 +186,6 @@ describe('UpdateFicheService', () => {
         budgetPrevisionnel: '35000',
         statut: StatutEnum.EN_PAUSE,
         ameliorationContinue: false,
-        calendrier: 'Calendrier prévisionnel',
         majTermine: true,
         tempsDeMiseEnOeuvre: { id: 1 },
         participationCitoyenne:
@@ -233,7 +232,6 @@ describe('UpdateFicheService', () => {
         budgetPrevisionnel: null,
         statut: null,
         ameliorationContinue: null,
-        calendrier: null,
         majTermine: null,
         tempsDeMiseEnOeuvre: null,
         participationCitoyenne: null,

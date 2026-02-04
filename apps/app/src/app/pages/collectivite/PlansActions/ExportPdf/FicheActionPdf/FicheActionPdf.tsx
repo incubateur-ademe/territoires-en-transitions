@@ -1,6 +1,5 @@
 import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
 import Acteurs from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/acteurs';
-import Calendrier from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/components/calendrier';
 import {
   Chemins,
   Infos,
@@ -74,10 +73,6 @@ const FicheActionPdf = ({
       {sections.intro.isChecked && <Description fiche={fiche} />}
 
       {sections.acteurs.isChecked && <Acteurs fiche={fiche} />}
-
-      {sections.planning.isChecked && (
-        <Calendrier justificationCalendrier={fiche.calendrier} />
-      )}
 
       {sections.indicateurs.isChecked && (
         <Indicateurs fiche={fiche} indicateursListe={indicateursListe} />
