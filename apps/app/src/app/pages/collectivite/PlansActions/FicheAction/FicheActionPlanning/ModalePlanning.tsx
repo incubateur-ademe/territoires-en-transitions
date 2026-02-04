@@ -11,7 +11,6 @@ import {
   FormSectionGrid,
   Input,
   ModalFooterOKCancel,
-  Textarea,
   useEventTracker,
 } from '@tet/ui';
 import { isEqual } from 'es-toolkit/predicate';
@@ -50,7 +49,6 @@ const ModalePlanning = ({ isOpen, setIsOpen, fiche }: ModalePlanningProps) => {
           tempsDeMiseEnOeuvre: editedFiche.tempsDeMiseEnOeuvre,
           statut: editedFiche.statut,
           priorite: editedFiche.priorite,
-          calendrier: editedFiche.calendrier,
         },
       });
     }
@@ -231,24 +229,6 @@ const ModalePlanning = ({ isOpen, setIsOpen, fiche }: ModalePlanningProps) => {
                 setEditedFiche((prevState) => ({
                   ...prevState,
                   priorite: priorite ?? null,
-                }))
-              }
-            />
-          </Field>
-
-          {/* Justification du calendrier */}
-          <Field
-            title="Calendrier"
-            hint="Si l’action est en pause ou abandonnée, expliquez pourquoi"
-            className="col-span-2"
-          >
-            <Textarea
-              className="min-h-[50px]"
-              value={editedFiche.calendrier ?? ''}
-              onChange={(evt) =>
-                setEditedFiche((prevState) => ({
-                  ...prevState,
-                  calendrier: (evt.target as HTMLTextAreaElement).value,
                 }))
               }
             />

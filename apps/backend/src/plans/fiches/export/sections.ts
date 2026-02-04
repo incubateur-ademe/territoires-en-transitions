@@ -109,7 +109,6 @@ const MISE_EN_OEUVRE: Section = {
       colLabel: "L'action se répète tous les ans",
       cellValue: ({ fiche }) => (fiche?.ameliorationContinue ? 'Oui' : ''),
     },
-    { colLabel: 'Calendrier', cellValue: ({ fiche }) => fiche?.calendrier },
   ],
 };
 

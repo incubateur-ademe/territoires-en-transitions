@@ -54,7 +54,6 @@ const baseFicheAction: FicheWithRelationsAndCollectivite = {
     },
   ],
   restreint: false,
-  calendrier: null,
   financeurs: [
     {
       ficheId: 10108,
