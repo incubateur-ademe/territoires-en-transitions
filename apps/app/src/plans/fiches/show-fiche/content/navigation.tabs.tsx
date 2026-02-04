@@ -40,7 +40,7 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
       id: 'details',
     },
     {
-      label: `Indicateurs ${
+      label: `Indicateurs liés ${
         indicateurs.list.length > 0 ? `(${indicateurs.list.length})` : ''
       }`,
       isVisible:
