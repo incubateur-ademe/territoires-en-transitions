@@ -115,6 +115,19 @@ export class NotificationsService {
     }
     const ret = await contentGenerator(notification);
     if (!ret.success) {
+      // met à jour la notification dans la base
+      await this.databaseService.db
+        .update(notificationTable)
+        .set({
+          status:
+            notification.retries < MAX_SEND_RETRIES - 1
+              ? NotificationStatusEnum.PENDING
+              : NotificationStatusEnum.FAILED,
+          retries: notification.retries + 1,
+          errorMessage: ret.error,
+        })
+        .where(eq(notificationTable.id, notification.id));
+
       return;
     }
 
