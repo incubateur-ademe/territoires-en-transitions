@@ -1,6 +1,8 @@
 import { format, isEqual, isValid } from 'date-fns';
 import { useState } from 'react';
 
+import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations, isFicheOnTime } from '@tet/domain/plans';
 import { cn, Icon, Input, TableCell } from '@tet/ui';
@@ -11,9 +13,15 @@ type Props = {
 };
 
 export const SousActionDateCell = ({ sousAction }: Props) => {
-  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const collectivite = useCurrentCollectivite();
 
-  const canMutate = hasCollectivitePermission('plans.fiches.update');
+  const { id: userId } = useUser();
+
+  const canUpdate = isFicheEditableByCollectiviteUser(
+    sousAction,
+    collectivite,
+    userId
+  );
 
   const initialDate = sousAction.dateFin ?? '';
 
@@ -32,7 +40,7 @@ export const SousActionDateCell = ({ sousAction }: Props) => {
 
   return (
     <TableCell
-      canEdit={canMutate}
+      canEdit={canUpdate}
       edit={{
         onClose: () => {
           hasChanged &&
@@ -65,7 +73,7 @@ export const SousActionDateCell = ({ sousAction }: Props) => {
           {format(new Date(sousAction.dateFin), 'dd/MM/yyyy')}
         </span>
       ) : (
-        <div className="text-center text-grey-6">{canMutate ? '–' : ''}</div>
+        <div className="text-center text-grey-6">{canUpdate ? '–' : ''}</div>
       )}
     </TableCell>
   );
