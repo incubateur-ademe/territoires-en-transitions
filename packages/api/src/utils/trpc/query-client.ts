@@ -24,7 +24,13 @@ export function makeQueryClient() {
         // above 0 to avoid refetching immediately on the client
         staleTime: 30 * 1000,
         retry: (failureCount, error) => {
+          console.error(error);
           if (error instanceof TRPCClientError) {
+            console.error(
+              `Error on tRPC path: ${
+                error.data?.path
+              } with data ${JSON.stringify(error.data ?? {})}`
+            );
             if (UNRECOVERABLE_ERRORS.includes(error.data?.code)) {
               return false;
             }
