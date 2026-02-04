@@ -1,7 +1,6 @@
 import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { and, eq } from 'drizzle-orm';
 import { cleanupReferentielActionStatutsAndLabellisations } from '../update-action-statut/referentiel-action-statut.test-fixture';
@@ -15,7 +14,7 @@ export async function createAudit({
   clos = false,
   withDemande = false,
 }: {
-  databaseService: DatabaseService;
+  databaseService: DatabaseServiceInterface;
   collectiviteId: number;
   referentielId: ReferentielId;
   dateDebut?: string | null;
@@ -49,7 +48,7 @@ export async function createAudit({
     .returning();
 
   const cleanup = async () => {
-    cleanupReferentielActionStatutsAndLabellisations(
+    await cleanupReferentielActionStatutsAndLabellisations(
       databaseService,
       collectiviteId
     );

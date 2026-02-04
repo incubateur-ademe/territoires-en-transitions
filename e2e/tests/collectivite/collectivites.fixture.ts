@@ -42,10 +42,7 @@ export class CollectiviteFixture {
   };
 
   getUser = (userIndex = 0) => {
-    if (userIndex < 0 || userIndex >= this.usersCreated.length) {
-      throw new Error(`User index ${userIndex} out of bounds`);
-    }
-    const userId = this.usersCreated[userIndex];
+    const userId = this.getUserId(userIndex);
     return this.users.getUserById(userId);
   };
 

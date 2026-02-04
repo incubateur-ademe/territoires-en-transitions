@@ -10,7 +10,7 @@ test.describe('Update action statut', () => {
       userArgs: { autoLogin: true },
       collectiviteArgs: { isCOT: true },
     });
-    page.goto('/');
+    await page.goto('/');
   });
 
   test("Possible de mettre à jour le statut d'une action en tant qu'éditeur si on est pas en audit", async ({

@@ -38,10 +38,13 @@ describe('StartAuditRouter', () => {
   test('un auditeur peut lancer un audit', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
+    // TODO: créer une nouvelle collectivité
+    // TODO: vérifier que l'audit a bien été demandé
     const { audit } = await createAuditWithOnTestFinished({
       databaseService: db,
       collectiviteId: RANDOM_COLLECTIVITE_ID,
       referentielId: ReferentielIdEnum.CAE,
+      dateDebut: null,
       withDemande: true,
     });
 
