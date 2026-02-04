@@ -153,7 +153,6 @@ const rawParseSchema = z.object({
   objectifs: optionalTextSchema,
   resources: optionalTextSchema,
   financements: optionalTextSchema,
-  calendrier: optionalTextSchema,
   notesComplementaire: optionalTextSchema,
   participationCitoyenne: optionalTextSchema,
   budget: numberSchema,

@@ -30,7 +30,6 @@ export function importActionInputToUpdateFicheInput(
     priorite: action.priorite,
     dateDebut: action.dateDebut?.toISOString() ?? null,
     dateFin: action.dateFin?.toISOString() ?? null,
-    calendrier: action.calendrier,
     instanceGouvernance: resolvedEntities.instanceGouvernance,
     participationCitoyenne: isParticipationCitoyenne(action.participation ?? '')
       ? action.participation
