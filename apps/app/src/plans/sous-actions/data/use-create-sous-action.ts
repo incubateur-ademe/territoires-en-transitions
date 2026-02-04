@@ -23,17 +23,21 @@ export const useCreateSousAction = (
       });
     },
 
-    meta: { disableSuccess: true },
-
     onSuccess: (createdFiche) => {
       queryClient.setQueriesData(
         trpc.plans.fiches.listFiches.queryFilter({
           collectiviteId,
         }),
-        (previous: ListFichesOutput) => ({
-          ...previous,
-          data: [...(previous.data ?? []), createdFiche],
-        })
+        (previous: ListFichesOutput | undefined) => {
+          if (!previous)
+            return {
+              data: [createdFiche],
+            };
+          return {
+            ...previous,
+            data: [...(previous.data ?? []), createdFiche],
+          };
+        }
       );
     },
 
