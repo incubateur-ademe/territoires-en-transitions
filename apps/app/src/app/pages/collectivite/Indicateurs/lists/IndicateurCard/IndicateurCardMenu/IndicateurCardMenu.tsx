@@ -1,6 +1,8 @@
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
-import { ButtonMenu, MenuAction } from '@tet/ui';
+import { ActionId } from '@tet/domain/referentiels';
+import { ButtonMenu } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
+import { IndicateurMenuAction } from '../menu-actions';
 export type ChartDownloadSettings = {
   showTrigger: boolean;
   openModal: () => void;
@@ -9,15 +11,13 @@ export type ChartDownloadSettings = {
 type Props = {
   indicateurId: number;
   openState: OpenState;
-  isEditable?: boolean;
   chartDownloadSettings: ChartDownloadSettings;
-  isFavoriCollectivite: boolean;
+  menuActions: IndicateurMenuAction[];
 };
 
 const IndicateurCardMenu = ({
+  menuActions,
   openState,
-  isFavoriCollectivite,
-  isEditable,
   indicateurId,
   chartDownloadSettings,
 }: Props) => {
@@ -28,26 +28,22 @@ const IndicateurCardMenu = ({
     openState.setIsOpen(false);
   };
 
-  const menuActions: (MenuAction & { isVisible?: boolean })[] = [
-    {
-      label: 'Retirer des favoris',
-      onClick: () => toggleEstFavori(false),
-      isVisible: isEditable && isFavoriCollectivite,
+  const onClickActions: Record<ActionId, () => void> = {
+    'remove-from-favorites': () => toggleEstFavori(false),
+    'add-to-favorites': () => toggleEstFavori(true),
+    'download-chart': () => {
+      chartDownloadSettings.openModal();
+      openState.setIsOpen(false);
     },
-    {
-      label: 'Ajouter aux favoris',
-      onClick: () => toggleEstFavori(true),
-      isVisible: isEditable && !isFavoriCollectivite,
-    },
-    {
-      label: 'Télécharger le graphique (.png)',
-      onClick: () => {
-        chartDownloadSettings.openModal();
-        openState.setIsOpen(false);
-      },
-      isVisible: chartDownloadSettings.showTrigger,
-    },
-  ];
+  };
+
+  const actions: Array<{ onClick: () => void; label: string }> =
+    menuActions.map((action) => {
+      return {
+        label: action.label,
+        onClick: onClickActions[action.id],
+      };
+    });
 
   return (
     <ButtonMenu
@@ -55,7 +51,7 @@ const IndicateurCardMenu = ({
       variant="grey"
       size="xs"
       menu={{
-        actions: menuActions,
+        actions,
         openState,
       }}
     />
