@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
+import { instanceGouvernanceErrorConfig } from './handle-instance-gouvernance.errors';
 import {
   createInstanceGouvernanceInputSchema,
   deleteInstanceGouvernanceInputSchema,
@@ -16,7 +17,9 @@ export class InstanceGouvernanceRouter {
     private readonly instanceGouvernanceService: InstanceGouvernanceService
   ) {}
 
-  private readonly getResultDataOrThrowError = createTrpcErrorHandler();
+  private readonly getResultDataOrThrowError = createTrpcErrorHandler(
+    instanceGouvernanceErrorConfig
+  );
 
   router = this.trpc.router({
     create: this.trpc.authedProcedure

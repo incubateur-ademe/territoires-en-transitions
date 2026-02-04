@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { ResourceType } from '@tet/backend/users/authorizations/resource-type.enum';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { failure } from '@tet/backend/utils/result.type';
 import { CommonErrorEnum } from '@tet/backend/utils/trpc/common-errors';
 import { InstanceGouvernance } from '@tet/domain/collectivites';
-import { PermissionOperationEnum } from '@tet/domain/users';
+import { ResourceType } from '@tet/domain/users';
 import { InstanceGouvernanceRepository } from './handle-instance-gouvernance.repository';
 import { Result } from './handle-instance-gouvernance.result';
 
@@ -23,6 +23,16 @@ export class InstanceGouvernanceService {
     user: AuthenticatedUser;
     tx?: Transaction;
   }): Promise<Result<InstanceGouvernance>> {
+    const isAllowed = await this.permissionService.isAllowed(
+      request.user,
+      'collectivites.tags.mutate',
+      ResourceType.COLLECTIVITE,
+      request.collectiviteId,
+      true
+    );
+    if (!isAllowed) {
+      return failure(CommonErrorEnum.UNAUTHORIZED);
+    }
     const result = await this.instanceGouvernanceRepository.create({
       nom: request.nom,
       collectiviteId: request.collectiviteId,
@@ -43,15 +53,13 @@ export class InstanceGouvernanceService {
   }): Promise<Result<InstanceGouvernance[]>> {
     const isAllowed = await this.permissionService.isAllowed(
       request.user,
-      PermissionOperationEnum['PLANS.FICHES.READ'],
+      'collectivites.tags.read',
       ResourceType.COLLECTIVITE,
-      request.collectiviteId
+      request.collectiviteId,
+      true
     );
     if (!isAllowed) {
-      return {
-        success: false,
-        error: CommonErrorEnum.UNAUTHORIZED,
-      };
+      return failure(CommonErrorEnum.UNAUTHORIZED);
     }
     return this.instanceGouvernanceRepository.list(request.collectiviteId);
   }
@@ -62,15 +70,13 @@ export class InstanceGouvernanceService {
   }): Promise<Result<boolean>> {
     const isAllowed = await this.permissionService.isAllowed(
       args.user,
-      PermissionOperationEnum['PLANS.FICHES.UPDATE'],
+      'collectivites.tags.mutate',
       ResourceType.COLLECTIVITE,
-      args.collectiviteId
+      args.collectiviteId,
+      true
     );
     if (!isAllowed) {
-      return {
-        success: false,
-        error: CommonErrorEnum.UNAUTHORIZED,
-      };
+      return failure(CommonErrorEnum.UNAUTHORIZED);
     }
     return this.instanceGouvernanceRepository.delete(args.id);
   }
@@ -83,15 +89,13 @@ export class InstanceGouvernanceService {
   }): Promise<Result<InstanceGouvernance>> {
     const isAllowed = await this.permissionService.isAllowed(
       args.user,
-      PermissionOperationEnum['PLANS.FICHES.UPDATE'],
+      'collectivites.tags.mutate',
       ResourceType.COLLECTIVITE,
-      args.collectiviteId
+      args.collectiviteId,
+      true
     );
     if (!isAllowed) {
-      return {
-        success: false,
-        error: CommonErrorEnum.UNAUTHORIZED,
-      };
+      return failure(CommonErrorEnum.UNAUTHORIZED);
     }
     return this.instanceGouvernanceRepository.update(args.id, args.nom);
   }

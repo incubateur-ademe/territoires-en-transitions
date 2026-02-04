@@ -30,7 +30,7 @@ export const InstanceGouvernanceDropdown = ({
   const { instanceGouvernanceTags } =
     useListInstanceGouvernanceTags(collectiviteId);
   const { mutate: createInstanceGouvernanceTag } =
-    useCreateInstanceGouvernanceTag(collectiviteId);
+    useCreateInstanceGouvernanceTag(collectiviteId, ficheId ?? undefined);
   const { mutate: updateInstanceGouvernanceTag } =
     useUpdateInstanceGouvernanceTag(collectiviteId);
   const { mutate: deleteInstanceGouvernance } =
@@ -55,10 +55,7 @@ export const InstanceGouvernanceDropdown = ({
       onCreate={
         ficheId
           ? async (tag) => {
-              const result = await createInstanceGouvernanceTag({
-                ...tag,
-                ficheId,
-              });
+              const result = await createInstanceGouvernanceTag(tag);
               return result;
             }
           : undefined

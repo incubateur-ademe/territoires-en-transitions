@@ -8,9 +8,8 @@
  *
  * Usage: tsx apps/tools/src/migrations/ingest-instance-gouvernance-migration-output.ts
  */
-
-import { instanceGouvernanceTable } from '@tet/backend/collectivites/tags/instance-gouvernance.table';
-import { ficheActionInstanceGouvernanceTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-instance-gouvernance';
+import { instanceGouvernanceTagTable } from '@tet/backend/collectivites/tags/instance-gouvernance.table';
+import { ficheActionInstanceGouvernanceTableTag } from '@tet/backend/plans/fiches/shared/models/fiche-action-instance-gouvernance';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
@@ -268,7 +267,7 @@ async function main() {
 
         // Create corresponding dcp entry
         await tx.insert(dcpTable).values({
-          userId: systemUserId,
+          id: systemUserId,
           email: SYSTEM_USER_EMAIL,
           prenom: 'Territoires',
           nom: 'en Transition',
@@ -318,11 +317,11 @@ async function main() {
             // Find or create instance gouvernance tag
             const existingTag = await tx
               .select()
-              .from(instanceGouvernanceTable)
+              .from(instanceGouvernanceTagTable)
               .where(
                 and(
-                  eq(instanceGouvernanceTable.nom, tagName),
-                  eq(instanceGouvernanceTable.collectiviteId, collectiviteId)
+                  eq(instanceGouvernanceTagTable.nom, tagName),
+                  eq(instanceGouvernanceTagTable.collectiviteId, collectiviteId)
                 )
               )
               .limit(1);
@@ -334,7 +333,7 @@ async function main() {
             } else {
               // Create new tag
               const [newTag] = await tx
-                .insert(instanceGouvernanceTable)
+                .insert(instanceGouvernanceTagTable)
                 .values({
                   nom: tagName,
                   collectiviteId: collectiviteId,
@@ -348,12 +347,12 @@ async function main() {
             // Link tag to fiche_action if not already linked
             const existingLink = await tx
               .select()
-              .from(ficheActionInstanceGouvernanceTable)
+              .from(ficheActionInstanceGouvernanceTableTag)
               .where(
                 and(
-                  eq(ficheActionInstanceGouvernanceTable.ficheId, ficheId),
+                  eq(ficheActionInstanceGouvernanceTableTag.ficheId, ficheId),
                   eq(
-                    ficheActionInstanceGouvernanceTable.instanceGouvernanceId,
+                    ficheActionInstanceGouvernanceTableTag.instanceGouvernanceTagId,
                     tagId
                   )
                 )
@@ -361,9 +360,9 @@ async function main() {
               .limit(1);
 
             if (existingLink.length === 0) {
-              await tx.insert(ficheActionInstanceGouvernanceTable).values({
+              await tx.insert(ficheActionInstanceGouvernanceTableTag).values({
                 ficheId: ficheId,
-                instanceGouvernanceId: tagId,
+                instanceGouvernanceTagId: tagId,
                 createdBy: systemUserId,
               });
               tagsLinkedCount++;

@@ -80,9 +80,3 @@ export const updateFicheInputSchema = ficheSchemaUpdate.extend({
 });
 
 export type UpdateFicheInput = z.infer<typeof updateFicheInputSchema>;
-
-export const createInstanceGouvernanceAndLinkToFicheInputSchema = z.object({
-  nom: z.string().min(1),
-  ficheId: z.number(),
-  collectiviteId: z.number(),
-});

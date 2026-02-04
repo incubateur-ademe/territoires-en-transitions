@@ -38,7 +38,6 @@ export const SelectTagsGeneric = ({
 }: SelectTagsGenericProps) => {
   const collectivite = useCurrentCollectivite();
   const collectiviteId = collectivite.collectiviteId;
-  console.log({ tags });
   const options: Option[] = tags.map((tag) => ({
     value: tag.id,
     label: tag.nom,
@@ -53,7 +52,7 @@ export const SelectTagsGeneric = ({
   }));
 
   const isEditionAllowed =
-    collectivite.niveauAcces !== null &&
+    collectivite.hasCollectivitePermission('collectivites.mutate') &&
     (onCreate !== undefined ||
       onUpdate !== undefined ||
       onDelete !== undefined) &&

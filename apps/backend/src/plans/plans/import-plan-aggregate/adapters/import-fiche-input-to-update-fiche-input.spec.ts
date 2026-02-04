@@ -39,6 +39,7 @@ describe('importFicheInputToUpdateFicheInput', () => {
     services: [{ id: 2, nom: 'Service B' }],
     financeurs: [{ id: 10, nom: 'ADEME', montant: 5000 }],
     partenaires: [{ id: 3, nom: 'Partenaire C' }],
+    instanceGouvernance: [{ id: 1, nom: 'Instance A' }],
   });
 
   it('should successfully adapt a valid plan import to plan creation request', () => {
@@ -176,6 +177,102 @@ describe('importFicheInputToUpdateFicheInput', () => {
       expect(result.data.fiches[0].fiche.titre).toBe('Fiche sans axe');
       expect(result.data.fiches[1].axisPath).toEqual(ficheWithAxis.axisPath);
       expect(result.data.fiches[1].fiche.titre).toBe(ficheWithAxis.titre);
+    }
+  });
+
+  it('should include instance gouvernance in the fiche when provided', () => {
+    const ficheWithInstanceGouvernance: Partial<ImportFicheInput> = {
+      axisPath: ['Axe 1'],
+      titre: 'Fiche avec instance de gouvernance',
+      instanceGouvernance: ['Comité de pilotage', 'Conseil municipal'],
+      structures: [],
+      partenaires: [],
+      services: [],
+      pilotes: [],
+      referents: [],
+      financeurs: [],
+    };
+
+    const planImport = createImportPlanInput({
+      fiches: [ficheWithInstanceGouvernance as ImportFicheInput],
+    });
+
+    const resolvedEntities: ResolvedFicheEntities[] = [
+      {
+        titre:
+          ficheWithInstanceGouvernance.titre ??
+          'Fiche avec instance de gouvernance',
+        axisPath: ficheWithInstanceGouvernance.axisPath,
+        pilotes: [],
+        referents: [],
+        structures: [],
+        services: [],
+        financeurs: [],
+        partenaires: [],
+        instanceGouvernance: [
+          { id: 1, nom: 'Comité de pilotage' },
+          { id: 2, nom: 'Conseil municipal' },
+        ],
+      },
+    ];
+
+    const result = importPlanInputToCreatePlanAggregateInput(
+      planImport,
+      resolvedEntities,
+      collectiviteId
+    );
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.fiches.length).toBe(1);
+      expect(result.data.fiches[0].fiche.instanceGouvernance).toEqual([
+        { id: 1, nom: 'Comité de pilotage' },
+        { id: 2, nom: 'Conseil municipal' },
+      ]);
+    }
+  });
+
+  it('should handle fiches with empty instance gouvernance', () => {
+    const ficheWithoutInstanceGouvernance: Partial<ImportFicheInput> = {
+      axisPath: ['Axe 1'],
+      titre: 'Fiche sans instance de gouvernance',
+      instanceGouvernance: [],
+      structures: [],
+      partenaires: [],
+      services: [],
+      pilotes: [],
+      referents: [],
+      financeurs: [],
+    };
+
+    const planImport = createImportPlanInput({
+      fiches: [ficheWithoutInstanceGouvernance as ImportFicheInput],
+    });
+
+    const resolvedEntities: ResolvedFicheEntities[] = [
+      {
+        titre: 'Fiche sans instance de gouvernance',
+        axisPath: ficheWithoutInstanceGouvernance.axisPath,
+        pilotes: [],
+        referents: [],
+        structures: [],
+        services: [],
+        financeurs: [],
+        partenaires: [],
+        instanceGouvernance: [],
+      },
+    ];
+
+    const result = importPlanInputToCreatePlanAggregateInput(
+      planImport,
+      resolvedEntities,
+      collectiviteId
+    );
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.fiches.length).toBe(1);
+      expect(result.data.fiches[0].fiche.instanceGouvernance).toEqual([]);
     }
   });
 });

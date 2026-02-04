@@ -26,7 +26,7 @@ import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
 import { ficheActionEffetAttenduTable } from '../shared/models/fiche-action-effet-attendu.table';
 import { ficheActionFinanceurTagTable } from '../shared/models/fiche-action-financeur-tag.table';
 import { ficheActionIndicateurTable } from '../shared/models/fiche-action-indicateur.table';
-import { ficheActionInstanceGouvernanceTable } from '../shared/models/fiche-action-instance-gouvernance';
+import { ficheActionInstanceGouvernanceTableTag } from '../shared/models/fiche-action-instance-gouvernance';
 import { ficheActionLibreTagTable } from '../shared/models/fiche-action-libre-tag.table';
 import { ficheActionLienTable } from '../shared/models/fiche-action-lien.table';
 import { ficheActionPartenaireTagTable } from '../shared/models/fiche-action-partenaire-tag.table';
@@ -351,17 +351,17 @@ export default class UpdateFicheService {
       if (instanceGouvernance !== undefined) {
         // Delete existing relations
         await transaction
-          .delete(ficheActionInstanceGouvernanceTable)
-          .where(eq(ficheActionInstanceGouvernanceTable.ficheId, ficheId));
+          .delete(ficheActionInstanceGouvernanceTableTag)
+          .where(eq(ficheActionInstanceGouvernanceTableTag.ficheId, ficheId));
 
         // Insert new relations
         if (instanceGouvernance !== null && instanceGouvernance.length > 0) {
           await transaction
-            .insert(ficheActionInstanceGouvernanceTable)
+            .insert(ficheActionInstanceGouvernanceTableTag)
             .values(
               instanceGouvernance.map((relation) => ({
                 ficheId: ficheId,
-                instanceGouvernanceId: relation.id,
+                instanceGouvernanceTagId: relation.id,
                 createdBy: user.id,
               }))
             )

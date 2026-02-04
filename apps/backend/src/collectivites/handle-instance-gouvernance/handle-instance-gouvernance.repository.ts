@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { ficheActionInstanceGouvernanceTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-instance-gouvernance';
+import { ficheActionInstanceGouvernanceTableTag } from '@tet/backend/plans/fiches/shared/models/fiche-action-instance-gouvernance';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { failure, success } from '@tet/backend/utils/result.type';
 import {
   InstanceGouvernance,
   instanceGouvernanceTagSchema,
 } from '@tet/domain/collectivites';
-import { eq } from 'drizzle-orm';
-import { instanceGouvernanceTable } from '../tags/instance-gouvernance.table';
+import { and, eq, ne } from 'drizzle-orm';
+import { instanceGouvernanceTagTable } from '../tags/instance-gouvernance.table';
 import { Result } from './handle-instance-gouvernance.result';
 
 @Injectable()
@@ -23,36 +24,43 @@ export class InstanceGouvernanceRepository {
     collectiviteId: number;
     userId: string;
     tx?: Transaction;
-  }): Promise<Result<InstanceGouvernance>> {
+  }): Promise<Result> {
     try {
       const [instanceGouvernance] = await (tx ?? this.databaseService.db)
-        .insert(instanceGouvernanceTable)
-        .values({ nom, collectiviteId, createdBy: userId })
+        .insert(instanceGouvernanceTagTable)
+        .values({
+          nom,
+          collectiviteId,
+          createdBy: userId,
+          createdAt: new Date().toISOString(),
+        })
+        .onConflictDoUpdate({
+          target: [
+            instanceGouvernanceTagTable.nom,
+            instanceGouvernanceTagTable.collectiviteId,
+          ],
+          set: {
+            createdBy: userId,
+            createdAt: new Date().toISOString(),
+          },
+        })
         .returning();
       const parsedResult =
         instanceGouvernanceTagSchema.safeParse(instanceGouvernance);
       if (!parsedResult.success) {
-        return {
-          success: false,
-          error: 'NOT_FOUND',
-          cause: parsedResult.error.message,
-        };
+        return failure('DATABASE_ERROR', parsedResult.error);
       }
-      return { success: true, data: parsedResult.data };
+      return parsedResult;
     } catch (error) {
-      return {
-        success: false,
-        error: 'SERVER_ERROR',
-        cause: (error as Error).message,
-      };
+      return failure('SERVER_ERROR', error as Error);
     }
   }
   async list(collectiviteId: number): Promise<Result<InstanceGouvernance[]>> {
     try {
       const result = await this.databaseService.db
         .select()
-        .from(instanceGouvernanceTable)
-        .where(eq(instanceGouvernanceTable.collectiviteId, collectiviteId));
+        .from(instanceGouvernanceTagTable)
+        .where(eq(instanceGouvernanceTagTable.collectiviteId, collectiviteId));
 
       const parsedResult = result
         .map((instance) => instanceGouvernanceTagSchema.safeParse(instance))
@@ -61,63 +69,74 @@ export class InstanceGouvernanceRepository {
 
       return { success: true, data: parsedResult };
     } catch (error) {
-      return {
-        success: false,
-        error: 'SERVER_ERROR',
-        cause: (error as Error).message,
-      };
+      return failure('SERVER_ERROR', error as Error);
     }
   }
   async delete(id: number): Promise<Result<boolean>> {
     try {
       const result = await this.databaseService.db.transaction(async (tx) => {
         await tx
-          .delete(ficheActionInstanceGouvernanceTable)
+          .delete(ficheActionInstanceGouvernanceTableTag)
           .where(
-            eq(ficheActionInstanceGouvernanceTable.instanceGouvernanceId, id)
+            eq(
+              ficheActionInstanceGouvernanceTableTag.instanceGouvernanceTagId,
+              id
+            )
           );
         await tx
-          .delete(instanceGouvernanceTable)
-          .where(eq(instanceGouvernanceTable.id, id))
+          .delete(instanceGouvernanceTagTable)
+          .where(eq(instanceGouvernanceTagTable.id, id))
           .returning();
         return true;
       });
-      return result
-        ? { success: true, data: result }
-        : {
-            success: false,
-            error: 'SERVER_ERROR',
-          };
+      return result ? success(result) : failure('DATABASE_ERROR');
     } catch (error) {
-      return {
-        success: false,
-        error: 'SERVER_ERROR',
-        cause: (error as Error).message,
-      };
+      return failure('SERVER_ERROR', error as Error);
     }
   }
   async update(id: number, nom: string): Promise<Result<InstanceGouvernance>> {
     try {
+      const [currentInstance] = await this.databaseService.db
+        .select()
+        .from(instanceGouvernanceTagTable)
+        .where(eq(instanceGouvernanceTagTable.id, id))
+        .limit(1);
+
+      if (!currentInstance) {
+        return failure('NOT_FOUND');
+      }
+
+      const [existingInstance] = await this.databaseService.db
+        .select()
+        .from(instanceGouvernanceTagTable)
+        .where(
+          and(
+            eq(instanceGouvernanceTagTable.nom, nom),
+            eq(
+              instanceGouvernanceTagTable.collectiviteId,
+              currentInstance.collectiviteId
+            ),
+            ne(instanceGouvernanceTagTable.id, id)
+          )
+        )
+        .limit(1);
+
+      if (existingInstance) {
+        return failure('DUPLICATE_NAME');
+      }
+
       const [result] = await this.databaseService.db
-        .update(instanceGouvernanceTable)
+        .update(instanceGouvernanceTagTable)
         .set({ nom })
-        .where(eq(instanceGouvernanceTable.id, id))
+        .where(eq(instanceGouvernanceTagTable.id, id))
         .returning();
       const parsedResult = instanceGouvernanceTagSchema.safeParse(result);
       if (!parsedResult.success) {
-        return {
-          success: false,
-          error: 'NOT_FOUND',
-          cause: parsedResult.error.message,
-        };
+        return failure('DATABASE_ERROR', parsedResult.error);
       }
-      return { success: true, data: parsedResult.data };
+      return success(result);
     } catch (error) {
-      return {
-        success: false,
-        error: 'SERVER_ERROR',
-        cause: (error as Error).message,
-      };
+      return failure('DATABASE_ERROR', error as Error);
     }
   }
 }
