@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { ListUsersService } from '@tet/backend/users/users/list-users/list-users.service';
+import { UserPreferencesService } from '@tet/backend/users/preferences/user-preferences.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { GetNotificationContentResult } from '@tet/backend/utils/notifications/models/notification-template.dto';
@@ -65,6 +66,7 @@ export class NotifyPiloteService {
     private readonly databaseService: DatabaseService,
     private readonly listFichesService: ListFichesService,
     private readonly listUsersService: ListUsersService,
+    private readonly userPreferencesService: UserPreferencesService,
     private readonly notificationsService: NotificationsService,
     private readonly getPlanUrlService: GetPlanUrlService
   ) {
@@ -409,6 +411,26 @@ export class NotifyPiloteService {
     }
     const { ficheIds, piloteId } = data;
 
+    // vérifie si l'envoi des notifications au pilote est totalement désactivé
+    // depuis les préférences utilisateur
+    const resultPreferences =
+      await this.userPreferencesService.getUserPreferences(piloteId);
+    if (!resultPreferences.success || !resultPreferences.data) {
+      return {
+        success: false,
+        error: 'Erreur de chargement des préférences utilisateur',
+      };
+    }
+    const preferences = resultPreferences.data;
+    const { isNotifyPiloteActionEnabled, isNotifyPiloteSousActionEnabled } =
+      preferences.utils.notifications;
+    if (!isNotifyPiloteActionEnabled && !isNotifyPiloteSousActionEnabled) {
+      return {
+        success: false,
+        error: `Notification pilote désactivée globalement pour l'utilisateur "${piloteId}"`,
+      };
+    }
+
     // charge toutes les fiches
     const fiches: FicheWithRelations[] = [];
     const result = await this.listFichesService.listFichesQuery(
@@ -419,10 +441,26 @@ export class NotifyPiloteService {
     for (const ficheId of ficheIds) {
       const fiche = result.data.find((f) => f.id === ficheId);
       if (!fiche) {
-        return { success: false, error: `Action ${ficheId} non trouvée` };
+        this.logger.log(`Action ${ficheId} non trouvée`);
+      } else if (
+        (!fiche.parentId && !isNotifyPiloteActionEnabled) ||
+        (fiche.parentId && !isNotifyPiloteSousActionEnabled)
+      ) {
+        this.logger.log(
+          `Notification pilote désactivée pour l'utilisateur "${piloteId}" l'action ${ficheId} non trouvée`
+        );
+      } else {
+        fiches.push(fiche);
       }
-      fiches.push(fiche);
     }
+
+    if (!fiches.length) {
+      return {
+        success: false,
+        error: `Echec de préparation des données pour notifier le pilote ${piloteId} des fiches ${ficheIds}`,
+      };
+    }
+
     const createdByUser = await this.listUsersService.getUserBasicInfo({
       userId: createdBy,
     });
@@ -453,7 +491,6 @@ export class NotifyPiloteService {
         ficheParente = getParentResult.data;
       }
 
-      const plan = fiche.plans?.[0];
       return {
         success: true,
         data: {
@@ -463,49 +500,34 @@ export class NotifyPiloteService {
           }action sur Territoires en Transitions`,
           assignedTo: pilote.nom,
           assignedBy: [createdByUser.prenom, createdByUser.nom].join(' '),
-          assignedAction: {
-            actionTitre: ficheParente ? ficheParente.titre : fiche.titre,
-            sousActionTitre: ficheParente ? fiche.titre : '',
-            planNom: plan?.nom || null,
-            actionDateFin: fiche.dateFin,
-            isSousAction: !!fiche.parentId,
-            actionUrl: this.getPlanUrlService.getFicheUrl({
-              collectiviteId: fiche.collectiviteId,
-              ficheId: fiche.id,
-              parentId: fiche.parentId,
-              planId: plan?.id || null,
-            }),
-          },
+          assignedAction: this.getAssignedActionData(fiche, ficheParente),
         },
       };
     }
 
-    // plusieurs fiches : utilise le format multi-fiches
-    const assignedActions = await Promise.all(
-      fiches.map(async (fiche) => {
-        const plan = fiche.plans?.[0];
-        let actionTitre = fiche.titre;
-        if (fiche.parentId) {
-          const getParentResult = await this.listFichesService.getFicheById(
-            fiche.parentId
-          );
-          if (getParentResult.success) {
-            actionTitre = getParentResult.data.titre;
-          }
-        }
-
-        return {
-          actionTitre: actionTitre || null,
-          actionUrl: this.getPlanUrlService.getFicheUrl({
-            collectiviteId: fiche.collectiviteId,
-            ficheId: fiche.id,
-            parentId: fiche.parentId,
-            planId: plan?.id || null,
-          }),
-          planNom: plan?.nom || null,
-        };
-      })
-    );
+    // plusieurs fiches : charge les fiches parentes (pour les sous-actions)
+    const parentFicheIds = new Set<number>();
+    fiches.forEach((f) => {
+      if (f.parentId) {
+        parentFicheIds.add(f.parentId);
+      }
+    });
+    let parentFiches: FicheWithRelations[] = [];
+    if (parentFicheIds.size) {
+      const getParentsResult = await this.listFichesService.listFichesQuery(
+        null,
+        { ficheIds: Array.from(parentFicheIds) },
+        { limit: 'all' }
+      );
+      parentFiches = getParentsResult.data;
+    }
+    // et utilise le format multi-fiches
+    const assignedActions = fiches.map((fiche) => {
+      const parentFiche = fiche.parentId
+        ? parentFiches.find((pf) => pf.id === fiche.parentId)
+        : undefined;
+      return this.getAssignedActionData(fiche, parentFiche);
+    });
 
     return {
       success: true,
@@ -516,6 +538,26 @@ export class NotifyPiloteService {
         assignedTo: pilote.nom,
         assignedActions,
       },
+    };
+  }
+
+  getAssignedActionData(
+    fiche: FicheWithRelations,
+    ficheParente?: FicheWithRelations
+  ) {
+    const plan = fiche.plans?.[0];
+    return {
+      actionTitre: ficheParente ? ficheParente.titre : fiche.titre,
+      sousActionTitre: ficheParente ? fiche.titre : '',
+      planNom: plan?.nom || null,
+      actionDateFin: fiche.dateFin,
+      isSousAction: !!fiche.parentId,
+      actionUrl: this.getPlanUrlService.getFicheUrl({
+        collectiviteId: fiche.collectiviteId,
+        ficheId: fiche.id,
+        parentId: fiche.parentId,
+        planId: plan?.id || null,
+      }),
     };
   }
 }
