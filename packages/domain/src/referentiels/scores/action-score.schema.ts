@@ -116,6 +116,11 @@ export const actionScoreSchema = z
       .enum(statutAvancementEnumValues)
       .optional()
       .describe("Avancement de l'action"),
+    avancementDetaille: z
+      .array(z.number())
+      .optional()
+      .nullable()
+      .describe("Avancement détaillé de l'action"),
     renseigne: z
       .boolean()
       .describe(

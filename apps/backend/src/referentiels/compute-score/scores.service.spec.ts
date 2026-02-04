@@ -692,6 +692,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoresMap['eci_1.1']).toEqual({
         aStatut: true,
         avancement: 'fait',
+        avancementDetaille: [1, 0, 0],
         actionId: 'eci_1.1',
         pointFait: 10,
         pointProgramme: 0.0,
@@ -796,6 +797,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoresMap['eci_1.1']).toEqual({
         aStatut: true,
         avancement: 'fait',
+        avancementDetaille: [1, 0, 0],
         actionId: 'eci_1.1',
         pointFait: 10,
         pointProgramme: 0.0,
@@ -900,6 +902,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoresMap['eci_1.1']).toEqual({
         aStatut: true,
         avancement: 'programme',
+        avancementDetaille: [0, 1, 0],
         actionId: 'eci_1.1',
         pointFait: 0,
         pointProgramme: 10,
@@ -1004,6 +1007,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoresMap['eci_1.1']).toEqual({
         aStatut: true,
         avancement: 'pas_fait',
+        avancementDetaille: [0, 0, 1],
         actionId: 'eci_1.1',
         pointFait: 0,
         pointProgramme: 0,
@@ -1108,6 +1112,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoresMap['eci_1.1']).toEqual({
         aStatut: true,
         avancement: 'detaille',
+        avancementDetaille: [0.2, 0.7, 0.1],
         actionId: 'eci_1.1',
         pointFait: 2,
         pointProgramme: 7,
@@ -1212,6 +1217,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoresMap['eci_1.1']).toEqual({
         aStatut: true,
         avancement: 'non_renseigne',
+        avancementDetaille: [0, 0, 0],
         actionId: 'eci_1.1',
         pointFait: 0,
         pointProgramme: 0,
@@ -1342,6 +1348,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoresMap['eci_1.1']).toEqual({
         aStatut: true,
         avancement: 'non_renseigne',
+        avancementDetaille: [0, 0, 0],
         actionId: 'eci_1.1',
         pointFait: 0,
         pointProgramme: 0,
@@ -1364,6 +1371,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoresMap['eci_1.2']).toEqual({
         aStatut: true,
         avancement: 'non_renseigne',
+        avancementDetaille: [0, 0, 0],
         actionId: 'eci_1.2',
         pointFait: 0,
         pointProgramme: 0,
@@ -1494,6 +1502,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoresMap['eci_2.1']).toEqual({
         aStatut: true,
         avancement: 'non_renseigne',
+        avancementDetaille: [0, 0, 0],
         actionId: 'eci_2.1',
         pointFait: 0,
         pointProgramme: 0,
@@ -1517,6 +1526,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoresMap['eci_2.2']).toEqual({
         aStatut: true,
         avancement: 'fait',
+        avancementDetaille: [1, 0, 0],
         actionId: 'eci_2.2',
         pointFait: 70,
         pointProgramme: 0,
@@ -1604,6 +1614,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoresMap['eci_2.1']).toEqual({
         aStatut: true,
         avancement: 'fait',
+        avancementDetaille: [1, 0, 0],
         actionId: 'eci_2.1',
         pointFait: 65,
         pointProgramme: 0,
@@ -1651,6 +1662,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoresMap['eci_2.1']).toEqual({
         aStatut: true,
         avancement: 'non_renseigne',
+        avancementDetaille: [0, 0, 0],
         actionId: 'eci_2.1',
         pointFait: 32,
         pointProgramme: 8,
@@ -1713,6 +1725,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoresMap['cae_4.2.1.2']).toEqual({
         aStatut: true,
         avancement: 'pas_fait',
+        avancementDetaille: [0, 0, 1],
         actionId: 'cae_4.2.1.2',
         completedTachesCount: 4,
         concerne: true,
@@ -2000,6 +2013,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoresMap['eci_1.1']).toEqual({
         aStatut: true,
         avancement: 'fait',
+        avancementDetaille: [1, 0, 0],
         actionId: 'eci_1.1',
         pointFait: 2.0,
         pointProgramme: 0.0,
@@ -2108,6 +2122,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoresMap['eci_1.1']).toEqual({
         aStatut: true,
         avancement: 'fait',
+        avancementDetaille: [1, 0, 0],
         actionId: 'eci_1.1',
         pointFait: 12.0,
         pointProgramme: 0.0,

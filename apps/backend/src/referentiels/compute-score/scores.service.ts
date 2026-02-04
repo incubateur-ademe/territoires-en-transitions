@@ -360,6 +360,8 @@ export default class ScoresService {
     if (actionStatut) {
       referentielActionAvecScore.score.aStatut = true;
       referentielActionAvecScore.score.avancement = actionStatut.avancement;
+      referentielActionAvecScore.score.avancementDetaille =
+        actionStatut.avancementDetaille;
     }
 
     // Si le parent n'est pas déjà désactivé et il y a une desactivation on l'applique et on le propagera aux enfants
@@ -558,6 +560,8 @@ export default class ScoresService {
       if (actionStatut) {
         referentielActionAvecScore.score.aStatut = true;
         referentielActionAvecScore.score.avancement = actionStatut.avancement;
+        referentielActionAvecScore.score.avancementDetaille =
+          actionStatut.avancementDetaille;
       }
 
       if (
