@@ -21,7 +21,7 @@ export const useGetMesureAuditStatut = ({
         collectiviteId,
         mesureId,
       },
-      { enabled }
+      { enabled, refetchOnMount: 'always' }
     )
   );
 };
