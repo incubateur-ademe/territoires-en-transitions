@@ -46,9 +46,6 @@ export const useUpdateMesureAuditStatut = () => {
             context.previous
           );
         }
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGetMesureAuditStatut,
-        });
       },
     })
   );
