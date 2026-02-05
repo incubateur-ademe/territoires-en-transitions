@@ -2,7 +2,7 @@
 // there's an issue in tailwind alias import with Nx structure
 // https://github.com/tailwindlabs/tailwindcss/issues/11097
 import { Config } from 'tailwindcss';
-import { preset } from '../../packages/ui/src/tailwind-preset';
+import { preset } from '@tet/ui/tailwind-preset';
 
 export default {
   presets: [preset as Config],
