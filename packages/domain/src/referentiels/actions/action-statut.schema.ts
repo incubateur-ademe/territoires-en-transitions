@@ -8,7 +8,7 @@ export const actionStatutSchema = z.object({
   avancementDetaille: z.nullable(z.array(z.number())),
   concerne: z.boolean(),
   modifiedBy: z.nullable(z.uuid()),
-  modifiedAt: z.iso.datetime(),
+  modifiedAt: z.iso.datetime({ offset: true }),
 });
 
 export type ActionStatut = z.infer<typeof actionStatutSchema>;

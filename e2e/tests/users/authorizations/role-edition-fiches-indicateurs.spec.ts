@@ -50,7 +50,7 @@ test.describe('Role edition fiches indicateurs', () => {
 
     // Now that the fiches are created, we can login as limited edition user
     await limitedEditionUser.login();
-    page.goto('/');
+    await page.goto('/');
 
     console.log('createdFicheIds', createdFicheIds);
   });

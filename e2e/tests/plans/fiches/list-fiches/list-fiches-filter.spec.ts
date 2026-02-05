@@ -20,7 +20,7 @@ test.describe('Liste des fiches', () => {
         statut: 'À venir',
       },
     ]);
-    page.goto('/');
+    await page.goto('/');
 
     console.log('createdFicheIds', createdFicheIds);
     await listFichesPom.goto();

@@ -72,22 +72,26 @@ const AvancementDetailleSliderAutoSave = ({
     setIsPercentageScore(isChecked);
     if (isChecked) {
       saveActionStatut({
-        actionId: actionId,
-        collectiviteId,
-        avancement: 'detaille',
-        avancementDetaille: (isScoreDetailleFilled
-          ? avancementDetaille
-          : AVANCEMENT_DETAILLE_PAR_STATUT.detaille) as AvancementValues,
-        concerne: true,
+        actionStatut: {
+          actionId: actionId,
+          collectiviteId,
+          avancement: 'detaille',
+          avancementDetaille: (isScoreDetailleFilled
+            ? avancementDetaille
+            : AVANCEMENT_DETAILLE_PAR_STATUT.detaille) as AvancementValues,
+          concerne: true,
+        },
       });
     } else {
       saveActionStatut({
-        ...statut,
-        actionId,
-        collectiviteId,
-        avancement: 'non_renseigne',
-        avancementDetaille: null,
-        concerne: true,
+        actionStatut: {
+          ...statut,
+          actionId,
+          collectiviteId,
+          avancement: 'non_renseigne',
+          avancementDetaille: null,
+          concerne: true,
+        },
       });
     }
   };
@@ -108,12 +112,14 @@ const AvancementDetailleSliderAutoSave = ({
 
       // Sauvegarde du nouvel avancement
       saveActionStatut({
-        ...statut,
-        actionId,
-        collectiviteId,
-        avancement,
-        avancementDetaille: values,
-        concerne: true,
+        actionStatut: {
+          ...statut,
+          actionId,
+          collectiviteId,
+          avancement,
+          avancementDetaille: values,
+          concerne: true,
+        },
       });
     },
     500

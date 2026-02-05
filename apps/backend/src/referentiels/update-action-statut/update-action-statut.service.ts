@@ -10,6 +10,8 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   ActionStatutCreate,
   actionStatutSchemaCreate,
+  canUpdateActionStatutWithoutPermissionCheck,
+  findActionById,
   getReferentielIdFromActionId,
   ScoreSnapshot,
 } from '@tet/domain/referentiels';
@@ -18,6 +20,7 @@ import { sql } from 'drizzle-orm';
 import z from 'zod';
 import { isErrorWithCause } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
+import { GetLabellisationService } from '../labellisations/get-labellisation.service';
 import { actionStatutTable } from '../models/action-statut.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 
@@ -44,7 +47,8 @@ export class UpdateActionStatutService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
-    private readonly snapshotsService: SnapshotsService
+    private readonly snapshotsService: SnapshotsService,
+    private readonly getLabellisationService: GetLabellisationService
   ) {}
 
   async upsertActionStatuts(
@@ -67,7 +71,6 @@ export class UpdateActionStatutService {
       collectiviteId
     );
 
-    // TODO: check parcours
     const seenActionIds = new Set<string>();
     for (const actionStatut of actionStatuts) {
       const key = `${actionStatut.collectiviteId}:${actionStatut.actionId}`;
@@ -91,6 +94,33 @@ export class UpdateActionStatutService {
           `Action ${actionStatut.actionId} is not in the same collectivite as the other actions`
         );
       }
+    }
+
+    const parcours =
+      await this.getLabellisationService.getParcoursLabellisation({
+        collectiviteId,
+        referentielId,
+      });
+    const currentScore = await this.snapshotsService.get(
+      collectiviteId,
+      referentielId
+    );
+    const isAuditeur = parcours.auditeurs.some(
+      (auditeur) => auditeur.userId === user.id
+    );
+    const canUpdateResult = canUpdateActionStatutWithoutPermissionCheck({
+      parcoursStatus: parcours.status,
+      actions: actionStatuts.map((actionStatut) => ({
+        actionId: actionStatut.actionId,
+        desactive: findActionById(
+          currentScore.scoresPayload.scores,
+          actionStatut.actionId
+        ).score.desactive,
+      })),
+      isAuditeur: isAuditeur,
+    });
+    if (!canUpdateResult.canUpdate) {
+      throw new BadRequestException(canUpdateResult.reason);
     }
 
     try {
