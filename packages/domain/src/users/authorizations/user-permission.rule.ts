@@ -119,7 +119,7 @@ export function hasAnyCollectiviteRole(
   );
 }
 
-export function isVisitor(
+export function isUserVisitor(
   user: UserRolesAndPermissions,
   { collectiviteId }: { collectiviteId: number }
 ): boolean {

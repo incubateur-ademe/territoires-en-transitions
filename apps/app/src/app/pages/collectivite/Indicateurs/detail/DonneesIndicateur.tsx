@@ -1,6 +1,11 @@
+import {
+  canUpdateIndicateurDefinition,
+  canUpdateIndicateurValeur,
+} from '@/app/indicateurs/indicateurs/indicateur-definition-authorization.utils';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { QuestionReponseList } from '@/app/referentiels/personnalisations/PersoPotentielModal/PersoPotentielQR';
 import { useChangeReponseHandler } from '@/app/referentiels/personnalisations/PersoPotentielModal/useChangeReponseHandler';
+import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Divider } from '@tet/ui';
 import classNames from 'classnames';
@@ -17,14 +22,12 @@ import { TypeSegmentationSelect } from './type-segmentation.select';
 
 type Props = {
   definition: IndicateurDefinition;
-  isReadonly?: boolean;
   updateUnite: (value: string) => void;
   updateCommentaire: (value: string) => void;
 };
 
 const DonneesIndicateur = ({
   definition,
-  isReadonly = false,
   updateUnite,
   updateCommentaire,
 }: Props) => {
@@ -42,7 +45,23 @@ const DonneesIndicateur = ({
     definition.identifiantReferentiel,
     chartInfo.sourceFilter.valeursReference?.drom ?? false
   );
-  const { collectiviteId } = useCurrentCollectivite();
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
+
+  const user = useUser();
+
+  const canMutateDefinition = canUpdateIndicateurDefinition(
+    hasCollectivitePermission,
+    definition,
+    user.id
+  );
+
+  const canMutateValeur = canUpdateIndicateurValeur(
+    hasCollectivitePermission,
+    definition,
+    user.id
+  );
+
   const handleChange = useChangeReponseHandler(collectiviteId, []);
 
   return (
@@ -53,7 +72,7 @@ const DonneesIndicateur = ({
           <IndicateurUniteInput
             unite={unite}
             updateUnite={updateUnite}
-            disabled={isReadonly}
+            disabled={!canMutateDefinition}
           />
         )}
 
@@ -74,7 +93,7 @@ const DonneesIndicateur = ({
           questionReponses={questionReponses}
           variant="indicateur"
           onChange={handleChange}
-          canEdit={!isReadonly}
+          canEdit={canMutateDefinition}
         />
       )}
 
@@ -83,7 +102,7 @@ const DonneesIndicateur = ({
         className="mb-6"
         chartInfo={chartInfo}
         definition={definition}
-        isReadonly={isReadonly}
+        isReadonly={!canMutateDefinition}
         onAddValue={() => setIsTableModalOpen(true)}
       />
 
@@ -98,7 +117,7 @@ const DonneesIndicateur = ({
         <IndicateurValuesTabs
           definition={definition}
           chartInfo={chartInfo}
-          isReadonly={isReadonly}
+          isReadonly={!canMutateValeur}
           openModalState={{
             isOpen: isTableModalOpen,
             setIsOpen: setIsTableModalOpen,
@@ -111,14 +130,14 @@ const DonneesIndicateur = ({
       {definition.estPerso && (
         <ThematiquesIndicateurInput
           definition={definition}
-          disabled={isReadonly}
+          disabled={!canMutateDefinition}
         />
       )}
 
       <IndicateurCommentaireInput
         key={commentaire}
         commentaire={commentaire}
-        disabled={isReadonly}
+        disabled={!canMutateDefinition}
         updateCommentaire={updateCommentaire}
       />
     </div>

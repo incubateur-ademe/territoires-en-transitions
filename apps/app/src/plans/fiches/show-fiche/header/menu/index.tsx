@@ -36,6 +36,7 @@ export const Menu = () => {
       id: 'activityLog',
       icon: 'history-line',
       label: "Journal d'activités",
+      isVisible: hasCollectivitePermission('collectivites.read'),
     },
     {
       id: 'deleting',

@@ -8,7 +8,6 @@ import {
 import { ModuleContainer } from '@/app/tableaux-de-bord/modules/module/module.container';
 import { FichesActionCountByModule } from '@/app/tableaux-de-bord/plans-action/fiches-action-count-by/fiches-action-count-by.module';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { useUser } from '@tet/api/users';
 import { Button } from '@tet/ui';
 import Header from '../_components/header';
 import Metrics from './_components/metrics';
@@ -23,43 +22,17 @@ import imageCountByStatutPlaceholder from './_components/action-countby-statut-p
 import imagePlanPlaceholder from './_components/suivi-plans-placeholder.png';
 
 const Page = () => {
-  const { prenom } = useUser();
-  const { collectiviteId, nom, hasCollectivitePermission } =
+  const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
 
   const listPlansQuery = useListPlans(collectiviteId);
   const { totalCount: plansCount } = listPlansQuery;
 
-  const canMutateCollectivite = hasCollectivitePermission(
-    'collectivites.mutate'
-  );
-
   const canCreatePlan = hasCollectivitePermission('plans.mutate');
 
   return (
     <>
-      <Header
-        title={
-          canMutateCollectivite
-            ? `Bonjour ${prenom}`
-            : `Tableau de bord de la collectivité ${nom}`
-        }
-        subtitle={
-          canMutateCollectivite
-            ? 'Bienvenue sur Territoires en Transitions'
-            : undefined
-        }
-        // pageButtons={[
-        //   {
-        //     children: 'Partager',
-        //     icon: 'share-forward-line',
-        //     variant: 'white',
-        //     size: 'sm',
-        //     onClick: () => null,
-        //   },
-        // ]}
-        activeTab="synthetique"
-      />
+      <Header activeTab="synthetique" />
       <div className="flex flex-col gap-8 mt-6">
         {/** Résumé par chiffres de la collectivité */}
         <Metrics />

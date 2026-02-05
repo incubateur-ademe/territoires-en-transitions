@@ -1,22 +1,29 @@
 import { TDBViewId } from '@/app/app/paths';
+import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
+import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, ButtonProps } from '@tet/ui';
 import { TabsTab } from '@tet/ui/design-system/TabsNext/index';
 
 type Props = {
   activeTab: TDBViewId;
-  title: string;
-  subtitle?: string;
   pageButtons?: ButtonProps[];
 };
 
-const Header = ({ activeTab, title, subtitle, pageButtons }: Props) => {
-  const { hasCollectivitePermission, isSimplifiedView } =
-    useCurrentCollectivite();
+const Header = ({ activeTab, pageButtons }: Props) => {
+  const { prenom } = useUser();
+  const { isSimplifiedView, collectiviteNom } = useCurrentCollectivite();
+  const isVisitor = useIsVisitor();
 
-  // In order to simplify UI, collectivite TDB is hidden for edition_fiches_indicateurs users
-  const canAccessCollectiviteTdb =
-    hasCollectivitePermission('collectivites.mutate') && !isSimplifiedView;
+  const isTdbTabsVisible = !isVisitor && !isSimplifiedView;
+
+  const title = isVisitor
+    ? `Tableau de bord de la collectivité ${collectiviteNom}`
+    : `Bonjour ${prenom}`;
+
+  const subtitle = isVisitor
+    ? undefined
+    : 'Bienvenue sur Territoires en Transitions';
 
   return (
     <div className="flex flex-col">
@@ -34,7 +41,7 @@ const Header = ({ activeTab, title, subtitle, pageButtons }: Props) => {
         )}
       </div>
       {/** Tabs */}
-      {canAccessCollectiviteTdb && (
+      {isTdbTabsVisible && (
         <div className="flex flex-wrap gap-3 py-4 border-b border-primary-3 !list-none">
           <TabsTab
             label="Tableau de bord"

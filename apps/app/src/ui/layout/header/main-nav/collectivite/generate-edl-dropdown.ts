@@ -6,16 +6,18 @@ import {
   makeReferentielUrl,
   referentielTabs,
 } from '@/app/app/paths';
-import { isVisitor } from '@tet/domain/users';
 import { CollectiviteNavItem } from './make-collectivite-nav';
 
 export const generateEdlDropdown = ({
   collectiviteId,
+  collectiviteAccesRestreint,
+  isVisitor,
 }: {
   collectiviteId: number;
+  collectiviteAccesRestreint: boolean;
+  isVisitor: boolean;
 }): CollectiviteNavItem => ({
-  isVisibleWhen: (user, accesRestreint) =>
-    !(accesRestreint && isVisitor(user, { collectiviteId })),
+  isVisible: !(collectiviteAccesRestreint && isVisitor),
   children: 'État des lieux',
   dataTest: 'nav-edl',
   links: [

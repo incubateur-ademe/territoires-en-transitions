@@ -8,9 +8,8 @@ import {
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import {
   hasRole,
-  isVisitor,
+  isUserVisitor,
   PlatformRole,
-  UserRolesAndPermissions,
   UserWithRolesAndPermissions,
 } from '@tet/domain/users';
 import {
@@ -28,10 +27,7 @@ import { generatePlansActionsDropdown } from './generate-plans-actions-dropdown'
 import { generateTdbDropdown } from './generate-tdb-dropdown';
 
 type AddtionalProps = {
-  isVisibleWhen?: (
-    user: UserRolesAndPermissions,
-    accesRestreint: boolean
-  ) => boolean;
+  isVisible?: boolean;
 };
 
 export type CollectiviteNavLink = NavLink & AddtionalProps;
@@ -43,6 +39,11 @@ type CollectiviteNavDropdown = NavDropdown &
 
 export type CollectiviteNavItem = CollectiviteNavLink | CollectiviteNavDropdown;
 
+const cleanButtonProps = (item: CollectiviteNavItem): NavItem => {
+  const { isVisible, ...rest } = item;
+  return rest;
+};
+
 export const makeCollectiviteNav = ({
   user,
   currentCollectivite,
@@ -53,31 +54,47 @@ export const makeCollectiviteNav = ({
   panierId?: string;
 }): HeaderProps['mainNav'] => {
   const { collectiviteId, collectiviteAccesRestreint } = currentCollectivite;
+  const isVisitor = isUserVisitor(user, { collectiviteId });
 
-  const filterItems = (items: CollectiviteNavItem[]): NavItem[] =>
+  const filterItems = (items: (CollectiviteNavItem | null)[]): NavItem[] =>
     items
-      .filter((item) =>
-        item.isVisibleWhen
-          ? item.isVisibleWhen(user, collectiviteAccesRestreint)
-          : true
-      )
+      .filter((item) => item !== null)
+      .filter((item) => (item.isVisible !== undefined ? item.isVisible : true))
       .map((item) =>
         isNavDropdown(item)
           ? { ...item, links: filterItems(item.links) as NavLink[] }
           : { ...item }
-      );
+      )
+      .map(cleanButtonProps);
 
-  const startItems: CollectiviteNavItem[] = [
+  const startItems: (CollectiviteNavItem | null)[] = [
     {
-      isVisibleWhen: (user) => !isVisitor(user, { collectiviteId }),
+      isVisible: !isVisitor,
       icon: 'home-4-line',
       href: makeCollectiviteAccueilUrl({ collectiviteId }),
       dataTest: 'nav-home',
     },
-    generateTdbDropdown({ collectiviteId }),
-    generateEdlDropdown({ collectiviteId }),
-    generatePlansActionsDropdown({ collectiviteId, panierId }),
-    generateIndicateursDropdown({ collectiviteId }),
+    generateTdbDropdown({
+      collectiviteId,
+      collectiviteAccesRestreint,
+      isVisitor,
+    }),
+    generateEdlDropdown({
+      collectiviteId,
+      collectiviteAccesRestreint,
+      isVisitor,
+    }),
+    generatePlansActionsDropdown({
+      collectiviteId,
+      collectiviteAccesRestreint,
+      isVisitor,
+      panierId,
+    }),
+    generateIndicateursDropdown({
+      collectiviteId,
+      collectiviteAccesRestreint,
+      isVisitor,
+    }),
     {
       children: 'Collectivités',
       dataTest: 'nav-collectivites',
@@ -87,7 +104,7 @@ export const makeCollectiviteNav = ({
       }),
     },
     {
-      isVisibleWhen: (user) => hasRole(user, PlatformRole.SUPER_ADMIN),
+      isVisible: hasRole(user, PlatformRole.SUPER_ADMIN),
       children: 'Support',
       links: [
         {
@@ -109,7 +126,12 @@ export const makeCollectiviteNav = ({
   ];
 
   const endItems: CollectiviteNavItem[] = [
-    generateParametresDropdown({ collectiviteId }),
+    generateParametresDropdown({
+      collectiviteId,
+      collectiviteAccesRestreint,
+      isVisitor,
+      isAdeme: hasRole(user, PlatformRole.ADEME),
+    }),
     generateCollectiviteNavItem(user, currentCollectivite),
   ];
 

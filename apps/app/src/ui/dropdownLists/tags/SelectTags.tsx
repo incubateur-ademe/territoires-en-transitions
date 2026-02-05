@@ -31,7 +31,8 @@ type SelectTagsProps = Omit<
     selectedValue: TagWithCollectiviteId;
   }) => void;
   optionsAreCaseSensitive?: boolean;
-  placeholder?: string | ((isEditionAllowed: boolean) => string);
+  placeholder?: string | ((isEditionEnabled: boolean) => string);
+  disableEdition?: boolean;
 };
 
 const SelectTags = ({
@@ -45,6 +46,7 @@ const SelectTags = ({
   refetchOptions,
   optionsAreCaseSensitive = true,
   placeholder,
+  disableEdition = false,
   ...props
 }: SelectTagsProps) => {
   const collectivite = useCurrentCollectivite();
@@ -76,9 +78,9 @@ const SelectTags = ({
   const getSelectedValues = (values?: OptionValue[]) =>
     (optionsListe ?? []).filter((opt) => values?.some((v) => v === opt.id));
 
-  const isEditionAllowed = collectivite.hasCollectivitePermission(
-    'collectivites.mutate'
-  );
+  const isEditionEnabled =
+    !disableEdition &&
+    collectivite.hasCollectivitePermission('collectivites.tags.mutate');
 
   // ***
   // Ajout d'un nouveau tag à la liste d'options
@@ -157,7 +159,7 @@ const SelectTags = ({
   const computedPlaceholder =
     typeof placeholder === 'string'
       ? placeholder
-      : placeholder?.(isEditionAllowed);
+      : placeholder?.(isEditionEnabled);
 
   return (
     <SelectFilter
@@ -171,7 +173,7 @@ const SelectTags = ({
         })
       }
       createProps={
-        isEditionAllowed
+        isEditionEnabled
           ? {
               userCreatedOptions: userCreatedOptionsIds ?? editableOptionsIds,
               onCreate: handleTagCreate,

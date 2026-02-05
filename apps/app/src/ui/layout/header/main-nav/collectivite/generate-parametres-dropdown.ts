@@ -1,18 +1,22 @@
 import {
-    makeCollectiviteBibliothequeUrl,
-    makeCollectiviteJournalUrl,
-    makeCollectiviteUsersUrl,
+  makeCollectiviteBibliothequeUrl,
+  makeCollectiviteJournalUrl,
+  makeCollectiviteUsersUrl,
 } from '@/app/app/paths';
-import { isVisitor } from '@tet/domain/users';
 import { CollectiviteNavItem } from './make-collectivite-nav';
 
 export const generateParametresDropdown = ({
   collectiviteId,
+  collectiviteAccesRestreint,
+  isVisitor,
+  isAdeme,
 }: {
   collectiviteId: number;
+  collectiviteAccesRestreint: boolean;
+  isVisitor: boolean;
+  isAdeme: boolean;
 }): CollectiviteNavItem => ({
-  isVisibleWhen: (user, accesRestreint) =>
-    !(accesRestreint && isVisitor(user, { collectiviteId })),
+  isVisible: !(collectiviteAccesRestreint && isVisitor),
   children: 'Paramètres',
   dataTest: 'nav-params',
   links: [
@@ -31,6 +35,7 @@ export const generateParametresDropdown = ({
       }),
     },
     {
+      isVisible: !isVisitor || isAdeme,
       children: "Journal d'activité",
       dataTest: 'params-logs',
       href: makeCollectiviteJournalUrl({

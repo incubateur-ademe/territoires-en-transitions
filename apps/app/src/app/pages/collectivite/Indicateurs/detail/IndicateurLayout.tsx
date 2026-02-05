@@ -29,7 +29,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
   const { collectiviteId, hasCollectivitePermission, isSimplifiedView } =
     useCurrentCollectivite();
 
-  const isReadOnly = !canUpdateIndicateurDefinition(
+  const canMutateIndicateur = canUpdateIndicateurDefinition(
     hasCollectivitePermission,
     definition,
     id
@@ -76,7 +76,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
         collectiviteId={collectiviteId}
         hasCollectivitePermission={hasCollectivitePermission}
         definition={definition}
-        isReadonly={isReadOnly}
+        isReadonly={!canMutateIndicateur}
         isPerso={definition.estPerso}
         composeSansAgregation={composeSansAgregation}
         onUpdate={handleTitreUpdate}
@@ -85,7 +85,10 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
       <div data-test={dataTest} className="pt-6">
         {composeSansAgregation ? (
           // Groupe d'indicateurs sans agrégation
-          <SousIndicateurs enfantsIds={enfantsIds} isReadonly={isReadOnly} />
+          <SousIndicateurs
+            enfantsIds={enfantsIds}
+            isReadonly={!canMutateIndicateur}
+          />
         ) : (
           // Indicateur sans enfant, groupe d'indicateurs avec agrégation,
           // ou indicateur personnalisé
@@ -94,7 +97,6 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
             <Tab label="Données">
               <DonneesIndicateur
                 definition={definition}
-                isReadonly={isReadOnly}
                 updateUnite={handleUniteUpdate}
                 updateCommentaire={handleCommentaireUpdate}
               />
@@ -109,7 +111,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
               >
                 <SousIndicateurs
                   enfantsIds={enfantsIds}
-                  isReadonly={isReadOnly}
+                  isReadonly={!canMutateIndicateur}
                 />
               </Tab>
             ) : undefined}
@@ -117,7 +119,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
             {displayMesuresLieesVisiteOrPermissionForReferenceIndicateur ? (
               <Tab label="Mesures des référentiels">
                 <ActionsLiees
-                  isReadonly={isReadOnly}
+                  isReadonly={!canMutateIndicateur}
                   actionsIds={
                     definition.mesures?.map((mesure) => mesure.id) ?? []
                   }
