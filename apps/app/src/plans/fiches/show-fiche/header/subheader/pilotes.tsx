@@ -7,6 +7,7 @@ import { PersonneTagOrUser } from '@tet/domain/collectivites';
 import { SANS_PILOTE_LABEL } from '@tet/domain/plans';
 import { cn, InlineEditWrapper } from '@tet/ui';
 import PiloteIcon from '../../../../plans/components/pilote-icon.svg';
+import { forceOpenSelect } from '../../utils';
 
 type PilotesTriggerProps = {
   personnes: PersonneTagOrUser[];
@@ -16,51 +17,54 @@ export const Pilotes = ({ personnes }: PilotesTriggerProps) => {
   const { fiche, isReadonly, isUpdating, update } = useFicheContext();
 
   return (
-    <InlineEditWrapper
-      disabled={isReadonly}
-      renderOnEdit={() => (
-        <div className="min-w-[360px]">
-          <PersonnesDropdown
-            dataTest="personnes-pilotes"
-            collectiviteIds={getFicheAllEditorCollectiviteIds(fiche)}
-            values={fiche.pilotes?.map((p) => getPersonneStringId(p))}
-            placeholder="Sélectionnez ou créez un pilote"
-            disabled={isUpdating}
-            onChange={({ personnes }) => {
-              update({
-                ficheId: fiche.id,
-                ficheFields: { pilotes: personnes },
-              });
-            }}
-          />
-        </div>
-      )}
-    >
-      {(props) => (
-        <button
-          type="button"
-          {...props}
-          className={cn(
-            props.className,
-            'flex items-center gap-2 hover:opacity-80 transition-opacity'
-          )}
-        >
-          <PiloteIcon className="w-4 h-4" />
-          {personnes.length > 0 ? (
-            <>
-              Pilotes:
-              <ListWithTooltip
-                className="text-sm text-grey-8 font-normal flex"
-                list={personnes.map((p) => p.nom)}
-              />
-            </>
-          ) : (
-            <span className="text-sm text-grey-8 font-normal">
-              {SANS_PILOTE_LABEL}
-            </span>
-          )}
-        </button>
-      )}
-    </InlineEditWrapper>
+    <div className="flex gap-2">
+      Pilotes:
+      <InlineEditWrapper
+        disabled={isReadonly}
+        renderOnEdit={() => (
+          <div className="max-w-[280px]">
+            <PersonnesDropdown
+              openState={forceOpenSelect}
+              dataTest="personnes-pilotes"
+              collectiviteIds={getFicheAllEditorCollectiviteIds(fiche)}
+              values={fiche.pilotes?.map((p) => getPersonneStringId(p))}
+              placeholder="Sélectionnez ou créez un pilote"
+              disabled={isUpdating}
+              onChange={({ personnes }) => {
+                update({
+                  ficheId: fiche.id,
+                  ficheFields: { pilotes: personnes },
+                });
+              }}
+            />
+          </div>
+        )}
+      >
+        {(props) => (
+          <button
+            type="button"
+            {...props}
+            className={cn(
+              props.className,
+              'flex items-center gap-2 hover:opacity-80 transition-opacity'
+            )}
+          >
+            <PiloteIcon className="w-4 h-4" />
+            {personnes.length > 0 ? (
+              <>
+                <ListWithTooltip
+                  className="text-sm text-grey-8 font-normal flex"
+                  list={personnes.map((p) => p.nom)}
+                />
+              </>
+            ) : (
+              <span className="text-sm text-grey-8 font-normal">
+                {SANS_PILOTE_LABEL}
+              </span>
+            )}
+          </button>
+        )}
+      </InlineEditWrapper>
+    </div>
   );
 };

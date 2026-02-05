@@ -4,6 +4,7 @@ import { ficheActionStatutOptions } from '@/app/ui/dropdownLists/listesStatiques
 import { isStatut, Statut } from '@tet/domain/plans';
 import { InlineEditWrapper, Select } from '@tet/ui';
 import { JSX } from 'react';
+import { forceOpenSelect } from '../../utils';
 
 export const Status = ({ status }: { status: Statut | null }): JSX.Element => {
   const { fiche, isReadonly, isUpdating, update } = useFicheContext();
@@ -11,9 +12,10 @@ export const Status = ({ status }: { status: Statut | null }): JSX.Element => {
   return (
     <InlineEditWrapper
       disabled={isReadonly}
-      renderOnEdit={({ openState }) => (
+      renderOnEdit={() => (
         <div className="min-w-[240px]">
           <Select
+            openState={forceOpenSelect}
             options={ficheActionStatutOptions}
             values={status ?? undefined}
             onChange={(value) => {
@@ -29,13 +31,16 @@ export const Status = ({ status }: { status: Statut | null }): JSX.Element => {
             )}
             buttonClassName="border-0 border-b"
             displayOptionsWithoutFloater
-            openState={openState}
             disabled={isUpdating}
           />
         </div>
       )}
     >
-      <StatusBadge status={status} />
+      {(props) => (
+        <button type="button" {...props}>
+          <StatusBadge status={status} />
+        </button>
+      )}
     </InlineEditWrapper>
   );
 };

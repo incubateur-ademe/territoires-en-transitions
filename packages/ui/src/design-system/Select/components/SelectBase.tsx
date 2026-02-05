@@ -97,7 +97,6 @@ export type SelectProps = {
     { state: BadgeState; light?: boolean }
   >;
   optionsAreCaseSensitive?: boolean;
-  alwaysOpen?: boolean;
 };
 
 /**

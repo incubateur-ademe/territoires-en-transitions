@@ -3,7 +3,7 @@ import { BudgetView } from './budget/budget.view';
 import { FinanceursView } from './financeurs';
 import { RessourcesFinancementsView } from './ressources-financements.view';
 
-export const MoyensContent = () => {
+export const BudgetContent = () => {
   return (
     <>
       <RessourcesFinancementsView />

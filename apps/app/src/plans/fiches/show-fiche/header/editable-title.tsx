@@ -41,12 +41,15 @@ export const EditableTitle = ({
             }}
             type="text"
             containerClassname="w-full"
-            className={cn('text-3xl', inputClassName)}
+            className={cn('text-2xl', inputClassName)}
           />
         </div>
       )}
     >
-      <h1 data-test={dataTest} className={cn('mb-0', className)}>
+      <h1
+        data-test={dataTest}
+        className={cn('mb-0 text-[2rem] leading-tight', className)}
+      >
         {initialTitle ?? 'Sans titre'}
       </h1>
     </InlineEditWrapper>

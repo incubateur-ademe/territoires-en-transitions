@@ -1,10 +1,11 @@
 import EffetsAttendusDropdown from '@/app/ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import { useGetThematiqueAndSousThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
-import { cn, RichTextEditor, SelectMultiple, Spacer } from '@tet/ui';
+import { cn, RichTextEditor, SelectMultiple } from '@tet/ui';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useFicheContext } from '../../../context/fiche-context';
+import { forceOpenSelect } from '../../../utils';
 import { InlineEditableItem } from '../editable-item';
 import { DescriptionFormValues } from './description-schema';
 import { getFieldLabel } from './labels';
@@ -71,7 +72,7 @@ export const Description = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col">
         <MainTitle>{getFieldLabel('description', fiche.description)}</MainTitle>
         <RichTextEditor
           unstyled
@@ -103,8 +104,7 @@ export const Description = () => {
           </div>
         )}
       />
-      <Spacer height={2} />
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 mt-4">
         <Controller
           name="effetsAttendus"
           control={control}
@@ -120,13 +120,15 @@ export const Description = () => {
               }
               isReadonly={isReadonly}
               renderOnEdit={() => (
-                <EffetsAttendusDropdown
-                  openState={{ isOpen: true }}
-                  values={field.value ?? undefined}
-                  onChange={({ effets }) => {
-                    field.onChange(effets);
-                  }}
-                />
+                <div className="w-full max-w-[400px]">
+                  <EffetsAttendusDropdown
+                    openState={forceOpenSelect}
+                    values={field.value ?? undefined}
+                    onChange={({ effets }) => {
+                      field.onChange(effets);
+                    }}
+                  />
+                </div>
               )}
             />
           )}
@@ -147,7 +149,7 @@ export const Description = () => {
               isReadonly={isReadonly}
               renderOnEdit={() => (
                 <SelectMultiple
-                  openState={{ isOpen: true }}
+                  openState={forceOpenSelect}
                   options={thematiqueOptions}
                   values={field.value?.map((thematique) => thematique.id)}
                   onChange={({ values }) => {
@@ -182,7 +184,7 @@ export const Description = () => {
                   values={field.value?.map(
                     (sousThematique) => sousThematique.id
                   )}
-                  openState={{ isOpen: true }}
+                  openState={forceOpenSelect}
                   onChange={({ values }) => {
                     field.onChange(
                       sousThematiqueListe.filter((sousThematique) =>
@@ -209,7 +211,7 @@ export const Description = () => {
               isReadonly={isReadonly}
               renderOnEdit={() => (
                 <TagsSuiviPersoDropdown
-                  openState={{ isOpen: true }}
+                  openState={forceOpenSelect}
                   values={(field.value ?? []).map((tag) => tag.id)}
                   onChange={({ libresTag }) => {
                     field.onChange(libresTag);
