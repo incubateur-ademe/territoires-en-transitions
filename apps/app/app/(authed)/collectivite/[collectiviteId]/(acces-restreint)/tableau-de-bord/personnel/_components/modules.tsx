@@ -8,6 +8,7 @@ import {
 } from '@tet/api/plan-actions';
 import { Event, EventName, useEventTracker } from '@tet/ui';
 
+import { useImprovedFicheActionUiEnabled } from '@/app/plans/fiches/show-fiche';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { ListPlansEmptyCard } from '@/app/plans/plans/list-all-plans/list-plans.empty-card';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -16,14 +17,17 @@ import FichesDontJeSuisLePiloteModal from './fiches-dont-je-suis-le-pilote.modal
 import { FilteredFichesByModule } from './filtered-fiche-by-module';
 import { IndicateursDontJeSuisLePiloteModule } from './indicateurs-dont-je-suis-le-pilote.module';
 import MesuresDontJeSuisLePiloteModule from './mesures-dont-je-suis-le-pilote.module';
+import { SousActionsDontJeSuisLePiloteModule } from './sous-actions-dont-je-suis-le-pilote.module';
 
 type ModuleDescriptor = {
   match: (module: Pick<ModuleSelect, 'defaultKey' | 'type'>) => boolean;
   isVisible: boolean;
   render: (module: ModuleSelect) => React.ReactNode | null;
 };
+
 const orderedModules: PersonalDefaultModuleKeys[] = [
   'actions-dont-je-suis-pilote',
+  'sous-actions-dont-je-suis-pilote',
   'indicateurs-dont-je-suis-pilote',
   'mesures-dont-je-suis-pilote',
 ] as const;
@@ -43,6 +47,8 @@ const FICHES_MODULE_PROPERTIES: Partial<
 const Modules = () => {
   const { data: modules, isLoading } = useTdbPersoFetchModules();
   const tracker = useEventTracker();
+
+  const isImprovedFicheActionUiEnabled = useImprovedFicheActionUiEnabled();
 
   const currentCollectivite = useCurrentCollectivite();
   const { collectiviteId, hasCollectivitePermission, isSimplifiedView } =
@@ -81,11 +87,34 @@ const Modules = () => {
     {
       match: (m) =>
         m.type === 'fiche_action.list' &&
+        m.defaultKey === 'sous-actions-dont-je-suis-pilote',
+      isVisible:
+        hasCollectivitePermission('plans.fiches.read_confidentiel') &&
+        isImprovedFicheActionUiEnabled === true,
+      render: (module) => {
+        if (noPlanAndCanCreatePlan) {
+          // We already display the placeholder to create a plan,
+          // so we don't need to display the list of fiche actions module.
+          return null;
+        }
+
+        return (
+          <SousActionsDontJeSuisLePiloteModule
+            key="sous-actions-dont-je-suis-pilote"
+            module={module as ModuleFicheActionsSelect}
+          />
+        );
+      },
+    },
+    {
+      match: (m) =>
+        m.type === 'fiche_action.list' &&
         m.defaultKey === 'actions-dont-je-suis-pilote',
       isVisible: hasCollectivitePermission('plans.fiches.read_confidentiel'),
       render: (module) => {
         if (noPlanAndCanCreatePlan) {
-          // We already display the placeholder to create a plan, so we don't need to display the list of fiche actions module.
+          // We already display the placeholder to create a plan,
+          // so we don't need to display the list of fiche actions module.
           return null;
         }
 

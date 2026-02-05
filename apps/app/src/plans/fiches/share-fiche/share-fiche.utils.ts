@@ -20,7 +20,7 @@ export function isFicheEditableByCollectiviteUser(
 ) {
   return (
     (hasCollectivitePermission('plans.fiches.update') ||
-      (userId &&
+      (!!userId &&
         hasCollectivitePermission('plans.fiches.update_piloted_by_me') &&
         fiche.pilotes?.some((pilote) => pilote.userId === userId))) &&
     (fiche.collectiviteId === collectiviteId ||

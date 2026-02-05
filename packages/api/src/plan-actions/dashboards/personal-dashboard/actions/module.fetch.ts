@@ -16,13 +16,11 @@ export async function moduleFetch<S extends PersonalDefaultModuleKeys>({
   collectiviteId,
   userId,
   defaultModuleKey,
-  planIds,
 }: {
   dbClient: DBClient;
   collectiviteId: number;
   userId: string;
   defaultModuleKey: S;
-  planIds: number[];
 }) {
   try {
     const query = dbClient
@@ -46,13 +44,9 @@ export async function moduleFetch<S extends PersonalDefaultModuleKeys>({
       : await getDefaultModule(defaultModuleKey, {
           collectiviteId,
           userId,
-          getPlanActionIds: () => Promise.resolve(planIds),
         });
 
-    if (
-      defaultModuleKey === 'indicateurs-de-suivi-de-mes-plans' ||
-      defaultModuleKey === 'indicateurs-dont-je-suis-pilote'
-    ) {
+    if (defaultModuleKey === 'indicateurs-dont-je-suis-pilote') {
       return tdbModule as ModuleIndicateursSelect;
     }
 

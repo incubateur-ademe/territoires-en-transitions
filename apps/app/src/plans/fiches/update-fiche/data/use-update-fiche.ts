@@ -51,6 +51,10 @@ export const useUpdateFiche = (args?: Args) => {
           collectiviteId,
         }),
         (previous: ListFichesOutput) => {
+          if (!previous)
+            return {
+              data: [{ ...ficheFields, id: ficheId }],
+            };
           return {
             ...previous,
             data: (previous.data ?? []).map((fiche) =>

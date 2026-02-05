@@ -116,7 +116,7 @@ function Root({ children }: { children: ReactNode }) {
   };
 
   return (
-    <div className="bg-white p-7 rounded-[10px]">
+    <div className="bg-white border border-grey-3 p-7 rounded-xl">
       {alertProps && (
         <SharedFicheLinkedResourcesAlert
           fiche={alertProps.fiche}

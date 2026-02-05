@@ -14,6 +14,7 @@ import {
 import { cloneElement, HTMLAttributes, useState } from 'react';
 
 import { useOpenState } from '../../hooks/use-open-state';
+import { preset } from '../../tailwind-preset';
 import { cn } from '../../utils/cn';
 import { OpenState } from '../../utils/types';
 
@@ -110,6 +111,7 @@ export const InlineEditWrapper = ({
                     refs.reference?.current?.getBoundingClientRect().height
                   }px`,
                   maxHeight, // set by floating-ui size middleware to calculate available space within the viewport
+                  zIndex: preset.theme.extend.zIndex.modal,
                 },
               })}
             >

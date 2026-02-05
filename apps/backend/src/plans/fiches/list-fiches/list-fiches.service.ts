@@ -769,13 +769,14 @@ export default class ListFichesService {
       tx
     );
 
-    if (!fichesAction?.length) {
+    const ficheAction = fichesAction?.find((f) => f.id === ficheId);
+    if (!ficheAction) {
       return {
         success: false,
         error: `Aucune action trouvée avec l'id ${ficheId}`,
       };
     }
-    const ficheAction = fichesAction[0];
+
     if (user) {
       await this.fichePermissionService.canReadFicheObject(
         ficheAction,
@@ -797,7 +798,11 @@ export default class ListFichesService {
     return { success: true, data: ficheAction };
   }
 
-  async countPiloteFiches(collectiviteId: number, user: AuthUser) {
+  async countPiloteFiches(
+    collectiviteId: number,
+    user: AuthUser,
+    subFiches = false
+  ) {
     if (!user.id) {
       throw new BadRequestException(
         `Seulement supporté pour les utilisateurs authentifiés`
@@ -818,13 +823,19 @@ export default class ListFichesService {
           eq(ficheActionTable.collectiviteId, collectiviteId),
           eq(ficheActionPiloteTable.userId, user.id),
           eq(ficheActionTable.deleted, false),
-          isNull(ficheActionTable.parentId)
+          subFiches
+            ? isNotNull(ficheActionTable.parentId)
+            : isNull(ficheActionTable.parentId)
         )
       );
 
     const queryResult = await query;
 
     return queryResult[0]?.count ?? 0;
+  }
+
+  async countPiloteSubFiches(collectiviteId: number, user: AuthUser) {
+    return this.countPiloteFiches(collectiviteId, user, true);
   }
 
   async countPiloteFichesIndicateurs(collectiviteId: number, user: AuthUser) {

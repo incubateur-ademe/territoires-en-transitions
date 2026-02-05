@@ -1,10 +1,9 @@
 import {
   makeCollectiviteIndicateursListUrl,
-  makeCollectivitePlansActionsListUrl,
-  makeCollectivitePlansActionsNouveauUrl,
   makeCollectiviteToutesLesFichesUrl,
   makeTdbCollectiviteUrl,
 } from '@/app/app/paths';
+import { useImprovedFicheActionUiEnabled } from '@/app/plans/fiches/show-fiche';
 import {
   MetricCard,
   MetricCardProps,
@@ -18,7 +17,7 @@ type MetricDescriptor = {
   isVisible: boolean;
   getCount: () => number;
   getTitle: (count: number) => string;
-  link: (args: { count: number }) => MetricCardProps['link'];
+  link?: (args: { count: number }) => MetricCardProps['link'];
 };
 
 function getMetricsToDisplay(
@@ -34,7 +33,7 @@ function getMetricsToDisplay(
       {
         title: metricDescriptor.getTitle(count),
         count,
-        link: metricDescriptor.link({ count }),
+        link: metricDescriptor.link?.({ count }),
       },
     ];
   });
@@ -45,27 +44,9 @@ const Metrics = () => {
     useCurrentCollectivite();
   const { data: metrics, isLoading } = useTdbPersoFetchMetrics();
 
+  const isImprovedFicheActionUiEnabled = useImprovedFicheActionUiEnabled();
+
   const metricDescriptors: MetricDescriptor[] = [
-    {
-      isVisible: hasCollectivitePermission('plans.read_confidentiel'),
-      getCount: () => metrics?.plans.count || 0,
-      getTitle: (count) => `Plan${count > 1 ? 's' : ''}`,
-      link: ({ count }) => {
-        if (count > 0) {
-          return {
-            href: makeCollectivitePlansActionsListUrl({ collectiviteId }),
-            children: 'Voir tous les plans',
-          };
-        }
-        if (hasCollectivitePermission('plans.mutate')) {
-          return {
-            href: makeCollectivitePlansActionsNouveauUrl({ collectiviteId }),
-            children: 'Créer un plan',
-          };
-        }
-        return undefined;
-      },
-    },
     {
       isVisible: hasCollectivitePermission('plans.fiches.read_confidentiel'),
       getCount: () => metrics?.plans.piloteFichesCount || 0,
@@ -81,6 +62,14 @@ const Metrics = () => {
               children: 'Voir les actions',
             }
           : undefined,
+    },
+    {
+      isVisible:
+        hasCollectivitePermission('plans.fiches.read_confidentiel') &&
+        isImprovedFicheActionUiEnabled === true,
+      getCount: () => metrics?.plans.piloteSubFichesCount || 0,
+      getTitle: (count) =>
+        `Sous-action${count > 1 ? 's' : ''} pilotée${count > 1 ? 's' : ''}`,
     },
     {
       isVisible: hasCollectivitePermission(
