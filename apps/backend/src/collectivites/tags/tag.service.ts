@@ -83,6 +83,9 @@ export class TagService {
       const [result] = await (tx ?? this.databaseService.db)
         .insert(table)
         .values({ nom: tag.nom, collectiviteId: tag.collectiviteId })
+        .onConflictDoNothing({
+          target: [table.nom, table.collectiviteId],
+        })
         .returning();
 
       // If onConflictDoNothing() returns a result, the tag was successfully created
@@ -90,8 +93,7 @@ export class TagService {
         return success(result as TagWithCollectiviteId);
       }
 
-      // If result is undefined, it means there was a conflict (tag already exists or created by concurrent operation)
-      // Fetch the existing tag
+      // If no result, the tag already exists, fetch it
       const [existingTag] = await (tx ?? this.databaseService.db)
         .select()
         .from(table)
@@ -111,6 +113,7 @@ export class TagService {
 
       return success(existingTag as TagWithCollectiviteId);
     } catch (error) {
+      console.error('error', error);
       return failure(
         error instanceof Error
           ? `Database error during tag creation for "${tag.nom}": ${error.message}`
