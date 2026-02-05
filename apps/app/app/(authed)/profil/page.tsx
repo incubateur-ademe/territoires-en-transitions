@@ -5,6 +5,8 @@ import { useUser } from '@tet/api/users';
 import { Button } from '@tet/ui';
 import { ProfilInfo } from './_components/profil-info';
 
+import { ProfilNotifications } from './_components/profil-notifications';
+
 export default function Page() {
   const user = useUser();
   const rejoindreCollectivitePath = getRejoindreCollectivitePath(
@@ -19,8 +21,9 @@ export default function Page() {
           Rejoindre une collectivité
         </Button>
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ProfilInfo user={user} />
+        <ProfilNotifications />
       </div>
     </div>
   );
