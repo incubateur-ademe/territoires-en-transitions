@@ -3,7 +3,6 @@ import { useBulkFichesEdit } from '@/app/plans/fiches/list-all-fiches/data/use-b
 import { Filters } from '@/app/plans/fiches/list-all-fiches/filters/types';
 import { Button, cn, VisibleWhen } from '@tet/ui';
 
-import { ExportMultipleFichesModal } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
 import { SortOptions } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
 import EditionPilote from './EditionPilote';
@@ -13,6 +12,7 @@ import EditionReferent from './EditionReferent';
 import EditionService from './EditionService';
 import EditionStatut from './EditionStatut';
 import EditionTagsLibres from './EditionTagsLibres';
+import { ExportMultipleFichesModal } from '@/app/plans/fiches/show-fiche/header/menu/actions/pdf-export/ExportModal/export-fa-modal';
 
 type ActionsGroupeesMenuProps = {
   isVisible: boolean;
