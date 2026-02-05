@@ -171,7 +171,12 @@ export default function RichTextEditor({
       const html = await editor.blocksToHTMLLossy(editor.document);
       // on ajoute un espace insécable dans les paragraphes vides pour ne pas
       // perdre les sauts de lignes
-      const content = html.replaceAll('<p></p>', '<p>&nbsp;</p>');
+      const content = html.replaceAll(
+        editorOptions.domAttributes?.inlineContent?.class
+          ? `<p class="${editorOptions.domAttributes.inlineContent.class}"></p>`
+          : '<p></p>',
+        '<p>&nbsp;</p>'
+      );
       // mais on évite d'avoir uniquement une ligne vide
       onChange(content === '<p>&nbsp;</p>' ? '' : content);
     }
