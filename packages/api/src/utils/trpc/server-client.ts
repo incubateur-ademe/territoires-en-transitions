@@ -1,4 +1,9 @@
-import { createTRPCClient, httpLink, TRPCClient } from '@trpc/client';
+import {
+  createTRPCClient,
+  httpLink,
+  loggerLink,
+  TRPCClient,
+} from '@trpc/client';
 import {
   createTRPCOptionsProxy,
   TRPCOptionsProxy,
@@ -34,7 +39,12 @@ export const getQueryClient = cache(makeQueryClient);
 export const trpcInServerComponent: TRPCOptionsProxy<AppRouter> =
   createTRPCOptionsProxy({
     client: createTRPCClient<AppRouter>({
-      links: [TRPC_LINK],
+      links: [
+        loggerLink({
+          enabled: () => true,
+        }),
+        TRPC_LINK,
+      ],
     }),
     queryClient: getQueryClient,
   });
