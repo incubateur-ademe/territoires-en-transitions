@@ -1,12 +1,12 @@
-const { preset } = require('../../packages/ui/src/tailwind-preset');
+import { preset } from '@tet/ui/tailwind-preset';
+import { Config } from 'tailwindcss';
 
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+
+export default  {
   presets: [preset],
   content: [
     './**/*.{js,jsx,ts,tsx}',
     '../../packages/ui/src/**/*.{js,jsx,ts,tsx}',
-    './public/index.html',
   ],
   theme: {
     extend: {
@@ -16,4 +16,4 @@ module.exports = {
       },
     },
   },
-};
+} satisfies Config;
