@@ -15,7 +15,7 @@ export const NotifyPiloteMultiFichesEmail = (
       <Text>Bonjour {assignedTo},</Text>
 
       <Text>
-        Vous-avez été assigné(e) à plusieurs actions sur Territoires en
+        Vous avez été assigné(e) à plusieurs actions sur Territoires en
         Transitions.
       </Text>
 
