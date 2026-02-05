@@ -77,8 +77,8 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
           ]}
         />
         {/** pour ouvrir le dialogue d'édition des valeurs */}
-        {chartInfo.sourceFilter.avecDonneesCollectivite && (
-          <Button size="sm" onClick={() => setIsOpen(true)} disabled={readonly}>
+        {chartInfo.sourceFilter.avecDonneesCollectivite && !readonly && (
+          <Button size="sm" onClick={() => setIsOpen(true)}>
             Ajouter une année
           </Button>
         )}

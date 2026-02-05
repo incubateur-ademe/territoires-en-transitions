@@ -1,5 +1,6 @@
 import { makeCollectivitePlansActionsListUrl } from '@/app/app/paths';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ButtonMenu, Icon, MenuAction, MenuSeparator } from '@tet/ui';
 import { useState } from 'react';
 import { GenerateReportPlanModal } from '../../reports/generate-plan-report-pptx/generate-report.modal';
@@ -14,6 +15,7 @@ type RestreindreFicheState = 'closed' | 'private' | 'public';
 export const PlanMenuButton = () => {
   const { plan, axeHasFiches } = usePlanAxesContext();
   const { mutate: exportPlanAction, isPending } = useExportPlanAction(plan.id);
+  const { hasCollectivitePermission } = useCurrentCollectivite();
 
   const [restreindreFiche, setRestreindreFiche] =
     useState<RestreindreFicheState>('closed');
@@ -27,41 +29,56 @@ export const PlanMenuButton = () => {
     isGeneratePptxPlanReportEnabled,
   } = useIsPendingReport();
 
+  const canMutatePlan = hasCollectivitePermission('plans.mutate');
+  const canExportPlan = hasCollectivitePermission('plans.export');
+
+  if (!canMutatePlan && !canExportPlan) {
+    return null;
+  }
+
   const menuActions: MenuAction[] = [
-    {
-      label: "Rendre publique l'ensemble des actions",
-      icon: 'lock-unlock-fill',
-      onClick: () => {
-        setRestreindreFiche('public');
-      },
-    },
-    {
-      label: "Rendre privé l'ensemble des actions",
-      icon: 'lock-fill',
-      onClick: () => {
-        setRestreindreFiche('private');
-      },
-    },
-    MenuSeparator,
-    {
-      label: 'Télécharger le plan (Excel)',
-      icon: 'file-excel-line',
-      disabled: isPending,
-      tooltip: isPending ? 'Export en cours' : undefined,
-      onClick: () => {
-        exportPlanAction('xlsx');
-      },
-    },
-    {
-      label: 'Télécharger le plan (Word)',
-      icon: 'file-word-line',
-      disabled: isPending,
-      tooltip: isPending ? 'Export en cours' : undefined,
-      onClick: () => {
-        exportPlanAction('docx');
-      },
-    },
-    isGeneratePptxPlanReportEnabled
+    canMutatePlan
+      ? {
+          label: "Rendre publique l'ensemble des actions",
+          icon: 'lock-unlock-fill',
+          onClick: () => {
+            setRestreindreFiche('public');
+          },
+        }
+      : null,
+    canMutatePlan
+      ? {
+          label: "Rendre privé l'ensemble des actions",
+          icon: 'lock-fill',
+          onClick: () => {
+            setRestreindreFiche('private');
+          },
+        }
+      : null,
+    canMutatePlan ? MenuSeparator : null,
+    canExportPlan
+      ? {
+          label: 'Télécharger le plan (Excel)',
+          icon: 'file-excel-line',
+          disabled: isPending,
+          tooltip: isPending ? 'Export en cours' : undefined,
+          onClick: () => {
+            exportPlanAction('xlsx');
+          },
+        }
+      : null,
+    canExportPlan
+      ? {
+          label: 'Télécharger le plan (Word)',
+          icon: 'file-word-line',
+          disabled: isPending,
+          tooltip: isPending ? 'Export en cours' : undefined,
+          onClick: () => {
+            exportPlanAction('docx');
+          },
+        }
+      : null,
+    canExportPlan && isGeneratePptxPlanReportEnabled
       ? {
           label: 'Générer un rapport',
           icon: 'slideshow-line',
@@ -72,15 +89,17 @@ export const PlanMenuButton = () => {
           },
         }
       : null,
-    MenuSeparator,
-    {
-      label: 'Supprimer le plan',
-      icon: 'delete-bin-6-line',
-      disabled: isPending,
-      onClick: () => {
-        setIsOpenDeletePlanModal(true);
-      },
-    },
+    canMutatePlan ? MenuSeparator : null,
+    canMutatePlan
+      ? {
+          label: 'Supprimer le plan',
+          icon: 'delete-bin-6-line',
+          disabled: isPending,
+          onClick: () => {
+            setIsOpenDeletePlanModal(true);
+          },
+        }
+      : null,
   ].filter(Boolean) as MenuAction[];
 
   return (

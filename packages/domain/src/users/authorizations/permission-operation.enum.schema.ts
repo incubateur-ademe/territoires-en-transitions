@@ -32,6 +32,7 @@ export const PermissionOperations = [
   'plans.read',
   'plans.read_confidentiel',
   'plans.mutate',
+  'plans.export',
 
   // Fiches actions
   'plans.fiches.read',

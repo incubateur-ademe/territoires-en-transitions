@@ -4,7 +4,7 @@ import { useDeleteTag } from '@/app/ui/dropdownLists/tags/useTagDelete';
 import { useTagUpdate } from '@/app/ui/dropdownLists/tags/useTagUpdate';
 import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import { RouterOutput, useTRPC } from '@tet/api';
-import { useCollectiviteId } from '@tet/api/collectivites';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
 import {
   Option,
@@ -37,16 +37,29 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
 };
 
 /** Sélecteur de personnes de la collectivité */
-const PersonnesDropdown = (props: Props) => {
-  const collectiviteId = useCollectiviteId();
+const PersonnesDropdown = ({
+  collectiviteIds,
+  disabledOptionsIds,
+  disableEdition = false,
+  additionalKeysToInvalidate,
+  onChange,
+  values,
+  dataTest,
+  ...props
+}: Props) => {
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
   const queryClient = useQueryClient();
   const trpc = useTRPC();
+
+  const isEditionEnabled =
+    !disableEdition && hasCollectivitePermission('collectivites.tags.mutate');
 
   const {
     data: personneListe,
     isLoading,
     refetch,
-  } = usePersonneListe(props.collectiviteIds);
+  } = usePersonneListe(collectiviteIds);
 
   const getOptionIcon = (personne: Tag) => {
     if (personne.tagId && personne.collectiviteId !== collectiviteId) {
@@ -62,9 +75,7 @@ const PersonnesDropdown = (props: Props) => {
     ? (personneListe as Tag[]).map((personne) => ({
         value: getPersonneStringId(personne),
         label: personne.nom,
-        disabled: props.disabledOptionsIds?.includes(
-          getPersonneStringId(personne)
-        ),
+        disabled: disabledOptionsIds?.includes(getPersonneStringId(personne)),
         icon: getOptionIcon(personne).icon,
         iconClassname: getOptionIcon(personne).iconClassname,
       }))
@@ -78,7 +89,7 @@ const PersonnesDropdown = (props: Props) => {
   const { mutate: updateTag } = useTagUpdate({
     key: ['personnes', collectiviteId],
     tagTableName: 'personne_tag',
-    keysToInvalidate: props.additionalKeysToInvalidate,
+    keysToInvalidate: additionalKeysToInvalidate,
     onSuccess: () => {
       refetch();
     },
@@ -119,8 +130,8 @@ const PersonnesDropdown = (props: Props) => {
         userId: null,
       };
 
-      props.onChange({
-        personnes: [tag, ...getSelectedPersonnes(props.values)],
+      onChange({
+        personnes: [tag, ...getSelectedPersonnes(values)],
         selectedPersonne: tag,
       });
     }
@@ -129,18 +140,19 @@ const PersonnesDropdown = (props: Props) => {
   return (
     <SelectFilter
       {...props}
-      dataTest={props.dataTest ?? 'personnes'}
+      dataTest={dataTest ?? 'personnes'}
+      values={values}
       isSearcheable
       isLoading={isLoading}
       options={options}
       onChange={({ values, selectedValue }) =>
-        props.onChange({
+        onChange({
           personnes: getSelectedPersonnes(values),
           selectedPersonne: getSelectedPersonnes([selectedValue])[0],
         })
       }
       createProps={
-        !props.disableEdition
+        isEditionEnabled
           ? {
               userCreatedOptions:
                 (personneListe as Tag[])
@@ -156,12 +168,12 @@ const PersonnesDropdown = (props: Props) => {
                 });
               },
               onDelete: (tagId) => {
-                props.onChange({
+                onChange({
                   personnes: getSelectedPersonnes(
-                    props.values?.filter((v) => v !== tagId)
+                    values?.filter((v) => v !== tagId)
                   ),
                   selectedPersonne: getSelectedPersonnes(
-                    props.values?.filter((v) => v === tagId)
+                    values?.filter((v) => v === tagId)
                   )[0],
                 });
                 deleteTag(parseInt(tagId as string));

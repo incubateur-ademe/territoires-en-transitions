@@ -79,15 +79,18 @@ export const NotesTable = ({
           </tbody>
         </table>
       </div>
-      <Spacer height={1} />
-      <Button
-        size="xs"
-        icon="add-line"
-        variant="outlined"
-        onClick={() => setIsAddingNote((prev) => !prev)}
-      >
-        Ajouter une note
-      </Button>
+
+      <VisibleWhen condition={!isReadonly}>
+        <Spacer height={1} />
+        <Button
+          size="xs"
+          icon="add-line"
+          variant="outlined"
+          onClick={() => setIsAddingNote((prev) => !prev)}
+        >
+          Ajouter une note
+        </Button>
+      </VisibleWhen>
     </div>
   );
 };

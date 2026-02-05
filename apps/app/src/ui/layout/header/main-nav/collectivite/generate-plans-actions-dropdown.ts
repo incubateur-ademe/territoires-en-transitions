@@ -1,21 +1,23 @@
 import {
-    makeCollectivitePanierUrl,
-    makeCollectivitePlansActionsListUrl,
-    makeCollectiviteToutesLesFichesUrl,
-    makeTdbPlansEtActionsUrl,
+  makeCollectivitePanierUrl,
+  makeCollectivitePlansActionsListUrl,
+  makeCollectiviteToutesLesFichesUrl,
+  makeTdbPlansEtActionsUrl,
 } from '@/app/app/paths';
-import { isVisitor } from '@tet/domain/users';
 import { CollectiviteNavItem } from './make-collectivite-nav';
 
 export const generatePlansActionsDropdown = ({
   collectiviteId,
+  collectiviteAccesRestreint,
+  isVisitor,
   panierId,
 }: {
   collectiviteId: number;
+  collectiviteAccesRestreint: boolean;
+  isVisitor: boolean;
   panierId?: string;
 }): CollectiviteNavItem => ({
-  isVisibleWhen: (user, accesRestreint) =>
-    !(accesRestreint && isVisitor(user, { collectiviteId })),
+  isVisible: !(collectiviteAccesRestreint && isVisitor),
   children: 'Plans & Actions',
   dataTest: 'nav-pa',
   links: [
@@ -41,7 +43,7 @@ export const generatePlansActionsDropdown = ({
       }),
     },
     {
-      hideWhenVisitor: true,
+      isVisible: !isVisitor,
       children: 'Actions à Impact',
       dataTest: 'pa-ai',
       href: makeCollectivitePanierUrl({

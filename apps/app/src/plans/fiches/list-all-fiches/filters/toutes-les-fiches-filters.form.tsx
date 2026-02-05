@@ -17,7 +17,6 @@ import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropd
 import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ListFichesRequestFilters as Filtres } from '@tet/domain/plans';
 import {
   Checkbox,
@@ -76,12 +75,6 @@ export const ToutesLesFichesFiltersForm = ({
     'finPeriode',
     'debutPeriode',
   ]);
-
-  const collectivite = useCurrentCollectivite();
-
-  const canMutateCollectivite = collectivite.hasCollectivitePermission(
-    'collectivites.mutate'
-  );
 
   const onSubmit = (data: FormFilters) => {
     setFilters(data);
@@ -147,7 +140,6 @@ export const ToutesLesFichesFiltersForm = ({
                         uIds.length > 0 ? uIds : (EMPTY_ARRAY_VALUE as string[])
                       );
                     }}
-                    disableEdition={!canMutateCollectivite}
                   />
                 )}
               />
@@ -168,7 +160,6 @@ export const ToutesLesFichesFiltersForm = ({
                           : EMPTY_ARRAY_VALUE;
                       field.onChange(serviceIds);
                     }}
-                    disableEdition={!canMutateCollectivite}
                   />
                 )}
               />
@@ -238,7 +229,6 @@ export const ToutesLesFichesFiltersForm = ({
                         uIds.length > 0 ? uIds : (EMPTY_ARRAY_VALUE as string[])
                       );
                     }}
-                    disableEdition={!canMutateCollectivite}
                   />
                 )}
               />
