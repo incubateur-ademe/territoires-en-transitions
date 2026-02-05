@@ -59,7 +59,7 @@ describe('Plan Transformer Tests', () => {
               },
             ],
             indicateurs: undefined,
-            instanceGouvernance: 'Une instance de gouvernance',
+            instanceGouvernance: ['Une instance de gouvernance'],
             objectifs: `Objectif général : L’appropriation du Contrat Local de Santé par les élus
 Objectif spécifique n°1 : Désigner les élus à intégrer la commission de suivi du CLS (Maire de communes avec une dynamique Santé)
 Objectif opérationnel 1.1 : Sensibiliser les élus à la dynamique du CLS

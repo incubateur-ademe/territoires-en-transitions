@@ -26,6 +26,7 @@ import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
 import { ficheActionEffetAttenduTable } from '../shared/models/fiche-action-effet-attendu.table';
 import { ficheActionFinanceurTagTable } from '../shared/models/fiche-action-financeur-tag.table';
 import { ficheActionIndicateurTable } from '../shared/models/fiche-action-indicateur.table';
+import { ficheActionInstanceGouvernanceTableTag } from '../shared/models/fiche-action-instance-gouvernance';
 import { ficheActionLibreTagTable } from '../shared/models/fiche-action-libre-tag.table';
 import { ficheActionLienTable } from '../shared/models/fiche-action-lien.table';
 import { ficheActionPartenaireTagTable } from '../shared/models/fiche-action-partenaire-tag.table';
@@ -104,6 +105,7 @@ export default class UpdateFicheService {
       libreTags,
       notes,
       sharedWithCollectivites,
+      instanceGouvernance,
       tempsDeMiseEnOeuvre,
       ...unsafeFicheAction
     } = ficheFields;
@@ -156,20 +158,6 @@ export default class UpdateFicheService {
         };
       }
       const existingFicheAction = resultGetExistingFiche.data;
-
-      /**
-       * Updates fiche action properties
-       */
-
-      // if (tempsDeMiseEnOeuvre !== undefined) {
-      //   await tx
-      //     .update(ficheActionTable)
-      //     .set({
-      //       ...ficheAction,
-      //       tempsDeMiseEnOeuvre: tempsDeMiseEnOeuvre?.id,
-      //     })
-      //     .where(eq(ficheActionTable.id, ficheId));
-      // }
 
       if (Object.keys(ficheFields).length > 0) {
         await transaction
@@ -358,6 +346,27 @@ export default class UpdateFicheService {
           ficheActionEffetAttenduTable.ficheId,
           [ficheActionEffetAttenduTable.effetAttenduId]
         );
+      }
+
+      if (instanceGouvernance !== undefined) {
+        // Delete existing relations
+        await transaction
+          .delete(ficheActionInstanceGouvernanceTableTag)
+          .where(eq(ficheActionInstanceGouvernanceTableTag.ficheId, ficheId));
+
+        // Insert new relations
+        if (instanceGouvernance !== null && instanceGouvernance.length > 0) {
+          await transaction
+            .insert(ficheActionInstanceGouvernanceTableTag)
+            .values(
+              instanceGouvernance.map((relation) => ({
+                ficheId: ficheId,
+                instanceGouvernanceTagId: relation.id,
+                createdBy: user.id,
+              }))
+            )
+            .returning();
+        }
       }
 
       if (libreTags !== undefined) {

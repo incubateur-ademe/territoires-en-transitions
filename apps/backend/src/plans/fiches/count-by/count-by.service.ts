@@ -457,14 +457,20 @@ export class CountByService {
         filters
       )}`
     );
+    try {
+      const { data: fiches } =
+        await this.ficheActionListService.getFichesActionResumes({
+          collectiviteId,
+          filters,
+        });
 
-    const { data: fiches } =
-      await this.ficheActionListService.getFichesActionResumes({
-        collectiviteId,
-        filters,
-      });
-
-    return this.countByPropertyWithFiches(fiches, countByProperty, filters);
+      console.log('fiches', fiches);
+      return this.countByPropertyWithFiches(fiches, countByProperty, filters);
+    } catch (error) {
+      console.log('error', error);
+      this.logger.error(error);
+      throw error;
+    }
   }
 
   async countByPropertyWithFiches(

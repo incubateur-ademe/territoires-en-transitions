@@ -1,181 +1,68 @@
 import { describe, expect, it } from 'vitest';
-import { ImportPlanInput } from '../import-plan.input';
 import { ResolvedFicheEntities } from '../resolvers/resolve-entity.service';
 import { ImportFicheInput } from '../schemas/import-fiche.input';
-import { importPlanInputToCreatePlanAggregateInput } from './import-plan-input-to-create-plan-aggregate-input';
+import { importFicheInputToUpdateFicheInput } from './import-fiche-input-to-update-fiche-input';
 
 describe('importFicheInputToUpdateFicheInput', () => {
   const collectiviteId = 42;
 
-  const createImportPlanInput = (
-    overrides?: Partial<ImportPlanInput>
-  ): ImportPlanInput => ({
-    nom: 'Mon Plan de Test',
-    typeId: 1,
-    pilotes: [{ userId: 'pilot-1', tagId: null }],
-    referents: [{ userId: null, tagId: 100 }],
-    fiches: [
-      {
-        axisPath: ['Axe 1'],
-        titre: 'Fiche 1',
-      } as ImportFicheInput,
-      {
-        axisPath: ['Axe 1', 'Sous-Axe 1'],
-        titre: 'Fiche 2',
-      } as ImportFicheInput,
-    ],
+  const createResolvedEntities = (
+    overrides?: Partial<ResolvedFicheEntities>
+  ): ResolvedFicheEntities => ({
+    titre: 'Test Fiche',
+    axisPath: ['Axe 1'],
+    pilotes: [],
+    referents: [],
+    structures: [],
+    services: [],
+    financeurs: [],
+    partenaires: [],
+    instanceGouvernance: [],
     ...overrides,
   });
 
-  const createResolvedEntities = (args: {
-    axisPath?: string[];
-    titre?: string;
-  }): ResolvedFicheEntities => ({
-    titre: args.titre ?? args.axisPath?.join(' > ') ?? '',
-    axisPath: args.axisPath,
-    pilotes: [{ userId: 'user-123' }],
-    referents: [{ tagId: 456 }],
-    structures: [{ id: 1, nom: 'Structure A' }],
-    services: [{ id: 2, nom: 'Service B' }],
-    financeurs: [{ id: 10, nom: 'ADEME', montant: 5000 }],
-    partenaires: [{ id: 3, nom: 'Partenaire C' }],
-  });
-
-  it('should successfully adapt a valid plan import to plan creation request', () => {
-    const planImport = createImportPlanInput();
-    const resolvedEntities = [
-      createResolvedEntities({ axisPath: ['Axe 1'] }),
-      createResolvedEntities({ axisPath: ['Axe 1', 'Sous-Axe 1'] }),
-    ];
-
-    const result = importPlanInputToCreatePlanAggregateInput(
-      planImport,
-      resolvedEntities,
-      collectiviteId
-    );
-
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.fiches.length).toBe(2);
-    }
-  });
-
-  it('should fail when a fiche has no corresponding resolved entities', () => {
-    const planImport = createImportPlanInput({
-      fiches: [
-        {
-          axisPath: ['Axe 1'],
-          titre: 'Fiche 1',
-        } as ImportFicheInput,
-        {
-          axisPath: ['Axe 2', 'Missing'],
-          titre: 'Fiche 2',
-        } as ImportFicheInput,
-      ],
-    });
-
-    // Only one resolved entity, but two fiches
-    const resolvedEntities = [createResolvedEntities({ axisPath: ['Axe 1'] })];
-
-    const result = importPlanInputToCreatePlanAggregateInput(
-      planImport,
-      resolvedEntities,
-      collectiviteId
-    );
-
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error).toContain(
-        'No resolved entity found for fiche "Fiche 2" (axisPath: Axe 2 > Missing)'
-      );
-    }
-  });
-
-  it('should handle multiple fiches with the same axis path', () => {
-    const planImport = createImportPlanInput({
-      fiches: [
-        {
-          axisPath: ['Axe 1'],
-          titre: 'Fiche 1',
-        } as ImportFicheInput,
-        {
-          axisPath: ['Axe 1'],
-          titre: 'Fiche 2',
-        } as ImportFicheInput,
-      ],
-    });
-
-    const resolvedEntities = [
-      createResolvedEntities({ axisPath: ['Axe 1'] }),
-      createResolvedEntities({ axisPath: ['Axe 1'] }), // Same path, potentially different entities
-    ];
-
-    const result = importPlanInputToCreatePlanAggregateInput(
-      planImport,
-      resolvedEntities,
-      collectiviteId
-    );
-
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.fiches).toHaveLength(2);
-      expect(result.data.fiches[0].fiche.titre).toBe('Fiche 1');
-      expect(result.data.fiches[1].fiche.titre).toBe('Fiche 2');
-    }
-  });
-
-  it('should handle mixed fiches with and without axes', () => {
-    const ficheWithoutAxis: Partial<ImportFicheInput> = {
-      axisPath: undefined,
-      titre: 'Fiche sans axe',
-      structures: [],
-      partenaires: [],
-      services: [],
-      pilotes: [],
-      referents: [],
-      financeurs: [],
+  it('should map all fiche fields correctly', () => {
+    const fiche: Partial<ImportFicheInput> = {
+      titre: 'Fiche complète',
+      description: 'Description de la fiche',
+      objectifs: 'Objectifs de la fiche',
+      instanceGouvernance: ['Instance 1'],
+      budget: 10000,
+      status: 'À venir',
+      priorite: 'Moyen',
     };
-    const ficheWithAxis: Partial<ImportFicheInput> = {
-      axisPath: ['Axe 1', 'Sous-Axe 1', 'Sous-Sous-Axe 1'],
-      titre: 'Fiche avec sous-sous-axe',
-      structures: [],
-      partenaires: [],
-      services: [],
-      pilotes: [],
-      referents: [],
-      financeurs: [],
-    };
-    const planImport = createImportPlanInput({
-      fiches: [
-        ficheWithoutAxis as ImportFicheInput,
-        ficheWithAxis as ImportFicheInput,
-      ],
+
+    const resolvedEntities = createResolvedEntities({
+      instanceGouvernance: [{ id: 1, nom: 'Instance 1' }],
+      structures: [{ id: 10, nom: 'Structure A' }],
+      services: [{ id: 20, nom: 'Service B' }],
+      partenaires: [{ id: 30, nom: 'Partenaire C' }],
+      financeurs: [{ id: 40, nom: 'Financeur D', montant: 5000 }],
+      pilotes: [{ userId: 'user-123' }],
+      referents: [{ tagId: 456 }],
     });
 
-    const resolvedEntities = [
-      createResolvedEntities({
-        axisPath: ficheWithAxis.axisPath,
-        titre: ficheWithAxis.titre,
-      }),
-      createResolvedEntities({
-        axisPath: ficheWithoutAxis.axisPath,
-        titre: ficheWithoutAxis.titre,
-      }),
-    ];
-
-    const result = importPlanInputToCreatePlanAggregateInput(
-      planImport,
+    const result = importFicheInputToUpdateFicheInput(
+      fiche as ImportFicheInput,
       resolvedEntities,
       collectiviteId
     );
 
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.fiches.length).toBe(2);
-      expect(result.data.fiches[0].axisPath).toEqual(ficheWithoutAxis.axisPath);
-      expect(result.data.fiches[0].fiche.titre).toBe('Fiche sans axe');
-      expect(result.data.fiches[1].axisPath).toEqual(ficheWithAxis.axisPath);
-      expect(result.data.fiches[1].fiche.titre).toBe(ficheWithAxis.titre);
-    }
+    expect(result.collectiviteId).toBe(collectiviteId);
+    expect(result.titre).toBe('Fiche complète');
+    expect(result.description).toBe('Description de la fiche');
+    expect(result.objectifs).toBe('Objectifs de la fiche');
+    expect(result.instanceGouvernance).toEqual([{ id: 1, nom: 'Instance 1' }]);
+    expect(result.budgetPrevisionnel).toBe('10000');
+    expect(result.statut).toBe('À venir');
+    expect(result.priorite).toBe('Moyen');
+    expect(result.structures).toEqual([{ id: 10, nom: 'Structure A' }]);
+    expect(result.services).toEqual([{ id: 20, nom: 'Service B' }]);
+    expect(result.partenaires).toEqual([{ id: 30, nom: 'Partenaire C' }]);
+    expect(result.financeurs).toEqual([
+      { financeurTag: { id: 40, nom: 'Financeur D' }, montantTtc: 5000 },
+    ]);
+    expect(result.pilotes).toEqual([{ userId: 'user-123' }]);
+    expect(result.referents).toEqual([{ tagId: 456 }]);
   });
 });
