@@ -9,16 +9,14 @@
         "options": {
           "buildTarget": "auth:build",
           "dev": true,
-          "port": 3003,
-          "webpack": true
+          "port": 3003
         }
       },
       "build": {
         "executor": "@nx/next:build",
         "dependsOn": ["^build"],
         "options": {
-          "outputPath": "apps/auth/.next",
-          "webpack": true
+          "outputPath": "apps/auth/.next"
         }
       }
     }
