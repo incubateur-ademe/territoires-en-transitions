@@ -1,7 +1,6 @@
-import { EChartsOption, PieSeriesOption } from 'echarts';
-
 import { prioritesToState } from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
 import { statutFicheActionToColor } from '@/app/plans/fiches/utils';
+import { EChartsOption } from '@/app/ui/charts/echarts';
 import { remToPx } from '@/app/ui/charts/echarts/remToPx';
 import { RouterOutput } from '@tet/api';
 import {
@@ -12,6 +11,7 @@ import {
 } from '@tet/domain/plans';
 import { roundTo } from '@tet/domain/utils';
 import { preset } from '@tet/ui';
+import type { PieSeriesOption } from 'echarts/charts';
 import { cloneDeep } from 'es-toolkit';
 
 const getItemColor = (
