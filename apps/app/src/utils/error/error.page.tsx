@@ -1,6 +1,5 @@
 'use client'; // Error boundaries must be Client Components
 
-import { datadogLogs } from '@datadog/browser-logs';
 import * as Sentry from '@sentry/nextjs';
 import { getErrorMessage } from '@tet/domain/utils';
 import { TRPCClientErrorLike } from '@trpc/client';
@@ -21,9 +20,6 @@ export function ErrorPage({
     if (error) {
       const scopeContext = new Sentry.Scope();
       scopeContext.setTag('crash_id', crashId);
-      datadogLogs.logger.error(
-        `Reporting error to Sentry: ${getErrorMessage(error)}`
-      );
       Sentry.captureException(error, scopeContext);
     }
   }, [crashId, error]);
