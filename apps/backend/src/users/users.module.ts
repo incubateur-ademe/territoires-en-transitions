@@ -16,6 +16,9 @@ import { UpdateUserRoleRouter } from './authorizations/update-user-role/update-u
 import { UpdateUserRoleService } from './authorizations/update-user-role/update-user-role.service';
 import { ConvertJwtToAuthUserService } from './convert-jwt-to-auth-user.service';
 import { AuthGuard } from './guards/auth.guard';
+import { UserPreferencesRepository } from './preferences/user-preferences.repository';
+import { UserPreferencesRouter } from './preferences/user-preferences.router';
+import { UserPreferencesService } from './preferences/user-preferences.service';
 import { UsersRouter } from './users.router';
 import { ListUsersRepository } from './users/list-users/list-users.repository';
 import { ListUsersRouter } from './users/list-users/list-users.router';
@@ -65,13 +68,19 @@ import { UpdateUserService } from './users/update-user/update-user.service';
 
     InvitationService,
     InvitationsRouter,
+
+    UserPreferencesRepository,
+    UserPreferencesService,
+    UserPreferencesRouter,
   ],
   exports: [
     PermissionService,
     GetUserRolesAndPermissionsService,
     ListUsersService,
     UsersRouter,
+    UserPreferencesRouter,
     ConvertJwtToAuthUserService,
+    UserPreferencesService,
   ],
 })
 export class UsersModule {}
