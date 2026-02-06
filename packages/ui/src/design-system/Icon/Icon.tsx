@@ -1,12 +1,12 @@
+import { RemixiconComponentType } from '@remixicon/react';
 import { forwardRef, HTMLAttributes, JSX, Ref } from 'react';
 import { cn } from '../../utils/cn';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
-export type IconValue =
-  | JSX.Element
-  | ((className: string) => JSX.Element)
-  | string;
+export type IconValue = JSX.Element<RemixiconComponentType>;
+// | ((className: string) => JSX.Element)
+// string;
 
 type IconProps = {
   icon: IconValue;
@@ -66,9 +66,9 @@ export const Icon = forwardRef(
         />
       );
     }
-    if (typeof icon === 'function') {
-      return icon(cn(sizeClassnames, className));
-    }
+    // if (typeof icon === 'function') {
+    //   return icon(cn(sizeClassnames, className));
+    // }
     return icon;
   }
 );
