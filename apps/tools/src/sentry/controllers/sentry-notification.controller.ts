@@ -12,7 +12,7 @@ export class SentryNotificationController {
 
   @Post('errors/callback')
   async handleErrorAlert(@Body() body: SentryEventWebhookPayload) {
-    this.logger.log('Received error alert from Datadog');
+    this.logger.log('Received error alert from Sentry');
 
     await this.sentryNotificationService.handleErrorAlert(body);
   }
