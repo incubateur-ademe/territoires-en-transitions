@@ -9,8 +9,7 @@
         "options": {
           "buildTarget": "auth:build",
           "dev": true,
-          "port": 3003,
-          "webpack": true
+          "port": 3003
         }
       },
       "build": {
