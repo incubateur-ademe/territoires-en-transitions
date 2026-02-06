@@ -14,7 +14,7 @@ import {
   makeOption,
   makeStackedSeries,
 } from '@/app/ui/charts/echarts';
-import { DatasetComponentOption } from 'echarts';
+import type { DatasetComponentOption } from 'echarts/components';
 import { LAYERS } from './layer-parameters';
 
 export type GrapheSecteurProps = {
@@ -65,7 +65,7 @@ export const GrapheSecteur = ({
   const option = makeOption({
     option: {
       dataset,
-      series: series,
+      series,
     },
     titre,
     unite,
