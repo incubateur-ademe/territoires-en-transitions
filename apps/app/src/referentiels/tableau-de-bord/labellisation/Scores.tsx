@@ -4,7 +4,7 @@ import {
   makeReferentielUrl,
 } from '@/app/app/paths';
 import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
-import Chart from '@/app/ui/charts/Chart';
+import { EChartsOption, ReactECharts } from '@/app/ui/charts/echarts';
 import logoTerritoireEngage from '@/app/ui/logo/logoTerritoireEngage_big.png';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { ReferentielId } from '@tet/domain/referentiels';
@@ -43,27 +43,65 @@ export const ScoreRempli = ({
   const { parcours, status } = useCycleLabellisation(referentiel);
   const data = getAggregatedScore(progressionScore.data);
 
+  const chartOption: EChartsOption = {
+    tooltip: {
+      trigger: 'item',
+      formatter: (params) => {
+        if (Array.isArray(params)) return '';
+        return `${params.marker} ${params.name}: <b>${params.value} points (${params.percent}%)</b>`;
+      },
+      textStyle: {
+        color: '#222',
+      },
+    },
+    series: [
+      {
+        type: 'pie',
+        radius: ['40%', '80%'],
+        padAngle: 1,
+        minAngle: 0,
+        minShowLabelAngle: 10,
+        percentPrecision: 0,
+
+        itemStyle: {
+          borderRadius: 4,
+          borderWidth: 4,
+        },
+        label: {
+          position: 'inside',
+          formatter: '{d}%',
+          opacity: 0.7,
+          fontSize: '0.9rem',
+        },
+        emphasis: {
+          itemStyle: {
+            color: 'inherit',
+          },
+        },
+        data: data.array.map((d) => ({
+          name: d.id,
+          value: d.value,
+          itemStyle: { color: d.color },
+        })),
+      },
+    ],
+  };
+
   return (
     <AccueilCard className="flex flex-col items-center xl:flex-row xl:justify-between">
       {/* Graphe donut */}
-      <div className="w-full max-w-xs xl:order-2">
-        <Chart
-          donut={{
-            chart: {
-              data: data.array,
-              unit: 'point',
-              displayPercentageValue: true,
-              centeredElement: potentiel && (
-                <div className="text-xs text-primary-10">
-                  <div className="mb-1">Potentiel</div>
-                  {`${toLocaleFixed(potentiel, 1)} point${
-                    potentiel > 1 ? 's' : ''
-                  }`}
-                </div>
-              ),
-            },
-          }}
-        />
+      <div className="w-full max-w-xs xl:order-2 relative">
+        <ReactECharts option={chartOption} style={{ height: 256 }} />
+        {!!potentiel && (
+          <div className="absolute inset-0 flex pointer-events-none">
+            <div className="m-auto text-center text-xs text-primary-10">
+              <div className="mb-1">Potentiel</div>
+              {`${toLocaleFixed(potentiel, 1)} point${
+                potentiel > 1 ? 's' : ''
+              }`}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col items-center xl:items-start gap-2 shrink-0">
