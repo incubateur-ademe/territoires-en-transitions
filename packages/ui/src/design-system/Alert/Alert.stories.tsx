@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { useState } from 'react';
+import { ComponentProps, useState } from 'react';
 import { Button } from '../Button';
 import { Alert } from './Alert';
 
@@ -33,18 +33,25 @@ export const Warning: Story = {
   args: { state: 'warning' },
 };
 
-export const ControlledByParent: Story = {
-  render: (args) => {
-    const [isOpen, setIsOpen] = useState(true);
+const RenderControlledByParent = (args: ComponentProps<typeof Alert>) => {
+  const [isOpen, setIsOpen] = useState(false);
 
-    return isOpen ? (
+  return isOpen ? (
+    <div className="flex flex-col gap-2">
       <Alert {...args} />
-    ) : (
-      <Button variant="outlined" onClick={() => setIsOpen(true)}>
-        Ouvrir l'alerte
+      <Button variant="outlined" onClick={() => setIsOpen(false)}>
+        Fermer l&apos;alerte
       </Button>
-    );
-  },
+    </div>
+  ) : (
+    <Button variant="outlined" onClick={() => setIsOpen(true)}>
+      Ouvrir l&apos;alerte
+    </Button>
+  );
+};
+
+export const ControlledByParent: Story = {
+  render: (args) => <RenderControlledByParent {...args} />,
 };
 
 export const WithDescriptionAsComponent: Story = {

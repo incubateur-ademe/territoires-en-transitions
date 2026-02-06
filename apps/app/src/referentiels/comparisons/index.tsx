@@ -3,11 +3,11 @@ import { EvolutionsSnapshotsDropdown } from '@/app/referentiels/comparisons/drop
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Badge, EmptyCard } from '@tet/ui';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { SaveScoreModal } from '../../app/pages/collectivite/Referentiels/SaveScore/save-score.modal';
 import PictoDashboard from '../../ui/pictogrammes/PictoDashboard';
 import { useReferentielId } from '../referentiel-context';
-import { useListSnapshots } from '../use-snapshot';
+import { SnapshotListItem, useListSnapshots } from '../use-snapshot';
 import { ScoreTotalEvolutionsChart } from './evolutions-score-total.chart';
 
 export const ScoreEvolutions = () => {
@@ -15,26 +15,25 @@ export const ScoreEvolutions = () => {
   const { hasCollectivitePermission, collectiviteId } =
     useCurrentCollectivite();
 
-  const { data: snapshots } = useListSnapshots({
+  const { data: snapshots, isPending } = useListSnapshots({
     referentielId,
   });
 
   // State management for the dropdown and the chart
-  const [selectedSnapshots, setSelectedSnapshots] = useState<typeof snapshots>(
-    []
-  );
+  const [selectedSnapshots, setSelectedSnapshots] = useState<
+    SnapshotListItem[]
+  >([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    if (snapshots) {
-      setSelectedSnapshots(snapshots.slice(0, 4));
-    }
-  }, [snapshots]);
-
-  if (!snapshots) {
+  if (isPending || !snapshots) {
     return <SpinnerLoader className="m-auto" />;
   }
+
+  const visibleSnapshots =
+    selectedSnapshots.length > 0
+      ? selectedSnapshots
+      : snapshots.slice(0, 4) ?? [];
 
   if (snapshots.length) {
     return (
@@ -46,7 +45,7 @@ export const ScoreEvolutions = () => {
           <div className="flex items-center justify-between">
             <div className="w-full max-w-6xl">
               <EvolutionsSnapshotsDropdown
-                values={selectedSnapshots ?? []}
+                values={visibleSnapshots ?? []}
                 onChange={setSelectedSnapshots}
                 options={snapshots}
                 maxBadgesToShow={3}
@@ -57,7 +56,7 @@ export const ScoreEvolutions = () => {
         </div>
         <div className="mt-8 pt-4 border-t border-gray-200">
           <ScoreTotalEvolutionsChart
-            snapshots={selectedSnapshots ?? []}
+            snapshots={visibleSnapshots ?? []}
             chartSize="lg"
             referentielId={referentielId}
             isDownloadable

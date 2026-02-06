@@ -171,4 +171,5 @@ const useMergedRefs = (refs: Array<unknown>) =>
         ref.current = current;
       }
     });
+  // eslint-disable-next-line react-hooks/use-memo
   }, refs);

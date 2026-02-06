@@ -10,8 +10,8 @@ const FiltreType = ({ filters, setFilters }: TFiltreProps) => {
         options={filtresTypeOptions}
         onChange={({ values }) => {
           if (values === undefined) {
-            delete filters.types;
-            return setFilters({ ...filters });
+            const { types, ...rest } = filters;
+            return setFilters({ ...rest });
           } else {
             return setFilters({ ...filters, types: values as TFilterType[] });
           }

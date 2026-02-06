@@ -38,7 +38,8 @@ export const Checkbox = forwardRef(
     }: CheckboxProps,
     ref?: Ref<HTMLInputElement>
   ) => {
-    const inputId = id ?? useId();
+    const generatedId = useId();
+    const inputId = id ?? generatedId;
 
     const Input = variant === 'checkbox' ? InputCheckbox : InputSwitch;
 
@@ -75,3 +76,4 @@ export const Checkbox = forwardRef(
     );
   }
 );
+Checkbox.displayName = 'Checkbox';

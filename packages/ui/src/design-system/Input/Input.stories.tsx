@@ -1,27 +1,29 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { useRef, useState } from 'react';
+import { ComponentProps, useRef, useState } from 'react';
 import { action } from 'storybook/actions';
 
 import { Input } from './Input';
 
+const RenderInput = (args: ComponentProps<typeof Input>) => {
+  const [value, setValue] = useState(args.value);
+  const inputRef = useRef<HTMLInputElement>(null);
+  return (
+    <Input
+      {...args}
+      ref={inputRef}
+      value={value}
+      onChange={(e) => {
+        action('onChange')(e.target.value);
+        action('inputRef.current.value')(inputRef.current?.value);
+        setValue(e.target.value);
+      }}
+    />
+  );
+};
+
 const meta: Meta<typeof Input> = {
   component: Input,
-  render: (args) => {
-    const [value, setValue] = useState(args.value);
-    const inputRef = useRef<HTMLInputElement>(null);
-    return (
-      <Input
-        {...args}
-        ref={inputRef}
-        value={value}
-        onChange={(e) => {
-          action('onChange')(e.target.value);
-          action('inputRef.current.value')(inputRef.current?.value);
-          setValue(e.target.value);
-        }}
-      />
-    );
-  },
+  render: (args) => <RenderInput {...args} />,
 };
 
 export default meta;

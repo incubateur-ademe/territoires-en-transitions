@@ -51,6 +51,7 @@ export const SideMenu = ({
     if (!isOpen) {
       interval = setInterval(() => setDisplayContent(false), 500);
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDisplayContent(true);
     }
 

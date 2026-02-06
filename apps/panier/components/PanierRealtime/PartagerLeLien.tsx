@@ -8,7 +8,7 @@ import {
   useCopyToClipboard,
   useEventTracker,
 } from '@tet/ui';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 import Membres from '../Picto/Membres';
 
 /**
@@ -18,6 +18,9 @@ export const PartagerLeLien = ({ panier }: { panier: Panier }) => {
   const [opened, setOpened] = useState(false);
   const [copied, setCopied] = useState(false);
   const [timeoutId, setTimeoutId] = useState<number | null>(null);
+  const updateTimeoutId = useEffectEvent((value: number | null) =>
+    setTimeoutId(value)
+  );
 
   const { copy } = useCopyToClipboard();
   const tracker = useEventTracker();
@@ -30,7 +33,7 @@ export const PartagerLeLien = ({ panier }: { panier: Panier }) => {
         window.clearTimeout(timeoutId);
       }
       const id = window.setTimeout(() => setCopied(false), 2000);
-      setTimeoutId(id);
+      updateTimeoutId(id);
     }
     return () => {
       if (timeoutId) {

@@ -29,7 +29,8 @@ export const RadioButton = forwardRef(
     }: RadioButtonProps,
     ref?: Ref<HTMLInputElement>
   ) => {
-    const inputId = id ?? useId();
+    const generatedId = useId();
+    const inputId = id ?? generatedId;
 
     return (
       <div
@@ -81,3 +82,4 @@ export const RadioButton = forwardRef(
     );
   }
 );
+RadioButton.displayName = 'RadioButton';

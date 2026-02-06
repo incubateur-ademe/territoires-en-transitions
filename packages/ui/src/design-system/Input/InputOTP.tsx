@@ -42,3 +42,4 @@ export const InputOTP = forwardRef(
     );
   }
 );
+InputOTP.displayName = 'InputOTP';

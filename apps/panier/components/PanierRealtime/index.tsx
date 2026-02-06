@@ -1,6 +1,5 @@
 'use client';
 
-import { Panier, PanierAPI, useSupabase } from '@tet/api';
 import ListeActions from '@/panier/components/ListeActions';
 import PanierActions from '@/panier/components/PanierActions';
 import {
@@ -8,9 +7,10 @@ import {
   usePanierContext,
   useUserContext,
 } from '@/panier/providers';
+import { Panier, PanierAPI, useSupabase } from '@tet/api';
 import { Event, useEventTracker } from '@tet/ui';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ContenuListesFiltre, PanierOngletName } from '../FiltresActions/types';
 import { useAjouterActionsRealiseesOuEnCoursState } from '../PanierActions/useAjouterActionsRealiseesOuEnCoursState';
 import { PartagerLeLien } from './PartagerLeLien';
@@ -47,7 +47,7 @@ const PanierRealtime = ({
   const tracker = useEventTracker();
 
   const supabase = useSupabase();
-  const panierAPI = new PanierAPI(supabase);
+  const panierAPI = useMemo(() => new PanierAPI(supabase), [supabase]);
 
   useEffect(() => {
     setPanier(panier);
@@ -63,7 +63,7 @@ const PanierRealtime = ({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [router, panier.id, setUser]);
+  }, [router, panier.id, setUser, panierAPI, supabase]);
 
   const handleToggleSelected = async (actionId: number, selected: boolean) => {
     if (selected) {

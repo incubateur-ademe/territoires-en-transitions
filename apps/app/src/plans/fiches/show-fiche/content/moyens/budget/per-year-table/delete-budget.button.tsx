@@ -37,7 +37,7 @@ export const DeleteBudgetButton = ({
           render={({ descriptionId }) => (
             <div id={descriptionId}>
               <p className="mb-0">
-                Ce budget sera supprimé définitivement de l'action.
+                Ce budget sera supprimé définitivement de l&apos;action.
                 Souhaitez-vous vraiment supprimer ce budget ?
               </p>
             </div>

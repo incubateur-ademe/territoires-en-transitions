@@ -66,8 +66,7 @@ export const useFicheBudgets = (fiche: FicheWithRelations): BudgetsState => {
               b.htBudgetId === budget.htBudgetId) &&
             (budget.etpBudgetId !== undefined ||
               budget.htBudgetId !== undefined);
-          b.year === 1990 &&
-            console.log('msssustBeSwapped', mustBeSwapped, b, budget);
+
           return mustBeSwapped ? budget : b;
         })
         .flatMap((b) => transformBudgetToFicheBudgetCreate(b, fiche.id, type));

@@ -72,3 +72,4 @@ export const Icon = forwardRef(
     return icon;
   }
 );
+Icon.displayName = 'Icon';

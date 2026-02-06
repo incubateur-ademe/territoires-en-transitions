@@ -5,7 +5,7 @@ import { Footer } from './Footer';
 const meta: Meta<typeof Footer> = {
   component: Footer,
   args: {
-    logos: [<i className="ri-leaf-line text-primary-9 !text-8xl" />],
+    logos: [<i key="leaf" className="ri-leaf-line text-primary-9 !text-8xl" />],
     content:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam eget maximus nisl, eget ullamcorper mauris. Nulla sagittis tempus leo nec elementum.',
     contentLinks: [

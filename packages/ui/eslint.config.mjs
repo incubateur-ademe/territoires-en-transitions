@@ -1,12 +1,13 @@
-import nxPlugin from '@nx/eslint-plugin';
+import { defineConfig } from 'eslint/config';
+import eslintNextjsConfig from '../../eslint-nextjs.config.mjs';
 import baseConfig from '../../eslint.config.mjs';
 
-const config = [
-  ...nxPlugin.configs['flat/react-typescript'],
+const eslintConfig = defineConfig([
+  ...eslintNextjsConfig,
   ...baseConfig,
   {
     ignores: ['storybook-static', 'postcss.config.js'],
   },
-];
+]);
 
-export default config;
+export default eslintConfig;

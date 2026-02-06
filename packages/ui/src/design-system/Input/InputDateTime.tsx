@@ -53,3 +53,4 @@ export const InputDateTime = forwardRef(
     );
   }
 );
+InputDateTime.displayName = 'InputDateTime';

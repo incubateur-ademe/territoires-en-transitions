@@ -68,3 +68,4 @@ export const InputNumber = forwardRef(
     );
   }
 );
+InputNumber.displayName = 'InputNumber';

@@ -48,3 +48,4 @@ export const InputSwitch = forwardRef(
     );
   }
 );
+InputSwitch.displayName = 'InputSwitch';

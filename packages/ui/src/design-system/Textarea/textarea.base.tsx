@@ -73,3 +73,4 @@ export const TextareaBase = forwardRef(
     );
   }
 );
+TextareaBase.displayName = 'TextareaBase';

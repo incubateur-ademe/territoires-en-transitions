@@ -2,14 +2,17 @@
 
 import { getRejoindreCollectivitePath } from '@tet/api';
 import { Alert, Button } from '@tet/ui';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 
 export default function Template({ children }: { children: React.ReactNode }) {
   const [rejoindreUrl, setRejoindreUrl] = useState<string>('');
+  const updateRejoindreUrl = useEffectEvent((value: string) =>
+    setRejoindreUrl(value)
+  );
 
   useEffect(() => {
     // Set the URL after component mounts on client side
-    setRejoindreUrl(getRejoindreCollectivitePath(document.location.origin));
+    updateRejoindreUrl(getRejoindreCollectivitePath(document.location.origin));
   }, []);
 
   return (

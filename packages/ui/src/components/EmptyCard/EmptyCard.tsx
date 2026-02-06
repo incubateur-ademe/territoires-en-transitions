@@ -110,10 +110,10 @@ export const EmptyCard = ({
     .filter((action) => {
       return action.isVisible === undefined || action.isVisible;
     })
-    .map((action) => {
+    .map((action, index) => {
       // Destructure pour exclure les props non natives au Button
       const { isVisible, ...buttonProps } = action;
-      return <Button size={sizeClasses[size].buttonSize} {...buttonProps} />;
+      return <Button key={index} size={sizeClasses[size].buttonSize} {...buttonProps} />;
     });
 
   return (

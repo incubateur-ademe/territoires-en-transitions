@@ -19,36 +19,73 @@ import {
 
 const columnHelper = createColumnHelper<FakeVueTabulaireAction>();
 
+const DescriptionCell = ({ initialValue }: { initialValue?: string }) => {
+  const [value, setValue] = useState(initialValue);
+
+  return (
+    <TableCell
+      canEdit
+      edit={{
+        renderOnEdit: ({ openState }) => (
+          <TableCellTextarea
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            closeEditing={() => openState.setIsOpen(false)}
+            placeholder="Renseigner la description"
+          />
+        ),
+      }}
+    >
+      {value && value.trim().length > 0 ? (
+        <span className="line-clamp-2">{value}</span>
+      ) : (
+        <span className="italic text-grey-6">Renseigner la description</span>
+      )}
+    </TableCell>
+  );
+};
+
+const StatusCell = ({ initialValue }: { initialValue?: string }) => {
+  const [value, setValue] = useState(initialValue);
+
+  return (
+    <TableCell
+      canEdit
+      edit={{
+        renderOnEdit: ({ openState }) => (
+          <div className="w-80">
+            <Select
+              options={fakeStatusOptions}
+              values={value}
+              onChange={(v: any) => setValue(v)}
+              openState={openState}
+              displayOptionsWithoutFloater
+            />
+          </div>
+        ),
+      }}
+    >
+      {value ? (
+        <Badge
+          state="info"
+          title={
+            fakeStatusOptions.find((option) => option.value === value)?.label
+          }
+          size="sm"
+        />
+      ) : (
+        <span className="italic text-sm text-grey-6">
+          Sélectionner un statut
+        </span>
+      )}
+    </TableCell>
+  );
+};
+
 const columns = [
   columnHelper.accessor('description', {
     header: () => <TableHeaderCell title="Description" />,
-    cell: (info) => {
-      const [value, setValue] = useState(info.cell.getValue());
-
-      return (
-        <TableCell
-          canEdit
-          edit={{
-            renderOnEdit: ({ openState }) => (
-              <TableCellTextarea
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                closeEditing={() => openState.setIsOpen(false)}
-                placeholder="Renseigner la description"
-              />
-            ),
-          }}
-        >
-          {value && value.trim().length > 0 ? (
-            <span className="line-clamp-2">{value}</span>
-          ) : (
-            <span className="italic text-grey-6">
-              Renseigner la description
-            </span>
-          )}
-        </TableCell>
-      );
-    },
+    cell: (info) => <DescriptionCell initialValue={info.cell.getValue()} />,
   }),
   columnHelper.accessor('statut', {
     header: (header) => (
@@ -58,43 +95,7 @@ const columns = [
         title="Statut"
       />
     ),
-    cell: () => {
-      const [value, setValue] = useState(fakeStatusOptions[0].value);
-
-      return (
-        <TableCell
-          canEdit
-          edit={{
-            renderOnEdit: ({ openState }) => (
-              <div className="w-80">
-                <Select
-                  options={fakeStatusOptions}
-                  values={value}
-                  onChange={(v: any) => setValue(v)}
-                  openState={openState}
-                  displayOptionsWithoutFloater
-                />
-              </div>
-            ),
-          }}
-        >
-          {value ? (
-            <Badge
-              state="info"
-              title={
-                fakeStatusOptions.find((option) => option.value === value)
-                  ?.label
-              }
-              size="sm"
-            />
-          ) : (
-            <span className="italic text-sm text-grey-6">
-              Sélectionner un statut
-            </span>
-          )}
-        </TableCell>
-      );
-    },
+    cell: () => <StatusCell initialValue={fakeStatusOptions[0].value} />,
   }),
   columnHelper.accessor('pilotes', {
     header: () => <TableHeaderCell className="w-56" title="Pilotes" />,

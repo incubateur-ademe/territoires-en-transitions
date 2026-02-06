@@ -18,7 +18,7 @@ const ContactEquipe = () => {
       <div className="flex-auto flex justify-center items-center gap-8 flex-wrap">
         <PictoWithBackground pictogram={<CommunityPicto />} />
         <Button href="/contact" variant="outlined">
-          Contacter l'équipe
+          {"Contacter l'équipe"}
         </Button>
       </div>
     </Section>

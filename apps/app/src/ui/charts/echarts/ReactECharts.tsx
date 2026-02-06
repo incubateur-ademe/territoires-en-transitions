@@ -219,7 +219,11 @@ export function ReactECharts({
       if (!chart) {
         return;
       }
-      loading ? chart.showLoading() : chart.hideLoading();
+      if (loading) {
+        chart.showLoading();
+      } else {
+        chart.hideLoading();
+      }
     }
   }, [loading, theme]);
 

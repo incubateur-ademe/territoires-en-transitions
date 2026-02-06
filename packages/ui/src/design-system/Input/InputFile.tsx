@@ -101,3 +101,4 @@ export const InputFile = forwardRef(
     );
   }
 );
+InputFile.displayName = 'InputFile';

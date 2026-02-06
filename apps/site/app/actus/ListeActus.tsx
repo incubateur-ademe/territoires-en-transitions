@@ -10,7 +10,7 @@ import {
   SelectFilter,
   SelectOption,
 } from '@tet/ui';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 import { ActuCard, getData } from './utils';
 
 const PAGINATION_LIMIT = 12;
@@ -25,10 +25,14 @@ const ListeActus = ({ categories }: ListeActusProps) => {
   >();
 
   const [selectedPage, setSelectedPage] = useState(1);
+  const updateSelectedPage = useEffectEvent((value: number) =>
+    setSelectedPage(value)
+  );
+
   const [total, setTotal] = useState(0);
   const [data, setData] = useState<ActuCard[]>();
 
-  const getActusData = async () => {
+  const getActusData = useEffectEvent(async () => {
     const { data, pagination } = await getData({
       page: selectedPage,
       limit: PAGINATION_LIMIT,
@@ -37,13 +41,13 @@ const ListeActus = ({ categories }: ListeActusProps) => {
     setData(data);
     setSelectedPage(pagination.start / PAGINATION_LIMIT + 1);
     setTotal(pagination.total);
-  };
+  });
 
   useEffect(() => {
     // Lorsque le filtre change, on revient en page 1 avant le fetch pour éviter des erreurs
     if (selectedPage === 1) getActusData();
-    else setSelectedPage(1);
-  }, [selectedCategories?.length]);
+    else updateSelectedPage(1);
+  }, [selectedCategories, selectedPage]);
 
   useEffect(() => {
     getActusData();

@@ -36,3 +36,4 @@ export const InputTel = forwardRef(
     );
   }
 );
+InputTel.displayName = 'InputTel';

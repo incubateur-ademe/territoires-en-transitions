@@ -102,6 +102,7 @@ export const InputBase = forwardRef<HTMLInputElement, InputBaseProps>(
     );
   }
 );
+InputBase.displayName = 'InputBase';
 
 /**
  * Affiche le contenu de la zone icône/texte/bouton à droite du champ.

@@ -63,3 +63,4 @@ export const Input = forwardRef(
     return <InputBase {...(props as InputBaseProps)} ref={ref} />;
   }
 );
+Input.displayName = 'Input';

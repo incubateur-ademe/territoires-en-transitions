@@ -1,5 +1,5 @@
-import { Panier } from '@tet/api';
 import FiltresActions from '@/panier/components/FiltresActions';
+import { Panier } from '@tet/api';
 import { Alert, Button, SITE_BASE_URL, Tab, Tabs } from '@tet/ui';
 import { useSearchParams } from 'next/navigation';
 import { ContenuListesFiltre, PanierOngletName } from '../FiltresActions/types';
@@ -108,7 +108,8 @@ const ListeActions = ({
                     footer={
                       tab.status === 'realise' ? (
                         <div className="inline">
-                          Valorisez ces actions "réalisées" sur l'&nbsp;
+                          Valorisez ces actions &apos;réalisées&apos; sur
+                          l&apos;
                           <Button
                             className="inline-flex mr-1"
                             variant="underlined"
@@ -118,13 +119,15 @@ const ListeActions = ({
                             outil numérique
                           </Button>
                           aux côtés des actions en cours et à venir pour
-                          constituer et piloter un plan sur l'outil numérique.
-                          Il vous suffit de cocher la case "Ajouter les actions
-                          classées “réalisées” au niveau du panier à droite.
+                          constituer et piloter un plan sur l&apos;outil
+                          numérique. Il vous suffit de cocher la case
+                          &quot;Ajouter les actions classées “réalisées”&quot;
+                          au niveau du panier à droite.
                         </div>
                       ) : (
                         <div className="inline">
-                          Pour retrouver ces actions "en cours" sur l'&nbsp;
+                          Pour retrouver ces actions &quot;en cours&quot; sur
+                          l&apos;
                           <Button
                             className="inline-flex mr-1"
                             variant="underlined"
@@ -134,8 +137,8 @@ const ListeActions = ({
                             outil numérique
                           </Button>
                           et les piloter, il vous suffit de cocher la case
-                          "Ajouter les actions classées “en cours” au niveau du
-                          panier à droite.
+                          &quot;Ajouter les actions classées “en cours”&quot; au
+                          niveau du panier à droite.
                         </div>
                       )
                     }

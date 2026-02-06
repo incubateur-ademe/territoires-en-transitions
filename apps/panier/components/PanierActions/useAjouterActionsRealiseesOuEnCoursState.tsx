@@ -1,6 +1,5 @@
-import { Panier, PanierAPI } from '@tet/api';
-import { useSupabase } from '@tet/api';
-import { useEffect, useState } from 'react';
+import { Panier, PanierAPI, useSupabase } from '@tet/api';
+import { useEffect, useEffectEvent, useState } from 'react';
 import { usePanierContext } from '../../providers';
 
 /**
@@ -44,6 +43,8 @@ const useToggleAjoutActions = (
   subset: 'en_cours' | 'realise'
 ) => {
   const [ajout, setAjout] = useState(false);
+  const updateAjout = useEffectEvent((value: boolean) => setAjout(value));
+
   const supabase = useSupabase();
   const panierAPI = new PanierAPI(supabase);
 
@@ -75,9 +76,9 @@ const useToggleAjoutActions = (
   // synchronise l'état si il n'y a plus d'actions dans le panier
   useEffect(() => {
     if (!countInPanier && ajout) {
-      setAjout(false);
+      updateAjout(false);
     } else if (countInPanier && !ajout) {
-      setAjout(true);
+      updateAjout(true);
     }
   }, [countInPanier, ajout]);
 
