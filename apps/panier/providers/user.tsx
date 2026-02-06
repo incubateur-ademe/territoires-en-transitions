@@ -50,7 +50,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       subscription?.unsubscribe();
     };
-  }, []);
+  }, [supabase.auth]);
 
   return <UserContext value={{ user, setUser }}>{children}</UserContext>;
 };

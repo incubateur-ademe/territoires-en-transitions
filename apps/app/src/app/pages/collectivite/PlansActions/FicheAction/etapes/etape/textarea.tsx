@@ -64,3 +64,5 @@ export const EtapeTextarea = forwardRef(
     );
   }
 );
+
+EtapeTextarea.displayName = 'EtapeTextarea';

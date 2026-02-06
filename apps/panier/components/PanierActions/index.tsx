@@ -1,12 +1,12 @@
+import { ActionImpact } from '@/panier/components/ActionImpact';
+import BasketPicto from '@/panier/components/Picto/BasketPicto';
+import EmptyBasketPicto from '@/panier/components/Picto/EmptyBasketPicto';
+import ValiderPanierButton from '@/panier/components/ValidationPanier/ValiderPanierButton';
 import {
   ActionImpactFourchetteBudgetaire,
   ActionImpactFull,
   Panier,
 } from '@tet/api';
-import { ActionImpact } from '@/panier/components/ActionImpact';
-import BasketPicto from '@/panier/components/Picto/BasketPicto';
-import EmptyBasketPicto from '@/panier/components/Picto/EmptyBasketPicto';
-import ValiderPanierButton from '@/panier/components/ValidationPanier/ValiderPanierButton';
 import { Alert } from '@tet/ui';
 import { AjouterActionsRealiseesOuEnCours } from './AjouterActionsRealiseesOuEnCours';
 import { AjouterActionsRealiseesOuEnCoursState } from './useAjouterActionsRealiseesOuEnCoursState';
@@ -56,7 +56,7 @@ const PanierActions = ({
             <div className="flex flex-col items-center max-lg:py-4">
               <EmptyBasketPicto />
               <span className="text-primary-8 text-lg font-bold text-center">
-                Votre panier d'actions est vide !
+                {"Votre panier d'actions est vide !"}
               </span>
             </div>
           </div>

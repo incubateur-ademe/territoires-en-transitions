@@ -1,6 +1,5 @@
-import React from 'react';
-import { ChartHead, ChartTitle } from './headings';
 import EvolutionFiches, { useEvolutionFiches } from './EvolutionFiches';
+import { ChartHead, ChartTitle } from './headings';
 
 type EvolutionPlansActionProps = {
   region?: string;
@@ -56,7 +55,7 @@ export function EvolutionPlansAction({
         )}
         {fiches && (
           <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-6 fr-col-lg-6 fr-ratio-16x9">
-            <ChartTitle>Nombre d'actions créées</ChartTitle>
+            <ChartTitle>{"Nombre d'actions créées"}</ChartTitle>
             <EvolutionFiches
               vue="stats_locales_evolution_nombre_fiches"
               region={region}

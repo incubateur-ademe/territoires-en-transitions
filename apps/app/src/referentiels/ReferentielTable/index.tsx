@@ -1,6 +1,6 @@
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { cn } from '@tet/ui';
-import { JSX, useCallback, useMemo } from 'react';
+import { JSX, useMemo } from 'react';
 import { TableInstance } from 'react-table';
 import { useReferentielId } from '../referentiel-context';
 import { makeRowRenderer } from './Row';
@@ -35,10 +35,7 @@ export const ReferentielTable: Table = (props) => {
   );
 
   // rendu d'une ligne
-  const renderRow = useCallback(makeRowRenderer(prepareRow, cellProps), [
-    prepareRow,
-    cellProps,
-  ]);
+  const renderRow = makeRowRenderer(prepareRow, cellProps);
 
   return (
     <div

@@ -43,7 +43,7 @@ export const SousActionDateCell = ({ sousAction }: Props) => {
       canEdit={canUpdate}
       edit={{
         onClose: () => {
-          hasChanged &&
+          if (hasChanged)
             updateSousAction({
               ficheId: sousAction.id,
               ficheFields: {

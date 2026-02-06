@@ -82,7 +82,7 @@ const EditionReferent = ({ onUpdate }: EditionReferentProps) => {
         variant="outlined"
         onClick={() => setIsModalOpen(true)}
       >
-        Éditer l'élu·e référent·e
+        {"Éditer l'élu·e référent·e"}
       </Button>
       {isModalOpen && (
         <ModaleEditionReferent

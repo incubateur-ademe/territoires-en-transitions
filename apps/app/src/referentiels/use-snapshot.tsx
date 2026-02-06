@@ -16,7 +16,7 @@ import { useReferentielId } from './referentiel-context';
 
 export type Snapshot = RouterOutput['referentiels']['snapshots']['getCurrent'];
 
-export type SnapshotDetails =
+export type SnapshotListItem =
   RouterOutput['referentiels']['snapshots']['list']['snapshots'][number];
 
 export type ActionDetailed = Snapshot['scoresPayload']['scores'];

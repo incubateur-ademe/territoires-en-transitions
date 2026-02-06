@@ -1,23 +1,19 @@
 import js from '@eslint/js';
 import nxPlugin from '@nx/eslint-plugin';
+import { defineConfig, globalIgnores } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 
-// Increase max listeners to prevent warning in Nx monorepo with multiple ESLint plugins
-
-process.setMaxListeners(20);
-
-export default [
-  {
-    ignores: [
-      '**/dist/**',
-      'out-tsc',
-      '.next',
-      'next-env.d.ts',
-      '.tsc-trace',
-      '**/e2e-cypress-deprecated/**',
-      '**/playwright-report/**',
-    ],
-  },
+const eslintConfig = defineConfig([
+  // Override default ignores of eslint-config-next
+  globalIgnores([
+    'dist/**',
+    'out-tsc',
+    '.next',
+    'next-env.d.ts',
+    '.tsc-trace',
+    '**/e2e-cypress-deprecated/**',
+    '**/playwright-report/**',
+  ]),
   ...nxPlugin.configs['flat/base'],
   ...nxPlugin.configs['flat/typescript'],
   ...nxPlugin.configs['flat/javascript'],
@@ -48,4 +44,6 @@ export default [
       '@typescript-eslint/no-var-requires': 'off',
     },
   },
-];
+]);
+
+export default eslintConfig;
