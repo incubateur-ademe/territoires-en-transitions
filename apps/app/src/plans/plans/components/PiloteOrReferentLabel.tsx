@@ -15,7 +15,7 @@ export const PiloteOrReferentLabel = ({
   return (
     <ListWithTooltip
       className="text-sm text-grey-8 font-normal flex"
-      icon={() => <Icon className="mr-1.5" />}
+      // icon={() => <Icon className="mr-1.5" />}
       list={personnes.map((p) => p.userName || p.tagName || '').filter(Boolean)}
     />
   );

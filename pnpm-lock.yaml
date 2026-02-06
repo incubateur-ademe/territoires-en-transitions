@@ -137,6 +137,9 @@ importers:
       '@react-pdf/renderer':
         specifier: 4.3.0
         version: 4.3.0(react@19.2.3)
+      '@remixicon/react':
+        specifier: ^4.8.0
+        version: 4.8.0(react@19.2.3)
       '@sentry/core':
         specifier: 10.32.1
         version: 10.32.1
@@ -410,9 +413,6 @@ importers:
       remark-gfm:
         specifier: 4.0.1
         version: 4.0.1
-      remixicon:
-        specifier: 4.6.0
-        version: 4.6.0
       rxjs:
         specifier: 7.8.2
         version: 7.8.2
@@ -1482,7 +1482,6 @@ packages:
 
   '@bryntum/scheduler-lib@1.0.0':
     resolution: {integrity: sha512-3Bd95kUaPsEJL+M7X2G5iV+7eNeSEPiFDX/U6Aucy5VeZDIuFFW+YTq4NVCVrzfs2wxeh5IRwW7fJC2mKv/hFw==}
-    engines: {node: '>=0.10.0'}
 
   '@bryntum/scheduler-react@6.3.1':
     resolution: {integrity: sha512-tqdu0Zz2wk7ou7vmM4g1m6xSNYrrtiMaBxd8v/DInVRsVGM2ZO9F6X6jisjF29CzUGAak+nI6H+GH02AkXBPYw==}
@@ -5076,6 +5075,11 @@ packages:
 
   '@remirror/core-constants@3.0.0':
     resolution: {integrity: sha512-42aWfPrimMfDKDi4YegyS7x+/0tlzaqwPQCULLanv3DMIlu96KTJR0fM5isWX2UViOqlGnX6YFgqWepcX+XMNg==}
+
+  '@remixicon/react@4.8.0':
+    resolution: {integrity: sha512-cbzR04GKWa3zWdgn0C2i+u/avb167iWeu9gqFO00UGu84meARPAm3oKowDZTU6dlk/WS3UHo6k//LMRM1l7CRw==}
+    peerDependencies:
+      react: '>=18.2.0'
 
   '@rollup/plugin-babel@6.1.0':
     resolution: {integrity: sha512-dFZNuFD2YRcoomP4oYf+DvQNSUA9ih+A3vUqopQx5EdtPGo3WBnQcI/S8pwpz91UsGfL0HsMSOlaMld8HrbubA==}
@@ -13271,9 +13275,6 @@ packages:
   remark-stringify@11.0.0:
     resolution: {integrity: sha512-1OSmLd3awB/t8qdoEOMazZkNsfVTeY4fTsgzcQFdXNq8ToTN4ZGwrMnlda4K6smTFKD+GRV6O48i6Z4iKgPPpw==}
 
-  remixicon@4.6.0:
-    resolution: {integrity: sha512-bKM5odjqE1yzVxEZGJE7F79WHhNrJFIKHXR+GG+P1IWXn8AnJZhl8SbIRDJsNAvIqx4VPkNwjuHfc42tutMDpQ==}
-
   renderkid@3.0.0:
     resolution: {integrity: sha512-q/7VIQA8lmM1hF+jn+sFSPWGlMkSAeNYcPLmDQx2zzuiDfaLrOmumR8iaUKlenFgh0XRPIUeSPlH3A+AW3Z5pg==}
 
@@ -20939,6 +20940,10 @@ snapshots:
       react-dom: 19.2.3(react@19.2.3)
 
   '@remirror/core-constants@3.0.0': {}
+
+  '@remixicon/react@4.8.0(react@19.2.3)':
+    dependencies:
+      react: 19.2.3
 
   '@rollup/plugin-babel@6.1.0(@babel/core@7.28.0)(@types/babel__core@7.20.5)(rollup@4.50.1)':
     dependencies:
@@ -30974,8 +30979,6 @@ snapshots:
       '@types/mdast': 4.0.4
       mdast-util-to-markdown: 2.1.2
       unified: 11.0.5
-
-  remixicon@4.6.0: {}
 
   renderkid@3.0.0:
     dependencies:

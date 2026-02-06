@@ -1,8 +1,6 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useRef } from 'react';
 
-import DoubleCheckIcon from '../../assets/DoubleCheckIcon';
-
 import { SITE_BASE_URL } from '../../utils/constants';
 import { Button } from './Button';
 
@@ -53,13 +51,13 @@ export const WithRemixIcon: Story = {
 };
 
 /** Bouton avec icône SVG custom. */
-export const WithCustomSVGIcon: Story = {
-  args: {
-    children: 'SVG Icon',
-    icon: (className: string) => <DoubleCheckIcon className={className} />,
-    iconPosition: 'left',
-  },
-};
+// export const WithCustomSVGIcon: Story = {
+//   args: {
+//     children: 'SVG Icon',
+//     icon: (className: string) => <DoubleCheckIcon className={className} />,
+//     iconPosition: 'left',
+//   },
+// };
 
 /** Bouton avec loader. */
 export const WithLoader: Story = {
