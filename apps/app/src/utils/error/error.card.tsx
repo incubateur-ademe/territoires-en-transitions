@@ -1,8 +1,6 @@
 'use client'; // Error boundaries must be Client Components
 
-import { datadogLogs } from '@datadog/browser-logs';
 import * as Sentry from '@sentry/nextjs';
-import { getErrorMessage } from '@tet/domain/utils';
 import { EmptyCard, PictoWarning } from '@tet/ui';
 import { TRPCClientErrorLike } from '@trpc/client';
 import { useEffect, useState } from 'react';
@@ -31,9 +29,6 @@ export function ErrorCard({
     if (error) {
       const scopeContext = new Sentry.Scope();
       scopeContext.setTag('crash_id', crashId);
-      datadogLogs.logger.error(
-        `Reporting error to Sentry: ${getErrorMessage(error)}`
-      );
       Sentry.captureException(error, scopeContext);
     }
   }, [crashId, error]);

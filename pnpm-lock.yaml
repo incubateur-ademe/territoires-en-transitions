@@ -38,9 +38,6 @@ importers:
       '@codegouvfr/react-dsfr':
         specifier: 1.26.0
         version: 1.26.0
-      '@datadog/browser-logs':
-        specifier: 6.22.0
-        version: 6.22.0
       '@dnd-kit/core':
         specifier: 6.3.1
         version: 6.3.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -1482,7 +1479,6 @@ packages:
 
   '@bryntum/scheduler-lib@1.0.0':
     resolution: {integrity: sha512-3Bd95kUaPsEJL+M7X2G5iV+7eNeSEPiFDX/U6Aucy5VeZDIuFFW+YTq4NVCVrzfs2wxeh5IRwW7fJC2mKv/hFw==}
-    engines: {node: '>=0.10.0'}
 
   '@bryntum/scheduler-react@6.3.1':
     resolution: {integrity: sha512-tqdu0Zz2wk7ou7vmM4g1m6xSNYrrtiMaBxd8v/DInVRsVGM2ZO9F6X6jisjF29CzUGAak+nI6H+GH02AkXBPYw==}
@@ -1572,17 +1568,6 @@ packages:
   '@csstools/css-tokenizer@3.0.3':
     resolution: {integrity: sha512-UJnjoFsmxfKUdNYdWgOB0mWUypuLvAfQPH1+pyvRJs6euowbFkFC6P13w1l8mJyi3vxYMxc9kld5jZEGRQs6bw==}
     engines: {node: '>=18'}
-
-  '@datadog/browser-core@6.22.0':
-    resolution: {integrity: sha512-f4c5y3HYR879+vZgwos3hPxTX8XvNCNmujSpSmA8zdIVA1JgP3Ern8Up2x4LEPGVxgSojUy8pVVtf3rjKXRjZg==}
-
-  '@datadog/browser-logs@6.22.0':
-    resolution: {integrity: sha512-CAHSU8mtjhBs4OM+ABpuK6qCtp/q8v2iX/mzVFyjQFv1C0J6WnsEmpQvSKO2YN9HQS59Rut9TXcUXIXLCo6WeQ==}
-    peerDependencies:
-      '@datadog/browser-rum': 6.22.0
-    peerDependenciesMeta:
-      '@datadog/browser-rum':
-        optional: true
 
   '@dnd-kit/accessibility@3.1.1':
     resolution: {integrity: sha512-2P+YgaXF+gRsIihwwY1gCsQSYnu9Zyj2py8kY5fFvUM1qm2WA2u639R6YNVfU4GWr+ZM5mqEsfHZZLoRONbemw==}
@@ -16619,12 +16604,6 @@ snapshots:
       '@csstools/css-tokenizer': 3.0.3
 
   '@csstools/css-tokenizer@3.0.3': {}
-
-  '@datadog/browser-core@6.22.0': {}
-
-  '@datadog/browser-logs@6.22.0':
-    dependencies:
-      '@datadog/browser-core': 6.22.0
 
   '@dnd-kit/accessibility@3.1.1(react@19.2.3)':
     dependencies:
