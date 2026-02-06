@@ -22,15 +22,17 @@ export const Range: Story = {
   },
 };
 
+const RenderMultiRangeCustomColors = () => {
+  const [value, setValue] = useState([25, 50, 75]);
+  return (
+    <Slider
+      value={value}
+      onValueChange={(newValue) => setValue(newValue)}
+      rangeColors={['red', 'green', 'blue', 'orange']}
+    />
+  );
+};
+
 export const MultiRangeCustomColors: Story = {
-  render: () => {
-    const [value, setValue] = useState([25, 50, 75]);
-    return (
-      <Slider
-        value={value}
-        onValueChange={(newValue) => setValue(newValue)}
-        rangeColors={['red', 'green', 'blue', 'orange']}
-      />
-    );
-  },
+  render: () => <RenderMultiRangeCustomColors />,
 };

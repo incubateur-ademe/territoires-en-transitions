@@ -37,6 +37,7 @@ export const Variantes: Story = {
           <div key={size} className="flex flex-col gap-5">
             {['default', 'warning', 'info', 'error'].map(variant => (
               <Notification
+                key={variant}
                 {...config}
                 variant={variant as NotificationVariant}
                 size={size as NotificationSize}

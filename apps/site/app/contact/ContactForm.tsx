@@ -14,7 +14,7 @@ import {
 import classNames from 'classnames';
 import { useRouter, useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 import { supabase } from '../initSupabase';
 import { options } from './data';
 
@@ -38,6 +38,10 @@ const initFormData: FormData = {
 
 const ContactForm = () => {
   const [formData, setFormData] = useState<FormData>(initFormData);
+  const updateFormData = useEffectEvent(
+    (value: (prevState: FormData) => FormData) => setFormData(value)
+  );
+
   const [status, setStatus] = useState<'success' | 'error' | null>(null);
   const [isError, setIsError] = useState(false);
 
@@ -110,13 +114,13 @@ const ContactForm = () => {
       const option = options.find((opt) => opt.value === objet);
 
       if (option) {
-        setFormData((prevState) => ({
+        updateFormData((prevState) => ({
           ...prevState,
           objet: option,
         }));
       }
     }
-  }, []);
+  }, [objet]);
 
   return (
     <>
@@ -258,7 +262,7 @@ const ContactForm = () => {
           {status === 'error' && (
             <>
               <Icon icon="close-line" />
-              Une erreur est survenue lors de l'envoi de votre message
+              {"Une erreur est survenue lors de l'envoi de votre message"}
             </>
           )}
         </div>

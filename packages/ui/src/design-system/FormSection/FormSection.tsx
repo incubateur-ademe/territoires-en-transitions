@@ -39,7 +39,7 @@ export const FormSection = ({
         <div className="h-px bg-primary-3" />
       </div>
       {/** Grille de children */}
-      <FormSectionGrid children={children} className={className} />
+      <FormSectionGrid className={className}>{children}</FormSectionGrid>
     </div>
   );
 };

@@ -1,34 +1,10 @@
-import nextPlugin from '@next/eslint-plugin-next';
-import nxPlugin from '@nx/eslint-plugin';
-import reactHooksPlugin from 'eslint-plugin-react-hooks';
+import { defineConfig } from 'eslint/config';
+import nextjsConfig from '../../eslint-nextjs.config.mjs';
 import baseConfig from '../../eslint.config.mjs';
 
-const config = [
-  ...nxPlugin.configs['flat/react-typescript'],
-  nextPlugin.flatConfig.coreWebVitals,
+const eslintConfig = defineConfig([
+  ...nextjsConfig,
   ...baseConfig,
-  {
-    plugins: {
-      'react-hooks': reactHooksPlugin,
-    },
-    rules: {
-      'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
-    },
-  },
-  {
-    // Node.js config files
-    files: ['*.config.js', '*.config.mjs', '*.config.cjs'],
-    languageOptions: {
-      globals: {
-        process: 'readonly',
-        module: 'readonly',
-        require: 'readonly',
-        __dirname: 'readonly',
-        __filename: 'readonly',
-      },
-    },
-  },
   {
     files: ['**/*.ts', '**/*.tsx'],
     rules: {
@@ -44,8 +20,13 @@ const config = [
           ],
         },
       ],
+
+      // Would be better to keep it as an error instead of warning, but too much places to fix for now.
+      'react-hooks/set-state-in-effect': 'warn',
     },
   },
-];
+]);
 
-export default config;
+export default eslintConfig;
+
+

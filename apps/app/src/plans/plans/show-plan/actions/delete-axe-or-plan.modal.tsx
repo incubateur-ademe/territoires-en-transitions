@@ -59,7 +59,8 @@ export const DeletePlanOrAxeModal = ({
           btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
-              isPlan ? deletePlan() : deleteAxe();
+              if (isPlan) deletePlan();
+              else deleteAxe();
               close();
             },
           }}

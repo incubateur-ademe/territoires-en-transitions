@@ -158,6 +158,7 @@ export const SelectBase = (props: SelectProps) => {
    */
   const [loading, setLoading] = useState(isLoading);
   // synchronise l'état de loading interne avec l'externe
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setLoading(isLoading), [isLoading]);
 
   /** Fonction de debounce */

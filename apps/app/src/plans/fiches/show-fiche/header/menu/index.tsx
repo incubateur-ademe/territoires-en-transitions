@@ -58,11 +58,10 @@ export const Menu = () => {
           onClick: () => openModal(action.id),
         })),
       }}
-      children={
-        <Icon icon="more-line" size="sm" className="h-4 w-4 color-primary-9" />
-      }
       className="border-grey-4 border-solid border-2 py-4 px-2 w-9 h-9 rounded-lg flex items-center justify-center bg-white"
       variant="unstyled"
-    />
+    >
+      <Icon icon="more-line" size="sm" className="h-4 w-4 color-primary-9" />
+    </ButtonMenu>
   );
 };

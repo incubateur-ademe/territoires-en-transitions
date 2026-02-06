@@ -12,7 +12,7 @@ const meta: Meta<typeof InlineLink> = {
     <div className="flex flex-col gap-2">
       <p className={args?.className}>
         On affiche un <InlineLink href="/" {...args} /> dans du texte qui
-        s'adapte automatiquement à la couleur et à la taille de celui-ci.
+        s&apos;adapte automatiquement à la couleur et à la taille de celui-ci.
       </p>
     </div>
   ),

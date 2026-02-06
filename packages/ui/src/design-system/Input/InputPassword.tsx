@@ -33,3 +33,4 @@ export const InputPassword = forwardRef(
     );
   }
 );
+InputPassword.displayName = 'InputPassword';

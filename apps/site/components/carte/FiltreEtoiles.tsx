@@ -43,6 +43,7 @@ const FiltreEtoiles = ({
       {etoiles.map((etoile, index) => (
         <Checkbox
           id={`${index + 1}etoiles`}
+          key={index}
           name={`${index + 1}etoiles`}
           aria-describedby={`${index + 1} étoile(s)`}
           checked={etoile}

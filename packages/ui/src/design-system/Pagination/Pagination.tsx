@@ -44,7 +44,9 @@ export const Pagination = ({
   const handleChangePage = (page: number) => {
     setCurrentPage(page);
     onChange?.(page);
-    !!idToScrollTo && document.getElementById(idToScrollTo)?.scrollIntoView();
+    if (idToScrollTo) {
+      document.getElementById(idToScrollTo)?.scrollIntoView();
+    }
   };
 
   // Détecte la largeur de page
@@ -60,7 +62,11 @@ export const Pagination = ({
 
   // Détecte le changement de largeur de la page
   useEffect(() => {
-    windowWidth < 992 ? setIsMobile(true) : setIsMobile(false);
+    if (windowWidth < 992) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
   }, [windowWidth]);
 
   // Détecte le changement de page sélectionnée en props

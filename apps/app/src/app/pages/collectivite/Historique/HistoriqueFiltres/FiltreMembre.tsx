@@ -25,8 +25,8 @@ const FiltreMembre = ({ filters, setFilters }: TFiltreProps) => {
         options={memberList}
         onChange={({ values }) => {
           if (values === undefined) {
-            delete filters.modified_by;
-            return setFilters({ ...filters });
+            const { modified_by, ...rest } = filters;
+            return setFilters({ ...rest });
           } else {
             return setFilters({
               ...filters,

@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 
-import { useState } from 'react';
+import { ComponentProps, useState } from 'react';
 import { DEPRECATED_ButtonMenu } from './DEPRECATED_ButtonMenu';
 
 const meta: Meta<typeof DEPRECATED_ButtonMenu> = {
@@ -33,22 +33,26 @@ export const Default: Story = {
   },
 };
 
+const RenderControlled = (
+  args: ComponentProps<typeof DEPRECATED_ButtonMenu>
+) => {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <div className="mb-52">
+      <DEPRECATED_ButtonMenu
+        {...args}
+        menuPlacement="bottom-start"
+        openState={{
+          isOpen,
+          setIsOpen,
+        }}
+      />
+    </div>
+  );
+};
+
 export const Controlled: Story = {
-  render: (args) => {
-    const [isOpen, setIsOpen] = useState(false);
-    return (
-      <div className="mb-52">
-        <DEPRECATED_ButtonMenu
-          {...args}
-          menuPlacement="bottom-start"
-          openState={{
-            isOpen,
-            setIsOpen,
-          }}
-        />
-      </div>
-    );
-  },
+  render: (args) => <RenderControlled {...args} />,
 };
 
 export const WithArrow: Story = {

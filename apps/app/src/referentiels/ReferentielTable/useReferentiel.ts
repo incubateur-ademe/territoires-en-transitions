@@ -156,7 +156,10 @@ export const useReferentiel = <ActionSubset extends IAction>(
   // la table avant qu'il ne soit appliqué lors du traitement d'une action
   // utilisé ici pour personnaliser le comportement de l'action `toggleRowExpanded`
   const reducer = useToggleRowExpandedReducer(rows);
-  const stateReducer = useCallback(reducer, [rows]);
+  const stateReducer = useCallback(
+    (newState: TableState, action: ActionType) => reducer(newState, action),
+    [reducer]
+  );
 
   return {
     isLoading,

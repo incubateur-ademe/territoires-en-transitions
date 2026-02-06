@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Event, Input, useEventTracker } from '@tet/ui';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { ResendFunction, VerifyType } from '../VerifyOTP';
 
@@ -30,11 +30,11 @@ export const ResendMessage = (props: ResendMessageProps) => {
     }),
   });
 
-  const { register, watch, formState } = useForm({
+  const { register, formState, control } = useForm({
     resolver: zodResolver(validationSchema),
     defaultValues: { email },
   });
-  const emailValue = watch('email');
+  const emailValue = useWatch({ control, name: 'email' });
 
   const [opened, setOpened] = useState(isOpened);
 

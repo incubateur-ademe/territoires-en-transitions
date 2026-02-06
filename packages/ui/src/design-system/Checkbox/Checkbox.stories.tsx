@@ -1,40 +1,44 @@
-import {useState} from 'react';
+import {ComponentProps, useState} from 'react';
 import {Meta, StoryObj} from '@storybook/nextjs-vite';
 import {Checkbox} from './Checkbox';
 
+const RenderCheckbox = (args: ComponentProps<typeof Checkbox>) => {
+  const [checked, setChecked] = useState(args.checked || false);
+  return (
+    <Checkbox
+      {...args}
+      checked={checked}
+      label="Description de l'action"
+      onChange={() => setChecked(!checked)}
+    />
+  );
+};
+
 const meta: Meta<typeof Checkbox> = {
   component: Checkbox,
-  render: args => {
-    const [checked, setChecked] = useState(args.checked || false);
-    return (
-      <Checkbox
-        {...args}
-        checked={checked}
-        label="Description de l'action"
-        onChange={() => setChecked(!checked)}
-      />
-    );
-  },
+  render: args => <RenderCheckbox {...args} />,
 };
 
 export default meta;
 
 type Story = StoryObj<typeof Checkbox>;
 
+const RenderSansLabel = (args: ComponentProps<typeof Checkbox>) => {
+  const [checked, setChecked] = useState(args.checked || false);
+  return (
+    <Checkbox
+      {...args}
+      checked={checked}
+      onChange={() => setChecked(!checked)}
+    />
+  );
+};
+
 export const SansLabel: Story = {
   args: {
     id: 'cb1',
   },
-  render: args => {
-    const [checked, setChecked] = useState(args.checked || false);
-    return (
-      <Checkbox
-        {...args}
-        checked={checked}
-        onChange={() => setChecked(!checked)}
-      />
-    );
-  },
+  render: args => <RenderSansLabel {...args} />,
 };
 
 export const Unchecked: Story = {

@@ -78,7 +78,9 @@ export const Card = ({
         target={external ? '_blank' : otherProps.target}
         rel={external ? 'noreferrer noopener' : otherProps.rel}
       >
-        <CardContent header={header} footer={footer} children={children} />
+        <CardContent header={header} footer={footer}>
+          {children}
+        </CardContent>
       </Link>
     );
   } else {
@@ -90,7 +92,9 @@ export const Card = ({
         className={appliedClassname}
         onClick={!disabled ? divCardProps.onClick : undefined}
       >
-        <CardContent header={header} footer={footer} children={children} />
+        <CardContent header={header} footer={footer}>
+          {children}
+        </CardContent>
       </div>
     );
   }

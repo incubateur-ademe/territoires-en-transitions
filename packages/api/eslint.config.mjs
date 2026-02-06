@@ -1,14 +1,10 @@
-import nextPlugin from '@next/eslint-plugin-next';
-import nxPlugin from '@nx/eslint-plugin';
+import { defineConfig } from 'eslint/config';
+import eslintNextjsConfig from '../../eslint-nextjs.config.mjs';
 import baseConfig from '../../eslint.config.mjs';
 
-const config = [
-  ...nxPlugin.configs['flat/react-typescript'],
-  nextPlugin.flatConfig.coreWebVitals,
+const eslintConfig = defineConfig([
+  ...eslintNextjsConfig,
   ...baseConfig,
-  {
-    ignores: ['.next/**/*'],
-  },
-];
+]);
 
-export default config;
+export default eslintConfig;

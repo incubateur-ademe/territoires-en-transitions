@@ -27,7 +27,7 @@ export const useDeleteAxe = (
       queryClient.invalidateQueries({
         queryKey: trpc.plans.plans.get.queryKey({ planId }),
       });
-      redirectURL && router.push(redirectURL);
+      if (redirectURL) router.push(redirectURL);
     },
   });
 };

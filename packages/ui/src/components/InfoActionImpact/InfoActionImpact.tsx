@@ -164,7 +164,7 @@ export const InfoActionImpact = ({
         <div className="flex gap-x-8 gap-y-3 flex-wrap pb-8">
           {!rex || rex.length === 0 ? (
             <span className="text-sm text-grey-7">
-              Exemples d'autres collectivités à venir
+              Exemples d&apos;autres collectivités à venir
             </span>
           ) : (
             rex.map((r, i) => (

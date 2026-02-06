@@ -14,7 +14,7 @@ export const Default: Story = {
   render: () => (
     <Tooltip label="Message">
       <div className="bg-primary-1 py-2 px-3 w-fit mt-10">
-        Survoler pour voir l'info bulle
+        Survoler pour voir l&apos;info bulle
       </div>
     </Tooltip>
   ),
@@ -105,7 +105,7 @@ export const LongText: Story = {
   render: () => (
     <Tooltip label="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin viverra erat non luctus porta. Aliquam vitae maximus enim, ut elementum arcu. Fusce euismod risus non eros sodales, nec sollicitudin justo rhoncus. Nulla commodo mauris vitae lectus elementum, sed iaculis elit tristique. Nam nec quam non quam viverra mattis vel vitae lorem. Etiam a ante sit amet urna elementum pretium et in enim. Mauris molestie dolor non sapien luctus, sed sollicitudin justo consequat.">
       <div className="bg-primary-1 py-2 px-3 w-fit mt-20">
-        Survoler pour voir l'info bulle
+        Survoler pour voir l&apos;info bulle
       </div>
     </Tooltip>
   ),
@@ -128,7 +128,7 @@ export const LongTextWithFixedWidth: Story = {
       }
     >
       <div className="bg-primary-1 py-2 px-3 w-fit mt-32">
-        Survoler pour voir l'info bulle
+        Survoler pour voir l&apos;info bulle
       </div>
     </Tooltip>
   ),
@@ -139,7 +139,7 @@ export const WithoutArrow: Story = {
   render: () => (
     <Tooltip label="Message" withArrow={false}>
       <div className="bg-primary-1 py-2 px-3 w-fit mt-10">
-        Survoler pour voir l'info bulle
+        Survoler pour voir l&apos;info bulle
       </div>
     </Tooltip>
   ),
@@ -150,7 +150,7 @@ export const ActivatedByClick: Story = {
   render: () => (
     <Tooltip label="Message" activatedBy="click">
       <div className="bg-primary-1 py-2 px-3 w-fit mt-10">
-        Cliquer pour voir l'info bulle
+        Cliquer pour voir l&apos;info bulle
       </div>
     </Tooltip>
   ),
@@ -181,7 +181,7 @@ export const CustomContent: Story = {
       }
     >
       <div className="bg-primary-1 py-2 px-3 w-fit mt-32">
-        Survoler pour voir l'info bulle
+        Survoler pour voir l&apos;info bulle
       </div>
     </Tooltip>
   ),

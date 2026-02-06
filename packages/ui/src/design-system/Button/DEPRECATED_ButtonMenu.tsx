@@ -95,25 +95,22 @@ export const DEPRECATED_ButtonMenu = ({
   return (
     <>
       {cloneElement(
-        <Button
-          {...props}
-          children={
-            text || withArrow ? (
-              <>
-                {text && <span className="line-clamp-1">{text}</span>}
-                {withArrow && (
-                  <Icon
-                    icon="arrow-down-s-line"
-                    size="sm"
-                    className={classNames('ml-2 transition-all', {
-                      'rotate-180': isOpen,
-                    })}
-                  />
-                )}
-              </>
-            ) : undefined
-          }
-        />,
+        <Button {...props}>
+          {text || withArrow ? (
+            <>
+              {text && <span className="line-clamp-1">{text}</span>}
+              {withArrow && (
+                <Icon
+                  icon="arrow-down-s-line"
+                  size="sm"
+                  className={classNames('ml-2 transition-all', {
+                    'rotate-180': isOpen,
+                  })}
+                />
+              )}
+            </>
+          ) : undefined}
+        </Button>,
         getReferenceProps({
           ref: refs.setReference,
         })

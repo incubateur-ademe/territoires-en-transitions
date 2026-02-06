@@ -60,12 +60,14 @@ export const OptionMenu = ({
       {/** Bouton d'ouverture du menu */}
       {cloneElement(
         <OptionMenuButton />,
+        // eslint-disable-next-line react-hooks/refs
         getReferenceProps({ ref: refs.setReference })
       )}
       {/** Menu */}
       {isOpen && (
         <FloatingFocusManager context={context}>
           <div
+            // eslint-disable-next-line react-hooks/refs
             ref={refs.setFloating}
             {...getFloatingProps()}
             style={{

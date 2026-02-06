@@ -355,28 +355,30 @@ export const AnchorButtons: Story = {
   ),
 };
 
+const RenderWithRef = () => {
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const anchorRef = useRef<HTMLAnchorElement>(null);
+  const onButtonClick = () => console.log(buttonRef.current);
+  const onAnchorClick = () => console.log(anchorRef.current);
+  return (
+    <div className="flex items-end gap-5">
+      <Button ref={buttonRef} onClick={onButtonClick}>
+        Button with ref
+      </Button>
+      <Button
+        ref={anchorRef}
+        onClick={onAnchorClick}
+        href={SITE_BASE_URL}
+        external
+      >
+        Anchor with ref
+      </Button>
+    </div>
+  );
+};
+
 export const WithRef: Story = {
-  render: () => {
-    const buttonRef = useRef<HTMLButtonElement>(null);
-    const anchorRef = useRef<HTMLAnchorElement>(null);
-    const onButtonClick = () => console.log(buttonRef.current);
-    const onAnchorClick = () => console.log(anchorRef.current);
-    return (
-      <div className="flex items-end gap-5">
-        <Button ref={buttonRef} onClick={onButtonClick}>
-          Button with ref
-        </Button>
-        <Button
-          ref={anchorRef}
-          onClick={onAnchorClick}
-          href={SITE_BASE_URL}
-          external
-        >
-          Anchor with ref
-        </Button>
-      </div>
-    );
-  },
+  render: () => <RenderWithRef />,
 };
 
 /** Customisation du bouton avec des classes ou des inline styles. */

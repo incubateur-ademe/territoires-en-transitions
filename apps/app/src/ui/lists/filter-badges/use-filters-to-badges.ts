@@ -37,19 +37,20 @@ type Args = {
 };
 
 /** Transforme les filtres en string associées à afficher dans les badges. */
-export const useFiltersToBadges = ({ filters, customValues }: Args) => {
+export const useFiltersToBadges = ({
+  filters,
+  customValues: unCleanedCustomValues,
+}: Args) => {
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
 
   // On nettoie les valeurs vides de l'objet customValues.
   // Permet de ne pas avoir à le faire dans les composants utilisant le hook.
-  if (customValues) {
-    Object.entries(customValues).forEach(([key, value]) => {
-      if (!value) {
-        delete customValues[key as keyof CustomFilterBadges];
-      }
-    });
-  }
+  const customValues = unCleanedCustomValues
+    ? (Object.fromEntries(
+        Object.entries(unCleanedCustomValues).filter(([, value]) => value)
+      ) as CustomFilterBadges)
+    : unCleanedCustomValues;
 
   return useQuery({
     queryKey: ['filter_badges', filters, customValues],
@@ -165,22 +166,20 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
               mergedFilters[key] ? 'Complet' : 'Incomplet'
             }`
           );
-        } else if (key === 'participationScore') {
-          mergedFilters[key] && badgeValues.push('Participe au score CAE');
-        } else if (key === 'estPerso') {
-          mergedFilters[key] &&
-            badgeValues.push(INDICATEUR_LABELS.personalized.singular);
-        } else if (key === 'estConfidentiel') {
-          mergedFilters[key] &&
-            badgeValues.push(INDICATEUR_LABELS.private.singular);
-        } else if (key === 'hasOpenData') {
-          mergedFilters[key] && badgeValues.push('Données Open Data');
+        } else if (key === 'participationScore' && mergedFilters[key]) {
+          badgeValues.push('Participe au score CAE');
+        } else if (key === 'estPerso' && mergedFilters[key]) {
+          badgeValues.push(INDICATEUR_LABELS.personalized.singular);
+        } else if (key === 'estConfidentiel' && mergedFilters[key]) {
+          badgeValues.push(INDICATEUR_LABELS.private.singular);
+        } else if (key === 'hasOpenData' && mergedFilters[key]) {
+          badgeValues.push('Données Open Data');
 
           /** Actions */
-        } else if (key === 'hasBudgetPrevisionnel') {
-          mergedFilters[key] && badgeValues.push('Budget renseigné');
-        } else if (key === 'restreint') {
-          mergedFilters[key] && badgeValues.push('Confidentialité');
+        } else if (key === 'hasBudgetPrevisionnel' && mergedFilters[key]) {
+          badgeValues.push('Budget renseigné');
+        } else if (key === 'restreint' && mergedFilters[key]) {
+          badgeValues.push('Confidentialité');
         } else if (key === 'hasIndicateurLies') {
           badgeValues.push(
             mergedFilters[key]
@@ -214,30 +213,28 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
                 'Avec note de suivi : ' + mergedFilters[key]?.sort().join(', ');
             }
           });
-        } else if (key === 'ameliorationContinue') {
-          mergedFilters[key] && badgeValues.push('Se répète tous les ans');
+        } else if (key === 'ameliorationContinue' && mergedFilters[key]) {
+          badgeValues.push('Se répète tous les ans');
         } else if (key === 'priorites') {
           badgeValues.push(`Priorité : ${mergedFilters[key]?.join(', ')}`);
         } else if (key === 'statuts') {
           badgeValues.push(`Statut : ${mergedFilters[key]?.join(', ')}`);
         } else if (key === 'cibles') {
           badgeValues.push(`Cible : ${mergedFilters[key]?.join(', ')}`);
-        } else if (key === 'noStatut') {
-          mergedFilters[key] && badgeValues.push('Sans statut');
-        } else if (key === 'noTag') {
-          mergedFilters[key] && badgeValues.push('Sans tag personnalisés');
-        } else if (key === 'noPilote') {
-          mergedFilters[key] && badgeValues.push('Sans pilote');
-        } else if (key === 'doesBelongToSeveralPlans') {
-          mergedFilters[key] &&
-            badgeValues.push('Actions mutualisées dans plusieurs plans');
-        } else if (key === 'noPriorite') {
-          mergedFilters[key] && badgeValues.push('Sans priorité');
-        } else if (key === 'noServicePilote') {
-          mergedFilters[key] &&
-            badgeValues.push('Sans direction ou service pilote');
-        } else if (key === 'noReferent') {
-          mergedFilters[key] && badgeValues.push('Sans élu·e référent·e');
+        } else if (key === 'noStatut' && mergedFilters[key]) {
+          badgeValues.push('Sans statut');
+        } else if (key === 'noTag' && mergedFilters[key]) {
+          badgeValues.push('Sans tag personnalisé');
+        } else if (key === 'noPilote' && mergedFilters[key]) {
+          badgeValues.push('Sans pilote');
+        } else if (key === 'doesBelongToSeveralPlans' && mergedFilters[key]) {
+          badgeValues.push('Actions mutualisées dans plusieurs plans');
+        } else if (key === 'noPriorite' && mergedFilters[key]) {
+          badgeValues.push('Sans priorité');
+        } else if (key === 'noServicePilote' && mergedFilters[key]) {
+          badgeValues.push('Sans direction ou service pilote');
+        } else if (key === 'noReferent' && mergedFilters[key]) {
+          badgeValues.push('Sans élu·e référent·e');
         } else if (
           key === 'typePeriode' &&
           mergedFilters[key] &&
@@ -266,7 +263,9 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
       // On ajoute les valeurs à override si elles existent
       if (customValues) {
         Object.values(customValues).forEach((value) => {
-          value && badgeValues.unshift(value);
+          if (value) {
+            badgeValues.unshift(value);
+          }
         });
       }
 

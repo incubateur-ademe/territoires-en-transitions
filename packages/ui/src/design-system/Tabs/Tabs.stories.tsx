@@ -17,9 +17,9 @@ type Story = StoryObj<typeof Tabs>;
 export const OngletParDefaut: Story = {
   args: {
     children: [
-      <Tab label="Onglet 1">contenu onglet 1</Tab>,
-      <Tab label="Onglet 2">contenu onglet 2</Tab>,
-      <Tab label="Onglet 3">contenu onglet 3</Tab>,
+      <Tab key="tab1" label="Onglet 1">contenu onglet 1</Tab>,
+      <Tab key="tab2" label="Onglet 2">contenu onglet 2</Tab>,
+      <Tab key="tab3" label="Onglet 3">contenu onglet 3</Tab>,
     ],
   },
 };
@@ -28,9 +28,9 @@ export const Onglet2: Story = {
   args: {
     defaultActiveTab: 1,
     children: [
-      <Tab label="Onglet 1">contenu onglet 1</Tab>,
-      <Tab label="Onglet 2">contenu onglet 2</Tab>,
-      <Tab label="Onglet 3">contenu onglet 3</Tab>,
+      <Tab key="tab1" label="Onglet 1">contenu onglet 1</Tab>,
+      <Tab key="tab2" label="Onglet 2">contenu onglet 2</Tab>,
+      <Tab key="tab3" label="Onglet 3">contenu onglet 3</Tab>,
     ],
   },
 };
@@ -39,13 +39,13 @@ export const AvecIcones = {
   args: {
     defaultActiveTab: 1,
     children: [
-      <Tab label="Onglet 1" icon="lock-fill">
+      <Tab key="tab1" label="Onglet 1" icon="lock-fill">
         contenu onglet 1
       </Tab>,
-      <Tab label="Onglet 2" icon="user-line">
+      <Tab key="tab2" label="Onglet 2" icon="user-line">
         contenu onglet 2
       </Tab>,
-      <Tab label="Onglet 3" icon="chat-1-line">
+      <Tab key="tab3" label="Onglet 3" icon="chat-1-line">
         contenu onglet 3
       </Tab>,
     ],
@@ -57,6 +57,7 @@ export const AvecIconesStylees: Story = {
     defaultActiveTab: 1,
     children: [
       <Tab
+        key="tab1"
         label="Onglet 1"
         icon="alert-fill"
         iconClassName="text-warning-1"
@@ -66,6 +67,7 @@ export const AvecIconesStylees: Story = {
         contenu onglet 1
       </Tab>,
       <Tab
+        key="tab2"
         label="Onglet 2"
         icon="checkbox-circle-fill"
         iconClassName="text-success-3"
@@ -108,13 +110,13 @@ export const AvecBeaucoupOnglets: Story = {
     defaultActiveTab: 1,
     children: [
       ...AvecIcones.args.children,
-      <Tab label="Onglet 4" icon="lock-fill">
+      <Tab key="tab4" label="Onglet 4" icon="lock-fill">
         contenu onglet 4
       </Tab>,
-      <Tab label="Onglet 5" icon="user-line">
+      <Tab key="tab5" label="Onglet 5" icon="user-line">
         contenu onglet 5
       </Tab>,
-      <Tab label="Onglet 6" icon="chat-1-line">
+      <Tab key="tab6" label="Onglet 6" icon="chat-1-line">
         contenu onglet 6
       </Tab>,
     ],

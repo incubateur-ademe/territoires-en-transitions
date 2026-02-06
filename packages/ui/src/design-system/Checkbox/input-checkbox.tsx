@@ -50,3 +50,4 @@ export const InputCheckbox = forwardRef(
     );
   }
 );
+InputCheckbox.displayName = 'InputCheckbox';

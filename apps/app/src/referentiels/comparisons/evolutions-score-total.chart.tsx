@@ -12,7 +12,7 @@ import {
 import { roundTo } from '@tet/domain/utils';
 import type { BarSeriesOption } from 'echarts/charts';
 import { theme as importedTheme } from '../../ui/charts/chartsTheme';
-import { SnapshotDetails } from '../use-snapshot';
+import { SnapshotListItem } from '../use-snapshot';
 import { sortByDate } from './utils';
 
 const theme = importedTheme;
@@ -20,7 +20,7 @@ const theme = importedTheme;
 /**
  * Ensures a snapshot is always displayed in the correct position on the graph according to its date.
  */
-const sortSnapshots = (snapshots: SnapshotDetails[], ascending = true) => {
+const sortSnapshots = (snapshots: SnapshotListItem[], ascending = true) => {
   if (!snapshots?.length) return [];
   return [...snapshots].sort((a, b) => {
     if (a.jalon === 'pre_audit' && b.jalon === 'post_audit') return -1;
@@ -75,7 +75,7 @@ export const ScoreTotalEvolutionsChart = ({
   chartSize = 'lg',
   isDownloadable = false,
 }: {
-  snapshots: SnapshotDetails[];
+  snapshots: SnapshotListItem[];
   referentielId: ReferentielId;
   chartSize: 'sm' | 'lg';
   isDownloadable?: boolean;

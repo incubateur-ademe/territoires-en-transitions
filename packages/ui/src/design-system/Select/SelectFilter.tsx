@@ -40,11 +40,13 @@ export const SelectFilter = ({
     );
 
     if (values && otherValues && otherValues.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFilterOptions([
         { label: UNSELECT_LABEL, value: ITEM_ALL },
         ...options,
       ]);
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFilterOptions(options);
     }
   }, [values, options]);

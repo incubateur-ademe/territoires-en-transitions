@@ -59,7 +59,7 @@ export const RequestPlanImportView = () => {
           <span className="font-bold">contact@territoiresentransitions.fr</span>
         </p>
         <p className="mb-0">
-          Nous vous informons dès que l'import est réalisé. Des questions
+          Nous vous informons dès que l&apos;import est réalisé. Des questions
           pendant le remplissage, contactez nous.
         </p>
 
@@ -91,7 +91,7 @@ export const RequestPlanImportView = () => {
         <h6 className="mb-4">Ressources</h6>
         <ul className="mb-0">
           <li>
-            Visualisez une vidéo de présentation du fichier d'import{' '}
+            Visualisez une vidéo de présentation du fichier d&apos;import{' '}
             <InlineLink
               href="https://www.youtube.com/watch?v=o0M4VdQ8bEc"
               openInNewTab
@@ -119,7 +119,7 @@ export const RequestPlanImportView = () => {
             onClick={goBackToPreviousPage}
             type="button"
           >
-            Revenir à l'étape précédente
+            Revenir à l&apos;étape précédente
           </Button>
         </div>
       </div>

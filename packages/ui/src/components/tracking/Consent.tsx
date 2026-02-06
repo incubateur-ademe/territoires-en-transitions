@@ -54,6 +54,7 @@ export function Consent({
   consentId: string;
 }) {
   if (typeof window !== 'undefined') {
+    // eslint-disable-next-line react-hooks/immutability
     window.axeptioSettings = {
       clientId: consentId,
       userCookiesDomain: 'territoiresentransitions.fr',

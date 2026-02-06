@@ -30,7 +30,7 @@ const Textarea = forwardRef(
   ) => {
     // Appelée au changement de valeur du textarea
     const textareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-      onInputChange && onInputChange(event.target.value);
+      onInputChange?.(event.target.value);
     };
 
     const { textareaRef, shadowRef } = useAutoSizeTextarea(

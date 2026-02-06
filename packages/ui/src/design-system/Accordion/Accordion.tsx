@@ -131,6 +131,7 @@ export const AccordionControlled = forwardRef<
     );
   }
 );
+AccordionControlled.displayName = 'AccordionControlled';
 
 export const Accordion = ({
   initialState,

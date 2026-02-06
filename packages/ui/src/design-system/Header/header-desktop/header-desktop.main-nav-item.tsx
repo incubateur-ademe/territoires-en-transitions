@@ -96,6 +96,7 @@ const HeaderDesktopDropdown = ({
       </button>
       {isOpen && (
         <div
+          // eslint-disable-next-line react-hooks/refs
           ref={refs.setFloating}
           {...getFloatingProps()}
           style={{

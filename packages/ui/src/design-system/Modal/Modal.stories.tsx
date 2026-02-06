@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { forwardRef, useState } from 'react';
+import { ComponentProps, forwardRef, useState } from 'react';
 
 import { Modal } from '.';
 import { Button } from '../Button';
@@ -20,6 +20,7 @@ const OpenButton = forwardRef((props: any, ref) => (
     {props.text ? props.text : 'Open'}
   </Button>
 ));
+OpenButton.displayName = 'OpenButton';
 
 export const Default: Story = {
   args: {
@@ -82,7 +83,7 @@ export const LongContent: Story = {
         {...args}
         render={({ close }) => (
           <div className="flex flex-col p-8 border border-grey-5 text-grey-8 rounded-lg">
-            <p>Contenu de la fonction "render" ici avec un petit bouton.</p>
+            <p>Contenu de la fonction &quot;render&quot; ici avec un petit bouton.</p>
             <p>Un autre paragraphe.</p>
             <div className="flex gap-6 mt-2 ml-auto">
               <Button variant="grey" onClick={() => close()}>
@@ -110,7 +111,7 @@ export const WithRender: Story = {
         {...args}
         render={() => (
           <div className="flex flex-col p-8 border border-grey-5 text-grey-8 rounded-lg">
-            <p>Contenu de la fonction "render" ici avec un petit bouton.</p>
+            <p>Contenu de la fonction &quot;render&quot; ici avec un petit bouton.</p>
             <p>Un autre paragraphe.</p>
             <Button className="ml-auto">Valider</Button>
           </div>
@@ -130,7 +131,7 @@ export const onlyRender: Story = {
         {...args}
         render={() => (
           <div className="p-8 border border-grey-5 text-grey-8 rounded-lg">
-            <span>Contenu de la fonction "render" ici dans les bordures.</span>
+            <span>Contenu de la fonction &quot;render&quot; ici dans les bordures.</span>
           </div>
         )}
       >
@@ -167,6 +168,23 @@ export const Size: Story = {
   },
 };
 
+const RenderControlled = (args: ComponentProps<typeof Modal>) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <Modal
+        {...args}
+        openState={{
+          isOpen,
+          setIsOpen,
+        }}
+      />
+      <OpenButton onClick={() => setIsOpen(!isOpen)} />
+    </>
+  );
+};
+
 export const Controlled: Story = {
   args: {
     textAlign: 'left',
@@ -174,22 +192,27 @@ export const Controlled: Story = {
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis magna, semper eget tortor sed, aliquet ornare risus. Sed egestas egestas porttitor. Sed quis pretium eros. Mauris a turpis eu elit efficitur vehicula. Nulla ac vulputate velit. Nulla quis neque nec sapien molestie imperdiet. Cras viverra lacus vulputate diam malesuada viverra.',
   },
-  render: (args) => {
-    const [isOpen, setIsOpen] = useState(false);
+  render: (args) => <RenderControlled {...args} />,
+};
 
-    return (
-      <>
-        <Modal
-          {...args}
-          openState={{
-            isOpen,
-            setIsOpen,
-          }}
-        />
-        <OpenButton onClick={() => setIsOpen(!isOpen)} />
-      </>
-    );
-  },
+const RenderWithFooterAlwaysVisible = (
+  args: ComponentProps<typeof Modal>
+) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <Modal
+        {...args}
+        openState={{
+          isOpen,
+          setIsOpen,
+        }}
+        footerIsAlwaysVisible
+      />
+      <OpenButton onClick={() => setIsOpen(!isOpen)} />
+    </>
+  );
 };
 
 export const WithFooterAlwaysVisible: Story = {
@@ -272,21 +295,5 @@ export const WithFooterAlwaysVisible: Story = {
       </ModalFooter>
     ),
   },
-  render: (args) => {
-    const [isOpen, setIsOpen] = useState(false);
-
-    return (
-      <>
-        <Modal
-          {...args}
-          openState={{
-            isOpen,
-            setIsOpen,
-          }}
-          footerIsAlwaysVisible
-        />
-        <OpenButton onClick={() => setIsOpen(!isOpen)} />
-      </>
-    );
-  },
+  render: (args) => <RenderWithFooterAlwaysVisible {...args} />,
 };

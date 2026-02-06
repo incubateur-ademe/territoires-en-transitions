@@ -2,10 +2,10 @@ import {
   TListeChoix,
   TReponse,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
-import { useDebouncedInput } from '@/app/ui/shared/useDebouncedInput';
 import { Button, Field, Input, RadioButton as RadioButtonBase } from '@tet/ui';
 import classNames from 'classnames';
-import { FC, ReactNode } from 'react';
+import { debounce } from 'es-toolkit';
+import { ChangeEvent, FC, ReactNode, useState } from 'react';
 import { TQuestionReponseProps } from './PersoPotentielQR';
 
 const ReponseContainer = ({
@@ -79,14 +79,15 @@ const ReponseProportion = ({
   const { id: questionId, reponse } = qr;
   const [min, max] = DEFAULT_RANGE;
 
-  const [value, handleChange, setValue] = useDebouncedInput(
-    proportionToString(reponse as number),
-    (query) => {
-      const proportion = stringToProportion(query, min, max);
-      setValue(proportionToString(proportion));
-      onChange(proportion);
-    }
-  );
+  const [value, setValue] = useState(proportionToString(reponse as number));
+
+  const handleChange = debounce((e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    const proportion = stringToProportion(value, min, max);
+    setValue(proportionToString(proportion));
+    onChange(proportion);
+  }, 1000);
 
   return (
     <ReponseContainer className="flex-col">
