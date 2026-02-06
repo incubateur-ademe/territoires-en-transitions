@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 
 import {
   Badge,
@@ -66,6 +66,10 @@ export const BadgesFilters = ({
 }: FiltersMenuProps) => {
   const [badgesList, setBadgesList] = useState<BadgeType[] | null>(null);
 
+  const updateBadgesList = useEffectEvent((list: BadgeType[] | null) =>
+    setBadgesList(list)
+  );
+
   /** Gère la fermeture d'un badge et la mise à jour du filtre associé */
   const handleCloseBadge = (badge: BadgeType) => {
     const selectedValue = badge.value;
@@ -110,18 +114,19 @@ export const BadgesFilters = ({
           filter.values.forEach((value) => {
             const option = options.find((opt) => opt.value === value);
 
-            option &&
+            if (option) {
               newList.push({
                 filter,
                 value: option.value,
                 label: option.label,
               });
+            }
           });
         }
       }
     });
 
-    newList.length > 0 ? setBadgesList(newList) : setBadgesList(null);
+    updateBadgesList(newList.length > 0 ? newList : null);
   }, [filters]);
 
   return (

@@ -79,11 +79,12 @@ export const CollectivitesHeader = ({
               <Select
                 options={getTrierParOptions()}
                 onChange={(value) => {
-                  value &&
+                  if (value) {
                     setFilters({
                       ...filters,
                       trierPar: [value as string],
                     });
+                  }
                 }}
                 values={filters.trierPar?.[0]}
                 customItem={(v) => (

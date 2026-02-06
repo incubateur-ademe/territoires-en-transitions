@@ -35,10 +35,11 @@ const ValiderPanierModale = () => {
     'Je modifie les actions à ma guise et invite mes collaborateurs à contribuer en ligne.',
   ];
 
-  !user &&
+  if (!user) {
     steps.unshift(
       'Je créé mon compte en quelques clics et me rattache à ma collectivité'
     );
+  }
 
   return (
     <div className="flex flex-col gap-10 items-center relative">

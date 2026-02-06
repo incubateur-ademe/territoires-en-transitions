@@ -1,7 +1,13 @@
 'use client';
 
 import classNames from 'classnames';
-import { Fragment, ReactNode, useEffect, useState } from 'react';
+import {
+  Fragment,
+  ReactNode,
+  useEffect,
+  useEffectEvent,
+  useState,
+} from 'react';
 
 type MasonryGalleryProps = {
   data: ReactNode[];
@@ -19,12 +25,21 @@ const MasonryGallery = ({
   className,
 }: MasonryGalleryProps) => {
   const [dataGallery, setDataGallery] = useState<ReactNode[][]>(Array(maxCols));
+  const updateDataGallery = useEffectEvent((value: ReactNode[][]) =>
+    setDataGallery(value)
+  );
+
   const [windowWidth, setWindowWidth] = useState<number | undefined>();
+  const updateWindowWidth = useEffectEvent((value: number | undefined) =>
+    setWindowWidth(value)
+  );
+
   const [columns, setColumns] = useState(3);
+  const updateColumns = useEffectEvent((value: number) => setColumns(value));
 
   useEffect(() => {
     // Initialisation de windowWith au chargement de la page
-    setWindowWidth(window.innerWidth);
+    updateWindowWidth(window.innerWidth);
 
     // Détecte le changement de taille de la fenêtre
     window.addEventListener('resize', () => setWindowWidth(window.innerWidth));
@@ -38,11 +53,11 @@ const MasonryGallery = ({
   useEffect(() => {
     if (windowWidth) {
       if (windowWidth <= breakpoints.md) {
-        setColumns(1);
+        updateColumns(1);
       } else if (windowWidth <= breakpoints.lg) {
-        if (maxCols === 3) setColumns(2);
-        else setColumns(1);
-      } else setColumns(maxCols);
+        if (maxCols === 3) updateColumns(2);
+        else updateColumns(1);
+      } else updateColumns(maxCols);
     }
   }, [windowWidth, breakpoints.md, breakpoints.lg, maxCols]);
 
@@ -59,7 +74,7 @@ const MasonryGallery = ({
         });
     }
 
-    setDataGallery(newGalleryContent);
+    updateDataGallery(newGalleryContent);
   }, [data, columns]);
 
   return (

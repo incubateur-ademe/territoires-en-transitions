@@ -1,6 +1,5 @@
 // Composant copié depuis l'app
 
-import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {
   FloatingPortal,
   useDismiss,
@@ -8,6 +7,12 @@ import {
   useInteractions,
 } from '@floating-ui/react';
 import classNames from 'classnames';
+import React, {
+  useEffect,
+  useEffectEvent,
+  useLayoutEffect,
+  useState,
+} from 'react';
 
 type TToastFloater = {
   open: boolean;
@@ -26,17 +31,22 @@ export const ToastFloater = ({
   className,
   autoHideDuration,
 }: TToastFloater) => {
-  const {refs, context, strategy} = useFloating({
+  const { refs, context, strategy } = useFloating({
     open,
     strategy: 'fixed',
   });
 
-  const {getFloatingProps} = useInteractions([useDismiss(context)]);
+  const { getFloatingProps } = useInteractions([useDismiss(context)]);
 
   const [toastWidth, setToastWidth] = useState<number | undefined>(undefined);
+  const updateToastWidth = useEffectEvent((value: number | undefined) =>
+    setToastWidth(value)
+  );
 
   useLayoutEffect(() => {
-    setToastWidth(context.refs.floating.current?.getBoundingClientRect().width);
+    updateToastWidth(
+      context.refs.floating.current?.getBoundingClientRect().width
+    );
   }, [context.refs.floating]);
 
   useEffect(() => {
@@ -65,7 +75,7 @@ export const ToastFloater = ({
             },
             className: classNames(
               'mx-4 py-2 px-4 bottom-6 text-white bg-gray-800 rounded-md z-[10000]',
-              className,
+              className
             ),
           })}
         >

@@ -20,7 +20,7 @@ import { usePlanTypeListe } from '@/app/app/pages/collectivite/PlansActions/Plan
 import { RecherchesViewParam } from '@/app/app/paths';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { CollectiviteEngagee } from '@tet/api';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 import { useDepartements } from '../data/useDepartements';
 import { useRegions } from '../data/useRegions';
 
@@ -40,10 +40,13 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
   const isLoading = isRegionsLoading || isDepartementsLoading;
 
   const [search, setSearch] = useState(filters.nom);
+  const updateSearch = useEffectEvent((value: string | undefined) =>
+    setSearch(value)
+  );
 
   // Afin de réinitialiser la recherche à la désactivation des filtres
   useEffect(() => {
-    setSearch(filters.nom);
+    updateSearch(filters.nom);
   }, [filters.nom]);
 
   return (

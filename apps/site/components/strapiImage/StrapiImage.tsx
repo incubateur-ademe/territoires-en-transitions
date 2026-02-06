@@ -3,7 +3,7 @@
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
 import classNames from 'classnames';
-import { CSSProperties, useEffect, useState } from 'react';
+import { CSSProperties, useEffect, useEffectEvent, useState } from 'react';
 
 const imagePlaceholder = '/placeholder.svg';
 
@@ -53,6 +53,7 @@ export const DEPRECATED_StrapiImage = ({
   const attributes = data.attributes;
 
   const [src, setSrc] = useState(imagePlaceholder);
+  const updateSrc = useEffectEvent((value: string) => setSrc(value));
 
   const formats = Object.keys(attributes.formats ?? {})
     .map((srcKey) => ({
@@ -62,7 +63,7 @@ export const DEPRECATED_StrapiImage = ({
     .sort((a, b) => a.width - b.width);
 
   useEffect(() => {
-    setSrc(
+    updateSrc(
       getImageSrc(
         size,
         attributes.formats as unknown as Format,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 import CarteContainer from './CarteContainer';
 import CollectiviteFeature from './CollectiviteFeature';
 import RegionFeature from './RegionFeature';
@@ -30,6 +30,13 @@ const CarteCollectivites = ({
   data,
 }: CarteCollectivitesProps) => {
   const [localData, setLocalData] = useState(data);
+  const updateLocalData = useEffectEvent(
+    (
+      value:
+        | CollectivitesCarteFrance
+        | ((prevData: CollectivitesCarteFrance) => CollectivitesCarteFrance)
+    ) => setLocalData(value)
+  );
 
   const sortCollectivites = (collectivites: labellisation_w_geojson[]) => {
     return collectivites.sort((a, b) => {
@@ -62,7 +69,7 @@ const CarteCollectivites = ({
       return data;
     };
 
-    setLocalData(processData(data));
+    updateLocalData(processData(data));
   }, [data]);
 
   useEffect(() => {
@@ -79,7 +86,7 @@ const CarteCollectivites = ({
       tempCollectivites = tempCollectivites.filter(
         (c) => c.cot === true && c.labellisee === false
       );
-    setLocalData((prevData) => {
+    updateLocalData((prevData) => {
       if (!prevData) return prevData;
       else
         return {

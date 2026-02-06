@@ -35,7 +35,7 @@ export const DeleteFinanceurButton = ({
           render={({ descriptionId }) => (
             <div id={descriptionId}>
               <p className="mb-0">
-                Ce financeur sera supprimé définitivement de l'action.
+                Ce financeur sera supprimé définitivement de l&apos;action.
                 Souhaitez-vous vraiment supprimer ce financeur ?
               </p>
             </div>

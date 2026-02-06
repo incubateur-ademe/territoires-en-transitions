@@ -4,19 +4,8 @@ import 'leaflet-defaulticon-compatibility';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
 import 'leaflet/dist/leaflet.css';
 import { CSSProperties, ReactNode, useEffect, useState } from 'react';
-import { MapContainer, useMap } from 'react-leaflet';
+import { MapContainer } from 'react-leaflet';
 import './style.css';
-
-/**
- * Permet d'utiliser l'objet map dans la console
- * todo à supprimer
- */
-function Debugger() {
-  const map = useMap();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (window as any)['map'] = map;
-  return null;
-}
 
 type CarteContainerProps = {
   children: ReactNode;
@@ -70,7 +59,6 @@ const CarteContainer = ({
       style={{ width: '100%', background: '#fff', ...style }}
       className="aspect-square"
     >
-      <Debugger />
       {children}
     </MapContainer>
   );
