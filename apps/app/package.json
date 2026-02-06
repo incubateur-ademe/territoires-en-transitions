@@ -10,16 +10,14 @@
         "options": {
           "buildTarget": "app:build",
           "dev": true,
-          "port": 3000,
-          "webpack": true
+          "port": 3000
         }
       },
       "build": {
         "executor": "@nx/next:build",
         "dependsOn": ["^build"],
         "options": {
-          "outputPath": "apps/app/.next",
-          "webpack": true
+          "outputPath": "apps/app/.next"
         }
       }
     }

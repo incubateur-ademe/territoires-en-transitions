@@ -10,7 +10,7 @@ import {
 import { renderToString } from '@/app/ui/charts/echarts/renderToString';
 import { getAnnee, getYear } from '@/app/ui/charts/echarts/utils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { GridComponentOption } from 'echarts';
+import type { GridComponentOption } from 'echarts/components';
 import { uniq } from 'es-toolkit';
 import { getSourceLabel } from '../data/get-source-label';
 import { PreparedData } from '../data/prepare-data';

@@ -1,12 +1,16 @@
 import { actionAvancementColors } from '@/app/app/theme';
-import { ReactECharts, TOOLBOX_BASE } from '@/app/ui/charts/echarts';
+import {
+  EChartsOption,
+  ReactECharts,
+  TOOLBOX_BASE,
+} from '@/app/ui/charts/echarts';
 import {
   ReferentielId,
   SnapshotJalon,
   SnapshotJalonEnum,
 } from '@tet/domain/referentiels';
 import { roundTo } from '@tet/domain/utils';
-import type { EChartsOption, SeriesOption } from 'echarts';
+import type { BarSeriesOption } from 'echarts/charts';
 import { theme as importedTheme } from '../../ui/charts/chartsTheme';
 import { SnapshotDetails } from '../use-snapshot';
 import { sortByDate } from './utils';
@@ -101,7 +105,7 @@ export const ScoreTotalEvolutionsChart = ({
     computePercentage(snapshot.pointNonRenseigne ?? 0, snapshot.pointPotentiel)
   );
 
-  const series: SeriesOption[] = [
+  const series: BarSeriesOption[] = [
     {
       name: 'Fait',
       type: 'bar' as const,

@@ -1,10 +1,10 @@
 import { preset } from '@tet/ui';
+import type { LineSeriesOption } from 'echarts/charts';
 import type {
   DatasetComponentOption,
-  EChartsOption,
   LegendComponentOption,
-  LineSeriesOption,
-} from 'echarts';
+} from 'echarts/components';
+import { EChartsOption } from './ReactECharts';
 
 const { colors } = preset.theme.extend;
 
@@ -149,7 +149,7 @@ export const makeLegendData = (
   );
 
 type OptionsProps = {
-  option?: EChartsOption;
+  option: EChartsOption;
   titre?: string;
   unite?: string;
   disableToolbox?: boolean;

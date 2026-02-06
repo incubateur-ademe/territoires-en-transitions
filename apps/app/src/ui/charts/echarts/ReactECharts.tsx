@@ -6,15 +6,38 @@
 
 import { preset } from '@tet/ui';
 import type {
+  BarSeriesOption,
+  LineSeriesOption,
+  PieSeriesOption,
+} from 'echarts/charts';
+import { BarChart, LineChart, PieChart } from 'echarts/charts';
+import type {
+  DatasetComponentOption,
+  GridComponentOption,
+  LegendComponentOption,
+  TitleComponentOption,
+  ToolboxComponentOption,
+  TooltipComponentOption,
+} from 'echarts/components';
+import {
+  DatasetComponent,
+  GridComponent,
+  LegendComponent,
+  TitleComponent,
+  ToolboxComponent,
+  TooltipComponent,
+} from 'echarts/components';
+import type {
+  ComposeOption,
   ECElementEvent,
   ECharts,
   EChartsInitOpts,
-  EChartsOption,
   EChartsType,
   ElementEvent,
   SetOptionOpts,
-} from 'echarts';
-import { getInstanceByDom, init } from 'echarts';
+} from 'echarts/core';
+import * as echarts from 'echarts/core';
+import { CanvasRenderer } from 'echarts/renderers';
 import type { CSSProperties, JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -60,10 +83,37 @@ const DEFAULT_CHART_STYLE: CSSProperties = {
   height: 600,
 };
 
-const DEFAULT_SETTINGS: SetOptionOpts = {
+const DEFAULT_SETTINGS: echarts.SetOptionOpts = {
   // pour éviter que des données persistent quand on passe d'un graphe à un autre
   notMerge: true,
 };
+
+echarts.use([
+  BarChart,
+  PieChart,
+  LineChart,
+
+  TitleComponent,
+  LegendComponent,
+  TooltipComponent,
+  GridComponent,
+  ToolboxComponent,
+  DatasetComponent,
+
+  CanvasRenderer,
+]);
+
+export type EChartsOption = ComposeOption<
+  | BarSeriesOption
+  | PieSeriesOption
+  | LineSeriesOption
+  | TitleComponentOption
+  | LegendComponentOption
+  | TooltipComponentOption
+  | GridComponentOption
+  | ToolboxComponentOption
+  | DatasetComponentOption
+>;
 
 export function ReactECharts({
   option,
@@ -88,7 +138,7 @@ export function ReactECharts({
 
       // We create a temporary chart, see https://github.com/hustcc/echarts-for-react/pull/464/commits/bf7f9a7edab0103b60b152db7f9cf45ff0f83205
       if (heightRatio) {
-        chart = init(chartRef.current, theme);
+        chart = echarts.init(chartRef.current, theme);
         height = chartRef.current.clientWidth * heightRatio;
         chart.dispose();
         setChartStyle((prev) => ({ ...prev, height }));
@@ -100,7 +150,8 @@ export function ReactECharts({
               height: height,
             }
           : undefined;
-      chart = init(chartRef.current, theme, opts);
+
+      chart = echarts.init(chartRef.current, theme, opts);
     }
 
     // Add chart resize listener
@@ -121,7 +172,7 @@ export function ReactECharts({
     // Update chart
     if (chartRef.current !== null) {
       const chartSettings = { ...DEFAULT_SETTINGS, ...settings };
-      const chart = getInstanceByDom(chartRef.current);
+      const chart = echarts.getInstanceByDom(chartRef.current);
       chart?.setOption(option, chartSettings);
     }
   }, [option, settings, theme]); // Whenever theme changes we need to add option and setting due to it being deleted in cleanup function
@@ -138,7 +189,7 @@ export function ReactECharts({
       if (!events) return;
       const values = Object.keys(events) as ElementEvent['type'][];
       if (chartRef.current) {
-        const chartInstance = getInstanceByDom(chartRef.current);
+        const chartInstance = echarts.getInstanceByDom(chartRef.current);
         if (chartInstance) {
           values.forEach((event) => {
             const handler = (e: EchartEventType) =>
@@ -163,7 +214,7 @@ export function ReactECharts({
   useEffect(() => {
     if (chartRef.current !== null) {
       const chart = chartRef.current
-        ? getInstanceByDom(chartRef.current)
+        ? echarts.getInstanceByDom(chartRef.current)
         : undefined;
       if (!chart) {
         return;
