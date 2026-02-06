@@ -1,10 +1,6 @@
 import { AuthRole } from '../../users/models/auth.models';
 import { ApplicationScopeContext } from './application-scope-context.dto';
 
-/**
- * See https://docs.datadoghq.com/fr/logs/log_configuration/attributes_naming_convention/#attributs-r%C3%A9serv%C3%A9s
- * See https://app.datadoghq.eu/logs/pipelines/standard-attributes
- */
 export interface ApplicationContext {
   source: string;
 
