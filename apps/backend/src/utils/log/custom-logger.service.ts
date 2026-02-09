@@ -13,27 +13,27 @@ export const getDefaultLoggerOptions = (): Options => {
     formatters:
       process.env.NODE_ENV === 'production'
         ? {
-          bindings(bindings) {
-            return { host: bindings.hostname };
-          },
-          level: (label, number) => {
-            return {
-              severity_number: number,
-              status: label,
-            };
-          },
-        }
+            bindings(bindings) {
+              return { host: bindings.hostname };
+            },
+            level: (label, number) => {
+              return {
+                severity_number: number,
+                status: label,
+              };
+            },
+          }
         : undefined,
     transport:
       process.env.NODE_ENV === 'production'
         ? undefined // Default configuration to console in json
         : {
-          target: 'pino-pretty',
-          options: {
-            singleLine: true,
-            colorize: true,
+            target: 'pino-pretty',
+            options: {
+              singleLine: true,
+              colorize: true,
+            },
           },
-        },
   };
 };
 /**
@@ -46,7 +46,7 @@ export class CustomLogger implements LoggerService {
     private readonly contextStoreService: ContextStoreService,
     private readonly config: Options,
     @Optional() private logger = pino(config)
-  ) { }
+  ) {}
 
   verbose(message: any, ...optionalParams: any[]) {
     this.call('trace', message, ...optionalParams);
@@ -101,5 +101,51 @@ export class CustomLogger implements LoggerService {
     } else {
       this.logger[level](objArg, message, ...params);
     }
+
+    // Forward logs to Sentry Logs for centralized observability
+    // this.forwardToSentryLogs(level, message, objArg);
+  }
+
+  /**
+   * Forward logs to Sentry structured logs.
+   * @see https://docs.sentry.io/platforms/javascript/guides/nestjs/logs/
+   */
+  private forwardToSentryLogs(level: Level, message: any, context: Log) {
+    const sentryLevel = level === 'trace' ? 'trace' : level;
+    const logMessage =
+      typeof message === 'string'
+        ? message
+        : message instanceof Error
+        ? message.message
+        : context.message || 'unknown';
+
+    const attributes: Record<string, string | number | boolean> = {};
+
+    if (context.trace_id) {
+      attributes['trace_id'] = context.trace_id;
+    }
+    if (context.logger?.name) {
+      attributes['logger'] = context.logger.name;
+    }
+    if (context.correlationId) {
+      attributes['correlation_id'] = context.correlationId;
+    }
+    if (context.requestPath) {
+      attributes['request_path'] = context.requestPath;
+    }
+    if (context.userId) {
+      attributes['user_id'] = context.userId;
+    }
+    if (context.source) {
+      attributes['source'] = context.source;
+    }
+    if (context.service) {
+      attributes['service'] = context.service;
+    }
+    if (context.error?.message) {
+      attributes['error_message'] = context.error.message;
+    }
+
+    Sentry.logger[sentryLevel](logMessage, attributes);
   }
 }
