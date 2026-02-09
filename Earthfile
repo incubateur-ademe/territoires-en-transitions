@@ -11,7 +11,6 @@ ARG --global PANIER_DIR='./apps/panier'
 ARG --global DOMAIN_DIR='./packages/domain'
 ARG --global UI_DIR='./packages/ui'
 ARG --global API_DIR='./packages/api'
-ARG --global BUSINESS_DIR='./business'
 # paramètres de la base de registre des images docker générées
 ARG --global REGISTRY='ghcr.io'
 ARG --global REG_USER='territoiresentransitions'
