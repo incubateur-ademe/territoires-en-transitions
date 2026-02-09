@@ -28,7 +28,7 @@ export const FicheActionImprovedView = ({
     if (error.data?.code === 'FORBIDDEN') {
       return <FicheNoAccessPage />;
     }
-    return <ErrorPage error={error} reset={() => window.location.reload()} />;
+    return <ErrorPage error={error} retry={() => window.location.reload()} />;
   }
 
   if (!fiche) {
