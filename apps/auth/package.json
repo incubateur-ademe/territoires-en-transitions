@@ -16,8 +16,7 @@
         "executor": "@nx/next:build",
         "dependsOn": ["^build"],
         "options": {
-          "outputPath": "apps/auth/.next",
-          "webpack": true
+          "outputPath": "apps/auth/.next"
         }
       }
     }

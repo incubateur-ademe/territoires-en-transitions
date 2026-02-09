@@ -17,8 +17,7 @@
         "executor": "@nx/next:build",
         "dependsOn": ["^build"],
         "options": {
-          "outputPath": "apps/app/.next",
-          "webpack": true
+          "outputPath": "apps/app/.next"
         }
       }
     }

@@ -69,7 +69,7 @@ jobs:
             ./nx/cache
             ./apps/app/.next/cache
             ./apps/auth/.next/cache
-          key: ci-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('./apps/app', './apps/auth', './apps/backend') }}
+          key: ci-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('./apps/app/**', './apps/auth/**', './apps/backend/**', '!**/.next/**') }}
           restore-keys: ci-${{ hashFiles('pnpm-lock.yaml') }}
 
       - name: Generate Nx project graph
