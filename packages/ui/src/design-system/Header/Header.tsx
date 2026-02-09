@@ -1,3 +1,4 @@
+import { DSFRCompliancyComponent } from '../../components/DSFRCompliancyComponent';
 import HeaderDesktop from './header-desktop/header-desktop';
 import HeaderMobile from './header-mobile/header-mobile';
 import { NavItem } from './types';
@@ -41,6 +42,7 @@ export const Header = ({
         mainNav={mainNav}
         secondaryNav={secondaryNav}
       />
+      <DSFRCompliancyComponent />
     </header>
   );
 };
