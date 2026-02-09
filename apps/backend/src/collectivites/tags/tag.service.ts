@@ -16,7 +16,7 @@ import {
   TagWithCollectiviteId,
 } from '@tet/domain/collectivites';
 import { and, AnyColumn, eq } from 'drizzle-orm';
-import { PgTable } from 'drizzle-orm/pg-core';
+import { IndexColumn, PgTable } from 'drizzle-orm/pg-core';
 
 const tagTypeTable: Record<
   TagType,
@@ -78,22 +78,21 @@ export class TagService {
     const table = tagTypeTable[tagType];
 
     try {
-      // Try to insert the tag directly with onConflictDoNothing
-      // This handles the race condition better than check-then-insert
       const [result] = await (tx ?? this.databaseService.db)
         .insert(table)
         .values({ nom: tag.nom, collectiviteId: tag.collectiviteId })
         .onConflictDoNothing({
-          target: [table.nom, table.collectiviteId],
+          target: [
+            table.nom as IndexColumn,
+            table.collectiviteId as IndexColumn,
+          ],
         })
         .returning();
 
-      // If onConflictDoNothing() returns a result, the tag was successfully created
       if (result) {
         return success(result as TagWithCollectiviteId);
       }
 
-      // If no result, the tag already exists, fetch it
       const [existingTag] = await (tx ?? this.databaseService.db)
         .select()
         .from(table)
