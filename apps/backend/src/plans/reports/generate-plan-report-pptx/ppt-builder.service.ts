@@ -203,6 +203,7 @@ export class PptBuilderService {
       },
       | typeof GenerateReportErrorEnum.PLAN_NOT_FOUND
       | typeof GenerateReportErrorEnum.DATABASE_ERROR
+      | typeof GenerateReportErrorEnum.PPT_BUILDER_ERROR
     >
   > {
     const { mediaDir, outputDir, reportName, templateConfig, request } = args;
@@ -431,7 +432,9 @@ export class PptBuilderService {
       );
       return {
         success: false,
-        error: 'DATABASE_ERROR',
+        error: 'PPT_BUILDER_ERROR',
+        cause:
+          error instanceof Error ? error : new Error(getErrorMessage(error)),
       };
     }
   }
