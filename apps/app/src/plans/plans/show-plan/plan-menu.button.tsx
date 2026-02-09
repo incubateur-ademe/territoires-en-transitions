@@ -23,11 +23,8 @@ export const PlanMenuButton = () => {
 
   const [isOpenGenerateReportModal, setIsOpenGenerateReportModal] =
     useState(false);
-  const {
-    isPending: isPendingGenerateReport,
-    renderToast,
-    isGeneratePptxPlanReportEnabled,
-  } = useIsPendingReport();
+  const { isPending: isPendingGenerateReport, renderToast } =
+    useIsPendingReport();
 
   const canMutatePlan = hasCollectivitePermission('plans.mutate');
   const canExportPlan = hasCollectivitePermission('plans.export');
@@ -78,7 +75,7 @@ export const PlanMenuButton = () => {
           },
         }
       : null,
-    canExportPlan && isGeneratePptxPlanReportEnabled
+    canExportPlan
       ? {
           label: 'Générer un rapport (PowerPoint)',
           icon: 'slideshow-line',
@@ -146,7 +143,7 @@ export const PlanMenuButton = () => {
           }}
         />
       )}
-      {isGeneratePptxPlanReportEnabled && isOpenGenerateReportModal && (
+      {isOpenGenerateReportModal && (
         <GenerateReportPlanModal
           plan={plan}
           openState={{
