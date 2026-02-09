@@ -114,14 +114,15 @@ export class GenerateReportsApplicationService {
     },
     mediaDir: string,
     outputDir: string,
-    error: GenerateReportError
+    error: GenerateReportError,
+    cause?: Error
   ): Promise<{ success: false; error: GenerateReportError }> {
     const { generationId, collectiviteId, planId, userId, reportName } =
       reportInfo;
 
     await this.reportGenerationRepository.update(generationId, {
       status: 'failed',
-      errorMessage: error,
+      errorMessage: `${error}${cause ? `: ${cause.message}` : ''}`,
       fileId: null,
     });
 
@@ -319,7 +320,8 @@ export class GenerateReportsApplicationService {
           },
           mediaDir,
           outputDir,
-          buildPresentationResult.error
+          buildPresentationResult.error,
+          buildPresentationResult.cause
         );
       }
 
@@ -343,7 +345,8 @@ export class GenerateReportsApplicationService {
           },
           mediaDir,
           outputDir,
-          GenerateReportErrorEnum.UPLOAD_STORAGE_ERROR
+          GenerateReportErrorEnum.UPLOAD_STORAGE_ERROR,
+          uploadResult.cause
         );
       }
 
@@ -380,7 +383,8 @@ export class GenerateReportsApplicationService {
           },
           mediaDir,
           outputDir,
-          GenerateReportErrorEnum.CREATE_NOTIFICATION_ERROR
+          GenerateReportErrorEnum.CREATE_NOTIFICATION_ERROR,
+          createdNotification.cause
         );
       }
 
@@ -401,7 +405,8 @@ export class GenerateReportsApplicationService {
         },
         mediaDir,
         outputDir,
-        error
+        error,
+        err instanceof Error ? err : new Error(getErrorMessage(err))
       );
     }
 
