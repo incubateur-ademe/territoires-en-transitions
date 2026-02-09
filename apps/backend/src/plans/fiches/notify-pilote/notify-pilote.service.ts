@@ -5,6 +5,7 @@ import { ListUsersService } from '@tet/backend/users/users/list-users/list-users
 import { UserPreferencesService } from '@tet/backend/users/preferences/user-preferences.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { GetNotificationContentResult } from '@tet/backend/utils/notifications/models/notification-template.dto';
 import { notificationTable } from '@tet/backend/utils/notifications/models/notification.table';
 import { NotificationsService } from '@tet/backend/utils/notifications/notifications.service';
@@ -63,6 +64,7 @@ export class NotifyPiloteService {
   private readonly logger = new Logger(NotifyPiloteService.name);
 
   constructor(
+    private readonly configService: ConfigurationService,
     private readonly databaseService: DatabaseService,
     private readonly listFichesService: ListFichesService,
     private readonly listUsersService: ListUsersService,
@@ -75,6 +77,11 @@ export class NotifyPiloteService {
       (notification: Notification) =>
         this.getPiloteNotificationContent(notification)
     );
+  }
+
+  getUnsubscribeUrl() {
+    const appUrl = this.configService.get('APP_URL');
+    return `${appUrl}/profil`;
   }
 
   /**
@@ -501,6 +508,7 @@ export class NotifyPiloteService {
           assignedTo: pilote.nom,
           assignedBy: [createdByUser.prenom, createdByUser.nom].join(' '),
           assignedAction: this.getAssignedActionData(fiche, ficheParente),
+          unsubscribeUrl: this.getUnsubscribeUrl(),
         },
       };
     }
@@ -537,6 +545,7 @@ export class NotifyPiloteService {
           'Vous avez été assigné(e) à plusieurs actions sur Territoires en Transitions',
         assignedTo: pilote.nom,
         assignedActions,
+        unsubscribeUrl: this.getUnsubscribeUrl(),
       },
     };
   }
