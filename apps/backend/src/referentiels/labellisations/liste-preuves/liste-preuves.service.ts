@@ -61,7 +61,7 @@ export class ListePreuvesService {
     // Check permissions
     const isAllowed = await this.permissions.isAllowed(
       user,
-      'referentiels.labellisations.request',
+      'referentiels.read',
       ResourceType.COLLECTIVITE,
       demande.collectiviteId,
       true
