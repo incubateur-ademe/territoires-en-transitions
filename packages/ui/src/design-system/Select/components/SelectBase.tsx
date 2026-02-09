@@ -1,5 +1,4 @@
 import { Placement } from '@floating-ui/react';
-import * as Sentry from '@sentry/nextjs';
 import { Fragment, Ref, forwardRef, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -194,7 +193,6 @@ export const SelectBase = (props: SelectProps) => {
               `Option with value ${subopt.value} has no label for select ${dataTest}`
             );
             console.error(error);
-            Sentry.captureException(error);
           }
         });
       } else {
@@ -203,7 +201,6 @@ export const SelectBase = (props: SelectProps) => {
             `Option with value ${option.value} has no label for select ${dataTest}`
           );
           console.error(error);
-          Sentry.captureException(error);
         }
       }
     });

@@ -1,6 +1,6 @@
+import { captureException } from '@/app/utils/sentry/sentry-client.lazy';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { usePDF } from '@react-pdf/renderer';
-import * as Sentry from '@sentry/nextjs';
 import { Button, ButtonProps } from '@tet/ui';
 import { JSX, useEffect, useState } from 'react';
 import { saveBlob } from '../../referentiels/preuves/Bibliotheque/saveBlob';
@@ -84,9 +84,10 @@ const ExportPDFButton = ({
 
   useEffect(() => {
     if (instance.error !== null) {
-      Sentry.captureException(
-        new Error(`Error generating pdf: ${instance.error}`)
-      );
+      captureException({
+        error: new Error(`Error generating pdf: ${instance.error}`),
+      });
+
       setToast('error', "Une erreur est survenue lors de l'export");
       setIsLoading(false);
     }

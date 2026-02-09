@@ -47,7 +47,7 @@ const FicheActionLegacy = ({
       // Suppose to happen only for "restreint" fiches
       return <FicheNoAccessPage />;
     }
-    return <ErrorPage error={error} reset={() => window.location.reload()} />;
+    return <ErrorPage error={error} retry={() => window.location.reload()} />;
   }
 
   if (!fiche) {

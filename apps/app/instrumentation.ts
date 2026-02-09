@@ -1,7 +1,14 @@
 import * as Sentry from '@sentry/nextjs';
+import { isSentryEnabled } from './src/utils/sentry/sentry.utils';
 
 export async function register() {
-  await import('./sentry.server.config');
+  if (!isSentryEnabled) {
+    return;
+  }
+
+  await import('./src/utils/sentry/sentry.server.config');
 }
 
-export const onRequestError = Sentry.captureRequestError;
+export const onRequestError = isSentryEnabled
+  ? Sentry.captureRequestError
+  : undefined;
