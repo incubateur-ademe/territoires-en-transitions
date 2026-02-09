@@ -61,9 +61,9 @@ export type FinanceursState = {
   upsert: (data: {
     financeurTagId: number;
     montantTtc: number;
-    financeurTag: { id: number; nom: string; collectiviteId: number };
   }) => Promise<void>;
   delete: (financeurTagId: number) => Promise<void>;
+  getFinanceurName: (financeurTagId: number) => string | undefined;
 };
 
 export const budgetSummarychema = z.object({
