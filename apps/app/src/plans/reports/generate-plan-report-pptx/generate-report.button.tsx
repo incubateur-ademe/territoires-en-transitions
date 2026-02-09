@@ -15,7 +15,6 @@ import {
   GenerateReportPlanModal,
   GenerateReportPlanModalProps,
 } from './generate-report.modal';
-import { useGeneratePptxPlanReportEnabled } from './use-generate-pptx-plan-report-enabled';
 
 const POLLING_INTERVAL = 2000;
 
@@ -28,8 +27,6 @@ export const GenerateReportButton = ({
   const collectiviteId = useCollectiviteId();
   const [pendingReportId, setPendingReportId] =
     useQueryState('downloadReportId');
-
-  const isGeneratePptxPlanReportEnabled = useGeneratePptxPlanReportEnabled();
 
   // Poll report status when a report is pending
   const { data: reportStatus } = useQuery({
@@ -113,10 +110,6 @@ export const GenerateReportButton = ({
       setPendingReportId(null);
     }
   }, [reportStatus, pendingReportId]);
-
-  if (!isGeneratePptxPlanReportEnabled) {
-    return null;
-  }
 
   return (
     <>

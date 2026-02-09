@@ -10,7 +10,6 @@ import { ReportGenerationStatusEnum } from '@tet/domain/plans';
 import { getErrorMessage } from '@tet/domain/utils';
 import { useQueryState } from 'nuqs';
 import { useCallback, useEffect } from 'react';
-import { useGeneratePptxPlanReportEnabled } from './use-generate-pptx-plan-report-enabled';
 
 const POLLING_INTERVAL = 2000;
 
@@ -21,8 +20,6 @@ export const useIsPendingReport = () => {
   const collectiviteId = useCollectiviteId();
   const [pendingReportId, setPendingReportId] =
     useQueryState('downloadReportId');
-
-  const isGeneratePptxPlanReportEnabled = useGeneratePptxPlanReportEnabled();
 
   // Poll report status when a report is pending
   const { data: reportStatus } = useQuery({
@@ -117,6 +114,5 @@ export const useIsPendingReport = () => {
   return {
     renderToast,
     isPending: !!pendingReportId,
-    isGeneratePptxPlanReportEnabled,
   };
 };
