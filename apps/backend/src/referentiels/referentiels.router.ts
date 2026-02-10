@@ -7,7 +7,7 @@ import { HandleMesuresServicesRouter } from './handle-mesure-services/handle-mes
 import { CreatePreuveRouter } from './labellisations/create-preuve/create-preuve.router';
 import { GetLabellisationRouter } from './labellisations/get-labellisation.router';
 import { HandleMesureAuditStatutRouter } from './labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.router';
-import { ListePreuvesRouter } from './labellisations/liste-preuves/liste-preuves.router';
+import { ListPreuvesRouter } from './labellisations/list-preuves/list-preuves.router';
 import { RequestLabellisationRouter } from './labellisations/request-labellisation/request-labellisation.router';
 import { StartAuditRouter } from './labellisations/start-audit/start-audit.router';
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
@@ -26,7 +26,7 @@ export class ReferentielsRouter {
     private readonly requestLabellisation: RequestLabellisationRouter,
     private readonly createPreuve: CreatePreuveRouter,
     private readonly validateAudit: ValidateAuditRouter,
-    private readonly listePreuves: ListePreuvesRouter,
+    private readonly listPreuves: ListPreuvesRouter,
     private readonly assignPilotesRouter: HandleMesurePilotesRouter,
     private readonly assignServicesRouter: HandleMesuresServicesRouter,
     private readonly scoreIndicatifRouter: ScoreIndicatifRouter,
@@ -52,7 +52,7 @@ export class ReferentielsRouter {
       this.validateAudit.router,
       this.getLabellisation.router,
       this.handleMesureAuditStatutRouter.router,
-      this.listePreuves.router
+      this.listPreuves.router
     ),
 
     definitions: this.getReferentielDefinitionRouter.router,
