@@ -96,7 +96,7 @@ const PlanViewContent = () => {
               <PlanOptionsButton />
               <VisibleWhen condition={hasAxesToExpand && !isFiltered}>
                 <Button
-                  size="xs"
+                  size="sm"
                   variant="outlined"
                   icon={areAllClosed ? 'arrow-down-line' : 'arrow-up-line'}
                   iconPosition="right"

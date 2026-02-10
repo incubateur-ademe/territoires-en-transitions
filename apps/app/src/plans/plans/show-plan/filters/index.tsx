@@ -6,7 +6,7 @@ export const FiltersMenuButton = () => {
   const { filtersCount } = usePlanFilters();
 
   return (
-    <GenericFiltersMenuButton activeFiltersCount={filtersCount} size="xs">
+    <GenericFiltersMenuButton activeFiltersCount={filtersCount} size="sm">
       <Menu />
     </GenericFiltersMenuButton>
   );
