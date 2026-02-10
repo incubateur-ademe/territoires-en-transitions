@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { action } from 'storybook/actions';
-import DoubleCheckIcon from '../../assets/DoubleCheckIcon';
 import { Badge } from '../Badge';
 import { Accordion, AccordionControlled } from './Accordion';
 
@@ -46,18 +45,18 @@ export const AvecIconeADroite: Story = {
   },
 };
 
-export const AvecIconeSVG: Story = {
-  args: {
-    icon: <DoubleCheckIcon className="fill-primary-7" />,
-  },
-};
+// export const AvecIconeSVG: Story = {
+//   args: {
+//     icon: <DoubleCheckIcon className="fill-primary-7" />,
+//   },
+// };
 
-export const AvecContenuAdditionnelHeader: Story = {
-  args: {
-    icon: <DoubleCheckIcon className="fill-primary-7" />,
-    headerContent: <Badge title="Badge" state="info" />,
-  },
-};
+// export const AvecContenuAdditionnelHeader: Story = {
+//   args: {
+//     icon: <DoubleCheckIcon className="fill-primary-7" />,
+//     headerContent: <Badge title="Badge" state="info" />,
+//   },
+// };
 
 export const AvecSousTitre: Story = {
   args: {
