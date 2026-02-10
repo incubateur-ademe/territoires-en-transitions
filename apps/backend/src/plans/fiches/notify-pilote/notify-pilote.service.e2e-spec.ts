@@ -16,7 +16,6 @@ import { NotificationStatusEnum, NotifiedOnEnum } from '@tet/domain/utils';
 import { eq, inArray, sql } from 'drizzle-orm';
 import { describe, expect, test } from 'vitest';
 import { createFiche } from '../fiches.test-fixture';
-import ListFichesService from '../list-fiches/list-fiches.service';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import { NotifyPiloteService } from './notify-pilote.service';
 
@@ -27,7 +26,6 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
   let notifyPiloteService: NotifyPiloteService;
-  let listFichesService: ListFichesService;
   let userPreferencesService: UserPreferencesService;
   let testCollectiviteAndUserCleanup: () => Promise<void>;
 
@@ -39,7 +37,6 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     databaseService = await getTestDatabase(app);
     router = await app.get(TrpcRouter);
     notifyPiloteService = app.get(NotifyPiloteService);
-    listFichesService = app.get(ListFichesService);
     userPreferencesService = app.get(UserPreferencesService);
 
     const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(
@@ -95,21 +92,6 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
 
     testUsers.push({ userId: user.id, cleanup });
     return user;
-  }
-
-  /**
-   * Obtient une fiche avec ses relations (pilotes)
-   */
-  async function getFicheWithRelations(ficheId: number) {
-    const fiche = await listFichesService.getFicheById(
-      ficheId,
-      false,
-      editorUser
-    );
-    if (!fiche.success) {
-      throw new Error(`Fiche ${ficheId} not found`);
-    }
-    return fiche.data;
   }
 
   /**
@@ -204,7 +186,6 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       ficheInput: { collectiviteId: collectivite.id },
     });
     testFicheIds.push(ficheId);
-    const previousFiche = await getFicheWithRelations(ficheId);
     await caller.plans.fiches.update({
       ficheId,
       ficheFields: {
@@ -214,23 +195,22 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     });
 
     // vérifie que les notifications ont été créées automatiquement par plans.fiches.update
-    let notifications = await getNotificationsForFiche(ficheId);
+    const notifications = await getNotificationsForFiche(ficheId);
     expect(notifications).toHaveLength(2);
 
     // Deuxième appel avec la même fiche - ne doit pas créer de doublons
-    const updatedFiche = await getFicheWithRelations(ficheId);
-    const result2 = await notifyPiloteService.upsertPiloteNotifications({
-      updatedFiche,
-      previousFiche,
-      user: editorUser,
+    await caller.plans.fiches.update({
+      ficheId,
+      ficheFields: {
+        pilotes: [{ userId: user1.id }, { userId: user2.id }],
+      },
+      isNotificationEnabled: true,
     });
 
-    assert(result2.success);
-    expect(result2.data?.count).toBe(0); // Aucune nouvelle notification car elles existent déjà
-
     // vérifie qu'il n'y a toujours que 2 notifications
-    notifications = await getNotificationsForFiche(ficheId);
-    expect(notifications).toHaveLength(2);
+    const notifications2 = await getNotificationsForFiche(ficheId);
+    expect(notifications2).toHaveLength(2);
+    expect(notifications2).toEqual(notifications);
   });
 
   test('supprime les notifications pending pour les pilotes qui ne sont plus assignés', async () => {
@@ -485,6 +465,187 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     expect(notifications[0].notificationData).toEqual({
       ficheIds: expect.arrayContaining([ficheId1, ficheId2, ficheId3]),
       piloteId: user1.id,
+    });
+  });
+
+  test("l'édition groupée des fiches regroupe les notifications par pilote", async () => {
+    const caller = router.createCaller({ user: editorUser });
+
+    const user1 = await createTestUser();
+    const user2 = await createTestUser();
+
+    // crée trois fiches
+    const ficheId1 = await createFiche({
+      caller,
+      ficheInput: { collectiviteId: collectivite.id },
+    });
+    testFicheIds.push(ficheId1);
+
+    const ficheId2 = await createFiche({
+      caller,
+      ficheInput: { collectiviteId: collectivite.id },
+    });
+    testFicheIds.push(ficheId2);
+
+    const ficheId3 = await createFiche({
+      caller,
+      ficheInput: { collectiviteId: collectivite.id },
+    });
+    testFicheIds.push(ficheId3);
+
+    // assigne user1 à fiche1 et fiche2 en mode "bulk" et user2 à fiche3
+    await caller.plans.fiches.bulkEdit({
+      collectiviteId: collectivite.id,
+      ficheIds: [ficheId1, ficheId2],
+      pilotes: { add: [{ userId: user1.id }] },
+      isNotificationEnabled: true,
+    });
+
+    await caller.plans.fiches.update({
+      ficheId: ficheId3,
+      ficheFields: {
+        pilotes: [{ userId: user2.id }],
+      },
+      isNotificationEnabled: true,
+    });
+
+    // vérifie que user1 a une seule notification avec les deux fiches
+    const notificationsUser1 = await getNotificationsForUser(user1.id);
+    expect(notificationsUser1).toHaveLength(1);
+    expect(notificationsUser1[0].notificationData).toEqual({
+      ficheIds: expect.arrayContaining([ficheId1, ficheId2]),
+      piloteId: user1.id,
+    });
+
+    // vérifie que user2 a une seule notification avec fiche3
+    const notificationsUser2 = await getNotificationsForUser(user2.id);
+    expect(notificationsUser2).toHaveLength(1);
+    expect(notificationsUser2[0].notificationData).toEqual({
+      ficheIds: [ficheId3],
+      piloteId: user2.id,
+    });
+  });
+
+  test("l'édition groupée des fiches ne crée pas de doublons des notifications", async () => {
+    const caller = router.createCaller({ user: editorUser });
+
+    const user1 = await createTestUser();
+
+    // crée deux fiches
+    const ficheId1 = await createFiche({
+      caller,
+      ficheInput: { collectiviteId: collectivite.id },
+    });
+    testFicheIds.push(ficheId1);
+
+    const ficheId2 = await createFiche({
+      caller,
+      ficheInput: { collectiviteId: collectivite.id },
+    });
+    testFicheIds.push(ficheId2);
+
+    // assigne user1 à fiche1 (crée une notification)
+    await caller.plans.fiches.update({
+      ficheId: ficheId1,
+      ficheFields: {
+        pilotes: [{ userId: user1.id }],
+      },
+      isNotificationEnabled: true,
+    });
+
+    // vérifie qu'une notification existe pour user1 avec fiche1
+    let notifications = await getNotificationsForUser(user1.id);
+    expect(notifications).toHaveLength(1);
+    expect(notifications[0].notificationData).toEqual({
+      ficheIds: [ficheId1],
+      piloteId: user1.id,
+    });
+
+    // assigne user1 à fiche2 également
+    await caller.plans.fiches.bulkEdit({
+      collectiviteId: collectivite.id,
+      ficheIds: [ficheId1, ficheId2],
+      pilotes: { add: [{ userId: user1.id }] },
+      isNotificationEnabled: true,
+    });
+
+    // vérifie qu'il n'y a toujours qu'une seule notification pour user1 avec les deux fiches
+    notifications = await getNotificationsForUser(user1.id);
+    expect(notifications).toHaveLength(1);
+    expect(notifications[0].notificationData).toEqual({
+      ficheIds: expect.arrayContaining([ficheId1, ficheId2]),
+      piloteId: user1.id,
+    });
+  });
+
+  test("l'édition groupée des fiches nettoie les notifications pour les pilotes retirés", async () => {
+    const caller = router.createCaller({ user: editorUser });
+
+    const user1 = await createTestUser();
+    const user2 = await createTestUser();
+
+    // crée deux fiches
+    const ficheId1 = await createFiche({
+      caller,
+      ficheInput: { collectiviteId: collectivite.id },
+    });
+    testFicheIds.push(ficheId1);
+
+    const ficheId2 = await createFiche({
+      caller,
+      ficheInput: { collectiviteId: collectivite.id },
+    });
+    testFicheIds.push(ficheId2);
+
+    // assigne user1 et user2 à fiche1, user1 à fiche2
+    await caller.plans.fiches.update({
+      ficheId: ficheId1,
+      ficheFields: {
+        pilotes: [{ userId: user1.id }, { userId: user2.id }],
+      },
+      isNotificationEnabled: true,
+    });
+
+    await caller.plans.fiches.update({
+      ficheId: ficheId2,
+      ficheFields: {
+        pilotes: [{ userId: user1.id }],
+      },
+      isNotificationEnabled: true,
+    });
+
+    // vérifie que les notifications existent
+    let notificationsUser1 = await getNotificationsForUser(user1.id);
+    let notificationsUser2 = await getNotificationsForUser(user2.id);
+    expect(notificationsUser1).toHaveLength(1);
+    expect(notificationsUser1[0].notificationData).toEqual({
+      ficheIds: [ficheId1, ficheId2],
+      piloteId: user1.id,
+    });
+    expect(notificationsUser2).toHaveLength(1);
+    expect(notificationsUser2[0].notificationData).toEqual({
+      ficheIds: [ficheId1],
+      piloteId: user2.id,
+    });
+
+    // retire user1 de fiche1 et fiche2
+    await caller.plans.fiches.bulkEdit({
+      collectiviteId: collectivite.id,
+      ficheIds: [ficheId1, ficheId2],
+      pilotes: { remove: [{ userId: user1.id }] },
+      isNotificationEnabled: true,
+    });
+
+    // vérifie que la notification pour user1 a été nettoyée
+    notificationsUser1 = await getNotificationsForUser(user1.id);
+    expect(notificationsUser1).toHaveLength(0);
+
+    // vérifie que user2 a toujours sa notification avec fiche1
+    notificationsUser2 = await getNotificationsForUser(user2.id);
+    expect(notificationsUser2).toHaveLength(1);
+    expect(notificationsUser2[0].notificationData).toEqual({
+      ficheIds: expect.arrayContaining([ficheId1]),
+      piloteId: user2.id,
     });
   });
 

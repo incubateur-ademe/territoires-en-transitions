@@ -14,6 +14,7 @@ function listSchema<T extends z.ZodTypeAny>(schema: T) {
 
 const commonFields = z.object({
   collectiviteId: z.coerce.number(),
+  isNotificationEnabled: z.boolean().optional(),
 
   ...ficheSchema
     .pick({
