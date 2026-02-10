@@ -575,50 +575,6 @@ curl-test:
         --env URL=$API_URL \
         curl-test:latest
 
-api-test-build:
-    FROM denoland/deno
-    ENV SUPABASE_URL
-    ENV SUPABASE_KEY
-    ENV SERVICE_ROLE_KEY
-    WORKDIR tests
-    COPY ./api_tests .
-    RUN deno cache tests/base/smoke.test.ts
-    RUN deno cache tests/base/utilisateur.test.ts
-    CMD deno
-    SAVE IMAGE api-test:latest
-
-api-test:
-    ARG --required SERVICE_ROLE_KEY
-    ARG --required API_URL
-    ARG network=host
-    ARG tests='base droit historique plan_action scoring indicateurs labellisation utilisateur'
-    LOCALLY
-    RUN earthly +api-test-build
-    FOR test IN $tests
-      RUN echo "Running tests for tests/$test'"
-      RUN docker run --rm \
-              --name api_test_tet \
-              --network $network \
-              --env SUPABASE_URL=$API_URL \
-              --env SUPABASE_ANON_KEY=$SERVICE_ROLE_KEY \
-              --env SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
-              api-test:latest test --no-check -A tests/$test/*.test.ts --location 'http://localhost'
-    END
-
-api-crud-test:
-    ARG --required ANON_KEY
-    ARG --required API_URL
-    ARG network=host
-    LOCALLY
-    RUN earthly +api-test-build
-    RUN echo "Running tests crud'"
-    RUN docker run --rm \
-      --name api_crud_test_tet \
-      --network $network \
-      --env SUPABASE_URL=$API_URL \
-      --env SUPABASE_ANON_KEY=$ANON_KEY \
-      api-test:latest test -A tests/crud/crud.test.ts --location 'http://localhost' -- elements:axe
-
 cypress-wip:
     FROM cypress/included:12.3.0
     ENV ELECTRON_EXTRA_LAUNCH_ARGS="--disable-gpu"
@@ -635,7 +591,6 @@ gen-types: ## génère le typage à partir de la base de données
     ELSE
         RUN pnpx supabase gen types typescript --local --schema public --schema labellisation > $API_DIR/src/database.types.ts
     END
-    RUN cp $API_DIR/src/database.types.ts ./api_tests/lib/database.types.ts
     RUN cp $API_DIR/src/database.types.ts ./supabase/functions/_shared/database.types.ts
 
 setup-env:
@@ -909,7 +864,6 @@ test:
     LOCALLY
     RUN earthly +curl-test
     RUN earthly +db-test
-    RUN earthly +api-test
     RUN earthly +db-deploy-test
     RUN earthly +app-test
 
