@@ -8,6 +8,7 @@ import { ListCollectiviteApiResponse } from '@tet/backend/collectivites/list-col
 import { ListCollectiviteInput } from '@tet/backend/collectivites/list-collectivites/list-collectivites.input';
 import { CollectiviteNatureType } from '@tet/backend/collectivites/shared/models/collectivite-banatic-type.table';
 import { collectiviteRelationsTable } from '@tet/backend/collectivites/shared/models/collectivite-relations.table';
+import { cotTable } from '@tet/backend/referentiels/labellisations/cot.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import {
@@ -152,6 +153,7 @@ export default class ListCollectivitesService {
             communeCode: collectiviteTable.communeCode,
             natureInsee: sql<CollectiviteNatureType>`${collectiviteTable.natureInsee}`,
             type: sql<CollectiviteType>`${collectiviteTable.type}`,
+            activeCOT: sql<boolean>`coalesce(${cotTable.actif}, false)`,
             ...relationsFields,
           }
         : {
@@ -159,6 +161,7 @@ export default class ListCollectivitesService {
             createdAt: sqlToDateTimeISO(collectiviteTable.createdAt),
             modifiedAt: sqlToDateTimeISO(collectiviteTable.modifiedAt),
             type: sql<CollectiviteType>`${collectiviteTable.type}`,
+            activeCOT: sql<boolean>`coalesce(${cotTable.actif}, false)`,
             natureInsee: sql<CollectiviteNatureType>`${collectiviteTable.natureInsee}`,
             ...relationsFields,
           };
@@ -167,6 +170,7 @@ export default class ListCollectivitesService {
       ? db
           .select(fields)
           .from(collectiviteTable)
+          .leftJoin(cotTable, eq(cotTable.collectiviteId, collectiviteTable.id))
           .leftJoin(
             collectiviteParents,
             eq(collectiviteTable.id, collectiviteParents.collectiviteId)
@@ -175,7 +179,13 @@ export default class ListCollectivitesService {
             collectiviteEnfants,
             eq(collectiviteTable.id, collectiviteEnfants.collectiviteId)
           )
-      : db.select(fields).from(collectiviteTable);
+      : db
+          .select(fields)
+          .from(collectiviteTable)
+          .leftJoin(
+            cotTable,
+            eq(cotTable.collectiviteId, collectiviteTable.id)
+          );
 
     const whereConditions: (SQLWrapper | SQL)[] = [];
 

@@ -100,7 +100,10 @@ export async function addTestCollectivite(
         }
       }
     };
-    return { collectivite: result, cleanup };
+    return {
+      collectivite: { ...result, activeCOT: collectiviteArgs.isCOT ?? false },
+      cleanup,
+    };
   } catch (err) {
     throw new Error(
       `Error adding collectivite on database ${
