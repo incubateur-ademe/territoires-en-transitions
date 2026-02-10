@@ -9,7 +9,7 @@ import {
 import { useEditFilenameState } from './useEditState';
 
 export type EditerDocumentProps = {
-  preuve: TPreuve;
+  preuve: Pick<TPreuve, 'fichier' | 'preuve_type' | 'collectivite_id'>;
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
 };
@@ -66,12 +66,20 @@ export const EditerDocumentModal = (props: EditerDocumentProps) => {
             btnOKProps={{
               disabled: isLoading || !value,
               onClick: () => {
+                if (!preuve.fichier) {
+                  return;
+                }
                 if (filename && filename !== fichier.filename) {
-                  editFilename({ ...preuve, updatedFilename: filename });
+                  editFilename({
+                    collectivite_id: preuve.collectivite_id,
+                    fichier: { hash: preuve.fichier.hash },
+                    updatedFilename: filename,
+                  });
                 }
                 if (confidentiel !== fichier?.confidentiel) {
                   updateConfidentiel({
-                    ...preuve,
+                    collectivite_id: preuve.collectivite_id,
+                    fichier: { hash: preuve.fichier.hash },
                     updatedConfidentiel: confidentiel,
                   });
                 }

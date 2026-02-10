@@ -32,8 +32,16 @@ export const useEditPreuve: TEditPreuve = (preuve) => {
   });
   const editFilename = useEditFilenameState({
     initialValue: fichier?.filename,
-    onUpdate: (updatedFilename) =>
-      updateBibliothequeFichierFilename({ ...preuve, updatedFilename }),
+    onUpdate: (updatedFilename) => {
+      if (!preuve.fichier) {
+        return;
+      }
+      updateBibliothequeFichierFilename({
+        collectivite_id: preuve.collectivite_id,
+        fichier: { hash: preuve.fichier.hash },
+        updatedFilename,
+      });
+    },
   });
 
   const remove = () => {
@@ -55,7 +63,7 @@ export const useEditPreuve: TEditPreuve = (preuve) => {
 
 // le nom de la table dans laquelle sont stockées les infos sur une preuve
 // dépend du type de la preuve
-const tableOfType = ({ preuve_type }: TPreuve) =>
+const tableOfType = ({ preuve_type }: Pick<TPreuve, 'preuve_type'>) =>
   (preuve_type as string) === 'annexe'
     ? 'annexe'
     : (`preuve_${preuve_type}` as const);
@@ -99,7 +107,9 @@ export const useUpdatePreuveLien = () => {
   const supabase = useSupabase();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (preuve: TPreuve) => {
+    mutationFn: async (
+      preuve: Pick<TPreuve, 'id' | 'lien' | 'collectivite_id' | 'preuve_type'>
+    ) => {
       const { id, lien } = preuve;
       if (!lien) return;
       const { url, titre } = lien;
@@ -144,7 +154,11 @@ export const useUpdateBibliothequeFichierFilename = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ['update_fiche_bibliotheque_'],
-    mutationFn: async (preuve: TPreuve & { updatedFilename: string }) => {
+    mutationFn: async (preuve: {
+      collectivite_id: number;
+      fichier: { hash: string };
+      updatedFilename: string;
+    }) => {
       if (!preuve?.fichier) {
         return null;
       }

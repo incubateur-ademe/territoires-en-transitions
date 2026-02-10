@@ -1,3 +1,4 @@
+import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -217,6 +218,14 @@ export async function cleanupReferentielActionStatutsAndLabellisations(
     .returning();
   console.log(
     `${preuveLabellisationRet.length} labellisation preuves removed from collectivite ${collectiviteId}`
+  );
+
+  const preuveAuditRet = await databaseService.db
+    .delete(preuveAuditTable)
+    .where(eq(preuveAuditTable.collectiviteId, collectiviteId))
+    .returning();
+  console.log(
+    `${preuveAuditRet.length} audit preuves removed from collectivite ${collectiviteId}`
   );
 
   const snapshotRet = await databaseService.db
