@@ -422,10 +422,15 @@ export default class UpdateFicheService {
 
       // Ajoute les notifications pour les pilotes nouvellement associés à une sous-fiche
       if (isNotificationEnabled) {
-        await this.notificationsFicheService.upsertPiloteNotifications({
-          updatedFiche: updatedFiche.data,
-          previousFiche: existingFicheAction,
+        await this.notificationsFicheService.upsertPiloteNotificationsBulk({
+          fichesPairs: [
+            {
+              updatedFiche: updatedFiche.data,
+              previousFiche: existingFicheAction,
+            },
+          ],
           user,
+          tx: transaction,
         });
       }
 

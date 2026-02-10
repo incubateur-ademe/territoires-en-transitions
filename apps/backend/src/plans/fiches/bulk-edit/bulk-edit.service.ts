@@ -9,6 +9,7 @@ import { AuthUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { and, inArray, or, sql } from 'drizzle-orm';
+import { NotifyPiloteService } from '../notify-pilote/notify-pilote.service';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import { ficheActionReferentTable } from '../shared/models/fiche-action-referent.table';
 import { ficheActionServiceTagTable } from '../shared/models/fiche-action-service-tag.table';
@@ -25,19 +26,20 @@ export class BulkEditService {
     private readonly permission: PermissionService,
     private readonly listFichesService: ListFichesService,
     private readonly shareFicheService: ShareFicheService,
-    private readonly fichePermissionsService: FicheActionPermissionsService
+    private readonly fichePermissionsService: FicheActionPermissionsService,
+    private readonly notificationsFicheService: NotifyPiloteService
   ) {}
 
   async bulkEdit(request: BulkEditRequest, user: AuthUser): Promise<void> {
-    const actualFicheIds =
+    const filters =
       request.ficheIds === 'all'
-        ? (
-            await this.listFichesService.getFichesActionResumes({
-              collectiviteId: request.collectiviteId,
-              filters: request.filters,
-            })
-          ).data.map((fiche) => fiche.id)
-        : request.ficheIds;
+        ? request.filters
+        : { ficheIds: request.ficheIds };
+    const currentFiches = await this.listFichesService.getFichesActionResumes({
+      collectiviteId: request.collectiviteId,
+      filters,
+    });
+    const actualFicheIds = currentFiches.data.map((fiche) => fiche.id);
 
     const { ficheIds, ...params } = request;
 
@@ -259,5 +261,41 @@ export class BulkEditService {
         );
       }
     });
+
+    if (request.isNotificationEnabled && request.pilotes) {
+      // recharge les fiches mises à jour
+      const updatedFiches = await this.listFichesService.getFichesActionResumes(
+        {
+          collectiviteId: request.collectiviteId,
+          filters,
+        }
+      );
+
+      // prépare les paires de fiches (avant/après)
+      const fichesPairs = actualFicheIds
+        .map((id) => {
+          const previousFiche = currentFiches.data.find((f) => f.id === id);
+          const updatedFiche = updatedFiches.data.find((f) => f.id === id);
+          return previousFiche && updatedFiche
+            ? { previousFiche, updatedFiche }
+            : null;
+        })
+        .filter((pair) => pair !== null);
+
+      // ajoute les notifications en masse
+      if (fichesPairs.length > 0) {
+        try {
+          await this.notificationsFicheService.upsertPiloteNotificationsBulk({
+            fichesPairs,
+            user,
+          });
+        } catch (error) {
+          this.logger.error(
+            "Erreur lors de l'envoi des notifications pilote pour l'édition groupée",
+            error
+          );
+        }
+      }
+    }
   }
 }
