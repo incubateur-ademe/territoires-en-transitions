@@ -43,17 +43,18 @@ export const AxeMenuButton = () => {
 
   const menuActions: MenuAction[] = [
     {
-      ...(isOptionEnabled(PlanDisplayOptionsEnum.INDICATEURS)
-        ? {}
-        : {
-            disabled: true,
-            tooltip: 'Les indicateurs sont masqués dans l’affichage global',
-          }),
-      label: 'Lier un indicateur',
-      icon: 'line-chart-line',
+      label: 'Modifier le titre',
+      icon: 'edit-line',
+      onClick: () => {
+        setIsOpenEditTitle(true);
+      },
+    },
+    {
+      label: 'Créer un axe',
+      icon: 'folder-add-line',
       onClick: () => {
         setIsOpen(true);
-        setIsOpenPanelIndicateurs(true);
+        createAxe();
       },
     },
     {
@@ -73,18 +74,17 @@ export const AxeMenuButton = () => {
       },
     },
     {
-      label: 'Modifier le titre',
-      icon: 'edit-line',
-      onClick: () => {
-        setIsOpenEditTitle(true);
-      },
-    },
-    {
-      label: 'Créer un axe',
-      icon: 'folder-add-line',
+      ...(isOptionEnabled(PlanDisplayOptionsEnum.INDICATEURS)
+        ? {}
+        : {
+            disabled: true,
+            tooltip: 'Les indicateurs sont masqués dans l’affichage global',
+          }),
+      label: 'Lier un indicateur',
+      icon: 'line-chart-line',
       onClick: () => {
         setIsOpen(true);
-        createAxe();
+        setIsOpenPanelIndicateurs(true);
       },
     },
     {
