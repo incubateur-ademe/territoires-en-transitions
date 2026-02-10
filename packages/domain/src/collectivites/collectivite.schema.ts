@@ -9,6 +9,7 @@ export const collectiviteSchema = z.object({
   accesRestreint: z.boolean().nullable(),
   nom: z.string(),
   type: collectiviteTypeEnumSchema.describe('Type de collectivité'),
+  activeCOT: z.boolean(),
   communeCode: z.string().nullable(),
   siren: z.string().nullable(),
   nic: z.string().nullable(),
@@ -30,6 +31,7 @@ export const collectiviteResumeSchema = collectiviteSchema.pick({
   communeCode: true,
   natureInsee: true,
   type: true,
+  activeCOT: true,
 });
 
 export const collectivitePublicSchema = collectiviteSchema;
