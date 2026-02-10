@@ -2,8 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RouterInput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
-import { useFeatureFlagEnabled } from 'posthog-js/react';
 import { ListFichesOutput } from '../../list-all-fiches/data/use-list-fiches';
+import { useIsNotificationEnabled } from './use-is-notification-enabled';
 
 type Args = Partial<{
   invalidatePlanId: number;
@@ -17,9 +17,7 @@ export const useUpdateFiche = (args?: Args) => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const user = useUser();
-  const isNotificationEnabled = useFeatureFlagEnabled(
-    'is-notification-enabled'
-  );
+  const isNotificationEnabled = useIsNotificationEnabled();
 
   const { mutateAsync } = useMutation(
     trpc.plans.fiches.update.mutationOptions()
