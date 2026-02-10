@@ -7,7 +7,7 @@ import {
   usePlanFilters,
 } from '@/app/plans/plans/show-plan/filters/plan-filters.context';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
-import { FilterBadges, FilterCategory, Spacer, VisibleWhen } from '@tet/ui';
+import { BadgeFilters, FilterCategory, Spacer, VisibleWhen } from '@tet/ui';
 
 const ficheListGridClassName = 'grid md:grid-cols-2 gap-4';
 
@@ -101,7 +101,7 @@ export const FilteredResults = ({ collectivite, currentUserId }: Props) => {
     <>
       <FilteredResultsSummary count={filteredResults.length} />
       <Spacer height={0.5} />
-      <FilterBadges<CurrentFiltersKeys>
+      <BadgeFilters<CurrentFiltersKeys>
         filterCategories={filterCategories}
         onDeleteFilterValue={onDeleteFilterValue}
         onDeleteFilterCategory={onDeleteFilterCategory}
