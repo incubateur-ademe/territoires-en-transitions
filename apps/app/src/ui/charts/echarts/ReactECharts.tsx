@@ -10,7 +10,7 @@ import type {
   LineSeriesOption,
   PieSeriesOption,
 } from 'echarts/charts';
-import { BarChart, LineChart, PieChart } from 'echarts/charts';
+import { BarChart, LineChart, PieChart, TreemapChart } from 'echarts/charts';
 import type {
   DatasetComponentOption,
   GridComponentOption,
@@ -92,6 +92,7 @@ echarts.use([
   BarChart,
   PieChart,
   LineChart,
+  TreemapChart,
 
   TitleComponent,
   LegendComponent,
