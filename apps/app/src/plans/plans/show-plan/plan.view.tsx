@@ -104,8 +104,8 @@ const PlanViewContent = () => {
                   dataTest="ToggleAllAxes"
                 >
                   {areAllClosed
-                    ? 'Ouvrir tous les axes/sous-axes'
-                    : 'Fermer tous les axes/sous-axes'}
+                    ? 'Ouvrir tous les axes'
+                    : 'Fermer tous les axes'}
                 </Button>
               </VisibleWhen>
             </>

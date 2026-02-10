@@ -3,7 +3,7 @@
 import { ButtonProps } from '@tet/ui';
 
 export const addAxeButtonProps: ButtonProps = {
-  children: 'Ajouter un nouveau titre/axe',
+  children: 'Créer un axe',
   dataTest: 'AjouterAxe',
   variant: 'outlined',
   size: 'sm',
