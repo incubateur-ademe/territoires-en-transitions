@@ -1,15 +1,15 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
 import { action } from 'storybook/actions';
-import { FilterBadges, FilterCategory } from '.';
+import { BadgeFilters, FilterCategory } from './index';
 
 // Define typed category keys for better type safety
 type TaskFilterKeys = 'status' | 'priority' | 'category' | 'assignee';
 type ProjectFilterKeys = 'phase' | 'team' | 'budget';
 
-const meta: Meta<typeof FilterBadges> = {
-  component: FilterBadges,
-  title: 'Design System/FilterBadges',
+const meta: Meta<typeof BadgeFilters> = {
+  component: BadgeFilters,
+  title: 'Design System/BadgesFilters',
   parameters: {
     docs: {
       description: {
@@ -23,7 +23,7 @@ const meta: Meta<typeof FilterBadges> = {
 
 export default meta;
 
-type Story = StoryObj<typeof FilterBadges>;
+type Story = StoryObj<typeof BadgeFilters>;
 
 // Sample data for stories with generic typing
 const sampleFilterCategories: FilterCategory<TaskFilterKeys>[] = [
@@ -162,7 +162,7 @@ const InteractiveFilterBadges = () => {
           better type safety.
         </p>
       </div>
-      <FilterBadges<TaskFilterKeys>
+      <BadgeFilters<TaskFilterKeys>
         filterCategories={filterCategories}
         onDeleteFilterValue={({ categoryKey, valueToDelete }) =>
           handleDeleteFilterValue(categoryKey as TaskFilterKeys, valueToDelete)

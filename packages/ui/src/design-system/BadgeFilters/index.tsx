@@ -82,7 +82,10 @@ const FilterByCategory = ({
           {selectedFilters
             .sort((a, b) => a.localeCompare(b))
             .map((filter) => (
-              <Filter key={filter} onDelete={!readonly ? () => onDeleteFilter(filter) : undefined}>
+              <Filter
+                key={filter}
+                onDelete={!readonly ? () => onDeleteFilter(filter) : undefined}
+              >
                 {filter}
               </Filter>
             ))}
@@ -132,7 +135,7 @@ const ClearAllFiltersButton = ({
  * A component that displays filter badges organized by categories.
  * Each category shows its title and the selected filter values as removable badges.
  */
-export const FilterBadges = <TKey extends string = string>({
+export const BadgeFilters = <TKey extends string = string>({
   filterCategories,
   onDeleteFilterValue,
   onDeleteFilterCategory,
