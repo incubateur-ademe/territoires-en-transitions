@@ -7,7 +7,10 @@ import { useState } from 'react';
 import { EditerLienModal } from './EditerLienModal';
 
 type MenuCarteDocumentProps = {
-  document: TPreuve;
+  document: Pick<
+    TPreuve,
+    'id' | 'fichier' | 'lien' | 'collectivite_id' | 'preuve_type'
+  >;
   className?: string;
   onComment: () => void;
   onDelete: () => void;

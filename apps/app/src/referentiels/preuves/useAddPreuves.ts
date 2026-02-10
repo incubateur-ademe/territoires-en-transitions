@@ -99,6 +99,7 @@ type TAddPreuveAuditArgs = {
 export const useAddPreuveAudit = () => {
   const supabase = useSupabase();
   const queryClient = useQueryClient();
+  const trpc = useTRPC();
   return useMutation({
     mutationFn: async (preuve: TAddPreuveAuditArgs) =>
       supabase.from('preuve_audit').insert(preuve),
@@ -106,6 +107,11 @@ export const useAddPreuveAudit = () => {
     onSuccess: (data, variables) => {
       invalidateQueries(queryClient, variables.collectivite_id, {
         invalidateParcours: true,
+      });
+      queryClient.invalidateQueries({
+        queryKey: trpc.referentiels.labellisations.listPreuvesAudit.queryKey({
+          auditId: variables.audit_id,
+        }),
       });
     },
   });

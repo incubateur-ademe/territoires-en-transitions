@@ -4,7 +4,7 @@ import { TPreuve } from './types';
 import { useUpdatePreuveLien } from './useEditPreuve';
 
 export type EditerLienProps = {
-  preuve: TPreuve;
+  preuve: Pick<TPreuve, 'id' | 'lien' | 'collectivite_id' | 'preuve_type'>;
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
 };
@@ -51,7 +51,12 @@ export const EditerLienModal = (props: EditerLienProps) => {
             btnOKProps={{
               disabled: isPending || !titre.trim() || !url,
               onClick: () => {
-                editLien({ ...preuve, lien: { titre, url } });
+                editLien({
+                  id: preuve.id,
+                  preuve_type: preuve.preuve_type,
+                  collectivite_id: preuve.collectivite_id,
+                  lien: { titre, url },
+                });
                 close();
               },
             }}
