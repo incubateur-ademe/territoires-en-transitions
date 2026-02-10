@@ -69,7 +69,7 @@ function Root({ children }: { children: ReactNode }) {
     data,
     byPassEmptyView = false,
   } = contentProps || {};
-  const isEmpty = (!data || data.length === 0) && byPassEmptyView === false;
+  const isEmpty = data?.length === 0 && byPassEmptyView === false;
 
   const renderBody = () => {
     if (isLoading) {

@@ -23,7 +23,7 @@ type FinanceurFormProviderProps = {
   isReadonly: boolean;
   onUpsertFinanceur: (financeur: FinanceurRowFormValues) => Promise<void>;
   onCancel?: () => void;
-  onDraftFinanceurChange?: (financeur: DraftFinanceurRowFormValues) => void;
+  onDraftFinanceurChange: (financeur: DraftFinanceurRowFormValues) => void;
   children: React.ReactNode;
   onDeleteDraftFinanceur: (draftId: string) => void;
 };
@@ -52,7 +52,7 @@ export const FinanceurFormProvider = ({
     (values?: FinanceurRowFormValues) => {
       const draftValues = values ?? form.getValues();
       if (!draftValues?.draftId) return;
-      onDraftFinanceurChange?.({
+      onDraftFinanceurChange({
         ...draftValues,
         ficheId: financeur.ficheId,
         draftId: draftValues.draftId,
@@ -63,7 +63,6 @@ export const FinanceurFormProvider = ({
 
   const onSubmit = useCallback(async () => {
     syncDraft();
-    console.log('onSubmit');
     await form.handleSubmit(async (data) => {
       await onUpsertFinanceur(data);
       if (data.draftId) {
@@ -72,12 +71,15 @@ export const FinanceurFormProvider = ({
     })();
   }, [form, onUpsertFinanceur, onDeleteDraftFinanceur, syncDraft]);
 
-  const value = {
-    form,
-    isReadonly,
-    onSubmit,
-    onCancel,
-  };
+  const value = React.useMemo(
+    () => ({
+      form,
+      isReadonly,
+      onSubmit,
+      onCancel,
+    }),
+    [form, isReadonly, onSubmit, onCancel]
+  );
 
   return (
     <FinanceurFormContext.Provider value={value}>

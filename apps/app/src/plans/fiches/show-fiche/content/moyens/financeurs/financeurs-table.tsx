@@ -46,11 +46,10 @@ export const FinanceursTable = () => {
       financeurTagId: number | undefined;
       draftId: string | undefined;
     }) => {
-      if (financeurTagId) {
-        await financeursState.delete(financeurTagId);
-      }
       if (draftId) {
         deleteDraftFinanceur(draftId);
+      } else if (financeurTagId) {
+        await financeursState.delete(financeurTagId);
       }
     },
     [deleteDraftFinanceur, financeursState]
