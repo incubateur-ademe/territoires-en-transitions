@@ -40,7 +40,7 @@ const fetchCollectiviteWhenVisiteMode = cache(
       collectiviteId: collectivite.id,
       collectiviteNom: collectivite.nom,
       collectiviteAccesRestreint: collectivite.accesRestreint ?? false,
-
+      collectiviteHasActiveCOT: collectivite.activeCOT,
       role: null,
       permissions: [],
       audits: [],

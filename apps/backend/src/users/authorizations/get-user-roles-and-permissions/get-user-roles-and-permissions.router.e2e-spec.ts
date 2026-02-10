@@ -69,6 +69,7 @@ describe('GetUserPermissions', () => {
         collectiviteId: collectivite.id,
         collectiviteNom: collectivite.nom,
         collectiviteAccesRestreint: false,
+        collectiviteHasActiveCOT: false,
         role: CollectiviteRole.EDITION,
         permissions: permissionsByRole[CollectiviteRole.EDITION],
 
@@ -125,6 +126,7 @@ describe('GetUserPermissions', () => {
         collectiviteId: collectivite.id,
         collectiviteNom: collectivite.nom,
         collectiviteAccesRestreint: false,
+        collectiviteHasActiveCOT: false,
         role: CollectiviteRole.EDITION,
         permissions: permissionsByRole[CollectiviteRole.EDITION],
 

@@ -1,6 +1,4 @@
 import { usePreuvesParType } from '@/app/referentiels/preuves/usePreuves';
-import { useQuery } from '@tanstack/react-query';
-import { useSupabase } from '@tet/api';
 import {
   useCollectiviteId,
   useCurrentCollectivite,
@@ -57,25 +55,6 @@ export const useIsAuditAuditeur = (audit_id?: number) => {
 export const useRapportsAudit = (audit_id?: number) => {
   const { audit } = usePreuvesParType({ preuve_types: ['audit'], audit_id });
   return audit || [];
-};
-
-/** Détermine si un COT est actif pour la collectivité */
-export const useHasActiveCOT = () => {
-  const collectivite_id = useCollectiviteId();
-  const supabase = useSupabase();
-
-  const { data } = useQuery({
-    queryKey: ['is_cot', collectivite_id],
-
-    queryFn: async () => {
-      const { count } = await supabase
-        .from('cot')
-        .select(undefined, { head: true, count: 'exact' })
-        .match({ collectivite_id, actif: true });
-      return Boolean(count);
-    },
-  });
-  return data || false;
 };
 
 /** Détermine si la description de l'action doit être affichée dans la page

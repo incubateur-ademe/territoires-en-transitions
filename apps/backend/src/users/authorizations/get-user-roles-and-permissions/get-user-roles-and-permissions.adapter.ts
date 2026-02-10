@@ -74,6 +74,7 @@ function toCollectiviteRolesAndPermissions(
         collectiviteId: audit.collectiviteId,
         collectiviteNom: audit.collectiviteNom,
         collectiviteAccesRestreint: audit.collectiviteAccesRestreint,
+        collectiviteHasActiveCOT: audit.collectiviteHasActiveCOT,
         role: null,
         permissions: [],
         audits: audits.map(toAuditRolesAndPermissions),
