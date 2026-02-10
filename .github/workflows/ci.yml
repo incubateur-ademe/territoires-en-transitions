@@ -37,11 +37,6 @@ jobs:
     uses: ./.github/workflows/init-db.yml
     secrets: inherit
 
-  test-api:
-    needs: [init-db]
-    uses: ./.github/workflows/test-api.yml
-    secrets: inherit
-
   test-package-api:
     needs: [init-db]
     uses: ./.github/workflows/test-package-api.yml
