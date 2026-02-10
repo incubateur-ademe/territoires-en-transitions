@@ -3,15 +3,14 @@ import { Financeur } from '@tet/domain/plans';
 import React, { createContext, useCallback, useContext } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import {
+  DraftFinanceurRowFormValues,
   financeurRowFormSchema,
   FinanceurRowFormValues,
-  TemporaryFinanceurRowFormValues,
 } from './types';
 
 type FinanceurFormContextValue = {
   form: UseFormReturn<FinanceurRowFormValues>;
   isReadonly: boolean;
-  isTemporary: boolean;
   onSubmit: () => Promise<void>;
   onCancel?: () => void;
 };
@@ -20,11 +19,13 @@ const FinanceurFormContext = createContext<FinanceurFormContextValue | null>(
   null
 );
 type FinanceurFormProviderProps = {
-  financeur: Financeur | TemporaryFinanceurRowFormValues;
+  financeur: Financeur | DraftFinanceurRowFormValues;
   isReadonly: boolean;
   onUpsertFinanceur: (financeur: FinanceurRowFormValues) => Promise<void>;
   onCancel?: () => void;
+  onDraftFinanceurChange?: (financeur: DraftFinanceurRowFormValues) => void;
   children: React.ReactNode;
+  onDeleteDraftFinanceur: (draftId: string) => void;
 };
 
 export const FinanceurFormProvider = ({
@@ -32,37 +33,52 @@ export const FinanceurFormProvider = ({
   isReadonly,
   onUpsertFinanceur,
   onCancel,
+  onDraftFinanceurChange,
+  onDeleteDraftFinanceur,
   children,
 }: FinanceurFormProviderProps) => {
-  const isTemporary = 'tempId' in financeur && financeur.tempId !== undefined;
-
   const form = useForm<FinanceurRowFormValues>({
     resolver: standardSchemaResolver(financeurRowFormSchema),
     mode: 'onChange',
     defaultValues: {
+      ficheId: financeur.ficheId,
       financeurTagId: financeur.financeurTagId ?? undefined,
       montantTtc: financeur.montantTtc ?? undefined,
-      tempId: 'tempId' in financeur ? financeur.tempId : undefined,
+      draftId: 'draftId' in financeur ? financeur.draftId : undefined,
     },
   });
 
-  const onSubmit = useCallback(async () => {
-    await form.handleSubmit(async (data) => {
-      await onUpsertFinanceur({
-        tempId: 'tempId' in data ? data.tempId : undefined,
-        financeurTagId: data.financeurTagId,
-        montantTtc: data.montantTtc,
+  const syncDraft = useCallback(
+    (values?: FinanceurRowFormValues) => {
+      const draftValues = values ?? form.getValues();
+      if (!draftValues?.draftId) return;
+      onDraftFinanceurChange?.({
+        ...draftValues,
+        ficheId: financeur.ficheId,
+        draftId: draftValues.draftId,
       });
+    },
+    [form, onDraftFinanceurChange, financeur.ficheId]
+  );
+
+  const onSubmit = useCallback(async () => {
+    syncDraft();
+    console.log('onSubmit');
+    await form.handleSubmit(async (data) => {
+      await onUpsertFinanceur(data);
+      if (data.draftId) {
+        onDeleteDraftFinanceur(data.draftId);
+      }
     })();
-  }, [form, onUpsertFinanceur]);
+  }, [form, onUpsertFinanceur, onDeleteDraftFinanceur, syncDraft]);
 
   const value = {
     form,
     isReadonly,
-    isTemporary,
     onSubmit,
     onCancel,
   };
+
   return (
     <FinanceurFormContext.Provider value={value}>
       {children}

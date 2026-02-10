@@ -6,28 +6,32 @@ import { useFinanceurFormContext } from './financeur-form.context';
 
 type FinanceurActionsCellProps = {
   fiche: FicheWithRelations;
-  onDeleteFinanceur: (financeurTagId: number) => Promise<void>;
+  onDeleteFinanceur: (data: {
+    financeurTagId: number | undefined;
+    draftId: string | undefined;
+  }) => Promise<void>;
 };
 
 export const FinanceurActionsCell = ({
   fiche,
   onDeleteFinanceur,
 }: FinanceurActionsCellProps) => {
-  const { form, isReadonly, isTemporary } = useFinanceurFormContext();
+  const { form, isReadonly } = useFinanceurFormContext();
   const { getFinanceurName } = useFicheFinanceurs(fiche);
-  if (isTemporary) {
-    return null;
-  }
 
   return (
     <VisibleWhen condition={!isReadonly}>
-      <TableCell className="py-0 flex justify-center">
+      <TableCell className="py-0 flex justify-center ">
         <DeleteFinanceurButton
           financeurName={
             getFinanceurName(form.getValues().financeurTagId) ?? ''
           }
           onDelete={async () => {
-            await onDeleteFinanceur(form.getValues().financeurTagId ?? 0);
+            const { financeurTagId, draftId } = form.getValues();
+            await onDeleteFinanceur({
+              financeurTagId,
+              draftId,
+            });
           }}
           fiche={fiche}
         />

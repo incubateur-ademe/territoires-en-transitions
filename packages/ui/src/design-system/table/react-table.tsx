@@ -33,13 +33,15 @@ export const ReactTable = <T,>({
       const cells = row
         .getVisibleCells()
         .map((cell) => (
-          <Fragment key={cell.id}>
+          <Fragment key={`${row.id}_${cell.column.id}`}>
             {flexRender(cell.column.columnDef.cell, cell.getContext())}
           </Fragment>
         ));
       return (
         <TableRow key={row.id} className="text-sm">
-          {rowWrapper({ row, children: <>{cells}</> })}
+          <Fragment key={row.id}>
+            {rowWrapper({ row, children: <>{cells}</> })}
+          </Fragment>
         </TableRow>
       );
     }

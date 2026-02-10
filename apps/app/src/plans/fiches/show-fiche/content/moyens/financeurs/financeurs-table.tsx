@@ -5,26 +5,22 @@ import {
 } from '@tanstack/react-table';
 import { Financeur } from '@tet/domain/plans';
 import { Button, ReactTable, TableHeaderCell } from '@tet/ui';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useFicheContext } from '../../../context/fiche-context';
 import { FinanceursPicto } from '../empty-view/financeurs.picto';
 import { FinanceurActionsCell } from './financeur-actions.cell';
 import { FinanceurFormProvider } from './financeur-form.context';
 import { FinanceurMontantCell } from './financeur-montant.cell';
 import { FinanceurNameCell } from './financeur-name.cell';
-import {
-  FinanceurRowFormValues,
-  TemporaryFinanceurRowFormValues,
-} from './types';
+import { DraftFinanceurRowFormValues, FinanceurRowFormValues } from './types';
+import { useDraftFinanceurs } from './use-draft-financeurs';
 
 const columnHelper = createColumnHelper<Financeur | Partial<Financeur>>();
 
 export const FinanceursTable = () => {
   const { fiche, isReadonly, financeurs: financeursState } = useFicheContext();
-  const [columnVisibility, setColumnVisibility] = useState({});
-  const [temporaryFinanceurs, setTemporaryFinanceurs] = useState<
-    TemporaryFinanceurRowFormValues[]
-  >([]);
+  const { draftFinanceurs, updateDraftFinanceur, deleteDraftFinanceur } =
+    useDraftFinanceurs(fiche.id);
 
   const usedFinanceurIds = useMemo(
     () => financeursState.list.map((f) => f.financeurTagId),
@@ -32,36 +28,42 @@ export const FinanceursTable = () => {
   );
 
   const tableData = useMemo(() => {
-    return [...financeursState.list, ...temporaryFinanceurs];
-  }, [financeursState.list, temporaryFinanceurs]);
+    return [...financeursState.list, ...(draftFinanceurs ?? [])];
+  }, [financeursState.list, draftFinanceurs]);
 
   const handleUpsertFinanceur = async (data: FinanceurRowFormValues) => {
     await financeursState.upsert({
       financeurTagId: data.financeurTagId,
       montantTtc: data.montantTtc,
     });
-    if (data.tempId) {
-      setTemporaryFinanceurs((prev) =>
-        prev.filter((tf) => tf.tempId !== data.tempId)
-      );
-    }
   };
 
   const handleDeleteFinanceur = useCallback(
-    async (financeurTagId: number) => {
-      await financeursState.delete(financeurTagId);
+    async ({
+      financeurTagId,
+      draftId,
+    }: {
+      financeurTagId: number | undefined;
+      draftId: string | undefined;
+    }) => {
+      if (financeurTagId) {
+        await financeursState.delete(financeurTagId);
+      }
+      if (draftId) {
+        deleteDraftFinanceur(draftId);
+      }
     },
-    [financeursState]
+    [deleteDraftFinanceur, financeursState]
   );
 
-  const handleCreateFinanceur = () => {
-    const temporaryFinanceur: TemporaryFinanceurRowFormValues = {
+  const handleCreateDraftFinanceur = () => {
+    const draftFinanceur: DraftFinanceurRowFormValues = {
       ficheId: fiche.id,
       financeurTagId: undefined,
       montantTtc: undefined,
-      tempId: `temp-${Date.now()}`,
+      draftId: `draft-${Date.now()}`,
     };
-    setTemporaryFinanceurs((prev) => [...prev, temporaryFinanceur]);
+    updateDraftFinanceur(draftFinanceur);
   };
 
   const columns = useMemo(
@@ -92,7 +94,12 @@ export const FinanceursTable = () => {
         cell: () => (
           <FinanceurActionsCell
             fiche={fiche}
-            onDeleteFinanceur={handleDeleteFinanceur}
+            onDeleteFinanceur={(args) => {
+              return handleDeleteFinanceur({
+                draftId: args.draftId,
+                financeurTagId: args.financeurTagId,
+              });
+            }}
           />
         ),
       }),
@@ -104,12 +111,10 @@ export const FinanceursTable = () => {
     columns,
     data: tableData,
     getRowId: (row) => {
-      return 'tempId' in row ? (row.tempId as string) : `${row.financeurTagId}`;
+      return 'draftId' in row
+        ? (row.draftId as string)
+        : `${row.financeurTagId}`;
     },
-    state: {
-      columnVisibility,
-    },
-    onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
   });
 
@@ -128,28 +133,27 @@ export const FinanceursTable = () => {
           rowWrapper={({ row, children }) => {
             const financeur = row.original as
               | Financeur
-              | TemporaryFinanceurRowFormValues;
+              | DraftFinanceurRowFormValues;
 
             return (
               <FinanceurFormProvider
                 financeur={financeur}
-                fiche={fiche}
                 isReadonly={isReadonly}
                 onUpsertFinanceur={handleUpsertFinanceur}
-                onCancel={
-                  'tempId' in financeur
-                    ? () =>
-                        setTemporaryFinanceurs((prev) =>
-                          prev.filter((tf) => tf.tempId !== financeur.tempId)
-                        )
+                onCancel={() =>
+                  'draftId' in row.original
+                    ? deleteDraftFinanceur(row.original.draftId as string)
                     : undefined
                 }
+                onDraftFinanceurChange={updateDraftFinanceur}
+                onDeleteDraftFinanceur={deleteDraftFinanceur}
               >
                 {children}
               </FinanceurFormProvider>
             );
           }}
           emptyCard={{
+            className: 'h-48 min-h-0',
             picto: (props) => <FinanceursPicto {...props} />,
             title: 'Aucun financeur pour le moment',
             description:
@@ -158,20 +162,22 @@ export const FinanceursTable = () => {
               ? undefined
               : [
                   {
-                    onClick: handleCreateFinanceur,
+                    onClick: handleCreateDraftFinanceur,
                     children: 'Ajouter un financeur',
                     icon: 'add-line',
+                    variant: 'outlined',
                   },
                 ],
           }}
         />
       </div>
-      {!isReadonly && (
+      {!isReadonly && tableData.length !== 0 && (
         <Button
           className="m-4"
           icon="add-line"
           size="xs"
-          onClick={handleCreateFinanceur}
+          onClick={handleCreateDraftFinanceur}
+          variant="outlined"
         >
           Ajouter un financeur
         </Button>

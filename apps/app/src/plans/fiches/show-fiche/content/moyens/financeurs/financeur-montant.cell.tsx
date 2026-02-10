@@ -1,5 +1,6 @@
 import { getFormattedNumber } from '@/app/utils/formatUtils';
 import { Input, TableCell } from '@tet/ui';
+import { isNil } from 'es-toolkit';
 import { useMemo } from 'react';
 import { Controller } from 'react-hook-form';
 import { useFinanceurFormContext } from './financeur-form.context';
@@ -9,13 +10,13 @@ export const FinanceurMontantCell = () => {
   const { control, watch } = form;
 
   const currentMontantTtc = watch('montantTtc');
-
-  const displayValue = useMemo(() => {
-    if (currentMontantTtc !== null && currentMontantTtc !== undefined) {
-      return `${getFormattedNumber(currentMontantTtc)} €`;
-    }
-    return null;
-  }, [currentMontantTtc]);
+  const displayValue = useMemo(
+    () =>
+      isNil(currentMontantTtc)
+        ? null
+        : `${getFormattedNumber(currentMontantTtc)} €`,
+    [currentMontantTtc]
+  );
 
   if (isReadonly) {
     return (
@@ -52,9 +53,6 @@ export const FinanceurMontantCell = () => {
                 name={name}
                 ref={ref}
                 autoFocus
-                onBlur={() => {
-                  openState.setIsOpen(false);
-                }}
                 onKeyDown={(evt) => {
                   if (evt.key === 'Enter' || evt.key === 'Escape') {
                     openState.setIsOpen(false);
