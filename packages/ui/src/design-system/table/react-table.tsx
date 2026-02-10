@@ -81,7 +81,6 @@ export const ReactTable = <T,>({
         ) : isEmpty ? (
           <TableEmpty
             columnIds={table.getVisibleFlatColumns().map((col) => col.id)}
-            description="Aucune donnée disponible"
             {...emptyCard}
           />
         ) : (

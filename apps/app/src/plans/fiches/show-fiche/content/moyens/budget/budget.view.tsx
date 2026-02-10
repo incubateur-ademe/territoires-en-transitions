@@ -2,11 +2,8 @@ import { BudgetType } from '@tet/domain/plans';
 import { useOpenState } from '@tet/ui/hooks/use-open-state';
 import React, { useMemo, useState } from 'react';
 import { useFicheContext } from '../../../context/fiche-context';
-import { BudgetsState } from '../../../context/types';
 import { EditableSection } from '../components/EditableSection';
-import { EmptyTableView } from '../empty-view';
 import { BudgetTypeChangeModal } from './budget-type-change.modal';
-import { isPerYearEmpty, isSummaryEmpty } from './budget.rule';
 import { BudgetPerYearTable } from './per-year-table';
 import { BudgetSummaryTable } from './summary-table';
 
@@ -18,14 +15,6 @@ function getSectionLabel(type: BudgetType) {
   return `Budget ${labels[type]} : `;
 }
 
-const areBudgetsEmpty = (budgetState: BudgetsState, type: BudgetType) => {
-  return (
-    (budgetState[type].summary === null ||
-      isSummaryEmpty(budgetState[type].summary)) &&
-    isPerYearEmpty(budgetState[type].perYear)
-  );
-};
-
 export const BudgetView = ({ type }: { type: BudgetType }) => {
   const { budgets: budgetsState } = useFicheContext();
   const defaultView = useMemo(
@@ -34,7 +23,6 @@ export const BudgetView = ({ type }: { type: BudgetType }) => {
   );
 
   const [view, setView] = useState<'year' | 'summary'>('summary');
-  const [editMode, setEditMode] = useState(false);
 
   React.useEffect(() => {
     setView(defaultView);
@@ -50,7 +38,6 @@ export const BudgetView = ({ type }: { type: BudgetType }) => {
     const newView = view === 'year' ? 'summary' : 'year';
     await budgetsState.reset(type, view);
     setView(newView);
-    setEditMode(true);
     modalOpenState.setIsOpen(false);
   };
 
@@ -58,14 +45,6 @@ export const BudgetView = ({ type }: { type: BudgetType }) => {
     modalOpenState.setIsOpen(false);
   };
 
-  const showEmptyCard = useMemo(
-    () => areBudgetsEmpty(budgetsState, type) && !editMode,
-    [budgetsState, type, editMode]
-  );
-
-  if (showEmptyCard) {
-    return <EmptyTableView type={type} onClick={() => setEditMode(true)} />;
-  }
   return (
     <>
       <EditableSection

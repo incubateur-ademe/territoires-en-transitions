@@ -1,5 +1,4 @@
 import { FicheBudget, FicheBudgetCreate } from '@tet/domain/plans';
-import { isNil } from 'es-toolkit';
 import { Budget, BudgetPerYear } from './types';
 
 export const transformFicheBudgetsToBudgetPerYear = (
@@ -89,7 +88,5 @@ export const transformBudgetToFicheBudgetCreate = (
     annee: 'year' in budget ? budget.year : null,
     id: budget.etpBudgetId,
   };
-  return [htBudget, etpBudget].filter(
-    (budget) => !isNil(budget.budgetPrevisionnel) || !isNil(budget.budgetReel)
-  );
+  return [htBudget, etpBudget];
 };

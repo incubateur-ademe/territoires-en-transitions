@@ -7,7 +7,7 @@ import { Financeur } from '@tet/domain/plans';
 import { Button, ReactTable, TableHeaderCell } from '@tet/ui';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useFicheContext } from '../../../context/fiche-context';
-import { FinanceursPicto } from '../empty-view/financeurs.picto';
+import { emptyViewsProps } from '../empty-view';
 import { FinanceurActionsCell } from './financeur-actions.cell';
 import { FinanceurFormProvider } from './financeur-form.context';
 import { FinanceurMontantCell } from './financeur-montant.cell';
@@ -153,11 +153,7 @@ export const FinanceursTable = () => {
             );
           }}
           emptyCard={{
-            className: 'h-48 min-h-0',
-            picto: (props) => <FinanceursPicto {...props} />,
-            title: 'Aucun financeur pour le moment',
-            description:
-              'Ajoutez des financeurs pour documenter les subventions obtenues pour votre action.',
+            ...emptyViewsProps.financeurs,
             actions: isReadonly
               ? undefined
               : [
