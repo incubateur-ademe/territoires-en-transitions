@@ -1,34 +1,13 @@
 import { usePreuvesParType } from '@/app/referentiels/preuves/usePreuves';
 import { useQuery } from '@tanstack/react-query';
-import { DBClient, useSupabase } from '@tet/api';
+import { useSupabase } from '@tet/api';
 import {
   useCollectiviteId,
   useCurrentCollectivite,
 } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
-import { ReferentielId } from '@tet/domain/referentiels';
+import { useLabellisationParcours } from '../labellisations/useLabellisationParcours';
 import { useReferentielId } from '../referentiel-context';
-import { TAuditEnCours } from './types';
-
-// charge les données
-const fetch = async (
-  supabase: DBClient,
-  collectivite_id: number,
-  referentiel: ReferentielId
-): Promise<TAuditEnCours | null> => {
-  // lit le statut de l'audit en cours (s'il existe)
-  const { data, error } = await supabase
-    .from('audit_en_cours')
-    .select('*')
-    .match({ collectivite_id, referentiel })
-    .limit(1);
-
-  if (error || !data?.length) {
-    return null;
-  }
-
-  return { ...data[0], referentiel_id: data[0].referentiel } as TAuditEnCours;
-};
 
 /**
  * Statut d'audit du référentiel et de la collectivité courante.
@@ -36,15 +15,15 @@ const fetch = async (
 export const useAudit = () => {
   const collectivite_id = useCollectiviteId();
   const referentiel = useReferentielId();
-  const supabase = useSupabase();
-  return useQuery({
-    queryKey: ['audit', collectivite_id, referentiel],
 
-    queryFn: () =>
-      collectivite_id && referentiel
-        ? fetch(supabase, collectivite_id, referentiel)
-        : null,
+  const parcours = useLabellisationParcours({
+    collectiviteId: collectivite_id,
+    referentielId: referentiel,
   });
+  const auditEnCours =
+    parcours?.status === 'audit_en_cours' ? parcours.audit : null;
+
+  return { data: auditEnCours };
 };
 
 /** Indique si l'utilisateur courant est l'auditeur pour la
@@ -58,64 +37,20 @@ export const useIsAuditeur = () => {
 export const useAuditeurs = () => {
   const collectivite_id = useCollectiviteId();
   const referentiel = useReferentielId();
-  const supabase = useSupabase();
-  return useQuery({
-    queryKey: ['auditeurs', collectivite_id, referentiel],
-
-    queryFn: () =>
-      collectivite_id
-        ? fetchAuditeurs(supabase, collectivite_id, referentiel)
-        : null,
+  const parcours = useLabellisationParcours({
+    collectiviteId: collectivite_id,
+    referentielId: referentiel,
   });
-};
-
-/** Liste des auditeurs d'un audit donné */
-export const useAuditAuditeurs = (audit_id?: number) => {
-  const supabase = useSupabase();
-
-  return useQuery({
-    queryKey: ['audit_auditeurs', audit_id],
-
-    queryFn: async () => {
-      if (!audit_id) {
-        return [];
-      }
-      const { data } = await supabase
-        .from('audit_auditeur')
-        .select('auditeur')
-        .eq('audit_id', audit_id);
-      return data || [];
-    },
-  });
+  return { data: parcours?.auditeurs };
 };
 
 /** Indique si l'utilisateur courant est l'auditeur d'un audit donné */
 export const useIsAuditAuditeur = (audit_id?: number) => {
   const user = useUser();
-  const { data: auditeurs } = useAuditAuditeurs(audit_id);
-  if (!user || !auditeurs?.length) {
-    return false;
-  }
-  return auditeurs.findIndex(({ auditeur }) => auditeur === user.id) !== -1;
-};
 
-export type TAuditeur = { nom: string; prenom: string };
-const fetchAuditeurs = async (
-  supabase: DBClient,
-  collectivite_id: number,
-  referentiel: ReferentielId
-) => {
-  const { data, error } = await supabase
-    .from('auditeurs')
-    .select('noms')
-    .match({ collectivite_id, referentiel })
-    .limit(1);
-
-  if (error || !data?.length) {
-    return null;
-  }
-
-  return data[0].noms as TAuditeur[];
+  return user.collectivites.some((collectivite) =>
+    collectivite.audits.some((audit) => audit.auditId === audit_id)
+  );
 };
 
 /** Rapport(s) associé(s) à un audit */

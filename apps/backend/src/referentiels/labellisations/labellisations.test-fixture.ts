@@ -8,6 +8,7 @@ import { and, eq } from 'drizzle-orm';
 import {
   cleanupReferentielActionStatutsAndLabellisations,
   updateAllNeedReferentielStatutsToCompleteReferentiel,
+  updateAllNeedReferentielStatutsToMatchReferentielScoreCriteria,
 } from '../update-action-statut/referentiel-action-statut.test-fixture';
 import { labellisationDemandeTable } from './labellisation-demande.table';
 
@@ -109,6 +110,41 @@ export async function requestCotAudit(
     collectiviteId,
     sujet: 'cot',
     etoiles: null,
+  });
+}
+
+export async function requestLabellisationForCot(
+  trpcClient: TRPCClient<AppRouter>,
+  collectiviteId: number,
+  referentiel: ReferentielId
+): Promise<void> {
+  // Fill referentiel
+  await updateAllNeedReferentielStatutsToCompleteReferentiel(
+    trpcClient,
+    collectiviteId,
+    referentiel
+  );
+
+  // Match score criteria
+  await updateAllNeedReferentielStatutsToMatchReferentielScoreCriteria(
+    trpcClient,
+    collectiviteId,
+    referentiel
+  );
+
+  // No need to upload file for not cot
+  const parcours =
+    await trpcClient.referentiels.labellisations.getParcours.query({
+      collectiviteId: collectiviteId,
+      referentielId: referentiel,
+    });
+
+  // Request audit
+  await trpcClient.referentiels.labellisations.requestLabellisation.mutate({
+    referentiel,
+    collectiviteId,
+    sujet: 'labellisation',
+    etoiles: parcours.etoiles,
   });
 }
 

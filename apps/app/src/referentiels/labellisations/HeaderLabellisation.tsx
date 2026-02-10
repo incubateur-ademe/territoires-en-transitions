@@ -4,7 +4,7 @@
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 import { useState } from 'react';
-import { TAuditeur, useAuditeurs } from '../audits/useAudit';
+import { useAuditeurs } from '../audits/useAudit';
 import { ValiderAuditButton } from '../audits/valider-audit.button';
 import { DemandeAuditModal } from './DemandeAuditModal';
 import { DemandeLabellisationModal } from './DemandeLabellisationModal';
@@ -166,7 +166,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
 // dans le parcours de labellisation
 const getHeaderMessageContent = (
   parcoursLabellisation: TCycleLabellisation,
-  auditeurs: TAuditeur[] | null | undefined
+  auditeurs: { userId: string; nom: string }[] | null | undefined
 ) => {
   const { status, isAuditeur, peutCommencerAudit } = parcoursLabellisation;
 
@@ -174,9 +174,7 @@ const getHeaderMessageContent = (
     return 'Demande envoyée';
   }
 
-  const listeAuditeurs = auditeurs
-    ?.map(({ prenom, nom }) => `${prenom} ${nom}`)
-    .join(', ');
+  const listeAuditeurs = auditeurs?.map((auditeur) => auditeur.nom).join(', ');
 
   if (status === 'audit_en_cours' && !isAuditeur) {
     return 'Audit en cours' + (listeAuditeurs ? `, par ${listeAuditeurs}` : '');
