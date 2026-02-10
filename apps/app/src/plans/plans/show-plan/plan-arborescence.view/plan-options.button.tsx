@@ -22,7 +22,7 @@ export const PlanOptionsButton = () => {
   return (
     <ButtonMenu
       dataTest="plan-options.button"
-      size="xs"
+      size="sm"
       variant="outlined"
       icon="eye-line"
       withArrow
