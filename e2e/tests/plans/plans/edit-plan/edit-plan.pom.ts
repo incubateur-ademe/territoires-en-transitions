@@ -196,7 +196,7 @@ export class EditPlanPom {
   async expectToggleAllAxesButtonShowsOpen() {
     const button = this.getToggleAllAxesButton();
     await expect(button).toBeVisible();
-    await expect(button).toContainText('Fermer tous les axes/sous-axes');
+    await expect(button).toContainText('Fermer tous les axes');
   }
 
   /**
@@ -206,7 +206,7 @@ export class EditPlanPom {
   async expectToggleAllAxesButtonShowsClose() {
     const button = this.getToggleAllAxesButton();
     await expect(button).toBeVisible();
-    await expect(button).toContainText('Ouvrir tous les axes/sous-axes');
+    await expect(button).toContainText('Ouvrir tous les axes');
   }
 
   /**
