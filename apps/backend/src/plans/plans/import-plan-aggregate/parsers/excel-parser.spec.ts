@@ -52,6 +52,21 @@ describe('Excel Parser Tests', () => {
     });
   });
 
+  describe('Instance governance parsing', () => {
+    it('should extract instance governance value from Excel cell', async () => {
+      const fileContent = readExcelFile('one_fiche_plan.xlsx');
+      const result = await parsePlanExcel(fileContent);
+      expect(result.success).toBe(true);
+      if (result.success && result.data.length > 0) {
+        const firstRow = result.data[0];
+        // The parser extracts raw values - instance governance should be present
+        expect(firstRow.instanceGouvernance).toEqual(
+          ' Une instance de gouvernance, Une autre instance'
+        );
+      }
+    });
+  });
+
   describe('Invalid Excel Files', () => {
     it('should fail when columns are incorrect', async () => {
       const fileContent = readExcelFile('plan_column_order_issue.xlsx');

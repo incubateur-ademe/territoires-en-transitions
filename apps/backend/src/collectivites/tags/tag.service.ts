@@ -16,7 +16,7 @@ import {
   TagWithCollectiviteId,
 } from '@tet/domain/collectivites';
 import { and, AnyColumn, eq } from 'drizzle-orm';
-import { PgTable } from 'drizzle-orm/pg-core';
+import { IndexColumn, PgTable } from 'drizzle-orm/pg-core';
 
 const tagTypeTable: Record<
   TagType,
@@ -78,21 +78,21 @@ export class TagService {
     const table = tagTypeTable[tagType];
 
     try {
-      // Try to insert the tag directly with onConflictDoNothing
-      // This handles the race condition better than check-then-insert
       const [result] = await (tx ?? this.databaseService.db)
         .insert(table)
         .values({ nom: tag.nom, collectiviteId: tag.collectiviteId })
-        .onConflictDoNothing()
+        .onConflictDoNothing({
+          target: [
+            table.nom as IndexColumn,
+            table.collectiviteId as IndexColumn,
+          ],
+        })
         .returning();
-      
-      // If onConflictDoNothing() returns a result, the tag was successfully created
+
       if (result) {
         return success(result as TagWithCollectiviteId);
       }
 
-      // If result is undefined, it means there was a conflict (tag already exists or created by concurrent operation)
-      // Fetch the existing tag
       const [existingTag] = await (tx ?? this.databaseService.db)
         .select()
         .from(table)
@@ -103,15 +103,16 @@ export class TagService {
           )
         )
         .limit(1);
-      
+
       if (!existingTag) {
         return failure(
           `Tag "${tag.nom}" not found after conflict resolution. This may indicate a database constraint issue.`
         );
       }
-      
+
       return success(existingTag as TagWithCollectiviteId);
     } catch (error) {
+      console.error('error', error);
       return failure(
         error instanceof Error
           ? `Database error during tag creation for "${tag.nom}": ${error.message}`

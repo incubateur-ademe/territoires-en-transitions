@@ -39,6 +39,7 @@ describe('formatToPrintableFilters', () => {
       utilisateurPiloteIds: ['4'],
       utilisateurReferentIds: [],
       sort: 'modified_at',
+      instanceGouvernanceIds: [1],
     };
     const getFilterValuesLabels = (
       key: FilterKeys,
@@ -202,6 +203,12 @@ describe('formatToPrintableFilters', () => {
         key: 'anneesNotes',
         title: filterLabels['anneesNotes'],
         selectedFilters: ['2023'],
+        onlyShowCategory: false,
+      },
+      {
+        key: 'instanceGouvernanceIds',
+        title: filterLabels['instanceGouvernanceIds'],
+        selectedFilters: ['1'],
         onlyShowCategory: false,
       },
       {

@@ -86,10 +86,6 @@ export class InvalidBudget extends ImportError {
   }
 }
 
-// ============================================================================
-// ENTITY RESOLUTION ERRORS
-// ============================================================================
-
 export class EntityResolutionError extends ImportError {
   readonly _tag = 'EntityResolutionError' as const;
   constructor(
@@ -107,14 +103,6 @@ export class EntityResolutionError extends ImportError {
         msg ? ` : ${msg}` : ''
       }`
     );
-  }
-}
-
-export class TagCreationError extends ImportError {
-  readonly _tag = 'TagCreationError' as const;
-  constructor(public readonly tagName: string, public readonly cause: unknown) {
-    const msg = cause instanceof Error ? cause.message : String(cause);
-    super(`Erreur lors de la création du tag "${tagName}" : ${msg}`);
   }
 }
 
@@ -162,7 +150,6 @@ export type ImportErrors =
   | InvalidDateRange
   | InvalidBudget
   | EntityResolutionError
-  | TagCreationError
   | PlanCreationError
   | TransactionError
   | TransformationError;
@@ -189,7 +176,6 @@ export function isClientError(error: ImportErrors): boolean {
       return true;
 
     case 'EntityResolutionError':
-    case 'TagCreationError':
     case 'PlanCreationError':
     case 'TransactionError':
       return false;

@@ -70,8 +70,7 @@ const PRESENTATION: Section = {
     },
     {
       colLabel: 'Instances de gouvernance',
-      cellValue: ({ fiche }: PlanRow) =>
-        htmlToText(fiche?.instanceGouvernance || ''),
+      cellValue: ({ fiche }: PlanRow) => getNames(fiche?.instanceGouvernance),
     },
   ],
 };

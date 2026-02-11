@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { InstanceGouvernanceService } from '@tet/backend/collectivites/handle-instance-gouvernance/handle-instance-gouvernance.service';
 import { CollectiviteMembresService } from '@tet/backend/collectivites/membres/membres.service';
 import { TagService } from '@tet/backend/collectivites/tags/tag.service';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
   combineResults,
@@ -14,6 +16,7 @@ import {
   deduplicateById,
   deduplicatePersons,
 } from '../utils/deduplication.utils';
+import { createInstanceGouvernanceResolver } from './instance-gouvernance.resolver';
 import { createPersonneResolver } from './personne.resolver';
 import { createTagResolver } from './tag.resolver';
 
@@ -23,6 +26,7 @@ export type PersonOrTag = { userId?: string; tagId?: number };
  * Resolved entities with IDs ready for persistence
  */
 export interface ResolvedFicheEntities {
+  instanceGouvernance: Array<Tag>;
   titre: string;
   axisPath?: string[];
   pilotes: Array<PersonOrTag>;
@@ -37,7 +41,8 @@ export interface ResolvedFicheEntities {
 export class ResolveEntityService {
   constructor(
     private readonly memberService: CollectiviteMembresService,
-    private readonly tagService: TagService
+    private readonly tagService: TagService,
+    private readonly instanceGouvernanceService: InstanceGouvernanceService
   ) {}
 
   /**
@@ -46,12 +51,14 @@ export class ResolveEntityService {
    * @param collectiviteId - The collectivité ID
    * @param fiches - The fiches with string references
    * @param tx - The database transaction
+   * @param user - Authenticated user required for instance gouvernance tags
    * @returns Resolved entities with database IDs
    */
   async resolveFicheEntities(
     collectiviteId: number,
     fiches: ImportFicheInput[],
-    tx: Transaction
+    tx: Transaction,
+    user: AuthenticatedUser
   ): Promise<Result<ResolvedFicheEntities[], string>> {
     const { getOrCreatePersonne } = await createPersonneResolver(
       collectiviteId,
@@ -82,12 +89,27 @@ export class ResolveEntityService {
       TagEnum.Partenaire
     );
 
+    const instanceGouvernanceResolverResult =
+      await createInstanceGouvernanceResolver(
+        collectiviteId,
+        this.instanceGouvernanceService,
+        user
+      );
+
+    if (!instanceGouvernanceResolverResult.success) {
+      return instanceGouvernanceResolverResult;
+    }
+
+    const { getOrCreate: getOrCreateInstanceGouvernance } =
+      instanceGouvernanceResolverResult.data;
+
     const resolvers = {
       getOrCreatePersonne,
       getOrCreateStructure,
       getOrCreateService,
       getOrCreateFinanceur,
       getOrCreatePartenaire,
+      getOrCreateInstanceGouvernance,
     };
 
     const results = await Promise.all(
@@ -106,6 +128,10 @@ export class ResolveEntityService {
   private async resolveSingleFiche(
     fiche: ImportFicheInput,
     resolvers: {
+      getOrCreateInstanceGouvernance: (
+        name: string,
+        tx: Transaction
+      ) => Promise<Result<Tag, string>>;
       getOrCreatePersonne: (
         name: string,
         tx: Transaction
@@ -136,6 +162,7 @@ export class ResolveEntityService {
       servicesResult,
       financeursResult,
       partenairesResult,
+      instanceGouvernanceResult,
     ] = await Promise.all([
       this.resolvePersons(fiche.pilotes, resolvers.getOrCreatePersonne, tx),
       this.resolvePersons(fiche.referents, resolvers.getOrCreatePersonne, tx),
@@ -159,6 +186,11 @@ export class ResolveEntityService {
         resolvers.getOrCreatePartenaire,
         tx
       ),
+      this.resolveSimpleEntities(
+        fiche.instanceGouvernance,
+        resolvers.getOrCreateInstanceGouvernance,
+        tx
+      ),
     ]);
 
     if (!pilotesResult.success) {
@@ -169,6 +201,7 @@ export class ResolveEntityService {
     if (!servicesResult.success) return servicesResult;
     if (!financeursResult.success) return financeursResult;
     if (!partenairesResult.success) return partenairesResult;
+    if (!instanceGouvernanceResult.success) return instanceGouvernanceResult;
 
     return success({
       titre: fiche.titre,
@@ -179,6 +212,7 @@ export class ResolveEntityService {
       services: servicesResult.data,
       financeurs: financeursResult.data,
       partenaires: partenairesResult.data,
+      instanceGouvernance: instanceGouvernanceResult.data,
     });
   }
 

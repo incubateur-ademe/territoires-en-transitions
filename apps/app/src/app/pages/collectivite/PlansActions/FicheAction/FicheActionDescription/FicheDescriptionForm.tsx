@@ -6,13 +6,13 @@ import { getMaxLengthMessage } from '@/app/utils/formatUtils';
 import { FormSectionGrid } from '@tet/ui';
 
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
+import { InstanceGouvernanceDropdown } from '@/app/plans/fiches/shared/dropdowns/instance-gouvernance.dropdown';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { RichTextEditor, SelectFilter } from '@tet/ui';
 import { Controller, useForm } from 'react-hook-form';
 import { Fiche } from '../data/use-get-fiche';
-
 const DESCRIPTION_MAX_LENGTH = 20000;
-const INSTANCES_MAX_LENGTH = 10000;
 
 export type FicheUpdatePayload = Pick<
   Fiche,
@@ -37,13 +37,13 @@ export const FicheDescriptionForm = ({
   onSubmit: (fiche: FicheUpdatePayload) => void;
   formId: string;
 }) => {
+  const collectiviteId = useCollectiviteId();
   const { handleSubmit, register, control, setValue, watch } =
     useForm<FicheWithRelations>({
       defaultValues: fiche,
     });
 
-  const { thematiques, description, instanceGouvernance, sousThematiques } =
-    watch();
+  const { thematiques, description, sousThematiques } = watch();
 
   const {
     sousThematiqueOptions,
@@ -163,27 +163,16 @@ export const FicheDescriptionForm = ({
           />
         </Field>
 
-        <Field
-          title="Instances de gouvernance"
-          className="col-span-2"
-          state={
-            instanceGouvernance?.length === INSTANCES_MAX_LENGTH
-              ? 'info'
-              : 'default'
-          }
-          message={getMaxLengthMessage(
-            instanceGouvernance ?? '',
-            INSTANCES_MAX_LENGTH,
-            true
-          )}
-        >
+        <Field title="Instances de gouvernance" className="col-span-2">
           <Controller
             control={control}
             name="instanceGouvernance"
             render={({ field }) => (
-              <RichTextEditor
-                initialValue={fiche.instanceGouvernance || ''}
-                onChange={(value) => field.onChange(value)}
+              <InstanceGouvernanceDropdown
+                collectiviteId={collectiviteId}
+                values={field.value?.map((t) => t.id) ?? null}
+                onChange={(tags) => field.onChange(tags)}
+                ficheId={fiche.id}
               />
             )}
           />

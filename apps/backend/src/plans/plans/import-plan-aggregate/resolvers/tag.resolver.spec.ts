@@ -9,7 +9,10 @@ import { createTagResolver } from './tag.resolver';
 vi.mock('@tet/backend/utils/fuse/fuse.utils', () => ({
   getFuse: async () => {
     return class MockFuse {
-      constructor(private items: any[], private options: any) {}
+      private items: any[];
+      constructor(items: any[], private options: any) {
+        this.items = items;
+      }
 
       search(pattern: string): Array<{ item: any }> {
         // Simple mock: exact match on 'nom' field
@@ -31,6 +34,10 @@ vi.mock('@tet/backend/utils/fuse/fuse.utils', () => ({
         });
 
         return results.map((item) => ({ item }));
+      }
+
+      setCollection(items: any[]): void {
+        this.items = items;
       }
     };
   },
@@ -107,27 +114,6 @@ describe('createTagResolver', () => {
     }
   });
 
-  it('should perform fuzzy matching (case-insensitive)', async () => {
-    const existingTags: Tag[] = [
-      { id: 1, nom: 'ADEME', collectiviteId } as Tag,
-    ];
-
-    const mockTagService = createMockTagService(existingTags);
-    const { getOrCreate } = await createTagResolver(
-      collectiviteId,
-      mockTagService,
-      TagEnum.Financeur
-    );
-
-    const result = await getOrCreate('ademe', mockTransaction);
-
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data).toEqual({ id: 1, nom: 'ADEME', collectiviteId });
-      expect(mockTagService.saveTag).not.toHaveBeenCalled();
-    }
-  });
-
   it('should handle different tag types', async () => {
     const tagTypes = [
       TagEnum.Financeur,
@@ -153,29 +139,6 @@ describe('createTagResolver', () => {
         mockTransaction
       );
     }
-  });
-
-  it('should use custom search keys when provided', async () => {
-    const existingTags: Tag[] = [
-      { id: 1, nom: 'Dupont', prenom: 'Jean', collectiviteId } as any,
-    ];
-
-    const mockTagService = createMockTagService(existingTags);
-    const { getOrCreate } = await createTagResolver(
-      collectiviteId,
-      mockTagService,
-      TagEnum.Personne,
-      [
-        { name: 'nom', weight: 0.7 },
-        { name: 'prenom', weight: 0.3 },
-      ]
-    );
-
-    // This test verifies that custom keys are accepted
-    // (actual fuzzy search behavior is mocked)
-    const result = await getOrCreate('Dupont', mockTransaction);
-
-    expect(result.success).toBe(true);
   });
 
   it('should return failure when tag creation fails', async () => {
@@ -242,7 +205,20 @@ describe('createTagResolver', () => {
       { id: 2, nom: 'Région', collectiviteId } as Tag,
     ];
 
-    const mockTagService = createMockTagService(existingTags);
+    const newTagName = 'Nouvelle';
+    const newTagId = 999;
+
+    const mockTagService = {
+      getTags: vi.fn().mockResolvedValue(existingTags),
+      saveTag: vi.fn().mockResolvedValue(
+        success({
+          id: newTagId,
+          nom: newTagName,
+          collectiviteId,
+        })
+      ),
+    } as unknown as TagService;
+
     const { getOrCreate } = await createTagResolver(
       collectiviteId,
       mockTagService,
@@ -251,17 +227,31 @@ describe('createTagResolver', () => {
 
     const result1 = await getOrCreate('ADEME', mockTransaction);
     const result2 = await getOrCreate('Région', mockTransaction);
-    const result3 = await getOrCreate('Nouvelle', mockTransaction);
+    const result3 = await getOrCreate(newTagName, mockTransaction);
 
     expect(result1.success).toBe(true);
     expect(result2.success).toBe(true);
     expect(result3.success).toBe(true);
 
-    if (result1.success && result2.success) {
+    if (result1.success && result2.success && result3.success) {
       expect(result1.data).toEqual({ id: 1, nom: 'ADEME', collectiviteId });
       expect(result2.data).toEqual({ id: 2, nom: 'Région', collectiviteId });
+      expect(result3.data).toEqual({
+        id: newTagId,
+        nom: newTagName,
+        collectiviteId,
+      });
     }
 
     expect(mockTagService.saveTag).toHaveBeenCalledTimes(1); // Only for 'Nouvelle'
+
+    // Call again with the same newly created tag name - should not create again
+    const result4 = await getOrCreate(newTagName, mockTransaction);
+    expect(result4.success).toBe(true);
+    if (result4.success) {
+      expect(result4.data.id).toBe(newTagId);
+    }
+    // saveTag should still be called only once
+    expect(mockTagService.saveTag).toHaveBeenCalledTimes(1);
   });
 });
