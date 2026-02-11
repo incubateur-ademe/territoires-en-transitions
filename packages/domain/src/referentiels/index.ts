@@ -21,6 +21,8 @@ export * from './labellisations/parcours-labellisation-status.enum';
 export * from './labellisations/parcours-labellisation.schema';
 export * from './labellisations/request-labellisation/request-labellisation.rules';
 export * from './labellisations/request-labellisation/request-labellisation.rules-errors';
+export * from './labellisations/start-audit/start-audit.rules';
+export * from './labellisations/start-audit/start-audit.rules-errors';
 export * from './referentiel-definition.schema';
 export * from './referentiel-id.enum';
 export * from './referentiel-tag.schema';

@@ -32,7 +32,7 @@ test.describe('Start labellisation collectivité COT', () => {
     await page.goto('/');
   });
 
-  test("Possibilité de démarrer un audit pour l'auditeur, une fois que la demande de labellisation est soumise et l'auiteur attribué", async ({
+  test("Possibilité de démarrer un audit pour l'auditeur, une fois que la demande de labellisation est soumise et l'auditeur attribué", async ({
     labellisationPom,
     collectivites,
     page,

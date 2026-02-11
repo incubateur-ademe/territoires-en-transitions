@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { useTRPC } from '@tet/api';
+import { useTRPC, useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
+  canStartAudit,
   ParcoursLabellisation,
   ParcoursLabellisationStatus,
   ReferentielId,
@@ -9,7 +10,6 @@ import {
 import { useIsAuditeur } from '../audits/useAudit';
 import { useCarteIdentite } from '../personnalisations/PersoReferentielThematique/useCarteIdentite';
 import { useLabellisationParcours } from './useLabellisationParcours';
-import { usePeutCommencerAudit } from './usePeutCommencerAudit';
 
 // données du cycle de labellisation/audit actuel d'une collectivité
 export type TCycleLabellisation = {
@@ -32,6 +32,7 @@ export const useCycleLabellisation = (
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
   const isAuditeur = useIsAuditeur();
+  const user = useUser();
   const identite = useCarteIdentite(collectiviteId);
 
   // charge les données du parcours
@@ -44,10 +45,7 @@ export const useCycleLabellisation = (
   const status = parcours?.status || 'non_demandee';
 
   // vérifie si l'utilisateur courant peut commencer l'audit
-  const peutCommencerAudit = usePeutCommencerAudit({
-    collectiviteId,
-    referentielId,
-  });
+  const peutCommencerAudit = canStartAudit(parcours, user.id).canRequest;
 
   // états dérivés
   const isCOT = Boolean(identite?.is_cot);
