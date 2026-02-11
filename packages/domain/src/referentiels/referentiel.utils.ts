@@ -387,7 +387,8 @@ export function getActionStatutFromActionScore(
     actionScore?.actionsEnfant.some(
       (action) =>
         action.score.avancement && action.score.avancement !== 'non_renseigne'
-    );
+    ) ||
+    false;
 
   if (avancement === 'detaille') {
     actionStatut.avancementDetaille = [

@@ -13,12 +13,14 @@ import { StartAuditRouter } from './labellisations/start-audit/start-audit.route
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { SnapshotsRouter } from './snapshots/snapshots.router';
+import { UpdateActionCommentaireRouter } from './update-action-commentaire/update-action-commentaire.router';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
 @Injectable()
 export class ReferentielsRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly updateActionStatutRouter: UpdateActionStatutRouter,
+    private readonly updateActionCommentaireRouter: UpdateActionCommentaireRouter,
     private readonly listActionStatutRouter: ListActionsRouter,
     private readonly scoreSnapshotsRouter: SnapshotsRouter,
     private readonly getLabellisation: GetLabellisationRouter,
@@ -37,6 +39,7 @@ export class ReferentielsRouter {
   router = this.trpc.router({
     actions: this.trpc.mergeRouters(
       this.updateActionStatutRouter.router,
+      this.updateActionCommentaireRouter.router,
       this.listActionStatutRouter.router,
       this.assignPilotesRouter.router,
       this.assignServicesRouter.router,

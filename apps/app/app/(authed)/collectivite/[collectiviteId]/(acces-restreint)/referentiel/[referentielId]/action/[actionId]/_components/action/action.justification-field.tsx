@@ -24,12 +24,13 @@ export const ActionJustificationField = ({
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
   const { actionCommentaire, isLoading } = useActionCommentaire(actionId);
-  const { saveActionCommentaire } = useSaveActionCommentaire();
+  const { mutate: saveActionCommentaire } = useSaveActionCommentaire();
   const initialValue = actionCommentaire?.commentaire;
 
   return (
     <Field title={title} hint={hint} className={fieldClassName} key={actionId}>
       <RichTextEditor
+        dataTest={`action-${actionId}-commentaire-editor`}
         className="[&_.bn-block-content]:py-0 [&_.bn-inline-content]:text-sm [&_.bn-inline-content]:leading-[1.25rem]"
         initialValue={initialValue}
         disabled={
@@ -41,8 +42,8 @@ export const ActionJustificationField = ({
         placeholder="Détaillez l'état d'avancement"
         onChange={(newValue: string) => {
           saveActionCommentaire({
-            action_id: actionId,
-            collectivite_id: collectiviteId,
+            actionId,
+            collectiviteId,
             commentaire: newValue ?? '',
           });
         }}

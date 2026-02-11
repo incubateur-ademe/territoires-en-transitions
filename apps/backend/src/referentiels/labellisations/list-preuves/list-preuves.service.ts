@@ -103,7 +103,7 @@ export class ListPreuvesService {
           bibliothequeFichierTable,
           eq(preuveAuditTable.fichierId, bibliothequeFichierTable.id)
         )
-        .innerJoin(
+        .leftJoin(
           collectiviteBucketTable,
           eq(
             collectiviteBucketTable.collectiviteId,
@@ -209,7 +209,7 @@ export class ListPreuvesService {
           bibliothequeFichierTable,
           eq(preuveLabellisationTable.fichierId, bibliothequeFichierTable.id)
         )
-        .innerJoin(
+        .leftJoin(
           collectiviteBucketTable,
           eq(
             collectiviteBucketTable.collectiviteId,

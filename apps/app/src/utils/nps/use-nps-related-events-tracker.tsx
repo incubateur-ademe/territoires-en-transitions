@@ -35,7 +35,7 @@ const useGetMutationPatterns = () => {
       'update_indicateur_card',
     ],
     referentiels: [
-      'upsert_referentiel_action_commentaire',
+      trpc.referentiels.actions.updateCommentaire.mutationKey(),
       trpc.referentiels.actions.upsertPilotes.mutationKey(),
       trpc.referentiels.actions.upsertServices.mutationKey(),
       'upsert_referentiel_justification',
