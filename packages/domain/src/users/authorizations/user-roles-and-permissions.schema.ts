@@ -26,6 +26,7 @@ const collectiviteRolesAndPermissionsSchema = z.object({
   permissions: z.array(permissionOperationEnumSchema),
   collectiviteId: z.number(),
   collectiviteNom: z.string(),
+  collectiviteHasActiveCOT: z.boolean(),
   collectiviteAccesRestreint: z.boolean(),
 
   audits: z.array(auditRolesAndPermissionsSchema),

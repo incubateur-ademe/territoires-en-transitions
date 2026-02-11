@@ -79,7 +79,7 @@ test.describe('Request labellisation collectivité non COT', () => {
     // Button to update action statuts is not present
     await expect(labellisationPom.updateActionStatutsLink).toHaveCount(0);
 
-    await labellisationPom.setTestDocument();
+    await labellisationPom.setLabellisationRequestTestDocument();
 
     await expect(labellisationPom.requestFirstStarButton).toBeEnabled();
     await labellisationPom.requestFirstStarButton.click();

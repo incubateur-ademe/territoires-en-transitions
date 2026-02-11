@@ -13,7 +13,7 @@ test.describe('Update action statut', () => {
     await page.goto('/');
   });
 
-  test("Possible de mettre à jour le statut d'une action en tant qu'éditeur si on est pas en audit", async ({
+  test("Possible de mettre à jour le statut d'une sous-action en tant qu'éditeur si on est pas en audit", async ({
     referentielScoresPom,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     referentiels, // We have to keep this variable order to clean data
@@ -31,6 +31,27 @@ test.describe('Update action statut', () => {
     await referentielScoresPom.updateSousActionAvancement('1.1.1.1', 'fait');
     await referentielScoresPom.expectScoreRatio('cae', '1.1.1.1', 0.6, 0.6);
     await referentielScoresPom.expectScoreRatio('cae', '1.1.1', 0.6, 12);
+  });
+
+  test("Possible de mettre à jour le statut d'une tâche en tant qu'éditeur si on est pas en audit, doit mettre à jour le statut de la sous-action", async ({
+    referentielScoresPom,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    referentiels, // We have to keep this variable order to clean data
+  }) => {
+    await referentielScoresPom.goto('cae');
+    await referentielScoresPom.goToActionPage(
+      '1 - Planification',
+      '1.1 Stratégie globale',
+      '1.1.1 Définir la vision, les'
+    );
+
+    await referentielScoresPom.expectScoreRatio('cae', '1.1.1.1', 0, 0.6);
+    await referentielScoresPom.expectScoreRatio('cae', '1.1.1', 0, 12);
+
+    await referentielScoresPom.expandSousAction('1.1.1.1');
+    await referentielScoresPom.updateTacheAvancement('1.1.1.1.1', 'fait');
+    await referentielScoresPom.expectScoreRatio('cae', '1.1.1.1', 0.3, 0.6);
+    await referentielScoresPom.expectScoreRatio('cae', '1.1.1', 0.3, 12);
   });
 
   test("Impossible de mettre à jour le statut d'une action en tant que lecteur", async ({

@@ -53,7 +53,7 @@ type TLabellisationAndDemandeAndAudit = {
   conditionFichiers: ConditionFichiers;
 };
 
-type GetDemandeError =
+type GetDemandeOrAuditError =
   | typeof CommonErrorEnum.NOT_FOUND
   | typeof CommonErrorEnum.DATABASE_ERROR;
 @Injectable()
@@ -127,7 +127,7 @@ export class GetLabellisationService {
   async getDemande(
     demandeId: number,
     tx?: Transaction
-  ): Promise<Result<LabellisationDemande, GetDemandeError>> {
+  ): Promise<Result<LabellisationDemande, GetDemandeOrAuditError>> {
     try {
       const demande = await (tx ?? this.db)
         .select()
@@ -144,6 +144,36 @@ export class GetLabellisationService {
       return {
         success: true,
         data: demande[0],
+      };
+    } catch (error) {
+      this.logger.error(error);
+      return {
+        success: false,
+        error: 'DATABASE_ERROR',
+      };
+    }
+  }
+
+  async getAudit(
+    auditId: number,
+    tx?: Transaction
+  ): Promise<Result<LabellisationAudit, GetDemandeOrAuditError>> {
+    try {
+      const audit = await (tx ?? this.db)
+        .select()
+        .from(auditTable)
+        .where(eq(auditTable.id, auditId))
+        .limit(1);
+
+      if (!audit.length) {
+        return {
+          success: false,
+          error: 'NOT_FOUND',
+        };
+      }
+      return {
+        success: true,
+        data: audit[0],
       };
     } catch (error) {
       this.logger.error(error);

@@ -21,6 +21,7 @@ import { SuggestionMenu } from './SuggestionMenu';
 type RichTextEditorProps = {
   className?: string;
   id?: string;
+  dataTest?: string;
   initialValue?: string;
   placeholder?: string;
   disabled?: boolean;
@@ -70,6 +71,7 @@ export default function RichTextEditor({
   className,
   id,
   initialValue,
+  dataTest,
   placeholder,
   disabled = false,
   isLoading = false,
@@ -112,6 +114,7 @@ export default function RichTextEditor({
     // ajoute des attributs HTML sur les éléments de l'éditeur
     domAttributes: {
       editor: {
+        'data-test': dataTest ?? '',
         // force l'activation du correcteur orthographique du navigateur ?
         spellcheck: 'true',
         class: cn(

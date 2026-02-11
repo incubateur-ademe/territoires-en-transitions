@@ -1,69 +1,44 @@
 import { useIsAuditeur } from '@/app/referentiels/audits/useAudit';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { DBClient, useSupabase, useTRPC } from '@tet/api';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@tet/api';
 import {
   useCollectiviteId,
   useCurrentCollectivite,
 } from '@tet/api/collectivites';
 import {
-  StatutAvancement,
   canUpdateActionStatutWithoutPermissionCheck,
+  findActionById,
+  getActionStatutFromActionScore,
 } from '@tet/domain/referentiels';
 import { PermissionOperationEnum } from '@tet/domain/users';
-import { objectToCamel } from 'ts-case-convert';
 import { useLabellisationParcours } from '../../labellisations/useLabellisationParcours';
 import { useReferentielId } from '../../referentiel-context';
-import { useScore } from '../../use-snapshot';
+import { useScore, useSnapshot } from '../../use-snapshot';
 
 /**
  * Charge le statut d'une action
  */
 export const useActionStatut = (actionId: string) => {
   const collectiviteId = useCollectiviteId();
-  const supabase = useSupabase();
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['action_statut', collectiviteId],
-    queryFn: () =>
-      collectiviteId
-        ? fetchCollectiviteActionStatuts(supabase, collectiviteId)
-        : null,
+  const { data: snapshot, isFetching: isLoadingSnapshot } = useSnapshot({
+    actionId,
   });
 
-  const statut = data?.find((action) => action.actionId === actionId) || null;
+  const actionScore = snapshot?.scoresPayload.scores
+    ? findActionById(snapshot?.scoresPayload.scores, actionId)
+    : null;
 
-  const filled =
-    data?.find(
-      (action) =>
-        action.actionId.includes(actionId) &&
-        action.actionId.split(actionId)[1] !== '' &&
-        action.avancement !== 'non_renseigne'
-    ) !== undefined || null;
+  const actionStatutFromScore = actionScore
+    ? getActionStatutFromActionScore(collectiviteId, actionScore)
+    : null;
 
   return {
-    statut,
-    filled,
-    isLoading,
+    statut: actionStatutFromScore?.actionStatut,
+    filled: actionStatutFromScore?.filled,
+    isLoading: isLoadingSnapshot,
   };
 };
-
-async function fetchCollectiviteActionStatuts(
-  supabase: DBClient,
-  collectiviteId: number
-) {
-  const query = supabase
-    .from('action_statut')
-    .select()
-    .eq('collectivite_id', collectiviteId);
-
-  const { error, data } = await query;
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return objectToCamel(data);
-}
 
 /**
  * Met à jour le statut d'une action
@@ -97,34 +72,6 @@ export const useSaveActionStatut = () => {
     isLoading: isPending,
     saveActionStatut,
   };
-};
-
-export const useTasksStatus = (tasksIds: string[]) => {
-  const collectiviteId = useCollectiviteId();
-  const supabase = useSupabase();
-
-  const { data, isLoading } = useQuery({
-    queryKey: ['action_statut', collectiviteId],
-    queryFn: () =>
-      collectiviteId
-        ? fetchCollectiviteActionStatuts(supabase, collectiviteId)
-        : null,
-  });
-
-  let tasksStatus: {
-    [key: string]: { avancement: StatutAvancement; concerne: boolean };
-  } = {};
-
-  tasksIds.forEach((taskId) => {
-    const task = data?.find((action) => action.actionId === taskId);
-    if (task !== undefined)
-      tasksStatus = {
-        ...tasksStatus,
-        [taskId]: { avancement: task.avancement, concerne: task.concerne },
-      };
-  });
-
-  return { tasksStatus, isLoading };
 };
 
 /**

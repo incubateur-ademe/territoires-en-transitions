@@ -1,11 +1,19 @@
 import { actionStatutSchema } from '@tet/domain/referentiels';
 import * as z from 'zod/mini';
 
-export const simpleActionStatutSchema = z.pick(actionStatutSchema, {
-  concerne: true,
-  avancement: true,
-  avancementDetaille: true,
-});
+export const simpleActionStatutSchema = z.partial(
+  z.pick(actionStatutSchema, {
+    concerne: true,
+    avancement: true,
+    avancementDetaille: true,
+    modifiedBy: true,
+    modifiedAt: true,
+  }),
+  {
+    modifiedBy: true,
+    modifiedAt: true,
+  }
+);
 
 export type SimpleActionStatutType = z.infer<typeof simpleActionStatutSchema>;
 

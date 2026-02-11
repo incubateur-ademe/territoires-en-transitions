@@ -1,6 +1,7 @@
 import {
   addAuditeur,
   requestCotAudit,
+  requestLabellisationForCot,
   startAudit,
 } from '@tet/backend/referentiels/labellisations/labellisations.test-fixture';
 import {
@@ -36,10 +37,12 @@ class ReferentielsFixtureFactory extends FixtureFactory {
 
   async addAuditeur({
     user,
+    auditeurUserId,
     collectiviteId,
     referentielId,
   }: {
     user: UserFixture;
+    auditeurUserId?: string;
     collectiviteId: number;
     referentielId: ReferentielId;
   }) {
@@ -47,7 +50,7 @@ class ReferentielsFixtureFactory extends FixtureFactory {
     await addAuditeur({
       trpcClient,
       databaseService,
-      auditeurUserId: user.data.id,
+      auditeurUserId: auditeurUserId ?? user.data.id,
       collectiviteId,
       referentielId,
     });
@@ -60,6 +63,15 @@ class ReferentielsFixtureFactory extends FixtureFactory {
   ): Promise<void> {
     const trpcClient = user.getTrpcClient();
     await requestCotAudit(trpcClient, collectiviteId, referentiel);
+  }
+
+  async requestLabellisationForCot(
+    user: UserFixture,
+    collectiviteId: number,
+    referentiel: ReferentielId
+  ): Promise<void> {
+    const trpcClient = user.getTrpcClient();
+    await requestLabellisationForCot(trpcClient, collectiviteId, referentiel);
   }
 
   async startAudit(

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table';
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
+import { cotTable } from '@tet/backend/referentiels/labellisations/cot.table';
 import { utilisateurSupportTable } from '@tet/backend/users/authorizations/roles/utilisateur-support.table';
 import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles/utilisateur-verifie.table';
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
@@ -21,6 +22,7 @@ export type PlatformRolesRow = {
 export type CollectiviteRolesRow = {
   collectiviteId: number;
   collectiviteNom: string;
+  collectiviteHasActiveCOT: boolean;
   collectiviteAccesRestreint: boolean;
   role: CollectiviteRole;
 };
@@ -30,6 +32,7 @@ export type AuditRolesRow = {
   auditDateDebut: string | null;
   collectiviteId: number;
   collectiviteNom: string;
+  collectiviteHasActiveCOT: boolean;
   collectiviteAccesRestreint: boolean;
 };
 
@@ -74,6 +77,7 @@ export class GetUserRolesAndPermissionsRepository {
       .select({
         collectiviteId: utilisateurCollectiviteAccessTable.collectiviteId,
         collectiviteNom: collectiviteTable.nom,
+        collectiviteHasActiveCOT: sql<boolean>`coalesce(${cotTable.actif}, false)`,
         collectiviteAccesRestreint: sql<boolean>`coalesce(${collectiviteTable.accesRestreint}, false)`,
         role: utilisateurCollectiviteAccessTable.accessLevel,
       })
@@ -84,6 +88,10 @@ export class GetUserRolesAndPermissionsRepository {
           collectiviteTable.id,
           utilisateurCollectiviteAccessTable.collectiviteId
         )
+      )
+      .leftJoin(
+        cotTable,
+        and(eq(cotTable.collectiviteId, collectiviteTable.id))
       )
       .where(
         and(
@@ -106,6 +114,7 @@ export class GetUserRolesAndPermissionsRepository {
         auditId: auditTable.id,
         collectiviteId: auditTable.collectiviteId,
         collectiviteNom: collectiviteTable.nom,
+        collectiviteHasActiveCOT: sql<boolean>`coalesce(${cotTable.actif}, false)`,
         collectiviteAccesRestreint: sql<boolean>`coalesce(${collectiviteTable.accesRestreint}, false)`,
         auditDateDebut: auditTable.dateDebut,
       })
@@ -114,6 +123,10 @@ export class GetUserRolesAndPermissionsRepository {
       .innerJoin(
         collectiviteTable,
         eq(collectiviteTable.id, auditTable.collectiviteId)
+      )
+      .leftJoin(
+        cotTable,
+        and(eq(cotTable.collectiviteId, collectiviteTable.id))
       )
       .where(
         and(eq(auditeurTable.auditeur, userId), eq(auditTable.clos, false))

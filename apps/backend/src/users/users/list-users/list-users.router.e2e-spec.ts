@@ -40,6 +40,7 @@ const expectedYoulouDoudouUserInfoResponse: UserWithRolesAndPermissions = {
       collectiviteId: 1,
       collectiviteNom: 'Ambérieu-en-Bugey',
       collectiviteAccesRestreint: false,
+      collectiviteHasActiveCOT: false,
       role: CollectiviteRole.EDITION,
       permissions: permissionsByRole[CollectiviteRole.EDITION],
 
@@ -49,6 +50,7 @@ const expectedYoulouDoudouUserInfoResponse: UserWithRolesAndPermissions = {
       collectiviteId: 2,
       collectiviteNom: 'Arbent',
       collectiviteAccesRestreint: false,
+      collectiviteHasActiveCOT: false,
       role: CollectiviteRole.EDITION,
       permissions: permissionsByRole[CollectiviteRole.EDITION],
 
@@ -59,7 +61,7 @@ const expectedYoulouDoudouUserInfoResponse: UserWithRolesAndPermissions = {
       collectiviteId: 10,
       collectiviteNom: 'La Boisse',
       collectiviteAccesRestreint: false,
-
+      collectiviteHasActiveCOT: false,
       role: null,
       permissions: [],
 

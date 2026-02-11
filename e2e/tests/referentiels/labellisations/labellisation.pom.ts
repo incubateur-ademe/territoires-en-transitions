@@ -1,5 +1,6 @@
 import { expect, Locator, Page } from '@playwright/test';
 import { ReferentielId } from '@tet/domain/referentiels';
+import { UserFixture } from 'tests/users/users.fixture';
 
 const TEST_PDF_PATH =
   'apps/backend/src/collectivites/documents/samples/document_test.pdf';
@@ -19,7 +20,15 @@ export class LabellisationPom {
   readonly requestLabellisationAuditOnlySuccessMessage: Locator;
   readonly closeDemandeAuditModalButton: Locator;
   readonly demandeLabellisationEnCoursMessage: Locator;
-  readonly addDocsButton: Locator;
+  readonly auditEnCoursMessage: Locator;
+  readonly addLabellisationRequestDocsButton: Locator;
+  readonly startLabellisationAuditButton: Locator;
+  readonly suiviLabellisationAuditTab: Locator;
+  readonly validateAuditButton: Locator;
+  readonly validateAuditModalTitle: Locator;
+  readonly addAuditReportDocsButton: Locator;
+  readonly validateAuditModalButton: Locator;
+  readonly validateAuditSuccessMessage: Locator;
 
   constructor(readonly page: Page) {
     this.title = page.getByRole('heading', { name: 'Audit et labellisation' });
@@ -48,6 +57,12 @@ export class LabellisationPom {
     this.submitRequestLabellisationButton = page.getByRole('button', {
       name: 'Envoyer ma demande',
     });
+    this.startLabellisationAuditButton = page.getByRole('button', {
+      name: "Commencer l'audit",
+    });
+    this.suiviLabellisationAuditTab = page.getByRole('tab', {
+      name: "Suivi de l'audit",
+    });
     this.requestLabellisationAuditOnlySuccessMessage = page.getByText(
       'Votre demande d’audit a bien été envoyée.'
     );
@@ -58,11 +73,37 @@ export class LabellisationPom {
       '[data-test="close-Modal"]'
     );
     this.demandeLabellisationEnCoursMessage = page.getByText('Demande envoyée');
-    this.addDocsButton = page.locator('[data-test="AddDocsButton"]');
+    this.auditEnCoursMessage = page.getByText('Audit en cours, par');
+
+    this.addLabellisationRequestDocsButton = page.locator(
+      '[data-test="AddDocsButton"]'
+    );
+    this.validateAuditButton = page.getByRole('button', {
+      name: "Valider l'audit",
+    });
+    this.validateAuditModalTitle = page.getByRole('heading', {
+      name: "Valider l'audit",
+    });
+    this.addAuditReportDocsButton = page.locator(
+      '[data-test="AddRapportButton"]'
+    );
+    this.validateAuditModalButton = page.locator('[data-test="validate"]');
+    this.validateAuditSuccessMessage = page.getByText(
+      'Labellisation en cours - audité par'
+    );
   }
 
-  async setTestDocument() {
-    await this.addDocsButton.click();
+  async setLabellisationRequestTestDocument() {
+    await this.addLabellisationRequestDocsButton.click();
+    await this.setTestDocument();
+  }
+
+  async setValidateAuditReportTestDocument() {
+    await this.addAuditReportDocsButton.click();
+    await this.setTestDocument();
+  }
+
+  private async setTestDocument() {
     const [fileChooser] = await Promise.all([
       this.page.waitForEvent('filechooser'),
       this.page.getByText('Choisir un fichier').click(),
@@ -76,6 +117,20 @@ export class LabellisationPom {
     await expect(
       this.page.getByText('document_test.pdf (PDF, 12.36 Ko)')
     ).toBeVisible();
+  }
+
+  async checkAuditEnCoursWithAuditeur(auditeurUser: UserFixture) {
+    await expect(this.auditEnCoursMessage).toBeVisible();
+    await expect(this.auditEnCoursMessage).toContainText(
+      `${auditeurUser.data.prenom} ${auditeurUser.data.nom}`
+    );
+  }
+
+  async checkLabellisationEnCoursAuditedBy(auditeurUser: UserFixture) {
+    await expect(this.validateAuditSuccessMessage).toBeVisible();
+    await expect(this.validateAuditSuccessMessage).toContainText(
+      `${auditeurUser.data.prenom} ${auditeurUser.data.nom}`
+    );
   }
 
   async goto(referentielId: ReferentielId) {

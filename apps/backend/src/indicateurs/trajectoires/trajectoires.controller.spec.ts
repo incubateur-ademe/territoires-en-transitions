@@ -101,6 +101,7 @@ describe('Téléchargement de la trajectoire SNBC', () => {
         siren: '246700488',
         natureInsee: 'METRO',
         type: 'epci',
+        activeCOT: false,
       },
       donneesEntree: {
         sources: ['rare', 'aldo'],
@@ -298,6 +299,7 @@ describe('Téléchargement de la trajectoire SNBC', () => {
           siren: '246700488',
           natureInsee: 'METRO',
           type: 'epci',
+          activeCOT: false,
         },
         donneesEntree: null,
       };

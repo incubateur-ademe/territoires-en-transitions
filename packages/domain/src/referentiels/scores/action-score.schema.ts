@@ -112,6 +112,16 @@ export const actionScoreSchema = z
       .describe(
         'Vrai si un statut a été renseigné pour cette action (sous-action ou tache)'
       ),
+    statutModifiedBy: z
+      .string()
+      .optional()
+      .nullable()
+      .describe("L'utilisateur qui a modifié le statut"),
+    statutModifiedAt: z.iso
+      .datetime()
+      .optional()
+      .nullable()
+      .describe('La date de modification du statut'),
     avancement: z
       .enum(statutAvancementEnumValues)
       .optional()

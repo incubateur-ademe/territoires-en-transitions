@@ -1,7 +1,6 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { DBClient, TablesInsert, useSupabase } from '@tet/api';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { DBClient, useSupabase, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { useUser } from '@tet/api/users';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 
 /**
@@ -70,28 +69,17 @@ const read = async (
 };
 
 export const useSaveActionCommentaire = () => {
-  const supabase = useSupabase();
-  const user = useUser();
+  const collectiviteId = useCollectiviteId();
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
 
-  const {
-    isPending,
-    mutate: saveActionCommentaire,
-    data: lastReply,
-  } = useMutation({
-    mutationKey: ['upsert_referentiel_action_commentaire'],
-    mutationFn: async (commentaire: ActionCommentaireWrite) =>
-      supabase
-        .from('action_commentaire')
-        .upsert([{ ...commentaire, modified_by: user.id }], {
-          onConflict: 'collectivite_id,action_id',
-        }),
-  });
-
-  return {
-    isPending,
-    saveActionCommentaire,
-    lastReply,
-  };
+  return useMutation(
+    trpc.referentiels.actions.updateCommentaire.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ['action_commentaire', collectiviteId],
+        });
+      },
+    })
+  );
 };
-
-type ActionCommentaireWrite = TablesInsert<'action_commentaire'>;
