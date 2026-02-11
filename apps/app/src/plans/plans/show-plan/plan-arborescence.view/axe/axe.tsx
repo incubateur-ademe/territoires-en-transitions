@@ -70,7 +70,7 @@ const AxeContent = () => {
           <AxeSousAxes />
           {!hasFiches && !hasSousAxes && (
             <span className="px-6 pt-3 pb-0 text-sm italic text-grey-6">
-              Cet axe ne contient aucune action ni sous-axe
+              Cet axe ne contient aucune action ni axe
             </span>
           )}
         </div>
