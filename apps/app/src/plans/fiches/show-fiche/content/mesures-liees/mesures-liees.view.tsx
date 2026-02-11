@@ -1,55 +1,31 @@
-import { SharedFicheLinkedResourcesAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
 import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
+import ActionLinkedCard from '@/app/referentiels/actions/action.linked-card';
 import ActionPicto from '@/app/ui/pictogrammes/ActionPicto';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { Button, EmptyCard } from '@tet/ui';
+import { Button } from '@tet/ui';
 import { useState } from 'react';
-import { MesuresLieesListe } from './mesures-liees.list';
+import { ContentLayout } from '../content-layout';
 import { MesuresLieesModal } from './mesures-liees.modal';
 
 export const MesuresLieesView = () => {
-  const { fiche, isReadonly, isUpdating } = useFicheContext();
+  const { fiche, isReadonly, mesures: mesuresState } = useFicheContext();
   const currentCollectiviteId = useCollectiviteId();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const { update } = useFicheContext();
-
-  const { mesures } = fiche;
-
-  const isEmpty = !mesures || mesures.length === 0;
 
   return (
     <>
-      {/* Titre et bouton d'édition */}
-      <div className="flex justify-between">
-        <h5 className="text-primary-8 mb-0">Mesures des référentiels liées</h5>
-        {!isReadonly && !isLoading && (
-          <Button
-            icon={!isUpdating ? 'link' : undefined}
-            size="xs"
-            variant="outlined"
-            disabled={isUpdating}
-            onClick={() => setIsModalOpen(true)}
-          >
-            {isUpdating && <SpinnerLoader className="!h-4" />}
-            Lier une mesure des référentiels
-          </Button>
-        )}
-      </div>
-      <SharedFicheLinkedResourcesAlert
-        fiche={fiche}
-        currentCollectiviteId={currentCollectiviteId}
-        sharedDataTitle="Mesures des référentiels liées"
-        sharedDataDescription="Les mesures des référentiels liées affichées correspondent à celles de cette collectivité."
-      />
-      {/* Liste des mesures des référentiels liées */}
-      {isEmpty ? (
-        <EmptyCard
+      <ContentLayout.Root>
+        <ContentLayout.SharedAlert
+          fiche={fiche}
+          collectiviteId={currentCollectiviteId}
+          title="Mesures des référentiels liées"
+          description="Les mesures des référentiels liées affichées correspondent à celles de cette collectivité."
+        />
+        <ContentLayout.Empty
+          isReadonly={isReadonly}
           picto={(props) => <ActionPicto {...props} />}
           title="Aucune mesure des référentiels n'est liée !"
           subTitle="Ici vous pouvez lier votre action avec une mesure des référentiels Climat Air Energie et Economie Circulaire de l’ADEME"
-          isReadonly={isReadonly}
           actions={[
             {
               children: 'Lier une mesure des référentiels',
@@ -57,26 +33,26 @@ export const MesuresLieesView = () => {
               onClick: () => setIsModalOpen(true),
             },
           ]}
-          size="xs"
         />
-      ) : (
-        <MesuresLieesListe
-          isReadonly={isReadonly}
-          externalCollectiviteId={fiche.collectiviteId}
-          mesuresIds={mesures?.map((mesure) => mesure.id)}
-          className="md:!grid-cols-2 lg:!grid-cols-1 xl:!grid-cols-2"
-          onLoad={setIsLoading}
-          onUnlink={(mesureId) =>
-            update({
-              ficheId: fiche.id,
-              ficheFields: {
-                mesures: mesures.filter((mesure) => mesure.id !== mesureId),
-              },
-            })
-          }
-        />
-      )}
 
+        <ContentLayout.Content
+          data={mesuresState.list ?? []}
+          actions={
+            <Button icon="link" size="sm" onClick={() => setIsModalOpen(true)}>
+              Lier une mesure des référentiels
+            </Button>
+          }
+        >
+          {(mesure) => (
+            <ActionLinkedCard
+              key={mesure.actionId}
+              isReadonly={isReadonly}
+              action={mesure}
+              onUnlink={() => mesuresState.unlinkMesure(mesure.actionId)}
+            />
+          )}
+        </ContentLayout.Content>
+      </ContentLayout.Root>
       {isModalOpen && (
         <MesuresLieesModal
           openState={{ isOpen: isModalOpen, setIsOpen: setIsModalOpen }}

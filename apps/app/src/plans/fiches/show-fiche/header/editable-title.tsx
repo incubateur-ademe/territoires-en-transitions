@@ -26,6 +26,7 @@ export const EditableTitle = ({
       renderOnEdit={({ openState }) => (
         <div className="w-full" data-test={dataTest}>
           <Input
+            displaySize="md"
             value={editedTitle ?? ''}
             autoFocus
             onChange={(evt) => setEditedTitle(evt.target.value)}
@@ -41,7 +42,7 @@ export const EditableTitle = ({
             }}
             type="text"
             containerClassname="w-full"
-            className={cn('text-2xl', inputClassName)}
+            className={inputClassName}
           />
         </div>
       )}

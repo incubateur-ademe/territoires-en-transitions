@@ -172,7 +172,7 @@ export const buttonGroupTheme = {
     active: {
       normal: {
         text: 'text-white hover:text-white',
-        background: 'bg-primary-7 hover:!bg-primary-8',
+        background: 'bg-primary-9 hover:!bg-primary-10',
         border: '',
         icon: '',
       },

@@ -11,7 +11,7 @@ import {
 import { DeleteBudgetButton } from './delete-budget.button';
 
 const Placeholder = ({ label }: { label: string }) => (
-  <span className="italic text-grey-6">{label}</span>
+  <span className="font-normal italic text-grey-6">{label}</span>
 );
 
 export const BudgetPerYearYearCell = ({

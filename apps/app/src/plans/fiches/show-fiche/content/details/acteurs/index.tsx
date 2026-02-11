@@ -12,7 +12,6 @@ import { JSX, useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import FranceIcon from '../../../../../plans/components/france-icon.svg';
 import { useFicheContext } from '../../../context/fiche-context';
-import { forceOpenSelect } from '../../../utils';
 import { InlineEditableItem } from '../editable-item';
 import { acteursFormSchema, ActeursFormValues } from './acteurs-schema';
 import { getFieldLabel } from './labels';
@@ -79,9 +78,9 @@ export const Acteurs = (): JSX.Element => {
             label={getFieldLabel('services', field.value)}
             value={formatList(field.value, (s) => s.nom)}
             isReadonly={isReadonly}
-            renderOnEdit={() => (
+            renderOnEdit={({ openState }) => (
               <ServicesPilotesDropdown
-                openState={forceOpenSelect}
+                openState={openState}
                 placeholder="Sélectionnez ou créez un pilote"
                 collectiviteIds={allFicheCollectiviteIds}
                 values={field.value?.map((s) => s.id) ?? []}
@@ -103,9 +102,9 @@ export const Acteurs = (): JSX.Element => {
             label={getFieldLabel('structures', field.value)}
             value={formatList(field.value, (s) => s.nom)}
             isReadonly={isReadonly}
-            renderOnEdit={() => (
+            renderOnEdit={({ openState }) => (
               <StructuresDropdown
-                openState={forceOpenSelect}
+                openState={openState}
                 values={field.value?.map((s) => s.id) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
                 onChange={({ structures }) => {
@@ -127,9 +126,9 @@ export const Acteurs = (): JSX.Element => {
             label={getFieldLabel('referents', field.value)}
             value={formatList(field.value, (r) => r.nom || 'Sans nom')}
             isReadonly={isReadonly}
-            renderOnEdit={() => (
+            renderOnEdit={({ openState }) => (
               <PersonnesDropdown
-                openState={forceOpenSelect}
+                openState={openState}
                 values={field.value?.map((r) => getPersonneStringId(r)) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
                 placeholder="Sélectionnez ou créez un·e élu·e référent·e"
@@ -184,9 +183,9 @@ export const Acteurs = (): JSX.Element => {
             label={getFieldLabel('partenaires', field.value)}
             value={formatList(field.value, (p) => p.nom)}
             isReadonly={isReadonly}
-            renderOnEdit={() => (
+            renderOnEdit={({ openState }) => (
               <PartenairesDropdown
-                openState={forceOpenSelect}
+                openState={openState}
                 values={field.value?.map((p) => p.id) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
                 onChange={({ partenaires }) => {
@@ -208,9 +207,9 @@ export const Acteurs = (): JSX.Element => {
             label={getFieldLabel('cibles', field.value)}
             value={field.value?.join(', ')}
             isReadonly={isReadonly}
-            renderOnEdit={() => (
+            renderOnEdit={({ openState }) => (
               <CiblesDropdown
-                openState={forceOpenSelect}
+                openState={openState}
                 values={field.value ?? []}
                 onChange={({ cibles }) => {
                   field.onChange(cibles);
@@ -234,9 +233,9 @@ export const Acteurs = (): JSX.Element => {
               label={getFieldLabel('participationCitoyenne', field.value)}
               value={selectedOption?.label}
               isReadonly={isReadonly}
-              renderOnEdit={() => (
+              renderOnEdit={({ openState }) => (
                 <Select
-                  openState={forceOpenSelect}
+                  openState={openState}
                   options={ficheActionParticipationOptions}
                   values={field.value ?? undefined}
                   onChange={(participation) => {

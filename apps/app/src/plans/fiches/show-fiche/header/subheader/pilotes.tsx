@@ -7,7 +7,6 @@ import { PersonneTagOrUser } from '@tet/domain/collectivites';
 import { SANS_PILOTE_LABEL } from '@tet/domain/plans';
 import { cn, InlineEditWrapper } from '@tet/ui';
 import PiloteIcon from '../../../../plans/components/pilote-icon.svg';
-import { forceOpenSelect } from '../../utils';
 
 type PilotesTriggerProps = {
   personnes: PersonneTagOrUser[];
@@ -17,14 +16,14 @@ export const Pilotes = ({ personnes }: PilotesTriggerProps) => {
   const { fiche, isReadonly, isUpdating, update } = useFicheContext();
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 hover:bg-grey-3 rounded px-2 py-1 -my-1 -mx-2">
       Pilotes:
       <InlineEditWrapper
         disabled={isReadonly}
-        renderOnEdit={() => (
+        renderOnEdit={({ openState }) => (
           <div className="max-w-[280px]">
             <PersonnesDropdown
-              openState={forceOpenSelect}
+              openState={openState}
               dataTest="personnes-pilotes"
               collectiviteIds={getFicheAllEditorCollectiviteIds(fiche)}
               values={fiche.pilotes?.map((p) => getPersonneStringId(p))}

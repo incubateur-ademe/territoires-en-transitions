@@ -1,5 +1,3 @@
-import { noop } from 'es-toolkit';
-
 /**
  * Renvoi un tableau d'options pour les années.
  * Par défaut de 1990 à l'année en cours.
@@ -7,7 +5,7 @@ import { noop } from 'es-toolkit';
  */
 export const getYearsOptions = (additionalYearsFromCurrentYear?: number) => {
   const currentYear = new Date().getFullYear();
-  const startingYear = 1990;
+  const startingYear = 2000;
   const finalYear =
     additionalYearsFromCurrentYear && additionalYearsFromCurrentYear > 0
       ? currentYear + additionalYearsFromCurrentYear
@@ -22,13 +20,4 @@ export const getYearsOptions = (additionalYearsFromCurrentYear?: number) => {
   return { yearsOptions, currentYear };
 };
 
-/**
- * Renvoie "Sans titre" si le string est undefined ou null
- * @deprecated
- */
 export const generateTitle = (title?: string | null) => title || 'Sans titre';
-
-export const forceOpenSelect = {
-  isOpen: true,
-  setIsOpen: noop,
-};

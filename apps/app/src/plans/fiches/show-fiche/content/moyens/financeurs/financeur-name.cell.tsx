@@ -46,7 +46,7 @@ export const FinanceurNameCell = ({
 
   return (
     <TableCell
-      className="font-bold text-primary-9 text-sm"
+      className="text-primary-9 text-sm"
       canEdit={!isReadonly}
       edit={{
         onClose: onSubmit,
@@ -75,7 +75,9 @@ export const FinanceurNameCell = ({
       }}
     >
       {displayValue ?? (
-        <span className="italic text-grey-6">Sélectionner un financeur</span>
+        <span className="font-normal italic text-grey-6">
+          Sélectionner un financeur
+        </span>
       )}
     </TableCell>
   );

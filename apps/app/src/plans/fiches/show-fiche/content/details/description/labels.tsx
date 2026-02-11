@@ -24,8 +24,8 @@ const FIELD_LABELS: Record<
     plural: 'Sous-thématiques',
   },
   libreTags: {
-    singular: 'Tag de suivi',
-    plural: 'Tags de suivi',
+    singular: 'Tag personnalisé',
+    plural: 'Tags personnalisés',
   },
 };
 

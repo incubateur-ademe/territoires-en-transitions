@@ -50,7 +50,10 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
       id: 'indicateurs',
     },
     {
-      label: `Sous-actions (${countSousActions})`,
+      label:
+        Array.isArray(countSousActions) && countSousActions.length > 0
+          ? `Sous-actions (${countSousActions.length})`
+          : 'Sous-actions',
       isVisible: true,
       id: 'sous-actions',
     },

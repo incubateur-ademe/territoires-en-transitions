@@ -43,7 +43,7 @@ export const DocumentsView = () => {
             <VisibleWhen condition={!isReadonly}>
               <Button
                 icon={!isLoading ? 'file-download-line' : undefined}
-                size="xs"
+                size="sm"
                 variant="outlined"
                 disabled={isLoading}
                 onClick={() => setIsModalOpen(true)}

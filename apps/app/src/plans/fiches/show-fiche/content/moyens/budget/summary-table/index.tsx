@@ -23,10 +23,31 @@ type BudgetSummaryRow = {
 } & Pick<Budget, SummaryField>;
 const columnHelper = createColumnHelper<BudgetSummaryRow>();
 
+const CellValue = ({
+  value,
+  item,
+}: {
+  value: string | null;
+  item: { unit: string };
+}) => {
+  if (!value)
+    return (
+      <span className="font-normal italic text-grey-6">Ajouter une valeur</span>
+    );
+  if (item.unit === 'ETP') return <ETPValue value={value} />;
+  return (
+    <span className="text-primary-9 font-medium">
+      {value} {item.unit}
+    </span>
+  );
+};
+
 const ETPValue = ({ value }: { value: string | null }) => {
   return (
-    <div className="flex items-center justify-center text-xs text-primary-9 font-bold py-2 px-2 bg-white border-primary-9 border rounded-md w-6 h-5">
-      {value ?? '-'}
+    <div className="flex">
+      <span className="inline-flex items-center justify-center min-h-5 text-xs text-primary-9 font-bold px-2 bg-white border border-primary-9 rounded-md">
+        {value ?? 'Ajouter une valeur'}
+      </span>
     </div>
   );
 };
@@ -101,7 +122,7 @@ export const BudgetSummaryTable = ({ type }: BudgetSummaryTableProps) => {
 
             return (
               <TableCell
-                className="text-primary-9 font-medium border-b border-gray-5 bg-grey-2"
+                className="border-b border-gray-5 bg-grey-2"
                 canEdit={!isReadonly}
                 edit={{
                   onClose: handleSubmitCallback,
@@ -114,7 +135,7 @@ export const BudgetSummaryTable = ({ type }: BudgetSummaryTableProps) => {
                           type="number"
                           decimalScale={item.unit === 'ETP' ? 2 : 0}
                           icon={item.icon ? { text: item.icon } : undefined}
-                          placeholder={`Ajouter ${item.label.toLowerCase()}`}
+                          placeholder="Ajouter une valeur"
                           value={value?.toString() ?? ''}
                           onValueChange={({ floatValue, value: raw }) =>
                             onChange(raw === '' ? null : floatValue ?? null)
@@ -128,13 +149,7 @@ export const BudgetSummaryTable = ({ type }: BudgetSummaryTableProps) => {
                   ),
                 }}
               >
-                {item.unit === 'ETP' ? (
-                  <ETPValue value={value} />
-                ) : (
-                  <span>
-                    {value ?? '-'} {item.unit}
-                  </span>
-                )}
+                <CellValue value={value} item={item} />
               </TableCell>
             );
           },

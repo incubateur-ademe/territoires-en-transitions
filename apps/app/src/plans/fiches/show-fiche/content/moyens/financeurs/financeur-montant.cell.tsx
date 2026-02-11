@@ -30,7 +30,7 @@ export const FinanceurMontantCell = () => {
 
   return (
     <TableCell
-      className="font-bold text-primary-9 text-sm"
+      className="text-primary-9 text-sm"
       canEdit={!isReadonly}
       edit={{
         onClose: onSubmit,
@@ -40,6 +40,7 @@ export const FinanceurMontantCell = () => {
             name="montantTtc"
             render={({ field: { onChange, value, name, ref } }) => (
               <Input
+                className="font-bold"
                 type="number"
                 decimalScale={0}
                 icon={{ text: '€' }}
@@ -65,7 +66,9 @@ export const FinanceurMontantCell = () => {
       }}
     >
       {displayValue ?? (
-        <span className="italic text-grey-6">Ajouter un montant</span>
+        <span className="font-normal italic text-grey-6">
+          Ajouter un montant
+        </span>
       )}
     </TableCell>
   );

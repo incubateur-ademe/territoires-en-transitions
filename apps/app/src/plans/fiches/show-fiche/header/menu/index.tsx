@@ -30,7 +30,7 @@ export const Menu = () => {
     {
       id: 'export',
       icon: 'download-line',
-      label: "Télécharger l'action",
+      label: "Télécharger l'action (PDF)",
     },
     {
       id: 'activityLog',

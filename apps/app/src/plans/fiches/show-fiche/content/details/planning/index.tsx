@@ -15,7 +15,6 @@ import { format } from 'date-fns';
 import { useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useFicheContext } from '../../../context/fiche-context';
-import { forceOpenSelect } from '../../../utils';
 import { InlineEditableItem } from '../editable-item';
 import { planningFormSchema, PlanningFormValues } from './planning-schema';
 
@@ -107,7 +106,7 @@ export const Planning = () => {
         </div>
         <div className="flex flex-col">
           <div className="text-primary-10 text-base">
-            Date de début et de fin prévisionnelle
+            Date de début et de fin prévisionnelle :
           </div>
           <div className="flex items-center gap-2">
             <Controller
@@ -180,7 +179,6 @@ export const Planning = () => {
                             e.target.value ? new Date(e.target.value) : null
                           );
                         }}
-                        onBlur={() => openState.setIsOpen?.(false)}
                         onKeyDown={(evt) => {
                           if (evt.key === 'Enter' || evt.key === 'Escape') {
                             openState.setIsOpen(false);
@@ -231,9 +229,9 @@ export const Planning = () => {
             label="Temps de mise en œuvre"
             value={field.value?.nom ?? null}
             isReadonly={isReadonly}
-            renderOnEdit={() => (
+            renderOnEdit={({ openState }) => (
               <MiseEnOeuvreDropdown
-                openState={forceOpenSelect}
+                openState={openState}
                 values={field.value ?? null}
                 onChange={(tempsDeMiseEnOeuvre) => {
                   field.onChange(tempsDeMiseEnOeuvre);
@@ -284,7 +282,7 @@ export const Planning = () => {
                 }}
                 buttonClassName="border-0 border-b"
                 displayOptionsWithoutFloater
-                openState={forceOpenSelect}
+                openState={openState}
               />
             )}
           />

@@ -2,10 +2,9 @@ import EffetsAttendusDropdown from '@/app/ui/dropdownLists/ficheAction/EffetsAtt
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import { useGetThematiqueAndSousThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
 import { cn, RichTextEditor, SelectMultiple } from '@tet/ui';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useFicheContext } from '../../../context/fiche-context';
-import { forceOpenSelect } from '../../../utils';
 import { InlineEditableItem } from '../editable-item';
 import { DescriptionFormValues } from './description-schema';
 import { getFieldLabel } from './labels';
@@ -70,6 +69,14 @@ export const Description = () => {
     return () => subscription.unsubscribe();
   }, [watch, update, fiche.id, getValues]);
 
+  // RichTextEditor behaves strangely when controlled hence
+  // only the initial value is used on first mount to keep the
+  // component uncontrolled
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const initialDescription = useMemo(() => fiche.description ?? '', []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const initialObjectifs = useMemo(() => fiche.objectifs ?? '', []);
+
   return (
     <>
       <div className="flex flex-col">
@@ -80,30 +87,24 @@ export const Description = () => {
             size: 'sm',
             color: 'primary',
           }}
-          initialValue={fiche.description ?? ''}
+          initialValue={initialDescription}
           onChange={(html) => setValue('description', html)}
         />
       </div>
-      <Controller
-        name="objectifs"
-        control={control}
-        render={({ field }) => (
-          <div className="flex flex-col gap-1">
-            <MainTitle size="normal">
-              {`${getFieldLabel('objectifs', fiche.objectifs)} : `}
-            </MainTitle>
-            <RichTextEditor
-              unstyled
-              contentStyle={{
-                size: 'sm',
-                color: 'primary',
-              }}
-              initialValue={fiche.description ?? ''}
-              onChange={field.onChange}
-            />
-          </div>
-        )}
-      />
+      <div className="flex flex-col gap-1">
+        <MainTitle size="normal">
+          {`${getFieldLabel('objectifs', fiche.objectifs)} : `}
+        </MainTitle>
+        <RichTextEditor
+          unstyled
+          contentStyle={{
+            size: 'sm',
+            color: 'primary',
+          }}
+          initialValue={initialObjectifs}
+          onChange={(html) => setValue('objectifs', html)}
+        />
+      </div>
       <div className="grid grid-cols-2 gap-4 mt-4">
         <Controller
           name="effetsAttendus"
@@ -119,10 +120,10 @@ export const Description = () => {
                   : undefined
               }
               isReadonly={isReadonly}
-              renderOnEdit={() => (
+              renderOnEdit={({ openState }) => (
                 <div className="w-full max-w-[400px]">
                   <EffetsAttendusDropdown
-                    openState={forceOpenSelect}
+                    openState={openState}
                     values={field.value ?? undefined}
                     onChange={({ effets }) => {
                       field.onChange(effets);
@@ -147,9 +148,9 @@ export const Description = () => {
                   .join(', ') ?? undefined
               }
               isReadonly={isReadonly}
-              renderOnEdit={() => (
+              renderOnEdit={({ openState }) => (
                 <SelectMultiple
-                  openState={forceOpenSelect}
+                  openState={openState}
                   options={thematiqueOptions}
                   values={field.value?.map((thematique) => thematique.id)}
                   onChange={({ values }) => {
@@ -178,13 +179,13 @@ export const Description = () => {
                   .join(', ') ?? undefined
               }
               isReadonly={isReadonly}
-              renderOnEdit={() => (
+              renderOnEdit={({ openState }) => (
                 <SelectMultiple
                   options={sousThematiqueOptions}
                   values={field.value?.map(
                     (sousThematique) => sousThematique.id
                   )}
-                  openState={forceOpenSelect}
+                  openState={openState}
                   onChange={({ values }) => {
                     field.onChange(
                       sousThematiqueListe.filter((sousThematique) =>
@@ -209,9 +210,9 @@ export const Description = () => {
                 selectedLibreTags?.map((tag) => tag.nom).join(', ') ?? undefined
               }
               isReadonly={isReadonly}
-              renderOnEdit={() => (
+              renderOnEdit={({ openState }) => (
                 <TagsSuiviPersoDropdown
-                  openState={forceOpenSelect}
+                  openState={openState}
                   values={(field.value ?? []).map((tag) => tag.id)}
                   onChange={({ libresTag }) => {
                     field.onChange(libresTag);

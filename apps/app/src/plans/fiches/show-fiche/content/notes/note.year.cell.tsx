@@ -5,7 +5,7 @@ import { useNoteForm } from './note-form.context';
 
 export const NoteYearCell = () => {
   const { form, submitNote, isReadonly } = useNoteForm();
-  const { yearsOptions } = getYearsOptions();
+  const { yearsOptions } = getYearsOptions(20);
 
   const value = form.watch('year');
 
