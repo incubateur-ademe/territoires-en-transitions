@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
 import { action } from 'storybook/actions';
+import { StoryWrapper } from '../../storybook/story.wrapper';
 import { BadgeFilters, FilterCategory } from './index';
 
 // Define typed category keys for better type safety
 type TaskFilterKeys = 'status' | 'priority' | 'category' | 'assignee';
-type ProjectFilterKeys = 'phase' | 'team' | 'budget';
 
 const meta: Meta<typeof BadgeFilters> = {
   component: BadgeFilters,
@@ -42,67 +42,12 @@ const sampleFilterCategories: FilterCategory<TaskFilterKeys>[] = [
     title: 'Catégorie',
     selectedFilters: ['Développement', 'Design', 'Marketing'],
   },
-];
-
-const singleCategoryFilters: FilterCategory<TaskFilterKeys>[] = [
-  {
-    key: 'status',
-    title: 'Statut',
-    selectedFilters: ['En cours', 'Terminé'],
-  },
-];
-
-const manyFilters: FilterCategory<TaskFilterKeys>[] = [
-  {
-    key: 'status',
-    title: 'Statut',
-    selectedFilters: [
-      'En cours',
-      'Terminé',
-      'En attente',
-      'Annulé',
-      'En révision',
-    ],
-  },
-  {
-    key: 'priority',
-    title: 'Priorité',
-    selectedFilters: ['Haute', 'Moyenne', 'Basse', 'Urgente'],
-  },
-  {
-    key: 'category',
-    title: 'Catégorie',
-    selectedFilters: [
-      'Développement',
-      'Design',
-      'Marketing',
-      'Finance',
-      'RH',
-      'IT',
-    ],
-  },
   {
     key: 'assignee',
-    title: 'Assigné à',
-    selectedFilters: ['Jean Dupont', 'Marie Martin', 'Pierre Durand'],
-  },
-];
-
-const projectFilters: FilterCategory<ProjectFilterKeys>[] = [
-  {
-    key: 'phase',
-    title: 'Phase',
-    selectedFilters: ['Planification', 'Développement'],
-  },
-  {
-    key: 'team',
-    title: 'Équipe',
-    selectedFilters: ['Frontend', 'Backend'],
-  },
-  {
-    key: 'budget',
-    title: 'Budget',
-    selectedFilters: ['< 10k€', '10k€ - 50k€'],
+    title: 'Sans pilote',
+    selectedFilters: [],
+    onlyShowCategory: true,
+    readonly: true,
   },
 ];
 
@@ -117,16 +62,21 @@ const InteractiveFilterBadges = () => {
     valueToDelete: string
   ) => {
     setFilterCategories((prev) =>
-      prev.map((category) =>
-        category.key === categoryKey
-          ? {
-              ...category,
-              selectedFilters: category.selectedFilters.filter(
-                (f) => f !== valueToDelete
-              ),
-            }
-          : category
-      )
+      prev
+        .map((category) =>
+          category.key === categoryKey
+            ? {
+                ...category,
+                selectedFilters: category.selectedFilters.filter(
+                  (f) => f !== valueToDelete
+                ),
+              }
+            : category
+        )
+        .filter(
+          (category) =>
+            category.onlyShowCategory || category.selectedFilters.length > 0
+        )
     );
     action('onDeleteFilterValue')(categoryKey, valueToDelete);
   };
@@ -146,73 +96,39 @@ const InteractiveFilterBadges = () => {
   };
 
   const handleClearAllFilters = () => {
-    setFilterCategories([]);
+    const filteredCategories = filterCategories.filter(
+      (category) => category.readonly
+    );
+    setFilterCategories(filteredCategories);
     action('onClearAllFilters')();
   };
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h3 className="text-lg font-semibold mb-2">
-          Interactive FilterBadges (Typed)
-        </h3>
-        <p className="text-sm text-gray-600 mb-4">
-          Try clicking on individual filter values or category close buttons to
-          see the component in action. This example uses typed category keys for
-          better type safety.
-        </p>
-      </div>
-      <BadgeFilters<TaskFilterKeys>
-        filterCategories={filterCategories}
-        onDeleteFilterValue={({ categoryKey, valueToDelete }) =>
-          handleDeleteFilterValue(categoryKey as TaskFilterKeys, valueToDelete)
-        }
-        onDeleteFilterCategory={handleDeleteFilterCategory}
-        onClearAllFilters={handleClearAllFilters}
-      />
-      {filterCategories.length === 0 && (
-        <p className="text-sm text-gray-500 italic">
-          All filters have been cleared. Refresh the page to see the filters
-          again.
-        </p>
-      )}
-    </div>
+    <StoryWrapper
+      title="Interactive FilterBadges (Typed)"
+      description="Try clicking on individual filter values or category close buttons to see the component in action. This example uses typed category keys for better type safety."
+    >
+      <>
+        <BadgeFilters<TaskFilterKeys>
+          filterCategories={filterCategories}
+          onDeleteFilterValue={({ categoryKey, valueToDelete }) =>
+            handleDeleteFilterValue(
+              categoryKey as TaskFilterKeys,
+              valueToDelete
+            )
+          }
+          onDeleteFilterCategory={handleDeleteFilterCategory}
+          onClearAllFilters={handleClearAllFilters}
+        />
+        {filterCategories.length === 0 && (
+          <p className="text-sm text-gray-500 italic">
+            All filters have been cleared. Refresh the page to see the filters
+            again.
+          </p>
+        )}
+      </>
+    </StoryWrapper>
   );
-};
-
-export const SingleCategory: Story = {
-  args: {
-    filterCategories: singleCategoryFilters,
-    onDeleteFilterValue: action('onDeleteFilterValue'),
-    onDeleteFilterCategory: action('onDeleteFilterCategory'),
-    onClearAllFilters: action('onClearAllFilters'),
-  },
-};
-
-export const ManyFilters: Story = {
-  args: {
-    filterCategories: manyFilters,
-    onDeleteFilterValue: action('onDeleteFilterValue'),
-    onDeleteFilterCategory: action('onDeleteFilterCategory'),
-    onClearAllFilters: action('onClearAllFilters'),
-  },
-};
-
-export const ProjectFilters: Story = {
-  args: {
-    filterCategories: projectFilters,
-    onDeleteFilterValue: action('onDeleteFilterValue'),
-    onDeleteFilterCategory: action('onDeleteFilterCategory'),
-    onClearAllFilters: action('onClearAllFilters'),
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Example with different typed category keys (ProjectFilterKeys) showing how the component adapts to different use cases.',
-      },
-    },
-  },
 };
 
 export const Interactive: Story = {
@@ -227,85 +143,196 @@ export const Interactive: Story = {
   },
 };
 
-export const WithoutCategoryDelete: Story = {
-  args: {
-    filterCategories: sampleFilterCategories,
-    onDeleteFilterValue: action('onDeleteFilterValue'),
-    onClearAllFilters: action('onClearAllFilters'),
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Example showing the component when onDeleteFilterCategory is not provided. Category delete buttons will not be shown, but individual filter values can still be removed.',
-      },
-    },
-  },
-};
+export const NonInteractiveExamples: Story = {
+  render: () => (
+    <div className="flex flex-col gap-8">
+      <StoryWrapper
+        title="One Category"
+        description="A single category with one filter value. Only the filter close button is shown."
+      >
+        <BadgeFilters<TaskFilterKeys>
+          filterCategories={[
+            {
+              key: 'priority',
+              title: 'Priority',
+              selectedFilters: ['High'],
+            },
+          ]}
+          onDeleteFilterValue={action('onDeleteFilterValue')}
+          onDeleteFilterCategory={action('onDeleteFilterCategory')}
+          onClearAllFilters={action('onClearAllFilters')}
+        />
+      </StoryWrapper>
 
-export const WithoutClearAll: Story = {
-  args: {
-    filterCategories: sampleFilterCategories,
-    onDeleteFilterValue: action('onDeleteFilterValue'),
-    onDeleteFilterCategory: action('onDeleteFilterCategory'),
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Example showing the component when onClearAllFilters is not provided. The "Clear all filters" button will not be shown.',
-      },
-    },
-  },
-};
+      <StoryWrapper
+        title="Multiple Categories"
+        description="Multiple categories with filter values."
+      >
+        <BadgeFilters<TaskFilterKeys>
+          filterCategories={[
+            {
+              key: 'priority',
+              title: 'Priority',
+              selectedFilters: ['High', 'Low'],
+            },
+            {
+              key: 'status',
+              title: 'Status',
+              selectedFilters: ['En cours', 'En attente'],
+            },
+          ]}
+          onDeleteFilterValue={action('onDeleteFilterValue')}
+          onDeleteFilterCategory={action('onDeleteFilterCategory')}
+          onClearAllFilters={action('onClearAllFilters')}
+        />
+      </StoryWrapper>
 
-export const MinimalProps: Story = {
-  args: {
-    filterCategories: singleCategoryFilters,
-    onDeleteFilterValue: action('onDeleteFilterValue'),
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Example with only the required props (filterCategories and onDeleteFilterValue). No category delete buttons or clear all button will be shown.',
-      },
-    },
-  },
-};
+      <StoryWrapper
+        title="Only Categories Without Value"
+        description="Categories are shown as single category filter, but none have any filter values."
+      >
+        <BadgeFilters
+          filterCategories={[
+            {
+              key: 'noStatus',
+              title: 'Sans statut',
+              selectedFilters: [],
+              onlyShowCategory: true,
+            },
+            {
+              key: 'noPriority',
+              title: 'Sans priorité',
+              selectedFilters: [],
+              onlyShowCategory: true,
+            },
+          ]}
+          onDeleteFilterValue={action('onDeleteFilterValue')}
+          onDeleteFilterCategory={action('onDeleteFilterCategory')}
+          onClearAllFilters={action('onClearAllFilters')}
+        />
+      </StoryWrapper>
 
-export const MixedCategoryDisplay: Story = {
-  args: {
-    filterCategories: [
-      {
-        key: 'status',
-        title: 'Statut',
-        selectedFilters: ['En cours', 'Terminé', 'En attente'],
-        onlyShowCategory: false, // Shows individual filter values
-      },
-      {
-        key: 'noPilote',
-        title: 'Sans pilote',
-        selectedFilters: [], // Boolean filter - no individual values to show
-        onlyShowCategory: true, // Only shows the category title
-      },
-      {
-        key: 'priority',
-        title: 'Priorité',
-        selectedFilters: ['Haute', 'Moyenne'],
-        // onlyShowCategory not set - defaults to false, shows individual values
-      },
-    ],
-    onDeleteFilterValue: action('onDeleteFilterValue'),
-    onDeleteFilterCategory: action('onDeleteFilterCategory'),
-    onClearAllFilters: action('onClearAllFilters'),
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Example showing mixed category display behavior. The "Statut" and "Priorité" filters show individual selected values as removable chips, while the "Sans pilote" filter only shows the category title (useful for boolean filters).',
-      },
-    },
-  },
+      <StoryWrapper
+        title="Without category delete"
+        description="No close button on categories"
+      >
+        <BadgeFilters<TaskFilterKeys>
+          filterCategories={[
+            {
+              key: 'priority',
+              title: 'Priority',
+              selectedFilters: ['High', 'Low'],
+            },
+            {
+              key: 'status',
+              title: 'Status',
+              selectedFilters: ['En cours', 'En attente'],
+            },
+          ]}
+          onDeleteFilterValue={action('onDeleteFilterValue')}
+          onClearAllFilters={action('onClearAllFilters')}
+        />
+      </StoryWrapper>
+
+      <StoryWrapper
+        title="Without Clear All"
+        description="The 'Clear all filters' button will not be shown because onClearAllFilters is not provided."
+      >
+        <BadgeFilters<TaskFilterKeys>
+          filterCategories={[
+            {
+              key: 'priority',
+              title: 'Priority',
+              selectedFilters: ['High'],
+            },
+            {
+              key: 'status',
+              title: 'Status',
+              selectedFilters: ['En cours', 'En attente'],
+            },
+          ]}
+          onDeleteFilterValue={action('onDeleteFilterValue')}
+          onDeleteFilterCategory={action('onDeleteFilterCategory')}
+        />
+      </StoryWrapper>
+
+      <StoryWrapper
+        title="Some only categories, some with values"
+        description="Some categories are readonly (badges/close cannot be deleted), some are editable."
+      >
+        <BadgeFilters<TaskFilterKeys>
+          filterCategories={[
+            {
+              key: 'priority',
+              title: 'Sans priorité',
+              selectedFilters: [],
+              onlyShowCategory: true,
+            },
+            {
+              key: 'status',
+              title: 'Statut',
+              selectedFilters: ['En cours'],
+            },
+          ]}
+          onDeleteFilterValue={action('onDeleteFilterValue')}
+          onDeleteFilterCategory={action('onDeleteFilterCategory')}
+          onClearAllFilters={action('onClearAllFilters')}
+        />
+      </StoryWrapper>
+
+      <StoryWrapper
+        title="Some Readonly, Some Not"
+        description="Some categories are readonly (badges/close cannot be deleted), some are editable."
+      >
+        <BadgeFilters<TaskFilterKeys>
+          filterCategories={[
+            {
+              key: 'priority',
+              title: 'Priority',
+              selectedFilters: ['High', 'Low'],
+              readonly: true,
+            },
+            {
+              key: 'status',
+              title: 'Status',
+              selectedFilters: ['En cours'],
+            },
+          ]}
+          onDeleteFilterValue={action('onDeleteFilterValue')}
+          onDeleteFilterCategory={action('onDeleteFilterCategory')}
+          onClearAllFilters={action('onClearAllFilters')}
+        />
+      </StoryWrapper>
+
+      <StoryWrapper
+        title="Readonly"
+        description="All categories and badges are set to readonly. Nothing can be removed."
+      >
+        <BadgeFilters<TaskFilterKeys>
+          filterCategories={[
+            {
+              key: 'priority',
+              title: 'Priority',
+              selectedFilters: ['High', 'Low'],
+              readonly: true,
+            },
+            {
+              key: 'status',
+              title: 'Status',
+              selectedFilters: ['En cours', 'En attente'],
+              readonly: true,
+            },
+            {
+              key: 'assignee',
+              title: 'Sans pilote',
+              selectedFilters: [],
+              onlyShowCategory: true,
+              readonly: true,
+            },
+          ]}
+          onDeleteFilterValue={action('onDeleteFilterValue')}
+        />
+      </StoryWrapper>
+    </div>
+  ),
 };
