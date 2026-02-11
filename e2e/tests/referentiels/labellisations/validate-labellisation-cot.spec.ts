@@ -41,7 +41,6 @@ test.describe('Validate labellisation collectivité COT', () => {
   test('Possibilité de valider un audit une fois démarré en déposant un rapport', async ({
     labellisationPom,
     collectivites,
-    page,
   }) => {
     const auditeurUser = collectivites.getCollectivite().getUser(1);
     await labellisationPom.goto(referentiel);

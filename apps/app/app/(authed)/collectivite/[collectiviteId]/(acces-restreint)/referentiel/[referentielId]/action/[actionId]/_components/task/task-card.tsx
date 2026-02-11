@@ -1,6 +1,7 @@
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { getIdentifiantFromActionId } from '@tet/domain/referentiels';
 import { Divider } from '@tet/ui';
 import { useState } from 'react';
 import { ActionJustificationField } from '../action/action.justification-field';
@@ -27,7 +28,10 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
   const shouldDisplayProgressBar = concerne === true && isDetailled;
 
   return (
-    <div className="flex flex-col gap-2 bg-grey-1 border border-grey-3 rounded-lg p-4">
+    <div
+      data-test={`Tache-${getIdentifiantFromActionId(task.id)}`}
+      className="flex flex-col gap-2 bg-grey-1 border border-grey-3 rounded-lg p-4"
+    >
       {/* En-tête */}
       <SubactionCardHeader
         subAction={task}

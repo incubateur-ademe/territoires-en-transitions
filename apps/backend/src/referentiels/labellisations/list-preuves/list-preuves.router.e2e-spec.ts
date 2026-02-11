@@ -75,6 +75,7 @@ describe('List Preuves Router', () => {
         withDemande: true,
         dateDebut: null,
       });
+      expect(demande).toBeDefined();
 
       const editeurCaller = router.createCaller({ user: editeurUser });
       const trpcClient = createTRPCClientFromCaller(editeurCaller);
@@ -92,7 +93,7 @@ describe('List Preuves Router', () => {
       const preuves =
         await visiteurCaller.referentiels.labellisations.listPreuvesLabellisation(
           {
-            demandeId: demande!.id,
+            demandeId: demande?.id ?? 0,
           }
         );
 

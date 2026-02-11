@@ -3,9 +3,14 @@ import {
   StatutAvancement,
   StatutAvancementEnum,
 } from './actions/action-statut-avancement.enum.schema';
-import { ActionTypeIncludingExemple } from './actions/action-type.enum';
+import { ActionStatut } from './actions/action-statut.schema';
+import {
+  ActionTypeEnum,
+  ActionTypeIncludingExemple,
+} from './actions/action-type.enum';
 import { ReferentielId, referentielIdEnumSchema } from './referentiel-id.enum';
 import { ActionScoreFinal } from './scores/action-score.schema';
+import { TreeOfActionsIncludingScore } from './scores/score-snapshot-action-scores-payload.schema';
 
 export class ReferentielException extends Error {
   constructor(message: string) {
@@ -352,4 +357,57 @@ export function isSousMesure(
     return identifiantPartsCount === 3;
   }
   return identifiantPartsCount === 4;
+}
+
+export function getActionStatutFromActionScore(
+  collectiviteId: number,
+  actionScore: TreeOfActionsIncludingScore
+): { actionStatut: ActionStatut; filled: boolean } | null {
+  if (
+    actionScore.actionType !== ActionTypeEnum.SOUS_ACTION &&
+    actionScore.actionType !== ActionTypeEnum.TACHE
+  ) {
+    return null;
+  }
+
+  const { avancement } = actionScore.score;
+
+  const actionStatut: ActionStatut = {
+    collectiviteId: collectiviteId,
+    actionId: actionScore.actionId,
+    avancement: avancement || 'non_renseigne',
+    avancementDetaille: null,
+    concerne: actionScore.score.concerne,
+    modifiedBy: actionScore.score.statutModifiedBy || null,
+    modifiedAt: actionScore.score.statutModifiedAt || '',
+  };
+  const filled =
+    (actionScore?.score.avancement &&
+      actionScore?.score.avancement !== 'non_renseigne') ||
+    actionScore?.actionsEnfant.some(
+      (action) =>
+        action.score.avancement && action.score.avancement !== 'non_renseigne'
+    );
+
+  if (avancement === 'detaille') {
+    actionStatut.avancementDetaille = [
+      actionScore.score.faitTachesAvancement &&
+      actionScore.score.totalTachesCount
+        ? actionScore.score.faitTachesAvancement /
+          actionScore.score.totalTachesCount
+        : 0,
+      actionScore.score.programmeTachesAvancement &&
+      actionScore.score.totalTachesCount
+        ? actionScore.score.programmeTachesAvancement /
+          actionScore.score.totalTachesCount
+        : 0,
+      actionScore.score.pasFaitTachesAvancement &&
+      actionScore.score.totalTachesCount
+        ? actionScore.score.pasFaitTachesAvancement /
+          actionScore.score.totalTachesCount
+        : 0,
+    ];
+  }
+
+  return { actionStatut, filled: filled };
 }

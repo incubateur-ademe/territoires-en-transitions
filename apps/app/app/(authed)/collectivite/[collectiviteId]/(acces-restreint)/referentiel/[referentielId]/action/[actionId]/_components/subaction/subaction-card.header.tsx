@@ -35,10 +35,14 @@ export const SubactionCardHeader = ({
           {!hideStatus && (
             <div className="mt-auto w-full flex max-sm:flex-col gap-3 sm:items-center justify-start">
               {isSubAction && (
-                <Icon
-                  icon={isExpanded ? 'arrow-down-s-line' : 'arrow-right-s-line'}
-                  size="lg"
-                />
+                <div data-test={`SousAction-${subAction.identifiant}-expand`}>
+                  <Icon
+                    icon={
+                      isExpanded ? 'arrow-down-s-line' : 'arrow-right-s-line'
+                    }
+                    size="lg"
+                  />
+                </div>
               )}
               <SubActionStatutDropdown
                 actionDefinition={subAction}

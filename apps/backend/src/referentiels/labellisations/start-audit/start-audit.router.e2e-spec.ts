@@ -20,8 +20,6 @@ import { snapshotTable } from '../../snapshots/snapshot.table';
 import { cleanupReferentielActionStatutsAndLabellisations } from '../../update-action-statut/referentiel-action-statut.test-fixture';
 import { addAuditeurPermission } from '../labellisations.test-fixture';
 
-const RANDOM_COLLECTIVITE_ID = 19;
-
 describe('StartAuditRouter', () => {
   let app: INestApplication;
   let router: TrpcRouter;
@@ -121,7 +119,7 @@ describe('StartAuditRouter', () => {
   });
 
   test('On ne peut pas lancer un audit déjà démarré', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: lectureUser });
 
     const { audit } = await createAuditWithOnTestFinished({
       databaseService: db,
