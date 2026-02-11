@@ -936,3 +936,4 @@ preuve_modify_by_with_api 2026-01-28T12:24:14Z System Administrator <root@MacBoo
 @v4.97.0 2026-02-09T10:16:59Z Marc Rutkowski <marc@attractive-media.fr> # Tag le plan en v4.97.0
 
 delete-plans-old-views 2026-02-10T09:08:30Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime des anciennes vues liées au domain plans
+delete-referentiels-old-views 2026-02-10T14:21:30Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime des anciennes vues liées au domaine referentiels
