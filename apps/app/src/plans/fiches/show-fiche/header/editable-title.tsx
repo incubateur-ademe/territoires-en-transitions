@@ -18,7 +18,7 @@ export const EditableTitle = ({
   isReadonly,
   onUpdate,
 }: EditableTitleProps) => {
-  const [editedTitle, setEditedTitle] = useState(initialTitle);
+  const [editedTitle, setEditedTitle] = useState(initialTitle || 'Sans titre');
   return (
     <InlineEditWrapper
       disabled={isReadonly}
@@ -27,7 +27,7 @@ export const EditableTitle = ({
         <div className="w-full" data-test={dataTest}>
           <Input
             displaySize="md"
-            value={editedTitle ?? ''}
+            value={editedTitle}
             autoFocus
             onChange={(evt) => setEditedTitle(evt.target.value)}
             onBlur={() => {
@@ -51,7 +51,7 @@ export const EditableTitle = ({
         data-test={dataTest}
         className={cn('mb-0 text-[2rem] leading-tight', className)}
       >
-        {initialTitle ?? 'Sans titre'}
+        {editedTitle}
       </h1>
     </InlineEditWrapper>
   );
