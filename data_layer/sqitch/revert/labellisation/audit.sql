@@ -105,13 +105,13 @@ begin
 end
 $$;
 
-create trigger after_write_update_audit_scores
+create or replace trigger after_write_update_audit_scores
     after insert or update
     on personnalisation_consequence
     for each row
 execute procedure labellisation.update_audit_score_on_personnalisation();
 
-create trigger after_write_update_audit_scores
+create or replace trigger after_write_update_audit_scores
     after insert or update
     on labellisation.audit
     for each row

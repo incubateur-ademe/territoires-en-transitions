@@ -265,7 +265,7 @@ comment on function private.upsert_actions is
 
 
 -- Trigger pour mettre à jour le contenu suite à l'insertion de json.
-create function
+create or replace function
     private.upsert_referentiel_after_json_insert()
     returns trigger
 as
@@ -277,7 +277,7 @@ begin
 end;
 $$ language plpgsql;
 
-create trigger after_referentiel_json
+create or replace trigger after_referentiel_json
     after insert
     on referentiel_json
     for each row

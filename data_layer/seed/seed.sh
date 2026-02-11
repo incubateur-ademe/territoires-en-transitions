@@ -25,9 +25,6 @@ echo "Load test domain.."
 for file in "$DATALAYER_DIR"/test/*.sql; do
     psql "$PG_URL" -v ON_ERROR_STOP=1 --file "${file}" || exit 1
 done
-
-echo "Enabling evaluation API..."
-psql "$PG_URL" -v ON_ERROR_STOP=1 -c 'select test.enable_evaluation_api();' || exit 1
 fi
 
 echo "Done!"

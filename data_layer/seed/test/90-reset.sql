@@ -23,8 +23,6 @@ $$
     select test_reset_reponse();
 -- 10-action.sql
     select test_reset_action_statut_and_desc();
--- 11-scores.sql
-    select test_reset_scores();
 -- 11-plan_action_et_indicateur.sql
     select test_reset_plan_action(); -- Reset les plans et les indicateurs
 -- 06-auth.sql
