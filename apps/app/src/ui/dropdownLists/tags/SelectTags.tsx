@@ -9,7 +9,7 @@ import {
   SelectFilter,
   SelectMultipleProps,
 } from '@tet/ui';
-import { useEffect } from 'react';
+import { objectToCamel } from 'ts-case-convert';
 import { useDeleteTag, useTagCreate, useTagUpdate } from '.';
 type SelectTagsProps = Omit<
   SelectMultipleProps,
@@ -86,36 +86,32 @@ const SelectTags = ({
   // Ajout d'un nouveau tag à la liste d'options
   // ***
 
-  const { data: newTag, mutate: createTag } = useTagCreate({
+  const { mutate: createTag } = useTagCreate({
     key: [queryKey, collectiviteId],
     tagTableName,
     onSuccess: refetchOptions,
   });
 
-  const newTagId = newTag?.data?.[0].id;
-
   const handleTagCreate = (tagName: string) => {
-    createTag({
-      collectiviteId,
-      nom: tagName,
-    });
-  };
-
-  useEffect(() => {
-    // Sélectionne le nouveau tag une fois la création terminée
-    if (newTag?.data) {
-      const tag = {
+    createTag(
+      {
         collectiviteId,
-        nom: newTag.data[0].nom,
-        id: newTag.data[0].id,
-      };
-
-      props.onChange({
-        values: [tag, ...getSelectedValues(props.values)],
-        selectedValue: tag,
-      });
-    }
-  }, [newTagId]);
+        nom: tagName,
+      },
+      {
+        onSuccess: (data) => {
+          const row = data?.data?.[0];
+          if (row) {
+            const tag = objectToCamel(row) as TagWithCollectiviteId;
+            props.onChange({
+              values: [tag, ...getSelectedValues(props.values)],
+              selectedValue: tag,
+            });
+          }
+        },
+      }
+    );
+  };
 
   // ***
   // Mise à jour d'un tag de la liste d'options
