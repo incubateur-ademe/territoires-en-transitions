@@ -1,30 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
-import { ResourceType } from '@tet/domain/users';
 import z from 'zod';
+import { startAuditErrorConfig } from './start-audit.errors';
 import { StartAuditService } from './start-audit.service';
 
 @Injectable()
 export class StartAuditRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly permissions: PermissionService,
     private readonly startAuditService: StartAuditService
   ) {}
 
+  private readonly getResultDataOrThrowError = createTrpcErrorHandler(
+    startAuditErrorConfig
+  );
   router = this.trpc.router({
     startAudit: this.trpc.authedProcedure
       .input(z.object({ auditId: z.number() }))
       .mutation(async ({ input: { auditId }, ctx: { user } }) => {
-        await this.permissions.isAllowed(
+        const result = await this.startAuditService.startAudit({
+          auditId,
           user,
-          'referentiels.labellisations.start_audit',
-          ResourceType.AUDIT,
-          auditId
-        );
-
-        return this.startAuditService.startAudit({ auditId });
+        });
+        return this.getResultDataOrThrowError(result);
       }),
   });
 }

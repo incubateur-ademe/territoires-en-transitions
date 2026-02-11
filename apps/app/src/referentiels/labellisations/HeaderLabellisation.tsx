@@ -103,6 +103,10 @@ type THeaderLabellisationProps = {
 export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
 
+  const { parcoursLabellisation } = props;
+  const { parcours, status, isAuditeur, peutCommencerAudit } =
+    parcoursLabellisation;
+
   const canMutateReferentiel = hasCollectivitePermission('referentiels.mutate');
   const canStartAuditReferentiel = hasCollectivitePermission(
     'referentiels.labellisations.start_audit'
@@ -110,10 +114,6 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   const canValidateAuditReferentiel = hasCollectivitePermission(
     'referentiels.labellisations.validate_audit'
   );
-
-  const { parcoursLabellisation } = props;
-  const { parcours, status, isAuditeur, peutCommencerAudit } =
-    parcoursLabellisation;
 
   const { data: auditeurs } = useAuditeurs();
 
