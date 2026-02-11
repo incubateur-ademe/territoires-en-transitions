@@ -69,7 +69,10 @@ const FilterByCategory = ({
   onDeleteCategory: (() => void) | null;
   onlyShowCategory: boolean | undefined;
 }) => {
-  const showRemoveCategoryButton = !!onDeleteCategory && !readonly;
+  const showRemoveCategoryButton =
+    !!onDeleteCategory &&
+    (onlyShowCategory || selectedFilters.length > 1) &&
+    !readonly;
   return (
     <div className="inline-flex items-center bg-primary-1 rounded-md border border-primary-3 w-auto py-2 px-3 gap-1">
       <div className="h-full flex items-center border-r-1 border-r-primary-3">
@@ -99,9 +102,6 @@ const FilterByCategory = ({
         >
           <Icon icon="close-circle-fill" className="text-primary-7" />
         </button>
-      </VisibleWhen>
-      <VisibleWhen condition={!showRemoveCategoryButton}>
-        <Icon icon="lock-fill" className="text-primary-7" />
       </VisibleWhen>
     </div>
   );
@@ -139,11 +139,27 @@ export const BadgeFilters = <TKey extends string = string>({
   filterCategories,
   onDeleteFilterValue,
   onDeleteFilterCategory,
-  onClearAllFilters = () => {},
+  onClearAllFilters,
 }: FilterBadgesProps<TKey>) => {
+  const removableCategories = filterCategories.filter(
+    (category) =>
+      !category.readonly &&
+      (category.onlyShowCategory || category.selectedFilters.length > 0)
+  );
+
+  const hasMoreThanOneRemovableCategory = removableCategories.length > 1;
+
+  const hasOnlyOneRemovableCategory =
+    removableCategories.length === 1 &&
+    (removableCategories[0].selectedFilters.length > 1 ||
+      removableCategories[0].onlyShowCategory);
+
   const shouldShowClearAllFilters =
     !!onClearAllFilters &&
+    hasMoreThanOneRemovableCategory &&
+    !hasOnlyOneRemovableCategory &&
     filterCategories.filter((category) => !category.readonly).length > 0;
+
   return (
     <div className="flex gap-2 items-center flex-wrap">
       {filterCategories.map((category) => {
@@ -173,7 +189,7 @@ export const BadgeFilters = <TKey extends string = string>({
         );
       })}
       <VisibleWhen condition={shouldShowClearAllFilters}>
-        <ClearAllFiltersButton onClick={onClearAllFilters}>
+        <ClearAllFiltersButton onClick={() => onClearAllFilters?.()}>
           Supprimer tous les filtres
         </ClearAllFiltersButton>
       </VisibleWhen>
