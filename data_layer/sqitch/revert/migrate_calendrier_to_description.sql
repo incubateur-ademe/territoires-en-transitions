@@ -20,6 +20,17 @@ alter table historique.fiche_action
     add column calendrier varchar(10000),
     add column previous_calendrier varchar(10000);
 
+-- backup data before column restoring from backup (description can have change between deploy and revert)
+create table if not exists migration.revert_calendrier_to_description as
+select id, description from public.fiche_action;
+
+-- restore content from the backup table
+UPDATE public.fiche_action fa
+SET calendrier = bak.calendrier,
+    description = bak.description
+FROM migration.migrate_calendrier_to_description bak
+WHERE fa.id = bak.id;
+
 --
 -- Recreate the view with calendrier field
 create view private.fiches_action
@@ -332,9 +343,53 @@ begin
 
     if updated is null
     then
-        insert into historique.fiche_action
-        values (default,
-                id_fiche,
+        -- utilise des noms de colonnes explicites car l'ordre original des
+        -- colonnes n'est plus le même après le revert du champ calendrier
+        insert into historique.fiche_action (
+            fiche_id,
+            titre,
+            previous_titre,
+            description,
+            previous_description,
+            piliers_eci,
+            previous_piliers_eci,
+            objectifs,
+            previous_objectifs,
+            resultats_attendus,
+            previous_resultats_attendus,
+            cibles,
+            previous_cibles,
+            ressources,
+            previous_ressources,
+            financements,
+            previous_financements,
+            budget_previsionnel,
+            previous_budget_previsionnel,
+            statut,
+            previous_statut,
+            niveau_priorite,
+            previous_niveau_priorite,
+            date_debut,
+            previous_date_debut,
+            date_fin_provisoire,
+            previous_date_fin_provisoire,
+            amelioration_continue,
+            previous_amelioration_continue,
+            maj_termine,
+            previous_maj_termine,
+            collectivite_id,
+            created_at,
+            modified_at,
+            previous_modified_at,
+            modified_by,
+            previous_modified_by,
+            restreint,
+            previous_restreint,
+            deleted,
+            calendrier,
+            previous_calendrier
+        )
+        values (id_fiche,
                 new.titre,
                 old.titre,
                 new.description,
@@ -363,8 +418,6 @@ begin
                 old.date_fin_provisoire,
                 new.amelioration_continue,
                 old.amelioration_continue,
-                new.calendrier,
-                old.calendrier,
                 new.maj_termine,
                 old.maj_termine,
                 new.collectivite_id,
@@ -375,7 +428,9 @@ begin
                 old.modified_by,
                 new.restreint,
                 old.restreint,
-                new is null)
+                new is null,
+                new.calendrier,
+                old.calendrier)
         returning id into updated;
 
         select id

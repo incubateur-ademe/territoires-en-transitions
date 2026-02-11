@@ -2,6 +2,23 @@
 
 BEGIN;
 
+-- backup data before column drop
+create table if not exists migration.migrate_calendrier_to_description as
+select id, calendrier, description from public.fiche_action
+WHERE calendrier IS NOT NULL
+  AND TRIM(calendrier) != '';
+
+-- migrate `calendrier` data into `description`
+update public.fiche_action
+set description = case
+  when description is not null and trim(description) != '' then
+    concat(description, chr(13),chr(10), 'Éléments de calendrier : ', trim(calendrier))
+  else
+    'Éléments de calendrier : ' || trim(calendrier)
+end
+where calendrier is not null
+  and trim(calendrier) != '';
+
 --
 -- BEFORE. Drop related functions and views before dropping the calendrier column
 DROP TRIGGER IF EXISTS save_history ON public.fiche_action;

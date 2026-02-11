@@ -41,7 +41,7 @@ BEGIN
     ) THEN
         RAISE EXCEPTION 'View private.fiches_action does not exist';
     END IF;
-    
+
     IF NOT EXISTS (
         SELECT 1
         FROM information_schema.views
