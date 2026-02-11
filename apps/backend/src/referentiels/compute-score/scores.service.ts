@@ -7,6 +7,7 @@ import {
 import DocumentService from '@tet/backend/collectivites/documents/document.service';
 import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import {
   CollectiviteAvecType,
   PersonnalisationReponsesPayload,
@@ -43,6 +44,7 @@ import {
   asc,
   desc,
   eq,
+  getTableColumns,
   gte,
   like,
   lte,
@@ -360,6 +362,10 @@ export default class ScoresService {
     if (actionStatut) {
       referentielActionAvecScore.score.aStatut = true;
       referentielActionAvecScore.score.avancement = actionStatut.avancement;
+      referentielActionAvecScore.score.statutModifiedBy =
+        actionStatut.modifiedBy;
+      referentielActionAvecScore.score.statutModifiedAt =
+        actionStatut.modifiedAt;
     }
 
     // Si le parent n'est pas déjà désactivé et il y a une desactivation on l'applique et on le propagera aux enfants
@@ -558,6 +564,10 @@ export default class ScoresService {
       if (actionStatut) {
         referentielActionAvecScore.score.aStatut = true;
         referentielActionAvecScore.score.avancement = actionStatut.avancement;
+        referentielActionAvecScore.score.statutModifiedBy =
+          actionStatut.modifiedBy;
+        referentielActionAvecScore.score.statutModifiedAt =
+          actionStatut.modifiedAt;
       }
 
       if (
@@ -921,7 +931,10 @@ export default class ScoresService {
     }
     // TODO: colonne referentiel dans les actionStatutTable ?
     const referentielActionStatuts = await this.databaseService.db
-      .select()
+      .select({
+        ...getTableColumns(table),
+        modifiedAt: sqlToDateTimeISO(table.modifiedAt),
+      })
       .from(table)
       .where(and(...actionStatutsConditions))
       .orderBy(desc(table.modifiedAt), asc(table.actionId));

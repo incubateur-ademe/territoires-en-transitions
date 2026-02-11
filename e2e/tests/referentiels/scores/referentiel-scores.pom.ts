@@ -7,6 +7,9 @@ import { roundTo } from '@tet/domain/utils';
 
 export class ReferentielScoresPom {
   readonly title: Locator;
+
+  readonly SELECT_STATUT_LOCATOR = '[data-test="SelectStatut"]';
+
   constructor(readonly page: Page) {
     this.title = page.getByRole('heading', { name: 'Référentiel' });
   }
@@ -32,11 +35,29 @@ export class ReferentielScoresPom {
     return `[data-test="SousAction-${sousActionIdentifiant}"]`;
   }
 
+  getTacheLocationExpression(tacheIdentifiant: string) {
+    return `[data-test="Tache-${tacheIdentifiant}"]`;
+  }
+
   getSousActionAvancementSelectLocator(sousActionIdentifiant: string) {
     return this.page.locator(
-      `${this.getSousActionLocationExpression(
-        sousActionIdentifiant
-      )} [data-test="SelectStatut"]`
+      `${this.getSousActionLocationExpression(sousActionIdentifiant)} ${
+        this.SELECT_STATUT_LOCATOR
+      }`
+    );
+  }
+
+  getTacheAvancementSelectLocator(tacheIdentifiant: string) {
+    return this.page.locator(
+      `${this.getTacheLocationExpression(tacheIdentifiant)} ${
+        this.SELECT_STATUT_LOCATOR
+      }`
+    );
+  }
+
+  getSousActionExpandLocator(sousActionIdentifiant: string) {
+    return this.page.locator(
+      `[data-test="SousAction-${sousActionIdentifiant}-expand"]`
     );
   }
 
@@ -63,6 +84,10 @@ export class ReferentielScoresPom {
     );
   }
 
+  async expandSousAction(sousActionIdentifiant: string) {
+    await this.getSousActionExpandLocator(sousActionIdentifiant).click();
+  }
+
   async updateSousActionAvancement(
     sousActionIdentifiant: string,
     avancement: StatutAvancementIncludingNonConcerne
@@ -70,6 +95,14 @@ export class ReferentielScoresPom {
     await this.getSousActionAvancementSelectLocator(
       sousActionIdentifiant
     ).click();
+    await this.page.locator(`[data-test="${avancement}"]`).click();
+  }
+
+  async updateTacheAvancement(
+    tacheIdentifiant: string,
+    avancement: StatutAvancementIncludingNonConcerne
+  ) {
+    await this.getTacheAvancementSelectLocator(tacheIdentifiant).click();
     await this.page.locator(`[data-test="${avancement}"]`).click();
   }
 }
