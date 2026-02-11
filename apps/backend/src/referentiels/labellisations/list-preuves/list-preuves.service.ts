@@ -136,7 +136,7 @@ export class ListPreuvesService {
       );
       return {
         success: false,
-        error: CreateLabellisationPreuveErrorEnum.DATABASE_ERROR,
+        error: ListPreuvesAuditErrorEnum.DATABASE_ERROR,
         cause:
           error instanceof Error ? error : new Error(getErrorMessage(error)),
       };
@@ -244,7 +244,7 @@ export class ListPreuvesService {
       );
       return {
         success: false,
-        error: CreateLabellisationPreuveErrorEnum.DATABASE_ERROR,
+        error: ListPreuvesAuditErrorEnum.DATABASE_ERROR,
         cause:
           error instanceof Error ? error : new Error(getErrorMessage(error)),
       };
@@ -270,7 +270,7 @@ export class ListPreuvesService {
         'bucketId', ${collectiviteBucketTable.bucketId},
         'filesize', (${storageObjectTable.metadata}->>'size')::integer
       )
-      END AS fichier
+      END
     `;
   }
 }

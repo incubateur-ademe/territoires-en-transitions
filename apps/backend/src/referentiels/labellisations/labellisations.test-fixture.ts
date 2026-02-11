@@ -132,7 +132,7 @@ export async function requestLabellisationForCot(
     referentiel
   );
 
-  // No need to upload file for not cot
+  // No need to upload file for cot
   const parcours =
     await trpcClient.referentiels.labellisations.getParcours.query({
       collectiviteId: collectiviteId,
