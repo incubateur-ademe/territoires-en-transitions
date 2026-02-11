@@ -80,7 +80,7 @@ export const PlanMenuButton = () => {
       : null,
     canExportPlan && isGeneratePptxPlanReportEnabled
       ? {
-          label: 'Générer un rapport',
+          label: 'Générer un rapport (PowerPoint)',
           icon: 'slideshow-line',
           disabled: isPendingGenerateReport,
           tooltip: isPendingGenerateReport ? 'Génération en cours' : undefined,
@@ -117,6 +117,7 @@ export const PlanMenuButton = () => {
         variant="grey"
         size="xs"
         menu={{
+          className: 'max-w-96',
           actions: menuActions,
         }}
       />
