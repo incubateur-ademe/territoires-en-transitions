@@ -74,35 +74,37 @@ const FilterByCategory = ({
     (onlyShowCategory || selectedFilters.length > 1) &&
     !readonly;
   return (
-    <div className="inline-flex items-center bg-primary-1 rounded-md border border-primary-3 w-auto py-2 px-3 gap-1">
-      <div className="h-full flex items-center border-r-1 border-r-primary-3">
-        <span className="align-middle text-primary-7 font-bold text-sm">
-          {title}
-        </span>
-      </div>
-      <VisibleWhen condition={onlyShowCategory === false}>
-        <div className="flex items-center flex-wrap gap-1 bg-grey-2">
-          {selectedFilters
-            .sort((a, b) => a.localeCompare(b))
-            .map((filter) => (
-              <Filter
-                key={filter}
-                onDelete={!readonly ? () => onDeleteFilter(filter) : undefined}
-              >
-                {filter}
-              </Filter>
-            ))}
-        </div>
-      </VisibleWhen>
+    <div className="inline-flex items-center rounded-md border border-grey-4 w-auto bg-white overflow-hidden">
+      <span className="px-2 py-1.5 text-grey-8 font-bold text-xs bg-grey-2 border-r border-grey-4">
+        {title}
+      </span>
+      <div className="flex items-center flex-wrap px-2 gap-1">
+        <VisibleWhen condition={onlyShowCategory === false}>
+          <>
+            {selectedFilters
+              .sort((a, b) => a.localeCompare(b))
+              .map((filter) => (
+                <Filter
+                  key={filter}
+                  onDelete={
+                    !readonly ? () => onDeleteFilter(filter) : undefined
+                  }
+                >
+                  {filter}
+                </Filter>
+              ))}
+          </>
+        </VisibleWhen>
 
-      <VisibleWhen condition={showRemoveCategoryButton}>
-        <button
-          onClick={() => onDeleteCategory?.()}
-          className="flex items-center cursor-pointer"
-        >
-          <Icon icon="close-circle-fill" className="text-primary-7" />
-        </button>
-      </VisibleWhen>
+        <VisibleWhen condition={showRemoveCategoryButton}>
+          <button
+            onClick={() => onDeleteCategory?.()}
+            className="flex items-center p-1 border border-grey-4 rounded-md"
+          >
+            <Icon icon="delete-bin-6-line" className="text-grey-7" size="xs" />
+          </button>
+        </VisibleWhen>
+      </div>
     </div>
   );
 };
