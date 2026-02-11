@@ -22,6 +22,7 @@ export const EditableSection = ({
           <Checkbox
             variant="switch"
             label="Détailler par année"
+            containerClassname="cursor-pointer"
             checked={toggleChecked}
             onChange={(e) => onToggleChange?.(e.target.checked)}
           />

@@ -65,7 +65,7 @@ export const FinanceurNameCell = ({
                     openState.setIsOpen(false);
                   }
                 }}
-                placeholder="Sélectionner un financeur"
+                placeholder="Sélectionner ou créer un financeur"
                 openState={openState}
                 displayOptionsWithoutFloater
               />

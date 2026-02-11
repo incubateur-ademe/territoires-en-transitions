@@ -47,7 +47,12 @@ export const Checkbox = forwardRef(
       <div
         className={cn('flex gap-2 min-w-min items-center', containerClassname)}
       >
-        <Input ref={ref} id={inputId} {...remainingProps} />
+        <Input
+          ref={ref}
+          id={inputId}
+          {...remainingProps}
+          className={cn('cursor-pointer', remainingProps.className)}
+        />
         <div className="flex flex-col gap-1">
           {label && (
             /** affiche l'input et le libellé */

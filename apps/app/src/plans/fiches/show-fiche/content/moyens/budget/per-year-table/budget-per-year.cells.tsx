@@ -73,13 +73,18 @@ const BudgetPerYearNumberCell = ({
       canEdit={!isReadonly}
       edit={{
         onClose: onSubmit,
-        renderOnEdit: () => (
+        renderOnEdit: ({ openState }) => (
           <BudgetPerYearInputField
             control={control}
             name={name}
             decimalScale={decimalScale}
             iconText={iconText}
             placeholder={emptyLabel}
+            onKeyDown={(evt) => {
+              if (evt.key === 'Enter' || evt.key === 'Escape') {
+                openState.setIsOpen(false);
+              }
+            }}
           />
         ),
       }}

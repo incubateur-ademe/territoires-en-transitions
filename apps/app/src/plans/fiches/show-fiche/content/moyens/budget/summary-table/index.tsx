@@ -126,7 +126,7 @@ export const BudgetSummaryTable = ({ type }: BudgetSummaryTableProps) => {
                 canEdit={!isReadonly}
                 edit={{
                   onClose: handleSubmitCallback,
-                  renderOnEdit: () => (
+                  renderOnEdit: ({ openState }) => (
                     <Controller
                       control={control}
                       name={item.fieldName}
@@ -143,6 +143,11 @@ export const BudgetSummaryTable = ({ type }: BudgetSummaryTableProps) => {
                           name={name}
                           ref={ref}
                           autoFocus
+                          onKeyDown={(evt) => {
+                            if (evt.key === 'Enter' || evt.key === 'Escape') {
+                              openState.setIsOpen(false);
+                            }
+                          }}
                         />
                       )}
                     />

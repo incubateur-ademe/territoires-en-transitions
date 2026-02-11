@@ -1,5 +1,6 @@
 import { BudgetType } from '@tet/domain/plans';
 import { useOpenState } from '@tet/ui/hooks/use-open-state';
+import { isNil } from 'es-toolkit';
 import React, { useMemo, useState } from 'react';
 import { useFicheContext } from '../../../context/fiche-context';
 import { EditableSection } from '../components/EditableSection';
@@ -17,6 +18,14 @@ function getSectionLabel(type: BudgetType) {
 
 export const BudgetView = ({ type }: { type: BudgetType }) => {
   const { budgets: budgetsState } = useFicheContext();
+
+  const { perYear, summary } = budgetsState[type];
+
+  const hasPerYearBudgets = perYear.length > 0;
+  const hasSummaryBudgets =
+    summary !== null &&
+    Object.values(summary).some((value) => isNil(value) === false);
+
   const defaultView = useMemo(
     () => (budgetsState[type].perYear.length > 0 ? 'year' : 'summary'),
     [budgetsState, type]
@@ -31,13 +40,19 @@ export const BudgetView = ({ type }: { type: BudgetType }) => {
   const modalOpenState = useOpenState();
 
   const handleToggleChange = () => {
-    modalOpenState.setIsOpen(true);
+    const needUserConfirmationToDeleteDataAndSwitchView =
+      (view === 'year' && hasPerYearBudgets !== false) ||
+      (view === 'summary' && hasSummaryBudgets !== false);
+
+    if (needUserConfirmationToDeleteDataAndSwitchView === false) {
+      return switchView();
+    }
+    modalOpenState.setIsOpen(needUserConfirmationToDeleteDataAndSwitchView);
   };
 
-  const handleValidate = async () => {
-    const newView = view === 'year' ? 'summary' : 'year';
+  const switchView = async () => {
     await budgetsState.reset(type, view);
-    setView(newView);
+    setView(view === 'year' ? 'summary' : 'year');
     modalOpenState.setIsOpen(false);
   };
 
@@ -62,7 +77,7 @@ export const BudgetView = ({ type }: { type: BudgetType }) => {
         isOpen={modalOpenState.isOpen}
         setIsOpen={modalOpenState.setIsOpen}
         currentView={view}
-        onValidate={handleValidate}
+        onValidate={switchView}
         onCancel={handleCancel}
       />
     </>
