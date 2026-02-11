@@ -15,6 +15,7 @@ import { useEffect, useMemo } from 'react';
 import { useFicheContext } from '../../../../context/fiche-context';
 import { BudgetPerYear } from '../../../../context/types';
 import { getYearsOptions } from '../../../../utils';
+import { emptyViewsProps } from '../../empty-view';
 import { BudgetPerYearFormProvider } from './budget-per-year-form.context';
 import {
   BudgetPerYearActionsCell,
@@ -210,6 +211,25 @@ export const BudgetPerYearTable = ({
         <div className="min-w-[800px]">
           <ReactTable
             table={table}
+            isEmpty={budgets.perYear.length === 0}
+            emptyCard={{
+              ...emptyViewsProps[type],
+              actions: isReadonly
+                ? undefined
+                : [
+                    {
+                      onClick: async () => {
+                        await upsert.year(
+                          { year: new Date().getFullYear() },
+                          type
+                        );
+                      },
+                      children: 'Ajouter un budget',
+                      icon: 'add-line',
+                      variant: 'outlined',
+                    },
+                  ],
+            }}
             rowWrapper={({ row, children }) => {
               if (row.original.type === 'budget') {
                 return (
@@ -228,7 +248,7 @@ export const BudgetPerYearTable = ({
         </div>
       </div>
       <Spacer height={1} />
-      {!isReadonly && (
+      {!isReadonly && budgets.perYear.length > 0 && (
         <Button
           size="xs"
           icon="add-line"
