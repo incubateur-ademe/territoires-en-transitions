@@ -26,29 +26,25 @@ export const DeletePlanOrAxeModal = ({
   const { mutateAsync: deletePlan } = useDeletePlan(planId, redirectURL);
   const { mutateAsync: deleteAxe } = useDeleteAxe(axeId, planId, redirectURL);
 
+  const labelPlanOrAxe = isPlan ? 'ce plan' : 'cet axe';
+
   return (
     <Modal
       dataTest="SupprimerFicheModale"
       size={axeHasFiche ? 'lg' : 'md'}
-      title={`Souhaitez-vous vraiment supprimer ce ${
-        isPlan ? 'plan' : 'titre/axe'
-      } ?`}
+      title={`Souhaitez-vous supprimer ${labelPlanOrAxe} ?`}
       openState={openState}
       description={
         axeHasFiche
           ? undefined
-          : `Il n'y a aucune action dans ce ${
-              isPlan ? 'plan' : 'titre/axe'
-            } et son arborescence.`
+          : `Il n'y a aucune action dans ${labelPlanOrAxe} et son arborescence.`
       }
       render={
         axeHasFiche
           ? () => (
               <Alert
                 state="warning"
-                title={`Attention : les actions liées à ${
-                  isPlan ? 'ce plan' : 'cet axe'
-                } seront également supprimées !`}
+                title={`Attention : les actions liées à ${labelPlanOrAxe} seront également supprimées !`}
                 description="Les actions liées à un autre plan ou mutualisées ne seront pas impactées."
               />
             )
