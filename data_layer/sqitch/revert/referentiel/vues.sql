@@ -12,7 +12,7 @@ select id,
        action_children.depth,
        coalesce(
                case
-                   when referentiel = 'cae'
+                   when action_definition.referentiel = 'cae'
                        then ('{"axe", "sous-axe", "action", "sous-action", "tache"}'::action_type[])[action_children.depth]
                    else ('{"axe", "action", "sous-action", "tache"}'::action_type[])[action_children.depth]
                    end
