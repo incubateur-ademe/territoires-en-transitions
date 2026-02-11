@@ -48,6 +48,10 @@ export const useAuditeurs = () => {
 export const useIsAuditAuditeur = (audit_id?: number) => {
   const user = useUser();
 
+  if (!audit_id) {
+    return false;
+  }
+
   return user.collectivites.some((collectivite) =>
     collectivite.audits.some((audit) => audit.auditId === audit_id)
   );

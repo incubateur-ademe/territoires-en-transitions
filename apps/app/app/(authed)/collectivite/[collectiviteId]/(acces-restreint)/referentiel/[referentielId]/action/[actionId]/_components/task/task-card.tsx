@@ -29,7 +29,7 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
 
   return (
     <div
-      data-test={`Tache-${getIdentifiantFromActionId(task.id)}`}
+      data-test={`Tache-${getIdentifiantFromActionId(task.id) || task.id}`}
       className="flex flex-col gap-2 bg-grey-1 border border-grey-3 rounded-lg p-4"
     >
       {/* En-tête */}

@@ -48,6 +48,8 @@ import { ReferentielsRouter } from './referentiels.router';
 import { ListSnapshotsService } from './snapshots/list-snapshots/list-snapshots.service';
 import { SnapshotsRouter } from './snapshots/snapshots.router';
 import { SnapshotsService } from './snapshots/snapshots.service';
+import { UpdateActionCommentaireRouter } from './update-action-commentaire/update-action-commentaire.router';
+import { UpdateActionCommentaireService } from './update-action-commentaire/update-action-commentaire.service';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
 import { UpdateActionStatutService } from './update-action-statut/update-action-statut.service';
 @Module({
@@ -72,6 +74,8 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
 
     UpdateActionStatutService,
     UpdateActionStatutRouter,
+    UpdateActionCommentaireService,
+    UpdateActionCommentaireRouter,
 
     ScoresService,
     ExportScoreComparisonService,
