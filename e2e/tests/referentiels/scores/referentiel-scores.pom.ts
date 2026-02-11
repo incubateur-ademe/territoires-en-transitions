@@ -39,6 +39,12 @@ export class ReferentielScoresPom {
     return `[data-test="Tache-${tacheIdentifiant}"]`;
   }
 
+  getActionCommentaireLocator(actionId: string) {
+    return this.page.locator(
+      `[data-test="action-${actionId}-commentaire-editor"]`
+    );
+  }
+
   getSousActionAvancementSelectLocator(sousActionIdentifiant: string) {
     return this.page.locator(
       `${this.getSousActionLocationExpression(sousActionIdentifiant)} ${

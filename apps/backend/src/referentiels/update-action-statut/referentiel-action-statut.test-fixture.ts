@@ -17,6 +17,7 @@ import { auditTable } from '../labellisations/audit.table';
 import { auditeurTable } from '../labellisations/auditeur.table';
 import { mesureAuditStatutTable } from '../labellisations/handle-mesure-audit-statut/mesure-audit-statut.table';
 import { labellisationDemandeTable } from '../labellisations/labellisation-demande.table';
+import { actionCommentaireTable } from '../models/action-commentaire.table';
 import { actionStatutTable } from '../models/action-statut.table';
 import { snapshotTable } from '../snapshots/snapshot.table';
 
@@ -210,6 +211,14 @@ export async function cleanupReferentielActionStatutsAndLabellisations(
     .returning();
   console.log(
     `${actionStatutsRet.length} action statuts removed from collectivite ${collectiviteId}`
+  );
+
+  const actionCommentairesRet = await databaseService.db
+    .delete(actionCommentaireTable)
+    .where(eq(actionCommentaireTable.collectiviteId, collectiviteId))
+    .returning();
+  console.log(
+    `${actionCommentairesRet.length} action commentaires removed for collectivite ${collectiviteId}`
   );
 
   const preuveLabellisationRet = await databaseService.db
