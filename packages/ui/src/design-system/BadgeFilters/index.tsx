@@ -160,9 +160,14 @@ export const BadgeFilters = <TKey extends string = string>({
     !hasOnlyOneRemovableCategory &&
     filterCategories.filter((category) => !category.readonly).length > 0;
 
+  const sortedCategoriesByReadonlyFirst = [...filterCategories].sort((a, b) => {
+    if (a.readonly === b.readonly) return 0;
+    return a.readonly ? -1 : 1;
+  });
+
   return (
     <div className="flex gap-2 items-center flex-wrap">
-      {filterCategories.map((category) => {
+      {sortedCategoriesByReadonlyFirst.map((category) => {
         return (
           <FilterByCategory
             key={
