@@ -6,12 +6,12 @@ const FiltreType = ({ filters, setFilters }: TFiltreProps) => {
     <Field title="Type d'élément modifié">
       <SelectFilter
         dataTest="filtre-type"
-        values={filters.types}
+        values={filters.types ?? []}
         options={filtresTypeOptions}
         onChange={({ values }) => {
           if (values === undefined) {
             const { types, ...rest } = filters;
-            return setFilters({ ...rest });
+            return setFilters({ types: null, ...rest });
           } else {
             return setFilters({ ...filters, types: values as TFilterType[] });
           }

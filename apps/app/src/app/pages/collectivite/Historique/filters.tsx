@@ -1,8 +1,15 @@
-import { HistoriqueType } from './types';
+import {
+  parseAsArrayOf,
+  parseAsInteger,
+  parseAsString,
+  parseAsStringLiteral,
+  UrlKeys,
+} from 'nuqs';
+import { HistoriqueType, historiqueTypeEnumValues } from './types';
 
 export const NB_ITEMS_PER_PAGE = 10;
 
-export type TFilterType = HistoriqueType | 'tous';
+export type TFilterType = HistoriqueType;
 
 export const filtresTypeOptions: { value: TFilterType; label: string }[] = [
   { value: 'action_statut', label: 'Mesure : statut' },
@@ -15,34 +22,38 @@ export const filtresTypeOptions: { value: TFilterType; label: string }[] = [
 ];
 
 export type TFilters = {
-  /** filtre par collectivité */
-  collectivite_id?: number;
-  /** par action */
-  action_id?: string;
   /** par membres de la collectivité */
-  modified_by?: string[];
+  modifiedBy: string[] | null;
   /** Par type d'historique */
-  types?: TFilterType[];
+  types: TFilterType[] | null;
   /** par plage de dates */
-  startDate?: string;
-  endDate?: string;
+  startDate: string | null;
+  endDate: string | null;
   /** index de la page voulue */
-  page?: number;
+  page: number | null;
 };
 
 export type TSetFilters = (newFilter: TFilters) => void;
-
-export type TInitialFilters = { collectivite_id: number; action_id?: string };
 
 export type TFiltreProps = {
   filters: TFilters;
   setFilters: TSetFilters;
 };
 
-export const nameToShortNames = {
-  modified_by: 'm',
+/** Parsers nuqs pour les paramètres de recherche URL de l'historique */
+export const filtersParsers = {
+  modifiedBy: parseAsArrayOf(parseAsString),
+  types: parseAsArrayOf(parseAsStringLiteral(historiqueTypeEnumValues)),
+  startDate: parseAsString,
+  endDate: parseAsString,
+  page: parseAsInteger,
+};
+
+/** Mapping noms → clés URL courtes */
+export const filtersUrlKeys: UrlKeys<typeof filtersParsers> = {
+  modifiedBy: 'm',
   types: 't',
   startDate: 's',
   endDate: 'e',
   page: 'p',
-};
+} as const;
