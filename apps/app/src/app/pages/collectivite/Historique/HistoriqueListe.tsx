@@ -1,3 +1,5 @@
+'use client';
+
 import HistoriqueItemActionPrecision from '@/app/app/pages/collectivite/Historique/actionPrecision/HistoriqueItemActionPrecision';
 import HistoriqueItemActionStatut from '@/app/app/pages/collectivite/Historique/actionStatut/HistoriqueItemActionStatut';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -7,30 +9,21 @@ import { NB_ITEMS_PER_PAGE } from './filters';
 import HistoriqueFiltres from './HistoriqueFiltres/HistoriqueFiltres';
 import HistoriqueItemJustification from './reponse/HistoriqueItemJustification';
 import HistoriqueItemReponse from './reponse/HistoriqueItemReponse';
-import {
-  THistoriqueItem,
-  THistoriqueItemProps,
-  THistoriqueProps,
-} from './types';
+import { THistoriqueItem, THistoriqueItemProps } from './types';
+import { useHistoriqueItemListe } from './useHistoriqueItemListe';
 
 /**
  * Affiche l'historique des modifications
  */
-export const HistoriqueListe = ({
-  items,
-  total,
-  initialFilters,
-  filters,
-  setFilters,
-  isLoading,
-}: THistoriqueProps) => {
+export const HistoriqueListe = ({ actionId }: { actionId?: string }) => {
   const tracker = useEventTracker();
+  const { items, total, filters, setFilters, isLoading } =
+    useHistoriqueItemListe({ actionId });
 
   return (
     <>
       <HistoriqueFiltres
         itemsNumber={total}
-        initialFilters={initialFilters}
         filters={filters}
         setFilters={setFilters}
       />

@@ -1,17 +1,20 @@
 import { Views } from '@tet/api';
-import { TFilters, TInitialFilters } from './filters';
+import { TFilters } from './filters';
 
 /* type de modification enregistrée dans l'historique */
-export type HistoriqueType =
-  | 'action_statut'
-  | 'action_precision'
-  | 'reponse'
-  | 'justification'
-  | 'preuve'
-  | 'membre'
-  | 'indicateur'
-  | 'plan_action_arborescence'
-  | 'plan_action_fiche';
+export const historiqueTypeEnumValues = [
+  'action_statut',
+  'action_precision',
+  'reponse',
+  'justification',
+  'preuve',
+  'membre',
+  'indicateur',
+  'plan_action_arborescence',
+  'plan_action_fiche',
+] as const;
+
+export type HistoriqueType = (typeof historiqueTypeEnumValues)[number];
 
 /** un item de l'historique */
 export type THistoriqueItem = Views<'historique'> & {
@@ -27,9 +30,7 @@ export type THistoriqueItemProps = {
 export type THistoriqueProps = {
   items: THistoriqueItem[];
   total: number;
-  initialFilters: TInitialFilters;
   filters: TFilters;
-  filtersCount: number;
-  setFilters: (filters: TFilters) => void;
+  setFilters: (filters: TFilters | null) => void;
   isLoading?: boolean;
 };

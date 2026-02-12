@@ -2,19 +2,17 @@ import FiltreMembre from './FiltreMembre';
 import FiltreType from './FiltreType';
 
 import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
-import { TFilters, TInitialFilters } from '../filters';
+import { TFilters } from '../filters';
 import { FiltreDateDebut, FiltreDateFin } from './FiltreDate';
 
 export type HistoriqueFiltresProps = {
   itemsNumber: number;
-  initialFilters: TInitialFilters;
   filters: TFilters;
-  setFilters: (filters: TFilters) => void;
+  setFilters: (filters: TFilters | null) => void;
 };
 
 const HistoriqueFiltres = ({
   itemsNumber,
-  initialFilters,
   filters,
   setFilters,
 }: HistoriqueFiltresProps) => {
@@ -32,12 +30,12 @@ const HistoriqueFiltres = ({
         <FiltreDateDebut filters={filters} setFilters={setFilters} />
         <FiltreDateFin filters={filters} setFilters={setFilters} />
       </div>
-      {Object.keys(filters).length > 2 && (
+      {Object.values(filters).some((value) => value !== null) && (
         <div className="flex items-baseline gap-6 mt-8">
           <span className="text-sm text-gray-400">
             {itemsNumber} résultat{itemsNumber > 1 && 's'}
           </span>
-          <DeleteFiltersButton onClick={() => setFilters(initialFilters)} />
+          <DeleteFiltersButton onClick={() => setFilters(null)} />
         </div>
       )}
     </div>

@@ -21,16 +21,16 @@ const FiltreMembre = ({ filters, setFilters }: TFiltreProps) => {
     <Field title="Membre">
       <SelectFilter
         dataTest="filtre-membre"
-        values={filters.modified_by}
+        values={filters.modifiedBy ?? []}
         options={memberList}
         onChange={({ values }) => {
           if (values === undefined) {
-            const { modified_by, ...rest } = filters;
-            return setFilters({ ...rest });
+            const { modifiedBy, ...rest } = filters;
+            return setFilters({ modifiedBy: null, ...rest });
           } else {
             return setFilters({
               ...filters,
-              modified_by: values as string[],
+              modifiedBy: values as string[],
             });
           }
         }}
