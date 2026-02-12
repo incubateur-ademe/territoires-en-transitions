@@ -149,7 +149,7 @@ export const Acteurs = (): JSX.Element => {
           <InlineEditableItem
             icon="user-star-line"
             label={getFieldLabel('instanceGouvernance', field.value)}
-            value={field.value}
+            value={field.value ?? undefined}
             isReadonly={isReadonly}
             renderOnEdit={({ openState }) => (
               <Input

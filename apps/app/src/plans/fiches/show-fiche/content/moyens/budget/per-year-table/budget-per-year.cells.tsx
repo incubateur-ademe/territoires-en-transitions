@@ -69,9 +69,10 @@ const BudgetPerYearNumberCell = ({
 
   return (
     <TableCell
-      className="font-bold text-primary-9 text-sm border-b border-gray-5"
+      className="font-bold text-primary-9 text-sm border-b border-gray-5 py-2"
       canEdit={!isReadonly}
       edit={{
+        floatingMatchReferenceHeight: false,
         onClose: onSubmit,
         renderOnEdit: ({ openState }) => (
           <BudgetPerYearInputField
@@ -141,7 +142,7 @@ export const BudgetPerYearActionsCell = ({
 
   return (
     <VisibleWhen condition={!isReadonly}>
-      <TableCell className="py-0 flex justify-center ">
+      <TableCell className="w-full flex justify-center">
         <DeleteBudgetButton
           year={form.getValues().year}
           onDelete={async () => {

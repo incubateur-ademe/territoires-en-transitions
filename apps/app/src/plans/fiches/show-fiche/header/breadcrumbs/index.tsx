@@ -17,7 +17,6 @@ type FichesBreadcrumbsProps = {
 
 const OtherPlansBreadcrumbs = ({
   axes,
-  planId,
   title,
   collectiviteId,
 }: {
@@ -87,7 +86,7 @@ export const Breadcrumbs = ({
         title={title}
         collectiviteId={collectiviteId}
         axeId={firstAxe?.id}
-        planId={planId}
+        planId={planId ?? firstAxe?.planId ?? undefined}
       />
       <VisibleWhen condition={axesToDisplay.length > 1}>
         <OtherPlansBreadcrumbs

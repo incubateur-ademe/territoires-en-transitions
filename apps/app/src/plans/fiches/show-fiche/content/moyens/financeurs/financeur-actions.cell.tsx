@@ -21,7 +21,7 @@ export const FinanceurActionsCell = ({
 
   return (
     <VisibleWhen condition={!isReadonly}>
-      <TableCell className="py-0 flex justify-center ">
+      <TableCell className="flex justify-center ">
         <DeleteFinanceurButton
           financeurName={
             getFinanceurName(form.getValues().financeurTagId) ?? ''

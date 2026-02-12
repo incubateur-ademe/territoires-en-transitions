@@ -137,7 +137,7 @@ export const NotesTable = ({
           }}
         />
       </div>
-      {!isReadonly && onCreateNote && (
+      {!isReadonly && onCreateNote && sortedNotes.length > 0 && (
         <Button
           className="m-4"
           icon="add-line"

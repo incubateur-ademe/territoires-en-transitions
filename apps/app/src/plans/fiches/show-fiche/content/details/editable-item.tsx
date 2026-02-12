@@ -1,15 +1,31 @@
-import { cn, Icon, InlineEditWrapper, RichTextEditor } from '@tet/ui';
+import {
+  cn,
+  Icon,
+  InfoTooltip,
+  InlineEditWrapper,
+  RichTextEditor,
+} from '@tet/ui';
 import { useMemo } from 'react';
 
 const DisplayValue = ({
   value,
+  helperText,
 }: {
-  value: string | React.ReactNode | undefined | null;
+  value?: string;
+  helperText?: string;
 }) => {
-  if (!value || typeof value === 'string') {
-    return <div className="text-grey-8 ">{value || 'À renseigner'}</div>;
-  }
-  return value;
+  return (
+    <div className="text-grey-8 flex items-center gap-1">
+      {helperText && (
+        <InfoTooltip
+          label={helperText}
+          size="sm"
+          iconClassName="flex-shrink-0 text-info-500"
+        />
+      )}
+      <span>{value || 'À renseigner'}</span>
+    </div>
+  );
 };
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
@@ -92,15 +108,17 @@ export const InlineEditableItem = ({
   value,
   isReadonly,
   renderOnEdit,
+  helperText,
 }: {
   small?: boolean;
   icon?: string | React.ReactNode;
   label?: string | React.ReactNode;
-  value: string | React.ReactNode | undefined | null;
+  value?: string;
   isReadonly: boolean;
   renderOnEdit: (args: {
     openState: { isOpen: boolean; setIsOpen: (v: boolean) => void };
   }) => React.ReactNode;
+  helperText?: string;
 }) => {
   const hasLabel = !!label && typeof label === 'string';
   return (
@@ -112,7 +130,9 @@ export const InlineEditableItem = ({
         })}
       >
         {typeof label === 'string' ? (
-          <div className="text-primary-10 text-base">{`${label} : `}</div>
+          <div className="text-primary-10 text-base flex items-center gap-1">
+            {`${label} : `}
+          </div>
         ) : (
           label
         )}
@@ -127,7 +147,7 @@ export const InlineEditableItem = ({
               'cursor-pointer hover:opacity-80 transition-opacity': !isReadonly,
             })}
           >
-            <DisplayValue value={value} />
+            <DisplayValue value={value} helperText={helperText} />
           </div>
         </InlineEditWrapper>
       </div>

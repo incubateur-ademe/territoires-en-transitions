@@ -227,7 +227,7 @@ export const Planning = () => {
           <InlineEditableItem
             icon="time-line"
             label="Temps de mise en œuvre"
-            value={field.value?.nom ?? null}
+            value={field.value?.nom ?? undefined}
             isReadonly={isReadonly}
             renderOnEdit={({ openState }) => (
               <MiseEnOeuvreDropdown
@@ -295,7 +295,7 @@ export const Planning = () => {
           <InlineEditableItem
             icon="time-line"
             label="Éléments de calendrier"
-            value={fiche.calendrier}
+            value={fiche.calendrier ?? undefined}
             isReadonly={isReadonly}
             renderOnEdit={() => (
               <TextareaBase

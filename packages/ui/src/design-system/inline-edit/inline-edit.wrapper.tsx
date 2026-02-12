@@ -26,6 +26,7 @@ export type InlineEditWrapperProps = {
   openState?: OpenState;
   onClose?: () => void;
   disabled?: boolean;
+  floatingMatchReferenceHeight?: boolean;
 };
 
 /**
@@ -38,6 +39,7 @@ export const InlineEditWrapper = ({
   onClose,
   disabled,
   openState,
+  floatingMatchReferenceHeight = true,
 }: InlineEditWrapperProps) => {
   const { isOpen, setIsOpen } = useOpenState(openState);
 
@@ -107,9 +109,11 @@ export const InlineEditWrapper = ({
                   minWidth: `${
                     refs.reference?.current?.getBoundingClientRect().width
                   }px`,
-                  minHeight: `${
-                    refs.reference?.current?.getBoundingClientRect().height
-                  }px`,
+                  minHeight: floatingMatchReferenceHeight
+                    ? `${
+                        refs.reference?.current?.getBoundingClientRect().height
+                      }px`
+                    : undefined,
                   maxHeight, // set by floating-ui size middleware to calculate available space within the viewport
                   zIndex: preset.theme.extend.zIndex.modal,
                 },

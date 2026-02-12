@@ -5,7 +5,7 @@ import {
 } from '@tanstack/react-table';
 import { Financeur } from '@tet/domain/plans';
 import { Button, ReactTable, TableHeaderCell } from '@tet/ui';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useFicheContext } from '../../../context/fiche-context';
 import { emptyViewsProps } from '../empty-view';
 import { FinanceurActionsCell } from './financeur-actions.cell';
@@ -116,10 +116,6 @@ export const FinanceursTable = () => {
     },
     getCoreRowModel: getCoreRowModel(),
   });
-
-  useEffect(() => {
-    table.getColumn('actions')?.toggleVisibility(!isReadonly);
-  }, [isReadonly, table]);
 
   const isEmpty = tableData.length === 0;
 

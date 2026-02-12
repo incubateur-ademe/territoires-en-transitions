@@ -178,7 +178,12 @@ export const Description = () => {
                   ?.map((sousThematique) => sousThematique.nom)
                   .join(', ') ?? undefined
               }
-              isReadonly={isReadonly}
+              isReadonly={isReadonly || !selectedThematiques?.length}
+              helperText={
+                !selectedThematiques?.length
+                  ? `Veuillez d'abord sélectionner une thématique pour pouvoir sélectionner une ou plusieurs sous-thématiques`
+                  : undefined
+              }
               renderOnEdit={({ openState }) => (
                 <SelectMultiple
                   options={sousThematiqueOptions}

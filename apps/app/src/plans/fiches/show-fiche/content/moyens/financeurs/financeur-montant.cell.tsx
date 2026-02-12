@@ -33,6 +33,7 @@ export const FinanceurMontantCell = () => {
       className="text-primary-9 text-sm"
       canEdit={!isReadonly}
       edit={{
+        floatingMatchReferenceHeight: false,
         onClose: onSubmit,
         renderOnEdit: ({ openState }) => (
           <Controller
