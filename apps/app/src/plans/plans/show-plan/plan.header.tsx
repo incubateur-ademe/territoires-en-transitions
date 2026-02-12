@@ -11,7 +11,7 @@ import {
   Select,
   Tooltip,
 } from '@tet/ui';
-import { countBy } from 'es-toolkit';
+import { countBy, isNil } from 'es-toolkit';
 import { ReactNode } from 'react';
 import { EditableTitle } from '../../fiches/show-fiche/header/editable-title';
 import FranceIcon from '../components/france-icon.svg';
@@ -50,8 +50,8 @@ const PlanMetadata = () => {
   const { plan, isReadOnly, updatePlan } = usePlanAxesContext();
   const { options: planTypesOptions } = usePlanTypeListe();
   const { id, collectiviteId } = plan;
-  const nbAxes = countBy(plan.axes, (axe) =>
-    axe.depth === 0 ? 'isRoot' : axe.depth > 1 ? 'isChild' : 'isParent'
+  const axesCountByType = countBy(plan.axes, (axe) =>
+    axe.depth === 0 ? 'root' : axe.depth > 1 ? 'sousAxe' : 'axe'
   );
 
   return (
@@ -129,13 +129,13 @@ const PlanMetadata = () => {
           dataTest="plan-header-axes"
           icon="git-commit-line"
           label={{ one: 'Axe', many: 'Axes' }}
-          value={nbAxes.isParent}
+          value={axesCountByType.axe || 0}
         />
         <PlanMetadataItem
           dataTest="plan-header-sous-axes"
           icon="git-merge-line"
           label={{ one: 'Sous-axe', many: 'Sous-axes' }}
-          value={nbAxes.isChild}
+          value={axesCountByType.sousAxe || 0}
         />
         <PlanMetadataItem
           dataTest="plan-header-actions"
@@ -205,10 +205,10 @@ const PlanMetadataItem = ({
             : label.one}{' '}
           :{' '}
         </span>
-        {value ? (
-          <span className="font-medium">{value}</span>
-        ) : (
+        {isNil(value) || value === '' ? (
           <span className="text-warning-1">À compléter</span>
+        ) : (
+          <span className="font-medium">{value}</span>
         )}
       </div>
       {!hideSeparator && <div className="ml-4 w-[1px] h-4 bg-primary-3" />}
