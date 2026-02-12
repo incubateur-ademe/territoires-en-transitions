@@ -15,18 +15,26 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .describe(
       "Token key pour l'authentification à l'API Notion pour la création de bug"
     ),
-  NOTION_BUG_DATABASE_ID: z
+  NOTION_BUG_SUPPORT_DATABASE_ID: z
     .string()
     .min(1)
-    .describe('ID de la base de données Notion dans laquelle créer les bugs'),
-  NOTION_BUG_EPIC_ID: z
+    .describe(
+      'ID de la base de données Notion dans laquelle créer les bugs et les demandes de support'
+    ),
+  NOTION_BUG_SUPPORT_EPIC_ID: z
     .string()
     .min(1)
-    .describe("ID de l'épic Notion dans laquel créer les bugs"),
+    .describe(
+      "ID de l'épic Notion dans laquel créer les bugs et les demandes de support"
+    ),
   NOTION_BUG_TEMPLATE_ID: z
     .string()
     .min(1)
     .describe('ID du template de bug Notion'),
+  NOTION_SUPPORT_TEMPLATE_ID: z
+    .string()
+    .min(1)
+    .describe('ID du template de support Notion'),
   TET_API_TOKEN: z
     .string()
     .min(1)
@@ -84,6 +92,11 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .min(1)
     .describe("Jeton d'accès à l'API Calendly"),
   ENABLE_CRON_JOBS: z.coerce.boolean().describe('Activer les cron jobs'),
+  CRON_JOBS_FILTER: z
+    .string()
+    .optional()
+    .transform((val) => val?.split(',').map((v) => v.trim()))
+    .describe('Filtre pour les cron jobs'),
   SIRENE_API_KEY: z.string().min(1).describe("Clé pour accéder à l'API SIRENE"),
   SIRENE_API_URL: z.string().min(1).describe("URL de l'API SIRENE"),
   CONNECT_URL: z.string().min(1).describe("Adresse de l'API Connect"),

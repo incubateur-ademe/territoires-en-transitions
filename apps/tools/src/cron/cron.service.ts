@@ -1,10 +1,10 @@
-import ConfigurationService from '../config/configuration.service';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, Logger } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { Queue } from 'bullmq';
 import { CronJob, CronTime } from 'cron';
 import { DateTime } from 'luxon';
+import ConfigurationService from '../config/configuration.service';
 import { CRON_JOBS_QUEUE_NAME, JobConfig, JOBS_CONFIG } from './cron.config';
 
 @Injectable()
@@ -23,8 +23,16 @@ export class CronService {
       );
       return;
     }
+    const cronJobsFilter: string[] | undefined =
+      this.configurationService.get('CRON_JOBS_FILTER');
 
     JOBS_CONFIG.forEach((job) => {
+      if (cronJobsFilter && !cronJobsFilter.includes(job.name)) {
+        this.logger.log(
+          `Cron job "${job.name}" non activé car filtré (filtre: ${cronJobsFilter.join(', ')})`
+        );
+        return;
+      }
       this.addCronJob(job);
     });
   }
