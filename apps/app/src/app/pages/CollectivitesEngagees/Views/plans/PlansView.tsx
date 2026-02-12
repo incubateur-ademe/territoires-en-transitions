@@ -2,17 +2,14 @@
 import { useFilteredPlans } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredPlans';
 import { PlanCarte } from '@/app/app/pages/CollectivitesEngagees/Views/plans/PlanCarte';
 import { View } from '@/app/app/pages/CollectivitesEngagees/Views/View';
-import { recherchesPlansUrl } from '@/app/app/paths';
-import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
+import { filtersParsers, filtersUrlKeys } from '../../data/filters';
 import { CollectiviteEngagee } from '@tet/api';
-import { initialFilters, nameToShortNames } from '../../data/filters';
+import { useQueryStates } from 'nuqs';
 
 export const PlansView = ({ collectiviteId }: { collectiviteId?: number }) => {
-  const [filters, setFilters] = useSearchParams<CollectiviteEngagee.Filters>(
-    recherchesPlansUrl,
-    initialFilters,
-    nameToShortNames
-  );
+  const [filters, setFilters] = useQueryStates(filtersParsers, {
+    urlKeys: filtersUrlKeys,
+  });
   const { isLoading, plans, plansCount } = useFilteredPlans(filters);
   return (
     <View<CollectiviteEngagee.RecherchesPlan>

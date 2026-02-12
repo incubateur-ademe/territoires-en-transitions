@@ -59,12 +59,14 @@ export const CollectivitesHeader = ({
   };
 
   const handleChangeView = (view: RecherchesViewParam) => {
-    setFilters({ ...filters, page: 1 });
+    const searchParams = new URLSearchParams(search);
+    searchParams.set('page', '1');
+
     router.push(
       `${getRechercheViewUrl({
         collectiviteId,
         view,
-      })}?${search.toString()}`
+      })}?${searchParams.toString()}`
     );
   };
 

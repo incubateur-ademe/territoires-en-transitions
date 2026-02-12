@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { CollectiviteEngagee, useTRPC } from '@tet/api';
 import { useUserSession } from '@tet/api/users';
-import { getFilterProperties } from './get-filter-properties';
+import { getFilterProperties } from './filters';
 
 /**
  * Renvoi une liste de collectivités en fonction d'un ensemble de filtres
@@ -13,9 +13,7 @@ export const useFilteredReferentiels = (args: CollectiviteEngagee.Filters) => {
   const { data, isLoading } = useQuery(
     trpc.collectivites.recherches.referentiels.queryOptions(
       {
-        ...args,
         ...getFilterProperties(args),
-        trierPar: ['score'],
       },
       {
         //race condition with session that makes the call starts with anonymous user

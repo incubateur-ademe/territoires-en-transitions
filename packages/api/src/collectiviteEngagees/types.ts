@@ -2,7 +2,7 @@ export type FilterPlan = {
   typesPlan: number[];
 };
 export type FilterCollectivite = {
-  nom?: string;
+  nom: string;
   regions: string[];
   departments: string[];
   typesCollectivite: string[];

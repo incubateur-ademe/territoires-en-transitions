@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { CollectiviteEngagee, useTRPC } from '@tet/api';
 import { useUserSession } from '@tet/api/users';
-import { getFilterProperties } from './get-filter-properties';
+import { getFilterProperties } from './filters';
 
 /**
  * Renvoi une liste de collectivités en fonction d'un ensemble de filtres
@@ -12,7 +12,6 @@ export const useFilteredCollectivites = (args: CollectiviteEngagee.Filters) => {
   const { data, isLoading } = useQuery(
     trpc.collectivites.recherches.collectivites.queryOptions(
       {
-        ...args,
         ...getFilterProperties(args),
         trierPar: ['nom'],
       },

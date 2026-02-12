@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { CollectiviteEngagee, useTRPC } from '@tet/api';
 import { useUserSession } from '@tet/api/users';
-import { getFilterProperties } from './get-filter-properties';
+import { getFilterProperties } from './filters';
 
 /**
  * Renvoi une liste de plans en fonction d'un ensemble de filtres
