@@ -52,7 +52,7 @@ const sampleFilterCategories: FilterCategory<TaskFilterKeys>[] = [
 ];
 
 // Interactive story with state management
-const InteractiveFilterBadges = () => {
+const InteractiveBadgeFilters = () => {
   const [filterCategories, setFilterCategories] = useState<
     FilterCategory<TaskFilterKeys>[]
   >(sampleFilterCategories);
@@ -105,7 +105,7 @@ const InteractiveFilterBadges = () => {
 
   return (
     <StoryWrapper
-      title="Interactive FilterBadges (Typed)"
+      title="Interactive BadgeFilters (Typed)"
       description="Try clicking on individual filter values or category close buttons to see the component in action. This example uses typed category keys for better type safety."
     >
       <>
@@ -132,7 +132,7 @@ const InteractiveFilterBadges = () => {
 };
 
 export const Interactive: Story = {
-  render: () => <InteractiveFilterBadges />,
+  render: () => <InteractiveBadgeFilters />,
   parameters: {
     docs: {
       description: {
