@@ -118,7 +118,7 @@ export default function RichTextEditor({
           // (le `!outline-none` est requis pour annuler une règle du dsfr)
           '!outline-none',
           unstyled
-            ? '!p-0'
+            ? '!p-0 !bg-transparent'
             : '!px-6 py-3 border border-solid rounded-lg bg-grey-1 focus-within:border-primary-5',
           className
         ),

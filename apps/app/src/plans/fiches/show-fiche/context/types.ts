@@ -1,5 +1,6 @@
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import { ListActionsResponse } from '@/app/referentiels/actions/use-list-actions';
 import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { FicheNote, FicheNoteUpsert, Financeur } from '@tet/domain/plans';
 import z from 'zod';
@@ -61,9 +62,15 @@ export type FinanceursState = {
   upsert: (data: {
     financeurTagId: number;
     montantTtc: number;
-    financeurTag: { id: number; nom: string; collectiviteId: number };
   }) => Promise<void>;
   delete: (financeurTagId: number) => Promise<void>;
+  getFinanceurName: (financeurTagId: number) => string | undefined;
+};
+
+export type MesuresState = {
+  list: ListActionsResponse['data'];
+  linkMesure: (mesureId: string) => Promise<void>;
+  unlinkMesure: (mesureId: string) => Promise<void>;
 };
 
 export const budgetSummarychema = z.object({

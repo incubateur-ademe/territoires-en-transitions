@@ -1,5 +1,5 @@
-import { flexRender, Table as TableProps } from '@tanstack/react-table';
-import { Fragment } from 'react';
+import { flexRender, Row, Table as TableProps } from '@tanstack/react-table';
+import { Fragment, ReactNode } from 'react';
 
 import { EmptyCardProps } from '../../components/EmptyCard/EmptyCard';
 
@@ -9,23 +9,53 @@ import { TableHead } from './table.head';
 import { TableLoading, TableLoadingProps } from './table.loading';
 import { TableRow } from './table.row';
 
-export type ReactTableProps = {
-  table: TableProps<any>;
+export type ReactTableProps<T = unknown> = {
+  table: TableProps<T>;
   isLoading?: boolean; // Pour afficher uniquement des loading rows
   isLoadingNewRow?: boolean; // Pour afficher un loading row en plus des rows existants
   nbLoadingRows?: TableLoadingProps['nbOfRows'];
   isEmpty?: boolean;
   emptyCard?: EmptyCardProps;
+  rowWrapper?: (props: { row: Row<T>; children: ReactNode }) => ReactNode;
 };
 
-export const ReactTable = ({
+export const ReactTable = <T,>({
   table,
   isLoading,
   isLoadingNewRow,
   isEmpty,
   emptyCard,
   nbLoadingRows,
-}: ReactTableProps) => {
+  rowWrapper,
+}: ReactTableProps<T>) => {
+  const renderRow = (row: Row<T>) => {
+    if (rowWrapper) {
+      const cells = row
+        .getVisibleCells()
+        .map((cell) => (
+          <Fragment key={`${row.id}_${cell.column.id}`}>
+            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+          </Fragment>
+        ));
+      return (
+        <TableRow key={row.id} className="text-sm">
+          <Fragment key={row.id}>
+            {rowWrapper({ row, children: <>{cells}</> })}
+          </Fragment>
+        </TableRow>
+      );
+    }
+    return (
+      <TableRow key={row.id} className="text-sm">
+        {row.getVisibleCells().map((cell) => (
+          <Fragment key={cell.id}>
+            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+          </Fragment>
+        ))}
+      </TableRow>
+    );
+  };
+
   return (
     <Table>
       <TableHead>
@@ -51,19 +81,10 @@ export const ReactTable = ({
         ) : isEmpty ? (
           <TableEmpty
             columnIds={table.getVisibleFlatColumns().map((col) => col.id)}
-            description="Aucune donnée disponible"
             {...emptyCard}
           />
         ) : (
-          table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id} className="text-sm">
-              {row.getVisibleCells().map((cell) => (
-                <Fragment key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </Fragment>
-              ))}
-            </TableRow>
-          ))
+          table.getRowModel().rows.map(renderRow)
         )}
         {isLoadingNewRow && (
           <TableLoading

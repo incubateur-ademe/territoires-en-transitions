@@ -17,7 +17,7 @@ type BreadcrumbsArgs = {
   collectiviteId: number;
   fichePath: TAxeRow[];
   title: string;
-  planId: number;
+  planId?: number;
 };
 
 const toBreadcrumbsLinks = ({
@@ -32,7 +32,7 @@ const toBreadcrumbsLinks = ({
         label: generateTitle(axe.nom),
         href: makeCollectivitePlanActionUrl({
           collectiviteId,
-          planActionUid: planId.toString(),
+          planActionUid: planId?.toString() ?? '',
           openAxes: fichePath
             .filter((_, index) => index <= i)
             .map((axe) => axe.id),
@@ -46,14 +46,15 @@ const toBreadcrumbsLinks = ({
 const useGetBreadcrumbsLinks = ({
   title,
   collectiviteId,
+  axeId,
   planId,
 }: BreadcrumbsProps) => {
-  const { data } = usePlanActionChemin(planId);
+  const { data } = usePlanActionChemin(axeId);
 
-  if (!planId) {
+  if (!axeId) {
     return [
       {
-        label: 'Actions non classées',
+        label: 'Action non classée',
         href: makeCollectiviteToutesLesFichesUrl({
           collectiviteId,
           ficheViewType: 'hors-plan',
@@ -65,7 +66,7 @@ const useGetBreadcrumbsLinks = ({
   return toBreadcrumbsLinks({
     collectiviteId,
     fichePath: data?.chemin ?? [],
-    planId: planId,
+    planId,
     title,
   });
 };
@@ -73,6 +74,7 @@ const useGetBreadcrumbsLinks = ({
 type BreadcrumbsProps = {
   title: string;
   collectiviteId: number;
+  axeId?: number;
   planId?: number;
 };
 

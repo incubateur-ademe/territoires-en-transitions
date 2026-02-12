@@ -1,4 +1,5 @@
 import { FicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheAction';
+import { ScrollReset } from '@/app/utils/scroll-reset';
 import {
   getQueryClient,
   trpcInServerComponent,
@@ -32,5 +33,11 @@ export default async function FicheDetailPage({
   if (!fiche) {
     return <div>Action non trouvée</div>;
   }
-  return <FicheAction fiche={fiche}>{children}</FicheAction>;
+  return (
+    <>
+      {/* In client side routing, when going from a plan view, scroll might be preserved. This component resets the scroll to the top of the page. */}
+      <ScrollReset />
+      <FicheAction fiche={fiche}>{children}</FicheAction>
+    </>
+  );
 }

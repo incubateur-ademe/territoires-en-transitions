@@ -40,7 +40,7 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
       id: 'details',
     },
     {
-      label: `Indicateurs ${
+      label: `Indicateurs liés ${
         indicateurs.list.length > 0 ? `(${indicateurs.list.length})` : ''
       }`,
       isVisible:
@@ -50,7 +50,10 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
       id: 'indicateurs',
     },
     {
-      label: `Sous-actions (${countSousActions})`,
+      label:
+        Array.isArray(countSousActions) && countSousActions.length > 0
+          ? `Sous-actions (${countSousActions.length})`
+          : 'Sous-actions',
       isVisible: true,
       id: 'sous-actions',
     },
@@ -63,8 +66,8 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
       id: 'notes',
     },
     {
-      label: 'Moyens',
-      id: 'moyens',
+      label: 'Budget',
+      id: 'budget',
     },
     {
       label: `Actions liées ${

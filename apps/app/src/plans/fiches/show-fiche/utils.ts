@@ -5,7 +5,7 @@
  */
 export const getYearsOptions = (additionalYearsFromCurrentYear?: number) => {
   const currentYear = new Date().getFullYear();
-  const startingYear = 1990;
+  const startingYear = 2000;
   const finalYear =
     additionalYearsFromCurrentYear && additionalYearsFromCurrentYear > 0
       ? currentYear + additionalYearsFromCurrentYear
@@ -20,8 +20,4 @@ export const getYearsOptions = (additionalYearsFromCurrentYear?: number) => {
   return { yearsOptions, currentYear };
 };
 
-/**
- * Renvoie "Sans titre" si le string est undefined ou null
- * @deprecated
- */
 export const generateTitle = (title?: string | null) => title || 'Sans titre';

@@ -81,11 +81,7 @@ export const NotesView = ({ isReadonly, fiche }: NotesViewProps) => {
 
           <div className="flex flex-col gap-3">
             {notes
-              .sort(
-                (a, b) =>
-                  new Date(b.dateNote).getTime() -
-                  new Date(a.dateNote).getTime()
-              )
+              .sort((a, b) => Number(b.dateNote) - Number(a.dateNote))
               .map((note) => (
                 <NoteCard
                   key={note.id}

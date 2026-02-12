@@ -3,7 +3,7 @@ const FICHE_SECTIONS = [
   'indicateurs',
   'sous-actions',
   'notes',
-  'moyens',
+  'budget',
   'actions-liees',
   'mesures-liees',
   'documents',

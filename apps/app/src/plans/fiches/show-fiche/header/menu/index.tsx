@@ -19,7 +19,7 @@ export const Menu = () => {
       id: 'emplacement',
       isVisible: hasCollectivitePermission('plans.mutate'),
       icon: 'folder-2-line',
-      label: "Mutualiser l'action dans d'autres plans",
+      label: "Mutualiser l'action dans un autre plan",
     },
     {
       id: 'accessRightsManagement',
@@ -30,7 +30,7 @@ export const Menu = () => {
     {
       id: 'export',
       icon: 'download-line',
-      label: "Télécharger l'action",
+      label: "Télécharger l'action (PDF)",
     },
     {
       id: 'activityLog',

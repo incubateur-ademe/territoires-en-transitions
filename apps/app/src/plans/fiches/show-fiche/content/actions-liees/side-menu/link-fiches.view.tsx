@@ -47,7 +47,7 @@ export const LinkFichesView = () => {
   return (
     <div className="p-4">
       <div className="relative flex flex-col gap-4">
-        <Field title="Rechercher par intitulé" small>
+        <Field title="Rechercher par intitulé ou description" small>
           <Input
             type="search"
             {...register('searchText')}

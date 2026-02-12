@@ -37,6 +37,7 @@ export const SousActionTitleCell = ({ sousAction }: Props) => {
       className="align-top"
       canEdit={canUpdate}
       edit={{
+        floatingMatchReferenceHeight: false,
         onClose: () =>
           hasChanged &&
           updateSousAction({

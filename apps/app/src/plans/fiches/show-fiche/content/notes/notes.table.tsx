@@ -1,13 +1,27 @@
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  Row,
+  useReactTable,
+} from '@tanstack/react-table';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
+
 import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
-import { Button, cn, Spacer, VisibleWhen } from '@tet/ui';
-import { useState } from 'react';
-import { NoteRow } from './editable-note-row';
-import { NoteTableNewRow } from './note-table-new-row';
+import { Button, ReactTable, TableHeaderCell } from '@tet/ui';
+import { NoteFormProvider } from './note-form.context';
+import { NoteActionsCell } from './note.actions.cell';
+import { NoteDescriptionCell } from './note.description.cell';
+import { NoteMetadataCell } from './note.metadata.cell';
+import { NoteYearCell } from './note.year.cell';
+import { NoteDeSuiviPicto } from './notes.picto';
 
 type NotesTableProps = {
   notes: FicheNote[];
   fiche: FicheWithRelations;
   isReadonly: boolean;
+  isLoading?: boolean;
+  isLoadingNewRow?: boolean;
+  onCreateNote?: () => void;
   onUpsertNote: (editedNote: {
     id?: number;
     note: string;
@@ -16,81 +30,123 @@ type NotesTableProps = {
   onDeleteNote: (noteToDeleteId: number) => Promise<void>;
 };
 
-const HeaderCell = ({
-  children,
-  className,
-}: {
-  children?: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <th
-      className={cn(
-        'text-left uppercase text-sm text-grey-9 font-medium py-3 pl-4 white border-b border-gray-4',
-        className
-      )}
-    >
-      {children}
-    </th>
-  );
-};
+const columnHelper = createColumnHelper<FicheNote>();
 
 export const NotesTable = ({
   notes,
   fiche,
   isReadonly,
+  isLoading,
+  isLoadingNewRow,
+  onCreateNote,
   onUpsertNote,
   onDeleteNote,
 }: NotesTableProps) => {
-  const [isAddingNote, setIsAddingNote] = useState(false);
-  const sortedNotes = [...notes].sort(
-    (a, b) => new Date(b.dateNote).getTime() - new Date(a.dateNote).getTime()
-  );
-  return (
-    <div>
-      <div className="overflow-x-auto">
-        <table className="w-full table-fixed border-separate border-spacing-0 border border-gray-3 bg-grey-1 rounded-lg overflow-hidden [&_tbody_tr:nth-child(even)]:bg-grey-2">
-          <thead>
-            <tr className="border-b border-gray-300">
-              <HeaderCell className="w-[125px]">Année</HeaderCell>
-              <HeaderCell className="w-[400px]">Description</HeaderCell>
-              <HeaderCell className="w-[300px]">Auteur/Date</HeaderCell>
-              <HeaderCell className="w-[80px]" />
-            </tr>
-          </thead>
-          <tbody>
-            {sortedNotes.map((note) => (
-              <NoteRow
-                key={note.id || 'new'}
-                note={note}
-                isReadonly={isReadonly}
-                fiche={fiche}
-                onUpsertNote={onUpsertNote}
-                onDeleteNote={onDeleteNote}
-              />
-            ))}
-            <VisibleWhen condition={!isReadonly && isAddingNote}>
-              <NoteTableNewRow
-                key="new"
-                onUpsertNote={onUpsertNote}
-                onCancel={() => setIsAddingNote(false)}
-              />
-            </VisibleWhen>
-          </tbody>
-        </table>
-      </div>
+  const [columnVisibility, setColumnVisibility] = useState({});
 
-      <VisibleWhen condition={!isReadonly}>
-        <Spacer height={1} />
+  const sortedNotes = useMemo(
+    () =>
+      [...notes].sort(
+        (a, b) =>
+          new Date(b.dateNote).getTime() - new Date(a.dateNote).getTime()
+      ),
+    [notes]
+  );
+
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('dateNote', {
+        header: () => <TableHeaderCell title="Année" className="w-32" />,
+        cell: () => <NoteYearCell />,
+      }),
+      columnHelper.accessor('note', {
+        header: () => <TableHeaderCell title="Description" />,
+        cell: () => <NoteDescriptionCell />,
+      }),
+      columnHelper.display({
+        id: 'metadata',
+        header: () => <TableHeaderCell title="Auteur/Date" className="w-96" />,
+        cell: () => <NoteMetadataCell />,
+      }),
+      columnHelper.display({
+        id: 'actions',
+        header: () => <TableHeaderCell className="w-16" icon="more-2-line" />,
+        cell: () => (
+          <NoteActionsCell fiche={fiche} onDeleteNote={onDeleteNote} />
+        ),
+      }),
+    ],
+    [fiche, onDeleteNote]
+  );
+
+  const table = useReactTable({
+    columns,
+    data: sortedNotes,
+    getRowId: (row, index) => row.id?.toString() ?? `new-${index}`,
+    state: {
+      columnVisibility,
+    },
+    onColumnVisibilityChange: setColumnVisibility,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  useEffect(() => {
+    table.getColumn('actions')?.toggleVisibility(!isReadonly);
+  }, [isReadonly, table]);
+
+  const isEmpty = sortedNotes.length === 0;
+
+  return (
+    <div className="p-2 bg-white rounded-lg border border-grey-3">
+      <div className="max-2xl:overflow-x-auto">
+        <ReactTable
+          table={table}
+          isLoading={isLoading}
+          isLoadingNewRow={isLoadingNewRow}
+          isEmpty={isEmpty}
+          rowWrapper={({
+            row,
+            children,
+          }: {
+            row: Row<FicheNote>;
+            children: ReactNode;
+          }) => (
+            <NoteFormProvider
+              note={row.original}
+              isReadonly={isReadonly}
+              onUpsertNote={onUpsertNote}
+            >
+              {children}
+            </NoteFormProvider>
+          )}
+          emptyCard={{
+            picto: (props) => <NoteDeSuiviPicto {...props} />,
+            title: 'Aucune note de suivi pour le moment',
+            description:
+              "Ajoutez des notes pour documenter le suivi et l'avancement de votre fiche action.",
+            actions:
+              isReadonly || !onCreateNote
+                ? undefined
+                : [
+                    {
+                      onClick: onCreateNote,
+                      children: 'Ajouter une note',
+                      icon: 'add-line',
+                    },
+                  ],
+          }}
+        />
+      </div>
+      {!isReadonly && onCreateNote && sortedNotes.length > 0 && (
         <Button
-          size="xs"
+          className="m-4"
           icon="add-line"
-          variant="outlined"
-          onClick={() => setIsAddingNote((prev) => !prev)}
+          size="xs"
+          onClick={onCreateNote}
         >
           Ajouter une note
         </Button>
-      </VisibleWhen>
+      )}
     </div>
   );
 };

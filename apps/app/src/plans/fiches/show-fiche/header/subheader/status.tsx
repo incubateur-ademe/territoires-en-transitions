@@ -14,6 +14,7 @@ export const Status = ({ status }: { status: Statut | null }): JSX.Element => {
       renderOnEdit={({ openState }) => (
         <div className="min-w-[240px]">
           <Select
+            openState={openState}
             options={ficheActionStatutOptions}
             values={status ?? undefined}
             onChange={(value) => {
@@ -29,13 +30,16 @@ export const Status = ({ status }: { status: Statut | null }): JSX.Element => {
             )}
             buttonClassName="border-0 border-b"
             displayOptionsWithoutFloater
-            openState={openState}
             disabled={isUpdating}
           />
         </div>
       )}
     >
-      <StatusBadge status={status} />
+      {(props) => (
+        <button type="button" {...props}>
+          <StatusBadge status={status} />
+        </button>
+      )}
     </InlineEditWrapper>
   );
 };

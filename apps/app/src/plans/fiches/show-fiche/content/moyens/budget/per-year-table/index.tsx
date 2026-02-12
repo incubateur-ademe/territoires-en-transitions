@@ -1,29 +1,43 @@
-import { Button, cn, Spacer, Table, TableHead, VisibleWhen } from '@tet/ui';
-import { useState } from 'react';
+import { getFormattedFloat, getFormattedNumber } from '@/app/utils/formatUtils';
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import {
+  Button,
+  ReactTable,
+  Spacer,
+  TableCell,
+  TableHeaderCell,
+} from '@tet/ui';
+import { useEffect, useMemo } from 'react';
 import { useFicheContext } from '../../../../context/fiche-context';
+import { BudgetPerYear } from '../../../../context/types';
 import { getYearsOptions } from '../../../../utils';
-import { BudgetPerYearTableNewRow } from './budget-per-year-new.row';
-import { BudgetPerYearTotalRow } from './budget-per-year-total.row';
-import { BudgetPerYearRow } from './budget-per-year.row';
+import { emptyViewsProps } from '../../empty-view';
+import { BudgetPerYearFormProvider } from './budget-per-year-form.context';
+import {
+  BudgetPerYearActionsCell,
+  BudgetPerYearDepenseCell,
+  BudgetPerYearEtpPrevisionnelCell,
+  BudgetPerYearEtpReelCell,
+  BudgetPerYearMontantCell,
+  BudgetPerYearYearCell,
+} from './budget-per-year.cells';
 
-const HeaderCell = ({
-  children,
-  className,
-}: {
-  children?: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <th
-      className={cn(
-        'text-left uppercase text-sm text-grey-9 font-medium py-3 pl-4 bg-white min-w-[150px]',
-        className
-      )}
-    >
-      {children}
-    </th>
-  );
-};
+type BudgetTableRow =
+  | {
+      id: string;
+      type: 'budget';
+      budget: BudgetPerYear;
+    }
+  | {
+      id: 'total';
+      type: 'total';
+    };
+
+const columnHelper = createColumnHelper<BudgetTableRow>();
 
 export const BudgetPerYearTable = ({
   type,
@@ -33,74 +47,225 @@ export const BudgetPerYearTable = ({
   const { budgets: budgetsState, fiche, isReadonly } = useFicheContext();
   const { upsert, deleteBudgets, [type]: budgets } = budgetsState;
 
-  const usedYears = budgets.perYear.map((budget) => budget.year);
-  const [isAddingBudget, setIsAddingBudget] = useState(usedYears.length === 0);
-
-  const yearsOptions = getYearsOptions(7).yearsOptions.filter(
-    (year) => !usedYears.includes(year.value)
+  const usedYears = useMemo(
+    () => budgets.perYear.map((budget) => budget.year),
+    [budgets.perYear]
+  );
+  const allYearsOptions = useMemo(() => getYearsOptions(7).yearsOptions, []);
+  const yearsOptions = useMemo(
+    () => allYearsOptions.filter((year) => !usedYears.includes(year.value)),
+    [allYearsOptions, usedYears]
   );
 
+  const tableData = useMemo<BudgetTableRow[]>(() => {
+    const rows: BudgetTableRow[] = budgets.perYear.map((budget) => ({
+      id: `${budget.year}`,
+      type: 'budget',
+      budget,
+    }));
+
+    rows.push({ id: 'total', type: 'total' });
+    return rows;
+  }, [budgets.perYear]);
+  const totals = useMemo(
+    () =>
+      budgets.perYear.reduce(
+        (acc, row) => ({
+          montant: acc.montant + (row.montant ?? 0),
+          depense: acc.depense + (row.depense ?? 0),
+          etpPrevisionnel: acc.etpPrevisionnel + (row.etpPrevisionnel ?? 0),
+          etpReel: acc.etpReel + (row.etpReel ?? 0),
+        }),
+        {
+          montant: 0,
+          depense: 0,
+          etpPrevisionnel: 0,
+          etpReel: 0,
+        }
+      ),
+    [budgets.perYear]
+  );
+
+  const columns = useMemo(
+    () => [
+      columnHelper.display({
+        id: 'year',
+        header: () => <TableHeaderCell title="Année" className="w-[150px]" />,
+        cell: ({ row }) => {
+          if (row.original.type === 'total') {
+            return (
+              <TableCell className="font-medium text-primary-9 text-sm border-b border-gray-5 bg-primary-3">
+                TOTAL
+              </TableCell>
+            );
+          }
+          const currentYear = row.original.budget.year;
+
+          const availableYearOptions = allYearsOptions.filter(
+            (yearOption) =>
+              yearOption.value === currentYear ||
+              !usedYears.includes(yearOption.value)
+          );
+
+          return (
+            <BudgetPerYearYearCell
+              availableYearOptions={availableYearOptions}
+            />
+          );
+        },
+      }),
+      columnHelper.display({
+        id: 'montant',
+        header: () => <TableHeaderCell title="Montant" />,
+        cell: ({ row }) => {
+          if (row.original.type === 'total') {
+            return (
+              <TableCell className="font-medium text-primary-9 border-b border-gray-5 bg-primary-3">
+                <span>
+                  {getFormattedNumber(totals.montant)} €{' '}
+                  <sup className="-top-[0.4em]">HT</sup>
+                </span>
+              </TableCell>
+            );
+          }
+          return <BudgetPerYearMontantCell />;
+        },
+      }),
+      columnHelper.display({
+        id: 'depense',
+        header: () => <TableHeaderCell title="Dépensé" />,
+        cell: ({ row }) => {
+          if (row.original.type === 'total') {
+            return (
+              <TableCell className="font-medium text-primary-9 border-b border-gray-5 bg-primary-3">
+                <span>{getFormattedNumber(totals.depense)} € </span>
+              </TableCell>
+            );
+          }
+          return <BudgetPerYearDepenseCell />;
+        },
+      }),
+      columnHelper.display({
+        id: 'etpPrevisionnel',
+        header: () => <TableHeaderCell title="ETP prévisionnel" />,
+        cell: ({ row }) => {
+          if (row.original.type === 'total') {
+            return (
+              <TableCell className="font-medium text-primary-9 border-b border-gray-5 bg-primary-3">
+                <span>{getFormattedFloat(totals.etpPrevisionnel)} ETP</span>
+              </TableCell>
+            );
+          }
+          return <BudgetPerYearEtpPrevisionnelCell />;
+        },
+      }),
+      columnHelper.display({
+        id: 'etpReel',
+        header: () => <TableHeaderCell title="ETP Réel" />,
+        cell: ({ row }) => {
+          if (row.original.type === 'total') {
+            return (
+              <TableCell className="font-medium text-primary-9 border-b border-gray-5 bg-primary-3">
+                {<span>{getFormattedFloat(totals.etpReel) ?? '-'} ETP</span>}
+              </TableCell>
+            );
+          }
+          return <BudgetPerYearEtpReelCell />;
+        },
+      }),
+      columnHelper.display({
+        id: 'actions',
+        header: () => <TableHeaderCell icon="more-2-line" />,
+        cell: ({ row }) => {
+          if (row.original.type === 'total') {
+            return (
+              <TableCell className="border-b border-gray-5 bg-primary-3" />
+            );
+          }
+          return (
+            <BudgetPerYearActionsCell
+              fiche={fiche}
+              onDeleteBudget={(year) => deleteBudgets(year, type)}
+            />
+          );
+        },
+      }),
+    ],
+    [allYearsOptions, usedYears, fiche, deleteBudgets, type, totals]
+  );
+
+  const table = useReactTable({
+    columns,
+    data: tableData,
+    getRowId: (row) => row.id,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  useEffect(() => {
+    table.getColumn('actions')?.toggleVisibility(!isReadonly);
+  }, [isReadonly, table]);
+
   return (
-    <div>
-      <div className="overflow-x-auto md:overflow-x-none">
-        <Table className="border-separate border-spacing-0 border border-gray-3 bg-grey-1 min-w-[800px] [&_tbody_tr:nth-child(even)]:bg-grey-2 [&_tbody_tr[data-total-row]]:bg-primary-3">
-          <TableHead>
-            <tr>
-              <HeaderCell
-                className={isAddingBudget ? 'w-[200px]' : 'w-[150px]'}
-              >
-                Année
-              </HeaderCell>
-              <HeaderCell className={isAddingBudget ? 'w-[200px]' : ''}>
-                Montant
-              </HeaderCell>
-              <HeaderCell className={isAddingBudget ? 'w-[200px]' : ''}>
-                Dépensé
-              </HeaderCell>
-              <HeaderCell className={isAddingBudget ? 'w-[200px]' : ''}>
-                ETP prévisionnel
-              </HeaderCell>
-              <HeaderCell className={isAddingBudget ? 'w-[200px]' : ''}>
-                ETP Réel
-              </HeaderCell>
-              <HeaderCell
-                className={isAddingBudget ? 'w-[150px]' : 'w-[80px]'}
-              />
-            </tr>
-          </TableHead>
-          <tbody>
-            {budgets.perYear.map((budget) => (
-              <BudgetPerYearRow
-                availableYearOptions={yearsOptions}
-                key={budget.year}
-                budget={budget}
-                fiche={fiche}
-                isReadonly={isReadonly}
-                onUpsertBudget={(budget) => upsert.year(budget, type)}
-                onDeleteBudget={(year) => deleteBudgets(year, type)}
-              />
-            ))}
-            <VisibleWhen condition={!isReadonly && isAddingBudget}>
-              <BudgetPerYearTableNewRow
-                key="new"
-                availableYearOptions={yearsOptions}
-                onUpsertBudget={(budget) => upsert.year(budget, type)}
-                onCancel={() => setIsAddingBudget(false)}
-              />
-            </VisibleWhen>
-            <BudgetPerYearTotalRow key="total" budgets={budgets.perYear} />
-          </tbody>
-        </Table>
+    <div className="p-2 bg-white rounded-lg border border-grey-3">
+      <div className="max-2xl:overflow-x-auto">
+        <div className="min-w-[800px]">
+          <ReactTable
+            table={table}
+            isEmpty={budgets.perYear.length === 0}
+            emptyCard={{
+              ...emptyViewsProps[type],
+              actions: isReadonly
+                ? undefined
+                : [
+                    {
+                      onClick: async () => {
+                        await upsert.year(
+                          { year: new Date().getFullYear() },
+                          type
+                        );
+                      },
+                      children: 'Ajouter un budget',
+                      icon: 'add-line',
+                      variant: 'outlined',
+                    },
+                  ],
+            }}
+            rowWrapper={({ row, children }) => {
+              if (row.original.type === 'budget') {
+                return (
+                  <BudgetPerYearFormProvider
+                    budget={row.original.budget}
+                    isReadonly={isReadonly}
+                    onUpsertBudget={(budget) => upsert.year(budget, type)}
+                  >
+                    {children}
+                  </BudgetPerYearFormProvider>
+                );
+              }
+              return children;
+            }}
+          />
+        </div>
       </div>
       <Spacer height={1} />
-      <Button
-        size="xs"
-        icon="add-line"
-        variant="outlined"
-        onClick={() => setIsAddingBudget((prev) => !prev)}
-      >
-        Ajouter un budget
-      </Button>
+      {!isReadonly && budgets.perYear.length > 0 && (
+        <Button
+          size="xs"
+          icon="add-line"
+          variant="outlined"
+          className="m-4"
+          disabled={yearsOptions.length === 0}
+          onClick={async () => {
+            const firstYearOption = yearsOptions[0];
+            if (!firstYearOption) {
+              return;
+            }
+            await upsert.year({ year: firstYearOption.value }, type);
+          }}
+        >
+          Ajouter un budget
+        </Button>
+      )}
     </div>
   );
 };
