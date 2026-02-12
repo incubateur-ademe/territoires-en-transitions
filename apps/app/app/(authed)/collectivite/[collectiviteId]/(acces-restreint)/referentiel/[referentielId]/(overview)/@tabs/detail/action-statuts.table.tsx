@@ -3,7 +3,7 @@
 import { DetailTacheTable } from '@/app/referentiels/DetailTaches/DetailTacheTable';
 import { noFilters } from '@/app/referentiels/DetailTaches/filters';
 import { useTableData } from '@/app/referentiels/DetailTaches/useTableData';
-import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
+import { DeleteFiltersButton } from '@/app/ui/lists/DEPRECATED_filter-badges/delete-filters.button';
 
 export const ActionStatutsTable = () => {
   const tableData = useTableData();

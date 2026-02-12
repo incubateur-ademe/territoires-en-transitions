@@ -4,7 +4,9 @@ import { useState } from 'react';
 
 import { ActionListFilters } from '@/app/referentiels/actions/use-list-actions';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import FilterBadges, { useFiltersToBadges } from '@/app/ui/lists/filter-badges';
+import DEPRECATED_FilterBadges, {
+  useFiltersToBadges,
+} from '@/app/ui/lists/DEPRECATED_filter-badges';
 import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { Checkbox, DEPRECATED_ButtonMenu, Select } from '@tet/ui';
 import Filters from './filters';
@@ -92,7 +94,7 @@ const ActionList = () => {
         </div>
       </div>
 
-      <FilterBadges
+      <DEPRECATED_FilterBadges
         badges={filterBadges}
         resetFilters={() => onFilterChange(initialFilters)}
         className="mt-6"

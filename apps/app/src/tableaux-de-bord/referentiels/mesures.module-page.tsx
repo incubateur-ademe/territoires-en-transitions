@@ -5,7 +5,9 @@ import {
   ModulePage,
   ModuleParentPage,
 } from '@/app/tableaux-de-bord/modules/module.page';
-import FilterBadges, { useFiltersToBadges } from '@/app/ui/lists/filter-badges';
+import DEPRECATED_FilterBadges, {
+  useFiltersToBadges,
+} from '@/app/ui/lists/DEPRECATED_filter-badges';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ModuleMesuresSelect } from '@tet/api/plan-actions';
@@ -70,7 +72,7 @@ export const MesuresModulePage = ({
             {filtersModal({ isOpen, setIsOpen })}
           </div>
           {filterBadges?.length && (
-            <FilterBadges
+            <DEPRECATED_FilterBadges
               badges={[
                 ...filterBadges,
                 ...getBadgesReferentiels(options.filtre.referentielIds),

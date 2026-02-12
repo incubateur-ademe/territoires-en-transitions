@@ -1,5 +1,5 @@
-import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
-import { BadgesContainer } from '@tet/ui';
+import { DeleteFiltersButton } from '@/app/ui/lists/DEPRECATED_filter-badges/delete-filters.button';
+import { DEPRECATED_BadgesContainer } from '@tet/ui';
 
 type Props = {
   /** valeurs des badges à afficher */
@@ -11,14 +11,14 @@ type Props = {
 
 /** Liste de badges représentant les filtres actifs avec
  * bouton de réinitialisation de ces filtres. */
-const FilterBadges = ({
+const DEPRECATED_FilterBadges = ({
   className,
   badges,
   maxDisplayedFilterCount,
   resetFilters,
 }: Props) => {
   return (
-    <BadgesContainer
+    <DEPRECATED_BadgesContainer
       badges={badges}
       className={className}
       badgeProps={{ state: 'standard', size: 'sm', trim: false }}
@@ -36,4 +36,4 @@ const FilterBadges = ({
   );
 };
 
-export default FilterBadges;
+export default DEPRECATED_FilterBadges;

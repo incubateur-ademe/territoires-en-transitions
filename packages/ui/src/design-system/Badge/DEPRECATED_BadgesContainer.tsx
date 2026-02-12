@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-import { Badge, BadgeProps } from '../Badge';
+import { Badge, BadgeProps } from '.';
 import { Tooltip } from '../Tooltip';
 
 type BadgesContainerProps = {
@@ -19,7 +19,7 @@ type BadgesContainerProps = {
 
 /** Liste de badges représentant avec un nombre maximum de badges
  * optionnellement un bouton en fin de ligne. */
-export const BadgesContainer = ({
+export const DEPRECATED_BadgesContainer = ({
   className,
   badges,
   badgeProps,
