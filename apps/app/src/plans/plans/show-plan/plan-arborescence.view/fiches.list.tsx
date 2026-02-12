@@ -41,6 +41,8 @@ export const FichesList = ({
         if (!fiche) {
           return <FicheActionCardSkeleton key={i} />;
         }
+      })}
+      {fiches.map((fiche) => {
         const isReadonly =
           !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id) ||
           isFicheSharedWithCollectivite(fiche, collectivite.collectiviteId);
