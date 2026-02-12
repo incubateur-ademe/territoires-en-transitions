@@ -1,13 +1,9 @@
 'use client';
-import { View } from '@/app/app/pages/CollectivitesEngagees/Views/View';
-import {
-  initialFilters,
-  nameToShortNames,
-} from '@/app/app/pages/CollectivitesEngagees/data/filters';
-import { useFilteredReferentiels } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredReferentiels';
-import { recherchesReferentielsUrl } from '@/app/app/paths';
-import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
 import { CollectiviteEngagee } from '@tet/api';
+import { useQueryStates } from 'nuqs';
+import { filtersParsers, filtersUrlKeys } from '../../data/filters';
+import { useFilteredReferentiels } from '../../data/useFilteredReferentiels';
+import { View } from '../View';
 import { ReferentielCarte } from './ReferentielCarte';
 
 export const ReferentielsView = ({
@@ -15,11 +11,9 @@ export const ReferentielsView = ({
 }: {
   collectiviteId?: number;
 }) => {
-  const [filters, setFilters] = useSearchParams<CollectiviteEngagee.Filters>(
-    recherchesReferentielsUrl,
-    initialFilters,
-    nameToShortNames
-  );
+  const [filters, setFilters] = useQueryStates(filtersParsers, {
+    urlKeys: filtersUrlKeys,
+  });
 
   const { isLoading, collectivites, collectivitesCount } =
     useFilteredReferentiels(filters);

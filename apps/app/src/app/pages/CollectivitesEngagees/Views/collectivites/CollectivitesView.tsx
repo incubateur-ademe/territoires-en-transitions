@@ -1,12 +1,10 @@
 'use client';
 
-import { nameToShortNames } from '@/app/app/pages/CollectivitesEngagees/data/filters';
-import { useFilteredCollectivites } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
-import { View } from '@/app/app/pages/CollectivitesEngagees/Views/View';
-import { recherchesCollectivitesUrl } from '@/app/app/paths';
-import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
 import { CollectiviteEngagee } from '@tet/api';
-import { initialFilters } from '../../data/filters';
+import { useQueryStates } from 'nuqs';
+import { filtersParsers, filtersUrlKeys } from '../../data/filters';
+import { useFilteredCollectivites } from '../../data/useFilteredCollectivites';
+import { View } from '../View';
 import { CollectiviteCarte } from './CollectiviteCarte';
 
 export const CollectivitesView = ({
@@ -14,11 +12,9 @@ export const CollectivitesView = ({
 }: {
   collectiviteId?: number;
 }) => {
-  const [filters, setFilters] = useSearchParams<CollectiviteEngagee.Filters>(
-    recherchesCollectivitesUrl,
-    initialFilters,
-    nameToShortNames
-  );
+  const [filters, setFilters] = useQueryStates(filtersParsers, {
+    urlKeys: filtersUrlKeys,
+  });
 
   const { isLoading, collectivites, collectivitesCount } =
     useFilteredCollectivites(filters);

@@ -1,6 +1,16 @@
 import { CollectiviteEngagee } from '@tet/api';
+import { parseAsArrayOf, parseAsInteger, parseAsString, UrlKeys } from 'nuqs';
 
-const notEmpty = (l: unknown[]): boolean => l.length > 0;
+export const MAX_NUMBER_OF_CARDS_PER_PAGE = 16;
+
+export const getFilterProperties = (args: CollectiviteEngagee.Filters) => {
+  return {
+    ...args,
+    nbCards: MAX_NUMBER_OF_CARDS_PER_PAGE,
+  };
+};
+
+const notEmpty = (l?: unknown[]): boolean => (l ? l.length > 0 : false);
 
 export const getNumberOfActiveFilters = (
   filtres: CollectiviteEngagee.Filters
@@ -34,8 +44,23 @@ export const initialFilters: CollectiviteEngagee.Filters = {
   tauxDeRemplissage: [],
   trierPar: ['nom'],
 };
-// mapping nom des filtres => params dans l'url
-export const nameToShortNames = {
+
+export const filtersParsers = {
+  nom: parseAsString.withDefault(''),
+  typesPlan: parseAsArrayOf(parseAsInteger).withDefault([]),
+  typesCollectivite: parseAsArrayOf(parseAsString).withDefault([]),
+  regions: parseAsArrayOf(parseAsString).withDefault([]),
+  departments: parseAsArrayOf(parseAsString).withDefault([]),
+  population: parseAsArrayOf(parseAsString).withDefault([]),
+  referentiel: parseAsArrayOf(parseAsString).withDefault([]),
+  niveauDeLabellisation: parseAsArrayOf(parseAsString).withDefault([]),
+  realiseCourant: parseAsArrayOf(parseAsString).withDefault([]),
+  tauxDeRemplissage: parseAsArrayOf(parseAsString).withDefault([]),
+  trierPar: parseAsArrayOf(parseAsString).withDefault(['nom']),
+  page: parseAsInteger.withDefault(1),
+};
+
+export const filtersUrlKeys: UrlKeys<typeof filtersParsers> = {
   nom: 'col',
   typesPlan: 'tp',
   typesCollectivite: 't',
@@ -47,4 +72,5 @@ export const nameToShortNames = {
   realiseCourant: 'f',
   tauxDeRemplissage: 'c',
   trierPar: 's',
+  page: 'page',
 };
