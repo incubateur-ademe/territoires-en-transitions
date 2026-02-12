@@ -1,4 +1,3 @@
-import Fuse from 'fuse.js';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TagEnum } from '@tet/domain/collectivites';
 import {
@@ -9,6 +8,7 @@ import {
   statutEnumValues,
 } from '@tet/domain/plans';
 import { isNil } from 'es-toolkit';
+import Fuse from 'fuse.js';
 import { z } from 'zod';
 import { ParsedRow } from '../parsers/excel-parser';
 import { deduplicateStrings } from '../utils/deduplication.utils';
@@ -114,7 +114,6 @@ export const importFicheInputSchema = z.object({
   objectifs: optionalTextSchema,
   resources: optionalTextSchema,
   financements: optionalTextSchema,
-  calendrier: optionalTextSchema,
   notesComplementaire: optionalTextSchema,
   participationCitoyenne: optionalTextSchema,
   budget: numberSchema,

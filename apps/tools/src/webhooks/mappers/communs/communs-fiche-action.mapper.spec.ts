@@ -56,7 +56,6 @@ describe('CommunsFicheActionMapper', () => {
         },
       ],
       restreint: false,
-      calendrier: null,
       financeurs: [
         {
           ficheId: 10108,
