@@ -1,13 +1,13 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { Badge, BadgesContainer } from './index';
+import { Badge, DEPRECATED_BadgesContainer } from './index';
 
-const meta: Meta<typeof BadgesContainer> = {
-  component: BadgesContainer,
+const meta: Meta<typeof DEPRECATED_BadgesContainer> = {
+  component: DEPRECATED_BadgesContainer,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof BadgesContainer>;
+type Story = StoryObj<typeof DEPRECATED_BadgesContainer>;
 
 export const Default: Story = {
   args: {

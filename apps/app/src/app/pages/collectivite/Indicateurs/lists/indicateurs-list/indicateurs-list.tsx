@@ -12,7 +12,7 @@ import {
   ListDefinitionsInputFilters,
   useListIndicateurs,
 } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
-import { CustomFilterBadges } from '@/app/ui/lists/filter-badges';
+import { CustomFilterBadges } from '@/app/ui/lists/DEPRECATED_filter-badges';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { OpenState } from '@tet/ui/utils/types';
@@ -52,7 +52,8 @@ const IndicateursListe = (props: Props) => {
     renderSettings,
   } = props;
 
-  const { collectiviteId, hasCollectivitePermission } = useCurrentCollectivite();
+  const { collectiviteId, hasCollectivitePermission } =
+    useCurrentCollectivite();
   const { id: currentUserId } = useUser();
 
   const { displayGraphs, sortBy, currentPage, ...filters } = searchParams;

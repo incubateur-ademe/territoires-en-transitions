@@ -1,4 +1,4 @@
-import { FiltersMenuButton as GenericFiltersMenuButton } from '@/app/ui/lists/filter-badges';
+import { FiltersMenuButton as GenericFiltersMenuButton } from '@/app/ui/lists/DEPRECATED_filter-badges';
 import { useFicheActionFilters } from './fiche-action-filters-context';
 import { ToutesLesFichesFiltersForm } from './toutes-les-fiches-filters.form';
 
