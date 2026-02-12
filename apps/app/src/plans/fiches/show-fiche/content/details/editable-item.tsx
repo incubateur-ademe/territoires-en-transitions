@@ -1,30 +1,11 @@
-import {
-  cn,
-  Icon,
-  InfoTooltip,
-  InlineEditWrapper,
-  RichTextEditor,
-} from '@tet/ui';
+import { cn, Icon, InlineEditWrapper, RichTextEditor } from '@tet/ui';
 import { useMemo } from 'react';
 
-const DisplayValue = ({
-  value,
-  helperText,
-}: {
-  value?: string;
-  helperText?: string;
-}) => {
-  return (
-    <div className="text-grey-8 flex items-center gap-1">
-      {helperText && (
-        <InfoTooltip
-          label={helperText}
-          size="sm"
-          iconClassName="flex-shrink-0 text-info-500"
-        />
-      )}
-      <span>{value || 'À renseigner'}</span>
-    </div>
+const DisplayValue = ({ value }: { value?: string | React.ReactNode }) => {
+  return typeof value === 'string' || !value ? (
+    <span>{value ?? 'À renseigner'}</span>
+  ) : (
+    value
   );
 };
 
@@ -108,17 +89,15 @@ export const InlineEditableItem = ({
   value,
   isReadonly,
   renderOnEdit,
-  helperText,
 }: {
   small?: boolean;
   icon?: string | React.ReactNode;
   label?: string | React.ReactNode;
-  value?: string;
+  value?: string | React.ReactNode;
   isReadonly: boolean;
   renderOnEdit: (args: {
     openState: { isOpen: boolean; setIsOpen: (v: boolean) => void };
   }) => React.ReactNode;
-  helperText?: string;
 }) => {
   const hasLabel = !!label && typeof label === 'string';
   return (
@@ -147,7 +126,7 @@ export const InlineEditableItem = ({
               'cursor-pointer hover:opacity-80 transition-opacity': !isReadonly,
             })}
           >
-            <DisplayValue value={value} helperText={helperText} />
+            <DisplayValue value={value} />
           </div>
         </InlineEditWrapper>
       </div>

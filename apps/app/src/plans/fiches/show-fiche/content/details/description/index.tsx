@@ -1,7 +1,7 @@
 import EffetsAttendusDropdown from '@/app/ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import { useGetThematiqueAndSousThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
-import { cn, RichTextEditor, SelectMultiple } from '@tet/ui';
+import { cn, RichTextEditor, SelectMultiple, Tooltip } from '@tet/ui';
 import { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useFicheContext } from '../../../context/fiche-context';
@@ -135,6 +135,30 @@ export const Description = () => {
           )}
         />
         <Controller
+          name="libreTags"
+          control={control}
+          render={({ field }) => (
+            <InlineEditableItem
+              small
+              icon="bookmark-line"
+              label={getFieldLabel('libreTags', selectedLibreTags)}
+              value={
+                selectedLibreTags?.map((tag) => tag.nom).join(', ') ?? undefined
+              }
+              isReadonly={isReadonly}
+              renderOnEdit={({ openState }) => (
+                <TagsSuiviPersoDropdown
+                  openState={openState}
+                  values={(field.value ?? []).map((tag) => tag.id)}
+                  onChange={({ libresTag }) => {
+                    field.onChange(libresTag);
+                  }}
+                />
+              )}
+            />
+          )}
+        />
+        <Controller
           name="thematiques"
           control={control}
           render={({ field }) => (
@@ -174,18 +198,22 @@ export const Description = () => {
               icon="folders-line"
               label={getFieldLabel('sousThematiques', selectedSousThematiques)}
               value={
-                selectedSousThematiques
-                  ?.map((sousThematique) => sousThematique.nom)
-                  .join(', ') ?? undefined
+                !selectedSousThematiques?.length ? (
+                  <Tooltip label="Veuillez d'abord sélectionner une thématique pour pouvoir sélectionner une ou plusieurs sous-thématiques">
+                    <span>A renseigner</span>
+                  </Tooltip>
+                ) : (
+                  selectedSousThematiques
+                    ?.map((sousThematique) => sousThematique.nom)
+                    .join(', ') ?? undefined
+                )
               }
               isReadonly={isReadonly || !selectedThematiques?.length}
-              helperText={
-                !selectedThematiques?.length
-                  ? `Veuillez d'abord sélectionner une thématique pour pouvoir sélectionner une ou plusieurs sous-thématiques`
-                  : undefined
-              }
               renderOnEdit={({ openState }) => (
                 <SelectMultiple
+                  buttonClassName={
+                    !selectedThematiques?.length ? 'cursor-disabled' : ''
+                  }
                   options={sousThematiqueOptions}
                   values={field.value?.map(
                     (sousThematique) => sousThematique.id
@@ -197,30 +225,6 @@ export const Description = () => {
                         values?.some((v) => v === sousThematique.id)
                       )
                     );
-                  }}
-                />
-              )}
-            />
-          )}
-        />
-        <Controller
-          name="libreTags"
-          control={control}
-          render={({ field }) => (
-            <InlineEditableItem
-              small
-              icon="bookmark-line"
-              label={getFieldLabel('libreTags', selectedLibreTags)}
-              value={
-                selectedLibreTags?.map((tag) => tag.nom).join(', ') ?? undefined
-              }
-              isReadonly={isReadonly}
-              renderOnEdit={({ openState }) => (
-                <TagsSuiviPersoDropdown
-                  openState={openState}
-                  values={(field.value ?? []).map((tag) => tag.id)}
-                  onChange={({ libresTag }) => {
-                    field.onChange(libresTag);
                   }}
                 />
               )}

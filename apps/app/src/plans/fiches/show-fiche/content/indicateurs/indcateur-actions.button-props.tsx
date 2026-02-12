@@ -4,12 +4,12 @@ export const linkIndicateursButtonProps: ButtonProps = {
   icon: 'link',
   variant: 'primary',
   size: 'xs',
-  children: 'Lier des indicateurs existants',
+  children: 'Lier un indicateur existant',
 };
 
 export const createIndicateurButtonProps: ButtonProps = {
   icon: 'file-add-line',
   variant: 'outlined',
   size: 'xs',
-  children: 'Créer et associer un indicateur personnalisé',
+  children: 'Créer un indicateur',
 };
