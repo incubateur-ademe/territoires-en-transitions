@@ -25,6 +25,8 @@ DROP MATERIALIZED VIEW IF EXISTS stats.report_scores;
 DROP VIEW IF EXISTS public.action_statuts;
 DROP VIEW IF EXISTS public.export_score_audit;
 DROP MATERIALIZED VIEW IF EXISTS labellisation.export_score_audit;
+
+DROP FUNCTION IF EXISTS private.referentiel_progress;
 DROP FUNCTION IF EXISTS private.convert_client_scores;
 
 DROP FUNCTION IF EXISTS private.to_tabular_score;
