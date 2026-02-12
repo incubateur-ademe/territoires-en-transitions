@@ -1,7 +1,7 @@
 import FiltreMembre from './FiltreMembre';
 import FiltreType from './FiltreType';
 
-import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
+import { DeleteFiltersButton } from '@/app/ui/lists/DEPRECATED_filter-badges/delete-filters.button';
 import { TFilters } from '../filters';
 import { FiltreDateDebut, FiltreDateFin } from './FiltreDate';
 
