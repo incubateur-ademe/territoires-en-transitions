@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { eq, inArray, or } from 'drizzle-orm';
+import { and, eq, inArray, or } from 'drizzle-orm';
 import { axeTable } from '../shared/models/axe.table';
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
+import { ficheActionTable } from '../shared/models/fiche-action.table';
 
 @Injectable()
 export class ListFichesBelongingToPlansRepository {
@@ -20,8 +21,15 @@ export class ListFichesBelongingToPlansRepository {
       })
       .from(ficheActionAxeTable)
       .leftJoin(axeTable, eq(ficheActionAxeTable.axeId, axeTable.id))
+      .leftJoin(
+        ficheActionTable,
+        eq(ficheActionTable.id, ficheActionAxeTable.ficheId)
+      )
       .where(
-        or(inArray(axeTable.plan, planIds), inArray(axeTable.id, planIds))
+        and(
+          or(inArray(axeTable.plan, planIds), inArray(axeTable.id, planIds)),
+          eq(ficheActionTable.deleted, false)
+        )
       );
   }
 }
