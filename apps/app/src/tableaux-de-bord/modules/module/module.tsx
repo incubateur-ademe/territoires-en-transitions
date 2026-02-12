@@ -1,10 +1,10 @@
 import React from 'react';
 
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
-import FilterBadges, {
+import DEPRECATED_FilterBadges, {
   BadgeFilters,
   useFiltersToBadges,
-} from '@/app/ui/lists/filter-badges';
+} from '@/app/ui/lists/DEPRECATED_filter-badges';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {
@@ -137,7 +137,10 @@ const Module = ({
         )}
       </div>
       {/** Filtres du module */}
-      <FilterBadges maxDisplayedFilterCount={1} badges={filterBadges} />
+      <DEPRECATED_FilterBadges
+        maxDisplayedFilterCount={1}
+        badges={filterBadges}
+      />
       {/** Contenu principal */}
       <div className="flex-grow">{children}</div>
       {/** Footer */}

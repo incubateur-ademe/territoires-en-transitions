@@ -1,4 +1,4 @@
-import { FiltersMenuButton as GenericFiltersMenuButton } from '@/app/ui/lists/filter-badges';
+import { FiltersMenuButton as GenericFiltersMenuButton } from '@/app/ui/lists/DEPRECATED_filter-badges';
 import { Menu } from './Menu';
 import { usePlanFilters } from './plan-filters.context';
 

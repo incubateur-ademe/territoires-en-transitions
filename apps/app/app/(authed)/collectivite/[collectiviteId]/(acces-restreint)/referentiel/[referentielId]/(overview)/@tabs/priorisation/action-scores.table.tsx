@@ -14,7 +14,7 @@ import { getMaxDepth } from '@/app/referentiels/AidePriorisation/queries';
 import { actionNewToDeprecated } from '@/app/referentiels/DEPRECATED_scores.types';
 import { useTable } from '@/app/referentiels/ReferentielTable/useReferentiel';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
+import { DeleteFiltersButton } from '@/app/ui/lists/DEPRECATED_filter-badges/delete-filters.button';
 import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { ITEM_ALL } from '@tet/ui';

@@ -1,5 +1,5 @@
 import ActionsGroupeesMenu from '@/app/app/pages/collectivite/PlansActions/ActionsGroupees/ActionsGroupeesMenu';
-import { CustomFilterBadges } from '@/app/ui/lists/filter-badges/use-filters-to-badges';
+import { CustomFilterBadges } from '@/app/ui/lists/DEPRECATED_filter-badges/use-filters-to-badges';
 
 import { FichesListEmpty } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.empty';
 import { FichesListGrid } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.grid';

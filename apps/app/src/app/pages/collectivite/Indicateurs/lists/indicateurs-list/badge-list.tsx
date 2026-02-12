@@ -2,10 +2,10 @@ import {
   IndicateurDefinitionListItem,
   ListDefinitionsInputFilters,
 } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
-import FilterBadges, {
+import DEPRECATED_FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
-} from '@/app/ui/lists/filter-badges';
+} from '@/app/ui/lists/DEPRECATED_filter-badges';
 import ExportButton from './export-button';
 
 type Props = {
@@ -38,7 +38,10 @@ const BadgeList = ({
   return (
     <div className="flex flex-row justify-between items-start">
       {displayBadgesList && (
-        <FilterBadges badges={filterBadges} resetFilters={resetFilters} />
+        <DEPRECATED_FilterBadges
+          badges={filterBadges}
+          resetFilters={resetFilters}
+        />
       )}
       {displayExportButton && (
         <ExportButton definitions={definitions} isFiltered={!!filterBadges} />

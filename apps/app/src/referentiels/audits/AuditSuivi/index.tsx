@@ -1,6 +1,6 @@
 'use client';
 
-import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
+import { DeleteFiltersButton } from '@/app/ui/lists/DEPRECATED_filter-badges/delete-filters.button';
 import { Table } from './Table';
 import { noFilters } from './filters';
 import { useTableData } from './useTableData';

@@ -36,7 +36,10 @@ type Args = {
   customValues?: CustomFilterBadges;
 };
 
-/** Transforme les filtres en string associées à afficher dans les badges. */
+/**
+ * Transforme les filtres en string associées à afficher dans les badges.
+ * @deprecated Utiliser `BadgeFilters` avec des logiques similaires à `plan-filters.context.tsx` ou `fiche-action-filters-context.tsx`
+ * */
 export const useFiltersToBadges = ({
   filters,
   customValues: unCleanedCustomValues,

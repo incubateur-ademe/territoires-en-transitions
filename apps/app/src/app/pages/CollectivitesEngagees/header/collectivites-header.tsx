@@ -5,7 +5,7 @@ import {
 } from '@/app/app/pages/CollectivitesEngagees/data/filters';
 import { trierParOptions } from '@/app/app/pages/CollectivitesEngagees/data/filtreOptions';
 import { getRechercheViewUrl, RecherchesViewParam } from '@/app/app/paths';
-import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
+import { DeleteFiltersButton } from '@/app/ui/lists/DEPRECATED_filter-badges/delete-filters.button';
 import { CollectiviteEngagee } from '@tet/api';
 import { ButtonGroup, Select } from '@tet/ui';
 import classNames from 'classnames';
