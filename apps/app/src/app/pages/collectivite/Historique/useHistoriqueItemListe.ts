@@ -2,7 +2,7 @@ import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { DBClient, useSupabase } from '@tet/api';
 import { ITEM_ALL } from '@tet/ui';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { NB_ITEMS_PER_PAGE, TFilters, nameToShortNames } from './filters';
 import { THistoriqueItem, THistoriqueProps } from './types';
 
@@ -123,11 +123,20 @@ export const useHistoriqueItemListe = (
     nameToShortNames
   );
 
+  // On s'assure que collectivite_id et action_id proviennent toujours des
+  // paramètres de la fonction (source de vérité) et non de l'état interne de
+  // useSearchParams qui peut être désynchronisé lors d'un changement de
+  // collectivité (ex: passage en mode visite via modification de l'URL).
+  const effectiveFilters = useMemo(
+    () => ({ ...filters, collectivite_id, action_id }),
+    [filters, collectivite_id, action_id]
+  );
+
   // charge les données
   const { data, isLoading } = useQuery({
-    queryKey: ['historique', collectivite_id, filters],
+    queryKey: ['historique', collectivite_id, effectiveFilters],
 
-    queryFn: () => fetchHistorique(supabase, filters),
+    queryFn: () => fetchHistorique(supabase, effectiveFilters),
   });
 
   return {
