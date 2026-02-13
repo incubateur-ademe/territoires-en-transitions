@@ -10,6 +10,7 @@ export * from './notifications';
 export * from './number.utils';
 export * from './pagination.schema';
 export * from './preset';
+export * from './supabase/supabase-url-to-auth-cookie-name.adapter';
 export * from './version.models';
 export * from './webhooks/webhook-configuration.schema';
 export * from './webhooks/webhook-message.schema';

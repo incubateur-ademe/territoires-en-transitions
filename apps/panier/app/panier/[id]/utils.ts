@@ -7,7 +7,7 @@ import {
   Panier,
   PanierAPI,
 } from '@tet/api';
-import { createClient } from '@tet/api/utils/supabase/server-client';
+import { createSupabaseServerClient } from '@tet/api/utils/supabase/server-client';
 
 const apiKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const apiUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -26,7 +26,7 @@ export const fetchPanier = async ({
   panierId: string;
   filtre: FiltreAction;
 }): Promise<Panier | null> => {
-  const supabase = await createClient();
+  const supabase = await createSupabaseServerClient();
   const api = new PanierAPI(supabase);
 
   const panier: Panier | null = await api.fetchPanier({
