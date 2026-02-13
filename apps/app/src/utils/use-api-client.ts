@@ -1,5 +1,4 @@
-import { useUserSession } from '@tet/api/users';
-import { getAuthHeaders } from '@tet/api/utils/supabase/get-auth-headers';
+import { useUserContext } from '@tet/api/users';
 import { isNil } from 'es-toolkit';
 import { getFileNameFromResponse } from './get-filename-from-response';
 
@@ -37,7 +36,7 @@ class ApiError extends Error {
 
 /** Expose un client pour accéder au nouveau backend en attendant de pouvoir intégrer tRPC */
 export const useApiClient = () => {
-  const session = useUserSession();
+  const { authHeaders } = useUserContext();
 
   // construit l'url pour la route et les paramètres donnés
   const makeUrl = ({ route, params }: API_ARGS) => {
@@ -59,7 +58,7 @@ export const useApiClient = () => {
     const response = await fetch(makeUrl(args), {
       headers: {
         'content-type': 'application/json',
-        ...(await getAuthHeaders(session)),
+        ...authHeaders,
       },
     });
     const body = await response.json();
@@ -80,7 +79,7 @@ export const useApiClient = () => {
         method,
         headers: {
           'content-type': 'application/json',
-          ...(await getAuthHeaders(session)),
+          ...authHeaders,
         },
         body: method === 'GET' ? undefined : JSON.stringify(params),
       }
@@ -106,7 +105,7 @@ export const useApiClient = () => {
         body: JSON.stringify(params),
         headers: {
           'content-type': 'application/json',
-          ...(await getAuthHeaders(session)),
+          ...authHeaders,
         },
       });
       const body = await response.json();
