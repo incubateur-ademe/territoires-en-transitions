@@ -64,7 +64,7 @@ export async function proxy(request: NextRequest) {
     .replace(/\s{2,}/g, ' ')
     .trim();
 
-  const requestHeaders = new Headers(request.headers);
+  const requestHeaders = new Headers();
   requestHeaders.set('x-nonce', nonce);
 
   requestHeaders.set(
@@ -72,7 +72,10 @@ export async function proxy(request: NextRequest) {
     contentSecurityPolicyHeaderValue
   );
 
-  const response = await updateSessionOrRedirect(request);
+  const response = await updateSessionOrRedirect({
+    request,
+    headers: requestHeaders,
+  });
 
   // ajoute les en-têtes CSP à la réponse
   response.headers.set(

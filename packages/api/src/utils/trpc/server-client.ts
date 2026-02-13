@@ -11,11 +11,11 @@ import {
 } from '@trpc/tanstack-react-query';
 import { cache } from 'react';
 import { getAuthHeaders } from '../supabase/get-auth-headers';
-import { createClient } from '../supabase/server-client';
 import { makeQueryClient } from './query-client';
 
 import type { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { getErrorMessage } from '@tet/domain/utils';
+import { createSupabaseServerClient } from '../supabase/server-client';
 
 async function authenticatedHeaders(args: { op: Operation }) {
   const correlationId = crypto.randomUUID();
@@ -23,7 +23,7 @@ async function authenticatedHeaders(args: { op: Operation }) {
     ...(args.op.context ?? {}),
     correlationId,
   };
-  const supabaseClient = await createClient();
+  const supabaseClient = await createSupabaseServerClient();
   const {
     data: { session },
   } = await supabaseClient.auth.getSession();

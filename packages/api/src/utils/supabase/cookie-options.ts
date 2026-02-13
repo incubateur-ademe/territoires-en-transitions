@@ -2,13 +2,12 @@
 // to dynamically get the environment variables from the server
 import 'server-only';
 
-import { CookieOptionsWithName } from '@supabase/ssr';
+import type { CookieOptionsWithName } from '@supabase/ssr';
 import { getRootDomain } from '../pathUtils';
 
 export function getCookieOptions(
   hostname: string | undefined = process.env.COOKIE_DOMAIN
 ): CookieOptionsWithName {
-
   const isProd =
     process.env.NODE_ENV === 'production' && process.env.ENV_NAME !== 'ci';
   const domain =

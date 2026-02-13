@@ -4,7 +4,7 @@ import { ENV } from '../../environmentVariables';
 import { Database } from '../../typeUtils';
 import { getCookieOptions } from './cookie-options';
 
-export async function createClient() {
+export async function createSupabaseServerClient() {
   const cookieStore = await cookies();
   const cookieOptions = getCookieOptions();
 

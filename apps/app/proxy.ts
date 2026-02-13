@@ -2,7 +2,7 @@ import { getAuthUrl, getRequestUrl } from '@tet/api';
 import { DBClient } from '@tet/api/typeUtils';
 import { dcpFetch } from '@tet/api/users/dcp.fetch';
 import { fetchUserCollectivites } from '@tet/api/users/user-collectivites.fetch.server';
-import { createClient } from '@tet/api/utils/supabase/middleware-client';
+import { getNextResponseWithUpdatedSupabaseSession } from '@tet/api/utils/supabase/proxy-client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import {
@@ -40,10 +40,13 @@ export const config = {
 };
 
 export async function proxy(request: NextRequest) {
-  const headers = new Headers(request.headers);
+  const headers = new Headers();
 
   // Add the current path to the headers to get it available in RSCs
   headers.set('x-current-path', request.nextUrl.pathname);
+
+  const { supabaseResponse, supabaseUser, supabaseClient } =
+    await getNextResponseWithUpdatedSupabaseSession({ request, headers });
 
   const url = getRequestUrl(request);
   const pathname = url.pathname;
@@ -56,23 +59,8 @@ export async function proxy(request: NextRequest) {
     return redirectToAuthDomain(pathname, searchParams, url.hostname);
   }
 
-  const supabaseResponse = NextResponse.next({
-    headers,
-    request,
-  });
-
-  const supabase = await createClient(request, supabaseResponse);
-
-  // IMPORTANT:
-  // Avoid writing any logic between createServerClient and supabase.auth.getUser().
-  // A simple mistake could make it very hard to debug issues with users being randomly logged out.
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
   // If the user is not authenticated, redirect to the home page
-  if (!user) {
+  if (!supabaseUser) {
     if (!isPublicPathname(pathname)) {
       return NextResponse.redirect(new URL('/', url));
     }
@@ -83,8 +71,8 @@ export async function proxy(request: NextRequest) {
   // ↓ After this line the user is authenticated
 
   const userDetails = await dcpFetch({
-    dbClient: supabase as DBClient,
-    user_id: user.id,
+    dbClient: supabaseClient,
+    user_id: supabaseUser.sub,
   });
 
   // If the user is authenticated but no personal data have been filled
@@ -100,7 +88,9 @@ export async function proxy(request: NextRequest) {
 
   // Check if the user has at least one collectivite
   // If not, redirect to the page finaliser mon inscription
-  const collectivites = await fetchUserCollectivites(supabase as DBClient);
+  const collectivites = await fetchUserCollectivites(
+    supabaseClient as DBClient
+  );
   if (collectivites.length === 0) {
     if (isAllowedPathnameWhenNoCollectivite(pathname)) {
       return supabaseResponse;
@@ -148,4 +138,3 @@ function redirectToAuthDomain(
   const authUrl = getAuthUrl(pathname, searchParams, originHostname);
   return NextResponse.redirect(authUrl);
 }
-
