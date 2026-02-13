@@ -7,8 +7,13 @@ import {
   ReactNode,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
+import {
+  AuthHeaders,
+  getAuthHeaders,
+} from '../../utils/supabase/get-auth-headers';
 import { useSupabase } from '../../utils/supabase/use-supabase';
 
 type UserContextProps = {
@@ -16,6 +21,7 @@ type UserContextProps = {
   setUser: (user: UserWithRolesAndPermissions | null) => void;
 
   session: Session | null;
+  authHeaders: AuthHeaders;
 };
 
 const UserContext = createContext<UserContextProps | null>(null);
@@ -52,37 +58,36 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<UserWithRolesAndPermissions | null>(null);
 
-  useEffect(() => {
-    // Fetch initial session immediately on mount so we don't wait for the async callback race
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
-      if (currentSession) {
-        setSession(currentSession);
-      }
-    });
-  }, [supabase.auth]);
+  const authHeaders = useMemo(() => getAuthHeaders(session), [session]);
 
   useEffect(() => {
-    // écoute les changements d'état (connecté, déconnecté, etc.)
+    // Fetch initial session immediately on mount so we don't wait for the async callback race
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setSession(session);
+      }
+    });
+  }, [supabase]);
+
+  useEffect(() => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (
-        event === 'INITIAL_SESSION' ||
-        event === 'SIGNED_IN' ||
-        event === 'TOKEN_REFRESHED'
-      ) {
-        setSession(session);
-      } else if (event === 'SIGNED_OUT') {
+      if (event === 'SIGNED_OUT') {
         setSession(null);
+      } else if (session) {
+        setSession(session);
       }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [supabase.auth]);
+  }, [supabase]);
 
   return (
-    <UserContext value={{ user, setUser, session }}>{children}</UserContext>
+    <UserContext value={{ user, setUser, session, authHeaders }}>
+      {children}
+    </UserContext>
   );
 };
