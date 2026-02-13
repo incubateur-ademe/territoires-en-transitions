@@ -1,9 +1,9 @@
 import 'server-only';
 
-import { createClient } from './server-client';
+import { createSupabaseServerClient } from './server-client';
 
 export async function getAuthUser() {
-  const supabaseClient = await createClient();
+  const supabaseClient = await createSupabaseServerClient();
 
   const {
     data: { user },
