@@ -2,7 +2,7 @@ import { makeCollectiviteIndicateursListUrl } from '@/app/app/paths';
 import {
   getQueryClient,
   trpcInServerComponent,
-} from '@tet/api/utils/trpc/server-client';
+} from '@tet/api/utils/trpc/trpc-server-client';
 import { redirect } from 'next/navigation';
 
 /**

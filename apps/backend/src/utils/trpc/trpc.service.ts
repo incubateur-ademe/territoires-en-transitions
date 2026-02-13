@@ -11,7 +11,9 @@ import {
   isAuthenticatedUser,
   isServiceRoleUser,
 } from '../../users/models/auth.models';
+import ConfigurationService from '../config/configuration.service';
 import { ContextStoreService } from '../context/context.service';
+import { extractAccessTokenFromSupabaseCookie } from '../supabase/supabase-cookie-parser';
 
 @Injectable()
 export class TrpcService {
@@ -19,7 +21,8 @@ export class TrpcService {
 
   constructor(
     private readonly contextStoreService: ContextStoreService,
-    private readonly convertJwtToAuthUserService: ConvertJwtToAuthUserService
+    private readonly convertJwtToAuthUserService: ConvertJwtToAuthUserService,
+    private readonly config: ConfigurationService
   ) {}
 
   trpc = initTRPC
@@ -160,31 +163,37 @@ export class TrpcService {
 
   /**
    * Creates context for an incoming request
+   * Extracts Supabase session from cookies (cookie-based auth) or Authorization header (Bearer token)
    * @see https://trpc.io/docs/v11/context
    */
   async createContext({ req }: CreateExpressContextOptions) {
-    // Extract Supabase session from cookies or headers
-    const supabaseToken = req.headers.authorization?.split('Bearer ')[1];
+    const supabaseUrl = this.config.get('SUPABASE_URL');
 
-    if (!supabaseToken) {
-      return { user: null };
-    }
-
-    const user = await this.convertJwtToAuthUserService.convertJwtToAuthUser(
-      supabaseToken
+    const supabaseJwtFromCookie = await extractAccessTokenFromSupabaseCookie(
+      req,
+      supabaseUrl
     );
 
-    this.contextStoreService.updateContext({
-      userId: user.id || undefined,
-      authRole: user.role,
-    });
+    const supabaseJwt =
+      supabaseJwtFromCookie ?? req.headers.authorization?.split('Bearer ')[1];
 
-    if (!user) {
+    if (!supabaseJwt) {
       return { user: null };
     }
 
-    return {
-      user,
-    };
+    try {
+      const user = await this.convertJwtToAuthUserService.convertJwtToAuthUser(
+        supabaseJwt
+      );
+
+      this.contextStoreService.updateContext({
+        userId: user.id || undefined,
+        authRole: user.role,
+      });
+
+      return { user };
+    } catch {
+      return { user: null };
+    }
   }
 }

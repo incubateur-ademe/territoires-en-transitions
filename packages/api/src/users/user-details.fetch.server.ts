@@ -6,7 +6,7 @@ import { getAuthUser } from '../utils/supabase/auth-user.server';
 import {
   getQueryClient,
   trpcInServerComponent,
-} from '../utils/trpc/server-client';
+} from '../utils/trpc/trpc-server-client';
 
 export const getUser = cache(async () => {
   const authUser = await getAuthUser();

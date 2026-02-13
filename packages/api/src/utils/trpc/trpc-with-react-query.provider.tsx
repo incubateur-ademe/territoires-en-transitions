@@ -10,18 +10,18 @@ import {
   createTRPCClient,
   httpBatchLink,
   httpLink,
+  loggerLink,
   splitLink,
   TRPCClientErrorLike,
 } from '@trpc/client';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import { createTRPCContext } from '@trpc/tanstack-react-query';
-import { getAuthHeaders } from '../supabase/get-auth-headers';
-import { getQueryClient } from './query-client';
+import { getQueryClient } from './react-query-client';
 
-import { SupabaseClient } from '@supabase/supabase-js';
 import type { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { useState } from 'react';
-import { useSupabase } from '../supabase/use-supabase';
+import { ENV } from '../../environmentVariables';
+import { getTrpcUrl } from './get-trpc-url.utils';
 export type { AppRouter };
 
 export type RouterInput = inferRouterInputs<AppRouter>;
@@ -49,38 +49,39 @@ export type TRPCUseMutationResult<TVariables, TData> = UseMutationResult<
   unknown
 >;
 
-function getUrl() {
-  return `${
-    process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080'
-  }/trpc`;
-}
-
-async function getHeadersFromSupabase(supabase: SupabaseClient) {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  return getAuthHeaders(session);
-}
-
-function getTrpcClient(supabase: SupabaseClient) {
+function getTrpcClient() {
   return createTRPCClient<AppRouter>({
     links: [
+      loggerLink({
+        enabled: (op) =>
+          ENV.node_env === 'development' ||
+          (op.direction === 'down' && op.result instanceof Error),
+      }),
       splitLink({
         condition(op) {
           // check for context property `batching`
           return Boolean(op.context.batching);
         },
         // when condition is true, use normal request
-        false: httpLink({
-          url: getUrl(),
-          headers: () => getHeadersFromSupabase(supabase),
+        true: httpLink({
+          url: getTrpcUrl(),
+          fetch: (url, options) => {
+            return fetch(url, {
+              ...options,
+              credentials: 'include',
+            });
+          },
         }),
         // when condition is false, use batching
         true: httpBatchLink({
           // transformer: superjson, <-- if you use a data transformer
-          url: getUrl(),
-          headers: () => getHeadersFromSupabase(supabase),
+          url: getTrpcUrl(),
+          fetch: (url, options) => {
+            return fetch(url, {
+              ...options,
+              credentials: 'include',
+            });
+          },
         }),
       }),
     ],
@@ -92,10 +93,9 @@ export function TrpcWithReactQueryProvider({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = useSupabase();
-  const queryClient = getQueryClient();
+  const [trpcClient] = useState(() => getTrpcClient());
 
-  const [trpcClient] = useState(() => getTrpcClient(supabase));
+  const queryClient = getQueryClient();
 
   return (
     <QueryClientProvider client={queryClient}>
