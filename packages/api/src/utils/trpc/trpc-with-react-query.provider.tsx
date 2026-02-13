@@ -8,7 +8,7 @@ import {
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import {
   createTRPCClient,
-  httpBatchLink,
+  httpBatchStreamLink,
   httpLink,
   loggerLink,
   splitLink,
@@ -59,8 +59,7 @@ function getTrpcClient() {
       }),
       splitLink({
         condition(op) {
-          // check for context property `batching`
-          return Boolean(op.context.batching);
+          return Boolean(op.context.skipBatch);
         },
         // when condition is true, use normal request
         true: httpLink({
@@ -72,8 +71,8 @@ function getTrpcClient() {
             });
           },
         }),
-        // when condition is false, use batching
-        true: httpBatchLink({
+        // when condition is false, use streaming batching
+        false: httpBatchStreamLink({
           // transformer: superjson, <-- if you use a data transformer
           url: getTrpcUrl(),
           fetch: (url, options) => {
