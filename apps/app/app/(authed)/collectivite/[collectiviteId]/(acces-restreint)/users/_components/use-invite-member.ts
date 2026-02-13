@@ -4,7 +4,6 @@ import {
 } from '@/app/app/paths';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useMutation } from '@tanstack/react-query';
-import { useUserContext } from '@tet/api/users';
 import { UserWithRolesAndPermissions } from '@tet/domain/users';
 
 export type SendInvitationArgs = {
@@ -28,7 +27,6 @@ export const useSendInvitation = (
   collectiviteName: string,
   user: UserWithRolesAndPermissions
 ) => {
-  const { authHeaders } = useUserContext();
   const { setToast } = useToastContext();
 
   return useMutation({
@@ -51,9 +49,9 @@ export const useSendInvitation = (
       const { prenom, nom, email: emailFrom } = user;
       return fetch(invitePath, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'content-type': 'application/json',
-          ...authHeaders,
         },
         body: JSON.stringify({
           to: email,

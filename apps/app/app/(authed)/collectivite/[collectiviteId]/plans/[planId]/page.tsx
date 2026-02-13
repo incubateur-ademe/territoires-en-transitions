@@ -2,7 +2,7 @@ import { Plan } from '@/app/plans/plans/show-plan';
 import {
   getQueryClient,
   trpcInServerComponent,
-} from '@tet/api/utils/trpc/server-client';
+} from '@tet/api/utils/trpc/trpc-server-client';
 import { z } from 'zod';
 
 const parametersSchema = z.object({

@@ -3,7 +3,7 @@ import { ScrollReset } from '@/app/utils/scroll-reset';
 import {
   getQueryClient,
   trpcInServerComponent,
-} from '@tet/api/utils/trpc/server-client';
+} from '@tet/api/utils/trpc/trpc-server-client';
 import { ReactNode } from 'react';
 import z from 'zod';
 

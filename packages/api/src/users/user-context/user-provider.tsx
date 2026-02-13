@@ -61,15 +61,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const authHeaders = useMemo(() => getAuthHeaders(session), [session]);
 
   useEffect(() => {
-    // Fetch initial session immediately on mount so we don't wait for the async callback race
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setSession(session);
-      }
-    });
-  }, [supabase]);
-
-  useEffect(() => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
