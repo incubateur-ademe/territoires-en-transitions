@@ -63,13 +63,14 @@ export class TrpcRouter {
           const { error } = opts;
           this.logger.error(error);
 
-          // report it to sentry with context
-          Sentry.captureException(
-            error,
-            getSentryContextFromApplicationContext(
-              this.contextStoreService.getContext()
-            )
-          );
+          if (error.code !== 'UNAUTHORIZED') {
+            Sentry.captureException(
+              error,
+              getSentryContextFromApplicationContext(
+                this.contextStoreService.getContext()
+              )
+            );
+          }
         },
       })
     );
