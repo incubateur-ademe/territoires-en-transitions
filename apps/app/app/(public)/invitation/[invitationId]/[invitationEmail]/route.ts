@@ -1,7 +1,7 @@
 import { signUpPath } from '@/app/app/paths';
 import { getAuthUrl, getRequestUrl } from '@tet/api';
 import { getAuthUser } from '@tet/api/utils/supabase/auth-user.server';
-import { trpcInServerFunction } from '@tet/api/utils/trpc/server-client';
+import { trpcInServerFunction } from '@tet/api/utils/trpc/trpc-server-client';
 import { redirect, RedirectType } from 'next/navigation';
 
 export async function GET(

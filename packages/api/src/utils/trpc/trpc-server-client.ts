@@ -9,24 +9,30 @@ import {
   TRPCOptionsProxy,
 } from '@trpc/tanstack-react-query';
 import { cache } from 'react';
-import { getAuthHeaders } from '../supabase/get-auth-headers';
-import { createClient } from '../supabase/server-client';
-import { makeQueryClient } from './query-client';
+import { makeQueryClient } from './react-query-client';
 
 import type { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { supabaseUrlToAuthCookieName } from '@tet/domain/utils';
+import { cookies } from 'next/headers';
+import { ENV } from '../../environmentVariables';
+import { getTrpcUrl } from './get-trpc-url.utils';
 
-async function authenticatedHeaders() {
-  const supabaseClient = await createClient();
-  const {
-    data: { session },
-  } = await supabaseClient.auth.getSession();
+async function getSupabaseCookieHeader() {
+  const cookieStore = await cookies();
 
-  return getAuthHeaders(session);
+  const supabaseCookieName = supabaseUrlToAuthCookieName(
+    ENV.supabase_url ?? ''
+  );
+  const supabaseJwt = cookieStore.get(supabaseCookieName)?.value;
+
+  return {
+    Cookie: `${supabaseCookieName}=${supabaseJwt}`,
+  };
 }
 
-const TRPC_LINK = httpLink({
-  url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/trpc`,
-  headers: authenticatedHeaders,
+const SERVER_HTTP_LINK = httpLink({
+  url: getTrpcUrl(),
+  headers: getSupabaseCookieHeader,
 });
 
 // IMPORTANT: Create a stable getter for the query client that
@@ -43,7 +49,7 @@ export const trpcInServerComponent: TRPCOptionsProxy<AppRouter> =
         loggerLink({
           enabled: () => true,
         }),
-        TRPC_LINK,
+        SERVER_HTTP_LINK,
       ],
     }),
     queryClient: getQueryClient,
@@ -52,5 +58,5 @@ export const trpcInServerComponent: TRPCOptionsProxy<AppRouter> =
 // TRPC client utilisable dans les server actions et les route handlers
 export const trpcInServerFunction: TRPCClient<AppRouter> =
   createTRPCClient<AppRouter>({
-    links: [TRPC_LINK],
+    links: [SERVER_HTTP_LINK],
   });

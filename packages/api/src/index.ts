@@ -1,5 +1,4 @@
 export * as CollectiviteEngagee from './collectiviteEngagees/types';
-export type { Json } from './json.types';
 export * from './panier_action_impact';
 export * from './typeUtils';
 export * from './users/user-context/user-provider';

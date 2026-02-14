@@ -1,8 +1,7 @@
 import { shasum256 } from '@/app/utils/shasum256';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ENV } from '@tet/api/environmentVariables';
-import { useUserSession } from '@tet/api/users';
-import { getAuthHeaders } from '@tet/api/utils/supabase/get-auth-headers';
+import { useUserContext } from '@tet/api/users';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import {
@@ -101,7 +100,7 @@ export const useUploader = (
   /** contenu à stocker */
   file: File
 ): TUploader => {
-  const session = useUserSession();
+  const { authHeaders } = useUserContext();
   // état de la progression
   const [status, setStatus] = useState<UploadStatus>({
     code: UploadStatusCode.running,
@@ -135,13 +134,12 @@ export const useUploader = (
     };
 
     const fetchData = async () => {
-      const authHeaders = await getAuthHeaders(session);
       if (bucket_id && authHeaders) {
         upload({ bucket_id, file, authHeaders, onStatusChange });
       }
     };
     fetchData();
-  }, [collectiviteId, bucket_id, upload, file, addFileToLib, session]);
+  }, [collectiviteId, bucket_id, upload, file, addFileToLib, authHeaders]);
 
   return { status };
 };

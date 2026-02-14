@@ -1,6 +1,6 @@
 import { fetchCollectivitePanierInfo } from '@/app/collectivites/panier/data/fetchCollectivitePanierInfo';
 import { AllPlansView } from '@/app/plans/plans/list-all-plans/all-plans.view';
-import { createClient } from '@tet/api/utils/supabase/server-client';
+import { createSupabaseServerClient } from '@tet/api/utils/supabase/server-client';
 import { z } from 'zod';
 
 export default async function PlansListPage({
@@ -19,7 +19,7 @@ export default async function PlansListPage({
     return <div>Invalid collectiviteId</div>;
   }
 
-  const supabaseClient = await createClient();
+  const supabaseClient = await createSupabaseServerClient();
   const panier = await fetchCollectivitePanierInfo(
     supabaseClient,
     collectiviteId

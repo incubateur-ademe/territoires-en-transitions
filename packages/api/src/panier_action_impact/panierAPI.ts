@@ -4,6 +4,7 @@ import { Database } from '../typeUtils';
 import {
   ActionImpactDetails,
   ActionImpactFull,
+  ActionImpactState,
   ActionImpactStatut,
   FiltreAction,
   Panier,
@@ -126,9 +127,13 @@ export class PanierAPI {
       data?.collectivite_id ?? data?.collectivite_preset
     );
 
+    type ActionImpactStateWithId = ActionImpactState & { id: string };
+
     // ajoute les flags d'état à chaque action
     const actions = actionsDetail?.map((action) => {
-      const etat = data?.etatActions?.find(
+      const etat = (
+        data?.etatActions as unknown as ActionImpactStateWithId[]
+      )?.find(
         // la relation calculée caste en string le champ `action_impact_state(action->>id)`
         // il faut donc caster aussi pour la faire la comparaison
         (etat) => etat.id === String(action.id)
