@@ -7,7 +7,7 @@ export const useFilteredCollectivites = (search: string) => {
     const query = supabase
       .from('site_labellisation')
       .select('collectivite_id, nom, code_siren_insee')
-      .neq('code_siren_insee', 67482) // Evite un doublon pour la page de Strasbourg
+      .neq('code_siren_insee', '67482') // Evite un doublon pour la page de Strasbourg
       .order('nom');
 
     // Nous devons charger la liste entière pour pouvoir utiliser la recherche fuse.
