@@ -149,24 +149,9 @@ export const BadgeFilters = <TKey extends string = string>({
   onDeleteFilterCategory,
   onClearAllFilters,
 }: FilterBadgesProps<TKey>) => {
-  const removableCategories = filterCategories.filter(
-    (category) =>
-      !category.readonly &&
-      (category.onlyShowCategory || category.selectedFilters.length > 0)
-  );
-
-  const hasMoreThanOneRemovableCategory = removableCategories.length > 1;
-
-  const hasOnlyOneRemovableCategory =
-    removableCategories.length === 1 &&
-    (removableCategories[0].selectedFilters.length > 1 ||
-      removableCategories[0].onlyShowCategory);
-
   const shouldShowClearAllFilters =
     !!onClearAllFilters &&
-    hasMoreThanOneRemovableCategory &&
-    !hasOnlyOneRemovableCategory &&
-    filterCategories.filter((category) => !category.readonly).length > 0;
+    filterCategories.filter((category) => !category.readonly).length > 1;
 
   const sortedCategoriesByReadonlyFirst = [...filterCategories].sort((a, b) => {
     if (a.readonly === b.readonly) return 0;
