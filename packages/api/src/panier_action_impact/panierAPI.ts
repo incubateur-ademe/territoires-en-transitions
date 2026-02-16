@@ -4,6 +4,7 @@ import { Database } from '../typeUtils';
 import {
   ActionImpactDetails,
   ActionImpactFull,
+  ActionImpactState,
   ActionImpactStatut,
   FiltreAction,
   Panier,
@@ -20,8 +21,12 @@ type RealtimePayload<T> = {
   old: Partial<T>;
 };
 
+type ActionImpactStateWithId = ActionImpactState & {
+  id: string;
+};
+
 export class PanierAPI {
-  protected supabase: SupabaseClient<Database>;
+  protected supabase: SupabaseClient;
 
   constructor(supabase: SupabaseClient<Database>) {
     this.supabase = supabase;
@@ -128,7 +133,7 @@ export class PanierAPI {
 
     // ajoute les flags d'état à chaque action
     const actions = actionsDetail?.map((action) => {
-      const etat = data?.etatActions?.find(
+      const etat = (data?.etatActions as ActionImpactStateWithId[])?.find(
         // la relation calculée caste en string le champ `action_impact_state(action->>id)`
         // il faut donc caster aussi pour la faire la comparaison
         (etat) => etat.id === String(action.id)
