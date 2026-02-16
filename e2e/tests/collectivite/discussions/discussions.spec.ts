@@ -19,8 +19,7 @@ test.describe('Discussions', () => {
       );
       collectiviteId = collectivite.data.id;
 
-      console.log(`Create discussions`);
-      const createdDiscussionIds = await discussions.create(user, [
+      await discussions.create(user, [
         {
           actionId: 'cae_1.1.1',
           collectiviteId: collectivite.data.id,
@@ -42,8 +41,6 @@ test.describe('Discussions', () => {
           message: 'Troisième commentaire sur la mesure 1.1.1',
         },
       ]);
-
-      console.log('createdDiscussionIds', createdDiscussionIds);
     }
   );
 

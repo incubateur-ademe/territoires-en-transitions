@@ -20,6 +20,7 @@ INDICATEUR_DEFINITIONS_SHEET_ID=
 
 # Ne pas changer ces valeurs
 SUPABASE_API_URL=http://127.0.0.1:54321
+SUPABASE_MAILPIT_URL=http://127.0.0.1:54324
 SUPABASE_NETWORK=supabase_network_tet
 SQITCH_TARGET=db:pg://postgres:postgres@supabase_db_tet:5432/postgres
 DOCKER_INTERNAL_DB_URL=postgresql://postgres:postgres@supabase_db_tet:5432/postgres

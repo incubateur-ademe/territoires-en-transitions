@@ -1,4 +1,5 @@
-import { useSupabase } from '@tet/api';
+import { useMutation } from '@tanstack/react-query';
+import { useSupabase, useTRPC } from '@tet/api';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useGetPasswordStrength } from '../../components/PasswordStrengthMeter/useGetPasswordStrength';
@@ -29,6 +30,11 @@ export const useSignupState = ({
 }) => {
   const router = useRouter();
   const supabase = useSupabase();
+  const trpc = useTRPC();
+
+  const { mutateAsync: updateUser } = useMutation(
+    trpc.users.users.update.mutationOptions()
+  );
 
   const getPasswordStrength = useGetPasswordStrength();
 
@@ -121,38 +127,27 @@ export const useSignupState = ({
 
     // ETAPE 3
     if (view === 'etape3') {
-      // enregistre les DCP
       const { data } = await supabase.auth.getUser();
-      const user_id = data.user?.id;
-      const email = data.user?.email;
-
-      if (user_id && email) {
-        const { telephone, prenom, nom } = formData as SignupDataStep3;
-
-        const { error } = await supabase.from('dcp').insert([
-          {
-            email,
-            telephone,
-            prenom,
-            nom,
-            user_id,
-          },
-        ]);
-
-        // et l'acceptation des CGU
-        const { error: error2 } = await supabase.rpc('accepter_cgu');
-
-        if (error || error2) {
-          setError('Une erreur est survenue. Veuillez contacter le support.');
-          return;
-        }
-
-        // et redirige
-        document.location.replace(redirectTo);
-      } else {
+      if (!data.user?.id) {
         setError('Une erreur est survenue. Veuillez contacter le support.');
         return;
       }
+
+      const { telephone, prenom, nom } = formData as SignupDataStep3;
+
+      try {
+        await updateUser({
+          prenom,
+          nom,
+          telephone,
+          hasAcceptedCGU: true,
+        });
+      } catch {
+        setError('Une erreur est survenue. Veuillez contacter le support.');
+        return;
+      }
+
+      router.replace(redirectTo);
     }
   };
 

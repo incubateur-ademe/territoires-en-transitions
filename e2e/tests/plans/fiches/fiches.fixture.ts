@@ -24,7 +24,6 @@ class FichesFactory extends FixtureFactory {
   ): Promise<number[]> {
     const trpcClient = user.getTrpcClient();
     const createdFichesPromises = fiches.map((fiche) => {
-      console.log('Create fiche', fiche);
       return trpcClient.plans.fiches.create.mutate({
         fiche,
         ficheFields: fiche.axeId
@@ -50,13 +49,9 @@ class FichesFactory extends FixtureFactory {
    * Supprime toutes les fiches d'une collectivité
    */
   async cleanupByCollectiviteId(collectiviteId: number): Promise<void> {
-    const ret = await databaseService.db
+    await databaseService.db
       .delete(ficheActionTable)
-      .where(eq(ficheActionTable.collectiviteId, collectiviteId))
-      .returning();
-    console.log(
-      `${ret.length} fiches removed from collectivite ${collectiviteId}`
-    );
+      .where(eq(ficheActionTable.collectiviteId, collectiviteId));
   }
 }
 

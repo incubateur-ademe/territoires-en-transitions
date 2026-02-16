@@ -36,13 +36,9 @@ export class DiscussionsFixture extends FixtureFactory {
    * Supprime toutes les discussions d'une collectivité
    */
   async cleanupByCollectiviteId(collectiviteId: number): Promise<void> {
-    const ret = await databaseService.db
+    await databaseService.db
       .delete(discussionTable)
-      .where(eq(discussionTable.collectiviteId, collectiviteId))
-      .returning();
-    console.log(
-      `${ret.length} discussions removed from collectivite ${collectiviteId}`
-    );
+      .where(eq(discussionTable.collectiviteId, collectiviteId));
   }
 }
 

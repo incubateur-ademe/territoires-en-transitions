@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSupabase } from '@tet/api';
-import { useUser } from '@tet/api/users';
+import { useUpdateUser } from '@/app/users/use-update-user';
+import { useMutation } from '@tanstack/react-query';
+import { useUser } from '@tet/api';
 import { Button, CGU_URL, Modal, ModalFooter } from '@tet/ui';
 import { useState } from 'react';
 import ContractSVG from './contract.svg';
@@ -15,7 +15,7 @@ export type TAccepterCGUProps = {
  */
 const AccepterCGUModal = () => {
   const [opened, setOpened] = useState(true);
-  const { mutate, isPending } = useAccepterCGU();
+  const { mutate: acceptCgu, isPending } = useAccepterCGU();
   const user = useUser();
   if (!user || user.cguAccepteesLe) {
     return null;
@@ -52,7 +52,7 @@ const AccepterCGUModal = () => {
             iconPosition="right"
             disabled={isPending}
             onClick={() => {
-              mutate();
+              acceptCgu();
               setOpened(false);
             }}
           >
@@ -68,17 +68,11 @@ export default AccepterCGUModal;
 
 // enregistre l'acceptation des CGU
 const useAccepterCGU = () => {
-  const user = useUser();
-  const queryClient = useQueryClient();
-  const supabase = useSupabase();
+  const { mutateAsync: updateUser } = useUpdateUser();
 
   return useMutation({
-    mutationFn: async () => user.id && supabase.rpc('accepter_cgu'),
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['dcp', user.id],
-      });
+    mutationFn: async () => {
+      await updateUser({ hasAcceptedCGU: true });
     },
   });
 };

@@ -13,7 +13,6 @@ test.describe('Role edition fiches indicateurs', () => {
         },
       });
 
-    console.log(`Create fiches with admin user`);
     const createdFicheIds = await fiches.create(adminUser, [
       {
         titre: 'Fiche test',
@@ -32,13 +31,6 @@ test.describe('Role edition fiches indicateurs', () => {
       cguAcceptees: true,
     });
 
-    console.log(
-      `Add pilotes ${
-        limitedEditionUser.data.id
-      } to fiches with ids ${createdFicheIds.join(',')} for collectivite ${
-        collectivite.data.id
-      }`
-    );
     const bulkEditRequest = {
       collectiviteId: collectivite.data.id,
       ficheIds: createdFicheIds,
@@ -51,8 +43,6 @@ test.describe('Role edition fiches indicateurs', () => {
     // Now that the fiches are created, we can login as limited edition user
     await limitedEditionUser.login();
     await page.goto('/');
-
-    console.log('createdFicheIds', createdFicheIds);
   });
 
   test('Home page', async ({ page }) => {

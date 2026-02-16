@@ -10,6 +10,7 @@ export const updateUserInputSchema = z
     telephone: z.string(),
     prenom: z.string(),
     nom: z.string(),
+    hasAcceptedCGU: z.boolean(),
   })
   .partial();
 
@@ -20,16 +21,27 @@ export class UpdateUserService {
   constructor(private readonly database: DatabaseService) {}
 
   async updateUser(
-    { prenom, nom, telephone }: z.infer<typeof updateUserInputSchema>,
+    {
+      prenom,
+      nom,
+      telephone,
+      hasAcceptedCGU,
+    }: z.infer<typeof updateUserInputSchema>,
     user: AuthenticatedUser
   ) {
-    if (prenom || nom || telephone) {
-      const userAttributes = {
-        ...(prenom && { prenom }),
-        ...(nom && { nom }),
-        ...(telephone && { telephone }),
-      };
+    const userAttributes: Partial<{
+      prenom: string;
+      nom: string;
+      telephone: string;
+      cguAccepteesLe: string;
+    }> = {
+      ...(prenom !== undefined && { prenom }),
+      ...(nom !== undefined && { nom }),
+      ...(telephone !== undefined && { telephone }),
+      ...(hasAcceptedCGU ? { cguAccepteesLe: new Date().toISOString() } : {}),
+    };
 
+    if (Object.keys(userAttributes).length > 0) {
       await this.db
         .update(dcpTable)
         .set(userAttributes)

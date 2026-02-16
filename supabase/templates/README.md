@@ -18,7 +18,7 @@ supabase stop
 supabase start
 ```
 
-Pour accéder aux emails "envoyés" en développement il faut ouvrir la webapp Inbucket.
+Pour accéder aux emails "envoyés" en développement il faut ouvrir la webapp Mailpit.
 Pour obtenir son url utiliser `supabase status` (donne actuellement la valeur `http://127.0.0.1:54324`). L'url est aussi affichée après avoir redémarré avec `supabase start`.
 
 ## Déploiement en production
