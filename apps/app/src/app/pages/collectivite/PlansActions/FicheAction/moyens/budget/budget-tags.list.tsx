@@ -13,7 +13,7 @@ export const BudgetTagsList = ({ tags, unit = 'HT' }: BudgetTagsListProps) => {
         <div key={`${tag.name}-${index}`} className="flex">
           <Badge
             title={tag.name}
-            state="standard"
+            variant="standard"
             uppercase={false}
             className="!rounded-r-none"
           />
@@ -34,7 +34,7 @@ export const BudgetTagsList = ({ tags, unit = 'HT' }: BudgetTagsListProps) => {
                 </span>
               )
             }
-            state="standard"
+            variant="standard"
             light
             uppercase={false}
             className="!rounded-l-none"

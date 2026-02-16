@@ -19,7 +19,7 @@ export const BadgeNiveauAcces = (props: Props) => {
     <Badge
       title={displayedAcces}
       size={size}
-      state={acces === null ? 'new' : 'info'}
+      variant={acces === null ? 'new' : 'info'}
       className={classNames(className, 'pointer-events-none')}
     />
   );

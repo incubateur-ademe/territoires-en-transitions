@@ -1,8 +1,8 @@
 import { Statut } from '@tet/domain/plans';
-import { Badge, BadgeState } from '@tet/ui';
+import { Badge, BadgeVariant } from '@tet/ui';
 import classNames from 'classnames';
 
-export const statusToState: Record<Statut | 'Sans statut', BadgeState> = {
+export const statusToVariant: Record<Statut | 'Sans statut', BadgeVariant> = {
   'À venir': 'standard',
   'En cours': 'info',
   Réalisé: 'success',
@@ -32,7 +32,7 @@ const BadgeStatut = ({ className, statut, size, count }: Props) => {
         'bg-white border-grey-4 text-grey-6': statut === 'Sans statut',
       })}
       title={`${count ? count : ''} ${statut}`}
-      state={statusToState[statut]}
+      variant={statusToVariant[statut]}
       size={size}
     />
   );

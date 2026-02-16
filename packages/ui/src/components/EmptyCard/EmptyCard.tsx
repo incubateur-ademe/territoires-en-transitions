@@ -113,7 +113,13 @@ export const EmptyCard = ({
     .map((action, index) => {
       // Destructure pour exclure les props non natives au Button
       const { isVisible, ...buttonProps } = action;
-      return <Button key={index} size={sizeClasses[size].buttonSize} {...buttonProps} />;
+      return (
+        <Button
+          key={index}
+          size={sizeClasses[size].buttonSize}
+          {...buttonProps}
+        />
+      );
     });
 
   return (
@@ -177,7 +183,7 @@ export const EmptyCard = ({
           <Badge
             key={index}
             title={tag}
-            state="standard"
+            variant="standard"
             size={sizeClasses[size].badgeSize}
             uppercase={false}
           />

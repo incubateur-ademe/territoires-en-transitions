@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { Fragment } from 'react';
 
-import { Badge, BadgeSize, BadgeState } from '../../Badge';
+import { Badge, BadgeSize, BadgeVariant } from '../../Badge';
 import { Icon } from '../../Icon';
 import { ITEM_ALL } from '../SelectFilter';
 import {
@@ -27,7 +27,7 @@ type BaseProps = {
   /** Permet de modifier le state des badges en fonction de la valeur */
   valueToBadgeState?: Record<
     OptionValue,
-    { state: BadgeState; light?: boolean }
+    { state: BadgeVariant; light?: boolean }
   >;
   /** Les fonction permettant la création de nouvelles options */
   createProps?: CreateOption;
@@ -173,7 +173,7 @@ const Option = ({
               icon={option.icon}
               iconPosition="left"
               iconClassname={option.iconClassname}
-              state={
+              variant={
                 disabled
                   ? 'grey'
                   : valueToBadgeState

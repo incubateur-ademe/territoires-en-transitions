@@ -19,7 +19,7 @@ export const IdentifiantAction = (props: TIdentifiantActionProps) => {
         <Badge
           title="Non concerné"
           size="sm"
-          state="grey"
+          variant="grey"
           trim={false}
           className="whitespace-nowrap"
         />

@@ -1,5 +1,5 @@
 import { MesureAuditStatutEnum } from '@tet/domain/referentiels';
-import { Badge, BadgeState } from '@tet/ui';
+import { Badge, BadgeVariant } from '@tet/ui';
 
 export const statusToLabel: Record<MesureAuditStatutEnum, string> = {
   non_audite: 'Non audité',
@@ -9,7 +9,7 @@ export const statusToLabel: Record<MesureAuditStatutEnum, string> = {
 
 export const statusToState: Record<
   MesureAuditStatutEnum,
-  { state: BadgeState }
+  { state: BadgeVariant }
 > = {
   non_audite: { state: 'warning' },
   en_cours: { state: 'info' },
@@ -27,7 +27,7 @@ export const BadgeAuditStatut = ({
   return (
     <Badge
       title={statusToLabel[statut]}
-      state={statusToState[statut].state}
+      variant={statusToState[statut].state}
       size="sm"
     />
   );

@@ -58,7 +58,7 @@ const IndicateursHeader = ({ isReadonly, fiche }: IndicateursHeaderProps) => {
             <Badge
               key={res.nom}
               title={res.nom}
-              state="standard"
+              variant="standard"
               uppercase={false}
             />
           ))

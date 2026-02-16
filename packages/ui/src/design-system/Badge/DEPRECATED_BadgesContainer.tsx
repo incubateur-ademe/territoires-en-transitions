@@ -10,7 +10,7 @@ type BadgesContainerProps = {
   maxDisplayedBadge?: {
     count: number;
     label?: string;
-    state?: BadgeProps['state'];
+    state?: BadgeProps['variant'];
   };
   endButtonBadge?: React.ReactNode;
   className?: string;
@@ -71,7 +71,7 @@ export const DEPRECATED_BadgesContainer = ({
             <Badge
               key="more"
               {...badgeProps}
-              state={maxDisplayedBadge.state || 'grey'}
+              variant={maxDisplayedBadge.state || 'grey'}
               title={`+${badges.length - maxDisplayedBadge.count} ${
                 maxDisplayedBadge.label || ''
               }`}

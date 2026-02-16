@@ -67,7 +67,7 @@ export const InfoActionImpact = ({
               key={theme.id}
               title={theme.nom}
               size="sm"
-              state="standard"
+              variant="standard"
             />
           ))}
         </div>

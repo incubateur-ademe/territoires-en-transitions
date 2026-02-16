@@ -80,7 +80,7 @@ export const ActionHeader = ({
               <div className="shrink-0 max-lg:hidden flex ml-auto">
                 <Badge
                   title={currentCollectiviteName}
-                  state={role === null ? 'new' : 'info'}
+                  variant={role === null ? 'new' : 'info'}
                   light
                   uppercase={false}
                   className="!rounded-r-none border-[0.5px] border-r-0 shrink-0"

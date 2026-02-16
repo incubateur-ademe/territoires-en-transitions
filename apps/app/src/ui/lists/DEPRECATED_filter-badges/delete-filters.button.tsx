@@ -20,7 +20,7 @@ export const DeleteFiltersButton = ({
       disabled={disabled}
     >
       <Badge
-        state="default"
+        variant="default"
         size="sm"
         icon="delete-bin-6-line"
         iconPosition="left"

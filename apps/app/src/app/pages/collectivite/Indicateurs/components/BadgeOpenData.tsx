@@ -28,7 +28,7 @@ const BadgeOpenData = ({ size }: Props) => {
           icon="database-2-line"
           iconPosition="left"
           title="Open Data"
-          state="standard"
+          variant="standard"
           size={size}
           light
         />

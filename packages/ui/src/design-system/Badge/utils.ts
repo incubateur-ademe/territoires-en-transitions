@@ -1,4 +1,4 @@
-import { BadgeState } from './index';
+import { BadgeVariant } from './index';
 
 /**
  * Thème couleurs du composant Badge
@@ -7,7 +7,7 @@ import { BadgeState } from './index';
  * texte, background, border et icône en fonction du statut du bouton
  **/
 export const badgeClassnames: Record<
-  BadgeState,
+  BadgeVariant,
   {
     text: string;
     background: string;

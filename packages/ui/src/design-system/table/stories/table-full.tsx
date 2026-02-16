@@ -61,7 +61,7 @@ const columns = [
     cell: (info) => (
       <TableCell>
         {info.getValue() ? (
-          <Badge state="info" title={info.getValue()} size="sm" />
+          <Badge variant="info" title={info.getValue()} size="sm" />
         ) : (
           <span className="italic text-sm text-grey-6">
             Sélectionner un statut

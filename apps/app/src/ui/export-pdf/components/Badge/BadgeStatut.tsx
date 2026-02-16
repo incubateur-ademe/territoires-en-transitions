@@ -1,4 +1,4 @@
-import { statusToState } from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
+import { statusToVariant } from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { Statut } from '@tet/domain/plans';
 import classNames from 'classnames';
 import { Badge } from './Badge';
@@ -26,7 +26,7 @@ export const BadgeStatut = ({
         'bg-white border-grey-4 text-grey-6': statut === 'Sans statut',
       })}
       title={`${count ? count : ''} ${statut}`}
-      state={statusToState[statut]}
+      state={statusToVariant[statut]}
       uppercase={uppercase}
       {...props}
     />

@@ -104,7 +104,7 @@ export const BudgetPerYearContent = ({
                         <sup className="-top-[0.4em]">HT</sup>
                       </span>
                     }
-                    state="standard"
+                    variant="standard"
                     light
                     className="mx-auto"
                   />
@@ -119,7 +119,7 @@ export const BudgetPerYearContent = ({
                         <sup className="-top-[0.4em]">HT</sup>
                       </span>
                     }
-                    state="standard"
+                    variant="standard"
                     light
                     className="mx-auto"
                   />
@@ -133,7 +133,7 @@ export const BudgetPerYearContent = ({
                         {getFormattedFloat(budget.etpPrevisionnel)} ETP
                       </span>
                     }
-                    state="standard"
+                    variant="standard"
                     light
                     className="mx-auto"
                   />
@@ -143,7 +143,7 @@ export const BudgetPerYearContent = ({
                 {budget.etpReel && (
                   <Badge
                     title={<span>{getFormattedFloat(budget.etpReel)} ETP</span>}
-                    state="standard"
+                    variant="standard"
                     light
                     className="mx-auto"
                   />
@@ -167,7 +167,7 @@ export const BudgetPerYearContent = ({
                     € <sup className="-top-[0.4em]">HT</sup>
                   </span>
                 }
-                state="standard"
+                variant="standard"
                 className="mx-auto"
               />
             </DEPRECATED_TCell>
@@ -181,7 +181,7 @@ export const BudgetPerYearContent = ({
                     € <sup className="-top-[0.4em]">HT</sup>
                   </span>
                 }
-                state="standard"
+                variant="standard"
                 className="mx-auto"
               />
             </DEPRECATED_TCell>
@@ -195,7 +195,7 @@ export const BudgetPerYearContent = ({
                     ETP
                   </span>
                 }
-                state="standard"
+                variant="standard"
                 className="mx-auto"
               />
             </DEPRECATED_TCell>
@@ -209,7 +209,7 @@ export const BudgetPerYearContent = ({
                     ETP
                   </span>
                 }
-                state="standard"
+                variant="standard"
                 className="mx-auto"
               />
             </DEPRECATED_TCell>

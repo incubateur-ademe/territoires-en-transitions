@@ -50,7 +50,7 @@ export const FicheActionDescription = ({
                 key={thematique.id}
                 title={thematique.nom}
                 uppercase={false}
-                state="info"
+                variant="info"
               />
             ))}
             {sousThematiques?.map((ssThematique) => (
@@ -58,7 +58,7 @@ export const FicheActionDescription = ({
                 key={ssThematique.id}
                 title={ssThematique.nom}
                 uppercase={false}
-                state="info"
+                variant="info"
               />
             ))}
             {libreTags?.map((tagPerso) => (
@@ -66,7 +66,7 @@ export const FicheActionDescription = ({
                 key={tagPerso.id}
                 title={tagPerso.nom}
                 uppercase={false}
-                state="default"
+                variant="default"
               />
             ))}
           </div>
