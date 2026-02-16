@@ -53,7 +53,7 @@ const Filter = ({
       title={children}
       size="sm"
       uppercase={false}
-      state="standard"
+      variant="standard"
     />
   );
 };
@@ -131,7 +131,7 @@ const ClearAllFiltersButton = ({
     <button onClick={onClick}>
       <Badge
         className="px-2 py-1 bg-none"
-        state="default"
+        variant="default"
         size="sm"
         icon="delete-bin-6-line"
         iconPosition="right"
@@ -231,7 +231,7 @@ export const BadgeFilters = <TKey extends string = string>({
         >
           <Badge
             title={`+${categoriesLeft.length}`}
-            state="standard"
+            variant="standard"
             className="px-2 py-1.5"
           />
         </Tooltip>

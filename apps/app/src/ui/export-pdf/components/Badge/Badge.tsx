@@ -1,11 +1,11 @@
 import { Text, TextProps } from '@react-pdf/renderer';
-import { BadgeState, badgeClassnames } from '@tet/ui';
+import { BadgeVariant, badgeClassnames } from '@tet/ui';
 import { tw } from '../../utils';
 import { Stack } from '../Stack';
 
 type BadgeProps = TextProps & {
   title: React.ReactNode;
-  state?: BadgeState;
+  state?: BadgeVariant;
   light?: boolean;
   size?: 'sm' | 'md';
   uppercase?: boolean;

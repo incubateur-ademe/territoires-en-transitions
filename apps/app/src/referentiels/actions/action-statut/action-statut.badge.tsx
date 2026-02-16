@@ -1,6 +1,6 @@
 import { avancementToLabel } from '@/app/app/labels';
 import { StatutAvancementIncludingNonConcerne } from '@tet/domain/referentiels';
-import { Badge, BadgeState } from '@tet/ui';
+import { Badge, BadgeVariant } from '@tet/ui';
 import classNames from 'classnames';
 
 type Props = {
@@ -14,7 +14,7 @@ type Props = {
 
 export const statusToState: Record<
   StatutAvancementIncludingNonConcerne,
-  { state: BadgeState; light?: boolean }
+  { state: BadgeVariant; light?: boolean }
 > = {
   non_renseigne: { state: 'grey', light: true },
   pas_fait: { state: 'warning' },
@@ -36,7 +36,7 @@ const ActionStatutBadge = ({
         dataTest="ActionStatutBadge"
         title={avancementToLabel[statut]}
         size={size}
-        state={statusToState[statut].state}
+        variant={statusToState[statut].state}
         light={statut === 'non_renseigne'}
         trim={false}
         className={classNames(

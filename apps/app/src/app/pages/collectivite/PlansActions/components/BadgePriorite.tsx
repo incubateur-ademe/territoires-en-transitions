@@ -1,11 +1,11 @@
-import { Badge, BadgeState } from '@tet/ui';
+import { Badge, BadgeVariant } from '@tet/ui';
 import classNames from 'classnames';
 
 import { Priorite } from '@tet/domain/plans';
 
 type Extends<T, U extends T> = U;
 export type PrioriteState = Extends<
-  BadgeState,
+  BadgeVariant,
   'success' | 'warning' | 'error'
 >;
 export const prioritesToState: Record<Priorite, PrioriteState> = {
@@ -26,7 +26,7 @@ const BadgePriorite = ({ className, priorite, size }: Props) => {
     <Badge
       className={classNames(className, '!border-grey-3 !bg-grey-1')}
       title={priorite}
-      state={prioritesToState[priorite]}
+      variant={prioritesToState[priorite]}
       size={size}
       light
     />

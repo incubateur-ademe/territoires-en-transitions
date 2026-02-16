@@ -31,7 +31,7 @@ export const FiltersMenuButton = ({
         <Badge
           className="absolute -top-2 -right-2 rounded-full border-2 border-white"
           title={activeFiltersCount}
-          state="info"
+          variant="info"
           size="sm"
         />
       </VisibleWhen>

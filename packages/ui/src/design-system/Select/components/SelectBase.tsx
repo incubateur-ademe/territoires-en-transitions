@@ -4,7 +4,7 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { cn } from '../../../utils/cn';
 import { OpenState } from '../../../utils/types';
-import { Badge, BadgeSize, BadgeState } from '../../Badge';
+import { Badge, BadgeSize, BadgeVariant } from '../../Badge';
 import { Icon } from '../../Icon';
 import { Tooltip } from '../../Tooltip';
 import {
@@ -93,7 +93,7 @@ export type SelectProps = {
   /** Permet de modifier le state des badges en fonction de la valeur */
   valueToBadgeState?: Record<
     OptionValue,
-    { state: BadgeState; light?: boolean }
+    { state: BadgeVariant; light?: boolean }
   >;
   optionsAreCaseSensitive?: boolean;
 };
@@ -252,7 +252,7 @@ export const SelectBase = (props: SelectProps) => {
                 </div>
                 <Badge
                   title={inputValue}
-                  state="default"
+                  variant="default"
                   size="sm"
                   className="my-auto mr-auto"
                   uppercase={optionsAreCaseSensitive === false}
@@ -366,7 +366,7 @@ const SelectButton = forwardRef(
       ) : (
         <Badge
           uppercase={optionsAreCaseSensitive === false}
-          state={option?.disabled ? 'grey' : 'default'}
+          variant={option?.disabled ? 'grey' : 'default'}
           icon={option.icon}
           iconPosition="left"
           iconClassname={option.iconClassname}
@@ -408,7 +408,7 @@ const SelectButton = forwardRef(
                 <Badge
                   uppercase={optionsAreCaseSensitive === false}
                   title={`+${values.length - maxBadgesToShow}`}
-                  state="info"
+                  variant="info"
                 />
               </div>
             </Tooltip>
@@ -453,7 +453,7 @@ const SelectButton = forwardRef(
           <Badge
             icon={isOpen ? 'arrow-up-s-line' : 'arrow-down-s-line'}
             size={badgeSize}
-            state={
+            variant={
               values && valueToBadgeState
                 ? valueToBadgeState[values[0]].state
                 : undefined

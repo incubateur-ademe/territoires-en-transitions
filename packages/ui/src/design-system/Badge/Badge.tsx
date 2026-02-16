@@ -6,7 +6,7 @@ import { forwardRef } from 'react';
 import { cn } from '../../utils/cn';
 import { badgeClassnames } from './utils';
 
-export type BadgeState =
+export type BadgeVariant =
   | 'default'
   | 'standard'
   | 'success'
@@ -25,7 +25,7 @@ export type BadgeProps = {
   /** Libellé affiché dans le badge */
   title?: React.ReactNode;
   /** État */
-  state?: BadgeState;
+  variant?: BadgeVariant;
   /** Taille du badge */
   size?: BadgeSize;
   /** Affiche le badge en style light */
@@ -54,7 +54,7 @@ export const Badge = forwardRef<HTMLDivElement, BadgeProps>(
     {
       title,
       onClose,
-      state = 'default',
+      variant = 'default',
       size = 'md',
       icon,
       iconPosition = 'right',
@@ -68,7 +68,7 @@ export const Badge = forwardRef<HTMLDivElement, BadgeProps>(
     },
     ref
   ) => {
-    const styles = badgeClassnames[state];
+    const styles = badgeClassnames[variant];
     return (
       <div
         ref={ref}

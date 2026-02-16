@@ -13,7 +13,7 @@ export const BadgeACompleter = ({
   <Badge
     dataTest="a-completer"
     title={a_completer ? 'À compléter' : 'Complété'}
-    state={a_completer ? 'info' : 'success'}
+    variant={a_completer ? 'info' : 'success'}
     size={size}
     className={className}
   />

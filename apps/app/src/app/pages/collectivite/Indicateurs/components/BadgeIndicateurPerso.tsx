@@ -6,7 +6,7 @@ const BadgeIndicateurPerso = ({ size }: Props) => {
   return (
     <Badge
       title="Indicateur personnalisé"
-      state="success"
+      variant="success"
       size={size}
       light
       iconPosition="left"

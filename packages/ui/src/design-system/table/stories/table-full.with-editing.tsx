@@ -67,7 +67,7 @@ const StatusCell = ({ initialValue }: { initialValue?: string }) => {
     >
       {value ? (
         <Badge
-          state="info"
+          variant="info"
           title={
             fakeStatusOptions.find((option) => option.value === value)?.label
           }

@@ -1,6 +1,6 @@
-import {Meta, StoryObj} from '@storybook/nextjs-vite';
-import {action} from 'storybook/actions';
-import {Badge, BadgeState} from './index';
+import { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { action } from 'storybook/actions';
+import { Badge, BadgeVariant } from './index';
 
 const meta: Meta<typeof Badge> = {
   component: Badge,
@@ -11,17 +11,17 @@ export default meta;
 type Story = StoryObj<typeof Badge>;
 
 export const Default: Story = {
-  args: {title: 'Badge'},
+  args: { title: 'Badge' },
 };
 
 export const CustomIcon: Story = {
-  args: {title: 'Badge', icon: 'alert-fill', onClose: () => null},
+  args: { title: 'Badge', icon: 'alert-fill', onClose: () => null },
 };
 
 export const Grid: Story = {
-  args: {title: 'Badge'},
-  render: args => {
-    const states: BadgeState[] = [
+  args: { title: 'Badge' },
+  render: (args) => {
+    const states: BadgeVariant[] = [
       'default',
       'standard',
       'success',
@@ -33,7 +33,7 @@ export const Grid: Story = {
     ];
     return (
       <div className="flex gap-16 flex-wrap">
-        {states.map(state => (
+        {states.map((state) => (
           <div key={state} className="col-span-1 flex flex-col gap-4">
             <div className="capitalize text-sm font-medium">{state}</div>
             <Badge {...args} state={state} />

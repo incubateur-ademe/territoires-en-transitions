@@ -171,7 +171,7 @@ const MembresListeTableRow = ({
             <div className="flex justify-center items-center">
               <Badge
                 icon={membre_id ? 'checkbox-circle-fill' : 'hourglass-line'}
-                state={membre_id ? 'success' : 'warning'}
+                variant={membre_id ? 'success' : 'warning'}
                 size="sm"
               />
             </div>

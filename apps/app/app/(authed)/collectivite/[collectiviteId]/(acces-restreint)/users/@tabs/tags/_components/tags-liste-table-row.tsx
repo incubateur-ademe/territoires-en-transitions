@@ -75,7 +75,7 @@ const TagsListeTableRow = ({
                 title="Invitation envoyée"
                 icon="hourglass-line"
                 iconPosition="left"
-                state="warning"
+                variant="warning"
                 size="sm"
               />
             )}
