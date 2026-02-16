@@ -10,6 +10,7 @@ import {
   createTRPCClient,
   httpBatchLink,
   httpLink,
+  loggerLink,
   splitLink,
   TRPCClientErrorLike,
 } from '@trpc/client';
@@ -20,6 +21,7 @@ import { getQueryClient } from './query-client';
 
 import { SupabaseClient } from '@supabase/supabase-js';
 import type { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { getErrorMessage } from '@tet/domain/utils';
 import { useState } from 'react';
 import { useSupabase } from '../supabase/use-supabase';
 export type { AppRouter };
@@ -55,17 +57,39 @@ function getUrl() {
   }/trpc`;
 }
 
-async function getHeadersFromSupabase(supabase: SupabaseClient) {
+async function getHeadersFromSupabase(
+  supabase: SupabaseClient,
+  correlationId: string
+) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
-  return getAuthHeaders(session);
+  const headers = getAuthHeaders(session);
+  return {
+    ...headers,
+    'x-correlation-id': correlationId,
+  };
 }
 
 function getTrpcClient(supabase: SupabaseClient) {
   return createTRPCClient<AppRouter>({
     links: [
+      loggerLink({
+        enabled: (op) => op.direction === 'down' && op.result instanceof Error,
+        logger(op) {
+          const correlationId = (op.context as any)?.correlationId;
+          if (op.direction === 'down' && op.result instanceof Error) {
+            console.error(
+              `[${correlationId}] tRPC error for path ${
+                op.path
+              } with data ${JSON.stringify(
+                op.result.data ?? {}
+              )}: ${getErrorMessage(op.result)}`
+            );
+          }
+        },
+      }),
       splitLink({
         condition(op) {
           // check for context property `batching`
@@ -74,13 +98,33 @@ function getTrpcClient(supabase: SupabaseClient) {
         // when condition is true, use normal request
         false: httpLink({
           url: getUrl(),
-          headers: () => getHeadersFromSupabase(supabase),
+          headers: (op) => {
+            const correlationId = crypto.randomUUID();
+
+            // attach to context so loggerLink can see it
+            op.op.context = {
+              ...(op.op.context ?? {}),
+              correlationId,
+            };
+            return getHeadersFromSupabase(supabase, correlationId);
+          },
         }),
         // when condition is false, use batching
         true: httpBatchLink({
           // transformer: superjson, <-- if you use a data transformer
           url: getUrl(),
-          headers: () => getHeadersFromSupabase(supabase),
+          headers: (op) => {
+            const correlationId = crypto.randomUUID();
+
+            // attach to context so loggerLink can see it
+            for (const opItem of op.opList) {
+              opItem.context = {
+                ...(opItem.context ?? {}),
+                correlationId,
+              };
+            }
+            return getHeadersFromSupabase(supabase, correlationId);
+          },
         }),
       }),
     ],

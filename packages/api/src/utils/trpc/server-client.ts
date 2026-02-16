@@ -2,6 +2,7 @@ import {
   createTRPCClient,
   httpLink,
   loggerLink,
+  Operation,
   TRPCClient,
 } from '@trpc/client';
 import {
@@ -14,19 +15,29 @@ import { createClient } from '../supabase/server-client';
 import { makeQueryClient } from './query-client';
 
 import type { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { getErrorMessage } from '@tet/domain/utils';
 
-async function authenticatedHeaders() {
+async function authenticatedHeaders(args: { op: Operation }) {
+  const correlationId = crypto.randomUUID();
+  args.op.context = {
+    ...(args.op.context ?? {}),
+    correlationId,
+  };
   const supabaseClient = await createClient();
   const {
     data: { session },
   } = await supabaseClient.auth.getSession();
 
-  return getAuthHeaders(session);
+  const authHeaders = getAuthHeaders(session);
+  return {
+    ...authHeaders,
+    'x-correlation-id': correlationId,
+  };
 }
 
 const TRPC_LINK = httpLink({
   url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/trpc`,
-  headers: authenticatedHeaders,
+  headers: (args) => authenticatedHeaders(args),
 });
 
 // IMPORTANT: Create a stable getter for the query client that
@@ -41,7 +52,20 @@ export const trpcInServerComponent: TRPCOptionsProxy<AppRouter> =
     client: createTRPCClient<AppRouter>({
       links: [
         loggerLink({
-          enabled: () => true,
+          enabled: (op) =>
+            op.direction === 'down' && op.result instanceof Error,
+          logger(op) {
+            const correlationId = (op.context as any)?.correlationId;
+            if (op.direction === 'down' && op.result instanceof Error) {
+              console.error(
+                `[${correlationId}] tRPC error for path ${
+                  op.path
+                } with data ${JSON.stringify(
+                  op.result.data ?? {}
+                )}: ${getErrorMessage(op.result)}`
+              );
+            }
+          },
         }),
         TRPC_LINK,
       ],
