@@ -1,9 +1,6 @@
 import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
-import {
-  getTextFormattedDate,
-  getTruncatedText,
-} from '@/app/utils/formatUtils';
+import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { isFicheOnTime } from '@tet/domain/plans';
 import { Button, Divider, EmptyCard, Icon } from '@tet/ui';
 import classNames from 'classnames';
@@ -24,11 +21,9 @@ export const FicheActionPlanning = ({
   className,
 }: FicheActionPlanningProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isFullJustification, setIsFullJustification] = useState(false);
 
   const {
     ameliorationContinue,
-    calendrier: justificationCalendrier,
     dateDebut,
     dateFin: dateFinPrevisionnelle,
     priorite: niveauPriorite,
@@ -40,8 +35,7 @@ export const FicheActionPlanning = ({
     !ameliorationContinue &&
     !dateDebut &&
     !dateFinPrevisionnelle &&
-    !tempsDeMiseEnOeuvre &&
-    !justificationCalendrier;
+    !tempsDeMiseEnOeuvre;
 
   const emptyTags = [
     'Date de début',
@@ -50,11 +44,6 @@ export const FicheActionPlanning = ({
   ];
   if (!statut) emptyTags.push('Statut');
   if (!niveauPriorite) emptyTags.push('Niveau de priorité');
-
-  const {
-    truncatedText: truncatedJustification,
-    isTextTruncated: isJustificationTruncated,
-  } = getTruncatedText(justificationCalendrier ?? '', 300);
 
   return (
     <>
@@ -159,30 +148,6 @@ export const FicheActionPlanning = ({
                 {"l'action se répète tous les ans"}
               </span>
             </div>
-          )}
-
-          {/* Justification si l'action est en pause ou abandonnée */}
-          {!!justificationCalendrier && (
-            <>
-              <Divider />
-              <p className="text-sm text-primary-10 text-left leading-[22px] whitespace-pre-wrap mb-0">
-                {isFullJustification || !isJustificationTruncated
-                  ? justificationCalendrier
-                  : truncatedJustification}
-              </p>
-              {isJustificationTruncated && (
-                <Button
-                  variant="underlined"
-                  size="xs"
-                  className="ml-auto"
-                  onClick={() =>
-                    setIsFullJustification((prevState) => !prevState)
-                  }
-                >
-                  {isFullJustification ? 'Voir moins' : 'Voir plus'}
-                </Button>
-              )}
-            </>
           )}
         </div>
       ) : (

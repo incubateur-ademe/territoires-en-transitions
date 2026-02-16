@@ -70,7 +70,6 @@ export const ficheResumeFactory = ({
     fichesLiees: null,
     financements: null,
     budgetPrevisionnel: null,
-    calendrier: null,
     notes: null,
     instanceGouvernance: null,
     participationCitoyenne: null,
