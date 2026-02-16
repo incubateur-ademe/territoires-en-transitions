@@ -36,4 +36,11 @@ export class UpdateUserService {
         .where(eq(dcpTable.id, user.id));
     }
   }
+
+  async acceptCgu(user: AuthenticatedUser) {
+    await this.db
+      .update(dcpTable)
+      .set({ cguAccepteesLe: new Date().toISOString() })
+      .where(eq(dcpTable.id, user.id));
+  }
 }

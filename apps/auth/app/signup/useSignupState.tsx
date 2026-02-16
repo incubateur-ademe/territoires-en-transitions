@@ -1,4 +1,5 @@
-import { useSupabase } from '@tet/api';
+import { useSupabase, useTRPC } from '@tet/api';
+import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useGetPasswordStrength } from '../../components/PasswordStrengthMeter/useGetPasswordStrength';
@@ -29,6 +30,10 @@ export const useSignupState = ({
 }) => {
   const router = useRouter();
   const supabase = useSupabase();
+  const trpc = useTRPC();
+  const { mutateAsync: acceptCgu } = useMutation(
+    trpc.users.users.acceptCgu.mutationOptions()
+  );
 
   const getPasswordStrength = useGetPasswordStrength();
 
@@ -139,10 +144,14 @@ export const useSignupState = ({
           },
         ]);
 
-        // et l'acceptation des CGU
-        const { error: error2 } = await supabase.rpc('accepter_cgu');
+        if (error) {
+          setError('Une erreur est survenue. Veuillez contacter le support.');
+          return;
+        }
 
-        if (error || error2) {
+        try {
+          await acceptCgu();
+        } catch {
           setError('Une erreur est survenue. Veuillez contacter le support.');
           return;
         }
