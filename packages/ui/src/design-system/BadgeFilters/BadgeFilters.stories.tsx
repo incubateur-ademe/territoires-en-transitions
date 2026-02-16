@@ -280,6 +280,38 @@ export const NonInteractiveExamples: Story = {
         />
       </StoryWrapper>
 
+      <StoryWrapper title="Max displayed categories count" description="">
+        <BadgeFilters<TaskFilterKeys>
+          maxDisplayedCategoriesCount={2}
+          filterCategories={[
+            {
+              key: 'priority',
+              title: 'Sans priorité',
+              selectedFilters: [],
+              onlyShowCategory: true,
+            },
+            {
+              key: 'status',
+              title: 'Statut',
+              selectedFilters: ['En cours'],
+            },
+            {
+              key: 'category',
+              title: 'Catégorie',
+              selectedFilters: ['Développement', 'Design', 'Marketing'],
+            },
+            {
+              key: 'assignee',
+              title: 'Pilote',
+              selectedFilters: ['John Doe', 'Jane Doe'],
+            },
+          ]}
+          onDeleteFilterValue={action('onDeleteFilterValue')}
+          onDeleteFilterCategory={action('onDeleteFilterCategory')}
+          onClearAllFilters={action('onClearAllFilters')}
+        />
+      </StoryWrapper>
+
       <StoryWrapper
         title="Some Readonly, Some Not"
         description="Some categories are readonly (badges/close cannot be deleted), some are editable."
