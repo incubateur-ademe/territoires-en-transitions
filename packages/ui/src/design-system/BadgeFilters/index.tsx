@@ -1,5 +1,7 @@
+import { Fragment } from 'react';
 import { Badge } from '../Badge';
 import { Icon } from '../Icon';
+import { Tooltip } from '../Tooltip';
 import { VisibleWhen } from '../VisibleWhen';
 
 export type FilterCategory<TKey extends string = string> = {
@@ -33,6 +35,8 @@ export type FilterBadgesProps<TKey extends string = string> = {
   onDeleteFilterCategory?: (categoryKey: TKey | TKey[]) => void;
   /** Called when all filters should be cleared */
   onClearAllFilters?: () => void;
+  /** Maximum number of categories to display */
+  maxDisplayedCategoriesCount?: number;
 };
 
 const Filter = ({
@@ -148,6 +152,7 @@ export const BadgeFilters = <TKey extends string = string>({
   onDeleteFilterValue,
   onDeleteFilterCategory,
   onClearAllFilters,
+  maxDisplayedCategoriesCount,
 }: FilterBadgesProps<TKey>) => {
   const shouldShowClearAllFilters =
     !!onClearAllFilters &&
@@ -158,9 +163,22 @@ export const BadgeFilters = <TKey extends string = string>({
     return a.readonly ? -1 : 1;
   });
 
+  const categoriesToDisplay = sortedCategoriesByReadonlyFirst.slice(
+    0,
+    maxDisplayedCategoriesCount
+  );
+
+  const categoriesLeft = sortedCategoriesByReadonlyFirst.slice(
+    maxDisplayedCategoriesCount
+  );
+
+  const hasMoreCategoriesToDisplay =
+    !!maxDisplayedCategoriesCount &&
+    sortedCategoriesByReadonlyFirst.length > maxDisplayedCategoriesCount;
+
   return (
     <div className="flex gap-2 items-center flex-wrap">
-      {sortedCategoriesByReadonlyFirst.map((category) => {
+      {categoriesToDisplay.map((category) => {
         return (
           <FilterByCategory
             key={
@@ -186,6 +204,38 @@ export const BadgeFilters = <TKey extends string = string>({
           />
         );
       })}
+      <VisibleWhen condition={hasMoreCategoriesToDisplay}>
+        <Tooltip
+          label={
+            <div className="flex flex-col gap-2">
+              {categoriesLeft.map(({ key, ...category }) => (
+                <Fragment key={category.title}>
+                  <FilterByCategory
+                    title={category.title}
+                    selectedFilters={category.selectedFilters}
+                    readonly={category.readonly}
+                    onlyShowCategory={category.onlyShowCategory}
+                    onDeleteFilter={(valueToDelete) => {
+                      onDeleteFilterValue({ categoryKey: key, valueToDelete });
+                    }}
+                    onDeleteCategory={
+                      onDeleteFilterCategory
+                        ? () => onDeleteFilterCategory(key)
+                        : null
+                    }
+                  />
+                </Fragment>
+              ))}
+            </div>
+          }
+        >
+          <Badge
+            title={`+${categoriesLeft.length}`}
+            state="standard"
+            className="px-2 py-1.5"
+          />
+        </Tooltip>
+      </VisibleWhen>
       <VisibleWhen condition={shouldShowClearAllFilters}>
         <ClearAllFiltersButton onClick={() => onClearAllFilters?.()}>
           Supprimer tous les filtres

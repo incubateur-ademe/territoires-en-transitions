@@ -7,6 +7,7 @@ import {
   offset,
   Placement,
   ReferenceType,
+  safePolygon,
   shift,
   useClick,
   useDismiss,
@@ -104,6 +105,7 @@ export const Tooltip = ({
   const { getReferenceProps, getFloatingProps } = useInteractions([
     (activatedBy === 'click' ? useClick : useHover)(context, {
       delay: { open: openingDelay, close: closingDelay },
+      handleClose: safePolygon(),
     }),
     useFocus(context),
     useRole(context, { role: 'tooltip' }),
@@ -171,5 +173,5 @@ const useMergedRefs = (refs: Array<unknown>) =>
         ref.current = current;
       }
     });
-  // eslint-disable-next-line react-hooks/use-memo
+    // eslint-disable-next-line react-hooks/use-memo
   }, refs);
