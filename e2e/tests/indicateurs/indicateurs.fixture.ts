@@ -22,7 +22,7 @@ class IndicateursFactory extends FixtureFactory {
     const indicateurId = await trpcClient.indicateurs.indicateurs.create.mutate(
       indicateur
     );
-    console.log('Create indicateur', indicateurId);
+
     return indicateurId;
   }
 
@@ -39,20 +39,15 @@ class IndicateursFactory extends FixtureFactory {
       indicateurId,
       collectiviteId,
     });
-    console.log('Delete indicateur', indicateurId);
   }
 
   /**
    * Supprime tous les indicateurs d'une collectivité
    */
   async cleanupByCollectiviteId(collectiviteId: number): Promise<void> {
-    const ret = await databaseService.db
+    await databaseService.db
       .delete(indicateurDefinitionTable)
-      .where(eq(indicateurDefinitionTable.collectiviteId, collectiviteId))
-      .returning();
-    console.log(
-      `${ret.length} indicateur(s) removed from collectivite ${collectiviteId}`
-    );
+      .where(eq(indicateurDefinitionTable.collectiviteId, collectiviteId));
   }
 }
 

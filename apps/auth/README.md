@@ -12,7 +12,7 @@ Les variables suivantes sont utilisées au runtime.
 | `SMTP_USER` | Utilisateur du serveur SMTP                                                              |
 | `PORT`      | Port sur lequel l'application en mode prod est exposée lors du lancement via `npm start` |
 
-> Dans les modes `development` ou `test`, les variables `SMTP_*` sont ignorées car le code utilise le serveur SMTP du service [Inbucket](https://inbucket.org/) inclus dans Supabase.
+> Dans les modes `development` ou `test`, les variables `SMTP_*` sont ignorées car le code utilise le serveur SMTP du service [Mailpit](https://mailpit.axllent.org/) inclus dans Supabase.
 
 Les variables suivantes sont utilisées au build et embarquées dans le front.
 

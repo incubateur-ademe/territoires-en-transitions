@@ -135,7 +135,6 @@ class CollectiviteFactory {
   };
 
   registerCleanupFunc = (factory: FixtureFactory) => {
-    console.log(`register cleanup function for ${factory.constructor.name}`);
     this.cleanupFuncs.push(factory.cleanupByCollectiviteId);
   };
 }

@@ -7,8 +7,7 @@ test.describe('Liste des fiches', () => {
       userArgs: { autoLogin: true },
     });
 
-    console.log(`Create fiches`);
-    const createdFicheIds = await fiches.create(user, [
+    await fiches.create(user, [
       {
         titre: 'Fiche test',
         collectiviteId: collectivite.data.id,
@@ -22,7 +21,6 @@ test.describe('Liste des fiches', () => {
     ]);
     await page.goto('/');
 
-    console.log('createdFicheIds', createdFicheIds);
     await listFichesPom.goto();
   });
 

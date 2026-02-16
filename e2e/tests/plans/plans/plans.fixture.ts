@@ -1,7 +1,6 @@
 import { RouterInput } from '@tet/api';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { eq } from 'drizzle-orm';
-import { partition } from 'es-toolkit';
 import { testWithFiches } from 'tests/plans/fiches/fiches.fixture';
 import { databaseService } from 'tests/shared/database.service';
 import { FixtureFactory } from 'tests/shared/fixture-factory.interface';
@@ -24,7 +23,6 @@ class PlansFactory extends FixtureFactory {
   ): Promise<number> {
     const trpcClient = user.getTrpcClient();
     const createdPlan = await trpcClient.plans.plans.create.mutate(plan);
-    console.log('Create plan', createdPlan.id);
     return createdPlan.id;
   }
 
@@ -34,7 +32,6 @@ class PlansFactory extends FixtureFactory {
   ): Promise<number> {
     const trpcClient = user.getTrpcClient();
     const createdAxe = await trpcClient.plans.axes.create.mutate(axe);
-    console.log('Create axe', createdAxe.id);
     return createdAxe.id;
   }
 
@@ -42,14 +39,9 @@ class PlansFactory extends FixtureFactory {
    * Supprime tous les plans/axes d'une collectivité
    */
   async cleanupByCollectiviteId(collectiviteId: number): Promise<void> {
-    const ret = await databaseService.db
+    await databaseService.db
       .delete(axeTable)
-      .where(eq(axeTable.collectiviteId, collectiviteId))
-      .returning();
-    const [plans, axes] = partition(ret, (axeOuPlan) => !axeOuPlan.parent);
-    console.log(
-      `${plans.length} plan(s) & ${axes.length} axe(s) removed from collectivite ${collectiviteId}`
-    );
+      .where(eq(axeTable.collectiviteId, collectiviteId));
   }
 }
 

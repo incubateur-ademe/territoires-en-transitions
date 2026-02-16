@@ -39,7 +39,7 @@ const getTransport = () => {
     });
   }
 
-  // renvoi le transporteur inbucket (pour le dev ou les tests)
+  // renvoi le transporteur Mailpit (pour le dev ou les tests)
   return nodemailer.createTransport({
     host: '127.0.0.1',
     port: 54325,

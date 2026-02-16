@@ -948,15 +948,6 @@ values
     ('fonction', 'axes', 'edition', 'non', 'oui', 'non', 'non'),
     ('fonction', 'axes', 'admin', 'non', 'oui', 'non', 'non'),
     ('fonction', 'axes', 'auditeur', 'non', 'oui', 'non', 'non'),
-    -- Fonction accepter_cgu
-    ('fonction', 'accepter_cgu', 'public', 'non', 'non', 'non', 'non'),
-    ('fonction', 'accepter_cgu', 'connecte', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'accepter_cgu', 'verifie', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'accepter_cgu', 'support', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'accepter_cgu', 'lecture', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'accepter_cgu', 'edition', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'accepter_cgu', 'admin', 'non', 'oui', 'non', 'non'),
-    ('fonction', 'accepter_cgu', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Fonction action_contexte
     ('fonction', 'action_contexte', 'public', 'non', 'non', 'non', 'non'),
     ('fonction', 'action_contexte', 'connecte', 'non', 'non', 'non', 'non'),
