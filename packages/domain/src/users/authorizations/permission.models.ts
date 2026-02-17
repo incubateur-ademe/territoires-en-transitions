@@ -8,6 +8,7 @@ import {
 
 const visiteurVerifiePermissions: readonly PermissionOperation[] = [
   'collectivites.read',
+  'collectivites.tags.read',
   'collectivites.documents.read',
   'referentiels.read',
   'plans.read',
@@ -22,7 +23,6 @@ const collectiviteLecturePermissions: readonly PermissionOperation[] = [
   'collectivites.read_confidentiel',
   'collectivites.documents.read_confidentiel',
   'collectivites.membres.read',
-  'collectivites.tags.read',
   'referentiels.read_confidentiel',
   'referentiels.discussions.read',
   'referentiels.discussions.mutate',
