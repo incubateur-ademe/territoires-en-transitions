@@ -139,6 +139,14 @@ export const backendConfigurationSchema = z.object({
     .describe(
       'List of email addresses that are allowed to receive emails sent by the SMTP server'
     ),
+  DELAY_IN_MIN_BEFORE_NOTIFY_PILOTE: z.coerce
+    .number()
+    .int()
+    .positive()
+    .prefault(15)
+    .describe(
+      "Délai en minutes avant envoi de la notification d'assignation comme pilote d'une action"
+    ),
 });
 export type BackendConfigurationType = z.infer<
   typeof backendConfigurationSchema
