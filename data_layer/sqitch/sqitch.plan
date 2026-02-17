@@ -939,3 +939,4 @@ creation_dune_table_instance_de_gouvernance 2025-12-17T13:16:12Z System Administ
 referentiel/historique_modified_by 2026-02-16T15:14:16Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Conserve le modified_by si auth.uid() n'est pas renseigné
 
 utilisateur/preferences 2026-02-03T14:06:05Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute le stockage des préférences utilisateur
+indicateur/delete_metadonnee_perf 2026-02-17T10:41:57Z Marc Rutkowski <marc@attractive-media.fr> # Index pour accélérer les DELETE sur indicateur_source_metadonnee
