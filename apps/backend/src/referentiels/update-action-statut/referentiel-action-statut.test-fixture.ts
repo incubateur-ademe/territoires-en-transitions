@@ -1,5 +1,7 @@
 import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/preuve-audit.table';
+import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
+import { preuveReglementaireTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire.table';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
 import {
@@ -219,6 +221,22 @@ export async function cleanupReferentielActionStatutsAndLabellisations(
     .returning();
   console.log(
     `${actionCommentairesRet.length} action commentaires removed for collectivite ${collectiviteId}`
+  );
+
+  const preuveReglementaireRet = await databaseService.db
+    .delete(preuveReglementaireTable)
+    .where(eq(preuveReglementaireTable.collectiviteId, collectiviteId))
+    .returning();
+  console.log(
+    `${preuveReglementaireRet.length} preuve reglementaires removed from collectivite ${collectiviteId}`
+  );
+
+  const preuveComplementaireRet = await databaseService.db
+    .delete(preuveComplementaireTable)
+    .where(eq(preuveComplementaireTable.collectiviteId, collectiviteId))
+    .returning();
+  console.log(
+    `${preuveComplementaireRet.length} preuve complementaires removed from collectivite ${collectiviteId}`
   );
 
   const preuveLabellisationRet = await databaseService.db

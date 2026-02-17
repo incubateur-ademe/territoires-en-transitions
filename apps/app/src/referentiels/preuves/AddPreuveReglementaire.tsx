@@ -42,7 +42,7 @@ export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
       }}
     >
       <Button
-        dataTest="AddPreuveReglementaire"
+        dataTest={`AddPreuveReglementaire-${preuve_id}`}
         size="xs"
         icon="file-add-line"
         variant={isDisabled ? 'outlined' : 'primary'}

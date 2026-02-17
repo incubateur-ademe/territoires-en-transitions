@@ -20,10 +20,10 @@ export const useEditPreuve: TEditPreuve = (preuve) => {
     isError: isUpdateCommentaireError,
   } = useUpdatePreuveCommentaire();
   const {
-    mutate: updateBibliothequeFichierFilename,
+    mutate: updateBibliothequeFichier,
     isPending: isUpdateFilenameLoading,
     isError: isUpdateFilenameError,
-  } = useUpdateBibliothequeFichierFilename();
+  } = useUpdateBibliothequeFichier();
   const { commentaire, fichier } = preuve;
   const editComment = useEditState({
     initialValue: commentaire,
@@ -36,10 +36,10 @@ export const useEditPreuve: TEditPreuve = (preuve) => {
       if (!preuve.fichier) {
         return;
       }
-      updateBibliothequeFichierFilename({
-        collectivite_id: preuve.collectivite_id,
-        fichier: { hash: preuve.fichier.hash },
-        updatedFilename,
+      updateBibliothequeFichier({
+        collectiviteId: preuve.collectivite_id,
+        hash: preuve.fichier.hash,
+        filename: updatedFilename,
       });
     },
   });
@@ -148,63 +148,20 @@ const useUpdatePreuveCommentaire = () => {
   });
 };
 
-// renvoie une fonction de renommage d'un fichier de la bibliothèque
-export const useUpdateBibliothequeFichierFilename = () => {
-  const supabase = useSupabase();
+// renvoie une fonction de mise à jour d'un fichier de la bibliothèque (nom et/ou confidentiel)
+export const useUpdateBibliothequeFichier = () => {
   const queryClient = useQueryClient();
-  return useMutation({
-    mutationKey: ['update_fiche_bibliotheque_'],
-    mutationFn: async (preuve: {
-      collectivite_id: number;
-      fichier: { hash: string };
-      updatedFilename: string;
-    }) => {
-      if (!preuve?.fichier) {
-        return null;
-      }
-      const { collectivite_id, fichier, updatedFilename } = preuve;
-      const { hash } = fichier;
-      return supabase.rpc('update_bibliotheque_fichier_filename', {
-        collectivite_id,
-        filename: updatedFilename,
-        hash,
-      });
-    },
-
-    onSuccess: (data, variables) => {
-      invalidateQueries(queryClient, variables.collectivite_id, {
-        invalidateParcours: false,
-      });
-    },
-  });
-};
-
-// renvoie une fonction d'édition de l'option "confidentiel" d'un fichier
-export const useUpdateBibliothequeFichierConfidentiel = () => {
-  const supabase = useSupabase();
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (preuve: {
-      collectivite_id: number;
-      fichier: { hash: string };
-      updatedConfidentiel: boolean;
-    }) => {
-      if (!preuve?.fichier) {
-        return null;
-      }
-      const { collectivite_id, fichier, updatedConfidentiel } = preuve;
-      const { hash } = fichier;
-      return supabase.rpc('update_bibliotheque_fichier_confidentiel', {
-        collectivite_id,
-        confidentiel: updatedConfidentiel,
-        hash,
-      });
-    },
-
-    onSuccess: (data, variables) => {
-      invalidateQueries(queryClient, variables.collectivite_id, {
-        invalidateParcours: false,
-      });
-    },
-  });
+  const trpc = useTRPC();
+  return useMutation(
+    trpc.collectivites.documents.update.mutationOptions({
+      onSuccess: (_data, variables) => {
+        invalidateQueries(queryClient, variables.collectiviteId, {
+          invalidateParcours: false,
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['bibliotheque_fichier'],
+        });
+      },
+    })
+  );
 };

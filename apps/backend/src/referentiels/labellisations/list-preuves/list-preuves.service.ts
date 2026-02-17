@@ -10,6 +10,7 @@ import { createdByNom, dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Result } from '@tet/backend/utils/result.type';
 import {
+  BibliothequeFichier,
   LegacyPreuveAuditWithFichier,
   LegacyPreuveLabellisationWithFichier,
 } from '@tet/domain/collectivites';
@@ -252,14 +253,12 @@ export class ListPreuvesService {
   }
 
   private getFileInfoSql() {
-    return sql<{
-      id: number;
-      collectiviteId: number | null;
-      hash: string | null;
-      filename: string | null;
-      confidentiel: boolean | null;
-      bucketId: string;
-    } | null>`
+    return sql<
+      | (BibliothequeFichier & {
+          bucketId: string;
+        })
+      | null
+    >`
       CASE WHEN ${bibliothequeFichierTable.id} IS NULL THEN NULL
       ELSE json_build_object(
         'id', ${bibliothequeFichierTable.id},

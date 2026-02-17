@@ -1,9 +1,7 @@
 import { expect, Locator, Page } from '@playwright/test';
 import { ReferentielId } from '@tet/domain/referentiels';
+import { DocumentsPom } from 'tests/collectivite/documents/documents.pom';
 import { UserFixture } from 'tests/users/users.fixture';
-
-const TEST_PDF_PATH =
-  'apps/backend/src/collectivites/documents/samples/document_test.pdf';
 
 export class LabellisationPom {
   readonly requestFirstStarButton: Locator;
@@ -29,8 +27,10 @@ export class LabellisationPom {
   readonly addAuditReportDocsButton: Locator;
   readonly validateAuditModalButton: Locator;
   readonly validateAuditSuccessMessage: Locator;
+  readonly documentsPom: DocumentsPom;
 
   constructor(readonly page: Page) {
+    this.documentsPom = new DocumentsPom(page);
     this.title = page.getByRole('heading', { name: 'Audit et labellisation' });
     this.requestFirstStarButton = page.getByRole('button', {
       name: 'Demander la première étoile',
@@ -95,28 +95,12 @@ export class LabellisationPom {
 
   async setLabellisationRequestTestDocument() {
     await this.addLabellisationRequestDocsButton.click();
-    await this.setTestDocument();
+    await this.documentsPom.setTestDocument();
   }
 
   async setValidateAuditReportTestDocument() {
     await this.addAuditReportDocsButton.click();
-    await this.setTestDocument();
-  }
-
-  private async setTestDocument() {
-    const [fileChooser] = await Promise.all([
-      this.page.waitForEvent('filechooser'),
-      this.page.getByText('Choisir un fichier').click(),
-    ]);
-
-    await fileChooser.setFiles(TEST_PDF_PATH);
-    await expect(
-      this.page.getByRole('button', { name: 'Ajouter' })
-    ).toBeEnabled();
-    await this.page.getByRole('button', { name: 'Ajouter' }).click();
-    await expect(
-      this.page.getByText('document_test.pdf (PDF, 12.36 Ko)')
-    ).toBeVisible();
+    await this.documentsPom.setTestDocument();
   }
 
   async checkAuditEnCoursWithAuditeur(auditeurUser: UserFixture) {

@@ -206,7 +206,7 @@ export const simpleReferentielScoring: TreeOfActionsIncludingScore = {
             {
               url: 'https://example.com/preuve2.pdf',
               modifiedAt: '2021-09-02T00:00:00.000Z',
-              filename: null,
+              filename: '',
               titre: 'Preuve 2',
               commentaire: 'Commentaire sur la preuve 2',
               fichierId: 2,

@@ -17,7 +17,7 @@ export const PermissionOperations = [
   // Documents
   'collectivites.documents.read',
   'collectivites.documents.read_confidentiel',
-  'collectivites.documents.create',
+  'collectivites.documents.mutate',
 
   // Référentiels
   'referentiels.read',
