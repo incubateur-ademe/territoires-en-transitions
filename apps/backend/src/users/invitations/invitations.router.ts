@@ -38,7 +38,7 @@ export class InvitationsRouter {
     deletePending: this.trpc.authedProcedure
       .input(
         z.object({
-          email: z.email(),
+          email: z.email({ pattern: z.regexes.unicodeEmail }),
           collectiviteId: z.int().positive(),
         })
       )
