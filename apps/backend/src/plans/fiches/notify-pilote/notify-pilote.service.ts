@@ -57,8 +57,6 @@ type OnUpdateFichePiloteNotificationInsert = Omit<
   notificationData: OnUpdateFichePiloteNotificationData;
 };
 
-const DEFAULT_DELAY_BEFORE_SENDING: DurationLike = { minutes: 1 };
-
 @Injectable()
 export class NotifyPiloteService {
   private readonly logger = new Logger(NotifyPiloteService.name);
@@ -82,6 +80,12 @@ export class NotifyPiloteService {
   getUnsubscribeUrl() {
     const appUrl = this.configService.get('APP_URL');
     return `${appUrl}/profil`;
+  }
+
+  getDelayBeforeSendingNotification(): DurationLike {
+    return {
+      minutes: this.configService.get('DELAY_IN_MIN_BEFORE_NOTIFY_PILOTE'),
+    };
   }
 
   /**
@@ -294,7 +298,10 @@ export class NotifyPiloteService {
    * Calcule la date d'envoi de la notification
    */
   private calculateSendAfterDate(): string {
-    return DateTime.now().plus(DEFAULT_DELAY_BEFORE_SENDING).toUTC().toString();
+    return DateTime.now()
+      .plus(this.getDelayBeforeSendingNotification())
+      .toUTC()
+      .toString();
   }
 
   /**
@@ -318,6 +325,7 @@ export class NotifyPiloteService {
   }): Promise<{ insertedCount: number }> {
     const notificationsToInsert: OnUpdateFichePiloteNotificationInsert[] = [];
 
+    const delayBeforeSending = this.getDelayBeforeSendingNotification();
     for (const { pilote, ficheIds } of pilotesWithFicheIds) {
       const existingNotification = existingNotificationsByUserId.get(
         pilote.userId
@@ -364,7 +372,7 @@ export class NotifyPiloteService {
       const insertedNotifications =
         await this.notificationsService.createPendingNotifications(
           notificationsToInsert,
-          DEFAULT_DELAY_BEFORE_SENDING,
+          delayBeforeSending,
           transaction
         );
       if (insertedNotifications.success) {
