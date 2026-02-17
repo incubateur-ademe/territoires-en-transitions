@@ -110,10 +110,13 @@ const IndicateursListe = (props: Props) => {
       <BadgeList
         definitions={definitions}
         filters={filtresBadges}
+        exportFilters={filters}
         customFilterBadges={customFilterBadges}
         resetFilters={resetFilters}
         isLoading={isPending}
         isEmpty={definitions?.length === 0}
+        count={count}
+        sortBy={sortBy}
       />
       {/** Chargement */}
       {isPending ? (

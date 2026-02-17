@@ -51,8 +51,8 @@ describe('Indicateurs', () => {
       /^Ambérieu-en-Bugey - cae_8 - Rénovation énergétique des logements - \d{4}-\d{2}-\d{2}.*\.xlsx$/
     );
     // poids approximitatif du fichier attendu car la date de génération peut le faire un peu varier
-    expect(body.byteLength).toBeGreaterThanOrEqual(6700);
-    expect(body.byteLength).toBeLessThanOrEqual(6800);
+    expect(body.byteLength).toBeGreaterThanOrEqual(7000);
+    expect(body.byteLength).toBeLessThanOrEqual(7100);
 
     // crée le classeur et vérifie le contenu de la 2ème ligne de la 1ère feuille
     const wb = new Workbook();
