@@ -17,6 +17,12 @@ export const useDeleteIndicateurValeur = () => {
             }),
           });
           queryClient.invalidateQueries({
+            queryKey: trpc.indicateurs.valeurs.list.queryKey({
+              collectiviteId,
+              indicateurIds: [indicateurId],
+            }),
+          });
+          queryClient.invalidateQueries({
             queryKey: trpc.referentiels.actions.getValeursUtilisables.queryKey({
               collectiviteId,
             }),
