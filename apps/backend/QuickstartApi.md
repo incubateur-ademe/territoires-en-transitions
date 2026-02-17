@@ -6,7 +6,7 @@ L'authentification de l'Api s'appuie sur le standard [Oauth2 client credentials 
 
 Avant de pouvoir appeler l'api en elle-même, la première étape consiste à générer un token à partir de ce couple `client_id/client_secret`. Pour obtenir ces identifiants, veuillez contacter le support via le chat ou par mail à l'adresse contact@territoiresentransitions.fr.
 
-Une fois ce couple `client_id/client_secret` obtenu, il faire un POST sur `https://api.territoiresentransitions.fr/api/v1/oauth/token` en le passant dans le body de la requête :
+Une fois ce couple `client_id/client_secret` obtenu, il faut faire un POST sur `https://api.territoiresentransitions.fr/api/v1/oauth/token` en passant ces informations dans le corps de la requête :
 
 ```
 {
