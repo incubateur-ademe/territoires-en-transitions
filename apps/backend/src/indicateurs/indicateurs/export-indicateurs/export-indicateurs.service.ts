@@ -143,6 +143,16 @@ export default class ExportIndicateursService {
       )
     );
 
+    // Ajoute la description et méthodologie de calcul en haut de la feuille
+    if (definition.description) {
+      const descTitleRow = worksheet.addRow([
+        'Description et méthodologie de calcul',
+      ]);
+      descTitleRow.font = BOLD;
+      worksheet.addRow([definition.description]);
+      worksheet.addRow([]); // ligne vide de séparation
+    }
+
     // extrait les ids des définitions
     const definitions = [
       definition,
