@@ -52,7 +52,7 @@ export const SelectTagsGeneric = ({
   }));
 
   const isEditionAllowed =
-    collectivite.hasCollectivitePermission('collectivites.mutate') &&
+    collectivite.hasCollectivitePermission('collectivites.tags.mutate') &&
     (onCreate !== undefined ||
       onUpdate !== undefined ||
       onDelete !== undefined) &&
