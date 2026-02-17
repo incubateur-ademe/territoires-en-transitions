@@ -64,7 +64,7 @@ export class StoreDocumentService {
     if (user) {
       const isAllowed = await this.permissionService.isAllowed(
         user,
-        'collectivites.documents.create',
+        'collectivites.documents.mutate',
         ResourceType.COLLECTIVITE,
         document.collectiviteId,
         true
@@ -114,7 +114,7 @@ export class StoreDocumentService {
     if (user) {
       const isAllowed = await this.permissionService.isAllowed(
         user,
-        'collectivites.documents.create',
+        'collectivites.documents.mutate',
         ResourceType.COLLECTIVITE,
         collectiviteId,
         true
@@ -182,7 +182,7 @@ export class StoreDocumentService {
     if (user) {
       const isAllowed = await this.permissionService.isAllowed(
         user,
-        'collectivites.documents.create',
+        'collectivites.documents.mutate',
         ResourceType.COLLECTIVITE,
         document.collectiviteId,
         true
@@ -230,7 +230,7 @@ export class StoreDocumentService {
 
       return {
         success: true,
-        data: insertedDocument,
+        data: insertedDocument as BibliothequeFichier,
       };
     } catch (error) {
       this.logger.error(

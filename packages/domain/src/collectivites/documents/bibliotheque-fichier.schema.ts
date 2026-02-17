@@ -2,9 +2,9 @@ import * as z from 'zod';
 
 export const bibliothequeFichierSchema = z.object({
   id: z.number(),
-  collectiviteId: z.nullable(z.number()),
-  hash: z.nullable(z.string()),
-  filename: z.nullable(z.string()),
+  collectiviteId: z.number(),
+  hash: z.string(),
+  filename: z.string(),
   confidentiel: z.nullable(z.boolean()),
 });
 

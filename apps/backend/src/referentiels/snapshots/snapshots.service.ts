@@ -353,8 +353,14 @@ export class SnapshotsService {
           );
         }
 
+        this.logger.log(
+          `Updating snapshot of score with ref ${createScoreSnapshot.ref} and type ${createScoreSnapshot.jalon} for collectivite ${createScoreSnapshot.collectiviteId} and referentiel ${createScoreSnapshot.referentielId}`
+        );
         scoreSnapshot = await this.upsertScoreSnapshot(createScoreSnapshot);
       } else {
+        this.logger.log(
+          `Inserting snapshot of score with ref ${createScoreSnapshot.ref} and type ${createScoreSnapshot.jalon} for collectivite ${createScoreSnapshot.collectiviteId} and referentiel ${createScoreSnapshot.referentielId}`
+        );
         scoreSnapshot = await this.insertSnapshotOrUpsertIfCurrentJalon(
           createScoreSnapshot
         );
@@ -364,7 +370,9 @@ export class SnapshotsService {
         isErrorWithCause(error) &&
         error.cause.code === PgIntegrityConstraintViolation.UniqueViolation
       ) {
-        this.logger.error(error);
+        this.logger.error(
+          `Unique violation for snapshot ${createScoreSnapshot.ref}: ${error.cause.detail} (${error.cause.code}, ${error.cause.constraint})`
+        );
         throw new BadRequestException(
           `Un snapshot de score avec la référence ${createScoreSnapshot.ref} existe déjà pour la collectivite ${createScoreSnapshot.collectiviteId} et le referentiel ${createScoreSnapshot.referentielId}`
         );

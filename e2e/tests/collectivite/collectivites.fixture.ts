@@ -5,6 +5,7 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { FixtureFactory } from 'tests/shared/fixture-factory.interface';
 import { testWithUsers, Users } from 'tests/users/users.fixture';
 import { databaseService } from '../shared/database.service';
+import { DocumentsPom } from './documents/documents.pom';
 
 type CollectiviteAndUserArgs = {
   collectiviteArgs?: Partial<Collectivite> & { isCOT?: boolean };
@@ -143,6 +144,7 @@ export type Collectivites = Omit<CollectiviteFactory, 'removeAll'>;
 
 export const testWithCollectivites = testWithUsers.extend<{
   collectivites: Collectivites;
+  documentsPom: DocumentsPom;
 }>({
   collectivites: async ({ users }, use) => {
     const {
@@ -160,5 +162,9 @@ export const testWithCollectivites = testWithUsers.extend<{
       getCollectivite,
     });
     await removeAll();
+  },
+  documentsPom: async ({ page }, use) => {
+    const documentsPom = new DocumentsPom(page);
+    await use(documentsPom);
   },
 });

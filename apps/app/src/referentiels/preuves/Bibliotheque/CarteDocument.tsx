@@ -60,7 +60,10 @@ const CarteDocument = ({
         {/** Cadenas document privé */}
         {fichier?.confidentiel && (
           <Tooltip label="Document en mode privé">
-            <div className="absolute -top-5 left-5">
+            <div
+              data-test="carte-doc-confidentiel"
+              className="absolute -top-5 left-5"
+            >
               <Notification icon="lock-fill" size="sm" classname="w-9 h-9" />
             </div>
           </Tooltip>

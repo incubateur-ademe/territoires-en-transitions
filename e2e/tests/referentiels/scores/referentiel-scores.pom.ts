@@ -4,14 +4,31 @@ import {
   StatutAvancementIncludingNonConcerne,
 } from '@tet/domain/referentiels';
 import { roundTo } from '@tet/domain/utils';
+import { DocumentsPom } from 'tests/collectivite/documents/documents.pom';
 
 export class ReferentielScoresPom {
   readonly title: Locator;
+  readonly documentsExpandButton: Locator;
+  readonly documentsAddPreuveComplementaireButton: Locator;
+  readonly documentsPom: DocumentsPom;
 
   readonly SELECT_STATUT_LOCATOR = '[data-test="SelectStatut"]';
 
   constructor(readonly page: Page) {
+    this.documentsPom = new DocumentsPom(page);
     this.title = page.getByRole('heading', { name: 'Référentiel' });
+    this.documentsExpandButton = page.getByRole('button', {
+      name: 'Documents',
+    });
+    this.documentsAddPreuveComplementaireButton = page.locator(
+      '[data-test="AddPreuveComplementaire"]'
+    );
+  }
+
+  getPreuveReglementaireButtonLocator(preuveId: string) {
+    return this.page.locator(
+      `[data-test="AddPreuveReglementaire-${preuveId}"]`
+    );
   }
 
   async goto(referentielId: ReferentielId) {

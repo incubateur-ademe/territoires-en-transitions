@@ -38,7 +38,7 @@ const collectiviteEditionPermissions: readonly PermissionOperation[] = [
 
   'collectivites.membres.mutate',
   'collectivites.tags.mutate',
-  'collectivites.documents.create',
+  'collectivites.documents.mutate',
   'referentiels.mutate',
   'referentiels.labellisations.request',
   'plans.mutate',
@@ -89,7 +89,7 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     'indicateurs.valeurs.mutate_piloted_by_me',
 
     'collectivites.tags.mutate',
-    'collectivites.documents.create',
+    'collectivites.documents.mutate',
   ],
   [AuditRole.AUDITEUR_AUDIT_NON_DEMARRE]: [
     ...collectiviteLecturePermissions,
@@ -103,7 +103,7 @@ export const permissionsByRole: Record<UserRole, PermissionOperation[]> = {
     'referentiels.labellisations.validate_audit',
     'referentiels.labellisations.mutate_action_audit_statut',
 
-    'collectivites.documents.create',
+    'collectivites.documents.mutate',
     'indicateurs.indicateurs.create',
     'indicateurs.indicateurs.update',
     'indicateurs.indicateurs.delete',

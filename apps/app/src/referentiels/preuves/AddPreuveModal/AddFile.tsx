@@ -4,7 +4,7 @@
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Button, Field, Input } from '@tet/ui';
 import { FormEvent, useEffect, useState } from 'react';
-import { useUpdateBibliothequeFichierConfidentiel } from '../Bibliotheque/useEditPreuve';
+import { useUpdateBibliothequeFichier } from '../Bibliotheque/useEditPreuve';
 import { CheckboxConfidentiel } from './CheckboxConfidentiel';
 import { EXPECTED_FORMATS_LIST, HINT } from './constants';
 import { TFileItem } from './FileItem';
@@ -40,8 +40,7 @@ export const AddFile = (props: TAddFileProps) => {
 
   const collectivite_id = useCollectiviteId();
 
-  const { mutate: updateConfidentiel } =
-    useUpdateBibliothequeFichierConfidentiel();
+  const { mutate: updateDocument } = useUpdateBibliothequeFichier();
 
   const onDropFiles = async (files: FileList | null) => {
     const filesToUpload = await filesToUploadList(collectivite_id, files);
@@ -95,10 +94,10 @@ export const AddFile = (props: TAddFileProps) => {
       if (collectivite_id && validFiles?.length) {
         await Promise.all(
           validFiles.map(({ status }) =>
-            updateConfidentiel({
-              collectivite_id,
-              fichier: { hash: (status as UploadStatusCompleted).hash },
-              updatedConfidentiel: confidentiel,
+            updateDocument({
+              collectiviteId: collectivite_id,
+              hash: (status as UploadStatusCompleted).hash,
+              confidentiel,
             })
           )
         );

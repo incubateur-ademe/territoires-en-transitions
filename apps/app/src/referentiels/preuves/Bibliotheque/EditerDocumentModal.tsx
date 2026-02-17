@@ -2,10 +2,7 @@ import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useState } from 'react';
 import { CheckboxConfidentiel } from '../AddPreuveModal/CheckboxConfidentiel';
 import { TPreuve } from './types';
-import {
-  useUpdateBibliothequeFichierConfidentiel,
-  useUpdateBibliothequeFichierFilename,
-} from './useEditPreuve';
+import { useUpdateBibliothequeFichier } from './useEditPreuve';
 import { useEditFilenameState } from './useEditState';
 
 export type EditerDocumentProps = {
@@ -29,11 +26,26 @@ export const EditerDocumentModal = (props: EditerDocumentProps) => {
   const [confidentiel, setConfidentiel] = useState(
     fichier?.confidentiel || false
   );
-  const { mutate: editFilename, isPending: isLoading1 } =
-    useUpdateBibliothequeFichierFilename();
-  const { mutate: updateConfidentiel, isPending: isLoading2 } =
-    useUpdateBibliothequeFichierConfidentiel();
-  const isLoading = isLoading1 || isLoading2;
+  const { mutate: updateDocument, isPending: isLoading } =
+    useUpdateBibliothequeFichier();
+
+  const handleOk = () => {
+    if (!fichier) {
+      return;
+    }
+    const filenameChanged = filename && filename !== fichier.filename;
+    const confidentielChanged =
+      confidentiel !== (fichier.confidentiel ?? false);
+    if (filenameChanged || confidentielChanged) {
+      updateDocument({
+        collectiviteId: preuve.collectivite_id,
+        hash: fichier.hash,
+        ...(filenameChanged && { filename }),
+        ...(confidentielChanged && { confidentiel }),
+      });
+    }
+    setIsOpen(false);
+  };
 
   return (
     !!fichier && (
@@ -59,30 +71,13 @@ export const EditerDocumentModal = (props: EditerDocumentProps) => {
             />
           </>
         )}
-        // Boutons pour valider / annuler les modifications
         renderFooter={({ close }) => (
           <ModalFooterOKCancel
             btnCancelProps={{ onClick: close, disabled: isLoading }}
             btnOKProps={{
               disabled: isLoading || !value,
               onClick: () => {
-                if (!preuve.fichier) {
-                  return;
-                }
-                if (filename && filename !== fichier.filename) {
-                  editFilename({
-                    collectivite_id: preuve.collectivite_id,
-                    fichier: { hash: preuve.fichier.hash },
-                    updatedFilename: filename,
-                  });
-                }
-                if (confidentiel !== fichier?.confidentiel) {
-                  updateConfidentiel({
-                    collectivite_id: preuve.collectivite_id,
-                    fichier: { hash: preuve.fichier.hash },
-                    updatedConfidentiel: confidentiel,
-                  });
-                }
+                handleOk();
                 close();
               },
             }}
