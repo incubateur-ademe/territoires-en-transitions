@@ -15,7 +15,7 @@ import {
   ModalFooterOKCancel,
   validateTel,
 } from '@tet/ui';
-import { useUpdateUser } from './use-update-user';
+import { useUpdateUser } from '../use-update-user';
 
 const validationSchema = z.object({
   prenom: z.string().min(1, {
