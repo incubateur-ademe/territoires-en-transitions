@@ -71,6 +71,7 @@ export const referentielTabs = [
   'progression',
   'priorisation',
   'detail',
+  'mesures-beta',
   'evolutions',
 ] as const;
 export type ReferentielTab = (typeof referentielTabs)[number];
