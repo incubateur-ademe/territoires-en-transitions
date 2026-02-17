@@ -1,17 +1,30 @@
 import { useExportIndicateurs } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
-import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import {
+  IndicateurDefinitionListItem,
+  ListDefinitionsInputFilters,
+} from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import { ListDefinitionsInputSort } from '@tet/domain/indicateurs';
 import { Badge } from '@tet/ui';
 import classNames from 'classnames';
 
 type Props = {
   definitions?: IndicateurDefinitionListItem[];
+  filters?: ListDefinitionsInputFilters;
+  count?: number;
+  sortBy?: ListDefinitionsInputSort;
   isFiltered: boolean;
 };
 
-const ExportButton = ({ definitions, isFiltered }: Props) => {
-  // fonction d'export
+const ExportButton = ({
+  definitions,
+  filters,
+  count,
+  sortBy,
+  isFiltered,
+}: Props) => {
+  // fonction d'export - utilise filters+count pour exporter tout le résultat du filtre
   const { mutate: exportIndicateurs, isPending: isDownloadingExport } =
-    useExportIndicateurs(definitions);
+    useExportIndicateurs({ definitions, filters, count, sortBy });
 
   return (
     <button
