@@ -136,7 +136,7 @@ export const FicheActionCard = ({
             'hover:border-primary-3 hover:!bg-primary-1': !isNotClickable,
           }
         )}
-        href={onSelect ? undefined : link}
+        href={onSelect || isNotClickable ? undefined : link}
         onClick={onSelect ? () => onSelect(!isSelected) : undefined}
         disabled={isNotClickable}
         isSelected={isSelected}
