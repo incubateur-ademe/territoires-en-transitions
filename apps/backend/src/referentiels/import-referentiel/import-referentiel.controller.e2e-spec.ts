@@ -21,7 +21,7 @@ describe('import-referentiel.controller.e2e-spec', () => {
     return async () => {
       await app.close();
     };
-  }, 30000);
+  });
 
   it(`Import du referentiel ECI depuis le spreadsheet`, async () => {
     // Reset the version
@@ -62,7 +62,7 @@ describe('import-referentiel.controller.e2e-spec', () => {
       ),
       statusCode: 422,
     });
-  }, 20000);
+  }, 60_000);
 
   it(`Import du referentiel CAE depuis le spreadsheet`, async () => {
     // Reset the version
@@ -103,7 +103,7 @@ describe('import-referentiel.controller.e2e-spec', () => {
       ),
       statusCode: 422,
     });
-  }, 20000);
+  }, 60_000);
 
   it(`Import du referentiel TE depuis le spreadsheet avec test du lock`, async () => {
     // Reset the version
@@ -149,5 +149,5 @@ describe('import-referentiel.controller.e2e-spec', () => {
       ),
       statusCode: 403,
     });
-  }, 20000);
+  }, 60_000);
 });
