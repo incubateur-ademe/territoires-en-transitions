@@ -55,9 +55,12 @@ export class InstanceGouvernanceRepository {
       return failure('SERVER_ERROR', error as Error);
     }
   }
-  async list(collectiviteId: number): Promise<Result<InstanceGouvernance[]>> {
+  async list(
+    collectiviteId: number,
+    tx?: Transaction
+  ): Promise<Result<InstanceGouvernance[]>> {
     try {
-      const result = await this.databaseService.db
+      const result = await (tx ?? this.databaseService.db)
         .select()
         .from(instanceGouvernanceTagTable)
         .where(eq(instanceGouvernanceTagTable.collectiviteId, collectiviteId));

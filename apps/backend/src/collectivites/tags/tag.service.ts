@@ -42,12 +42,13 @@ export class TagService {
    */
   async getTags(
     collectiviteId: number,
-    tagType: TagType
+    tagType: TagType,
+    tx?: Transaction
   ): Promise<TagWithCollectiviteId[]> {
     const toReturn: TagWithCollectiviteId[] = [];
     const table = tagTypeTable[tagType];
 
-    const tags = await this.databaseService.db
+    const tags = await (tx ?? this.databaseService.db)
       .select()
       .from(table)
       .where(eq(table.collectiviteId, collectiviteId));
