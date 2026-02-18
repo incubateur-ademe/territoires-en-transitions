@@ -1,6 +1,5 @@
 import { CollectiviteRole } from '@tet/domain/users';
 import { Badge, BadgeProps, IconValue } from '@tet/ui';
-import classNames from 'classnames';
 
 import { getAccessLevelLabel } from '@/app/users/authorizations/permission-access-level.utils';
 
@@ -13,13 +12,12 @@ const niveauAccesToIcon: Record<CollectiviteRole, IconValue> = {
 
 type BadgeAccesProps = Omit<
   BadgeProps,
-  'title' | 'icon' | 'iconPosition' | 'state' | 'uppercase' | 'className'
+  'title' | 'icon' | 'iconPosition' | 'state' | 'uppercase'
 > & {
   acces?: CollectiviteRole;
-  className?: string;
 };
 
-const BadgeAcces = ({ acces, className, ...props }: BadgeAccesProps) => {
+const BadgeAcces = ({ acces, ...props }: BadgeAccesProps) => {
   if (!acces) return null;
 
   return (
@@ -27,14 +25,9 @@ const BadgeAcces = ({ acces, className, ...props }: BadgeAccesProps) => {
       title={getAccessLevelLabel(acces)}
       icon={niveauAccesToIcon[acces]}
       iconPosition="left"
-      variant={acces === 'lecture' ? 'default' : 'custom'}
+      variant={acces === 'lecture' ? 'default' : 'hight'}
+      type="outlined"
       uppercase={false}
-      className={classNames(
-        {
-          'text-primary-9 bg-grey-1 border-primary-4': acces !== 'lecture',
-        },
-        className
-      )}
       {...props}
     />
   );
