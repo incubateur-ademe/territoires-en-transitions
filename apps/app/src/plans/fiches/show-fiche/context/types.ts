@@ -2,7 +2,12 @@ import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { ListActionsResponse } from '@/app/referentiels/actions/use-list-actions';
 import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
-import { FicheNote, FicheNoteUpsert, Financeur } from '@tet/domain/plans';
+import {
+  FicheNote,
+  FicheNoteUpsert,
+  FicheWithRelations,
+  Financeur,
+} from '@tet/domain/plans';
 import z from 'zod';
 
 export type ActionsLieesState = {
@@ -68,7 +73,7 @@ export type FinanceursState = {
 };
 
 export type MesuresState = {
-  list: ListActionsResponse['data'];
+  list: NonNullable<ListActionsResponse['data']>;
   linkMesure: (mesureId: string) => Promise<void>;
   unlinkMesure: (mesureId: string) => Promise<void>;
 };
@@ -88,3 +93,9 @@ export const budgetPerYearFormSchema = budgetSummarychema.extend({
   year: z.number(),
 });
 export type BudgetPerYear = z.infer<typeof budgetPerYearFormSchema>;
+
+export type SousActionsState = {
+  count: number;
+  isLoading: boolean;
+  list: FicheWithRelations[];
+};
