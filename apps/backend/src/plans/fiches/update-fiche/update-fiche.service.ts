@@ -442,26 +442,41 @@ export default class UpdateFicheService {
       };
     };
 
-    // Utilise la transaction fournie ou en crée une nouvelle
-    const resultUpdate = await (tx
-      ? executeInTransaction(tx)
-      : this.databaseService.db.transaction((newTx) =>
-          executeInTransaction(newTx)
-        ));
-    if (!resultUpdate.success) {
-      return { success: false, error: resultUpdate.error };
-    }
-    const updatedFiche = resultUpdate.data.ficheUpdated;
-    await this.webhookService.sendWebhookNotification(
-      ApplicationSousScopesEnum.FICHES,
-      `${ficheId}`,
-      updatedFiche
-    );
+    try {
+      const resultUpdate = await (tx
+        ? executeInTransaction(tx)
+        : this.databaseService.db.transaction((newTx) =>
+            executeInTransaction(newTx)
+          ));
+      if (!resultUpdate.success) {
+        return { success: false, error: resultUpdate.error };
+      }
+      const updatedFiche = resultUpdate.data.ficheUpdated;
 
-    return {
-      success: true,
-      data: updatedFiche,
-    };
+      try {
+        await this.webhookService.sendWebhookNotification(
+          ApplicationSousScopesEnum.FICHES,
+          `${ficheId}`,
+          updatedFiche
+        );
+      } catch (webhookError) {
+        this.logger.error(
+          `Webhook notification failed for fiche ${ficheId}`,
+          webhookError instanceof Error ? webhookError.stack : webhookError
+        );
+      }
+
+      return {
+        success: true,
+        data: updatedFiche,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: 'SERVER_ERROR',
+        cause: error instanceof Error ? error : new Error(String(error)),
+      };
+    }
   }
 
   private async updateNotes({

@@ -1,6 +1,16 @@
 import { cn, InlineEditWrapper, TableCellTextarea } from '@tet/ui';
 import { useState } from 'react';
 
+export const TITLE_MAX_LENGTH = 300;
+
+const TitleLengthHint = ({ currentLength }: { currentLength: number }) => {
+  return (
+    <span className="text-xs text-grey-6 px-4 py-1">
+      {`${currentLength} / ${TITLE_MAX_LENGTH} caractères`}
+    </span>
+  );
+};
+
 type EditableTitleProps = {
   dataTest?: string;
   className?: string;
@@ -21,6 +31,9 @@ export const EditableTitle = ({
   onUpdate,
 }: EditableTitleProps) => {
   const [title, setTitle] = useState(initialTitle);
+
+  const titleLength = (title ?? '').length;
+
   return (
     <InlineEditWrapper
       floatingMatchReferenceHeight={false}
@@ -29,21 +42,28 @@ export const EditableTitle = ({
         onUpdate(title);
       }}
       renderOnEdit={({ openState }) => (
-        <TableCellTextarea
-          dataTest={dataTest}
-          value={title ?? undefined}
-          autoFocus
-          onChange={(evt) => setTitle(evt.target.value)}
-          placeholder="Saisir un titre"
-          onBlur={() => openState.setIsOpen(false)}
-          onKeyDown={(evt) => {
-            if (evt.key === 'Enter') {
-              openState.setIsOpen(false);
+        <div className="flex flex-col gap-1">
+          <TableCellTextarea
+            dataTest={dataTest}
+            value={title ?? undefined}
+            autoFocus
+            onChange={(evt) =>
+              setTitle(evt.target.value.slice(0, TITLE_MAX_LENGTH))
             }
-          }}
-          className={inputClassName}
-          rows={1}
-        />
+            placeholder="Saisir un titre"
+            onBlur={() => {
+              openState.setIsOpen(false);
+            }}
+            onKeyDown={(evt) => {
+              if (evt.key === 'Enter') {
+                openState.setIsOpen(false);
+              }
+            }}
+            className={inputClassName}
+            rows={1}
+          />
+          <TitleLengthHint currentLength={titleLength} />
+        </div>
       )}
     >
       <h1

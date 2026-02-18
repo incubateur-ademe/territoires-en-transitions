@@ -9,7 +9,6 @@ import { TSectionsValues, sectionsInitValue } from '../utils';
 import ActionsLiees from './ActionsLiees';
 import Description from './Description';
 import Documents from './Documents';
-import Etapes from './Etapes';
 import FichesLiees from './FichesLiees';
 import Indicateurs from './Indicateurs';
 import { Moyens } from './Moyens';
@@ -36,7 +35,6 @@ const FicheActionPdf = ({
   sections = sectionsInitValue,
   chemins,
   indicateursListe,
-  etapes,
   fichesLiees,
   actionsLiees,
   annexes,
@@ -77,8 +75,6 @@ const FicheActionPdf = ({
       {sections.indicateurs.isChecked && (
         <Indicateurs fiche={fiche} indicateursListe={indicateursListe} />
       )}
-
-      {sections.etapes.isChecked && <Etapes etapes={etapes} />}
 
       {sections.notes.isChecked && (
         <Notes notes={notes} years={sections.notes.values} />

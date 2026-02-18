@@ -10,7 +10,11 @@ export const useFicheActionsLiees = (
   collectiviteId: number,
   ficheId: number
 ): ActionsLieesState => {
-  const { fiches: list, isLoading } = useListFiches(collectiviteId, {
+  const {
+    fiches: list,
+    isLoading,
+    count,
+  } = useListFiches(collectiviteId, {
     filters: {
       linkedFicheIds: [ficheId],
     },
@@ -40,5 +44,6 @@ export const useFicheActionsLiees = (
     isLoading,
     update,
     updateActionLiee,
+    count,
   };
 };

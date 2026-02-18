@@ -7,12 +7,11 @@ import { FicheWithRelations } from '@tet/domain/plans';
 import { Event, useEventTracker } from '@tet/ui';
 import { mapValues } from 'es-toolkit';
 import { createElement, JSX, useEffect, useState } from 'react';
-import { useGetEtapes } from '../../../../content/etapes/use-get-etapes';
 import { useAnnexesFicheActionInfos } from '../../../../data/useAnnexesFicheActionInfos';
 import { useFichesActionLiees } from '../../../../data/useFichesActionLiees';
 import { useFicheActionChemins } from '../../../../data/usePlanActionChemin';
 import FicheActionPdf from './FicheActionPdf/FicheActionPdf';
-import { TSectionsValues, sectionsInitValue } from './utils';
+import { sectionsInitValue, TSectionsValues } from './utils';
 
 type FicheActionPdfContentProps = {
   fiche: FicheWithRelations;
@@ -61,10 +60,6 @@ export const FicheActionPdfContent = ({
   const { data: annexes, isLoading: isLoadingAnnexes } =
     useAnnexesFicheActionInfos(fiche.id, options.documents.isChecked);
 
-  const { data: etapes, isLoading: isLoadingEtapes } = useGetEtapes(
-    fiche.id,
-    options.etapes.isChecked
-  );
   const { data: budgets, isLoading: isLoadingBudget } = useGetBudget(
     { ficheId: fiche.id },
     options.moyens.isChecked
@@ -76,7 +71,6 @@ export const FicheActionPdfContent = ({
     isLoadingActionsLiees ||
     isLoadingAxes ||
     isLoadingAnnexes ||
-    isLoadingEtapes ||
     isLoadingBudget;
 
   useEffect(() => {
@@ -89,7 +83,6 @@ export const FicheActionPdfContent = ({
             .map((a) => a.chemin)
             .filter((chemin) => chemin !== null),
           indicateursListe: indicateursListe?.data ?? [],
-          etapes,
           fichesLiees,
           actionsLiees: fiche?.mesures?.length ? actionsLiees ?? [] : [],
           annexes,
