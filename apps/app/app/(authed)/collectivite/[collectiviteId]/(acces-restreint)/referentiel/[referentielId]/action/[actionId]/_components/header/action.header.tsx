@@ -81,7 +81,7 @@ export const ActionHeader = ({
                 <Badge
                   title={currentCollectiviteName}
                   variant={role === null ? 'new' : 'info'}
-                  light
+                  type="outlined"
                   uppercase={false}
                   className="!rounded-r-none border-[0.5px] border-r-0 shrink-0"
                   size="sm"

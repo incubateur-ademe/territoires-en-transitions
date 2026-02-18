@@ -105,7 +105,7 @@ export const BudgetPerYearContent = ({
                       </span>
                     }
                     variant="standard"
-                    light
+                    type="outlined"
                     className="mx-auto"
                   />
                 )}
@@ -120,7 +120,7 @@ export const BudgetPerYearContent = ({
                       </span>
                     }
                     variant="standard"
-                    light
+                    type="outlined"
                     className="mx-auto"
                   />
                 )}
@@ -134,7 +134,7 @@ export const BudgetPerYearContent = ({
                       </span>
                     }
                     variant="standard"
-                    light
+                    type="outlined"
                     className="mx-auto"
                   />
                 )}
@@ -144,7 +144,7 @@ export const BudgetPerYearContent = ({
                   <Badge
                     title={<span>{getFormattedFloat(budget.etpReel)} ETP</span>}
                     variant="standard"
-                    light
+                    type="outlined"
                     className="mx-auto"
                   />
                 )}

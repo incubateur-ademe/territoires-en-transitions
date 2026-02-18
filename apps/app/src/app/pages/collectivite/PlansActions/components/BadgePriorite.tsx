@@ -28,7 +28,7 @@ const BadgePriorite = ({ className, priorite, size }: Props) => {
       title={priorite}
       variant={prioritesToState[priorite]}
       size={size}
-      light
+      type="outlined"
     />
   );
 };

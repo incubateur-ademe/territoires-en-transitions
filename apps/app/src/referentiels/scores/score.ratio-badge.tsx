@@ -36,7 +36,7 @@ export const ScoreRatioBadge = ({
         <Badge
           title="0 point"
           variant="grey"
-          light
+          type="outlined"
           uppercase={false}
           size={size}
         />
@@ -53,7 +53,7 @@ export const ScoreRatioBadge = ({
           <Badge
             title={`${roundPointFait} / ${roundPointPotentiel} points`}
             variant="success"
-            light
+            type="outlined"
             className="!rounded-l-none border-[0.5px] !border-success-3 border-l-0 shrink-0"
             uppercase={false}
             size={size}
