@@ -37,7 +37,7 @@ const ActionStatutBadge = ({
         title={avancementToLabel[statut]}
         size={size}
         variant={statusToState[statut].state}
-        light={statut === 'non_renseigne'}
+        type={statut === 'non_renseigne' ? 'outlined' : 'solid'}
         trim={false}
         className={classNames(
           'min-w-fit',

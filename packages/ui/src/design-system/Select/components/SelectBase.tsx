@@ -458,10 +458,12 @@ const SelectButton = forwardRef(
                 ? valueToBadgeState[values[0]].state
                 : undefined
             }
-            light={
+            type={
               values && valueToBadgeState
-                ? valueToBadgeState[values[0]].light ?? false
-                : false
+                ? valueToBadgeState[values[0]].light
+                  ? 'outlined'
+                  : 'solid'
+                : 'solid'
             }
             title={
               values

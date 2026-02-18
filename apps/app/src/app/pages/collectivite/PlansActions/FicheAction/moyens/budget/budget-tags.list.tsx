@@ -35,7 +35,7 @@ export const BudgetTagsList = ({ tags, unit = 'HT' }: BudgetTagsListProps) => {
               )
             }
             variant="standard"
-            light
+            type="outlined"
             uppercase={false}
             className="!rounded-l-none"
           />

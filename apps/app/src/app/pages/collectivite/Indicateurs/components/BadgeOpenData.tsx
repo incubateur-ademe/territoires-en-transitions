@@ -30,7 +30,7 @@ const BadgeOpenData = ({ size }: Props) => {
           title="Open Data"
           variant="standard"
           size={size}
-          light
+          type="outlined"
         />
       </div>
     </Tooltip>

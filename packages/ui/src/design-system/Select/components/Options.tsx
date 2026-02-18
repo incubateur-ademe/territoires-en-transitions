@@ -180,10 +180,12 @@ const Option = ({
                   ? valueToBadgeState[option.value].state
                   : 'default'
               }
-              light={
+              type={
                 valueToBadgeState
-                  ? valueToBadgeState[option.value].light ?? false
-                  : true
+                  ? valueToBadgeState[option.value].light
+                    ? 'outlined'
+                    : 'solid'
+                  : 'solid'
               }
               size={badgeSize}
               trim={false}
