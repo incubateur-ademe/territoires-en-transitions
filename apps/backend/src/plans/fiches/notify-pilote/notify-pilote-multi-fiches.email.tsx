@@ -40,7 +40,9 @@ export const NotifyPiloteMultiFichesEmail = (
               )}
               {planNom ? ` - ${planNom}` : ''}
               <br />
-              <Link href={actionUrl}>Voir l'action →</Link>
+              <Link href={actionUrl}>
+                Voir {isSousAction ? 'la sous-action' : "l'action"} →
+              </Link>
             </li>
           )
         )}
