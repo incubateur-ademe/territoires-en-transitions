@@ -31,6 +31,9 @@ type SideMenuProps = {
   dataTest?: string;
 };
 
+/**
+ * @deprecated Utiliser le hook `useSidePanel` à la place
+ */
 export const SideMenu = ({
   children,
   headerType = 'title',
