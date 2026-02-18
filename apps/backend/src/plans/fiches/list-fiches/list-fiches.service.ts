@@ -1013,13 +1013,13 @@ export default class ListFichesService {
     const ficheActionNotes = this.getFicheActionNotesQuery(ficheIds, tx);
     const ficheActionMesures = this.getFicheActionMesuresQuery(ficheIds, tx);
     const ficheActionFichesLiees =
-      this.getFicheActionFichesLieesQuery(ficheIds);
-    const ficheActionDocs = this.getFicheActionsDocsQuery(ficheIds);
-    const ficheActionSharings = this.getFicheActionSharingsQuery(ficheIds);
+      this.getFicheActionFichesLieesQuery(ficheIds, tx);
+    const ficheActionDocs = this.getFicheActionsDocsQuery(ficheIds, tx);
+    const ficheActionSharings = this.getFicheActionSharingsQuery(ficheIds, tx);
     const ficheActionBudgets =
       this.listFichesBudgetRepository.listFicheBudgetsByFicheId({
         ficheIds,
-      });
+      }, { tx });
 
     const dcpModifiedBy = aliasedTable(dcpTable, 'dcpModifiedBy');
 

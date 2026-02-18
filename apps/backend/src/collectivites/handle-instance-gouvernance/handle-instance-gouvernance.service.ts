@@ -28,7 +28,8 @@ export class InstanceGouvernanceService {
       'collectivites.tags.mutate',
       ResourceType.COLLECTIVITE,
       request.collectiviteId,
-      true
+      true,
+      request.tx
     );
     if (!isAllowed) {
       return failure(CommonErrorEnum.UNAUTHORIZED);
@@ -50,18 +51,23 @@ export class InstanceGouvernanceService {
   async list(request: {
     collectiviteId: number;
     user: AuthenticatedUser;
+    tx?: Transaction;
   }): Promise<Result<InstanceGouvernance[]>> {
     const isAllowed = await this.permissionService.isAllowed(
       request.user,
       'collectivites.tags.read',
       ResourceType.COLLECTIVITE,
       request.collectiviteId,
-      true
+      true,
+      request.tx
     );
     if (!isAllowed) {
       return failure(CommonErrorEnum.UNAUTHORIZED);
     }
-    return this.instanceGouvernanceRepository.list(request.collectiviteId);
+    return this.instanceGouvernanceRepository.list(
+      request.collectiviteId,
+      request.tx
+    );
   }
   async delete(args: {
     id: number;

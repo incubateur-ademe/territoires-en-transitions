@@ -47,8 +47,11 @@ export default class FicheActionPermissionsService {
     return rows?.[0] ?? null;
   }
 
-  async getPiloteUserIdsForFiche(ficheId: number): Promise<string[]> {
-    const rows = await this.databaseService.db
+  async getPiloteUserIdsForFiche(
+    ficheId: number,
+    tx?: Transaction
+  ): Promise<string[]> {
+    const rows = await (tx ?? this.databaseService.db)
       .select({
         userId: sql<string>`${ficheActionPiloteTable.userId}`,
       })
@@ -69,7 +72,8 @@ export default class FicheActionPermissionsService {
     >,
     operation: PermissionOperation,
     tokenInfo: AuthUser,
-    doNotThrow?: boolean
+    doNotThrow?: boolean,
+    tx?: Transaction
   ): Promise<FicheAccessMode | null> {
     if (
       fiche.sharedWithCollectivites &&
@@ -86,7 +90,8 @@ export default class FicheActionPermissionsService {
           operation,
           ResourceType.COLLECTIVITE,
           sharing.id,
-          true
+          true,
+          tx
         )
       );
       const isAllowedResults = await Promise.all(isAllowedPromises);
@@ -108,9 +113,10 @@ export default class FicheActionPermissionsService {
   private async isAllowedByFicheIdSharings(
     fiche: Pick<Fiche, 'id' | 'collectiviteId'>,
     operation: PermissionOperation,
-    tokenInfo: AuthUser
+    tokenInfo: AuthUser,
+    tx?: Transaction
   ): Promise<FicheAccessMode | null> {
-    const sharings = await this.shareFicheService.listFicheSharings(fiche.id);
+    const sharings = await this.shareFicheService.listFicheSharings(fiche.id, tx);
 
     const ficheWithSharings: Pick<
       FicheWithRelations,
@@ -126,7 +132,9 @@ export default class FicheActionPermissionsService {
     return this.isAllowedByFicheSharings(
       ficheWithSharings,
       operation,
-      tokenInfo
+      tokenInfo,
+      undefined,
+      tx
     );
   }
 
@@ -152,7 +160,8 @@ export default class FicheActionPermissionsService {
       fiche,
       operation,
       tokenInfo,
-      doNotThrow
+      doNotThrow,
+      tx
     );
   }
 
@@ -237,6 +246,7 @@ export default class FicheActionPermissionsService {
     const userPermissionsResult =
       await this.getUserPermissionsService.getUserRolesAndPermissions({
         userId: user.id,
+        tx,
       });
 
     if (!userPermissionsResult.success) {
@@ -260,12 +270,17 @@ export default class FicheActionPermissionsService {
         collectiviteId: fiche.collectiviteId,
       })
     ) {
-      const piloteUserIds = await this.getPiloteUserIdsForFiche(ficheId);
+      const piloteUserIds = await this.getPiloteUserIdsForFiche(ficheId, tx);
       if (piloteUserIds.includes(user.id)) {
         return FicheAccessModeEnum.DIRECT;
       }
     }
 
-    return this.isAllowedByFicheIdSharings(fiche, 'plans.fiches.update', user);
+    return this.isAllowedByFicheIdSharings(
+      fiche,
+      'plans.fiches.update',
+      user,
+      tx
+    );
   }
 }

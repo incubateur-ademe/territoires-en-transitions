@@ -29,8 +29,8 @@ export class GetUserRolesAndPermissionsService {
     }
 
     const [collectiviteRoles, auditRoles] = await Promise.all([
-      this.getUserPermissionsRepository.getCollectiviteRoles({ userId }),
-      this.getUserPermissionsRepository.getAuditRoles({ userId }),
+      this.getUserPermissionsRepository.getCollectiviteRoles({ userId, tx }),
+      this.getUserPermissionsRepository.getAuditRoles({ userId, tx }),
     ]);
 
     const userPermissions = toUserRolesAndPermissions({
