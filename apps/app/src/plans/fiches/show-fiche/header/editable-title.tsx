@@ -10,6 +10,8 @@ type EditableTitleProps = {
   onUpdate: (value: string | null) => void;
 };
 
+const TITLE_FALLBACK = 'Sans titre';
+
 export const EditableTitle = ({
   dataTest,
   className,
@@ -19,25 +21,18 @@ export const EditableTitle = ({
   onUpdate,
 }: EditableTitleProps) => {
   const [title, setTitle] = useState(initialTitle);
-  const updateOrFallback = (value: string | null) => {
-    const TITLE_FALLBACK = 'Sans titre';
-    if (value === null || value.trim() === '') {
-      setTitle(TITLE_FALLBACK);
-    } else {
-      setTitle(value);
-    }
-  };
   return (
     <InlineEditWrapper
       floatingMatchReferenceHeight={false}
       disabled={isReadonly}
-      onClose={() => updateOrFallback(title)}
+      onClose={() => setTitle(title)}
       renderOnEdit={({ openState }) => (
         <TableCellTextarea
           dataTest={dataTest}
           value={title ?? undefined}
           autoFocus
           onChange={(evt) => setTitle(evt.target.value)}
+          placeholder="Saisir un titre"
           onBlur={() => {
             onUpdate(title);
             openState.setIsOpen(false);
@@ -57,7 +52,7 @@ export const EditableTitle = ({
         data-test={dataTest}
         className={cn('mb-0 text-[2rem] leading-tight', className)}
       >
-        {title}
+        {title || TITLE_FALLBACK}
       </h1>
     </InlineEditWrapper>
   );
