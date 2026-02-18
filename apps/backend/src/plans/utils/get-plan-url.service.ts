@@ -22,8 +22,10 @@ export default class GetPlanUrlService {
   }) {
     const appUrl = this.configService.get('APP_URL');
     return `${appUrl}/collectivite/${collectiviteId}/actions/${
-      parentId ? `${parentId}#${ficheId}` : ficheId
-    }/details${planId ? `?planId=${planId}` : ''}`;
+      parentId ? parentId : ficheId
+    }/${parentId ? 'sous-actions' : 'details'}${
+      planId ? `?planId=${planId}` : ''
+    }`;
   }
 
   getPlanUrl({
