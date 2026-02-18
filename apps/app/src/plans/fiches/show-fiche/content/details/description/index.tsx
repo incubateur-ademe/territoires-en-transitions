@@ -77,6 +77,10 @@ export const Description = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const initialObjectifs = useMemo(() => fiche.objectifs ?? '', []);
 
+  const showSousThematiquesTooltip = useMemo(() => {
+    return !selectedThematiques || selectedThematiques.length === 0;
+  }, [selectedThematiques]);
+
   return (
     <>
       <div className="flex flex-col">
@@ -200,7 +204,7 @@ export const Description = () => {
               icon="folders-line"
               label={getFieldLabel('sousThematiques', selectedSousThematiques)}
               value={
-                !selectedSousThematiques?.length ? (
+                showSousThematiquesTooltip ? (
                   <Tooltip label="Veuillez d'abord sélectionner une thématique pour pouvoir sélectionner une ou plusieurs sous-thématiques">
                     <span>À renseigner</span>
                   </Tooltip>
@@ -213,9 +217,6 @@ export const Description = () => {
               isReadonly={isReadonly || !selectedThematiques?.length}
               renderOnEdit={({ openState }) => (
                 <SelectMultiple
-                  buttonClassName={
-                    !selectedThematiques?.length ? 'cursor-disabled' : ''
-                  }
                   options={sousThematiqueOptions}
                   values={field.value?.map(
                     (sousThematique) => sousThematique.id
