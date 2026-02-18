@@ -195,7 +195,7 @@ export const Acteurs = (): JSX.Element => {
           <InlineEditableItem
             icon="crosshair-2-line"
             label={getFieldLabel('cibles', field.value)}
-            value={field.value?.join(', ')}
+            value={formatList(field.value, (c) => c)}
             isReadonly={isReadonly}
             renderOnEdit={({ openState }) => (
               <CiblesDropdown
