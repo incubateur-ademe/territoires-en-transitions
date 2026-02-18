@@ -14,12 +14,13 @@ type CreateTagFn = (
 export const createPersonneResolver = async (
   collectiviteId: number,
   memberService: CollectiviteMembresService,
-  tagService: TagService
+  tagService: TagService,
+  tx?: Transaction
 ) => {
   const Fuse = await getFuse();
   const [members, tags] = await Promise.all([
-    memberService.list({ collectiviteId }),
-    tagService.getTags(collectiviteId, TagEnum.Personne),
+    memberService.list({ collectiviteId }, { tx }),
+    tagService.getTags(collectiviteId, TagEnum.Personne, tx),
   ]);
   const searchMembers = new Fuse(members, {
     keys: [

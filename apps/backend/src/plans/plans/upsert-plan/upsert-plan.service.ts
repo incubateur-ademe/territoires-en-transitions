@@ -34,7 +34,8 @@ export class UpsertPlanService {
       PermissionOperationEnum['PLANS.MUTATE'],
       ResourceType.COLLECTIVITE,
       plan.collectiviteId,
-      true
+      true,
+      tx
     );
     if (!isAllowed) {
       return {

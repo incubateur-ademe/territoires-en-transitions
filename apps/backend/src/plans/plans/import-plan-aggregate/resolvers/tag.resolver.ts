@@ -53,11 +53,12 @@ export async function createTagResolver(
   collectiviteId: number,
   tagService: TagService,
   tagType: TagType,
-  searchKeys: FuseKey[] = ['nom']
+  searchKeys: FuseKey[] = ['nom'],
+  tx?: Transaction
 ): Promise<{
   getOrCreate: (name: string, tx: Transaction) => Promise<Result<Tag, string>>;
 }> {
-  const tags = await tagService.getTags(collectiviteId, tagType);
+  const tags = await tagService.getTags(collectiviteId, tagType, tx);
 
   const Fuse = await getFuse();
   const searchEngine = new Fuse(tags, {

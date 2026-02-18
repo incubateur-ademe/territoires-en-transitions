@@ -57,7 +57,9 @@ export class CreateFicheService {
         user,
         PermissionOperationEnum['PLANS.FICHES.CREATE'],
         ResourceType.COLLECTIVITE,
-        fiche.collectiviteId
+        fiche.collectiviteId,
+        false,
+        tx
       );
     }
     try {

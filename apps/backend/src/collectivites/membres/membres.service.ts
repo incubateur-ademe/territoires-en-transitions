@@ -40,13 +40,13 @@ export class CollectiviteMembresService {
     estReferent,
     fonction,
     inclureInvitations,
-  }: z.infer<typeof this.listInputSchema>) {
+  }: z.infer<typeof this.listInputSchema>, { tx }: { tx?: Transaction } = {}) {
     this.logger.log(
       `Récupération des membres pour la collectivité ${collectiviteId}`
     );
 
     // sous-requête pour les membres déjà rattachés
-    const membres = this.databaseService.db
+    const membres = (tx ?? this.databaseService.db)
       .select({
         userId: utilisateurCollectiviteAccessTable.userId,
         prenom: dcpTable.prenom,
@@ -91,7 +91,7 @@ export class CollectiviteMembresService {
     // sous-requête pour les invitations
     let rows;
     if (inclureInvitations) {
-      const invitations = this.databaseService.db
+      const invitations = (tx ?? this.databaseService.db)
         .select({
           userId: sql<string>`null`.as('user_id'),
           prenom: sql<null>`null`.as('prenom'),

@@ -8,12 +8,14 @@ import { Tag } from '@tet/domain/collectivites';
 export const createInstanceGouvernanceResolver = async (
   collectiviteId: number,
   instanceGouvernanceService: InstanceGouvernanceService,
-  user: AuthenticatedUser
+  user: AuthenticatedUser,
+  tx?: Transaction
 ) => {
   const Fuse = await getFuse();
   const tagsResult = await instanceGouvernanceService.list({
     collectiviteId,
     user,
+    tx,
   });
 
   if (!tagsResult.success) {

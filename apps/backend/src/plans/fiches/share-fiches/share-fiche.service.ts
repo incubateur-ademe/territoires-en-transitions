@@ -24,8 +24,11 @@ export class ShareFicheService {
 
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async listFicheSharings(ficheId: number): Promise<FicheSharing[]> {
-    return this.databaseService.db
+  async listFicheSharings(
+    ficheId: number,
+    tx?: Transaction
+  ): Promise<FicheSharing[]> {
+    return (tx ?? this.databaseService.db)
       .select()
       .from(ficheActionSharingTable)
       .where(eq(ficheActionSharingTable.ficheId, ficheId));

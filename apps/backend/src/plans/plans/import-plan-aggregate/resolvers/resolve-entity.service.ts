@@ -63,37 +63,47 @@ export class ResolveEntityService {
     const { getOrCreatePersonne } = await createPersonneResolver(
       collectiviteId,
       this.memberService,
-      this.tagService
+      this.tagService,
+      tx
     );
     const { getOrCreate: getOrCreateStructure } = await createTagResolver(
       collectiviteId,
       this.tagService,
-      TagEnum.Structure
+      TagEnum.Structure,
+      undefined,
+      tx
     );
 
     const { getOrCreate: getOrCreateFinanceur } = await createTagResolver(
       collectiviteId,
       this.tagService,
-      TagEnum.Financeur
+      TagEnum.Financeur,
+      undefined,
+      tx
     );
 
     const { getOrCreate: getOrCreateService } = await createTagResolver(
       collectiviteId,
       this.tagService,
-      TagEnum.Service
+      TagEnum.Service,
+      undefined,
+      tx
     );
 
     const { getOrCreate: getOrCreatePartenaire } = await createTagResolver(
       collectiviteId,
       this.tagService,
-      TagEnum.Partenaire
+      TagEnum.Partenaire,
+      undefined,
+      tx
     );
 
     const instanceGouvernanceResolverResult =
       await createInstanceGouvernanceResolver(
         collectiviteId,
         this.instanceGouvernanceService,
-        user
+        user,
+        tx
       );
 
     if (!instanceGouvernanceResolverResult.success) {
