@@ -1,7 +1,13 @@
 import EffetsAttendusDropdown from '@/app/ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import { useGetThematiqueAndSousThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
-import { cn, RichTextEditor, SelectMultiple, Tooltip } from '@tet/ui';
+import {
+  cn,
+  RichTextEditor,
+  SelectMultiple,
+  Tooltip,
+  VisibleWhen,
+} from '@tet/ui';
 import { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useFicheContext } from '../../../context/fiche-context';
@@ -77,10 +83,16 @@ export const Description = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const initialObjectifs = useMemo(() => fiche.objectifs ?? '', []);
 
+  const showSousThematiquesTooltip =
+    !selectedThematiques || selectedThematiques.length === 0;
+
   return (
     <>
       <div className="flex flex-col">
         <MainTitle>{getFieldLabel('description', fiche.description)}</MainTitle>
+        <VisibleWhen condition={isReadonly && !initialDescription}>
+          À renseigner
+        </VisibleWhen>
         <RichTextEditor
           unstyled
           contentStyle={{
@@ -89,12 +101,16 @@ export const Description = () => {
           }}
           initialValue={initialDescription}
           onChange={(html) => setValue('description', html)}
+          disabled={isReadonly}
         />
       </div>
       <div className="flex flex-col gap-1">
         <MainTitle size="normal">
           {`${getFieldLabel('objectifs', fiche.objectifs)} : `}
         </MainTitle>
+        <VisibleWhen condition={isReadonly && !initialObjectifs}>
+          À renseigner
+        </VisibleWhen>
         <RichTextEditor
           unstyled
           contentStyle={{
@@ -103,6 +119,7 @@ export const Description = () => {
           }}
           initialValue={initialObjectifs}
           onChange={(html) => setValue('objectifs', html)}
+          disabled={isReadonly}
         />
       </div>
       <div className="grid grid-cols-2 gap-4 mt-4">
@@ -200,7 +217,7 @@ export const Description = () => {
               icon="folders-line"
               label={getFieldLabel('sousThematiques', selectedSousThematiques)}
               value={
-                !selectedSousThematiques?.length ? (
+                showSousThematiquesTooltip ? (
                   <Tooltip label="Veuillez d'abord sélectionner une thématique pour pouvoir sélectionner une ou plusieurs sous-thématiques">
                     <span>À renseigner</span>
                   </Tooltip>
@@ -213,9 +230,6 @@ export const Description = () => {
               isReadonly={isReadonly || !selectedThematiques?.length}
               renderOnEdit={({ openState }) => (
                 <SelectMultiple
-                  buttonClassName={
-                    !selectedThematiques?.length ? 'cursor-disabled' : ''
-                  }
                   options={sousThematiqueOptions}
                   values={field.value?.map(
                     (sousThematique) => sousThematique.id

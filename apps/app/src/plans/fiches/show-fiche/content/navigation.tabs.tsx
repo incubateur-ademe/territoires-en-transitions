@@ -8,8 +8,7 @@ import {
   Tabs as TabsUI,
 } from '@tet/ui/design-system/TabsNext/index';
 import { useSelectedLayoutSegment } from 'next/navigation';
-import { useIsFeatureFlagEnabled } from '@/app/utils/posthog/use-is-feature-flag-enabled';
-import { useListFiches } from '../../list-all-fiches/data/use-list-fiches';
+import { useFeatureFlagEnabled } from 'posthog-js/react';
 import { useFicheContext } from '../context/fiche-context';
 import { FicheSectionId, isFicheSectionId } from './type';
 
@@ -17,16 +16,12 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
   const rawActiveTab = useSelectedLayoutSegment();
   const activeTab =
     rawActiveTab && isFicheSectionId(rawActiveTab) ? rawActiveTab : 'details';
-  const { fiche, indicateurs, actionsLiees, documents } = useFicheContext();
+  const { fiche, indicateurs, actionsLiees, documents, mesures, sousActions } =
+    useFicheContext();
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
 
-  const { count: countSousActions } = useListFiches(collectiviteId, {
-    filters: { parentsId: [fiche.id] },
-    queryOptions: { limit: 1, page: 1 },
-  });
-
-  const widgetCommunsFlagEnabled = useIsFeatureFlagEnabled(
+  const widgetCommunsFlagEnabled = useFeatureFlagEnabled(
     'is-widget-communs-enabled'
   );
 
@@ -51,8 +46,8 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
     },
     {
       label:
-        Array.isArray(countSousActions) && countSousActions.length > 0
-          ? `Sous-actions (${countSousActions.length})`
+        sousActions.count > 0
+          ? `Sous-actions (${sousActions.count})`
           : 'Sous-actions',
       isVisible: true,
       id: 'sous-actions',
@@ -71,7 +66,7 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
     },
     {
       label: `Actions liées ${
-        actionsLiees.list.length > 0 ? `(${actionsLiees.list.length})` : ''
+        actionsLiees.count > 0 ? `(${actionsLiees.count})` : ''
       }`,
       isVisible:
         hasCollectivitePermission('plans.fiches.read_confidentiel') ||
@@ -79,7 +74,9 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
       id: 'actions-liees',
     },
     {
-      label: 'Mesures liées',
+      label: `Mesures liées ${
+        mesures.list.length > 0 ? `(${mesures.list.length})` : ''
+      }`,
       isVisible:
         hasCollectivitePermission('referentiels.read_confidentiel') ||
         hasCollectivitePermission('referentiels.read'),

@@ -124,6 +124,7 @@ export const InlineEditableItem = ({
           <div
             className={cn({
               'cursor-pointer hover:opacity-80 transition-opacity': !isReadonly,
+              'cursor-not-allowed': isReadonly,
             })}
           >
             <DisplayValue value={value} />
