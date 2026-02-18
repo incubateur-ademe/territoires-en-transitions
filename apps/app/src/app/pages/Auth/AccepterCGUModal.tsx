@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSupabase } from '@tet/api';
-import { useUser } from '@tet/api/users';
+import { useTRPC, useUser } from '@tet/api';
 import { Button, CGU_URL, Modal, ModalFooter } from '@tet/ui';
 import { useState } from 'react';
 import ContractSVG from './contract.svg';
@@ -70,11 +69,10 @@ export default AccepterCGUModal;
 const useAccepterCGU = () => {
   const user = useUser();
   const queryClient = useQueryClient();
-  const supabase = useSupabase();
+  const trpc = useTRPC();
 
   return useMutation({
-    mutationFn: async () => user.id && supabase.rpc('accepter_cgu'),
-
+    ...trpc.users.users.acceptCgu.mutationOptions(),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['dcp', user.id],

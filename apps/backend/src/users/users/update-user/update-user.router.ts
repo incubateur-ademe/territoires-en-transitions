@@ -18,5 +18,8 @@ export class UpdateUserRouter {
       .mutation(({ input, ctx: { user } }) =>
         this.updateUserService.updateUser(input, user)
       ),
+    acceptCgu: this.trpc.authedProcedure.mutation(({ ctx: { user } }) =>
+      this.updateUserService.acceptCgu(user)
+    ),
   });
 }
