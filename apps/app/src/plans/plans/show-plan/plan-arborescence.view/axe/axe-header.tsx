@@ -1,6 +1,5 @@
 import { Button, cn, Icon, Tooltip } from '@tet/ui';
 import { PlanDisplayOptionsEnum } from '../plan-options.context';
-import { AxeIndicateursPanel } from './axe-indicateurs.panel';
 import { AxeMenuButton } from './axe-menu.button';
 import { AxeTitleInput } from './axe-title.input';
 import { useAxeContext } from './axe.context';
@@ -12,7 +11,6 @@ export const AxeHeader = () => {
     isReadOnly,
     isOpen,
     setIsOpen,
-    isOpenPanelIndicateurs,
     isOpenEditTitle,
     setIsOpenEditTitle,
     planOptions,
@@ -45,10 +43,10 @@ export const AxeHeader = () => {
             if (e.shiftKey && !isReadOnly && !isOpenEditTitle) {
               setIsOpenEditTitle(true);
             }
-            // ne permet pas de refermer l'axe si le volet "associer des
-            // indicateurs" est ouvert ou si l'édition du titre est en cours
+            // ne permet pas de refermer l'axe si le panel est ouvert
+            // ou si l'édition du titre est en cours
             // (évite l'ouverture/fermeture involontaire de l'axe)
-            else if (!isOpenPanelIndicateurs && !isOpenEditTitle) {
+            else if (!isOpenEditTitle) {
               setIsOpen(!isOpen);
             }
           }}
@@ -106,7 +104,6 @@ export const AxeHeader = () => {
               )}
               <AxeMenuButton />
             </div>
-            <AxeIndicateursPanel />
           </>
         )}
       </div>

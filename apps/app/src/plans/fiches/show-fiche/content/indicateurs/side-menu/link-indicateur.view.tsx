@@ -23,8 +23,10 @@ export const LinkIndicateursView = () => {
 
 export const LinkIndicateursViewBase = ({
   indicateurs,
+  dataTest,
 }: {
   indicateurs: Pick<FicheContextValue['indicateurs'], 'list' | 'update'>;
+  dataTest?: string;
 }) => {
   const selectedIndicateurs = indicateurs.list;
   const onSelect = indicateurs.update;
@@ -47,7 +49,7 @@ export const LinkIndicateursViewBase = ({
     });
 
   return (
-    <div className="p-4">
+    <div className="p-4" data-test={dataTest}>
       <div className="relative flex flex-col gap-4">
         <Field title="Rechercher par nom ou description" small>
           <Input
