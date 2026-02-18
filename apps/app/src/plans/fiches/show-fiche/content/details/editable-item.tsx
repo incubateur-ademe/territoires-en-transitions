@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 const DisplayValue = ({ value }: { value?: string | React.ReactNode }) => {
   return typeof value === 'string' || !value ? (
-    <span>{value ?? 'À renseigner'}</span>
+    <span>{value || 'À renseigner'}</span>
   ) : (
     value
   );
