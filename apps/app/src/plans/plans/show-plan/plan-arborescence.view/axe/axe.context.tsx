@@ -41,8 +41,6 @@ export type AxeContextValue = {
   // sélection des indicateurs associés à l'axe
   selectedIndicateurs: IndicateurDefinitionListItem[];
   toggleIndicateur: (indicateur: IndicateurDefinitionListItem) => Promise<void>;
-  isOpenPanelIndicateurs: boolean;
-  setIsOpenPanelIndicateurs: (isOpen: boolean) => void;
 
   // édition du titre de l'axe
   isOpenEditTitle: boolean;
@@ -106,7 +104,6 @@ export const AxeProvider = (props: AxeProviderProps) => {
     enabled: isOpen,
   });
 
-  const [isOpenPanelIndicateurs, setIsOpenPanelIndicateurs] = useState(false);
   const [isOpenEditTitle, setIsOpenEditTitle] = useState(false);
 
   const isMainAxe = axe.depth === 1;
@@ -175,8 +172,6 @@ export const AxeProvider = (props: AxeProviderProps) => {
         shouldScroll,
         selectedIndicateurs,
         toggleIndicateur,
-        isOpenPanelIndicateurs,
-        setIsOpenPanelIndicateurs,
         isOpenEditTitle,
         setIsOpenEditTitle,
         providerProps,

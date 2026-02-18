@@ -23,7 +23,7 @@ type PanelAction =
   | { type: 'close' }
   | { type: 'setTitle'; title: string };
 
-type PanelState = Panel & {
+export type PanelState = Panel & {
   isOpen: boolean;
 };
 

@@ -1,3 +1,4 @@
+import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { ButtonMenu, MenuAction } from '@tet/ui';
 import { useState } from 'react';
 import { checkAxeHasFiche } from '../../../utils';
@@ -9,17 +10,15 @@ import {
   PlanDisplayOptionsEnum,
   usePlanOptions,
 } from '../plan-options.context';
+import { AxeIndicateursPanelContent } from './axe-indicateurs.panel-content';
 import { useAxeContext } from './axe.context';
 
 export const AxeMenuButton = () => {
-  const {
-    isReadOnly,
-    setIsOpen,
-    setIsOpenPanelIndicateurs,
-    setIsOpenEditTitle,
-    providerProps,
-  } = useAxeContext();
+  const { isReadOnly, setIsOpen, setIsOpenEditTitle, providerProps } =
+    useAxeContext();
+
   const { axe, axes, rootAxe, collectivite } = providerProps;
+
   const hasDescription = axe.description !== null;
 
   const { isOptionEnabled } = usePlanOptions();
@@ -36,6 +35,24 @@ export const AxeMenuButton = () => {
   });
   const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
   const [isOpenMoveModal, setIsOpenMoveModal] = useState(false);
+
+  const { setPanel } = useSidePanel();
+
+  const openIndicateursPanel = () => {
+    if (!isReadOnly) {
+      setPanel({
+        type: 'open',
+        title: 'Associer des indicateurs',
+        content: (
+          <AxeIndicateursPanelContent
+            collectiviteId={collectivite.collectiviteId}
+            axe={axe}
+            planId={rootAxe.id}
+          />
+        ),
+      });
+    }
+  };
 
   if (isReadOnly) {
     return null;
@@ -84,7 +101,7 @@ export const AxeMenuButton = () => {
       icon: 'line-chart-line',
       onClick: () => {
         setIsOpen(true);
-        setIsOpenPanelIndicateurs(true);
+        openIndicateursPanel();
       },
     },
     {
