@@ -6,6 +6,7 @@ import {
   useCurrentCollectivite,
 } from '@tet/api/collectivites';
 import {
+  ActionStatut,
   canUpdateActionStatutWithoutPermissionCheck,
   getActionStatutFromActionScore,
 } from '@tet/domain/referentiels';
@@ -15,11 +16,17 @@ import { useReferentielId } from '../../referentiel-context';
 import { useScore, useSnapshot } from '../../use-snapshot';
 
 import { findActionInTree } from '@tet/domain/referentiels';
+import { useEffect, useState } from 'react';
 /**
  * Charge le statut d'une action
  */
 export const useActionStatut = (actionId: string) => {
   const collectiviteId = useCollectiviteId();
+
+  const [actionStatutFromScore, setActionStatutFromScore] = useState<{
+    actionStatut: ActionStatut;
+    filled: boolean;
+  } | null>(null);
 
   const { data: snapshot, isFetching: isLoadingSnapshot } = useSnapshot({
     actionId,
@@ -32,9 +39,15 @@ export const useActionStatut = (actionId: string) => {
       ) ?? null
     : null;
 
-  const actionStatutFromScore = actionScore
-    ? getActionStatutFromActionScore(collectiviteId, actionScore)
-    : null;
+  useEffect(() => {
+    if (actionScore) {
+      setActionStatutFromScore(
+        getActionStatutFromActionScore(collectiviteId, actionScore)
+      );
+    } else {
+      setActionStatutFromScore(null);
+    }
+  }, [actionScore]);
 
   return {
     statut: actionStatutFromScore?.actionStatut,
