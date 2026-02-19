@@ -9,6 +9,7 @@ import { badgeClassnames } from './utils';
 export type BadgeVariant =
   | 'default'
   | 'standard'
+  | 'hight'
   | 'success'
   | 'warning'
   | 'new'
@@ -16,6 +17,8 @@ export type BadgeVariant =
   | 'info'
   | 'grey'
   | 'custom';
+
+export type BadgeType = 'outlined' | 'solid' | 'inverted';
 
 export type BadgeSize = 'sm' | 'md';
 
@@ -26,10 +29,10 @@ export type BadgeProps = {
   title?: React.ReactNode;
   /** État */
   variant?: BadgeVariant;
+  /** Type de badge */
+  type?: BadgeType;
   /** Taille du badge */
   size?: BadgeSize;
-  /** Affiche le badge en style light */
-  light?: boolean;
   /** Icône à afficher dans le badge */
   icon?: IconValue;
   /** Position de l'icon dans le badge, à droite par défaut */
@@ -55,11 +58,11 @@ export const Badge = forwardRef<HTMLDivElement, BadgeProps>(
       title,
       onClose,
       variant = 'default',
+      type = 'solid',
       size = 'md',
       icon,
       iconPosition = 'right',
       iconClassname,
-      light = false,
       disabled,
       className,
       trim = true,
@@ -68,7 +71,7 @@ export const Badge = forwardRef<HTMLDivElement, BadgeProps>(
     },
     ref
   ) => {
-    const styles = badgeClassnames[variant];
+    const styles = badgeClassnames[variant][type];
     return (
       <div
         ref={ref}
@@ -79,7 +82,6 @@ export const Badge = forwardRef<HTMLDivElement, BadgeProps>(
           'flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded-md',
           {
             'flex-row-reverse': iconPosition === 'left',
-            'border-grey-4 bg-white': light,
             'px-1.5 py-0.5': size === 'sm',
           },
           className

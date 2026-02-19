@@ -1,66 +1,138 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { action } from 'storybook/actions';
-import { Badge, BadgeVariant } from './index';
+import { StoryWrapper } from '../../storybook/story.wrapper';
+import { Divider } from '../Divider/Divider';
+import { Badge, BadgeSize, BadgeType, BadgeVariant } from './Badge';
+import { BadgeDouble } from './BadgeDouble';
 
 const meta: Meta<typeof Badge> = {
   component: Badge,
+  args: { title: 'Badge', variant: 'standard' },
 };
 
 export default meta;
 
 type Story = StoryObj<typeof Badge>;
 
+const variants: BadgeVariant[] = [
+  'default',
+  'standard',
+  'hight',
+  'success',
+  'warning',
+  'new',
+  'error',
+  'info',
+  'grey',
+  'custom',
+];
+
+const types: BadgeType[] = ['outlined', 'solid', 'inverted'];
+
+const sizes: BadgeSize[] = ['sm', 'md'];
+
 export const Default: Story = {
-  args: { title: 'Badge' },
-};
+  render: (args) => (
+    <div className="flex flex-col gap-12">
+      <StoryWrapper title="Types">
+        <div className="flex gap-12 flex-wrap">
+          {types.map((type) => (
+            <div key={type} className="flex flex-col items-center gap-4">
+              <div className="capitalize text-sm text-grey-8 font-medium">
+                {type}
+              </div>
+              <Badge {...args} type={type} />
+            </div>
+          ))}
+        </div>
+      </StoryWrapper>
 
-export const CustomIcon: Story = {
-  args: { title: 'Badge', icon: 'alert-fill', onClose: () => null },
-};
+      <Divider />
 
-export const Grid: Story = {
-  args: { title: 'Badge' },
-  render: (args) => {
-    const states: BadgeVariant[] = [
-      'default',
-      'standard',
-      'success',
-      'warning',
-      'new',
-      'error',
-      'info',
-      'grey',
-    ];
-    return (
-      <div className="flex gap-16 flex-wrap">
-        {states.map((state) => (
-          <div key={state} className="col-span-1 flex flex-col gap-4">
-            <div className="capitalize text-sm font-medium">{state}</div>
-            <Badge {...args} state={state} />
-            <Badge {...args} state={state} onClose={action('onClose')} light />
-            <Badge
-              {...args}
-              state={state}
-              size="sm"
-              onClose={action('onClose')}
-              iconPosition="left"
-            />
-            <Badge
-              {...args}
-              state={state}
-              disabled
-              onClose={action('onClose')}
-            />
-            <Badge
-              {...args}
-              state={state}
-              onClose={action('onClose')}
-              disabled
-              light
-            />
-          </div>
-        ))}
-      </div>
-    );
-  },
+      <StoryWrapper title="Variants with types">
+        <div className="flex gap-12 flex-wrap">
+          {variants.map((variant) => (
+            <div key={variant} className="flex flex-col items-center gap-4">
+              <div className="capitalize text-sm text-grey-8 font-medium">
+                {variant}
+              </div>
+              {types.map((type) => (
+                <Badge key={type} {...args} variant={variant} type={type} />
+              ))}
+            </div>
+          ))}
+        </div>
+      </StoryWrapper>
+
+      <Divider />
+
+      <StoryWrapper title="Size">
+        <div className="flex gap-8 flex-wrap">
+          {sizes.map((size) => (
+            <div key={size} className="flex flex-col items-center gap-4">
+              <div className="capitalize text-sm text-grey-8 font-medium">
+                {size}
+              </div>
+              <Badge {...args} size={size} />
+            </div>
+          ))}
+        </div>
+      </StoryWrapper>
+
+      <Divider />
+
+      <StoryWrapper title="With icon">
+        <div className="flex items-center gap-8 flex-wrap">
+          <Badge {...args} icon="alert-fill" />
+          <Badge {...args} icon="hourglass-line" iconPosition="left" />
+          <Badge icon="checkbox-circle-fill" variant="success" />
+        </div>
+      </StoryWrapper>
+
+      <Divider />
+
+      <StoryWrapper title="With onClose">
+        <div className="flex items-center gap-8 flex-wrap">
+          <Badge
+            {...args}
+            icon="hourglass-line"
+            iconPosition="left"
+            onClose={action('onClose')}
+          />
+        </div>
+      </StoryWrapper>
+
+      <Divider />
+
+      <StoryWrapper title="BadgeDouble">
+        <div className="flex gap-12 flex-wrap">
+          {variants.map((variant) => (
+            <div key={variant} className="flex flex-col items-center gap-4">
+              <div className="capitalize text-sm text-grey-8 font-medium">
+                {variant}
+              </div>
+              {types.map((type) => (
+                <BadgeDouble
+                  key={variant}
+                  variant={variant}
+                  size="sm"
+                  type={type}
+                  badgeLeft={{
+                    ...args,
+                    iconPosition: 'left',
+                    icon: 'hourglass-line',
+                  }}
+                  badgeRight={{
+                    ...args,
+                    variant: 'success',
+                    icon: 'checkbox-circle-fill',
+                  }}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+      </StoryWrapper>
+    </div>
+  ),
 };
