@@ -685,7 +685,7 @@ export class NotifyPiloteService {
     fiche: FicheWithRelations,
     ficheParente?: FicheWithRelations
   ) {
-    const plan = fiche.plans?.[0];
+    const plan = ficheParente?.plans?.[0] || fiche.plans?.[0];
     return {
       actionTitre: ficheParente ? ficheParente.titre : fiche.titre,
       sousActionTitre: ficheParente ? fiche.titre : '',
