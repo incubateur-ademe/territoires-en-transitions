@@ -946,3 +946,5 @@ utilisateur/dcp_drop_accepter_cgu 2026-02-16T14:44:41Z Frederic Arnoux <frederic
 utilisateur/dcp_sync_insert_update [utilisateur/dcp_sync] 2026-02-24T00:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Étend sync_dcp pour INSERT et UPDATE (auth.users -> dcp)
 utilisateur/dcp_add_rights_search_path [utilisateur/dcp_sync_insert_update] 2026-02-24T00:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Qualifie les tables avec public. dans after_insert_dcp_add_rights
 utilisateur/test_create_user_sync_dcp [utilisateur/dcp_add_rights_search_path] 2026-02-24T00:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Adapte test_create_user pour s'appuyer sur sync_dcp
+
+migration/etape_to_sous_action 2026-02-19T12:00:00Z Marc <marc@attractive-media.fr> # Lie une étape à une sous-action pour suivi de la migration
