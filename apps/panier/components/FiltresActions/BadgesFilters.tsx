@@ -144,9 +144,9 @@ export const BadgesFilters = ({
                 badge.label
               }`}
               size="sm"
-              state="standard"
+              variant="standard"
               uppercase={false}
-              light
+              type="outlined"
               onClose={() => handleCloseBadge(badge)}
             />
           ))}
@@ -159,9 +159,9 @@ export const BadgesFilters = ({
               icon="delete-bin-6-line"
               iconPosition="left"
               size="sm"
-              state="grey"
+              variant="grey"
               uppercase={false}
-              light
+              type="outlined"
             />
           </div>
         )}
