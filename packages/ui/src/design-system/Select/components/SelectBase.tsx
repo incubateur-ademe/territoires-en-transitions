@@ -253,6 +253,7 @@ export const SelectBase = (props: SelectProps) => {
                 <Badge
                   title={inputValue}
                   variant="default"
+                  type="outlined"
                   size="sm"
                   className="my-auto mr-auto"
                   uppercase={optionsAreCaseSensitive === false}
@@ -367,6 +368,7 @@ const SelectButton = forwardRef(
         <Badge
           uppercase={optionsAreCaseSensitive === false}
           variant={option?.disabled ? 'grey' : 'default'}
+          type="outlined"
           icon={option.icon}
           iconPosition="left"
           iconClassname={option.iconClassname}

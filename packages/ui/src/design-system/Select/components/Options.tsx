@@ -185,7 +185,7 @@ const Option = ({
                   ? valueToBadgeState[option.value].light
                     ? 'outlined'
                     : 'solid'
-                  : 'solid'
+                  : 'outlined'
               }
               size={badgeSize}
               trim={false}
