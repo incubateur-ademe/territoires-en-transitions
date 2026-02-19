@@ -37,6 +37,7 @@ export const identiteCollectiviteSchema = z.object({
   drom: z.boolean().nullable(),
   test: z.boolean().optional(),
   dansAireUrbaine: z.boolean().nullable().optional(),
+  fiscalitePropre: z.boolean().nullable().optional(),
 });
 
 export type IdentiteCollectivite = z.infer<typeof identiteCollectiviteSchema>;

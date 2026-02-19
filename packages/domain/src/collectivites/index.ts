@@ -1,5 +1,6 @@
 export * from './categorie-tag.schema';
 export * from './collectivite-banatic-type.enum';
+export * from './collectivite.rule';
 export * from './collectivite-relation.schema';
 export * from './collectivite-type.enum';
 export * from './collectivite.schema';
