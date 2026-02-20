@@ -32,7 +32,10 @@ const AvancementDetailleSlider = ({
   const [done, scheduled] = avancement;
 
   return (
-    <div className={classNames('w-full flex flex-col', className)}>
+    <div
+      className={classNames('w-full flex flex-col', className)}
+      data-test="AvancementDetailleSlider"
+    >
       {/** Slider */}
       <Slider
         step={5}
