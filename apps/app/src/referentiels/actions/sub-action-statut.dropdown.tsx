@@ -145,22 +145,12 @@ export const SubActionStatutDropdown = ({
         actionDefinition.type === ActionTypeEnum.SOUS_ACTION &&
         actionDefinition.children.length > 0
       ) {
-        setLocalAvancement('detaille');
         setLocalAvancementDetaille(undefined);
-        saveActionStatut({
-          ...argsToSave,
-          avancement: 'non_renseigne',
-          avancementDetaille: undefined,
-        });
 
         setOpenSubActionModal(true);
         openDetailledState?.setIsOpen(true);
       } else {
-        setLocalAvancement('detaille');
         setLocalAvancementDetaille(avancement_detaille);
-        saveActionStatut({
-          ...argsToSave,
-        });
 
         setOpenScoreDetaille(true);
         openDetailledState?.setIsOpen(true);

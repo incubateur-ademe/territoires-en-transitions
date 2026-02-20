@@ -11,6 +11,11 @@ export class ReferentielScoresPom {
   readonly documentsExpandButton: Locator;
   readonly documentsAddPreuveComplementaireButton: Locator;
   readonly documentsPom: DocumentsPom;
+  readonly detaillerAvancementModalTitle: Locator;
+  readonly detaillerAvancementPourcentageCheckbox: Locator;
+  readonly detaillerAvancementSlider: Locator;
+  readonly detaillerAvancementSliderMinValue: Locator;
+  readonly detaillerAvancementSliderMaxValue: Locator;
 
   readonly SELECT_STATUT_LOCATOR = '[data-test="SelectStatut"]';
 
@@ -22,6 +27,43 @@ export class ReferentielScoresPom {
     });
     this.documentsAddPreuveComplementaireButton = page.locator(
       '[data-test="AddPreuveComplementaire"]'
+    );
+    this.detaillerAvancementModalTitle = page.getByRole('heading', {
+      name: "Détailler l'avancement",
+    });
+    this.detaillerAvancementPourcentageCheckbox = page.getByRole('checkbox', {
+      name: 'Détailler l’avancement au pourcentage',
+    });
+    this.detaillerAvancementSlider = page.locator(
+      '[data-test="AvancementDetailleSlider"]'
+    );
+    this.detaillerAvancementSliderMinValue = page.getByRole('slider', {
+      name: 'Minimum',
+    });
+    this.detaillerAvancementSliderMaxValue = page.getByRole('slider', {
+      name: 'Maximum',
+    });
+  }
+
+  async setDetaillerAvancementSliderMinValue(percentage: number) {
+    const sliderBox = await this.detaillerAvancementSlider.boundingBox();
+    if (!sliderBox) {
+      throw new Error('Slider not found');
+    }
+    const thumbBox = await this.detaillerAvancementSliderMinValue.boundingBox();
+    if (!thumbBox) {
+      throw new Error('Slider min not found');
+    }
+    // We add 0.5 to the percentage to ensure the slider is moved to the correct position
+    const targetX =
+      sliderBox.x + sliderBox.width * (Math.min(percentage + 0.5, 100) / 100);
+
+    await this.detaillerAvancementSliderMinValue.hover();
+    await this.page.mouse.down();
+    await this.page.mouse.move(targetX, thumbBox.y, { steps: 1 });
+    await this.page.mouse.up();
+    await expect(this.detaillerAvancementSlider).toContainText(
+      `Fait ${percentage}%`
     );
   }
 

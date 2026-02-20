@@ -1,8 +1,11 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
+import { ActionStatutCreate } from '@tet/domain/referentiels';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
+import { useState } from 'react';
 import { ActionJustificationField } from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.justification-field';
-import AvancementDetailleSliderAutoSave from './avancement-detaille.slider.auto-save';
+import { useSaveActionStatut } from '../action-statut/use-action-statut';
+import AvancementDetailleSliderWithCheckbox from './avancement-detaille.slider.with-checkbox';
 
 type Props = {
   actionDefinition: ActionDefinitionSummary;
@@ -16,6 +19,9 @@ type Props = {
 
 const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
   const { id: actionId, nom: actionName } = actionDefinition;
+  const { saveActionStatut } = useSaveActionStatut();
+  const [actionStatutUpdate, setActionStatutUpdate] =
+    useState<ActionStatutCreate | null>(null);
 
   return (
     <Modal
@@ -26,9 +32,12 @@ const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
       render={() => (
         <div className="flex flex-col gap-8">
           {/* Slider pour détailler le score manuellement */}
-          <AvancementDetailleSliderAutoSave
+          <AvancementDetailleSliderWithCheckbox
             className="my-8 px-12"
             actionId={actionId}
+            onAvancementDetailleUpdate={(actionStatutUpdate) =>
+              setActionStatutUpdate(actionStatutUpdate)
+            }
           />
 
           {/* Raisons de la répartition */}
@@ -40,10 +49,19 @@ const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
       )}
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
-          btnOKProps={{
-            variant: 'outlined',
-            children: 'Fermer',
+          btnCancelProps={{
+            children: 'Annuler',
             onClick: close,
+          }}
+          btnOKProps={{
+            variant: 'primary',
+            children: 'Valider',
+            onClick: () => {
+              if (actionStatutUpdate) {
+                saveActionStatut(actionStatutUpdate);
+              }
+              close();
+            },
           }}
         />
       )}
