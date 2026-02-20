@@ -52,7 +52,7 @@ export const useActionStatut = (actionId: string) => {
   return {
     statut: actionStatutFromScore?.actionStatut,
     filled: actionStatutFromScore?.filled,
-    isLoading: isLoadingSnapshot,
+    isLoading: actionStatutFromScore === null || isLoadingSnapshot,
   };
 };
 
