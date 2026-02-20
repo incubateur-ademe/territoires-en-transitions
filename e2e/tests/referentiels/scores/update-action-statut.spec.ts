@@ -33,6 +33,105 @@ test.describe('Update action statut', () => {
     await referentielScoresPom.expectScoreRatio('cae', '1.1.1', 0.6, 12);
   });
 
+  test("Possible de mettre à jour le statut d'une sous-action (avec tâches) détaillé au pourcentage en tant qu'éditeur si on est pas en audit", async ({
+    page,
+    referentielScoresPom,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    referentiels, // We have to keep this variable order to clean data
+  }) => {
+    await referentielScoresPom.goto('cae');
+    await referentielScoresPom.goToActionPage(
+      '1 - Planification',
+      '1.1 Stratégie globale',
+      '1.1.1 Définir la vision, les'
+    );
+
+    const actionId = '1.1.1.1';
+    await referentielScoresPom.expectScoreRatio('cae', actionId, 0, 0.6);
+    await referentielScoresPom.expectScoreRatio('cae', '1.1.1', 0, 12);
+
+    await referentielScoresPom.updateSousActionAvancement(actionId, 'detaille');
+    await expect(
+      referentielScoresPom.detaillerAvancementModalTitle
+    ).toBeVisible();
+    await expect(
+      referentielScoresPom.detaillerAvancementPourcentageCheckbox
+    ).toBeVisible();
+    await referentielScoresPom.detaillerAvancementPourcentageCheckbox.check();
+
+    await expect(referentielScoresPom.detaillerAvancementSlider).toBeVisible();
+    await expect(
+      referentielScoresPom.detaillerAvancementSliderMinValue
+    ).toBeVisible();
+    await expect(
+      referentielScoresPom.detaillerAvancementSliderMaxValue
+    ).toBeVisible();
+    await referentielScoresPom.setDetaillerAvancementSliderMinValue(25);
+
+    // If we cancel the modal, the score should not be updated
+    await page.getByRole('button', { name: 'Annuler' }).click();
+    await referentielScoresPom.expectScoreRatio('cae', actionId, 0, 0.6);
+    await referentielScoresPom.expectScoreRatio('cae', '1.1.1', 0, 12);
+
+    // Do the same thing but this time we validate the modal
+    // As we have cancelled the modal
+    await referentielScoresPom.updateSousActionAvancement(actionId, 'detaille');
+    await referentielScoresPom.detaillerAvancementPourcentageCheckbox.check();
+    await referentielScoresPom.setDetaillerAvancementSliderMinValue(25);
+    await page.getByRole('button', { name: 'Valider' }).click();
+    await referentielScoresPom.expectScoreRatio('cae', actionId, 0.2, 0.6);
+    await referentielScoresPom.expectScoreRatio('cae', '1.1.1', 0.2, 12);
+  });
+
+  test("Possible de mettre à jour le statut d'une sous-action (sans tâches) détaillé au pourcentage en tant qu'éditeur si on est pas en audit", async ({
+    page,
+    referentielScoresPom,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    referentiels, // We have to keep this variable order to clean data
+  }) => {
+    const actionId = '1.1.1.5';
+    await referentielScoresPom.goto('cae');
+    await referentielScoresPom.goToActionPage(
+      '1 - Planification',
+      '1.1 Stratégie globale',
+      '1.1.1 Définir la vision, les'
+    );
+
+    await referentielScoresPom.expectScoreRatio('cae', actionId, 0, 3.6);
+    await referentielScoresPom.expectScoreRatio('cae', '1.1.1', 0, 12);
+
+    await referentielScoresPom.updateSousActionAvancement(actionId, 'detaille');
+    await expect(
+      referentielScoresPom.detaillerAvancementModalTitle
+    ).toBeVisible();
+    // no checkbox in this case because there is no tasks
+    await expect(
+      referentielScoresPom.detaillerAvancementPourcentageCheckbox
+    ).toHaveCount(0);
+
+    await expect(referentielScoresPom.detaillerAvancementSlider).toBeVisible();
+    await expect(
+      referentielScoresPom.detaillerAvancementSliderMinValue
+    ).toBeVisible();
+    await expect(
+      referentielScoresPom.detaillerAvancementSliderMaxValue
+    ).toBeVisible();
+    await referentielScoresPom.setDetaillerAvancementSliderMinValue(25);
+
+    // If we cancel the modal, the score should not be updated
+    await page.getByRole('button', { name: 'Annuler' }).click();
+    await referentielScoresPom.expectScoreRatio('cae', actionId, 0, 3.6);
+    await referentielScoresPom.expectScoreRatio('cae', '1.1.1', 0, 12);
+
+    // Do the same thing but this time we validate the modal
+    // As we have cancelled the modal
+    await referentielScoresPom.updateSousActionAvancement(actionId, 'detaille');
+    await referentielScoresPom.setDetaillerAvancementSliderMinValue(25);
+    await page.getByRole('button', { name: 'Valider' }).click();
+    await referentielScoresPom.expectScoreRatio('cae', actionId, 0.9, 3.6);
+    await referentielScoresPom.expectScoreRatio('cae', '1.1.1', 0.9, 12);
+  });
+
   test("Possible de mettre à jour le statut d'une tâche en tant qu'éditeur si on est pas en audit, doit mettre à jour le statut de la sous-action", async ({
     referentielScoresPom,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -118,6 +217,7 @@ test.describe('Update action statut', () => {
 
   test("Une fois l'audit démarré, seul l'auditeur peut mettre à jour le statut des actions", async ({
     referentielScoresPom,
+    labellisationPom,
     page,
     referentiels,
     collectivites,
@@ -163,15 +263,19 @@ test.describe('Update action statut', () => {
       referentielScoresPom.getSousActionAvancementBadgeLocator('1.1.1.1')
     ).toBeVisible();
 
-    // Now we start the audit
-    await referentiels.startAudit(
-      auditeurUser,
-      collectivite.data.id,
-      referentiel
-    );
+    // Start the audit
+    await labellisationPom.goto(referentiel);
+    await expect(labellisationPom.startLabellisationAuditButton).toBeEnabled();
+    await labellisationPom.startLabellisationAuditButton.click();
+    await expect(labellisationPom.suiviLabellisationAuditTab).toBeVisible();
 
-    // Reload the page, we are now able to update the action statut because the audit is started
-    await page.reload();
+    // We are now able to update the action statut because the audit is started
+    await referentielScoresPom.goto(referentiel);
+    await referentielScoresPom.goToActionPage(
+      '1 - Planification',
+      '1.1 Stratégie globale',
+      '1.1.1 Définir la vision, les'
+    );
     await referentielScoresPom.updateSousActionAvancement('1.1.1.1', 'fait');
     await referentielScoresPom.expectScoreRatio('cae', '1.1.1.1', 0.6, 0.6);
     await referentielScoresPom.expectScoreRatio('cae', '1.1.1', 0.6, 12);

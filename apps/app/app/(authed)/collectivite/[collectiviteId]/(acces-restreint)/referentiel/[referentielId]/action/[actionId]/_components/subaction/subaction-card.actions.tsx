@@ -39,6 +39,7 @@ const SubactionCardActions = ({
         {/* Statut détaillé */}
         {isDetailled && setOpenDetailledModal && (
           <span
+            data-test="DetaillerAvancementButton"
             className="text-xs text-primary-8 hover:text-primary-9 font-medium cursor-pointer"
             onClick={(evt) => {
               evt.stopPropagation();
