@@ -1,8 +1,19 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { ActionStatutCreate } from '@tet/domain/referentiels';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
+import { omit } from 'es-toolkit';
+import { useEffect, useState } from 'react';
 import { ActionJustificationField } from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.justification-field';
-import AvancementDetailleSliderAutoSave from './avancement-detaille.slider.auto-save';
+import { AVANCEMENT_DETAILLE_PAR_STATUT } from '../../utils';
+import {
+  useActionStatut,
+  useSaveActionStatut,
+} from '../action-statut/use-action-statut';
+import AvancementDetailleSlider, {
+  AvancementValues,
+} from './avancement-detaille.slider';
 
 type Props = {
   actionDefinition: ActionDefinitionSummary;
@@ -16,6 +27,44 @@ type Props = {
 
 const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
   const { id: actionId, nom: actionName } = actionDefinition;
+  const { statut, isLoading } = useActionStatut(actionId);
+  const collectiviteId = useCollectiviteId();
+  const { saveActionStatut } = useSaveActionStatut();
+  const [actionStatutUpdate, setActionStatutUpdate] =
+    useState<ActionStatutCreate | null>(null);
+
+  useEffect(() => {
+    if (!isLoading && statut && !actionStatutUpdate) {
+      setActionStatutUpdate(omit(statut, ['modifiedAt', 'modifiedBy']));
+    }
+  }, [statut]);
+
+  if (!actionStatutUpdate) {
+    return null;
+  }
+
+  const handleSaveScoreDetaille = (values: AvancementValues) => {
+    // Si la jauge est à 100% dans un des statuts, le statut
+    // est mis à jour automatiquement
+    const avancement =
+      values[0] === 1
+        ? 'fait'
+        : values[1] === 1
+        ? 'programme'
+        : values[2] === 1
+        ? 'pas_fait'
+        : 'detaille';
+
+    const newActionStatutUpdate: ActionStatutCreate = {
+      ...actionStatutUpdate,
+      collectiviteId,
+      avancement,
+      avancementDetaille: values,
+      concerne: true,
+    };
+
+    setActionStatutUpdate(newActionStatutUpdate);
+  };
 
   return (
     <Modal
@@ -26,9 +75,13 @@ const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
       render={() => (
         <div className="flex flex-col gap-8">
           {/* Slider pour détailler le score manuellement */}
-          <AvancementDetailleSliderAutoSave
+          <AvancementDetailleSlider
             className="my-8 px-12"
-            actionId={actionId}
+            avancement={
+              (actionStatutUpdate.avancementDetaille ||
+                AVANCEMENT_DETAILLE_PAR_STATUT.detaille) as AvancementValues
+            }
+            onChange={handleSaveScoreDetaille}
           />
 
           {/* Raisons de la répartition */}
@@ -40,10 +93,19 @@ const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
       )}
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
-          btnOKProps={{
-            variant: 'outlined',
-            children: 'Fermer',
+          btnCancelProps={{
+            children: 'Annuler',
             onClick: close,
+          }}
+          btnOKProps={{
+            variant: 'primary',
+            children: 'Valider',
+            onClick: () => {
+              if (actionStatutUpdate) {
+                saveActionStatut(actionStatutUpdate);
+              }
+              close();
+            },
           }}
         />
       )}
