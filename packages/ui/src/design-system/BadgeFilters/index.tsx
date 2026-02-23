@@ -1,4 +1,5 @@
 import { Fragment } from 'react';
+import { cn } from '../../utils/cn';
 import { Badge } from '../Badge';
 import { Icon } from '../Icon';
 import { Tooltip } from '../Tooltip';
@@ -79,7 +80,14 @@ const FilterByCategory = ({
     !readonly;
   return (
     <div className="inline-flex items-center rounded-md border border-grey-4 w-auto bg-white overflow-hidden">
-      <span className="px-2 py-1.5 text-grey-8 font-bold text-xs bg-grey-2 border-r border-grey-4">
+      <span
+        className={cn(
+          'px-2 py-1.5 text-grey-8 font-bold text-xs bg-grey-2 border-r border-grey-4',
+          {
+            'border-r-0': onlyShowCategory && !showRemoveCategoryButton,
+          }
+        )}
+      >
         {title}
       </span>
       <VisibleWhen condition={!onlyShowCategory || showRemoveCategoryButton}>
