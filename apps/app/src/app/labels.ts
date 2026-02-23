@@ -1,15 +1,16 @@
-import type { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
 import { MembreFonction } from '@tet/domain/collectivites';
-import { StatutAvancementIncludingNonConcerne } from '@tet/domain/referentiels';
+import {
+  ReferentielId,
+  StatutAvancementIncludingNonConcerne,
+} from '@tet/domain/referentiels';
 
 // Define all labels from app
-export const referentielToName: Record<
-  ReferentielOfIndicateur | string,
-  string
-> = {
+export const referentielToName: Record<ReferentielId | string, string> = {
   cae: 'Climat Air Énergie',
   eci: 'Économie Circulaire',
   crte: 'Contrat Relance Transition Écologique',
+  te: 'Transition Écologique',
+  'te-test': 'Transition Écologique (test)',
 };
 
 export const avancementToLabel: Record<

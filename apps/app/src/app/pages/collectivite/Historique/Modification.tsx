@@ -4,7 +4,6 @@ import { fr } from 'date-fns/locale';
 import { JSX, useState } from 'react';
 
 import { referentielToName } from '@/app/app/labels';
-import { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
 import { Button, Icon } from '@tet/ui';
 import { HistoriqueType, THistoriqueItem } from './types';
 
@@ -46,9 +45,7 @@ const Modification = ({
   const { modified_at, modified_by_nom, type, action_id } = historique;
   const referentielId =
     SHOW_REFERENTIEL.includes(type) && action_id?.substring(0, 3);
-  const referentielNom =
-    referentielId &&
-    referentielToName[referentielId as ReferentielOfIndicateur];
+  const referentielNom = referentielId && referentielToName[referentielId];
   const modifiedAt = new Date(modified_at);
 
   return (

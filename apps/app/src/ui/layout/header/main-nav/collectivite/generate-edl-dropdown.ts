@@ -95,5 +95,28 @@ export const generateEdlDropdown = ({
       }),
       urlPrefix: ['eci/labellisation'],
     },
+    {
+      children: 'Référentiel Transition Écologique',
+      isVisible: true,
+      dataTest: 'edl-te',
+      href: makeReferentielUrl({
+        collectiviteId,
+        referentielId: 'te',
+      }),
+      urlPrefix: [
+        ...referentielTabs.map((referentielTab) =>
+          makeReferentielUrl({
+            collectiviteId,
+            referentielId: 'te',
+            referentielTab,
+          })
+        ),
+        makeReferentielActionUrl({
+          collectiviteId,
+          referentielId: 'te',
+          actionId: '',
+        }),
+      ],
+    },
   ],
 });

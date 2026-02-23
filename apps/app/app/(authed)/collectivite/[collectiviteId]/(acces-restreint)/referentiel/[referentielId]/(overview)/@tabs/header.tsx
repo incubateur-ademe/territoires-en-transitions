@@ -3,7 +3,6 @@
 import { referentielToName } from '@/app/app/labels';
 import DownloadScoreButton from '@/app/app/pages/collectivite/Referentiels/DownloadScore/download-score.button';
 import SaveScoreButton from '@/app/app/pages/collectivite/Referentiels/SaveScore/save-score.button';
-import { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
 import { useReferentielDownToAction } from '@/app/referentiels/referentiel-hooks';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
@@ -23,10 +22,7 @@ export const Header = ({ referentielId }: { referentielId: ReferentielId }) => {
   return (
     <>
       <div className="flex max-md:flex-col md:items-center md:justify-between gap-4 mb-6">
-        <h1 className="mb-0">
-          Référentiel{' '}
-          {referentielToName[referentielId as ReferentielOfIndicateur]}
-        </h1>
+        <h1 className="mb-0">Référentiel {referentielToName[referentielId]}</h1>
         <div className="flex gap-x-4">
           <DownloadScoreButton
             referentielId={referentielId}
