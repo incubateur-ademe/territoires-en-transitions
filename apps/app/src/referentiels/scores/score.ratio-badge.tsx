@@ -1,5 +1,5 @@
 import { roundTo } from '@tet/domain/utils';
-import { Badge, BadgeSize } from '@tet/ui';
+import { Badge, BadgeDouble, BadgeSize } from '@tet/ui';
 import classNames from 'classnames';
 import { useScore } from '../use-snapshot';
 
@@ -41,25 +41,21 @@ export const ScoreRatioBadge = ({
           size={size}
         />
       ) : (
-        <>
-          <Badge
-            title={`${roundTo((pointFait / pointPotentiel) * 100, 1)} %`}
-            variant="success"
-            uppercase={false}
-            className="!rounded-r-none border-[0.5px] !border-success-3 border-r-0 shrink-0"
-            size={size}
-            trim={false}
-          />
-          <Badge
-            title={`${roundPointFait} / ${roundPointPotentiel} points`}
-            variant="success"
-            type="outlined"
-            className="!rounded-l-none border-[0.5px] !border-success-3 border-l-0 shrink-0"
-            uppercase={false}
-            size={size}
-            trim={false}
-          />
-        </>
+        <BadgeDouble
+          variant="success"
+          type="solid"
+          size={size}
+          badgeLeft={{
+            title: `${roundTo((pointFait / pointPotentiel) * 100, 1)} %`,
+            uppercase: false,
+            trim: false,
+          }}
+          badgeRight={{
+            title: `${roundPointFait} / ${roundPointPotentiel} points`,
+            uppercase: false,
+            trim: false,
+          }}
+        />
       )}
     </div>
   );
