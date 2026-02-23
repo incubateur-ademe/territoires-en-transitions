@@ -92,7 +92,7 @@ const columns = [
       const statut = info.getValue();
       return (
         <TableCell>
-          {statut && <BadgeStatut statut={statut} size="sm" />}
+          {statut && <BadgeStatut statut={statut} size="xs" />}
         </TableCell>
       );
     },
@@ -113,7 +113,7 @@ const columns = [
       const priorite = info.getValue();
       return (
         <TableCell>
-          {priorite && <BadgePriorite priorite={priorite} size="sm" />}
+          {priorite && <BadgePriorite priorite={priorite} size="xs" />}
         </TableCell>
       );
     },

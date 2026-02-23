@@ -254,10 +254,10 @@ const FicheActionCard = ({
             ficheAction.actionImpactId) && (
             <div className="flex items-center gap-3">
               {ficheAction.priorite && (
-                <BadgePriorite priorite={ficheAction.priorite} size="sm" />
+                <BadgePriorite priorite={ficheAction.priorite} size="xs" />
               )}
               {ficheAction.statut && (
-                <BadgeStatut statut={ficheAction.statut} size="sm" />
+                <BadgeStatut statut={ficheAction.statut} size="xs" />
               )}
               {ficheAction.actionImpactId && (
                 <Tooltip label="Action issue du service Actions à Impact">
