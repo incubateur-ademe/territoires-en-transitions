@@ -95,7 +95,15 @@ describe('CommunsFicheActionMapper', () => {
         departementCode: '54',
         nic: null,
         dansAireUrbaine: null,
-        activeCOT: false,
+        preferences: {
+          referentiels: {
+            display: {
+              cae: true,
+              eci: true,
+              te: true,
+            },
+          },
+        },
       },
       financements: null,
       collectiviteId: 4708,

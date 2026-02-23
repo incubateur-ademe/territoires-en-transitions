@@ -45,6 +45,8 @@ import { ValidateAuditService } from './labellisations/validate-audit/validate-a
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { ListActionsService } from './list-actions/list-actions.service';
 import { ReferentielsRouter } from './referentiels.router';
+import { ResetDisplayPreferencesRouter } from './reset-display-preferences/reset-display-preferences.router';
+import { ResetDisplayPreferencesService } from './reset-display-preferences/reset-display-preferences.service';
 import { ListSnapshotsService } from './snapshots/list-snapshots/list-snapshots.service';
 import { SnapshotsRouter } from './snapshots/snapshots.router';
 import { SnapshotsService } from './snapshots/snapshots.service';
@@ -112,6 +114,9 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
 
     ScoreIndicatifService,
     ScoreIndicatifRouter,
+
+    ResetDisplayPreferencesService,
+    ResetDisplayPreferencesRouter,
   ],
   exports: [ListLabellisationsService, ListActionsService, ReferentielsRouter],
   controllers: [

@@ -2,6 +2,7 @@ import { usePathname } from 'next/navigation';
 
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
 import { useGetCollectivitePanierInfo } from '@/app/collectivites/panier/data/useGetCollectivitePanierInfo';
+import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-enabled';
 import { useCollectiviteContext } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { Header as HeaderTet } from '@tet/ui';
@@ -16,6 +17,7 @@ export const Header = () => {
   const user = useUser();
 
   const { collectivite } = useCollectiviteContext();
+  const referentielTeEnabled = useReferentielTeEnabled();
 
   const { panier } = useGetCollectivitePanierInfo(
     collectivite?.collectiviteId ?? null
@@ -36,6 +38,7 @@ export const Header = () => {
         user,
         currentCollectivite: collectivite,
         panierId: panier?.panierId,
+        referentielTeEnabled,
       })}
       secondaryNav={makeSecondaryNav(user)}
     />

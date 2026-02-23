@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CollectiviteCrudRouter } from '@tet/backend/collectivites/collectivite-crud/collectivite-crud.router';
+import { CollectivitePreferencesRouter } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.router';
 import { DiscussionRouter } from '@tet/backend/collectivites/discussions/presentation/discussion.router';
 import { ImportCollectiviteRelationsRouter } from '@tet/backend/collectivites/import-collectivite-relations/import-collectivite-relations.router';
 import { RecherchesRouter } from '@tet/backend/collectivites/recherches/recherches.router';
@@ -29,7 +30,8 @@ export class CollectivitesRouter {
     private readonly importCollectiviteRelationsRouter: ImportCollectiviteRelationsRouter,
     private readonly discussionRouter: DiscussionRouter,
     private readonly instanceGouvernanceRouter: InstanceGouvernanceRouter,
-    private readonly personnalisationsRouter: PersonnalisationsRouter
+    private readonly personnalisationsRouter: PersonnalisationsRouter,
+    private readonly collectivitePreferencesRouter: CollectivitePreferencesRouter
   ) {}
 
   router = this.trpc.router({
@@ -46,6 +48,7 @@ export class CollectivitesRouter {
     discussions: this.discussionRouter.router,
     relations: this.importCollectiviteRelationsRouter.router,
     recherches: this.recherchesRouter.router,
+    preferences: this.collectivitePreferencesRouter.router,
     tags: {
       personnes: this.personneTagRouter.router,
       instanceGouvernance: this.instanceGouvernanceRouter.router,

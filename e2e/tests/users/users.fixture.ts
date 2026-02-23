@@ -2,6 +2,7 @@ import test, { BrowserContext } from '@playwright/test';
 import { AppRouter } from '@tet/api';
 import {
   addTestUser,
+  addUserRoleSupport,
   deleteUserCollectiviteRole,
   setUserCollectiviteRole,
   TestUserArgs,
@@ -69,6 +70,23 @@ class UserFactory {
     const userFixture = new UserFixture(this.context, user, cleanup);
     this.usersFixtureCreated.push(userFixture);
     return userFixture;
+  };
+
+  addUserRoleSupport = async ({
+    userId,
+    isSupport = true,
+    isSuperAdminRoleEnabled = false,
+  }: {
+    userId: string;
+    isSupport?: boolean;
+    isSuperAdminRoleEnabled?: boolean;
+  }) => {
+    await addUserRoleSupport({
+      databaseService,
+      userId,
+      isSupport,
+      isSuperAdminRoleEnabled,
+    });
   };
 
   setUserCollectiviteRole = async ({
@@ -139,6 +157,7 @@ export const testWithUsers = test.extend<{
   users: async ({ context }, use) => {
     const {
       addUser,
+      addUserRoleSupport,
       removeSome,
       getUser,
       getUserById,
@@ -148,6 +167,7 @@ export const testWithUsers = test.extend<{
     } = new UserFactory(context);
     await use({
       addUser,
+      addUserRoleSupport,
       removeSome,
       getUser,
       getUserById,

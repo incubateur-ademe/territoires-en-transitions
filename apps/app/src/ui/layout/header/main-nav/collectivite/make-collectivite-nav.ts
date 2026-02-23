@@ -3,9 +3,11 @@ import {
   getRechercheViewUrl,
   importerPlanUrl,
   makeCollectiviteAccueilUrl,
+  makeCollectiviteAffichageReferentielsUrl,
   makeCollectiviteModifierUrl,
 } from '@/app/app/paths';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
+import { ReferentielDisplayMap } from '@tet/domain/collectivites';
 import {
   hasRole,
   isUserVisitor,
@@ -25,6 +27,12 @@ import { generateIndicateursDropdown } from './generate-indicateurs-dropdown';
 import { generateParametresDropdown } from './generate-parametres-dropdown';
 import { generatePlansActionsDropdown } from './generate-plans-actions-dropdown';
 import { generateTdbDropdown } from './generate-tdb-dropdown';
+
+const REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY: ReferentielDisplayMap = {
+  eci: true,
+  cae: true,
+  te: false,
+} as const;
 
 type AddtionalProps = {
   isVisible?: boolean;
@@ -48,10 +56,12 @@ export const makeCollectiviteNav = ({
   user,
   currentCollectivite,
   panierId,
+  referentielTeEnabled,
 }: {
   user: UserWithRolesAndPermissions;
   currentCollectivite: CollectiviteCurrent;
   panierId?: string;
+  referentielTeEnabled: boolean;
 }): HeaderProps['mainNav'] => {
   const { collectiviteId, collectiviteAccesRestreint } = currentCollectivite;
   const isVisitor = isUserVisitor(user, { collectiviteId });
@@ -83,6 +93,9 @@ export const makeCollectiviteNav = ({
       collectiviteId,
       collectiviteAccesRestreint,
       isVisitor,
+      referentielsDisplay: referentielTeEnabled
+        ? currentCollectivite.collectivitePreferences.referentiels.display
+        : REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY,
     }),
     generatePlansActionsDropdown({
       collectiviteId,
@@ -118,6 +131,12 @@ export const makeCollectiviteNav = ({
         {
           children: 'Modifier la collectivité',
           href: makeCollectiviteModifierUrl({
+            collectiviteId,
+          }),
+        },
+        {
+          children: 'Affichage des référentiels',
+          href: makeCollectiviteAffichageReferentielsUrl({
             collectiviteId,
           }),
         },
