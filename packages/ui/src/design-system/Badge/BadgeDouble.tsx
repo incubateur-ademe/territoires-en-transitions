@@ -9,9 +9,9 @@ type SingleBadgeProps = Pick<
 
 type Props = {
   className?: string;
-  variant: BadgeVariant;
-  type: BadgeType;
-  size: BadgeSize;
+  variant?: BadgeVariant;
+  type?: BadgeType;
+  size?: BadgeSize;
   badgeLeft: SingleBadgeProps;
   badgeRight: SingleBadgeProps;
 };
@@ -31,7 +31,7 @@ export const BadgeDouble = ({
   className,
   variant = 'default',
   type = 'outlined',
-  size,
+  size = 'sm',
   badgeLeft,
   badgeRight,
 }: Props) => {
