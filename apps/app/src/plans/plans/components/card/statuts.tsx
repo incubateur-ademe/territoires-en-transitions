@@ -92,7 +92,7 @@ export const Statuts = ({
                   key={statut}
                   statut={value || SANS_STATUT_LABEL}
                   count={count}
-                  size="sm"
+                  size="xs"
                 />
               )
           )}

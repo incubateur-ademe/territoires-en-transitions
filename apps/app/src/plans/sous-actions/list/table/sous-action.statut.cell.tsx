@@ -42,13 +42,13 @@ export const SousActionStatutCell = ({ sousAction }: Props) => {
             }}
             displayOptionsWithoutFloater
             openState={openState}
-            size="sm"
+            badgeSize="xs"
           />
         ),
       }}
     >
       {sousAction.statut ? (
-        <BadgeStatut statut={sousAction.statut} size="sm" />
+        <BadgeStatut statut={sousAction.statut} size="xs" />
       ) : (
         <span className="text-grey-6">{canUpdate ? 'Sélectionner' : ''}</span>
       )}

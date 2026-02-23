@@ -1,12 +1,12 @@
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { ficheActionStatutOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { Statut } from '@tet/domain/plans';
-import { Select, SelectProps } from '@tet/ui';
+import { BadgeSize, Select, SelectProps } from '@tet/ui';
 
 type Props = Omit<SelectProps, 'values' | 'onChange' | 'options'> & {
   values?: Statut | null;
   onChange: (statut: Statut) => void;
-  size?: 'md' | 'sm';
+  badgeSize?: BadgeSize;
 };
 
 const StatutsSelectDropdown = (props: Props) => {
@@ -19,7 +19,7 @@ const StatutsSelectDropdown = (props: Props) => {
       onChange={(statut) => props.onChange(statut as Statut)}
       placeholder="Sélectionner un statut"
       customItem={(item) => (
-        <BadgeStatut statut={item.value as Statut} size={props.size} />
+        <BadgeStatut statut={item.value as Statut} size={props.badgeSize} />
       )}
     />
   );
