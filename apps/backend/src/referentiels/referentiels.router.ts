@@ -12,6 +12,7 @@ import { RequestLabellisationRouter } from './labellisations/request-labellisati
 import { StartAuditRouter } from './labellisations/start-audit/start-audit.router';
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
 import { ListActionsRouter } from './list-actions/list-actions.router';
+import { ResetDisplayPreferencesRouter } from './reset-display-preferences/reset-display-preferences.router';
 import { SnapshotsRouter } from './snapshots/snapshots.router';
 import { UpdateActionCommentaireRouter } from './update-action-commentaire/update-action-commentaire.router';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
@@ -33,7 +34,8 @@ export class ReferentielsRouter {
     private readonly assignServicesRouter: HandleMesuresServicesRouter,
     private readonly scoreIndicatifRouter: ScoreIndicatifRouter,
     private readonly handleMesureAuditStatutRouter: HandleMesureAuditStatutRouter,
-    private readonly getReferentielDefinitionRouter: GetReferentielDefinitionRouter
+    private readonly getReferentielDefinitionRouter: GetReferentielDefinitionRouter,
+    private readonly resetDisplayPreferencesRouter: ResetDisplayPreferencesRouter
   ) {}
 
   router = this.trpc.router({
@@ -59,6 +61,8 @@ export class ReferentielsRouter {
     ),
 
     definitions: this.getReferentielDefinitionRouter.router,
+
+    preferences: this.resetDisplayPreferencesRouter.router,
   });
 
   createCaller = this.trpc.createCallerFactory(this.router);

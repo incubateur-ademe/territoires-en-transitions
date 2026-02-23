@@ -10,6 +10,7 @@ import {
   collectiviteTypeEnum,
   CollectiviteUpdateNIC,
   CollectiviteUpsert,
+  defaultCollectivitePreferences,
 } from '@tet/domain/collectivites';
 import { and, eq, inArray, sql, SQL } from 'drizzle-orm';
 import { collectiviteTable } from '../shared/models/collectivite.table';
@@ -29,7 +30,7 @@ export default class CollectiviteCrudService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async upsert(collectivite: CollectiviteUpsert): Promise<Collectivite> {
-    const { id, modifiedAt, ...rest } = collectivite;
+    const { id, modifiedAt, preferences, ...rest } = collectivite;
     // Check if the "collectivité" to insert already exist
     if (!id) {
       const col = await this.find(collectivite);
@@ -40,7 +41,11 @@ export default class CollectiviteCrudService {
     }
     const [result] = (await this.databaseService.db
       .insert(collectiviteTable)
-      .values({ ...collectivite, nom: collectivite.nom ?? '' })
+      .values({
+        ...collectivite,
+        nom: collectivite.nom ?? '',
+        preferences: preferences ?? defaultCollectivitePreferences,
+      })
       .onConflictDoUpdate({
         target: [collectiviteTable.id],
         set: {

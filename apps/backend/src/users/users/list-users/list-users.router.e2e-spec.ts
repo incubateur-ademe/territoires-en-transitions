@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { defaultCollectivitePreferences } from '@tet/domain/collectivites';
 import {
   AuditRole,
   CollectiviteRole,
@@ -40,18 +41,18 @@ const expectedYoulouDoudouUserInfoResponse: UserWithRolesAndPermissions = {
       collectiviteId: 1,
       collectiviteNom: 'Ambérieu-en-Bugey',
       collectiviteAccesRestreint: false,
+      collectivitePreferences: defaultCollectivitePreferences,
       role: CollectiviteRole.EDITION,
       permissions: permissionsByRole[CollectiviteRole.EDITION],
-
       audits: expect.any(Array),
     },
     {
       collectiviteId: 2,
       collectiviteNom: 'Arbent',
       collectiviteAccesRestreint: false,
+      collectivitePreferences: defaultCollectivitePreferences,
       role: CollectiviteRole.EDITION,
       permissions: permissionsByRole[CollectiviteRole.EDITION],
-
       audits: expect.any(Array),
     },
     {
@@ -59,7 +60,7 @@ const expectedYoulouDoudouUserInfoResponse: UserWithRolesAndPermissions = {
       collectiviteId: 10,
       collectiviteNom: 'La Boisse',
       collectiviteAccesRestreint: false,
-
+      collectivitePreferences: defaultCollectivitePreferences,
       role: null,
       permissions: [],
 

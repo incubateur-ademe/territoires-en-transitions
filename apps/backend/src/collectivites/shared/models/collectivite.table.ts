@@ -1,9 +1,14 @@
 import { collectiviteBanaticTypeTable } from '@tet/backend/collectivites/shared/models/collectivite-banatic-type.table';
 import { createdAt, modifiedAt } from '@tet/backend/utils/column.utils';
-import { collectiviteNature } from '@tet/domain/collectivites';
+import {
+  CollectivitePreferences,
+  CollectiviteType,
+  collectiviteNature,
+} from '@tet/domain/collectivites';
 import {
   boolean,
   integer,
+  jsonb,
   pgTable,
   serial,
   text,
@@ -16,7 +21,7 @@ export const collectiviteTable = pgTable('collectivite', {
   createdAt,
   accesRestreint: boolean('access_restreint'),
   nom: text('nom').notNull(),
-  type: text('type').notNull(), // TODO check collectiviteType
+  type: text('type').notNull().$type<CollectiviteType>(),
   communeCode: varchar('commune_code', { length: 5 }),
   siren: varchar('siren', { length: 9 }),
   nic: varchar('nic', { length: 5 }),
@@ -27,4 +32,5 @@ export const collectiviteTable = pgTable('collectivite', {
   }).references(() => collectiviteBanaticTypeTable.id),
   population: integer('population'),
   dansAireUrbaine: boolean('dans_aire_urbaine'),
+  preferences: jsonb('preferences').notNull().$type<CollectivitePreferences>(),
 });

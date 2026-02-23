@@ -3,9 +3,11 @@ import {
   getRechercheViewUrl,
   importerPlanUrl,
   makeCollectiviteAccueilUrl,
+  makeCollectiviteAffichageReferentielsUrl,
   makeCollectiviteModifierUrl,
 } from '@/app/app/paths';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
+import { ReferentielDisplayMap } from '@tet/domain/collectivites';
 import {
   hasRole,
   isUserVisitor,
@@ -48,10 +50,12 @@ export const makeCollectiviteNav = ({
   user,
   currentCollectivite,
   panierId,
+  referentielDisplay,
 }: {
   user: UserWithRolesAndPermissions;
   currentCollectivite: CollectiviteCurrent;
   panierId?: string;
+  referentielDisplay?: ReferentielDisplayMap;
 }): HeaderProps['mainNav'] => {
   const { collectiviteId, collectiviteAccesRestreint } = currentCollectivite;
   const isVisitor = isUserVisitor(user, { collectiviteId });
@@ -83,6 +87,9 @@ export const makeCollectiviteNav = ({
       collectiviteId,
       collectiviteAccesRestreint,
       isVisitor,
+      referentielsDisplay:
+        referentielDisplay ??
+        currentCollectivite.collectivitePreferences.referentiels.display,
     }),
     generatePlansActionsDropdown({
       collectiviteId,
@@ -118,6 +125,12 @@ export const makeCollectiviteNav = ({
         {
           children: 'Modifier la collectivité',
           href: makeCollectiviteModifierUrl({
+            collectiviteId,
+          }),
+        },
+        {
+          children: 'Affichage des référentiels',
+          href: makeCollectiviteAffichageReferentielsUrl({
             collectiviteId,
           }),
         },

@@ -1,7 +1,7 @@
 import * as z from 'zod/mini';
 import { preuveSchemaEssential } from '../../collectivites/documents/preuve.schema';
 import { referentielIdEnumSchema } from '../referentiel-id.enum';
-import { actionTypeIncludingExempleSchema } from './action-type.enum';
+import { actionTypeSchema } from './action-type.enum';
 
 const actionCategorieEnumValues = ['bases', 'mise en œuvre', 'effets'] as const;
 const actionCategorieEnumSchema = z.enum(actionCategorieEnumValues);
@@ -49,7 +49,7 @@ export const actionDefinitionEssentialSchema = z.object({
   actionId: z.string(),
   points: z.nullable(z.number()),
   level: z.number(),
-  actionType: actionTypeIncludingExempleSchema,
+  actionType: actionTypeSchema,
   // action catalogues include cae, eci but also biodiversite, eau
   tags: z.optional(z.array(z.string())),
   preuves: z.optional(z.array(preuveSchemaEssential)),

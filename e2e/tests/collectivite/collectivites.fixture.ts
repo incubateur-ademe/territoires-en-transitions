@@ -13,7 +13,19 @@ import { DocumentsPom } from './documents/documents.pom';
 type CollectiviteAndUserArgs = {
   collectiviteArgs?: Partial<Collectivite> & { isCOT?: boolean };
   userArgs?: Omit<TestUserArgs, 'collectiviteId'> &
-    ({ autoLogin?: boolean } | undefined);
+    (
+      | {
+          autoLogin?: boolean;
+          isSupport?: true;
+          isSuperAdminRoleEnabled?: boolean;
+        }
+      | {
+          autoLogin?: boolean;
+          isSupport?: false;
+          isSuperAdminRoleEnabled?: false;
+        }
+      | undefined
+    );
 };
 
 type CollectiviteCleanupFunc = (collectiviteId: number) => Promise<void>;
@@ -27,10 +39,22 @@ export class CollectiviteFixture {
 
   // ajoute un utilisateur rattaché à la collectivité
   async addUser(userArgs: CollectiviteAndUserArgs['userArgs']) {
+    if (userArgs?.isSuperAdminRoleEnabled && !userArgs.isSupport) {
+      throw new Error(
+        'isSuperAdminRoleEnabled nécessite isSupport: true dans ce fixture'
+      );
+    }
     const user = await this.users.addUser({
       ...(userArgs || {}),
       collectiviteId: this.data.id,
     });
+    if (userArgs?.isSupport) {
+      await this.users.addUserRoleSupport({
+        userId: user.data.id,
+        isSupport: userArgs.isSupport,
+        isSuperAdminRoleEnabled: userArgs.isSuperAdminRoleEnabled,
+      });
+    }
     if (userArgs?.autoLogin) {
       await user.login();
     }

@@ -69,6 +69,15 @@ describe('GetUserPermissions', () => {
         collectiviteId: collectivite.id,
         collectiviteNom: collectivite.nom,
         collectiviteAccesRestreint: false,
+        collectivitePreferences: {
+          referentiels: {
+            display: {
+              cae: true,
+              eci: true,
+              te: true,
+            },
+          },
+        },
         role: CollectiviteRole.EDITION,
         permissions: permissionsByRole[CollectiviteRole.EDITION],
 
@@ -125,6 +134,15 @@ describe('GetUserPermissions', () => {
         collectiviteId: collectivite.id,
         collectiviteNom: collectivite.nom,
         collectiviteAccesRestreint: false,
+        collectivitePreferences: {
+          referentiels: {
+            display: {
+              cae: true,
+              eci: true,
+              te: true,
+            },
+          },
+        },
         role: CollectiviteRole.EDITION,
         permissions: permissionsByRole[CollectiviteRole.EDITION],
 

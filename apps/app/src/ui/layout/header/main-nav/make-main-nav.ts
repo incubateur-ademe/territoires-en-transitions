@@ -1,5 +1,6 @@
 import { finaliserMonInscriptionUrl } from '@/app/app/paths';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
+import { ReferentielDisplayMap } from '@tet/domain/collectivites';
 import {
   hasRole,
   PlatformRole,
@@ -13,12 +14,14 @@ type Props = {
   user: UserWithRolesAndPermissions;
   currentCollectivite: CollectiviteCurrent | null;
   panierId?: string;
+  referentielDisplay?: ReferentielDisplayMap;
 };
 
 export const makeMainNav = ({
   user,
   currentCollectivite,
   panierId,
+  referentielDisplay,
 }: Props): HeaderProps['mainNav'] => {
   const hasToCompleteRegistration =
     !hasRole(user, PlatformRole.VERIFIED) && user.collectivites.length === 0;
@@ -46,6 +49,7 @@ export const makeMainNav = ({
       user,
       currentCollectivite,
       panierId,
+      referentielDisplay,
     });
   }
 };
