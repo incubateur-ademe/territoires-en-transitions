@@ -84,7 +84,7 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
             className="grow shrink max-sm:w-full"
           />
           <div className="shrink-0 flex">
-            <ScoreRatioBadge actionId={id} size="sm" />
+            <ScoreRatioBadge actionId={id} size="xs" />
           </div>
         </div>
 

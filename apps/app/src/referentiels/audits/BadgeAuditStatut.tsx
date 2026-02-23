@@ -28,7 +28,7 @@ export const BadgeAuditStatut = ({
     <Badge
       title={statusToLabel[statut]}
       variant={statusToState[statut].state}
-      size="sm"
+      size="xs"
     />
   );
 };

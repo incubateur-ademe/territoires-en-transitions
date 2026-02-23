@@ -1,4 +1,4 @@
-import { Badge, BadgeVariant } from '@tet/ui';
+import { Badge, BadgeSize, BadgeVariant } from '@tet/ui';
 import classNames from 'classnames';
 
 import { Priorite } from '@tet/domain/plans';
@@ -18,7 +18,7 @@ type Props = {
   className?: string;
   priorite: Priorite;
   // Rend une version plus petite du composant
-  size?: 'sm' | 'md';
+  size?: BadgeSize;
 };
 
 const BadgePriorite = ({ className, priorite, size }: Props) => {

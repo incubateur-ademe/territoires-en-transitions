@@ -1,5 +1,5 @@
 import { Statut } from '@tet/domain/plans';
-import { Badge, BadgeVariant } from '@tet/ui';
+import { Badge, BadgeSize, BadgeVariant } from '@tet/ui';
 import classNames from 'classnames';
 
 export const statusToVariant: Record<Statut | 'Sans statut', BadgeVariant> = {
@@ -18,8 +18,7 @@ type Props = {
   className?: string;
   count?: number;
   statut: Statut | 'Sans statut';
-  // Rend une version plus petite du composant
-  size?: 'sm' | 'md';
+  size?: BadgeSize;
 };
 
 /** Badge représentant le statut d'une fiche */

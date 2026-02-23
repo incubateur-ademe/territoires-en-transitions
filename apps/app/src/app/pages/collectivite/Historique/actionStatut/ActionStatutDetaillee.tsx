@@ -6,7 +6,7 @@ export const PrecedenteActionStatutDetaille = ({
   avancementDetaille: number[];
 }) => (
   <>
-    <ActionStatutBadge statut="detaille" barre size="md" />
+    <ActionStatutBadge statut="detaille" barre size="sm" />
     <div className="mt-2">
       <p className="mb-0.5 text-sm whitespace-nowrap line-through">
         Fait: {avancementDetaille[0] * 100} %
@@ -27,7 +27,7 @@ export const NouvelleActionStatutDetaille = ({
   avancementDetaille: number[];
 }) => (
   <>
-    <ActionStatutBadge statut="detaille" size="md" />
+    <ActionStatutBadge statut="detaille" size="sm" />
     <div className="mt-2">
       <p className="mb-0.5 text-sm whitespace-nowrap">
         Fait: {avancementDetaille[0] * 100} %

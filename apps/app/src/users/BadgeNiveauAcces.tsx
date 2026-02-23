@@ -12,7 +12,7 @@ type Props = {
 
 /** Représente le niveau d'accès à une collectivité par un badge */
 export const BadgeNiveauAcces = (props: Props) => {
-  const { acces, className, size = 'sm' } = props;
+  const { acces, className, size = 'xs' } = props;
   const displayedAcces = getLabel(props);
 
   return (

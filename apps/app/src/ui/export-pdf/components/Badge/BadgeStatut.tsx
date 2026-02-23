@@ -1,12 +1,13 @@
 import { statusToVariant } from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { Statut } from '@tet/domain/plans';
+import { BadgeSize } from '@tet/ui';
 import classNames from 'classnames';
 import { Badge } from './Badge';
 
 type BadgeStatutProps = {
   count?: number;
   statut: Statut | 'Sans statut';
-  size?: 'sm' | 'md';
+  size?: BadgeSize;
   uppercase?: boolean;
   className?: string;
 };

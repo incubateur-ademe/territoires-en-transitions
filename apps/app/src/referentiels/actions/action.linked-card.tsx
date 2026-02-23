@@ -75,7 +75,7 @@ const ActionLinkedCard = ({
           <div className="shrink-0 flex">
             <ScoreRatioBadge
               actionId={actionId}
-              size="sm"
+              size="xs"
               externalCollectiviteId={externalCollectiviteId}
             />
           </div>

@@ -129,7 +129,7 @@ export const AccesDropdown = ({
   const accessLevelsOptions = useAccessLevels({ allowAdmin: true });
 
   if (currentUserAccess !== 'admin')
-    return <BadgeAcces acces={currentUserAccess} size="sm" className="ml-3" />;
+    return <BadgeAcces acces={currentUserAccess} size="xs" className="ml-3" />;
 
   return (
     <div data-test="acces-dropdown">
@@ -139,7 +139,7 @@ export const AccesDropdown = ({
         onSelect={onSelect}
         options={accessLevelsOptions}
         renderSelection={(value) => (
-          <BadgeAcces acces={value as CollectiviteRole} size="sm" />
+          <BadgeAcces acces={value as CollectiviteRole} size="xs" />
         )}
         renderOption={(option) => (
           <AccessDropdownLabel

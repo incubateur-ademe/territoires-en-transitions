@@ -56,7 +56,7 @@ export const SubactionCardHeader = ({
 
               {isSubAction && (
                 <div className="shrink-0 flex">
-                  <ScoreRatioBadge actionId={subAction.id} size="sm" />
+                  <ScoreRatioBadge actionId={subAction.id} size="xs" />
                 </div>
               )}
 

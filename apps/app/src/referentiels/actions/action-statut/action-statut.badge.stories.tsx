@@ -6,7 +6,7 @@ export default {
 
 export const Barre = () => <ActionStatutBadge statut="non_renseigne" barre />;
 export const Small = () => (
-  <ActionStatutBadge statut="non_renseigne" size="sm" />
+  <ActionStatutBadge statut="non_renseigne" size="xs" />
 );
 export const NonRenseigne = () => <ActionStatutBadge statut="non_renseigne" />;
 export const PasFait = () => <ActionStatutBadge statut="pas_fait" />;

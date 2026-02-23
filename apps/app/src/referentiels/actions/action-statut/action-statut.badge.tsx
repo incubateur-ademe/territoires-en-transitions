@@ -1,15 +1,13 @@
 import { avancementToLabel } from '@/app/app/labels';
 import { StatutAvancementIncludingNonConcerne } from '@tet/domain/referentiels';
-import { Badge, BadgeVariant } from '@tet/ui';
+import { Badge, BadgeSize, BadgeVariant } from '@tet/ui';
 import classNames from 'classnames';
 
 type Props = {
   className?: string;
   statut: StatutAvancementIncludingNonConcerne;
-  // Indique si le statut est barré
   barre?: boolean;
-  // Rend une version plus petite du composant
-  size?: 'sm' | 'md';
+  size?: BadgeSize;
 };
 
 export const statusToState: Record<
@@ -28,7 +26,7 @@ const ActionStatutBadge = ({
   className,
   statut,
   barre,
-  size = 'sm',
+  size = 'xs',
 }: Props) => {
   return (
     statut && (

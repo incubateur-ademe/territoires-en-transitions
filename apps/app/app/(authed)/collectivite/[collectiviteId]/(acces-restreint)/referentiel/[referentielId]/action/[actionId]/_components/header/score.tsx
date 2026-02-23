@@ -10,7 +10,7 @@ type Props = {
 export const Score = ({ actionDefinition }: Props) => {
   return (
     <div className="flex gap-3 items-center flex-wrap text-grey-8 shrink-0">
-      <ScoreRatioBadge actionId={actionDefinition.id} size="sm" />
+      <ScoreRatioBadge actionId={actionDefinition.id} size="xs" />
 
       <ScoreProgressBar
         id={actionDefinition.id}

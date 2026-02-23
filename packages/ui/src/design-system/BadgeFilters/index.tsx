@@ -51,7 +51,7 @@ const Filter = ({
       className="rounded-md border border-primary-3 text-primary-7 gap-1 font-bold  px-3 bg-white"
       onClose={onDelete}
       title={children}
-      size="sm"
+      size="xs"
       uppercase={false}
       variant="standard"
     />
@@ -131,8 +131,9 @@ const ClearAllFiltersButton = ({
     <button onClick={onClick}>
       <Badge
         className="px-2 py-1 bg-none"
-        variant="default"
-        size="sm"
+        variant="grey"
+        type="outlined"
+        size="xs"
         icon="delete-bin-6-line"
         iconPosition="right"
         title={children}

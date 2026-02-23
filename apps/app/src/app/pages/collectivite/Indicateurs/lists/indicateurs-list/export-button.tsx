@@ -29,9 +29,10 @@ const ExportButton = ({ definitions, isFiltered }: Props) => {
             ? 'Exporter le résultat de mon filtre en Excel'
             : 'Exporter tous les indicateurs en Excel'
         }
-        variant="default"
+        variant="grey"
+        type="outlined"
         uppercase={false}
-        size="sm"
+        size="xs"
       />
     </button>
   );

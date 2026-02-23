@@ -82,7 +82,7 @@ export const WithFooter: Story = {
     children: content,
     footer: (
       <div className="flex justify-between items-center gap-4">
-        <Badge title="Un badge" size="sm" variant="success" />
+        <Badge title="Un badge" size="xs" variant="success" />
         <div className="flex gap-4">
           <Button variant="outlined" size="xs">
             Annuler
@@ -108,7 +108,7 @@ export const CompleteCard: Story = {
     ),
     footer: (
       <div className="flex justify-between items-center gap-4">
-        <Badge title="Un badge" size="sm" variant="success" />
+        <Badge title="Un badge" size="xs" variant="success" />
         <div className="flex gap-4">
           <Button variant="outlined" size="xs" onClick={() => undefined}>
             Annuler

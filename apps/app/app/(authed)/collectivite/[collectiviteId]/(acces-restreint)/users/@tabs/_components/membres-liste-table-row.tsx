@@ -157,7 +157,7 @@ const MembresListeTableRow = ({
               }}
             />
           ) : (
-            <BadgeAcces acces={niveau_acces} size="sm" />
+            <BadgeAcces acces={niveau_acces} size="xs" />
           )}
         </DEPRECATED_TCell>
 
@@ -172,7 +172,7 @@ const MembresListeTableRow = ({
               <Badge
                 icon={membre_id ? 'checkbox-circle-fill' : 'hourglass-line'}
                 variant={membre_id ? 'success' : 'warning'}
-                size="sm"
+                size="xs"
               />
             </div>
           </Tooltip>

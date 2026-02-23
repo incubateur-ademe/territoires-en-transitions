@@ -18,7 +18,7 @@ export const IdentifiantAction = (props: TIdentifiantActionProps) => {
       {isDisabledAction(action) ? (
         <Badge
           title="Non concerné"
-          size="sm"
+          size="xs"
           variant="grey"
           trim={false}
           className="whitespace-nowrap"

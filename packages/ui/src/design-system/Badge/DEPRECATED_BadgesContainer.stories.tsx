@@ -12,14 +12,14 @@ type Story = StoryObj<typeof DEPRECATED_BadgesContainer>;
 export const Default: Story = {
   args: {
     badges: ['Badge1', 'Badge2', 'Badge3'],
-    badgeProps: { variant: 'standard', size: 'sm', trim: false },
+    badgeProps: { variant: 'standard', size: 'xs', trim: false },
   },
 };
 
 export const WithClearButton: Story = {
   args: {
     badges: ['Badge1', 'Badge2', 'Badge3'],
-    badgeProps: { variant: 'standard', size: 'sm', trim: false },
+    badgeProps: { variant: 'standard', size: 'xs', trim: false },
     endButtonBadge: (
       <Badge
         title="Supprimer tous les filtres"
@@ -37,7 +37,7 @@ export const WithClearButtonAndMaxDisplayed: Story = {
     badges: ['Badge1', 'Badge2', 'Badge3', 'Badge4', 'Badge5'],
     badgeProps: {
       variant: 'standard',
-      size: 'sm',
+      size: 'xs',
       trim: false,
     },
     maxDisplayedBadge: { count: 2, label: 'filtre(s)' },

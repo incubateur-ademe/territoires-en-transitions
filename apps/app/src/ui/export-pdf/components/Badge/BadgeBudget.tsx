@@ -1,13 +1,14 @@
 import { Badge } from '@/app/ui/export-pdf/components';
 import { getFormattedFloat } from '@/app/utils/formatUtils';
 import { Text } from '@react-pdf/renderer';
+import { BadgeSize } from '@tet/ui';
 import classNames from 'classnames';
 import { tw } from '../../utils';
 
 type BadgeBudgetProps = {
   montant: number | undefined | null;
   unite?: 'HT' | 'ETP';
-  size?: 'sm' | 'md';
+  size?: BadgeSize;
   className?: string;
 };
 

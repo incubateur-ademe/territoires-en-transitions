@@ -140,7 +140,7 @@ export const SelectBase = (props: SelectProps) => {
     disabled = false,
     small = false,
     isBadgeSelect = false,
-    badgeSize = 'sm',
+    badgeSize = 'xs',
     valueToBadgeState,
     optionsAreCaseSensitive = false,
   } = props;
@@ -254,7 +254,7 @@ export const SelectBase = (props: SelectProps) => {
                   title={inputValue}
                   variant="default"
                   type="outlined"
-                  size="sm"
+                  size="xs"
                   className="my-auto mr-auto"
                   uppercase={optionsAreCaseSensitive === false}
                 />
