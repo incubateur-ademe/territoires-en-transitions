@@ -110,6 +110,7 @@ const InteractiveBadgeFilters = () => {
     >
       <>
         <BadgeFilters<TaskFilterKeys>
+          maxDisplayedCategoriesCount={2}
           filterCategories={filterCategories}
           onDeleteFilterValue={({ categoryKey, valueToDelete }) =>
             handleDeleteFilterValue(

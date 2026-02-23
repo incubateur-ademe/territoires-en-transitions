@@ -73,7 +73,7 @@ export const Default: Story = {
               <div className="capitalize text-sm text-grey-8 font-medium">
                 {size}
               </div>
-              <Badge {...args} size={size} />
+              <Badge {...args} size={size} icon="hourglass-line" />
             </div>
           ))}
         </div>
