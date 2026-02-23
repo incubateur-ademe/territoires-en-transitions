@@ -53,7 +53,7 @@ const Filter = ({
       title={children}
       size="xs"
       uppercase={false}
-      variant="standard"
+      variant="hight"
     />
   );
 };
