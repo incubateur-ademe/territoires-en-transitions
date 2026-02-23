@@ -20,7 +20,7 @@ export const BadgePriorite = ({
   return (
     <Badge
       title={priorite}
-      state={prioritesToState[priorite]}
+      variant={prioritesToState[priorite]}
       uppercase={uppercase}
       className={classNames(className, 'border-grey-3 bg-grey-1')}
       {...props}

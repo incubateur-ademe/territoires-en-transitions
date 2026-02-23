@@ -27,7 +27,7 @@ export const BadgeStatut = ({
         'bg-white border-grey-4 text-grey-6': statut === 'Sans statut',
       })}
       title={`${count ? count : ''} ${statut}`}
-      state={statusToVariant[statut]}
+      variant={statusToVariant[statut]}
       uppercase={uppercase}
       {...props}
     />

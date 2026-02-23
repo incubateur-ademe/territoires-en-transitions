@@ -140,7 +140,7 @@ const ActeursListe = ({
       {icon(colors.grey[8])}
       <Paragraph className="text-grey-8">{titre} :</Paragraph>
       {liste.map((l) => (
-        <Badge key={l} title={l} state="standard" light />
+        <Badge key={l} title={l} variant="standard" type="outlined" />
       ))}
       <Paragraph>{comment}</Paragraph>
     </Stack>

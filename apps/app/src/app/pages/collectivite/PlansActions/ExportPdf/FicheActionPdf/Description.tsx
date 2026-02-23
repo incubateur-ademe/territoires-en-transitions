@@ -68,9 +68,9 @@ const Description = ({ fiche }: { fiche: FicheWithRelations }) => {
             <Badge
               key={b.id}
               title={b.nom}
-              state={b.state}
+              variant={b.state}
               uppercase={b.uppercase}
-              light
+              type="outlined"
             />
           ))}
         </Stack>
