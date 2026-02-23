@@ -76,7 +76,7 @@ const TagsListeTableRow = ({
                 icon="hourglass-line"
                 iconPosition="left"
                 variant="warning"
-                size="sm"
+                size="xs"
               />
             )}
           </div>

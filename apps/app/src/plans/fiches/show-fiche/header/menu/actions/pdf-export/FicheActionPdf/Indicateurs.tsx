@@ -30,15 +30,21 @@ const IndicateurCard = ({ indicateur }: IndicateurCardProps) => {
         {estPerso && (
           <Badge
             title="Indicateur personnalisé"
-            state="success"
-            size="sm"
-            light
+            variant="success"
+            size="xs"
+            type="outlined"
             uppercase
           />
         )}
 
         {hasOpenData && (
-          <Badge title="Open Data" state="standard" size="sm" light uppercase />
+          <Badge
+            title="Open Data"
+            variant="standard"
+            size="xs"
+            type="outlined"
+            uppercase
+          />
         )}
       </Stack>
 
@@ -109,7 +115,7 @@ const Indicateurs = ({ fiche, indicateursListe }: IndicateursProps) => {
               Effets attendus :
             </Paragraph>
             {effetsAttendus.map((res) => (
-              <Badge key={res.nom} title={res.nom} state="standard" />
+              <Badge key={res.nom} title={res.nom} variant="standard" />
             ))}
           </Stack>
         )}

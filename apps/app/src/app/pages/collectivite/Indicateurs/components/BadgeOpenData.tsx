@@ -1,11 +1,7 @@
-import { Badge, BadgeProps, InlineLink, Tooltip } from '@tet/ui';
-
-type Props = {
-  size?: BadgeProps['size'];
-};
+import { Badge, InlineLink, Tooltip } from '@tet/ui';
 
 /** Badge permettant de savoir si l'indicateur détient des données en open data */
-const BadgeOpenData = ({ size }: Props) => {
+const BadgeOpenData = () => {
   return (
     <Tooltip
       className="max-w-xs"
@@ -29,7 +25,7 @@ const BadgeOpenData = ({ size }: Props) => {
           iconPosition="left"
           title="Open Data"
           variant="standard"
-          size={size}
+          size="xs"
           type="outlined"
         />
       </div>

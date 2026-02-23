@@ -1,5 +1,5 @@
 import { Text, TextProps } from '@react-pdf/renderer';
-import { BadgeVariant, badgeClassnames } from '@tet/ui';
+import { BadgeSize, BadgeType, BadgeVariant, badgeClassnames } from '@tet/ui';
 import { tw } from '../../utils';
 import { Stack } from '../Stack';
 
@@ -7,7 +7,7 @@ type BadgeProps = TextProps & {
   title: React.ReactNode;
   state?: BadgeVariant;
   light?: boolean;
-  size?: 'sm' | 'md';
+  size?: BadgeSize;
   uppercase?: boolean;
   className?: string;
 };
@@ -16,7 +16,7 @@ export const Badge = ({
   title,
   state = 'default',
   light = false,
-  size = 'md',
+  size = 'sm',
   uppercase = false,
   className,
   ...props

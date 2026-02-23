@@ -50,8 +50,8 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
     <Card wrap={false} gap={1} className="w-[49%] p-3">
       {/* Statut et niveau de priorité */}
       <Stack direction="row" gap={1.5}>
-        {!!priorite && <BadgePriorite priorite={priorite} size="sm" />}
-        {<BadgeStatut statut={statut ?? 'Sans statut'} size="sm" />}
+        {!!priorite && <BadgePriorite priorite={priorite} size="xs" />}
+        {<BadgeStatut statut={statut ?? 'Sans statut'} size="xs" />}
       </Stack>
 
       <Stack gap={1.5} className="mb-1">

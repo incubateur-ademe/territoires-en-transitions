@@ -195,8 +195,8 @@ export const IndicateurCardBase = ({
                 )}
               </div>
               <div className="flex items-center gap-2 flex-wrap">
-                {definition.estPerso && <BadgeIndicateurPerso size="sm" />}
-                {definition.hasOpenData && <BadgeOpenData size="sm" />}
+                {definition.estPerso && <BadgeIndicateurPerso />}
+                {definition.hasOpenData && <BadgeOpenData />}
               </div>
             </>
           )}

@@ -1,14 +1,12 @@
-import { Badge, BadgeProps } from '@tet/ui';
+import { Badge } from '@tet/ui';
 
-type Props = Pick<BadgeProps, 'size'>;
-
-const BadgeIndicateurPerso = ({ size }: Props) => {
+const BadgeIndicateurPerso = () => {
   return (
     <Badge
       title="Indicateur personnalisé"
       variant="success"
       type="outlined"
-      size={size}
+      size="xs"
       iconPosition="left"
       icon="user-line"
     />

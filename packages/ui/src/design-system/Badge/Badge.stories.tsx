@@ -29,7 +29,7 @@ const variants: BadgeVariant[] = [
 
 const types: BadgeType[] = ['outlined', 'solid', 'inverted'];
 
-const sizes: BadgeSize[] = ['sm', 'md'];
+const sizes: BadgeSize[] = ['xs', 'sm'];
 
 export const Default: Story = {
   render: (args) => (
@@ -124,7 +124,6 @@ export const Default: Story = {
                   }}
                   badgeRight={{
                     ...args,
-                    variant: 'success',
                     icon: 'checkbox-circle-fill',
                   }}
                 />

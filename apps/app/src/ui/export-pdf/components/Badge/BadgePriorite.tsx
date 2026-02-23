@@ -1,11 +1,12 @@
 import { prioritesToState } from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
 import { Priorite } from '@tet/domain/plans';
+import { BadgeSize } from '@tet/ui';
 import classNames from 'classnames';
 import { Badge } from './Badge';
 
 type BadgePrioriteProps = {
   priorite: Priorite;
-  size?: 'sm' | 'md';
+  size?: BadgeSize;
   uppercase?: boolean;
   className?: string;
 };

@@ -114,8 +114,8 @@ export const IndicateurInfos = ({
               (isPerso || hasOpenData) && (
                 <div className="w-[1px] h-5 bg-grey-5" />
               )}
-            {isPerso && <BadgeIndicateurPerso size="sm" />}
-            {hasOpenData && <BadgeOpenData size="sm" />}
+            {isPerso && <BadgeIndicateurPerso />}
+            {hasOpenData && <BadgeOpenData />}
           </>
         )}
       </div>

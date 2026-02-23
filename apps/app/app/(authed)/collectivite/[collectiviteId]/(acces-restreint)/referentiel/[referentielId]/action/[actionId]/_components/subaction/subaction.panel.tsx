@@ -65,7 +65,7 @@ const SubActionPanel = ({ subAction }: Props) => {
           {subAction.haveScoreIndicatif && (
             <ScoreIndicatifBadge actionId={subAction.id} />
           )}
-          <ScoreRatioBadge actionId={subAction.id} size="sm" />
+          <ScoreRatioBadge actionId={subAction.id} size="xs" />
         </div>
 
         {/* Infos score indicatif */}

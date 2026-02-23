@@ -55,7 +55,7 @@ const ProgressBar = ({
         <Badge
           title={`${roundTo(displayedValue, 1)} %`}
           variant="success"
-          size="sm"
+          size="xs"
           trim={false}
           className={classNames('shrink-0', {
             'order-first': valuePosition === 'left',

@@ -53,7 +53,7 @@ export const PlanCarte = ({ plan, isClickable }: Props) => {
         {plan.planType && (
           <Badge
             title={generateTitle(plan.planType)}
-            size="sm"
+            size="xs"
             variant="standard"
           />
         )}

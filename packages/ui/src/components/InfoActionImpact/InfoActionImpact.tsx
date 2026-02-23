@@ -66,7 +66,7 @@ export const InfoActionImpact = ({
             <Badge
               key={theme.id}
               title={theme.nom}
-              size="sm"
+              size="xs"
               variant="standard"
             />
           ))}

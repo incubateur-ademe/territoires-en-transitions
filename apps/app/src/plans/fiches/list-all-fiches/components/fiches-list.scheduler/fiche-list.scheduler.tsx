@@ -61,12 +61,12 @@ const MenuAide = () => (
           </p>
           <ul className="mb-0 text-sm [&>li]:flex [&>li]:items-center [&>li]:gap-1 [&>li]:pb-3">
             <li>
-              Zoomer ou dé-zoomer → <Badge title="ctrl" size="sm" /> +
-              <Badge title="scroll" size="sm" />
+              Zoomer ou dé-zoomer → <Badge title="ctrl" size="xs" /> +
+              <Badge title="scroll" size="xs" />
             </li>
             <li>
-              Se déplacer dans le temps → <Badge title="shift" size="sm" /> +
-              <Badge title="scroll" size="sm" />
+              Se déplacer dans le temps → <Badge title="shift" size="xs" /> +
+              <Badge title="scroll" size="xs" />
             </li>
           </ul>
         </div>

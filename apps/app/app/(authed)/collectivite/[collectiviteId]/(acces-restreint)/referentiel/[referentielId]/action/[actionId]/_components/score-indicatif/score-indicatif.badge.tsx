@@ -23,7 +23,7 @@ export const ScoreIndicatifBadge = ({ actionId }: Props) => {
         nbIndicateurs > 1 ? 'des indicateurs' : 'un indicateur'
       }`}
       variant="info"
-      size="sm"
+      size="xs"
       uppercase={false}
       iconPosition="left"
       icon="line-chart-line"

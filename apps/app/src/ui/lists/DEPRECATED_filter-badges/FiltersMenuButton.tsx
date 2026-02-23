@@ -32,7 +32,7 @@ export const FiltersMenuButton = ({
           className="absolute -top-2 -right-2 rounded-full border-2 border-white"
           title={activeFiltersCount}
           variant="info"
-          size="sm"
+          size="xs"
         />
       </VisibleWhen>
     </div>

@@ -2,7 +2,6 @@ import classNames from 'classnames';
 
 import { Icon, IconValue } from '../Icon';
 
-import { forwardRef } from 'react';
 import { cn } from '../../utils/cn';
 import { badgeClassnames } from './utils';
 
@@ -20,7 +19,7 @@ export type BadgeVariant =
 
 export type BadgeType = 'outlined' | 'solid' | 'inverted';
 
-export type BadgeSize = 'sm' | 'md';
+export type BadgeSize = 'xs' | 'sm';
 
 export type BadgeProps = {
   /** Id pour les tests e2e */
@@ -52,88 +51,81 @@ export type BadgeProps = {
 };
 
 /** Affiche un badge */
-export const Badge = forwardRef<HTMLDivElement, BadgeProps>(
-  (
-    {
-      title,
-      onClose,
-      variant = 'default',
-      type = 'solid',
-      size = 'md',
-      icon,
-      iconPosition = 'right',
-      iconClassname,
-      disabled,
-      className,
-      trim = true,
-      uppercase = true,
-      dataTest,
-    },
-    ref
-  ) => {
-    const styles = badgeClassnames[variant][type];
-    return (
-      <div
-        ref={ref}
-        data-test={`Badge-${dataTest}`}
-        className={cn(
-          styles.background,
-          styles.border,
-          'flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded-md',
-          {
-            'flex-row-reverse': iconPosition === 'left',
-            'px-1.5 py-0.5': size === 'sm',
-          },
-          className
-        )}
-      >
-        {(!!title || onClose) && (
-          <div className="flex items-center gap-1">
-            {!!title && (
-              <span
-                className={classNames(
-                  styles.text,
-                  'font-bold leading-4 text-left',
-                  {
-                    'line-clamp-1': trim,
-                    'text-xs': size === 'sm',
-                    'mt-0.5 text-sm': size === 'md',
-                    uppercase,
-                  }
-                )}
-              >
-                {title}
-              </span>
-            )}
+export const Badge = ({
+  title,
+  onClose,
+  variant = 'default',
+  type = 'solid',
+  size = 'sm',
+  icon,
+  iconPosition = 'right',
+  iconClassname,
+  disabled,
+  className,
+  trim = true,
+  uppercase = true,
+  dataTest,
+}: BadgeProps) => {
+  const styles = badgeClassnames[variant][type];
 
-            {onClose && !disabled && (
-              <div
-                className="flex rounded-full cursor-pointer"
-                onClick={(evt) => {
-                  evt.stopPropagation();
-                  onClose?.();
-                }}
-              >
-                <Icon
-                  icon="close-circle-line"
-                  size={size === 'sm' ? 'xs' : 'sm'}
-                  className={cn(styles.icon)}
-                />
-              </div>
-            )}
-          </div>
-        )}
+  return (
+    <div
+      data-test={`Badge-${dataTest}`}
+      className={cn(
+        styles.background,
+        styles.border,
+        'flex items-center gap-1 max-w-max h-fit px-3 py-1 border border-solid rounded-md',
+        {
+          'flex-row-reverse': iconPosition === 'left',
+          'px-1.5 py-0.5': size === 'xs',
+        },
+        className
+      )}
+    >
+      {(!!title || onClose) && (
+        <div className="flex items-center gap-1">
+          {!!title && (
+            <span
+              className={classNames(
+                styles.text,
+                'font-bold leading-4 text-left',
+                {
+                  'line-clamp-1': trim,
+                  'text-xs': size === 'xs',
+                  'mt-0.5 text-sm': size === 'sm',
+                  uppercase,
+                }
+              )}
+            >
+              {title}
+            </span>
+          )}
 
-        {icon && (
-          <Icon
-            icon={icon}
-            size={size === 'sm' ? 'xs' : 'sm'}
-            className={cn(styles.icon, iconClassname)}
-          />
-        )}
-      </div>
-    );
-  }
-);
+          {onClose && !disabled && (
+            <div
+              className="flex rounded-full cursor-pointer"
+              onClick={(evt) => {
+                evt.stopPropagation();
+                onClose?.();
+              }}
+            >
+              <Icon
+                icon="close-circle-line"
+                size={size}
+                className={cn(styles.icon)}
+              />
+            </div>
+          )}
+        </div>
+      )}
 
-Badge.displayName = 'Badge';
+      {icon && (
+        <Icon
+          icon={icon}
+          size={size === 'sm' ? 'xs' : 'sm'}
+          className={cn(styles.icon, iconClassname)}
+        />
+      )}
+    </div>
+  );
+};

@@ -21,7 +21,7 @@ const DEPRECATED_FilterBadges = ({
     <DEPRECATED_BadgesContainer
       badges={badges}
       className={className}
-      badgeProps={{ variant: 'standard', size: 'sm', trim: false }}
+      badgeProps={{ variant: 'standard', size: 'xs', trim: false }}
       maxDisplayedBadge={
         maxDisplayedFilterCount
           ? { count: maxDisplayedFilterCount, label: 'filtre(s)' }

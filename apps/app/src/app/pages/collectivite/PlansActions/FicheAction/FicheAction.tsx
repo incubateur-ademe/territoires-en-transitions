@@ -145,7 +145,7 @@ export const FicheAction = ({
   const [params] = useQueryStates({ planId: parseAsInteger });
   const planId = params.planId || undefined;
 
-  if (isImprovedUiEnabled) {
+  if (!isImprovedUiEnabled) {
     return (
       <FicheActionImprovedView fiche={initialFiche} planId={planId}>
         {children}
