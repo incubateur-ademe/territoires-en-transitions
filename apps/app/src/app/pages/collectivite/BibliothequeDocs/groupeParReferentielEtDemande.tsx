@@ -40,7 +40,7 @@ const groupeParDemande = (
 
 // groupe les preuves par référentiel et par demande
 type TPreuvesParReferentielEtDemande = Record<
-  string,
+  ReferentielId,
   Record<string, TPreuveAuditEtLabellisation[]>
 >;
 export const groupeParReferentielEtDemande = (

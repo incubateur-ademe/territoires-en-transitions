@@ -8,6 +8,7 @@ import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authoriza
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { CollectivitePreferences } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, sql } from 'drizzle-orm';
 
@@ -23,6 +24,7 @@ export type CollectiviteRolesRow = {
   collectiviteNom: string;
   collectiviteAccesRestreint: boolean;
   role: CollectiviteRole;
+  collectivitePreferences: CollectivitePreferences;
 };
 
 export type AuditRolesRow = {
@@ -31,6 +33,7 @@ export type AuditRolesRow = {
   collectiviteId: number;
   collectiviteNom: string;
   collectiviteAccesRestreint: boolean;
+  collectivitePreferences: CollectivitePreferences;
 };
 
 @Injectable()
@@ -76,6 +79,7 @@ export class GetUserRolesAndPermissionsRepository {
         collectiviteNom: collectiviteTable.nom,
         collectiviteAccesRestreint: sql<boolean>`coalesce(${collectiviteTable.accesRestreint}, false)`,
         role: utilisateurCollectiviteAccessTable.role,
+        collectivitePreferences: collectiviteTable.preferences,
       })
       .from(utilisateurCollectiviteAccessTable)
       .innerJoin(
@@ -107,6 +111,7 @@ export class GetUserRolesAndPermissionsRepository {
         collectiviteId: auditTable.collectiviteId,
         collectiviteNom: collectiviteTable.nom,
         collectiviteAccesRestreint: sql<boolean>`coalesce(${collectiviteTable.accesRestreint}, false)`,
+        collectivitePreferences: collectiviteTable.preferences,
         auditDateDebut: auditTable.dateDebut,
       })
       .from(auditeurTable)

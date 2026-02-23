@@ -337,7 +337,10 @@ export class SnapshotsService {
 
     let scoreSnapshot: ScoreSnapshot;
     try {
-      if (snapshotForceUpdate) {
+      if (
+        snapshotForceUpdate &&
+        createScoreSnapshot.jalon !== SnapshotJalonEnum.COURANT
+      ) {
         const existingSnapshot = await this.getSnapshotWithoutPayloads(
           createScoreSnapshot.collectiviteId,
           createScoreSnapshot.referentielId as ReferentielId,

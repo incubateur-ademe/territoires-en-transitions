@@ -3,6 +3,7 @@ import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import {
   CollectiviteRole,
@@ -11,7 +12,7 @@ import {
 } from '@tet/domain/users';
 import assert from 'assert';
 import { and, count, eq, sql } from 'drizzle-orm';
-import { UpdateUserRoleService } from '../authorizations/update-user-role/update-user-role.service';
+import { utilisateurSupportTable } from '../authorizations/roles/utilisateur-support.table';
 import { utilisateurCollectiviteAccessTable } from '../authorizations/utilisateur-collectivite-access.table';
 
 export type TestUserArgs = {
@@ -149,19 +150,29 @@ function randomVowel() {
 }
 
 export async function addUserRoleSupport({
-  app,
+  databaseService,
   userId,
   isSupport = true,
+  isSuperAdminRoleEnabled = false,
 }: {
-  app: INestApplication;
+  databaseService: DatabaseServiceInterface;
   userId: string;
   isSupport?: boolean;
+  isSuperAdminRoleEnabled?: boolean;
 }) {
-  const updateRoleService = app.get(UpdateUserRoleService);
-  await updateRoleService.setIsSupport(userId, isSupport);
+  await databaseService.db
+    .update(utilisateurSupportTable)
+    .set({
+      isSupport: isSupport || false,
+      isSuperAdminRoleEnabled: isSuperAdminRoleEnabled || false,
+    })
+    .where(eq(utilisateurSupportTable.userId, userId));
 
   const cleanup = async () => {
-    await updateRoleService.setIsSupport(userId, false);
+    await databaseService.db
+      .update(utilisateurSupportTable)
+      .set({ isSupport: false, isSuperAdminRoleEnabled: false })
+      .where(eq(utilisateurSupportTable.userId, userId));
   };
 
   return {
@@ -198,8 +209,9 @@ export async function addAndEnableUserSuperAdminMode({
   caller: ReturnType<TrpcRouter['createCaller']>;
   userId: string;
 }) {
+  const databaseService = app.get(DatabaseService);
   const { cleanup: cleanupAddUserRoleSupport } = await addUserRoleSupport({
-    app,
+    databaseService,
     userId,
   });
   const { cleanup: cleanupEnableUserSuperAdminMode } =

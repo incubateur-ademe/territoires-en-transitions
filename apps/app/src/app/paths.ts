@@ -96,6 +96,7 @@ export const collectiviteIndicateursListPath = `${collectiviteIndicateursBasePat
 export const collectiviteTrajectoirePath = `${collectivitePath}/trajectoire`;
 export const collectiviteAccueilPath = `${collectivitePath}/accueil`;
 export const collectiviteModifierPath = `${collectivitePath}/modifier`;
+export const collectiviteAffichageReferentielsPath = `${collectivitePath}/affichage-referentiels`;
 
 const referentielIdParam = 'referentielId';
 const referentielVueParam = 'referentielVue';
@@ -499,6 +500,16 @@ export const makeCollectiviteModifierUrl = ({
   collectiviteId: number;
 }) =>
   collectiviteModifierPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+
+export const makeCollectiviteAffichageReferentielsUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectiviteAffichageReferentielsPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );

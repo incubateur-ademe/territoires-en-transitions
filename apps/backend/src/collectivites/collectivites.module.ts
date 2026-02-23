@@ -1,6 +1,9 @@
 import { Logger, Module } from '@nestjs/common';
 import { CollectiviteCrudRouter } from '@tet/backend/collectivites/collectivite-crud/collectivite-crud.router';
 import CollectiviteCrudService from '@tet/backend/collectivites/collectivite-crud/collectivite-crud.service';
+import { CollectivitePreferencesRepository } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.repository';
+import { CollectivitePreferencesRouter } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.router';
+import { CollectivitePreferencesService } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.service';
 import { DocumentController } from '@tet/backend/collectivites/documents/document.controller';
 import { StoreDocumentRouter } from '@tet/backend/collectivites/documents/store-document/store-document.router';
 import { StoreDocumentService } from '@tet/backend/collectivites/documents/store-document/store-document.service';
@@ -83,6 +86,9 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     RecherchesRouter,
     ImportCollectiviteRelationsService,
     ImportCollectiviteRelationsRouter,
+    CollectivitePreferencesRepository,
+    CollectivitePreferencesService,
+    CollectivitePreferencesRouter,
     DiscussionRouter,
     DiscussionApplicationService,
     DiscussionDomainService,
@@ -124,6 +130,9 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     RecherchesRouter,
     ImportCollectiviteRelationsService,
     ImportCollectiviteRelationsRouter,
+    CollectivitePreferencesRepository,
+    CollectivitePreferencesRouter,
+    CollectivitePreferencesService,
     DiscussionRouter,
     DiscussionApplicationService,
     DiscussionDomainService,

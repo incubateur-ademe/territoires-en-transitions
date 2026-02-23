@@ -17,15 +17,8 @@ export const orderedActionType = [
   ActionTypeEnum.ACTION,
   ActionTypeEnum.SOUS_ACTION,
   ActionTypeEnum.TACHE,
+  ActionTypeEnum.EXEMPLE,
 ] as const;
 
 export const actionTypeSchema = z.enum(orderedActionType);
 export type ActionType = z.infer<typeof actionTypeSchema>;
-
-export const actionTypeIncludingExempleSchema = z.enum([
-  ...orderedActionType,
-  ActionTypeEnum.EXEMPLE,
-]);
-export type ActionTypeIncludingExemple = z.infer<
-  typeof actionTypeIncludingExempleSchema
->;

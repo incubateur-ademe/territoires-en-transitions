@@ -1,3 +1,4 @@
+import { referentielToName } from '@/app/app/labels';
 import { TOption } from '@/app/ui/shared/select/commons';
 
 export const populationCollectiviteOptions: TOption[] = [
@@ -33,10 +34,18 @@ export const niveauLabellisationCollectiviteOptions: TOption[] = [
   { value: '5', label: 'Cinquième étoile' },
 ];
 
-export const referentielCollectiviteOptions: TOption[] = [
-  { value: 'eci', label: 'Économie Circulaire' },
-  { value: 'cae', label: 'Climat Air Énergie' },
-];
+export const getReferentielCollectiviteOptions = (
+  referentielTeEnabled: boolean
+): TOption[] => {
+  const referentielOptions = [
+    { value: 'cae', label: referentielToName['cae'] },
+    { value: 'eci', label: referentielToName['eci'] },
+    { value: 'te', label: referentielToName['te'] },
+  ];
+  return referentielTeEnabled
+    ? referentielOptions
+    : referentielOptions.filter((option) => option.value !== 'te');
+};
 
 export const trierParOptions: TOption[] = [
   { value: 'score', label: '% Réalisé courant' },
@@ -54,6 +63,6 @@ export const typeCollectiviteOptions: TOption[] = [
   { value: 'PETR', label: 'Pôle d’équilibre territorial rural' },
   { value: 'POLEM', label: 'Pôle métropolitain' },
   { value: 'syndicat', label: 'Syndicat' },
-  { value: 'departement', label: 'Département'},
-  { value: 'region', label: 'Région'}
+  { value: 'departement', label: 'Département' },
+  { value: 'region', label: 'Région' },
 ];

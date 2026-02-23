@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { getTestApp, signInWith, YOLO_DODO } from '@tet/backend/test';
+import { defaultCollectivitePreferences } from '@tet/domain/collectivites';
 import {
   CollectiviteRole,
   permissionsByRole,
@@ -57,6 +58,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           collectiviteId: 1,
           collectiviteNom: 'Ambérieu-en-Bugey',
           collectiviteAccesRestreint: false,
+          collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.ADMIN,
           permissions: permissionsByRole[CollectiviteRole.ADMIN],
 
@@ -66,6 +68,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           collectiviteId: 2,
           collectiviteNom: 'Arbent',
           collectiviteAccesRestreint: false,
+          collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.EDITION,
           permissions: permissionsByRole[CollectiviteRole.EDITION],
 
@@ -75,6 +78,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           collectiviteId: 3895,
           collectiviteNom: 'CA Annonay Rhône Agglo',
           collectiviteAccesRestreint: false,
+          collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.LECTURE,
           permissions: permissionsByRole[CollectiviteRole.LECTURE],
 
@@ -84,6 +88,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           collectiviteId: 3812,
           collectiviteNom: 'CA du Bassin de Bourg-en-Bresse',
           collectiviteAccesRestreint: false,
+          collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.EDITION,
           permissions: permissionsByRole[CollectiviteRole.EDITION],
 
@@ -93,6 +98,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           collectiviteId: 3829,
           collectiviteNom: 'CA du Pays de Laon',
           collectiviteAccesRestreint: false,
+          collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.EDITION,
           permissions: permissionsByRole[CollectiviteRole.EDITION],
 
@@ -102,6 +108,7 @@ describe("Api pour lister les permissions de l'utilisateur", () => {
           collectiviteId: 4936,
           collectiviteNom: 'Eurométropole de Strasbourg',
           collectiviteAccesRestreint: false,
+          collectivitePreferences: defaultCollectivitePreferences,
           role: CollectiviteRole.EDITION,
           permissions: permissionsByRole[CollectiviteRole.EDITION],
 
