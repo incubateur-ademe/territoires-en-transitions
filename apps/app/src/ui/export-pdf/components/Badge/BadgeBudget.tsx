@@ -36,7 +36,7 @@ export const BadgeBudget = ({
           </Text>
         )
       }
-      state="standard"
+      variant="standard"
       className={classNames('bg-white', className)}
       {...props}
     />

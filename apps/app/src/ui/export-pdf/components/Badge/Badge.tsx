@@ -5,8 +5,8 @@ import { Stack } from '../Stack';
 
 type BadgeProps = TextProps & {
   title: React.ReactNode;
-  state?: BadgeVariant;
-  light?: boolean;
+  variant?: BadgeVariant;
+  type?: BadgeType;
   size?: BadgeSize;
   uppercase?: boolean;
   className?: string;
@@ -14,8 +14,8 @@ type BadgeProps = TextProps & {
 
 export const Badge = ({
   title,
-  state = 'default',
-  light = false,
+  variant = 'default',
+  type = 'solid',
   size = 'sm',
   uppercase = false,
   className,
@@ -23,9 +23,7 @@ export const Badge = ({
 }: BadgeProps) => {
   const style = className ? ` ${className}` : '';
 
-  const { background, border, text } = badgeClassnames[state];
-
-  const backgroundColor = light === true ? 'bg-white' : background;
+  const { background, border, text } = badgeClassnames[variant][type];
 
   let fontStyle =
     size === 'sm' ? 'text-[0.5rem] leading-5' : 'text-[0.6rem] leading-5';
@@ -36,7 +34,7 @@ export const Badge = ({
     <Stack wrap={false} direction="row" gap={0}>
       <Text
         style={tw(
-          `${backgroundColor} ${border} ${text} ${fontStyle} border rounded px-1.5 py-0.5 font-bold${style}`
+          `${background} ${border} ${text} ${fontStyle} border rounded px-1.5 py-0.5 font-bold ${style}`
         )}
         {...props}
       >
