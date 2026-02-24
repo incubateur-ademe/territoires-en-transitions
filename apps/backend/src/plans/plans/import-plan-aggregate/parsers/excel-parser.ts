@@ -4,8 +4,15 @@ import {
   Result,
   success,
 } from '@tet/backend/utils/result.type';
-import ExcelJS from 'exceljs';
+import ExcelJS, {
+  CellFormulaValue,
+  CellHyperlinkValue,
+  CellRichTextValue,
+  CellSharedFormulaValue,
+  CellValue,
+} from 'exceljs';
 import { ImportFicheInput } from '../schemas/import-fiche.input';
+import { extractTextFromRichText } from '../utils/rich-text.utils';
 
 type ColumnKeys =
   | keyof Omit<ImportFicheInput, 'axisPath'>
@@ -111,9 +118,57 @@ function validateColumns(
   return success(true);
 }
 
-function parseRow(rowData: unknown[]): ParsedRow {
+function extractValue(
+  cell: CellValue
+): string | boolean | number | Date | undefined | null {
+  if (cell === null || cell === undefined) {
+    return cell;
+  }
+  if (
+    typeof cell === 'string' ||
+    typeof cell === 'boolean' ||
+    typeof cell === 'number' ||
+    cell instanceof Date
+  ) {
+    return cell;
+  }
+  // RichText: flatten richText segments to a single string
+  if (
+    typeof cell === 'object' &&
+    'richText' in cell &&
+    Array.isArray((cell as CellRichTextValue).richText)
+  ) {
+    return extractTextFromRichText(cell) ?? '';
+  }
+  // Hyperlink: use display text
+  if (typeof cell === 'object' && 'hyperlink' in cell && 'text' in cell) {
+    return (cell as CellHyperlinkValue).text;
+  }
+  // Formula / shared formula: use result (skip error results)
+  if (
+    typeof cell === 'object' &&
+    ('formula' in cell || 'sharedFormula' in cell)
+  ) {
+    const withResult = cell as CellFormulaValue | CellSharedFormulaValue;
+    const result = withResult.result;
+    if (result !== undefined && result !== null) {
+      if (typeof result === 'object' && 'error' in result) {
+        return undefined;
+      }
+      return result as string | number | boolean | Date;
+    }
+    return undefined;
+  }
+  // CellErrorValue
+  if (typeof cell === 'object' && 'error' in cell) {
+    return undefined;
+  }
+  return undefined;
+}
+
+function parseRow(rowData: CellValue[]): ParsedRow {
   return OrderedColumns.reduce((acc, columnProperties, index) => {
-    acc[columnProperties.name] = rowData[index];
+    acc[columnProperties.name] = extractValue(rowData[index]);
     return acc;
   }, {} as ParsedRow);
 }
@@ -123,7 +178,7 @@ function parseWorksheet(worksheet: ExcelJS.Worksheet): PlanDataParsedFromExcel {
 
   worksheet.eachRow((row, rowNumber) => {
     if (rowNumber < FIRST_DATA_ROW) return; // Skip header rows
-    const [_ignoredFirstColumn, ...rowData] = row.values as unknown[];
+    const [_ignoredFirstColumn, ...rowData] = row.values as CellValue[];
     rows.push(parseRow(rowData));
   });
 
