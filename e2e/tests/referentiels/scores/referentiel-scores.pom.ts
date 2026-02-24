@@ -112,7 +112,7 @@ export class ReferentielScoresPom {
   }
 
   getSousActionLocationExpression(sousActionIdentifiant: string) {
-    return `[data-test="SousAction-${sousActionIdentifiant}"]`;
+    return `[data-test="SousActionHeader-${sousActionIdentifiant}"]`;
   }
 
   getTacheLocationExpression(tacheIdentifiant: string) {
@@ -143,7 +143,7 @@ export class ReferentielScoresPom {
 
   getSousActionExpandLocator(sousActionIdentifiant: string) {
     return this.page.locator(
-      `[data-test="SousAction-${sousActionIdentifiant}-expand"]`
+      `[data-test="SousActionHeader-${sousActionIdentifiant}-expand"]`
     );
   }
 
