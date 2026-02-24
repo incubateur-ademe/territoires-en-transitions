@@ -76,9 +76,7 @@ export const useSaveActionCommentaire = () => {
   return useMutation(
     trpc.referentiels.actions.updateCommentaire.mutationOptions({
       onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: ['action_commentaire', collectiviteId],
-        });
+        // Do not invalidate cache here, make the text blink
       },
     })
   );
