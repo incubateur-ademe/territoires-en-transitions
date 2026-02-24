@@ -204,7 +204,7 @@ test.describe('Update action statut', () => {
     await page.getByRole('button', { name: 'Valider' }).click();
     await referentielScoresPom.expectScoreRatio('cae', actionId, 3.6, 3.6);
     await referentielScoresPom.expectScoreRatio('cae', '1.1.1', 3.6, 12);
-    expect(
+    await expect(
       referentielScoresPom.getSousActionAvancementSelectLocator(actionId)
     ).toContainText('Fait');
   });
@@ -228,6 +228,20 @@ test.describe('Update action statut', () => {
     await referentielScoresPom.updateTacheAvancement('1.1.1.1.1', 'fait');
     await referentielScoresPom.expectScoreRatio('cae', '1.1.1.1', 0.3, 0.6);
     await referentielScoresPom.expectScoreRatio('cae', '1.1.1', 0.3, 12);
+
+    // Now if we update the sous-action to non renseigné, the tâches should be updated to non renseigné
+    await referentielScoresPom.updateSousActionAvancement(
+      '1.1.1.1',
+      'non_renseigne'
+    );
+    await referentielScoresPom.expectScoreRatio('cae', '1.1.1.1', 0, 0.6);
+    await referentielScoresPom.expectScoreRatio('cae', '1.1.1', 0, 12);
+    await expect(
+      referentielScoresPom.getSousActionAvancementSelectLocator('1.1.1.1')
+    ).toContainText('Non renseigné');
+    await expect(
+      referentielScoresPom.getTacheAvancementSelectLocator('1.1.1.1.1')
+    ).toContainText('Non renseigné');
   });
 
   test("Impossible de mettre à jour le statut d'une action en tant que lecteur", async ({

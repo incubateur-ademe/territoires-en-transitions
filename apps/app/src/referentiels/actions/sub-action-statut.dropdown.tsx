@@ -3,6 +3,7 @@ import {
   useActionStatut,
   useEditActionStatutIsDisabled,
   useSaveActionStatut,
+  useSaveActionStatuts,
 } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -51,6 +52,7 @@ export const SubActionStatutDropdown = ({
 
   // Fonction de sauvegarde du statut
   const { saveActionStatut } = useSaveActionStatut();
+  const { mutate: saveActionStatuts } = useSaveActionStatuts();
 
   // Arguments renvoyés lors de la sauvegarde d'un nouveau statut
   const args = {
@@ -59,7 +61,9 @@ export const SubActionStatutDropdown = ({
   };
 
   // Informations sur l'avancement de la sous-mesure / tâche
-  const { statut, filled } = useActionStatut(actionDefinition.id);
+  const { statut, filled, filledByChildren } = useActionStatut(
+    actionDefinition.id
+  );
   const { avancement, avancementDetaille, concerne } = statut || {};
 
   /**
@@ -161,13 +165,41 @@ export const SubActionStatutDropdown = ({
       setLocalAvancementDetaille(avancement_detaille);
 
       // Sauvegarde du nouveau statut
-      saveActionStatut({
-        ...argsToSave,
-        avancementDetaille:
-          actionDefinition.type === ActionTypeEnum.SOUS_ACTION
-            ? localAvancementDetaille
-            : avancement_detaille,
-      });
+      if (
+        argsToSave.avancement !== 'non_renseigne' ||
+        !filledByChildren?.length
+      ) {
+        saveActionStatut({
+          ...argsToSave,
+          avancementDetaille:
+            actionDefinition.type === ActionTypeEnum.SOUS_ACTION
+              ? localAvancementDetaille
+              : avancement_detaille,
+        });
+      } else {
+        // Save the statut of the children to non_renseigne
+        const childActionStatuts: ActionStatutCreate[] = filledByChildren.map(
+          (childActionId) => ({
+            collectiviteId: collectivite.collectiviteId,
+            actionId: childActionId,
+            avancement: 'non_renseigne',
+            avancementDetaille: null,
+            concerne: true,
+          })
+        );
+        saveActionStatuts({
+          actionStatuts: [
+            {
+              collectiviteId: collectivite.collectiviteId,
+              actionId: actionDefinition.id,
+              avancement: 'non_renseigne',
+              avancementDetaille: null,
+              concerne: true,
+            },
+            ...childActionStatuts,
+          ],
+        });
+      }
     }
   };
 
@@ -177,15 +209,7 @@ export const SubActionStatutDropdown = ({
           quand au moins une des tâches a un statut */}
       <div onClick={(evt) => evt.stopPropagation()} className="flex">
         <SelectActionStatut
-          items={
-            actionDefinition.type === ActionTypeEnum.SOUS_ACTION &&
-            localAvancement !== 'non_renseigne' &&
-            filled
-              ? statutAvancementIncludingNonConcerneEnumSchema.options.filter(
-                  (item) => item !== 'non_renseigne'
-                )
-              : statutAvancementIncludingNonConcerneEnumSchema.options
-          }
+          items={statutAvancementIncludingNonConcerneEnumSchema.options}
           disabled={disabled}
           value={localAvancement}
           onChange={handleChange}

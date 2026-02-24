@@ -362,7 +362,11 @@ export function isSousMesure(
 export function getActionStatutFromActionScore(
   collectiviteId: number,
   actionScore: TreeOfActionsIncludingScore
-): { actionStatut: ActionStatut; filled: boolean } | null {
+): {
+  actionStatut: ActionStatut;
+  filled: boolean;
+  filledByChildren: string[];
+} | null {
   if (
     actionScore.actionType !== ActionTypeEnum.SOUS_ACTION &&
     actionScore.actionType !== ActionTypeEnum.TACHE
@@ -381,13 +385,18 @@ export function getActionStatutFromActionScore(
     modifiedBy: actionScore.score.statutModifiedBy || null,
     modifiedAt: actionScore.score.statutModifiedAt || '',
   };
+
+  const filledByChildren = actionScore.actionsEnfant
+    .filter(
+      (action) =>
+        action.score.avancement && action.score.avancement !== 'non_renseigne'
+    )
+    .map((action) => action.actionId);
+  const hasAtLeastOneChildWithStatutRenseigne = filledByChildren.length > 0;
   const filled =
     (actionScore?.score.avancement &&
       actionScore?.score.avancement !== 'non_renseigne') ||
-    actionScore?.actionsEnfant.some(
-      (action) =>
-        action.score.avancement && action.score.avancement !== 'non_renseigne'
-    ) ||
+    hasAtLeastOneChildWithStatutRenseigne ||
     false;
 
   if (avancement === 'detaille') {
@@ -410,5 +419,5 @@ export function getActionStatutFromActionScore(
     ];
   }
 
-  return { actionStatut, filled: filled };
+  return { actionStatut, filled, filledByChildren };
 }

@@ -26,6 +26,7 @@ export const useActionStatut = (actionId: string) => {
   const [actionStatutFromScore, setActionStatutFromScore] = useState<{
     actionStatut: ActionStatut;
     filled: boolean;
+    filledByChildren: string[];
   } | null>(null);
 
   const { data: snapshot, isFetching: isLoadingSnapshot } = useSnapshot({
@@ -52,6 +53,7 @@ export const useActionStatut = (actionId: string) => {
   return {
     statut: actionStatutFromScore?.actionStatut,
     filled: actionStatutFromScore?.filled,
+    filledByChildren: actionStatutFromScore?.filledByChildren,
     isLoading: actionStatutFromScore === null || isLoadingSnapshot,
   };
 };
@@ -63,7 +65,6 @@ export const useSaveActionStatut = () => {
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
   const queryClient = useQueryClient();
-
   const trpc = useTRPC();
 
   const { isPending, mutate: saveActionStatut } = useMutation(
@@ -88,6 +89,31 @@ export const useSaveActionStatut = () => {
     isLoading: isPending,
     saveActionStatut,
   };
+};
+
+export const useSaveActionStatuts = () => {
+  const collectiviteId = useCollectiviteId();
+  const referentielId = useReferentielId();
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
+
+  return useMutation(
+    trpc.referentiels.actions.updateStatuts.mutationOptions({
+      onSuccess: () => {
+        // Invalidate cache for all action statuts
+        queryClient.invalidateQueries({
+          queryKey: ['action_statut', collectiviteId],
+        });
+
+        queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.snapshots.getCurrent.queryKey({
+            collectiviteId,
+            referentielId,
+          }),
+        });
+      },
+    })
+  );
 };
 
 /**

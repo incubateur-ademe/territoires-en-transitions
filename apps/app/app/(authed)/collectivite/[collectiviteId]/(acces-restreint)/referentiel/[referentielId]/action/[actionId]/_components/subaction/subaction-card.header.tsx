@@ -28,14 +28,19 @@ export const SubactionCardHeader = ({
   const isSubAction = subAction.type === ActionTypeEnum.SOUS_ACTION;
 
   return (
-    <div className="flex flex-col gap-2">
+    <div
+      className="flex flex-col gap-2"
+      data-test={`SousActionHeader-${subAction.identifiant}`}
+    >
       {(!hideStatus || subAction.haveScoreIndicatif) && (
         <div className="flex flex-wrap gap-2">
           {/* Statut */}
           {!hideStatus && (
             <div className="mt-auto w-full flex max-sm:flex-col gap-3 sm:items-center justify-start">
               {isSubAction && (
-                <div data-test={`SousAction-${subAction.identifiant}-expand`}>
+                <div
+                  data-test={`SousActionHeader-${subAction.identifiant}-expand`}
+                >
                   <Icon
                     icon={
                       isExpanded ? 'arrow-down-s-line' : 'arrow-right-s-line'
