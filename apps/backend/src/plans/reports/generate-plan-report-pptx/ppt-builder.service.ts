@@ -5,7 +5,11 @@ import { IndicateurChartService } from '@tet/backend/indicateurs/charts/indicate
 import { EchartsService } from '@tet/backend/utils/echarts/echarts.service';
 import { getHorizontalStackedBarChartOption } from '@tet/backend/utils/echarts/get-horizontal-stackedbar-chart-option.utils';
 import { getPieChartOption } from '@tet/backend/utils/echarts/get-pie-chart-option.utils';
-import { Result } from '@tet/backend/utils/result.type';
+import {
+  failure,
+  Result,
+  success,
+} from '@tet/backend/utils/result.type';
 import {
   CollectiviteAvecType,
   PersonnalisationReponsesPayload,
@@ -29,8 +33,8 @@ import {
 import { EChartsOption } from 'echarts/types/dist/echarts';
 import { chunk, isNil } from 'es-toolkit';
 import { writeFileSync } from 'fs';
-import { imageSizeFromFile } from 'image-size/fromFile';
 import { DateTime } from 'luxon';
+import sharp from 'sharp';
 import * as path from 'path';
 import {
   Automizer,
@@ -204,6 +208,7 @@ export class PptBuilderService {
       | typeof GenerateReportErrorEnum.PLAN_NOT_FOUND
       | typeof GenerateReportErrorEnum.DATABASE_ERROR
       | typeof GenerateReportErrorEnum.PPT_BUILDER_ERROR
+      | typeof GenerateReportErrorEnum.INVALID_COLLECTIVITE_LOGO
     >
   > {
     const { mediaDir, outputDir, reportName, templateConfig, request } = args;
@@ -246,11 +251,19 @@ export class PptBuilderService {
         .loadRoot(templateConfig.templatePath)
         .load(templateConfig.templatePath, templateConfig.key);
 
-      const logo = await this.loadCollectiviteLogo(
+      const logoResult = await this.loadCollectiviteLogo(
         mediaDir,
         presentation,
         request.logoFile
       );
+      if (!logoResult.success) {
+        return {
+          success: false,
+          error: logoResult.error,
+          cause: logoResult.cause,
+        };
+      }
+      const logo = logoResult.data;
 
       const slideGenerationArgs: Omit<SlideGenerationArgs, 'slideType'> = {
         presentation,
@@ -710,9 +723,14 @@ export class PptBuilderService {
     mediaDir: string,
     presentation: Automizer,
     logoFileBase64?: string
-  ) {
+  ): Promise<
+    Result<
+      { dimensions: { width: number; height: number }; fileName: string } | null,
+      typeof GenerateReportErrorEnum.INVALID_COLLECTIVITE_LOGO
+    >
+  > {
     if (!logoFileBase64) {
-      return null;
+      return success(null);
     }
 
     let mimeType = 'image/png'; // default
@@ -738,9 +756,33 @@ export class PptBuilderService {
 
     presentation.loadMedia(logoFileName);
 
-    const dimensions = await imageSizeFromFile(logoFilePath);
+    let metadata: sharp.Metadata;
+    try {
+      metadata = await sharp(logoFilePath).metadata();
+    } catch (err) {
+      return failure(
+        GenerateReportErrorEnum.INVALID_COLLECTIVITE_LOGO,
+        new Error(
+          `Logo collectivité invalide ou corrompu (fichier: ${logoFileName}). ` +
+            `Détail: ${getErrorMessage(err)}`
+        )
+      );
+    }
+    const width = metadata.width;
+    const height = metadata.height;
+    if (width == null || height == null) {
+      return failure(
+        GenerateReportErrorEnum.INVALID_COLLECTIVITE_LOGO,
+        new Error(
+          `Impossible de lire les dimensions du logo collectivité (fichier: ${logoFileName}). ` +
+            `Largeur: ${width ?? 'indéfinie'}, hauteur: ${height ?? 'indéfinie'}. ` +
+            'Vérifiez que le fichier est une image valide (PNG, JPEG, etc.).'
+        )
+      );
+    }
+    const dimensions = { width, height };
     this.logger.log(`Logo dimensions: ${JSON.stringify(dimensions)}`);
-    return { dimensions, fileName: logoFileName };
+    return success({ dimensions, fileName: logoFileName });
   }
 
   private addSlide(args: SlideGenerationArgs) {

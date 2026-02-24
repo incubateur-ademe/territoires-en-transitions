@@ -10,6 +10,7 @@ const GenerateReportSpecificErrors = [
   'UPDATE_REPORT_GENERATION_ERROR',
   'PLAN_NOT_FOUND',
   'PPT_BUILDER_ERROR',
+  'INVALID_COLLECTIVITE_LOGO',
   'CREATE_NOTIFICATION_ERROR',
   StoreDocumentErrorEnum.UPLOAD_STORAGE_ERROR,
 ] as const;
@@ -48,6 +49,11 @@ export const generateReportErrorConfig: TrpcErrorHandlerConfig<GenerateReportSpe
         code: 'INTERNAL_SERVER_ERROR',
         message:
           'Une erreur est survenue lors de la construction du rapport PowerPoint',
+      },
+      INVALID_COLLECTIVITE_LOGO: {
+        code: 'BAD_REQUEST',
+        message:
+          'Le logo de la collectivité est invalide ou corrompu. Vérifiez que le fichier est une image valide (PNG, JPEG, etc.).',
       },
     },
   };
