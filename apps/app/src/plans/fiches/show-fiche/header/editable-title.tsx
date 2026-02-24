@@ -25,7 +25,9 @@ export const EditableTitle = ({
     <InlineEditWrapper
       floatingMatchReferenceHeight={false}
       disabled={isReadonly}
-      onClose={() => setTitle(title)}
+      onClose={() => {
+        onUpdate(title);
+      }}
       renderOnEdit={({ openState }) => (
         <TableCellTextarea
           dataTest={dataTest}
@@ -33,13 +35,9 @@ export const EditableTitle = ({
           autoFocus
           onChange={(evt) => setTitle(evt.target.value)}
           placeholder="Saisir un titre"
-          onBlur={() => {
-            onUpdate(title);
-            openState.setIsOpen(false);
-          }}
+          onBlur={() => openState.setIsOpen(false)}
           onKeyDown={(evt) => {
             if (evt.key === 'Enter') {
-              onUpdate(title);
               openState.setIsOpen(false);
             }
           }}
