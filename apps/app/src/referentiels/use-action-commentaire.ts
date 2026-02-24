@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { DBClient, useSupabase, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
@@ -69,8 +69,6 @@ const read = async (
 };
 
 export const useSaveActionCommentaire = () => {
-  const collectiviteId = useCollectiviteId();
-  const queryClient = useQueryClient();
   const trpc = useTRPC();
 
   return useMutation(
