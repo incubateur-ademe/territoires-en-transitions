@@ -9,7 +9,7 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { ReportGenerationStatusEnum } from '@tet/domain/plans';
 import { getErrorMessage } from '@tet/domain/utils';
 import { useQueryState } from 'nuqs';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 const POLLING_INTERVAL = 2000;
 
@@ -18,6 +18,7 @@ export const useIsPendingReport = () => {
   const apiClient = useApiClient();
   const { setToast, renderToast } = useBaseToast();
   const collectiviteId = useCollectiviteId();
+  const lastDownloadedReportIdRef = useRef<string | null>(null);
   const [pendingReportId, setPendingReportId] =
     useQueryState('downloadReportId');
 
@@ -70,6 +71,11 @@ export const useIsPendingReport = () => {
       reportStatus.status === ReportGenerationStatusEnum.COMPLETED &&
       reportStatus.fileId;
     if (fileCanBeDownloaded) {
+      if (lastDownloadedReportIdRef.current === reportStatus.id) {
+        // Do not download the same report twice
+        return;
+      }
+      lastDownloadedReportIdRef.current = reportStatus.id;
       setToast('info', 'Téléchargement du rapport en cours...');
       downloadReport(
         collectiviteId,
