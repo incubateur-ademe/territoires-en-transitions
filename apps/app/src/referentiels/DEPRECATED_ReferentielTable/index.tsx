@@ -15,6 +15,9 @@ type Table = <T extends Record<string, unknown>>(props: {
   dataTest?: string;
 }) => JSX.Element;
 
+/**
+ * @deprecated
+ */
 export const ReferentielTable: Table = (props) => {
   const {
     className,
