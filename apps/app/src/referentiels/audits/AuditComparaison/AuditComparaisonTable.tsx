@@ -9,8 +9,8 @@ import {
   useTable,
 } from 'react-table';
 import { CellPercent, CellPoints } from '../../AidePriorisation/Cells';
-import { ReferentielTable } from '../../ReferentielTable';
-import { CellAction } from '../../ReferentielTable/CellAction';
+import { ReferentielTable } from '../../DEPRECATED_ReferentielTable';
+import { CellAction } from '../../DEPRECATED_ReferentielTable/CellAction';
 import './styles.css';
 import {
   TComparaisonScoreAudit,

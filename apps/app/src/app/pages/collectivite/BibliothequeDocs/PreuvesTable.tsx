@@ -11,8 +11,8 @@ import {
   useFlexLayout,
   useTable,
 } from 'react-table';
-import { CellAction } from '../../../../referentiels/ReferentielTable/CellAction';
-import '../../../../referentiels/ReferentielTable/styles.css';
+import { CellAction } from '../../../../referentiels/DEPRECATED_ReferentielTable/CellAction';
+import '../../../../referentiels/DEPRECATED_ReferentielTable/styles.css';
 import { TableData } from './useTableData';
 
 export type TPreuvesTableProps = {
