@@ -7,8 +7,8 @@ import {
   useFlexLayout,
   useTable,
 } from 'react-table';
-import { ReferentielTable } from '../ReferentielTable';
-import { CellAction } from '../ReferentielTable/CellAction';
+import { ReferentielTable } from '../DEPRECATED_ReferentielTable';
+import { CellAction } from '../DEPRECATED_ReferentielTable/CellAction';
 import { CellStatut } from './CellStatut';
 import { FiltreStatut } from './FiltreStatut';
 import { TacheDetail } from './queries';

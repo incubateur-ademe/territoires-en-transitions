@@ -1,4 +1,4 @@
-import { useTable } from '@/app/referentiels/ReferentielTable/useReferentiel';
+import { useTable } from '@/app/referentiels/DEPRECATED_ReferentielTable/useReferentiel';
 import { phaseToLabel } from '@/app/referentiels/utils';
 import { reduceActions } from '@tet/domain/referentiels';
 import { ActionDetailed, useAction } from '../use-snapshot';
