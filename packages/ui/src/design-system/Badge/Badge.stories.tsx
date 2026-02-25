@@ -113,7 +113,7 @@ export const Default: Story = {
               </div>
               {types.map((type) => (
                 <BadgeDouble
-                  key={variant}
+                  key={type}
                   variant={variant}
                   size="sm"
                   type={type}
