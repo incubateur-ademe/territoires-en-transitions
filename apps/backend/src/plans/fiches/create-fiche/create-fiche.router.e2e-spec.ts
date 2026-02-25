@@ -1,7 +1,7 @@
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUser,
-  getAuthUserFromDcp,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   YOLO_DODO,
@@ -32,7 +32,9 @@ describe('Create Fiche Action', () => {
     });
 
     collectivite = testCollectiviteAndUserResult.collectivite;
-    editorUser = getAuthUserFromDcp(testCollectiviteAndUserResult.user);
+    editorUser = getAuthUserFromUserCredentials(
+      testCollectiviteAndUserResult.user
+    );
 
     return async () => {
       await testCollectiviteAndUserResult.cleanup();
@@ -97,7 +99,7 @@ describe('Create Fiche Action', () => {
         await cleanup();
       });
 
-      const lectureUser = getAuthUserFromDcp(user);
+      const lectureUser = getAuthUserFromUserCredentials(user);
       const caller = router.createCaller({ user: lectureUser });
 
       await expect(
@@ -122,7 +124,7 @@ describe('Create Fiche Action', () => {
         await cleanup();
       });
 
-      const limitedEditionUser = getAuthUserFromDcp(user);
+      const limitedEditionUser = getAuthUserFromUserCredentials(user);
       const caller = router.createCaller({ user: limitedEditionUser });
 
       await expect(

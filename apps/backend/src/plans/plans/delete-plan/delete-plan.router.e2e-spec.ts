@@ -1,7 +1,7 @@
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUser,
-  getAuthUserFromDcp,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   YOLO_DODO,
@@ -36,7 +36,9 @@ describe('Supprimer un plan', () => {
     });
 
     collectivite = testCollectiviteAndUserResult.collectivite;
-    editorUser = getAuthUserFromDcp(testCollectiviteAndUserResult.user);
+    editorUser = getAuthUserFromUserCredentials(
+      testCollectiviteAndUserResult.user
+    );
 
     return async () => {
       await testCollectiviteAndUserResult.cleanup();
@@ -319,7 +321,7 @@ describe('Supprimer un plan', () => {
         await cleanup();
       });
 
-      const lectureUser = getAuthUserFromDcp(user);
+      const lectureUser = getAuthUserFromUserCredentials(user);
       const lectureCaller = router.createCaller({ user: lectureUser });
 
       await expect(
@@ -357,7 +359,7 @@ describe('Supprimer un plan', () => {
         await cleanup();
       });
 
-      const limitedEditionUser = getAuthUserFromDcp(user);
+      const limitedEditionUser = getAuthUserFromUserCredentials(user);
       const limitedEditionCaller = router.createCaller({
         user: limitedEditionUser,
       });

@@ -1,7 +1,7 @@
 import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
 import {
   getAuthUser,
-  getAuthUserFromDcp,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
@@ -533,7 +533,7 @@ describe('BulkEditRouter', () => {
     onTestFinished(async () => {
       await cleanup();
     });
-    const limitedEditionUser = getAuthUserFromDcp(user);
+    const limitedEditionUser = getAuthUserFromUserCredentials(user);
     const limitedEditionCaller = router.createCaller({
       user: limitedEditionUser,
     });

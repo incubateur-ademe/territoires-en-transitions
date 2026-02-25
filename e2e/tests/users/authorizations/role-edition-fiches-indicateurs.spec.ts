@@ -28,7 +28,6 @@ test.describe('Role edition fiches indicateurs', () => {
 
     const limitedEditionUser = await collectivite.addUser({
       accessLevel: 'edition_fiches_indicateurs',
-      cguAcceptees: true,
     });
 
     const bulkEditRequest = {

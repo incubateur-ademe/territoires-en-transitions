@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import {
-  getAuthUserFromDcp,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
@@ -30,7 +30,7 @@ describe('UserPreferencesRouter', () => {
     });
     onTestFinished(() => cleanup());
 
-    const authUser = getAuthUserFromDcp(user);
+    const authUser = getAuthUserFromUserCredentials(user);
     const caller = userPreferencesRouter.router.createCaller({
       user: authUser,
     });
@@ -70,7 +70,7 @@ describe('UserPreferencesRouter', () => {
     });
     onTestFinished(() => cleanup());
 
-    const authUser = getAuthUserFromDcp(user);
+    const authUser = getAuthUserFromUserCredentials(user);
     const caller = userPreferencesRouter.router.createCaller({
       user: authUser,
     });
@@ -99,7 +99,7 @@ describe('UserPreferencesRouter', () => {
     });
     onTestFinished(() => cleanup());
 
-    const authUser = getAuthUserFromDcp(user);
+    const authUser = getAuthUserFromUserCredentials(user);
     const caller = userPreferencesRouter.router.createCaller({
       user: authUser,
     });
@@ -117,7 +117,7 @@ describe('UserPreferencesRouter', () => {
     });
     onTestFinished(() => cleanup());
 
-    const authUser = getAuthUserFromDcp(user);
+    const authUser = getAuthUserFromUserCredentials(user);
     const caller = userPreferencesRouter.router.createCaller({
       user: authUser,
     });

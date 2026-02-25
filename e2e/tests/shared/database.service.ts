@@ -15,4 +15,3 @@ class DatabaseService implements DatabaseServiceInterface {
 }
 
 export const databaseService = new DatabaseService();
-

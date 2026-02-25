@@ -17,7 +17,6 @@ import { utilisateurCollectiviteAccessTable } from '../authorizations/utilisateu
 export type TestUserArgs = {
   collectiviteId?: number | null;
   accessLevel?: CollectiviteRole;
-  cguAcceptees?: boolean;
 };
 
 const TEST_USER_PASSWORD = 'yolododo';
@@ -25,10 +24,9 @@ const TEST_USER_PASSWORD = 'yolododo';
 // ajoute un utilisateur de test
 export async function addTestUser(
   { db }: DatabaseServiceInterface,
-  { collectiviteId, accessLevel, cguAcceptees }: TestUserArgs = {
+  { collectiviteId, accessLevel }: TestUserArgs = {
     collectiviteId: null,
     accessLevel: CollectiviteRole.EDITION,
-    cguAcceptees: true,
   }
 ): Promise<{
   cleanup: () => Promise<void>;
@@ -44,8 +42,8 @@ export async function addTestUser(
   assert(userCount > 0, 'User count is valid');
   const email = `${prenom}_${userCount}@${nom}.fr`.toLowerCase();
 
-  // insère l'utilisateur
-  const ret = await db
+  // insère l'utilisateur (le trigger sync_dcp crée la ligne dcp)
+  await db
     .insert(authUsersTable)
     .values([
       {
@@ -65,7 +63,7 @@ export async function addTestUser(
           provider: 'email',
           providers: ['email'],
         },
-        rawUserMetaData: {},
+        rawUserMetaData: { nom, prenom },
         createdAt: sql`now()`,
         updatedAt: sql`now()`,
       },
@@ -73,20 +71,11 @@ export async function addTestUser(
     .returning()
     .then(([u]) => u);
 
-  // insère les dcp et les droits
-  const dcpUser = await db
-    .insert(dcpTable)
-    .values([
-      {
-        id: userId,
-        nom,
-        prenom,
-        email,
-        cguAccepteesLe: cguAcceptees ? sql`now()` : undefined,
-      },
-    ])
-    .returning()
-    .then(([dcp]) => dcp);
+  await db
+    .update(dcpTable)
+    .set({ cguAccepteesLe: sql`now()` })
+    .where(eq(dcpTable.id, userId));
+
   await db
     .update(utilisateurVerifieTable)
     .set({ verifie: true })
@@ -104,7 +93,16 @@ export async function addTestUser(
     ]);
   }
 
-  console.log(`Added user ${ret.email} with id ${ret.id}`);
+  const dcpUser = await db
+    .select()
+    .from(dcpTable)
+    .where(eq(dcpTable.id, userId))
+    .then(([u]) => u);
+
+  assert(
+    dcpUser,
+    `sync_dcp trigger failed to create dcp record for user ${userId}. Check database permissions and trigger configuration.`
+  );
 
   // cleanup
   const cleanup = async () => {

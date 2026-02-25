@@ -4,7 +4,11 @@ import {
   deleteAllDocuments,
   uploadCreateTestDocument,
 } from '@tet/backend/collectivites/documents/documents.test-fixture';
-import { getAuthUserFromDcp, signInWith, YOLO_DODO } from '@tet/backend/test';
+import {
+  getAuthUserFromUserCredentials,
+  signInWith,
+  YOLO_DODO,
+} from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -46,8 +50,12 @@ describe('UpdateDocumentRouter', () => {
     );
 
     collectivite = testCollectiviteAndUsersResult.collectivite;
-    editorUser = getAuthUserFromDcp(testCollectiviteAndUsersResult.users[0]);
-    readerUser = getAuthUserFromDcp(testCollectiviteAndUsersResult.users[1]);
+    editorUser = getAuthUserFromUserCredentials(
+      testCollectiviteAndUsersResult.users[0]
+    );
+    readerUser = getAuthUserFromUserCredentials(
+      testCollectiviteAndUsersResult.users[1]
+    );
     cleanup = testCollectiviteAndUsersResult.cleanup;
 
     const editorSignIn = await signInWith({

@@ -1,7 +1,7 @@
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUser,
-  getAuthUserFromDcp,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   YOLO_DODO,
@@ -37,7 +37,9 @@ describe('Lister les axes', () => {
     });
 
     collectivite = testCollectiviteAndUserResult.collectivite;
-    editorUser = getAuthUserFromDcp(testCollectiviteAndUserResult.user);
+    editorUser = getAuthUserFromUserCredentials(
+      testCollectiviteAndUserResult.user
+    );
 
     // Créer un plan pour les tests
     const caller = router.createCaller({ user: editorUser });
@@ -475,7 +477,7 @@ describe('Lister les axes', () => {
         await cleanup();
       });
 
-      const lectureUser = getAuthUserFromDcp(user);
+      const lectureUser = getAuthUserFromUserCredentials(user);
       const caller = router.createCaller({ user: lectureUser });
 
       // Créer un axe avec l'utilisateur admin
@@ -513,7 +515,7 @@ describe('Lister les axes', () => {
         await cleanup();
       });
 
-      const limitedEditionUser = getAuthUserFromDcp(user);
+      const limitedEditionUser = getAuthUserFromUserCredentials(user);
       const caller = router.createCaller({ user: limitedEditionUser });
 
       // Créer un axe avec l'utilisateur admin
@@ -847,7 +849,7 @@ describe('Lister les axes', () => {
         await cleanup();
       });
 
-      const lectureUser = getAuthUserFromDcp(user);
+      const lectureUser = getAuthUserFromUserCredentials(user);
       const caller = router.createCaller({ user: lectureUser });
 
       // Créer un axe avec l'utilisateur admin
@@ -885,7 +887,7 @@ describe('Lister les axes', () => {
         await cleanup();
       });
 
-      const limitedEditionUser = getAuthUserFromDcp(user);
+      const limitedEditionUser = getAuthUserFromUserCredentials(user);
       const caller = router.createCaller({ user: limitedEditionUser });
 
       // Créer un axe avec l'utilisateur admin

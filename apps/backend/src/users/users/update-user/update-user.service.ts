@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { failure, success } from '@tet/backend/utils/result.type';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { AuthenticatedUser } from '../../models/auth.models';
 import { dcpTable } from '../../models/dcp.table';
+import { UpdateUserErrorEnum } from './update-user.errors';
 
 export const updateUserInputSchema = z
   .object({
@@ -42,10 +44,19 @@ export class UpdateUserService {
     };
 
     if (Object.keys(userAttributes).length > 0) {
-      await this.db
+      const result = await this.db
         .update(dcpTable)
         .set(userAttributes)
-        .where(eq(dcpTable.id, user.id));
+        .where(eq(dcpTable.id, user.id))
+        .returning();
+
+      if (result.length === 0) {
+        return failure(UpdateUserErrorEnum.USER_NOT_FOUND);
+      }
+
+      return success(null);
     }
+
+    return success(null);
   }
 }

@@ -2,7 +2,7 @@ import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
 import { FichesRouter } from '@tet/backend/plans/fiches/fiches.router';
 import {
   getAuthUser,
-  getAuthUserFromDcp,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   YOLO_DODO,
@@ -53,12 +53,12 @@ const ficheId = 9999;
 
 describe('UpdateFicheService', () => {
   let db: DatabaseService;
-  let router: FichesRouter;
+  let fichesRouter: FichesRouter;
   let yoloDodo: AuthenticatedUser;
 
   beforeAll(async () => {
     const app = await getTestApp();
-    router = app.get(FichesRouter);
+    fichesRouter = app.get(FichesRouter);
     db = await getTestDatabase(app);
     yoloDodo = await getAuthUser(YOLO_DODO);
 
@@ -83,7 +83,7 @@ describe('UpdateFicheService', () => {
 
   describe('Update fiche action fields', () => {
     test('should return 400 when invalid numeric type are provided', async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: yoloDodo });
 
       const data: UpdateFicheInput = {
         budgetPrevisionnel: 'invalid_number',
@@ -105,7 +105,7 @@ describe('UpdateFicheService', () => {
     });
 
     test('should return 400 for invalid date format in dateDebut', async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: yoloDodo });
 
       const data: UpdateFicheInput = { dateDebut: 'not-a-date' };
 
@@ -125,7 +125,7 @@ describe('UpdateFicheService', () => {
     });
 
     test('should return 400 for invalid boolean type in ameliorationContinue', async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: yoloDodo });
 
       const data = {
         ameliorationContinue: 'not-a-boolean',
@@ -145,7 +145,7 @@ describe('UpdateFicheService', () => {
     });
 
     test('should return 404 when updating a non-existent ficheAction', async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: yoloDodo });
 
       const nonExistentFicheActionId = 121212;
       const data: UpdateFicheInput = {
@@ -279,7 +279,7 @@ describe('UpdateFicheService', () => {
       expect(sousFiche.parentId).toBe(parentFiche.id);
 
       // Met à jour la sous-fiche avec différents champs
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: yoloDodo });
       const updateData: UpdateFicheInput = {
         titre: 'Sous-fiche mise à jour',
         description: 'Description de la sous-fiche mise à jour',
@@ -352,7 +352,7 @@ describe('UpdateFicheService', () => {
         sousThematiques: [{ id: 3 }, { id: 4 }],
       };
 
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: yoloDodo });
 
       await caller.update({
         ficheId,
@@ -380,7 +380,7 @@ describe('UpdateFicheService', () => {
     });
 
     test('should update the partenaires relations in the database', async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: yoloDodo });
 
       const ficheFields: UpdateFicheInput = {
         partenaires: [{ id: 1 }, { id: 2 }],
@@ -445,7 +445,7 @@ describe('UpdateFicheService', () => {
         structures: [{ id: 1 }, { id: 2 }],
       };
 
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: yoloDodo });
 
       await caller.update({
         ficheId,
@@ -478,7 +478,7 @@ describe('UpdateFicheService', () => {
         ],
       };
 
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: yoloDodo });
 
       await caller.update({
         ficheId,
@@ -723,7 +723,7 @@ describe('UpdateFicheService', () => {
     });
 
     it('should return 400 when trying to set a non-existent fiche as parent', async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: yoloDodo });
 
       const nonExistentParentId = 999999;
       await expect(() =>
@@ -741,7 +741,7 @@ describe('UpdateFicheService', () => {
     });
 
     it('should prevent creating a self-referencing parent relation', async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: yoloDodo });
 
       await expect(() =>
         caller.update({
@@ -764,7 +764,7 @@ describe('UpdateFicheService', () => {
         titre: 'Tentative de mise à jour sans droits',
       };
 
-      const caller = router.createCaller({ user: null });
+      const caller = fichesRouter.createCaller({ user: null });
 
       await expect(() =>
         caller.update({
@@ -793,7 +793,7 @@ describe('UpdateFicheService', () => {
         titre: 'Construire des pistes cyclables',
       };
 
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: yoloDodo });
 
       await expect(() =>
         caller.update({
@@ -818,7 +818,7 @@ describe('UpdateFicheService', () => {
         titre: 'Titre mis à jour par une utilisatrice autorisée',
       };
 
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: yoloDodo });
 
       await caller.update({
         ficheId,
@@ -841,14 +841,14 @@ describe('UpdateFicheService', () => {
         accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
       });
 
-      const adminCaller = router.createCaller({ user: yoloDodo });
+      const adminCaller = fichesRouter.createCaller({ user: yoloDodo });
 
       onTestFinished(async () => {
         await cleanup();
       });
 
-      const limitedEditionUser = getAuthUserFromDcp(user);
-      const limitedEditionCaller = router.createCaller({
+      const limitedEditionUser = getAuthUserFromUserCredentials(user);
+      const limitedEditionCaller = fichesRouter.createCaller({
         user: limitedEditionUser,
       });
 
@@ -975,7 +975,7 @@ describe('UpdateFicheService', () => {
   }
 
   async function updateFiche(data: UpdateFicheInput) {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = fichesRouter.createCaller({ user: yoloDodo });
 
     await caller.update({
       ficheId,

@@ -1,6 +1,6 @@
 import {
   getAuthUser,
-  getAuthUserFromDcp,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   YOLO_DODO,
@@ -167,7 +167,7 @@ describe('IndicateurDefinitionServiceRouter', () => {
       await cleanup();
     });
 
-    const lectureUser = getAuthUserFromDcp(user);
+    const lectureUser = getAuthUserFromUserCredentials(user);
     const lectureCaller = router.createCaller({ user: lectureUser });
 
     await expect(() =>
@@ -206,7 +206,7 @@ describe('IndicateurDefinitionServiceRouter', () => {
       await cleanup();
     });
 
-    const limitedEditionUser = getAuthUserFromDcp(user);
+    const limitedEditionUser = getAuthUserFromUserCredentials(user);
     const limitedEditionCaller = router.createCaller({
       user: limitedEditionUser,
     });

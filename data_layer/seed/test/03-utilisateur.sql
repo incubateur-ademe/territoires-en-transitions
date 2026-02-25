@@ -20,38 +20,36 @@ create or replace function
 as
 $$
 begin
-    insert into auth.users
-    values ('00000000-0000-0000-0000-000000000000',
-            user_id,
-            'authenticated',
-            'authenticated',
-            email,
-            '$2a$10$zHta6/ak2n7cONYwYodHJOJ0cmnhyXKUomwX0D4X0j3sQqWfXNs0C',
-            now(),
-            null,
-            '', null,
-            '', null,
-            '', '', null,
-            now(),
-            '{
-              "provider": "email",
-              "providers": [
-                "email"
-              ]
-            }', '{}',
-            false,
-            now(), now(),
-            null, null, '', '', null, default,
-            0);
+    insert into auth.users (
+        instance_id, id, aud, role, email, encrypted_password,
+        email_confirmed_at, invited_at, confirmation_token, confirmation_sent_at,
+        recovery_token, recovery_sent_at, email_change_token_new, email_change,
+        email_change_sent_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data,
+        is_super_admin, created_at, updated_at, phone, phone_confirmed_at,
+        phone_change, phone_change_token, phone_change_sent_at,
+        email_change_token_current, email_change_confirm_status, banned_until,
+        reauthentication_token, reauthentication_sent_at
+    )
+    values (
+        '00000000-0000-0000-0000-000000000000',
+        test_create_user.user_id,
+        'authenticated',
+        'authenticated',
+        test_create_user.email,
+        '$2a$10$zHta6/ak2n7cONYwYodHJOJ0cmnhyXKUomwX0D4X0j3sQqWfXNs0C',
+        now(), null, '', null, '', null, '', '', null, now(),
+        '{"provider": "email", "providers": ["email"]}',
+        jsonb_build_object('nom', test_create_user.nom, 'prenom', test_create_user.prenom),
+        false, now(), now(), null, null, '', '', null, default, 0
+    );
 
-    insert into dcp (user_id, nom, prenom, email)
-    values (user_id, nom, prenom, email);
+    -- dcp est créé par le trigger sync_dcp sur auth.users
+
     update utilisateur_verifie set verifie = true where utilisateur_verifie.user_id = test_create_user.user_id;
 end;
 $$ language plpgsql security definer;
 comment on function test_create_user is
-    'Crée un nouvel utilisateur, ajoute ses DCPs. '
-        'Son mot de passe sera `yolododo.`';
+    'Crée un nouvel utilisateur. Le trigger sync_dcp crée la ligne dcp. Son mot de passe sera `yolododo.`';
 
 create function
     test.random_voyelle()

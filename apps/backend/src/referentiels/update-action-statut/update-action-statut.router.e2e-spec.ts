@@ -1,5 +1,5 @@
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import { getAuthUserFromDcp } from '@tet/backend/test';
+import { getAuthUserFromUserCredentials } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Collectivite } from '@tet/domain/collectivites';
 import { ActionScore, ReferentielIdEnum } from '@tet/domain/referentiels';
@@ -69,8 +69,12 @@ describe('UpdateActionStatutRouter', () => {
     );
 
     collectivite = testCollectiviteAndUsersResult.collectivite;
-    editorUser = getAuthUserFromDcp(testCollectiviteAndUsersResult.users[0]);
-    readerUser = getAuthUserFromDcp(testCollectiviteAndUsersResult.users[1]);
+    editorUser = getAuthUserFromUserCredentials(
+      testCollectiviteAndUsersResult.users[0]
+    );
+    readerUser = getAuthUserFromUserCredentials(
+      testCollectiviteAndUsersResult.users[1]
+    );
 
     input = {
       collectiviteId: collectivite.id,
