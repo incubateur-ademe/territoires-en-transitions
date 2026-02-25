@@ -149,10 +149,10 @@ const CollectiviteHeader = ({
             {!!population_totale && (
               <Badge
                 title={`${getFormattedNumber(population_totale)} habitants`}
-                state="new"
+                variant="new"
               />
             )}
-            {!!type && <Badge title={type} state="info" />}
+            {!!type && <Badge title={type} variant="info" />}
           </div>
 
           {/* URL */}

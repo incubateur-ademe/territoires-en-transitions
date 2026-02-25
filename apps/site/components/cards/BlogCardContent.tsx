@@ -54,7 +54,7 @@ const BlogCardContent = ({
 
         {!!badge && (
           <div className="absolute top-0 left-0 p-4">
-            <Badge title={badge} state="standard" size="sm" />
+            <Badge title={badge} variant="standard" size="xs" />
           </div>
         )}
       </div>
@@ -73,9 +73,9 @@ const BlogCardContent = ({
                 <Badge
                   key={`${idx}-${category}`}
                   title={category}
-                  state="info"
-                  size="sm"
-                  light
+                  variant="info"
+                  type="outlined"
+                  size="xs"
                 />
               ))}
             </div>

@@ -49,11 +49,11 @@ const CollectiviteCard = ({
               title={`${Intl.NumberFormat('fr', {
                 maximumFractionDigits: 3,
               }).format(population)} habitants`}
-              state="new"
-              size="sm"
+              variant="new"
+              size="xs"
             />
           )}
-          {type && <Badge title={type} state="info" size="sm" />}
+          {type && <Badge title={type} variant="info" size="xs" />}
         </div>
       </div>
       <div className="flex flex-col items-center p-6 w-full text-center">

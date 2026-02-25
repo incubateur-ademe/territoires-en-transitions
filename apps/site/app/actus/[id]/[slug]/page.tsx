@@ -68,8 +68,8 @@ const Article = async ({ params }: { params: Promise<{ id: string }> }) => {
               <Badge
                 key={`${idx}-${category}`}
                 title={category}
-                state="info"
-                size="sm"
+                variant="info"
+                size="xs"
               />
             ))}
           </div>
