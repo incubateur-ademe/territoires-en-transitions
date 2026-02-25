@@ -56,6 +56,7 @@ const Markdown = <T extends ElementType = 'div'>({
     [&_ol]:list-inside [&_ol]:pl-4
     [&>*:last-child]:mb-0
     [&_li_p]:inline
+    [&_a]:underline
     `,
         className
       )}
