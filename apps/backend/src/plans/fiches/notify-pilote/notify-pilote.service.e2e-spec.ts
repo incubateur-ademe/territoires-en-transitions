@@ -1,6 +1,6 @@
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
-  getAuthUserFromDcp,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
@@ -49,7 +49,9 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
     );
 
     collectivite = testCollectiviteAndUserResult.collectivite;
-    editorUser = getAuthUserFromDcp(testCollectiviteAndUserResult.user);
+    editorUser = getAuthUserFromUserCredentials(
+      testCollectiviteAndUserResult.user
+    );
     testCollectiviteAndUserCleanup = testCollectiviteAndUserResult.cleanup;
 
     return async () => {
@@ -707,7 +709,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       const caller = router.createCaller({ user: editorUser });
 
       const user1 = await createTestUser();
-      const user1Auth = getAuthUserFromDcp(user1);
+      const user1Auth = getAuthUserFromUserCredentials(user1);
 
       // crée une fiche (action, pas de parentId) et assigne user1 comme pilote
       const ficheId = await createFiche({
@@ -755,7 +757,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       const caller = router.createCaller({ user: editorUser });
 
       const user1 = await createTestUser();
-      const user1Auth = getAuthUserFromDcp(user1);
+      const user1Auth = getAuthUserFromUserCredentials(user1);
 
       // crée une fiche parente
       const parentFicheId = await createFiche({
@@ -820,7 +822,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       const caller = router.createCaller({ user: editorUser });
 
       const user1 = await createTestUser();
-      const user1Auth = getAuthUserFromDcp(user1);
+      const user1Auth = getAuthUserFromUserCredentials(user1);
 
       // crée une fiche (action) et assigne user1 comme pilote
       const ficheId = await createFiche({
@@ -868,7 +870,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       const caller = router.createCaller({ user: editorUser });
 
       const user1 = await createTestUser();
-      const user1Auth = getAuthUserFromDcp(user1);
+      const user1Auth = getAuthUserFromUserCredentials(user1);
 
       // crée une fiche et assigne user1 comme pilote (notification créée)
       const ficheId = await createFiche({
@@ -916,7 +918,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       const caller = router.createCaller({ user: editorUser });
 
       const user1 = await createTestUser();
-      const user1Auth = getAuthUserFromDcp(user1);
+      const user1Auth = getAuthUserFromUserCredentials(user1);
 
       // crée une action et une sous-action
       const actionId = await createFiche({
@@ -1002,7 +1004,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       const caller = router.createCaller({ user: editorUser });
 
       const user1 = await createTestUser();
-      const user1Auth = getAuthUserFromDcp(user1);
+      const user1Auth = getAuthUserFromUserCredentials(user1);
 
       // désactive uniquement les notifications pour les sous-actions
       await userPreferencesService.updateUserPreferences(user1Auth, {
@@ -1043,7 +1045,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       const caller = router.createCaller({ user: editorUser });
 
       const user1 = await createTestUser();
-      const user1Auth = getAuthUserFromDcp(user1);
+      const user1Auth = getAuthUserFromUserCredentials(user1);
 
       // désactive uniquement les notifications pour les actions
       await userPreferencesService.updateUserPreferences(user1Auth, {

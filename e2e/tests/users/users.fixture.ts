@@ -64,7 +64,6 @@ class UserFactory {
   addUser = async (args?: TestUserArgs) => {
     const { user, cleanup } = await addTestUser(databaseService, {
       accessLevel: 'edition',
-      cguAcceptees: true,
       ...(args || {}),
     });
     const userFixture = new UserFixture(this.context, user, cleanup);

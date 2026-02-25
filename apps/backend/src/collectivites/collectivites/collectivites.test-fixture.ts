@@ -20,18 +20,18 @@ import { bibliothequeFichierTable } from '../documents/models/bibliotheque-fichi
 import { collectiviteTable } from '../shared/models/collectivite.table';
 
 export async function setCollectiviteAsCOT(
-  databaseService: DatabaseServiceInterface,
+  { db }: DatabaseServiceInterface,
   collectiviteId: number,
   isCOT: boolean
 ): Promise<void> {
   if (isCOT) {
-    await databaseService.db.insert(cotTable).values({
+    await db.insert(cotTable).values({
       collectiviteId: collectiviteId,
       actif: true,
       signataire: collectiviteId,
     });
   } else {
-    await databaseService.db
+    await db
       .delete(cotTable)
       .where(eq(cotTable.collectiviteId, collectiviteId));
   }
@@ -39,7 +39,7 @@ export async function setCollectiviteAsCOT(
 
 // ajoute une collectivité
 export async function addTestCollectivite(
-  databaseService: DatabaseServiceInterface,
+  { db }: DatabaseServiceInterface,
   collectiviteArgs: Partial<Collectivite> & { isCOT?: boolean } = {}
 ): Promise<{ collectivite: Collectivite; cleanup: () => Promise<void> }> {
   const { isCOT, ...collectiviteInput } = collectiviteArgs;
@@ -52,7 +52,7 @@ export async function addTestCollectivite(
   };
 
   try {
-    const result = await databaseService.db
+    const result = await db
       .insert(collectiviteTable)
       .values([createCollectivite])
       .returning()
@@ -63,7 +63,7 @@ export async function addTestCollectivite(
       }));
 
     if (collectiviteArgs.isCOT) {
-      await setCollectiviteAsCOT(databaseService, result.id, true);
+      await setCollectiviteAsCOT({ db }, result.id, true);
     }
 
     console.log(`Added collectivite ${result.nom} with id ${result.id}`);
@@ -73,16 +73,16 @@ export async function addTestCollectivite(
       if (collectiviteId) {
         try {
           console.log(`Cleanup collectivite ${collectiviteId}`);
-          await databaseService.db
+          await db
             .delete(bibliothequeFichierTable)
             .where(eq(bibliothequeFichierTable.collectiviteId, collectiviteId));
-          await databaseService.db
+          await db
             .delete(collectiviteBucketTable)
             .where(eq(collectiviteBucketTable.collectiviteId, collectiviteId));
-          await databaseService.db
+          await db
             .delete(cotTable)
             .where(eq(cotTable.collectiviteId, collectiviteId));
-          await databaseService.db
+          await db
             .delete(collectiviteTable)
             .where(eq(collectiviteTable.id, collectiviteId));
         } catch (error) {
@@ -115,7 +115,7 @@ export async function addTestCollectivite(
 
 // ajoute une collectivité et un utilisateur rattaché à celle-ci
 export async function addTestCollectiviteAndUser(
-  databaseService: DatabaseServiceInterface,
+  { db }: DatabaseServiceInterface,
   args?: {
     user: Omit<TestUserArgs, 'collectiviteId'>;
     collectivite?: Partial<Collectivite>;
@@ -126,11 +126,15 @@ export async function addTestCollectiviteAndUser(
   cleanup: () => Promise<void>;
 }> {
   const { collectivite, cleanup: collectiviteCleanup } =
-    await addTestCollectivite(databaseService, args?.collectivite);
-  const { user, cleanup: userCleanup } = await addTestUser(databaseService, {
-    ...(args?.user ?? {}),
-    collectiviteId: collectivite.id,
-  });
+    await addTestCollectivite({ db }, args?.collectivite);
+
+  const { user, cleanup: userCleanup } = await addTestUser(
+    { db },
+    {
+      ...(args?.user ?? {}),
+      collectiviteId: collectivite.id,
+    }
+  );
   const cleanup = async () => {
     await userCleanup();
     await collectiviteCleanup();
@@ -139,7 +143,7 @@ export async function addTestCollectiviteAndUser(
 }
 
 export async function addTestCollectiviteAndUsers(
-  databaseService: DatabaseServiceInterface,
+  { db }: DatabaseServiceInterface,
   args: {
     users: Omit<TestUserArgs, 'collectiviteId'>[];
     collectivite?: Partial<Collectivite> & { isCOT?: boolean };
@@ -150,13 +154,17 @@ export async function addTestCollectiviteAndUsers(
   cleanup: () => Promise<void>;
 }> {
   const { collectivite, cleanup: collectiviteCleanup } =
-    await addTestCollectivite(databaseService, args?.collectivite);
+    await addTestCollectivite({ db }, args?.collectivite);
+
   const usersResults = await Promise.all(
     args?.users.map(async (user) => {
-      return await addTestUser(databaseService, {
-        ...user,
-        collectiviteId: collectivite.id,
-      });
+      return await addTestUser(
+        { db },
+        {
+          ...user,
+          collectiviteId: collectivite.id,
+        }
+      );
     })
   );
 

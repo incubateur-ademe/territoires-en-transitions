@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUser,
-  getAuthUserFromDcp,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
@@ -52,9 +52,9 @@ describe('StartAuditRouter', () => {
     );
     collectivite = testCollectiviteAndUsersResult.collectivite;
     const lectureUserFixture = testCollectiviteAndUsersResult.users[0];
-    lectureUser = getAuthUserFromDcp(lectureUserFixture);
+    lectureUser = getAuthUserFromUserCredentials(lectureUserFixture);
     const editionUserFixture = testCollectiviteAndUsersResult.users[1];
-    editionUser = getAuthUserFromDcp(editionUserFixture);
+    editionUser = getAuthUserFromUserCredentials(editionUserFixture);
 
     yoloDodoUser = await getAuthUser(YOLO_DODO);
 

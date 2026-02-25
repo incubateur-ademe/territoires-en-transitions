@@ -1,7 +1,7 @@
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUser,
-  getAuthUserFromDcp,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   YOLO_DODO,
@@ -26,17 +26,22 @@ describe('Lister les plans', () => {
     router = await app.get(TrpcRouter);
     db = await getTestDatabase(app);
 
-    const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(db, {
-      user: {
-        accessLevel: CollectiviteRole.ADMIN,
-      },
-      collectivite: {
-        accesRestreint: true,
-      },
-    });
+    const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(
+      db,
+      {
+        user: {
+          accessLevel: CollectiviteRole.ADMIN,
+        },
+        collectivite: {
+          accesRestreint: true,
+        },
+      }
+    );
 
     collectivite = testCollectiviteAndUserResult.collectivite;
-    editorUser = getAuthUserFromDcp(testCollectiviteAndUserResult.user);
+    editorUser = getAuthUserFromUserCredentials(
+      testCollectiviteAndUserResult.user
+    );
 
     return async () => {
       await testCollectiviteAndUserResult.cleanup();
@@ -365,16 +370,19 @@ describe('Lister les plans', () => {
     });
 
     test('Un utilisateur avec des droits de lecture sur la collectivité peut lister les plans', async () => {
-      const { user, cleanup } = await addTestUser(db, {
-        collectiviteId: collectivite.id,
-        accessLevel: CollectiviteRole.LECTURE,
-      });
+      const { user, cleanup } = await addTestUser(
+        db,
+        {
+          collectiviteId: collectivite.id,
+          accessLevel: CollectiviteRole.LECTURE,
+        }
+      );
 
       onTestFinished(async () => {
         await cleanup();
       });
 
-      const lectureUser = getAuthUserFromDcp(user);
+      const lectureUser = getAuthUserFromUserCredentials(user);
       const caller = router.createCaller({ user: lectureUser });
 
       // Créer un plan avec l'utilisateur admin
@@ -400,16 +408,19 @@ describe('Lister les plans', () => {
     });
 
     test("Un utilisateur avec des droits d'édition limités sur la collectivité ne peut pas lister les plans", async () => {
-      const { user, cleanup } = await addTestUser(db, {
-        collectiviteId: collectivite.id,
-        accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
-      });
+      const { user, cleanup } = await addTestUser(
+        db,
+        {
+          collectiviteId: collectivite.id,
+          accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+        }
+      );
 
       onTestFinished(async () => {
         await cleanup();
       });
 
-      const limitedEditionUser = getAuthUserFromDcp(user);
+      const limitedEditionUser = getAuthUserFromUserCredentials(user);
       const caller = router.createCaller({ user: limitedEditionUser });
 
       // Créer un plan avec l'utilisateur admin

@@ -1,7 +1,7 @@
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUser,
-  getAuthUserFromDcp,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   YOLO_DODO,
@@ -34,7 +34,9 @@ describe('Delete Fiche Action', () => {
       },
     });
     collectivite = testCollectiviteAndUserResult.collectivite;
-    editorUser = getAuthUserFromDcp(testCollectiviteAndUserResult.user);
+    editorUser = getAuthUserFromUserCredentials(
+      testCollectiviteAndUserResult.user
+    );
 
     const caller = router.createCaller({ user: editorUser });
     const createFicheResult = await createFicheAndCleanupFunction({
@@ -209,7 +211,7 @@ describe('Delete Fiche Action', () => {
         await cleanup();
       });
 
-      const lectureUser = getAuthUserFromDcp(user);
+      const lectureUser = getAuthUserFromUserCredentials(user);
       const caller = router.createCaller({ user: lectureUser });
 
       // Attempt to delete should fail with ForbiddenException
@@ -230,7 +232,7 @@ describe('Delete Fiche Action', () => {
         await cleanup();
       });
 
-      const lectureUser = getAuthUserFromDcp(user);
+      const lectureUser = getAuthUserFromUserCredentials(user);
       const caller = router.createCaller({ user: lectureUser });
 
       // Attempt to delete should fail with ForbiddenException

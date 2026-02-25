@@ -1,7 +1,7 @@
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUser,
-  getAuthUserFromDcp,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   YOLO_DODO,
@@ -36,7 +36,9 @@ describe('Créer ou modifier un axe', () => {
     });
 
     collectivite = testCollectiviteAndUserResult.collectivite;
-    editorUser = getAuthUserFromDcp(testCollectiviteAndUserResult.user);
+    editorUser = getAuthUserFromUserCredentials(
+      testCollectiviteAndUserResult.user
+    );
 
     // Créer un plan pour les tests
     const caller = router.createCaller({ user: editorUser });
@@ -145,7 +147,7 @@ describe('Créer ou modifier un axe', () => {
         await cleanup();
       });
 
-      const lectureUser = getAuthUserFromDcp(user);
+      const lectureUser = getAuthUserFromUserCredentials(user);
       const caller = router.createCaller({ user: lectureUser });
 
       await expect(
@@ -168,7 +170,7 @@ describe('Créer ou modifier un axe', () => {
         await cleanup();
       });
 
-      const limitedEditionUser = getAuthUserFromDcp(user);
+      const limitedEditionUser = getAuthUserFromUserCredentials(user);
       const caller = router.createCaller({ user: limitedEditionUser });
 
       await expect(

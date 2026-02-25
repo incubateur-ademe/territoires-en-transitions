@@ -6,7 +6,7 @@ import {
 import {
   createTRPCClientFromCaller,
   getAuthUser,
-  getAuthUserFromDcp,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   ISO_OR_SQL_DATE_TIME_REGEX,
@@ -75,9 +75,11 @@ describe('Request Labellisation Router', () => {
       password: YOLO_DODO.password,
     });
     adminAuthToken = adminUserSignInResponse.data.session?.access_token ?? '';
-    adminUser = getAuthUserFromDcp(admin);
-    lectureUser = getAuthUserFromDcp(testCollectiviteAndUsersResult.users[2]);
-    editionFichesIndicateursUser = getAuthUserFromDcp(
+    adminUser = getAuthUserFromUserCredentials(admin);
+    lectureUser = getAuthUserFromUserCredentials(
+      testCollectiviteAndUsersResult.users[2]
+    );
+    editionFichesIndicateursUser = getAuthUserFromUserCredentials(
       testCollectiviteAndUsersResult.users[3]
     );
 

@@ -10,7 +10,6 @@ import {
   AuthUser,
   isAuthenticatedUser,
 } from '@tet/backend/users/models/auth.models';
-import { Dcp } from '@tet/domain/users';
 import { getTestApp } from './app-utils';
 import { YOLO_DODO } from './test-users.samples';
 
@@ -38,16 +37,20 @@ export async function getAuthToken(
   return response.data.session?.access_token || '';
 }
 
-export function getAuthUserFromDcp(dcp: Dcp): AuthenticatedUser {
+export function getAuthUserFromUserCredentials(user: {
+  id: string;
+  email: string | null;
+  telephone?: string | null;
+}): AuthenticatedUser {
   return {
-    id: dcp.id,
+    id: user.id,
     role: AuthRole.AUTHENTICATED,
     isAnonymous: false,
     jwtPayload: {
       role: AuthRole.AUTHENTICATED,
-      email: dcp.email,
+      email: user.email ?? undefined,
       is_anonymous: false,
-      phone: dcp.telephone || undefined,
+      phone: user.telephone ?? undefined,
       app_metadata: {
         provider: 'email',
       },

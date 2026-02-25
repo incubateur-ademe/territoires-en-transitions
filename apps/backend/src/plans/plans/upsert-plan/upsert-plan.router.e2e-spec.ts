@@ -2,7 +2,7 @@ import { createPersonneTag } from '@tet/backend/collectivites/collectivites.test
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUser,
-  getAuthUserFromDcp,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   YOLO_DODO,
@@ -12,11 +12,11 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
+import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 import { planPiloteTable } from '../../fiches/shared/models/plan-pilote.table';
 import { planReferentTable } from '../../fiches/shared/models/plan-referent.table';
-import { CollectiviteRole } from '@tet/domain/users';
 
 describe('Créer ou modifier un plan', () => {
   let router: TrpcRouter;
@@ -37,7 +37,9 @@ describe('Créer ou modifier un plan', () => {
     });
 
     collectivite = testCollectiviteAndUserResult.collectivite;
-    editorUser = getAuthUserFromDcp(testCollectiviteAndUserResult.user);
+    editorUser = getAuthUserFromUserCredentials(
+      testCollectiviteAndUserResult.user
+    );
 
     return async () => {
       await testCollectiviteAndUserResult.cleanup();
@@ -128,7 +130,7 @@ describe('Créer ou modifier un plan', () => {
         await cleanup();
       });
 
-      const lectureUser = getAuthUserFromDcp(user);
+      const lectureUser = getAuthUserFromUserCredentials(user);
       const caller = router.createCaller({ user: lectureUser });
 
       await expect(
@@ -149,7 +151,7 @@ describe('Créer ou modifier un plan', () => {
         await cleanup();
       });
 
-      const limitedEditionUser = getAuthUserFromDcp(user);
+      const limitedEditionUser = getAuthUserFromUserCredentials(user);
       const caller = router.createCaller({ user: limitedEditionUser });
 
       await expect(

@@ -9,7 +9,10 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { and, eq } from 'drizzle-orm';
 import { getTestApp } from '../../../test/app-utils';
-import { getAuthUser, getAuthUserFromDcp } from '../../../test/auth-utils';
+import {
+  getAuthUser,
+  getAuthUserFromUserCredentials,
+} from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
@@ -390,7 +393,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       await cleanup();
     });
 
-    const limitedEditionUser = getAuthUserFromDcp(user);
+    const limitedEditionUser = getAuthUserFromUserCredentials(user);
     const limitedEditionCaller = router.createCaller({
       user: limitedEditionUser,
     });

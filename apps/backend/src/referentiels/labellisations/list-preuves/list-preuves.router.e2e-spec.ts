@@ -3,7 +3,7 @@ import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collecti
 import {
   createTRPCClientFromCaller,
   getAuthUser,
-  getAuthUserFromDcp,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   signInWith,
@@ -54,7 +54,7 @@ describe('List Preuves Router', () => {
     });
     editeurAuthToken =
       editeurUserSignInResponse.data.session?.access_token ?? '';
-    editeurUser = getAuthUserFromDcp(editeur);
+    editeurUser = getAuthUserFromUserCredentials(editeur);
     visiteurUser = await getAuthUser(YOLO_DODO);
 
     return async () => {
