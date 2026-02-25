@@ -1,7 +1,7 @@
-import { useModifierStateRef } from "@/app/referentiels/ReferentielTable/useModifierStateRef";
-import { ActionType, TableState } from "react-table";
+import { useModifierStateRef } from '@/app/referentiels/DEPRECATED_ReferentielTable/useModifierStateRef';
+import { ActionType, TableState } from 'react-table';
 
-type Mesure = {identifiant: string};
+type Mesure = { identifiant: string };
 
 /**
  * Renvoi un `stateReducer` pour une instance react-table permettant de changer
@@ -12,9 +12,7 @@ type Mesure = {identifiant: string};
  * mais cela paraissait plus compliqué
  * Ref: https://github.com/TanStack/table/blob/v7/src/plugin-hooks/useExpanded.js
  */
-export const useRowExpandedReducer = (
-  rows: Mesure[]
-) => {
+export const useRowExpandedReducer = (rows: Mesure[]) => {
   // état courant des touches "modificatrices"
   const modifierStateRef = useModifierStateRef();
 
@@ -47,7 +45,8 @@ export const useRowExpandedReducer = (
             // une ligne sera dépliée si il y a une entrée clé/valeur `[id, true]`
             // dans l'objet `expanded` et est repliée si son id n'est pas dans
             // l'objet (l'entrée `[id, undefined]` supprime la clé de l'objet)
-            [identifiant]: getDepth(identifiant) <= clickedDepth ? true : undefined,
+            [identifiant]:
+              getDepth(identifiant) <= clickedDepth ? true : undefined,
           }),
           newState.expanded as Record<string, boolean | undefined>
         ),
@@ -70,10 +69,7 @@ export const useRowExpandedReducer = (
 };
 
 // renvoi le sous-ensemble des lignes appartenant au même axe
-const getRowsByAxe = (
-  rows: Mesure[],
-  actionId: string
-) => {
+const getRowsByAxe = (rows: Mesure[], actionId: string) => {
   const axeId = `${actionId.split('.')[0]}.`;
   return rows.filter(({ identifiant }) => identifiant?.startsWith(axeId));
 };
