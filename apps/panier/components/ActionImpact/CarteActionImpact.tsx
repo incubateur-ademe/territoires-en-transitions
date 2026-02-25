@@ -32,7 +32,7 @@ export const CarteActionImpact = ({
           <div className="flex justify-end items-center gap-2 opacity-100 group-hover:opacity-0 transition-opacity duration-500">
             {/* Badge thématique */}
             {!!thematiques.length && (
-              <Badge title={thematiques[0].nom} size="sm" state="standard" />
+              <Badge title={thematiques[0].nom} size="sm" variant="standard" />
             )}
             {/* Budget */}
             <NiveauBudget budget={budget ?? { niveau: 1, nom: 'Non estimé' }} />
