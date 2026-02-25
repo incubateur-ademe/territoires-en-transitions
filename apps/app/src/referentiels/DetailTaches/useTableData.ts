@@ -8,9 +8,9 @@ import {
 } from '@tet/domain/referentiels';
 import { TableOptions } from 'react-table';
 import { useSaveActionStatut } from '../actions/action-statut/use-action-statut';
+import { useTable } from '../DEPRECATED_ReferentielTable/useReferentiel';
 import { actionNewToDeprecated } from '../DEPRECATED_scores.types';
 import { useReferentielId } from '../referentiel-context';
-import { useTable } from '../ReferentielTable/useReferentiel';
 import { initialFilters, nameToShortNames, TFilters } from './filters';
 import { TacheDetail } from './queries';
 import { actionMatchingFilter } from './useTableData.helpers';

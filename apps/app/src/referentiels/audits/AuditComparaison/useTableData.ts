@@ -1,7 +1,7 @@
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { TableOptions } from 'react-table';
+import { useReferentiel } from '../../DEPRECATED_ReferentielTable/useReferentiel';
 import { useReferentielId } from '../../referentiel-context';
-import { useReferentiel } from '../../ReferentielTable/useReferentiel';
 import { TComparaisonScoreAudit, TScoreAuditRowData } from './types';
 import { useComparaisonScoreAudit } from './useComparaisonScoreAudit';
 
