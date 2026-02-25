@@ -27,7 +27,7 @@ export type BadgeProps = {
   dataTest?: string;
   /** Libellé affiché dans le badge */
   title?: React.ReactNode;
-  /** État */
+  /** Variant */
   variant?: BadgeVariant;
   /** Type de badge */
   type?: BadgeType;
