@@ -39,10 +39,10 @@ describe('Document Controller', () => {
       {
         users: [
           {
-            accessLevel: CollectiviteRole.ADMIN,
+            role: CollectiviteRole.ADMIN,
           },
           {
-            accessLevel: CollectiviteRole.LECTURE,
+            role: CollectiviteRole.LECTURE,
           },
         ],
       }

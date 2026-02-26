@@ -32,7 +32,7 @@ describe('Créer ou modifier un plan', () => {
 
     const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(db, {
       user: {
-        accessLevel: CollectiviteRole.ADMIN,
+        role: CollectiviteRole.ADMIN,
       },
     });
 
@@ -123,7 +123,7 @@ describe('Créer ou modifier un plan', () => {
     test('Un utilisateur avec des droits de lecture sur la collectivité ne peut pas créer un plan', async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteRole.LECTURE,
+        role: CollectiviteRole.LECTURE,
       });
 
       onTestFinished(async () => {
@@ -144,7 +144,7 @@ describe('Créer ou modifier un plan', () => {
     test("Un utilisateur avec des droits d'édition limités sur la collectivité ne peut pas créer un plan", async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+        role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
       });
 
       onTestFinished(async () => {

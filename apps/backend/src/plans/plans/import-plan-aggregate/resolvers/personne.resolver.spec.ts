@@ -1,4 +1,4 @@
-import { CollectiviteMembresService } from '@tet/backend/collectivites/membres/membres.service';
+import { ListMembresService } from '@tet/backend/collectivites/membres/list-membres/list-membres.service';
 import { TagService } from '@tet/backend/collectivites/tags/tag.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success } from '@tet/backend/utils/result.type';
@@ -58,9 +58,9 @@ describe('createPersonneResolver', () => {
     existingTags: Tag[] = []
   ) => {
     return {
-      memberService: {
-        list: vi.fn().mockResolvedValue(existingMembers),
-      } as unknown as CollectiviteMembresService,
+      listMembresService: {
+        list: vi.fn().mockResolvedValue({ membres: existingMembers }),
+      } as unknown as ListMembresService,
       tagService: {
         getTags: vi.fn().mockResolvedValue(existingTags),
         saveTag: vi.fn().mockImplementation((tagData) => {
@@ -80,11 +80,12 @@ describe('createPersonneResolver', () => {
     const existingMembers = [
       { userId: 'user-123', nom: 'Dupont', prenom: 'Jean' },
     ];
-    const { memberService, tagService } = createMockServices(existingMembers);
+    const { listMembresService, tagService } =
+      createMockServices(existingMembers);
 
     const { getOrCreatePersonne } = await createPersonneResolver(
       collectiviteId,
-      memberService,
+      listMembresService,
       tagService
     );
 
@@ -101,11 +102,14 @@ describe('createPersonneResolver', () => {
     const existingTags: Tag[] = [
       { id: 1, nom: 'Personne Tag', collectiviteId } as Tag,
     ];
-    const { memberService, tagService } = createMockServices([], existingTags);
+    const { listMembresService, tagService } = createMockServices(
+      [],
+      existingTags
+    );
 
     const { getOrCreatePersonne } = await createPersonneResolver(
       collectiviteId,
-      memberService,
+      listMembresService,
       tagService
     );
 
@@ -122,7 +126,7 @@ describe('createPersonneResolver', () => {
     const newTagName = 'Nouvelle Personne';
     const newTagId = 999;
 
-    const { memberService, tagService } = createMockServices([], []);
+    const { listMembresService, tagService } = createMockServices([], []);
     (tagService.saveTag as ReturnType<typeof vi.fn>).mockResolvedValue(
       success({
         id: newTagId,
@@ -133,7 +137,7 @@ describe('createPersonneResolver', () => {
 
     const { getOrCreatePersonne } = await createPersonneResolver(
       collectiviteId,
-      memberService,
+      listMembresService,
       tagService
     );
 
@@ -155,7 +159,7 @@ describe('createPersonneResolver', () => {
     const newTagName = 'Nouvelle Personne';
     const newTagId = 999;
 
-    const { memberService, tagService } = createMockServices([], []);
+    const { listMembresService, tagService } = createMockServices([], []);
     (tagService.saveTag as ReturnType<typeof vi.fn>).mockResolvedValue(
       success({
         id: newTagId,
@@ -166,7 +170,7 @@ describe('createPersonneResolver', () => {
 
     const { getOrCreatePersonne } = await createPersonneResolver(
       collectiviteId,
-      memberService,
+      listMembresService,
       tagService
     );
 
@@ -189,14 +193,14 @@ describe('createPersonneResolver', () => {
   });
 
   it('should return failure when tag creation fails', async () => {
-    const { memberService, tagService } = createMockServices([], []);
+    const { listMembresService, tagService } = createMockServices([], []);
     (tagService.saveTag as ReturnType<typeof vi.fn>).mockResolvedValue(
       failure('Database error')
     );
 
     const { getOrCreatePersonne } = await createPersonneResolver(
       collectiviteId,
-      memberService,
+      listMembresService,
       tagService
     );
 

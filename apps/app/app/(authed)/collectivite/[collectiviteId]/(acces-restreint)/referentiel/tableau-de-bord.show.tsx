@@ -33,7 +33,7 @@ export const TableauDeBordShow = () => {
   } = useProgressionReferentiel();
 
   const { data: referents } = useMembres({ collectiviteId, estReferent: true });
-  const referentsParFonction = groupeParFonction(referents || []);
+  const referentsParFonction = groupeParFonction(referents?.membres || []);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -48,7 +48,7 @@ export const TableauDeBordShow = () => {
         <h2 className="mb-0">{"Synthèse de l'état des lieux"}</h2>
         <VisibleWhen condition={canMutateReferentiel}>
           <Button size="sm" onClick={() => setIsModalOpen(true)}>
-            {referents?.length
+            {referents?.membres?.length
               ? 'Modifier les référents'
               : 'Renseigner les référents'}
           </Button>

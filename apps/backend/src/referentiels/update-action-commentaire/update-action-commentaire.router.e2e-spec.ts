@@ -39,10 +39,10 @@ describe('UpdateActionCommentaireRouter', () => {
       {
         users: [
           {
-            accessLevel: CollectiviteRole.EDITION,
+            role: CollectiviteRole.EDITION,
           },
           {
-            accessLevel: CollectiviteRole.LECTURE,
+            role: CollectiviteRole.LECTURE,
           },
         ],
       }

@@ -43,8 +43,8 @@ describe('UpdateDocumentRouter', () => {
       databaseService,
       {
         users: [
-          { accessLevel: CollectiviteRole.EDITION },
-          { accessLevel: CollectiviteRole.LECTURE },
+          { role: CollectiviteRole.EDITION },
+          { role: CollectiviteRole.LECTURE },
         ],
       }
     );

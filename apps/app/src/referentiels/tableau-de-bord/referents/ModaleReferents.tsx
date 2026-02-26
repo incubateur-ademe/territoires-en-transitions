@@ -1,5 +1,9 @@
 import { membreFonctionToLabel } from '@/app/app/labels';
 import { makeCollectiviteUsersUrl } from '@/app/app/paths';
+import {
+  Membre,
+  useListMembres,
+} from '@/app/collectivites/membres/list-membres/use-list-membres';
 import { type MembreFonction } from '@tet/domain/collectivites';
 import {
   Field,
@@ -10,13 +14,9 @@ import {
 } from '@tet/ui';
 import { pick } from 'es-toolkit';
 import { useEffect, useState } from 'react';
+import { useUpdateMembres } from '../../../collectivites/membres/use-update-membres';
 import ReferentsDropdown from './ReferentsDropdown';
-import {
-  CollectiviteMembre,
-  groupeParFonction,
-  useMembres,
-} from './useMembres';
-import { useUpdateMembres } from './useUpdateMembres';
+import { groupeParFonction } from './useMembres';
 
 export type ModaleReferentsProps = {
   collectiviteId: number;
@@ -33,19 +33,19 @@ const EMAIL_ADEME = 'territoireengage@ademe.fr';
  */
 export const ModaleReferents = (props: ModaleReferentsProps) => {
   const { collectiviteId, isOpen, setIsOpen } = props;
-  const { data } = useMembres({ collectiviteId });
+  const { data: membres = [] } = useListMembres();
   const { mutate: updateMembres } = useUpdateMembres();
 
   // état local de la liste des membres et référents, groupés par fonction
-  const [listeMembres, setListeMembres] = useState(data);
+  const [listeMembres, setListeMembres] = useState(membres);
   const parFonction = groupeParFonction(listeMembres || []);
 
   // synchronise l'état local après chargement de la liste des membres
   useEffect(() => {
-    if (data) {
-      setListeMembres(data);
+    if (membres) {
+      setListeMembres(membres);
     }
-  }, [data]);
+  }, [membres]);
 
   // met à jour l'état local après sélection/désélection dans une liste
   const handleChange = ({ selectedValue }: { selectedValue: OptionValue }) => {
@@ -123,7 +123,7 @@ export const ModaleReferents = (props: ModaleReferentsProps) => {
                 ?.filter(
                   (membre) =>
                     membre.estReferent !==
-                    data?.find((m) => membre.userId === m.userId)?.estReferent
+                    membres.find((m) => membre.userId === m.userId)?.estReferent
                 )
                 .map((membre) => ({
                   ...pick(membre, ['userId', 'estReferent']),
@@ -151,7 +151,7 @@ const DropdownOrMessage = ({
 }: {
   collectiviteId: number;
   fonction: MembreFonction;
-  membres: CollectiviteMembre[] | undefined;
+  membres: Membre[] | undefined;
   handleChange: ({ selectedValue }: { selectedValue: OptionValue }) => void;
 }) =>
   membres?.length ? (

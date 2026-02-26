@@ -26,12 +26,6 @@ export class UpdateUserRoleService {
       .where(eq(utilisateurSupportTable.userId, userId));
   }
 
-  /**
-   * Active ou désactive le mode support pour un utilisateur
-   * Nécessite que l'utilisateur ait déjà le rôle support (support = true)
-   * @param userId identifiant de l'utilisateur
-   * @param isActive vrai pour activer le mode support, faux pour le désactiver
-   */
   async toggleSuperAdminRole({
     userId,
     isEnabled,

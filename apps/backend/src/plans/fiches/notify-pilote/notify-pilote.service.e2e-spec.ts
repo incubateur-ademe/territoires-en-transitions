@@ -43,7 +43,7 @@ describe("Notifications envoyées lors de la mise à jour d'une fiche action", (
       databaseService,
       {
         user: {
-          accessLevel: CollectiviteRole.EDITION,
+          role: CollectiviteRole.EDITION,
         },
       }
     );

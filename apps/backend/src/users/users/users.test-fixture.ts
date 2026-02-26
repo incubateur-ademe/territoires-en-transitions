@@ -16,7 +16,9 @@ import { utilisateurCollectiviteAccessTable } from '../authorizations/utilisateu
 
 export type TestUserArgs = {
   collectiviteId?: number | null;
-  accessLevel?: CollectiviteRole;
+  role?: CollectiviteRole;
+  prenom?: string;
+  nom?: string;
 };
 
 const TEST_USER_PASSWORD = 'yolododo';
@@ -24,16 +26,21 @@ const TEST_USER_PASSWORD = 'yolododo';
 // ajoute un utilisateur de test
 export async function addTestUser(
   { db }: DatabaseServiceInterface,
-  { collectiviteId, accessLevel }: TestUserArgs = {
+  {
+    collectiviteId,
+    role,
+    prenom: customPrenom,
+    nom: customNom,
+  }: TestUserArgs = {
     collectiviteId: null,
-    accessLevel: CollectiviteRole.EDITION,
+    role: CollectiviteRole.EDITION,
   }
 ): Promise<{
   cleanup: () => Promise<void>;
   user: Dcp & { password: string };
 }> {
-  const prenom = `Y${randomVowel()}l${randomVowel()}`;
-  const nom = `D${randomVowel()}d${randomVowel()}`;
+  const prenom = customPrenom ?? `Y${randomVowel()}l${randomVowel()}`;
+  const nom = customNom ?? `D${randomVowel()}d${randomVowel()}`;
 
   // génère un uuid et un email unique
   const userId = crypto.randomUUID();
@@ -88,7 +95,7 @@ export async function addTestUser(
         userId,
         collectiviteId,
         isActive: true,
-        accessLevel,
+        role,
       },
     ]);
   }
@@ -106,7 +113,6 @@ export async function addTestUser(
 
   // cleanup
   const cleanup = async () => {
-    console.log(`Cleanup user ${userId}`);
     await db.delete(dcpTable).where(eq(dcpTable.id, userId));
     await db
       .delete(utilisateurVerifieTable)
@@ -227,7 +233,7 @@ export async function setUserCollectiviteRole(
       {
         userId,
         collectiviteId,
-        accessLevel: role,
+        role,
         isActive: true,
       },
     ])
@@ -237,7 +243,7 @@ export async function setUserCollectiviteRole(
         utilisateurCollectiviteAccessTable.collectiviteId,
       ],
       set: {
-        accessLevel: role,
+        role: role,
         isActive: true,
       },
     });

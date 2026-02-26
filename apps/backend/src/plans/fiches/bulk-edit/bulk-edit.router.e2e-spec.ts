@@ -528,7 +528,7 @@ describe('BulkEditRouter', () => {
     const ficheIds = await generateFicheIds(caller);
     const { user, cleanup } = await addTestUser(db, {
       collectiviteId: COLLECTIVITE_ID,
-      accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+      role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
     });
     onTestFinished(async () => {
       await cleanup();

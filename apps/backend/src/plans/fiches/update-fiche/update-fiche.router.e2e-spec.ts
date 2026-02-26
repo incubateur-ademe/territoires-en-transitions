@@ -838,7 +838,7 @@ describe('UpdateFicheService', () => {
     test('User with limited edition rights on collectivite can update fiche only if he is pilote', async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectiviteId,
-        accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+        role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
       });
 
       const adminCaller = fichesRouter.createCaller({ user: yoloDodo });

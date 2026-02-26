@@ -63,7 +63,7 @@ class UserFactory {
   // ajoute un utilisateur (par défaut avec le role "editeur" et les CGU validées)
   addUser = async (args?: TestUserArgs) => {
     const { user, cleanup } = await addTestUser(databaseService, {
-      accessLevel: 'edition',
+      role: 'edition',
       ...(args || {}),
     });
     const userFixture = new UserFixture(this.context, user, cleanup);

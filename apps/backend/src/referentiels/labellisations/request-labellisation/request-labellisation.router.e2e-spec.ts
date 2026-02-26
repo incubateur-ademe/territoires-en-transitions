@@ -52,16 +52,16 @@ describe('Request Labellisation Router', () => {
         },
         users: [
           {
-            accessLevel: CollectiviteRole.ADMIN,
+            role: CollectiviteRole.ADMIN,
           },
           {
-            accessLevel: CollectiviteRole.EDITION,
+            role: CollectiviteRole.EDITION,
           },
           {
-            accessLevel: CollectiviteRole.LECTURE,
+            role: CollectiviteRole.LECTURE,
           },
           {
-            accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+            role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
           },
         ],
       }

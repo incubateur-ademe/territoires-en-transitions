@@ -1,8 +1,6 @@
 'use client';
 
-import { useState } from 'react';
 import { SignupModal } from '../../components/Signup';
-import { useListCollectivites } from './useCollectivites';
 import { useSignupState } from './useSignupState';
 
 /**
@@ -23,9 +21,6 @@ export const SignupPageClient = ({
   otp: string | null;
   redirect_to: string;
 }) => {
-  const [filter, setFilter] = useState('');
-  const { data: collectivites } = useListCollectivites(filter);
-
   const defaultValues = {
     email,
     otp,
@@ -37,12 +32,5 @@ export const SignupPageClient = ({
     defaultValues,
   });
 
-  return (
-    <SignupModal
-      collectivites={collectivites || []}
-      onFilterCollectivites={setFilter}
-      defaultValues={defaultValues}
-      {...state}
-    />
-  );
+  return <SignupModal defaultValues={defaultValues} {...state} />;
 };

@@ -8,6 +8,8 @@ import {
 
 const visiteurVerifiePermissions: readonly PermissionOperation[] = [
   'collectivites.read',
+  'collectivites.membres.read',
+  'collectivites.tags.read',
   'collectivites.documents.read',
   'referentiels.read',
   'plans.read',
@@ -21,8 +23,6 @@ const collectiviteLecturePermissions: readonly PermissionOperation[] = [
 
   'collectivites.read_confidentiel',
   'collectivites.documents.read_confidentiel',
-  'collectivites.membres.read',
-  'collectivites.tags.read',
   'referentiels.read_confidentiel',
   'referentiels.discussions.read',
   'referentiels.discussions.mutate',
@@ -36,7 +36,6 @@ const collectiviteLecturePermissions: readonly PermissionOperation[] = [
 const collectiviteEditionPermissions: readonly PermissionOperation[] = [
   ...collectiviteLecturePermissions,
 
-  'collectivites.membres.mutate',
   'collectivites.tags.mutate',
   'collectivites.documents.mutate',
   'referentiels.mutate',
@@ -55,6 +54,7 @@ const collectiviteEditionPermissions: readonly PermissionOperation[] = [
 const collectiviteAdminPermissions: readonly PermissionOperation[] = [
   ...collectiviteEditionPermissions,
 
+  'collectivites.membres.mutate',
   'collectivites.tableau-de-bord.mutate',
 ];
 

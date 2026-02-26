@@ -3,6 +3,7 @@
 import {
   CollectiviteRolesAndPermissions,
   PermissionOperation,
+  UserInfo,
 } from '@tet/domain/users';
 import dynamic from 'next/dynamic';
 import { useContext } from 'react';
@@ -16,6 +17,9 @@ export interface CollectiviteCurrent extends CollectiviteRolesAndPermissions {
   isSimplifiedView: boolean;
 
   hasCollectivitePermission: (permission: PermissionOperation) => boolean;
+
+  // user info also here for convenience access
+  user: UserInfo;
 }
 
 export const CollectiviteProvider = dynamic(

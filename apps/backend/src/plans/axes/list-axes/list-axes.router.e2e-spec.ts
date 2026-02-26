@@ -29,7 +29,7 @@ describe('Lister les axes', () => {
 
     const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(db, {
       user: {
-        accessLevel: CollectiviteRole.ADMIN,
+        role: CollectiviteRole.ADMIN,
       },
       collectivite: {
         accesRestreint: true,
@@ -470,7 +470,7 @@ describe('Lister les axes', () => {
     test('Un utilisateur avec des droits de lecture sur la collectivité peut lister les axes', async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteRole.LECTURE,
+        role: CollectiviteRole.LECTURE,
       });
 
       onTestFinished(async () => {
@@ -508,7 +508,7 @@ describe('Lister les axes', () => {
     test("Un utilisateur avec des droits d'édition limités sur la collectivité ne peut pas lister les axes", async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+        role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
       });
 
       onTestFinished(async () => {
@@ -842,7 +842,7 @@ describe('Lister les axes', () => {
     test('Un utilisateur avec des droits de lecture sur la collectivité peut lister les axes récursivement', async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteRole.LECTURE,
+        role: CollectiviteRole.LECTURE,
       });
 
       onTestFinished(async () => {
@@ -880,7 +880,7 @@ describe('Lister les axes', () => {
     test("Un utilisateur avec des droits d'édition limités sur la collectivité ne peut pas lister les axes récursivement", async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+        role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
       });
 
       onTestFinished(async () => {

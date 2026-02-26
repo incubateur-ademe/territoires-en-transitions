@@ -30,7 +30,7 @@ describe('Delete Fiche Action', () => {
     db = await getTestDatabase(app);
     const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(db, {
       user: {
-        accessLevel: CollectiviteRole.ADMIN,
+        role: CollectiviteRole.ADMIN,
       },
     });
     collectivite = testCollectiviteAndUserResult.collectivite;
@@ -204,7 +204,7 @@ describe('Delete Fiche Action', () => {
     test('User with lecture rights on collectivite cannot delete fiche', async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteRole.LECTURE,
+        role: CollectiviteRole.LECTURE,
       });
 
       onTestFinished(async () => {
@@ -225,7 +225,7 @@ describe('Delete Fiche Action', () => {
     test('User with limited edition rights on collectivite cannot delete fiche', async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+        role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
       });
 
       onTestFinished(async () => {

@@ -19,7 +19,7 @@ test.describe('Validate labellisation collectivité COT', () => {
     );
 
     const auditeurUser = await collectivite.addUser({
-      accessLevel: CollectiviteRole.LECTURE,
+      role: CollectiviteRole.LECTURE,
       autoLogin: true,
     });
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InstanceGouvernanceService } from '@tet/backend/collectivites/handle-instance-gouvernance/handle-instance-gouvernance.service';
-import { CollectiviteMembresService } from '@tet/backend/collectivites/membres/membres.service';
+import { ListMembresService } from '@tet/backend/collectivites/membres/list-membres/list-membres.service';
 import { TagService } from '@tet/backend/collectivites/tags/tag.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -40,7 +40,7 @@ export interface ResolvedFicheEntities {
 @Injectable()
 export class ResolveEntityService {
   constructor(
-    private readonly memberService: CollectiviteMembresService,
+    private readonly listMembresService: ListMembresService,
     private readonly tagService: TagService,
     private readonly instanceGouvernanceService: InstanceGouvernanceService
   ) {}
@@ -62,7 +62,7 @@ export class ResolveEntityService {
   ): Promise<Result<ResolvedFicheEntities[], string>> {
     const { getOrCreatePersonne } = await createPersonneResolver(
       collectiviteId,
-      this.memberService,
+      this.listMembresService,
       this.tagService,
       tx
     );

@@ -1,10 +1,10 @@
 import { referentielToName } from '@/app/app/labels';
+import { Membre } from '@/app/collectivites/membres/list-membres/use-list-membres';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { Icon, Tooltip, useCopyToClipboard } from '@tet/ui';
-import { CollectiviteMembre } from './useMembres';
 
 export type ReferentItemProps = {
-  membre: CollectiviteMembre;
+  membre: Membre;
 };
 
 /**

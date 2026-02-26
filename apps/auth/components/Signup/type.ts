@@ -40,10 +40,6 @@ export type SignupProps = {
   error: string | null;
   /** Indique qu'un appel réseau est en cours */
   isLoading?: boolean;
-  /** Liste de collectivités auxquelles le compte peut être rattaché */
-  collectivites: Array<{ id: number; nom: string }>;
-  /** Appelé pour filtrer la liste des collectivités */
-  onFilterCollectivites: (value: string) => void;
   /** Appelé à l'envoi du formulaire */
   onSubmit: (data: SignupData) => void;
   /** Appelé à l'annulation du formulaire */

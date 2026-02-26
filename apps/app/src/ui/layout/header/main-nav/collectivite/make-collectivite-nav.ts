@@ -105,7 +105,7 @@ export const makeCollectiviteNav = ({
     },
     {
       isVisible: hasRole(user, PlatformRole.SUPER_ADMIN),
-      children: 'Support',
+      children: 'Super Admin',
       links: [
         {
           children: 'Importer un plan',

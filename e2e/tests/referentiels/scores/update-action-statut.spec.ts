@@ -325,7 +325,7 @@ test.describe('Update action statut', () => {
 
     const auditeurUser = await collectivite.addUser({
       autoLogin: true,
-      accessLevel: CollectiviteRole.LECTURE,
+      role: CollectiviteRole.LECTURE,
     });
 
     await referentiels.addAuditeur({

@@ -29,9 +29,11 @@ export async function GET(
 
   // Else consume invitation and redirect to the home page
   try {
-    await trpcInServerFunction.users.invitations.consume.mutate({
-      invitationId,
-    });
+    await trpcInServerFunction.collectivites.membres.invitations.consume.mutate(
+      {
+        invitationId,
+      }
+    );
   } catch (error) {
     console.error(
       `Error consuming invitation ${invitationId}`,

@@ -1,9 +1,9 @@
+import { Membre } from '@/app/collectivites/membres/list-membres/use-list-membres';
 import { ReferentItem } from './ReferentItem';
-import { CollectiviteMembre } from './useMembres';
 
 export type ReferentsListProps = {
   nomFonction: string;
-  referents?: CollectiviteMembre[];
+  referents?: Membre[];
 };
 
 /**

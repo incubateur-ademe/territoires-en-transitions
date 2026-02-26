@@ -9,7 +9,7 @@ export function ToggleSuperAdminModeCheckbox() {
     <Checkbox
       key="checkbox-super-admin-mode"
       variant="switch"
-      label="Mode support"
+      label="Mode super-admin"
       checked={isSuperAdminRoleEnabled}
       onChange={toggleSuperAdminRole}
       disabled={isPending}

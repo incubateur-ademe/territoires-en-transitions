@@ -8,8 +8,8 @@ import {
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
+import { invitationTable } from '../../collectivites/membres/invitation.table';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
-import { invitationTable } from '../models/invitation.table';
 import { collectiviteRolePgEnum } from './roles/collectivite-role.column';
 
 export const utilisateurCollectiviteAccessTable = pgTable(
@@ -23,7 +23,7 @@ export const utilisateurCollectiviteAccessTable = pgTable(
     createdAt,
     modifiedAt,
     isActive: boolean('active').notNull(),
-    accessLevel: collectiviteRolePgEnum('niveau_acces')
+    role: collectiviteRolePgEnum('niveau_acces')
       .notNull()
       .default(CollectiviteRole.LECTURE),
     invitationId: uuid('invitation_id').references(() => invitationTable.id),

@@ -7,14 +7,14 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
-import { invitationPersonneTagTable } from '@tet/backend/users/invitations/invitation-personne-tag.table';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { invitationTable } from '@tet/backend/users/models/invitation.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq, inArray, isNotNull, ne } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
+import { invitationTable } from '../../membres/invitation.table';
+import { invitationPersonneTagTable } from '../../membres/mutate-invitations/invitation-personne-tag.table';
 
 describe('Test PersonneTagService', () => {
   let router: TrpcRouter;
@@ -28,13 +28,13 @@ describe('Test PersonneTagService', () => {
     databaseService = await getTestDatabase(app);
   });
 
-  test('Appelle list sans avoir les droits', async () => {
+  test('Appelle liste en tant que visiteur', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
     await expect(() =>
       caller.collectivites.tags.personnes.list({
         collectiviteId: 200,
       })
-    ).rejects.toThrowError();
+    ).not.toThrow();
   });
 
   test('Appelle list', async () => {
@@ -43,7 +43,7 @@ describe('Test PersonneTagService', () => {
     const [invitationAdded] = await databaseService.db
       .insert(invitationTable)
       .values({
-        accessLevel: CollectiviteRole.EDITION,
+        role: CollectiviteRole.EDITION,
         email: 'test@test.fr',
         collectiviteId: 1,
         createdBy: yoloDodoUser.id,
@@ -105,7 +105,7 @@ describe('Test PersonneTagService', () => {
     expect(resultTwo.length).toBe(2);
 
     // Si on annule l'invitation, le tag ne doit plus avoir d'invitation associée
-    await caller.users.invitations.deletePending({
+    await caller.collectivites.membres.invitations.deletePending({
       email: 'test@test.fr',
       collectiviteId: 1,
     });

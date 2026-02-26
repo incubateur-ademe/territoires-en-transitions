@@ -32,7 +32,7 @@ describe('Supprimer un axe', () => {
 
     const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(db, {
       user: {
-        accessLevel: CollectiviteRole.ADMIN,
+        role: CollectiviteRole.ADMIN,
       },
       collectivite: {
         accesRestreint: true,
@@ -378,7 +378,7 @@ describe('Supprimer un axe', () => {
       // Utilisateur avec droits de lecture uniquement
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteRole.LECTURE,
+        role: CollectiviteRole.LECTURE,
       });
 
       onTestFinished(async () => {
@@ -407,7 +407,7 @@ describe('Supprimer un axe', () => {
       // Utilisateur avec droits d'édition limités
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+        role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
       });
 
       onTestFinished(async () => {

@@ -1,4 +1,4 @@
-import { CollectiviteMembresService } from '@tet/backend/collectivites/membres/membres.service';
+import { ListMembresService } from '@tet/backend/collectivites/membres/list-membres/list-membres.service';
 import { TagService } from '@tet/backend/collectivites/tags/tag.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { getFuse } from '@tet/backend/utils/fuse/fuse.utils';
@@ -13,16 +13,16 @@ type CreateTagFn = (
 
 export const createPersonneResolver = async (
   collectiviteId: number,
-  memberService: CollectiviteMembresService,
+  listMembresService: ListMembresService,
   tagService: TagService,
   tx?: Transaction
 ) => {
   const Fuse = await getFuse();
   const [members, tags] = await Promise.all([
-    memberService.list({ collectiviteId }, { tx }),
+    listMembresService.list({ collectiviteId }, { tx }),
     tagService.getTags(collectiviteId, TagEnum.Personne, tx),
   ]);
-  const searchMembers = new Fuse(members, {
+  const searchMembers = new Fuse(members.membres, {
     keys: [
       { name: 'nom', weight: 0.7 },
       { name: 'prenom', weight: 0.3 },
