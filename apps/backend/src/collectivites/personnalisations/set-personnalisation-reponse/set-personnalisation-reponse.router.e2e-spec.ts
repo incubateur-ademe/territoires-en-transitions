@@ -43,7 +43,7 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
       databaseService,
       {
         user: {
-          accessLevel: CollectiviteRole.ADMIN,
+          role: CollectiviteRole.ADMIN,
         },
       }
     );
@@ -333,7 +333,7 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
     test('Un utilisateur avec des droits de lecture sur la collectivité ne peut pas créer une réponse', async () => {
       const { user, cleanup } = await addTestUser(databaseService, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteRole.LECTURE,
+        role: CollectiviteRole.LECTURE,
       });
 
       onTestFinished(async () => {

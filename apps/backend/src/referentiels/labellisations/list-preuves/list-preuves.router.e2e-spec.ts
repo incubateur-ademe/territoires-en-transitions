@@ -40,7 +40,7 @@ describe('List Preuves Router', () => {
         collectivite: {},
         users: [
           {
-            accessLevel: CollectiviteRole.EDITION,
+            role: CollectiviteRole.EDITION,
           },
         ],
       }

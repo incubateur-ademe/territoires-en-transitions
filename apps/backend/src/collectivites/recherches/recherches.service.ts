@@ -12,7 +12,6 @@ import {
   collectiviteBanaticTypeTable,
 } from '@tet/backend/collectivites/shared/models/collectivite-banatic-type.table';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
-import { membreTable } from '@tet/backend/collectivites/shared/models/membre.table';
 import { indicateurValeurTable } from '@tet/backend/indicateurs/valeurs/indicateur-valeur.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-axe.table';
@@ -27,6 +26,7 @@ import { collectiviteTypeEnum } from '@tet/domain/collectivites';
 import { SnapshotJalonEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { getTableName, sql } from 'drizzle-orm';
+import { membreTable } from '../membres/membre.table';
 
 /** Type of view */
 const tabEnum = {
@@ -53,7 +53,7 @@ export default class RecherchesService {
     // Create the query
     const query = `WITH ${this.getFilteredCollectivitesQuery(filters)},
     ${this.getContactsQuery(
-      `pud.${utilisateurCollectiviteAccessTable.accessLevel.name} = '${CollectiviteRole.ADMIN}'`
+      `pud.${utilisateurCollectiviteAccessTable.role.name} = '${CollectiviteRole.ADMIN}'`
     )}
     SELECT  c.collectiviteId as "collectiviteId",
             c.collectiviteNom as "collectiviteNom",
@@ -125,7 +125,7 @@ export default class RecherchesService {
     filters: FiltersRequest
   ): Promise<{ count: number; items: RecherchesPlan[] }> {
     // Create the where condition for contacts
-    const whereConditionContacts = `(pud.${utilisateurCollectiviteAccessTable.accessLevel.name} = '${CollectiviteRole.ADMIN}' OR pud.${utilisateurCollectiviteAccessTable.accessLevel.name} = '${CollectiviteRole.EDITION}')`;
+    const whereConditionContacts = `(pud.${utilisateurCollectiviteAccessTable.role.name} = '${CollectiviteRole.ADMIN}' OR pud.${utilisateurCollectiviteAccessTable.role.name} = '${CollectiviteRole.EDITION}')`;
 
     // Create the query
     const query = `WITH ${this.getFilteredCollectivitesQuery(filters)},

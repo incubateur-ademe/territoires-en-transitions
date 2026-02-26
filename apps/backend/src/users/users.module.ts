@@ -5,8 +5,6 @@ import { ApikeysController } from '@tet/backend/users/apikeys/apikeys.controller
 import { ApikeysRouter } from '@tet/backend/users/apikeys/apikeys.router';
 import { ApikeysService } from '@tet/backend/users/apikeys/apikeys.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { InvitationService } from '@tet/backend/users/invitations/invitation.service';
-import { InvitationsRouter } from '@tet/backend/users/invitations/invitations.router';
 import { ListUsersController } from '@tet/backend/users/users/list-users/list-users.controller';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
@@ -66,9 +64,6 @@ import { UpdateUserService } from './users/update-user/update-user.service';
     ApikeysService,
     ApikeysRouter,
 
-    InvitationService,
-    InvitationsRouter,
-
     UserPreferencesRepository,
     UserPreferencesService,
     UserPreferencesRouter,
@@ -76,6 +71,7 @@ import { UpdateUserService } from './users/update-user/update-user.service';
   exports: [
     PermissionService,
     GetUserRolesAndPermissionsService,
+    UpdateUserRoleService,
     ListUsersService,
     UsersRouter,
     UserPreferencesRouter,

@@ -23,6 +23,6 @@ select *
 from test.groupement;
 
 $$ language sql security definer;
-comment on function test_reset_droits is
+comment on function test_reset_groupements is
     'Reinitialise les groupements.';
 

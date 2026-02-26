@@ -42,10 +42,10 @@ describe('StartAuditRouter', () => {
         },
         users: [
           {
-            accessLevel: CollectiviteRole.LECTURE,
+            role: CollectiviteRole.LECTURE,
           },
           {
-            accessLevel: CollectiviteRole.EDITION,
+            role: CollectiviteRole.EDITION,
           },
         ],
       }

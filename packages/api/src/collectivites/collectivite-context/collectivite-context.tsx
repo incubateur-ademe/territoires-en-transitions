@@ -91,6 +91,8 @@ export function CollectiviteProvider_OnlyImportWithoutSSR({
         hasPermission(user, permission, {
           collectiviteId: collectivite.collectiviteId,
         }),
+
+      user,
     };
   };
 

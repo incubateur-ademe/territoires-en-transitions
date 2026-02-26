@@ -10,13 +10,8 @@ const meta: Meta<typeof Signup> = {
     defaultValues: {
       email: 'yolo@dodo.com',
     },
-    collectivites: [
-      { id: 1270, nom: 'Grenoble' },
-      { id: 5460, nom: '#Collectivité Test' },
-    ],
     onSubmit: action('onSubmit'),
     onCancel: action('onCancel'),
-    onFilterCollectivites: action('onFilterCollectivites'),
     getPasswordStrength: (...args) => {
       action('getPasswordStrength')(...args);
       return null;

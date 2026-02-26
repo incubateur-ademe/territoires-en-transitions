@@ -75,7 +75,7 @@ export class GetUserRolesAndPermissionsRepository {
         collectiviteId: utilisateurCollectiviteAccessTable.collectiviteId,
         collectiviteNom: collectiviteTable.nom,
         collectiviteAccesRestreint: sql<boolean>`coalesce(${collectiviteTable.accesRestreint}, false)`,
-        role: utilisateurCollectiviteAccessTable.accessLevel,
+        role: utilisateurCollectiviteAccessTable.role,
       })
       .from(utilisateurCollectiviteAccessTable)
       .innerJoin(

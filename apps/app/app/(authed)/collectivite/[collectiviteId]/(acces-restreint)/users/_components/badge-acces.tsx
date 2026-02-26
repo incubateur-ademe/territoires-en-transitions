@@ -1,7 +1,7 @@
 import { CollectiviteRole } from '@tet/domain/users';
 import { Badge, BadgeProps, IconValue } from '@tet/ui';
 
-import { getAccessLevelLabel } from '@/app/users/authorizations/permission-access-level.utils';
+import { getCollectiviteRoleLabel } from '@/app/users/authorizations/collectivite-role.utils';
 
 const niveauAccesToIcon: Record<CollectiviteRole, IconValue> = {
   admin: 'user-star-line',
@@ -22,7 +22,7 @@ const BadgeAcces = ({ acces, ...props }: BadgeAccesProps) => {
 
   return (
     <Badge
-      title={getAccessLevelLabel(acces)}
+      title={getCollectiviteRoleLabel(acces)}
       icon={niveauAccesToIcon[acces]}
       iconPosition="left"
       variant={acces === 'lecture' ? 'default' : 'high'}

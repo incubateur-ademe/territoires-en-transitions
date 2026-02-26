@@ -1,4 +1,4 @@
-import { getAccessLevelLabel } from '@/app/users/authorizations/permission-access-level.utils';
+import { getCollectiviteRoleLabel } from '@/app/users/authorizations/collectivite-role.utils';
 import { CollectiviteRole } from '@tet/domain/users';
 import { Badge, BadgeSize } from '@tet/ui';
 import classNames from 'classnames';
@@ -32,5 +32,5 @@ const getLabel = ({ acces, isAuditeur }: Props) => {
   if (!acces) {
     return 'visite';
   }
-  return getAccessLevelLabel(acces);
+  return getCollectiviteRoleLabel(acces);
 };

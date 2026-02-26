@@ -7,10 +7,6 @@ as
 $$
     truncate groupement_collectivite;
     select test_reset_groupements();
--- 02-droits.sql
-    select test_reset_droits();
--- 04-membre.sql
-    select test_reset_membres();
 -- 05-history.sql
     select test_clear_history();
 -- 06-preuve.sql

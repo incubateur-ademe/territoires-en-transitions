@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { CollectiviteMembresService } from '@tet/backend/collectivites/membres/membres.service';
+import { ListMembresService } from '@tet/backend/collectivites/membres/list-membres/list-membres.service';
 import { ListPersonneTagsOutput } from '@tet/backend/collectivites/tags/personnes/list-personne-tags.output';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import { indicateurPiloteTable } from '@tet/backend/indicateurs/shared/models/indicateur-pilote.table';
@@ -7,14 +7,14 @@ import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/
 import { ficheActionReferentTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-referent.table';
 import { actionPiloteTable } from '@tet/backend/referentiels/models/action-pilote.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { invitationPersonneTagTable } from '@tet/backend/users/invitations/invitation-personne-tag.table';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
-import { invitationTable } from '@tet/backend/users/models/invitation.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { AnyColumn, and, eq, getTableName, inArray, sql } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
+import { invitationTable } from '../../membres/invitation.table';
+import { invitationPersonneTagTable } from '../../membres/mutate-invitations/invitation-personne-tag.table';
 
 /** Liste des tables ayant une référence vers personne_tag */
 const tables = [
@@ -30,7 +30,7 @@ export class PersonneTagService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
-    private readonly membresService: CollectiviteMembresService
+    private readonly listMembresService: ListMembresService
   ) {}
 
   /**
@@ -107,7 +107,7 @@ export class PersonneTagService {
     }
     const execute = async (tx: Transaction) => {
       // Vérifie que l'utilisateur donné appartient à la collectivité
-      const isMember = await this.membresService.isActiveMember({
+      const isMember = await this.listMembresService.isActiveMember({
         userId,
         collectiviteId,
         tx,

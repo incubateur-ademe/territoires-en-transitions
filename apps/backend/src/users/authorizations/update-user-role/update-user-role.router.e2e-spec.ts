@@ -30,7 +30,7 @@ describe('UpdateUserRole', () => {
       expect(user.roles.includes(PlatformRole.SUPER_ADMIN)).toBe(enabled);
     }
 
-    test('Active le mode support pour un utilisateur avec le rôle support', async () => {
+    test('Active le mode super-admin pour un utilisateur avec le rôle support', async () => {
       const caller = router.createCaller({ user: yoloDodoUser });
 
       await expectUserToHaveRoleSupportEnabled(caller, false);
@@ -67,7 +67,7 @@ describe('UpdateUserRole', () => {
       });
     });
 
-    test("Ne peut pas activer le mode support si l'utilisateur n'a pas le rôle support", async () => {
+    test("Ne peut pas activer le mode super-admin si l'utilisateur n'a pas le rôle support", async () => {
       const caller = router.createCaller({ user: yoloDodoUser });
 
       await expectUserToHaveRoleSupportEnabled(caller, false);
@@ -77,7 +77,7 @@ describe('UpdateUserRole', () => {
           isEnabled: true,
         })
       ).rejects.toThrowError(
-        /L'utilisateur doit avoir le rôle support pour activer le mode support/
+        /L'utilisateur doit avoir le rôle support pour activer le mode super-admin/
       );
 
       await expectUserToHaveRoleSupportEnabled(caller, false);

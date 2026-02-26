@@ -16,8 +16,37 @@ import { Dcp } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
 import { eq } from 'drizzle-orm';
 import { DatabaseError } from 'pg';
+import { utilisateurCollectiviteAccessTable } from '../../users/authorizations/utilisateur-collectivite-access.table';
 import { bibliothequeFichierTable } from '../documents/models/bibliotheque-fichier.table';
+import { invitationTable } from '../membres/invitation.table';
+import { invitationPersonneTagTable } from '../membres/mutate-invitations/invitation-personne-tag.table';
 import { collectiviteTable } from '../shared/models/collectivite.table';
+
+/** Supprime droits et invitations (prérequis avant suppression des users) */
+export async function cleanupCollectivitePrerequisites(
+  { db }: DatabaseServiceInterface,
+  collectiviteId: number
+): Promise<void> {
+  // D'abord supprimer les droits (ils référencent invitation_id)
+  await db
+    .delete(utilisateurCollectiviteAccessTable)
+    .where(
+      eq(utilisateurCollectiviteAccessTable.collectiviteId, collectiviteId)
+    );
+
+  const invitationsToDelete = await db
+    .select({ id: invitationTable.id })
+    .from(invitationTable)
+    .where(eq(invitationTable.collectiviteId, collectiviteId));
+  for (const inv of invitationsToDelete) {
+    await db
+      .delete(invitationPersonneTagTable)
+      .where(eq(invitationPersonneTagTable.invitationId, inv.id));
+  }
+  await db
+    .delete(invitationTable)
+    .where(eq(invitationTable.collectiviteId, collectiviteId));
+}
 
 export async function setCollectiviteAsCOT(
   { db }: DatabaseServiceInterface,
@@ -72,7 +101,6 @@ export async function addTestCollectivite(
     const cleanup = async () => {
       if (collectiviteId) {
         try {
-          console.log(`Cleanup collectivite ${collectiviteId}`);
           await db
             .delete(bibliothequeFichierTable)
             .where(eq(bibliothequeFichierTable.collectiviteId, collectiviteId));

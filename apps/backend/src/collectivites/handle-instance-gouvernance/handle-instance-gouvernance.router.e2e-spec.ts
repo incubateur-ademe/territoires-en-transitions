@@ -7,7 +7,7 @@ import {
   getTestDatabase,
   getTestRouter,
   YOLO_DODO,
-  YOULOU_DOUDOU
+  YOULOU_DOUDOU,
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -42,7 +42,7 @@ describe('InstanceGouvernanceRouter', () => {
     db = await getTestDatabase(app);
   });
 
-  test('list: rejects when user has no rights on collectivite', async () => {
+  test('list: verified visiting user is allowed to read', async () => {
     const userWithNoRights = await getAuthUser(YOLO_DODO);
     const caller = router.createCaller({ user: userWithNoRights });
 
@@ -52,7 +52,7 @@ describe('InstanceGouvernanceRouter', () => {
 
     await expect(async () => {
       await caller.collectivites.tags.instanceGouvernance.list(input);
-    }).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
+    }).not.toThrow();
   });
 
   test('create / list / update / delete: happy path', async () => {

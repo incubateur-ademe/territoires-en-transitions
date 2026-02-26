@@ -1,4 +1,7 @@
-import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import {
+  addTestCollectivite,
+  cleanupCollectivitePrerequisites,
+} from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { TestUserArgs } from '@tet/backend/users/users/users.test-fixture';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
@@ -90,6 +93,12 @@ class CollectiviteFactory {
           this.cleanupFuncs.map((cleanupFunc) =>
             cleanupFunc(collectivite.data.id)
           )
+        );
+
+        // supprime invitations et droits avant les users (FK invitation.created_by)
+        await cleanupCollectivitePrerequisites(
+          databaseService,
+          collectivite.data.id
         );
 
         // supprime les utilisateurs

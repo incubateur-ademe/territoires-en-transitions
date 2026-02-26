@@ -1,6 +1,5 @@
 import { Meta } from '@storybook/nextjs-vite';
 import { action } from 'storybook/actions';
-import { TUpdateMembre } from '../../../../../../../src/app/pages/collectivite/Users/types';
 import { ConfirmerChangementNiveau } from './ConfirmerChangementNiveau';
 
 export default {
@@ -9,14 +8,14 @@ export default {
 
 const handlers = {
   setIsOpen: action('setIsOpen'),
-  updateMembre: action('updateMembre') as TUpdateMembre,
+  updateMembre: action('updateMembre') as () => void,
 };
 
 export const AdminChangeSonAcces = {
   args: {
     isOpen: true,
     selectedOption: 'edition',
-    membre: { user_id: '1', email: '' },
+    membre: { userId: '1', email: '' },
     isCurrentUser: true,
     ...handlers,
   },

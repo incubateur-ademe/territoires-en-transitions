@@ -21,28 +21,23 @@ export const sendEmail = (email: Email) => {
  * Fourni le transporteur de mails approprié en fonction de l'env.
  */
 const getTransport = () => {
-  // pour la prod.
-  if (process.env.NODE_ENV === 'production') {
-    // vérifie l'env.
-    const user = process.env.SMTP_USER;
-    const pass = process.env.SMTP_KEY;
-    if (!pass || !user) {
-      throw Error('Config brevo manquante');
-    }
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_KEY;
 
-    // renvoi le transporteur pour brevo
+  if (!pass || !user) {
+    // renvoi le transporteur Mailpit (pour le dev ou les tests)
     return nodemailer.createTransport({
-      host: 'smtp-relay.brevo.com',
-      port: 587,
+      host: '127.0.0.1',
+      port: 54325,
       secure: false,
-      auth: {user, pass},
     });
   }
 
-  // renvoi le transporteur Mailpit (pour le dev ou les tests)
+  // renvoi le transporteur pour brevo
   return nodemailer.createTransport({
-    host: '127.0.0.1',
-    port: 54325,
+    host: 'smtp-relay.brevo.com',
+    port: 587,
     secure: false,
+    auth: { user, pass },
   });
 };

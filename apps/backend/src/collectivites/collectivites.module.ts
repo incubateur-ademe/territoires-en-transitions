@@ -8,7 +8,7 @@ import { UpdateDocumentRouter } from '@tet/backend/collectivites/documents/updat
 import { UpdateDocumentService } from '@tet/backend/collectivites/documents/update-document/update-document.service';
 import { ImportCollectiviteRelationsRouter } from '@tet/backend/collectivites/import-collectivite-relations/import-collectivite-relations.router';
 import { ImportCollectiviteRelationsService } from '@tet/backend/collectivites/import-collectivite-relations/import-collectivite-relations.service';
-import { ExportConnectService } from '@tet/backend/collectivites/membres/export-connect.service';
+import { ExportConnectService } from '@tet/backend/collectivites/membres/sync-membres-with-crm-connect/export-connect.service';
 import { RecherchesRouter } from '@tet/backend/collectivites/recherches/recherches.router';
 import RecherchesService from '@tet/backend/collectivites/recherches/recherches.service';
 import { PersonneTagRouter } from '@tet/backend/collectivites/tags/personnes/personne-tag.router';
@@ -31,8 +31,12 @@ import { InstanceGouvernanceRouter } from './handle-instance-gouvernance/handle-
 import { InstanceGouvernanceService } from './handle-instance-gouvernance/handle-instance-gouvernance.service';
 import { ListCollectivitesRouter } from './list-collectivites/list-collectivites.router';
 import ListCollectivitesService from './list-collectivites/list-collectivites.service';
+import { ListMembresService } from './membres/list-membres/list-membres.service';
+import { ListPendingInvitationsService } from './membres/list-pending-invitations/list-pending-invitations.service';
 import { CollectiviteMembresRouter } from './membres/membres.router';
-import { CollectiviteMembresService } from './membres/membres.service';
+import { InvitationService } from './membres/mutate-invitations/invitation.service';
+import { InvitationsRouter } from './membres/mutate-invitations/invitations.router';
+import { MutateMembresService } from './membres/mutate-membres/mutate-membres.service';
 import { PersonnalisationsRouter } from './personnalisations/personnalisations.router';
 import { SetPersonnalisationReponseRouter } from './personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.router';
 import { SetPersonnalisationReponseService } from './personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.service';
@@ -41,13 +45,17 @@ import CollectivitesService from './services/collectivites.service';
 import GroupementsService from './services/groupements.service';
 import { PersonnesService } from './services/personnes.service';
 import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
-
 @Module({
   imports: [TableauDeBordModule],
   providers: [
     CollectivitesRouter,
     CollectivitesService,
-    CollectiviteMembresService,
+    ListMembresService,
+    ListPendingInvitationsService,
+    InvitationService,
+    InvitationsRouter,
+
+    MutateMembresService,
     CollectiviteMembresRouter,
     GroupementsService,
     PersonnesService,
@@ -95,7 +103,7 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
   exports: [
     CollectivitesRouter,
     CollectivitesService,
-    CollectiviteMembresService,
+    ListMembresService,
     CollectiviteMembresRouter,
     GroupementsService,
     PersonnesRouter,

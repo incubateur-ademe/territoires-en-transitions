@@ -37,7 +37,7 @@ describe('Test upsert collectivite', () => {
     databaseService = await getTestDatabase(app);
   });
 
-  test('Test utilisateur support mais sans le mode support actif', async () => {
+  test('Test utilisateur support mais sans le mode super-admin actif', async () => {
     const { cleanup } = await addUserRoleSupport({
       app,
       userId: yoloDodoUser.id,

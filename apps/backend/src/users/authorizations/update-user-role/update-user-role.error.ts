@@ -12,7 +12,7 @@ export const updateUserRoleErrorConfig: TrpcErrorHandlerConfig<SpecificError> =
       USER_NOT_SUPPORT: {
         code: 'BAD_REQUEST',
         message:
-          "L'utilisateur doit avoir le rôle support pour activer le mode support",
+          "L'utilisateur doit avoir le rôle support pour activer le mode super-admin",
       },
     },
   };

@@ -29,7 +29,7 @@ describe('Récupérer un plan', () => {
 
     const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(db, {
       user: {
-        accessLevel: CollectiviteRole.ADMIN,
+        role: CollectiviteRole.ADMIN,
       },
       collectivite: {
         accesRestreint: true,
@@ -233,7 +233,7 @@ describe('Récupérer un plan', () => {
     test('Un utilisateur avec des droits de lecture sur la collectivité peut récupérer un plan', async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteRole.LECTURE,
+        role: CollectiviteRole.LECTURE,
       });
 
       onTestFinished(async () => {
@@ -268,7 +268,7 @@ describe('Récupérer un plan', () => {
     test("Un utilisateur avec des droits d'édition limités sur la collectivité ne peut pas récupérer un plan", async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+        role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
       });
 
       onTestFinished(async () => {
@@ -300,7 +300,7 @@ describe('Récupérer un plan', () => {
     test("Un utilisateur avec des droits d'édition sur la collectivité peut récupérer un plan", async () => {
       const { user, cleanup } = await addTestUser(db, {
         collectiviteId: collectivite.id,
-        accessLevel: CollectiviteRole.EDITION,
+        role: CollectiviteRole.EDITION,
       });
 
       onTestFinished(async () => {

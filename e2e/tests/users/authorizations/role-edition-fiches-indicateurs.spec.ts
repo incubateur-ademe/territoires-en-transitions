@@ -8,7 +8,7 @@ test.describe('Role edition fiches indicateurs', () => {
     const { collectivite, user: adminUser } =
       await collectivites.addCollectiviteAndUser({
         userArgs: {
-          accessLevel: 'admin',
+          role: 'admin',
           autoLogin: true,
         },
       });
@@ -27,7 +27,7 @@ test.describe('Role edition fiches indicateurs', () => {
     ]);
 
     const limitedEditionUser = await collectivite.addUser({
-      accessLevel: 'edition_fiches_indicateurs',
+      role: 'edition_fiches_indicateurs',
     });
 
     const bulkEditRequest = {

@@ -18,6 +18,27 @@ export const YULU_DUDU = {
   },
 } as const;
 
+// Edition on collectivités 1 and 2 (for "soi" / self-update tests)
+export const YILI_DIDI = {
+  id: '3f407fc6-3634-45ff-a988-301e9088096a',
+  email: 'yili@didi.com',
+  password: 'yilididi',
+  collectiviteId: {
+    edition: 1,
+    edition2: 2,
+  },
+} as const;
+
+// Lecture on collectivité 1
+export const YALA_DADA = {
+  id: '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561',
+  email: 'yala@dada.com',
+  password: 'yaladada',
+  collectiviteId: {
+    lecture: 1,
+  },
+} as const;
+
 // Auditeur de la collectivité 1 et 10
 export const YOULOU_DOUDOU = {
   id: '5f407fc6-3634-45ff-a988-301e9088096a',

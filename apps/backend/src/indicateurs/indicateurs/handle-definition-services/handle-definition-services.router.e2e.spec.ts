@@ -161,7 +161,7 @@ describe('IndicateurDefinitionServiceRouter', () => {
 
     const { user, cleanup } = await addTestUser(db, {
       collectiviteId: collectiviteId,
-      accessLevel: CollectiviteRole.LECTURE,
+      role: CollectiviteRole.LECTURE,
     });
     onTestFinished(async () => {
       await cleanup();
@@ -200,7 +200,7 @@ describe('IndicateurDefinitionServiceRouter', () => {
 
     const { user, cleanup } = await addTestUser(db, {
       collectiviteId: collectiviteId,
-      accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+      role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
     });
     onTestFinished(async () => {
       await cleanup();

@@ -1,9 +1,8 @@
+import { Membre } from '@/app/collectivites/membres/list-membres/use-list-membres';
 import { Option, SelectFilter, SelectMultipleProps } from '@tet/ui';
 
-import { CollectiviteMembre } from './useMembres';
-
 type Props = Omit<SelectMultipleProps, 'values' | 'options'> & {
-  membres: CollectiviteMembre[];
+  membres: Membre[];
 };
 
 /** Sélecteur de membres référents de la collectivité */

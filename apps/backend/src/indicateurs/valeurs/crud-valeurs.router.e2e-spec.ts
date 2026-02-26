@@ -387,7 +387,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
 
     const { user, cleanup } = await addTestUser(databaseService, {
       collectiviteId: collectiviteId,
-      accessLevel: CollectiviteRole.EDITION_FICHES_INDICATEURS,
+      role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
     });
     onTestFinished(async () => {
       await cleanup();

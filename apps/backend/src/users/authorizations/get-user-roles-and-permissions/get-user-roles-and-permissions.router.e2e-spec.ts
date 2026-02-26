@@ -33,7 +33,7 @@ describe('GetUserPermissions', () => {
       databaseService,
       {
         user: {
-          accessLevel: CollectiviteRole.EDITION,
+          role: CollectiviteRole.EDITION,
         },
       }
     );
@@ -88,7 +88,7 @@ describe('GetUserPermissions', () => {
       databaseService,
       {
         user: {
-          accessLevel: CollectiviteRole.EDITION,
+          role: CollectiviteRole.EDITION,
         },
       }
     );

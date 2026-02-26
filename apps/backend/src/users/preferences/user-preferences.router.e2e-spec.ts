@@ -26,7 +26,7 @@ describe('UserPreferencesRouter', () => {
 
   test("Lire et mettre à jour les préférences de l'utilisateur", async () => {
     const { user, cleanup } = await addTestUser(dbService, {
-      accessLevel: CollectiviteRole.EDITION,
+      role: CollectiviteRole.EDITION,
     });
     onTestFinished(() => cleanup());
 
@@ -66,7 +66,7 @@ describe('UserPreferencesRouter', () => {
 
   test("Mettre à jour une seule préférence de l'utilisateur", async () => {
     const { user, cleanup } = await addTestUser(dbService, {
-      accessLevel: CollectiviteRole.EDITION,
+      role: CollectiviteRole.EDITION,
     });
     onTestFinished(() => cleanup());
 
@@ -95,7 +95,7 @@ describe('UserPreferencesRouter', () => {
 
   test('Essayer de mettre à jour une préférence avec une valeur du mauvais type déclenche une erreur', async () => {
     const { user, cleanup } = await addTestUser(dbService, {
-      accessLevel: CollectiviteRole.EDITION,
+      role: CollectiviteRole.EDITION,
     });
     onTestFinished(() => cleanup());
 
@@ -113,7 +113,7 @@ describe('UserPreferencesRouter', () => {
 
   test('Essayer de mettre à jour une préférence avec une clé inconnue déclenche une erreur', async () => {
     const { user, cleanup } = await addTestUser(dbService, {
-      accessLevel: CollectiviteRole.EDITION,
+      role: CollectiviteRole.EDITION,
     });
     onTestFinished(() => cleanup());
 
