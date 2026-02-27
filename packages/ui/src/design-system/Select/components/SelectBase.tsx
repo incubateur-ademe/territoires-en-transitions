@@ -4,7 +4,7 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { cn } from '../../../utils/cn';
 import { OpenState } from '../../../utils/types';
-import { Badge, BadgeSize, BadgeVariant } from '../../Badge';
+import { Badge, BadgeSize, BadgeType, BadgeVariant } from '../../Badge';
 import { Icon } from '../../Icon';
 import { Tooltip } from '../../Tooltip';
 import {
@@ -93,7 +93,7 @@ export type SelectProps = {
   /** Permet de modifier le state des badges en fonction de la valeur */
   valueToBadgeState?: Record<
     OptionValue,
-    { state: BadgeVariant; light?: boolean }
+    { state: BadgeVariant; type?: BadgeType }
   >;
   optionsAreCaseSensitive?: boolean;
 };
@@ -462,9 +462,7 @@ const SelectButton = forwardRef(
             }
             type={
               values && valueToBadgeState
-                ? valueToBadgeState[values[0]].light
-                  ? 'outlined'
-                  : 'solid'
+                ? valueToBadgeState[values[0]]?.type ?? 'solid'
                 : 'solid'
             }
             title={
