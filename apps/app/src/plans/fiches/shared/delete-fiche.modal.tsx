@@ -1,6 +1,13 @@
 import { useDeleteFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-delete-fiche';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
-import { Alert, cn, Modal, ModalFooterOKCancel } from '@tet/ui';
+import {
+  Alert,
+  cn,
+  Event,
+  Modal,
+  ModalFooterOKCancel,
+  useEventTracker,
+} from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import {
   FicheListItem,
@@ -33,6 +40,10 @@ export const DeleteFicheModal = ({
   axeId,
 }: DeleteFicheModalProps) => {
   const { id, titre, plans } = fiche;
+
+  const tracker = useEventTracker();
+
+  tracker(Event.fiches.deleteModaleValidation);
 
   const { mutate: deleteFiche } = useDeleteFiche({
     onDeleteCallback,
@@ -96,6 +107,7 @@ export const DeleteFicheModal = ({
               deleteFiche({
                 ficheId: id,
               });
+              tracker(Event.fiches.deleteModaleValidation);
               close();
             },
           }}

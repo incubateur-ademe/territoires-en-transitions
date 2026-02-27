@@ -78,6 +78,8 @@ export const Event = {
     exportPdfGroupe: 'export_PDF_telechargement_groupe',
     updateActeurs: 'validation_modale_acteurs_fa',
     updateDescription: 'validation_modale_modifier_fa',
+    updateModaleValidation: 'modale:action:modification:valider',
+    deleteModaleValidation: 'modale:action:suppression:valider',
     viewImpactInfo: 'cta_fa_fai',
     downloadModele: 'cta_telecharger_modele',
     listChangeView: {

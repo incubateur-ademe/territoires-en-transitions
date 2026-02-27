@@ -8,10 +8,12 @@ import { getIsoFormattedDate } from '@/app/utils/formatUtils';
 import { QueryKey } from '@tanstack/react-query';
 import {
   Checkbox,
+  Event,
   Field,
   FormSectionGrid,
   Input,
   ModalFooterOKCancel,
+  useEventTracker,
 } from '@tet/ui';
 import { format } from 'date-fns';
 import { useRef, useState } from 'react';
@@ -28,6 +30,8 @@ type Props = {
  * Modale pour modifier une fiche action.
  */
 const ModifierFicheModale = ({ initialFiche, isOpen, setIsOpen }: Props) => {
+  const tracker = useEventTracker();
+
   const { mutate: updateFiche } = useUpdateFiche();
 
   const [fiche, setFiche] = useState(initialFiche);
@@ -165,6 +169,7 @@ const ModifierFicheModale = ({ initialFiche, isOpen, setIsOpen }: Props) => {
               btnOKProps={{
                 onClick: () => {
                   updateFiche({ ficheId: fiche.id, ficheFields: fiche });
+                  tracker(Event.fiches.updateModaleValidation);
                   close();
                 },
               }}
