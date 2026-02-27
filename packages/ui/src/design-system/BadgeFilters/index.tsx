@@ -49,12 +49,12 @@ const Filter = ({
 }) => {
   return (
     <Badge
-      className="rounded-md border border-primary-3 text-primary-7 gap-1 font-bold  px-3 bg-white"
       onClose={onDelete}
       title={children}
       size="xs"
       uppercase={false}
       variant="high"
+      type="outlined"
     />
   );
 };
