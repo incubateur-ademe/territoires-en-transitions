@@ -548,7 +548,6 @@ export class IndicateurChartService {
   ): Promise<{
     indicateurValeurs: IndicateurAvecValeursParSource;
     indicateurSegmentation?: IndicateurChartSegmentationWithValeurs | null;
-    valeursMoyenneCollectivites?: ValeursMoyenneDTO | null;
     valeursReference?: ValeursReferenceDTO | null;
     chartData: EChartsOption;
   }> {
@@ -648,7 +647,6 @@ export class IndicateurChartService {
       indicateurValeurs,
       indicateurSegmentation,
       valeursReference,
-      valeursMoyenneCollectivites,
       chartData,
     };
   }

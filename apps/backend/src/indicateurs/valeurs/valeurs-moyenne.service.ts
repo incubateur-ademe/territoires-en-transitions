@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import {
   aliasedTable,
@@ -12,7 +13,6 @@ import {
   ne,
   sql,
 } from 'drizzle-orm';
-import { collectiviteCardView } from '../../collectivites/shared/models/collectivite-card.view';
 import { DatabaseService } from '../../utils/database/database.service';
 
 import { indicateurSourceMetadonneeTable } from '@tet/backend/indicateurs/shared/models/indicateur-source-metadonnee.table';
@@ -32,22 +32,6 @@ export default class ValeursMoyenneService {
     private readonly permissionService: PermissionService,
     private readonly collectiviteService: CollectivitesService
   ) {}
-
-  // TODO: à changer pour ne plus utiliser la vue `collectivite_card`
-  async getTypeCollectivite(collectiviteId: number) {
-    this.logger.log(
-      `Récupération du type de la collectivité ${collectiviteId}`
-    );
-
-    const result = await this.databaseService.db
-      .select({
-        typeCollectivite: collectiviteCardView.typeCollectivite,
-      })
-      .from(collectiviteCardView)
-      .where(eq(collectiviteCardView.collectiviteId, collectiviteId));
-
-    return result?.[0]?.typeCollectivite || null;
-  }
 
   /**
    * Donne la moyenne par date d'un indicateur pour les collectivités de même type
@@ -82,13 +66,29 @@ export default class ValeursMoyenneService {
     const iv = aliasedTable(indicateurValeurTable, 'iv');
     const ism = aliasedTable(indicateurSourceMetadonneeTable, 'ism');
     const s = aliasedTable(indicateurSourceTable, 's');
+    const c = aliasedTable(collectiviteTable, 'c');
 
-    // TODO: à changer pour ne plus utiliser la vue `collectivite_card`
-    const typeCollectivite = await this.getTypeCollectivite(collectiviteId);
-    if (!typeCollectivite) {
+    // type_collectivite selon la logique: epci + nature_insee S% -> syndicat, sinon nature_insee ou type
+    const typeCollectiviteExpr = sql<string>`CASE
+      WHEN ${c.type} = 'epci' THEN
+        CASE WHEN ${c.natureInsee}::text ~~ 'S%' THEN 'syndicat'::text ELSE ${c.natureInsee} END
+      ELSE ${c.type}
+    END`;
+
+    const typeCollectiviteResult = await this.databaseService.db
+      .select({
+        typeCollectivite: typeCollectiviteExpr,
+      })
+      .from(collectiviteTable)
+      .where(eq(collectiviteTable.id, collectiviteId))
+      .limit(1)
+      .then((result) => result[0]);
+
+    if (!typeCollectiviteResult) {
       return null;
     }
-    const cc = aliasedTable(collectiviteCardView, 'cc');
+
+    const { typeCollectivite } = typeCollectiviteResult;
 
     // sous-requête pour avoir toutes les valeurs disponibles pour les
     // collectivités de même type, et le rang d'affichage de la source associée
@@ -107,12 +107,12 @@ export default class ValeursMoyenneService {
           ),
         })
         .from(iv)
-        .leftJoin(cc, eq(cc.collectiviteId, iv.collectiviteId))
+        .innerJoin(c, eq(iv.collectiviteId, c.id))
         .leftJoin(ism, eq(iv.metadonneeId, ism.id))
         .leftJoin(s, eq(s.id, ism.sourceId))
         .where(
           and(
-            eq(cc.typeCollectivite, typeCollectivite),
+            sql`${typeCollectiviteExpr} IS NOT DISTINCT FROM ${typeCollectivite}`,
             isNotNull(iv.resultat),
             isNotNull(iv.metadonneeId),
             ne(ism.sourceId, 'snbc'),
@@ -174,6 +174,10 @@ export default class ValeursMoyenneService {
       `Récupération de ${valeurs.length} valeurs moyenne d'indicateur`
     );
 
-    return { indicateurId, typeCollectivite, valeurs };
+    return {
+      indicateurId,
+      typeCollectivite: typeCollectivite ?? '',
+      valeurs,
+    };
   }
 }
