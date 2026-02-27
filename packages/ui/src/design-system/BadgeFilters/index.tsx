@@ -54,7 +54,7 @@ const Filter = ({
       title={children}
       size="xs"
       uppercase={false}
-      variant="hight"
+      variant="high"
     />
   );
 };

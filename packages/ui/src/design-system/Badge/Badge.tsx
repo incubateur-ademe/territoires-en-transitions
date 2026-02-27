@@ -9,7 +9,7 @@ import { badgeClassnames } from './utils';
 export type BadgeVariant =
   | 'default'
   | 'standard'
-  | 'hight'
+  | 'high'
   | 'success'
   | 'warning'
   | 'new'

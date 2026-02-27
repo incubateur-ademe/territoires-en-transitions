@@ -17,7 +17,7 @@ type Story = StoryObj<typeof Badge>;
 const variants: BadgeVariant[] = [
   'default',
   'standard',
-  'hight',
+  'high',
   'success',
   'warning',
   'new',
