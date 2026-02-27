@@ -1,26 +1,15 @@
-import { DBClient, useSupabase } from '@tet/api';
-import useSWR from 'swr';
+import { useQuery } from '@tanstack/react-query';
+import { TRPCUseQueryResult, useTRPC } from '@tet/api';
 
-/** Charge la liste des collectivités */
-const getCollectivites = async (supabase: DBClient, nom?: string) => {
-  const query = supabase
-    .from('collectivite_card')
-    .select('value: collectivite_id, label: nom');
+export function useListCollectivites(
+  nom?: string
+): TRPCUseQueryResult<Array<{ id: number; nom: string }>> {
+  const trpc = useTRPC();
 
-  if (nom) {
-    query.ilike('nom', `%${nom}%`);
-  } else {
-    query.limit(15);
-  }
-
-  const { data } = await query;
-
-  return (data || []) as Array<{ value: number; label: string }>;
-};
-
-export const useCollectivites = (nom?: string) => {
-  const supabase = useSupabase();
-  return useSWR(['signup-collectivite', nom], () =>
-    getCollectivites(supabase, nom)
+  return useQuery(
+    trpc.collectivites.collectivites.list.queryOptions({
+      ...(nom && { text: nom }),
+      limit: 15,
+    })
   );
-};
+}

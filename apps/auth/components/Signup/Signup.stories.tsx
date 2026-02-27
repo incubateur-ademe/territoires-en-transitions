@@ -1,6 +1,6 @@
-import { action } from 'storybook/actions';
 import { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
+import { action } from 'storybook/actions';
 import { Signup } from './Signup';
 import { SignupView } from './type';
 
@@ -11,8 +11,8 @@ const meta: Meta<typeof Signup> = {
       email: 'yolo@dodo.com',
     },
     collectivites: [
-      { value: 1270, label: 'Grenoble' },
-      { value: 5460, label: '#Collectivité Test' },
+      { id: 1270, nom: 'Grenoble' },
+      { id: 5460, nom: '#Collectivité Test' },
     ],
     onSubmit: action('onSubmit'),
     onCancel: action('onCancel'),
