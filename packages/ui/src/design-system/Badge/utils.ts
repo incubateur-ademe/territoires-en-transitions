@@ -58,7 +58,7 @@ export const badgeClassnames: Record<
       icon: 'text-white',
     },
   },
-  hight: {
+  high: {
     outlined: {
       text: 'text-primary-9',
       background: 'bg-white',

@@ -25,7 +25,7 @@ const BadgeAcces = ({ acces, ...props }: BadgeAccesProps) => {
       title={getAccessLevelLabel(acces)}
       icon={niveauAccesToIcon[acces]}
       iconPosition="left"
-      variant={acces === 'lecture' ? 'default' : 'hight'}
+      variant={acces === 'lecture' ? 'default' : 'high'}
       type="outlined"
       uppercase={false}
       {...props}
