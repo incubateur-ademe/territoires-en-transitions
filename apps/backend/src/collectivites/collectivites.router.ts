@@ -9,6 +9,7 @@ import { ListCategoriesRouter } from './handle-categories/list-categories.router
 import { InstanceGouvernanceRouter } from './handle-instance-gouvernance/handle-instance-gouvernance.router';
 import { ListCollectivitesRouter } from './list-collectivites/list-collectivites.router';
 import { CollectiviteMembresRouter } from './membres/membres.router';
+import { PersonnalisationsRouter } from './personnalisations/personnalisations.router';
 import { PersonnesRouter } from './personnes.router';
 import { TableauDeBordCollectiviteRouter } from './tableau-de-bord/tableau-de-bord-collectivite.router';
 import { PersonneTagRouter } from './tags/personnes/personne-tag.router';
@@ -27,7 +28,8 @@ export class CollectivitesRouter {
     private readonly personneTagRouter: PersonneTagRouter,
     private readonly importCollectiviteRelationsRouter: ImportCollectiviteRelationsRouter,
     private readonly discussionRouter: DiscussionRouter,
-    private readonly instanceGouvernanceRouter: InstanceGouvernanceRouter
+    private readonly instanceGouvernanceRouter: InstanceGouvernanceRouter,
+    private readonly personnalisationsRouter: PersonnalisationsRouter
   ) {}
 
   router = this.trpc.router({
@@ -40,6 +42,7 @@ export class CollectivitesRouter {
       this.listCollectivitesRouter.router,
       this.upsertRouter.router
     ),
+    personnalisations: this.personnalisationsRouter.router,
     discussions: this.discussionRouter.router,
     relations: this.importCollectiviteRelationsRouter.router,
     recherches: this.recherchesRouter.router,

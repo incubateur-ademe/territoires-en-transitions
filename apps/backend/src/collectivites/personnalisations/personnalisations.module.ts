@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ImportPersonnalisationQuestionController } from '@tet/backend/collectivites/personnalisations/import-personnalisation-questions/import-personnalisation-question.controller';
 import ImportPersonnalisationQuestionService from '@tet/backend/collectivites/personnalisations/import-personnalisation-questions/import-personnalisation-question.service';
 import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
+import { SetPersonnalisationReponseService } from '@tet/backend/collectivites/personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.service';
 import { SheetModule } from '@tet/backend/utils/google-sheets/sheet.module';
 import { UsersModule } from '../../users/users.module';
 import { CollectivitesModule } from '../collectivites.module';
@@ -15,12 +16,14 @@ import PersonnalisationsService from './services/personnalisations-service';
     PersonnalisationsService,
     ImportPersonnalisationQuestionService,
     ListPersonnalisationQuestionsService,
+    SetPersonnalisationReponseService,
   ],
   exports: [
     PersonnalisationsExpressionService,
     PersonnalisationsService,
     ImportPersonnalisationQuestionService,
     ListPersonnalisationQuestionsService,
+    SetPersonnalisationReponseService,
   ],
   controllers: [ImportPersonnalisationQuestionController],
 })
