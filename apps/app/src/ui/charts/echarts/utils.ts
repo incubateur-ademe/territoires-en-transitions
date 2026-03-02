@@ -193,6 +193,10 @@ export const makeOption = ({
   disableToolbox = false,
   hideMinMaxLabel = false,
 }: OptionsProps): EChartsOption => {
+  const optionsToAvoidParentOverflowClippingRules = {
+    appendToBody: true,
+    confine: true,
+  };
   const {
     grid: customGrid,
     legend: customLegend,
@@ -268,6 +272,7 @@ export const makeOption = ({
     tooltip: {
       trigger: 'axis',
       order: 'valueDesc',
+      ...optionsToAvoidParentOverflowClippingRules,
       axisPointer: {
         type: 'cross',
         label: {
