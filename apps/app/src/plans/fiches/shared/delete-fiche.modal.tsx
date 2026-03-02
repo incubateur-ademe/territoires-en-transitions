@@ -43,8 +43,6 @@ export const DeleteFicheModal = ({
 
   const tracker = useEventTracker();
 
-  tracker(Event.fiches.deleteModaleValidation);
-
   const { mutate: deleteFiche } = useDeleteFiche({
     onDeleteCallback,
     planId,
