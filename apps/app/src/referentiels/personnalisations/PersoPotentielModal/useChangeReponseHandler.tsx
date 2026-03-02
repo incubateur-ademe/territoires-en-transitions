@@ -6,7 +6,7 @@ import {
   TReponseWrite,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSupabase, useTRPC } from '@tet/api';
+import { useTRPC } from '@tet/api';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { useSnapshotComputeAndUpdate } from '../../use-snapshot';
 
@@ -24,9 +24,10 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
     useSnapshotComputeAndUpdate();
 
   const queryClient = useQueryClient();
-  const supabase = useSupabase();
   const trpc = useTRPC();
-
+  const { mutateAsync: setReponse } = useMutation(
+    trpc.collectivites.personnalisations.setReponse.mutationOptions()
+  );
   const saveReponse = async ({
     question,
     reponse,
@@ -43,12 +44,11 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
       question,
       reponse,
     });
-    const ret = await supabase.rpc('save_reponse', {
-      json: newReponse,
+    await setReponse({
+      collectiviteId,
+      questionId: question.id,
+      reponse: newReponse.reponse,
     });
-    if (ret?.error) {
-      throw Error(ret.error.message);
-    }
     return true;
   };
 
@@ -66,9 +66,7 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
       const queryKey = ['reponse', collectiviteId, question.id];
 
       // annule un éventuel fetch en cours pour que la MàJ optimiste ne soit pas écrasée
-      await queryClient.cancelQueries({
-        queryKey: queryKey,
-      });
+      await queryClient.cancelQueries({ queryKey });
 
       // extrait la valeur actuelle du cache
       const previousCacheValue = queryClient.getQueryData(queryKey);
