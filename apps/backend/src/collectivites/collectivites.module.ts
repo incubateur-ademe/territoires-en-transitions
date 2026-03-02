@@ -33,6 +33,9 @@ import { ListCollectivitesRouter } from './list-collectivites/list-collectivites
 import ListCollectivitesService from './list-collectivites/list-collectivites.service';
 import { CollectiviteMembresRouter } from './membres/membres.router';
 import { CollectiviteMembresService } from './membres/membres.service';
+import { PersonnalisationsRouter } from './personnalisations/personnalisations.router';
+import { SetPersonnalisationReponseRouter } from './personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.router';
+import { SetPersonnalisationReponseService } from './personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.service';
 import { PersonnesRouter } from './personnes.router';
 import CollectivitesService from './services/collectivites.service';
 import GroupementsService from './services/groupements.service';
@@ -60,6 +63,9 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     TagService,
     PersonneTagService,
     PersonneTagRouter,
+    PersonnalisationsRouter,
+    SetPersonnalisationReponseRouter,
+    SetPersonnalisationReponseService,
     ListCollectivitesRouter,
     ListCollectivitesService,
     CollectiviteCrudService,
