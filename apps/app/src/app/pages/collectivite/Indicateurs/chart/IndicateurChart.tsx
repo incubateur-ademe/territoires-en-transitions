@@ -12,6 +12,7 @@ import { getAnnee, getYear } from '@/app/ui/charts/echarts/utils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import type { GridComponentOption } from 'echarts/components';
 import { uniq } from 'es-toolkit';
+import { useRef } from 'react';
 import { getSourceLabel } from '../data/get-source-label';
 import { PreparedData } from '../data/prepare-data';
 import { IndicateurChartInfo } from '../data/use-indicateur-chart';
@@ -22,6 +23,7 @@ import {
 import { DataSourceTooltipContent } from '../Indicateur/detail/DataSourceTooltip';
 import { SourceType } from '../types';
 import { LAYERS } from './layer-parameters';
+import { useResizeGraphOnContainerSizeUpdate } from './use-resize-graph-on-container-size-update';
 
 type ChartVariant = 'thumbnail' | 'modal' | 'detail';
 
@@ -229,6 +231,7 @@ const IndicateurChart = ({
   className,
 }: IndicateurChartProps) => {
   const { data } = chartInfo;
+  const chartContainerRef = useRef<HTMLDivElement>(null);
 
   const getColorBySourceId = useGetColorBySourceId();
 
@@ -245,6 +248,11 @@ const IndicateurChart = ({
     ...donneesSegments,
     ...references,
   ];
+
+  useResizeGraphOnContainerSizeUpdate({
+    containerRef: chartContainerRef,
+    disabled: isLoading || dataset.length === 0,
+  });
 
   if (!dataset.length) return null;
 
@@ -307,7 +315,7 @@ const IndicateurChart = ({
   });
 
   return (
-    <div className={className} style={style}>
+    <div ref={chartContainerRef} className={className} style={style}>
       {isLoading ? (
         <div className="h-full w-full rounded-lg flex justify-center items-center bg-primary-0">
           <SpinnerLoader className="w-8 h-8 fill-primary-5" />
