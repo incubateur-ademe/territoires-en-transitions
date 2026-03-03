@@ -56,6 +56,8 @@ export const SousActionDateCell = ({ sousAction }: Props) => {
             containerClassname="grow border-none"
             className="w-40 border-grey-3 p-1"
             type="date"
+            min="1900-01-01"
+            max="2100-01-01"
             autoFocus
             value={value && format(new Date(value), 'yyyy-MM-dd')}
             onChange={(e) => setValue(e.target.value)}
