@@ -2,12 +2,14 @@ import { BlockNoteEditor } from '@blocknote/core';
 import {
   BasicTextStyleButton,
   BlockTypeSelect,
+  blockTypeSelectItems,
   ColorStyleButton,
   CreateLinkButton,
   FormattingToolbar as FormattingToolbarBase,
   FormattingToolbarController,
-  blockTypeSelectItems,
 } from '@blocknote/react';
+import { JSX } from 'react';
+import { allFormattingActions, FormattingAction } from './formatting-actions';
 
 export const ENABLED_ITEMS = [
   'paragraph',
@@ -15,9 +17,37 @@ export const ENABLED_ITEMS = [
   'numberedListItem',
 ];
 
-export function FormattingToolbar({ editor }: { editor: BlockNoteEditor }) {
+export function FormattingToolbar({
+  editor,
+  actions = allFormattingActions,
+}: {
+  editor: BlockNoteEditor;
+  actions?: FormattingAction[];
+}) {
   const items = blockTypeSelectItems(editor.dictionary).filter((item) =>
     ENABLED_ITEMS.includes(item.type)
+  );
+
+  const ActionComponents: Record<FormattingAction, () => JSX.Element> = {
+    blockType: () => <BlockTypeSelect key="blockTypeSelect" items={items} />,
+    bold: () => (
+      <BasicTextStyleButton basicTextStyle="bold" key="boldStyleButton" />
+    ),
+    italic: () => (
+      <BasicTextStyleButton basicTextStyle="italic" key="italicStyleButton" />
+    ),
+    underline: () => (
+      <BasicTextStyleButton
+        basicTextStyle="underline"
+        key="underlineStyleButton"
+      />
+    ),
+    color: () => <ColorStyleButton key="colorStyleButton" />,
+    link: () => <CreateLinkButton key="createLinkButton" />,
+  };
+
+  const ActionComponentsList = actions.map((action) =>
+    ActionComponents[action]()
   );
 
   return (
@@ -33,24 +63,7 @@ export function FormattingToolbar({ editor }: { editor: BlockNoteEditor }) {
             e.preventDefault()
           }
         >
-          <FormattingToolbarBase>
-            <BlockTypeSelect key="blockTypeSelect" items={items} />
-
-            <BasicTextStyleButton
-              basicTextStyle={'bold'}
-              key="boldStyleButton"
-            />
-            <BasicTextStyleButton
-              basicTextStyle={'italic'}
-              key="italicStyleButton"
-            />
-            <BasicTextStyleButton
-              basicTextStyle={'underline'}
-              key="underlineStyleButton"
-            />
-            <ColorStyleButton key="colorStyleButton" />
-            <CreateLinkButton key="createLinkButton" />
-          </FormattingToolbarBase>
+          <FormattingToolbarBase>{ActionComponentsList}</FormattingToolbarBase>
         </div>
       )}
     />
