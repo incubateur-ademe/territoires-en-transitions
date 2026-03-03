@@ -6,6 +6,8 @@ export const collectiviteTypeEnum = {
   EPCI: 'epci',
   COMMUNE: 'commune',
   TEST: 'test',
+  PREFECTURE_REGION: 'prefecture_region',
+  PREFECTURE_DEPARTEMENT: 'prefecture_departement',
 } as const;
 
 export type CollectiviteType =

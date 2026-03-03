@@ -949,3 +949,4 @@ utilisateur/test_create_user_sync_dcp [utilisateur/dcp_add_rights_search_path] 2
 delete-referentiels-old-views 2026-02-10T14:21:30Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime des anciennes vues liées au domaine referentiels
 
 evaluation/drop-save-reponse 2026-03-02T16:16:26Z Marc Rutkowski <marc@attractive-media.fr> # Supprime la fonction rpc save-reponse
+collectivite/type_add_prefectures 2026-03-03T10:00:00Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute les types prefecture_region et prefecture_departement

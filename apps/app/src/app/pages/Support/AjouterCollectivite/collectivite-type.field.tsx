@@ -10,6 +10,8 @@ export const collectiviteType = {
   EPCI: 'epci',
   Commune: 'commune',
   Test: 'test',
+  PrefectureRegion: 'prefecture_region',
+  PrefectureDepartement: 'prefecture_departement',
 } as const;
 
 export const CollectiviteTypeField = ({ type, onSelect }: Props) => {
@@ -18,6 +20,8 @@ export const CollectiviteTypeField = ({ type, onSelect }: Props) => {
     { label: 'EPCI', value: collectiviteType.EPCI },
     { label: 'Département', value: collectiviteType.Departement },
     { label: 'Région', value: collectiviteType.Region },
+    { label: 'Préfecture de département', value: collectiviteType.PrefectureDepartement },
+    { label: 'Préfecture de région', value: collectiviteType.PrefectureRegion },
     { label: 'Collectivité test', value: collectiviteType.Test },
   ];
 
