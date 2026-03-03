@@ -9,7 +9,7 @@ import {
   FormattingToolbarController,
 } from '@blocknote/react';
 import { JSX } from 'react';
-import { allFormattingActions, FormattingAction } from './formatting-actions';
+import { allFormattingActions, FormattingAction } from './edition-properties';
 
 export const ENABLED_ITEMS = [
   'paragraph',
@@ -19,10 +19,10 @@ export const ENABLED_ITEMS = [
 
 export function FormattingToolbar({
   editor,
-  actions = allFormattingActions,
+  availableActions,
 }: {
   editor: BlockNoteEditor;
-  actions?: FormattingAction[];
+  availableActions?: FormattingAction[];
 }) {
   const items = blockTypeSelectItems(editor.dictionary).filter((item) =>
     ENABLED_ITEMS.includes(item.type)
@@ -46,8 +46,8 @@ export function FormattingToolbar({
     link: () => <CreateLinkButton key="createLinkButton" />,
   };
 
-  const ActionComponentsList = actions.map((action) =>
-    ActionComponents[action]()
+  const ActionComponentsList = (availableActions ?? allFormattingActions).map(
+    (action) => ActionComponents[action]()
   );
 
   return (

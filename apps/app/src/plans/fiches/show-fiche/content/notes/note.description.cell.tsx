@@ -21,13 +21,20 @@ export const NoteDescriptionCell = () => {
         initialValue={value}
         onChange={(html) => form.setValue('description', html)}
         onBlur={submitNote}
-        actions={
+        availableActions={
           /*
            * actions are limited to these 3 for now
            * to hide issues with color picker, link and block type action
            * buttons not working in table cell
            * */
           ['bold', 'italic', 'underline']
+        }
+        availableSuggestionItems={
+          /*
+           * suggestion items are limited to these 3 for now
+           * to hide issues with emoji not working in table cell
+           * */
+          ['numbered_list', 'bullet_list', 'paragraph']
         }
       />
     </TableCell>

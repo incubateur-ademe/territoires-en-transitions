@@ -17,8 +17,8 @@ import { cn } from '../../utils/cn';
 import { TextPlaceholder } from '../TextPlaceholder/TextPlaceholder';
 import { ENABLED_ITEMS, FormattingToolbar } from './FormattingToolbar';
 import { SuggestionMenu } from './SuggestionMenu';
+import { FormattingAction, SuggestionItem } from './edition-properties';
 
-type Action = 'bold' | 'italic' | 'underline' | 'color' | 'link';
 type RichTextEditorProps = {
   className?: string;
   id?: string;
@@ -38,7 +38,8 @@ type RichTextEditorProps = {
   };
   unstyled?: boolean;
   onBlur?: () => void;
-  actions?: Action[];
+  availableActions?: FormattingAction[];
+  availableSuggestionItems?: SuggestionItem[];
 };
 
 // utilisé pour convertir en html les liens présents dans les contenus texte existants
@@ -83,7 +84,8 @@ export default function RichTextEditor({
   contentStyle,
   unstyled = false,
   onBlur,
-  actions,
+  availableActions,
+  availableSuggestionItems,
 }: RichTextEditorProps) {
   const { size = 'base', color = 'grey' } = contentStyle ?? {};
   const contentColor = {
@@ -218,8 +220,11 @@ export default function RichTextEditor({
         }
       }}
     >
-      <FormattingToolbar editor={editor} actions={actions} />
-      <SuggestionMenu editor={editor} />
+      <FormattingToolbar editor={editor} availableActions={availableActions} />
+      <SuggestionMenu
+        editor={editor}
+        availableSuggestionItems={availableSuggestionItems}
+      />
     </BlockNoteView>
   );
 }
