@@ -14,7 +14,7 @@ export const noteFormSchema = z.object({
       new Date().getFullYear() + 10,
       "L'année ne peut pas être dans plus de 10 ans"
     ),
-  description: z.string().min(1, 'La description est requise'),
+  description: z.string(),
 });
 
 export type NoteFormValues = z.infer<typeof noteFormSchema>;
