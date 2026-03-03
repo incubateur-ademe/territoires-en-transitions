@@ -53,19 +53,15 @@ export const useUpdateFiche = (args?: Args) => {
               (n: any) => n.id === newNote.id
             );
             if (!existingNote) return newNote;
-            return {
-              ...newNote,
-              createdAt: existingNote.createdAt,
-              createdBy: existingNote.createdBy,
-              modifiedAt: new Date().toISOString(),
-              modifiedBy: user
-                ? { id: user.id, nom: user.nom, prenom: user.prenom }
-                : existingNote.modifiedBy,
-            };
+            return { ...existingNote, ...newNote };
           });
         }
 
-        return { ...old, ...mergedFicheFields };
+        return {
+          ...old,
+          ...mergedFicheFields,
+          modifiedAt: new Date().toISOString(),
+        };
       });
 
       // Optimistically update all caches of list of fiches
