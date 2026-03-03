@@ -1,5 +1,4 @@
 import { RichTextEditor, TableCell } from '@tet/ui';
-import { htmlToText } from 'html-to-text';
 import { useNoteForm } from './note-form.context';
 
 export const NoteDescriptionCell = () => {
@@ -19,7 +18,7 @@ export const NoteDescriptionCell = () => {
     <TableCell className="text-primary-9 align-top">
       <RichTextEditor
         unstyled
-        initialValue={htmlToText(value)}
+        initialValue={value}
         onChange={(html) => form.setValue('description', html)}
         onBlur={submitNote}
       />
