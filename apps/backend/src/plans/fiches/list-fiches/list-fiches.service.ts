@@ -1012,14 +1012,19 @@ export default class ListFichesService {
     const ficheActionEtapes = this.getFicheActionEtapesQuery(ficheIds, tx);
     const ficheActionNotes = this.getFicheActionNotesQuery(ficheIds, tx);
     const ficheActionMesures = this.getFicheActionMesuresQuery(ficheIds, tx);
-    const ficheActionFichesLiees =
-      this.getFicheActionFichesLieesQuery(ficheIds, tx);
+    const ficheActionFichesLiees = this.getFicheActionFichesLieesQuery(
+      ficheIds,
+      tx
+    );
     const ficheActionDocs = this.getFicheActionsDocsQuery(ficheIds, tx);
     const ficheActionSharings = this.getFicheActionSharingsQuery(ficheIds, tx);
     const ficheActionBudgets =
-      this.listFichesBudgetRepository.listFicheBudgetsByFicheId({
-        ficheIds,
-      }, { tx });
+      this.listFichesBudgetRepository.listFicheBudgetsByFicheId(
+        {
+          ficheIds,
+        },
+        { tx }
+      );
 
     const dcpModifiedBy = aliasedTable(dcpTable, 'dcpModifiedBy');
 
@@ -1238,7 +1243,7 @@ export default class ListFichesService {
   private getIdentifiedPlanCondition(
     planIds: number[] | undefined
   ): SQLWrapper | undefined {
-    if (isNil(planIds)) {
+    if (isNil(planIds) || planIds.length === 0) {
       return;
     }
     const planQuery = this.databaseService.db
