@@ -16,7 +16,7 @@ import {
   useEventTracker,
 } from '@tet/ui';
 import { format } from 'date-fns';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import BaseUpdateFicheModal from '../FicheActionPlanning/base-update-fiche-modal';
 
 type Props = {
@@ -31,6 +31,10 @@ type Props = {
  */
 const ModifierFicheModale = ({ initialFiche, isOpen, setIsOpen }: Props) => {
   const tracker = useEventTracker();
+
+  useEffect(() => {
+    tracker(Event.fiches.updateModaleOuverture);
+  }, [tracker]);
 
   const { mutate: updateFiche } = useUpdateFiche();
 
