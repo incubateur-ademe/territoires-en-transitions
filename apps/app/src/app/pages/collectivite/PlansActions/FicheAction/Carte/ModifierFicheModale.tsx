@@ -33,8 +33,10 @@ const ModifierFicheModale = ({ initialFiche, isOpen, setIsOpen }: Props) => {
   const tracker = useEventTracker();
 
   useEffect(() => {
-    tracker(Event.fiches.updateModaleOuverture);
-  }, [tracker]);
+    if (isOpen) {
+      tracker(Event.fiches.updateModaleOuverture);
+    }
+  }, [isOpen, tracker]);
 
   const { mutate: updateFiche } = useUpdateFiche();
 
