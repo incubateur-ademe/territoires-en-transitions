@@ -39,7 +39,7 @@ type CollectiviteNavDropdown = NavDropdown &
 
 export type CollectiviteNavItem = CollectiviteNavLink | CollectiviteNavDropdown;
 
-const cleanButtonProps = (item: CollectiviteNavItem): NavItem => {
+export const cleanButtonProps = (item: CollectiviteNavItem): NavItem => {
   const { isVisible, ...rest } = item;
   return rest;
 };

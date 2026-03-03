@@ -3,7 +3,7 @@ import { isUserVisitor, UserRolesAndPermissions } from '@tet/domain/users';
 import { HeaderProps } from '@tet/ui';
 import { generateCollectiviteNavItem } from './generate-collectivite-nav-item';
 import { generateTdbPersonalLink } from './generate-tdb-personal-link';
-import { CollectiviteNavItem } from './make-collectivite-nav';
+import { cleanButtonProps, CollectiviteNavItem } from './make-collectivite-nav';
 
 export const makeSimplifiedViewNav = ({
   user,
@@ -24,7 +24,7 @@ export const makeSimplifiedViewNav = ({
           collectiviteId: currentCollectivite.collectiviteId,
         }),
       }),
-    ],
+    ].map(cleanButtonProps),
     endItems: endItems,
   };
 };
