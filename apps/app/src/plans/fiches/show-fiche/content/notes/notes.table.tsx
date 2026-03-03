@@ -79,6 +79,9 @@ export const NotesTable = ({
     [fiche, onDeleteNote]
   );
 
+  // React Compiler does not work well with useReactTable()
+  // See: https://github.com/TanStack/table/issues/6137
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     columns,
     data: sortedNotes,

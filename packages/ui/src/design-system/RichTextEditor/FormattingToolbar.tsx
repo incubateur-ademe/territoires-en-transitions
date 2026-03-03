@@ -23,21 +23,35 @@ export function FormattingToolbar({ editor }: { editor: BlockNoteEditor }) {
   return (
     <FormattingToolbarController
       formattingToolbar={() => (
-        <FormattingToolbarBase>
-          <BlockTypeSelect key="blockTypeSelect" items={items} />
+        <div
+          onMouseDown={(e) =>
+            /**
+             * The formatting toolbar is rendered outside the editor (e.g. in a floating layer).
+             * Clicking a toolbar button triggers a mousedown on that button, so the browser moves focus
+             * from the contentEditable to the button and clears the selection before the button’s click handler runs.
+             */
+            e.preventDefault()
+          }
+        >
+          <FormattingToolbarBase>
+            <BlockTypeSelect key="blockTypeSelect" items={items} />
 
-          <BasicTextStyleButton basicTextStyle={'bold'} key="boldStyleButton" />
-          <BasicTextStyleButton
-            basicTextStyle={'italic'}
-            key="italicStyleButton"
-          />
-          <BasicTextStyleButton
-            basicTextStyle={'underline'}
-            key="underlineStyleButton"
-          />
-          <ColorStyleButton key="colorStyleButton" />
-          <CreateLinkButton key="createLinkButton" />
-        </FormattingToolbarBase>
+            <BasicTextStyleButton
+              basicTextStyle={'bold'}
+              key="boldStyleButton"
+            />
+            <BasicTextStyleButton
+              basicTextStyle={'italic'}
+              key="italicStyleButton"
+            />
+            <BasicTextStyleButton
+              basicTextStyle={'underline'}
+              key="underlineStyleButton"
+            />
+            <ColorStyleButton key="colorStyleButton" />
+            <CreateLinkButton key="createLinkButton" />
+          </FormattingToolbarBase>
+        </div>
       )}
     />
   );
