@@ -25,7 +25,7 @@ export const NoteDescriptionCell = () => {
           /*
            * actions are limited to these 3 for now
            * to hide issues with color picker, link and block type action
-           * buttons not working in table cell for now
+           * buttons not working in table cell
            * */
           ['bold', 'italic', 'underline']
         }
