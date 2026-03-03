@@ -97,7 +97,10 @@ const QuestionReponse = (props: TQuestionReponseProps) => {
             icon="information-fill"
           />
         ) : null}
-        <Reponse {...props} />
+        <Reponse
+          key={`${id}${qr.reponse === undefined ? '-loading' : ''}`}
+          {...props}
+        />
         {variant !== 'indicateur' && <Justification {...props} />}
         {hasProportionDescription ? (
           <Accordion
