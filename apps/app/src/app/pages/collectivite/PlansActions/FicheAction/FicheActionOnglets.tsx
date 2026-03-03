@@ -50,9 +50,7 @@ const FicheActionOnglets = ({
   const tabDescriptors: TabDescriptor[] = [
     {
       label: 'Indicateurs de suivi',
-      isVisible:
-        hasCollectivitePermission('indicateurs.indicateurs.read') &&
-        !isSimplifiedView,
+      isVisible: hasCollectivitePermission('indicateurs.indicateurs.read'),
       render: () => (
         <IndicateursTab
           isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
@@ -77,8 +75,7 @@ const FicheActionOnglets = ({
     },
     {
       label: 'Actions liées',
-      isVisible:
-        hasCollectivitePermission('plans.fiches.read') && !isSimplifiedView,
+      isVisible: hasCollectivitePermission('plans.fiches.read'),
       render: () => (
         <FichesLieesTab
           isReadonly={cannotBeModifiedBecauseFicheIsShared || isReadonly}
