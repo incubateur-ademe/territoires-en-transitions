@@ -958,3 +958,4 @@ collectivite/type_add_service_public [collectivite/type_add_prefectures] 2026-03
 
 migration/etape_to_sous_action 2026-02-19T12:00:00Z Marc <marc@attractive-media.fr> # Lie une étape à une sous-action pour suivi de la migration
 evaluation/question_choix_formulation_not_null 2026-03-10T17:50:33Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute une contrainte NOT NULL sur question_choix.formulation
+evaluation/drop-justification-triggers 2026-03-10T17:50:33Z Marc Rutkowski <marc@attractive-media.fr> # Supprime les triggers modified_by/modified_at sur la table justification
