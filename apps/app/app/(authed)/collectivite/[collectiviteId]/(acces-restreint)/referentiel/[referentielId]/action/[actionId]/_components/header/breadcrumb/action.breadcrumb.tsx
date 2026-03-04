@@ -1,38 +1,28 @@
-import { uniq } from 'es-toolkit';
 import { useState } from 'react';
 
 import { makeReferentielUrl } from '@/app/app/paths';
-import {
-  ActionDefinitionSummary,
-  useReferentielDownToAction,
-} from '@/app/referentiels/referentiel-hooks';
-import { ActionDetailed } from '@/app/referentiels/use-snapshot';
+import { useGetActionAncestors } from '@/app/referentiels/actions/use-get-action-ancestors';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
+import { useListActionsGroupedById } from '@/app/referentiels/actions/use-list-actions-grouped-by-id';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
+import {
+  ActionTypeEnum,
+  getReferentielIdFromActionId,
+} from '@tet/domain/referentiels';
 import { Breadcrumbs } from '@tet/ui';
 import { ReferentielDropdownNavigation } from './referentiel-dropdown.navigation';
 
 /**
  * Fil d'ariane localisation d'une action dans le référentiel
  */
-export const ActionBreadcrumb = ({ action }: { action: ActionDetailed }) => {
+export const ActionBreadcrumb = ({ action }: { action: ActionListItem }) => {
   const { actionId } = action;
 
   const collectiviteId = useCollectiviteId();
-
-  const referentiel = useReferentielDownToAction(
-    getReferentielIdFromActionId(actionId)
-  );
-
-  const getParent = (id: string) =>
-    referentiel.find((e) => e.children.includes(id)) ?? null;
-
-  const parents = uniq(
-    referentiel.reduce((path) => {
-      const parent = getParent(path[0]?.id ?? actionId);
-      return parent ? [parent, ...path] : path;
-    }, [] as ActionDefinitionSummary[])
-  );
+  const [{ data: actions = {} }] = useListActionsGroupedById({
+    referentielIds: [getReferentielIdFromActionId(actionId)],
+  });
+  const ancestors = useGetActionAncestors({ actionId }) ?? [];
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -41,8 +31,8 @@ export const ActionBreadcrumb = ({ action }: { action: ActionDetailed }) => {
       <Breadcrumbs
         size="sm"
         enableLastElementClick
-        items={parents.map((parent, index) => {
-          if (parent.type === 'referentiel') {
+        items={ancestors.reverse().map((parent, index) => {
+          if (parent.actionType === ActionTypeEnum.REFERENTIEL) {
             return {
               label: parent.nom,
               href: makeReferentielUrl({
@@ -62,8 +52,9 @@ export const ActionBreadcrumb = ({ action }: { action: ActionDetailed }) => {
           }
         })}
       />
+
       <ReferentielDropdownNavigation
-        referentiel={referentiel}
+        actions={actions}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         actionId={actionId}

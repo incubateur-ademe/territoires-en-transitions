@@ -1,9 +1,8 @@
 import { MesureAuditStatutEnum } from '@tet/domain/referentiels';
-import { ActionReferentiel } from '../../DEPRECATED_scores.types';
+import { ActionDetailed } from '../../use-snapshot';
 
 // un sous-ensemble des champs pour alimenter notre table
-export type TAuditSuiviRow = ActionReferentiel & {
-  action_id: string;
+export type TAuditSuiviRow = ActionDetailed & {
   statut: MesureAuditStatutEnum;
   ordreDuJour: boolean;
 };

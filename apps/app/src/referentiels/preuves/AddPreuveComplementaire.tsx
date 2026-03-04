@@ -1,9 +1,9 @@
-import { TActionDef } from '@/app/referentiels/preuves/usePreuves';
 import { appLabels } from '@/app/labels/catalog';
+import { TActionDef } from '@/app/referentiels/preuves/usePreuves';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, Field, Modal, Select } from '@tet/ui';
 import { useState } from 'react';
-import { useSubActionOptionsListe } from '../use-sub-action-definitions';
+import { useGetActionChildren } from '../actions/use-get-action-children';
 import { AddPreuveModal } from './AddPreuveModal';
 import { useAddPreuveComplementaireToAction } from './useAddPreuveToAction';
 
@@ -20,7 +20,7 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
   const selectSubActionIsRequired = addToSubAction && !subaction_id;
 
   const handlers = useAddPreuveComplementaireToAction(
-    addToSubAction ? subaction_id : action.id
+    addToSubAction ? subaction_id : action.actionId
   );
 
   const currentCollectivite = useCurrentCollectivite();
@@ -70,13 +70,20 @@ const SelectSubAction = ({
   action: TActionDef;
   setSubaction: (value: string) => void;
 }) => {
-  const options = useSubActionOptionsListe(action);
+  const children = useGetActionChildren({
+    actionId: action.actionId,
+  });
+
+  const selectOptions = children.map(({ actionId, identifiant, nom }) => ({
+    value: actionId,
+    label: `${identifiant} ${nom}`,
+  }));
 
   return (
     <Field title={appLabels.sousActionAssociee}>
       <Select
         dataTest="SelectSubAction"
-        options={options}
+        options={selectOptions}
         onChange={(value) => value && setSubaction(value as string)}
       />
     </Field>

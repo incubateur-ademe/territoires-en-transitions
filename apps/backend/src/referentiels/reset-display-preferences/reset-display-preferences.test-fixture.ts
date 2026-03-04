@@ -1,8 +1,5 @@
 import { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
-import {
-  ReferentielId,
-  StatutAvancementEnum,
-} from '@tet/domain/referentiels';
+import { ReferentielId, StatutAvancementEnum } from '@tet/domain/referentiels';
 import { TRPCClient } from '@trpc/client';
 import assert from 'assert';
 import { getActionStatusCreateForAction } from '../update-action-statut/referentiel-action-statut.test-fixture';
@@ -29,13 +26,9 @@ export async function seedCollectiviteReferentielDisplayActivity({
 
   const actionStatusesToCreate = getActionStatusCreateForAction(
     scoreSnapshot.scoresPayload.scores,
-    StatutAvancementEnum.FAIT
-  )
-    .map((actionStatus) => ({
-      ...actionStatus,
-      collectiviteId,
-    }))
-    .slice(0, ACTION_STATUT_COUNT_THRESHOLD1);
+    StatutAvancementEnum.FAIT,
+    collectiviteId
+  ).slice(0, ACTION_STATUT_COUNT_THRESHOLD1);
 
   assert(
     actionStatusesToCreate.length >= ACTION_STATUT_COUNT_THRESHOLD1,

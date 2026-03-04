@@ -1,23 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import { useCollectiviteId } from '@tet/api/collectivites';
-
-/** Récupère la liste des services pilotes d'une mesure */
-export const useListMesureServicesPilotes = (actionId: string) => {
-  const collectiviteId = useCollectiviteId();
-  const trpc = useTRPC();
-
-  const { data: servicesData } = useQuery(
-    trpc.referentiels.actions.listServices.queryOptions({
-      collectiviteId,
-      mesureIds: [actionId],
-    })
-  );
-
-  return {
-    data: servicesData?.[actionId] || [],
-  };
-};
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 
 /** Modifie la liste des services pilotes d'une mesure */
 export const useUpsertMesureServicesPilotes = () => {
@@ -28,14 +11,9 @@ export const useUpsertMesureServicesPilotes = () => {
     trpc.referentiels.actions.upsertServices.mutationOptions({
       onSuccess: (data, variables) => {
         queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.actions.listServices.queryKey({
+          queryKey: trpc.referentiels.actions.listActionsGroupedById.queryKey({
             collectiviteId: variables.collectiviteId,
-            mesureIds: [variables.mesureId],
-          }),
-        });
-        queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.actions.listActions.queryKey({
-            collectiviteId: variables.collectiviteId,
+            referentielId: getReferentielIdFromActionId(variables.mesureId),
           }),
         });
       },
@@ -52,14 +30,9 @@ export const useDeleteMesureServicesPilotes = () => {
     trpc.referentiels.actions.deleteServices.mutationOptions({
       onSuccess: (data, variables) => {
         queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.actions.listServices.queryKey({
+          queryKey: trpc.referentiels.actions.listActionsGroupedById.queryKey({
             collectiviteId: variables.collectiviteId,
-            mesureIds: [variables.mesureId],
-          }),
-        });
-        queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.actions.listActions.queryKey({
-            collectiviteId: variables.collectiviteId,
+            referentielId: getReferentielIdFromActionId(variables.mesureId),
           }),
         });
       },

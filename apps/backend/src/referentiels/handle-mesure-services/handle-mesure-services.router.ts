@@ -4,11 +4,6 @@ import { actionIdSchema } from '@tet/domain/referentiels';
 import { z } from 'zod';
 import { HandleMesureServicesService } from './handle-mesure-services.service';
 
-const listServicesSchema = z.object({
-  collectiviteId: z.int(),
-  mesureIds: z.array(actionIdSchema).optional(),
-});
-
 const upsertServicesSchema = z.object({
   collectiviteId: z.int(),
   mesureId: actionIdSchema,
@@ -33,12 +28,6 @@ export class HandleMesuresServicesRouter {
   ) {}
 
   router = this.trpc.router({
-    listServices: this.trpc.authedProcedure
-      .input(listServicesSchema)
-      .query(({ input }) => {
-        return this.service.listServices(input.collectiviteId, input.mesureIds);
-      }),
-
     upsertServices: this.trpc.authedProcedure
       .input(upsertServicesSchema)
       .mutation(({ input, ctx }) => {

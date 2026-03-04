@@ -1,10 +1,15 @@
 import { INestApplication } from '@nestjs/common';
-import { getTestApp, getTestDatabase, getTestRouter } from '../../../test/app-utils';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
+import { CollectiviteRole } from '@tet/domain/users';
+import {
+  getTestApp,
+  getTestDatabase,
+  getTestRouter,
+} from '../../../test/app-utils';
 import { getAuthUserFromUserCredentials } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { addTestUser } from '../../users/users/users.test-fixture';
 import { TrpcRouter } from '../../utils/trpc/trpc.router';
-import { CollectiviteRole } from '@tet/domain/users';
 
 describe('HandleMesurePilotesRouter', () => {
   let app: INestApplication;
@@ -24,21 +29,6 @@ describe('HandleMesurePilotesRouter', () => {
 
   afterAll(async () => {
     await app.close();
-  });
-
-  test('List pilotes throws error when not authenticated', async () => {
-    const caller = router.createCaller({ user: null });
-
-    const input = {
-      collectiviteId: 1,
-      mesureIds: ['eci_2.2.2.2'],
-    };
-
-    // `rejects` is necessary to handle exception in async function
-    // See https://vitest.dev/api/expect.html#tothrowerror
-    await expect(() =>
-      caller.referentiels.actions.listPilotes(input)
-    ).rejects.toThrowError(/not authenticated/i);
   });
 
   test('Upsert pilotes throws error when not authorized', async () => {
@@ -93,16 +83,6 @@ describe('HandleMesurePilotesRouter', () => {
       ])
     );
 
-    // List pilotes
-    const listedPilotes = await caller.referentiels.actions.listPilotes({
-      collectiviteId,
-      mesureIds: [mesureId],
-    });
-    expect(listedPilotes[mesureId]).toHaveLength(2);
-    expect(listedPilotes[mesureId]).toEqual(
-      expect.arrayContaining(createdPilotes)
-    );
-
     // Update pilotes
     const updatedPilotesInput = {
       collectiviteId,
@@ -122,17 +102,26 @@ describe('HandleMesurePilotesRouter', () => {
       },
     ]);
 
-    // Delete pilotes
+    const actionsAfterUpdate =
+      await caller.referentiels.actions.listActionsGroupedById({
+        collectiviteId,
+        referentielId: getReferentielIdFromActionId(mesureId),
+      });
+
+    expect(actionsAfterUpdate[mesureId].pilotes).toHaveLength(1);
+
     await caller.referentiels.actions.deletePilotes({
       collectiviteId,
       mesureId,
     });
 
-    const emptyPilotes = await caller.referentiels.actions.listPilotes({
-      collectiviteId,
-      mesureIds: [mesureId],
-    });
-    expect(emptyPilotes).toEqual({});
+    const actionsAfterDelete =
+      await caller.referentiels.actions.listActionsGroupedById({
+        collectiviteId,
+        referentielId: getReferentielIdFromActionId(mesureId),
+      });
+
+    expect(actionsAfterDelete[mesureId].pilotes).toEqual([]);
   });
 
   test('Throw error when upserting pilotes with empty pilotes array', async () => {

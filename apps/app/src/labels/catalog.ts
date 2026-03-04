@@ -8,6 +8,7 @@ export const appLabels = {
   referentielTeTest: 'Transition Écologique (test)',
 
   nonRenseigne: 'Non renseigné',
+  nonRenseignable: 'Non renseignable',
   avancementFait: 'Fait',
   avancementPasFait: 'Pas fait',
   avancementDetaille: 'Détaillé au %',

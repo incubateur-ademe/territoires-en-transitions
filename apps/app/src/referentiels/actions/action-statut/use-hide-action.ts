@@ -1,47 +1,9 @@
-import { findActionInTree } from '@tet/domain/referentiels';
-import { useEffect, useState } from 'react';
+import { isActionHidden } from '@tet/domain/referentiels';
 import { useReferentielTeEnabled } from '../../use-referentiel-te-enabled';
-import { useSnapshot } from '../../use-snapshot';
+import { ActionListItem } from '../use-list-actions';
 
-export const useHideAction = (actionId: string) => {
+export const useHideAction = (action: ActionListItem) => {
   const referentielTeEnabled = useReferentielTeEnabled();
-  const [hideAction, setHideAction] = useState<
-    | {
-        hide: boolean;
-        isLoading: false;
-      }
-    | {
-        hide: null;
-        isLoading: true;
-      }
-  >({
-    hide: null,
-    isLoading: true,
-  });
 
-  const { data: snapshot, isPending: isLoadingSnapshot } = useSnapshot({
-    actionId,
-  });
-
-  useEffect(() => {
-    const actionScore = snapshot?.scoresPayload.scores
-      ? findActionInTree(
-          [snapshot.scoresPayload.scores],
-          (a) => a.actionId === actionId
-        ) ?? null
-      : null;
-    if (!actionScore || isLoadingSnapshot) {
-      setHideAction({
-        hide: null,
-        isLoading: true,
-      });
-    } else {
-      setHideAction({
-        hide: Boolean(actionScore.score.desactive) && referentielTeEnabled,
-        isLoading: false,
-      });
-    }
-  }, [snapshot, isLoadingSnapshot, actionId]);
-
-  return hideAction;
+  return isActionHidden(action.score.desactive, referentielTeEnabled);
 };

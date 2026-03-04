@@ -1,5 +1,5 @@
 import { ACTION_TYPE_LABELS } from '@/app/referentiels/actions/action-label.constants';
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Alert, Button } from '@tet/ui';
 import { useState } from 'react';
@@ -7,11 +7,13 @@ import { ScoreIndicatifModal } from '../score-indicatif/score-indicatif.modal';
 import { useGetScoreIndicatif } from '../score-indicatif/use-get-score-indicatif';
 
 type Props = {
-  action: Pick<ActionDefinitionSummary, 'type' | 'id' | 'haveScoreIndicatif'>;
+  action: Pick<ActionListItem, 'actionType' | 'actionId' | 'exprScore'>;
 };
 
 const SubactionCardActions = ({ action }: Props) => {
-  const { id: actionId, type, haveScoreIndicatif } = action;
+  const { actionId, actionType, exprScore } = action;
+  const haveScoreIndicatif = Boolean(exprScore && exprScore.trim() !== '');
+
   const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
 
   const { hasCollectivitePermission } = useCurrentCollectivite();
@@ -19,7 +21,8 @@ const SubactionCardActions = ({ action }: Props) => {
   const {
     data: scoreIndicatifParActionId,
     isLoading: isScoreIndicatifLoading,
-  } = useGetScoreIndicatif(actionId);
+  } = useGetScoreIndicatif({ actionId, enabled: haveScoreIndicatif });
+
   const scoreIndicatif = scoreIndicatifParActionId?.[actionId];
   const nbIndicateurs = scoreIndicatif?.indicateurs?.length || 0;
 
@@ -55,7 +58,9 @@ const SubactionCardActions = ({ action }: Props) => {
           ) : (
             <Alert
               className="w-full"
-              title={`Cette ${ACTION_TYPE_LABELS[type]} nécessite des données ${
+              title={`Cette ${
+                ACTION_TYPE_LABELS[actionType]
+              } nécessite des données ${
                 nbIndicateurs > 1 ? "d'indicateurs" : "d'un indicateur"
               } pour le calcul du score.`}
               state="info"

@@ -27,12 +27,11 @@ export const AxeDescription = () => {
           'focus-within:border': !isReadOnly,
         })}
         initialValue={axe.description}
-        onChange={(value) => {
+        onBlur={(value) => {
           if (value !== axe.description) {
             return updateAxe.mutateAsync({ description: value });
           }
         }}
-        debounceDelayOnChange={1000}
       />
     </section>
   );

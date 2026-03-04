@@ -3,8 +3,7 @@ import { Priorite, Statut } from '@tet/domain/plans';
 import {
   ActionScoreFinal,
   ReferentielId,
-  StatutAvancementIncludingNonConcerne,
-  StatutAvancementIncludingNonConcerneDetailleALaTache,
+  StatutAvancement,
 } from '@tet/domain/referentiels';
 
 export type PdfIndicateurDefinition = {
@@ -51,11 +50,9 @@ export const referentielToName = {
   'te-test': 'Transition Écologique (test)',
 } as const satisfies Record<ReferentielLabelKey, string>;
 
-export const avancementToLabel: Record<
-  StatutAvancementIncludingNonConcerneDetailleALaTache,
-  string
-> = {
+export const avancementToLabel: Record<StatutAvancement, string> = {
   non_renseigne: 'Non renseigné',
+  non_renseignable: 'Non renseignable',
   fait: 'Fait',
   pas_fait: 'Pas fait',
   detaille: 'Détaillé au %',
@@ -65,7 +62,7 @@ export const avancementToLabel: Record<
 };
 
 export const actionAvancementColors: Record<
-  StatutAvancementIncludingNonConcerne,
+  Exclude<StatutAvancement, 'non_renseignable'>,
   string
 > = {
   non_concerne: '#929292',
@@ -73,5 +70,6 @@ export const actionAvancementColors: Record<
   pas_fait: '#FFCA79',
   programme: '#7AB1E8',
   detaille: '#000091',
+  detaille_a_la_tache: '#000091',
   fait: '#34CB6A',
 };

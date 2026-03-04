@@ -4,7 +4,7 @@ import { useListServices } from './use-list-services';
 
 type Props = Omit<
   TagDropdownProps,
-  'options' | 'optionsListe' | 'placeholder' | 'tagType' | 'refetchOptions'
+  'options' | 'optionsListe' | 'tagType' | 'refetchOptions'
 > & {
   /**
    * Si spécifié, on récupère les tags de toutes ces collectivités et pas uniquement de la collectivité courante
@@ -12,19 +12,25 @@ type Props = Omit<
   collectiviteIds?: number[];
 };
 
-const ServiceTagDropdown = ({ collectiviteIds, onChange, ...props }: Props) => {
+const ServiceTagDropdown = ({
+  collectiviteIds,
+  onChange,
+  placeholder,
+  ...props
+}: Props) => {
   const { data, refetch } = useListServices({
     collectiviteIds,
   });
 
+  const defaultPlaceholder = (isEditionAllowed: boolean) =>
+    `Sélectionner ${
+      isEditionAllowed ? 'ou créer ' : ''
+    }une direction ou service pilote`;
+
   return (
     <TagDropdown
       {...props}
-      placeholder={(isEditionAllowed) =>
-        `Sélectionner ${
-          isEditionAllowed ? 'ou créer ' : ''
-        }une direction ou service pilote`
-      }
+      placeholder={placeholder ?? defaultPlaceholder}
       tagType={TagEnum.Service}
       optionsListe={data}
       refetchOptions={refetch}

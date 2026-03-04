@@ -2,23 +2,22 @@
 
 import { useListIndicateurs } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { useFichesActionLiees } from '@/app/referentiels/action.show/useFichesActionLiees';
-import { useActionId } from '@/app/referentiels/actions/action-context';
+import { useListDiscussions } from '@/app/referentiels/actions/comments/hooks/use-list-discussions';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/use-action-preuves-count';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 
 type ActionMetadataCount = {
   documents: number | undefined;
   indicateurs: number | undefined;
   fiches: number | undefined;
+  comments: number | undefined;
 };
 
-export function useActionMetadataCount(
-  actionDefinitionId: string
-): ActionMetadataCount {
-  const actionId = useActionId();
+export function useActionMetadataCount(actionId: string): ActionMetadataCount {
   const { collectiviteId } = useCurrentCollectivite();
 
-  const { data: preuvesCount } = useActionPreuvesCount(actionDefinitionId);
+  const { data: preuvesCount } = useActionPreuvesCount(actionId);
   const documents = preuvesCount?.total;
 
   const { data: { data: indicateursLies } = {} } = useListIndicateurs({
@@ -32,5 +31,13 @@ export function useActionMetadataCount(
     collectiviteId,
   });
 
-  return { documents, indicateurs, fiches: fichesLiees.length };
+  const referentielId = getReferentielIdFromActionId(actionId);
+  const { data: discussionsData } = useListDiscussions(referentielId, {
+    actionId,
+  });
+  const comments = discussionsData?.discussions
+    .filter((d) => d.status === 'ouvert')
+    .reduce((acc, d) => acc + d.messages.length, 0);
+
+  return { documents, indicateurs, fiches: fichesLiees.length, comments };
 }

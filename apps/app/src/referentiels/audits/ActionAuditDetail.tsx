@@ -1,7 +1,7 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { appLabels } from '@/app/labels/catalog';
 import { Checkbox, Field, RichTextEditor } from '@tet/ui';
 import { ChangeEvent } from 'react';
+import { ActionListItem } from '../actions/use-list-actions';
 import {
   MesureAuditStatut,
   useGetMesureAuditStatut,
@@ -10,7 +10,7 @@ import { useUpdateMesureAuditStatut } from './use-update-mesure-audit-statut';
 import { useAudit, useIsAuditeur } from './useAudit';
 
 export type TActionAuditDetailProps = {
-  action: ActionDefinitionSummary;
+  action: ActionListItem;
 };
 
 export type TActionAuditDetailBaseProps = {
@@ -31,8 +31,7 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
           className="[&_.bn-block-content]:py-0 [&_.bn-inline-content]:text-sm [&_.bn-inline-content]:leading-[1.25rem]"
           initialValue={avisInitial}
           disabled={readonly}
-          debounceDelayOnChange={1000}
-          onChange={(value: string) => {
+          onBlur={(value: string) => {
             updateMesureAuditStatut({
               collectiviteId: auditStatut.collectiviteId,
               mesureId: auditStatut.mesureId,
@@ -69,7 +68,7 @@ export const ActionAuditDetail = (props: TActionAuditDetailProps) => {
   const isAuditeur = useIsAuditeur();
 
   const { data: auditStatut } = useGetMesureAuditStatut({
-    mesureId: action.id,
+    mesureId: action.actionId,
     enabled: !!audit,
   });
 

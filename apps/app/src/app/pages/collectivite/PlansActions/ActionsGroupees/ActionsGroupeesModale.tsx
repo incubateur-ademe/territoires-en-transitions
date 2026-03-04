@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { FormSectionGrid, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { JSX } from 'react';
@@ -27,7 +28,7 @@ const ActionsGroupeesModale = ({
         <ModalFooterOKCancel
           btnCancelProps={{ onClick: close }}
           btnOKProps={{
-            children: `Valider`,
+            children: appLabels.valider,
             onClick: () => {
               close();
               onSave();

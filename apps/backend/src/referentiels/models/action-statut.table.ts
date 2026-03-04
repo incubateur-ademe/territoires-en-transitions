@@ -1,5 +1,5 @@
 import { modifiedAt, modifiedBy } from '@tet/backend/utils/column.utils';
-import { statutAvancementEnumValues } from '@tet/domain/referentiels';
+import { statutAvancementEnumSchemaCreateInDatabaseValues } from '@tet/domain/referentiels';
 import {
   boolean,
   doublePrecision,
@@ -12,7 +12,7 @@ import { actionIdReference } from './action-relation.table';
 
 export const statutAvancementPgEnum = pgEnum(
   'avancement',
-  statutAvancementEnumValues
+  statutAvancementEnumSchemaCreateInDatabaseValues
 );
 
 export const actionStatutTable = pgTable('action_statut', {
@@ -21,7 +21,9 @@ export const actionStatutTable = pgTable('action_statut', {
     .references(() => collectiviteTable.id),
   actionId: actionIdReference.notNull(),
   avancement: statutAvancementPgEnum('avancement').notNull(),
-  avancementDetaille: doublePrecision('avancement_detaille').array(),
+  avancementDetaille: doublePrecision('avancement_detaille')
+    .array()
+    .$type<[number, number, number]>(),
   concerne: boolean('concerne').notNull(),
   modifiedBy,
   modifiedAt,

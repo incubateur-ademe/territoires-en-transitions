@@ -1,14 +1,14 @@
 import z from 'zod';
 
-export enum ActionTypeEnum {
-  REFERENTIEL = 'referentiel',
-  AXE = 'axe',
-  SOUS_AXE = 'sous-axe',
-  ACTION = 'action',
-  SOUS_ACTION = 'sous-action',
-  TACHE = 'tache',
-  EXEMPLE = 'exemple',
-}
+export const ActionTypeEnum = {
+  REFERENTIEL: 'referentiel',
+  AXE: 'axe',
+  SOUS_AXE: 'sous-axe',
+  ACTION: 'action',
+  SOUS_ACTION: 'sous-action',
+  TACHE: 'tache',
+  EXEMPLE: 'exemple',
+} as const;
 
 export const orderedActionType = [
   ActionTypeEnum.REFERENTIEL,

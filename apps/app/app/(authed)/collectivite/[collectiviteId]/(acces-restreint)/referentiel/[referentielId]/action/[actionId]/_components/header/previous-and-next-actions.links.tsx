@@ -1,7 +1,10 @@
 import { JSX } from 'react';
 
-import { usePrevAndNextActionLinks } from '@/app/referentiels/actions/use-prev-and-next-action-links';
+import { getPrevAndNextActionLinks } from '@/app/referentiels/actions/get-prev-and-next-action-links.utils';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, cn } from '@tet/ui';
+import { useSearchParams } from 'next/navigation';
 
 type ActionNavigationButtonProps = {
   direction: 'previous' | 'next';
@@ -22,10 +25,7 @@ const ActionNavigationButton = ({
 
   return (
     <Button
-      className={cn(
-        'border-b-transparent hover:text-primary-9',
-        className
-      )}
+      className={cn('border-b-transparent hover:text-primary-9', className)}
       variant="underlined"
       icon={isPrevious ? 'arrow-left-line' : 'arrow-right-line'}
       iconPosition={isPrevious ? 'left' : 'right'}
@@ -39,16 +39,22 @@ const ActionNavigationButton = ({
 };
 
 type Props = {
-  actionId: string;
+  action: ActionListItem;
   headerIsSticky?: boolean;
 };
 
 export const PreviousAndNextActionsLinks = ({
-  actionId,
+  action,
   headerIsSticky = false,
 }: Props) => {
-  const { prevActionLink, nextActionLink } =
-    usePrevAndNextActionLinks(actionId);
+  const { collectiviteId } = useCurrentCollectivite();
+  const searchParams = useSearchParams();
+
+  const { prevActionLink, nextActionLink } = getPrevAndNextActionLinks({
+    action,
+    collectiviteId,
+    searchParams,
+  });
 
   if (!prevActionLink && !nextActionLink) return null;
 

@@ -1,9 +1,11 @@
 import { makeReferentielActionUrl } from '@/app/app/paths';
-import { useListActions } from '@/app/referentiels/actions/use-list-actions';
+import {
+  ActionListItem,
+  useListActions,
+} from '@/app/referentiels/actions/use-list-actions';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { PersonnalisationRegle } from '@tet/domain/collectivites';
-import { ActionWithScore } from '@tet/domain/referentiels';
 import { AccordionControlled, InfoTooltip } from '@tet/ui';
 import DOMPurify from 'dompurify';
 import Link from 'next/link';
@@ -20,7 +22,7 @@ export const QuestionActionsLiees = (props: QuestionReponseProps) => {
   const enabled = (actionIds?.length && isOpen) || false;
   const { data: actionsLiees } = useListActions(
     { actionIds: actionIds || [] },
-    enabled
+    { enabled }
   );
   const { data: regles } = useListPersonnalisationRegles(
     actionIds || [],
@@ -43,7 +45,7 @@ const ActionsLiees = ({
   actions,
   regles,
 }: {
-  actions?: ActionWithScore[];
+  actions?: ActionListItem[];
   regles: PersonnalisationRegle[];
 }) => {
   const collectiviteId = useCollectiviteId();

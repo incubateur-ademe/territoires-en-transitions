@@ -7,11 +7,16 @@ type Props = React.HTMLAttributes<HTMLTableCellElement> & {
   icon?: string;
   title?: string;
   titleClassName?: string;
+  /** Pins the cell on horizontal scroll (typically the first column). */
+  pinnedLeft?: boolean;
   /** Composant de filtre (Select, Input, etc.) affiché sous le titre. */
   filter?: ReactNode;
   /** ClassName du conteneur du filtre (row du dessous) */
   filterClassName?: string;
 };
+
+export const pinnedLeftClassName =
+  'sticky left-0 z-10 bg-inherit shadow-[1px_0_0_0] shadow-grey-3';
 
 /** Header cell for tables with predefined optional sorting, icon and filter */
 export const TableHeaderCell = ({
@@ -22,6 +27,7 @@ export const TableHeaderCell = ({
   titleClassName,
   filter,
   filterClassName,
+  pinnedLeft,
   children,
   ...props
 }: Props) => {
@@ -30,6 +36,7 @@ export const TableHeaderCell = ({
       {...props}
       className={cn(
         'px-4 py-3 text-sm text-grey-9 font-medium leading-none align-top',
+        { [pinnedLeftClassName]: pinnedLeft },
         className
       )}
     >

@@ -2,14 +2,14 @@ import { referentielToName } from '@/app/app/labels';
 import { makeReferentielTacheUrl } from '@/app/app/paths';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { ActionTypeEnum, ActionWithScore } from '@tet/domain/referentiels';
+import { Action } from '@tet/domain/referentiels';
 import { Button, Card } from '@tet/ui';
 import { ScoreProgressBar } from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 
 type ActionCardProps = {
   isReadonly?: boolean;
-  action: ActionWithScore;
+  action: Action;
   externalCollectiviteId?: number;
   openInNewTab?: boolean;
   onUnlink?: () => void;
@@ -66,18 +66,11 @@ const ActionLinkedCard = ({
         {/** Score */}
         <div className="w-full flex max-sm:flex-col gap-3 sm:items-center justify-between">
           <ScoreProgressBar
-            id={actionId}
-            identifiant={identifiant}
-            type={ActionTypeEnum.ACTION}
+            action={action}
             className="grow shrink max-sm:w-full"
-            externalCollectiviteId={externalCollectiviteId}
           />
           <div className="shrink-0 flex">
-            <ScoreRatioBadge
-              actionId={actionId}
-              size="xs"
-              externalCollectiviteId={externalCollectiviteId}
-            />
+            <ScoreRatioBadge action={action} size="xs" />
           </div>
         </div>
 

@@ -1,8 +1,7 @@
 import { expect, Locator, Page } from '@playwright/test';
 import {
   ReferentielId,
-  StatutAvancementIncludingNonConcerne,
-  StatutAvancementIncludingNonConcerneDetailleALaTache,
+  StatutAvancementCreate,
 } from '@tet/domain/referentiels';
 import { roundTo } from '@tet/domain/utils';
 import { DocumentsPom } from 'tests/collectivite/documents/documents.pom';
@@ -229,7 +228,7 @@ export class ReferentielScoresPom {
 
   async updateSousActionAvancement(
     sousActionIdentifiant: string,
-    avancement: StatutAvancementIncludingNonConcerneDetailleALaTache
+    avancement: StatutAvancementCreate
   ) {
     await this.getSousActionAvancementSelectLocator(
       sousActionIdentifiant
@@ -239,7 +238,7 @@ export class ReferentielScoresPom {
 
   async updateTacheAvancement(
     tacheIdentifiant: string,
-    avancement: StatutAvancementIncludingNonConcerne
+    avancement: StatutAvancementCreate
   ) {
     await this.getTacheAvancementSelectLocator(tacheIdentifiant).click();
     await this.page.locator(`[data-test="${avancement}"]`).click();

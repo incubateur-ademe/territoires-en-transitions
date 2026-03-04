@@ -3,17 +3,18 @@ import { Locator, Page } from '@playwright/test';
 export class FilterDiscussionsPom {
   readonly statusSelect: Locator;
   readonly orderBySelect: Locator;
+  readonly discussionPanel: Locator;
 
   constructor(readonly page: Page) {
     this.page = page;
-    const discussionPanel = page.locator(
+    this.discussionPanel = page.locator(
       '[data-test="ActionCommentsSidePanelContent"]'
     );
     // The selects are within the panel - using more specific selectors
-    this.orderBySelect = discussionPanel
+    this.orderBySelect = this.discussionPanel
       .locator('button')
       .filter({ hasText: 'Trier par mesure' });
-    this.statusSelect = discussionPanel
+    this.statusSelect = this.discussionPanel
       .locator('button')
       .filter({ hasText: 'Commentaires ouverts' });
   }
@@ -46,7 +47,7 @@ export class FilterDiscussionsPom {
   }
 
   async filterAction(actionId: string) {
-    await this.page
+    await this.discussionPanel
       .locator('button')
       .filter({ hasText: actionId.substring(0, 4) })
       .first()
@@ -62,6 +63,9 @@ export class FilterDiscussionsPom {
     const subAction = this.page.locator(
       `[data-test="SousAction-${actionId}"] div`
     );
-    await subAction.locator('button').filter({ hasText: 'commentaire' }).click();
+    await subAction
+      .locator('button')
+      .filter({ hasText: 'commentaire' })
+      .click();
   }
 }

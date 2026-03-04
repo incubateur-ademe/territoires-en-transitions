@@ -1,5 +1,5 @@
 import { useTable } from '@/app/referentiels/DEPRECATED_ReferentielTable/useReferentiel';
-import { phaseToLabel } from '@/app/referentiels/utils';
+import { categorieToLabel } from '@/app/referentiels/utils';
 import { reduceActions } from '@tet/domain/referentiels';
 import { ActionDetailed, useAction } from '../use-snapshot';
 
@@ -19,7 +19,7 @@ export const useProgressionReferentiel = () => {
     referentielId: 'eci',
   });
 
-  // Répartition par phase
+  // Répartition par catégorie
   const caePhases = { bases: 0, 'mise en œuvre': 0, effets: 0 };
   const eciPhases = { bases: 0, 'mise en œuvre': 0, effets: 0 };
 
@@ -54,21 +54,21 @@ export const useProgressionReferentiel = () => {
   );
 
   const caeRepartitionPhases = [
-    { id: phaseToLabel['bases'], value: caePointsParCategorie['bases'] },
+    { id: categorieToLabel['bases'], value: caePointsParCategorie['bases'] },
     {
-      id: phaseToLabel['mise en œuvre'],
+      id: categorieToLabel['mise en œuvre'],
       value: caePointsParCategorie['mise en œuvre'],
     },
-    { id: phaseToLabel['effets'], value: caePointsParCategorie['effets'] },
+    { id: categorieToLabel['effets'], value: caePointsParCategorie['effets'] },
   ];
 
   const eciRepartitionPhases = [
-    { id: phaseToLabel['bases'], value: eciPointsParCategorie['bases'] },
+    { id: categorieToLabel['bases'], value: eciPointsParCategorie['bases'] },
     {
-      id: phaseToLabel['mise en œuvre'],
+      id: categorieToLabel['mise en œuvre'],
       value: eciPointsParCategorie['mise en œuvre'],
     },
-    { id: phaseToLabel['effets'], value: eciPointsParCategorie['effets'] },
+    { id: categorieToLabel['effets'], value: eciPointsParCategorie['effets'] },
   ];
 
   return {

@@ -1,6 +1,7 @@
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
+import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { CellProps } from 'react-table';
-import { ProgressionRow } from '../DEPRECATED_scores.types';
+import { ActionDetailed } from '../use-snapshot';
 import Down from './down.svg';
 import { getMaxDepth } from './queries';
 import Up from './up.svg';
@@ -21,7 +22,7 @@ const PICTO_COLORS = {
   },
 };
 
-type TCellProps = CellProps<ProgressionRow> & {
+type TCellProps = CellProps<ActionDetailed> & {
   referentiel: string | null;
   difference?: keyof typeof PICTOS;
 };
@@ -45,7 +46,9 @@ const CellValue = (
   const Picto = difference ? PICTOS[difference] : null;
   const fill = difference
     ? PICTO_COLORS[difference][
-        row && (row.original.type === 'axe' || row.original.type === 'sous-axe')
+        row &&
+        (row.original.actionType === ActionTypeEnum.AXE ||
+          row.original.actionType === ActionTypeEnum.SOUS_AXE)
           ? 'alt'
           : 'default'
       ]
@@ -94,7 +97,7 @@ export const CellPoints = (props: TCellValueProps) => {
  */
 export const CellPhase = (props: TCellProps) => {
   const { value, row, referentiel } = props;
-  const { depth } = row.original;
+  const { level: depth } = row.original;
 
   // on n'affiche pas la phase avant le niveau sous-action
   if (depth < getMaxDepth(referentiel)) {

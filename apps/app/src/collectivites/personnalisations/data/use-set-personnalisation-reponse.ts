@@ -89,6 +89,13 @@ export const useSetPersonnalisationReponse = () => {
             })
           )
       );
+
+      await queryClient.invalidateQueries({
+        queryKey: trpc.referentiels.actions.listActionsGroupedById.queryKey({
+          collectiviteId,
+        }),
+      });
+
       await queryClient.invalidateQueries(
         trpc.referentiels.actions.getNeededPersonnalisationQuestionsStatus.queryFilter(
           {

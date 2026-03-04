@@ -2,6 +2,7 @@ import { Children, isValidElement, ReactNode } from 'react';
 import { cn } from '../../utils/cn';
 
 import { InlineEditWrapper, InlineEditWrapperProps } from '../inline-edit';
+import { pinnedLeftClassName } from './table.header-cell';
 
 type TableCellHtmlProps = React.TdHTMLAttributes<HTMLTableCellElement>;
 
@@ -9,6 +10,8 @@ export type TableCellProps = TableCellHtmlProps & {
   edit?: Omit<InlineEditWrapperProps, 'children'>;
   canEdit?: boolean;
   placeholder?: string;
+  /** Pins the cell on horizontal scroll (typically the first column). */
+  pinnedLeft?: boolean;
 };
 
 function hasVisibleChildren(children: ReactNode): boolean {
@@ -32,6 +35,7 @@ export const TableCell = ({
   edit,
   canEdit,
   placeholder,
+  pinnedLeft,
   ...props
 }: TableCellProps) => {
   const showPlaceholder = canEdit && !hasVisibleChildren(children);
@@ -48,8 +52,11 @@ export const TableCell = ({
       <InlineEditWrapper {...edit}>
         <Cell
           {...props}
+          pinnedLeft={pinnedLeft}
           data-inline-edit={canEdit ? 'true' : undefined}
-          className={cn('-outline-offset-2', className)}
+          className={cn('-outline-offset-2', className, {
+            'hover:bg-primary-0 focus:bg-primary-0': canEdit,
+          })}
         >
           {renderedChildren}
         </Cell>
@@ -58,14 +65,28 @@ export const TableCell = ({
   }
 
   return (
-    <Cell className={className} {...props}>
+    <Cell className={className} pinnedLeft={pinnedLeft} {...props}>
       {renderedChildren}
     </Cell>
   );
 };
 
-const Cell = ({ className, children, ...props }: TableCellProps) => (
-  <td {...props} className={cn('px-4 py-3 text-left ', className)}>
-    {children}
-  </td>
-);
+const Cell = ({
+  className,
+  children,
+  pinnedLeft,
+  ...props
+}: TableCellProps) => {
+  return (
+    <td
+      {...props}
+      className={cn(
+        'px-4 py-3 text-left',
+        { [pinnedLeftClassName]: pinnedLeft },
+        className
+      )}
+    >
+      {children}
+    </td>
+  );
+};

@@ -49,7 +49,6 @@ export const simpleReferentielScoring: TreeOfActionsIncludingScore = {
             pasConcerneTachesAvancement: 0,
             desactive: false,
             renseigne: true,
-            aStatut: true,
             avancement: 'fait',
           },
           scoresTag: {},

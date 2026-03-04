@@ -1,9 +1,9 @@
+import { useListFichesGroupedByActionId } from '@/app/plans/fiches/data/use-list-fiches-grouped-by-action-id';
 import FichesActionsDropdown from '@/app/ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { Field } from '@tet/ui';
 import { FichesLieesListe } from './fiches-liees.list';
-import { useFichesActionLiees } from './useFichesActionLiees';
 import { useUpdateFichesActionLiees } from './useUpdateFichesActionLiees';
 
 export type TFichesActionProps = {
@@ -19,10 +19,11 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
   const { collectiviteId, hasCollectivitePermission } = collectivite;
 
   const { id: currentUserId } = useUser();
-  const { data: fiches, isLoading } = useFichesActionLiees({
-    actionId,
-    collectiviteId,
-  });
+
+  const { fichesByActionId = {}, isLoading } = useListFichesGroupedByActionId();
+
+  const fiches = fichesByActionId[actionId] ?? [];
+
   const { mutate: updateFichesActionLiees } = useUpdateFichesActionLiees();
 
   const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');

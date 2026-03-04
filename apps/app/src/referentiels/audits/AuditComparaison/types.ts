@@ -1,14 +1,14 @@
-import { Tables, Views } from '@tet/api';
-import { ActionReferentiel } from '../../DEPRECATED_scores.types';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { ActionDetailed } from '../../use-snapshot';
 
 // alias et règle les imperfections du typage auto-généré
-export type TScoreAudit = Tables<'type_tabular_score'>;
-export type TComparaisonScoreAudit = Views<'comparaison_scores_audit'> & {
-  action_id: string;
-  pre_audit: TScoreAudit;
-  courant: TScoreAudit;
+
+export type TComparaisonScoreAudit = {
+  collectiviteId: number;
+  referentielId: ReferentielId;
+  actionId: string;
+  preAudit: ActionDetailed;
+  courant: ActionDetailed;
 };
 
-// les lignes passées à la table (une fois complétées par les données du
-// référentiel) auront ce type
-export type TScoreAuditRowData = TComparaisonScoreAudit & ActionReferentiel;
+export type TScoreAuditRowData = TComparaisonScoreAudit & ActionDetailed;

@@ -1,7 +1,7 @@
+import { ReferencedIndicateur } from '@tet/backend/indicateurs/valeurs/referenced-indicateur.dto';
 import { regleTypeEnumValues } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { ReferencedIndicateur } from '@tet/backend/indicateurs/valeurs/referenced-indicateur.dto';
-import { ImportActionDefinitionType } from './import-action-definition.dto';
+import { ImportActionDefinition } from './import-action-definition.dto';
 
 type RegleType = (typeof regleTypeEnumValues)[number];
 
@@ -54,7 +54,7 @@ export type VerifyReferentielExpressionsInput = {
   referentielId: ReferentielId;
   actions: Array<
     Pick<
-      ImportActionDefinitionType,
+      ImportActionDefinition,
       'identifiant' | 'desactivation' | 'reduction' | 'score' | 'exprScore'
     >
   >;

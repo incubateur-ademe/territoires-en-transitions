@@ -33,6 +33,7 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   }) => void;
   disabledOptionsIds?: string[];
   disableEdition?: boolean;
+  isSearcheable?: boolean;
 };
 
 /** Sélecteur de personnes de la collectivité */
@@ -40,6 +41,7 @@ const PersonneTagDropdown = ({
   collectiviteIds,
   disabledOptionsIds,
   disableEdition = false,
+  isSearcheable = true,
   onChange,
   values,
   dataTest,
@@ -142,7 +144,7 @@ const PersonneTagDropdown = ({
       {...props}
       dataTest={dataTest ?? 'personnes'}
       values={values}
-      isSearcheable
+      isSearcheable={isSearcheable}
       isLoading={isLoading}
       options={options}
       onChange={({ values, selectedValue }) =>

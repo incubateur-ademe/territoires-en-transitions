@@ -16,7 +16,7 @@ import {
   EtoileEnum,
   findActionById,
   getParcoursLabellisationStatus,
-  getParentIdFromActionId,
+  getParentId,
   getScoreRatios,
   Labellisation,
   LabellisationAudit,
@@ -689,7 +689,7 @@ function addIsScoreConditionSatisfied<
 
     const parent = findActionById(
       actionScoresTree,
-      getParentIdFromActionId(actionCondition.actionId) as string
+      getParentId({ actionId: actionCondition.actionId }) as string
     );
 
     const parentScore = {

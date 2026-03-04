@@ -1,17 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import {
-  discussionMessageTable,
-  discussionTable,
-} from '@tet/backend/collectivites/discussions/infrastructure/discussion.table';
-import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
-import { ListActionSummariesRequestType } from '@tet/backend/referentiels/list-actions/list-action-summaries.request';
-import { ActionDefinitionSummary } from '@tet/backend/referentiels/models/action-definition-summary.dto';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
-import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
 import { questionActionTable } from '@tet/backend/referentiels/models/question-action.table';
-import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
+import {
+  AuthenticatedUser,
+  AuthUser,
+} from '@tet/backend/users/models/auth.models';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
@@ -19,42 +16,98 @@ import {
   TagWithCollectiviteId,
 } from '@tet/domain/collectivites';
 import {
+  ActionId,
+  ActionsGroupedById,
   ActionType,
-  ActionWithScore,
-  ListActionsRequestType,
-  ReferentielId,
+  ActionWithDefinitionAndPilotes,
+  scoreSnapshotTreeToActionsWithGenealogyGroupedById,
 } from '@tet/domain/referentiels';
-import {
-  and,
-  asc,
-  count,
-  eq,
-  getTableColumns,
-  inArray,
-  like,
-  or,
-  SQL,
-  sql,
-} from 'drizzle-orm';
+import { ResourceType } from '@tet/domain/users';
+import { and, asc, count, eq, getTableColumns, SQL, sql } from 'drizzle-orm';
 import { actionPiloteTable } from '../models/action-pilote.table';
 import { actionServiceTable } from '../models/action-service.table';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
-import { getExtendActionWithComputedFields } from '../snapshots/snapshots.utils';
+import { ListActionsGroupedByIdInput } from './list-actions-grouped-by-id.input';
 
 @Injectable()
 export class ListActionsService {
   constructor(
     private readonly databaseService: DatabaseService,
+    private readonly collectiviteService: CollectivitesService,
+    private readonly permissions: PermissionService,
     private readonly snapshotService: SnapshotsService
   ) {}
 
   private db = this.databaseService.db;
 
-  async listActions({
+  async listActionsGroupedById(
+    { referentielId, collectiviteId }: ListActionsGroupedByIdInput,
+    { user }: { user: AuthenticatedUser }
+  ): Promise<ActionsGroupedById> {
+    const collectiviteIsPrivate = await this.collectiviteService.isPrivate(
+      collectiviteId
+    );
+
+    await this.permissions.isAllowed(
+      user,
+      collectiviteIsPrivate
+        ? 'referentiels.read_confidentiel'
+        : 'referentiels.read',
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+
+    const promiseOfActionsWithDefinitionAndPilotes =
+      this.listActionsWithDefinitionAndPilotesGroupedById({
+        collectiviteId,
+        referentielId,
+      });
+
+    const promiseOfActionsWithScoreAndGenealogyGroupedById =
+      this.snapshotService
+        .get(collectiviteId, referentielId)
+        .then((snapshot) =>
+          scoreSnapshotTreeToActionsWithGenealogyGroupedById(
+            snapshot.scoresPayload.scores
+          )
+        );
+
+    const [
+      actionsWithDefinitionAndPilotes,
+      actionsWithScoreAndGenealogyGroupedById,
+    ] = await Promise.all([
+      promiseOfActionsWithDefinitionAndPilotes,
+      promiseOfActionsWithScoreAndGenealogyGroupedById,
+    ]);
+
+    const actions = {} as ActionsGroupedById;
+
+    for (const actionId in actionsWithScoreAndGenealogyGroupedById) {
+      if (
+        !Object.prototype.hasOwnProperty.call(
+          actionsWithScoreAndGenealogyGroupedById,
+          actionId
+        )
+      ) {
+        continue;
+      }
+
+      actions[actionId] = {
+        ...actionsWithScoreAndGenealogyGroupedById[actionId],
+        ...actionsWithDefinitionAndPilotes[actionId],
+      };
+    }
+
+    return actions;
+  }
+
+  private async listActionsWithDefinitionAndPilotesGroupedById({
     collectiviteId,
-    filters,
-  }: ListActionsRequestType): Promise<ActionWithScore[]> {
+    referentielId,
+  }: ListActionsGroupedByIdInput): Promise<
+    Record<ActionId, ActionWithDefinitionAndPilotes>
+  > {
     const subQuery = this.db
       .$with('action_definition_with_details')
       .as(this.listWithDetails(collectiviteId));
@@ -63,88 +116,17 @@ export class ListActionsService {
 
     const queryFilters: SQL[] = [];
 
-    if (filters?.actionIds && filters.actionIds.length > 0) {
-      queryFilters.push(inArray(subQuery.actionId, filters.actionIds));
-    }
-
-    if (filters?.actionTypes && filters.actionTypes.length > 0) {
-      queryFilters.push(inArray(subQuery.actionType, filters.actionTypes));
-    }
-
-    if (
-      filters?.utilisateurPiloteIds &&
-      filters.utilisateurPiloteIds.length > 0
-    ) {
-      const pilotesCountSubquery = this.db
-        .select({
-          count: sql`COUNT(DISTINCT ${actionPiloteTable.userId})`,
-        })
-        .from(actionPiloteTable)
-        .where(
-          and(
-            eq(actionPiloteTable.actionId, subQuery.actionId),
-            eq(actionPiloteTable.collectiviteId, collectiviteId),
-            inArray(actionPiloteTable.userId, filters.utilisateurPiloteIds)
-          )
-        );
-      queryFilters.push(
-        eq(pilotesCountSubquery, filters.utilisateurPiloteIds.length)
-      );
-    }
-
-    if (filters?.personnePiloteIds && filters.personnePiloteIds.length > 0) {
-      const personnesCountSubquery = this.db
-        .select({
-          count: sql`COUNT(DISTINCT ${actionPiloteTable.tagId})`,
-        })
-        .from(actionPiloteTable)
-        .where(
-          and(
-            eq(actionPiloteTable.actionId, subQuery.actionId),
-            eq(actionPiloteTable.collectiviteId, collectiviteId),
-            inArray(actionPiloteTable.tagId, filters.personnePiloteIds)
-          )
-        );
-      queryFilters.push(
-        eq(personnesCountSubquery, filters.personnePiloteIds.length)
-      );
-    }
-
-    if (filters?.servicePiloteIds && filters.servicePiloteIds.length > 0) {
-      const servicesCountSubquery = this.db
-        .select({
-          count: sql`COUNT(DISTINCT ${actionServiceTable.serviceTagId})`,
-        })
-        .from(actionServiceTable)
-        .where(
-          and(
-            eq(actionServiceTable.actionId, subQuery.actionId),
-            eq(actionServiceTable.collectiviteId, collectiviteId),
-            inArray(actionServiceTable.serviceTagId, filters.servicePiloteIds)
-          )
-        );
-      queryFilters.push(
-        eq(servicesCountSubquery, filters.servicePiloteIds.length)
-      );
-    }
-
-    if (filters?.referentielIds && filters.referentielIds.length > 0) {
-      queryFilters.push(
-        inArray(subQuery.referentielId, filters.referentielIds)
-      );
-    }
+    queryFilters.push(eq(subQuery.referentielId, referentielId));
 
     request.where(and(...queryFilters));
     request.orderBy(asc(subQuery.actionId));
 
     const actions = await request;
 
-    const extendActionWithComputedFields = getExtendActionWithComputedFields(
-      collectiviteId,
-      this.snapshotService.get.bind(this.snapshotService)
-    );
-
-    return Promise.all(actions.map(extendActionWithComputedFields));
+    return actions.reduce((acc, action) => {
+      acc[action.actionId] = action;
+      return acc;
+    }, {} as Record<ActionId, ActionWithDefinitionAndPilotes>);
   }
 
   private listWithDepth() {
@@ -221,6 +203,19 @@ export class ListActionsService {
           sql<ActionType>`${referentielDefinitionTable.hierarchie}[${subQuery.depth} + 1]`.as(
             'actionType'
           ),
+
+        questionIds: sql<Array<string>>`
+          COALESCE(
+            (
+              SELECT array_to_json(
+                array_agg(DISTINCT ${questionActionTable.questionId})
+              )
+              FROM ${questionActionTable}
+              WHERE ${eq(questionActionTable.actionId, subQuery.actionId)}
+            ),
+            '[]'::json
+          )
+        `.as('questionIds'),
 
         pilotes: sql<Array<PersonneTagOrUser>>`
           array_remove(
@@ -320,171 +315,5 @@ export class ListActionsService {
         subQuery.exprScore,
         referentielDefinitionTable.hierarchie
       );
-  }
-
-  // donne un sommaire des entrées d'un référentiel
-  // (remplace la vue SQL `action_definition_summary`)
-  async listActionSummaries(
-    params: ListActionSummariesRequestType
-  ): Promise<ActionDefinitionSummary[]> {
-    const { referentielId, actionTypes } = params;
-    const subQuery = this.db
-      .$with('action_definition_summary')
-      .as(this.getActionDefinitionSummariesSubQuery(params));
-
-    const query = this.db
-      .with(subQuery)
-      .select()
-      .from(subQuery)
-      .where(inArray(subQuery.actionType, actionTypes))
-      .orderBy(
-        sql`${subQuery.actionId} collate numeric_with_case_and_accent_insensitive`
-      );
-
-    const actionDefinitions = await query;
-
-    const actionChildren = await this.getActionChildren({ referentielId });
-
-    return actionDefinitions.map((definition) => {
-      return {
-        id: definition.actionId,
-        referentiel: definition.referentiel,
-        children:
-          actionChildren?.find((action) => action.id === definition.actionId)
-            ?.children || [],
-        depth: definition.depth,
-        type: definition.actionType,
-        identifiant: definition.identifiant,
-        nom: definition.nom,
-        description: definition.description,
-        haveContexte: definition.contexte !== '',
-        haveExemples: definition.exemples !== '',
-        haveRessources: definition.ressources !== '',
-        havePerimetreEvaluation: definition.perimetreEvaluation !== '',
-        haveQuestions: definition.haveQuestions,
-        haveScoreIndicatif: !!(
-          definition.exprScore && definition.exprScore !== ''
-        ),
-        phase: definition.categorie,
-        preuvesCount: definition.preuvesCount,
-        openDiscussionsCount: definition.openDiscussionsCount,
-      };
-    });
-  }
-
-  // pour remplacer la vue action_definition_summary
-  private getActionDefinitionSummariesSubQuery({
-    collectiviteId,
-    referentielId,
-    identifiant,
-  }: ListActionSummariesRequestType) {
-    const subQuery = this.db
-      .$with('action_definition_with_depth')
-      .as(this.listWithDepth());
-
-    return this.db
-      .with(subQuery)
-      .select({
-        modifiedAt: subQuery.modifiedAt,
-        actionId: subQuery.actionId,
-        referentiel: subQuery.referentiel,
-        identifiant: subQuery.identifiant,
-        nom: subQuery.nom,
-        description: subQuery.description,
-        contexte: subQuery.contexte,
-        exemples: subQuery.exemples,
-        ressources: subQuery.ressources,
-        perimetreEvaluation: subQuery.perimetreEvaluation,
-        categorie: subQuery.categorie,
-        depth: subQuery.depth,
-        exprScore: subQuery.exprScore,
-        // Add the action type from the `referentiel_definition.hierarchie` array
-        // Ex: 'axe', 'sous-axe', etc
-        actionType:
-          sql<ActionType>`${referentielDefinitionTable.hierarchie}[${subQuery.depth} + 1]`.as(
-            'actionType'
-          ),
-        haveQuestions:
-          sql<boolean>`(${subQuery.actionId} in (select ${questionActionTable.actionId} from ${questionActionTable}))`.as(
-            'haveQuestions'
-          ),
-        openDiscussionsCount: sql<number>`(
-            select COUNT(*)
-            from ${discussionMessageTable}
-            inner join ${discussionTable} on ${discussionMessageTable.discussionId} = ${discussionTable.id} and ${discussionTable.collectiviteId} = ${collectiviteId} and ${discussionTable.status} = 'ouvert'
-            where ${discussionTable.actionId} = ${subQuery.actionId}
-          )`.as('openDiscussionsCount'),
-        preuvesCount: sql<number>`(
-            select COUNT(*)
-            from ${preuveComplementaireTable}
-            where ${preuveComplementaireTable.actionId} = ${subQuery.actionId} and ${preuveComplementaireTable.collectiviteId} = ${collectiviteId}
-          )`.as('preuvesCount'),
-      })
-      .from(subQuery)
-      .innerJoin(
-        referentielDefinitionTable,
-        and(
-          eq(referentielDefinitionTable.id, subQuery.referentielId),
-          eq(referentielDefinitionTable.version, subQuery.referentielVersion)
-        )
-      )
-      .where(
-        and(
-          eq(subQuery.referentiel, referentielId),
-          identifiant
-            ? or(
-                eq(subQuery.identifiant, identifiant),
-                like(subQuery.identifiant, `${identifiant}.%`)
-              )
-            : undefined
-        )
-      );
-  }
-
-  private async getActionChildren({
-    referentielId,
-  }: {
-    referentielId: ReferentielId;
-  }) {
-    const relations = await this.db
-      .select({
-        id: actionRelationTable.id,
-        parent: actionRelationTable.parent,
-      })
-      .from(actionRelationTable)
-      .where(eq(actionRelationTable.referentiel, referentielId));
-
-    const parentToChildren = new Map<string | null, string[]>();
-    for (const rel of relations) {
-      const parent = rel.parent ?? null;
-      if (!parentToChildren.has(parent)) parentToChildren.set(parent, []);
-      parentToChildren.get(parent)?.push(rel.id);
-    }
-
-    const results: Array<{ id: string; children: string[]; depth: number }> =
-      [];
-    const visited = new Set<string>();
-
-    function traverse(id: string, parents: string[], depth: number) {
-      if (visited.has(id)) return;
-      visited.add(id);
-
-      const children = parentToChildren.get(id) ?? [];
-      results.push({ id, children, depth });
-
-      for (const child of children) {
-        if (!parents.includes(child)) {
-          traverse(child, [...parents, id], depth + 1);
-        }
-      }
-    }
-
-    const roots = parentToChildren.get(null) ?? [];
-    for (const rootId of roots) {
-      traverse(rootId, [], 0);
-    }
-
-    results.sort((a, b) => a.depth - b.depth);
-    return results;
   }
 }

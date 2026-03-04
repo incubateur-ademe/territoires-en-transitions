@@ -1,9 +1,8 @@
-import { useScore } from '@/app/referentiels/use-snapshot';
 import { appLabels } from '@/app/labels/catalog';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { ActionScoreFinal } from '@tet/domain/referentiels';
 
-type ScorePartial = Pick<
+type ActionScoreLike = Pick<
   ActionScoreFinal,
   'pointReferentiel' | 'pointPotentiel' | 'pointPotentielPerso' | 'desactive'
 >;
@@ -11,9 +10,7 @@ type ScorePartial = Pick<
 /**
  * Affiche le potentiel de points (normal ou réduit)
  */
-export function PointsPotentiels({ actionId }: { actionId: string }) {
-  const score = useScore(actionId);
-
+export function PointsPotentiels({ score }: { score?: ActionScoreLike }) {
   if (!score) {
     return null;
   }
@@ -25,7 +22,7 @@ export function PointsPotentiels({ actionId }: { actionId: string }) {
   );
 }
 
-const getLabel = (actionScore: ScorePartial): string => {
+const getLabel = (actionScore: ActionScoreLike): string => {
   const { pointReferentiel, pointPotentiel, pointPotentielPerso, desactive } =
     actionScore;
 
