@@ -1,14 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
+import { PersonnalisationReponse } from '@tet/domain/collectivites';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
-import { InferSelectModel } from 'drizzle-orm';
-import { reponseBinaireTable } from '../models/reponse-binaire.table';
-import { reponseChoixTable } from '../models/reponse-choix.table';
-import { reponseProportionTable } from '../models/reponse-proportion.table';
 import {
   SetPersonnalisationReponseError,
   SetPersonnalisationReponseErrorEnum,
@@ -16,60 +13,114 @@ import {
 import { SetPersonnalisationReponseInput } from './set-personnalisation-reponse.input';
 import { SetPersonnalisationReponseRepository } from './set-personnalisation-reponse.repository';
 
-type ReponseBinaireType = InferSelectModel<typeof reponseBinaireTable>;
-type ReponseProportionType = InferSelectModel<typeof reponseProportionTable>;
-type ReponseChoixType = InferSelectModel<typeof reponseChoixTable>;
-
-type PersonnalisationReponseType =
-  | ReponseBinaireType
-  | ReponseProportionType
-  | ReponseChoixType;
-
 @Injectable()
 export class SetPersonnalisationReponseService {
-  private readonly logger = new Logger(SetPersonnalisationReponseService.name);
-
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
-    private readonly setPersonalisationReponseRepository: SetPersonnalisationReponseRepository
+    private readonly setPersonnalisationReponseRepository: SetPersonnalisationReponseRepository
   ) {}
 
   async setPersonnalisationReponse(
     input: SetPersonnalisationReponseInput,
     user: AuthenticatedUser,
     tx?: Transaction
-  ): Promise<
-    Result<PersonnalisationReponseType, SetPersonnalisationReponseError>
-  > {
-    const { collectiviteId } = input;
+  ): Promise<Result<PersonnalisationReponse, SetPersonnalisationReponseError>> {
+    const { collectiviteId, questionId, justification } = input;
 
-    // vérifie les permissions d'écriture sur la collectivité
-    const isAllowed = await this.permissionService.isAllowed(
-      user,
-      PermissionOperationEnum['REFERENTIELS.MUTATE'],
-      ResourceType.COLLECTIVITE,
-      collectiviteId,
-      true
-    );
-    if (!isAllowed) {
-      return {
-        success: false,
-        error: SetPersonnalisationReponseErrorEnum.UNAUTHORIZED,
-      };
-    }
-
-    const executeInTransaction = async (transaction: Transaction) => {
-      return this.setPersonalisationReponseRepository.setReponse(
-        input,
+    const executeInTransaction = async (
+      transaction: Transaction
+    ): Promise<
+      Result<PersonnalisationReponse, SetPersonnalisationReponseError>
+    > => {
+      // vérifie les permissions d'écriture sur la collectivité
+      const isAllowed = await this.permissionService.isAllowed(
+        user,
+        PermissionOperationEnum['REFERENTIELS.MUTATE'],
+        ResourceType.COLLECTIVITE,
+        collectiviteId,
+        true,
         transaction
       );
+      if (!isAllowed) {
+        throw new Error(SetPersonnalisationReponseErrorEnum.UNAUTHORIZED);
+      }
+
+      // insère/màj la réponse
+      const setReponseResult =
+        await this.setPersonnalisationReponseRepository.setReponse(
+          input,
+          transaction
+        );
+      if (!setReponseResult.success) {
+        throw new Error(setReponseResult.error);
+      }
+
+      const { questionType, reponse } = setReponseResult.data;
+
+      if (justification === undefined) {
+        const getJustificationResult =
+          await this.setPersonnalisationReponseRepository.getJustification(
+            {
+              collectiviteId,
+              questionId,
+            },
+            transaction
+          );
+
+        if (!getJustificationResult.success) {
+          throw new Error(getJustificationResult.error);
+        }
+        return {
+          success: true,
+          data: {
+            questionId,
+            questionType,
+            justification: getJustificationResult.data,
+            reponse,
+          },
+        };
+      }
+
+      // insère/màj la justification
+      const setJustificationResult =
+        await this.setPersonnalisationReponseRepository.setJustification(
+          input,
+          user,
+          transaction
+        );
+      if (!setJustificationResult.success) {
+        throw new Error(setJustificationResult.error);
+      }
+
+      return {
+        success: true,
+        data: {
+          questionId,
+          questionType,
+          justification: setJustificationResult.data,
+          reponse,
+        },
+      };
     };
 
-    return tx
-      ? executeInTransaction(tx)
-      : this.databaseService.db.transaction(async (newTx) =>
-          executeInTransaction(newTx)
-        );
+    const execute = () =>
+      tx
+        ? executeInTransaction(tx)
+        : this.databaseService.db.transaction((newTx) =>
+            executeInTransaction(newTx)
+          );
+
+    return execute().catch((error) => {
+      const message = error instanceof Error ? error.message : null;
+      const normalizedError =
+        message && message in SetPersonnalisationReponseErrorEnum
+          ? (message as SetPersonnalisationReponseError)
+          : SetPersonnalisationReponseErrorEnum.DATABASE_ERROR;
+      return {
+        success: false,
+        error: normalizedError,
+      };
+    });
   }
 }
