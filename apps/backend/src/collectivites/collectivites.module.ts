@@ -38,6 +38,7 @@ import { InvitationService } from './membres/mutate-invitations/invitation.servi
 import { InvitationsRouter } from './membres/mutate-invitations/invitations.router';
 import { MutateMembresService } from './membres/mutate-membres/mutate-membres.service';
 import { PersonnalisationsRouter } from './personnalisations/personnalisations.router';
+import { SetPersonnalisationReponseRepository } from './personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.repository';
 import { SetPersonnalisationReponseRouter } from './personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.router';
 import { SetPersonnalisationReponseService } from './personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.service';
 import { PersonnesRouter } from './personnes.router';
@@ -74,6 +75,7 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     PersonnalisationsRouter,
     SetPersonnalisationReponseRouter,
     SetPersonnalisationReponseService,
+    SetPersonnalisationReponseRepository,
     ListCollectivitesRouter,
     ListCollectivitesService,
     CollectiviteCrudService,
