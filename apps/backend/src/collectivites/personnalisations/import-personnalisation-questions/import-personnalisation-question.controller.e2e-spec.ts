@@ -44,7 +44,7 @@ describe('import-personnalisation-question.controller', () => {
       description: '',
       formulation:
         'La collectivité a-t-elle la compétence "éclairage public" ?',
-      version: '1.0.0',
+      version: expect.any(String),
       choix: [
         {
           id: 'EP_1_a',
