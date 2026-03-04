@@ -14,6 +14,7 @@ import {
   SetPersonnalisationReponseError,
   SetPersonnalisationReponseErrorEnum,
 } from './set-personnalisation-reponse.errors';
+import { SetPersonnalisationReponseInput } from './set-personnalisation-reponse.input';
 
 type ReponseBinaireType = InferSelectModel<typeof reponseBinaireTable>;
 type ReponseProportionType = InferSelectModel<typeof reponseProportionTable>;
@@ -34,13 +35,13 @@ export class SetPersonnalisationReponseService {
   ) {}
 
   async setPersonnalisationReponse(
-    collectiviteId: number,
-    questionId: string,
-    reponse: boolean | number | string | null,
+    input: SetPersonnalisationReponseInput,
     user: AuthenticatedUser
   ): Promise<
     Result<PersonnalisationReponseType, SetPersonnalisationReponseError>
   > {
+    const { collectiviteId, questionId, reponse } = input;
+
     // vérifie les permissions d'écriture sur la collectivité
     const isAllowed = await this.permissionService.isAllowed(
       user,
