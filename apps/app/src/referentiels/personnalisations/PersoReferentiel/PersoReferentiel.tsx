@@ -77,9 +77,7 @@ const PersoReferentiel = () => {
                 })}
               >
                 {item.nom}
-                <BadgeACompleter
-                  a_completer={item.completude === 'a_completer'}
-                />
+                <BadgeACompleter isComplete={item.isComplete} />
               </Link>
             </li>
           ))}

@@ -1,49 +1,33 @@
 import { useQuery } from '@tanstack/react-query';
-import { DBClient, NonNullableFields, useSupabase, Views } from '@tet/api';
+import { useTRPC } from '@tet/api';
+import type { QuestionThematiqueCompletude } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
-
-type TQuestionThematiqueCompletudeRead = NonNullableFields<
-  Views<'question_thematique_completude'>
->;
 
 type TUseQuestionThematiqueCompletude = (
   collectivite_id: number | undefined,
   filters?: ReferentielId[]
-) => TQuestionThematiqueCompletudeRead[];
+) => QuestionThematiqueCompletude[];
 
 // charge l'état de complétude de la personnalisation groupé par thématique
 export const useQuestionThematiqueCompletude: TUseQuestionThematiqueCompletude =
   (collectivite_id, filters) => {
-    const supabase = useSupabase();
-    const { data } = useQuery({
-      queryKey: ['question_thematique_completude', collectivite_id],
-      queryFn: () => (collectivite_id ? fetch(supabase, collectivite_id) : []),
-      enabled: !!collectivite_id,
-    });
-
-    return applyFilter(
-      (data as TQuestionThematiqueCompletudeRead[]) || [],
-      filters
+    const trpc = useTRPC();
+    const { data } = useQuery(
+      trpc.collectivites.personnalisations.getQuestionThematiqueCompletude.queryOptions(
+        { collectiviteId: collectivite_id ?? 0 },
+        {
+          enabled: !!collectivite_id,
+        }
+      )
     );
+    return applyFilter(data ?? [], filters);
   };
-
-// charge les données
-const fetch = async (supabase: DBClient, collectivite_id: number) => {
-  if (collectivite_id) {
-    const { data: thematiques } = await supabase
-      .from('question_thematique_completude')
-      .select()
-      .eq('collectivite_id', collectivite_id);
-
-    return thematiques || [];
-  }
-};
 
 // applique les filtres aux données chargées
 const applyFilter = (
-  thematiques: TQuestionThematiqueCompletudeRead[],
+  thematiques: QuestionThematiqueCompletude[],
   filters?: ReferentielId[]
-): TQuestionThematiqueCompletudeRead[] => {
+): QuestionThematiqueCompletude[] => {
   if (!filters) {
     return thematiques;
   }
