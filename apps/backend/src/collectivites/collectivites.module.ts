@@ -33,6 +33,9 @@ import { ListCollectivitesRouter } from './list-collectivites/list-collectivites
 import ListCollectivitesService from './list-collectivites/list-collectivites.service';
 import { CollectiviteMembresRouter } from './membres/membres.router';
 import { CollectiviteMembresService } from './membres/membres.service';
+import { GetQuestionThematiqueCompletudeRepository } from './personnalisations/get-question-thematique-completude/get-question-thematique-completude.repository';
+import { GetQuestionThematiqueCompletudeRouter } from './personnalisations/get-question-thematique-completude/get-question-thematique-completude.router';
+import { GetQuestionThematiqueCompletudeService } from './personnalisations/get-question-thematique-completude/get-question-thematique-completude.service';
 import { PersonnalisationsRouter } from './personnalisations/personnalisations.router';
 import { SetPersonnalisationReponseRouter } from './personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.router';
 import { SetPersonnalisationReponseService } from './personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.service';
@@ -66,6 +69,9 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     PersonnalisationsRouter,
     SetPersonnalisationReponseRouter,
     SetPersonnalisationReponseService,
+    GetQuestionThematiqueCompletudeRepository,
+    GetQuestionThematiqueCompletudeRouter,
+    GetQuestionThematiqueCompletudeService,
     ListCollectivitesRouter,
     ListCollectivitesService,
     CollectiviteCrudService,

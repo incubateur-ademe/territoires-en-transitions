@@ -119,7 +119,9 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
 
       if (context) {
         queryClient.invalidateQueries({
-          queryKey: ['question_thematique_completude', collectiviteId],
+          queryKey: trpc.collectivites.personnalisations.getQuestionThematiqueCompletude.queryKey(
+            { collectiviteId }
+          ),
         });
       }
 
