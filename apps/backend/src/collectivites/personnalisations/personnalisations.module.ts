@@ -8,6 +8,7 @@ import { UsersModule } from '../../users/users.module';
 import { CollectivitesModule } from '../collectivites.module';
 import PersonnalisationsExpressionService from './services/personnalisations-expression.service';
 import PersonnalisationsService from './services/personnalisations-service';
+import { SetPersonnalisationReponseRepository } from './set-personnalisation-reponse/set-personnalisation-reponse.repository';
 
 @Module({
   imports: [CollectivitesModule, UsersModule, SheetModule],
@@ -17,6 +18,7 @@ import PersonnalisationsService from './services/personnalisations-service';
     ImportPersonnalisationQuestionService,
     ListPersonnalisationQuestionsService,
     SetPersonnalisationReponseService,
+    SetPersonnalisationReponseRepository,
   ],
   exports: [
     PersonnalisationsExpressionService,
