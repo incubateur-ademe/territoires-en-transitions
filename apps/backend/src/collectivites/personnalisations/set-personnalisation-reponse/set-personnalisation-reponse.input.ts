@@ -1,14 +1,13 @@
+import { reponseValueSchema } from '@tet/domain/collectivites';
 import { z } from 'zod';
 
 export const setPersonnalisationReponseInputSchema = z.object({
-  collectiviteId: z.number().positive("L'ID de la collectivité doit être positif"),
+  collectiviteId: z
+    .number()
+    .positive("L'ID de la collectivité doit être positif"),
   questionId: z.string().min(1, "L'ID de la question est requis"),
-  reponse: z.union([
-    z.boolean(),
-    z.number(),
-    z.string(),
-    z.null(),
-  ]),
+  reponse: reponseValueSchema,
+  justification: z.string().optional(),
 });
 
 export type SetPersonnalisationReponseInput = z.infer<
