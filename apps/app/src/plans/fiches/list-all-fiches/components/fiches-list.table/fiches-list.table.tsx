@@ -25,6 +25,7 @@ declare module '@tanstack/react-table' {
     selectedFicheIds?: number[] | 'all';
     selectAction?: (ficheId: number) => void;
     onUnlink?: (ficheId: number) => void;
+    collectiviteId?: number;
   }
 }
 
