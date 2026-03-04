@@ -197,18 +197,6 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
       });
     });
 
-    test('Mettre à jour une réponse binaire avec le mauvais type de données génère une erreur', async () => {
-      const caller = router.createCaller({ user: editorUser });
-
-      await expect(
-        caller.collectivites.personnalisations.setReponse({
-          collectiviteId: collectivite.id,
-          questionId: questionBinaireId,
-          reponse: 'oui', // chaîne au lieu de booléen
-        })
-      ).rejects.toThrow('Réponse non valide pour cette question');
-    });
-
     test('Créer avec succès une réponse proportion', async () => {
       const caller = router.createCaller({ user: editorUser });
 
@@ -237,18 +225,6 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
       });
     });
 
-    test('Mettre à jour une réponse proportion avec le mauvais type de données génère une erreur', async () => {
-      const caller = router.createCaller({ user: editorUser });
-
-      await expect(
-        caller.collectivites.personnalisations.setReponse({
-          collectiviteId: collectivite.id,
-          questionId: questionProportionId,
-          reponse: '0.75', // chaîne au lieu de number
-        })
-      ).rejects.toThrow('Réponse non valide pour cette question');
-    });
-
     test('Créer avec succès une réponse choix', async () => {
       const caller = router.createCaller({ user: editorUser });
 
@@ -275,18 +251,6 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
           .delete(reponseChoixTable)
           .where(eq(reponseChoixTable.questionId, questionChoixId));
       });
-    });
-
-    test('Mettre à jour une réponse choix avec le mauvais type de données génère une erreur', async () => {
-      const caller = router.createCaller({ user: editorUser });
-
-      await expect(
-        caller.collectivites.personnalisations.setReponse({
-          collectiviteId: collectivite.id,
-          questionId: questionChoixId,
-          reponse: false, // booléen au lieu de string
-        })
-      ).rejects.toThrow('Réponse non valide pour cette question');
     });
 
     test('Créer avec succès une réponse null', async () => {
@@ -386,6 +350,42 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
           reponse: true,
         })
       ).rejects.toThrow();
+    });
+
+    test('Créer une réponse binaire avec le mauvais type de données génère une erreur', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      await expect(
+        caller.collectivites.personnalisations.setReponse({
+          collectiviteId: collectivite.id,
+          questionId: questionBinaireId,
+          reponse: 'oui', // chaîne au lieu de booléen
+        })
+      ).rejects.toThrow('Réponse non valide pour cette question');
+    });
+
+    test('Créer une réponse proportion avec le mauvais type de données génère une erreur', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      await expect(
+        caller.collectivites.personnalisations.setReponse({
+          collectiviteId: collectivite.id,
+          questionId: questionProportionId,
+          reponse: '0.75', // chaîne au lieu de number
+        })
+      ).rejects.toThrow('Réponse non valide pour cette question');
+    });
+
+    test('Créer une réponse choix avec le mauvais type de données génère une erreur', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      await expect(
+        caller.collectivites.personnalisations.setReponse({
+          collectiviteId: collectivite.id,
+          questionId: questionChoixId,
+          reponse: false, // booléen au lieu de string
+        })
+      ).rejects.toThrow('Réponse non valide pour cette question');
     });
   });
 });
