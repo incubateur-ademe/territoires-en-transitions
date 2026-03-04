@@ -1,25 +1,42 @@
-import { BlockNoteEditor, DefaultSuggestionItem, filterSuggestionItems } from '@blocknote/core';
+import {
+  BlockNoteEditor,
+  DefaultSuggestionItem,
+  filterSuggestionItems,
+} from '@blocknote/core';
 import {
   DefaultReactSuggestionItem,
   getDefaultReactSlashMenuItems,
   SuggestionMenuController,
 } from '@blocknote/react';
-
-const ENABLED_ITEMS = ['numbered_list', 'bullet_list', 'paragraph', 'emoji'];
+import { allSuggestionItems, SuggestionItem } from './edition-properties';
 
 const getMenuItems = (
-  editor: BlockNoteEditor
+  editor: BlockNoteEditor,
+  availableSuggestionItems: readonly SuggestionItem[]
 ): DefaultReactSuggestionItem[] => {
   const items = getDefaultReactSlashMenuItems(editor);
-  return items.filter((item) => ENABLED_ITEMS.includes((item as DefaultSuggestionItem).key));
+  return items.filter((item) =>
+    (availableSuggestionItems as readonly string[]).includes(
+      (item as DefaultSuggestionItem).key
+    )
+  );
 };
 
-export function SuggestionMenu({ editor }: { editor: BlockNoteEditor }) {
+export function SuggestionMenu({
+  editor,
+  availableSuggestionItems,
+}: {
+  editor: BlockNoteEditor;
+  availableSuggestionItems?: SuggestionItem[];
+}) {
   return (
     <SuggestionMenuController
       triggerCharacter="/"
       getItems={async (query) =>
-        filterSuggestionItems(getMenuItems(editor), query)
+        filterSuggestionItems(
+          getMenuItems(editor, availableSuggestionItems ?? allSuggestionItems),
+          query
+        )
       }
     />
   );

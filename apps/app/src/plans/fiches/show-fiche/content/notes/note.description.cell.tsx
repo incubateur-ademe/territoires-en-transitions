@@ -1,5 +1,4 @@
 import { RichTextEditor, TableCell } from '@tet/ui';
-import { htmlToText } from 'html-to-text';
 import { useNoteForm } from './note-form.context';
 
 export const NoteDescriptionCell = () => {
@@ -19,9 +18,24 @@ export const NoteDescriptionCell = () => {
     <TableCell className="text-primary-9 align-top">
       <RichTextEditor
         unstyled
-        initialValue={htmlToText(value)}
+        initialValue={value}
         onChange={(html) => form.setValue('description', html)}
         onBlur={submitNote}
+        availableActions={
+          /*
+           * actions are limited to these 3 for now
+           * to hide issues with color picker, link and block type action
+           * buttons not working in table cell
+           * */
+          ['bold', 'italic', 'underline']
+        }
+        availableSuggestionItems={
+          /*
+           * suggestion items are limited to these 3 for now
+           * to hide issues with emoji not working in table cell
+           * */
+          ['numbered_list', 'bullet_list', 'paragraph']
+        }
       />
     </TableCell>
   );

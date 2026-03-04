@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RouterInput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { useUser } from '@tet/api/users';
 import { ListFichesOutput } from '../../list-all-fiches/data/use-list-fiches';
 import { useIsNotificationEnabled } from './use-is-notification-enabled';
 
@@ -16,7 +15,6 @@ export const useUpdateFiche = (args?: Args) => {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const user = useUser();
   const isNotificationEnabled = useIsNotificationEnabled();
 
   const { mutateAsync } = useMutation(
@@ -53,19 +51,15 @@ export const useUpdateFiche = (args?: Args) => {
               (n: any) => n.id === newNote.id
             );
             if (!existingNote) return newNote;
-            return {
-              ...newNote,
-              createdAt: existingNote.createdAt,
-              createdBy: existingNote.createdBy,
-              modifiedAt: new Date().toISOString(),
-              modifiedBy: user
-                ? { id: user.id, nom: user.nom, prenom: user.prenom }
-                : existingNote.modifiedBy,
-            };
+            return { ...existingNote, ...newNote };
           });
         }
 
-        return { ...old, ...mergedFicheFields };
+        return {
+          ...old,
+          ...mergedFicheFields,
+          modifiedAt: new Date().toISOString(),
+        };
       });
 
       // Optimistically update all caches of list of fiches
