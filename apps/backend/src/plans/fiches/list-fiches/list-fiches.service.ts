@@ -1305,6 +1305,28 @@ export default class ListFichesService {
     }
   }
 
+  private getPlanFilterCondition(
+    filters: ListFichesRequestFilters,
+    collectiviteId: number | null
+  ): SQLWrapper | SQL | undefined {
+    const planConditions: (SQLWrapper | SQL | undefined)[] = [];
+
+    if (filters.planActionIds?.length) {
+      planConditions.push(
+        this.getIdentifiedPlanCondition(filters.planActionIds)
+      );
+    } else {
+      planConditions.push(
+        this.getHasNoPlanCondition(filters.noPlan, collectiviteId)
+      );
+    }
+    planConditions.push(
+      this.getMultiplePlansCondition(filters.doesBelongToSeveralPlans)
+    );
+
+    return or(...planConditions);
+  }
+
   private getHasNoLinkedEntityCondition<T extends TableConfig>(
     noLinkedEntity: boolean | undefined,
     linkedTable: Table<T>,
@@ -1808,16 +1830,7 @@ export default class ListFichesService {
       )
     );
 
-    const planConditions: (SQLWrapper | SQL | undefined)[] = [];
-    planConditions.push(
-      this.getHasNoPlanCondition(filters.noPlan, collectiviteId)
-    );
-    planConditions.push(this.getIdentifiedPlanCondition(filters.planActionIds));
-    planConditions.push(
-      this.getMultiplePlansCondition(filters.doesBelongToSeveralPlans)
-    );
-
-    conditions.push(or(...planConditions));
+    conditions.push(this.getPlanFilterCondition(filters, collectiviteId));
 
     const piloteConditions: (SQLWrapper | SQL | undefined)[] = [];
     piloteConditions.push(

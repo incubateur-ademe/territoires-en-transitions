@@ -1941,6 +1941,67 @@ test('Fetch avec filtre les plansIds', async () => {
   expect(planNotFound).toBeUndefined();
 });
 
+test('Fetch avec noPlan false et planActionIds ne retourne que les fiches du plan sélectionné', async () => {
+  const caller = router.createCaller({ user: yoloDodo });
+
+  const [ficheA, ficheB] = await db.db
+    .insert(ficheActionTable)
+    .values([
+      {
+        titre: 'Fiche plan A - filtre noPlan planActionIds',
+        collectiviteId: COLLECTIVITE_ID,
+      },
+      {
+        titre: 'Fiche plan B - filtre noPlan planActionIds',
+        collectiviteId: COLLECTIVITE_ID,
+      },
+    ])
+    .returning();
+
+  const [planA, planB] = await db.db
+    .insert(axeTable)
+    .values([
+      { nom: 'Plan A filtre combiné', collectiviteId: COLLECTIVITE_ID },
+      { nom: 'Plan B filtre combiné', collectiviteId: COLLECTIVITE_ID },
+    ])
+    .returning();
+
+  await db.db.insert(ficheActionAxeTable).values([
+    { ficheId: ficheA.id, axeId: planA.id },
+    { ficheId: ficheB.id, axeId: planB.id },
+  ]);
+
+  onTestFinished(async () => {
+    await db.db
+      .delete(ficheActionAxeTable)
+      .where(inArray(ficheActionAxeTable.ficheId, [ficheA.id, ficheB.id]));
+    await db.db
+      .delete(ficheActionTable)
+      .where(inArray(ficheActionTable.id, [ficheA.id, ficheB.id]));
+    await db.db
+      .delete(axeTable)
+      .where(inArray(axeTable.id, [planA.id, planB.id]));
+  });
+
+  const { data: fichesFilteredByPlanA } = await caller.plans.fiches.listFiches({
+    collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      noPlan: false,
+      planActionIds: [planA.id],
+    },
+  });
+
+  expect(fichesFilteredByPlanA).toContainEqual(
+    expect.objectContaining({
+      id: ficheA.id,
+      titre: 'Fiche plan A - filtre noPlan planActionIds',
+    })
+  );
+  expect(
+    fichesFilteredByPlanA.every((f) => f.plans?.some((p) => p.id === planA.id))
+  ).toBe(true);
+});
+
 test('Fetch avec selectAll retourne tous les IDs correspondant aux filtres', async () => {
   const caller = router.createCaller({ user: yoloDodo });
 
