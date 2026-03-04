@@ -1,18 +1,26 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import Markdown from '@/app/ui/Markdown';
 import { Accordion, cn } from '@tet/ui';
-import { TTOCItem } from './action-information.types';
-import { useActionInfoData } from './use-action-information';
 
 type Props = {
-  item: TTOCItem;
-  action: ActionDefinitionSummary;
+  item: {
+    property: keyof Pick<
+      ActionListItem,
+      | 'description'
+      | 'contexte'
+      | 'exemples'
+      | 'ressources'
+      | 'perimetreEvaluation'
+    >;
+    label: string;
+    num: number;
+  };
+  action: ActionListItem;
 };
 
 const ActionInformationsItem = ({ item, action }: Props) => {
-  const { id, label, num } = item;
+  const { property, label, num } = item;
   const titre = `${num}. ${label}`;
-  const { data } = useActionInfoData(id, action);
 
   return (
     <Accordion
@@ -22,7 +30,7 @@ const ActionInformationsItem = ({ item, action }: Props) => {
       content={
         <Markdown
           className="[&>*]:mb-2 mb-8"
-          content={data ?? 'Cette section est vide.'}
+          content={action[property] ?? 'Cette section est vide.'}
           openLinksInNewTab
           options={{
             components: {

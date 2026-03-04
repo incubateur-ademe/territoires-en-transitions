@@ -2,14 +2,25 @@ import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 
-export function useGetScoreIndicatif(actionId: string) {
+export function useGetScoreIndicatif({
+  actionId,
+  enabled = true,
+}: {
+  actionId: string;
+  enabled: boolean;
+}) {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
 
   return useQuery(
-    trpc.referentiels.actions.getScoreIndicatif.queryOptions({
-      collectiviteId,
-      actionIds: [actionId],
-    })
+    trpc.referentiels.actions.getScoreIndicatif.queryOptions(
+      {
+        collectiviteId,
+        actionIds: [actionId],
+      },
+      {
+        enabled,
+      }
+    )
   );
 }

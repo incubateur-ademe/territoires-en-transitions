@@ -3,7 +3,7 @@
 import { referentielToName } from '@/app/app/labels';
 import DownloadScoreButton from '@/app/app/pages/collectivite/Referentiels/DownloadScore/download-score.button';
 import SaveScoreButton from '@/app/app/pages/collectivite/Referentiels/SaveScore/save-score.button';
-import { useReferentielDownToAction } from '@/app/referentiels/referentiel-hooks';
+import { useGetAction } from '@/app/referentiels/actions/use-get-action';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -15,9 +15,9 @@ export const Header = ({ referentielId }: { referentielId: ReferentielId }) => {
 
   const haveEditionAccess = hasCollectivitePermission('referentiels.mutate');
 
-  const actions = useReferentielDownToAction(referentielId);
-
-  const referentiel = actions.find((a) => a.type === 'referentiel');
+  const action = useGetAction({
+    actionId: referentielId,
+  });
 
   return (
     <>
@@ -37,17 +37,10 @@ export const Header = ({ referentielId }: { referentielId: ReferentielId }) => {
         </div>
       </div>
 
-      {referentiel && (
-        <div className="flex max-sm:flex-col sm:items-center gap-4 pb-4 mb-4 border-b border-primary-3">
-          <ScoreProgressBar
-            className="grow"
-            id={referentiel.id}
-            identifiant={referentiel.identifiant}
-            type={referentiel.type}
-          />
-          <ScoreRatioBadge actionId={referentiel.id} className="sm:ml-auto" />
-        </div>
-      )}
+      <div className="flex max-sm:flex-col sm:items-center gap-4 pb-4 mb-4 border-b border-primary-3">
+        <ScoreProgressBar className="grow" action={action} />
+        <ScoreRatioBadge action={action} className="sm:ml-auto" />
+      </div>
     </>
   );
 };

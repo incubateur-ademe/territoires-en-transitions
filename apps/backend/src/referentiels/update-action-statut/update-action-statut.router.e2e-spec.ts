@@ -3,7 +3,11 @@ import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collecti
 import { getAuthUserFromUserCredentials } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Collectivite } from '@tet/domain/collectivites';
-import { ActionScore, ReferentielIdEnum } from '@tet/domain/referentiels';
+import {
+  ActionScore,
+  findActionInTree,
+  ReferentielIdEnum,
+} from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { and, eq } from 'drizzle-orm';
@@ -23,27 +27,6 @@ type Input = inferProcedureInput<
   AppRouter['referentiels']['actions']['updateStatut']
 >;
 
-const expectedCaeRootScoreAfterStatutUpdate: ActionScore = {
-  actionId: 'cae',
-  etoiles: 1,
-  pointReferentiel: 500,
-  pointPotentiel: 500,
-  pointPotentielPerso: null,
-  pointFait: 0.3,
-  pointPasFait: 0,
-  pointNonRenseigne: 499.7,
-  pointProgramme: 0,
-  concerne: true,
-  completedTachesCount: 8,
-  totalTachesCount: 1111,
-  faitTachesAvancement: 1,
-  programmeTachesAvancement: 0,
-  pasFaitTachesAvancement: 0,
-  pasConcerneTachesAvancement: 7,
-  desactive: false,
-  renseigne: false,
-};
-
 describe('UpdateActionStatutRouter', () => {
   let app: INestApplication;
   let router: TrpcRouter;
@@ -52,7 +35,6 @@ describe('UpdateActionStatutRouter', () => {
   let adminUser: AuthenticatedUser;
   let collectivite: Collectivite;
   let databaseService: DatabaseService;
-  let input: Input;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -86,15 +68,6 @@ describe('UpdateActionStatutRouter', () => {
     adminUser = getAuthUserFromUserCredentials(
       testCollectiviteAndUsersResult.users[2]
     );
-
-    input = {
-      collectiviteId: collectivite.id,
-      actionId: 'cae_1.1.1.1.2',
-      avancement: 'detaille',
-      avancementDetaille: [1, 0, 0],
-      concerne: true,
-    };
-
   });
 
   afterAll(async () => {
@@ -111,6 +84,12 @@ describe('UpdateActionStatutRouter', () => {
   test('not authenticated', async () => {
     const caller = router.createCaller({ user: null });
 
+    const input: Input = {
+      collectiviteId: collectivite.id,
+      actionId: 'cae_1.1.1.1.2',
+      statut: 'fait',
+    };
+
     await expect(() =>
       caller.referentiels.actions.updateStatut(input)
     ).rejects.toThrowError(/not authenticated/i);
@@ -118,6 +97,12 @@ describe('UpdateActionStatutRouter', () => {
 
   test('not authorized: accès en lecture uniquement', async () => {
     const caller = router.createCaller({ user: readerUser });
+
+    const input: Input = {
+      collectiviteId: collectivite.id,
+      actionId: 'cae_1.1.1.1.2',
+      statut: 'fait',
+    };
 
     await expect(() =>
       caller.referentiels.actions.updateStatut(input)
@@ -127,11 +112,14 @@ describe('UpdateActionStatutRouter', () => {
   test('Action inexistante', async () => {
     const caller = router.createCaller({ user: editorUser });
 
+    const input: Input = {
+      collectiviteId: collectivite.id,
+      actionId: 'cae_1.1.1.11',
+      statut: 'fait',
+    };
+
     await expect(() =>
-      caller.referentiels.actions.updateStatut({
-        ...input,
-        actionId: 'cae_1.1.1.11',
-      })
+      caller.referentiels.actions.updateStatut(input)
     ).rejects.toThrowError(
       'Action with id cae_1.1.1.11 not found in action tree'
     );
@@ -139,6 +127,34 @@ describe('UpdateActionStatutRouter', () => {
 
   test("Mise à jour du score courant lors de la mise à jour du statut d'une action", async () => {
     const caller = router.createCaller({ user: editorUser });
+
+    const input: Input = {
+      collectiviteId: collectivite.id,
+      actionId: 'cae_1.1.1.1.2',
+      statut: 'detaille',
+      statutDetailleAuPourcentage: [1, 0, 0],
+    };
+
+    const expectedCaeRootScoreAfterStatutUpdate: ActionScore = {
+      actionId: 'cae',
+      etoiles: 1,
+      pointReferentiel: 500,
+      pointPotentiel: 500,
+      pointPotentielPerso: null,
+      pointFait: 0.3,
+      pointPasFait: 0,
+      pointNonRenseigne: 499.7,
+      pointProgramme: 0,
+      concerne: true,
+      completedTachesCount: 8,
+      totalTachesCount: 1111,
+      faitTachesAvancement: 1,
+      programmeTachesAvancement: 0,
+      pasFaitTachesAvancement: 0,
+      pasConcerneTachesAvancement: 7,
+      desactive: false,
+      renseigne: false,
+    };
 
     const currentFullScoreStatutUpdateResponse =
       await caller.referentiels.actions.updateStatut(input);
@@ -167,6 +183,12 @@ describe('UpdateActionStatutRouter', () => {
       referentielId: ReferentielIdEnum.CAE,
     });
 
+    const input: Input = {
+      collectiviteId: collectivite.id,
+      actionId: 'cae_1.1.1.1.2',
+      statut: 'programme',
+    };
+
     await expect(
       caller.referentiels.actions.updateStatut(input)
     ).rejects.toThrowError(/AUDIT_STARTED_BUT_NOT_AUDITEUR/i);
@@ -187,6 +209,12 @@ describe('UpdateActionStatutRouter', () => {
       userId: readerUser.id,
     });
 
+    const input: Input = {
+      collectiviteId: collectivite.id,
+      actionId: 'cae_1.1.1.1.2',
+      statut: 'programme',
+    };
+
     await expect(
       caller.referentiels.actions.updateStatut(input)
     ).rejects.toThrowError(/Droits insuffisants/i);
@@ -206,14 +234,31 @@ describe('UpdateActionStatutRouter', () => {
       userId: readerUser.id,
     });
 
+    const input: Input = {
+      collectiviteId: collectivite.id,
+      actionId: 'cae_1.1.1.1',
+      statut: 'programme',
+    };
+
     const response = await caller.referentiels.actions.updateStatut(input);
-    expect(response.scoresPayload.scores.score).toEqual(
-      expectedCaeRootScoreAfterStatutUpdate
-    );
+    expect(
+      findActionInTree(
+        [response.scoresPayload.scores],
+        (action) => action.actionId === input.actionId
+      )?.score.statut
+    ).toEqual('programme');
   });
 
   test("L'historique est créé lors de la mise à jour du statut", async () => {
     const caller = router.createCaller({ user: editorUser });
+
+    const input: Input = {
+      collectiviteId: collectivite.id,
+      actionId: 'cae_1.1.1.1.2',
+      statut: 'detaille',
+      statutDetailleAuPourcentage: [0.2, 0.7, 0.1],
+    };
+
     await caller.referentiels.actions.updateStatut(input);
 
     const historyRows = await databaseService.db
@@ -221,8 +266,8 @@ describe('UpdateActionStatutRouter', () => {
       .from(historiqueActionStatutTable)
       .where(
         and(
-          eq(historiqueActionStatutTable.collectiviteId, collectivite.id),
-          eq(historiqueActionStatutTable.actionId, 'cae_1.1.1.1.2')
+          eq(historiqueActionStatutTable.collectiviteId, input.collectiviteId),
+          eq(historiqueActionStatutTable.actionId, input.actionId)
         )
       );
 
@@ -236,22 +281,31 @@ describe('UpdateActionStatutRouter', () => {
   test("L'historique est dédupliqué pour les modifications rapprochées par le même utilisateur", async () => {
     const caller = router.createCaller({ user: editorUser });
 
+    const input: Input = {
+      collectiviteId: collectivite.id,
+      actionId: 'cae_1.1.1.1.2',
+      statut: 'detaille',
+      statutDetailleAuPourcentage: [0.2, 0.7, 0.1],
+    };
+
     // First update
     await caller.referentiels.actions.updateStatut(input);
-    // Second update within 1 hour
-    await caller.referentiels.actions.updateStatut({
+
+    const newInput: Input = {
       ...input,
-      avancement: 'fait',
-      avancementDetaille: null,
-    });
+      statut: 'fait',
+      statutDetailleAuPourcentage: null,
+    };
+    // Second update within 1 hour
+    await caller.referentiels.actions.updateStatut(newInput);
 
     const historyRows = await databaseService.db
       .select()
       .from(historiqueActionStatutTable)
       .where(
         and(
-          eq(historiqueActionStatutTable.collectiviteId, collectivite.id),
-          eq(historiqueActionStatutTable.actionId, 'cae_1.1.1.1.2')
+          eq(historiqueActionStatutTable.collectiviteId, input.collectiviteId),
+          eq(historiqueActionStatutTable.actionId, input.actionId)
         )
       );
 
@@ -262,8 +316,8 @@ describe('UpdateActionStatutRouter', () => {
     const adminCaller = router.createCaller({ user: adminUser });
     await adminCaller.referentiels.actions.updateStatut({
       ...input,
-      avancement: 'pas_fait',
-      avancementDetaille: null,
+      statut: 'pas_fait',
+      statutDetailleAuPourcentage: null,
     });
 
     const historyRowsAfterAdminUpdate = await databaseService.db
@@ -271,8 +325,8 @@ describe('UpdateActionStatutRouter', () => {
       .from(historiqueActionStatutTable)
       .where(
         and(
-          eq(historiqueActionStatutTable.collectiviteId, collectivite.id),
-          eq(historiqueActionStatutTable.actionId, 'cae_1.1.1.1.2')
+          eq(historiqueActionStatutTable.collectiviteId, input.collectiviteId),
+          eq(historiqueActionStatutTable.actionId, input.actionId)
         )
       );
 
@@ -282,11 +336,11 @@ describe('UpdateActionStatutRouter', () => {
     );
     expect(adminHistoryRow).toMatchObject({
       avancement: 'pas_fait',
-      avancementDetaille: null,
+      avancementDetaille: [0, 0, 1],
       modifiedBy: adminUser.id,
       previousAvancement: 'fait',
       previousModifiedBy: editorUser.id,
-      previousAvancementDetaille: null,
+      previousAvancementDetaille: [1, 0, 0],
     });
     const editorHistoryRow = historyRowsAfterAdminUpdate.find(
       (row) => row.modifiedBy === editorUser.id

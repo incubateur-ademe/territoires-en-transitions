@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { ImportActionDefinitionType } from '@tet/backend/referentiels/import-referentiel/import-action-definition.dto';
+import { ImportActionDefinition } from '@tet/backend/referentiels/import-referentiel/import-action-definition.dto';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
@@ -7,7 +7,7 @@ import { ImportPreuveReglementaireDefinition } from './import-preuve-reglementai
 import ImportPreuveReglementaireDefinitionService from './import-preuve-reglementaire-definition.service';
 
 // Mock actions for testing
-const mockActions: ImportActionDefinitionType[] = [
+const mockActions: ImportActionDefinition[] = [
   {
     identifiant: '1.1.1',
     referentiel: 'eci',
@@ -23,7 +23,7 @@ const mockActions: ImportActionDefinitionType[] = [
     referentiel: 'eci',
     nom: 'Test Action 3',
   },
-] as ImportActionDefinitionType[];
+] as ImportActionDefinition[];
 
 describe('ImportPreuveReglementaireDefinitionService', () => {
   let service: ImportPreuveReglementaireDefinitionService;

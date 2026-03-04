@@ -1,5 +1,6 @@
 'use client';
 
+import { useAction } from '@/app/referentiels/actions/action-context';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useMemo } from 'react';
 import { ActionView } from './_components/action.view';
@@ -40,15 +41,19 @@ const useSidePanelQueryParams = (): {
   return { activePanel, handlePanelChange };
 };
 
-export default function Page(): React.ReactNode {
+export default function Page() {
   const { activePanel, handlePanelChange } = useSidePanelQueryParams();
+  const action = useAction();
+
+  if (!action) return null;
 
   return (
     <ActionSidePanelProvider
       activePanel={activePanel}
       onPanelChange={handlePanelChange}
+      action={action}
     >
-      <ActionView />
+      <ActionView action={action} />
     </ActionSidePanelProvider>
   );
 }

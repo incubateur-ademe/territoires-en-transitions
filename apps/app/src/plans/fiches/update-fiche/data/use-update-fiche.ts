@@ -82,60 +82,61 @@ export const useUpdateFiche = (args?: Args) => {
         }
       );
 
-      let newListActionsKey: unknown[] | undefined;
-      if (ficheFields.mesures) {
-        const oldFiche = previousFiche as
-          | { mesures?: { id: string }[] }
-          | undefined;
-        const oldActionIds = oldFiche?.mesures?.map((m) => m.id) ?? [];
-        const newActionIds = ficheFields.mesures.map((m) => m.id);
-        const oldListActionsKey =
-          trpc.referentiels.actions.listActions.queryKey({
-            collectiviteId,
-            filters: { actionIds: oldActionIds },
-          });
-        newListActionsKey = trpc.referentiels.actions.listActions.queryKey({
-          collectiviteId,
-          filters: { actionIds: newActionIds },
-        });
-        const oldList = (queryClient.getQueryData(oldListActionsKey) ?? []) as {
-          actionId: string;
-          identifiant?: string;
-          nom?: string;
-          referentiel?: string;
-          pilotes?: unknown[];
-          services?: unknown[];
-        }[];
+      // Why this was needed ?
+      // let newListActionsKey: unknown[] | undefined;
+      // if (ficheFields.mesures) {
+      //   const oldFiche = previousFiche as
+      //     | { mesures?: { id: string }[] }
+      //     | undefined;
+      //   const oldActionIds = oldFiche?.mesures?.map((m) => m.id) ?? [];
+      //   const newActionIds = ficheFields.mesures.map((m) => m.id);
+      //   const oldListActionsKey =
+      //     trpc.referentiels.actions.listActions.queryKey({
+      //       collectiviteId,
+      //       filters: { actionIds: oldActionIds },
+      //     });
+      //   newListActionsKey = trpc.referentiels.actions.listActions.queryKey({
+      //     collectiviteId,
+      //     filters: { actionIds: newActionIds },
+      //   });
+      //   const oldList = (queryClient.getQueryData(oldListActionsKey) ?? []) as {
+      //     actionId: string;
+      //     identifiant?: string;
+      //     nom?: string;
+      //     referentiel?: string;
+      //     pilotes?: unknown[];
+      //     services?: unknown[];
+      //   }[];
 
-        const addedIds = newActionIds.filter(
-          (id) => !oldActionIds.includes(id)
-        );
-        const removedIds = oldActionIds.filter(
-          (id) => !newActionIds.includes(id)
-        );
+      //   const addedIds = newActionIds.filter(
+      //     (id) => !oldActionIds.includes(id)
+      //   );
+      //   const removedIds = oldActionIds.filter(
+      //     (id) => !newActionIds.includes(id)
+      //   );
 
-        let newList = [...oldList];
+      //   let newList = [...oldList];
 
-        if (removedIds.length > 0) {
-          newList = newList.filter((a) => !removedIds.includes(a.actionId));
-        }
-        if (addedIds.length > 0) {
-          const placeholders = addedIds.map((actionId) => {
-            const [referentiel = 'cae', identifiantPart] = actionId.split('_');
-            return {
-              actionId,
-              identifiant: identifiantPart ?? actionId,
-              nom: 'Chargement…',
-              referentiel,
-              pilotes: [] as unknown[],
-              services: [] as unknown[],
-            };
-          });
-          newList = [...newList, ...placeholders];
-        }
+      //   if (removedIds.length > 0) {
+      //     newList = newList.filter((a) => !removedIds.includes(a.actionId));
+      //   }
+      //   if (addedIds.length > 0) {
+      //     const placeholders = addedIds.map((actionId) => {
+      //       const [referentiel = 'cae', identifiantPart] = actionId.split('_');
+      //       return {
+      //         actionId,
+      //         identifiant: identifiantPart ?? actionId,
+      //         nom: 'Chargement…',
+      //         referentiel,
+      //         pilotes: [] as unknown[],
+      //         services: [] as unknown[],
+      //       };
+      //     });
+      //     newList = [...newList, ...placeholders];
+      //   }
 
-        queryClient.setQueryData(newListActionsKey, newList);
-      }
+      //   queryClient.setQueryData(newListActionsKey, newList);
+      // }
 
       if (ficheFields.indicateurs) {
         queryClient.setQueryData(
@@ -163,18 +164,18 @@ export const useUpdateFiche = (args?: Args) => {
       }
 
       // Return a context object with the snapshotted value
-      return { previousFiche, newListActionsKey };
+      return { previousFiche };
     },
     // If the mutation fails, use the context returned from onMutate to rollback
-    onError: (error, { ficheId, ficheFields }, context) => {
+    onError: (error, { ficheId }, context) => {
       const queryKeyOfGetFiche = trpc.plans.fiches.get.queryKey({
         id: ficheId,
       });
 
       queryClient.setQueryData(queryKeyOfGetFiche, context?.previousFiche);
-      if (ficheFields.mesures && context?.newListActionsKey) {
-        queryClient.removeQueries({ queryKey: context.newListActionsKey });
-      }
+      // if (ficheFields.mesures && context?.newListActionsKey) {
+      //   queryClient.removeQueries({ queryKey: context.newListActionsKey });
+      // }
     },
     // Always refetch after error or success:
     onSettled: (result, error, { ficheId, ficheFields }) => {
@@ -196,15 +197,16 @@ export const useUpdateFiche = (args?: Args) => {
         });
       }
 
-      if (ficheFields.mesures) {
-        const newActionIds = ficheFields.mesures.map((m) => m.id);
-        queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.actions.listActions.queryKey({
-            collectiviteId,
-            filters: { actionIds: newActionIds },
-          }),
-        });
-      }
+      // Why this was needed ?
+      // if (ficheFields.mesures) {
+      //   const newActionIds = ficheFields.mesures.map((m) => m.id);
+      //   queryClient.invalidateQueries({
+      //     queryKey: trpc.referentiels.actions.listActions.queryKey({
+      //       collectiviteId,
+      //       filters: { actionIds: newActionIds },
+      //     }),
+      //   });
+      // }
 
       // Dans le cas où on update la fiche depuis la liste des fiches
       queryClient.invalidateQueries({

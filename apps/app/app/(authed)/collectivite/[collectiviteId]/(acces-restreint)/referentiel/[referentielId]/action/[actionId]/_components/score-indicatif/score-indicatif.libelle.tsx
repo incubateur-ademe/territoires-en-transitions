@@ -1,4 +1,5 @@
 import { avancementToLabel } from '@/app/app/labels';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { toPercentString } from '@/app/utils/to-percent-string';
 import {
   ScoreIndicatifType,
@@ -12,11 +13,18 @@ import { useGetScoreIndicatif } from './use-get-score-indicatif';
 import { prepareScoreIndicatifData, texteValeurUtilisee } from './utils';
 
 type Props = {
-  actionId: string;
+  action: Pick<ActionListItem, 'actionId' | 'exprScore'>;
 };
 
-const ScoreIndicatifLibelle = ({ actionId }: Props) => {
-  const { data, isLoading } = useGetScoreIndicatif(actionId);
+const ScoreIndicatifLibelle = ({ action }: Props) => {
+  const { actionId, exprScore } = action;
+  const haveScoreIndicatif = Boolean(exprScore && exprScore.trim() !== '');
+
+  const { data, isLoading } = useGetScoreIndicatif({
+    actionId,
+    enabled: haveScoreIndicatif,
+  });
+
   if (!data || isLoading) return null;
 
   const scoreIndicatif = data[actionId];

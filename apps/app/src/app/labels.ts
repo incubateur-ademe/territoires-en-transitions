@@ -1,10 +1,6 @@
 import { appLabels } from '@/app/labels/catalog';
 import { MembreFonction } from '@tet/domain/collectivites';
-import {
-  ReferentielId,
-  StatutAvancementIncludingNonConcerne,
-  StatutAvancementIncludingNonConcerneDetailleALaTache,
-} from '@tet/domain/referentiels';
+import { ReferentielId, StatutAvancement } from '@tet/domain/referentiels';
 
 // Define all labels from app
 type ReferentielLabelKey = ReferentielId | 'crte';
@@ -16,26 +12,15 @@ export const referentielToName: Record<ReferentielLabelKey, string> = {
   'te-test': appLabels.referentielTeTest,
 };
 
-export const avancementToLabel: Record<
-  StatutAvancementIncludingNonConcerneDetailleALaTache,
-  string
-> = {
+export const avancementToLabel: Record<StatutAvancement, string> = {
   non_renseigne: appLabels.nonRenseigne,
+  non_renseignable: appLabels.nonRenseignable,
   fait: appLabels.avancementFait,
   pas_fait: appLabels.avancementPasFait,
   detaille: appLabels.avancementDetaille,
   detaille_a_la_tache: appLabels.avancementDetailleALaTache,
   programme: appLabels.avancementProgramme,
   non_concerne: appLabels.avancementNonConcerne,
-};
-
-/** Labels for statut options including display-only "Détaillé à la tâche" (subaction with tasks) */
-export const avancementDisplayToLabel: Record<
-  StatutAvancementIncludingNonConcerne | 'detaille_a_la_tache',
-  string
-> = {
-  ...avancementToLabel,
-  detaille_a_la_tache: appLabels.avancementDetailleALaTache,
 };
 
 export const actionIdToLabel: Record<string, string> = {

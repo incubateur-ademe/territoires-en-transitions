@@ -2,8 +2,10 @@ import { ActionTypeEnum } from './actions/action-type.enum';
 import {
   getActionTypeFromActionId,
   getLevelFromActionId,
+  isActionHidden,
   normalizeIdentifiantReferentiel,
   rollUpActionIdToActionLevel,
+  scoreSnapshotTreeToActionsWithGenealogyGroupedById,
 } from './referentiel.utils';
 
 describe('getLevelFromActionId', () => {
@@ -120,6 +122,14 @@ describe('rollUpActionIdToActionLevel', () => {
     expect(
       rollUpActionIdToActionLevel('cae_5.1.4.4.1', sansAction)
     ).toEqual('cae_5.1.4.4.1');
+  });
+});
+
+describe('isActionHidden', () => {
+  test('masque uniquement si TE activé et action désactivée', () => {
+    expect(isActionHidden(true, true)).toBe(true);
+    expect(isActionHidden(true, false)).toBe(false);
+    expect(isActionHidden(false, true)).toBe(false);
   });
 });
 
@@ -250,6 +260,314 @@ describe('normalizeIdentifiantReferentiel', () => {
       expect(normalizeIdentifiantReferentiel('cae 49 a-hab')).toBe(
         'cae_49.a-hab'
       );
+    });
+  });
+});
+
+describe('scoreSnapshotTreeToActionsWithGenealogyGroupedById', () => {
+  type TestAction = {
+    actionId: string;
+    actionsEnfant: TestAction[];
+    score: { desactive: boolean | undefined };
+  };
+
+  const makeAction = (
+    actionId: string,
+    options: { desactive?: boolean; children?: TestAction[] } = {}
+  ): TestAction => ({
+    actionId,
+    actionsEnfant: options.children ?? [],
+    score: { desactive: options.desactive ?? false },
+  });
+
+  /**
+   * Arbre de référence :
+   * eci
+   * ├── eci_1
+   * │   ├── eci_1.1
+   * │   ├── eci_1.2
+   * │   └── eci_1.3
+   * ├── eci_2
+   * │   ├── eci_2.1 .. eci_2.5
+   * └── eci_3
+   *     ├── eci_3.1
+   *     └── eci_3.2
+   */
+  const buildReferenceTree = (): TestAction =>
+    makeAction('eci', {
+      children: [
+        makeAction('eci_1', {
+          children: [
+            makeAction('eci_1.1'),
+            makeAction('eci_1.2'),
+            makeAction('eci_1.3'),
+          ],
+        }),
+        makeAction('eci_2', {
+          children: [
+            makeAction('eci_2.1'),
+            makeAction('eci_2.2'),
+            makeAction('eci_2.3'),
+            makeAction('eci_2.4'),
+            makeAction('eci_2.5'),
+          ],
+        }),
+        makeAction('eci_3', {
+          children: [makeAction('eci_3.1'), makeAction('eci_3.2')],
+        }),
+      ],
+    });
+
+  describe('navigation au sein des frères du même parent', () => {
+    test('previousId / nextId pointent vers les frères directs', () => {
+      const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(
+        buildReferenceTree()
+      );
+
+      expect(result['eci_1.2']).toMatchObject({
+        previousId: 'eci_1.1',
+        nextId: 'eci_1.3',
+      });
+    });
+
+    test('navigation entre axes (niveau 1)', () => {
+      const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(
+        buildReferenceTree()
+      );
+
+      expect(result['eci_1']).toMatchObject({
+        previousId: null,
+        nextId: 'eci_2',
+      });
+      expect(result['eci_2']).toMatchObject({
+        previousId: 'eci_1',
+        nextId: 'eci_3',
+      });
+      expect(result['eci_3']).toMatchObject({
+        previousId: 'eci_2',
+        nextId: null,
+      });
+    });
+
+    test("la racine (niveau 0) n'a ni next ni previous ni parent", () => {
+      const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(
+        buildReferenceTree()
+      );
+
+      expect(result['eci']).toMatchObject({
+        previousId: null,
+        nextId: null,
+        parentId: null,
+      });
+    });
+  });
+
+  describe('navigation à travers les frontières de parent', () => {
+    test('le premier enfant d’un parent pointe vers le dernier enfant du parent précédent', () => {
+      const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(
+        buildReferenceTree()
+      );
+
+      expect(result['eci_2.1']).toMatchObject({
+        previousId: 'eci_1.3',
+        nextId: 'eci_2.2',
+      });
+    });
+
+    test('le dernier enfant d’un parent pointe vers le premier enfant du parent suivant', () => {
+      const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(
+        buildReferenceTree()
+      );
+
+      expect(result['eci_2.5']).toMatchObject({
+        previousId: 'eci_2.4',
+        nextId: 'eci_3.1',
+      });
+    });
+
+    test('le tout premier enfant a previousId = null', () => {
+      const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(
+        buildReferenceTree()
+      );
+
+      expect(result['eci_1.1'].previousId).toBeNull();
+      expect(result['eci_1.1'].nextId).toBe('eci_1.2');
+    });
+
+    test('le tout dernier enfant a nextId = null', () => {
+      const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(
+        buildReferenceTree()
+      );
+
+      expect(result['eci_3.2'].previousId).toBe('eci_3.1');
+      expect(result['eci_3.2'].nextId).toBeNull();
+    });
+
+    test("ignore l'arithmétique d'identifiants : suit l'ordre réel de l'arbre", () => {
+      const tree = makeAction('eci', {
+        children: [
+          makeAction('eci_1', {
+            children: [makeAction('eci_1.1'), makeAction('eci_1.3')],
+          }),
+          makeAction('eci_2', {
+            children: [makeAction('eci_2.2')],
+          }),
+        ],
+      });
+
+      const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(tree);
+
+      expect(result['eci_1.1'].nextId).toBe('eci_1.3');
+      expect(result['eci_1.3'].nextId).toBe('eci_2.2');
+      expect(result['eci_2.2'].previousId).toBe('eci_1.3');
+    });
+  });
+
+  describe('saut des actions désactivées', () => {
+    test('saute une action désactivée vers l’avant', () => {
+      const tree = makeAction('eci', {
+        children: [
+          makeAction('eci_1', {
+            children: [
+              makeAction('eci_1.1'),
+              makeAction('eci_1.2', { desactive: true }),
+              makeAction('eci_1.3'),
+            ],
+          }),
+        ],
+      });
+
+      const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(tree);
+
+      expect(result['eci_1.1'].nextId).toBe('eci_1.3');
+      expect(result['eci_1.3'].previousId).toBe('eci_1.1');
+    });
+
+    test('saute plusieurs actions désactivées consécutives', () => {
+      const tree = makeAction('eci', {
+        children: [
+          makeAction('eci_1', {
+            children: [
+              makeAction('eci_1.1'),
+              makeAction('eci_1.2', { desactive: true }),
+              makeAction('eci_1.3', { desactive: true }),
+              makeAction('eci_1.4', { desactive: true }),
+              makeAction('eci_1.5'),
+            ],
+          }),
+        ],
+      });
+
+      const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(tree);
+
+      expect(result['eci_1.1'].nextId).toBe('eci_1.5');
+      expect(result['eci_1.5'].previousId).toBe('eci_1.1');
+    });
+
+    test('saute les actions désactivées au-delà des frontières de parent', () => {
+      const tree = makeAction('eci', {
+        children: [
+          makeAction('eci_1', {
+            children: [makeAction('eci_1.1')],
+          }),
+          makeAction('eci_2', {
+            children: [
+              makeAction('eci_2.1', { desactive: true }),
+              makeAction('eci_2.2', { desactive: true }),
+            ],
+          }),
+          makeAction('eci_3', {
+            children: [makeAction('eci_3.1')],
+          }),
+        ],
+      });
+
+      const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(tree);
+
+      expect(result['eci_1.1'].nextId).toBe('eci_3.1');
+      expect(result['eci_3.1'].previousId).toBe('eci_1.1');
+    });
+
+    test('previousId / nextId valent null si tous les candidats sont désactivés', () => {
+      const tree = makeAction('eci', {
+        children: [
+          makeAction('eci_1', {
+            children: [
+              makeAction('eci_1.1', { desactive: true }),
+              makeAction('eci_1.2', { desactive: true }),
+              makeAction('eci_1.3'),
+              makeAction('eci_1.4', { desactive: true }),
+            ],
+          }),
+        ],
+      });
+
+      const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(tree);
+
+      expect(result['eci_1.3']).toMatchObject({
+        previousId: null,
+        nextId: null,
+      });
+    });
+
+    test('une action désactivée navigue elle aussi vers des candidats non désactivés', () => {
+      const tree = makeAction('eci', {
+        children: [
+          makeAction('eci_1', {
+            children: [
+              makeAction('eci_1.1'),
+              makeAction('eci_1.2', { desactive: true }),
+              makeAction('eci_1.3'),
+            ],
+          }),
+        ],
+      });
+
+      const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(tree);
+
+      expect(result['eci_1.2']).toMatchObject({
+        previousId: 'eci_1.1',
+        nextId: 'eci_1.3',
+      });
+    });
+  });
+
+  describe('structure de généalogie', () => {
+    test('parentId et childrenIds reflètent l’arbre', () => {
+      const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(
+        buildReferenceTree()
+      );
+
+      expect(result['eci_1']).toMatchObject({
+        parentId: 'eci',
+        childrenIds: ['eci_1.1', 'eci_1.2', 'eci_1.3'],
+      });
+      expect(result['eci_1.2']).toMatchObject({
+        parentId: 'eci_1',
+        childrenIds: [],
+      });
+    });
+
+    test('childrenIds reste fidèle à l’arbre, même pour les enfants désactivés', () => {
+      const tree = makeAction('eci', {
+        children: [
+          makeAction('eci_1', {
+            children: [
+              makeAction('eci_1.1'),
+              makeAction('eci_1.2', { desactive: true }),
+              makeAction('eci_1.3'),
+            ],
+          }),
+        ],
+      });
+
+      const result = scoreSnapshotTreeToActionsWithGenealogyGroupedById(tree);
+
+      expect(result['eci_1'].childrenIds).toEqual([
+        'eci_1.1',
+        'eci_1.2',
+        'eci_1.3',
+      ]);
     });
   });
 });

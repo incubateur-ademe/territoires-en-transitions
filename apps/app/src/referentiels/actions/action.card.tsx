@@ -6,32 +6,28 @@ import { appLabels } from '@/app/labels/catalog';
 import Markdown from '@/app/ui/Markdown';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import {
-  ActionType,
-  ActionWithScore,
-  getReferentielIdFromActionId,
-} from '@tet/domain/referentiels';
+import { Action, getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Button, Card } from '@tet/ui';
 import { ScoreProgressBar } from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 import { useHideAction } from './action-statut/use-hide-action';
 
 type ActionCardProps = {
-  action: ActionWithScore;
+  action: Action;
   showDescription?: boolean;
 };
 
 export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
   const { actionId: id, identifiant, nom: title, description } = action;
-  const hideResult = useHideAction(id);
+  const isHidden = useHideAction(action);
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
 
-  const referentiel = getReferentielIdFromActionId(id);
+  const referentielId = getReferentielIdFromActionId(id);
 
   const [isEditOpen, setIsEditOpen] = useState(false);
 
-  if (hideResult.hide) {
+  if (isHidden) {
     return null;
   }
 
@@ -63,7 +59,7 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
       <Card
         href={makeReferentielActionUrl({
           collectiviteId,
-          referentielId: referentiel,
+          referentielId,
           actionId: id,
         })}
         className="font-normal h-full !gap-2 !p-4 !bg-grey-1 hover:!border-grey-3 hover:!bg-grey-2 !shadow-none"
@@ -81,13 +77,11 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
 
         <div className="w-full flex max-sm:flex-col gap-3 sm:items-center justify-between">
           <ScoreProgressBar
-            id={id}
-            identifiant={identifiant}
-            type={'action' as ActionType}
+            action={action}
             className="grow shrink max-sm:w-full"
           />
           <div className="shrink-0 flex">
-            <ScoreRatioBadge actionId={id} size="xs" />
+            <ScoreRatioBadge action={action} size="xs" />
           </div>
         </div>
 

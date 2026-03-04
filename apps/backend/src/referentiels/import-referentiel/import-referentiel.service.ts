@@ -14,9 +14,9 @@ import { ListPlatformDefinitionsRepository } from '@tet/backend/indicateurs/defi
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
 import ImportPreuveReglementaireDefinitionService from '@tet/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
 import {
+  ImportActionDefinition,
   ImportActionDefinitionCoremeasureType,
   importActionDefinitionSchema,
-  ImportActionDefinitionType,
 } from '@tet/backend/referentiels/import-referentiel/import-action-definition.dto';
 import {
   ReferentielLabelEnum,
@@ -32,13 +32,13 @@ import {
   regleTypeEnumValues,
 } from '@tet/domain/collectivites';
 import {
-  ActionDefinitionCreate,
   ActionDefinitionTag,
   ActionOrigine,
   ActionRelationCreate,
+  ActionType,
   ActionTypeEnum,
   getActionTypeFromActionId,
-  getParentIdFromActionId,
+  getParentId,
   ReferentielDefinition,
   ReferentielId,
 } from '@tet/domain/referentiels';
@@ -49,6 +49,7 @@ import {
   GetReferentielService,
   ReferentielResponse,
 } from '../get-referentiel/get-referentiel.service';
+import { ActionDefinitionCreate } from '../models/action-definition.table';
 import { ImportReferentielRepository } from './import-referentiel.repository';
 import {
   buildActionId,
@@ -74,7 +75,7 @@ const REFERENTIEL_ID_TO_CONFIG_KEY: Record<
 };
 
 // ces types peuvent avoir des points (ou un pourcentage)
-const ACTION_TYPE_WITH_POINTS = [
+const ACTION_TYPE_WITH_POINTS: ActionType[] = [
   ActionTypeEnum.ACTION,
   ActionTypeEnum.SOUS_ACTION,
   ActionTypeEnum.TACHE,
@@ -142,7 +143,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     const existingActionIds = await this.repository.getExistingActionIds();
 
     const importActionDefinitions =
-      await this.sheetService.getDataFromSheet<ImportActionDefinitionType>(
+      await this.sheetService.getDataFromSheet<ImportActionDefinition>(
         spreadsheetId,
         importActionDefinitionSchema,
         REFERENTIEL_SPREADSHEET_RANGE,
@@ -357,7 +358,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     });
     const actionRelations: ActionRelationCreate[] = [];
     actionDefinitions.forEach((action) => {
-      const parent = getParentIdFromActionId(action.actionId);
+      const parent = getParentId({ actionId: action.actionId });
       if (parent) {
         const foundParent = actionDefinitions.find(
           (action) => action.actionId === parent
@@ -442,7 +443,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     );
 
     const importActionDefinitions =
-      await this.sheetService.getDataFromSheet<ImportActionDefinitionType>(
+      await this.sheetService.getDataFromSheet<ImportActionDefinition>(
         spreadsheetId,
         importActionDefinitionSchema,
         REFERENTIEL_SPREADSHEET_RANGE,
@@ -467,7 +468,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     referentielId: ReferentielId,
     actions: Array<
       Pick<
-        ImportActionDefinitionType,
+        ImportActionDefinition,
         | 'identifiant'
         | 'desactivation'
         | 'reduction'

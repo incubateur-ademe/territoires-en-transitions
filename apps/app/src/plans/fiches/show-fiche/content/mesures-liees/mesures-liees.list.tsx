@@ -24,17 +24,14 @@ export const MesuresLieesListe = ({
   onLoad,
   onUnlink,
 }: MesuresLieesListeProps) => {
-  const { data: actionsLiees, isLoading } = useListActions(
-    {
-      actionIds: mesuresIds,
-    },
-    true,
-    externalCollectiviteId
-  );
+  const { data: actionsLiees, isPending } = useListActions({
+    actionIds: mesuresIds,
+    collectiviteId: externalCollectiviteId,
+  });
 
-  useEffect(() => onLoad?.(isLoading), [isLoading]);
+  useEffect(() => onLoad?.(isPending), [isPending, onLoad]);
 
-  if (isLoading) {
+  if (isPending) {
     return <SpinnerLoader className="mx-auto my-8" />;
   }
 

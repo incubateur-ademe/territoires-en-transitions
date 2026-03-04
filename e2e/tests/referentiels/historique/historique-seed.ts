@@ -1,9 +1,8 @@
-import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
 import { questionThematiqueTable } from '@tet/backend/collectivites/personnalisations/models/question-thematique.table';
+import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
 import { sql } from 'drizzle-orm';
 import { databaseService } from 'tests/shared/database.service';
 import { UserFixture } from 'tests/users/users.fixture';
-
 
 export const TEST_QUESTION_BINAIRE_ID = 'hist-e2e-question-binaire';
 export const TEST_THEMATIQUE_ID = 'hist-e2e-thematique';
@@ -41,9 +40,7 @@ export async function seedActionStatut(
   await user.getTrpcClient().referentiels.actions.updateStatut.mutate({
     collectiviteId: input.collectiviteId,
     actionId: input.actionId,
-    avancement: 'fait',
-    avancementDetaille: null,
-    concerne: true,
+    statut: 'fait',
   });
 }
 
@@ -100,13 +97,11 @@ export async function seedReponse(
     reponse?: boolean;
   }
 ) {
-  await user
-    .getTrpcClient()
-    .collectivites.personnalisations.setReponse.mutate({
-      collectiviteId: input.collectiviteId,
-      questionId: input.questionId ?? TEST_QUESTION_BINAIRE_ID,
-      reponse: input.reponse ?? true,
-    });
+  await user.getTrpcClient().collectivites.personnalisations.setReponse.mutate({
+    collectiviteId: input.collectiviteId,
+    questionId: input.questionId ?? TEST_QUESTION_BINAIRE_ID,
+    reponse: input.reponse ?? true,
+  });
 }
 
 /**
@@ -126,13 +121,10 @@ export async function seedJustification(
     reponse?: boolean;
   }
 ) {
-  await user
-    .getTrpcClient()
-    .collectivites.personnalisations.setReponse.mutate({
-      collectiviteId: input.collectiviteId,
-      questionId: input.questionId ?? TEST_QUESTION_BINAIRE_ID,
-      reponse: input.reponse ?? true,
-      justification: input.texte ?? 'Justification e2e historique',
-    });
+  await user.getTrpcClient().collectivites.personnalisations.setReponse.mutate({
+    collectiviteId: input.collectiviteId,
+    questionId: input.questionId ?? TEST_QUESTION_BINAIRE_ID,
+    reponse: input.reponse ?? true,
+    justification: input.texte ?? 'Justification e2e historique',
+  });
 }
-

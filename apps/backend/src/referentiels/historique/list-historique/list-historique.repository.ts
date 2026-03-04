@@ -64,8 +64,8 @@ export type HistoriqueUnionRow = {
     | 'detaille'
     | 'non_renseigne'
     | null;
-  avancementDetaille: number[] | null;
-  previousAvancementDetaille: number[] | null;
+  avancementDetaille: [number, number, number] | null;
+  previousAvancementDetaille: [number, number, number] | null;
   concerne: boolean | null;
   previousConcerne: boolean | null;
   precision: string | null;
@@ -226,7 +226,7 @@ export class ListHistoriqueRepository {
   >`null::avancement`;
   private readonly nullBoolean = sql<boolean | null>`null::boolean`;
   private readonly nullDoubleArray = sql<
-    number[] | null
+    [number, number, number] | null
   >`null::double precision[]`;
   private readonly nullVarchar30 = sql<string | null>`null::varchar(30)`;
 

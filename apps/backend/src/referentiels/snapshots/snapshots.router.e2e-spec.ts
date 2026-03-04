@@ -1,13 +1,14 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.table';
-import { getScoresIndicatifsFromSnapshot } from '@tet/backend/referentiels/snapshots/snapshots.utils';
 import {
   fixturePourScoreIndicatif,
   insertFixturePourScoreIndicatif,
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
+  ActionDefinitionEssential,
+  ActionTreeNode,
   ActionTypeEnum,
   findActionInTree,
   flatMapActionsEnfants,
@@ -429,7 +430,7 @@ describe('SnapshotsRouter', () => {
 
     const actionWithStatutAfterRecompute = findActionInTree(
       [recomputedSnapshot.scoresPayload.scores],
-      (action) => action.actionId === actionWithStatut!.actionId
+      (action) => action.actionId === actionWithStatut?.actionId
     );
     expect(actionWithStatutAfterRecompute?.score.statut).toBeDefined();
   });

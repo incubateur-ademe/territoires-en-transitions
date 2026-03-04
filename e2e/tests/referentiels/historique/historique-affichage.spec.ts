@@ -29,17 +29,13 @@ test.describe('Historique — affichage', () => {
     await referentiels.updateActionStatut(user, {
       collectiviteId: collectivite.data.id,
       actionId: 'cae_1.1.1.1.2',
-      avancement: 'fait',
-      avancementDetaille: null,
-      concerne: true,
+      statut: 'fait',
     });
     // Statut sur une sous-mesure (cae_1.1.1.1 → profondeur 4 → sous-action)
     await referentiels.updateActionStatut(user, {
       collectiviteId: collectivite.data.id,
       actionId: 'cae_1.1.1.1',
-      avancement: 'fait',
-      avancementDetaille: null,
-      concerne: true,
+      statut: 'fait',
     });
 
     const historiquePom = new HistoriquePom(page);

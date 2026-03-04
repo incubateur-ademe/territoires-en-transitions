@@ -1,13 +1,12 @@
-import ActionPreuvePanel from '@/app/referentiels/actions/action-preuve.panel';
-import { ActionReferentiel } from '@/app/referentiels/DEPRECATED_scores.types';
 import { appLabels } from '@/app/labels/catalog';
+import ActionPreuvePanel from '@/app/referentiels/actions/action-preuve.panel';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { Fragment, useEffect, useRef } from 'react';
 import {
   CellProps,
   Column,
-  Row,
   useExpanded,
   useFlexLayout,
   useTable,
@@ -21,8 +20,8 @@ export type TPreuvesTableProps = {
   referentielId: Exclude<ReferentielId, 'te' | 'te-test'>;
 };
 
-export type TCellProps = CellProps<ActionReferentiel>;
-export type TColumn = Column<ActionReferentiel>;
+export type TCellProps = CellProps<ActionListItem>;
+export type TColumn = Column<ActionListItem>;
 
 // défini les colonnes de la table
 const COLUMNS: TColumn[] = [
@@ -76,7 +75,13 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
         // unique en 1er argument et non un tableau comme l'indique son typage
         .forEach((row) => toggleRowExpanded(row.id as unknown as string[]));
     }
-  }, [table?.data?.length, flatRows, toggleRowExpanded, isInitialLoading]);
+  }, [
+    table?.data?.length,
+    flatRows,
+    toggleRowExpanded,
+    isInitialLoading,
+    maxDepth,
+  ]);
 
   // rendu de la table
   return (
@@ -88,63 +93,57 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
         {isLoading ? (
           <div className="message">Chargement en cours...</div>
         ) : rows.length ? (
-          rows.map(
-            (
-              row: Row<ActionReferentiel>,
-              index: number,
-              rows: Row<ActionReferentiel>[]
-            ) => {
-              prepareRow(row);
-              const { original, isExpanded } = row;
-              const { depth, nom, identifiant, action_id } = original;
-              // dernière ligne avant une nouvelle section
-              const isLast =
-                (!rows[index + 1] || rows[index + 1].depth === 0) &&
-                row.depth > 0;
+          rows.map((row, index: number, rows) => {
+            prepareRow(row);
+            const { original, isExpanded } = row;
+            const { depth, nom, identifiant, actionId } = original;
+            // dernière ligne avant une nouvelle section
+            const isLast =
+              (!rows[index + 1] || rows[index + 1].depth === 0) &&
+              row.depth > 0;
 
-              const className = `row d${depth} ${
-                isExpanded ? 'open' : 'close'
-              } ${isLast ? 'last' : ''}`;
+            const className = `row d${depth} ${isExpanded ? 'open' : 'close'} ${
+              isLast ? 'last' : ''
+            }`;
 
-              const { key, ...rowProps } = row.getRowProps();
+            const { key, ...rowProps } = row.getRowProps();
 
-              const action = {
-                id: action_id,
-                identifiant,
-                referentiel: referentielId,
-              };
+            const action = {
+              actionId,
+              identifiant,
+              referentiel: referentielId,
+            };
 
-              return (
-                <Fragment key={key}>
-                  {depth <= maxDepth ? (
-                    <div
-                      className={className}
-                      title={(nom as string) || ''}
-                      {...rowProps}
-                    >
-                      {row.cells.map((cell) => {
-                        const { key, ...cellProps } = cell.getCellProps();
-                        return (
-                          <div className="cell" key={key} {...cellProps}>
-                            {cell.render('Cell', {
-                              collectiviteId,
-                              referentielId,
-                              alwaysShowExpand: true,
-                            })}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : null}
-                  {isExpanded && depth === maxDepth ? (
-                    <div className="row py-5 pl-32 pr-5">
-                      <ActionPreuvePanel action={action} hideIdentifier />
-                    </div>
-                  ) : null}
-                </Fragment>
-              );
-            }
-          )
+            return (
+              <Fragment key={key}>
+                {depth <= maxDepth ? (
+                  <div
+                    className={className}
+                    title={(nom as string) || ''}
+                    {...rowProps}
+                  >
+                    {row.cells.map((cell) => {
+                      const { key, ...cellProps } = cell.getCellProps();
+                      return (
+                        <div className="cell" key={key} {...cellProps}>
+                          {cell.render('Cell', {
+                            collectiviteId,
+                            referentielId,
+                            alwaysShowExpand: true,
+                          })}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : null}
+                {isExpanded && depth === maxDepth ? (
+                  <div className="row py-5 pl-32 pr-5">
+                    <ActionPreuvePanel action={action} hideIdentifier />
+                  </div>
+                ) : null}
+              </Fragment>
+            );
+          })
         ) : (
           <div className="message">{appLabels.aucunResultat}</div>
         )}

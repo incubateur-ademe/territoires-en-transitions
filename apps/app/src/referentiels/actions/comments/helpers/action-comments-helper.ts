@@ -1,62 +1,10 @@
 import { makeReferentielActionUrl } from '@/app/app/paths';
-import { type ActionDetailed } from '@/app/referentiels/use-snapshot';
-import { CollectiviteCurrent } from '@tet/api/collectivites';
 import {
   discussionOrderByEnum,
-  discussionStatus,
   DiscussionWithMessages,
 } from '@tet/domain/collectivites';
-import {
-  isSousMesure as isSousMesureDomain,
-  ReferentielId,
-} from '@tet/domain/referentiels';
-
-/**
- * Recursively extracts all actionId and nom properties from actionsEnfant
- */
-export const getActionsAndSubActions = (
-  actionNode: ActionDetailed | undefined
-): Array<{
-  actionId: string;
-  identifiant: string;
-  nom: string;
-}> => {
-  if (!actionNode) return [];
-  const result: Array<{
-    actionId: string;
-    identifiant: string;
-    nom: string;
-  }> = [];
-  if (
-    (actionNode.actionType === 'action' ||
-      actionNode.actionType === 'sous-action') &&
-    actionNode.actionId &&
-    actionNode.nom
-  ) {
-    result.push({
-      actionId: actionNode.actionId,
-      identifiant: actionNode.identifiant || actionNode.actionId.split('_')[1],
-      nom: actionNode.nom,
-    });
-  }
-  if (actionNode.actionsEnfant && Array.isArray(actionNode.actionsEnfant)) {
-    actionNode.actionsEnfant.forEach((enfant) => {
-      result.push(...getActionsAndSubActions(enfant));
-    });
-  }
-
-  return result;
-};
-
-export const isSousMesure = (
-  actionId: string,
-  referentielId: ReferentielId
-) => {
-  return (
-    isSousMesureDomain(actionId, referentielId) &&
-    actionId !== discussionStatus.ALL
-  );
-};
+import { ActionTypeEnum } from '@tet/domain/referentiels';
+import { ActionListItem } from '../../use-list-actions';
 
 const getMostRecentMessage = (disc: DiscussionWithMessages) => {
   if (!disc.messages || disc.messages.length === 0) {
@@ -122,25 +70,17 @@ export const sortDiscussions = (
   }
 };
 
-export const canCreateDiscussion = (
-  currentCollectivite: CollectiviteCurrent
-) => {
-  return currentCollectivite.hasCollectivitePermission(
-    'referentiels.discussions.mutate'
-  );
-};
-
 export const buildActionLink = (
-  actionId: string,
-  referentielId: ReferentielId,
+  action: Pick<ActionListItem, 'actionId' | 'actionType' | 'referentielId'>,
   collectiviteId: number
 ) => {
-  const actionIdToLink = isSousMesure(actionId, referentielId)
-    ? actionId.split('.').slice(0, -1).join('.')
-    : actionId;
+  const actionIdToLink =
+    action.actionType === ActionTypeEnum.SOUS_ACTION
+      ? action.actionId.split('.').slice(0, -1).join('.')
+      : action.actionId;
   return `${makeReferentielActionUrl({
     collectiviteId,
-    referentielId,
+    referentielId: action.referentielId,
     actionId: actionIdToLink,
-  })}#${actionId}`;
+  })}#${action.actionId}`;
 };

@@ -1,13 +1,10 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import classNames from 'classnames';
 import { JSX } from 'react';
-import { ActionJustificationField } from '../action/action.justification-field';
 import TaskCard from './task-card';
 
 type TasksListProps = {
-  subActionId?: string;
-  tasks: ActionDefinitionSummary[];
-  hideStatus?: boolean;
+  tasks: ActionListItem[];
   shouldShowJustifications?: boolean;
   className?: string;
 };
@@ -17,29 +14,17 @@ type TasksListProps = {
  */
 
 const TaskCardsList = ({
-  subActionId,
   tasks,
-  hideStatus = false,
   shouldShowJustifications = true,
   className,
 }: TasksListProps): JSX.Element => {
   return (
     <div>
-      {shouldShowJustifications && subActionId && (
-        <ActionJustificationField
-          actionId={subActionId}
-          title="Explications sur l'état d'avancement :"
-          className="min-h-20"
-          fieldClassName="min-h-20 mb-4"
-        />
-      )}
-
       <div className={classNames('flex flex-col gap-4', className)}>
         {tasks.map((task) => (
           <TaskCard
-            key={task.id}
+            key={task.actionId}
             task={task}
-            hideStatus={hideStatus}
             showJustifications={shouldShowJustifications}
           />
         ))}

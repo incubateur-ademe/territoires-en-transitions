@@ -11,10 +11,11 @@ export type ActionId = z.infer<typeof actionIdSchema>;
 
 export const actionDefinitionSchema = z.object({
   actionId: actionIdSchema,
-  referentiel: referentielIdEnumSchema,
-  referentielId: z.string(),
-  referentielVersion: z.string(),
   identifiant: z.string(),
+  /** @deprecated use `referentielId` instead */
+  referentiel: referentielIdEnumSchema,
+  referentielId: referentielIdEnumSchema,
+  referentielVersion: z.string(),
   nom: z.string(),
   description: z.string(),
   contexte: z.string(),
@@ -28,22 +29,13 @@ export const actionDefinitionSchema = z.object({
   categorie: z.nullable(actionCategorieEnumSchema),
   exprScore: z.nullable(z.string()),
   modifiedAt: z.iso.datetime(),
+
+  depth: z.number(),
+  actionType: actionTypeSchema,
+  questionIds: z.array(z.string()),
 });
 
 export type ActionDefinition = z.infer<typeof actionDefinitionSchema>;
-
-export const actionDefinitionSchemaCreate = z.partial(actionDefinitionSchema, {
-  preuve: true,
-  points: true,
-  pourcentage: true,
-  categorie: true,
-  exprScore: true,
-  modifiedAt: true,
-});
-
-export type ActionDefinitionCreate = z.infer<
-  typeof actionDefinitionSchemaCreate
->;
 
 export const actionDefinitionEssentialSchema = z.object({
   actionId: z.string(),

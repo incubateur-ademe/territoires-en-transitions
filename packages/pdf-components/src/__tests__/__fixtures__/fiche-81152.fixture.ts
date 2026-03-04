@@ -5,7 +5,7 @@ import type {
   FicheNote,
   FicheWithRelations,
 } from '@tet/domain/plans';
-import type { ActionWithScore } from '@tet/domain/referentiels';
+import { ActionTypeEnum, type Action } from '@tet/domain/referentiels';
 import type { PdfIndicateurDefinition } from '../../fiche-action/external-types';
 import type { FicheActionPdfExtendedProps } from '../../fiche-action/FicheActionPdf';
 import type { PdfSectionKey } from '../../fiche-action/utils';
@@ -579,7 +579,7 @@ const fichesLiees: FicheWithRelations[] = [
   },
 ];
 
-const actionsLiees: ActionWithScore[] = [
+const actionsLiees: Action[] = [
   {
     actionId: 'cae_1.3.1.6',
     referentiel: 'cae',
@@ -601,10 +601,14 @@ const actionsLiees: ActionWithScore[] = [
     modifiedAt: '2025-01-01T00:00:00.000Z',
     pilotes: [],
     services: [],
-    statut: 'non_renseigne',
-    desactive: false,
-    concerne: true,
+    actionType: ActionTypeEnum.ACTION,
+    questionIds: [],
     depth: 4,
+    parentId: 'cae_1.3.1',
+    childrenIds: ['cae_1.3.1.6'],
+    nextId: null,
+    previousId: null,
+    scoresTag: {},
     score: {
       actionId: 'cae_1.3.1.6',
       pointReferentiel: 1.8,
@@ -631,6 +635,8 @@ const actionsLiees: ActionWithScore[] = [
     referentiel: 'cae',
     referentielId: 'cae',
     referentielVersion: '2024-01-01',
+    actionType: ActionTypeEnum.ACTION,
+    questionIds: [],
     identifiant: '2.1.2',
     nom: 'Elaborer une stratégie patrimoniale incluant un programme de rénovation',
     description: '',
@@ -647,10 +653,12 @@ const actionsLiees: ActionWithScore[] = [
     modifiedAt: '2025-01-01T00:00:00.000Z',
     pilotes: [],
     services: [],
-    statut: 'detaille',
-    desactive: false,
-    concerne: true,
+    parentId: 'cae_2.1',
+    childrenIds: ['cae_2.1.2.1', 'cae_2.1.2.2', 'cae_2.1.2.3'],
+    nextId: null,
+    previousId: null,
     depth: 3,
+    scoresTag: {},
     score: {
       actionId: 'cae_2.1.2',
       pointReferentiel: 8,
@@ -670,6 +678,7 @@ const actionsLiees: ActionWithScore[] = [
       desactive: false,
       renseigne: true,
       avancement: 'detaille',
+      statut: 'detaille',
     },
   },
   {
@@ -693,10 +702,14 @@ const actionsLiees: ActionWithScore[] = [
     modifiedAt: '2025-01-01T00:00:00.000Z',
     pilotes: [],
     services: [],
-    statut: 'non_renseigne',
-    desactive: false,
-    concerne: true,
+    parentId: 'eci_2',
+    childrenIds: ['eci_2.1.1', 'eci_2.1.2'],
+    nextId: null,
+    previousId: null,
     depth: 2,
+    scoresTag: {},
+    actionType: ActionTypeEnum.ACTION,
+    questionIds: [],
     score: {
       actionId: 'eci_2.1',
       pointReferentiel: 0,

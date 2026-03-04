@@ -2,6 +2,7 @@ import {
   ActionDefinition,
   ActionDefinitionEssential,
   ActionTreeNode,
+  ActionType,
   ActionTypeEnum,
 } from '@tet/domain/referentiels';
 import {
@@ -64,7 +65,7 @@ describe('ReferentielsService', () => {
         },
       ];
 
-      const orderedActionTypes: ActionTypeEnum[] = [
+      const orderedActionTypes: ActionType[] = [
         ActionTypeEnum.REFERENTIEL,
         ActionTypeEnum.ACTION,
         ActionTypeEnum.SOUS_ACTION,

@@ -16,7 +16,6 @@ import {
   ActionStatutCreate,
   ActionTypeEnum,
   ReferentielId,
-  StatutAvancement,
   StatutAvancementEnum,
   TreeOfActionsIncludingScore,
 } from '@tet/domain/referentiels';
@@ -38,8 +37,9 @@ export const UPDATE_ACTION_STATUT_CHUNK_SIZE = 100;
 
 export function getActionStatusCreateForAction(
   action: TreeOfActionsIncludingScore,
-  avancement: StatutAvancement
-): Omit<ActionStatutCreate, 'collectiviteId'>[] {
+  avancement: 'fait' | 'pas_fait',
+  collectiviteId: number
+): ActionStatutCreate[] {
   if (
     (action.actionType === ActionTypeEnum.SOUS_ACTION ||
       action.actionType === ActionTypeEnum.TACHE) &&
@@ -58,7 +58,7 @@ export function getActionStatusCreateForAction(
       action.actionsEnfant.length > 0)
   ) {
     return action.actionsEnfant.flatMap((subAction) =>
-      getActionStatusCreateForAction(subAction, avancement)
+      getActionStatusCreateForAction(subAction, avancement, collectiviteId)
     );
   } else if (
     action.actionType === ActionTypeEnum.SOUS_ACTION ||
@@ -67,8 +67,8 @@ export function getActionStatusCreateForAction(
     return [
       {
         actionId: action.actionId,
-        avancement: avancement,
-        concerne: action.score.concerne,
+        statut: avancement,
+        collectiviteId,
       },
     ];
   }
@@ -80,7 +80,7 @@ async function applyAvancementToAllReferentielActions(
   trpcClient: TRPCClient<AppRouter>,
   collectiviteId: number,
   referentiel: ReferentielId,
-  avancement: StatutAvancement
+  avancement: 'fait' | 'pas_fait'
 ): Promise<void> {
   const scoreSnapshot =
     await trpcClient.referentiels.snapshots.getCurrent.query({
@@ -91,11 +91,9 @@ async function applyAvancementToAllReferentielActions(
   const actionStatusesToCreate: ActionStatutCreate[] =
     getActionStatusCreateForAction(
       scoreSnapshot.scoresPayload.scores,
-      avancement
-    ).map((actionStatus) => ({
-      ...actionStatus,
-      collectiviteId: collectiviteId,
-    }));
+      avancement,
+      collectiviteId
+    );
 
   const actionStatusesChunks = chunk(
     actionStatusesToCreate,
@@ -188,13 +186,12 @@ export async function updateAllNeedReferentielStatutsToMatchReferentielScoreCrit
                 `Action ${critere.action_id} not found in score tree`
               );
             }
-            const actionStatuses = getActionStatusCreateForAction(
-              action,
-              StatutAvancementEnum.FAIT
-            ).map((actionStatus) => ({
-              ...actionStatus,
-              collectiviteId: collectiviteId,
-            }));
+            const actionStatuses: ActionStatutCreate[] =
+              getActionStatusCreateForAction(
+                action,
+                StatutAvancementEnum.FAIT,
+                collectiviteId
+              );
             return actionStatuses;
           } else {
             return [];

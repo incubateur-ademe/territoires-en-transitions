@@ -2,13 +2,7 @@ import { PdfLinkedAction, referentielToName } from './external-types';
 import { ScoreProgressBar } from './scores/score-progress-bar';
 import { ScoreRatioBadge } from './scores/score-ratio-badge';
 
-import {
-  Card,
-  Divider,
-  Paragraph,
-  Stack,
-  Title,
-} from '../primitives';
+import { Card, Divider, Paragraph, Stack, Title } from '../primitives';
 
 type ActionLieeCardProps = {
   action: PdfLinkedAction;

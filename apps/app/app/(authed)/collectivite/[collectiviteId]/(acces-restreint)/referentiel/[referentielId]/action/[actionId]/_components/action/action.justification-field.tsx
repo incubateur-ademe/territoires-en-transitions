@@ -1,30 +1,28 @@
 'use client';
 
-import {
-  useActionCommentaire,
-  useSaveActionCommentaire,
-} from '@/app/referentiels/use-action-commentaire';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
+import { useUpdateActionExplication } from '@/app/referentiels/actions/use-update-action-explication';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Field, RichTextEditor, TextareaProps } from '@tet/ui';
 
 type Props = TextareaProps & {
-  actionId: string;
+  action: ActionListItem;
   title?: string;
   hint?: string;
   fieldClassName?: string;
 };
 
 export const ActionJustificationField = ({
-  actionId,
+  action: { actionId, score },
   title,
   hint,
   disabled,
+  placeholder,
 }: Props) => {
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
-  const { actionCommentaire, isLoading } = useActionCommentaire(actionId);
-  const { mutate: saveActionCommentaire } = useSaveActionCommentaire();
-  const initialValue = actionCommentaire?.commentaire;
+
+  const { mutate: updateActionExplication } = useUpdateActionExplication();
 
   return (
     <Field title={title} hint={hint} key={actionId} className="cursor-auto">
@@ -32,19 +30,20 @@ export const ActionJustificationField = ({
         <RichTextEditor
           dataTest={`action-${actionId}-commentaire-editor`}
           className="[&_.bn-block-content]:py-0 [&_.bn-inline-content]:text-sm [&_.bn-inline-content]:leading-[1.25rem]"
-          initialValue={initialValue}
+          initialValue={score.explication}
           disabled={
-            !hasCollectivitePermission('referentiels.mutate') ||
-            isLoading ||
-            disabled
+            !hasCollectivitePermission('referentiels.mutate') || disabled
           }
-          debounceDelayOnChange={1000}
-          placeholder="Détaillez l'état d'avancement"
-          onChange={(newValue: string) => {
-            saveActionCommentaire({
+          placeholder={placeholder ?? "Détaillez l'état d'avancement"}
+          onBlur={(htmlValue: string) => {
+            if (htmlValue.trim() === score.explication?.trim()) {
+              return;
+            }
+
+            updateActionExplication({
               actionId,
               collectiviteId,
-              commentaire: newValue ?? '',
+              commentaire: htmlValue.trim(),
             });
           }}
         />

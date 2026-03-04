@@ -13,8 +13,8 @@ export type TableLoadingProps = {
 export const TableLoading = ({ columnIds, nbOfRows = 10 }: TableLoadingProps) =>
   [...Array(nbOfRows).keys()].map((i) => (
     <TableRow key={i}>
-      {columnIds.map((columnId) => (
-        <TableCell key={columnId}>
+      {columnIds.map((columnId, index) => (
+        <TableCell key={`${columnId}-${index}`}>
           <div className="animate-pulse h-5 bg-grey-2 rounded-md" />
         </TableCell>
       ))}

@@ -1,11 +1,8 @@
 import { ActionCard } from '@/app/referentiels/actions/action.card';
-import {
-  ActionListFilters,
-  useListActions,
-} from '@/app/referentiels/actions/use-list-actions';
+import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { ActionTypeEnum } from '@tet/domain/referentiels';
+import { ActionTypeEnum, ListActionsInput } from '@tet/domain/referentiels';
 import { EmptyCard } from '@tet/ui';
 import classNames from 'classnames';
 import { DisplayOption } from './action.list';
@@ -13,7 +10,7 @@ import Axe from './axe';
 import { buildReferentiel } from './utils';
 
 type Props = {
-  filters: ActionListFilters;
+  filters: ListActionsInput;
   toggleFilters: () => void;
   display?: DisplayOption;
   showDescriptionOn: boolean;
@@ -25,7 +22,7 @@ const List = ({
   display = 'action',
   showDescriptionOn,
 }: Props) => {
-  const { data: actionList, isLoading: isLoadingActions } = useListActions({
+  const { data: actionList, isPending: isLoadingActions } = useListActions({
     ...filters,
     actionTypes:
       display === 'axe'

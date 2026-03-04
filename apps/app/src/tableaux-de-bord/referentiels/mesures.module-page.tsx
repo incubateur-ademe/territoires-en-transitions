@@ -31,7 +31,7 @@ export const MesuresModulePage = ({
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const { data, isLoading } = useListActions({
+  const { data, isPending } = useListActions({
     ...options.filtre,
     actionTypes: [ActionTypeEnum.ACTION],
   });
@@ -52,7 +52,7 @@ export const MesuresModulePage = ({
   return (
     <ModulePage title={titre} parentPage={parentPage}>
       {/** Chargement */}
-      {isLoading ? (
+      {isPending ? (
         <div className="m-auto">
           <SpinnerLoader className="w-8 h-8" />
         </div>

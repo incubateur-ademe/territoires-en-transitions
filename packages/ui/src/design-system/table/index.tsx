@@ -1,5 +1,3 @@
-import './table.css';
-
 export * from './react-table';
 export * from './table';
 export * from './table.cell';

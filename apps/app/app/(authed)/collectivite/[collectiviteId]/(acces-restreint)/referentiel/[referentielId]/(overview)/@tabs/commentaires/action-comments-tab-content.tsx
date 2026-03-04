@@ -1,35 +1,21 @@
 'use client';
 
+import ActionCommentsTabHeader from '@/app/referentiels/actions/comments/action-comments-tab.header';
+import ActionCommentFeed from '@/app/referentiels/actions/comments/action-comments.feed';
+import { useListActionComments } from '@/app/referentiels/actions/comments/hooks/use-list-action-comments';
+import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   DiscussionOrderBy,
   discussionOrderByEnum,
   DiscussionStatus,
 } from '@tet/domain/collectivites';
-import { ReferentielId } from '@tet/domain/referentiels';
-import ActionCommentsTabHeader from '../../../action/[actionId]/_components/comments/action-comments-tab.header';
 
-import { useMemo } from 'react';
-import ActionCommentFeed from '../../../action/[actionId]/_components/comments/action-comments.feed';
-import { useCommentsContent } from '../../../action/[actionId]/_components/comments/hooks/use-comments-content';
+export const ActionCommentsTabContent = () => {
+  const referentielId = useReferentielId();
+  const collectiviteId = useCollectiviteId();
 
-type Props = {
-  parentActionId?: string;
-  actionId?: string;
-  referentielId: ReferentielId;
-  actionsAndSubActionsTitleList: {
-    actionId: string;
-    identifiant: string;
-    nom: string;
-  }[];
-};
-
-export const ActionCommentsTabContent = ({
-  parentActionId,
-  actionId,
-  referentielId,
-  actionsAndSubActionsTitleList,
-}: Props) => {
   const {
     selectedAction,
     selectedStatus,
@@ -39,26 +25,13 @@ export const ActionCommentsTabContent = ({
     handleActionChange,
     displayedDiscussions,
     isPending,
-    options,
     canCreateDiscussion,
     selectedOrderBy,
-  } = useCommentsContent({
-    parentActionId,
-    actionId,
+  } = useListActionComments({
     referentielId,
-    actionsAndSubActionsTitleList,
+    collectiviteId,
     selectedOrderBy: discussionOrderByEnum.CREATED_AT,
   });
-
-  const actionsWithAllOption = useMemo(() => {
-    return [
-      {
-        label: 'Toutes les mesures',
-        value: 'all',
-      },
-      ...options,
-    ];
-  }, [options]);
 
   if (isPending) {
     return <SpinnerLoader className="m-auto" />;
@@ -80,9 +53,7 @@ export const ActionCommentsTabContent = ({
         onActionChange={(value: string | undefined) =>
           handleActionChange(value)
         }
-        actionsOptions={actionsWithAllOption}
         commentsCount={commentsCount}
-        referentielId={referentielId}
       />
 
       {/** Feed */}
@@ -93,7 +64,6 @@ export const ActionCommentsTabContent = ({
           discussions={displayedDiscussions}
           isInputDisabled={!canCreateDiscussion}
           isDisplayedAsPanel={false}
-          referentielId={referentielId}
         />
       </div>
     </div>
