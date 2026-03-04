@@ -962,3 +962,4 @@ stats/drop-old-stats-views [stats/locales stats/vues_BI] 2026-04-02T00:00:00Z Fr
 referentiel/drop-action-historique-triggers [referentiel/historique_modified_by] 2026-03-25T00:00:00Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Supprime les triggers d'historisation des statuts et commentaires, remplacés par le backend TypeScript
 
 evaluation/question_choix_formulation_not_null 2026-03-10T17:50:33Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute une contrainte NOT NULL sur question_choix.formulation
+evaluation/drop-justification-triggers 2026-03-10T17:50:33Z Marc Rutkowski <marc@attractive-media.fr> # Supprime les triggers modified_by/modified_at sur la table justification
