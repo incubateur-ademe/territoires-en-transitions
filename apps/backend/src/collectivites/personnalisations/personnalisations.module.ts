@@ -6,6 +6,8 @@ import { SetPersonnalisationReponseService } from '@tet/backend/collectivites/pe
 import { SheetModule } from '@tet/backend/utils/google-sheets/sheet.module';
 import { UsersModule } from '../../users/users.module';
 import { CollectivitesModule } from '../collectivites.module';
+import { ListPersonnalisationReponsesRepository } from './list-personnalisation-reponses/list-personnalisation-reponses.repository';
+import { ListPersonnalisationReponsesService } from './list-personnalisation-reponses/list-personnalisation-reponses.service';
 import PersonnalisationsExpressionService from './services/personnalisations-expression.service';
 import PersonnalisationsService from './services/personnalisations-service';
 import { SetPersonnalisationReponseRepository } from './set-personnalisation-reponse/set-personnalisation-reponse.repository';
@@ -19,6 +21,8 @@ import { SetPersonnalisationReponseRepository } from './set-personnalisation-rep
     ListPersonnalisationQuestionsService,
     SetPersonnalisationReponseService,
     SetPersonnalisationReponseRepository,
+    ListPersonnalisationReponsesService,
+    ListPersonnalisationReponsesRepository,
   ],
   exports: [
     PersonnalisationsExpressionService,

@@ -1,9 +1,9 @@
 import { referentielIdEnumSchema } from '@tet/domain/referentiels';
 import { z } from 'zod';
-import { getPersonnalisationReponsesRequestSchema } from './get-personnalisation-reponses.request';
+import { listPersonnalisationReponsesRequestSchema } from './list-personnalisation-reponses.request';
 
 export const getPersonnalisationConsequencesRequestSchema =
-  getPersonnalisationReponsesRequestSchema
+  listPersonnalisationReponsesRequestSchema
     .extend({
       referentiel: z.optional(referentielIdEnumSchema),
     })
