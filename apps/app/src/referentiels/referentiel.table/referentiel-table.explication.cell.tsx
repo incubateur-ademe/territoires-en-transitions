@@ -1,5 +1,6 @@
 import { CellContext } from '@tanstack/react-table';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { cn, RichTextEditor, TableCell, Tooltip } from '@tet/ui';
 import { htmlToText } from 'html-to-text';
 import { ReferentielTableRow } from './types';
@@ -11,6 +12,20 @@ type Props = {
 
 export const ReferentielTableExplicationCell = ({ info }: Props) => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
+
+  const canHaveExplication =
+    info.row.original.type === ActionTypeEnum.ACTION ||
+    info.row.original.type === ActionTypeEnum.SOUS_ACTION ||
+    info.row.original.type === ActionTypeEnum.TACHE;
+
+  if (!canHaveExplication) {
+    return (
+      <TableCell
+        className={cn(actionTypeToClassName[info.row.original.type])}
+      />
+    );
+  }
+
   return (
     <TableCell
       className={cn(actionTypeToClassName[info.row.original.type])}
@@ -18,10 +33,9 @@ export const ReferentielTableExplicationCell = ({ info }: Props) => {
       edit={{
         renderOnEdit: () => (
           <RichTextEditor
+            className="min-h-24 max-w-2xl !rounded-md"
             initialValue={info.getValue()}
-            // onChange={(value) => {
-            //   info.row.original.explication = value;
-            // }}
+            disabled
           />
         ),
       }}
