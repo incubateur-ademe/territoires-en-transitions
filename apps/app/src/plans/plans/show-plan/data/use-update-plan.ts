@@ -15,7 +15,6 @@ export const useUpdatePlan = ({
 
   const { mutateAsync } = useMutation({
     mutationFn: updatePlanMutation,
-    meta: { disableToast: true },
     onSuccess: async (data) => {
       await queryClient.invalidateQueries({
         queryKey: trpc.plans.plans.get.queryKey({ planId: data.id }),
@@ -36,7 +35,18 @@ export const useUpdatePlan = ({
     },
   });
 
+  const updatePlan = async (
+    ...args: Parameters<typeof mutateAsync>
+  ): Promise<boolean> => {
+    try {
+      await mutateAsync(...args);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   return {
-    mutate: mutateAsync,
+    mutate: updatePlan,
   };
 };
