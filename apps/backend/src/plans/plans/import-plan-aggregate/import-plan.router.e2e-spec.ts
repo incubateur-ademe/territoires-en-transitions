@@ -121,7 +121,7 @@ describe("Test import Plan d'action", () => {
     const input = await pathToInput({ pathName });
     await expect(caller.plans.plans.import(input)).rejects.toThrowError(
       `Erreur lors de la transformation des données :
- Colonne budget: Un nombre est attendu`
+ Fiche avec le titre "Ajouter caméra de surveillance au parking à vélo 2040-2044" : Colonne budget: Un nombre est attendu`
     );
   });
 
