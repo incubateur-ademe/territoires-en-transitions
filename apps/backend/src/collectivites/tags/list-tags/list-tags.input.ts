@@ -9,6 +9,7 @@ export const tagTypeSchema = z.enum([
   TagEnum.Structure,
   // TagEnum.Categorie,
   TagEnum.Libre,
+  TagEnum.InstanceGouvernance,
 ]);
 
 export const listTagsInputSchema = z.object({

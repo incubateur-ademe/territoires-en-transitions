@@ -21,6 +21,7 @@ export const TagEnum = {
   Service: 'service',
   Structure: 'structure',
   Libre: 'libre',
+  InstanceGouvernance: 'instanceGouvernance',
 } as const;
 
 export type TagType = (typeof TagEnum)[keyof typeof TagEnum];

@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { financeurTagTable } from '@tet/backend/collectivites/tags/financeur-tag.table';
+import { instanceGouvernanceTagTable } from '@tet/backend/collectivites/tags/instance-gouvernance.table';
 import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
 import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-tag.table';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
@@ -32,6 +33,7 @@ const tagTypeTable: Record<
   [TagEnum.Service]: serviceTagTable,
   [TagEnum.Structure]: structureTagTable,
   [TagEnum.Libre]: libreTagTable,
+  [TagEnum.InstanceGouvernance]: instanceGouvernanceTagTable,
 };
 
 @Injectable()

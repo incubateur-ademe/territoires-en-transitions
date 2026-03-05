@@ -8,6 +8,7 @@ export const tagTypeSchema = z.enum([
   TagEnum.Service,
   TagEnum.Structure,
   TagEnum.Libre,
+  TagEnum.InstanceGouvernance,
 ]);
 
 export const createTagInputSchema = z.object({

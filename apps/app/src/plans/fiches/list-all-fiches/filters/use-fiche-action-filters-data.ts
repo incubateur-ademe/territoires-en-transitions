@@ -1,5 +1,6 @@
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import { useListFinanceurs } from '@/app/collectivites/tags/use-list-financeurs';
+import { useListInstanceGouvernances } from '@/app/collectivites/tags/use-list-instance-gouvernances';
 import { useListLibreTags } from '@/app/collectivites/tags/use-list-libre-tags';
 import { usePartenairesListe } from '@/app/collectivites/tags/use-list-partenaires';
 import { usePersonneListe } from '@/app/collectivites/tags/use-list-personnes';
@@ -9,7 +10,6 @@ import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-pla
 import { useGetThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useMemo } from 'react';
-import { useListInstanceGouvernanceTags } from '../../show-fiche/data/use-list-instance-gouvernance-tags';
 import { NOTES_OPTIONS } from './options';
 import { FilterKeys } from './types';
 
@@ -30,9 +30,8 @@ export const useFicheActionFiltersData = () => {
   const { data: financeurs } = useListFinanceurs();
   const { data: structures } = useListStructures();
   const { data: partenaires } = usePartenairesListe();
-  const { instanceGouvernanceTags } =
-    useListInstanceGouvernanceTags(collectiviteId);
   const { data: tags } = useListLibreTags();
+  const { data: instanceGouvernanceTags } = useListInstanceGouvernances();
 
   const personneOptions = useMemo(() => {
     return (

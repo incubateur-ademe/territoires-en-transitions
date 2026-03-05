@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InstanceGouvernanceService } from '@tet/backend/collectivites/handle-instance-gouvernance/handle-instance-gouvernance.service';
 import { ListMembresService } from '@tet/backend/collectivites/membres/list-membres/list-membres.service';
 import { ListTagsService } from '@tet/backend/collectivites/tags/list-tags/list-tags.service';
 import { MutateTagService } from '@tet/backend/collectivites/tags/mutate-tag/mutate-tag.service';
@@ -17,7 +16,6 @@ import {
   deduplicateById,
   deduplicatePersons,
 } from '../utils/deduplication.utils';
-import { createInstanceGouvernanceResolver } from './instance-gouvernance.resolver';
 import { createPersonneResolver } from './personne.resolver';
 import { createTagResolver } from './tag.resolver';
 
@@ -43,8 +41,7 @@ export class ResolveEntityService {
   constructor(
     private readonly listMembresService: ListMembresService,
     private readonly listTagsService: ListTagsService,
-    private readonly mutateTagService: MutateTagService,
-    private readonly instanceGouvernanceService: InstanceGouvernanceService
+    private readonly mutateTagService: MutateTagService
   ) {}
 
   /**
@@ -105,20 +102,15 @@ export class ResolveEntityService {
       tx
     );
 
-    const instanceGouvernanceResolverResult =
-      await createInstanceGouvernanceResolver(
+    const { getOrCreate: getOrCreateInstanceGouvernance } =
+      await createTagResolver(
         collectiviteId,
-        this.instanceGouvernanceService,
-        user,
+        this.listTagsService,
+        this.mutateTagService,
+        TagEnum.InstanceGouvernance,
+        undefined,
         tx
       );
-
-    if (!instanceGouvernanceResolverResult.success) {
-      return instanceGouvernanceResolverResult;
-    }
-
-    const { getOrCreate: getOrCreateInstanceGouvernance } =
-      instanceGouvernanceResolverResult.data;
 
     const resolvers = {
       getOrCreatePersonne,

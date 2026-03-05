@@ -4,10 +4,9 @@ import { useGetThematiqueAndSousThematiqueOptions } from '@/app/ui/dropdownLists
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
 import { FormSectionGrid } from '@tet/ui';
 
+import { SelectInstanceGouvernanceCombobox } from '@/app/collectivites/tags/instance-gouvernance.dropdown';
 import SelectLibreTagsCombobox from '@/app/collectivites/tags/select-libre-tags.combobox';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { InstanceGouvernanceDropdown } from '@/app/plans/fiches/shared/dropdowns/instance-gouvernance.dropdown';
-import { useCollectiviteId } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { RichTextEditor, SelectFilter } from '@tet/ui';
 import { Controller, useForm } from 'react-hook-form';
@@ -37,7 +36,6 @@ export const FicheDescriptionForm = ({
   onSubmit: (fiche: FicheUpdatePayload) => void;
   formId: string;
 }) => {
-  const collectiviteId = useCollectiviteId();
   const { handleSubmit, register, control, setValue, watch } =
     useForm<FicheWithRelations>({
       defaultValues: fiche,
@@ -165,11 +163,9 @@ export const FicheDescriptionForm = ({
             control={control}
             name="instanceGouvernance"
             render={({ field }) => (
-              <InstanceGouvernanceDropdown
-                collectiviteId={collectiviteId}
-                values={field.value?.map((t) => t.id) ?? null}
-                onChange={(tags) => field.onChange(tags)}
-                ficheId={fiche.id}
+              <SelectInstanceGouvernanceCombobox
+                values={field.value?.map((t) => t.id) ?? []}
+                onChange={({ values }) => field.onChange(values)}
               />
             )}
           />

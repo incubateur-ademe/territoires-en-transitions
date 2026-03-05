@@ -1,10 +1,10 @@
+import { SelectInstanceGouvernanceCombobox } from '@/app/collectivites/tags/instance-gouvernance.dropdown';
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import SelectPartenairesCombobox from '@/app/collectivites/tags/select-partenaires.combobox';
 import SelectPersonnesCombobox from '@/app/collectivites/tags/select-personnes.combobox';
 import SelectServicesPilotesCombobox from '@/app/collectivites/tags/select-service-pilotes.combobox';
 import SelectStructuresCombobox from '@/app/collectivites/tags/select-structures.combobox';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import { InstanceGouvernanceDropdown } from '@/app/plans/fiches/shared/dropdowns/instance-gouvernance.dropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import { ficheActionParticipationOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -149,11 +149,9 @@ export const Acteurs = (): JSX.Element => {
             value={formatList(field.value, (t) => t.nom)}
             isReadonly={isReadonly}
             renderOnEdit={() => (
-              <InstanceGouvernanceDropdown
-                collectiviteId={fiche.collectiviteId}
+              <SelectInstanceGouvernanceCombobox
                 values={field.value?.map((t) => t.id) ?? []}
                 onChange={(tags) => field.onChange(tags)}
-                ficheId={fiche.id}
               />
             )}
           />

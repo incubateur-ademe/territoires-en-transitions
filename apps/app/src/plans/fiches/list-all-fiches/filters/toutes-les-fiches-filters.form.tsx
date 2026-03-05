@@ -1,3 +1,4 @@
+import { SelectInstanceGouvernanceCombobox } from '@/app/collectivites/tags/instance-gouvernance.dropdown';
 import {
   getPilotesValues,
   getReferentsValues,
@@ -11,7 +12,6 @@ import SelectPersonnesCombobox from '@/app/collectivites/tags/select-personnes.c
 import SelectServicesPilotesCombobox from '@/app/collectivites/tags/select-service-pilotes.combobox';
 import SelectStructuresCombobox from '@/app/collectivites/tags/select-structures.combobox';
 import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
-import { InstanceGouvernanceDropdown } from '@/app/plans/fiches/shared/dropdowns/instance-gouvernance.dropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import { NoteYearsDropdown } from '@/app/ui/dropdownLists/ficheAction/notes/note-years.dropdown';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
@@ -212,11 +212,12 @@ export const ToutesLesFichesFiltersForm = ({
                 name="instanceGouvernanceIds"
                 control={control}
                 render={({ field }) => (
-                  <InstanceGouvernanceDropdown
-                    collectiviteId={collectiviteId}
+                  <SelectInstanceGouvernanceCombobox
                     values={field.value}
-                    onChange={(tags) => field.onChange(tags.map((t) => t.id))}
-                    canEditTags={false}
+                    onChange={({ values }) =>
+                      field.onChange(values.map((t) => t.id))
+                    }
+                    disableEdition={true}
                   />
                 )}
               />
