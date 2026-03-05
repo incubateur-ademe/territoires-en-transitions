@@ -16,11 +16,10 @@ import {
   TableHeaderCell,
   TableLoading,
   TableRow,
-  Tooltip,
 } from '@tet/ui';
-import { htmlToText } from 'html-to-text';
 import React, { useEffect, useState } from 'react';
 import { ReferentielTableCommentairesCell } from './referentiel-table.commentaires.cell';
+import { ReferentielTableExplicationCell } from './referentiel-table.explication.cell';
 import { ReferentielTableNotificationCell } from './referentiel-table.notification.cell';
 import { ReferentielTablePersonnesPilotesCell } from './referentiel-table.personnes-pilotes.cell';
 import { ReferentielTablePointsCell } from './referentiel-table.points.cell';
@@ -224,12 +223,7 @@ const columns = [
         titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
       />
     ),
-    cell: (info) => (
-      <ReferentielTableStatutCell
-        statut={info.getValue()}
-        actionType={info.row.original.type}
-      />
-    ),
+    cell: (info) => <ReferentielTableStatutCell info={info} />,
   }),
   columnHelper.accessor('explication', {
     header: () => (
@@ -238,15 +232,7 @@ const columns = [
         className={cn('w-[32rem]', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
       />
     ),
-    cell: (info) => (
-      <TableCell className={cn(actionTypeToClassName[info.row.original.type])}>
-        <Tooltip label={htmlToText(info.getValue() ?? '')}>
-          <span className="line-clamp-1">
-            {htmlToText(info.getValue() ?? '')}
-          </span>
-        </Tooltip>
-      </TableCell>
-    ),
+    cell: (info) => <ReferentielTableExplicationCell info={info} />,
   }),
   columnHelper.accessor('personnesPilotes', {
     header: () => (
@@ -255,12 +241,7 @@ const columns = [
         className={cn('w-56', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
       />
     ),
-    cell: (info) => (
-      <ReferentielTablePersonnesPilotesCell
-        pilotes={info.getValue()}
-        actionType={info.row.original.type}
-      />
-    ),
+    cell: (info) => <ReferentielTablePersonnesPilotesCell info={info} />,
   }),
   columnHelper.accessor('servicesPilotes', {
     header: () => (
@@ -269,12 +250,7 @@ const columns = [
         className={cn('w-56', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
       />
     ),
-    cell: (info) => (
-      <ReferentielTableServicesPilotesCell
-        services={info.getValue()}
-        actionType={info.row.original.type}
-      />
-    ),
+    cell: (info) => <ReferentielTableServicesPilotesCell info={info} />,
   }),
   columnHelper.accessor('countDocuments', {
     header: () => (
@@ -326,9 +302,7 @@ const columns = [
         className={cn('w-32', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
       />
     ),
-    cell: (info) => (
-      <ReferentielTableCommentairesCell info={info.row.original} />
-    ),
+    cell: (info) => <ReferentielTableCommentairesCell info={info} />,
   }),
 ];
 
