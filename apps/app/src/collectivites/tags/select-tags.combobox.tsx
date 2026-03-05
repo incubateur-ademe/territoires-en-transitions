@@ -7,15 +7,18 @@ import {
   SelectFilter,
   SelectMultipleProps,
 } from '@tet/ui';
-import { useDeleteTag, useTagCreate, useTagUpdate } from '.';
-type SelectTagsProps = Omit<
+import { useCreateTag } from './use-create-tag';
+import { useDeleteTag } from './use-delete-tag';
+import { useUpdateTag } from './use-update-tag';
+
+export type SelectTagsComboboxProps = Omit<
   SelectMultipleProps,
   'options' | 'onChange' | 'placeholder'
 > & {
+  values?: number[];
   tagType: TagType;
   optionsListe?: TagWithCollectiviteId[];
   userCreatedOptionsIds?: number[];
-  disableOptionsForOtherCollectivites?: boolean;
   disabledOptionsIds?: number[];
   refetchOptions: () => void;
   onChange: ({
@@ -30,18 +33,17 @@ type SelectTagsProps = Omit<
   disableEdition?: boolean;
 };
 
-const SelectTags = ({
+export const SelectTagsCombobox = ({
   tagType,
   optionsListe,
   userCreatedOptionsIds,
-  disableOptionsForOtherCollectivites,
   disabledOptionsIds,
   refetchOptions,
   optionsAreCaseSensitive = true,
   placeholder,
   disableEdition = false,
   ...props
-}: SelectTagsProps) => {
+}: SelectTagsComboboxProps) => {
   const collectivite = useCurrentCollectivite();
   const collectiviteId = collectivite.collectiviteId;
   // Liste d'options pour le select
@@ -56,10 +58,7 @@ const SelectTags = ({
       opt.collectiviteId && opt.collectiviteId !== collectiviteId
         ? 'text-success-1'
         : undefined,
-    disabled:
-      disabledOptionsIds?.includes(opt.id) ||
-      (disableOptionsForOtherCollectivites &&
-        opt.collectiviteId !== collectiviteId),
+    disabled: disabledOptionsIds?.includes(opt.id),
   }));
 
   // Ids des options pour le createProps
@@ -79,7 +78,7 @@ const SelectTags = ({
   // Ajout d'un nouveau tag à la liste d'options
   // ***
 
-  const { mutate: createTag } = useTagCreate({
+  const { mutate: createTag } = useCreateTag({
     tagType,
     onSuccess: refetchOptions,
   });
@@ -104,7 +103,7 @@ const SelectTags = ({
   // Mise à jour d'un tag de la liste d'options
   // ***
 
-  const { mutate: updateTag } = useTagUpdate({
+  const { mutate: updateTag } = useUpdateTag({
     tagType,
     onSuccess: refetchOptions,
   });
@@ -165,5 +164,3 @@ const SelectTags = ({
     />
   );
 };
-
-export default SelectTags;

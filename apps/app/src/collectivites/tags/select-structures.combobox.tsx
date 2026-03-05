@@ -1,12 +1,9 @@
 import { TagEnum, TagWithCollectiviteId } from '@tet/domain/collectivites';
 import { SelectMultipleProps } from '@tet/ui';
-import SelectTags from '../tags/SelectTags';
-import { useStructuresListe } from './useStructuresListe';
+import { SelectTagsCombobox } from './select-tags.combobox';
+import { useListTags } from './use-list-tags';
 
-type StructuresDropdownProps = Omit<
-  SelectMultipleProps,
-  'values' | 'onChange' | 'options'
-> & {
+type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   values?: number[];
   /**
    * Si spécifié, on récupère les tags de toutes ces collectivités et pas uniquement de la collectivité courante
@@ -21,11 +18,14 @@ type StructuresDropdownProps = Omit<
   }) => void;
 };
 
-const StructuresDropdown = (props: StructuresDropdownProps) => {
-  const { data, refetch } = useStructuresListe(props.collectiviteIds);
+const SelectStructuresCombobox = (props: Props) => {
+  const { data, refetch } = useListTags({
+    tagType: TagEnum.Structure,
+    collectiviteIds: props.collectiviteIds,
+  });
 
   return (
-    <SelectTags
+    <SelectTagsCombobox
       {...props}
       placeholder={(isEditionAllowed) =>
         `Sélectionner ${
@@ -45,4 +45,4 @@ const StructuresDropdown = (props: StructuresDropdownProps) => {
   );
 };
 
-export default StructuresDropdown;
+export default SelectStructuresCombobox;

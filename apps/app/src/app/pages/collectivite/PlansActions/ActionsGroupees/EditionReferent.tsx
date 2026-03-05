@@ -1,7 +1,7 @@
+import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import SelectPersonnesCombobox from '@/app/collectivites/tags/select-personnes.combobox';
 import { BulkEditRequest } from '@/app/plans/fiches/list-all-fiches/data/use-bulk-fiches-edit';
 import FranceIcon from '@/app/plans/plans/components/france-icon.svg';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
 import { Button, Event, Field, useEventTracker } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
@@ -48,14 +48,14 @@ const ModaleEditionReferent = ({
     >
       <>
         <Field title="Ajouter un·e élu·e référent·e" className="col-span-2">
-          <PersonnesDropdown
+          <SelectPersonnesCombobox
             values={referentsToAdd?.map((r) => getPersonneStringId(r))}
             placeholder="Sélectionnez ou créez un·e élu·e référent·e"
             onChange={({ personnes }) => setReferentsToAdd(personnes)}
           />
         </Field>
         <Field title="Dissocier un·e élu·e référent·e" className="col-span-2">
-          <PersonnesDropdown
+          <SelectPersonnesCombobox
             disableEdition
             values={referentsToRemove?.map((r) => getPersonneStringId(r))}
             placeholder="Sélectionnez un ou plusieurs élu·e·s référent·e·s"

@@ -1,10 +1,10 @@
+import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import SelectPartenairesCombobox from '@/app/collectivites/tags/select-partenaires.combobox';
+import SelectPersonnesCombobox from '@/app/collectivites/tags/select-personnes.combobox';
+import SelectServicesPilotesCombobox from '@/app/collectivites/tags/select-service-pilotes.combobox';
+import SelectStructuresCombobox from '@/app/collectivites/tags/select-structures.combobox';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
-import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
-import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import ParticipationCitoyenneDropdown from '@/app/ui/dropdownLists/ficheAction/ParticipationCitoyenneDropdown/ParticipationCitoyenneDropdown';
 import { FicheWithRelations } from '@tet/domain/plans';
@@ -61,7 +61,7 @@ const ModaleActeurs = ({ isOpen, setIsOpen, fiche }: ModaleActeursProps) => {
         <FormSectionGrid formSectionId={descriptionId}>
           {/* Directions ou services pilote */}
           <Field title="Direction ou service pilote">
-            <ServicesPilotesDropdown
+            <SelectServicesPilotesCombobox
               placeholder="Sélectionnez ou créez un pilote"
               collectiviteIds={allFicheCollectiviteIds}
               values={editedFiche.services?.map((s) => s.id)}
@@ -76,7 +76,7 @@ const ModaleActeurs = ({ isOpen, setIsOpen, fiche }: ModaleActeursProps) => {
 
           {/* Structures pilote */}
           <Field title="Structure pilote">
-            <StructuresDropdown
+            <SelectStructuresCombobox
               values={editedFiche.structures?.map((s) => s.id)}
               collectiviteIds={allFicheCollectiviteIds}
               onChange={({ structures }) =>
@@ -90,7 +90,7 @@ const ModaleActeurs = ({ isOpen, setIsOpen, fiche }: ModaleActeursProps) => {
 
           {/* Élu·e référent·e */}
           <Field title="Élu·e référent·e">
-            <PersonnesDropdown
+            <SelectPersonnesCombobox
               values={editedFiche.referents?.map((r) => getPersonneStringId(r))}
               collectiviteIds={allFicheCollectiviteIds}
               placeholder="Sélectionnez ou créez un·e élu·e référent·e"
@@ -105,7 +105,7 @@ const ModaleActeurs = ({ isOpen, setIsOpen, fiche }: ModaleActeursProps) => {
 
           {/* Partenaires */}
           <Field title="Partenaires">
-            <PartenairesDropdown
+            <SelectPartenairesCombobox
               values={editedFiche.partenaires?.map((p) => p.id)}
               collectiviteIds={allFicheCollectiviteIds}
               onChange={({ partenaires }) =>

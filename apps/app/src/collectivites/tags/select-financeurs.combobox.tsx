@@ -1,12 +1,9 @@
 import { TagEnum, TagWithCollectiviteId } from '@tet/domain/collectivites';
 import { SelectMultipleProps } from '@tet/ui';
-import SelectTags from '../tags/SelectTags';
-import { useFinanceursListe } from './useFinanceursListe';
+import { SelectTagsCombobox } from './select-tags.combobox';
+import { useListFinanceurs } from './use-list-financeurs';
 
-type FinanceursDropdownProps = Omit<
-  SelectMultipleProps,
-  'values' | 'onChange' | 'options'
-> & {
+type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   /**
    * Si spécifié, on récupère les financeurs de toutes ces collectivités et pas uniquement de la collectivité courante
    */
@@ -22,11 +19,13 @@ type FinanceursDropdownProps = Omit<
   }) => void;
 };
 
-const FinanceursDropdown = (props: FinanceursDropdownProps) => {
-  const { data, refetch } = useFinanceursListe(props.collectiviteIds);
+const SelectFinanceursCombobox = (props: Props) => {
+  const { data, refetch } = useListFinanceurs({
+    collectiviteIds: props.collectiviteIds,
+  });
 
   return (
-    <SelectTags
+    <SelectTagsCombobox
       {...props}
       tagType={TagEnum.Financeur}
       optionsListe={data}
@@ -45,4 +44,4 @@ const FinanceursDropdown = (props: FinanceursDropdownProps) => {
   );
 };
 
-export default FinanceursDropdown;
+export default SelectFinanceursCombobox;

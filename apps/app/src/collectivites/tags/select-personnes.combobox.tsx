@@ -1,7 +1,7 @@
+import { useCreateTag } from '@/app/collectivites/tags/use-create-tag';
+import { useDeleteTag } from '@/app/collectivites/tags/use-delete-tag';
+import { useUpdateTag } from '@/app/collectivites/tags/use-update-tag';
 import { SHARE_ICON } from '@/app/plans/fiches/share-fiche/fiche-share-info';
-import { useTagCreate } from '@/app/ui/dropdownLists/tags/useTagCreate';
-import { useDeleteTag } from '@/app/ui/dropdownLists/tags/useTagDelete';
-import { useTagUpdate } from '@/app/ui/dropdownLists/tags/useTagUpdate';
 import { useQueryClient } from '@tanstack/react-query';
 import { RouterOutput, useTRPC } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -13,8 +13,8 @@ import {
   SelectMultipleProps,
 } from '@tet/ui';
 import { useEffect } from 'react';
-import { usePersonneListe } from './usePersonneListe';
-import { getPersonneStringId } from './utils';
+import { getPersonneStringId } from './personnes.utils';
+import { usePersonneListe } from './use-list-personnes';
 
 type Tag = RouterOutput['collectivites']['personnes']['list'][number];
 
@@ -36,7 +36,7 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
 };
 
 /** Sélecteur de personnes de la collectivité */
-const PersonnesDropdown = ({
+const SelectPersonnesCombobox = ({
   collectiviteIds,
   disabledOptionsIds,
   disableEdition = false,
@@ -84,7 +84,7 @@ const PersonnesDropdown = ({
       values?.some((v) => v === getPersonneStringId(p))
     ) ?? [];
 
-  const { mutate: updateTag } = useTagUpdate({
+  const { mutate: updateTag } = useUpdateTag({
     tagType: TagEnum.Personne,
     onSuccess: () => {
       refetch();
@@ -98,7 +98,7 @@ const PersonnesDropdown = ({
     },
   });
 
-  const { data: newTag, mutate: createTag } = useTagCreate({
+  const { data: newTag, mutate: createTag } = useCreateTag({
     tagType: TagEnum.Personne,
     onSuccess: () => {
       refetch();
@@ -191,4 +191,4 @@ const PersonnesDropdown = ({
   );
 };
 
-export default PersonnesDropdown;
+export default SelectPersonnesCombobox;

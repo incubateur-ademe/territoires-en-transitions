@@ -1,6 +1,6 @@
 'use client';
 import { usePlanTypeListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import SelectPersonnesCombobox from '@/app/collectivites/tags/select-personnes.combobox';
 import { Personne } from '@tet/domain/collectivites';
 import { AggregatedBudget } from '@tet/domain/plans';
 import {
@@ -236,7 +236,7 @@ const PlanMetadataItemPersonne = ({
       disabled={isReadOnly}
       renderOnEdit={({ openState }) => {
         return (
-          <PersonnesDropdown
+          <SelectPersonnesCombobox
             dataTest={`${dataTest}-dropdown`}
             buttonClassName="border-none"
             values={personnes

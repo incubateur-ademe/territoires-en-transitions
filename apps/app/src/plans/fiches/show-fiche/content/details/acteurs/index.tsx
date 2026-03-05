@@ -1,10 +1,10 @@
+import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import SelectPartenairesCombobox from '@/app/collectivites/tags/select-partenaires.combobox';
+import SelectPersonnesCombobox from '@/app/collectivites/tags/select-personnes.combobox';
+import SelectServicesPilotesCombobox from '@/app/collectivites/tags/select-service-pilotes.combobox';
+import SelectStructuresCombobox from '@/app/collectivites/tags/select-structures.combobox';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { InstanceGouvernanceDropdown } from '@/app/plans/fiches/shared/dropdowns/instance-gouvernance.dropdown';
-import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
-import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import { ficheActionParticipationOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -79,7 +79,7 @@ export const Acteurs = (): JSX.Element => {
             value={formatList(field.value, (s) => s.nom)}
             isReadonly={isReadonly}
             renderOnEdit={({ openState }) => (
-              <ServicesPilotesDropdown
+              <SelectServicesPilotesCombobox
                 openState={openState}
                 placeholder="Sélectionnez ou créez un pilote"
                 collectiviteIds={allFicheCollectiviteIds}
@@ -102,7 +102,7 @@ export const Acteurs = (): JSX.Element => {
             value={formatList(field.value, (s) => s.nom)}
             isReadonly={isReadonly}
             renderOnEdit={({ openState }) => (
-              <StructuresDropdown
+              <SelectStructuresCombobox
                 openState={openState}
                 values={field.value?.map((s) => s.id) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
@@ -125,7 +125,7 @@ export const Acteurs = (): JSX.Element => {
             value={formatList(field.value, (r) => r.nom || 'Sans nom')}
             isReadonly={isReadonly}
             renderOnEdit={({ openState }) => (
-              <PersonnesDropdown
+              <SelectPersonnesCombobox
                 openState={openState}
                 values={field.value?.map((r) => getPersonneStringId(r)) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}
@@ -170,7 +170,7 @@ export const Acteurs = (): JSX.Element => {
             value={formatList(field.value, (p) => p.nom)}
             isReadonly={isReadonly}
             renderOnEdit={({ openState }) => (
-              <PartenairesDropdown
+              <SelectPartenairesCombobox
                 openState={openState}
                 values={field.value?.map((p) => p.id) ?? []}
                 collectiviteIds={allFicheCollectiviteIds}

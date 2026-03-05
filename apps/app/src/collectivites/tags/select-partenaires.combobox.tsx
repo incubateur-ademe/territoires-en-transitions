@@ -1,12 +1,9 @@
 import { TagEnum, TagWithCollectiviteId } from '@tet/domain/collectivites';
 import { SelectMultipleProps } from '@tet/ui';
-import SelectTags from '../tags/SelectTags';
-import { usePartenairesListe } from './usePartenairesListe';
+import { SelectTagsCombobox } from './select-tags.combobox';
+import { usePartenairesListe } from './use-list-partenaires';
 
-type PartenairesDropdownProps = Omit<
-  SelectMultipleProps,
-  'values' | 'onChange' | 'options'
-> & {
+type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   values?: number[];
   /**
    * Si spécifié, on récupère les tags de toutes ces collectivités et pas uniquement de la collectivité courante
@@ -21,11 +18,11 @@ type PartenairesDropdownProps = Omit<
   }) => void;
 };
 
-const PartenairesDropdown = (props: PartenairesDropdownProps) => {
+const SelectPartenairesCombobox = (props: Props) => {
   const { data, refetch } = usePartenairesListe(props.collectiviteIds);
 
   return (
-    <SelectTags
+    <SelectTagsCombobox
       {...props}
       placeholder={(isEditionAllowed) =>
         `Sélectionner ${isEditionAllowed ? 'ou créer ' : ''}un partenaire`
@@ -43,4 +40,4 @@ const PartenairesDropdown = (props: PartenairesDropdownProps) => {
   );
 };
 
-export default PartenairesDropdown;
+export default SelectPartenairesCombobox;

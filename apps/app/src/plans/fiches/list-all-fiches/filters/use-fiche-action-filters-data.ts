@@ -1,11 +1,11 @@
+import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import { useListFinanceurs } from '@/app/collectivites/tags/use-list-financeurs';
+import { useListLibreTags } from '@/app/collectivites/tags/use-list-libre-tags';
+import { usePartenairesListe } from '@/app/collectivites/tags/use-list-partenaires';
+import { usePersonneListe } from '@/app/collectivites/tags/use-list-personnes';
+import { useServicesPilotesListe } from '@/app/collectivites/tags/use-list-service-pilotes';
+import { useListStructures } from '@/app/collectivites/tags/use-list-structures';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
-import { useFinanceursListe } from '@/app/ui/dropdownLists/FinanceursDropdown/useFinanceursListe';
-import { usePartenairesListe } from '@/app/ui/dropdownLists/PartenairesDropdown/usePartenairesListe';
-import { usePersonneListe } from '@/app/ui/dropdownLists/PersonnesDropdown/usePersonneListe';
-import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
-import { useServicesPilotesListe } from '@/app/ui/dropdownLists/ServicesPilotesDropdown/useServicesPilotesListe';
-import { useStructuresListe } from '@/app/ui/dropdownLists/StructuresDropdown/useStructuresListe';
-import { useTagsSuiviPersoListe } from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/useTagsSuiviPersoListe';
 import { useGetThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useMemo } from 'react';
@@ -19,6 +19,7 @@ export type LookupConfig = {
   valueKey: string;
   fallbackLabel?: string;
 };
+
 export const useFicheActionFiltersData = () => {
   const collectiviteId = useCollectiviteId();
 
@@ -26,12 +27,12 @@ export const useFicheActionFiltersData = () => {
   const { plans } = useListPlans(collectiviteId);
   const { data: services } = useServicesPilotesListe();
   const { thematiqueListe } = useGetThematiqueOptions();
-  const { data: financeurs } = useFinanceursListe();
-  const { data: structures } = useStructuresListe();
+  const { data: financeurs } = useListFinanceurs();
+  const { data: structures } = useListStructures();
   const { data: partenaires } = usePartenairesListe();
-  const { data: tags } = useTagsSuiviPersoListe();
   const { instanceGouvernanceTags } =
     useListInstanceGouvernanceTags(collectiviteId);
+  const { data: tags } = useListLibreTags();
 
   const personneOptions = useMemo(() => {
     return (

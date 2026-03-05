@@ -1,14 +1,13 @@
 import { TagEnum, TagWithCollectiviteId } from '@tet/domain/collectivites';
 import { SelectMultipleProps } from '@tet/ui';
-import SelectTags from '../tags/SelectTags';
-import { useServicesPilotesListe } from './useServicesPilotesListe';
+import { SelectTagsCombobox } from './select-tags.combobox';
+import { useServicesPilotesListe } from './use-list-service-pilotes';
 
-type ServicesPilotesDropdownProps = Omit<
+type SelectServicesPilotesComboboxProps = Omit<
   SelectMultipleProps,
   'values' | 'onChange' | 'options'
 > & {
   values?: number[];
-  disableOptionsForOtherCollectivites?: boolean;
 
   /**
    * Si spécifié, on récupère les tags de toutes ces collectivités et pas uniquement de la collectivité courante
@@ -25,11 +24,13 @@ type ServicesPilotesDropdownProps = Omit<
   disableEdition?: boolean;
 };
 
-const ServicesPilotesDropdown = (props: ServicesPilotesDropdownProps) => {
+const SelectServicesPilotesCombobox = (
+  props: SelectServicesPilotesComboboxProps
+) => {
   const { data, refetch } = useServicesPilotesListe(props.collectiviteIds);
 
   return (
-    <SelectTags
+    <SelectTagsCombobox
       {...props}
       dataTest={props.dataTest ?? 'ServicePilote'}
       tagType={TagEnum.Service}
@@ -45,4 +46,4 @@ const ServicesPilotesDropdown = (props: ServicesPilotesDropdownProps) => {
   );
 };
 
-export default ServicesPilotesDropdown;
+export default SelectServicesPilotesCombobox;

@@ -3,54 +3,50 @@ import { RouterInput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { TagType, TagWithCollectiviteId } from '@tet/domain/collectivites';
 
-type TagInput = Omit<
-  RouterInput['collectivites']['tags']['update'],
-  'collectiviteId' | 'tagType'
->;
+type TagInput = Pick<RouterInput['collectivites']['tags']['create'], 'nom'>;
 
 type Args = {
   tagType: TagType;
   onSuccess?: () => void;
 };
 
-export const useTagUpdate = ({ tagType, onSuccess }: Args) => {
+export const useCreateTag = ({ tagType, onSuccess }: Args) => {
   const queryClient = useQueryClient();
   const trpc = useTRPC();
   const collectiviteId = useCollectiviteId();
 
-  const { mutateAsync: updateTagMutation } = useMutation(
-    trpc.collectivites.tags.update.mutationOptions()
+  const { mutateAsync: createTagMutation } = useMutation(
+    trpc.collectivites.tags.create.mutationOptions()
   );
 
   return useMutation({
     mutationFn: async (tag: TagInput) => {
-      return await updateTagMutation({
+      return await createTagMutation({
         tagType,
-        id: tag.id,
         nom: tag.nom,
         collectiviteId,
       });
     },
-
     onMutate: async (tag) => {
       const listTagsQueryKey = trpc.collectivites.tags.list.queryKey({
         collectiviteId,
         tagType,
       });
-      await queryClient.cancelQueries({ queryKey: listTagsQueryKey });
+
+      await queryClient.cancelQueries({
+        queryKey: listTagsQueryKey,
+      });
 
       const previousdata: TagWithCollectiviteId[] | undefined =
         queryClient.getQueryData(listTagsQueryKey);
 
       queryClient.setQueryData(listTagsQueryKey, (old) => {
-        return old
-          ? old.map((v) => (v.id === tag.id ? { ...v, ...tag } : v))
-          : [];
+        const newTag = { ...tag, collectiviteId, id: -1 };
+        return old ? [newTag, ...old] : [newTag];
       });
 
       return { previousdata };
     },
-
     onSettled: (data, err, args, context) => {
       const listTagsQueryKey = trpc.collectivites.tags.list.queryKey({
         collectiviteId,
@@ -63,7 +59,6 @@ export const useTagUpdate = ({ tagType, onSuccess }: Args) => {
 
       queryClient.invalidateQueries({ queryKey: listTagsQueryKey });
     },
-
     onSuccess: () => onSuccess?.(),
   });
 };

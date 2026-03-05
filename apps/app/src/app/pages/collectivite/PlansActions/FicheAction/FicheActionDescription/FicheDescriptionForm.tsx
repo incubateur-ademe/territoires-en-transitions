@@ -1,10 +1,10 @@
 import { Field, Input } from '@tet/ui';
 
-import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import { useGetThematiqueAndSousThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
 import { FormSectionGrid } from '@tet/ui';
 
+import SelectLibreTagsCombobox from '@/app/collectivites/tags/select-libre-tags.combobox';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { InstanceGouvernanceDropdown } from '@/app/plans/fiches/shared/dropdowns/instance-gouvernance.dropdown';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -127,10 +127,10 @@ export const FicheDescriptionForm = ({
             control={control}
             name="libreTags"
             render={({ field }) => (
-              <TagsSuiviPersoDropdown
+              <SelectLibreTagsCombobox
                 collectiviteIds={getFicheAllEditorCollectiviteIds(fiche)}
                 values={(field.value ?? []).map((t) => t.id)}
-                onChange={({ libresTag }) => field.onChange(libresTag)}
+                onChange={({ values }) => field.onChange(values)}
               />
             )}
           />
