@@ -117,6 +117,29 @@ async listAxes(
 
 On fait le compromis ici de co-localiser la définition des codes erreur internes avec la définition des erreurs tRPC associées pour simplifier la maintenance et la lisibilité.
 
+### Erreurs normalisées dans le cadre des transactions
+
+Lorsqu'un service utilise une **transaction** (ex: `db.transaction()`), le `throw` reste le mécanisme naturel pour interrompre la transaction et provoquer le rollback. On ne peut pas simplement retourner un `Result` en cas d'erreur car la transaction doit être abandonnée.
+
+Dans ce cas, on adopte un pattern hybride :
+
+1. **À l'intérieur de la transaction** : on lance des `DomainError(code)` pour transporter les codes d'erreur métier typés.
+2. **Au niveau du catch** : on utilise `normalizeCaughtError()` pour convertir l'exception en `Result` — si c'est une `DomainError` avec un code reconnu, on le conserve ; sinon on renvoie une erreur par défaut (ex: `DATABASE_ERROR`).
+
+```typescript
+// Exemple : service avec transaction
+return executeInTransaction().catch((error) => {
+  const normalizedError = normalizeCaughtError(
+    error,
+    SetPersonnalisationReponseErrorEnum,
+    SetPersonnalisationReponseErrorEnum.DATABASE_ERROR
+  );
+  return { success: false, error: normalizedError };
+});
+```
+
+Voir les utilitaires : `DomainError` (`@tet/backend/utils/domain-error`) et `normalizeCaughtError` (`@tet/backend/utils/normalize-caught-error`).
+
 ## Conséquences
 
 ### Bénéfices
