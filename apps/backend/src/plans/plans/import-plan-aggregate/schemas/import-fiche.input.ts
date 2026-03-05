@@ -70,8 +70,23 @@ const numberSchema = z.coerce
   .number({ message: 'Un nombre est attendu' })
   .optional();
 
-const dateSchema = z.coerce
-  .date({ message: 'Une date est attendue' })
+/** Parses DD/MM/YYYY or DD-MM-YYYY (e.g. from Excel) to ISO YYYY-MM-DD so new Date() accepts it. */
+const toISODateString = (val: unknown): unknown => {
+  if (typeof val !== 'string' || !val.trim()) return val;
+  const parts = val.trim().split(/[/-]/);
+  if (parts.length !== 3) return val;
+  const [d, m, y] = parts;
+  if (d.length <= 2 && m.length <= 2 && y.length === 4) {
+    return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+  }
+  return val;
+};
+
+const dateSchema = z
+  .preprocess(
+    toISODateString,
+    z.coerce.date({ message: 'Une date est attendue' })
+  )
   .optional();
 
 const listSchema = z
@@ -109,7 +124,10 @@ export const importFicheInputSchema = z.object({
   id: z.number().optional(),
   axisPath: z.array(z.string()).optional(),
   titre: titleSchema.pipe(
-    z.string().min(1, { message: 'Le titre est obligatoire' })
+    z
+      .string()
+      .min(1, { message: 'Le titre est obligatoire' })
+      .max(300, { message: 'Le titre ne peut pas dépasser 300 caractères' })
   ),
   description: optionalTextSchema,
   gouvernance: optionalTextSchema,
@@ -192,8 +210,12 @@ export const parseImportedFiche = async (
     path: err.path.join('.'),
     message: err.message,
   }));
-
   return failure(
-    errors.map((e) => `Colonne ${e.path}: ${e.message}`).join('\n')
+    errors
+      .map(
+        (e) =>
+          `Fiche avec le titre "${data.titre}" : Colonne ${e.path}: ${e.message}`
+      )
+      .join('\n')
   );
 };
