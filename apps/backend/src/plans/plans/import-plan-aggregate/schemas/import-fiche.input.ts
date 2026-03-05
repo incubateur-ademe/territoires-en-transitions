@@ -70,7 +70,9 @@ const numberSchema = z.coerce
   .number({ message: 'Un nombre est attendu' })
   .optional();
 
-const dateSchema = z.coerce.date().optional();
+const dateSchema = z.coerce
+  .date({ message: 'Une date est attendue' })
+  .optional();
 
 const listSchema = z
   .preprocess(richTextPreprocessor, z.string())
@@ -100,7 +102,7 @@ export const financeurSchema = z.object({
     .string()
     .transform((val) => cleanText(val))
     .default(''),
-  montant: z.number(),
+  montant: z.number({ message: 'Un montant est attendu' }),
 });
 
 export const importFicheInputSchema = z.object({
