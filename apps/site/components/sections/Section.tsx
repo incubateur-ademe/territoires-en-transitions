@@ -14,7 +14,7 @@ const Section = ({
   containerClassName = '',
   className = '',
 }: SectionProps): JSX.Element => (
-  <section id={id} className={classNames('py-7', containerClassName)}>
+  <section id={id} className={classNames('py-14', containerClassName)}>
     <div className={classNames('fr-container flex flex-col gap-4', className)}>
       {children}
     </div>

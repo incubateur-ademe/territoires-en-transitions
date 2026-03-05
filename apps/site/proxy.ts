@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { STREAMLIT_IFRAME_SRC } from './app/statistiques/streamlit.utils';
 
 /**
  * Middleware pour ajouter à chaque requête les en-têtes CSP
@@ -74,7 +75,7 @@ export function proxy(request: NextRequest) {
     frame-ancestors 'none';
     frame-src youtube.com www.youtube.com dailymotion.com www.dailymotion.com *.adform.net ${
       googleWithFloodlight.frameSrc
-    };
+    } ${new URL(STREAMLIT_IFRAME_SRC).origin};
     block-all-mixed-content;
     upgrade-insecure-requests;
 `;
