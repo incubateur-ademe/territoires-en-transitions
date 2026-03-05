@@ -1,24 +1,23 @@
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
+import { CellContext } from '@tanstack/react-table';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
-import { ActionType } from '@tet/domain/referentiels';
 import { cn, TableCell } from '@tet/ui';
+import { ReferentielTableRow } from './types';
 import { actionTypeToClassName } from './utils';
 
 type Props = {
-  pilotes?: PersonneTagOrUser[];
-  actionType: ActionType;
+  info: CellContext<ReferentielTableRow, PersonneTagOrUser[] | undefined>;
 };
 
-export const ReferentielTablePersonnesPilotesCell = ({
-  pilotes,
-  actionType,
-}: Props) => {
+export const ReferentielTablePersonnesPilotesCell = ({ info }: Props) => {
+  const data = info.row.original;
+
   return (
-    <TableCell className={cn(actionTypeToClassName[actionType])}>
-      {pilotes && pilotes.length > 0 ? (
+    <TableCell className={cn(actionTypeToClassName[data.type])}>
+      {data.personnesPilotes && data.personnesPilotes.length > 0 ? (
         <ListWithTooltip
-          title={pilotes[0].nom}
-          list={pilotes.map((p) => p.nom)}
+          title={data.personnesPilotes[0].nom}
+          list={data.personnesPilotes.map((p) => p.nom)}
           className="text-grey-8"
           renderFirstItem={(item) => (
             <span className="max-w-48 line-clamp-1 text-primary-9">{item}</span>

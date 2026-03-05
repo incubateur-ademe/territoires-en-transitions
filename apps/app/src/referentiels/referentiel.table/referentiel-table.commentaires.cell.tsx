@@ -1,3 +1,4 @@
+import { CellContext } from '@tanstack/react-table';
 import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { cn, TableCell } from '@tet/ui';
 import { useCommentPanel } from 'app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/comments/hooks/use-comment-panel';
@@ -7,31 +8,35 @@ import { ReferentielTableRow } from './types';
 import { actionTypeToClassName } from './utils';
 
 type Props = {
-  info: ReferentielTableRow;
+  info: CellContext<ReferentielTableRow, number | undefined>;
 };
 
-export const ReferentielTableCommentairesCellContent = ({ info }: Props) => {
-  const { openPanel } = useCommentPanel(info.referentielId, info.id);
+const ReferentielTableCommentairesCellContent = ({ info }: Props) => {
+  const data = info.row.original;
+
+  const { openPanel } = useCommentPanel(data.referentielId, data.id);
 
   return (
     <ReferentielTableNotificationCell
-      actionType={info.type}
+      actionType={data.type}
       onClick={() => {
-        openPanel(info.id);
+        openPanel(data.id);
       }}
-      count={info.countComments}
+      count={data.countComments}
     />
   );
 };
 
 export const ReferentielTableCommentairesCell = ({ info }: Props) => {
-  if (info.type === ActionTypeEnum.ACTION) {
+  const data = info.row.original;
+
+  if (data.type === ActionTypeEnum.ACTION) {
     return (
-      <ActionProvider actionId={info.id}>
+      <ActionProvider actionId={data.id}>
         <ReferentielTableCommentairesCellContent info={info} />
       </ActionProvider>
     );
   }
 
-  return <TableCell className={cn(actionTypeToClassName[info.type])} />;
+  return <TableCell className={cn(actionTypeToClassName[data.type])} />;
 };

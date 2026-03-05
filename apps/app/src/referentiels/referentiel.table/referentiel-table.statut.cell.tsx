@@ -1,29 +1,38 @@
+import { CellContext } from '@tanstack/react-table';
 import {
-  ActionType,
   ActionTypeEnum,
   StatutAvancementIncludingNonConcerne,
 } from '@tet/domain/referentiels';
 import { cn, TableCell } from '@tet/ui';
 import ActionStatutBadge from '../actions/action-statut/action-statut.badge';
+import { ReferentielTableRow } from './types';
 import { actionTypeToClassName } from './utils';
 
 type Props = {
-  actionType: ActionType;
-  statut?: StatutAvancementIncludingNonConcerne | null;
+  info: CellContext<
+    ReferentielTableRow,
+    StatutAvancementIncludingNonConcerne | undefined
+  >;
 };
 
-export const ReferentielTableStatutCell = ({ actionType, statut }: Props) => {
+export const ReferentielTableStatutCell = ({ info }: Props) => {
+  const data = info.row.original;
+
   const canDisplayStatut =
-    actionType === ActionTypeEnum.SOUS_ACTION ||
-    actionType === ActionTypeEnum.TACHE;
+    data.type === ActionTypeEnum.SOUS_ACTION ||
+    data.type === ActionTypeEnum.TACHE;
 
   return (
-    <TableCell className={cn(actionTypeToClassName[actionType])}>
+    <TableCell className={cn(actionTypeToClassName[data.type])}>
       <>
         {canDisplayStatut && (
           <>
-            {statut ? (
-              <ActionStatutBadge statut={statut} size="xs" className="m-auto" />
+            {data.statut ? (
+              <ActionStatutBadge
+                statut={data.statut}
+                size="xs"
+                className="m-auto"
+              />
             ) : (
               <ActionStatutBadge
                 statut="non_renseigne"
