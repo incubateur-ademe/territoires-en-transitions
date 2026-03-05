@@ -46,18 +46,19 @@ type BaseProps = {
   showButtons?: boolean;
   cancelButton?: React.ReactElement;
   submitButtonText?: string;
+  clearSubmitErrorMessage?: () => void;
 };
 
 export function UpsertPlanForm(
   props: BaseProps & {
-    onSubmit: (data: UpsertPlanWithoutFilePayload) => Promise<void>;
+    onSubmit: (data: UpsertPlanWithoutFilePayload) => Promise<boolean>;
     includeFileUpload?: false | undefined;
   }
 ): JSX.Element;
 
 export function UpsertPlanForm(
   props: BaseProps & {
-    onSubmit: (data: UpsertPlanWithFilePayload) => Promise<void>;
+    onSubmit: (data: UpsertPlanWithFilePayload) => Promise<boolean>;
     includeFileUpload: true;
   }
 ): JSX.Element;
@@ -70,10 +71,11 @@ export function UpsertPlanForm({
   onSubmit,
   includeFileUpload,
   submitButtonText = 'Valider',
+  clearSubmitErrorMessage,
 }: BaseProps & {
   onSubmit:
-    | ((data: UpsertPlanWithoutFilePayload) => Promise<void>)
-    | ((data: UpsertPlanWithFilePayload) => Promise<void>);
+    | ((data: UpsertPlanWithoutFilePayload) => Promise<boolean>)
+    | ((data: UpsertPlanWithFilePayload) => Promise<boolean>);
   includeFileUpload?: boolean;
 }) {
   const { options: planTypesOptions } = usePlanTypeListe();
@@ -85,6 +87,7 @@ export function UpsertPlanForm({
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<UpsertPlanPayload>({
     resolver: zodResolver(schema),
@@ -103,7 +106,7 @@ export function UpsertPlanForm({
       onSubmit={handleSubmit(async (data) => {
         const submit = onSubmit as (
           data: UpsertPlanWithoutFilePayload | UpsertPlanWithFilePayload
-        ) => Promise<void>;
+        ) => Promise<boolean>;
 
         const basePayload: UpsertPlanWithoutFilePayload = {
           nom: data.nom,
@@ -113,13 +116,13 @@ export function UpsertPlanForm({
           file: undefined,
         };
 
-        if (includeFileUpload && isWithFilePayload(data)) {
-          return submit({
-            ...basePayload,
-            file: data.file,
-          });
+        const file =
+          includeFileUpload && isWithFilePayload(data) ? data.file : undefined;
+
+        const result = await submit({ ...basePayload, file });
+        if (result) {
+          reset();
         }
-        await submit(basePayload);
       })}
       className="flex flex-col gap-6"
     >
@@ -208,11 +211,17 @@ export function UpsertPlanForm({
                   type="file"
                   accept=".xls,.xlsx"
                   displaySize="md"
-                  onChange={(e) => field.onChange(e.target.files?.[0] ?? null)}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] ?? null;
+                    field.onChange(file);
+                    if (file) {
+                      clearSubmitErrorMessage?.();
+                    }
+                  }}
                 />
 
                 {field.value && (
-                  <p className="mt-2 text-sm text-grey-7">
+                  <p className="mt-2 text-sm text-grey-7 break-all">
                     Fichier sélectionné : <strong>{field.value.name}</strong>
                   </p>
                 )}

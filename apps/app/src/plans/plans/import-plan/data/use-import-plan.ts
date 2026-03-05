@@ -53,5 +53,6 @@ export const useImportPlan = () => {
     mutate: importPlan,
     isLoading: isPending,
     errorMessage,
+    clearError: () => setErrorMessage(null),
   };
 };

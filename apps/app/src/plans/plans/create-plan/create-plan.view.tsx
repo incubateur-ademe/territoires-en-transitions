@@ -39,14 +39,19 @@ const useGetCreatePlanFunction = () => {
     typeId: number | null;
     referents: PersonneId[] | null;
     pilotes: PersonneId[] | null;
-  }): Promise<void> => {
-    await createPlanAction({
-      collectiviteId,
-      nom,
-      typeId: typeId ?? undefined,
-      referents: referents ?? undefined,
-      pilotes: pilotes ?? undefined,
-    });
+  }): Promise<boolean> => {
+    try {
+      await createPlanAction({
+        collectiviteId,
+        nom,
+        typeId: typeId ?? undefined,
+        referents: referents ?? undefined,
+        pilotes: pilotes ?? undefined,
+      });
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   const handleGoBack = () => {
