@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { DomainError } from '@tet/backend/utils/domain-error';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { normalizeCaughtError } from '@tet/backend/utils/normalize-caught-error';
 import { Result } from '@tet/backend/utils/result.type';
 import { PersonnalisationReponse } from '@tet/domain/collectivites';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
@@ -43,7 +45,7 @@ export class SetPersonnalisationReponseService {
         transaction
       );
       if (!isAllowed) {
-        throw new Error(SetPersonnalisationReponseErrorEnum.UNAUTHORIZED);
+        throw new DomainError(SetPersonnalisationReponseErrorEnum.UNAUTHORIZED);
       }
 
       // insère/màj la réponse
@@ -53,7 +55,7 @@ export class SetPersonnalisationReponseService {
           transaction
         );
       if (!setReponseResult.success) {
-        throw new Error(setReponseResult.error);
+        throw new DomainError(setReponseResult.error);
       }
 
       const { questionType, reponse } = setReponseResult.data;
@@ -69,7 +71,7 @@ export class SetPersonnalisationReponseService {
           );
 
         if (!getJustificationResult.success) {
-          throw new Error(getJustificationResult.error);
+          throw new DomainError(getJustificationResult.error);
         }
         return {
           success: true,
@@ -90,7 +92,7 @@ export class SetPersonnalisationReponseService {
           transaction
         );
       if (!setJustificationResult.success) {
-        throw new Error(setJustificationResult.error);
+        throw new DomainError(setJustificationResult.error);
       }
 
       return {
@@ -112,11 +114,11 @@ export class SetPersonnalisationReponseService {
           );
 
     return execute().catch((error) => {
-      const message = error instanceof Error ? error.message : null;
-      const normalizedError =
-        message && message in SetPersonnalisationReponseErrorEnum
-          ? (message as SetPersonnalisationReponseError)
-          : SetPersonnalisationReponseErrorEnum.DATABASE_ERROR;
+      const normalizedError = normalizeCaughtError(
+        error,
+        SetPersonnalisationReponseErrorEnum,
+        SetPersonnalisationReponseErrorEnum.DATABASE_ERROR
+      );
       return {
         success: false,
         error: normalizedError,
