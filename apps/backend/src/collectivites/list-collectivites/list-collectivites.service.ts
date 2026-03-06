@@ -28,6 +28,8 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { DatabaseService } from '../../utils/database/database.service';
+import { departementTable } from '../shared/models/imports-departement.table';
+import { regionTable } from '../shared/models/imports-region.table';
 import { collectiviteTable } from '../shared/models/collectivite.table';
 import { GetCollectiviteInput } from './get-collectivite.input';
 
@@ -163,14 +165,24 @@ export default class ListCollectivitesService {
             type: sql<CollectiviteType>`${collectiviteTable.type}`,
             activeCOT: sql<boolean>`coalesce(${cotTable.actif}, false)`,
             natureInsee: sql<CollectiviteNatureType>`${collectiviteTable.natureInsee}`,
+            regionName: regionTable.libelle,
+            departementName: departementTable.libelle,
+            populationSource: sql<string | null>`case when ${collectiviteTable.type} = 'commune' then 'Insee Populations légales 2020 parues 29/12/2022' when ${collectiviteTable.type} = 'epci' then 'BANATIC 2023' else null end`,
             ...relationsFields,
           };
 
+    const baseRequest = db
+      .select(fields)
+      .from(collectiviteTable)
+      .leftJoin(cotTable, eq(cotTable.collectiviteId, collectiviteTable.id))
+      .leftJoin(regionTable, eq(collectiviteTable.regionCode, regionTable.code))
+      .leftJoin(
+        departementTable,
+        eq(collectiviteTable.departementCode, departementTable.code)
+      );
+
     const request = input.withRelations
-      ? db
-          .select(fields)
-          .from(collectiviteTable)
-          .leftJoin(cotTable, eq(cotTable.collectiviteId, collectiviteTable.id))
+      ? baseRequest
           .leftJoin(
             collectiviteParents,
             eq(collectiviteTable.id, collectiviteParents.collectiviteId)
@@ -179,13 +191,7 @@ export default class ListCollectivitesService {
             collectiviteEnfants,
             eq(collectiviteTable.id, collectiviteEnfants.collectiviteId)
           )
-      : db
-          .select(fields)
-          .from(collectiviteTable)
-          .leftJoin(
-            cotTable,
-            eq(cotTable.collectiviteId, collectiviteTable.id)
-          );
+      : baseRequest;
 
     const whereConditions: (SQLWrapper | SQL)[] = [];
 
