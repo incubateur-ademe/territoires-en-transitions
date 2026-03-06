@@ -123,7 +123,8 @@ export const AjouterCollectivitePage = () => {
             onChange={(value) => updateCollectivite('siren', value, true)}
           />
         )}
-        {collectivite.type == collectiviteType.Departement && (
+        {(collectivite.type === collectiviteType.Departement ||
+          collectivite.type === collectiviteType.PrefectureDepartement) && (
           <CodeDepartementField
             value={collectivite.departementCode ?? ''}
             onChange={(value) =>
@@ -131,7 +132,8 @@ export const AjouterCollectivitePage = () => {
             }
           />
         )}
-        {collectivite.type == collectiviteType.Region && (
+        {(collectivite.type === collectiviteType.Region ||
+          collectivite.type === collectiviteType.PrefectureRegion) && (
           <CodeRegionField
             value={collectivite.regionCode ?? ''}
             onChange={(value) => updateCollectivite('regionCode', value, true)}
@@ -145,9 +147,11 @@ export const AjouterCollectivitePage = () => {
                 collectivite.communeCode?.length != 5) ||
               (collectivite.type == collectiviteType.EPCI &&
                 collectivite.siren?.length != 9) ||
-              (collectivite.type == collectiviteType.Departement &&
+              ((collectivite.type == collectiviteType.Departement ||
+                collectivite.type == collectiviteType.PrefectureDepartement) &&
                 !collectivite.departementCode) ||
-              (collectivite.type == collectiviteType.Region &&
+              ((collectivite.type == collectiviteType.Region ||
+                collectivite.type == collectiviteType.PrefectureRegion) &&
                 !collectivite.regionCode)
             }
             onClick={handleSearch}
@@ -203,14 +207,15 @@ export const AjouterCollectivitePage = () => {
                 onChange={(value) => updateCollectivite('siren', value)}
               />
             )}
-            {collectivite.type != collectiviteType.Region && (
-              <CodeDepartementField
-                value={collectivite.departementCode ?? ''}
-                onChange={(value) =>
-                  updateCollectivite('departementCode', value)
-                }
-              />
-            )}
+            {collectivite.type !== collectiviteType.Region &&
+              collectivite.type !== collectiviteType.PrefectureRegion && (
+                <CodeDepartementField
+                  value={collectivite.departementCode ?? ''}
+                  onChange={(value) =>
+                    updateCollectivite('departementCode', value)
+                  }
+                />
+              )}
             <CodeRegionField
               value={collectivite.regionCode ?? ''}
               onChange={(value) => updateCollectivite('regionCode', value)}
@@ -236,6 +241,7 @@ export const AjouterCollectivitePage = () => {
               (collectivite.type === collectiviteType.EPCI &&
                 !collectivite.siren) ||
               (collectivite.type !== collectiviteType.Region &&
+                collectivite.type !== collectiviteType.PrefectureRegion &&
                 collectivite.type !== collectiviteType.Test &&
                 !collectivite.departementCode) ||
               (collectivite.type !== collectiviteType.Test &&

@@ -1,9 +1,9 @@
+import { Injectable, Logger } from '@nestjs/common';
 import { banaticTable } from '@tet/backend/collectivites/shared/models/imports-banatic.table';
 import { importCommuneTable } from '@tet/backend/collectivites/shared/models/imports-commune.table';
 import { departementTable } from '@tet/backend/collectivites/shared/models/imports-departement.table';
 import { regionTable } from '@tet/backend/collectivites/shared/models/imports-region.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { Injectable, Logger } from '@nestjs/common';
 import {
   Collectivite,
   CollectiviteNatureType,
@@ -95,6 +95,7 @@ export default class CollectiviteCrudService {
 
       // Get more info from imports.departement
       case collectiviteTypeEnum.DEPARTEMENT:
+      case collectiviteTypeEnum.PREFECTURE_DEPARTEMENT:
         if (collectivite.departementCode) {
           [info] = await this.databaseService.db
             .select({
@@ -110,6 +111,7 @@ export default class CollectiviteCrudService {
 
       // Get more info from imports.region
       case collectiviteTypeEnum.REGION:
+      case collectiviteTypeEnum.PREFECTURE_REGION:
         if (collectivite.regionCode) {
           [info] = await this.databaseService.db
             .select({
@@ -161,7 +163,21 @@ export default class CollectiviteCrudService {
         );
         break;
 
+      case collectiviteTypeEnum.PREFECTURE_DEPARTEMENT:
+        if (!collectivite.departementCode) return null;
+        condition.push(
+          eq(collectiviteTable.departementCode, collectivite.departementCode)
+        );
+        break;
+
       case collectiviteTypeEnum.REGION:
+        if (!collectivite.regionCode) return null;
+        condition.push(
+          eq(collectiviteTable.regionCode, collectivite.regionCode)
+        );
+        break;
+
+      case collectiviteTypeEnum.PREFECTURE_REGION:
         if (!collectivite.regionCode) return null;
         condition.push(
           eq(collectiviteTable.regionCode, collectivite.regionCode)
@@ -178,6 +194,7 @@ export default class CollectiviteCrudService {
       .from(collectiviteTable)
       .where(and(...condition))
       .limit(1)) as Collectivite[];
+
     return result ?? null;
   }
 
