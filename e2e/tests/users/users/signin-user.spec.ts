@@ -1,8 +1,7 @@
 import { expect } from '@playwright/test';
 import { testWithCollectivites } from 'tests/collectivite/collectivites.fixture';
-import { fillAndSubmitLoginForm, goToAuthUrl } from './auth.utils';
+import { SigninUserPom } from './signin-user.pom';
 
-// Test data
 const EXISTING_USER_EMAIL = 'YoLO@dodo.com';
 const INVALID_PASSWORD = "n'importe quoi";
 
@@ -12,8 +11,11 @@ const finaliserMonInscriptionUrl = /\/finaliser-mon-inscription$/;
 const test = testWithCollectivites;
 
 test.describe('Login avec mot de passe', () => {
+  let pom: SigninUserPom;
+
   test.beforeEach(async ({ page }) => {
-    await goToAuthUrl(page);
+    pom = new SigninUserPom(page);
+    await pom.goToAuthUrl();
   });
 
   test("en tant qu'utilisateur déjà rattaché", async ({
@@ -21,7 +23,7 @@ test.describe('Login avec mot de passe', () => {
     collectivites,
   }) => {
     const { user } = await collectivites.addCollectiviteAndUser();
-    await fillAndSubmitLoginForm(page, user.data.email, user.data.password);
+    await pom.fillAndSubmitLoginForm(user.data.email, user.data.password);
     await expect(page).toHaveURL(successfulLoginUrl);
   });
 
@@ -29,8 +31,9 @@ test.describe('Login avec mot de passe', () => {
     page,
     users,
   }) => {
+    pom = new SigninUserPom(page);
     const user = await users.addUser();
-    await fillAndSubmitLoginForm(page, user.data.email, user.data.password);
+    await pom.fillAndSubmitLoginForm(user.data.email, user.data.password);
 
     await expect(
       page.getByRole('heading', { name: 'Merci pour votre inscription !' })
@@ -45,9 +48,8 @@ test.describe('Login avec mot de passe', () => {
 
   test('Echouer à se connecter', async ({ page, collectivites }) => {
     const { user } = await collectivites.addCollectiviteAndUser();
-    await fillAndSubmitLoginForm(page, user.data.email, INVALID_PASSWORD);
+    await pom.fillAndSubmitLoginForm(user.data.email, INVALID_PASSWORD);
 
-    // Verify error message
     await expect(page.locator('[data-test="SignInPage"]')).toBeVisible();
     await expect(page.locator('[data-test="error"]')).toContainText(
       "L'email ou le mot de passe ne correspondent pas"
@@ -68,23 +70,17 @@ test.describe('Login avec mot de passe', () => {
       .locator('[data-test="PasswordRecovery"] button[type=submit]')
       .click();
 
-    // Verify reset email sent message
     await expect(page.locator('[data-test="msg_init_mdp"]')).toBeVisible();
     await expect(page.locator('[data-test="PasswordRecovery"]')).toBeHidden();
-
-    // Note: Email verification and password reset would require email testing infrastructure
   });
 
   test('réinitialiser son mot de passe avec une erreur', async ({ page }) => {
-    // Click on forgotten password
     await page.locator('[data-test="forgotten-pwd"]').click();
 
-    // Fill recovery form
     await page
       .locator('[data-test="PasswordRecovery"] input[name=email]')
       .fill(EXISTING_USER_EMAIL);
 
-    // Mock API error response
     await page.route('**/auth/v*/recover*', (route) => {
       route.fulfill({ status: 400, body: '{}' });
     });
@@ -93,7 +89,6 @@ test.describe('Login avec mot de passe', () => {
       .locator('[data-test="PasswordRecovery"] button[type=submit]')
       .click();
 
-    // Verify error state
     await expect(page.locator('[data-test="msg_init_mdp"]')).toBeHidden();
     await expect(page.locator('[data-test="PasswordRecovery"]')).toBeVisible();
     await expect(page.locator('[data-test="PasswordRecovery"]')).toContainText(
@@ -103,12 +98,15 @@ test.describe('Login avec mot de passe', () => {
 });
 
 test.describe('Login sans mot de passe', () => {
+  let pom: SigninUserPom;
+
   test.beforeEach(async ({ page }) => {
-    await goToAuthUrl(page, { tab: 'sans-mdp' });
+    pom = new SigninUserPom(page);
+    await pom.goToAuthUrl({ tab: 'sans-mdp' });
   });
 
   test("en tant qu'utilisateur déjà rattaché", async ({ page }) => {
-    await fillAndSubmitLoginForm(page, EXISTING_USER_EMAIL);
+    await pom.fillAndSubmitLoginForm(EXISTING_USER_EMAIL);
 
     await expect(page.locator('[data-test="msg_lien_envoye"]')).toBeVisible();
   });
@@ -118,7 +116,7 @@ test.describe('Login sans mot de passe', () => {
     collectivites,
   }) => {
     const { user } = await collectivites.addCollectiviteAndUser();
-    await fillAndSubmitLoginForm(page, user.data.email);
+    await pom.fillAndSubmitLoginForm(user.data.email);
 
     await expect(page.locator('[data-test="msg_lien_envoye"]')).toBeVisible();
   });
