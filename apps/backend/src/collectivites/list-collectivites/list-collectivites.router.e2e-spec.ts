@@ -118,6 +118,7 @@ describe('Route de recherche des collectivités', () => {
       communeCode: null,
       natureInsee: 'CA',
       type: 'epci',
+      activeCOT: false,
       parents: [
         {
           id: 5186,

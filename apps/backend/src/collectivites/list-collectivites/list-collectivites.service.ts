@@ -29,12 +29,20 @@ import {
 } from 'drizzle-orm';
 import { DatabaseService } from '../../utils/database/database.service';
 import { collectiviteTable } from '../shared/models/collectivite.table';
+import { departementTable } from '../shared/models/imports-departement.table';
+import { regionTable } from '../shared/models/imports-region.table';
 import { GetCollectiviteInput } from './get-collectivite.input';
 
 /**
  * Minimum population for a commune to be imported in the platform
  */
 export const MIN_COMMUNE_POPULATION = 3000;
+
+/** Libellés des sources de population par type de collectivité */
+const POPULATION_SOURCE_LABELS = {
+  commune: 'Insee Populations légales 2020 parues 29/12/2022',
+  epci: 'BANATIC 2023',
+} as const;
 
 @Injectable()
 export default class ListCollectivitesService {
@@ -144,33 +152,52 @@ export default class ListCollectivitesService {
           enfants: SQL.Aliased<CollectiviteResume[]>;
         });
 
-    const fields =
-      !input.fieldsMode || input.fieldsMode === 'resume'
-        ? {
-            id: collectiviteTable.id,
-            nom: collectiviteTable.nom,
-            siren: collectiviteTable.siren,
-            communeCode: collectiviteTable.communeCode,
-            natureInsee: sql<CollectiviteNatureType>`${collectiviteTable.natureInsee}`,
-            type: sql<CollectiviteType>`${collectiviteTable.type}`,
-            ...relationsFields,
-          }
-        : (() => {
-            return {
-              ...getTableColumns(collectiviteTable),
-              createdAt: sqlToDateTimeISO(collectiviteTable.createdAt),
-              modifiedAt: sqlToDateTimeISO(collectiviteTable.modifiedAt),
-              type: sql<CollectiviteType>`${collectiviteTable.type}`,
-              natureInsee: sql<CollectiviteNatureType>`${collectiviteTable.natureInsee}`,
-              ...relationsFields,
-            };
-          })();
+    const isModeResume = !input.fieldsMode || input.fieldsMode === 'resume';
+    const fields = isModeResume
+      ? {
+          id: collectiviteTable.id,
+          nom: collectiviteTable.nom,
+          siren: collectiviteTable.siren,
+          communeCode: collectiviteTable.communeCode,
+          natureInsee: sql<CollectiviteNatureType>`${collectiviteTable.natureInsee}`,
+          type: sql<CollectiviteType>`${collectiviteTable.type}`,
+          activeCOT: sql<boolean>`coalesce(${cotTable.actif}, false)`,
+          ...relationsFields,
+        }
+      : {
+          ...getTableColumns(collectiviteTable),
+          createdAt: sqlToDateTimeISO(collectiviteTable.createdAt),
+          modifiedAt: sqlToDateTimeISO(collectiviteTable.modifiedAt),
+          type: sql<CollectiviteType>`${collectiviteTable.type}`,
+          activeCOT: sql<boolean>`coalesce(${cotTable.actif}, false)`,
+          natureInsee: sql<CollectiviteNatureType>`${collectiviteTable.natureInsee}`,
+          regionName: regionTable.libelle,
+          departementName: departementTable.libelle,
+          populationSource: sql<
+            string | null
+          >`case when ${collectiviteTable.type} = 'commune' then ${POPULATION_SOURCE_LABELS.commune} when ${collectiviteTable.type} = 'epci' then ${POPULATION_SOURCE_LABELS.epci} else null end`,
+          ...relationsFields,
+        };
+
+    let baseRequest = db
+      .select(fields)
+      .from(collectiviteTable)
+      .leftJoin(cotTable, eq(cotTable.collectiviteId, collectiviteTable.id));
+
+    if (!isModeResume) {
+      baseRequest = baseRequest
+        .leftJoin(
+          regionTable,
+          eq(collectiviteTable.regionCode, regionTable.code)
+        )
+        .leftJoin(
+          departementTable,
+          eq(collectiviteTable.departementCode, departementTable.code)
+        );
+    }
 
     const request = input.withRelations
-      ? db
-          .select(fields)
-          .from(collectiviteTable)
-          .leftJoin(cotTable, eq(cotTable.collectiviteId, collectiviteTable.id))
+      ? baseRequest
           .leftJoin(
             collectiviteParents,
             eq(collectiviteTable.id, collectiviteParents.collectiviteId)
@@ -179,13 +206,7 @@ export default class ListCollectivitesService {
             collectiviteEnfants,
             eq(collectiviteTable.id, collectiviteEnfants.collectiviteId)
           )
-      : db
-          .select(fields)
-          .from(collectiviteTable)
-          .leftJoin(
-            cotTable,
-            eq(cotTable.collectiviteId, collectiviteTable.id)
-          );
+      : baseRequest;
 
     const whereConditions: (SQLWrapper | SQL)[] = [];
 
