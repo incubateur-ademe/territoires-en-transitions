@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { financeurTagTable } from '@tet/backend/collectivites/tags/financeur-tag.table';
-import { instanceGouvernanceTagTable } from '@tet/backend/collectivites/tags/instance-gouvernance.table';
 import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
 import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-tag.table';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
@@ -11,6 +10,7 @@ import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, Result } from '@tet/backend/utils/result.type';
 import { TagEnum, TagWithCollectiviteId } from '@tet/domain/collectivites';
 import { asc, eq } from 'drizzle-orm';
+import { instanceGouvernanceTagTable } from '../instance-gouvernance-tag.table';
 import { ListTagsError, ListTagsErrorEnum } from './list-tags.errors';
 import { ListTagsInput } from './list-tags.input';
 

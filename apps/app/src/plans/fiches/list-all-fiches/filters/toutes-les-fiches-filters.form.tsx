@@ -18,7 +18,6 @@ import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorite
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import { useCollectiviteId } from '@tet/api/collectivites';
 import { ListFichesRequestFilters as Filtres } from '@tet/domain/plans';
 import {
   Checkbox,
@@ -61,7 +60,6 @@ export const ToutesLesFichesFiltersForm = ({
   readonlyFilters?: Partial<FormFilters>;
   setFilters: (filters: Partial<FormFilters>) => void;
 }) => {
-  const collectiviteId = useCollectiviteId();
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
   const shareFicheEnabled = useShareFicheEnabled();
