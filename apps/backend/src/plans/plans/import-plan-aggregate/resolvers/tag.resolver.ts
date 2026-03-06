@@ -1,5 +1,6 @@
 import { ListTagsService } from '@tet/backend/collectivites/tags/list-tags/list-tags.service';
 import { MutateTagService } from '@tet/backend/collectivites/tags/mutate-tag/mutate-tag.service';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { getFuse } from '@tet/backend/utils/fuse/fuse.utils';
 import { failure, Result, success } from '@tet/backend/utils/result.type';
@@ -57,6 +58,7 @@ export async function createTagResolver(
   mutateTagService: MutateTagService,
   tagType: TagType,
   searchKeys: FuseKey[] = ['nom'],
+  user: AuthenticatedUser,
   tx?: Transaction
 ): Promise<{
   getOrCreate: (name: string, tx: Transaction) => Promise<Result<Tag, string>>;
@@ -88,7 +90,7 @@ export async function createTagResolver(
         collectiviteId,
         tagType,
       },
-      { tx }
+      { user, isUserTrusted: true, tx }
     );
   };
 

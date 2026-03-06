@@ -1,10 +1,21 @@
 import { ListTagsService } from '@tet/backend/collectivites/tags/list-tags/list-tags.service';
 import { MutateTagService } from '@tet/backend/collectivites/tags/mutate-tag/mutate-tag.service';
+import {
+  AuthenticatedUser,
+  AuthRole,
+} from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { Tag, TagEnum } from '@tet/domain/collectivites';
 import { describe, expect, it, vi } from 'vitest';
 import { createTagResolver } from './tag.resolver';
+
+const mockUser: AuthenticatedUser = {
+  id: 'user-123',
+  role: AuthRole.AUTHENTICATED,
+  isAnonymous: false,
+  jwtPayload: { role: AuthRole.AUTHENTICATED },
+};
 
 // Mock Fuse
 vi.mock('@tet/backend/utils/fuse/fuse.utils', () => ({
@@ -87,7 +98,9 @@ describe('createTagResolver', () => {
       collectiviteId,
       listTagsService,
       mutateTagService,
-      TagEnum.Financeur
+      TagEnum.Financeur,
+      undefined,
+      mockUser
     );
 
     const result = await getOrCreate('ADEME', mockTransaction);
@@ -110,7 +123,9 @@ describe('createTagResolver', () => {
       collectiviteId,
       listTagsService,
       mutateTagService,
-      TagEnum.Financeur
+      TagEnum.Financeur,
+      undefined,
+      mockUser
     );
 
     const result = await getOrCreate('Nouvelle Entité', mockTransaction);
@@ -128,6 +143,7 @@ describe('createTagResolver', () => {
           nom: 'Nouvelle Entité',
           collectiviteId,
           tagType: TagEnum.Financeur,
+          createdBy: undefined,
         },
         { tx: mockTransaction }
       );
@@ -148,7 +164,9 @@ describe('createTagResolver', () => {
         collectiviteId,
         listTagsService,
         mutateTagService,
-        tagType
+        tagType,
+        undefined,
+        mockUser
       );
 
       const result = await getOrCreate('Test Entity', mockTransaction);
@@ -159,6 +177,7 @@ describe('createTagResolver', () => {
           nom: 'Test Entity',
           collectiviteId,
           tagType,
+          createdBy: undefined,
         },
         { tx: mockTransaction }
       );
@@ -178,7 +197,9 @@ describe('createTagResolver', () => {
       collectiviteId,
       listTagsService,
       mutateTagService,
-      TagEnum.Financeur
+      TagEnum.Financeur,
+      undefined,
+      mockUser
     );
 
     const result = await getOrCreate('New Tag', mockTransaction);
@@ -200,7 +221,9 @@ describe('createTagResolver', () => {
       collectiviteId,
       listTagsService,
       mutateTagService,
-      TagEnum.Financeur
+      TagEnum.Financeur,
+      undefined,
+      mockUser
     );
 
     // First call
@@ -219,7 +242,9 @@ describe('createTagResolver', () => {
       collectiviteId,
       listTagsService,
       mutateTagService,
-      TagEnum.Financeur
+      TagEnum.Financeur,
+      undefined,
+      mockUser
     );
 
     const result = await getOrCreate('First Tag', mockTransaction);
@@ -257,7 +282,9 @@ describe('createTagResolver', () => {
       collectiviteId,
       listTagsService,
       mutateTagService,
-      TagEnum.Financeur
+      TagEnum.Financeur,
+      undefined,
+      mockUser
     );
 
     const result1 = await getOrCreate('ADEME', mockTransaction);

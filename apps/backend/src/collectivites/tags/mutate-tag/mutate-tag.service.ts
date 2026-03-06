@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { ServiceSecondArg } from '@tet/backend/utils/nest/service-second-arg.utils';
 import { failure, Result } from '@tet/backend/utils/result.type';
 import { TagWithCollectiviteId } from '@tet/domain/collectivites';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
@@ -24,9 +23,9 @@ export class MutateTagService {
 
   async createTag(
     input: CreateTagInput,
-    { user, tx }: { user?: AuthenticatedUser; tx?: Transaction }
+    { user, isUserTrusted = false, tx }: ServiceSecondArg
   ): Promise<Result<TagWithCollectiviteId, MutateTagError>> {
-    if (user) {
+    if (!isUserTrusted) {
       const isAllowed = await this.permissionService.isAllowed(
         user,
         PermissionOperationEnum['COLLECTIVITES.TAGS.MUTATE'],
@@ -42,14 +41,20 @@ export class MutateTagService {
       }
     }
 
-    return this.mutateTagRepository.createTag(input, tx);
+    return this.mutateTagRepository.createTag(
+      {
+        ...input,
+        createdBy: user?.id,
+      },
+      tx
+    );
   }
 
   async updateTag(
     input: UpdateTagInput,
-    { user, tx }: { user?: AuthenticatedUser; tx?: Transaction }
+    { user, isUserTrusted = false, tx }: ServiceSecondArg
   ): Promise<Result<TagWithCollectiviteId, MutateTagError>> {
-    if (user) {
+    if (!isUserTrusted) {
       const isAllowed = await this.permissionService.isAllowed(
         user,
         PermissionOperationEnum['COLLECTIVITES.TAGS.MUTATE'],
@@ -70,9 +75,9 @@ export class MutateTagService {
 
   async deleteTag(
     input: DeleteTagInput,
-    { user, tx }: { user?: AuthenticatedUser; tx?: Transaction }
+    { user, isUserTrusted = false, tx }: ServiceSecondArg
   ): Promise<Result<void, MutateTagError>> {
-    if (user) {
+    if (!isUserTrusted) {
       const isAllowed = await this.permissionService.isAllowed(
         user,
         PermissionOperationEnum['COLLECTIVITES.TAGS.MUTATE'],

@@ -1,11 +1,22 @@
 import { ListMembresService } from '@tet/backend/collectivites/membres/list-membres/list-membres.service';
 import { ListTagsService } from '@tet/backend/collectivites/tags/list-tags/list-tags.service';
 import { MutateTagService } from '@tet/backend/collectivites/tags/mutate-tag/mutate-tag.service';
+import {
+  AuthenticatedUser,
+  AuthRole,
+} from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success } from '@tet/backend/utils/result.type';
 import { Tag, TagEnum } from '@tet/domain/collectivites';
 import { describe, expect, it, vi } from 'vitest';
 import { createPersonneResolver } from './personne.resolver';
+
+const mockUser: AuthenticatedUser = {
+  id: 'user-123',
+  role: AuthRole.AUTHENTICATED,
+  isAnonymous: false,
+  jwtPayload: { role: AuthRole.AUTHENTICATED },
+};
 
 // Mock Fuse
 vi.mock('@tet/backend/utils/fuse/fuse.utils', () => ({
@@ -90,7 +101,8 @@ describe('createPersonneResolver', () => {
       collectiviteId,
       listMembresService,
       listTagsService,
-      mutateTagService
+      mutateTagService,
+      mockUser
     );
 
     const result = await getOrCreatePersonne('Dupont', mockTransaction);
@@ -113,7 +125,8 @@ describe('createPersonneResolver', () => {
       collectiviteId,
       listMembresService,
       listTagsService,
-      mutateTagService
+      mutateTagService,
+      mockUser
     );
 
     const result = await getOrCreatePersonne('Personne Tag', mockTransaction);
@@ -143,7 +156,8 @@ describe('createPersonneResolver', () => {
       collectiviteId,
       listMembresService,
       listTagsService,
-      mutateTagService
+      mutateTagService,
+      mockUser
     );
 
     const result = await getOrCreatePersonne(newTagName, mockTransaction);
@@ -151,9 +165,8 @@ describe('createPersonneResolver', () => {
     expect(result.success).toBe(true);
     expect(mutateTagService.createTag).toHaveBeenCalledTimes(1);
     expect(mutateTagService.createTag).toHaveBeenCalledWith(
-      { nom: newTagName, collectiviteId },
-      TagEnum.Personne,
-      mockTransaction
+      { tagType: TagEnum.Personne, nom: newTagName, collectiviteId },
+      { tx: mockTransaction }
     );
     if (result.success) {
       expect(result.data).toEqual({ tagId: newTagId });
@@ -178,7 +191,8 @@ describe('createPersonneResolver', () => {
       collectiviteId,
       listMembresService,
       listTagsService,
-      mutateTagService
+      mutateTagService,
+      mockUser
     );
 
     // First call: create the new tag
@@ -210,7 +224,8 @@ describe('createPersonneResolver', () => {
       collectiviteId,
       listMembresService,
       listTagsService,
-      mutateTagService
+      mutateTagService,
+      mockUser
     );
 
     const result = await getOrCreatePersonne('New Person', mockTransaction);

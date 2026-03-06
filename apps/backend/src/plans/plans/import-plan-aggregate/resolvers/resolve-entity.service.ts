@@ -64,6 +64,7 @@ export class ResolveEntityService {
       this.listMembresService,
       this.listTagsService,
       this.mutateTagService,
+      user,
       tx
     );
     const { getOrCreate: getOrCreateStructure } = await createTagResolver(
@@ -72,6 +73,7 @@ export class ResolveEntityService {
       this.mutateTagService,
       TagEnum.Structure,
       undefined,
+      user,
       tx
     );
 
@@ -81,6 +83,7 @@ export class ResolveEntityService {
       this.mutateTagService,
       TagEnum.Financeur,
       undefined,
+      user,
       tx
     );
 
@@ -90,6 +93,7 @@ export class ResolveEntityService {
       this.mutateTagService,
       TagEnum.Service,
       undefined,
+      user,
       tx
     );
 
@@ -99,6 +103,7 @@ export class ResolveEntityService {
       this.mutateTagService,
       TagEnum.Partenaire,
       undefined,
+      user,
       tx
     );
 
@@ -109,6 +114,7 @@ export class ResolveEntityService {
         this.mutateTagService,
         TagEnum.InstanceGouvernance,
         undefined,
+        user,
         tx
       );
 

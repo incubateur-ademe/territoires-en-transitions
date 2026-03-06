@@ -1,6 +1,7 @@
 import { ListMembresService } from '@tet/backend/collectivites/membres/list-membres/list-membres.service';
 import { ListTagsService } from '@tet/backend/collectivites/tags/list-tags/list-tags.service';
 import { MutateTagService } from '@tet/backend/collectivites/tags/mutate-tag/mutate-tag.service';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { getFuse } from '@tet/backend/utils/fuse/fuse.utils';
 import { Result, failure, success } from '@tet/backend/utils/result.type';
@@ -9,6 +10,7 @@ import { Tag, TagEnum } from '@tet/domain/collectivites';
 type CreateTagFn = (
   name: string,
   collectiviteId: number,
+  user: AuthenticatedUser,
   tx: Transaction
 ) => Promise<Result<Tag, string>>;
 
@@ -17,6 +19,7 @@ export const createPersonneResolver = async (
   listMembresService: ListMembresService,
   listTagsService: ListTagsService,
   mutateTagService: MutateTagService,
+  user: AuthenticatedUser,
   tx?: Transaction
 ) => {
   const Fuse = await getFuse();
@@ -48,10 +51,10 @@ export const createPersonneResolver = async (
     ignoreLocation: true,
   });
 
-  const createTag: CreateTagFn = async (name, collectiviteId, tx) => {
+  const createTag: CreateTagFn = async (name, collectiviteId, user, tx) => {
     return mutateTagService.createTag(
       { nom: name, collectiviteId, tagType: TagEnum.Personne },
-      { tx }
+      { user, isUserTrusted: true, tx }
     );
   };
 
@@ -75,7 +78,7 @@ export const createPersonneResolver = async (
       return success({ tagId: foundTag.id });
     }
 
-    const created = await createTag(name, collectiviteId, tx);
+    const created = await createTag(name, collectiviteId, user, tx);
     if (!created.success) {
       return failure(created.error);
     }

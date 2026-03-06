@@ -5,16 +5,12 @@ import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-t
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
 import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag.table';
+import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
-import {
-  TagEnum,
-  TagType,
-  TagWithCollectiviteId,
-} from '@tet/domain/collectivites';
-import { AnyColumn, eq } from 'drizzle-orm';
-import { PgTable } from 'drizzle-orm/pg-core';
+import { TagEnum, TagWithCollectiviteId } from '@tet/domain/collectivites';
+import { eq } from 'drizzle-orm';
 import { instanceGouvernanceTagTable } from '../instance-gouvernance-tag.table';
 import { MutateTagError, MutateTagErrorEnum } from './mutate-tag.errors';
 import {
@@ -23,10 +19,7 @@ import {
   UpdateTagInput,
 } from './mutate-tag.input';
 
-const tagTypeTable: Record<
-  TagType,
-  PgTable & { collectiviteId: AnyColumn; id: AnyColumn; nom: AnyColumn }
-> = {
+const tagTypeTable = {
   [TagEnum.Financeur]: financeurTagTable,
   [TagEnum.Personne]: personneTagTable,
   [TagEnum.Partenaire]: partenaireTagTable,
@@ -43,28 +36,31 @@ export class MutateTagRepository {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async createTag(
-    input: CreateTagInput,
+    {
+      nom,
+      collectiviteId,
+      tagType,
+      createdBy,
+    }: CreateTagInput & { createdBy: string },
     tx?: Transaction
   ): Promise<Result<TagWithCollectiviteId, MutateTagError>> {
     try {
-      const table = tagTypeTable[input.tagType];
+      const table = tagTypeTable[tagType];
       const db = tx ?? this.databaseService.db;
 
       const [result] = await db
         .insert(table)
         .values({
-          nom: input.nom,
-          collectiviteId: input.collectiviteId,
+          nom,
+          collectiviteId,
+          createdBy,
+          createdAt: SQL_CURRENT_TIMESTAMP,
         })
         .returning();
 
       return {
         success: true,
-        data: {
-          id: result.id as number,
-          nom: result.nom as string,
-          collectiviteId: result.collectiviteId as number,
-        },
+        data: result,
       };
     } catch (error) {
       this.logger.error('Error creating tag', error);
