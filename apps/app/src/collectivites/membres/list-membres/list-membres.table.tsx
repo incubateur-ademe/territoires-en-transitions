@@ -24,7 +24,7 @@ const MEMBRES_COLUMNS = [
 ];
 
 export function ListmembresTable() {
-  const { data: membres, isLoading: isLoadingMembres } = useListMembres();
+  const { data: membres = [], isLoading: isLoadingMembres } = useListMembres();
   const { updateMembre } = useUpdateMembre();
 
   const { hasCollectivitePermission, user } = useCurrentCollectivite();
@@ -32,6 +32,9 @@ export function ListmembresTable() {
   const canMutateTags = hasCollectivitePermission('collectivites.tags.mutate');
   const canMutateMembres = hasCollectivitePermission(
     'collectivites.membres.mutate'
+  );
+  const isCurrentUserIncludedInMembres = membres.some(
+    (membre) => membre.userId === user?.id
   );
 
   return (
@@ -47,7 +50,13 @@ export function ListmembresTable() {
               <TableHeaderCell>Intitulé de poste</TableHeaderCell>
               <TableHeaderCell className="w-[12%]">Accès</TableHeaderCell>
 
-              <VisibleWhen condition={canMutateMembres || canMutateTags}>
+              <VisibleWhen
+                condition={
+                  canMutateMembres ||
+                  canMutateTags ||
+                  isCurrentUserIncludedInMembres
+                }
+              >
                 <TableHeaderCell className="w-[10%]">Actions</TableHeaderCell>
               </VisibleWhen>
             </TableRow>
@@ -55,7 +64,7 @@ export function ListmembresTable() {
           <tbody>
             {isLoadingMembres ? (
               <TableLoading columnIds={MEMBRES_COLUMNS} nbOfRows={5} />
-            ) : membres && membres.length > 0 ? (
+            ) : membres.length > 0 ? (
               membres.map((membre) => (
                 <ListMembresTableRow
                   key={membre.userId}
