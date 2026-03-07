@@ -1,7 +1,8 @@
+import { divisionOrZero } from '@tet/domain/utils';
 import { actionIdToLabel } from '@/app/app/labels';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { TableOptions } from 'react-table';
-import { ProgressionRow } from '../DEPRECATED_scores.types';
+import type { ActionDetailed } from '../use-snapshot';
 import { EtatDesLieuxGraphs } from './graphs/EtatDesLieuxGraphs';
 import { ScoreRempli, ScoreVide } from './labellisation/Scores';
 
@@ -9,7 +10,7 @@ type Props = {
   isReadonly: boolean;
   collectiviteId: number;
   progressionScore: Pick<
-    TableOptions<ProgressionRow>,
+    TableOptions<ActionDetailed>,
     'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
   >;
   repartitionPhases: { id: string; value: number }[];
@@ -29,8 +30,10 @@ export const ReferentielCard = ({
   title,
 }: Props) => {
   const displayEtatDesLieux =
-    progressionScore.data.find((d) => d.score_non_renseigne !== 1) !==
-    undefined;
+    (progressionScore.data as ActionDetailed[]).find(
+      (d) =>
+        divisionOrZero(d.score?.pointNonRenseigne ?? 0, d.score?.pointPotentiel ?? 0) !== 1
+    ) !== undefined;
 
   return (
     <div className="flex flex-col gap-6">
@@ -60,9 +63,9 @@ export const ReferentielCard = ({
             collectiviteId={collectiviteId}
             referentiel={referentiel}
             title={title}
-            tags={progressionScore.data.map((d) => ({
-              label: actionIdToLabel[d.action_id] ?? d.nom,
-              axeId: d.action_id,
+            tags={(progressionScore.data as ActionDetailed[]).map((d) => ({
+              label: actionIdToLabel[d.actionId] ?? d.nom,
+              axeId: d.actionId,
             }))}
           />
         </>

@@ -6,10 +6,10 @@ import {
   ReferentielId,
   SnapshotJalonEnum,
 } from '@tet/domain/referentiels';
-import { actionNewToDeprecated } from '../../DEPRECATED_scores.types';
-import { TComparaisonScoreAudit } from './types';
+import { toComparaisonRowFromSnapshot } from './snapshot-to-tabular';
+import type { TScoreAuditRowData } from './types';
 
-// charge les comparaisons de potentiels/scores avant/après audit
+// charge les comparaisons de potentiels/scores avant/après audit (depuis snapshots)
 export const useComparaisonScoreAudit = (
   collectiviteId: number,
   referentielId: ReferentielId
@@ -26,11 +26,10 @@ export const useComparaisonScoreAudit = (
         },
       },
       {
-        select(snapshots) {
+        select(snapshots): TScoreAuditRowData[] {
           const currentSnapshot = snapshots.find(
             (snap) => snap.jalon === SnapshotJalonEnum.COURANT
           );
-
           const preAuditSnapshot = snapshots.find(
             (snap) => snap.jalon === SnapshotJalonEnum.PRE_AUDIT
           );
@@ -41,22 +40,13 @@ export const useComparaisonScoreAudit = (
 
           const { scores } = currentSnapshot.scoresPayload;
 
-          const result = flatMapActionsEnfants(scores).map((currentAction) => {
+          return flatMapActionsEnfants(scores).map((currentAction) => {
             const preAuditAction = findActionById(
               preAuditSnapshot.scoresPayload.scores,
               currentAction.actionId
             );
-
-            return {
-              collectivite_id: collectiviteId,
-              referentiel: referentielId,
-              action_id: currentAction.actionId,
-              courant: actionNewToDeprecated(currentAction),
-              pre_audit: actionNewToDeprecated(preAuditAction),
-            };
+            return toComparaisonRowFromSnapshot(currentAction, preAuditAction);
           });
-
-          return result as TComparaisonScoreAudit[];
         },
       }
     )

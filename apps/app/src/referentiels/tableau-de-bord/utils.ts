@@ -1,13 +1,13 @@
+import { divisionOrZero } from '@tet/domain/utils';
 import { avancementToLabel } from '@/app/app/labels';
 import { actionAvancementColors } from '@/app/app/theme';
-import { ProgressionRow } from '../DEPRECATED_scores.types';
+import type { ActionDetailed } from '../use-snapshot';
 
 /**
- * Met en forme les scores pour les graphes de progression des scores
+ * Met en forme les scores pour les graphes de progression (snapshot format)
  */
-
 export const getFormattedScore = (
-  scoreData: readonly ProgressionRow[],
+  scoreData: readonly ActionDetailed[],
   indexBy: string,
   percentage: boolean,
   customColors: { [key: string]: string }
@@ -15,52 +15,60 @@ export const getFormattedScore = (
   const formattedScore = [];
 
   if (percentage) {
-    // Formate les scores (%) pour un affichage sur 100
     formattedScore.push(
-      ...scoreData.map((d) => ({
-        [indexBy]: `${d.action_id.split('_')[1]}`,
-        [avancementToLabel.fait]: d.score_realise * 100,
-        [avancementToLabel.programme]: d.score_programme * 100,
-        [avancementToLabel.pas_fait]: d.score_pas_fait * 100,
-        [avancementToLabel.non_renseigne]: d.score_non_renseigne * 100,
-        ...customColors,
-        clickable: `${d.have_children}`,
-      }))
+      ...scoreData.map((d) => {
+        const pp = d.score?.pointPotentiel ?? 0;
+        return {
+          [indexBy]: `${(d.actionId ?? '').split('_')[1]}`,
+          [avancementToLabel.fait]:
+            divisionOrZero(d.score?.pointFait ?? 0, pp) * 100,
+          [avancementToLabel.programme]:
+            divisionOrZero(d.score?.pointProgramme ?? 0, pp) * 100,
+          [avancementToLabel.pas_fait]:
+            divisionOrZero(d.score?.pointPasFait ?? 0, pp) * 100,
+          [avancementToLabel.non_renseigne]:
+            divisionOrZero(d.score?.pointNonRenseigne ?? 0, pp) * 100,
+          ...customColors,
+          clickable: `${d.actionsEnfant?.length > 0}`,
+        };
+      })
     );
 
-    // Calcul des scores totaux
     const totalPointsMaxPersonnalises =
       scoreData.reduce(
-        (res, currVal) => res + currVal.points_max_personnalises,
+        (res, d) => res + (d.score?.pointPotentiel ?? 0),
         0
       ) || 1;
 
     formattedScore.push({
       [indexBy]: 'Total',
       [avancementToLabel.fait]:
-        (scoreData.reduce((res, currVal) => res + currVal.points_realises, 0) /
+        (scoreData.reduce((res, d) => res + (d.score?.pointFait ?? 0), 0) /
           totalPointsMaxPersonnalises) *
         100,
       [avancementToLabel.programme]:
         (scoreData.reduce(
-          (res, currVal) => res + currVal.points_programmes,
+          (res, d) => res + (d.score?.pointProgramme ?? 0),
           0
         ) /
           totalPointsMaxPersonnalises) *
         100,
       [avancementToLabel.pas_fait]:
         (scoreData.reduce(
-          (res, currVal) =>
-            res + currVal.score_pas_fait * currVal.points_max_personnalises,
+          (res, d) =>
+            res +
+            divisionOrZero(d.score?.pointPasFait ?? 0, d.score?.pointPotentiel ?? 0) *
+              (d.score?.pointPotentiel ?? 0),
           0
         ) /
           totalPointsMaxPersonnalises) *
         100,
       [avancementToLabel.non_renseigne]:
         (scoreData.reduce(
-          (res, currVal) =>
+          (res, d) =>
             res +
-            currVal.score_non_renseigne * currVal.points_max_personnalises,
+            divisionOrZero(d.score?.pointNonRenseigne ?? 0, d.score?.pointPotentiel ?? 0) *
+              (d.score?.pointPotentiel ?? 0),
           0
         ) /
           totalPointsMaxPersonnalises) *
@@ -69,32 +77,32 @@ export const getFormattedScore = (
       clickable: 'false',
     });
   } else {
-    // Formate les scores en points
     formattedScore.push(
-      ...scoreData.map((d) => ({
-        [indexBy]: `${d.action_id.split('_')[1]}`,
-        [avancementToLabel.fait]: d.points_realises,
-        [avancementToLabel.programme]: d.points_programmes,
-        [avancementToLabel.pas_fait]:
-          d.score_pas_fait * d.points_max_personnalises,
-        [avancementToLabel.non_renseigne]:
-          d.score_non_renseigne * d.points_max_personnalises,
-        ...customColors,
-        clickable: `${d.have_children}`,
-      }))
+      ...scoreData.map((d) => {
+        const pp = d.score?.pointPotentiel ?? 0;
+        return {
+          [indexBy]: `${(d.actionId ?? '').split('_')[1]}`,
+          [avancementToLabel.fait]: d.score?.pointFait ?? 0,
+          [avancementToLabel.programme]: d.score?.pointProgramme ?? 0,
+          [avancementToLabel.pas_fait]:
+            divisionOrZero(d.score?.pointPasFait ?? 0, pp) * (pp || 1),
+          [avancementToLabel.non_renseigne]:
+            divisionOrZero(d.score?.pointNonRenseigne ?? 0, pp) * (pp || 1),
+          ...customColors,
+          clickable: `${d.actionsEnfant?.length > 0}`,
+        };
+      })
     );
   }
 
   return formattedScore;
 };
 
-export const getAggregatedScore = (scoreData: readonly ProgressionRow[]) => {
+export const getAggregatedScore = (
+  scoreData: readonly ActionDetailed[]
+) => {
   const aggregatedScore: { id: string; value: number; color?: string }[] = [
-    {
-      id: avancementToLabel.fait,
-      value: 0,
-      color: actionAvancementColors.fait,
-    },
+    { id: avancementToLabel.fait, value: 0, color: actionAvancementColors.fait },
     {
       id: avancementToLabel.programme,
       value: 0,
@@ -112,13 +120,14 @@ export const getAggregatedScore = (scoreData: readonly ProgressionRow[]) => {
     },
   ];
 
-  scoreData.forEach((score) => {
-    aggregatedScore[0].value += score.points_realises;
-    aggregatedScore[1].value += score.points_programmes;
+  scoreData.forEach((d) => {
+    const pp = d.score?.pointPotentiel ?? 0;
+    aggregatedScore[0].value += d.score?.pointFait ?? 0;
+    aggregatedScore[1].value += d.score?.pointProgramme ?? 0;
     aggregatedScore[2].value +=
-      score.score_pas_fait * score.points_max_personnalises;
+      divisionOrZero(d.score?.pointPasFait ?? 0, pp) * (pp || 1);
     aggregatedScore[3].value +=
-      score.score_non_renseigne * score.points_max_personnalises;
+      divisionOrZero(d.score?.pointNonRenseigne ?? 0, pp) * (pp || 1);
   });
 
   return {
@@ -128,7 +137,7 @@ export const getAggregatedScore = (scoreData: readonly ProgressionRow[]) => {
     pas_fait: aggregatedScore[2].value,
     non_renseigne: aggregatedScore[3].value,
     max_personnalise: scoreData.reduce(
-      (res, currVal) => res + currVal.points_max_personnalises,
+      (res, d) => res + (d.score?.pointPotentiel ?? 0),
       0
     ),
   };

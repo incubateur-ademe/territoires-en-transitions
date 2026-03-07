@@ -1,5 +1,5 @@
+import type { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import { TScoreAuditRowData } from '@/app/referentiels/audits/AuditComparaison/types';
-import { ProgressionRow } from '@/app/referentiels/DEPRECATED_scores.types';
 import { BarDatum } from '@nivo/bar';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
@@ -19,7 +19,7 @@ const typeToIndexby: Record<string, string> = {
 
 export type TBarChartScoreTable =
   | Pick<
-      TableOptions<ProgressionRow>,
+      TableOptions<ActionDetailed>,
       'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
     >
   | Pick<
@@ -49,7 +49,7 @@ type BarChartCardWithSubrowsProps = {
   };
   customStyle?: React.CSSProperties;
   getFormattedScore: (
-    scoreData: readonly ProgressionRow[] | readonly TScoreAuditRowData[],
+    scoreData: readonly ActionDetailed[] | readonly TScoreAuditRowData[],
     indexBy: string,
     percentage: boolean,
     customColors: { [key: string]: string }
@@ -81,7 +81,11 @@ const BarChartCardWithSubrows = ({
     setScoreBreadcrumb([
       { scoreData: score.data, name: 'Tous les axes', fileName: 'referentiel' },
     ]);
-    setIndexBy(score.data[0]?.type ? typeToIndexby[score.data[0].type] : '');
+    const first = score.data[0] as
+      | { actionType?: string; type?: string }
+      | undefined;
+    const typeKey = first?.actionType ?? first?.type;
+    setIndexBy(typeKey ? typeToIndexby[typeKey] ?? typeKey : '');
   }, [score.data]);
 
   // Affichage de l'axe enfant
@@ -108,7 +112,10 @@ const BarChartCardWithSubrows = ({
               fileName: indexBy,
             },
           ]);
-          setIndexBy(typeToIndexby[subRows[0].type]);
+          const rowType =
+            (subRows[0] as { actionType?: string }).actionType ??
+            (subRows[0] as { type?: string }).type;
+          setIndexBy(typeToIndexby[rowType ?? ''] ?? rowType ?? '');
         }
       }
     }
@@ -118,7 +125,11 @@ const BarChartCardWithSubrows = ({
   const handleOpenParentIndex = (index: number) => {
     const newScore = scoreBreadcrumb.slice(0, index + 1);
     setScoreBreadcrumb(newScore);
-    setIndexBy(typeToIndexby[newScore[newScore.length - 1].scoreData[0].type]);
+    const firstRow = newScore[newScore.length - 1].scoreData[0] as
+      | { actionType?: string; type?: string }
+      | undefined;
+    const typeKey = firstRow?.actionType ?? firstRow?.type;
+    setIndexBy(typeKey ? typeToIndexby[typeKey] ?? typeKey : '');
   };
 
   // Props du graphe

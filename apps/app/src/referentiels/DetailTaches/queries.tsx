@@ -1,4 +1,4 @@
-import { ProgressionRow } from '../DEPRECATED_scores.types';
+import type { ActionDetailed } from '../use-snapshot';
 
-// un sous-ensemble des champs pour alimenter notre table des taches
-export type TacheDetail = ProgressionRow & { isExpanded: boolean };
+/** Ligne de la table détail des tâches (snapshot action + état déplié) */
+export type TacheDetail = ActionDetailed & { isExpanded?: boolean };

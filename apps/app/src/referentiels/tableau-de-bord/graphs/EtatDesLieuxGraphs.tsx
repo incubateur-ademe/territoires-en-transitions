@@ -7,7 +7,7 @@ import { ReferentielId } from '@tet/domain/referentiels';
 import { Button, Event, useEventTracker } from '@tet/ui';
 import { JSX, useState } from 'react';
 import { TableOptions } from 'react-table';
-import { ProgressionRow } from '../../DEPRECATED_scores.types';
+import type { ActionDetailed } from '../../use-snapshot';
 import { AccueilCard } from '../AccueilCard';
 import ProgressionReferentiel from './ProgressionReferentiel';
 import { TdbScoreTotalChart } from './tdb-score-total.chart';
@@ -16,7 +16,7 @@ type EtatDesLieuxGraphsProps = {
   referentiel: ReferentielId;
   displayEtatDesLieux: boolean;
   progressionScore: Pick<
-    TableOptions<ProgressionRow>,
+    TableOptions<ActionDetailed>,
     'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
   >;
   repartitionPhases: { id: string; value: number }[];

@@ -8,9 +8,9 @@ import {
 } from '@tet/domain/referentiels';
 import { TableOptions } from 'react-table';
 import { useSaveActionStatut } from '../actions/action-statut/use-action-statut';
-import { actionNewToDeprecated } from '../DEPRECATED_scores.types';
 import { useReferentielId } from '../referentiel-context';
 import { useTable } from '../ReferentielTable/useReferentiel';
+import type { ActionDetailed } from '../use-snapshot';
 import { initialFilters, nameToShortNames, TFilters } from './filters';
 import { TacheDetail } from './queries';
 import { actionMatchingFilter } from './useTableData.helpers';
@@ -50,7 +50,6 @@ export const useTableData: UseTableData = () => {
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
 
-  // filtre initial
   const [filters, setFilters, filtersCount] = useSearchParams<TFilters>(
     'detail',
     initialFilters,
@@ -63,51 +62,35 @@ export const useTableData: UseTableData = () => {
 
   const { saveActionStatut, isLoading: isSaving } = useSaveActionStatut();
 
-  const actionMatchingFilterWrapper = (
-    actionOld: ReturnType<typeof actionNewToDeprecated>
-  ) => {
-    const action = (actionOld as ReturnType<typeof actionNewToDeprecated>)
-      .sourceAction;
+  const actionMatchingFilterWrapper = (action: ActionDetailed) =>
+    actionMatchingFilter(action, filters.statut);
 
-    const { statut: statuts } = filters;
-
-    return actionMatchingFilter(action, statuts);
-  };
-
-  const getSubRows = (row: any) => {
-    const action = (row as ReturnType<typeof actionNewToDeprecated>)
-      .sourceAction;
-
-    // On n'affiche pas les tâches si la sous-action a un statut existant autre que 'non_renseigné'
+  const getSubRows = (row: ActionDetailed) => {
     if (
-      action.actionType === ActionTypeEnum.SOUS_ACTION &&
-      action.score.avancement &&
-      action.score.avancement !== StatutAvancementEnum.NON_RENSEIGNE
+      row.actionType === ActionTypeEnum.SOUS_ACTION &&
+      row.score.avancement &&
+      row.score.avancement !== StatutAvancementEnum.NON_RENSEIGNE
     ) {
       return [];
     }
-
-    return action.actionsEnfant
-      .map(actionNewToDeprecated)
+    return row.actionsEnfant
       .map(addPropertyIsExpanded)
       .filter(actionMatchingFilterWrapper);
   };
 
   const [taskCount, sousActionsCount] = reduceActions(
-    table.data.map((a) => a.sourceAction),
+    table.data as ActionDetailed[],
     [0, 0],
     ([taskCount, sousActionsCount], action) => {
-      if (!actionMatchingFilterWrapper(actionNewToDeprecated(action))) {
+      if (!actionMatchingFilterWrapper(action)) {
         return [taskCount, sousActionsCount];
       }
-
       if (action.actionType === ActionTypeEnum.TACHE) {
         return [taskCount + 1, sousActionsCount];
       }
       if (action.actionType === ActionTypeEnum.SOUS_ACTION) {
         return [taskCount, sousActionsCount + 1];
       }
-
       return [taskCount, sousActionsCount];
     }
   );
@@ -115,7 +98,7 @@ export const useTableData: UseTableData = () => {
   return {
     table: {
       ...table,
-      data: table.data
+      data: (table.data as ActionDetailed[])
         .map(addPropertyIsExpanded)
         .filter(actionMatchingFilterWrapper),
       getSubRows,
@@ -133,7 +116,6 @@ export const useTableData: UseTableData = () => {
       saveActionStatut({
         collectiviteId,
         actionId,
-        // TODO: Move this logic to the backend
         avancement:
           avancement === StatutAvancementEnum.NON_CONCERNE
             ? StatutAvancementEnum.NON_RENSEIGNE
@@ -150,39 +132,29 @@ export const useTableData: UseTableData = () => {
 };
 
 function addPropertyIsExpanded(
-  action: ReturnType<typeof actionNewToDeprecated>
-) {
+  action: ActionDetailed
+): ActionDetailed & { isExpanded: boolean } {
+  const avancementDescendants = action.actionsEnfant.flatMap(
+    (a) => (a.score.avancement ? [a.score.avancement] : [])
+  );
   if (
-    action.type === ActionTypeEnum.SOUS_ACTION &&
-    (action.avancement === StatutAvancementEnum.NON_RENSEIGNE ||
-      !action.avancement)
+    action.actionType === ActionTypeEnum.SOUS_ACTION &&
+    (action.score.avancement === StatutAvancementEnum.NON_RENSEIGNE ||
+      !action.score.avancement)
   ) {
-    // Les sous-actions "non renseigné" avec des tâches renseignées
-    // sont mises à jour avec un statut "détaillé"
-    // isExpanded est mis à true
-    // Si c'est un "vrai" non renseignée, alors isExpanded est à false
-    if (
-      action.avancement_descendants?.find(
-        (av) => !!av && av !== StatutAvancementEnum.NON_RENSEIGNE
-      )
-    ) {
-      return {
-        ...action,
-        avancement: StatutAvancementEnum.DETAILLE,
-        isExpanded: true,
-      };
-    } else {
-      return { ...action, isExpanded: false };
-    }
-  } else if (action.type === ActionTypeEnum.SOUS_ACTION) {
-    // Les autres sous-actions ne sont pas dépliées
-
-    return { ...action, isExpanded: false };
-  } else if (action.type === ActionTypeEnum.TACHE) {
-    // Les tâches ne sont pas dépliées
-    return { ...action, isExpanded: false };
-  } else {
-    // Les axes / sous-axes / actions sont dépliés
-    return { ...action, isExpanded: true };
+    const hasRenseigneDescendant = avancementDescendants.some(
+      (av) => av && av !== StatutAvancementEnum.NON_RENSEIGNE
+    );
+    return {
+      ...action,
+      isExpanded: !!hasRenseigneDescendant,
+    };
   }
+  if (action.actionType === ActionTypeEnum.SOUS_ACTION) {
+    return { ...action, isExpanded: false };
+  }
+  if (action.actionType === ActionTypeEnum.TACHE) {
+    return { ...action, isExpanded: false };
+  }
+  return { ...action, isExpanded: true };
 }
