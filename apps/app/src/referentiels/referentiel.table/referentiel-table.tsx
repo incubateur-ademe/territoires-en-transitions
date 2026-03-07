@@ -11,28 +11,23 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   cn,
   Table,
-  TableCell,
   TableHead,
   TableHeaderCell,
   TableLoading,
   TableRow,
 } from '@tet/ui';
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';
 import { ReferentielTableCommentairesCell } from './referentiel-table.commentaires.cell';
 import { ReferentielTableExplicationCell } from './referentiel-table.explication.cell';
 import { ReferentielTableNotificationCell } from './referentiel-table.notification.cell';
 import { ReferentielTablePersonnesPilotesCell } from './referentiel-table.personnes-pilotes.cell';
-import { ReferentielTablePointsCell } from './referentiel-table.points.cell';
-import { ReferentielTableProgressBarCell } from './referentiel-table.progress-bar.cell';
+import { ReferentielTableScoreRatioCell } from './referentiel-table.score-ratio.cell';
 import { ReferentielTableServicesPilotesCell } from './referentiel-table.services-pilotes.cell';
-import { ReferentielTableStatutCell } from './referentiel-table.statut.cell';
+import { ReferentielTableStatutOrProgressionCell } from './referentiel-table.statut-or-progression.cell';
 import { ReferentielTableTitleCell } from './referentiel-table.title.cell';
 import { ReferentielTableProps, ReferentielTableRow } from './types';
-import {
-  actionTypeToClassName,
-  buildInitialExpanded,
-  getCommonPinningStyles,
-} from './utils';
+import { buildInitialExpanded, getCommonPinningStyles } from './utils';
 
 const HEADER_CELL_SMALL_CENTER_CLASSNAME = 'text-xs m-auto normal-case';
 const HEADER_CELL_BORDER_RIGHT_CLASSNAME =
@@ -40,7 +35,11 @@ const HEADER_CELL_BORDER_RIGHT_CLASSNAME =
 
 const columnHelper = createColumnHelper<ReferentielTableRow>();
 
-const columns = [
+const getColumns = ({
+  updateActionStatut,
+}: {
+  updateActionStatut: ReturnType<typeof useUpdateActionStatut>['mutate'];
+}) => [
   columnHelper.accessor('nom', {
     size: 512,
     header: (info) => (
@@ -62,178 +61,197 @@ const columns = [
   //     </TableCell>
   //   ),
   // }),
-  columnHelper.accessor('phase', {
+  // columnHelper.accessor('phase', {
+  //   header: () => (
+  //     <TableHeaderCell
+  //       title="Phase"
+  //       className={cn('w-36', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
+  //       titleClassName="m-auto"
+  //     />
+  //   ),
+  //   cell: (info) => (
+  //     <TableCell
+  //       className={cn(
+  //         'text-center',
+  //         actionTypeToClassName[info.row.original.type]
+  //       )}
+  //     >
+  //       {info.getValue()}
+  //     </TableCell>
+  //   ),
+  // }),
+  columnHelper.accessor('statut', {
     header: () => (
       <TableHeaderCell
-        title="Phase"
-        className={cn('w-36', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
-        titleClassName="m-auto"
+        title="Statut"
+        className={cn('w-40', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
       />
     ),
     cell: (info) => (
-      <TableCell
-        className={cn(
-          'text-center',
-          actionTypeToClassName[info.row.original.type]
-        )}
-      >
-        {info.getValue()}
-      </TableCell>
-    ),
-  }),
-  columnHelper.accessor('pointPotentiel', {
-    header: () => (
-      <TableHeaderCell
-        title="Le potentiel personnalisé"
-        className={cn('w-28', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
-        titleClassName={cn(HEADER_CELL_SMALL_CENTER_CLASSNAME)}
-      />
-    ),
-    cell: (info) => (
-      <ReferentielTablePointsCell
-        value={info.getValue()}
-        actionType={info.row.original.type}
+      <ReferentielTableStatutOrProgressionCell
+        info={info}
+        updateActionStatut={updateActionStatut}
       />
     ),
   }),
+
   columnHelper.display({
     id: 'progress',
     header: () => (
       <TableHeaderCell
         title="Progression"
         className={cn('w-60', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
-        titleClassName="m-auto normal-case"
       />
     ),
-    cell: ({ row }) => <ReferentielTableProgressBarCell row={row.original} />,
+    cell: ({ row }) => <ReferentielTableScoreRatioCell row={row.original} />,
   }),
-  columnHelper.accessor('pointRestant', {
-    header: () => (
-      <TableHeaderCell
-        title="Point restant"
-        className={cn('w-24', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
-        titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
-      />
-    ),
-    cell: (info) => (
-      <ReferentielTablePointsCell
-        value={info.getValue()}
-        actionType={info.row.original.type}
-      />
-    ),
-  }),
-  columnHelper.accessor('pointFait', {
-    header: () => (
-      <TableHeaderCell
-        title="Point fait"
-        className={cn('w-24', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
-        titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
-      />
-    ),
-    cell: (info) => (
-      <ReferentielTablePointsCell
-        value={info.getValue()}
-        actionType={info.row.original.type}
-      />
-    ),
-  }),
-  columnHelper.accessor('scoreRealise', {
-    header: () => (
-      <TableHeaderCell
-        title="% Fait"
-        className={cn('w-24', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
-        titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
-      />
-    ),
-    cell: (info) => (
-      <ReferentielTablePointsCell
-        value={info.getValue()}
-        percentage
-        actionType={info.row.original.type}
-      />
-    ),
-  }),
-  columnHelper.accessor('pointProgramme', {
-    header: () => (
-      <TableHeaderCell
-        title="Point programmé"
-        className={cn('w-24', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
-        titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
-      />
-    ),
-    cell: (info) => (
-      <ReferentielTablePointsCell
-        value={info.getValue()}
-        actionType={info.row.original.type}
-      />
-    ),
-  }),
-  columnHelper.accessor('scoreProgramme', {
-    header: () => (
-      <TableHeaderCell
-        title="% Programmé"
-        className={cn('w-24', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
-        titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
-      />
-    ),
-    cell: (info) => (
-      <ReferentielTablePointsCell
-        value={info.getValue()}
-        percentage
-        actionType={info.row.original.type}
-      />
-    ),
-  }),
-  columnHelper.accessor('pointsPasFait', {
-    header: () => (
-      <TableHeaderCell
-        title="Point pas fait"
-        className={cn('w-24', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
-        titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
-      />
-    ),
-    cell: (info) => (
-      <ReferentielTablePointsCell
-        value={info.getValue()}
-        actionType={info.row.original.type}
-      />
-    ),
-  }),
-  columnHelper.accessor('scorePasFait', {
-    header: () => (
-      <TableHeaderCell
-        title="% Pas fait"
-        className={cn('w-24', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
-        titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
-      />
-    ),
-    cell: (info) => (
-      <ReferentielTablePointsCell
-        value={info.getValue()}
-        percentage
-        actionType={info.row.original.type}
-      />
-    ),
-  }),
-  columnHelper.accessor('statut', {
-    header: () => (
-      <TableHeaderCell
-        title="Statut"
-        className={cn('w-40', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
-        titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
-      />
-    ),
-    cell: (info) => <ReferentielTableStatutCell info={info} />,
-  }),
+
   columnHelper.accessor('explication', {
     header: () => (
       <TableHeaderCell
-        title="Explications sur l'état d'avancement"
+        title="État d'avancement"
         className={cn('w-[32rem]', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
       />
     ),
     cell: (info) => <ReferentielTableExplicationCell info={info} />,
   }),
+
+  // columnHelper.accessor('pointPotentiel', {
+  //   header: () => (
+  //     <TableHeaderCell
+  //       title="Potentiel"
+  //       className={cn('w-28', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
+  //       titleClassName={cn(HEADER_CELL_SMALL_CENTER_CLASSNAME)}
+  //     />
+  //   ),
+  //   cell: (info) => (
+  //     <ReferentielTablePointsCell
+  //       value={info.getValue()}
+  //       actionType={info.row.original.type}
+  //     />
+  //   ),
+  // }),
+  // columnHelper.display({
+  //   id: 'progress',
+  //   header: () => (
+  //     <TableHeaderCell
+  //       title="Progression"
+  //       className={cn('w-60', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
+  //       titleClassName="m-auto normal-case"
+  //     />
+  //   ),
+  //   cell: ({ row }) => <ReferentielTableProgressionCell row={row.original} />,
+  // }),
+
+  // columnHelper.accessor('pointRestant', {
+  //   header: () => (
+  //     <TableHeaderCell
+  //       title="Point restant"
+  //       className={cn('w-24', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
+  //       titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
+  //     />
+  //   ),
+  //   cell: (info) => (
+  //     <ReferentielTablePointsCell
+  //       value={info.getValue()}
+  //       actionType={info.row.original.type}
+  //     />
+  //   ),
+  // }),
+  // columnHelper.accessor('pointFait', {
+  //   header: () => (
+  //     <TableHeaderCell
+  //       title="Point fait"
+  //       className={cn('w-24', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
+  //       titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
+  //     />
+  //   ),
+  //   cell: (info) => (
+  //     <ReferentielTablePointsCell
+  //       value={info.getValue()}
+  //       actionType={info.row.original.type}
+  //     />
+  //   ),
+  // }),
+  // columnHelper.accessor('scoreRealise', {
+  //   header: () => (
+  //     <TableHeaderCell
+  //       title="% Fait"
+  //       className={cn('w-24', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
+  //       titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
+  //     />
+  //   ),
+  //   cell: (info) => (
+  //     <ReferentielTablePointsCell
+  //       value={info.getValue()}
+  //       percentage
+  //       actionType={info.row.original.type}
+  //     />
+  //   ),
+  // }),
+  // columnHelper.accessor('pointProgramme', {
+  //   header: () => (
+  //     <TableHeaderCell
+  //       title="Point programmé"
+  //       className={cn('w-24', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
+  //       titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
+  //     />
+  //   ),
+  //   cell: (info) => (
+  //     <ReferentielTablePointsCell
+  //       value={info.getValue()}
+  //       actionType={info.row.original.type}
+  //     />
+  //   ),
+  // }),
+  // columnHelper.accessor('scoreProgramme', {
+  //   header: () => (
+  //     <TableHeaderCell
+  //       title="% Programmé"
+  //       className={cn('w-24', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
+  //       titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
+  //     />
+  //   ),
+  //   cell: (info) => (
+  //     <ReferentielTablePointsCell
+  //       value={info.getValue()}
+  //       percentage
+  //       actionType={info.row.original.type}
+  //     />
+  //   ),
+  // }),
+  // columnHelper.accessor('pointsPasFait', {
+  //   header: () => (
+  //     <TableHeaderCell
+  //       title="Point pas fait"
+  //       className={cn('w-24', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
+  //       titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
+  //     />
+  //   ),
+  //   cell: (info) => (
+  //     <ReferentielTablePointsCell
+  //       value={info.getValue()}
+  //       actionType={info.row.original.type}
+  //     />
+  //   ),
+  // }),
+  // columnHelper.accessor('scorePasFait', {
+  //   header: () => (
+  //     <TableHeaderCell
+  //       title="% Pas fait"
+  //       className={cn('w-24', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
+  //       titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
+  //     />
+  //   ),
+  //   cell: (info) => (
+  //     <ReferentielTablePointsCell
+  //       value={info.getValue()}
+  //       percentage
+  //       actionType={info.row.original.type}
+  //     />
+  //   ),
+  // }),
+
   columnHelper.accessor('personnesPilotes', {
     header: () => (
       <TableHeaderCell
@@ -311,14 +329,22 @@ export const ReferentielTable = ({
   isLoading = false,
 }: ReferentielTableProps) => {
   const collectiviteId = useCollectiviteId();
+  const { mutate: updateActionStatut } = useUpdateActionStatut();
 
-  const [expanded, setExpanded] = useState<ExpandedState>({});
+  const [expanded, setExpanded] = useState<ExpandedState>(
+    buildInitialExpanded(data)
+  );
 
-  useEffect(() => {
-    if (data.length > 0) {
-      setExpanded(buildInitialExpanded(data));
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data.length > 0) {
+  //     setExpanded(buildInitialExpanded(data));
+  //   }
+  // }, [data]);
+
+  const columns = useMemo(
+    () => getColumns({ updateActionStatut }),
+    [updateActionStatut]
+  );
 
   const table = useReactTable({
     columns,
@@ -329,6 +355,9 @@ export const ReferentielTable = ({
     getRowId: (row) => row.id,
     state: {
       expanded,
+      rowPinning: {
+        top: [],
+      },
       columnPinning: {
         left: ['nom'],
       },
