@@ -11,7 +11,6 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   cn,
   Table,
-  TableCell,
   TableHead,
   TableHeaderCell,
   TableLoading,
@@ -28,11 +27,7 @@ import { ReferentielTableServicesPilotesCell } from './referentiel-table.service
 import { ReferentielTableStatutCell } from './referentiel-table.statut.cell';
 import { ReferentielTableTitleCell } from './referentiel-table.title.cell';
 import { ReferentielTableProps, ReferentielTableRow } from './types';
-import {
-  actionTypeToClassName,
-  buildInitialExpanded,
-  getCommonPinningStyles,
-} from './utils';
+import { buildInitialExpanded, getCommonPinningStyles } from './utils';
 
 const HEADER_CELL_SMALL_CENTER_CLASSNAME = 'text-xs m-auto normal-case';
 const HEADER_CELL_BORDER_RIGHT_CLASSNAME =
@@ -62,24 +57,34 @@ const columns = [
   //     </TableCell>
   //   ),
   // }),
-  columnHelper.accessor('phase', {
+  // columnHelper.accessor('phase', {
+  //   header: () => (
+  //     <TableHeaderCell
+  //       title="Phase"
+  //       className={cn('w-36', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
+  //       titleClassName="m-auto"
+  //     />
+  //   ),
+  //   cell: (info) => (
+  //     <TableCell
+  //       className={cn(
+  //         'text-center',
+  //         actionTypeToClassName[info.row.original.type]
+  //       )}
+  //     >
+  //       {info.getValue()}
+  //     </TableCell>
+  //   ),
+  // }),
+  columnHelper.accessor('statut', {
     header: () => (
       <TableHeaderCell
-        title="Phase"
-        className={cn('w-36', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
-        titleClassName="m-auto"
+        title="Statut"
+        className={cn('w-40', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
+        titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
       />
     ),
-    cell: (info) => (
-      <TableCell
-        className={cn(
-          'text-center',
-          actionTypeToClassName[info.row.original.type]
-        )}
-      >
-        {info.getValue()}
-      </TableCell>
-    ),
+    cell: (info) => <ReferentielTableStatutCell info={info} />,
   }),
   columnHelper.accessor('pointPotentiel', {
     header: () => (
@@ -214,16 +219,6 @@ const columns = [
         actionType={info.row.original.type}
       />
     ),
-  }),
-  columnHelper.accessor('statut', {
-    header: () => (
-      <TableHeaderCell
-        title="Statut"
-        className={cn('w-40', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
-        titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
-      />
-    ),
-    cell: (info) => <ReferentielTableStatutCell info={info} />,
   }),
   columnHelper.accessor('explication', {
     header: () => (

@@ -5,6 +5,7 @@ import {
 } from '@tet/domain/referentiels';
 import { cn, TableCell } from '@tet/ui';
 import ActionStatutBadge from '../actions/action-statut/action-statut.badge';
+import { SelectActionStatut } from '../actions/action-statut/action-statut.select';
 import { ReferentielTableRow } from './types';
 import { actionTypeToClassName } from './utils';
 
@@ -23,7 +24,21 @@ export const ReferentielTableStatutCell = ({ info }: Props) => {
     data.type === ActionTypeEnum.TACHE;
 
   return (
-    <TableCell className={cn(actionTypeToClassName[data.type])}>
+    <TableCell
+      className={cn(actionTypeToClassName[data.type])}
+      canEdit={true}
+      edit={{
+        renderOnEdit: ({ openState }) => {
+          return (
+            <SelectActionStatut
+              openState={openState}
+              value={data.statut}
+              onChange={(statut) => {}}
+            />
+          );
+        },
+      }}
+    >
       <>
         {canDisplayStatut && (
           <>
