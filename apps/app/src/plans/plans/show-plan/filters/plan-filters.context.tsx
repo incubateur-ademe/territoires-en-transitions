@@ -1,8 +1,8 @@
 'use client';
 
+import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import { usePersonneListe } from '@/app/collectivites/tags/use-list-personnes';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import { usePersonneListe } from '@/app/ui/dropdownLists/PersonnesDropdown/usePersonneListe';
-import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import { TOption } from '@/app/ui/shared/select/commons';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Plan } from '@tet/domain/plans';

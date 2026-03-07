@@ -14,24 +14,14 @@ export const tagWithCollectiviteIdSchema = z.object({
 
 export type TagWithCollectiviteId = z.infer<typeof tagWithCollectiviteIdSchema>;
 
-export const tagUpdateSchema = z.partial(tagWithCollectiviteIdSchema);
-
-export type TagUpdate = z.input<typeof tagUpdateSchema>;
-
-export const tagInsertSchema = z.partial(tagWithCollectiviteIdSchema, {
-  id: true,
-});
-
-export type TagCreate = z.infer<typeof tagInsertSchema>;
-
 export const TagEnum = {
   Financeur: 'financeur',
   Personne: 'personne',
   Partenaire: 'partenaire',
   Service: 'service',
   Structure: 'structure',
-  Categorie: 'categorie',
   Libre: 'libre',
+  InstanceGouvernance: 'instanceGouvernance',
 } as const;
 
 export type TagType = (typeof TagEnum)[keyof typeof TagEnum];

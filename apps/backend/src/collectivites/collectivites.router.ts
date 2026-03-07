@@ -3,15 +3,16 @@ import { CollectiviteCrudRouter } from '@tet/backend/collectivites/collectivite-
 import { DiscussionRouter } from '@tet/backend/collectivites/discussions/presentation/discussion.router';
 import { ImportCollectiviteRelationsRouter } from '@tet/backend/collectivites/import-collectivite-relations/import-collectivite-relations.router';
 import { RecherchesRouter } from '@tet/backend/collectivites/recherches/recherches.router';
-import { TrpcService } from '../utils/trpc/trpc.service';
+import { TrpcService } from '@tet/backend/utils/trpc/trpc.service';
 import { DocumentsRouter } from './documents/documents.router';
 import { ListCategoriesRouter } from './handle-categories/list-categories.router';
-import { InstanceGouvernanceRouter } from './handle-instance-gouvernance/handle-instance-gouvernance.router';
 import { ListCollectivitesRouter } from './list-collectivites/list-collectivites.router';
 import { CollectiviteMembresRouter } from './membres/membres.router';
 import { PersonnalisationsRouter } from './personnalisations/personnalisations.router';
 import { PersonnesRouter } from './personnes.router';
 import { TableauDeBordCollectiviteRouter } from './tableau-de-bord/tableau-de-bord-collectivite.router';
+import { ListTagsRouter } from './tags/list-tags/list-tags.router';
+import { MutateTagRouter } from './tags/mutate-tag/mutate-tag.router';
 import { PersonneTagRouter } from './tags/personnes/personne-tag.router';
 @Injectable()
 export class CollectivitesRouter {
@@ -26,9 +27,10 @@ export class CollectivitesRouter {
     private readonly upsertRouter: CollectiviteCrudRouter,
     private readonly recherchesRouter: RecherchesRouter,
     private readonly personneTagRouter: PersonneTagRouter,
+    private readonly mutateTagRouter: MutateTagRouter,
+    private readonly listTagsRouter: ListTagsRouter,
     private readonly importCollectiviteRelationsRouter: ImportCollectiviteRelationsRouter,
     private readonly discussionRouter: DiscussionRouter,
-    private readonly instanceGouvernanceRouter: InstanceGouvernanceRouter,
     private readonly personnalisationsRouter: PersonnalisationsRouter
   ) {}
 
@@ -46,9 +48,13 @@ export class CollectivitesRouter {
     discussions: this.discussionRouter.router,
     relations: this.importCollectiviteRelationsRouter.router,
     recherches: this.recherchesRouter.router,
-    tags: {
-      personnes: this.personneTagRouter.router,
-      instanceGouvernance: this.instanceGouvernanceRouter.router,
-    },
+    tags: this.trpc.mergeRouters(
+      this.mutateTagRouter.router,
+      this.listTagsRouter.router,
+
+      this.trpc.router({
+        personnes: this.personneTagRouter.router,
+      })
+    ),
   });
 }

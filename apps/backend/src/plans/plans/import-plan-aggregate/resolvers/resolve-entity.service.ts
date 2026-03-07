@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InstanceGouvernanceService } from '@tet/backend/collectivites/handle-instance-gouvernance/handle-instance-gouvernance.service';
 import { ListMembresService } from '@tet/backend/collectivites/membres/list-membres/list-membres.service';
-import { TagService } from '@tet/backend/collectivites/tags/tag.service';
+import { ListTagsService } from '@tet/backend/collectivites/tags/list-tags/list-tags.service';
+import { MutateTagService } from '@tet/backend/collectivites/tags/mutate-tag/mutate-tag.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
@@ -16,7 +16,6 @@ import {
   deduplicateById,
   deduplicatePersons,
 } from '../utils/deduplication.utils';
-import { createInstanceGouvernanceResolver } from './instance-gouvernance.resolver';
 import { createPersonneResolver } from './personne.resolver';
 import { createTagResolver } from './tag.resolver';
 
@@ -41,8 +40,8 @@ export interface ResolvedFicheEntities {
 export class ResolveEntityService {
   constructor(
     private readonly listMembresService: ListMembresService,
-    private readonly tagService: TagService,
-    private readonly instanceGouvernanceService: InstanceGouvernanceService
+    private readonly listTagsService: ListTagsService,
+    private readonly mutateTagService: MutateTagService
   ) {}
 
   /**
@@ -57,61 +56,67 @@ export class ResolveEntityService {
   async resolveFicheEntities(
     collectiviteId: number,
     fiches: ImportFicheInput[],
-    tx: Transaction,
-    user: AuthenticatedUser
+    user: AuthenticatedUser,
+    tx: Transaction
   ): Promise<Result<ResolvedFicheEntities[], string>> {
     const { getOrCreatePersonne } = await createPersonneResolver(
       collectiviteId,
       this.listMembresService,
-      this.tagService,
+      this.listTagsService,
+      this.mutateTagService,
+      user,
       tx
     );
     const { getOrCreate: getOrCreateStructure } = await createTagResolver(
       collectiviteId,
-      this.tagService,
+      this.listTagsService,
+      this.mutateTagService,
       TagEnum.Structure,
       undefined,
+      user,
       tx
     );
 
     const { getOrCreate: getOrCreateFinanceur } = await createTagResolver(
       collectiviteId,
-      this.tagService,
+      this.listTagsService,
+      this.mutateTagService,
       TagEnum.Financeur,
       undefined,
+      user,
       tx
     );
 
     const { getOrCreate: getOrCreateService } = await createTagResolver(
       collectiviteId,
-      this.tagService,
+      this.listTagsService,
+      this.mutateTagService,
       TagEnum.Service,
       undefined,
+      user,
       tx
     );
 
     const { getOrCreate: getOrCreatePartenaire } = await createTagResolver(
       collectiviteId,
-      this.tagService,
+      this.listTagsService,
+      this.mutateTagService,
       TagEnum.Partenaire,
       undefined,
+      user,
       tx
     );
 
-    const instanceGouvernanceResolverResult =
-      await createInstanceGouvernanceResolver(
+    const { getOrCreate: getOrCreateInstanceGouvernance } =
+      await createTagResolver(
         collectiviteId,
-        this.instanceGouvernanceService,
+        this.listTagsService,
+        this.mutateTagService,
+        TagEnum.InstanceGouvernance,
+        undefined,
         user,
         tx
       );
-
-    if (!instanceGouvernanceResolverResult.success) {
-      return instanceGouvernanceResolverResult;
-    }
-
-    const { getOrCreate: getOrCreateInstanceGouvernance } =
-      instanceGouvernanceResolverResult.data;
 
     const resolvers = {
       getOrCreatePersonne,

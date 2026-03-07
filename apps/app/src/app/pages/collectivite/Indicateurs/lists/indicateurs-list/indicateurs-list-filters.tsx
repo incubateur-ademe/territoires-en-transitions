@@ -1,12 +1,12 @@
 import { SearchParams } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
 import { IndicateursListParamOption } from '@/app/app/paths';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {
   getPilotesValues,
   splitPilotePersonnesAndUsers,
-} from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+} from '@/app/collectivites/tags/personnes.utils';
+import SelectPersonnesCombobox from '@/app/collectivites/tags/select-personnes.combobox';
+import SelectServicesPilotesCombobox from '@/app/collectivites/tags/select-service-pilotes.combobox';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
-import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import IndicateurCategoriesDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCategoriesDropdown';
 import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
@@ -124,7 +124,7 @@ export const IndicateursListFilters = ({
           />
         </Field>
         <Field title="Personne pilote">
-          <PersonnesDropdown
+          <SelectPersonnesCombobox
             values={getPilotesValues(filters)}
             disabled={listId === 'mes-indicateurs'}
             onChange={({ personnes }) => {
@@ -145,7 +145,7 @@ export const IndicateursListFilters = ({
           />
         </Field>
         <Field title="Direction ou service pilote">
-          <ServicesPilotesDropdown
+          <SelectServicesPilotesCombobox
             values={filters.serviceIds}
             onChange={({ services }) => {
               const { serviceIds, ...rest } = filters;

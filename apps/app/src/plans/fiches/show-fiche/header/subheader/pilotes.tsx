@@ -1,7 +1,7 @@
+import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import SelectPersonnesCombobox from '@/app/collectivites/tags/select-personnes.combobox';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
 import { SANS_PILOTE_LABEL } from '@tet/domain/plans';
@@ -22,7 +22,7 @@ export const Pilotes = ({ personnes }: PilotesTriggerProps) => {
         disabled={isReadonly}
         renderOnEdit={({ openState }) => (
           <div className="max-w-[280px]">
-            <PersonnesDropdown
+            <SelectPersonnesCombobox
               openState={openState}
               dataTest="personnes-pilotes"
               collectiviteIds={getFicheAllEditorCollectiviteIds(fiche)}

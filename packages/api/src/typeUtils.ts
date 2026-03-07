@@ -20,20 +20,6 @@ export type CompositeTypes<
   T extends keyof Database['public']['CompositeTypes']
 > = Database['public']['CompositeTypes'][T];
 
-// un exemple de type d'objet tag associé à une collectivité
-export type CollectiviteTag =
-  Database['public']['Tables']['partenaire_tag']['Insert'];
-
-export type TableTag =
-  | 'financeur_tag'
-  | 'libre_tag'
-  | 'partenaire_tag'
-  | 'personne_tag'
-  | 'service_tag'
-  | 'structure_tag';
-
-export type MesCollectivites = Views<'mes_collectivites'>;
-
 /**
   Génère, à partir d'un type, un nouveau type dont tous les champs sont non
   null. Utile pour caster le typage de certaines Views exportées par supabase

@@ -1,24 +1,23 @@
-import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
-import { InstanceGouvernanceDropdown } from '@/app/plans/fiches/shared/dropdowns/instance-gouvernance.dropdown';
-import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
-import { NoteYearsDropdown } from '@/app/ui/dropdownLists/ficheAction/notes/note-years.dropdown';
-import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
-import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
-import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
-import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import { SelectInstanceGouvernanceCombobox } from '@/app/collectivites/tags/instance-gouvernance.dropdown';
 import {
   getPilotesValues,
   getReferentsValues,
   splitPilotePersonnesAndUsers,
   splitReferentPersonnesAndUsers,
-} from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+} from '@/app/collectivites/tags/personnes.utils';
+import SelectFinanceursCombobox from '@/app/collectivites/tags/select-financeurs.combobox';
+import SelectLibreTagsCombobox from '@/app/collectivites/tags/select-libre-tags.combobox';
+import SelectPartenairesCombobox from '@/app/collectivites/tags/select-partenaires.combobox';
+import SelectPersonnesCombobox from '@/app/collectivites/tags/select-personnes.combobox';
+import SelectServicesPilotesCombobox from '@/app/collectivites/tags/select-service-pilotes.combobox';
+import SelectStructuresCombobox from '@/app/collectivites/tags/select-structures.combobox';
+import { useShareFicheEnabled } from '@/app/plans/fiches/share-fiche/use-share-fiche-enabled';
+import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
+import { NoteYearsDropdown } from '@/app/ui/dropdownLists/ficheAction/notes/note-years.dropdown';
+import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
+import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
-import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
-import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import { useCollectiviteId } from '@tet/api/collectivites';
 import { ListFichesRequestFilters as Filtres } from '@tet/domain/plans';
 import {
   Checkbox,
@@ -61,7 +60,6 @@ export const ToutesLesFichesFiltersForm = ({
   readonlyFilters?: Partial<FormFilters>;
   setFilters: (filters: Partial<FormFilters>) => void;
 }) => {
-  const collectiviteId = useCollectiviteId();
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
   const shareFicheEnabled = useShareFicheEnabled();
@@ -124,7 +122,7 @@ export const ToutesLesFichesFiltersForm = ({
                 name="personnePiloteIds"
                 control={control}
                 render={({ field }) => (
-                  <PersonnesDropdown
+                  <SelectPersonnesCombobox
                     values={pilotes}
                     disabled={
                       !isNil(readonlyFilters.personnePiloteIds) ||
@@ -153,7 +151,7 @@ export const ToutesLesFichesFiltersForm = ({
                 name="servicePiloteIds"
                 control={control}
                 render={({ field }) => (
-                  <ServicesPilotesDropdown
+                  <SelectServicesPilotesCombobox
                     values={field.value}
                     disabled={!isNil(readonlyFilters.servicePiloteIds)}
                     onChange={({ services }) => {
@@ -173,7 +171,7 @@ export const ToutesLesFichesFiltersForm = ({
                 name="structurePiloteIds"
                 control={control}
                 render={({ field }) => (
-                  <StructuresDropdown
+                  <SelectStructuresCombobox
                     values={field.value}
                     disabled={!isNil(readonlyFilters.structurePiloteIds)}
                     onChange={({ structures }) => {
@@ -193,13 +191,13 @@ export const ToutesLesFichesFiltersForm = ({
                 name="libreTagsIds"
                 control={control}
                 render={({ field }) => (
-                  <TagsSuiviPersoDropdown
+                  <SelectLibreTagsCombobox
                     values={field.value}
                     disabled={!isNil(readonlyFilters.libreTagsIds)}
-                    onChange={({ libresTag }) => {
+                    onChange={({ values }) => {
                       const tagIds =
-                        libresTag.length > 0
-                          ? libresTag.map((t) => t.id)
+                        values.length > 0
+                          ? values.map((t) => t.id)
                           : EMPTY_ARRAY_VALUE;
                       field.onChange(tagIds);
                     }}
@@ -212,11 +210,12 @@ export const ToutesLesFichesFiltersForm = ({
                 name="instanceGouvernanceIds"
                 control={control}
                 render={({ field }) => (
-                  <InstanceGouvernanceDropdown
-                    collectiviteId={collectiviteId}
+                  <SelectInstanceGouvernanceCombobox
                     values={field.value}
-                    onChange={(tags) => field.onChange(tags.map((t) => t.id))}
-                    canEditTags={false}
+                    onChange={({ values }) =>
+                      field.onChange(values.map((t) => t.id))
+                    }
+                    disableEdition={true}
                   />
                 )}
               />
@@ -227,7 +226,7 @@ export const ToutesLesFichesFiltersForm = ({
                 name="personneReferenteIds"
                 control={control}
                 render={({ field }) => (
-                  <PersonnesDropdown
+                  <SelectPersonnesCombobox
                     values={referents}
                     disabled={
                       !isNil(readonlyFilters.personneReferenteIds) ||
@@ -352,7 +351,7 @@ export const ToutesLesFichesFiltersForm = ({
                 name="financeurIds"
                 control={control}
                 render={({ field }) => (
-                  <FinanceursDropdown
+                  <SelectFinanceursCombobox
                     values={field.value}
                     disabled={!isNil(readonlyFilters.financeurIds)}
                     onChange={({ financeurs }) => {
@@ -371,7 +370,7 @@ export const ToutesLesFichesFiltersForm = ({
                 name="partenaireIds"
                 control={control}
                 render={({ field }) => (
-                  <PartenairesDropdown
+                  <SelectPartenairesCombobox
                     values={field.value}
                     disabled={!isNil(readonlyFilters.partenaireIds)}
                     onChange={({ partenaires }) => {

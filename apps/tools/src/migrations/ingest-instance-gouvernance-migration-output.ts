@@ -8,7 +8,7 @@
  *
  * Usage: tsx apps/tools/src/migrations/ingest-instance-gouvernance-migration-output.ts
  */
-import { instanceGouvernanceTagTable } from '@tet/backend/collectivites/tags/instance-gouvernance.table';
+import { instanceGouvernanceTagTable } from '@tet/backend/collectivites/tags/instance-gouvernance-tag.table';
 import { ficheActionInstanceGouvernanceTableTag } from '@tet/backend/plans/fiches/shared/models/fiche-action-instance-gouvernance';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
