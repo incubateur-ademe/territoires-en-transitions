@@ -8,10 +8,10 @@ import {
   useFlexLayout,
   useTable,
 } from 'react-table';
+import { ReferentielTable } from '../DEPRECATED_ReferentielTable';
+import { CellAction } from '../DEPRECATED_ReferentielTable/CellAction';
 import { ProgressionRow } from '../DEPRECATED_scores.types';
 import { useReferentielId } from '../referentiel-context';
-import { ReferentielTable } from '../ReferentielTable';
-import { CellAction } from '../ReferentielTable/CellAction';
 import { CellPercent, CellPhase, CellPoints } from './Cells';
 import { TFilters } from './filters';
 import { FiltrePhase } from './FiltrePhase';

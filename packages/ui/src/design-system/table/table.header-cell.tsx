@@ -5,6 +5,7 @@ type Props = React.HTMLAttributes<HTMLTableCellElement> & {
   sortFn?: () => void;
   icon?: string;
   title?: string;
+  titleClassName?: string;
 };
 
 /** Header cell for tables with predefined optional sorting and icon */
@@ -13,6 +14,7 @@ export const TableHeaderCell = ({
   icon,
   className,
   title,
+  titleClassName,
   children,
   ...props
 }: Props) => {
@@ -32,7 +34,9 @@ export const TableHeaderCell = ({
             className={cn({ 'm-auto': !children && !title })}
           />
         )}
-        {title && <span className="uppercase">{title}</span>}
+        {title && (
+          <span className={cn('uppercase', titleClassName)}>{title}</span>
+        )}
         {children}
         {sortFn && (
           <div
