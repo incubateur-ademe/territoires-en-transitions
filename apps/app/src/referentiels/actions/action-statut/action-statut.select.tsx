@@ -6,6 +6,7 @@ import {
 } from '@tet/domain/referentiels';
 import { SelectBadge } from '@tet/ui';
 import ActionStatutBadge, { statusToState } from './action-statut.badge';
+import { OpenState } from '@tet/ui/utils/types';
 
 export type TSelectActionStatutProps = {
   // item sélectionné (`non_renseigne` si `undefined` ou `null`)
@@ -16,6 +17,8 @@ export type TSelectActionStatutProps = {
   disabled?: boolean;
   // pour afficher une liste différente d'items (`DEFAULT_ITEMS` si non spécifié)
   items?: StatutAvancementIncludingNonConcerne[];
+
+  openState?: OpenState;
 };
 
 // transforme une liste de statuts en options pour la liste déroulante
@@ -32,7 +35,7 @@ export const DEFAULT_OPTIONS_WITH_NON_CONCERNE = getOptions(
  * Affiche le sélecteur de statut d'une action
  */
 export const SelectActionStatut = (props: TSelectActionStatutProps) => {
-  const { value, onChange, disabled, items } = props;
+  const { value, onChange, disabled, items, openState } = props;
 
   const options = items ? getOptions(items) : DEFAULT_OPTIONS;
   const currentValue = value || 'non_renseigne';
@@ -54,6 +57,7 @@ export const SelectActionStatut = (props: TSelectActionStatutProps) => {
       onChange={(v) => onChange(v as StatutAvancementIncludingNonConcerne)}
       valueToBadgeState={statusToState}
       dropdownZindex={801}
+      openState={openState}
     />
   );
 };
