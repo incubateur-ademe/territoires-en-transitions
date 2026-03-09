@@ -3,6 +3,7 @@ import { questionChoixTable } from '@tet/backend/collectivites/personnalisations
 import { questionThematiqueTable } from '@tet/backend/collectivites/personnalisations/models/question-thematique.table';
 import { QuestionWithChoices } from '@tet/backend/collectivites/personnalisations/models/question-with-choices.dto';
 import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
+import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
 import { questionActionTable } from '@tet/backend/referentiels/models/question-action.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -61,7 +62,7 @@ export default class ListPersonnalisationQuestionsService {
     const actionsSubquery = this.getActionsSubquery();
 
     // Check filter conditions
-    const { actionIds, questionIds, referentielIds, thematiqueId } =
+    const { actionIds, collectiviteId, questionIds, referentielIds, thematiqueId } =
       input || {};
     const conditions: (ReturnType<typeof eq> | SQL)[] = [];
 
@@ -90,8 +91,18 @@ export default class ListPersonnalisationQuestionsService {
       conditions.push(inArray(questionTable.id, questionIds));
     }
 
+    // filtre par type de collectivité : questions sans restriction ou concernant ce type
+    if (collectiviteId !== undefined) {
+      conditions.push(
+        or(
+          isNull(questionTable.typesCollectivitesConcernees),
+          sql`${questionTable.typesCollectivitesConcernees} @> ARRAY[${collectiviteTable.type}]::text[]`
+        ) as SQL
+      );
+    }
+
     // Main query with joined subqueries
-    const baseQuery = this.databaseService.db
+    let baseQuery = this.databaseService.db
       .select({
         id: questionTable.id,
         actionIds: actionsSubquery.actionIds,
@@ -123,6 +134,13 @@ export default class ListPersonnalisationQuestionsService {
         actionsSubquery,
         eq(actionsSubquery.questionId, questionTable.id)
       );
+
+    if (collectiviteId !== undefined) {
+      baseQuery = baseQuery.innerJoin(
+        collectiviteTable,
+        eq(collectiviteTable.id, collectiviteId)
+      ) as typeof baseQuery;
+    }
 
     const queryWithConditions =
       conditions.length > 0 ? baseQuery.where(and(...conditions)) : baseQuery;
