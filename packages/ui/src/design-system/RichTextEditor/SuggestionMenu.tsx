@@ -1,4 +1,8 @@
-import { BlockNoteEditor, DefaultSuggestionItem, filterSuggestionItems } from '@blocknote/core';
+import {
+  BlockNoteEditor,
+  DefaultSuggestionItem,
+  filterSuggestionItems,
+} from '@blocknote/core';
 import {
   DefaultReactSuggestionItem,
   getDefaultReactSlashMenuItems,
@@ -11,7 +15,9 @@ const getMenuItems = (
   editor: BlockNoteEditor
 ): DefaultReactSuggestionItem[] => {
   const items = getDefaultReactSlashMenuItems(editor);
-  return items.filter((item) => ENABLED_ITEMS.includes((item as DefaultSuggestionItem).key));
+  return items.filter((item) =>
+    ENABLED_ITEMS.includes((item as DefaultSuggestionItem).key)
+  );
 };
 
 export function SuggestionMenu({ editor }: { editor: BlockNoteEditor }) {
@@ -21,6 +27,9 @@ export function SuggestionMenu({ editor }: { editor: BlockNoteEditor }) {
       getItems={async (query) =>
         filterSuggestionItems(getMenuItems(editor), query)
       }
+      floatingOptions={{
+        strategy: 'fixed',
+      }}
     />
   );
 }

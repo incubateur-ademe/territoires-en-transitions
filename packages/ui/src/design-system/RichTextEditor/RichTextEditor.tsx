@@ -202,7 +202,16 @@ export default function RichTextEditor({
       slashMenu={false}
       sideMenu={false}
       editable={!disabled}
-      onBlur={onBlur}
+      onBlur={(ev) => {
+        /**
+         * blur event is triggered only when user actually clicks outside of the blocknote editor
+         */
+        const isBlurTriggeredByElementInsideBlockNote =
+          ev.currentTarget.contains(ev.relatedTarget);
+        if (isBlurTriggeredByElementInsideBlockNote) return;
+
+        onBlur?.();
+      }}
       onChange={(ed, { getChanges }) => {
         const changes = getChanges();
         // appelle le callback seulement la 1ère initialisation du contenu

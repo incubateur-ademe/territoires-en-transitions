@@ -6,14 +6,6 @@ export const NoteDescriptionCell = () => {
 
   const value = form.watch('description');
 
-  if (isReadonly) {
-    return (
-      <TableCell className="text-primary-9 align-top">
-        <div className="text-sm" dangerouslySetInnerHTML={{ __html: value }} />
-      </TableCell>
-    );
-  }
-
   return (
     <TableCell className="text-primary-9 align-top">
       <RichTextEditor
@@ -21,6 +13,7 @@ export const NoteDescriptionCell = () => {
         initialValue={value}
         onChange={(html) => form.setValue('description', html)}
         onBlur={submitNote}
+        disabled={isReadonly}
       />
     </TableCell>
   );
