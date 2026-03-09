@@ -28,9 +28,9 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { DatabaseService } from '../../utils/database/database.service';
+import { collectiviteTable } from '../shared/models/collectivite.table';
 import { departementTable } from '../shared/models/imports-departement.table';
 import { regionTable } from '../shared/models/imports-region.table';
-import { collectiviteTable } from '../shared/models/collectivite.table';
 import { GetCollectiviteInput } from './get-collectivite.input';
 
 /**
@@ -113,7 +113,7 @@ export default class ListCollectivitesService {
     const collectivites = await this.listCollectivites({
       ...input,
       fieldsMode: 'public',
-      withRelations: true,
+      withRelations: input.withRelations,
       page: 1,
       limit: 1,
     });
@@ -167,7 +167,9 @@ export default class ListCollectivitesService {
             natureInsee: sql<CollectiviteNatureType>`${collectiviteTable.natureInsee}`,
             regionName: regionTable.libelle,
             departementName: departementTable.libelle,
-            populationSource: sql<string | null>`case when ${collectiviteTable.type} = 'commune' then 'Insee Populations légales 2020 parues 29/12/2022' when ${collectiviteTable.type} = 'epci' then 'BANATIC 2023' else null end`,
+            populationSource: sql<
+              string | null
+            >`case when ${collectiviteTable.type} = 'commune' then 'Insee Populations légales 2020 parues 29/12/2022' when ${collectiviteTable.type} = 'epci' then 'BANATIC 2023' else null end`,
             ...relationsFields,
           };
 
