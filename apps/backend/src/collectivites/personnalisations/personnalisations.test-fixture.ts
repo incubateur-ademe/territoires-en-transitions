@@ -1,5 +1,9 @@
+import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
+import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
+import { questionActionTable } from '@tet/backend/referentiels/models/question-action.table';
 import { getAuthUserFromUserCredentials } from '@tet/backend/test';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
+import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq, inArray } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
@@ -27,6 +31,9 @@ export async function addTestPersonnalisationData(
     questionProportionId: `test-q-proportion-${runId}`,
     questionChoixId: `test-q-choix-${runId}`,
     choixId: `test-choix-1-${runId}`,
+    // Actions pour tester le filtre actionIds (te-test existe en seed)
+    actionId1: `te-test_1-${runId}`,
+    actionId2: `te-test_2-${runId}`,
   };
 
   // Créer une collectivité de test
@@ -95,6 +102,59 @@ export async function addTestPersonnalisationData(
     })
     .onConflictDoNothing();
 
+  // Créer des actions de test pour le filtre actionIds (te-test existe en seed)
+  // action_definition référence action_relation, donc insérer action_relation en premier
+  const referentielTeTest = ReferentielIdEnum['TE-TEST'];
+  await databaseService.db
+    .insert(actionRelationTable)
+    .values([
+      { id: testDataId.actionId1, referentiel: referentielTeTest },
+      { id: testDataId.actionId2, referentiel: referentielTeTest },
+    ])
+    .onConflictDoNothing();
+
+  const actionDefinitionValues = {
+    referentiel: referentielTeTest,
+    referentielId: referentielTeTest,
+    referentielVersion: '0.1.0',
+    identifiant: '1.0.0',
+    nom: 'Action test',
+    description: '',
+    contexte: '',
+    exemples: '',
+    ressources: '',
+    reductionPotentiel: '',
+    perimetreEvaluation: '',
+  };
+  await databaseService.db
+    .insert(actionDefinitionTable)
+    .values([
+      {
+        ...actionDefinitionValues,
+        actionId: testDataId.actionId1,
+      },
+      {
+        ...actionDefinitionValues,
+        actionId: testDataId.actionId2,
+      },
+    ])
+    .onConflictDoNothing();
+
+  // Lie actionId1 à questionBinaire, actionId2 à questionChoix
+  await databaseService.db
+    .insert(questionActionTable)
+    .values([
+      {
+        actionId: testDataId.actionId1,
+        questionId: testDataId.questionBinaireId,
+      },
+      {
+        actionId: testDataId.actionId2,
+        questionId: testDataId.questionChoixId,
+      },
+    ])
+    .onConflictDoNothing();
+
   const { user, collectivite, cleanup } = testCollectiviteAndUserResult;
   const cleanupReponses = async () => {
     // Nettoyer les réponses
@@ -114,8 +174,19 @@ export async function addTestPersonnalisationData(
       .where(eq(justificationTable.collectiviteId, collectivite.id));
   };
 
+  // isole les questions de la fixture (ignore les données seed)
+  const isolateFixtureQuestions = <T extends { id: string }>(
+    questions: T[],
+    questionIds = [
+      testDataId.questionBinaireId,
+      testDataId.questionProportionId,
+      testDataId.questionChoixId,
+    ]
+  ) => questions.filter((q) => questionIds.includes(q.id));
+
   return {
     ...testDataId,
+    isolateFixtureQuestions,
     user,
     userCredentials,
     collectivite,
@@ -123,6 +194,32 @@ export async function addTestPersonnalisationData(
     cleanup: async () => {
       // Nettoyer les réponses
       await cleanupReponses();
+
+      // les liens entre question et mesure
+      await databaseService.db
+        .delete(questionActionTable)
+        .where(
+          inArray(questionActionTable.questionId, [
+            testDataId.questionBinaireId,
+            testDataId.questionChoixId,
+          ])
+        );
+      await databaseService.db
+        .delete(actionDefinitionTable)
+        .where(
+          inArray(actionDefinitionTable.actionId, [
+            testDataId.actionId1,
+            testDataId.actionId2,
+          ])
+        );
+      await databaseService.db
+        .delete(actionRelationTable)
+        .where(
+          inArray(actionRelationTable.id, [
+            testDataId.actionId1,
+            testDataId.actionId2,
+          ])
+        );
 
       // et les questions
       await databaseService.db
