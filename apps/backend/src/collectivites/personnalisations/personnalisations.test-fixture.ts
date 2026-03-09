@@ -30,6 +30,7 @@ export async function addTestPersonnalisationData(
     questionBinaireId: `test-q-binaire-${runId}`,
     questionProportionId: `test-q-proportion-${runId}`,
     questionChoixId: `test-q-choix-${runId}`,
+    questionCollectiviteNonConcernee: `test-q-nc-${runId}`,
     choixId: `test-choix-1-${runId}`,
     // Actions pour tester le filtre actionIds (te-test existe en seed)
     actionId1: `te-test_1-${runId}`,
@@ -60,6 +61,12 @@ export async function addTestPersonnalisationData(
     .onConflictDoNothing();
 
   // Créer des questions de test pour chaque type
+  const collectiviteType = testCollectiviteAndUserResult.collectivite.type;
+  const typesCollectivitesConcernees = [collectiviteType];
+  // types exclus du type de la collectivité pour tester le filtre (ex: region si collectivité EPCI)
+  const typesCollectivitesNonConcernees = [
+    collectiviteType === 'epci' ? 'region' : 'epci',
+  ];
   await databaseService.db
     .insert(questionTable)
     .values([
@@ -69,6 +76,7 @@ export async function addTestPersonnalisationData(
         description: 'Question binaire de test',
         formulation: 'Est-ce une question binaire ?',
         thematiqueId: testDataId.thematiqueId,
+        typesCollectivitesConcernees,
         version: '1.0.0',
       },
       {
@@ -77,6 +85,7 @@ export async function addTestPersonnalisationData(
         description: 'Question proportion de test',
         formulation: 'Quelle est la proportion ?',
         thematiqueId: testDataId.thematiqueId,
+        typesCollectivitesConcernees,
         version: '1.0.0',
       },
       {
@@ -85,6 +94,17 @@ export async function addTestPersonnalisationData(
         description: 'Question choix de test',
         formulation: 'Quel est votre choix ?',
         thematiqueId: testDataId.thematiqueId,
+        typesCollectivitesConcernees,
+        version: '1.0.0',
+      },
+      {
+        id: testDataId.questionCollectiviteNonConcernee,
+        type: 'binaire',
+        description:
+          "La collectivité de test n'est pas concernée par cette question",
+        formulation: 'Ne doit pas apparaitre dans la liste des questions',
+        thematiqueId: testDataId.thematiqueId,
+        typesCollectivitesConcernees: typesCollectivitesNonConcernees,
         version: '1.0.0',
       },
     ])
@@ -174,7 +194,7 @@ export async function addTestPersonnalisationData(
       .where(eq(justificationTable.collectiviteId, collectivite.id));
   };
 
-  // isole les questions de la fixture (ignore les données seed)
+  // isole les questions de la fixture (ignore les données seed et la question "non concernée")
   const isolateFixtureQuestions = <T extends { id: string }>(
     questions: T[],
     questionIds = [
@@ -232,6 +252,7 @@ export async function addTestPersonnalisationData(
             testDataId.questionBinaireId,
             testDataId.questionProportionId,
             testDataId.questionChoixId,
+            testDataId.questionCollectiviteNonConcernee,
           ])
         );
       await databaseService.db
