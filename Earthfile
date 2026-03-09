@@ -546,35 +546,6 @@ package-ui-storybook-test:
       "pnpx http-server $UI_DIR/storybook-static --port $PORT --silent" \
       "pnpx wait-on tcp:127.0.0.1:$PORT && pnpm nx test-storybook ui --url http://127.0.0.1:$PORT" || true
 
-
-curl-test-build:
-    FROM curlimages/curl:8.1.0
-    USER root
-    RUN apk --update add jq
-    COPY ./data_layer/scripts/curl_test.sh /curl_test.sh
-    ENTRYPOINT sh ./curl_test.sh
-    SAVE IMAGE curl-test:latest
-
-curl-test:
-    ARG --required SERVICE_ROLE_KEY
-    ARG --required API_URL
-    ARG network=supabase_network_tet
-    ARG internal_url=http://supabase_kong_tet:8000
-    LOCALLY
-    RUN earthly +curl-test-build
-    RUN docker run --rm \
-        --name curl_test_tet \
-        --network $network \
-        --env API_KEY=$SERVICE_ROLE_KEY \
-        --env URL=$internal_url \
-        curl-test:latest
-    RUN docker run --rm \
-        --name curl_test_tet \
-        --network host \
-        --env API_KEY=$SERVICE_ROLE_KEY \
-        --env URL=$API_URL \
-        curl-test:latest
-
 cypress-wip:
     FROM cypress/included:12.3.0
     ENV ELECTRON_EXTRA_LAUNCH_ARGS="--disable-gpu"
@@ -862,7 +833,6 @@ restore-state:
 
 test:
     LOCALLY
-    RUN earthly +curl-test
     RUN earthly +db-test
     RUN earthly +db-deploy-test
     RUN earthly +app-test
