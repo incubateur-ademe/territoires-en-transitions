@@ -17,12 +17,12 @@ export const makeRowRenderer: RowRendererFactory = (
   function Row(row, index, rows) {
     prepareRow(row);
     const { original, isExpanded, canExpand } = row;
-    const { depth, nom } = original;
+    const { level, nom } = original;
     // dernière ligne avant une nouvelle section
     const isLast =
       (!rows[index + 1] || rows[index + 1].depth === 0) && row.depth > 0;
 
-    const className = `row d${depth} ${isExpanded ? 'open' : 'close'} ${
+    const className = `row d${level} ${isExpanded ? 'open' : 'close'} ${
       isLast ? 'last' : ''
     }`;
 

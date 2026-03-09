@@ -12,8 +12,9 @@ import { CellPercent, CellPoints } from '../../AidePriorisation/Cells';
 import { ReferentielTable } from '../../ReferentielTable';
 import { CellAction } from '../../ReferentielTable/CellAction';
 import './styles.css';
+import type { TabularScoreFromSnapshot } from './snapshot-to-tabular';
 import {
-  TComparaisonScoreAudit,
+  AuditComparisonHeaderData,
   TScoreAudit,
   TScoreAuditRowData,
 } from './types';
@@ -23,16 +24,16 @@ export type TDetailTacheTableProps = {
   tableData: TableData;
 };
 export type THeaderProps = HeaderProps<TScoreAuditRowData> & {
-  headerData?: TComparaisonScoreAudit;
+  headerData?: AuditComparisonHeaderData;
 };
 export type TCellProps = CellProps<TScoreAuditRowData>;
 export type TColumn = Column<TScoreAuditRowData>;
 
 /** Vérifie si la valeur courante d'un champ diffère de sa valeur avant audit */
 const getDifference = (
-  field: keyof TScoreAudit,
-  pre_audit?: TScoreAudit,
-  courant?: TScoreAudit
+  field: keyof TabularScoreFromSnapshot,
+  pre_audit?: TabularScoreFromSnapshot,
+  courant?: TabularScoreFromSnapshot
 ): 'up' | 'down' | undefined => {
   if (!pre_audit && courant) {
     return 'up';
@@ -41,8 +42,8 @@ const getDifference = (
     return undefined;
   }
 
-  const previous = roundTo(pre_audit[field] as number, 3);
-  const current = roundTo(courant[field] as number, 3);
+  const previous = roundTo((pre_audit[field] as number) ?? 0, 3);
+  const current = roundTo((courant[field] as number) ?? 0, 3);
 
   if (previous === current) {
     return undefined;
@@ -53,7 +54,7 @@ const getDifference = (
 
 /** Vérifie si la valeur courante d'un champ d'une ligne donnée diffère de sa valeur avant audit */
 const getDifferenceOnRow = (
-  field: keyof TScoreAudit,
+  field: keyof TabularScoreFromSnapshot,
   row: TCellProps['row']
 ) => {
   const { pre_audit, courant } = row.original;
@@ -62,9 +63,9 @@ const getDifferenceOnRow = (
 
 /** Affiche une cellule d'en-tête avec un libellé et une valeur */
 const Header = (props: {
-  field: keyof TScoreAudit;
-  value?: TScoreAudit;
-  previous?: TScoreAudit;
+  field: keyof TabularScoreFromSnapshot;
+  value?: TabularScoreFromSnapshot;
+  previous?: TabularScoreFromSnapshot;
   label: string;
   Cell: typeof CellPoints | typeof CellPercent;
 }) => {
@@ -85,7 +86,7 @@ const Header = (props: {
 };
 
 /** Renvoie les définitions de colonnes de la table */
-const getColumns = (headerData?: TComparaisonScoreAudit): TColumn[] => {
+const getColumns = (headerData?: AuditComparisonHeaderData): TColumn[] => {
   const { pre_audit, courant } = headerData || {};
 
   return [

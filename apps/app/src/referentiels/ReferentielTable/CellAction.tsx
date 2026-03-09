@@ -4,9 +4,9 @@ import { ReferentielId } from '@tet/domain/referentiels';
 import { Tooltip } from '@tet/ui';
 import Link from 'next/link';
 import { CellProps } from 'react-table';
-import { ActionReferentiel } from '../DEPRECATED_scores.types';
+import type { ActionDetailed } from '../use-snapshot';
 
-export type TCellProps = CellProps<ActionReferentiel> & {
+export type TCellProps = CellProps<ActionDetailed> & {
   collectiviteId: number | null;
   referentielId: Exclude<ReferentielId, 'te' | 'te-test'> | null;
   maxDepth?: number | null;
@@ -52,7 +52,8 @@ export const CellAction = (props: TCellProps) => {
   } = props;
   if (!collectiviteId || !referentielId) return null;
 
-  const { depth, identifiant } = row.original;
+  const depth = row.original.level ?? 0;
+  const { identifiant } = row.original;
   const haveSubrows = row.subRows.length > 0;
   const isNotMaxDepth = !maxDepth || depth < maxDepth;
   const showExpand = alwaysShowExpand || (haveSubrows && isNotMaxDepth);
@@ -91,7 +92,7 @@ export const CellAction = (props: TCellProps) => {
                 onClick={(evt) => evt.stopPropagation()}
                 href={makeReferentielTacheUrl({
                   collectiviteId,
-                  actionId: row.original.action_id,
+                  actionId: row.original.actionId,
                   referentielId,
                 })}
               >
@@ -130,7 +131,8 @@ const infoDeplier = (
 // affiche le picto reflétant l'état plié/déplié
 const Expand = ({ row, referentielId }: TCellProps) => {
   const { isExpanded, original } = row;
-  const { depth } = original;
+  const depth = original.level;
+
   const invertColor = depth < (referentielId === 'cae' ? 3 : 2);
   const className = [
     'mr-2 hover:!bg-transparent',

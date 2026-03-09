@@ -32,7 +32,8 @@ const COLUMNS: TColumn[] = [
     width: '100%',
   },
   {
-    accessor: 'avancement',
+    id: 'avancement',
+    accessor: (row: TacheDetail) => row.score?.avancement,
     Header: FiltreStatut as any,
     Cell: CellStatut,
     width: 185,
@@ -52,7 +53,10 @@ export const DetailTacheTable = (props: TDetailTacheTableProps) => {
     () => ({ updateStatut, isSaving }),
     [isSaving, updateStatut]
   );
-  const customHeaderProps = useMemo(() => ({ filters, setFilters }), [filters]);
+  const customHeaderProps = useMemo(
+    () => ({ filters, setFilters }),
+    [filters, setFilters]
+  );
 
   // crée l'instance de la table
   const tableInstance = useTable(
@@ -70,7 +74,14 @@ export const DetailTacheTable = (props: TDetailTacheTableProps) => {
         toggleRowExpanded([row.original.identifiant], row.original.isExpanded)
       );
     }
-  }, [table?.data?.length, toggleAllRowsExpanded, filters.statut.length]);
+  }, [
+    table.data.length,
+    toggleAllRowsExpanded,
+    filters.statut.length,
+    tableInstance.flatRows,
+    isSaving,
+    toggleRowExpanded,
+  ]);
 
   // rendu de la table
   return (
