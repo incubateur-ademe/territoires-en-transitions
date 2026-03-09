@@ -60,6 +60,9 @@ export const PermissionOperations = [
 
   // Utilisateurs
   'users.authorizations.mutate_super_admin_role',
+
+  // API Partenaires
+  'partner.plans.read',
 ] as const;
 
 export const permissionOperationEnumSchema = z.enum(PermissionOperations);
