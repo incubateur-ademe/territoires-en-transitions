@@ -119,7 +119,7 @@ export default class ListCollectivitesService {
     const collectivites = await this.listCollectivites({
       ...input,
       fieldsMode: 'public',
-      withRelations: true,
+      withRelations: input.withRelations ?? true,
       page: 1,
       limit: 1,
     });
