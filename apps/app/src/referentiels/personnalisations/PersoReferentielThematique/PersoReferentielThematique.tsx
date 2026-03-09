@@ -31,7 +31,7 @@ export const PersoReferentielThematique = () => {
     referentiels,
     thematiqueId
   );
-  const identite = useCarteIdentite(collectiviteId);
+  const { data: identite } = useCarteIdentite(collectiviteId);
   const handleChange = useChangeReponseHandler(collectiviteId, ['cae', 'eci']);
 
   const [onlyNoResponse, setOnlyNoResponse] = useState(false);
