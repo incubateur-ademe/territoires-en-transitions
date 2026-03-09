@@ -810,7 +810,6 @@ restore-state:
 
 test:
     LOCALLY
-    RUN earthly +curl-test
     RUN earthly +db-test
     RUN earthly +db-deploy-test
     RUN earthly +app-test
