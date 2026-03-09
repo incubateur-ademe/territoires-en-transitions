@@ -47,6 +47,44 @@ describe('Lister les questions de personnalisation', () => {
       expect(questionChoix?.choix?.[0].formulation).toBe('Choix 1');
     });
 
+    test('Filtrer par collectiviteId exclut les questions pour lesquelles la collectivité est non concernée (suivant son type)', async () => {
+      const caller = router.createCaller({ user: testData.userCredentials });
+
+      const result = await caller.collectivites.personnalisations.listQuestions(
+        {
+          collectiviteId: testData.collectivite.id,
+          thematiqueId: testData.thematiqueId,
+        }
+      );
+
+      const questions = testData.isolateFixtureQuestions(result);
+      expect(questions).toHaveLength(3);
+      expect(questions.map((q) => q.id)).not.toContain(
+        testData.questionCollectiviteNonConcernee
+      );
+    });
+
+    test('Sans collectiviteId retourne toutes les questions y compris non concernées', async () => {
+      const caller = router.createCaller({ user: testData.userCredentials });
+
+      const result = await caller.collectivites.personnalisations.listQuestions(
+        {
+          thematiqueId: testData.thematiqueId,
+        }
+      );
+
+      const allFixtureQuestionIds = [
+        testData.questionBinaireId,
+        testData.questionProportionId,
+        testData.questionChoixId,
+        testData.questionCollectiviteNonConcernee,
+      ];
+      const fixtureQuestions = result.filter((q) =>
+        allFixtureQuestionIds.includes(q.id)
+      );
+      expect(fixtureQuestions).toHaveLength(4);
+    });
+
     test('Filtrer par thematiqueId', async () => {
       const caller = router.createCaller({ user: testData.userCredentials });
 
