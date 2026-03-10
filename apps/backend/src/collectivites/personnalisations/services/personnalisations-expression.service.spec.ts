@@ -41,6 +41,60 @@ describe('PersonnalisationsExpressionService', () => {
     });
   });
 
+  describe('extractNeededQuestionsFromExpression', () => {
+    it('returns a simple question with boolean value', () => {
+      const formula = 'reponse(AOM_1, OUI)';
+      const neededQuestions =
+        expressionService.extractNeededQuestionsFromExpression(formula);
+
+      expect(neededQuestions).toEqual({
+        AOM_1: [true],
+      });
+    });
+
+    it('returns a question without explicit value', () => {
+      const formula = 'reponse(question_proportion) - 0.2';
+      const neededQuestions =
+        expressionService.extractNeededQuestionsFromExpression(formula);
+
+      expect(neededQuestions).toEqual({
+        question_proportion: [null],
+      });
+    });
+
+    it('returns multiple questions with their values', () => {
+      const formula =
+        'reponse(dechets_1, OUI) et reponse(dechets_2, NON) et reponse(dechets_3, 0.5)';
+      const neededQuestions =
+        expressionService.extractNeededQuestionsFromExpression(formula);
+
+      expect(neededQuestions).toEqual({
+        dechets_1: [true],
+        dechets_2: [false],
+        dechets_3: [0.5],
+      });
+    });
+
+    it('deduplicates values for the same question', () => {
+      const formula =
+        'reponse(AOD_elec, OUI) ou reponse(AOD_elec, NON) ou reponse(AOD_elec, OUI)';
+      const neededQuestions =
+        expressionService.extractNeededQuestionsFromExpression(formula);
+
+      expect(neededQuestions).toEqual({
+        AOD_elec: [true, false],
+      });
+    });
+
+    it('returns an empty map when there is no question', () => {
+      const formula = 'score(eci_1) - 0.2';
+      const neededQuestions =
+        expressionService.extractNeededQuestionsFromExpression(formula);
+
+      expect(neededQuestions).toEqual({});
+    });
+  });
+
   describe('parseAndEvaluateExpression', () => {
     it('reponse(question_proportion) - 0.2', async () => {
       expect(

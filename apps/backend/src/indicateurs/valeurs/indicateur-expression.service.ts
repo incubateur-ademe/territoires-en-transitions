@@ -4,9 +4,9 @@ import {
   ExpressionParser,
   getExpressionVisitor,
 } from '@tet/backend/utils/expression-parser';
+import { evaluateIdentite } from '@tet/backend/utils/expression-parser/evaluate-identite';
 import { getFormmattedErrors } from '@tet/backend/utils/expression-parser/get-formatted-errors.utils';
 import { IdentiteCollectivite } from '@tet/domain/collectivites';
-import { evaluateIdentite } from '@tet/backend/utils/expression-parser/evaluate-identite';
 import { createToken, CstNode } from 'chevrotain';
 import { isNil } from 'es-toolkit';
 import { ReferencedIndicateur } from './referenced-indicateur.dto';
@@ -183,8 +183,6 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
   }
 }
 
-const visitor = new IndicateurExpressionVisitor();
-
 // Visitor pour extraire les références d'indicateurs
 class IndicateurReferenceExtractionVisitor extends getExpressionVisitor(
   parser.getBaseCstVisitorConstructorWithDefaults()
@@ -346,6 +344,7 @@ export default class IndicateurExpressionService {
       }
     }
     const cst = this.parseExpression(inputText);
+    const visitor = new IndicateurExpressionVisitor();
     visitor.sourceIndicateursValeurs = sourceIndicateursValeurs;
     visitor.indicateurValeursComplementaires = valeursComplementaires;
     visitor.identiteCollectivite = identiteCollectivite || null;

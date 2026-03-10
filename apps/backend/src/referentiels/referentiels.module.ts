@@ -13,9 +13,10 @@ import { ListSnapshotsController } from '@tet/backend/referentiels/snapshots/lis
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { PersonnalisationsModule } from '../collectivites/personnalisations/personnalisations.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
+import { ActionPersonnalisationsRouter } from './action-personnalisations/action-personnalisations.router';
+import { ActionPersonnalisationsService } from './action-personnalisations/action-personnalisations.service';
 import ScoresService from './compute-score/scores.service';
 import { GetReferentielDefinitionRouter } from './definitions/get-referentiel-definition/get-referentiel-definition.router';
-import { GetReferentielDefinitionService } from './definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { GetReferentielController } from './definitions/get-referentiel-definition/get-referentiel.controller';
 import { ExportScoreComparisonController } from './export-score/export-score-comparison.controller';
 import { ExportScoreComparisonService } from './export-score/export-score-comparison.service';
@@ -45,6 +46,7 @@ import { ValidateAuditRouter } from './labellisations/validate-audit/validate-au
 import { ValidateAuditService } from './labellisations/validate-audit/validate-audit.service';
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { ListActionsService } from './list-actions/list-actions.service';
+import { ReferentielsCoreModule } from './referentiels-core.module';
 import { ReferentielsRouter } from './referentiels.router';
 import { ResetDisplayPreferencesRouter } from './reset-display-preferences/reset-display-preferences.router';
 import { ResetDisplayPreferencesService } from './reset-display-preferences/reset-display-preferences.service';
@@ -64,11 +66,11 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     PersonnalisationsModule,
     IndicateursModule,
     FichesModule,
+    ReferentielsCoreModule,
   ],
   providers: [
     ActionStatutHistoryService,
     GetReferentielService,
-    GetReferentielDefinitionService,
     GetReferentielDefinitionRouter,
     ImportReferentielRepository,
     ImportReferentielService,
@@ -79,6 +81,9 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ListActionsRouter,
 
     UpdateActionStatutHistoriqueRepository,
+    ActionPersonnalisationsService,
+    ActionPersonnalisationsRouter,
+
     UpdateActionStatutService,
     UpdateActionStatutRouter,
     UpdateActionCommentaireHistoriqueRepository,

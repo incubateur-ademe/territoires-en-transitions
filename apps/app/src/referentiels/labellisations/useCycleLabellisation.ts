@@ -1,3 +1,4 @@
+import { useGetCollectivite } from '@/app/collectivites/collectivites/use-get-collectivite';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC, useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -8,7 +9,6 @@ import {
   ReferentielId,
 } from '@tet/domain/referentiels';
 import { useIsAuditeur } from '../audits/useAudit';
-import { useCarteIdentite } from '../personnalisations/PersoReferentielThematique/useCarteIdentite';
 import { useLabellisationParcours } from './useLabellisationParcours';
 
 // données du cycle de labellisation/audit actuel d'une collectivité
@@ -33,7 +33,7 @@ export const useCycleLabellisation = (
     useCurrentCollectivite();
   const isAuditeur = useIsAuditeur();
   const user = useUser();
-  const identite = useCarteIdentite(collectiviteId);
+  const { data: identite } = useGetCollectivite(collectiviteId);
 
   // charge les données du parcours
   const parcours = useLabellisationParcours({
@@ -48,7 +48,7 @@ export const useCycleLabellisation = (
   const peutCommencerAudit = canStartAudit(parcours, user.id).canRequest;
 
   // états dérivés
-  const isCOT = Boolean(identite?.is_cot);
+  const isCOT = Boolean(identite?.activeCOT);
 
   const peutDemanderEtoileBase = Boolean(
     // pas d'audit ou de labellisation demandée

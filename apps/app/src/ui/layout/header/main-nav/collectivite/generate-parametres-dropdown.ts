@@ -2,6 +2,7 @@ import {
   makeCollectiviteBibliothequeUrl,
   makeCollectiviteJournalUrl,
   makeCollectiviteUsersUrl,
+  makeMaCollectiviteUrl,
 } from '@/app/app/paths';
 import { CollectiviteNavItem } from './make-collectivite-nav';
 
@@ -20,6 +21,14 @@ export const generateParametresDropdown = ({
   children: 'Paramètres',
   dataTest: 'nav-params',
   links: [
+    {
+      children: 'Ma collectivité',
+      dataTest: 'params-collectivite',
+      href: makeMaCollectiviteUrl({
+        collectiviteId,
+      }),
+      urlPrefix: ['/ma-collectivite'],
+    },
     {
       children: 'Gestion des utilisateurs',
       dataTest: 'params-membres',

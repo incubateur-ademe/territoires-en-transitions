@@ -7,7 +7,6 @@ import { ApikeysService } from '@tet/backend/users/apikeys/apikeys.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { ListUsersController } from '@tet/backend/users/users/list-users/list-users.controller';
 import { NestjsFormDataModule } from 'nestjs-form-data';
-import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { GetUserRolesAndPermissionsRepository } from './authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.repository';
 import { GetUserRolesAndPermissionsService } from './authorizations/get-user-roles-and-permissions/get-user-roles-and-permissions.service';
 import { UpdateUserRoleRouter } from './authorizations/update-user-role/update-user-role.router';
@@ -35,7 +34,6 @@ import { UpdateUserService } from './users/update-user/update-user.service';
         expiresIn: '6h',
       },
     }),
-    CollectivitesModule,
   ],
   controllers: [ApikeysController, ListUsersController],
   providers: [

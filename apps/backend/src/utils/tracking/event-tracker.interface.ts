@@ -1,3 +1,5 @@
+import { FeatureFlagKey } from '@tet/domain/utils';
+
 export interface EventTracker {
   capture(params: {
     distinctId: string;
@@ -6,6 +8,11 @@ export interface EventTracker {
   }): void;
 
   isEnabled(): boolean;
+
+  isFeatureEnabled(
+    featureFlagKey: FeatureFlagKey,
+    userId: string
+  ): Promise<boolean>;
 
   shutdown(): Promise<void>;
 }

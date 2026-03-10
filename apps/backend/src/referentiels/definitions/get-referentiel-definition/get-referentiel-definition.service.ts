@@ -2,8 +2,8 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { referentielDefinitionTable } from '@tet/backend/referentiels/models/referentiel-definition.table';
 import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import type { ReferentielId } from '@tet/domain/referentiels';
-import { eq, getTableColumns } from 'drizzle-orm';
+import type { ActionType, ReferentielId } from '@tet/domain/referentiels';
+import { eq, getTableColumns, inArray } from 'drizzle-orm';
 import { GetReferentielDefinitionOutput } from './get-referentiel-definition.output';
 
 @Injectable()
@@ -48,5 +48,23 @@ export class GetReferentielDefinitionService {
     }
 
     return referentielDefinitions[0];
+  }
+
+  async getHierarchiesByReferentielIds(
+    referentielIds: ReferentielId[]
+  ): Promise<ReadonlyMap<ReferentielId, ActionType[]>> {
+    if (referentielIds.length === 0) {
+      return new Map();
+    }
+
+    const rows = await this.databaseService.db
+      .select({
+        id: referentielDefinitionTable.id,
+        hierarchie: referentielDefinitionTable.hierarchie,
+      })
+      .from(referentielDefinitionTable)
+      .where(inArray(referentielDefinitionTable.id, referentielIds));
+
+    return new Map(rows.map((r) => [r.id, r.hierarchie]));
   }
 }

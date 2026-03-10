@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import { forwardRef, ReactNode, useState } from 'react';
 import { Icon, IconValue } from '../../design-system/Icon';
 import { cn } from '../../utils/cn';
@@ -95,10 +94,7 @@ export const AccordionControlled = forwardRef<
           {expanded &&
             (typeof content === 'string' ? (
               <div
-                className={classNames(
-                  'px-8 pb-6 text-grey-8',
-                  contentClassname
-                )}
+                className={cn('px-8 pb-6 text-grey-8', contentClassname)}
                 id={id}
               >
                 {content}
@@ -113,7 +109,7 @@ export const AccordionControlled = forwardRef<
     return (
       <div
         data-test={dataTest}
-        className={classNames('border-y border-grey-3', containerClassname)}
+        className={cn('border-y border-grey-3', containerClassname)}
         ref={ref}
       >
         {/** EN-TÊTE */}
@@ -167,7 +163,7 @@ export const AccordionControlled = forwardRef<
         {expanded &&
           (typeof content === 'string' ? (
             <div
-              className={classNames('px-8 pb-6 text-grey-8', contentClassname)}
+              className={cn('px-8 pb-6 text-grey-8', contentClassname)}
               id={id}
             >
               {content}

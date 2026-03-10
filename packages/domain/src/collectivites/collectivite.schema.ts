@@ -10,15 +10,19 @@ export const collectiviteSchema = z.object({
   accesRestreint: z.boolean().nullable(),
   nom: z.string(),
   type: collectiviteTypeEnumSchema.describe('Type de collectivité'),
+  activeCOT: z.boolean().optional(),
   communeCode: z.string().nullable(),
   siren: z.string().nullable(),
   nic: z.string().nullable(),
   departementCode: z.string().nullable(),
+  departementName: z.string().nullable().optional(),
   regionCode: z.string().nullable(),
+  regionName: z.string().nullable().optional(),
   natureInsee: collectiviteNatureEnumSchema
     .nullable()
     .describe('Nature de la collectivité tel que défini dans la base Banatic'),
   population: z.number().nullable(),
+  populationSource: z.string().nullable().optional(),
   dansAireUrbaine: z.boolean().nullable(),
   preferences: collectivitePreferencesSchema,
 });
@@ -32,6 +36,7 @@ export const collectiviteResumeSchema = collectiviteSchema.pick({
   communeCode: true,
   natureInsee: true,
   type: true,
+  activeCOT: true,
 });
 
 export const collectivitePublicSchema = collectiviteSchema;

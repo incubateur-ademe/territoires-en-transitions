@@ -1,3 +1,4 @@
+import { collectiviteNatureLabel } from '@tet/domain/collectivites';
 import { referentielToName } from '@/app/app/labels';
 import { TOption } from '@/app/ui/shared/select/commons';
 
@@ -54,14 +55,14 @@ export const trierParOptions: TOption[] = [
 ];
 
 export const typeCollectiviteOptions: TOption[] = [
-  { value: 'CA', label: "Communauté d'agglomération" },
-  { value: 'CC', label: 'Communauté de communes' },
-  { value: 'CU', label: 'Communauté urbaine' },
+  { value: 'CA', label: collectiviteNatureLabel.CA },
+  { value: 'CC', label: collectiviteNatureLabel.CC },
+  { value: 'CU', label: collectiviteNatureLabel.CU },
   { value: 'commune', label: 'Commune' },
-  { value: 'EPT', label: 'Établissement public territorial' },
-  { value: 'METRO', label: 'Métropole' },
-  { value: 'PETR', label: 'Pôle d’équilibre territorial rural' },
-  { value: 'POLEM', label: 'Pôle métropolitain' },
+  { value: 'EPT', label: collectiviteNatureLabel.EPT },
+  { value: 'METRO', label: collectiviteNatureLabel.METRO },
+  { value: 'PETR', label: collectiviteNatureLabel.PETR },
+  { value: 'POLEM', label: collectiviteNatureLabel.POLEM },
   { value: 'syndicat', label: 'Syndicat' },
   { value: 'departement', label: 'Département' },
   { value: 'region', label: 'Région' },

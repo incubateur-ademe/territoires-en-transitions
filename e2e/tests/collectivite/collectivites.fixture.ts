@@ -28,8 +28,6 @@ type CollectiviteAndUserArgs = {
     );
 };
 
-type CollectiviteCleanupFunc = (collectiviteId: number) => Promise<void>;
-
 export class CollectiviteFixture {
   constructor(
     private readonly users: Users,
@@ -107,13 +105,13 @@ class CollectiviteFactory {
   }[] = [];
 
   // pour supprimer les entités crées par les tests et liées à la collectivité (fiches, etc.)
-  private cleanupFuncs: CollectiviteCleanupFunc[] = [];
+  private cleanupFactories: FixtureFactory[] = [];
 
   removeAll = async () => {
     for (const { collectivite, cleanup } of this.createdCollectivites) {
-      // Supprimer d'abord les entités liées, dans un ordre stable, avant les users.
-      for (const cleanupFunc of this.cleanupFuncs) {
-        await cleanupFunc(collectivite.data.id);
+      // supprime d'abord les entités liées, dans un ordre stable, avant les users.
+      for (const cleanupFactory of this.cleanupFactories) {
+        await cleanupFactory.cleanupByCollectiviteId(collectivite.data.id);
       }
 
       // supprime invitations et droits avant les users (FK invitation.created_by)
@@ -127,6 +125,13 @@ class CollectiviteFactory {
 
       // supprime la collectivité
       await cleanup();
+
+      // supprime les données globales après toutes les collectivités
+      for (const cleanupFactory of this.cleanupFactories) {
+        if (cleanupFactory.cleanupGlobal) {
+          await cleanupFactory.cleanupGlobal();
+        }
+      }
     }
   };
 
@@ -145,10 +150,7 @@ class CollectiviteFactory {
       databaseService,
       collectiviteArgs
     );
-    const collectiviteFixture = new CollectiviteFixture(
-      this.users,
-      collectivite
-    );
+    const collectiviteFixture = new CollectiviteFixture(this.users, collectivite);
     this.createdCollectivites.push({
       collectivite: collectiviteFixture,
       cleanup,
@@ -164,7 +166,7 @@ class CollectiviteFactory {
   };
 
   registerCleanupFunc = (factory: FixtureFactory) => {
-    this.cleanupFuncs.push(factory.cleanupByCollectiviteId);
+    this.cleanupFactories.push(factory);
   };
 }
 

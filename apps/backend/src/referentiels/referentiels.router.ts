@@ -13,6 +13,7 @@ import { StartAuditRouter } from './labellisations/start-audit/start-audit.route
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { ResetDisplayPreferencesRouter } from './reset-display-preferences/reset-display-preferences.router';
+import { ActionPersonnalisationsRouter } from './action-personnalisations/action-personnalisations.router';
 import { SnapshotsRouter } from './snapshots/snapshots.router';
 import { UpdateActionCommentaireRouter } from './update-action-commentaire/update-action-commentaire.router';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
@@ -33,6 +34,7 @@ export class ReferentielsRouter {
     private readonly assignPilotesRouter: HandleMesurePilotesRouter,
     private readonly assignServicesRouter: HandleMesuresServicesRouter,
     private readonly scoreIndicatifRouter: ScoreIndicatifRouter,
+    private readonly actionPersonnalisationsRouter: ActionPersonnalisationsRouter,
     private readonly handleMesureAuditStatutRouter: HandleMesureAuditStatutRouter,
     private readonly getReferentielDefinitionRouter: GetReferentielDefinitionRouter,
     private readonly resetDisplayPreferencesRouter: ResetDisplayPreferencesRouter
@@ -45,7 +47,8 @@ export class ReferentielsRouter {
       this.listActionStatutRouter.router,
       this.assignPilotesRouter.router,
       this.assignServicesRouter.router,
-      this.scoreIndicatifRouter.router
+      this.scoreIndicatifRouter.router,
+      this.actionPersonnalisationsRouter.router
     ),
 
     snapshots: this.scoreSnapshotsRouter.router,

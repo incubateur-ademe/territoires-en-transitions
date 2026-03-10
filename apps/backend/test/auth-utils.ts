@@ -13,6 +13,8 @@ import {
 import { getTestApp } from './app-utils';
 import { YOLO_DODO } from './test-users.samples';
 
+export { getAuthUserFromUserCredentials } from './get-auth-user-from-credentials';
+
 let supabase: SupabaseClient;
 
 export const getSupabaseClient = (): SupabaseClient => {
@@ -35,27 +37,6 @@ export async function getAuthToken(
 ): Promise<string> {
   const response = await signInWith(credentials);
   return response.data.session?.access_token || '';
-}
-
-export function getAuthUserFromUserCredentials(user: {
-  id: string;
-  email: string | null;
-  telephone?: string | null;
-}): AuthenticatedUser {
-  return {
-    id: user.id,
-    role: AuthRole.AUTHENTICATED,
-    isAnonymous: false,
-    jwtPayload: {
-      role: AuthRole.AUTHENTICATED,
-      email: user.email ?? undefined,
-      is_anonymous: false,
-      phone: user.telephone ?? undefined,
-      app_metadata: {
-        provider: 'email',
-      },
-    },
-  };
 }
 
 export async function getAuthUser(

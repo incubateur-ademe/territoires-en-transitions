@@ -19,7 +19,9 @@ export const getZodEnumArrayFromQueryString = (
     Zod.z
       .string()
       .transform((value) =>
-        typeof value === 'string' ? value.split(',') : value
+        typeof value === 'string'
+          ? value.split(',').map((segment) => segment.trim())
+          : value
       )
       .pipe(enumType.array()),
     enumType.array(),

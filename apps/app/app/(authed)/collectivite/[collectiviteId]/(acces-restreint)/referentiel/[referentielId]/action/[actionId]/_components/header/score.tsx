@@ -1,11 +1,17 @@
-import { PersoPotentiel } from '@/app/referentiels/personnalisations/PersoPotentielModal/PersoPotentiel';
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { PointsPotentiels } from './points-potentiels.label';
 
 type Props = {
   actionDefinition: ActionDefinitionSummary;
 };
+
+const showPotentielPointsForReferentielIds: ReferentielId[] = [
+  'cae',
+  'eci',
+] as const;
 
 export const Score = ({ actionDefinition }: Props) => {
   return (
@@ -18,12 +24,15 @@ export const Score = ({ actionDefinition }: Props) => {
       />
       <ScoreRatioBadge actionId={actionDefinition.id} size="xs" />
 
-      {actionDefinition.haveQuestions && (
-        <>
-          <div className="w-[0.5px] h-5 bg-grey-5" />
-          <PersoPotentiel actionDef={actionDefinition} />
-        </>
-      )}
+      {actionDefinition.haveQuestions &&
+        showPotentielPointsForReferentielIds.includes(
+          actionDefinition.referentiel
+        ) && (
+          <>
+            <div className="w-[0.5px] h-5 bg-grey-5" />
+            <PointsPotentiels actionId={actionDefinition.id} />
+          </>
+        )}
     </div>
   );
 };

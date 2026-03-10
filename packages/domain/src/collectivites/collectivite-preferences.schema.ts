@@ -1,4 +1,5 @@
 import * as z from 'zod/mini';
+import { ReferentielId } from '../referentiels';
 
 /** Referentiel ids that can be toggled in the nav (excludes te-test). */
 export const collectiviteReferentielDisplayIds = ['cae', 'eci', 'te'] as const;
@@ -38,3 +39,19 @@ export const defaultCollectivitePreferences: CollectivitePreferences = {
     },
   },
 } as const;
+
+// référentiels affichés quand le feature flag `is-referentiel-te-enabled` n'est pas activé
+export const REFERENTIEL_TE_DISABLED_REFERENTIELS_DISPLAY: ReferentielDisplayMap =
+  {
+    eci: true,
+    cae: true,
+    te: false,
+  } as const;
+
+export function getEnabledReferentielIdsFromDisplayMap(
+  displayMap: ReferentielDisplayMap
+): ReferentielId[] {
+  return Object.entries(displayMap)
+    .filter(([_, enabled]) => enabled)
+    .map(([id]) => id as ReferentielId);
+}

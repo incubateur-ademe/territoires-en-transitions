@@ -4,6 +4,7 @@ import {
   DEPRECATED_useActionDefinition,
   useAction,
 } from '@/app/referentiels/actions/action-context';
+import { ActionPersonnalisationInfo } from '@/app/referentiels/actions/action-personnalisations/ActionPersonnalisationInfo';
 import { ActionAuditDetail } from '@/app/referentiels/audits/ActionAuditDetail';
 import {
   ActionDefinitionSummary,
@@ -56,6 +57,7 @@ function ActionDetailContent({ action }: { action: ActionDefinitionSummary }) {
   return (
     <section>
       <div className="flex flex-col">
+        <ActionPersonnalisationInfo className="mb-2" actionId={action.id} />
         <ActionAuditDetail action={action} />
         {showJustifications && (
           <>

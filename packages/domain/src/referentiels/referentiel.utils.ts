@@ -109,6 +109,36 @@ export function getParentIdFromActionId(actionId: string): string | null {
 }
 
 /**
+ * Remonte un actionId jusqu'au nœud de type `action` lorsque le nœud courant
+ * est plus profond dans `hierarchie` (ex. sous-action, tâche).
+ */
+export function rollUpActionIdToActionLevel(
+  actionId: string,
+  hierarchie: ActionType[]
+): string {
+  const actionLevelIndex = hierarchie.indexOf(ActionTypeEnum.ACTION);
+  if (actionLevelIndex === -1) {
+    return actionId;
+  }
+
+  let current = actionId;
+  const initial = actionId;
+
+  while (true) {
+    const type = getActionTypeFromActionId(current, hierarchie);
+    const typeIndex = hierarchie.indexOf(type);
+    if (typeIndex === -1 || typeIndex <= actionLevelIndex) {
+      return current;
+    }
+    const parent = getParentIdFromActionId(current);
+    if (parent === null) {
+      return initial;
+    }
+    current = parent;
+  }
+}
+
+/**
  * Détermine le statut d'avancement d'une action (inclus le "non concerné")
  * en fonction des autres propriétés provenant du score calculé de l'action.
  * C'est à dire après le calcul des points tenant compte de la personnalisation.
