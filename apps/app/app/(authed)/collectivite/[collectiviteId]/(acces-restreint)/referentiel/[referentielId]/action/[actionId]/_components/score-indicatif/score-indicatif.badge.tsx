@@ -1,4 +1,3 @@
-import { useIsScoreIndicatifEnabled } from '@/app/referentiels/comparisons/use-is-score-indicatif-enabled';
 import { Badge } from '@tet/ui';
 import { useGetScoreIndicatif } from './use-get-score-indicatif';
 
@@ -8,8 +7,7 @@ type Props = {
 
 export const ScoreIndicatifBadge = ({ actionId }: Props) => {
   const { data, isLoading } = useGetScoreIndicatif(actionId);
-  const isScoreIndicatifEnabled = useIsScoreIndicatifEnabled();
-  if (!data || isLoading || !isScoreIndicatifEnabled) return null;
+  if (!data || isLoading) return null;
 
   const scoreIndicatif = data[actionId];
   if (!scoreIndicatif) return null;

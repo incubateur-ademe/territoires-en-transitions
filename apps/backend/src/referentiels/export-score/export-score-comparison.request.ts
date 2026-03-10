@@ -10,10 +10,6 @@ export const exportScoreComparisonRequestSchema = z.object({
     .string()
     .transform((value) => value === 'true')
     .optional(),
-  isScoreIndicatifEnabled: z
-    .string()
-    .transform((value) => value === 'true')
-    .optional(),
 });
 
 export type ExportScoreComparisonRequestQuery = z.infer<

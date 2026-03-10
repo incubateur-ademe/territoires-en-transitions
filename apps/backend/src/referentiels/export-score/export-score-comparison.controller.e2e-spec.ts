@@ -110,6 +110,7 @@ describe('Referentiels scoring routes', () => {
       },
       '',
       '',
+      undefined,
       '',
       '',
       undefined,
@@ -202,7 +203,7 @@ describe('Referentiels scoring routes', () => {
     ]);
 
     // vérifie la taille
-    const expectedExportSize = 55.1;
+    const expectedExportSize = 55.9;
     const exportFileSize = parseInt(
       responseSnapshotExport.headers['content-length']
     );
@@ -247,7 +248,6 @@ sinon ((limite(cae_6.a) - val(cae_6.a)) / (limite(cae_6.a) - cible(cae_6.a)))`,
         exportFormat: 'excel',
         isAudit: 'false',
         snapshotReferences: ['score-courant'],
-        isScoreIndicatifEnabled: 'true',
       })
       .expect(200)
       .responseType('blob');

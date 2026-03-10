@@ -77,7 +77,6 @@ function createScoreComparisonData(
     pilotes: {},
     services: {},
     fichesActionLiees: {},
-    isScoreIndicatifEnabled: false,
   };
 }
 
