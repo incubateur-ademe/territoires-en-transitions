@@ -1,24 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
-import { Tables, useSupabase } from '@tet/api';
-
-export type TPersonnalisationRegleRead = Tables<'personnalisation_regle'>;
-
-type TUseRegles = (action_id: string) => TPersonnalisationRegleRead[];
+import { useTRPC } from '@tet/api';
 
 // charge les règles de personnalisation pour une action donnée
-export const useRegles: TUseRegles = (action_id) => {
-  const supabase = useSupabase();
-  const query = useQuery({
-    queryKey: ['personnalisation_regle', action_id],
+export const useRegles = (actionId: string) => {
+  const trpc = useTRPC();
+  const { data, ...other } = useQuery(
+    trpc.collectivites.personnalisations.listRegles.queryOptions(
+      {
+        actionIds: [actionId],
+      },
+      { enabled: Boolean(actionId?.trim()) }
+    )
+  );
 
-    queryFn: async () => {
-      const { data } = await supabase
-        .from('personnalisation_regle')
-        .select()
-        .match({ action_id });
-      return data;
-    },
-  });
-
-  return query?.data || [];
+  return { data: data ?? [], ...other };
 };

@@ -33,7 +33,7 @@ export const useCycleLabellisation = (
     useCurrentCollectivite();
   const isAuditeur = useIsAuditeur();
   const user = useUser();
-  const identite = useCarteIdentite(collectiviteId);
+  const { data: identite } = useCarteIdentite(collectiviteId);
 
   // charge les données du parcours
   const parcours = useLabellisationParcours({
@@ -48,7 +48,7 @@ export const useCycleLabellisation = (
   const peutCommencerAudit = canStartAudit(parcours, user.id).canRequest;
 
   // états dérivés
-  const isCOT = Boolean(identite?.is_cot);
+  const isCOT = Boolean(identite?.activeCOT);
 
   const peutDemanderEtoileBase = Boolean(
     // pas d'audit ou de labellisation demandée

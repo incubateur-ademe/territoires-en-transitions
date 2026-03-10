@@ -10,6 +10,7 @@ import {
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, Checkbox } from '@tet/ui';
 
+import { isNil } from 'es-toolkit';
 import { usePersonnalisationReferentiels } from '../personnalisation-referentiel.context';
 import { QuestionReponseList } from '../PersoPotentielModal/PersoPotentielQR';
 import { useChangeReponseHandler } from '../PersoPotentielModal/useChangeReponseHandler';
@@ -25,22 +26,21 @@ export const PersoReferentielThematique = () => {
   const { referentiels } = usePersonnalisationReferentiels();
   const { thematiqueId } = useParams<{ thematiqueId: string }>();
   const thematique = useThematique(thematiqueId);
-  const qr = useQuestionsReponses({ thematique_id: thematiqueId });
+  const qr = useQuestionsReponses(
+    thematiqueId ? { thematiqueIds: [thematiqueId] } : {}
+  );
   const nextThematiqueId = useNextThematiqueId(
     collectiviteId,
     referentiels,
     thematiqueId
   );
-  const identite = useCarteIdentite(collectiviteId);
+  const { data: identite } = useCarteIdentite(collectiviteId);
   const handleChange = useChangeReponseHandler(collectiviteId, ['cae', 'eci']);
 
   const [onlyNoResponse, setOnlyNoResponse] = useState(false);
 
   const qrList = onlyNoResponse
-    ? qr.filter(
-        ({ reponse }) =>
-          reponse === null || reponse === undefined || reponse === ''
-      )
+    ? qr.filter(({ reponse }) => isNil(reponse) || reponse === '')
     : qr;
 
   if (!thematique) {

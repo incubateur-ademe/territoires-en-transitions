@@ -28,8 +28,8 @@ export const PersoPotentiel = ({ actionDef }: TPersoPotentielButtonProps) => {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const qr = useQuestionsReponses({ action_ids: [actionId] });
-  const regles = useRegles(actionId);
+  const qr = useQuestionsReponses({ actionIds: [actionId] });
+  const { data: regles } = useRegles(actionId);
   const handleChange = useChangeReponseHandler(collectiviteId, [
     getReferentielIdFromActionId(actionId),
   ]);

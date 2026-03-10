@@ -5,9 +5,9 @@
 import {
   TChangeReponse,
   TQuestionReponse,
-  TReponse,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
+import { PersonnalisationReponseValue } from '@tet/domain/collectivites';
 import { Accordion } from '@tet/ui';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
@@ -54,7 +54,7 @@ export type TQuestionReponseProps = {
   qr: TQuestionReponse;
   /** vrai quand la question est la 1ère de type proportion */
   hasProportionDescription: boolean;
-  onChange: (reponse: TReponse) => void;
+  onChange: (reponse: PersonnalisationReponseValue) => void;
   /** Variante suivant que la liste est affichée dans une page Personnalisation
    * ou dans la modale de personnalisation (depuis une action) */
   variant?: 'modal' | 'indicateur' | undefined;
@@ -146,7 +146,9 @@ export const QuestionReponseList = (props: TQuestionReponseListProps) => {
             qr={qr}
             canEdit={canEdit}
             variant={variant}
-            onChange={(reponse: TReponse) => onChange(qr, reponse)}
+            onChange={(reponse: PersonnalisationReponseValue) =>
+              onChange(qr, reponse)
+            }
             hasProportionDescription={hasProportionDescription(
               questionReponses,
               index

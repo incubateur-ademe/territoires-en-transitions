@@ -1,28 +1,22 @@
 import { ReferentielId } from '@tet/domain/referentiels';
 
-import { useQuestionThematiqueCompletude } from '../PersoReferentiel/useQuestionThematiqueCompletude';
+import { usePersonnalisationThematiques } from '../PersoReferentiel/usePersonnalisationThematiques';
 
-type TUseNextThematiqueLink = (
-  collectivite_id: number,
+export const useNextThematiqueId = (
+  collectiviteId: number,
   referentiels: ReferentielId[],
-  thematique_id?: string
-) => string | null;
-
-export const useNextThematiqueId: TUseNextThematiqueLink = (
-  collectivite_id,
-  referentiels,
-  thematique_id
-) => {
-  const data = useQuestionThematiqueCompletude(collectivite_id, referentiels);
+  thematiqueId?: string
+): string | null => {
+  const data = usePersonnalisationThematiques(collectiviteId, referentiels);
 
   // données non valides ou pas encore chargée
-  if (!data || !thematique_id) {
+  if (!data || !thematiqueId) {
     return null;
   }
 
   // cherche l'index de la thématique courante
   const currentThematiqueIndex = data.findIndex(
-    ({ id }) => id === thematique_id
+    ({ id }) => id === thematiqueId
   );
   if (currentThematiqueIndex === -1) {
     return null;

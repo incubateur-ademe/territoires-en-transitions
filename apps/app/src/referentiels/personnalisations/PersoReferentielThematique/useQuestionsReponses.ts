@@ -1,4 +1,4 @@
-import { TReponse } from '@/app/referentiels/personnalisations/personnalisation.types';
+import { PersonnalisationReponseValue } from '@tet/domain/collectivites';
 import { TFilters, useQuestions } from './useQuestions';
 import { useReponses } from './useReponses';
 
@@ -11,21 +11,18 @@ export const useQuestionsReponses = (filters: TFilters) => {
   // charge les questions et les réponses
   const { data: questions } = useQuestions(filters);
 
-  const reponses = useReponses(questions || []);
+  const { data: reponses } = useReponses(questions || []);
 
   // indexe les réponses par id de question
   const reponsesByQuestionId = new Map<
     string,
-    { reponse: TReponse; justification?: string | null }
+    { reponse: PersonnalisationReponseValue; justification?: string | null }
   >();
-  reponses.forEach(({ data }) => {
-    if (data) {
-      const { question_id, reponse, justification } = data;
-      reponsesByQuestionId.set(question_id, {
-        reponse: reponse.reponse,
-        justification,
-      });
-    }
+  reponses?.forEach(({ questionId, reponse, justification }) => {
+    reponsesByQuestionId.set(questionId, {
+      reponse,
+      justification,
+    });
   });
 
   // associe les réponses aux questions
