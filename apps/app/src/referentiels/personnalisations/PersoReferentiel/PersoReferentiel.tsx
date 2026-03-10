@@ -10,7 +10,7 @@ import { ReferentielId } from '@tet/domain/referentiels';
 import { Checkbox } from '@tet/ui';
 
 import { usePersonnalisationReferentiels } from '../personnalisation-referentiel.context';
-import { useQuestionThematiqueCompletude } from './useQuestionThematiqueCompletude';
+import { usePersonnalisationThematiques } from './usePersonnalisationThematiques';
 
 const PersoReferentiel = () => {
   const { collectiviteId, nom } = useCurrentCollectivite();
@@ -19,7 +19,7 @@ const PersoReferentiel = () => {
 
   const referentielOptions: ReferentielId[] = ['cae', 'eci'];
 
-  const thematiques = useQuestionThematiqueCompletude(
+  const thematiques = usePersonnalisationThematiques(
     collectiviteId,
     referentiels
   );
@@ -77,9 +77,7 @@ const PersoReferentiel = () => {
                 })}
               >
                 {item.nom}
-                <BadgeACompleter
-                  a_completer={item.completude === 'a_completer'}
-                />
+                <BadgeACompleter isComplete={item.isComplete} />
               </Link>
             </li>
           ))}

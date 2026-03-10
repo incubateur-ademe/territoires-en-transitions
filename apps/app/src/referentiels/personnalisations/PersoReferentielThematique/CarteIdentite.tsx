@@ -2,34 +2,35 @@
  * Affiche les informations administratives d'une collectivité
  */
 
-import { TCarteIdentite } from './useCarteIdentite';
+import { CollectivitePublic } from '@tet/domain/collectivites';
 
-export type TCarteIdentiteProps = {
-  identite: TCarteIdentite;
-};
-
-export const CarteIdentite = (props: TCarteIdentiteProps) => {
+export const CarteIdentite = (props: { identite: CollectivitePublic }) => {
   const { identite } = props;
   const {
-    code_siren_insee,
-    departement_name,
+    communeCode,
+    departementName,
     nom,
-    population_source,
-    population_totale,
-    region_name,
-    type_collectivite,
+    population,
+    populationSource,
+    regionName,
+    siren,
+    type,
   } = identite;
+
+  const codeSirenInsee = communeCode ?? siren ?? '';
 
   const items = [
     { title: 'Nom', value: nom },
-    { title: 'Type de collectivité', value: type_collectivite },
-    { title: 'Code SIREN ou INSEE', value: code_siren_insee },
-    { title: 'Région', value: region_name },
+    { title: 'Type de collectivité', value: type },
+    { title: 'Code SIREN ou INSEE', value: codeSirenInsee },
+    { title: 'Région', value: regionName ?? null },
     {
-      title: `Population (${population_source})`,
-      value: `${population_totale?.toLocaleString()} habitants`,
+      title: populationSource
+        ? `Population (${populationSource})`
+        : 'Population',
+      value: population ? `${population.toLocaleString()} habitants` : null,
     },
-    { title: 'Département', value: departement_name },
+    { title: 'Département', value: departementName ?? null },
   ];
 
   return (
