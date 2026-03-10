@@ -15,7 +15,7 @@ export type ListActionsResponse = {
 
 export function useListActions(
   filters?: ActionListFilters,
-  enabled = true,
+  requested = true,
   externalCollectiviteId?: number
 ): ListActionsResponse {
   const currentCollectiviteId = useCollectiviteId();
@@ -28,7 +28,7 @@ export function useListActions(
         filters,
       },
       {
-        enabled,
+        enabled: requested,
       }
     )
   );

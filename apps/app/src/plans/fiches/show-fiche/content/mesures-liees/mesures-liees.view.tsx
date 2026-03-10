@@ -4,14 +4,11 @@ import ActionPicto from '@/app/ui/pictogrammes/ActionPicto';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 import { useState } from 'react';
-import { useFicheMesures } from '../../context/hooks/use-fiche-mesure';
 import { ContentLayout } from '../content-layout';
 import { MesuresLieesModal } from './mesures-liees.modal';
 
 export const MesuresLieesView = () => {
-  const { fiche, isReadonly } = useFicheContext();
-  const mesuresState = useFicheMesures(fiche);
-
+  const { fiche, isReadonly, mesures: mesuresState } = useFicheContext();
   const currentCollectiviteId = useCollectiviteId();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
