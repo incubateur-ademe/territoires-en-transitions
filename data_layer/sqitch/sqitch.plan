@@ -963,3 +963,4 @@ referentiel/drop-action-historique-triggers [referentiel/historique_modified_by]
 
 evaluation/question_choix_formulation_not_null 2026-03-10T17:50:33Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute une contrainte NOT NULL sur question_choix.formulation
 evaluation/drop-justification-triggers 2026-03-10T17:50:33Z Marc Rutkowski <marc@attractive-media.fr> # Supprime les triggers modified_by/modified_at sur la table justification
+referentiel/banatic_2025 2026-03-10T13:36:30Z System Administrator <root@Host-001.lan> # Création des tables pour gérer les codes banatic 2025
