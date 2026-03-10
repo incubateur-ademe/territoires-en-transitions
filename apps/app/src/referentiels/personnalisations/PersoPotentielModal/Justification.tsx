@@ -1,5 +1,6 @@
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Accordion, Textarea } from '@tet/ui';
+import { isNil } from 'es-toolkit';
 import { useEffect, useState } from 'react';
 import { TQuestionReponseProps } from './PersoPotentielQR';
 import { useUpdateJustification } from './useUpdateJustification';
@@ -10,17 +11,18 @@ import { useUpdateJustification } from './useUpdateJustification';
  */
 export const Justification = (props: TQuestionReponseProps) => {
   const { qr, canEdit } = props;
-  const { reponse, justification, id } = qr;
+  const { reponse, justification, id, type } = qr;
   const { collectiviteId } = useCurrentCollectivite();
   const [value, setValue] = useState(justification);
-  const { mutate: updateJustification } = useUpdateJustification();
+  const { mutate: updateJustification } =
+    useUpdateJustification(collectiviteId);
 
   // synchronise la valeur initiale car la réponse est chargée de manière asynchrone
   useEffect(() => {
     setValue(justification);
   }, [justification]);
 
-  if (reponse === undefined || reponse === null) {
+  if (isNil(reponse)) {
     return null;
   }
 
@@ -39,13 +41,14 @@ export const Justification = (props: TQuestionReponseProps) => {
           placeholder="Exemple : Cette compétence est transférée à Nom de la Collectivité par délibération du JJ-MM-AAAA OU Cette compétence est exercée par la collectivité sur 2/3 des communes soit 3/4 de la population"
           onChange={(evt) => setValue(evt.currentTarget.value)}
           onBlur={() => {
-            const newValue = value?.trim() || '';
-            if (newValue !== (justification || ''))
+            const newValue = value?.trim() ?? '';
+            if (newValue !== (justification ?? ''))
               updateJustification({
-                collectivite_id: collectiviteId,
-                question_id: id,
-                texte: newValue,
-                modified_at: new Date().toISOString(),
+                collectiviteId,
+                questionId: id,
+                questionType: type,
+                reponse,
+                justification: newValue,
               });
           }}
           disabled={!canEdit}

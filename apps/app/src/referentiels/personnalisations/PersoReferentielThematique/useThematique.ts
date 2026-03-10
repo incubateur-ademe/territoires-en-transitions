@@ -1,29 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
-import { Tables, useSupabase } from '@tet/api';
-
-export type TQuestionThematiqueRead = Tables<'question_thematique'>;
-
-type TUseThematique = (
-  thematique_id: string | undefined
-) => TQuestionThematiqueRead | null;
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { usePersonnalisationThematiques } from '../PersoReferentiel/usePersonnalisationThematiques';
 
 // charge les informations d'une thématique
-export const useThematique: TUseThematique = (thematique_id) => {
-  const supabase = useSupabase();
-  const { data } = useQuery({
-    queryKey: ['question_thematique', thematique_id],
-
-    queryFn: async () => {
-      if (thematique_id) {
-        const { data: thematique } = await supabase
-          .from('question_thematique')
-          .select()
-          .eq('id', thematique_id);
-        return (thematique?.[0] as TQuestionThematiqueRead) || null;
-      }
-      return null;
-    },
-  });
-
-  return data || null;
+export const useThematique = (thematiqueId: string) => {
+  const collectiviteId = useCollectiviteId();
+  const thematiques = usePersonnalisationThematiques(collectiviteId);
+  return thematiques?.find((t) => t.id === thematiqueId) || null;
 };

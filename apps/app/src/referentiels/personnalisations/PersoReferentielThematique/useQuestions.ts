@@ -1,13 +1,11 @@
-import { TQuestionRead } from '@/app/referentiels/personnalisations/personnalisation.types';
 import { useQuery } from '@tanstack/react-query';
-import { DBClient, useSupabase } from '@tet/api';
+import { RouterInput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 
-export type TFilters = {
-  action_ids?: string[];
-  thematique_id?: string;
-  questionIds?: string[];
-};
+export type TFilters = Omit<
+  RouterInput['collectivites']['personnalisations']['listQuestions'],
+  'collectiviteId'
+>;
 
 /**
  * Charge la liste des questions de personnalisation pour la collectivité
@@ -15,45 +13,12 @@ export type TFilters = {
  */
 export const useQuestions = (filters: TFilters) => {
   const collectiviteId = useCollectiviteId();
-  const supabase = useSupabase();
+  const trpc = useTRPC();
 
-  return useQuery({
-    queryKey: ['questions', collectiviteId, filters],
-    queryFn: () => fetchQuestions(supabase, collectiviteId, filters),
-  });
-};
-
-const fetchQuestions = async (
-  supabase: DBClient,
-  collectiviteId: number,
-  filters: TFilters
-) => {
-  const query = supabase
-    .from('question_display')
-    .select()
-    .eq('collectivite_id', collectiviteId);
-
-  const { action_ids, thematique_id, questionIds } = filters || {};
-  if (action_ids) {
-    query.contains('action_ids', action_ids);
-  }
-
-  if (thematique_id) {
-    query.eq('thematique_id', thematique_id);
-  }
-
-  if (questionIds) {
-    query.in('id', questionIds);
-  }
-
-  query.order('ordonnancement', { ascending: true });
-
-  // attends les données
-  const { error, data } = await query;
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data as unknown as TQuestionRead[];
+  return useQuery(
+    trpc.collectivites.personnalisations.listQuestions.queryOptions({
+      collectiviteId,
+      ...filters,
+    })
+  );
 };

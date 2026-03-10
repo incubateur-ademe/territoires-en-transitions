@@ -4,14 +4,14 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { useScore } from '@/app/referentiels/use-snapshot';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
+import type { PersonnalisationRegle } from '@tet/domain/collectivites';
 import DOMPurify from 'dompurify';
-import { TPersonnalisationRegleRead } from './useRegles';
 
 export type TPersoPotentielDocProps = {
   /** Définition de l'action */
   actionDef: ActionDefinitionSummary;
   /** Règles de personnalisation applicables */
-  regles: TPersonnalisationRegleRead[];
+  regles: PersonnalisationRegle[];
 };
 
 export const PersoPotentielDoc = ({
