@@ -98,10 +98,7 @@ const AVANCEMENT_TO_LABEL: Record<StatutAvancement | 'non_concerne', string> = {
 };
 
 /** Génère la liste des colonnes */
-export function buildColumns(
-  exportMode: ExportMode,
-  isScoreIndicatifEnabled?: boolean
-): Column[] {
+export function buildColumns(exportMode: ExportMode): Column[] {
   // va contenir la table de correspondances entre clé de colonne et lettre associée
   // pour pouvoir les utiliser dans les formules
   const columnLetterByKey: ColumnLetterByKey = {};
@@ -173,14 +170,12 @@ export function buildColumns(
     },
 
     // 1er groupe de colonnes "points/scores"
-    ...buildScoreColumns(1, columnLetterByKey, isScoreIndicatifEnabled),
+    ...buildScoreColumns(1, columnLetterByKey),
   ];
 
   // ajoute le 2ème de groupe de colonnes "points/scores" quand il y a 2 snapshots dans l'export
   if (exportMode !== ExportMode.SINGLE_SNAPSHOT) {
-    columns.push(
-      ...buildScoreColumns(2, columnLetterByKey, isScoreIndicatifEnabled)
-    );
+    columns.push(...buildScoreColumns(2, columnLetterByKey));
   }
 
   // puis les colonnes de fin du tableau
@@ -243,8 +238,7 @@ type SnapshotIndex = 1 | 2;
 /** Génère la liste des colonnes points/score/statut/état d'avancement */
 function buildScoreColumns(
   snapshotIndex: SnapshotIndex,
-  columnLetterByKey: ColumnLetterByKey,
-  isScoreIndicatifEnabled?: boolean
+  columnLetterByKey: ColumnLetterByKey
 ): Column[] {
   const {
     getScoreByIndex,
@@ -343,30 +337,26 @@ function buildScoreColumns(
         style: { alignment: Utils.ALIGN_LEFT_WRAP },
         width: WIDTH_MEDIUM,
       },
-      headCellProps: isScoreIndicatifEnabled
-        ? headCellProps
-        : lastHeadCellProps,
+      headCellProps,
       getValue: ({ scoreRow: row }) =>
         htmlToText(getScoreByIndex(row)?.explication || ''),
     },
   ];
 
-  if (isScoreIndicatifEnabled) {
-    columns.push({
-      title: 'Score lié à un indicateur',
-      colProps: {
-        style: { alignment: Utils.ALIGN_LEFT_WRAP },
-        width: WIDTH_MEDIUM,
-      },
-      headCellProps: lastHeadCellProps,
-      getValue: ({ scoreRow: row }) => {
-        const scoreIndicatif = row[scoreKey]?.scoreIndicatif;
-        if (scoreIndicatif) {
-          return getLibelleScoreIndicatif(scoreIndicatif);
-        }
-      },
-    });
-  }
+  columns.push({
+    title: 'Score lié à un indicateur',
+    colProps: {
+      style: { alignment: Utils.ALIGN_LEFT_WRAP },
+      width: WIDTH_MEDIUM,
+    },
+    headCellProps: lastHeadCellProps,
+    getValue: ({ scoreRow: row }) => {
+      const scoreIndicatif = row[scoreKey]?.scoreIndicatif;
+      if (scoreIndicatif) {
+        return getLibelleScoreIndicatif(scoreIndicatif);
+      }
+    },
+  });
 
   return columns;
 }

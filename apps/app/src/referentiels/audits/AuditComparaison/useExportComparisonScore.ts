@@ -1,4 +1,3 @@
-import { useIsScoreIndicatifEnabled } from '@/app/referentiels/comparisons/use-is-score-indicatif-enabled';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { useApiClient } from '@/app/utils/use-api-client';
 import { useMutation } from '@tanstack/react-query';
@@ -9,13 +8,11 @@ type ExportFormat = 'excel' | 'csv';
 const buildParams = (
   exportFormat: ExportFormat,
   isAudit: boolean,
-  snapshotReferences?: string[],
-  isScoreIndicatifEnabled?: boolean
+  snapshotReferences?: string[]
 ) => {
   const params: Record<string, string | boolean | undefined> = {
     exportFormat,
     isAudit,
-    isScoreIndicatifEnabled,
   };
   if (snapshotReferences) {
     params.snapshotReferences = snapshotReferences.join(',');
@@ -49,7 +46,6 @@ export const useExportComparisonScores = (
 ) => {
   const tracker = useEventTracker();
   const api = useApiClient();
-  const isScoreIndicatifEnabled = useIsScoreIndicatifEnabled();
 
   return useMutation({
     mutationFn: async () => {
@@ -59,9 +55,6 @@ export const useExportComparisonScores = (
       tracker(trackingEvent);
 
       const params = buildParams(exportFormat, isAudit, snapshotReferences);
-      if (isScoreIndicatifEnabled) {
-        params.isScoreIndicatifEnabled = true;
-      }
 
       const { blob, filename } = await api.getAsBlob({
         route: `/collectivites/${collectiviteId}/referentiels/${referentiel}/score-snapshots/export-comparison`,

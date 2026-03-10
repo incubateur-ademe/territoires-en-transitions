@@ -56,7 +56,6 @@ export type ScoreComparisonData = {
   pilotes: Record<ActionId, PersonneTagOrUser[]>;
   services: Record<ActionId, TagWithCollectiviteId[]>;
   fichesActionLiees: Record<ActionId, string>;
-  isScoreIndicatifEnabled: boolean | undefined;
 };
 
 export enum ExportMode {
@@ -92,12 +91,7 @@ export class LoadScoreComparisonService {
     referentielId: ReferentielId,
     query: ExportScoreComparisonRequestQuery
   ): Promise<ScoreComparisonData> {
-    const {
-      exportFormat,
-      isAudit,
-      isScoreIndicatifEnabled,
-      snapshotReferences,
-    } = query;
+    const { exportFormat, isAudit, snapshotReferences } = query;
 
     const exportMode = this.getExportMode(isAudit, snapshotReferences);
 
@@ -186,7 +180,6 @@ export class LoadScoreComparisonService {
       pilotes,
       services,
       fichesActionLiees,
-      isScoreIndicatifEnabled,
     };
   }
 
