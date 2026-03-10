@@ -13,12 +13,12 @@ import z from 'zod';
 import { TokenInfo } from '../../../users/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../../users/models/auth.models';
 import { listIndicateursApiRequestSchema } from './list-indicateurs.api-request';
+import { listIndicateursInputSchema } from './list-indicateurs.input';
 import {
   indicateurListItemSchema,
   ListIndicateursOutput,
 } from './list-indicateurs.output';
 import { ListIndicateursService } from './list-indicateurs.service';
-import { listIndicateursInputSchema } from './list-indicateurs.input';
 
 class ListIndicateursApiRequestClass extends createZodDto(
   listIndicateursApiRequestSchema
@@ -55,6 +55,7 @@ export class ListIndicateursController {
       filters: {
         indicateurIds: request.indicateurIds,
         identifiantsReferentiel: request.identifiantsReferentiel,
+        withChildren: true,
       },
       queryOptions: {
         page: request.page,
