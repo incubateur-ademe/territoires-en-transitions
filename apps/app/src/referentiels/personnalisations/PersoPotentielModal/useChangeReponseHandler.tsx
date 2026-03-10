@@ -1,24 +1,17 @@
-import {
-  TChangeReponse,
-  TQuestionRead,
-  TQuestionReponseWrite,
-  TReponse,
-  TReponseWrite,
-} from '@/app/referentiels/personnalisations/personnalisation.types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
+import {
+  PersonnalisationReponseValue,
+  Question,
+  QuestionType,
+} from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { useSnapshotComputeAndUpdate } from '../../use-snapshot';
 
-type TUseChangeReponseHandler = (
+// gestionnaire d'enregistrement des réponses
+export const useChangeReponseHandler = (
   collectiviteId: number,
   referentielIds: ReferentielId[]
-) => TChangeReponse;
-
-// gestionnaire d'enregistrement des réponses
-export const useChangeReponseHandler: TUseChangeReponseHandler = (
-  collectiviteId,
-  referentielIds
 ) => {
   const { computeScoreAndUpdateCurrentSnapshot } =
     useSnapshotComputeAndUpdate();
@@ -28,33 +21,30 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
   const { mutateAsync: setReponse } = useMutation(
     trpc.collectivites.personnalisations.setReponse.mutationOptions()
   );
-  const saveReponse = async ({
-    question,
-    reponse,
-  }: {
-    question: TQuestionRead;
-    reponse: TReponse;
-  }): Promise<boolean> => {
-    if (!collectiviteId) {
-      return false;
-    }
 
-    const newReponse = transform({
-      collectivite_id: collectiviteId,
-      question,
-      reponse,
-    });
-    await setReponse({
+  const getReponseQueryKey = (questionId: string) =>
+    trpc.collectivites.personnalisations.listReponses.queryKey({
       collectiviteId,
-      questionId: question.id,
-      reponse: newReponse.reponse,
+      questionIds: [questionId],
     });
-    return true;
-  };
 
   const { mutate } = useMutation({
     mutationKey: ['upsert_reponse_potentiel_personnalisation'],
-    mutationFn: saveReponse,
+    mutationFn: async ({
+      question,
+      reponse,
+    }: {
+      question: Question;
+      reponse: PersonnalisationReponseValue;
+    }): Promise<boolean> => {
+      const newReponse = transformReponseValue(question.type, reponse);
+      await setReponse({
+        collectiviteId,
+        questionId: question.id,
+        reponse: newReponse,
+      });
+      return true;
+    },
 
     meta: {
       error: "La personnalisation du potentiel n'a pas été enregistrée",
@@ -62,8 +52,7 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
 
     // avant que la mutation soit exécutée...
     onMutate: async ({ question, reponse }) => {
-      // la clé dans le cache
-      const queryKey = ['reponse', collectiviteId, question.id];
+      const queryKey = getReponseQueryKey(question.id);
 
       // annule un éventuel fetch en cours pour que la MàJ optimiste ne soit pas écrasée
       await queryClient.cancelQueries({ queryKey });
@@ -72,44 +61,44 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
       const previousCacheValue = queryClient.getQueryData(queryKey);
 
       // crée la nouvelle valeur à partir des entrées
-      const question_id = question.id;
-      const newValue = {
-        collectivite_id: collectiviteId,
-        question_id,
-        reponse: {
-          type: question.type,
-          reponse,
-          collectivite_id: collectiviteId,
-          question_id,
-        },
+      const questionId = question.id;
+      const newReponse = transformReponseValue(question.type, reponse);
+      const newEntry = {
+        questionId,
+        questionType: question.type,
+        reponse: newReponse,
+        justification: null,
       };
 
+      let newValue;
+      if (previousCacheValue) {
+        const exists = previousCacheValue.some(
+          (cacheItem) => cacheItem.questionId === questionId
+        );
+        if (exists) {
+          newValue = previousCacheValue.map((cacheItem) =>
+            cacheItem.questionId === questionId
+              ? { ...cacheItem, reponse: newReponse }
+              : cacheItem
+          );
+        } else {
+          newValue = [...previousCacheValue, newEntry];
+        }
+      } else {
+        newValue = [newEntry];
+      }
       // et écrit cette valeur dans le cache
       queryClient.setQueryData(queryKey, newValue);
-
-      // renvoi un objet `context` avec la valeur précédente du cache et la
-      // clé correspondante
-      return { queryKey, previousCacheValue };
     },
 
-    // utilise le contexte fourni par `onMutate` pour revenir à l'état
-    // précédent si la mutation a échouée
-    onError: (err, variables, context) => {
-      if (context) {
-        const { queryKey, previousCacheValue } = context;
-        queryClient.setQueryData(queryKey, previousCacheValue);
-      }
+    // rechargement après la requête
+    onSettled: (data, error, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: getReponseQueryKey(variables.question.id),
+      });
     },
 
-    // et refecth systématiquement que la mutation se soit bien effectuée ou
-    // non
-    onSettled: (data, error, variables, context) => {
-      if (context) {
-        queryClient.invalidateQueries({ queryKey: context.queryKey });
-      }
-    },
-
-    onSuccess(data, variables, context) {
+    onSuccess(data, variables) {
       referentielIds.forEach((referentielId) => {
         computeScoreAndUpdateCurrentSnapshot({
           collectiviteId,
@@ -117,11 +106,9 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
         });
       });
 
-      if (context) {
-        queryClient.invalidateQueries({
-          queryKey: ['question_thematique_completude', collectiviteId],
-        });
-      }
+      queryClient.invalidateQueries({
+        queryKey: getReponseQueryKey(variables.question.id),
+      });
 
       queryClient.invalidateQueries({
         queryKey: trpc.indicateurs.valeurs.reference.queryKey({
@@ -131,31 +118,28 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
     },
   });
 
-  const handleChange = (question: TQuestionRead, reponse: TReponse) =>
-    mutate({ question, reponse });
+  const handleChange = (
+    question: Question,
+    reponse: PersonnalisationReponseValue
+  ) => mutate({ question, reponse });
 
   return handleChange;
 };
 
 // transforme si nécessaire la valeur d'une réponse à écrire dans la base
-const transform = (qr: TQuestionReponseWrite): TReponseWrite => {
-  const { question, reponse: reponseValue } = qr;
-  if (question.type === 'proportion') {
-    const value = typeof reponseValue === 'number' ? reponseValue / 100 : null;
-    return setReponseValue(qr, value);
+export const transformReponseValue = (
+  questionType: QuestionType,
+  reponse: PersonnalisationReponseValue
+) => {
+  if (questionType === 'proportion') {
+    return typeof reponse === 'number' ? reponse / 100 : null;
   }
 
-  if (question.type === 'binaire') {
-    if (reponseValue === 'oui') return setReponseValue(qr, true);
-    if (reponseValue === 'non') return setReponseValue(qr, false);
-    return setReponseValue(qr, null);
+  if (questionType === 'binaire') {
+    if (reponse === 'oui' || reponse === true) return true;
+    if (reponse === 'non' || reponse === false) return false;
+    return null;
   }
 
-  return setReponseValue(qr, reponseValue);
-};
-
-// change la valeur dans une réponse et renvoi l'objet résultant
-const setReponseValue = (qr: TQuestionReponseWrite, reponse: TReponse) => {
-  const { collectivite_id, question } = qr;
-  return { collectivite_id, question_id: question.id, reponse };
+  return reponse;
 };
