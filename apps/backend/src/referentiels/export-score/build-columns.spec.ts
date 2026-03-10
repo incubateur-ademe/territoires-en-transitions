@@ -1,5 +1,6 @@
 import { CollectiviteAvecType } from '@tet/domain/collectivites';
 import {
+  ActionType,
   ActionTypeEnum,
   ScoreComputeMode,
   ScoreComputeModeEnum,
@@ -82,7 +83,7 @@ function createScoreComparisonData(
 
 function createScoreRow(
   actionId: string,
-  actionType: ActionTypeEnum,
+  actionType: ActionType,
   score: Partial<ScoresPayload['scores']['score']> & {
     actionsEnfant?: Array<{
       score: { actionId: string; concerne: boolean; avancement: string };
@@ -244,7 +245,7 @@ describe('formatActionStatut', () => {
 
     it('retourne "Détaillé" pour le statut detaille', () => {
       const row = createScoreRow('eci_1.1', ActionTypeEnum.SOUS_ACTION, {
-        avancement: StatutAvancementEnum.DETAILLE,
+        avancement: StatutAvancementEnum.DETAILLE_AU_POURCENTAGE,
       });
       const data = createScoreComparisonData(undefined, [row]);
 
@@ -340,7 +341,7 @@ describe('formatActionStatut', () => {
 
     it('retourne une chaîne vide pour une tâche sans statut dont le parent est détaillé', () => {
       const parent = createScoreRow('eci_1.1.1', ActionTypeEnum.SOUS_ACTION, {
-        avancement: StatutAvancementEnum.DETAILLE,
+        avancement: StatutAvancementEnum.DETAILLE_AU_POURCENTAGE,
       });
       const row = createScoreRow('eci_1.1.1.1', ActionTypeEnum.TACHE, {
         avancement: undefined,
@@ -352,7 +353,7 @@ describe('formatActionStatut', () => {
 
     it('retourne une chaîne vide pour une tâche avec un statut dont le parent est détaillé', () => {
       const parent = createScoreRow('eci_1.1.1', ActionTypeEnum.SOUS_ACTION, {
-        avancement: StatutAvancementEnum.DETAILLE,
+        avancement: StatutAvancementEnum.DETAILLE_AU_POURCENTAGE,
       });
       const row = createScoreRow('eci_1.1.1.1', ActionTypeEnum.TACHE, {
         avancement: StatutAvancementEnum.FAIT,

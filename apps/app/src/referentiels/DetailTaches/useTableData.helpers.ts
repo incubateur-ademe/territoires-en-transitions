@@ -1,9 +1,9 @@
-import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import {
   ActionTypeEnum,
   flatMapActionsEnfants,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
+import { ActionDetailed } from '../use-snapshot';
 
 /**
  * Vérifie si une action est non renseigné ou contient des sous-actions ou taches non renseignées ou pas de sous actions ou taches
@@ -29,8 +29,7 @@ export function hasNonInformedActionOrNonInformedChild(
 
     const hasNoChildren = act.actionsEnfant.length === 0;
     const hasNonRenseigneChild = act.actionsEnfant.some(
-      (a: ActionDetailed) =>
-        a.score.concerne === true && a.score.renseigne === false
+      (a) => a.score.concerne === true && a.score.renseigne === false
     );
     return hasNoChildren || hasNonRenseigneChild;
   });
@@ -43,13 +42,13 @@ export function hasDetailedSousActionOrInformedTache(
   action: ActionDetailed
 ): boolean {
   return flatMapActionsEnfants(action).some((act) => {
-    const isDetaille = act.score.avancement === StatutAvancementEnum.DETAILLE;
+    const isDetaille =
+      act.score.avancement === StatutAvancementEnum.DETAILLE_AU_POURCENTAGE;
     const isSousAction = act.actionType === ActionTypeEnum.SOUS_ACTION;
     const isConcerned = act.score.concerne === true;
     const isNotRenseigne = act.score.renseigne === false;
     const hasRenseigneChild = act.actionsEnfant.some(
-      (a: ActionDetailed) =>
-        a.score.concerne === true && a.score.renseigne === true
+      (a) => a.score.concerne === true && a.score.renseigne === true
     );
 
     return (
@@ -90,7 +89,7 @@ export function filterAxeOrSousAxeOrAction(
   // une sous-action ou une tâche détaillée
   // (une sous-action peut être considérée détaillée si
   // elle est non renseignée mais avec au moins une tâche renseignée)
-  if (statuts.includes(StatutAvancementEnum.DETAILLE)) {
+  if (statuts.includes(StatutAvancementEnum.DETAILLE_AU_POURCENTAGE)) {
     if (hasDetailedSousActionOrInformedTache(action)) {
       return true;
     }
@@ -142,11 +141,11 @@ export function filterSousAction(
   // - avec statut détaillé
   // - OU avec statut non renseigné, et des tâches renseignées
   // ou sous-action contenant une tâche au statut détaillé
-  if (statuts.includes(StatutAvancementEnum.DETAILLE)) {
+  if (statuts.includes(StatutAvancementEnum.DETAILLE_AU_POURCENTAGE)) {
     const isDetaille =
-      action.score.avancement === StatutAvancementEnum.DETAILLE;
+      action.score.avancement === StatutAvancementEnum.DETAILLE_AU_POURCENTAGE;
     const hasDetailleChild = action.actionsEnfant.some(
-      (a) => a.score.avancement === StatutAvancementEnum.DETAILLE
+      (a) => a.score.avancement === StatutAvancementEnum.DETAILLE_AU_POURCENTAGE
     );
     const isConcerned = action.score.concerne === true;
     const isNotRenseigne = action.score.renseigne === false;

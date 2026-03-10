@@ -2,11 +2,10 @@ import { Controller, Get, Logger, Param } from '@nestjs/common';
 import { ApiExcludeController, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiUsageEnum } from '@tet/backend/utils/api/api-usage-type.enum';
 import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
-import type { ReferentielId } from '@tet/domain/referentiels';
+import type { ActionType, ReferentielId } from '@tet/domain/referentiels';
 import {
   ActionDefinitionEssential,
   ActionTreeNode,
-  ActionTypeEnum,
 } from '@tet/domain/referentiels';
 import { AllowAnonymousAccess } from '../../users/decorators/allow-anonymous-access.decorator';
 import { CorrelatedActionsFields } from '../correlated-actions/correlated-actions.dto';
@@ -16,7 +15,7 @@ import { ImportReferentielService } from './import-referentiel.service';
 class ImportReferentielResponse implements ReferentielResponse {
   constructor(
     public version: string,
-    public orderedItemTypes: ActionTypeEnum[],
+    public orderedItemTypes: ActionType[],
     public itemsTree: ActionTreeNode<
       ActionDefinitionEssential & CorrelatedActionsFields
     >

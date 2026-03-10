@@ -17,11 +17,12 @@ export const actionCategoriePgEnum = pgEnum('action_categorie', [
 ]);
 
 export const actionIdVarchar = varchar('action_id', { length: 30 });
+
 export const actionDefinitionTable = pgTable('action_definition', {
   modifiedAt,
   actionId: actionIdVarchar.primaryKey().notNull(),
   referentiel: referentielIdPgEnum('referentiel').notNull(),
-  referentielId: varchar('referentiel_id', { length: 30 })
+  referentielId: referentielIdPgEnum('referentiel_id')
     .notNull()
     .references(() => referentielDefinitionTable.id),
   referentielVersion: varchar('referentiel_version', { length: 16 }).notNull(),

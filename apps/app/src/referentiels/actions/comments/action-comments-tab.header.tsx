@@ -1,11 +1,12 @@
-import { pluralizeLabel } from '../pluralize';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
+import { useReferentielId } from '@/app/referentiels/referentiel-context';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { DiscussionOrderBy, DiscussionStatus } from '@tet/domain/collectivites';
-import { ReferentielId } from '@tet/domain/referentiels';
+import { pluralizeLabel } from 'app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/pluralize';
 import {
   ActionSelect,
   OrderBySelect,
   StatusSelect,
-  type Option,
 } from './action-comments-filters';
 
 type Props = {
@@ -13,11 +14,9 @@ type Props = {
   onOrderByChange: (value: DiscussionOrderBy) => void;
   selectedStatus: DiscussionStatus;
   onStatusChange: (value: DiscussionStatus) => void;
-  selectedAction?: string;
+  selectedAction?: Pick<ActionListItem, 'actionId' | 'actionType'>;
   onActionChange: (value: string | undefined) => void;
-  actionsOptions: Option[];
   commentsCount?: number;
-  referentielId: ReferentielId;
 };
 
 const ActionCommentsTabHeader = ({
@@ -27,10 +26,21 @@ const ActionCommentsTabHeader = ({
   onStatusChange,
   selectedAction,
   onActionChange,
-  actionsOptions,
   commentsCount,
-  referentielId,
 }: Props) => {
+  const referentielId = useReferentielId();
+  const collectiviteId = useCollectiviteId();
+
+  // const actionsWithAllOption = useMemo(() => {
+  //   return [
+  //     {
+  //       label: 'Toutes les mesures',
+  //       value: 'all',
+  //     },
+  //     ...options,
+  //   ];
+  // }, [options]);
+
   return (
     <div className="bg-white">
       <div className="mx-4 py-4 flex flex-col gap-4 border-b border-primary-3">
@@ -56,8 +66,8 @@ const ActionCommentsTabHeader = ({
               <ActionSelect
                 selectedAction={selectedAction}
                 onActionChange={onActionChange}
-                actionsOptions={actionsOptions}
                 referentielId={referentielId}
+                collectiviteId={collectiviteId}
                 placeholder="Toutes les mesures"
                 indentSubActions={true}
               />

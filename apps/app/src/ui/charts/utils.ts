@@ -1,5 +1,4 @@
-import { ProgressionRow } from '@/app/referentiels/DEPRECATED_scores.types';
-import { TScoreAuditRowData } from '@/app/referentiels/audits/AuditComparaison/types';
+import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import { DonutData } from '@/app/ui/charts/Donut/DonutChart';
 import { defaultColors, nivoColorsSet } from '@/app/ui/charts/chartsTheme';
 
@@ -9,11 +8,11 @@ import { defaultColors, nivoColorsSet } from '@/app/ui/charts/chartsTheme';
  */
 
 export const getIndexTitles = (
-  scoreData: readonly (ProgressionRow | TScoreAuditRowData)[],
+  scoreData: readonly ActionDetailed[],
   addTotal: boolean
 ) => {
   const indexTitles = scoreData.map(
-    (d) => `${d.action_id.split('_')[1]}. ${d.nom}`
+    (d) => `${d.actionId.split('_')[1]}. ${d.nom}`
   );
   if (addTotal) indexTitles.push('Total');
 

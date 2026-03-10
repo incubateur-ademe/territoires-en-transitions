@@ -1,4 +1,5 @@
-import {TScoreAuditRowData} from './types';
+import { divisionOrZero } from '@tet/domain/utils';
+import { TScoreAuditRowData } from './types';
 
 /**
  * Met en forme les scores pour les graphes de comparaison avant / après audit
@@ -14,10 +15,18 @@ export const getFormattedScore = (
   if (percentage) {
     // Formate les scores (%) pour un affichage sur 100
     formattedScore.push(
-      ...scoreData.map(d => ({
-        [indexBy]: `${d.action_id.split('_')[1]}`,
-        'Avant audit': (d.pre_audit.score_realise || 0) * 100,
-        'Après audit': (d.courant.score_realise || 0) * 100,
+      ...scoreData.map((d) => ({
+        [indexBy]: `${d.actionId.split('_')[1]}`,
+        'Avant audit':
+          divisionOrZero(
+            d.preAudit.score.pointFait,
+            d.preAudit.score.pointPotentiel
+          ) * 100,
+        'Après audit':
+          divisionOrZero(
+            d.courant.score.pointFait,
+            d.courant.score.pointPotentiel
+          ) * 100,
       }))
     );
 
@@ -26,23 +35,22 @@ export const getFormattedScore = (
       [indexBy]: 'Total',
       'Avant audit':
         (scoreData.reduce(
-          (res, currVal) => res + (currVal.pre_audit.points_realises || 0),
+          (res, currVal) => res + (currVal.preAudit.score.pointFait || 0),
           0
         ) /
           (scoreData.reduce(
             (res, currVal) =>
-              res + (currVal.pre_audit.points_max_personnalises || 0),
+              res + (currVal.preAudit.score.pointPotentiel || 0),
             0
           ) || 1)) *
         100,
       'Après audit':
         (scoreData.reduce(
-          (res, currVal) => res + (currVal.courant.points_realises || 0),
+          (res, currVal) => res + (currVal.courant.score.pointFait || 0),
           0
         ) /
           (scoreData.reduce(
-            (res, currVal) =>
-              res + (currVal.courant.points_max_personnalises || 0),
+            (res, currVal) => res + (currVal.courant.score.pointPotentiel || 0),
             0
           ) || 1)) *
         100,
@@ -50,10 +58,10 @@ export const getFormattedScore = (
   } else {
     // Formate les scores en points
     formattedScore.push(
-      ...scoreData.map(d => ({
-        [indexBy]: `${d.action_id.split('_')[1]}`,
-        'Avant audit': d.pre_audit.points_realises,
-        'Après audit': d.courant.points_realises,
+      ...scoreData.map((d) => ({
+        [indexBy]: `${d.actionId.split('_')[1]}`,
+        'Avant audit': d.preAudit.score.pointFait,
+        'Après audit': d.courant.score.pointFait,
       }))
     );
   }

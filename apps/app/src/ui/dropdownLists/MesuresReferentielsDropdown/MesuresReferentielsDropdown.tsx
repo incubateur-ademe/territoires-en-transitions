@@ -1,6 +1,5 @@
 import {
   ActionListItem,
-  ListActionsResponse,
   useListActions,
 } from '@/app/referentiels/actions/use-list-actions';
 import { ActionTypeEnum } from '@tet/domain/referentiels';
@@ -18,7 +17,9 @@ const MesuresReferentielsDropdown = (
   props: MesuresReferentielsDropdownProps
 ) => {
   // Liste de toutes les actions
-  const { data: mesureListe }: ListActionsResponse = useListActions();
+  const { data: mesureListe } = useListActions({
+    actionTypes: [ActionTypeEnum.ACTION, ActionTypeEnum.SOUS_ACTION],
+  });
 
   const [filteredOptions, setFilteredOptions] = useState<SelectOption[]>([]);
 

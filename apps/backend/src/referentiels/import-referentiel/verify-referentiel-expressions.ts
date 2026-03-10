@@ -8,7 +8,7 @@ import {
   regleTypeEnumValues,
 } from '@tet/domain/collectivites';
 import { ActionQuestion, ReferentielId } from '@tet/domain/referentiels';
-import { ImportActionDefinitionType } from './import-action-definition.dto';
+import { ImportActionDefinition } from './import-action-definition.dto';
 import {
   ExpressionToVerify,
   IndicateurCibleLimiteReference,
@@ -81,7 +81,7 @@ function buildExpressionsToVerify(
   referentielId: ReferentielId,
   actions: Array<
     Pick<
-      ImportActionDefinitionType,
+      ImportActionDefinition,
       'identifiant' | 'desactivation' | 'reduction' | 'score'
     >
   >
@@ -105,10 +105,7 @@ type ExtractIndicateurs = (expression: string) => ReferencedIndicateur[] | null;
 export function buildIndicateurReferences(input: {
   referentielId: ReferentielId;
   actions: Array<
-    Pick<
-      ImportActionDefinitionType,
-      'identifiant' | 'exprScore' | 'indicateurs'
-    >
+    Pick<ImportActionDefinition, 'identifiant' | 'exprScore' | 'indicateurs'>
   >;
   extractIndicateurs: ExtractIndicateurs;
 }): IndicateurReference[] {
@@ -164,7 +161,7 @@ export function buildQuestionActionRelations(input: {
   referentielId: ReferentielId;
   actions: Array<
     Pick<
-      ImportActionDefinitionType,
+      ImportActionDefinition,
       'identifiant' | 'desactivation' | 'reduction' | 'score'
     >
   >;
@@ -437,7 +434,7 @@ function verifyPersonnalisationExpressions(input: {
 
 function verifyScoreExpressions(input: {
   referentielId: ReferentielId;
-  actions: Array<Pick<ImportActionDefinitionType, 'identifiant' | 'exprScore'>>;
+  actions: Array<Pick<ImportActionDefinition, 'identifiant' | 'exprScore'>>;
   parseExpression: ParseExpression;
 }): string[] {
   const { referentielId, actions, parseExpression } = input;

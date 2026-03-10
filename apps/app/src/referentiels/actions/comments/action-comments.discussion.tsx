@@ -1,4 +1,3 @@
-import { canCreateDiscussion } from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { DiscussionWithMessages } from '@tet/domain/collectivites';
 import classNames from 'classnames';
@@ -19,7 +18,7 @@ const ActionCommentDiscussion = ({
 }: Props) => {
   const { mutate: handleAddDiscussion } = useAddDiscussion();
 
-  const currentCollectivite = useCurrentCollectivite();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
 
   const handleSave = (message: string) => {
     handleAddDiscussion({
@@ -41,7 +40,7 @@ const ActionCommentDiscussion = ({
         <div
           className={classNames({ 'ml-10': discussion.messages.length > 0 })}
         >
-          {canCreateDiscussion(currentCollectivite) && (
+          {hasCollectivitePermission('referentiels.discussions.mutate') && (
             <ActionNewDiscussionInput
               placeholder="Répondre"
               onSave={handleSave}

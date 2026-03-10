@@ -1,14 +1,11 @@
 'use client';
 
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useListMesurePilotes } from '@/app/referentiels/actions/use-mesure-pilotes';
 import { useListMesureServicesPilotes } from '@/app/referentiels/actions/use-mesure-services-pilotes';
 import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import {
-  ActionDefinitionSummary,
-  useSortedActionSummaryChildren,
-} from '@/app/referentiels/referentiel-hooks';
-import { ActionDetailed } from '@/app/referentiels/use-snapshot';
+import { useSortedActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
 import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
@@ -26,6 +23,7 @@ import { Infos } from './infos';
 import { PreviousAndNextActionsLinks } from './previous-and-next-actions.links';
 import { Score } from './score';
 import { VerticalDivider } from './vertical-divider';
+
 function CommentsButton({
   count,
   onClick,
@@ -71,13 +69,7 @@ const RoleAndCollectiviteBadge = () => {
   );
 };
 
-export const ActionHeader = ({
-  actionDefinition,
-  action,
-}: {
-  actionDefinition: ActionDefinitionSummary;
-  action: ActionDetailed;
-}) => {
+export const ActionHeader = ({ action }: { action: ActionListItem }) => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
 
   const { data: pilotes } = useListMesurePilotes(action.actionId);

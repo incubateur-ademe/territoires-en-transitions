@@ -1,24 +1,24 @@
-import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import { useHideAction } from '@/app/referentiels/actions/action-statut/use-hide-action';
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
-import { getIdentifiantFromActionId } from '@tet/domain/referentiels';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
+import {
+  getIdentifiantFromActionId,
+  StatutAvancementEnum,
+} from '@tet/domain/referentiels';
 import { ActionJustificationField } from '../action/action.justification-field';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
 import SubactionCardActions from '../subaction/subaction-card.actions';
 import { SubactionCardHeader } from '../subaction/subaction-card.header';
 
 type Props = {
-  task: ActionDefinitionSummary;
-  hideStatus: boolean;
+  task: ActionListItem;
   showJustifications: boolean;
 };
 
-const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
-  const { statut } = useActionStatut(task.id);
-  const { hide } = useHideAction(task.id);
-  const { avancement, concerne } = statut || {};
+const TaskCard = ({ task, showJustifications }: Props) => {
+  const { statut, concerne } = task.score;
+  const { hide } = useHideAction(task.actionId);
 
-  const isDetailled = avancement === 'detaille';
+  const isDetailled = statut === StatutAvancementEnum.DETAILLE_AU_POURCENTAGE;
   const shouldDisplayProgressBar = concerne === true && isDetailled;
 
   if (hide) {
@@ -27,18 +27,19 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
 
   return (
     <div
-      data-test={`Tache-${getIdentifiantFromActionId(task.id) || task.id}`}
+      data-test={`Tache-${
+        getIdentifiantFromActionId(task.actionId) || task.actionId
+      }`}
       className="flex flex-col gap-2 bg-grey-1 border border-grey-3 rounded-lg p-4"
     >
       {/* En-tête */}
       <SubactionCardHeader
         subAction={task}
-        hideStatus={hideStatus}
         shouldDisplayProgressBar={shouldDisplayProgressBar}
       />
 
       {/* Informations sur les scores indicatifs */}
-      <ScoreIndicatifLibelle actionId={task.id} />
+      <ScoreIndicatifLibelle actionId={task.actionId} />
 
       {/* Actions */}
       <SubactionCardActions action={task} />
@@ -46,7 +47,7 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
       {/* Ajout de commentaire */}
       {showJustifications && (
         <ActionJustificationField
-          actionId={task.id}
+          actionId={task.actionId}
           placeholder="Ce champ est facultatif, il ne sera pas considéré lors de l’audit"
         />
       )}

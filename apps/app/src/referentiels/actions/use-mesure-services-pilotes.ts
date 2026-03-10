@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 
 /** Récupère la liste des services pilotes d'une mesure */
 export const useListMesureServicesPilotes = (actionId: string) => {
@@ -34,8 +35,9 @@ export const useUpsertMesureServicesPilotes = () => {
           }),
         });
         queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.actions.listActions.queryKey({
+          queryKey: trpc.referentiels.actions.listActionsGroupedById.queryKey({
             collectiviteId: variables.collectiviteId,
+            referentielId: getReferentielIdFromActionId(variables.mesureId),
           }),
         });
       },
@@ -58,8 +60,9 @@ export const useDeleteMesureServicesPilotes = () => {
           }),
         });
         queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.actions.listActions.queryKey({
+          queryKey: trpc.referentiels.actions.listActionsGroupedById.queryKey({
             collectiviteId: variables.collectiviteId,
+            referentielId: getReferentielIdFromActionId(variables.mesureId),
           }),
         });
       },

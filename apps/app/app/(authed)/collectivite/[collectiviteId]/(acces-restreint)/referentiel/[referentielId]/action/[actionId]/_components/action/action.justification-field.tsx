@@ -19,6 +19,7 @@ export const ActionJustificationField = ({
   title,
   hint,
   disabled,
+  placeholder,
 }: Props) => {
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
@@ -39,7 +40,7 @@ export const ActionJustificationField = ({
             disabled
           }
           debounceDelayOnChange={1000}
-          placeholder="Détaillez l'état d'avancement"
+          placeholder={placeholder ?? "Détaillez l'état d'avancement"}
           onChange={(newValue: string) => {
             saveActionCommentaire({
               actionId,

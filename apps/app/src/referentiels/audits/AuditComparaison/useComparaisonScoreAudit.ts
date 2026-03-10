@@ -6,8 +6,6 @@ import {
   ReferentielId,
   SnapshotJalonEnum,
 } from '@tet/domain/referentiels';
-import { actionNewToDeprecated } from '../../DEPRECATED_scores.types';
-import { TComparaisonScoreAudit } from './types';
 
 // charge les comparaisons de potentiels/scores avant/après audit
 export const useComparaisonScoreAudit = (
@@ -48,15 +46,15 @@ export const useComparaisonScoreAudit = (
             );
 
             return {
-              collectivite_id: collectiviteId,
-              referentiel: referentielId,
-              action_id: currentAction.actionId,
-              courant: actionNewToDeprecated(currentAction),
-              pre_audit: actionNewToDeprecated(preAuditAction),
+              collectiviteId,
+              referentielId,
+              courant: currentAction,
+              preAudit: preAuditAction,
+              ...currentAction,
             };
           });
 
-          return result as TComparaisonScoreAudit[];
+          return result;
         },
       }
     )

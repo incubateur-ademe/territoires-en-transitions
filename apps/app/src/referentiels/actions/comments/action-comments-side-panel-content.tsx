@@ -1,33 +1,28 @@
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   DiscussionOrderBy,
   discussionOrderByEnum,
   DiscussionStatus,
 } from '@tet/domain/collectivites';
-import { ReferentielId } from '@tet/domain/referentiels';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import ActionCommentsPanelHeader from './action-comments-panel.header';
 import ActionCommentFeed from './action-comments.feed';
-import { useCommentsContent } from './hooks/use-comments-content';
+import { useListActionComments } from './hooks/use-list-action-comments';
 
 type Props = {
-  parentActionId?: string;
-  actionId?: string;
-  referentielId: ReferentielId;
-  actionsAndSubActionsTitleList: {
-    actionId: string;
-    identifiant: string;
-    nom: string;
-  }[];
+  action: ActionListItem;
   updateTitlePanel?: (title: string) => void;
 };
 
 export const ActionCommentsSidePanelContent = ({
-  parentActionId,
-  actionId,
-  referentielId,
-  actionsAndSubActionsTitleList,
+  action,
   updateTitlePanel,
 }: Props) => {
+  const referentielId = getReferentielIdFromActionId(action.actionId);
+  const collectiviteId = useCollectiviteId();
+
   const {
     selectedAction,
     selectedStatus,
@@ -36,14 +31,12 @@ export const ActionCommentsSidePanelContent = ({
     handleOrderByChange,
     handleActionChange,
     displayedDiscussions,
-    options,
     isPending,
     canCreateDiscussion,
-  } = useCommentsContent({
-    parentActionId,
-    actionId,
+  } = useListActionComments({
     referentielId,
-    actionsAndSubActionsTitleList,
+    collectiviteId,
+    action,
     updateTitlePanel,
     selectedOrderBy: discussionOrderByEnum.ACTION_ID,
   });
@@ -68,10 +61,10 @@ export const ActionCommentsSidePanelContent = ({
         onActionChange={(value: string | undefined) =>
           handleActionChange(value)
         }
-        actionsOptions={options}
         canCreateDiscussion={canCreateDiscussion}
-        parentActionId={parentActionId}
+        parentActionId={action.parentId ?? undefined}
         referentielId={referentielId}
+        collectiviteId={collectiviteId}
       />
       {/** Feed */}
       <div className="mb-auto">
@@ -81,7 +74,6 @@ export const ActionCommentsSidePanelContent = ({
           discussions={displayedDiscussions}
           isInputDisabled={!canCreateDiscussion}
           isDisplayedAsPanel={true}
-          referentielId={referentielId}
         />
       </div>
     </div>

@@ -120,9 +120,9 @@ export class ImportReferentielRepository {
       }
 
       // Delete personnalisation rules
-      await tx.delete(personnalisationRegleTable).where(
-        like(personnalisationRegleTable.actionId, `${referentielId}_%`)
-      );
+      await tx
+        .delete(personnalisationRegleTable)
+        .where(like(personnalisationRegleTable.actionId, `${referentielId}_%`));
 
       // Create personnalisation rules
       if (personnalisationRegles.length) {
@@ -149,9 +149,7 @@ export class ImportReferentielRepository {
         .delete(questionActionTable)
         .where(ilike(questionActionTable.actionId, `${referentielId}_%`));
       if (questionActionRelations.length) {
-        await tx
-          .insert(questionActionTable)
-          .values(questionActionRelations);
+        await tx.insert(questionActionTable).values(questionActionRelations);
       }
 
       // relations action indicateur

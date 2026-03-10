@@ -49,12 +49,12 @@ export const FicheActionPdfContent = ({
       requested: options.fiches.isChecked,
     });
 
-  const { data: actionsLiees, isLoading: isLoadingActionsLiees } =
+  const { data: actionsLiees, isPending: isLoadingActionsLiees } =
     useListActions(
       {
         actionIds: fiche?.mesures?.map((action) => action.id),
       },
-      options.actionsLiees.isChecked
+      { enabled: options.actionsLiees.isChecked }
     );
 
   const { data: annexes, isLoading: isLoadingAnnexes } =
