@@ -37,14 +37,16 @@ import { CollectiviteMembresRouter } from './membres/membres.router';
 import { InvitationService } from './membres/mutate-invitations/invitation.service';
 import { InvitationsRouter } from './membres/mutate-invitations/invitations.router';
 import { MutateMembresService } from './membres/mutate-membres/mutate-membres.service';
-import { ListPersonnalisationThematiquesRepository } from './personnalisations/list-personnalisation-thematiques/list-personnalisation-thematiques.repository';
-import { ListPersonnalisationThematiquesRouter } from './personnalisations/list-personnalisation-thematiques/list-personnalisation-thematiques.router';
-import { ListPersonnalisationThematiquesService } from './personnalisations/list-personnalisation-thematiques/list-personnalisation-thematiques.service';
 import { ListPersonnalisationQuestionsRouter } from './personnalisations/list-personnalisation-questions/list-personnalisation-questions.router';
 import ListPersonnalisationQuestionsService from './personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
+import { ListPersonnalisationReglesRouter } from './personnalisations/list-personnalisation-regles/list-personnalisation-regles.router';
+import { ListPersonnalisationReglesService } from './personnalisations/list-personnalisation-regles/list-personnalisation-regles.service';
 import { ListPersonnalisationReponsesRepository } from './personnalisations/list-personnalisation-reponses/list-personnalisation-reponses.repository';
 import { ListPersonnalisationReponsesRouter } from './personnalisations/list-personnalisation-reponses/list-personnalisation-reponses.router';
 import { ListPersonnalisationReponsesService } from './personnalisations/list-personnalisation-reponses/list-personnalisation-reponses.service';
+import { ListPersonnalisationThematiquesRepository } from './personnalisations/list-personnalisation-thematiques/list-personnalisation-thematiques.repository';
+import { ListPersonnalisationThematiquesRouter } from './personnalisations/list-personnalisation-thematiques/list-personnalisation-thematiques.router';
+import { ListPersonnalisationThematiquesService } from './personnalisations/list-personnalisation-thematiques/list-personnalisation-thematiques.service';
 import { PersonnalisationsRouter } from './personnalisations/personnalisations.router';
 import { SetPersonnalisationReponseRouter } from './personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.router';
 import { SetPersonnalisationReponseService } from './personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.service';
@@ -82,6 +84,8 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     PersonnalisationsRouter,
     SetPersonnalisationReponseRouter,
     SetPersonnalisationReponseService,
+    ListPersonnalisationReglesRouter,
+    ListPersonnalisationReglesService,
     ListPersonnalisationReponsesRouter,
     ListPersonnalisationReponsesService,
     ListPersonnalisationReponsesRepository,
