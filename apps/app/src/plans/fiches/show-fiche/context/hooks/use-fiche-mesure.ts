@@ -7,9 +7,9 @@ export const useFicheMesures = (fiche: FicheWithRelations): MesuresState => {
   const { mutate: updateFiche } = useUpdateFiche();
   const { data: actionsLiees } = useListActions(
     {
-      actionIds: fiche.mesures?.map((mesure) => mesure.id) ?? [],
+      actionIds: fiche.mesures?.map((mesure) => mesure.id) ?? undefined,
     },
-    true
+    Boolean(fiche.mesures && fiche.mesures.length > 0)
   );
 
   return {
