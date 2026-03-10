@@ -7,6 +7,7 @@ export const questionTypeEnumValues = [
   'proportion',
 ] as const;
 export const questionTypeEnumSchema = z.enum(questionTypeEnumValues);
+export type QuestionType = (typeof questionTypeEnumValues)[number];
 
 export const questionSchema = z.object({
   id: z.string(),
