@@ -128,3 +128,6 @@ export const getInitials = (name: string): string => {
     .map((word) => word.charAt(0).toUpperCase())
     .join('');
 };
+
+export const capitalize = (text: string): string =>
+  text.charAt(0).toUpperCase() + text.slice(1);

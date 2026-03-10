@@ -3,9 +3,9 @@ import {
   ExpressionParser,
   getExpressionVisitor,
 } from '@tet/backend/utils/expression-parser';
+import { evaluateIdentite } from '@tet/backend/utils/expression-parser/evaluate-identite';
 import { getFormmattedErrors } from '@tet/backend/utils/expression-parser/get-formatted-errors.utils';
 import { IdentiteCollectivite } from '@tet/domain/collectivites';
-import { evaluateIdentite } from '@tet/backend/utils/expression-parser/evaluate-identite';
 import { createToken, CstNode } from 'chevrotain';
 
 const IDENTITE = createToken({ name: 'IDENTITE', pattern: /identite/i });
@@ -113,7 +113,69 @@ class PersonnalisationsExpressionVisitor extends getExpressionVisitor(
     }
   }
 }
-const visitor = new PersonnalisationsExpressionVisitor();
+
+// Visitor for extracting personnalisation questions and their expected values
+class PersonnalisationQuestionsExtractionVisitor extends getExpressionVisitor(
+  parser.getBaseCstVisitorConstructorWithDefaults()
+) {
+  public questions: {
+    [questionId: string]: Array<boolean | number | string | null>;
+  } = {};
+
+  constructor() {
+    super();
+    this.validateVisitor();
+  }
+
+  private addQuestionValue(
+    questionId: string,
+    value: boolean | number | string | null
+  ) {
+    const existing = this.questions[questionId] ?? [];
+    if (!existing.some((v) => v === value)) {
+      this.questions[questionId] = [...existing, value];
+    }
+  }
+
+  // Override call to route to our custom handlers when needed
+  call(ctx: any) {
+    try {
+      return super.call(ctx);
+    } catch {
+      if (ctx.identite) {
+        return this.visit(ctx.identite);
+      } else if (ctx.reponse) {
+        return this.visit(ctx.reponse);
+      } else if (ctx.score) {
+        return this.visit(ctx.score);
+      }
+    }
+  }
+
+  // We only care about reponse(...) calls to collect personnalisation questions
+  reponse(ctx: any) {
+    const questionId = this.visit(ctx.identifier) as string;
+
+    if (ctx.primary) {
+      const value = this.visit(ctx.primary) as boolean | number | string | null;
+      this.addQuestionValue(questionId, value);
+    } else {
+      this.addQuestionValue(questionId, null);
+    }
+
+    // This visitor is only used for extraction, its return value is ignored
+    return null;
+  }
+
+  // For identite/score we do not collect anything; keep them as no-ops.
+  identite(_ctx: any) {
+    return null;
+  }
+
+  score(_ctx: any) {
+    return null;
+  }
+}
 
 @Injectable()
 export default class PersonnalisationsExpressionService {
@@ -144,9 +206,19 @@ export default class PersonnalisationsExpressionService {
     scores: { [key: string]: number } | null = null
   ): number | boolean | string | null {
     const cst = this.parseExpression(inputText);
+    const visitor = new PersonnalisationsExpressionVisitor();
     visitor.reponses = reponses;
     visitor.identiteCollectivite = identiteCollectivite;
     visitor.scores = scores;
     return visitor.visit(cst) as string | number | boolean | null;
+  }
+
+  extractNeededQuestionsFromExpression(inputText: string): {
+    [questionId: string]: Array<boolean | number | string | null>;
+  } {
+    const cst = this.parseExpression(inputText);
+    const extractionVisitor = new PersonnalisationQuestionsExtractionVisitor();
+    extractionVisitor.visit(cst);
+    return extractionVisitor.questions;
   }
 }

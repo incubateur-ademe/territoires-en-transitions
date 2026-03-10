@@ -17,7 +17,9 @@ import RecherchesService from '@tet/backend/collectivites/recherches/recherches.
 import { PersonneTagRouter } from '@tet/backend/collectivites/tags/personnes/personne-tag.router';
 import { PersonneTagService } from '@tet/backend/collectivites/tags/personnes/personne-tag.service';
 import { TagService } from '@tet/backend/collectivites/tags/tag.service';
+import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { CollectiviteController } from './collectivite.controller';
+import { CollectivitesCoreModule } from './collectivites-core.module';
 import { CollectivitesRouter } from './collectivites.router';
 import { DiscussionApplicationService } from './discussions/application/discussion-application.service';
 import { DiscussionDomainService } from './discussions/domain/discussion-domain-service';
@@ -40,19 +42,21 @@ import { CollectiviteMembresRouter } from './membres/membres.router';
 import { InvitationService } from './membres/mutate-invitations/invitation.service';
 import { InvitationsRouter } from './membres/mutate-invitations/invitations.router';
 import { MutateMembresService } from './membres/mutate-membres/mutate-membres.service';
-import { PersonnalisationsRouter } from './personnalisations/personnalisations.router';
-import { SetPersonnalisationReponseRouter } from './personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.router';
-import { SetPersonnalisationReponseService } from './personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.service';
+import { PersonnalisationsModule } from './personnalisations/personnalisations.module';
 import { PersonnesRouter } from './personnes.router';
-import CollectivitesService from './services/collectivites.service';
 import GroupementsService from './services/groupements.service';
 import { PersonnesService } from './services/personnes.service';
 import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
+
 @Module({
-  imports: [TableauDeBordModule],
+  imports: [
+    CollectivitesCoreModule,
+    PersonnalisationsModule,
+    TableauDeBordModule,
+    TransactionModule,
+  ],
   providers: [
     CollectivitesRouter,
-    CollectivitesService,
     ListMembresService,
     ListPendingInvitationsService,
     InvitationService,
@@ -74,9 +78,6 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     TagService,
     PersonneTagService,
     PersonneTagRouter,
-    PersonnalisationsRouter,
-    SetPersonnalisationReponseRouter,
-    SetPersonnalisationReponseService,
     ListCollectivitesRouter,
     ListCollectivitesService,
     CollectiviteCrudService,
@@ -107,8 +108,8 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     },
   ],
   exports: [
+    CollectivitesCoreModule,
     CollectivitesRouter,
-    CollectivitesService,
     ListMembresService,
     CollectiviteMembresRouter,
     GroupementsService,

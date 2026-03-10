@@ -6,11 +6,16 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import {
+  SetPersonnalisationReponseSavedEvent,
+  SetPersonnalisationReponseService,
+} from '@tet/backend/collectivites/personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { sqlToDate, sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import { toSlug } from '@tet/backend/utils/string.utils';
 import { PersonnalisationReponsesPayload } from '@tet/domain/collectivites';
 import {
+  getReferentielIdFromActionId,
   ReferentielId,
   ScoreSnapshot,
   ScoreSnapshotCreate,
@@ -28,6 +33,7 @@ import { AuthRole, AuthUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { isErrorWithCause } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
+import { ActionPersonnalisationsService } from '../action-personnalisations/action-personnalisations.service';
 import ScoresService from '../compute-score/scores.service';
 import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { snapshotTable } from './snapshot.table';
@@ -55,8 +61,53 @@ export class SnapshotsService {
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
     private readonly scoresService: ScoresService,
+    private readonly actionPersonnalisationService: ActionPersonnalisationsService,
+    private readonly setPersonnalisationReponseService: SetPersonnalisationReponseService,
     private readonly referentielDefinitionService: GetReferentielDefinitionService
-  ) {}
+  ) {
+    // Recompute score snapshots when personnalisation answers change.
+    this.setPersonnalisationReponseService.registerResponseListener((event) =>
+      this.onPersonnalisationResponseSaved(event)
+    );
+  }
+
+  private async onPersonnalisationResponseSaved(
+    event: SetPersonnalisationReponseSavedEvent
+  ): Promise<void> {
+    const actionIds =
+      await this.actionPersonnalisationService.getActionIdsForQuestion(
+        event.questionId
+      );
+
+    if (!actionIds.length) {
+      return;
+    }
+
+    const uniqueReferentielIds = [
+      ...new Set(
+        actionIds.map((actionId) => getReferentielIdFromActionId(actionId))
+      ),
+    ];
+
+    // Recompute current snapshots for every impacted referential.
+    this.logger.log(
+      `Recomputing current snapshots for ${
+        uniqueReferentielIds.length
+      } referentiels (${uniqueReferentielIds.join(', ')}) for collectivite ${
+        event.collectiviteId
+      }`
+    );
+    await Promise.all(
+      uniqueReferentielIds.map((referentielId) =>
+        this.computeAndUpsert({
+          collectiviteId: event.collectiviteId,
+          referentielId,
+          jalon: SnapshotJalonEnum.COURANT,
+          user: event.user,
+        })
+      )
+    );
+  }
 
   private getDefaultSnapshotMetadata({
     nom: snapshotNom,

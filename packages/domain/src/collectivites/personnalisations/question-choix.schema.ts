@@ -4,7 +4,7 @@ export const questionChoixSchema = z.object({
   id: z.string(),
   questionId: z.string(),
   ordonnancement: z.nullable(z.number()),
-  formulation: z.nullable(z.string()),
+  formulation: z.string(),
   version: z.string(),
 });
 

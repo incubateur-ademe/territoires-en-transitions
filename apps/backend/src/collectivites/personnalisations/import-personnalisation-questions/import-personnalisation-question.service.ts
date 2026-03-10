@@ -1,4 +1,5 @@
 import {
+  HttpException,
   Injectable,
   Logger,
   UnprocessableEntityException,
@@ -6,8 +7,8 @@ import {
 import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import { questionChoixTable } from '@tet/backend/collectivites/personnalisations/models/question-choix.table';
 import { questionThematiqueTable } from '@tet/backend/collectivites/personnalisations/models/question-thematique.table';
-import { QuestionWithChoices } from '@tet/backend/collectivites/personnalisations/models/question-with-choices.dto';
 import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
+import { banatic2025CompetenceTable } from '@tet/backend/shared/models/banatic-2025-competence.table';
 import BaseSpreadsheetImporterService from '@tet/backend/shared/services/base-spreadsheet-importer.service';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
 import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
@@ -18,11 +19,15 @@ import {
   QuestionChoixCreate,
   QuestionThematique,
   questionThematiqueSchema,
+  QuestionWithChoices,
 } from '@tet/domain/collectivites';
 import { sql } from 'drizzle-orm';
+import PersonnalisationsExpressionService from '../services/personnalisations-expression.service';
 import {
   ImportPersonnalisationChoix,
   importPersonnalisationChoixSchema,
+  ImportPersonnalisationCompetence,
+  importPersonnalisationCompetenceSchema,
   ImportPersonnalisationQuestion,
   importPersonnalisationQuestionSchema,
 } from './import-personnalisation-question.dto';
@@ -31,16 +36,18 @@ import {
 export default class ImportPersonnalisationQuestionService extends BaseSpreadsheetImporterService {
   readonly logger = new Logger(ImportPersonnalisationQuestionService.name);
 
-  private readonly QUESTIONS_SPREADSHEET_RANGE = 'Questions!A:H';
+  private readonly QUESTIONS_SPREADSHEET_RANGE = 'Questions!A:J';
   private readonly THEMATIQUES_SPREADSHEET_RANGE = 'Thématiques!A:B';
   private readonly CHOIX_SPREADSHEET_RANGE = 'Choix!A:D';
+  private readonly COMPETENCES_SPREADSHEET_RANGE = 'Compétences Banatic!A:B';
 
   constructor(
     private readonly databaseService: DatabaseService,
     sheetService: SheetService,
     private readonly config: ConfigurationService,
     private readonly listPersonnalisationQuestionsService: ListPersonnalisationQuestionsService,
-    private readonly versionService: VersionService
+    private readonly versionService: VersionService,
+    private readonly personnalisationsExpressionService: PersonnalisationsExpressionService
   ) {
     super(sheetService);
   }
@@ -86,16 +93,27 @@ export default class ImportPersonnalisationQuestionService extends BaseSpreadshe
       spreadsheetId,
       newVersion
     );
+    const { data: competences } = await this.listPersonnalisationCompetences(
+      spreadsheetId,
+      newVersion
+    );
 
     this.logger.log(
       `Found ${questions.length} questions and ${choix.length} choices in spreadsheet ${spreadsheetId}`
     );
 
+    const existingQuestions =
+      await this.listPersonnalisationQuestionsService.listQuestionsWithChoices(
+        []
+      );
+
     // Verify data integrity
     this.verifyPersonnalisationQuestionsAndChoix(
       questions,
       choix,
-      questionThematiques
+      questionThematiques,
+      existingQuestions,
+      competences
     );
 
     // Upsert questions and choices
@@ -103,7 +121,8 @@ export default class ImportPersonnalisationQuestionService extends BaseSpreadshe
       await this.upsertPersonnalisationQuestionsAndChoix(
         questions,
         choix,
-        questionThematiques
+        questionThematiques,
+        competences
       );
 
     return { questions: upsertedQuestions };
@@ -146,22 +165,59 @@ export default class ImportPersonnalisationQuestionService extends BaseSpreadshe
     );
   }
 
+  async listPersonnalisationCompetences(
+    spreadsheetId: string,
+    newVersion: string
+  ) {
+    return this.sheetService.getDataFromSheet<ImportPersonnalisationCompetence>(
+      spreadsheetId,
+      importPersonnalisationCompetenceSchema,
+      this.COMPETENCES_SPREADSHEET_RANGE,
+      ['competenceCode'],
+      {
+        version: newVersion,
+      }
+    );
+  }
+
   verifyPersonnalisationQuestionsAndChoix(
     questions: ImportPersonnalisationQuestion[],
     choix: ImportPersonnalisationChoix[],
-    questionThematiques: QuestionThematique[]
+    questionThematiques: QuestionThematique[],
+    existingQuestions: QuestionWithChoices[],
+    competences: ImportPersonnalisationCompetence[]
   ) {
     const questionsMap = new Map<string, ImportPersonnalisationQuestion>();
     const choixByQuestionMap = new Map<string, ImportPersonnalisationChoix[]>();
 
+    const existingQuestionsMap = new Map<string, QuestionWithChoices>();
+    existingQuestions.forEach((question) => {
+      existingQuestionsMap.set(question.id.toLowerCase(), question);
+    });
+
     // Verify no duplicate question IDs
     questions.forEach((question) => {
-      if (questionsMap.has(question.id)) {
+      const normalizedQuestionId = question.id.toLowerCase();
+      if (questionsMap.has(normalizedQuestionId)) {
         throw new UnprocessableEntityException(
-          `Duplicate question id ${question.id}`
+          `Duplicate question id ${question.id} (existing: ${
+            questionsMap.get(normalizedQuestionId)?.id
+          })`
         );
       }
-      questionsMap.set(question.id, question);
+
+      // or case changes into ID
+      if (
+        existingQuestionsMap.has(normalizedQuestionId) &&
+        existingQuestionsMap.get(normalizedQuestionId)?.id !== question.id
+      ) {
+        throw new UnprocessableEntityException(
+          `Cannot change existing question ID ${
+            existingQuestionsMap.get(normalizedQuestionId)?.id
+          } to ${question.id} `
+        );
+      }
+      questionsMap.set(normalizedQuestionId, question);
 
       if (
         question.thematiqueId &&
@@ -177,27 +233,57 @@ export default class ImportPersonnalisationQuestionService extends BaseSpreadshe
 
     // Group choices by question and verify references
     choix.forEach((choice) => {
-      if (!questionsMap.has(choice.questionId)) {
+      const normalizedQuestionId = choice.questionId.toLowerCase();
+      const canonicalQuestion = questionsMap.get(normalizedQuestionId);
+      if (!canonicalQuestion) {
         throw new UnprocessableEntityException(
           `Invalid question reference ${choice.questionId} for choice ${choice.id}`
         );
       }
+      choice.questionId = canonicalQuestion.id;
 
-      if (!choixByQuestionMap.has(choice.questionId)) {
-        choixByQuestionMap.set(choice.questionId, []);
+      if (!choixByQuestionMap.has(normalizedQuestionId)) {
+        choixByQuestionMap.set(normalizedQuestionId, []);
       }
-      choixByQuestionMap.get(choice.questionId)?.push(choice);
+      choixByQuestionMap.get(normalizedQuestionId)?.push(choice);
     });
 
     // Verify that questions of type 'choix' have choices
     questions.forEach((question) => {
+      const normalizedQuestionId = question.id.toLowerCase();
       if (question.type === 'choix') {
-        const questionChoix = choixByQuestionMap.get(question.id) || [];
+        const questionChoix =
+          choixByQuestionMap.get(normalizedQuestionId) || [];
         if (questionChoix.length === 0) {
           throw new UnprocessableEntityException(
-            `Question ${question.id} is of type 'choix' but has no choices defined`
+            `Question ${normalizedQuestionId} is of type 'choix' but has no choices defined`
           );
         }
+      }
+
+      // validate expressions
+      if (question.exprVisible) {
+        try {
+          this.personnalisationsExpressionService.parseExpression(
+            question.exprVisible
+          );
+        } catch (error) {
+          throw new UnprocessableEntityException(
+            `Invalid expression for question ${question.id}: "${
+              (error as HttpException).message
+            }"`
+          );
+        }
+      }
+
+      // validate competence codes
+      if (
+        question.competenceCode != null &&
+        !competences.some((c) => c.competenceCode === question.competenceCode)
+      ) {
+        throw new UnprocessableEntityException(
+          `Competence code ${question.competenceCode} not found for question ${question.id}`
+        );
       }
     });
 
@@ -207,11 +293,12 @@ export default class ImportPersonnalisationQuestionService extends BaseSpreadshe
   private async upsertPersonnalisationQuestionsAndChoix(
     questions: ImportPersonnalisationQuestion[],
     choix: ImportPersonnalisationChoix[],
-    questionThematiques: QuestionThematique[]
+    questionThematiques: QuestionThematique[],
+    competences: ImportPersonnalisationCompetence[]
   ): Promise<QuestionWithChoices[]> {
     await this.databaseService.db.transaction(async (tx) => {
       this.logger.log(
-        `Upserting ${questionThematiques.length} thematiques, ${questions.length} questions and ${choix.length} choices in a transaction`
+        `Upserting ${competences.length} competences, ${questionThematiques.length} thematiques, ${questions.length} questions and ${choix.length} choices in a transaction`
       );
 
       // Upsert thematiques
@@ -223,6 +310,17 @@ export default class ImportPersonnalisationQuestionService extends BaseSpreadshe
           set: buildConflictUpdateColumns(questionThematiqueTable, ['nom']),
         })
         .returning();
+
+      // Upsert competences
+      await tx
+        .insert(banatic2025CompetenceTable)
+        .values(competences)
+        .onConflictDoUpdate({
+          target: [banatic2025CompetenceTable.competenceCode],
+          set: buildConflictUpdateColumns(banatic2025CompetenceTable, [
+            'intitule',
+          ]),
+        });
 
       // Upsert questions
       const upsertedQuestions = await tx
@@ -238,6 +336,9 @@ export default class ImportPersonnalisationQuestionService extends BaseSpreadshe
             'ordonnancement',
             'typesCollectivitesConcernees',
             'version',
+            'competenceCode',
+            'consignesJustification',
+            'exprVisible',
           ]),
         })
         .returning();
@@ -271,6 +372,8 @@ export default class ImportPersonnalisationQuestionService extends BaseSpreadshe
       };
     });
 
-    return this.listPersonnalisationQuestionsService.listQuestionsWithChoices();
+    return this.listPersonnalisationQuestionsService.listQuestionsWithChoices(
+      []
+    );
   }
 }

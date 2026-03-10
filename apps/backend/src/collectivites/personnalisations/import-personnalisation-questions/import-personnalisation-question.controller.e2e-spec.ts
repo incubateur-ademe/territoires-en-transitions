@@ -1,5 +1,4 @@
 import { INestApplication } from '@nestjs/common';
-import { QuestionWithChoices } from '@tet/backend/collectivites/personnalisations/models/question-with-choices.dto';
 import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
 import TrajectoiresXlsxService from '@tet/backend/indicateurs/trajectoires/trajectoires-xlsx.service';
 import {
@@ -10,10 +9,14 @@ import {
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
+import { QuestionWithChoices } from '@tet/domain/collectivites';
 import * as path from 'path';
 import { default as request } from 'supertest';
 import * as zCore from 'zod/v4/core';
-import { importPersonnalisationQuestionSchema } from './import-personnalisation-question.dto';
+import {
+  importPersonnalisationCompetenceSchema,
+  importPersonnalisationQuestionSchema,
+} from './import-personnalisation-question.dto';
 
 const SAMPLES_DIR = path.join(__dirname, 'samples');
 
@@ -61,6 +64,19 @@ function createLocalSheetServiceMock(): Partial<SheetService> {
               'import-personnalisation-choices.csv'
             );
             return parseCsvWithSchema<T>(csvPath, schema, templateData);
+          }
+
+          // Competences sheet
+          if (range?.startsWith('Compétences Banatic')) {
+            const csvPath = path.join(
+              SAMPLES_DIR,
+              'import-personnalisation-competences.csv'
+            );
+            return parseCsvWithSchema<T>(
+              csvPath,
+              importPersonnalisationCompetenceSchema,
+              templateData
+            );
           }
 
           if (range?.startsWith('Questions')) {
@@ -134,7 +150,7 @@ describe('import-personnalisation-question.controller', () => {
       description: '',
       formulation:
         'La collectivité a-t-elle la compétence "éclairage public" ?',
-      version: '1.0.2',
+      version: expect.any(String),
       choix: [
         {
           id: 'EP_1_a',

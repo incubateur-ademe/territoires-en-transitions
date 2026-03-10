@@ -18,13 +18,17 @@ import {
 import { roundTo } from '@tet/domain/utils';
 import { PersonnalisationConsequencesByActionId } from '../../collectivites/personnalisations/models/personnalisation-consequence.dto';
 import { caePersonnalisationRegles } from '../../collectivites/personnalisations/models/samples/cae-personnalisation-regles.sample';
+import ListPersonnalisationQuestionsService from '../../collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
+import { PersonnalisationConsequencesService } from '../../collectivites/personnalisations/services/personnalisation-consequences.service';
 import PersonnalisationsExpressionService from '../../collectivites/personnalisations/services/personnalisations-expression.service';
 import PersonnalisationsService from '../../collectivites/personnalisations/services/personnalisations-service';
+import { SetPersonnalisationReponseService } from '../../collectivites/personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.service';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import ConfigurationService from '../../utils/config/configuration.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import MattermostNotificationService from '../../utils/mattermost-notification.service';
+import { ActionPersonnalisationsService } from '../action-personnalisations/action-personnalisations.service';
 import { CorrelatedActionsWithScoreFields } from '../correlated-actions/correlated-actions.dto';
 import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
@@ -39,7 +43,7 @@ import ScoresService from './scores.service';
 
 describe('ReferentielsScoringService', () => {
   let referentielsScoringService: ScoresService;
-  let personnalisationService: PersonnalisationsService;
+  let actionPersonnalisationsService: ActionPersonnalisationsService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -48,6 +52,16 @@ describe('ReferentielsScoringService', () => {
         SnapshotsService,
         PersonnalisationsService,
         PersonnalisationsExpressionService,
+        PersonnalisationConsequencesService,
+        ActionPersonnalisationsService,
+        {
+          provide: ListPersonnalisationQuestionsService,
+          useValue: { listPersonnalisation: vi.fn() },
+        },
+        {
+          provide: SetPersonnalisationReponseService,
+          useValue: { registerResponseListener: vi.fn() },
+        },
         GetReferentielService,
         GetReferentielDefinitionService,
       ],
@@ -70,7 +84,9 @@ describe('ReferentielsScoringService', () => {
       .compile();
 
     referentielsScoringService = moduleRef.get(ScoresService);
-    personnalisationService = moduleRef.get(PersonnalisationsService);
+    actionPersonnalisationsService = moduleRef.get(
+      ActionPersonnalisationsService
+    );
   });
 
   describe('getScoreFromOrigineActionsAndRatio', () => {
@@ -2342,7 +2358,7 @@ describe('ReferentielsScoringService', () => {
         drom: false,
       };
       const personnalisationConsequences =
-        await personnalisationService.getPersonnalisationConsequences(
+        await actionPersonnalisationsService.getPersonnalisationConsequences(
           caePersonnalisationRegles,
           reponses,
           collectiviteInfo
@@ -2382,7 +2398,7 @@ describe('ReferentielsScoringService', () => {
         drom: false,
       };
       const personnalisationConsequences =
-        await personnalisationService.getPersonnalisationConsequences(
+        await actionPersonnalisationsService.getPersonnalisationConsequences(
           caePersonnalisationRegles,
           reponses,
           collectiviteInfo
@@ -2428,7 +2444,7 @@ describe('ReferentielsScoringService', () => {
         drom: false,
       };
       const personnalisationConsequences =
-        await personnalisationService.getPersonnalisationConsequences(
+        await actionPersonnalisationsService.getPersonnalisationConsequences(
           caePersonnalisationRegles,
           reponses,
           collectiviteInfo
@@ -2499,7 +2515,7 @@ describe('ReferentielsScoringService', () => {
         drom: true,
       };
       const personnalisationConsequences =
-        await personnalisationService.getPersonnalisationConsequences(
+        await actionPersonnalisationsService.getPersonnalisationConsequences(
           caePersonnalisationRegles,
           reponses,
           collectiviteInfo
@@ -2578,7 +2594,7 @@ describe('ReferentielsScoringService', () => {
         habitat_2: 0.1,
       };
       const personnalisationConsequencesCas1 =
-        await personnalisationService.getPersonnalisationConsequences(
+        await actionPersonnalisationsService.getPersonnalisationConsequences(
           caePersonnalisationRegles,
           reponsesCas1,
           collectiviteInfo
@@ -2605,7 +2621,7 @@ describe('ReferentielsScoringService', () => {
         habitat_2: 0.5,
       };
       const personnalisationConsequencesCas2 =
-        await personnalisationService.getPersonnalisationConsequences(
+        await actionPersonnalisationsService.getPersonnalisationConsequences(
           caePersonnalisationRegles,
           reponsesCas2,
           collectiviteInfo
@@ -2631,7 +2647,7 @@ describe('ReferentielsScoringService', () => {
         habitat_2: 0.1,
       };
       const personnalisationConsequencesCas3 =
-        await personnalisationService.getPersonnalisationConsequences(
+        await actionPersonnalisationsService.getPersonnalisationConsequences(
           caePersonnalisationRegles,
           reponsesCas3,
           collectiviteInfo
@@ -2717,7 +2733,7 @@ describe('ReferentielsScoringService', () => {
         dechets_3: false,
       };
       const personnalisationConsequencesCas1 =
-        await personnalisationService.getPersonnalisationConsequences(
+        await actionPersonnalisationsService.getPersonnalisationConsequences(
           caePersonnalisationRegles,
           reponsesCas1,
           communeInfo
@@ -2753,7 +2769,7 @@ describe('ReferentielsScoringService', () => {
         dechets_2: true,
       };
       const personnalisationConsequencesCas2 =
-        await personnalisationService.getPersonnalisationConsequences(
+        await actionPersonnalisationsService.getPersonnalisationConsequences(
           caePersonnalisationRegles,
           reponsesCas2,
           communeInfo
@@ -2810,7 +2826,7 @@ describe('ReferentielsScoringService', () => {
       };
 
       const personnalisationConsequencesCas3 =
-        await personnalisationService.getPersonnalisationConsequences(
+        await actionPersonnalisationsService.getPersonnalisationConsequences(
           caePersonnalisationRegles,
           reponsesCas3,
           epciInfo
@@ -2859,7 +2875,7 @@ describe('ReferentielsScoringService', () => {
         dechets_4: 0.1,
       };
       const personnalisationConsequencesCas4 =
-        await personnalisationService.getPersonnalisationConsequences(
+        await actionPersonnalisationsService.getPersonnalisationConsequences(
           caePersonnalisationRegles,
           reponsesCas4,
           epciInfo

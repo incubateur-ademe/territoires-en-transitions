@@ -1,0 +1,119 @@
+competenceCode,intitule
+1005,Concession de la distribution publique d'électricité
+1010,Concession de la distribution publique de gaz
+1015,"Création, aménagement, entretien et gestion des réseaux de chaleur ou de froid urbains"
+1020,Soutien aux actions de maîtrise d'énergie
+1025,"Création et entretien des infrastructures de charge nécessaires à l'usage des véhicules électriques ou hybrides rechargeables, en application de l'article L2224-37 du CGCT"
+1030,Eclairage public
+1035,"Installation d'hydroélectricité, d'énergies renouvelables et autres installations visées à l'article L2224-32 du CGCT"
+1040,Installation de production d'électricité de proximité au sens de l'article L2224-33 du CGCT
+1045,Contribution à la transition énergétique
+1505,"Eau (production, traitement, stockage, transport, distribution)"
+1510,Assainissement collectif des eaux usées
+1515,Assainissement non collectif des eaux usées
+1520,Gestion des eaux pluviales urbaines
+2000,Mise en place d'une zone à faible émissions mobilité (ZFE-m) (L. 2213-4-1 du CGCT)
+2005,GEMAPI : Aménagement d'un bassin ou d'une fraction de bassin hydrographique (L. 211-7 1° du code de l'environnement)
+2010,"GEMAPI : Entretien et aménagement d'un cours d'eau, canal, lac ou plan d'eau (L. 211-7 2° du code de l'environnement)"
+2015,GEMAPI : Défense contre les inondations et contre la mer (L. 211-7 5° du code de l'environnement)
+2020,"GEMAPI : Protection et restauration des sites, des écosystèmes aquatiques, des zones humides et des formations boisées riveraines (L. 211-7 8° du code de l'environnement)"
+2025,Approvisionnement en eau (L. 211-7-3° du code de l'environnement)
+2030,Maîtrise des eaux pluviales et de ruissellement ou la lutte contre l'érosion des sols (L. 211-7 4° du code de l'environnement)
+2035,Lutte contre la pollution (L.211-7-6° du code de l'environnement)
+2040,Protection et la conservation des eaux superficielles et souterraines (L.211-7-7° du code de l'environnement)
+2045,Aménagements hydrauliques concourant à la sécurité civile (L. 211-7 9° du code de l'environnement)
+2050,"Exploitation, entretien et aménagement d'ouvrages hydrauliques existants (L. 211-7 10° du code de l'environnement)"
+2055,Mise en place et exploitation de dispositifs de surveillance de la ressource en eau et des milieux aquatiques (L. 211-7 11 ° du code de l'environnement)
+2060,"Animation et concertation dans les domaines de la prévention du risque d'inondation ainsi que de la gestion et de la protection de la ressource en eau et des milieux aquatiques dans un sous-bassin ou un groupement de sous-bassins, ou dans un système aquifère, correspondant à une unité hydrographique (L.211-7-12° du code de l'environnement)"
+2065,Aménagement et gestion d'un parc naturel régional
+2070,"Autorité concessionnaire de l'Etat pour les plages, dans les conditions prévues à l'article L. 2124-4 du code général de la propriété des personnes publiques."
+2075,Elaboration et adoption du plan climat-air-énergie territorial en application de l'article L. 229-26 du code de l'environnement
+2080,Exercice de la compétence collecte des déchets ménagers et assimilés
+2085,Exercice de la compétence traitement des déchets ménagers et assimilés
+2090,Lutte contre les nuisances sonores
+2095,Lutte contre la pollution de l'air
+2500,"Création, gestion, extension et translation des cimetières et sites cinéraires"
+2505,"Création, gestion et extension des crématoriums"
+2510,Service extérieur de pompes funèbres (L. 2223-19 du CGCT)
+3000,Activités sanitaires
+3005,Maisons de santé pluridisciplinaires
+3010,Accueil du jeune enfant : Crèches
+3015,Accueil du jeune enfant : Relais petite enfance
+3020,Accueil du jeune enfant : Maisons d'assistants maternels
+3025,Centre intercommunal d'action sociale
+3030,Aide sociale
+3035,Action sociale communale
+3040,Action sociale départementale
+3045,"Adoption, adaptation et mise en oeuvre du programme départemental d'insertion"
+3050,Aide départementale aux jeunes en difficulté
+3055,Action départementale de prévention spécialisée auprès des jeunes et des familles en difficulté ou en rupture avec leur milieu
+3060,Action départementale Personnes âgées
+3500,"Elaboration du diagnostic du territoire et définition des orientations du contrat de ville, animation et coordination des dispositifs contractuels de développement urbain, de développement local et d'insertion économique et sociale ainsi que des dispositifs locaux de prévention de la délinquance ; programmes d'actions définis dans le contrat de ville"
+4000,Actions de développement économique dans les conditions prévues à l'article L. 4251-17 ; politique locale du commerce et soutien aux activités commerciales
+4005,"Création, aménagement, entretien et gestion de zones d'activité industrielle, commerciale, tertiaire, artisanale, touristique, portuaire ou aéroportuaire"
+4010,Compétences de la région en matière de développement économique en application des articles L. 4211-1 et L. 4253-1 à L4253-3
+4500,Promotion du tourisme dont la création d'offices de tourisme et animation touristique
+4505,Compétences touristiques du département
+4510,Gestion des équipements touristiques
+4515,Organisation d'un service de remontées mécaniques au sens de l'article L. 342-9 du code du tourisme
+4520,Thermalisme
+5000,"Construction, aménagement, entretien et fonctionnement d'équipements culturels et sportifs"
+5005,"Compétences du département en matière de culture, construction, exploitation et entretien des équipements et infrastructures destinés à la pratique du sport"
+5010,"Construction, entretien et fonctionnement d'équipements de l'enseignement préélémentaire et élémentaire"
+5015,"Activités périscolaires (activités culturelles, sportives, artistiques complémentaires aux enseignements scolaires)"
+5020,"Construction, reconstruction, aménagement, entretien et fonctionnement des lycées (accueil, restauration, hébergement, entretien général et technique)"
+5025,"Construction, reconstruction, aménagement, entretien et fonctionnement des collèges (accueil, restauration, hébergement, entretien général et technique)"
+5030,Programme de soutien et d'aides aux établissements d'enseignement supérieur et de recherche et aux programmes de recherche
+5035,Activités culturelles ou socioculturelles
+5040,Activités sportives
+5045,Restauration scolaire
+5050,Garderie périscolaire
+5500,Schéma de cohérence territoriale (SCOT) (Art. L. 143-16 code de l'urbanisme)
+5505,Schéma de secteur (Art. L. 173-1 du code de l'urbanisme)
+5510,Plan local d'urbanisme et document d'urbanisme en tenant lieu (Art. L. 153-1 du code de l'urbanisme)
+5515,"Définition, création et réalisation d'opérations d'aménagement d'intérêt communautaire au sens de l'article L.300-1 du code de l'urbanisme (les ZAC entrent dans cette catégorie)"
+5520,Constitution de réserves foncières (articles L.210-1 et L.221-1 du code de l'urbanisme)
+5525,Droit de préemption urbain (article L.211-2 du code de l'urbanisme)
+5530,Délivrance des autorisations d'occupation du sol (Permis de construire...) (article L.422-3 du code de l'urbanisme)
+5535,Actions de valorisation du patrimoine naturel et paysager
+5540,Instruction des autorisations d'occupation du sol (article L.423-1 et articles R.*423-14 et suivants du code de l'urbanisme)
+6000,"Organisation de services réguliers / à la demande de transports publics de personnes, des services de mobilité solidaire, organisation ou contribution au développement des services relatifs aux mobilités actives définies à l'article L. 1271-1 du code des transports, organisation ou contribution au développement des services relatifs aux usages partagés des véhicules terrestres à moteur."
+6005,Organisation de transports scolaires
+6010,Transports publics non urbains (L. 3111-1 du code des transports)
+6015,Gestion de ports de plaisance ou de ports maritimes de commerce (L. 5314-4 du code des transports)
+6020,Exploitation d'aérodrome dont organisation de services aériens de transport public (L. 6321-2 du code des transports)
+6025,Participation à la gouvernance et à l'aménagement des gares situées sur le territoire métropolitain
+6030,Voies navigables (D. 4314-3 du code des transports)
+6035,Mise en place d'itinéraires cyclables
+6040,"Création, aménagement, entretien de la voirie communale"
+6045,"Signalisation, abris de voyageurs, parcs et aires de stationnement"
+6055,Conseil en mobilité destiné aux employeurs et aux gestionnaires d'activités générant des flux de déplacements importants
+6060,Organisation ou contribution au développement des services de transport de marchandises et de logistique urbaine
+6065,Syndicat de transport de type SRU
+6070,Plans de mobilité
+6075,Compétences départementales en matières de voirie
+6500,Programme local de l'habitat
+6505,Action et aide financière en faveur du logement social
+6510,Action en faveur du logement des personnes défavorisées
+6515,Opération programmée d'amélioration de l'habitat (OPAH)
+6520,Amélioration du parc immobilier bâti
+6525,Actions de réhabilitation et résorption de l'habitat insalubre
+6530,Délégation des aides à la pierre - Compétences insécables (IV Art.L.301-5-1 CCH) - Etat
+6535,Délégation des aides à la pierre - Compétences sécables (V Art.L.301-5-1 CCH) - Etat
+7000,"Aménagement, entretien et gestion des aires d'accueil des gens du voyage et des terrains familiaux locatifs"
+7500,Abattoirs publics
+7505,"Marchés d'intérêt national, halles, foires et marchés"
+7510,Contributions pour le financement du SDIS
+7515,Préparation et réalisation des enquêtes de recensement de la population
+7520,Centre de première intervention des services locaux d'incendie et de secours (L. 1424-36-4)
+7525,Service public de défense extérieure contre l'incendie
+7530,Réseaux et services locaux de communications électroniques d'initiative publique au sens de l'article L 1425-1 CGCT
+7535,Maison France services
+7540,Archéologie préventive
+7545,Plan de mise en accessibilité
+7550,Gestion des sentiers de randonnée
+7555,Projet alimentaire territorial
+7560,Lutte contre les nuisibles
+7565,Fourrière automobile
+7570,Fourrière animale
+7575,Autres

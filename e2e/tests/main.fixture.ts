@@ -1,6 +1,7 @@
 import { mergeTests } from '@playwright/test';
 import { testWithCollectivites } from './collectivite/collectivites.fixture';
 import { testWithDiscussions } from './collectivite/discussions/discussions.fixture';
+import { testWithPersonnalisations } from './collectivite/personnalisations/personnalisations.fixture';
 import { testWithPersonneTags } from './collectivite/tags/personne-tags.fixture';
 import { testWithIndicateurs } from './indicateurs/indicateurs.fixture';
 import { testWithFiches } from './plans/fiches/fiches.fixture';
@@ -14,5 +15,6 @@ export const test = mergeTests(
   testWithPlans,
   testWithFiches,
   testWithIndicateurs,
+  testWithPersonnalisations,
   testWithReferentiels
 );

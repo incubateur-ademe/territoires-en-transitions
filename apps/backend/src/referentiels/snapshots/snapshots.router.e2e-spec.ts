@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.table';
 import { getScoresIndicatifsFromSnapshot } from '@tet/backend/referentiels/snapshots/snapshots.utils';
 import {
@@ -8,10 +9,12 @@ import {
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   ActionTypeEnum,
+  findActionInTree,
   ReferentielId,
   ReferentielIdEnum,
   SnapshotJalonEnum,
 } from '@tet/domain/referentiels';
+import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import {
@@ -19,11 +22,16 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '../../../test/app-utils';
-import { getAnonUser, getAuthUserFromUserCredentials } from '../../../test/auth-utils';
+import {
+  getAnonUser,
+  getAuthUserFromUserCredentials,
+} from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
-import { addTestUser, setUserCollectiviteRole } from '../../users/users/users.test-fixture';
-import { CollectiviteRole } from '@tet/domain/users';
 import { AuthenticatedUser } from '../../users/models/auth.models';
+import {
+  addTestUser,
+  setUserCollectiviteRole,
+} from '../../users/users/users.test-fixture';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { SnapshotsRouter } from './snapshots.router';
 
@@ -41,6 +49,8 @@ describe('SnapshotsRouter', () => {
   let testUser: AuthenticatedUser;
   let rhoneAggloCollectiviteId: number;
   let databaseService: DatabaseService;
+  let persoListenerTestCollectiviteId: number;
+  let persoListenerTestUser: AuthenticatedUser;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -63,10 +73,29 @@ describe('SnapshotsRouter', () => {
       collectiviteId: rhoneAggloCollectiviteId,
       role: CollectiviteRole.LECTURE,
     });
-  });
 
-  afterAll(async () => {
-    await app.close();
+    const testCollectiviteAndUsersResult = await addTestCollectiviteAndUsers(
+      databaseService,
+      {
+        collectivite: {
+          isCOT: true,
+        },
+        users: [
+          {
+            role: CollectiviteRole.EDITION,
+          },
+        ],
+      }
+    );
+
+    persoListenerTestCollectiviteId =
+      testCollectiviteAndUsersResult.collectivite.id;
+    const testUserFixture = testCollectiviteAndUsersResult.users[0];
+    persoListenerTestUser = getAuthUserFromUserCredentials(testUserFixture);
+
+    return async () => {
+      await app.close();
+    };
   });
 
   test("Création d'un snapshot: not authenticated", async () => {
@@ -131,6 +160,51 @@ describe('SnapshotsRouter', () => {
     // aucun score indicatif n'est présent dans le snapshot
     const scoresIndicatifs = await getScoresIndicatifsFromSnapshot(snapshot);
     expect(scoresIndicatifs).toEqual({});
+  });
+
+  test('Current snapshot automatically recomputed after personnalisation response save', async () => {
+    const caller = router.createCaller({ user: persoListenerTestUser });
+
+    const currentSnapshotBefore =
+      await caller.referentiels.snapshots.getCurrent({
+        collectiviteId: persoListenerTestCollectiviteId,
+        referentielId: ReferentielIdEnum.CAE,
+      });
+
+    const actionNodeBefore = findActionInTree(
+      [currentSnapshotBefore.scoresPayload.scores],
+      (action) => action.actionId === 'cae_1.2.2'
+    );
+
+    expect(actionNodeBefore).toBeDefined();
+    expect(actionNodeBefore?.score.pointPotentiel).toBe(12);
+
+    await caller.collectivites.personnalisations.setReponse({
+      collectiviteId: persoListenerTestCollectiviteId,
+      questionId: 'centre_urbain',
+      reponse: false,
+    });
+
+    await caller.collectivites.personnalisations.setReponse({
+      collectiviteId: persoListenerTestCollectiviteId,
+      questionId: 'AOM_1',
+      reponse: false,
+    });
+
+    const currentSnapshotAfter = await caller.referentiels.snapshots.getCurrent(
+      {
+        collectiviteId: persoListenerTestCollectiviteId,
+        referentielId: ReferentielIdEnum.CAE,
+      }
+    );
+
+    const actionNodeAfter = findActionInTree(
+      [currentSnapshotAfter.scoresPayload.scores],
+      (action) => action.actionId === 'cae_1.2.2'
+    );
+
+    expect(actionNodeAfter).toBeDefined();
+    expect(actionNodeAfter?.score.pointPotentiel).toBe(2);
   });
 
   test("Création d'un snapshot avec un score indicatif sur une action", async () => {

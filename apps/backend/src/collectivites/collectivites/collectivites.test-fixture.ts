@@ -23,6 +23,7 @@ import { bibliothequeFichierTable } from '../documents/models/bibliotheque-fichi
 import { invitationTable } from '../membres/invitation.table';
 import { invitationPersonneTagTable } from '../membres/mutate-invitations/invitation-personne-tag.table';
 import { financeurTagTable } from '../tags/financeur-tag.table';
+import { justificationTable } from '../personnalisations/models/justification.table';
 import { reponseBinaireTable } from '../personnalisations/models/reponse-binaire.table';
 import { reponseChoixTable } from '../personnalisations/models/reponse-choix.table';
 import { reponseProportionTable } from '../personnalisations/models/reponse-proportion.table';
@@ -110,6 +111,22 @@ export async function addTestCollectivite(
     const cleanup = async () => {
       if (collectiviteId) {
         try {
+          // Nettoyer les réponses
+          await db
+            .delete(reponseBinaireTable)
+            .where(eq(reponseBinaireTable.collectiviteId, collectiviteId));
+          await db
+            .delete(reponseProportionTable)
+            .where(eq(reponseProportionTable.collectiviteId, collectiviteId));
+          await db
+            .delete(reponseChoixTable)
+            .where(eq(reponseChoixTable.collectiviteId, collectiviteId));
+
+          // et les justifications
+          await db
+            .delete(justificationTable)
+            .where(eq(justificationTable.collectiviteId, collectiviteId));
+
           await db
             .delete(bibliothequeFichierTable)
             .where(eq(bibliothequeFichierTable.collectiviteId, collectiviteId));

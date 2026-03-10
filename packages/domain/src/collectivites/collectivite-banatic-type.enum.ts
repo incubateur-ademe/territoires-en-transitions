@@ -23,3 +23,17 @@ export const collectiviteNature = [
 
 export const collectiviteNatureEnumSchema = z.enum(collectiviteNature);
 export type CollectiviteNatureType = (typeof collectiviteNature)[number];
+
+export const collectiviteNatureLabel: Record<CollectiviteNatureType, string> = {
+  METRO: 'Métropole',
+  CU: 'Communauté urbaine',
+  CA: "Communauté d'agglomération",
+  CC: 'Communauté de communes',
+  SMF: 'Syndicat mixte fermé',
+  SMO: 'Syndicat mixte ouvert',
+  SIVU: 'Syndicat intercommunal à vocation unique',
+  SIVOM: 'Syndicat intercommunal à vocation multiple',
+  POLEM: 'Pôle métropolitain',
+  PETR: 'Pôle d’équilibre territorial rural',
+  EPT: 'Établissement public territorial',
+};

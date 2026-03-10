@@ -1,5 +1,4 @@
 import {
-  makeCollectivitePersoRefUrl,
   makeReferentielActionUrl,
   makeReferentielLabellisationUrl,
   makeReferentielRootUrl,
@@ -38,13 +37,6 @@ export const generateEdlDropdown = ({
       children: 'Tableau de bord État des Lieux',
       href: makeReferentielRootUrl({ collectiviteId }),
       dataTest: 'edl-synthese',
-    },
-    {
-      children: 'Personnalisation des référentiels',
-      href: makeCollectivitePersoRefUrl({
-        collectiviteId,
-      }),
-      dataTest: 'edl-personnalisation',
     },
     {
       children: 'Référentiel Climat-Air-Énergie',

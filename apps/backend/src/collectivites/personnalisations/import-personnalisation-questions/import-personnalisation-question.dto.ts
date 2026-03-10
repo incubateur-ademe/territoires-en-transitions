@@ -1,6 +1,7 @@
 import { getZodEnumArrayFromQueryString } from '@tet/backend/utils/zod.utils';
 import {
   collectiviteTypeEnumSchema,
+  competenceBanaticSchema,
   questionChoixCreateSchema,
   questionCreateSchema,
 } from '@tet/domain/collectivites';
@@ -16,15 +17,30 @@ export const importPersonnalisationQuestionSchema = z.object({
   )
     .optional()
     .nullable(),
+
+  competenceCode: z.coerce.number().optional(),
 });
 
 export type ImportPersonnalisationQuestion = z.infer<
   typeof importPersonnalisationQuestionSchema
 >;
 
-// Schema for importing choices from spreadsheet
-export const importPersonnalisationChoixSchema = questionChoixCreateSchema;
+// Schema for importing choices from spreadsheet - formulation requise
+export const importPersonnalisationChoixSchema = z.object({
+  ...questionChoixCreateSchema.shape,
+  formulation: z.string().trim().min(1),
+});
 
 export type ImportPersonnalisationChoix = z.infer<
   typeof importPersonnalisationChoixSchema
+>;
+
+// Schema for importing banatic competences from spreadsheet
+export const importPersonnalisationCompetenceSchema = z.object({
+  ...competenceBanaticSchema.shape,
+  competenceCode: z.coerce.number(),
+  intitule: z.string().trim().min(1),
+});
+export type ImportPersonnalisationCompetence = z.infer<
+  typeof importPersonnalisationCompetenceSchema
 >;

@@ -3,7 +3,7 @@ import {
   DetailPrecedenteModificationWrapper,
 } from '@/app/app/pages/collectivite/Historique/DetailModificationWrapper';
 import Modification from '@/app/app/pages/collectivite/Historique/Modification';
-import { makeCollectivitePersoRefThematiqueUrl } from '@/app/app/paths';
+import { makeMaCollectiviteUrl } from '@/app/app/paths';
 import { THistoriqueItemProps } from '../types';
 import { formatReponseValue } from './formatReponseValue';
 
@@ -21,9 +21,12 @@ const HistoriqueItemReponse = ({ item }: THistoriqueItemProps) => {
         { titre: 'Thématique', description: thematique_nom ?? '' },
       ]}
       detail={<HistoriqueItemReponseDetails item={item} />}
-      pageLink={makeCollectivitePersoRefThematiqueUrl({
+      pageLink={makeMaCollectiviteUrl({
         collectiviteId: collectivite_id,
-        thematiqueId: thematique_id ?? '',
+        view: 'personnalisation',
+        searchParams: thematique_id
+          ? { t: thematique_id, ot: thematique_id }
+          : undefined,
       })}
     />
   );

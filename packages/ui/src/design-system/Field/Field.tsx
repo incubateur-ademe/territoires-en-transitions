@@ -1,5 +1,4 @@
-import classNames from 'classnames';
-
+import { cn } from '../../utils/cn';
 import { FieldMessage, FieldMessageProps } from './FieldMessage';
 
 export type FieldState =
@@ -19,6 +18,8 @@ export type FieldProps = {
   children: React.ReactNode;
   /** Pour surcharger les styles du container */
   className?: string;
+  /** Pour surcharger les styles du titre */
+  titleClassName?: string;
   /** Complément d'informations */
   hint?: string;
   /** Pour lier le libellé et le champ qu'il contient */
@@ -32,6 +33,7 @@ export const Field = ({
   fieldId,
   title,
   className,
+  titleClassName,
   hint,
   htmlFor,
   state = 'default',
@@ -42,7 +44,7 @@ export const Field = ({
   return (
     <div
       id={fieldId}
-      className={classNames(
+      className={cn(
         'flex-grow flex flex-col',
         {
           'gap-2': !small,
@@ -56,10 +58,14 @@ export const Field = ({
           {/** Title */}
           {title !== undefined && (
             <div
-              className={classNames('text-primary-9', {
-                'text-grey-5': state === 'disabled',
-                'text-sm': small,
-              })}
+              className={cn(
+                'text-primary-9',
+                {
+                  'text-grey-5': state === 'disabled',
+                  'text-sm': small,
+                },
+                titleClassName
+              )}
             >
               {title}
             </div>
@@ -67,7 +73,7 @@ export const Field = ({
           {/** Hint */}
           {hint !== undefined && (
             <span
-              className={classNames('block mt-2 text-xs text-grey-7', {
+              className={cn('block mt-2 text-xs text-grey-7', {
                 'text-grey-5': state === 'disabled',
               })}
             >

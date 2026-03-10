@@ -1,4 +1,5 @@
-import { useQuestionsReponses } from '@/app/referentiels/personnalisations/PersoReferentielThematique/useQuestionsReponses';
+import { useCollectiviteId } from '@tet/api/collectivites';
+import { useListPersonnalisationQuestionsReponses } from '../../../../../collectivites/personnalisations/data/use-list-personnalisation-questions-reponses';
 
 // pour cet indicateur uniquement on doit afficher une question de personnalisation
 const PERSONNALISATION = {
@@ -8,13 +9,15 @@ const PERSONNALISATION = {
 
 export const useIndicateurPersonnalisation = (
   identifiantReferentiel?: string | null,
-  drom?: boolean,
+  drom?: boolean
 ) => {
-  const qrList = useQuestionsReponses({
+  const collectiviteId = useCollectiviteId();
+  const qrList = useListPersonnalisationQuestionsReponses(collectiviteId, {
     questionIds: [PERSONNALISATION.questionId],
   });
   return identifiantReferentiel === PERSONNALISATION.identifiantReferentiel &&
-    qrList.length && !drom
+    qrList.length &&
+    !drom
     ? qrList
     : null;
 };

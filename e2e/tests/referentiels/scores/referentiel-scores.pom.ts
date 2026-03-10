@@ -117,6 +117,18 @@ export class ReferentielScoresPom {
     ).toBeVisible();
   }
 
+  getActionLocationExpression(actionIdentifiant: string) {
+    return `[data-test="Action-${actionIdentifiant}"]`;
+  }
+
+  getActionPointsPotentielsLocator(actionIdentifiant: string) {
+    return this.page.locator(
+      `${this.getActionLocationExpression(
+        actionIdentifiant
+      )} [data-test="points-potentiels"]`
+    );
+  }
+
   getSousActionLocationExpression(sousActionIdentifiant: string) {
     return `[data-test="SousActionHeader-${sousActionIdentifiant}"]`;
   }

@@ -1,3 +1,4 @@
+import { banatic2025CompetenceTable } from '@tet/backend/shared/models/banatic-2025-competence.table';
 import { version } from '@tet/backend/utils/column.utils';
 import { questionTypeEnumValues } from '@tet/domain/collectivites';
 import { integer, pgEnum, pgTable, text, varchar } from 'drizzle-orm/pg-core';
@@ -19,4 +20,9 @@ export const questionTable = pgTable('question', {
   description: text('description').notNull(),
   formulation: text('formulation').notNull(),
   version,
+  competenceCode: integer('competence_code').references(
+    () => banatic2025CompetenceTable.competenceCode
+  ),
+  consignesJustification: text('consignes_justification'),
+  exprVisible: text('expr_visible'),
 });

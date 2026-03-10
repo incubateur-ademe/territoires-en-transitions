@@ -7,6 +7,7 @@ export const questionTypeEnumValues = [
   'proportion',
 ] as const;
 export const questionTypeEnumSchema = z.enum(questionTypeEnumValues);
+export type QuestionType = (typeof questionTypeEnumValues)[number];
 
 export const questionSchema = z.object({
   id: z.string(),
@@ -19,6 +20,9 @@ export const questionSchema = z.object({
   description: z.string(),
   formulation: z.string(),
   version: z.string(),
+  competenceCode: z.nullable(z.int()),
+  consignesJustification: z.nullable(z.string()),
+  exprVisible: z.nullable(z.string()),
 });
 
 export type Question = z.infer<typeof questionSchema>;
@@ -28,6 +32,9 @@ export const questionCreateSchema = z.partial(questionSchema, {
   ordonnancement: true,
   typesCollectivitesConcernees: true,
   version: true,
+  competenceCode: true,
+  consignesJustification: true,
+  exprVisible: true,
 });
 
 export type QuestionCreate = z.infer<typeof questionCreateSchema>;

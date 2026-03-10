@@ -66,6 +66,7 @@ import ConfigurationService from '../../utils/config/configuration.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import MattermostNotificationService from '../../utils/mattermost-notification.service';
 import { sleep } from '../../utils/sleep.utils';
+import { ActionPersonnalisationsService } from '../action-personnalisations/action-personnalisations.service';
 import { CorrelatedActionsWithScoreFields } from '../correlated-actions/correlated-actions.dto';
 import { CorrelatedActionWithScore } from '../correlated-actions/referentiel-action-origine-with-score.dto';
 import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
@@ -112,6 +113,7 @@ export default class ScoresService {
     private readonly getReferentielsService: GetReferentielService,
     private readonly getReferentielDefinitionService: GetReferentielDefinitionService,
     private readonly personnalisationService: PersonnalisationsService,
+    private readonly actionPersonnalisationsService: ActionPersonnalisationsService,
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly labellisationService: LabellisationService,
     private readonly documentService: DocumentService,
@@ -1260,7 +1262,7 @@ export default class ScoresService {
       await this.labellisationService.getEtoileDefinitions();
 
     const personnalisationConsequencesResult =
-      await this.personnalisationService.getPersonnalisationConsequencesForCollectivite(
+      await this.actionPersonnalisationsService.getPersonnalisationConsequencesForCollectivite(
         collectiviteId,
         {
           date: parameters.date,

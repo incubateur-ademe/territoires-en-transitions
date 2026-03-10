@@ -1,4 +1,12 @@
 # Start supabase and restore/create image of a seeded DB for testing purpose
+#
+# In CI, image for the current version of the DB (matching the checksum of the
+# data_layer dir, see `db-path` action) is pulled from ghcr.io and only built
+# and pushed if it doesn't exists.
+# Existing images can be listed from
+# https://github.com/orgs/territoiresentransitions/packages/container/supabase_db_tet/versions
+# Delete an image from this page and restart CI workflow to force a rebuild.
+#
 name: init-db
 
 on:
@@ -83,15 +91,15 @@ jobs:
       - name: Import indicateur definitions from spreadsheets
         if: ${{ steps.is_available.outputs.exists != 'success' }}
         run: >
-            pnpm test:backend
-            import-indicateur-definition.controller.e2e-spec.ts
+          pnpm test:backend
+          import-indicateur-definition.controller.e2e-spec.ts
 
       - name: Import personnalisation questions from spreadsheets
         if: ${{ steps.is_available.outputs.exists != 'success' }}
         run: >
           pnpm test:backend
           import-personnalisation-question.controller.e2e-spec.ts
-      
+
       - name: Import referentiel definitions from spreadsheets
         if: ${{ steps.is_available.outputs.exists != 'success' }}
         run: >

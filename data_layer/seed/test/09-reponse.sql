@@ -52,22 +52,10 @@ $$
 -- désactive temporairement les triggers pour accélérer les inserts
     alter table reponse_binaire
         disable trigger after_reponse_insert;
-    alter table reponse_binaire
-        disable trigger save_history;
-    alter table reponse_binaire
-        disable trigger set_modified_at_before_reponse_binaire_update;
     alter table reponse_choix
         disable trigger after_reponse_insert;
-    alter table reponse_choix
-        disable trigger save_history;
-    alter table reponse_choix
-        disable trigger set_modified_at_before_reponse_choix_update;
     alter table reponse_proportion
         disable trigger after_reponse_insert;
-    alter table reponse_proportion
-        disable trigger save_history;
-    alter table reponse_proportion
-        disable trigger set_modified_at_before_reponse_proportion_update;
 
     -- Vide les tables des réponses
     truncate justification;
@@ -107,22 +95,10 @@ $$
 -- ré active les triggers
     alter table reponse_binaire
         enable trigger after_reponse_insert;
-    alter table reponse_binaire
-        enable trigger save_history;
-    alter table reponse_binaire
-        enable trigger set_modified_at_before_reponse_binaire_update;
     alter table reponse_choix
         enable trigger after_reponse_insert;
-    alter table reponse_choix
-        enable trigger save_history;
-    alter table reponse_choix
-        enable trigger set_modified_at_before_reponse_choix_update;
     alter table reponse_proportion
         enable trigger after_reponse_insert;
-    alter table reponse_proportion
-        enable trigger save_history;
-    alter table reponse_proportion
-        enable trigger set_modified_at_before_reponse_proportion_update;
     $$ language sql security definer;
 comment on function test_reset_reponse is
     'Reinitialise les réponses de personnalisation des référentiels.';
