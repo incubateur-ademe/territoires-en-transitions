@@ -22,7 +22,7 @@ export type SnapshotListItem =
 
 export type ActionDetailed = Snapshot['scoresPayload']['scores'];
 
-export function useSnapshot({
+export function useGetCurrentSnapshot({
   actionId,
   externalCollectiviteId,
 }: {
@@ -73,7 +73,7 @@ export function useListSnapshots({
 }
 
 export function useAction(actionId: string, externalCollectiviteId?: number) {
-  const { data: snapshot, isPending } = useSnapshot({
+  const { data: snapshot, isPending } = useGetCurrentSnapshot({
     actionId,
     externalCollectiviteId,
   });
@@ -92,16 +92,6 @@ export function useAction(actionId: string, externalCollectiviteId?: number) {
     isPending,
     data: snapshot ? toAction(snapshot) : undefined,
   };
-}
-
-export function useScore(actionId: string, externalCollectiviteId?: number) {
-  const { data: action } = useAction(actionId, externalCollectiviteId);
-
-  if (!action) {
-    return;
-  }
-
-  return action.score;
 }
 
 /**
@@ -176,7 +166,7 @@ export function useEtatLieuxHasStarted(referentielId: ReferentielId) {
     data: snapshot,
     isLoading,
     isError,
-  } = useSnapshot({ actionId: referentielId });
+  } = useGetCurrentSnapshot({ actionId: referentielId });
 
   if (isLoading || isError || !snapshot) {
     return { started: false, isLoading, isError };

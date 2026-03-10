@@ -1,8 +1,8 @@
 import { BadgeAuditStatut, statusToState } from './BadgeAuditStatut';
 
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { MesureAuditStatutEnum } from '@tet/domain/referentiels';
 import { SelectBadge } from '@tet/ui';
+import { ActionListItem } from '../actions/use-list-actions';
 import {
   MesureAuditStatut,
   useGetMesureAuditStatut,
@@ -11,7 +11,7 @@ import { useUpdateMesureAuditStatut } from './use-update-mesure-audit-statut';
 import { useAudit, useIsAuditeur } from './useAudit';
 
 export type TActionAuditStatutProps = {
-  action: ActionDefinitionSummary;
+  action: ActionListItem;
   className?: string;
 };
 
@@ -55,9 +55,7 @@ export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
 /**
  * Charge les données et fait le rendu
  */
-const ActionAuditStatut = (props: TActionAuditStatutProps) => {
-  const { action, className } = props;
-
+const ActionAuditStatut = ({ action, className }: TActionAuditStatutProps) => {
   // donnée de l'audit en cours (si il y en a un)
   const { data: audit } = useAudit();
 
@@ -66,7 +64,7 @@ const ActionAuditStatut = (props: TActionAuditStatutProps) => {
 
   // statut d'audit de l'action
   const { data: auditStatut } = useGetMesureAuditStatut({
-    mesureId: action.id,
+    mesureId: action.actionId,
     enabled: !!audit,
   });
 

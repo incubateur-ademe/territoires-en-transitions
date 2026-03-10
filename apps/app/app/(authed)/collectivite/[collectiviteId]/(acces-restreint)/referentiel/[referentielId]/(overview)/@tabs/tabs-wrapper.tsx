@@ -1,6 +1,6 @@
 'use client';
 
-import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   Tabs,
   TabsList,
@@ -10,7 +10,10 @@ import {
 import { PropsWithChildren } from 'react';
 
 export const TabsWrapper = ({ children }: PropsWithChildren) => {
-  const isVisitor = useIsVisitor();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const canReadComments = hasCollectivitePermission(
+    'referentiels.discussions.read'
+  );
 
   return (
     <Tabs className="grow flex flex-col">
@@ -20,7 +23,10 @@ export const TabsWrapper = ({ children }: PropsWithChildren) => {
         <TabsTab href="priorisation" label="Aide à la priorisation" />
         <TabsTab href="detail" label="Détail des statuts" />
         <TabsTab href="evolutions" label="Évolutions du score" />
-        {!isVisitor && <TabsTab href="commentaires" label="Commentaires" />}
+
+        {canReadComments && (
+          <TabsTab href="commentaires" label="Commentaires" />
+        )}
       </TabsList>
 
       <TabsPanel className="mt-8">{children}</TabsPanel>

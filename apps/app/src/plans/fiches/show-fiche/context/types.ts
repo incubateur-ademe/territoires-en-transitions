@@ -1,6 +1,6 @@
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
-import { ListActionsResponse } from '@/app/referentiels/actions/use-list-actions';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
 import {
   FicheNote,
@@ -74,7 +74,8 @@ export type FinanceursState = {
 };
 
 export type MesuresState = {
-  list: NonNullable<ListActionsResponse['data']>;
+  list: ActionListItem[];
+  isListPending: boolean;
   linkMesure: (mesureId: string) => Promise<void>;
   unlinkMesure: (mesureId: string) => Promise<void>;
 };

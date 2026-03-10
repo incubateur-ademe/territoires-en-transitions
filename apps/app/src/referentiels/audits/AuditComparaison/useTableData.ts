@@ -2,7 +2,7 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { TableOptions } from 'react-table';
 import { useReferentiel } from '../../DEPRECATED_ReferentielTable/useReferentiel';
 import { useReferentielId } from '../../referentiel-context';
-import { TComparaisonScoreAudit, TScoreAuditRowData } from './types';
+import { TScoreAuditRowData } from './types';
 import { useComparaisonScoreAudit } from './useComparaisonScoreAudit';
 
 export type UseTableData = () => TableData;
@@ -18,19 +18,19 @@ export type TableData = {
   /** Nombre total de lignes */
   total: number;
   /** données pour l'en-tête */
-  headerData?: TComparaisonScoreAudit;
+  headerData?: TScoreAuditRowData;
 };
 
 /**
  * Memoïze et renvoi les données et paramètres de la table
  */
 export const useTableData: UseTableData = () => {
-  const collectivite_id = useCollectiviteId();
+  const collectiviteId = useCollectiviteId();
   const referentiel = useReferentielId();
 
   // chargement des données
   const { data, isLoading } = useComparaisonScoreAudit(
-    collectivite_id,
+    collectiviteId,
     referentiel
   );
 
@@ -39,9 +39,9 @@ export const useTableData: UseTableData = () => {
     table,
     total,
     isLoading: isLoadingReferentiel,
-  } = useReferentiel(referentiel, collectivite_id, data);
+  } = useReferentiel(referentiel, collectiviteId, data);
 
-  const headerData = data?.find((r) => r.action_id === referentiel);
+  const headerData = data?.find((r) => r.actionId === referentiel);
 
   return {
     table,

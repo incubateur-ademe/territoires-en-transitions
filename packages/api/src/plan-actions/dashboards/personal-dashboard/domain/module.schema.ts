@@ -85,7 +85,7 @@ export const moduleMesuresSchema = z.object({
 export const moduleMesuresSelectSchema =
   moduleCommonSchemaSelect.merge(moduleMesuresSchema);
 
-export type ModuleMesuresSelect = z.input<typeof moduleMesuresSelectSchema>;
+export type ModuleMesuresSelect = z.infer<typeof moduleMesuresSelectSchema>;
 
 export const moduleSchemaSelect = z.discriminatedUnion('type', [
   moduleIndicateursSelectSchema,

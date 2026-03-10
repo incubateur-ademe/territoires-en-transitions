@@ -1,5 +1,5 @@
 import { buildActionLink } from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
-import { useReferentielId } from '@/app/referentiels/referentiel-context';
+import { useGetAction } from '@/app/referentiels/actions/use-get-action';
 import { getInitials, getModifiedSince } from '@/app/utils/formatUtils';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
@@ -51,13 +51,15 @@ const ActionCommentItem = ({
   title,
   isDisplayedAsPanel,
 }: Props) => {
+  const action = useGetAction({ actionId });
+
   const creationDate = new Date(comment.createdAt);
   const [selectedStatus, setSelectedStatus] = useState<ActionDiscussionStatut>(
     discussionStatus ?? discussionStatusEnum.OUVERT
   );
   const [isEditingComment, setIsEditingComment] = useState(false);
   const collectiviteId = useCollectiviteId();
-  const referentielId = useReferentielId();
+
   const {
     mutateAsync: updateDiscussionMessage,
     isPending: isUpdatingDiscussionMessage,
@@ -213,13 +215,9 @@ const ActionCommentItem = ({
             </div>
             {title &&
               isFirstComment &&
-              (!isDisplayedAsPanel ? (
+              (!isDisplayedAsPanel && action ? (
                 <Link
-                  href={buildActionLink(
-                    actionId,
-                    referentielId,
-                    collectiviteId
-                  )}
+                  href={buildActionLink(action, collectiviteId)}
                   target="_blank"
                   rel="noreferrer noopener"
                   className="after:hidden bg-none"

@@ -2,12 +2,11 @@
 
 import { useState } from 'react';
 
-import { ActionListFilters } from '@/app/referentiels/actions/use-list-actions';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import DEPRECATED_FilterBadges, {
   useFiltersToBadges,
 } from '@/app/ui/lists/DEPRECATED_filter-badges';
-import { ActionTypeEnum } from '@tet/domain/referentiels';
+import { ActionTypeEnum, ListActionsInput } from '@tet/domain/referentiels';
 import { Checkbox, DEPRECATED_ButtonMenu, Select } from '@tet/ui';
 import Filters from './filters';
 import List from './list';
@@ -17,7 +16,7 @@ export type DisplayOption = 'axe' | 'action';
 const ActionList = () => {
   const referentielId = useReferentielId();
 
-  const initialFilters: ActionListFilters = {
+  const initialFilters: ListActionsInput = {
     actionTypes: [
       ActionTypeEnum.AXE,
       ActionTypeEnum.SOUS_AXE,
@@ -36,7 +35,7 @@ const ActionList = () => {
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  const onFilterChange = (filters: ActionListFilters) => {
+  const onFilterChange = (filters: ListActionsInput) => {
     if (filters) {
       setFilters(filters);
       setDisplayOption('action');

@@ -1,8 +1,17 @@
-import { isSousMesure } from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
+import {
+  ActionListItem,
+  useListActions,
+} from '@/app/referentiels/actions/use-list-actions';
 import { DiscussionOrderBy, DiscussionStatus } from '@tet/domain/collectivites';
-import { ReferentielId } from '@tet/domain/referentiels';
+import {
+  ActionType,
+  ActionTypeEnum,
+  getParentId,
+  ReferentielId,
+} from '@tet/domain/referentiels';
 import { Select } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
+import { useMemo } from 'react';
 import {
   orderByOptions,
   statusOptions,
@@ -57,37 +66,69 @@ export const StatusSelect = ({
 };
 
 type ActionSelectProps = {
-  selectedAction?: string;
+  selectedAction?: Pick<ActionListItem, 'actionId' | 'actionType'>;
   onActionChange: (value: string | undefined) => void;
-  actionsOptions: Option[];
-  referentielId: ReferentielId;
   placeholder?: string;
   indentSubActions?: boolean;
+  referentielId: ReferentielId;
+  collectiviteId: number;
 };
 
 export const ActionSelect = ({
   selectedAction,
   onActionChange,
-  actionsOptions,
-  referentielId,
   placeholder = 'Toutes les mesures',
   indentSubActions = true,
+  referentielId,
+  collectiviteId,
 }: ActionSelectProps) => {
+  const { data: actions = [] } = useListActions({
+    referentielIds: [referentielId],
+    actionTypes: [ActionTypeEnum.ACTION, ActionTypeEnum.SOUS_ACTION],
+    collectiviteId,
+  });
+
+  type OptionWithActionType = Option & {
+    actionType: ActionType;
+  };
+
+  const actionsOptions: OptionWithActionType[] = useMemo(() => {
+    const filteredActions = !selectedAction
+      ? actions.filter((action) => action.actionType === ActionTypeEnum.ACTION)
+      : actions.filter(
+          ({ actionId, actionType }) =>
+            (actionType === ActionTypeEnum.ACTION &&
+              actionId === selectedAction.actionId) ||
+            (actionType === ActionTypeEnum.SOUS_ACTION &&
+              getParentId({ actionId }) === selectedAction.actionId)
+        );
+
+    return filteredActions.map((action) => ({
+      label: `${action.identifiant} ${action.nom}`,
+      value: action.actionId,
+      actionType: action.actionType,
+    }));
+  }, [actions, selectedAction]);
+
   return (
     <Select
       placeholder={placeholder}
       options={actionsOptions}
-      values={selectedAction ?? undefined}
+      values={selectedAction?.actionId ?? undefined}
       onChange={(value) => onActionChange(value as string | undefined)}
       customItem={(v) => (
         <span
           className={cn('text-grey-8 text-xs text-left', {
             'ml-4':
               indentSubActions &&
-              isSousMesure(v.value as string, referentielId),
+              v &&
+              (v as OptionWithActionType).actionType ===
+                ActionTypeEnum.SOUS_ACTION,
             'pl-4':
               !indentSubActions &&
-              isSousMesure(v.value as string, referentielId),
+              v &&
+              (v as OptionWithActionType).actionType ===
+                ActionTypeEnum.SOUS_ACTION,
           })}
         >
           {v.label}

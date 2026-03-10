@@ -1,17 +1,12 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
-import { omit } from 'es-toolkit';
 import TasksList from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/task/task.cards-list';
-import { useActionSummaryChildren } from '../../referentiel-hooks';
-import {
-  useActionStatut,
-  useSaveActionStatut,
-} from '../action-statut/use-action-statut';
+import { useSaveActionStatut } from '../action-statut/use-action-statut';
+import { ActionListItem } from '../use-list-actions';
 
 type Props = {
-  actionDefinition: ActionDefinitionSummary;
+  action: ActionListItem;
   openState: OpenState;
 };
 
@@ -20,16 +15,16 @@ type Props = {
  * Evolution future : déplacement du contenu de la modale dans un panneau latéral
  * (à confirmer)
  */
-const SubActionModal = ({ actionDefinition, openState }: Props) => {
-  const { id: actionId, nom: actionName } = actionDefinition;
-  const tasks = useActionSummaryChildren(actionDefinition);
-  const { statut, isLoading } = useActionStatut(actionId);
+const SubActionModal = ({ action, openState }: Props) => {
+  const { actionId, nom: actionName } = action;
+  const taskIds = action.childrenIds;
+
   const collectiviteId = useCollectiviteId();
-  const { saveActionStatut, isLoading: isSaving } = useSaveActionStatut();
+  const { saveActionStatut, isLoading } = useSaveActionStatut();
 
   const handleValidate = () => {
     saveActionStatut({
-      ...(statut ? omit(statut, ['modifiedAt', 'modifiedBy']) : {}),
+      ...action.score,
       actionId,
       collectiviteId,
       avancement: 'non_renseigne',
@@ -38,23 +33,17 @@ const SubActionModal = ({ actionDefinition, openState }: Props) => {
     });
   };
 
-  const isPending = isLoading || isSaving;
-
   return (
     <Modal
       size="xl"
       title="Détailler l'avancement à la tâche"
       subTitle={`${actionId.split('_')[1]} ${actionName}`}
       openState={openState}
-      noCloseButton={isPending}
+      noCloseButton={isLoading}
       render={() => (
         <div className="flex flex-col gap-8">
-          {tasks.length > 0 && (
-            <TasksList
-              tasks={tasks}
-              hideStatus={false}
-              shouldShowJustifications
-            />
+          {taskIds.length > 0 && (
+            <TasksList taskIds={taskIds} shouldShowJustifications />
           )}
         </div>
       )}
@@ -63,7 +52,7 @@ const SubActionModal = ({ actionDefinition, openState }: Props) => {
           btnOKProps={{
             variant: 'primary',
             children: 'Valider',
-            disabled: isPending,
+            disabled: isLoading,
             onClick: () => {
               handleValidate();
               close();

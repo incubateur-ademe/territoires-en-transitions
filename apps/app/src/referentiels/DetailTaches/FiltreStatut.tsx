@@ -4,15 +4,15 @@ import {
   MultiSelectFilterTitle,
 } from '@/app/ui/shared/select/MultiSelectFilter';
 
-import { DEFAULT_OPTIONS_WITH_NON_CONCERNE } from '@/app/referentiels/actions/action-statut/action-statut.select';
-import { StatutAvancementIncludingNonConcerne } from '@tet/domain/referentiels';
+import { DEFAULT_OPTIONS } from '@/app/referentiels/actions/action-statut/action-statut.select';
+import { StatutAvancementCreate } from '@tet/domain/referentiels';
 import { ITEM_ALL } from '@tet/ui';
 import { TFiltreProps } from './filters';
 
 // les options sont celles du sélecteur de statut + une entrée "tous les statuts"
 const items = [
   { value: ITEM_ALL, label: 'Tous les statuts' },
-  ...DEFAULT_OPTIONS_WITH_NON_CONCERNE,
+  ...DEFAULT_OPTIONS,
 ];
 const FILTER_NAME = 'statut';
 
@@ -34,9 +34,7 @@ export const FiltreStatut = (props: TFiltreProps) => {
         option.value === ITEM_ALL ? (
           <span className="leading-6">Tous les statuts</span>
         ) : (
-          <ActionStatutBadge
-            statut={option.value as StatutAvancementIncludingNonConcerne}
-          />
+          <ActionStatutBadge statut={option.value as StatutAvancementCreate} />
         )
       }
     />

@@ -1,17 +1,21 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.table';
-import { getScoresIndicatifsFromSnapshot } from '@tet/backend/referentiels/snapshots/snapshots.utils';
 import {
   fixturePourScoreIndicatif,
   insertFixturePourScoreIndicatif,
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
+  ActionDefinitionEssential,
+  ActionTreeNode,
   ActionTypeEnum,
   findActionInTree,
   ReferentielId,
   ReferentielIdEnum,
+  ScoreFinalFields,
+  ScoreIndicatifPayload,
+  ScoreSnapshot,
   SnapshotJalonEnum,
 } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
@@ -42,6 +46,27 @@ type ComputeScoreInput = inferProcedureInput<
 type UpdateSnapshotNameInput = inferProcedureInput<
   AppRouter['referentiels']['snapshots']['updateName']
 >;
+
+/**
+ * Récupère les scores indicatifs d'un snapshot
+ */
+async function getScoresIndicatifsFromSnapshot(
+  snapshot: ScoreSnapshot
+): Promise<Record<string, ScoreIndicatifPayload>> {
+  const scoresIndicatifs: Record<string, ScoreIndicatifPayload> = {};
+
+  const extractScoresIndicatifs = (
+    node: ActionTreeNode<ActionDefinitionEssential & ScoreFinalFields>
+  ) => {
+    if (node.actionId && node.scoreIndicatif) {
+      scoresIndicatifs[node.actionId] = node.scoreIndicatif;
+    }
+    node.actionsEnfant?.forEach(extractScoresIndicatifs);
+  };
+
+  extractScoresIndicatifs(snapshot.scoresPayload.scores);
+  return scoresIndicatifs;
+}
 
 describe('SnapshotsRouter', () => {
   let app: INestApplication;

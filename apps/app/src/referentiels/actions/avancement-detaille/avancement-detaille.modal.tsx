@@ -1,26 +1,28 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ActionStatutCreate } from '@tet/domain/referentiels';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
-import { omit } from 'es-toolkit';
 import { useEffect, useState } from 'react';
 import { ActionJustificationField } from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/action/action.justification-field';
 import { AVANCEMENT_DETAILLE_PAR_STATUT } from '../../utils';
-import {
-  useActionStatut,
-  useSaveActionStatut,
-} from '../action-statut/use-action-statut';
+import { useSaveActionStatut } from '../action-statut/use-action-statut';
+import { ActionListItem } from '../use-list-actions';
 import AvancementDetailleSlider, {
   AvancementValues,
 } from './avancement-detaille.slider';
 
 type Props = {
-  actionDefinition: ActionDefinitionSummary;
+  action: ActionListItem;
   openState: OpenState;
 };
 
-const getAvancementFromAvancementDetaille = (avancementDetaille: number[]) => {
+const getAvancementFromAvancementDetaille = (
+  avancementDetaille: [number, number, number] | undefined
+) => {
+  if (!avancementDetaille) {
+    return 'non_renseigne';
+  }
+
   return avancementDetaille[0] === 1
     ? 'fait'
     : avancementDetaille[1] === 1
@@ -34,28 +36,39 @@ const getAvancementFromAvancementDetaille = (avancementDetaille: number[]) => {
  * Modale permettant l'ajustement manuel de l'avancement détaillé
  * + l'ajout d'un texte justificatif
  */
-const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
-  const { id: actionId, nom: actionName } = actionDefinition;
-  const { statut, isLoading } = useActionStatut(actionId);
+
+const AvancementDetailleModal = ({ action, openState }: Props) => {
   const collectiviteId = useCollectiviteId();
+
+  const { actionId, nom: actionName } = action;
+
+  const statut = {
+    collectiviteId,
+    actionId,
+    concerne: action.score.concerne,
+    avancement: action.score.avancement || 'non_renseigne',
+    avancementDetaille: action.score.avancementDetaille,
+  };
+
   const { saveActionStatut } = useSaveActionStatut();
+
   const [actionStatutUpdate, setActionStatutUpdate] =
     useState<ActionStatutCreate | null>(null);
 
   useEffect(() => {
-    if (!isLoading && statut && !actionStatutUpdate) {
+    if (statut && !actionStatutUpdate) {
       const avancementDetaille =
         statut.avancement === 'detaille'
           ? statut.avancementDetaille || AVANCEMENT_DETAILLE_PAR_STATUT.detaille
           : AVANCEMENT_DETAILLE_PAR_STATUT.detaille;
       setActionStatutUpdate({
-        ...omit(statut, ['modifiedAt', 'modifiedBy']),
-        avancementDetaille: avancementDetaille,
+        ...statut,
+        avancementDetaille: avancementDetaille as [number, number, number],
         avancement: getAvancementFromAvancementDetaille(avancementDetaille),
         concerne: true,
       });
     }
-  }, [statut]);
+  }, [actionStatutUpdate, statut]);
 
   if (!actionStatutUpdate) {
     return null;
@@ -96,7 +109,7 @@ const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
 
           {/* Raisons de la répartition */}
           <ActionJustificationField
-            actionId={actionDefinition.id}
+            actionId={action.actionId}
             hint="Pour faciliter la relecture, vous pouvez préciser ici les raisons de cette répartition"
           />
         </div>

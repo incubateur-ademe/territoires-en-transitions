@@ -1,4 +1,3 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { Checkbox, Field, RichTextEditor } from '@tet/ui';
 import { ChangeEvent } from 'react';
 import {
@@ -7,9 +6,10 @@ import {
 } from './use-get-mesure-audit-statut';
 import { useUpdateMesureAuditStatut } from './use-update-mesure-audit-statut';
 import { useAudit, useIsAuditeur } from './useAudit';
+import { ActionListItem } from '../actions/use-list-actions';
 
 export type TActionAuditDetailProps = {
-  action: ActionDefinitionSummary;
+  action: ActionListItem;
 };
 
 export type TActionAuditDetailBaseProps = {
@@ -79,7 +79,7 @@ export const ActionAuditDetail = (props: TActionAuditDetailProps) => {
   const isAuditeur = useIsAuditeur();
 
   const { data: auditStatut } = useGetMesureAuditStatut({
-    mesureId: action.id,
+    mesureId: action.actionId,
     enabled: !!audit,
   });
 

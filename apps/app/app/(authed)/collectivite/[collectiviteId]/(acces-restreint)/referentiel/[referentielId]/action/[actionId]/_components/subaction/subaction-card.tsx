@@ -1,15 +1,15 @@
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import { useHideAction } from '@/app/referentiels/actions/action-statut/use-hide-action';
 import SubActionDescription from '@/app/referentiels/actions/sub-action/sub-action.description';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import {
   ActionDefinitionSummary,
   useActionSummaryChildren,
 } from '@/app/referentiels/referentiel-hooks';
 import { useStickyHeaderHeight } from '@/app/ui/layout/HeaderSticky';
-import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { AccordionControlled, Button, cn } from '@tet/ui';
-import { ActionJustificationField } from '../action/action.justification-field';
 import { pluralize } from '../pluralize';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
 import { useActionSidePanel } from '../side-panel/context';
@@ -47,13 +47,16 @@ const SubactionHeader = ({
   subAction,
   isExpanded,
   toggleExpand,
+  commentsCount,
 }: {
-  subAction: ActionDefinitionSummary;
+  subAction: ActionListItem;
   isExpanded: boolean;
   toggleExpand: () => void;
+  commentsCount: number;
 }) => {
-  const preuvesCount = useActionPreuvesCount(subAction.id);
-  const isVisitor = useIsVisitor();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const preuvesCount = useActionPreuvesCount(subAction.actionId);
+
   const { togglePanel, isActive } = useActionSidePanel();
   const stickyHeaderHeight = useStickyHeaderHeight();
 
@@ -78,26 +81,23 @@ const SubactionHeader = ({
           <OpenPanelButton
             key="documents"
             label={pluralize(preuvesCount, 'document')}
-            onClick={() => togglePanel('documents', subAction.id)}
-            isActive={isActive('documents', subAction.id)}
+            onClick={() => togglePanel('documents', subAction.actionId)}
+            isActive={isActive('documents', subAction.actionId)}
           />,
-          ...(!isVisitor
+          ...(hasCollectivitePermission('referentiels.discussions.read')
             ? [
                 <OpenPanelButton
                   key="comments"
-                  label={pluralize(
-                    subAction.openDiscussionsCount ?? 0,
-                    'commentaire'
-                  )}
-                  onClick={() => togglePanel('comments', subAction.id)}
-                  isActive={isActive('comments', subAction.id)}
+                  label={pluralize(commentsCount ?? 0, 'commentaire')}
+                  onClick={() => togglePanel('comments', subAction.actionId)}
+                  isActive={isActive('comments', subAction.actionId)}
                 />,
               ]
             : []),
         ]}
       />
 
-      <ScoreIndicatifLibelle actionId={subAction.id} />
+      <ScoreIndicatifLibelle actionId={subAction.actionId} />
 
       <SubactionCardActions action={subAction} />
     </div>
@@ -109,12 +109,12 @@ const SubactionContent = ({
   tasks,
   hideTasksStatus,
 }: {
-  subAction: ActionDefinitionSummary;
-  tasks: ActionDefinitionSummary[];
+  subAction: ActionListItem;
+  tasks: ActionListItem[];
   hideTasksStatus: boolean;
 }) => (
   <div className={cn('flex flex-col gap-4 p-4')}>
-    {(subAction.description || subAction.haveExemples) && (
+    {(subAction.description || subAction.exemples !== '') && (
       <SubActionDescription subAction={subAction} className="text-sm" />
     )}
 
@@ -131,6 +131,7 @@ type SubActionCardProps = {
   isExpanded: boolean;
   onToggleExpanded: () => void;
   showJustifications: boolean;
+  commentsCount: number;
 };
 
 const SubActionCard = ({
@@ -138,6 +139,7 @@ const SubActionCard = ({
   isExpanded,
   onToggleExpanded,
   showJustifications,
+  commentsCount,
 }: SubActionCardProps) => {
   const { statut } = useActionStatut(subAction.id);
   const { hide } = useHideAction(subAction.id);
@@ -169,24 +171,12 @@ const SubActionCard = ({
         expanded={isExpanded}
         setExpanded={onToggleExpanded}
         renderHeader={({ isExpanded: expanded, toggleExpand }) => (
-          <>
-            <SubactionHeader
-              subAction={subAction}
-              isExpanded={expanded}
-              toggleExpand={toggleExpand}
-            />
-            <div
-              className={cn('px-4 pb-4 bg-white cursor-pointer', {
-                'bg-primary-1': isExpanded,
-                'rounded-lg': !isExpanded,
-              })}
-              onClick={toggleExpand}
-            >
-              {showJustifications && (
-                <ActionJustificationField actionId={subAction.id} />
-              )}
-            </div>
-          </>
+          <SubactionHeader
+            subAction={subAction}
+            isExpanded={expanded}
+            toggleExpand={toggleExpand}
+            commentsCount={commentsCount}
+          />
         )}
         content={
           <SubactionContent

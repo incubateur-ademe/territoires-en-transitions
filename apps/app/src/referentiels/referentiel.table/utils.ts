@@ -3,7 +3,6 @@ import {
   ActionType,
   ActionTypeEnum,
   ReferentielId,
-  StatutAvancementEnum,
 } from '@tet/domain/referentiels';
 import { divisionOrZero } from '@tet/domain/utils';
 import { CSSProperties } from 'react';
@@ -65,10 +64,6 @@ function mapActionToRow(
 ): ReferentielTableRow {
   const { score } = action;
 
-  const statut = !score.concerne
-    ? StatutAvancementEnum.NON_CONCERNE
-    : score.avancement;
-
   return {
     id: action.actionId,
     collectiviteId,
@@ -87,7 +82,7 @@ function mapActionToRow(
     pointsPasFait: score.pointPasFait,
     pointPotentiel: score.pointPotentiel,
     pointRestant: score.pointPotentiel - score.pointFait,
-    statut,
+    statut: score.statut,
     phase: action.categorie ?? undefined,
     children: action.actionsEnfant.map((child) =>
       mapActionToRow(child, collectiviteId, referentielId)

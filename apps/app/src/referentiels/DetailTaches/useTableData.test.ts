@@ -210,7 +210,7 @@ describe('useTableData - Helper Functions', () => {
         actionType: ActionTypeEnum.SOUS_ACTION,
         score: {
           ...createMockAction().score,
-          avancement: StatutAvancementEnum.DETAILLE,
+          avancement: StatutAvancementEnum.DETAILLE_AU_POURCENTAGE,
         },
       });
 
@@ -459,14 +459,14 @@ describe('useTableData - actionMatchingFilter', () => {
 
     it('should filter détaillé sous-action', () => {
       const filter = createFilterFunction({
-        statut: [StatutAvancementEnum.DETAILLE],
+        statut: [StatutAvancementEnum.DETAILLE_AU_POURCENTAGE],
       });
 
       const sousAction = createMockAction({
         actionType: ActionTypeEnum.SOUS_ACTION,
         score: {
           ...createMockAction().score,
-          avancement: StatutAvancementEnum.DETAILLE,
+          avancement: StatutAvancementEnum.DETAILLE_AU_POURCENTAGE,
         },
       });
 
@@ -618,14 +618,14 @@ describe('useTableData - actionMatchingFilter', () => {
 
     it('should filter action with détaillé sous-action', () => {
       const filter = createFilterFunction({
-        statut: [StatutAvancementEnum.DETAILLE],
+        statut: [StatutAvancementEnum.DETAILLE_AU_POURCENTAGE],
       });
 
       const sousAction = createMockAction({
         actionType: ActionTypeEnum.SOUS_ACTION,
         score: {
           ...createMockAction().score,
-          avancement: StatutAvancementEnum.DETAILLE,
+          avancement: StatutAvancementEnum.DETAILLE_AU_POURCENTAGE,
         },
       });
 

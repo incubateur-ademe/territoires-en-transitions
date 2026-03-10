@@ -1,7 +1,7 @@
 import { getZodStringArrayFromQueryString } from '@tet/backend/utils/zod.utils';
 import {
   actionCategorieEnumSchema,
-  actionDefinitionSchemaCreate,
+  actionDefinitionSchema,
 } from '@tet/domain/referentiels';
 import z from 'zod';
 import * as zm from 'zod/mini';
@@ -11,26 +11,23 @@ export enum ImportActionDefinitionCoremeasureType {
 }
 
 export const importActionDefinitionSchema = z.object({
-  ...zm.partial(actionDefinitionSchemaCreate, {
-    actionId: true,
-    description: true,
-    nom: true,
-    contexte: true,
-    exemples: true,
-    ressources: true,
-    referentiel: true,
-    referentielId: true,
-    referentielVersion: true,
-    reductionPotentiel: true,
-    perimetreEvaluation: true,
-    exprScore: true,
-  }).shape,
+  ...zm.partial(
+    zm.omit(actionDefinitionSchema, {
+      actionType: true,
+      depth: true,
+      questionIds: true,
+    }),
+    {
+      exprScore: true,
+      preuve: true,
+      points: true,
+      pourcentage: true,
+      categorie: true,
+      modifiedAt: true,
+    }
+  ).shape,
 
-  categorie: z
-    .string()
-    .toLowerCase()
-    .pipe(actionCategorieEnumSchema)
-    .optional(),
+  categorie: z.string().toLowerCase().pipe(actionCategorieEnumSchema).nullish(),
   origine: z.string().optional(),
   labels: getZodStringArrayFromQueryString().optional(),
   coremeasure: z.string().optional(),
@@ -49,6 +46,6 @@ export const importActionDefinitionSchema = z.object({
   reductionDesc: z.string().optional(),
 });
 
-export type ImportActionDefinitionType = z.infer<
+export type ImportActionDefinition = z.infer<
   typeof importActionDefinitionSchema
 >;
