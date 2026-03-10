@@ -117,6 +117,34 @@ async listAxes(
 
 On fait le compromis ici de co-localiser la définition des codes erreur internes avec la définition des erreurs tRPC associées pour simplifier la maintenance et la lisibilité.
 
+### Traitement des transactions
+
+Lorsqu'un service utilise une **transaction**, on utilise le `TransactionManager` (`@tet/backend/utils/transaction/transaction-manager.service`) pour que les opérations soient correctement annulées en cas d'échec de l'une d'elles.
+
+**Deux modes d'utilisation :**
+
+1. **Transaction créée par le manager** : `executeSingle(operation)` ou `executeTransaction(operations)` — le manager crée et gère la transaction. Le rollback est automatique en cas de `throw` (échec d'une opération).
+2. **Transaction partagée** : `executeSingle(operation, tx)` ou `executeTransaction(operations, tx)` — le service appelant fournit la transaction via le paramètre `tx`. Le manager intercepte le `throw` et appelle `tx.rollback()` explicitement avant de renvoyer `failure(error)`, afin que le rollback soit déclenché dans tous les cas. **Note** : `tx.rollback()` lance une exception `TransactionRollbackError`. Dans ce cas, une exception est propagée à l'appelant à la place d'un `Result` en `failure`.
+
+Drizzle effectue un rollback implicite dès qu'une exception atteint la frontière de la transaction (le callback passé à `db.transaction()`). Le manager intercepte le `throw` lorsqu'un `tx` externe est fourni, ce qui empêche cette propagation — d'où l'appel explicite à `tx.rollback()` pour garantir l'annulation.
+
+**L'opération** passée au manager retourne des `Result<T, E>`. En cas de `failure`, le manager interrompt l'exécution par un `throw`, déclenche le rollback (selon le mode utilisé), puis renvoie `failure(error)` à l'appelant. L'opération gère elle-même les erreurs inattendues via un `try/catch` qui retourne `failure(defaultError)` (ex. `DATABASE_ERROR`).
+
+```typescript
+// Exemple : service avec transaction
+const operation = async (tx: Transaction) => {
+  try {
+    if (!isAllowed) return failure(ErrorEnum.UNAUTHORIZED);
+    const result = await repository.save(input, tx);
+    if (!result.success) return failure(result.error);
+    return success(result.data);
+  } catch {
+    return failure(ErrorEnum.DATABASE_ERROR);
+  }
+};
+return this.transactionManager.executeSingle(operation, tx);
+```
+
 ## Conséquences
 
 ### Bénéfices
