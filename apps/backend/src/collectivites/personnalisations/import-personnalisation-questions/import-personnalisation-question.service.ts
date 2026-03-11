@@ -6,7 +6,6 @@ import {
 import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import { questionChoixTable } from '@tet/backend/collectivites/personnalisations/models/question-choix.table';
 import { questionThematiqueTable } from '@tet/backend/collectivites/personnalisations/models/question-thematique.table';
-import { QuestionWithChoices } from '@tet/backend/collectivites/personnalisations/models/question-with-choices.dto';
 import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
 import BaseSpreadsheetImporterService from '@tet/backend/shared/services/base-spreadsheet-importer.service';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
@@ -18,6 +17,7 @@ import {
   QuestionChoixCreate,
   QuestionThematique,
   questionThematiqueSchema,
+  QuestionWithChoices,
 } from '@tet/domain/collectivites';
 import { sql } from 'drizzle-orm';
 import {

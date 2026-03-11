@@ -1,14 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { questionChoixTable } from '@tet/backend/collectivites/personnalisations/models/question-choix.table';
 import { questionThematiqueTable } from '@tet/backend/collectivites/personnalisations/models/question-thematique.table';
-import { QuestionWithChoices } from '@tet/backend/collectivites/personnalisations/models/question-with-choices.dto';
 import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
 import { questionActionTable } from '@tet/backend/referentiels/models/question-action.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { arrayOverlapsPatched } from '@tet/backend/utils/drizzle.utils';
-import { CollectiviteType, QuestionChoix } from '@tet/domain/collectivites';
+import {
+  CollectiviteType,
+  QuestionChoix,
+  QuestionWithChoices,
+} from '@tet/domain/collectivites';
 import { and, eq, inArray, isNull, or, SQL, sql } from 'drizzle-orm';
 import { ListPersonnalisationQuestionsInput } from './list-personnalisation-questions.input';
 
@@ -53,7 +56,7 @@ export default class ListPersonnalisationQuestionsService {
   ): Promise<QuestionWithChoices[]> {
     this.logger.log(
       `Fetching all personnalisation questions with choices${
-        input ? `and filtered by: ${JSON.stringify(input)}` : ''
+        input ? ` and filtered by: ${JSON.stringify(input)}` : ''
       }`
     );
 
@@ -62,8 +65,13 @@ export default class ListPersonnalisationQuestionsService {
     const actionsSubquery = this.getActionsSubquery();
 
     // Check filter conditions
-    const { actionIds, collectiviteId, questionIds, referentielIds, thematiqueId } =
-      input || {};
+    const {
+      actionIds,
+      collectiviteId,
+      questionIds,
+      referentielIds,
+      thematiqueId,
+    } = input || {};
     const conditions: (ReturnType<typeof eq> | SQL)[] = [];
 
     // questions liées à au moins une des actions

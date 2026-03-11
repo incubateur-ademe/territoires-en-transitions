@@ -951,3 +951,4 @@ delete-referentiels-old-views 2026-02-10T14:21:30Z Frederic Arnoux <frederic.arn
 evaluation/drop-save-reponse 2026-03-02T16:16:26Z Marc Rutkowski <marc@attractive-media.fr> # Supprime la fonction rpc save-reponse
 collectivite/type_add_prefectures 2026-03-03T10:00:00Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute les types prefecture_region et prefecture_departement
 utilisateur/drop_list_membres_views [utilisateur/test_create_user_sync_dcp] 2026-03-02T12:37:58Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime les vues et fonctions RPC obsolètes liées aux membres (collectivite_membres, retool_user_list, update_collectivite_membre_*)
+evaluation/question_choix_formulation_not_null 2026-03-10T17:50:33Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute une contrainte NOT NULL sur question_choix.formulation

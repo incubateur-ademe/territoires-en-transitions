@@ -8,6 +8,6 @@ export const questionChoixTable = pgTable('question_choix', {
     .references(() => questionTable.id, { onDelete: 'cascade' })
     .notNull(),
   ordonnancement: integer('ordonnancement'),
-  formulation: text('formulation'),
+  formulation: text('formulation').notNull(),
   version,
 });

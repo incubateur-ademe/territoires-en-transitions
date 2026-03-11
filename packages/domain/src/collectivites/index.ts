@@ -30,6 +30,7 @@ export * from './personnalisations/personnalisation-regle.schema';
 export * from './personnalisations/personnalisation.schema';
 export * from './personnalisations/question-choix.schema';
 export * from './personnalisations/question-thematique.schema';
+export * from './personnalisations/question-with-choices.schema';
 export * from './personnalisations/question.schema';
 export * from './personnalisations/reponse.schema';
 export * from './personne-tag-or-user.schema';
