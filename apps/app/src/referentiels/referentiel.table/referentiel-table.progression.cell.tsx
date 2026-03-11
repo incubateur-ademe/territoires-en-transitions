@@ -7,19 +7,14 @@ type Props = {
   row: ReferentielTableRow;
 };
 
-export const ReferentielTableProgressBarCell = ({ row }: Props) => {
-  const isAxeOrSousAxe = row.type === 'axe' || row.type === 'sous-axe';
+export const ReferentielTableProgressionCell = ({ row }: Props) => {
   return (
     <TableCell className={cn(actionTypeToClassName[row.type])}>
-      {isAxeOrSousAxe ? (
-        ''
-      ) : (
-        <ScoreProgressBar
-          id={row.id}
-          identifiant={row.identifiant}
-          type={row.type}
-        />
-      )}
+      <ScoreProgressBar
+        id={row.id}
+        identifiant={row.identifiant}
+        type={row.type}
+      />
     </TableCell>
   );
 };

@@ -5,7 +5,8 @@ import {
 } from '@tet/domain/referentiels';
 import { cn, TableCell } from '@tet/ui';
 import ActionStatutBadge from '../actions/action-statut/action-statut.badge';
-import { SelectActionStatut } from '../actions/action-statut/action-statut.select';
+import { ChooseActionStatutSelect } from '../actions/action-statut/choose-action-statut.select';
+import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';
 import { ReferentielTableRow } from './types';
 import { actionTypeToClassName } from './utils';
 
@@ -14,12 +15,16 @@ type Props = {
     ReferentielTableRow,
     StatutAvancementIncludingNonConcerne | undefined
   >;
+  updateActionStatut: ReturnType<typeof useUpdateActionStatut>['mutate'];
 };
 
-export const ReferentielTableStatutCell = ({ info }: Props) => {
+export const ReferentielTableStatutCell = ({
+  info,
+  updateActionStatut,
+}: Props) => {
   const data = info.row.original;
 
-  const canDisplayStatut =
+  const canHaveStatut =
     data.type === ActionTypeEnum.SOUS_ACTION ||
     data.type === ActionTypeEnum.TACHE;
 
@@ -30,34 +35,21 @@ export const ReferentielTableStatutCell = ({ info }: Props) => {
       edit={{
         renderOnEdit: ({ openState }) => {
           return (
-            <SelectActionStatut
+            <ChooseActionStatutSelect
               openState={openState}
               value={data.statut}
-              onChange={(statut) => {}}
+              onChange={(value) =>
+                updateActionStatut({ actionId: data.id, statut: value })
+              }
+              badgeSize="xs"
             />
           );
         },
       }}
     >
-      <>
-        {canDisplayStatut && (
-          <>
-            {data.statut ? (
-              <ActionStatutBadge
-                statut={data.statut}
-                size="xs"
-                className="m-auto"
-              />
-            ) : (
-              <ActionStatutBadge
-                statut="non_renseigne"
-                size="xs"
-                className="m-auto"
-              />
-            )}
-          </>
-        )}
-      </>
+      {canHaveStatut && (
+        <ActionStatutBadge statut={data.statut} size="xs" className="m-auto" />
+      )}
     </TableCell>
   );
 };
