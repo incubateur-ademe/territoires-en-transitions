@@ -6,7 +6,7 @@ export const listPersonnalisationQuestionsInputSchema = z
     actionIds: z.array(z.string()).optional(),
     collectiviteId: z.number().optional(),
     referentielIds: z.array(referentielIdEnumSchema).optional(),
-    thematiqueId: z.string().optional(),
+    thematiqueIds: z.array(z.string().min(1)).optional(),
     questionIds: z.array(z.string()).optional(),
   })
   .optional();
