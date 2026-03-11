@@ -128,17 +128,14 @@ export const SubActionStatutDropdown = ({
   // Mise à jour du statut lorsque une nouvelle valeur
   // est sélectionnée sur le dropdown
   const handleChange = (value: StatutAvancementIncludingNonConcerne) => {
-    const {
-      avancement,
-      concerne,
-      avancementDetaille: avancement_detaille,
-    } = statutParAvancement(value);
+    const { avancement, concerne, avancementDetaille } =
+      statutParAvancement(value);
 
     const argsToSave = {
       ...args,
       ...statut,
       avancement,
-      avancementDetaille: avancement_detaille,
+      avancementDetaille,
       concerne,
     };
 
@@ -154,7 +151,7 @@ export const SubActionStatutDropdown = ({
         setOpenSubActionModal(true);
         openDetailledState?.setIsOpen(true);
       } else {
-        setLocalAvancementDetaille(avancement_detaille);
+        setLocalAvancementDetaille(avancementDetaille);
 
         setOpenScoreDetaille(true);
         openDetailledState?.setIsOpen(true);
@@ -162,7 +159,7 @@ export const SubActionStatutDropdown = ({
     } else {
       // Mise à jour dans les cas de statuts autres que détaillé
       setLocalAvancement(value);
-      setLocalAvancementDetaille(avancement_detaille);
+      setLocalAvancementDetaille(avancementDetaille);
 
       // Sauvegarde du nouveau statut
       if (
@@ -174,7 +171,7 @@ export const SubActionStatutDropdown = ({
           avancementDetaille:
             actionDefinition.type === ActionTypeEnum.SOUS_ACTION
               ? localAvancementDetaille
-              : avancement_detaille,
+              : avancementDetaille,
         });
       } else {
         // Save the statut of the children to non_renseigne

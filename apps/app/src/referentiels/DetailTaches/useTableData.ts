@@ -1,13 +1,12 @@
 import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
-import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   ActionTypeEnum,
   reduceActions,
-  StatutAvancement,
   StatutAvancementEnum,
+  StatutAvancementIncludingNonConcerne,
 } from '@tet/domain/referentiels';
 import { TableOptions } from 'react-table';
-import { useSaveActionStatut } from '../actions/action-statut/use-action-statut';
+import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';
 import { useTable } from '../DEPRECATED_ReferentielTable/useReferentiel';
 import { actionNewToDeprecated } from '../DEPRECATED_scores.types';
 import { useReferentielId } from '../referentiel-context';
@@ -40,14 +39,16 @@ export type TableData = {
   /** pour remettre à jour les filtres */
   setFilters: (filters: TFilters) => void;
   /** pour changer le statut d'une tâche */
-  updateStatut: (action_id: string, value: string) => void;
+  updateStatut: (
+    action_id: string,
+    value: StatutAvancementIncludingNonConcerne
+  ) => void;
 };
 
 /**
  * Renvoie les données et paramètres de la table
  */
 export const useTableData: UseTableData = () => {
-  const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
 
   // filtre initial
@@ -61,7 +62,8 @@ export const useTableData: UseTableData = () => {
     referentielId,
   });
 
-  const { saveActionStatut, isLoading: isSaving } = useSaveActionStatut();
+  const { mutate: updateActionStatut, isPending: isSaving } =
+    useUpdateActionStatut();
 
   const actionMatchingFilterWrapper = (
     actionOld: ReturnType<typeof actionNewToDeprecated>
@@ -129,21 +131,13 @@ export const useTableData: UseTableData = () => {
     sousActionsCount,
     total,
     sousActionsTotal,
-    updateStatut: (actionId: string, avancement: string) => {
-      saveActionStatut({
-        collectiviteId,
+    updateStatut: (
+      actionId: string,
+      statut: StatutAvancementIncludingNonConcerne
+    ) => {
+      updateActionStatut({
         actionId,
-        // TODO: Move this logic to the backend
-        avancement:
-          avancement === StatutAvancementEnum.NON_CONCERNE
-            ? StatutAvancementEnum.NON_RENSEIGNE
-            : (avancement as StatutAvancement),
-        avancementDetaille:
-          avancement === StatutAvancementEnum.DETAILLE
-            ? [0.25, 0.5, 0.25]
-            : undefined,
-        concerne:
-          avancement === StatutAvancementEnum.NON_CONCERNE ? false : true,
+        statut,
       });
     },
   };

@@ -70,11 +70,6 @@ export const useSaveActionStatut = () => {
   const { isPending, mutate: saveActionStatut } = useMutation(
     trpc.referentiels.actions.updateStatut.mutationOptions({
       onSuccess: () => {
-        // Invalidate cache for all action statuts
-        queryClient.invalidateQueries({
-          queryKey: ['action_statut', collectiviteId],
-        });
-
         queryClient.invalidateQueries({
           queryKey: trpc.referentiels.snapshots.getCurrent.queryKey({
             collectiviteId,
@@ -100,11 +95,6 @@ export const useSaveActionStatuts = () => {
   return useMutation(
     trpc.referentiels.actions.updateStatuts.mutationOptions({
       onSuccess: () => {
-        // Invalidate cache for all action statuts
-        queryClient.invalidateQueries({
-          queryKey: ['action_statut', collectiviteId],
-        });
-
         queryClient.invalidateQueries({
           queryKey: trpc.referentiels.snapshots.getCurrent.queryKey({
             collectiviteId,

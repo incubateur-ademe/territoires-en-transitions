@@ -85,36 +85,3 @@ export const fetchActionStatutsList = async (
   );
   return { rows, count };
 };
-
-// met à jour l'état d'une tâche
-// TODO-SNAPSHOT mutualiser avec le hook similaire `useSaveActionStatut`
-export const updateTacheStatut = async ({
-  dbClient,
-  collectivite_id,
-  action_id,
-  avancement,
-  avancement_detaille,
-}: {
-  dbClient: DBClient;
-  collectivite_id: number | null;
-  action_id: string;
-  avancement: string;
-  avancement_detaille?: number[];
-}) => {
-  const { error, data } = await dbClient.from('action_statut').upsert(
-    {
-      collectivite_id,
-      action_id,
-      avancement,
-      avancement_detaille:
-        avancement_detaille ||
-        (avancement === 'detaille' ? [0.25, 0.5, 0.25] : undefined),
-      concerne: true,
-    } as never,
-    { onConflict: 'collectivite_id, action_id' }
-  );
-  if (error) {
-    throw new Error(error.message);
-  }
-  return data;
-};

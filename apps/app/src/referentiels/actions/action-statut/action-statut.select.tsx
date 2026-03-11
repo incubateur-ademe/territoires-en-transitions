@@ -5,8 +5,8 @@ import {
   statutAvancementIncludingNonConcerneEnumSchema,
 } from '@tet/domain/referentiels';
 import { SelectBadge } from '@tet/ui';
-import ActionStatutBadge, { statusToState } from './action-statut.badge';
 import { OpenState } from '@tet/ui/utils/types';
+import ActionStatutBadge, { statusToState } from './action-statut.badge';
 
 export type TSelectActionStatutProps = {
   // item sélectionné (`non_renseigne` si `undefined` ou `null`)
@@ -41,11 +41,7 @@ export const SelectActionStatut = (props: TSelectActionStatutProps) => {
   const currentValue = value || 'non_renseigne';
 
   if (disabled) {
-    return (
-      <ActionStatutBadge
-        statut={currentValue as StatutAvancementIncludingNonConcerne}
-      />
-    );
+    return <ActionStatutBadge statut={currentValue} />;
   }
 
   return (
