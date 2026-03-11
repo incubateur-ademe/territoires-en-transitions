@@ -826,6 +826,81 @@ describe('Lister les axes', () => {
     });
   });
 
+  describe('Lister les axes récursivement - Sous-actions exclues', () => {
+    test('Les sous-actions ne doivent pas apparaître dans les fiches des axes', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      // Créer un axe
+      const axe = await caller.plans.axes.create({
+        nom: 'Axe avec sous-actions',
+        collectiviteId: collectivite.id,
+        planId,
+        parent: planId,
+      });
+
+      // Créer une fiche action (parent)
+      const parentFiche = await caller.plans.fiches.create({
+        fiche: {
+          collectiviteId: collectivite.id,
+          titre: 'Action parente',
+        },
+      });
+
+      // Associer la fiche à l'axe
+      await caller.plans.fiches.update({
+        ficheId: parentFiche.id,
+        ficheFields: {
+          axes: [{ id: axe.id }],
+        },
+        isNotificationEnabled: false,
+      });
+
+      // Créer une sous-action (fiche avec parentId)
+      const sousAction = await caller.plans.fiches.create({
+        fiche: {
+          collectiviteId: collectivite.id,
+          titre: 'Sous-action',
+        },
+      });
+
+      // Associer la sous-action à l'axe et lui donner un parent
+      await caller.plans.fiches.update({
+        ficheId: sousAction.id,
+        ficheFields: {
+          axes: [{ id: axe.id }],
+          parentId: parentFiche.id,
+        },
+        isNotificationEnabled: false,
+      });
+
+      onTestFinished(async () => {
+        const cleanupCaller = router.createCaller({ user: editorUser });
+        await cleanupCaller.plans.fiches.delete({
+          ficheId: sousAction.id,
+          deleteMode: 'hard',
+        });
+        await cleanupCaller.plans.fiches.delete({
+          ficheId: parentFiche.id,
+          deleteMode: 'hard',
+        });
+        await cleanupCaller.plans.axes.delete({ axeId: axe.id });
+      });
+
+      const result = await caller.plans.axes.listRecursively({
+        parentId: planId,
+        collectiviteId: collectivite.id,
+      });
+
+      const axeResult = result.find((a) => a.id === axe.id);
+      expect(axeResult).toBeDefined();
+
+      // L'axe ne doit contenir que la fiche parente, pas la sous-action
+      expect(axeResult?.fiches).toContain(parentFiche.id);
+      expect(axeResult?.fiches).not.toContain(sousAction.id);
+      expect(axeResult?.fiches).toHaveLength(1);
+    });
+  });
+
   describe("Lister les axes récursivement - Droits d'accès", () => {
     test('Un utilisateur sans droits sur la collectivité ne peut pas lister les axes récursivement', async () => {
       const yoloDodoUser = await getAuthUser(YOLO_DODO);

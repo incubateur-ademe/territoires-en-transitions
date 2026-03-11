@@ -463,8 +463,6 @@ export class CountByService {
           collectiviteId,
           filters,
         });
-
-      console.log('fiches', fiches);
       return this.countByPropertyWithFiches(fiches, countByProperty, filters);
     } catch (error) {
       console.log('error', error);

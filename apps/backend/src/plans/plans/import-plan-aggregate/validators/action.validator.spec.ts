@@ -1,13 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { ImportFicheInput } from '../schemas/import-fiche.input';
-import { validateFiche } from './fiche.validator';
-describe('validateFiche', () => {
-  const createValidFiche = (
-    overrides?: Partial<ImportFicheInput>
-  ): ImportFicheInput =>
+import {
+  ImportActionInput,
+  ImportActionOrSousAction,
+} from '../schemas/import-action.input';
+import { validateAction } from './action.validator';
+describe('validateAction', () => {
+  const createValidAction = (
+    overrides?: Partial<ImportActionInput>
+  ): ImportActionOrSousAction =>
     ({
       axisPath: ['Axe 1'],
-      titre: 'Fiche valide',
+      titre: 'Action valide',
       description: 'Description',
       pilotes: [],
       referents: [],
@@ -16,86 +19,86 @@ describe('validateFiche', () => {
       financeurs: [],
       partenaires: [],
       ...overrides,
-    } as ImportFicheInput);
+    } as ImportActionOrSousAction);
 
   describe('Title validation', () => {
     it('should pass for a valid title', async () => {
-      const fiche = createValidFiche({ titre: 'Mon titre valide' });
+      const action = createValidAction({ titre: 'Mon titre valide' });
 
-      const result = await validateFiche(fiche);
+      const result = await validateAction(action);
 
       expect(result.success).toBe(true);
     });
 
     it('should fail when title is empty', async () => {
-      const fiche = createValidFiche({ titre: '' });
+      const action = createValidAction({ titre: '' });
 
-      const result = await validateFiche(fiche);
+      const result = await validateAction(action);
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error._tag).toBe('InvalidFicheTitre');
+        expect(result.error._tag).toBe('InvalidActionTitre');
         expect(result.error.message).toContain('titre');
-        if (result.error._tag === 'InvalidFicheTitre') {
+        if (result.error._tag === 'InvalidActionTitre') {
           expect(result.error.titre).toBe('');
         }
       }
     });
 
     it('should fail when title is only whitespace', async () => {
-      const fiche = createValidFiche({ titre: '   ' });
+      const action = createValidAction({ titre: '   ' });
 
-      const result = await validateFiche(fiche);
+      const result = await validateAction(action);
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error._tag).toBe('InvalidFicheTitre');
+        expect(result.error._tag).toBe('InvalidActionTitre');
       }
     });
 
     it('should fail when title is undefined', async () => {
-      const fiche = createValidFiche({ titre: undefined as any });
+      const action = createValidAction({ titre: undefined as any });
 
-      const result = await validateFiche(fiche);
+      const result = await validateAction(action);
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error._tag).toBe('InvalidFicheTitre');
+        expect(result.error._tag).toBe('InvalidActionTitre');
       }
     });
   });
 
   describe('Date validation', () => {
     it('should pass when dateDebut is before dateFin', async () => {
-      const fiche = createValidFiche({
+      const action = createValidAction({
         dateDebut: new Date('2024-01-01'),
         dateFin: new Date('2024-12-31'),
       });
 
-      const result = await validateFiche(fiche);
+      const result = await validateAction(action);
 
       expect(result.success).toBe(true);
     });
 
     it('should pass when dateDebut equals dateFin', async () => {
       const sameDate = new Date('2024-06-15');
-      const fiche = createValidFiche({
+      const action = createValidAction({
         dateDebut: sameDate,
         dateFin: sameDate,
       });
 
-      const result = await validateFiche(fiche);
+      const result = await validateAction(action);
 
       expect(result.success).toBe(true);
     });
 
     it('should fail when dateDebut is after dateFin', async () => {
-      const fiche = createValidFiche({
+      const action = createValidAction({
         dateDebut: new Date('2024-12-31'),
         dateFin: new Date('2024-01-01'),
       });
 
-      const result = await validateFiche(fiche);
+      const result = await validateAction(action);
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -109,34 +112,34 @@ describe('validateFiche', () => {
     });
 
     it('should pass when only dateDebut is provided', async () => {
-      const fiche = createValidFiche({
+      const action = createValidAction({
         dateDebut: new Date('2024-01-01'),
         dateFin: undefined,
       });
 
-      const result = await validateFiche(fiche);
+      const result = await validateAction(action);
 
       expect(result.success).toBe(true);
     });
 
     it('should pass when only dateFin is provided', async () => {
-      const fiche = createValidFiche({
+      const action = createValidAction({
         dateDebut: undefined,
         dateFin: new Date('2024-12-31'),
       });
 
-      const result = await validateFiche(fiche);
+      const result = await validateAction(action);
 
       expect(result.success).toBe(true);
     });
 
     it('should pass when no dates are provided', async () => {
-      const fiche = createValidFiche({
+      const action = createValidAction({
         dateDebut: undefined,
         dateFin: undefined,
       });
 
-      const result = await validateFiche(fiche);
+      const result = await validateAction(action);
 
       expect(result.success).toBe(true);
     });
@@ -144,25 +147,25 @@ describe('validateFiche', () => {
 
   describe('Budget validation', () => {
     it('should pass for a positive budget', async () => {
-      const fiche = createValidFiche({ budget: 10000 });
+      const action = createValidAction({ budget: 10000 });
 
-      const result = await validateFiche(fiche);
+      const result = await validateAction(action);
 
       expect(result.success).toBe(true);
     });
 
     it('should pass for a zero budget', async () => {
-      const fiche = createValidFiche({ budget: 0 });
+      const action = createValidAction({ budget: 0 });
 
-      const result = await validateFiche(fiche);
+      const result = await validateAction(action);
 
       expect(result.success).toBe(true);
     });
 
     it('should fail for a negative budget', async () => {
-      const fiche = createValidFiche({ budget: -5000 });
+      const action = createValidAction({ budget: -5000 });
 
-      const result = await validateFiche(fiche);
+      const result = await validateAction(action);
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -176,27 +179,51 @@ describe('validateFiche', () => {
     });
 
     it('should pass when budget is undefined', async () => {
-      const fiche = createValidFiche({ budget: undefined });
+      const action = createValidAction({ budget: undefined });
 
-      const result = await validateFiche(fiche);
+      const result = await validateAction(action);
+
+      expect(result.success).toBe(true);
+    });
+
+    it('should fail when budget exceeds max allowed value', async () => {
+      const action = createValidAction({ budget: 1_000_000_000_000 });
+
+      const result = await validateAction(action);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error._tag).toBe('InvalidBudget');
+        expect(result.error.message).toContain('valeur maximale');
+        if (result.error._tag === 'InvalidBudget') {
+          expect(result.error.value).toBe(1_000_000_000_000);
+          expect(result.error.reason).toContain('valeur maximale');
+        }
+      }
+    });
+
+    it('should pass when budget equals max allowed value', async () => {
+      const action = createValidAction({ budget: 999_999_999_999 });
+
+      const result = await validateAction(action);
 
       expect(result.success).toBe(true);
     });
   });
 
   describe('Instance governance validation', () => {
-    it('should pass for a fiche with instance governance', async () => {
-      const fiche = createValidFiche({
+    it('should pass for an action with instance governance', async () => {
+      const action = createValidAction({
         instanceGouvernance: ['Comité de pilotage'],
       });
 
-      const result = await validateFiche(fiche);
+      const result = await validateAction(action);
 
       expect(result.success).toBe(true);
     });
 
-    it('should pass for a fiche with multiple instance governance values', async () => {
-      const fiche = createValidFiche({
+    it('should pass for an action with multiple instance governance values', async () => {
+      const action = createValidAction({
         instanceGouvernance: [
           'Comité de pilotage',
           'Conseil municipal',
@@ -204,7 +231,7 @@ describe('validateFiche', () => {
         ],
       });
 
-      const result = await validateFiche(fiche);
+      const result = await validateAction(action);
 
       expect(result.success).toBe(true);
     });
@@ -212,25 +239,25 @@ describe('validateFiche', () => {
 
   describe('Multiple validation errors', () => {
     it('should return the first validation error encountered', async () => {
-      const fiche = createValidFiche({
+      const action = createValidAction({
         titre: '', // Invalid
         budget: -100, // Also invalid
       });
 
-      const result = await validateFiche(fiche);
+      const result = await validateAction(action);
 
       expect(result.success).toBe(false);
       if (!result.success) {
         // Should return title error first (as it's checked first)
-        expect(result.error._tag).toBe('InvalidFicheTitre');
+        expect(result.error._tag).toBe('InvalidActionTitre');
       }
     });
   });
 
-  describe('Valid fiche with all fields', () => {
-    it('should pass validation for a complete valid fiche', async () => {
-      const fiche = createValidFiche({
-        titre: 'Fiche complète',
+  describe('Valid action with all fields', () => {
+    it('should pass validation for a complete valid action', async () => {
+      const action = createValidAction({
+        titre: 'Action complète',
         description: 'Description complète',
         objectifs: 'Objectifs clairs',
         dateDebut: new Date('2024-01-01'),
@@ -245,7 +272,7 @@ describe('validateFiche', () => {
         instanceGouvernance: ['Comité de pilotage', 'Conseil municipal'],
       });
 
-      const result = await validateFiche(fiche);
+      const result = await validateAction(action);
 
       expect(result.success).toBe(true);
     });

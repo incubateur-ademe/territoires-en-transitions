@@ -7,6 +7,8 @@
  * Pattern Result to propagate errors up to the router.
  */
 
+import { ImportSousActionInput } from './schemas/import-action.input';
+
 /**
  * Base class for all import errors
  */
@@ -49,11 +51,11 @@ export class InvalidPlanType extends ImportError {
   }
 }
 
-export class InvalidFicheTitre extends ImportError {
-  readonly _tag = 'InvalidFicheTitre' as const;
+export class InvalidActionTitre extends ImportError {
+  readonly _tag = 'InvalidActionTitre' as const;
   constructor(public readonly titre: string, public readonly row?: number) {
     super(
-      `Le titre de la fiche est invalide${
+      `Le titre de l'action est invalide${
         row ? ` (ligne ${row})` : ''
       } : "${titre}"`
     );
@@ -83,6 +85,28 @@ export class InvalidBudget extends ImportError {
     public readonly row?: number
   ) {
     super(`Budget invalide${row ? ` (ligne ${row})` : ''} : ${reason}`);
+  }
+}
+
+export class MissingSousActionParent extends ImportError {
+  readonly _tag = 'MissingSousActionParent' as const;
+  constructor(
+    public readonly sousTitreAction: string,
+    public readonly row?: number
+  ) {
+    super(
+      `${
+        row !== undefined ? `Ligne ${row} : ` : ''
+      }'Titre de la sous-action' est renseigné mais 'Titre de l'action' est manquant.`
+    );
+  }
+}
+
+export class ParentActionNotFound extends ImportError {
+  readonly _tag = 'ParentActionNotFound' as const;
+  constructor(public readonly sousActions: ImportSousActionInput[]) {
+    const titres = sousActions.map((a) => `"${a.titre}"`).join(', ');
+    super(`Sous-action(s) sans action parente trouvée(s) : ${titres}`);
   }
 }
 
@@ -146,9 +170,11 @@ export type ImportErrors =
   | ExcelParsingError
   | InvalidExcelFormat
   | InvalidPlanType
-  | InvalidFicheTitre
+  | InvalidActionTitre
   | InvalidDateRange
   | InvalidBudget
+  | MissingSousActionParent
+  | ParentActionNotFound
   | EntityResolutionError
   | PlanCreationError
   | TransactionError
@@ -169,14 +195,16 @@ export function isClientError(error: ImportErrors): boolean {
     case 'ExcelParsingError':
     case 'InvalidExcelFormat':
     case 'InvalidPlanType':
-    case 'InvalidFicheTitre':
+    case 'InvalidActionTitre':
     case 'InvalidDateRange':
     case 'InvalidBudget':
+    case 'MissingSousActionParent':
+    case 'ParentActionNotFound':
     case 'TransformationError':
+    case 'PlanCreationError':
       return true;
 
     case 'EntityResolutionError':
-    case 'PlanCreationError':
     case 'TransactionError':
       return false;
 

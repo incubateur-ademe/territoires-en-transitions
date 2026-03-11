@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { ResolvedFicheEntities } from '../resolvers/resolve-entity.service';
-import { ImportFicheInput } from '../schemas/import-fiche.input';
-import { importFicheInputToUpdateFicheInput } from './import-fiche-input-to-update-fiche-input';
+import { ImportActionInput } from '../schemas/import-action.input';
+import { importActionInputToUpdateFicheInput } from './import-action-input-to-update-fiche-input';
 
-describe('importFicheInputToUpdateFicheInput', () => {
+describe('importActionInputToUpdateFicheInput', () => {
   const collectiviteId = 42;
 
   const createResolvedEntities = (
     overrides?: Partial<ResolvedFicheEntities>
   ): ResolvedFicheEntities => ({
-    titre: 'Test Fiche',
+    titre: 'Test Action',
     axisPath: ['Axe 1'],
     pilotes: [],
     referents: [],
@@ -21,11 +21,11 @@ describe('importFicheInputToUpdateFicheInput', () => {
     ...overrides,
   });
 
-  it('should map all fiche fields correctly', () => {
-    const fiche: Partial<ImportFicheInput> = {
-      titre: 'Fiche complète',
-      description: 'Description de la fiche',
-      objectifs: 'Objectifs de la fiche',
+  it('should map all action fields correctly', () => {
+    const action: Partial<ImportActionInput> = {
+      titre: 'Action complète',
+      description: 'Description de la action',
+      objectifs: 'Objectifs de la action',
       instanceGouvernance: ['Instance 1'],
       budget: 10000,
       status: 'À venir',
@@ -42,16 +42,16 @@ describe('importFicheInputToUpdateFicheInput', () => {
       referents: [{ tagId: 456 }],
     });
 
-    const result = importFicheInputToUpdateFicheInput(
-      fiche as ImportFicheInput,
+    const result = importActionInputToUpdateFicheInput(
+      action as ImportActionInput,
       resolvedEntities,
       collectiviteId
     );
 
     expect(result.collectiviteId).toBe(collectiviteId);
-    expect(result.titre).toBe('Fiche complète');
-    expect(result.description).toBe('Description de la fiche');
-    expect(result.objectifs).toBe('Objectifs de la fiche');
+    expect(result.titre).toBe('Action complète');
+    expect(result.description).toBe('Description de la action');
+    expect(result.objectifs).toBe('Objectifs de la action');
     expect(result.instanceGouvernance).toEqual([{ id: 1, nom: 'Instance 1' }]);
     expect(result.budgetPrevisionnel).toBe('10000');
     expect(result.statut).toBe('À venir');

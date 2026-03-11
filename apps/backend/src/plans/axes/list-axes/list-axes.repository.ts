@@ -102,7 +102,7 @@ export class ListAxesRepository {
           FROM parents a
           JOIN fiche_action_axe faa ON a.id = faa.axe_id
           JOIN fiche_action fa on fa.id = faa.fiche_id
-          WHERE fa.deleted = false
+          WHERE fa.deleted = false AND fa.parent_id IS NULL
           GROUP BY a.id
         )
       SELECT id, nom, description, fiches, ancestors, depth, sort_path

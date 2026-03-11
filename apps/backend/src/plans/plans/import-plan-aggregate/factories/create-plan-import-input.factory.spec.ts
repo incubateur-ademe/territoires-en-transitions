@@ -1,6 +1,7 @@
 import * as fs from 'node:fs';
 import * as path from 'path';
 import { parsePlanExcel } from '../parsers/excel-parser';
+import { isSousAction } from '../schemas/import-action.input';
 import { createImportPlanInput } from './create-plan-import-input.factory';
 
 const RESOURCES_DIR = path.join(__dirname, '../__fixtures__');
@@ -31,8 +32,8 @@ describe('Plan Transformer Tests', () => {
           expect(data.data.typeId).toBe(1);
           expect(data.data.pilotes).toEqual([]);
           expect(data.data.referents).toEqual([]);
-          expect(data.data.fiches.length).toBe(29);
-          expect(data.data.fiches[0]).toEqual({
+          expect(data.data.actions.length).toBe(29);
+          expect(data.data.actions[0]).toEqual({
             axisPath: [
               'Axe 1. COORDINATION DU CLS - AXE TRANSVERSAL',
               'Objectif stratégique 1. Impulser une dynamique participative',
@@ -84,7 +85,31 @@ Objectif opérationnel 3.1 : Evaluer le CLS avec la commission d’élus communa
         }
       }
     });
-    it('should successfully transform a valid plan Excel file having fiches with no axes', async () => {
+    it('should correctly extract sous-actions with parentActionTitre and titre from Excel', async () => {
+      const fileContent = readExcelFile('plan_with_sous_actions.xlsx');
+      const result = await parsePlanExcel(fileContent);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        const data = await createImportPlanInput(
+          result.data,
+          'test',
+          1,
+          [],
+          []
+        );
+        expect(data.success).toBe(true);
+        if (data.success) {
+          const sousActions = data.data.actions.filter(isSousAction);
+          expect(sousActions.length).toBeGreaterThan(0);
+          // The sous-action's own title is in titre
+          // and the parent action title is in parentActionTitre
+          expect(sousActions[0].titre).toBeTruthy();
+          expect(sousActions[0].parentActionTitre).toBeTruthy();
+        }
+      }
+    });
+
+    it('should successfully transform a valid plan Excel file having actions with no axes', async () => {
       const fileContent = readExcelFile(
         'plan_with_fiche_with_and_without_axe.xlsx'
       );
@@ -104,10 +129,11 @@ Objectif opérationnel 3.1 : Evaluer le CLS avec la commission d’élus communa
           expect(data.data.typeId).toBe(1);
           expect(data.data.pilotes).toEqual([]);
           expect(data.data.referents).toEqual([]);
-          expect(data.data.fiches.length).toBe(46);
-          const [firstFicheWithAxis, secondFicheWithoutAxis] = data.data.fiches;
-          expect(firstFicheWithAxis.axisPath).toEqual(['Axe 1', 'Sous-Axe 1']);
-          expect(secondFicheWithoutAxis.axisPath).toEqual(undefined);
+          expect(data.data.actions.length).toBe(46);
+          const [firstActionWithAxis, secondActionWithoutAxis] =
+            data.data.actions;
+          expect(firstActionWithAxis.axisPath).toEqual(['Axe 1', 'Sous-Axe 1']);
+          expect(secondActionWithoutAxis.axisPath).toEqual(undefined);
         }
       }
     });
