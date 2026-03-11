@@ -23,6 +23,10 @@ export class CrispService {
   private readonly FEEDBACK_REGEXP = /^feedback(?:\s*(\d*)([jh]))?/i;
   private readonly DEFAULT_FEEDBACK_DAYS = 2;
 
+  // cache des messageKeys en cours de traitement pour éviter les doublons en cas
+  // d'appels en parallèle (présuppose que tools est déployé sur seule instance)
+  private readonly processingMessages = new Set<string>();
+
   constructor(
     private readonly notionBugCreatorService: NotionBugCreatorService,
     private readonly configurationService: ConfigurationService,
@@ -96,31 +100,43 @@ export class CrispService {
       );
     }
 
-    const content = body.data.content?.trim() || '';
-    const ticketMatch = content.match(this.TICKET_REGEXP);
-    const feedbackMatch = content.match(this.FEEDBACK_REGEXP);
-    if (ticketMatch) {
-      return await this.handleTicketCreationRequest(
-        websiteId,
-        sessionId,
-        messageId,
-        ticketMatch
-      );
-    } else if (feedbackMatch) {
-      return await this.handleFeedbackCreationRequest(
-        websiteId,
-        sessionId,
-        messageId,
-        feedbackMatch
-      );
-    } else {
-      this.logger.log(
-        `Ignoring message received for session ${sessionId} on website ${websiteId} because it doesn't match ticket or feedback`
-      );
+    const messageKey = `${websiteId}-${sessionId}-${messageId}`;
+    if (this.processingMessages.has(messageKey)) {
+      this.logger.log(`Ignoring duplicate call for message ${messageKey}`);
+      return;
+    }
+    this.processingMessages.add(messageKey);
 
-      return {
-        type: 'none',
-      };
+    try {
+      const content = body.data.content?.trim() || '';
+      const ticketMatch = content.match(this.TICKET_REGEXP);
+      const feedbackMatch = content.match(this.FEEDBACK_REGEXP);
+      if (ticketMatch) {
+        return await this.handleTicketCreationRequest(
+          websiteId,
+          sessionId,
+          messageId,
+          ticketMatch
+        );
+      } else if (feedbackMatch) {
+        return await this.handleFeedbackCreationRequest(
+          websiteId,
+          sessionId,
+          messageId,
+          feedbackMatch
+        );
+      } else {
+        this.logger.log(
+          `Ignoring message received for session ${sessionId} on website ${websiteId} because it doesn't match ticket or feedback`
+        );
+
+        return {
+          type: 'none',
+        };
+      }
+    } finally {
+      // continue à éviter les doublons tout en limitant la taille du cache
+      setTimeout(() => this.processingMessages.delete(messageKey), 30_000);
     }
   }
 
