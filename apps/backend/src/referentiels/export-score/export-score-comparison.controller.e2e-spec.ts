@@ -1,18 +1,69 @@
 import { INestApplication } from '@nestjs/common';
-import { insertFixturePourScoreIndicatif } from '@tet/backend/test';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { SnapshotsService } from '@tet/backend/referentiels/snapshots/snapshots.service';
+import {
+  getAuthUserFromUserCredentials,
+  insertFixturePourScoreIndicatif,
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { Collectivite } from '@tet/domain/collectivites';
+import {
+  findActionInTree,
+  ReferentielId,
+  SnapshotJalonEnum,
+} from '@tet/domain/referentiels';
+import { CollectiviteRole } from '@tet/domain/users';
 import { CellValue, Workbook } from 'exceljs';
 import { DateTime } from 'luxon';
 import { default as request } from 'supertest';
-import { getTestApp } from '../../../test/app-utils';
+import { getTestApp, getTestRouter } from '../../../test/app-utils';
+import { cleanupReferentielActionStatutsAndLabellisations } from '../update-action-statut/referentiel-action-statut.test-fixture';
 
 describe('Referentiels scoring routes', () => {
   let app: INestApplication;
   let databaseService: DatabaseService;
+  let router: TrpcRouter;
+  let snapshotsService: SnapshotsService;
+  let collectivite: Collectivite;
+  let editionUser: AuthenticatedUser;
 
   beforeAll(async () => {
     app = await getTestApp();
     databaseService = app.get(DatabaseService);
+    router = await getTestRouter(app);
+    snapshotsService = app.get(SnapshotsService);
+
+    const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(
+      databaseService,
+      {
+        user: {
+          role: CollectiviteRole.EDITION,
+        },
+      }
+    );
+    collectivite = testCollectiviteAndUserResult.collectivite;
+    const editionUserFixture = testCollectiviteAndUserResult.user;
+    editionUser = getAuthUserFromUserCredentials(editionUserFixture);
+
+    return async () => {
+      await cleanupReferentielActionStatutsAndLabellisations(
+        databaseService,
+        collectivite.id
+      );
+      await testCollectiviteAndUserResult.cleanup();
+      if (app) {
+        await app.close();
+      }
+    };
+  });
+
+  afterEach(async () => {
+    await cleanupReferentielActionStatutsAndLabellisations(
+      databaseService,
+      collectivite.id
+    );
   });
 
   test(`Export du snapshot pour un utilisateur non authentifié`, async () => {
@@ -27,6 +78,81 @@ describe('Referentiels scoring routes', () => {
       })
       .expect(401);
   });
+
+  test(`Export du snapshot avec excludeDesactive`, async () => {
+    const referentielId: ReferentielId = 'eci';
+
+    const caller = router.createCaller({ user: editionUser });
+
+    await caller.collectivites.personnalisations.setReponse({
+      collectiviteId: collectivite.id,
+      questionId: 'dechets_1',
+      reponse: false,
+    });
+
+    const baseSnapshot = await snapshotsService.computeAndUpsert({
+      collectiviteId: collectivite.id,
+      referentielId,
+      jalon: SnapshotJalonEnum.COURANT,
+    });
+    const actionIdentifiant = '2.2';
+    const action = findActionInTree(
+      [baseSnapshot.scoresPayload.scores],
+      (a) => a.identifiant === actionIdentifiant
+    );
+    // la personnalisation a désactivé l'action
+    expect(action?.score?.desactive).toBe(true);
+
+    const collectiviteId = collectivite.id;
+    const snapshotRef = SnapshotsService.SCORE_COURANT_SNAPSHOT_REF;
+
+    // Default behavior: excludeDesactive omitted => row present
+    const responseWithoutFlag = await request(app.getHttpServer())
+      .get(
+        `/collectivites/${collectiviteId}/referentiels/${referentielId}/score-snapshots/export-comparison`
+      )
+      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .query({
+        exportFormat: 'excel',
+        isAudit: 'false',
+        snapshotReferences: [snapshotRef],
+      })
+      .expect(200)
+      .responseType('blob');
+
+    const wb1 = new Workbook();
+    await wb1.xlsx.load(responseWithoutFlag.body as ArrayBuffer);
+    const ws1 = wb1.getWorksheet(1);
+    const rows1 = ws1?.getRows(0, 500) || [];
+    const foundWithoutFlag = rows1.find(
+      (r) => (r.values as CellValue[])?.[1] === actionIdentifiant
+    );
+    expect(foundWithoutFlag).toBeDefined();
+
+    // With flag: row must be absent
+    const responseWithFlag = await request(app.getHttpServer())
+      .get(
+        `/collectivites/${collectiviteId}/referentiels/${referentielId}/score-snapshots/export-comparison`
+      )
+      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .query({
+        exportFormat: 'excel',
+        isAudit: 'false',
+        snapshotReferences: [snapshotRef],
+        excludeDesactive: 'true',
+      })
+      .expect(200)
+      .responseType('blob');
+
+    const wb2 = new Workbook();
+    await wb2.xlsx.load(responseWithFlag.body as ArrayBuffer);
+    const ws2 = wb2.getWorksheet(1);
+    const rows2 = ws2?.getRows(0, 500) || [];
+    const foundWithFlag = rows2.find(
+      (r) => (r.values as CellValue[])?.[1] === actionIdentifiant
+    );
+    expect(foundWithFlag).toBeUndefined();
+  }, 30000);
 
   test(`Export du snapshot pour un utilisateur anonyme`, async () => {
     const responseSnapshotExport = await request(app.getHttpServer())
@@ -209,12 +335,6 @@ describe('Referentiels scoring routes', () => {
     );
     expect(exportFileSize / 1000).toBeCloseTo(expectedExportSize, 0);
   }, 30000);
-
-  afterAll(async () => {
-    if (app) {
-      await app.close();
-    }
-  });
 
   test(`Export du snapshot avec un score indicatif`, async () => {
     const collectiviteId = 2; // sur la 1 CAE est verrouillé par une demande de labellisation
@@ -447,10 +567,4 @@ Pourcentage indicatif Fait en 2020 de 100% calculé si 300 kg/hab en 2020 (sourc
       '',
     ]);
   }, 30000);
-
-  afterAll(async () => {
-    if (app) {
-      await app.close();
-    }
-  });
 });

@@ -32,6 +32,7 @@ export * from './scores/action-score.schema';
 export * from './scores/action-with-score.schema';
 export * from './scores/can-update-action-statut.rules';
 export * from './scores/can-update-action-statut.rules-errors';
+export * from './scores/export-score-comparison.request';
 export * from './scores/score-compute-mode.enum.schema';
 export * from './scores/score-indicatif.schema';
 export * from './scores/score-snapshot-action-scores-payload.schema';

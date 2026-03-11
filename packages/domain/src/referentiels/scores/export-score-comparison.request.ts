@@ -1,4 +1,4 @@
-import z from 'zod';
+import { z } from 'zod';
 
 export const exportScoreComparisonRequestSchema = z.object({
   exportFormat: z.enum(['excel', 'csv']),
@@ -7,6 +7,10 @@ export const exportScoreComparisonRequestSchema = z.object({
     .transform((value) => value.split(','))
     .optional(),
   isAudit: z
+    .string()
+    .transform((value) => value === 'true')
+    .optional(),
+  excludeDesactive: z
     .string()
     .transform((value) => value === 'true')
     .optional(),
