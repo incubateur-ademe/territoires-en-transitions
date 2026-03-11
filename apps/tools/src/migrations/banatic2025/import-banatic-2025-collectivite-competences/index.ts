@@ -3,21 +3,21 @@
  * Import Banatic 2025 competences per collectivité from the groupements CSV.
  *
  * Prerequisites:
- * - banatic_2025_competence populated (run import-banatic-2025-codes.ts first).
+ * - banatic_2025_competence populated (run import-banatic-2025-codes first).
  *
  * Usage:
- *   SUPABASE_DATABASE_URL="postgresql://..." tsx apps/tools/src/migrations/import-banatic-2025-collectivite-competences.ts [path/to/groupements.csv]
+ *   SUPABASE_DATABASE_URL="postgresql://..." tsx apps/tools/src/migrations/banatic2025/import-banatic-2025-collectivite-competences/index.ts [path/to/groupements.csv]
  */
 
 import { collectiviteBanatic2025CompetenceTable } from '@tet/backend/collectivites/shared/models/collectivite-banatic-2025-competence.table';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { banatic2025CompetenceTable } from '@tet/backend/shared/models/banatic-2025-competence.table';
 import { collectiviteTypeEnum } from '@tet/domain/collectivites';
-import { parse } from 'csv-parse/sync';
-import { eq } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { z } from 'zod';
-import { getMigrationDbAndCsvPath } from './migration-env';
+import { findCollectiviteIdBySiren } from '../collectivite-db';
+import { getCsvPathFromArgv, parseCsvRecords, readCsvFile } from '../csv';
+import { getDatabase } from '../db';
 
 const COL_SIREN = 3; // D
 const COL_NATURE_JURIDIQUE = 5; // F
@@ -27,17 +27,6 @@ const COL_NOM = 4; // E
 const COL_POPULATION = 39;
 
 type ColumnIndexToBanaticCode = Map<number, number>;
-
-const parseCsvContent = (content: string): Record<string, string>[] =>
-  parse(content, {
-    columns: true,
-    delimiter: ';',
-    skip_empty_lines: true,
-    trim: true,
-    relax_column_count: true,
-    bom: true,
-    quote: '"',
-  }) as Record<string, string>[];
 
 const getHeaders = (records: Record<string, string>[]): string[] =>
   records[0] ? Object.keys(records[0]) : [];
@@ -124,18 +113,6 @@ const rowToParsed = (
     competences: rowToCompetences(row, headers, columnIndexToCode),
   });
 
-const findCollectiviteIdBySiren = async (
-  db: NodePgDatabase,
-  siren: string
-): Promise<number | null> => {
-  const [row] = await db
-    .select({ id: collectiviteTable.id })
-    .from(collectiviteTable)
-    .where(eq(collectiviteTable.siren, siren))
-    .limit(1);
-  return row?.id ?? null;
-};
-
 const createCollectivite = async (
   db: NodePgDatabase,
   parsed: ParsedRow
@@ -202,60 +179,68 @@ const insertCompetencesForCollectivite = async (
 };
 
 const USAGE =
-  'tsx apps/tools/src/migrations/import-banatic-2025-collectivite-competences.ts [path/to/groupements.csv]';
+  'tsx apps/tools/src/migrations/banatic2025/import-banatic-2025-collectivite-competences/index.ts [path/to/groupements.csv]';
 
 async function main() {
-  const { db, pool, fileContent } = getMigrationDbAndCsvPath(
-    'import-banatic-2025-collectivite-competences',
-    USAGE
+  const csvPath = getCsvPathFromArgv(2, USAGE);
+  const fileContent = readCsvFile(csvPath);
+  const { db, pool } = getDatabase(
+    'import-banatic-2025-collectivite-competences'
   );
 
-  const competences = await db
-    .select({
-      competenceCode: banatic2025CompetenceTable.competenceCode,
-      intitule: banatic2025CompetenceTable.intitule,
-    })
-    .from(banatic2025CompetenceTable);
+  try {
+    const competences = await db
+      .select({
+        competenceCode: banatic2025CompetenceTable.competenceCode,
+        intitule: banatic2025CompetenceTable.intitule,
+      })
+      .from(banatic2025CompetenceTable);
 
-  const allRecords = parseCsvContent(fileContent);
-  const headers = getHeaders(allRecords);
-  const columnIndexToCode = buildColumnIndexToBanaticCode(headers, competences);
-  const records = firstRowPerSiren(allRecords, headers[COL_SIREN]);
+    const allRecords = parseCsvRecords(fileContent, {
+      delimiter: ';',
+      bom: true,
+    });
+    const headers = getHeaders(allRecords);
+    const columnIndexToCode = buildColumnIndexToBanaticCode(
+      headers,
+      competences
+    );
+    const records = firstRowPerSiren(allRecords, headers[COL_SIREN]);
 
-  console.log(
-    `${allRecords.length} rows, ${records.length} unique SIREN, ${columnIndexToCode.size} competence columns.`
-  );
+    console.log(
+      `${allRecords.length} rows, ${records.length} unique SIREN, ${columnIndexToCode.size} competence columns.`
+    );
 
-  const { upserted, created, skipped } = await records.reduce(
-    async (accPromise, row) => {
-      const acc = await accPromise;
+    let upserted = 0;
+    let created = 0;
+    let skipped = 0;
+
+    for (const row of records) {
       const parsed = rowToParsed(row, headers, columnIndexToCode);
-      if (!parsed.siren) return { ...acc, skipped: acc.skipped + 1 };
+      if (!parsed.siren) {
+        skipped++;
+        continue;
+      }
       const { collectiviteId, created: c } = await ensureCollectiviteId(
         db,
         parsed
       );
-
-      if (collectiviteId === null) return { ...acc, skipped: acc.skipped + 1 };
       const n = await insertCompetencesForCollectivite(
         db,
         collectiviteId,
         parsed.competences
       );
-      return {
-        upserted: acc.upserted + n,
-        created: acc.created + (c ? 1 : 0),
-        skipped: acc.skipped,
-      };
-    },
-    Promise.resolve({ upserted: 0, created: 0, skipped: 0 })
-  );
+      upserted += n;
+      if (c) created++;
+    }
 
-  console.log(
-    `   Upserted ${upserted} (collectivite_id, competence_code); ${created} new collectivite(s); ${skipped} skipped.`
-  );
-  console.log('✅ Done.');
-  await pool.end();
+    console.log(
+      `   Upserted ${upserted} (collectivite_id, competence_code); ${created} new collectivite(s); ${skipped} skipped.`
+    );
+    console.log('✅ Done.');
+  } finally {
+    await pool.end();
+  }
 }
 
 main().catch((err) => {
