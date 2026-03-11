@@ -8,6 +8,7 @@ describe('validateFiche', () => {
     ({
       axisPath: ['Axe 1'],
       titre: 'Fiche valide',
+      sousTitreAction: null,
       description: 'Description',
       pilotes: [],
       referents: [],
@@ -202,6 +203,71 @@ describe('validateFiche', () => {
           'Conseil municipal',
           'Commission de suivi',
         ],
+      });
+
+      const result = await validateFiche(fiche);
+
+      expect(result.success).toBe(true);
+    });
+  });
+
+  describe('Sous-action validation', () => {
+    it('should fail when sousTitreAction is set but titre is empty', async () => {
+      const fiche = createValidFiche({
+        titre: '' as any,
+        sousTitreAction: 'Sous-action 1',
+      });
+
+      const result = await validateFiche(fiche);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error._tag).toBe('MissingSousActionParent');
+        expect(result.error.message).toContain("'Titre de la sous-action' est renseigné");
+        expect(result.error.message).toContain("'Titre de l'action' est manquant");
+        if (result.error._tag === 'MissingSousActionParent') {
+          expect(result.error.sousTitreAction).toBe('Sous-action 1');
+        }
+      }
+    });
+
+    it('should pass when sousTitreAction is null', async () => {
+      const fiche = createValidFiche({ sousTitreAction: null });
+
+      const result = await validateFiche(fiche);
+
+      expect(result.success).toBe(true);
+    });
+
+    it('should pass when both titre and sousTitreAction are set', async () => {
+      const fiche = createValidFiche({
+        titre: 'Action parente',
+        sousTitreAction: 'Sous-action 1',
+      });
+
+      const result = await validateFiche(fiche);
+
+      expect(result.success).toBe(true);
+    });
+
+    it('should fail when sousTitreAction is set but titre is only whitespace', async () => {
+      const fiche = createValidFiche({
+        titre: '   ' as any,
+        sousTitreAction: 'Sous-action 1',
+      });
+
+      const result = await validateFiche(fiche);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error._tag).toBe('MissingSousActionParent');
+      }
+    });
+
+    it('should pass when sousTitreAction is whitespace and titre is valid', async () => {
+      const fiche = createValidFiche({
+        titre: 'Action parente',
+        sousTitreAction: '   ',
       });
 
       const result = await validateFiche(fiche);

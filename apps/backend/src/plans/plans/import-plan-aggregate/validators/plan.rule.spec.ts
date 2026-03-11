@@ -158,6 +158,78 @@ describe('validateImportedPlan', () => {
     });
   });
 
+  describe('Parent action existence validation', () => {
+    it('should pass when a sous-action has a dedicated parent row', async () => {
+      const fiches = [
+        createValidFiche({ axisPath: ['Axe 1'], titre: 'Action parente', sousTitreAction: null }),
+        createValidFiche({ axisPath: ['Axe 1'], titre: 'Action parente', sousTitreAction: 'Sous-action 1.1' }),
+      ];
+      const plan = createValidPlan({ fiches });
+
+      const result = await validateImportPlanInput(plan);
+
+      expect(result.success).toBe(true);
+    });
+
+    it('should fail when a sous-action has no dedicated parent row', async () => {
+      const fiches = [
+        createValidFiche({ axisPath: ['Axe 1'], titre: 'Action parente', sousTitreAction: 'Sous-action 1.1' }),
+      ];
+      const plan = createValidPlan({ fiches });
+
+      const result = await validateImportPlanInput(plan);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error._tag).toBe('ParentActionNotFound');
+        expect(result.error.message).toContain('Action parente');
+        expect(result.error.message).toContain('Sous-action 1.1');
+      }
+    });
+
+    it('should fail when parent row is in a different axis than the sous-action', async () => {
+      const fiches = [
+        createValidFiche({ axisPath: ['Axe 1'], titre: 'Action parente', sousTitreAction: null }),
+        createValidFiche({ axisPath: ['Axe 2'], titre: 'Action parente', sousTitreAction: 'Sous-action 1.1' }),
+      ];
+      const plan = createValidPlan({ fiches });
+
+      const result = await validateImportPlanInput(plan);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error._tag).toBe('ParentActionNotFound');
+      }
+    });
+
+    it('should pass when multiple sous-actions share a dedicated parent row in same axis', async () => {
+      const fiches = [
+        createValidFiche({ axisPath: ['Axe 1'], titre: 'Action parente', sousTitreAction: null }),
+        createValidFiche({ axisPath: ['Axe 1'], titre: 'Action parente', sousTitreAction: 'Sous-action 1.1' }),
+        createValidFiche({ axisPath: ['Axe 1'], titre: 'Action parente', sousTitreAction: 'Sous-action 1.2' }),
+      ];
+      const plan = createValidPlan({ fiches });
+
+      const result = await validateImportPlanInput(plan);
+
+      expect(result.success).toBe(true);
+    });
+
+    it('should pass when same parent title exists in different axes each with their own dedicated row', async () => {
+      const fiches = [
+        createValidFiche({ axisPath: ['Axe 1'], titre: 'Action parente', sousTitreAction: null }),
+        createValidFiche({ axisPath: ['Axe 1'], titre: 'Action parente', sousTitreAction: 'Sous-action A' }),
+        createValidFiche({ axisPath: ['Axe 2'], titre: 'Action parente', sousTitreAction: null }),
+        createValidFiche({ axisPath: ['Axe 2'], titre: 'Action parente', sousTitreAction: 'Sous-action B' }),
+      ];
+      const plan = createValidPlan({ fiches });
+
+      const result = await validateImportPlanInput(plan);
+
+      expect(result.success).toBe(true);
+    });
+  });
+
   describe('Combined validation', () => {
     it('should return plan error before fiche errors', async () => {
       const fiche = createValidFiche({ titre: '' }); // Invalid fiche

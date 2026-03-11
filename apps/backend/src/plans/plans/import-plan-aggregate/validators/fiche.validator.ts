@@ -5,12 +5,17 @@ import {
   InvalidBudget,
   InvalidDateRange,
   InvalidFicheTitre,
+  MissingSousActionParent,
 } from '../import.errors';
 import { ImportFicheInput } from '../schemas/import-fiche.input';
 
 const validateBasicFields = (
   fiche: ImportFicheInput
 ): Result<true, ImportErrors> => {
+  if (fiche.sousTitreAction != null && !fiche.titre?.trim()) {
+    return failure(new MissingSousActionParent(fiche.sousTitreAction));
+  }
+
   if (!fiche.titre?.trim()) {
     return failure(new InvalidFicheTitre(fiche.titre || ''));
   }

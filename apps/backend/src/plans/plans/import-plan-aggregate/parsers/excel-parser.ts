@@ -11,26 +11,49 @@ import ExcelJS, {
   CellSharedFormulaValue,
   CellValue,
 } from 'exceljs';
-import { ImportFicheInput } from '../schemas/import-fiche.input';
 import { extractTextFromRichText } from '../utils/rich-text.utils';
 
+/**
+ * All column names that can appear in a parsed Excel row.
+ * Listed explicitly (no dependency on ImportFicheInput) to avoid a circular
+ * import with import-fiche.input.ts, which in turn imports ParsedRow.
+ */
 type ColumnKeys =
-  | keyof Omit<ImportFicheInput, 'axisPath'>
   | 'Axe'
   | 'SousAxe'
   | 'SousSousAxe'
+  | 'titre'
+  | 'sousTitreAction'
+  | 'description'
+  | 'instanceGouvernance'
+  | 'objectifs'
+  | 'indicateurs'
+  | 'structures'
+  | 'resources'
+  | 'partenaires'
+  | 'services'
+  | 'pilotes'
+  | 'referents'
+  | 'participation'
+  | 'financements'
   | 'Financeur1'
   | 'Montant1'
   | 'Financeur2'
   | 'Montant2'
   | 'Financeur3'
-  | 'Montant3';
+  | 'Montant3'
+  | 'budget'
+  | 'status'
+  | 'priorite'
+  | 'dateDebut'
+  | 'dateFin';
 
 const OrderedColumns: Array<{ name: ColumnKeys; label: string }> = [
   { name: 'Axe', label: 'Axe (x)' },
   { name: 'SousAxe', label: 'Sous-axe (x.x)' },
   { name: 'SousSousAxe', label: 'Sous-sous axe (x.x.x)' },
   { name: 'titre', label: "Titre de l'action" },
+  { name: 'sousTitreAction', label: 'Titre de la sous-action' },
   { name: 'description', label: 'Descriptif' },
   { name: 'instanceGouvernance', label: 'Instances de gouvernance' },
   { name: 'objectifs', label: 'Objectifs' },
