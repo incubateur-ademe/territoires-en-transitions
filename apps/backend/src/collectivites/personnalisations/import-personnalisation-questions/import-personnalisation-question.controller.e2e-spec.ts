@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import { QuestionWithChoices } from '@tet/backend/collectivites/personnalisations/models/question-with-choices.dto';
+import { QuestionWithChoices } from '@tet/domain/collectivites';
 import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
 import { getTestApp, getTestDatabase } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';

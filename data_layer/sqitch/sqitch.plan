@@ -955,3 +955,5 @@ collectivite/preferences 2026-02-24T12:00:00Z System Administrator <root@localho
 @v4.98.0 2026-03-23T16:49:20Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Tag le plan en v4.98.0
 
 collectivite/type_add_service_public [collectivite/type_add_prefectures] 2026-03-31T10:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Ajoute le type service_public
+
+evaluation/question_choix_formulation_not_null 2026-03-10T17:50:33Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute une contrainte NOT NULL sur question_choix.formulation
