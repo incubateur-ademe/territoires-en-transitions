@@ -6,15 +6,15 @@
  * Rows without a valid Code Compétence (e.g. C1005) are skipped.
  *
  * Usage:
- *   SUPABASE_DATABASE_URL="postgresql://..." tsx apps/tools/src/migrations/import-banatic-2025-codes.ts [path/to/1_code_banatic_2025.csv]
+ *   SUPABASE_DATABASE_URL="postgresql://..." tsx apps/tools/src/migrations/banatic2025/import-banatic-2025-codes/index.ts [path/to/1_code_banatic_2025.csv]
  *
  * Default path: ~/Downloads/source_banatic_2025/1_code_banatic_2025.csv
  */
 
 import { banatic2025CompetenceTable } from '@tet/backend/shared/models/banatic-2025-competence.table';
-import { parse } from 'csv-parse/sync';
 import { z } from 'zod';
-import { getMigrationDbAndCsvPath } from './migration-env';
+import { getCsvPathFromArgv, parseCsvRecords, readCsvFile } from '../csv';
+import { getDatabase } from '../db';
 
 const codeCompetenceSchema = z
   .string()
@@ -33,16 +33,6 @@ const CSV_COLUMNS = {
   intitule: 'Intitulé BANATIC',
 } as const;
 
-/** Parse CSV content with csv-parse (comma, quoted fields). */
-const parseCsvRecords = (content: string): Record<string, string>[] =>
-  parse(content, {
-    columns: true,
-    delimiter: ',',
-    skip_empty_lines: true,
-    trim: true,
-    relax_column_count: true,
-  }) as Record<string, string>[];
-
 /** Extract code and intitulé from a csv-parse record. */
 const recordToRaw = (
   record: Record<string, string>
@@ -53,12 +43,6 @@ const recordToRaw = (
   if (!code || !intitule) return null;
   return { codeCompetence: code, intituleBanatic: intitule };
 };
-
-/** Validate raw row with Zod. */
-const validateRow = (raw: {
-  codeCompetence: string;
-  intituleBanatic: string;
-}) => csvRowSchema.safeParse(raw);
 
 /** Convert code string (C1005) to integer (1005). */
 const codeToInteger = (code: string): number => {
@@ -75,29 +59,27 @@ const toDbRow = (row: CsvRow) => ({
 
 /** Parse file content into validated CsvRow[]; invalid rows are skipped with a warn. */
 const contentToRows = (content: string): CsvRow[] =>
-  parseCsvRecords(content).reduce<CsvRow[]>((acc, record, i) => {
+  parseCsvRecords(content).flatMap((record, i) => {
     const raw = recordToRaw(record);
-    if (!raw) return acc;
-    const result = validateRow(raw);
-    if (result.success) return [...acc, result.data];
+    if (!raw) return [];
+    const result = csvRowSchema.safeParse(raw);
+    if (result.success) return [result.data];
     console.warn(
       `⚠️  Line ${i + 2}: skip (${
         raw.codeCompetence
       } / ${raw.intituleBanatic.slice(0, 30)}...): ${result.error.message}`
     );
-    return acc;
-  }, []);
+    return [];
+  });
 
 const USAGE =
-  'tsx apps/tools/src/migrations/import-banatic-2025-codes.ts [path/to/1_code_banatic_2025.csv]';
+  'tsx apps/tools/src/migrations/banatic2025/import-banatic-2025-codes/index.ts [path/to/1_code_banatic_2025.csv]';
 
 async function main() {
-  const { db, pool, fileContent } = getMigrationDbAndCsvPath(
-    'import-banatic-2025-codes',
-    USAGE
-  );
+  const csvPath = getCsvPathFromArgv(2, USAGE);
+  const fileContent = readCsvFile(csvPath);
 
-  console.log('📂 Parsing CSV:', fileContent);
+  console.log('📂 Parsing CSV:', csvPath);
   const rows = contentToRows(fileContent);
   console.log(`   Found ${rows.length} valid rows (code + intitulé).`);
 
@@ -106,6 +88,7 @@ async function main() {
     return;
   }
 
+  const { db, pool } = getDatabase('import-banatic-2025-codes');
   type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
   const upsertRow = (tx: Tx, row: CsvRow) =>
     tx
@@ -132,9 +115,7 @@ async function main() {
   }
 }
 
-main()
-  .then(() => process.exit(0))
-  .catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
