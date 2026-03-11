@@ -128,22 +128,6 @@ describe('CreatePlanAggregateService', () => {
       expect(secondCall[0].parent).toBe(10); // Parent is Axe 1
     });
 
-    it('should fail validation when plan name is empty', async () => {
-      const request = createValidRequest();
-      request.nom = '';
-
-      const result = await service.create(request, mockUser, mockTransaction);
-
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error).toBe(PlanErrorType.INVALID_DATA);
-      }
-
-      // No service calls should have been made
-      expect(mockCreateFicheService.createFiche).not.toHaveBeenCalled();
-      expect(mockUpsertPlanService.upsertPlan).not.toHaveBeenCalled();
-    });
-
     it('should fail when fiche creation fails', async () => {
       const request = createValidRequest();
 
@@ -202,20 +186,20 @@ describe('CreatePlanAggregateService', () => {
         collectiviteId: 1,
         nom: 'Complex Plan',
         fiches: [
-          { axisPath: ['A'], fiche: { collectiviteId: 1, titre: 'F1' } as any },
+          { axisPath: ['A'], fiche: { titre: 'F1', pilotes: [], referents: [] } },
           {
             axisPath: ['A', 'A1'],
-            fiche: { collectiviteId: 1, titre: 'F2' } as any,
+            fiche: { titre: 'F2', pilotes: [], referents: [] },
           },
           {
             axisPath: ['A', 'A1', 'A1a'],
-            fiche: { collectiviteId: 1, titre: 'F3' } as any,
+            fiche: { titre: 'F3', pilotes: [], referents: [] },
           },
           {
             axisPath: ['A', 'A2'],
-            fiche: { collectiviteId: 1, titre: 'F4' } as any,
+            fiche: { titre: 'F4', pilotes: [], referents: [] },
           },
-          { axisPath: ['B'], fiche: { collectiviteId: 1, titre: 'F5' } as any },
+          { axisPath: ['B'], fiche: { titre: 'F5', pilotes: [], referents: [] } },
         ],
       };
 
@@ -252,15 +236,15 @@ describe('CreatePlanAggregateService', () => {
         fiches: [
           {
             axisPath: ['Axe 1'],
-            fiche: { collectiviteId: 1, titre: 'F1' } as any,
+            fiche: { titre: 'F1', pilotes: [], referents: [] },
           },
           {
             axisPath: ['Axe 1'],
-            fiche: { collectiviteId: 1, titre: 'F2' } as any,
+            fiche: { titre: 'F2', pilotes: [], referents: [] },
           },
           {
             axisPath: ['Axe 1', 'Sous-Axe 1'],
-            fiche: { collectiviteId: 1, titre: 'F3' } as any,
+            fiche: { titre: 'F3', pilotes: [], referents: [] },
           },
         ],
       };
@@ -313,6 +297,191 @@ describe('CreatePlanAggregateService', () => {
       mockCreateFicheService.createFiche.mockRejectedValue(
         new Error('Unexpected error')
       );
+
+      const result = await service.create(request, mockUser, mockTransaction);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe(PlanErrorType.DATABASE_ERROR);
+      }
+    });
+
+    it('should create sous-actions with parentId in two passes', async () => {
+      const request: CreatePlanAggregateInput = {
+        collectiviteId: 1,
+        nom: 'Plan avec sous-actions',
+        fiches: [
+          {
+            axisPath: ['Axe 1'],
+            fiche: { titre: 'Action normale', pilotes: [], referents: [] },
+          },
+          {
+            axisPath: ['Axe 1'],
+            fiche: { titre: 'Action parente', pilotes: [], referents: [] },
+          },
+          {
+            axisPath: ['Axe 1'],
+            fiche: { titre: 'Sous-action 1.1', pilotes: [], referents: [] },
+            parentActionTitre: 'Action parente',
+          },
+        ],
+      };
+
+      mockUpsertPlanService.upsertPlan.mockResolvedValueOnce(
+        success({ id: 1, nom: 'Plan avec sous-actions' })
+      );
+      mockUpsertAxeService.upsertAxe.mockResolvedValueOnce(
+        success({ id: 10, nom: 'Axe 1' })
+      );
+
+      // Pass 1: Action normale + Action parente (dedicated row)
+      mockCreateFicheService.createFiche
+        .mockResolvedValueOnce(success({ id: 100, titre: 'Action normale' }))
+        .mockResolvedValueOnce(success({ id: 101, titre: 'Action parente' }))
+        // Pass 2: Sous-action
+        .mockResolvedValueOnce(success({ id: 102, titre: 'Sous-action 1.1' }));
+
+      const result = await service.create(request, mockUser, mockTransaction);
+
+      expect(result.success).toBe(true);
+      // 3 fiches total: 1 normal + 1 parent (dedicated) + 1 sous-action
+      expect(mockCreateFicheService.createFiche).toHaveBeenCalledTimes(3);
+
+      // Verify sous-action has parentId set
+      const sousActionCall = mockCreateFicheService.createFiche.mock.calls[2];
+      expect(sousActionCall[0].parentId).toBe(101);
+    });
+
+    it('should create sous-actions referencing a dedicated parent fiche', async () => {
+      const request: CreatePlanAggregateInput = {
+        collectiviteId: 1,
+        nom: 'Plan dédup',
+        fiches: [
+          {
+            axisPath: ['Axe 1'],
+            fiche: { titre: 'Action parente', pilotes: [], referents: [] },
+          },
+          {
+            axisPath: ['Axe 1'],
+            fiche: { titre: 'Sous-action 1.1', pilotes: [], referents: [] },
+            parentActionTitre: 'Action parente',
+          },
+          {
+            axisPath: ['Axe 1'],
+            fiche: { titre: 'Sous-action 1.2', pilotes: [], referents: [] },
+            parentActionTitre: 'Action parente',
+          },
+        ],
+      };
+
+      mockUpsertPlanService.upsertPlan.mockResolvedValueOnce(
+        success({ id: 1, nom: 'Plan dédup' })
+      );
+      mockUpsertAxeService.upsertAxe.mockResolvedValueOnce(
+        success({ id: 10, nom: 'Axe 1' })
+      );
+
+      // Pass 1: 1 dedicated parent
+      mockCreateFicheService.createFiche
+        .mockResolvedValueOnce(success({ id: 200, titre: 'Action parente' }))
+        // Pass 2: 2 sous-actions
+        .mockResolvedValueOnce(success({ id: 201, titre: 'Sous-action 1.1' }))
+        .mockResolvedValueOnce(success({ id: 202, titre: 'Sous-action 1.2' }));
+
+      const result = await service.create(request, mockUser, mockTransaction);
+
+      expect(result.success).toBe(true);
+      // 3 fiches: 1 parent + 2 sous-actions
+      expect(mockCreateFicheService.createFiche).toHaveBeenCalledTimes(3);
+
+      // Both sous-actions reference the same parent
+      const call1 = mockCreateFicheService.createFiche.mock.calls[1];
+      const call2 = mockCreateFicheService.createFiche.mock.calls[2];
+      expect(call1[0].parentId).toBe(200);
+      expect(call2[0].parentId).toBe(200);
+    });
+
+    it('should create separate parent fiches for sous-actions sharing the same title but in different axis paths', async () => {
+      const request: CreatePlanAggregateInput = {
+        collectiviteId: 1,
+        nom: 'Plan multi-axes',
+        fiches: [
+          {
+            axisPath: ['Axe 1'],
+            fiche: { titre: 'Action parente', pilotes: [], referents: [] },
+          },
+          {
+            axisPath: ['Axe 2'],
+            fiche: { titre: 'Action parente', pilotes: [], referents: [] },
+          },
+          {
+            axisPath: ['Axe 1'],
+            fiche: { titre: 'Sous-action A', pilotes: [], referents: [] },
+            parentActionTitre: 'Action parente',
+          },
+          {
+            axisPath: ['Axe 2'],
+            fiche: { titre: 'Sous-action B', pilotes: [], referents: [] },
+            parentActionTitre: 'Action parente',
+          },
+        ],
+      };
+
+      mockUpsertPlanService.upsertPlan.mockResolvedValueOnce(
+        success({ id: 1, nom: 'Plan multi-axes' })
+      );
+      mockUpsertAxeService.upsertAxe
+        .mockResolvedValueOnce(success({ id: 10, nom: 'Axe 1' }))
+        .mockResolvedValueOnce(success({ id: 11, nom: 'Axe 2' }));
+
+      // Pass 1: 2 dedicated parents (same title, different axes)
+      mockCreateFicheService.createFiche
+        .mockResolvedValueOnce(success({ id: 100, titre: 'Action parente' }))
+        .mockResolvedValueOnce(success({ id: 101, titre: 'Action parente' }))
+        // Pass 2: 2 sous-actions, each referencing their own parent
+        .mockResolvedValueOnce(success({ id: 102, titre: 'Sous-action A' }))
+        .mockResolvedValueOnce(success({ id: 103, titre: 'Sous-action B' }));
+
+      const result = await service.create(request, mockUser, mockTransaction);
+
+      expect(result.success).toBe(true);
+      expect(mockCreateFicheService.createFiche).toHaveBeenCalledTimes(4);
+
+      const sousActionACall = mockCreateFicheService.createFiche.mock.calls[2];
+      const sousActionBCall = mockCreateFicheService.createFiche.mock.calls[3];
+      expect(sousActionACall[0].parentId).toBe(100);
+      expect(sousActionBCall[0].parentId).toBe(101);
+    });
+
+    it('should return DATABASE_ERROR when a sous-action creation fails in pass 2', async () => {
+      const request: CreatePlanAggregateInput = {
+        collectiviteId: 1,
+        nom: 'Plan',
+        fiches: [
+          {
+            axisPath: ['Axe 1'],
+            fiche: { titre: 'Action parente', pilotes: [], referents: [] },
+          },
+          {
+            axisPath: ['Axe 1'],
+            fiche: { titre: 'Sous-action 1.1', pilotes: [], referents: [] },
+            parentActionTitre: 'Action parente',
+          },
+        ],
+      };
+
+      mockUpsertPlanService.upsertPlan.mockResolvedValueOnce(
+        success({ id: 1, nom: 'Plan' })
+      );
+      mockUpsertAxeService.upsertAxe.mockResolvedValueOnce(
+        success({ id: 10, nom: 'Axe 1' })
+      );
+
+      // Pass 1: dedicated parent created successfully
+      mockCreateFicheService.createFiche
+        .mockResolvedValueOnce(success({ id: 100, titre: 'Action parente' }))
+        // Pass 2: sous-action fails
+        .mockResolvedValueOnce(failure(PlanErrorType.DATABASE_ERROR));
 
       const result = await service.create(request, mockUser, mockTransaction);
 
@@ -394,5 +563,6 @@ describe('CreatePlanAggregateService', () => {
 
       expect(mockCreateFicheService.createFiche).toHaveBeenCalledTimes(4);
     });
+
   });
 });

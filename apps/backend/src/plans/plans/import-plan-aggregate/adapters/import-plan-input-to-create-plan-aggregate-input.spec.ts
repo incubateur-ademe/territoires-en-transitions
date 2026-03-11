@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { ImportPlanInput } from '../import-plan.input';
 import { ResolvedFicheEntities } from '../resolvers/resolve-entity.service';
-import { ImportFicheInput } from '../schemas/import-fiche.input';
+import {
+  ImportActionInput,
+  ImportSousActionInput,
+} from '../schemas/import-action.input';
 import { importPlanInputToCreatePlanAggregateInput } from './import-plan-input-to-create-plan-aggregate-input';
 
 describe('importPlanInputToCreatePlanAggregateInput', () => {
@@ -14,15 +17,15 @@ describe('importPlanInputToCreatePlanAggregateInput', () => {
     typeId: 1,
     pilotes: [{ userId: 'pilot-1', tagId: null }],
     referents: [{ userId: null, tagId: 100 }],
-    fiches: [
+    actions: [
       {
         axisPath: ['Axe 1'],
-        titre: 'Fiche 1',
-      } as ImportFicheInput,
+        titre: 'Action 1',
+      } as ImportActionInput,
       {
         axisPath: ['Axe 1', 'Sous-Axe 1'],
-        titre: 'Fiche 2',
-      } as ImportFicheInput,
+        titre: 'Action 2',
+      } as ImportActionInput,
     ],
     ...overrides,
   });
@@ -61,21 +64,21 @@ describe('importPlanInputToCreatePlanAggregateInput', () => {
     }
   });
 
-  it('should fail when a fiche has no corresponding resolved entities', () => {
+  it('should fail when an action has no corresponding resolved entities', () => {
     const planImport = createImportPlanInput({
-      fiches: [
+      actions: [
         {
           axisPath: ['Axe 1'],
-          titre: 'Fiche 1',
-        } as ImportFicheInput,
+          titre: 'Action 1',
+        } as ImportActionInput,
         {
           axisPath: ['Axe 2', 'Missing'],
-          titre: 'Fiche 2',
-        } as ImportFicheInput,
+          titre: 'Action 2',
+        } as ImportActionInput,
       ],
     });
 
-    // Only one resolved entity, but two fiches
+    // Only one resolved entity, but two actions
     const resolvedEntities = [createResolvedEntities({ axisPath: ['Axe 1'] })];
 
     const result = importPlanInputToCreatePlanAggregateInput(
@@ -87,22 +90,22 @@ describe('importPlanInputToCreatePlanAggregateInput', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error).toContain(
-        'No resolved entity found for fiche "Fiche 2" (axisPath: Axe 2 > Missing)'
+        'No resolved entity found for action "Action 2" (axisPath: Axe 2 > Missing)'
       );
     }
   });
 
-  it('should handle multiple fiches with the same axis path', () => {
+  it('should handle multiple actions with the same axis path', () => {
     const planImport = createImportPlanInput({
-      fiches: [
+      actions: [
         {
           axisPath: ['Axe 1'],
-          titre: 'Fiche 1',
-        } as ImportFicheInput,
+          titre: 'Action 1',
+        } as ImportActionInput,
         {
           axisPath: ['Axe 1'],
-          titre: 'Fiche 2',
-        } as ImportFicheInput,
+          titre: 'Action 2',
+        } as ImportActionInput,
       ],
     });
 
@@ -120,47 +123,44 @@ describe('importPlanInputToCreatePlanAggregateInput', () => {
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.fiches).toHaveLength(2);
-      expect(result.data.fiches[0].fiche.titre).toBe('Fiche 1');
-      expect(result.data.fiches[1].fiche.titre).toBe('Fiche 2');
+      expect(result.data.fiches[0].fiche.titre).toBe('Action 1');
+      expect(result.data.fiches[1].fiche.titre).toBe('Action 2');
     }
   });
 
-  it('should handle mixed fiches with and without axes', () => {
-    const ficheWithoutAxis: Partial<ImportFicheInput> = {
+  it('should handle mixed actions with and without axes', () => {
+    const actionWithoutAxis: ImportActionInput = {
       axisPath: undefined,
-      titre: 'Fiche sans axe',
+      titre: 'Action sans axe',
       structures: [],
       partenaires: [],
       services: [],
       pilotes: [],
       referents: [],
       financeurs: [],
-    };
-    const ficheWithAxis: Partial<ImportFicheInput> = {
+    } as unknown as ImportActionInput;
+    const actionWithAxis: ImportActionInput = {
       axisPath: ['Axe 1', 'Sous-Axe 1', 'Sous-Sous-Axe 1'],
-      titre: 'Fiche avec sous-sous-axe',
+      titre: 'Action avec sous-sous-axe',
       structures: [],
       partenaires: [],
       services: [],
       pilotes: [],
       referents: [],
       financeurs: [],
-    };
+    } as unknown as ImportActionInput;
     const planImport = createImportPlanInput({
-      fiches: [
-        ficheWithoutAxis as ImportFicheInput,
-        ficheWithAxis as ImportFicheInput,
-      ],
+      actions: [actionWithoutAxis, actionWithAxis],
     });
 
     const resolvedEntities = [
       createResolvedEntities({
-        axisPath: ficheWithAxis.axisPath,
-        titre: ficheWithAxis.titre,
+        axisPath: actionWithAxis.axisPath,
+        titre: actionWithAxis.titre,
       }),
       createResolvedEntities({
-        axisPath: ficheWithoutAxis.axisPath,
-        titre: ficheWithoutAxis.titre,
+        axisPath: actionWithoutAxis.axisPath,
+        titre: actionWithoutAxis.titre,
       }),
     ];
 
@@ -173,17 +173,19 @@ describe('importPlanInputToCreatePlanAggregateInput', () => {
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.fiches.length).toBe(2);
-      expect(result.data.fiches[0].axisPath).toEqual(ficheWithoutAxis.axisPath);
-      expect(result.data.fiches[0].fiche.titre).toBe('Fiche sans axe');
-      expect(result.data.fiches[1].axisPath).toEqual(ficheWithAxis.axisPath);
-      expect(result.data.fiches[1].fiche.titre).toBe(ficheWithAxis.titre);
+      expect(result.data.fiches[0].axisPath).toEqual(
+        actionWithoutAxis.axisPath
+      );
+      expect(result.data.fiches[0].fiche.titre).toBe('Action sans axe');
+      expect(result.data.fiches[1].axisPath).toEqual(actionWithAxis.axisPath);
+      expect(result.data.fiches[1].fiche.titre).toBe(actionWithAxis.titre);
     }
   });
 
-  it('should include instance gouvernance in the fiche when provided', () => {
-    const ficheWithInstanceGouvernance: Partial<ImportFicheInput> = {
+  it('should include instance gouvernance in the action when provided', () => {
+    const actionWithInstanceGouvernance: ImportActionInput = {
       axisPath: ['Axe 1'],
-      titre: 'Fiche avec instance de gouvernance',
+      titre: 'Action avec instance de gouvernance',
       instanceGouvernance: ['Comité de pilotage', 'Conseil municipal'],
       structures: [],
       partenaires: [],
@@ -191,18 +193,16 @@ describe('importPlanInputToCreatePlanAggregateInput', () => {
       pilotes: [],
       referents: [],
       financeurs: [],
-    };
+    } as unknown as ImportActionInput;
 
     const planImport = createImportPlanInput({
-      fiches: [ficheWithInstanceGouvernance as ImportFicheInput],
+      actions: [actionWithInstanceGouvernance],
     });
 
     const resolvedEntities: ResolvedFicheEntities[] = [
       {
-        titre:
-          ficheWithInstanceGouvernance.titre ??
-          'Fiche avec instance de gouvernance',
-        axisPath: ficheWithInstanceGouvernance.axisPath,
+        titre: actionWithInstanceGouvernance.titre,
+        axisPath: actionWithInstanceGouvernance.axisPath,
         pilotes: [],
         referents: [],
         structures: [],
@@ -232,10 +232,75 @@ describe('importPlanInputToCreatePlanAggregateInput', () => {
     }
   });
 
-  it('should handle fiches with empty instance gouvernance', () => {
-    const ficheWithoutInstanceGouvernance: Partial<ImportFicheInput> = {
+  it('should use titre as the fiche title and parentActionTitre for sous-actions', () => {
+    const sousAction: ImportSousActionInput = {
       axisPath: ['Axe 1'],
-      titre: 'Fiche sans instance de gouvernance',
+      titre: 'Sous-action 1.1',
+      parentActionTitre: 'Action parente',
+      structures: [],
+      partenaires: [],
+      services: [],
+      pilotes: [],
+      referents: [],
+      financeurs: [],
+    } as unknown as ImportSousActionInput;
+
+    const planImport = createImportPlanInput({
+      actions: [sousAction],
+    });
+
+    const resolvedEntities = [createResolvedEntities({ axisPath: ['Axe 1'] })];
+
+    const result = importPlanInputToCreatePlanAggregateInput(
+      planImport,
+      resolvedEntities,
+      collectiviteId
+    );
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      const fiche = result.data.fiches[0];
+      expect(fiche.fiche.titre).toBe('Sous-action 1.1');
+      expect(fiche.parentActionTitre).toBe('Action parente');
+    }
+  });
+
+  it('should not set parentActionTitre for normal actions', () => {
+    const normalAction: ImportActionInput = {
+      axisPath: ['Axe 1'],
+      titre: 'Action normale',
+      structures: [],
+      partenaires: [],
+      services: [],
+      pilotes: [],
+      referents: [],
+      financeurs: [],
+    } as unknown as ImportActionInput;
+
+    const planImport = createImportPlanInput({
+      actions: [normalAction],
+    });
+
+    const resolvedEntities = [createResolvedEntities({ axisPath: ['Axe 1'] })];
+
+    const result = importPlanInputToCreatePlanAggregateInput(
+      planImport,
+      resolvedEntities,
+      collectiviteId
+    );
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      const fiche = result.data.fiches[0];
+      expect(fiche.fiche.titre).toBe('Action normale');
+      expect(fiche.parentActionTitre).toBeUndefined();
+    }
+  });
+
+  it('should handle actions with empty instance gouvernance', () => {
+    const actionWithoutInstanceGouvernance: ImportActionInput = {
+      axisPath: ['Axe 1'],
+      titre: 'Action sans instance de gouvernance',
       instanceGouvernance: [],
       structures: [],
       partenaires: [],
@@ -243,16 +308,16 @@ describe('importPlanInputToCreatePlanAggregateInput', () => {
       pilotes: [],
       referents: [],
       financeurs: [],
-    };
+    } as unknown as ImportActionInput;
 
     const planImport = createImportPlanInput({
-      fiches: [ficheWithoutInstanceGouvernance as ImportFicheInput],
+      actions: [actionWithoutInstanceGouvernance],
     });
 
     const resolvedEntities: ResolvedFicheEntities[] = [
       {
-        titre: 'Fiche sans instance de gouvernance',
-        axisPath: ficheWithoutInstanceGouvernance.axisPath,
+        titre: 'Action sans instance de gouvernance',
+        axisPath: actionWithoutInstanceGouvernance.axisPath,
         pilotes: [],
         referents: [],
         structures: [],

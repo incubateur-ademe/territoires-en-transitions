@@ -1,6 +1,6 @@
 import { PersonneId, personneIdSchema } from '@tet/domain/collectivites';
 import { z } from 'zod';
-import { ImportFicheInput } from './schemas/import-fiche.input';
+import { ImportActionOrSousAction } from './schemas/import-action.input';
 
 export const importPlanInputSchema = z.object({
   collectiviteId: z.number(),
@@ -14,7 +14,7 @@ export const importPlanInputSchema = z.object({
 export type ImportPlanInput = {
   nom: string;
   id?: number;
-  fiches: ImportFicheInput[];
+  actions: ImportActionOrSousAction[];
   typeId?: number;
   pilotes?: PersonneId[];
   referents?: PersonneId[];

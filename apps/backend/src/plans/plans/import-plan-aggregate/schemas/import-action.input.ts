@@ -3,7 +3,6 @@ import { TagEnum } from '@tet/domain/collectivites';
 import {
   cibleEnumValues,
   participationCitoyenneEnumValues,
-  Priorite,
   prioriteEnumValues,
   statutEnumValues,
 } from '@tet/domain/plans';
@@ -35,21 +34,23 @@ const cleanText = (text: string | null | undefined): string | undefined => {
     .trim();
 };
 
-const fuzzyMatchEnum = <T extends string>(
-  value: string | undefined,
-  enumValues: readonly T[],
-  synonyms?: Record<string, T>
-): T | undefined => {
-  if (!value) return undefined;
-  const cleaned = cleanText(value);
-  if (!cleaned) return undefined;
-
+const createFuzzyMatcher = <T extends string>(
+  enumValues: readonly T[]
+) => {
   const fuse = new Fuse(enumValues);
-  const found = fuse.search(cleaned)?.[0]?.item;
-
-  if (!found) return undefined;
-  return (synonyms?.[found] ?? found) as T;
+  return (value: string | undefined): T | undefined => {
+    if (!value) return undefined;
+    const cleaned = cleanText(value);
+    if (!cleaned) return undefined;
+    const found = fuse.search(cleaned)?.[0]?.item;
+    return found ?? undefined;
+  };
 };
+
+const matchPriorite = createFuzzyMatcher(prioriteEnumValues);
+const matchParticipation = createFuzzyMatcher(participationCitoyenneEnumValues);
+const matchCible = createFuzzyMatcher(cibleEnumValues);
+const matchStatut = createFuzzyMatcher(statutEnumValues);
 
 const titleSchema = z
   .preprocess(
@@ -57,6 +58,16 @@ const titleSchema = z
     z.string({ message: 'Un texte est attendu' })
   )
   .transform((val) => cleanTitle(val));
+
+const nullableTitleSchema = z
+  .preprocess(
+    richTextPreprocessor,
+    z.union([z.string(), z.null(), z.undefined()])
+  )
+  .transform((val): string | null => {
+    if (!val) return null;
+    return cleanTitle(String(val)) || null;
+  });
 
 const optionalTextSchema = z
   .preprocess(
@@ -123,9 +134,14 @@ export const financeurSchema = z.object({
   montant: z.number({ message: 'Un montant est attendu' }),
 });
 
-export const importFicheInputSchema = z.object({
+/**
+ * Internal schema for parsing raw Excel data.
+ * Includes sousTitreAction which is used to determine Action vs SousAction.
+ */
+const rawParseSchema = z.object({
   id: z.number().optional(),
   axisPath: z.array(z.string()).optional(),
+  sousTitreAction: nullableTitleSchema,
   titre: titleSchema.pipe(
     z
       .string()
@@ -152,32 +168,55 @@ export const importFicheInputSchema = z.object({
   priorite: z
     .string()
     .optional()
-    .transform((val) => fuzzyMatchEnum<Priorite>(val, prioriteEnumValues)),
+    .transform(matchPriorite),
 
   participation: z
     .string()
     .optional()
-    .transform((val) => fuzzyMatchEnum(val, participationCitoyenneEnumValues)),
+    .transform(matchParticipation),
 
   cible: z
     .string()
     .optional()
-    .transform((val) => fuzzyMatchEnum(val, cibleEnumValues)),
+    .transform(matchCible),
   status: z
     .string()
     .optional()
-    .transform((val) => fuzzyMatchEnum(val, statutEnumValues)),
+    .transform(matchStatut),
   pilotes: listSchema,
   referents: listSchema,
   financeurs: z.array(financeurSchema).default([]),
   indicateurs: z.any(),
 });
 
-export type ImportFicheInput = z.infer<typeof importFicheInputSchema>;
+type RawParsedAction = z.infer<typeof rawParseSchema>;
 
-export const parseImportedFiche = async (
+export type ImportActionInput = Omit<RawParsedAction, 'sousTitreAction'>;
+
+export type ImportSousActionInput = RawParsedAction & {
+  parentActionTitre: string;
+};
+
+/** Discriminated union for the import pipeline. */
+export type ImportActionOrSousAction =
+  | ImportActionInput
+  | ImportSousActionInput;
+
+/** Type guard: checks if an action is a sous-action via presence of parentActionTitre. */
+export const isSousAction = (
+  input: ImportActionOrSousAction
+): input is ImportSousActionInput => 'parentActionTitre' in input;
+
+/**
+ * Parses a raw Excel row into either an ImportActionInput or ImportSousActionInput.
+ *
+ * When sousTitreAction is present, the title swap happens here:
+ * - titre becomes the sous-action's own title (from sousTitreAction column)
+ * - parentActionTitre holds the parent action's title (from titre column)
+ */
+export const parseImportedAction = async (
   data: ParsedRow
-): Promise<Result<ImportFicheInput, string>> => {
+): Promise<Result<ImportActionOrSousAction, string>> => {
   const validFinanceurs = [
     {
       nom: data.Financeur1,
@@ -199,14 +238,30 @@ export const parseImportedFiche = async (
 
   const hasAxes = axisPath.length > 0;
 
-  const result = await importFicheInputSchema.safeParseAsync({
+  const result = await rawParseSchema.safeParseAsync({
     ...data,
     financeurs: validFinanceurs,
     axisPath: hasAxes ? axisPath : undefined,
   });
 
   if (result.success) {
-    return success(result.data);
+    const parsed = result.data;
+    const sousTitre = parsed.sousTitreAction;
+    const { sousTitreAction: _, axisPath: parsedAxisPath, ...base } = parsed;
+
+    if (sousTitre !== null && sousTitre.trim() !== '') {
+      return success({
+        ...base,
+        titre: sousTitre,
+        parentActionTitre: parsed.titre,
+        axisPath: parsedAxisPath,
+      });
+    }
+
+    return success({
+      ...base,
+      axisPath: parsedAxisPath,
+    });
   }
 
   const errors = result.error.issues.map((err) => ({
@@ -217,7 +272,7 @@ export const parseImportedFiche = async (
     errors
       .map(
         (e) =>
-          `Fiche avec le titre "${data.titre}" : Colonne ${e.path}: ${e.message}`
+          `Action avec le titre "${data.titre}" : Colonne ${e.path}: ${e.message}`
       )
       .join('\n')
   );

@@ -3,6 +3,7 @@ import { TRPCError } from '@trpc/server';
 import { TrpcService } from '../../../utils/trpc/trpc.service';
 import { ImportPlanApplicationService } from './import-plan.application-service';
 import { importPlanInputSchema } from './import-plan.input';
+import { isClientError } from './import.errors';
 
 @Injectable()
 export class ImportPlanRouter {
@@ -26,9 +27,12 @@ export class ImportPlanRouter {
         );
 
         if (!result.success) {
+          const clientFacing = isClientError(result.error);
           throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: result.error.message,
+            code: clientFacing ? 'BAD_REQUEST' : 'INTERNAL_SERVER_ERROR',
+            message: clientFacing
+              ? result.error.message
+              : 'Une erreur interne est survenue',
           });
         }
 

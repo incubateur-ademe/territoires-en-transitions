@@ -11,7 +11,7 @@ import {
   success,
 } from '@tet/backend/utils/result.type';
 import { Tag, TagEnum } from '@tet/domain/collectivites';
-import { ImportFicheInput } from '../schemas/import-fiche.input';
+import { ImportActionOrSousAction } from '../schemas/import-action.input';
 import {
   deduplicateById,
   deduplicatePersons,
@@ -46,17 +46,17 @@ export class ResolveEntityService {
   ) {}
 
   /**
-   * Resolves all entities for a list of fiches
+   * Resolves all entities for a list of actions
    *
    * @param collectiviteId - The collectivité ID
-   * @param fiches - The fiches with string references
+   * @param actions - The actions with string references
    * @param tx - The database transaction
    * @param user - Authenticated user required for instance gouvernance tags
    * @returns Resolved entities with database IDs
    */
   async resolveFicheEntities(
     collectiviteId: number,
-    fiches: ImportFicheInput[],
+    actions: ImportActionOrSousAction[],
     tx: Transaction,
     user: AuthenticatedUser
   ): Promise<Result<ResolvedFicheEntities[], string>> {
@@ -123,8 +123,8 @@ export class ResolveEntityService {
     };
 
     const results = await Promise.all(
-      fiches.map(async (fiche) => {
-        const result = await this.resolveSingleFiche(fiche, resolvers, tx);
+      actions.map(async (action) => {
+        const result = await this.resolveSingleAction(action, resolvers, tx);
         if (!result.success) {
           return result;
         }
@@ -135,8 +135,8 @@ export class ResolveEntityService {
     return combineResults(results);
   }
 
-  private async resolveSingleFiche(
-    fiche: ImportFicheInput,
+  private async resolveSingleAction(
+    action: ImportActionOrSousAction,
     resolvers: {
       getOrCreateInstanceGouvernance: (
         name: string,
@@ -174,30 +174,30 @@ export class ResolveEntityService {
       partenairesResult,
       instanceGouvernanceResult,
     ] = await Promise.all([
-      this.resolvePersons(fiche.pilotes, resolvers.getOrCreatePersonne, tx),
-      this.resolvePersons(fiche.referents, resolvers.getOrCreatePersonne, tx),
+      this.resolvePersons(action.pilotes, resolvers.getOrCreatePersonne, tx),
+      this.resolvePersons(action.referents, resolvers.getOrCreatePersonne, tx),
       this.resolveSimpleEntities(
-        fiche.structures,
+        action.structures,
         resolvers.getOrCreateStructure,
         tx
       ),
       this.resolveSimpleEntities(
-        fiche.services,
+        action.services,
         resolvers.getOrCreateService,
         tx
       ),
       this.resolveFinanceurs(
-        fiche.financeurs,
+        action.financeurs,
         resolvers.getOrCreateFinanceur,
         tx
       ),
       this.resolveSimpleEntities(
-        fiche.partenaires,
+        action.partenaires,
         resolvers.getOrCreatePartenaire,
         tx
       ),
       this.resolveSimpleEntities(
-        fiche.instanceGouvernance,
+        action.instanceGouvernance,
         resolvers.getOrCreateInstanceGouvernance,
         tx
       ),
@@ -214,8 +214,8 @@ export class ResolveEntityService {
     if (!instanceGouvernanceResult.success) return instanceGouvernanceResult;
 
     return success({
-      titre: fiche.titre,
-      axisPath: fiche.axisPath,
+      titre: action.titre,
+      axisPath: action.axisPath,
       pilotes: pilotesResult.data,
       referents: referentsResult.data,
       structures: structuresResult.data,
@@ -251,11 +251,7 @@ export class ResolveEntityService {
           );
         }
 
-        return success(
-          result.data.userId
-            ? { userId: result.data.userId }
-            : { tagId: result.data.tagId as number }
-        );
+        return success(result.data);
       })
     );
 

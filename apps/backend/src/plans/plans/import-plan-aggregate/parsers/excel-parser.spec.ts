@@ -52,6 +52,29 @@ describe('Excel Parser Tests', () => {
     });
   });
 
+  describe('Sous-action column parsing', () => {
+    it('should extract sousTitreAction when set', async () => {
+      const fileContent = readExcelFile('plan_with_sous_actions.xlsx');
+      const result = await parsePlanExcel(fileContent);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        // Row 5 (index 1): sous-action 1.1 with parent "Action 1"
+        expect(result.data[1].sousTitreAction).toBe('Sous-action 1.1');
+        expect(result.data[1].titre).toBe('Action 1');
+      }
+    });
+
+    it('should return a falsy value for sousTitreAction when cell is empty', async () => {
+      const fileContent = readExcelFile('plan_with_sous_actions.xlsx');
+      const result = await parsePlanExcel(fileContent);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        // Row 4 (index 0): normal action, no sous-action
+        expect(result.data[0].sousTitreAction).toBeFalsy();
+      }
+    });
+  });
+
   describe('Instance governance parsing', () => {
     it('should extract instance governance value from Excel cell', async () => {
       const fileContent = readExcelFile('one_fiche_plan.xlsx');

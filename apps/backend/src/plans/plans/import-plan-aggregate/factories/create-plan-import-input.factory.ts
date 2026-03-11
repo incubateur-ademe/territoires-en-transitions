@@ -7,7 +7,7 @@ import {
 import { PersonneId } from '@tet/domain/collectivites';
 import { ImportPlanInput } from '../import-plan.input';
 import { ParsedRow } from '../parsers/excel-parser';
-import { parseImportedFiche } from '../schemas/import-fiche.input';
+import { parseImportedAction } from '../schemas/import-action.input';
 
 export async function createImportPlanInput(
   rows: ParsedRow[],
@@ -20,23 +20,23 @@ export async function createImportPlanInput(
     const plan: ImportPlanInput = {
       nom: planName,
       typeId: planType,
-      fiches: [],
+      actions: [],
       pilotes,
       referents,
     };
 
-    const fiches = await Promise.all(
-      rows.map((row) => parseImportedFiche(row))
+    const actions = await Promise.all(
+      rows.map((row) => parseImportedAction(row))
     );
 
-    const fichesResult = combineResults(fiches);
-    if (!fichesResult.success) {
-      return failure(fichesResult.error);
+    const actionsResult = combineResults(actions);
+    if (!actionsResult.success) {
+      return failure(actionsResult.error);
     }
 
     return success({
       ...plan,
-      fiches: fichesResult.data,
+      actions: actionsResult.data,
     });
   } catch (error) {
     return failure(

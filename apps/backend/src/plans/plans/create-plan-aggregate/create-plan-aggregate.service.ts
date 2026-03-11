@@ -3,8 +3,10 @@ import { CreateFicheService } from '@tet/backend/plans/fiches/create-fiche/creat
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
+  combineResults,
   failure,
   Result,
+  success,
 } from '@tet/backend/utils/result.type';
 import { FicheCreate } from '@tet/domain/plans';
 import { UpsertAxeError } from '../../axes/upsert-axe/upsert-axe.errors';
@@ -16,27 +18,52 @@ import {
   axisFormatter,
   extractUniqueAxes,
   findParentAxeId,
+  getActionKey,
   validatePlanAggregate,
 } from './create-plan-aggregate.rule';
-import { CreatePlanAggregateInput } from './create-plan-aggregate.types';
+import {
+  CreatePlanAggregateInput,
+  FicheWithRelationsAndAxisPath,
+} from './create-plan-aggregate.types';
+
+type SousActionFiche = FicheWithRelationsAndAxisPath & {
+  parentActionTitre: string;
+};
+
+interface CreationContext {
+  axeIdsByPath: Map<string, number>;
+  planId: number;
+  collectiviteId: number;
+  user: AuthenticatedUser;
+  tx: Transaction;
+}
+
+function resolveAxeId(
+  axisPath: string[] | undefined,
+  axeIdsByPath: Map<string, number>,
+  planId: number
+): number | undefined {
+  return axisPath
+    ? axeIdsByPath.get(axisFormatter.serialize(axisPath))
+    : planId;
+}
+
+function buildFicheCreate(
+  fiche: FicheWithRelationsAndAxisPath['fiche'],
+  collectiviteId: number,
+  parentId?: number
+): FicheCreate {
+  return {
+    ...fiche,
+    collectiviteId,
+    tempsDeMiseEnOeuvre: fiche.tempsDeMiseEnOeuvre?.id ?? null,
+    ...(parentId !== undefined ? { parentId } : {}),
+  };
+}
 
 /**
- * Plan Aggregate Service (Domain Service)
- *
- * Orchestrates the creation of complete plan aggregates.
- * Handles the creation of:
- * - Plan (root axe)
- * - Hierarchical axes structure
- * - Fiches with proper linkage to axes
- *
- * This service is feature-agnostic and can be used by:
- * - Import feature
- * - Plan duplication
- * - Plan templates
- * - Any other feature that needs to create complete plans
- *
- * This service delegates business logic to pure operations (plan.operations.ts)
- * and focuses on orchestration and infrastructure concerns.
+ * Orchestrates the creation of a complete plan aggregate:
+ * plan (root axe), hierarchical axes, and fiches with proper linkage.
  */
 @Injectable()
 export class CreatePlanAggregateService {
@@ -48,66 +75,6 @@ export class CreatePlanAggregateService {
     private readonly upsertPlanService: UpsertPlanService
   ) {}
 
-  /**
-   * Creates a hierarchical structure of axes from axis paths
-   * Uses pure operations to compute the creation order and validate hierarchy
-   * @param paths Array of axis paths (e.g., [['Axe1', 'SousAxe1'], ['Axe1', 'SousAxe2']])
-   * @param planId ID of the parent plan
-   * @param collectiviteId ID of the collectivité
-   * @param user Authenticated user
-   * @param tx Database transaction
-   * @returns Map of axis path (joined by '::') to axis ID
-   */
-  private async createAxesFromPaths(
-    paths: string[][],
-    planId: number,
-    collectiviteId: number,
-    user: AuthenticatedUser,
-    tx: Transaction
-  ): Promise<Result<Map<string, number>, PlanError | UpsertAxeError>> {
-    const axesToCreate = extractUniqueAxes(paths);
-
-    const axeIdsByPath = new Map<string, number>();
-
-    // Create axes in order (parents before children)
-    for (const axe of axesToCreate) {
-      const parentIdResult = findParentAxeId(axe.path, axeIdsByPath, planId);
-
-      if (!parentIdResult.success) {
-        return parentIdResult;
-      }
-
-      const nom = axe.path[axe.path.length - 1];
-
-      const createdAxe = await this.upsertAxeService.upsertAxe(
-        {
-          planId,
-          parent: parentIdResult.data,
-          collectiviteId,
-          nom,
-        },
-        user,
-        tx
-      );
-
-      if (!createdAxe.success) {
-        return createdAxe;
-      }
-
-      axeIdsByPath.set(axe.fullPath, createdAxe.data.id);
-    }
-
-    return { success: true, data: axeIdsByPath };
-  }
-
-  /**
-   * Creates a complete plan with fiches and axes structure
-   * Uses pure operations for validation and orchestration logic
-   * @param request Plan creation request
-   * @param user Authenticated user
-   * @param tx Database transaction
-   * @returns Result with created plan ID
-   */
   async create(
     request: CreatePlanAggregateInput,
     user: AuthenticatedUser,
@@ -130,16 +97,14 @@ export class CreatePlanAggregateService {
           pilotes: request.pilotes,
           referents: request.referents,
         },
-        allAxisPaths
+        allAxisPaths,
+        request.fiches
       );
 
       if (!aggregateValidation.isValid) {
-        this.logger.warn(
-          `Plan aggregate validation failed: ${aggregateValidation.errors.join(
-            ', '
-          )}`
-        );
-        return failure(PlanErrorType.INVALID_DATA);
+        const details = aggregateValidation.errors.join(', ');
+        this.logger.warn(`Plan aggregate validation failed: ${details}`);
+        return failure(PlanErrorType.INVALID_DATA, new Error(details));
       }
 
       // Step 1: Create the plan (root axe)
@@ -154,68 +119,175 @@ export class CreatePlanAggregateService {
         user,
         tx
       );
-      if (!createPlanResult.success) {
-        return createPlanResult;
-      }
+      if (!createPlanResult.success) return createPlanResult;
 
-      // Step 2: Create axes
-      const axeResult = await this.createAxesFromPaths(
-        allAxisPaths,
-        createPlanResult.data.id,
-        request.collectiviteId,
+      const axeResult = await this.createAxesFromPaths({
+        paths: allAxisPaths,
+        planId: createPlanResult.data.id,
+        collectiviteId: request.collectiviteId,
         user,
-        tx
+        tx,
+      });
+      if (!axeResult.success) return axeResult;
+
+      const ctx: CreationContext = {
+        axeIdsByPath: axeResult.data,
+        planId: createPlanResult.data.id,
+        collectiviteId: request.collectiviteId,
+        user,
+        tx,
+      };
+
+      const normalFiches = request.fiches.filter((f) => !f.parentActionTitre);
+      const sousActions = request.fiches.filter(
+        (f): f is SousActionFiche => !!f.parentActionTitre
       );
-      if (!axeResult.success) {
-        return axeResult;
-      }
 
-      // Step 3: Create fiches sequentially to avoid poisoning the shared
-      // transaction on the first error (Promise.all masks the root cause)
-      for (const [index, ficheWithPath] of request.fiches.entries()) {
-        const axeId = ficheWithPath.axisPath
-          ? axeResult.data.get(
-              axisFormatter.serialize(ficheWithPath.axisPath)
-            )
-          : createPlanResult.data.id;
+      const createdFiche = await this.createActionFiches({
+        fiches: normalFiches,
+        ctx,
+      });
+      if (!createdFiche.success) return createdFiche;
 
-        const ficheToCreate: FicheCreate = {
-          ...ficheWithPath.fiche,
-          collectiviteId: request.collectiviteId,
-          tempsDeMiseEnOeuvre:
-            ficheWithPath.fiche.tempsDeMiseEnOeuvre?.id ?? null,
-        };
-
-        const createdFiche = await this.createFicheService.createFiche(
-          ficheToCreate,
-          {
-            ficheFields: {
-              ...ficheWithPath.fiche,
-              axes: axeId ? [{ id: axeId }] : undefined,
-            },
-            user,
-            tx,
-          }
-        );
-
-        if (!createdFiche.success) {
-          this.logger.error(
-            `Failed to create fiche ${index + 1}/${request.fiches.length} "${ficheWithPath.fiche.titre}": ${createdFiche.error}`
-          );
-          return failure(PlanErrorType.DATABASE_ERROR);
-        }
-      }
+      const sousActionsResult = await this.createSousActionFiches({
+        sousActions,
+        parentIdByKey: createdFiche.data,
+        ctx,
+      });
+      if (!sousActionsResult.success) return sousActionsResult;
 
       this.logger.log(
         `Successfully created plan ${request.nom} (ID: ${createPlanResult.data.id})`
       );
-      return { success: true, data: createPlanResult.data.id };
+      return success(createPlanResult.data.id);
     } catch (error) {
       this.logger.error(`Error creating plan:`, error);
-      return {
-        success: false,
-        error: PlanErrorType.DATABASE_ERROR,
-      };
+      return failure(PlanErrorType.DATABASE_ERROR);
     }
+  }
+
+  private async createAxesFromPaths({
+    paths,
+    planId,
+    collectiviteId,
+    user,
+    tx,
+  }: {
+    paths: string[][];
+    planId: number;
+    collectiviteId: number;
+    user: AuthenticatedUser;
+    tx: Transaction;
+  }): Promise<Result<Map<string, number>, PlanError | UpsertAxeError>> {
+    const axesToCreate = extractUniqueAxes(paths);
+
+    return axesToCreate.reduce<
+      Promise<Result<Map<string, number>, PlanError | UpsertAxeError>>
+    >(async (accPromise, axe) => {
+      const acc = await accPromise;
+      if (!acc.success) return acc;
+
+      const parentIdResult = findParentAxeId(axe.path, acc.data, planId);
+      if (!parentIdResult.success) return parentIdResult;
+
+      const nom = axe.path[axe.path.length - 1];
+      const createdAxe = await this.upsertAxeService.upsertAxe(
+        { planId, parent: parentIdResult.data, collectiviteId, nom },
+        user,
+        tx
+      );
+      if (!createdAxe.success) return createdAxe;
+
+      acc.data.set(axe.fullPath, createdAxe.data.id);
+      return acc;
+    }, Promise.resolve(success(new Map<string, number>())));
+  }
+
+  private async createActionFiches({
+    fiches,
+    ctx,
+  }: {
+    fiches: FicheWithRelationsAndAxisPath[];
+    ctx: CreationContext;
+  }): Promise<Result<Map<string, number>, PlanError>> {
+    const results = await Promise.all(
+      fiches.map(async (ficheWithPath) => {
+        const result = await this.createOneFiche({ ficheWithPath, ctx });
+        if (!result.success) return result;
+        return success({ ficheWithPath, id: result.data.id });
+      })
+    );
+
+    const combined = combineResults(results);
+    if (!combined.success) return failure(PlanErrorType.DATABASE_ERROR);
+
+    const parentIdByKey = combined.data.reduce((acc, { ficheWithPath, id }) => {
+      if (ficheWithPath.fiche.titre) {
+        acc.set(
+          getActionKey(ficheWithPath.fiche.titre, ficheWithPath.axisPath),
+          id
+        );
+      }
+      return acc;
+    }, new Map<string, number>());
+    return success(parentIdByKey);
+  }
+
+  private async createSousActionFiches({
+    sousActions,
+    parentIdByKey,
+    ctx,
+  }: {
+    sousActions: SousActionFiche[];
+    parentIdByKey: Map<string, number>;
+    ctx: CreationContext;
+  }): Promise<Result<void, PlanError>> {
+    const results = await Promise.all(
+      sousActions.map((ficheWithPath) => {
+        const parentId = parentIdByKey.get(
+          getActionKey(ficheWithPath.parentActionTitre, ficheWithPath.axisPath)
+        );
+        if (parentId === undefined)
+          return failure(PlanErrorType.DATABASE_ERROR);
+        return this.createOneFiche({ ficheWithPath, ctx, parentId });
+      })
+    );
+
+    const combined = combineResults(results);
+    if (!combined.success) return failure(PlanErrorType.DATABASE_ERROR);
+    return success(undefined);
+  }
+
+  private async createOneFiche({
+    ficheWithPath,
+    ctx,
+    parentId,
+  }: {
+    ficheWithPath: FicheWithRelationsAndAxisPath;
+    ctx: CreationContext;
+    parentId?: number;
+  }): Promise<Result<{ id: number }, PlanError>> {
+    const axeId = resolveAxeId(
+      ficheWithPath.axisPath,
+      ctx.axeIdsByPath,
+      ctx.planId
+    );
+    const ficheToCreate = buildFicheCreate(
+      ficheWithPath.fiche,
+      ctx.collectiviteId,
+      parentId
+    );
+
+    const result = await this.createFicheService.createFiche(ficheToCreate, {
+      ficheFields: {
+        ...ficheWithPath.fiche,
+        axes: axeId ? [{ id: axeId }] : undefined,
+      },
+      user: ctx.user,
+      tx: ctx.tx,
+    });
+
+    if (!result.success) return failure(PlanErrorType.DATABASE_ERROR);
+    return success({ id: result.data.id });
   }
 }

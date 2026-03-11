@@ -105,7 +105,6 @@ export class FicheActionBudgetService {
     await this.ficheService.canWriteFiche(ficheId, user);
 
     return this.databaseService.db.transaction(async (trx) => {
-      console.log('budgets', budgets);
       const budgetsToReturn = await Promise.all(
         budgets.map((budget) => this.upsertSingleBudget(budget, trx))
       );

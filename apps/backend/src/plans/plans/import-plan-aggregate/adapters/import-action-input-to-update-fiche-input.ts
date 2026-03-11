@@ -1,39 +1,39 @@
 import { UpdateFicheInput } from '@tet/backend/plans/fiches/update-fiche/update-fiche.input';
 import { isParticipationCitoyenne } from '@tet/domain/plans';
 import { ResolvedFicheEntities } from '../resolvers/resolve-entity.service';
-import { ImportFicheInput } from '../schemas/import-fiche.input';
+import { ImportActionOrSousAction } from '../schemas/import-action.input';
 /**
- * Adapter: FicheImport → UpdateFicheRequest
+ * Adapter: ImportAction → UpdateFicheInput
  *
  * Transforms import-specific data structures to domain objects.
  *
- * @param fiche - The imported fiche data from Excel
+ * @param action - The imported action data from Excel
  * @param resolvedEntities - The resolved entities (tags, users, etc.)
  * @param collectiviteId - The collectivité ID
- * @returns A UpdateFicheRequest ready for persistence
+ * @returns A UpdateFicheInput ready for persistence
  */
-export function importFicheInputToUpdateFicheInput(
-  fiche: ImportFicheInput,
+export function importActionInputToUpdateFicheInput(
+  action: ImportActionOrSousAction,
   resolvedEntities: ResolvedFicheEntities,
   collectiviteId: number
 ): UpdateFicheInput {
   return {
     collectiviteId,
-    titre: fiche.titre,
-    description: fiche.description,
-    objectifs: fiche.objectifs,
-    cibles: fiche.cible ? [fiche.cible] : undefined,
-    ressources: fiche.resources,
-    financements: fiche.financements,
-    budgetPrevisionnel: fiche.budget?.toString() ?? null,
-    statut: fiche.status,
-    priorite: fiche.priorite,
-    dateDebut: fiche.dateDebut?.toISOString() ?? null,
-    dateFin: fiche.dateFin?.toISOString() ?? null,
-    calendrier: fiche.calendrier,
+    titre: action.titre,
+    description: action.description,
+    objectifs: action.objectifs,
+    cibles: action.cible ? [action.cible] : undefined,
+    ressources: action.resources,
+    financements: action.financements,
+    budgetPrevisionnel: action.budget?.toString() ?? null,
+    statut: action.status,
+    priorite: action.priorite,
+    dateDebut: action.dateDebut?.toISOString() ?? null,
+    dateFin: action.dateFin?.toISOString() ?? null,
+    calendrier: action.calendrier,
     instanceGouvernance: resolvedEntities.instanceGouvernance,
-    participationCitoyenne: isParticipationCitoyenne(fiche.participation ?? '')
-      ? fiche.participation
+    participationCitoyenne: isParticipationCitoyenne(action.participation ?? '')
+      ? action.participation
       : null,
     structures: resolvedEntities.structures,
     pilotes: resolvedEntities.pilotes,

@@ -16,6 +16,8 @@ import {
   AxeHierarchyValidation,
   AxisPath,
   CreatePlanAggregateValidation,
+  FicheWithRelationsAndAxisPath,
+  isSousAction,
   PlanCreationData,
   PlanCreationDataSchema,
   UniqueAxe,
@@ -24,8 +26,15 @@ import {
 const JOIN_CHAR = '::';
 export const axisFormatter = {
   serialize: (path: AxisPath) => path.join(JOIN_CHAR),
-  deserialize: (key: string) => key.split(JOIN_CHAR) as AxisPath,
+  deserialize: (key: string): AxisPath => key.split(JOIN_CHAR),
 };
+
+/**
+ * Builds a unique key for an action within its axis context.
+ * Used to identify, deduplicate, and link actions/sous-actions.
+ */
+export const getActionKey = (titre: string, axisPath?: string[]): string =>
+  axisFormatter.serialize([...(axisPath ?? []), titre]);
 
 export function validatePlanCreationData(
   data: unknown
@@ -104,7 +113,8 @@ function validateAxeHierarchy(paths: AxisPath[]): AxeHierarchyValidation {
 
 export function validatePlanAggregate(
   planData: PlanCreationData,
-  ficheAxisPaths: AxisPath[]
+  ficheAxisPaths: AxisPath[],
+  fiches: FicheWithRelationsAndAxisPath[]
 ): CreatePlanAggregateValidation {
   const errors: string[] = [];
 
@@ -122,10 +132,65 @@ export function validatePlanAggregate(
     );
   }
 
+  const orphanedSousActions = findOrphanedSousActions(fiches);
+  if (orphanedSousActions.length > 0) {
+    errors.push(
+      `Sous-actions sans action parente : ${orphanedSousActions.join(', ')}`
+    );
+  }
+
+  const duplicateKeys = findDuplicateActionKeys(fiches);
+  if (duplicateKeys.length > 0) {
+    errors.push(
+      `Titres d'actions en doublon dans le même axe : ${duplicateKeys.join(
+        ', '
+      )}`
+    );
+  }
+
   return {
     isValid: errors.length === 0,
     errors,
   };
+}
+
+function findOrphanedSousActions(
+  fiches: FicheWithRelationsAndAxisPath[]
+): string[] {
+  const ficheActionKeys = new Set(
+    fiches
+      .filter(({ parentActionTitre }) => !parentActionTitre)
+      .flatMap(({ fiche, axisPath }) =>
+        fiche.titre ? [getActionKey(fiche.titre, axisPath)] : []
+      )
+  );
+
+  const sousActions = fiches
+    .filter(isSousAction)
+    .filter(
+      (f) => !ficheActionKeys.has(getActionKey(f.parentActionTitre, f.axisPath))
+    );
+  return sousActions.map(
+    (f) => `"${f.fiche.titre}" (action parente: "${f.parentActionTitre}")`
+  );
+}
+
+function findDuplicateActionKeys(
+  fiches: FicheWithRelationsAndAxisPath[]
+): string[] {
+  const seen = fiches
+    .filter(({ parentActionTitre }) => !parentActionTitre)
+    .reduce((acc, { fiche, axisPath }) => {
+      const { titre } = fiche;
+      if (titre) {
+        const key = getActionKey(titre, axisPath);
+        acc.set(key, (acc.get(key) ?? 0) + 1);
+      }
+      return acc;
+    }, new Map<string, number>());
+  return [...seen.entries()]
+    .filter(([, count]) => count > 1)
+    .map(([key]) => key);
 }
 
 /**

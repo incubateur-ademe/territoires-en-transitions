@@ -36,7 +36,7 @@ export class ImportPlanApplicationService {
     planType?: number,
     pilotes?: PersonneId[],
     referents?: PersonneId[]
-  ): Promise<Result<boolean, ImportErrors>> {
+  ): Promise<Result<number, ImportErrors>> {
     // 1. Parse Excel file
     const parsedRows = await parsePlanExcel(file);
     if (!parsedRows.success) {
@@ -56,14 +56,14 @@ export class ImportPlanApplicationService {
     }
 
     // 3. Validate business rules
-    const validationResult = await validateImportPlanInput(planResult.data);
+    const validationResult = validateImportPlanInput(planResult.data);
     if (!validationResult.success) {
       return validationResult;
     }
 
     // 4. Execute import in transaction
     const saveResult = await this.transactionManager.executeSingle<
-      boolean,
+      number,
       ImportErrors
     >(async (tx) => {
       try {
@@ -71,7 +71,7 @@ export class ImportPlanApplicationService {
         const resolvedEntitiesResult =
           await this.resolveEntityService.resolveFicheEntities(
             collectiviteId,
-            planResult.data.fiches,
+            planResult.data.actions,
             tx,
             user
           );
@@ -80,7 +80,7 @@ export class ImportPlanApplicationService {
           return failure(
             new EntityResolutionError(
               'entities',
-              'fiches',
+              'actions',
               resolvedEntitiesResult.error
             )
           );
@@ -105,10 +105,14 @@ export class ImportPlanApplicationService {
         );
 
         if (!planCreationResult.success) {
-          return failure(new PlanCreationError(planCreationResult.error));
+          return failure(
+            new PlanCreationError(
+              planCreationResult.cause?.message ?? planCreationResult.error
+            )
+          );
         }
 
-        return success(true);
+        return success(planCreationResult.data);
       } catch (error) {
         this.logger.error('Error during import transaction:', error);
         return failure(new TransactionError(error));
