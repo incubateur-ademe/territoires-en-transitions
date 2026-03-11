@@ -1,20 +1,25 @@
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { useApiClient } from '@/app/utils/use-api-client';
 import { useMutation } from '@tanstack/react-query';
+import { ExportScoreComparisonRequestQuery } from '@tet/domain/referentiels';
 import { Event, useEventTracker } from '@tet/ui';
+import { useReferentielTeEnabled } from '../../use-referentiel-te-enabled';
 
 type ExportFormat = 'excel' | 'csv';
 
 const buildParams = (
   exportFormat: ExportFormat,
   isAudit: boolean,
+  referentielTeEnabled: boolean,
   snapshotReferences?: string[]
 ) => {
-  const params: Record<string, string | boolean | undefined> = {
+  const params: ExportScoreComparisonRequestQuery = {
     exportFormat,
     isAudit,
+    excludeDesactive: referentielTeEnabled,
   };
   if (snapshotReferences) {
+    // @ts-ignore: query parameters are stringified
     params.snapshotReferences = snapshotReferences.join(',');
   }
   return params;
@@ -46,6 +51,7 @@ export const useExportComparisonScores = (
 ) => {
   const tracker = useEventTracker();
   const api = useApiClient();
+  const referentielTeEnabled = useReferentielTeEnabled();
 
   return useMutation({
     mutationFn: async () => {
@@ -54,7 +60,12 @@ export const useExportComparisonScores = (
       const trackingEvent = getTrackingEvent(isAudit, snapshotReferences);
       tracker(trackingEvent);
 
-      const params = buildParams(exportFormat, isAudit, snapshotReferences);
+      const params = buildParams(
+        exportFormat,
+        isAudit,
+        referentielTeEnabled,
+        snapshotReferences
+      );
 
       const { blob, filename } = await api.getAsBlob({
         route: `/collectivites/${collectiviteId}/referentiels/${referentiel}/score-snapshots/export-comparison`,

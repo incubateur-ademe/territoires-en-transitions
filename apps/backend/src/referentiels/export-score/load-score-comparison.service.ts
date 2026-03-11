@@ -1,6 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches.service';
-import { ExportScoreComparisonRequestQuery } from '@tet/backend/referentiels/export-score/export-score-comparison.request';
 import { HandleMesureServicesService } from '@tet/backend/referentiels/handle-mesure-services/handle-mesure-services.service';
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
@@ -21,6 +20,7 @@ import {
 } from '@tet/domain/referentiels';
 import { format } from 'date-fns';
 import { and, desc, eq } from 'drizzle-orm';
+import { ExportScoreComparisonRequestQuery } from '../../../../../packages/domain/src/referentiels/scores/export-score-comparison.request';
 import * as Utils from '../../utils/excel/export-excel.utils';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import { HandleMesurePilotesService } from '../handle-mesure-pilotes/handle-mesure-pilotes.service';
@@ -92,6 +92,7 @@ export class LoadScoreComparisonService {
     query: ExportScoreComparisonRequestQuery
   ): Promise<ScoreComparisonData> {
     const { exportFormat, isAudit, snapshotReferences } = query;
+    const excludeDesactive = query.excludeDesactive === true;
 
     const exportMode = this.getExportMode(isAudit, snapshotReferences);
 
@@ -125,7 +126,11 @@ export class LoadScoreComparisonService {
       referentielId,
       snapshotReferences
     );
-    const scoreRows = this.transformSnapshotsIntoRows(snapshot1, snapshot2);
+    const scoreRows = this.transformSnapshotsIntoRows(
+      snapshot1,
+      snapshot2,
+      excludeDesactive
+    );
 
     // charge les données ne faisant pas partie des snapshots (auditeurs, etc.)
     const auditeurs = isAudit
@@ -332,7 +337,8 @@ export class LoadScoreComparisonService {
    */
   private transformSnapshotsIntoRows(
     snapshot1: ScoreSnapshot,
-    snapshot2: ScoreSnapshot | null
+    snapshot2: ScoreSnapshot | null,
+    excludeDesactive: boolean
   ): ScoreRow[] {
     const snapshot1Scores = snapshot1.scoresPayload.scores;
     const snapshot2Scores = snapshot2?.scoresPayload.scores;
@@ -340,29 +346,31 @@ export class LoadScoreComparisonService {
     const s2Rows = snapshot2Scores
       ? flatMapActionsEnfants(snapshot2Scores)
       : null;
-    return (
-      s1Rows
-        .map((score1) => {
-          const { actionId, actionType } = score1;
-          const score2 =
-            s2Rows?.find((score2) => {
-              return score2.actionId === actionId;
-            }) || null;
-          return {
-            actionId,
-            actionType,
-            score1,
-            score2,
-          };
-        })
-        // tri les lignes par actionId (pour éviter d'avoir 1, 10, 2)
-        .toSorted((a, b) => {
-          return a.actionId.localeCompare(b.actionId, undefined, {
-            numeric: true,
-            sensitivity: 'base',
-          });
-        })
-    );
+    const rows = s1Rows.map((score1) => {
+      const { actionId, actionType } = score1;
+      const score2 =
+        s2Rows?.find((score2) => {
+          return score2.actionId === actionId;
+        }) || null;
+      return {
+        actionId,
+        actionType,
+        score1,
+        score2,
+      };
+    });
+
+    const filteredRows = excludeDesactive
+      ? rows.filter((r) => r.score1?.score?.desactive !== true)
+      : rows;
+
+    // tri les lignes par actionId (pour éviter d'avoir 1, 10, 2)
+    return filteredRows.toSorted((a, b) => {
+      return a.actionId.localeCompare(b.actionId, undefined, {
+        numeric: true,
+        sensitivity: 'base',
+      });
+    });
   }
 
   private async getActionDescriptions(

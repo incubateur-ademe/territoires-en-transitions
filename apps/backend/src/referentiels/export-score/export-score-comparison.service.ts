@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ExportScoreComparisonRequestQuery } from '@tet/backend/referentiels/export-score/export-score-comparison.request';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { Workbook } from 'exceljs';
+import { ExportScoreComparisonRequestQuery } from '../../../../../packages/domain/src/referentiels/scores/export-score-comparison.request';
 import { buildRows } from './build-rows';
 import { LoadScoreComparisonService } from './load-score-comparison.service';
 
