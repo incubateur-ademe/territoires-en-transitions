@@ -322,6 +322,93 @@ describe('CreatePlanAggregateService', () => {
       }
     });
 
+    it('should create sous-actions with parentId in two passes', async () => {
+      const request: CreatePlanAggregateInput = {
+        collectiviteId: 1,
+        nom: 'Plan avec sous-actions',
+        fiches: [
+          {
+            axisPath: ['Axe 1'],
+            fiche: { titre: 'Action normale', pilotes: [], referents: [] },
+          },
+          {
+            axisPath: ['Axe 1'],
+            fiche: { titre: 'Sous-action 1.1', pilotes: [], referents: [] },
+            parentActionTitre: 'Action parente',
+          },
+        ],
+      };
+
+      mockUpsertPlanService.upsertPlan.mockResolvedValueOnce(
+        success({ id: 1, nom: 'Plan avec sous-actions' })
+      );
+      mockUpsertAxeService.upsertAxe.mockResolvedValueOnce(
+        success({ id: 10, nom: 'Axe 1' })
+      );
+
+      // Pass 1: Action normale + auto-created Action parente
+      mockCreateFicheService.createFiche
+        .mockResolvedValueOnce(success({ id: 100, titre: 'Action normale' }))
+        .mockResolvedValueOnce(success({ id: 101, titre: 'Action parente' }))
+        // Pass 2: Sous-action
+        .mockResolvedValueOnce(success({ id: 102, titre: 'Sous-action 1.1' }));
+
+      const result = await service.create(request, mockUser, mockTransaction);
+
+      expect(result.success).toBe(true);
+      // 3 fiches total: 1 normal + 1 auto-parent + 1 sous-action
+      expect(mockCreateFicheService.createFiche).toHaveBeenCalledTimes(3);
+
+      // Verify sous-action has parentId set
+      const sousActionCall = mockCreateFicheService.createFiche.mock.calls[2];
+      expect(sousActionCall[0].parentId).toBe(101);
+    });
+
+    it('should deduplicate parent fiches when multiple sous-actions share the same parent', async () => {
+      const request: CreatePlanAggregateInput = {
+        collectiviteId: 1,
+        nom: 'Plan dédup',
+        fiches: [
+          {
+            axisPath: ['Axe 1'],
+            fiche: { titre: 'Sous-action 1.1', pilotes: [], referents: [] },
+            parentActionTitre: 'Action parente',
+          },
+          {
+            axisPath: ['Axe 1'],
+            fiche: { titre: 'Sous-action 1.2', pilotes: [], referents: [] },
+            parentActionTitre: 'Action parente',
+          },
+        ],
+      };
+
+      mockUpsertPlanService.upsertPlan.mockResolvedValueOnce(
+        success({ id: 1, nom: 'Plan dédup' })
+      );
+      mockUpsertAxeService.upsertAxe.mockResolvedValueOnce(
+        success({ id: 10, nom: 'Axe 1' })
+      );
+
+      // Pass 1: 1 auto-created parent (deduplicated)
+      mockCreateFicheService.createFiche
+        .mockResolvedValueOnce(success({ id: 200, titre: 'Action parente' }))
+        // Pass 2: 2 sous-actions
+        .mockResolvedValueOnce(success({ id: 201, titre: 'Sous-action 1.1' }))
+        .mockResolvedValueOnce(success({ id: 202, titre: 'Sous-action 1.2' }));
+
+      const result = await service.create(request, mockUser, mockTransaction);
+
+      expect(result.success).toBe(true);
+      // 3 fiches: 1 parent + 2 sous-actions (NOT 2+2=4)
+      expect(mockCreateFicheService.createFiche).toHaveBeenCalledTimes(3);
+
+      // Both sous-actions reference the same parent
+      const call1 = mockCreateFicheService.createFiche.mock.calls[1];
+      const call2 = mockCreateFicheService.createFiche.mock.calls[2];
+      expect(call1[0].parentId).toBe(200);
+      expect(call2[0].parentId).toBe(200);
+    });
+
     it('should attach multiple fiches without axes to the plan root without creating any axes', async () => {
       const request: CreatePlanAggregateInput = {
         collectiviteId: 1,

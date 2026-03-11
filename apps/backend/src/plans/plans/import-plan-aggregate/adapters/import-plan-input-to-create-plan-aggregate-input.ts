@@ -29,10 +29,16 @@ export function importPlanInputToCreatePlanAggregateInput(
       );
     }
 
+    const sousTitreAction = ficheImport.sousTitreAction;
+    const isSousAction = sousTitreAction != null;
+
     return success({
       axisPath: ficheImport.axisPath,
+      parentActionTitre: isSousAction ? ficheImport.titre : undefined,
       fiche: importFicheInputToUpdateFicheInput(
-        ficheImport,
+        isSousAction
+          ? { ...ficheImport, titre: sousTitreAction }
+          : ficheImport,
         resolvedEntity,
         collectiviteId
       ),

@@ -38,6 +38,7 @@ describe('Plan Transformer Tests', () => {
               'Objectif stratégique 1. Impulser une dynamique participative',
               'Sous-Sous Axe',
             ],
+            sousTitreAction: null,
             budget: 5000000,
             dateDebut: new Date('2025-12-01T00:00:00.000Z'),
             dateFin: new Date('2030-09-01T00:00:00.000Z'),

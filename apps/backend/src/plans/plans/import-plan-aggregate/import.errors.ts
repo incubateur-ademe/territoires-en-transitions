@@ -86,6 +86,31 @@ export class InvalidBudget extends ImportError {
   }
 }
 
+export class MissingSousActionParent extends ImportError {
+  readonly _tag = 'MissingSousActionParent' as const;
+  constructor(
+    public readonly sousTitreAction: string,
+    public readonly row?: number
+  ) {
+    super(
+      `${row !== undefined ? `Ligne ${row} : ` : ''}'Titre de la sous-action' est renseigné mais 'Titre de l'action' est manquant.`
+    );
+  }
+}
+
+export class ParentActionNotFound extends ImportError {
+  readonly _tag = 'ParentActionNotFound' as const;
+  constructor(
+    public readonly sousTitreAction: string,
+    public readonly parentActionTitre: string,
+    public readonly row?: number
+  ) {
+    super(
+      `${row !== undefined ? `Ligne ${row} : ` : ''}Impossible de créer la sous-action "${sousTitreAction}" — l'action parente "${parentActionTitre}" est introuvable.`
+    );
+  }
+}
+
 export class EntityResolutionError extends ImportError {
   readonly _tag = 'EntityResolutionError' as const;
   constructor(
@@ -149,6 +174,8 @@ export type ImportErrors =
   | InvalidFicheTitre
   | InvalidDateRange
   | InvalidBudget
+  | MissingSousActionParent
+  | ParentActionNotFound
   | EntityResolutionError
   | PlanCreationError
   | TransactionError
@@ -172,6 +199,8 @@ export function isClientError(error: ImportErrors): boolean {
     case 'InvalidFicheTitre':
     case 'InvalidDateRange':
     case 'InvalidBudget':
+    case 'MissingSousActionParent':
+    case 'ParentActionNotFound':
     case 'TransformationError':
       return true;
 
