@@ -1,5 +1,6 @@
-import { questionChoixSchema, questionSchema } from '@tet/domain/collectivites';
 import * as z from 'zod/mini';
+import { questionChoixSchema } from './question-choix.schema';
+import { questionSchema } from './question.schema';
 
 export const questionWithChoicesSchema = z.object({
   ...questionSchema.shape,

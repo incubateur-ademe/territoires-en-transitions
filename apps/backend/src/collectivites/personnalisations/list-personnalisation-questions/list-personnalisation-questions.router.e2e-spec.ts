@@ -53,7 +53,7 @@ describe('Lister les questions de personnalisation', () => {
       const result = await caller.collectivites.personnalisations.listQuestions(
         {
           collectiviteId: testData.collectivite.id,
-          thematiqueId: testData.thematiqueId,
+          thematiqueIds: [testData.thematiqueId],
         }
       );
 
@@ -69,7 +69,7 @@ describe('Lister les questions de personnalisation', () => {
 
       const result = await caller.collectivites.personnalisations.listQuestions(
         {
-          thematiqueId: testData.thematiqueId,
+          thematiqueIds: [testData.thematiqueId],
         }
       );
 
@@ -90,7 +90,7 @@ describe('Lister les questions de personnalisation', () => {
 
       const result = await caller.collectivites.personnalisations.listQuestions(
         {
-          thematiqueId: testData.thematiqueId,
+          thematiqueIds: [testData.thematiqueId],
         }
       );
 
@@ -132,6 +132,29 @@ describe('Lister les questions de personnalisation', () => {
           testData.questionChoixId,
         ].sort()
       );
+    });
+
+    test('Filtrer par referentiel et thématique', async () => {
+      const caller = router.createCaller({ user: testData.userCredentials });
+
+      const avecTeTest =
+        await caller.collectivites.personnalisations.listQuestions({
+          collectiviteId: testData.collectivite.id,
+          referentielIds: ['te-test'],
+          thematiqueIds: [testData.thematiqueId],
+        });
+      const questionsTeTest = testData.isolateFixtureQuestions(avecTeTest);
+      expect(questionsTeTest).toHaveLength(3);
+
+      const avecCaeSeulement =
+        await caller.collectivites.personnalisations.listQuestions({
+          collectiviteId: testData.collectivite.id,
+          referentielIds: ['cae'],
+          thematiqueIds: [testData.thematiqueId],
+        });
+      const questionsCae = testData.isolateFixtureQuestions(avecCaeSeulement);
+      expect(questionsCae).toHaveLength(1);
+      expect(questionsCae[0].id).toBe(testData.questionProportionId);
     });
 
     test("Filtrer par referentielIds exclut les questions liées uniquement à d'autres référentiels", async () => {

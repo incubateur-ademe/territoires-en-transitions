@@ -1,15 +1,27 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { questionChoixTable } from '@tet/backend/collectivites/personnalisations/models/question-choix.table';
 import { questionThematiqueTable } from '@tet/backend/collectivites/personnalisations/models/question-thematique.table';
-import { QuestionWithChoices } from '@tet/backend/collectivites/personnalisations/models/question-with-choices.dto';
 import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
 import { questionActionTable } from '@tet/backend/referentiels/models/question-action.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { arrayOverlapsPatched } from '@tet/backend/utils/drizzle.utils';
-import { CollectiviteType, QuestionChoix } from '@tet/domain/collectivites';
-import { and, eq, inArray, isNull, or, SQL, sql } from 'drizzle-orm';
+import {
+  CollectiviteType,
+  QuestionChoix,
+  QuestionWithChoices,
+} from '@tet/domain/collectivites';
+import {
+  and,
+  eq,
+  exists,
+  inArray,
+  isNull,
+  notExists,
+  or,
+  SQL,
+  sql,
+} from 'drizzle-orm';
 import { ListPersonnalisationQuestionsInput } from './list-personnalisation-questions.input';
 
 @Injectable()
@@ -53,7 +65,7 @@ export default class ListPersonnalisationQuestionsService {
   ): Promise<QuestionWithChoices[]> {
     this.logger.log(
       `Fetching all personnalisation questions with choices${
-        input ? `and filtered by: ${JSON.stringify(input)}` : ''
+        input ? ` and filtered by: ${JSON.stringify(input)}` : ''
       }`
     );
 
@@ -62,30 +74,59 @@ export default class ListPersonnalisationQuestionsService {
     const actionsSubquery = this.getActionsSubquery();
 
     // Check filter conditions
-    const { actionIds, collectiviteId, questionIds, referentielIds, thematiqueId } =
-      input || {};
+    const {
+      actionIds,
+      collectiviteId,
+      questionIds,
+      referentielIds,
+      thematiqueIds,
+    } = input || {};
     const conditions: (ReturnType<typeof eq> | SQL)[] = [];
 
     // questions liées à au moins une des actions
     if (actionIds && actionIds.length > 0) {
-      conditions.push(
-        arrayOverlapsPatched(actionsSubquery.actionIds, actionIds)
-      );
+      const actionIdsFilterQuery = this.databaseService.db
+        .select({ questionId: questionActionTable.questionId })
+        .from(questionActionTable)
+        .where(
+          and(
+            eq(questionActionTable.questionId, questionTable.id),
+            inArray(questionActionTable.actionId, actionIds)
+          )
+        );
+      conditions.push(exists(actionIdsFilterQuery));
     }
 
     // questions ayant au moins une action dans un des référentiels OU liées à
     // aucun référentiel
     if (referentielIds && referentielIds.length > 0) {
+      const referentielOverlapQuery = this.databaseService.db
+        .select({ questionId: questionActionTable.questionId })
+        .from(questionActionTable)
+        .innerJoin(
+          actionRelationTable,
+          eq(questionActionTable.actionId, actionRelationTable.id)
+        )
+        .where(
+          and(
+            eq(questionActionTable.questionId, questionTable.id),
+            inArray(actionRelationTable.referentiel, referentielIds)
+          )
+        );
+      const noQuestionActionQuery = this.databaseService.db
+        .select({ questionId: questionActionTable.questionId })
+        .from(questionActionTable)
+        .where(eq(questionActionTable.questionId, questionTable.id));
       conditions.push(
         or(
-          arrayOverlapsPatched(actionsSubquery.referentielIds, referentielIds),
-          isNull(actionsSubquery.referentielIds)
+          exists(referentielOverlapQuery),
+          notExists(noQuestionActionQuery)
         ) as SQL
       );
     }
 
-    if (thematiqueId) {
-      conditions.push(eq(questionTable.thematiqueId, thematiqueId));
+    if (thematiqueIds && thematiqueIds.length > 0) {
+      conditions.push(inArray(questionTable.thematiqueId, thematiqueIds));
     }
     if (questionIds && questionIds.length > 0) {
       conditions.push(inArray(questionTable.id, questionIds));

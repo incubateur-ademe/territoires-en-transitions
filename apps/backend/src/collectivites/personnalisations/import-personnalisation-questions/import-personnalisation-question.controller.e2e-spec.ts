@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import { QuestionWithChoices } from '@tet/backend/collectivites/personnalisations/models/question-with-choices.dto';
+import { QuestionWithChoices } from '@tet/domain/collectivites';
 import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
 import TrajectoiresXlsxService from '@tet/backend/indicateurs/trajectoires/trajectoires-xlsx.service';
 import {
