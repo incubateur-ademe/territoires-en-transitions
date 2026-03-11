@@ -1,4 +1,5 @@
 import * as z from 'zod/mini';
+import { collectivitePreferencesSchema } from '../../collectivites/collectivite-preferences.schema';
 import { permissionOperationEnumSchema } from './permission-operation.enum.schema';
 import {
   auditRoleSchema,
@@ -27,6 +28,7 @@ const collectiviteRolesAndPermissionsSchema = z.object({
   collectiviteId: z.number(),
   collectiviteNom: z.string(),
   collectiviteAccesRestreint: z.boolean(),
+  collectivitePreferences: collectivitePreferencesSchema,
 
   audits: z.array(auditRolesAndPermissionsSchema),
 });

@@ -1,6 +1,3 @@
-import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
-import { preuveReglementaireDefinitionTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire-definition.table';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   HttpException,
   HttpStatus,
@@ -8,11 +5,14 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
+import { preuveReglementaireDefinitionTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire-definition.table';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   ActionDefinition,
   ActionDefinitionEssential,
   ActionTreeNode,
-  ActionTypeIncludingExemple,
+  ActionType,
   ReferentielId,
 } from '@tet/domain/referentiels';
 import { and, asc, eq, getTableColumns, ilike, sql } from 'drizzle-orm';
@@ -38,7 +38,7 @@ export type ActionDefinitionAvecParent = Pick<
  */
 export interface ReferentielResponse {
   version: string;
-  orderedItemTypes: Array<ActionTypeIncludingExemple>;
+  orderedItemTypes: Array<ActionType>;
   itemsTree: ActionTreeNode<
     ActionDefinitionEssential & CorrelatedActionsFields
   >;
@@ -221,7 +221,7 @@ export class GetReferentielService {
 
 export function buildReferentielTree(
   actionDefinitions: ActionDefinitionAvecParent[],
-  orderedActionTypes: ActionTypeIncludingExemple[],
+  orderedActionTypes: ActionType[],
   actionOrigines?: GetActionOrigineDtoSchema[] | null
 ) {
   const rootAction = actionDefinitions.find((action) => !action.parentActionId);
@@ -256,7 +256,7 @@ function attacheActionsEnfant(
       CorrelatedActionsFields
   >,
   actionDefinitions: ActionDefinitionAvecParent[],
-  orderActionTypes: ActionTypeIncludingExemple[],
+  orderActionTypes: ActionType[],
   currentLevel: number,
   actionOrigines?: GetActionOrigineDtoSchema[] | null
 ): void {

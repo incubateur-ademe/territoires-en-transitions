@@ -8,9 +8,11 @@ import {
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import {
   Collectivite,
+  CollectivitePreferences,
   CollectiviteType,
   collectiviteTypeEnum,
   CreateCollectivite,
+  defaultCollectivitePreferences,
 } from '@tet/domain/collectivites';
 import { Dcp } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
@@ -72,12 +74,15 @@ export async function addTestCollectivite(
   collectiviteArgs: Partial<Collectivite> & { isCOT?: boolean } = {}
 ): Promise<{ collectivite: Collectivite; cleanup: () => Promise<void> }> {
   const { isCOT, ...collectiviteInput } = collectiviteArgs;
-  const createCollectivite: CreateCollectivite = {
+  const createCollectivite: CreateCollectivite & {
+    preferences: CollectivitePreferences;
+  } = {
     ...collectiviteInput,
     nom:
       collectiviteArgs.nom ||
       `Collectivité ${Math.random().toString().substring(2, 6)}`,
     type: collectiviteArgs.type || collectiviteTypeEnum.EPCI,
+    preferences: collectiviteArgs.preferences || defaultCollectivitePreferences,
   };
 
   try {
@@ -129,7 +134,7 @@ export async function addTestCollectivite(
       }
     };
     return {
-      collectivite: { ...result, activeCOT: collectiviteArgs.isCOT ?? false },
+      collectivite: result,
       cleanup,
     };
   } catch (err) {

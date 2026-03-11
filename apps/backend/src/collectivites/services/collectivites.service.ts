@@ -4,6 +4,7 @@ import {
   CollectiviteBanaticType,
   collectiviteBanaticTypeTable,
 } from '@tet/backend/collectivites/shared/models/collectivite-banatic-type.table';
+import { cotTable } from '@tet/backend/referentiels/labellisations/cot.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
@@ -56,7 +57,7 @@ export default class CollectivitesService {
   }
 
   getCollectiviteSousType(
-    collectivite: Collectivite,
+    collectivite: Pick<Collectivite, 'type'>,
     typeBanatic: CollectiviteBanaticType | null
   ): CollectiviteSousTypeEnum | null {
     if (
@@ -85,14 +86,14 @@ export default class CollectivitesService {
       collectivite.collectivite.type === collectiviteTypeEnum.EPCI;
 
     return {
-      ...(collectivite.collectivite as Collectivite),
+      ...collectivite.collectivite,
       // TODO "doublon" avec typeId
       type:
         collectiviteTest || collectiviteEPCI
           ? CollectiviteTypeEnum.EPCI
           : CollectiviteTypeEnum.COMMUNE,
       soustype: this.getCollectiviteSousType(
-        collectivite.collectivite as Collectivite,
+        collectivite.collectivite,
         collectivite.collectivite_banatic_type
       ),
       populationTags: this.getPopulationTags(collectivitePopulation),
@@ -117,6 +118,7 @@ export default class CollectivitesService {
         eq(collectiviteTable.natureInsee, collectiviteBanaticTypeTable.id)
       )
       .leftJoin(regionTable, eq(collectiviteTable.regionCode, regionTable.code))
+      .leftJoin(cotTable, eq(collectiviteTable.id, cotTable.collectiviteId))
       .where(eq(collectiviteTable.id, collectiviteId));
 
     if (!collectiviteByIdResult?.length) {

@@ -2,10 +2,12 @@ import { INestApplication } from '@nestjs/common';
 import {
   getAuthUser,
   getTestApp,
+  getTestDatabase,
   getTestRouter,
   YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { PlatformRole } from '@tet/domain/users';
 import { addUserRoleSupport } from '../../users/users.test-fixture';
@@ -14,11 +16,13 @@ describe('UpdateUserRole', () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
   let app: INestApplication;
+  let databaseService: DatabaseService;
 
   beforeAll(async () => {
     router = await getTestRouter();
     yoloDodoUser = await getAuthUser(YOLO_DODO);
     app = await getTestApp();
+    databaseService = await getTestDatabase(app);
   });
 
   describe('Rôle Support', () => {
@@ -36,7 +40,7 @@ describe('UpdateUserRole', () => {
       await expectUserToHaveRoleSupportEnabled(caller, false);
 
       const { cleanup } = await addUserRoleSupport({
-        app,
+        databaseService,
         userId: yoloDodoUser.id,
       });
 
