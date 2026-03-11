@@ -1,0 +1,12 @@
+Libellé Catégorie;Anciens Codes Compétences;Anciennes compétences;;Nouveau Code Compétence;Libellé compétence de destination;Compétence déléguée en amont ;EPCI à qui peut être délégué la compétence en amont;Compétence obligatoire ? 
+Production, réseaux et distribution d'énergie;C1004;Concession de la distribution d'électricité et de gaz;--->;C1005;Concession de la distribution publique d'électricité;;;CU, METRO
+;;;--->;C1010;Concession de la distribution publique de gaz;;;CU, METRO
+;C1020;Création, aménagement, entretien et gestion des réseaux de chaleur ou de froid urbains;--->;C1015;Création, aménagement, entretien et gestion des réseaux de chaleur ou de froid urbains;;;CU, METRO
+;C1025;Soutien aux actions de MDE;--->;C1020;Soutien aux actions de maîtrise d'énergie ;;;CU, METRO
+;;;;C1035;Installation d'hydroélectricité, d'énergies renouvelables;;;
+;;;;C1040;Installation de production d'électricité de proximité;;;
+Eau et assainissement ;C1502;Eau (Traitement, Adduction, Distribution);--->;C1505;Eau (production, traitement, stockage, transport, distribution);;;CA, CU, METRO
+;C1505;Assainissement collectif;--->;C1510;Assainissement collectif des eaux usées;;;CA, CU, METRO
+Compétences abandonnées;C1010;Hydraulique (OBSOLETE);;;;;;
+;C1030;Autres énergies;;;;;;
+;C4555;Études et programmation;;;;;;
