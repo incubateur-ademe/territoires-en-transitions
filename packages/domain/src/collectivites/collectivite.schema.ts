@@ -1,5 +1,6 @@
 import z from 'zod';
 import { collectiviteNatureEnumSchema } from './collectivite-banatic-type.enum';
+import { collectivitePreferencesSchema } from './collectivite-preferences.schema';
 import { collectiviteTypeEnumSchema } from './collectivite-type.enum';
 
 export const collectiviteSchema = z.object({
@@ -9,7 +10,6 @@ export const collectiviteSchema = z.object({
   accesRestreint: z.boolean().nullable(),
   nom: z.string(),
   type: collectiviteTypeEnumSchema.describe('Type de collectivité'),
-  activeCOT: z.boolean(),
   communeCode: z.string().nullable(),
   siren: z.string().nullable(),
   nic: z.string().nullable(),
@@ -20,6 +20,7 @@ export const collectiviteSchema = z.object({
     .describe('Nature de la collectivité tel que défini dans la base Banatic'),
   population: z.number().nullable(),
   dansAireUrbaine: z.boolean().nullable(),
+  preferences: collectivitePreferencesSchema,
 });
 
 export type Collectivite = z.infer<typeof collectiviteSchema>;
@@ -31,7 +32,6 @@ export const collectiviteResumeSchema = collectiviteSchema.pick({
   communeCode: true,
   natureInsee: true,
   type: true,
-  activeCOT: true,
 });
 
 export const collectivitePublicSchema = collectiviteSchema;
@@ -51,6 +51,7 @@ export const createCollectiviteSchema = z.object({
   natureInsee: collectiviteNatureEnumSchema.nullish(),
   population: z.number().nullish(),
   dansAireUrbaine: z.boolean().nullish(),
+  preferences: z.optional(collectivitePreferencesSchema),
 });
 
 export const collectiviteUpsertSchema = createCollectiviteSchema.partial({

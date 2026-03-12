@@ -76,7 +76,6 @@ describe('Calcul de trajectoire SNBC', () => {
         nom: 'CA du Bassin de Bourg-en-Bresse',
         siren: '200071751',
         natureInsee: 'CA',
-        activeCOT: false,
       },
       donneesEntree: {
         sources: [],

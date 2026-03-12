@@ -153,18 +153,18 @@ export default class ListCollectivitesService {
             communeCode: collectiviteTable.communeCode,
             natureInsee: sql<CollectiviteNatureType>`${collectiviteTable.natureInsee}`,
             type: sql<CollectiviteType>`${collectiviteTable.type}`,
-            activeCOT: sql<boolean>`coalesce(${cotTable.actif}, false)`,
             ...relationsFields,
           }
-        : {
-            ...getTableColumns(collectiviteTable),
-            createdAt: sqlToDateTimeISO(collectiviteTable.createdAt),
-            modifiedAt: sqlToDateTimeISO(collectiviteTable.modifiedAt),
-            type: sql<CollectiviteType>`${collectiviteTable.type}`,
-            activeCOT: sql<boolean>`coalesce(${cotTable.actif}, false)`,
-            natureInsee: sql<CollectiviteNatureType>`${collectiviteTable.natureInsee}`,
-            ...relationsFields,
-          };
+        : (() => {
+            return {
+              ...getTableColumns(collectiviteTable),
+              createdAt: sqlToDateTimeISO(collectiviteTable.createdAt),
+              modifiedAt: sqlToDateTimeISO(collectiviteTable.modifiedAt),
+              type: sql<CollectiviteType>`${collectiviteTable.type}`,
+              natureInsee: sql<CollectiviteNatureType>`${collectiviteTable.natureInsee}`,
+              ...relationsFields,
+            };
+          })();
 
     const request = input.withRelations
       ? db

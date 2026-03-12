@@ -1,4 +1,4 @@
-import { useIsScoreIndicatifEnabled } from '@/app/referentiels/comparisons/use-is-score-indicatif-enabled';
+import { useIsScoreIndicatifAllowed } from '@/app/referentiels/comparisons/use-is-score-indicatif-allowed';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { useApiClient } from '@/app/utils/use-api-client';
 import { useMutation } from '@tanstack/react-query';
@@ -49,7 +49,7 @@ export const useExportComparisonScores = (
 ) => {
   const tracker = useEventTracker();
   const api = useApiClient();
-  const isScoreIndicatifEnabled = useIsScoreIndicatifEnabled();
+  const isScoreIndicatifEnabled = useIsScoreIndicatifAllowed();
 
   return useMutation({
     mutationFn: async () => {

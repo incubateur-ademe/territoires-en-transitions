@@ -4,7 +4,6 @@ import { referentielToName } from '@/app/app/labels';
 import { makeReferentielUrl } from '@/app/app/paths';
 import HeaderLabellisationConnected from '@/app/referentiels/labellisations/HeaderLabellisation';
 import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
-import { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useEtatLieuxHasStarted } from '@/app/referentiels/use-snapshot';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -76,7 +75,7 @@ const Title = ({ referentielId }: { referentielId: ReferentielId }) => (
   <>
     <h1 className="text-center mb-2">Audit et labellisation</h1>
     <p className="text-center text-[22px]">
-      Référentiel {referentielToName[referentielId as ReferentielOfIndicateur]}
+      Référentiel {referentielToName[referentielId]}
     </p>
   </>
 );

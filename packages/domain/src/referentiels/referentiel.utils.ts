@@ -4,10 +4,7 @@ import {
   StatutAvancementEnum,
 } from './actions/action-statut-avancement.enum.schema';
 import { ActionStatut } from './actions/action-statut.schema';
-import {
-  ActionTypeEnum,
-  ActionTypeIncludingExemple,
-} from './actions/action-type.enum';
+import { ActionType, ActionTypeEnum } from './actions/action-type.enum';
 import { ReferentielId, referentielIdEnumSchema } from './referentiel-id.enum';
 import { ActionScoreFinal } from './scores/action-score.schema';
 import { TreeOfActionsIncludingScore } from './scores/score-snapshot-action-scores-payload.schema';
@@ -53,8 +50,8 @@ export function getAxeFromActionId(actionId: string): number {
 
 export function getActionTypeFromActionId(
   actionId: string,
-  orderedActionTypes: ActionTypeIncludingExemple[]
-): ActionTypeIncludingExemple {
+  orderedActionTypes: ActionType[]
+): ActionType {
   const level = getLevelFromActionId(actionId);
 
   if (level >= orderedActionTypes.length) {

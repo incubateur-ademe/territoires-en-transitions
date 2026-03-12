@@ -13,12 +13,14 @@ type Props = {
   user: UserWithRolesAndPermissions;
   currentCollectivite: CollectiviteCurrent | null;
   panierId?: string;
+  referentielTeEnabled: boolean;
 };
 
 export const makeMainNav = ({
   user,
   currentCollectivite,
   panierId,
+  referentielTeEnabled,
 }: Props): HeaderProps['mainNav'] => {
   const hasToCompleteRegistration =
     !hasRole(user, PlatformRole.VERIFIED) && user.collectivites.length === 0;
@@ -46,6 +48,7 @@ export const makeMainNav = ({
       user,
       currentCollectivite,
       panierId,
+      referentielTeEnabled,
     });
   }
 };
