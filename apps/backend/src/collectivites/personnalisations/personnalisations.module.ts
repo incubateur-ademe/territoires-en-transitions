@@ -4,19 +4,26 @@ import ImportPersonnalisationQuestionService from '@tet/backend/collectivites/pe
 import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import { SetPersonnalisationReponseService } from '@tet/backend/collectivites/personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.service';
 import { SheetModule } from '@tet/backend/utils/google-sheets/sheet.module';
+import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { UsersModule } from '../../users/users.module';
 import { CollectivitesModule } from '../collectivites.module';
+import { ListPersonnalisationReponsesRepository } from './list-personnalisation-reponses/list-personnalisation-reponses.repository';
+import { ListPersonnalisationReponsesService } from './list-personnalisation-reponses/list-personnalisation-reponses.service';
 import PersonnalisationsExpressionService from './services/personnalisations-expression.service';
 import PersonnalisationsService from './services/personnalisations-service';
+import { SetPersonnalisationReponseRepository } from './set-personnalisation-reponse/set-personnalisation-reponse.repository';
 
 @Module({
-  imports: [CollectivitesModule, UsersModule, SheetModule],
+  imports: [CollectivitesModule, UsersModule, SheetModule, TransactionModule],
   providers: [
     PersonnalisationsExpressionService,
     PersonnalisationsService,
     ImportPersonnalisationQuestionService,
     ListPersonnalisationQuestionsService,
     SetPersonnalisationReponseService,
+    ListPersonnalisationReponsesService,
+    ListPersonnalisationReponsesRepository,
+    SetPersonnalisationReponseRepository,
   ],
   exports: [
     PersonnalisationsExpressionService,

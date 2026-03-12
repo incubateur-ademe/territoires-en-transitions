@@ -1,10 +1,10 @@
 import {
-  TListeChoix,
-  TReponse,
-} from '@/app/referentiels/personnalisations/personnalisation.types';
+  PersonnalisationReponseValue,
+  QuestionChoix,
+} from '@tet/domain/collectivites';
 import { Button, Field, Input, RadioButton as RadioButtonBase } from '@tet/ui';
 import classNames from 'classnames';
-import { debounce } from 'es-toolkit';
+import { debounce, isNil } from 'es-toolkit';
 import { ChangeEvent, FC, ReactNode, useState } from 'react';
 import { TQuestionReponseProps } from './PersoPotentielQR';
 
@@ -27,19 +27,17 @@ const ReponseChoix = ({ qr, onChange, canEdit }: TQuestionReponseProps) => {
 
   return (
     <ReponseContainer className="flex-col">
-      {choices?.map(({ id: choiceId, label }) => {
-        return (
-          <RadioButton
-            key={questionId + choiceId}
-            disabled={!canEdit}
-            questionId={questionId}
-            choiceId={choiceId}
-            label={label}
-            reponse={reponse}
-            onChange={onChange}
-          />
-        );
-      })}
+      {choices?.map(({ id: choiceId, formulation }) => (
+        <RadioButton
+          key={questionId + choiceId}
+          disabled={!canEdit}
+          questionId={questionId}
+          choiceId={choiceId}
+          label={formulation}
+          reponse={reponse}
+          onChange={onChange}
+        />
+      ))}
     </ReponseContainer>
   );
 };
@@ -48,19 +46,19 @@ const ReponseChoix = ({ qr, onChange, canEdit }: TQuestionReponseProps) => {
 const ReponseBinaire = ({ qr, onChange, canEdit }: TQuestionReponseProps) => {
   const { id: questionId, reponse } = qr;
   const choices = getFilteredChoices(reponse, [
-    { id: 'oui', label: 'Oui' },
-    { id: 'non', label: 'Non' },
+    { id: 'oui', formulation: 'Oui' },
+    { id: 'non', formulation: 'Non' },
   ]);
 
   return (
     <ReponseContainer>
-      {choices?.map(({ id: choiceId, label }) => (
+      {choices?.map(({ id: choiceId, formulation }) => (
         <RadioButton
           key={choiceId}
           disabled={!canEdit}
           questionId={questionId}
           choiceId={choiceId}
-          label={label}
+          label={formulation}
           reponse={reponse}
           onChange={onChange}
         />
@@ -120,7 +118,7 @@ const stringToProportion = (str: string, min: number, max: number) => {
 };
 
 const proportionToString = (value: number | null) =>
-  value === null || value === undefined ? '' : String(value);
+  isNil(value) ? '' : String(value);
 
 // correspondances entre un type de réponse et son composant
 export const reponseParType: { [k: string]: FC<TQuestionReponseProps> } = {
@@ -130,13 +128,17 @@ export const reponseParType: { [k: string]: FC<TQuestionReponseProps> } = {
 };
 
 const getFilteredChoices = (
-  reponse: TReponse | undefined,
-  choix: TListeChoix
-): TListeChoix => {
-  const hasReponse = reponse !== null && reponse !== undefined;
-  return hasReponse
-    ? choix?.filter(({ id: choiceId }) => reponse?.toString() === choiceId)
-    : choix;
+  reponse: PersonnalisationReponseValue | undefined,
+  choix: Pick<QuestionChoix, 'id' | 'formulation'>[]
+) => {
+  // Convertir le booléen en string 'oui'/'non' pour la comparaison
+  const normalizedReponse =
+    typeof reponse === 'boolean' ? (reponse ? 'oui' : 'non') : reponse;
+  return isNil(normalizedReponse)
+    ? choix
+    : choix?.filter(
+        ({ id: choiceId }) => normalizedReponse?.toString() === choiceId
+      );
 };
 
 const RadioButton = ({
@@ -151,10 +153,10 @@ const RadioButton = ({
   questionId: string;
   choiceId: string;
   label: string;
-  reponse: TReponse | undefined;
-  onChange: (reponse: TReponse) => void;
+  reponse: PersonnalisationReponseValue | undefined;
+  onChange: (reponse: PersonnalisationReponseValue) => void;
 }) => {
-  const hasReponse = reponse !== null && reponse !== undefined;
+  const hasReponse = !isNil(reponse);
   const eltId = `${questionId}-${choiceId}`;
 
   return (

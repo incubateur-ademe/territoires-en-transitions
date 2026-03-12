@@ -1,81 +1,55 @@
-import {
-  TQuestionRead,
-  TReponse,
-  TReponseRead,
-} from '@/app/referentiels/personnalisations/personnalisation.types';
 import { useQueries } from '@tanstack/react-query';
-import { DBClient, useSupabase } from '@tet/api';
+import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { PersonnalisationReponse, Question } from '@tet/domain/collectivites';
 import { roundTo } from '@tet/domain/utils';
 
 // charge les réponses existantes pour une série de questions donnée
-export const useReponses = (questions: TQuestionRead[]) => {
+export const useReponses = (questions: Question[]) => {
   const collectiviteId = useCollectiviteId();
-  const supabase = useSupabase();
+  const trpc = useTRPC();
 
   // une requête par question pour permettre le rechargement individuel
-  const queries = questions.map((q) => ({
-    queryKey: ['reponse', collectiviteId, q.id],
-    queryFn: () => fetchReponse(supabase, collectiviteId, q.id),
-    enabled: !!collectiviteId,
-  }));
-
-  return useQueries({ queries });
-};
-
-// chargement des données
-const fetchReponse = async (
-  supabase: DBClient,
-  collectivite_id: number,
-  question_id: string
-) => {
-  const query = supabase
-    .from('reponse_display')
-    .select()
-    .match({ collectivite_id, question_id });
-
-  // attends les données
-  const { error, data } = await query;
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data?.length ? transform(data[0] as TReponseRead) : null;
+  return useQueries({
+    queries: questions.map((q) =>
+      trpc.collectivites.personnalisations.listReponses.queryOptions(
+        {
+          collectiviteId,
+          questionIds: [q.id],
+        },
+        {
+          select: (rows) => rows.map((row) => transform(row)),
+        }
+      )
+    ),
+    combine: (results) => {
+      return {
+        data: results
+          .map((result) => result.data?.[0])
+          .filter(Boolean) as PersonnalisationReponse[],
+        pending: results.some((result) => result.isPending),
+      };
+    },
+  });
 };
 
 // met à jour si nécessaire la valeur d'une réponse lue depuis la base
-const transform = (row: TReponseRead) => {
-  const { reponse } = row;
-  const { type, reponse: reponseValue } = reponse;
+const transform = (row: PersonnalisationReponse) => {
+  const { questionType, reponse } = row;
 
   // transforme en pourcentage une réponse de type proportion
-  if (type === 'proportion') {
-    const value =
-      typeof reponseValue === 'number' ? roundTo(reponseValue * 100, 0) : '';
-    return setReponseValue(row, value);
+  if (questionType === 'proportion') {
+    const value = typeof reponse === 'number' ? roundTo(reponse * 100, 0) : '';
+    return { ...row, reponse: value };
   }
 
   // transforme une valeur booléen en id (oui/non) du bouton radio correspondant
-  if (reponseValue !== null && type === 'binaire') {
-    if (reponseValue === true) return setReponseValue(row, 'oui');
-    if (reponseValue === false) return setReponseValue(row, 'non');
-    return setReponseValue(row, null);
+  if (reponse !== null && questionType === 'binaire') {
+    if (reponse === true) return { ...row, reponse: 'oui' };
+    if (reponse === false) return { ...row, reponse: 'non' };
+    return { ...row, reponse: null };
   }
 
   // autres cas: renvoi la réponse inchangée
   return row;
-};
-
-// change la valeur dans une réponse et renvoi l'objet résultant
-const setReponseValue = (row: TReponseRead, reponseValue: TReponse) => {
-  const { reponse } = row;
-
-  return {
-    ...row,
-    reponse: {
-      ...reponse,
-      reponse: reponseValue,
-    },
-  };
 };
