@@ -38,6 +38,7 @@ describe('Plan Transformer Tests', () => {
               'Objectif stratégique 1. Impulser une dynamique participative',
               'Sous-Sous Axe',
             ],
+            sousTitreAction: null,
             budget: 5000000,
             dateDebut: new Date('2025-12-01T00:00:00.000Z'),
             dateFin: new Date('2030-09-01T00:00:00.000Z'),
@@ -84,6 +85,26 @@ Objectif opérationnel 3.1 : Evaluer le CLS avec la commission d’élus communa
         }
       }
     });
+    it('should correctly extract sous-actions with sousTitreAction and parent titre from Excel', async () => {
+      const fileContent = readExcelFile('plan_with_sous_actions.xlsx');
+      const result = await parsePlanExcel(fileContent);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        const data = await createImportPlanInput(result.data, 'test', 1, [], []);
+        expect(data.success).toBe(true);
+        if (data.success) {
+          const sousActions = data.data.fiches.filter(
+            (f) => f.sousTitreAction != null
+          );
+          expect(sousActions.length).toBeGreaterThan(0);
+          // The sous-action should carry its own title in sousTitreAction
+          // and the parent action title in titre
+          expect(sousActions[0].sousTitreAction).toBeTruthy();
+          expect(sousActions[0].titre).toBeTruthy();
+        }
+      }
+    });
+
     it('should successfully transform a valid plan Excel file having fiches with no axes', async () => {
       const fileContent = readExcelFile(
         'plan_with_fiche_with_and_without_axe.xlsx'

@@ -6,7 +6,6 @@ import {
   success,
 } from '@tet/backend/utils/result.type';
 import { isPersonneId } from '@tet/domain/collectivites';
-import { isEqual } from 'es-toolkit';
 import { ImportPlanInput } from '../import-plan.input';
 import { ResolvedFicheEntities } from '../resolvers/resolve-entity.service';
 import { importFicheInputToUpdateFicheInput } from './import-fiche-input-to-update-fiche-input';
@@ -16,10 +15,8 @@ export function importPlanInputToCreatePlanAggregateInput(
   resolvedEntities: ResolvedFicheEntities[],
   collectiviteId: number
 ): Result<CreatePlanAggregateInput, string> {
-  const fichesWithPaths = planImport.fiches.map((ficheImport) => {
-    const resolvedEntity = resolvedEntities.find((entity) =>
-      isEqual(entity.axisPath, ficheImport.axisPath)
-    );
+  const fichesWithPaths = planImport.fiches.map((ficheImport, index) => {
+    const resolvedEntity = resolvedEntities[index];
 
     if (!resolvedEntity) {
       return failure(
@@ -29,10 +26,16 @@ export function importPlanInputToCreatePlanAggregateInput(
       );
     }
 
+    const sousTitreAction = ficheImport.sousTitreAction;
+    const isSousAction = sousTitreAction != null;
+
     return success({
       axisPath: ficheImport.axisPath,
+      parentActionTitre: isSousAction ? ficheImport.titre : undefined,
       fiche: importFicheInputToUpdateFicheInput(
-        ficheImport,
+        isSousAction
+          ? { ...ficheImport, titre: sousTitreAction }
+          : ficheImport,
         resolvedEntity,
         collectiviteId
       ),

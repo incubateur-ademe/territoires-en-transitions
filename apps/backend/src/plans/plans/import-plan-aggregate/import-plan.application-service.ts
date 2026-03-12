@@ -36,7 +36,7 @@ export class ImportPlanApplicationService {
     planType?: number,
     pilotes?: PersonneId[],
     referents?: PersonneId[]
-  ): Promise<Result<boolean, ImportErrors>> {
+  ): Promise<Result<number, ImportErrors>> {
     // 1. Parse Excel file
     const parsedRows = await parsePlanExcel(file);
     if (!parsedRows.success) {
@@ -63,7 +63,7 @@ export class ImportPlanApplicationService {
 
     // 4. Execute import in transaction
     const saveResult = await this.transactionManager.executeSingle<
-      boolean,
+      number,
       ImportErrors
     >(async (tx) => {
       try {
@@ -108,7 +108,7 @@ export class ImportPlanApplicationService {
           return failure(new PlanCreationError(planCreationResult.error));
         }
 
-        return success(true);
+        return success(planCreationResult.data);
       } catch (error) {
         this.logger.error('Error during import transaction:', error);
         return failure(new TransactionError(error));

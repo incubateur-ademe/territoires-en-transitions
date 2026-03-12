@@ -1,4 +1,8 @@
 import { INestApplication } from '@nestjs/common';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-axe.table';
+import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
   getAuthUser,
@@ -7,15 +11,18 @@ import {
   getTestRouter,
 } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { eq } from 'drizzle-orm';
+import { and, eq, inArray, isNull } from 'drizzle-orm';
 import * as fs from 'node:fs';
 import path from 'path';
-import { onTestFinished } from 'vitest';
+import { expect, onTestFinished } from 'vitest';
 import z from 'zod';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { addAndEnableUserSuperAdminMode } from '../../../users/users/users.test-fixture';
 import { TrpcRouter } from '../../../utils/trpc/trpc.router';
 import { importPlanInputSchema } from './import-plan.input';
+
+const TEST_COLLECTIVITE_ID = 50;
+const TEST_PLAN_NAME = 'import test';
 
 const pathToInput = async ({
   pathName,
@@ -28,7 +35,7 @@ const pathToInput = async ({
   const buff = fs.readFileSync(filePath);
   return {
     collectiviteId,
-    planName: 'import test',
+    planName: TEST_PLAN_NAME,
     planType: 1,
     file: buff.toString('base64'),
   };
@@ -40,11 +47,74 @@ describe("Test import Plan d'action", () => {
   let app: INestApplication;
   let databaseService: DatabaseService;
 
+  const deletePlan = async (
+    caller: ReturnType<TrpcRouter['createCaller']>,
+    planId: number
+  ) => {
+    await caller.plans.plans.delete({ planId });
+  };
+
+  const getFichesByTitreInPlan = async (titre: string, planId: number) => {
+    const axeIds = await databaseService.db
+      .select({ id: axeTable.id })
+      .from(axeTable)
+      .where(eq(axeTable.plan, planId));
+
+    const allAxeIds = [planId, ...axeIds.map((a) => a.id)];
+
+    return databaseService.db
+      .select({
+        id: ficheActionTable.id,
+        titre: ficheActionTable.titre,
+        description: ficheActionTable.description,
+        statut: ficheActionTable.statut,
+        priorite: ficheActionTable.priorite,
+        budgetPrevisionnel: ficheActionTable.budgetPrevisionnel,
+        parentId: ficheActionTable.parentId,
+        dateDebut: ficheActionTable.dateDebut,
+        dateFin: ficheActionTable.dateFin,
+        collectiviteId: ficheActionTable.collectiviteId,
+      })
+      .from(ficheActionTable)
+      .innerJoin(
+        ficheActionAxeTable,
+        eq(ficheActionTable.id, ficheActionAxeTable.ficheId)
+      )
+      .where(
+        and(
+          eq(ficheActionTable.titre, titre),
+          inArray(ficheActionAxeTable.axeId, allAxeIds)
+        )
+      );
+  };
+
+  const deleteAllTestPlans = async (
+    caller: ReturnType<TrpcRouter['createCaller']>
+  ) => {
+    const plans = await databaseService.db
+      .select({ id: axeTable.id })
+      .from(axeTable)
+      .where(and(eq(axeTable.nom, TEST_PLAN_NAME), isNull(axeTable.parent)));
+
+    for (const plan of plans) {
+      await caller.plans.plans.delete({ planId: plan.id });
+    }
+  };
+
   beforeAll(async () => {
     router = await getTestRouter();
     yoloDodoUser = await getAuthUser();
     app = await getTestApp();
     databaseService = await getTestDatabase(app);
+
+    const caller = router.createCaller({ user: yoloDodoUser });
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: yoloDodoUser.id,
+    });
+    await deleteAllTestPlans(caller);
+    await cleanup();
   });
 
   afterAll(async () => {
@@ -54,7 +124,10 @@ describe("Test import Plan d'action", () => {
   test('Test utilisateur non support', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
     const pathName = './__fixtures__/nouveau-plan-valide.xlsx';
-    const input = await pathToInput({ pathName, collectiviteId: 50 });
+    const input = await pathToInput({
+      pathName,
+      collectiviteId: TEST_COLLECTIVITE_ID,
+    });
     await expect(caller.plans.plans.import(input)).rejects.toThrowError();
   });
 
@@ -67,13 +140,19 @@ describe("Test import Plan d'action", () => {
       userId: yoloDodoUser.id,
     });
 
-    onTestFinished(cleanup);
-
     const pathName = './__fixtures__/nouveau-plan-valide.xlsx';
-    const input = await pathToInput({ pathName, collectiviteId: 50 });
+    const input = await pathToInput({
+      pathName,
+      collectiviteId: TEST_COLLECTIVITE_ID,
+    });
 
-    const result = await caller.plans.plans.import(input);
-    expect(result).toBe(true);
+    const planId = (await caller.plans.plans.import(input)) as unknown as number;
+    expect(planId).toBeGreaterThan(0);
+
+    onTestFinished(async () => {
+      await deletePlan(caller, planId);
+      await cleanup();
+    });
   });
 
   test('Test import plan sans axes', async () => {
@@ -84,11 +163,19 @@ describe("Test import Plan d'action", () => {
       caller,
       userId: yoloDodoUser.id,
     });
-    onTestFinished(cleanup);
+
     const pathName = './__fixtures__/plan_sans_axes.xlsx';
-    const input = await pathToInput({ pathName, collectiviteId: 50 });
-    const result = await caller.plans.plans.import(input);
-    expect(result).toBe(true);
+    const input = await pathToInput({
+      pathName,
+      collectiviteId: TEST_COLLECTIVITE_ID,
+    });
+    const planId = (await caller.plans.plans.import(input)) as unknown as number;
+    expect(planId).toBeGreaterThan(0);
+
+    onTestFinished(async () => {
+      await deletePlan(caller, planId);
+      await cleanup();
+    });
   });
 
   test('Test import plan avec une seule fiche', async () => {
@@ -99,11 +186,165 @@ describe("Test import Plan d'action", () => {
       caller,
       userId: yoloDodoUser.id,
     });
-    onTestFinished(cleanup);
+
     const pathName = './__fixtures__/one_fiche_plan.xlsx';
-    const input = await pathToInput({ pathName, collectiviteId: 50 });
-    const result = await caller.plans.plans.import(input);
-    expect(result).toBe(true);
+    const input = await pathToInput({
+      pathName,
+      collectiviteId: TEST_COLLECTIVITE_ID,
+    });
+    const planId = (await caller.plans.plans.import(input)) as unknown as number;
+    expect(planId).toBeGreaterThan(0);
+
+    onTestFinished(async () => {
+      await deletePlan(caller, planId);
+      await cleanup();
+    });
+
+    const titreFiche =
+      "Action 1. Création d'un comité de suivi d'élus autour du CLS";
+    const fiches = await getFichesByTitreInPlan(titreFiche, planId);
+
+    expect(fiches).toHaveLength(1);
+    expect(fiches[0]).toMatchObject({
+      titre: titreFiche,
+      description: expect.stringContaining('permettre aux élus communautaires'),
+      statut: 'À venir',
+      priorite: 'Élevé',
+      budgetPrevisionnel: '5000000',
+      parentId: null,
+      dateDebut: expect.stringContaining('2025-12-01'),
+      dateFin: expect.stringContaining('2030-09-01'),
+    });
+  });
+
+  test("Test import plan avec sous-actions échoue si l'action parente n'a pas de ligne dédiée", async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: yoloDodoUser.id,
+    });
+    onTestFinished(cleanup);
+
+    const pathName = './__fixtures__/plan_with_sous_actions.xlsx';
+    const input = await pathToInput({
+      pathName,
+      collectiviteId: TEST_COLLECTIVITE_ID,
+    });
+    await expect(caller.plans.plans.import(input)).rejects.toThrowError(
+      'Impossible de créer la sous-action "Sous-action 1.1" — l\'action parente "Action 1" est introuvable.'
+    );
+  });
+
+  test('Test import plan avec sous-actions crée les fiches parentes et les sous-actions avec parentId', async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const { cleanup } = await addAndEnableUserSuperAdminMode({
+      app,
+      caller,
+      userId: yoloDodoUser.id,
+    });
+
+    const pathName = './__fixtures__/plan_with_sous_actions_valid.xlsx';
+    const input = await pathToInput({
+      pathName,
+      collectiviteId: TEST_COLLECTIVITE_ID,
+    });
+    const planId = (await caller.plans.plans.import(input)) as unknown as number;
+    expect(planId).toBeGreaterThan(0);
+
+    onTestFinished(async () => {
+      await deletePlan(caller, planId);
+      await cleanup();
+    });
+
+    const fichesByTitre = async (titre: string) =>
+      getFichesByTitreInPlan(titre, planId);
+
+    const piloteNomsByFicheId = async (ficheId: number) =>
+      databaseService.db
+        .select({ nom: personneTagTable.nom })
+        .from(ficheActionPiloteTable)
+        .innerJoin(
+          personneTagTable,
+          eq(ficheActionPiloteTable.tagId, personneTagTable.id)
+        )
+        .where(
+          and(
+            eq(ficheActionPiloteTable.ficheId, ficheId),
+            isNull(ficheActionPiloteTable.userId)
+          )
+        );
+
+    // Normal action without sous-action
+    const actionNormale = await fichesByTitre('Action normale');
+    expect(actionNormale).toHaveLength(1);
+    expect(actionNormale[0]).toMatchObject({
+      parentId: null,
+      description: 'Description action normale',
+    });
+
+    // "Action 1" has a dedicated row and should exist with no parentId
+    const parentFiches = await fichesByTitre('Action 1');
+    expect(parentFiches).toHaveLength(1);
+    expect(parentFiches[0]).toMatchObject({ parentId: null });
+    const parentId = parentFiches[0].id;
+
+    // Sous-action 1.1 and 1.2 should reference "Action 1" as parent
+    const sousAction11 = await fichesByTitre('Sous-action 1.1');
+    expect(sousAction11).toHaveLength(1);
+    expect(sousAction11[0]).toMatchObject({
+      titre: 'Sous-action 1.1',
+      description: 'Description sous-action 1.1',
+      statut: 'En cours',
+      dateFin: expect.stringContaining('2025-12-31'),
+      parentId,
+    });
+    const pilotes11 = await piloteNomsByFicheId(sousAction11[0].id);
+    expect(pilotes11).toHaveLength(1);
+    expect(pilotes11[0].nom).toBe('Pilote SA1.1');
+
+    const sousAction12 = await fichesByTitre('Sous-action 1.2');
+    expect(sousAction12).toHaveLength(1);
+    expect(sousAction12[0]).toMatchObject({
+      titre: 'Sous-action 1.2',
+      description: 'Description sous-action 1.2',
+      statut: 'Réalisé',
+      dateFin: expect.stringContaining('2026-06-30'),
+      parentId,
+    });
+    const pilotes12 = await piloteNomsByFicheId(sousAction12[0].id);
+    expect(pilotes12).toHaveLength(1);
+    expect(pilotes12[0].nom).toBe('Pilote SA1.2');
+
+    // Normal action in Axe 2
+    const action2 = await fichesByTitre('Action 2');
+    expect(action2).toHaveLength(1);
+    expect(action2[0]).toMatchObject({
+      parentId: null,
+      description: 'Description action 2',
+    });
+
+    // "Action 3" has a dedicated row in a sub-axis and should exist with no parentId
+    const parentFiches3 = await fichesByTitre('Action 3');
+    expect(parentFiches3).toHaveLength(1);
+    expect(parentFiches3[0]).toMatchObject({ parentId: null });
+    const parentId3 = parentFiches3[0].id;
+
+    // Sous-action 3.1 should reference "Action 3" as parent
+    const sousAction31 = await fichesByTitre('Sous-action 3.1');
+    expect(sousAction31).toHaveLength(1);
+    expect(sousAction31[0]).toMatchObject({
+      titre: 'Sous-action 3.1',
+      description: 'Description sous-action 3.1',
+      statut: 'En pause',
+      dateFin: expect.stringContaining('2027-03-31'),
+      parentId: parentId3,
+    });
+    const pilotes31 = await piloteNomsByFicheId(sousAction31[0].id);
+    expect(pilotes31).toHaveLength(1);
+    expect(pilotes31[0].nom).toBe('Pilote SA3.1');
   });
 
   test('Test erreur budget', async () => {
@@ -152,19 +393,25 @@ describe("Test import Plan d'action", () => {
       userId: yoloDodoUser.id,
     });
 
-    onTestFinished(cleanup);
-
     const pathName = './__fixtures__/one_fiche_plan.xlsx';
-    const input = await pathToInput({ pathName, collectiviteId: 50 });
-    const result = await caller.plans.plans.import(input);
-    expect(result).toBe(true);
+    const input = await pathToInput({
+      pathName,
+      collectiviteId: TEST_COLLECTIVITE_ID,
+    });
+    const planId = (await caller.plans.plans.import(input)) as unknown as number;
+    expect(planId).toBeGreaterThan(0);
 
-    // Vérifier que les instances de gouvernance sont bien liées aux fiches
-    const fiches = await databaseService.db
-      .select()
-      .from(ficheActionTable)
-      .where(eq(ficheActionTable.collectiviteId, 50));
+    onTestFinished(async () => {
+      await deletePlan(caller, planId);
+      await cleanup();
+    });
 
-    expect(fiches.length).toBeGreaterThan(0);
+    // Vérifier que la fiche avec ses instances de gouvernance a été créée
+    const titreFiche =
+      "Action 1. Création d'un comité de suivi d'élus autour du CLS";
+    const fiches = await getFichesByTitreInPlan(titreFiche, planId);
+
+    expect(fiches).toHaveLength(1);
+    expect(fiches[0]).toMatchObject({ titre: titreFiche });
   });
 });

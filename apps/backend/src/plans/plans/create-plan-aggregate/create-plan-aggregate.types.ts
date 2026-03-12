@@ -59,9 +59,12 @@ export interface CreatePlanAggregateInput {
 }
 
 /**
- * A fiche with its axis path for hierarchical organization
+ * A fiche with its axis path for hierarchical organization.
+ * When `parentActionTitre` is set, this fiche is a sous-action whose parent
+ * is the action with that title (within the same axisPath).
  */
 export interface FicheWithRelationsAndAxisPath {
   axisPath?: string[];
   fiche: Omit<UpdateFicheInput, 'collectiviteId'>;
+  parentActionTitre?: string;
 }

@@ -232,6 +232,72 @@ describe('importPlanInputToCreatePlanAggregateInput', () => {
     }
   });
 
+  it("should use sousTitreAction as the fiche title and store the original titre as parentActionTitre", () => {
+    const sousFiche: Partial<ImportFicheInput> = {
+      axisPath: ['Axe 1'],
+      titre: 'Action parente',
+      sousTitreAction: 'Sous-action 1.1',
+      structures: [],
+      partenaires: [],
+      services: [],
+      pilotes: [],
+      referents: [],
+      financeurs: [],
+    };
+
+    const planImport = createImportPlanInput({
+      fiches: [sousFiche as ImportFicheInput],
+    });
+
+    const resolvedEntities = [createResolvedEntities({ axisPath: ['Axe 1'] })];
+
+    const result = importPlanInputToCreatePlanAggregateInput(
+      planImport,
+      resolvedEntities,
+      collectiviteId
+    );
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      const fiche = result.data.fiches[0];
+      expect(fiche.fiche.titre).toBe('Sous-action 1.1');
+      expect(fiche.parentActionTitre).toBe('Action parente');
+    }
+  });
+
+  it('should not set parentActionTitre for normal actions', () => {
+    const normalFiche: Partial<ImportFicheInput> = {
+      axisPath: ['Axe 1'],
+      titre: 'Action normale',
+      sousTitreAction: null,
+      structures: [],
+      partenaires: [],
+      services: [],
+      pilotes: [],
+      referents: [],
+      financeurs: [],
+    };
+
+    const planImport = createImportPlanInput({
+      fiches: [normalFiche as ImportFicheInput],
+    });
+
+    const resolvedEntities = [createResolvedEntities({ axisPath: ['Axe 1'] })];
+
+    const result = importPlanInputToCreatePlanAggregateInput(
+      planImport,
+      resolvedEntities,
+      collectiviteId
+    );
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      const fiche = result.data.fiches[0];
+      expect(fiche.fiche.titre).toBe('Action normale');
+      expect(fiche.parentActionTitre).toBeUndefined();
+    }
+  });
+
   it('should handle fiches with empty instance gouvernance', () => {
     const ficheWithoutInstanceGouvernance: Partial<ImportFicheInput> = {
       axisPath: ['Axe 1'],

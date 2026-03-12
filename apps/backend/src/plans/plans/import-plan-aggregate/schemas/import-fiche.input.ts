@@ -58,6 +58,16 @@ const titleSchema = z
   )
   .transform((val) => cleanTitle(val));
 
+const nullableTitleSchema = z
+  .preprocess(
+    richTextPreprocessor,
+    z.union([z.string(), z.null(), z.undefined()])
+  )
+  .transform((val): string | null => {
+    if (!val) return null;
+    return cleanTitle(String(val)) || null;
+  });
+
 const optionalTextSchema = z
   .preprocess(
     richTextPreprocessor,
@@ -123,6 +133,7 @@ export const financeurSchema = z.object({
 export const importFicheInputSchema = z.object({
   id: z.number().optional(),
   axisPath: z.array(z.string()).optional(),
+  sousTitreAction: nullableTitleSchema,
   titre: titleSchema.pipe(
     z
       .string()
