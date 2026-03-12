@@ -10,7 +10,7 @@ import {
   PersonnalisationReponse,
   PersonnalisationReponseValue,
 } from '@tet/domain/collectivites';
-import { eq, inArray, sql } from 'drizzle-orm';
+import { and, eq, inArray, isNotNull, SQL, sql } from 'drizzle-orm';
 import {
   ListPersonnalisationReponsesErrorEnum,
   type ListPersonnalisationReponsesError,
@@ -41,6 +41,14 @@ export class ListPersonnalisationReponsesRepository {
         tx
       );
 
+      const conditions: SQL[] = [];
+      if (questionIds && questionIds.length > 0) {
+        conditions.push(inArray(questionTypeSubquery.id, questionIds));
+      }
+      if (!input.withEmptyReponse) {
+        conditions.push(isNotNull(reponseSubquery.value));
+      }
+
       const query = tx
         .select({
           questionId: questionTypeSubquery.id,
@@ -49,7 +57,7 @@ export class ListPersonnalisationReponsesRepository {
           justification: justificationSubquery.justification,
         })
         .from(questionTypeSubquery)
-        .innerJoin(
+        .leftJoin(
           reponseSubquery,
           eq(reponseSubquery.questionId, questionTypeSubquery.id)
         )
@@ -58,9 +66,7 @@ export class ListPersonnalisationReponsesRepository {
           eq(justificationSubquery.questionId, questionTypeSubquery.id)
         );
 
-      if (questionIds && questionIds.length > 0) {
-        query.where(inArray(questionTypeSubquery.id, questionIds));
-      }
+      if (conditions.length) query.where(and(...conditions));
 
       const result = await query;
       return { success: true, data: result };

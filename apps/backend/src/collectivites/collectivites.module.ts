@@ -51,6 +51,7 @@ import { ListPersonnalisationThematiquesRepository } from './personnalisations/l
 import { ListPersonnalisationThematiquesRouter } from './personnalisations/list-personnalisation-thematiques/list-personnalisation-thematiques.router';
 import { ListPersonnalisationThematiquesService } from './personnalisations/list-personnalisation-thematiques/list-personnalisation-thematiques.service';
 import { PersonnalisationsRouter } from './personnalisations/personnalisations.router';
+import { SetPersonnalisationReponseRepository } from './personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.repository';
 import { SetPersonnalisationReponseRouter } from './personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.router';
 import { SetPersonnalisationReponseService } from './personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.service';
 import { PersonnesRouter } from './personnes.router';
@@ -58,8 +59,10 @@ import CollectivitesService from './services/collectivites.service';
 import GroupementsService from './services/groupements.service';
 import { PersonnesService } from './services/personnes.service';
 import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
+import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
+
 @Module({
-  imports: [TableauDeBordModule],
+  imports: [TableauDeBordModule, TransactionModule],
   providers: [
     CollectivitesRouter,
     CollectivitesService,
@@ -87,6 +90,7 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     PersonnalisationsRouter,
     SetPersonnalisationReponseRouter,
     SetPersonnalisationReponseService,
+    SetPersonnalisationReponseRepository,
     ListPersonnalisationReglesRouter,
     ListPersonnalisationReglesService,
     ListPersonnalisationReponsesRouter,
