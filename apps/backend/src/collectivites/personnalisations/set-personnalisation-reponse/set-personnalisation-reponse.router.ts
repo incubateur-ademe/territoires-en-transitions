@@ -22,9 +22,7 @@ export class SetPersonnalisationReponseRouter {
       .mutation(async ({ input, ctx }) => {
         const result =
           await this.setPersonnalisationReponseService.setPersonnalisationReponse(
-            input.collectiviteId,
-            input.questionId,
-            input.reponse,
+            input,
             ctx.user
           );
         return this.getResultDataOrThrowError(result);

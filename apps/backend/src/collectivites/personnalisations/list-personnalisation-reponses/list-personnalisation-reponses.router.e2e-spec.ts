@@ -37,7 +37,7 @@ describe('Lister les réponses aux questions de personnalisation', () => {
   });
 
   describe('List Personnalisation Reponses - Cas de succès', () => {
-    test('Ne retourne pas de réponse pour les questions sans réponse enregistrée', async () => {
+    test('Ne retourne pas de résultat pour les questions sans réponse enregistrée', async () => {
       const caller = router.createCaller({ user: testData.userCredentials });
 
       const result = await caller.collectivites.personnalisations.listReponses({
@@ -50,6 +50,23 @@ describe('Lister les réponses aux questions de personnalisation', () => {
       });
 
       expect(result).toHaveLength(0);
+    });
+
+    test('Retourne aussi les réponses vides (null) pour les questions sans réponse enregistrée si `withEmptyReponse` est spécifié', async () => {
+      const caller = router.createCaller({ user: testData.userCredentials });
+
+      const result = await caller.collectivites.personnalisations.listReponses({
+        withEmptyReponse: true,
+        collectiviteId: testData.collectivite.id,
+        questionIds: [
+          testData.questionBinaireId,
+          testData.questionProportionId,
+          testData.questionChoixId,
+        ],
+      });
+
+      expect(result).toHaveLength(3);
+      expect(result.filter((r) => r.reponse === null)).toHaveLength(3);
     });
 
     test('Retourne les réponses binaire, proportion et choix enregistrées', async () => {
@@ -103,8 +120,6 @@ describe('Lister les réponses aux questions de personnalisation', () => {
       expect(choixResult?.reponse).toEqual(testData.choixId);
     });
 
-    // TODO: à décommenter quand l'écriture de la justification via setReponse sera possible
-    /*
     test('Retourne les justifications associées aux réponses', async () => {
       const caller = router.createCaller({ user: testData.userCredentials });
 
@@ -122,7 +137,7 @@ describe('Lister les réponses aux questions de personnalisation', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].justification).toBe('Justification de test');
-    });*/
+    });
 
     test('Un utilisateur avec droits de lecture peut récupérer les réponses', async () => {
       const caller = router.createCaller({ user: testData.userCredentials });

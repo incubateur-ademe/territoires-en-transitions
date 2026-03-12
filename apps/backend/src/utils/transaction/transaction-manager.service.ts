@@ -46,10 +46,10 @@ export class TransactionManager {
       return success(results);
     } catch (error) {
       this.logger.error('Transaction failed:', error);
-      // en cas de transaction partagée, déclenche le rollback explicitement
-      // (le manager intercepte le throw, donc Drizzle ne le fait pas automatiquement)
+      // en cas de transaction partagée, relancer l'erreur pour que Drizzle fasse le rollback
+      // (l'objet tx de Drizzle n'expose pas de méthode rollback())
       if (tx) {
-        tx.rollback();
+        throw error;
       }
       return failure(error as E);
     }
