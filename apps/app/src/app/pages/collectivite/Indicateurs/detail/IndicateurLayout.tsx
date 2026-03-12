@@ -62,8 +62,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
 
   const enfantsIds = enfants?.map(({ id }) => id) || [];
 
-  const displayFichesLieesVisiteOrPermission =
-    hasCollectivitePermission('plans.fiches.read') && !isSimplifiedView;
+  const canReadFiches = hasCollectivitePermission('plans.fiches.read');
 
   const displayMesuresLieesVisiteOrPermissionForReferenceIndicateur =
     !definition.estPerso &&
@@ -127,7 +126,7 @@ const IndicateurLayout = ({ dataTest, definition }: IndicateurLayoutProps) => {
               </Tab>
             ) : undefined}
 
-            {displayFichesLieesVisiteOrPermission ? (
+            {canReadFiches ? (
               <Tab label="Actions">
                 <FichesLiees definition={definition} />
               </Tab>
