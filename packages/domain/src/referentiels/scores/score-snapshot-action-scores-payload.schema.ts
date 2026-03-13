@@ -36,6 +36,15 @@ export type TreeOfActionsIncludingScore = ActionTreeNode<ActionIncludingScore>;
  * Score de la collectivité pour un référentiel et une date donnée
  * Inclus les scores des actions et les scores indicatifs basés sur les indicateurs
  */
+/**
+ * Version courante du payload de scores.
+ * Incrémentée à chaque changement structurel nécessitant un recalcul des snapshots existants.
+ *
+ * Historique :
+ * - v2 : ajout de `statut` (statut d'affichage pré-calculé incluant non_concerne et detaille)
+ */
+export const SCORES_PAYLOAD_CURRENT_VERSION = 2;
+
 export const scoresPayloadSchemaWithoutScoresJsonTree = z.object({
   collectiviteId: z.int(),
   referentielId: referentielIdEnumSchema,
@@ -47,6 +56,7 @@ export const scoresPayloadSchemaWithoutScoresJsonTree = z.object({
   auditId: z.optional(z.int()),
   anneeAudit: z.optional(z.number()),
   mode: z.optional(scoreComnputeModeEnumSchema),
+  payloadVersion: z.optional(z.number()),
 });
 
 type ScoresPayloadWithoutScoresJsonTree = z.infer<
