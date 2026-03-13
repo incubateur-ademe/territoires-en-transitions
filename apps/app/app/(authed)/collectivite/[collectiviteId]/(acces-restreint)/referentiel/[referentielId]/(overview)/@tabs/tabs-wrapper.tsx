@@ -18,6 +18,7 @@ export const TabsWrapper = ({ children }: PropsWithChildren) => {
         <TabsTab href="progression" label="Mesures" />
         <TabsTab href="priorisation" label="Aide à la priorisation" />
         <TabsTab href="detail" label="Détail des statuts" />
+        <TabsTab href="mesures-beta" label="Mesures beta" />
         <TabsTab href="evolutions" label="Évolutions du score" />
         {!isVisitor && <TabsTab href="commentaires" label="Commentaires" />}
       </TabsList>
