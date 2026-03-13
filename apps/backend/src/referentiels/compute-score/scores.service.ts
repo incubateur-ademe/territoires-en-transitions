@@ -30,6 +30,7 @@ import {
   ScoreFields,
   ScoreFinalFields,
   ScoreIndicatifPayload,
+  SCORES_PAYLOAD_CURRENT_VERSION,
   ScoresPayload,
   SnapshotJalonEnum,
   StatutAvancementEnum,
@@ -1314,6 +1315,7 @@ export default class ScoresService {
         collectiviteId,
         collectiviteInfo,
         date: parameters.date || DateTime.now().toISO(),
+        payloadVersion: SCORES_PAYLOAD_CURRENT_VERSION,
         scores: referentielWithScore as ActionTreeNode<
           Pick<ActionDefinition, 'identifiant' | 'nom' | 'categorie'> &
             ActionDefinitionEssential &
@@ -1369,6 +1371,7 @@ export default class ScoresService {
         referentielVersion: referentiel.version,
         collectiviteInfo,
         date: parameters.date || new Date().toISOString(),
+        payloadVersion: SCORES_PAYLOAD_CURRENT_VERSION,
         scores: scores,
       };
 
