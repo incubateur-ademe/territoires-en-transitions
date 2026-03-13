@@ -1,8 +1,5 @@
 import { CellContext } from '@tanstack/react-table';
-import {
-  ActionTypeEnum,
-  StatutAvancementIncludingNonConcerne,
-} from '@tet/domain/referentiels';
+import { StatutAvancementIncludingNonConcerne } from '@tet/domain/referentiels';
 import { cn, TableCell } from '@tet/ui';
 import ActionStatutBadge from '../actions/action-statut/action-statut.badge';
 import { ChooseActionStatutSelect } from '../actions/action-statut/choose-action-statut.select';
@@ -24,10 +21,6 @@ export const ReferentielTableStatutCell = ({
 }: Props) => {
   const data = info.row.original;
 
-  const canHaveStatut =
-    data.type === ActionTypeEnum.SOUS_ACTION ||
-    data.type === ActionTypeEnum.TACHE;
-
   return (
     <TableCell
       className={cn(actionTypeToClassName[data.type])}
@@ -47,9 +40,7 @@ export const ReferentielTableStatutCell = ({
         },
       }}
     >
-      {canHaveStatut && (
-        <ActionStatutBadge statut={data.statut} size="xs" className="m-auto" />
-      )}
+      <ActionStatutBadge statut={data.statut} size="xs" className="m-auto" />
     </TableCell>
   );
 };

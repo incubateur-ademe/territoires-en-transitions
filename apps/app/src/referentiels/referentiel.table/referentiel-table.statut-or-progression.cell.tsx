@@ -27,7 +27,10 @@ export const ReferentielTableStatutOrProgressionCell = ({
     data.type === ActionTypeEnum.SOUS_AXE ||
     data.type === ActionTypeEnum.ACTION
   ) {
-    return ReferentielTableProgressionCell({ row: data });
+    return ReferentielTableProgressionCell({
+      row: data,
+      toggleRowExpanded: info.row.getToggleExpandedHandler(),
+    });
   }
 
   return ReferentielTableStatutCell({ info, updateActionStatut });
