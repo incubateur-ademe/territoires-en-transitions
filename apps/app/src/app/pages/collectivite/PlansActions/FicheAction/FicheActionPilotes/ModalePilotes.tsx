@@ -1,7 +1,7 @@
+import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import SelectPersonnesCombobox from '@/app/collectivites/tags/select-personnes.combobox';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import { Field, FormSectionGrid, ModalFooterOKCancel } from '@tet/ui';
 import { isEqual } from 'es-toolkit/predicate';
 import { useState } from 'react';
@@ -37,7 +37,7 @@ const ModalePilotes = ({ isOpen, setIsOpen, fiche }: ModalePilotesProps) => {
         <FormSectionGrid formSectionId={descriptionId}>
           {/* Personnes pilote */}
           <Field title="Personne pilote" className="col-span-2">
-            <PersonnesDropdown
+            <SelectPersonnesCombobox
               dataTest="personnes-pilotes"
               collectiviteIds={getFicheAllEditorCollectiviteIds(fiche)}
               values={editedFiche.pilotes?.map((p) => getPersonneStringId(p))}
@@ -48,9 +48,6 @@ const ModalePilotes = ({ isOpen, setIsOpen, fiche }: ModalePilotesProps) => {
                   pilotes: personnes,
                 }))
               }
-              additionalKeysToInvalidate={[
-                ['fiche_action', fiche.id.toString()],
-              ]}
             />
           </Field>
         </FormSectionGrid>

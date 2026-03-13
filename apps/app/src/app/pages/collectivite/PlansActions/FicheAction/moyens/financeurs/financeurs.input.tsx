@@ -1,4 +1,4 @@
-import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
+import SelectFinanceursCombobox from '@/app/collectivites/tags/select-financeurs.combobox';
 import { Financeur } from '@tet/domain/plans';
 import { Button, Field, Input } from '@tet/ui';
 
@@ -21,7 +21,7 @@ export const FinanceursInput = ({
           className="col-span-2 grid grid-cols-7 gap-4"
         >
           <Field title={`Financeur ${index + 1}`} className="col-span-3">
-            <FinanceursDropdown
+            <SelectFinanceursCombobox
               collectiviteIds={collectiviteIds}
               values={
                 financeur.financeurTag.id
@@ -73,7 +73,7 @@ export const FinanceursInput = ({
 
       <div className="col-span-2 grid grid-cols-7 gap-4">
         <Field title="Ajouter un financeur" className="col-span-3">
-          <FinanceursDropdown
+          <SelectFinanceursCombobox
             collectiviteIds={collectiviteIds}
             key={(financeurs ?? []).length}
             placeholder="Sélectionnez ou créez un tag"

@@ -1,6 +1,6 @@
+import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import SelectPersonnesCombobox from '@/app/collectivites/tags/select-personnes.combobox';
 import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -31,7 +31,7 @@ export const SousActionPilotesCell = ({ sousAction }: Props) => {
       edit={{
         renderOnEdit: ({ openState }) => (
           <div className="w-80">
-            <PersonnesDropdown
+            <SelectPersonnesCombobox
               values={sousAction.pilotes?.map((p) => getPersonneStringId(p))}
               onChange={(pilotes) => {
                 updateSousAction({

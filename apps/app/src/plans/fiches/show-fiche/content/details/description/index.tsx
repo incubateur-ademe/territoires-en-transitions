@@ -1,5 +1,5 @@
+import SelectLibreTagsCombobox from '@/app/collectivites/tags/select-libre-tags.combobox';
 import EffetsAttendusDropdown from '@/app/ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
-import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import { useGetThematiqueAndSousThematiqueOptions } from '@/app/ui/dropdownLists/ThematiquesDropdown/use-get-thematique-and-sous-thematique-options';
 import { cn, RichTextEditor, SelectMultiple, Tooltip } from '@tet/ui';
 import { useEffect, useMemo } from 'react';
@@ -147,11 +147,11 @@ export const Description = () => {
               }
               isReadonly={isReadonly}
               renderOnEdit={({ openState }) => (
-                <TagsSuiviPersoDropdown
+                <SelectLibreTagsCombobox
                   openState={openState}
                   values={(field.value ?? []).map((tag) => tag.id)}
-                  onChange={({ libresTag }) => {
-                    field.onChange(libresTag);
+                  onChange={({ values }) => {
+                    field.onChange(values);
                   }}
                 />
               )}

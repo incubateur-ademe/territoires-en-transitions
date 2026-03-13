@@ -1,13 +1,8 @@
-import { beforeAll, describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { supabase } from '../tests/supabase';
-import { testReset } from '../tests/testReset';
 import { PanierAPI } from './panierAPI';
 
 describe('Création de panier', async () => {
-  beforeAll(async () => {
-    await testReset();
-  });
-
   it('La fonction `panier_from_landing` devrait renvoyer un nouveau panier.', async () => {
     const { error, data } = await supabase.rpc('panier_from_landing');
 

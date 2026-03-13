@@ -1,0 +1,178 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { financeurTagTable } from '@tet/backend/collectivites/tags/financeur-tag.table';
+import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
+import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-tag.table';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
+import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag.table';
+import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { Result } from '@tet/backend/utils/result.type';
+import { TagEnum, TagWithCollectiviteId } from '@tet/domain/collectivites';
+import { eq } from 'drizzle-orm';
+import { instanceGouvernanceTagTable } from '../instance-gouvernance-tag.table';
+import { MutateTagError, MutateTagErrorEnum } from './mutate-tag.errors';
+import {
+  CreateTagInput,
+  DeleteTagInput,
+  UpdateTagInput,
+} from './mutate-tag.input';
+
+const tagTypeTable = {
+  [TagEnum.Financeur]: financeurTagTable,
+  [TagEnum.Personne]: personneTagTable,
+  [TagEnum.Partenaire]: partenaireTagTable,
+  [TagEnum.Service]: serviceTagTable,
+  [TagEnum.Structure]: structureTagTable,
+  [TagEnum.Libre]: libreTagTable,
+  [TagEnum.InstanceGouvernance]: instanceGouvernanceTagTable,
+};
+
+@Injectable()
+export class MutateTagRepository {
+  private readonly logger = new Logger(MutateTagRepository.name);
+
+  constructor(private readonly databaseService: DatabaseService) {}
+
+  async createTag(
+    {
+      nom,
+      collectiviteId,
+      tagType,
+      createdBy,
+    }: CreateTagInput & { createdBy: string },
+    tx?: Transaction
+  ): Promise<Result<TagWithCollectiviteId, MutateTagError>> {
+    try {
+      const table = tagTypeTable[tagType];
+      const db = tx ?? this.databaseService.db;
+
+      const [result] = await db
+        .insert(table)
+        .values({
+          nom,
+          collectiviteId,
+          createdBy,
+          createdAt: SQL_CURRENT_TIMESTAMP,
+        })
+        // .onConflictDoNothing()
+        .returning();
+
+      return {
+        success: true,
+        data: result,
+      };
+    } catch (error) {
+      this.logger.error('Error creating tag', error);
+      return {
+        success: false,
+        error: MutateTagErrorEnum.TAG_CREATE_ERROR,
+        cause: error as Error,
+      };
+    }
+  }
+
+  async updateTag(
+    input: UpdateTagInput,
+    tx?: Transaction
+  ): Promise<Result<TagWithCollectiviteId, MutateTagError>> {
+    try {
+      const table = tagTypeTable[input.tagType];
+      const db = tx ?? this.databaseService.db;
+
+      // Check if tag exists
+      const [existing] = await db
+        .select()
+        .from(table)
+        .where(eq(table.id, input.id));
+
+      if (!existing) {
+        return {
+          success: false,
+          error: MutateTagErrorEnum.TAG_NOT_FOUND,
+        };
+      }
+
+      // Verify collectiviteId matches
+      if (existing.collectiviteId !== input.collectiviteId) {
+        return {
+          success: false,
+          error: MutateTagErrorEnum.UNAUTHORIZED,
+        };
+      }
+
+      const updateData: { nom?: string } = {};
+      if (input.nom !== undefined) {
+        updateData.nom = input.nom;
+      }
+
+      const [result] = await db
+        .update(table)
+        .set(updateData)
+        .where(eq(table.id, input.id))
+        .returning();
+
+      return {
+        success: true,
+        data: {
+          id: result.id as number,
+          nom: result.nom as string,
+          collectiviteId: result.collectiviteId as number,
+        },
+      };
+    } catch (error) {
+      this.logger.error('Error updating tag', error);
+      return {
+        success: false,
+        error: MutateTagErrorEnum.TAG_UPDATE_ERROR,
+        cause: error as Error,
+      };
+    }
+  }
+
+  async deleteTag(
+    input: DeleteTagInput,
+    tx?: Transaction
+  ): Promise<Result<void, MutateTagError>> {
+    try {
+      const table = tagTypeTable[input.tagType];
+      const db = tx ?? this.databaseService.db;
+
+      // Check if tag exists and belongs to collectivite
+      const [existing] = await db
+        .select()
+        .from(table)
+        .where(eq(table.id, input.id));
+
+      if (!existing) {
+        return {
+          success: false,
+          error: MutateTagErrorEnum.TAG_NOT_FOUND,
+        };
+      }
+
+      // Verify collectiviteId matches
+      if (existing.collectiviteId !== input.collectiviteId) {
+        return {
+          success: false,
+          error: MutateTagErrorEnum.UNAUTHORIZED,
+        };
+      }
+
+      await db.delete(table).where(eq(table.id, input.id));
+
+      return {
+        success: true,
+        data: undefined,
+      };
+    } catch (error) {
+      this.logger.error('Error deleting tag', error);
+      return {
+        success: false,
+        error: MutateTagErrorEnum.TAG_DELETE_ERROR,
+        cause: error as Error,
+      };
+    }
+  }
+}

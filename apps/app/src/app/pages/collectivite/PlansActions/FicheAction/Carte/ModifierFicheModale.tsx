@@ -1,7 +1,7 @@
+import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import SelectPersonnesCombobox from '@/app/collectivites/tags/select-personnes.combobox';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { useUpdateFiche } from '@/app/plans/fiches/update-fiche/data/use-update-fiche';
-import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
@@ -94,7 +94,7 @@ const ModifierFicheModale = ({ initialFiche, isOpen, setIsOpen }: Props) => {
               </Field>
             </FormSectionGrid>
             <Field title="Personne pilote">
-              <PersonnesDropdown
+              <SelectPersonnesCombobox
                 values={fiche.pilotes?.map((p) => getPersonneStringId(p))}
                 onChange={({ personnes }) => {
                   setFiche({

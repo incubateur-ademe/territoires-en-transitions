@@ -1,7 +1,7 @@
 import {
   getPilotesValues,
   getReferentsValues,
-} from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+} from '@/app/collectivites/tags/personnes.utils';
 import { FilterCategory } from '@tet/ui';
 import { uniqBy } from 'es-toolkit/array';
 import { getFilterLabel } from '../labels';
