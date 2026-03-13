@@ -10,13 +10,18 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   ActionTypeEnum,
   findActionInTree,
+  flatMapActionsEnfants,
   ReferentielId,
   ReferentielIdEnum,
+  ScoreFinalFields,
+  ScoreIndicatifPayload,
+  SCORES_PAYLOAD_CURRENT_VERSION,
+  ScoreSnapshot,
   SnapshotJalonEnum,
 } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import {
   getTestApp,
   getTestDatabase,
@@ -42,6 +47,39 @@ type ComputeScoreInput = inferProcedureInput<
 type UpdateSnapshotNameInput = inferProcedureInput<
   AppRouter['referentiels']['snapshots']['updateName']
 >;
+
+/**
+ * Récupère les scores indicatifs d'un snapshot
+ */
+async function getScoresIndicatifsFromSnapshot(
+  snapshot: ScoreSnapshot
+): Promise<Record<string, ScoreIndicatifPayload>> {
+  const scoresIndicatifs: Record<string, ScoreIndicatifPayload> = {};
+
+  const extractScoresIndicatifs = (
+    node: ActionTreeNode<ActionDefinitionEssential & ScoreFinalFields>
+  ) => {
+    if (node.actionId && node.scoreIndicatif) {
+      scoresIndicatifs[node.actionId] = node.scoreIndicatif;
+    }
+    node.actionsEnfant?.forEach(extractScoresIndicatifs);
+  };
+
+  extractScoresIndicatifs(snapshot.scoresPayload.scores);
+  return scoresIndicatifs;
+}
+
+function stripStatutFromSousActionsAndTaches(
+  node: ActionTreeNode<ActionDefinitionEssential & ScoreFinalFields>
+): void {
+  if (
+    node.actionType === ActionTypeEnum.SOUS_ACTION ||
+    node.actionType === ActionTypeEnum.TACHE
+  ) {
+    delete node.score.statut;
+  }
+  node.actionsEnfant.forEach(stripStatutFromSousActionsAndTaches);
+}
 
 describe('SnapshotsRouter', () => {
   let app: INestApplication;
@@ -336,6 +374,64 @@ describe('SnapshotsRouter', () => {
     };
 
     expect(referentielScoreWithoutActionsEnfant).toEqual(expectedCaeRoot);
+  });
+
+  test('Recompute current snapshot when scoresPayload payloadVersion is outdated', async () => {
+    const caller = router.createCaller({ user: getAnonUser() });
+    const collectiviteId = 1;
+    const referentielId = ReferentielIdEnum.CAE;
+
+    const freshSnapshot = await caller.referentiels.snapshots.getCurrent({
+      collectiviteId,
+      referentielId,
+    });
+
+    expect(freshSnapshot.scoresPayload.payloadVersion).toBe(
+      SCORES_PAYLOAD_CURRENT_VERSION
+    );
+
+    const actionWithStatut = flatMapActionsEnfants(
+      freshSnapshot.scoresPayload.scores
+    ).find(
+      (action) =>
+        (action.actionType === ActionTypeEnum.SOUS_ACTION ||
+          action.actionType === ActionTypeEnum.TACHE) &&
+        action.score.statut !== undefined
+    );
+    expect(actionWithStatut).toBeDefined();
+
+    const outdatedPayload = structuredClone(freshSnapshot.scoresPayload);
+    outdatedPayload.payloadVersion = SCORES_PAYLOAD_CURRENT_VERSION - 1;
+    stripStatutFromSousActionsAndTaches(outdatedPayload.scores);
+
+    await databaseService.db
+      .update(snapshotTable)
+      .set({ scoresPayload: outdatedPayload })
+      .where(
+        and(
+          eq(snapshotTable.collectiviteId, collectiviteId),
+          eq(snapshotTable.referentielId, referentielId),
+          eq(snapshotTable.ref, 'score-courant')
+        )
+      );
+
+    const recomputedSnapshot = await caller.referentiels.snapshots.getCurrent({
+      collectiviteId,
+      referentielId,
+    });
+
+    expect(recomputedSnapshot.scoresPayload.payloadVersion).toBe(
+      SCORES_PAYLOAD_CURRENT_VERSION
+    );
+    expect(
+      new Date(recomputedSnapshot.modifiedAt).getTime()
+    ).toBeGreaterThanOrEqual(new Date(freshSnapshot.modifiedAt).getTime());
+
+    const actionWithStatutAfterRecompute = findActionInTree(
+      [recomputedSnapshot.scoresPayload.scores],
+      (action) => action.actionId === actionWithStatut!.actionId
+    );
+    expect(actionWithStatutAfterRecompute?.score.statut).toBeDefined();
   });
 
   test(`Récupération anonyme du score d'un référentiel pour une collectivite inconnue`, async () => {
