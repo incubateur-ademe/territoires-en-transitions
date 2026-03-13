@@ -94,16 +94,6 @@ export function useAction(actionId: string, externalCollectiviteId?: number) {
   };
 }
 
-export function useScore(actionId: string, externalCollectiviteId?: number) {
-  const { data: action } = useAction(actionId, externalCollectiviteId);
-
-  if (!action) {
-    return;
-  }
-
-  return action.score;
-}
-
 /**
  * @returns the mutation that will re-compute all action's scores,
  * save them into current snapshot, and invalidate the current snapshot query

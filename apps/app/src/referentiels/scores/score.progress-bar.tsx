@@ -2,7 +2,7 @@ import { avancementToLabel } from '@/app/app/labels';
 import { actionAvancementColors } from '@/app/app/theme';
 import ProgressBarWithTooltip from '@/app/referentiels/scores/progress-bar-with-tooltip';
 import { ActionType } from '@tet/domain/referentiels';
-import { useScore } from '../use-snapshot';
+import { useGetActionScore } from '../use-get-action-score';
 
 type ScoreProgressBarProps = {
   className?: string;
@@ -23,7 +23,7 @@ export function ScoreProgressBar({
   valuePosition,
   externalCollectiviteId,
 }: ScoreProgressBarProps) {
-  const score = useScore(id, externalCollectiviteId);
+  const score = useGetActionScore({ actionId: id, externalCollectiviteId });
   const isReglementaire = identifiant.split('.').includes('0');
 
   if (

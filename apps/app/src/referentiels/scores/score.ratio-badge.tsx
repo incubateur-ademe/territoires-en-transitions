@@ -1,7 +1,7 @@
 import { roundTo } from '@tet/domain/utils';
 import { Badge, BadgeDouble, BadgeSize } from '@tet/ui';
 import classNames from 'classnames';
-import { useScore } from '../use-snapshot';
+import { useGetActionScore } from '../use-get-action-score';
 
 type Props = {
   actionId: string;
@@ -16,7 +16,7 @@ export const ScoreRatioBadge = ({
   className,
   externalCollectiviteId,
 }: Props) => {
-  const score = useScore(actionId, externalCollectiviteId);
+  const score = useGetActionScore({ actionId, externalCollectiviteId });
 
   if (!score) {
     return null;

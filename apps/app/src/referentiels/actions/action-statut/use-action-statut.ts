@@ -13,7 +13,8 @@ import {
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { useLabellisationParcours } from '../../labellisations/useLabellisationParcours';
 import { useReferentielId } from '../../referentiel-context';
-import { useScore, useSnapshot } from '../../use-snapshot';
+import { useSnapshot } from '../../use-snapshot';
+import { useGetActionScore } from '../../use-get-action-score';
 
 import { findActionInTree } from '@tet/domain/referentiels';
 import { useEffect, useState } from 'react';
@@ -119,7 +120,7 @@ export const useEditActionStatutIsDisabled = (actionId: string) => {
   });
   const isAuditeur = useIsAuditeur();
 
-  const score = useScore(actionId);
+  const score = useGetActionScore({ actionId });
   if (!score) {
     return true;
   }

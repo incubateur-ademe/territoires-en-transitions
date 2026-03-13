@@ -2,10 +2,10 @@
  * Affiche l'onglet "Documentation"
  */
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
-import { useScore } from '@/app/referentiels/use-snapshot';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import DOMPurify from 'dompurify';
 import { TPersonnalisationRegleRead } from './useRegles';
+import { useGetActionScore } from '../../use-get-action-score';
 
 export type TPersoPotentielDocProps = {
   /** Définition de l'action */
@@ -18,7 +18,7 @@ export const PersoPotentielDoc = ({
   actionDef,
   regles,
 }: TPersoPotentielDocProps) => {
-  const score = useScore(actionDef.id);
+  const score = useGetActionScore({ actionId: actionDef.id });
 
   const pointReferentiel = score?.pointReferentiel;
 

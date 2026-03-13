@@ -1,6 +1,6 @@
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { ActionScoreFinal } from '@tet/domain/referentiels';
-import { useScore } from '../../use-snapshot';
+import { useGetActionScore } from '../../use-get-action-score';
 
 type ScorePartial = Pick<
   ActionScoreFinal,
@@ -11,7 +11,7 @@ type ScorePartial = Pick<
  * "Personnaliser" si nécessaire
  */
 export function PointsPotentiels({ actionId }: { actionId: string }) {
-  const score = useScore(actionId);
+  const score = useGetActionScore({ actionId });
 
   if (!score) {
     return null;
