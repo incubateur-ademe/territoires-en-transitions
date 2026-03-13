@@ -20,10 +20,14 @@ export const statutAvancementEnumValues = [
 export const statutAvancementEnumSchema = z.enum(statutAvancementEnumValues);
 export type StatutAvancement = z.infer<typeof statutAvancementEnumSchema>;
 
-export const statutAvancementIncludingNonConcerneEnumSchema = z.enum([
+export const statutAvancementIncludingNonConcerneEnumValues = [
   ...statutAvancementEnumValues,
   StatutAvancementEnum.NON_CONCERNE,
-]);
+] as const;
+
+export const statutAvancementIncludingNonConcerneEnumSchema = z.enum(
+  statutAvancementIncludingNonConcerneEnumValues
+);
 export type StatutAvancementIncludingNonConcerne = z.infer<
   typeof statutAvancementIncludingNonConcerneEnumSchema
 >;

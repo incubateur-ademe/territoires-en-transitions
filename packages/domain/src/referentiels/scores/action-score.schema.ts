@@ -1,5 +1,8 @@
 import { z } from 'zod';
-import { statutAvancementEnumValues } from '../actions/action-statut-avancement.enum.schema';
+import {
+  statutAvancementEnumValues,
+  statutAvancementIncludingNonConcerneEnumValues,
+} from '../actions/action-statut-avancement.enum.schema';
 import { scoreIndicatifPayloadSchema } from './score-indicatif.schema';
 
 export const actionScoreSchema = z
@@ -106,12 +109,6 @@ export const actionScoreSchema = z
       .describe(
         "Vrai si l'action ou un de ses ancêtres est désactivé du fait de la personnalisation"
       ),
-    aStatut: z
-      .boolean()
-      .optional()
-      .describe(
-        'Vrai si un statut a été renseigné pour cette action (sous-action ou tache)'
-      ),
     statutModifiedBy: z
       .string()
       .optional()
@@ -125,7 +122,13 @@ export const actionScoreSchema = z
     avancement: z
       .enum(statutAvancementEnumValues)
       .optional()
-      .describe("Avancement de l'action"),
+      .describe("Avancement de l'action (valeur brute issue de la BDD)"),
+    statut: z
+      .enum(statutAvancementIncludingNonConcerneEnumValues)
+      .optional()
+      .describe(
+        "Statut d'avancement étendu pré-calculé pour l'affichage : inclut non_concerne (si désactivé/non concerné) et detaille (si non renseigné mais avec enfants renseignés)"
+      ),
     renseigne: z
       .boolean()
       .describe(

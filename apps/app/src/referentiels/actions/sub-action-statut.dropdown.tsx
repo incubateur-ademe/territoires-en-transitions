@@ -11,11 +11,9 @@ import {
   ActionStatutCreate,
   ActionTypeEnum,
   StatutAvancementIncludingNonConcerne,
-  getStatutAvancement,
   statutAvancementIncludingNonConcerneEnumSchema,
 } from '@tet/domain/referentiels';
 import { useEffect, useState } from 'react';
-import { useScore } from '../use-snapshot';
 import { statutParAvancement } from '../utils';
 import AvancementDetailleModal from './avancement-detaille/avancement-detaille.modal';
 import SubActionModal from './sub-action/sub-action.modal';
@@ -47,9 +45,6 @@ export const SubActionStatutDropdown = ({
   // Détermine si l'édition du statut est désactivée
   const disabled = useEditActionStatutIsDisabled(actionDefinition.id);
 
-  // Récupère les données liées au score
-  const score = useScore(actionDefinition.id);
-
   // Fonction de sauvegarde du statut
   const { saveActionStatut } = useSaveActionStatut();
   const { mutate: saveActionStatuts } = useSaveActionStatuts();
@@ -61,23 +56,13 @@ export const SubActionStatutDropdown = ({
   };
 
   // Informations sur l'avancement de la sous-mesure / tâche
-  const { statut, filled, filledByChildren } = useActionStatut(
-    actionDefinition.id
-  );
-  const { avancement, avancementDetaille, concerne } = statut || {};
-
-  /**
-   * @deprecated Supprimer cette logique du front pour la faire uniquement côté back
-   * Le `useActionStatut` devrait déjà renvoyer le bon statut à manipuler directement dans le front
-   */
-  const avancementExt = getStatutAvancement({
-    avancement: avancement,
-    desactive: score?.desactive,
-    concerne,
-  });
+  const { statut, filledByChildren } = useActionStatut(actionDefinition.id);
+  const { avancementDetaille } = statut || {};
 
   // Statut et tableau d'avancement détaillé locaux au dropdown
-  const [localAvancement, setLocalAvancement] = useState(avancementExt);
+  const [localAvancement, setLocalAvancement] = useState<
+    StatutAvancementIncludingNonConcerne | undefined
+  >(statut?.avancement);
   const [localAvancementDetaille, setLocalAvancementDetaille] =
     useState(avancementDetaille);
 
@@ -103,27 +88,11 @@ export const SubActionStatutDropdown = ({
     handleDetailleState(openDetailledState?.isOpen);
   }, [openDetailledState?.isOpen]);
 
-  // Permet la mise à jour du dropdown si un autre élément
-  // de la sous-action a changé de statut
+  // Mise à jour du dropdown quand le statut change (ex: enfant modifié)
   useEffect(() => {
-    if (
-      actionDefinition.type === 'sous-action' &&
-      avancementExt === 'non_renseigne' &&
-      concerne !== false &&
-      filled
-    ) {
-      setLocalAvancement('detaille');
-    } else {
-      setLocalAvancement(avancementExt);
-    }
-    setLocalAvancementDetaille(avancementDetaille);
-  }, [
-    avancementExt,
-    avancementDetaille,
-    concerne,
-    filled,
-    actionDefinition.type,
-  ]);
+    setLocalAvancement(statut?.avancement);
+    setLocalAvancementDetaille(statut?.avancementDetaille);
+  }, [statut?.avancement, statut?.avancementDetaille]);
 
   // Mise à jour du statut lorsque une nouvelle valeur
   // est sélectionnée sur le dropdown

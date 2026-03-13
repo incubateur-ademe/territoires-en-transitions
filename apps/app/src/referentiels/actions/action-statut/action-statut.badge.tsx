@@ -5,7 +5,7 @@ import classNames from 'classnames';
 
 type Props = {
   className?: string;
-  statut: StatutAvancementIncludingNonConcerne;
+  statut?: StatutAvancementIncludingNonConcerne;
   barre?: boolean;
   size?: BadgeSize;
 };
@@ -28,22 +28,20 @@ const ActionStatutBadge = ({
   barre,
   size = 'xs',
 }: Props) => {
+  if (!statut) {
+    return null;
+  }
+
   return (
-    statut && (
-      <Badge
-        dataTest="ActionStatutBadge"
-        title={avancementToLabel[statut]}
-        size={size}
-        variant={statusToState[statut].state}
-        type={statusToState[statut].type ?? 'solid'}
-        trim={false}
-        className={classNames(
-          'min-w-fit',
-          { 'line-through': barre },
-          className
-        )}
-      />
-    )
+    <Badge
+      dataTest="ActionStatutBadge"
+      title={avancementToLabel[statut]}
+      size={size}
+      variant={statusToState[statut].state}
+      type={statusToState[statut].type ?? 'solid'}
+      trim={false}
+      className={classNames('min-w-fit', { 'line-through': barre }, className)}
+    />
   );
 };
 

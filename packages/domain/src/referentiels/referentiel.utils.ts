@@ -2,6 +2,7 @@ import { divisionOrZero } from '../utils/number.utils';
 import {
   StatutAvancement,
   StatutAvancementEnum,
+  StatutAvancementIncludingNonConcerne,
 } from './actions/action-statut-avancement.enum.schema';
 import { ActionStatut } from './actions/action-statut.schema';
 import { ActionType, ActionTypeEnum } from './actions/action-type.enum';
@@ -136,6 +137,8 @@ export function getStatutAvancement({
 }
 
 /**
+ * @deprecated done directly in the snapshot computation now.
+ *
  * Détermine le statut d'avancement d'une action en incluant le statut "non concerné"
  * et en fonction des avancements des actions enfants.
  */
@@ -361,6 +364,7 @@ export function getActionStatutFromActionScore(
   actionScore: TreeOfActionsIncludingScore
 ): {
   actionStatut: ActionStatut;
+  statut: StatutAvancementIncludingNonConcerne;
   filled: boolean;
   filledByChildren: string[];
 } | null {
@@ -416,5 +420,7 @@ export function getActionStatutFromActionScore(
     ];
   }
 
-  return { actionStatut, filled, filledByChildren };
+  const statut = actionScore.score.statut ?? StatutAvancementEnum.NON_RENSEIGNE;
+
+  return { actionStatut, statut, filled, filledByChildren };
 }

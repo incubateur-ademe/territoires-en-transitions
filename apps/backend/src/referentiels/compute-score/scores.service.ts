@@ -23,6 +23,7 @@ import {
   ActionTreeNode,
   ActionTypeEnum,
   getParentIdFromActionId,
+  getStatutAvancement,
   LabellisationAudit,
   LabellisationEtoileDefinition,
   ReferentielId,
@@ -31,6 +32,7 @@ import {
   ScoreIndicatifPayload,
   ScoresPayload,
   SnapshotJalonEnum,
+  StatutAvancementEnum,
   TreeOfActionsIncludingScore,
 } from '@tet/domain/referentiels';
 import {
@@ -360,7 +362,6 @@ export default class ScoresService {
   ) {
     const actionStatut = actionStatuts[referentielActionAvecScore.actionId];
     if (actionStatut) {
-      referentielActionAvecScore.score.aStatut = true;
       referentielActionAvecScore.score.avancement = actionStatut.avancement;
       referentielActionAvecScore.score.statutModifiedBy =
         actionStatut.modifiedBy;
@@ -370,13 +371,13 @@ export default class ScoresService {
 
     // Si le parent n'est pas déjà désactivé et il y a une desactivation on l'applique et on le propagera aux enfants
     if (parentConcerne && actionStatut && !actionStatut.concerne) {
-      parentConcerne = actionStatut.concerne;
+      parentConcerne = false;
     }
 
-    // On applique parent concerne que si il est à faut
+    // On applique parent concerne que si il est à faux
     // Ceci afin d'éviter de réactiver une action qui a été désactivée par une règle de personnalisation
     if (!parentConcerne) {
-      referentielActionAvecScore.score.concerne = parentConcerne;
+      referentielActionAvecScore.score.concerne = false;
     }
 
     referentielActionAvecScore.actionsEnfant.forEach((actionEnfant) => {
@@ -483,7 +484,7 @@ export default class ScoresService {
           (enfant) => enfant.score.concerne
         ).length;
         if (
-          action.score.aStatut &&
+          action.score.avancement &&
           action.score.concerne &&
           !enfantsConcernes
         ) {
@@ -562,7 +563,6 @@ export default class ScoresService {
     } else {
       const actionStatut = actionStatuts[referentielActionAvecScore.actionId];
       if (actionStatut) {
-        referentielActionAvecScore.score.aStatut = true;
         referentielActionAvecScore.score.avancement = actionStatut.avancement;
         referentielActionAvecScore.score.statutModifiedBy =
           actionStatut.modifiedBy;
@@ -773,7 +773,7 @@ export default class ScoresService {
     if (action.actionsEnfant.length) {
       // Lorsque le statut d'un parent est renseigné, il prévaut sur la somme de ses enfants
       // Un peu étrange mais uniquement conservé pour conserver le statut des enfants
-      if (!action.score.aStatut) {
+      if (!action.score.avancement) {
         action.score.pointFait = action.actionsEnfant.reduce(
           (acc, enfant) => acc + (enfant.score.pointFait || 0),
           0
@@ -1908,7 +1908,50 @@ export default class ScoresService {
       this.computeEtoiles(actionWithScore, etoilesDefinitions);
     }
 
+    this.computeStatut(actionWithScore);
+
     return actionWithScore as TreeOfActionsIncludingScore;
+  }
+
+  /**
+   * Pré-calcule le champ `statut` sur chaque nœud de l'arbre,
+   * en appliquant la logique de `getStatutAvancement` (inclut non_concerne)
+   * et la dérivation `detaille` pour les sous-actions non renseignées
+   * dont au moins un enfant est renseigné.
+   *
+   * Réplique côté backend la logique précédemment côté frontend uniquement.
+   */
+  private computeStatut(
+    action: ActionTreeNode<ActionDefinitionEssential & ScoreFinalFields>
+  ): void {
+    action.actionsEnfant.forEach((enfant) => this.computeStatut(enfant));
+
+    // if (!action.score.avancement) {
+    //   return;
+    // }
+
+    const statut = getStatutAvancement({
+      avancement: action.score.avancement,
+      desactive: action.score.desactive,
+      concerne: action.score.concerne,
+    });
+
+    const childrenStatuts = action.actionsEnfant
+      .map((enfant) => enfant.score.statut)
+      .filter((s) => s !== undefined);
+
+    const hasAtLeastOneChildWithStatutRenseigne = childrenStatuts.some(
+      (statut) => statut && statut !== StatutAvancementEnum.NON_RENSEIGNE
+    );
+
+    const isStatutNonRenseigne =
+      !statut || statut === StatutAvancementEnum.NON_RENSEIGNE;
+
+    if (hasAtLeastOneChildWithStatutRenseigne && isStatutNonRenseigne) {
+      action.score.statut = StatutAvancementEnum.DETAILLE;
+    } else {
+      action.score.statut = statut ?? StatutAvancementEnum.NON_RENSEIGNE;
+    }
   }
 
   // Enrichit l'arbre des scores avec les scores indicatifs
@@ -2253,7 +2296,6 @@ export default class ScoresService {
       for (const key of scoreMapKeys) {
         // We ignore renseigne (weird value in python) and point_potentiel_perso for now
         if (
-          key !== 'aStatut' && // Not existing in python code
           key !== 'etoiles' && // Not existing in python code
           key !== 'explication' && // Not existing in python code
           key !== 'renseigne' &&

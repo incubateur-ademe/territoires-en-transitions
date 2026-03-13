@@ -4,8 +4,6 @@ import {
   ActionDefinitionEssential,
   ActionTreeNode,
   findActionInTree,
-  flatMapActionsEnfants,
-  getStatutAvancementBasedOnChildren,
   ReferentielException,
   ReferentielId,
   ScoreFinalFields,
@@ -51,19 +49,15 @@ export function getExtendActionWithComputedFields(
 
     const { score } = actionWithScore;
 
+    const statut = score.statut ?? StatutAvancementEnum.NON_RENSEIGNE;
+
     return {
       ...action,
       ...{ score },
       ...{
         desactive: score.desactive,
         concerne: score.concerne,
-        statut:
-          getStatutAvancementBasedOnChildren(
-            score,
-            flatMapActionsEnfants(actionWithScore)
-              .map((a) => a.score.avancement)
-              .filter((a) => a !== undefined)
-          ) ?? StatutAvancementEnum.NON_RENSEIGNE,
+        statut,
       },
     };
   };

@@ -7,17 +7,18 @@ import {
 } from '@tet/api/collectivites';
 import {
   ActionStatut,
+  StatutAvancementIncludingNonConcerne,
   canUpdateActionStatutWithoutPermissionCheck,
+  findActionInTree,
   getActionStatutFromActionScore,
 } from '@tet/domain/referentiels';
 import { PermissionOperationEnum } from '@tet/domain/users';
+import { useEffect, useState } from 'react';
 import { useLabellisationParcours } from '../../labellisations/useLabellisationParcours';
 import { useReferentielId } from '../../referentiel-context';
-import { useSnapshot } from '../../use-snapshot';
 import { useGetActionScore } from '../../use-get-action-score';
+import { useSnapshot } from '../../use-snapshot';
 
-import { findActionInTree } from '@tet/domain/referentiels';
-import { useEffect, useState } from 'react';
 /**
  * Charge le statut d'une action
  */
@@ -26,6 +27,7 @@ export const useActionStatut = (actionId: string) => {
 
   const [actionStatutFromScore, setActionStatutFromScore] = useState<{
     actionStatut: ActionStatut;
+    statut: StatutAvancementIncludingNonConcerne;
     filled: boolean;
     filledByChildren: string[];
   } | null>(null);
