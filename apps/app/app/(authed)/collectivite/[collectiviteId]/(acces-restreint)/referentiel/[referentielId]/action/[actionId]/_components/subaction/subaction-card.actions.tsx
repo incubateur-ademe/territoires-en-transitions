@@ -6,15 +6,11 @@ import { useGetScoreIndicatif } from '../score-indicatif/use-get-score-indicatif
 type Props = {
   actionId: string;
   haveScoreIndicatif?: boolean;
-  isDetailled?: boolean;
-  setOpenDetailledModal?: (state: boolean) => void;
 };
 
 const SubactionCardActions = ({
   actionId,
   haveScoreIndicatif = false,
-  isDetailled = false,
-  setOpenDetailledModal,
 }: Props) => {
   const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
 
@@ -27,34 +23,12 @@ const SubactionCardActions = ({
   const scoreIndicatif = scoreIndicatifParActionId?.[actionId];
   const nbIndicateurs = scoreIndicatif?.indicateurs?.length || 0;
 
-  if (
-    !hasCollectivitePermission('referentiels.mutate') ||
-    (!isDetailled && !haveScoreIndicatif)
-  )
+  if (!hasCollectivitePermission('referentiels.mutate') || !haveScoreIndicatif)
     return null;
 
   return (
     <>
       <div className="flex flex-wrap gap-x-2 gap-y-0.5">
-        {/* Statut détaillé */}
-        {isDetailled && setOpenDetailledModal && (
-          <span
-            data-test="DetaillerAvancementButton"
-            className="text-xs text-primary-8 hover:text-primary-9 font-medium cursor-pointer"
-            onClick={(evt) => {
-              evt.stopPropagation();
-              setOpenDetailledModal(true);
-            }}
-          >
-            Détailler l’avancement
-          </span>
-        )}
-
-        {haveScoreIndicatif &&
-          scoreIndicatif &&
-          isDetailled &&
-          setOpenDetailledModal && <div className="w-[0.5px] h-4 bg-grey-5" />}
-
         {/* Score indicatif */}
         {haveScoreIndicatif && !isScoreIndicatifLoading && scoreIndicatif && (
           <span

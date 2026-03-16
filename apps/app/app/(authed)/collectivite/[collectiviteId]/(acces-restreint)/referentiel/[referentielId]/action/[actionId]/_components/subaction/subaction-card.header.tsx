@@ -1,7 +1,4 @@
-import {
-  OpenModaleState,
-  SubActionStatutDropdown,
-} from '@/app/referentiels/actions/sub-action-statut.dropdown';
+import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
@@ -14,7 +11,6 @@ type Props = {
   subAction: ActionDefinitionSummary;
   shouldDisplayProgressBar?: boolean;
   hideStatus?: boolean;
-  openDetailledState?: OpenModaleState;
   isExpanded?: boolean;
 };
 
@@ -22,7 +18,6 @@ export const SubactionCardHeader = ({
   subAction,
   shouldDisplayProgressBar = true,
   hideStatus = false,
-  openDetailledState,
   isExpanded = false,
 }: Props) => {
   const isSubAction = subAction.type === ActionTypeEnum.SOUS_ACTION;
@@ -49,10 +44,7 @@ export const SubactionCardHeader = ({
                   />
                 </div>
               )}
-              <SubActionStatutDropdown
-                actionDefinition={subAction}
-                openDetailledState={openDetailledState}
-              />
+              <SubActionStatutDropdown actionDefinition={subAction} />
 
               {isSubAction && (
                 <div className="shrink-0 flex">

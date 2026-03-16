@@ -20,7 +20,7 @@ type Props = {
 };
 
 const SubActionPanel = ({ subAction }: Props) => {
-  const { statut, filled } = useActionStatut(subAction.id);
+  const { statut } = useActionStatut(subAction.id);
   const { concerne, avancement } = statut ?? {};
   const tasks = useActionSummaryChildren(subAction);
   const preuvesCount = useActionPreuvesCount(subAction.id);
@@ -28,19 +28,12 @@ const SubActionPanel = ({ subAction }: Props) => {
   const [shouldShowJustifications, setShouldShowJustifications] =
     useState(true);
 
-  const [openDetailledModal, setOpenDetailledModal] = useState(false);
-
   const shouldHideTasksStatus =
     concerne === false ||
     (statut !== null &&
       avancement !== 'non_renseigne' &&
       avancement !== 'detaille') ||
     (statut !== null && avancement === 'detaille');
-
-  const isDetailled =
-    avancement === 'detaille' ||
-    (avancement === 'non_renseigne' && filled === true) ||
-    (statut === null && filled === true);
 
   return (
     <div>
@@ -55,13 +48,7 @@ const SubActionPanel = ({ subAction }: Props) => {
           {subAction.identifiant} {subAction.nom}
         </p>
         <div className="flex flex-wrap gap-2">
-          <SubActionStatutDropdown
-            actionDefinition={subAction}
-            openDetailledState={{
-              isOpen: openDetailledModal,
-              setIsOpen: setOpenDetailledModal,
-            }}
-          />
+          <SubActionStatutDropdown actionDefinition={subAction} />
           {subAction.haveScoreIndicatif && (
             <ScoreIndicatifBadge actionId={subAction.id} />
           )}
@@ -75,8 +62,6 @@ const SubActionPanel = ({ subAction }: Props) => {
         <SubactionCardActions
           actionId={subAction.id}
           haveScoreIndicatif={subAction.haveScoreIndicatif}
-          isDetailled={isDetailled}
-          setOpenDetailledModal={setOpenDetailledModal}
         />
       </div>
 

@@ -55,11 +55,9 @@ const SubActionCard = ({
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const [openDetailledModal, setOpenDetailledModal] = useState(false);
-
   const hash = getHashFromUrl();
 
-  const { statut, filled } = useActionStatut(subAction.id);
+  const { statut } = useActionStatut(subAction.id);
   const { avancement } = statut || {};
 
   const preuvesCount = useActionPreuvesCount(subAction.id);
@@ -80,11 +78,6 @@ const SubActionCard = ({
       avancement !== 'non_renseigne' &&
       avancement !== 'detaille') ||
     (statut !== null && avancement === 'detaille');
-
-  const isDetailled =
-    avancement === 'detaille' ||
-    (avancement === 'non_renseigne' && filled === true) ||
-    (statut === null && filled === true);
 
   const isSubAction = subAction.type === ActionTypeEnum.SOUS_ACTION;
 
@@ -125,26 +118,15 @@ const SubActionCard = ({
           onClick();
         }}
       >
-        <SubactionCardHeader
-          subAction={subAction}
-          openDetailledState={{
-            isOpen: openDetailledModal,
-            setIsOpen: setOpenDetailledModal,
-          }}
-          isExpanded={isExpanded}
-        />
+        <SubactionCardHeader subAction={subAction} isExpanded={isExpanded} />
 
         {hasCollectivitePermission('referentiels.mutate') &&
-          (isDetailled || subAction.haveScoreIndicatif) && (
-            <Divider className="mt-1 mb-2" />
-          )}
+          subAction.haveScoreIndicatif && <Divider className="mt-1 mb-2" />}
 
         {/* Actions */}
         <SubactionCardActions
           actionId={subAction.id}
           haveScoreIndicatif={subAction.haveScoreIndicatif}
-          isDetailled={isDetailled}
-          setOpenDetailledModal={setOpenDetailledModal}
         />
 
         {/* Informations sur les scores indicatifs */}
