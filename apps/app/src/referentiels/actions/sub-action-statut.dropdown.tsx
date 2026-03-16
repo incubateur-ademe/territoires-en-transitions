@@ -10,10 +10,12 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   ActionStatutCreate,
   ActionTypeEnum,
+  StatutAvancementEnum,
   StatutAvancementIncludingNonConcerne,
+  StatutAvancementIncludingNonConcerneDetailleALaTache,
   getStatutAvancement,
-  statutAvancementIncludingNonConcerneEnumSchema,
 } from '@tet/domain/referentiels';
+import { Button } from '@tet/ui';
 import { useEffect, useState } from 'react';
 import { useScore } from '../use-snapshot';
 import { statutParAvancement } from '../utils';
@@ -34,14 +36,9 @@ export type OpenModaleState = {
 
 type Props = {
   actionDefinition: ActionDefinitionSummary;
-  /** Contrôle externe des modale de score détaillé */
-  openDetailledState?: OpenModaleState;
 };
 
-export const SubActionStatutDropdown = ({
-  actionDefinition,
-  openDetailledState,
-}: Props) => {
+export const SubActionStatutDropdown = ({ actionDefinition }: Props) => {
   const collectivite = useCurrentCollectivite();
 
   // Détermine si l'édition du statut est désactivée
@@ -76,8 +73,11 @@ export const SubActionStatutDropdown = ({
     concerne,
   });
 
-  // Statut et tableau d'avancement détaillé locaux au dropdown
-  const [localAvancement, setLocalAvancement] = useState(avancementExt);
+  // Statut et tableau d'avancement détaillé locaux au dropdown (inclut 'detaille_a_la_tache' pour l'affichage)
+  const [localAvancement, setLocalAvancement] =
+    useState<StatutAvancementIncludingNonConcerneDetailleALaTache>(
+      avancementExt
+    );
   const [localAvancementDetaille, setLocalAvancementDetaille] =
     useState(avancementDetaille);
 
@@ -85,34 +85,20 @@ export const SubActionStatutDropdown = ({
   const [openSubActionModal, setOpenSubActionModal] = useState(false);
   const [openScoreDetaille, setOpenScoreDetaille] = useState(false);
 
-  const handleDetailleState = (state = false) => {
-    if (!disabled && localAvancement === 'detaille') {
-      if (
-        actionDefinition.type === ActionTypeEnum.SOUS_ACTION &&
-        actionDefinition.children.length > 0
-      ) {
-        setOpenSubActionModal(state);
-      } else {
-        setOpenScoreDetaille(state);
-      }
-      openDetailledState?.setIsOpen(state);
-    }
-  };
-
-  useEffect(() => {
-    handleDetailleState(openDetailledState?.isOpen);
-  }, [openDetailledState?.isOpen]);
+  const isSubActionWithTasks =
+    actionDefinition.type === ActionTypeEnum.SOUS_ACTION &&
+    actionDefinition.children.length > 0;
 
   // Permet la mise à jour du dropdown si un autre élément
   // de la sous-action a changé de statut
   useEffect(() => {
     if (
-      actionDefinition.type === 'sous-action' &&
+      isSubActionWithTasks &&
       avancementExt === 'non_renseigne' &&
       concerne !== false &&
       filled
     ) {
-      setLocalAvancement('detaille');
+      setLocalAvancement('detaille_a_la_tache');
     } else {
       setLocalAvancement(avancementExt);
     }
@@ -122,12 +108,14 @@ export const SubActionStatutDropdown = ({
     avancementDetaille,
     concerne,
     filled,
-    actionDefinition.type,
+    isSubActionWithTasks,
   ]);
 
   // Mise à jour du statut lorsque une nouvelle valeur
   // est sélectionnée sur le dropdown
-  const handleChange = (value: StatutAvancementIncludingNonConcerne) => {
+  const handleChange = (
+    value: StatutAvancementIncludingNonConcerneDetailleALaTache
+  ) => {
     const {
       avancement,
       concerne,
@@ -145,20 +133,11 @@ export const SubActionStatutDropdown = ({
     // Logique de sauvegarde à revoir si remplacement
     // de la modale <SubActionModal /> par un panneau latéral
     if (avancement === 'detaille') {
-      if (
-        actionDefinition.type === ActionTypeEnum.SOUS_ACTION &&
-        actionDefinition.children.length > 0
-      ) {
-        setLocalAvancementDetaille(undefined);
-
-        setOpenSubActionModal(true);
-        openDetailledState?.setIsOpen(true);
-      } else {
-        setLocalAvancementDetaille(avancement_detaille);
-
-        setOpenScoreDetaille(true);
-        openDetailledState?.setIsOpen(true);
-      }
+      setLocalAvancementDetaille(avancement_detaille);
+      setOpenScoreDetaille(true);
+    } else if (value === 'detaille_a_la_tache') {
+      setLocalAvancementDetaille(undefined);
+      setOpenSubActionModal(true);
     } else {
       // Mise à jour dans les cas de statuts autres que détaillé
       setLocalAvancement(value);
@@ -203,17 +182,55 @@ export const SubActionStatutDropdown = ({
     }
   };
 
+  const showPenButton =
+    !disabled &&
+    (localAvancement === 'detaille' ||
+      localAvancement === 'detaille_a_la_tache');
+
+  const allOrderedStatutItems = [
+    StatutAvancementEnum.FAIT,
+    StatutAvancementEnum.PAS_FAIT,
+    StatutAvancementEnum.PROGRAMME,
+    StatutAvancementEnum.DETAILLE,
+    StatutAvancementEnum.DETAILLE_A_LA_TACHE,
+    StatutAvancementEnum.NON_CONCERNE,
+    StatutAvancementEnum.NON_RENSEIGNE,
+  ];
+  const filteredStatutItems = isSubActionWithTasks
+    ? allOrderedStatutItems
+    : allOrderedStatutItems.filter(
+        (item) => item !== StatutAvancementEnum.DETAILLE_A_LA_TACHE
+      );
+
   return (
     <>
-      {/* Dropdown avec suppression de l'option "non renseigné" sur les sous-actions
-          quand au moins une des tâches a un statut */}
-      <div onClick={(evt) => evt.stopPropagation()} className="flex">
+      {/* Dropdown + bouton crayon pour ouvrir la modale détaillée */}
+      <div
+        onClick={(evt) => evt.stopPropagation()}
+        className="flex items-center gap-2"
+      >
         <SelectActionStatut
-          items={statutAvancementIncludingNonConcerneEnumSchema.options}
+          items={filteredStatutItems}
           disabled={disabled}
           value={localAvancement}
           onChange={handleChange}
         />
+        {showPenButton && (
+          <Button
+            data-test="DetaillerAvancementButton"
+            icon="edit-line"
+            title="Détailler l'avancement"
+            variant="underlined"
+            size="xs"
+            onClick={() => {
+              if (localAvancement === 'detaille_a_la_tache') {
+                setOpenSubActionModal(true);
+              } else {
+                setOpenScoreDetaille(true);
+              }
+            }}
+          />
+        )}
       </div>
 
       {/* Modale de détail de la sous-action (liste des tâches + jaude de score détaillé) */}
@@ -225,7 +242,6 @@ export const SubActionStatutDropdown = ({
               isOpen: openSubActionModal,
               setIsOpen: (value) => {
                 setOpenSubActionModal(value);
-                openDetailledState?.setIsOpen(value);
               },
             }}
           />
@@ -241,7 +257,6 @@ export const SubActionStatutDropdown = ({
               isOpen: openScoreDetaille,
               setIsOpen: (value) => {
                 setOpenScoreDetaille(value);
-                openDetailledState?.setIsOpen(value);
               },
             }}
           />

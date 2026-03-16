@@ -20,11 +20,20 @@ type Props = {
   openState: OpenState;
 };
 
+const getAvancementFromAvancementDetaille = (avancementDetaille: number[]) => {
+  return avancementDetaille[0] === 1
+    ? 'fait'
+    : avancementDetaille[1] === 1
+    ? 'programme'
+    : avancementDetaille[2] === 1
+    ? 'pas_fait'
+    : 'detaille';
+};
+
 /**
  * Modale permettant l'ajustement manuel de l'avancement détaillé
  * + l'ajout d'un texte justificatif
  */
-
 const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
   const { id: actionId, nom: actionName } = actionDefinition;
   const { statut, isLoading } = useActionStatut(actionId);
@@ -35,7 +44,13 @@ const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
 
   useEffect(() => {
     if (!isLoading && statut && !actionStatutUpdate) {
-      setActionStatutUpdate(omit(statut, ['modifiedAt', 'modifiedBy']));
+      const avancementDetaille =
+        statut.avancementDetaille || AVANCEMENT_DETAILLE_PAR_STATUT.detaille;
+      setActionStatutUpdate({
+        ...omit(statut, ['modifiedAt', 'modifiedBy']),
+        avancementDetaille: avancementDetaille,
+        avancement: getAvancementFromAvancementDetaille(avancementDetaille),
+      });
     }
   }, [statut]);
 
@@ -46,19 +61,11 @@ const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
   const handleSaveScoreDetaille = (values: AvancementValues) => {
     // Si la jauge est à 100% dans un des statuts, le statut
     // est mis à jour automatiquement
-    const avancement =
-      values[0] === 1
-        ? 'fait'
-        : values[1] === 1
-        ? 'programme'
-        : values[2] === 1
-        ? 'pas_fait'
-        : 'detaille';
 
     const newActionStatutUpdate: ActionStatutCreate = {
       ...actionStatutUpdate,
       collectiviteId,
-      avancement,
+      avancement: getAvancementFromAvancementDetaille(values),
       avancementDetaille: values,
       concerne: true,
     };
@@ -69,7 +76,7 @@ const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
   return (
     <Modal
       size="xl"
-      title="Détailler l'avancement"
+      title="Détailler l'avancement au pourcentage"
       subTitle={`${actionId.split('_')[1]} ${actionName}`}
       openState={openState}
       render={() => (

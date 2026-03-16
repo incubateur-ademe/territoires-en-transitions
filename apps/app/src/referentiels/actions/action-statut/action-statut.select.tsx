@@ -2,6 +2,7 @@ import { avancementToLabel } from '@/app/app/labels';
 import {
   statutAvancementEnumSchema,
   StatutAvancementIncludingNonConcerne,
+  StatutAvancementIncludingNonConcerneDetailleALaTache,
   statutAvancementIncludingNonConcerneEnumSchema,
 } from '@tet/domain/referentiels';
 import { SelectBadge } from '@tet/ui';
@@ -9,18 +10,28 @@ import ActionStatutBadge, { statusToState } from './action-statut.badge';
 
 export type TSelectActionStatutProps = {
   // item sélectionné (`non_renseigne` si `undefined` ou `null`)
-  value: StatutAvancementIncludingNonConcerne | undefined | null;
+  value:
+    | StatutAvancementIncludingNonConcerneDetailleALaTache
+    | undefined
+    | null;
   // appelée quand la sélection change
-  onChange: (value: StatutAvancementIncludingNonConcerne) => void;
+  onChange: (
+    value: StatutAvancementIncludingNonConcerneDetailleALaTache
+  ) => void;
   // mode "lecture seule"
   disabled?: boolean;
   // pour afficher une liste différente d'items (`DEFAULT_ITEMS` si non spécifié)
-  items?: StatutAvancementIncludingNonConcerne[];
+  items?: StatutAvancementIncludingNonConcerneDetailleALaTache[];
 };
 
 // transforme une liste de statuts en options pour la liste déroulante
-const getOptions = (items: StatutAvancementIncludingNonConcerne[]) =>
-  items.map((value) => ({ value, label: avancementToLabel[value] }));
+const getOptions = (
+  items: StatutAvancementIncludingNonConcerneDetailleALaTache[]
+) =>
+  items.map((value) => ({
+    value,
+    label: avancementToLabel[value].toUpperCase(),
+  }));
 
 export const DEFAULT_OPTIONS = getOptions(statutAvancementEnumSchema.options);
 

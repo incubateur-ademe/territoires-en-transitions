@@ -2,6 +2,7 @@ import { expect, Locator, Page } from '@playwright/test';
 import {
   ReferentielId,
   StatutAvancementIncludingNonConcerne,
+  StatutAvancementIncludingNonConcerneDetailleALaTache,
 } from '@tet/domain/referentiels';
 import { roundTo } from '@tet/domain/utils';
 import { DocumentsPom } from 'tests/collectivite/documents/documents.pom';
@@ -12,7 +13,7 @@ export class ReferentielScoresPom {
   readonly documentsAddPreuveComplementaireButton: Locator;
   readonly documentsPom: DocumentsPom;
   readonly detaillerAvancementModalTitle: Locator;
-  readonly detaillerAvancementPourcentageCheckbox: Locator;
+  readonly detaillerAvancementALaTacheModalTitle: Locator;
   readonly detaillerAvancementSlider: Locator;
   readonly detaillerAvancementSliderMinValue: Locator;
   readonly detaillerAvancementSliderMaxValue: Locator;
@@ -30,10 +31,10 @@ export class ReferentielScoresPom {
       '[data-test="AddPreuveComplementaire"]'
     );
     this.detaillerAvancementModalTitle = page.getByRole('heading', {
-      name: "Détailler l'avancement",
+      name: "Détailler l'avancement au pourcentage",
     });
-    this.detaillerAvancementPourcentageCheckbox = page.getByRole('checkbox', {
-      name: 'Détailler l’avancement au pourcentage',
+    this.detaillerAvancementALaTacheModalTitle = page.getByRole('heading', {
+      name: "Détailler l'avancement à la tâche",
     });
     this.detaillerAvancementSlider = page.locator(
       '[data-test="AvancementDetailleSlider"]'
@@ -174,9 +175,18 @@ export class ReferentielScoresPom {
     await this.getSousActionExpandLocator(sousActionIdentifiant).click();
   }
 
+  /** Edit (pen) button to open détaillé modal, scoped to a sous-action row */
+  getDetaillerAvancementEditButtonLocator(sousActionIdentifiant: string) {
+    return this.page.locator(
+      `${this.getSousActionLocationExpression(
+        sousActionIdentifiant
+      )} [data-test="DetaillerAvancementButton"]`
+    );
+  }
+
   async updateSousActionAvancement(
     sousActionIdentifiant: string,
-    avancement: StatutAvancementIncludingNonConcerne
+    avancement: StatutAvancementIncludingNonConcerneDetailleALaTache
   ) {
     await this.getSousActionAvancementSelectLocator(
       sousActionIdentifiant

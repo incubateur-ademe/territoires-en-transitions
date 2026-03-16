@@ -2,7 +2,7 @@ import { Enums } from '@tet/api';
 import {
   StatutAvancement,
   StatutAvancementEnum,
-  StatutAvancementIncludingNonConcerne,
+  StatutAvancementIncludingNonConcerneDetailleALaTache,
 } from '@tet/domain/referentiels';
 
 export const phaseToLabel: Record<Enums<'action_categorie'> | string, string> =
@@ -13,26 +13,30 @@ export const phaseToLabel: Record<Enums<'action_categorie'> | string, string> =
   };
 
 // Valeurs par défaut de l'avancement détaillé par statut d'avancement
-export const AVANCEMENT_DETAILLE_PAR_STATUT: Record<
-  StatutAvancement,
-  number[] | undefined
-> = {
+export const AVANCEMENT_DETAILLE_PAR_STATUT = {
   non_renseigne: undefined,
   fait: [1, 0, 0],
   programme: [0, 1, 0],
   pas_fait: [0, 0, 1],
   detaille: [0.5, 0.25, 0.25],
-};
+} satisfies Record<StatutAvancement, number[] | undefined>;
 
 // Génère les propriétés de l'objet statut à écrire lors du changement de l'avancement
 export const statutParAvancement = (
-  avancement: StatutAvancementIncludingNonConcerne
+  avancement: StatutAvancementIncludingNonConcerneDetailleALaTache
 ) => {
   // cas spécial pour le faux statut "non concerné"
   if (avancement === StatutAvancementEnum.NON_CONCERNE) {
     return {
       avancement: StatutAvancementEnum.NON_RENSEIGNE,
       concerne: false,
+    };
+  }
+
+  if (avancement === StatutAvancementEnum.DETAILLE_A_LA_TACHE) {
+    return {
+      avancement: StatutAvancementEnum.NON_RENSEIGNE,
+      concerne: true,
     };
   }
 

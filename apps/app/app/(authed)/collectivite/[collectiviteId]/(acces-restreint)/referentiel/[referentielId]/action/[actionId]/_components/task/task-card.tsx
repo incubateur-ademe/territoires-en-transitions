@@ -3,7 +3,6 @@ import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { getIdentifiantFromActionId } from '@tet/domain/referentiels';
 import { Divider } from '@tet/ui';
-import { useState } from 'react';
 import { ActionJustificationField } from '../action/action.justification-field';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
 import SubactionCardActions from '../subaction/subaction-card.actions';
@@ -18,8 +17,6 @@ type Props = {
 const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
   const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
-
-  const [openDetailledModal, setOpenDetailledModal] = useState(false);
 
   const { statut } = useActionStatut(task.id);
   const { avancement, concerne } = statut || {};
@@ -37,33 +34,23 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
         subAction={task}
         hideStatus={hideStatus}
         shouldDisplayProgressBar={shouldDisplayProgressBar}
-        openDetailledState={{
-          isOpen: openDetailledModal,
-          setIsOpen: setOpenDetailledModal,
-        }}
       />
 
       {/* Informations sur les scores indicatifs */}
       <ScoreIndicatifLibelle actionId={task.id} />
 
-      {canEditReferentiel && (isDetailled || task.haveScoreIndicatif) && (
-        <Divider />
-      )}
+      {canEditReferentiel && task.haveScoreIndicatif && <Divider />}
 
       {/* Actions */}
       <SubactionCardActions
         actionId={task.id}
         haveScoreIndicatif={task.haveScoreIndicatif}
-        isDetailled={isDetailled}
-        setOpenDetailledModal={setOpenDetailledModal}
       />
 
       {/* Ajout de commentaire */}
       {showJustifications && (
         <>
-          {canEditReferentiel && (isDetailled || task.haveScoreIndicatif) && (
-            <Divider />
-          )}
+          {canEditReferentiel && task.haveScoreIndicatif && <Divider />}
 
           <ActionJustificationField
             actionId={task.id}
