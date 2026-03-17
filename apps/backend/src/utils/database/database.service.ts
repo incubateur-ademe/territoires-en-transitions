@@ -18,6 +18,11 @@ export class DatabaseService
   private readonly pool = new Pool({
     connectionString: this.configService.get('SUPABASE_DATABASE_URL'),
     application_name: `Backend ${process.env.APPLICATION_VERSION}`,
+    max: 20,
+    connectionTimeoutMillis: 5000,
+    idleTimeoutMillis: 30000,
+    statement_timeout: 30000,
+    idle_in_transaction_session_timeout: 60000,
   });
 
   public readonly db = drizzle({
