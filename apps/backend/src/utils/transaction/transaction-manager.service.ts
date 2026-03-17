@@ -49,7 +49,7 @@ export class TransactionManager {
       // en cas de transaction partagée, déclenche le rollback explicitement
       // (le manager intercepte le throw, donc Drizzle ne le fait pas automatiquement)
       if (tx) {
-        tx.rollback();
+        await tx.rollback();
       }
       return failure(error as E);
     }
