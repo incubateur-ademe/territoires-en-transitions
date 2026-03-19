@@ -1,3 +1,4 @@
+import { useCollectivite } from '@/app/app/pages/collectivite/personnalisations/data/use-collectivite';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC, useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -8,7 +9,6 @@ import {
   ReferentielId,
 } from '@tet/domain/referentiels';
 import { useIsAuditeur } from '../audits/useAudit';
-import { useCarteIdentite } from '../personnalisations/PersoReferentielThematique/useCarteIdentite';
 import { useLabellisationParcours } from './useLabellisationParcours';
 
 // données du cycle de labellisation/audit actuel d'une collectivité
@@ -33,7 +33,7 @@ export const useCycleLabellisation = (
     useCurrentCollectivite();
   const isAuditeur = useIsAuditeur();
   const user = useUser();
-  const { data: identite } = useCarteIdentite(collectiviteId);
+  const { data: identite } = useCollectivite(collectiviteId);
 
   // charge les données du parcours
   const parcours = useLabellisationParcours({

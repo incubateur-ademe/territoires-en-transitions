@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 
-export const useCarteIdentite = (collectiviteId: number) => {
+export const useCollectivite = (collectiviteId: number) => {
   const trpc = useTRPC();
 
   return useQuery(

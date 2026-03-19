@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { usePersonnalisationRegles } from '@/app/app/pages/collectivite/personnalisations/data/use-personnalisation-regles';
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
@@ -8,7 +9,6 @@ import { useQuestionsReponses } from '../PersoReferentielThematique/useQuestions
 import { PersoPotentielTabs } from './PersoPotentielTabs';
 import { PointsPotentiels } from './points-potentiels.label';
 import { useChangeReponseHandler } from './useChangeReponseHandler';
-import { useRegles } from './useRegles';
 
 export type TPersoPotentielButtonProps = {
   /** Définition de l'action */
@@ -29,7 +29,10 @@ export const PersoPotentiel = ({ actionDef }: TPersoPotentielButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const qr = useQuestionsReponses({ actionIds: [actionId] });
-  const { data: regles } = useRegles(actionId);
+  const { data: regles } = usePersonnalisationRegles(
+    [actionId],
+    Boolean(actionId?.trim())
+  );
   const handleChange = useChangeReponseHandler(collectiviteId, [
     getReferentielIdFromActionId(actionId),
   ]);

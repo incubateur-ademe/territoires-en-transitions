@@ -10,12 +10,12 @@ import {
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, Checkbox } from '@tet/ui';
 
+import { useCollectivite } from '@/app/app/pages/collectivite/personnalisations/data/use-collectivite';
 import { isNil } from 'es-toolkit';
 import { usePersonnalisationReferentiels } from '../personnalisation-referentiel.context';
 import { QuestionReponseList } from '../PersoPotentielModal/PersoPotentielQR';
 import { useChangeReponseHandler } from '../PersoPotentielModal/useChangeReponseHandler';
 import { CarteIdentite } from './CarteIdentite';
-import { useCarteIdentite } from './useCarteIdentite';
 import { useNextThematiqueId } from './useNextThematiqueId';
 import { useQuestionsReponses } from './useQuestionsReponses';
 import { useThematique } from './useThematique';
@@ -34,7 +34,7 @@ export const PersoReferentielThematique = () => {
     referentiels,
     thematiqueId
   );
-  const { data: identite } = useCarteIdentite(collectiviteId);
+  const { data: identite } = useCollectivite(collectiviteId);
   const handleChange = useChangeReponseHandler(collectiviteId, ['cae', 'eci']);
 
   const [onlyNoResponse, setOnlyNoResponse] = useState(false);

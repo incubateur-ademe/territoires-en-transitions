@@ -104,6 +104,9 @@ const referentielPersonnalisationThematiquePath = `${referentielPersonnalisation
 export const collectiviteUsersPath = `${collectivitePath}/users`;
 export const collectiviteUsersTagsPath = `${collectiviteUsersPath}/tags`;
 
+const maCollectiviteVueParam = 'paramsVue';
+export const maCollectivitePath = `${collectivitePath}/ma-collectivite/:${maCollectiviteVueParam}`;
+
 export const collectiviteBibliothequePath = `${collectivitePath}/bibliotheque`;
 export const collectiviteJournalPath = `${collectivitePath}/historique`;
 const collectiviteActionsPath = `${collectivitePath}/actions`;
@@ -432,6 +435,17 @@ export const makeCollectiviteUsersUrl = ({
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
+
+export const makeMaCollectiviteUrl = ({
+  collectiviteId,
+  view = 'presentation',
+}: {
+  collectiviteId: number;
+  view?: 'presentation' | 'personnalisation';
+}) =>
+  maCollectivitePath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .replace(`:${maCollectiviteVueParam}`, view);
 
 export const makeCollectiviteUsersTagsUrl = ({
   collectiviteId,
