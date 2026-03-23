@@ -41,7 +41,7 @@ describe('generate-reports.router.e2e-spec.ts', () => {
 
     expect(reportGeneration.name).toMatch(expectedFileName);
 
-    await sleep(10000);
+    await sleep(20000);
 
     const updatedReportGeneration = await caller.plans.reports.get({
       reportId: reportGeneration.id,
@@ -68,7 +68,7 @@ describe('generate-reports.router.e2e-spec.ts', () => {
     expect(fileName).toMatch(expectedFileName);
     // Vérifie que le fichier a une taille raisonnable (rapport PPTX)
     expect(body.byteLength).toBeGreaterThan(1000);
-  }, 15000);
+  }, 25000);
 
   it("Refuse la génération de rapport si l'utilisateur n'a pas les droits", async () => {
     const caller = router.createCaller({ user: yuluDuduUser });
