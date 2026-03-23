@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RouterInput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { useFeatureFlagEnabled } from 'posthog-js/react';
 import { ListFichesOutput } from '../../fiches/list-all-fiches/data/use-list-fiches';
+import { useIsFeatureFlagEnabled } from '@/app/utils/posthog/use-is-feature-flag-enabled';
 
 type Args = Partial<{
   onUpdateCallback: () => void;
@@ -14,7 +14,7 @@ export const useUpdateSousAction = (args?: Args) => {
   const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const isNotificationEnabled = useFeatureFlagEnabled(
+  const isNotificationEnabled = useIsFeatureFlagEnabled(
     'is-notification-enabled'
   );
 

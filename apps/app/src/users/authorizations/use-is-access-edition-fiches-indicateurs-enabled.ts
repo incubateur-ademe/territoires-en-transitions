@@ -1,5 +1,5 @@
-import { useFeatureFlagEnabled } from 'posthog-js/react';
+import { useIsFeatureFlagEnabled } from '@/app/utils/posthog/use-is-feature-flag-enabled';
 
 export function useIsAccessEditionFichesIndicateursEnabled() {
-  return useFeatureFlagEnabled('is-access-edition-fiches-indicateurs-enabled');
+  return useIsFeatureFlagEnabled('is-access-edition-fiches-indicateurs-enabled');
 }

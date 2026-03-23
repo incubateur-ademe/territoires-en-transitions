@@ -1,4 +1,4 @@
-import { useFeatureFlagEnabled } from 'posthog-js/react';
+import { useIsFeatureFlagEnabled } from '@/app/utils/posthog/use-is-feature-flag-enabled';
 
 /**
  * Hook to check if the improved fiche action UI feature flag is enabled.
@@ -8,5 +8,5 @@ import { useFeatureFlagEnabled } from 'posthog-js/react';
  * or the legacy version.
  */
 export function useImprovedFicheActionUiEnabled() {
-  return useFeatureFlagEnabled('is-improved-fiche-action-ui-enabled');
+  return useIsFeatureFlagEnabled('is-improved-fiche-action-ui-enabled');
 }

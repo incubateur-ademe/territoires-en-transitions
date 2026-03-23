@@ -1,5 +1,5 @@
-import { useFeatureFlagEnabled } from 'posthog-js/react';
+import { useIsFeatureFlagEnabled } from '@/app/utils/posthog/use-is-feature-flag-enabled';
 
 export function useIsScoreIndicatifEnabled() {
-  return useFeatureFlagEnabled('is-score-indicatif-enabled');
+  return useIsFeatureFlagEnabled('is-score-indicatif-enabled');
 }
