@@ -51,7 +51,7 @@ export class CreatePreuveService {
     // Check permissions
     const isAllowed = await this.permissions.isAllowed(
       user,
-      'referentiels.labellisations.request',
+      'referentiels.mutate',
       ResourceType.COLLECTIVITE,
       demande.collectiviteId,
       true
