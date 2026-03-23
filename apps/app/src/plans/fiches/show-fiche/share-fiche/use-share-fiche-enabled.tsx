@@ -1,5 +1,5 @@
-import { useFeatureFlagEnabled } from 'posthog-js/react';
+import { useIsFeatureFlagEnabled } from '@/app/utils/posthog/use-is-feature-flag-enabled';
 
 export function useShareFicheEnabled() {
-  return useFeatureFlagEnabled('is-share-fiche-enabled');
+  return useIsFeatureFlagEnabled('is-share-fiche-enabled');
 }

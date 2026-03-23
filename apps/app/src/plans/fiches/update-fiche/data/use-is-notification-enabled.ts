@@ -1,5 +1,5 @@
-import { useFeatureFlagEnabled } from 'posthog-js/react';
+import { useIsFeatureFlagEnabled } from '@/app/utils/posthog/use-is-feature-flag-enabled';
 
 export function useIsNotificationEnabled() {
-  return useFeatureFlagEnabled('is-notification-enabled');
+  return useIsFeatureFlagEnabled('is-notification-enabled');
 }

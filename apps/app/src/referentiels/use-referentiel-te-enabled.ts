@@ -1,10 +1,5 @@
-import { ENV } from '@tet/api/environmentVariables';
-import { useFeatureFlagEnabled } from 'posthog-js/react';
+import { useIsFeatureFlagEnabled } from '../utils/posthog/use-is-feature-flag-enabled';
 
 export function useReferentielTeEnabled() {
-  return (
-    useFeatureFlagEnabled('is-referentiel-te-enabled') ||
-    !ENV.application_env ||
-    ENV.application_env === 'ci'
-  );
+  return useIsFeatureFlagEnabled('is-referentiel-te-enabled');
 }

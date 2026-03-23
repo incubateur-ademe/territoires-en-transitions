@@ -6,7 +6,7 @@ import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { AppEnvironment } from '@tet/domain/utils';
 import { Tab, Tabs } from '@tet/ui';
-import { useFeatureFlagEnabled } from 'posthog-js/react';
+import { useIsFeatureFlagEnabled } from '@/app/utils/posthog/use-is-feature-flag-enabled';
 import { DocumentsView } from './Documents/documents.view';
 import Etapes from './etapes';
 import FichesLieesTab from './FichesLiees/FichesLieesTab';
@@ -38,7 +38,7 @@ const FicheActionOnglets = ({
 }: FicheActionOngletsProps) => {
   const { collectiviteId, isSimplifiedView, hasCollectivitePermission } =
     collectivite;
-  const widgetCommunsFlagEnabled = useFeatureFlagEnabled(
+  const widgetCommunsFlagEnabled = useIsFeatureFlagEnabled(
     'is-widget-communs-enabled'
   );
 
