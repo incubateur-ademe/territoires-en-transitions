@@ -139,6 +139,7 @@ export default class SheetService {
     const deleteOptions: drive_v3.Params$Resource$Files$Delete = {
       auth: authClient,
       fileId: fileId,
+      supportsAllDrives: true,
     };
     await drive.files.delete(deleteOptions);
     this.logger.log(`Spreadsheet ${fileId} correctement supprimé.`);
@@ -150,6 +151,7 @@ export default class SheetService {
       auth: authClient,
       fileId: fileId,
       fields: 'name',
+      supportsAllDrives: true,
     };
     const res = await drive.files.get(getOptions);
     return res.data.name ?? '';
@@ -161,6 +163,7 @@ export default class SheetService {
       auth: authClient,
       fileId: fileId,
       alt: 'media',
+      supportsAllDrives: true,
     };
     const res = await drive.files.get(
       getOptions,
