@@ -117,7 +117,7 @@ export class PermissionService {
     );
 
     if (!hasPermissionResult) {
-      this.logger.log(
+      this.logger.warn(
         `L'utilisateur ${user.id} ne possède pas l'autorisation ${operation} sur la ressource ${resourceType} ${resourceId}`
       );
       if (!doNotThrow) {
