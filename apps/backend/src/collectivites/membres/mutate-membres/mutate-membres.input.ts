@@ -24,3 +24,16 @@ export const removeMembreInputSchema = z.object({
 });
 
 export type RemoveMembreInput = z.infer<typeof removeMembreInputSchema>;
+
+export const joinAsMembreInputSchema = z.object({
+  collectiviteId: z.number(),
+  fonction: membreFonctionEnumSchema,
+  detailsFonction: z.string().optional().default(''),
+  champIntervention: z
+    .array(z.enum(referentielIdEnumValues))
+    .optional()
+    .default([]),
+  estReferent: z.boolean().optional().default(false),
+});
+
+export type JoinAsMembreInput = z.infer<typeof joinAsMembreInputSchema>;

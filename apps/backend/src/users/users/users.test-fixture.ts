@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { membreTable } from '@tet/backend/collectivites/membres/membre.table';
 import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles/utilisateur-verifie.table';
 import { authUsersTable } from '@tet/backend/users/models/auth-users.table';
 import { dcpTable } from '@tet/backend/users/models/dcp.table';
@@ -20,6 +21,8 @@ export type TestUserArgs = {
   role?: CollectiviteRole;
   prenom?: string;
   nom?: string;
+  /** @default true — met à jour `utilisateur_verifie` après création du compte */
+  verified?: boolean;
 };
 
 const TEST_USER_PASSWORD = 'yolododo';
@@ -32,6 +35,7 @@ export async function addTestUser(
     role,
     prenom: customPrenom,
     nom: customNom,
+    verified = true,
   }: TestUserArgs = {
     collectiviteId: null,
     role: CollectiviteRole.EDITION,
@@ -83,7 +87,7 @@ export async function addTestUser(
 
   await db
     .update(utilisateurVerifieTable)
-    .set({ verifie: true })
+    .set({ verifie: verified })
     .where(eq(utilisateurVerifieTable.userId, userId));
 
   // rattache l'utilisateur à la collectivité
@@ -115,19 +119,10 @@ export async function addTestUser(
     await db
       .delete(utilisateurVerifieTable)
       .where(eq(utilisateurVerifieTable.userId, userId));
-    if (collectiviteId) {
-      await db
-        .delete(utilisateurCollectiviteAccessTable)
-        .where(
-          and(
-            eq(utilisateurCollectiviteAccessTable.userId, userId),
-            eq(
-              utilisateurCollectiviteAccessTable.collectiviteId,
-              collectiviteId
-            )
-          )
-        );
-    }
+    await db
+      .delete(utilisateurCollectiviteAccessTable)
+      .where(eq(utilisateurCollectiviteAccessTable.userId, userId));
+    await db.delete(membreTable).where(eq(membreTable.userId, userId));
     await db.delete(authUsersTable).where(eq(authUsersTable.id, userId));
   };
 
@@ -274,6 +269,4 @@ export async function deleteUserCollectiviteRole(
     )
     .returning()
     .then(([u]) => u);
-
-  console.log(`User ${userId} collectivite ${collectiviteId} role deleted`);
 }

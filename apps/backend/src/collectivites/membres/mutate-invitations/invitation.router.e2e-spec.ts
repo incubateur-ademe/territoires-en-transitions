@@ -8,12 +8,13 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
+import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles/utilisateur-verifie.table';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
-import { CollectiviteRole, Dcp } from '@tet/domain/users';
+import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq } from 'drizzle-orm';
 import { utilisateurCollectiviteAccessTable } from '../../../users/authorizations/utilisateur-collectivite-access.table';
 import { invitationTable } from '../invitation.table';
@@ -27,7 +28,6 @@ describe('Test les invitations', () => {
   let adminUser: AuthenticatedUser;
   let adminEmail: string;
   let adminUserId: string;
-  let inviteeUser: Dcp & { password: string };
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -42,10 +42,6 @@ describe('Test les invitations', () => {
     adminUser = getAuthUserFromUserCredentials(testResult.user);
     adminEmail = testResult.user.email ?? '';
     adminUserId = testResult.user.id;
-
-    // Create user to be invited (not in collectivite)
-    const inviteeResult = await addTestUser(databaseService);
-    inviteeUser = inviteeResult.user;
   });
 
   afterAll(async () => {
@@ -79,7 +75,12 @@ describe('Test les invitations', () => {
   });
 
   test(`Invite un utilisateur déjà existant mais pas rattaché à la collectivité`, async () => {
-    const caller = router.createCaller({ user: adminUser });
+    // Create user to be invited (not in collectivite)
+    const { user: invitedUser } = await addTestUser(databaseService, {
+      verified: false,
+    });
+
+    const adminCaller = router.createCaller({ user: adminUser });
 
     // Create tag and fiches for this test
     const [testTag] = await databaseService.db
@@ -87,10 +88,10 @@ describe('Test les invitations', () => {
       .values({ nom: 'Pilote Tag Invite', collectiviteId: collectivite.id })
       .returning();
 
-    const fiche1 = await caller.plans.fiches.create({
+    const fiche1 = await adminCaller.plans.fiches.create({
       fiche: { collectiviteId: collectivite.id, titre: 'Fiche invite test 1' },
     });
-    const fiche2 = await caller.plans.fiches.create({
+    const fiche2 = await adminCaller.plans.fiches.create({
       fiche: { collectiviteId: collectivite.id, titre: 'Fiche invite test 2' },
     });
 
@@ -99,35 +100,52 @@ describe('Test les invitations', () => {
       { ficheId: fiche2.id, tagId: testTag.id },
     ]);
 
+    // Vérifie que l'utilisateur n'est pas vérifié
+    const [verifAvant] = await databaseService.db
+      .select()
+      .from(utilisateurVerifieTable)
+      .where(eq(utilisateurVerifieTable.userId, invitedUser.id))
+      .limit(1);
+
+    expect(verifAvant?.verifie).toBe(false);
+
     // Vérifie que l'invité n'appartient pas à la collectivité
     const avantInvitation = await databaseService.db
       .select()
       .from(utilisateurCollectiviteAccessTable)
       .where(
         and(
-          eq(utilisateurCollectiviteAccessTable.userId, inviteeUser.id),
+          eq(utilisateurCollectiviteAccessTable.userId, invitedUser.id),
           eq(utilisateurCollectiviteAccessTable.collectiviteId, collectivite.id)
         )
       );
     expect(avantInvitation.length).toBe(0);
 
     // Invite l'utilisateur
-    const invitation = await caller.collectivites.membres.invitations.create({
-      collectiviteId: collectivite.id,
-      email: inviteeUser.email ?? '',
-      role: CollectiviteRole.EDITION,
-      tagIds: [testTag.id],
-    });
-    // Retourne null quand il y a un rattachement sans création d'invitation
+    const invitation =
+      await adminCaller.collectivites.membres.invitations.create({
+        collectiviteId: collectivite.id,
+        email: invitedUser.email,
+        role: CollectiviteRole.EDITION,
+        tagIds: [testTag.id],
+      });
     expect(invitation).toBeNull();
 
-    // Vérifie que l'invité est rattaché à la collectivité
+    // Vérifie que l'utilisateur est vérifié après avoir été invité
+    const [verifApres] = await databaseService.db
+      .select()
+      .from(utilisateurVerifieTable)
+      .where(eq(utilisateurVerifieTable.userId, invitedUser.id))
+      .limit(1);
+
+    expect(verifApres?.verifie).toBe(true);
+
     const apresInvitation = await databaseService.db
       .select()
       .from(utilisateurCollectiviteAccessTable)
       .where(
         and(
-          eq(utilisateurCollectiviteAccessTable.userId, inviteeUser.id),
+          eq(utilisateurCollectiviteAccessTable.userId, invitedUser.id),
           eq(utilisateurCollectiviteAccessTable.collectiviteId, collectivite.id)
         )
       );
@@ -137,7 +155,7 @@ describe('Test les invitations', () => {
     const pilotes = await databaseService.db
       .select()
       .from(ficheActionPiloteTable)
-      .where(eq(ficheActionPiloteTable.userId, inviteeUser.id));
+      .where(eq(ficheActionPiloteTable.userId, invitedUser.id));
     expect(pilotes.length).toBe(2);
   });
 

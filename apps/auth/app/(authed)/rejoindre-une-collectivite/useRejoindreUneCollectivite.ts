@@ -5,8 +5,11 @@ import {
   useSupabase,
   useTRPC,
 } from '@tet/api';
-import { useQueryClient } from '@tanstack/react-query';
-import { CollectivitePublic } from '@tet/domain/collectivites';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  CollectivitePublic,
+  type MembreFonction,
+} from '@tet/domain/collectivites';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -64,6 +67,10 @@ export const useRejoindreUneCollectivite = ({
   const queryClient = useQueryClient();
   const trpc = useTRPC();
 
+  const { mutateAsync: joinCollectivite } = useMutation(
+    trpc.collectivites.membres.join.mutationOptions()
+  );
+
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [collectivites, setCollectivites] = useState<MatchingCollectivites>([]);
@@ -86,24 +93,25 @@ export const useRejoindreUneCollectivite = ({
 
     // demande le rattachement
     setIsLoading(true);
-    const { error } = await supabase.rpc('claim_collectivite', {
-      collectivite_id: formData.collectiviteId,
-      champ_intervention: formData.champ_intervention || [],
-      role: formData.role,
-      poste,
-      est_referent: formData.est_referent || false,
-    });
-    setIsLoading(false);
-
-    // sort si il y a une erreur
-    if (error) {
+    try {
+      await joinCollectivite({
+        collectiviteId: formData.collectiviteId,
+        champIntervention: formData.champ_intervention || [],
+        fonction: formData.role as MembreFonction,
+        detailsFonction: poste,
+        estReferent: formData.est_referent || false,
+      });
+    } catch (e) {
       const errorMessage =
-        error?.message || 'Le rattachement à cette collectivité a échoué';
+        e instanceof Error
+          ? e.message
+          : 'Le rattachement à cette collectivité a échoué';
       setError(errorMessage);
+      setIsLoading(false);
       return;
     }
+    setIsLoading(false);
 
-    // redirige
     router.push(redirectTo);
   };
 

@@ -105,7 +105,6 @@ export async function addTestCollectivite(
       await setCollectiviteAsCOT({ db }, result.id, true);
     }
 
-    console.log(`Added collectivite ${result.nom} with id ${result.id}`);
     const collectiviteId = result?.id;
 
     const cleanup = async () => {

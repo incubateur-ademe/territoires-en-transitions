@@ -74,6 +74,8 @@ export class InvitationService {
               },
             });
 
+          await this.roleUpdateService.setIsVerified(invitedUser.id, true, trx);
+
           // Relie les tags donnés
           if (invitation.tagIds && invitation.tagIds.length > 0) {
             await this.personneTagService.convertTagsToUser(

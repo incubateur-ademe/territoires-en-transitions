@@ -17,6 +17,7 @@ import {
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { DatabaseService } from '../../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../../utils/trpc/trpc.router';
+import { utilisateurCollectiviteAccessTable } from '../../../users/authorizations/utilisateur-collectivite-access.table';
 import { membreTable } from '../membre.table';
 
 type ListInput = inferProcedureInput<
@@ -129,6 +130,94 @@ describe('CollectiviteMembresRouter mutate', () => {
 
   afterAll(async () => {
     await app.close();
+  });
+
+  describe('join (rejoindre une collectivité)', () => {
+    test('premier membre actif reçoit le rôle admin', async () => {
+      const { collectivite, cleanup: collCleanup } = await addTestCollectivite(
+        db
+      );
+      const { user: joiner, cleanup: userCleanup } = await addTestUser(db, {
+        collectiviteId: null,
+      });
+      const caller = router.createCaller({
+        user: getAuthUserFromUserCredentials(joiner),
+      });
+
+      await caller.collectivites.membres.join({
+        collectiviteId: collectivite.id,
+        fonction: MembreFonctionEnum.TECHNIQUE,
+        detailsFonction: 'Chef de projet',
+        champIntervention: ['cae'],
+        estReferent: false,
+      });
+
+      const [access] = await db.db
+        .select()
+        .from(utilisateurCollectiviteAccessTable)
+        .where(
+          and(
+            eq(utilisateurCollectiviteAccessTable.userId, joiner.id),
+            eq(
+              utilisateurCollectiviteAccessTable.collectiviteId,
+              collectivite.id
+            )
+          )
+        )
+        .limit(1);
+      expect(access?.role).toBe(CollectiviteRole.ADMIN);
+      expect(access?.isActive).toBe(true);
+
+      await userCleanup();
+      await collCleanup();
+    });
+
+    test('refuse si la collectivité a déjà au moins un membre actif', async () => {
+      const { user: joiner, cleanup: userCleanup } = await addTestUser(db, {
+        collectiviteId: null,
+      });
+      const caller = router.createCaller({
+        user: getAuthUserFromUserCredentials(joiner),
+      });
+
+      await expect(
+        caller.collectivites.membres.join({
+          collectiviteId: collectivite3.id,
+          fonction: MembreFonctionEnum.POLITIQUE,
+          detailsFonction: '',
+          champIntervention: [],
+          estReferent: false,
+        })
+      ).rejects.toThrow(/inviter/);
+
+      await userCleanup();
+    });
+
+    test('refuse si déjà membre actif de la collectivité', async () => {
+      const caller = router.createCaller({ user: adminUser });
+      await expect(
+        caller.collectivites.membres.join({
+          collectiviteId: collectivite1.id,
+          fonction: MembreFonctionEnum.TECHNIQUE,
+        })
+      ).rejects.toThrow(/déjà rattaché/);
+    });
+
+    test("refuse si la collectivité n'existe pas", async () => {
+      const { user: joiner, cleanup: userCleanup } = await addTestUser(db, {
+        collectiviteId: null,
+      });
+      const caller = router.createCaller({
+        user: getAuthUserFromUserCredentials(joiner),
+      });
+      await expect(
+        caller.collectivites.membres.join({
+          collectiviteId: 2_147_483_647,
+          fonction: MembreFonctionEnum.TECHNIQUE,
+        })
+      ).rejects.toThrow(/n'existe pas/);
+      await userCleanup();
+    });
   });
 
   test('admin peut mettre à jour un autre membre (fonction, detailsFonction, champIntervention)', async () => {
