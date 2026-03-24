@@ -25,7 +25,7 @@ describe('import-referentiel.service', () => {
           },
         ])
       ).rejects.toThrow(
-        'Invalid desactivation expression "token non valide" for action cae_1.2.3: NotAllInputParsedException: Redundant input, expecting EOF but found: non (1:7 --> 1:9)'
+        'L\'expression de desactivation "token non valide" de l\'action cae_1.2.3 contient une erreur de syntaxe : NotAllInputParsedException: Redundant input, expecting EOF but found: non (1:7 --> 1:9)'
       );
     });
 
@@ -38,7 +38,7 @@ describe('import-referentiel.service', () => {
           },
         ])
       ).rejects.toThrow(
-        `Invalid reduction expression "score()" for action cae_1.2.3: MismatchedTokenException: Expecting token of type --> CNAME <-- but found --> ')' <-- (1:7)`
+        `L'expression de reduction "score()" de l'action cae_1.2.3 contient une erreur de syntaxe : MismatchedTokenException: Expecting token of type --> CNAME <-- but found --> ')' <-- (1:7)`
       );
     });
 
@@ -51,7 +51,7 @@ describe('import-referentiel.service', () => {
           },
         ])
       ).rejects.toThrow(
-        /Invalid score expression "1 -- 2" for action cae_1.2.3: NoViableAltException: Expecting: one of these possible Token sequences:.*/
+        /L'expression de score "1 -- 2" de l'action cae_1.2.3 contient une erreur de syntaxe : NoViableAltException: Expecting: one of these possible Token sequences:.*/
       );
     });
 
@@ -64,7 +64,7 @@ describe('import-referentiel.service', () => {
           },
         ])
       ).rejects.toThrow(
-        'Invalid score expression "limite(cae_1.b))" for action cae_1.2.3: NotAllInputParsedException: Redundant input, expecting EOF but found: ) (1:16)'
+        'L\'expression de score "limite(cae_1.b))" de l\'action cae_1.2.3 contient une erreur de syntaxe : NotAllInputParsedException: Redundant input, expecting EOF but found: ) (1:16)'
       );
     });
 
@@ -77,7 +77,7 @@ describe('import-referentiel.service', () => {
           },
         ])
       ).rejects.toThrow(
-        'Missing indicateurs: "cae_1000" into expression "limite(cae_1000)" of action cae_1.2.3'
+        'L\'indicateur "cae_1000" référencé dans expression "limite(cae_1000)" de l\'action cae_1.2.3 n\'existe pas'
       );
     });
 
@@ -90,7 +90,7 @@ describe('import-referentiel.service', () => {
           },
         ])
       ).rejects.toThrow(
-        'Missing indicateurs: "cae_1000" into indicateur list of action cae_1.2.3'
+        'L\'indicateur "cae_1000" référencé dans liste indicateurs de l\'action cae_1.2.3 n\'existe pas'
       );
     });
 
@@ -104,8 +104,8 @@ describe('import-referentiel.service', () => {
         ])
       ).rejects.toThrow(
         [
-          'Missing value/expression "cible" for indicateur "cae_1.a" used into expression "limite(cae_1.a) < cible(cae_1.a)" of action cae_1.2.3',
-          'Missing value/expression "limite" for indicateur "cae_1.a" used into expression "limite(cae_1.a) < cible(cae_1.a)" of action cae_1.2.3',
+          'L\'expression cible manquante pour l\'indicateur "cae_1.a" utilisé dans l\'expression "limite(cae_1.a) < cible(cae_1.a)" de l\'action cae_1.2.3',
+          'L\'expression limite manquante pour l\'indicateur "cae_1.a" utilisé dans l\'expression "limite(cae_1.a) < cible(cae_1.a)" de l\'action cae_1.2.3',
         ].join('\n')
       );
     });
@@ -117,6 +117,78 @@ describe('import-referentiel.service', () => {
           {
             identifiant: '1.2.3',
             exprScore: 'limite(cae_36) < cible(cae_39)',
+          },
+        ]
+      );
+      expect(ret).toBe(true);
+    });
+  });
+
+  describe(`Vérifie la validité sémantique des expressions de personnalisation`, () => {
+    test(`Déclenche une erreur si une expression reponse() référence une question inexistante`, async () => {
+      await expect(() =>
+        importReferentielService.verifyReferentielExpressions('cae', [
+          {
+            identifiant: '1.2.3',
+            desactivation: 'reponse(question_inexistante_999, OUI)',
+          },
+        ])
+      ).rejects.toThrow(/question_inexistante_999/);
+    });
+
+    test(`Déclenche une erreur si une expression reponse() utilise une valeur invalide pour une question binaire`, async () => {
+      await expect(() =>
+        importReferentielService.verifyReferentielExpressions('cae', [
+          {
+            identifiant: '1.2.3',
+            desactivation: 'reponse(dechets_1, INVALIDE)',
+          },
+        ])
+      ).rejects.toThrow(/INVALIDE/);
+    });
+
+    test(`Déclenche une erreur si identite() utilise un champ invalide`, async () => {
+      await expect(() =>
+        importReferentielService.verifyReferentielExpressions('cae', [
+          {
+            identifiant: '1.2.3',
+            desactivation: 'identite(champ_invalide, valeur)',
+          },
+        ])
+      ).rejects.toThrow(/champ_invalide/);
+    });
+
+    test(`Déclenche une erreur si identite() utilise une valeur invalide pour le champ population`, async () => {
+      await expect(() =>
+        importReferentielService.verifyReferentielExpressions('cae', [
+          {
+            identifiant: '1.2.3',
+            desactivation: 'identite(population, population_invalide)',
+          },
+        ])
+      ).rejects.toThrow(/population_invalide/);
+    });
+
+    test(`Ne déclenche pas d'erreur pour une expression valide reponse(question_existante, OUI)`, async () => {
+      const ret = await importReferentielService.verifyReferentielExpressions(
+        'cae',
+        [
+          {
+            identifiant: '1.2.3',
+            desactivation: 'reponse(dechets_1, OUI)',
+          },
+        ]
+      );
+      expect(ret).toBe(true);
+    });
+
+    test(`Ne déclenche pas d'erreur pour une expression valide identite(type, commune)`, async () => {
+      const ret = await importReferentielService.verifyReferentielExpressions(
+        'cae',
+        [
+          {
+            identifiant: '1.2.3',
+            desactivation: 'identite(type, commune)',
           },
         ]
       );
