@@ -9,6 +9,7 @@ import { ListMembresService } from './list-membres/list-membres.service';
 import { InvitationsRouter } from './mutate-invitations/invitations.router';
 import { mutateMembresErrorConfig } from './mutate-membres/mutate-membres.errors';
 import {
+  joinAsMembreInputSchema,
   removeMembreInputSchema,
   updateMembreInputSchema,
 } from './mutate-membres/mutate-membres.input';
@@ -48,6 +49,13 @@ export class CollectiviteMembresRouter {
       .input(removeMembreInputSchema)
       .mutation(async ({ input, ctx }) => {
         const result = await this.mutateMembresService.remove(input, ctx.user);
+        return this.getResultDataOrThrowError(result);
+      }),
+
+    join: this.trpc.authedProcedure
+      .input(joinAsMembreInputSchema)
+      .mutation(async ({ input, ctx }) => {
+        const result = await this.mutateMembresService.join(input, ctx.user);
         return this.getResultDataOrThrowError(result);
       }),
 
