@@ -20,6 +20,7 @@ import {
 } from '@tet/backend/plans/fiches/list-fiches/list-fiches.request';
 import { ficheActionSharingTable } from '@tet/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
+import { planActionTypeTable } from '@tet/backend/plans/fiches/shared/models/plan-action-type.table';
 import { ficheActionEffetAttenduTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-effet-attendu.table';
 import { ficheActionFinanceurTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-financeur-tag.table';
 import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
@@ -52,6 +53,7 @@ import {
 } from '@tet/domain/collectivites';
 import {
   FicheNote,
+  FichePlan,
   FicheWithRelations,
   FicheWithRelationsAndCollectivite,
   Financeur,
@@ -490,8 +492,8 @@ export default class ListFichesService {
       .select({
         ficheId: ficheActionAxeTable.ficheId,
         plans: sql<
-          TagWithCollectiviteId[]
-        >`array_agg(json_build_object('id', COALESCE(${axeTable.plan}, ${axeTable.id}), 'nom', COALESCE(${planTable.nom}, ${axeTable.nom}),  'collectiviteId', ${axeTable.collectiviteId}))`.as(
+          FichePlan[]
+        >`array_agg(json_build_object('id', COALESCE(${axeTable.plan}, ${axeTable.id}), 'nom', COALESCE(${planTable.nom}, ${axeTable.nom}), 'collectiviteId', ${axeTable.collectiviteId}, 'type', ${planActionTypeTable.type}))`.as(
           'plans'
         ),
       })
@@ -504,7 +506,11 @@ export default class ListFichesService {
           isNotNull(parentAxeTable.parent)
         )
       )
-      .leftJoin(planTable, eq(planTable.id, axeTable.plan));
+      .leftJoin(planTable, eq(planTable.id, axeTable.plan))
+      .leftJoin(
+        planActionTypeTable,
+        eq(planActionTypeTable.id, planTable.typeId)
+      );
 
     query.where(inArray(ficheActionAxeTable.ficheId, ficheIds));
 

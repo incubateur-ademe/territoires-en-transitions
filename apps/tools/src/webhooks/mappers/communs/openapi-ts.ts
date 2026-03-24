@@ -1,8 +1,7 @@
 import { defaultPlugins } from '@hey-api/openapi-ts';
 
 export default {
-  input:
-    'https://les-communs-transition-ecologique-api-staging.osc-fr1.scalingo.io/openapi.json',
+  input: 'https://api.collectivites.beta.gouv.fr/api/projets/openapi.json',
   output: 'client',
   plugins: [
     ...defaultPlugins,

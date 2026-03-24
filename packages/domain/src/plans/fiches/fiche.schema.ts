@@ -22,6 +22,15 @@ import { piliersEciEnumSchema } from './pilier-eci.enum.schema';
 import { prioriteEnumValues } from './priorite.enum.schema';
 import { statutEnumValues } from './statut.enum.schema';
 
+export const fichePlanSchema = z.object({
+  id: z.number(),
+  nom: z.string(),
+  collectiviteId: z.number(),
+  type: z.string().nullable(),
+});
+
+export type FichePlan = z.infer<typeof fichePlanSchema>;
+
 export const ficheSchema = z.object({
   id: z.number(),
   collectiviteId: z.number(),
@@ -169,7 +178,7 @@ export const ficheWithRelationsSchema = ficheSchema.extend({
     .array()
     .nullable()
     .describe('Axes'),
-  plans: z.array(tagWithCollectiviteIdSchema).nullable().describe('Plans'),
+  plans: z.array(fichePlanSchema).nullable().describe('Plans'),
   etapes: z
     .object({
       nom: z.string(),
