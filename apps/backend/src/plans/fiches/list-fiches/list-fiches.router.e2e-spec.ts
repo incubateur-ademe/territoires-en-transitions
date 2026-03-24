@@ -341,6 +341,7 @@ describe('Filtres sur les fiches actions', () => {
     expect(fiches[0].plans?.[0]).toMatchObject({
       nom: 'Plan Vélo 2020-2024', // correspond au plan racine
       collectiviteId: 1,
+      type: null,
     });
   });
 

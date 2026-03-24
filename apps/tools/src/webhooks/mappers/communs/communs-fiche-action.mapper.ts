@@ -7,13 +7,11 @@ import {
 } from '@tet/domain/utils';
 import { DateTime } from 'luxon';
 import { AbstractEntityMapper } from '../AbstractEntityMapper';
-import { CreateProjetRequest } from './client/types.gen';
-
-type CompetenceType = NonNullable<CreateProjetRequest['competences']>[number];
+import { CreateFicheActionRequest } from './client/types.gen';
 
 export class CommunsFicheActionMapper extends AbstractEntityMapper<
   FicheWithRelationsAndCollectivite,
-  CreateProjetRequest
+  CreateFicheActionRequest
 > {
   private readonly logger = new Logger(CommunsFicheActionMapper.name);
 
@@ -24,9 +22,9 @@ export class CommunsFicheActionMapper extends AbstractEntityMapper<
     'CC',
   ];
 
-  private readonly FICHE_STATUT_TO_PROJECT_PHASE_STATUT: Record<
+  private readonly FICHE_STATUT_TO_PHASE_STATUT: Record<
     Statut,
-    CreateProjetRequest['phaseStatut']
+    CreateFicheActionRequest['phaseStatut']
   > = {
     'A discuter': 'En cours',
     'En cours': 'En cours',
@@ -42,28 +40,19 @@ export class CommunsFicheActionMapper extends AbstractEntityMapper<
     super(ApplicationSousScopesEnum.FICHES, WebhookPayloadFormatEnum.COMMUNS);
   }
 
-  getCompetenceFromThematique(_thematique: {
-    id: number;
-    nom: string;
-  }): CompetenceType | null {
-    // TODO
-
-    return null;
-  }
-
   getPhaseAndStatut(data: FicheWithRelationsAndCollectivite): {
-    phase: CreateProjetRequest['phase'] | undefined;
-    phaseStatut: CreateProjetRequest['phaseStatut'] | undefined;
+    phase: CreateFicheActionRequest['phase'] | undefined;
+    phaseStatut: CreateFicheActionRequest['phaseStatut'] | undefined;
   } {
     return {
       phase: data.statut ? 'Opération' : undefined,
       phaseStatut: data.statut
-        ? this.FICHE_STATUT_TO_PROJECT_PHASE_STATUT[data.statut]
+        ? this.FICHE_STATUT_TO_PHASE_STATUT[data.statut]
         : undefined,
     };
   }
 
-  map(data: FicheWithRelationsAndCollectivite): CreateProjetRequest | null {
+  map(data: FicheWithRelationsAndCollectivite): CreateFicheActionRequest | null {
     if (data.restreint) {
       this.logger.log(`Do not send restricted fiche action ${data.id}`);
       return null;
@@ -82,8 +71,7 @@ export class CommunsFicheActionMapper extends AbstractEntityMapper<
         data.collectivite.natureInsee &&
         this.SUPPORTED_EPCI_NATURE.includes(data.collectivite.natureInsee))
     ) {
-      // Implement the mapping logic here
-      const createProjectRequest: CreateProjetRequest = {
+      const createFicheActionRequest: CreateFicheActionRequest = {
         nom: data.titre || 'Sans titre', // TODO: to be checked, otherwise do not send it
         externalId: `${data.id}`,
         description: data.description || '',
@@ -96,29 +84,32 @@ export class CommunsFicheActionMapper extends AbstractEntityMapper<
                 : data.collectivite.siren) || '',
           },
         ],
-        budgetPrevisionnel: bugetPrevisionnel,
+        budgetPrevisionnel: bugetPrevisionnel ?? undefined,
         dateDebutPrevisionnelle: data.dateDebut
-          ? DateTime.fromISO(data.dateDebut.replace(' ', 'T')).toISO()
-          : null,
+          ? DateTime.fromISO(data.dateDebut.replace(' ', 'T')).toISO() ??
+            undefined
+          : undefined,
+        parentExternalId: data.parentId ? String(data.parentId) : undefined,
+        plans: data.plans?.length
+          ? data.plans.map((plan) => ({
+              externalId: String(plan.id),
+              nom: plan.nom,
+              type: plan.type ?? undefined,
+            }))
+          : undefined,
         ...this.getPhaseAndStatut(data),
       };
 
       if (data.referents?.length) {
         // Take the first one. Enough for now.
-        createProjectRequest.porteur = {
+        createFicheActionRequest.porteur = {
           referentNom: data.referents[0].nom,
           referentTelephone: data.referents[0].telephone,
           referentEmail: data.referents[0].email,
         };
       }
 
-      if (data.thematiques) {
-        createProjectRequest.competences = data.thematiques
-          .map((thematique) => this.getCompetenceFromThematique(thematique))
-          .filter((theme) => theme) as CompetenceType[];
-      }
-
-      return createProjectRequest;
+      return createFicheActionRequest;
     } else {
       this.logger.log(
         `Ignoring FicheAction with id ${data.id}: type ${data.collectivite?.type} with nature ${data.collectivite?.natureInsee} not supported`
