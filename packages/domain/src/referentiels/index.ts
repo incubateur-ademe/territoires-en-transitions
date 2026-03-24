@@ -24,6 +24,8 @@ export * from './labellisations/request-labellisation/request-labellisation.rule
 export * from './labellisations/request-labellisation/request-labellisation.rules-errors';
 export * from './labellisations/start-audit/start-audit.rules';
 export * from './labellisations/start-audit/start-audit.rules-errors';
+export * from './import-referentiel/verify-referentiel-expressions.rules';
+export * from './import-referentiel/verify-referentiel-expressions.rules-errors';
 export * from './referentiel-definition.schema';
 export * from './referentiel-id.enum';
 export * from './referentiel-tag.schema';

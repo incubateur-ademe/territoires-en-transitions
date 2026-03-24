@@ -16,7 +16,6 @@ import {
 } from '@tet/backend/indicateurs/definitions/indicateur-action.table';
 import { ListPlatformDefinitionsRepository } from '@tet/backend/indicateurs/definitions/list-platform-definitions/list-platform-definitions.repository';
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
-import { ReferencedIndicateur } from '@tet/backend/indicateurs/valeurs/referenced-indicateur.dto';
 import ImportPreuveReglementaireDefinitionService from '@tet/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
 import {
   ImportActionDefinitionCoremeasureType,
@@ -56,7 +55,7 @@ import {
 } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
 import { eq, ilike, like } from 'drizzle-orm';
-import { isNil, uniq } from 'es-toolkit';
+import { isNil } from 'es-toolkit';
 import { actionOrigineTable } from '../correlated-actions/action-origine.table';
 import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
 import {
@@ -67,6 +66,11 @@ import { actionDefinitionTagTable } from '../models/action-definition-tag.table'
 import { actionDefinitionTable } from '../models/action-definition.table';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
 import { referentielTagTable } from '../models/referentiel-tag.table';
+import { extractReferencesFromExpression } from '@tet/backend/collectivites/personnalisations/services/personnalisation-expression-reference-extractor';
+import { verifyReferentielExpressions } from './verify-referentiel-expressions';
+import { buildIndicateurReferences } from './verify-referentiel-expressions.builders';
+import { buildActionId } from './verify-referentiel-expressions.helpers';
+import { IndicateurReference } from './verify-referentiel-expressions.types';
 
 const REFERENTIEL_SPREADSHEET_RANGE = 'Structure référentiel!A:Z';
 const ACTION_ID_REGEXP = /^[a-zA-Z]+_\d+(\.\d+)*$/;
@@ -167,6 +171,11 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         ['identifiant']
       );
 
+    await this.verifyReferentielExpressions(
+      referentielId,
+      importActionDefinitions.data
+    );
+
     const actionDefinitions: ActionDefinitionCreate[] = [];
     const createActionOrigines: ActionOrigine[] = [];
     const createPersonnalisationRegles: PersonnalisationRegleCreate[] = [];
@@ -175,7 +184,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     const personnalisationQuestionRelations: ActionQuestion[] = [];
     const createActionTags: ActionDefinitionTag[] = [];
     importActionDefinitions.data.forEach((action) => {
-      const actionId = `${referentielId}_${action.identifiant}`;
+      const actionId = buildActionId(referentielId, action.identifiant);
       const alreadyExists = actionDefinitions.find(
         (action) => action.actionId === actionId
       );
@@ -267,18 +276,6 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
               formule: action[ruleType],
               description: action[`${ruleType}Desc`] || '',
             };
-            // Check that we can parse the expression
-            try {
-              this.personnalisationsExpressionService.parseExpression(
-                regle.formule
-              );
-            } catch (e) {
-              throw new UnprocessableEntityException(
-                `Invalid ${ruleType} expression ${
-                  action[ruleType]
-                } for action ${actionId}: ${getErrorMessage(e)}`
-              );
-            }
             createPersonnalisationRegles.push(regle);
           }
         });
@@ -311,15 +308,6 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         }
 
         if (action.exprScore) {
-          try {
-            this.indicateurExpressionService.parseExpression(action.exprScore);
-          } catch (e) {
-            throw new UnprocessableEntityException(
-              `Invalid score expression for action ${actionId}: ${getErrorMessage(
-                e
-              )}`
-            );
-          }
           const referencedIndicateurs =
             this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
               action.exprScore
@@ -632,210 +620,85 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       >
     >
   ) {
-    await this.verifyReferentielPersonnalisationExpressions(
+    const questions =
+      await this.listPersonnalisationQuestionsService.listQuestionsWithChoices();
+
+    const references = buildIndicateurReferences({
       referentielId,
-      actions
-    );
-    await this.verifyReferentielIndicateursAndScoreIndicatifExpressions(
+      actions,
+      extractIndicateurs: (expr) => {
+        try {
+          return this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
+            expr
+          );
+        } catch {
+          return null;
+        }
+      },
+    });
+
+    const { indicateurIdParIdentifiant, indicateurDefinitions } =
+      await this.loadIndicateurVerificationData(references);
+
+    const result = verifyReferentielExpressions({
       referentielId,
-      actions
-    );
+      actions,
+      questions,
+      indicateurReferences: references,
+      indicateurIdParIdentifiant,
+      indicateurDefinitions,
+      parsePersonnalisationExpression: (expr) =>
+        this.safeParse(() =>
+          this.personnalisationsExpressionService.parseExpression(expr)
+        ),
+      parseScoreExpression: (expr) =>
+        this.safeParse(() =>
+          this.indicateurExpressionService.parseExpression(expr)
+        ),
+      extractReferences: extractReferencesFromExpression,
+    });
+
+    if (!result.success) {
+      const messages = result.errors.map((e) => e.message).join('\n');
+      throw new UnprocessableEntityException(messages);
+    }
     return true;
   }
 
-  private async verifyReferentielPersonnalisationExpressions(
-    referentielId: ReferentielId,
-    actions: Array<
-      Pick<
-        ImportActionDefinitionType,
-        'identifiant' | 'desactivation' | 'reduction' | 'score'
-      >
-    >
+  private async loadIndicateurVerificationData(
+    references: IndicateurReference[]
   ) {
-    actions.forEach((action) => {
-      const actionId = `${referentielId}_${action.identifiant}`;
-      regleTypeEnumValues.forEach((ruleType) => {
-        if (action[ruleType]) {
-          try {
-            this.personnalisationsExpressionService.parseExpression(
-              action[ruleType]
-            );
-            // TODO: extract questions from expression to check that the question exists. Need to output questionIds and answerIds from the parser
-            // Ex: eci 2.2 desactivation: reponse(dechets_1, NON) => we have to check that the question dechets_1 exists and that it's a binary question
-          } catch (e) {
-            throw new UnprocessableEntityException(
-              `Invalid ${ruleType} expression "${
-                action[ruleType]
-              }" for action ${actionId}: ${getErrorMessage(e)}`
-            );
-          }
-        }
-      });
-    });
-  }
-
-  private async verifyReferentielIndicateursAndScoreIndicatifExpressions(
-    referentielId: ReferentielId,
-    actions: Array<
-      Pick<
-        ImportActionDefinitionType,
-        'identifiant' | 'exprScore' | 'indicateurs'
-      >
-    >
-  ) {
-    const references: Array<{
-      actionId: string;
-      expr: string | null;
-      exprIndicateurs: ReferencedIndicateur[] | null;
-      indicateurs: string[];
-    }> = [];
-
-    actions.forEach((action) => {
-      const actionId = `${referentielId}_${action.identifiant}`;
-
-      if (action.exprScore) {
-        try {
-          this.indicateurExpressionService.parseExpression(action.exprScore);
-        } catch (e) {
-          throw new UnprocessableEntityException(
-            `Invalid score expression "${
-              action.exprScore
-            }" for action ${actionId}: ${getErrorMessage(e)}`
-          );
-        }
-        const expressionIndicateurs =
-          this.indicateurExpressionService.extractNeededSourceIndicateursFromFormula(
-            action.exprScore
-          );
-        references.push({
-          actionId,
-          expr: action.exprScore,
-          exprIndicateurs: expressionIndicateurs,
-          indicateurs: expressionIndicateurs.map((ind) => ind.identifiant),
-        });
-      }
-
-      if (action.indicateurs) {
-        references.push({
-          actionId,
-          expr: null,
-          exprIndicateurs: null,
-          indicateurs: action.indicateurs,
-        });
-      }
-    });
-
-    // vérifie la présence des indicateurs référencés dans les formules et dans le champ indicateurs
-    const identifiants = uniq([
-      ...references.flatMap((ref) => ref.indicateurs),
-    ]);
+    const identifiants = [
+      ...new Set(references.flatMap((ref) => ref.indicateurs)),
+    ];
     const indicateurIdParIdentifiant =
       await this.listPlatformDefinitionsRepository.listPlatformDefinitionIdsByIdentifiantReferentiels(
         identifiants
       );
 
-    const identifiantsManquants = identifiants.filter(
-      (identifiant) => !indicateurIdParIdentifiant[identifiant]
-    );
-
-    if (identifiantsManquants.length) {
-      const referencesManquantes = references
-        .map((ref) => ({
-          ...ref,
-          indicateurs: ref.indicateurs.filter((ind) =>
-            identifiantsManquants.includes(ind)
-          ),
-        }))
-        .filter((ref) => ref.indicateurs.length);
-
-      throw new NotFoundException(
-        `Missing indicateurs: ${referencesManquantes
-          .map(
-            (r) =>
-              `${r.indicateurs.map((ind) => `"${ind}"`).join(', ')} into ${
-                r.expr ? `expression "${r.expr}"` : 'indicateur list'
-              } of action ${r.actionId}`
-          )
-          .join('\n')}`
-      );
-    }
-
-    // vérifie la présence des valeurs limite/cible référencées dans les formules
-    type ReferenceValeurCibleOuLimite = {
-      indicateurId: number;
-      actionId: string;
-      expr: string;
-    };
-    const referencesValeur: {
-      limite: ReferenceValeurCibleOuLimite[];
-      cible: ReferenceValeurCibleOuLimite[];
-    } = { limite: [], cible: [] };
-
-    references.forEach((ref) => {
-      if (!ref.expr) {
-        return;
-      }
-      ref.exprIndicateurs?.forEach((ind) => {
-        const valeurCibleRequise = ind.tokens.includes('cible');
-        const valeurLimiteRequise = ind.tokens.includes('limite');
-        const indicateurId = indicateurIdParIdentifiant[ind.identifiant];
-        if (valeurCibleRequise || valeurLimiteRequise) {
-          const refValeur = {
-            indicateurId,
-            actionId: ref.actionId,
-            expr: ref.expr || '',
-          };
-          if (valeurCibleRequise) {
-            referencesValeur.cible.push(refValeur);
-          }
-          if (valeurLimiteRequise) {
-            referencesValeur.limite.push(refValeur);
-          }
-        }
-      });
-    });
-
-    if (referencesValeur.limite.length || referencesValeur.cible.length) {
-      const indicateurIds = uniq(
-        [...referencesValeur.limite, ...referencesValeur.cible].map(
-          (ref) => ref.indicateurId
-        )
-      );
-
-      const definitions =
-        await this.listPlatformDefinitionsRepository.listPlatformDefinitions({
-          indicateurIds,
-        });
-
-      const exprManquantes: string[] = [];
-      const verifExprManquante = (
-        type: 'cible' | 'limite',
-        indicateurId: number,
-        identifiantReferentiel: string
-      ) => {
-        const ref = referencesValeur[type].find(
-          (ref) => ref.indicateurId === indicateurId
-        );
-        if (ref) {
-          exprManquantes.push(
-            `Missing value/expression "${type}" for indicateur "${identifiantReferentiel}" used into expression "${ref.expr}" of action ${ref.actionId}`
-          );
-        }
-      };
-
-      definitions.forEach((definition) => {
-        const { id, exprCible, identifiantReferentiel, exprSeuil } = definition;
-        if (identifiantReferentiel) {
-          if (!exprCible)
-            verifExprManquante('cible', id, identifiantReferentiel);
-          if (!exprSeuil)
-            verifExprManquante('limite', id, identifiantReferentiel);
-        }
+    const indicateurIds = [
+      ...new Set(
+        identifiants
+          .map((id) => indicateurIdParIdentifiant[id])
+          .filter(Boolean)
+      ),
+    ];
+    const indicateurDefinitions =
+      await this.listPlatformDefinitionsRepository.listPlatformDefinitions({
+        indicateurIds,
       });
 
-      if (exprManquantes.length) {
-        throw new NotFoundException(exprManquantes.join('\n'));
-      }
+    return { indicateurIdParIdentifiant, indicateurDefinitions };
+  }
+
+  private safeParse(
+    parse: () => void
+  ): { success: true } | { success: false; error: string } {
+    try {
+      parse();
+      return { success: true };
+    } catch (e) {
+      return { success: false, error: getErrorMessage(e) };
     }
   }
 
