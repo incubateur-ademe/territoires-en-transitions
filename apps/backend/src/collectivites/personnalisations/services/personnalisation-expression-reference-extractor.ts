@@ -1,5 +1,5 @@
 import { getExpressionVisitor } from '@tet/backend/utils/expression-parser';
-import { PersonnalisationExpressionReferences } from '@tet/domain/referentiels';
+import { PersonnalisationExpressionReferences } from '@tet/backend/referentiels/import-referentiel/verify-referentiel-expressions.types';
 import { parser } from './personnalisations-expression.service';
 
 function extractRawTokenValue(primaryNode: any): string {

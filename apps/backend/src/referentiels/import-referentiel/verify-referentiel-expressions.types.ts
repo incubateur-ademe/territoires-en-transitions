@@ -1,23 +1,25 @@
 import { regleTypeEnumValues } from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { ReferencedIndicateur } from '@tet/backend/indicateurs/valeurs/referenced-indicateur.dto';
-import {
-  PersonnalisationExpressionReferences,
-  VerifyExpressionError,
-} from '@tet/domain/referentiels';
-
-export type VerifyResult =
-  | { success: true }
-  | { success: false; errors: VerifyExpressionError[] };
+import { ImportActionDefinitionType } from './import-action-definition.dto';
 
 type RegleType = (typeof regleTypeEnumValues)[number];
 
-export type ParseExpression = (
-  expression: string
-) => { success: true } | { success: false; error: string };
+export type PersonnalisationExpressionReferences = {
+  questions: Array<{ questionId: string; valeur?: string }>;
+  identiteFields: Array<{ champ: string; valeur: string }>;
+  scores: Array<{ actionId: string }>;
+};
 
-export type ExtractReferences = (
-  expression: string
-) => PersonnalisationExpressionReferences;
+export type QuestionForVerification = {
+  id: string;
+  type: 'binaire' | 'choix' | 'proportion';
+  choix?: Array<{
+    id: string;
+    ordonnancement: number | null;
+    formulation: string | null;
+  }> | null;
+};
 
 export type IndicateurDefinitionForVerification = {
   id: number;
@@ -35,12 +37,31 @@ export type ExpressionToVerify = {
 export type IndicateurReference = {
   actionId: string;
   scoreExpression: string | null;
-  indicateursExpression: ReferencedIndicateur[] | null;
-  indicateurs: string[];
+  referencedIndicateurs: ReferencedIndicateur[] | null;
 };
 
 export type IndicateurCibleLimiteReference = {
   indicateurId: number;
   actionId: string;
   scoreExpression: string;
+};
+
+export type ParseExpression = (
+  expression: string
+) => { success: true } | { success: false; error: string };
+
+export type VerifyReferentielExpressionsInput = {
+  referentielId: ReferentielId;
+  actions: Array<
+    Pick<
+      ImportActionDefinitionType,
+      'identifiant' | 'desactivation' | 'reduction' | 'score' | 'exprScore'
+    >
+  >;
+  questions: QuestionForVerification[];
+  indicateurReferences: IndicateurReference[];
+  indicateurIdByIdentifiant: Record<string, number>;
+  indicateurDefinitions: IndicateurDefinitionForVerification[];
+  parsePersonnalisationExpression: ParseExpression;
+  parseScoreExpression: ParseExpression;
 };

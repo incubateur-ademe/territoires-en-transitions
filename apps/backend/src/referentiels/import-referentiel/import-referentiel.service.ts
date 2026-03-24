@@ -66,10 +66,11 @@ import { actionDefinitionTagTable } from '../models/action-definition-tag.table'
 import { actionDefinitionTable } from '../models/action-definition.table';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
 import { referentielTagTable } from '../models/referentiel-tag.table';
-import { extractReferencesFromExpression } from '@tet/backend/collectivites/personnalisations/services/personnalisation-expression-reference-extractor';
-import { verifyReferentielExpressions } from './verify-referentiel-expressions';
-import { buildIndicateurReferences } from './verify-referentiel-expressions.builders';
-import { buildActionId } from './verify-referentiel-expressions.helpers';
+import {
+  verifyReferentielExpressions,
+  buildIndicateurReferences,
+  buildActionId,
+} from './verify-referentiel-expressions';
 import { IndicateurReference } from './verify-referentiel-expressions.types';
 
 const REFERENTIEL_SPREADSHEET_RANGE = 'Structure référentiel!A:Z';
@@ -637,30 +638,28 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       },
     });
 
-    const { indicateurIdParIdentifiant, indicateurDefinitions } =
+    const { indicateurIdByIdentifiant, indicateurDefinitions } =
       await this.loadIndicateurVerificationData(references);
 
-    const result = verifyReferentielExpressions({
+    const errors = verifyReferentielExpressions({
       referentielId,
       actions,
       questions,
       indicateurReferences: references,
-      indicateurIdParIdentifiant,
+      indicateurIdByIdentifiant,
       indicateurDefinitions,
-      parsePersonnalisationExpression: (expr) =>
+      parsePersonnalisationExpression: (expression) =>
         this.safeParse(() =>
-          this.personnalisationsExpressionService.parseExpression(expr)
+          this.personnalisationsExpressionService.parseExpression(expression)
         ),
-      parseScoreExpression: (expr) =>
+      parseScoreExpression: (expression) =>
         this.safeParse(() =>
-          this.indicateurExpressionService.parseExpression(expr)
+          this.indicateurExpressionService.parseExpression(expression)
         ),
-      extractReferences: extractReferencesFromExpression,
     });
 
-    if (!result.success) {
-      const messages = result.errors.map((e) => e.message).join('\n');
-      throw new UnprocessableEntityException(messages);
+    if (errors.length) {
+      throw new UnprocessableEntityException(errors.join('\n'));
     }
     return true;
   }
@@ -669,9 +668,15 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     references: IndicateurReference[]
   ) {
     const identifiants = [
-      ...new Set(references.flatMap((ref) => ref.indicateurs)),
+      ...new Set(
+        references.flatMap((reference) =>
+          (reference.referencedIndicateurs ?? []).map(
+            (indicateur) => indicateur.identifiant
+          )
+        )
+      ),
     ];
-    const indicateurIdParIdentifiant =
+    const indicateurIdByIdentifiant =
       await this.listPlatformDefinitionsRepository.listPlatformDefinitionIdsByIdentifiantReferentiels(
         identifiants
       );
@@ -679,7 +684,9 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     const indicateurIds = [
       ...new Set(
         identifiants
-          .map((id) => indicateurIdParIdentifiant[id])
+          .map(
+            (identifiant) => indicateurIdByIdentifiant[identifiant]
+          )
           .filter(Boolean)
       ),
     ];
@@ -688,7 +695,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
         indicateurIds,
       });
 
-    return { indicateurIdParIdentifiant, indicateurDefinitions };
+    return { indicateurIdByIdentifiant, indicateurDefinitions };
   }
 
   private safeParse(
