@@ -10,7 +10,6 @@ import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { Tab, Tabs, sideMenuContentZindex } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { ScoreIndicatifBadge } from '../score-indicatif/score-indicatif.badge';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
 import TasksList from '../task/task.cards-list';
 import SubactionCardActions from './subaction-card.actions';
@@ -49,9 +48,6 @@ const SubActionPanel = ({ subAction }: Props) => {
         </p>
         <div className="flex flex-wrap gap-2">
           <SubActionStatutDropdown actionDefinition={subAction} />
-          {subAction.haveScoreIndicatif && (
-            <ScoreIndicatifBadge actionId={subAction.id} />
-          )}
           <ScoreRatioBadge actionId={subAction.id} size="xs" />
         </div>
 

@@ -64,7 +64,7 @@ export const LibelleScoreIndicatif = ({
   typeScore: ScoreIndicatifType;
   donnees: {
     valeurPrincipale: ScoreIndicatifValeurUtilisee;
-    valeurSecondaire: ScoreIndicatifValeurUtilisee;
+    valeurSecondaire: ScoreIndicatifValeurUtilisee | null;
     noSource?: boolean;
     score: number;
   };
@@ -98,8 +98,6 @@ export const LibelleScoreIndicatif = ({
           />
         </>
       )}
-      {typeScore === scoreIndicatifTypeEnum.PROGRAMME &&
-        ` atteint${valeurSecondaire ? 's' : ''}`}
     </p>
   );
 };
@@ -110,8 +108,7 @@ export const LibelleScoreIndicatif = ({
 const LibelleScoreFait = ({ score }: { score: number }) => {
   return (
     <>
-      Pourcentage indicatif Fait de <b>{toPercentString(score)}</b> calculé sur
-      la base de :
+      Score indicatif <b>Fait de {toPercentString(score)}</b>, basé sur
     </>
   );
 };
@@ -129,8 +126,11 @@ export function LibelleScoreProgramme({
   const annee = new Date(dateValeur).getFullYear();
   return (
     <>
-      Pourcentage indicatif Fait en {isNaN(Number(annee)) ? '' : annee} de{' '}
-      <b>{toPercentString(score)}</b> calculé si
+      Score indicatif{' '}
+      <b>
+        Fait en {isNaN(Number(annee)) ? '' : annee} de {toPercentString(score)}
+      </b>
+      , basé sur
     </>
   );
 }
@@ -163,7 +163,13 @@ const LibelleValeurUtilisee = ({
 
   return (
     <span>
-      <b>{segments.valeurEtUnite}</b> {segments.annee} {segments.source}{' '}
+      la valeur de l’indicateur
+      {valeurUtilisee.indicateurTitre
+        ? ` "${valeurUtilisee.indicateurTitre}"`
+        : ''}{' '}
+      de <b>{segments.valeurEtUnite}</b>
+      {typeScore === scoreIndicatifTypeEnum.FAIT ? ' ' : ' atteint '}
+      {segments.annee} {segments.source}{' '}
     </span>
   );
 };

@@ -1,21 +1,10 @@
-import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useGetIndicateur } from '@/app/indicateurs/indicateurs/use-get-indicateur';
-import Markdown from '@/app/ui/Markdown';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   ScoreIndicatifType,
   scoreIndicatifTypeEnum,
 } from '@tet/domain/referentiels';
-import {
-  Alert,
-  Button,
-  Card,
-  Divider,
-  Modal,
-  ModalFooterOKCancel,
-  Tab,
-  Tabs,
-} from '@tet/ui';
+import { Alert, Card, Divider, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { uniqBy } from 'es-toolkit';
 import { useState } from 'react';
@@ -50,8 +39,6 @@ export const ScoreIndicatifModal = (props: ScoreIndicatifModalProps) => {
     <Modal
       openState={openState}
       size="xl"
-      disableDismiss
-      noCloseButton
       render={() =>
         /** affiche les données de l'indicateur quand il y en a un seul ou que
          * l'utilisateur en a sélectionné un */
@@ -220,14 +207,9 @@ const ScoreIndicatifModalIndicateurTabs = (
   const indicateur = scoreIndicatif?.indicateurs.find(
     (ind) => ind.indicateurId === indicateurId
   );
-  const { identifiantReferentiel, titre, unite } = indicateur || {};
+  const { titre, unite } = indicateur || {};
   const collectiviteId = useCollectiviteId();
   const { data: definition } = useGetIndicateur(indicateurId, collectiviteId);
-  const indicateurURL = makeCollectiviteIndicateursUrl({
-    collectiviteId,
-    indicateurView: 'cae',
-    identifiantReferentiel,
-  });
 
   if (!indicateur || !scoreIndicatif) return;
   return (
@@ -235,30 +217,9 @@ const ScoreIndicatifModalIndicateurTabs = (
       <h3 className="mb-2">
         {titre} <sup className="text-grey-6">({unite})</sup>
       </h3>
-      <Button
-        className="mb-4"
-        variant="underlined"
-        size="sm"
-        href={indicateurURL}
-        external
-      >
-        Voir la fiche de l’indicateur
-      </Button>
-      <Tabs>
-        <Tab label="Données">
-          {definition && (
-            <ScoreIndicatifDonnees definition={definition} {...props} />
-          )}
-        </Tab>
-        <Tab label="Informations sur l'indicateur">
-          {definition?.description && (
-            <Markdown
-              content={definition.description}
-              className="bg-white p-10 border border-grey-3 rounded-xl paragraphe-16 paragraphe-primary-9"
-            />
-          )}
-        </Tab>
-      </Tabs>
+      {definition && (
+        <ScoreIndicatifDonnees definition={definition} {...props} />
+      )}
     </div>
   );
 };

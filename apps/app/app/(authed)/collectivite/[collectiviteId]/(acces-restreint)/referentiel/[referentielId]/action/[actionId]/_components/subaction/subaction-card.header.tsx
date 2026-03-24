@@ -5,7 +5,6 @@ import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import Markdown from '@/app/ui/Markdown';
 import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { Icon, InfoTooltip } from '@tet/ui';
-import { ScoreIndicatifBadge } from '../score-indicatif/score-indicatif.badge';
 
 type Props = {
   subAction: ActionDefinitionSummary;
@@ -64,16 +63,11 @@ export const SubactionCardHeader = ({
               )}
             </div>
           )}
-
-          {/* Score indicatif */}
-          {subAction.haveScoreIndicatif && (
-            <ScoreIndicatifBadge actionId={subAction.id} />
-          )}
         </div>
       )}
 
       {/* Identifiant et nom de l'action + infos additionnelles */}
-      <div className="text-primary-9 text-base font-bold">
+      <div className="text-primary-9 text-base font-bold mb-2">
         {subAction.identifiant} {subAction.nom}{' '}
         {subAction.description &&
           subAction.type !== ActionTypeEnum.SOUS_ACTION && (
