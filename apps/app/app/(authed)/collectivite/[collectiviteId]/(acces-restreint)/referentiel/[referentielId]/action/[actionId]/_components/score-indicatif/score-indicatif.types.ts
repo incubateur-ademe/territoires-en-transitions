@@ -5,7 +5,7 @@ export type ScoreIndicatifAction =
 
 export type ScoreIndicatifValeurUtilisee = NonNullable<
   NonNullable<ScoreIndicatifAction>['fait']
->['valeursUtilisees'][number];
+>['valeursUtilisees'][number] & { indicateurTitre?: string };
 
 export type ScoreIndicatifValeursUtilisables =
   RouterOutput['referentiels']['actions']['getValeursUtilisables'];

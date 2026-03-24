@@ -120,17 +120,14 @@ const SubActionCard = ({
       >
         <SubactionCardHeader subAction={subAction} isExpanded={isExpanded} />
 
-        {hasCollectivitePermission('referentiels.mutate') &&
-          subAction.haveScoreIndicatif && <Divider className="mt-1 mb-2" />}
+        {/* Informations sur les scores indicatifs */}
+        <ScoreIndicatifLibelle actionId={subAction.id} />
 
         {/* Actions */}
         <SubactionCardActions
           actionId={subAction.id}
           haveScoreIndicatif={subAction.haveScoreIndicatif}
         />
-
-        {/* Informations sur les scores indicatifs */}
-        <ScoreIndicatifLibelle actionId={subAction.id} />
       </div>
 
       <div

@@ -15,8 +15,25 @@ export function prepareScoreIndicatifData(
   const donnees = scoreIndicatif[typeScore];
   if (!donnees?.valeursUtilisees[0]) return null;
 
-  const valeurPrincipale = donnees.valeursUtilisees[0];
-  const valeurSecondaire = donnees.valeursUtilisees[1];
+  const valeurPrincipale = {
+    ...donnees.valeursUtilisees[0],
+    indicateurTitre:
+      scoreIndicatif.indicateurs.find(
+        (indicateur) =>
+          indicateur.indicateurId === donnees.valeursUtilisees[0].indicateurId
+      )?.titre || '',
+  };
+  const valeurSecondaire = donnees.valeursUtilisees[1]
+    ? {
+        ...donnees.valeursUtilisees[1],
+        indicateurTitre:
+          scoreIndicatif.indicateurs.find(
+            (indicateur) =>
+              indicateur.indicateurId ===
+              donnees.valeursUtilisees[1].indicateurId
+          )?.titre || '',
+      }
+    : undefined;
 
   return {
     score: donnees.score,

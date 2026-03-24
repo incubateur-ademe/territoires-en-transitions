@@ -1,9 +1,13 @@
 import IndicateurDetailChart from '@/app/app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
 import { useIndicateurChartInfo } from '@/app/app/pages/collectivite/Indicateurs/data/use-indicateur-chart';
 import { EditValeursModal } from '@/app/app/pages/collectivite/Indicateurs/table/edit-valeurs-modal';
+import {
+  IndicateurViewParamOption,
+  makeCollectiviteIndicateursUrl,
+} from '@/app/app/paths';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { ModalFooterOKCancel } from '@tet/ui';
+import { Accordion, Button, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useState } from 'react';
 import { ScoreIndicatifAction } from './score-indicatif.types';
@@ -36,12 +40,43 @@ export const ScoreIndicatifDonnees = (props: ScoreIndicatifDonneesProps) => {
   const { resultats, objectifs } = chartInfo.data.valeurs;
   const data = resultats || objectifs;
 
+  const indicateurView = definition.identifiantReferentiel
+    ? (definition.identifiantReferentiel.split(
+        '_'
+      )[0] as IndicateurViewParamOption)
+    : null;
+  const indicateurURL = indicateurView
+    ? makeCollectiviteIndicateursUrl({
+        collectiviteId,
+        indicateurView: indicateurView,
+        identifiantReferentiel: definition.identifiantReferentiel,
+      })
+    : null;
+
   return (
     <div className="flex flex-col gap-5">
-      <IndicateurDetailChart
-        definition={definition}
-        chartInfo={chartInfo}
-        isDownloadable={false}
+      <Accordion
+        title="Afficher le graphique de l'indicateur"
+        content={
+          <IndicateurDetailChart
+            definition={definition}
+            chartInfo={chartInfo}
+            isDownloadable={false}
+          />
+        }
+        headerContent={
+          indicateurURL ? (
+            <Button
+              className="mb-4"
+              variant="underlined"
+              size="sm"
+              href={indicateurURL}
+              external
+            >
+              Voir la fiche de l’indicateur
+            </Button>
+          ) : null
+        }
       />
       <ScoreIndicatifValeursUtilisees
         selectionValeurs={selectionValeurs.fait}

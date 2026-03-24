@@ -2,7 +2,6 @@ import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-ac
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { getIdentifiantFromActionId } from '@tet/domain/referentiels';
-import { Divider } from '@tet/ui';
 import { ActionJustificationField } from '../action/action.justification-field';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
 import SubactionCardActions from '../subaction/subaction-card.actions';
@@ -39,8 +38,6 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
       {/* Informations sur les scores indicatifs */}
       <ScoreIndicatifLibelle actionId={task.id} />
 
-      {canEditReferentiel && task.haveScoreIndicatif && <Divider />}
-
       {/* Actions */}
       <SubactionCardActions
         actionId={task.id}
@@ -49,14 +46,10 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
 
       {/* Ajout de commentaire */}
       {showJustifications && (
-        <>
-          {canEditReferentiel && task.haveScoreIndicatif && <Divider />}
-
-          <ActionJustificationField
-            actionId={task.id}
-            placeholder="Ce champ est facultatif, il ne sera pas considéré lors de l’audit"
-          />
-        </>
+        <ActionJustificationField
+          actionId={task.id}
+          placeholder="Ce champ est facultatif, il ne sera pas considéré lors de l’audit"
+        />
       )}
     </div>
   );
