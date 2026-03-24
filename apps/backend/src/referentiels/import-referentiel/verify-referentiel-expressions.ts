@@ -1,68 +1,264 @@
 import {
-  CibleLimiteManquante,
-  ExpressionSyntaxeInvalide,
-  IndicateurInconnu,
-  QuestionForVerification,
-  ReferentielId,
-  ScoreExpressionSyntaxeInvalide,
-  verifyPersonnalisationReferences,
-} from '@tet/domain/referentiels';
+  CollectiviteLocalisationTypeEnum,
+  CollectivitePopulationTypeEnum,
+  CollectiviteSousTypeEnum,
+  CollectiviteTypeEnum,
+  regleTypeEnumValues,
+} from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
+import { ReferencedIndicateur } from '@tet/backend/indicateurs/valeurs/referenced-indicateur.dto';
+import { extractReferencesFromExpression } from '@tet/backend/collectivites/personnalisations/services/personnalisation-expression-reference-extractor';
 import { ImportActionDefinitionType } from './import-action-definition.dto';
 import {
-  buildCibleLimiteReferences,
-  buildExpressionsToVerify,
-} from './verify-referentiel-expressions.builders';
-import {
-  buildActionId,
-  combineAllErrors,
-} from './verify-referentiel-expressions.helpers';
-import {
-  ExtractReferences,
   ExpressionToVerify,
+  IndicateurCibleLimiteReference,
   IndicateurDefinitionForVerification,
   IndicateurReference,
   ParseExpression,
-  IndicateurCibleLimiteReference,
-  VerifyResult,
+  PersonnalisationExpressionReferences,
+  QuestionForVerification,
+  VerifyReferentielExpressionsInput,
 } from './verify-referentiel-expressions.types';
 
-// --- Verification functions ---
+const ALLOWED_IDENTITY_VALUES_BY_FIELD: Record<string, string[]> = {
+  type: [
+    ...Object.values(CollectiviteTypeEnum),
+    ...Object.values(CollectiviteSousTypeEnum),
+  ].map((value) => value.toLowerCase()),
+  population: Object.values(CollectivitePopulationTypeEnum).map((value) =>
+    value.toLowerCase()
+  ),
+  localisation: Object.values(CollectiviteLocalisationTypeEnum).map((value) =>
+    value.toLowerCase()
+  ),
+  dans_aire_urbaine: ['oui', 'non'],
+};
 
-function verifySyntaxeExpression(
-  expressionToVerify: ExpressionToVerify,
-  parseExpression: ParseExpression
-): VerifyResult {
-  const result = parseExpression(expressionToVerify.expression);
-  if (result.success) return { success: true };
+export function buildActionId(
+  referentielId: ReferentielId,
+  identifiant: string
+): string {
+  return `${referentielId}_${identifiant}`;
+}
+
+function buildExpressionsToVerify(
+  referentielId: ReferentielId,
+  actions: Array<
+    Pick<
+      ImportActionDefinitionType,
+      'identifiant' | 'desactivation' | 'reduction' | 'score'
+    >
+  >
+): ExpressionToVerify[] {
+  return actions.flatMap((action) => {
+    const actionId = buildActionId(referentielId, action.identifiant);
+    return regleTypeEnumValues
+      .filter((ruleType): ruleType is typeof ruleType & string =>
+        Boolean(action[ruleType])
+      )
+      .map((ruleType) => ({
+        actionId,
+        ruleType,
+        expression: String(action[ruleType]),
+      }));
+  });
+}
+
+type ExtractIndicateurs = (
+  expression: string
+) => ReferencedIndicateur[] | null;
+
+export function buildIndicateurReferences(input: {
+  referentielId: ReferentielId;
+  actions: Array<
+    Pick<
+      ImportActionDefinitionType,
+      'identifiant' | 'exprScore' | 'indicateurs'
+    >
+  >;
+  extractIndicateurs: ExtractIndicateurs;
+}): IndicateurReference[] {
+  const { referentielId, actions, extractIndicateurs } = input;
+
+  return actions.flatMap((action): IndicateurReference[] => {
+    const actionId = buildActionId(referentielId, action.identifiant);
+
+    const scoreReference = action.exprScore
+      ? buildScoreIndicateurReference(
+          actionId,
+          action.exprScore,
+          extractIndicateurs
+        )
+      : [];
+
+    const listReference = action.indicateurs
+      ? [
+          {
+            actionId,
+            scoreExpression: null,
+            referencedIndicateurs: action.indicateurs.map(
+              (identifiant) => ({
+                identifiant,
+                optional: false,
+                tokens: [],
+              })
+            ),
+          },
+        ]
+      : [];
+
+    return [...scoreReference, ...listReference];
+  });
+}
+
+function buildScoreIndicateurReference(
+  actionId: string,
+  scoreExpression: string,
+  extractIndicateurs: ExtractIndicateurs
+): IndicateurReference[] {
+  const referencedIndicateurs = extractIndicateurs(scoreExpression);
+  if (!referencedIndicateurs) return [];
+
+  return [
+    {
+      actionId,
+      scoreExpression,
+      referencedIndicateurs,
+    },
+  ];
+}
+
+function buildCibleLimiteReferences(
+  references: IndicateurReference[],
+  indicateurIdByIdentifiant: Record<string, number>
+): {
+  cible: IndicateurCibleLimiteReference[];
+  limite: IndicateurCibleLimiteReference[];
+} {
+  const referencesWithScoreExpression = references.filter(
+    (
+      reference
+    ): reference is IndicateurReference & { scoreExpression: string } =>
+      Boolean(reference.scoreExpression)
+  );
+
+  const allCibleLimiteReferences = referencesWithScoreExpression.flatMap(
+    (reference) =>
+      (reference.referencedIndicateurs ?? [])
+        .filter(
+          (indicateur) =>
+            indicateurIdByIdentifiant[indicateur.identifiant] !== undefined
+        )
+        .map((indicateur) => ({
+          referenceValue: {
+            indicateurId:
+              indicateurIdByIdentifiant[indicateur.identifiant],
+            actionId: reference.actionId,
+            scoreExpression: reference.scoreExpression,
+          },
+          tokens: indicateur.tokens,
+        }))
+  );
 
   return {
-    success: false,
-    errors: [
-      new ExpressionSyntaxeInvalide(
-        expressionToVerify.actionId,
-        expressionToVerify.ruleType,
-        expressionToVerify.expression,
-        result.error
-      ),
-    ],
+    cible: allCibleLimiteReferences
+      .filter((reference) => reference.tokens.includes('cible'))
+      .map((reference) => reference.referenceValue),
+    limite: allCibleLimiteReferences
+      .filter((reference) => reference.tokens.includes('limite'))
+      .map((reference) => reference.referenceValue),
   };
 }
 
-function verifySemantique(
-  expressionToVerify: ExpressionToVerify,
+function verifyQuestionReference(
+  reference: { questionId: string; valeur?: string },
+  questions: QuestionForVerification[],
+  actionId: string,
+  ruleType: string
+): string | null {
+  const question = questions.find((q) => q.id === reference.questionId);
+  if (!question) {
+    return `La question "${reference.questionId}" utilisée dans l'expression de ${ruleType} de l'action ${actionId} n'existe pas`;
+  }
+
+  if (reference.valeur === undefined) return null;
+
+  const valeur = reference.valeur;
+
+  switch (question.type) {
+    case 'binaire': {
+      if (['OUI', 'NON'].includes(valeur.toUpperCase())) return null;
+      return `La valeur "${valeur}" pour la question "${reference.questionId}" (type binaire) dans l'expression de ${ruleType} de l'action ${actionId} n'est pas valide. Valeurs autorisées : OUI, NON`;
+    }
+    case 'choix': {
+      const validChoiceIds = question.choix?.map((choice) => choice.id) ?? [];
+      if (validChoiceIds.includes(valeur)) return null;
+      const allowedValues = validChoiceIds.length
+        ? `. Valeurs autorisées : ${validChoiceIds.join(', ')}`
+        : '';
+      return `La valeur "${valeur}" pour la question "${reference.questionId}" (type choix) dans l'expression de ${ruleType} de l'action ${actionId} n'est pas valide${allowedValues}`;
+    }
+    case 'proportion':
+      return `La valeur "${valeur}" pour la question "${reference.questionId}" (type proportion) dans l'expression de ${ruleType} de l'action ${actionId} n'est pas valide`;
+  }
+}
+
+function verifyIdentiteReference(
+  reference: { champ: string; valeur: string },
+  actionId: string,
+  ruleType: string
+): string | null {
+  const allowedValues = ALLOWED_IDENTITY_VALUES_BY_FIELD[reference.champ];
+  if (!allowedValues) {
+    const allowedFields = Object.keys(ALLOWED_IDENTITY_VALUES_BY_FIELD).join(', ');
+    return `Le champ d'identité "${reference.champ}" dans l'expression de ${ruleType} de l'action ${actionId} n'est pas valide. Champs autorisés : ${allowedFields}`;
+  }
+
+  if (!allowedValues.includes(reference.valeur.toLowerCase())) {
+    return `La valeur "${reference.valeur}" pour identite(${reference.champ}) dans l'expression de ${ruleType} de l'action ${actionId} n'est pas valide. Valeurs autorisées : ${allowedValues.join(', ')}`;
+  }
+
+  return null;
+}
+
+function verifyScoreReference(
+  reference: { actionId: string },
+  actionIds: string[],
+  actionId: string,
+  ruleType: string
+): string | null {
+  if (!actionIds.includes(reference.actionId)) {
+    return `L'action "${reference.actionId}" référencée dans score() de l'expression de ${ruleType} de l'action ${actionId} n'existe pas dans le référentiel`;
+  }
+  return null;
+}
+
+function verifyPersonnalisationReferences(
+  references: PersonnalisationExpressionReferences,
   questions: QuestionForVerification[],
   actionIds: string[],
-  extractReferences: ExtractReferences
-): VerifyResult {
-  const refs = extractReferences(expressionToVerify.expression);
-  const errors = verifyPersonnalisationReferences(
-    refs,
-    questions,
-    actionIds,
-    expressionToVerify.actionId,
-    expressionToVerify.ruleType
-  );
-  return errors.length ? { success: false, errors } : { success: true };
+  actionId: string,
+  ruleType: string
+): string[] {
+  const questionErrors = references.questions
+    .map((reference) =>
+      verifyQuestionReference(reference, questions, actionId, ruleType)
+    )
+    .filter((error): error is string => error !== null);
+
+  const identiteErrors = references.identiteFields
+    .map((reference) =>
+      verifyIdentiteReference(reference, actionId, ruleType)
+    )
+    .filter((error): error is string => error !== null);
+
+  const scoreErrors = references.scores
+    .map((reference) =>
+      verifyScoreReference(reference, actionIds, actionId, ruleType)
+    )
+    .filter((error): error is string => error !== null);
+
+  return [...questionErrors, ...identiteErrors, ...scoreErrors];
 }
 
 function verifyPersonnalisationExpressions(input: {
@@ -70,197 +266,173 @@ function verifyPersonnalisationExpressions(input: {
   questions: QuestionForVerification[];
   actionIds: string[];
   parseExpression: ParseExpression;
-  extractReferences: ExtractReferences;
-}): VerifyResult {
-  const { expressions, questions, actionIds, parseExpression, extractReferences } =
-    input;
+}): string[] {
+  const { expressions, questions, actionIds, parseExpression } = input;
 
-  const syntaxeResults = expressions.map((expressionToVerify) =>
-    verifySyntaxeExpression(expressionToVerify, parseExpression)
+  const { syntaxErrors, validExpressions } = expressions.reduce<{
+    syntaxErrors: string[];
+    validExpressions: ExpressionToVerify[];
+  }>(
+    (accumulator, expressionToVerify) => {
+      const result = parseExpression(expressionToVerify.expression);
+      if (result.success) {
+        accumulator.validExpressions.push(expressionToVerify);
+      } else {
+        accumulator.syntaxErrors.push(
+          `L'expression de ${expressionToVerify.ruleType} "${expressionToVerify.expression}" de l'action ${expressionToVerify.actionId} contient une erreur de syntaxe : ${result.error}`
+        );
+      }
+      return accumulator;
+    },
+    { syntaxErrors: [], validExpressions: [] }
   );
 
-  const semantiqueResults = expressions
-    .filter((_, i) => syntaxeResults[i].success)
-    .map((expressionToVerify) =>
-      verifySemantique(expressionToVerify, questions, actionIds, extractReferences)
+  const semanticErrors = validExpressions.flatMap((expressionToVerify) => {
+    const references = extractReferencesFromExpression(
+      expressionToVerify.expression
     );
+    return verifyPersonnalisationReferences(
+      references,
+      questions,
+      actionIds,
+      expressionToVerify.actionId,
+      expressionToVerify.ruleType
+    );
+  });
 
-  return combineAllErrors([...syntaxeResults, ...semantiqueResults]);
+  return [...syntaxErrors, ...semanticErrors];
 }
 
 function verifyScoreExpressions(input: {
   referentielId: ReferentielId;
-  actions: Array<Pick<ImportActionDefinitionType, 'identifiant' | 'exprScore'>>;
+  actions: Array<
+    Pick<ImportActionDefinitionType, 'identifiant' | 'exprScore'>
+  >;
   parseExpression: ParseExpression;
-}): VerifyResult {
+}): string[] {
   const { referentielId, actions, parseExpression } = input;
 
-  const results = actions
-    .filter((a): a is typeof a & { exprScore: string } => Boolean(a.exprScore))
-    .map((action): VerifyResult => {
+  return actions
+    .filter(
+      (action): action is typeof action & { exprScore: string } =>
+        Boolean(action.exprScore)
+    )
+    .flatMap((action) => {
       const result = parseExpression(action.exprScore);
-      if (result.success) return { success: true };
+      if (result.success) return [];
 
       const actionId = buildActionId(referentielId, action.identifiant);
-      return {
-        success: false,
-        errors: [
-          new ScoreExpressionSyntaxeInvalide(
-            actionId,
-            action.exprScore,
-            result.error
-          ),
-        ],
-      };
+      return [
+        `L'expression de score "${action.exprScore}" de l'action ${actionId} contient une erreur de syntaxe : ${result.error}`,
+      ];
     });
-
-  return combineAllErrors(results);
 }
 
 function verifyIndicateursExist(
   references: IndicateurReference[],
-  indicateurIdParIdentifiant: Record<string, number>
-): VerifyResult {
+  indicateurIdByIdentifiant: Record<string, number>
+): string[] {
   const seen = new Set<string>();
 
-  const results = references.flatMap((ref) =>
-    ref.indicateurs
+  return references.flatMap((reference) => {
+    const identifiants = (reference.referencedIndicateurs ?? []).map(
+      (indicateur) => indicateur.identifiant
+    );
+
+    return identifiants
       .filter((identifiant) => {
         if (seen.has(identifiant)) return false;
         seen.add(identifiant);
-        return !indicateurIdParIdentifiant[identifiant];
+        return !indicateurIdByIdentifiant[identifiant];
       })
-      .map((identifiant): VerifyResult => ({
-        success: false,
-        errors: [
-          new IndicateurInconnu(
-            ref.actionId,
-            identifiant,
-            ref.scoreExpression
-              ? `expression "${ref.scoreExpression}"`
-              : 'liste indicateurs'
-          ),
-        ],
-      }))
-  );
-
-  return results.length
-    ? combineAllErrors(results)
-    : { success: true };
+      .map((identifiant) => {
+        const source = reference.scoreExpression
+          ? `expression "${reference.scoreExpression}"`
+          : 'liste indicateurs';
+        return `L'indicateur "${identifiant}" référencé dans ${source} de l'action ${reference.actionId} n'existe pas`;
+      });
+  });
 }
 
-function verifyDefinitionCibleOuLimite(
+function verifyDefinitionCibleOrLimite(
   type: 'cible' | 'limite',
-  refValeurs: IndicateurCibleLimiteReference[],
+  references: IndicateurCibleLimiteReference[],
   indicateurDefinitions: IndicateurDefinitionForVerification[]
-): VerifyResult {
-  const exprField = type === 'cible' ? 'exprCible' : 'exprSeuil';
+): string[] {
+  const expressionField = type === 'cible' ? 'exprCible' : 'exprSeuil';
 
-  // Pour chaque référence cible/limite utilisée dans une expression de score,
-  // vérifier que l'indicateur correspondant a bien une expression cible/limite définie.
-  const results = refValeurs.map((ref): VerifyResult => {
+  return references.flatMap((reference) => {
     const definition = indicateurDefinitions.find(
-      (def) => def.id === ref.indicateurId
+      (definition) => definition.id === reference.indicateurId
     );
 
-    if (definition?.[exprField]) return { success: true };
+    if (definition?.[expressionField]) return [];
 
-    return {
-      success: false,
-      errors: [
-        new CibleLimiteManquante(
-          type,
-          definition?.identifiantReferentiel ?? '',
-          ref.scoreExpression,
-          ref.actionId
-        ),
-      ],
-    };
+    return [
+      `L'expression ${type} manquante pour l'indicateur "${definition?.identifiantReferentiel ?? ''}" utilisé dans l'expression "${reference.scoreExpression}" de l'action ${reference.actionId}`,
+    ];
   });
-
-  return combineAllErrors(results);
 }
 
 function verifyCibleLimiteExpressions(
   references: IndicateurReference[],
-  indicateurIdParIdentifiant: Record<string, number>,
+  indicateurIdByIdentifiant: Record<string, number>,
   definitions: IndicateurDefinitionForVerification[]
-): VerifyResult {
+): string[] {
   const { cible, limite } = buildCibleLimiteReferences(
     references,
-    indicateurIdParIdentifiant
+    indicateurIdByIdentifiant
   );
 
-  if (!cible.length && !limite.length) return { success: true };
+  if (!cible.length && !limite.length) return [];
 
-  return combineAllErrors([
-    verifyDefinitionCibleOuLimite('cible', cible, definitions),
-    verifyDefinitionCibleOuLimite('limite', limite, definitions),
-  ]);
+  return [
+    ...verifyDefinitionCibleOrLimite('cible', cible, definitions),
+    ...verifyDefinitionCibleOrLimite('limite', limite, definitions),
+  ];
 }
-
-// --- Orchestration ---
-
-type VerifyReferentielExpressionsInput = {
-  referentielId: ReferentielId;
-  actions: Array<
-    Pick<
-      ImportActionDefinitionType,
-      'identifiant' | 'desactivation' | 'reduction' | 'score' | 'exprScore'
-    >
-  >;
-  questions: QuestionForVerification[];
-  indicateurReferences: IndicateurReference[];
-  indicateurIdParIdentifiant: Record<string, number>;
-  indicateurDefinitions: IndicateurDefinitionForVerification[];
-  parsePersonnalisationExpression: ParseExpression;
-  parseScoreExpression: ParseExpression;
-  extractReferences: ExtractReferences;
-};
 
 export function verifyReferentielExpressions(
   input: VerifyReferentielExpressionsInput
-): VerifyResult {
+): string[] {
   const {
     referentielId,
     actions,
     questions,
     indicateurReferences,
-    indicateurIdParIdentifiant,
+    indicateurIdByIdentifiant,
     indicateurDefinitions,
     parsePersonnalisationExpression,
     parseScoreExpression,
-    extractReferences,
   } = input;
 
-  const actionIds = actions.map((a) =>
-    buildActionId(referentielId, a.identifiant)
+  const actionIds = actions.map((action) =>
+    buildActionId(referentielId, action.identifiant)
   );
 
   const expressions = buildExpressionsToVerify(referentielId, actions);
 
-  return combineAllErrors([
-    // 1. Syntaxe et semantique des expressions de personnalisation (desactivation, reduction, score)
-    verifyPersonnalisationExpressions({
+  return [
+    // 1. Syntax and semantics of personalisation expressions (desactivation, reduction, score)
+    ...verifyPersonnalisationExpressions({
       expressions,
       questions,
       actionIds,
       parseExpression: parsePersonnalisationExpression,
-      extractReferences,
     }),
-    // 2. Syntaxe des expressions de score (exprScore)
-    verifyScoreExpressions({
+    // 2. Syntax of score expressions (exprScore)
+    ...verifyScoreExpressions({
       referentielId,
       actions,
       parseExpression: parseScoreExpression,
     }),
-    // 3. Existence des indicateurs references dans les expressions de score et les listes
-    verifyIndicateursExist(indicateurReferences, indicateurIdParIdentifiant),
-    // 4. Presence des expressions cible/limite pour chaque indicateur utilise via cible() ou limite()
-    verifyCibleLimiteExpressions(
+    // 3. Existence of referenced indicators in score expressions and lists
+    ...verifyIndicateursExist(indicateurReferences, indicateurIdByIdentifiant),
+    // 4. Presence of cible/limite expressions for each indicator used via cible() or limite()
+    ...verifyCibleLimiteExpressions(
       indicateurReferences,
-      indicateurIdParIdentifiant,
+      indicateurIdByIdentifiant,
       indicateurDefinitions
     ),
-  ]);
+  ];
 }
