@@ -37,8 +37,6 @@ export const LinkFichesView = () => {
     },
     queryOptions: {
       sort: [{ field: 'titre', direction: 'asc' }],
-      limit: 20,
-      page: 1,
     },
   });
 
