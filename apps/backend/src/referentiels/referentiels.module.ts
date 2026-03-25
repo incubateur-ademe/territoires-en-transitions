@@ -25,6 +25,7 @@ import { HandleMesurePilotesService } from './handle-mesure-pilotes/handle-mesur
 import { HandleMesuresServicesRouter } from './handle-mesure-services/handle-mesure-services.router';
 import { HandleMesureServicesService } from './handle-mesure-services/handle-mesure-services.service';
 import { ImportReferentielController } from './import-referentiel/import-referentiel.controller';
+import { ImportReferentielRepository } from './import-referentiel/import-referentiel.repository';
 import { ImportReferentielService } from './import-referentiel/import-referentiel.service';
 import { CreatePreuveRouter } from './labellisations/create-preuve/create-preuve.router';
 import { CreatePreuveService } from './labellisations/create-preuve/create-preuve.service';
@@ -67,6 +68,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     GetReferentielService,
     GetReferentielDefinitionService,
     GetReferentielDefinitionRouter,
+    ImportReferentielRepository,
     ImportReferentielService,
     ImportPreuveReglementaireDefinitionService,
     ReferentielsRouter,

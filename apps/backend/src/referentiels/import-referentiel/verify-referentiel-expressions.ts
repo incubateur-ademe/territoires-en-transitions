@@ -8,6 +8,7 @@ import {
 import { ReferentielId } from '@tet/domain/referentiels';
 import { ReferencedIndicateur } from '@tet/backend/indicateurs/valeurs/referenced-indicateur.dto';
 import { extractReferencesFromExpression } from '@tet/backend/collectivites/personnalisations/services/personnalisation-expression-reference-extractor';
+import { ActionQuestion } from '@tet/domain/referentiels';
 import { ImportActionDefinitionType } from './import-action-definition.dto';
 import {
   ExpressionToVerify,
@@ -126,6 +127,38 @@ function buildScoreIndicateurReference(
       referencedIndicateurs,
     },
   ];
+}
+
+export function buildQuestionActionRelations(input: {
+  referentielId: ReferentielId;
+  actions: Array<
+    Pick<
+      ImportActionDefinitionType,
+      'identifiant' | 'desactivation' | 'reduction' | 'score'
+    >
+  >;
+}): ActionQuestion[] {
+  const { referentielId, actions } = input;
+  const seen = new Set<string>();
+
+  return actions.flatMap((action) => {
+    const actionId = buildActionId(referentielId, action.identifiant);
+
+    return regleTypeEnumValues.flatMap((ruleType) => {
+      const expression = action[ruleType];
+      if (!expression) return [];
+
+      const references = extractReferencesFromExpression(expression);
+      return references.questions
+        .filter(({ questionId }) => {
+          const key = `${actionId}:${questionId}`;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        })
+        .map(({ questionId }) => ({ actionId, questionId }));
+    });
+  });
 }
 
 function buildCibleLimiteReferences(

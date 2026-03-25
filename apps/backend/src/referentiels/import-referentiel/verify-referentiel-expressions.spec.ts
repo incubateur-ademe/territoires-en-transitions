@@ -1,4 +1,7 @@
-import { verifyReferentielExpressions } from './verify-referentiel-expressions';
+import {
+  verifyReferentielExpressions,
+  buildQuestionActionRelations,
+} from './verify-referentiel-expressions';
 import {
   ParseExpression,
   VerifyReferentielExpressionsInput,
@@ -179,5 +182,145 @@ describe('verifyReferentielExpressions', () => {
     expect(errors).toHaveLength(1);
     expect(errors[0]).toContain('expression de score');
     expect(errors[0]).toContain('erreur de syntaxe');
+  });
+});
+
+describe('buildQuestionActionRelations', () => {
+  it('extrait les questions depuis une expression de desactivation', () => {
+    const relations = buildQuestionActionRelations({
+      referentielId: 'cae',
+      actions: [
+        {
+          identifiant: '1.1',
+          desactivation: 'reponse(dechets_1, OUI)',
+        },
+      ],
+    });
+
+    expect(relations).toEqual([
+      { actionId: 'cae_1.1', questionId: 'dechets_1' },
+    ]);
+  });
+
+  it('extrait les questions depuis une expression de reduction', () => {
+    const relations = buildQuestionActionRelations({
+      referentielId: 'cae',
+      actions: [
+        {
+          identifiant: '2.3',
+          reduction: 'reponse(habitat_1, NON)',
+        },
+      ],
+    });
+
+    expect(relations).toEqual([
+      { actionId: 'cae_2.3', questionId: 'habitat_1' },
+    ]);
+  });
+
+  it('extrait les questions depuis une expression de score', () => {
+    const relations = buildQuestionActionRelations({
+      referentielId: 'cae',
+      actions: [
+        {
+          identifiant: '3.1',
+          score: 'reponse(transport_1)',
+        },
+      ],
+    });
+
+    expect(relations).toEqual([
+      { actionId: 'cae_3.1', questionId: 'transport_1' },
+    ]);
+  });
+
+  it('deduplique les questions referencees dans plusieurs expressions de la meme action', () => {
+    const relations = buildQuestionActionRelations({
+      referentielId: 'cae',
+      actions: [
+        {
+          identifiant: '1.1',
+          desactivation: 'reponse(dechets_1, OUI)',
+          reduction: 'reponse(dechets_1, NON)',
+        },
+      ],
+    });
+
+    expect(relations).toEqual([
+      { actionId: 'cae_1.1', questionId: 'dechets_1' },
+    ]);
+  });
+
+  it('extrait plusieurs questions distinctes depuis une meme expression', () => {
+    const relations = buildQuestionActionRelations({
+      referentielId: 'cae',
+      actions: [
+        {
+          identifiant: '1.1',
+          desactivation:
+            'si reponse(dechets_1, OUI) et reponse(dechets_2, NON) alors desactivation',
+        },
+      ],
+    });
+
+    expect(relations).toEqual([
+      { actionId: 'cae_1.1', questionId: 'dechets_1' },
+      { actionId: 'cae_1.1', questionId: 'dechets_2' },
+    ]);
+  });
+
+  it('retourne un tableau vide quand aucune expression n a de question', () => {
+    const relations = buildQuestionActionRelations({
+      referentielId: 'cae',
+      actions: [
+        {
+          identifiant: '1.1',
+        },
+      ],
+    });
+
+    expect(relations).toEqual([]);
+  });
+
+  it('combine les questions de plusieurs actions', () => {
+    const relations = buildQuestionActionRelations({
+      referentielId: 'cae',
+      actions: [
+        {
+          identifiant: '1.1',
+          desactivation: 'reponse(dechets_1, OUI)',
+        },
+        {
+          identifiant: '2.1',
+          reduction: 'reponse(habitat_1, NON)',
+        },
+      ],
+    });
+
+    expect(relations).toEqual([
+      { actionId: 'cae_1.1', questionId: 'dechets_1' },
+      { actionId: 'cae_2.1', questionId: 'habitat_1' },
+    ]);
+  });
+
+  it('permet la meme question sur des actions differentes', () => {
+    const relations = buildQuestionActionRelations({
+      referentielId: 'cae',
+      actions: [
+        {
+          identifiant: '1.1',
+          desactivation: 'reponse(dechets_1, OUI)',
+        },
+        {
+          identifiant: '2.1',
+          desactivation: 'reponse(dechets_1, NON)',
+        },
+      ],
+    });
+
+    expect(relations).toEqual([
+      { actionId: 'cae_1.1', questionId: 'dechets_1' },
+      { actionId: 'cae_2.1', questionId: 'dechets_1' },
+    ]);
   });
 });
