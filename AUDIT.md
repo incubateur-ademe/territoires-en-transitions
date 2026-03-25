@@ -242,7 +242,541 @@ Le dossier `e2e-cypress-deprecated/` existe encore.
 
 ---
 
-## 6. Plan d'action recommandé
+## 6. Analyse architecturale du backend — Vision DDD
+
+### 6.1 Structure des modules
+
+Le backend NestJS (`apps/backend/src/`) est organisé en **5 domaines métier** + infrastructure :
+
+```
+src/
+├── collectivites/          # Gestion des collectivités territoriales
+│   ├── collectivite-crud/  #   CRUD de base
+│   ├── discussions/        #   Fil de discussion (le module le plus DDD)
+│   ├── documents/          #   Upload / stockage de documents
+│   ├── membres/            #   Membres d'une collectivité
+│   ├── personnalisations/  #   Personnalisation des référentiels
+│   ├── recherches/         #   Recherche fulltext
+│   ├── tableau-de-bord/    #   Dashboard / widgets
+│   └── tags/               #   Tags personnalisés
+├── indicateurs/            # Indicateurs et trajectoires
+│   ├── definitions/        #   Définitions d'indicateurs
+│   ├── valeurs/            #   Saisie des valeurs
+│   ├── trajectoires/       #   Calcul de trajectoires SNBC
+│   ├── import/             #   Import de données
+│   └── sources/            #   Sources de données externes
+├── plans/                  # Plans d'action
+│   ├── plans/              #   CRUD plans (Get/List/Upsert/Delete)
+│   ├── fiches/             #   Fiches action (entité la plus complexe)
+│   ├── axes/               #   Arborescence d'axes
+│   ├── paniers/            #   Panier d'actions prédéfinies
+│   └── reports/            #   Génération de rapports (PDF/PPTX)
+├── referentiels/           # Référentiels de notation (CAE, ECI)
+│   ├── compute-score/      #   Moteur de calcul de scores
+│   ├── definitions/        #   Définitions d'actions référentiel
+│   ├── labellisations/     #   Processus de labellisation
+│   ├── snapshots/          #   Historique des scores
+│   └── export-score/       #   Export de scores
+├── users/                  # Utilisateurs et permissions
+│   ├── apikeys/            #   Clés API (Argon2 + throttle)
+│   ├── authorizations/     #   RBAC / permissions
+│   ├── guards/             #   AuthGuard, JWT validation
+│   └── preferences/        #   Préférences utilisateur
+├── shared/                 # Services partagés inter-domaines
+│   ├── thematiques/
+│   ├── effet-attendu/
+│   └── models/
+├── metrics/                # Métriques plateforme
+└── utils/                  # Infrastructure transversale
+    ├── database/           #   DatabaseService (Drizzle + RLS)
+    ├── trpc/               #   TrpcService + error handlers
+    ├── transaction/        #   TransactionManager
+    ├── bullmq/             #   Job queue (BullMQ)
+    ├── email/              #   Service email
+    ├── supabase/           #   Client Supabase
+    └── ...                 #   Log, config, context, tracking, etc.
+```
+
+### 6.2 Analyse du layering
+
+#### Architecture actuelle par module
+
+Chaque module suit un pattern de découpage **par opération** :
+
+```
+plans/plans/
+├── plans.module.ts              # Module NestJS
+├── plans.router.ts              # Agrégateur de sous-routers
+├── get-plan/
+│   ├── get-plan.router.ts       # Présentation (tRPC)
+│   ├── get-plan.service.ts      # Application (orchestration)
+│   ├── get-plan.repository.ts   # Infrastructure (Drizzle)
+│   ├── get-plan.schema.ts       # Input DTO (Zod)
+│   └── get-plan.error-config.ts # Mapping erreurs → tRPC
+├── list-plans/
+│   ├── list-plans.router.ts
+│   ├── list-plans.service.ts
+│   └── list-plans.repository.ts
+├── upsert-plan/
+│   ├── upsert-plan.router.ts
+│   ├── upsert-plan.service.ts
+│   └── upsert-plan.repository.ts
+└── delete-plan/
+    ├── delete-plan.router.ts
+    ├── delete-plan.service.ts
+    └── delete-plan.repository.ts
+```
+
+#### Couches identifiées
+
+| Couche | Fichiers | Implémenté | Observations |
+|--------|----------|------------|--------------|
+| **Présentation** | `*.router.ts` | ✅ Bien | tRPC procedures, validation Zod, conversion erreurs |
+| **Application** | `*.service.ts`, `*-application.service.ts` | ⚠️ Mixte | Orchestration + logique métier mélangées |
+| **Domaine** | `packages/domain/src/**/*.schema.ts`, `*.rule.ts` | ❌ Anémique | Schémas Zod uniquement, pas d'entités riches |
+| **Infrastructure** | `*.repository.ts`, `database.service.ts` | ✅ Correct | Drizzle ORM, transaction-aware |
+
+### 6.3 Pattern Repository — Analyse détaillée
+
+#### Segmentation par opération (non par agrégat)
+
+Le choix architectural est **1 repository = 1 opération CRUD**, et non 1 repository = 1 agrégat :
+
+```typescript
+// ❌ Pattern actuel : segmentation par opération
+GetPlanRepository      // SELECT plan + joins
+ListPlansRepository    // SELECT plans avec filtres
+UpsertPlanRepository   // INSERT/UPDATE plan + relations
+DeletePlanRepository   // DELETE plan
+
+// ✅ Pattern DDD : 1 repository par agrégat
+PlanRepository {
+  findById(id): Plan
+  findAll(filters): Plan[]
+  save(plan): void
+  delete(id): void
+}
+```
+
+**Avantages du pattern actuel :**
+- Fichiers courts et focalisés (~50-150 lignes)
+- Facile de trouver le code d'une opération
+- Chaque repository est testable indépendamment
+
+**Inconvénients :**
+- Pas de notion d'agrégat — le `Plan` n'est pas une unité de cohérence
+- Relations (pilotes, référents, axes) gérées dans des méthodes séparées sans cohésion
+- Duplication de jointures entre Get et List
+- Pas d'invariant d'agrégat vérifiable côté repository
+
+#### Implémentation technique
+
+```typescript
+// get-plan.repository.ts — Pattern typique
+@Injectable()
+export class GetPlanRepository {
+  constructor(private readonly databaseService: DatabaseService) {}
+
+  async getPlan(
+    { planId, collectiviteId }: GetPlanInput,
+    tx?: Transaction
+  ): Promise<Result<PlanRow, GetPlanError>> {
+    const db = tx ?? this.databaseService.db;
+    const result = await db
+      .select()
+      .from(planActionTable)
+      .where(and(
+        eq(planActionTable.id, planId),
+        eq(planActionTable.collectiviteId, collectiviteId)
+      ))
+      .limit(1);
+
+    if (!result.length) {
+      return { success: false, error: GetPlanErrorEnum.PLAN_NOT_FOUND };
+    }
+    return { success: true, data: result[0] };
+  }
+}
+```
+
+**Points positifs :**
+- Transaction optionnelle (`tx?: Transaction`) — permet la composition transactionnelle
+- `Result<T, E>` systématique — pas d'exceptions pour les erreurs métier
+- Drizzle ORM avec requêtes typées — pas de SQL brut
+
+**Point d'attention :**
+- Pas d'interface abstraite (sauf `DiscussionRepository`) — couplage direct à Drizzle
+- Impossible de mock facilement pour les tests unitaires sans DI sur interface
+
+### 6.4 Service Layer — Analyse critique
+
+#### Trois types de services identifiés
+
+**Type 1 : Services d'orchestration simples** (majorité)
+
+```typescript
+// get-plan.service.ts — Agrège données de plusieurs repositories
+@Injectable()
+export class GetPlanService {
+  async getPlan(input, user?, tx?): Promise<Result<PlanWithDetails, Error>> {
+    // 1. Récupère le plan
+    const planResult = await this.getPlanRepo.getPlan(input, tx);
+    // 2. Vérifie les permissions
+    if (!await this.checkPermission(plan.collectiviteId, user)) { ... }
+    // 3. Récupère les axes
+    const axes = await this.axeRepo.listAxes(planId, tx);
+    // 4. Récupère les pilotes
+    const pilotes = await this.getPlanRepo.getPilotes(planId, tx);
+    // 5. Récupère les référents
+    const referents = await this.getPlanRepo.getReferents(planId, tx);
+    // 6. Calcule le budget
+    const budget = this.computeBudgetRules.computeBudget(fiches);
+    // 7. Assemble et retourne
+    return { success: true, data: { ...plan, axes, pilotes, referents, budget } };
+  }
+}
+```
+
+**Type 2 : Application Services** (module discussions — le plus proche de DDD)
+
+```typescript
+// discussion-application.service.ts
+@Injectable()
+export class DiscussionApplicationService {
+  constructor(
+    private readonly discussionDomainService: DiscussionDomainService,
+    private readonly discussionRepo: DiscussionRepository,  // ← Interface !
+    private readonly permissionService: PermissionService,
+  ) {}
+
+  async createDiscussion(input, user): Promise<Result<Discussion, Error>> {
+    // 1. Vérifie permissions
+    await this.permissionService.check(user, input.collectiviteId);
+    // 2. Délègue au domain service pour la logique métier
+    return this.discussionDomainService.create(input, user);
+  }
+}
+```
+
+**Type 3 : Services "fat"** (anti-pattern)
+
+```typescript
+// create-fiche.service.ts — 343 lignes, fait TOUT
+@Injectable()
+export class CreateFicheService {
+  async createFiche(input, user, tx?): Promise<Result<Fiche, Error>> {
+    // 1. Permission check
+    // 2. Insert fiche principale
+    // 3. Ajoute thématiques (helper interne)
+    // 4. Ajoute sous-thématiques
+    // 5. Ajoute effets attendus
+    // 6. Ajoute partenaires
+    // 7. Ajoute structures
+    // 8. Ajoute services
+    // 9. Ajoute financeurs
+    // 10. Ajoute pilotes
+    // 11. Ajoute référents
+    // 12. Ajoute actions
+    // 13. Ajoute impacts
+    // 14. Ajoute budget
+    // 15. Retourne fiche complète
+  }
+}
+```
+
+#### Critique architecturale
+
+| Aspect | État | Commentaire |
+|--------|------|-------------|
+| **Responsabilité unique** | ⚠️ Variable | Certains services orchestrent bien, d'autres sont des "god services" |
+| **Permission checks** | ⚠️ Dupliqué | Chaque service vérifie les permissions — devrait être un aspect/intercepteur |
+| **Transaction management** | ✅ Bien | Pattern `tx?: Transaction` cohérent, `TransactionManager` disponible |
+| **Séparation read/write** | ⚠️ Partielle | Get/List séparés de Upsert/Delete mais pas de CQRS formel |
+| **Composition** | ⚠️ Faible | Les services se composent rarement entre eux — logique dupliquée |
+
+### 6.5 Modèle de domaine — Anti-pattern anémique
+
+#### Le package `@tet/domain` : un pur schéma de validation
+
+Le package domaine (`packages/domain/src`) ne contient **aucune entité riche**. C'est un catalogue de :
+
+- **Schémas Zod** pour la validation d'entrée/sortie
+- **Enums** pour les statuts et priorités
+- **Types inférés** (`type Fiche = z.infer<typeof ficheSchema>`)
+- **Fonctions utilitaires** dispersées dans des fichiers `*.rule.ts` et `*.utils.ts`
+
+```typescript
+// ❌ Ce qui existe : un sac de données
+export const ficheSchema = z.object({
+  id: z.number(),
+  titre: z.string().nullable(),
+  statut: z.enum(statutEnumValues).nullable(),
+  priorite: z.enum(prioriteEnumValues).nullable(),
+  dateDebut: z.string().nullable(),
+  dateFin: z.string().nullable(),
+  budgetPrevisionnel: z.string().nullable(),
+  // ... 20+ champs sans comportement
+});
+
+// Logique métier externalisée dans un fichier utilitaire séparé
+export const isFicheOnTime = ({ statut, dateFin }: Pick<Fiche, ...>): boolean => {
+  if (statut === StatutEnum.REALISE || statut === StatutEnum.ABANDONNE) return true;
+  if (!dateFin) return true;
+  return isBefore(new Date(Date.now()), new Date(dateFin));
+};
+```
+
+```typescript
+// ✅ Ce qui serait souhaitable : une entité riche
+class FicheAction {
+  private constructor(private props: FicheProps) {
+    this.validate();
+  }
+
+  get isOnTime(): boolean {
+    if (this.isTerminee) return true;
+    if (!this.props.dateFin) return true;
+    return isBefore(new Date(), this.props.dateFin);
+  }
+
+  get isTerminee(): boolean {
+    return [StatutEnum.REALISE, StatutEnum.ABANDONNE].includes(this.props.statut);
+  }
+
+  changerStatut(nouveau: Statut): Result<void, FicheError> {
+    // Invariants métier vérifiés ici
+    if (this.isTerminee && nouveau !== StatutEnum.EN_COURS) {
+      return { success: false, error: 'CANNOT_CHANGE_TERMINAL_STATUS' };
+    }
+    this.props.statut = nouveau;
+    return { success: true, data: undefined };
+  }
+}
+```
+
+#### Conséquences de l'anémie
+
+1. **Logique métier éparpillée** : entre `*.rule.ts`, `*.utils.ts`, et les services backend
+2. **Pas d'invariants métier** : aucune garantie qu'une `Fiche` est dans un état cohérent
+3. **Duplication** : la même logique peut exister côté frontend et backend
+4. **Tests unitaires difficiles** : il faut mocker l'infrastructure pour tester une règle métier
+
+### 6.6 Intégration tRPC
+
+#### Pattern Router → Service → Repository
+
+```
+┌─────────────┐    ┌──────────────┐    ┌────────────────┐    ┌─────────┐
+│ tRPC Router │───▶│   Service    │───▶│  Repository    │───▶│ Drizzle │
+│ (.router.ts)│    │ (.service.ts)│    │(.repository.ts)│    │   ORM   │
+└─────────────┘    └──────────────┘    └────────────────┘    └─────────┘
+       │                  │                     │
+  Zod Input          Permission           Transaction
+  Validation          Check               Awareness
+  Error → TRPCError   Result<T,E>         Result<T,E>
+```
+
+#### Cohérence et qualité
+
+```typescript
+// Pattern tRPC systématique et bien appliqué
+@Injectable()
+export class GetPlanRouter {
+  constructor(
+    private readonly trpc: TrpcService,
+    private readonly service: GetPlanService,
+  ) {}
+
+  private readonly handle = createTrpcErrorHandler(getPlanErrorConfig);
+
+  router = this.trpc.router({
+    get: this.trpc.authedProcedure
+      .input(getPlanInputSchema)       // ← Validation Zod
+      .query(async ({ input, ctx }) => {
+        const result = await this.service.getPlan(input, ctx.user);
+        return this.handle(result);     // ← Result → TRPCError
+      }),
+  });
+}
+```
+
+**Points forts :**
+- Pattern uniforme sur 70+ routers
+- Validation systématique avec Zod
+- Conversion centralisée `Result<T,E>` → `TRPCError` via `createTrpcErrorHandler`
+- Séparation `authedProcedure` / `publicProcedure`
+
+**Points faibles :**
+- Deux styles d'error handling coexistent (`createTrpcErrorHandler` vs manuel)
+- Les routers sont très fins → overhead de fichiers (4-6 fichiers par opération)
+
+### 6.7 Gestion des erreurs — Pattern Result
+
+Le pattern `Result<T, E>` est **le meilleur choix architectural du backend** :
+
+```typescript
+// utils/result.type.ts
+export type Result<Data, ServiceError, Cause extends Error = Error> =
+  | { success: true; data: Data }
+  | { success: false; error: ServiceError; cause?: Cause };
+```
+
+#### Propagation à travers les couches
+
+```typescript
+// Repository → retourne Result
+async getPlan(input, tx?): Promise<Result<PlanRow, GetPlanError>> {
+  if (!result.length) {
+    return { success: false, error: GetPlanErrorEnum.PLAN_NOT_FOUND };
+  }
+  return { success: true, data: result[0] };
+}
+
+// Service → propage ou enrichit
+async getPlan(input, user?): Promise<Result<PlanDetails, GetPlanError>> {
+  const planResult = await this.repo.getPlan(input, tx);
+  if (!planResult.success) return planResult;  // ← Propagation directe
+  // ... enrichissement
+  return { success: true, data: enrichedPlan };
+}
+
+// Router → convertit en TRPCError
+const result = await this.service.getPlan(input, ctx.user);
+return this.handle(result);  // ← Success → data, Failure → throw TRPCError
+```
+
+#### Qualité : erreurs typées par domaine
+
+```typescript
+// Chaque module définit ses erreurs
+const specificErrors = ['PLAN_NOT_FOUND', 'GET_PILOTES_ERROR'] as const;
+export const GetPlanErrorEnum = createErrorsEnum(specificErrors);
+
+// Avec mapping vers codes HTTP/tRPC
+export const getPlanErrorConfig = {
+  specificErrors: {
+    PLAN_NOT_FOUND: { code: 'NOT_FOUND', message: "Le plan n'a pas été trouvé" },
+  },
+};
+```
+
+### 6.8 Cross-cutting concerns
+
+| Concern | Implémentation | Qualité |
+|---------|----------------|---------|
+| **Logging** | `CustomLogger` + `ContextStoreService` (userId, role dans chaque log) | ✅ Bien |
+| **Transactions** | `TransactionManager.executeSingle()`, `tx?: Transaction` passé partout | ✅ Bien |
+| **RLS** | `DatabaseService.rls(user)` → set_config JWT avant chaque tx | ✅ Bien |
+| **Permissions** | `PermissionService.check()` appelé dans chaque service | ⚠️ Dupliqué — devrait être un aspect |
+| **Tracking** | `ApiTrackingInterceptor` + Sentry context | ✅ Bien |
+| **Caching** | ❌ Absent — aucune couche de cache applicatif | ❌ Manquant |
+| **Events** | ❌ Absent — pas de domain events, seulement webhooks HTTP | ❌ Manquant |
+| **Retry** | BullMQ pour les jobs asynchrones uniquement | ⚠️ Partiel |
+
+### 6.9 Incohérences de nommage
+
+| Pattern | Exemples | Problème |
+|---------|----------|----------|
+| **Service naming** | `GetPlanService` vs `DiscussionApplicationService` vs `CreateFicheService` | Pas de convention unique |
+| **Repository naming** | `GetPlanRepository` vs `DiscussionRepositoryImpl` | `Impl` suffix inconsistant |
+| **Langue** | Tables FR (`fiche_action`), services EN (`GetPlanService`), erreurs FR ("Le plan n'a pas été trouvé") | Mix FR/EN |
+| **Fichiers** | `get-plan.service.ts` vs `discussion-application.service.ts` | Granularité variable |
+| **Domain service** | Seul `DiscussionDomainService` existe | Convention non généralisée |
+
+### 6.10 Le module Discussions — Modèle à suivre
+
+Le module `collectivites/discussions/` est le **seul module qui implémente un layering DDD propre** :
+
+```
+discussions/
+├── application/
+│   ├── discussion-application.service.ts    # Orchestration + permissions
+│   └── discussion-query.service.ts          # Lecture
+├── domain/
+│   ├── discussion-domain-service.ts         # Logique métier
+│   └── discussion.repository.ts             # Interface abstraite (!)
+├── infrastructure/
+│   └── discussion-repository-impl.ts        # Implémentation Drizzle
+├── list-discussion/
+│   └── list-discussion.service.ts
+└── discussion.router.ts
+```
+
+**Ce qui est bien :**
+- `DiscussionRepository` est une **interface** (le seul du projet)
+- `DiscussionRepositoryImpl` implémente l'interface → mockable pour les tests
+- `DiscussionDomainService` contient la logique métier
+- `DiscussionApplicationService` ne fait qu'orchestrer
+
+**Ce qui manque pour être exemplaire :**
+- Pas d'entité `Discussion` riche (toujours des schémas Zod)
+- Pas de domain events (`DiscussionCreated`, `CommentAdded`)
+
+### 6.11 Synthèse et recommandations DDD
+
+#### Matrice de maturité DDD
+
+| Critère | Score | Détail |
+|---------|-------|--------|
+| **Bounded Contexts** | 6/10 | Modules bien séparés mais pas de context map explicite |
+| **Entités / Agrégats** | 2/10 | Anémique — schémas Zod sans comportement |
+| **Value Objects** | 2/10 | Simples enums, pas de VO typés (ex: `CollectiviteId`) |
+| **Domain Services** | 3/10 | Un seul (`DiscussionDomainService`), logique dans les app services |
+| **Repositories** | 5/10 | Fonctionnels mais sans interface (sauf Discussions) |
+| **Application Services** | 6/10 | Présents mais trop gros, mélangent orchestration et logique |
+| **Domain Events** | 0/10 | Inexistants |
+| **Ubiquitous Language** | 4/10 | Termes métier FR dans les tables, mais mix FR/EN dans le code |
+| **Anti-corruption Layer** | 5/10 | Zod valide les entrées, mais pas de mapping entité ↔ persistence |
+
+**Score DDD global : 3.5/10**
+
+#### Recommandations architecturales prioritaires
+
+**1. Généraliser le pattern Discussions à tous les modules**
+Le module `discussions/` est la preuve de concept interne. Appliquer progressivement :
+- Interfaces repository dans chaque module
+- Séparation `application/` vs `domain/` vs `infrastructure/`
+- Domain services pour la logique métier
+
+**2. Enrichir le modèle de domaine**
+Transformer les schémas Zod en entités riches progressivement, en commençant par `FicheAction` (l'entité la plus complexe) :
+- Encapsuler les invariants (`isFicheOnTime`, `changerStatut`, `ajouterBudget`)
+- Créer des Value Objects typés (`PlanId`, `CollectiviteId`, `Statut`)
+- Extraire un mapper `FicheMapper` pour la conversion entité ↔ persistence
+
+**3. Dégraisser les services "fat"**
+`CreateFicheService` (343 lignes) devrait être décomposé :
+- `FicheFactory` pour la création avec ses relations
+- `FicheRelationsService` pour la gestion des associations
+- Ou mieux : méthodes sur l'agrégat `FicheAction`
+
+**4. Extraire les permissions en aspect**
+Le check `await this.permissionService.check(user, collectiviteId)` est dupliqué dans **chaque service**. Alternatives :
+- Intercepteur NestJS sur les routes
+- Décorateur `@RequirePermission(PermissionLevel.WRITE)` sur les méthodes
+- Guard tRPC middleware
+
+**5. Introduire des Domain Events**
+Pour découpler les modules (notifications, webhooks, audit) :
+```typescript
+// Exemple : quand une fiche change de statut
+ficheAction.changerStatut(StatutEnum.REALISE);
+// → émet FicheStatutChangedEvent
+// → déclenche notification aux pilotes
+// → déclenche webhook externe
+// → met à jour les indicateurs liés
+```
+
+**6. Standardiser le nommage**
+Choisir une convention unique et l'appliquer (ADR recommandée) :
+- `{Feature}QueryService` pour les lectures
+- `{Feature}CommandService` pour les écritures
+- `{Feature}Repository` (interface) + `Drizzle{Feature}Repository` (impl)
+- Tout en anglais ou tout en français — pas de mix
+
+---
+
+## 7. Plan d'action recommandé
 
 ### Immédiat (Sprint en cours)
 1. **Ajouter helmet.js** au backend NestJS (`apps/backend/src/main.ts`) — headers de sécurité manquants.
@@ -259,19 +793,24 @@ Le dossier `e2e-cypress-deprecated/` existe encore.
 10. Créer **CONTRIBUTING.md** et **CODE_OF_CONDUCT.md**.
 11. Activer **Dependabot** ou **Renovate** pour le suivi des dépendances.
 12. Restreindre le passage du token JWT aux headers uniquement (supprimer le support query params dans `auth.guard.ts`).
+13. **Généraliser le pattern Discussions** (interface repository, séparation domain/application) aux modules Plans et Fiches.
+14. **Extraire les permission checks en intercepteur** NestJS pour éliminer la duplication.
 
 ### Moyen terme (1-3 mois)
-13. Activer les vérifications TypeScript manquantes (`noImplicitReturns`, etc.).
-14. Ajouter le monitoring de taille de bundle (`@next/bundle-analyzer`).
-15. Supprimer `e2e-cypress-deprecated/`.
-16. Planifier la migration Strapi 4 → 5.
-17. Augmenter la couverture de tests vers 40%+ (prioriser auth, scoring, API).
+15. Activer les vérifications TypeScript manquantes (`noImplicitReturns`, etc.).
+16. Ajouter le monitoring de taille de bundle (`@next/bundle-analyzer`).
+17. Supprimer `e2e-cypress-deprecated/`.
+18. Planifier la migration Strapi 4 → 5.
+19. Augmenter la couverture de tests vers 40%+ (prioriser auth, scoring, API).
+20. **Enrichir le modèle de domaine** : transformer `FicheAction` en entité riche (invariants, méthodes, Value Objects).
+21. **Standardiser le nommage** (QueryService/CommandService) via une ADR.
+22. **Introduire les Domain Events** pour découpler notifications/webhooks/audit.
 
 ---
 
-## 7. Conclusion
+## 8. Conclusion
 
-**Note globale : 7.5/10**
+**Note globale : 7/10**
 
 Le projet Territoires en Transitions est un projet OSS gouvernemental bien architecturé avec une stack moderne et des fondations solides. La séparation des concerns est claire, le typage end-to-end avec tRPC est excellent, et la pipeline CI/CD est robuste.
 
