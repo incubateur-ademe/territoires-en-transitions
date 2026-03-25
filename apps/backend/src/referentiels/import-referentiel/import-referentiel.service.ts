@@ -8,11 +8,9 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
-import { personnalisationRegleTable } from '@tet/backend/collectivites/personnalisations/models/personnalisation-regle.table';
 import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
 import {
   CreateIndicateurActionType,
-  indicateurActionTable,
 } from '@tet/backend/indicateurs/definitions/indicateur-action.table';
 import { ListPlatformDefinitionsRepository } from '@tet/backend/indicateurs/definitions/list-platform-definitions/list-platform-definitions.repository';
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
@@ -22,8 +20,6 @@ import {
   importActionDefinitionSchema,
   ImportActionDefinitionType,
 } from '@tet/backend/referentiels/import-referentiel/import-action-definition.dto';
-import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
-import { questionActionTable } from '@tet/backend/referentiels/models/question-action.table';
 import {
   ReferentielLabelEnum,
   referentielLabelEnumSchema,
@@ -31,8 +27,6 @@ import {
 import BaseSpreadsheetImporterService from '@tet/backend/shared/services/base-spreadsheet-importer.service';
 import { BackendConfigurationType } from '@tet/backend/utils/config/configuration.model';
 import ConfigurationService from '@tet/backend/utils/config/configuration.service';
-import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
-import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
 import VersionService from '@tet/backend/utils/version/version.service';
 import {
@@ -43,33 +37,26 @@ import {
   ActionDefinitionCreate,
   ActionDefinitionTag,
   ActionOrigine,
-  ActionQuestion,
   ActionRelationCreate,
   ActionTypeEnum,
   getActionTypeFromActionId,
   getParentIdFromActionId,
   ReferentielDefinition,
   ReferentielId,
-  ReferentielIdEnum,
-  ReferentielTag,
 } from '@tet/domain/referentiels';
 import { getErrorMessage } from '@tet/domain/utils';
-import { eq, ilike, like } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
-import { actionOrigineTable } from '../correlated-actions/action-origine.table';
 import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
 import {
   GetReferentielService,
   ReferentielResponse,
 } from '../get-referentiel/get-referentiel.service';
-import { actionDefinitionTagTable } from '../models/action-definition-tag.table';
-import { actionDefinitionTable } from '../models/action-definition.table';
-import { referentielDefinitionTable } from '../models/referentiel-definition.table';
-import { referentielTagTable } from '../models/referentiel-tag.table';
+import { ImportReferentielRepository } from './import-referentiel.repository';
 import {
   verifyReferentielExpressions,
   buildIndicateurReferences,
   buildActionId,
+  buildQuestionActionRelations,
 } from './verify-referentiel-expressions';
 import { IndicateurReference } from './verify-referentiel-expressions.types';
 
@@ -100,7 +87,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
 
   constructor(
     private readonly config: ConfigurationService,
-    private readonly database: DatabaseService,
+    private readonly repository: ImportReferentielRepository,
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly indicateurExpressionService: IndicateurExpressionService,
     private readonly listPlatformDefinitionsRepository: ListPlatformDefinitionsRepository,
@@ -139,7 +126,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       );
     }
 
-    await this.createReferentielTagsIfNeeded();
+    await this.repository.createReferentielTagsIfNeeded();
     const allowVersionOverwrite =
       this.versionService.getVersion().environment !== 'prod';
     const isNewReferentiel =
@@ -153,16 +140,8 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     );
 
     // Get all existing action ids, to be able to check origine validity
-    const existingActionIds = (
-      await this.database.db
-        .select({
-          action_id: actionRelationTable.id,
-        })
-        .from(actionRelationTable)
-    ).map((action) => action.action_id);
-
-    const questions =
-      await this.listPersonnalisationQuestionsService.listQuestionsWithChoices();
+    const existingActionIds =
+      await this.repository.getExistingActionIds();
 
     const importActionDefinitions =
       await this.sheetService.getDataFromSheet<ImportActionDefinitionType>(
@@ -182,7 +161,6 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     const createPersonnalisationRegles: PersonnalisationRegleCreate[] = [];
     const indicateurIdentifiants: { identifiant: string; actionId: string }[] =
       [];
-    const personnalisationQuestionRelations: ActionQuestion[] = [];
     const createActionTags: ActionDefinitionTag[] = [];
     importActionDefinitions.data.forEach((action) => {
       const actionId = buildActionId(referentielId, action.identifiant);
@@ -349,35 +327,6 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
           });
         }
 
-        if (action.personnalisationQuestions) {
-          this.logger.log(
-            `Action ${actionId} is linked to personnalisation questions: ${action.personnalisationQuestions.join(
-              ','
-            )}`
-          );
-          action.personnalisationQuestions?.forEach((questionId) => {
-            const question = questions.find(
-              (question) => question.id === questionId
-            );
-            if (!question) {
-              throw new UnprocessableEntityException(
-                `Personnalisation question ${questionId} not found`
-              );
-            }
-
-            const existingRelation = personnalisationQuestionRelations.find(
-              (relation) =>
-                relation.questionId === questionId &&
-                relation.actionId === actionId
-            );
-            if (!existingRelation) {
-              personnalisationQuestionRelations.push({
-                questionId,
-                actionId,
-              });
-            }
-          });
-        }
       } else {
         throw new UnprocessableEntityException(
           `Action ${actionId} is duplicated in the spreadsheet`
@@ -457,116 +406,23 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       );
     }
 
-    await this.database.db.transaction(async (tx) => {
-      await tx
-        .insert(actionRelationTable)
-        .values(actionRelations)
-        .onConflictDoNothing();
+    const questionActionRelations = buildQuestionActionRelations({
+      referentielId,
+      actions: importActionDefinitions.data,
+    });
 
-      const columnsToUpdate = [
-        'nom',
-        'description',
-        'categorie',
-        'contexte',
-        'exemples',
-        'ressources',
-        'reductionPotentiel',
-        'perimetreEvaluation',
-        'preuve',
-        'referentielVersion',
-        'exprScore',
-        'points',
-        'pourcentage',
-      ];
-
-      await tx
-        .insert(actionDefinitionTable)
-        .values(actionDefinitions)
-        .onConflictDoUpdate({
-          target: [actionDefinitionTable.actionId],
-          set: buildConflictUpdateColumns(
-            actionDefinitionTable,
-            columnsToUpdate as any
-          ),
-        });
-
-      await tx
-        .delete(actionOrigineTable)
-        .where(eq(actionOrigineTable.referentielId, referentielId));
-
-      if (createActionOrigines.length) {
-        await tx.insert(actionOrigineTable).values(createActionOrigines);
-      }
-
-      // Delete & recreate tags
-      await tx
-        .delete(actionDefinitionTagTable)
-        .where(eq(actionDefinitionTagTable.referentielId, referentielId));
-
-      if (createActionTags.length) {
-        await tx.insert(actionDefinitionTagTable).values(createActionTags);
-      }
-
-      // Delete personnalisation rules
-      tx.delete(personnalisationRegleTable).where(
-        like(personnalisationRegleTable.actionId, `${referentielId}_%`)
-      );
-
-      // Create personnalisation rules
-      await tx
-        .insert(personnalisationRegleTable)
-        .values(createPersonnalisationRegles)
-        .onConflictDoUpdate({
-          target: [
-            personnalisationRegleTable.actionId,
-            personnalisationRegleTable.type,
-          ],
-          set: buildConflictUpdateColumns(personnalisationRegleTable, [
-            'formule',
-            'description',
-          ]),
-        });
-
-      // relations action personnalisation question
-      this.logger.log(
-        `Recreating ${personnalisationQuestionRelations.length} personnalisation question action relations`
-      );
-      await tx
-        .delete(questionActionTable)
-        .where(ilike(questionActionTable.actionId, `${referentielId}%`));
-      if (personnalisationQuestionRelations.length) {
-        await tx
-          .insert(questionActionTable)
-          .values(personnalisationQuestionRelations);
-      }
-
-      // relations action indicateur
-      this.logger.log(
-        `Recreating ${createIndicateurActions.length} indicateur action relations`
-      );
-      await tx
-        .delete(indicateurActionTable)
-        .where(ilike(indicateurActionTable.actionId, `${referentielId}%`));
-      if (createIndicateurActions.length) {
-        await tx.insert(indicateurActionTable).values(createIndicateurActions);
-      }
-
-      await tx
-        .insert(referentielDefinitionTable)
-        .values(referentielDefinition)
-        .onConflictDoUpdate({
-          target: [referentielDefinitionTable.id],
-          set: buildConflictUpdateColumns(referentielDefinitionTable, [
-            'version',
-          ]),
-        });
-
-      await this.importPreuveReglementaireDefinitionService.importPreuveReglementaireDefinitionsAndActionRelations(
-        referentielId,
-        spreadsheetId,
-        importActionDefinitions.data,
-        tx
-      );
+    await this.repository.saveReferentiel({
+      referentielId,
+      spreadsheetId,
+      actionRelations,
+      actionDefinitions,
+      actionOrigines: createActionOrigines,
+      actionTags: createActionTags,
+      personnalisationRegles: createPersonnalisationRegles,
+      questionActionRelations,
+      indicateurActions: createIndicateurActions,
+      referentielDefinition,
+      importActionDefinitions: importActionDefinitions.data,
     });
 
     this.logger.log(`Import du référentiel ${referentielId} terminé`);
@@ -723,40 +579,6 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     );
   }
 
-  private async createReferentielTagsIfNeeded(): Promise<void> {
-    const referentielTags: ReferentielTag[] = [
-      {
-        ref: ReferentielIdEnum.CAE,
-        nom: 'CAE',
-        type: 'Catalogue',
-      },
-      {
-        ref: ReferentielIdEnum.ECI,
-        nom: 'ECI',
-        type: 'Catalogue',
-      },
-      {
-        ref: ImportActionDefinitionCoremeasureType.COREMEASURE,
-        nom: 'EEA Coremeasure',
-        type: 'EEA',
-      },
-      {
-        ref: ReferentielLabelEnum.TE_ECI,
-        nom: 'Label TE ECI',
-        type: 'Label',
-      },
-      {
-        ref: ReferentielLabelEnum.TE_CAE,
-        nom: 'Label TE CAE',
-        type: 'Label',
-      },
-    ];
-
-    await this.database.db
-      .insert(referentielTagTable)
-      .values(referentielTags)
-      .onConflictDoNothing();
-  }
 }
 
 export function parseActionsOrigine(
