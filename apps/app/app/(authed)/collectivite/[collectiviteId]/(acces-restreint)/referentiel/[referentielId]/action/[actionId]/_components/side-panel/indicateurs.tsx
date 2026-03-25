@@ -6,21 +6,18 @@ import { useActionId } from '@/app/referentiels/actions/action-context';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
+import { ReactNode } from 'react';
 
-export default function Page() {
+export function IndicateursPanelContent(): ReactNode {
   const collectivite = useCurrentCollectivite();
   const mesureId = useActionId();
 
   const { data: { data: indicateursLies } = {}, isLoading } =
     useListIndicateurs({
       collectiviteId: collectivite.collectiviteId,
-      filters: {
-        mesureId,
-      },
+      filters: { mesureId },
     });
 
-  // le contenu de l'onglet Indicateurs n'est pas affiché
-  // si la collectivité est en accès restreint
   if (
     collectivite.accesRestreint &&
     !collectivite.hasCollectivitePermission('referentiels.read_confidentiel')
@@ -34,8 +31,10 @@ export default function Page() {
 
   return (
     <section>
-      {!indicateursLies || indicateursLies?.length === 0 ? (
-        <p>{"Cette action ne comporte pas d'indicateur"}</p>
+      {!indicateursLies || indicateursLies.length === 0 ? (
+        <p className="text-sm text-grey-6">
+          {"Cette action ne comporte pas d'indicateur"}
+        </p>
       ) : (
         <IndicateurChartsGrid
           definitions={indicateursLies}

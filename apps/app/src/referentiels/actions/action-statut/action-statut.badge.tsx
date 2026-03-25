@@ -39,7 +39,7 @@ const ActionStatutBadge = ({
         type={statusToState[statut].type ?? 'solid'}
         trim={false}
         className={classNames(
-          'min-w-fit',
+          'min-w-fit text-nowrap',
           { 'line-through': barre },
           className
         )}

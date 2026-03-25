@@ -20,6 +20,6 @@ export type ActionDefinitionSummary = {
   haveQuestions: boolean;
   haveScoreIndicatif: boolean;
   phase: ActionCategorie | null;
-  discussionsCount: number;
+  openDiscussionsCount: number;
   preuvesCount: number;
 };

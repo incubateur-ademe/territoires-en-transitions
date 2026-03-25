@@ -27,12 +27,7 @@ const FichesLieesListe = ({
   return (
     // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
     <div>
-      <div
-        className={classNames(
-          'grid lg:grid-cols-2 xl:grid-cols-3 gap-3',
-          className
-        )}
-      >
+      <div className={classNames('grid grid-cols-1 gap-3', className)}>
         {isLoading
           ? [1, 2, 3].map((i) => <FicheActionCardSkeleton key={i} />)
           : fiches.map((fiche) => (

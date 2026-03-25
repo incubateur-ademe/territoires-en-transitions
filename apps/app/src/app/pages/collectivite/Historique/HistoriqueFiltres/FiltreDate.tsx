@@ -5,9 +5,10 @@ import { TFiltreProps } from '../filters';
 export const FiltreDateDebut = ({ filters, setFilters }: TFiltreProps) => {
   const ref = useRef<HTMLInputElement>(null);
   return (
-    <Field title="Date de début">
+    <Field title="Date de début" small>
       <Input
         ref={ref}
+        displaySize="sm"
         type="date"
         data-test="filtre-start-date"
         value={filters.startDate || ''}
@@ -20,14 +21,15 @@ export const FiltreDateDebut = ({ filters, setFilters }: TFiltreProps) => {
 export const FiltreDateFin = ({ filters, setFilters }: TFiltreProps) => {
   const ref = useRef<HTMLInputElement>(null);
   return (
-    <Field title="Date de fin">
+    <Field title="Date de fin" small>
       <Input
         ref={ref}
+        displaySize="sm"
         type="date"
         data-test="filtre-end-date"
         value={filters.endDate || ''}
         onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
-      />{' '}
+      />
     </Field>
   );
 };

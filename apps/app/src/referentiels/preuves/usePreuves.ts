@@ -38,7 +38,6 @@ const fetch = async (
     .order('fichier->>filename' as 'fichier', { ascending: true })
     .eq('collectivite_id', collectivite_id);
 
-  // éventuellement filtrées par action (et ses sous-actions si `withSubActions` est aussi fourni)
   const action = filters?.action;
   if (action) {
     if (filters?.withSubActions) {

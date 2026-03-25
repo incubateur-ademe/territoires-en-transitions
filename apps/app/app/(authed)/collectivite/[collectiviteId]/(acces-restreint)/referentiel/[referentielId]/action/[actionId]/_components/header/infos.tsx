@@ -1,48 +1,139 @@
+import {
+  useDeleteMesurePilotes,
+  useUpsertMesurePilotes,
+} from '@/app/referentiels/actions/use-mesure-pilotes';
+import {
+  useDeleteMesureServicesPilotes,
+  useUpsertMesureServicesPilotes,
+} from '@/app/referentiels/actions/use-mesure-services-pilotes';
+import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
-import { OpenState } from '@tet/ui/utils/types';
+import { Icon, IconValue, InlineEditWrapper } from '@tet/ui';
+import { VerticalDivider } from './vertical-divider';
+
+const EmptyField = ({
+  icon,
+  label,
+  ...props
+}: {
+  icon: IconValue;
+  label: string;
+} & React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    {...props}
+    className="flex items-baseline gap-1 py-1 px-2 -mx-2 -my-1 rounded-md hover:bg-grey-3 text-sm text-primary-9 font-normal"
+  >
+    <Icon icon={icon} size="sm" />
+    <span>
+      {label} : <span className="text-warning-1">À compléter</span>
+    </span>
+  </div>
+);
 
 type Props = {
-  openState: OpenState;
+  actionId: string;
   pilotes?: PersonneTagOrUser[];
   services?: Tag[];
   isReadOnly?: boolean;
 };
 
-const Infos = ({ openState, pilotes, services, isReadOnly }: Props) => {
+export const Infos = ({ actionId, pilotes, services, isReadOnly }: Props) => {
+  const collectiviteId = useCollectiviteId();
   const hasPilotes = pilotes && pilotes.length > 0;
   const hasServices = services && services.length > 0;
 
+  const { mutate: upsertPilotes } = useUpsertMesurePilotes();
+  const { mutate: deletePilotes } = useDeleteMesurePilotes();
+  const { mutate: upsertServices } = useUpsertMesureServicesPilotes();
+  const { mutate: deleteServices } = useDeleteMesureServicesPilotes();
   return (
-    (hasPilotes || hasServices) && (
-      <div className="flex gap-3">
-        <div className="w-[0.5px] h-5 bg-grey-5 max-lg:hidden" />
-        {hasPilotes && (
+    <>
+      <VerticalDivider />
+      <InlineEditWrapper
+        disabled={isReadOnly}
+        renderOnEdit={({ openState }) => (
+          <PersonnesDropdown
+            dataTest="action-header-pilote-dropdown"
+            buttonClassName="border-none"
+            dropdownZindex={1000}
+            values={pilotes?.map(getPersonneStringId) ?? []}
+            onChange={({ personnes }) => {
+              if (personnes.length === 0) {
+                deletePilotes({ collectiviteId, mesureId: actionId });
+              } else {
+                upsertPilotes({
+                  collectiviteId,
+                  mesureId: actionId,
+                  pilotes: personnes.map((p) => ({
+                    userId: p.userId ?? null,
+                    tagId: p.tagId ?? null,
+                  })),
+                });
+              }
+            }}
+            openState={openState}
+          />
+        )}
+      >
+        {hasPilotes ? (
           <ListWithTooltip
             title="Pilotes"
             list={pilotes.map((p) => p.nom ?? '')}
             icon="user-line"
             hoveringColor="grey"
-            onClick={() => openState.setIsOpen(true)}
             disabled={isReadOnly}
+            className="text-sm text-primary-9 font-normal"
+          />
+        ) : (
+          <EmptyField icon="user-line" label="Pilotes" />
+        )}
+      </InlineEditWrapper>
+      <VerticalDivider />
+      <InlineEditWrapper
+        disabled={isReadOnly}
+        renderOnEdit={({ openState }) => (
+          <ServicesPilotesDropdown
+            dataTest="action-header-service-dropdown"
+            dropdownZindex={1000}
+            values={services?.map((s) => s.id) ?? []}
+            onChange={({ services: newServices }) => {
+              if (newServices.length === 0) {
+                deleteServices({ collectiviteId, mesureId: actionId });
+              } else {
+                upsertServices({
+                  collectiviteId,
+                  mesureId: actionId,
+                  services: newServices.map((s) => ({
+                    serviceTagId: s.id,
+                    tagId: s.id,
+                  })),
+                });
+              }
+            }}
+            openState={openState}
           />
         )}
-        {hasPilotes && hasServices && (
-          <div className="w-[0.5px] h-5 bg-grey-5" />
-        )}
-        {hasServices && (
+      >
+        {hasServices ? (
           <ListWithTooltip
             title="Direction ou service pilote"
             list={services.map((s) => s.nom ?? '')}
             icon="briefcase-line"
             hoveringColor="grey"
-            onClick={() => openState.setIsOpen(true)}
             disabled={isReadOnly}
+            className="text-sm text-primary-9 font-normal"
+          />
+        ) : (
+          <EmptyField
+            icon="briefcase-line"
+            label="Direction ou service pilote"
           />
         )}
-      </div>
-    )
+      </InlineEditWrapper>
+    </>
   );
 };
-
-export default Infos;

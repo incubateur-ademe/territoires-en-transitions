@@ -9,6 +9,9 @@ export const JournalActivite = () => {
     <div data-test="JournalActivite" className="grow flex flex-col">
       <h1 className="text-center my-12">{"Journal d'activité"}</h1>
       <Divider className="mb-6" />
+      <p className="mb-6 font-bold">
+        Filtrer l’historique des modifications par
+      </p>
       <HistoriqueListe />
     </div>
   );

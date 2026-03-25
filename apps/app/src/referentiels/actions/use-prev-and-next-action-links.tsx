@@ -1,26 +1,32 @@
 import { makeReferentielActionUrl } from '@/app/app/paths';
 import { useReferentielDownToAction } from '@/app/referentiels/referentiel-hooks';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { useSearchParams } from 'next/navigation';
 import { useReferentielId } from '../referentiel-context';
 
 /**
  * Génération des liens "Mesure précédente" et "Mesure suivante"
  */
 export const usePrevAndNextActionLinks = (actionId: string) => {
-  // collectivité et référentiel courant
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
+  const searchParams = useSearchParams();
 
-  // tableau contenant uniquement les sous-axes et actions
   const actions = useReferentielDownToAction(referentielId);
   const filteredActions = actions.filter((action) => action.type === 'action');
 
-  // index de l'action courante
   const currentActionIndex = filteredActions.findIndex(
     ({ id }) => id === actionId
   );
 
-  // mesure précédente
+  const persistedParams = new URLSearchParams();
+  const panelParam = searchParams.get('panel');
+  if (panelParam !== null) {
+    persistedParams.set('panel', panelParam);
+  }
+  const panelIdParameter =
+    persistedParams.size > 0 ? `?${persistedParams}` : '';
+
   const prevAction =
     currentActionIndex > 0
       ? filteredActions[currentActionIndex - 1]
@@ -30,10 +36,9 @@ export const usePrevAndNextActionLinks = (actionId: string) => {
         collectiviteId,
         referentielId,
         actionId: prevAction.id,
-      })
+      }) + panelIdParameter
     : undefined;
 
-  // mesure suivante
   const nextAction =
     currentActionIndex < filteredActions.length - 1
       ? filteredActions[currentActionIndex + 1]
@@ -43,7 +48,7 @@ export const usePrevAndNextActionLinks = (actionId: string) => {
         collectiviteId,
         referentielId,
         actionId: nextAction.id,
-      })
+      }) + panelIdParameter
     : undefined;
 
   return {

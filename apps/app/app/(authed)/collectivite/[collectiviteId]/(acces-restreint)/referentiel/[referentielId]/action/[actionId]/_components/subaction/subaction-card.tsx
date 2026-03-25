@@ -1,73 +1,159 @@
-import { useActionId } from '@/app/referentiels/actions/action-context';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
-import SubActionPreuvesAccordion from '@/app/referentiels/actions/sub-action/sub-action-preuves.accordion';
 import SubActionDescription from '@/app/referentiels/actions/sub-action/sub-action.description';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
-import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import {
   ActionDefinitionSummary,
   useActionSummaryChildren,
 } from '@/app/referentiels/referentiel-hooks';
+import { useStickyHeaderHeight } from '@/app/ui/layout/HeaderSticky';
 import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
-import { ActionTypeEnum } from '@tet/domain/referentiels';
-import { Accordion, Button, Divider } from '@tet/ui';
+import { AccordionControlled, Button } from '@tet/ui';
 import classNames from 'classnames';
-import { useEffect, useRef, useState } from 'react';
 import { ActionJustificationField } from '../action/action.justification-field';
-import { useCommentPanel } from '../comments/hooks/use-comment-panel';
+import { pluralize } from '../pluralize';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
+import { useActionSidePanel } from '../side-panel/context';
 import TaskCardsList from '../task/task.cards-list';
 import SubactionCardActions from './subaction-card.actions';
 import { SubactionCardHeader } from './subaction-card.header';
 
-export const getHashFromUrl = () => {
-  // Only run on client side since window is not available on server
-  if (typeof window !== 'undefined') {
-    // Get everything after # symbol, removing the # itself
-    const hash = window.location.hash.slice(1);
-    return hash;
-  }
+const OpenPanelButton = ({
+  label,
+  onClick,
+  isActive,
+}: {
+  label: string;
+  onClick: () => void;
+  isActive?: boolean;
+}) => (
+  <Button
+    variant="unstyled"
+    size="xs"
+    icon="layout-right-line"
+    iconPosition="right"
+    className={classNames(
+      'px-2 py-1 font-medium rounded-md border-[1px] text-xs flex gap-1 items-center justify-center text-nowrap',
+      isActive
+        ? 'bg-primary-9 border-primary-9 text-white'
+        : 'text-grey-8 border-grey-4'
+    )}
+    onClick={onClick}
+  >
+    {label}
+  </Button>
+);
 
-  return '';
+const SubactionHeader = ({
+  subAction,
+  isExpanded,
+  toggleExpand,
+}: {
+  subAction: ActionDefinitionSummary;
+  isExpanded: boolean;
+  toggleExpand: () => void;
+}) => {
+  const preuvesCount = useActionPreuvesCount(subAction.id);
+  const isVisitor = useIsVisitor();
+  const { togglePanel, isActive } = useActionSidePanel();
+  const stickyHeaderHeight = useStickyHeaderHeight();
+
+  return (
+    <div
+      style={{ top: stickyHeaderHeight }}
+      className={classNames('sticky z-10 p-4 rounded-t-lg', {
+        'bg-primary-1 hover:bg-primary-1': isExpanded,
+        'bg-grey-1': !isExpanded,
+      })}
+    >
+      <SubactionCardHeader
+        subAction={subAction}
+        isExpanded={isExpanded}
+        toggleExpand={toggleExpand}
+        actions={[
+          <OpenPanelButton
+            key="documents"
+            label={pluralize(preuvesCount, 'document')}
+            onClick={() => togglePanel('documents', subAction.id)}
+            isActive={isActive('documents', subAction.id)}
+          />,
+          ...(!isVisitor
+            ? [
+                <OpenPanelButton
+                  key="comments"
+                  label={pluralize(
+                    subAction.openDiscussionsCount ?? 0,
+                    'commentaire'
+                  )}
+                  onClick={() => togglePanel('comments', subAction.id)}
+                  isActive={isActive('comments', subAction.id)}
+                />,
+              ]
+            : []),
+        ]}
+      />
+
+      <ScoreIndicatifLibelle actionId={subAction.id} />
+
+      <SubactionCardActions
+        actionId={subAction.id}
+        haveScoreIndicatif={subAction.haveScoreIndicatif}
+      />
+    </div>
+  );
 };
+
+const SubactionContent = ({
+  subAction,
+  tasks,
+  showJustifications,
+  hideTasksStatus,
+}: {
+  subAction: ActionDefinitionSummary;
+  tasks: ActionDefinitionSummary[];
+  showJustifications: boolean;
+  hideTasksStatus: boolean;
+}) => (
+  <div
+    className={classNames('flex flex-col gap-4', {
+      'p-4': showJustifications,
+    })}
+  >
+    {showJustifications && (
+      <ActionJustificationField
+        actionId={subAction.id}
+        placeholder="Explications sur l'etat d'avancement"
+      />
+    )}
+
+    {(subAction.description || subAction.haveExemples) && (
+      <SubActionDescription subAction={subAction} className="text-sm" />
+    )}
+
+    <TaskCardsList
+      className="mt-2"
+      tasks={tasks}
+      hideStatus={hideTasksStatus}
+    />
+  </div>
+);
 
 type SubActionCardProps = {
   subAction: ActionDefinitionSummary;
-  isOpen: boolean;
+  isExpanded: boolean;
+  onToggleExpanded: () => void;
   showJustifications: boolean;
-  onClick: () => void;
 };
-
-/**
- * Carte permettant l'affichage d'une sous-action
- * dans l'onglet "Suivi de l'action" du menu
- * "Référentiel CAE / ECI" de la page "Etat des lieux"
- */
 
 const SubActionCard = ({
   subAction,
-  isOpen,
+  isExpanded,
+  onToggleExpanded,
   showJustifications,
-  onClick,
 }: SubActionCardProps) => {
-  const ref = useRef<HTMLDivElement>(null);
-
-  const hash = getHashFromUrl();
-
   const { statut } = useActionStatut(subAction.id);
   const { avancement } = statut || {};
 
-  const preuvesCount = useActionPreuvesCount(subAction.id);
-
   const tasks = useActionSummaryChildren(subAction);
-
-  const [isExpanded, setIsExpanded] = useState(isOpen);
-
-  const referentielId = useReferentielId();
-
-  const isVisitor = useIsVisitor();
-
-  const { openPanel } = useCommentPanel(referentielId, useActionId());
 
   const shouldHideTasksStatus =
     statut?.concerne === false ||
@@ -76,135 +162,34 @@ const SubActionCard = ({
       avancement !== 'detaille') ||
     (statut !== null && avancement === 'detaille');
 
-  const isSubAction = subAction.type === ActionTypeEnum.SOUS_ACTION;
-
-  useEffect(() => {
-    const id = hash;
-    if (id.includes(subAction.id)) {
-      // Scroll jusqu'à la sous-action indiquée dans l'url
-      if (id === subAction.id && ref && ref.current) {
-        setTimeout(() => {
-          ref.current?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center',
-          });
-        }, 0);
-      }
-    }
-  }, [hash, ref]);
-
-  const isPanelFlagEnabled = false;
-
   return (
     <div
-      ref={ref}
+      id={subAction.id}
       data-test={`SousAction-${subAction.identifiant}`}
       className={classNames(
-        'flex flex-col bg-grey-1 transition-colors border border-grey-3 rounded-lg',
+        'border border-grey-3 rounded-lg bg-grey-1 transition-colors',
         { 'hover:bg-grey-2': !isExpanded }
       )}
     >
-      {/* En-tête */}
-      <div
-        className={classNames('p-4', {
-          'bg-primary-1 hover:bg-primary-1 border-primary-3': isExpanded,
-          'cursor-pointer': isSubAction,
-        })}
-        onClick={() => {
-          setIsExpanded(!isExpanded);
-          onClick();
-        }}
-      >
-        <SubactionCardHeader subAction={subAction} isExpanded={isExpanded} />
-
-        {/* Informations sur les scores indicatifs */}
-        <ScoreIndicatifLibelle actionId={subAction.id} />
-
-        {/* Actions */}
-        <SubactionCardActions
-          actionId={subAction.id}
-          haveScoreIndicatif={subAction.haveScoreIndicatif}
-        />
-      </div>
-
-      <div
-        className={classNames('flex flex-col gap-4', {
-          'p-4': showJustifications || isExpanded,
-        })}
-      >
-        {/* Commentaire associé à la sous-action */}
-        {showJustifications && (
-          <ActionJustificationField
-            actionId={subAction.id}
-            placeholder="Explications sur l'état d'avancement"
+      <AccordionControlled
+        expanded={isExpanded}
+        setExpanded={onToggleExpanded}
+        renderHeader={({ isExpanded: expanded, toggleExpand }) => (
+          <SubactionHeader
+            subAction={subAction}
+            isExpanded={expanded}
+            toggleExpand={toggleExpand}
           />
         )}
-
-        {/* Infos complémentaires */}
-        {isPanelFlagEnabled && preuvesCount > 0 && (
-          <div className="mt-auto flex flex-col gap-2">
-            <Divider className="mt-auto" />
-            <div className="text-xs text-grey-8">
-              <span>
-                {preuvesCount} document{preuvesCount > 1 ? 's' : ''}
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* Section Tâches */}
-        {!isPanelFlagEnabled && isExpanded && (
-          <>
-            {(subAction.description || subAction.haveExemples) && (
-              <Accordion
-                id={`Description-${subAction.id}`}
-                title="Description"
-                content={
-                  <SubActionDescription
-                    subAction={subAction}
-                    className="mb-4 mx-2"
-                  />
-                }
-              />
-            )}
-
-            {tasks.length > 0 && (
-              <Accordion
-                id={`Tâches-${subAction.id}`}
-                dataTest={`TâchesPanel-${subAction.identifiant}`}
-                title="Tâches"
-                containerClassname="border-b-0"
-                content={
-                  <TaskCardsList
-                    className="mt-2"
-                    tasks={tasks}
-                    hideStatus={shouldHideTasksStatus}
-                  />
-                }
-                initialState={isExpanded}
-              />
-            )}
-
-            <SubActionPreuvesAccordion subAction={subAction} />
-          </>
-        )}
-        {!isVisitor && (
-          <>
-            <Divider className="mt-auto" />
-
-            <Button
-              variant="underlined"
-              size="xs"
-              className="text-left border-b-transparent text-grey-6"
-              onClick={() => {
-                openPanel(subAction.id);
-              }}
-            >
-              {subAction.discussionsCount} commentaires
-            </Button>
-          </>
-        )}
-      </div>
+        content={
+          <SubactionContent
+            subAction={subAction}
+            tasks={tasks}
+            showJustifications={showJustifications}
+            hideTasksStatus={shouldHideTasksStatus}
+          />
+        }
+      />
     </div>
   );
 };

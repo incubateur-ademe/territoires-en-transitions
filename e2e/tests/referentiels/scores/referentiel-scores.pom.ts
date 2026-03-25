@@ -24,9 +24,11 @@ export class ReferentielScoresPom {
   constructor(readonly page: Page) {
     this.documentsPom = new DocumentsPom(page);
     this.title = page.getByRole('heading', { name: 'Référentiel' });
-    this.documentsExpandButton = page.getByRole('button', {
-      name: 'Documents',
-    });
+    this.documentsExpandButton = page
+      .getByRole('toolbar', { name: 'Panneaux latéraux' })
+      .getByRole('button', {
+        name: 'Document',
+      });
     this.documentsAddPreuveComplementaireButton = page.locator(
       '[data-test="AddPreuveComplementaire"]'
     );
@@ -98,6 +100,9 @@ export class ReferentielScoresPom {
   async goto(referentielId: ReferentielId) {
     await this.page.locator('[data-test="nav-edl"]').click();
     await this.page.locator(`[data-test="edl-${referentielId}"]`).click();
+    await this.page.waitForURL(
+      new RegExp(`/referentiel/${referentielId}(/|$|\\?)`)
+    );
     await expect(this.title).toBeVisible();
   }
 
@@ -143,9 +148,9 @@ export class ReferentielScoresPom {
   }
 
   getSousActionExpandLocator(sousActionIdentifiant: string) {
-    return this.page.locator(
-      `[data-test="SousActionHeader-${sousActionIdentifiant}-expand"]`
-    );
+    return this.page.getByRole('button', {
+      name: `Déplier la sous-action ${sousActionIdentifiant}`,
+    });
   }
 
   getSousActionAvancementBadgeLocator(sousActionIdentifiant: string) {

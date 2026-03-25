@@ -21,10 +21,7 @@ const HistoriqueFiltres = ({
       id="filtres-historique"
       className="mb-8 pb-8 border-b border-b-gray-200"
     >
-      <p className="mb-6 font-bold">
-        Filtrer l’historique des modifications par
-      </p>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-6">
+      <div className="grid sm:grid-cols-2 gap-2">
         <FiltreMembre filters={filters} setFilters={setFilters} />
         <FiltreType filters={filters} setFilters={setFilters} />
         <FiltreDateDebut filters={filters} setFilters={setFilters} />

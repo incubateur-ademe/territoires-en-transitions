@@ -367,7 +367,7 @@ export class ListActionsService {
         ),
         phase: definition.categorie,
         preuvesCount: definition.preuvesCount,
-        discussionsCount: definition.discussionsCount,
+        openDiscussionsCount: definition.openDiscussionsCount,
       };
     });
   }
@@ -408,12 +408,12 @@ export class ListActionsService {
           sql<boolean>`(${subQuery.actionId} in (select ${questionActionTable.actionId} from ${questionActionTable}))`.as(
             'haveQuestions'
           ),
-        discussionsCount: sql<number>`(
+        openDiscussionsCount: sql<number>`(
             select COUNT(*)
             from ${discussionMessageTable}
-            inner join ${discussionTable} on ${discussionMessageTable.discussionId} = ${discussionTable.id} and ${discussionTable.collectiviteId} = ${collectiviteId}
+            inner join ${discussionTable} on ${discussionMessageTable.discussionId} = ${discussionTable.id} and ${discussionTable.collectiviteId} = ${collectiviteId} and ${discussionTable.status} = 'ouvert'
             where ${discussionTable.actionId} = ${subQuery.actionId}
-          )`.as('discussionsCount'),
+          )`.as('openDiscussionsCount'),
         preuvesCount: sql<number>`(
             select COUNT(*)
             from ${preuveComplementaireTable}

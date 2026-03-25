@@ -39,7 +39,7 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
         {/* Titre du document + Identifiant de l'action associée */}
         <span
           data-test="desc"
-          className="text-sm text-primary-9 font-medium flex flex-wrap gap-2 items-center uppercase"
+          className="text-sm text-primary-9 font-bold flex flex-wrap gap-2 items-center uppercase max-w-80"
         >
           {nom}{' '}
           {!(hideIdentifier ?? false) && <IdentifiantAction action={action} />}

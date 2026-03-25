@@ -55,7 +55,7 @@ export const AvecIconeSVG: Story = {
 export const AvecContenuAdditionnelHeader: Story = {
   args: {
     icon: <DoubleCheckIcon className="fill-primary-7" />,
-    headerContent: <Badge title="Badge" variant="info" />,
+    additionalRightHeaderContent: <Badge title="Badge" variant="info" />,
   },
 };
 
@@ -74,7 +74,7 @@ export const CompletTitreLong: Story = {
       'Titre long qui prend plusieurs lignes, qui est vraiment très long et qui ne finit pas de finir',
     subtitle:
       'Cette section est visible uniquement par les membres de votre collectivité',
-    headerContent: <Badge title="Badge" variant="info" />,
+    additionalRightHeaderContent: <Badge title="Badge" variant="info" />,
   },
 };
 
@@ -83,7 +83,9 @@ export const CustomHeaderAndContent: Story = {
     icon: 'lock-line',
     title:
       'Titre long qui prend plusieurs lignes, qui est vraiment très long et qui ne finit pas de finir',
-    headerContent: <Badge title="Badge" variant="info" className="!h-12" />,
+    additionalRightHeaderContent: (
+      <Badge title="Badge" variant="info" className="!h-12" />
+    ),
     containerClassname: 'border border-primary-3 rounded-xl',
     headerClassname: 'px-6',
     content: (

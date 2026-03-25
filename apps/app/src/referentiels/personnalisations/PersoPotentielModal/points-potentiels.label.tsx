@@ -17,11 +17,7 @@ export function PointsPotentiels({ actionId }: { actionId: string }) {
     return null;
   }
 
-  return (
-    <div data-test="PointsPotentiels">
-      <div>{getLabel(score)}</div>
-    </div>
-  );
+  return <div className="text-sm text-grey-6">{getLabel(score)}</div>;
 }
 
 const getLabel = (actionScore: ScorePartial): string => {

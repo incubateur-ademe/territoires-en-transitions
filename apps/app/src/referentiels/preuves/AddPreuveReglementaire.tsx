@@ -44,10 +44,11 @@ export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
       <Button
         dataTest={`AddPreuveReglementaire-${preuve_id}`}
         size="xs"
-        icon="file-add-line"
+        icon="file-add-fill"
         variant={isDisabled ? 'outlined' : 'primary'}
         title="Ajouter une preuve"
         onClick={() => setOpened(true)}
+        className="w-12 flex items-center justify-center"
       />
     </Modal>
   );

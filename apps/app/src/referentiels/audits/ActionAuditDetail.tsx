@@ -27,10 +27,10 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
   const { mutate: updateMesureAuditStatut } = useUpdateMesureAuditStatut();
 
   return (
-    <div className="mt-8 border border-grey-3 bg-white p-4 rounded-lg">
+    <div className="border border-grey-3 bg-white p-4 rounded-lg">
       <Field
-        title="Notes de l’auditeur, auditrice"
-        hint="Remarques sur la mesure, questions pour la séance d’audit"
+        title="Notes de l'auditeur, auditrice"
+        hint="Remarques sur la mesure, questions pour la séance d'audit"
       >
         <RichTextEditor
           className="[&_.bn-block-content]:py-0 [&_.bn-inline-content]:text-sm [&_.bn-inline-content]:leading-[1.25rem]"
@@ -76,16 +76,14 @@ export const ActionAuditDetail = (props: TActionAuditDetailProps) => {
   // donnée de l'audit en cours (si il y en a un)
   const { data: audit } = useAudit();
 
-  // indique si l'utilisateur courant est l'auditeur
   const isAuditeur = useIsAuditeur();
 
-  // statut d'audit de l'action
   const { data: auditStatut } = useGetMesureAuditStatut({
     mesureId: action.id,
     enabled: !!audit,
   });
 
-  return audit && auditStatut ? (
+  return audit && isAuditeur && auditStatut ? (
     <ActionAuditDetailBase
       auditStatut={auditStatut}
       readonly={!isAuditeur || audit.valide}

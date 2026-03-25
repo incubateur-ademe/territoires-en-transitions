@@ -1,7 +1,6 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
-import { Checkbox } from '@tet/ui';
 import classNames from 'classnames';
-import { JSX, useEffect, useState } from 'react';
+import { JSX } from 'react';
 import { ActionJustificationField } from '../action/action.justification-field';
 import TaskCard from './task-card';
 
@@ -9,9 +8,7 @@ type TasksListProps = {
   subActionId?: string;
   tasks: ActionDefinitionSummary[];
   hideStatus?: boolean;
-  displayJustificationCheckbox?: boolean;
   shouldShowJustifications?: boolean;
-  setShouldShowJustifications?: (value: boolean) => void;
   className?: string;
 };
 
@@ -23,36 +20,12 @@ const TaskCardsList = ({
   subActionId,
   tasks,
   hideStatus = false,
-  displayJustificationCheckbox = false,
-  shouldShowJustifications,
-  setShouldShowJustifications,
+  shouldShowJustifications = true,
   className,
 }: TasksListProps): JSX.Element => {
-  const [showJustifications, setShowJustififcations] = useState(
-    shouldShowJustifications ?? true
-  );
-
-  useEffect(() => {
-    setShowJustififcations(shouldShowJustifications ?? true);
-  }, [shouldShowJustifications]);
-
   return (
     <div>
-      {displayJustificationCheckbox && (
-        <Checkbox
-          variant="switch"
-          label="Afficher l’état d’avancement"
-          labelClassname="text-grey-7"
-          containerClassname="mb-6"
-          checked={showJustifications}
-          onChange={(evt) => {
-            setShowJustififcations(evt.currentTarget.checked);
-            setShouldShowJustifications?.(evt.currentTarget.checked);
-          }}
-        />
-      )}
-
-      {showJustifications && subActionId && (
+      {shouldShowJustifications && subActionId && (
         <ActionJustificationField
           actionId={subActionId}
           title="Explications sur l'état d'avancement :"
@@ -67,7 +40,7 @@ const TaskCardsList = ({
             key={task.id}
             task={task}
             hideStatus={hideStatus}
-            showJustifications={showJustifications}
+            showJustifications={shouldShowJustifications}
           />
         ))}
       </div>

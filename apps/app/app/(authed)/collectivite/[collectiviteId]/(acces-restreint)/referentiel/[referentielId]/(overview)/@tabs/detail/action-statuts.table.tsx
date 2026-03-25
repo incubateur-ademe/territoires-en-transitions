@@ -1,5 +1,6 @@
 'use client';
 
+import { pluralizeLabel } from '../../../action/[actionId]/_components/pluralize';
 import { DetailTacheTable } from '@/app/referentiels/DetailTaches/DetailTacheTable';
 import { noFilters } from '@/app/referentiels/DetailTaches/filters';
 import { useTableData } from '@/app/referentiels/DetailTaches/useTableData';
@@ -16,8 +17,8 @@ export const ActionStatutsTable = () => {
     filtersCount,
   } = tableData;
   const labelFilters = filtersCount > 1 ? 'filtres actifs' : 'filtre actif';
-  const labelSousActions = `sous-action${sousActionsCount > 1 ? 's' : ''}`;
-  const labelTaches = 'tâche' + (count > 1 ? 's' : '');
+  const labelSousActions = pluralizeLabel(sousActionsCount, 'sous-action');
+  const labelTaches = pluralizeLabel(count, 'tâche');
 
   return (
     <>

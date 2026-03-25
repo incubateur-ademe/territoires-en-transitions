@@ -108,7 +108,7 @@ test.describe('Discussions', () => {
     await discussionsPom.expectedDiscussionCount(1);
   });
 
-  test('Ouverture du panneau de discussion sur un sous-action', async ({
+  test('Ouverture du panneau de discussion sur une sous-action', async ({
     discussionsPom,
     filterDiscussionsPom,
   }) => {

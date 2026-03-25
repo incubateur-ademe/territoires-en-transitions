@@ -52,9 +52,7 @@ const CarteDocument = ({
   return (
     <>
       <div
-        className={classNames('relative group max-w-screen-md', {
-          'mt-3': fichier?.confidentiel,
-        })}
+        className={classNames('relative group max-w-screen-md')}
         data-test="carte-doc"
       >
         {/** Cadenas document privé */}
@@ -62,9 +60,9 @@ const CarteDocument = ({
           <Tooltip label="Document en mode privé">
             <div
               data-test="carte-doc-confidentiel"
-              className="absolute -top-5 left-5"
+              className="absolute -top-3 left-5"
             >
-              <Notification icon="lock-fill" size="sm" classname="w-9 h-9" />
+              <Notification icon="lock-fill" size="xs" classname="w-6 h-6" />
             </div>
           </Tooltip>
         )}
@@ -79,10 +77,10 @@ const CarteDocument = ({
         )}
 
         {/* Carte*/}
-        <Card className="!p-4 h-full !gap-2">
+        <Card className="p-4 h-full gap-1">
           {/* Titre avec format et taille du fichier */}
           <span
-            className="text-primary-8 hover:text-primary-8 transition text-base font-bold cursor-pointer"
+            className="text-primary-9 hover:text-primary-8 transition text-base font-bold cursor-pointer"
             data-test="name"
             title={fichier ? 'Télécharger le fichier' : 'Ouvrir le lien'}
             onClick={() => openPreuve(document)}

@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { DBClient, useSupabase, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
@@ -70,11 +70,14 @@ const read = async (
 
 export const useSaveActionCommentaire = () => {
   const trpc = useTRPC();
-
+  const collectivite_id = useCollectiviteId();
+  const queryClient = useQueryClient();
   return useMutation(
     trpc.referentiels.actions.updateCommentaire.mutationOptions({
       onSuccess: () => {
-        // Do not invalidate cache here, make the text blink
+        queryClient.invalidateQueries({
+          queryKey: ['historique', collectivite_id],
+        });
       },
     })
   );

@@ -1,104 +1,93 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { phaseToLabel } from '@/app/referentiels/utils';
-import { Divider, SideMenu } from '@tet/ui';
+import { Divider } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import SubActionCard from './subaction-card';
-import SubActionPanel from './subaction.panel';
+import { useHashFromUrl } from './use-hash-from-url';
 
 type Props = {
   sortedSubActions: {
     [id: string]: ActionDefinitionSummary[];
   };
-  subActionsList: ActionDefinitionSummary[];
   showJustifications: boolean;
-  isSubActionExpanded?: boolean;
+  actionsAreAllExpanded?: boolean;
 };
+
+type DefaultExpanded = { type: 'all' } | { type: 'action'; actionId: string };
+
+function useExpandedSubActions(defaultExpanded?: DefaultExpanded): {
+  isExpanded: (id: string) => boolean;
+  toggle: (id: string) => void;
+} {
+  const [overrides, setOverrides] = useState<Record<string, boolean>>({});
+  const defaultKey = defaultExpanded
+    ? defaultExpanded.type === 'all'
+      ? 'all'
+      : defaultExpanded.actionId
+    : '';
+  const [prevKey, setPrevKey] = useState(defaultKey);
+
+  if (prevKey !== defaultKey) {
+    setPrevKey(defaultKey);
+    setOverrides({});
+  }
+
+  const isExpanded = (id: string): boolean => {
+    if (id in overrides) return overrides[id];
+    if (!defaultExpanded) return false;
+    if (defaultExpanded.type === 'all') return true;
+    return defaultExpanded.actionId.startsWith(id);
+  };
+
+  const toggle = (id: string) => {
+    setOverrides((prev) => ({ ...prev, [id]: !isExpanded(id) }));
+  };
+
+  return { isExpanded, toggle };
+}
 
 export const SubActionCardsList = ({
   sortedSubActions,
-  subActionsList,
   showJustifications,
-  isSubActionExpanded = false,
+  actionsAreAllExpanded,
 }: Props) => {
-  const [selectedSubactionIdx, setSelectedSubactionIdx] = useState(0);
-  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const hash = useHashFromUrl();
 
-  const isPanelFlagEnabled = false;
-
-  const handleClick = (subActionId: string) => {
-    setSelectedSubactionIdx(
-      subActionsList.findIndex((s) => s.id === subActionId)
-    );
-
-    if (isPanelFlagEnabled) {
-      setIsPanelOpen((prevState) =>
-        subActionsList[selectedSubactionIdx].id === subActionId
-          ? !prevState
-          : true
-      );
-    }
-  };
+  const defaultExpanded: DefaultExpanded | undefined = actionsAreAllExpanded
+    ? { type: 'all' }
+    : hash
+      ? { type: 'action', actionId: hash }
+      : undefined;
+  const { isExpanded, toggle } = useExpandedSubActions(defaultExpanded);
 
   return (
-    <>
-      <div className="flex flex-col gap-7">
-        {['bases', 'mise en œuvre', 'effets'].map(
-          (phase) =>
-            sortedSubActions[phase] && (
-              <div key={phase} className="flex flex-col">
-                <h6 className="mb-0 text-sm">
-                  {phaseToLabel[phase].toUpperCase()}
-                </h6>
-                <Divider className="mt-2 mb-6" />
+    <div className="flex flex-col gap-7">
+      {['bases', 'mise en œuvre', 'effets'].map(
+        (phase) =>
+          sortedSubActions[phase] && (
+            <div key={phase} className="flex flex-col">
+              <h6 className="mb-0 text-sm">
+                {phaseToLabel[phase].toUpperCase()}
+              </h6>
+              <Divider className="mt-2 mb-6" />
 
-                <div>
-                  <div className={classNames('grid gap-7')}>
-                    {sortedSubActions[phase].map((subAction) => (
-                      <SubActionCard
-                        key={`${subAction.id}-${isSubActionExpanded}`}
-                        subAction={subAction}
-                        isOpen={isSubActionExpanded}
-                        showJustifications={showJustifications}
-                        onClick={() => {
-                          handleClick(subAction.id);
-                        }}
-                      />
-                    ))}
-                  </div>
+              <div>
+                <div className={classNames('grid gap-7')}>
+                  {sortedSubActions[phase].map((subAction) => (
+                    <SubActionCard
+                      key={subAction.id}
+                      subAction={subAction}
+                      isExpanded={isExpanded(subAction.id)}
+                      onToggleExpanded={() => toggle(subAction.id)}
+                      showJustifications={showJustifications}
+                    />
+                  ))}
                 </div>
               </div>
-            )
-        )}
-      </div>
-
-      {isPanelFlagEnabled && (
-        <SideMenu
-          isOpen={isPanelOpen}
-          setIsOpen={setIsPanelOpen}
-          headerType="navigation"
-          navigation={{
-            prev:
-              selectedSubactionIdx !== 0
-                ? {
-                    label: 'Sous-mesure précédente',
-                    onClick: () =>
-                      setSelectedSubactionIdx(selectedSubactionIdx - 1),
-                  }
-                : undefined,
-            next:
-              selectedSubactionIdx !== subActionsList.length - 1
-                ? {
-                    label: 'Sous-mesure suivante',
-                    onClick: () =>
-                      setSelectedSubactionIdx(selectedSubactionIdx + 1),
-                  }
-                : undefined,
-          }}
-        >
-          <SubActionPanel subAction={subActionsList[selectedSubactionIdx]} />
-        </SideMenu>
+            </div>
+          )
       )}
-    </>
+    </div>
   );
 };

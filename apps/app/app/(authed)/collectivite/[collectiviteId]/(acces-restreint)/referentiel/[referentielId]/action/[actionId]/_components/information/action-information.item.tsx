@@ -1,6 +1,6 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import Markdown from '@/app/ui/Markdown';
-import { Accordion } from '@tet/ui';
+import { Accordion, cn } from '@tet/ui';
 import { TTOCItem } from './action-information.types';
 import { useActionInfoData } from './use-action-information';
 
@@ -18,11 +18,22 @@ const ActionInformationsItem = ({ item, action }: Props) => {
     <Accordion
       title={titre}
       containerClassname="border-b-0"
+      headerClassname="text-sm text-primary-8 font-[700]"
       content={
         <Markdown
-          className="paragraphe-16 [&>*]:mb-2 mb-8"
+          className="[&>*]:mb-2 mb-8"
           content={data ?? 'Cette section est vide.'}
           openLinksInNewTab
+          options={{
+            components: {
+              p: ({ node, ...rest }) => (
+                <p
+                  {...rest}
+                  className={cn(rest.className, 'text-sm text-primary-9')}
+                />
+              ),
+            },
+          }}
         />
       }
     />

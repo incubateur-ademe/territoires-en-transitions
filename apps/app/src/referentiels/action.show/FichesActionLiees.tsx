@@ -1,9 +1,8 @@
 import FichesActionsDropdown from '@/app/ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
-import { Button, Field } from '@tet/ui';
+import { Field } from '@tet/ui';
 import FichesLieesListe from '../../app/pages/collectivite/PlansActions/FicheAction/FichesLiees/FichesLieesListe';
-import { useCreateFicheResume } from '../../app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
 import { useFichesActionLiees } from './useFichesActionLiees';
 import { useUpdateFichesActionLiees } from './useUpdateFichesActionLiees';
 
@@ -24,26 +23,14 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
     actionId,
     collectiviteId,
   });
-  const { mutate: createFicheResume } = useCreateFicheResume({
-    actionId,
-    openInNewTab: true,
-    collectiviteId,
-  });
   const { mutate: updateFichesActionLiees } =
     useUpdateFichesActionLiees(actionId);
 
   const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
-  const canCreateFiche = hasCollectivitePermission('plans.fiches.create');
 
   return (
     <div className="flex flex-col gap-8">
-      {canCreateFiche && (
-        <Button icon="add-line" size="sm" onClick={() => createFicheResume()}>
-          Créer une action
-        </Button>
-      )}
-
-      <Field title="Actions">
+      <Field title="Actions" small>
         <FichesActionsDropdown
           disabled={!canEditReferentiel}
           ficheCouranteId={null}
