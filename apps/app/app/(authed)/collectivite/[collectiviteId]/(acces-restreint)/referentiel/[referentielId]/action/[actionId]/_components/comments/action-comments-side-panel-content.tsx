@@ -21,7 +21,7 @@ type Props = {
   updateTitlePanel?: (title: string) => void;
 };
 
-const ActionCommentsSidePanelContent = ({
+export const ActionCommentsSidePanelContent = ({
   parentActionId,
   actionId,
   referentielId,
@@ -87,5 +87,3 @@ const ActionCommentsSidePanelContent = ({
     </div>
   );
 };
-
-export default ActionCommentsSidePanelContent;

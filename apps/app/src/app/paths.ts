@@ -75,15 +75,7 @@ export const referentielTabs = [
 ] as const;
 export type ReferentielTab = (typeof referentielTabs)[number];
 
-export type ActionTabParamOption =
-  | ''
-  | 'audit'
-  | 'documents'
-  | 'indicateurs'
-  | 'fiches'
-  | 'historique'
-  | 'informations'
-  | 'commentaires';
+
 
 type LabellisationTab = 'suivi' | 'cycles' | 'criteres';
 
@@ -255,18 +247,15 @@ export const makeReferentielActionUrl = ({
   collectiviteId,
   actionId,
   referentielId,
-  actionVue,
 }: {
   collectiviteId: number;
   actionId: string;
   referentielId: ReferentielId;
-  actionVue?: ActionTabParamOption;
 }) =>
   referentielActionPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${referentielIdParam}`, referentielId)
-    .replace(`:${actionParam}`, actionId)
-    .concat(actionVue ? `/${actionVue}` : '');
+    .replace(`:${actionParam}`, actionId);
 
 export const makeReferentielTacheUrl = ({
   collectiviteId,
@@ -287,7 +276,8 @@ export const makeReferentielTacheUrl = ({
     referentielId,
     actionId: limitedLevels,
   });
-  const hash = levels.length !== limitedLevels.length ? `#${actionId}` : '';
+  const hash =
+    levels.length !== limitedLevels.split('.').length ? `#${actionId}` : '';
   return pathname + hash;
 };
 

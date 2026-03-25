@@ -9,6 +9,7 @@ import { Divider, VisibleWhen } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import Link from 'next/link';
 import { Fragment, useMemo } from 'react';
+import { pluralize } from '../pluralize';
 import ActionCommentsEmptyImg from './action-comment.empty-img';
 import ActionCommentDiscussion from './action-comments.discussion';
 import { ActionDiscussionStatut } from './action-comments.types';
@@ -50,9 +51,9 @@ const ActionCommentFeed = ({
         <div className="flex flex-col gap-4">
           <ActionCommentsEmptyImg className="mx-auto" />
           <p className="text-sm text-center text-grey-7">
-            Aucun commentaire{' '}
-            {{ all: '', ouvert: 'ouvert', ferme: 'fermé' }[state]} pour
-            l&apos;instant
+            {`Aucun commentaire ${
+              state === 'all' ? '' : state === 'ouvert' ? 'ouvert' : 'fermé'
+            } pour l'instant`}
           </p>
         </div>
       ) : (
@@ -157,7 +158,7 @@ const ActionHeader = ({
         {
           'top-[139px]': !isDisplayedAsPanel || isInputDisabled,
           'top-[180px]': isDisplayedAsPanel && !isInputDisabled,
-          'sticky z-10': isDisplayedAsPanel,
+          'sticky z-1': isDisplayedAsPanel,
         }
       )}
     >
@@ -170,9 +171,7 @@ const ActionHeader = ({
         <span>{`${discussion.actionIdentifiant} - ${discussion.actionNom}`}</span>
       )}
       <VisibleWhen condition={canDisplayNumberOfMessages}>
-        <span>
-          {` ${numberOfMessages} commentaire${numberOfMessages > 1 ? 's' : ''}`}{' '}
-        </span>
+        <span>{pluralize(numberOfMessages, 'commentaire')}</span>
       </VisibleWhen>
     </div>
   );

@@ -12,8 +12,8 @@ type Props = {
 
 /** Représente le niveau d'accès à une collectivité par un badge */
 export const BadgeNiveauAcces = (props: Props) => {
-  const { acces, className, size = 'xs' } = props;
-  const displayedAcces = getLabel(props);
+  const { acces, className, size = 'xs', isAuditeur } = props;
+  const displayedAcces = getLabel({ acces, isAuditeur });
 
   return (
     <Badge
@@ -25,7 +25,13 @@ export const BadgeNiveauAcces = (props: Props) => {
   );
 };
 
-const getLabel = ({ acces, isAuditeur }: Props) => {
+const getLabel = ({
+  acces,
+  isAuditeur,
+}: {
+  acces: CollectiviteRole | null;
+  isAuditeur?: boolean;
+}): string => {
   if (isAuditeur) {
     return 'audit';
   }

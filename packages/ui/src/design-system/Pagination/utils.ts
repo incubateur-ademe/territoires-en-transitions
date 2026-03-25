@@ -1,32 +1,38 @@
 const getRange = (start: number, end: number) =>
   Array.from({ length: end - start + 1 }, (_, k) => start + k);
 
+const compactPaginationProperties = {
+  maxPages: 5,
+  leftLimit: 2,
+  middleRangeGap: 0,
+  getRightLimit: (nbOfPages: number): number => nbOfPages - 1,
+};
+
+const regularPaginationProperties = {
+  maxPages: 7,
+  leftLimit: 3,
+  middleRangeGap: 1,
+  getRightLimit: (nbOfPages: number): number => nbOfPages - 2,
+};
+
 /** Calcule le tableau pagination en fonction de la page courante,
  * du nombre total de pages, et de la taille d'écran */
 export const calculatePaginationArray = ({
-  isMobile,
+  isCompact,
   nbOfPages,
   currentPage,
-  small,
 }: {
-  isMobile: boolean;
+  isCompact: boolean;
   nbOfPages: number;
   currentPage: number;
-  small: boolean;
-}) => {
-  const isSmallSize = isMobile || small;
+}): (number | undefined)[] => {
+  const { maxPages, leftLimit, middleRangeGap, getRightLimit } = isCompact
+    ? compactPaginationProperties
+    : regularPaginationProperties;
 
-  // Nombre maximum de boutons visibles sur la pagination
-  const maxPages = isSmallSize ? 5 : 7;
-
-  // Affiche la totalité des boutons
+  const rightLimit = getRightLimit(nbOfPages);
   const displayAllPages = nbOfPages <= maxPages;
 
-  // Nombre maximum de boutons visibles sur les extrémités
-  const leftLimit = isSmallSize ? 2 : 3;
-  const rightLimit = isSmallSize ? nbOfPages - 1 : nbOfPages - 2;
-
-  // Adapte les limites gauche et droite en fonction de la page actuelle
   let leftMaxLimit = leftLimit;
   let rightMinLimit = rightLimit;
   if (currentPage === leftLimit) {
@@ -38,13 +44,8 @@ export const calculatePaginationArray = ({
     rightMinLimit--;
   }
 
-  // La page sélectionnée est une page centrale
   const isMiddlePage = currentPage > leftLimit && currentPage < rightLimit;
 
-  // Nombre de boutons visibles autour d'une page centrale
-  const middleRangeGap = isSmallSize ? 0 : 1;
-
-  // Boutons au milieu de la pagination (ou totalité des boutons si nbOfPages <= maxPages)
   const middleRange =
     displayAllPages || isMiddlePage
       ? getRange(
@@ -53,7 +54,6 @@ export const calculatePaginationArray = ({
         )
       : [];
 
-  // Boutons à gauche et à droite de la pagination
   const leftRange = !displayAllPages
     ? getRange(1, isMiddlePage ? 1 : leftMaxLimit)
     : [];
@@ -62,7 +62,6 @@ export const calculatePaginationArray = ({
     ? getRange(isMiddlePage ? nbOfPages : rightMinLimit, nbOfPages)
     : [];
 
-  // Remplace le bouton "..." s'il n'y a qu'une seule page masquée
   const leftIntersection =
     isMiddlePage && middleRange[0] - leftRange[leftRange.length - 1] === 2
       ? middleRange[0] - 1
@@ -73,7 +72,6 @@ export const calculatePaginationArray = ({
       ? rightRange[0] - 1
       : undefined;
 
-  // Construction du tableau final
   const finalArray: (number | undefined)[] = [...leftRange];
 
   if (!displayAllPages) {

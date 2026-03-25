@@ -1,13 +1,20 @@
-import { ActionProvider } from '@/app/referentiels/actions/action-context';
 import { ReactNode } from 'react';
+
+import { ActionProvider } from '@/app/referentiels/actions/action-context';
+import { DisplaySettingsProvider } from './_components/display-settings.context';
 
 export default async function Layout({
   params,
-  tabs,
+  children,
 }: {
   params: Promise<{ actionId: string }>;
-  tabs: ReactNode;
+  children: ReactNode;
 }) {
   const { actionId } = await params;
-  return <ActionProvider actionId={actionId}>{tabs}</ActionProvider>;
+
+  return (
+    <ActionProvider actionId={actionId}>
+      <DisplaySettingsProvider>{children}</DisplaySettingsProvider>
+    </ActionProvider>
+  );
 }

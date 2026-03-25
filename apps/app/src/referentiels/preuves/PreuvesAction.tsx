@@ -81,7 +81,9 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
                     />
                     {(showComplementaires ||
                       (idx !== preuvesParDefinitionId.length - 1 &&
-                        !showComplementaires)) && <Divider className="mb-6" />}
+                        !showComplementaires)) && (
+                      <Divider className="mb-6 border-grey-3" />
+                    )}
                   </Fragment>
                 )
               );
@@ -104,7 +106,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
             className="flex items-center justify-between gap-4"
             data-test="preuve"
           >
-            <span className="text-sm text-primary-9 font-medium flex gap-2 items-center uppercase">
+            <span className="text-sm text-primary-9 font-bold flex gap-2 items-center uppercase max-w-80">
               Documents complémentaires
             </span>
 

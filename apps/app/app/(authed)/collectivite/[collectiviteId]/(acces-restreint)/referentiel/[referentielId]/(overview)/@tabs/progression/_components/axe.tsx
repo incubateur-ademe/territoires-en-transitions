@@ -7,7 +7,7 @@ import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { ActionType } from '@tet/domain/referentiels';
-import { AccordionControlled, AccordionType } from '@tet/ui';
+import { AccordionControlled } from '@tet/ui';
 
 export type TAxe = ActionListItem & {
   children?: TAxe[];
@@ -15,7 +15,11 @@ export type TAxe = ActionListItem & {
 
 type Props = {
   axe: TAxe;
-  accordionProps?: Omit<AccordionType, 'title' | 'content'>;
+  accordionProps?: {
+    containerClassname?: string;
+    headerClassname?: string;
+    arrowClassname?: string;
+  };
   showDescription?: boolean;
 };
 
@@ -47,7 +51,7 @@ const Axe = ({ axe, accordionProps, showDescription }: Props) => {
       headerClassname={classNames({ '!pb-4': isOpen })}
       expanded={isOpen}
       setExpanded={() => setIsOpened(!isOpen)}
-      headerContent={
+      additionalRightHeaderContent={
         <div className="flex items-center justify-between gap-3">
           <ScoreProgressBar
             id={axe.actionId}

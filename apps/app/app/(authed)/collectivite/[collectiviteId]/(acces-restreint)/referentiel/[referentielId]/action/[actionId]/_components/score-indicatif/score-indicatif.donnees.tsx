@@ -64,7 +64,7 @@ export const ScoreIndicatifDonnees = (props: ScoreIndicatifDonneesProps) => {
             isDownloadable={false}
           />
         }
-        headerContent={
+        additionalRightHeaderContent={
           indicateurURL ? (
             <Button
               className="mb-4"

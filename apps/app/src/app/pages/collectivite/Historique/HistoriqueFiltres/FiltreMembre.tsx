@@ -18,8 +18,9 @@ const FiltreMembre = ({ filters, setFilters }: TFiltreProps) => {
     }));
 
   return (
-    <Field title="Membre">
+    <Field title="Membre" small>
       <SelectFilter
+        small
         dataTest="filtre-membre"
         values={filters.modifiedBy ?? []}
         options={memberList}

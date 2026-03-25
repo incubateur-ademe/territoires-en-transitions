@@ -1,18 +1,24 @@
 'use client';
 
-import { AnchorButtonProps } from '@tet/ui';
 import React, {
+  ComponentType,
   createContext,
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useReducer,
+  useRef,
 } from 'react';
+
+export type SidePanelTitleProps = {
+  title?: string;
+};
 
 type Panel = {
   isPersistentWithNextPath?: (path: string) => boolean;
-  expand?: AnchorButtonProps;
   title?: string;
+  Title?: ComponentType<SidePanelTitleProps>;
   content?: React.ReactNode;
 };
 
@@ -29,11 +35,9 @@ export type PanelState = Panel & {
 
 type PanelContextType = {
   panel: PanelState;
-  setPanel: (
-    action: PanelAction,
-    onChangeCallback?: (type: PanelAction['type']) => void
-  ) => void;
+  setPanel: (action: PanelAction) => void;
   setTitle: (title: string) => void;
+  registerOnClose: (callback: (() => void) | undefined) => void;
 };
 
 const PanelContext = createContext<PanelContextType | undefined>(undefined);
@@ -61,32 +65,58 @@ export const SidePanelProvider = ({ children }: { children: ReactNode }) => {
     title: '',
   });
 
-  const setPanel = useCallback(
-    (
-      action: PanelAction,
-      onChangeCallback?: (type: PanelAction['type']) => void
-    ) => {
-      dispatch(action);
-      onChangeCallback?.(action.type);
-    },
-    []
-  );
-  const contextValue: PanelContextType = {
-    panel,
-    setPanel,
-    setTitle: (title: string) => {
-      dispatch({ type: 'setTitle', title });
-    },
-  };
+  const onCloseRegisteredCallback = useRef<(() => void) | undefined>(undefined);
+  const isOpenRef = useRef(false);
 
-  return <PanelContext value={contextValue}>{children}</PanelContext>;
+  const registerOnClose = useCallback((callback: (() => void) | undefined) => {
+    onCloseRegisteredCallback.current = callback;
+  }, []);
+
+  const setPanel = useCallback((action: PanelAction) => {
+    if (action.type === 'close' && isOpenRef.current) {
+      onCloseRegisteredCallback.current?.();
+    }
+    isOpenRef.current = action.type === 'open';
+    dispatch(action);
+  }, []);
+
+  const setTitle = useCallback((title: string) => {
+    dispatch({ type: 'setTitle', title });
+  }, []);
+
+  return (
+    <PanelContext value={{ panel, setPanel, setTitle, registerOnClose }}>
+      {children}
+    </PanelContext>
+  );
 };
 
-export const useSidePanel = (): PanelContextType => {
+type UseSidePanelOptions = {
+  onClose?: () => void;
+};
+
+type UseSidePanelReturn = {
+  panel: PanelState;
+  setPanel: (action: PanelAction) => void;
+  setTitle: (title: string) => void;
+};
+
+export const useSidePanel = (
+  options?: UseSidePanelOptions
+): UseSidePanelReturn => {
   const context = useContext(PanelContext);
   if (!context) {
     throw new Error('usePanel doit être utilisé dans PanelProvider');
   }
 
-  return context;
+  const { registerOnClose, ...rest } = context;
+
+  useEffect(() => {
+    if (options?.onClose) {
+      registerOnClose(options.onClose);
+      return () => registerOnClose(undefined);
+    }
+  }, [options?.onClose, registerOnClose]);
+
+  return rest;
 };

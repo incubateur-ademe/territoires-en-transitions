@@ -23,7 +23,7 @@ const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
   const collectivite = useCurrentCollectivite();
 
   return (
-    <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8">
+    <div className="grid grid-cols-1 gap-x-6 gap-y-8">
       {definitions?.map((definition) => (
         <IndicateurChartContainer
           key={definition.id}

@@ -1,11 +1,12 @@
 import classNames from 'classnames';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { useSearchParams } from 'next/navigation';
 import { JSX, useState } from 'react';
 
 import { referentielToName } from '@/app/app/labels';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { Button, Icon } from '@tet/ui';
+import { Badge, Button, Icon, Spacer } from '@tet/ui';
 import { HistoriqueType, THistoriqueItem } from './types';
 
 export type HistoriqueDescription = {
@@ -43,6 +44,7 @@ const Modification = ({
   pageLink,
 }: Props) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const searchParams = useSearchParams();
   const { modified_at, modified_by_nom, type, action_id } = historique;
   const referentielId =
     SHOW_REFERENTIEL.includes(type) &&
@@ -50,40 +52,63 @@ const Modification = ({
   const referentielNom = referentielId && referentielToName[referentielId];
   const modifiedAt = new Date(modified_at);
 
+  const pageLinkWithPanel = (() => {
+    if (!pageLink) return undefined;
+    const panel = searchParams.get('panel');
+    if (!panel) return pageLink;
+    const [pathname, hash] = pageLink.split('#');
+    return { pathname, query: { panel }, hash };
+  })();
+
   return (
-    <div data-test="item" className="flex flex-col gap-4 md:flex-row md:gap-6">
+    <div data-test="item">
       {/* DATE */}
-      <div className="pr-6 min-w-[11rem] md:border-r md:border-gray-200 flex items-start md:justify-end">
-        <span
-          className="py-1 px-2 text-sm uppercase whitespace-nowrap text-blue-600 bg-blue-100 rounded-md"
-          title={`à ${format(modifiedAt, 'HH:mm')}`}
-        >
-          {format(modifiedAt, 'dd MMMM yyyy', {
-            locale: fr,
-          })}
-        </span>
-      </div>
+      <Badge
+        variant="standard"
+        type="outlined"
+        size="xs"
+        title={format(modifiedAt, 'dd MMMM yyyy', { locale: fr })}
+      />
+      <Spacer height={1} />
       {/* MAIN */}
-      <div className="flex flex-col grow overflow-hidden md:flex-row">
+      <div className="">
         {/* ICON */}
-        <Icon size="lg" icon={icon} className="mr-4 mt-0.5 text-primary" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-baseline justify-start gap-2">
+            <Icon size="lg" icon={icon} className="text-primary-9" />
+            <p className="mb-2 font-bold text-primary-9">{nom}</p>
+          </div>
+
+          {!!pageLinkWithPanel && (
+            <Button
+              icon="arrow-right-line"
+              size="xs"
+              iconPosition="right"
+              variant="underlined"
+              className="text-primary-9 text-sm border-b-transparent"
+              href={pageLinkWithPanel}
+            >
+              {`Voir l'action`}
+            </Button>
+          )}
+        </div>
+
         {/* CONTENT */}
         <div className="flex flex-col grow overflow-hidden">
           {/* DESCRIPTION */}
           <div className="mb-4" data-test="desc">
-            <p className="mb-2 font-bold text-blue-600">{nom}</p>
-            <p className="mb-2">
+            <p className="mb-2 text-sm">
               <span className="text-gray-500">Par : </span>
               {modified_by_nom}
             </p>
             {referentielNom ? (
-              <p className="mb-2">
+              <p className="mb-2 text-sm">
                 <span className="text-gray-500">Référentiel : </span>
                 {referentielNom}
               </p>
             ) : null}
             {descriptions.map((desc) => (
-              <p key={desc.titre} className="mb-2 last:mb-0">
+              <p key={desc.titre} className="mb-2 last:mb-0 text-sm">
                 <span className="text-gray-500">{desc.titre} : </span>
                 {desc.description}
               </p>
@@ -92,14 +117,14 @@ const Modification = ({
           {/* DETAILS */}
           {detail && (
             <div
-              className="mb-4 border-t border-b border-gray-200"
+              className="mb-4 border-t border-b border-grey-3 text-sm"
               data-test={`detail-${isDetailsOpen ? 'on' : 'off'}`}
             >
               <button
                 onClick={() => setIsDetailsOpen(!isDetailsOpen)}
                 className="flex items-center w-full py-4 px-2"
               >
-                <div className="font-bold">
+                <div className="font-bold text-primary-9">
                   {isDetailsOpen ? 'Masquer le détail' : 'Afficher le détail'}
                 </div>
                 <Icon
@@ -114,18 +139,6 @@ const Modification = ({
                 <div className="max-w-full p-2 mb-4">{detail}</div>
               )}
             </div>
-          )}
-          {!!pageLink && (
-            <Button
-              className="ml-auto"
-              icon="arrow-right-line"
-              iconPosition="right"
-              size="sm"
-              variant="outlined"
-              href={pageLink}
-            >
-              Voir la page
-            </Button>
           )}
         </div>
       </div>

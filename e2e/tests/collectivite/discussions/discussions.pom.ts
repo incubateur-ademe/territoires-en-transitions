@@ -14,9 +14,9 @@ export class DiscussionsPom {
     this.commentsTabPanel = page.locator(
       '[data-test="ActionCommentsTabContent"]'
     );
-    this.discussionButton = page.locator(
-      '[data-test="ActionDiscussionsButton"]'
-    );
+    this.discussionButton = page.getByRole('button', {
+      name: 'Commentaires',
+    });
     this.commentItem = this.discussionPanel.getByText("aujourd'hui");
   }
 

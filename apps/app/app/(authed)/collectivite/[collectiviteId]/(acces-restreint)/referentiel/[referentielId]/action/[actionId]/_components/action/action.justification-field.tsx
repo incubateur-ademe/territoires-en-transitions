@@ -18,7 +18,6 @@ export const ActionJustificationField = ({
   actionId,
   title,
   hint,
-  fieldClassName,
   disabled,
 }: Props) => {
   const { collectiviteId, hasCollectivitePermission } =
@@ -28,7 +27,7 @@ export const ActionJustificationField = ({
   const initialValue = actionCommentaire?.commentaire;
 
   return (
-    <Field title={title} hint={hint} className={fieldClassName} key={actionId}>
+    <Field title={title} hint={hint} key={actionId}>
       <RichTextEditor
         dataTest={`action-${actionId}-commentaire-editor`}
         className="[&_.bn-block-content]:py-0 [&_.bn-inline-content]:text-sm [&_.bn-inline-content]:leading-[1.25rem]"

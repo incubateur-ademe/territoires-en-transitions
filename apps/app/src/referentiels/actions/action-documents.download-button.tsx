@@ -49,7 +49,6 @@ export const DownloadDocs = ({ action, className }: TDownloadDocsProps) => {
       icon="download-line"
       disabled={isFetching || !refetch}
       onClick={refetch ? () => refetch() : undefined}
-      variant="outlined"
       size="xs"
       className={className}
     >

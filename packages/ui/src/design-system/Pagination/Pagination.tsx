@@ -1,8 +1,10 @@
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from '../Button';
 import PaginationPageButton from './PaginationPageButton';
 import { calculatePaginationArray } from './utils';
+
+const COMPACT_BREAKPOINT = 992;
 
 type PaginationProps = {
   /** Page sélectionnée */
@@ -15,7 +17,7 @@ type PaginationProps = {
   idToScrollTo?: string;
   /** Détecte le changement de page sélectionnée */
   onChange?: (selectedPage: number) => void;
-  /** Format réduit */
+  /** Force le format compact (sinon détecté automatiquement via la largeur du container) */
   small?: boolean;
   /** Classnames custom */
   className?: string;
@@ -30,78 +32,60 @@ export const Pagination = ({
   maxElementsPerPage,
   idToScrollTo,
   onChange,
-  small = false,
+  small,
   className,
 }: PaginationProps) => {
-  const [nbOfPages, setNbOfPages] = useState(
-    Math.ceil(nbOfElements / maxElementsPerPage)
+  const containerRef = useRef<HTMLElement>(null);
+  const [containerIsNarrow, setContainerIsNarrow] = useState(false);
+
+  const isCompact = small ?? containerIsNarrow;
+  const nbOfPages = Math.ceil(nbOfElements / maxElementsPerPage);
+
+  const pageButtons = calculatePaginationArray({
+    isCompact,
+    nbOfPages,
+    currentPage: selectedPage,
+  });
+
+  const handleChangePage = useCallback(
+    (page: number): void => {
+      onChange?.(page);
+      if (idToScrollTo) {
+        document.getElementById(idToScrollTo)?.scrollIntoView();
+      }
+    },
+    [onChange, idToScrollTo]
   );
-  const [pageButtons, setPageButtons] = useState<(number | undefined)[]>([]);
-  const [currentPage, setCurrentPage] = useState(selectedPage);
-  const [windowWidth, setWindowWidth] = useState<number>(0);
-  const [isMobile, setIsMobile] = useState(false);
 
-  const handleChangePage = (page: number) => {
-    setCurrentPage(page);
-    onChange?.(page);
-    if (idToScrollTo) {
-      document.getElementById(idToScrollTo)?.scrollIntoView();
-    }
-  };
-
-  // Détecte la largeur de page
   useEffect(() => {
-    setWindowWidth(window.innerWidth);
+    if (small !== undefined) return;
 
-    window.addEventListener('resize', () => setWindowWidth(window.innerWidth));
-    return () =>
-      window.removeEventListener('resize', () =>
-        setWindowWidth(window.innerWidth)
-      );
-  }, []);
+    const container = containerRef.current;
+    if (!container) return;
 
-  // Détecte le changement de largeur de la page
-  useEffect(() => {
-    if (windowWidth < 992) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  }, [windowWidth]);
-
-  // Détecte le changement de page sélectionnée en props
-  useEffect(() => {
-    setCurrentPage(selectedPage);
-  }, [selectedPage]);
-
-  // Détecte les changement nécessitant le recalcul des boutons
-  useEffect(() => {
-    const paginationArray = calculatePaginationArray({
-      isMobile,
-      nbOfPages,
-      currentPage,
-      small,
+    const observer = new ResizeObserver((entries) => {
+      const width = entries[0]?.contentRect.width ?? 0;
+      setContainerIsNarrow(width < COMPACT_BREAKPOINT);
     });
 
-    setPageButtons(paginationArray);
-  }, [currentPage, nbOfPages, isMobile]);
-
-  // Détecte un changement du nombre de pages
-  useEffect(() => {
-    setNbOfPages(Math.ceil(nbOfElements / maxElementsPerPage));
-  }, [nbOfElements, maxElementsPerPage]);
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [small]);
 
   return nbOfElements > maxElementsPerPage ? (
-    <nav className={classNames('flex w-fit gap-6', className)}>
+    <nav
+      ref={containerRef}
+      className={classNames('flex w-fit gap-6', className)}
+    >
       <Button
         icon="arrow-left-s-line"
         variant="outlined"
         size="xs"
         title="Page précédente"
-        onClick={() => handleChangePage(currentPage - 1)}
-        disabled={currentPage === 1}
+        onClick={() => handleChangePage(selectedPage - 1)}
+        disabled={selectedPage === 1}
       >
-        {!isMobile && 'Précédent'}
+        {!isCompact && 'Précédent'}
       </Button>
 
       <div className="flex gap-3">
@@ -109,7 +93,7 @@ export const Pagination = ({
           <PaginationPageButton
             key={i}
             pageNumber={pageNum}
-            isSelected={currentPage === pageNum}
+            isSelected={selectedPage === pageNum}
             onClick={() => !!pageNum && handleChangePage(pageNum)}
           />
         ))}
@@ -121,10 +105,10 @@ export const Pagination = ({
         variant="outlined"
         size="xs"
         title="Page suivante"
-        onClick={() => handleChangePage(currentPage + 1)}
-        disabled={currentPage === nbOfPages}
+        onClick={() => handleChangePage(selectedPage + 1)}
+        disabled={selectedPage === nbOfPages}
       >
-        {!isMobile && 'Suivant'}
+        {!isCompact && 'Suivant'}
       </Button>
     </nav>
   ) : null;

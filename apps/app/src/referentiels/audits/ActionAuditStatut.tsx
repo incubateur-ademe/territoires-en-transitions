@@ -75,7 +75,6 @@ const ActionAuditStatut = (props: TActionAuditStatutProps) => {
 
   return audit && auditStatut ? (
     <>
-      <div className="w-[0.5px] h-5 bg-grey-5 max-sm:hidden lg:hidden" />
       <ActionAuditStatutBase
         auditStatut={auditStatut}
         readonly={!isAuditeur || audit?.valide}

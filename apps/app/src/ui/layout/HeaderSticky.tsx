@@ -1,4 +1,11 @@
-import { Ref, useEffect, useRef, useState } from 'react';
+import {
+  Ref,
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 type Props = {
   render: ({ isSticky }: { isSticky: boolean }) => React.ReactNode;
@@ -7,8 +14,41 @@ type Props = {
 export const Z_INDEX_ABOVE_STICKY_HEADER = 50;
 export const Z_INDEX_STICKY_HEADER = 40;
 
+const StickyHeaderHeightContext = createContext<{
+  height: number;
+  setContentRef: (node: HTMLDivElement | null) => void;
+}>({ height: 0, setContentRef: () => {} });
+
+export function useStickyHeaderHeight(): number {
+  return useContext(StickyHeaderHeightContext).height;
+}
+
+export function StickyHeaderHeightProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}): React.ReactNode {
+  const [contentRef, setContentRef] = useState<HTMLDivElement | null>(null);
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    if (!contentRef) return;
+    const observer = new ResizeObserver(([entry]) => {
+      setHeight(entry.contentRect.height);
+    });
+    observer.observe(contentRef);
+    return () => observer.disconnect();
+  }, [contentRef]);
+
+  return (
+    <StickyHeaderHeightContext.Provider value={{ height, setContentRef }}>
+      {children}
+    </StickyHeaderHeightContext.Provider>
+  );
+}
+
 /**
- * Rend le header d'une page sticky et permet de réduire les éléments
+ * Rend le header d’une page sticky et permet de réduire les éléments
  * en exposant un booléen `isSticky` quand le header passe en mode fixe.
  *
  * Le contenu à afficher doit être rendu avec la propriété `render` dans laquelle est exposée `isSticky`
@@ -17,6 +57,7 @@ export const Z_INDEX_STICKY_HEADER = 40;
  * */
 const HeaderSticky = ({ render }: Props) => {
   const headerRef: Ref<HTMLDivElement> = useRef(null);
+  const { setContentRef } = useContext(StickyHeaderHeightContext);
 
   const [isSticky, setIsSticky] = useState(false);
 
@@ -52,16 +93,18 @@ const HeaderSticky = ({ render }: Props) => {
   }, []);
 
   /**
-   * pointer-event est set pour permettre l'interaction avec les éléments sous la div qui a la taille originale.
-   * Il est possible d'améliorer cela mais cela demande pas mal d'efforts, à voir plus tard si nécessaire.
+   * pointer-event est set pour permettre l’interaction avec les éléments sous la div qui a la taille originale.
+   * Il est possible d’améliorer cela mais cela demande pas mal d’efforts, à voir plus tard si nécessaire.
    */
   return (
     <div
       ref={headerRef}
-      style={{ minHeight: `${originalHeight}px` }}
+      style={{ minHeight: isSticky ? `${originalHeight}px` : 'auto' }}
       className={`sticky top-0 z-${Z_INDEX_STICKY_HEADER} pointer-events-none`}
     >
-      <div className="pointer-events-auto">{render({ isSticky })}</div>
+      <div ref={setContentRef} className="pointer-events-auto">
+        {render({ isSticky })}
+      </div>
     </div>
   );
 };

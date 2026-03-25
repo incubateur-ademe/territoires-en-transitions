@@ -62,6 +62,6 @@ export class FilterDiscussionsPom {
     const subAction = this.page.locator(
       `[data-test="SousAction-${actionId}"] div`
     );
-    subAction.locator('button').filter({ hasText: 'commentaires' }).click();
+    await subAction.locator('button').filter({ hasText: 'commentaire' }).click();
   }
 }

@@ -7,6 +7,7 @@ import {
   setUserCollectiviteRole,
   TestUserArgs,
 } from '@tet/backend/users/users/users.test-fixture';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { CollectiviteRole, Dcp } from '@tet/domain/users';
 import { TRPCClient } from '@trpc/client';
 import assert from 'assert';
@@ -52,6 +53,21 @@ export class UserFixture {
   getTrpcClient(): TRPCClient<AppRouter> {
     assert(this.trpcClient, 'User is not authenticated');
     return this.trpcClient;
+  }
+
+  /**
+   * Force le calcul synchrone du snapshot courant d'un référentiel, pour
+   * garantir que la page des scores aura ses données disponibles dès le
+   * premier rendu (sinon le calcul lazy côté backend rend le test flaky).
+   */
+  async precomputeReferentielSnapshot(
+    collectiviteId: number,
+    referentielId: ReferentielId
+  ): Promise<void> {
+    await this.getTrpcClient().referentiels.snapshots.getCurrent.query({
+      collectiviteId,
+      referentielId,
+    });
   }
 }
 

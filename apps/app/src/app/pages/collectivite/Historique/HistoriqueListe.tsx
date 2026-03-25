@@ -15,7 +15,13 @@ import { useHistoriqueItemListe } from './useHistoriqueItemListe';
 /**
  * Affiche l'historique des modifications
  */
-export const HistoriqueListe = ({ actionId }: { actionId?: string }) => {
+export const HistoriqueListe = ({
+  actionId,
+  small,
+}: {
+  actionId?: string;
+  small?: boolean;
+}) => {
   const tracker = useEventTracker();
   const { items, total, filters, setFilters, isLoading } =
     useHistoriqueItemListe({ actionId });
@@ -41,6 +47,7 @@ export const HistoriqueListe = ({ actionId }: { actionId?: string }) => {
           tracker(Event.paginationClick);
         }}
         idToScrollTo="filtres-historique"
+        small={small}
       />
     </>
   );
@@ -60,7 +67,9 @@ const Content = ({
   }
   if (total === 0) {
     return (
-      <span data-test="empty_history">Aucun historique de modification</span>
+      <span className="text-sm text-grey-6" data-test="empty_history">
+        Aucun historique de modification
+      </span>
     );
   }
   return items.map((item) => {

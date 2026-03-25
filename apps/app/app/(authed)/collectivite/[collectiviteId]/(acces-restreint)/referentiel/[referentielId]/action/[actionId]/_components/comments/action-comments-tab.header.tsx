@@ -1,3 +1,4 @@
+import { pluralizeLabel } from '../pluralize';
 import { DiscussionOrderBy, DiscussionStatus } from '@tet/domain/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import {
@@ -43,7 +44,7 @@ const ActionCommentsTabHeader = ({
           <div className="flex items-center gap-2 w-full justify-end">
             <span className="text-grey-8 text-xs">
               {commentsCount ?? 0}{' '}
-              {`commentaire${(commentsCount ?? 0) > 1 ? 's' : ''}`}
+              {pluralizeLabel(commentsCount, 'commentaire')}
             </span>
             <div className="">
               <StatusSelect
@@ -69,4 +70,3 @@ const ActionCommentsTabHeader = ({
 };
 
 export default ActionCommentsTabHeader;
-

@@ -207,7 +207,7 @@ export const SubActionStatutDropdown = ({ actionDefinition }: Props) => {
       {/* Dropdown + bouton crayon pour ouvrir la modale détaillée */}
       <div
         onClick={(evt) => evt.stopPropagation()}
-        className="flex items-center gap-2"
+        className="flex items-center gap-2 mr-2"
       >
         <SelectActionStatut
           items={filteredStatutItems}
@@ -232,7 +232,6 @@ export const SubActionStatutDropdown = ({ actionDefinition }: Props) => {
           />
         )}
       </div>
-
       {/* Modale de détail de la sous-action (liste des tâches + jaude de score détaillé) */}
       {openSubActionModal && (
         <div onClick={(evt) => evt.stopPropagation()}>

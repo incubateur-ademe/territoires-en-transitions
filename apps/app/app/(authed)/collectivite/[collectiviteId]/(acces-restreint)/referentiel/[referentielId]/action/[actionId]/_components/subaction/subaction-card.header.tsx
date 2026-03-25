@@ -4,23 +4,56 @@ import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import Markdown from '@/app/ui/Markdown';
 import { ActionTypeEnum } from '@tet/domain/referentiels';
-import { Icon, InfoTooltip } from '@tet/ui';
+import { cn, Icon, InfoTooltip, VisibleWhen } from '@tet/ui';
+import { ReactNode } from 'react';
+
+type ExpandCollapseButtonProps = {
+  isExpanded: boolean;
+  onClick?: () => void;
+  'aria-label'?: string;
+};
+
+const ExpandCollapseButton = ({
+  isExpanded,
+  onClick,
+  'aria-label': ariaLabel,
+}: ExpandCollapseButtonProps): ReactNode => (
+  <button
+    type="button"
+    onClick={onClick}
+    aria-expanded={isExpanded}
+    aria-label={ariaLabel}
+    className={cn(
+      'transition-transform flex items-center justify-center cursor-pointer',
+      {
+        'rotate-90': isExpanded,
+      }
+    )}
+  >
+    <Icon icon="arrow-right-s-line" size="lg" />
+  </button>
+);
 
 type Props = {
   subAction: ActionDefinitionSummary;
   shouldDisplayProgressBar?: boolean;
   hideStatus?: boolean;
   isExpanded?: boolean;
+  toggleExpand?: () => void;
+  actions?: ReactNode[];
 };
 
 export const SubactionCardHeader = ({
   subAction,
   shouldDisplayProgressBar = true,
   hideStatus = false,
-  isExpanded = false,
+  isExpanded,
+  toggleExpand,
+  actions,
 }: Props) => {
   const isSubAction = subAction.type === ActionTypeEnum.SOUS_ACTION;
 
+  const taskCanBeExpanded = isSubAction && isExpanded !== undefined;
   return (
     <div
       className="flex flex-col gap-2"
@@ -30,40 +63,46 @@ export const SubactionCardHeader = ({
         <div className="flex flex-wrap gap-2">
           {/* Statut */}
           {!hideStatus && (
-            <div className="mt-auto w-full flex max-sm:flex-col gap-3 sm:items-center justify-start">
-              {isSubAction && (
-                <div
-                  data-test={`SousActionHeader-${subAction.identifiant}-expand`}
-                >
-                  <Icon
-                    icon={
-                      isExpanded ? 'arrow-down-s-line' : 'arrow-right-s-line'
-                    }
-                    size="lg"
+            <div className="mt-auto w-full flex max-sm:flex-col sm:items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2">
+                <VisibleWhen condition={taskCanBeExpanded}>
+                  <ExpandCollapseButton
+                    isExpanded={!!isExpanded}
+                    onClick={toggleExpand}
+                    aria-label={`Déplier la sous-action ${subAction.identifiant}`}
                   />
-                </div>
-              )}
-              <SubActionStatutDropdown actionDefinition={subAction} />
+                </VisibleWhen>
+                <div className="flex items-center">
+                  <SubActionStatutDropdown actionDefinition={subAction} />
 
-              {isSubAction && (
-                <div className="shrink-0 flex">
-                  <ScoreRatioBadge actionId={subAction.id} size="xs" />
+                  {isSubAction && (
+                    <div className="shrink-0 flex">
+                      <ScoreRatioBadge actionId={subAction.id} size="xs" />
+                    </div>
+                  )}
                 </div>
-              )}
-
-              {shouldDisplayProgressBar && (
-                <ScoreProgressBar
-                  id={subAction.id}
-                  identifiant={subAction.identifiant}
-                  type={subAction.type}
-                  className="w-80"
-                  displayDoneValue={subAction.type === ActionTypeEnum.TACHE}
-                  valuePosition="left"
-                />
+              </div>
+              {actions && actions.length > 0 && (
+                <div
+                  className="justify-self-end flex gap-2"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {actions}
+                </div>
               )}
             </div>
           )}
         </div>
+      )}
+      {shouldDisplayProgressBar && (
+        <ScoreProgressBar
+          id={subAction.id}
+          identifiant={subAction.identifiant}
+          type={subAction.type}
+          className="w-full"
+          displayDoneValue={subAction.type === ActionTypeEnum.TACHE}
+          valuePosition="left"
+        />
       )}
 
       {/* Identifiant et nom de l'action + infos additionnelles */}

@@ -9,15 +9,14 @@ type Props = {
 
 export const Score = ({ actionDefinition }: Props) => {
   return (
-    <div className="flex gap-3 items-center flex-wrap text-grey-8 shrink-0">
-      <ScoreRatioBadge actionId={actionDefinition.id} size="xs" />
-
+    <div className="flex gap-3 items-center flex-wrap text-grey-8 min-w-0">
       <ScoreProgressBar
         id={actionDefinition.id}
         identifiant={actionDefinition.identifiant}
         type={actionDefinition.type}
-        className="w-80"
+        className="w-80 hidden md:block"
       />
+      <ScoreRatioBadge actionId={actionDefinition.id} size="xs" />
 
       {actionDefinition.haveQuestions && (
         <>
