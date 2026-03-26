@@ -1,7 +1,9 @@
-import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { getIdentifiantFromActionId } from '@tet/domain/referentiels';
+import {
+  getIdentifiantFromActionId,
+  StatutAvancementEnum,
+} from '@tet/domain/referentiels';
 import { Divider } from '@tet/ui';
 import { useState } from 'react';
 import { ActionJustificationField } from '../action/action.justification-field';
@@ -10,32 +12,31 @@ import SubactionCardActions from '../subaction/subaction-card.actions';
 import { SubactionCardHeader } from '../subaction/subaction-card.header';
 
 type Props = {
-  task: ActionDefinitionSummary;
-  hideStatus: boolean;
+  task: ActionListItem;
   showJustifications: boolean;
 };
 
-const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
+const TaskCard = ({ task, showJustifications }: Props) => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
   const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
 
   const [openDetailledModal, setOpenDetailledModal] = useState(false);
 
-  const { statut } = useActionStatut(task.id);
-  const { avancement, concerne } = statut || {};
+  const { statut, concerne } = task.score;
 
-  const isDetailled = avancement === 'detaille';
+  const isDetailled = statut === StatutAvancementEnum.DETAILLE;
   const shouldDisplayProgressBar = concerne === true && isDetailled;
 
   return (
     <div
-      data-test={`Tache-${getIdentifiantFromActionId(task.id) || task.id}`}
+      data-test={`Tache-${
+        getIdentifiantFromActionId(task.actionId) || task.actionId
+      }`}
       className="flex flex-col gap-2 bg-grey-1 border border-grey-3 rounded-lg p-4"
     >
       {/* En-tête */}
       <SubactionCardHeader
         subAction={task}
-        hideStatus={hideStatus}
         shouldDisplayProgressBar={shouldDisplayProgressBar}
         openDetailledState={{
           isOpen: openDetailledModal,
@@ -44,16 +45,16 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
       />
 
       {/* Informations sur les scores indicatifs */}
-      <ScoreIndicatifLibelle actionId={task.id} />
+      <ScoreIndicatifLibelle actionId={task.actionId} />
 
-      {canEditReferentiel && (isDetailled || task.haveScoreIndicatif) && (
+      {canEditReferentiel && (isDetailled || task.scoreIndicatif) && (
         <Divider />
       )}
 
       {/* Actions */}
       <SubactionCardActions
-        actionId={task.id}
-        haveScoreIndicatif={task.haveScoreIndicatif}
+        actionId={task.actionId}
+        haveScoreIndicatif={Boolean(task.scoreIndicatif)}
         isDetailled={isDetailled}
         setOpenDetailledModal={setOpenDetailledModal}
       />
@@ -61,12 +62,11 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
       {/* Ajout de commentaire */}
       {showJustifications && (
         <>
-          {canEditReferentiel && (isDetailled || task.haveScoreIndicatif) && (
-            <Divider />
-          )}
+          {canEditReferentiel &&
+            (isDetailled || Boolean(task.scoreIndicatif)) && <Divider />}
 
           <ActionJustificationField
-            actionId={task.id}
+            actionId={task.actionId}
             placeholder="Ce champ est facultatif, il ne sera pas considéré lors de l’audit"
           />
         </>

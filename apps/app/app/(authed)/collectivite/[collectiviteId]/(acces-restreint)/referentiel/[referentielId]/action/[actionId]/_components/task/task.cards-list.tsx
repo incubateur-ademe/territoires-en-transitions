@@ -1,17 +1,12 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
-import { Checkbox } from '@tet/ui';
+import { useListActions } from '@/app/referentiels/actions/use-list-actions';
+import { ActionId } from '@tet/domain/referentiels';
 import classNames from 'classnames';
-import { JSX, useEffect, useState } from 'react';
-import { ActionJustificationField } from '../action/action.justification-field';
+import { JSX } from 'react';
 import TaskCard from './task-card';
 
 type TasksListProps = {
-  subActionId?: string;
-  tasks: ActionDefinitionSummary[];
-  hideStatus?: boolean;
-  displayJustificationCheckbox?: boolean;
+  taskIds: ActionId[];
   shouldShowJustifications?: boolean;
-  setShouldShowJustifications?: (value: boolean) => void;
   className?: string;
 };
 
@@ -20,54 +15,20 @@ type TasksListProps = {
  */
 
 const TaskCardsList = ({
-  subActionId,
-  tasks,
-  hideStatus = false,
-  displayJustificationCheckbox = false,
-  shouldShowJustifications,
-  setShouldShowJustifications,
+  taskIds,
+  shouldShowJustifications = true,
   className,
 }: TasksListProps): JSX.Element => {
-  const [showJustifications, setShowJustififcations] = useState(
-    shouldShowJustifications ?? true
-  );
-
-  useEffect(() => {
-    setShowJustififcations(shouldShowJustifications ?? true);
-  }, [shouldShowJustifications]);
+  const { data: tasks = [] } = useListActions({ actionIds: taskIds });
 
   return (
     <div>
-      {displayJustificationCheckbox && (
-        <Checkbox
-          variant="switch"
-          label="Afficher l’état d’avancement"
-          labelClassname="text-grey-7"
-          containerClassname="mb-6"
-          checked={showJustifications}
-          onChange={(evt) => {
-            setShowJustififcations(evt.currentTarget.checked);
-            setShouldShowJustifications?.(evt.currentTarget.checked);
-          }}
-        />
-      )}
-
-      {showJustifications && subActionId && (
-        <ActionJustificationField
-          actionId={subActionId}
-          title="Explications sur l'état d'avancement :"
-          className="min-h-20"
-          fieldClassName="min-h-20 mb-4"
-        />
-      )}
-
       <div className={classNames('flex flex-col gap-4', className)}>
         {tasks.map((task) => (
           <TaskCard
-            key={task.id}
+            key={task.actionId}
             task={task}
-            hideStatus={hideStatus}
-            showJustifications={showJustifications}
+            showJustifications={shouldShowJustifications}
           />
         ))}
       </div>

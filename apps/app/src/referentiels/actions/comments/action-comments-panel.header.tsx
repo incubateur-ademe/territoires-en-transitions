@@ -1,24 +1,24 @@
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { DiscussionOrderBy, DiscussionStatus } from '@tet/domain/collectivites';
-import { ReferentielId } from '@tet/domain/referentiels';
 import {
   ActionSelect,
   OrderBySelect,
   StatusSelect,
-  type Option,
 } from './action-comments-filters';
 import ActionCommentNew from './action-comments.new';
+import { ReferentielId } from '@tet/domain/referentiels';
 
 type Props = {
   selectedOrderBy: DiscussionOrderBy;
   onOrderByChange: (value: DiscussionOrderBy) => void;
   selectedStatus: DiscussionStatus;
   onStatusChange: (value: DiscussionStatus) => void;
-  selectedAction?: string;
+  selectedAction?: Pick<ActionListItem, 'actionId' | 'actionType'>;
   onActionChange: (value: string | undefined) => void;
-  actionsOptions: Option[];
   canCreateDiscussion: boolean;
   parentActionId?: string;
   referentielId: ReferentielId;
+  collectiviteId: number;
 };
 
 const ActionCommentsPanelHeader = ({
@@ -28,10 +28,10 @@ const ActionCommentsPanelHeader = ({
   onStatusChange,
   selectedAction,
   onActionChange,
-  actionsOptions,
   canCreateDiscussion,
   parentActionId,
   referentielId,
+  collectiviteId,
 }: Props) => {
   return (
     <div className="bg-white sticky top-0 z-10">
@@ -49,18 +49,18 @@ const ActionCommentsPanelHeader = ({
         <ActionSelect
           selectedAction={selectedAction}
           onActionChange={onActionChange}
-          actionsOptions={actionsOptions}
-          referentielId={referentielId}
           placeholder="Sélectionner ou rédiger un commentaire sur la mesure"
           indentSubActions={false}
+          referentielId={referentielId}
+          collectiviteId={collectiviteId}
         />
 
         {canCreateDiscussion && (selectedAction || parentActionId) && (
           <ActionCommentNew
             actionId={
-              parentActionId && (selectedAction === 'all' || !selectedAction)
+              parentActionId && !selectedAction
                 ? parentActionId
-                : selectedAction || ''
+                : selectedAction?.actionId || ''
             }
             disabledInput={!selectedAction}
           />

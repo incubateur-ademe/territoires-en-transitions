@@ -4,10 +4,10 @@ import BarChartCardWithSubrows, {
   TBarChartScoreTable,
 } from '@/app/ui/charts/old/BarChartCardWithSubrows';
 import { ReferentielId } from '@tet/domain/referentiels';
-import { TableOptions } from 'react-table';
-import { ProgressionRow } from '../../DEPRECATED_scores.types';
-import { getFormattedScore } from '../utils';
 import { JSX } from 'react';
+import { TableOptions } from 'react-table';
+import { ActionDetailed } from '../../use-snapshot';
+import { getFormattedScore } from '../utils';
 
 // Définition des couleurs des graphes
 const customColors = {
@@ -40,7 +40,7 @@ const legend = [
 
 type ProgressionReferentielProps = {
   score: Pick<
-    TableOptions<ProgressionRow>,
+    TableOptions<ActionDetailed>,
     'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
   >;
   referentiel: ReferentielId;
@@ -87,12 +87,7 @@ const ProgressionReferentiel = ({
         additionalInfo: true,
       }}
       getFormattedScore={(scoreData, indexBy, percentage, customColors) =>
-        getFormattedScore(
-          scoreData as readonly ProgressionRow[],
-          indexBy,
-          percentage,
-          customColors
-        )
+        getFormattedScore(scoreData, indexBy, percentage, customColors)
       }
       customStyle={customStyle}
     />

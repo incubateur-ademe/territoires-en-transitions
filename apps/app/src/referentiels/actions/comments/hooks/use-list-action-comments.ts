@@ -1,42 +1,46 @@
-import {
-  canCreateDiscussion,
-  isSousMesure,
-  sortDiscussions,
-} from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
+import { sortDiscussions } from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
+import { useListActionsGroupedById } from '@/app/referentiels/actions/use-list-actions-grouped-by-id';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   DiscussionOrderBy,
   DiscussionStatus,
   discussionStatus,
 } from '@tet/domain/collectivites';
-import { ReferentielId } from '@tet/domain/referentiels';
+import { ActionTypeEnum, ReferentielId } from '@tet/domain/referentiels';
 import { useEffect, useMemo, useState } from 'react';
 import { useListDiscussions } from './use-list-discussions';
 
 type UseCommentsContentProps = {
-  parentActionId?: string;
-  actionId?: string;
-  referentielId: ReferentielId;
-  actionsAndSubActionsTitleList: {
-    actionId: string;
-    identifiant: string;
-    nom: string;
-  }[];
+  action?: ActionListItem;
   updateTitlePanel?: (title: string) => void;
   selectedOrderBy: DiscussionOrderBy;
+  referentielId: ReferentielId;
+  collectiviteId: number;
 };
 
-export const useCommentsContent = ({
-  parentActionId,
-  actionId,
-  referentielId,
-  actionsAndSubActionsTitleList,
+export const useListActionComments = ({
+  action,
   updateTitlePanel,
   selectedOrderBy,
+  referentielId,
+  collectiviteId,
 }: UseCommentsContentProps) => {
-  const [selectedAction, setSelectedAction] = useState<string | undefined>(
-    actionId !== undefined ? actionId : 'all'
+  const [{ data: actions }] = useListActionsGroupedById({
+    referentielIds: [referentielId],
+    collectiviteId,
+  });
+
+  const [selectedActionId, setSelectedActionId] = useState<string | undefined>(
+    action !== undefined ? action.actionId : 'all'
   );
+
+  const selectedAction = useMemo(() => {
+    return actions && selectedActionId && selectedActionId !== 'all'
+      ? actions[selectedActionId]
+      : undefined;
+  }, [actions, selectedActionId]);
+
   const [selectedStatus, setSelectedStatus] = useState<DiscussionStatus>(
     discussionStatus.OUVERT
   );
@@ -47,25 +51,20 @@ export const useCommentsContent = ({
 
   const { data: discussions, isPending } = useListDiscussions(referentielId, {
     actionId:
-      actionId && isSousMesure(actionId, referentielId)
-        ? parentActionId
-        : actionId,
+      selectedActionId === 'all'
+        ? undefined
+        : selectedActionId !== undefined &&
+          action &&
+          action.actionType === ActionTypeEnum.SOUS_ACTION
+        ? action.parentId ?? undefined
+        : selectedActionId,
   });
 
-  const currentCollectivite = useCurrentCollectivite();
-
-  const options = useMemo(() => {
-    const options = actionsAndSubActionsTitleList.map((action) => ({
-      label: `${action.identifiant} ${action.nom}`,
-      value: action.actionId,
-    }));
-
-    return options;
-  }, [actionsAndSubActionsTitleList]);
+  const { hasCollectivitePermission } = useCurrentCollectivite();
 
   const handleActionChange = (value: string | undefined) => {
     if (value !== undefined) {
-      setSelectedAction(value);
+      setSelectedActionId(value);
     }
   };
 
@@ -73,15 +72,15 @@ export const useCommentsContent = ({
     return (
       discussions?.discussions.filter(
         (discussion) =>
-          (selectedAction === 'all' ||
-            (selectedAction !== undefined &&
-              discussion.actionId.startsWith(selectedAction))) &&
+          (selectedActionId === 'all' ||
+            (selectedActionId !== undefined &&
+              discussion.actionId.startsWith(selectedActionId))) &&
           (selectedStatus === 'all'
             ? true
             : discussion.status === selectedStatus)
       ) ?? []
     );
-  }, [discussions, selectedAction, selectedStatus]);
+  }, [discussions, selectedActionId, selectedStatus]);
 
   const displayedDiscussions = useMemo(() => {
     return sortDiscussions(selectedOrderByState, filteredDiscussions);
@@ -103,26 +102,28 @@ export const useCommentsContent = ({
 
   // Set selected action based on actionId
   useEffect(() => {
-    if (actionId === undefined) {
-      setSelectedAction('all');
+    if (action === undefined) {
+      setSelectedActionId('all');
     } else {
-      setSelectedAction(actionId);
+      setSelectedActionId(action.actionId);
     }
-  }, [actionId]);
+  }, [action]);
 
   return {
+    discussions,
+    selectedActionId,
     selectedAction,
     selectedStatus,
     setSelectedStatus,
     selectedOrderBy: selectedOrderByState,
     handleOrderByChange,
     commentsCount,
-    options,
     handleActionChange,
     displayedDiscussions,
     isPending,
-    canCreateDiscussion: canCreateDiscussion(currentCollectivite),
-    currentCollectivite,
+    canCreateDiscussion: hasCollectivitePermission(
+      'referentiels.discussions.mutate'
+    ),
     setSelectedOrderBy,
   };
 };

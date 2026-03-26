@@ -1,30 +1,28 @@
 import { avancementToLabel } from '@/app/app/labels';
 import { actionAvancementColors } from '@/app/app/theme';
 import ProgressBarWithTooltip from '@/app/referentiels/scores/progress-bar-with-tooltip';
-import { ActionType } from '@tet/domain/referentiels';
-import { useGetActionScore } from '../use-get-action-score';
+import { ActionTypeEnum } from '@tet/domain/referentiels';
+import { ActionListItem } from '../actions/use-list-actions';
 
 type ScoreProgressBarProps = {
   className?: string;
   displayDoneValue?: boolean;
   valuePosition?: 'left' | 'right';
-  id: string;
-  identifiant: string;
-  type: ActionType;
-  externalCollectiviteId?: number;
+  action?: ActionListItem;
 };
 
 export function ScoreProgressBar({
-  id,
-  identifiant,
-  type,
+  action,
   className,
   displayDoneValue = false,
   valuePosition,
-  externalCollectiviteId,
 }: ScoreProgressBarProps) {
-  const score = useGetActionScore({ actionId: id, externalCollectiviteId });
-  const isReglementaire = identifiant.split('.').includes('0');
+  if (!action) {
+    return null;
+  }
+
+  const score = action.score;
+  const isReglementaire = action.identifiant.split('.').includes('0');
 
   if (
     score === undefined ||
@@ -34,11 +32,13 @@ export function ScoreProgressBar({
     return null;
   }
 
+  const isTache = action.actionType === ActionTypeEnum.TACHE;
+
   const progressScore = [
     {
       label: avancementToLabel.fait,
       value:
-        type === 'tache' || isReglementaire
+        isTache || isReglementaire
           ? score.faitTachesAvancement
           : score.pointFait,
       color: actionAvancementColors.fait,
@@ -46,7 +46,7 @@ export function ScoreProgressBar({
     {
       label: avancementToLabel.programme,
       value:
-        type === 'tache' || isReglementaire
+        isTache || isReglementaire
           ? score.programmeTachesAvancement
           : score.pointProgramme,
       color: actionAvancementColors.programme,
@@ -54,7 +54,7 @@ export function ScoreProgressBar({
     {
       label: avancementToLabel.pas_fait,
       value:
-        type === 'tache' || isReglementaire
+        isTache || isReglementaire
           ? score.pasFaitTachesAvancement
           : score.pointPasFait,
       color: actionAvancementColors.pas_fait,
@@ -76,7 +76,7 @@ export function ScoreProgressBar({
       }}
       valueToDisplay={displayDoneValue ? avancementToLabel.fait : undefined}
       valuePosition={valuePosition}
-      percent={type === 'tache'}
+      percent={isTache}
       className={className}
     />
   );

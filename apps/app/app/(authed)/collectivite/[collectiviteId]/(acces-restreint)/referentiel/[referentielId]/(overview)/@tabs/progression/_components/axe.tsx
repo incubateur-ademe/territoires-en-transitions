@@ -3,10 +3,10 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 import { ActionCard } from '@/app/referentiels/actions/action.card';
+import { useGetAction } from '@/app/referentiels/actions/use-get-action';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
-import { ActionType } from '@tet/domain/referentiels';
 import { AccordionControlled, AccordionType } from '@tet/ui';
 
 export type TAxe = ActionListItem & {
@@ -27,6 +27,10 @@ const Axe = ({ axe, accordionProps, showDescription }: Props) => {
   const [isOpen, setIsOpened] = useState(
     idParam ? axe.actionId.includes(idParam) : false
   );
+
+  const actionWithScore = useGetAction({
+    actionId: axe.actionId,
+  });
 
   const ref = useRef<HTMLDivElement>(null);
 
@@ -50,13 +54,11 @@ const Axe = ({ axe, accordionProps, showDescription }: Props) => {
       headerContent={
         <div className="flex items-center justify-between gap-3">
           <ScoreProgressBar
-            id={axe.actionId}
-            identifiant={axe.identifiant}
-            type={axe.actionType as ActionType}
+            action={actionWithScore}
             className="w-48 max-md:hidden"
           />
           <ScoreRatioBadge
-            actionId={axe.actionId}
+            action={actionWithScore}
             className="justify-end w-40 max-sm:hidden"
             size="xs"
           />

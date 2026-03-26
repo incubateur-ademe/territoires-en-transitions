@@ -1,24 +1,23 @@
 /**
  * Affiche l'onglet "Documentation"
  */
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import DOMPurify from 'dompurify';
+import { ActionListItem } from '../../actions/use-list-actions';
 import { TPersonnalisationRegleRead } from './useRegles';
-import { useGetActionScore } from '../../use-get-action-score';
 
 export type TPersoPotentielDocProps = {
   /** Définition de l'action */
-  actionDef: ActionDefinitionSummary;
+  action: ActionListItem;
   /** Règles de personnalisation applicables */
   regles: TPersonnalisationRegleRead[];
 };
 
 export const PersoPotentielDoc = ({
-  actionDef,
+  action,
   regles,
 }: TPersoPotentielDocProps) => {
-  const score = useGetActionScore({ actionId: actionDef.id });
+  const score = action.score;
 
   const pointReferentiel = score?.pointReferentiel;
 
@@ -40,7 +39,7 @@ export const PersoPotentielDoc = ({
           ) : null
         )}
         <li>
-          Nombre de points initial pour cette {actionDef.type} :{' '}
+          Nombre de points initial pour cette {action.actionType} :{' '}
           {toLocaleFixed(pointReferentiel, 2)}
         </li>
       </ul>

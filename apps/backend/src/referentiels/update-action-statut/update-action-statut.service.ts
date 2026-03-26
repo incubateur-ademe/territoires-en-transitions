@@ -13,7 +13,7 @@ import {
   ActionTypeEnum,
   canUpdateActionStatutWithoutPermissionCheck,
   findActionById,
-  getParentIdFromActionId,
+  getParentId,
   getReferentielIdFromActionId,
   ScoreSnapshot,
   TreeOfActionsIncludingScore,
@@ -239,7 +239,7 @@ export class UpdateActionStatutService {
     // Tâche renseignée → reset le parent sous-action s'il a un statut direct
     const parentResets = actionStatuts
       .filter((s) => findNode(s.actionId)?.actionType === ActionTypeEnum.TACHE)
-      .map((s) => getParentIdFromActionId(s.actionId))
+      .map((s) => getParentId({ actionId: s.actionId }))
       .filter((parentId): parentId is string => parentId !== null)
       .filter((parentId) => !explicitActionIds.has(parentId))
       .map((parentId) => ({ parentId, node: findNode(parentId) }))

@@ -14,7 +14,7 @@ export type TPersoPotentielTabsProps = TPersoPotentielQRProps &
 
 export const PersoPotentielTabs = ({
   defaultActiveTab,
-  actionDef,
+  action,
   regles,
   questionReponses,
   onChange,
@@ -27,14 +27,14 @@ export const PersoPotentielTabs = ({
     >
       <Tab label="Personnalisation du potentiel" icon="settings-5-line">
         <PersoPotentielQR
-          actionDef={actionDef}
+          action={action}
           questionReponses={questionReponses}
           onChange={onChange}
           canEdit={hasCollectivitePermission('referentiels.mutate')}
         />
       </Tab>
       <Tab label="Règles applicables" icon="information-line">
-        <PersoPotentielDoc actionDef={actionDef} regles={regles} />
+        <PersoPotentielDoc action={action} regles={regles} />
       </Tab>
     </Tabs>
   );

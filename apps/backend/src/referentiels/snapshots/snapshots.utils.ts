@@ -25,38 +25,48 @@ export function getExtendActionWithComputedFields(
     referentielId: ReferentielId
   ) => ReturnType<SnapshotsService['get']>
 ) {
-  const getCurrentSnapshot = memoize((referentielId: ReferentielId) =>
-    getSnapshot(collectiviteId, referentielId)
+  const getCurrentSnapshot = memoize(
+    ({
+      collectiviteId,
+      referentielId,
+    }: {
+      collectiviteId: number;
+      referentielId: ReferentielId;
+    }) => getSnapshot(collectiviteId, referentielId)
   );
 
-  return async <A extends { actionId: string; referentiel: ReferentielId }>(
-    action: A
+  return async <Input extends { actionId: string; referentiel: ReferentielId }>(
+    action: Input
   ) => {
     const {
       scoresPayload: { scores: scoresTree },
-    } = await getCurrentSnapshot(action.referentiel);
+    } = await getCurrentSnapshot({
+      referentielId: action.referentiel,
+      collectiviteId,
+    });
 
-    const actionWithScore = findActionInTree(
+    const actionFromSnapshot = findActionInTree(
       [scoresTree],
       (a) => a.actionId === action.actionId
     );
 
-    if (!actionWithScore) {
+    if (!actionFromSnapshot) {
       throw new ReferentielException(
-        `Action ${action.actionId} not found in current score`
+        `Action ${action.actionId} not found in current score snapshot`
       );
     }
 
-    const { score } = actionWithScore;
+    const { score } = actionFromSnapshot;
 
     const statut = score.statut ?? StatutAvancementEnum.NON_RENSEIGNE;
 
     return {
       ...action,
-      ...{ score },
-      ...{
-        desactive: score.desactive,
-        concerne: score.concerne,
+
+      childrenIds: actionFromSnapshot.actionsEnfant.map((a) => a.actionId),
+
+      score: {
+        ...score,
         statut,
       },
     };

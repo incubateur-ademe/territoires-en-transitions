@@ -2,10 +2,10 @@ import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { RouterInput, useSupabase } from '@tet/api';
+import { useSupabase } from '@tet/api';
 import { ModuleMesuresSelect, modulesSave } from '@tet/api/plan-actions';
 import { useUser } from '@tet/api/users';
-import { ReferentielId } from '@tet/domain/referentiels';
+import { ListActionsInput, ReferentielId } from '@tet/domain/referentiels';
 import {
   Event,
   Field,
@@ -16,9 +16,6 @@ import {
   useEventTracker,
 } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
-
-type ActionListFilters =
-  RouterInput['referentiels']['actions']['listActions']['filters'];
 
 type Props = {
   module: ModuleMesuresSelect;
@@ -37,7 +34,7 @@ const MesuresDontJeSuisLePiloteModal = ({
 
   const { id: userId } = useUser();
 
-  const [filtreState, setFiltreState] = useState<ActionListFilters>(
+  const [filtreState, setFiltreState] = useState<ListActionsInput>(
     module.options.filtre
   );
 

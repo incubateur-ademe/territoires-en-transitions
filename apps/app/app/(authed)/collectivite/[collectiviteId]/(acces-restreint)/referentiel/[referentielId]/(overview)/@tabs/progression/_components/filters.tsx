@@ -1,13 +1,13 @@
 import { Field, FormSection } from '@tet/ui';
 
-import { ActionListFilters } from '@/app/referentiels/actions/use-list-actions';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { splitPilotePersonnesAndUsers } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
+import { ListActionsInput } from '@tet/domain/referentiels';
 
 type Props = {
-  filters: ActionListFilters;
-  setFilters: (filters: ActionListFilters) => void;
+  filters: ListActionsInput;
+  setFilters: (filters: ListActionsInput) => void;
 };
 
 const Filters = ({ filters, setFilters }: Props) => {

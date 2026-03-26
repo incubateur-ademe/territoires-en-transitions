@@ -22,7 +22,7 @@ import {
   ActionStatut,
   ActionTreeNode,
   ActionTypeEnum,
-  getParentIdFromActionId,
+  getParentId,
   getStatutAvancement,
   LabellisationAudit,
   LabellisationEtoileDefinition,
@@ -2364,7 +2364,9 @@ export default class ScoresService {
       ) {
         if (!computedScore.concerne) {
           // Check if parent is not concerne
-          let parentActionId = getParentIdFromActionId(computedScore.actionId);
+          let parentActionId = getParentId({
+            actionId: computedScore.actionId,
+          });
           while (parentActionId) {
             const parentAction = fullScoreMap?.[parentActionId];
             if (!parentAction?.concerne) {
@@ -2372,7 +2374,7 @@ export default class ScoresService {
               hasDiff = false;
               break;
             }
-            parentActionId = getParentIdFromActionId(parentActionId);
+            parentActionId = getParentId({ actionId: parentActionId });
           }
         }
       }

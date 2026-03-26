@@ -1,28 +1,23 @@
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { PersoPotentiel } from '@/app/referentiels/personnalisations/PersoPotentielModal/PersoPotentiel';
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 
 type Props = {
-  actionDefinition: ActionDefinitionSummary;
+  action: ActionListItem;
 };
 
-export const Score = ({ actionDefinition }: Props) => {
+export const Score = ({ action }: Props) => {
   return (
     <div className="flex gap-3 items-center flex-wrap text-grey-8 shrink-0">
-      <ScoreRatioBadge actionId={actionDefinition.id} size="xs" />
+      <ScoreRatioBadge action={action} size="xs" />
 
-      <ScoreProgressBar
-        id={actionDefinition.id}
-        identifiant={actionDefinition.identifiant}
-        type={actionDefinition.type}
-        className="w-80"
-      />
+      <ScoreProgressBar action={action} className="w-80" />
 
-      {actionDefinition.haveQuestions && (
+      {action.questionIds.length > 0 && (
         <>
           <div className="w-[0.5px] h-5 bg-grey-5" />
-          <PersoPotentiel actionDef={actionDefinition} />
+          <PersoPotentiel action={action} />
         </>
       )}
     </div>

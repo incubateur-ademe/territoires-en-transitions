@@ -12,7 +12,7 @@ import { useAnnexesFicheActionInfos } from '../FicheAction/data/useAnnexesFicheA
 import { useFichesActionLiees } from '../FicheAction/data/useFichesActionLiees';
 import { useFicheActionChemins } from '../PlanAction/data/usePlanActionChemin';
 import FicheActionPdf from './FicheActionPdf/FicheActionPdf';
-import { TSectionsValues, sectionsInitValue } from './utils';
+import { sectionsInitValue, TSectionsValues } from './utils';
 
 type FicheActionPdfContentProps = {
   fiche: FicheWithRelations;
@@ -50,12 +50,14 @@ export const FicheActionPdfContent = ({
       requested: options.fiches.isChecked,
     });
 
-  const { data: actionsLiees, isLoading: isLoadingActionsLiees } =
+  const { data: actionsLiees, isPending: isLoadingActionsLiees } =
     useListActions(
       {
         actionIds: fiche?.mesures?.map((action) => action.id),
       },
-      options.actionsLiees.isChecked
+      {
+        enabled: options.actionsLiees.isChecked,
+      }
     );
 
   const { data: annexes, isLoading: isLoadingAnnexes } =

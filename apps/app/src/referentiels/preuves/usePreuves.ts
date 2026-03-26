@@ -1,13 +1,14 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { useQuery } from '@tanstack/react-query';
 import { DBClient, useSupabase } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { ActionListItem } from '../actions/use-list-actions';
 import { TPreuve, TPreuvesParType, TPreuveType } from './Bibliotheque/types';
 
 export type TActionDef = Pick<
-  ActionDefinitionSummary,
-  'id' | 'identifiant' | 'referentiel'
+  ActionListItem,
+  'actionId' | 'identifiant' | 'referentiel'
 >;
+
 type TFilters = {
   action?: TActionDef;
   withSubActions?: boolean;
@@ -46,7 +47,7 @@ const fetch = async (
         .eq('action->>referentiel' as 'action', action.referentiel)
         .ilike('action->>identifiant' as 'action', `${action.identifiant}%`);
     } else {
-      query.eq('action->>action_id' as 'action', action.id);
+      query.eq('action->>action_id' as 'action', action.actionId);
     }
   }
 

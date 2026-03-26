@@ -16,7 +16,7 @@ import { ApiUsage } from '@tet/backend/utils/api/api-usage.decorator';
 import {
   ActionDefinitionEssential,
   ActionTreeNode,
-  ActionTypeEnum,
+  type ActionType,
   referentielDefinitionSchema,
   type ReferentielId,
 } from '@tet/domain/referentiels';
@@ -34,7 +34,7 @@ import { GetReferentielDefinitionService } from './get-referentiel-definition.se
 class ReferentielResponseClass implements ReferentielResponse {
   constructor(
     public version: string,
-    public orderedItemTypes: ActionTypeEnum[],
+    public orderedItemTypes: ActionType[],
     public itemsTree: ActionTreeNode<
       ActionDefinitionEssential & CorrelatedActionsFields
     >

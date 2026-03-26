@@ -14,13 +14,13 @@ export const useListDiscussions = (
   filters?: Filters,
   options?: QueryOptions
 ) => {
-  const collectivite_id = useCollectiviteId();
+  const collectiviteId = useCollectiviteId();
   const trpc = useTRPC();
 
   return useQuery(
     trpc.collectivites.discussions.list.queryOptions({
-      collectiviteId: collectivite_id,
-      referentielId: referentielId,
+      collectiviteId,
+      referentielId,
       filters,
       options,
     })

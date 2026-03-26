@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { StatutAvancementIncludingNonConcerne } from '@tet/domain/referentiels';
+import { StatutAvancementCreate } from '@tet/domain/referentiels';
+import { useCallback } from 'react';
 import { useReferentielId } from '../../referentiel-context';
 import { statutParAvancement } from '../../utils';
 
@@ -15,7 +16,7 @@ export const useUpdateActionStatut = () => {
     trpc.referentiels.actions.updateStatut.mutationOptions({
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.snapshots.getCurrent.queryKey({
+          queryKey: trpc.referentiels.actions.listActionsGroupedById.queryKey({
             collectiviteId,
             referentielId,
           }),
@@ -24,14 +25,13 @@ export const useUpdateActionStatut = () => {
     })
   );
 
-  return {
-    ...mutation,
-    mutate: ({
+  const mutate = useCallback(
+    ({
       actionId,
       statut,
     }: {
       actionId: string;
-      statut: StatutAvancementIncludingNonConcerne;
+      statut: StatutAvancementCreate;
     }) => {
       const { avancement, concerne, avancementDetaille } =
         statutParAvancement(statut);
@@ -44,5 +44,11 @@ export const useUpdateActionStatut = () => {
         avancementDetaille,
       });
     },
+    [collectiviteId, mutation]
+  );
+
+  return {
+    ...mutation,
+    mutate,
   };
 };

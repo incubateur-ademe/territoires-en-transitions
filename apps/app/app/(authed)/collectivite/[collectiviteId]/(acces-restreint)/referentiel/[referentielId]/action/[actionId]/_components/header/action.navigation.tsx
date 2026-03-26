@@ -1,32 +1,25 @@
 import classNames from 'classnames';
 
-import { useActionId } from '@/app/referentiels/actions/action-context';
-import { usePrevAndNextActionLinks } from '@/app/referentiels/actions/use-prev-and-next-action-links';
-import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
+import { getPrevAndNextActionLinks } from '@/app/referentiels/actions/get-prev-and-next-action-links.utils';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
-import { useCommentPanel } from '../comments/hooks/use-comment-panel';
 
 type Props = {
-  actionId: string;
+  action: ActionListItem;
   headerIsSticky?: boolean;
 };
 
-const ActionNavigation = ({ actionId, headerIsSticky = false }: Props) => {
-  const { prevActionLink, nextActionLink, nextActionId, prevActionId } =
-    usePrevAndNextActionLinks(actionId);
+const ActionNavigation = ({ action, headerIsSticky = false }: Props) => {
+  const { collectiviteId } = useCurrentCollectivite();
+  const { prevActionLink, nextActionLink } = getPrevAndNextActionLinks({
+    action,
+    collectiviteId,
+  });
 
-  const { panel } = useSidePanel();
-  const referentielId = useReferentielId();
-  const { openPanel } = useCommentPanel(referentielId, useActionId());
-
-  if (!prevActionLink && !nextActionLink) return null;
-
-  const handleClick = (actionId: string) => {
-    if (panel.isOpen) {
-      openPanel(actionId);
-    }
-  };
+  if (!prevActionLink && !nextActionLink) {
+    return null;
+  }
 
   return (
     <div
@@ -45,7 +38,6 @@ const ActionNavigation = ({ actionId, headerIsSticky = false }: Props) => {
           icon="arrow-left-line"
           size={headerIsSticky ? 'xs' : 'sm'}
           href={prevActionLink}
-          onClick={() => prevActionId && handleClick(prevActionId)}
         >
           Mesure précédente
         </Button>
@@ -59,7 +51,6 @@ const ActionNavigation = ({ actionId, headerIsSticky = false }: Props) => {
           iconPosition="right"
           size={headerIsSticky ? 'xs' : 'sm'}
           href={nextActionLink}
-          onClick={() => nextActionId && handleClick(nextActionId)}
         >
           Mesure suivante
         </Button>

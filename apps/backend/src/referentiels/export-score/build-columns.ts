@@ -8,7 +8,7 @@ import { PreuveEssential } from '@tet/domain/collectivites';
 import {
   ActionTypeEnum,
   getIdentifiantFromActionId,
-  getParentIdFromActionId,
+  getParentId,
   ScoreComputeModeEnum,
   StatutAvancement,
   StatutAvancementEnum,
@@ -544,7 +544,7 @@ export function formatActionStatut(
   if (actionType === ActionTypeEnum.TACHE) {
     // récupère l'item parent et le score associé
     const actionId = row.actionId;
-    const parentId = getParentIdFromActionId(actionId);
+    const parentId = getParentId({ actionId });
     const parentRow = data.scoreRows.find((r) => r.actionId === parentId);
     const parentActionScore = parentRow?.[scoreKey];
 

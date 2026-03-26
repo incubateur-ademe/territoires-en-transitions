@@ -5,14 +5,12 @@ import { MesuresState } from '../types';
 
 export const useFicheMesures = (fiche: FicheWithRelations): MesuresState => {
   const { mutate: updateFiche } = useUpdateFiche();
-  const { data: actionsLiees } = useListActions(
-    {
-      actionIds: fiche.mesures?.map((mesure) => mesure.id) ?? [],
-    },
-    true
-  );
+  const { data: actionsLiees, isPending: isListPending } = useListActions({
+    actionIds: fiche.mesures?.map((mesure) => mesure.id) ?? [],
+  });
 
   return {
+    isListPending,
     list: actionsLiees ?? [],
     linkMesure: async (mesureId: string) => {
       await updateFiche({

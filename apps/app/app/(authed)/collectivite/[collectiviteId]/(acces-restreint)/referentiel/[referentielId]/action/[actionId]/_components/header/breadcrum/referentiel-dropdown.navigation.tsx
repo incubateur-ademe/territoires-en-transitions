@@ -2,8 +2,9 @@ import classNames from 'classnames';
 import Link from 'next/link';
 
 import { makeReferentielActionUrl } from '@/app/app/paths';
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import {
+  ActionsGroupedById,
   ActionTypeEnum,
   getReferentielIdFromActionId,
 } from '@tet/domain/referentiels';
@@ -20,7 +21,7 @@ import {
 } from '@tet/ui';
 
 type Props = {
-  referentiel: ActionDefinitionSummary[];
+  actions: ActionsGroupedById;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   actionId: string;
@@ -28,7 +29,7 @@ type Props = {
 };
 
 export const ReferentielDropdownNavigation = ({
-  referentiel,
+  actions,
   isOpen,
   setIsOpen,
   actionId,
@@ -38,67 +39,65 @@ export const ReferentielDropdownNavigation = ({
     <DropdownMenuTrigger />
     <DropdownMenuContent className="max-w-md" align="start">
       <DropdownMenuGroup>
-        {buildTree(referentiel).map((item) => (
-          <DropdownTree
-            key={item.id}
-            item={item}
-            openedActionId={actionId}
-            collectiviteId={collectiviteId}
-          />
-        ))}
+        {Object.values(actions)
+          .filter((item) => item.depth === 1)
+          .map((item) => (
+            <DropdownTree
+              key={item.actionId}
+              actions={actions}
+              action={item}
+              openedActionId={actionId}
+              collectiviteId={collectiviteId}
+            />
+          ))}
       </DropdownMenuGroup>
     </DropdownMenuContent>
   </DropdownMenu>
 );
 
-type NavItem = {
-  id: string;
-  identifiant: string;
-  nom: string;
-  type: ActionDefinitionSummary['type'];
-  children?: NavItem[];
-};
-
 type DropdownTreeProps = {
-  item: NavItem;
+  actions: ActionsGroupedById;
+  action: ActionListItem;
   openedActionId: string;
   collectiviteId: number;
 };
 
 const DropdownTree = ({
-  item,
+  actions,
+  action,
   openedActionId,
   collectiviteId,
 }: DropdownTreeProps): React.ReactNode => {
-  return item.type === ActionTypeEnum.ACTION ? (
+  return action.actionType === ActionTypeEnum.ACTION ? (
     <DropdownMenuItem
-      key={item.id}
+      key={action.actionId}
       className="max-w-xs md:max-w-sm xl:max-w-md py-2"
     >
       <Link
         href={makeReferentielActionUrl({
           collectiviteId,
-          referentielId: getReferentielIdFromActionId(item.id),
-          actionId: item.id,
+          referentielId: getReferentielIdFromActionId(action.actionId),
+          actionId: action.actionId,
         })}
         className={classNames('bg-none hover:text-primary hover:underline', {
-          'text-primary': item.id === openedActionId,
+          'text-primary': action.actionId === openedActionId,
         })}
       >
-        {item.identifiant} - {item.nom}
+        {action.identifiant} - {action.nom}
       </Link>
     </DropdownMenuItem>
   ) : (
-    <DropdownMenuSub key={item.id}>
+    <DropdownMenuSub key={action.actionId}>
       <DropdownMenuSubTrigger className="max-w-xs md:max-w-sm xl:max-w-md py-2">
-        {item.identifiant} - {item.nom}
+        {action.identifiant} - {action.nom}
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
-          {item.children?.map((child) => (
+          {action.childrenIds.map((childId) => (
             <DropdownTree
-              key={child.id}
-              item={child}
+              key={childId}
+              actions={actions}
+              action={actions[childId]}
               openedActionId={openedActionId}
               collectiviteId={collectiviteId}
             />
@@ -108,20 +107,3 @@ const DropdownTree = ({
     </DropdownMenuSub>
   );
 };
-
-function buildTree(list: ActionDefinitionSummary[]) {
-  const map = Object.fromEntries(list.map((n) => [n.id, n]));
-  const node = (n: ActionDefinitionSummary): NavItem => ({
-    id: n.id,
-    identifiant: n.identifiant,
-    nom: n.nom,
-    type: n.type,
-    children: (n.children || [])
-      .map((cid) => map[cid])
-      .filter(Boolean)
-      .map(node)
-      .sort((a, b) => a.identifiant.localeCompare(b.identifiant)),
-  });
-  // Racines : depth === 1 ("cae_1", "cae_2" ...)
-  return list.filter((n) => n.depth === 1).map(node);
-}
