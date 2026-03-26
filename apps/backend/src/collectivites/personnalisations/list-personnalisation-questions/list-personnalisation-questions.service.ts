@@ -161,6 +161,9 @@ export default class ListPersonnalisationQuestionsService {
         choix: sql<
           Omit<QuestionChoix, 'questionId' | 'version'>[]
         >`${questionChoixSubquery.choix}`,
+        competenceCode: questionTable.competenceCode,
+        consignesJustification: questionTable.consignesJustification,
+        exprVisible: questionTable.exprVisible,
       })
       .from(questionTable)
       .leftJoin(

@@ -1,6 +1,7 @@
 import { getZodEnumArrayFromQueryString } from '@tet/backend/utils/zod.utils';
 import {
   collectiviteTypeEnumSchema,
+  competenceBanaticSchema,
   questionChoixCreateSchema,
   questionCreateSchema,
 } from '@tet/domain/collectivites';
@@ -30,4 +31,10 @@ export const importPersonnalisationChoixSchema = z.object({
 
 export type ImportPersonnalisationChoix = z.infer<
   typeof importPersonnalisationChoixSchema
+>;
+
+// Schema for importing banatic competences from spreadsheet
+export const importPersonnalisationCompetenceSchema = competenceBanaticSchema;
+export type ImportPersonnalisationCompetence = z.infer<
+  typeof importPersonnalisationCompetenceSchema
 >;

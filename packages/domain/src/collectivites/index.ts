@@ -27,6 +27,7 @@ export * from './membres/invitation.schema';
 export * from './membres/membre.schema';
 export * from './partenaire-tag.schema';
 export * from './personnalisation-reponses-payload.schema';
+export * from './personnalisations/competence-banatic.schema';
 export * from './personnalisations/personnalisation-regle.schema';
 export * from './personnalisations/personnalisation.schema';
 export * from './personnalisations/question-choix.schema';
