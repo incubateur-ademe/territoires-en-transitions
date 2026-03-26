@@ -66,8 +66,11 @@ const optionalTextSchema = z
   .optional()
   .transform((val) => (val ? cleanText(val) : undefined));
 
-const numberSchema = z.coerce
-  .number({ message: 'Un nombre est attendu' })
+const numberSchema = z
+  .preprocess((val) => {
+    if (val instanceof Date) return undefined;
+    return val;
+  }, z.coerce.number({ message: 'Un nombre est attendu' }))
   .optional();
 
 /** Parses DD/MM/YYYY or DD-MM-YYYY (e.g. from Excel) to ISO YYYY-MM-DD so new Date() accepts it. */

@@ -35,16 +35,42 @@ export const ficheSchema = z.object({
   id: z.number(),
   collectiviteId: z.number(),
   parentId: z.number().nullable(),
-  titre: z.string().nullable().describe('Titre'),
-  description: z.string().nullable().describe('Description'),
+  titre: z
+    .string()
+    .max(300, 'Le titre ne doit pas dépasser 300 caractères')
+    .nullable()
+    .describe('Titre'),
+  description: z
+    .string()
+    .max(20000, 'La description ne doit pas dépasser 20 000 caractères')
+    .nullable()
+    .describe('Description'),
   piliersEci: z.array(piliersEciEnumSchema).nullable().describe('Piliers ECI'),
-  objectifs: z.string().nullable().describe('Objectifs'),
+  objectifs: z
+    .string()
+    .max(10000, 'Les objectifs ne doivent pas dépasser 10 000 caractères')
+    .nullable()
+    .describe('Objectifs'),
   cibles: z.array(z.enum(cibleEnumValues)).nullable().describe('Cibles'),
-  ressources: z.string().nullable().describe('Ressources'),
+  ressources: z
+    .string()
+    .max(10000, 'Les ressources ne doivent pas dépasser 10 000 caractères')
+    .nullable()
+    .describe('Ressources'),
   financements: z.string().nullable().describe('Financements'),
-  // numeric mapped as string in most drivers
+  // numeric(12, 0) mapped as string by Drizzle
   budgetPrevisionnel: z
     .string()
+    .refine(
+      (val) => {
+        const num = Number(val);
+        return !isNaN(num) && num >= 0 && num < 1e12;
+      },
+      {
+        message:
+          'Le budget prévisionnel doit être un nombre positif inférieur à 999 999 999 999',
+      }
+    )
     .nullable()
     .describe('Budget prévisionnel total'),
   statut: z.enum(statutEnumValues).nullable().describe('Statut'),
@@ -55,7 +81,11 @@ export const ficheSchema = z.object({
     .boolean()
     .nullable()
     .describe('Action se répète tous les ans'),
-  calendrier: z.string().nullable().describe('Calendrier'),
+  calendrier: z
+    .string()
+    .max(10000, 'Le calendrier ne doit pas dépasser 10 000 caractères')
+    .nullable()
+    .describe('Calendrier'),
   participationCitoyenne: z
     .string()
     .nullable()

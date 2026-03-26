@@ -25,6 +25,16 @@ const validateBasicFields = (
     );
   }
 
+  const MAX_BUDGET = 999_999_999_999;
+  if (isNil(fiche.budget) === false && fiche.budget > MAX_BUDGET) {
+    return failure(
+      new InvalidBudget(
+        fiche.budget,
+        `Le budget dépasse la valeur maximale autorisée (${MAX_BUDGET}). Vérifiez que la colonne budget ne contient pas une date ou une valeur erronée.`
+      )
+    );
+  }
+
   return success(true);
 };
 

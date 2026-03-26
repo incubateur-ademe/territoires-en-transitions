@@ -3,10 +3,8 @@ import { CreateFicheService } from '@tet/backend/plans/fiches/create-fiche/creat
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
-  combineResults,
   failure,
   Result,
-  success,
 } from '@tet/backend/utils/result.type';
 import { FicheCreate } from '@tet/domain/plans';
 import { UpsertAxeError } from '../../axes/upsert-axe/upsert-axe.errors';
@@ -143,6 +141,7 @@ export class CreatePlanAggregateService {
         );
         return failure(PlanErrorType.INVALID_DATA);
       }
+
       // Step 1: Create the plan (root axe)
       const createPlanResult = await this.upsertPlanService.upsertPlan(
         {
@@ -171,46 +170,40 @@ export class CreatePlanAggregateService {
         return axeResult;
       }
 
-      // Step 3: Create all fiches
-      const createdFichesResults = await Promise.all(
-        request.fiches.map(async (ficheWithPath) => {
-          const axeId = ficheWithPath.axisPath
-            ? axeResult.data.get(
-                axisFormatter.serialize(ficheWithPath.axisPath)
-              )
-            : createPlanResult.data.id;
-          const ficheToCreate: FicheCreate = {
-            ...ficheWithPath.fiche,
-            collectiviteId: request.collectiviteId,
-            tempsDeMiseEnOeuvre:
-              ficheWithPath.fiche.tempsDeMiseEnOeuvre?.id ?? null,
-          };
-          const createdFiche = await this.createFicheService.createFiche(
-            ficheToCreate,
-            {
-              ficheFields: {
-                ...ficheWithPath.fiche,
-                axes: axeId ? [{ id: axeId }] : undefined,
-              },
-              user,
-              tx,
-            }
-          );
+      // Step 3: Create fiches sequentially to avoid poisoning the shared
+      // transaction on the first error (Promise.all masks the root cause)
+      for (const [index, ficheWithPath] of request.fiches.entries()) {
+        const axeId = ficheWithPath.axisPath
+          ? axeResult.data.get(
+              axisFormatter.serialize(ficheWithPath.axisPath)
+            )
+          : createPlanResult.data.id;
 
-          if (!createdFiche.success) {
-            return createdFiche;
+        const ficheToCreate: FicheCreate = {
+          ...ficheWithPath.fiche,
+          collectiviteId: request.collectiviteId,
+          tempsDeMiseEnOeuvre:
+            ficheWithPath.fiche.tempsDeMiseEnOeuvre?.id ?? null,
+        };
+
+        const createdFiche = await this.createFicheService.createFiche(
+          ficheToCreate,
+          {
+            ficheFields: {
+              ...ficheWithPath.fiche,
+              axes: axeId ? [{ id: axeId }] : undefined,
+            },
+            user,
+            tx,
           }
+        );
 
-          return success({
-            id: createdFiche.data,
-            axisPath: ficheWithPath.axisPath,
-          });
-        })
-      );
-
-      const fichesCreationResults = combineResults(createdFichesResults);
-      if (fichesCreationResults.success === false) {
-        return failure(PlanErrorType.DATABASE_ERROR);
+        if (!createdFiche.success) {
+          this.logger.error(
+            `Failed to create fiche ${index + 1}/${request.fiches.length} "${ficheWithPath.fiche.titre}": ${createdFiche.error}`
+          );
+          return failure(PlanErrorType.DATABASE_ERROR);
+        }
       }
 
       this.logger.log(
