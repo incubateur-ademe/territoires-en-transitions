@@ -959,3 +959,4 @@ collectivite/type_add_service_public [collectivite/type_add_prefectures] 2026-03
 evaluation/question_choix_formulation_not_null 2026-03-10T17:50:33Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute une contrainte NOT NULL sur question_choix.formulation
 evaluation/drop-justification-triggers 2026-03-10T17:50:33Z Marc Rutkowski <marc@attractive-media.fr> # Supprime les triggers modified_by/modified_at sur la table justification
 referentiel/banatic_2025 2026-03-10T13:36:30Z System Administrator <root@Host-001.lan> # Création des tables pour gérer les codes banatic 2025
+evaluation/add_personnalisation_question_competence 2026-03-25T13:59:27Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute le code compétence, les consignes pour la justification et la formule de masquage d'une question
