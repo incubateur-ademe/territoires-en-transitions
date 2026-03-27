@@ -10,7 +10,7 @@ import {
   getIdentifiantFromActionId,
   getParentId,
   ScoreComputeModeEnum,
-  StatutAvancement,
+  StatutAvancementCreate,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
 import { htmlToText, roundTo } from '@tet/domain/utils';
@@ -88,7 +88,7 @@ function isTotalRow(scoreRow: ScoreRow) {
 const WIDTH_SMALL = 12;
 const WIDTH_MEDIUM = 50;
 
-const AVANCEMENT_TO_LABEL: Record<StatutAvancement | 'non_concerne', string> = {
+const AVANCEMENT_TO_LABEL: Record<StatutAvancementCreate, string> = {
   [StatutAvancementEnum.NON_RENSEIGNE]: 'Non renseigné',
   [StatutAvancementEnum.FAIT]: 'Fait',
   [StatutAvancementEnum.PAS_FAIT]: 'Pas fait',

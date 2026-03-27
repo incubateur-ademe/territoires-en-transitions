@@ -1,8 +1,7 @@
 import { avancementToLabel } from '@/app/app/labels';
 import {
-  statutAvancementEnumSchema,
-  StatutAvancementIncludingNonConcerne,
-  statutAvancementIncludingNonConcerneEnumSchema,
+  StatutAvancementCreate,
+  statutAvancementEnumCreateSchema,
 } from '@tet/domain/referentiels';
 import { SelectBadge } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
@@ -10,25 +9,23 @@ import ActionStatutBadge, { statusToState } from './action-statut.badge';
 
 export type TSelectActionStatutProps = {
   // item sélectionné (`non_renseigne` si `undefined` ou `null`)
-  value: StatutAvancementIncludingNonConcerne | undefined | null;
+  value: StatutAvancementCreate | undefined | null;
   // appelée quand la sélection change
-  onChange: (value: StatutAvancementIncludingNonConcerne) => void;
+  onChange: (value: StatutAvancementCreate) => void;
   // mode "lecture seule"
   disabled?: boolean;
   // pour afficher une liste différente d'items (`DEFAULT_ITEMS` si non spécifié)
-  items?: StatutAvancementIncludingNonConcerne[];
+  items?: StatutAvancementCreate[];
 
   openState?: OpenState;
 };
 
 // transforme une liste de statuts en options pour la liste déroulante
-const getOptions = (items: StatutAvancementIncludingNonConcerne[]) =>
+const getOptions = (items: StatutAvancementCreate[]) =>
   items.map((value) => ({ value, label: avancementToLabel[value] }));
 
-export const DEFAULT_OPTIONS = getOptions(statutAvancementEnumSchema.options);
-
-export const DEFAULT_OPTIONS_WITH_NON_CONCERNE = getOptions(
-  statutAvancementIncludingNonConcerneEnumSchema.options
+export const DEFAULT_OPTIONS = getOptions(
+  statutAvancementEnumCreateSchema.options
 );
 
 /**
@@ -50,7 +47,7 @@ export const SelectActionStatut = (props: TSelectActionStatutProps) => {
       defaultValue={currentValue}
       values={currentValue}
       options={options}
-      onChange={(v) => onChange(v as StatutAvancementIncludingNonConcerne)}
+      onChange={(v) => onChange(v as StatutAvancementCreate)}
       valueToBadgeState={statusToState}
       dropdownZindex={801}
       openState={openState}

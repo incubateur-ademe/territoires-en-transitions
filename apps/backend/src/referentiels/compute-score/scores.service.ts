@@ -578,6 +578,9 @@ export default class ScoresService {
       ) {
         const pointsPotentiel =
           referentielActionAvecScore.score.pointPotentiel || 0;
+        referentielActionAvecScore.score.avancementDetaille =
+          actionStatut.avancementDetaille;
+
         const pourcentageFait = actionStatut.avancementDetaille[0];
         const pourcentageProgramme = actionStatut.avancementDetaille[1];
         const pourcentagePasFait = actionStatut.avancementDetaille[2];
@@ -931,14 +934,15 @@ export default class ScoresService {
       actionStatutsConditions.push(lte(table.modifiedAt, endOfTheDay ?? date));
     }
     // TODO: colonne referentiel dans les actionStatutTable ?
-    const referentielActionStatuts = await this.databaseService.db
+    const referentielActionStatuts = (await this.databaseService.db
       .select({
         ...getTableColumns(table),
         modifiedAt: sqlToDateTimeISO(table.modifiedAt),
       })
       .from(table)
       .where(and(...actionStatutsConditions))
-      .orderBy(desc(table.modifiedAt), asc(table.actionId));
+      .orderBy(desc(table.modifiedAt), asc(table.actionId))) as ActionStatut[];
+
     this.logger.log(
       `${referentielActionStatuts.length} statuts trouves pour le referentiel ${referentielId} et la collectivite ${collectiviteId}`
     );
@@ -1911,27 +1915,42 @@ export default class ScoresService {
       this.computeEtoiles(actionWithScore, etoilesDefinitions);
     }
 
-    this.computeStatut(actionWithScore);
+    this.computeStatut({ action: actionWithScore });
 
     return actionWithScore as TreeOfActionsIncludingScore;
   }
 
   /**
-   * Pré-calcule le champ `statut` sur chaque nœud de l'arbre,
-   * en appliquant la logique de `getStatutAvancement` (inclut non_concerne)
-   * et la dérivation `detaille` pour les sous-actions non renseignées
-   * dont au moins un enfant est renseigné.
+   * Pré-calcule le champ `statut` uniquement sur les nœuds `sous-action` et `tache`.
+   * Pour les autres types (axe, sous-axe, action, etc.), la propriété est absente
+   * (`undefined` après sérialisation JSON).
    *
-   * Réplique côté backend la logique précédemment côté frontend uniquement.
+   * Logique sur les nœuds concernés : `getStatutAvancement` (inclut non_concerne)
+   * et dérivation `detaille` pour une sous-action non renseignée dont au moins un
+   * enfant a un statut renseigné.
+   * Si l'action est non renseignée, le statut est null.
+   * Si l'action est non concernée, le statut est non_concerne.
+   * Si l'action est détaillée manuellement, le statut est detaille et les enfants sont non renseignables.
    */
-  private computeStatut(
-    action: ActionTreeNode<ActionDefinitionEssential & ScoreFinalFields>
-  ): void {
-    action.actionsEnfant.forEach((enfant) => this.computeStatut(enfant));
+  private computeStatut({
+    action,
+    parent,
+  }: {
+    action: ActionTreeNode<ActionDefinitionEssential & ScoreFinalFields>;
+    parent?: ActionTreeNode<ActionDefinitionEssential & ScoreFinalFields>;
+  }): void {
+    action.actionsEnfant.forEach((enfant) =>
+      this.computeStatut({ action: enfant, parent: action })
+    );
 
-    // if (!action.score.avancement) {
-    //   return;
-    // }
+    const isStatutOnScoreApplicable =
+      action.actionType === ActionTypeEnum.SOUS_ACTION ||
+      action.actionType === ActionTypeEnum.TACHE;
+
+    if (!isStatutOnScoreApplicable) {
+      delete action.score.statut;
+      return;
+    }
 
     const statut = getStatutAvancement({
       avancement: action.score.avancement,
@@ -1944,7 +1963,9 @@ export default class ScoresService {
       .filter((s) => s !== undefined);
 
     const hasAtLeastOneChildWithStatutRenseigne = childrenStatuts.some(
-      (statut) => statut && statut !== StatutAvancementEnum.NON_RENSEIGNE
+      (childStatut) =>
+        childStatut != null &&
+        childStatut !== StatutAvancementEnum.NON_RENSEIGNE
     );
 
     const isStatutNonRenseigne =
@@ -1952,8 +1973,15 @@ export default class ScoresService {
 
     if (hasAtLeastOneChildWithStatutRenseigne && isStatutNonRenseigne) {
       action.score.statut = StatutAvancementEnum.DETAILLE;
+    } else if (
+      parent?.score.avancement === StatutAvancementEnum.DETAILLE ||
+      (parent?.score.avancement &&
+        parent?.score.avancement !== StatutAvancementEnum.NON_RENSEIGNE)
+    ) {
+      action.score.statut = StatutAvancementEnum.NON_RENSEIGNABLE;
     } else {
-      action.score.statut = statut ?? StatutAvancementEnum.NON_RENSEIGNE;
+      action.score.statut =
+        statut === StatutAvancementEnum.NON_RENSEIGNE ? null : statut;
     }
   }
 

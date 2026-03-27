@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import {
-  statutAvancementEnumValues,
-  statutAvancementIncludingNonConcerneEnumValues,
+  statutAvancementEnumSchema,
+  statutAvancementEnumSchemaCreateInDatabase,
 } from '../actions/action-statut-avancement.enum.schema';
 import { scoreIndicatifPayloadSchema } from './score-indicatif.schema';
 
@@ -119,15 +119,17 @@ export const actionScoreSchema = z
       .optional()
       .nullable()
       .describe('La date de modification du statut'),
-    avancement: z
-      .enum(statutAvancementEnumValues)
+    avancement: statutAvancementEnumSchemaCreateInDatabase
       .optional()
       .describe("Avancement de l'action (valeur brute issue de la BDD)"),
-    statut: z
-      .enum(statutAvancementIncludingNonConcerneEnumValues)
+    avancementDetaille: z.nullish(
+      z.tuple([z.number(), z.number(), z.number()])
+    ),
+    statut: statutAvancementEnumSchema
+      .nullable()
       .optional()
       .describe(
-        "Statut d'avancement étendu pré-calculé pour l'affichage : inclut non_concerne (si désactivé/non concerné) et detaille (si non renseigné mais avec enfants renseignés)"
+        "Statut d'avancement étendu pré-calculé pour l'affichage (uniquement pour les actions de type sous-action et tache ; absent pour axe, sous-axe, action, etc.) : null équivaut à l'avancement non renseigné ; inclut non_concerne (si désactivé/non concerné) et detaille (si non renseigné mais avec enfants renseignés)"
       ),
     renseigne: z
       .boolean()
@@ -184,7 +186,7 @@ export const actionScoreFinalSchema = z.object({
   pointReferentiel: actionScoreSchema.shape.pointReferentiel.unwrap(),
   pointPotentiel: actionScoreSchema.shape.pointPotentiel.unwrap(),
 
-  // We omit volontarily `pointPotentielPerso` because it is not always computed (when there is no personnalisation)
+  // We omit volontarily `pointPotentielPerso` because it is not always compquted (when there is no personnalisation)
 
   pointFait: actionScoreSchema.shape.pointFait.unwrap(),
   pointPasFait: actionScoreSchema.shape.pointPasFait.unwrap(),

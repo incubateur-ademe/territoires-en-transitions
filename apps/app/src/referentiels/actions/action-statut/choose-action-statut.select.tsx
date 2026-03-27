@@ -1,36 +1,30 @@
 import { avancementToLabel } from '@/app/app/labels';
 import {
-  statutAvancementEnumSchema,
-  StatutAvancementIncludingNonConcerne,
-  statutAvancementIncludingNonConcerneEnumSchema,
+  StatutAvancementCreate,
+  StatutAvancementEnum,
+  statutAvancementEnumCreateSchema,
 } from '@tet/domain/referentiels';
 import { BadgeSize, Select, SelectProps } from '@tet/ui';
 import ActionStatutBadge from './action-statut.badge';
 
 type Props = Omit<SelectProps, 'values' | 'onChange' | 'options'> & {
-  value?: StatutAvancementIncludingNonConcerne | null;
-  onChange: (statut: StatutAvancementIncludingNonConcerne) => void;
+  value?: StatutAvancementCreate | null;
+  onChange: (statut: StatutAvancementCreate) => void;
   badgeSize?: BadgeSize;
 };
 
-const statutAvancementsToSelectOptions = (
-  items: StatutAvancementIncludingNonConcerne[]
-) => items.map((value) => ({ value, label: avancementToLabel[value] }));
+const statutAvancementsToSelectOptions = (items: StatutAvancementCreate[]) =>
+  items.map((value) => ({ value, label: avancementToLabel[value] }));
 
 export const DEFAULT_OPTIONS = statutAvancementsToSelectOptions(
-  statutAvancementEnumSchema.options
+  statutAvancementEnumCreateSchema.options
 );
-
-export const DEFAULT_OPTIONS_WITH_NON_CONCERNE =
-  statutAvancementsToSelectOptions(
-    statutAvancementIncludingNonConcerneEnumSchema.options
-  );
 
 export const ChooseActionStatutSelect = (props: Props) => {
   const { value, onChange, openState, badgeSize } = props;
 
-  const options = DEFAULT_OPTIONS_WITH_NON_CONCERNE;
-  const currentValue = value || 'non_renseigne';
+  const options = DEFAULT_OPTIONS;
+  const currentValue = value ?? StatutAvancementEnum.NON_RENSEIGNE;
 
   return (
     <Select
@@ -38,11 +32,11 @@ export const ChooseActionStatutSelect = (props: Props) => {
       dataTest="ChooseActionStatutSelect"
       values={currentValue}
       options={options}
-      onChange={(v) => onChange(v as StatutAvancementIncludingNonConcerne)}
+      onChange={(v) => onChange(v as StatutAvancementCreate)}
       openState={openState}
       customItem={(item) => (
         <ActionStatutBadge
-          statut={item.value as StatutAvancementIncludingNonConcerne}
+          statut={item.value as StatutAvancementCreate}
           size={badgeSize}
         />
       )}

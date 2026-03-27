@@ -1,8 +1,9 @@
 import { Enums } from '@tet/api';
 import {
   StatutAvancement,
+  StatutAvancementCreate,
+  StatutAvancementCreateInDatabase,
   StatutAvancementEnum,
-  StatutAvancementIncludingNonConcerne,
 } from '@tet/domain/referentiels';
 
 export const phaseToLabel: Record<Enums<'action_categorie'> | string, string> =
@@ -14,8 +15,8 @@ export const phaseToLabel: Record<Enums<'action_categorie'> | string, string> =
 
 // Valeurs par défaut de l'avancement détaillé par statut d'avancement
 export const AVANCEMENT_DETAILLE_PAR_STATUT: Record<
-  StatutAvancement,
-  number[] | undefined
+  StatutAvancementCreateInDatabase,
+  [number, number, number] | undefined
 > = {
   non_renseigne: undefined,
   fait: [1, 0, 0],
@@ -25,9 +26,7 @@ export const AVANCEMENT_DETAILLE_PAR_STATUT: Record<
 };
 
 // Génère les propriétés de l'objet statut à écrire lors du changement de l'avancement
-export const statutParAvancement = (
-  avancement: StatutAvancementIncludingNonConcerne
-) => {
+export const statutParAvancement = (avancement: StatutAvancementCreate) => {
   // cas spécial pour le faux statut "non concerné"
   if (avancement === StatutAvancementEnum.NON_CONCERNE) {
     return {

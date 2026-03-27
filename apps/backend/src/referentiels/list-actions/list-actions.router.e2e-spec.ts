@@ -67,7 +67,14 @@ describe('ActionStatutListRouter', () => {
       expect(action.depth).toBeDefined();
       expect(action.actionType).toBeDefined();
 
-      expect(action.score.statut).toBeDefined();
+      const statutApplicableSurScore =
+        action.actionType === ActionTypeEnum.SOUS_ACTION ||
+        action.actionType === ActionTypeEnum.TACHE;
+      if (statutApplicableSurScore) {
+        expect(action.score.statut).toBeDefined();
+      } else {
+        expect(action.score.statut).toBeUndefined();
+      }
       expect(action.score.desactive).toBeDefined();
       expect(action.score.concerne).toBeDefined();
 

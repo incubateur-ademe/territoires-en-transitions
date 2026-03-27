@@ -4,13 +4,10 @@ import { ActionId } from './actions/action-definition.schema';
 import {
   StatutAvancement,
   StatutAvancementEnum,
-  StatutAvancementIncludingNonConcerne,
 } from './actions/action-statut-avancement.enum.schema';
-import { ActionStatut } from './actions/action-statut.schema';
-import { ActionType, ActionTypeEnum } from './actions/action-type.enum';
+import { ActionType } from './actions/action-type.enum';
 import { ReferentielId, referentielIdEnumSchema } from './referentiel-id.enum';
 import { ActionScoreFinal } from './scores/action-score.schema';
-import { TreeOfActionsIncludingScore } from './scores/score-snapshot-action-scores-payload.schema';
 
 export class ReferentielException extends Error {
   constructor(message: string) {
@@ -185,37 +182,37 @@ export function getStatutAvancement({
   return avancement;
 }
 
-/**
- * @deprecated done directly in the snapshot computation now.
- *
- * Détermine le statut d'avancement d'une action en incluant le statut "non concerné"
- * et en fonction des avancements des actions enfants.
- */
-export const getStatutAvancementBasedOnChildren = (
-  action: {
-    avancement?: StatutAvancement;
-    desactive: boolean;
-    concerne: boolean;
-  },
-  childrenStatuts: StatutAvancement[] | undefined
-) => {
-  const statutEtendu = getStatutAvancement(action);
+// /**
+//  * @deprecated done directly in the snapshot computation now.
+//  *
+//  * Détermine le statut d'avancement d'une action en incluant le statut "non concerné"
+//  * et en fonction des avancements des actions enfants.
+//  */
+// export const getStatutAvancementBasedOnChildren = (
+//   action: {
+//     avancement?: StatutAvancement;
+//     desactive: boolean;
+//     concerne: boolean;
+//   },
+//   childrenStatuts: StatutAvancement[] | undefined
+// ) => {
+//   const statutEtendu = getStatutAvancement(action);
 
-  const hasAtLeastOneChildWithStatutRenseigne = childrenStatuts?.some(
-    (statut) => statut && statut !== StatutAvancementEnum.NON_RENSEIGNE
-  );
+//   const hasAtLeastOneChildWithStatutRenseigne = childrenStatuts?.some(
+//     (statut) => statut && statut !== StatutAvancementEnum.NON_RENSEIGNE
+//   );
 
-  const isStatutNonRenseigne =
-    !statutEtendu || statutEtendu === StatutAvancementEnum.NON_RENSEIGNE;
+//   const isStatutNonRenseigne =
+//     !statutEtendu || statutEtendu === StatutAvancementEnum.NON_RENSEIGNE;
 
-  // Une sous-action "non renseigné" mais avec au moins une tâche renseignée a
-  // le statut "détaillé"
-  if (hasAtLeastOneChildWithStatutRenseigne && isStatutNonRenseigne) {
-    return StatutAvancementEnum.DETAILLE;
-  }
+//   // Une sous-action "non renseigné" mais avec au moins une tâche renseignée a
+//   // le statut "détaillé"
+//   if (hasAtLeastOneChildWithStatutRenseigne && isStatutNonRenseigne) {
+//     return StatutAvancementEnum.DETAILLE;
+//   }
 
-  return statutEtendu ?? StatutAvancementEnum.NON_RENSEIGNE;
-};
+//   return statutEtendu ?? StatutAvancementEnum.NON_RENSEIGNE;
+// };
 
 export function getScoreRatios({
   pointFait,
@@ -494,69 +491,68 @@ export function normalizeIdentifiantReferentiel(text: string): string | null {
   return normalized;
 }
 
+// export function getActionStatutFromActionScore(
+//   collectiviteId: number,
+//   actionScore: TreeOfActionsIncludingScore
+// ): {
+//   actionStatut: ActionStatut;
+//   statut: StatutAvancementIncludingNonConcerne;
+//   filled: boolean;
+//   filledByChildren: string[];
+// } | null {
+//   if (
+//     actionScore.actionType !== ActionTypeEnum.SOUS_ACTION &&
+//     actionScore.actionType !== ActionTypeEnum.TACHE
+//   ) {
+//     return null;
+//   }
 
-export function getActionStatutFromActionScore(
-  collectiviteId: number,
-  actionScore: TreeOfActionsIncludingScore
-): {
-  actionStatut: ActionStatut;
-  statut: StatutAvancementIncludingNonConcerne;
-  filled: boolean;
-  filledByChildren: string[];
-} | null {
-  if (
-    actionScore.actionType !== ActionTypeEnum.SOUS_ACTION &&
-    actionScore.actionType !== ActionTypeEnum.TACHE
-  ) {
-    return null;
-  }
+//   const { avancement } = actionScore.score;
 
-  const { avancement } = actionScore.score;
+//   const actionStatut: ActionStatut = {
+//     collectiviteId: collectiviteId,
+//     actionId: actionScore.actionId,
+//     avancement: avancement || 'non_renseigne',
+//     avancementDetaille: null,
+//     concerne: actionScore.score.concerne,
+//     modifiedBy: actionScore.score.statutModifiedBy || null,
+//     modifiedAt: actionScore.score.statutModifiedAt || '',
+//   };
 
-  const actionStatut: ActionStatut = {
-    collectiviteId: collectiviteId,
-    actionId: actionScore.actionId,
-    avancement: avancement || 'non_renseigne',
-    avancementDetaille: null,
-    concerne: actionScore.score.concerne,
-    modifiedBy: actionScore.score.statutModifiedBy || null,
-    modifiedAt: actionScore.score.statutModifiedAt || '',
-  };
+//   const filledByChildren = actionScore.actionsEnfant
+//     .filter(
+//       (action) =>
+//         action.score.avancement && action.score.avancement !== 'non_renseigne'
+//     )
+//     .map((action) => action.actionId);
+//   const hasAtLeastOneChildWithStatutRenseigne = filledByChildren.length > 0;
+//   const filled =
+//     (actionScore?.score.avancement &&
+//       actionScore?.score.avancement !== 'non_renseigne') ||
+//     hasAtLeastOneChildWithStatutRenseigne ||
+//     false;
 
-  const filledByChildren = actionScore.actionsEnfant
-    .filter(
-      (action) =>
-        action.score.avancement && action.score.avancement !== 'non_renseigne'
-    )
-    .map((action) => action.actionId);
-  const hasAtLeastOneChildWithStatutRenseigne = filledByChildren.length > 0;
-  const filled =
-    (actionScore?.score.avancement &&
-      actionScore?.score.avancement !== 'non_renseigne') ||
-    hasAtLeastOneChildWithStatutRenseigne ||
-    false;
+//   if (avancement === 'detaille') {
+//     actionStatut.avancementDetaille = [
+//       actionScore.score.faitTachesAvancement &&
+//       actionScore.score.totalTachesCount
+//         ? actionScore.score.faitTachesAvancement /
+//           actionScore.score.totalTachesCount
+//         : 0,
+//       actionScore.score.programmeTachesAvancement &&
+//       actionScore.score.totalTachesCount
+//         ? actionScore.score.programmeTachesAvancement /
+//           actionScore.score.totalTachesCount
+//         : 0,
+//       actionScore.score.pasFaitTachesAvancement &&
+//       actionScore.score.totalTachesCount
+//         ? actionScore.score.pasFaitTachesAvancement /
+//           actionScore.score.totalTachesCount
+//         : 0,
+//     ];
+//   }
 
-  if (avancement === 'detaille') {
-    actionStatut.avancementDetaille = [
-      actionScore.score.faitTachesAvancement &&
-      actionScore.score.totalTachesCount
-        ? actionScore.score.faitTachesAvancement /
-          actionScore.score.totalTachesCount
-        : 0,
-      actionScore.score.programmeTachesAvancement &&
-      actionScore.score.totalTachesCount
-        ? actionScore.score.programmeTachesAvancement /
-          actionScore.score.totalTachesCount
-        : 0,
-      actionScore.score.pasFaitTachesAvancement &&
-      actionScore.score.totalTachesCount
-        ? actionScore.score.pasFaitTachesAvancement /
-          actionScore.score.totalTachesCount
-        : 0,
-    ];
-  }
+//   const statut = actionScore.score.statut ?? StatutAvancementEnum.NON_RENSEIGNE;
 
-  const statut = actionScore.score.statut ?? StatutAvancementEnum.NON_RENSEIGNE;
-
-  return { actionStatut, statut, filled, filledByChildren };
-}
+//   return { actionStatut, statut, filled, filledByChildren };
+// }
