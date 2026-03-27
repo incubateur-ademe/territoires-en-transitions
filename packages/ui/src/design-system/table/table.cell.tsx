@@ -2,9 +2,9 @@ import { cn } from '../../utils/cn';
 
 import { InlineEditWrapper, InlineEditWrapperProps } from '../inline-edit';
 
-export type TableCellProps = React.TdHTMLAttributes<HTMLTableCellElement>;
+type TableCellHtmlProps = React.TdHTMLAttributes<HTMLTableCellElement>;
 
-type Props = TableCellProps & {
+export type TableCellProps = TableCellHtmlProps & {
   edit?: Omit<InlineEditWrapperProps, 'children'>;
   canEdit?: boolean;
 };
@@ -15,7 +15,7 @@ export const TableCell = ({
   edit,
   canEdit,
   ...props
-}: Props) => {
+}: TableCellProps) => {
   if (edit && canEdit) {
     return (
       <InlineEditWrapper {...edit}>
