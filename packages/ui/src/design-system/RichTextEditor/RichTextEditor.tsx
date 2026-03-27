@@ -9,8 +9,8 @@ import {
 import { fr as locale } from '@blocknote/core/locales';
 import { BlockNoteView } from '@blocknote/mantine';
 import '@blocknote/mantine/style.css';
-import { useCreateBlockNote } from '@blocknote/react';
-import { useEffect, useState } from 'react';
+import { useCreateBlockNote, useEditorChange } from '@blocknote/react';
+import { useEffect } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { cn } from '../../utils/cn';
@@ -18,7 +18,7 @@ import { TextPlaceholder } from '../TextPlaceholder/TextPlaceholder';
 import { ENABLED_ITEMS, FormattingToolbar } from './FormattingToolbar';
 import { SuggestionMenu } from './SuggestionMenu';
 
-type RichTextEditorProps = {
+export type RichTextEditorProps = {
   className?: string;
   id?: string;
   dataTest?: string;
@@ -38,6 +38,7 @@ type RichTextEditorProps = {
   };
   unstyled?: boolean;
   onBlur?: () => void;
+  OnKeyDownCapture?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
 };
 
 // utilisé pour convertir en html les liens présents dans les contenus texte existants
@@ -83,6 +84,7 @@ export default function RichTextEditor({
   contentStyle,
   unstyled = false,
   onBlur,
+  OnKeyDownCapture,
 }: RichTextEditorProps) {
   const { size = 'base', color = 'grey' } = contentStyle ?? {};
   const contentColor = {
@@ -98,6 +100,7 @@ export default function RichTextEditor({
     md: 'text-md',
     lg: 'text-lg',
   }[size];
+
   const editorOptions: BlockNoteEditor['options'] = {
     // schéma de données géré par l'éditeur
     schema: createEditorSchema(),
@@ -145,51 +148,73 @@ export default function RichTextEditor({
   const editor = useCreateBlockNote(editorOptions, [className]);
 
   // pour éviter que le onChange soit appelé lors de la 1ère initialisation du contenu
-  const [isContentInitialized, setIsContentInitialized] = useState(false);
+  // const [isContentInitialized, setIsContentInitialized] = useState(false);
 
   // écrase le contenu quand la valeur initiale change
+  // useEffect(() => {
+  //   async function setInitialContent() {
+  //     if (initialValue) {
+  //       // si le texte initial ne contient pas de liens HTML
+  //       if (!initialValue.match(CONTAINS_HTML_URL)) {
+  //         // on remplace les éventuelles URLs présentes par des tags HTML
+  //         initialValue = initialValue.replaceAll(
+  //           CONVERT_URL.searchValue,
+  //           CONVERT_URL.replaceValue
+  //         );
+  //       }
+
+  //       // essaye de faire le parsing html
+  //       const blocks = await editor.tryParseHTMLToBlocks(
+  //         // en conservant les éventuels sauts de lignes initiaux
+  //         initialValue.replaceAll('\n', '<br />')
+  //       );
+  //       editor.replaceBlocks(editor.document, blocks);
+
+  //       if (editor.domElement && setIsTruncated) {
+  //         const isTruncated =
+  //           editor.domElement.scrollHeight > editor.domElement.offsetHeight;
+  //         setIsTruncated(isTruncated);
+  //       }
+  //     }
+  //   }
+  //   setInitialContent();
+  // }, [editor, initialValue]);
+
   useEffect(() => {
-    async function setInitialContent() {
-      if (initialValue) {
-        // si le texte initial ne contient pas de liens HTML
-        if (!initialValue.match(CONTAINS_HTML_URL)) {
-          // on remplace les éventuelles URLs présentes par des tags HTML
-          initialValue = initialValue.replaceAll(
-            CONVERT_URL.searchValue,
-            CONVERT_URL.replaceValue
-          );
-        }
-
-        // essaye de faire le parsing html
-        const blocks = await editor.tryParseHTMLToBlocks(
-          // en conservant les éventuels sauts de lignes initiaux
-          initialValue.replaceAll('\n', '<br />')
-        );
-        editor.replaceBlocks(editor.document, blocks);
-
-        if (editor.domElement && setIsTruncated) {
-          const isTruncated =
-            editor.domElement.scrollHeight > editor.domElement.offsetHeight;
-          setIsTruncated(isTruncated);
-        }
-      }
+    // Replaces the blocks on initialization
+    // But, you can also call this before rendering the editor
+    async function loadHTML(html: string) {
+      const blocks = await editor.tryParseHTMLToBlocks(html);
+      editor.replaceBlocks(editor.document, blocks);
     }
-    setInitialContent();
+
+    if (initialValue) {
+      loadHTML(initialValue);
+    }
   }, [editor, initialValue]);
+
+  useEditorChange(async (editor) => {
+    const html = await editor.blocksToFullHTML(editor.document);
+
+    // console.log('onChange: html', html);
+    onChange?.(html);
+  }, editor);
 
   const handleChange = useDebouncedCallback(async () => {
     if (onChange) {
       const html = await editor.blocksToHTMLLossy(editor.document);
-      // on ajoute un espace insécable dans les paragraphes vides pour ne pas
-      // perdre les sauts de lignes
-      const content = html.replaceAll(
-        editorOptions.domAttributes?.inlineContent?.class
-          ? `<p class="${editorOptions.domAttributes.inlineContent.class}"></p>`
-          : '<p></p>',
-        '<p>&nbsp;</p>'
-      );
-      // mais on évite d'avoir uniquement une ligne vide
-      onChange(content === '<p>&nbsp;</p>' ? '' : content);
+      // // on ajoute un espace insécable dans les paragraphes vides pour ne pas
+      // // perdre les sauts de lignes
+      // const content = html.replaceAll(
+      //   editorOptions.domAttributes?.inlineContent?.class
+      //     ? `<p class="${editorOptions.domAttributes.inlineContent.class}"></p>`
+      //     : '<p></p>',
+      //   '<p>&nbsp;</p>'
+      // );
+      // // mais on évite d'avoir uniquement une ligne vide
+      // onChange(content === '<p>&nbsp;</p>' ? '' : content);
+
+      onChange(html);
     }
   }, debounceDelayOnChange);
 
@@ -208,6 +233,7 @@ export default function RichTextEditor({
       slashMenu={false}
       sideMenu={false}
       editable={!disabled}
+      onKeyDownCapture={OnKeyDownCapture}
       onBlur={(ev) => {
         /**
          * blur event is triggered only when user actually clicks outside of the blocknote editor
@@ -218,17 +244,17 @@ export default function RichTextEditor({
 
         onBlur?.();
       }}
-      onChange={(ed, { getChanges }) => {
-        const changes = getChanges();
-        // appelle le callback seulement la 1ère initialisation du contenu
-        // chargé ou si la source de la modif est autre que "local" (notamment
-        // un copier-coller alors que le champ est initialement vide)
-        if (isContentInitialized || changes?.[0].source.type !== 'local') {
-          handleChange();
-        } else {
-          setIsContentInitialized(true);
-        }
-      }}
+      // onChange={(ed, { getChanges }) => {
+      //   const changes = getChanges();
+      //   // appelle le callback seulement la 1ère initialisation du contenu
+      //   // chargé ou si la source de la modif est autre que "local" (notamment
+      //   // un copier-coller alors que le champ est initialement vide)
+      //   if (isContentInitialized || changes?.[0].source.type !== 'local') {
+      //     handleChange();
+      //   } else {
+      //     setIsContentInitialized(true);
+      //   }
+      // }}
     >
       <FormattingToolbar editor={editor} />
       <SuggestionMenu editor={editor} />
