@@ -1,10 +1,9 @@
 import { cn, TableCell } from '@tet/ui';
+import { ActionListItem } from '../actions/use-list-actions';
 import { ScoreProgressBar } from '../scores/score.progress-bar';
-import { ReferentielTableRow } from './types';
-import { actionTypeToClassName } from './utils';
 
 type Props = {
-  row: ReferentielTableRow;
+  row: ActionListItem;
   toggleRowExpanded?: () => void;
   canToggle?: boolean;
 };
@@ -15,17 +14,10 @@ export const ReferentielTableProgressionCell = ({
 }: Props) => {
   return (
     <TableCell
-      className={cn(
-        actionTypeToClassName[row.type],
-        toggleRowExpanded ? 'cursor-pointer' : ''
-      )}
+      className={cn(toggleRowExpanded ? 'cursor-pointer' : '')}
       onClick={toggleRowExpanded}
     >
-      <ScoreProgressBar
-        id={row.id}
-        identifiant={row.identifiant}
-        type={row.type}
-      />
+      <ScoreProgressBar action={row} />
     </TableCell>
   );
 };

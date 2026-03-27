@@ -1,35 +1,37 @@
 import { makeReferentielActionUrl } from '@/app/app/paths';
 import { CellContext } from '@tanstack/react-table';
-import { ActionTypeEnum } from '@tet/domain/referentiels';
+import { ActionTypeEnum, ReferentielId } from '@tet/domain/referentiels';
 import { Button, cn, Icon, TableCell, Tooltip } from '@tet/ui';
 import { MouseEvent } from 'react';
-import { ReferentielTableRow } from './types';
-import { actionTypeToClassName, getCommonPinningStyles } from './utils';
+import { ActionListItem } from '../actions/use-list-actions';
+import { getColumnPinningStyles } from './utils';
 
 type Props = {
-  info: CellContext<ReferentielTableRow, string>;
+  info: CellContext<ActionListItem, string>;
 };
 
 export const ReferentielTableTitleCell = ({ info }: Props) => {
   const row = info.row;
-  const action = row.original;
-  const haveChildren = action.children && action.children.length > 0;
+  const { actionId, actionType, identifiant, childrenIds } = row.original;
+
+  const haveChildren = childrenIds.length > 0;
 
   const isAxeOrSousAxe =
-    action.type === ActionTypeEnum.AXE ||
-    action.type === ActionTypeEnum.SOUS_AXE;
+    actionType === ActionTypeEnum.AXE || actionType === ActionTypeEnum.SOUS_AXE;
+
+  const pinning = getColumnPinningStyles(info.column, actionType);
 
   return (
     <TableCell
       className={cn(
         'group relative',
-        actionTypeToClassName[action.type],
-        haveChildren ? 'cursor-pointer' : ''
+        haveChildren ? 'cursor-pointer' : '',
+        pinning.className
       )}
-      style={{ ...getCommonPinningStyles(info.column) }}
+      style={pinning.style}
       onClick={haveChildren ? row.getToggleExpandedHandler() : undefined}
     >
-      {action.type === ActionTypeEnum.ACTION && (
+      {actionType === ActionTypeEnum.ACTION && (
         <div className="absolute right-4 inset-y-0 hidden group-hover:flex group-focus-within:flex">
           <Button
             type="button"
@@ -44,9 +46,10 @@ export const ReferentielTableTitleCell = ({ info }: Props) => {
               event.stopPropagation()
             }
             href={makeReferentielActionUrl({
-              collectiviteId: action.collectiviteId,
-              referentielId: action.referentielId,
-              actionId: action.id,
+              collectiviteId: info.table.options.meta?.collectiviteId as number,
+              referentielId: info.table.options.meta
+                ?.referentielId as ReferentielId,
+              actionId,
             })}
           >
             Ouvrir la mesure
@@ -73,7 +76,7 @@ export const ReferentielTableTitleCell = ({ info }: Props) => {
               'text-grey-8': !isAxeOrSousAxe,
             })}
           >
-            {action.identifiant} -{' '}
+            {identifiant} -{' '}
           </span>
           <Tooltip label={info.getValue()}>
             <span

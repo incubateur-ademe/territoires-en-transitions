@@ -1,24 +1,22 @@
-import { CellContext } from '@tanstack/react-table';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { cn, RichTextEditor, TableCell, Tooltip } from '@tet/ui';
+import { RichTextEditor, TableCell, Tooltip } from '@tet/ui';
 import { htmlToText } from 'html-to-text';
-import { ReferentielTableRow } from './types';
-import { actionTypeToClassName } from './utils';
+import { ActionListItem } from '../actions/use-list-actions';
 
 type Props = {
-  info: CellContext<ReferentielTableRow, string | undefined>;
+  row: ActionListItem;
+  canEdit: boolean;
 };
 
-export const ReferentielTableExplicationCell = ({ info }: Props) => {
-  const { hasCollectivitePermission } = useCurrentCollectivite();
+export const ReferentielTableExplicationCell = ({ row, canEdit }: Props) => {
+  const explication = row.score.explication;
+
   return (
     <TableCell
-      className={cn(actionTypeToClassName[info.row.original.type])}
-      canEdit={hasCollectivitePermission('referentiels.mutate')}
+      canEdit={canEdit}
       edit={{
         renderOnEdit: () => (
           <RichTextEditor
-            initialValue={info.getValue()}
+            initialValue={explication}
             // onChange={(value) => {
             //   info.row.original.explication = value;
             // }}
@@ -26,11 +24,11 @@ export const ReferentielTableExplicationCell = ({ info }: Props) => {
         ),
       }}
     >
-      <Tooltip label={htmlToText(info.getValue() ?? '')}>
-        <span className="line-clamp-1">
-          {htmlToText(info.getValue() ?? '')}
-        </span>
-      </Tooltip>
+      {explication && explication.length > 0 && (
+        <Tooltip label={htmlToText(explication)}>
+          <span className="line-clamp-1">{htmlToText(explication)}</span>
+        </Tooltip>
+      )}
     </TableCell>
   );
 };

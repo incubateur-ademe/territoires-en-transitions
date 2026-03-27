@@ -1,16 +1,15 @@
-import { cn, TableCell } from '@tet/ui';
+import { TableCell } from '@tet/ui';
+import { ActionListItem } from '../actions/use-list-actions';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
-import { ReferentielTableRow } from './types';
-import { actionTypeToClassName } from './utils';
 
 type Props = {
-  row: ReferentielTableRow;
+  row: ActionListItem;
 };
 
 export const ReferentielTableScoreRatioCell = ({ row }: Props) => {
   return (
-    <TableCell className={cn(actionTypeToClassName[row.type])}>
-      <ScoreRatioBadge actionId={row.id} size="xs" />
+    <TableCell>
+      <ScoreRatioBadge action={row} size="xs" />
     </TableCell>
   );
 };
