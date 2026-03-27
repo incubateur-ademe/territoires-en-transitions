@@ -978,3 +978,6 @@ evaluation/drop-question-thematique-completude 2026-04-27T14:37:24Z Marc Rutkows
 utils/banner_info 2026-04-27T10:00:00Z Thibaut Dusanter <thibaut.dusanter@gmail.com> # Crée la table banner_info, son index unique partiel et active RLS sans policies (bannière propriétaire)
 
 referentiel/update_te_hierarchie 2026-04-28T00:00:00Z Thibaut Dusanter <thibaut.dusanter@gmail.com> # Met à jour la hiérarchie des référentiels te et te-test pour utiliser tache au lieu d'exemple
+
+referentiel/drop_action_information_rpcs 2026-03-25T12:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime action_contexte, action_exemples, action_ressources, action_perimetre_evaluation
+referentiel/drop_comparaison_scores_audit_type_tabular_score [referentiel/drop_action_information_rpcs] 2026-03-27T09:05:14Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime la vue comparaison_scores_audit et la table type_tabular_score
