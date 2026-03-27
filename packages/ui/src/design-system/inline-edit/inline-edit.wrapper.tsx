@@ -1,7 +1,6 @@
 import {
   autoUpdate,
   FloatingFocusManager,
-  FloatingNode,
   FloatingOverlay,
   FloatingPortal,
   offset,
@@ -10,15 +9,22 @@ import {
   useClick,
   useDismiss,
   useFloating,
-  useFloatingNodeId,
   useInteractions,
 } from '@floating-ui/react';
-import { cloneElement, HTMLAttributes, useState } from 'react';
-
-import { useOpenState } from '../../hooks/use-open-state';
+import {
+  cloneElement,
+  HTMLAttributes,
+  useEffect,
+  useRef,
+  useState,
+  type RefAttributes,
+} from 'react';
+ import { useOpenState } from '../../hooks/use-open-state';
 import { preset } from '../../tailwind-preset';
 import { cn } from '../../utils/cn';
+import { mergeRefs } from '../../utils/merge-refs';
 import { OpenState } from '../../utils/types';
+penState } from '../../utils/types';
 
 export type InlineEditWrapperProps = {
   children:
@@ -44,6 +50,10 @@ export const InlineEditWrapper = ({
   floatingMatchReferenceHeight = true,
 }: InlineEditWrapperProps) => {
   const { isOpen, setIsOpen } = useOpenState(openState);
+  const [triggerElement, setTriggerElement] = useState<HTMLElement | null>(
+    null
+  );
+  const wasOpenRef = useRef(isOpen);
 
   const handleOpenChange = (open: boolean) => {
     if (disabled) return;
@@ -54,9 +64,18 @@ export const InlineEditWrapper = ({
     setIsOpen(open);
   };
 
-  const [internalMaxHeight, setInternalMaxHeight] = useState(0);
+  useEffect(() => {
+    if (wasOpenRef.current && !isOpen) {
+      requestAnimationFrame(() => {
+        triggerElement?.focus();
+      });
+    }
+    wasOpenRef.current = isOpen;
+  }, [isOpen, triggerElement]);
 
-  const nodeId = useFloatingNodeId();
+  const nodeId = useFloatingNodeId()
+
+  const [maxHeight, setMaxHeight] = useState(0);
 
   const { refs, context, x, y, strategy } = useFloating({
     open: isOpen,
@@ -83,12 +102,25 @@ export const InlineEditWrapper = ({
   ]);
 
   const isChildrenFunction = typeof children === 'function';
+  const childProps = isChildrenFunction ? {} : children.props;
+  const { ref: childRef, ...childPropsRest } =
+    childProps as HTMLAttributes<HTMLElement> & RefAttributes<HTMLElement>;
   const inlineProps = getReferenceProps({
-    ref: refs.setReference,
+    ref: mergeRefs(refs.setReference, childRef),
     tabIndex: disabled ? undefined : 0,
-    ...(isChildrenFunction ? {} : children.props),
+    onMouseDownCapture: (event) => {
+      setTriggerElement(event.currentTarget as HTMLElement);
+    },
+    onKeyDownCapture: (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        setTriggerElement(event.currentTarget as HTMLElement);
+      }
+    },
+    ...childPropsRest,
     className: cn(
       'cursor-pointer',
+      'data-[inline-edit=true]:hover:bg-primary-2/40',
+      'transition-colors',
       { 'cursor-default': disabled },
       isChildrenFunction ? undefined : children.props.className
     ),

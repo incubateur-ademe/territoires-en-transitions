@@ -1,23 +1,19 @@
-import { ActionType } from '@tet/domain/referentiels';
-import { cn, Notification, TableCell } from '@tet/ui';
+import { Notification, TableCell } from '@tet/ui';
 import Link from 'next/link';
-import { actionTypeToClassName } from './utils';
 
 type Props = {
   onClick?: () => void;
   link?: string;
   count?: number;
-  actionType: ActionType;
 };
 
 export const ReferentielTableNotificationCell = ({
   link,
   onClick,
   count,
-  actionType,
 }: Props) => {
   return (
-    <TableCell className={cn(actionTypeToClassName[actionType])}>
+    <TableCell>
       {count && count > 0 && (
         <>
           {link && (

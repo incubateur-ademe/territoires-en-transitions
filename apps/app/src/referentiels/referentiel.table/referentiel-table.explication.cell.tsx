@@ -1,36 +1,59 @@
 import { CellContext } from '@tanstack/react-table';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { cn, RichTextEditor, TableCell, Tooltip } from '@tet/ui';
-import { htmlToText } from 'html-to-text';
-import { ReferentielTableRow } from './types';
-import { actionTypeToClassName } from './utils';
+import { ActionType, ActionTypeEnum } from '@tet/domain/referentiels';
+import { TableCell, TableCellRichTextEditor } from '@tet/ui';
+import { ActionListItem } from '../actions/use-list-actions';
+import { useUpdateActionExplication } from '../actions/use-update-action-explication';
+import { useReferentielTableCellFocus } from './referentiel-table.keyboard';
+import { getTableMeta } from './utils';
 
 type Props = {
-  info: CellContext<ReferentielTableRow, string | undefined>;
+  info: CellContext<ActionListItem, unknown>;
+  canEdit: boolean;
+  updateActionExplication: ReturnType<
+    typeof useUpdateActionExplication
+  >['mutate'];
 };
 
-export const ReferentielTableExplicationCell = ({ info }: Props) => {
-  const { hasCollectivitePermission } = useCurrentCollectivite();
+const actionTypesWithExplication = new Set<ActionType>([
+  ActionTypeEnum.SOUS_ACTION,
+  ActionTypeEnum.TACHE,
+]);
+
+export const ReferentielTableExplicationCell = ({
+  info,
+  canEdit,
+  updateActionExplication,
+}: Props) => {
+  const { referentielCellProps } = useReferentielTableCellFocus(info.cell);
+  const action = info.row.original;
+
+  if (!actionTypesWithExplication.has(action.actionType)) {
+    return <TableCell {...referentielCellProps} />;
+  }
+
+  const {
+    actionId,
+    score: { explication },
+  } = action;
+
+  const { collectiviteId } = getTableMeta(info.table);
+
   return (
-    <TableCell
-      className={cn(actionTypeToClassName[info.row.original.type])}
-      canEdit={hasCollectivitePermission('referentiels.mutate')}
-      edit={{
-        renderOnEdit: () => (
-          <RichTextEditor
-            initialValue={info.getValue()}
-            // onChange={(value) => {
-            //   info.row.original.explication = value;
-            // }}
-          />
-        ),
+    <TableCellRichTextEditor
+      {...referentielCellProps}
+      canEdit={canEdit}
+      initialValue={explication}
+      onValueChange={(value) => {
+        if (value === explication) {
+          return;
+        }
+
+        updateActionExplication({
+          actionId,
+          collectiviteId,
+          commentaire: value || '',
+        });
       }}
-    >
-      <Tooltip label={htmlToText(info.getValue() ?? '')}>
-        <span className="line-clamp-1">
-          {htmlToText(info.getValue() ?? '')}
-        </span>
-      </Tooltip>
-    </TableCell>
+    />
   );
 };
