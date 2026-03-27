@@ -11,26 +11,27 @@ import {
   TFilters,
 } from '@/app/referentiels/AidePriorisation/filters';
 import { getMaxDepth } from '@/app/referentiels/AidePriorisation/queries';
-import { actionNewToDeprecated } from '@/app/referentiels/DEPRECATED_scores.types';
-import { useTable } from '@/app/referentiels/ReferentielTable/useReferentiel';
+import { useTable } from '@/app/referentiels/DEPRECATED_ReferentielTable/useReferentiel';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
+import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import { DeleteFiltersButton } from '@/app/ui/lists/DEPRECATED_filter-badges/delete-filters.button';
 import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
 import { ReferentielId } from '@tet/domain/referentiels';
+import { divisionOrZero } from '@tet/domain/utils';
 import { ITEM_ALL } from '@tet/ui';
 import { flow } from 'es-toolkit';
 
 function actionMatchingCategorie(categories: string[]) {
-  return (action: ReturnType<typeof actionNewToDeprecated>) =>
-    action.phase === null ||
+  return (action: ActionDetailed) =>
+    action.categorie === null ||
     categories.includes(ITEM_ALL) ||
-    categories.includes(action.phase);
+    categories.includes(action.categorie);
 }
 
 function actionMatchingRatios(
   referentielId: ReferentielId,
   ratios: PercentFilterValues[],
-  filterColumnName: 'score_programme' | 'score_realise'
+  filterColumnName: 'scoreProgramme' | 'scoreRealise'
 ) {
   if (ratios.includes(ITEM_ALL)) {
     return () => true;
@@ -42,16 +43,24 @@ function actionMatchingRatios(
 
   const maxLevel = getMaxDepth(referentielId);
 
-  return (action: ReturnType<typeof actionNewToDeprecated>) => {
+  return (action: ActionDetailed) => {
     // On applique le filtre sur les pourcentages de score uniquement aux sous-taches
-    if (action.depth < maxLevel) {
+    if (action.level < maxLevel) {
       return true;
     }
 
+    const scoreInPercentage =
+      filterColumnName === 'scoreProgramme'
+        ? divisionOrZero(
+            action.score.pointProgramme,
+            action.score.pointPotentiel
+          )
+        : divisionOrZero(action.score.pointFait, action.score.pointPotentiel);
+
     return boundaries.some((boundary) => {
       return (
-        action[filterColumnName] >= boundary.lower &&
-        action[filterColumnName] < boundary.upper
+        scoreInPercentage >= boundary.lower &&
+        scoreInPercentage < boundary.upper
       );
     });
   };
@@ -67,13 +76,13 @@ function useTableWithFilters(referentielId: ReferentielId) {
   const actionMatchingRatiosOfScoreProgramme = actionMatchingRatios(
     referentielId,
     filters.score_programme,
-    'score_programme'
+    'scoreProgramme'
   );
 
   const actionMatchingRatiosOfScoreRealise = actionMatchingRatios(
     referentielId,
     filters.score_realise,
-    'score_realise'
+    'scoreRealise'
   );
 
   const { table, isLoading } = useTable({

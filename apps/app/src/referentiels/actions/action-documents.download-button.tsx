@@ -1,15 +1,15 @@
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { TFichier } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { usePreuves } from '@/app/referentiels/preuves/usePreuves';
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { DBClient, useSupabase } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 import classNames from 'classnames';
+import { ActionListItem } from './use-list-actions';
 
 export type TDownloadDocsProps = {
-  action: ActionDefinitionSummary;
+  action: ActionListItem;
   className?: string;
 };
 
@@ -63,7 +63,7 @@ export const DownloadDocs = ({ action, className }: TDownloadDocsProps) => {
  * fonction `refetch`) la génération et le téléchargement d'un zip contenant
  * tous les fichiers associés à une sous-action.
  */
-const useDownloadDocs = (action: ActionDefinitionSummary) => {
+const useDownloadDocs = (action: ActionListItem) => {
   const { referentiel, identifiant } = action;
   const supabase = useSupabase();
   const collectivite = useCurrentCollectivite();

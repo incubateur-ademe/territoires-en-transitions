@@ -12,6 +12,7 @@ import { useFicheBudgets } from './hooks/use-fiche-budgets';
 import { useFicheDocuments } from './hooks/use-fiche-documents';
 import { useFicheFinanceurs } from './hooks/use-fiche-financeurs';
 import { useFicheIndicateurs } from './hooks/use-fiche-indicateurs';
+import { useFicheMesures } from './hooks/use-fiche-mesure';
 import { useFicheNotes } from './hooks/use-fiche-notes';
 import {
   ActionsLieesState,
@@ -19,6 +20,7 @@ import {
   DocumentsState,
   FinanceursState,
   IndicateursState,
+  MesuresState,
   NotesState,
 } from './types';
 
@@ -34,6 +36,7 @@ export type FicheContextValue = {
   notes: NotesState;
   budgets: BudgetsState;
   financeurs: FinanceursState;
+  mesures: MesuresState;
 };
 
 const FicheContext = createContext<FicheContextValue | null>(null);
@@ -77,7 +80,7 @@ export const FicheProvider = ({
   const notes = useFicheNotes(fiche);
   const budgets = useFicheBudgets(fiche);
   const financeurs = useFicheFinanceurs(fiche);
-
+  const mesures = useFicheMesures(fiche);
   const contextValue: FicheContextValue = useMemo(
     () => ({
       fiche,
@@ -91,6 +94,7 @@ export const FicheProvider = ({
       notes,
       budgets,
       financeurs,
+      mesures,
     }),
     [
       fiche,
@@ -104,6 +108,7 @@ export const FicheProvider = ({
       notes,
       budgets,
       financeurs,
+      mesures,
     ]
   );
 

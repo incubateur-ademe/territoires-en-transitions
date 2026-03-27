@@ -8,7 +8,7 @@ import {
   ActionStatutCreate,
   ActionTypeEnum,
   ReferentielId,
-  StatutAvancement,
+  StatutAvancementCreateInDatabase,
   StatutAvancementEnum,
   TreeOfActionsIncludingScore,
 } from '@tet/domain/referentiels';
@@ -27,7 +27,7 @@ export const UPDATE_ACTION_STATUT_CHUNK_SIZE = 100;
 
 export function getActionStatusCreateForAction(
   action: TreeOfActionsIncludingScore,
-  avancement: StatutAvancement
+  avancement: StatutAvancementCreateInDatabase
 ): Omit<ActionStatutCreate, 'collectiviteId'>[] {
   if (
     (action.actionType === ActionTypeEnum.SOUS_ACTION ||

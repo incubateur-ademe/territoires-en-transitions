@@ -1,11 +1,10 @@
 import { useState } from 'react';
 
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useListMesurePilotes } from '@/app/referentiels/actions/use-mesure-pilotes';
 import { useListMesureServicesPilotes } from '@/app/referentiels/actions/use-mesure-services-pilotes';
 import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
-import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -20,13 +19,7 @@ import { Score } from './score';
  * Affiche la partie de l'en-tête de la page Action sensible à la position du
  * défilement vertical
  */
-export const ActionHeader = ({
-  actionDefinition,
-  action,
-}: {
-  actionDefinition: ActionDefinitionSummary;
-  action: ActionDetailed;
-}) => {
+export const ActionHeader = ({ action }: { action: ActionListItem }) => {
   const {
     nom: currentCollectiviteName,
     isRoleAuditeur,
@@ -112,7 +105,7 @@ export const ActionHeader = ({
               }
             )}
           >
-            <Score actionDefinition={actionDefinition} />
+            <Score action={action} />
 
             <div className="flex max-sm:flex-col gap-3 sm:items-center w-fit">
               {action && (
@@ -126,18 +119,12 @@ export const ActionHeader = ({
                   isReadOnly={!canEditReferentiel}
                 />
               )}
-              <ActionAuditStatut
-                action={actionDefinition}
-                className="lg:ml-auto -m-1"
-              />
+              <ActionAuditStatut action={action} className="lg:ml-auto -m-1" />
             </div>
           </div>
 
           {/** Action précédente / suivante */}
-          <ActionNavigation
-            actionId={action.actionId}
-            headerIsSticky={isSticky}
-          />
+          <ActionNavigation action={action} headerIsSticky={isSticky} />
 
           {/* Modale d'édition rapide */}
           {action && isEditModalOpen && (

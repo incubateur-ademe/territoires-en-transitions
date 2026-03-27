@@ -1,9 +1,6 @@
-import { StatutAvancementIncludingNonConcerne } from '@tet/domain/referentiels';
+import { StatutAvancementCreate } from '@tet/domain/referentiels';
 
-export const actionAvancementColors: Record<
-  StatutAvancementIncludingNonConcerne,
-  string
-> = {
+export const actionAvancementColors: Record<StatutAvancementCreate, string> = {
   non_concerne: '#929292',
   non_renseigne: '#E5E5E5',
   pas_fait: '#FFCA79',

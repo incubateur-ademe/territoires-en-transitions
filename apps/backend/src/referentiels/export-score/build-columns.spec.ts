@@ -1,5 +1,6 @@
 import { CollectiviteAvecType } from '@tet/domain/collectivites';
 import {
+  ActionType,
   ActionTypeEnum,
   ScoreComputeMode,
   ScoreComputeModeEnum,
@@ -82,7 +83,7 @@ function createScoreComparisonData(
 
 function createScoreRow(
   actionId: string,
-  actionType: ActionTypeEnum,
+  actionType: ActionType,
   score: Partial<ScoresPayload['scores']['score']> & {
     actionsEnfant?: Array<{
       score: { actionId: string; concerne: boolean; avancement: string };

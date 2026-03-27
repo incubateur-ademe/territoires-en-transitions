@@ -5,58 +5,11 @@ import {
   useCollectiviteId,
   useCurrentCollectivite,
 } from '@tet/api/collectivites';
-import {
-  ActionStatut,
-  canUpdateActionStatutWithoutPermissionCheck,
-  getActionStatutFromActionScore,
-} from '@tet/domain/referentiels';
+import { canUpdateActionStatutWithoutPermissionCheck } from '@tet/domain/referentiels';
 import { PermissionOperationEnum } from '@tet/domain/users';
 import { useLabellisationParcours } from '../../labellisations/useLabellisationParcours';
 import { useReferentielId } from '../../referentiel-context';
-import { useScore, useSnapshot } from '../../use-snapshot';
-
-import { findActionInTree } from '@tet/domain/referentiels';
-import { useEffect, useState } from 'react';
-/**
- * Charge le statut d'une action
- */
-export const useActionStatut = (actionId: string) => {
-  const collectiviteId = useCollectiviteId();
-
-  const [actionStatutFromScore, setActionStatutFromScore] = useState<{
-    actionStatut: ActionStatut;
-    filled: boolean;
-    filledByChildren: string[];
-  } | null>(null);
-
-  const { data: snapshot, isFetching: isLoadingSnapshot } = useSnapshot({
-    actionId,
-  });
-
-  const actionScore = snapshot?.scoresPayload.scores
-    ? findActionInTree(
-        [snapshot.scoresPayload.scores],
-        (a) => a.actionId === actionId
-      ) ?? null
-    : null;
-
-  useEffect(() => {
-    if (actionScore) {
-      setActionStatutFromScore(
-        getActionStatutFromActionScore(collectiviteId, actionScore)
-      );
-    } else {
-      setActionStatutFromScore(null);
-    }
-  }, [actionScore]);
-
-  return {
-    statut: actionStatutFromScore?.actionStatut,
-    filled: actionStatutFromScore?.filled,
-    filledByChildren: actionStatutFromScore?.filledByChildren,
-    isLoading: actionStatutFromScore === null || isLoadingSnapshot,
-  };
-};
+import { useGetAction } from '../use-get-action';
 
 /**
  * Met à jour le statut d'une action
@@ -70,11 +23,6 @@ export const useSaveActionStatut = () => {
   const { isPending, mutate: saveActionStatut } = useMutation(
     trpc.referentiels.actions.updateStatut.mutationOptions({
       onSuccess: () => {
-        // Invalidate cache for all action statuts
-        queryClient.invalidateQueries({
-          queryKey: ['action_statut', collectiviteId],
-        });
-
         queryClient.invalidateQueries({
           queryKey: trpc.referentiels.snapshots.getCurrent.queryKey({
             collectiviteId,
@@ -100,11 +48,6 @@ export const useSaveActionStatuts = () => {
   return useMutation(
     trpc.referentiels.actions.updateStatuts.mutationOptions({
       onSuccess: () => {
-        // Invalidate cache for all action statuts
-        queryClient.invalidateQueries({
-          queryKey: ['action_statut', collectiviteId],
-        });
-
         queryClient.invalidateQueries({
           queryKey: trpc.referentiels.snapshots.getCurrent.queryKey({
             collectiviteId,
@@ -129,10 +72,12 @@ export const useEditActionStatutIsDisabled = (actionId: string) => {
   });
   const isAuditeur = useIsAuditeur();
 
-  const score = useScore(actionId);
-  if (!score) {
+  const action = useGetAction({ actionId });
+  if (!action) {
     return true;
   }
+
+  const { score } = action;
 
   const canUpdateResult = canUpdateActionStatutWithoutPermissionCheck({
     actions: [{ actionId, desactive: score.desactive }],

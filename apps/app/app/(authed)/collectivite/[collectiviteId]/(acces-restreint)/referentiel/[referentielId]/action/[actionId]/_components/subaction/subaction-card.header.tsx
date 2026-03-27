@@ -2,18 +2,17 @@ import {
   OpenModaleState,
   SubActionStatutDropdown,
 } from '@/app/referentiels/actions/sub-action-statut.dropdown';
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import Markdown from '@/app/ui/Markdown';
-import { ActionTypeEnum } from '@tet/domain/referentiels';
+import { ActionTypeEnum, StatutAvancementEnum } from '@tet/domain/referentiels';
 import { Icon, InfoTooltip } from '@tet/ui';
 import { ScoreIndicatifBadge } from '../score-indicatif/score-indicatif.badge';
 
 type Props = {
-  subAction: ActionDefinitionSummary;
+  subAction: ActionListItem;
   shouldDisplayProgressBar?: boolean;
-  hideStatus?: boolean;
   openDetailledState?: OpenModaleState;
   isExpanded?: boolean;
 };
@@ -21,21 +20,22 @@ type Props = {
 export const SubactionCardHeader = ({
   subAction,
   shouldDisplayProgressBar = true,
-  hideStatus = false,
   openDetailledState,
   isExpanded = false,
 }: Props) => {
-  const isSubAction = subAction.type === ActionTypeEnum.SOUS_ACTION;
+  const isSubAction = subAction.actionType === ActionTypeEnum.SOUS_ACTION;
+  const isStatusVisible =
+    subAction.score.statut !== StatutAvancementEnum.NON_RENSEIGNABLE;
 
   return (
     <div
       className="flex flex-col gap-2"
       data-test={`SousActionHeader-${subAction.identifiant}`}
     >
-      {(!hideStatus || subAction.haveScoreIndicatif) && (
+      {(isStatusVisible || subAction.scoreIndicatif) && (
         <div className="flex flex-wrap gap-2">
           {/* Statut */}
-          {!hideStatus && (
+          {isStatusVisible && (
             <div className="mt-auto w-full flex max-sm:flex-col gap-3 sm:items-center justify-start">
               {isSubAction && (
                 <div
@@ -50,23 +50,23 @@ export const SubactionCardHeader = ({
                 </div>
               )}
               <SubActionStatutDropdown
-                actionDefinition={subAction}
+                action={subAction}
                 openDetailledState={openDetailledState}
               />
 
               {isSubAction && (
                 <div className="shrink-0 flex">
-                  <ScoreRatioBadge actionId={subAction.id} size="xs" />
+                  <ScoreRatioBadge action={subAction} size="xs" />
                 </div>
               )}
 
               {shouldDisplayProgressBar && (
                 <ScoreProgressBar
-                  id={subAction.id}
-                  identifiant={subAction.identifiant}
-                  type={subAction.type}
+                  action={subAction}
                   className="w-80"
-                  displayDoneValue={subAction.type === ActionTypeEnum.TACHE}
+                  displayDoneValue={
+                    subAction.actionType === ActionTypeEnum.TACHE
+                  }
                   valuePosition="left"
                 />
               )}
@@ -74,8 +74,8 @@ export const SubactionCardHeader = ({
           )}
 
           {/* Score indicatif */}
-          {subAction.haveScoreIndicatif && (
-            <ScoreIndicatifBadge actionId={subAction.id} />
+          {subAction.scoreIndicatif && (
+            <ScoreIndicatifBadge actionId={subAction.actionId} />
           )}
         </div>
       )}
@@ -84,7 +84,7 @@ export const SubactionCardHeader = ({
       <div className="text-primary-9 text-base font-bold">
         {subAction.identifiant} {subAction.nom}{' '}
         {subAction.description &&
-          subAction.type !== ActionTypeEnum.SOUS_ACTION && (
+          subAction.actionType !== ActionTypeEnum.SOUS_ACTION && (
             <InfoTooltip
               label={
                 <Markdown

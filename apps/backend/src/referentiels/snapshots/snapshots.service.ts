@@ -12,6 +12,7 @@ import { toSlug } from '@tet/backend/utils/string.utils';
 import { PersonnalisationReponsesPayload } from '@tet/domain/collectivites';
 import {
   ReferentielId,
+  SCORES_PAYLOAD_CURRENT_VERSION,
   ScoreSnapshot,
   ScoreSnapshotCreate,
   ScoresPayload,
@@ -402,6 +403,11 @@ export class SnapshotsService {
     return scoreSnapshot;
   }
 
+  private isSnapshotPayloadOutdated(snapshot: ScoreSnapshot): boolean {
+    const version = snapshot.scoresPayload.payloadVersion;
+    return !version || version < SCORES_PAYLOAD_CURRENT_VERSION;
+  }
+
   private async getSnapshotWithoutPayloads(
     collectiviteId: number,
     referentielId: ReferentielId,
@@ -450,21 +456,25 @@ export class SnapshotsService {
       .limit(1)
       .then((result) => result[0]);
 
-    if (
-      snapshotRef === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF &&
-      !snapshot
-    ) {
-      this.logger.log(
-        `Force compute of current score for '${referentielId}' and CT ${collectiviteId}`
-      );
+    if (snapshotRef === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF) {
+      const needsRecompute =
+        !snapshot ||
+        this.isSnapshotPayloadOutdated(snapshot);
 
-      // compute the score then save it into current snapshot
-      snapshot = await this.computeAndUpsert({
-        collectiviteId,
-        referentielId,
-        jalon: SnapshotJalonEnum.COURANT,
-        user,
-      });
+      if (needsRecompute) {
+        this.logger.log(
+          !snapshot
+            ? `Force compute of current score for '${referentielId}' and CT ${collectiviteId}`
+            : `Snapshot payload version outdated (${snapshot.scoresPayload.payloadVersion ?? 'undefined'} < ${SCORES_PAYLOAD_CURRENT_VERSION}), recomputing for '${referentielId}' and CT ${collectiviteId}`
+        );
+
+        snapshot = await this.computeAndUpsert({
+          collectiviteId,
+          referentielId,
+          jalon: SnapshotJalonEnum.COURANT,
+          user,
+        });
+      }
     }
 
     if (!snapshot) {

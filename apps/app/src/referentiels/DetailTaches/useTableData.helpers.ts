@@ -1,9 +1,9 @@
-import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import {
   ActionTypeEnum,
   flatMapActionsEnfants,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
+import { ActionDetailed } from '../use-snapshot';
 
 /**
  * Vérifie si une action est non renseigné ou contient des sous-actions ou taches non renseignées ou pas de sous actions ou taches
@@ -29,8 +29,7 @@ export function hasNonInformedActionOrNonInformedChild(
 
     const hasNoChildren = act.actionsEnfant.length === 0;
     const hasNonRenseigneChild = act.actionsEnfant.some(
-      (a: ActionDetailed) =>
-        a.score.concerne === true && a.score.renseigne === false
+      (a) => a.score.concerne === true && a.score.renseigne === false
     );
     return hasNoChildren || hasNonRenseigneChild;
   });
@@ -48,8 +47,7 @@ export function hasDetailedSousActionOrInformedTache(
     const isConcerned = act.score.concerne === true;
     const isNotRenseigne = act.score.renseigne === false;
     const hasRenseigneChild = act.actionsEnfant.some(
-      (a: ActionDetailed) =>
-        a.score.concerne === true && a.score.renseigne === true
+      (a) => a.score.concerne === true && a.score.renseigne === true
     );
 
     return (

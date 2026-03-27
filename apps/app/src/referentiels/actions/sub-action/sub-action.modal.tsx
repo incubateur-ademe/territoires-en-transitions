@@ -1,23 +1,21 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { ActionStatutCreate } from '@tet/domain/referentiels';
+import {
+  ActionStatutCreate,
+  StatutAvancementEnum,
+} from '@tet/domain/referentiels';
 import { Checkbox, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
-import { omit } from 'es-toolkit';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import TasksList from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/task/task.cards-list';
-import { useActionSummaryChildren } from '../../referentiel-hooks';
 import { AVANCEMENT_DETAILLE_PAR_STATUT } from '../../utils';
-import {
-  useActionStatut,
-  useSaveActionStatut,
-} from '../action-statut/use-action-statut';
+import { useSaveActionStatut } from '../action-statut/use-action-statut';
 import AvancementDetailleSlider, {
   AvancementValues,
 } from '../avancement-detaille/avancement-detaille.slider';
+import { ActionListItem } from '../use-list-actions';
 
 type Props = {
-  actionDefinition: ActionDefinitionSummary;
+  action: ActionListItem;
   openState: OpenState;
 };
 
@@ -27,22 +25,17 @@ type Props = {
  * (à confirmer)
  */
 
-const SubActionModal = ({ actionDefinition, openState }: Props) => {
-  const { id: actionId, nom: actionName } = actionDefinition;
-  const tasks = useActionSummaryChildren(actionDefinition);
-  const { statut, isLoading } = useActionStatut(actionId);
+const SubActionModal = ({ action, openState }: Props) => {
+  const { actionId, nom: actionName } = action;
+  const taskIds = action.childrenIds;
+
   const collectiviteId = useCollectiviteId();
   const [actionStatutUpdate, setActionStatutUpdate] =
     useState<ActionStatutCreate | null>(null);
   const { saveActionStatut } = useSaveActionStatut();
-  const [percentageAvancement, setPercentageAvancement] = useState(false);
-
-  useEffect(() => {
-    if (!isLoading && statut && !actionStatutUpdate) {
-      setActionStatutUpdate(omit(statut, ['modifiedAt', 'modifiedBy']));
-      setPercentageAvancement(statut.avancement === 'detaille');
-    }
-  }, [statut]);
+  const [percentageAvancement, setPercentageAvancement] = useState(
+    action.score.avancement === StatutAvancementEnum.DETAILLE
+  );
 
   if (!actionStatutUpdate) {
     return null;
@@ -132,12 +125,8 @@ const SubActionModal = ({ actionDefinition, openState }: Props) => {
           </div>
 
           {/* Liste des tâches */}
-          {tasks.length > 0 && (
-            <TasksList
-              tasks={tasks}
-              hideStatus={percentageAvancement}
-              shouldShowJustifications
-            />
+          {taskIds.length > 0 && (
+            <TasksList taskIds={taskIds} shouldShowJustifications />
           )}
         </div>
       )}
@@ -156,11 +145,13 @@ const SubActionModal = ({ actionDefinition, openState }: Props) => {
             children: 'Valider',
             onClick: () => {
               if (percentageAvancement) {
-                saveActionStatut(actionStatutUpdate);
+                saveActionStatut({
+                  ...actionStatutUpdate,
+                  avancement: 'detaille',
+                });
               } else {
                 // Si on valide le détaillé à la tâche, on met le statut de la sous-action à non renseigné. Un peu étrang, mais manière dont cela fonctionne actuellement.
                 saveActionStatut({
-                  ...(statut ? omit(statut, ['modifiedAt', 'modifiedBy']) : {}),
                   actionId,
                   collectiviteId,
                   avancement: 'non_renseigne',

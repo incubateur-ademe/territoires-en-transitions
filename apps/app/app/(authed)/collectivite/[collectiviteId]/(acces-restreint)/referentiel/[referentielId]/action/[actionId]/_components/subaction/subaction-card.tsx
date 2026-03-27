@@ -1,21 +1,13 @@
-import { useActionId } from '@/app/referentiels/actions/action-context';
-import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import SubActionPreuvesAccordion from '@/app/referentiels/actions/sub-action/sub-action-preuves.accordion';
 import SubActionDescription from '@/app/referentiels/actions/sub-action/sub-action.description';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
-import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import {
-  ActionDefinitionSummary,
-  useActionSummaryChildren,
-} from '@/app/referentiels/referentiel-hooks';
-import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { ActionTypeEnum } from '@tet/domain/referentiels';
+import { ActionTypeEnum, StatutAvancementEnum } from '@tet/domain/referentiels';
 import { Accordion, Button, Divider } from '@tet/ui';
 import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { ActionJustificationField } from '../action/action.justification-field';
-import { useCommentPanel } from '../comments/hooks/use-comment-panel';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
 import TaskCardsList from '../task/task.cards-list';
 import SubactionCardActions from './subaction-card.actions';
@@ -33,10 +25,11 @@ export const getHashFromUrl = () => {
 };
 
 type SubActionCardProps = {
-  subAction: ActionDefinitionSummary;
+  subAction: ActionListItem;
   isOpen: boolean;
   showJustifications: boolean;
-  onClick: () => void;
+  openCommentPanel: ({ action }: { action: ActionListItem }) => void;
+  commentsCount: number;
 };
 
 /**
@@ -49,7 +42,8 @@ const SubActionCard = ({
   subAction,
   isOpen,
   showJustifications,
-  onClick,
+  openCommentPanel,
+  commentsCount,
 }: SubActionCardProps) => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
 
@@ -59,40 +53,23 @@ const SubActionCard = ({
 
   const hash = getHashFromUrl();
 
-  const { statut, filled } = useActionStatut(subAction.id);
-  const { avancement } = statut || {};
+  const { statut } = subAction.score;
 
-  const preuvesCount = useActionPreuvesCount(subAction.id);
+  const preuvesCount = useActionPreuvesCount(subAction.actionId);
 
-  const tasks = useActionSummaryChildren(subAction);
+  const taskIds = subAction.childrenIds;
 
   const [isExpanded, setIsExpanded] = useState(isOpen);
 
-  const referentielId = useReferentielId();
+  const isDetailled = statut === StatutAvancementEnum.DETAILLE;
 
-  const isVisitor = useIsVisitor();
-
-  const { openPanel } = useCommentPanel(referentielId, useActionId());
-
-  const shouldHideTasksStatus =
-    statut?.concerne === false ||
-    (statut !== null &&
-      avancement !== 'non_renseigne' &&
-      avancement !== 'detaille') ||
-    (statut !== null && avancement === 'detaille');
-
-  const isDetailled =
-    avancement === 'detaille' ||
-    (avancement === 'non_renseigne' && filled === true) ||
-    (statut === null && filled === true);
-
-  const isSubAction = subAction.type === ActionTypeEnum.SOUS_ACTION;
+  const isSubAction = subAction.actionType === ActionTypeEnum.SOUS_ACTION;
 
   useEffect(() => {
     const id = hash;
-    if (id.includes(subAction.id)) {
+    if (id.includes(subAction.actionId)) {
       // Scroll jusqu'à la sous-action indiquée dans l'url
-      if (id === subAction.id && ref && ref.current) {
+      if (id === subAction.actionId && ref && ref.current) {
         setTimeout(() => {
           ref.current?.scrollIntoView({
             behavior: 'smooth',
@@ -122,7 +99,6 @@ const SubActionCard = ({
         })}
         onClick={() => {
           setIsExpanded(!isExpanded);
-          onClick();
         }}
       >
         <SubactionCardHeader
@@ -135,20 +111,20 @@ const SubActionCard = ({
         />
 
         {hasCollectivitePermission('referentiels.mutate') &&
-          (isDetailled || subAction.haveScoreIndicatif) && (
+          (isDetailled || subAction.scoreIndicatif) && (
             <Divider className="mt-1 mb-2" />
           )}
 
         {/* Actions */}
         <SubactionCardActions
-          actionId={subAction.id}
-          haveScoreIndicatif={subAction.haveScoreIndicatif}
+          actionId={subAction.actionId}
+          haveScoreIndicatif={Boolean(subAction.scoreIndicatif)}
           isDetailled={isDetailled}
           setOpenDetailledModal={setOpenDetailledModal}
         />
 
         {/* Informations sur les scores indicatifs */}
-        <ScoreIndicatifLibelle actionId={subAction.id} />
+        <ScoreIndicatifLibelle actionId={subAction.actionId} />
       </div>
 
       <div
@@ -159,7 +135,7 @@ const SubActionCard = ({
         {/* Commentaire associé à la sous-action */}
         {showJustifications && (
           <ActionJustificationField
-            actionId={subAction.id}
+            actionId={subAction.actionId}
             placeholder="Explications sur l'état d'avancement"
           />
         )}
@@ -179,9 +155,9 @@ const SubActionCard = ({
         {/* Section Tâches */}
         {!isPanelFlagEnabled && isExpanded && (
           <>
-            {(subAction.description || subAction.haveExemples) && (
+            {(subAction.description || subAction.exemples !== '') && (
               <Accordion
-                id={`Description-${subAction.id}`}
+                id={`Description-${subAction.actionId}`}
                 title="Description"
                 content={
                   <SubActionDescription
@@ -192,19 +168,13 @@ const SubActionCard = ({
               />
             )}
 
-            {tasks.length > 0 && (
+            {taskIds.length > 0 && (
               <Accordion
-                id={`Tâches-${subAction.id}`}
+                id={`Tâches-${subAction.actionId}`}
                 dataTest={`TâchesPanel-${subAction.identifiant}`}
                 title="Tâches"
                 containerClassname="border-b-0"
-                content={
-                  <TaskCardsList
-                    className="mt-2"
-                    tasks={tasks}
-                    hideStatus={shouldHideTasksStatus}
-                  />
-                }
+                content={<TaskCardsList className="mt-2" taskIds={taskIds} />}
                 initialState={isExpanded}
               />
             )}
@@ -212,7 +182,7 @@ const SubActionCard = ({
             <SubActionPreuvesAccordion subAction={subAction} />
           </>
         )}
-        {!isVisitor && (
+        {hasCollectivitePermission('referentiels.discussions.read') && (
           <>
             <Divider className="mt-auto" />
 
@@ -221,10 +191,10 @@ const SubActionCard = ({
               size="xs"
               className="text-left border-b-transparent text-grey-6"
               onClick={() => {
-                openPanel(subAction.id);
+                openCommentPanel({ action: subAction });
               }}
             >
-              {subAction.discussionsCount} commentaires
+              {commentsCount} commentaires
             </Button>
           </>
         )}

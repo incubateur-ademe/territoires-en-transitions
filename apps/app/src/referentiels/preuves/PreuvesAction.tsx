@@ -58,7 +58,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
     : null;
 
   return (
-    <div data-test={`preuves-${action.id}`} {...otherProps}>
+    <div data-test={`preuves-${action.actionId}`} {...otherProps}>
       {/* Preuves attendues */}
       {reglementairesParActionId ? (
         <div data-test="attendues">

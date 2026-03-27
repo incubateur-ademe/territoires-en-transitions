@@ -1,17 +1,17 @@
 'use client';
 
-import { DEPRECATED_useActionDefinition } from '@/app/referentiels/actions/action-context';
-import {
-  ActionDefinitionSummary,
-  useSortedActionSummaryChildren,
-} from '@/app/referentiels/referentiel-hooks';
+import { useAction } from '@/app/referentiels/actions/action-context';
+import { useListDiscussions } from '@/app/referentiels/actions/comments/hooks/use-list-discussions';
+import { useGetActionChildren } from '@/app/referentiels/actions/use-get-action-children';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Button, Checkbox, Divider } from '@tet/ui';
 import { useState } from 'react';
 import { ActionJustificationField } from '../_components/action/action.justification-field';
 import { SubActionCardsList } from '../_components/subaction/subaction.cards-list';
 
 export default function Page() {
-  const action = DEPRECATED_useActionDefinition();
+  const action = useAction();
 
   if (!action) {
     return null;
@@ -24,11 +24,17 @@ export default function Page() {
  * Contenu de l'onglet "Suivi de l'action" du menu
  * "Référentiel CAE / ECI" de la page "Etat des lieux"
  */
-function ActionDetailPage({ action }: { action: ActionDefinitionSummary }) {
-  const subActions = useSortedActionSummaryChildren(action);
+function ActionDetailPage({ action }: { action: ActionListItem }) {
+  const sousActions = useGetActionChildren({ actionId: action.actionId });
+
+  const referentielId = getReferentielIdFromActionId(action.actionId);
+  const { data: discussions } = useListDiscussions(referentielId, {
+    actionId: action.actionId,
+  });
+
+  const sousActionsGroupedByCategorie = groupByCategorie(sousActions);
 
   const [showJustifications, setShowJustififcations] = useState(true);
-
   const [subActionsExpanded, setSubActionsExpanded] = useState(false);
 
   return (
@@ -46,8 +52,8 @@ function ActionDetailPage({ action }: { action: ActionDefinitionSummary }) {
           </Button>
           {/* Nombre de mesures affichées */}
           <span className="text-grey-6 text-base font-medium">
-            {subActions.count}{' '}
-            {subActions.count > 1 ? 'sous-mesures' : 'sous-mesure'}
+            {sousActions.length}{' '}
+            {sousActions.length > 1 ? 'sous-mesures' : 'sous-mesure'}
           </span>
 
           {/* Affichage des justifications */}
@@ -67,7 +73,7 @@ function ActionDetailPage({ action }: { action: ActionDefinitionSummary }) {
         {/* Explications sur l'état d'avancement */}
         {showJustifications && (
           <ActionJustificationField
-            actionId={action.id}
+            actionId={action.actionId}
             title="Explications sur l'état d'avancement :"
             className="min-h-20"
             fieldClassName="mb-5"
@@ -76,14 +82,42 @@ function ActionDetailPage({ action }: { action: ActionDefinitionSummary }) {
       </div>
 
       {/* Sous-actions triées par phase */}
-      {subActions.actions.length > 0 && (
+      {sousActions.length > 0 && (
         <SubActionCardsList
-          sortedSubActions={subActions.sortedActions}
-          subActionsList={subActions.actions}
+          parentAction={action}
+          sortedSubActions={sousActionsGroupedByCategorie}
           showJustifications={showJustifications}
           isSubActionExpanded={subActionsExpanded}
+          discussions={
+            discussions?.discussions.filter(
+              (discussion) => discussion.actionId === action.actionId
+            ) ?? []
+          }
         />
       )}
     </section>
   );
+}
+
+function groupByCategorie<T extends { categorie: string | null }>(
+  actions: T[]
+) {
+  let groupedActions: {
+    [id: string]: T[];
+  } = {};
+
+  actions.forEach((act) => {
+    if (act.categorie) {
+      if (groupedActions[act.categorie]) {
+        groupedActions[act.categorie].push(act);
+      } else {
+        groupedActions = {
+          ...groupedActions,
+          [act.categorie]: [act],
+        };
+      }
+    }
+  });
+
+  return groupedActions;
 }

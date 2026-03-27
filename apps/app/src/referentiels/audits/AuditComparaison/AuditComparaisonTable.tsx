@@ -1,4 +1,4 @@
-import { roundTo } from '@tet/domain/utils';
+import { divisionOrZero, roundTo } from '@tet/domain/utils';
 import { useMemo } from 'react';
 import {
   CellProps,
@@ -9,30 +9,27 @@ import {
   useTable,
 } from 'react-table';
 import { CellPercent, CellPoints } from '../../AidePriorisation/Cells';
-import { ReferentielTable } from '../../ReferentielTable';
-import { CellAction } from '../../ReferentielTable/CellAction';
+import { ReferentielTable } from '../../DEPRECATED_ReferentielTable';
+import { CellAction } from '../../DEPRECATED_ReferentielTable/CellAction';
+import { ActionDetailed } from '../../use-snapshot';
 import './styles.css';
-import {
-  TComparaisonScoreAudit,
-  TScoreAudit,
-  TScoreAuditRowData,
-} from './types';
+import { TScoreAuditRowData } from './types';
 import { TableData } from './useTableData';
 
 export type TDetailTacheTableProps = {
   tableData: TableData;
 };
 export type THeaderProps = HeaderProps<TScoreAuditRowData> & {
-  headerData?: TComparaisonScoreAudit;
+  headerData?: TScoreAuditRowData;
 };
 export type TCellProps = CellProps<TScoreAuditRowData>;
 export type TColumn = Column<TScoreAuditRowData>;
 
 /** Vérifie si la valeur courante d'un champ diffère de sa valeur avant audit */
 const getDifference = (
-  field: keyof TScoreAudit,
-  pre_audit?: TScoreAudit,
-  courant?: TScoreAudit
+  field: keyof ActionDetailed['score'] | 'scoreRealise',
+  pre_audit: ActionDetailed['score'],
+  courant: ActionDetailed['score']
 ): 'up' | 'down' | undefined => {
   if (!pre_audit && courant) {
     return 'up';
@@ -41,8 +38,17 @@ const getDifference = (
     return undefined;
   }
 
-  const previous = roundTo(pre_audit[field] as number, 3);
-  const current = roundTo(courant[field] as number, 3);
+  const preAuditValue =
+    field === 'scoreRealise'
+      ? divisionOrZero(pre_audit.pointFait, pre_audit.pointPotentiel)
+      : pre_audit[field];
+  const currentValue =
+    field === 'scoreRealise'
+      ? divisionOrZero(courant.pointFait, courant.pointPotentiel)
+      : courant[field];
+
+  const previous = roundTo(preAuditValue as number, 3);
+  const current = roundTo(currentValue as number, 3);
 
   if (previous === current) {
     return undefined;
@@ -53,28 +59,33 @@ const getDifference = (
 
 /** Vérifie si la valeur courante d'un champ d'une ligne donnée diffère de sa valeur avant audit */
 const getDifferenceOnRow = (
-  field: keyof TScoreAudit,
+  field: keyof ActionDetailed['score'] | 'scoreRealise',
   row: TCellProps['row']
 ) => {
-  const { pre_audit, courant } = row.original;
-  return getDifference(field, pre_audit, courant);
+  const { preAudit: pre_audit, courant } = row.original;
+  return getDifference(field, pre_audit.score, courant.score);
 };
 
 /** Affiche une cellule d'en-tête avec un libellé et une valeur */
 const Header = (props: {
-  field: keyof TScoreAudit;
-  value?: TScoreAudit;
-  previous?: TScoreAudit;
+  field: keyof ActionDetailed['score'] | 'scoreRealise';
+  value?: ActionDetailed['score'];
+  previous?: ActionDetailed['score'];
   label: string;
   Cell: typeof CellPoints | typeof CellPercent;
 }) => {
   const { field, value, previous, label, Cell } = props;
+
   return (
     <>
       {label}
       {value ? (
         <Cell
-          value={value[field]}
+          value={
+            field === 'scoreRealise'
+              ? divisionOrZero(value.pointFait, value.pointPotentiel)
+              : value[field]
+          }
           difference={
             previous ? getDifference(field, previous, value) : undefined
           }
@@ -85,8 +96,8 @@ const Header = (props: {
 };
 
 /** Renvoie les définitions de colonnes de la table */
-const getColumns = (headerData?: TComparaisonScoreAudit): TColumn[] => {
-  const { pre_audit, courant } = headerData || {};
+const getColumns = (headerData?: TScoreAuditRowData): TColumn[] => {
+  const { preAudit: pre_audit, courant } = headerData || {};
 
   return [
     {
@@ -100,12 +111,12 @@ const getColumns = (headerData?: TComparaisonScoreAudit): TColumn[] => {
       id: 'total',
       columns: [
         {
-          accessor: 'pre_audit.points_max_referentiel' as 'pre_audit',
+          accessor: 'preAudit.score.pointReferentiel' as 'preAudit',
           Header: () => (
             <Header
               Cell={CellPoints}
-              field="points_max_referentiel"
-              value={pre_audit}
+              field="pointReferentiel"
+              value={pre_audit?.score}
               label="Potentiel max"
             />
           ),
@@ -118,12 +129,12 @@ const getColumns = (headerData?: TComparaisonScoreAudit): TColumn[] => {
       Header: 'Avant audit',
       columns: [
         {
-          accessor: 'pre_audit.points_max_personnalises' as 'pre_audit',
+          accessor: 'preAudit.score.pointPotentiel' as 'preAudit',
           Header: () => (
             <Header
               Cell={CellPoints}
-              field="points_max_personnalises"
-              value={pre_audit}
+              field="pointPotentiel"
+              value={pre_audit?.score}
               label="Potentiel adapté"
             />
           ),
@@ -131,12 +142,12 @@ const getColumns = (headerData?: TComparaisonScoreAudit): TColumn[] => {
           width: 77,
         },
         {
-          accessor: 'pre_audit.points_realises' as 'pre_audit',
+          accessor: 'preAudit.score.pointFait' as 'preAudit',
           Header: () => (
             <Header
               Cell={CellPoints}
-              field="points_realises"
-              value={pre_audit}
+              field="pointFait"
+              value={pre_audit?.score}
               label="Points réalisés"
             />
           ),
@@ -144,12 +155,12 @@ const getColumns = (headerData?: TComparaisonScoreAudit): TColumn[] => {
           width: 77,
         },
         {
-          accessor: 'pre_audit.score_realise' as 'pre_audit',
+          accessor: 'preAudit.score.scoreRealise' as 'preAudit',
           Header: () => (
             <Header
               Cell={CellPercent}
-              field="score_realise"
-              value={pre_audit}
+              field="scoreRealise"
+              value={pre_audit?.score}
               label="% réalisé"
             />
           ),
@@ -162,61 +173,58 @@ const getColumns = (headerData?: TComparaisonScoreAudit): TColumn[] => {
       Header: 'Après audit',
       columns: [
         {
-          accessor: 'courant.points_max_personnalises' as 'courant',
+          accessor: 'courant.score.pointPotentiel' as 'courant',
           Header: () => (
             <Header
               Cell={CellPoints}
-              field="points_max_personnalises"
-              value={courant}
-              previous={pre_audit}
+              field="pointPotentiel"
+              value={courant?.score}
+              previous={pre_audit?.score}
               label="Potentiel adapté"
             />
           ),
           Cell: (props: TCellProps) => (
             <CellPoints
               {...props}
-              difference={getDifferenceOnRow(
-                'points_max_personnalises',
-                props.row
-              )}
+              difference={getDifferenceOnRow('pointPotentiel', props.row)}
             />
           ),
           width: 100,
         },
         {
-          accessor: 'courant.points_realises' as 'courant',
+          accessor: 'courant.score.pointFait' as 'courant',
           Header: () => (
             <Header
               Cell={CellPoints}
-              field="points_realises"
-              value={courant}
-              previous={pre_audit}
+              field="pointFait"
+              value={courant?.score}
+              previous={pre_audit?.score}
               label="Points réalisés"
             />
           ),
           Cell: (props: TCellProps) => (
             <CellPoints
               {...props}
-              difference={getDifferenceOnRow('points_realises', props.row)}
+              difference={getDifferenceOnRow('pointFait', props.row)}
             />
           ),
           width: 100,
         },
         {
-          accessor: 'courant.score_realise' as 'courant',
+          accessor: 'courant.score.scoreRealise' as 'courant',
           Header: () => (
             <Header
               Cell={CellPercent}
-              field="score_realise"
-              value={courant}
-              previous={pre_audit}
+              field="scoreRealise"
+              value={courant?.score}
+              previous={pre_audit?.score}
               label="% réalisé"
             />
           ),
           Cell: (props: TCellProps) => (
             <CellPercent
               {...props}
-              difference={getDifferenceOnRow('score_realise', props.row)}
+              difference={getDifferenceOnRow('scoreRealise', props.row)}
             />
           ),
           width: 110,

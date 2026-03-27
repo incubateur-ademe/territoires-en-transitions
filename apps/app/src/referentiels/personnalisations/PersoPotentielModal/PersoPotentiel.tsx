@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Button, Modal } from '@tet/ui';
+import { ActionListItem } from '../../actions/use-list-actions';
 import { useQuestionsReponses } from '../PersoReferentielThematique/useQuestionsReponses';
 import { PersoPotentielTabs } from './PersoPotentielTabs';
 import { PointsPotentiels } from './points-potentiels.label';
@@ -11,8 +11,7 @@ import { useChangeReponseHandler } from './useChangeReponseHandler';
 import { useRegles } from './useRegles';
 
 export type TPersoPotentielButtonProps = {
-  /** Définition de l'action */
-  actionDef: ActionDefinitionSummary;
+  action: ActionListItem;
 };
 
 /**
@@ -20,8 +19,8 @@ export type TPersoPotentielButtonProps = {
  * bouton permettant d'ouvrir le dialogue "personnaliser le potentiel de points"
  * d'une action, et le dialogue lui-même
  */
-export const PersoPotentiel = ({ actionDef }: TPersoPotentielButtonProps) => {
-  const { id: actionId, type, identifiant, nom } = actionDef;
+export const PersoPotentiel = ({ action }: TPersoPotentielButtonProps) => {
+  const { actionId, actionType, identifiant, nom } = action;
 
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
@@ -41,7 +40,7 @@ export const PersoPotentiel = ({ actionDef }: TPersoPotentielButtonProps) => {
         className="flex items-center"
         onClick={(event) => event.stopPropagation()}
       >
-        <PointsPotentiels actionId={actionId} />
+        <PointsPotentiels score={action.score} />
 
         <Button
           className="ml-2"
@@ -59,11 +58,11 @@ export const PersoPotentiel = ({ actionDef }: TPersoPotentielButtonProps) => {
         openState={{ isOpen, setIsOpen }}
         title="Personnaliser le potentiel de points"
         subTitle={`${
-          type[0].toUpperCase() + type.slice(1)
+          actionType[0].toUpperCase() + actionType.slice(1)
         } ${identifiant} : ${nom}`}
         render={() => (
           <PersoPotentielTabs
-            actionDef={actionDef}
+            action={action}
             questionReponses={qr}
             regles={regles}
             onChange={handleChange}

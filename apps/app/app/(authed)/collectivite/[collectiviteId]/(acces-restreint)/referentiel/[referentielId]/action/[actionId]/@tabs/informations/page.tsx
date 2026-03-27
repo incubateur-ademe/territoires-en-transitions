@@ -1,30 +1,68 @@
 'use client';
 
-import { DEPRECATED_useActionDefinition } from '@/app/referentiels/actions/action-context';
+import { useAction } from '@/app/referentiels/actions/action-context';
 import Markdown from '@/app/ui/Markdown';
 import ActionInformationsItem from '../../_components/information/action-information.item';
-import { getItems } from '../../_components/information/action-information.utils';
 
 export default function Page() {
-  const actionDefinition = DEPRECATED_useActionDefinition();
+  const action = useAction();
 
-  if (!actionDefinition) return null;
-
-  const items = getItems(actionDefinition);
+  if (!action) return null;
 
   return (
     <section>
-      <Markdown
-        content={actionDefinition.description}
-        className="paragraphe-16 mb-8"
-      />
-      {items.map((item) => (
+      <Markdown content={action.description} className="paragraphe-16 mb-8" />
+
+      {action.description.length > 0 && (
         <ActionInformationsItem
-          key={item.id}
-          item={item}
-          action={actionDefinition}
+          item={{
+            property: 'description',
+            label: 'Description',
+            num: 1,
+          }}
+          action={action}
         />
-      ))}
+      )}
+      {action.contexte.length > 0 && (
+        <ActionInformationsItem
+          item={{
+            property: 'contexte',
+            label: 'Contexte et réglementation',
+            num: 2,
+          }}
+          action={action}
+        />
+      )}
+      {action.exemples.length > 0 && (
+        <ActionInformationsItem
+          item={{
+            property: 'exemples',
+            label: 'Exemples d’autres collectivités',
+            num: 3,
+          }}
+          action={action}
+        />
+      )}
+      {action.ressources.length > 0 && (
+        <ActionInformationsItem
+          item={{
+            property: 'ressources',
+            label: 'Ressources',
+            num: 4,
+          }}
+          action={action}
+        />
+      )}
+      {action.perimetreEvaluation.length > 0 && (
+        <ActionInformationsItem
+          item={{
+            property: 'perimetreEvaluation',
+            label: 'Précisions évaluation',
+            num: 5,
+          }}
+          action={action}
+        />
+      )}
     </section>
   );
 }

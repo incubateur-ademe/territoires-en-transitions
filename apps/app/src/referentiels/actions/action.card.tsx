@@ -5,18 +5,14 @@ import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
 import Markdown from '@/app/ui/Markdown';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import {
-  ActionType,
-  ActionWithScore,
-  getReferentielIdFromActionId,
-} from '@tet/domain/referentiels';
+import { Action, getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Button, Card } from '@tet/ui';
 import { ScoreProgressBar } from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 
 /** Carte générique d'une mesure du référentiel */
 type ActionCardProps = {
-  action: ActionWithScore;
+  action: Action;
   showDescription?: boolean;
 };
 
@@ -78,13 +74,11 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
         {/** Score */}
         <div className="w-full flex max-sm:flex-col gap-3 sm:items-center justify-between">
           <ScoreProgressBar
-            id={id}
-            identifiant={identifiant}
-            type={'action' as ActionType}
+            action={action}
             className="grow shrink max-sm:w-full"
           />
           <div className="shrink-0 flex">
-            <ScoreRatioBadge actionId={id} size="xs" />
+            <ScoreRatioBadge action={action} size="xs" />
           </div>
         </div>
 

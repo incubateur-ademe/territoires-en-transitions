@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { preuveActionTable } from '@tet/backend/collectivites/documents/models/preuve-action.table';
 import { preuveReglementaireDefinitionTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire-definition.table';
-import { ImportActionDefinitionType } from '@tet/backend/referentiels/import-referentiel/import-action-definition.dto';
+import { ImportActionDefinition } from '@tet/backend/referentiels/import-referentiel/import-action-definition.dto';
 import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
@@ -33,7 +33,7 @@ export default class ImportPreuveReglementaireDefinitionService {
   async importPreuveReglementaireDefinitionsAndActionRelations(
     referentielId: ReferentielId,
     spreadsheetId: string,
-    actions: ImportActionDefinitionType[],
+    actions: ImportActionDefinition[],
     tx: Transaction
   ): Promise<{
     definitions: PreuveReglementaireDefinition[];
@@ -77,7 +77,7 @@ export default class ImportPreuveReglementaireDefinitionService {
   async verifyReferentielPreuveReglementaireDefinitionsAndActionRelations(
     referentielId: ReferentielId,
     spreadsheetId: string,
-    actions: ImportActionDefinitionType[]
+    actions: ImportActionDefinition[]
   ): Promise<void> {
     const { data: preuveDefinitions } =
       await this.getPreuveReglementaireDefinitions(spreadsheetId);
@@ -91,7 +91,7 @@ export default class ImportPreuveReglementaireDefinitionService {
 
   verifyReferentielPreuveReglementaireDefinitionsAndActionRelationsWithData(
     referentielId: ReferentielId,
-    actions: ImportActionDefinitionType[],
+    actions: ImportActionDefinition[],
     preuveDefinitions: ImportPreuveReglementaireDefinition[]
   ) {
     const preuveDefinitionsMap = new Map<

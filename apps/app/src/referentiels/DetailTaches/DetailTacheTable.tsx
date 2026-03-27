@@ -7,12 +7,11 @@ import {
   useFlexLayout,
   useTable,
 } from 'react-table';
-import { ReferentielTable } from '../ReferentielTable';
-import { CellAction } from '../ReferentielTable/CellAction';
+import { ReferentielTable } from '../DEPRECATED_ReferentielTable';
+import { CellAction } from '../DEPRECATED_ReferentielTable/CellAction';
 import { CellStatut } from './CellStatut';
 import { FiltreStatut } from './FiltreStatut';
-import { TacheDetail } from './queries';
-import { TableData } from './useTableData';
+import { TableData, TacheDetail } from './useTableData';
 
 export type TDetailTacheTableProps = {
   tableData: TableData;
@@ -32,7 +31,7 @@ const COLUMNS: TColumn[] = [
     width: '100%',
   },
   {
-    accessor: 'avancement',
+    accessor: 'score.avancement' as 'score',
     Header: FiltreStatut as any,
     Cell: CellStatut,
     width: 185,

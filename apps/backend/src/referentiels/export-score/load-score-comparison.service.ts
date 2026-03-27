@@ -11,13 +11,13 @@ import {
 } from '@tet/domain/collectivites';
 import {
   ActionId,
-  ActionTypeEnum,
-  ExportScoreComparisonRequestQuery,
   flatMapActionsEnfants,
   ReferentielId,
   ScoreSnapshot,
   SnapshotJalonEnum,
   TreeOfActionsIncludingScore,
+  type ActionType,
+  type ExportScoreComparisonRequestQuery,
 } from '@tet/domain/referentiels';
 import { format } from 'date-fns';
 import { and, desc, eq } from 'drizzle-orm';
@@ -35,7 +35,7 @@ export type Auditeur = {
 
 export type ScoreRow = {
   actionId: ActionId;
-  actionType: ActionTypeEnum;
+  actionType: ActionType;
   score1: TreeOfActionsIncludingScore;
   score2: TreeOfActionsIncludingScore | null;
 };

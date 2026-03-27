@@ -1,5 +1,4 @@
-import { TScoreAuditRowData } from '@/app/referentiels/audits/AuditComparaison/types';
-import { ProgressionRow } from '@/app/referentiels/DEPRECATED_scores.types';
+import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import { BarDatum } from '@nivo/bar';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
@@ -17,15 +16,10 @@ const typeToIndexby: Record<string, string> = {
   tache: 'tâche',
 };
 
-export type TBarChartScoreTable =
-  | Pick<
-      TableOptions<ProgressionRow>,
-      'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
-    >
-  | Pick<
-      TableOptions<TScoreAuditRowData>,
-      'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
-    >;
+export type TBarChartScoreTable = Pick<
+  TableOptions<ActionDetailed>,
+  'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
+>;
 
 type BarChartCardWithSubrowsProps = {
   referentiel: ReferentielId;
@@ -49,7 +43,7 @@ type BarChartCardWithSubrowsProps = {
   };
   customStyle?: React.CSSProperties;
   getFormattedScore: (
-    scoreData: readonly ProgressionRow[] | readonly TScoreAuditRowData[],
+    scoreData: readonly ActionDetailed[],
     indexBy: string,
     percentage: boolean,
     customColors: { [key: string]: string }
@@ -81,7 +75,9 @@ const BarChartCardWithSubrows = ({
     setScoreBreadcrumb([
       { scoreData: score.data, name: 'Tous les axes', fileName: 'referentiel' },
     ]);
-    setIndexBy(score.data[0]?.type ? typeToIndexby[score.data[0].type] : '');
+    setIndexBy(
+      score.data[0]?.actionType ? typeToIndexby[score.data[0].actionType] : ''
+    );
   }, [score.data]);
 
   // Affichage de l'axe enfant
@@ -95,7 +91,6 @@ const BarChartCardWithSubrows = ({
       const currentRow = scoreData[relativeIndex];
 
       if (currentRow) {
-        // @ts-expect-error TODO: fix this
         const subRows = score.getSubRows(currentRow, relativeIndex);
         if (!!subRows && subRows.length > 0) {
           setScoreBreadcrumb((prevScoreBreadcrumb) => [
@@ -108,7 +103,7 @@ const BarChartCardWithSubrows = ({
               fileName: indexBy,
             },
           ]);
-          setIndexBy(typeToIndexby[subRows[0].type]);
+          setIndexBy(typeToIndexby[subRows[0].actionType]);
         }
       }
     }
@@ -118,7 +113,9 @@ const BarChartCardWithSubrows = ({
   const handleOpenParentIndex = (index: number) => {
     const newScore = scoreBreadcrumb.slice(0, index + 1);
     setScoreBreadcrumb(newScore);
-    setIndexBy(typeToIndexby[newScore[newScore.length - 1].scoreData[0].type]);
+    setIndexBy(
+      typeToIndexby[newScore[newScore.length - 1].scoreData[0].actionType]
+    );
   };
 
   // Props du graphe

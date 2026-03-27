@@ -73,7 +73,6 @@ const actionNode = {
           tags: [],
           level: 5,
           score: {
-            aStatut: true,
             actionId: 'cae_1.1.1.1.1',
             concerne: true,
             desactive: false,
@@ -108,7 +107,6 @@ const actionNode = {
           tags: [],
           level: 5,
           score: {
-            aStatut: true,
             actionId: 'cae_1.1.1.1.2',
             concerne: true,
             desactive: false,

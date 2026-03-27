@@ -1,68 +1,51 @@
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
+import { useCommentPanel } from '@/app/referentiels/actions/comments/hooks/use-comment-panel';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { phaseToLabel } from '@/app/referentiels/utils';
-import { Divider, SideMenu } from '@tet/ui';
+import { Discussion } from '@tet/domain/collectivites';
+import { Divider } from '@tet/ui';
 import classNames from 'classnames';
-import { useState } from 'react';
 import SubActionCard from './subaction-card';
-import SubActionPanel from './subaction.panel';
 
 type Props = {
+  parentAction: ActionListItem;
   sortedSubActions: {
-    [id: string]: ActionDefinitionSummary[];
+    [categorie: string]: ActionListItem[];
   };
-  subActionsList: ActionDefinitionSummary[];
   showJustifications: boolean;
   isSubActionExpanded?: boolean;
+  discussions: Discussion[];
 };
 
 export const SubActionCardsList = ({
   sortedSubActions,
-  subActionsList,
   showJustifications,
+  discussions,
   isSubActionExpanded = false,
 }: Props) => {
-  const [selectedSubactionIdx, setSelectedSubactionIdx] = useState(0);
-  const [isPanelOpen, setIsPanelOpen] = useState(false);
-
-  const isPanelFlagEnabled = false;
-
-  const handleClick = (subActionId: string) => {
-    setSelectedSubactionIdx(
-      subActionsList.findIndex((s) => s.id === subActionId)
-    );
-
-    if (isPanelFlagEnabled) {
-      setIsPanelOpen((prevState) =>
-        subActionsList[selectedSubactionIdx].id === subActionId
-          ? !prevState
-          : true
-      );
-    }
-  };
+  const { openCommentPanel } = useCommentPanel();
 
   return (
     <>
       <div className="flex flex-col gap-7">
         {['bases', 'mise en œuvre', 'effets'].map(
-          (phase) =>
-            sortedSubActions[phase] && (
-              <div key={phase} className="flex flex-col">
+          (categorie) =>
+            sortedSubActions[categorie] && (
+              <div key={categorie} className="flex flex-col">
                 <h6 className="mb-0 text-sm">
-                  {phaseToLabel[phase].toUpperCase()}
+                  {phaseToLabel[categorie].toUpperCase()}
                 </h6>
                 <Divider className="mt-2 mb-6" />
 
                 <div>
                   <div className={classNames('grid gap-7')}>
-                    {sortedSubActions[phase].map((subAction) => (
+                    {sortedSubActions[categorie].map((subAction) => (
                       <SubActionCard
-                        key={`${subAction.id}-${isSubActionExpanded}`}
+                        key={`${subAction.actionId}-${isSubActionExpanded}`}
                         subAction={subAction}
                         isOpen={isSubActionExpanded}
                         showJustifications={showJustifications}
-                        onClick={() => {
-                          handleClick(subAction.id);
-                        }}
+                        openCommentPanel={openCommentPanel}
+                        commentsCount={discussions.length}
                       />
                     ))}
                   </div>
@@ -71,34 +54,6 @@ export const SubActionCardsList = ({
             )
         )}
       </div>
-
-      {isPanelFlagEnabled && (
-        <SideMenu
-          isOpen={isPanelOpen}
-          setIsOpen={setIsPanelOpen}
-          headerType="navigation"
-          navigation={{
-            prev:
-              selectedSubactionIdx !== 0
-                ? {
-                    label: 'Sous-mesure précédente',
-                    onClick: () =>
-                      setSelectedSubactionIdx(selectedSubactionIdx - 1),
-                  }
-                : undefined,
-            next:
-              selectedSubactionIdx !== subActionsList.length - 1
-                ? {
-                    label: 'Sous-mesure suivante',
-                    onClick: () =>
-                      setSelectedSubactionIdx(selectedSubactionIdx + 1),
-                  }
-                : undefined,
-          }}
-        >
-          <SubActionPanel subAction={subActionsList[selectedSubactionIdx]} />
-        </SideMenu>
-      )}
     </>
   );
 };

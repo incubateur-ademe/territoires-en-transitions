@@ -7,17 +7,17 @@ import {
   TQuestionReponse,
   TReponse,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { Accordion } from '@tet/ui';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
+import { ActionListItem } from '../../actions/use-list-actions';
 import { Justification } from './Justification';
 import { PointsPotentiels } from './points-potentiels.label';
 import { reponseParType } from './Reponse';
 
 export type TPersoPotentielQRProps = {
   /** Définition de l'action */
-  actionDef: ActionDefinitionSummary;
+  action: ActionListItem;
   /** Liste des questions/réponses associées à l'action */
   questionReponses: TQuestionReponse[];
   /** Fonction appelée quand une réponse est modifiée */
@@ -30,7 +30,7 @@ export type TPersoPotentielQRProps = {
  * Affiche le potentiel réduit ou augmenté ainsi que la liste des questions/réponses
  */
 export const PersoPotentielQR = ({
-  actionDef,
+  action,
   questionReponses,
   onChange,
   canEdit,
@@ -38,7 +38,7 @@ export const PersoPotentielQR = ({
   return (
     <div data-test="PersoPotentielQR">
       <div className="ml-0 mb-4 max-w-fit pl-4 pr-8 py-4 shadow-[inset_0.25rem_0_0_0_rgb(244,196,71)] border border-secondary-1">
-        <PointsPotentiels actionId={actionDef.id} />
+        <PointsPotentiels score={action.score} />
       </div>
       <QuestionReponseList
         questionReponses={questionReponses}
