@@ -894,15 +894,6 @@ values
     ('table', 'thematique', 'edition', 'non', 'oui', 'non', 'non'),
     ('table', 'thematique', 'admin', 'non', 'oui', 'non', 'non'),
     ('table', 'thematique', 'auditeur', 'non', 'oui', 'non', 'non'),
-    -- Table type_tabular_score
-    ('table', 'type_tabular_score', 'public', 'non', 'non', 'non', 'non'),
-    ('table', 'type_tabular_score', 'connecte', 'non', 'non', 'non', 'non'),
-    ('table', 'type_tabular_score', 'verifie', 'non', 'non', 'non', 'non'),
-    ('table', 'type_tabular_score', 'support', 'non', 'non', 'non', 'non'),
-    ('table', 'type_tabular_score', 'lecture', 'non', 'non', 'non', 'non'),
-    ('table', 'type_tabular_score', 'edition', 'non', 'non', 'non', 'non'),
-    ('table', 'type_tabular_score', 'admin', 'non', 'non', 'non', 'non'),
-    ('table', 'type_tabular_score', 'auditeur', 'non', 'non', 'non', 'non'),
     -- Table usage
     ('table', 'usage', 'public', 'non', 'non', 'non', 'non'),
     ('table', 'usage', 'connecte', 'soi', 'non', 'non', 'non'),
