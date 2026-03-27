@@ -188,7 +188,7 @@
     "@sentry/types": "9.43.0",
     "@storybook/addon-docs": "10.1.10",
     "@storybook/nextjs-vite": "10.1.10",
-    "@storybook/test-runner": "0.24.2",
+    "@storybook/test": "8.6.15",
     "@strapi/typescript-utils": "5.33.1",
     "@svgr/webpack": "8.1.0",
     "@swc/cli": "0.7.8",
