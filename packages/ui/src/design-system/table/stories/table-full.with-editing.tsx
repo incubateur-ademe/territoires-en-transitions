@@ -9,6 +9,7 @@ import { Badge } from '../../Badge';
 import { Select } from '../../Select';
 import { ReactTable } from '../react-table';
 import { TableCell } from '../table.cell';
+import { TableCellRichTextEditor } from '../table.cell-rich-text-editor';
 import { TableCellTextarea } from '../table.cell-textarea';
 import { TableHeaderCell } from '../table.header-cell';
 import {
@@ -42,6 +43,21 @@ const DescriptionCell = ({ initialValue }: { initialValue?: string }) => {
         <span className="italic text-grey-6">Renseigner la description</span>
       )}
     </TableCell>
+  );
+};
+
+const ExplicationCell = ({ initialValue }: { initialValue?: string }) => {
+  const [value, setValue] = useState(initialValue);
+
+  return (
+    <TableCellRichTextEditor
+      key={value}
+      canEdit
+      initialValue={value}
+      onValueChange={(value) => {
+        setValue(value);
+      }}
+    />
   );
 };
 
@@ -87,6 +103,12 @@ const columns = [
     header: () => <TableHeaderCell title="Description" />,
     cell: (info) => <DescriptionCell initialValue={info.cell.getValue()} />,
   }),
+
+  columnHelper.accessor('explication', {
+    header: () => <TableHeaderCell title="Explication (rich text)" />,
+    cell: (info) => <ExplicationCell initialValue={info.cell.getValue()} />,
+  }),
+
   columnHelper.accessor('statut', {
     header: (header) => (
       <TableHeaderCell
