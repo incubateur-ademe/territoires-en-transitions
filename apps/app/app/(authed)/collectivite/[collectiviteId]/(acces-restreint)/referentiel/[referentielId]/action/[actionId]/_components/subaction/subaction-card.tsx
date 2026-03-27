@@ -1,15 +1,15 @@
-import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import { useHideAction } from '@/app/referentiels/actions/action-statut/use-hide-action';
 import SubActionDescription from '@/app/referentiels/actions/sub-action/sub-action.description';
-import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
-import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import {
-  ActionDefinitionSummary,
-  useActionSummaryChildren,
-} from '@/app/referentiels/referentiel-hooks';
+  ActionListItem,
+  useListActions,
+} from '@/app/referentiels/actions/use-list-actions';
+import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import { useStickyHeaderHeight } from '@/app/ui/layout/HeaderSticky';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
 import { AccordionControlled, Button, cn } from '@tet/ui';
+import classNames from 'classnames';
+import { ActionJustificationField } from '../action/action.justification-field';
 import { pluralize } from '../pluralize';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
 import { useActionSidePanel } from '../side-panel/context';
@@ -54,9 +54,8 @@ const SubactionHeader = ({
   toggleExpand: () => void;
   commentsCount: number;
 }) => {
-  const { hasCollectivitePermission } = useCurrentCollectivite();
   const preuvesCount = useActionPreuvesCount(subAction.actionId);
-
+  const isVisitor = useIsVisitor();
   const { togglePanel, isActive } = useActionSidePanel();
   const stickyHeaderHeight = useStickyHeaderHeight();
 
@@ -84,7 +83,7 @@ const SubactionHeader = ({
             onClick={() => togglePanel('documents', subAction.actionId)}
             isActive={isActive('documents', subAction.actionId)}
           />,
-          ...(hasCollectivitePermission('referentiels.discussions.read')
+          ...(!isVisitor
             ? [
                 <OpenPanelButton
                   key="comments"
@@ -107,27 +106,29 @@ const SubactionHeader = ({
 const SubactionContent = ({
   subAction,
   tasks,
-  hideTasksStatus,
+  showJustifications,
 }: {
   subAction: ActionListItem;
   tasks: ActionListItem[];
-  hideTasksStatus: boolean;
+  showJustifications: boolean;
 }) => (
-  <div className={cn('flex flex-col gap-4 p-4')}>
+  <div
+    className={classNames('flex flex-col gap-4', {
+      'p-4': showJustifications,
+    })}
+  >
+    {showJustifications && <ActionJustificationField action={subAction} />}
+
     {(subAction.description || subAction.exemples !== '') && (
       <SubActionDescription subAction={subAction} className="text-sm" />
     )}
 
-    <TaskCardsList
-      className="mt-2"
-      tasks={tasks}
-      hideStatus={hideTasksStatus}
-    />
+    <TaskCardsList className="mt-2" tasks={tasks} />
   </div>
 );
 
 type SubActionCardProps = {
-  subAction: ActionDefinitionSummary;
+  subAction: ActionListItem;
   isExpanded: boolean;
   onToggleExpanded: () => void;
   showJustifications: boolean;
@@ -141,18 +142,10 @@ const SubActionCard = ({
   showJustifications,
   commentsCount,
 }: SubActionCardProps) => {
-  const { statut } = useActionStatut(subAction.id);
-  const { hide } = useHideAction(subAction.id);
-  const { avancement } = statut || {};
-
-  const tasks = useActionSummaryChildren(subAction);
-
-  const shouldHideTasksStatus =
-    statut?.concerne === false ||
-    (statut !== null &&
-      avancement !== 'non_renseigne' &&
-      avancement !== 'detaille') ||
-    (statut !== null && avancement === 'detaille');
+  const { data: tasks = [] } = useListActions({
+    actionIds: subAction.childrenIds,
+  });
+  const { hide } = useHideAction(subAction.actionId);
 
   if (hide) {
     return null;
@@ -160,7 +153,7 @@ const SubActionCard = ({
 
   return (
     <div
-      id={subAction.id}
+      id={subAction.actionId}
       data-test={`SousAction-${subAction.identifiant}`}
       className={cn(
         'border border-grey-3 rounded-lg bg-grey-1 transition-colors',
@@ -182,7 +175,7 @@ const SubActionCard = ({
           <SubactionContent
             subAction={subAction}
             tasks={tasks}
-            hideTasksStatus={shouldHideTasksStatus}
+            showJustifications={showJustifications}
           />
         }
       />

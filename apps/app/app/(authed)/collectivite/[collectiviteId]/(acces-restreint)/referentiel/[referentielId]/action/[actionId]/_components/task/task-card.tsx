@@ -47,7 +47,7 @@ const TaskCard = ({ task, showJustifications }: Props) => {
       {/* Ajout de commentaire */}
       {showJustifications && (
         <ActionJustificationField
-          actionId={task.actionId}
+          action={task}
           placeholder="Ce champ est facultatif, il ne sera pas considéré lors de l’audit"
         />
       )}

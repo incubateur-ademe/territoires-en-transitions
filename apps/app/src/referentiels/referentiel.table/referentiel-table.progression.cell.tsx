@@ -1,31 +1,36 @@
+import { Cell } from '@tanstack/react-table';
 import { cn, TableCell } from '@tet/ui';
+import { ActionListItem } from '../actions/use-list-actions';
 import { ScoreProgressBar } from '../scores/score.progress-bar';
-import { ReferentielTableRow } from './types';
-import { actionTypeToClassName } from './utils';
+import { useReferentielTableCellFocus } from './referentiel-table.keyboard';
 
 type Props = {
-  row: ReferentielTableRow;
+  row: ActionListItem;
+  cell: Cell<ActionListItem, unknown>;
   toggleRowExpanded?: () => void;
   canToggle?: boolean;
 };
 
 export const ReferentielTableProgressionCell = ({
   row,
+  cell,
   toggleRowExpanded,
 }: Props) => {
+  const { referentielCellProps } = useReferentielTableCellFocus(cell);
+  const haveChildren = row.childrenIds.length > 0;
+  const canToggleExpand = Boolean(toggleRowExpanded) && haveChildren;
+
   return (
     <TableCell
+      {...referentielCellProps}
       className={cn(
-        actionTypeToClassName[row.type],
-        toggleRowExpanded ? 'cursor-pointer' : ''
+        canToggleExpand ? 'cursor-pointer' : '',
+        referentielCellProps.className
       )}
-      onClick={toggleRowExpanded}
+      data-referentiel-toggle-expand={canToggleExpand ? 'true' : undefined}
+      onClick={canToggleExpand ? toggleRowExpanded : undefined}
     >
-      <ScoreProgressBar
-        id={row.id}
-        identifiant={row.identifiant}
-        type={row.type}
-      />
+      <ScoreProgressBar action={row} />
     </TableCell>
   );
 };

@@ -1,99 +1,103 @@
-import { Column } from '@tanstack/react-table';
+import { Column, Table, TableMeta } from '@tanstack/react-table';
 import {
   ActionType,
   ActionTypeEnum,
+  ReferentielException,
   ReferentielId,
 } from '@tet/domain/referentiels';
-import { divisionOrZero } from '@tet/domain/utils';
+import { cn } from '@tet/ui';
 import { CSSProperties } from 'react';
-import { ActionDetailed, Snapshot } from '../use-snapshot';
-import { ReferentielTableRow } from './types';
+import { ActionListItem } from '../actions/use-list-actions';
 
-/** Types d'actions qui sont dépliés par défaut */
-const EXPANDED_BY_DEFAULT_TYPES = new Set([
-  ActionTypeEnum.AXE,
-  ActionTypeEnum.SOUS_AXE,
-]);
-
-export const buildInitialExpanded = (
-  rows: ReferentielTableRow[]
-): Record<string, boolean> => {
-  return rows.reduce((acc, row) => {
-    if (EXPANDED_BY_DEFAULT_TYPES.has(row.type) && row.children?.length) {
-      acc[row.id] = true;
-      Object.assign(acc, buildInitialExpanded(row.children));
-    }
-    return acc;
-  }, {} as Record<string, boolean>);
+type ColumnPinningOptions = {
+  /** L’entête doit passer au-dessus des cellules du corps si les deux sont sticky. */
+  variant?: 'header' | 'body';
 };
 
-/** Retourne les styles communs pour les colonnes fixées */
-export const getCommonPinningStyles = (
-  column: Column<ReferentielTableRow>
-): CSSProperties => {
+export type ColumnPinningCellProps = {
+  className: string;
+  /** `left` et `width` viennent de TanStack Table (pixels dynamiques) — pas de classes Tailwind stables. */
+  style: CSSProperties;
+};
+
+/**
+ * Colonne pinnée : classes Tailwind + style minimal pour les valeurs calculées (`left`, `largeur`).
+ *
+ * Les `<td>` / `<th>` suivants dans la même ligne sont peints après la première colonne dans
+ * l’ordre du DOM ; un `z-index` élevé sur la cellule sticky évite qu’ils la recouvrent au scroll.
+ */
+export const getColumnPinningStyles = (
+  column: Column<ActionListItem>,
+  actionType?: ActionType,
+  options?: ColumnPinningOptions
+): ColumnPinningCellProps => {
   const isPinned = column.getIsPinned();
+  const zClass = isPinned
+    ? options?.variant === 'header'
+      ? 'z-30'
+      : 'z-10'
+    : 'z-0';
+
+  const bgClass =
+    isPinned && actionType ? BACKGROUND_COLORS_BY_ACTION_TYPE[actionType] : '';
+
   return {
-    left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
-    opacity: isPinned ? 0.95 : 1,
-    position: isPinned ? 'sticky' : 'relative',
-    width: column.getSize(),
-    zIndex: isPinned ? 1 : 0,
+    className: cn(isPinned ? 'sticky' : 'relative', zClass, bgClass),
+    style: {
+      width: column.getSize(),
+      ...(isPinned === 'left' ? { left: `${column.getStart('left')}px` } : {}),
+    },
   };
 };
 
-/** Retourne la classe CSS des cellules pour chaque type d'action */
-export const actionTypeToClassName: Record<ActionType, string> = {
-  [ActionTypeEnum.AXE]:
-    '!bg-primary-9 border-b border-r last:border-r-0 border-primary-10 font-medium text-white',
-  [ActionTypeEnum.SOUS_AXE]:
-    '!bg-primary-8 border-b border-r last:border-r-0 border-primary-10 font-medium text-white',
-  [ActionTypeEnum.ACTION]:
-    'border-r border-r-primary-10 last:border-r-0 border-b border-b-grey-3 !bg-primary-1 text-primary-9',
-  [ActionTypeEnum.SOUS_ACTION]:
-    'border-r border-r-primary-10 last:border-r-0 border-b border-b-grey-3 !bg-white text-primary-9',
-  [ActionTypeEnum.TACHE]:
-    'border-r border-r-primary-10 last:border-r-0 border-b border-b-grey-3 !bg-white text-primary-9',
-  [ActionTypeEnum.REFERENTIEL]: '',
-};
-
-/** Transforme les données du snapshot au format attendu par le tableau du référentiel */
-function mapActionToRow(
-  action: ActionDetailed,
-  collectiviteId: number,
-  referentielId: ReferentielId
-): ReferentielTableRow {
-  const { score } = action;
-
+export function getRowPinningStyles(): CSSProperties {
   return {
-    id: action.actionId,
-    collectiviteId,
-    referentielId,
-    actionId: action.actionId,
-    identifiant: action.identifiant,
-    nom: action.nom,
-    depth: action.level,
-    type: action.actionType as ActionType,
-    explication: score.explication,
-    scoreRealise: divisionOrZero(score.pointFait, score.pointPotentiel),
-    scoreProgramme: divisionOrZero(score.pointProgramme, score.pointPotentiel),
-    scorePasFait: divisionOrZero(score.pointPasFait, score.pointPotentiel),
-    pointFait: score.pointFait,
-    pointProgramme: score.pointProgramme,
-    pointsPasFait: score.pointPasFait,
-    pointPotentiel: score.pointPotentiel,
-    pointRestant: score.pointPotentiel - score.pointFait,
-    statut: score.statut,
-    phase: action.categorie ?? undefined,
-    children: action.actionsEnfant.map((child) =>
-      mapActionToRow(child, collectiviteId, referentielId)
-    ),
+    // opacity: isPinned ? 0.95 : 1,
+    position: 'sticky',
+    zIndex: 1,
+    top: '10px',
   };
 }
 
-export function snapshotToReferentielTableRows(
-  snapshot: Snapshot
-): ReferentielTableRow[] {
-  return snapshot.scoresPayload.scores.actionsEnfant.map((action) =>
-    mapActionToRow(action, snapshot.collectiviteId, snapshot.referentielId)
+const isTableMetaValid = (
+  meta?: TableMeta<ActionListItem>
+): meta is { collectiviteId: number; referentielId: ReferentielId } => {
+  return (
+    meta !== undefined && 'collectiviteId' in meta && 'referentielId' in meta
   );
-}
+};
+
+export const getTableMeta = (
+  table: Table<ActionListItem>
+): { collectiviteId: number; referentielId: ReferentielId } => {
+  const meta = table.options.meta;
+  if (!isTableMetaValid(meta)) {
+    throw new ReferentielException('Table meta is not valid');
+  }
+  return meta;
+};
+
+const BACKGROUND_COLORS_BY_ACTION_TYPE: Record<ActionType, string> = {
+  [ActionTypeEnum.AXE]: 'bg-primary-9',
+  [ActionTypeEnum.SOUS_AXE]: 'bg-primary-8',
+  [ActionTypeEnum.ACTION]: 'bg-primary-1',
+  [ActionTypeEnum.SOUS_ACTION]: 'bg-white',
+  [ActionTypeEnum.TACHE]: 'bg-white',
+  [ActionTypeEnum.REFERENTIEL]: '',
+  [ActionTypeEnum.EXEMPLE]: '',
+};
+
+export const rowClassNameByActionTypeToClassName: Record<ActionType, string> = {
+  [ActionTypeEnum.AXE]:
+    '!bg-primary-9 font-medium text-white [&_td]:border-b [&_td]:border-r [&_td]:border-primary-10 [&_td]:last:border-r-0',
+  [ActionTypeEnum.SOUS_AXE]:
+    '!bg-primary-8 font-medium text-white [&_td]:border-b [&_td]:border-r [&_td]:last:border-r-0 [&_td]:border-primary-10',
+  [ActionTypeEnum.ACTION]:
+    '!bg-primary-1 text-primary-9 [&_td]:border-r [&_td]:border-r-primary-10 [&_td]:last:border-r-0 [&_td]:border-b [&_td]:border-b-grey-3 ',
+  [ActionTypeEnum.SOUS_ACTION]:
+    '!bg-white text-primary-9 [&_td]:border-r [&_td]:border-r-primary-10 [&_td]:last:border-r-0 [&_td]:border-b [&_td]:border-b-grey-3 ',
+  [ActionTypeEnum.TACHE]:
+    '!bg-white text-primary-9 [&_td]:border-r [&_td]:border-r-primary-10 [&_td]:last:border-r-0 [&_td]:border-b [&_td]:border-b-grey-3 ',
+  [ActionTypeEnum.REFERENTIEL]: '',
+  [ActionTypeEnum.EXEMPLE]: '',
+};

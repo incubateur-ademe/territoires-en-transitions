@@ -109,7 +109,7 @@ const AvancementDetailleModal = ({ action, openState }: Props) => {
 
           {/* Raisons de la répartition */}
           <ActionJustificationField
-            actionId={action.actionId}
+            action={action}
             hint="Pour faciliter la relecture, vous pouvez préciser ici les raisons de cette répartition"
           />
         </div>
