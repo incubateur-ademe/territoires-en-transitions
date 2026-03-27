@@ -983,3 +983,6 @@ plan_action/drop_plan_action_chemin_view 2026-05-05T08:32:55Z Gaël Servaud <gae
 plan_action/fix_save_fiche_action_modified_by [migrate_calendrier_to_description] 2026-05-06T15:03:56Z Gaël Servaud <gaelservaud@Host-005.lan> # Corrige save_fiche_action() pour historiser le modified_by écrit sur la fiche au lieu de auth.uid()
 
 labellisation/drop_preuve_count 2026-05-12T14:05:12Z Marc Rutkowski <marc@attractive-media.fr> # Supprime la fonction preuve_count remplacée par le point tRPC referentiels.actions.countPreuves
+
+referentiel/drop_action_information_rpcs 2026-03-25T12:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime action_contexte, action_exemples, action_ressources, action_perimetre_evaluation
+referentiel/drop_comparaison_scores_audit_type_tabular_score [referentiel/drop_action_information_rpcs] 2026-03-27T09:05:14Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime la vue comparaison_scores_audit et la table type_tabular_score
