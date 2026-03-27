@@ -38,10 +38,7 @@ export const TableCell = ({
 };
 
 const Cell = ({ className, children, ...props }: TableCellProps) => (
-  <td
-    {...props}
-    className={cn('px-4 py-3 text-left !bg-transparent', className)}
-  >
+  <td {...props} className={cn('px-4 py-3 text-left ', className)}>
     {children}
   </td>
 );
