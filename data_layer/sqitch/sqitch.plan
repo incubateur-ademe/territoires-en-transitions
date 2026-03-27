@@ -954,3 +954,5 @@ utilisateur/drop_list_membres_views [utilisateur/test_create_user_sync_dcp] 2026
 collectivite/preferences 2026-02-24T12:00:00Z System Administrator <root@localhost> # Préférences collectivité (affichage référentiels)
 @v4.98.0 2026-03-23T16:49:20Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Tag le plan en v4.98.0
 
+referentiel/drop_action_information_rpcs 2026-03-25T12:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime action_contexte, action_exemples, action_ressources, action_perimetre_evaluation
+referentiel/drop_comparaison_scores_audit_type_tabular_score [referentiel/drop_action_information_rpcs] 2026-03-27T09:05:14Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime la vue comparaison_scores_audit et la table type_tabular_score
