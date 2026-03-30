@@ -158,6 +158,12 @@ export const getStrapiData = async () => {
           undefined,
         cta: programmeData.compte_cta as unknown as string,
       },
+      newsletter: {
+        titre: accueilAttrs.newsletter_titre as unknown as string,
+        description: accueilAttrs.newsletter_description as unknown as string,
+        ctaLinkedin: accueilAttrs.linkedin_btn as unknown as string,
+        ctaNewsletter: accueilAttrs.newsletter_btn as unknown as string,
+      },
     };
   } else return null;
 };

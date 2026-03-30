@@ -1,14 +1,9 @@
-'use client';
-
+import { BookDemoButton } from '@/site/components/buttons/book-demo.button';
+import { CreateAccountButton } from '@/site/components/buttons/create-account.button';
 import Section from '@/site/components/sections/Section';
-import { getAuthPaths } from '@tet/api';
-import { ENV } from '@tet/api/environmentVariables';
-import { Button } from '@tet/ui';
 import Image from 'next/image';
 
 const AccueilHeroSection = () => {
-  const authPaths = getAuthPaths(ENV.app_url ?? '');
-
   return (
     <Section
       className="flex lg:!flex-row justify-between items-center gap-9"
@@ -20,20 +15,14 @@ const AccueilHeroSection = () => {
           <span className="text-primary-8 underline">référence</span> pour
           piloter la transition écologique de votre territoire
         </h2>
-        <p className="text-primary-7 text-2xl leading-8">
+        <p className="text-primary-7 max-lg:text-center text-2xl leading-8">
           Centralisez toutes vos actions, priorisez-les et suivez vos
           indicateurs pour atteindre vos objectifs.
         </p>
 
-        <div className="flex flex-row gap-4">
-          <Button href={authPaths?.signUp}>Créer un compte</Button>
-          <Button
-            icon="calendar-2-line"
-            variant="outlined"
-            href="https://aide.territoiresentransitions.fr/fr/article/nos-sessions-demo-et-rendez-vous-individuels-ngu7tg/"
-          >
-            Réserver une démo
-          </Button>
+        <div className="flex flex-row flex-wrap gap-4 max-lg:justify-center">
+          <CreateAccountButton />
+          <BookDemoButton />
         </div>
       </div>
       <Image

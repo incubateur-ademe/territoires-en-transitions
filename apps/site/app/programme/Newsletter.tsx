@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import posthog from 'posthog-js';
+import posthog from "posthog-js";
 
-import Section from '@/site/components/sections/Section';
-import { Button } from '@tet/ui';
+import Section from "@/site/components/sections/Section";
+import { Button } from "@tet/ui";
 
 type NewsletterProps = {
   titre: string;
@@ -34,7 +34,7 @@ const Newsletter = ({
         </Button>
         <Button
           href="https://cloud.contact.ademe.fr/inscription-tete"
-          onClick={() => posthog.capture('inscription_newsletter')}
+          onClick={() => posthog.capture("inscription_newsletter")}
           external
         >
           {ctaNewsletter}

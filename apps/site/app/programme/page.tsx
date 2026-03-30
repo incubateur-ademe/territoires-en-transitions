@@ -8,6 +8,7 @@ import CollectivitesEngagees from './CollectivitesEngagees';
 import Compte from './Compte';
 import Contact from './Contact';
 import Etapes from './Etapes';
+import Newsletter from './Newsletter';
 import Objectifs from './Objectifs';
 import ProgrammeBanner from './ProgrammeBanner';
 import ProgrammeHeroSection from './ProgrammeHeroSection';
@@ -62,6 +63,8 @@ const Programme = async () => {
       <Services {...data.services} />
 
       <Compte {...data.compte} />
+
+      <Newsletter {...data.newsletter} />
     </>
   );
 };
