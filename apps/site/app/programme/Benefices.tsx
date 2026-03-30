@@ -2,7 +2,7 @@ import { Vignette } from '@/site/app/types';
 import Card from '@/site/components/cards/Card';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import CardsSection from '@/site/components/sections/CardsSection';
-import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import ImageStrapi from '@/site/components/strapiImage/ImageStrapi';
 
 type BeneficesProps = {
   titre: string;
@@ -23,10 +23,10 @@ const Benefices = ({ titre, contenu }: BeneficesProps) => {
               description={c.legende ?? ''}
               image={
                 c.image ? (
-                  <DEPRECATED_StrapiImage
-                    data={c.image}
+                  <ImageStrapi
+                    strapiImage={c.image}
                     displayCaption={false}
-                    className="w-full h-[200px] object-cover"
+                    imgClassName="w-full h-[200px] object-cover"
                   />
                 ) : undefined
               }

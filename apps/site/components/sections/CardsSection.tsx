@@ -32,8 +32,8 @@ const CardsSection = ({
     {!!title && (
       <h2
         className={classNames(
-          'text-primary-8 text-center max-md:mb-2',
-          textClassname,
+          'text-primary-10 text-center max-md:mb-2',
+          textClassname
         )}
       >
         {title}
