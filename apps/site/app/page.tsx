@@ -7,7 +7,6 @@ import AccueilHeroSection from './AccueilHeroSection';
 import Communaute from './Communaute';
 import DemandeContact from './DemandeContact';
 import Newsletter from './Newsletter';
-import Objectifs from './Objectifs';
 import Temoignages from './Temoignages';
 import { getData } from './utils';
 
@@ -33,11 +32,9 @@ const Accueil = async () => {
         />
       </Section>
 
-      <Accompagnement {...data.accompagnement} />
-
-      <Objectifs {...data.objectifs} />
-
       <Communaute {...data.collectivites} />
+
+      <Accompagnement {...data.accompagnement} />
 
       <DemandeContact {...data.contact} />
 

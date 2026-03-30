@@ -1,4 +1,3 @@
-import { VignetteAvecDetailsFetchedData } from '@/site/app/types';
 import { fetchSingle } from '@/site/src/strapi/strapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
@@ -42,10 +41,8 @@ export const getData = async () => {
   const data = await fetchSingle('page-accueil', [
     ['populate[0]', 'programme.image'],
     ['populate[1]', 'plateforme.image'],
-    ['populate[2]', 'objectifs_liste_detaillee.image'],
-    ['populate[3]', 'objectifs_liste_detaillee.details_cta'],
-    ['populate[4]', 'temoignages_liste.temoignage'],
-    ['populate[5]', 'temoignages_liste.temoignage.portrait'],
+    ['populate[2]', 'temoignages_liste.temoignage'],
+    ['populate[3]', 'temoignages_liste.temoignage.portrait'],
   ]);
 
   const accueilData = data.attributes;
@@ -57,8 +54,6 @@ export const getData = async () => {
   const formattedData = data
     ? {
         accompagnement: {
-          titre: accueilData.accueil_titre as unknown as string,
-          description: accueilData.accueil_description as unknown as string,
           contenu: [
             {
               titre: accueilData.programme.titre as unknown as string,
@@ -79,26 +74,6 @@ export const getData = async () => {
               },
             },
           ],
-        },
-        objectifs: {
-          titre: accueilData.objectifs_titre as unknown as string,
-          contenu:
-            !!accueilData.objectifs_liste_detaillee &&
-            accueilData.objectifs_liste_detaillee.length
-              ? (
-                  accueilData.objectifs_liste_detaillee as unknown as VignetteAvecDetailsFetchedData[]
-                ).map((obj) => ({
-                  id: obj.id,
-                  titre: obj.titre,
-                  legende: obj.legende,
-                  image: obj.image?.data,
-                  details: {
-                    titre: obj.details_titre,
-                    contenu: obj.details_texte,
-                    cta: obj.details_cta,
-                  },
-                }))
-              : null,
         },
         collectivites: {
           titre: accueilData.collectivites_titre as unknown as string,
