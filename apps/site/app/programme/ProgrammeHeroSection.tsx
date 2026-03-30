@@ -31,12 +31,14 @@ const ProgrammeHeroSection = ({
     <ImageStrapi
       strapiImage={couvertureMobile}
       containerClassName="w-full"
+      imgClassName="w-full h-auto"
       displayCaption={false}
     />
   ) : (
     <ImageStrapi
       strapiImage={couverture}
       containerClassName="xl:max-w-[1460px] mx-auto"
+      imgClassName="w-full h-auto"
       displayCaption={false}
     />
   );

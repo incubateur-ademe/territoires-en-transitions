@@ -41,7 +41,7 @@ const CollectiviteCard = ({
         <ImageStrapi
           strapiImage={cover}
           size="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
-          imgClassName="object-cover aspect-[5/2] lg:aspect-[3/1]"
+          imgClassName="w-full object-cover aspect-[5/2] lg:aspect-[3/1]"
         />
         <div className="absolute -bottom-3 right-6 flex gap-4">
           {population && (
