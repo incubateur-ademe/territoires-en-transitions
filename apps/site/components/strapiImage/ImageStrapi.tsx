@@ -56,7 +56,7 @@ const ImageStrapi = ({
     <div className={classNames('relative', containerClassName)}>
       <img
         className={classNames('block w-full h-full', imgClassName)}
-        src={(formats.small?.url ?? url) as unknown as string}
+        src={(formats?.small?.url ?? url) as unknown as string}
         srcSet={
           formats &&
           Object.keys(formats)

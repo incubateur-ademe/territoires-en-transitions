@@ -9,8 +9,6 @@ import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { Button } from '@tet/ui';
 
 type AccompagnementProps = {
-  titre: string;
-  description?: string;
   contenu: {
     titre: string;
     description: string;
@@ -19,18 +17,12 @@ type AccompagnementProps = {
   }[];
 };
 
-const Accompagnement = ({
-  titre,
-  description,
-  contenu,
-}: AccompagnementProps) => {
+const Accompagnement = ({ contenu }: AccompagnementProps) => {
   return (
     <Section
       containerClassName="max-md:!py-6 md:!pt-14"
       className="!max-w-[1200px]"
     >
-      <h1 className="text-center text-primary-10 text-3xl mb-0">{titre}</h1>
-      <p className="text-center text-primary-10 text-xl">{description}</p>
       <div className="flex flex-col max-md:gap-4 gap-10">
         {contenu.map((c, index) => (
           <div

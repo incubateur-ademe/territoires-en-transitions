@@ -8,6 +8,7 @@ import CollectivitesEngagees from './CollectivitesEngagees';
 import Compte from './Compte';
 import Contact from './Contact';
 import Etapes from './Etapes';
+import Objectifs from './Objectifs';
 import ProgrammeBanner from './ProgrammeBanner';
 import ProgrammeHeroSection from './ProgrammeHeroSection';
 import Services from './Services';
@@ -42,6 +43,8 @@ const Programme = async () => {
         couvertureMobile={data.banner.couvertureMobile}
       />
 
+      <Objectifs intro={data.accompagnementIntro} objectifs={data.objectifs} />
+
       <ProgrammeBanner
         titre={data.titre}
         description={data.description}
@@ -50,13 +53,13 @@ const Programme = async () => {
 
       <Benefices {...data.benefices} />
 
+      <CollectivitesEngagees {...data.collectivites} />
+
       <Contact {...data.contact} />
 
       <Etapes {...data.etapes} />
 
       <Services {...data.services} />
-
-      <CollectivitesEngagees {...data.collectivites} />
 
       <Compte {...data.compte} />
     </>

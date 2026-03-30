@@ -1,4 +1,7 @@
-import { VignetteFetchedData } from '@/site/app/types';
+import {
+  VignetteAvecDetailsFetchedData,
+  VignetteFetchedData,
+} from '@/site/app/types';
 import { fetchSingle } from '@/site/src/strapi/strapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
@@ -15,6 +18,8 @@ export const getStrapiData = async () => {
     fetchSingle('page-accueil', [
       ['populate[0]', 'couverture_desktop'],
       ['populate[1]', 'couverture_mobile'],
+      ['populate[2]', 'objectifs_liste_detaillee.image'],
+      ['populate[3]', 'objectifs_liste_detaillee.details_cta'],
     ]),
   ]);
 
@@ -29,12 +34,40 @@ export const getStrapiData = async () => {
       couvertureMobile: accueilAttrs.couverture_mobile
         ?.data as unknown as StrapiItem,
     };
+    const accompagnementIntro = {
+      titre: accueilAttrs.accueil_titre as unknown as string,
+      description: accueilAttrs.accueil_description as unknown as
+        | string
+        | undefined,
+    };
+    const objectifs = {
+      titre: accueilAttrs.objectifs_titre as unknown as string,
+      contenu:
+        !!accueilAttrs.objectifs_liste_detaillee &&
+        accueilAttrs.objectifs_liste_detaillee.length
+          ? (
+              accueilAttrs.objectifs_liste_detaillee as unknown as VignetteAvecDetailsFetchedData[]
+            ).map((obj) => ({
+              id: obj.id,
+              titre: obj.titre,
+              legende: obj.legende,
+              image: obj.image?.data,
+              details: {
+                titre: obj.details_titre,
+                contenu: obj.details_texte,
+                cta: obj.details_cta,
+              },
+            }))
+          : null,
+    };
     const metaImage =
       (programmeData.seo?.metaImage?.data as unknown as StrapiItem)
         ?.attributes ?? undefined;
 
     return {
       banner,
+      accompagnementIntro,
+      objectifs,
       seo: {
         metaTitle:
           (programmeData.seo?.metaTitle as unknown as string) ?? undefined,
