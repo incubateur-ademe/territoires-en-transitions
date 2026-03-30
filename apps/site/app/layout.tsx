@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 import { Header } from '../components/layout/Header';
 import { Trackers } from '../providers/posthog';
 import './global.css';
-import { getMetaData } from './utils';
+import { getMetaData } from './home/utils';
 
 export const viewport: Viewport = {
   width: 'device-width',

@@ -6,7 +6,7 @@ import {
 } from '@/site/app/stats/NombreCollectivitesEngagees';
 import Section from '@/site/components/sections/Section';
 import { Button } from '@tet/ui';
-import { useActiveUsers } from './stats/ActiveUsers';
+import { useActiveUsers } from '../stats/ActiveUsers';
 
 type CommunauteProps = {
   titre: string;

@@ -1,9 +1,9 @@
 import Section from '@/site/components/sections/Section';
+import { TitreSection } from '@/site/components/sections/TitreSection';
 import TestimonialSlideshow from '@/site/components/slideshow/TestimonialSlideshow';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
 type TemoignagesProps = {
-  titre: string;
   contenu: {
     id: number;
     auteur: string;
@@ -13,17 +13,17 @@ type TemoignagesProps = {
   }[];
 };
 
-const Temoignages = ({ titre, contenu }: TemoignagesProps) => {
+const Temoignages = ({ contenu }: TemoignagesProps) => {
   return contenu.length > 1 ? (
-    <Section containerClassName="max-md:!py-6 md:max-lg:!py-12 lg:!py-18">
-      {!!titre.trim() && <h2 className="text-center max-md:mb-2">{titre}</h2>}
+    <Section className="py-8 gap-8" containerClassName="bg-primary-1">
+      <TitreSection>Ce que disent les collectivités</TitreSection>
       <TestimonialSlideshow
         contenu={contenu}
         className="rounded-md max-md:p-2 md:w-3/4 max-w-full mx-auto md:border border-primary-3"
         dotsColor="orange"
         backgroundColor="bg-white md:bg-primary-0"
         displayButtons={false}
-        autoSlideDelay={12000}
+        autoSlideDelay={12_000}
         autoSlide
       />
     </Section>

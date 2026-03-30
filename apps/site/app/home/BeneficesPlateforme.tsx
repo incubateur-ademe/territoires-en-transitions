@@ -51,11 +51,11 @@ const items: Array<Item> = [
       'Accédez plus facilement aux plans & actions des autres collectivités pour accélérer vos propres actions',
     picto: 'human-cooperation',
   },
-] as const;
+];
 
 export const BeneficesPlateforme = () => {
   return (
-    <Section containerClassName="bg-primary-1">
+    <Section containerClassName="bg-primary-1 max-md:!py-6 md:max-lg:!py-12 lg:!py-20">
       <div className="mx-auto grid md:grid-cols-3 gap-12">
         {items.map((item) => (
           <BeneficesPlateformeItem key={item.titre} item={item} />
@@ -68,7 +68,7 @@ export const BeneficesPlateforme = () => {
 const BeneficesPlateformeItem = ({ item }: { item: Item }) => {
   const { titre, sousTitre, description, picto } = item;
   return (
-    <div className="flex flex-col max-w-md">
+    <div className="flex flex-col max-w-md items-center md:items-start">
       <Image src={`/pictogrammes/${picto}.svg`} alt="" width={80} height={80} />
       <h5>{titre}</h5>
       <h6 className="text-grey-8">{sousTitre}</h6>
