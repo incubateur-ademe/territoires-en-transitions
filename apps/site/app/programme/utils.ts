@@ -3,25 +3,38 @@ import { fetchSingle } from '@/site/src/strapi/strapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
 export const getStrapiData = async () => {
-  // Fetch du contenu de la page programme
-  const data = await fetchSingle('page-programme', [
-    ['populate[0]', 'seo'],
-    ['populate[1]', 'seo.metaImage'],
-    ['populate[2]', 'benefices_liste_markdown.image'],
-    ['populate[3]', 'etapes_liste_markdown.image'],
-    ['populate[4]', 'services_liste_rel.image'],
-    ['populate[5]', 'compte_image'],
+  const [data, accueilPage] = await Promise.all([
+    fetchSingle('page-programme', [
+      ['populate[0]', 'seo'],
+      ['populate[1]', 'seo.metaImage'],
+      ['populate[2]', 'benefices_liste_markdown.image'],
+      ['populate[3]', 'etapes_liste_markdown.image'],
+      ['populate[4]', 'services_liste_rel.image'],
+      ['populate[5]', 'compte_image'],
+    ]),
+    fetchSingle('page-accueil', [
+      ['populate[0]', 'couverture_desktop'],
+      ['populate[1]', 'couverture_mobile'],
+    ]),
   ]);
 
-  // Formattage de la data
+  // Formatage de la data
   if (data) {
     const programmeData = data.attributes;
-
+    const accueilAttrs = accueilPage.attributes;
+    const couvertureDesktop = accueilAttrs.couverture_desktop
+      ?.data as unknown as StrapiItem;
+    const banner = {
+      couverture: couvertureDesktop,
+      couvertureMobile: accueilAttrs.couverture_mobile
+        ?.data as unknown as StrapiItem,
+    };
     const metaImage =
       (programmeData.seo?.metaImage?.data as unknown as StrapiItem)
         ?.attributes ?? undefined;
 
     return {
+      banner,
       seo: {
         metaTitle:
           (programmeData.seo?.metaTitle as unknown as string) ?? undefined,
