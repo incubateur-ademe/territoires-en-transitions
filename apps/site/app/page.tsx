@@ -4,6 +4,7 @@ import NoResult from '@/site/components/info/NoResult';
 import Section from '../components/sections/Section';
 import Accompagnement from './Accompagnement';
 import AccueilHeroSection from './AccueilHeroSection';
+import { BeneficesPlateforme } from './BeneficesPlateforme';
 import Communaute from './Communaute';
 import DemandeContact from './DemandeContact';
 import Newsletter from './Newsletter';
@@ -33,6 +34,8 @@ const Accueil = async () => {
       </Section>
 
       <Communaute {...data.collectivites} />
+
+      <BeneficesPlateforme />
 
       <Accompagnement {...data.accompagnement} />
 
