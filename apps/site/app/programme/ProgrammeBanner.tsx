@@ -1,4 +1,5 @@
 import Section from '@/site/components/sections/Section';
+import { TitreSection } from '@/site/components/sections/TitreSection';
 import EmbededVideo from '@/site/components/video/EmbededVideo';
 
 type ProgrammeBannerProps = {
@@ -14,7 +15,7 @@ const ProgrammeBanner = ({
 }: ProgrammeBannerProps) => {
   return (
     <Section>
-      <h1 className="text-center text-primary-8">{titre}</h1>
+      <TitreSection>{titre}</TitreSection>
       {!!description && (
         <p className="text-2xl text-grey-8 text-center">{description}</p>
       )}

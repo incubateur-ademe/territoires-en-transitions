@@ -7,6 +7,7 @@ import {
   useTerritoiresLabellises,
 } from '@/site/app/stats/NombreCollectivitesEngagees';
 import Section from '@/site/components/sections/Section';
+import { TitreSection } from '@/site/components/sections/TitreSection';
 import { Button } from '@tet/ui';
 import classNames from 'classnames';
 import posthog from 'posthog-js';
@@ -38,7 +39,7 @@ const CollectivitesEngagees = ({
 
   return (
     <Section containerClassName="bg-primary-1 max-md:!py-6 md:max-lg:!py-12 lg:!py-18">
-      <h3 className="text-primary-9 text-center mb-8">{titre}</h3>
+      <TitreSection>{titre}</TitreSection>
 
       {/* besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari */}
       {displayData && (

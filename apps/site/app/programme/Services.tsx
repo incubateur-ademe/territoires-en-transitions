@@ -1,6 +1,7 @@
 import BlogCard from '@/site/components/cards/BlogCard';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import Section from '@/site/components/sections/Section';
+import { TitreSection } from '@/site/components/sections/TitreSection';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
 type ServicesProps = {
@@ -23,7 +24,7 @@ const Services = ({ titre, contenu }: ServicesProps) => {
       className="items-center"
       containerClassName="max-md:!py-6 md:max-lg:!py-12 lg:!py-20"
     >
-      <h3 className="text-center mb-4">{titre}</h3>
+      <TitreSection>{titre}</TitreSection>
       <CardsWrapper cols={3}>
         {contenu.length > 0 &&
           contenu.map((c) => (
