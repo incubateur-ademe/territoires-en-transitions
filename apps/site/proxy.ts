@@ -40,7 +40,7 @@ export function proxy(request: NextRequest) {
       *.googletagmanager.com
       *.adform.net
       https://snap.licdn.com;
-    style-src ${styleSrc} client.crisp.chat;
+    style-src ${styleSrc} client.crisp.chat fonts.axept.io;
     img-src 'self' blob: data:
       ytimg.com
       px.ads.linkedin.com
@@ -56,7 +56,7 @@ export function proxy(request: NextRequest) {
         'strapiapp',
         'media.strapiapp'
       )};
-    font-src 'self' client.crisp.chat;
+    font-src 'self' client.crisp.chat fonts.axept.io;
     object-src 'none';
     connect-src 'self'
       ${process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''}
