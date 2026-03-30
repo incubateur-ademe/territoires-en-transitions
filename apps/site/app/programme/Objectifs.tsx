@@ -53,7 +53,7 @@ const Objectifs = ({ intro, objectifs }: ObjectifsProps) => {
                             strapiImage={c.image}
                             displayCaption={false}
                             containerClassName="bg-[#FEF4F2] rounded-lg h-[116px] flex justify-center items-center"
-                            imgClassName="max-w-[70%] max-h-[70%]"
+                            imgClassName="max-w-[70%] max-h-[70%] object-contain"
                           />
                         ) : undefined}
                         <div className="opacity-0 group-hover:opacity-90 transition-all duration-500 absolute top-0 left-0 bg-[#FEF4F2] rounded-lg border-[0.5px] border-[#F28E40] h-[116px] w-full flex justify-center items-center text-primary-10 font-bold">
