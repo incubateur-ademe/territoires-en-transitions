@@ -40,14 +40,12 @@ export const getMetaData = async () => {
 export const getData = async () => {
   // Fetch du contenu de la page d'accueil
   const data = await fetchSingle('page-accueil', [
-    ['populate[1]', 'couverture_desktop'],
-    ['populate[2]', 'couverture_mobile'],
-    ['populate[3]', 'programme.image'],
-    ['populate[4]', 'plateforme.image'],
-    ['populate[5]', 'objectifs_liste_detaillee.image'],
-    ['populate[6]', 'objectifs_liste_detaillee.details_cta'],
-    ['populate[7]', 'temoignages_liste.temoignage'],
-    ['populate[8]', 'temoignages_liste.temoignage.portrait'],
+    ['populate[0]', 'programme.image'],
+    ['populate[1]', 'plateforme.image'],
+    ['populate[2]', 'objectifs_liste_detaillee.image'],
+    ['populate[3]', 'objectifs_liste_detaillee.details_cta'],
+    ['populate[4]', 'temoignages_liste.temoignage'],
+    ['populate[5]', 'temoignages_liste.temoignage.portrait'],
   ]);
 
   const accueilData = data.attributes;
@@ -58,12 +56,6 @@ export const getData = async () => {
   // Formattage de la data
   const formattedData = data
     ? {
-        banner: {
-          couverture: accueilData.couverture_desktop
-            ?.data as unknown as StrapiItem,
-          couvertureMobile: accueilData.couverture_mobile
-            ?.data as unknown as StrapiItem,
-        },
         accompagnement: {
           titre: accueilData.accueil_titre as unknown as string,
           description: accueilData.accueil_description as unknown as string,

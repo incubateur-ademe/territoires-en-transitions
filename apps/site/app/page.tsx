@@ -2,7 +2,6 @@
 
 import NoResult from '@/site/components/info/NoResult';
 import Accompagnement from './Accompagnement';
-import AccueilBanner from './AccueilBanner';
 import Communaute from './Communaute';
 import DemandeContact from './DemandeContact';
 import Newsletter from './Newsletter';
@@ -19,8 +18,6 @@ const Accueil = async () => {
 
   return (
     <>
-      <AccueilBanner {...data.banner} />
-
       <Accompagnement {...data.accompagnement} />
 
       <Objectifs {...data.objectifs} />
