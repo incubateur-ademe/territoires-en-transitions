@@ -29,6 +29,7 @@ import { DatabaseService } from '../../utils/database/database.service';
 import { isErrorWithCause } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
 import ScoresService from '../compute-score/scores.service';
+import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { snapshotTable } from './snapshot.table';
 import { upsertSnapshotInputSchema } from './upsert-snapshot.input';
 
@@ -53,7 +54,8 @@ export class SnapshotsService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
-    private readonly scoresService: ScoresService
+    private readonly scoresService: ScoresService,
+    private readonly referentielDefinitionService: GetReferentielDefinitionService
   ) {}
 
   private getDefaultSnapshotMetadata({
@@ -432,6 +434,10 @@ export class SnapshotsService {
     snapshotRef: string = SnapshotsService.SCORE_COURANT_SNAPSHOT_REF,
     user?: AuthUser
   ): Promise<ScoreSnapshot> {
+    const referentielDefinition =
+      await this.referentielDefinitionService.getReferentielDefinition(
+        referentielId
+      );
     let snapshot = await this.databaseService.db
       .select({
         ...getTableColumns(snapshotTable),
@@ -452,10 +458,11 @@ export class SnapshotsService {
 
     if (
       snapshotRef === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF &&
-      !snapshot
+      (!snapshot ||
+        referentielDefinition.version !== snapshot.referentielVersion)
     ) {
       this.logger.log(
-        `Force compute of current score for '${referentielId}' and CT ${collectiviteId}`
+        `Force compute of current score for '${referentielId}' and CT ${collectiviteId} (referentiel version: ${referentielDefinition.version}, snapshot version: ${snapshot?.referentielVersion})`
       );
 
       // compute the score then save it into current snapshot
