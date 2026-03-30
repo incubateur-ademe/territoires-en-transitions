@@ -510,6 +510,10 @@ export class NotionBugCreatorService {
       delete blockClone.archived;
       delete blockClone.in_trash;
       delete blockClone.parent;
+      if (blockClone.type === 'paragraph') {
+        // @ts-expect-error TODO: icon is not typed in the client, but returned null by the api and prevent from creatting the block
+        delete blockClone.paragraph?.icon;
+      }
       return blockClone as BlockObjectRequest;
     });
 
@@ -683,6 +687,8 @@ export class NotionBugCreatorService {
           collectivitesString
         );
       }
+
+      this.logger.log(`Filling message block with ${messages.length} messages`);
 
       await this.fillMessageBlock(existingBlocks, messages);
 
