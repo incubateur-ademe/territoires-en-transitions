@@ -219,16 +219,19 @@ export class EditAxePom {
    * @param indicateurTitre - Le titre de l'indicateur à sélectionner
    */
   async selectIndicateur(indicateurTitre: string) {
-    // Trouver la checkbox de l'indicateur dans le panneau latéral
-    // Les indicateurs sont dans des cartes avec data-test="chart-{id}"
-    // Le titre est dans le label de la checkbox, on peut cliquer directement sur le label
-    const indicateurLabel = this.getIndicateursPanel()
-      .locator('label')
-      .filter({ hasText: indicateurTitre })
-      .first();
+    const panel = this.getIndicateursPanel();
 
-    await expect(indicateurLabel).toBeVisible();
-    await indicateurLabel.click();
+    // La grille rend d'abord un placeholder texte, puis remplace la ligne par
+    // une carte avec checkbox quand l'élément entre dans le viewport.
+    const indicateurPlaceholder = panel.getByText(indicateurTitre).first();
+    await expect(indicateurPlaceholder).toBeVisible({ timeout: 10000 });
+    await indicateurPlaceholder.scrollIntoViewIfNeeded();
+
+    const indicateurCheckbox = panel.getByRole('checkbox', {
+      name: indicateurTitre,
+    });
+    await expect(indicateurCheckbox).toBeVisible({ timeout: 10000 });
+    await indicateurCheckbox.click();
   }
 
   /**
