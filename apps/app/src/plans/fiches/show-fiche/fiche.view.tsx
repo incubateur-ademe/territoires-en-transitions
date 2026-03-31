@@ -8,17 +8,17 @@ import { FicheProvider } from './context/fiche-context';
 import { useGetFiche } from '@/app/plans/fiches/data/use-get-fiche';
 import { Header } from './header';
 
-type FicheActionImprovedProps = {
+type FicheViewProps = {
   fiche: FicheWithRelations;
   children?: React.ReactNode;
   planId?: number;
 };
 
-export const FicheActionImprovedView = ({
+export const FicheView = ({
   fiche: initialFiche,
   children: content,
   planId,
-}: FicheActionImprovedProps) => {
+}: FicheViewProps) => {
   const { data: fiche, error } = useGetFiche({
     id: initialFiche.id,
     initialData: initialFiche,

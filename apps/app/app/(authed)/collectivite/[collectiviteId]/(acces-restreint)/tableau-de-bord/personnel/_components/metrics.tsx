@@ -3,7 +3,6 @@ import {
   makeCollectiviteToutesLesFichesUrl,
   makeTdbCollectiviteUrl,
 } from '@/app/app/paths';
-import { useImprovedFicheActionUiEnabled } from '@/app/plans/fiches/show-fiche';
 import {
   MetricCard,
   MetricCardProps,
@@ -44,8 +43,6 @@ const Metrics = () => {
     useCurrentCollectivite();
   const { data: metrics, isLoading } = useTdbPersoFetchMetrics();
 
-  const isImprovedFicheActionUiEnabled = useImprovedFicheActionUiEnabled();
-
   const metricDescriptors: MetricDescriptor[] = [
     {
       isVisible: hasCollectivitePermission('plans.fiches.read_confidentiel'),
@@ -64,9 +61,7 @@ const Metrics = () => {
           : undefined,
     },
     {
-      isVisible:
-        hasCollectivitePermission('plans.fiches.read_confidentiel') &&
-        isImprovedFicheActionUiEnabled === true,
+      isVisible: hasCollectivitePermission('plans.fiches.read_confidentiel'),
       getCount: () => metrics?.plans.piloteSubFichesCount || 0,
       getTitle: (count) =>
         `Sous-action${count > 1 ? 's' : ''} pilotée${count > 1 ? 's' : ''}`,
