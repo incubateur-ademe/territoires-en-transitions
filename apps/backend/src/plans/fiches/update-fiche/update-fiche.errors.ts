@@ -7,6 +7,8 @@ const specificErrors = [
   'SELF_REFERENCE',
   'PARENT_NOT_FOUND',
   'FICHE_NOT_FOUND',
+  'INSTANCE_GOUVERNANCE_COLLECTIVITE_MISMATCH',
+  'INSTANCE_GOUVERNANCE_TAG_NOT_FOUND',
 ] as const;
 type SpecificError = (typeof specificErrors)[number];
 
@@ -24,8 +26,24 @@ export const updateFicheErrorConfig: TrpcErrorHandlerConfig<SpecificError> = {
       code: 'NOT_FOUND',
       message: 'Action non trouvée',
     },
+    INSTANCE_GOUVERNANCE_COLLECTIVITE_MISMATCH: {
+      code: 'BAD_REQUEST',
+      message:
+        "L'instance de gouvernance n'appartient pas à la même collectivité que la fiche",
+    },
+    INSTANCE_GOUVERNANCE_TAG_NOT_FOUND: {
+      code: 'BAD_REQUEST',
+      message: "Une ou plusieurs instances de gouvernance n'existent pas",
+    },
   },
 };
 
 export const UpdateFicheErrorEnum = createErrorsEnum(specificErrors);
 export type UpdateFicheError = keyof typeof UpdateFicheErrorEnum;
+
+export class UpdateFicheValidationError extends Error {
+  constructor(public readonly ficheError: UpdateFicheError) {
+    super(ficheError);
+    this.name = 'UpdateFicheValidationError';
+  }
+}

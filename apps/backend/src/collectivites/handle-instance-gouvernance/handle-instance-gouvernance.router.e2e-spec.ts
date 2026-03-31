@@ -10,16 +10,11 @@ import {
   YOLO_DODO,
   YOULOU_DOUDOU,
 } from '@tet/backend/test';
-import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles/utilisateur-verifie.table';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import {
-  addTestUser,
-  deleteUserCollectiviteRole,
-} from '@tet/backend/users/users/users.test-fixture';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { InstanceGouvernance } from '@tet/domain/collectivites';
-import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
@@ -224,115 +219,6 @@ describe('InstanceGouvernanceRouter', () => {
       .where(eq(instanceGouvernanceTagTable.id, instanceId));
 
     expect(fromDb.nom).toBe('Instance mise à jour');
-  });
-
-  test('list: supports multiple collectiviteIds', async () => {
-    const userWithRights = await getAuthUser(YOULOU_DOUDOU);
-    const caller = router.createCaller({ user: userWithRights });
-
-    const COLLECTIVITE_ID_2 = YOLO_DODO.collectiviteId.edition;
-
-    const {
-      instanceGouvernanceTagId: tagId1,
-      instanceGouvernanceTagCleanup: cleanup1,
-    } = await createInstanceGouvernanceTagAndCleanupFunction({
-      caller,
-      instanceGouvernanceTagInput: {
-        collectiviteId: COLLECTIVITE_ID,
-        nom: 'Instance collectivité 1',
-      },
-    });
-
-    const {
-      instanceGouvernanceTagId: tagId2,
-      instanceGouvernanceTagCleanup: cleanup2,
-    } = await createInstanceGouvernanceTagAndCleanupFunction({
-      caller,
-      instanceGouvernanceTagInput: {
-        collectiviteId: COLLECTIVITE_ID_2,
-        nom: 'Instance collectivité 2',
-      },
-    });
-
-    const listed = await caller.collectivites.tags.instanceGouvernance.list({
-      collectiviteIds: [COLLECTIVITE_ID, COLLECTIVITE_ID_2],
-    });
-
-    const ourTags = listed.filter(
-      (item: InstanceGouvernance) => item.id === tagId1 || item.id === tagId2
-    );
-    expect(ourTags).toHaveLength(2);
-    expect(ourTags.map((t: InstanceGouvernance) => t.nom).sort()).toEqual([
-      'Instance collectivité 1',
-      'Instance collectivité 2',
-    ]);
-
-    onTestFinished(async () => {
-      await cleanup1();
-      await cleanup2();
-    });
-  });
-
-  test('list: with collectiviteIds only returns tags from allowed collectivites', async () => {
-    const userWithRights = await getAuthUser(YOULOU_DOUDOU);
-    const callerWithRights = router.createCaller({ user: userWithRights });
-
-    const COLLECTIVITE_ID_2 = YOLO_DODO.collectiviteId.edition;
-
-    const { instanceGouvernanceTagId, instanceGouvernanceTagCleanup } =
-      await createInstanceGouvernanceTagAndCleanupFunction({
-        caller: callerWithRights,
-        instanceGouvernanceTagInput: {
-          collectiviteId: COLLECTIVITE_ID,
-          nom: 'Instance visible',
-        },
-      });
-
-    const { instanceGouvernanceTagCleanup: cleanup2 } =
-      await createInstanceGouvernanceTagAndCleanupFunction({
-        caller: callerWithRights,
-        instanceGouvernanceTagInput: {
-          collectiviteId: COLLECTIVITE_ID_2,
-          nom: 'Instance non visible',
-        },
-      });
-
-    const { user: restrictedUser, cleanup: restrictedUserCleanup } =
-      await addTestUser(db, {
-        collectiviteId: COLLECTIVITE_ID,
-        role: CollectiviteRole.LECTURE,
-      });
-    await db.db
-      .update(utilisateurVerifieTable)
-      .set({ verifie: false })
-      .where(eq(utilisateurVerifieTable.userId, restrictedUser.id));
-    const restrictedAuthUser = getAuthUserFromUserCredentials(restrictedUser);
-    const restrictedCaller = router.createCaller({ user: restrictedAuthUser });
-
-    const listed =
-      await restrictedCaller.collectivites.tags.instanceGouvernance.list({
-        collectiviteIds: [COLLECTIVITE_ID, COLLECTIVITE_ID_2],
-      });
-
-    const ourTag = listed.find(
-      (item: InstanceGouvernance) => item.id === instanceGouvernanceTagId
-    );
-    expect(ourTag).toBeDefined();
-
-    const otherCollectiviteTags = listed.filter(
-      (item: InstanceGouvernance) => item.collectiviteId === COLLECTIVITE_ID_2
-    );
-    expect(otherCollectiviteTags).toHaveLength(0);
-
-    onTestFinished(async () => {
-      await deleteUserCollectiviteRole(db, {
-        userId: restrictedUser.id,
-        collectiviteId: COLLECTIVITE_ID,
-      });
-      await restrictedUserCleanup();
-      await instanceGouvernanceTagCleanup();
-      await cleanup2();
-    });
   });
 
   test('create: rejects when user has no update rights on collectivite', async () => {

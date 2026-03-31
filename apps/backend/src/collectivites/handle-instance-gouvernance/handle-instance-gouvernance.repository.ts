@@ -3,11 +3,8 @@ import { ficheActionInstanceGouvernanceTableTag } from '@tet/backend/plans/fiche
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { failure, success } from '@tet/backend/utils/result.type';
-import {
-  InstanceGouvernance,
-  instanceGouvernanceTagSchema,
-} from '@tet/domain/collectivites';
-import { and, eq, inArray, ne } from 'drizzle-orm';
+import { InstanceGouvernance } from '@tet/domain/collectivites';
+import { and, eq, ne } from 'drizzle-orm';
 import { instanceGouvernanceTagTable } from '../tags/instance-gouvernance.table';
 import { Result } from './handle-instance-gouvernance.result';
 
@@ -26,7 +23,7 @@ export class InstanceGouvernanceRepository {
     tx?: Transaction;
   }): Promise<Result> {
     try {
-      const [instanceGouvernance] = await (tx ?? this.databaseService.db)
+      const [result] = await (tx ?? this.databaseService.db)
         .insert(instanceGouvernanceTagTable)
         .values({
           nom,
@@ -45,12 +42,7 @@ export class InstanceGouvernanceRepository {
           },
         })
         .returning();
-      const parsedResult =
-        instanceGouvernanceTagSchema.safeParse(instanceGouvernance);
-      if (!parsedResult.success) {
-        return failure('DATABASE_ERROR', parsedResult.error);
-      }
-      return parsedResult;
+      return success(result);
     } catch (error) {
       return failure('SERVER_ERROR', error as Error);
     }
@@ -65,39 +57,11 @@ export class InstanceGouvernanceRepository {
         .from(instanceGouvernanceTagTable)
         .where(eq(instanceGouvernanceTagTable.collectiviteId, collectiviteId));
 
-      const parsedResult = result
-        .map((instance) => instanceGouvernanceTagSchema.safeParse(instance))
-        .filter((result) => result.success)
-        .map((result) => result.data);
-
-      return { success: true, data: parsedResult };
+      return success(result);
     } catch (error) {
       return failure('SERVER_ERROR', error as Error);
     }
   }
-  async listByCollectiviteIds(
-    collectiviteIds: number[],
-    tx?: Transaction
-  ): Promise<Result<InstanceGouvernance[]>> {
-    try {
-      const result = await (tx ?? this.databaseService.db)
-        .select()
-        .from(instanceGouvernanceTagTable)
-        .where(
-          inArray(instanceGouvernanceTagTable.collectiviteId, collectiviteIds)
-        );
-
-      const parsedResult = result
-        .map((instance) => instanceGouvernanceTagSchema.safeParse(instance))
-        .filter((result) => result.success)
-        .map((result) => result.data);
-
-      return { success: true, data: parsedResult };
-    } catch (error) {
-      return failure('SERVER_ERROR', error as Error);
-    }
-  }
-
   async delete(id: number): Promise<Result<boolean>> {
     try {
       const result = await this.databaseService.db.transaction(async (tx) => {
@@ -156,10 +120,6 @@ export class InstanceGouvernanceRepository {
         .set({ nom })
         .where(eq(instanceGouvernanceTagTable.id, id))
         .returning();
-      const parsedResult = instanceGouvernanceTagSchema.safeParse(result);
-      if (!parsedResult.success) {
-        return failure('DATABASE_ERROR', parsedResult.error);
-      }
       return success(result);
     } catch (error) {
       return failure('DATABASE_ERROR', error as Error);
