@@ -1,4 +1,4 @@
-import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
 

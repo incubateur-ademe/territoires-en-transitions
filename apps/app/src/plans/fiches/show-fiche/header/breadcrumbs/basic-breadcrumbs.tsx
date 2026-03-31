@@ -6,7 +6,7 @@ import { TAxeRow } from '@/app/types/alias';
 import { Breadcrumbs as BreadcrumbsUI } from '@tet/ui';
 import { useRouter } from 'next/navigation';
 import { usePlanActionChemin } from '../../data/usePlanActionChemin';
-import { generateTitle } from '../../utils';
+import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
 
 type BreadcrumbsLink = {
   label: string;

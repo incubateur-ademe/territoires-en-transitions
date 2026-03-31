@@ -1,4 +1,4 @@
-import { generateTitle } from '@/app/plans/fiches/show-fiche/utils';
+import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
 import { getAuthorAndDate } from '@/app/referentiels/preuves/Bibliotheque/utils';
 import {
   DiscussIcon,

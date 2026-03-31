@@ -1,4 +1,4 @@
-import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { useGetFiche } from '@/app/plans/fiches/data/use-get-fiche';
 import { useCurrentCollectivite } from '@tet/api/collectivites';

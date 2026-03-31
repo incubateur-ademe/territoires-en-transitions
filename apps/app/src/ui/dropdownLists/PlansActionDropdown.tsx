@@ -1,4 +1,4 @@
-import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {

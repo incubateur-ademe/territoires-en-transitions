@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { TAxeRow } from '@/app/types/alias';
 import { useSupabase } from '@tet/api';
-import { generateTitle } from '../../FicheAction/data/utils';
+import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
 
 type FilArianeLink = {
   label: string;
