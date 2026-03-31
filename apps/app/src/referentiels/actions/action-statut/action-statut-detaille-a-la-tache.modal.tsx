@@ -6,7 +6,7 @@ import { ActionListItem, useListActions } from '../use-list-actions';
 import { useUpdateActionStatut } from './use-update-action-statut';
 
 type Props = {
-  action: ActionListItem;
+  action: Pick<ActionListItem, 'actionId' | 'nom' | 'childrenIds'>;
   openState: OpenState;
 };
 
@@ -19,10 +19,10 @@ export const ActionStatutDetailleALaTacheModal = ({
   action,
   openState,
 }: Props) => {
-  const { actionId, nom: actionName } = action;
+  const { actionId, nom: actionName, childrenIds } = action;
 
   const { data: tasks = [] } = useListActions({
-    actionIds: action.childrenIds,
+    actionIds: childrenIds,
   });
 
   const tasksWithStatusVisible = tasks.map((task) => ({
@@ -33,10 +33,10 @@ export const ActionStatutDetailleALaTacheModal = ({
     },
   }));
 
-  const { mutate: saveActionStatut, isPending } = useUpdateActionStatut();
+  const { mutate: updateActionStatut, isPending } = useUpdateActionStatut();
 
   const handleValidate = () => {
-    saveActionStatut({
+    updateActionStatut({
       actionId,
       statut: StatutAvancementEnum.NON_RENSEIGNE,
     });

@@ -2,12 +2,16 @@ import { CellContext } from '@tanstack/react-table';
 import {
   ActionType,
   ActionTypeEnum,
+  isActionStatutDetaille,
   StatutAvancement,
+  StatutAvancementCreate,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
 import { TableCell } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
+import { useRef } from 'react';
 import ActionStatutBadge from '../actions/action-statut/action-statut.badge';
-import { ChooseActionStatutSelect } from '../actions/action-statut/choose-action-statut.select';
+import { ActionStatutDropdown } from '../actions/action-statut/action-statut.dropdown';
 import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';
 import { ActionListItem } from '../actions/use-list-actions';
 import { useReferentielTableCellFocus } from './referentiel-table.keyboard';
@@ -26,18 +30,20 @@ export const ReferentielTableStatutCell = ({
   info,
   updateActionStatut,
 }: Props) => {
-  const { referentielCellProps } = useReferentielTableCellFocus(info.cell);
+  const { focusCellProps: referentielCellProps } = useReferentielTableCellFocus(
+    info.cell
+  );
   const action = info.row.original;
 
-  const { actionType } = action;
+  const {
+    actionType,
+    score: { statut },
+  } = action;
 
-  if (!actionTypesWithStatut.has(actionType)) {
-    return <TableCell {...referentielCellProps} />;
-  }
-
-  const { statut } = action.score;
-
-  if (statut === StatutAvancementEnum.NON_RENSEIGNABLE) {
+  if (
+    !actionTypesWithStatut.has(actionType) ||
+    statut === StatutAvancementEnum.NON_RENSEIGNABLE
+  ) {
     return <TableCell {...referentielCellProps} />;
   }
 
@@ -48,13 +54,11 @@ export const ReferentielTableStatutCell = ({
       edit={{
         renderOnEdit: ({ openState }) => {
           return (
-            <ChooseActionStatutSelect
-              openState={openState}
-              value={statut}
-              badgeSize="xs"
-              onChange={(value) =>
-                updateActionStatut({ actionId: action.actionId, statut: value })
-              }
+            <InlineEditActionStatutDropdown
+              action={action}
+              statut={statut}
+              updateActionStatut={updateActionStatut}
+              inlineEditOpenState={openState}
             />
           );
         },
@@ -63,8 +67,64 @@ export const ReferentielTableStatutCell = ({
       <ActionStatutBadge
         statut={statut ?? StatutAvancementEnum.NON_RENSEIGNE}
         size="xs"
-        className="m-auto"
       />
     </TableCell>
   );
 };
+
+function InlineEditActionStatutDropdown({
+  action,
+  statut,
+  updateActionStatut,
+  inlineEditOpenState: { isOpen, setIsOpen },
+}: {
+  action: ActionListItem;
+  statut: StatutAvancement | null | undefined;
+  updateActionStatut: ReturnType<typeof useUpdateActionStatut>['mutate'];
+  inlineEditOpenState: OpenState;
+}) {
+  // useRef pour garder la référence du statut sélectionné
+  const selectedStatutRef = useRef<StatutAvancement | null | undefined>(null);
+
+  const closeEditing = () => {
+    setIsOpen(false);
+  };
+
+  const handleOnStatutChange = (nextStatut: StatutAvancementCreate) => {
+    selectedStatutRef.current = nextStatut;
+
+    if (isActionStatutDetaille(nextStatut)) {
+      return;
+    }
+
+    updateActionStatut({
+      actionId: action.actionId,
+      statut: nextStatut,
+    });
+
+    closeEditing();
+  };
+
+  const handleOnSelectOpenChange = (opened: boolean) => {
+    if (opened) {
+      setIsOpen(true);
+      return;
+    }
+
+    if (!isActionStatutDetaille(selectedStatutRef.current)) {
+      setIsOpen(false);
+    }
+  };
+
+  return (
+    <ActionStatutDropdown
+      buttonClassName="border-none outline-none"
+      displayOptionsWithoutFloater={true}
+      action={action}
+      value={statut}
+      openState={{ isOpen, setIsOpen: handleOnSelectOpenChange }}
+      onChange={handleOnStatutChange}
+      onStatutDetailleModalClose={closeEditing}
+    />
+  );
+}
