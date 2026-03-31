@@ -1,6 +1,6 @@
 'use client';
 
-import ModaleCreerIndicateur from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
+import { CreateIndicateurModal } from '@/app/plans/fiches/show-fiche/content/indicateurs/create-indicateur.modal';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 import { ReactNode, useState } from 'react';
@@ -27,7 +27,7 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
               Créer un indicateur
             </Button>
             {isNewIndicateurOpen && (
-              <ModaleCreerIndicateur
+              <CreateIndicateurModal
                 isOpen={isNewIndicateurOpen}
                 setIsOpen={setIsNewIndicateurOpen}
               />

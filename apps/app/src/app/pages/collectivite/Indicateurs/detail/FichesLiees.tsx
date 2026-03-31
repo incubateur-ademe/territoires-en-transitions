@@ -6,8 +6,8 @@ import { FicheActionFiltersProvider } from '@/app/plans/fiches/list-all-fiches/f
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, EmptyCard } from '@tet/ui';
 import { useState } from 'react';
-import FichePicto from '../../PlansActions/FicheAction/FichesLiees/FichePicto';
-import ModaleFichesLiees from '../../PlansActions/FicheAction/FichesLiees/ModaleFichesLiees';
+import { FichePicto } from './fiche.picto';
+import { FichesLieesModal } from './fiches-liees.modal';
 
 type Props = {
   definition: IndicateurDefinition;
@@ -86,7 +86,7 @@ const FichesLiees = ({ definition }: Props) => {
         </div>
       )}
 
-      <ModaleFichesLiees
+      <FichesLieesModal
         isOpen={isModalOpen}
         setIsOpen={setIsModalOpen}
         currentFicheId={null}

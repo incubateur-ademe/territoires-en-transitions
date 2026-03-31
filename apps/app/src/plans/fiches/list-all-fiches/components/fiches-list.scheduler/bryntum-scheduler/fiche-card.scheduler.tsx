@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { useLayoutEffect, useRef, useState } from 'react';
 
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
-import { FicheActionCardProps } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
-import ModifierFicheModale from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/ModifierFicheModale';
+import { FicheActionCardProps } from '@/app/plans/fiches/components/card/fiche.card';
+import { EditFicheModal } from '@/app/plans/fiches/components/card/edit-fiche.modal';
 import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
@@ -119,7 +119,7 @@ export const FicheCardScheduler = ({
         {canUpdate && (
           <div className="hidden group-hover:flex absolute left-full gap-2 py-3 pl-2">
             {isEditOpen && (
-              <ModifierFicheModale
+              <EditFicheModal
                 initialFiche={fiche}
                 isOpen={isEditOpen}
                 setIsOpen={() => setIsEditOpen(!isEditOpen)}
