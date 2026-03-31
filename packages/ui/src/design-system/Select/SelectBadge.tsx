@@ -19,6 +19,7 @@ type Props = Omit<
 
 /**
  * Sélecteur de valeur unique pour les listes de badges métier
+ * @deprecated use Select with customItem instead
  **/
 export const SelectBadge = ({
   defaultValue,
