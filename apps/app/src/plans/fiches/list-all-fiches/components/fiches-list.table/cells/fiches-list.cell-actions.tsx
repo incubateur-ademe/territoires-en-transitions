@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import ModifierFicheModale from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/ModifierFicheModale';
+import { EditFicheModal } from '@/app/plans/fiches/components/card/edit-fiche.modal';
 import {
   ficheSharedSingularAndPluralText,
   getFicheActionShareIcon,
@@ -68,7 +68,7 @@ export const FichesListCellActions = ({ fiche }: Props) => {
           ),
         }}
       />
-      <ModifierFicheModale
+      <EditFicheModal
         initialFiche={fiche}
         isOpen={isEditOpen}
         setIsOpen={() => setIsEditOpen(!isEditOpen)}

@@ -1,5 +1,5 @@
-import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
-import FicheActionCardSkeleton from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
+import { FicheCard } from '@/app/plans/fiches/components/card/fiche.card';
+import { FicheCardSkeleton } from '@/app/plans/fiches/components/card/fiche.skeleton';
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import {
@@ -39,7 +39,7 @@ const FilteredResultsList = ({
   return (
     <div className={ficheListGridClassName}>
       {filteredResults.map((fiche) => (
-        <FicheActionCard
+        <FicheCard
           key={fiche.id}
           ficheAction={fiche}
           link={makeCollectiviteActionUrl({
@@ -111,7 +111,7 @@ export const FilteredResults = ({ collectivite, currentUserId }: Props) => {
       {isLoading ? (
         <div className={ficheListGridClassName}>
           {[1, 2, 3, 4].map((i) => (
-            <FicheActionCardSkeleton key={i} />
+            <FicheCardSkeleton key={i} />
           ))}
         </div>
       ) : (

@@ -1,4 +1,4 @@
-import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
+import { FicheCard } from '@/app/plans/fiches/components/card/fiche.card';
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import Module from '@/app/tableaux-de-bord/modules/module/module';
@@ -75,7 +75,7 @@ export const FichesActionModule = ({
     >
       <div className="grid md:grid-cols-2 2xl:grid-cols-4 gap-4">
         {fiches.map((fiche) => (
-          <FicheActionCard
+          <FicheCard
             currentCollectivite={collectivite}
             currentUserId={user.id}
             key={fiche.id}

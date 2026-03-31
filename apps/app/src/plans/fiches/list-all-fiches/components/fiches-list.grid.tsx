@@ -1,4 +1,4 @@
-import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
+import { FicheCard } from '@/app/plans/fiches/components/card/fiche.card';
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -52,7 +52,7 @@ export const FichesListGrid = ({
     <div className="grow">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {fiches.map((fiche) => (
-          <FicheActionCard
+          <FicheCard
             key={fiche.id}
             ficheAction={fiche}
             completion={fiche.completion}

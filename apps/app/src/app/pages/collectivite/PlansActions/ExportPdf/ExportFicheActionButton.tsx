@@ -1,4 +1,4 @@
-import { useGetEtapes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/etapes/use-get-etapes';
+import { useGetEtapes } from './use-get-etapes';
 import { useListIndicateurs } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { useGetBudget } from '@/app/plans/fiches/update-fiche/data/use-get-budget';
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';

@@ -1,5 +1,5 @@
-import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
-import FicheActionCardSkeleton from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCardSkeleton';
+import { FicheCard } from '@/app/plans/fiches/components/card/fiche.card';
+import { FicheCardSkeleton } from '@/app/plans/fiches/components/card/fiche.skeleton';
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import {
   isFicheEditableByCollectiviteUser,
@@ -39,7 +39,7 @@ export const FichesList = ({
         const fiche =
           (ficheId > 0 && fiches.find((f) => f.id === ficheId)) || null;
         if (!fiche) {
-          return <FicheActionCardSkeleton key={i} />;
+          return <FicheCardSkeleton key={i} />;
         }
       })}
       {fiches.map((fiche) => {
@@ -47,7 +47,7 @@ export const FichesList = ({
           !isFicheEditableByCollectiviteUser(fiche, collectivite, user.id) ||
           isFicheSharedWithCollectivite(fiche, collectivite.collectiviteId);
         return (
-          <FicheActionCard
+          <FicheCard
             currentCollectivite={collectivite}
             currentUserId={user.id}
             key={fiche.id}

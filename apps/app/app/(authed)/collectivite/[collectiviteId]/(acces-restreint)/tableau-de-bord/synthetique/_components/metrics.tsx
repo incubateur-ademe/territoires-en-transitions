@@ -15,7 +15,7 @@ import { MetricCard } from '@/app/tableaux-de-bord/metrics/metric.card';
 import { MetricCardSkeleton } from '@/app/tableaux-de-bord/metrics/metric.card-skeleton';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 
-import ModaleCreerIndicateur from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
+import { CreateIndicateurModal } from '@/app/plans/fiches/show-fiche/content/indicateurs/create-indicateur.modal';
 import { useTdbCollectiviteFetchMetrics } from '../_hooks/use-tdb-collectivite-fetch-metrics';
 
 const Metrics = () => {
@@ -142,7 +142,7 @@ const Metrics = () => {
             }
           />
           {isNewIndicateurOpen && (
-            <ModaleCreerIndicateur
+            <CreateIndicateurModal
               isOpen={isNewIndicateurOpen}
               setIsOpen={setIsNewIndicateurOpen}
             />

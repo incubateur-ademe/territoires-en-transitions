@@ -1,6 +1,6 @@
 import ActionPicto from '@/app/ui/pictogrammes/ActionPicto';
 import { EmptyCard } from '@tet/ui';
-import { MesuresLieesListe } from '../../PlansActions/FicheAction/mesures-liees/mesures-liees.list';
+import { MesuresLieesListe } from './mesures-liees.list';
 
 type Props = {
   isReadonly: boolean;
