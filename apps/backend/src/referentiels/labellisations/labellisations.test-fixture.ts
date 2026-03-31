@@ -2,7 +2,7 @@ import { auditTable } from '@tet/backend/referentiels/labellisations/audit.table
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { ReferentielId } from '@tet/domain/referentiels';
+import { LabellisationDemande, ReferentielId } from '@tet/domain/referentiels';
 import { TRPCClient } from '@trpc/client';
 import { and, eq } from 'drizzle-orm';
 import {
@@ -63,6 +63,27 @@ export async function createAudit({
   return { audit, demande, cleanup };
 }
 
+export async function validateAuditWithCnl({
+  databaseService,
+  auditId,
+  cnlDate,
+}: {
+  databaseService: DatabaseServiceInterface;
+  auditId: number;
+  cnlDate: Date;
+}) {
+  await databaseService.db
+    .update(auditTable)
+    .set({
+      dateCnl: cnlDate.toISOString(),
+      valideLabellisation: true,
+    })
+    .where(eq(auditTable.id, auditId));
+  console.log(
+    `Audit ${auditId} validated with CNL on ${cnlDate.toISOString()}`
+  );
+}
+
 export async function addAuditeurPermission({
   databaseService,
   auditId,
@@ -117,7 +138,7 @@ export async function requestLabellisationForCot(
   trpcClient: TRPCClient<AppRouter>,
   collectiviteId: number,
   referentiel: ReferentielId
-): Promise<void> {
+): Promise<LabellisationDemande> {
   // Fill referentiel
   await updateAllNeedReferentielStatutsToCompleteReferentiel(
     trpcClient,
@@ -140,12 +161,14 @@ export async function requestLabellisationForCot(
     });
 
   // Request audit
-  await trpcClient.referentiels.labellisations.requestLabellisation.mutate({
-    referentiel,
-    collectiviteId,
-    sujet: 'labellisation',
-    etoiles: parcours.etoiles,
-  });
+  const requestLabellisationResponse =
+    await trpcClient.referentiels.labellisations.requestLabellisation.mutate({
+      referentiel,
+      collectiviteId,
+      sujet: 'labellisation',
+      etoiles: parcours.etoiles,
+    });
+  return requestLabellisationResponse;
 }
 
 export async function startAudit(

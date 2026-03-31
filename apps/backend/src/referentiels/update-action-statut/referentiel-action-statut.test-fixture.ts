@@ -19,8 +19,11 @@ import { auditTable } from '../labellisations/audit.table';
 import { auditeurTable } from '../labellisations/auditeur.table';
 import { mesureAuditStatutTable } from '../labellisations/handle-mesure-audit-statut/mesure-audit-statut.table';
 import { labellisationDemandeTable } from '../labellisations/labellisation-demande.table';
+import { labellisationTable } from '../labellisations/labellisation.table';
 import { actionCommentaireTable } from '../models/action-commentaire.table';
 import { actionStatutTable } from '../models/action-statut.table';
+import { historiqueActionCommentaireTable } from '../models/historique-action-commentaire.table';
+import { historiqueActionStatutTable } from '../models/historique-action-statut.table';
 import { snapshotTable } from '../snapshots/snapshot.table';
 
 export const UPDATE_ACTION_STATUT_CHUNK_SIZE = 100;
@@ -207,6 +210,23 @@ export async function cleanupReferentielActionStatutsAndLabellisations(
   databaseService: DatabaseServiceInterface,
   collectiviteId: number
 ) {
+  // Clean history tables first (before main tables)
+  const historiqueActionStatutsRet = await databaseService.db
+    .delete(historiqueActionStatutTable)
+    .where(eq(historiqueActionStatutTable.collectiviteId, collectiviteId))
+    .returning();
+  console.log(
+    `${historiqueActionStatutsRet.length} historique action statuts removed from collectivite ${collectiviteId}`
+  );
+
+  const historiqueActionCommentairesRet = await databaseService.db
+    .delete(historiqueActionCommentaireTable)
+    .where(eq(historiqueActionCommentaireTable.collectiviteId, collectiviteId))
+    .returning();
+  console.log(
+    `${historiqueActionCommentairesRet.length} historique action commentaires removed from collectivite ${collectiviteId}`
+  );
+
   const actionStatutsRet = await databaseService.db
     .delete(actionStatutTable)
     .where(eq(actionStatutTable.collectiviteId, collectiviteId))
@@ -299,6 +319,14 @@ export async function cleanupReferentielActionStatutsAndLabellisations(
       `${mesureAuditStatutsRet.length} mesure audit statuts removed from collectivite ${collectiviteId}`
     );
   }
+
+  const labellisations = await databaseService.db
+    .delete(labellisationTable)
+    .where(eq(labellisationTable.collectiviteId, collectiviteId))
+    .returning();
+  console.log(
+    `${labellisations.length} labellisations removed for collectivite ${collectiviteId}`
+  );
 
   const auditRet = await databaseService.db
     .delete(auditTable)

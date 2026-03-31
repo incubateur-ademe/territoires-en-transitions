@@ -39,10 +39,6 @@ $$
         disable trigger action_statut_check_update;
     alter table action_statut
         disable trigger after_action_statut_insert;
-    alter table action_statut
-        disable trigger save_history;
-    alter table action_commentaire
-        disable trigger save_history;
     alter table action_commentaire
         disable trigger set_modified_at_before_action_commentaire_update;
 
@@ -77,10 +73,6 @@ $$
         enable trigger action_statut_check_update;
     alter table action_statut
         enable trigger after_action_statut_insert;
-    alter table action_statut
-        enable trigger save_history;
-    alter table action_commentaire
-        enable trigger save_history;
     alter table action_commentaire
         enable trigger set_modified_at_before_action_commentaire_update;
 $$
