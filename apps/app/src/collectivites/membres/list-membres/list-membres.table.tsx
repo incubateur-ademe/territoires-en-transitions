@@ -45,9 +45,9 @@ export function ListmembresTable() {
           <TableHead>
             <TableRow>
               <TableHeaderCell>Nom et adresse mail</TableHeaderCell>
-              <TableHeaderCell>Fonction</TableHeaderCell>
-              <TableHeaderCell>{"Champ d'intervention"}</TableHeaderCell>
+              <TableHeaderCell>Rôle</TableHeaderCell>
               <TableHeaderCell>Intitulé de poste</TableHeaderCell>
+              <TableHeaderCell>{"Champ d'intervention"}</TableHeaderCell>
               <TableHeaderCell className="w-[12%]">Accès</TableHeaderCell>
 
               <VisibleWhen

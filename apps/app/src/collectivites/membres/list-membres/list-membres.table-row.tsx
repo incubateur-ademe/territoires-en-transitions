@@ -80,24 +80,6 @@ const ListMembresTableRow = ({
           ) : null}
         </TableCell>
 
-        {/* Champ d'intervention */}
-        <TableCell>
-          {canMutateMembres || isCurrentUserRow ? (
-            <ChampsInterventionDropdown
-              values={champIntervention ?? []}
-              onChange={(value) =>
-                updateMembre({ userId, name: 'champIntervention', value })
-              }
-            />
-          ) : (
-            (champIntervention ?? []).map((champ) => (
-              <div key={champ} className="text-sm/7">
-                {referentielToName[champ]}
-              </div>
-            ))
-          )}
-        </TableCell>
-
         {/* Intitulé de poste */}
         <TableCell>
           {canMutateMembres || isCurrentUserRow ? (
@@ -115,6 +97,24 @@ const ListMembresTableRow = ({
             <span title={detailsFonction ?? undefined} className="text-sm">
               {detailsFonction}
             </span>
+          )}
+        </TableCell>
+
+        {/* Champ d'intervention */}
+        <TableCell>
+          {canMutateMembres || isCurrentUserRow ? (
+            <ChampsInterventionDropdown
+              values={champIntervention ?? []}
+              onChange={(value) =>
+                updateMembre({ userId, name: 'champIntervention', value })
+              }
+            />
+          ) : (
+            (champIntervention ?? []).map((champ) => (
+              <div key={champ} className="text-sm/7">
+                {referentielToName[champ]}
+              </div>
+            ))
           )}
         </TableCell>
 
