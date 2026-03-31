@@ -1,6 +1,5 @@
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { getIdentifiantFromActionId } from '@tet/domain/referentiels';
 import { ActionJustificationField } from '../action/action.justification-field';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
@@ -14,9 +13,6 @@ type Props = {
 };
 
 const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
-  const { hasCollectivitePermission } = useCurrentCollectivite();
-  const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
-
   const { statut } = useActionStatut(task.id);
   const { avancement, concerne } = statut || {};
 
