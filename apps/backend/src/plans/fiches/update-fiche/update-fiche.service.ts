@@ -4,13 +4,18 @@ import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { WebhookService } from '@tet/backend/utils/webhooks/webhook.service';
-import { ficheSchemaUpdate, FicheWithRelations } from '@tet/domain/plans';
+import {
+  canLinkInstanceGouvernanceToFiche,
+  ficheSchemaUpdate,
+  FicheWithRelations,
+} from '@tet/domain/plans';
 import { ApplicationSousScopesEnum } from '@tet/domain/utils';
 import {
   Column,
   ColumnBaseConfig,
   ColumnDataType,
   eq,
+  inArray,
   or,
   TableConfig,
 } from 'drizzle-orm';
@@ -26,6 +31,7 @@ import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
 import { ficheActionEffetAttenduTable } from '../shared/models/fiche-action-effet-attendu.table';
 import { ficheActionFinanceurTagTable } from '../shared/models/fiche-action-financeur-tag.table';
 import { ficheActionIndicateurTable } from '../shared/models/fiche-action-indicateur.table';
+import { instanceGouvernanceTagTable } from '../../../collectivites/tags/instance-gouvernance.table';
 import { ficheActionInstanceGouvernanceTableTag } from '../shared/models/fiche-action-instance-gouvernance';
 import { ficheActionLibreTagTable } from '../shared/models/fiche-action-libre-tag.table';
 import { ficheActionLienTable } from '../shared/models/fiche-action-lien.table';
@@ -37,7 +43,11 @@ import { ficheActionSousThematiqueTable } from '../shared/models/fiche-action-so
 import { ficheActionStructureTagTable } from '../shared/models/fiche-action-structure-tag.table';
 import { ficheActionThematiqueTable } from '../shared/models/fiche-action-thematique.table';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
-import { UpdateFicheError, UpdateFicheErrorEnum } from './update-fiche.errors';
+import {
+  UpdateFicheError,
+  UpdateFicheErrorEnum,
+  UpdateFicheValidationError,
+} from './update-fiche.errors';
 import { UpdateFicheInput } from './update-fiche.input';
 import { UpdateFicheResult } from './update-fiche.result';
 
@@ -349,24 +359,13 @@ export default class UpdateFicheService {
       }
 
       if (instanceGouvernance !== undefined) {
-        // Delete existing relations
-        await transaction
-          .delete(ficheActionInstanceGouvernanceTableTag)
-          .where(eq(ficheActionInstanceGouvernanceTableTag.ficheId, ficheId));
-
-        // Insert new relations
-        if (instanceGouvernance !== null && instanceGouvernance.length > 0) {
-          await transaction
-            .insert(ficheActionInstanceGouvernanceTableTag)
-            .values(
-              instanceGouvernance.map((relation) => ({
-                ficheId: ficheId,
-                instanceGouvernanceTagId: relation.id,
-                createdBy: user.id,
-              }))
-            )
-            .returning();
-        }
+        await this.validateAndUpdateInstanceGouvernance({
+          ficheId,
+          instanceGouvernance,
+          collectiviteId: existingFicheAction.collectiviteId,
+          userId: user.id,
+          transaction,
+        });
       }
 
       if (libreTags !== undefined) {
@@ -471,6 +470,9 @@ export default class UpdateFicheService {
         data: updatedFiche,
       };
     } catch (error) {
+      if (error instanceof UpdateFicheValidationError) {
+        return { success: false, error: error.ficheError };
+      }
       return {
         success: false,
         error: 'SERVER_ERROR',
@@ -652,5 +654,68 @@ export default class UpdateFicheService {
       financeurTagId: financeur.financeurTag.id,
       montantTtc: financeur.montantTtc,
     }));
+  }
+
+  private async validateAndUpdateInstanceGouvernance({
+    ficheId,
+    instanceGouvernance,
+    collectiviteId,
+    userId,
+    transaction,
+  }: {
+    ficheId: number;
+    instanceGouvernance: { id: number }[] | null;
+    collectiviteId: number;
+    userId: string;
+    transaction: Transaction;
+  }) {
+    await transaction
+      .delete(ficheActionInstanceGouvernanceTableTag)
+      .where(eq(ficheActionInstanceGouvernanceTableTag.ficheId, ficheId));
+
+    if (!instanceGouvernance || instanceGouvernance.length === 0) {
+      return;
+    }
+
+    const tagIds = instanceGouvernance.map((relation) => relation.id);
+    const tags = await transaction
+      .select({
+        id: instanceGouvernanceTagTable.id,
+        collectiviteId: instanceGouvernanceTagTable.collectiviteId,
+      })
+      .from(instanceGouvernanceTagTable)
+      .where(inArray(instanceGouvernanceTagTable.id, tagIds));
+
+    const foundIds = tags.map((tag) => tag.id);
+    const missingIds = tagIds.filter((id) => !foundIds.includes(id));
+    if (missingIds.length > 0) {
+      throw new UpdateFicheValidationError(
+        'INSTANCE_GOUVERNANCE_TAG_NOT_FOUND'
+      );
+    }
+
+    const hasMismatch = tags.some(
+      (tag) =>
+        !canLinkInstanceGouvernanceToFiche({
+          ficheCollectiviteId: collectiviteId,
+          instanceGouvernanceCollectiviteId: tag.collectiviteId,
+        })
+    );
+    if (hasMismatch) {
+      throw new UpdateFicheValidationError(
+        'INSTANCE_GOUVERNANCE_COLLECTIVITE_MISMATCH'
+      );
+    }
+
+    await transaction
+      .insert(ficheActionInstanceGouvernanceTableTag)
+      .values(
+        instanceGouvernance.map((relation) => ({
+          ficheId,
+          instanceGouvernanceTagId: relation.id,
+          createdBy: userId,
+        }))
+      )
+      .returning();
   }
 }

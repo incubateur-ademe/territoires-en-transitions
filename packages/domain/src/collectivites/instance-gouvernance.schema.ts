@@ -5,7 +5,7 @@ export const instanceGouvernanceTagSchema = z.object({
   nom: z.string(),
   collectiviteId: z.number(),
   createdAt: z.string().nullable(),
-  createdBy: z.uuid().nullable(),
+  createdBy: z.string().nullable(),
 });
 
 export type InstanceGouvernance = z.infer<typeof instanceGouvernanceTagSchema>;

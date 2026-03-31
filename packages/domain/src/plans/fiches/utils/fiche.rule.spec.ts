@@ -1,7 +1,7 @@
 import { addDays, subDays } from 'date-fns';
 import { Fiche } from '../fiche.schema';
 import { Statut, StatutEnum, statutEnumValues } from '../statut.enum.schema';
-import { isFicheOnTime } from './fiche.rule';
+import { canLinkInstanceGouvernanceToFiche, isFicheOnTime } from './fiche.rule';
 
 const createMockFiche = (
   statut: Statut,
@@ -9,6 +9,26 @@ const createMockFiche = (
 ): Partial<Fiche> => ({
   statut,
   dateFin: dateFin ? new Date(dateFin).toISOString() : null,
+});
+
+describe('canLinkInstanceGouvernanceToFiche', () => {
+  it('returns true when collectiviteIds match', () => {
+    expect(
+      canLinkInstanceGouvernanceToFiche({
+        ficheCollectiviteId: 1,
+        instanceGouvernanceCollectiviteId: 1,
+      })
+    ).toBe(true);
+  });
+
+  it('returns false when collectiviteIds differ', () => {
+    expect(
+      canLinkInstanceGouvernanceToFiche({
+        ficheCollectiviteId: 1,
+        instanceGouvernanceCollectiviteId: 2,
+      })
+    ).toBe(false);
+  });
 });
 
 describe('isFicheOnTime', () => {

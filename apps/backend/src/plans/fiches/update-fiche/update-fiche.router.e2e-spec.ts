@@ -1,3 +1,4 @@
+import { instanceGouvernanceTagTable } from '@tet/backend/collectivites/tags/instance-gouvernance.table';
 import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
 import { FichesRouter } from '@tet/backend/plans/fiches/fiches.router';
 import {
@@ -55,12 +56,18 @@ describe('UpdateFicheService', () => {
   let db: DatabaseService;
   let fichesRouter: FichesRouter;
   let yoloDodo: AuthenticatedUser;
+  let userWithNoRights: AuthenticatedUser;
+  let userWithNoRightsCleanup: () => Promise<void>;
 
   beforeAll(async () => {
     const app = await getTestApp();
     fichesRouter = app.get(FichesRouter);
     db = await getTestDatabase(app);
     yoloDodo = await getAuthUser(YOLO_DODO);
+
+    const { user: testUser, cleanup } = await addTestUser(db);
+    userWithNoRights = getAuthUserFromUserCredentials(testUser);
+    userWithNoRightsCleanup = cleanup;
 
     await db.db
       .delete(ficheActionTable)
@@ -71,6 +78,7 @@ describe('UpdateFicheService', () => {
     await insertFixtures(db, ficheId);
 
     return async () => {
+      await userWithNoRightsCleanup();
       await cleanupLibreTags();
 
       await db.db
@@ -778,7 +786,7 @@ describe('UpdateFicheService', () => {
       );
     });
 
-    test('should not allow update if fiche action is not in user‘s collectivite', async () => {
+    test('should not allow update if fiche action is not in user collectivite', async () => {
       await db.db
         .insert(ficheActionTable)
         .values({ ...ficheActionFixture, id: 10000, collectiviteId: 3 });
@@ -793,7 +801,7 @@ describe('UpdateFicheService', () => {
         titre: 'Construire des pistes cyclables',
       };
 
-      const caller = fichesRouter.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: userWithNoRights });
 
       await expect(() =>
         caller.update({
@@ -960,19 +968,110 @@ describe('UpdateFicheService', () => {
       effetAttenduId: effetsAttendusFixture.id,
     });
 
-    await databaseService.db.insert(libreTagTable).values([
-      {
-        id: 1,
-        nom: 'Tag 1',
-        collectiviteId,
-      },
-    ]);
+    await databaseService.db
+      .insert(libreTagTable)
+      .values([
+        {
+          id: 1,
+          nom: 'Tag 1',
+          collectiviteId,
+        },
+      ])
+      .onConflictDoNothing();
 
     await databaseService.db.insert(ficheActionLibreTagTable).values({
       ficheId,
       libreTagId: libresFixture.id,
     });
   }
+
+  test('should reject linking instance gouvernance from a different collectivite', async () => {
+    const otherCollectiviteId = 2;
+
+    const [tag] = await db.db
+      .insert(instanceGouvernanceTagTable)
+      .values({
+        nom: 'Instance autre collectivité',
+        collectiviteId: otherCollectiviteId,
+        createdBy: yoloDodo.id,
+        createdAt: new Date().toISOString(),
+      })
+      .returning();
+
+    const caller = fichesRouter.createCaller({ user: yoloDodo });
+
+    await expect(
+      caller.update({
+        ficheId,
+        ficheFields: {
+          instanceGouvernance: [{ id: tag.id }],
+        },
+      })
+    ).rejects.toThrow(
+      "L'instance de gouvernance n'appartient pas à la même collectivité que la fiche"
+    );
+
+    await db.db
+      .delete(instanceGouvernanceTagTable)
+      .where(eq(instanceGouvernanceTagTable.id, tag.id));
+  });
+
+  test('should reject linking non-existent instance gouvernance tag', async () => {
+    const nonExistentTagId = 999999;
+    const caller = fichesRouter.createCaller({ user: yoloDodo });
+
+    await expect(
+      caller.update({
+        ficheId,
+        ficheFields: {
+          instanceGouvernance: [{ id: nonExistentTagId }],
+        },
+      })
+    ).rejects.toThrow(
+      "Une ou plusieurs instances de gouvernance n'existent pas"
+    );
+  });
+
+  test('should rollback all changes when instance gouvernance validation fails', async () => {
+    const otherCollectiviteId = 2;
+    const originalTitre = 'Titre avant rollback';
+
+    const caller = fichesRouter.createCaller({ user: yoloDodo });
+
+    await caller.update({
+      ficheId,
+      ficheFields: { titre: originalTitre },
+    });
+
+    const [tag] = await db.db
+      .insert(instanceGouvernanceTagTable)
+      .values({
+        nom: 'Instance rollback test',
+        collectiviteId: otherCollectiviteId,
+        createdBy: yoloDodo.id,
+        createdAt: new Date().toISOString(),
+      })
+      .returning();
+
+    await expect(
+      caller.update({
+        ficheId,
+        ficheFields: {
+          titre: 'Titre qui ne devrait pas être sauvegardé',
+          instanceGouvernance: [{ id: tag.id }],
+        },
+      })
+    ).rejects.toThrow(
+      "L'instance de gouvernance n'appartient pas à la même collectivité que la fiche"
+    );
+
+    const fiche = await caller.get({ id: ficheId });
+    expect(fiche.titre).toBe(originalTitre);
+
+    await db.db
+      .delete(instanceGouvernanceTagTable)
+      .where(eq(instanceGouvernanceTagTable.id, tag.id));
+  });
 
   async function updateFiche(data: UpdateFicheInput) {
     const caller = fichesRouter.createCaller({ user: yoloDodo });
