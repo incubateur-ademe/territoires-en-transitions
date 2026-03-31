@@ -1,6 +1,6 @@
 /**
- * Renvoi un tableau d'options pour les années.
- * Par défaut de 1990 à l'année en cours.
+ * Renvoie un tableau d'options pour les années.
+ * Par défaut de 2000 à l'année en cours.
  * @param additionalYearsFromCurrentYear - Nombre d'années supplémentaires à partir de l'année en cours
  */
 export const getYearsOptions = (additionalYearsFromCurrentYear?: number) => {
@@ -19,5 +19,3 @@ export const getYearsOptions = (additionalYearsFromCurrentYear?: number) => {
 
   return { yearsOptions, currentYear };
 };
-
-export const generateTitle = (title?: string | null) => title || 'Sans titre';

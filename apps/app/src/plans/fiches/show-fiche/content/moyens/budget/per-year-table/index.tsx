@@ -14,7 +14,7 @@ import {
 import { useEffect, useMemo } from 'react';
 import { useFicheContext } from '../../../../context/fiche-context';
 import { BudgetPerYear } from '../../../../context/types';
-import { getYearsOptions } from '../../../../utils';
+import { getYearsOptions } from '@/app/utils/get-years-options';
 import { emptyViewsProps } from '../../empty-view';
 import { BudgetPerYearFormProvider } from './budget-per-year-form.context';
 import {

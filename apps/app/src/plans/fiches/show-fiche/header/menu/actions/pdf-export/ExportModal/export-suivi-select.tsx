@@ -1,5 +1,5 @@
 import { OptionValue, SelectMultiple } from '@tet/ui';
-import { getYearsOptions } from '../../../../../utils';
+import { getYearsOptions } from '@/app/utils/get-years-options';
 import { TSectionsValues } from '../utils';
 
 type Props = {
