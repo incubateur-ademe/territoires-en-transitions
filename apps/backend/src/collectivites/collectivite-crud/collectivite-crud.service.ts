@@ -189,6 +189,12 @@ export default class CollectiviteCrudService {
         );
         break;
 
+      case collectiviteTypeEnum.SERVICE_PUBLIC:
+        if (!collectivite.siren || !collectivite.nic) return null;
+        condition.push(eq(collectiviteTable.siren, collectivite.siren));
+        condition.push(eq(collectiviteTable.nic, collectivite.nic));
+        break;
+
       case collectiviteTypeEnum.TEST:
         if (!collectivite.nom) return null;
         condition.push(eq(collectiviteTable.nom, collectivite.nom));

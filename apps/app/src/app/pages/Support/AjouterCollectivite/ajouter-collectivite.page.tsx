@@ -7,6 +7,7 @@ import {
   collectiviteType,
   CollectiviteTypeField,
 } from '@/app/app/pages/Support/AjouterCollectivite/collectivite-type.field';
+import { NicField } from '@/app/app/pages/Support/AjouterCollectivite/nic.field';
 import { SirenField } from '@/app/app/pages/Support/AjouterCollectivite/siren.field';
 import { useFindCollectivite } from '@/app/app/pages/Support/AjouterCollectivite/use-find-collectivite';
 import {
@@ -139,6 +140,18 @@ export const AjouterCollectivitePage = () => {
             onChange={(value) => updateCollectivite('regionCode', value, true)}
           />
         )}
+        {collectivite.type === collectiviteType.ServicePublic && (
+          <>
+            <SirenField
+              value={collectivite.siren ?? ''}
+              onChange={(value) => updateCollectivite('siren', value, true)}
+            />
+            <NicField
+              value={collectivite.nic ?? ''}
+              onChange={(value) => updateCollectivite('nic', value, true)}
+            />
+          </>
+        )}
         {collectivite.type && collectivite.type != collectiviteType.Test && (
           <Button
             className="self-end"
@@ -152,7 +165,10 @@ export const AjouterCollectivitePage = () => {
                 !collectivite.departementCode) ||
               ((collectivite.type == collectiviteType.Region ||
                 collectivite.type == collectiviteType.PrefectureRegion) &&
-                !collectivite.regionCode)
+                !collectivite.regionCode) ||
+              (collectivite.type == collectiviteType.ServicePublic &&
+                (collectivite.siren?.length != 9 ||
+                  collectivite.nic?.length != 5))
             }
             onClick={handleSearch}
           >
@@ -207,8 +223,15 @@ export const AjouterCollectivitePage = () => {
                 onChange={(value) => updateCollectivite('siren', value)}
               />
             )}
+            {collectivite.type === collectiviteType.ServicePublic && (
+              <NicField
+                value={collectivite.nic ?? ''}
+                onChange={(value) => updateCollectivite('nic', value)}
+              />
+            )}
             {collectivite.type !== collectiviteType.Region &&
-              collectivite.type !== collectiviteType.PrefectureRegion && (
+              collectivite.type !== collectiviteType.PrefectureRegion &&
+              collectivite.type !== collectiviteType.ServicePublic && (
                 <CodeDepartementField
                   value={collectivite.departementCode ?? ''}
                   onChange={(value) =>
@@ -216,10 +239,12 @@ export const AjouterCollectivitePage = () => {
                   }
                 />
               )}
-            <CodeRegionField
-              value={collectivite.regionCode ?? ''}
-              onChange={(value) => updateCollectivite('regionCode', value)}
-            />
+            {collectivite.type !== collectiviteType.ServicePublic && (
+              <CodeRegionField
+                value={collectivite.regionCode ?? ''}
+                onChange={(value) => updateCollectivite('regionCode', value)}
+              />
+            )}
           </div>
         )}
 
@@ -240,11 +265,15 @@ export const AjouterCollectivitePage = () => {
                 !collectivite.communeCode) ||
               (collectivite.type === collectiviteType.EPCI &&
                 !collectivite.siren) ||
+              (collectivite.type === collectiviteType.ServicePublic &&
+                (!collectivite.siren || !collectivite.nic)) ||
               (collectivite.type !== collectiviteType.Region &&
                 collectivite.type !== collectiviteType.PrefectureRegion &&
                 collectivite.type !== collectiviteType.Test &&
+                collectivite.type !== collectiviteType.ServicePublic &&
                 !collectivite.departementCode) ||
               (collectivite.type !== collectiviteType.Test &&
+                collectivite.type !== collectiviteType.ServicePublic &&
                 !collectivite.regionCode)
             }
             onClick={handleSave}
