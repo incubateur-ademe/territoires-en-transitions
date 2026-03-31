@@ -21,11 +21,11 @@ export const Header = () => {
             href: '/',
           },
           {
-            children: 'Programme',
+            children: 'Programme TETE',
             href: '/programme',
           },
           {
-            children: 'Outil numérique',
+            children: 'Plateforme numérique',
             href: '/outil-numerique',
           },
           {
