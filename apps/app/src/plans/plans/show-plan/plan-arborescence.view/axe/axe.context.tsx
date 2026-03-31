@@ -1,4 +1,4 @@
-import { useCreateFicheResume } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
+import { useCreateFicheResume } from '@/app/plans/fiches/data/use-create-fiche-resume';
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { CollectiviteCurrent } from '@tet/api/collectivites';

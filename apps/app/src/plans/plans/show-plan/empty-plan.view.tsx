@@ -1,5 +1,5 @@
 'use client';
-import { useCreateFicheResume } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
+import { useCreateFicheResume } from '@/app/plans/fiches/data/use-create-fiche-resume';
 import PictoAction from '@/app/ui/pictogrammes/PictoAction';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { PlanNode } from '@tet/domain/plans';

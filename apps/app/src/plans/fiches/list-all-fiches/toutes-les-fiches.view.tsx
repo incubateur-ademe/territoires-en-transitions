@@ -1,5 +1,5 @@
 'use client';
-import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
+import { useCreateFicheAction } from '@/app/plans/fiches/data/use-create-fiche-action';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { Header } from '@/app/plans/plans/components/header';
 import { useCurrentCollectivite } from '@tet/api/collectivites';

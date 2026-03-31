@@ -1,4 +1,4 @@
-import { useDeleteFiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-delete-fiche';
+import { useDeleteFiche } from '@/app/plans/fiches/data/use-delete-fiche';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import {
   Alert,
