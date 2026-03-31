@@ -27,8 +27,16 @@ export const useTagCreate = ({
 
   return useMutation({
     mutationKey: ['create_tag'],
-    mutationFn: async (tag: TagCreate) =>
-      await supabase.from(tagTableName).insert(objectToSnake(tag)).select(),
+    mutationFn: async (tag: TagCreate) => {
+      const { error, data } = await supabase
+        .from(tagTableName)
+        .insert(objectToSnake(tag))
+        .select();
+      if (error) {
+        throw error;
+      }
+      return data;
+    },
     onMutate: async (tag) => {
       await queryClient.cancelQueries({ queryKey: key });
 

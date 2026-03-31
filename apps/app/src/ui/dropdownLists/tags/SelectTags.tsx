@@ -100,7 +100,7 @@ const SelectTags = ({
       },
       {
         onSuccess: (data) => {
-          const row = data?.data?.[0];
+          const row = data?.[0];
           if (row) {
             const tag = objectToCamel(row) as TagWithCollectiviteId;
             props.onChange({

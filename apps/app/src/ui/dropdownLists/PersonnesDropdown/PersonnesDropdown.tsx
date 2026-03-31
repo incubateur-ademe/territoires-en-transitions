@@ -117,15 +117,15 @@ const PersonnesDropdown = ({
     },
   });
 
-  const newTagId = newTag?.data?.[0].id;
+  const newTagId = newTag?.[0].id;
 
   /** Utilise useEffect pour récupérer le nouvel id
    * du tag créé afin d'appliquer le onChange */
   useEffect(() => {
-    if (newTag?.data) {
+    if (newTag?.length) {
       const tag: PersonneTagOrUser = {
         collectiviteId,
-        nom: newTag.data[0].nom,
+        nom: newTag[0].nom,
         tagId: newTagId ?? null,
         userId: null,
       };

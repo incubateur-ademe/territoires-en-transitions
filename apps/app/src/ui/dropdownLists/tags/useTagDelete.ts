@@ -21,7 +21,13 @@ export const useDeleteTag = ({
 
   return useMutation({
     mutationFn: async (tag_id: number) => {
-      await supabase.from(tagTableName).delete().eq('id', tag_id);
+      const { error } = await supabase
+        .from(tagTableName)
+        .delete()
+        .eq('id', tag_id);
+      if (error) {
+        throw error;
+      }
     },
 
     onMutate: async (tag_id) => {
