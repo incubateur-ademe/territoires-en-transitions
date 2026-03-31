@@ -75,6 +75,12 @@ export const useRejoindreUneCollectivite = ({
   const onSubmit = async (formData: RejoindreUneCollectiviteData) => {
     if (!formData?.collectiviteId || !formData.role) return;
 
+    const poste = formData.poste?.trim();
+    if (!poste) {
+      setError('Veuillez renseigner votre intitulé de poste');
+      return;
+    }
+
     // réinitialise les erreurs
     setError(null);
 
@@ -84,7 +90,7 @@ export const useRejoindreUneCollectivite = ({
       collectivite_id: formData.collectiviteId,
       champ_intervention: formData.champ_intervention || [],
       role: formData.role,
-      poste: formData.poste || '',
+      poste,
       est_referent: formData.est_referent || false,
     });
     setIsLoading(false);

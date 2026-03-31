@@ -13,6 +13,7 @@ import {
   SelectMultiple,
   useEventTracker,
 } from '@tet/ui';
+import React from 'react';
 import { useState } from 'react';
 import { CollectiviteSelectionnee } from './CollectiviteSelectionnee';
 import {
@@ -56,10 +57,12 @@ export const RejoindreUneCollectivite = (
   const { id: collectiviteId, contacts } = collectiviteSelectionnee || {};
 
   const hasContacts = !!contacts?.length;
+  const hasPoste = !!poste?.trim();
   const isValid =
     collectiviteId &&
     !hasContacts &&
     role &&
+    hasPoste &&
     (!est_referent || champ_intervention?.length);
 
   const eventTracker = useEventTracker();
@@ -144,11 +147,11 @@ export const RejoindreUneCollectivite = (
                 }}
               />
             </Field>
-            <Field title="Intitulé de poste" htmlFor="poste">
+            <Field title="Intitulé de poste *" htmlFor="poste">
               <Input
                 id="poste"
                 type="text"
-                value={poste}
+                value={poste ?? ''}
                 onChange={(e) =>
                   setFormState((previous) => ({
                     ...previous,
