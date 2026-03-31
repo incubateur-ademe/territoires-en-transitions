@@ -1,7 +1,7 @@
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { JSX, useEffect, useState } from 'react';
-import { useGetFiche } from '../../../../data/use-get-fiche';
+import { useGetFiche } from '@/app/plans/fiches/data/use-get-fiche';
 import { FicheActionPdfContent } from './ExportFicheActionButton';
 import { TSectionsValues } from './utils';
 

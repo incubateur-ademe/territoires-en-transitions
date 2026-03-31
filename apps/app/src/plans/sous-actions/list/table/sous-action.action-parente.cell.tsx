@@ -1,6 +1,6 @@
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
-import { useGetFiche } from '@/app/plans/fiches/show-fiche/data/use-get-fiche';
+import { useGetFiche } from '@/app/plans/fiches/data/use-get-fiche';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { TableCell } from '@tet/ui';

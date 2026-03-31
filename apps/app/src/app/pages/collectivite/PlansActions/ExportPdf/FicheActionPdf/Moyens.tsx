@@ -1,5 +1,5 @@
 import BudgetContent from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/BudgetContent';
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { Fiche } from '@/app/plans/fiches/data/use-get-fiche';
 import { FicheBudget } from '@/app/plans/fiches/update-fiche/data/use-get-budget';
 import {
   BadgeFinanceur,

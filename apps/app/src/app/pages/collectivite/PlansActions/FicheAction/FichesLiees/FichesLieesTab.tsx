@@ -1,4 +1,4 @@
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { Fiche } from '@/app/plans/fiches/data/use-get-fiche';
 import { SharedFicheLinkedResourcesAlert } from '@/app/plans/fiches/share-fiche/shared-fiche-linked-resources.alert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { CollectiviteCurrent, useCollectiviteId } from '@tet/api/collectivites';
