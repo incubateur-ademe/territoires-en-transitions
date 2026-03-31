@@ -106,15 +106,23 @@ export class ReferentielScoresPom {
     await expect(this.title).toBeVisible();
   }
 
+  async expandAxe(axeName: string) {
+    await this.page.getByRole('button', { name: axeName }).click();
+  }
+
   async goToActionPage(axe: string, sousAxe: string | null, action: string) {
-    await this.page.getByRole('button', { name: axe }).click();
+    await this.expandAxe(axe);
     if (sousAxe) {
-      await this.page.getByRole('button', { name: sousAxe }).click();
+      await this.expandAxe(sousAxe);
     }
-    await this.page.getByRole('link', { name: action }).click();
+    await this.getActionCardLocator(action).click();
     await expect(
       this.page.getByRole('heading', { name: action })
     ).toBeVisible();
+  }
+
+  getActionCardLocator(actionText: string) {
+    return this.page.getByRole('link', { name: actionText });
   }
 
   getActionLocationExpression(actionIdentifiant: string) {
@@ -208,13 +216,8 @@ export class ReferentielScoresPom {
     await this.getSousActionExpandLocator(sousActionIdentifiant).click();
   }
 
-  /** Edit (pen) button to open détaillé modal, scoped to a sous-action row */
-  getDetaillerAvancementEditButtonLocator(sousActionIdentifiant: string) {
-    return this.page.locator(
-      `${this.getSousActionLocationExpression(
-        sousActionIdentifiant
-      )} [data-test="DetaillerAvancementButton"]`
-    );
+  async expandTaches() {
+    await this.page.getByRole('button', { name: 'Tâches' }).click();
   }
 
   async updateSousActionAvancement(

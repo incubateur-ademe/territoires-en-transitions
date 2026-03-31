@@ -13,6 +13,7 @@ import {
 import { Button, Card } from '@tet/ui';
 import { ScoreProgressBar } from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
+import { useHideAction } from './action-statut/use-hide-action';
 
 /** Carte générique d'une mesure du référentiel */
 type ActionCardProps = {
@@ -22,12 +23,17 @@ type ActionCardProps = {
 
 export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
   const { actionId: id, identifiant, nom: title, description } = action;
+  const hideResult = useHideAction(id);
   const { collectiviteId, hasCollectivitePermission } =
     useCurrentCollectivite();
 
   const referentiel = getReferentielIdFromActionId(id);
 
   const [isEditOpen, setIsEditOpen] = useState(false);
+
+  if (hideResult.hide) {
+    return null;
+  }
 
   return (
     <div className="relative group h-full">

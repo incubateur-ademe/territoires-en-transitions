@@ -1,4 +1,5 @@
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
+import { useHideAction } from '@/app/referentiels/actions/action-statut/use-hide-action';
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { getIdentifiantFromActionId } from '@tet/domain/referentiels';
 import { ActionJustificationField } from '../action/action.justification-field';
@@ -14,10 +15,15 @@ type Props = {
 
 const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
   const { statut } = useActionStatut(task.id);
+  const { hide } = useHideAction(task.id);
   const { avancement, concerne } = statut || {};
 
   const isDetailled = avancement === 'detaille';
   const shouldDisplayProgressBar = concerne === true && isDetailled;
+
+  if (hide) {
+    return null;
+  }
 
   return (
     <div

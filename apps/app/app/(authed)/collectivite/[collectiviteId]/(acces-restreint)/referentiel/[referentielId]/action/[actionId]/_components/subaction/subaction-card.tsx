@@ -1,4 +1,5 @@
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
+import { useHideAction } from '@/app/referentiels/actions/action-statut/use-hide-action';
 import SubActionDescription from '@/app/referentiels/actions/sub-action/sub-action.description';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import {
@@ -139,6 +140,7 @@ const SubActionCard = ({
   showJustifications,
 }: SubActionCardProps) => {
   const { statut } = useActionStatut(subAction.id);
+  const { hide } = useHideAction(subAction.id);
   const { avancement } = statut || {};
 
   const tasks = useActionSummaryChildren(subAction);
@@ -149,6 +151,10 @@ const SubActionCard = ({
       avancement !== 'non_renseigne' &&
       avancement !== 'detaille') ||
     (statut !== null && avancement === 'detaille');
+
+  if (hide) {
+    return null;
+  }
 
   return (
     <div
