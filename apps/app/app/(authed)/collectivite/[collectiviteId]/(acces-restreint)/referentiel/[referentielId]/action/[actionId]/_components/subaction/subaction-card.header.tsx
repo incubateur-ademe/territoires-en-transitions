@@ -1,4 +1,4 @@
-import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
+import { ActionStatutDropdownWithDetailleButton } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
@@ -76,10 +76,7 @@ export const SubactionCardHeader = ({
                   className="flex items-center"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <SubActionStatutDropdown
-                    key={`${subAction.actionId}-${subAction.score.statut}`}
-                    action={subAction}
-                  />
+                  <ActionStatutDropdownWithDetailleButton action={subAction} />
 
                   {isSubAction && (
                     <div className="shrink-0 flex">

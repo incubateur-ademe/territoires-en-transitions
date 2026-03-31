@@ -103,6 +103,14 @@ const getColumns = ({
   }),
 
   columnHelper.display({
+    id: 'statutDetaille',
+    header: () => <TableHeaderCell title="" className={cn('w-[3.25rem]')} />,
+    cell: ({ row, cell }) => (
+      <ReferentielTableStatutDetailleCell row={row.original} cell={cell} />
+    ),
+  }),
+
+  columnHelper.display({
     id: 'progress',
     header: () => (
       <TableHeaderCell
