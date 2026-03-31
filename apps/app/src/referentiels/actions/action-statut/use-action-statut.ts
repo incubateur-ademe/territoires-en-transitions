@@ -23,39 +23,59 @@ import { useEffect, useState } from 'react';
 export const useActionStatut = (actionId: string) => {
   const collectiviteId = useCollectiviteId();
 
-  const [actionStatutFromScore, setActionStatutFromScore] = useState<{
-    actionStatut: ActionStatut;
-    filled: boolean;
-    filledByChildren: string[];
-  } | null>(null);
+  const [actionStatutFromScore, setActionStatutFromScore] = useState<
+    | {
+        statut: ActionStatut | null;
+        filled: boolean | null;
+        filledByChildren: string[] | null;
+        isLoading: false;
+      }
+    | {
+        statut: null;
+        filled: null;
+        filledByChildren: null;
+        isLoading: true;
+      }
+  >({
+    statut: null,
+    filled: null,
+    filledByChildren: null,
+    isLoading: true,
+  });
 
-  const { data: snapshot, isFetching: isLoadingSnapshot } = useSnapshot({
+  const { data: snapshot, isPending: isLoadingSnapshot } = useSnapshot({
     actionId,
   });
 
-  const actionScore = snapshot?.scoresPayload.scores
-    ? findActionInTree(
-        [snapshot.scoresPayload.scores],
-        (a) => a.actionId === actionId
-      ) ?? null
-    : null;
-
   useEffect(() => {
-    if (actionScore) {
-      setActionStatutFromScore(
-        getActionStatutFromActionScore(collectiviteId, actionScore)
-      );
+    const actionScore = snapshot?.scoresPayload.scores
+      ? findActionInTree(
+          [snapshot.scoresPayload.scores],
+          (a) => a.actionId === actionId
+        ) ?? null
+      : null;
+    if (!actionScore || isLoadingSnapshot) {
+      setActionStatutFromScore({
+        statut: null,
+        filled: null,
+        filledByChildren: null,
+        isLoading: true,
+      });
     } else {
-      setActionStatutFromScore(null);
+      const actionStatutFromScore = getActionStatutFromActionScore(
+        collectiviteId,
+        actionScore
+      );
+      setActionStatutFromScore({
+        statut: actionStatutFromScore?.actionStatut ?? null,
+        filled: actionStatutFromScore?.filled ?? null,
+        filledByChildren: actionStatutFromScore?.filledByChildren ?? null,
+        isLoading: false,
+      });
     }
-  }, [actionScore]);
+  }, [snapshot, isLoadingSnapshot, actionId, collectiviteId]);
 
-  return {
-    statut: actionStatutFromScore?.actionStatut,
-    filled: actionStatutFromScore?.filled,
-    filledByChildren: actionStatutFromScore?.filledByChildren,
-    isLoading: actionStatutFromScore === null || isLoadingSnapshot,
-  };
+  return actionStatutFromScore;
 };
 
 /**
