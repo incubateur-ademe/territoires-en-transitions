@@ -1,4 +1,4 @@
-import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
+import { generateTitle } from '@/app/utils/generate-title';
 import { TAxeRow } from '@/app/types/alias';
 import { ArrowRightIcon } from '@/app/ui/export-pdf/assets/icons';
 import { Paragraph, Stack } from '@/app/ui/export-pdf/components';

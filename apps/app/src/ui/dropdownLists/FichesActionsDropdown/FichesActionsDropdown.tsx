@@ -1,4 +1,4 @@
-import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
+import { generateTitle } from '@/app/utils/generate-title';
 import {
   FicheListItem,
   useListFiches,

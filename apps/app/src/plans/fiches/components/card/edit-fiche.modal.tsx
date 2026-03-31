@@ -5,7 +5,6 @@ import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/ut
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
-import { QueryKey } from '@tanstack/react-query';
 import {
   Checkbox,
   Event,
@@ -23,7 +22,6 @@ type Props = {
   initialFiche: FicheListItem;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  keysToInvalidate?: QueryKey[];
 };
 
 /**

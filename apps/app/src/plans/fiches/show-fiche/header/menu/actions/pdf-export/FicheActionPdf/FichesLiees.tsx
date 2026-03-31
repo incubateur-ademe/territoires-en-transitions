@@ -19,7 +19,7 @@ import { FicheWithRelations } from '@tet/domain/plans';
 import { preset } from '@tet/ui';
 import classNames from 'classnames';
 import { format, isBefore, startOfToday } from 'date-fns';
-import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
+import { generateTitle } from '@/app/utils/generate-title';
 
 const { colors } = preset.theme.extend;
 

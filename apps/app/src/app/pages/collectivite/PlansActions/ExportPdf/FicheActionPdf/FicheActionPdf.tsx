@@ -12,7 +12,7 @@ import { Paragraph, Stack, Title } from '@/app/ui/export-pdf/components';
 import { RouterOutput } from '@tet/api';
 import { FicheBudget, FicheNote, FicheWithRelations } from '@tet/domain/plans';
 import { ActionWithScore } from '@tet/domain/referentiels';
-import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
+import { AnnexeInfo } from '../use-annexes-fiche-infos';
 import { TSectionsValues, sectionsInitValue } from '../utils';
 import ActionsLiees from './ActionsLiees';
 import Description from './Description';

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { INDICATEUR_LABELS } from '@/app/app/pages/collectivite/Indicateurs/constants';
-import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
+import { generateTitle } from '@/app/utils/generate-title';
 import { NOTES_PROPERTIES } from '@/app/plans/fiches/list-all-fiches/filters/options';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
 import { useSupabase } from '@tet/api';

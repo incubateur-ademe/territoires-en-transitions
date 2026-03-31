@@ -14,8 +14,8 @@ import {
   Title,
 } from '@/app/ui/export-pdf/components';
 import { preset } from '@tet/ui';
-import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
-import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
+import { AnnexeInfo } from '../use-annexes-fiche-infos';
+import { generateTitle } from '@/app/utils/generate-title';
 
 const { colors } = preset.theme.extend;
 

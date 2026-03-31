@@ -3,7 +3,7 @@ import { Icon, Tooltip } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { Fiche } from '@/app/plans/fiches/data/use-get-fiche';
 
-type FicheActionCompletionStatusProps = {
+type FicheCompletionStatusProps = {
   completion?: Completion;
   className?: string;
 };
@@ -20,10 +20,10 @@ const getFieldLabel = (field: keyof Fiche) => {
   return DISPLAYED_LABELS[field] || field;
 };
 
-export const FicheActionCompletionStatus = ({
+export const FicheCompletionStatus = ({
   completion: completionRaw,
   className,
-}: FicheActionCompletionStatusProps) => {
+}: FicheCompletionStatusProps) => {
   if (!completionRaw) return null;
 
   const completion = orderFields(completionRaw);
