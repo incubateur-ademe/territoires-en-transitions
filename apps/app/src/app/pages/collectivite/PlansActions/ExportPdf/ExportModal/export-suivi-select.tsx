@@ -1,4 +1,4 @@
-import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
+import { getYearsOptions } from '@/app/utils/get-years-options';
 import { OptionValue, SelectMultiple } from '@tet/ui';
 import { TSectionsValues } from '../utils';
 

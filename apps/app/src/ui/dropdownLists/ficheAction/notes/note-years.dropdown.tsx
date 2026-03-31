@@ -1,4 +1,4 @@
-import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
+import { getYearsOptions } from '@/app/utils/get-years-options';
 import { SelectFilter, SelectProps } from '@tet/ui';
 
 type Props = Omit<SelectProps, 'values' | 'onChange' | 'options'> & {

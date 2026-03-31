@@ -14,27 +14,6 @@ export const formatNewTag = (inputValue: string, collectivite_id: number) => ({
 /** Renvoie "Sans titre" si le string est undefined ou null */
 export const generateTitle = (title?: string | null) => title || 'Sans titre';
 
-/**
- * Renvoie un tableau d'options pour les années.
- * Par défaut de 2000 à l'année en cours.
- * @param additionalYearsFromCurrentYear - Nombre d'années supplémentaires à partir de l'année en cours
- */
-export const getYearsOptions = (additionalYearsFromCurrentYear?: number) => {
-  const currentYear = new Date().getFullYear();
-  const startingYear = 2000;
-  const finalYear =
-    additionalYearsFromCurrentYear && additionalYearsFromCurrentYear > 0
-      ? currentYear + additionalYearsFromCurrentYear
-      : currentYear;
-  const yearsOptions = Array.from(
-    { length: finalYear - startingYear + 1 },
-    (_, i) => i + startingYear
-  )
-    .reverse()
-    .map((y) => ({ value: y, label: y.toString() }));
-
-  return { yearsOptions, currentYear };
-};
 
 /** Ordonne les fiches par titre */
 export function sortFichesResume<T extends { titre: string | null }>(
