@@ -1,4 +1,4 @@
-import { FicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/FicheAction';
+import { Fiche } from '@/app/plans/fiches/show-fiche';
 import { ScrollReset } from '@/app/utils/scroll-reset';
 import {
   getQueryClient,
@@ -18,7 +18,6 @@ export default async function FicheDetailPage({
   children?: ReactNode;
   params: Promise<{
     actionId: string;
-    planId?: number;
   }>;
 }) {
   const rawParams = await params;
@@ -37,7 +36,7 @@ export default async function FicheDetailPage({
     <>
       {/* In client side routing, when going from a plan view, scroll might be preserved. This component resets the scroll to the top of the page. */}
       <ScrollReset />
-      <FicheAction fiche={fiche}>{children}</FicheAction>
+      <Fiche fiche={fiche}>{children}</Fiche>
     </>
   );
 }

@@ -8,7 +8,6 @@ import {
 } from '@tet/api/plan-actions';
 import { Event, EventName, useEventTracker } from '@tet/ui';
 
-import { useImprovedFicheActionUiEnabled } from '@/app/plans/fiches/show-fiche';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import { ListPlansEmptyCard } from '@/app/plans/plans/list-all-plans/list-plans.empty-card';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -48,8 +47,6 @@ const Modules = () => {
   const { data: modules, isLoading } = useTdbPersoFetchModules();
   const tracker = useEventTracker();
 
-  const isImprovedFicheActionUiEnabled = useImprovedFicheActionUiEnabled();
-
   const currentCollectivite = useCurrentCollectivite();
   const { collectiviteId, hasCollectivitePermission, isSimplifiedView } =
     currentCollectivite;
@@ -88,9 +85,7 @@ const Modules = () => {
       match: (m) =>
         m.type === 'fiche_action.list' &&
         m.defaultKey === 'sous-actions-dont-je-suis-pilote',
-      isVisible:
-        hasCollectivitePermission('plans.fiches.read_confidentiel') &&
-        isImprovedFicheActionUiEnabled === true,
+      isVisible: hasCollectivitePermission('plans.fiches.read_confidentiel'),
       render: (module) => {
         if (noPlanAndCanCreatePlan) {
           // We already display the placeholder to create a plan,

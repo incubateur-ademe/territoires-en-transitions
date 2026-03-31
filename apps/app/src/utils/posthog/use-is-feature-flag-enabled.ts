@@ -8,7 +8,6 @@ const FEATURE_FLAGS = [
   'is-notification-enabled',
   'is-share-fiche-enabled',
   'is-access-edition-fiches-indicateurs-enabled',
-  'is-improved-fiche-action-ui-enabled',
 ] as const;
 
 export const FeatureFlagEnum = createEnumObject(FEATURE_FLAGS);
