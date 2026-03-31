@@ -26,13 +26,13 @@ export class ListPersonnalisationReglesService {
           modifiedAt: personnalisationRegleTable.modifiedAt,
         })
         .from(personnalisationRegleTable)
-        .orderBy(personnalisationRegleTable.actionId);
-
-      if (input?.actionIds?.length) {
-        query.where(
-          inArray(personnalisationRegleTable.actionId, input.actionIds)
+        .orderBy(personnalisationRegleTable.actionId)
+        .where(
+          input?.actionIds?.length
+            ? inArray(personnalisationRegleTable.actionId, input.actionIds)
+            : undefined
         );
-      }
+
       return query;
     };
 

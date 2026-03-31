@@ -69,7 +69,10 @@ export class ListPersonnalisationReponsesRepository {
       if (conditions.length) query.where(and(...conditions));
 
       const result = await query;
-      return { success: true, data: result };
+      return {
+        success: true,
+        data: result as PersonnalisationReponse[],
+      };
     } catch (error) {
       this.logger.error(
         `Erreur de chargement des réponses ${error} ${collectiviteId} ${questionIds?.join(
@@ -127,7 +130,7 @@ export class ListPersonnalisationReponsesRepository {
           .select({
             questionId: reponseChoixTable.questionId,
             value:
-              sql<PersonnalisationReponseValue>`to_jsonb(${reponseChoixTable.reponse})`.as(
+              sql<PersonnalisationReponseValue>`to_jsonb(nullif(${reponseChoixTable.reponse}, ''))`.as(
                 'value'
               ),
           })

@@ -206,14 +206,14 @@ export default class ListPersonnalisationQuestionsService {
     return this.databaseService.db
       .select({
         questionId: questionActionTable.questionId,
-        actionIds: sql<
-          string[]
-        >`array_agg(${questionActionTable.actionId})::text[]`.as('action_ids'),
-        referentielIds: sql<
-          string[]
-        >`array_agg(${actionRelationTable.referentiel})::text[]`.as(
-          'referentiel_ids'
-        ),
+        actionIds: sql<string[]>`array_agg(
+            distinct ${questionActionTable.actionId}
+            order by ${questionActionTable.actionId}
+          )::text[]`.as('action_ids'),
+        referentielIds: sql<string[]>`array_agg(
+            distinct ${actionRelationTable.referentiel}
+            order by ${actionRelationTable.referentiel}
+          )::text[]`.as('referentiel_ids'),
       })
       .from(questionActionTable)
       .leftJoin(

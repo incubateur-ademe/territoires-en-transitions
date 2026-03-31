@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import {
+  PersonnalisationReponse,
   PersonnalisationReponseValue,
   Question,
   QuestionType,
@@ -88,7 +89,7 @@ export const useChangeReponseHandler = (
         newValue = [newEntry];
       }
       // et écrit cette valeur dans le cache
-      queryClient.setQueryData(queryKey, newValue);
+      queryClient.setQueryData(queryKey, newValue as PersonnalisationReponse[]);
     },
 
     // rechargement après la requête

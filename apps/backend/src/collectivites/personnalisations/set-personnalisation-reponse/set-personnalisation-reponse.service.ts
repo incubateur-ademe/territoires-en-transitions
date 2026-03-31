@@ -6,8 +6,7 @@ import { failure, Result, success } from '@tet/backend/utils/result.type';
 import { TransactionManager } from '@tet/backend/utils/transaction/transaction-manager.service';
 import {
   PersonnalisationReponse,
-  PersonnalisationReponseValue,
-  QuestionType,
+  PersonnalisationReponseTypee,
 } from '@tet/domain/collectivites';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { ListPersonnalisationReponsesService } from '../list-personnalisation-reponses/list-personnalisation-reponses.service';
@@ -76,10 +75,7 @@ export class SetPersonnalisationReponseService {
         }
 
         // insère/màj la réponse si elle diffère de la réponse existante
-        let newReponse: {
-          questionType: QuestionType;
-          reponse: PersonnalisationReponseValue;
-        } | null = null;
+        let newReponse: PersonnalisationReponseTypee | null = null;
         if (currentReponse.reponse !== newReponseValue) {
           const setReponseResult =
             await this.setPersonnalisationReponseRepository.setReponse(
@@ -92,9 +88,12 @@ export class SetPersonnalisationReponseService {
           newReponse = setReponseResult.data;
         }
 
-        // insère/màj la justification si elle diffère de la justification existante
-        let newJustification;
-        if (currentReponse.justification !== newJustificationValue) {
+        // insère/màj la justification seulement si une nouvelle valeur est fournie explicitement
+        let newJustification: string | null | undefined;
+        if (
+          newJustificationValue !== undefined &&
+          currentReponse.justification !== newJustificationValue
+        ) {
           const setJustificationResult =
             await this.setPersonnalisationReponseRepository.setJustification(
               input,
@@ -107,7 +106,8 @@ export class SetPersonnalisationReponseService {
           newJustification = setJustificationResult.data;
         }
 
-        const { questionType, reponse } = newReponse || currentReponse;
+        const sourceReponse = newReponse ?? currentReponse;
+        const { questionType, reponse } = sourceReponse;
         return success({
           questionId,
           questionType,
@@ -116,7 +116,7 @@ export class SetPersonnalisationReponseService {
               ? newJustification
               : currentReponse.justification,
           reponse,
-        });
+        } as PersonnalisationReponse);
       } catch {
         return failure(SetPersonnalisationReponseErrorEnum.DATABASE_ERROR);
       }
