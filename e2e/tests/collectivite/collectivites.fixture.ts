@@ -110,28 +110,24 @@ class CollectiviteFactory {
   private cleanupFuncs: CollectiviteCleanupFunc[] = [];
 
   removeAll = async () => {
-    return Promise.all(
-      this.createdCollectivites.map(async ({ collectivite, cleanup }) => {
-        // supprime les entités liées
-        await Promise.all(
-          this.cleanupFuncs.map((cleanupFunc) =>
-            cleanupFunc(collectivite.data.id)
-          )
-        );
+    for (const { collectivite, cleanup } of this.createdCollectivites) {
+      // Supprimer d'abord les entités liées, dans un ordre stable, avant les users.
+      for (const cleanupFunc of this.cleanupFuncs) {
+        await cleanupFunc(collectivite.data.id);
+      }
 
-        // supprime invitations et droits avant les users (FK invitation.created_by)
-        await cleanupCollectivitePrerequisites(
-          databaseService,
-          collectivite.data.id
-        );
+      // supprime invitations et droits avant les users (FK invitation.created_by)
+      await cleanupCollectivitePrerequisites(
+        databaseService,
+        collectivite.data.id
+      );
 
-        // supprime les utilisateurs
-        await collectivite.cleanupUsers();
+      // supprime les utilisateurs
+      await collectivite.cleanupUsers();
 
-        // supprime la collectivité
-        await cleanup();
-      })
-    );
+      // supprime la collectivité
+      await cleanup();
+    }
   };
 
   getCollectivite = (index = 0) => {
