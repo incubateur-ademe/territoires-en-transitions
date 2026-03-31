@@ -1,6 +1,6 @@
 import { DateHelper } from '@bryntum/scheduler';
 
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { Fiche } from '@/app/plans/fiches/data/use-get-fiche';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { computeDateRange } from './compute-data-range';
 

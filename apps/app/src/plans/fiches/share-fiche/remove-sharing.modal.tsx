@@ -1,4 +1,4 @@
-import { Fiche } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/use-get-fiche';
+import { Fiche } from '@/app/plans/fiches/data/use-get-fiche';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Alert, Button, Modal, ModalFooterOKCancel } from '@tet/ui';

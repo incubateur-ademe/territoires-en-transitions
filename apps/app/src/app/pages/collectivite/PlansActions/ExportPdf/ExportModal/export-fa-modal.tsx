@@ -7,7 +7,7 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { Button, Event, Modal, ModalFooter, useEventTracker } from '@tet/ui';
 import { mapValues } from 'es-toolkit';
 import { useState } from 'react';
-import { Fiche } from '../../FicheAction/data/use-get-fiche';
+import { Fiche } from '@/app/plans/fiches/data/use-get-fiche';
 import { ExportFicheActionButton } from '../ExportFicheActionButton';
 import ExportFicheActionGroupeesButton from '../ExportFicheActionGroupeesButton';
 import { sectionsInitValue } from '../utils';

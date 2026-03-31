@@ -5,7 +5,7 @@ import { ErrorPage } from '@/app/utils/error/error.page';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { NavigationTabs } from './content/navigation.tabs';
 import { FicheProvider } from './context/fiche-context';
-import { useGetFiche } from './data/use-get-fiche';
+import { useGetFiche } from '@/app/plans/fiches/data/use-get-fiche';
 import { Header } from './header';
 
 type FicheActionImprovedProps = {
