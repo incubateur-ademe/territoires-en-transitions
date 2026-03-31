@@ -48,27 +48,46 @@ export class InstanceGouvernanceService {
     }
     return result;
   }
-  async list(request: {
-    collectiviteId: number;
-    user: AuthenticatedUser;
-    tx?: Transaction;
-  }): Promise<Result<InstanceGouvernance[]>> {
-    const isAllowed = await this.permissionService.isAllowed(
-      request.user,
-      'collectivites.tags.read',
-      ResourceType.COLLECTIVITE,
-      request.collectiviteId,
-      true,
-      request.tx
-    );
-    if (!isAllowed) {
+  async list(
+    request: (
+      | { collectiviteId: number }
+      | { collectiviteIds: number[] }
+    ) & {
+      user: AuthenticatedUser;
+      tx?: Transaction;
+    }
+  ): Promise<Result<InstanceGouvernance[]>> {
+    const collectiviteIds =
+      'collectiviteIds' in request
+        ? request.collectiviteIds
+        : [request.collectiviteId];
+
+    const allowedCollectiviteIds = (
+      await Promise.all(
+        collectiviteIds.map(async (collectiviteId) => {
+          const isAllowed = await this.permissionService.isAllowed(
+            request.user,
+            'collectivites.tags.read',
+            ResourceType.COLLECTIVITE,
+            collectiviteId,
+            true,
+            request.tx
+          );
+          return isAllowed ? collectiviteId : null;
+        })
+      )
+    ).filter((id): id is number => id !== null);
+
+    if (allowedCollectiviteIds.length === 0) {
       return failure(CommonErrorEnum.UNAUTHORIZED);
     }
-    return this.instanceGouvernanceRepository.list(
-      request.collectiviteId,
+
+    return this.instanceGouvernanceRepository.listByCollectiviteIds(
+      allowedCollectiviteIds,
       request.tx
     );
   }
+
   async delete(args: {
     id: number;
     user: AuthenticatedUser;

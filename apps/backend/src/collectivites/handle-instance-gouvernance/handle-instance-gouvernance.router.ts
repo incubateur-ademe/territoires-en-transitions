@@ -36,7 +36,7 @@ export class InstanceGouvernanceRouter {
       .input(listInstanceGouvernanceInputSchema)
       .query(async ({ input, ctx }) => {
         const result = await this.instanceGouvernanceService.list({
-          collectiviteId: input.collectiviteId,
+          ...input,
           user: ctx.user,
         });
         return this.getResultDataOrThrowError(result);

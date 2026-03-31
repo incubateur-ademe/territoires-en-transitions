@@ -208,6 +208,85 @@ describe('InstanceGouvernanceRouter', () => {
     expect(fromDb.nom).toBe('Instance mise à jour');
   });
 
+  test('list: supports multiple collectiviteIds', async () => {
+    const userWithRights = await getAuthUser(YOULOU_DOUDOU);
+    const caller = router.createCaller({ user: userWithRights });
+
+    const COLLECTIVITE_ID_2 = YOLO_DODO.collectiviteId.edition;
+
+    const { instanceGouvernanceTagId: tagId1, instanceGouvernanceTagCleanup: cleanup1 } =
+      await createInstanceGouvernanceTagAndCleanupFunction({
+        caller,
+        instanceGouvernanceTagInput: {
+          collectiviteId: COLLECTIVITE_ID,
+          nom: 'Instance collectivité 1',
+        },
+      });
+
+    const { instanceGouvernanceTagId: tagId2, instanceGouvernanceTagCleanup: cleanup2 } =
+      await createInstanceGouvernanceTagAndCleanupFunction({
+        caller,
+        instanceGouvernanceTagInput: {
+          collectiviteId: COLLECTIVITE_ID_2,
+          nom: 'Instance collectivité 2',
+        },
+      });
+
+    const listed = await caller.collectivites.tags.instanceGouvernance.list({
+      collectiviteIds: [COLLECTIVITE_ID, COLLECTIVITE_ID_2],
+    });
+
+    const ourTags = listed.filter(
+      (item: InstanceGouvernance) =>
+        item.id === tagId1 || item.id === tagId2
+    );
+    expect(ourTags).toHaveLength(2);
+    expect(ourTags.map((t: InstanceGouvernance) => t.nom).sort()).toEqual([
+      'Instance collectivité 1',
+      'Instance collectivité 2',
+    ]);
+
+    onTestFinished(async () => {
+      await cleanup1();
+      await cleanup2();
+    });
+  });
+
+  test('list: with collectiviteIds only returns tags from allowed collectivites', async () => {
+    const userWithRights = await getAuthUser(YOULOU_DOUDOU);
+    const callerWithRights = router.createCaller({ user: userWithRights });
+
+    const { instanceGouvernanceTagId, instanceGouvernanceTagCleanup } =
+      await createInstanceGouvernanceTagAndCleanupFunction({
+        caller: callerWithRights,
+        instanceGouvernanceTagInput: {
+          collectiviteId: COLLECTIVITE_ID,
+          nom: 'Instance visible',
+        },
+      });
+
+    const userWithNoRights = await getAuthUser(YOLO_DODO);
+    const callerWithNoRights = router.createCaller({ user: userWithNoRights });
+
+    const listed = await callerWithNoRights.collectivites.tags.instanceGouvernance.list({
+      collectiviteIds: [COLLECTIVITE_ID, 9999],
+    });
+
+    const ourTag = listed.find(
+      (item: InstanceGouvernance) => item.id === instanceGouvernanceTagId
+    );
+    expect(ourTag).toBeDefined();
+
+    const nonExistentCollectiviteTags = listed.filter(
+      (item: InstanceGouvernance) => item.collectiviteId === 9999
+    );
+    expect(nonExistentCollectiviteTags).toHaveLength(0);
+
+    onTestFinished(async () => {
+      await instanceGouvernanceTagCleanup();
+    });
+  });
+
   test('create: rejects when user has no update rights on collectivite', async () => {
     // YOLO_DODO has rights on collectivite 1 and 2, but not on collectivite 9999
     const userWithNoRights = await getAuthUser(YOLO_DODO);

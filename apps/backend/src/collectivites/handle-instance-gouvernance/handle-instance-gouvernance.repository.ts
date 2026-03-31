@@ -7,7 +7,7 @@ import {
   InstanceGouvernance,
   instanceGouvernanceTagSchema,
 } from '@tet/domain/collectivites';
-import { and, eq, ne } from 'drizzle-orm';
+import { and, eq, inArray, ne } from 'drizzle-orm';
 import { instanceGouvernanceTagTable } from '../tags/instance-gouvernance.table';
 import { Result } from './handle-instance-gouvernance.result';
 
@@ -75,6 +75,29 @@ export class InstanceGouvernanceRepository {
       return failure('SERVER_ERROR', error as Error);
     }
   }
+  async listByCollectiviteIds(
+    collectiviteIds: number[],
+    tx?: Transaction
+  ): Promise<Result<InstanceGouvernance[]>> {
+    try {
+      const result = await (tx ?? this.databaseService.db)
+        .select()
+        .from(instanceGouvernanceTagTable)
+        .where(
+          inArray(instanceGouvernanceTagTable.collectiviteId, collectiviteIds)
+        );
+
+      const parsedResult = result
+        .map((instance) => instanceGouvernanceTagSchema.safeParse(instance))
+        .filter((result) => result.success)
+        .map((result) => result.data);
+
+      return { success: true, data: parsedResult };
+    } catch (error) {
+      return failure('SERVER_ERROR', error as Error);
+    }
+  }
+
   async delete(id: number): Promise<Result<boolean>> {
     try {
       const result = await this.databaseService.db.transaction(async (tx) => {
