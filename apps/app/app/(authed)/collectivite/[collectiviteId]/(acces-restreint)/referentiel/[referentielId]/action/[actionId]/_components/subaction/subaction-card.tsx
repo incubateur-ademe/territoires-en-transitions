@@ -9,7 +9,6 @@ import {
   useActionSummaryChildren,
 } from '@/app/referentiels/referentiel-hooks';
 import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { Accordion, Button, Divider } from '@tet/ui';
 import classNames from 'classnames';
@@ -51,8 +50,6 @@ const SubActionCard = ({
   showJustifications,
   onClick,
 }: SubActionCardProps) => {
-  const { hasCollectivitePermission } = useCurrentCollectivite();
-
   const ref = useRef<HTMLDivElement>(null);
 
   const hash = getHashFromUrl();
