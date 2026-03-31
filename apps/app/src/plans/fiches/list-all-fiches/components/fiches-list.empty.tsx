@@ -1,4 +1,4 @@
-import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
+import { useCreateFicheAction } from '@/app/plans/fiches/data/use-create-fiche-action';
 import { PermissionOperation } from '@tet/domain/users';
 import { EmptyCard } from '@tet/ui';
 import { EmptyFichePicto } from './empty-fiche.picto';

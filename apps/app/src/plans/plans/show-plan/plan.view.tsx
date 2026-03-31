@@ -1,6 +1,6 @@
 'use client';
 
-import { useCreateFicheResume } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
+import { useCreateFicheResume } from '@/app/plans/fiches/data/use-create-fiche-resume';
 import { EmptyPlanView } from '@/app/plans/plans/show-plan/empty-plan.view';
 import {
   PlanAxesProvider,

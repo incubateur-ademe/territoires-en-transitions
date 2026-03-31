@@ -1,7 +1,7 @@
 import { PlanNode } from '@tet/domain/plans';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
-import { useRestreindreFiches } from '../../../../app/pages/collectivite/PlansActions/FicheAction/data/useRestreindreFiches';
+import { useRestreindreFiches } from './use-restrict-fiches';
 import { JSX } from 'react';
 
 type Props = {
