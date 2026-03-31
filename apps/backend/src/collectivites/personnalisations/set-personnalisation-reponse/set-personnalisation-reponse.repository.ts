@@ -4,8 +4,8 @@ import { buildConflictUpdateColumns } from '@tet/backend/utils/database/conflict
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import {
+  PersonnalisationReponseTypee,
   PersonnalisationReponseValue,
-  QuestionType,
 } from '@tet/domain/collectivites';
 import { eq } from 'drizzle-orm';
 import { DatabaseError } from 'pg';
@@ -20,11 +20,6 @@ import {
 } from './set-personnalisation-reponse.errors';
 import { SetPersonnalisationReponseInput } from './set-personnalisation-reponse.input';
 
-type SetPersonnalisationReponseOutput = {
-  questionType: QuestionType;
-  reponse: PersonnalisationReponseValue;
-};
-
 @Injectable()
 export class SetPersonnalisationReponseRepository {
   private readonly logger = new Logger(
@@ -37,7 +32,7 @@ export class SetPersonnalisationReponseRepository {
     input: SetPersonnalisationReponseInput,
     tx: Transaction
   ): Promise<
-    Result<SetPersonnalisationReponseOutput, SetPersonnalisationReponseError>
+    Result<PersonnalisationReponseTypee, SetPersonnalisationReponseError>
   > {
     const { collectiviteId, questionId, reponse } = input;
 
@@ -157,7 +152,10 @@ export class SetPersonnalisationReponseRepository {
 
       return {
         success: true,
-        data: { questionType: question.type, reponse: reponseCreee },
+        data: {
+          questionType: question.type,
+          reponse: reponseCreee,
+        } as PersonnalisationReponseTypee,
       };
     } catch (error) {
       this.logger.error(
