@@ -52,7 +52,6 @@ export const FichesList = ({
             currentUserId={user.id}
             key={fiche.id}
             ficheAction={fiche}
-            editKeysToInvalidate={[['axe_fiches', axeId, ficheIds]]}
             isEditable={!isReadonly}
             isMoveable
             planId={planId}

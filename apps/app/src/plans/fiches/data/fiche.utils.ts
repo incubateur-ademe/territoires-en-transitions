@@ -11,10 +11,6 @@ export const formatNewTag = (inputValue: string, collectivite_id: number) => ({
   nom: inputValue,
 });
 
-/** Renvoie "Sans titre" si le string est undefined ou null */
-export const generateTitle = (title?: string | null) => title || 'Sans titre';
-
-
 /** Ordonne les fiches par titre */
 export function sortFichesResume<T extends { titre: string | null }>(
   fiches: T[]
@@ -68,7 +64,6 @@ export const ficheResumeFactory = ({
     fichesLiees: null,
     financements: null,
     budgetPrevisionnel: null,
-    calendrier: null,
     notes: null,
     instanceGouvernance: null,
     participationCitoyenne: null,

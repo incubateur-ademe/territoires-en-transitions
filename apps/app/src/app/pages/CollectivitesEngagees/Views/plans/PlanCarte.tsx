@@ -2,7 +2,7 @@ import classNames from 'classnames';
 
 import { Badge, Card, Event, useEventTracker } from '@tet/ui';
 
-import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
+import { generateTitle } from '@/app/utils/generate-title';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { CollectiviteEngagee } from '@tet/api';
 import ContactsDisplay from '../../contacts/contacts-display';

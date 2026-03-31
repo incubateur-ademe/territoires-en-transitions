@@ -5,7 +5,7 @@ import { Icon } from '@tet/ui';
 import classNames from 'classnames';
 import { isBefore, startOfToday } from 'date-fns';
 
-type FicheActionFooterInfoProps = {
+type FicheFooterProps = {
   pilotes: PersonneTagOrUser[] | null | undefined;
   services: Tag[] | null | undefined;
   dateDeFin: string | null | undefined;
@@ -17,7 +17,7 @@ export const FicheFooter = ({
   services,
   dateDeFin,
   ameliorationContinue,
-}: FicheActionFooterInfoProps) => {
+}: FicheFooterProps) => {
   const hasPilotes = !!pilotes && pilotes.length > 0;
   const hasServices = !!services && services.length > 0;
   const hasDateDeFin = !!dateDeFin;

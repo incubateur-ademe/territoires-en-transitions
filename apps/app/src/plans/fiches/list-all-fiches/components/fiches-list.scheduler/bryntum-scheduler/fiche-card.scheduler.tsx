@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { useLayoutEffect, useRef, useState } from 'react';
 
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
-import { FicheActionCardProps } from '@/app/plans/fiches/components/card/fiche.card';
+import { FicheCardProps } from '@/app/plans/fiches/components/card/fiche.card';
 import { EditFicheModal } from '@/app/plans/fiches/components/card/edit-fiche.modal';
-import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
+import { generateTitle } from '@/app/utils/generate-title';
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { DeleteOrRemoveFicheSharingModal } from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';
@@ -14,7 +14,7 @@ import { Button, Card } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 
 type Props = Pick<
-  FicheActionCardProps,
+  FicheCardProps,
   'ficheAction' | 'currentCollectivite' | 'currentUserId'
 >;
 

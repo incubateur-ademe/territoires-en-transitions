@@ -2,7 +2,7 @@ import FichesActionsDropdown from '@/app/ui/dropdownLists/FichesActionsDropdown/
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
 import { Field } from '@tet/ui';
-import FichesLieesListe from '../../app/pages/collectivite/PlansActions/FicheAction/FichesLiees/FichesLieesListe';
+import { FichesLieesListe } from './fiches-liees.list';
 import { useFichesActionLiees } from './useFichesActionLiees';
 import { useUpdateFichesActionLiees } from './useUpdateFichesActionLiees';
 
@@ -48,7 +48,7 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
         isLoading={isLoading}
         onUnlink={
           canEditReferentiel
-            ? (ficheId) =>
+            ? (ficheId: number) =>
                 updateFichesActionLiees({
                   fiches: fiches,
                   fiches_liees: fiches.filter((f) => f.id !== ficheId),

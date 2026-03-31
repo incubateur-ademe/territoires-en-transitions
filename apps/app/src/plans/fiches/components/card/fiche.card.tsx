@@ -12,7 +12,6 @@ import { getFicheActionPlanForCollectivite } from '@/app/plans/fiches/shared/fic
 import MoveFicheModal from '@/app/plans/plans/show-plan/actions/move-fiche.modal';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
-import { QueryKey } from '@tanstack/react-query';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import {
   Button,
@@ -26,12 +25,12 @@ import classNames from 'classnames';
 import { useState } from 'react';
 import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
-import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
-import { FicheActionCompletionStatus } from './fiche.completion';
+import { generateTitle } from '@/app/utils/generate-title';
+import { FicheCompletionStatus } from './fiche.completion';
 import { FicheFooter } from './fiche.footer';
 import { EditFicheModal } from './edit-fiche.modal';
 
-export type FicheActionCardProps = {
+export type FicheCardProps = {
   /** Contenu de la carte fiche action */
   ficheAction: FicheListItem;
   /** Complétion de la fiche action */
@@ -45,7 +44,6 @@ export type FicheActionCardProps = {
   isEditable?: boolean;
   /** Affiche le bouton "déplacer" */
   isMoveable?: boolean;
-  editKeysToInvalidate?: QueryKey[];
   /** Etat sélectionné ou non de la fiche */
   isSelected?: boolean;
   /** Dissociation de la fiche action */
@@ -71,7 +69,6 @@ export const FicheCard = ({
   openInNewTab,
   isEditable = false,
   isMoveable = false,
-  editKeysToInvalidate,
   isSelected = false,
   onUnlink,
   onSelect,
@@ -80,7 +77,7 @@ export const FicheCard = ({
   currentUserId,
   planId,
   axeId,
-}: FicheActionCardProps) => {
+}: FicheCardProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
@@ -131,7 +128,6 @@ export const FicheCard = ({
                     initialFiche={ficheAction}
                     isOpen={isEditOpen}
                     setIsOpen={() => toggleOpen(!isEditOpen)}
-                    keysToInvalidate={editKeysToInvalidate}
                   />
                 )}
                 <Button
@@ -302,7 +298,7 @@ export const FicheCard = ({
                       {!!ficheAction.modifiedAt && (
                         <div className="max-md:hidden w-px h-5 bg-grey-5" />
                       )}
-                      <FicheActionCompletionStatus
+                      <FicheCompletionStatus
                         completion={completion}
                         className="text-xs text-grey-6"
                       />
