@@ -3,6 +3,7 @@
 import NoResult from '@/site/components/info/NoResult';
 import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
 import { Metadata, ResolvingMetadata } from 'next';
+import Temoignages from '../home/Temoignages';
 import Benefices from './Benefices';
 import CollectivitesEngagees from './CollectivitesEngagees';
 import Compte from './Compte';
@@ -61,6 +62,8 @@ const Programme = async () => {
       <Etapes {...data.etapes} />
 
       <Services {...data.services} />
+
+      {data.temoignages && <Temoignages {...data.temoignages} />}
 
       <Compte {...data.compte} />
 

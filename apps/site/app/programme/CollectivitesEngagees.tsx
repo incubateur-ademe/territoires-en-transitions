@@ -54,7 +54,7 @@ const CollectivitesEngagees = ({
             <ListElement label="Collectivités labellisées" value={labellises} />
 
             <ListElement
-              label="Contrats d’Objectif Territorial (COT)"
+              label="Contrats d’Objectifs Territoriaux (COT)"
               value={cot}
             />
 

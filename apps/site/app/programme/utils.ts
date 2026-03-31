@@ -20,6 +20,8 @@ export const getStrapiData = async () => {
       ['populate[1]', 'couverture_mobile'],
       ['populate[2]', 'objectifs_liste_detaillee.image'],
       ['populate[3]', 'objectifs_liste_detaillee.details_cta'],
+      ['populate[4]', 'temoignages_liste.temoignage'],
+      ['populate[5]', 'temoignages_liste.temoignage.portrait'],
     ]),
   ]);
 
@@ -27,6 +29,8 @@ export const getStrapiData = async () => {
   if (data) {
     const programmeData = data.attributes;
     const accueilAttrs = accueilPage.attributes;
+    const temoignages = accueilAttrs.temoignages_liste
+      ?.data as unknown as StrapiItem[];
     const couvertureDesktop = accueilAttrs.couverture_desktop
       ?.data as unknown as StrapiItem;
     const banner = {
@@ -158,6 +162,24 @@ export const getStrapiData = async () => {
           undefined,
         cta: programmeData.compte_cta as unknown as string,
       },
+      temoignages:
+        temoignages && temoignages.length > 0
+          ? {
+              titre: accueilAttrs.temoignages_titre as unknown as string,
+              contenu: temoignages.map((d) => ({
+                id: d.id,
+                auteur: d.attributes.temoignage?.auteur as unknown as string,
+                role:
+                  (d.attributes.temoignage?.role as unknown as string) ??
+                  undefined,
+                temoignage: d.attributes.temoignage
+                  ?.temoignage as unknown as string,
+                portrait:
+                  (d.attributes.temoignage?.portrait
+                    .data as unknown as StrapiItem) ?? undefined,
+              })),
+            }
+          : null,
       newsletter: {
         titre: accueilAttrs.newsletter_titre as unknown as string,
         description: accueilAttrs.newsletter_description as unknown as string,
