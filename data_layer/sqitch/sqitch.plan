@@ -954,3 +954,4 @@ utilisateur/drop_list_membres_views [utilisateur/test_create_user_sync_dcp] 2026
 collectivite/preferences 2026-02-24T12:00:00Z System Administrator <root@localhost> # Préférences collectivité (affichage référentiels)
 @v4.98.0 2026-03-23T16:49:20Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Tag le plan en v4.98.0
 
+collectivite/type_add_service_public [collectivite/type_add_prefectures] 2026-03-31T10:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Ajoute le type service_public

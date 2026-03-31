@@ -8,6 +8,7 @@ export const collectiviteTypeEnum = {
   TEST: 'test',
   PREFECTURE_REGION: 'prefecture_region',
   PREFECTURE_DEPARTEMENT: 'prefecture_departement',
+  SERVICE_PUBLIC: 'service_public',
 } as const;
 
 export type CollectiviteType =

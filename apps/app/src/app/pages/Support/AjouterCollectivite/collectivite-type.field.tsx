@@ -12,6 +12,7 @@ export const collectiviteType = {
   Test: 'test',
   PrefectureRegion: 'prefecture_region',
   PrefectureDepartement: 'prefecture_departement',
+  ServicePublic: 'service_public',
 } as const;
 
 export const CollectiviteTypeField = ({ type, onSelect }: Props) => {
@@ -22,6 +23,7 @@ export const CollectiviteTypeField = ({ type, onSelect }: Props) => {
     { label: 'Région', value: collectiviteType.Region },
     { label: 'Préfecture de département', value: collectiviteType.PrefectureDepartement },
     { label: 'Préfecture de région', value: collectiviteType.PrefectureRegion },
+    { label: 'Service public', value: collectiviteType.ServicePublic },
     { label: 'Collectivité test', value: collectiviteType.Test },
   ];
 
