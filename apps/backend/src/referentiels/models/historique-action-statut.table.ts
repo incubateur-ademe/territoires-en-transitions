@@ -3,6 +3,7 @@ import {
   boolean,
   doublePrecision,
   integer,
+  serial,
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
@@ -14,6 +15,7 @@ import { statutAvancementPgEnum } from './action-statut.table';
 export const historiqueActionStatutTable = historiqueSchema.table(
   'action_statut',
   {
+    id: serial('id').primaryKey().notNull(),
     collectiviteId: integer('collectivite_id')
       .notNull()
       .references(() => collectiviteTable.id),
@@ -27,7 +29,7 @@ export const historiqueActionStatutTable = historiqueSchema.table(
     concerne: boolean('concerne').notNull(),
     previousConcerne: boolean('previous_concerne'),
     modifiedBy: uuid('modified_by'),
-    previousModifiedBy: uuid('previous_modified_by').default(sql`auth.uid()`),
+    previousModifiedBy: uuid('previous_modified_by'),
     modifiedAt: timestamp('modified_at', {
       withTimezone: true,
       mode: 'string',

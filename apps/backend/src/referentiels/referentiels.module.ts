@@ -51,8 +51,10 @@ import { ResetDisplayPreferencesService } from './reset-display-preferences/rese
 import { ListSnapshotsService } from './snapshots/list-snapshots/list-snapshots.service';
 import { SnapshotsRouter } from './snapshots/snapshots.router';
 import { SnapshotsService } from './snapshots/snapshots.service';
+import { UpdateActionCommentaireHistoriqueRepository } from './update-action-commentaire/update-action-commentaire-historique.repository';
 import { UpdateActionCommentaireRouter } from './update-action-commentaire/update-action-commentaire.router';
 import { UpdateActionCommentaireService } from './update-action-commentaire/update-action-commentaire.service';
+import { UpdateActionStatutHistoriqueRepository } from './update-action-statut/update-action-statut-historique.repository';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
 import { UpdateActionStatutService } from './update-action-statut/update-action-statut.service';
 @Module({
@@ -76,8 +78,10 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ListActionsService,
     ListActionsRouter,
 
+    UpdateActionStatutHistoriqueRepository,
     UpdateActionStatutService,
     UpdateActionStatutRouter,
+    UpdateActionCommentaireHistoriqueRepository,
     UpdateActionCommentaireService,
     UpdateActionCommentaireRouter,
 

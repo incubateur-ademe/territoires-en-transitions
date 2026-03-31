@@ -5,7 +5,7 @@ import { Collectivite } from '@tet/domain/collectivites';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import {
   getTestApp,
   getTestDatabase,
@@ -14,6 +14,7 @@ import {
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { actionCommentaireTable } from '../models/action-commentaire.table';
+import { historiqueActionCommentaireTable } from '../models/historique-action-commentaire.table';
 import { createAuditWithOnTestFinished } from '../referentiels.test-fixture';
 import { cleanupReferentielActionStatutsAndLabellisations } from '../update-action-statut/referentiel-action-statut.test-fixture';
 
@@ -25,6 +26,7 @@ describe('UpdateActionCommentaireRouter', () => {
   let router: TrpcRouter;
   let editorUser: AuthenticatedUser;
   let readerUser: AuthenticatedUser;
+  let adminUser: AuthenticatedUser;
   let collectivite: Collectivite;
   let databaseService: DatabaseService;
   let input: Input;
@@ -44,6 +46,9 @@ describe('UpdateActionCommentaireRouter', () => {
           {
             role: CollectiviteRole.LECTURE,
           },
+          {
+            role: CollectiviteRole.ADMIN,
+          },
         ],
       }
     );
@@ -54,6 +59,9 @@ describe('UpdateActionCommentaireRouter', () => {
     );
     readerUser = getAuthUserFromUserCredentials(
       testCollectiviteAndUsersResult.users[1]
+    );
+    adminUser = getAuthUserFromUserCredentials(
+      testCollectiviteAndUsersResult.users[2]
     );
 
     input = {
@@ -143,5 +151,80 @@ describe('UpdateActionCommentaireRouter', () => {
 
     expect(rows).toHaveLength(1);
     expect(rows[0].commentaire).toBe('Mon commentaire de précision');
+  });
+
+  test("L'historique est créé lors de la mise à jour du commentaire", async () => {
+    const caller = router.createCaller({ user: editorUser });
+    await caller.referentiels.actions.updateCommentaire(input);
+
+    const historyRows = await databaseService.db
+      .select()
+      .from(historiqueActionCommentaireTable)
+      .where(
+        and(
+          eq(historiqueActionCommentaireTable.collectiviteId, collectivite.id),
+          eq(historiqueActionCommentaireTable.actionId, 'cae_1.1.1.1.2')
+        )
+      );
+
+    expect(historyRows).toHaveLength(1);
+    expect(historyRows[0].precision).toBe('Mon commentaire de précision');
+    expect(historyRows[0].previousPrecision).toBeNull();
+    expect(historyRows[0].modifiedBy).toBe(editorUser.id);
+  });
+
+  test("L'historique est dédupliqué pour les modifications rapprochées", async () => {
+    const caller = router.createCaller({ user: editorUser });
+
+    await caller.referentiels.actions.updateCommentaire(input);
+    await caller.referentiels.actions.updateCommentaire({
+      ...input,
+      commentaire: 'Commentaire modifié par éditeur',
+    });
+
+    const historyRows = await databaseService.db
+      .select()
+      .from(historiqueActionCommentaireTable)
+      .where(
+        and(
+          eq(historiqueActionCommentaireTable.collectiviteId, collectivite.id),
+          eq(historiqueActionCommentaireTable.actionId, 'cae_1.1.1.1.2')
+        )
+      );
+
+    expect(historyRows).toHaveLength(1);
+    expect(historyRows[0].precision).toBe('Commentaire modifié par éditeur');
+
+    // Third update by admin user
+    const adminCaller = router.createCaller({ user: adminUser });
+    await adminCaller.referentiels.actions.updateCommentaire({
+      ...input,
+      commentaire: 'Commentaire modifié par admin',
+    });
+
+    const historyRowsAfterAdminUpdate = await databaseService.db
+      .select()
+      .from(historiqueActionCommentaireTable)
+      .where(
+        and(
+          eq(historiqueActionCommentaireTable.collectiviteId, collectivite.id),
+          eq(historiqueActionCommentaireTable.actionId, 'cae_1.1.1.1.2')
+        )
+      );
+
+    expect(historyRowsAfterAdminUpdate).toHaveLength(2);
+    const adminHistoryRow = historyRowsAfterAdminUpdate.find(
+      (row) => row.modifiedBy === adminUser.id
+    );
+    expect(adminHistoryRow).toMatchObject({
+      precision: 'Commentaire modifié par admin',
+      previousPrecision: 'Commentaire modifié par éditeur',
+      modifiedBy: adminUser.id,
+      previousModifiedBy: editorUser.id,
+    });
+    const editorHistoryRow = historyRowsAfterAdminUpdate.find(
+      (row) => row.modifiedBy === editorUser.id
+    );
+    expect(editorHistoryRow?.precision).toBe('Commentaire modifié par éditeur');
   });
 });

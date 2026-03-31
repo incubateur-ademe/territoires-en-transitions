@@ -955,8 +955,9 @@ collectivite/preferences 2026-02-24T12:00:00Z System Administrator <root@localho
 @v4.98.0 2026-03-23T16:49:20Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Tag le plan en v4.98.0
 
 collectivite/type_add_service_public [collectivite/type_add_prefectures] 2026-03-31T10:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Ajoute le type service_public
-
 migration/etape_to_sous_action 2026-02-19T12:00:00Z Marc <marc@attractive-media.fr> # Lie une étape à une sous-action pour suivi de la migration
 migrate_calendrier_to_description 2026-02-04T09:43:46Z System Administrator <root@Host-002.lan> # Migrate calendrier to description
 
 stats/drop-old-stats-views [stats/locales stats/vues_BI] 2026-04-02T00:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime les vues publiques historiques des stats remplacées par l'iframe
+referentiel/drop-action-historique-triggers [referentiel/historique_modified_by] 2026-03-25T00:00:00Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Supprime les triggers d'historisation des statuts et commentaires, remplacés par le backend TypeScript
+

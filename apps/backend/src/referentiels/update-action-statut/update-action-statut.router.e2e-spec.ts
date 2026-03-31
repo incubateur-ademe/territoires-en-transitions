@@ -5,6 +5,7 @@ import { Collectivite } from '@tet/domain/collectivites';
 import { ActionScore, ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
+import { and, eq } from 'drizzle-orm';
 import {
   getTestApp,
   getTestDatabase,
@@ -13,6 +14,7 @@ import {
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { addAuditeurPermission } from '../labellisations/labellisations.test-fixture';
+import { historiqueActionStatutTable } from '../models/historique-action-statut.table';
 import { createAuditWithOnTestFinished } from '../referentiels.test-fixture';
 import { cleanupReferentielActionStatutsAndLabellisations } from './referentiel-action-statut.test-fixture';
 
@@ -45,6 +47,7 @@ describe('UpdateActionStatutRouter', () => {
   let router: TrpcRouter;
   let editorUser: AuthenticatedUser;
   let readerUser: AuthenticatedUser;
+  let adminUser: AuthenticatedUser;
   let collectivite: Collectivite;
   let databaseService: DatabaseService;
   let input: Input;
@@ -64,6 +67,9 @@ describe('UpdateActionStatutRouter', () => {
           {
             role: CollectiviteRole.LECTURE,
           },
+          {
+            role: CollectiviteRole.ADMIN,
+          },
         ],
       }
     );
@@ -74,6 +80,9 @@ describe('UpdateActionStatutRouter', () => {
     );
     readerUser = getAuthUserFromUserCredentials(
       testCollectiviteAndUsersResult.users[1]
+    );
+    adminUser = getAuthUserFromUserCredentials(
+      testCollectiviteAndUsersResult.users[2]
     );
 
     input = {
@@ -198,5 +207,87 @@ describe('UpdateActionStatutRouter', () => {
     expect(response.scoresPayload.scores.score).toEqual(
       expectedCaeRootScoreAfterStatutUpdate
     );
+  });
+
+  test("L'historique est créé lors de la mise à jour du statut", async () => {
+    const caller = router.createCaller({ user: editorUser });
+    await caller.referentiels.actions.updateStatut(input);
+
+    const historyRows = await databaseService.db
+      .select()
+      .from(historiqueActionStatutTable)
+      .where(
+        and(
+          eq(historiqueActionStatutTable.collectiviteId, collectivite.id),
+          eq(historiqueActionStatutTable.actionId, 'cae_1.1.1.1.2')
+        )
+      );
+
+    expect(historyRows).toHaveLength(1);
+    expect(historyRows[0].avancement).toBe('detaille');
+    expect(historyRows[0].previousAvancement).toBeNull();
+    expect(historyRows[0].modifiedBy).toBe(editorUser.id);
+    expect(historyRows[0].previousModifiedBy).toBeNull();
+  });
+
+  test("L'historique est dédupliqué pour les modifications rapprochées par le même utilisateur", async () => {
+    const caller = router.createCaller({ user: editorUser });
+
+    // First update
+    await caller.referentiels.actions.updateStatut(input);
+    // Second update within 1 hour
+    await caller.referentiels.actions.updateStatut({
+      ...input,
+      avancement: 'fait',
+      avancementDetaille: null,
+    });
+
+    const historyRows = await databaseService.db
+      .select()
+      .from(historiqueActionStatutTable)
+      .where(
+        and(
+          eq(historiqueActionStatutTable.collectiviteId, collectivite.id),
+          eq(historiqueActionStatutTable.actionId, 'cae_1.1.1.1.2')
+        )
+      );
+
+    expect(historyRows).toHaveLength(1);
+    expect(historyRows[0].avancement).toBe('fait');
+
+    // Third update by admin user
+    const adminCaller = router.createCaller({ user: adminUser });
+    await adminCaller.referentiels.actions.updateStatut({
+      ...input,
+      avancement: 'pas_fait',
+      avancementDetaille: null,
+    });
+
+    const historyRowsAfterAdminUpdate = await databaseService.db
+      .select()
+      .from(historiqueActionStatutTable)
+      .where(
+        and(
+          eq(historiqueActionStatutTable.collectiviteId, collectivite.id),
+          eq(historiqueActionStatutTable.actionId, 'cae_1.1.1.1.2')
+        )
+      );
+
+    expect(historyRowsAfterAdminUpdate).toHaveLength(2);
+    const adminHistoryRow = historyRowsAfterAdminUpdate.find(
+      (row) => row.modifiedBy === adminUser.id
+    );
+    expect(adminHistoryRow).toMatchObject({
+      avancement: 'pas_fait',
+      avancementDetaille: null,
+      modifiedBy: adminUser.id,
+      previousAvancement: 'fait',
+      previousModifiedBy: editorUser.id,
+      previousAvancementDetaille: null,
+    });
+    const editorHistoryRow = historyRowsAfterAdminUpdate.find(
+      (row) => row.modifiedBy === editorUser.id
+    );
+    expect(editorHistoryRow?.avancement).toBe('fait');
   });
 });
