@@ -201,7 +201,7 @@ export const SelectBase = (props: SelectProps) => {
         }
       }
     });
-  }, [options]);
+  }, [dataTest, options]);
 
   /** Compare la valeur de l'input de recherche avec la première option de la liste
    * pour afficher le bouton de création d'une option */
@@ -282,6 +282,7 @@ export const SelectBase = (props: SelectProps) => {
             valueToBadgeState={valueToBadgeState}
             noOptionPlaceholder={emptySearchPlaceholder}
             uppercase={optionsAreCaseSensitive === false}
+            autoFocusOnOpen={Boolean(displayOptionsWithoutFloater)}
           />
         </div>
       )}

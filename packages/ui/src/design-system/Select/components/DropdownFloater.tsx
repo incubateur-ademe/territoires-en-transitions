@@ -15,12 +15,13 @@ import {
   useFloatingParentNodeId,
   useInteractions,
 } from '@floating-ui/react';
-import { cloneElement, CSSProperties, JSX, useState } from 'react';
+import classNames from 'classnames';
+import { cloneElement, JSX, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { useOpenState } from '../../../hooks/use-open-state';
 import { preset } from '../../../tailwind-preset';
-import { cn } from '../../../utils/cn';
 import { OpenState } from '../../../utils/types';
+/../utils/types';
 
 export type DropdownFloaterProps = {
   /** Élement qui reçoit la fonction d'ouverture du dropdown */
@@ -76,7 +77,6 @@ export const DropdownFloater = ({
   const { isOpen, toggleIsOpen } = useOpenState(openState);
 
   const [maxHeight, setMaxHeight] = useState(0);
-  const [minHeight, setMinHeight] = useState(0);
 
   const nodeId = useFloatingNodeId();
 
@@ -98,8 +98,6 @@ export const DropdownFloater = ({
           // https://floating-ui.com/docs/size
           flushSync(() => {
             setMaxHeight(availableHeight);
-            if (availableHeight < 80 && rects.floating.height > availableHeight)
-              setMinHeight(rects.floating.height);
           });
           Object.assign(elements.floating.style, {
             minWidth: `${rects.reference.width}px`,
