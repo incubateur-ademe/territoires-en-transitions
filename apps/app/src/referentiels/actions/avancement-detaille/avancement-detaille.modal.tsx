@@ -45,7 +45,9 @@ const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
   useEffect(() => {
     if (!isLoading && statut && !actionStatutUpdate) {
       const avancementDetaille =
-        statut.avancementDetaille || AVANCEMENT_DETAILLE_PAR_STATUT.detaille;
+        statut.avancement === 'detaille'
+          ? statut.avancementDetaille || AVANCEMENT_DETAILLE_PAR_STATUT.detaille
+          : AVANCEMENT_DETAILLE_PAR_STATUT.detaille;
       setActionStatutUpdate({
         ...omit(statut, ['modifiedAt', 'modifiedBy']),
         avancementDetaille: avancementDetaille,
