@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';

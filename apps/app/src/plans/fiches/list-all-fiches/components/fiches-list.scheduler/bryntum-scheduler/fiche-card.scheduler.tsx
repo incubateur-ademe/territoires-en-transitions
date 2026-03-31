@@ -5,7 +5,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { FicheActionCardProps } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import ModifierFicheModale from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/ModifierFicheModale';
-import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { DeleteOrRemoveFicheSharingModal } from '@/app/plans/fiches/shared/delete-or-remove-fiche-sharing.modal';

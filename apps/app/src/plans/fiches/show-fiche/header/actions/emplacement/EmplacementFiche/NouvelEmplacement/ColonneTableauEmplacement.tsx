@@ -1,5 +1,5 @@
 import { TProfondeurAxe } from '@/app/plans/plans/types';
-import { generateTitle } from '../../../../../utils';
+import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
 import { BoutonTableauEmplacement } from './BoutonTableauEmplacement';
 
 type ColonneTableauEmplacementProps = {

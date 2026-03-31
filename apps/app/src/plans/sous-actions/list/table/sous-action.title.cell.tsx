@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
 import { isFicheEditableByCollectiviteUser } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';

@@ -1,0 +1,117 @@
+import { FicheListItem } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import { naturalSort } from '@/app/utils/naturalSort';
+
+/**
+ * Formate un nouveau tag qui nécessite un type minimum collectivite_id, nom
+ * @param inputValue
+ * @param collectivite_id
+ */
+export const formatNewTag = (inputValue: string, collectivite_id: number) => ({
+  collectivite_id,
+  nom: inputValue,
+});
+
+/** Renvoie "Sans titre" si le string est undefined ou null */
+export const generateTitle = (title?: string | null) => title || 'Sans titre';
+
+/**
+ * Renvoie un tableau d'options pour les années.
+ * Par défaut de 2000 à l'année en cours.
+ * @param additionalYearsFromCurrentYear - Nombre d'années supplémentaires à partir de l'année en cours
+ */
+export const getYearsOptions = (additionalYearsFromCurrentYear?: number) => {
+  const currentYear = new Date().getFullYear();
+  const startingYear = 2000;
+  const finalYear =
+    additionalYearsFromCurrentYear && additionalYearsFromCurrentYear > 0
+      ? currentYear + additionalYearsFromCurrentYear
+      : currentYear;
+  const yearsOptions = Array.from(
+    { length: finalYear - startingYear + 1 },
+    (_, i) => i + startingYear
+  )
+    .reverse()
+    .map((y) => ({ value: y, label: y.toString() }));
+
+  return { yearsOptions, currentYear };
+};
+
+/** Ordonne les fiches par titre */
+export function sortFichesResume<T extends { titre: string | null }>(
+  fiches: T[]
+): T[] {
+  return fiches.sort((a: T, b: T) => {
+    if (!a.titre) return -1;
+    if (!b.titre) return 1;
+    return naturalSort(a.titre, b.titre);
+  });
+}
+
+type FactoryArgs = {
+  tempId: number;
+  collectiviteId: number;
+  axeFichesIds?: number[] | null;
+  axeId?: number;
+};
+
+export const ficheResumeFactory = ({
+  tempId,
+  collectiviteId,
+  axeId,
+}: FactoryArgs): FicheListItem => {
+  return {
+    id: tempId,
+    collectiviteId,
+    parentId: null,
+    collectiviteNom: null,
+    dateDebut: null,
+    dateFin: null,
+    ameliorationContinue: null,
+    priorite: null,
+    plans: null,
+    statut: null,
+    titre: '',
+    restreint: false,
+    services: [],
+    pilotes: [],
+    modifiedAt: new Date().toISOString(),
+    sharedWithCollectivites: [],
+    axes: axeId
+      ? [{ id: axeId, collectiviteId, nom: '', parentId: null, planId: null }]
+      : null,
+    description: null,
+    piliersEci: null,
+    objectifs: null,
+    cibles: null,
+    indicateurs: null,
+    mesures: null,
+    etapes: null,
+    fichesLiees: null,
+    financements: null,
+    budgetPrevisionnel: null,
+    calendrier: null,
+    notes: null,
+    instanceGouvernance: null,
+    participationCitoyenne: null,
+    participationCitoyenneType: null,
+    tempsDeMiseEnOeuvre: null,
+    majTermine: null,
+    ressources: null,
+    createdAt: new Date().toISOString(),
+    partenaires: [],
+    referents: [],
+    effetsAttendus: [],
+    sousThematiques: [],
+    thematiques: [],
+    structures: [],
+    libreTags: [],
+    financeurs: [],
+    docs: [],
+    budgets: [],
+    completion: {
+      ficheId: tempId,
+      fields: [],
+      isCompleted: false,
+    },
+  };
+};

@@ -16,7 +16,7 @@ import {
   getFicheActionShareText,
 } from '../../../share-fiche/fiche-share-info';
 import { isFicheEditableByCollectiviteUser } from '../../../share-fiche/share-fiche.utils';
-import { generateTitle } from '../../../utils';
+import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
 import FicheActionFooterInfo from './fiche-action.footer';
 
 export type FicheActionCardProps = {

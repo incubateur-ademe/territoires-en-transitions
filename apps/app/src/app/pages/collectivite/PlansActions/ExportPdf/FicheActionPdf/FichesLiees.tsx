@@ -19,7 +19,7 @@ import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { preset } from '@tet/ui';
 import classNames from 'classnames';
 import { format, isBefore, startOfToday } from 'date-fns';
-import { generateTitle } from '../../FicheAction/data/utils';
+import { generateTitle } from '@/app/plans/fiches/data/fiche.utils';
 
 const { colors } = preset.theme.extend;
 
