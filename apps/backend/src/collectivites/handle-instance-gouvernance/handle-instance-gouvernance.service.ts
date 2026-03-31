@@ -49,10 +49,7 @@ export class InstanceGouvernanceService {
     return result;
   }
   async list(
-    request: (
-      | { collectiviteId: number }
-      | { collectiviteIds: number[] }
-    ) & {
+    request: ({ collectiviteId: number } | { collectiviteIds: number[] }) & {
       user: AuthenticatedUser;
       tx?: Transaction;
     }
