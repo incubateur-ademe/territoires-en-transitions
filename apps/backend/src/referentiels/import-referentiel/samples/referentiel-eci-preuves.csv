@@ -1,0 +1,290 @@
+id,nom,actions,description
+resultats_eval_efc,Preuve de l'évaluation,eci_3.6.4,"<p>Enquête, évaluation environnementale, évaluation sociétale…</p>
+"
+strategie_eit,"Document formalisant la stratégie, si possible validé par un (ou des) élu(s)",eci_3.5.1,
+analyse_enjeux_sociaux,Analyse des enjeux sociaux intégrés dans le diagnostic,eci_1.1.2,
+rapport_diag_eci,Rapport de diagnostic,eci_3.1.1,
+evenement_sensi_conso_responsable,Preuve du déroulé des évènements mettant en avant la consommation sobre et responsable,eci_3.3.1,"<p>Au choix : programme, feuille d'émargement, bilan de l'évènement, etc.</p>
+"
+participation_formation_achats_responsables,Document attestant des formations et sensibilisations réalisées,eci_3.2.1,
+restit_plpdma_spgd,Restitution du PLPDMA dans le rapport annuel SPGD,eci_2.1.1,
+diffusion_rapport_annuel_public,Rapport annuel diffusé aux particuliers ou incitation à la consulter en facilitant l'accès,eci_2.4.5,
+etude_ti,Documents d'avancement de l'étude,eci_4.2.2,
+delib_ti,Délibération de principe sur la mise en place de la Tarification Incitative (TI),eci_4.2.4,
+CR_reunion_inter_collectivites,Comptes-rendus des réunions d'échange,eci_1.2.4,
+rapport_etude_reduction_impact_collecte,Rapport de l'étude réalisée,eci_2.4.1,
+organigramme_eci,L'organigramme de l'équipe mobilisée pour la mise en œuvre de la politique Economie Circulaire (élu et équipe technique),eci_1.1.1,"<p>Organigramme du candidat sur lequel sont surlignés les services et directions qui participent à la politique ECi.</p>
+"
+accompagnement_acteurs_recherche_financements,Preuve des démarches établies par la collectivité pour chaque projet accompagné,eci_4.3.3,"<p>Comptes rendus de rendez-vous, agenda, etc.</p>
+"
+enquete_satisfaction_entreprises_conseillees,Enquête de satisfaction auprès des entreprises conseillées,eci_2.5.2,
+plan_actions_eci,Plan d'actions d'optimisation de la collecte,eci_2.2.2,
+arrete_modalites_collecte_dechets,Arrêté fixant les modalités de collecte des différentes catégories de déchets,eci_2.2.0,
+fiche_Optigede_actions_grandpublic_eci,Fiches actions sur Optigede,eci_5.1.2,
+etude_optimisation_couts,Rapport d'étude,eci_4.1.2,
+convention_ecoconception,Convention des différents partenariats,eci_3.4.2,
+participation_formation_conso_responsable,Attestations de formation,eci_3.3.2,
+cr_reunion_interentreprise_eit,Comptes rendus des réunions/ateliers inter-entreprises réalisés,eci_3.5.2,
+cdc_diag_eci,Cadrage ou cahier des charges du diagnostic,eci_3.1.1,
+CR_reunion_elaboration_nouvelle_strategie_eci,Compte-rendu des réunions d'élaboration des nouvelles stratégies,eci_1.2.3,
+bilan_synergies_eit,Document de preuve de la réalisation de la synergie,eci_3.5.3,"<p>Contrat, article, publication...</p>
+"
+budget_eci,Justificatif d'une ligne budgétaire dédiée à la stratégie et au programme d'actions Economie Circulaire en précisant la part du budget ECi par rapport au budget global (%),eci_1.1.1,"<p>Toute ligne budgétaire relative à la politique économie circulaire quel que soit le service mettant en oeuvre l’action.</p>
+"
+financement_ri,Document formalisant l'accompagnement de chaque projet,eci_3.7.2,"<p>Contrat ou convention de financement par exemple</p>
+<p>Le degré d'innovation est à considérer à l'échelle géographique pertinente.</p>
+"
+participation_projets_efc,Preuve d'engagement,eci_3.6.3,"<p>Charte, comptes rendus de réunion</p>
+"
+com_public_conso_responsable,Support(s) de communication,eci_3.3.1,"<p>Au choix : annuaire, carte en ligne, page du site web, livret, etc.</p>
+"
+liste_membres_copil_elargi,Liste des membres de la gouvernance élargie et leurs rôles,eci_1.1.3,
+actions_service_conso_responsable,Liste d’actions à décliner dans chaque service formé,eci_3.3.2,
+suivi_actions_filiere,Protocole de suivi,eci_3.1.3,
+conformite_installations,"Autre preuve de la conformité des installations (selon la nature de l'installation) pour les émissions polluantes et les nuisances (olfactives, sonores, etc.)",eci_2.4.0,"<p>En présence de non-conformité, la collectivité doit justifier d&#x27;un plan d&#x27;actions correctives et de l&#x27;absence de contentieux.</p>
+"
+duerp_traitement,Document Unique d'Evaluation de Risques Professionnels (DUERP) pour les installations sous la responsabilité de la collectivité (DSP et marché inclus),eci_2.3.0,
+delib_strategie_eci,"Délibération relative à l'adoption de la stratégie, comprenant le budget associé et intégrant les enjeux issus du diagnostic",eci_1.1.4,
+com_optimisation_couts,Supports de communication,eci_4.1.4,
+plan_actions_reduction_impact_traitement,Plan d'actions pour limiter les impacts du traitement des déchets,eci_2.4.4,
+delib_regl_collecte_dechets,Délibération approuvant le règlement de collecte des déchets qui couvre l’ensemble du territoire administratif de l’EPCI,eci_2.2.0,"<p>Si le règlement de collecte doit être mis à jour à la suite de changements (ex : fusion de collectivités), il faut alors</p>
+<p>communiquer le courrier d’engagement politique visant à réaliser la mise à jour du document.</p>
+"
+attestation_report_modal,Autre(s) document(s) attestant de la mise en place du report modal,eci_2.4.3,
+document_unique_evaluation_risques_professionnels,Document Unique d'Evaluation de Risques Professionnels (DUERP) pour les installations sous la responsabilité de la collectivité (DSP et marché inclus),eci_2.4.0,
+synthese_bilan,Document de synthèse,eci_1.3.2,
+cr_reunions_avancement_plan_actions,Comptes rendus de réunions attestant de l'avancement du plan d'actions et du déroulement des travaux,eci_2.4.4,
+fiche_media_eci,"Fiches ""belles histoires"" dans des médias accessibles",eci_1.1.5,
+fiche_Optigede_actions_acteurseco_eci,Fiches actions sur Optigede,eci_5.3.2,
+attestation_reglementation_contentieux,Attestation sur l'honneur,eci_2.3.0,"<p>Une attestation sur l’honneur datée et signée par le responsable de la collectivité déclarant que la réglementation</p>
+<p>sociale et environnementale est respectée et qu’aucun contentieux n’est en cours sur ces sujets. Si un contentieux est</p>
+<p>en cours, préciser son objet et l’avancement de son traitement.</p>
+"
+cr_reunions_gouvernance,Compte-rendu des réunions de gouvernance et des groupes de travail pour la construction des actions économie circulaire,eci_1.1.3,
+CR_activite_conseil,Compte-rendu d'activité du service de conseil,eci_2.5.2,"<p>Le compte-rendu doit indiquer le taux de mobilisation (liste des entreprises ciblées et liste des entreprises</p>
+<p>conseillées)</p>
+"
+cr_copil_eit,"Documents descriptifs de la gouvernance de la démarche EIT, comptes rendus de comités de pilotage",eci_3.5.2,
+cr_cces,Compte-rendu de la dernière réunion de la Commission consultative d’élaboration et de suivi (CCES) avec la liste des participants,"eci_2.1.0, eci_2.1.2",
+rapports_etudes_service_collecte,Rapports issus des enquêtes et des études,eci_2.2.1,"<p>Les preuves ne doivent pas forcément être récentes, mais doivent demeurer d'actualité par rapport à l'état du système de</p>
+<p>collecte en place.</p>
+"
+fiche_poste_eit,fiche de poste du poste internalisé ou convention d'aide pour le poste financé dans une structure tierce,eci_3.5.3,
+duerp_traitement_collecte,DUERP,eci_2.4.0,
+fiche_Optigede_actions_collectivitesT_eci,Fiches actions sur Optigede,eci_5.2.2,
+attestation_honneur,Attestation sur l'honneur,eci_2.4.0,"<p>Attestation sur l'honneur datée et signée par le responsable de la collectivité déclarant que la réglementation sociale</p>
+<p>et environnementale est respectée et qu'aucun contentieux n'est en cours sur ces sujets. Si un contentieux est en cours,</p>
+<p>préciser son objet et l'avancement de son traitement</p>
+"
+politique_achats_responsables,"Politique d'achats, délibération, charte ou SPASER (si achats publics supérieurs à 100 M€)",eci_3.2.1,
+liste_ICPE,Tableau précisant la liste des ICPE sous la responsabilité de la collectivité,eci_2.4.0,"<p>Pour chaque ICPE sous la responsabilité de la collectivité, le tableau devra préciser</p>
+<ul>
+<li>
+<p>L'arrêté permettant leur activité ;</p>
+</li>
+<li>
+<p>Le régime auquel elles sont soumises (déclaration, enregistrement ou autorisation) ;</p>
+</li>
+<li>
+<p>Les visites d'inspection ICPE effectuées au cours des 5 dernières années, et si l'une de ces visites a mis en évidence</p>
+</li>
+</ul>
+<p>un problème de non-conformité, la réponse de l'exploitant et/ou de la collectivité responsable.</p>
+"
+doc_cadrage_actions_inter_collectivites,"Documents de cadrage des actions (liste d'actions, plan d'action , etc.)",eci_1.2.4,
+grille_tarifaire_RS,Délibération de la grille tarifaire,"eci_4.2.1, eci_4.2.3",
+accompagnement_installation_traitement,"Documents de production : PV de contrôle qualité, remontée des écarts, trace des actions correctives",eci_2.3.3,
+collectivités_collab_possible,Liste des autres collectivités à potentiel de collaboration,eci_5.2.3,
+externalisation_eit,Document attestant de la création de l'acteur-tiers et présentant les modalités de financement,eci_3.5.4,
+delib_cces,Délibération de création de la CCES avec sa composition,"eci_2.1.0, eci_2.1.2",
+action_co_constuite_eci,"Description de(s) l'action co-construite pour chaque compétence, avec l'explication de ce qui favorise l'économie circulaire",eci_1.2.2,
+guide_collecte,Guide de collecte ou document assimilé,eci_2.2.0,
+suivi_deploiement_solutions_optimisation_filieres,Eléments de suivi du déploiement des solutions,eci_2.3.2,
+com_achats_responsables,Support(s) de promotion des achats durables,eci_3.2.3,
+analyse_enjeux_envi,Analyse des enjeux environnementaux intégrés dans le diagnostic,eci_1.1.2,
+analyse_besoins_acteurs,Synthèse de l'analyse des besoins,eci_5.1.3,
+duerp_collecte,Dernier DUERP en date pour les activités liées à la compétence collecte,eci_2.2.0,
+participation_formation_collectivitesT_eci,Preuve de participation aux formations,eci_5.2.1,"<p>Attestations de formation, compteur de participation aux MOOC, nombre de vues sur les vidéos pédagogiques, etc.</p>
+"
+fiche_Optigede_filiere,Fiches actions sur Optigede,eci_3.1.2,
+fiches_equipe_maj,Fiches de poste des membres de l'équipe mises à jour,eci_1.1.1,
+suivi_actions_reduction_impact_collecte,Tableau de bord de pilotage de la progression,eci_2.4.2,
+validation_plan_action_filiere,Preuve de la validation du plan d'actions,eci_3.1.2,
+doc_sensi_conso_responsable,Documents de sensibilisation,eci_3.3.2,
+enquete_besoins_acteurs,Synthèse de résultats de l'enquête,eci_5.1.3,
+delib_engagement_politique_eci,Délibération indiquant l'engagement à développer une stratégie et un programme d'actions Economie Circulaire,eci_1.1.1,"<p>Tout document démontrant l’existence d’une politique ECi : délibération, note explicative.</p>
+"
+CR_reunion_partage_bilan,Compte-rendu des réunions d'analyse des résultats,eci_1.3.2,
+convention_animation_efc,Convention avec une structure d'animation ou preuve de l'adhésion,eci_3.6.2,
+plan_actions_reduction_impact_collecte,Plan d'actions pour limiter les impacts de la collecte des déchets,"eci_2.4.2, eci_2.4.1",
+bilan_actions_filiere,Bilan,eci_3.1.3,
+cr_reseau_ecoconception,Compte rendu des réunions du réseau,eci_3.4.1,
+liste_projets_finances,Liste des projets soutenus et montants associés,eci_4.3.4,
+carto_achats,Cartographie des achats,eci_3.2.1,
+actions_optimisation_couts,Preuves des actions,eci_4.1.3,
+plan_action_eci,Programme d'actions formalisé,eci_1.1.4,
+justif_reflexion_collective_prevention,Document attestant d'une réflexion collective sur les sujets de prévention de déchets,eci_2.5.3,"<p>Par exemple : besoins en emballages, etc.</p>
+"
+rapport_eci_achats_responsables,Rapport d'activité,eci_3.2.2,
+identification_entreprises_conseillees,Méthode d'identification des entreprises prioritaires à conseiller,eci_2.5.2,
+delib_compo_cces,Restitution du PLPDMA dans le rapport annuel SPGD,eci_2.1.2,"<p>Preuve identique à la eci_2.1.0 --&gt;</p>
+"
+com_acteurseco_eci,Historique des documents diffusés,eci_5.3.1,
+participation_formation_efc,Attestation de suivi de formation,eci_3.6.1,
+evenement_sensi_efc,Preuve de réalisation d'évènements de sensibilisation,eci_3.6.1,
+com_public_projets_eit,Documents de communication,eci_3.5.4,
+cr_CLIS,Derniers comptes rendus des CLIS (Commissions Locales d'Information et de Surveillance) établies sur le territoire de la collectivité,eci_2.4.5,
+cr_recherche_synergies_eit,Comptes rendus de réunions et d'activités liées à la recherche de synergies,eci_3.5.3,
+fiche_Optigede_eci,Fiches actions sur Optigede,eci_1.1.5,
+realisation_actions_reduction_impact_traitement,Justificatifs des travaux en cours de réalisation,eci_2.4.4,
+fiche_poste_portage_eit,Fiche de poste,eci_3.5.4,
+integration_eit_activites_collectivite,Document de présentation du dispositif mis en place pour intégrer l'EIT dans les activités de la collectivité,eci_3.5.3,"<p>Procédure d'implantation de nouvelles entreprises intégrant des mutualisations de flux, etc.</p>
+"
+soutien_externe_conso_responsable,Délibération décrivant les modalités du dispositif de soutien à une offre commerciale plus sobre ou au changement de modèle économique,eci_3.3.4,
+SPASER,Le document formalisant le SPASER - Schéma de Promotion des Achats Publics Socialement et Ecologiquement Responsables,eci_3.2.0,"<p>Uniquement pour les collectivités dont le montant total annuel des achats est supérieur à 50 millions d’euros H.T</p>
+<p>En cas de non-conformité, la collectivité doit justifier d'un plan d'actions correctives et de l'absence de contentieux.</p>
+"
+delib_plan_actions_optimisation_collecte,Délibération validant le plan d'actions,eci_2.2.2,
+liste_installations_icpe_collecte,"La liste des installations ICPE liées à la compétence collecte, précisant le type de ces installations et leur niveau de conformité",eci_2.2.0,"<p>La liste précise, pour les installations ICPE liées à la compétence collecte, en régie ou sous DSP :</p>
+<p>• Le type de ces installations (autorisation, déclaration, enregistrement).</p>
+<p>• Le niveau de conformité : “Conforme” ou “Présence de non-conformité(s)”.</p>
+<p>En l’absence de non-conformité, un engagement sur l’honneur du Président/e de la collectivité certifiant la sincérité</p>
+<p>des informations sur la conformité du fonctionnement</p>
+<p>de ces installations est attendue.</p>
+<p>En présence de non-conformités, un engagement par l’exécutif de la collectivité à lever ces non-conformités dans un</p>
+<p>dialogue constructif avec les services de l'Etat sera à</p>
+<p>produire.</p>
+<p>Pour les compétences déléguées à une autre collectivité, il n’est pas demandé d’engagement relatif aux non-conformités,</p>
+<p>la liste des installations est néanmoins à produire.</p>
+"
+indicateurs_eci,Indicateurs spécifiques et objectifs renseignés dans une interface dédié,eci_1.3.1,"<p>Plateforme Territoires en Transitions ou une autre interface choisie par la collectivité (ex. tableau de bord Excel)</p>
+"
+synthese_analyse_matrice_couts,Synthèse de l'analyse de la matrice des coûts,eci_4.1.2,
+bilan_outil_suivi_PLPDMA,Rapport annuel du SPPGD faisant état de l'avancement de la politique de prévention,eci_2.1.3,
+liste_acteurs_initiatives_eci,La liste des acteurs et des initiatives en économie circulaire sur le territoire,eci_1.1.2,
+sinoe_plpdma,Dépôt sur SINOE du PLPDMA,eci_2.1.0,
+liste_membres_copil_interne,Liste des membres du comité de pilotage interne,eci_1.1.3,"<p>La gouvernance interne, inter-services, peut être justifiée par des compte-rendu de comité de pilotage, feuille de présence, schéma de gouvernance, etc.</p>
+"
+enjeux_collectivités,Liste des autres collectivités et des enjeux identifiés,eci_5.2.3,
+realisation_actions_reduction_impact_collecte,Justificatifs des travaux en cours de réalisation,eci_2.4.2,
+matrice_couts_SINOE,Matrice des coûts validée dans SINOE,eci_4.1.1,
+nouvelle_strategie_eci,Document approuvé par un élu précisant comment l'économie circulaire est prise en compte dans les nouvelles stratégies,eci_1.2.3,
+plan_action_conso_responsable,Fiches d'actions réalisées ou suivi du plan d'action,eci_3.3.3,
+suivi_actions_eci_achats_responsables,Tableau de bord,eci_3.2.3,
+delib_elu_eci,Délibération qui donne délégation et/ou qui cite l’élu.e.s en charge de l’ECi,eci_1.1.1,"<p>Si l’ECi ne figure pas explicitement dans la délégation, joindre une note explicative.</p>
+"
+participation_formation_grandpublic_eci,Preuve de participation aux formations,eci_5.1.1,"<p>Documents de communication, supports de sensibilisation, attestations de formation, compteur de participation aux MOOC, nombre de vues sur les vidéos pédagogiques, etc.</p>
+"
+diffusion_rapport_annuel_pro,Documents d'information et moyen(s) de diffusion,eci_2.5.1,
+analyse_positionnement_couts,Document présentant l'analyse de positionnement,eci_4.1.1,"<p>onglet Analyse de la matrice des coûts ou diaporama par exemple</p>
+"
+cdc_projets_ecoconception,"Charte d’engagement, cahier des charges ou méthodologie",eci_3.4.4,
+rapport_reseau_ecoconception,Rapport d'activité de l'animation du réseau,eci_3.4.1,
+suivi_refus,"Document de suivi des refus (refus de tri, digestat et énergie)",eci_2.3.3,
+reunions_acteurseco_eci,Historique des supports de présentation des réunions d'information et les listes de participants,eci_5.3.1,
+espaces_communs_dialogue_acteurs,Description du/des espace(s) communs de dialogue,eci_5.1.3,
+carto_representants_locaux_acteurseco,Cartographie de représentants locaux,eci_5.3.3,
+fiche_Optigede_externe_conso_responsable,Fiche action sur Optigede,eci_3.3.4,
+fiche_Optigede_tranversalite_eci,Fiches actions sur Optigede,eci_1.2.2,
+cr_reseau_regional_eit,Comptes rendus des réunions du réseau régional,eci_3.5.2,
+contrat_synergie_eit_activites_collectivite,Contrat formalisant une synergie sur une activité de la collectivité,eci_3.5.3,
+grille_tarifaire_ti_second_niveau,Délibération de la grille tarifaire,eci_4.2.5,
+partage_projets_eit,Projets EIT renseigné sur ELIPSE et SYNAPSE,eci_3.5.4,
+com_partenariat_representants_locaux_acteurseco,Supports de communication,eci_5.3.3,
+atelier_sensi_conso_responsable,Preuve du déroulé des ateliers de sensibilisation,eci_3.3.1,"<p>Au choix : programme, feuille d'émargement, bilan de l'évènement, etc.</p>
+"
+liste_installations_icpe_traitement,Tableau précisant la liste des ICPE sous la responsabilité de la collectivité (DSP et marché inclus),eci_2.3.0,"<p>Le tableau devra préciser, pour chaque ICPE sous la reponsabilité de la collectivité (ce qui inclut les DSP et les</p>
+<p>autres marchés) :</p>
+<ul>
+<li>
+<p>L’arrêté permettant leur activité ;</p>
+</li>
+<li>
+<p>Le régime auquel elles sont soumises (déclaration, enregistrement ou autorisation) ;</p>
+</li>
+<li>
+<p>Les visites d’inspection ICPE effectuées au cours des 5 dernières années et si, l’une de ces visites a mis en évidence</p>
+</li>
+</ul>
+<p>un problème de non-conformité la réponse de l’exploitant et/ou de la collectivité responsable.</p>
+"
+analyse_enjeux_eco,Analyse des enjeux économiques intégrés dans le diagnostic,eci_1.1.2,
+attestation_regl_collecte_traitement_dechets,Attestation sur l’honneur du respect de la législation sociale et environnementale pour la collecte et/ou le traitement des déchets et mentionnant l'absence de contentieux en cours (si contentieux : préciser leur objet),eci_2.2.0,
+convention_collab_collectivitésT,Conventions ou accords de partenariat,eci_5.2.3,
+liste_actions_reduction_impact_collecte,La liste des actions priorisées,eci_2.4.1,"<p>Décision de la collectivité ou un compte rendu qui acte cette formalisation des priorités</p>
+"
+presentation_modalites_financements,"Adoption du document de référence, dont les critères liés à la sobriété (si évoqué)",eci_4.3.4,
+cdc_integration_efc_achats,Cahier(s) des charges intégrant des critères d'économie de la fonctionnalité et de la coopération,eci_3.6.2,
+justif_action_acteurs_pro,Documents attestant que la collectivité a accompagné la mise en place de services,eci_2.5.3,"<p>Convention d'aide, mise en contact de personnes, mise à disposition de moyens...</p>
+"
+diag_eci,Diagnostic de l'économie circulaire,eci_1.1.2,"<ul>
+<li>
+<p>Tout élément de diagnostic disponible, même issu de diagnostics relatifs à des démarches connexes (PLPDMA, SRDEII, PRPGD, PRAEC, SRADDET, S3, PLU, SCoT, PCAET, PAT, SRDT, etc…).</p>
+</li>
+<li>
+<p>Comptes-rendus de réunion de travail, etc.</p>
+</li>
+<li>
+<p>Les autres preuves détaillées dans cette sous-action sont des composantes du diagnostic.</p>
+</li>
+</ul>
+"
+participation_formation_eci,Attestations de participation aux formations réalisées,eci_1.2.1,
+veille_financements,Liste de sources ou veille formalisée,eci_4.3.1,
+implication_collectivite_ri,Document formalisant l'implication dans les programmes,eci_3.7.1,"<p>Contrat, charte, convention ou plaquette d'événement impliquant la collectivité par exemple</p>
+"
+autorisation_exploit_icpe,Autorisation d'exploiter pour les sites classés ICPE,eci_2.4.0,
+com_externe_financements,Outils de communication,eci_4.3.2,"<p>Exemple: Page internet, Newsletter, Journal, Blog, etc.</p>
+"
+fiche_Optigede_optimisation_collecte,Fiches actions Optigede incluant la stratégie de communication,eci_2.2.3,
+convention_partenariat_repr_locaux_acteurs_eco,Conventions de partenariat,eci_5.3.3,
+rapports_etudes_flux_dechets,Rapport(s) d'étude(s),eci_2.3.1,
+plan_formation_eci,Vote/validation du plan formation par la collectivité,eci_1.2.1,
+formalisation_actions_conso_responsable,Document de formalisation,eci_3.3.2,
+exclusion_conso_responsable,Délibération décrivant les critères d’exclusion de subventions aux associations promouvant des activités non sobres,eci_3.3.4,
+communication_public_impacts,Autre(s) support(s) de communication,eci_2.4.5,"<p>Exemples :</p>
+<ul>
+<li>
+<p>Article dans un journal local</p>
+</li>
+<li>
+<p>Présence d'informations sur les factures</p>
+</li>
+<li>
+<p>Commission Locale d'Information et de Surveillance</p>
+</li>
+</ul>
+"
+decision_etude_reduction_impact_collecte,Justificatif de décision de la collectivité pour mener l'étude en interne ou en externe,eci_2.4.1,"<p>Compte rendu, délibération, cahier des charges de l'étude, etc.</p>
+"
+partage_diag_eci,Liste d'acteurs avec lesquels le diagnostic a été partagé,eci_3.1.1,
+suivi_actions_reduction_impact_traitement,Tableau de bord de pilotage de progression,eci_2.4.4,
+grille_tarifaire_ti,Délibération de tarif ou de grille tarifaire,eci_4.2.4,
+presentation_sppgd,Procès-verbal du conseil syndical ou intercommunal faisant état de la présentation du rapport en assemblée et/ou de son adoption,eci_4.1.0,
+rapport_sppgd,Rapport du service public de prévention et de gestion des déchets ménagers et assimilés (SPPGD),"eci_2.2.0, eci_4.1.0, eci_2.4.3","<p>Pour les audits d’une année N, disposer au moins du rapport N-2.</p>
+<p>Le rapport est un vrai document d’information du public et non un simple document de communication. Vous trouverez
+<a href=""https://expertises.ademe.fr/professionnels/collectivites/integrer-lenvironnement-domaines-dintervention/dechets/connaitre/dossier/acceder-donnees/rapport-service-public-prevention-gestion-dechets-menagers-assimiles"">
+ici une page d’information
+</a>
+sur le rapport du service public</p>
+<p>de prévention et de gestion des déchets ménagers et assimilés et les exigences associées.</p>
+"
+cr_resau_achats_responsables,Justificatif de participation à un réseau d'acheteurs ou club d'acheteurs,eci_3.2.3,"<p>Compte-rendu de réunions, etc.</p>
+"
+liste_etablissements_ecoconception,Liste des établissements,eci_3.4.2,
+PLPDMA,Programme local de prévention des déchets - PLPDMA,"eci_2.1.0, eci_2.1.1",
+cr_commission_suivi_sites,Compte-rendu de commission de suivi de site,eci_2.4.0,
+partenariat_acteurs,Conventions de partenariat,eci_5.1.3,
+recherche_acteurs_recherche_financements,Preuve des démarches proactives de recherche d'acteurs intéressés,eci_4.3.3,"<p>Appels à idées, communication ouverte, etc.</p>
+"
+com_externe_bilan,Support de communication externe,eci_1.3.2,
+synthese_enjeux_objectifs_actions_eci,"Synthèse des enjeux, objectifs et actions économie circulaire des documents de planification analysés",eci_1.1.2,"<p>La synthèse doit indiquer les sources des enjeux, objectifs et actions.</p>
+"
+methode_eval_efc,Présentation de la méthode d'évaluation choisie,eci_3.6.4,
+plan_action_maj_suite_bilan,Programme d'actions mis à jour,eci_1.3.2,
+com_public_eit,Supports de communication/sensibilisation réalisés,eci_3.5.2,
+cr_gt_strategie_eit,Compte rendu des réunions de travail pour définir la stratégie,eci_3.5.1,"<p>Dans le but de montrer l'implication de tous les services concernés, en particulier du service développement économique</p>
+"
+accompagnement_ecoconception,"Fiches descriptives de l'accompagnement réalisé, factures, etc.",eci_3.4.3,
+delib_PLPDMA,Délibération approuvant le PLPDMA ou une délibération récente prise pour le lancement de l’élaboration du PLPDMA.,eci_2.1.0,
+fiche_Optigede_conso_responsable,Fiches actions sur Optigede,eci_3.3.3,

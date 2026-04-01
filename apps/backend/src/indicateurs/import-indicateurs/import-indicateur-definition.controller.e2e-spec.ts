@@ -1,9 +1,90 @@
 import { INestApplication } from '@nestjs/common';
-import { getTestApp, getTestDatabase } from '@tet/backend/test';
+import {
+  getTestApp,
+  getTestDatabase,
+  parseCsvWithSchema,
+  stringFrenchNumberSchema,
+} from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
 import { sql } from 'drizzle-orm';
+import * as path from 'path';
 import { default as request } from 'supertest';
+import * as z from 'zod/mini';
 import { indicateurDefinitionTable } from '../definitions/indicateur-definition.table';
+import TrajectoiresXlsxService from '../trajectoires/trajectoires-xlsx.service';
+import { importIndicateurDefinitionSchema } from './import-indicateur-definition.dto';
+
+/**
+ * Creates a mock SheetService that reads from local CSV files.
+ * Routes calls based on the range parameter to the appropriate CSV file.
+ */
+function createLocalSheetServiceMock(): Partial<SheetService> {
+  return {
+    getDataFromSheet: vi
+      .fn()
+      .mockImplementation(
+        async <T extends Record<string, unknown>>(
+          _spreadsheetId: string,
+          schema: any,
+          range?: string,
+          idProperties?: (keyof T)[],
+          templateData?: Partial<T>
+        ): Promise<{ data: T[]; header: string[] | null }> => {
+          // Changelog / Versions sheet
+          if (range?.startsWith('Versions')) {
+            const data = [
+              { version: '1.0.1', date: '2026-04-01', description: 'Test' },
+            ] as unknown as T[];
+            return { data, header: ['version', 'date', 'description'] };
+          }
+
+          // Objectifs sheet
+          if (range?.startsWith('Objectifs')) {
+            const csvPath = path.join(
+              __dirname,
+              './samples/import-indicateur-objectifs.csv'
+            );
+            return parseCsvWithSchema<T>(csvPath, schema, templateData);
+          }
+
+          if (range?.startsWith('Indicateur')) {
+            const csvPath = path.join(
+              __dirname,
+              './samples/import-indicateur-definitions.csv'
+            );
+            return parseCsvWithSchema<T>(
+              csvPath,
+              z.extend(importIndicateurDefinitionSchema, {
+                precision: stringFrenchNumberSchema.optional(),
+                borneMin: stringFrenchNumberSchema.nullable().optional(),
+                borneMax: stringFrenchNumberSchema.nullable().optional(),
+                participationScore: z.optional(
+                  z.transform(
+                    (value) => value?.toString().toLowerCase() === 'true'
+                  )
+                ),
+                sansValeurUtilisateur: z.optional(
+                  z.transform(
+                    (value) => value?.toString().toLowerCase() === 'true'
+                  )
+                ),
+              }),
+              templateData
+            );
+          }
+
+          throw new Error(`Unknown range ${range} in mock SheetService`);
+        }
+      ),
+
+    getDefaultRangeFromHeader: vi
+      .fn()
+      .mockImplementation((_header: string[], sheetName?: string): string => {
+        return sheetName || '';
+      }),
+  };
+}
 
 describe('import-indicateur-definition.controller.e2e-spec', () => {
   let app: INestApplication;
@@ -11,8 +92,13 @@ describe('import-indicateur-definition.controller.e2e-spec', () => {
 
   beforeAll(async () => {
     app = await getTestApp({
-      // simule l'env. de prod pour tester que l'on ne peut pas écraser la version courante
       mockProdEnv: true,
+      overrides: (builder) => {
+        builder
+          .overrideProvider(SheetService)
+          .useValue(createLocalSheetServiceMock());
+        builder.overrideProvider(TrajectoiresXlsxService).useValue({});
+      },
     });
     databaseService = await getTestDatabase(app);
 
@@ -21,7 +107,7 @@ describe('import-indicateur-definition.controller.e2e-spec', () => {
     };
   });
 
-  it(`Import des indicateurs depuis le spreadsheet`, async () => {
+  it(`Import des indicateurs depuis le fichier CSV local`, async () => {
     // Reset the version
     await databaseService.db
       .update(indicateurDefinitionTable)
@@ -52,14 +138,14 @@ describe('import-indicateur-definition.controller.e2e-spec', () => {
       ),
       statusCode: 422,
     });
-  }, 10000); // 10 seconds timeout to allow the import to complete
+  }, 30000);
 
-  it(`Vérfie les formules des indicateurs depuis le spreadsheet`, async () => {
+  it(`Vérifie les formules des indicateurs depuis le fichier CSV local`, async () => {
     const response = await request(app.getHttpServer())
       .get(`/indicateur-definitions/verify`)
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`);
     expect(response.body).toMatchObject({
       ok: true,
     });
-  }, 10000); // 10 seconds timeout to allow the import to complete
+  }, 10000);
 });

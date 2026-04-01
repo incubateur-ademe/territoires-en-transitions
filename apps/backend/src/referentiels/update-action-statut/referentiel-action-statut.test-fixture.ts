@@ -76,7 +76,7 @@ export async function updateAllNeedReferentielStatutsToCompleteReferentiel(
       collectiviteId: collectiviteId,
     });
   console.log(
-    `Score for referentiel ${referentiel}: ${scoreSnapshot.scoresPayload.scores.score.pointFait} / ${scoreSnapshot.scoresPayload.scores.score.pointPotentiel}, search for actions to complete`
+    `Score for referentiel ${referentiel}: ${scoreSnapshot.scoresPayload.scores.score.pointFait} / ${scoreSnapshot.scoresPayload.scores.score.pointPotentiel} (${scoreSnapshot.scoresPayload.scores.score.pointReferentiel}), search for actions to complete (${scoreSnapshot.scoresPayload.scores.score.completedTachesCount} completed taches)`
   );
 
   const actionStatusesToCreate: ActionStatutCreate[] =
