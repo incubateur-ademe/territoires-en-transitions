@@ -39,7 +39,7 @@ const ActionLieeCard = ({ action }: ActionLieeCardProps) => {
           <ScoreProgressBar score={action.score} className="w-2/3" />
         )}
         {/* Badge de score */}
-        {action.score && <ScoreRatioBadge score={action.score} size="sm" />}
+        {action.score && <ScoreRatioBadge score={action.score} size="xs" />}
       </Stack>
     </Card>
   );

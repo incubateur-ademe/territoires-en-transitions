@@ -43,7 +43,7 @@ export const Moyens = ({ fiche, budgets = [] }: MoyensProps) => {
       <Divider className="mt-2" />
       <Stack>
         <Title variant="h5" className="text-primary-8 uppercase">
-          Moyens
+          Budget
         </Title>
 
         <Paragraph
