@@ -156,6 +156,15 @@ export class ReferentielScoresPom {
     );
   }
 
+  getScoreRatioLocator(
+    referentielId: ReferentielId,
+    actionIdentifiant: string
+  ) {
+    return this.page.locator(
+      `[data-test="scoreRatio-${referentielId}_${actionIdentifiant}"]`
+    );
+  }
+
   async expectScoreRatio(
     referentielId: ReferentielId,
     actionIdentifiant: string,
@@ -163,12 +172,19 @@ export class ReferentielScoresPom {
     pointPotentiel: number
   ) {
     await expect(
-      this.page.locator(
-        `[data-test="scoreRatio-${referentielId}_${actionIdentifiant}"]`
-      )
+      this.getScoreRatioLocator(referentielId, actionIdentifiant)
     ).toContainText(
       `${roundTo(pointFait, 1)} / ${roundTo(pointPotentiel, 1)} points`
     );
+  }
+
+  async expectScoreRatioNonConcerne(
+    referentielId: ReferentielId,
+    actionIdentifiant: string
+  ) {
+    await expect(
+      this.getScoreRatioLocator(referentielId, actionIdentifiant)
+    ).toContainText(/\b0 point\b/i);
   }
 
   async expandSousAction(sousActionIdentifiant: string) {

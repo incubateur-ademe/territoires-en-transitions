@@ -85,6 +85,36 @@ test.describe('Update action statut', () => {
     );
   });
 
+  test("Possible de mettre à jour le statut d'une sous-action (avec tâches) détaillé au pourcentage en tant qu'éditeur si on est pas en audit - cas particulier lorsqu'on part du non concerne et qu'on ne change pas le slider", async ({
+    page,
+    referentielScoresPom,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    referentiels, // We have to keep this variable order to clean data
+  }) => {
+    await referentielScoresPom.goto('cae');
+    await referentielScoresPom.goToActionPage(
+      '1 - Planification',
+      '1.1 Stratégie globale',
+      '1.1.1 Définir la vision, les'
+    );
+
+    const actionId = '1.1.1.1';
+    await referentielScoresPom.expectScoreRatio('cae', actionId, 0, 0.6);
+    await referentielScoresPom.expectScoreRatio('cae', '1.1.1', 0, 12);
+
+    await referentielScoresPom.updateSousActionAvancement(
+      actionId,
+      'non_concerne'
+    );
+    await referentielScoresPom.expectScoreRatioNonConcerne('cae', actionId);
+
+    // We open the modal and don't change the slider
+    await referentielScoresPom.updateSousActionAvancement(actionId, 'detaille');
+    await page.getByRole('button', { name: 'Valider' }).click();
+    await referentielScoresPom.expectScoreRatio('cae', actionId, 0.3, 0.6);
+    await referentielScoresPom.expectScoreRatio('cae', '1.1.1', 0.3, 12);
+  });
+
   test("Possible de mettre à jour le statut d'une sous-action (avec tâches) détaillé à la tâche en tant qu'éditeur si on est pas en audit", async ({
     page,
     referentielScoresPom,
