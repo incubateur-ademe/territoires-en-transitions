@@ -22,7 +22,7 @@ export const assertNoDuplicateBudgets = (
     const key =
       budget.id !== undefined
         ? `id:${budget.id}`
-        : `${budget.ficheId}:${budget.type}:${budget.unite}:${budget.annee}`;
+        : `${budget.ficheId}:${budget.type}:${budget.unite}:${budget.annee ?? null}`;
 
     if (seen.has(key)) {
       throw new Error(`Duplicate budget entry: ${key}`);
