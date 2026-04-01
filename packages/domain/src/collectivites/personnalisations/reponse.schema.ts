@@ -17,26 +17,38 @@ export const reponseValueSchema = z.union([
 
 export type PersonnalisationReponseValue = z.infer<typeof reponseValueSchema>;
 
-const personnalisationReponseBinaireSchema = z.object({
+const personnalisationReponseBaseSchema = z.object({
   questionId: z.string(),
-  questionType: z.literal('binaire'),
-  reponse: reponseBinaireValueSchema,
   justification: z.nullable(z.string()),
+  competenceCode: z.nullable(z.string()),
+  competenceIntitule: z.nullable(z.string()),
+  competenceExercee: z.nullable(z.boolean()),
+  natureTransfert: z.nullable(z.string()),
 });
 
-const personnalisationReponseProportionSchema = z.object({
-  questionId: z.string(),
-  questionType: z.literal('proportion'),
-  reponse: reponseProportionValueSchema,
-  justification: z.nullable(z.string()),
-});
+const personnalisationReponseBinaireSchema = z.extend(
+  personnalisationReponseBaseSchema,
+  {
+    questionType: z.literal('binaire'),
+    reponse: reponseBinaireValueSchema,
+  }
+);
 
-const personnalisationReponseChoixSchema = z.object({
-  questionId: z.string(),
-  questionType: z.literal('choix'),
-  reponse: reponseChoixValueSchema,
-  justification: z.nullable(z.string()),
-});
+const personnalisationReponseProportionSchema = z.extend(
+  personnalisationReponseBaseSchema,
+  {
+    questionType: z.literal('proportion'),
+    reponse: reponseProportionValueSchema,
+  }
+);
+
+const personnalisationReponseChoixSchema = z.extend(
+  personnalisationReponseBaseSchema,
+  {
+    questionType: z.literal('choix'),
+    reponse: reponseChoixValueSchema,
+  }
+);
 
 export const personnalisationReponseSchema = z.discriminatedUnion(
   'questionType',

@@ -69,6 +69,25 @@ describe('Lister les réponses aux questions de personnalisation', () => {
       expect(result.filter((r) => r.reponse === null)).toHaveLength(3);
     });
 
+    test('Retourne la réponse Banatic (compétence exercée) si elle existe à défaut de la réponse de la collectivité', async () => {
+      const caller = router.createCaller({ user: testData.userCredentials });
+
+      const result = await caller.collectivites.personnalisations.listReponses({
+        collectiviteId: testData.collectivite.id,
+        questionIds: [testData.questionBinaireCompetenceBanaticId],
+      });
+
+      expect(result).toHaveLength(1);
+      const row = result[0];
+      expect(row.questionType).toBe('binaire');
+      expect(row.questionId).toBe(testData.questionBinaireCompetenceBanaticId);
+      expect(row.reponse).toBe(true);
+      expect(row.competenceCode).toBe(testData.competenceBanaticTestCode);
+      expect(row.competenceIntitule).toEqual(testData.competenceIntitule);
+      expect(row.competenceExercee).toBe(true);
+      expect(row.natureTransfert).toBe('transfert de test');
+    });
+
     test('Retourne les réponses binaire, proportion et choix enregistrées', async () => {
       const caller = router.createCaller({ user: testData.userCredentials });
 
@@ -198,13 +217,18 @@ describe('Lister les réponses aux questions de personnalisation', () => {
         collectiviteId: testData.collectivite.id,
       });
 
-      expect(result.length).toEqual(2);
+      expect(result.length).toEqual(3);
       expect(
         result.find((r) => r.questionId === testData.questionBinaireId)?.reponse
       ).toBe(true);
       expect(
         result.find((r) => r.questionId === testData.questionChoixId)?.reponse
       ).toBe(testData.choixId);
+      expect(
+        result.find(
+          (r) => r.questionId === testData.questionBinaireCompetenceBanaticId
+        )?.reponse
+      ).toBe(true);
     });
   });
 

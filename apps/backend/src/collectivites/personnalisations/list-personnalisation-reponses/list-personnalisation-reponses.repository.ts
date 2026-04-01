@@ -4,18 +4,26 @@ import { questionTable } from '@tet/backend/collectivites/personnalisations/mode
 import { reponseBinaireTable } from '@tet/backend/collectivites/personnalisations/models/reponse-binaire.table';
 import { reponseChoixTable } from '@tet/backend/collectivites/personnalisations/models/reponse-choix.table';
 import { reponseProportionTable } from '@tet/backend/collectivites/personnalisations/models/reponse-proportion.table';
+import { collectiviteBanatic2025CompetenceTable } from '@tet/backend/collectivites/shared/models/collectivite-banatic-2025-competence.table';
+import { collectiviteBanatic2025TransfertTable } from '@tet/backend/collectivites/shared/models/collectivite-banatic-2025-transfert.table';
+import { banatic2025CompetenceTable } from '@tet/backend/shared/models/banatic-2025-competence.table';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import { Result } from '@tet/backend/utils/result.type';
 import {
   PersonnalisationReponse,
   PersonnalisationReponseValue,
 } from '@tet/domain/collectivites';
-import { and, eq, inArray, isNotNull, SQL, sql } from 'drizzle-orm';
+import { and, eq, inArray, isNotNull, or, SQL, sql } from 'drizzle-orm';
+import { DatabaseError } from 'pg';
 import {
   ListPersonnalisationReponsesErrorEnum,
   type ListPersonnalisationReponsesError,
 } from './list-personnalisation-reponses.errors';
 import type { ListPersonnalisationReponsesInput } from './list-personnalisation-reponses.input';
+
+type CompetenceSubquery = ReturnType<
+  ListPersonnalisationReponsesRepository['getCompetenceSubquery']
+>;
 
 @Injectable()
 export class ListPersonnalisationReponsesRepository {
@@ -35,15 +43,25 @@ export class ListPersonnalisationReponsesRepository {
 
     try {
       const questionTypeSubquery = this.getQuestionTypeSubquery(tx);
-      const reponseSubquery = this.getReponseSubquery(collectiviteId, tx);
+      const competenceSubquery = this.getCompetenceSubquery(collectiviteId, tx);
+      const reponseSubquery = this.getReponseSubquery(
+        collectiviteId,
+        competenceSubquery,
+        tx
+      );
       const justificationSubquery = this.getJustificationSubquery(
         collectiviteId,
         tx
       );
 
       const conditions: SQL[] = [];
-      if (questionIds && questionIds.length > 0) {
-        conditions.push(inArray(questionTypeSubquery.id, questionIds));
+      if (questionIds !== undefined) {
+        if (questionIds.length === 0) {
+          // tableau vide explicite : aucune question (≠ undefined = toutes les questions avec réponse)
+          conditions.push(sql`false`);
+        } else {
+          conditions.push(inArray(questionTypeSubquery.id, questionIds));
+        }
       }
       if (!input.withEmptyReponse) {
         conditions.push(isNotNull(reponseSubquery.value));
@@ -55,8 +73,13 @@ export class ListPersonnalisationReponsesRepository {
           questionType: questionTypeSubquery.type,
           reponse: reponseSubquery.value,
           justification: justificationSubquery.justification,
+          competenceCode: competenceSubquery.competenceCode,
+          competenceIntitule: competenceSubquery.competenceIntitule,
+          competenceExercee: competenceSubquery.competenceExercee,
+          natureTransfert: competenceSubquery.natureTransfert,
         })
         .from(questionTypeSubquery)
+        .leftJoin(questionTable, eq(questionTable.id, questionTypeSubquery.id))
         .leftJoin(
           reponseSubquery,
           eq(reponseSubquery.questionId, questionTypeSubquery.id)
@@ -64,6 +87,10 @@ export class ListPersonnalisationReponsesRepository {
         .leftJoin(
           justificationSubquery,
           eq(justificationSubquery.questionId, questionTypeSubquery.id)
+        )
+        .leftJoin(
+          competenceSubquery,
+          eq(competenceSubquery.competenceCode, questionTable.competenceCode)
         );
 
       if (conditions.length) query.where(and(...conditions));
@@ -75,9 +102,9 @@ export class ListPersonnalisationReponsesRepository {
       };
     } catch (error) {
       this.logger.error(
-        `Erreur de chargement des réponses ${error} ${collectiviteId} ${questionIds?.join(
-          ','
-        )}`
+        `Erreur de chargement des réponses ${
+          (error as DatabaseError).cause
+        } ${collectiviteId} ${questionIds?.join(',')}`
       );
       return {
         success: false,
@@ -113,18 +140,41 @@ export class ListPersonnalisationReponsesRepository {
   /**
    * Sous-requête : réponse
    */
-  private getReponseSubquery(collectiviteId: number, tx: Transaction) {
+  private getReponseSubquery(
+    collectiviteId: number,
+    competenceSubquery: CompetenceSubquery,
+    tx: Transaction
+  ) {
     // cast toutes les réponses en jsonb pour que l'UNION fonctionne
     return tx
       .select({
-        questionId: reponseBinaireTable.questionId,
+        questionId: questionTable.id,
         value:
-          sql<PersonnalisationReponseValue>`to_jsonb(${reponseBinaireTable.reponse})`.as(
+          sql<PersonnalisationReponseValue>`to_jsonb(coalesce(${reponseBinaireTable.reponse}, ${competenceSubquery.competenceExercee}))`.as(
             'value'
           ),
       })
-      .from(reponseBinaireTable)
-      .where(eq(reponseBinaireTable.collectiviteId, collectiviteId))
+      .from(questionTable)
+      .leftJoin(
+        reponseBinaireTable,
+        and(
+          eq(reponseBinaireTable.questionId, questionTable.id),
+          eq(reponseBinaireTable.collectiviteId, collectiviteId)
+        )
+      )
+      .leftJoin(
+        competenceSubquery,
+        eq(competenceSubquery.competenceCode, questionTable.competenceCode)
+      )
+      .where(
+        and(
+          eq(questionTable.type, 'binaire'),
+          or(
+            isNotNull(reponseBinaireTable.questionId),
+            isNotNull(competenceSubquery.competenceExercee)
+          )
+        )
+      )
       .union(
         tx
           .select({
@@ -150,5 +200,46 @@ export class ListPersonnalisationReponsesRepository {
           .where(eq(reponseProportionTable.collectiviteId, collectiviteId))
       )
       .as('reponse');
+  }
+
+  /**
+   * Sous-requête : compétence Banatic associée à  la question
+   */
+  private getCompetenceSubquery(collectiviteId: number, tx: Transaction) {
+    return tx
+      .select({
+        competenceCode: banatic2025CompetenceTable.competenceCode,
+        competenceIntitule: banatic2025CompetenceTable.intitule,
+        competenceExercee: collectiviteBanatic2025CompetenceTable.exercice,
+        natureTransfert: collectiviteBanatic2025TransfertTable.natureTransfert,
+      })
+      .from(banatic2025CompetenceTable)
+      .leftJoin(
+        collectiviteBanatic2025CompetenceTable,
+        and(
+          eq(
+            collectiviteBanatic2025CompetenceTable.collectiviteId,
+            collectiviteId
+          ),
+          eq(
+            collectiviteBanatic2025CompetenceTable.competenceCode,
+            banatic2025CompetenceTable.competenceCode
+          )
+        )
+      )
+      .leftJoin(
+        collectiviteBanatic2025TransfertTable,
+        and(
+          eq(
+            collectiviteBanatic2025TransfertTable.collectiviteId,
+            collectiviteId
+          ),
+          eq(
+            collectiviteBanatic2025TransfertTable.competenceCode,
+            banatic2025CompetenceTable.competenceCode
+          )
+        )
+      )
+      .as('competence');
   }
 }

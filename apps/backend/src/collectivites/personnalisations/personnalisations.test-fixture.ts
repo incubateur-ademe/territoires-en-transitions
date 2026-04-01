@@ -1,14 +1,17 @@
+import { collectiviteBanatic2025TransfertTable } from '@tet/backend/collectivites/shared/models/collectivite-banatic-2025-transfert.table';
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
 import { questionActionTable } from '@tet/backend/referentiels/models/question-action.table';
+import { banatic2025CompetenceTable } from '@tet/backend/shared/models/banatic-2025-competence.table';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import { CollectiviteType } from '@tet/domain/collectivites';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
-import { eq, inArray } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 import { getAuthUserFromUserCredentials } from '../../../test/get-auth-user-from-credentials';
 import { addTestCollectiviteAndUser } from '../collectivites/collectivites.test-fixture';
+import { collectiviteBanatic2025CompetenceTable } from '../shared/models/collectivite-banatic-2025-competence.table';
 import { justificationTable } from './models/justification.table';
 import { questionChoixTable } from './models/question-choix.table';
 import { questionThematiqueTable } from './models/question-thematique.table';
@@ -83,6 +86,115 @@ export async function addTestChoix(
           .delete(questionChoixTable)
           .where(inArray(questionChoixTable.id, choixIds));
       }
+    },
+  };
+}
+
+/** insère une compétence */
+export async function addTestBanaticCompetence(
+  { db }: DatabaseServiceInterface,
+  data: {
+    intitule?: string;
+    version?: string;
+  }
+): Promise<{
+  competenceCode: number;
+  intitule: string;
+  cleanup: () => Promise<void>;
+}> {
+  // plage alignée sur la contrainte banatic_2025_competence_code_format (1000–9999)
+  const competenceCode = 1000 + Math.floor(Math.random() * 8999);
+  const intitule = data.intitule ?? 'Compétence test';
+
+  const insertedRows = await db
+    .insert(banatic2025CompetenceTable)
+    .values({
+      competenceCode,
+      intitule,
+      version: data.version ?? PERSONNALISATION_QUESTION_VERSION,
+    })
+    .onConflictDoNothing()
+    .returning({ competenceCode: banatic2025CompetenceTable.competenceCode });
+
+  const insertedByFixture = insertedRows.length > 0;
+
+  return {
+    competenceCode,
+    intitule,
+    cleanup: async () => {
+      if (insertedByFixture) {
+        await db
+          .delete(banatic2025CompetenceTable)
+          .where(eq(banatic2025CompetenceTable.competenceCode, competenceCode));
+      }
+    },
+  };
+}
+
+/** affecte une compétence à une collectivité */
+export async function addTestCollectiviteCompetence(
+  { db }: DatabaseServiceInterface,
+  data: {
+    collectiviteId: number;
+    competenceCode: number;
+    exercice: boolean;
+  }
+): Promise<{ cleanup: () => Promise<void> }> {
+  await db
+    .insert(collectiviteBanatic2025CompetenceTable)
+    .values(data)
+    .onConflictDoNothing();
+
+  return {
+    cleanup: async () => {
+      await db
+        .delete(collectiviteBanatic2025CompetenceTable)
+        .where(
+          and(
+            eq(
+              collectiviteBanatic2025CompetenceTable.collectiviteId,
+              data.collectiviteId
+            ),
+            eq(
+              collectiviteBanatic2025CompetenceTable.competenceCode,
+              data.competenceCode
+            )
+          )
+        );
+    },
+  };
+}
+
+/** ajoute un transfert de compétence pour une collectivité */
+export async function addTestCollectiviteTransfertCompetence(
+  { db }: DatabaseServiceInterface,
+  data: {
+    collectiviteId: number;
+    competenceCode: number;
+    natureTransfert?: string;
+  }
+): Promise<{ cleanup: () => Promise<void> }> {
+  await db
+    .insert(collectiviteBanatic2025TransfertTable)
+    .values(data)
+    .onConflictDoNothing();
+
+  return {
+    cleanup: async () => {
+      await db
+        .delete(collectiviteBanatic2025TransfertTable)
+        .where(
+          and(
+            eq(
+              collectiviteBanatic2025TransfertTable.collectiviteId,
+              data.collectiviteId
+            ),
+            eq(
+              collectiviteBanatic2025TransfertTable.competenceCode,
+              data.competenceCode
+            )
+          )
+        );
     },
   };
 }
@@ -319,6 +431,53 @@ export async function addTestPersonnalisationData(
     questionChoixId: mergedTestDataId.questionChoixId,
   });
 
+  // question binaire + compétence Banatic pour tester la valeur sans reponse_binaire
+  const questionBinaireCompetenceBanaticId = `test-q-banatic-${runId}`;
+  const {
+    competenceCode,
+    intitule: competenceIntitule,
+    cleanup: cleanupBanaticCompetence,
+  } = await addTestBanaticCompetence(databaseService, {
+    intitule: 'Compétence test personnalisation',
+  });
+
+  const { cleanup: cleanupCollectiviteBanaticCompetence } =
+    await addTestCollectiviteCompetence(databaseService, {
+      collectiviteId: collectivite.id,
+      competenceCode,
+      exercice: true,
+    });
+
+  const { cleanup: cleanupCollectiviteTransfertCompetence } =
+    await addTestCollectiviteTransfertCompetence(databaseService, {
+      collectiviteId: collectivite.id,
+      competenceCode,
+      natureTransfert: 'transfert de test',
+    });
+
+  const { cleanup: cleanupQuestionBinaireBanatic } = await addTestQuestions(
+    databaseService,
+    [
+      {
+        id: questionBinaireCompetenceBanaticId,
+        type: 'binaire',
+        description: 'Question binaire liée à une compétence Banatic',
+        formulation: 'Question binaire compétence Banatic',
+        thematiqueId: mergedTestDataId.thematiqueId,
+        typesCollectivitesConcernees: [collectiviteType],
+        competenceCode,
+        version: PERSONNALISATION_QUESTION_VERSION,
+      },
+    ]
+  );
+
+  const cleanupBanaticCompetenceFixture = async () => {
+    await cleanupQuestionBinaireBanatic();
+    await cleanupCollectiviteBanaticCompetence();
+    await cleanupCollectiviteTransfertCompetence();
+    await cleanupBanaticCompetence();
+  };
+
   const cleanupReponses = async () => {
     // Nettoyer les réponses
     await databaseService.db
@@ -349,6 +508,9 @@ export async function addTestPersonnalisationData(
 
   return {
     ...mergedTestDataId,
+    questionBinaireCompetenceBanaticId,
+    competenceBanaticTestCode: competenceCode,
+    competenceIntitule,
     isolateFixtureQuestions,
     user,
     userCredentials,
@@ -364,6 +526,8 @@ export async function addTestPersonnalisationData(
         questionBinaireId: mergedTestDataId.questionBinaireId,
         questionChoixId: mergedTestDataId.questionChoixId,
       });
+
+      await cleanupBanaticCompetenceFixture();
 
       // les questions et thématique
       await cleanupQuestionCollectiviteNonConcernee();
