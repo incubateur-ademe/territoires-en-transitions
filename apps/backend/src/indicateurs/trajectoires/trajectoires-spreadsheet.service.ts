@@ -15,7 +15,6 @@ import {
 } from '@tet/domain/indicateurs';
 import { flatten, isNil, partition } from 'es-toolkit';
 import slugify from 'slugify';
-import GroupementsService from '../../collectivites/services/groupements.service';
 import { AuthUser } from '../../users/models/auth.models';
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
@@ -34,7 +33,6 @@ import TrajectoiresDataService from './trajectoires-data.service';
 @Injectable()
 export default class TrajectoiresSpreadsheetService {
   private readonly logger = new Logger(TrajectoiresSpreadsheetService.name);
-  private readonly TRAJECTOIRE_GROUPEMENT = 'trajectoire';
 
   constructor(
     private readonly configService: ConfigurationService,
@@ -42,7 +40,6 @@ export default class TrajectoiresSpreadsheetService {
     private readonly valeursService: CrudValeursService,
     private readonly trajectoiresDataService: TrajectoiresDataService,
     private readonly sheetService: SheetService,
-    private readonly groupementsService: GroupementsService,
     private readonly listCollectivitesService: ListCollectivitesService
   ) {}
 
@@ -92,14 +89,6 @@ export default class TrajectoiresSpreadsheetService {
 
     const indicateurSourceMetadonnee =
       await this.trajectoiresDataService.getTrajectoireIndicateursMetadonnees();
-
-    // Récupération du groupement auquel la collectivité devra être rattachée
-    const groupement = await this.groupementsService.getGroupementAvecNom(
-      this.TRAJECTOIRE_GROUPEMENT
-    );
-    this.logger.log(
-      `Groupement pour la trajectoire trouvé avec l'id ${groupement.id}`
-    );
 
     const verificationRequest: VerificationTrajectoireRequest = {
       collectiviteId: epci.id,
@@ -301,12 +290,6 @@ export default class TrajectoiresSpreadsheetService {
         indicateurValeursTrajectoireResultat,
         undefined // we don't want to check permission, we have already checked it and it's not the same
       );
-
-    // Maintenant que les indicateurs ont été créés, on peut ajouter la collectivité au groupement
-    await this.groupementsService.ajouteCollectiviteAuGroupement(
-      groupement.id,
-      epci.id
-    );
 
     const [
       indicateurResultatConsommationDefinitions,
