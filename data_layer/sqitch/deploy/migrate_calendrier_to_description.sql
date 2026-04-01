@@ -2,6 +2,10 @@
 
 BEGIN;
 
+-- Disable the history trigger before the migration to avoid firing on every row update
+DROP TRIGGER IF EXISTS save_history ON public.fiche_action;
+DROP FUNCTION historique.save_fiche_action();
+
 -- backup data before column drop
 drop table if exists migration.migrate_calendrier_to_description;
 create table migration.migrate_calendrier_to_description as
@@ -19,10 +23,6 @@ set description = case
 end
 where calendrier is not null
   and trim(calendrier) != '';
-
--- Drop the save_fiche_action trigger and function before dropping columns
-DROP TRIGGER IF EXISTS save_history ON public.fiche_action;
-DROP FUNCTION historique.save_fiche_action();
 
 -- Remove the calendrier column from fiche_action table
 alter table public.fiche_action
