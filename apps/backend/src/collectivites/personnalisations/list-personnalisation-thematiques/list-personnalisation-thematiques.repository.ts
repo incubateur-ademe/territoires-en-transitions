@@ -12,7 +12,6 @@ import {
   inArray,
   isNotNull,
   isNull,
-  notExists,
   or,
   sql,
   type SQL,
@@ -68,8 +67,7 @@ export class ListPersonnalisationThematiquesRepository {
     if (thematiqueIds?.length) {
       whereConditions.push(inArray(questionThematiqueTable.id, thematiqueIds));
     }
-    // questions ayant au moins une action dans un des référentiels OU liées à
-    // aucun référentiel
+    // questions ayant au moins une action dans un des référentiels
     if (referentielIds?.length) {
       const referentielOverlapQuery = tx
         .select({ questionId: questionActionTable.questionId })
@@ -84,16 +82,7 @@ export class ListPersonnalisationThematiquesRepository {
             inArray(actionRelationTable.referentiel, referentielIds)
           )
         );
-      const noQuestionActionQuery = tx
-        .select({ questionId: questionActionTable.questionId })
-        .from(questionActionTable)
-        .where(eq(questionActionTable.questionId, questionTable.id));
-      whereConditions.push(
-        or(
-          exists(referentielOverlapQuery),
-          notExists(noQuestionActionQuery)
-        ) as SQL
-      );
+      whereConditions.push(or(exists(referentielOverlapQuery)) as SQL);
     }
 
     const rows = await tx

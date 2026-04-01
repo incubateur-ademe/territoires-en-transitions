@@ -11,17 +11,7 @@ import {
   QuestionChoix,
   QuestionWithChoices,
 } from '@tet/domain/collectivites';
-import {
-  and,
-  eq,
-  exists,
-  inArray,
-  isNull,
-  notExists,
-  or,
-  SQL,
-  sql,
-} from 'drizzle-orm';
+import { and, eq, exists, inArray, isNull, or, SQL, sql } from 'drizzle-orm';
 import { ListPersonnalisationQuestionsInput } from './list-personnalisation-questions.input';
 
 @Injectable()
@@ -97,8 +87,7 @@ export default class ListPersonnalisationQuestionsService {
       conditions.push(exists(actionIdsFilterQuery));
     }
 
-    // questions ayant au moins une action dans un des référentiels OU liées à
-    // aucun référentiel
+    // questions ayant au moins une action dans un des référentiels
     if (referentielIds && referentielIds.length > 0) {
       const referentielOverlapQuery = this.databaseService.db
         .select({ questionId: questionActionTable.questionId })
@@ -113,16 +102,7 @@ export default class ListPersonnalisationQuestionsService {
             inArray(actionRelationTable.referentiel, referentielIds)
           )
         );
-      const noQuestionActionQuery = this.databaseService.db
-        .select({ questionId: questionActionTable.questionId })
-        .from(questionActionTable)
-        .where(eq(questionActionTable.questionId, questionTable.id));
-      conditions.push(
-        or(
-          exists(referentielOverlapQuery),
-          notExists(noQuestionActionQuery)
-        ) as SQL
-      );
+      conditions.push(or(exists(referentielOverlapQuery)) as SQL);
     }
 
     if (thematiqueIds && thematiqueIds.length > 0) {
