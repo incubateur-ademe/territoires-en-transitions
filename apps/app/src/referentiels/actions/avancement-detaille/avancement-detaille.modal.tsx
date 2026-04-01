@@ -52,6 +52,7 @@ const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
         ...omit(statut, ['modifiedAt', 'modifiedBy']),
         avancementDetaille: avancementDetaille,
         avancement: getAvancementFromAvancementDetaille(avancementDetaille),
+        concerne: true,
       });
     }
   }, [statut]);
@@ -60,7 +61,7 @@ const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
     return null;
   }
 
-  const handleSaveScoreDetaille = (values: AvancementValues) => {
+  const handleUpdateScoreDetaille = (values: AvancementValues) => {
     // Si la jauge est à 100% dans un des statuts, le statut
     // est mis à jour automatiquement
 
@@ -90,7 +91,7 @@ const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
               (actionStatutUpdate.avancementDetaille ||
                 AVANCEMENT_DETAILLE_PAR_STATUT.detaille) as AvancementValues
             }
-            onChange={handleSaveScoreDetaille}
+            onChange={handleUpdateScoreDetaille}
           />
 
           {/* Raisons de la répartition */}
