@@ -63,6 +63,20 @@ export const transformFicheBudgetsToBudgetSummary = (
   };
 };
 
+export const budgetMustBeUpdated = (
+  existing: BudgetPerYear,
+  updated: BudgetPerYear
+): boolean => {
+  const etpMatch =
+    existing.etpBudgetId !== undefined &&
+    existing.etpBudgetId === updated.etpBudgetId;
+  const htMatch =
+    existing.htBudgetId !== undefined &&
+    existing.htBudgetId === updated.htBudgetId;
+
+  return etpMatch || htMatch;
+};
+
 export const transformBudgetToFicheBudgetCreate = (
   budget: BudgetPerYear | Budget,
   ficheId: number,
