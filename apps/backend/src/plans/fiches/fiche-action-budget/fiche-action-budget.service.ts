@@ -9,7 +9,11 @@ import {
 } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { FicheBudget, FicheBudgetCreate } from '@tet/domain/plans';
+import {
+  assertNoDuplicateBudgets,
+  FicheBudget,
+  FicheBudgetCreate,
+} from '@tet/domain/plans';
 import { and, eq, inArray, isNotNull, isNull } from 'drizzle-orm';
 
 @Injectable()
@@ -101,6 +105,8 @@ export class FicheActionBudgetService {
     if (!budgets.every((budget) => budget.ficheId === ficheId)) {
       throw new Error('Budgets from the same call must have the same ficheId.');
     }
+
+    assertNoDuplicateBudgets(budgets);
 
     await this.ficheService.canWriteFiche(ficheId, user);
 

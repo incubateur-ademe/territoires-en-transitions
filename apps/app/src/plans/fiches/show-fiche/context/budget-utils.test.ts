@@ -1,6 +1,11 @@
-import { FicheBudget } from '@tet/domain/plans';
+import {
+  assertNoDuplicateBudgets,
+  FicheBudget,
+  FicheBudgetCreate,
+} from '@tet/domain/plans';
 import { describe, expect, it } from 'vitest';
 import {
+  budgetMustBeUpdated,
   transformBudgetToFicheBudgetCreate,
   transformFicheBudgetsToBudgetPerYear,
   transformFicheBudgetsToBudgetSummary,
@@ -291,6 +296,53 @@ describe('budget-utils', () => {
     });
   });
 
+  describe('budgetMustBeUpdated', () => {
+    it('should match by htBudgetId', () => {
+      expect(
+        budgetMustBeUpdated(
+          { year: 2025, htBudgetId: 5906 },
+          { year: 2025, htBudgetId: 5906, montant: 90000 }
+        )
+      ).toBe(true);
+    });
+
+    it('should match by etpBudgetId', () => {
+      expect(
+        budgetMustBeUpdated(
+          { year: 2025, etpBudgetId: 10 },
+          { year: 2025, etpBudgetId: 10, etpPrevisionnel: 5 }
+        )
+      ).toBe(true);
+    });
+
+    it('should not match when both etpBudgetId are undefined', () => {
+      expect(
+        budgetMustBeUpdated(
+          { year: 2026, htBudgetId: 5907 },
+          { year: 2025, htBudgetId: 5906, etpPrevisionnel: 1 }
+        )
+      ).toBe(false);
+    });
+
+    it('should not match when both htBudgetId are undefined', () => {
+      expect(
+        budgetMustBeUpdated(
+          { year: 2025, etpBudgetId: 10 },
+          { year: 2026, etpBudgetId: 20 }
+        )
+      ).toBe(false);
+    });
+
+    it('should not match when no ID matches', () => {
+      expect(
+        budgetMustBeUpdated(
+          { year: 2025, htBudgetId: 1 },
+          { year: 2027, htBudgetId: 99 }
+        )
+      ).toBe(false);
+    });
+  });
+
   describe('transformBudgetToFicheBudgetCreate', () => {
     it('should handle all transformation scenarios', () => {
       // Test with full BudgetPerYear (both HT and ETP)
@@ -435,6 +487,51 @@ describe('budget-utils', () => {
       );
       expect(idResult.find((b) => b.unite === 'HT')?.id).toBe(10);
       expect(idResult.find((b) => b.unite === 'ETP')?.id).toBe(20);
+    });
+  });
+
+  describe('assertNoDuplicateBudgets', () => {
+    const baseBudget: FicheBudgetCreate = {
+      ficheId: 1,
+      type: 'fonctionnement',
+      unite: 'HT',
+    };
+
+    it('does not throw for unique budgets', () => {
+      expect(() =>
+        assertNoDuplicateBudgets([
+          { ...baseBudget, annee: 2025 },
+          { ...baseBudget, annee: 2026 },
+          { ...baseBudget, unite: 'ETP', annee: 2025 },
+        ])
+      ).not.toThrow();
+    });
+
+    it('does not throw for budgets with different ids', () => {
+      expect(() =>
+        assertNoDuplicateBudgets([
+          { ...baseBudget, id: 1, annee: 2025 },
+          { ...baseBudget, id: 2, annee: 2025 },
+        ])
+      ).not.toThrow();
+    });
+
+    it('throws on duplicate budgets without id', () => {
+      expect(() =>
+        assertNoDuplicateBudgets([
+          { ...baseBudget, annee: 2025 },
+          { ...baseBudget, annee: 2025 },
+        ])
+      ).toThrow('Duplicate budget entry');
+    });
+
+    it('throws on duplicate budgets with same id', () => {
+      expect(() =>
+        assertNoDuplicateBudgets([
+          { ...baseBudget, id: 5906, annee: 2025 },
+          { ...baseBudget, id: 5906, annee: 2025 },
+        ])
+      ).toThrow('Duplicate budget entry');
     });
   });
 });

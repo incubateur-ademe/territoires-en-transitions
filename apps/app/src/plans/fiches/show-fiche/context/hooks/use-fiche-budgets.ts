@@ -4,6 +4,7 @@ import { useDeleteBudgets } from '../../../update-fiche/data/use-delete-budgets'
 import { useGetBudget } from '../../../update-fiche/data/use-get-budget';
 import { useUpsertBudgets } from '../../../update-fiche/data/use-upsert-budgets';
 import {
+  budgetMustBeUpdated,
   transformBudgetToFicheBudgetCreate,
   transformFicheBudgetsToBudgetPerYear,
   transformFicheBudgetsToBudgetSummary,
@@ -50,6 +51,8 @@ export const useFicheBudgets = (fiche: FicheWithRelations): BudgetsState => {
           fiche.id,
           type
         );
+
+        console.log('budgetsToUpsert', budget, budgetsToUpsert);
         await upsertBudgetsMutation.mutateAsync(budgetsToUpsert);
         return;
       }
@@ -60,15 +63,7 @@ export const useFicheBudgets = (fiche: FicheWithRelations): BudgetsState => {
           : fonctionnementPerYear;
 
       const budgetsToUpdate = currentPerYear
-        .map((b) => {
-          const mustBeSwapped =
-            (b.etpBudgetId === budget.etpBudgetId ||
-              b.htBudgetId === budget.htBudgetId) &&
-            (budget.etpBudgetId !== undefined ||
-              budget.htBudgetId !== undefined);
-
-          return mustBeSwapped ? budget : b;
-        })
+        .map((b) => (budgetMustBeUpdated(b, budget) ? budget : b))
         .flatMap((b) => transformBudgetToFicheBudgetCreate(b, fiche.id, type));
 
       await upsertBudgetsMutation.mutateAsync(budgetsToUpdate);
