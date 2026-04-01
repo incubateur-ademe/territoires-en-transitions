@@ -16,7 +16,7 @@ export const Badge = ({
   title,
   variant = 'default',
   type = 'solid',
-  size = 'sm',
+  size = 'xs',
   uppercase = false,
   className,
   ...props
@@ -25,9 +25,9 @@ export const Badge = ({
 
   const { background, border, text } = badgeClassnames[variant][type];
 
-  let fontStyle = size === 'sm' ? 'text-sm' : 'text-xs';
+  let fontStyle = size === 'sm' ? 'text-xs' : 'text-[0.6rem]';
 
-  const paddingStyle = size === 'sm' ? 'px-3 py-1' : 'px-1.5 py-0.5';
+  const paddingStyle = size === 'sm' ? 'px-1.5' : 'px-1';
 
   if (uppercase) fontStyle += ' uppercase';
 
@@ -35,7 +35,7 @@ export const Badge = ({
     <Stack wrap={false} direction="row" gap={0}>
       <Text
         style={tw(
-          `${paddingStyle} ${background} ${border} ${text} ${fontStyle} leading-4 border rounded font-bold ${style}`
+          `${paddingStyle} pt-0 pb-0.5 ${background} ${border} ${text} ${fontStyle} leading-none border rounded font-bold ${style}`
         )}
         {...props}
       >

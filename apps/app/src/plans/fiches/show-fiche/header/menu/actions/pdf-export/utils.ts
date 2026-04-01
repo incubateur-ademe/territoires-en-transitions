@@ -12,10 +12,10 @@ export type PdfSectionKey =
 export const keyToTitle: Record<PdfSectionKey, string> = {
   intro: 'Intro : Description, Instances de gouvernance',
   planning: 'Calendrier',
-  acteurs: 'Acteurs',
-  indicateurs: 'Indicateurs de suivi',
+  acteurs: 'Acteurs du projet',
+  indicateurs: 'Indicateurs liés',
   notes: 'Notes',
-  moyens: 'Moyens',
+  moyens: 'Budget',
   fiches: 'Actions liées',
   actionsLiees: 'Mesures des référentiels liées',
   documents: 'Documents',

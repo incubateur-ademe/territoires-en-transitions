@@ -86,7 +86,7 @@ const Indicateurs = ({ fiche, indicateursListe }: IndicateursProps) => {
       <Divider className="mt-2" />
       <Stack>
         <Title variant="h5" className="text-primary-8 uppercase">
-          Indicateurs de suivi
+          Indicateurs liés
         </Title>
 
         {/* Objectifs */}
