@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
+import { Test, TestingModuleBuilder } from '@nestjs/testing';
 import { AppModule } from '@tet/backend/app.module';
 import { ContextStoreService } from '@tet/backend/utils/context/context.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -11,20 +11,25 @@ import { observable } from '@trpc/server/observable';
 
 export const getTestApp = async (options?: {
   mockProdEnv?: boolean;
+  overrides?: (builder: TestingModuleBuilder) => void;
 }): Promise<INestApplication> => {
-  const moduleRefPromise = await Test.createTestingModule({
+  const moduleBuilder = Test.createTestingModule({
     imports: [AppModule],
   });
 
   if (options?.mockProdEnv) {
-    moduleRefPromise.overrideProvider(VersionService).useValue({
+    moduleBuilder.overrideProvider(VersionService).useValue({
       getVersion: () => {
         return { environment: 'prod' };
       },
     });
   }
 
-  const moduleRef = await moduleRefPromise.compile();
+  if (options?.overrides) {
+    options.overrides(moduleBuilder);
+  }
+
+  const moduleRef = await moduleBuilder.compile();
 
   const app = moduleRef.createNestApplication();
   const contextStoreService = app.get(ContextStoreService);
@@ -60,27 +65,27 @@ export function createTRPCClientFromCaller(
             // e.g., "referentiels.snapshots.getCurrent" -> caller.referentiels.snapshots.getCurrent
             // Note: Caller procedures are callable directly, unlike TRPCClient which uses .query()/.mutate()
             const pathParts = op.path.split('.');
-            
+
             try {
               // Navigate through the path to get the procedure
               let current: any = caller;
-              
+
               for (const part of pathParts) {
                 if (current == null) {
                   throw new Error(
                     `Path "${op.path}" not found in caller. Cannot access "${part}" on null/undefined.`
                   );
                 }
-                
+
                 // Access the property (handles proxies)
                 const value = current[part];
-                
+
                 if (value === undefined) {
                   throw new Error(
                     `Path "${op.path}" not found in caller. Part "${part}" is undefined.`
                   );
                 }
-                
+
                 current = value;
               }
 
@@ -88,7 +93,9 @@ export function createTRPCClientFromCaller(
               // The procedure itself is the function to call
               if (typeof current !== 'function') {
                 throw new Error(
-                  `Path "${op.path}" resolved to a non-function. Expected a procedure function but got ${typeof current}.`
+                  `Path "${
+                    op.path
+                  }" resolved to a non-function. Expected a procedure function but got ${typeof current}.`
                 );
               }
 

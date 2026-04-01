@@ -1,0 +1,5 @@
+identifiantReferentiel,dateValeur,formule
+cae_24.b,2030-01-01,100
+cae_17.b,2030-01-01,100
+cae_3.b,2030-01-01,"si identite(localisation, metropole) alors 33 sinon si identite(localisation, DOM) alors 100"
+cae_59,2030-01-01,30

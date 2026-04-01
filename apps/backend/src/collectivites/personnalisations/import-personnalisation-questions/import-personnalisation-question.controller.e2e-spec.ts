@@ -1,9 +1,93 @@
 import { INestApplication } from '@nestjs/common';
 import { QuestionWithChoices } from '@tet/backend/collectivites/personnalisations/models/question-with-choices.dto';
 import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
-import { getTestApp, getTestDatabase } from '@tet/backend/test';
+import TrajectoiresXlsxService from '@tet/backend/indicateurs/trajectoires/trajectoires-xlsx.service';
+import {
+  getTestApp,
+  getTestDatabase,
+  parseCsvWithSchema,
+  stringFrenchNumberSchema,
+} from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
+import * as path from 'path';
 import { default as request } from 'supertest';
+import * as zCore from 'zod/v4/core';
+import { importPersonnalisationQuestionSchema } from './import-personnalisation-question.dto';
+
+const SAMPLES_DIR = path.join(__dirname, 'samples');
+
+/**
+ * Creates a mock SheetService that reads from local CSV files.
+ * Routes calls based on the range parameter to the appropriate CSV file.
+ */
+function createLocalSheetServiceMock(): Partial<SheetService> {
+  return {
+    getDataFromSheet: vi
+      .fn()
+      .mockImplementation(
+        async <T extends Record<string, unknown>>(
+          _spreadsheetId: string,
+          schema: zCore.$ZodObject,
+          range?: string,
+          idProperties?: (keyof T)[],
+          templateData?: Partial<T>
+        ): Promise<{ data: T[]; header: string[] | null }> => {
+          // Changelog / Versions sheet
+          if (range?.startsWith('Versions')) {
+            const data = [
+              {
+                version: '1.0.2',
+                date: '2026-04-01',
+                description: 'Test',
+              },
+            ] as unknown as T[];
+            return { data, header: ['version', 'date', 'description'] };
+          }
+
+          // Thématiques sheet
+          if (range?.startsWith('Th')) {
+            const csvPath = path.join(
+              SAMPLES_DIR,
+              'import-personnalisation-thematiques.csv'
+            );
+            return parseCsvWithSchema<T>(csvPath, schema, templateData);
+          }
+
+          // Choix sheet
+          if (range?.startsWith('Choix')) {
+            const csvPath = path.join(
+              SAMPLES_DIR,
+              'import-personnalisation-choices.csv'
+            );
+            return parseCsvWithSchema<T>(csvPath, schema, templateData);
+          }
+
+          if (range?.startsWith('Questions')) {
+            const csvPath = path.join(
+              SAMPLES_DIR,
+              'import-personnalisation-questions.csv'
+            );
+            return parseCsvWithSchema<T>(
+              csvPath,
+              importPersonnalisationQuestionSchema.extend({
+                ordonnancement: stringFrenchNumberSchema.optional(),
+              }),
+              templateData
+            );
+          }
+
+          throw new Error(`Unsupported range in mock SheetService: ${range}`);
+        }
+      ),
+
+    getDefaultRangeFromHeader: vi
+      .fn()
+      .mockImplementation((_header: string[], sheetName?: string): string => {
+        return sheetName || '';
+      }),
+  };
+}
 
 describe('import-personnalisation-question.controller', () => {
   let app: INestApplication;
@@ -11,8 +95,13 @@ describe('import-personnalisation-question.controller', () => {
 
   beforeAll(async () => {
     app = await getTestApp({
-      // simule l'env. de prod pour tester que l'on ne peut pas écraser la version courante
       mockProdEnv: true,
+      overrides: (builder) => {
+        builder
+          .overrideProvider(SheetService)
+          .useValue(createLocalSheetServiceMock());
+        builder.overrideProvider(TrajectoiresXlsxService).useValue({});
+      },
     });
     databaseService = await getTestDatabase(app);
 
@@ -21,7 +110,7 @@ describe('import-personnalisation-question.controller', () => {
     };
   });
 
-  it(`Import des questions de personnalisation depuis le spreadsheet`, async () => {
+  it(`Import des questions de personnalisation depuis les fichiers CSV locaux`, async () => {
     // Reset the version
     await databaseService.db.update(questionTable).set({ version: '0.0.1' });
 

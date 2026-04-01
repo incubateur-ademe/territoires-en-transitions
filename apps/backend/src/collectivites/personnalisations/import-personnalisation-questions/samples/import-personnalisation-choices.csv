@@ -1,0 +1,13 @@
+id,questionId,ordonnancement,formulation
+EP_1_a,EP_1,,Oui sur l'ensemble du territoire
+EP_1_b,EP_1,,Oui partiellement (uniquement sur les zones d'intérêt communautaire par exemple)
+EP_1_c,EP_1,,Non pas du tout
+voirie_1_a,voirie_1,,Oui sur l'ensemble du territoire
+voirie_1_b,voirie_1,,"Oui uniquement sur les trottoirs, parkings ou zones d'activités et industrielles"
+voirie_1_c,voirie_1,,Non pas du tout
+Eau_potable_a,Eau_potable,,"Oui, la collectivité gère l'intralité de la compétence"
+Eau_potable_b,Eau_potable,,"Oui, mais la collectivité ne gère qu'une partie seulement des composantes de la compétence"
+Eau_potable_c,Eau_potable,,"Non, la collectivité ne gère aucune des composantes de la compétence"
+voirie_a,voirie,,Oui sur l'ensemble du territoire
+voirie_b,voirie,,Oui partiellement (sur une partie du territoire)
+voirie_c,voirie,,Non pas du tout

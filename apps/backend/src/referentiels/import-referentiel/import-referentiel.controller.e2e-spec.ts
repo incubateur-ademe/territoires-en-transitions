@@ -1,11 +1,114 @@
 import { INestApplication } from '@nestjs/common';
+import TrajectoiresXlsxService from '@tet/backend/indicateurs/trajectoires/trajectoires-xlsx.service';
 import { referentielDefinitionTable } from '@tet/backend/referentiels/models/referentiel-definition.table';
-import { getTestApp, getTestDatabase } from '@tet/backend/test';
+import {
+  getTestApp,
+  getTestDatabase,
+  parseCsvWithSchema,
+  stringFrenchNumberSchema,
+} from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
-import { findActionById, ReferentielIdEnum } from '@tet/domain/referentiels';
+import SheetService from '@tet/backend/utils/google-sheets/sheet.service';
+import {
+  findActionById,
+  flatMapActionsEnfants,
+  ReferentielIdEnum,
+} from '@tet/domain/referentiels';
 import { eq } from 'drizzle-orm';
+import * as path from 'path';
 import { default as request } from 'supertest';
+import * as zCore from 'zod/v4/core';
 import { ReferentielResponse } from '../get-referentiel/get-referentiel.service';
+import { importActionDefinitionSchema } from './import-action-definition.dto';
+
+const SAMPLES_DIR = path.join(__dirname, 'samples');
+
+/** Maps spreadsheet IDs (from env) to referentiel short names used in CSV filenames. */
+function buildSpreadsheetIdToReferentielMap(): Record<string, string> {
+  const map: Record<string, string> = {};
+  if (process.env.REFERENTIEL_ECI_SHEET_ID) {
+    map[process.env.REFERENTIEL_ECI_SHEET_ID] = 'eci';
+  }
+  if (process.env.REFERENTIEL_CAE_SHEET_ID) {
+    map[process.env.REFERENTIEL_CAE_SHEET_ID] = 'cae';
+  }
+  if (process.env.REFERENTIEL_TE_SHEET_ID) {
+    map[process.env.REFERENTIEL_TE_SHEET_ID] = 'te';
+  }
+  return map;
+}
+
+/**
+ * Creates a mock SheetService that reads from local CSV files.
+ * Routes calls based on spreadsheetId (→ referentiel) and range (→ sheet type).
+ */
+function createLocalSheetServiceMock(): Partial<SheetService> {
+  const spreadsheetIdToReferentiel = buildSpreadsheetIdToReferentielMap();
+
+  return {
+    getDataFromSheet: vi
+      .fn()
+      .mockImplementation(
+        async <T extends Record<string, unknown>>(
+          spreadsheetId: string,
+          schema: zCore.$ZodObject,
+          range?: string,
+          idProperties?: (keyof T)[],
+          templateData?: Partial<T>
+        ): Promise<{ data: T[]; header: string[] | null }> => {
+          // Changelog / Versions sheet
+          if (range?.startsWith('Versions')) {
+            const data = [
+              { version: '1.0.1', date: '2026-04-01', description: 'Test' },
+            ] as unknown as T[];
+            return { data, header: ['version', 'date', 'description'] };
+          }
+
+          const referentiel = spreadsheetIdToReferentiel[spreadsheetId];
+          if (!referentiel) {
+            throw new Error(
+              `Unknown spreadsheetId ${spreadsheetId} in mock SheetService`
+            );
+          }
+
+          // Preuves réglementaires sheet
+          if (range?.startsWith('Preuves')) {
+            const csvPath = path.join(
+              SAMPLES_DIR,
+              `referentiel-${referentiel}-preuves.csv`
+            );
+            const preuvesResult = parseCsvWithSchema<T>(
+              csvPath,
+              schema,
+              templateData
+            );
+            return preuvesResult;
+          }
+
+          // Default: Structure référentiel sheet
+          const csvPath = path.join(
+            SAMPLES_DIR,
+            `referentiel-${referentiel}-structure.csv`
+          );
+          const actionsResult = parseCsvWithSchema<T>(
+            csvPath,
+            importActionDefinitionSchema.extend({
+              points: stringFrenchNumberSchema.optional(),
+              pourcentage: stringFrenchNumberSchema.optional(),
+            }),
+            templateData
+          );
+          return actionsResult;
+        }
+      ),
+
+    getDefaultRangeFromHeader: vi
+      .fn()
+      .mockImplementation((_header: string[], sheetName?: string): string => {
+        return sheetName || '';
+      }),
+  };
+}
 
 describe('import-referentiel.controller.e2e-spec', () => {
   let app: INestApplication;
@@ -13,8 +116,13 @@ describe('import-referentiel.controller.e2e-spec', () => {
 
   beforeAll(async () => {
     app = await getTestApp({
-      // simule l'env. de prod pour tester que l'on ne peut pas écraser la version courante
       mockProdEnv: true,
+      overrides: (builder) => {
+        builder
+          .overrideProvider(SheetService)
+          .useValue(createLocalSheetServiceMock());
+        builder.overrideProvider(TrajectoiresXlsxService).useValue({});
+      },
     });
     databaseService = await getTestDatabase(app);
 
@@ -23,7 +131,7 @@ describe('import-referentiel.controller.e2e-spec', () => {
     };
   }, 30_000);
 
-  it(`Import du referentiel ECI depuis le spreadsheet`, async () => {
+  it(`Import du referentiel ECI depuis les fichiers CSV locaux`, async () => {
     // Reset the version
     await databaseService.db
       .update(referentielDefinitionTable)
@@ -49,6 +157,20 @@ describe('import-referentiel.controller.e2e-spec', () => {
     expect(foundAction.preuves).toHaveLength(1);
     expect(foundAction.preuves?.[0]?.preuveId).toBe('indicateurs_eci');
 
+    // Check that the tache are imported
+    const foundTache = findActionById(
+      getReferentielResponse.itemsTree,
+      'eci_1.1.1.2'
+    );
+    expect(foundTache).toBeDefined();
+    expect(foundTache.points).toBe(1.8);
+
+    const flatActions = flatMapActionsEnfants(getReferentielResponse.itemsTree);
+    console.log(`Eci actions count: ${flatActions.length}`);
+    expect(flatActions.length).toBe(368);
+
+    expect(getReferentielResponse.itemsTree.points).toBe(500);
+
     // Import a second time the definitions, must be refused because the version is the same
     const errorResponse = await request(app.getHttpServer())
       .get(importPath)
@@ -64,7 +186,7 @@ describe('import-referentiel.controller.e2e-spec', () => {
     });
   }, 60_000);
 
-  it(`Import du referentiel CAE depuis le spreadsheet`, async () => {
+  it(`Import du referentiel CAE depuis les fichiers CSV locaux`, async () => {
     // Reset the version
     await databaseService.db
       .update(referentielDefinitionTable)
@@ -105,7 +227,7 @@ describe('import-referentiel.controller.e2e-spec', () => {
     });
   }, 60_000);
 
-  it(`Import du referentiel TE depuis le spreadsheet avec test du lock`, async () => {
+  it(`Import du referentiel TE depuis les fichiers CSV locaux avec test du lock`, async () => {
     // Reset the version
     await databaseService.db
       .update(referentielDefinitionTable)
@@ -116,9 +238,12 @@ describe('import-referentiel.controller.e2e-spec', () => {
     // Import a first time the definitions
     const response = await request(app.getHttpServer())
       .get(importPath)
-      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
-      .expect(200);
+      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`);
     const getReferentielResponse: ReferentielResponse = response.body;
+    expect(getReferentielResponse).toMatchObject({
+      version: '1.0.1',
+      orderedItemTypes: expect.any(Array),
+    });
     expect(getReferentielResponse.itemsTree.actionId).toBe(
       ReferentielIdEnum.TE
     );
