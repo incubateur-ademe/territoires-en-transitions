@@ -10,7 +10,7 @@ jobs:
   db-delete:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: supabase/setup-cli@v1.6.0
       - id: get_path
         uses: ./.github/actions/db-path
@@ -30,7 +30,7 @@ jobs:
   db-start:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/supabase-start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
@@ -40,7 +40,7 @@ jobs:
   db-stop:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: supabase/setup-cli@v1
       - run: supabase stop
 
@@ -48,14 +48,14 @@ jobs:
   db-save:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/db-save
 
   # Restaure un backup de la base de dev
   db-restore:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: docker stop supabase_db_tet
       - uses: ./.github/actions/db-restore
       - run: docker start supabase_db_tet
@@ -68,7 +68,7 @@ jobs:
   redis-start:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/redis-start
         with:
           network: ${{ vars.SUPABASE_NETWORK }}
