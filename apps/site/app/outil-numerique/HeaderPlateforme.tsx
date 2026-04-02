@@ -1,6 +1,5 @@
 'use client';
 
-import { useEvolutionTotalActivation } from '@/site/app/stats/EvolutionTotalActivationParType';
 import Section from '@/site/components/sections/Section';
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
@@ -27,9 +26,6 @@ const HeaderPlateforme = ({
   url_demo,
   couverture,
 }: HeaderPlateformeProps) => {
-  const { data } = useEvolutionTotalActivation('', '');
-  const collectivitesActivees = data ? data.courant.total : undefined;
-
   return (
     <Section containerClassName="bg-gradient-to-b from-[#F4F5FD] to-[#FFFFFF] !pb-0">
       <h1 className="text-primary-9 text-center md:text-[45px] md:leading-[55px] lg:px-20 mb-2">
@@ -46,11 +42,10 @@ const HeaderPlateforme = ({
           >
             {cta_inscription}
           </Button>
-          {!!collectivitesActivees && (
-            <p className="md:hidden text-primary-9 text-[13px] font-bold mb-0 pt-2">
-              Déjà {collectivitesActivees} collectivités utilisatrices
-            </p>
-          )}
+
+          <p className="md:hidden text-primary-9 text-[13px] font-bold mb-0 pt-2">
+            Déjà plus de 1200 collectivités utilisatrices
+          </p>
         </div>
 
         <Button
@@ -63,14 +58,12 @@ const HeaderPlateforme = ({
         </Button>
       </div>
       <div className="max-md:hidden flex justify-center gap-4 h-[32px] mt-2">
-        {!!collectivitesActivees && (
-          <>
-            <Arrow />
-            <p className="text-primary-9 text-[13px] font-bold mb-0 pt-2">
-              Déjà {collectivitesActivees} collectivités utilisatrices
-            </p>
-          </>
-        )}
+        <>
+          <Arrow />
+          <p className="text-primary-9 text-[13px] font-bold mb-0 pt-2">
+            Déjà plus de 1200 collectivités utilisatrices
+          </p>
+        </>
       </div>
 
       <DEPRECATED_StrapiImage

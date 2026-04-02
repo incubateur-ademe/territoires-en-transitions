@@ -3,7 +3,6 @@
 import posthog from 'posthog-js';
 
 import Arrow from '@/site/app/outil-numerique/Arrow';
-import { useEvolutionTotalActivation } from '@/site/app/stats/EvolutionTotalActivationParType';
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
 import { DEPRECATED_StrapiImage } from '@/site/components/strapiImage/StrapiImage';
@@ -18,9 +17,6 @@ type CompteProps = {
 };
 
 const Compte = ({ titre, description, cta, image }: CompteProps) => {
-  const { data } = useEvolutionTotalActivation('', '');
-  const collectivitesActivees = data ? data.courant.total : undefined;
-
   return (
     <Section containerClassName="max-md:!py-6 md:max-lg:!py-12 lg:!py-20">
       <div className="flex max-lg:flex-col justify-between items-center max-md:gap-8 gap-12">
@@ -49,14 +45,12 @@ const Compte = ({ titre, description, cta, image }: CompteProps) => {
         </div>
       </div>
 
-      {!!collectivitesActivees && (
-        <div className="max-lg:hidden flex justify-center gap-4 h-[32px] mt-2 ml-28 self-start">
-          <Arrow />
-          <p className="text-primary-9 text-[13px] font-bold mb-0 pt-2">
-            Déjà {collectivitesActivees} collectivités utilisatrices
-          </p>
-        </div>
-      )}
+      <div className="max-lg:hidden flex justify-center gap-4 h-[32px] mt-2 ml-28 self-start">
+        <Arrow />
+        <p className="text-primary-9 text-[13px] font-bold mb-0 pt-2">
+          Plus de 1200 collectivités utilisatrices
+        </p>
+      </div>
     </Section>
   );
 };

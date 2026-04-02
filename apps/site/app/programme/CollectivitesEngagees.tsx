@@ -1,11 +1,6 @@
 'use client';
 
 import { useConseillersCount } from '@/site/app/programme/useConseillersCount';
-import {
-  useCollectivitesEngagees,
-  useTerritoiresCOT,
-  useTerritoiresLabellises,
-} from '@/site/app/stats/NombreCollectivitesEngagees';
 import Section from '@/site/components/sections/Section';
 import { TitreSection } from '@/site/components/sections/TitreSection';
 import { Button } from '@tet/ui';
@@ -23,19 +18,10 @@ const CollectivitesEngagees = ({
   ctaCollectivites,
   ctaAnnuaire,
 }: CollectivitesEngageesProps) => {
-  const { data: cot, isLoading: isCotLoading } = useTerritoiresCOT('', '');
-  const { data: labellises, isLoading: isLabellisesLoading } =
-    useTerritoiresLabellises('', '');
-  const { data: engages, isLoading: isEngagesLoading } =
-    useCollectivitesEngagees('', '');
   const { data: conseillersCount, isLoading: isConseillersCountLoading } =
     useConseillersCount();
 
-  const displayData =
-    !isCotLoading &&
-    !isLabellisesLoading &&
-    !isEngagesLoading &&
-    !isConseillersCountLoading;
+  const displayData = !isConseillersCountLoading;
 
   return (
     <Section containerClassName="bg-primary-1 max-md:!py-6 md:max-lg:!py-12 lg:!py-18">
@@ -47,15 +33,15 @@ const CollectivitesEngagees = ({
           <div className="grid grid-cols-4 max-md:grid-cols-1">
             <ListElement
               label="Territoires Engagés Transition Écologique"
-              value={engages}
+              value={'644'}
               className="max-md:pt-0"
             />
 
-            <ListElement label="Collectivités labellisées" value={labellises} />
+            <ListElement label="Collectivités labellisées" value={'481'} />
 
             <ListElement
               label="Contrats d’Objectifs Territoriaux (COT)"
-              value={cot}
+              value={'370'}
             />
 
             <ListElement
@@ -86,7 +72,7 @@ export default CollectivitesEngagees;
 
 type ListElementProps = {
   label: string;
-  value: number | undefined;
+  value: string | number | undefined;
   className?: string;
 };
 
