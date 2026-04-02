@@ -636,7 +636,7 @@ export class NotifyPiloteService {
           subject: `Vous avez été assigné(e) à une ${
             fiche.parentId ? 'sous-' : ''
           }action sur Territoires en Transitions`,
-          assignedTo: pilote.nom,
+          assignedTo: pilote.prenom,
           assignedBy: [createdByUser.prenom, createdByUser.nom].join(' '),
           assignedAction: this.getAssignedActionData(fiche, ficheParente),
           unsubscribeUrl: this.getUnsubscribeUrl(),
