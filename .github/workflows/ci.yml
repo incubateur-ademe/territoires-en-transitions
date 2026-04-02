@@ -16,7 +16,7 @@ jobs:
   pnpm-install:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Fetch deps
         if: ${{ !env.ACT }}
         uses: ./.github/actions/pnpm-install

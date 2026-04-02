@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: pnpm install
         if: ${{ !env.ACT }}
@@ -46,7 +46,7 @@ jobs:
     needs: [build-storybook]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           # We need to fetch all branches and commits so that Chromatic can compare git changes with the base.
           fetch-depth: 0
@@ -71,7 +71,7 @@ jobs:
     needs: [build-storybook]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/pnpm-install
 
       - name: Download storybook build
