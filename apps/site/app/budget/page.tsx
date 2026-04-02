@@ -5,7 +5,6 @@ import Section from '@/site/components/sections/Section';
 import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
 import { Metadata, ResolvingMetadata } from 'next';
 import BudgetConsomme from './BudgetConsomme';
-import ChiffresClefs from './ChiffresClefs';
 import Fonctionnement from './Fonctionnement';
 import PerformanceBudget from './PerformanceBudget';
 import Principes from './Principes';
@@ -56,7 +55,17 @@ const Budget = async () => {
         <div className="max-lg:order-first col-span-full lg:col-span-1 flex flex-col md:gap-10">
           <Fonctionnement {...strapiData.fonctionnement} />
           <Principes {...strapiData.principes} />
-          <ChiffresClefs />
+          <div className="bg-white md:rounded-xl py-8 md:py-12 px-6 md:px-10">
+            <h2 className="text-primary-9">Statistiques</h2>
+            <a
+              href="/stats"
+              className="text-primary-7 font-bold w-fit"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              {"Voir nos statistiques d'utilisation"}
+            </a>
+          </div>
         </div>
       </div>
     </Section>
