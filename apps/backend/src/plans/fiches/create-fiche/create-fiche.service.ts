@@ -16,7 +16,7 @@ import { PermissionService } from '@tet/backend/users/authorizations/permission.
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
-import { Fiche, FicheCreate } from '@tet/domain/plans';
+import { Fiche, FicheCreate, ficheSchemaCreate } from '@tet/domain/plans';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { UpdateFicheInput } from '../update-fiche/update-fiche.input';
 import UpdateFicheService from '../update-fiche/update-fiche.service';
@@ -62,6 +62,17 @@ export class CreateFicheService {
         tx
       );
     }
+    const validation = ficheSchemaCreate.safeParse(fiche);
+    if (!validation.success) {
+      const message = validation.error.issues
+        .map((issue) => issue.message)
+        .join(', ');
+      return {
+        success: false,
+        error: message,
+      };
+    }
+
     try {
       const [createdFiche] = await (tx || this.databaseService.db)
         .insert(ficheActionTable)

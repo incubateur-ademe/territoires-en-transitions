@@ -72,6 +72,23 @@ describe('Create Fiche Action', () => {
     });
   });
 
+  describe('Create Fiche Action - Validation', () => {
+    test('Cannot create a fiche with a titre exceeding 300 characters', async () => {
+      const caller = router.createCaller({ user: editorUser });
+
+      const longTitre = 'a'.repeat(301);
+
+      await expect(
+        caller.plans.fiches.create({
+          fiche: {
+            titre: longTitre,
+            collectiviteId: collectivite.id,
+          },
+        })
+      ).rejects.toThrow('Le titre ne doit pas dépasser 300 caractères');
+    });
+  });
+
   describe('Create Fiche Action - Access Rights', () => {
     test('User without rights on collectivite cannot create fiche', async () => {
       const yoloDodoUser = await getAuthUser(YOLO_DODO);

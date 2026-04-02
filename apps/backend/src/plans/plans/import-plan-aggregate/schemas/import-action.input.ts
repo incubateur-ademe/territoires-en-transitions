@@ -34,9 +34,7 @@ const cleanText = (text: string | null | undefined): string | undefined => {
     .trim();
 };
 
-const createFuzzyMatcher = <T extends string>(
-  enumValues: readonly T[]
-) => {
+const createFuzzyMatcher = <T extends string>(enumValues: readonly T[]) => {
   const fuse = new Fuse(enumValues);
   return (value: string | undefined): T | undefined => {
     if (!value) return undefined;
@@ -141,7 +139,15 @@ export const financeurSchema = z.object({
 const rawParseSchema = z.object({
   id: z.number().optional(),
   axisPath: z.array(z.string()).optional(),
-  sousTitreAction: nullableTitleSchema,
+  sousTitreAction: nullableTitleSchema.pipe(
+    z
+      .string()
+      .max(300, {
+        message:
+          'Le titre de la sous-action ne peut pas dépasser 300 caractères',
+      })
+      .nullable()
+  ),
   titre: titleSchema.pipe(
     z
       .string()
@@ -164,24 +170,12 @@ const rawParseSchema = z.object({
   structures: listSchema,
   partenaires: listSchema,
   services: listSchema,
-  priorite: z
-    .string()
-    .optional()
-    .transform(matchPriorite),
+  priorite: z.string().optional().transform(matchPriorite),
 
-  participation: z
-    .string()
-    .optional()
-    .transform(matchParticipation),
+  participation: z.string().optional().transform(matchParticipation),
 
-  cible: z
-    .string()
-    .optional()
-    .transform(matchCible),
-  status: z
-    .string()
-    .optional()
-    .transform(matchStatut),
+  cible: z.string().optional().transform(matchCible),
+  status: z.string().optional().transform(matchStatut),
   pilotes: listSchema,
   referents: listSchema,
   financeurs: z.array(financeurSchema).default([]),
