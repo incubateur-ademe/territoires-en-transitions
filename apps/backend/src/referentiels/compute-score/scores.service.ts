@@ -7,7 +7,6 @@ import {
 import DocumentService from '@tet/backend/collectivites/documents/document.service';
 import { ScoreIndicatifService } from '@tet/backend/referentiels/score-indicatif/score-indicatif.service';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
-import { sqlToDateTimeISO } from '@tet/backend/utils/column.utils';
 import {
   CollectiviteAvecType,
   PersonnalisationReponsesPayload,
@@ -19,7 +18,6 @@ import {
   ActionScore,
   ActionScoreWithOnlyPoints,
   ActionScoreWithOnlyPointsAndStatuts,
-  ActionStatut,
   ActionTreeNode,
   ActionTypeEnum,
   getParentId,
@@ -42,19 +40,7 @@ import {
   ResourceType,
 } from '@tet/domain/users';
 import { roundTo } from '@tet/domain/utils';
-import {
-  and,
-  asc,
-  desc,
-  eq,
-  getTableColumns,
-  gte,
-  like,
-  lte,
-  sql,
-  SQL,
-  SQLWrapper,
-} from 'drizzle-orm';
+import { and, desc, eq, gte, sql } from 'drizzle-orm';
 import { chunk, isEqual, isNil, pick } from 'es-toolkit';
 import { DateTime } from 'luxon';
 import { PersonnalisationConsequencesByActionId } from '../../collectivites/personnalisations/models/personnalisation-consequence.dto';
@@ -70,6 +56,8 @@ import { DatabaseService } from '../../utils/database/database.service';
 import MattermostNotificationService from '../../utils/mattermost-notification.service';
 import { sleep } from '../../utils/sleep.utils';
 import { ActionPersonnalisationsService } from '../action-personnalisations/action-personnalisations.service';
+import { ListActionExplicationsRepository } from '../actions/list-action-explications/list-action-explications.repository';
+import { ListActionStatutsRepository } from '../actions/list-action-statuts/list-action-statuts.repository';
 import { CorrelatedActionsWithScoreFields } from '../correlated-actions/correlated-actions.dto';
 import { CorrelatedActionWithScore } from '../correlated-actions/referentiel-action-origine-with-score.dto';
 import { GetReferentielDefinitionService } from '../definitions/get-referentiel-definition/get-referentiel-definition.service';
@@ -78,8 +66,6 @@ import {
   ReferentielResponse,
 } from '../get-referentiel/get-referentiel.service';
 import { LabellisationService } from '../labellisations/labellisation.service';
-import { actionCommentaireTable } from '../models/action-commentaire.table';
-import { actionStatutTable } from '../models/action-statut.table';
 import { CheckMultipleReferentielScoresRequestType } from '../models/check-multiple-referentiel-scores.request';
 import { CheckReferentielScoresRequestType } from '../models/check-referentiel-scores.request';
 import { CheckScoreStatus } from '../models/check-score-status.enum';
@@ -92,8 +78,7 @@ import { GetCheckScoresResponseType } from '../models/get-check-scores.response'
 import { GetMultipleCheckScoresResponseType } from '../models/get-multiple-check-scores.response';
 import { GetReferentielMultipleScoresRequestType } from '../models/get-referentiel-multiple-scores.request';
 import { GetReferentielScoresRequestType } from '../models/get-referentiel-scores.request';
-import { historiqueActionCommentaireTable } from '../models/historique-action-commentaire.table';
-import { historiqueActionStatutTable } from '../models/historique-action-statut.table';
+import { inferStatutDetailleAuPourcentageFromStatut } from '../update-action-statut/action-statut-create-to-action-statut-in-database.adapter';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
 
 type ActionWithScore = ActionTreeNode<ActionDefinitionEssential & ScoreFields>;
@@ -120,7 +105,9 @@ export default class ScoresService {
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly labellisationService: LabellisationService,
     private readonly documentService: DocumentService,
-    private readonly scoreIndicatifService: ScoreIndicatifService
+    private readonly scoreIndicatifService: ScoreIndicatifService,
+    private readonly listActionStatutsRepository: ListActionStatutsRepository,
+    private readonly listActionExplicationsRepository: ListActionExplicationsRepository
   ) {}
 
   private async checkCollectiviteAndReferentielWithAccess(
@@ -573,19 +560,22 @@ export default class ScoresService {
           actionStatut.modifiedAt;
       }
 
-      if (
-        actionStatut &&
-        actionStatut.avancement !== 'non_renseigne' &&
-        actionStatut.avancementDetaille?.length === 3
-      ) {
+      if (actionStatut && actionStatut.avancement !== 'non_renseigne') {
         const pointsPotentiel =
           referentielActionAvecScore.score.pointPotentiel || 0;
-        referentielActionAvecScore.score.avancementDetaille =
-          actionStatut.avancementDetaille;
 
-        const pourcentageFait = actionStatut.avancementDetaille[0];
-        const pourcentageProgramme = actionStatut.avancementDetaille[1];
-        const pourcentagePasFait = actionStatut.avancementDetaille[2];
+        if (
+          actionStatut.avancement ===
+          StatutAvancementEnum.DETAILLE_AU_POURCENTAGE
+        ) {
+          referentielActionAvecScore.score.avancementDetaille =
+            actionStatut.avancementDetaille;
+        }
+
+        const [pourcentageFait, pourcentageProgramme, pourcentagePasFait] =
+          referentielActionAvecScore.score.avancementDetaille ??
+          inferStatutDetailleAuPourcentageFromStatut(actionStatut.avancement);
+
         referentielActionAvecScore.score.pointFait =
           pourcentageFait * pointsPotentiel;
         referentielActionAvecScore.score.pointPasFait =
@@ -889,155 +879,6 @@ export default class ScoresService {
         : null;
   }
 
-  private fillAvancementDetailleFromAvancement(
-    actionStatut: Pick<ActionStatut, 'avancement' | 'avancementDetaille'>
-  ) {
-    if (actionStatut.avancement === 'fait') {
-      actionStatut.avancementDetaille = [1, 0, 0];
-    } else if (actionStatut.avancement === 'programme') {
-      actionStatut.avancementDetaille = [0, 1, 0];
-    } else if (actionStatut.avancement === 'pas_fait') {
-      actionStatut.avancementDetaille = [0, 0, 1];
-    } else if (!actionStatut.avancementDetaille) {
-      actionStatut.avancementDetaille = [0, 0, 0];
-    }
-  }
-
-  async getReferentielActionStatuts(
-    referentielId: ReferentielId,
-    collectiviteId: number,
-    date?: string,
-    tokenInfo?: AuthenticatedUser,
-    noCheck?: boolean
-  ): Promise<ActionStatutsByActionId> {
-    const getActionStatuts: ActionStatutsByActionId = {};
-
-    this.logger.log(
-      `Getting collectivite ${collectiviteId} action statuts for referentiel ${referentielId} and date ${date}`
-    );
-
-    // No check if no date is defined: allowed for anonymous access
-    if (!noCheck) {
-      await this.checkCollectiviteAndReferentielWithAccess(
-        collectiviteId,
-        referentielId,
-        date ? tokenInfo : undefined
-      );
-    }
-
-    const table = date ? historiqueActionStatutTable : actionStatutTable;
-
-    const actionStatutsConditions: (SQLWrapper | SQL)[] = [
-      eq(table.collectiviteId, collectiviteId),
-      like(table.actionId, `${referentielId}%`),
-    ];
-    if (date) {
-      const endOfTheDay = DateTime.fromISO(date).endOf('day').toUTC().toISO();
-      actionStatutsConditions.push(lte(table.modifiedAt, endOfTheDay ?? date));
-    }
-    // TODO: colonne referentiel dans les actionStatutTable ?
-    const referentielActionStatuts = (await this.databaseService.db
-      .select({
-        ...getTableColumns(table),
-        modifiedAt: sqlToDateTimeISO(table.modifiedAt),
-      })
-      .from(table)
-      .where(and(...actionStatutsConditions))
-      .orderBy(desc(table.modifiedAt), asc(table.actionId))) as ActionStatut[];
-
-    this.logger.log(
-      `${referentielActionStatuts.length} statuts trouves pour le referentiel ${referentielId} et la collectivite ${collectiviteId}`
-    );
-    this.logger.log(
-      `Dernière modification de statut: ${
-        referentielActionStatuts.length
-          ? referentielActionStatuts[0]?.modifiedAt
-          : 'N/A'
-      }`
-    );
-    referentielActionStatuts.forEach((actionStatut) => {
-      if (!getActionStatuts[actionStatut.actionId]) {
-        getActionStatuts[actionStatut.actionId] = actionStatut;
-        this.fillAvancementDetailleFromAvancement(actionStatut);
-      } else {
-        // On ne garde que le dernier statut, déjà pris en compte par l'orderBy
-      }
-    });
-
-    return getActionStatuts;
-  }
-
-  // Called explications to differentiate from discussion commentaire
-  private async getReferentielActionStatutExplications(
-    referentielId: ReferentielId,
-    collectiviteId: number,
-    date?: string,
-    tokenInfo?: InternalAuthUser,
-    noCheck?: boolean
-  ): Promise<GetActionStatutExplicationsResponseType> {
-    const getActionStatutsExplications: GetActionStatutExplicationsResponseType =
-      {};
-
-    this.logger.log(
-      `Getting collectivite ${collectiviteId} action statut explications for referentiel ${referentielId} and date ${date}`
-    );
-
-    // // No check if no date is defined, allowed for anonymous access
-    if (!noCheck && date) {
-      await this.checkCollectiviteAndReferentielWithAccess(
-        collectiviteId,
-        referentielId,
-        tokenInfo
-      );
-    }
-
-    const table = date
-      ? historiqueActionCommentaireTable
-      : actionCommentaireTable;
-
-    const actionStatutsConditions: (SQLWrapper | SQL)[] = [
-      eq(table.collectiviteId, collectiviteId),
-      like(table.actionId, `${referentielId}%`),
-    ];
-    if (date) {
-      const endOfTheDay = DateTime.fromISO(date).endOf('day').toUTC().toISO();
-      actionStatutsConditions.push(lte(table.modifiedAt, endOfTheDay ?? date));
-    }
-    // TODO: colonne referentiel dans les actionStatutTable ?
-    const referentielActionStatutExplications = await this.databaseService.db
-      .select({
-        actionId: table.actionId,
-        explication: date
-          ? historiqueActionCommentaireTable.precision
-          : actionCommentaireTable.commentaire,
-        modifiedAt: table.modifiedAt,
-      })
-      .from(table)
-      .where(and(...actionStatutsConditions))
-      .orderBy(desc(table.modifiedAt), asc(table.actionId));
-    this.logger.log(
-      `${referentielActionStatutExplications.length} action statut explications trouves pour le referentiel ${referentielId} et la collectivite ${collectiviteId}`
-    );
-    this.logger.log(
-      `Dernière modification de statut: ${
-        referentielActionStatutExplications.length
-          ? referentielActionStatutExplications[0]?.modifiedAt
-          : 'N/A'
-      }`
-    );
-    referentielActionStatutExplications.forEach((actionStatutExplication) => {
-      if (!getActionStatutsExplications[actionStatutExplication.actionId]) {
-        getActionStatutsExplications[actionStatutExplication.actionId] = {
-          explication: actionStatutExplication.explication,
-        };
-      } else {
-        // On ne garde que la dernière explication, déjà pris en compte par l'orderBy
-      }
-    });
-
-    return getActionStatutsExplications;
-  }
-
   private getActionPointScore(
     actionScore: ActionScore
   ): ActionScoreWithOnlyPoints | null {
@@ -1278,18 +1119,19 @@ export default class ScoresService {
       );
 
     if (!parameters.avecReferentielsOrigine) {
-      const actionStatuts = await this.getReferentielActionStatuts(
-        referentielId,
-        collectiviteId,
-        parameters.date
-      );
-
-      const actionStatutExplications =
-        await this.getReferentielActionStatutExplications(
+      const actionStatuts =
+        await this.listActionStatutsRepository.listByActionIds({
           referentielId,
           collectiviteId,
-          parameters.date
-        );
+          date: parameters.date,
+        });
+
+      const actionStatutExplications =
+        await this.listActionExplicationsRepository.execute({
+          referentielId,
+          collectiviteId,
+          date: parameters.date,
+        });
       const actionPreuves = await this.documentService.getActionPreuves(
         collectiviteId,
         referentielId,
@@ -1855,13 +1697,6 @@ export default class ScoresService {
     actionPreuves?: { [actionId: string]: PreuveDto[] },
     etoilesDefinitions?: LabellisationEtoileDefinition[]
   ): TreeOfActionsIncludingScore {
-    const actionStatutsKeys = Object.keys(actionStatuts);
-    for (const actionStatutKey of actionStatutsKeys) {
-      const actionStatut = actionStatuts[actionStatutKey];
-      // force le remplissage de l'avancement détaillé si il n'est pas renseigné
-      this.fillAvancementDetailleFromAvancement(actionStatut);
-    }
-
     const actionWithScore = this.buildActionWithScore(
       action,
       actionStatutExplications,
@@ -1945,11 +1780,11 @@ export default class ScoresService {
       this.computeStatut({ action: enfant, parent: action })
     );
 
-    const isStatutOnScoreApplicable =
+    const actionHasStatut =
       action.actionType === ActionTypeEnum.SOUS_ACTION ||
       action.actionType === ActionTypeEnum.TACHE;
 
-    if (!isStatutOnScoreApplicable) {
+    if (!actionHasStatut) {
       delete action.score.statut;
       return;
     }
@@ -1974,12 +1809,10 @@ export default class ScoresService {
       !statut || statut === StatutAvancementEnum.NON_RENSEIGNE;
 
     if (hasAtLeastOneChildWithStatutRenseigne && isStatutNonRenseigne) {
-      action.score.statut = StatutAvancementEnum.DETAILLE_AU_POURCENTAGE;
+      action.score.statut = StatutAvancementEnum.DETAILLE_A_LA_TACHE;
     } else if (
-      parent?.score.avancement ===
-        StatutAvancementEnum.DETAILLE_AU_POURCENTAGE ||
-      (parent?.score.avancement &&
-        parent?.score.avancement !== StatutAvancementEnum.NON_RENSEIGNE)
+      parent?.score.avancement &&
+      parent?.score.avancement !== StatutAvancementEnum.NON_RENSEIGNE
     ) {
       action.score.statut = StatutAvancementEnum.NON_RENSEIGNABLE;
     } else {

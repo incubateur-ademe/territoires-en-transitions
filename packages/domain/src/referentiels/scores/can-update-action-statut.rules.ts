@@ -8,7 +8,7 @@ export function canUpdateActionStatutWithoutPermissionCheck({
   isAuditeur,
 }: {
   parcoursStatus?: ParcoursLabellisationStatus;
-  actions: Pick<ActionScore, 'desactive' | 'actionId'>[];
+  actions: Pick<ActionScore, 'desactive'>[];
   isAuditeur: boolean;
 }):
   | {

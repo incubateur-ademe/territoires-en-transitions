@@ -6,6 +6,7 @@ import {
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
 import { TableOptions } from 'react-table';
+import { DEFAULT_STATUT_DETAILLE_AU_POURCENTAGE } from '../actions/action-statut/action-statut-detaille-au-pourcentage.modal';
 import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';
 import { useTable } from '../DEPRECATED_ReferentielTable/useReferentiel';
 import { useReferentielId } from '../referentiel-context';
@@ -122,10 +123,19 @@ export const useTableData: UseTableData = () => {
     total,
     sousActionsTotal,
     updateStatut: (actionId: string, statut: StatutAvancementCreate) => {
-      updateActionStatut({
-        actionId,
-        statut,
-      });
+      updateActionStatut(
+        statut === StatutAvancementEnum.DETAILLE_AU_POURCENTAGE
+          ? {
+              actionId,
+              statut,
+              statutDetailleAuPourcentage:
+                DEFAULT_STATUT_DETAILLE_AU_POURCENTAGE,
+            }
+          : {
+              actionId,
+              statut,
+            }
+      );
     },
   };
 };

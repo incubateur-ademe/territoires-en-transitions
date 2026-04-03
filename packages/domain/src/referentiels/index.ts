@@ -7,6 +7,7 @@ export * from './actions/action-origine.schema';
 export * from './actions/action-question.schema';
 export * from './actions/action-relation.schema';
 export * from './actions/action-statut-avancement.enum.schema';
+export * from './actions/action-statut/is-action-statut-detaille.rule';
 export * from './actions/action-statut.schema';
 export * from './actions/action-type.enum';
 export * from './actions/list-actions.input';

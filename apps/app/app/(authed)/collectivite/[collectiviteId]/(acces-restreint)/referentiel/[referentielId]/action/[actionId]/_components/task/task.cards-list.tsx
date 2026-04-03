@@ -1,11 +1,10 @@
-import { useListActions } from '@/app/referentiels/actions/use-list-actions';
-import { ActionId } from '@tet/domain/referentiels';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import classNames from 'classnames';
 import { JSX } from 'react';
 import TaskCard from './task-card';
 
 type TasksListProps = {
-  taskIds: ActionId[];
+  tasks: ActionListItem[];
   shouldShowJustifications?: boolean;
   className?: string;
 };
@@ -15,12 +14,10 @@ type TasksListProps = {
  */
 
 const TaskCardsList = ({
-  taskIds,
+  tasks,
   shouldShowJustifications = true,
   className,
 }: TasksListProps): JSX.Element => {
-  const { data: tasks = [] } = useListActions({ actionIds: taskIds });
-
   return (
     <div>
       <div className={classNames('flex flex-col gap-4', className)}>

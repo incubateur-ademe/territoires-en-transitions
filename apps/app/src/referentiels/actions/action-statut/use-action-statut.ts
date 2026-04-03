@@ -11,34 +11,6 @@ import { useLabellisationParcours } from '../../labellisations/useLabellisationP
 import { useReferentielId } from '../../referentiel-context';
 import { useGetAction } from '../use-get-action';
 
-/**
- * Met à jour le statut d'une action
- */
-export const useSaveActionStatut = () => {
-  const collectiviteId = useCollectiviteId();
-  const referentielId = useReferentielId();
-  const queryClient = useQueryClient();
-  const trpc = useTRPC();
-
-  const { isPending, mutate: saveActionStatut } = useMutation(
-    trpc.referentiels.actions.updateStatut.mutationOptions({
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.snapshots.getCurrent.queryKey({
-            collectiviteId,
-            referentielId,
-          }),
-        });
-      },
-    })
-  );
-
-  return {
-    isLoading: isPending,
-    saveActionStatut,
-  };
-};
-
 export const useSaveActionStatuts = () => {
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
@@ -80,7 +52,7 @@ export const useEditActionStatutIsDisabled = (actionId: string) => {
   const { score } = action;
 
   const canUpdateResult = canUpdateActionStatutWithoutPermissionCheck({
-    actions: [{ actionId, desactive: score.desactive }],
+    actions: [{ desactive: score.desactive }],
     parcoursStatus: parcours?.status,
     isAuditeur,
   });

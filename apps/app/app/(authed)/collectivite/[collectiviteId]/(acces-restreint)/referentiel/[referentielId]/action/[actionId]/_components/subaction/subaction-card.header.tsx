@@ -76,7 +76,10 @@ export const SubactionCardHeader = ({
                   className="flex items-center"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <SubActionStatutDropdown action={subAction} />
+                  <SubActionStatutDropdown
+                    key={`${subAction.actionId}-${subAction.score.statut}`}
+                    action={subAction}
+                  />
 
                   {isSubAction && (
                     <div className="shrink-0 flex">

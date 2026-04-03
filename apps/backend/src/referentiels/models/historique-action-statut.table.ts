@@ -22,10 +22,12 @@ export const historiqueActionStatutTable = historiqueSchema.table(
     actionId: actionIdReference.notNull(),
     avancement: statutAvancementPgEnum('avancement').notNull(),
     previousAvancement: statutAvancementPgEnum('previous_avancement'),
-    avancementDetaille: doublePrecision('avancement_detaille').array(),
-    previousAvancementDetaille: doublePrecision(
-      'previous_avancement_detaille'
-    ).array(),
+    avancementDetaille: doublePrecision('avancement_detaille')
+      .array()
+      .$type<[number, number, number]>(),
+    previousAvancementDetaille: doublePrecision('previous_avancement_detaille')
+      .array()
+      .$type<[number, number, number]>(),
     concerne: boolean('concerne').notNull(),
     previousConcerne: boolean('previous_concerne'),
     modifiedBy: uuid('modified_by'),

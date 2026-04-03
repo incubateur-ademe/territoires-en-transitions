@@ -1,17 +1,17 @@
 import { avancementToLabel } from '@/app/app/labels';
-import { StatutAvancementCreate } from '@tet/domain/referentiels';
+import { StatutAvancement } from '@tet/domain/referentiels';
 import { Badge, BadgeSize, BadgeType, BadgeVariant } from '@tet/ui';
 import classNames from 'classnames';
 
 type Props = {
   className?: string;
-  statut?: StatutAvancementCreate;
+  statut?: StatutAvancement;
   barre?: boolean;
   size?: BadgeSize;
 };
 
 export const statusToState: Record<
-  StatutAvancementCreate,
+  StatutAvancement,
   { state: BadgeVariant; type?: BadgeType }
 > = {
   non_renseigne: { state: 'grey', type: 'outlined' },
@@ -21,6 +21,7 @@ export const statusToState: Record<
   detaille_a_la_tache: { state: 'standard' },
   fait: { state: 'success' },
   non_concerne: { state: 'grey' },
+  non_renseignable: { state: 'grey' },
 };
 
 const ActionStatutBadge = ({

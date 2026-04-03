@@ -1,22 +1,18 @@
 import { SelectActionStatut } from '@/app/referentiels/actions/action-statut/action-statut.select';
-import {
-  useEditActionStatutIsDisabled,
-  useSaveActionStatut,
-  useSaveActionStatuts,
-} from '@/app/referentiels/actions/action-statut/use-action-statut';
-import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useEditActionStatutIsDisabled } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import {
   ActionStatutCreate,
   ActionTypeEnum,
+  StatutAvancement,
   StatutAvancementCreate,
   StatutAvancementEnum,
 } from '@tet/domain/referentiels';
 import { Button } from '@tet/ui';
-import { useEffect, useState } from 'react';
-import { statutParAvancement } from '../utils';
-import AvancementDetailleModal from './avancement-detaille/avancement-detaille.modal';
-import SubActionModal from './sub-action/sub-action.modal';
-import { useGetActionChildren } from './use-get-action-children';
+import { useState } from 'react';
+import { ActionStatutDetailleALaTacheModal } from './action-statut/action-statut-detaille-a-la-tache.modal';
+import { ActionStatutDetailleAuPourcentageModal } from './action-statut/action-statut-detaille-au-pourcentage.modal';
+import ActionStatutBadge from './action-statut/action-statut.badge';
+import { useUpdateActionStatut } from './action-statut/use-update-action-statut';
 import { ActionListItem } from './use-list-actions';
 
 export type StatusToSavePayload = {
@@ -35,136 +31,87 @@ type Props = {
   action: ActionListItem;
 };
 
-export const SubActionStatutDropdown = ({ action }: Props) => {
-  const collectivite = useCurrentCollectivite();
+const sousActionStatuts = [
+  StatutAvancementEnum.NON_RENSEIGNE,
+  StatutAvancementEnum.FAIT,
+  StatutAvancementEnum.PAS_FAIT,
+  StatutAvancementEnum.PROGRAMME,
+  StatutAvancementEnum.DETAILLE_AU_POURCENTAGE,
+  StatutAvancementEnum.DETAILLE_A_LA_TACHE,
+  StatutAvancementEnum.NON_CONCERNE,
+];
 
+const tacheStatuts = [
+  StatutAvancementEnum.NON_RENSEIGNE,
+  StatutAvancementEnum.FAIT,
+  StatutAvancementEnum.PAS_FAIT,
+  StatutAvancementEnum.PROGRAMME,
+  StatutAvancementEnum.DETAILLE_AU_POURCENTAGE,
+  StatutAvancementEnum.NON_CONCERNE,
+];
+
+export const SubActionStatutDropdown = ({ action }: Props) => {
   // Détermine si l'édition du statut est désactivée
   const disabled = useEditActionStatutIsDisabled(action.actionId);
 
   // Fonction de sauvegarde du statut
-  const { saveActionStatut } = useSaveActionStatut();
-  const { mutate: saveActionStatuts } = useSaveActionStatuts();
-
-  // Arguments renvoyés lors de la sauvegarde d'un nouveau statut
-  const args = {
-    actionId: action.actionId,
-    collectiviteId: collectivite.collectiviteId,
-  };
-
-  // Informations sur l'avancement de la sous-mesure / tâche
-  const { avancement, avancementDetaille } = action.score;
-  const children = useGetActionChildren({ actionId: action.actionId });
-  const filledByChildren = children
-    .filter(
-      (child) => child.score.avancement !== StatutAvancementEnum.NON_RENSEIGNE
-    )
-    .map((child) => child.actionId);
-
-  // Statut et tableau d'avancement détaillé locaux au dropdown
-  const [localAvancement, setLocalAvancement] = useState<
-    StatutAvancementCreate | undefined
-  >(avancement);
-  const [localAvancementDetaille, setLocalAvancementDetaille] =
-    useState(avancementDetaille);
+  const { mutate: updateActionStatut } = useUpdateActionStatut();
 
   // Gestion de l'ouverture des modales de score détaillé
-  const [openSubActionModal, setOpenSubActionModal] = useState(false);
-  const [openScoreDetaille, setOpenScoreDetaille] = useState(false);
+  const [
+    openActionStatutDetailleALaTacheModal,
+    setOpenActionStatutDetailleALaTacheModal,
+  ] = useState(false);
+  const [
+    openStatutDetailleAuPourcentageModal,
+    setOpenStatutDetailleAuPourcentageModal,
+  ] = useState(false);
 
-  const isSubActionWithTasks =
+  const [statut, setStatut] = useState<StatutAvancement>(
+    action.score.statut ?? StatutAvancementEnum.NON_RENSEIGNE
+  );
+
+  const isSousActionWithTasks =
     action.actionType === ActionTypeEnum.SOUS_ACTION &&
     action.childrenIds.length > 0;
 
-  // Mise à jour du dropdown quand le statut change (ex: enfant modifié)
-  useEffect(() => {
-    setLocalAvancement(avancement);
-    setLocalAvancementDetaille(avancementDetaille);
-  }, [avancement, avancementDetaille]);
+  const statutItems = isSousActionWithTasks ? sousActionStatuts : tacheStatuts;
 
-  // Mise à jour du statut lorsque une nouvelle valeur
-  // est sélectionnée sur le dropdown
-  const handleChange = (value: StatutAvancementCreate) => {
-    const { avancement, concerne, avancementDetaille } =
-      statutParAvancement(value);
+  const hasStatutDetaille =
+    !disabled &&
+    (statut === StatutAvancementEnum.DETAILLE_AU_POURCENTAGE ||
+      statut === StatutAvancementEnum.DETAILLE_A_LA_TACHE);
 
-    const argsToSave = {
-      ...args,
-      avancement,
-      avancementDetaille,
-      concerne,
-    };
+  if (disabled) {
+    return <ActionStatutBadge statut={statut} />;
+  }
 
-    // Logique de sauvegarde à revoir si remplacement
-    // de la modale <SubActionModal /> par un panneau latéral
-    if (avancement === 'detaille') {
-      setLocalAvancementDetaille(avancementDetaille);
-      setOpenScoreDetaille(true);
-    } else if (value === 'detaille_a_la_tache') {
-      setLocalAvancementDetaille(undefined);
-      setOpenSubActionModal(true);
+  const openStatutDetailleModal = (
+    statut: Extract<StatutAvancementCreate, 'detaille_a_la_tache' | 'detaille'>
+  ) => {
+    if (statut === StatutAvancementEnum.DETAILLE_A_LA_TACHE) {
+      setOpenActionStatutDetailleALaTacheModal(true);
     } else {
-      // Mise à jour dans les cas de statuts autres que détaillé
-      setLocalAvancement(value);
-      setLocalAvancementDetaille(avancementDetaille);
-
-      // Sauvegarde du nouveau statut
-      if (
-        argsToSave.avancement !== 'non_renseigne' ||
-        !filledByChildren?.length
-      ) {
-        saveActionStatut({
-          ...argsToSave,
-          avancementDetaille:
-            action.actionType === ActionTypeEnum.SOUS_ACTION
-              ? localAvancementDetaille
-              : avancementDetaille,
-        });
-      } else {
-        // Save the statut of the children to non_renseigne
-        const childActionStatuts: ActionStatutCreate[] = filledByChildren.map(
-          (childActionId) => ({
-            collectiviteId: collectivite.collectiviteId,
-            actionId: childActionId,
-            avancement: 'non_renseigne',
-            avancementDetaille: null,
-            concerne: true,
-          })
-        );
-        saveActionStatuts({
-          actionStatuts: [
-            {
-              collectiviteId: collectivite.collectiviteId,
-              actionId: action.actionId,
-              avancement: 'non_renseigne',
-              avancementDetaille: null,
-              concerne: true,
-            },
-            ...childActionStatuts,
-          ],
-        });
-      }
+      setOpenStatutDetailleAuPourcentageModal(true);
     }
   };
 
-  const showPenButton =
-    !disabled &&
-    (localAvancement === 'detaille' ||
-      localAvancement === 'detaille_a_la_tache');
+  const onChangeStatut = (statut: StatutAvancementCreate) => {
+    if (
+      statut === StatutAvancementEnum.DETAILLE_AU_POURCENTAGE ||
+      statut === StatutAvancementEnum.DETAILLE_A_LA_TACHE
+    ) {
+      openStatutDetailleModal(statut);
+      return;
+    }
 
-  const allOrderedStatutItems = [
-    StatutAvancementEnum.FAIT,
-    StatutAvancementEnum.PAS_FAIT,
-    StatutAvancementEnum.PROGRAMME,
-    StatutAvancementEnum.DETAILLE_AU_POURCENTAGE,
-    StatutAvancementEnum.DETAILLE_A_LA_TACHE,
-    StatutAvancementEnum.NON_CONCERNE,
-    StatutAvancementEnum.NON_RENSEIGNE,
-  ];
-  const filteredStatutItems = isSubActionWithTasks
-    ? allOrderedStatutItems
-    : allOrderedStatutItems.filter(
-        (item) => item !== StatutAvancementEnum.DETAILLE_A_LA_TACHE
-      );
+    setStatut(statut);
+
+    updateActionStatut({
+      actionId: action.actionId,
+      statut,
+    });
+  };
 
   return (
     <>
@@ -174,37 +121,32 @@ export const SubActionStatutDropdown = ({ action }: Props) => {
         className="flex items-center gap-2 mr-2"
       >
         <SelectActionStatut
-          items={filteredStatutItems}
-          disabled={disabled}
-          value={localAvancement}
-          onChange={handleChange}
+          items={statutItems}
+          value={statut}
+          onChange={onChangeStatut}
         />
-        {showPenButton && (
+
+        {hasStatutDetaille && (
           <Button
             data-test="DetaillerAvancementButton"
             icon="edit-line"
             title="Détailler l'avancement"
             variant="underlined"
             size="xs"
-            onClick={() => {
-              if (localAvancement === 'detaille_a_la_tache') {
-                setOpenSubActionModal(true);
-              } else {
-                setOpenScoreDetaille(true);
-              }
-            }}
+            onClick={() => openStatutDetailleModal(statut)}
           />
         )}
       </div>
-      {/* Modale de détail de la sous-action (liste des tâches + jaude de score détaillé) */}
-      {openSubActionModal && (
+
+      {/* Modale de détail de la sous-action (liste des tâches + jauge de score détaillé) */}
+      {openActionStatutDetailleALaTacheModal && (
         <div onClick={(evt) => evt.stopPropagation()}>
-          <SubActionModal
+          <ActionStatutDetailleALaTacheModal
             action={action}
             openState={{
-              isOpen: openSubActionModal,
+              isOpen: openActionStatutDetailleALaTacheModal,
               setIsOpen: (value) => {
-                setOpenSubActionModal(value);
+                setOpenActionStatutDetailleALaTacheModal(value);
               },
             }}
           />
@@ -212,15 +154,15 @@ export const SubActionStatutDropdown = ({ action }: Props) => {
       )}
 
       {/* Modale de score détaillé */}
-      {openScoreDetaille && (
+      {openStatutDetailleAuPourcentageModal && (
         <div onClick={(evt) => evt.stopPropagation()}>
-          <AvancementDetailleModal
+          <ActionStatutDetailleAuPourcentageModal
             key={JSON.stringify(action.score)}
             action={action}
             openState={{
-              isOpen: openScoreDetaille,
+              isOpen: openStatutDetailleAuPourcentageModal,
               setIsOpen: (value) => {
-                setOpenScoreDetaille(value);
+                setOpenStatutDetailleAuPourcentageModal(value);
               },
             }}
           />

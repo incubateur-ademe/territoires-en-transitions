@@ -1,8 +1,5 @@
 import { MembreFonction } from '@tet/domain/collectivites';
-import {
-  ReferentielId,
-  StatutAvancementCreate,
-} from '@tet/domain/referentiels';
+import { ReferentielId, StatutAvancement } from '@tet/domain/referentiels';
 
 // Define all labels from app
 type ReferentielLabelKey = ReferentielId | 'crte';
@@ -14,7 +11,7 @@ export const referentielToName = {
   'te-test': 'Transition Écologique (test)',
 } as const satisfies Record<ReferentielLabelKey, string>;
 
-export const avancementToLabel: Record<StatutAvancementCreate, string> = {
+export const avancementToLabel: Record<StatutAvancement, string> = {
   non_renseigne: 'Non renseigné',
   fait: 'Fait',
   pas_fait: 'Pas fait',
@@ -22,6 +19,7 @@ export const avancementToLabel: Record<StatutAvancementCreate, string> = {
   detaille_a_la_tache: 'Détaillé à la tâche',
   programme: 'Programmé',
   non_concerne: 'Non concerné',
+  non_renseignable: 'Non renseignable',
 };
 
 export const actionIdToLabel: Record<string, string> = {
