@@ -572,7 +572,7 @@ export function formatActionStatut(
   // n'affiche pas "non renseigné" pour une sous-action dont au moins une des tâches a un statut
   if (
     actionType === ActionTypeEnum.SOUS_ACTION &&
-    (!avancement || avancement === 'non_renseigne' || avancement === 'detaille')
+    (!avancement || avancement === StatutAvancementEnum.NON_RENSEIGNE)
   ) {
     const hasChildrenAvancement = actionScore.actionsEnfant?.some(
       (actionScoreEnfant) =>
@@ -580,7 +580,7 @@ export function formatActionStatut(
         actionScoreEnfant.score?.avancement !== 'non_renseigne'
     );
     if (hasChildrenAvancement) {
-      return AVANCEMENT_TO_LABEL.detaille;
+      return AVANCEMENT_TO_LABEL.detaille_a_la_tache;
     }
   }
 

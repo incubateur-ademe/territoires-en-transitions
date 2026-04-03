@@ -6,27 +6,27 @@ import {
 } from '@nestjs/common';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthUser } from '@tet/backend/users/models/auth.models';
+import { SQL_CURRENT_TIMESTAMP } from '@tet/backend/utils/column.utils';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import {
   ActionStatutCreate,
   actionStatutSchemaCreate,
-  ActionTypeEnum,
   canUpdateActionStatutWithoutPermissionCheck,
   findActionById,
-  getParentId,
   getReferentielIdFromActionId,
   ScoreSnapshot,
-  TreeOfActionsIncludingScore,
 } from '@tet/domain/referentiels';
 import { PermissionOperationEnum, ResourceType } from '@tet/domain/users';
 import { getErrorMessage } from '@tet/domain/utils';
-import { and, eq, inArray, sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 import z from 'zod';
 import { isErrorWithCause } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
 import { GetLabellisationService } from '../labellisations/get-labellisation.service';
 import { actionStatutTable } from '../models/action-statut.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
+import { actionStatutCreateToActionStatutInDatabase } from './action-statut-create-to-action-statut-in-database.adapter';
+import { computeAndMergeParentCascadingStatuts } from './compute-cascading-statuts.rule';
 import { UpdateActionStatutHistoriqueRepository } from './update-action-statut-historique.repository';
 
 export const upsertActionStatutsRequestSchema = z.object({
@@ -129,56 +129,25 @@ export class UpdateActionStatutService {
       throw new BadRequestException(canUpdateResult.reason);
     }
 
-    const cascadeStatuts = this.computeCascadeStatuts(
+    const allActionStatuts = computeAndMergeParentCascadingStatuts(
       actionStatuts,
       currentScore.scoresPayload.scores,
       collectiviteId
     );
-    const allStatuts = this.mergeWithCascade(actionStatuts, cascadeStatuts);
-
-    if (cascadeStatuts.length > 0) {
-      this.logger.log(
-        `Cascade: ${
-          cascadeStatuts.length
-        } statut(s) supplémentaire(s) ajouté(s) (${cascadeStatuts
-          .map((s) => s.actionId)
-          .join(', ')})`
-      );
-    }
 
     try {
-      await this.databaseService.db.transaction(async (tx) => {
-        // Sort action IDs to prevent deadlocks when locking multiple rows
-        const sortedActionStatuts = [...actionStatuts].sort((a, b) =>
-          a.actionId.localeCompare(b.actionId)
-        );
-        const sortedActionIds = sortedActionStatuts.map((a) => a.actionId);
+      const actionStatuts = allActionStatuts.map((actionStatut) => ({
+        collectiviteId: actionStatut.collectiviteId,
+        actionId: actionStatut.actionId,
+        modifiedBy: user.id,
+        modifiedAt: SQL_CURRENT_TIMESTAMP,
 
-        // Fetch old values with row lock (ordered to match sort for deadlock prevention)
-        const oldValues = await tx
-          .select()
-          .from(actionStatutTable)
-          .where(
-            and(
-              eq(actionStatutTable.collectiviteId, collectiviteId),
-              inArray(actionStatutTable.actionId, sortedActionIds)
-            )
-          )
-          .orderBy(actionStatutTable.actionId)
-          .for('update');
-        const oldValuesMap = new Map(
-          oldValues.map((ov) => [ov.actionId, ov])
-        );
+        ...actionStatutCreateToActionStatutInDatabase(actionStatut),
+      }));
 
-        // Upsert action statuts with .returning() to get modified_at
-        const upsertedRows = await tx
+      await this.databaseService.db
         .insert(actionStatutTable)
-        .values(
-          allStatuts.map((actionStatut) => ({
-            ...actionStatut,
-            modifiedBy: user.id,
-          }))
-        )
+        .values(actionStatuts)
         .onConflictDoUpdate({
           target: [
             actionStatutTable.collectiviteId,
@@ -191,14 +160,13 @@ export class UpdateActionStatutService {
             avancementDetaille: sql.raw(
               `excluded.${actionStatutTable.avancementDetaille.name}`
             ),
-            concerne: sql.raw(
-              `excluded.${actionStatutTable.concerne.name}`
-            ),
+            concerne: sql.raw(`excluded.${actionStatutTable.concerne.name}`),
             modifiedBy: sql.raw(
               `excluded.${actionStatutTable.modifiedBy.name}`
             ),
           },
-        }).returning();
+        })
+        .returning();
 
       // Write history for each upserted row
       for (const upserted of upsertedRows) {
@@ -234,74 +202,5 @@ export class UpdateActionStatutService {
       referentielId,
       user,
     });
-  }
-
-  /**
-   * Calcule les statuts en cascade à appliquer pour maintenir la cohérence
-   * entre sous-actions et tâches :
-   *
-   * - Tâche renseignée → si le parent (sous-action) a un statut direct
-   *   (autre que non_renseigne/detaille), le parent est remis à non_renseigne.
-   *   `computeStatut` dérivera alors automatiquement "detaille".
-   *
-   * - Sous-action avec un statut direct (autre que non_renseigne/detaille)
-   *   → toutes les tâches enfants renseignées sont remises à non_renseigne.
-   */
-  private computeCascadeStatuts(
-    actionStatuts: ActionStatutCreate[],
-    scoresTree: TreeOfActionsIncludingScore,
-    collectiviteId: number
-  ): ActionStatutCreate[] {
-    const explicitActionIds = new Set(actionStatuts.map((s) => s.actionId));
-
-    const findNode = (actionId: string) => {
-      try {
-        return findActionById(scoresTree, actionId);
-      } catch {
-        return undefined;
-      }
-    };
-
-    const hasDirectStatus = (node: TreeOfActionsIncludingScore) =>
-      node.score.avancement &&
-      node.score.avancement !== 'non_renseigne' &&
-      node.score.avancement !== 'detaille';
-
-    const makeResetStatut = (actionId: string): ActionStatutCreate => ({
-      collectiviteId,
-      actionId,
-      avancement: 'non_renseigne',
-      avancementDetaille: null,
-      concerne: true,
-    });
-
-    // Tâche renseignée → reset le parent sous-action s'il a un statut direct
-    const parentResets = actionStatuts
-      .filter((s) => findNode(s.actionId)?.actionType === ActionTypeEnum.TACHE)
-      .map((s) => getParentId({ actionId: s.actionId }))
-      .filter((parentId): parentId is string => parentId !== null)
-      .filter((parentId) => !explicitActionIds.has(parentId))
-      .map((parentId) => ({ parentId, node: findNode(parentId) }))
-      .filter(
-        ({ node }) =>
-          node?.actionType === ActionTypeEnum.SOUS_ACTION &&
-          hasDirectStatus(node)
-      )
-      .map(({ parentId }) => makeResetStatut(parentId));
-
-    return parentResets;
-  }
-
-  /**
-   * Fusionne les statuts explicites avec les statuts en cascade.
-   * Les statuts explicites ont toujours priorité sur les cascade.
-   */
-  private mergeWithCascade(
-    explicit: ActionStatutCreate[],
-    cascade: ActionStatutCreate[]
-  ): ActionStatutCreate[] {
-    const explicitIds = new Set(explicit.map((s) => s.actionId));
-    const uniqueCascade = cascade.filter((s) => !explicitIds.has(s.actionId));
-    return [...explicit, ...uniqueCascade];
   }
 }

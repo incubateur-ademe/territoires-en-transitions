@@ -90,9 +90,8 @@ describe('UpdateActionStatutRouter', () => {
     input = {
       collectiviteId: collectivite.id,
       actionId: 'cae_1.1.1.1.2',
-      avancement: 'detaille',
-      avancementDetaille: [1, 0, 0],
-      concerne: true,
+      statut: 'detaille',
+      statutDetailleAuPourcentage: [1, 0, 0],
     };
 
   });

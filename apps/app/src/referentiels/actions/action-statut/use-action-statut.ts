@@ -11,49 +11,6 @@ import { useLabellisationParcours } from '../../labellisations/useLabellisationP
 import { useReferentielId } from '../../referentiel-context';
 import { useGetAction } from '../use-get-action';
 
-/**
- * Met à jour le statut d'une action
- */
-export const useSaveActionStatut = () => {
-  const collectiviteId = useCollectiviteId();
-  const referentielId = useReferentielId();
-  const queryClient = useQueryClient();
-  const trpc = useTRPC();
-
-  const { isPending, mutate: saveActionStatut } = useMutation(
-    trpc.referentiels.actions.updateStatut.mutationOptions({
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.snapshots.getCurrent.queryKey({
-            collectiviteId,
-            referentielId,
-          }),
-        });
-      },
-      // Les invalidations de l'historique sont placées dans `onSettled` et
-      // awaitées, alignées sur le pattern de
-      // `useSetPersonnalisationJustification` : on veut rafraîchir
-      // l'historique même si la mutation a échoué (cas optimistique avec
-      // rollback) et garantir que la promesse de mutation ne se résout
-      // qu'une fois le cache à jour, pour éviter qu'un caller chaîné voie
-      // l'ancien état.
-      onSettled: async () => {
-        await queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.historique.list.queryKey(),
-        });
-        await queryClient.invalidateQueries({
-          queryKey: trpc.referentiels.historique.listUtilisateurs.queryKey(),
-        });
-      },
-    })
-  );
-
-  return {
-    isLoading: isPending,
-    saveActionStatut,
-  };
-};
-
 export const useSaveActionStatuts = () => {
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
@@ -107,7 +64,7 @@ export const useEditActionStatutIsDisabled = (actionId: string) => {
   const { score } = action;
 
   const canUpdateResult = canUpdateActionStatutWithoutPermissionCheck({
-    actions: [{ actionId, desactive: score.desactive }],
+    actions: [{ desactive: score.desactive }],
     parcoursStatus: parcours?.status,
     isAuditeur,
   });

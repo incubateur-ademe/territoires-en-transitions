@@ -1,10 +1,15 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useTRPC } from '@tet/api';
+import {
+  DistributiveOmit,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
+import { RouterInput, useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { StatutAvancementCreate } from '@tet/domain/referentiels';
 import { useCallback } from 'react';
 import { useReferentielId } from '../../referentiel-context';
-import { statutParAvancement } from '../../utils';
+
+type ActionStatutCreate =
+  RouterInput['referentiels']['actions']['updateStatut'];
 
 export const useUpdateActionStatut = () => {
   const collectiviteId = useCollectiviteId();
@@ -21,27 +26,37 @@ export const useUpdateActionStatut = () => {
             referentielId,
           }),
         });
+
+        queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.snapshots.getCurrent.queryKey({
+            collectiviteId,
+            referentielId,
+          }),
+        });
+      },
+      // Les invalidations de l'historique sont placées dans `onSettled` et
+      // awaitées, alignées sur le pattern de
+      // `useSetPersonnalisationJustification` : on veut rafraîchir
+      // l'historique même si la mutation a échoué (cas optimistique avec
+      // rollback) et garantir que la promesse de mutation ne se résout
+      // qu'une fois le cache à jour, pour éviter qu'un caller chaîné voie
+      // l'ancien état.
+      onSettled: async () => {
+        await queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.historique.list.queryKey(),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.historique.listUtilisateurs.queryKey(),
+        });
       },
     })
   );
 
   const mutate = useCallback(
-    ({
-      actionId,
-      statut,
-    }: {
-      actionId: string;
-      statut: StatutAvancementCreate;
-    }) => {
-      const { avancement, concerne, avancementDetaille } =
-        statutParAvancement(statut);
-
+    (actionStatut: DistributiveOmit<ActionStatutCreate, 'collectiviteId'>) => {
       return mutation.mutate({
+        ...actionStatut,
         collectiviteId,
-        actionId,
-        avancement,
-        concerne,
-        avancementDetaille,
       });
     },
     [collectiviteId, mutation]

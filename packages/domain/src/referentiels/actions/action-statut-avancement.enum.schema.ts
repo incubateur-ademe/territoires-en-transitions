@@ -25,13 +25,22 @@ export const statutAvancementEnumValues = [
 export const statutAvancementEnumSchema = z.enum(statutAvancementEnumValues);
 export type StatutAvancement = z.infer<typeof statutAvancementEnumSchema>;
 
-export const statutAvancementEnumSchemaCreateInDatabase = z.enum([
+export type StatutAvancementDetaille = Extract<
+  StatutAvancement,
+  'detaille_a_la_tache' | 'detaille'
+>;
+
+export const statutAvancementEnumSchemaCreateInDatabaseValues = [
   StatutAvancementEnum.FAIT,
   StatutAvancementEnum.PAS_FAIT,
   StatutAvancementEnum.PROGRAMME,
   StatutAvancementEnum.NON_RENSEIGNE,
   StatutAvancementEnum.DETAILLE_AU_POURCENTAGE,
-]);
+] as const;
+
+export const statutAvancementEnumSchemaCreateInDatabase = z.enum(
+  statutAvancementEnumSchemaCreateInDatabaseValues
+);
 
 export type StatutAvancementCreateInDatabase = z.infer<
   typeof statutAvancementEnumSchemaCreateInDatabase

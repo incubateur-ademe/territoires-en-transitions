@@ -243,13 +243,13 @@ describe('formatActionStatut', () => {
       expect(formatActionStatut(row, data, 1)).toBe('Non renseigné');
     });
 
-    it('retourne "Détaillé" pour le statut detaille', () => {
+    it('retourne "Détaillé au %" pour le statut detaille', () => {
       const row = createScoreRow('eci_1.1', ActionTypeEnum.SOUS_ACTION, {
         avancement: StatutAvancementEnum.DETAILLE_AU_POURCENTAGE,
       });
       const data = createScoreComparisonData(undefined, [row]);
 
-      expect(formatActionStatut(row, data, 1)).toBe('Détaillé');
+      expect(formatActionStatut(row, data, 1)).toBe('Détaillé au %');
     });
   });
 
@@ -265,7 +265,7 @@ describe('formatActionStatut', () => {
   });
 
   describe('Sous-actions avec avancement détaillé', () => {
-    it('retourne "Détaillé" quand une sous-action sans statut a des enfants avec statut', () => {
+    it('retourne "Détaillé à la tâche" quand une sous-action sans statut a des enfants avec statut', () => {
       const row = createScoreRow('eci_1.1', ActionTypeEnum.SOUS_ACTION, {
         avancement: StatutAvancementEnum.NON_RENSEIGNE,
         actionsEnfant: [
@@ -280,7 +280,7 @@ describe('formatActionStatut', () => {
       });
       const data = createScoreComparisonData(undefined, [row]);
 
-      expect(formatActionStatut(row, data, 1)).toBe('Détaillé');
+      expect(formatActionStatut(row, data, 1)).toBe('Détaillé à la tâche');
     });
 
     it('retourne le statut normal si une sous-action a un statut valide', () => {

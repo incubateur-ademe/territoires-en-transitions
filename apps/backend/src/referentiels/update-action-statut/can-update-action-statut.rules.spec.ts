@@ -12,7 +12,7 @@ describe('canUpdateActionStatutWithoutPermissionCheck', () => {
   it('returns ACTION_DISABLED when score is desactive', () => {
     const result = canUpdateActionStatutWithoutPermissionCheck({
       ...defaultParams,
-      actions: [{ actionId: 'action-1', desactive: true }],
+      actions: [{ desactive: true }],
     });
     expect(result.canUpdate).toBe(false);
     expect(result.reason).toBe(

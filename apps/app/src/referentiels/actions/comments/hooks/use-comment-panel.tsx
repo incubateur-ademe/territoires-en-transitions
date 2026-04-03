@@ -15,8 +15,6 @@ export const useCommentPanel = () => {
   const parentAction = useGetAction({ actionId: parentActionId });
   const searchParams = useSearchParams();
 
-  console.log('parentAction', parentActionId);
-
   const closeCommentPanel = () => {
     setPanel({ type: 'close' });
   };
@@ -27,8 +25,6 @@ export const useCommentPanel = () => {
       collectiviteId,
       searchParams,
     });
-
-    console.log('openCommentPanel', action.actionId);
 
     setPanel({
       type: 'open',

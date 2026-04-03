@@ -3,6 +3,7 @@ import {
   statutAvancementEnumSchema,
   statutAvancementEnumSchemaCreateInDatabase,
 } from '../actions/action-statut-avancement.enum.schema';
+import { statutDetailleAuPourcentageSchema } from '../actions/action-statut.schema';
 import { scoreIndicatifPayloadSchema } from './score-indicatif.schema';
 
 export const actionScoreSchema = z
@@ -122,9 +123,7 @@ export const actionScoreSchema = z
     avancement: statutAvancementEnumSchemaCreateInDatabase
       .optional()
       .describe("Avancement de l'action (valeur brute issue de la BDD)"),
-    avancementDetaille: z.nullish(
-      z.tuple([z.number(), z.number(), z.number()])
-    ),
+    avancementDetaille: z.nullish(statutDetailleAuPourcentageSchema),
     statut: statutAvancementEnumSchema
       .nullable()
       .optional()

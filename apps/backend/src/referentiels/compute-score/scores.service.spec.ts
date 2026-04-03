@@ -40,6 +40,8 @@ import { simpleReferentiel } from '../models/samples/simple-referentiel';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
 import ScoresService from './scores.service';
+import { ListActionStatutsRepository } from '../actions/list-action-statuts/list-action-statuts.repository';
+import { ListActionExplicationsRepository } from '../actions/list-action-explications/list-action-explications.repository';
 
 describe('ReferentielsScoringService', () => {
   let referentielsScoringService: ScoresService;
@@ -76,7 +78,9 @@ describe('ReferentielsScoringService', () => {
           token === ConfigurationService ||
           token === SheetService ||
           token === DocumentService ||
-          token === ScoreIndicatifService
+          token === ScoreIndicatifService ||
+          token === ListActionStatutsRepository ||
+          token === ListActionExplicationsRepository
         ) {
           return {};
         }
@@ -892,6 +896,33 @@ describe('ReferentielsScoringService', () => {
       });
     });
 
+    it('notation_when_one_tache_is_fait_avancementDetaille_incoherent', async () => {
+      const personnalisationConsequences: PersonnalisationConsequencesByActionId =
+        {};
+      const actionStatuts: ActionStatutsByActionId = {
+        'eci_1.1': {
+          concerne: true,
+          avancement: 'fait',
+          avancementDetaille: [0.2, 0.5, 0.3],
+        },
+      };
+
+      const scoresMap = referentielsScoringService.computeScoreMap(
+        simpleReferentiel,
+        personnalisationConsequences,
+        actionStatuts,
+        1
+      );
+
+      expect(scoresMap['eci_1.1']).toMatchObject({
+        avancement: 'fait',
+        statut: 'fait',
+        pointFait: 10,
+        pointProgramme: 0,
+        pointPasFait: 0,
+      });
+    });
+
     it('notation_when_one_tache_is_programme', async () => {
       const personnalisationConsequences: PersonnalisationConsequencesByActionId =
         {};
@@ -1123,6 +1154,7 @@ describe('ReferentielsScoringService', () => {
 
       expect(scoresMap['eci_1.1']).toEqual({
         avancement: 'detaille',
+        avancementDetaille: [0.2, 0.7, 0.1],
         statut: 'detaille',
         actionId: 'eci_1.1',
         pointFait: 2,
@@ -1665,10 +1697,11 @@ describe('ReferentielsScoringService', () => {
         1
       );
 
-      // Avancement partiel de eci_2.1.1 ne doit pas être pris en compte
+      // Sous-action non renseignée au global mais au moins une tâche renseignée :
+      // computeStatut dérive `detaille_a_la_tache` (pas `detaille` = détail au pourcentage).
       expect(scoresMap['eci_2.1']).toEqual({
         avancement: 'non_renseigne',
-        statut: 'detaille',
+        statut: 'detaille_a_la_tache',
         actionId: 'eci_2.1',
         pointFait: 32,
         pointProgramme: 8,
@@ -1687,6 +1720,39 @@ describe('ReferentielsScoringService', () => {
         desactive: false,
         renseigne: false,
       });
+
+      // Branche else : tâche détaillée au pourcentage, parent encore non_renseigne → statut `detaille`.
+      expect(scoresMap['eci_2.1.1'].statut).toBe('detaille');
+      // Branche else : tâche toujours non renseignée, parent non verrouillé → statut null.
+      expect(scoresMap['eci_2.1.2'].statut).toBeNull();
+    });
+
+    it('computeStatut : les tâches sous une sous-action déjà renseignée au niveau agrégé sont non_renseignable', async () => {
+      const personnalisationConsequences: PersonnalisationConsequencesByActionId =
+        {};
+      const actionStatuts: ActionStatutsByActionId = {
+        'eci_2.1': {
+          concerne: true,
+          avancement: 'fait',
+          avancementDetaille: [1, 0, 0],
+        },
+        'eci_2.1.1': {
+          concerne: true,
+          avancement: 'detaille',
+          avancementDetaille: [0.8, 0.2, 0],
+        },
+      };
+
+      const scoresMap = referentielsScoringService.computeScoreMap(
+        deeperReferentiel,
+        personnalisationConsequences,
+        actionStatuts,
+        1
+      );
+
+      expect(scoresMap['eci_2.1'].statut).toBe('fait');
+      // Parent avec avancement explicite ≠ non_renseigne → enfants tâche en non_renseignable.
+      expect(scoresMap['eci_2.1.1'].statut).toBe('non_renseignable');
     });
 
     it('Statut non concerné ne doit pas être pris des enfants si défini explicitement au niveau du parent', async () => {
