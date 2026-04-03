@@ -8,6 +8,7 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
+import { onTestFinished } from 'vitest';
 import { utilisateurVerifieTable } from '@tet/backend/users/authorizations/roles/utilisateur-verifie.table';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
@@ -295,6 +296,107 @@ describe('Test les invitations', () => {
       .where(eq(ficheActionPiloteTable.userId, adminUserId));
 
     expect(pilotes.length).toBeGreaterThanOrEqual(2);
+  });
+
+  test(`Refuse de consommer une invitation inexistante`, async () => {
+    const caller = router.createCaller({ user: adminUser });
+
+    await expect(() =>
+      caller.collectivites.membres.invitations.consume({
+        invitationId: crypto.randomUUID(),
+      })
+    ).rejects.toThrow(/n'existe pas/);
+  });
+
+  test(`Consomme une invitation malgré une casse différente entre JWT et email en base`, async () => {
+    const { user: invitee, cleanup: cleanupInvitee } = await addTestUser(
+      databaseService,
+      { collectiviteId: undefined, verified: false }
+    );
+    onTestFinished(cleanupInvitee);
+
+    const [invitationRow] = await databaseService.db
+      .insert(invitationTable)
+      .values({
+        role: CollectiviteRole.LECTURE,
+        email: 'CaseSensitive.Local@test.fr',
+        collectiviteId: collectivite.id,
+        createdBy: adminUserId,
+      })
+      .returning();
+
+    onTestFinished(async () => {
+      await databaseService.db
+        .delete(utilisateurCollectiviteAccessTable)
+        .where(
+          and(
+            eq(utilisateurCollectiviteAccessTable.userId, invitee.id),
+            eq(
+              utilisateurCollectiviteAccessTable.collectiviteId,
+              collectivite.id
+            )
+          )
+        );
+      await databaseService.db
+        .delete(invitationTable)
+        .where(eq(invitationTable.id, invitationRow.id));
+    });
+
+    const inviteeCaller = router.createCaller({
+      user: getAuthUserFromUserCredentials({
+        id: invitee.id,
+        email: 'casesensitive.local@test.fr',
+      }),
+    });
+
+    await inviteeCaller.collectivites.membres.invitations.consume({
+      invitationId: invitationRow.id,
+    });
+
+    const access = await databaseService.db
+      .select()
+      .from(utilisateurCollectiviteAccessTable)
+      .where(
+        and(
+          eq(utilisateurCollectiviteAccessTable.userId, invitee.id),
+          eq(utilisateurCollectiviteAccessTable.collectiviteId, collectivite.id)
+        )
+      );
+
+    expect(access.length).toBe(1);
+  });
+
+  test(`Refuse de consommer une invitation avec un email différent`, async () => {
+    const { user: wrongUser, cleanup: cleanupWrongUser } = await addTestUser(
+      databaseService
+    );
+    onTestFinished(cleanupWrongUser);
+
+    const [invitationRow] = await databaseService.db
+      .insert(invitationTable)
+      .values({
+        role: CollectiviteRole.LECTURE,
+        email: 'only-for-invited@test.fr',
+        collectiviteId: collectivite.id,
+        createdBy: adminUserId,
+      })
+      .returning();
+
+    onTestFinished(async () => {
+      await databaseService.db
+        .delete(invitationTable)
+        .where(eq(invitationTable.id, invitationRow.id));
+    });
+
+    const wrongCaller = router.createCaller({
+      user: getAuthUserFromUserCredentials(wrongUser),
+    });
+
+    await expect(() =>
+      wrongCaller.collectivites.membres.invitations.consume({
+        invitationId: invitationRow.id,
+      })
+    ).rejects.toThrow(/ne peut être consommée que par/);
   });
 
   test(`Supprime une invitation en attente`, async () => {
