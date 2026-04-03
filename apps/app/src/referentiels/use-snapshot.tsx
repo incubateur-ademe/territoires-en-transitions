@@ -109,6 +109,13 @@ export function useSnapshotComputeAndUpdate() {
           trpc.referentiels.snapshots.getCurrent.queryKey(inputParams),
           snapshot
         );
+
+        queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.actions.listActionsGroupedById.queryKey({
+            collectiviteId: snapshot.collectiviteId,
+            referentielId: snapshot.referentielId,
+          }),
+        });
       },
       meta: {
         disableToast: true,
