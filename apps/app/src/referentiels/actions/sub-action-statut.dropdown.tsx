@@ -120,11 +120,13 @@ export const SubActionStatutDropdown = ({ action }: Props) => {
         onClick={(evt) => evt.stopPropagation()}
         className="flex items-center gap-2 mr-2"
       >
-        <SelectActionStatut
-          items={statutItems}
-          value={statut}
-          onChange={onChangeStatut}
-        />
+        {statut !== StatutAvancementEnum.NON_RENSEIGNABLE && (
+          <SelectActionStatut
+            items={statutItems}
+            value={statut}
+            onChange={onChangeStatut}
+          />
+        )}
 
         {hasStatutDetaille && (
           <Button
