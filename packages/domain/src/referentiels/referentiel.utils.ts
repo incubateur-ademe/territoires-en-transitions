@@ -212,38 +212,6 @@ export function getStatutAvancement({
   return avancement;
 }
 
-// /**
-//  * @deprecated done directly in the snapshot computation now.
-//  *
-//  * Détermine le statut d'avancement d'une action en incluant le statut "non concerné"
-//  * et en fonction des avancements des actions enfants.
-//  */
-// export const getStatutAvancementBasedOnChildren = (
-//   action: {
-//     avancement?: StatutAvancement;
-//     desactive: boolean;
-//     concerne: boolean;
-//   },
-//   childrenStatuts: StatutAvancement[] | undefined
-// ) => {
-//   const statutEtendu = getStatutAvancement(action);
-
-//   const hasAtLeastOneChildWithStatutRenseigne = childrenStatuts?.some(
-//     (statut) => statut && statut !== StatutAvancementEnum.NON_RENSEIGNE
-//   );
-
-//   const isStatutNonRenseigne =
-//     !statutEtendu || statutEtendu === StatutAvancementEnum.NON_RENSEIGNE;
-
-//   // Une sous-action "non renseigné" mais avec au moins une tâche renseignée a
-//   // le statut "détaillé"
-//   if (hasAtLeastOneChildWithStatutRenseigne && isStatutNonRenseigne) {
-//     return StatutAvancementEnum.DETAILLE_AU_POURCENTAGE;
-//   }
-
-//   return statutEtendu ?? StatutAvancementEnum.NON_RENSEIGNE;
-// };
-
 export function getScoreRatios({
   pointFait,
   pointProgramme,
@@ -278,26 +246,6 @@ export function getScoreRatios({
         : divisionOrZero(pointNonRenseigne, pointPotentiel),
     ratioTachesCount: divisionOrZero(completedTachesCount, totalTachesCount),
   };
-}
-
-/**
- * Equivalent to a `reduce` function but for a list of actions and their children.
- * Supports both regular properties and getters for actionsEnfant.
- */
-export function reduceChildren<A extends { children: A[] }, T>(
-  actions: A[],
-  initialValue: T,
-  callbackfn: (previousValue: T, currentValue: A) => T
-): T {
-  return actions.reduce((previousValue, action) => {
-    const newValue = callbackfn(previousValue, action);
-
-    if (action.children && action.children.length > 0) {
-      return reduceChildren(action.children, newValue, callbackfn);
-    }
-
-    return newValue;
-  }, initialValue);
 }
 
 /**
@@ -366,11 +314,38 @@ export function flatMapActionsEnfants<
   ]);
 }
 
-export function flatMapChildren<A extends { children: A[] }>(action: A): A[] {
-  return reduceChildren([action], [] as A[], (allChildren, action) => [
-    ...allChildren,
+export function reduceActionsById<A extends { childrenIds: string[] }, T>(
+  actionsById: Record<string, A>,
+  action: A,
+  initialValue: T,
+  callbackfn: (previousValue: T, currentValue: A) => T
+): T {
+  return action.childrenIds.reduce((previousValue, actionId) => {
+    const newValue = callbackfn(previousValue, actionsById[actionId]);
+
+    if (actionsById[actionId]) {
+      return reduceActionsById(
+        actionsById,
+        actionsById[actionId],
+        newValue,
+        callbackfn
+      );
+    }
+
+    return newValue;
+  }, initialValue);
+}
+
+export function flatMapChildren<A extends { childrenIds: string[] }>(
+  actionsById: Record<string, A>,
+  action: A
+): A[] {
+  return reduceActionsById(
+    actionsById,
     action,
-  ]);
+    [] as A[],
+    (allChildren, action) => [...allChildren, action]
+  );
 }
 
 export function filterActionsBy<Action>(

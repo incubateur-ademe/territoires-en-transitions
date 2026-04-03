@@ -16,6 +16,7 @@ export const ActionStatutsTable = () => {
     setFilters,
     filtersCount,
   } = tableData;
+
   const labelFilters = filtersCount > 1 ? 'filtres actifs' : 'filtre actif';
   const labelSousActions = pluralizeLabel(sousActionsCount, 'sous-action');
   const labelTaches = pluralizeLabel(count, 'tâche');

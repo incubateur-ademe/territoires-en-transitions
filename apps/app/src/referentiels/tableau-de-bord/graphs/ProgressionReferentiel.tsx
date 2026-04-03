@@ -6,7 +6,7 @@ import BarChartCardWithSubrows, {
 import { ReferentielId } from '@tet/domain/referentiels';
 import { JSX } from 'react';
 import { TableOptions } from 'react-table';
-import { ActionDetailed } from '../../use-snapshot';
+import { ActionListItem } from '../../actions/use-list-actions';
 import { getFormattedScore } from '../utils';
 
 // Définition des couleurs des graphes
@@ -40,7 +40,7 @@ const legend = [
 
 type ProgressionReferentielProps = {
   score: Pick<
-    TableOptions<ActionDetailed>,
+    TableOptions<ActionListItem>,
     'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
   >;
   referentiel: ReferentielId;

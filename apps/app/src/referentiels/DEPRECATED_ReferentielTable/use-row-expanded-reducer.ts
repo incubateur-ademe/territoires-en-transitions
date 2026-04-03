@@ -1,7 +1,7 @@
 import { useModifierStateRef } from '@/app/referentiels/DEPRECATED_ReferentielTable/useModifierStateRef';
 import { ActionType, TableState } from 'react-table';
 
-type Mesure = { identifiant: string };
+type Action = { identifiant: string };
 
 /**
  * Renvoi un `stateReducer` pour une instance react-table permettant de changer
@@ -12,7 +12,7 @@ type Mesure = { identifiant: string };
  * mais cela paraissait plus compliqué
  * Ref: https://github.com/TanStack/table/blob/v7/src/plugin-hooks/useExpanded.js
  */
-export const useRowExpandedReducer = (rows: Mesure[]) => {
+export const useRowExpandedReducer = (rows: Action[]) => {
   // état courant des touches "modificatrices"
   const modifierStateRef = useModifierStateRef();
 
@@ -69,7 +69,7 @@ export const useRowExpandedReducer = (rows: Mesure[]) => {
 };
 
 // renvoi le sous-ensemble des lignes appartenant au même axe
-const getRowsByAxe = (rows: Mesure[], actionId: string) => {
+const getRowsByAxe = (rows: Action[], actionId: string) => {
   const axeId = `${actionId.split('.')[0]}.`;
   return rows.filter(({ identifiant }) => identifiant?.startsWith(axeId));
 };

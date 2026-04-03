@@ -1,49 +1,48 @@
-import { indexBy } from '@/app/utils/indexBy';
-import {
-  ActionTypeEnum,
-  flatMapActionsEnfants,
-  reduceActions,
-  ReferentielId,
-} from '@tet/domain/referentiels';
+import { ActionTypeEnum, ReferentielId } from '@tet/domain/referentiels';
 import { useCallback, useMemo } from 'react';
 import { ActionType, TableState } from 'react-table';
 import { getMaxDepth } from '../AidePriorisation/queries';
-import { ActionDetailed, useGetCurrentSnapshot } from '../use-snapshot';
+
+import { ActionListItem } from '../actions/use-list-actions';
+import { useListActionsGroupedById } from '../actions/use-list-actions-grouped-by-id';
 import { useRowExpandedReducer } from './use-row-expanded-reducer';
 import { useModifierStateRef } from './useModifierStateRef';
 
 export function useTable({ referentielId }: { referentielId: ReferentielId }) {
-  const { data: snapshot, isPending } = useGetCurrentSnapshot({
-    actionId: referentielId,
+  const [{ data: actionsById = {}, isPending }] = useListActionsGroupedById({
+    referentielIds: [referentielId],
   });
 
   // Uniquement les actions de niveau 1 (axes)
-  const axesOnly = snapshot?.scoresPayload.scores.actionsEnfant;
+  const axesOnly = useMemo(() => {
+    const referentiel = actionsById[referentielId];
+    return referentiel?.childrenIds.map((id) => actionsById[id]);
+  }, [actionsById, referentielId]);
 
-  const getRowId = useCallback((action: ActionDetailed) => action.actionId, []);
+  const getRowId = useCallback((action: ActionListItem) => action.actionId, []);
 
   const maxLevel = getMaxDepth(referentielId);
 
   // Renvoie les sous-lignes d'une ligne, donc les enfants d'une action
   // mais seulement jusqu'au niveau 3
   const getSubRows = useCallback(
-    (action: ActionDetailed) => {
+    (action: ActionListItem) => {
       // On s'arrête aux sous-actions (on ne descend pas aux taches)
-      if (action.level > maxLevel - 1) {
+      if (action.depth > maxLevel - 1) {
         return [];
       }
 
-      return action.actionsEnfant;
+      return action.childrenIds.map((id) => actionsById[id]);
     },
-    [maxLevel]
+    [maxLevel, actionsById]
   );
 
   // le `stateReducer` de react-table permet de transformer le prochain état de
   // la table avant qu'il ne soit appliqué lors du traitement d'une action
   // utilisé ici pour personnaliser le comportement de l'action `toggleRowExpanded`
-  const rows = snapshot
-    ? flatMapActionsEnfants(snapshot.scoresPayload.scores)
-    : [];
+
+  const rows = useMemo(() => Object.values(actionsById), [actionsById]);
+
   const stateReducer = useRowExpandedReducer(rows);
 
   const table = {
@@ -54,32 +53,15 @@ export function useTable({ referentielId }: { referentielId: ReferentielId }) {
     stateReducer,
   };
 
-  const tachesTotalCount = reduceActions(
-    snapshot?.scoresPayload.scores.actionsEnfant ?? [],
-    0,
-    (count, action) => {
-      if (action.actionType === 'tache') {
-        return count + 1;
-      }
-      return count;
-    }
-  );
-
-  const sousActionsTotalCount = reduceActions(
-    snapshot?.scoresPayload.scores.actionsEnfant ?? [],
-    0,
-    (count, action) => {
-      if (action.actionType === 'sous-action') {
-        return count + 1;
-      }
-      return count;
-    }
-  );
-
-  //  rows.filter(isTache).length || 0;
-  // const sousActionsTotal = rows.filter(isSousAction).length;
+  const tachesTotalCount = rows.filter(
+    (action) => action.actionType === ActionTypeEnum.TACHE
+  ).length;
+  const sousActionsTotalCount = rows.filter(
+    (action) => action.actionType === ActionTypeEnum.SOUS_ACTION
+  ).length;
 
   return {
+    actionsById,
     table,
     total: tachesTotalCount,
     sousActionsTotal: sousActionsTotalCount,
@@ -93,10 +75,10 @@ export function useTable({ referentielId }: { referentielId: ReferentielId }) {
  * @returns
  * @deprecated
  */
-export const useReferentiel = <Action extends ActionDetailed>(
-  referentielId: string,
+export const useReferentiel = <ActionLike extends { actionId: string }>(
+  referentielId: ReferentielId,
   collectiviteId: number,
-  actions?: Action[] | 'all'
+  actions?: ActionLike[] | 'all'
 ) => {
   // chargement du référentiel
   const { mergeActions, isLoading, total, sousActionsTotal } =
@@ -106,20 +88,16 @@ export const useReferentiel = <Action extends ActionDetailed>(
   const rows = useMemo(() => mergeActions(actions), [actions, mergeActions]);
 
   // extrait les lignes de 1er niveau
-  const data = useMemo(() => rows?.filter((a) => a.level === 1) || [], [rows]);
+  const data = useMemo(() => rows?.filter((a) => a.depth === 1) || [], [rows]);
 
   // renvoi l'id d'une ligne
-  const getRowId = useCallback((row: Action) => row.actionId, []);
+  const getRowId = useCallback((row: ActionLike) => row.actionId, []);
 
   // renvoi les sous-lignes d'une ligne
   const getSubRows = useCallback(
-    (parentRow: Action) =>
-      rows && parentRow.actionsEnfant.length > 0
-        ? rows?.filter(
-            ({ identifiant, level }) =>
-              level === parentRow.level + 1 &&
-              identifiant.startsWith(parentRow.identifiant)
-          )
+    (parentRow: ActionListItem & ActionLike) =>
+      rows && parentRow.childrenIds.length > 0
+        ? parentRow.childrenIds.map((id) => rows.find((r) => r.actionId === id))
         : [],
     [rows]
   );
@@ -165,17 +143,12 @@ export const useReferentiel = <Action extends ActionDetailed>(
  * Charge l'arborescence d'un référentiel et renvoi une fonction permettant de
  * créer une copie des données fusionnées avec celles de l'arborescence
  */
-const useReferentielData = (referentielId: string) => {
-  const { data, isPending } = useGetCurrentSnapshot({
-    actionId: referentielId,
+const useReferentielData = (referentielId: ReferentielId) => {
+  const [{ data: actions = {}, isPending }] = useListActionsGroupedById({
+    referentielIds: [referentielId],
   });
 
-  const rows = useMemo(
-    () => (data ? flatMapActionsEnfants(data.scoresPayload.scores) : []),
-    [data]
-  );
-
-  const actionById = indexBy(rows, 'actionId');
+  const rows = useMemo(() => Object.values(actions), [actions]);
 
   const total =
     rows.filter((a) => a.actionType === ActionTypeEnum.TACHE).length || 0;
@@ -185,29 +158,34 @@ const useReferentielData = (referentielId: string) => {
 
   // fusionne avec les informations préchargées du référentiel
   const mergeActions = useCallback(
-    <Action extends ActionDetailed>(actions?: Action[] | 'all'): Action[] => {
+    <ActionLike extends { actionId: string }>(
+      actionsToMerge?: ActionLike[] | 'all'
+    ): (ActionListItem & ActionLike)[] => {
       // pas de données
-      if (!actionById || !actions) {
+      if (!actionsToMerge) {
         return [];
       }
 
       // uniquement les lignes du référentiel
-      if (actions === 'all') {
-        return rows as Action[];
+      if (actionsToMerge === 'all') {
+        return rows as (ActionListItem & ActionLike)[];
       }
 
       // fusionne dans chaque ligne les données complémentaires
-      return actions.map((action) => ({
-        ...action,
-        ...(actionById[action.actionId] || {}),
-      }));
+      return rows.map(
+        (action) =>
+          ({
+            ...action,
+            ...(actionsToMerge.find((a) => a.actionId === action.actionId) ||
+              {}),
+          } as ActionListItem & ActionLike)
+      );
     },
-    [actionById, rows]
+    [rows]
   );
 
   return {
     isLoading: isPending,
-    actionById,
     mergeActions,
     total: total || 0,
     sousActionsTotal: sousActionsTotal || 0,
@@ -215,7 +193,7 @@ const useReferentielData = (referentielId: string) => {
   };
 };
 
-export const useToggleRowExpandedReducer = (rows: ActionDetailed[]) => {
+export const useToggleRowExpandedReducer = (rows: ActionListItem[]) => {
   // état courant des touches "modificatrices"
   const modifierStateRef = useModifierStateRef();
 
@@ -243,12 +221,12 @@ export const useToggleRowExpandedReducer = (rows: ActionDetailed[]) => {
       return {
         ...newState,
         expanded: rowsSubset.reduce(
-          (newExpanded, { level, identifiant }) => ({
+          (newExpanded, { depth, identifiant }) => ({
             ...newExpanded,
             // une ligne sera dépliée si il y a une entrée clé/valeur `[id, true]`
             // dans l'objet `expanded` et est repliée si son id n'est pas dans
             // l'objet (l'entrée `[id, undefined]` supprime la clé de l'objet)
-            [identifiant]: level - 1 <= clickedDepth ? true : undefined,
+            [identifiant]: depth - 1 <= clickedDepth ? true : undefined,
           }),
           newState.expanded as Record<string, boolean | undefined>
         ),
@@ -271,7 +249,7 @@ export const useToggleRowExpandedReducer = (rows: ActionDetailed[]) => {
 };
 
 // renvoi le sous-ensemble des lignes appartenant au même axe
-const getRowsByAxe = (rows: ActionDetailed[], clickedId: string) => {
+const getRowsByAxe = (rows: ActionListItem[], clickedId: string) => {
   const axeId = clickedId.split('.')[0] + '.';
   return rows.filter(({ identifiant }) => identifiant?.startsWith(axeId));
 };

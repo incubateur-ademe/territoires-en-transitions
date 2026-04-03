@@ -1,5 +1,5 @@
 import ActionPreuvePanel from '@/app/referentiels/actions/action-preuve.panel';
-import { ActionDetailed } from '@/app/referentiels/use-snapshot';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { Fragment, useEffect, useRef } from 'react';
@@ -19,8 +19,8 @@ export type TPreuvesTableProps = {
   referentielId: Exclude<ReferentielId, 'te' | 'te-test'>;
 };
 
-export type TCellProps = CellProps<ActionDetailed>;
-export type TColumn = Column<ActionDetailed>;
+export type TCellProps = CellProps<ActionListItem>;
+export type TColumn = Column<ActionListItem>;
 
 // défini les colonnes de la table
 const COLUMNS: TColumn[] = [
@@ -67,7 +67,7 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
       isInitialLoading.current = false;
       flatRows
         // filtre les lignes à déplier
-        .filter((row) => row.original.level < maxDepth)
+        .filter((row) => row.original.depth < maxDepth)
         // déplie les lignes voulues
         // NOTE: on utilise `as unknown as string[]` pour contourner une erreur
         // de typage dans react-table : `toggleRowExpanded` attend bien un id
@@ -95,7 +95,7 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
           rows.map((row, index: number, rows) => {
             prepareRow(row);
             const { original, isExpanded } = row;
-            const { level: depth, nom, identifiant, actionId } = original;
+            const { depth, nom, identifiant, actionId } = original;
             // dernière ligne avant une nouvelle section
             const isLast =
               (!rows[index + 1] || rows[index + 1].depth === 0) &&
