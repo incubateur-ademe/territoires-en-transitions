@@ -44,35 +44,60 @@ export const useSaveActionStatuts = () => {
 };
 
 /**
- * Détermine si l'utilisateur a le droit de modifier le statut d'une action
+ * Shared context for action statut edit permission checks.
+ * Call once at the table/page level, then use `isActionStatutEditDisabled`
+ * per row with the action's `score.desactive` value.
  */
-export const useEditActionStatutIsDisabled = (actionId: string) => {
+export const useActionStatutEditContext = () => {
   const { hasCollectivitePermission, collectiviteId } =
     useCurrentCollectivite();
   const referentielId = useReferentielId();
   const parcours = useLabellisationParcours({
-    collectiviteId: collectiviteId,
-    referentielId: referentielId,
+    collectiviteId,
+    referentielId,
   });
   const isAuditeur = useIsAuditeur();
+
+  const hasPermission = hasCollectivitePermission(
+    PermissionOperationEnum['REFERENTIELS.MUTATE']
+  );
+
+  return { parcoursStatus: parcours?.status, isAuditeur, hasPermission };
+};
+
+export type ActionStatutEditContext = ReturnType<
+  typeof useActionStatutEditContext
+>;
+
+export function isActionStatutEditDisabled(
+  ctx: ActionStatutEditContext,
+  desactive: boolean
+): boolean {
+  const canUpdateResult = canUpdateActionStatutWithoutPermissionCheck({
+    actions: [{ desactive }],
+    parcoursStatus: ctx.parcoursStatus,
+    isAuditeur: ctx.isAuditeur,
+  });
+
+  if (!canUpdateResult.canUpdate) {
+    return true;
+  }
+
+  return !ctx.hasPermission;
+}
+
+/**
+ * Détermine si l'utilisateur a le droit de modifier le statut d'une action.
+ * @deprecated Use `useActionStatutEditContext` + `isActionStatutEditDisabled` instead
+ * to avoid per-row hook overhead in tables.
+ */
+export const useEditActionStatutIsDisabled = (actionId: string) => {
+  const ctx = useActionStatutEditContext();
 
   const action = useGetAction({ actionId });
   if (!action) {
     return true;
   }
 
-  const { score } = action;
-
-  const canUpdateResult = canUpdateActionStatutWithoutPermissionCheck({
-    actions: [{ desactive: score.desactive }],
-    parcoursStatus: parcours?.status,
-    isAuditeur,
-  });
-  if (!canUpdateResult.canUpdate) {
-    return true;
-  }
-
-  return !hasCollectivitePermission(
-    PermissionOperationEnum['REFERENTIELS.MUTATE']
-  );
+  return isActionStatutEditDisabled(ctx, action.score.desactive);
 };

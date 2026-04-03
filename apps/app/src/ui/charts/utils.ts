@@ -1,4 +1,4 @@
-import { ActionDetailed } from '@/app/referentiels/use-snapshot';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { DonutData } from '@/app/ui/charts/Donut/DonutChart';
 import { defaultColors, nivoColorsSet } from '@/app/ui/charts/chartsTheme';
 
@@ -8,7 +8,7 @@ import { defaultColors, nivoColorsSet } from '@/app/ui/charts/chartsTheme';
  */
 
 export const getIndexTitles = (
-  scoreData: readonly ActionDetailed[],
+  scoreData: readonly ActionListItem[],
   addTotal: boolean
 ) => {
   const indexTitles = scoreData.map(

@@ -1,4 +1,4 @@
-import { ActionDetailed } from '@/app/referentiels/use-snapshot';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { BarDatum } from '@nivo/bar';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
@@ -17,7 +17,7 @@ const typeToIndexby: Record<string, string> = {
 };
 
 export type TBarChartScoreTable = Pick<
-  TableOptions<ActionDetailed>,
+  TableOptions<ActionListItem>,
   'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
 >;
 
@@ -43,7 +43,7 @@ type BarChartCardWithSubrowsProps = {
   };
   customStyle?: React.CSSProperties;
   getFormattedScore: (
-    scoreData: readonly ActionDetailed[],
+    scoreData: readonly ActionListItem[],
     indexBy: string,
     percentage: boolean,
     customColors: { [key: string]: string }

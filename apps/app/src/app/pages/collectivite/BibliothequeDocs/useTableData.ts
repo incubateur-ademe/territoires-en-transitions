@@ -1,16 +1,19 @@
-import { ActionDetailed } from '@/app/referentiels/use-snapshot';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { TableOptions } from 'react-table';
 import { useReferentiel } from '../../../../referentiels/DEPRECATED_ReferentielTable/useReferentiel';
 
-export type UseTableData = (referentiel: string) => TableData;
+export type UseTableData = (referentiel: ReferentielId) => TableData;
+
+type TTable = Pick<
+  TableOptions<ActionListItem>,
+  'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
+>;
 
 export type TableData = {
   /** données à passer à useTable */
-  table: Pick<
-    TableOptions<ActionDetailed>,
-    'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
-  >;
+  table: TTable;
   /** Indique que le chargement des données est en cours */
   isLoading: boolean;
 };
@@ -18,18 +21,18 @@ export type TableData = {
 /**
  * Memoïze et renvoi les données et paramètres de la table
  */
-export const useTableData: UseTableData = (referentiel) => {
+export const useTableData: UseTableData = (referentielId) => {
   const collectiviteId = useCollectiviteId();
 
   // chargement du référentiel
   const { table, total, count, isLoading } = useReferentiel(
-    referentiel,
+    referentielId,
     collectiviteId,
     'all'
   );
 
   return {
-    table,
+    table: table as unknown as TTable,
     isLoading,
     count,
     total,

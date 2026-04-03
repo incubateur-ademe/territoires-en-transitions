@@ -12,17 +12,18 @@ import {
 } from '@/app/referentiels/AidePriorisation/filters';
 import { getMaxDepth } from '@/app/referentiels/AidePriorisation/queries';
 import { useTable } from '@/app/referentiels/DEPRECATED_ReferentielTable/useReferentiel';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import { DeleteFiltersButton } from '@/app/ui/lists/DEPRECATED_filter-badges/delete-filters.button';
 import { useSearchParams } from '@/app/utils/[deprecated]use-search-params';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { divisionOrZero } from '@tet/domain/utils';
 import { ITEM_ALL } from '@tet/ui';
 import { flow } from 'es-toolkit';
+import { useMemo } from 'react';
 
 function actionMatchingCategorie(categories: string[]) {
-  return (action: ActionDetailed) =>
+  return (action: ActionListItem) =>
     action.categorie === null ||
     categories.includes(ITEM_ALL) ||
     categories.includes(action.categorie);
@@ -43,9 +44,9 @@ function actionMatchingRatios(
 
   const maxLevel = getMaxDepth(referentielId);
 
-  return (action: ActionDetailed) => {
+  return (action: ActionListItem) => {
     // On applique le filtre sur les pourcentages de score uniquement aux sous-taches
-    if (action.level < maxLevel) {
+    if (action.depth < maxLevel) {
       return true;
     }
 
@@ -73,16 +74,24 @@ function useTableWithFilters(referentielId: ReferentielId) {
     nameToShortNames
   );
 
-  const actionMatchingRatiosOfScoreProgramme = actionMatchingRatios(
-    referentielId,
-    filters.score_programme,
-    'scoreProgramme'
+  const actionMatchingRatiosOfScoreProgramme = useMemo(
+    () =>
+      actionMatchingRatios(
+        referentielId,
+        filters.score_programme,
+        'scoreProgramme'
+      ),
+    [referentielId, filters.score_programme]
   );
 
-  const actionMatchingRatiosOfScoreRealise = actionMatchingRatios(
-    referentielId,
-    filters.score_realise,
-    'scoreRealise'
+  const actionMatchingRatiosOfScoreRealise = useMemo(
+    () =>
+      actionMatchingRatios(
+        referentielId,
+        filters.score_realise,
+        'scoreRealise'
+      ),
+    [referentielId, filters.score_realise]
   );
 
   const { table, isLoading } = useTable({
@@ -92,15 +101,26 @@ function useTableWithFilters(referentielId: ReferentielId) {
   const numberOfFilteredTaskActions = 0;
   const totalNumberOfTaskActions = 0;
 
-  return {
-    table: {
-      ...table,
-      getSubRows: flow(table.getSubRows, (rows) =>
+  const getSubRows = useMemo(
+    () =>
+      flow(table.getSubRows, (rows) =>
         rows
           .filter(actionMatchingCategorie(filters.phase))
           .filter(actionMatchingRatiosOfScoreProgramme)
           .filter(actionMatchingRatiosOfScoreRealise)
       ),
+    [
+      table.getSubRows,
+      filters.phase,
+      actionMatchingRatiosOfScoreProgramme,
+      actionMatchingRatiosOfScoreRealise,
+    ]
+  );
+
+  return {
+    table: {
+      ...table,
+      getSubRows,
     },
     filters,
     setFilters,

@@ -1,14 +1,14 @@
 import { avancementToLabel } from '@/app/app/labels';
 import { actionAvancementColors } from '@/app/app/theme';
 import { divisionOrZero } from '@tet/domain/utils';
-import { ActionDetailed } from '../use-snapshot';
+import { ActionListItem } from '../actions/use-list-actions';
 
 /**
  * Met en forme les scores pour les graphes de progression des scores
  */
 
 export const getFormattedScore = (
-  scoreData: readonly ActionDetailed[],
+  scoreData: readonly ActionListItem[],
   indexBy: string,
   percentage: boolean,
   customColors: { [key: string]: string }
@@ -30,7 +30,7 @@ export const getFormattedScore = (
           divisionOrZero(d.score.pointNonRenseigne, d.score.pointPotentiel) *
           100,
         ...customColors,
-        clickable: `${d.actionsEnfant.length > 0}`,
+        clickable: `${d.childrenIds.length > 0}`,
       }))
     );
 
@@ -86,7 +86,7 @@ export const getFormattedScore = (
         [avancementToLabel.non_renseigne]:
           d.score.pointNonRenseigne * d.score.pointPotentiel,
         ...customColors,
-        clickable: `${d.actionsEnfant.length > 0}`,
+        clickable: `${d.childrenIds.length > 0}`,
       }))
     );
   }
@@ -94,7 +94,7 @@ export const getFormattedScore = (
   return formattedScore;
 };
 
-export const getAggregatedScore = (scoreData: readonly ActionDetailed[]) => {
+export const getAggregatedScore = (scoreData: readonly ActionListItem[]) => {
   const aggregatedScore: { id: string; value: number; color?: string }[] = [
     {
       id: avancementToLabel.fait,

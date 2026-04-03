@@ -7,12 +7,14 @@ import { useComparaisonScoreAudit } from './useComparaisonScoreAudit';
 
 export type UseTableData = () => TableData;
 
+type TTable = Pick<
+  TableOptions<TScoreAuditRowData>,
+  'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded' | 'stateReducer'
+>;
+
 export type TableData = {
   /** données à passer à useTable */
-  table: Pick<
-    TableOptions<TScoreAuditRowData>,
-    'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
-  >;
+  table: TTable;
   /** Indique que le chargement des données est en cours */
   isLoading: boolean;
   /** Nombre total de lignes */
@@ -41,10 +43,12 @@ export const useTableData: UseTableData = () => {
     isLoading: isLoadingReferentiel,
   } = useReferentiel(referentiel, collectiviteId, data);
 
-  const headerData = data?.find((r) => r.actionId === referentiel);
+  const headerData = Object.values(data ?? {}).find(
+    (r) => r.actionId === referentiel
+  );
 
   return {
-    table,
+    table: table as unknown as TTable,
     headerData,
     isLoading: isLoading || isLoadingReferentiel,
     total,

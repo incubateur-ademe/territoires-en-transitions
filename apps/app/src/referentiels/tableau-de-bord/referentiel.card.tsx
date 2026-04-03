@@ -2,7 +2,7 @@ import { actionIdToLabel } from '@/app/app/labels';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { divisionOrZero } from '@tet/domain/utils';
 import { TableOptions } from 'react-table';
-import { ActionDetailed } from '../use-snapshot';
+import { ActionListItem } from '../actions/use-list-actions';
 import { EtatDesLieuxGraphs } from './graphs/EtatDesLieuxGraphs';
 import { ScoreRempli, ScoreVide } from './labellisation/Scores';
 
@@ -10,7 +10,7 @@ type Props = {
   isReadonly: boolean;
   collectiviteId: number;
   progressionScore: Pick<
-    TableOptions<ActionDetailed>,
+    TableOptions<ActionListItem>,
     'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
   >;
   repartitionPhases: { id: string; value: number }[];

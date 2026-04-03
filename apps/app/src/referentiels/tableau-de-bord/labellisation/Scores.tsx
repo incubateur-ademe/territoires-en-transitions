@@ -13,7 +13,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { JSX } from 'react';
 import { TableOptions } from 'react-table';
-import { ActionDetailed } from '../../use-snapshot';
+import { ActionListItem } from '../../actions/use-list-actions';
 import { AccueilCard } from '../AccueilCard';
 import { getAggregatedScore } from '../utils';
 import LabellisationInfo from './LabellisationInfo';
@@ -24,7 +24,7 @@ type ScoreRempliProps = {
   referentiel: ReferentielId;
   title: string;
   progressionScore: Pick<
-    TableOptions<ActionDetailed>,
+    TableOptions<ActionListItem>,
     'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
   >;
   potentiel: number | undefined;

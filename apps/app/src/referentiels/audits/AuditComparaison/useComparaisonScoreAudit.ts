@@ -6,6 +6,7 @@ import {
   ReferentielId,
   SnapshotJalonEnum,
 } from '@tet/domain/referentiels';
+import { TScoreAuditRowData } from './types';
 
 // charge les comparaisons de potentiels/scores avant/après audit
 export const useComparaisonScoreAudit = (
@@ -24,7 +25,7 @@ export const useComparaisonScoreAudit = (
         },
       },
       {
-        select(snapshots) {
+        select(snapshots): TScoreAuditRowData[] {
           const currentSnapshot = snapshots.find(
             (snap) => snap.jalon === SnapshotJalonEnum.COURANT
           );
