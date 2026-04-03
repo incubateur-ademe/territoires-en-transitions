@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { ListMembresService } from '@tet/backend/collectivites/membres/list-membres/list-membres.service';
 import { PersonneTagService } from '@tet/backend/collectivites/tags/personnes/personne-tag.service';
@@ -164,7 +165,15 @@ export class InvitationService {
       .from(invitationTable)
       .where(eq(invitationTable.id, invitationId))
       .limit(1);
-    if (user.jwtPayload.email !== invitation.email) {
+
+    if (!invitation) {
+      this.logger.error(`L'invitation ${invitationId} n'existe pas`);
+      throw new NotFoundException(`L'invitation ${invitationId} n'existe pas`);
+    }
+
+    if (
+      user.jwtPayload.email?.toLowerCase() !== invitation.email.toLowerCase()
+    ) {
       this.logger.error(
         `L'email de l'invitation ${invitation.email} ne correspond pas à l'email du token ${user.jwtPayload.email}`
       );
