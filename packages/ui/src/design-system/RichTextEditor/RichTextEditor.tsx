@@ -10,8 +10,7 @@ import { fr as locale } from '@blocknote/core/locales';
 import { BlockNoteView } from '@blocknote/mantine';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote, useEditorChange } from '@blocknote/react';
-import { useEffect } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
+import React, { useEffect } from 'react';
 
 import { cn } from '../../utils/cn';
 import { TextPlaceholder } from '../TextPlaceholder/TextPlaceholder';
@@ -27,8 +26,6 @@ export type RichTextEditorProps = {
   placeholder?: string;
   disabled?: boolean;
   isLoading?: boolean;
-  /** Délai en ms pour appeler moins systématiquement le `onChange` */
-  debounceDelayOnChange?: number;
   onChange?: (html: string) => void;
   /** Appelé quand l'affichage du contenu initial est tronqué (par une règle css max-height) */
   setIsTruncated?: (truncated: boolean) => void;
@@ -37,18 +34,19 @@ export type RichTextEditorProps = {
     color?: 'white' | 'grey' | 'primary';
   };
   unstyled?: boolean;
-  onBlur?: () => void;
+  onBlur?: (htmlValue: string) => void;
   OnKeyDownCapture?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
 };
 
 // utilisé pour convertir en html les liens présents dans les contenus texte existants
-const CONTAINS_HTML_URL = /<a\s[^>]*href="[^"]*"[^>]*>(.*?)<\/a>/;
-const CONVERT_URL = {
-  searchValue:
-    /(https?):\/\/([\da-z.-]+\.[a-z.]+|[\d.]+)([/:?=&#]{1}[\da-z.-]+)*[/?]?/gim,
-  replaceValue:
-    '<a href="$&" target="_blank" rel="noopener noreferrer nofollow">$&</a>',
-};
+
+// const CONTAINS_HTML_URL = /<a\s[^>]*href="[^"]*"[^>]*>(.*?)<\/a>/;
+// const CONVERT_URL = {
+//   searchValue:
+//     /(https?):\/\/([\da-z.-]+\.[a-z.]+|[\d.]+)([/:?=&#]{1}[\da-z.-]+)*[/?]?/gim,
+//   replaceValue:
+//     '<a href="$&" target="_blank" rel="noopener noreferrer nofollow">$&</a>',
+// };
 
 // génère le schéma des données gérées par l'éditeur en ne conservant que les
 // types de blocs acceptés (permet notamment de complètement désactiver le bloc
@@ -78,7 +76,6 @@ export default function RichTextEditor({
   placeholder,
   disabled = false,
   isLoading = false,
-  debounceDelayOnChange = 0,
   onChange,
   setIsTruncated,
   contentStyle,
@@ -183,40 +180,57 @@ export default function RichTextEditor({
   useEffect(() => {
     // Replaces the blocks on initialization
     // But, you can also call this before rendering the editor
-    async function loadHTML(html: string) {
-      const blocks = await editor.tryParseHTMLToBlocks(html);
+    async function loadContent(content: string) {
+      const isHtml = content.trim().startsWith('<');
+
+      const blocks = isHtml
+        ? await editor.tryParseHTMLToBlocks(content)
+        : await editor.tryParseMarkdownToBlocks(content);
+
       editor.replaceBlocks(editor.document, blocks);
     }
 
     if (initialValue) {
-      loadHTML(initialValue);
+      loadContent(initialValue);
     }
   }, [editor, initialValue]);
 
   useEditorChange(async (editor) => {
     const html = await editor.blocksToFullHTML(editor.document);
 
-    // console.log('onChange: html', html);
     onChange?.(html);
   }, editor);
 
-  const handleChange = useDebouncedCallback(async () => {
-    if (onChange) {
-      const html = await editor.blocksToHTMLLossy(editor.document);
-      // // on ajoute un espace insécable dans les paragraphes vides pour ne pas
-      // // perdre les sauts de lignes
-      // const content = html.replaceAll(
-      //   editorOptions.domAttributes?.inlineContent?.class
-      //     ? `<p class="${editorOptions.domAttributes.inlineContent.class}"></p>`
-      //     : '<p></p>',
-      //   '<p>&nbsp;</p>'
-      // );
-      // // mais on évite d'avoir uniquement une ligne vide
-      // onChange(content === '<p>&nbsp;</p>' ? '' : content);
+  const handleOnBlur = async (event: React.FocusEvent<HTMLDivElement>) => {
+    /**
+     * blur event is triggered only when user actually clicks outside of the blocknote editor
+     */
+    const isBlurTriggeredByElementInsideBlockNote =
+      event.currentTarget.contains(event.relatedTarget);
+    if (isBlurTriggeredByElementInsideBlockNote) return;
 
-      onChange(html);
-    }
-  }, debounceDelayOnChange);
+    const html = await editor.blocksToFullHTML(editor.document);
+
+    onBlur?.(html);
+  };
+
+  // const handleChange = useDebouncedCallback(async () => {
+  //   if (onChange) {
+  //     const html = await editor.blocksToHTMLLossy(editor.document);
+  //     // // on ajoute un espace insécable dans les paragraphes vides pour ne pas
+  //     // // perdre les sauts de lignes
+  //     const content = html.replaceAll(
+  //       editorOptions.domAttributes?.inlineContent?.class
+  //         ? `<p class="${editorOptions.domAttributes.inlineContent.class}"></p>`
+  //         : '<p></p>',
+  //       '<p>&nbsp;</p>'
+  //     );
+  //     // mais on évite d'avoir uniquement une ligne vide
+  //     onChange(content === '<p>&nbsp;</p>' ? '' : content);
+
+  //     // onChange(html);
+  //   }
+  // }, debounceDelayOnChange);
 
   if (isLoading) {
     return (
@@ -234,16 +248,7 @@ export default function RichTextEditor({
       sideMenu={false}
       editable={!disabled}
       onKeyDownCapture={OnKeyDownCapture}
-      onBlur={(ev) => {
-        /**
-         * blur event is triggered only when user actually clicks outside of the blocknote editor
-         */
-        const isBlurTriggeredByElementInsideBlockNote =
-          ev.currentTarget.contains(ev.relatedTarget);
-        if (isBlurTriggeredByElementInsideBlockNote) return;
-
-        onBlur?.();
-      }}
+      onBlur={handleOnBlur}
       // onChange={(ed, { getChanges }) => {
       //   const changes = getChanges();
       //   // appelle le callback seulement la 1ère initialisation du contenu
