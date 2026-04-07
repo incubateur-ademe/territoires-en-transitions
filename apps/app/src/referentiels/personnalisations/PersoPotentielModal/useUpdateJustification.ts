@@ -25,9 +25,11 @@ export const useUpdateJustification = (collectiviteId: number) => {
   );
 
   const getReponseQueryKey = (questionId: string) =>
-    trpc.collectivites.personnalisations.listReponses.queryKey({
+    trpc.collectivites.personnalisations.listQuestions.queryKey({
+      mode: 'reponsesOnly',
       collectiviteId,
       questionIds: [questionId],
+      withEmptyReponse: true,
     });
 
   return useMutation({

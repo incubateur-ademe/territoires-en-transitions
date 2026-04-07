@@ -24,9 +24,11 @@ export const useChangeReponseHandler = (
   );
 
   const getReponseQueryKey = (questionId: string) =>
-    trpc.collectivites.personnalisations.listReponses.queryKey({
+    trpc.collectivites.personnalisations.listQuestions.queryKey({
+      mode: 'reponsesOnly',
       collectiviteId,
       questionIds: [questionId],
+      withEmptyReponse: true,
     });
 
   const { mutate } = useMutation({

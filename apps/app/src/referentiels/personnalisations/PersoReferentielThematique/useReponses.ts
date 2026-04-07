@@ -12,10 +12,12 @@ export const useReponses = (questions: Question[]) => {
   // une requête par question pour permettre le rechargement individuel
   return useQueries({
     queries: questions.map((q) =>
-      trpc.collectivites.personnalisations.listReponses.queryOptions(
+      trpc.collectivites.personnalisations.listQuestions.queryOptions(
         {
+          mode: 'reponsesOnly',
           collectiviteId,
           questionIds: [q.id],
+          withEmptyReponse: true,
         },
         {
           select: (rows) => rows.map((row) => transform(row)),

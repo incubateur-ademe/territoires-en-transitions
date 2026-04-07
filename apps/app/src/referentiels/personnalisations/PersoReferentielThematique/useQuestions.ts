@@ -10,6 +10,7 @@ export type TFilters = Omit<
 /**
  * Charge la liste des questions de personnalisation pour la collectivité
  * courante. La liste est filtrable par action(s) ou par thématique.
+ * `mode` est omis : défaut API `questions` (définitions sans réponses).
  */
 export const useQuestions = (filters: TFilters) => {
   const collectiviteId = useCollectiviteId();

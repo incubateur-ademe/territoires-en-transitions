@@ -44,11 +44,11 @@ export class ListPersonnalisationReponsesRepository {
     try {
       const questionTypeSubquery = this.getQuestionTypeSubquery(tx);
       const competenceSubquery = this.getCompetenceSubquery(collectiviteId, tx);
-      const reponseSubquery = this.getReponseSubquery(
+      const reponseSubquery = this.buildReponseUnionQuery(
         collectiviteId,
         competenceSubquery,
         tx
-      );
+      ).as('reponse');
       const justificationSubquery = this.getJustificationSubquery(
         collectiviteId,
         tx
@@ -138,14 +138,49 @@ export class ListPersonnalisationReponsesRepository {
   }
 
   /**
-   * Sous-requête : réponse
+   * Sous-requête des identifiants de questions ayant une réponse « pleine »
+   * (même définition que listReponses sans withEmptyReponse), pour jointures
+   * (ex. comptage par thématique).
    */
-  private getReponseSubquery(
+  getAnsweredQuestionIdsSubquery(collectiviteId: number, tx: Transaction) {
+    const competenceSubquery = this.getCompetenceSubquery(collectiviteId, tx);
+    const union = this.buildReponseUnionQuery(
+      collectiviteId,
+      competenceSubquery,
+      tx
+    );
+    const reponseUnion = union.as('reponseUnion');
+    return tx
+      .select({ questionId: reponseUnion.questionId })
+      .from(reponseUnion)
+      .where(isNotNull(reponseUnion.value))
+      .as('reponse');
+  }
+
+  /**
+   * Identifiants distincts des questions ayant une réponse « pleine »
+   * (même définition que listReponses sans withEmptyReponse).
+   */
+  async listAnsweredQuestionIds(
+    collectiviteId: number,
+    tx: Transaction
+  ): Promise<string[]> {
+    const sub = this.getAnsweredQuestionIdsSubquery(collectiviteId, tx);
+    const rows = await tx
+      .selectDistinct({ questionId: sub.questionId })
+      .from(sub);
+    return rows.map((r) => r.questionId);
+  }
+
+  /**
+   * UNION des réponses (binaire avec compétence Banatic, choix, proportion).
+   * cast toutes les réponses en jsonb pour que l'UNION fonctionne
+   */
+  private buildReponseUnionQuery(
     collectiviteId: number,
     competenceSubquery: CompetenceSubquery,
     tx: Transaction
   ) {
-    // cast toutes les réponses en jsonb pour que l'UNION fonctionne
     return tx
       .select({
         questionId: questionTable.id,
@@ -198,8 +233,7 @@ export class ListPersonnalisationReponsesRepository {
           })
           .from(reponseProportionTable)
           .where(eq(reponseProportionTable.collectiviteId, collectiviteId))
-      )
-      .as('reponse');
+      );
   }
 
   /**

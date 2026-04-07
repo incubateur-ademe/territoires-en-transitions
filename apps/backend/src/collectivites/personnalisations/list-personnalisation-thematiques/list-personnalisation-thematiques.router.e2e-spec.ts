@@ -11,6 +11,7 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { onTestFinished } from 'vitest';
 import {
   addTestPersonnalisationData,
+  addTestQuestionsExprVisible,
   TestPersonnalisationData,
 } from '../personnalisations.test-fixture';
 
@@ -50,7 +51,9 @@ describe('Lister les thématiques de personnalisation', () => {
       expect(thematique).toBeDefined();
       expect(thematique?.id).toBe(testData.thematiqueId);
       expect(thematique?.nom).toBe('Thématique de test');
-      expect(thematique?.questionsCount).toBe(3);
+      expect(thematique?.questionsCount).toBe(
+        testData.fixtureQuestionIds.length
+      );
       expect(thematique?.reponsesCount).toBe(0);
       expect(thematique?.referentiels).toContain('te-test');
       expect(thematique?.isComplete).toBe(false);
@@ -88,7 +91,9 @@ describe('Lister les thématiques de personnalisation', () => {
         });
 
       const thematique = getFixtureThematique(result);
-      expect(thematique?.questionsCount).toBe(3);
+      expect(thematique?.questionsCount).toBe(
+        testData.fixtureQuestionIds.length
+      );
       expect(thematique?.reponsesCount).toBe(2);
       expect(thematique?.isComplete).toBe(false);
     });
@@ -118,7 +123,10 @@ describe('Lister les thématiques de personnalisation', () => {
         });
 
       const thematique = getFixtureThematique(result);
-      expect(thematique?.questionsCount).toBe(3);
+      expect(thematique?.questionsCount).toBe(
+        testData.fixtureQuestionIds.length
+      );
+      // choix avec reponse null : non compté comme réponse fournie
       expect(thematique?.reponsesCount).toBe(2);
       expect(thematique?.isComplete).toBe(false);
     });
@@ -248,7 +256,7 @@ describe('Lister les thématiques de personnalisation', () => {
       expect(getFixtureThematique(sansCorrespondance)).toBeUndefined();
     });
 
-    test('Filtre referentielIds : ne retient que les thématiques liées à ces référentiels ou à aucun référentiel', async () => {
+    test('Filtre referentielIds : ne retient que les questions liées aux mesures de ces référentiels', async () => {
       const caller = router.createCaller({ user: testData.userCredentials });
 
       const avecTeTest =
@@ -259,8 +267,8 @@ describe('Lister les thématiques de personnalisation', () => {
       const thematiqueTeTest = getFixtureThematique(avecTeTest);
       expect(thematiqueTeTest).toBeDefined();
       expect(thematiqueTeTest?.referentiels).toContain('te-test');
-      // binaire + choix liés à te-test, proportion sans lien mesure
-      expect(thematiqueTeTest?.questionsCount).toBe(3);
+      // binaire + choix liés à te-test (proportion sans mesure → exclue)
+      expect(thematiqueTeTest?.questionsCount).toBe(2);
       expect(thematiqueTeTest?.reponsesCount).toBe(0);
 
       const avecCaeSeulement =
@@ -268,11 +276,8 @@ describe('Lister les thématiques de personnalisation', () => {
           collectiviteId: testData.collectivite.id,
           referentielIds: ['cae'],
         });
-      const thematiqueCae = getFixtureThematique(avecCaeSeulement);
-      expect(thematiqueCae).toBeDefined();
-      // seule la question sans lien mesure (proportion) reste pour ce filtre
-      expect(thematiqueCae?.questionsCount).toBe(1);
-      expect(thematiqueCae?.reponsesCount).toBe(0);
+      // aucune question de la fixture n'est liée à une mesure cae → la thématique de test n'apparaît pas
+      expect(getFixtureThematique(avecCaeSeulement)).toBeUndefined();
     });
 
     test('Un utilisateur avec droits de lecture peut lister les thématiques', async () => {
@@ -297,6 +302,87 @@ describe('Lister les thématiques de personnalisation', () => {
       const thematique = getFixtureThematique(result);
       expect(thematique).toBeDefined();
       expect(thematique?.id).toBe(testData.thematiqueId);
+    });
+  });
+
+  describe('Compteurs et exprVisible', () => {
+    test('question conditionnelle masquée sans réponse : exclue des compteurs', async () => {
+      const { questionReferenceId, cleanup } = await addTestQuestionsExprVisible(
+        databaseService,
+        {
+          thematiqueId: testData.thematiqueId,
+          collectiviteType: testData.collectivite.type,
+        }
+      );
+      onTestFinished(cleanup);
+
+      const caller = router.createCaller({ user: testData.userCredentials });
+
+      const result =
+        await caller.collectivites.personnalisations.listThematiques({
+          collectiviteId: testData.collectivite.id,
+        });
+
+      const thematique = getFixtureThematique(result);
+      expect(thematique).toBeDefined();
+      // 3 questions fixture + référence expr_visible ; la conditionnelle est masquée
+      expect(thematique?.questionsCount).toBe(
+        testData.fixtureQuestionIds.length + 1
+      );
+      expect(thematique?.reponsesCount).toBe(0);
+      expect(thematique?.isComplete).toBe(false);
+
+      const questions =
+        await caller.collectivites.personnalisations.listQuestions({
+          mode: 'questions',
+          collectiviteId: testData.collectivite.id,
+          questionIds: [questionReferenceId],
+        });
+      expect(questions).toHaveLength(1);
+    });
+
+    test('question conditionnelle masquée avec réponse orpheline en base : ne compte pas la réponse', async () => {
+      const {
+        questionReferenceId,
+        questionConditionnelleId,
+        cleanup,
+      } = await addTestQuestionsExprVisible(databaseService, {
+        thematiqueId: testData.thematiqueId,
+        collectiviteType: testData.collectivite.type,
+      });
+      onTestFinished(cleanup);
+
+      const caller = router.createCaller({ user: testData.userCredentials });
+
+      await caller.collectivites.personnalisations.setReponse({
+        collectiviteId: testData.collectivite.id,
+        questionId: questionReferenceId,
+        reponse: false,
+      });
+      await caller.collectivites.personnalisations.setReponse({
+        collectiviteId: testData.collectivite.id,
+        questionId: questionConditionnelleId,
+        reponse: true,
+      });
+      await caller.collectivites.personnalisations.setReponse({
+        collectiviteId: testData.collectivite.id,
+        questionId: questionReferenceId,
+        reponse: true,
+      });
+
+      const result =
+        await caller.collectivites.personnalisations.listThematiques({
+          collectiviteId: testData.collectivite.id,
+        });
+
+      const thematique = getFixtureThematique(result);
+      expect(thematique).toBeDefined();
+      expect(thematique?.questionsCount).toBe(
+        testData.fixtureQuestionIds.length + 1
+      );
+      // seule la référence reste visible avec une réponse ; la conditionnelle est masquée malgré une ligne en base
+      expect(thematique?.reponsesCount).toBe(1);
+      expect(thematique?.isComplete).toBe(false);
     });
   });
 

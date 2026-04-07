@@ -13,9 +13,10 @@ export class ListPersonnalisationQuestionsRouter {
   router = this.trpc.router({
     listQuestions: this.trpc.authedProcedure
       .input(listPersonnalisationQuestionsInputSchema)
-      .query(async ({ input }) => {
-        return this.listPersonnalisationQuestionsService.listQuestionsWithChoices(
-          input
+      .query(async ({ input, ctx }) => {
+        return this.listPersonnalisationQuestionsService.listPersonnalisation(
+          input,
+          ctx.user
         );
       }),
   });

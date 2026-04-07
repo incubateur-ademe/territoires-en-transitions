@@ -20,7 +20,16 @@ import { reponseBinaireTable } from './models/reponse-binaire.table';
 import { reponseChoixTable } from './models/reponse-choix.table';
 import { reponseProportionTable } from './models/reponse-proportion.table';
 
-const PERSONNALISATION_QUESTION_VERSION = '1.0.0' as const;
+/**
+ * construit un id de test unique tronqué pour respecter la limite varchar(30)
+ */
+const MAX_PERSONNALISATION_ID_LEN = 30;
+function generatePersonnalisationTestId(prefix: string): string {
+  const raw = `${prefix}-${randomUUID()}`.replaceAll('-', '_');
+  return raw.length <= MAX_PERSONNALISATION_ID_LEN
+    ? raw
+    : raw.slice(0, MAX_PERSONNALISATION_ID_LEN);
+}
 
 const TE_TEST_ACTION_DEFINITION_BASE = {
   referentielVersion: '0.1.0',
@@ -55,16 +64,35 @@ export async function addTestThematique(
 }
 
 // insère des questions
+type QuestionInsertInput = Omit<typeof questionTable.$inferInsert, 'id'>;
 export async function addTestQuestions(
   { db }: DatabaseServiceInterface,
-  questions: (typeof questionTable.$inferInsert)[]
-): Promise<{ cleanup: () => Promise<void> }> {
-  const ids = questions.map((q) => q.id);
-  await db.insert(questionTable).values(questions).onConflictDoNothing();
+  questions: QuestionInsertInput[]
+): Promise<{ ids: string[]; cleanup: () => Promise<void> }> {
+  const rows = questions.map((q) => {
+    const id = generatePersonnalisationTestId('test-q');
+    return { ...q, id };
+  });
+  const ids = rows.map((q) => q.id);
+  await db.insert(questionTable).values(rows).onConflictDoNothing();
 
   return {
+    ids,
     cleanup: async () => {
       if (ids.length > 0) {
+        // supprime les données liées par FK avant les questions elles-mêmes
+        await db
+          .delete(reponseBinaireTable)
+          .where(inArray(reponseBinaireTable.questionId, ids));
+        await db
+          .delete(reponseChoixTable)
+          .where(inArray(reponseChoixTable.questionId, ids));
+        await db
+          .delete(reponseProportionTable)
+          .where(inArray(reponseProportionTable.questionId, ids));
+        await db
+          .delete(justificationTable)
+          .where(inArray(justificationTable.questionId, ids));
         await db.delete(questionTable).where(inArray(questionTable.id, ids));
       }
     },
@@ -72,14 +100,23 @@ export async function addTestQuestions(
 }
 
 // insère des choix pour une question type "choix"
+type QuestionChoixInsertInput = Omit<
+  typeof questionChoixTable.$inferInsert,
+  'id'
+>;
 export async function addTestChoix(
   { db }: DatabaseServiceInterface,
-  choix: (typeof questionChoixTable.$inferInsert)[]
-): Promise<{ cleanup: () => Promise<void> }> {
-  const choixIds = choix.map((c) => c.id);
-  await db.insert(questionChoixTable).values(choix).onConflictDoNothing();
+  choix: QuestionChoixInsertInput[]
+): Promise<{ ids: string[]; cleanup: () => Promise<void> }> {
+  const rows = choix.map((c) => {
+    const id = generatePersonnalisationTestId('test-c');
+    return { ...c, id };
+  });
+  const choixIds = rows.map((c) => c.id);
+  await db.insert(questionChoixTable).values(rows).onConflictDoNothing();
 
   return {
+    ids: choixIds,
     cleanup: async () => {
       if (choixIds.length > 0) {
         await db
@@ -111,7 +148,6 @@ export async function addTestBanaticCompetence(
     .values({
       competenceCode,
       intitule,
-      version: data.version ?? PERSONNALISATION_QUESTION_VERSION,
     })
     .onConflictDoNothing()
     .returning({ competenceCode: banatic2025CompetenceTable.competenceCode });
@@ -199,77 +235,83 @@ export async function addTestCollectiviteTransfertCompetence(
   };
 }
 
-/**
- * Crée une thématique, 3 questions (binaire, proportion, choix) et 1 choix
- */
+/** Crée une thématique, 3 questions (binaire, proportion, choix) et 1 choix. */
 export async function addTestThematiqueEtQuestions(
   databaseService: DatabaseServiceInterface,
-  collectiviteType: CollectiviteType,
-  runId = randomUUID().substring(0, 12)
+  collectiviteType: CollectiviteType
 ) {
-  const data = {
-    thematiqueId: `test-thematique-${runId}`,
-    thematiqueNom: 'Thématique de test',
-    questionBinaireId: `test-q-binaire-${runId}`,
-    questionBinaireFormulation: 'Est-ce une question binaire ?',
-    questionProportionId: `test-q-proportion-${runId}`,
-    questionProportionFormulation: 'Quelle est la proportion ?',
-    questionChoixId: `test-q-choix-${runId}`,
-    questionChoixFormulation: 'Quel est votre choix ?',
-    choixId: `test-choix-1-${runId}`,
-    choixFormulation: 'Choix 1',
-  };
+  const thematiqueId = generatePersonnalisationTestId('test-thematique');
+  const thematiqueNom = 'Thématique de test';
+  const questionBinaireFormulation = 'Est-ce une question binaire ?';
+  const questionProportionFormulation = 'Quelle est la proportion ?';
+  const questionChoixFormulation = 'Quel est votre choix ?';
+  const choixFormulation = 'Choix 1';
 
   const typesCollectivitesConcernees = [collectiviteType];
 
   const { cleanup: cleanupThematique } = await addTestThematique(
     databaseService,
     {
-      id: data.thematiqueId,
-      nom: data.thematiqueNom,
+      id: thematiqueId,
+      nom: thematiqueNom,
     }
   );
 
-  const questionDefinitions = [
+  const questionDefinitions: QuestionInsertInput[] = [
     {
-      id: data.questionBinaireId,
-      type: 'binaire' as const,
+      type: 'binaire',
       description: 'Question binaire de test',
-      formulation: data.questionBinaireFormulation,
+      formulation: questionBinaireFormulation,
     },
     {
-      id: data.questionProportionId,
-      type: 'proportion' as const,
+      type: 'proportion',
       description: 'Question proportion de test',
-      formulation: data.questionProportionFormulation,
+      formulation: questionProportionFormulation,
     },
     {
-      id: data.questionChoixId,
-      type: 'choix' as const,
+      type: 'choix',
       description: 'Question choix de test',
-      formulation: data.questionChoixFormulation,
+      formulation: questionChoixFormulation,
     },
   ];
 
-  const { cleanup: cleanupQuestions } = await addTestQuestions(
-    databaseService,
-    questionDefinitions.map((q) => ({
-      ...q,
-      thematiqueId: data.thematiqueId,
-      typesCollectivitesConcernees,
-      version: PERSONNALISATION_QUESTION_VERSION,
-    }))
-  );
+  const { ids: questionIds, cleanup: cleanupQuestions } =
+    await addTestQuestions(
+      databaseService,
+      questionDefinitions.map((q) => ({
+        ...q,
+        thematiqueId,
+        typesCollectivitesConcernees,
+      }))
+    );
 
-  const { cleanup: cleanupChoix } = await addTestChoix(databaseService, [
-    {
-      id: data.choixId,
-      questionId: data.questionChoixId,
-      formulation: data.choixFormulation,
-      ordonnancement: 1,
-      version: PERSONNALISATION_QUESTION_VERSION,
-    },
-  ]);
+  const [questionBinaireId, questionProportionId, questionChoixId] =
+    questionIds;
+
+  const { ids: choixIds, cleanup: cleanupChoix } = await addTestChoix(
+    databaseService,
+    [
+      {
+        questionId: questionChoixId,
+        formulation: choixFormulation,
+        ordonnancement: 1,
+      },
+    ]
+  );
+  const [choixId] = choixIds;
+
+  const data = {
+    thematiqueId,
+    thematiqueNom,
+    questionBinaireId,
+    questionBinaireFormulation,
+    questionProportionId,
+    questionProportionFormulation,
+    questionChoixId,
+    questionChoixFormulation,
+    choixId,
+    choixFormulation,
+  };
 
   return {
     data,
@@ -288,6 +330,7 @@ type TestActionIds = {
   questionChoixId: string;
 };
 
+/** Insère les liens entre actions et questions */
 async function insertTestActionsLieesAuxQuestions(
   databaseService: DatabaseServiceInterface,
   ids: TestActionIds
@@ -335,6 +378,7 @@ async function insertTestActionsLieesAuxQuestions(
     .onConflictDoNothing();
 }
 
+/** Supprime les liens entre actions et questions */
 async function deleteTestActionsLieesAuxQuestions(
   databaseService: DatabaseServiceInterface,
   ids: TestActionIds
@@ -357,16 +401,160 @@ async function deleteTestActionsLieesAuxQuestions(
     .where(inArray(actionRelationTable.id, [ids.actionId1, ids.actionId2]));
 }
 
-// Crée une collectivité, une thématique et des questions de test
+/** Ajoute une question pour tester le filtre par type de collectivité concernée */
+export async function addTestQuestionCollectiviteNonConcernee(
+  databaseService: DatabaseServiceInterface,
+  data: { thematiqueId: string; collectiviteType: CollectiviteType }
+): Promise<{ questionId: string; cleanup: () => Promise<void> }> {
+  const typesCollectivitesNonConcernees = [
+    data.collectiviteType === 'epci' ? 'region' : 'epci',
+  ];
+  const {
+    ids: [questionId],
+    cleanup,
+  } = await addTestQuestions(databaseService, [
+    {
+      type: 'binaire',
+      description:
+        "La collectivité de test n'est pas concernée par cette question",
+      formulation: 'Ne doit pas apparaitre dans la liste des questions',
+      thematiqueId: data.thematiqueId,
+      typesCollectivitesConcernees: typesCollectivitesNonConcernees,
+    },
+  ]);
+  return { questionId, cleanup };
+}
+
+/** Ajoute une question associée à une compétence */
+export async function addTestQuestionBanaticCompetencePourCollectivite(
+  databaseService: DatabaseServiceInterface,
+  data: {
+    collectiviteId: number;
+    thematiqueId: string;
+    collectiviteType: CollectiviteType;
+  }
+): Promise<{
+  questionBinaireCompetenceBanaticId: string;
+  competenceBanaticTestCode: number;
+  competenceIntitule: string;
+  cleanup: () => Promise<void>;
+}> {
+  const {
+    competenceCode,
+    intitule: competenceIntitule,
+    cleanup: cleanupBanaticCompetence,
+  } = await addTestBanaticCompetence(databaseService, {
+    intitule: 'Compétence test personnalisation',
+  });
+
+  const { cleanup: cleanupCollectiviteBanaticCompetence } =
+    await addTestCollectiviteCompetence(databaseService, {
+      collectiviteId: data.collectiviteId,
+      competenceCode,
+      exercice: true,
+    });
+
+  const { cleanup: cleanupCollectiviteTransfertCompetence } =
+    await addTestCollectiviteTransfertCompetence(databaseService, {
+      collectiviteId: data.collectiviteId,
+      competenceCode,
+      natureTransfert: 'transfert de test',
+    });
+
+  const {
+    ids: [questionBinaireCompetenceBanaticId],
+    cleanup: cleanupQuestionBinaireBanatic,
+  } = await addTestQuestions(databaseService, [
+    {
+      type: 'binaire',
+      description: 'Question binaire liée à une compétence Banatic',
+      formulation: 'Question binaire compétence Banatic',
+      thematiqueId: data.thematiqueId,
+      typesCollectivitesConcernees: [data.collectiviteType],
+      competenceCode,
+    },
+  ]);
+
+  const cleanup = async () => {
+    await cleanupQuestionBinaireBanatic();
+    await cleanupCollectiviteBanaticCompetence();
+    await cleanupCollectiviteTransfertCompetence();
+    await cleanupBanaticCompetence();
+  };
+
+  return {
+    questionBinaireCompetenceBanaticId,
+    competenceBanaticTestCode: competenceCode,
+    competenceIntitule,
+    cleanup,
+  };
+}
+
+/** Ajoute les questions pour tester les questions conditionnelles */
+export async function addTestQuestionsExprVisible(
+  databaseService: DatabaseServiceInterface,
+  data: {
+    thematiqueId: string;
+    collectiviteType: CollectiviteType;
+  }
+): Promise<{
+  questionReferenceId: string;
+  questionConditionnelleId: string;
+  cleanup: () => Promise<void>;
+}> {
+  /**
+   * Ajoute deux questions :
+   * - une question de référence toujours visible
+   * - une question conditionnelle visible uniquement lorsque la réponse
+   *   à la question de référence est NON (false)
+   */
+
+  // ajoute une question de référence toujours visible
+  const {
+    ids: [questionReferenceId],
+    cleanup: cleanupQuestionReference,
+  } = await addTestQuestions(databaseService, [
+    {
+      thematiqueId: data.thematiqueId,
+      type: 'binaire',
+      description: 'Question de référence pour tests expr_visible',
+      formulation: 'Référence expr_visible',
+    },
+  ]);
+
+  // une question conditionnelle visible uniquement lorsque la réponse à la
+  // question de référence est NON (false)
+  const {
+    ids: [questionConditionnelleId],
+    cleanup: cleanupQuestionConditionnelle,
+  } = await addTestQuestions(databaseService, [
+    {
+      thematiqueId: data.thematiqueId,
+      type: 'binaire',
+      description: 'Question affichée seulement si expr_visible est vérifiée',
+      formulation: 'Question conditionnelle expr_visible',
+      exprVisible: `Si reponse(${questionReferenceId}, NON) alors VRAI`,
+    },
+  ]);
+
+  return {
+    questionReferenceId,
+    questionConditionnelleId,
+    cleanup: async () => {
+      await cleanupQuestionConditionnelle();
+      await cleanupQuestionReference();
+    },
+  };
+}
+
+/** Crée une collectivité, une thématique et des questions de test */
 export async function addTestPersonnalisationData(
   databaseService: DatabaseServiceInterface
 ) {
-  const runId = randomUUID().substring(0, 12);
   const testDataId = {
-    questionCollectiviteNonConcernee: `test-q-nc-${runId}`,
     // Actions pour tester le filtre actionIds (te-test existe en seed)
-    actionId1: `te-test_1-${runId}`,
-    actionId2: `te-test_2-${runId}`,
+    actionId1: generatePersonnalisationTestId('test-a'),
+    actionId2: generatePersonnalisationTestId('test-a'),
   };
 
   const { user, collectivite, cleanup } = await addTestCollectiviteAndUser(
@@ -383,30 +571,7 @@ export async function addTestPersonnalisationData(
   const collectiviteType = collectivite.type;
 
   const { data: baseData, cleanup: cleanupThematiqueEtQuestions } =
-    await addTestThematiqueEtQuestions(
-      databaseService,
-      collectiviteType,
-      runId
-    );
-
-  // types exclus du type de la collectivité pour tester le filtre (ex: region si collectivité EPCI)
-  const typesCollectivitesNonConcernees = [
-    collectiviteType === 'epci' ? 'region' : 'epci',
-  ];
-
-  const { cleanup: cleanupQuestionCollectiviteNonConcernee } =
-    await addTestQuestions(databaseService, [
-      {
-        id: testDataId.questionCollectiviteNonConcernee,
-        type: 'binaire',
-        description:
-          "La collectivité de test n'est pas concernée par cette question",
-        formulation: 'Ne doit pas apparaitre dans la liste des questions',
-        thematiqueId: baseData.thematiqueId,
-        typesCollectivitesConcernees: typesCollectivitesNonConcernees,
-        version: PERSONNALISATION_QUESTION_VERSION,
-      },
-    ]);
+    await addTestThematiqueEtQuestions(databaseService, collectiviteType);
 
   const {
     thematiqueId,
@@ -431,53 +596,6 @@ export async function addTestPersonnalisationData(
     questionChoixId: mergedTestDataId.questionChoixId,
   });
 
-  // question binaire + compétence Banatic pour tester la valeur sans reponse_binaire
-  const questionBinaireCompetenceBanaticId = `test-q-banatic-${runId}`;
-  const {
-    competenceCode,
-    intitule: competenceIntitule,
-    cleanup: cleanupBanaticCompetence,
-  } = await addTestBanaticCompetence(databaseService, {
-    intitule: 'Compétence test personnalisation',
-  });
-
-  const { cleanup: cleanupCollectiviteBanaticCompetence } =
-    await addTestCollectiviteCompetence(databaseService, {
-      collectiviteId: collectivite.id,
-      competenceCode,
-      exercice: true,
-    });
-
-  const { cleanup: cleanupCollectiviteTransfertCompetence } =
-    await addTestCollectiviteTransfertCompetence(databaseService, {
-      collectiviteId: collectivite.id,
-      competenceCode,
-      natureTransfert: 'transfert de test',
-    });
-
-  const { cleanup: cleanupQuestionBinaireBanatic } = await addTestQuestions(
-    databaseService,
-    [
-      {
-        id: questionBinaireCompetenceBanaticId,
-        type: 'binaire',
-        description: 'Question binaire liée à une compétence Banatic',
-        formulation: 'Question binaire compétence Banatic',
-        thematiqueId: mergedTestDataId.thematiqueId,
-        typesCollectivitesConcernees: [collectiviteType],
-        competenceCode,
-        version: PERSONNALISATION_QUESTION_VERSION,
-      },
-    ]
-  );
-
-  const cleanupBanaticCompetenceFixture = async () => {
-    await cleanupQuestionBinaireBanatic();
-    await cleanupCollectiviteBanaticCompetence();
-    await cleanupCollectiviteTransfertCompetence();
-    await cleanupBanaticCompetence();
-  };
-
   const cleanupReponses = async () => {
     // Nettoyer les réponses
     await databaseService.db
@@ -496,21 +614,20 @@ export async function addTestPersonnalisationData(
       .where(eq(justificationTable.collectiviteId, collectivite.id));
   };
 
+  /** les 3 questions de la thématique de test pour le type de collectivité */
   const fixtureQuestionIds = [
     mergedTestDataId.questionBinaireId,
     mergedTestDataId.questionProportionId,
     mergedTestDataId.questionChoixId,
   ];
 
-  // isole les questions de la fixture (ignore les données seed et la question "non concernée")
+  // isole les questions créées par cette fixture (hors données seed)
   const isolateFixtureQuestions = <T extends { id: string }>(questions: T[]) =>
     questions.filter((q) => fixtureQuestionIds.includes(q.id));
 
   return {
     ...mergedTestDataId,
-    questionBinaireCompetenceBanaticId,
-    competenceBanaticTestCode: competenceCode,
-    competenceIntitule,
+    fixtureQuestionIds,
     isolateFixtureQuestions,
     user,
     userCredentials,
@@ -527,10 +644,6 @@ export async function addTestPersonnalisationData(
         questionChoixId: mergedTestDataId.questionChoixId,
       });
 
-      await cleanupBanaticCompetenceFixture();
-
-      // les questions et thématique
-      await cleanupQuestionCollectiviteNonConcernee();
       await cleanupThematiqueEtQuestions();
 
       await cleanup();
