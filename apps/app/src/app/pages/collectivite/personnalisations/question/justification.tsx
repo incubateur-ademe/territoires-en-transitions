@@ -1,8 +1,8 @@
-import { useUpdateJustification } from '@/app/referentiels/personnalisations/PersoPotentielModal/useUpdateJustification';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Icon, Textarea } from '@tet/ui';
 import { isNil } from 'es-toolkit';
 import { useEffect, useState } from 'react';
+import { useSaveJustification } from '../data/use-save-justification';
 import { QuestionReponseProps } from './question-reponse-props.types';
 
 const DEFAULT_PLACEHOLDER =
@@ -17,8 +17,8 @@ export const Justification = (props: QuestionReponseProps) => {
   const { reponse: reponseValue, justification } = reponse || {};
   const { collectiviteId } = useCurrentCollectivite();
   const [value, setValue] = useState(justification);
-  const { mutate: updateJustification } =
-    useUpdateJustification(collectiviteId);
+  const { mutateAsync: saveJustification } =
+    useSaveJustification(collectiviteId);
 
   // synchronise la valeur initiale car la réponse est chargée de manière asynchrone
   useEffect(() => {
@@ -56,11 +56,10 @@ export const Justification = (props: QuestionReponseProps) => {
         onBlur={() => {
           const newValue = value?.trim() ?? '';
           if (newValue !== (justification ?? ''))
-            updateJustification({
-              collectiviteId,
-              questionId: id,
+            saveJustification({
+              questionId: question.id,
               questionType: type,
-              reponse: reponseValue ?? null,
+              reponse: reponseValue,
               justification: newValue,
             });
         }}

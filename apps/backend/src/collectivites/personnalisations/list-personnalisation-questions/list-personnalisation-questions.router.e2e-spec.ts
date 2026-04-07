@@ -8,8 +8,8 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import type {
+  PersonnalisationQuestionReponse,
   PersonnalisationReponse,
-  QuestionReponse,
   QuestionWithChoices,
 } from '@tet/domain/collectivites';
 import { referentielIdEnumValues } from '@tet/domain/referentiels';
@@ -24,7 +24,7 @@ import {
 
 type ListQuestionsUnion =
   | QuestionWithChoices[]
-  | QuestionReponse[]
+  | PersonnalisationQuestionReponse[]
   | PersonnalisationReponse[];
 
 /** Résultat tRPC quand `mode === 'questions'` (le routeur est typé en union sur tous les modes). */

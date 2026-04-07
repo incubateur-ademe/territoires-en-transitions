@@ -6,7 +6,7 @@ import {
 
 export type QuestionReponseProps = {
   question: QuestionWithChoices;
-  reponse: PersonnalisationReponse | undefined;
+  reponse?: PersonnalisationReponse | null;
   /** vrai quand la question est la 1ère de type proportion */
   hasProportionDescription: boolean;
   onChange: (reponse: PersonnalisationReponseValue) => void;

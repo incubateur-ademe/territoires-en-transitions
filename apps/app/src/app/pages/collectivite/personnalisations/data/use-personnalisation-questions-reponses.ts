@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
-import { QuestionReponse } from '@tet/domain/collectivites';
+import { PersonnalisationQuestionReponse } from '@tet/domain/collectivites';
 import { PersonnalisationFilters } from '../filters/personnalisation-filters.types';
 import { transformLoadedReponse } from './transform-reponse';
 
@@ -20,7 +20,7 @@ export const usePersonnalisationQuestionsReponses = (
       },
       {
         select: (rows) => {
-          const pairs = rows as QuestionReponse[];
+          const pairs = rows as PersonnalisationQuestionReponse[];
           return pairs.map(({ question, reponse }) => ({
             question,
             reponse: reponse ? transformLoadedReponse(reponse) : reponse,

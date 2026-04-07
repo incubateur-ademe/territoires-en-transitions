@@ -3,13 +3,12 @@ import {
   canUpdateIndicateurValeur,
 } from '@/app/indicateurs/indicateurs/indicateur-definition-authorization.utils';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
-import { QuestionReponseList } from '@/app/referentiels/personnalisations/PersoPotentielModal/PersoPotentielQR';
-import { useChangeReponseHandler } from '@/app/referentiels/personnalisations/PersoPotentielModal/useChangeReponseHandler';
 import { useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Divider } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
+import { PersonnalisationQuestionsList } from '../../personnalisations/personnalisation-questions.list';
 import { useIndicateurChartInfo } from '../data/use-indicateur-chart';
 import { useIndicateurPersonnalisation } from '../data/use-indicateur-personnalisation';
 import IndicateurDetailChart from '../Indicateur/detail/IndicateurDetailChart';
@@ -45,8 +44,7 @@ const DonneesIndicateur = ({
     definition.identifiantReferentiel,
     chartInfo.sourceFilter.valeursReference?.drom ?? false
   );
-  const { collectiviteId, hasCollectivitePermission } =
-    useCurrentCollectivite();
+  const { hasCollectivitePermission } = useCurrentCollectivite();
 
   const user = useUser();
 
@@ -61,8 +59,6 @@ const DonneesIndicateur = ({
     definition,
     user.id
   );
-
-  const handleChange = useChangeReponseHandler(collectiviteId, []);
 
   return (
     <div className="flex flex-col gap-7 bg-white p-10 border border-grey-3 rounded-xl">
@@ -89,10 +85,8 @@ const DonneesIndicateur = ({
 
       {/** Q/R personnalisation */}
       {questionReponses && (
-        <QuestionReponseList
+        <PersonnalisationQuestionsList
           questionReponses={questionReponses}
-          variant="indicateur"
-          onChange={handleChange}
           canEdit={canMutateDefinition}
         />
       )}

@@ -2,8 +2,8 @@ import { matchQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {
+  PersonnalisationQuestionReponse,
   PersonnalisationReponseValue,
-  QuestionReponse,
   QuestionWithChoices,
 } from '@tet/domain/collectivites';
 import { transformReponseToWrite } from './transform-reponse';
@@ -59,7 +59,7 @@ export const useSaveReponse = () => {
             matchQuery({ queryKey: queryKeyQuestionsReponses }, q),
         },
         (previous) =>
-          (previous as QuestionReponse[]).map((row) =>
+          (previous as PersonnalisationQuestionReponse[]).map((row) =>
             row.question.id === question.id
               ? {
                   ...row,

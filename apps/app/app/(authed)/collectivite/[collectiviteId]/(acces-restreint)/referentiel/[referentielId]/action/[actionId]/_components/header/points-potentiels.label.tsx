@@ -1,14 +1,14 @@
+import { useScore } from '@/app/referentiels/use-snapshot';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { ActionScoreFinal } from '@tet/domain/referentiels';
-import { useScore } from '../../use-snapshot';
 
 type ScorePartial = Pick<
   ActionScoreFinal,
   'pointReferentiel' | 'pointPotentiel' | 'pointPotentielPerso' | 'desactive'
 >;
 
-/** Affiche le potentiel de points (normal ou réduit) ainsi qu'un bouton
- * "Personnaliser" si nécessaire
+/**
+ * Affiche le potentiel de points (normal ou réduit)
  */
 export function PointsPotentiels({ actionId }: { actionId: string }) {
   const score = useScore(actionId);

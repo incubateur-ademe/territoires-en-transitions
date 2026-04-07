@@ -3,7 +3,7 @@
 import { PersonnalisationThematique as TPersonnalisationThematique } from '@tet/domain/collectivites';
 import { Badge, cn, Icon } from '@tet/ui';
 import { useOpeneedThematiques } from './data/use-opened-thematiques';
-import { PersonnalisationQuestionsList } from './personnalisation-questions.list';
+import { PersonnalisationThematiqueQuestionsList } from './personnalisation-thematique-questions.list';
 
 type Props = {
   thematique: TPersonnalisationThematique;
@@ -50,7 +50,9 @@ export function PersonnalisationThematique({ thematique }: Props) {
           )}
         </button>
       </div>
-      {isOpen && <PersonnalisationQuestionsList thematique={thematique} />}
+      {isOpen && (
+        <PersonnalisationThematiqueQuestionsList thematique={thematique} />
+      )}
     </div>
   );
 }

@@ -4,6 +4,7 @@ export type PersonnalisationFilters = {
   thematiqueIds?: string[];
   referentielIds?: ReferentielId[];
   actionIds?: string[];
+  questionIds?: string[];
 };
 
 export type PersonnalisationFilterKeys = keyof PersonnalisationFilters;

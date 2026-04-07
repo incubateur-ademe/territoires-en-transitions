@@ -1,5 +1,5 @@
 import {
-  makeCollectivitePersoRefUrl,
+  makeMaCollectiviteUrl,
   makeReferentielLabellisationUrl,
   makeReferentielUrl,
 } from '@/app/app/paths';
@@ -204,7 +204,10 @@ export const ScoreVide = ({
         <Button
           size="sm"
           onClick={() => tracker(Event.referentiels.personalizeReferentiel)}
-          href={makeCollectivitePersoRefUrl({ collectiviteId })}
+          href={makeMaCollectiviteUrl({
+            collectiviteId,
+            view: 'personnalisation',
+          })}
         >
           {isReadonly
             ? 'Voir la personnalisation du référentiel'

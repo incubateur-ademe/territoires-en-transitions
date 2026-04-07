@@ -15,6 +15,7 @@ const urlKeys: Record<PersonnalisationFilterKeys, string> = {
   thematiqueIds: 't',
   referentielIds: 'r',
   actionIds: 'a',
+  questionIds: 'q',
 };
 
 const emptyFilters = Object.keys(searchParametersParser).reduce((acc, key) => {

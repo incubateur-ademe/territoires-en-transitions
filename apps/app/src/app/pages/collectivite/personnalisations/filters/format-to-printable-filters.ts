@@ -15,6 +15,7 @@ const FILTER_CATEGORY_TITLES: Record<PersonnalisationFilterKeys, string> = {
   referentielIds: 'Référentiels',
   thematiqueIds: 'Thématiques',
   actionIds: 'Éléments impactés',
+  questionIds: 'Questions',
 };
 
 /**

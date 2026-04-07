@@ -98,8 +98,6 @@ const referentielPath = `${referentielRootPath}/:${referentielIdParam}/:${refere
 const referentielActionPath = `${referentielRootPath}/:${referentielIdParam}/action/:${actionParam}`;
 const referentielLabellisationRootPath = `${referentielRootPath}/:${referentielIdParam}/labellisation`;
 const referentielLabellisationPath = `${referentielLabellisationRootPath}/:${labellisationVueParam}?`;
-const referentielPersonnalisationPath = `${referentielRootPath}/personnalisation`;
-const referentielPersonnalisationThematiquePath = `${referentielPersonnalisationPath}/:${thematiqueParam}`;
 
 export const collectiviteUsersPath = `${collectivitePath}/users`;
 export const collectiviteUsersTagsPath = `${collectiviteUsersPath}/tags`;
@@ -439,13 +437,16 @@ export const makeCollectiviteUsersUrl = ({
 export const makeMaCollectiviteUrl = ({
   collectiviteId,
   view = 'presentation',
+  thematiqueId,
 }: {
   collectiviteId: number;
   view?: 'presentation' | 'personnalisation';
+  thematiqueId?: string;
 }) =>
   maCollectivitePath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${maCollectiviteVueParam}`, view);
+    .replace(`:${maCollectiviteVueParam}`, view)
+    .concat(thematiqueId ? `?t=${thematiqueId}&ot=${thematiqueId}` : '');
 
 export const makeCollectiviteUsersTagsUrl = ({
   collectiviteId,
@@ -453,16 +454,6 @@ export const makeCollectiviteUsersTagsUrl = ({
   collectiviteId: number;
 }) =>
   collectiviteUsersTagsPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
-
-export const makeCollectivitePersoRefUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  referentielPersonnalisationPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
@@ -476,17 +467,6 @@ export const makeCollectiviteBibliothequeUrl = ({
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
-
-export const makeCollectivitePersoRefThematiqueUrl = ({
-  collectiviteId,
-  thematiqueId,
-}: {
-  collectiviteId: number;
-  thematiqueId: string;
-}) =>
-  referentielPersonnalisationThematiquePath
-    .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${thematiqueParam}`, thematiqueId);
 
 export const makeCollectiviteJournalUrl = ({
   collectiviteId,

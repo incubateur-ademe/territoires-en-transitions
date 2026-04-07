@@ -7,8 +7,11 @@ import { roundTo } from '@tet/domain/utils';
 
 export const transformReponseToWrite = (
   questionType: QuestionType,
-  reponse: PersonnalisationReponseValue
+  reponse?: PersonnalisationReponseValue
 ) => {
+  if (reponse === undefined) {
+    return null;
+  }
   if (questionType === 'proportion') {
     return typeof reponse === 'number' ? reponse / 100 : null;
   }
