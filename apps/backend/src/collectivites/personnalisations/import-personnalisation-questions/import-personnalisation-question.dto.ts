@@ -17,6 +17,8 @@ export const importPersonnalisationQuestionSchema = z.object({
   )
     .optional()
     .nullable(),
+
+  competenceCode: z.coerce.number().optional(),
 });
 
 export type ImportPersonnalisationQuestion = z.infer<
@@ -34,7 +36,11 @@ export type ImportPersonnalisationChoix = z.infer<
 >;
 
 // Schema for importing banatic competences from spreadsheet
-export const importPersonnalisationCompetenceSchema = competenceBanaticSchema;
+export const importPersonnalisationCompetenceSchema = z.object({
+  ...competenceBanaticSchema.shape,
+  competenceCode: z.coerce.number(),
+  intitule: z.string().trim().min(1),
+});
 export type ImportPersonnalisationCompetence = z.infer<
   typeof importPersonnalisationCompetenceSchema
 >;

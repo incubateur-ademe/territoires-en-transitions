@@ -2,7 +2,10 @@ import { justificationTable } from '@tet/backend/collectivites/personnalisations
 import { reponseBinaireTable } from '@tet/backend/collectivites/personnalisations/models/reponse-binaire.table';
 import { reponseChoixTable } from '@tet/backend/collectivites/personnalisations/models/reponse-choix.table';
 import { reponseProportionTable } from '@tet/backend/collectivites/personnalisations/models/reponse-proportion.table';
-import { addTestThematiqueEtQuestions } from '@tet/backend/collectivites/personnalisations/personnalisations.test-fixture';
+import {
+  addTestThematiqueEtQuestions,
+  linkThematiqueTestQuestionsToReferentielActions,
+} from '@tet/backend/collectivites/personnalisations/personnalisations.test-fixture';
 import { CollectiviteType } from '@tet/domain/collectivites';
 import { eq } from 'drizzle-orm';
 import { databaseService } from 'tests/shared/database.service';
@@ -22,7 +25,17 @@ class PersonnalisationsFactory extends FixtureFactory {
       databaseService,
       collectiviteType
     );
-    this.cleanups.push(cleanup);
+    const { cleanup: cleanupActionLinks } =
+      await linkThematiqueTestQuestionsToReferentielActions(databaseService, {
+        questionBinaireId: data.questionBinaireId,
+        questionProportionId: data.questionProportionId,
+        questionChoixId: data.questionChoixId,
+      });
+    // supprime d'abord les liens mesure ↔ question (FK) puis thématique / questions
+    this.cleanups.push(async () => {
+      await cleanupActionLinks();
+      await cleanup();
+    });
     return data;
   }
 

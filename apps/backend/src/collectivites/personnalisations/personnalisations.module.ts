@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ImportPersonnalisationQuestionController } from '@tet/backend/collectivites/personnalisations/import-personnalisation-questions/import-personnalisation-question.controller';
 import ImportPersonnalisationQuestionService from '@tet/backend/collectivites/personnalisations/import-personnalisation-questions/import-personnalisation-question.service';
-import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import { ListPersonnalisationQuestionsRouter } from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.router';
+import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import { ListPersonnalisationReglesRouter } from '@tet/backend/collectivites/personnalisations/list-personnalisation-regles/list-personnalisation-regles.router';
 import { ListPersonnalisationReglesService } from '@tet/backend/collectivites/personnalisations/list-personnalisation-regles/list-personnalisation-regles.service';
 import { ListPersonnalisationReponsesRepository } from '@tet/backend/collectivites/personnalisations/list-personnalisation-reponses/list-personnalisation-reponses.repository';
@@ -14,6 +14,7 @@ import { SetPersonnalisationReponseRepository } from '@tet/backend/collectivites
 import { SetPersonnalisationReponseRouter } from '@tet/backend/collectivites/personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.router';
 import { SetPersonnalisationReponseService } from '@tet/backend/collectivites/personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.service';
 import { SheetModule } from '@tet/backend/utils/google-sheets/sheet.module';
+import { TrackingModule } from '@tet/backend/utils/tracking/tracking.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { UsersModule } from '../../users/users.module';
 import { CollectivitesCoreModule } from '../collectivites-core.module';
@@ -26,6 +27,7 @@ import PersonnalisationsService from './services/personnalisations-service';
     UsersModule,
     SheetModule,
     TransactionModule,
+    TrackingModule,
   ],
   providers: [
     PersonnalisationsExpressionService,

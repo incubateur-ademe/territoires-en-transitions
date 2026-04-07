@@ -3,10 +3,12 @@ import {
   getTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
+import { CollectivitePreferencesService } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.service';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import type { PersonnalisationThematique } from '@tet/domain/collectivites';
+import { referentielIdEnumValues } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { onTestFinished } from 'vitest';
 import {
@@ -21,7 +23,15 @@ describe('Lister les thématiques de personnalisation', () => {
   let testData: TestPersonnalisationData;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    const app = await getTestApp({
+      overrides: (builder) => {
+        builder.overrideProvider(CollectivitePreferencesService).useValue({
+          getEnabledReferentiels: vi
+            .fn()
+            .mockResolvedValue([...referentielIdEnumValues]),
+        });
+      },
+    });
     router = await app.get(TrpcRouter);
     databaseService = await getTestDatabase(app);
     testData = await addTestPersonnalisationData(databaseService);
@@ -55,7 +65,7 @@ describe('Lister les thématiques de personnalisation', () => {
         testData.fixtureQuestionIds.length
       );
       expect(thematique?.reponsesCount).toBe(0);
-      expect(thematique?.referentiels).toContain('te-test');
+      expect(thematique?.referentiels).toContain('te');
       expect(thematique?.isComplete).toBe(false);
     });
 
@@ -159,7 +169,7 @@ describe('Lister les thématiques de personnalisation', () => {
       expect(thematique?.isComplete).toBe(true);
     });
 
-    test('referentiels contient te-test pour la thématique liée aux actions', async () => {
+    test('referentiels contient te pour la thématique liée aux actions', async () => {
       const caller = router.createCaller({ user: testData.userCredentials });
 
       const result =
@@ -168,7 +178,7 @@ describe('Lister les thématiques de personnalisation', () => {
         });
 
       const thematique = getFixtureThematique(result);
-      expect(thematique?.referentiels).toContain('te-test');
+      expect(thematique?.referentiels).toContain('te');
     });
 
     test('Filtre actionIds : ne compte que les questions liées à ces mesures', async () => {
@@ -262,13 +272,12 @@ describe('Lister les thématiques de personnalisation', () => {
       const avecTeTest =
         await caller.collectivites.personnalisations.listThematiques({
           collectiviteId: testData.collectivite.id,
-          referentielIds: ['te-test'],
+          referentielIds: ['te'],
         });
       const thematiqueTeTest = getFixtureThematique(avecTeTest);
       expect(thematiqueTeTest).toBeDefined();
-      expect(thematiqueTeTest?.referentiels).toContain('te-test');
-      // binaire + choix liés à te-test (proportion sans mesure → exclue)
-      expect(thematiqueTeTest?.questionsCount).toBe(2);
+      expect(thematiqueTeTest?.referentiels).toContain('te');
+      expect(thematiqueTeTest?.questionsCount).toBe(3);
       expect(thematiqueTeTest?.reponsesCount).toBe(0);
 
       const avecCaeSeulement =
@@ -307,13 +316,11 @@ describe('Lister les thématiques de personnalisation', () => {
 
   describe('Compteurs et exprVisible', () => {
     test('question conditionnelle masquée sans réponse : exclue des compteurs', async () => {
-      const { questionReferenceId, cleanup } = await addTestQuestionsExprVisible(
-        databaseService,
-        {
+      const { questionReferenceId, cleanup } =
+        await addTestQuestionsExprVisible(databaseService, {
           thematiqueId: testData.thematiqueId,
           collectiviteType: testData.collectivite.type,
-        }
-      );
+        });
       onTestFinished(cleanup);
 
       const caller = router.createCaller({ user: testData.userCredentials });
@@ -342,14 +349,11 @@ describe('Lister les thématiques de personnalisation', () => {
     });
 
     test('question conditionnelle masquée avec réponse orpheline en base : ne compte pas la réponse', async () => {
-      const {
-        questionReferenceId,
-        questionConditionnelleId,
-        cleanup,
-      } = await addTestQuestionsExprVisible(databaseService, {
-        thematiqueId: testData.thematiqueId,
-        collectiviteType: testData.collectivite.type,
-      });
+      const { questionReferenceId, questionConditionnelleId, cleanup } =
+        await addTestQuestionsExprVisible(databaseService, {
+          thematiqueId: testData.thematiqueId,
+          collectiviteType: testData.collectivite.type,
+        });
       onTestFinished(cleanup);
 
       const caller = router.createCaller({ user: testData.userCredentials });

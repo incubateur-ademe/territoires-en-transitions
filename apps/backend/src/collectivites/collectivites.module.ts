@@ -17,7 +17,9 @@ import RecherchesService from '@tet/backend/collectivites/recherches/recherches.
 import { PersonneTagRouter } from '@tet/backend/collectivites/tags/personnes/personne-tag.router';
 import { PersonneTagService } from '@tet/backend/collectivites/tags/personnes/personne-tag.service';
 import { TagService } from '@tet/backend/collectivites/tags/tag.service';
+import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 import { CollectiviteController } from './collectivite.controller';
+import { CollectivitesCoreModule } from './collectivites-core.module';
 import { CollectivitesRouter } from './collectivites.router';
 import { DiscussionApplicationService } from './discussions/application/discussion-application.service';
 import { DiscussionDomainService } from './discussions/domain/discussion-domain-service';
@@ -40,13 +42,11 @@ import { CollectiviteMembresRouter } from './membres/membres.router';
 import { InvitationService } from './membres/mutate-invitations/invitation.service';
 import { InvitationsRouter } from './membres/mutate-invitations/invitations.router';
 import { MutateMembresService } from './membres/mutate-membres/mutate-membres.service';
-import { CollectivitesCoreModule } from './collectivites-core.module';
 import { PersonnalisationsModule } from './personnalisations/personnalisations.module';
 import { PersonnesRouter } from './personnes.router';
 import GroupementsService from './services/groupements.service';
 import { PersonnesService } from './services/personnes.service';
 import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
-import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
 
 @Module({
   imports: [

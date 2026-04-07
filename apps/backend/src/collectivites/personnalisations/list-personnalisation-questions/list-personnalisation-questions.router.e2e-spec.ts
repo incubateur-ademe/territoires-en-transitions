@@ -1,3 +1,4 @@
+import { CollectivitePreferencesService } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.service';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -11,6 +12,7 @@ import type {
   QuestionReponse,
   QuestionWithChoices,
 } from '@tet/domain/collectivites';
+import { referentielIdEnumValues } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { onTestFinished } from 'vitest';
 import {
@@ -38,7 +40,15 @@ describe('Lister les questions de personnalisation', () => {
   let testData: TestPersonnalisationData;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    const app = await getTestApp({
+      overrides: (builder) => {
+        builder.overrideProvider(CollectivitePreferencesService).useValue({
+          getEnabledReferentiels: vi
+            .fn()
+            .mockResolvedValue([...referentielIdEnumValues]),
+        });
+      },
+    });
     router = await app.get(TrpcRouter);
     databaseService = await getTestDatabase(app);
     testData = await addTestPersonnalisationData(databaseService);
@@ -154,18 +164,21 @@ describe('Lister les questions de personnalisation', () => {
     test('Filtrer par referentielIds : ne retient que les questions liées aux mesures de ces référentiels', async () => {
       const caller = router.createCaller({ user: testData.userCredentials });
 
-      // binaire + choix liées à te-test ; proportion sans mesure → exclue
       const result = asQuestionWithChoicesList(
         await caller.collectivites.personnalisations.listQuestions({
           mode: 'questions',
-          referentielIds: ['te-test'],
+          referentielIds: ['te'],
         })
       );
 
       const questions = testData.isolateFixtureQuestions(result);
-      expect(questions).toHaveLength(2);
+      expect(questions).toHaveLength(3);
       expect(questions.map((q) => q.id).sort()).toEqual(
-        [testData.questionBinaireId, testData.questionChoixId].sort()
+        [
+          testData.questionBinaireId,
+          testData.questionChoixId,
+          testData.questionProportionId,
+        ].sort()
       );
     });
 
@@ -176,12 +189,12 @@ describe('Lister les questions de personnalisation', () => {
         await caller.collectivites.personnalisations.listQuestions({
           mode: 'questions',
           collectiviteId: testData.collectivite.id,
-          referentielIds: ['te-test'],
+          referentielIds: ['te'],
           thematiqueIds: [testData.thematiqueId],
         })
       );
       const questionsTeTest = testData.isolateFixtureQuestions(avecTeTest);
-      expect(questionsTeTest).toHaveLength(2);
+      expect(questionsTeTest).toHaveLength(3);
 
       const avecCaeSeulement = asQuestionWithChoicesList(
         await caller.collectivites.personnalisations.listQuestions({

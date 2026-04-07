@@ -5,6 +5,7 @@ import CollectivitesService from '@tet/backend/collectivites/services/collectivi
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import type {
   PersonnalisationThematique,
   QuestionWithChoices,
@@ -12,6 +13,7 @@ import type {
 import { ReferentielId } from '@tet/domain/referentiels';
 import { ResourceType } from '@tet/domain/users';
 import { uniq } from 'es-toolkit';
+import { CollectivitePreferencesService } from '../../collectivite-preferences/collectivite-preferences.service';
 import type { ListThematiquesInput } from './list-personnalisation-thematiques.input';
 
 @Injectable()
@@ -20,8 +22,10 @@ export class ListPersonnalisationThematiquesService {
     private readonly permissionService: PermissionService,
     private readonly databaseService: DatabaseService,
     private readonly collectiviteService: CollectivitesService,
+    private readonly collectivitePreferencesService: CollectivitePreferencesService,
     private readonly listPersonnalisationQuestionsService: ListPersonnalisationQuestionsService,
-    private readonly listPersonnalisationReponsesRepository: ListPersonnalisationReponsesRepository
+    private readonly listPersonnalisationReponsesRepository: ListPersonnalisationReponsesRepository,
+    private readonly trackingService: TrackingService
   ) {}
 
   async listThematiques(
@@ -43,13 +47,28 @@ export class ListPersonnalisationThematiquesService {
       collectiviteId
     );
 
+    const isReferentielTEEnabled = await this.trackingService.isFeatureEnabled(
+      'is-referentiel-te-enabled',
+      user.id
+    );
+
+    const enabledReferentiels =
+      await this.collectivitePreferencesService.getEnabledReferentiels(
+        isReferentielTEEnabled,
+        input.collectiviteId,
+        user
+      );
+
     const [questions, answeredQuestionIds] = await Promise.all([
-      this.listPersonnalisationQuestionsService.listQuestionsWithChoices({
-        collectiviteId,
-        actionIds,
-        referentielIds,
-        thematiqueIds,
-      }),
+      this.listPersonnalisationQuestionsService.listQuestionsWithChoices(
+        enabledReferentiels,
+        {
+          collectiviteId,
+          actionIds,
+          referentielIds,
+          thematiqueIds,
+        }
+      ),
       this.databaseService.db.transaction(async (tx) =>
         this.listPersonnalisationReponsesRepository.listAnsweredQuestionIds(
           collectiviteId,

@@ -11,17 +11,30 @@ import { useState } from 'react';
 import { usePersonnalisationRegles } from '../data/use-personnalisation-regles';
 import { QuestionReponseProps } from './question-reponse-props.types';
 
+const endWithADigit = /[0-9]$/;
+
 /** Affiche les mesures des référentiels liées à une question */
 export const QuestionActionsLiees = (props: QuestionReponseProps) => {
   const { question } = props;
   const { actionIds } = question;
   const [isOpen, setIsOpen] = useState(false);
-  const enabled = (actionIds?.length && isOpen) || false;
+
+  // TODO: à supprimer
+  // filtrage pour éviter une erreur dans `referentiels.actions.listActions`
+  // avec les actionId tel que te_2.1.1.6.a
+  const actionIdsFiltered = actionIds?.filter((actionId) =>
+    actionId.match(endWithADigit)
+  );
+
+  const enabled = (actionIdsFiltered?.length && isOpen) || false;
   const { data: actionsLiees } = useListActions(
-    { actionIds: actionIds || [] },
+    { actionIds: actionIdsFiltered || [] },
     enabled
   );
-  const { data: regles } = usePersonnalisationRegles(actionIds || [], enabled);
+  const { data: regles } = usePersonnalisationRegles(
+    actionIdsFiltered || [],
+    enabled
+  );
 
   return (
     <AccordionControlled

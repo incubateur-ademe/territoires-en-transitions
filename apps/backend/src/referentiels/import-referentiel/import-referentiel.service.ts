@@ -9,9 +9,7 @@ import {
 } from '@nestjs/common';
 import ListPersonnalisationQuestionsService from '@tet/backend/collectivites/personnalisations/list-personnalisation-questions/list-personnalisation-questions.service';
 import PersonnalisationsExpressionService from '@tet/backend/collectivites/personnalisations/services/personnalisations-expression.service';
-import {
-  CreateIndicateurActionType,
-} from '@tet/backend/indicateurs/definitions/indicateur-action.table';
+import { CreateIndicateurActionType } from '@tet/backend/indicateurs/definitions/indicateur-action.table';
 import { ListPlatformDefinitionsRepository } from '@tet/backend/indicateurs/definitions/list-platform-definitions/list-platform-definitions.repository';
 import IndicateurExpressionService from '@tet/backend/indicateurs/valeurs/indicateur-expression.service';
 import ImportPreuveReglementaireDefinitionService from '@tet/backend/referentiels/import-preuve-reglementaire-definitions/import-preuve-reglementaire-definition.service';
@@ -53,11 +51,11 @@ import {
 } from '../get-referentiel/get-referentiel.service';
 import { ImportReferentielRepository } from './import-referentiel.repository';
 import {
-  verifyReferentielExpressions,
-  normalizeTypeSyndicatExpressions,
-  buildIndicateurReferences,
   buildActionId,
+  buildIndicateurReferences,
   buildQuestionActionRelations,
+  normalizeTypeSyndicatExpressions,
+  verifyReferentielExpressions,
 } from './verify-referentiel-expressions';
 import { IndicateurReference } from './verify-referentiel-expressions.types';
 
@@ -141,8 +139,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     );
 
     // Get all existing action ids, to be able to check origine validity
-    const existingActionIds =
-      await this.repository.getExistingActionIds();
+    const existingActionIds = await this.repository.getExistingActionIds();
 
     const importActionDefinitions =
       await this.sheetService.getDataFromSheet<ImportActionDefinitionType>(
@@ -330,7 +327,6 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             }
           });
         }
-
       } else {
         throw new UnprocessableEntityException(
           `Action ${actionId} is duplicated in the spreadsheet`
@@ -482,7 +478,9 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     >
   ) {
     const questions =
-      await this.listPersonnalisationQuestionsService.listQuestionsWithChoices();
+      await this.listPersonnalisationQuestionsService.listQuestionsWithChoices(
+        []
+      );
 
     const references = buildIndicateurReferences({
       referentielId,
@@ -544,9 +542,7 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
     const indicateurIds = [
       ...new Set(
         identifiants
-          .map(
-            (identifiant) => indicateurIdByIdentifiant[identifiant]
-          )
+          .map((identifiant) => indicateurIdByIdentifiant[identifiant])
           .filter(Boolean)
       ),
     ];
@@ -582,7 +578,6 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
-
 }
 
 export function parseActionsOrigine(

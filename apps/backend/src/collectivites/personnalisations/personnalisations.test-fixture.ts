@@ -326,7 +326,9 @@ export async function addTestThematiqueEtQuestions(
 type TestActionIds = {
   actionId1: string;
   actionId2: string;
+  actionId3: string;
   questionBinaireId: string;
+  questionProportionId: string;
   questionChoixId: string;
 };
 
@@ -335,19 +337,20 @@ async function insertTestActionsLieesAuxQuestions(
   databaseService: DatabaseServiceInterface,
   ids: TestActionIds
 ) {
-  const referentielTest = ReferentielIdEnum['TE-TEST'];
+  const referentielId = ReferentielIdEnum.TE;
   await databaseService.db
     .insert(actionRelationTable)
     .values([
-      { id: ids.actionId1, referentiel: referentielTest },
-      { id: ids.actionId2, referentiel: referentielTest },
+      { id: ids.actionId1, referentiel: referentielId },
+      { id: ids.actionId2, referentiel: referentielId },
+      { id: ids.actionId3, referentiel: referentielId },
     ])
     .onConflictDoNothing();
 
   const actionDefinitionValues = {
     ...TE_TEST_ACTION_DEFINITION_BASE,
-    referentiel: referentielTest,
-    referentielId: referentielTest,
+    referentiel: referentielId,
+    referentielId,
   };
   await databaseService.db
     .insert(actionDefinitionTable)
@@ -359,6 +362,10 @@ async function insertTestActionsLieesAuxQuestions(
       {
         ...actionDefinitionValues,
         actionId: ids.actionId2,
+      },
+      {
+        ...actionDefinitionValues,
+        actionId: ids.actionId3,
       },
     ])
     .onConflictDoNothing();
@@ -374,6 +381,10 @@ async function insertTestActionsLieesAuxQuestions(
         actionId: ids.actionId2,
         questionId: ids.questionChoixId,
       },
+      {
+        actionId: ids.actionId3,
+        questionId: ids.questionProportionId,
+      },
     ])
     .onConflictDoNothing();
 }
@@ -388,17 +399,44 @@ async function deleteTestActionsLieesAuxQuestions(
     .where(
       inArray(questionActionTable.questionId, [
         ids.questionBinaireId,
+        ids.questionProportionId,
         ids.questionChoixId,
       ])
     );
   await databaseService.db
     .delete(actionDefinitionTable)
-    .where(
-      inArray(actionDefinitionTable.actionId, [ids.actionId1, ids.actionId2])
-    );
+    .where(inArray(actionDefinitionTable.actionId, [ids.actionId1, ids.actionId2, ids.actionId3]));
   await databaseService.db
     .delete(actionRelationTable)
-    .where(inArray(actionRelationTable.id, [ids.actionId1, ids.actionId2]));
+    .where(inArray(actionRelationTable.id, [ids.actionId1, ids.actionId2, ids.actionId3]));
+}
+
+/**
+ * Lie les 3 questions d'une thématique de test à des mesures du référentiel `te`.
+ */
+export async function linkThematiqueTestQuestionsToReferentielActions(
+  databaseService: DatabaseServiceInterface,
+  data: {
+    questionBinaireId: string;
+    questionProportionId: string;
+    questionChoixId: string;
+  }
+): Promise<{ cleanup: () => Promise<void> }> {
+  const actionId1 = generatePersonnalisationTestId('test-a');
+  const actionId2 = generatePersonnalisationTestId('test-a');
+  const actionId3 = generatePersonnalisationTestId('test-a');
+  const ids: TestActionIds = {
+    actionId1,
+    actionId2,
+    actionId3,
+    ...data,
+  };
+  await insertTestActionsLieesAuxQuestions(databaseService, ids);
+  return {
+    cleanup: async () => {
+      await deleteTestActionsLieesAuxQuestions(databaseService, ids);
+    },
+  };
 }
 
 /** Ajoute une question pour tester le filtre par type de collectivité concernée */
@@ -422,7 +460,44 @@ export async function addTestQuestionCollectiviteNonConcernee(
       typesCollectivitesConcernees: typesCollectivitesNonConcernees,
     },
   ]);
-  return { questionId, cleanup };
+
+  const actionId = generatePersonnalisationTestId('test-a');
+  const referentielTest = ReferentielIdEnum['TE-TEST'];
+  await databaseService.db
+    .insert(actionRelationTable)
+    .values([{ id: actionId, referentiel: referentielTest }])
+    .onConflictDoNothing();
+  await databaseService.db
+    .insert(actionDefinitionTable)
+    .values([
+      {
+        ...TE_TEST_ACTION_DEFINITION_BASE,
+        referentiel: referentielTest,
+        referentielId: referentielTest,
+        actionId,
+      },
+    ])
+    .onConflictDoNothing();
+  await databaseService.db
+    .insert(questionActionTable)
+    .values([{ actionId, questionId }])
+    .onConflictDoNothing();
+
+  return {
+    questionId,
+    cleanup: async () => {
+      await databaseService.db
+        .delete(questionActionTable)
+        .where(eq(questionActionTable.questionId, questionId));
+      await databaseService.db
+        .delete(actionDefinitionTable)
+        .where(eq(actionDefinitionTable.actionId, actionId));
+      await databaseService.db
+        .delete(actionRelationTable)
+        .where(eq(actionRelationTable.id, actionId));
+      await cleanup();
+    },
+  };
 }
 
 /** Ajoute une question associée à une compétence */
@@ -537,10 +612,49 @@ export async function addTestQuestionsExprVisible(
     },
   ]);
 
+  const exprVisibleActionId = generatePersonnalisationTestId('test-a');
+  const referentielTest = ReferentielIdEnum['TE-TEST'];
+  await databaseService.db
+    .insert(actionRelationTable)
+    .values([{ id: exprVisibleActionId, referentiel: referentielTest }])
+    .onConflictDoNothing();
+  await databaseService.db
+    .insert(actionDefinitionTable)
+    .values([
+      {
+        ...TE_TEST_ACTION_DEFINITION_BASE,
+        referentiel: referentielTest,
+        referentielId: referentielTest,
+        actionId: exprVisibleActionId,
+      },
+    ])
+    .onConflictDoNothing();
+  await databaseService.db
+    .insert(questionActionTable)
+    .values([
+      { actionId: exprVisibleActionId, questionId: questionReferenceId },
+      { actionId: exprVisibleActionId, questionId: questionConditionnelleId },
+    ])
+    .onConflictDoNothing();
+
   return {
     questionReferenceId,
     questionConditionnelleId,
     cleanup: async () => {
+      await databaseService.db
+        .delete(questionActionTable)
+        .where(
+          inArray(questionActionTable.questionId, [
+            questionReferenceId,
+            questionConditionnelleId,
+          ])
+        );
+      await databaseService.db
+        .delete(actionDefinitionTable)
+        .where(eq(actionDefinitionTable.actionId, exprVisibleActionId));
+      await databaseService.db
+        .delete(actionRelationTable)
+        .where(eq(actionRelationTable.id, exprVisibleActionId));
       await cleanupQuestionConditionnelle();
       await cleanupQuestionReference();
     },
@@ -555,6 +669,7 @@ export async function addTestPersonnalisationData(
     // Actions pour tester le filtre actionIds (te-test existe en seed)
     actionId1: generatePersonnalisationTestId('test-a'),
     actionId2: generatePersonnalisationTestId('test-a'),
+    actionId3: generatePersonnalisationTestId('test-a'),
   };
 
   const { user, collectivite, cleanup } = await addTestCollectiviteAndUser(
@@ -592,7 +707,9 @@ export async function addTestPersonnalisationData(
   await insertTestActionsLieesAuxQuestions(databaseService, {
     actionId1: mergedTestDataId.actionId1,
     actionId2: mergedTestDataId.actionId2,
+    actionId3: mergedTestDataId.actionId3,
     questionBinaireId: mergedTestDataId.questionBinaireId,
+    questionProportionId: mergedTestDataId.questionProportionId,
     questionChoixId: mergedTestDataId.questionChoixId,
   });
 
@@ -640,7 +757,9 @@ export async function addTestPersonnalisationData(
       await deleteTestActionsLieesAuxQuestions(databaseService, {
         actionId1: mergedTestDataId.actionId1,
         actionId2: mergedTestDataId.actionId2,
+        actionId3: mergedTestDataId.actionId3,
         questionBinaireId: mergedTestDataId.questionBinaireId,
+        questionProportionId: mergedTestDataId.questionProportionId,
         questionChoixId: mergedTestDataId.questionChoixId,
       });
 

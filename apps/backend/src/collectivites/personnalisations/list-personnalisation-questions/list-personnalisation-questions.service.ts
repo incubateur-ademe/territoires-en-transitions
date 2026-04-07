@@ -9,18 +9,21 @@ import { actionRelationTable } from '@tet/backend/referentiels/models/action-rel
 import { questionActionTable } from '@tet/backend/referentiels/models/question-action.table';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { TrackingService } from '@tet/backend/utils/tracking/tracking.service';
 import { createTrpcErrorHandler } from '@tet/backend/utils/trpc/trpc-error-handler';
 import {
   CollectiviteType,
   IdentiteCollectivite,
+  PersonnalisationQuestionReponse,
   PersonnalisationReponse,
   PersonnalisationReponsesPayload,
   QuestionChoix,
-  QuestionReponse,
   QuestionWithChoices,
 } from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
 import { and, eq, exists, inArray, isNull, or, SQL, sql } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
+import { CollectivitePreferencesService } from '../../collectivite-preferences/collectivite-preferences.service';
 import PersonnalisationsExpressionService from '../services/personnalisations-expression.service';
 import PersonnalisationsService from '../services/personnalisations-service';
 import type {
@@ -41,7 +44,9 @@ export default class ListPersonnalisationQuestionsService {
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService,
     private readonly personnalisationsService: PersonnalisationsService,
     private readonly collectivitesService: CollectivitesService,
-    private readonly listPersonnalisationReponsesService: ListPersonnalisationReponsesService
+    private readonly collectivitePreferencesService: CollectivitePreferencesService,
+    private readonly listPersonnalisationReponsesService: ListPersonnalisationReponsesService,
+    private readonly trackingService: TrackingService
   ) {}
 
   /**
@@ -51,14 +56,31 @@ export default class ListPersonnalisationQuestionsService {
     input: ListPersonnalisationQuestionsInput,
     user: AuthenticatedUser
   ): Promise<
-    QuestionWithChoices[] | QuestionReponse[] | PersonnalisationReponse[]
+    | QuestionWithChoices[]
+    | PersonnalisationQuestionReponse[]
+    | PersonnalisationReponse[]
   > {
+    const isReferentielTEEnabled = await this.trackingService.isFeatureEnabled(
+      'is-referentiel-te-enabled',
+      user.id
+    );
+
+    const enabledReferentiels =
+      await this.collectivitePreferencesService.getEnabledReferentiels(
+        isReferentielTEEnabled,
+        input.collectiviteId,
+        user
+      );
+
     if (input.mode === 'questions' || !input.collectiviteId) {
-      return this.getVisibleQuestionsWithChoices(input);
+      return this.getVisibleQuestionsWithChoices(input, enabledReferentiels);
     }
 
     if (input.mode === 'withReponses') {
-      const questions = await this.getVisibleQuestionsWithChoices(input);
+      const questions = await this.getVisibleQuestionsWithChoices(
+        input,
+        enabledReferentiels
+      );
       const ids = questions.map((q) => q.id);
       if (ids.length === 0) {
         return [];
@@ -83,7 +105,7 @@ export default class ListPersonnalisationQuestionsService {
     }
 
     // mode 'reponsesOnly'
-    const ids = await this.getVisibleQuestionIds(input);
+    const ids = await this.getVisibleQuestionIds(input, enabledReferentiels);
     if (ids.length === 0) {
       return [];
     }
@@ -127,9 +149,13 @@ export default class ListPersonnalisationQuestionsService {
    * Lists all personnalisation questions with their choices (filtres + expr_visible).
    */
   async listQuestionsWithChoices(
+    enabledReferentiels: ReferentielId[],
     input?: ListPersonnalisationQuestionsFilters
   ): Promise<QuestionWithChoices[]> {
-    return this.getVisibleQuestionsWithChoices(input ?? {});
+    return this.getVisibleQuestionsWithChoices(
+      input ?? {},
+      enabledReferentiels
+    );
   }
 
   /**
@@ -137,10 +163,13 @@ export default class ListPersonnalisationQuestionsService {
    * Utilisé pour le mode `reponsesOnly`.
    */
   private async getVisibleQuestionIds(
-    input: ListPersonnalisationQuestionsFilters
+    input: ListPersonnalisationQuestionsFilters,
+    enabledReferentiels: ReferentielId[]
   ): Promise<string[]> {
-    const conditions =
-      this.buildPersonnalisationQuestionFilterConditions(input);
+    const conditions = this.buildPersonnalisationQuestionFilterConditions(
+      input,
+      enabledReferentiels
+    );
     const { collectiviteId } = input;
 
     let baseQuery = this.databaseService.db
@@ -185,7 +214,8 @@ export default class ListPersonnalisationQuestionsService {
   }
 
   private buildPersonnalisationQuestionFilterConditions(
-    input: ListPersonnalisationQuestionsFilters
+    input: ListPersonnalisationQuestionsFilters,
+    enabledReferentiels: ReferentielId[]
   ): (ReturnType<typeof eq> | SQL)[] {
     const {
       actionIds,
@@ -209,7 +239,14 @@ export default class ListPersonnalisationQuestionsService {
       conditions.push(exists(actionIdsFilterQuery));
     }
 
-    if (referentielIds && referentielIds.length > 0) {
+    // pour renvoyer les questions filtrées par référentiels ET uniquement sur
+    // les référentiels activés
+    const isFilteringByReferentielIds =
+      referentielIds && referentielIds.length > 0;
+    const referentielIdsFilter = isFilteringByReferentielIds
+      ? enabledReferentiels.filter((id) => referentielIds.includes(id))
+      : enabledReferentiels;
+    if (referentielIdsFilter.length > 0) {
       const referentielOverlapQuery = this.databaseService.db
         .select({ questionId: questionActionTable.questionId })
         .from(questionActionTable)
@@ -220,7 +257,7 @@ export default class ListPersonnalisationQuestionsService {
         .where(
           and(
             eq(questionActionTable.questionId, questionTable.id),
-            inArray(actionRelationTable.referentiel, referentielIds)
+            inArray(actionRelationTable.referentiel, referentielIdsFilter)
           )
         );
       conditions.push(exists(referentielOverlapQuery));
@@ -246,10 +283,11 @@ export default class ListPersonnalisationQuestionsService {
   }
 
   /**
-   * Questions visibles après filtres métier et expr_visible.
+   * Questions visibles après application des filtres et évaluation de exprVisible.
    */
   private async getVisibleQuestionsWithChoices(
-    input: ListPersonnalisationQuestionsFilters
+    input: ListPersonnalisationQuestionsFilters,
+    enabledReferentiels: ReferentielId[]
   ): Promise<QuestionWithChoices[]> {
     this.logger.log(
       `Fetching personnalisation questions with choices${
@@ -260,10 +298,12 @@ export default class ListPersonnalisationQuestionsService {
     );
 
     const questionChoixSubquery = this.getQuestionChoixQuery();
-    const actionsSubquery = this.getActionsSubquery();
+    const actionsSubquery = this.getActionsSubquery(enabledReferentiels);
     const { collectiviteId } = input;
-    const conditions =
-      this.buildPersonnalisationQuestionFilterConditions(input);
+    const conditions = this.buildPersonnalisationQuestionFilterConditions(
+      input,
+      enabledReferentiels
+    );
 
     let baseQuery = this.databaseService.db
       .select({
@@ -367,8 +407,8 @@ export default class ListPersonnalisationQuestionsService {
     }
   }
 
-  private getActionsSubquery() {
-    return this.databaseService.db
+  private getActionsSubquery(enabledReferentiels: ReferentielId[]) {
+    const base = this.databaseService.db
       .select({
         questionId: questionActionTable.questionId,
         actionIds: sql<string[]>`array_agg(
@@ -381,11 +421,14 @@ export default class ListPersonnalisationQuestionsService {
           )::text[]`.as('referentiel_ids'),
       })
       .from(questionActionTable)
-      .leftJoin(
+      .innerJoin(
         actionRelationTable,
         eq(questionActionTable.actionId, actionRelationTable.id)
       )
-      .groupBy(questionActionTable.questionId)
+      .groupBy(questionActionTable.questionId);
+
+    return base
+      .where(inArray(actionRelationTable.referentiel, enabledReferentiels))
       .as('actions');
   }
 }

@@ -103,7 +103,9 @@ export default class ImportPersonnalisationQuestionService extends BaseSpreadshe
     );
 
     const existingQuestions =
-      await this.listPersonnalisationQuestionsService.listQuestionsWithChoices();
+      await this.listPersonnalisationQuestionsService.listQuestionsWithChoices(
+        []
+      );
 
     // Verify data integrity
     this.verifyPersonnalisationQuestionsAndChoix(
@@ -370,6 +372,8 @@ export default class ImportPersonnalisationQuestionService extends BaseSpreadshe
       };
     });
 
-    return this.listPersonnalisationQuestionsService.listQuestionsWithChoices();
+    return this.listPersonnalisationQuestionsService.listQuestionsWithChoices(
+      []
+    );
   }
 }
