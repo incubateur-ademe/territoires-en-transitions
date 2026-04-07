@@ -3,6 +3,7 @@ export * from './count-by';
 export * from './echarts/chart-render.request';
 export * from './echarts/palettes';
 export * from './enum.utils';
+export * from './feature-flags';
 export * from './get-error-message';
 export * from './html-to-text';
 export * from './modified-since.enum';
