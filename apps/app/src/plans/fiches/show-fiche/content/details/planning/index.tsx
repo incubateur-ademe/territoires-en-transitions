@@ -117,9 +117,12 @@ export const Planning = () => {
                         field.value ? format(field.value, 'yyyy-MM-dd') : ''
                       }
                       onChange={(e) => {
-                        field.onChange(
-                          e.target.value ? new Date(e.target.value) : null
-                        );
+                        const date = e.target.value
+                          ? new Date(e.target.value)
+                          : null;
+                        if (date === null || date.getFullYear() >= 1900) {
+                          field.onChange(date);
+                        }
                       }}
                       onKeyDown={(evt) => {
                         if (evt.key === 'Enter' || evt.key === 'Escape') {
@@ -167,9 +170,12 @@ export const Planning = () => {
                           field.value ? format(field.value, 'yyyy-MM-dd') : ''
                         }
                         onChange={(e) => {
-                          field.onChange(
-                            e.target.value ? new Date(e.target.value) : null
-                          );
+                          const date = e.target.value
+                            ? new Date(e.target.value)
+                            : null;
+                          if (date === null || date.getFullYear() >= 1900) {
+                            field.onChange(date);
+                          }
                         }}
                         onKeyDown={(evt) => {
                           if (evt.key === 'Enter' || evt.key === 'Escape') {
