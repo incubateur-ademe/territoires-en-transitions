@@ -31,16 +31,6 @@ const ActionCommentsTabHeader = ({
   const referentielId = useReferentielId();
   const collectiviteId = useCollectiviteId();
 
-  // const actionsWithAllOption = useMemo(() => {
-  //   return [
-  //     {
-  //       label: 'Toutes les mesures',
-  //       value: 'all',
-  //     },
-  //     ...options,
-  //   ];
-  // }, [options]);
-
   return (
     <div className="bg-white">
       <div className="mx-4 py-4 flex flex-col gap-4 border-b border-primary-3">
@@ -64,12 +54,11 @@ const ActionCommentsTabHeader = ({
             </div>
             <div className="flex-1 ">
               <ActionSelect
-                selectedAction={selectedAction}
+                selectedActionOrSousAction={selectedAction}
                 onActionChange={onActionChange}
                 referentielId={referentielId}
                 collectiviteId={collectiviteId}
                 placeholder="Toutes les mesures"
-                indentSubActions={true}
               />
             </div>
           </div>

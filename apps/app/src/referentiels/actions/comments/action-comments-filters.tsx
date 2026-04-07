@@ -66,25 +66,27 @@ export const StatusSelect = ({
 };
 
 type ActionSelectProps = {
-  selectedAction?: Pick<ActionListItem, 'actionId' | 'actionType'>;
+  selectedActionOrSousAction?: Pick<ActionListItem, 'actionId' | 'actionType'>;
   onActionChange: (value: string | undefined) => void;
+  isSousActionsVisible?: boolean;
   placeholder?: string;
-  indentSubActions?: boolean;
   referentielId: ReferentielId;
   collectiviteId: number;
 };
 
 export const ActionSelect = ({
-  selectedAction,
+  selectedActionOrSousAction,
   onActionChange,
+  isSousActionsVisible = false,
   placeholder = 'Toutes les mesures',
-  indentSubActions = true,
   referentielId,
   collectiviteId,
 }: ActionSelectProps) => {
   const { data: actions = [] } = useListActions({
     referentielIds: [referentielId],
-    actionTypes: [ActionTypeEnum.ACTION, ActionTypeEnum.SOUS_ACTION],
+    actionTypes: isSousActionsVisible
+      ? [ActionTypeEnum.ACTION, ActionTypeEnum.SOUS_ACTION]
+      : [ActionTypeEnum.ACTION],
     collectiviteId,
   });
 
@@ -92,40 +94,51 @@ export const ActionSelect = ({
     actionType: ActionType;
   };
 
-  const actionsOptions: OptionWithActionType[] = useMemo(() => {
-    const filteredActions = !selectedAction
-      ? actions.filter((action) => action.actionType === ActionTypeEnum.ACTION)
-      : actions.filter(
-          ({ actionId, actionType }) =>
-            (actionType === ActionTypeEnum.ACTION &&
-              actionId === selectedAction.actionId) ||
-            (actionType === ActionTypeEnum.SOUS_ACTION &&
-              getParentId({ actionId }) === selectedAction.actionId)
-        );
+  const selectedActionId =
+    selectedActionOrSousAction?.actionType === ActionTypeEnum.ACTION
+      ? selectedActionOrSousAction.actionId
+      : getParentId({ actionId: selectedActionOrSousAction?.actionId ?? '' });
 
-    return filteredActions.map((action) => ({
+  const actionsOptions: OptionWithActionType[] = useMemo(() => {
+    const filteredActions =
+      isSousActionsVisible && selectedActionId
+        ? actions.filter(
+            ({ actionId, actionType }) =>
+              (actionType === ActionTypeEnum.ACTION &&
+                actionId === selectedActionId) ||
+              (actionType === ActionTypeEnum.SOUS_ACTION &&
+                getParentId({ actionId }) === selectedActionId)
+          )
+        : actions;
+
+    const filteredActionOptions = filteredActions.map((action) => ({
       label: `${action.identifiant} ${action.nom}`,
       value: action.actionId,
       actionType: action.actionType,
     }));
-  }, [actions, selectedAction]);
+
+    return isSousActionsVisible
+      ? filteredActionOptions
+      : [
+          {
+            label: 'Toutes les mesures',
+            value: 'all',
+            actionType: ActionTypeEnum.ACTION,
+          },
+          ...filteredActionOptions,
+        ];
+  }, [actions, isSousActionsVisible, selectedActionId]);
 
   return (
     <Select
       placeholder={placeholder}
       options={actionsOptions}
-      values={selectedAction?.actionId ?? undefined}
+      values={selectedActionOrSousAction?.actionId ?? undefined}
       onChange={(value) => onActionChange(value as string | undefined)}
       customItem={(v) => (
         <span
           className={cn('text-grey-8 text-xs text-left', {
             'ml-4':
-              indentSubActions &&
-              v &&
-              (v as OptionWithActionType).actionType ===
-                ActionTypeEnum.SOUS_ACTION,
-            'pl-4':
-              !indentSubActions &&
               v &&
               (v as OptionWithActionType).actionType ===
                 ActionTypeEnum.SOUS_ACTION,
