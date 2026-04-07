@@ -1,12 +1,12 @@
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { DiscussionOrderBy, DiscussionStatus } from '@tet/domain/collectivites';
+import { ReferentielId } from '@tet/domain/referentiels';
 import {
   ActionSelect,
   OrderBySelect,
   StatusSelect,
 } from './action-comments-filters';
 import ActionCommentNew from './action-comments.new';
-import { ReferentielId } from '@tet/domain/referentiels';
 
 type Props = {
   selectedOrderBy: DiscussionOrderBy;
@@ -47,10 +47,10 @@ const ActionCommentsPanelHeader = ({
           />
         </div>
         <ActionSelect
-          selectedAction={selectedAction}
+          selectedActionOrSousAction={selectedAction}
           onActionChange={onActionChange}
+          isSousActionsVisible={true}
           placeholder="Sélectionner ou rédiger un commentaire sur la mesure"
-          indentSubActions={false}
           referentielId={referentielId}
           collectiviteId={collectiviteId}
         />
