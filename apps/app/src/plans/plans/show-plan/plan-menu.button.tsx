@@ -36,7 +36,7 @@ export const PlanMenuButton = () => {
   const menuActions: MenuAction[] = [
     canMutatePlan
       ? {
-          label: "Rendre publique l'ensemble des actions",
+          label: "Rendre public l'ensemble des actions",
           icon: 'lock-unlock-fill',
           onClick: () => {
             setRestreindreFiche('public');
