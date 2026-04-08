@@ -5,11 +5,8 @@ import { IndicateurChartService } from '@tet/backend/indicateurs/charts/indicate
 import { EchartsService } from '@tet/backend/utils/echarts/echarts.service';
 import { getHorizontalStackedBarChartOption } from '@tet/backend/utils/echarts/get-horizontal-stackedbar-chart-option.utils';
 import { getPieChartOption } from '@tet/backend/utils/echarts/get-pie-chart-option.utils';
-import {
-  failure,
-  Result,
-  success,
-} from '@tet/backend/utils/result.type';
+import { isErrorWithCause } from '@tet/backend/utils/nest/errors.utils';
+import { failure, Result, success } from '@tet/backend/utils/result.type';
 import {
   CollectiviteAvecType,
   PersonnalisationReponsesPayload,
@@ -34,7 +31,6 @@ import { EChartsOption } from 'echarts/types/dist/echarts';
 import { chunk, isNil } from 'es-toolkit';
 import { writeFileSync } from 'fs';
 import { DateTime } from 'luxon';
-import sharp from 'sharp';
 import * as path from 'path';
 import {
   Automizer,
@@ -45,6 +41,7 @@ import {
   StatusTracker,
 } from 'pptx-automizer';
 import { ElementInfo, XmlElement } from 'pptx-automizer/dist/types/xml-types';
+import sharp from 'sharp';
 import { CountByService } from '../../fiches/count-by/count-by.service';
 import ListFichesService from '../../fiches/list-fiches/list-fiches.service';
 import { ComputeBudgetRules } from '../../plans/compute-budget/compute-budget.rules';
@@ -72,6 +69,8 @@ export class PptBuilderService {
 
   /** PowerPoint EMU precision (1 px = 9525 EMU) */
   private readonly EMU_PER_PX = 914400 / 96;
+
+  private readonly INDICATEUR_CHART_IMAGE_FILES_CHUNK_LIMIT = 10;
 
   /** Convert EMU → pixels */
   private emuToPx(emu: number): number {
@@ -361,24 +360,34 @@ export class PptBuilderService {
         mediaDir
       );
 
-      let indicateurChartImageFiles: {
+      const indicateurChartImageFiles: {
         indicateurId: number;
         imageFile: string;
         totalFilledValeursCount: number;
       }[] = [];
       if (request.includeFicheIndicateursSlides && indicateurChartSize) {
-        indicateurChartImageFiles = await Promise.all(
-          filteredFichesIndicateurs?.map((indicateurId) =>
-            this.writeIndicateurChartImageFileAndLoadMedia({
-              indicateurId,
-              collectivite,
-              personnalisationReponses,
-              presentation,
-              mediaDir,
-              chartSize: indicateurChartSize,
-            })
-          ) ?? []
+        this.logger.log(
+          `Writing indicateur chart image files for ${filteredFichesIndicateurs.length} indicateurs`
         );
+        const filteredFicheIndicateurChunks = chunk(
+          filteredFichesIndicateurs,
+          this.INDICATEUR_CHART_IMAGE_FILES_CHUNK_LIMIT
+        );
+        for (const filteredFichesIndicateurChunk of filteredFicheIndicateurChunks) {
+          const indicateurChartImageFilesChunk = await Promise.all(
+            filteredFichesIndicateurChunk.map((indicateurId) =>
+              this.writeIndicateurChartImageFileAndLoadMedia({
+                indicateurId,
+                collectivite,
+                personnalisationReponses,
+                presentation,
+                mediaDir,
+                chartSize: indicateurChartSize,
+              })
+            )
+          );
+          indicateurChartImageFiles.push(...indicateurChartImageFilesChunk);
+        }
       }
       for (const axe of axes) {
         await this.addAxesSummarySlide({
@@ -440,6 +449,12 @@ export class PptBuilderService {
         },
       };
     } catch (error) {
+      this.logger.error(error);
+      if (isErrorWithCause(error)) {
+        this.logger.error(
+          `Error cause: ${error.cause.message} (${error.cause.code}, ${error.cause.constraint}), Stack ${error.cause.stack}`
+        );
+      }
       this.logger.error(
         `Error building presentation: ${getErrorMessage(error)}`
       );
@@ -725,7 +740,10 @@ export class PptBuilderService {
     logoFileBase64?: string
   ): Promise<
     Result<
-      { dimensions: { width: number; height: number }; fileName: string } | null,
+      {
+        dimensions: { width: number; height: number };
+        fileName: string;
+      } | null,
       typeof GenerateReportErrorEnum.INVALID_COLLECTIVITE_LOGO
     >
   > {
@@ -775,7 +793,9 @@ export class PptBuilderService {
         GenerateReportErrorEnum.INVALID_COLLECTIVITE_LOGO,
         new Error(
           `Impossible de lire les dimensions du logo collectivité (fichier: ${logoFileName}). ` +
-            `Largeur: ${width ?? 'indéfinie'}, hauteur: ${height ?? 'indéfinie'}. ` +
+            `Largeur: ${width ?? 'indéfinie'}, hauteur: ${
+              height ?? 'indéfinie'
+            }. ` +
             'Vérifiez que le fichier est une image valide (PNG, JPEG, etc.).'
         )
       );
