@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.table';
 import { getScoresIndicatifsFromSnapshot } from '@tet/backend/referentiels/snapshots/snapshots.utils';
 import {
@@ -18,8 +19,10 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '../../../test/app-utils';
-import { getAnonUser, getAuthUser } from '../../../test/auth-utils';
+import { getAnonUser, getAuthUserFromUserCredentials } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
+import { addTestUser, setUserCollectiviteRole } from '../../users/users/users.test-fixture';
+import { CollectiviteRole } from '@tet/domain/users';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { SnapshotsRouter } from './snapshots.router';
@@ -33,20 +36,37 @@ type UpdateSnapshotNameInput = inferProcedureInput<
 >;
 
 describe('SnapshotsRouter', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
   let rhoneAggloCollectiviteId: number;
   let databaseService: DatabaseService;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
-    yoloDodoUser = await getAuthUser();
     rhoneAggloCollectiviteId = await getCollectiviteIdBySiren(
       databaseService,
       '200072015'
     );
+
+    const testUserResult = await addTestUser(databaseService, {
+      collectiviteId: 1,
+      role: CollectiviteRole.ADMIN,
+    });
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
+
+    // Give lecture access to Rhône Agglo (matching YOLO_DODO's original seed access)
+    await setUserCollectiviteRole(databaseService, {
+      userId: testUserResult.user.id,
+      collectiviteId: rhoneAggloCollectiviteId,
+      role: CollectiviteRole.LECTURE,
+    });
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test("Création d'un snapshot: not authenticated", async () => {
@@ -64,7 +84,7 @@ describe('SnapshotsRouter', () => {
   });
 
   test("Création d'un snapshot: not authorized, accès en lecture uniquement", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const input: ComputeScoreInput = {
       referentielId: ReferentielIdEnum.CAE,
@@ -78,7 +98,7 @@ describe('SnapshotsRouter', () => {
   });
 
   test("Création d'un snapshot avec nom et date spécifique", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
     const snapshotDate = '2024-09-21';
     const snapshotNom = 'Test snapshot avec date';
 
@@ -114,7 +134,7 @@ describe('SnapshotsRouter', () => {
   });
 
   test("Création d'un snapshot avec un score indicatif sur une action", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
     const snapshotDate = '2024-09-21';
     const snapshotNom = 'Test snapshot avec date';
 
@@ -269,7 +289,7 @@ describe('SnapshotsRouter', () => {
   });
 
   test(`Récupération du score d'un référentiel avec sauvegarde d'un snapshot autorisé pour un utilisateur en écriture`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const currentSnapshot = await caller.referentiels.snapshots.getCurrent({
       collectiviteId: 1,
@@ -350,8 +370,8 @@ describe('SnapshotsRouter', () => {
       modifiedAt: expect.toEqualDate(snapshotTestAccent.modifiedAt),
       createdAt: expect.toEqualDate(snapshotTestAccent.createdAt),
       auditId: null,
-      createdBy: yoloDodoUser.id,
-      modifiedBy: yoloDodoUser.id,
+      createdBy: testUser.id,
+      modifiedBy: testUser.id,
       pointFait: 0.36,
       pointNonRenseigne: 492.8,
       pointPasFait: 0.03,
@@ -361,7 +381,7 @@ describe('SnapshotsRouter', () => {
   });
 
   test(`Suppression d'un snapshot non-autorisé pour un utilisateur en écriture mais sur un snapshot qui ne soit pas de type date personnalisée`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const currentSnapshot = await caller.referentiels.snapshots.getCurrent({
       collectiviteId: 1,
@@ -384,7 +404,7 @@ describe('SnapshotsRouter', () => {
   });
 
   test(`Récupération de l'historique du score d'un référentiel pour un utilisateur autorisé`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const currentSnapshot =
       await caller.referentiels.snapshots.computeAndUpsert({
@@ -452,7 +472,7 @@ describe('SnapshotsRouter', () => {
   });
 
   test("Mise à jour du nom d'un snapshot: not authorized, accès en lecture uniquement", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const input: UpdateSnapshotNameInput = {
       collectiviteId: rhoneAggloCollectiviteId,
@@ -467,7 +487,7 @@ describe('SnapshotsRouter', () => {
   });
 
   test("Mise à jour du nom d'un snapshot autre que date_personnalisee: score_courant, not authorized", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const input: ComputeScoreInput = {
       collectiviteId: 1,
@@ -500,7 +520,7 @@ describe('SnapshotsRouter', () => {
   });
 
   test("Mise à jour du nom d'un snapshot", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const input: ComputeScoreInput = {
       referentielId: ReferentielIdEnum.CAE,

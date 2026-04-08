@@ -1,6 +1,8 @@
+import { INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   fixturePourScoreIndicatif,
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getIndicateurIdByIdentifiant,
   getTestApp,
   getTestDatabase,
@@ -10,34 +12,53 @@ import {
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { CollectiviteRole } from '@tet/domain/users';
 
 describe('ScoreIndicatifRouter', () => {
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
   let databaseService: DatabaseService;
   let indicateurIdCae7: number;
+  let app: INestApplication;
+  let testCollectiviteId: number;
+  let cleanupScoreIndicatifFixture: (() => Promise<void>) | undefined;
+  let cleanupCollectivite: (() => Promise<void>) | undefined;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
-    yoloDodoUser = await getAuthUser();
+
+    const collectiviteResult = await addTestCollectiviteAndUser(
+      databaseService,
+      { user: { role: CollectiviteRole.ADMIN } }
+    );
+    testCollectiviteId = collectiviteResult.collectivite.id;
+    testUser = getAuthUserFromUserCredentials(collectiviteResult.user);
+    cleanupCollectivite = collectiviteResult.cleanup;
 
     // insert test data
-    const cleanup = await insertFixturePourScoreIndicatif(
+    cleanupScoreIndicatifFixture = await insertFixturePourScoreIndicatif(
       databaseService,
-      fixturePourScoreIndicatif
+      { ...fixturePourScoreIndicatif, collectiviteId: testCollectiviteId }
     );
 
     indicateurIdCae7 = await getIndicateurIdByIdentifiant(
       databaseService,
       'cae_7'
     );
+  });
 
-    return async () => {
-      await cleanup();
-      await app.close();
-    };
+  afterAll(async () => {
+    // L'ordre importe : supprimer d'abord les valeurs d'indicateur (qui référencent
+    // la collectivité via FK non-cascadante) avant de supprimer la collectivité.
+    if (cleanupScoreIndicatifFixture) {
+      await cleanupScoreIndicatifFixture();
+    }
+    if (cleanupCollectivite) {
+      await cleanupCollectivite();
+    }
+    await app.close();
   });
 
   test('Lire les valeurs utilisables lève une erreur si on est non authentifié', async () => {
@@ -45,16 +66,16 @@ describe('ScoreIndicatifRouter', () => {
 
     await expect(() =>
       caller.referentiels.actions.getValeursUtilisables({
-        collectiviteId: 1,
+        collectiviteId: testCollectiviteId,
         actionIds: ['cae_1.2.3.3.4', 'cae_1.2', 'nimp'],
       })
     ).rejects.toThrowError(/not authenticated/i);
   });
 
   test('Lire les valeurs utilisables pour le calcul du score indicatif', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
     const result = await caller.referentiels.actions.getValeursUtilisables({
-      collectiviteId: 1,
+      collectiviteId: testCollectiviteId,
       actionIds: ['cae_1.2.3.3.4', 'cae_1.2', 'nimp'],
     });
 
@@ -122,16 +143,16 @@ describe('ScoreIndicatifRouter', () => {
 
     await expect(() =>
       caller.referentiels.actions.getValeursUtilisees({
-        collectiviteId: 1,
+        collectiviteId: testCollectiviteId,
         actionIds: ['cae_1.2.3.3.4', 'cae_1.2', 'nimp'],
       })
     ).rejects.toThrowError(/not authenticated/i);
   });
 
   test('Lire les valeurs utilisées pour le calcul du score indicatif', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
     const result = await caller.referentiels.actions.getValeursUtilisees({
-      collectiviteId: 1,
+      collectiviteId: testCollectiviteId,
       actionIds: ['cae_1.2.3.3.4', 'cae_1.2', 'nimp'],
     });
 
@@ -175,16 +196,16 @@ describe('ScoreIndicatifRouter', () => {
 
     await expect(() =>
       caller.referentiels.actions.getScoreIndicatif({
-        collectiviteId: 1,
+        collectiviteId: testCollectiviteId,
         actionIds: ['cae_1.2.3.3.4'],
       })
     ).rejects.toThrowError(/not authenticated/i);
   });
 
   test('Demander un score calculable', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
     const result = await caller.referentiels.actions.getScoreIndicatif({
-      collectiviteId: 1,
+      collectiviteId: testCollectiviteId,
       actionIds: ['cae_1.2.3.3.4'],
     });
 
@@ -235,9 +256,9 @@ describe('ScoreIndicatifRouter', () => {
   });
 
   test("Demander un score quand il n'est pas encore calculable (par manque de valeurs sélectionnées)", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
     const result = await caller.referentiels.actions.getScoreIndicatif({
-      collectiviteId: 1,
+      collectiviteId: testCollectiviteId,
       actionIds: ['cae_1.2.3.3.1'],
     });
 
@@ -245,10 +266,10 @@ describe('ScoreIndicatifRouter', () => {
   });
 
   test('Insérer des valeurs et demander le score', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const exemple2 = {
-      collectiviteId: 1,
+      collectiviteId: testCollectiviteId,
       actionId: 'cae_1.2.3.3.1',
       identifiantReferentiel: 'cae_6.a',
       dateValeur: '2025-05-29',
@@ -265,7 +286,7 @@ describe('ScoreIndicatifRouter', () => {
     onTestFinished(() => cleanup());
 
     const result = await caller.referentiels.actions.getScoreIndicatif({
-      collectiviteId: 1,
+      collectiviteId: testCollectiviteId,
       actionIds: ['cae_1.2.3.3.1'],
     });
 

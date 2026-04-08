@@ -4,16 +4,14 @@ import {
   getTestApp,
   getTestDatabase,
   signInWith,
-  YOLO_DODO,
 } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CollectiviteRole } from '@tet/domain/users';
 import * as fs from 'fs';
 import * as path from 'path';
 import request from 'supertest';
 import { deleteAllDocuments } from './documents.test-fixture';
-
-const TEST_USER_PASSWORD = 'yolododo';
 
 const TEST_PDF_PATH = path.join(__dirname, './samples/document_test.pdf');
 
@@ -24,7 +22,6 @@ describe('Document Controller', () => {
   let adminAuthToken: string;
   let lectureUserToken: string;
   let visiteUserToken: string;
-  let cleanup: () => Promise<void>;
   let testPdfBuffer: Buffer;
 
   beforeAll(async () => {
@@ -48,19 +45,22 @@ describe('Document Controller', () => {
       }
     );
 
-    const visiteUser = await signInWith(YOLO_DODO);
+    const noAccessUserResult = await addTestUser(db);
+    const visiteUser = await signInWith({
+      email: noAccessUserResult.user.email,
+      password: noAccessUserResult.user.password,
+    });
     visiteUserToken = visiteUser.data.session?.access_token ?? '';
     if (!visiteUserToken) {
       throw new Error('Échec login visite user : token manquant');
     }
 
     collectiviteId = testCollectiviteAndUsersResult.collectivite.id;
-    cleanup = testCollectiviteAndUsersResult.cleanup;
 
     const adminUser = testCollectiviteAndUsersResult.users[0];
     const adminUserSignInResponse = await signInWith({
       email: adminUser.email,
-      password: TEST_USER_PASSWORD,
+      password: adminUser.password,
     });
     adminAuthToken = adminUserSignInResponse.data.session?.access_token ?? '';
     if (!adminAuthToken) {
@@ -70,7 +70,7 @@ describe('Document Controller', () => {
     const lectureUser = testCollectiviteAndUsersResult.users[1];
     const lectureUserSignInResponse = await signInWith({
       email: lectureUser.email,
-      password: TEST_USER_PASSWORD,
+      password: lectureUser.password,
     });
     lectureUserToken =
       lectureUserSignInResponse.data.session?.access_token ?? '';
@@ -88,7 +88,6 @@ describe('Document Controller', () => {
   });
 
   afterAll(async () => {
-    await cleanup?.();
     await app?.close();
   });
 

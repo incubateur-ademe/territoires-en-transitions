@@ -1,11 +1,14 @@
+import { INestApplication } from '@nestjs/common';
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
+import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-  YOLO_DODO,
 } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import { CollectiviteRole } from '@tet/domain/users';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -19,6 +22,7 @@ import { addAuditeurPermission } from '../labellisations.test-fixture';
 import { mesureAuditStatutTable } from './mesure-audit-statut.table';
 
 describe('MesureAuditStatutRouter : règles métier', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let user: AuthenticatedUser;
   let databaseService: DatabaseService;
@@ -27,17 +31,25 @@ describe('MesureAuditStatutRouter : règles métier', () => {
   const mesureId = 'cae_1.1.1.1';
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
-    user = await getAuthUser(YOLO_DODO);
+    const testUserResult = await addTestUser(databaseService, {
+      collectiviteId: 2,
+      role: CollectiviteRole.EDITION,
+    });
+    user = getAuthUserFromUserCredentials(testUserResult.user);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test('updateStatut puis getStatut retourne le bon statut', async () => {
     const caller = router.createCaller({ user });
     // Création d'un statut pour l'audit en cours
     const statut = {
-      collectiviteId: YOLO_DODO.collectiviteId.edition,
+      collectiviteId: 2,
       mesureId,
       statut: MesureAuditStatutEnum.EN_COURS,
     } as const;
@@ -49,14 +61,14 @@ describe('MesureAuditStatutRouter : règles métier', () => {
 
     await expect(
       caller.referentiels.labellisations.getMesureAuditStatut({
-        collectiviteId: YOLO_DODO.collectiviteId.edition,
+        collectiviteId: 2,
         mesureId,
       })
     ).rejects.toThrow('Aucun audit en cours trouvé');
 
     const { audit: auditEnCours } = await createAuditWithOnTestFinished({
       databaseService,
-      collectiviteId: YOLO_DODO.collectiviteId.edition,
+      collectiviteId: 2,
       referentielId,
     });
 
@@ -76,7 +88,7 @@ describe('MesureAuditStatutRouter : règles métier', () => {
     // Lecture du statut
     const getRes =
       await caller.referentiels.labellisations.getMesureAuditStatut({
-        collectiviteId: YOLO_DODO.collectiviteId.edition,
+        collectiviteId: 2,
         mesureId,
       });
 
@@ -85,7 +97,7 @@ describe('MesureAuditStatutRouter : règles métier', () => {
     // Retente l'updateStatut avec un statut différent
     const updateRes2 =
       await caller.referentiels.labellisations.updateMesureAuditStatut({
-        collectiviteId: YOLO_DODO.collectiviteId.edition,
+        collectiviteId: 2,
         mesureId,
         statut: MesureAuditStatutEnum.AUDITE,
       });
@@ -97,7 +109,7 @@ describe('MesureAuditStatutRouter : règles métier', () => {
     // Retente l'updateStatut avec un avis différent
     const updateRes3 =
       await caller.referentiels.labellisations.updateMesureAuditStatut({
-        collectiviteId: YOLO_DODO.collectiviteId.edition,
+        collectiviteId: 2,
         mesureId,
         avis: 'Nouvel avis',
       });
@@ -109,7 +121,7 @@ describe('MesureAuditStatutRouter : règles métier', () => {
     // Retente l'updateStatut avec un ordreDuJour différent
     const updateRes4 =
       await caller.referentiels.labellisations.updateMesureAuditStatut({
-        collectiviteId: YOLO_DODO.collectiviteId.edition,
+        collectiviteId: 2,
         mesureId,
         ordreDuJour: false,
       });
@@ -125,21 +137,21 @@ describe('MesureAuditStatutRouter : règles métier', () => {
     // Simule un audit clos et un audit en cours pour la même mesure
     const { audit: auditClos } = await createAuditWithOnTestFinished({
       databaseService,
-      collectiviteId: YOLO_DODO.collectiviteId.edition,
+      collectiviteId: 2,
       referentielId,
       clos: true,
     });
 
     const { audit: auditEnCours } = await createAuditWithOnTestFinished({
       databaseService,
-      collectiviteId: YOLO_DODO.collectiviteId.edition,
+      collectiviteId: 2,
       referentielId,
     });
 
     // Insert un statut pour l'audit clos pour la même mesure
     await databaseService.db.insert(mesureAuditStatutTable).values({
       auditId: auditClos.id,
-      collectiviteId: YOLO_DODO.collectiviteId.edition,
+      collectiviteId: 2,
       mesureId,
       statut: MesureAuditStatutEnum.AUDITE,
       avis: 'Ancien audit',
@@ -155,7 +167,7 @@ describe('MesureAuditStatutRouter : règles métier', () => {
 
     // 2. updateStatut (qui cible l'audit en cours)
     const newStatut = {
-      collectiviteId: YOLO_DODO.collectiviteId.edition,
+      collectiviteId: 2,
       mesureId,
       statut: MesureAuditStatutEnum.EN_COURS,
       avis: 'Audit en cours',
@@ -167,7 +179,7 @@ describe('MesureAuditStatutRouter : règles métier', () => {
     // 3. getStatut doit retourner le statut de l'audit en cours
     const getRes2 =
       await caller.referentiels.labellisations.getMesureAuditStatut({
-        collectiviteId: YOLO_DODO.collectiviteId.edition,
+        collectiviteId: 2,
         mesureId: mesureId,
       });
 
@@ -176,16 +188,32 @@ describe('MesureAuditStatutRouter : règles métier', () => {
 });
 
 describe('MesureAuditStatutRouter : permissions', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let databaseService: DatabaseService;
   const referentielId = ReferentielIdEnum.CAE;
   const mesureId = 'cae_1.1.1.1';
-  const collectiviteId = 99; // id sur lequel YOLO_DODO n'a pas de droits
+  let noAccessUser: AuthenticatedUser;
+  let collectiviteId: number;
+  let collectiviteCleanup: () => Promise<void>;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
+
+    // Collectivité isolée sur laquelle l'utilisateur n'a pas de droits
+    const collectiviteResult = await addTestCollectivite(databaseService);
+    collectiviteId = collectiviteResult.collectivite.id;
+    collectiviteCleanup = collectiviteResult.cleanup;
+
+    const noAccessResult = await addTestUser(databaseService);
+    noAccessUser = getAuthUserFromUserCredentials(noAccessResult.user);
+  });
+
+  afterAll(async () => {
+    await collectiviteCleanup?.();
+    await app.close();
   });
 
   test('getStatut refuse si non authentifié', async () => {
@@ -212,8 +240,8 @@ describe('MesureAuditStatutRouter : permissions', () => {
   });
 
   test('getStatut refuse si non autorisé', async () => {
-    // YOLO_DODO n'a pas de droits sur collectiviteId fictif
-    const user = await getAuthUser(YOLO_DODO);
+    // L'utilisateur de test n'a pas de droits sur collectiviteId fictif
+    const user = noAccessUser;
     const caller = router.createCaller({ user });
 
     await createAuditWithOnTestFinished({
@@ -231,7 +259,7 @@ describe('MesureAuditStatutRouter : permissions', () => {
   });
 
   test('updateStatut refuse si non auditeur', async () => {
-    const user = await getAuthUser(); // YOLO_DODO n'est pas auditeur sur collectiviteId fictif
+    const user = noAccessUser; // L'utilisateur de test n'est pas auditeur sur collectiviteId fictif
     const caller = router.createCaller({ user });
 
     await createAuditWithOnTestFinished({

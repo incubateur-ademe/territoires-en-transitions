@@ -1,10 +1,9 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
-  getAuthUser,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
@@ -22,11 +21,13 @@ import { reponseChoixTable } from '../models/reponse-choix.table';
 import { reponseProportionTable } from '../models/reponse-proportion.table';
 
 describe('Enregistrer une réponse à une question de personnalisation', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let databaseService: DatabaseService;
 
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
+  let noAccessUser: AuthenticatedUser;
 
   // Questions de test
   let questionBinaireId: string;
@@ -35,7 +36,7 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
   let choixId: string;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await app.get(TrpcRouter);
     databaseService = await getTestDatabase(app);
 
@@ -52,6 +53,9 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
     editorUser = getAuthUserFromUserCredentials(
       testCollectiviteAndUserResult.user
     );
+
+    const noAccessUserResult = await addTestUser(databaseService);
+    noAccessUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
 
     // Créer une thématique de test
     const thematiqueId = 'test-thematique';
@@ -102,37 +106,10 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
       version: '1.0.0',
     });
 
-    return async () => {
-      // Nettoyer les réponses
-      await databaseService.db
-        .delete(reponseBinaireTable)
-        .where(eq(reponseBinaireTable.collectiviteId, collectivite.id));
-      await databaseService.db
-        .delete(reponseProportionTable)
-        .where(eq(reponseProportionTable.collectiviteId, collectivite.id));
-      await databaseService.db
-        .delete(reponseChoixTable)
-        .where(eq(reponseChoixTable.collectiviteId, collectivite.id));
+  });
 
-      // Nettoyer les questions
-      await databaseService.db
-        .delete(questionChoixTable)
-        .where(eq(questionChoixTable.questionId, questionChoixId));
-      await databaseService.db
-        .delete(questionTable)
-        .where(eq(questionTable.id, questionBinaireId));
-      await databaseService.db
-        .delete(questionTable)
-        .where(eq(questionTable.id, questionProportionId));
-      await databaseService.db
-        .delete(questionTable)
-        .where(eq(questionTable.id, questionChoixId));
-      await databaseService.db
-        .delete(questionThematiqueTable)
-        .where(eq(questionThematiqueTable.id, thematiqueId));
-
-      await testCollectiviteAndUserResult.cleanup();
-    };
+  afterAll(async () => {
+    await app.close();
   });
 
   describe('Set Personnalisation Reponse - Cas de succès', () => {
@@ -318,8 +295,7 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
 
   describe("Set Personnalisation Reponse - Cas d'erreur", () => {
     test('Un utilisateur sans droits sur la collectivité ne peut pas créer une réponse', async () => {
-      const yoloDodoUser = await getAuthUser(YOLO_DODO);
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: noAccessUser });
 
       await expect(
         caller.collectivites.personnalisations.setReponse({

@@ -102,9 +102,10 @@ describe('import-indicateur-definition.controller.e2e-spec', () => {
     });
     databaseService = await getTestDatabase(app);
 
-    return async () => {
-      await app.close();
-    };
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   it(`Import des indicateurs depuis le fichier CSV local`, async () => {

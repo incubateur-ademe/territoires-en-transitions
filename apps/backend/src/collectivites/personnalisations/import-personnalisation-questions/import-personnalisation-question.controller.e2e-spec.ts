@@ -105,9 +105,10 @@ describe('import-personnalisation-question.controller', () => {
     });
     databaseService = await getTestDatabase(app);
 
-    return async () => {
-      await app.close();
-    };
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   it(`Import des questions de personnalisation depuis les fichiers CSV locaux`, async () => {

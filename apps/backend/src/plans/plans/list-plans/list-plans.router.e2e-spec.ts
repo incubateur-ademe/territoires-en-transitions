@@ -1,10 +1,9 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
-  getAuthUser,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
@@ -15,14 +14,16 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { onTestFinished } from 'vitest';
 
 describe('Lister les plans', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
 
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
+  let noAccessUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await app.get(TrpcRouter);
     db = await getTestDatabase(app);
 
@@ -40,9 +41,13 @@ describe('Lister les plans', () => {
       testCollectiviteAndUserResult.user
     );
 
-    return async () => {
-      await testCollectiviteAndUserResult.cleanup();
-    };
+    const noAccessUserResult = await addTestUser(db);
+    noAccessUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
+
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   describe('Lister les plans - Cas de succès', () => {
@@ -356,8 +361,7 @@ describe('Lister les plans', () => {
 
   describe("Lister les plans - Droits d'accès", () => {
     test('Un utilisateur sans droits sur la collectivité ne peut pas lister les plans', async () => {
-      const yoloDodoUser = await getAuthUser(YOLO_DODO);
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: noAccessUser });
 
       await expect(
         caller.plans.plans.list({

@@ -1,6 +1,8 @@
 import { INestApplication } from '@nestjs/common';
-import { getAuthToken, getTestApp } from '@tet/backend/test';
+import { getAuthToken, getTestApp, getTestDatabase } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { Workbook } from 'exceljs';
 import { default as request } from 'supertest';
@@ -8,13 +10,21 @@ import { indicateurDefinitionTable } from '../../definitions/indicateur-definiti
 
 describe('Indicateurs', () => {
   let app: INestApplication;
-  let yoloDodoToken: string;
+  let authToken: string;
   let databaseService: DatabaseService;
 
   beforeAll(async () => {
     app = await getTestApp();
-    yoloDodoToken = await getAuthToken();
-    databaseService = app.get<DatabaseService>(DatabaseService);
+    databaseService = await getTestDatabase(app);
+
+    const testUserResult = await addTestUser(databaseService, {
+      collectiviteId: 1,
+      role: CollectiviteRole.LECTURE,
+    });
+    authToken = await getAuthToken({
+      email: testUserResult.user.email ?? '',
+      password: testUserResult.user.password,
+    });
   });
 
   afterAll(async () => {
@@ -31,7 +41,7 @@ describe('Indicateurs', () => {
 
     const response = await request(app.getHttpServer())
       .post('/indicateur-definitions/xlsx')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .send({ collectiviteId: 1, indicateurIds: [indicateurId] })
       .expect(201)
       .responseType('blob');
@@ -44,8 +54,6 @@ describe('Indicateurs', () => {
     );
 
     const body = response.body as ArrayBuffer;
-    // décommenter pour écrire le fichier (et vérifier son contenu manuellement)
-    // writeFileSync(fileName, body);
 
     expect(fileName).toMatch(
       /^Ambérieu-en-Bugey - cae_8 - Rénovation énergétique des logements - \d{4}-\d{2}-\d{2}.*\.xlsx$/

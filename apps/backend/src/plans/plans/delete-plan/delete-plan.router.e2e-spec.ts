@@ -1,10 +1,9 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
-  getAuthUser,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
@@ -15,14 +14,16 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { onTestFinished } from 'vitest';
 
 describe('Supprimer un plan', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
 
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
+  let noAccessUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await app.get(TrpcRouter);
     db = await getTestDatabase(app);
 
@@ -40,9 +41,13 @@ describe('Supprimer un plan', () => {
       testCollectiviteAndUserResult.user
     );
 
-    return async () => {
-      await testCollectiviteAndUserResult.cleanup();
-    };
+    const noAccessUserResult = await addTestUser(db);
+    noAccessUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
+
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   describe('Supprimer un plan - Cas de succès', () => {
@@ -283,8 +288,7 @@ describe('Supprimer un plan', () => {
       });
 
       // Utilisateur sans droits
-      const yoloDodoUser = await getAuthUser(YOLO_DODO);
-      const unauthorizedCaller = router.createCaller({ user: yoloDodoUser });
+      const unauthorizedCaller = router.createCaller({ user: noAccessUser });
 
       await expect(
         unauthorizedCaller.plans.plans.delete({ planId: createdPlan.id })

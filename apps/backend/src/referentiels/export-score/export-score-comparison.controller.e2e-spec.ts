@@ -47,16 +47,10 @@ describe('Referentiels scoring routes', () => {
     const editionUserFixture = testCollectiviteAndUserResult.user;
     editionUser = getAuthUserFromUserCredentials(editionUserFixture);
 
-    return async () => {
-      await cleanupReferentielActionStatutsAndLabellisations(
-        databaseService,
-        collectivite.id
-      );
-      await testCollectiviteAndUserResult.cleanup();
-      if (app) {
-        await app.close();
-      }
-    };
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   afterEach(async () => {

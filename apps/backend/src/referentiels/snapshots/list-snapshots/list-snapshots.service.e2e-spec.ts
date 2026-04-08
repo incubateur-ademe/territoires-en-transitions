@@ -1,20 +1,37 @@
-import { getAuthUser, getTestApp } from '@tet/backend/test';
+import { INestApplication } from '@nestjs/common';
+import {
+  getAuthUserFromUserCredentials,
+  getTestApp,
+  getTestDatabase,
+} from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { ReferentielIdEnum, SnapshotJalonEnum } from '@tet/domain/referentiels';
+import { CollectiviteRole } from '@tet/domain/users';
 import { ReferentielsRouter } from '../../referentiels.router';
 
 describe('ListSnapshotsService', () => {
+  let app: INestApplication;
   let router: ReferentielsRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = app.get(ReferentielsRouter);
-    yoloDodoUser = await getAuthUser();
+    const db = await getTestDatabase(app);
+    const testUserResult = await addTestUser(db, {
+      collectiviteId: 1,
+      role: CollectiviteRole.ADMIN,
+    });
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test("Création d'un snapshot, liste des snapshots existants suppression", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const snapshot = await caller.snapshots.computeAndUpsert({
       referentielId: ReferentielIdEnum.CAE,
@@ -50,8 +67,8 @@ describe('ListSnapshotsService', () => {
       createdAt: expect.toEqualDate(snapshot.createdAt),
       referentielVersion: '1.0.1',
       auditId: null,
-      createdBy: yoloDodoUser.id,
-      modifiedBy: yoloDodoUser.id,
+      createdBy: testUser.id,
+      modifiedBy: testUser.id,
       pointFait: 0.36,
       pointPasFait: 0.03,
       pointNonRenseigne: 492.8,

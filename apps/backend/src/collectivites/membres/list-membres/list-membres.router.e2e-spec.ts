@@ -37,10 +37,10 @@ describe('CollectiviteMembresRouter list', () => {
     collectiviteId = result.collectivite.id;
     adminUser = getAuthUserFromUserCredentials(result.user);
 
-    return async () => {
-      await result.cleanup();
-      await app.close();
-    };
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test('peut lister les membres de la collectivité', async () => {

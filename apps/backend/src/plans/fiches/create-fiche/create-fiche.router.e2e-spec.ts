@@ -1,11 +1,10 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
 import {
-  getAuthUser,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
@@ -15,14 +14,16 @@ import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 
 describe('Create Fiche Action', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
 
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
+  let noAccessUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await app.get(TrpcRouter);
     db = await getTestDatabase(app);
 
@@ -37,9 +38,13 @@ describe('Create Fiche Action', () => {
       testCollectiviteAndUserResult.user
     );
 
-    return async () => {
-      await testCollectiviteAndUserResult.cleanup();
-    };
+    const noAccessUserResult = await addTestUser(db);
+    noAccessUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
+
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   describe('Create Fiche Action - Success Cases', () => {
@@ -92,8 +97,7 @@ describe('Create Fiche Action', () => {
 
   describe('Create Fiche Action - Access Rights', () => {
     test('User without rights on collectivite cannot create fiche', async () => {
-      const yoloDodoUser = await getAuthUser(YOLO_DODO);
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: noAccessUser });
 
       await expect(
         caller.plans.fiches.create({
@@ -103,7 +107,7 @@ describe('Create Fiche Action', () => {
           },
         })
       ).rejects.toThrow(
-        `Droits insuffisants, l'utilisateur ${YOLO_DODO.id} n'a pas l'autorisation plans.fiches.create sur la ressource Collectivité ${collectivite.id}`
+        `Droits insuffisants, l'utilisateur ${noAccessUser.id} n'a pas l'autorisation plans.fiches.create sur la ressource Collectivité ${collectivite.id}`
       );
     });
 

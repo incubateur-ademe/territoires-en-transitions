@@ -175,10 +175,26 @@ describe('import-referentiel.controller.e2e-spec', () => {
     });
     databaseService = await getTestDatabase(app);
 
-    return async () => {
-      await app.close();
-    };
   }, 30_000);
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  // Restore referentiel versions after each test to avoid race conditions
+  // with parallel tests that read referentiel_definition.version
+  afterEach(async () => {
+    for (const refId of [
+      ReferentielIdEnum.ECI,
+      ReferentielIdEnum.CAE,
+      ReferentielIdEnum.TE,
+    ]) {
+      await databaseService.db
+        .update(referentielDefinitionTable)
+        .set({ version: '1.0.1' })
+        .where(eq(referentielDefinitionTable.id, refId));
+    }
+  });
 
   it(`Import du referentiel ECI depuis les fichiers CSV locaux`, async () => {
     // Reset the version

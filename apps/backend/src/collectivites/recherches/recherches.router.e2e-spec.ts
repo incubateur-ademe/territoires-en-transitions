@@ -1,5 +1,12 @@
-import { getAuthUser, getTestRouter } from '@tet/backend/test';
+import { INestApplication } from '@nestjs/common';
+import {
+  getAuthUserFromUserCredentials,
+  getTestApp,
+  getTestDatabase,
+  getTestRouter,
+} from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { inferProcedureInput } from '@trpc/server';
 
@@ -40,22 +47,31 @@ const inputWithCondition: inputType = {
  * Test que les requêtes s'executent correctement càd sans erreurs de syntaxe
  */
 describe('Test recherches collectivite', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let authenticatedUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    router = await getTestRouter();
-    yoloDodoUser = await getAuthUser();
+    app = await getTestApp();
+    router = await getTestRouter(app);
+    const db = await getTestDatabase(app);
+
+    const testUserResult = await addTestUser(db);
+    authenticatedUser = getAuthUserFromUserCredentials(testUserResult.user);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test('Test tab "Collectivités"', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
     const result = await caller.collectivites.recherches.collectivites(input);
     expect(result.items.length).toEqual(2);
   });
 
   test('Test tab "Collectivités" avec conditions', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
     const result = await caller.collectivites.recherches.collectivites(
       inputWithCondition
     );
@@ -63,13 +79,13 @@ describe('Test recherches collectivite', () => {
   });
 
   test('Test tab "Référentiels"', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
     const result = await caller.collectivites.recherches.referentiels(input);
     expect(result.items.length).toEqual(2);
   });
 
   test('Test tab "Référentiels" avec conditions', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
     const result = await caller.collectivites.recherches.referentiels(
       inputWithCondition
     );
@@ -77,13 +93,13 @@ describe('Test recherches collectivite', () => {
   });
 
   test('Test tab "Plans d action"', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
     const result = await caller.collectivites.recherches.plans(input);
     expect(result.items.length).toEqual(2);
   });
 
   test('Test tab "Plans d action" avec conditions', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
     const result = await caller.collectivites.recherches.plans(
       inputWithCondition
     );

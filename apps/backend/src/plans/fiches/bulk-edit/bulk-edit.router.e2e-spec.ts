@@ -1,12 +1,10 @@
+import { INestApplication } from '@nestjs/common';
 import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
 import {
-  getAuthUser,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-  YOLO_DODO,
-  YULU_DUDU,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
@@ -25,7 +23,7 @@ import { ficheActionTable } from '../shared/models/fiche-action.table';
 
 type Input = inferProcedureInput<AppRouter['plans']['fiches']['bulkEdit']>;
 
-const COLLECTIVITE_ID = YOLO_DODO.collectiviteId.admin;
+const COLLECTIVITE_ID = 1;
 
 const generateFicheIds = async (
   caller: ReturnType<TrpcRouter['createCaller']>
@@ -91,19 +89,33 @@ function getFichesWithServices(db: DatabaseService, ficheIds: number[]) {
 }
 
 describe('BulkEditRouter', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
-  let yoloDodo: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
+  let noAccessUser: AuthenticatedUser;
   let db: DatabaseService;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     db = await getTestDatabase(app);
-    yoloDodo = await getAuthUser(YOLO_DODO);
+
+    const testUserResult = await addTestUser(db, {
+      collectiviteId: COLLECTIVITE_ID,
+      role: CollectiviteRole.ADMIN,
+    });
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
+
+    const noAccessResult = await addTestUser(db);
+    noAccessUser = getAuthUserFromUserCredentials(noAccessResult.user);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test('authenticated, bulk edit `statut`', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
     const ficheIds = await generateFicheIds(caller);
     const input1: Input = {
       collectiviteId: COLLECTIVITE_ID,
@@ -138,13 +150,13 @@ describe('BulkEditRouter', () => {
   });
 
   test('authenticated, bulk edit `personnePilotes`', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
     const ficheIds = await generateFicheIds(caller);
     const input: Input = {
       collectiviteId: COLLECTIVITE_ID,
       ficheIds,
       pilotes: {
-        add: [{ tagId: 1 }, { userId: yoloDodo.id }],
+        add: [{ tagId: 1 }, { userId: testUser.id }],
       },
     } satisfies Input;
 
@@ -171,7 +183,7 @@ describe('BulkEditRouter', () => {
         add: [{ tagId: 3 }],
         remove: [
           { tagId: input.pilotes?.add?.[0]?.tagId },
-          { userId: yoloDodo.id },
+          { userId: testUser.id },
         ],
       },
     };
@@ -199,7 +211,7 @@ describe('BulkEditRouter', () => {
         .insert(ficheActionPiloteTable)
         .values([
           { ficheId: 1, userId: null, tagId: 1 },
-          { ficheId: 1, userId: yoloDodo.id, tagId: null },
+          { ficheId: 1, userId: testUser.id, tagId: null },
           { ficheId: 2, userId: null, tagId: 1 },
           { ficheId: 3, userId: null, tagId: 3 },
           { ficheId: 4, userId: null, tagId: 3 },
@@ -209,7 +221,7 @@ describe('BulkEditRouter', () => {
   });
 
   test('authenticated, bulk edit `libreTags`', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
     const ficheIds = await generateFicheIds(caller);
     function createLibreTagIds() {
       return db.db
@@ -286,7 +298,7 @@ describe('BulkEditRouter', () => {
   });
 
   test('authenticated, bulk edit `priorite`', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
     const ficheIds = await generateFicheIds(caller);
     const input1: Input = {
       collectiviteId: COLLECTIVITE_ID,
@@ -320,7 +332,7 @@ describe('BulkEditRouter', () => {
   });
 
   test('authenticated, bulk edit `dateFin`', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
     const ficheIds = await generateFicheIds(caller);
     const input1: Input = {
       collectiviteId: COLLECTIVITE_ID,
@@ -356,7 +368,7 @@ describe('BulkEditRouter', () => {
   });
 
   test('authenticated, bulk edit `ameliorationContinue`', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
     const ficheIds = await generateFicheIds(caller);
     const input1: Input = {
       collectiviteId: COLLECTIVITE_ID,
@@ -390,13 +402,13 @@ describe('BulkEditRouter', () => {
   });
 
   test('authenticated, bulk edit `referents` (élus référents)', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
     const ficheIds = await generateFicheIds(caller);
     const input: Input = {
       collectiviteId: COLLECTIVITE_ID,
       ficheIds,
       referents: {
-        add: [{ tagId: 1 }, { userId: yoloDodo.id }],
+        add: [{ tagId: 1 }, { userId: testUser.id }],
       },
     } satisfies Input;
 
@@ -423,7 +435,7 @@ describe('BulkEditRouter', () => {
         add: [{ tagId: 3 }],
         remove: [
           { tagId: input.referents?.add?.[0]?.tagId },
-          { userId: yoloDodo.id },
+          { userId: testUser.id },
         ],
       },
     };
@@ -449,7 +461,7 @@ describe('BulkEditRouter', () => {
   });
 
   test('authenticated, bulk edit `services` (directions pilotes)', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
     const ficheIds = await generateFicheIds(caller);
 
     // Use existing service_tag ids (1 and 2 should exist in test data)
@@ -505,12 +517,11 @@ describe('BulkEditRouter', () => {
   });
 
   test('authenticated, without access to some fiches', async () => {
-    const callerYoloDodo = router.createCaller({ user: yoloDodo });
+    const callerTestUser = router.createCaller({ user: testUser });
 
-    const yuluDudu = await getAuthUser(YULU_DUDU);
-    const callerYuluDudu = router.createCaller({ user: yuluDudu });
+    const callerYuluDudu = router.createCaller({ user: noAccessUser });
 
-    const ficheIds = await generateFicheIds(callerYoloDodo);
+    const ficheIds = await generateFicheIds(callerTestUser);
 
     const input: Input = {
       collectiviteId: COLLECTIVITE_ID,
@@ -524,7 +535,7 @@ describe('BulkEditRouter', () => {
   });
 
   test('authenticated, with limited edition access', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
     const ficheIds = await generateFicheIds(caller);
     const { user, cleanup } = await addTestUser(db, {
       collectiviteId: COLLECTIVITE_ID,
@@ -550,8 +561,8 @@ describe('BulkEditRouter', () => {
   });
 
   test('not authenticated', async () => {
-    const callerYoloDodo = router.createCaller({ user: yoloDodo });
-    const ficheIds = await generateFicheIds(callerYoloDodo);
+    const callerTestUser = router.createCaller({ user: testUser });
+    const ficheIds = await generateFicheIds(callerTestUser);
 
     const callerNull = router.createCaller({ user: null });
 

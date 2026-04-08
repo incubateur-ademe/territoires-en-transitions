@@ -81,6 +81,17 @@ export async function insertFixturePourScoreIndicatif(
     .values([{ indicateurId, actionId }])
     .onConflictDoNothing();
 
+  // supprime les valeurs existantes pour rendre la fixture idempotente
+  await databaseService.db
+    .delete(indicateurValeurTable)
+    .where(
+      and(
+        eq(indicateurValeurTable.indicateurId, indicateurId),
+        eq(indicateurValeurTable.collectiviteId, collectiviteId),
+        eq(indicateurValeurTable.dateValeur, dateValeur)
+      )
+    );
+
   // insère des valeurs
   const result2 = await databaseService.db
     .insert(indicateurValeurTable)
@@ -102,7 +113,6 @@ export async function insertFixturePourScoreIndicatif(
         objectif: null,
       },
     ])
-    .onConflictDoNothing()
     .returning();
 
   // associe les valeurs à l'action pour la collectivité
@@ -126,17 +136,13 @@ export async function insertFixturePourScoreIndicatif(
     ])
     .onConflictDoNothing();
 
-  // renvoi la fonction de cleanup
+  // Fonction de cleanup scopée à la collectivité uniquement.
+  // On NE nettoie PAS `actionDefinitionTable.exprScore` ni le lien
+  // `indicateurActionTable` : ces lignes sont globales et partagées entre
+  // tests parallèles ; la formule est déterministe, les écritures
+  // concurrentes convergent vers la même valeur. Nettoyer ici
+  // déclencherait des races avec d'autres fichiers qui lisent la formule.
   return async () => {
-    await databaseService.db
-      .update(actionDefinitionTable)
-      .set({ exprScore: null })
-      .where(eq(actionDefinitionTable.actionId, actionId));
-
-    await databaseService.db
-      .delete(indicateurActionTable)
-      .where(eq(indicateurActionTable.actionId, actionId));
-
     await databaseService.db
       .delete(indicateurValeurTable)
       .where(

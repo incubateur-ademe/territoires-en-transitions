@@ -1,38 +1,72 @@
+import { INestApplication } from '@nestjs/common';
+import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import {
+  addTestUser,
+  setUserCollectiviteRole,
+} from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import {
   ActionTypeEnum,
   MesureAuditStatutEnum,
 } from '@tet/domain/referentiels';
+import { CollectiviteRole } from '@tet/domain/users';
 import { createAuditWithOnTestFinished } from '../../referentiels.test-fixture';
 import { addAuditeurPermission } from '../labellisations.test-fixture';
 import { mesureAuditStatutTable } from './mesure-audit-statut.table';
 
-const collectiviteId = 34 as const;
 const referentielId = 'cae' as const;
 
 describe('listMesureAuditStatuts.router', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
   let databaseService: DatabaseService;
+  let collectiviteId: number;
+  let noAuditCollectiviteId: number;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
-    yoloDodoUser = await getAuthUser();
+
+    // Collectivité principale pour les tests avec audit
+    const collectiviteResult = await addTestCollectivite(databaseService);
+    collectiviteId = collectiviteResult.collectivite.id;
+
+    // Collectivité séparée sans audit (pour le test "no audit in progress")
+    const noAuditResult = await addTestCollectivite(databaseService);
+    noAuditCollectiviteId = noAuditResult.collectivite.id;
+
+    const testUserResult = await addTestUser(databaseService);
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
+
+    // Donner accès aux deux collectivités
+    await setUserCollectiviteRole(databaseService, {
+      userId: testUserResult.user.id,
+      collectiviteId,
+      role: CollectiviteRole.ADMIN,
+    });
+    await setUserCollectiviteRole(databaseService, {
+      userId: testUserResult.user.id,
+      collectiviteId: noAuditCollectiviteId,
+      role: CollectiviteRole.ADMIN,
+    });
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test('should return all measures with their audit status, including measures without defined statuses', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const { audit: auditEnCours } = await createAuditWithOnTestFinished({
       databaseService,
@@ -40,10 +74,10 @@ describe('listMesureAuditStatuts.router', () => {
       referentielId,
     });
 
-    addAuditeurPermission({
+    await addAuditeurPermission({
       databaseService,
       auditId: auditEnCours.id,
-      userId: yoloDodoUser.id,
+      userId: testUser.id,
     });
 
     // Crée des statuts pour deux mesures spécifiques
@@ -54,7 +88,7 @@ describe('listMesureAuditStatuts.router', () => {
       statut: MesureAuditStatutEnum.AUDITE,
       avis: 'Avis positif pour action 1.1.1',
       ordreDuJour: true,
-      modifiedBy: yoloDodoUser.id,
+      modifiedBy: testUser.id,
     };
 
     const mesureAuditStatusCae21 = {
@@ -64,7 +98,7 @@ describe('listMesureAuditStatuts.router', () => {
       statut: MesureAuditStatutEnum.EN_COURS,
       avis: "En cours d'audit pour sous-axe 2.1",
       ordreDuJour: false,
-      modifiedBy: yoloDodoUser.id,
+      modifiedBy: testUser.id,
     };
 
     const mesureAuditStatuses = [
@@ -175,9 +209,9 @@ describe('listMesureAuditStatuts.router', () => {
   });
 
   test('should throw error when no audit is in progress', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
     const input = {
-      collectiviteId: YOLO_DODO.collectiviteId.edition,
+      collectiviteId: noAuditCollectiviteId, // collectivité sans audit en cours
       referentielId,
     };
 

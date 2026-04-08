@@ -1,12 +1,15 @@
+import { INestApplication } from '@nestjs/common';
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import { ficheActionEtapeTable } from './fiche-action-etape.table';
@@ -22,19 +25,29 @@ type listInput = inferProcedureInput<
 >;
 
 describe('Route CRUD des étapes des fiches actions', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let authenticatedUser: AuthenticatedUser;
   let databaseService: DatabaseService;
 
   beforeAll(async () => {
-    router = await getTestRouter();
-    yoloDodoUser = await getAuthUser();
-    const app = await getTestApp();
+    app = await getTestApp();
+    router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
+
+    const testUserResult = await addTestUser(databaseService, {
+      collectiviteId: 1,
+      role: CollectiviteRole.ADMIN,
+    });
+    authenticatedUser = getAuthUserFromUserCredentials(testUserResult.user);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test(`Test la gestion de l'ordre des étapes d'une fiche action`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
     const ficheId: listInput = {
       ficheId: 1,
     };

@@ -5,14 +5,13 @@ import {
 } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   createTRPCClientFromCaller,
-  getAuthUser,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   ISO_OR_SQL_DATE_TIME_REGEX,
   signInWith,
-  YOLO_DODO,
 } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -38,6 +37,7 @@ describe('Request Labellisation Router', () => {
   let adminAuthToken: string;
   let lectureUser: AuthenticatedUser;
   let editionFichesIndicateursUser: AuthenticatedUser;
+  let noAccessUser: AuthenticatedUser;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -72,7 +72,7 @@ describe('Request Labellisation Router', () => {
     const admin = testCollectiviteAndUsersResult.users[0];
     const adminUserSignInResponse = await signInWith({
       email: admin.email,
-      password: YOLO_DODO.password,
+      password: admin.password,
     });
     adminAuthToken = adminUserSignInResponse.data.session?.access_token ?? '';
     adminUser = getAuthUserFromUserCredentials(admin);
@@ -83,18 +83,12 @@ describe('Request Labellisation Router', () => {
       testCollectiviteAndUsersResult.users[3]
     );
 
-    return async () => {
-      await cleanupReferentielActionStatutsAndLabellisations(
-        db,
-        collectivite.id
-      );
+    const noAccessUserResult = await addTestUser(db);
+    noAccessUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
+  });
 
-      await testCollectiviteAndUsersResult.cleanup();
-
-      if (app) {
-        await app.close();
-      }
-    };
+  afterAll(async () => {
+    await app.close();
   });
 
   beforeEach(async () => {
@@ -118,8 +112,7 @@ describe('Request Labellisation Router', () => {
 
   describe('Request Labellisation - Access Rights', () => {
     test('User without rights on collectivite cannot request labellisation', async () => {
-      const yoloDodoUser = await getAuthUser(YOLO_DODO);
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: noAccessUser });
 
       await expect(
         caller.referentiels.labellisations.requestLabellisation({

@@ -9,6 +9,10 @@ describe('Version controller', () => {
     app = await getTestApp();
   });
 
+  afterAll(async () => {
+    await app.close();
+  });
+
   it(`Test throw`, async () => {
     const response = await request(app.getHttpServer())
       .get('/throw')
@@ -20,7 +24,4 @@ describe('Version controller', () => {
     });
   });
 
-  afterAll(async () => {
-    await app.close();
-  });
 });

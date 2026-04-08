@@ -1,16 +1,29 @@
-import { getTestApp, getTestRouter } from '../../../test/app-utils';
-import { getAuthUser } from '../../../test/auth-utils';
+import { INestApplication } from '@nestjs/common';
+import { getTestApp, getTestDatabase, getTestRouter } from '../../../test/app-utils';
+import { getAuthUserFromUserCredentials } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
+import { addTestUser } from '../../users/users/users.test-fixture';
 import { TrpcRouter } from '../../utils/trpc/trpc.router';
+import { CollectiviteRole } from '@tet/domain/users';
 
 describe('HandleMesurePilotesRouter', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
-    yoloDodoUser = await getAuthUser();
+    const db = await getTestDatabase(app);
+    const testUserResult = await addTestUser(db, {
+      collectiviteId: 1,
+      role: CollectiviteRole.ADMIN,
+    });
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test('List pilotes throws error when not authenticated', async () => {
@@ -29,7 +42,7 @@ describe('HandleMesurePilotesRouter', () => {
   });
 
   test('Upsert pilotes throws error when not authorized', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const input = {
       collectiviteId: 3,
@@ -45,7 +58,7 @@ describe('HandleMesurePilotesRouter', () => {
   });
 
   test('Insert, update and delete pilotes', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
     const mesureId = 'eci_2.2.2.2';
     const collectiviteId = 1;
 
@@ -123,7 +136,7 @@ describe('HandleMesurePilotesRouter', () => {
   });
 
   test('Throw error when upserting pilotes with empty pilotes array', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const input = {
       collectiviteId: 1,

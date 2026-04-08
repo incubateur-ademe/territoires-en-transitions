@@ -1,13 +1,13 @@
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { inferRouterInputs } from '@trpc/server';
 import { onTestFinished } from 'vitest';
+import { UpdateFicheInput } from './update-fiche/update-fiche.input';
 
 type CreateFicheInput =
-  inferRouterInputs<AppRouter>['plans']['fiches']['create']['fiche'] & {
-    axeId?: number;
-    pilotes?: { userId: string }[];
-    indicateurs?: { id: number }[];
-  };
+  inferRouterInputs<AppRouter>['plans']['fiches']['create']['fiche'] &
+    Pick<UpdateFicheInput, 'pilotes' | 'indicateurs'> & {
+      axeId?: number;
+    };
 
 type FicheId = number;
 
@@ -51,15 +51,19 @@ export async function createFiches({
   caller: ReturnType<TrpcRouter['createCaller']>;
   ficheInputs: CreateFicheInput[];
 }): Promise<{ ficheIds: FicheId[]; cleanup: () => Promise<void> }> {
-  const fiches = await Promise.all(ficheInputs.map(async (ficheInput) => {
-    return await createFicheAndCleanupFunction({ caller, ficheInput });
-  }));
+  const fiches = await Promise.all(
+    ficheInputs.map(async (ficheInput) => {
+      return await createFicheAndCleanupFunction({ caller, ficheInput });
+    })
+  );
 
   const ficheIds = fiches.map((fiche) => fiche.ficheId);
   const cleanup = async () => {
-    await Promise.all(fiches.map(async (fiche) => {
-      await fiche.ficheCleanup();
-    }));
+    await Promise.all(
+      fiches.map(async (fiche) => {
+        await fiche.ficheCleanup();
+      })
+    );
   };
 
   return { ficheIds, cleanup };

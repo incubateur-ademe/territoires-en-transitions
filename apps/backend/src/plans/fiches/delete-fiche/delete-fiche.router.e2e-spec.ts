@@ -1,11 +1,10 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
 import {
-  getAuthUser,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
@@ -18,15 +17,17 @@ import { createFicheAndCleanupFunction } from '../fiches.test-fixture';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
 
 describe('Delete Fiche Action', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
 
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
+  let noAccessUser: AuthenticatedUser;
   let testFicheId: number;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await app.get(TrpcRouter);
     db = await getTestDatabase(app);
     const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(db, {
@@ -39,6 +40,9 @@ describe('Delete Fiche Action', () => {
       testCollectiviteAndUserResult.user
     );
 
+    const noAccessUserResult = await addTestUser(db);
+    noAccessUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
+
     const caller = router.createCaller({ user: editorUser });
     const createFicheResult = await createFicheAndCleanupFunction({
       caller,
@@ -49,10 +53,10 @@ describe('Delete Fiche Action', () => {
     });
     testFicheId = createFicheResult.ficheId;
 
-    return async () => {
-      await createFicheResult.ficheCleanup();
-      await testCollectiviteAndUserResult.cleanup();
-    };
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   describe('Delete Fiche Action - Success Cases', () => {
@@ -190,15 +194,13 @@ describe('Delete Fiche Action', () => {
 
   describe('Delete Fiche Action - Access Rights', () => {
     test('User without rights on collectivite cannot delete fiche', async () => {
-      // Yolo Dodo has no rights on the collectivite
-      const yoloDodoUser = await getAuthUser(YOLO_DODO);
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: noAccessUser });
 
       // Attempt to delete should fail with ForbiddenException
       await expect(
         caller.plans.fiches.delete({ ficheId: testFicheId })
       ).rejects.toThrow(
-        `Droits insuffisants, l'utilisateur ${YOLO_DODO.id} n'a pas l'autorisation plans.fiches.delete sur la ressource Collectivité ${collectivite.id}`
+        `Droits insuffisants, l'utilisateur ${noAccessUser.id} n'a pas l'autorisation plans.fiches.delete sur la ressource Collectivité ${collectivite.id}`
       );
     });
 

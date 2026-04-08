@@ -17,7 +17,6 @@ import { Collectivite } from '@tet/domain/collectivites';
 import { ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import request from 'supertest';
-import { cleanupReferentielActionStatutsAndLabellisations } from '../update-action-statut/referentiel-action-statut.test-fixture';
 import {
   addAuditeurPermission,
   requestLabellisationForCot,
@@ -62,18 +61,10 @@ describe('Api pour lister les labellisations des collectivités', () => {
     const editionUserFixture = testCollectiviteAndUsersResult.users[1];
     editionUser = getAuthUserFromUserCredentials(editionUserFixture);
 
-    return async () => {
-      await cleanupReferentielActionStatutsAndLabellisations(
-        db,
-        collectivite.id
-      );
+  });
 
-      await testCollectiviteAndUsersResult.cleanup();
-
-      if (app) {
-        await app.close();
-      }
-    };
+  afterAll(async () => {
+    await app.close();
   });
 
   test('Liste des labellisations des collectivités & paginations', async () => {

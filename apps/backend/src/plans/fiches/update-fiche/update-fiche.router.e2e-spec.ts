@@ -1,15 +1,24 @@
+import { INestApplication } from '@nestjs/common';
+import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { financeurTagTable } from '@tet/backend/collectivites/tags/financeur-tag.table';
 import { instanceGouvernanceTagTable } from '@tet/backend/collectivites/tags/instance-gouvernance.table';
 import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
+import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-tag.table';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
+import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag.table';
 import { FichesRouter } from '@tet/backend/plans/fiches/fiches.router';
+import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import {
-  getAuthUser,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import {
+  addTestUser,
+  setUserCollectiviteRole,
+} from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CibleEnum, PiliersEciEnum, StatutEnum } from '@tet/domain/plans';
 import { CollectiviteRole } from '@tet/domain/users';
@@ -17,18 +26,10 @@ import { and, eq } from 'drizzle-orm';
 import { describe, expect, onTestFinished } from 'vitest';
 import {
   actionsFixture,
-  axesFixture,
   effetsAttendusFixture,
-  fichesLieesFixture,
   financeursFixture,
   indicateursFixture,
-  libresFixture,
-  partenairesFixture,
-  pilotesFixture,
-  referentsFixture,
-  servicesFixture,
   sousThematiquesFixture,
-  structuresFixture,
   thematiquesFixture,
 } from '../shared/fixtures/fiche-action-relations.fixture';
 import { ficheActionFixture } from '../shared/fixtures/fiche-action.fixture';
@@ -49,49 +50,63 @@ import { ficheActionThematiqueTable } from '../shared/models/fiche-action-themat
 import { ficheActionTable } from '../shared/models/fiche-action.table';
 import { UpdateFicheInput } from './update-fiche.input';
 
-const collectiviteId = 1;
 const ficheId = 9999;
 
 describe('UpdateFicheService', () => {
   let db: DatabaseService;
+  let app: INestApplication;
   let fichesRouter: FichesRouter;
-  let yoloDodo: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
   let userWithNoRights: AuthenticatedUser;
-  let userWithNoRightsCleanup: () => Promise<void>;
+  let collectiviteId: number;
+
+  // IDs des entités créées sur la collectivité isolée
+  let axeId1: number;
+  let axeId2: number;
+  let personneTagId1: number;
+  let personneTagId2: number;
+  let structureTagId1: number;
+  let structureTagId2: number;
+  let partenaireTagId1: number;
+  let partenaireTagId2: number;
+  let serviceTagId1: number;
+  let serviceTagId2: number;
+  let financeurTagId1: number;
+  let financeurTagId2: number;
+  let libreTagId1: number;
+  let libreTagId2: number;
+  let linkedFicheId: number;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     fichesRouter = app.get(FichesRouter);
     db = await getTestDatabase(app);
-    yoloDodo = await getAuthUser(YOLO_DODO);
 
-    const { user: testUser, cleanup } = await addTestUser(db);
-    userWithNoRights = getAuthUserFromUserCredentials(testUser);
-    userWithNoRightsCleanup = cleanup;
+    // Collectivité isolée
+    const { collectivite } = await addTestCollectivite(db);
+    collectiviteId = collectivite.id;
 
-    await db.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, ficheId));
+    const testUserResult = await addTestUser(db);
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
+    await setUserCollectiviteRole(db, {
+      userId: testUserResult.user.id,
+      collectiviteId,
+      role: CollectiviteRole.ADMIN,
+    });
 
-    await db.db.insert(ficheActionTable).values(ficheActionFixture);
+    const noAccessResult = await addTestUser(db);
+    userWithNoRights = getAuthUserFromUserCredentials(noAccessResult.user);
 
     await insertFixtures(db, ficheId);
+  });
 
-    return async () => {
-      await userWithNoRightsCleanup();
-      await cleanupLibreTags();
-
-      await db.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, ficheId));
-
-      await app.close();
-    };
+  afterAll(async () => {
+    await app.close();
   });
 
   describe('Update fiche action fields', () => {
     test('should return 400 when invalid numeric type are provided', async () => {
-      const caller = fichesRouter.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: testUser });
 
       const data: UpdateFicheInput = {
         budgetPrevisionnel: 'invalid_number',
@@ -113,7 +128,7 @@ describe('UpdateFicheService', () => {
     });
 
     test('should return 400 for invalid date format in dateDebut', async () => {
-      const caller = fichesRouter.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: testUser });
 
       const data: UpdateFicheInput = { dateDebut: 'not-a-date' };
 
@@ -133,7 +148,7 @@ describe('UpdateFicheService', () => {
     });
 
     test('should return 400 for invalid boolean type in ameliorationContinue', async () => {
-      const caller = fichesRouter.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: testUser });
 
       const data = {
         ameliorationContinue: 'not-a-boolean',
@@ -153,7 +168,7 @@ describe('UpdateFicheService', () => {
     });
 
     test('should return 404 when updating a non-existent ficheAction', async () => {
-      const caller = fichesRouter.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: testUser });
 
       const nonExistentFicheActionId = 121212;
       const data: UpdateFicheInput = {
@@ -174,7 +189,7 @@ describe('UpdateFicheService', () => {
 
     test('should update fiche action fields', async () => {
       const data: UpdateFicheInput = {
-        collectiviteId: 1,
+        collectiviteId,
         titre: 'Construire des pistes cyclables',
         description:
           'Un objectif à long terme sera de construire de nombreuses pistes cyclables dans le centre-ville.',
@@ -285,7 +300,7 @@ describe('UpdateFicheService', () => {
       expect(sousFiche.parentId).toBe(parentFiche.id);
 
       // Met à jour la sous-fiche avec différents champs
-      const caller = fichesRouter.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: testUser });
       const updateData: UpdateFicheInput = {
         titre: 'Sous-fiche mise à jour',
         description: 'Description de la sous-fiche mise à jour',
@@ -327,14 +342,16 @@ describe('UpdateFicheService', () => {
   describe('Update relations', () => {
     test('should update the axes relations in the database', async () => {
       const data: UpdateFicheInput = {
-        axes: [{ id: 1 }, { id: 2 }],
+        axes: [{ id: axeId1 }, { id: axeId2 }],
       };
 
       const fiche = await updateFiche(data);
 
-      expect(fiche.axes).toContainEqual(expect.objectContaining({ id: 1 }));
       expect(fiche.axes).toContainEqual(
-        expect.objectContaining({ id: 2, planId: 1 })
+        expect.objectContaining({ id: axeId1 })
+      );
+      expect(fiche.axes).toContainEqual(
+        expect.objectContaining({ id: axeId2 })
       );
     });
 
@@ -358,7 +375,7 @@ describe('UpdateFicheService', () => {
         sousThematiques: [{ id: 3 }, { id: 4 }],
       };
 
-      const caller = fichesRouter.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: testUser });
 
       await caller.update({
         ficheId,
@@ -386,10 +403,10 @@ describe('UpdateFicheService', () => {
     });
 
     test('should update the partenaires relations in the database', async () => {
-      const caller = fichesRouter.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: testUser });
 
       const ficheFields: UpdateFicheInput = {
-        partenaires: [{ id: 1 }, { id: 2 }],
+        partenaires: [{ id: partenaireTagId1 }, { id: partenaireTagId2 }],
       };
 
       await caller.update({
@@ -402,8 +419,8 @@ describe('UpdateFicheService', () => {
       });
 
       expect(ficheWithPartenaires.partenaires).toStrictEqual([
-        expect.objectContaining({ id: 1 }),
-        expect.objectContaining({ id: 2 }),
+        expect.objectContaining({ id: partenaireTagId1 }),
+        expect.objectContaining({ id: partenaireTagId2 }),
       ]);
 
       await caller.update({
@@ -448,10 +465,10 @@ describe('UpdateFicheService', () => {
 
     it('should update the structures relations in the database', async () => {
       const data: UpdateFicheInput = {
-        structures: [{ id: 1 }, { id: 2 }],
+        structures: [{ id: structureTagId1 }, { id: structureTagId2 }],
       };
 
-      const caller = fichesRouter.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: testUser });
 
       await caller.update({
         ficheId,
@@ -463,28 +480,19 @@ describe('UpdateFicheService', () => {
       });
 
       expect(fiche.structures).toContainEqual(
-        expect.objectContaining({ id: 1 })
+        expect.objectContaining({ id: structureTagId1 })
       );
       expect(fiche.structures).toContainEqual(
-        expect.objectContaining({ id: 2 })
+        expect.objectContaining({ id: structureTagId2 })
       );
     });
 
     it('should update the pilotes relations in the database', async () => {
       const data: UpdateFicheInput = {
-        pilotes: [
-          {
-            tagId: 1,
-            userId: '3f407fc6-3634-45ff-a988-301e9088096a',
-          },
-          {
-            tagId: 9,
-            userId: '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561',
-          },
-        ],
+        pilotes: [{ tagId: personneTagId1 }, { tagId: personneTagId2 }],
       };
 
-      const caller = fichesRouter.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: testUser });
 
       await caller.update({
         ficheId,
@@ -496,16 +504,10 @@ describe('UpdateFicheService', () => {
       });
 
       expect(fiche.pilotes).toContainEqual(
-        expect.objectContaining({
-          tagId: 1,
-          userId: '3f407fc6-3634-45ff-a988-301e9088096a',
-        })
+        expect.objectContaining({ tagId: personneTagId1 })
       );
       expect(fiche.pilotes).toContainEqual(
-        expect.objectContaining({
-          tagId: 9,
-          userId: '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561',
-        })
+        expect.objectContaining({ tagId: personneTagId2 })
       );
     });
 
@@ -513,11 +515,11 @@ describe('UpdateFicheService', () => {
       const data: UpdateFicheInput = {
         financeurs: [
           {
-            financeurTag: { id: 1 },
+            financeurTag: { id: financeurTagId1 },
             montantTtc: 999,
           },
           {
-            financeurTag: { id: 2 },
+            financeurTag: { id: financeurTagId2 },
             montantTtc: 666,
           },
         ],
@@ -527,13 +529,13 @@ describe('UpdateFicheService', () => {
 
       expect(fiche.financeurs).toContainEqual(
         expect.objectContaining({
-          financeurTag: expect.objectContaining({ id: 1 }),
+          financeurTag: expect.objectContaining({ id: financeurTagId1 }),
           montantTtc: 999,
         })
       );
       expect(fiche.financeurs).toContainEqual(
         expect.objectContaining({
-          financeurTag: expect.objectContaining({ id: 2 }),
+          financeurTag: expect.objectContaining({ id: financeurTagId2 }),
           montantTtc: 666,
         })
       );
@@ -579,38 +581,33 @@ describe('UpdateFicheService', () => {
 
     it('should update the services relations in the database', async () => {
       const data: UpdateFicheInput = {
-        services: [{ id: 1 }, { id: 2 }],
+        services: [{ id: serviceTagId1 }, { id: serviceTagId2 }],
       };
 
       const fiche = await updateFiche(data);
 
       expect(fiche.services).toContainEqual(
         expect.objectContaining({
-          id: 1,
+          id: serviceTagId1,
         })
       );
       expect(fiche.services).toContainEqual(
         expect.objectContaining({
-          id: 2,
+          id: serviceTagId2,
         })
       );
     });
 
     it('should update the fiches liees relations in the database', async () => {
       const data: UpdateFicheInput = {
-        fichesLiees: [{ id: 1 }, { id: 2 }],
+        fichesLiees: [{ id: linkedFicheId }],
       };
 
       const fiche = await updateFiche(data);
 
       expect(fiche.fichesLiees).toContainEqual(
         expect.objectContaining({
-          id: 1,
-        })
-      );
-      expect(fiche.fichesLiees).toContainEqual(
-        expect.objectContaining({
-          id: 2,
+          id: linkedFicheId,
         })
       );
     });
@@ -635,30 +632,21 @@ describe('UpdateFicheService', () => {
     });
 
     it('should update libre tag relations in the database when an existing tag is added', async () => {
-      // Setup test data
-      await db.db
-        .insert(libreTagTable)
-        .values([{ id: 2, nom: 'Tag 2', collectiviteId }]);
-
       const data: UpdateFicheInput = {
-        libreTags: [{ id: 1 }, { id: 2 }],
+        libreTags: [{ id: libreTagId1 }, { id: libreTagId2 }],
       };
       const fiche = await updateFiche(data);
 
       expect(fiche.libreTags).toContainEqual(
         expect.objectContaining({
-          id: 1,
+          id: libreTagId1,
         })
       );
       expect(fiche.libreTags).toContainEqual(
         expect.objectContaining({
-          id: 2,
+          id: libreTagId2,
         })
       );
-
-      onTestFinished(async () => {
-        await cleanupLibreTags();
-      });
     });
 
     it('should update notes relations in the database', async () => {
@@ -729,7 +717,7 @@ describe('UpdateFicheService', () => {
     });
 
     it('should return 400 when trying to set a non-existent fiche as parent', async () => {
-      const caller = fichesRouter.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: testUser });
 
       const nonExistentParentId = 999999;
       await expect(() =>
@@ -747,7 +735,7 @@ describe('UpdateFicheService', () => {
     });
 
     it('should prevent creating a self-referencing parent relation', async () => {
-      const caller = fichesRouter.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: testUser });
 
       await expect(() =>
         caller.update({
@@ -785,9 +773,13 @@ describe('UpdateFicheService', () => {
     });
 
     test('should not allow update if fiche action is not in user collectivite', async () => {
-      await db.db
-        .insert(ficheActionTable)
-        .values({ ...ficheActionFixture, id: 10000, collectiviteId: 3 });
+      // Créer une fiche sur une autre collectivité où l'utilisateur n'a pas accès
+      const { collectivite: otherCollectivite } = await addTestCollectivite(db);
+      await db.db.insert(ficheActionTable).values({
+        ...ficheActionFixture,
+        id: 10000,
+        collectiviteId: otherCollectivite.id,
+      });
 
       onTestFinished(async () => {
         await db.db
@@ -809,10 +801,10 @@ describe('UpdateFicheService', () => {
       ).rejects.toThrowError(/Droits insuffisants/i);
     });
 
-    test('should allow update if fiche action is in user‘s collectivite', async () => {
+    test('should allow update if fiche action is in user’s collectivite', async () => {
       await db.db
         .insert(ficheActionTable)
-        .values({ ...ficheActionFixture, id: 10000, collectiviteId: 1 });
+        .values({ ...ficheActionFixture, id: 10000, collectiviteId });
 
       onTestFinished(async () => {
         await db.db
@@ -824,7 +816,7 @@ describe('UpdateFicheService', () => {
         titre: 'Titre mis à jour par une utilisatrice autorisée',
       };
 
-      const caller = fichesRouter.createCaller({ user: yoloDodo });
+      const caller = fichesRouter.createCaller({ user: testUser });
 
       await caller.update({
         ficheId,
@@ -847,7 +839,7 @@ describe('UpdateFicheService', () => {
         role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
       });
 
-      const adminCaller = fichesRouter.createCaller({ user: yoloDodo });
+      const adminCaller = fichesRouter.createCaller({ user: testUser });
 
       onTestFinished(async () => {
         await cleanup();
@@ -871,7 +863,7 @@ describe('UpdateFicheService', () => {
       // Udpate to add it as pilote
       await adminCaller.update({
         ficheId: ficheId,
-        ficheFields: { pilotes: [{ tagId: 1, userId: user.id }] },
+        ficheFields: { pilotes: [{ tagId: personneTagId1, userId: user.id }] },
       });
 
       // Update should now succeed
@@ -954,9 +946,97 @@ describe('UpdateFicheService', () => {
     databaseService: DatabaseService,
     ficheId: number
   ) {
+    // Créer les entités collectivité-spécifiques
+    const [a1] = await databaseService.db
+      .insert(axeTable)
+      .values([{ nom: 'Plan test', collectiviteId }])
+      .returning();
+    axeId1 = a1.id;
+    const [a2] = await databaseService.db
+      .insert(axeTable)
+      .values([{ nom: 'Axe test 2', collectiviteId, plan: axeId1 }])
+      .returning();
+    axeId2 = a2.id;
+
+    const [pt1, pt2] = await databaseService.db
+      .insert(personneTagTable)
+      .values([
+        { nom: 'Pilote Test 1', collectiviteId },
+        { nom: 'Pilote Test 2', collectiviteId },
+      ])
+      .returning();
+    personneTagId1 = pt1.id;
+    personneTagId2 = pt2.id;
+
+    const [st1, st2] = await databaseService.db
+      .insert(structureTagTable)
+      .values([
+        { nom: 'Structure Test 1', collectiviteId },
+        { nom: 'Structure Test 2', collectiviteId },
+      ])
+      .returning();
+    structureTagId1 = st1.id;
+    structureTagId2 = st2.id;
+
+    const [pat1, pat2] = await databaseService.db
+      .insert(partenaireTagTable)
+      .values([
+        { nom: 'Partenaire Test 1', collectiviteId },
+        { nom: 'Partenaire Test 2', collectiviteId },
+      ])
+      .returning();
+    partenaireTagId1 = pat1.id;
+    partenaireTagId2 = pat2.id;
+
+    const [svc1, svc2] = await databaseService.db
+      .insert(serviceTagTable)
+      .values([
+        { nom: 'Service Test 1', collectiviteId },
+        { nom: 'Service Test 2', collectiviteId },
+      ])
+      .returning();
+    serviceTagId1 = svc1.id;
+    serviceTagId2 = svc2.id;
+
+    const [ft1, ft2] = await databaseService.db
+      .insert(financeurTagTable)
+      .values([
+        { nom: 'Financeur Test 1', collectiviteId },
+        { nom: 'Financeur Test 2', collectiviteId },
+      ])
+      .returning();
+    financeurTagId1 = ft1.id;
+    financeurTagId2 = ft2.id;
+
+    const [lt1, lt2] = await databaseService.db
+      .insert(libreTagTable)
+      .values([
+        { nom: 'Libre Tag 1', collectiviteId },
+        { nom: 'Libre Tag 2', collectiviteId },
+      ])
+      .returning();
+    libreTagId1 = lt1.id;
+    libreTagId2 = lt2.id;
+
+    const [lf] = await databaseService.db
+      .insert(ficheActionTable)
+      .values({ titre: 'Fiche liée test', collectiviteId, restreint: false })
+      .returning();
+    linkedFicheId = lf.id;
+
+    // Insérer la fiche de test principale
+    await databaseService.db
+      .delete(ficheActionTable)
+      .where(eq(ficheActionTable.id, ficheId));
+
+    await databaseService.db
+      .insert(ficheActionTable)
+      .values({ ...ficheActionFixture, collectiviteId });
+
+    // Insérer les relations de la fiche
     await databaseService.db.insert(ficheActionAxeTable).values({
       ficheId,
-      axeId: axesFixture.id,
+      axeId: axeId1,
     });
 
     await databaseService.db.insert(ficheActionThematiqueTable).values({
@@ -971,24 +1051,22 @@ describe('UpdateFicheService', () => {
 
     await databaseService.db.insert(ficheActionPartenaireTagTable).values({
       ficheId,
-      partenaireTagId: partenairesFixture.id,
+      partenaireTagId: partenaireTagId1,
     });
 
     await databaseService.db.insert(ficheActionStructureTagTable).values({
       ficheId,
-      structureTagId: structuresFixture.id,
+      structureTagId: structureTagId1,
     });
 
     await databaseService.db.insert(ficheActionPiloteTable).values({
       ficheId,
-      tagId: pilotesFixture.tagId,
-      userId: pilotesFixture.userId,
+      tagId: personneTagId1,
     });
 
     await databaseService.db.insert(ficheActionReferentTable).values({
       ficheId,
-      tagId: referentsFixture.tagId,
-      userId: referentsFixture.userId,
+      tagId: personneTagId2,
     });
 
     await databaseService.db.insert(ficheActionActionTable).values({
@@ -1003,18 +1081,18 @@ describe('UpdateFicheService', () => {
 
     await databaseService.db.insert(ficheActionServiceTagTable).values({
       ficheId,
-      serviceTagId: servicesFixture.id,
+      serviceTagId: serviceTagId1,
     });
 
     await databaseService.db.insert(ficheActionFinanceurTagTable).values({
       ficheId,
-      financeurTagId: financeursFixture.financeurTag.id,
+      financeurTagId: financeurTagId1,
       montantTtc: financeursFixture.montantTtc,
     });
 
     await databaseService.db.insert(ficheActionLienTable).values({
       ficheUne: ficheId,
-      ficheDeux: fichesLieesFixture.id,
+      ficheDeux: linkedFicheId,
     });
 
     await databaseService.db.insert(ficheActionEffetAttenduTable).values({
@@ -1022,37 +1100,27 @@ describe('UpdateFicheService', () => {
       effetAttenduId: effetsAttendusFixture.id,
     });
 
-    await databaseService.db
-      .insert(libreTagTable)
-      .values([
-        {
-          id: 1,
-          nom: 'Tag 1',
-          collectiviteId,
-        },
-      ])
-      .onConflictDoNothing();
-
     await databaseService.db.insert(ficheActionLibreTagTable).values({
       ficheId,
-      libreTagId: libresFixture.id,
+      libreTagId: libreTagId1,
     });
   }
 
   test('should reject linking instance gouvernance from a different collectivite', async () => {
-    const otherCollectiviteId = 2;
+    const { collectivite: otherCollectivite } = await addTestCollectivite(db);
+    const otherCollectiviteId = otherCollectivite.id;
 
     const [tag] = await db.db
       .insert(instanceGouvernanceTagTable)
       .values({
         nom: 'Instance autre collectivité',
         collectiviteId: otherCollectiviteId,
-        createdBy: yoloDodo.id,
+        createdBy: testUser.id,
         createdAt: new Date().toISOString(),
       })
       .returning();
 
-    const caller = fichesRouter.createCaller({ user: yoloDodo });
+    const caller = fichesRouter.createCaller({ user: testUser });
 
     await expect(
       caller.update({
@@ -1072,7 +1140,7 @@ describe('UpdateFicheService', () => {
 
   test('should reject linking non-existent instance gouvernance tag', async () => {
     const nonExistentTagId = 999999;
-    const caller = fichesRouter.createCaller({ user: yoloDodo });
+    const caller = fichesRouter.createCaller({ user: testUser });
 
     await expect(
       caller.update({
@@ -1087,10 +1155,11 @@ describe('UpdateFicheService', () => {
   });
 
   test('should rollback all changes when instance gouvernance validation fails', async () => {
-    const otherCollectiviteId = 2;
+    const { collectivite: otherCollectivite } = await addTestCollectivite(db);
+    const otherCollectiviteId = otherCollectivite.id;
     const originalTitre = 'Titre avant rollback';
 
-    const caller = fichesRouter.createCaller({ user: yoloDodo });
+    const caller = fichesRouter.createCaller({ user: testUser });
 
     await caller.update({
       ficheId,
@@ -1102,7 +1171,7 @@ describe('UpdateFicheService', () => {
       .values({
         nom: 'Instance rollback test',
         collectiviteId: otherCollectiviteId,
-        createdBy: yoloDodo.id,
+        createdBy: testUser.id,
         createdAt: new Date().toISOString(),
       })
       .returning();
@@ -1128,7 +1197,7 @@ describe('UpdateFicheService', () => {
   });
 
   async function updateFiche(data: UpdateFicheInput) {
-    const caller = fichesRouter.createCaller({ user: yoloDodo });
+    const caller = fichesRouter.createCaller({ user: testUser });
 
     await caller.update({
       ficheId,
@@ -1142,7 +1211,7 @@ describe('UpdateFicheService', () => {
     return fiche;
   }
 
-  const cleanupLibreTags = async () => {
+  const _cleanupLibreTags = async () => {
     // Always cleanup ficheActionLibreTag first due to foreign key constraints
     await db.db
       .delete(ficheActionLibreTagTable)

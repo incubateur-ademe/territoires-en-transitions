@@ -11,7 +11,7 @@ import {
   defaultUserPreferences,
 } from '@tet/domain/users';
 import assert from 'assert';
-import { and, count, eq, sql } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { utilisateurSupportTable } from '../authorizations/roles/utilisateur-support.table';
 import { utilisateurCollectiviteAccessTable } from '../authorizations/utilisateur-collectivite-access.table';
 
@@ -45,10 +45,7 @@ export async function addTestUser(
 
   // génère un uuid et un email unique
   const userId = crypto.randomUUID();
-  const resp = await db.select({ userCount: count() }).from(authUsersTable);
-  const userCount = resp?.[0].userCount;
-  assert(userCount > 0, 'User count is valid');
-  const email = `${prenom}_${userCount}@${nom}.fr`.toLowerCase();
+  const email = `${prenom}_${userId.split('-')[0]}@${nom}.fr`.toLowerCase();
 
   // insère l'utilisateur (le trigger sync_dcp crée la ligne dcp)
   await db
