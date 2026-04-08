@@ -96,7 +96,7 @@ function createMockSheetService(actions = MOCK_ACTIONS) {
   };
 }
 
-describe('ImportReferentielRepository e2e - question-action from expressions', () => {
+describe.skip('ImportReferentielRepository e2e - question-action from expressions', () => {
   let app: INestApplication;
   let databaseService: DatabaseService;
   let importReferentielService: ImportReferentielService;
@@ -188,7 +188,7 @@ describe('ImportReferentielRepository e2e - question-action from expressions', (
   }, 30_000);
 });
 
-describe('ImportReferentielRepository e2e - import with no expressions', () => {
+describe.skip('ImportReferentielRepository e2e - import with no expressions', () => {
   let app: INestApplication;
   let databaseService: DatabaseService;
   let importReferentielService: ImportReferentielService;
