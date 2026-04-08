@@ -410,11 +410,18 @@ export class PptBuilderService {
           logo,
         });
 
-        const axeFilteredFiches = filteredFiches.filter((fiche) =>
-          axe.id === this.countByService.NO_AXE_ID
-            ? !fiche.axes?.some((a) => a.parentId === plan.id)
-            : fiche.axes?.some((a) => a.id === axe.id)
-        );
+        const axeFilteredFiches = filteredFiches
+          .filter((fiche) =>
+            axe.id === this.countByService.NO_AXE_ID
+              ? !fiche.axes?.some((a) => a.parentId === plan.id)
+              : fiche.axes?.some((a) => a.id === axe.id)
+          )
+          .sort((a, b) =>
+            (a.titre ?? '').localeCompare(b.titre ?? '', this.LOCALE, {
+              sensitivity: 'base',
+              numeric: true,
+            })
+          );
         for (const fiche of axeFilteredFiches) {
           const ficheTextReplacementsInfo =
             this.getFicheTextReplacementsInfos(fiche);

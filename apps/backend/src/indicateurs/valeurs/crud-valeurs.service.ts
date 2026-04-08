@@ -393,14 +393,7 @@ export default class CrudValeursService {
       ? await this.databaseService.db
           .select()
           .from(indicateurSourceTable)
-          .where(
-            inArray(
-              indicateurSourceTable.id,
-              uniqueIndicateurMetadonnees.map(
-                (metadonnee) => metadonnee.sourceId
-              )
-            )
-          )
+          .where(inArray(indicateurSourceTable.id, sourceIds))
       : [];
 
     const indicateurValeurGroupeesParSource =
