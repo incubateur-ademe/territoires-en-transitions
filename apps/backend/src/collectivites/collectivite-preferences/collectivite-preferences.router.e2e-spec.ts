@@ -45,12 +45,10 @@ describe('CollectivitePreferencesRouter', () => {
       testCollectiviteAndUserResult.user
     );
 
-    return async () => {
-      await testCollectiviteAndUserResult.cleanup();
-      if (app) {
-        await app.close();
-      }
-    };
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test('Non-support user cannot update preferences', async () => {

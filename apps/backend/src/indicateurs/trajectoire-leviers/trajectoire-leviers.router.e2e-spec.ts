@@ -1,21 +1,37 @@
-import { getAnonUser, getAuthUser, YOLO_DODO } from '@tet/backend/test';
+import { INestApplication } from '@nestjs/common';
+import {
+  getAnonUser,
+  getAuthUserFromUserCredentials,
+  getTestApp,
+  getTestDatabase,
+} from '@tet/backend/test';
 import {
   AuthenticatedUser,
   AuthRole,
   AuthUser,
 } from '@tet/backend/users/models/auth.models';
-import { getTestRouter } from '../../../test/app-utils';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { TrpcRouter } from '../../utils/trpc/trpc.router';
 
 describe('Route de récupération des données Trajectoire Leviers', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let anonUser: AuthUser<AuthRole.ANON>;
-  let yoloDodoUser: AuthenticatedUser;
+  let authenticatedUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    router = await getTestRouter();
+    app = await getTestApp();
+    router = app.get(TrpcRouter);
+    const db = await getTestDatabase(app);
+
     anonUser = getAnonUser();
-    yoloDodoUser = await getAuthUser(YOLO_DODO);
+
+    const testUserResult = await addTestUser(db);
+    authenticatedUser = getAuthUserFromUserCredentials(testUserResult.user);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test('Non autorisé si non authentifié ou anonyme', async () => {
@@ -37,7 +53,7 @@ describe('Route de récupération des données Trajectoire Leviers', () => {
   });
 
   test('Commune collectivite not supported', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
 
     await expect(async () => {
       await caller.indicateurs.trajectoires.leviers.getData({
@@ -47,7 +63,7 @@ describe('Route de récupération des données Trajectoire Leviers', () => {
   });
 
   test('Visite for collectivite with siren 246700488', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
 
     const siren = '246700488';
     // On récupère / recalule la trajectoire car nécessaire

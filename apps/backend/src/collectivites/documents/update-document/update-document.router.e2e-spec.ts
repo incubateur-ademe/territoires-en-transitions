@@ -7,8 +7,8 @@ import {
 import {
   getAuthUserFromUserCredentials,
   signInWith,
-  YOLO_DODO,
 } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -21,8 +21,6 @@ import {
   getTestRouter,
 } from '../../../../test/app-utils';
 
-const TEST_USER_PASSWORD = 'yolododo';
-
 describe('UpdateDocumentRouter', () => {
   let app: INestApplication;
   let router: TrpcRouter;
@@ -32,7 +30,6 @@ describe('UpdateDocumentRouter', () => {
   let readerUser: AuthenticatedUser;
   let editorToken: string;
   let visiteurToken: string;
-  let cleanup: () => Promise<void>;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -56,18 +53,21 @@ describe('UpdateDocumentRouter', () => {
     readerUser = getAuthUserFromUserCredentials(
       testCollectiviteAndUsersResult.users[1]
     );
-    cleanup = testCollectiviteAndUsersResult.cleanup;
 
     const editorSignIn = await signInWith({
       email: testCollectiviteAndUsersResult.users[0].email,
-      password: TEST_USER_PASSWORD,
+      password: testCollectiviteAndUsersResult.users[0].password,
     });
     editorToken = editorSignIn.data.session?.access_token ?? '';
     if (!editorToken) {
       throw new Error('Échec login editor: token manquant');
     }
 
-    const visiteurSignIn = await signInWith(YOLO_DODO);
+    const noAccessUserResult = await addTestUser(databaseService);
+    const visiteurSignIn = await signInWith({
+      email: noAccessUserResult.user.email,
+      password: noAccessUserResult.user.password,
+    });
     visiteurToken = visiteurSignIn.data.session?.access_token ?? '';
     if (!visiteurToken) {
       throw new Error('Échec login visiteur: token manquant');
@@ -75,7 +75,6 @@ describe('UpdateDocumentRouter', () => {
   });
 
   afterAll(async () => {
-    await cleanup?.();
     await app?.close();
   });
 

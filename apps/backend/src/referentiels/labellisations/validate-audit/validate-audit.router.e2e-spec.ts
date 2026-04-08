@@ -1,35 +1,40 @@
 import { INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { createAuditWithOnTestFinished } from '@tet/backend/referentiels/referentiels.test-fixture';
 
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { Collectivite } from '@tet/domain/collectivites';
 import { ReferentielIdEnum, SnapshotJalonEnum } from '@tet/domain/referentiels';
+import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { snapshotTable } from '../../snapshots/snapshot.table';
 import { addAuditeurPermission } from '../labellisations.test-fixture';
-
-const RANDOM_COLLECTIVITE_ID = 56;
 
 describe('ValidateAuditRouter', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
+  let collectivite: Collectivite;
 
   beforeAll(async () => {
     app = await getTestApp();
     router = await getTestRouter(app);
     db = await getTestDatabase(app);
 
-    yoloDodoUser = await getAuthUser(YOLO_DODO);
+    const testResult = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    collectivite = testResult.collectivite;
+    testUser = getAuthUserFromUserCredentials(testResult.user);
   });
 
   afterAll(async () => {
@@ -37,11 +42,11 @@ describe('ValidateAuditRouter', () => {
   });
 
   test('un auditeur peut valider un audit', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const { audit } = await createAuditWithOnTestFinished({
       databaseService: db,
-      collectiviteId: RANDOM_COLLECTIVITE_ID,
+      collectiviteId: collectivite.id,
       referentielId: ReferentielIdEnum.CAE,
       withDemande: true,
     });
@@ -49,7 +54,7 @@ describe('ValidateAuditRouter', () => {
     await addAuditeurPermission({
       databaseService: db,
       auditId: audit.id,
-      userId: yoloDodoUser.id,
+      userId: testUser.id,
     });
 
     const validatedAudit =
@@ -76,7 +81,7 @@ describe('ValidateAuditRouter', () => {
   });
 
   test('un non auditeur ne peut pas valider un audit', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     await expect(
       caller.referentiels.labellisations.validateAudit({

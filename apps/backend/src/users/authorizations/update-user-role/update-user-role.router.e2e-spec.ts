@@ -1,11 +1,11 @@
 import { INestApplication } from '@nestjs/common';
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-  YOLO_DODO,
 } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -14,15 +14,21 @@ import { addUserRoleSupport } from '../../users/users.test-fixture';
 
 describe('UpdateUserRole', () => {
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
   let app: INestApplication;
   let databaseService: DatabaseService;
 
   beforeAll(async () => {
-    router = await getTestRouter();
-    yoloDodoUser = await getAuthUser(YOLO_DODO);
     app = await getTestApp();
+    router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
+
+    const testUserResult = await addTestUser(databaseService);
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   describe('Rôle Support', () => {
@@ -35,13 +41,13 @@ describe('UpdateUserRole', () => {
     }
 
     test('Active le mode super-admin pour un utilisateur avec le rôle support', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       await expectUserToHaveRoleSupportEnabled(caller, false);
 
       const { cleanup } = await addUserRoleSupport({
         databaseService,
-        userId: yoloDodoUser.id,
+        userId: testUser.id,
       });
 
       onTestFinished(cleanup);
@@ -72,7 +78,7 @@ describe('UpdateUserRole', () => {
     });
 
     test("Ne peut pas activer le mode super-admin si l'utilisateur n'a pas le rôle support", async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       await expectUserToHaveRoleSupportEnabled(caller, false);
 

@@ -53,8 +53,18 @@ const appLogger = new Logger('AppModule');
 
         appLogger.log(`Connecting to Redis at ${host}:${port}`);
 
+        // Under Vitest, each worker process loads its own AppModule and spins
+        // up the same @Processor against the shared Redis. Without isolation,
+        // jobs enqueued by one test file can be consumed by another file's
+        // worker — and app.close() in afterAll hangs on in-flight foreign jobs.
+        // A per-process prefix gives each worker its own queue namespace.
+        const prefix = process.env.VITEST
+          ? `bull:test:${process.pid}`
+          : undefined;
+
         return {
           connection: { host, port },
+          ...(prefix ? { prefix } : {}),
         };
       },
       inject: [ConfigurationService],

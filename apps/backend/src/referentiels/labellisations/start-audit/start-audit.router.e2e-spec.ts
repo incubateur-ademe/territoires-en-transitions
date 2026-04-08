@@ -1,13 +1,12 @@
 import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
-  getAuthUser,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-  YOLO_DODO,
 } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -24,7 +23,7 @@ describe('StartAuditRouter', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
-  let yoloDodoUser: AuthenticatedUser;
+  let noAccessUser: AuthenticatedUser;
   let lectureUser: AuthenticatedUser;
   let editionUser: AuthenticatedUser;
   let collectivite: Collectivite;
@@ -56,20 +55,12 @@ describe('StartAuditRouter', () => {
     const editionUserFixture = testCollectiviteAndUsersResult.users[1];
     editionUser = getAuthUserFromUserCredentials(editionUserFixture);
 
-    yoloDodoUser = await getAuthUser(YOLO_DODO);
+    const noAccessUserResult = await addTestUser(db);
+    noAccessUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
+  });
 
-    return async () => {
-      await cleanupReferentielActionStatutsAndLabellisations(
-        db,
-        collectivite.id
-      );
-
-      await testCollectiviteAndUsersResult.cleanup();
-
-      if (app) {
-        await app.close();
-      }
-    };
+  afterAll(async () => {
+    await app.close();
   });
 
   beforeEach(async () => {
@@ -150,7 +141,7 @@ describe('StartAuditRouter', () => {
       withDemande: true,
     });
 
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: noAccessUser });
 
     await expect(
       caller.referentiels.labellisations.startAudit({

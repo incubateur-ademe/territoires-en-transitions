@@ -5,11 +5,13 @@ import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fic
 import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import { CollectiviteRole } from '@tet/domain/users';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { and, eq, inArray, isNull } from 'drizzle-orm';
 import * as fs from 'node:fs';
@@ -43,7 +45,7 @@ const pathToInput = async ({
 
 describe("Test import Plan d'action", { timeout: 30_000 }, () => {
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
   let app: INestApplication;
   let databaseService: DatabaseService;
 
@@ -126,16 +128,21 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
   };
 
   beforeAll(async () => {
-    router = await getTestRouter();
-    yoloDodoUser = await getAuthUser();
     app = await getTestApp();
+    router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
 
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const testUserResult = await addTestUser(databaseService, {
+      collectiviteId: 1,
+      role: CollectiviteRole.ADMIN,
+    });
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
+
+    const caller = router.createCaller({ user: testUser });
     const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,
       caller,
-      userId: yoloDodoUser.id,
+      userId: testUser.id,
     });
     await deleteAllTestPlans(caller);
     await cleanup();
@@ -146,7 +153,7 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
   });
 
   test('Test utilisateur non support', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
     const pathName = './__fixtures__/nouveau-plan-valide.xlsx';
     const input = await pathToInput({
       pathName,
@@ -156,12 +163,12 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
   });
 
   test('Utilisateur support même sans droits sur la collectivité doit pouvoir importer le plan', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,
       caller,
-      userId: yoloDodoUser.id,
+      userId: testUser.id,
     });
 
     const pathName = './__fixtures__/nouveau-plan-valide.xlsx';
@@ -182,12 +189,12 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
   });
 
   test('Test import plan sans axes', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,
       caller,
-      userId: yoloDodoUser.id,
+      userId: testUser.id,
     });
 
     const pathName = './__fixtures__/plan_sans_axes.xlsx';
@@ -207,12 +214,12 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
   });
 
   test('Test import plan avec une seule fiche', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,
       caller,
-      userId: yoloDodoUser.id,
+      userId: testUser.id,
     });
 
     const pathName = './__fixtures__/one_fiche_plan.xlsx';
@@ -248,12 +255,12 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
   });
 
   test("Test import plan avec sous-actions échoue si l'action parente n'a pas de ligne dédiée", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,
       caller,
-      userId: yoloDodoUser.id,
+      userId: testUser.id,
     });
     onTestFinished(cleanup);
 
@@ -268,12 +275,12 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
   });
 
   test('Test import plan avec sous-actions crée les fiches parentes et les sous-actions avec parentId', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,
       caller,
-      userId: yoloDodoUser.id,
+      userId: testUser.id,
     });
 
     const pathName = './__fixtures__/plan_with_sous_actions_valid.xlsx';
@@ -380,12 +387,12 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
   });
 
   test('Test import plan avec actions en doublon dans le même axe échoue', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,
       caller,
-      userId: yoloDodoUser.id,
+      userId: testUser.id,
     });
     onTestFinished(cleanup);
 
@@ -400,12 +407,12 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
   });
 
   test('Test erreur budget', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,
       caller,
-      userId: yoloDodoUser.id,
+      userId: testUser.id,
     });
 
     onTestFinished(cleanup);
@@ -419,12 +426,12 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
   });
 
   test('Test erreur colonne', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,
       caller,
-      userId: yoloDodoUser.id,
+      userId: testUser.id,
     });
 
     onTestFinished(cleanup);
@@ -437,12 +444,12 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
   });
 
   test('Test import plan avec instances de gouvernance', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,
       caller,
-      userId: yoloDodoUser.id,
+      userId: testUser.id,
     });
 
     const pathName = './__fixtures__/one_fiche_plan.xlsx';

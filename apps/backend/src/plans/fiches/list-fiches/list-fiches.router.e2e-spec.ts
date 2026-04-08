@@ -1,7 +1,10 @@
+import { INestApplication } from '@nestjs/common';
+import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { financeurTagTable } from '@tet/backend/collectivites/tags/financeur-tag.table';
 import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
 import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-tag.table';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
+import { serviceTagTable } from '@tet/backend/collectivites/tags/service-tag.table';
 import { structureTagTable } from '@tet/backend/collectivites/tags/structure-tag.table';
 import { ficheActionNoteTable } from '@tet/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
 import { ficheActionSharingTable } from '@tet/backend/plans/fiches/share-fiches/fiche-action-sharing.table';
@@ -14,6 +17,7 @@ import { ficheActionLibreTagTable } from '@tet/backend/plans/fiches/shared/model
 import { ficheActionLienTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-lien.table';
 import { ficheActionPartenaireTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-partenaire-tag.table';
 import { ficheActionReferentTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-referent.table';
+import { ficheActionServiceTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-service-tag.table';
 import { ficheActionSousThematiqueTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-sous-thematique.table';
 import { ficheActionStructureTagTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-structure-tag.table';
 import { ficheActionThematiqueTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-thematique.table';
@@ -21,48 +25,99 @@ import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-
 import { sousThematiqueTable } from '@tet/backend/shared/thematiques/sous-thematique.table';
 import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-  YOLO_DODO,
-  YOULOU_DOUDOU,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import {
+  addTestUser,
+  setUserCollectiviteRole,
+} from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { withOnTestFinished } from '@tet/backend/utils/test-fixture.utils';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { StatutEnum } from '@tet/domain/plans';
+import { CollectiviteRole } from '@tet/domain/users';
 import { eq, inArray } from 'drizzle-orm';
 import { uniq } from 'es-toolkit';
 import { createFiche, createFiches } from '../fiches.test-fixture';
 
+describe('ListFichesRouter', () => {
+let app: INestApplication;
 let router: TrpcRouter;
-let yoloDodo: AuthenticatedUser;
+let testUser: AuthenticatedUser;
+let testUserId: string;
+let otherUserId: string;
 let db: DatabaseService;
-
-const COLLECTIVITE_ID = YOLO_DODO.collectiviteId.admin;
+let personneTagId1: number;
+// Collectivité isolée pour les tests qui créent leurs propres données
+let testCollectiviteId: number;
 
 beforeAll(async () => {
-  const app = await getTestApp();
+  app = await getTestApp();
   router = await getTestRouter(app);
   db = await getTestDatabase(app);
-  yoloDodo = await getAuthUser(YOLO_DODO);
+
+  // Collectivité isolée pour les tests auto-suffisants
+  const { collectivite } = await addTestCollectivite(db);
+  testCollectiviteId = collectivite.id;
+
+  // Personne tags sur la collectivité isolée (pour les tests pilotes/referents)
+  const [pt1] = await db.db
+    .insert(personneTagTable)
+    .values([{ nom: 'Pilote Test 1', collectiviteId: testCollectiviteId }])
+    .returning();
+  personneTagId1 = pt1.id;
+
+  const testUserResult = await addTestUser(db);
+  testUser = getAuthUserFromUserCredentials(testUserResult.user);
+  testUserId = testUserResult.user.id;
+  // Accès admin sur la collectivité isolée
+  await setUserCollectiviteRole(db, {
+    userId: testUserResult.user.id,
+    collectiviteId: testCollectiviteId,
+    role: CollectiviteRole.ADMIN,
+  });
+
+  // Second utilisateur pour les filtres par utilisateur
+  const otherUserResult = await addTestUser(db);
+  otherUserId = otherUserResult.user.id;
+  await setUserCollectiviteRole(db, {
+    userId: otherUserResult.user.id,
+    collectiviteId: testCollectiviteId,
+    role: CollectiviteRole.EDITION,
+  });
+});
+
+afterAll(async () => {
+  await app.close();
 });
 
 describe('Filtres sur les fiches actions', () => {
   test('Fetch sans filtre retourne des fiches uniques', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
+
+    // Créer des fiches sur la collectivité isolée
+    const { ficheIds } = await withOnTestFinished(createFiches)({
+      caller,
+      ficheInputs: [
+        { collectiviteId: testCollectiviteId, titre: 'Fiche unicité 1' },
+        { collectiviteId: testCollectiviteId, titre: 'Fiche unicité 2' },
+        { collectiviteId: testCollectiviteId, titre: 'Fiche unicité 3' },
+      ],
+    });
 
     const { data: fiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     });
 
     if (!fiches) {
       expect.fail();
     }
 
-    expect(fiches.length).toBeGreaterThan(0);
+    expect(fiches.length).toBeGreaterThanOrEqual(ficheIds.length);
 
     // Check unicity of all fiches
     const ids = fiches.map((f) => f.id);
@@ -71,7 +126,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Order by title en natural sort including NULL values', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     // insert des fiches avec des titres différents contenant une numérotation
     const { ficheIds } = await withOnTestFinished(createFiches)({
@@ -79,41 +134,41 @@ describe('Filtres sur les fiches actions', () => {
       ficheInputs: [
         {
           titre: '11 - Fiche-test 4',
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
         {
           titre: '10 - Fiche-test 3',
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
         {
           titre: null,
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
         {
           titre: '2 - Fiche-test 2',
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
         {
           titre: '1 - Fiche-test 1',
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
         {
           titre: 'Z - Last title',
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
         {
           titre: null,
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
         {
           titre: 'A - First title',
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
       ],
     });
 
     const { data: fichesAsc } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         ficheIds,
       },
@@ -146,7 +201,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesAscUpdated } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         ficheIds,
       },
@@ -163,12 +218,25 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur une personne', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
+
+    // Créer une fiche avec un pilote tag sur la collectivité isolée
+    const { ficheIds } = await withOnTestFinished(createFiches)({
+      caller,
+      ficheInputs: [
+        {
+          collectiviteId: testCollectiviteId,
+          titre: 'Fiche filtre personne',
+          pilotes: [{ tagId: personneTagId1 }],
+        },
+      ],
+    });
 
     const { data: fiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
-        personnePiloteIds: [1],
+        ficheIds,
+        personnePiloteIds: [personneTagId1],
       },
     });
 
@@ -176,22 +244,36 @@ describe('Filtres sur les fiches actions', () => {
       expect.fail();
     }
 
+    expect(fiches.length).toBe(1);
     for (const fiche of fiches) {
       expect(fiche).toMatchObject({
         pilotes: expect.arrayContaining([
-          expect.objectContaining({ tagId: 1, nom: 'Lou Piote' }),
+          expect.objectContaining({ tagId: personneTagId1 }),
         ]),
       });
     }
   });
 
   test('Fetch avec filtre sur un utilisateur', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
+
+    // Créer une fiche avec un pilote utilisateur sur la collectivité isolée
+    const { ficheIds } = await withOnTestFinished(createFiches)({
+      caller,
+      ficheInputs: [
+        {
+          collectiviteId: testCollectiviteId,
+          titre: 'Fiche filtre utilisateur',
+          pilotes: [{ userId: testUserId }],
+        },
+      ],
+    });
 
     const { data: fiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
-        utilisateurPiloteIds: [yoloDodo.id],
+        ficheIds,
+        utilisateurPiloteIds: [testUserId],
       },
     });
 
@@ -199,12 +281,12 @@ describe('Filtres sur les fiches actions', () => {
       expect.fail();
     }
 
+    expect(fiches.length).toBe(1);
     for (const fiche of fiches) {
       expect(fiche).toMatchObject({
         pilotes: expect.arrayContaining([
           expect.objectContaining({
-            userId: yoloDodo.id,
-            nom: 'Yolo Dodo',
+            userId: testUserId,
             tagId: null,
           }),
         ]),
@@ -212,14 +294,43 @@ describe('Filtres sur les fiches actions', () => {
     }
   });
 
-  test('Fetch avec filtre sur un utilisateur et sur personne. Le filtre doit être un OU.', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+  // Crée un jeu de fiches avec différents types de pilotes sur testCollectiviteId
+  async function createFichesAvecPilotes(
+    caller: ReturnType<TrpcRouter['createCaller']>
+  ) {
+    return withOnTestFinished(createFiches)({
+      caller,
+      ficheInputs: [
+        {
+          collectiviteId: testCollectiviteId,
+          titre: 'Fiche pilote tag test',
+          pilotes: [{ tagId: personneTagId1 }],
+        },
+        {
+          collectiviteId: testCollectiviteId,
+          titre: 'Fiche pilote user test',
+          pilotes: [{ userId: testUserId }],
+        },
+        {
+          collectiviteId: testCollectiviteId,
+          titre: 'Fiche sans pilote test',
+        },
+      ],
+    });
+  }
 
+  test('Fetch avec filtre sur un utilisateur et sur personne. Le filtre doit être un OU.', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    const { ficheIds } = await createFichesAvecPilotes(caller);
+
+    // Filtre avec utilisateur OU personne → doit retourner les 2 fiches avec pilote
     const { data: fiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
-        utilisateurPiloteIds: [yoloDodo.id],
-        personnePiloteIds: [1],
+        ficheIds,
+        utilisateurPiloteIds: [testUserId],
+        personnePiloteIds: [personneTagId1],
       },
     });
 
@@ -227,7 +338,8 @@ describe('Filtres sur les fiches actions', () => {
       expect.fail();
     }
 
-    expect(fiches.length).toBeGreaterThan(0);
+    // Les 2 fiches avec pilote (tag OU user) doivent être retournées
+    expect(fiches.length).toBe(2);
 
     for (const fiche of fiches) {
       expect(fiche.pilotes?.length).toBeGreaterThan(0);
@@ -235,23 +347,25 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec tableaux vides dans les filtres pilotes doit être équivalent à aucun filtre', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
-    // Récupérer toutes les fiches sans filtre
+    // Créer des fiches isolées avec des pilotes pour éviter les interférences parallèles
+    const { ficheIds } = await createFichesAvecPilotes(caller);
+
+    // Récupérer les fiches de test sans filtre
     const { data: fichesWithoutFilter } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
-      filters: {},
+      collectiviteId: testCollectiviteId,
+      filters: { ficheIds },
     });
 
-    if (!fichesWithoutFilter) {
-      expect.fail();
-    }
+    expect(fichesWithoutFilter.length).toBe(3);
 
     // Récupérer les fiches avec des tableaux vides pour personnePiloteIds
     const { data: fichesWithEmptyPersonnePiloteIds } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
+          ficheIds,
           personnePiloteIds: [],
         },
       });
@@ -259,8 +373,9 @@ describe('Filtres sur les fiches actions', () => {
     // Récupérer les fiches avec des tableaux vides pour utilisateurPiloteIds
     const { data: fichesWithEmptyUtilisateurPiloteIds } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
+          ficheIds,
           utilisateurPiloteIds: [],
         },
       });
@@ -268,8 +383,9 @@ describe('Filtres sur les fiches actions', () => {
     // Récupérer les fiches avec les deux tableaux vides
     const { data: fichesWithBothEmptyArrays } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
+          ficheIds,
           personnePiloteIds: [],
           utilisateurPiloteIds: [],
         },
@@ -284,7 +400,7 @@ describe('Filtres sur les fiches actions', () => {
     );
     expect(fichesWithBothEmptyArrays?.length).toBe(fichesWithoutFilter.length);
 
-    // Vérifier que les IDs sont les mêmes (dans le même ordre)
+    // Vérifier que les IDs sont les mêmes
     const idsWithoutFilter = fichesWithoutFilter.map((f) => f.id).sort();
     const idsWithEmptyPersonne = fichesWithEmptyPersonnePiloteIds
       ?.map((f) => f.id)
@@ -300,12 +416,47 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur un service', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
+
+    // Créer un service tag sur la collectivité isolée
+    const [serviceTag] = await db.db
+      .insert(serviceTagTable)
+      .values({
+        nom: 'Service test dynamique',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
+
+    // Créer une fiche et la lier au service
+    const [fiche] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Fiche avec service test',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
+
+    await db.db.insert(ficheActionServiceTagTable).values({
+      ficheId: fiche.id,
+      serviceTagId: serviceTag.id,
+    });
+
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionServiceTagTable)
+        .where(eq(ficheActionServiceTagTable.ficheId, fiche.id));
+      await db.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, fiche.id));
+      await db.db
+        .delete(serviceTagTable)
+        .where(eq(serviceTagTable.id, serviceTag.id));
+    });
 
     const { data: fiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
-        servicePiloteIds: [2],
+        servicePiloteIds: [serviceTag.id],
       },
     });
 
@@ -313,23 +464,47 @@ describe('Filtres sur les fiches actions', () => {
       expect.fail();
     }
 
-    for (const fiche of fiches) {
-      expect(fiche).toMatchObject({
+    expect(fiches.length).toBeGreaterThan(0);
+    for (const f of fiches) {
+      expect(f).toMatchObject({
         services: expect.arrayContaining([
-          { id: 2, nom: 'Ultra service', collectiviteId: 1 },
+          {
+            id: serviceTag.id,
+            nom: 'Service test dynamique',
+            collectiviteId: testCollectiviteId,
+          },
         ]),
       });
     }
   });
 
   test('Fetch avec filtre sur un plan', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
+
+    // Créer un plan dynamique sur la collectivité isolée
+    const plan = await caller.plans.plans.create({
+      nom: 'Plan Test Dynamique',
+      collectiviteId: testCollectiviteId,
+    });
+
+    // Créer une fiche associée au plan avec un titre qui contient le nom du plan
+    await createFiche({
+      caller,
+      ficheInput: {
+        collectiviteId: testCollectiviteId,
+        titre: 'Fiche dans Plan Test Dynamique',
+        axeId: plan.id,
+      },
+    });
+
+    onTestFinished(async () => {
+      await caller.plans.plans.delete({ planId: plan.id });
+    });
 
     const { data: fiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
-        texteNomOuDescription:
-          'Ajouter caméra de surveillance au parking à vélo 2020-2024',
+        texteNomOuDescription: 'Fiche dans Plan Test Dynamique',
       },
     });
 
@@ -339,18 +514,49 @@ describe('Filtres sur les fiches actions', () => {
 
     expect(fiches).toHaveLength(1);
     expect(fiches[0].plans?.[0]).toMatchObject({
-      nom: 'Plan Vélo 2020-2024', // correspond au plan racine
-      collectiviteId: 1,
+      nom: 'Plan Test Dynamique',
+      collectiviteId: testCollectiviteId,
       type: null,
     });
   });
 
   test('Fetch avec filtre sur une mesure du referentiel associée', async () => {
-    // Test avec une action associée à plusieurs fiches
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
+    // Créer 2 fiches dynamiques sur la collectivité isolée
+    const [ficheA] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Fiche mesure A',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
+    const [ficheB] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Fiche mesure B',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
+
+    // Lier les 2 fiches à l'action eci_2.1 (donnée référentielle stable)
+    await db.db.insert(ficheActionActionTable).values([
+      { ficheId: ficheA.id, actionId: 'eci_2.1' },
+      { ficheId: ficheB.id, actionId: 'eci_2.1' },
+    ]);
+
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionActionTable)
+        .where(inArray(ficheActionActionTable.ficheId, [ficheA.id, ficheB.id]));
+      await db.db
+        .delete(ficheActionTable)
+        .where(inArray(ficheActionTable.id, [ficheA.id, ficheB.id]));
+    });
+
+    // Test avec une action associée à plusieurs fiches
     const { data: fichesWithAction } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         mesureIds: ['eci_2.1'],
       },
@@ -360,11 +566,11 @@ describe('Filtres sur les fiches actions', () => {
       expect.fail();
     }
 
-    expect(fichesWithAction.length).toBeGreaterThan(1);
+    expect(fichesWithAction.length).toBeGreaterThanOrEqual(2);
 
-    // Test avec une action associée à aucune fiche
+    // Test avec une action associée à aucune fiche sur cette collectivité
     const { data: noFichesFound } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         mesureIds: ['eci_2.2'],
       },
@@ -378,35 +584,60 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur une fiche liée', async () => {
-    const [fiche] = await db.db
+    const caller = router.createCaller({ user: testUser });
+
+    // Créer 3 fiches dynamiques sur la collectivité isolée
+    const [ficheA] = await db.db
       .insert(ficheActionTable)
       .values({
-        titre: 'Fiche test pour liens',
-        collectiviteId: COLLECTIVITE_ID,
+        titre: 'Fiche liée A',
+        collectiviteId: testCollectiviteId,
       })
       .returning();
-    const testFicheId = fiche.id;
+    const [ficheB] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Fiche liée B',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
+    const [ficheC] = await db.db
+      .insert(ficheActionTable)
+      .values({
+        titre: 'Fiche liée C',
+        collectiviteId: testCollectiviteId,
+      })
+      .returning();
 
     onTestFinished(async () => {
       await db.db
         .delete(ficheActionLienTable)
-        .where(eq(ficheActionLienTable.ficheUne, testFicheId));
+        .where(
+          inArray(ficheActionLienTable.ficheUne, [
+            ficheA.id,
+            ficheB.id,
+            ficheC.id,
+          ])
+        );
       await db.db
         .delete(ficheActionLienTable)
-        .where(eq(ficheActionLienTable.ficheDeux, testFicheId));
+        .where(
+          inArray(ficheActionLienTable.ficheDeux, [
+            ficheA.id,
+            ficheB.id,
+            ficheC.id,
+          ])
+        );
       await db.db
         .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, testFicheId));
+        .where(inArray(ficheActionTable.id, [ficheA.id, ficheB.id, ficheC.id]));
     });
 
-    const caller = router.createCaller({ user: yoloDodo });
-
-    // Cette nouvelle fiche n'est liée à aucune autre fiche
-
+    // ficheB n'est liée à aucune autre fiche
     const { data: noFichesFound } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
-        linkedFicheIds: [testFicheId],
+        linkedFicheIds: [ficheB.id],
       },
     });
 
@@ -416,16 +647,17 @@ describe('Filtres sur les fiches actions', () => {
 
     expect(noFichesFound).toHaveLength(0);
 
+    // Lier ficheA <-> ficheB et ficheB <-> ficheC
     await db.db.insert(ficheActionLienTable).values([
-      { ficheUne: 1, ficheDeux: testFicheId },
-      { ficheUne: testFicheId, ficheDeux: 3 },
+      { ficheUne: ficheA.id, ficheDeux: ficheB.id },
+      { ficheUne: ficheB.id, ficheDeux: ficheC.id },
     ]);
 
     // Test avec une fiche associée à plusieurs fiches
     const { data: fichesWithFiche } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
-        linkedFicheIds: [testFicheId],
+        linkedFicheIds: [ficheB.id],
       },
     });
 
@@ -437,12 +669,12 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur un statut', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
     await Promise.all([
       createFiche({
         caller,
         ficheInput: {
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
           titre: 'Fiche test pour statut A venir',
           statut: StatutEnum.A_VENIR,
         },
@@ -451,7 +683,7 @@ describe('Filtres sur les fiches actions', () => {
       createFiche({
         caller,
         ficheInput: {
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
           titre: 'Fiche test pour statut En cours',
           statut: StatutEnum.A_VENIR,
         },
@@ -459,7 +691,7 @@ describe('Filtres sur les fiches actions', () => {
       createFiche({
         caller,
         ficheInput: {
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
           titre: 'Fiche test pour statut Abandonné',
           statut: StatutEnum.ABANDONNE,
         },
@@ -467,11 +699,11 @@ describe('Filtres sur les fiches actions', () => {
     ]);
 
     const { data: allFiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {},
     });
     const { data: aVenirFiche } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         statuts: [StatutEnum.A_VENIR],
       },
@@ -485,16 +717,30 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur la date de modification', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
+
+    // Créer une fiche sur la collectivité isolée (modifiedAt = maintenant par défaut)
+    await createFiche({
+      caller,
+      ficheInput: {
+        collectiviteId: testCollectiviteId,
+        titre: 'Fiche test modification récente',
+      },
+    });
 
     const { data: fiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         modifiedSince: 'last-15-days',
       },
     });
 
-    expect(fiches).toMatchObject({});
+    expect(fiches.length).toBeGreaterThan(0);
+    expect(fiches).toContainEqual(
+      expect.objectContaining({
+        titre: 'Fiche test modification récente',
+      })
+    );
   });
 
   /*********************************************************************
@@ -509,7 +755,7 @@ describe('Filtres sur les fiches actions', () => {
         .insert(ficheActionTable)
         .values({
           ameliorationContinue: true,
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         })
         .returning();
       const testFicheId = fiche.id;
@@ -520,11 +766,11 @@ describe('Filtres sur les fiches actions', () => {
           .where(eq(ficheActionTable.id, testFicheId));
       });
 
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = router.createCaller({ user: testUser });
 
       const { data: ficheWithAmeliorationContinue } =
         await caller.plans.fiches.listFiches({
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
           filters: {
             ameliorationContinue: true,
           },
@@ -551,12 +797,12 @@ describe('Filtres sur les fiches actions', () => {
 
   describe('Filtres booléens', () => {
     test("Fetch avec filtre sur le fait d'avoir au moins une mesure liée", async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = router.createCaller({ user: testUser });
 
       const [fiche] = await db.db
         .insert(ficheActionTable)
         .values({
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         })
         .returning();
       const testFicheId = fiche.id;
@@ -577,7 +823,7 @@ describe('Filtres sur les fiches actions', () => {
 
       const { data: fichesWithMesuresLiees } =
         await caller.plans.fiches.listFiches({
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
           filters: {
             hasMesuresLiees: true,
           },
@@ -595,12 +841,12 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     test("Fetch avec filtre sur le fait d'avoir au moins un indicateur lié", async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = router.createCaller({ user: testUser });
 
       const [fiche] = await db.db
         .insert(ficheActionTable)
         .values({
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         })
         .returning();
       const testFicheId = fiche.id;
@@ -621,7 +867,7 @@ describe('Filtres sur les fiches actions', () => {
 
       const { data: fichesWithIndicateursLies } =
         await caller.plans.fiches.listFiches({
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
           filters: {
             hasIndicateurLies: true,
           },
@@ -647,12 +893,12 @@ describe('Filtres sur les fiches actions', () => {
 
   describe('Filtres sur absences', () => {
     test('Fetch avec filtre sur aucun pilote', async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = router.createCaller({ user: testUser });
 
       const [fiche] = await db.db
         .insert(ficheActionTable)
         .values({
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         })
         .returning();
       const testFicheId = fiche.id;
@@ -664,7 +910,7 @@ describe('Filtres sur les fiches actions', () => {
       });
 
       const { data: fiches } = await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           noPilote: true,
         },
@@ -683,12 +929,12 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     test('Fetch avec filtre sur aucun service pilote', async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = router.createCaller({ user: testUser });
 
       const [fiche] = await db.db
         .insert(ficheActionTable)
         .values({
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         })
         .returning();
       const testFicheId = fiche.id;
@@ -700,7 +946,7 @@ describe('Filtres sur les fiches actions', () => {
       });
 
       const { data: fiches } = await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           noServicePilote: true,
         },
@@ -719,13 +965,13 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     test('Fetch avec filtre sur aucun statut', async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = router.createCaller({ user: testUser });
 
       const [fiche] = await db.db
         .insert(ficheActionTable)
         .values({
           titre: 'Test aucun statut',
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
           statut: null,
         })
         .returning();
@@ -738,7 +984,7 @@ describe('Filtres sur les fiches actions', () => {
 
       const { data: fichesWithoutStatut } =
         await caller.plans.fiches.listFiches({
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
           filters: {
             noStatut: true,
           },
@@ -760,7 +1006,7 @@ describe('Filtres sur les fiches actions', () => {
         .where(eq(ficheActionTable.id, fiche.id));
 
       const { data: fichesWithStatut } = await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           noStatut: true,
         },
@@ -776,13 +1022,13 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur budget prévisionnel', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const [fiche] = await db.db
       .insert(ficheActionTable)
       .values({
         titre: 'Test budget prévisionnel',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         budgetPrevisionnel: '50000',
       })
       .returning();
@@ -795,7 +1041,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesWithBudget } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         hasBudgetPrevisionnel: true,
       },
@@ -813,14 +1059,14 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur date de fin prévisionnelle', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const [fiche] = await db.db
       .insert(ficheActionTable)
       .values({
         titre: 'Test date de fin prévisionnelle',
         dateFin: '2024-12-31T00:00:00Z',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -832,7 +1078,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesWithDateFin } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         hasDateDeFinPrevisionnelle: true,
       },
@@ -846,14 +1092,14 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur fiche restreinte', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const [fiche] = await db.db
       .insert(ficheActionTable)
       .values({
         titre: 'Test fiche restreinte',
         restreint: true,
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -865,7 +1111,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesRestreintes } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         restreint: true,
       },
@@ -884,13 +1130,13 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur fiche mutualisée', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const [fiche] = await db.db
       .insert(ficheActionTable)
       .values({
         titre: 'Test fiche mutualisée',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -905,7 +1151,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesMutualisees } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         sharedWithCollectivites: true,
       },
@@ -925,7 +1171,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesMutualiseesAfterSharing } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           sharedWithCollectivites: true,
         },
@@ -942,14 +1188,14 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur aucune priorité', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const [fiche] = await db.db
       .insert(ficheActionTable)
       .values({
         titre: 'Test aucune priorité',
         priorite: null,
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -962,7 +1208,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithoutPriorite } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           noPriorite: true,
         },
@@ -981,13 +1227,13 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur aucune note', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const [fiche] = await db.db
       .insert(ficheActionTable)
       .values({
         titre: 'Test aucune note',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -999,7 +1245,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesWithoutNote } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         notes: 'WITHOUT',
       },
@@ -1017,18 +1263,18 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur ficheIds spécifiques', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const [fiche1, fiche2] = await db.db
       .insert(ficheActionTable)
       .values([
         {
           titre: 'Test ficheIds spécifiques 1',
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
         {
           titre: 'Test ficheIds spécifiques 2',
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
       ])
       .returning();
@@ -1042,7 +1288,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesSpecifiques } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         ficheIds: [testFicheId1, testFicheId2],
       },
@@ -1059,14 +1305,14 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur partenaireIds', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     // Create a partenaire tag
     const [partenaireTag] = await db.db
       .insert(partenaireTagTable)
       .values({
         nom: 'Partenaire test',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testPartenaireTagId = partenaireTag.id;
@@ -1076,7 +1322,7 @@ describe('Filtres sur les fiches actions', () => {
       .insert(ficheActionTable)
       .values({
         titre: 'Test partenaireIds',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -1095,7 +1341,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithPartenaireBeforeAddingTag } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           partenaireIds: [testPartenaireTagId],
         },
@@ -1115,7 +1361,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithPartenaire } = await caller.plans.fiches.listFiches(
       {
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           partenaireIds: [testPartenaireTagId],
         },
@@ -1134,14 +1380,14 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur financeurIds', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     // Create a financeur tag
     const [financeurTag] = await db.db
       .insert(financeurTagTable)
       .values({
         nom: 'Financeur test',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFinanceurTagId = financeurTag.id;
@@ -1151,7 +1397,7 @@ describe('Filtres sur les fiches actions', () => {
       .insert(ficheActionTable)
       .values({
         titre: 'Test financeurIds',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -1170,7 +1416,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithFinanceurBeforeAddingTag } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           financeurIds: [testFinanceurTagId],
         },
@@ -1190,7 +1436,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesWithFinanceur } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         financeurIds: [testFinanceurTagId],
       },
@@ -1208,7 +1454,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur thematiqueIds', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     // Create a thematique
     const [thematique] = await db.db
@@ -1224,7 +1470,7 @@ describe('Filtres sur les fiches actions', () => {
       .insert(ficheActionTable)
       .values({
         titre: 'Test thematiqueIds',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -1243,7 +1489,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithThematiqueBeforeAddingTag } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           thematiqueIds: [testThematiqueId],
         },
@@ -1263,7 +1509,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithThematique } = await caller.plans.fiches.listFiches(
       {
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           thematiqueIds: [testThematiqueId],
         },
@@ -1278,7 +1524,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur sousThematiqueIds', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     // Create a thematique first
     const [thematique] = await db.db
@@ -1303,7 +1549,7 @@ describe('Filtres sur les fiches actions', () => {
       .insert(ficheActionTable)
       .values({
         titre: 'Test sousThematiqueIds',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -1325,7 +1571,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithSousThematiqueBeforeAddingTag } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           sousThematiqueIds: [testSousThematiqueId],
         },
@@ -1345,7 +1591,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithSousThematique } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           sousThematiqueIds: [testSousThematiqueId],
         },
@@ -1363,14 +1609,14 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur libreTagsIds', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     // Create a libre tag
     const [libreTag] = await db.db
       .insert(libreTagTable)
       .values({
         nom: 'Libre tag test',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testLibreTagId = libreTag.id;
@@ -1380,7 +1626,7 @@ describe('Filtres sur les fiches actions', () => {
       .insert(ficheActionTable)
       .values({
         titre: 'Test libreTagsIds',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -1399,7 +1645,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithLibreTagBeforeAddingTag } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           libreTagsIds: [testLibreTagId],
         },
@@ -1418,7 +1664,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesWithLibreTag } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         libreTagsIds: [testLibreTagId],
       },
@@ -1432,20 +1678,20 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur aucune personne référente', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const [personneTag] = await db.db
       .insert(personneTagTable)
       .values({
         nom: 'Personne référente test',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
 
     const [fiche] = await db.db
       .insert(ficheActionTable)
       .values({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -1464,7 +1710,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithoutReferent } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           noReferent: true,
         },
@@ -1484,7 +1730,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithReferentAfterAddingTag } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           noReferent: true,
         },
@@ -1498,14 +1744,14 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur personne référente', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     // Create a personne tag
     const [personneTag] = await db.db
       .insert(personneTagTable)
       .values({
         nom: 'Personne référente test',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
 
@@ -1513,7 +1759,7 @@ describe('Filtres sur les fiches actions', () => {
       .insert(personneTagTable)
       .values({
         nom: 'Autre personne référente test',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
 
@@ -1521,7 +1767,7 @@ describe('Filtres sur les fiches actions', () => {
     const [fiche] = await db.db
       .insert(ficheActionTable)
       .values({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -1548,7 +1794,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesWithReferent } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         personneReferenteIds: [personneTag.id],
       },
@@ -1562,7 +1808,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithAnotherReferent } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           personneReferenteIds: [anotherPersonneTag.id],
         },
@@ -1576,13 +1822,13 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur utilisateur référent', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     // Create a fiche
     const [fiche] = await db.db
       .insert(ficheActionTable)
       .values({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -1590,7 +1836,7 @@ describe('Filtres sur les fiches actions', () => {
     // Link fiche to user référent
     await db.db.insert(ficheActionReferentTable).values({
       ficheId: testFicheId,
-      userId: yoloDodo.id,
+      userId: testUser.id,
     });
 
     onTestFinished(async () => {
@@ -1604,9 +1850,9 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithUserReferent } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
-          utilisateurReferentIds: [yoloDodo.id],
+          utilisateurReferentIds: [testUser.id],
         },
       });
 
@@ -1618,9 +1864,9 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithAnotherUserReferent } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
-          utilisateurReferentIds: [YOULOU_DOUDOU.id],
+          utilisateurReferentIds: [otherUserId],
         },
       });
 
@@ -1632,13 +1878,13 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur date de modification après', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
     const modifiedDate = new Date('2024-01-01T00:00:00Z');
 
     const [fiche] = await db.db
       .insert(ficheActionTable)
       .values({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         modifiedAt: modifiedDate.toISOString(),
       })
       .returning();
@@ -1651,7 +1897,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesModifiedAfter } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         modifiedAfter: '2023-12-31T00:00:00Z',
       },
@@ -1665,7 +1911,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesModifiedAfterLater } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           modifiedAfter: '2024-03-01T00:00:00Z',
         },
@@ -1679,104 +1925,23 @@ describe('Filtres sur les fiches actions', () => {
   });
 });
 
-test('Fetch avec filtre sur une action du referentiel associée', async () => {
-  // Test avec une action associée à plusieurs fiches
-  const caller = router.createCaller({ user: yoloDodo });
-
-  const { data: fichesWithAction } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
-    filters: {
-      mesureIds: ['eci_2.1'],
-    },
-  });
-
-  if (!fichesWithAction) {
-    expect.fail();
-  }
-
-  expect(fichesWithAction.length).toBeGreaterThan(1);
-
-  // Test avec une action associée à aucune fiche
-  const { data: noFichesFound } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
-    filters: {
-      mesureIds: ['eci_2.2'],
-    },
-  });
-
-  if (!noFichesFound) {
-    expect.fail();
-  }
-
-  expect(noFichesFound).toHaveLength(0);
-});
-
-test('Fetch avec filtre sur une fiche liée', async () => {
-  await db.db.insert(ficheActionLienTable).values([
-    { ficheUne: 1, ficheDeux: 5 },
-    { ficheUne: 5, ficheDeux: 3 },
-  ]);
-
-  onTestFinished(async () => {
-    await db.db
-      .delete(ficheActionLienTable)
-      .where(eq(ficheActionLienTable.ficheUne, 1));
-    await db.db
-      .delete(ficheActionLienTable)
-      .where(eq(ficheActionLienTable.ficheUne, 5));
-  });
-
-  const caller = router.createCaller({ user: yoloDodo });
-
-  // Test avec une fiche associée à plusieurs fiches
-  const { data: fichesWithFiche } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
-    filters: {
-      linkedFicheIds: [5],
-    },
-    queryOptions: {
-      sort: [{ field: 'created_at', direction: 'asc' }],
-    },
-  });
-
-  if (!fichesWithFiche) {
-    expect.fail();
-  }
-
-  expect(fichesWithFiche).toHaveLength(2);
-
-  // Test qu'une fiche associée à plusieurs fiches n'est pas retournée plusieurs fois
-  const { data: fichesLinkedSeveralTimes } =
-    await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
-      filters: {
-        ficheIds: [5],
-      },
-    });
-
-  expect(fichesLinkedSeveralTimes).toHaveLength(1);
-
-  // Test avec une fiche associée à aucune autre fiche
-  const { data: noFichesFound } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
-    filters: {
-      linkedFicheIds: [10],
-    },
-  });
-
-  if (!noFichesFound) {
-    expect.fail();
-  }
-
-  expect(noFichesFound).toHaveLength(0);
-});
-
 test('Fetch avec filtre sur un indicateur lié', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
+  // Créer une fiche dynamique sur la collectivité isolée
+  const [fiche] = await db.db
+    .insert(ficheActionTable)
+    .values({
+      titre: 'Fiche test indicateur',
+      collectiviteId: testCollectiviteId,
+    })
+    .returning();
+  const testFicheId = fiche.id;
+
+  // Test avec un indicateur inexistant
   const { data: noFichesWithInexistingIndicateur } =
     await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         indicateurIds: [9999],
       },
@@ -1784,21 +1949,24 @@ test('Fetch avec filtre sur un indicateur lié', async () => {
 
   expect(noFichesWithInexistingIndicateur).toHaveLength(0);
 
-  // Lie un indicateur à une fiche
+  // Lie un indicateur existant (donnée référentielle stable) à la fiche dynamique
   await db.db.insert(ficheActionIndicateurTable).values({
-    ficheId: 1,
+    ficheId: testFicheId,
     indicateurId: 56,
   });
 
   onTestFinished(async () => {
     await db.db
       .delete(ficheActionIndicateurTable)
-      .where(eq(ficheActionIndicateurTable.ficheId, 1));
+      .where(eq(ficheActionIndicateurTable.ficheId, testFicheId));
+    await db.db
+      .delete(ficheActionTable)
+      .where(eq(ficheActionTable.id, testFicheId));
   });
 
   const { data: fichesWithExistingIndicateur } =
     await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         indicateurIds: [56],
       },
@@ -1806,155 +1974,166 @@ test('Fetch avec filtre sur un indicateur lié', async () => {
 
   expect(fichesWithExistingIndicateur.length).toBeGreaterThan(0);
   const ficheWithIndicateur = fichesWithExistingIndicateur.find(
-    (fiche) => fiche.id === 1
+    (f) => f.id === testFicheId
   );
   expect(ficheWithIndicateur).toBeDefined();
 });
 
 test('Fetch avec filtre sur un statut', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
-  const { data: emptyData } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+  const caller = router.createCaller({ user: testUser });
+
+  // Créer des fiches avec des statuts connus sur la collectivité isolée
+  await createFiche({
+    caller,
+    ficheInput: {
+      collectiviteId: testCollectiviteId,
+      titre: 'Fiche statut En cours',
+      statut: StatutEnum.EN_COURS,
+    },
+  });
+  await createFiche({
+    caller,
+    ficheInput: {
+      collectiviteId: testCollectiviteId,
+      titre: 'Fiche statut A venir',
+      statut: StatutEnum.A_VENIR,
+    },
+  });
+
+  // Filtre sur 'En cours' uniquement
+  const { data: enCoursData } = await caller.plans.fiches.listFiches({
+    collectiviteId: testCollectiviteId,
     filters: {
       statuts: ['En cours'],
     },
   });
 
-  expect(emptyData.length).toBe(0);
+  expect(enCoursData.length).toBeGreaterThan(0);
+  for (const fiche of enCoursData) {
+    expect(fiche.statut).toBe(StatutEnum.EN_COURS);
+  }
 
+  // Filtre sur 'En cours' et 'À venir'
   const { data: withData } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       statuts: ['En cours', 'À venir'],
     },
   });
 
-  expect(withData.length).toBeGreaterThan(0);
-
-  // Que des fiches avec un statut 'À venir' dans les seeds de base
+  expect(withData.length).toBeGreaterThanOrEqual(2);
   for (const fiche of withData) {
-    expect(fiche.statut).toBe(StatutEnum.A_VENIR);
+    expect([StatutEnum.EN_COURS, StatutEnum.A_VENIR]).toContain(fiche.statut);
   }
-});
-
-test('Fetch avec filtre sur la date de modification', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
-
-  const { data: fiches } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
-    filters: {
-      modifiedSince: 'last-15-days',
-    },
-  });
-
-  expect(fiches.length).toBeGreaterThan(0);
 });
 
 test('Fetch avec filtre sur aucun plan', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
-  const { data: initialWithoutData } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+  // Créer un plan sur la collectivité isolée
+  const plan = await caller.plans.plans.create({
+    nom: 'Plan test noPlan',
+    collectiviteId: testCollectiviteId,
+  });
+
+  onTestFinished(async () => {
+    await caller.plans.plans.delete({ planId: plan.id });
+  });
+
+  // Créer une fiche associée au plan et une fiche sans plan
+  const { ficheIds } = await withOnTestFinished(createFiches)({
+    caller,
+    ficheInputs: [
+      {
+        collectiviteId: testCollectiviteId,
+        titre: 'Fiche avec plan',
+        axeId: plan.id,
+      },
+      {
+        collectiviteId: testCollectiviteId,
+        titre: 'Fiche sans plan',
+      },
+    ],
+  });
+
+  // Fiches sans plan
+  const { data: withoutPlan } = await caller.plans.fiches.listFiches({
+    collectiviteId: testCollectiviteId,
     filters: {
+      ficheIds,
       noPlan: true,
     },
   });
 
-  const initialNumberOfFichesWithoutPlan = initialWithoutData.length;
+  expect(withoutPlan).toHaveLength(1);
+  expect(withoutPlan[0].titre).toBe('Fiche sans plan');
 
+  // Fiches avec plan
   const { data: withPlan } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
+      ficheIds,
       noPlan: false,
     },
   });
 
-  expect(withPlan.length).toBeGreaterThan(0);
-
-  const ficheWithPlan = withPlan.at(0);
-  if (!ficheWithPlan) {
-    expect.fail();
-  }
-
-  // On supprime le plan de la première fiche
-  await db.db
-    .delete(ficheActionAxeTable)
-    .where(eq(ficheActionAxeTable.ficheId, ficheWithPlan.id));
-
-  // On ré-associe le plan à la fiche en fin de test
-  onTestFinished(async () => {
-    if (ficheWithPlan.axes && ficheWithPlan.axes.length > 0) {
-      await db.db
-        .insert(ficheActionAxeTable)
-        .values({ axeId: ficheWithPlan.axes[0].id, ficheId: ficheWithPlan.id });
-    }
-  });
-
-  const { data: withoutPlan } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
-    filters: {
-      noPlan: true,
-    },
-  });
-
-  expect(withoutPlan).toHaveLength(initialNumberOfFichesWithoutPlan + 1);
-  expect(withoutPlan.map((f) => f.id)).toContain(ficheWithPlan.id);
+  expect(withPlan).toHaveLength(1);
+  expect(withPlan[0].titre).toBe('Fiche avec plan');
 });
 
 test('Fetch avec filtre les plansIds', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
-  const { data: withPlan } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
-    filters: {
-      noPlan: false,
+  // Créer un plan dynamique sur la collectivité isolée
+  const plan = await caller.plans.plans.create({
+    nom: 'Plan test plansIds',
+    collectiviteId: testCollectiviteId,
+  });
+
+  // Créer une fiche associée au plan
+  await createFiche({
+    caller,
+    ficheInput: {
+      collectiviteId: testCollectiviteId,
+      titre: 'Fiche test plansIds',
+      axeId: plan.id,
     },
   });
 
-  expect(withPlan.length).toBeGreaterThan(0);
-
-  const ficheWithPlan = withPlan.at(0);
-  if (!ficheWithPlan) {
-    expect.fail();
-  }
-
-  const firstPlanId = ficheWithPlan.plans?.find(
-    (p) => p.collectiviteId === COLLECTIVITE_ID
-  )?.id;
-
-  if (!firstPlanId) {
-    expect.fail();
-  }
+  onTestFinished(async () => {
+    await caller.plans.plans.delete({ planId: plan.id });
+  });
 
   const { data: withPlanId } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
-      planActionIds: [firstPlanId],
+      planActionIds: [plan.id],
     },
   });
 
   expect(withPlanId.length).toBeGreaterThan(0);
 
+  // Toutes les fiches retournées doivent appartenir au plan filtré
   const planNotFound = withPlanId.find(
-    (f) => !f.plans?.find((p) => p.id === firstPlanId)
+    (f) => !f.plans?.find((p) => p.id === plan.id)
   );
 
   expect(planNotFound).toBeUndefined();
 });
 
 test('Fetch avec noPlan false et planActionIds ne retourne que les fiches du plan sélectionné', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [ficheA, ficheB] = await db.db
     .insert(ficheActionTable)
     .values([
       {
         titre: 'Fiche plan A - filtre noPlan planActionIds',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       },
       {
         titre: 'Fiche plan B - filtre noPlan planActionIds',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       },
     ])
     .returning();
@@ -1962,8 +2141,8 @@ test('Fetch avec noPlan false et planActionIds ne retourne que les fiches du pla
   const [planA, planB] = await db.db
     .insert(axeTable)
     .values([
-      { nom: 'Plan A filtre combiné', collectiviteId: COLLECTIVITE_ID },
-      { nom: 'Plan B filtre combiné', collectiviteId: COLLECTIVITE_ID },
+      { nom: 'Plan A filtre combiné', collectiviteId: testCollectiviteId },
+      { nom: 'Plan B filtre combiné', collectiviteId: testCollectiviteId },
     ])
     .returning();
 
@@ -1985,7 +2164,7 @@ test('Fetch avec noPlan false et planActionIds ne retourne que les fiches du pla
   });
 
   const { data: fichesFilteredByPlanA } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       noPlan: false,
       planActionIds: [planA.id],
@@ -2004,25 +2183,53 @@ test('Fetch avec noPlan false et planActionIds ne retourne que les fiches du pla
 });
 
 test('Fetch avec selectAll retourne tous les IDs correspondant aux filtres', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
+
+  // Créer des fiches avec statut 'À venir' sur la collectivité isolée
+  await Promise.all([
+    createFiche({
+      caller,
+      ficheInput: {
+        collectiviteId: testCollectiviteId,
+        titre: 'Fiche selectAll A venir 1',
+        statut: StatutEnum.A_VENIR,
+      },
+    }),
+    createFiche({
+      caller,
+      ficheInput: {
+        collectiviteId: testCollectiviteId,
+        titre: 'Fiche selectAll A venir 2',
+        statut: StatutEnum.A_VENIR,
+      },
+    }),
+    createFiche({
+      caller,
+      ficheInput: {
+        collectiviteId: testCollectiviteId,
+        titre: 'Fiche selectAll A venir 3',
+        statut: StatutEnum.A_VENIR,
+      },
+    }),
+  ]);
 
   // Récupérer toutes les fiches sans pagination pour avoir la référence
   const { data: fichesFromSimpleSelect } = await caller.plans.fiches.listFiches(
     {
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         statuts: ['À venir'],
       },
       queryOptions: {
         page: 1,
-        limit: 1000, // Un nombre élevé pour récupérer toutes les fiches
+        limit: 1000,
       },
     }
   );
 
-  // Récupérer les fiches avec pagination (page 1, 5 éléments)
+  // Récupérer les fiches avec limit 'all'
   const { data: fichesFromSelectAll } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       statuts: ['À venir'],
     },
@@ -2037,14 +2244,14 @@ test('Fetch avec selectAll retourne tous les IDs correspondant aux filtres', asy
 });
 
 test('Fetch avec filtre sur les années de notes', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   // Créer une fiche de test
   const [fiche] = await db.db
     .insert(ficheActionTable)
     .values({
       titre: 'Fiche test pour notes',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
   const testFicheId = fiche.id;
@@ -2056,8 +2263,8 @@ test('Fetch avec filtre sur les années de notes', async () => {
       ficheId: testFicheId,
       dateNote: '2023-01-01T00:00:00Z',
       note: 'Note 2023',
-      createdBy: yoloDodo.id,
-      modifiedBy: yoloDodo.id,
+      createdBy: testUser.id,
+      modifiedBy: testUser.id,
       createdAt: now.toISOString(),
       modifiedAt: now.toISOString(),
     },
@@ -2065,8 +2272,8 @@ test('Fetch avec filtre sur les années de notes', async () => {
       ficheId: testFicheId,
       dateNote: '2024-01-01T00:00:00Z',
       note: 'Note 2024',
-      createdBy: yoloDodo.id,
-      modifiedBy: yoloDodo.id,
+      createdBy: testUser.id,
+      modifiedBy: testUser.id,
       createdAt: now.toISOString(),
       modifiedAt: now.toISOString(),
     },
@@ -2074,8 +2281,8 @@ test('Fetch avec filtre sur les années de notes', async () => {
       ficheId: testFicheId,
       dateNote: '2025-01-01T00:00:00Z',
       note: 'Note 2025',
-      createdBy: yoloDodo.id,
-      modifiedBy: yoloDodo.id,
+      createdBy: testUser.id,
+      modifiedBy: testUser.id,
       createdAt: now.toISOString(),
       modifiedAt: now.toISOString(),
     },
@@ -2093,7 +2300,7 @@ test('Fetch avec filtre sur les années de notes', async () => {
 
   // Test avec filtre sur l'année 2023
   const { data: fiches2023 } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       anneesNotes: ['2023'],
     },
@@ -2109,7 +2316,7 @@ test('Fetch avec filtre sur les années de notes', async () => {
 
   // Test avec filtre sur plusieurs années
   const { data: fichesMultiples } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       anneesNotes: ['2024', '2025'],
     },
@@ -2125,7 +2332,7 @@ test('Fetch avec filtre sur les années de notes', async () => {
 
   // Test avec une année qui n'existe pas
   const { data: fichesInexistantes } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       anneesNotes: ['2020'],
     },
@@ -2138,13 +2345,13 @@ test('Fetch avec filtre sur les années de notes', async () => {
 });
 
 test('Fetch avec filtre sur priorites', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [fiche] = await db.db
     .insert(ficheActionTable)
     .values({
       priorite: 'Élevé',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
   const testFicheId = fiche.id;
@@ -2156,7 +2363,7 @@ test('Fetch avec filtre sur priorites', async () => {
   });
 
   const { data: fichesWithPriorite } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       priorites: ['Élevé'],
     },
@@ -2175,7 +2382,7 @@ test('Fetch avec filtre sur priorites', async () => {
 
   const { data: fichesWithAnotherPriorite } =
     await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         priorites: ['Moyen'],
       },
@@ -2189,13 +2396,13 @@ test('Fetch avec filtre sur priorites', async () => {
 });
 
 test('Fetch avec filtre sur cibles', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [fiche] = await db.db
     .insert(ficheActionTable)
     .values({
       cibles: ['Elus locaux', 'Agents'],
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
   const testFicheId = fiche.id;
@@ -2207,7 +2414,7 @@ test('Fetch avec filtre sur cibles', async () => {
   });
 
   const { data: fichesWithCibles } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       cibles: ['Elus locaux'],
     },
@@ -2226,7 +2433,7 @@ test('Fetch avec filtre sur cibles', async () => {
   // Try with another cible which should not be found
   const { data: fichesWithAnotherCible } = await caller.plans.fiches.listFiches(
     {
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         cibles: ['Partenaires'],
       },
@@ -2241,12 +2448,12 @@ test('Fetch avec filtre sur cibles', async () => {
 });
 
 test('Fetch avec filtre sur aucune tag personnalisé', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [fiche] = await db.db
     .insert(ficheActionTable)
     .values({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
   const testFicheId = fiche.id;
@@ -2255,7 +2462,7 @@ test('Fetch avec filtre sur aucune tag personnalisé', async () => {
     .insert(libreTagTable)
     .values({
       nom: 'Test Tag',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -2270,7 +2477,7 @@ test('Fetch avec filtre sur aucune tag personnalisé', async () => {
   });
 
   const { data: fichesWithoutTag } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       noTag: true,
     },
@@ -2289,7 +2496,7 @@ test('Fetch avec filtre sur aucune tag personnalisé', async () => {
   });
 
   const { data: fichesWithTag } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       libreTagsIds: [tag.id],
     },
@@ -2303,7 +2510,7 @@ test('Fetch avec filtre sur aucune tag personnalisé', async () => {
 
   const { data: fichesWithoutTagAfterAddingTag } =
     await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         noTag: true,
       },
@@ -2317,12 +2524,12 @@ test('Fetch avec filtre sur aucune tag personnalisé', async () => {
 });
 
 test('Fetch avec filtre sur actions dans plusieurs plans', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [fiche] = await db.db
     .insert(ficheActionTable)
     .values({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
   const testFicheId = fiche.id;
@@ -2332,11 +2539,11 @@ test('Fetch avec filtre sur actions dans plusieurs plans', async () => {
     .values([
       {
         nom: 'Test Plan 1',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       },
       {
         nom: 'Test Plan 2',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       },
     ])
     .returning();
@@ -2369,7 +2576,7 @@ test('Fetch avec filtre sur actions dans plusieurs plans', async () => {
 
   const { data: fichesWithSeveralPlans } = await caller.plans.fiches.listFiches(
     {
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         doesBelongToSeveralPlans: true,
       },
@@ -2384,7 +2591,7 @@ test('Fetch avec filtre sur actions dans plusieurs plans', async () => {
 
   const { data: fichesWithoutSeveralPlans } =
     await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         doesBelongToSeveralPlans: false,
       },
@@ -2398,13 +2605,13 @@ test('Fetch avec filtre sur actions dans plusieurs plans', async () => {
 });
 
 test('Fetch avec filtre sur structurePiloteIds', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
   // Create a structure tag
   const [structureTag] = await db.db
     .insert(structureTagTable)
     .values({
       nom: 'Structure test',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -2412,7 +2619,7 @@ test('Fetch avec filtre sur structurePiloteIds', async () => {
   const [fiche] = await db.db
     .insert(ficheActionTable)
     .values({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
   const testFicheId = fiche.id;
@@ -2436,7 +2643,7 @@ test('Fetch avec filtre sur structurePiloteIds', async () => {
   });
 
   const { data: fichesWithStructure } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       structurePiloteIds: [structureTag.id],
     },
@@ -2450,7 +2657,7 @@ test('Fetch avec filtre sur structurePiloteIds', async () => {
 
   const { data: fichesWithAnotherStructure } =
     await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         structurePiloteIds: [structureTag.id - 1],
       },
@@ -2463,13 +2670,13 @@ test('Fetch avec filtre sur structurePiloteIds', async () => {
 });
 
 test('Fetch avec filtre sur debutPeriode et finPeriode', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [fiche] = await db.db
     .insert(ficheActionTable)
     .values({
       dateDebut: '2024-06-01T00:00:00Z',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
   const testFicheId = fiche.id;
@@ -2481,7 +2688,7 @@ test('Fetch avec filtre sur debutPeriode et finPeriode', async () => {
   });
 
   const { data: fichesWithPeriode } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       typePeriode: 'debut',
       debutPeriode: '2024-05-01T00:00:00Z',
@@ -2497,7 +2704,7 @@ test('Fetch avec filtre sur debutPeriode et finPeriode', async () => {
 
   const { data: fichesWithAnotherPeriode } =
     await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         typePeriode: 'debut',
         debutPeriode: '2024-07-01T00:00:00Z',
@@ -2512,13 +2719,13 @@ test('Fetch avec filtre sur debutPeriode et finPeriode', async () => {
 });
 
 test('Fetch sans filtre exclut les sous-fiches par défaut', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [parentFiche] = await db.db
     .insert(ficheActionTable)
     .values({
       titre: 'Fiche parente test',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -2526,7 +2733,7 @@ test('Fetch sans filtre exclut les sous-fiches par défaut', async () => {
     .insert(ficheActionTable)
     .values({
       titre: 'Sous-fiche test',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       parentId: parentFiche.id,
     })
     .returning();
@@ -2542,7 +2749,7 @@ test('Fetch sans filtre exclut les sous-fiches par défaut', async () => {
 
   // Sans withChildren, les sous-fiches ne doivent pas apparaître
   const { data: fichesWithoutChildren } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       texteNomOuDescription: 'test',
     },
@@ -2564,13 +2771,13 @@ test('Fetch sans filtre exclut les sous-fiches par défaut', async () => {
 });
 
 test('Fetch avec withChildren inclut les sous-fiches', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [parentFiche] = await db.db
     .insert(ficheActionTable)
     .values({
       titre: 'Fiche parente avec children',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -2578,7 +2785,7 @@ test('Fetch avec withChildren inclut les sous-fiches', async () => {
     .insert(ficheActionTable)
     .values({
       titre: 'Sous-fiche avec children',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       parentId: parentFiche.id,
     })
     .returning();
@@ -2594,7 +2801,7 @@ test('Fetch avec withChildren inclut les sous-fiches', async () => {
 
   // Avec withChildren, les sous-fiches doivent apparaître
   const { data: fichesWithChildren } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       texteNomOuDescription: 'children',
       withChildren: true,
@@ -2616,7 +2823,7 @@ test('Fetch avec withChildren inclut les sous-fiches', async () => {
   );
 
   const { data: fichesWithChildren2 } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       ficheIds: [parentFiche.id],
       withChildren: true,
@@ -2627,13 +2834,13 @@ test('Fetch avec withChildren inclut les sous-fiches', async () => {
 });
 
 test('Fetch avec parentsId retourne uniquement les sous-fiches des parents spécifiés', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [parentFiche1] = await db.db
     .insert(ficheActionTable)
     .values({
       titre: 'Parent 1',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -2641,7 +2848,7 @@ test('Fetch avec parentsId retourne uniquement les sous-fiches des parents spéc
     .insert(ficheActionTable)
     .values({
       titre: 'Parent 2',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -2649,7 +2856,7 @@ test('Fetch avec parentsId retourne uniquement les sous-fiches des parents spéc
     .insert(ficheActionTable)
     .values({
       titre: 'Sous-fiche Parent 1',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       parentId: parentFiche1.id,
     })
     .returning();
@@ -2658,7 +2865,7 @@ test('Fetch avec parentsId retourne uniquement les sous-fiches des parents spéc
     .insert(ficheActionTable)
     .values({
       titre: 'Sous-fiche Parent 2',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       parentId: parentFiche2.id,
     })
     .returning();
@@ -2674,7 +2881,7 @@ test('Fetch avec parentsId retourne uniquement les sous-fiches des parents spéc
 
   // Avec parentsId pour parentFiche1, seules ses sous-fiches doivent apparaître
   const { data: fichesWithParentsId } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       parentsId: [parentFiche1.id],
     },
@@ -2707,13 +2914,13 @@ test('Fetch avec parentsId retourne uniquement les sous-fiches des parents spéc
 });
 
 test('Fetch avec les filtres parentsId et withChildren génère une erreur', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [parentFiche] = await db.db
     .insert(ficheActionTable)
     .values({
       titre: 'Parent pour test withChildren',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -2721,7 +2928,7 @@ test('Fetch avec les filtres parentsId et withChildren génère une erreur', asy
     .insert(ficheActionTable)
     .values({
       titre: 'Sous-fiche pour test withChildren',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       parentId: parentFiche.id,
     })
     .returning();
@@ -2737,7 +2944,7 @@ test('Fetch avec les filtres parentsId et withChildren génère une erreur', asy
 
   await expect(
     caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         parentsId: [parentFiche.id],
         withChildren: true,
@@ -2749,13 +2956,13 @@ test('Fetch avec les filtres parentsId et withChildren génère une erreur', asy
 });
 
 test("Fetch avec parentsId combiné avec d'autres filtres", async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [parentFiche] = await db.db
     .insert(ficheActionTable)
     .values({
       titre: 'Parent avec restriction',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -2763,7 +2970,7 @@ test("Fetch avec parentsId combiné avec d'autres filtres", async () => {
     .insert(ficheActionTable)
     .values({
       titre: 'Sous-fiche 1 restreinte',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       parentId: parentFiche.id,
       restreint: true,
     })
@@ -2773,7 +2980,7 @@ test("Fetch avec parentsId combiné avec d'autres filtres", async () => {
     .insert(ficheActionTable)
     .values({
       titre: 'Sous-fiche 2 non restreinte',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       parentId: parentFiche.id,
       restreint: false,
     })
@@ -2790,7 +2997,7 @@ test("Fetch avec parentsId combiné avec d'autres filtres", async () => {
 
   // Filtrer par parentsId ET restreint
   const { data: fichesRestreintes } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       parentsId: [parentFiche.id],
       restreint: true,
@@ -2812,13 +3019,13 @@ test("Fetch avec parentsId combiné avec d'autres filtres", async () => {
 });
 
 test('Fetch avec onlyChildren liste toutes les sous-fiches mais exclut les fiches parentes', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const { ficheIds } = await withOnTestFinished(createFiches)({
     caller,
     ficheInputs: [
-      { titre: 'Parent 1 onlyChildren', collectiviteId: COLLECTIVITE_ID },
-      { titre: 'Parent 2 onlyChildren', collectiviteId: COLLECTIVITE_ID },
+      { titre: 'Parent 1 onlyChildren', collectiviteId: testCollectiviteId },
+      { titre: 'Parent 2 onlyChildren', collectiviteId: testCollectiviteId },
     ],
   });
   const [parentFiche1Id, parentFiche2Id] = ficheIds;
@@ -2828,17 +3035,17 @@ test('Fetch avec onlyChildren liste toutes les sous-fiches mais exclut les fiche
     ficheInputs: [
       {
         titre: 'Sous-fiche Parent 1 onlyChildren',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         parentId: parentFiche1Id,
       },
       {
         titre: 'Sous-fiche Parent 2 onlyChildren',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         parentId: parentFiche2Id,
       },
       {
         titre: 'Fiche sans parent onlyChildren',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       },
     ],
   });
@@ -2846,7 +3053,7 @@ test('Fetch avec onlyChildren liste toutes les sous-fiches mais exclut les fiche
 
   // Avec onlyChildren, seules les sous-fiches doivent apparaître
   const { data: fichesOnlyChildren } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       onlyChildren: true,
     },
@@ -2888,18 +3095,18 @@ test('Fetch avec onlyChildren liste toutes les sous-fiches mais exclut les fiche
 });
 
 test('Fetch avec onlyChildren et parentsId liste uniquement les sous-fiches des parents spécifiés', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const { ficheIds } = await withOnTestFinished(createFiches)({
     caller,
     ficheInputs: [
       {
         titre: 'Parent 1 onlyChildren parentsId',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       },
       {
         titre: 'Parent 2 onlyChildren parentsId',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       },
     ],
   });
@@ -2910,12 +3117,12 @@ test('Fetch avec onlyChildren et parentsId liste uniquement les sous-fiches des 
     ficheInputs: [
       {
         titre: 'Sous-fiche Parent 1 onlyChildren parentsId',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         parentId: parentFiche1Id,
       },
       {
         titre: 'Sous-fiche Parent 2 onlyChildren parentsId',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         parentId: parentFiche2Id,
       },
     ],
@@ -2925,7 +3132,7 @@ test('Fetch avec onlyChildren et parentsId liste uniquement les sous-fiches des 
   // Avec onlyChildren et parentsId pour parentFiche1, seules ses sous-fiches doivent apparaître
   const { data: fichesOnlyChildrenParentsId } =
     await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         onlyChildren: true,
         parentsId: [parentFiche1Id],
@@ -2962,27 +3169,27 @@ test('Fetch avec onlyChildren et parentsId liste uniquement les sous-fiches des 
 });
 
 test('Fetch avec onlyChildren ignore withChildren', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const parentFicheId = await createFiche({
     caller,
     ficheInput: {
       titre: 'Parent onlyChildren withChildren',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     },
   });
   const subFicheId = await createFiche({
     caller,
     ficheInput: {
       titre: 'Sous-fiche onlyChildren withChildren',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       parentId: parentFicheId,
     },
   });
 
   // Avec onlyChildren seul
   const { data: fichesOnlyChildren } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       texteNomOuDescription: 'onlyChildren withChildren',
       onlyChildren: true,
@@ -2992,7 +3199,7 @@ test('Fetch avec onlyChildren ignore withChildren', async () => {
   // Avec onlyChildren ET withChildren (withChildren doit être ignoré)
   const { data: fichesOnlyChildrenWithChildren } =
     await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         texteNomOuDescription: 'onlyChildren withChildren',
         onlyChildren: true,
@@ -3032,14 +3239,14 @@ test('Fetch avec onlyChildren ignore withChildren', async () => {
 });
 
 test('Fetch avec filtre sur axeIds', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   // Create a plan
   const [plan] = await db.db
     .insert(axeTable)
     .values({
       nom: 'Test Plan',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -3049,7 +3256,7 @@ test('Fetch avec filtre sur axeIds', async () => {
     .values([
       {
         nom: 'Test Axe 1',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         plan: plan.id,
       },
     ])
@@ -3060,7 +3267,7 @@ test('Fetch avec filtre sur axeIds', async () => {
     .insert(ficheActionTable)
     .values({
       titre: 'Fiche test axeIds 1',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -3077,7 +3284,7 @@ test('Fetch avec filtre sur axeIds', async () => {
 
   // Test filtering by first axe
   const { data: fichesWithAxe1 } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       axesId: [axe.id],
     },
@@ -3099,7 +3306,7 @@ test('Fetch avec filtre sur axeIds', async () => {
 
   const { data: fichesWithAxe1AfterAddingFiche } =
     await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         axesId: [axe.id],
       },
@@ -3113,17 +3320,17 @@ test('Fetch avec filtre sur axeIds', async () => {
 });
 
 test('Exclut les fiches supprimées (soft delete)', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [ficheActive, ficheDeleted] = await db.db
     .insert(ficheActionTable)
     .values([
       {
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         titre: 'Fiche active',
       },
       {
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         titre: 'Fiche supprimée',
         deleted: true,
       },
@@ -3140,7 +3347,7 @@ test('Exclut les fiches supprimées (soft delete)', async () => {
   });
 
   const { data } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {},
     queryOptions: { page: 1, limit: 50 },
   });
@@ -3148,4 +3355,6 @@ test('Exclut les fiches supprimées (soft delete)', async () => {
   const ids = data.map((f) => f.id);
   expect(ids).toContain(ficheActive.id);
   expect(ids).not.toContain(ficheDeleted.id);
+});
+
 });

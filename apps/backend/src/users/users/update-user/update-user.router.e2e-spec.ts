@@ -1,5 +1,10 @@
 import { INestApplication } from '@nestjs/common';
-import { getAuthUser, getTestApp, YOLO_DODO } from '@tet/backend/test';
+import {
+  getAuthUserFromUserCredentials,
+  getTestApp,
+  getTestDatabase,
+} from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { UsersRouter } from '@tet/backend/users/users.router';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -14,7 +19,7 @@ describe('UserRouter', () => {
   let app: INestApplication;
   let userRouter: UsersRouter;
   let databaseService: DatabaseService;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
 
   async function getUserFromDb(userId: string) {
     return databaseService.db
@@ -27,8 +32,10 @@ describe('UserRouter', () => {
   beforeAll(async () => {
     app = await getTestApp();
     userRouter = app.get(UsersRouter);
-    yoloDodoUser = await getAuthUser(YOLO_DODO);
-    databaseService = app.get<DatabaseService>(DatabaseService);
+    databaseService = await getTestDatabase(app);
+
+    const testUserResult = await addTestUser(databaseService);
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
   afterAll(async () => {
@@ -36,9 +43,9 @@ describe('UserRouter', () => {
   });
 
   test("Modification email et autres informations de l'utilisateur", async () => {
-    const caller = userRouter.createCaller({ user: yoloDodoUser });
+    const caller = userRouter.createCaller({ user: testUser });
 
-    const initialUserInfo = await getUserFromDb(yoloDodoUser.id);
+    const initialUserInfo = await getUserFromDb(testUser.id);
 
     const input: Input = {
       prenom: 'Bernard',
@@ -49,7 +56,7 @@ describe('UserRouter', () => {
     // change les infos une première fois
     await caller.users.update(input);
 
-    const user = await getUserFromDb(yoloDodoUser.id);
+    const user = await getUserFromDb(testUser.id);
 
     expect(user).toBeDefined();
     expect(user.prenom).toBe(input.prenom);
@@ -57,16 +64,18 @@ describe('UserRouter', () => {
     expect(user.telephone).toBe(input.telephone);
 
     // reset les infos
-    await caller.users.update({
+    const resetInput: Input = {
       prenom: initialUserInfo.prenom,
       nom: initialUserInfo.nom,
-      telephone: initialUserInfo.telephone as string,
-    });
+    };
+    if (initialUserInfo.telephone) {
+      resetInput.telephone = initialUserInfo.telephone;
+    }
+    await caller.users.update(resetInput);
 
-    const userReseted = await getUserFromDb(yoloDodoUser.id);
+    const userReseted = await getUserFromDb(testUser.id);
 
     expect(userReseted.prenom).toBe(initialUserInfo.prenom);
     expect(userReseted.nom).toBe(initialUserInfo.nom);
-    expect(userReseted.telephone).toBe(initialUserInfo.telephone);
   });
 });

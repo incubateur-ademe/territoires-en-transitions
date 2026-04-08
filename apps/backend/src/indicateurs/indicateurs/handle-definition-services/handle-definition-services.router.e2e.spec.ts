@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import {
   getAuthUser,
   getAuthUserFromUserCredentials,
@@ -19,17 +20,18 @@ describe('IndicateurDefinitionServiceRouter', () => {
   let router: TrpcRouter;
   let yoloDodo: AuthenticatedUser;
   let db: DatabaseService;
+  let app: INestApplication;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     db = await getTestDatabase(app);
     router = app.get(TrpcRouter);
 
     yoloDodo = await getAuthUser(YOLO_DODO);
+  });
 
-    return async () => {
-      await app.close();
-    };
+  afterAll(async () => {
+    await app.close();
   });
 
   test('list, update, delete services associated with an indicateur and a collectivite', async () => {

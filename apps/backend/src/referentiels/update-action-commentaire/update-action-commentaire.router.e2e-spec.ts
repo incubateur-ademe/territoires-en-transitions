@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { getAuthUserFromUserCredentials } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -30,9 +31,10 @@ describe('UpdateActionCommentaireRouter', () => {
   let collectivite: Collectivite;
   let databaseService: DatabaseService;
   let input: Input;
+  let app: INestApplication;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
 
@@ -69,13 +71,10 @@ describe('UpdateActionCommentaireRouter', () => {
       actionId: 'cae_1.1.1.1.2',
       commentaire: 'Mon commentaire de précision',
     };
+  });
 
-    return async () => {
-      await testCollectiviteAndUsersResult.cleanup();
-      if (app) {
-        await app.close();
-      }
-    };
+  afterAll(async () => {
+    await app.close();
   });
 
   afterEach(async () => {

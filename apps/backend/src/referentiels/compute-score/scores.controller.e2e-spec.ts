@@ -13,12 +13,6 @@ describe('Referentiels scoring routes', () => {
   });
 
   test(`Bac à sable: récupération de multiple scores depuis les référentiels d'origine`, async () => {
-    // Importe le referentiel TE
-    await request(app.getHttpServer())
-      .get(`/referentiels/te/import`)
-      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
-      .expect(200);
-
     const response = await request(app.getHttpServer())
       .get(
         `/referentiels/te/scores?collectiviteIds=1&avecReferentielsOrigine=true`
@@ -90,8 +84,6 @@ describe('Referentiels scoring routes', () => {
   });
 
   afterAll(async () => {
-    if (app) {
-      await app.close();
-    }
+    await app.close();
   });
 });

@@ -29,7 +29,7 @@ export default class ListPersonnalisationQuestionsService {
               'ordonnancement', ${questionChoixTable.ordonnancement},
               'formulation', ${questionChoixTable.formulation}
             )
-            ORDER BY ${questionChoixTable.ordonnancement}
+            ORDER BY ${questionChoixTable.ordonnancement} NULLS LAST, ${questionChoixTable.id}
           )
         `.as('choix'),
       })

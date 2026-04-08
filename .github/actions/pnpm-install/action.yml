@@ -26,6 +26,20 @@ runs:
         pnpm config set '//npm.bryntum.com/:_authToken' "${{ inputs.bryntum_access_token }}"
         pnpm install --frozen-lockfile
 
+    # node-canvas has no prebuild for Node 24 yet; rebuild compiles from source and needs Cairo/Pixman dev libs.
+    - name: Install canvas native build dependencies
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          build-essential \
+          pkg-config \
+          libcairo2-dev \
+          libpango1.0-dev \
+          libjpeg-dev \
+          libgif-dev \
+          librsvg2-dev
+
     - name: Rebuild native dependencies
       shell: bash
       run: pnpm rebuild canvas

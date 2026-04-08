@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { createFiche } from '@tet/backend/plans/fiches/fiches.test-fixture';
 import { getAuthUser, getTestApp, YOLO_DODO } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -10,16 +11,17 @@ const collectiviteId = 2;
 describe('IndicateurDefinitionFichesRouter', () => {
   let router: TrpcRouter;
   let yoloDodo: AuthenticatedUser;
+  let app: INestApplication;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = app.get(TrpcRouter);
 
     yoloDodo = await getAuthUser(YOLO_DODO);
+  });
 
-    return async () => {
-      await app.close();
-    };
+  afterAll(async () => {
+    await app.close();
   });
 
   test('should update indicateur linked fiches', async () => {

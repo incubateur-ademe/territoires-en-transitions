@@ -1,10 +1,9 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
-  getAuthUser,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
@@ -18,15 +17,17 @@ import { axeIndicateurTable } from '../../fiches/shared/models/axe-indicateur.ta
 import { axeTable } from '../../fiches/shared/models/axe.table';
 
 describe('Supprimer un axe', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
 
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
+  let noAccessUser: AuthenticatedUser;
   let planId: number;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await app.get(TrpcRouter);
     db = await getTestDatabase(app);
 
@@ -44,9 +45,13 @@ describe('Supprimer un axe', () => {
       testCollectiviteAndUserResult.user
     );
 
-    return async () => {
-      await testCollectiviteAndUserResult.cleanup();
-    };
+    const noAccessUserResult = await addTestUser(db);
+    noAccessUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
+
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   beforeEach(async () => {
@@ -356,8 +361,7 @@ describe('Supprimer un axe', () => {
       });
 
       // Utilisateur sans droits
-      const yoloDodoUser = await getAuthUser(YOLO_DODO);
-      const unauthorizedCaller = router.createCaller({ user: yoloDodoUser });
+      const unauthorizedCaller = router.createCaller({ user: noAccessUser });
 
       await expect(
         unauthorizedCaller.plans.axes.delete({ axeId: createdAxe.id })

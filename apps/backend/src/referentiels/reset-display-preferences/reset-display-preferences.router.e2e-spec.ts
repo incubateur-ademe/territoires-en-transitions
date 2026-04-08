@@ -48,13 +48,10 @@ describe('ResetDisplayPreferencesRouter', () => {
     editorUser = getAuthUserFromUserCredentials(
       testCollectiviteAndUserResult.user
     );
+  });
 
-    return async () => {
-      await testCollectiviteAndUserResult.cleanup();
-      if (app) {
-        await app.close();
-      }
-    };
+  afterAll(async () => {
+    await app.close();
   });
 
   afterEach(async () => {

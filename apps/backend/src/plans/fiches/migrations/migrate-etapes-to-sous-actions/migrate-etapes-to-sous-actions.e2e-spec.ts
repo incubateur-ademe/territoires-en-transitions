@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { ficheActionEtapeTable } from '@tet/backend/plans/fiches/fiche-action-etape/fiche-action-etape.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
@@ -12,11 +13,16 @@ import { eq } from 'drizzle-orm';
 import { runMigrateEtapesToSousActions } from './migrate-etapes-to-sous-actions';
 
 describe('migrate-etapes-to-sous-actions.e2e-spec', () => {
+  let app: INestApplication;
   let dbService: DatabaseService;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     dbService = await getTestDatabase(app);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   it('migre les étapes en sous-actions et évite les doublons', async () => {
