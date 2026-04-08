@@ -600,16 +600,12 @@ export class IndicateurChartService {
         .then((result) => result.indicateurs[0]),
       // Conditionally fetch reference valeurs
       includeReferenceValeurs
-        ? this.valeurReferenceService
-            .getValeursReference({
-              collectiviteId,
-              indicateurIds: [definition.id],
-              collectiviteAvecType,
-              personnalisationReponses,
-            })
-            .then((result) =>
-              result.find((v) => v?.indicateurId === definition.id)
-            )
+        ? this.valeurReferenceService.getValeursReferenceForDefinition({
+            collectiviteId,
+            definition,
+            collectiviteAvecType,
+            personnalisationReponses,
+          })
         : Promise.resolve(null),
       // Conditionally fetch moyenne collectivites
       includeMoyenne

@@ -27,6 +27,13 @@ export default class ValeursReferenceService {
     private readonly personnalisationsExpressionService: PersonnalisationsExpressionService
   ) {}
 
+  private async getValeurObjectifsIndicateurs(indicateurIds: number[]) {
+    return this.databaseService.db
+      .select()
+      .from(indicateurObjectifTable)
+      .where(inArray(indicateurObjectifTable.indicateurId, indicateurIds));
+  }
+
   /**
    * Donne les valeurs de référence (cible et/ou seuil) des indicateurs pour une collectivité
    */
@@ -49,10 +56,9 @@ export default class ValeursReferenceService {
     );
 
     // charge les objectifs associés aux indicateurs
-    const valeurObjectifsIndicateurs = await this.databaseService.db
-      .select()
-      .from(indicateurObjectifTable)
-      .where(inArray(indicateurObjectifTable.indicateurId, indicateurIds));
+    const valeurObjectifsIndicateurs = await this.getValeurObjectifsIndicateurs(
+      indicateurIds
+    );
     const valeursOBjectifsParIndicateurId = groupBy(
       valeurObjectifsIndicateurs,
       ({ indicateurId }) => indicateurId
@@ -77,23 +83,77 @@ export default class ValeursReferenceService {
     return definitions.map((definition) =>
       this.getValeursReferenceIndicateur(
         definition,
-        valeursOBjectifsParIndicateurId,
+        valeursOBjectifsParIndicateurId[definition.id],
         collectiviteInfo,
         reponses
       )
     );
   }
 
+  async getValeursReferenceForDefinition(options: {
+    collectiviteId: number;
+    definition: Pick<
+      IndicateurDefinition,
+      | 'id'
+      | 'identifiantReferentiel'
+      | 'exprCible'
+      | 'exprSeuil'
+      | 'libelleCibleSeuil'
+      | 'unite'
+    >;
+    collectiviteAvecType?: CollectiviteAvecType;
+    personnalisationReponses?: PersonnalisationReponsesPayload;
+  }) {
+    const {
+      collectiviteId,
+      definition,
+      collectiviteAvecType,
+      personnalisationReponses,
+    } = options;
+    this.logger.log(
+      `Récupération des valeurs référence de l'indicateur ${definition.id}`
+    );
+
+    // charge les objectifs associés à l'indicateur
+    const valeurObjectifsIndicateur = await this.getValeurObjectifsIndicateurs([
+      definition.id,
+    ]);
+
+    // l'identité et la personnalisation de la collectivité
+    const collectiviteInfo =
+      collectiviteAvecType ||
+      (await this.collectivitesService.getCollectiviteAvecType(collectiviteId));
+    const reponses =
+      personnalisationReponses ||
+      (await this.personnalisationsService.getPersonnalisationReponses(
+        collectiviteId
+      ));
+
+    return this.getValeursReferenceIndicateur(
+      definition,
+      valeurObjectifsIndicateur,
+      collectiviteInfo,
+      reponses
+    );
+  }
+
   private getValeursReferenceIndicateur(
-    definition: IndicateurDefinition,
-    valeursOBjectifsParIndicateurId: Record<
-      number,
-      {
-        indicateurId: number;
-        dateValeur: string;
-        formule: string;
-      }[]
+    definition: Pick<
+      IndicateurDefinition,
+      | 'id'
+      | 'identifiantReferentiel'
+      | 'exprCible'
+      | 'exprSeuil'
+      | 'libelleCibleSeuil'
+      | 'unite'
     >,
+    valeurObjectifs:
+      | {
+          indicateurId: number;
+          dateValeur: string;
+          formule: string;
+        }[]
+      | undefined,
     collectiviteInfo: CollectiviteAvecType,
     reponses: PersonnalisationReponsesPayload
   ): ValeursReferenceDTO | null {
@@ -105,7 +165,6 @@ export default class ValeursReferenceService {
       libelleCibleSeuil,
       unite,
     } = definition;
-    const valeurObjectifs = valeursOBjectifsParIndicateurId[indicateurId];
     if (exprCible === null && exprSeuil === null && !valeurObjectifs?.length) {
       return null;
     }

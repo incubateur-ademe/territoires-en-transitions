@@ -383,15 +383,25 @@ export default class CrudValeursService {
       }, initialMetadonneesAcc)
     ) as IndicateurSourceMetadonnee[];
 
-    const sources = await this.databaseService.db
-      .select()
-      .from(indicateurSourceTable)
-      .where(
-        inArray(
-          indicateurSourceTable.id,
-          uniqueIndicateurMetadonnees.map((metadonnee) => metadonnee.sourceId)
-        )
-      );
+    const sourceIds = [
+      ...new Set(
+        uniqueIndicateurMetadonnees.map((metadonnee) => metadonnee.sourceId)
+      ),
+    ];
+
+    const sources = sourceIds.length
+      ? await this.databaseService.db
+          .select()
+          .from(indicateurSourceTable)
+          .where(
+            inArray(
+              indicateurSourceTable.id,
+              uniqueIndicateurMetadonnees.map(
+                (metadonnee) => metadonnee.sourceId
+              )
+            )
+          )
+      : [];
 
     const indicateurValeurGroupeesParSource =
       this.groupeIndicateursValeursParIndicateurEtSource(
