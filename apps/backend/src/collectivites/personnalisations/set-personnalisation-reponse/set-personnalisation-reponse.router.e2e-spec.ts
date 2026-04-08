@@ -1,10 +1,8 @@
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
-  getAuthUser,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
@@ -27,6 +25,7 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
 
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
+  let noAccessUser: AuthenticatedUser;
 
   // Questions de test
   let questionBinaireId: string;
@@ -52,6 +51,9 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
     editorUser = getAuthUserFromUserCredentials(
       testCollectiviteAndUserResult.user
     );
+
+    const noAccessUserResult = await addTestUser(databaseService);
+    noAccessUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
 
     // Créer une thématique de test
     const thematiqueId = 'test-thematique';
@@ -131,6 +133,7 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
         .delete(questionThematiqueTable)
         .where(eq(questionThematiqueTable.id, thematiqueId));
 
+      await noAccessUserResult.cleanup();
       await testCollectiviteAndUserResult.cleanup();
     };
   });
@@ -318,8 +321,7 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
 
   describe("Set Personnalisation Reponse - Cas d'erreur", () => {
     test('Un utilisateur sans droits sur la collectivité ne peut pas créer une réponse', async () => {
-      const yoloDodoUser = await getAuthUser(YOLO_DODO);
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: noAccessUser });
 
       await expect(
         caller.collectivites.personnalisations.setReponse({

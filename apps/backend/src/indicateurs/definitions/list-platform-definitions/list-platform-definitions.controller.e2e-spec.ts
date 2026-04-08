@@ -1,26 +1,34 @@
 import { INestApplication } from '@nestjs/common';
-import { getTestApp, signInWith, YOLO_DODO } from '@tet/backend/test';
+import { getTestApp, getTestDatabase, signInWith } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { IndicateurDefinition } from '@tet/domain/indicateurs';
 import request from 'supertest';
 
 describe("Api pour lister les définitions d'indicateur", () => {
   let app: INestApplication;
-  let yoloDodoToken: string;
+  let authToken: string;
 
   beforeAll(async () => {
     app = await getTestApp();
-    const yoloDodo = await signInWith(YOLO_DODO);
-    yoloDodoToken = yoloDodo.data.session?.access_token || '';
-  });
+    const db = await getTestDatabase(app);
 
-  afterAll(async () => {
-    await app.close();
+    const testUserResult = await addTestUser(db);
+    const signInResponse = await signInWith({
+      email: testUserResult.user.email,
+      password: testUserResult.user.password,
+    });
+    authToken = signInResponse.data.session?.access_token || '';
+
+    return async () => {
+      await testUserResult.cleanup();
+      if (app) await app.close();
+    };
   });
 
   test('Liste des définitions & paginations', async () => {
     const response = await request(app.getHttpServer())
       .get(`/indicateurs/definitions`)
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
     expect(response.body).toMatchObject({
@@ -32,7 +40,7 @@ describe("Api pour lister les définitions d'indicateur", () => {
   test('Liste des définitions avec recherche par identifiants', async () => {
     const response = await request(app.getHttpServer())
       .get(`/indicateurs/definitions?identifiantsReferentiel=cae_2.a,cae_2.k`)
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
     const listDefinitionsResponse = response.body;
@@ -82,7 +90,7 @@ describe("Api pour lister les définitions d'indicateur", () => {
       .join(',');
     const responseById = await request(app.getHttpServer())
       .get(`/indicateurs/definitions?indicateurIds=${indicateurIds}`)
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
     const listDefinitionsResponseById = responseById.body;
@@ -101,7 +109,7 @@ describe("Api pour lister les définitions d'indicateur", () => {
   test("Liste des définitions d'indicateurs prédéfinis dans la plateforme ne contiennent pas de collectiviteId", async () => {
     const response = await request(app.getHttpServer())
       .get(`/indicateurs/definitions`)
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
     const listDefinitionsResponse = response.body;

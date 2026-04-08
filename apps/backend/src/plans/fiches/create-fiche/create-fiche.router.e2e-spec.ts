@@ -1,10 +1,8 @@
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
-  getAuthUser,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
@@ -19,6 +17,7 @@ describe('Create Fiche Action', () => {
 
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
+  let noAccessUser: AuthenticatedUser;
 
   beforeAll(async () => {
     const app = await getTestApp();
@@ -36,7 +35,11 @@ describe('Create Fiche Action', () => {
       testCollectiviteAndUserResult.user
     );
 
+    const noAccessUserResult = await addTestUser(db);
+    noAccessUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
+
     return async () => {
+      await noAccessUserResult.cleanup();
       await testCollectiviteAndUserResult.cleanup();
     };
   });
@@ -91,8 +94,7 @@ describe('Create Fiche Action', () => {
 
   describe('Create Fiche Action - Access Rights', () => {
     test('User without rights on collectivite cannot create fiche', async () => {
-      const yoloDodoUser = await getAuthUser(YOLO_DODO);
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: noAccessUser });
 
       await expect(
         caller.plans.fiches.create({
@@ -102,7 +104,7 @@ describe('Create Fiche Action', () => {
           },
         })
       ).rejects.toThrow(
-        `Droits insuffisants, l'utilisateur ${YOLO_DODO.id} n'a pas l'autorisation plans.fiches.create sur la ressource Collectivité ${collectivite.id}`
+        `Droits insuffisants, l'utilisateur ${noAccessUser.id} n'a pas l'autorisation plans.fiches.create sur la ressource Collectivité ${collectivite.id}`
       );
     });
 

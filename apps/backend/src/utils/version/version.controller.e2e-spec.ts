@@ -7,6 +7,10 @@ describe('Version controller', () => {
 
   beforeAll(async () => {
     app = await getTestApp();
+
+    return async () => {
+      if (app) await app.close();
+    };
   });
 
   it(`Test throw`, async () => {
@@ -20,7 +24,4 @@ describe('Version controller', () => {
     });
   });
 
-  afterAll(async () => {
-    await app.close();
-  });
 });

@@ -1,10 +1,8 @@
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
-  getAuthUser,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
@@ -20,6 +18,7 @@ describe('Récupérer un axe', () => {
 
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
+  let noAccessUser: AuthenticatedUser;
   let planId: number;
 
   beforeAll(async () => {
@@ -41,6 +40,9 @@ describe('Récupérer un axe', () => {
       testCollectiviteAndUserResult.user
     );
 
+    const noAccessUserResult = await addTestUser(db);
+    noAccessUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
+
     // Créer un plan pour les tests
     const caller = router.createCaller({ user: editorUser });
     const plan = await caller.plans.plans.create({
@@ -50,6 +52,7 @@ describe('Récupérer un axe', () => {
     planId = plan.id;
 
     return async () => {
+      await noAccessUserResult.cleanup();
       await caller.plans.plans.delete({ planId });
       await testCollectiviteAndUserResult.cleanup();
     };
@@ -244,8 +247,7 @@ describe('Récupérer un axe', () => {
         await cleanupCaller.plans.axes.delete({ axeId: createdAxe.id });
       });
 
-      const yoloDodoUser = await getAuthUser(YOLO_DODO);
-      const unauthorizedCaller = router.createCaller({ user: yoloDodoUser });
+      const unauthorizedCaller = router.createCaller({ user: noAccessUser });
 
       await expect(
         unauthorizedCaller.plans.axes.get({

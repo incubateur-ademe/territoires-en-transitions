@@ -1,10 +1,8 @@
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
-  getAuthUser,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
@@ -22,6 +20,7 @@ describe('Créer ou modifier un axe', () => {
 
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
+  let noAccessUser: AuthenticatedUser;
   let planId: number;
 
   beforeAll(async () => {
@@ -40,6 +39,9 @@ describe('Créer ou modifier un axe', () => {
       testCollectiviteAndUserResult.user
     );
 
+    const noAccessUserResult = await addTestUser(db);
+    noAccessUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
+
     // Créer un plan pour les tests
     const caller = router.createCaller({ user: editorUser });
     const plan = await caller.plans.plans.create({
@@ -49,6 +51,7 @@ describe('Créer ou modifier un axe', () => {
     planId = plan.id;
 
     return async () => {
+      await noAccessUserResult.cleanup();
       await caller.plans.plans.delete({ planId });
       await testCollectiviteAndUserResult.cleanup();
     };
@@ -124,8 +127,7 @@ describe('Créer ou modifier un axe', () => {
 
   describe("Créer ou modifier un axe - Droits d'accès", () => {
     test('Un utilisateur sans droits sur la collectivité ne peut pas créer un axe', async () => {
-      const yoloDodoUser = await getAuthUser(YOLO_DODO);
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: noAccessUser });
 
       await expect(
         caller.plans.axes.create({

@@ -2,13 +2,12 @@ import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   createTRPCClientFromCaller,
-  getAuthUser,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   signInWith,
-  YOLO_DODO,
 } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -50,14 +49,17 @@ describe('List Preuves Router', () => {
     const editeur = testCollectiviteAndUsersResult.users[0];
     const editeurUserSignInResponse = await signInWith({
       email: editeur.email,
-      password: YOLO_DODO.password,
+      password: editeur.password,
     });
     editeurAuthToken =
       editeurUserSignInResponse.data.session?.access_token ?? '';
     editeurUser = getAuthUserFromUserCredentials(editeur);
-    visiteurUser = await getAuthUser(YOLO_DODO);
+
+    const noAccessUserResult = await addTestUser(db);
+    visiteurUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
 
     return async () => {
+      await noAccessUserResult.cleanup();
       await testCollectiviteAndUsersResult.cleanup();
 
       if (app) {
