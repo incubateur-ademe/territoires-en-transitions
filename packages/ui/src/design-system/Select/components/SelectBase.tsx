@@ -474,12 +474,16 @@ const SelectButton = forwardRef(
           />
         ) : (
           <div
-            className={cn('flex px-4', {
-              'min-h-[2.5rem] py-1': small,
-              'min-h-[3rem] py-2': !small,
+            className={cn('flex ', {
+              'min-h-[2.5rem] px-2 py-1': small,
+              'min-h-[3rem] px-4 py-2': !small,
             })}
           >
-            <div className="flex grow flex-wrap gap-2 mr-4">
+            <div
+              className={cn('flex grow flex-wrap gap-2 mr-4', {
+                'mr-2': small,
+              })}
+            >
               {values && Array.isArray(values) && values.length > 0 ? (
                 /** Listes des valeurs sélectionnées */
                 <div className="flex items-center gap-2 grow">
