@@ -6,7 +6,7 @@ import { useCollectiviteId } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { BadgeFilters } from '@tet/ui';
 import { useCallback, useMemo } from 'react';
-import { usePersonnalisationThematiques } from '../data/use-personnalisation-thematiques';
+import { useListPersonnalisationThematiques } from '../data/use-list-personnalisation-thematiques';
 import { formatToPrintableFilters } from './format-to-printable-filters';
 import { usePersonnalisationFilters } from './personnalisation-filters-context';
 import type { PersonnalisationFilterKeys } from './personnalisation-filters.types';
@@ -19,7 +19,8 @@ const actionLabel = (action: {
 
 export const PersonnalisationFilterBadges = () => {
   const collectiviteId = useCollectiviteId();
-  const { data: thematiques } = usePersonnalisationThematiques(collectiviteId);
+  const { data: thematiques } =
+    useListPersonnalisationThematiques(collectiviteId);
   const { filters, resetFilters, onDeleteFilterValue, onDeleteFilterCategory } =
     usePersonnalisationFilters();
 

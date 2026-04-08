@@ -17,7 +17,7 @@ export type UpdateJustificationInput = {
 /**
  * Met à jour la justification d'une réponse à une question de personnalisation
  */
-export const useSaveJustification = (collectiviteId: number) => {
+export const useSetPersonnalisationJustification = (collectiviteId: number) => {
   const queryClient = useQueryClient();
   const trpc = useTRPC();
   const { mutateAsync: setReponse } = useMutation(

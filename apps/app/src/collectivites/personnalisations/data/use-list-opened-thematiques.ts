@@ -2,8 +2,8 @@ import { parseAsArrayOf, parseAsString, useQueryState } from 'nuqs';
 
 const OPENED_THEMATIQUES_QUERY_PARAM = 'ot';
 
-export function useOpeneedThematiques() {
-  const [openedThematiques, setOpenedThematiques] = useQueryState(
+export function useListOpenedThematiques() {
+  const [openedThematiques, setOpenedThematiquesQueryParam] = useQueryState(
     OPENED_THEMATIQUES_QUERY_PARAM,
     parseAsArrayOf(parseAsString).withDefault([])
   );
@@ -15,13 +15,19 @@ export function useOpeneedThematiques() {
     const index = openedThematiques.findIndex((id) => id === thematiqueId);
     const isAlreadyOpen = index !== -1;
     if (open && !isAlreadyOpen) {
-      setOpenedThematiques([...openedThematiques, thematiqueId]);
+      setOpenedThematiquesQueryParam([...openedThematiques, thematiqueId]);
     } else if (!open && isAlreadyOpen) {
-      setOpenedThematiques(openedThematiques.toSpliced(index, 1));
+      setOpenedThematiquesQueryParam(openedThematiques.toSpliced(index, 1));
     }
   };
 
+  const setOpenedThematiques = (thematiqueIds: string[]) => {
+    setOpenedThematiquesQueryParam(Array.from(new Set(thematiqueIds)));
+  };
+
   return {
+    openedThematiques,
+    setOpenedThematiques,
     isOpenThematique,
     openThematique,
   };

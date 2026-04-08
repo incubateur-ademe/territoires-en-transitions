@@ -14,7 +14,7 @@ const FILTER_KEYS_ORDER: PersonnalisationFilterKeys[] = [
 const FILTER_CATEGORY_TITLES: Record<PersonnalisationFilterKeys, string> = {
   referentielIds: 'Référentiels',
   thematiqueIds: 'Thématiques',
-  actionIds: 'Éléments impactés',
+  actionIds: 'Éléments affectés',
   questionIds: 'Questions',
 };
 

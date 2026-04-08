@@ -6,9 +6,8 @@ export function PersonnalisationHeader() {
     <>
       <div className="flex justify-between items-center">
         <div className="font-normal text-primary-9">
-          Les mesures et sous mesures proposées dans les référentiels
-          Écologiques dépendent des compétences et caractéristiques de chaque
-          collectivité.
+          Les mesures et sous mesures proposées dans les référentiels dépendent
+          des compétences et caractéristiques de chaque collectivité.
         </div>
         <PersonnalisationFiltersMenu />
       </div>

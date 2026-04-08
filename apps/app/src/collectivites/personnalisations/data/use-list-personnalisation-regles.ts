@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 
 // charge les règles de personnalisation pour les actions données
-export const usePersonnalisationRegles = (
+export const useListPersonnalisationRegles = (
   actionIds: string[],
   enabled = true
 ) => {

@@ -4,14 +4,14 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { CollectivitePublic } from '@tet/domain/collectivites';
 import { Card } from '@tet/ui';
-import { useCollectivite } from '../personnalisations/data/use-collectivite';
+import { useGetCollectivite } from '../../../../collectivites/collectivites/use-get-collectivite';
 
 /**
  * Affiche les informations administratives d'une collectivité
  */
 export function InfosAdministratives() {
   const { collectiviteId } = useCurrentCollectivite();
-  const { data: identite } = useCollectivite(collectiviteId);
+  const { data: identite } = useGetCollectivite(collectiviteId);
   const items = identite ? getItems(identite) : null;
 
   return (

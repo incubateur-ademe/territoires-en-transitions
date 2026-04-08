@@ -2,7 +2,7 @@ import { useReferentielTeEnabled } from '@/app/referentiels/use-referentiel-te-e
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { SelectFilter, SelectMultipleProps } from '@tet/ui';
-import { getReferentielCollectiviteOptions } from '../../../CollectivitesEngagees/data/filtreOptions';
+import { getReferentielCollectiviteOptions } from '../../../app/pages/CollectivitesEngagees/data/filtreOptions';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   values?: ReferentielId[];

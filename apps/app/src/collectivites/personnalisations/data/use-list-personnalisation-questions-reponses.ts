@@ -4,7 +4,7 @@ import { PersonnalisationQuestionReponse } from '@tet/domain/collectivites';
 import { PersonnalisationFilters } from '../filters/personnalisation-filters.types';
 import { transformLoadedReponse } from './transform-reponse';
 
-export const usePersonnalisationQuestionsReponses = (
+export const useListPersonnalisationQuestionsReponses = (
   collectiviteId: number,
   filters?: PersonnalisationFilters
 ) => {

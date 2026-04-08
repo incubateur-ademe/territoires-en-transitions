@@ -1,7 +1,7 @@
 'use client';
 
 import { PersonnalisationQuestionReponse } from '@tet/domain/collectivites';
-import { useSaveReponse } from './data/use-save-reponse';
+import { useSetPersonnalisationReponse } from './data/use-set-personnalisation-reponse';
 import { QuestionReponse } from './question/question-reponse';
 
 type Props = {
@@ -13,7 +13,7 @@ export function PersonnalisationQuestionsList({
   canEdit,
   questionReponses,
 }: Props) {
-  const handleChange = useSaveReponse();
+  const handleChange = useSetPersonnalisationReponse();
 
   const firstProportionIndex = questionReponses.findIndex(
     ({ question }) => question.type === 'proportion'

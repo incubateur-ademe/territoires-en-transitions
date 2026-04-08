@@ -58,18 +58,18 @@ test.describe('Page Personnalisation (Paramètres > Ma collectivité)', () => {
     await pom.goto(collectivite.data.id);
 
     // vérifie le badge initial : aucune réponse fournie
-    await pom.expectThematiqueBadge(persoData.thematiqueNom, 'À compléter 0/3');
+    await pom.expectThematiqueBadge(persoData.thematiqueNom, 'Incomplet 0/3');
 
     await pom.openThematique(persoData.thematiqueNom);
     await pom.expectQuestionsVisible();
 
     // répond à la question proportion et contrôle la mise à jour du badge
     await pom.repondreQuestionProportion(persoData.questionProportionId, 50);
-    await pom.expectThematiqueBadge(persoData.thematiqueNom, 'À compléter 1/3');
+    await pom.expectThematiqueBadge(persoData.thematiqueNom, 'Incomplet 1/3');
 
     // répond à la question binaire et contrôle la mise à jour du badge
     await pom.repondreQuestionBinaire(persoData.questionBinaireId, 'Oui');
-    await pom.expectThematiqueBadge(persoData.thematiqueNom, 'À compléter 2/3');
+    await pom.expectThematiqueBadge(persoData.thematiqueNom, 'Incomplet 2/3');
 
     // répond à la question choix et contrôle la mise à jour du badge
     await pom.repondreQuestionChoix(
@@ -80,6 +80,6 @@ test.describe('Page Personnalisation (Paramètres > Ma collectivité)', () => {
     // vérifie que le badge passe à "Complété" une fois toutes les réponses enregistrées
     await expect(
       pom.thematiquesHeadings.filter({ hasText: persoData.thematiqueNom })
-    ).toContainText('Complété 3/3');
+    ).toContainText('Complet 3/3');
   });
 });

@@ -1,5 +1,5 @@
 import { useCollectiviteId } from '@tet/api/collectivites';
-import { usePersonnalisationQuestionsReponses } from '../../personnalisations/data/use-personnalisation-questions-reponses';
+import { useListPersonnalisationQuestionsReponses } from '../../../../../collectivites/personnalisations/data/use-list-personnalisation-questions-reponses';
 
 // pour cet indicateur uniquement on doit afficher une question de personnalisation
 const PERSONNALISATION = {
@@ -12,7 +12,7 @@ export const useIndicateurPersonnalisation = (
   drom?: boolean
 ) => {
   const collectiviteId = useCollectiviteId();
-  const qrList = usePersonnalisationQuestionsReponses(collectiviteId, {
+  const qrList = useListPersonnalisationQuestionsReponses(collectiviteId, {
     questionIds: [PERSONNALISATION.questionId],
   });
   return identifiantReferentiel === PERSONNALISATION.identifiantReferentiel &&

@@ -2,7 +2,7 @@
 
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { PersonnalisationThematique } from '@tet/domain/collectivites';
-import { usePersonnalisationQuestionsReponses } from './data/use-personnalisation-questions-reponses';
+import { useListPersonnalisationQuestionsReponses } from './data/use-list-personnalisation-questions-reponses';
 import { usePersonnalisationFilters } from './filters/personnalisation-filters-context';
 import { PersonnalisationQuestionsList } from './personnalisation-questions.list';
 
@@ -16,7 +16,7 @@ export function PersonnalisationThematiqueQuestionsList({ thematique }: Props) {
   const canEdit = hasCollectivitePermission('referentiels.mutate');
   const { filters } = usePersonnalisationFilters();
 
-  const questionReponses = usePersonnalisationQuestionsReponses(
+  const questionReponses = useListPersonnalisationQuestionsReponses(
     collectiviteId,
     {
       ...filters,

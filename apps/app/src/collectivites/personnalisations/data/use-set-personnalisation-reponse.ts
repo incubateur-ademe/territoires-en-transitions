@@ -11,7 +11,7 @@ import { transformReponseToWrite } from './transform-reponse';
 /**
  * Enregistre la réponse à une question de personnalisation pour la collectivité courante.
  */
-export const useSaveReponse = () => {
+export const useSetPersonnalisationReponse = () => {
   const collectiviteId = useCollectiviteId();
   const queryClient = useQueryClient();
   const trpc = useTRPC();

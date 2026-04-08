@@ -2,7 +2,7 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Icon, Textarea } from '@tet/ui';
 import { isNil } from 'es-toolkit';
 import { useEffect, useState } from 'react';
-import { useSaveJustification } from '../data/use-save-justification';
+import { useSetPersonnalisationJustification } from '../data/use-set-personnalisation-justification';
 import { QuestionReponseProps } from './question-reponse-props.types';
 
 const DEFAULT_PLACEHOLDER =
@@ -18,7 +18,7 @@ export const Justification = (props: QuestionReponseProps) => {
   const { collectiviteId } = useCurrentCollectivite();
   const [value, setValue] = useState(justification);
   const { mutateAsync: saveJustification } =
-    useSaveJustification(collectiviteId);
+    useSetPersonnalisationJustification(collectiviteId);
 
   // synchronise la valeur initiale car la réponse est chargée de manière asynchrone
   useEffect(() => {

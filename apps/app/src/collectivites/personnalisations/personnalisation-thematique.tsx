@@ -2,7 +2,7 @@
 
 import { PersonnalisationThematique as TPersonnalisationThematique } from '@tet/domain/collectivites';
 import { Badge, cn, Icon } from '@tet/ui';
-import { useOpeneedThematiques } from './data/use-opened-thematiques';
+import { useListOpenedThematiques } from './data/use-list-opened-thematiques';
 import { PersonnalisationThematiqueQuestionsList } from './personnalisation-thematique-questions.list';
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 };
 
 export function PersonnalisationThematique({ thematique }: Props) {
-  const { isOpenThematique, openThematique } = useOpeneedThematiques();
+  const { isOpenThematique, openThematique } = useListOpenedThematiques();
   const isOpen = isOpenThematique(thematique.id);
 
   return (
@@ -36,14 +36,14 @@ export function PersonnalisationThematique({ thematique }: Props) {
           {thematique.isComplete ? (
             <Badge
               size="sm"
-              title={`Complété ${thematique.reponsesCount}/${thematique.questionsCount}`}
+              title={`Complet ${thematique.reponsesCount}/${thematique.questionsCount}`}
               variant="success"
               className="border-none"
             />
           ) : (
             <Badge
               size="sm"
-              title={`À compléter ${thematique.reponsesCount}/${thematique.questionsCount}`}
+              title={`Incomplet ${thematique.reponsesCount}/${thematique.questionsCount}`}
               variant="warning"
               className="border-none"
             />

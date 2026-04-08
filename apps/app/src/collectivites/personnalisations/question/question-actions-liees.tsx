@@ -8,10 +8,8 @@ import { AccordionControlled, InfoTooltip } from '@tet/ui';
 import DOMPurify from 'dompurify';
 import Link from 'next/link';
 import { useState } from 'react';
-import { usePersonnalisationRegles } from '../data/use-personnalisation-regles';
+import { useListPersonnalisationRegles } from '../data/use-list-personnalisation-regles';
 import { QuestionReponseProps } from './question-reponse-props.types';
-
-const endWithADigit = /[0-9]$/;
 
 /** Affiche les mesures des référentiels liées à une question */
 export const QuestionActionsLiees = (props: QuestionReponseProps) => {
@@ -19,20 +17,13 @@ export const QuestionActionsLiees = (props: QuestionReponseProps) => {
   const { actionIds } = question;
   const [isOpen, setIsOpen] = useState(false);
 
-  // TODO: à supprimer
-  // filtrage pour éviter une erreur dans `referentiels.actions.listActions`
-  // avec les actionId tel que te_2.1.1.6.a
-  const actionIdsFiltered = actionIds?.filter((actionId) =>
-    actionId.match(endWithADigit)
-  );
-
-  const enabled = (actionIdsFiltered?.length && isOpen) || false;
+  const enabled = (actionIds?.length && isOpen) || false;
   const { data: actionsLiees } = useListActions(
-    { actionIds: actionIdsFiltered || [] },
+    { actionIds: actionIds || [] },
     enabled
   );
-  const { data: regles } = usePersonnalisationRegles(
-    actionIdsFiltered || [],
+  const { data: regles } = useListPersonnalisationRegles(
+    actionIds || [],
     enabled
   );
 
@@ -40,7 +31,7 @@ export const QuestionActionsLiees = (props: QuestionReponseProps) => {
     <AccordionControlled
       containerClassname="border-none"
       headerClassname="text-grey-8 py-2"
-      title="Afficher les éléments impactés et règles associées"
+      title="Afficher les éléments affectés et règles associées"
       content={<ActionsLiees actions={actionsLiees} regles={regles} />}
       expanded={isOpen}
       setExpanded={setIsOpen}
@@ -72,7 +63,7 @@ const ActionsLiees = ({
         return (
           <div key={actionId} className="flex flex-row gap-2 items-center">
             <Link href={url} className="underline">
-              {referentiel} {identifiant} - {nom}
+              {referentiel} {referentiel === 'te' ? '' : identifiant} - {nom}
             </Link>
             {pointReferentiel !== undefined && !!reglesActions.length && (
               <InfoTooltip

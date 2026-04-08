@@ -8,7 +8,7 @@ import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Divider } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { PersonnalisationQuestionsList } from '../../personnalisations/personnalisation-questions.list';
+import { PersonnalisationQuestionsList } from '../../../../../collectivites/personnalisations/personnalisation-questions.list';
 import { useIndicateurChartInfo } from '../data/use-indicateur-chart';
 import { useIndicateurPersonnalisation } from '../data/use-indicateur-personnalisation';
 import IndicateurDetailChart from '../Indicateur/detail/IndicateurDetailChart';

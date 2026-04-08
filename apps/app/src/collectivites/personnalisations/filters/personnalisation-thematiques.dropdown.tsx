@@ -1,5 +1,5 @@
 import { SelectFilter, SelectMultipleProps } from '@tet/ui';
-import { usePersonnalisationThematiques } from '../data/use-personnalisation-thematiques';
+import { useListPersonnalisationThematiques } from '../data/use-list-personnalisation-thematiques';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   collectiviteId: number;
@@ -9,7 +9,8 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
 
 export const PersonnalisationThematiquesDropdown = (props: Props) => {
   const { collectiviteId, onChange } = props;
-  const { data: thematiques } = usePersonnalisationThematiques(collectiviteId);
+  const { data: thematiques } =
+    useListPersonnalisationThematiques(collectiviteId);
 
   return (
     <SelectFilter

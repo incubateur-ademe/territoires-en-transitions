@@ -1,4 +1,4 @@
-import { useCollectivite } from '@/app/app/pages/collectivite/personnalisations/data/use-collectivite';
+import { useGetCollectivite } from '@/app/collectivites/collectivites/use-get-collectivite';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC, useUser } from '@tet/api';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -33,7 +33,7 @@ export const useCycleLabellisation = (
     useCurrentCollectivite();
   const isAuditeur = useIsAuditeur();
   const user = useUser();
-  const { data: identite } = useCollectivite(collectiviteId);
+  const { data: identite } = useGetCollectivite(collectiviteId);
 
   // charge les données du parcours
   const parcours = useLabellisationParcours({
