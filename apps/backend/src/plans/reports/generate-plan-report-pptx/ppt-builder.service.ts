@@ -94,7 +94,10 @@ export class PptBuilderService {
           },
           {
             sourceId: IndicateurSourceEnum.COLLECTIVITE,
-            valeurTypes: [IndicateurValeurTypeEnum.RESULTAT],
+            valeurTypes: [
+              IndicateurValeurTypeEnum.RESULTAT,
+              IndicateurValeurTypeEnum.OBJECTIF,
+            ],
           },
         ],
         segmentation: {
@@ -117,7 +120,10 @@ export class PptBuilderService {
           },
           {
             sourceId: IndicateurSourceEnum.COLLECTIVITE,
-            valeurTypes: [IndicateurValeurTypeEnum.RESULTAT],
+            valeurTypes: [
+              IndicateurValeurTypeEnum.RESULTAT,
+              IndicateurValeurTypeEnum.OBJECTIF,
+            ],
           },
         ],
         segmentation: {
