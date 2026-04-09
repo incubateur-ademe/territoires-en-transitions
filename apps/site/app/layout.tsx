@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 import { ReactNode } from 'react';
 import { Header } from '../components/layout/Header';
 import { Trackers } from '../providers/posthog';
+import { RootProviders } from '../providers/root-providers';
 import './global.css';
 import { getMetaData } from './home/utils';
 
@@ -92,11 +93,13 @@ export default async function RootLayout({
             key: process.env.POSTHOG_KEY,
           }}
         >
-          <div className="grow flex flex-col">
-            <Header />
-            <div className="grow flex flex-col">{children}</div>
-          </div>
-          <Footer />
+          <RootProviders>
+            <div className="grow flex flex-col">
+              <Header />
+              <div className="grow flex flex-col">{children}</div>
+            </div>
+            <Footer />
+          </RootProviders>
         </Trackers>
       </body>
     </html>
