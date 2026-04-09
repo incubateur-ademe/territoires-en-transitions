@@ -16,7 +16,7 @@
   "dependencies": {
     "@strapi/plugin-i18n": "4.25.20",
     "@strapi/plugin-users-permissions": "4.25.20",
-    "@strapi/strapi": "4.25.20",
+    "@strapi/strapi": "5.36.1",
     "@strapi/typescript-utils": "4.25.20",
     "better-sqlite3": "^8.5.0",
     "pg": "8.8.0",
