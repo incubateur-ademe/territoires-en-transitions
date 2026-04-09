@@ -62,23 +62,20 @@ const IndicateursListe = (props: Props) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const { data: { data: definitions, count = 0 } = {}, isPending } =
-    useListIndicateurs(
-      {
-        collectiviteId,
-        filters,
-        queryOptions: {
-          page: currentPage,
-          limit: maxNbOfCards,
-          sort: sortByItems
-            .filter((item) => item.value === sortBy)
-            .map((item) => ({
-              field: item.value,
-              direction: item.direction,
-            })),
-        },
+    useListIndicateurs({
+      collectiviteId,
+      filters,
+      queryOptions: {
+        page: currentPage,
+        limit: maxNbOfCards,
+        sort: sortByItems
+          .filter((item) => item.value === sortBy)
+          .map((item) => ({
+            field: item.value,
+            direction: item.direction,
+          })),
       },
-      { disableAutoRefresh: false }
-    );
+    });
 
   /** Filtres (définis par la vue courante) à exclure des badges */
   let filtresBadges = filters;
