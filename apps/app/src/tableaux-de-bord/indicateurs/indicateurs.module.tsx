@@ -34,18 +34,15 @@ export const IndicateursModule = ({
 
   const { collectiviteId } = useCurrentCollectivite();
 
-  const { data: listIndicateursData, isLoading } = useListIndicateurs(
-    {
-      collectiviteId,
-      filters: module.options.filtre,
-      queryOptions: {
-        sort: [{ field: 'estRempli', direction: 'desc' }],
-        limit: module.options.limit,
-        page: module.options.page,
-      },
+  const { data: listIndicateursData, isLoading } = useListIndicateurs({
+    collectiviteId,
+    filters: module.options.filtre,
+    queryOptions: {
+      sort: [{ field: 'estRempli', direction: 'desc' }],
+      limit: module.options.limit,
+      page: module.options.page,
     },
-    { disableAutoRefresh: false }
-  );
+  });
 
   const indicateurs = listIndicateursData?.data;
   const totalCount = listIndicateursData?.count || 0;
