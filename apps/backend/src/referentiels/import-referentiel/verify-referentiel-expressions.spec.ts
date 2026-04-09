@@ -1,5 +1,6 @@
 import {
   verifyReferentielExpressions,
+  normalizeTypeSyndicatExpressions,
   buildQuestionActionRelations,
 } from './verify-referentiel-expressions';
 import {
@@ -167,6 +168,38 @@ describe('verifyReferentielExpressions', () => {
     expect(errors).toEqual([]);
   });
 
+  it('retourne une erreur quand identite(type, syndicat) est utilisé sur un référentiel autre que cae ou eci', () => {
+    const errors = verifyReferentielExpressions({
+      ...baseInput,
+      referentielId: 'te',
+      actions: [
+        {
+          identifiant: '1.1',
+          desactivation: 'si identite(type, syndicat) alors VRAI',
+        },
+      ],
+    });
+
+    expect(errors).toEqual([
+      `La valeur "syndicat" pour identite(type) dans l'expression de désactivation de l'action te_1.1 n'est pas valide. Valeurs autorisées pour identite(type, ...) : epci, commune`,
+    ]);
+  });
+
+  it(`ne retourne pas d'erreur quand identite(type, syndicat) est utilisé sur le référentiel eci`, () => {
+    const errors = verifyReferentielExpressions({
+      ...baseInput,
+      referentielId: 'eci',
+      actions: [
+        {
+          identifiant: '1.2.2',
+          desactivation: 'si identite(type, syndicat) alors VRAI',
+        },
+      ],
+    });
+
+    expect(errors).toEqual([]);
+  });
+
   it('retourne une erreur de syntaxe pour les expressions de score', () => {
     const failParse: ParseExpression = () => ({
       success: false,
@@ -322,5 +355,43 @@ describe('buildQuestionActionRelations', () => {
       { actionId: 'cae_1.1', questionId: 'dechets_1' },
       { actionId: 'cae_2.1', questionId: 'dechets_1' },
     ]);
+  });
+});
+
+describe('normalizeTypeSyndicatExpressions', () => {
+  it(`remplace identite(type, syndicat) par identite(soustype, syndicat) pour le référentiel eci`, () => {
+    expect(
+      normalizeTypeSyndicatExpressions({
+        referentielId: 'eci',
+        expression: 'si identite(type, syndicat) alors VRAI',
+      })
+    ).toBe('si identite(soustype, syndicat) alors VRAI');
+  });
+
+  it(`remplace identite(type, syndicat) par identite(soustype, syndicat) pour le référentiel cae`, () => {
+    expect(
+      normalizeTypeSyndicatExpressions({
+        referentielId: 'cae',
+        expression: 'si identite(type, syndicat) alors VRAI',
+      })
+    ).toBe('si identite(soustype, syndicat) alors VRAI');
+  });
+
+  it(`ne modifie pas l'expression pour un référentiel autre que cae ou eci`, () => {
+    expect(
+      normalizeTypeSyndicatExpressions({
+        referentielId: 'te',
+        expression: 'si identite(type, syndicat) alors VRAI',
+      })
+    ).toBe('si identite(type, syndicat) alors VRAI');
+  });
+
+  it(`ne modifie pas les autres appels identite()`, () => {
+    expect(
+      normalizeTypeSyndicatExpressions({
+        referentielId: 'eci',
+        expression: 'si identite(type, EPCI) alors VRAI',
+      })
+    ).toBe('si identite(type, EPCI) alors VRAI');
   });
 });

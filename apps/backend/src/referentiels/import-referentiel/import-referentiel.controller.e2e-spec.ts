@@ -18,10 +18,15 @@ import { eq } from 'drizzle-orm';
 import * as path from 'path';
 import { default as request } from 'supertest';
 import * as zCore from 'zod/v4/core';
+import { importPersonnalisationQuestionSchema } from '../../collectivites/personnalisations/import-personnalisation-questions/import-personnalisation-question.dto';
 import { ReferentielResponse } from '../get-referentiel/get-referentiel.service';
 import { importActionDefinitionSchema } from './import-action-definition.dto';
 
 const SAMPLES_DIR = path.join(__dirname, 'samples');
+const PERSONNALISATION_SAMPLES_DIR = path.join(
+  __dirname,
+  '../../collectivites/personnalisations/import-personnalisation-questions/samples'
+);
 
 /** Maps spreadsheet IDs (from env) to referentiel short names used in CSV filenames. */
 function buildSpreadsheetIdToReferentielMap(): Record<string, string> {
@@ -62,6 +67,50 @@ function createLocalSheetServiceMock(): Partial<SheetService> {
               { version: '1.0.1', date: '2026-04-01', description: 'Test' },
             ] as unknown as T[];
             return { data, header: ['version', 'date', 'description'] };
+          }
+
+          // Personnalisation questions sheets
+          const personnalisationSheetId =
+            process.env.PERSONNALISATION_QUESTIONS_SHEET_ID;
+          if (
+            personnalisationSheetId &&
+            spreadsheetId === personnalisationSheetId
+          ) {
+            if (range?.startsWith('Th')) {
+              return parseCsvWithSchema<T>(
+                path.join(
+                  PERSONNALISATION_SAMPLES_DIR,
+                  'import-personnalisation-thematiques.csv'
+                ),
+                schema,
+                templateData
+              );
+            }
+            if (range?.startsWith('Choix')) {
+              return parseCsvWithSchema<T>(
+                path.join(
+                  PERSONNALISATION_SAMPLES_DIR,
+                  'import-personnalisation-choices.csv'
+                ),
+                schema,
+                templateData
+              );
+            }
+            if (range?.startsWith('Questions')) {
+              return parseCsvWithSchema<T>(
+                path.join(
+                  PERSONNALISATION_SAMPLES_DIR,
+                  'import-personnalisation-questions.csv'
+                ),
+                importPersonnalisationQuestionSchema.extend({
+                  ordonnancement: stringFrenchNumberSchema.optional(),
+                }),
+                templateData
+              );
+            }
+            throw new Error(
+              `Unsupported range for personnalisation questions: ${range}`
+            );
           }
 
           const referentiel = spreadsheetIdToReferentiel[spreadsheetId];

@@ -22,6 +22,15 @@ describe('extractReferencesFromExpression', () => {
         { champ: 'type', valeur: 'commune' },
       ]);
     });
+
+    it('extrait champ et valeur depuis identite(soustype, syndicat)', () => {
+      const refs = extractReferencesFromExpression(
+        'identite(soustype, syndicat)'
+      );
+      expect(refs.identiteFields).toEqual([
+        { champ: 'soustype', valeur: 'syndicat' },
+      ]);
+    });
   });
 
   describe('score()', () => {

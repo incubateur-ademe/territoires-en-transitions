@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CollectiviteNatureType } from './collectivite-banatic-type.enum';
 import { collectiviteSchema } from './collectivite.schema';
 
 export enum CollectiviteTypeEnum {
@@ -7,7 +8,9 @@ export enum CollectiviteTypeEnum {
 }
 
 export enum CollectiviteSousTypeEnum {
+  EPCI_FP = 'epci_a_fiscalite_propre',
   SYNDICAT = 'syndicat',
+  POLE = 'pole',
 }
 
 export enum CollectivitePopulationTypeEnum {
@@ -29,6 +32,23 @@ export enum CollectiviteLocalisationTypeEnum {
   DOM = 'DOM',
   METROPOLE = 'Metropole',
 }
+
+export const NATURE_TO_SOUS_TYPE: Record<
+  CollectiviteNatureType,
+  CollectiviteSousTypeEnum
+> = {
+  CC: CollectiviteSousTypeEnum.EPCI_FP,
+  CA: CollectiviteSousTypeEnum.EPCI_FP,
+  CU: CollectiviteSousTypeEnum.EPCI_FP,
+  METRO: CollectiviteSousTypeEnum.EPCI_FP,
+  EPT: CollectiviteSousTypeEnum.EPCI_FP,
+  SMF: CollectiviteSousTypeEnum.SYNDICAT,
+  SMO: CollectiviteSousTypeEnum.SYNDICAT,
+  SIVU: CollectiviteSousTypeEnum.SYNDICAT,
+  SIVOM: CollectiviteSousTypeEnum.SYNDICAT,
+  POLEM: CollectiviteSousTypeEnum.POLE,
+  PETR: CollectiviteSousTypeEnum.POLE,
+};
 
 export const identiteCollectiviteSchema = z.object({
   type: z.enum(CollectiviteTypeEnum),

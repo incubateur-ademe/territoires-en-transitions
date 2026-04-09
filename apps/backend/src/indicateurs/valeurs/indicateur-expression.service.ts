@@ -5,10 +5,8 @@ import {
   getExpressionVisitor,
 } from '@tet/backend/utils/expression-parser';
 import { getFormmattedErrors } from '@tet/backend/utils/expression-parser/get-formatted-errors.utils';
-import {
-  CollectivitePopulationTypeEnum,
-  IdentiteCollectivite,
-} from '@tet/domain/collectivites';
+import { IdentiteCollectivite } from '@tet/domain/collectivites';
+import { evaluateIdentite } from '@tet/backend/utils/expression-parser/evaluate-identite';
 import { createToken, CstNode } from 'chevrotain';
 import { isNil } from 'es-toolkit';
 import { ReferencedIndicateur } from './referenced-indicateur.dto';
@@ -165,33 +163,9 @@ class IndicateurExpressionVisitor extends getExpressionVisitor(
   }
 
   identite(ctx: any) {
-    // Règles historiques exprimées avec ces identifiants
-    const identifier = this.visit(ctx.identifier) as
-      | 'type'
-      | 'population'
-      | 'localisation'
-      | 'dans_aire_urbaine';
-    const primary = this.visit(ctx.primary);
-    if (!this.identiteCollectivite) {
-      throw new Error(
-        `Information ${identifier} d'identité de la collectivité non trouvée`
-      );
-    }
-    if (identifier === 'type') {
-      return (
-        this.identiteCollectivite.type === primary ||
-        this.identiteCollectivite.soustype === primary
-      );
-    } else if (identifier === 'population') {
-      return this.identiteCollectivite.populationTags.includes(
-        primary as CollectivitePopulationTypeEnum
-      );
-    } else if (identifier === 'localisation') {
-      const drom = primary === 'DOM';
-      return this.identiteCollectivite.drom === drom;
-    } else if (identifier === 'dans_aire_urbaine') {
-      return this.identiteCollectivite.dansAireUrbaine === primary;
-    }
+    const identifier = this.visit(ctx.identifier) as string;
+    const primary = this.visit(ctx.primary) as string;
+    return evaluateIdentite(this.identiteCollectivite, identifier, primary);
   }
 
   reponse(ctx: any) {

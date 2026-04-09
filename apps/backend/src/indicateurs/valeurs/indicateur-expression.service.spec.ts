@@ -1,5 +1,8 @@
 import { Test } from '@nestjs/testing';
-import { CollectiviteTypeEnum } from '@tet/domain/collectivites';
+import {
+  CollectiviteSousTypeEnum,
+  CollectiviteTypeEnum,
+} from '@tet/domain/collectivites';
 import IndicateurExpressionService from './indicateur-expression.service';
 
 // décommenter (et lancer les tests) pour màj la doc
@@ -496,6 +499,119 @@ describe('IndicateurExpressionService', () => {
         ((valeurs.cae_5 - valeursComplementaires.limite.cae_5) * 0.1) /
           (valeursComplementaires.limite.cae_5 -
             valeursComplementaires.cible.cae_5)
+      );
+    });
+  });
+
+  describe('identite(soustype, ...)', () => {
+    const formule = 'si identite(soustype, syndicat) alors 1 sinon 0';
+    const formuleFP =
+      'si identite(soustype, epci_a_fiscalite_propre) alors 1 sinon 0';
+
+    it('identite(soustype, syndicat) retourne 1 pour un syndicat', () => {
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          formule,
+          { dummy: 1 },
+          {
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.EPCI,
+              soustype: CollectiviteSousTypeEnum.SYNDICAT,
+              populationTags: [],
+              drom: false,
+            },
+          }
+        )
+      ).toBe(1);
+    });
+
+    it('identite(soustype, epci_a_fiscalite_propre) retourne 1 pour un EPCI FP', () => {
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          formuleFP,
+          { dummy: 1 },
+          {
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.EPCI,
+              soustype: CollectiviteSousTypeEnum.EPCI_FP,
+              populationTags: [],
+              drom: false,
+            },
+          }
+        )
+      ).toBe(1);
+    });
+
+    it('identite(soustype, pole) retourne 1 pour un pole', () => {
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          'si identite(soustype, pole) alors 1 sinon 0',
+          { dummy: 1 },
+          {
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.EPCI,
+              soustype: CollectiviteSousTypeEnum.POLE,
+              populationTags: [],
+              drom: false,
+            },
+          }
+        )
+      ).toBe(1);
+    });
+
+    it('identite(soustype, syndicat) retourne 0 pour une commune', () => {
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          formule,
+          { dummy: 1 },
+          {
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.COMMUNE,
+              soustype: null,
+              populationTags: [],
+              drom: false,
+            },
+          }
+        )
+      ).toBe(0);
+    });
+
+    it('identite(soustype, SYNDICAT) en majuscules retourne 1 (insensible a la casse)', () => {
+      expect(
+        indicateurExpressionService.parseAndEvaluateExpression(
+          'si identite(soustype, SYNDICAT) alors 1 sinon 0',
+          { dummy: 1 },
+          {
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.EPCI,
+              soustype: CollectiviteSousTypeEnum.SYNDICAT,
+              populationTags: [],
+              drom: false,
+            },
+          }
+        )
+      ).toBe(1);
+    });
+  });
+
+  describe("messages d'erreur pour identite()", () => {
+    it('lance une erreur avec les enums type et soustype pour un champ inconnu', () => {
+      expect(() =>
+        indicateurExpressionService.parseAndEvaluateExpression(
+          'si identite(inconnu, EPCI) alors 1 sinon 0',
+          { dummy: 1 },
+          {
+            identiteCollectivite: {
+              type: CollectiviteTypeEnum.EPCI,
+              soustype: CollectiviteSousTypeEnum.EPCI_FP,
+              populationTags: [],
+              drom: false,
+            },
+          }
+        )
+      ).toThrow(
+        'Champ d\'identité "inconnu" non reconnu dans identite(inconnu, EPCI). ' +
+          'Champs autorisés : type, soustype, population, localisation, dans_aire_urbaine.'
       );
     });
   });
