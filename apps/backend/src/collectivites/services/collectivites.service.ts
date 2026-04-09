@@ -1,19 +1,16 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import {
-  collectiviteBanaticSubType,
-  CollectiviteBanaticType,
-  collectiviteBanaticTypeTable,
-} from '@tet/backend/collectivites/shared/models/collectivite-banatic-type.table';
+import { collectiviteBanaticTypeTable } from '@tet/backend/collectivites/shared/models/collectivite-banatic-type.table';
 import { cotTable } from '@tet/backend/referentiels/labellisations/cot.table';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
 import {
-  Collectivite,
   CollectiviteAvecType,
   CollectivitePopulationTypeEnum,
   CollectiviteSousTypeEnum,
   collectiviteTypeEnum,
   CollectiviteTypeEnum,
+  CollectiviteNatureType,
+  NATURE_TO_SOUS_TYPE,
 } from '@tet/domain/collectivites';
 import { and, eq } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
@@ -57,18 +54,10 @@ export default class CollectivitesService {
   }
 
   getCollectiviteSousType(
-    collectivite: Pick<Collectivite, 'type'>,
-    typeBanatic: CollectiviteBanaticType | null
+    natureInsee: CollectiviteNatureType | null
   ): CollectiviteSousTypeEnum | null {
-    if (
-      collectivite.type == collectiviteTypeEnum.EPCI &&
-      typeBanatic &&
-      (typeBanatic.type == collectiviteBanaticSubType.SyndicatMixte ||
-        typeBanatic.type == collectiviteBanaticSubType.SyndicatCommunes)
-    ) {
-      return CollectiviteSousTypeEnum.SYNDICAT;
-    }
-    return null;
+    if (!natureInsee) return null;
+    return NATURE_TO_SOUS_TYPE[natureInsee] ?? null;
   }
 
   async getCollectiviteAvecType(
@@ -93,8 +82,7 @@ export default class CollectivitesService {
           ? CollectiviteTypeEnum.EPCI
           : CollectiviteTypeEnum.COMMUNE,
       soustype: this.getCollectiviteSousType(
-        collectivite.collectivite,
-        collectivite.collectivite_banatic_type
+        collectivite.collectivite.natureInsee
       ),
       populationTags: this.getPopulationTags(collectivitePopulation),
       // A bit weird, but it's the same as sql for now: if collectivite test, metropole if epci, null if commune

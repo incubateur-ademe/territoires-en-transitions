@@ -305,7 +305,7 @@ coremeasure,1.1.3,"Réaliser un diagnostic de vulnérabilité, définir une stra
  Eci_1.1.2.2 (1)
  Eci_1.1.2.3 (1)
  Eci_1.1.2.4 (1)
- Eci_1.1.2.5 (1)",,te_eci,,"si identite(type, EPCI) ou identite(type, syndicat) alors VRAI
+ Eci_1.1.2.5 (1)",,te_eci,,"si identite(type, EPCI) ou identite(soustype, syndicat) alors VRAI
  sinon FAUX",,,,,,,"La collectivité s’approprie les enjeux du diagnostic économie circulaire réalisé à l’échelle supra en le déclinant à son échelle (acteurs, ressources...). 
  Son analyse lui permet d’identifier les leviers d’actions directes qu’elle peut actionner en lien avec ses compétences et relations/interventions auprès des acteurs de son territoire : organisation interne, patrimoine bâti, voirie, espaces verts, enfance et jeunesse, commerce…
  Au moins une fois par an, elle échange avec les acteurs de son territoire (commerces, associations...) pour identifier les initiatives locales et les besoins. 
@@ -387,7 +387,7 @@ coremeasure,1.1.3,"Réaliser un diagnostic de vulnérabilité, définir une stra
  Cae_1.2.3.2.2 (1)
  Cae_1.2.3.2.3 (1)
  Eci_2.1.0 (1)
- Eci_1.3.1",,te_eci,,"si identite(type, EPCI) ou identite(type, syndicat) alors VRAI
+ Eci_1.3.1",,te_eci,,"si identite(type, EPCI) ou identite(soustype, syndicat) alors VRAI
  sinon FAUX",,,,,,,"La collectivité définit sa stratégie, ses objectifs et son plan d’action d’Economie circulaire adapté à son territoire.
  Les questions que la collectivité doit se poser pour construire sa stratégie, ses objectifs et son plan d’action sont par exemple :
  - Ma collectivité supra est-elle dotée d’une stratégie, d’objectifs et d’un plan d’action d’Economie circulaire ? Puis-je y contribuer et me greffer à sa démarche (feuille de route pertinente à mon échelle) ? 
@@ -448,7 +448,7 @@ coremeasure,1.1.3,"Réaliser un diagnostic de vulnérabilité, définir une stra
  - Contenir un volet : sensibilisation, mobilisation et valorisation des acteurs et initiatives locales ;
  - Contenir un volet numérique responsable, à moins que celui-ci ne renvoie vers un schéma directeur du numérique responsable.
  La partie concernant la Commission consultative d'élaboration et de suivi est traitée dans la mesure « Mettre en place une Commission Consultative d’Élaboration et de Suivi (CCES) élargie du Plan Local de Prévention des Déchets Ménagers et Assimilés ».",,,,,,,
-,1.1.5.3,Bâtir un plan d’actions avec les EPCI dans l'objectif de réduire les déchets et d'améliorer leur qualité,"1,5",Eci_1.2.4.1,,te_eci,,"si identite(type, EPCI) ou identite(type, syndicat) alors VRAI
+,1.1.5.3,Bâtir un plan d’actions avec les EPCI dans l'objectif de réduire les déchets et d'améliorer leur qualité,"1,5",Eci_1.2.4.1,,te_eci,,"si identite(type, EPCI) ou identite(soustype, syndicat) alors VRAI
  sinon FAUX",,,,,,,"Par sa connaissance des flux de déchets gérés, le syndicat est capable d'identifier les gisements de déchets problématiques à optimiser (secteurs, filières, flux de ressources consommées, usagers, …). Sur cette base, le syndicat peut ainsi prendre un rôle d'animateur pour un dialogue avec et entre ses EPCI adhérents, dans l’objectif de les aider à bâtir un plan d’actions complémentaires à celui du syndicat, faisant appel aux compétences des EPCI (développement économique par exemple). Les actions en faveur de la sobriété sont également prises en considération.",,,,,,,
 ,1.1.5.4,S’assurer que la stratégie présente des indicateurs spécifiques dotés d’objectifs,"1,8",Eci_1.3.1,Effets,te_eci,,"si identite(type, commune) alors VRAI
  sinon FAUX",,,,,,,"L'efficacité de la politique économie circulaire de la collectivité dépend de sa capacité à suivre, évaluer et adapter ses plans d'actions. Pour cela, la collectivité doit mettre en œuvre des outils de reporting, quantifier les résultats obtenus et adapter/réorienter régulièrement les actions envisagées.
@@ -2240,7 +2240,7 @@ coremeasure,3.3.1,Optimiser la gestion de l'eau potable,"10,0",Cae_3.3.1,,"te_ca
  - Travailler avec une université pouvant faire des approches en changement de comportement",,,,,,
 ,3.4.1.6,Inciter les adhérents du syndicat de traitement à déployer des actions visant à promouvoir la prévention de la production des déchets,"3,0","Eci_1.2.4.2 (1)
  Eci_1.2.4.3 (1)
- Eci_1.2.4.4 (1)",,"te_cae,te_eci",Cette sous-mesure n'est activée que pour les syndicats de déchets,"si identite(type, syndicat) alors FAUX
+ Eci_1.2.4.4 (1)",,"te_cae,te_eci",Cette sous-mesure n'est activée que pour les syndicats de déchets,"si identite(soustype, syndicat) alors FAUX
  sinon VRAI",,,,,,,"Le syndicat mobilise ses EPCI adhérentes dans la mise en œuvre d’actions de prévention et de sobriété dans le cadre de leurs compétences en dehors de la collecte et du traitement des déchets. Il soutient ses EPCI adhérents dans l'intégration du diagnostic Économie Circulaire au sein de leurs politiques locales, en les aidant à mobiliser des acteurs au-delà de leur compétence déchets, comme ceux du développement économique. Ce soutien vise à encourager une approche transversale et collaborative, permettant aux collectivités de mieux intégrer l'économie circulaire dans leurs actions et politiques locales.","- Partager avec les EPCI les observations sur les gisements de déchets à optimiser sur leur territoire,
  - Les accompagner dans l’identification de pistes de réduction,
  - Proposer et déployer des actions communes de sensibilisation.

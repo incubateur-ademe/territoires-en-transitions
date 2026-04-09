@@ -54,6 +54,7 @@ import {
 import { ImportReferentielRepository } from './import-referentiel.repository';
 import {
   verifyReferentielExpressions,
+  normalizeTypeSyndicatExpressions,
   buildIndicateurReferences,
   buildActionId,
   buildQuestionActionRelations,
@@ -252,7 +253,10 @@ export class ImportReferentielService extends BaseSpreadsheetImporterService {
             const regle: PersonnalisationRegleCreate = {
               actionId: createActionDefinition.actionId,
               type: ruleType,
-              formule: action[ruleType],
+              formule: normalizeTypeSyndicatExpressions({
+                referentielId,
+                expression: action[ruleType],
+              }),
               description: action[`${ruleType}Desc`] || '',
             };
             createPersonnalisationRegles.push(regle);

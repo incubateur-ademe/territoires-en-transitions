@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 import {
   CollectivitePopulationTypeEnum,
+  CollectiviteSousTypeEnum,
   CollectiviteTypeEnum,
 } from '@tet/domain/collectivites';
 import PersonnalisationsExpressionService from './personnalisations-expression.service';
@@ -499,7 +500,146 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
     });
   });
 
-  it('Permet de tester si la collectivité a le flag `dansAireUrbaine`', async () => {
+  describe('identite(soustype, ...)', () => {
+    it('identite(soustype, syndicat) retourne true pour un syndicat', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(soustype, syndicat)',
+          null,
+          {
+            type: CollectiviteTypeEnum.EPCI,
+            soustype: CollectiviteSousTypeEnum.SYNDICAT,
+            populationTags: [],
+            drom: false,
+          }
+        )
+      ).toBe(true);
+    });
+
+    it('identite(soustype, epci_a_fiscalite_propre) retourne true pour un EPCI FP', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(soustype, epci_a_fiscalite_propre)',
+          null,
+          {
+            type: CollectiviteTypeEnum.EPCI,
+            soustype: CollectiviteSousTypeEnum.EPCI_FP,
+            populationTags: [],
+            drom: false,
+          }
+        )
+      ).toBe(true);
+    });
+
+    it('identite(soustype, pole) retourne true pour un pole', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(soustype, pole)',
+          null,
+          {
+            type: CollectiviteTypeEnum.EPCI,
+            soustype: CollectiviteSousTypeEnum.POLE,
+            populationTags: [],
+            drom: false,
+          }
+        )
+      ).toBe(true);
+    });
+
+    it('identite(soustype, syndicat) retourne false pour un EPCI FP', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(soustype, syndicat)',
+          null,
+          {
+            type: CollectiviteTypeEnum.EPCI,
+            soustype: CollectiviteSousTypeEnum.EPCI_FP,
+            populationTags: [],
+            drom: false,
+          }
+        )
+      ).toBe(false);
+    });
+
+    it('identite(soustype, syndicat) retourne false pour une commune (soustype null)', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(soustype, syndicat)',
+          null,
+          {
+            type: CollectiviteTypeEnum.COMMUNE,
+            soustype: null,
+            populationTags: [],
+            drom: false,
+          }
+        )
+      ).toBe(false);
+    });
+
+    it('identite(soustype, SYNDICAT) en majuscules retourne true (insensible a la casse)', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(soustype, SYNDICAT)',
+          null,
+          {
+            type: CollectiviteTypeEnum.EPCI,
+            soustype: CollectiviteSousTypeEnum.SYNDICAT,
+            populationTags: [],
+            drom: false,
+          }
+        )
+      ).toBe(true);
+    });
+
+    it('identite(type, epci) en minuscules retourne true (insensible a la casse)', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(type, epci)',
+          null,
+          {
+            type: CollectiviteTypeEnum.EPCI,
+            soustype: CollectiviteSousTypeEnum.EPCI_FP,
+            populationTags: [],
+            drom: false,
+          }
+        )
+      ).toBe(true);
+    });
+  });
+
+  describe('identite(type, ...)', () => {
+    it('identite(type, EPCI) retourne true pour un EPCI', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(type, EPCI)',
+          null,
+          {
+            type: CollectiviteTypeEnum.EPCI,
+            soustype: CollectiviteSousTypeEnum.EPCI_FP,
+            populationTags: [],
+            drom: false,
+          }
+        )
+      ).toBe(true);
+    });
+
+    it('identite(type, commune) retourne true pour une commune', () => {
+      expect(
+        expressionService.parseAndEvaluateExpression(
+          'identite(type, commune)',
+          null,
+          {
+            type: CollectiviteTypeEnum.COMMUNE,
+            soustype: null,
+            populationTags: [],
+            drom: false,
+          }
+        )
+      ).toBe(true);
+    });
+  });
+
+  it('identite(dans_aire_urbaine, oui) retourne vrai quand dansAireUrbaine est true', async () => {
     const expression = `si identite(dans_aire_urbaine, oui) alors 1 sinon 2\n`;
 
     const collectivite = {
@@ -528,5 +668,56 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
         dansAireUrbaine: null,
       })
     ).toBe(2);
+  });
+
+  it('identite(dans_aire_urbaine, non) retourne vrai quand dansAireUrbaine est false', async () => {
+    const expression = `si identite(dans_aire_urbaine, non) alors 1 sinon 2\n`;
+
+    const collectivite = {
+      type: CollectiviteTypeEnum.COMMUNE,
+      soustype: null,
+      populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
+      drom: false,
+    };
+    expect(
+      expressionService.parseAndEvaluateExpression(expression, undefined, {
+        ...collectivite,
+        dansAireUrbaine: false,
+      })
+    ).toBe(1);
+
+    expect(
+      expressionService.parseAndEvaluateExpression(expression, undefined, {
+        ...collectivite,
+        dansAireUrbaine: true,
+      })
+    ).toBe(2);
+
+    expect(
+      expressionService.parseAndEvaluateExpression(expression, undefined, {
+        ...collectivite,
+        dansAireUrbaine: null,
+      })
+    ).toBe(2);
+  });
+
+  describe("messages d'erreur pour identite()", () => {
+    it('lance une erreur avec les enums type et soustype pour un champ inconnu', () => {
+      expect(() =>
+        expressionService.parseAndEvaluateExpression(
+          'identite(inconnu, EPCI)',
+          null,
+          {
+            type: CollectiviteTypeEnum.EPCI,
+            soustype: CollectiviteSousTypeEnum.EPCI_FP,
+            populationTags: [],
+            drom: false,
+          }
+        )
+      ).toThrow(
+        'Champ d\'identité "inconnu" non reconnu dans identite(inconnu, EPCI). ' +
+          'Champs autorisés : type, soustype, population, localisation, dans_aire_urbaine.'
+      );
+    });
   });
 });
