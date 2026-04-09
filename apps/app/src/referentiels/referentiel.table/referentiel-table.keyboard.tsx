@@ -1,5 +1,5 @@
-import { Cell, Table as ReactTable } from '@tanstack/react-table';
-import type { HTMLAttributes, RefAttributes } from 'react';
+import { Cell, Row, Table as ReactTable } from '@tanstack/react-table';
+import type { HTMLAttributes, KeyboardEvent, RefAttributes } from 'react';
 import {
   createContext,
   useCallback,
@@ -33,6 +33,18 @@ function findPosition(
     }
   }
   return null;
+}
+
+function findRowByCellId(
+  table: ReactTable<ActionListItem>,
+  cellId: string
+): Row<ActionListItem> | null {
+  return (
+    table
+      .getRowModel()
+      .rows.find((row) => row.getVisibleCells().some((cell) => cell.id === cellId)) ??
+    null
+  );
 }
 
 type ReferentielTableKeyboardContextValue = {
@@ -114,7 +126,7 @@ export function ReferentielTableKeyboardProvider({
   }, [focusedCellId, navigationDeps]);
 
   const onKeyDownCapture = useCallback(
-    (event: React.KeyboardEvent<HTMLTableElement>) => {
+    (event: KeyboardEvent<HTMLTableElement>) => {
       const isArrowKey =
         event.key === 'ArrowUp' ||
         event.key === 'ArrowDown' ||
@@ -157,18 +169,41 @@ export function ReferentielTableKeyboardProvider({
       }
 
       if (isSpaceKey) {
-        // Only toggle expand/collapse for cells explicitly marked as such.
-        const shouldToggleExpand = td.getAttribute(
-          'data-referentiel-toggle-expand'
-        );
-        if (!shouldToggleExpand) {
+        const currentRow = findRowByCellId(table, cellId);
+        if (!currentRow) {
           return;
+        }
+
+        // Space toggles expand/collapse from any cell in the row.
+        // If the row is a leaf, collapse/expand its parent instead.
+        const isLeafRow = !currentRow.getCanExpand();
+        const rowToToggle =
+          isLeafRow ? currentRow.getParentRow() : currentRow;
+        if (!rowToToggle?.getCanExpand()) {
+          return;
+        }
+
+        const matrix = getCellMatrix(table);
+        const currentPos = findPosition(matrix, cellId);
+        let nextFocusedCellId = cellId;
+
+        if (isLeafRow && currentPos) {
+          const parentCells = rowToToggle.getVisibleCells();
+          const nextCol = Math.min(currentPos.col, parentCells.length - 1);
+          const parentCellId = parentCells[nextCol]?.id;
+          if (parentCellId) {
+            nextFocusedCellId = parentCellId;
+            const parentPos = findPosition(matrix, parentCellId);
+            if (parentPos) {
+              lastPositionRef.current = parentPos;
+            }
+          }
         }
 
         event.preventDefault();
         event.stopPropagation();
-        setFocusedCellId(cellId);
-        td.click();
+        setFocusedCellId(nextFocusedCellId);
+        rowToToggle.toggleExpanded();
         return;
       }
 

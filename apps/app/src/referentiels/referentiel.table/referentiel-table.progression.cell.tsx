@@ -27,7 +27,6 @@ export const ReferentielTableProgressionCell = ({
         canToggleExpand ? 'cursor-pointer' : '',
         referentielCellProps.className
       )}
-      data-referentiel-toggle-expand={canToggleExpand ? 'true' : undefined}
       onClick={canToggleExpand ? toggleRowExpanded : undefined}
     >
       <ScoreProgressBar action={row} />
