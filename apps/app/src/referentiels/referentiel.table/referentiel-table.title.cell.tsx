@@ -32,9 +32,6 @@ export const ReferentielTableTitleCell = ({ info }: Props) => {
         pinning.className,
         referentielCellProps.className
       )}
-      data-referentiel-toggle-expand={
-        haveChildren ? 'true' : undefined
-      }
       style={pinning.style}
       onClick={haveChildren ? row.getToggleExpandedHandler() : undefined}
     >
