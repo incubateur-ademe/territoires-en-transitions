@@ -3,55 +3,67 @@
 import BlogCard from '@/site/components/cards/BlogCard';
 import MasonryGallery from '@/site/components/galleries/MasonryGallery';
 import { convertNameToSlug } from '@/site/src/utils/convertNameToSlug';
-import {
-  Field,
-  OptionValue,
-  Pagination,
-  SelectFilter,
-  SelectOption,
-} from '@tet/ui';
-import { useEffect, useEffectEvent, useState } from 'react';
-import { ActuCard, getData } from './utils';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { Field, Pagination, SelectFilter, SelectOption } from '@tet/ui';
+import { parseAsArrayOf, parseAsInteger, useQueryStates } from 'nuqs';
+import { useMemo } from 'react';
+import { getData } from './utils';
 
 const PAGINATION_LIMIT = 12;
+const actusSearchParams = {
+  selectedPage: parseAsInteger.withDefault(1),
+  selectedCategories: parseAsArrayOf(parseAsInteger).withDefault([]),
+};
 
 type ListeActusProps = {
   categories: SelectOption[];
 };
 
 const ListeActus = ({ categories }: ListeActusProps) => {
-  const [selectedCategories, setSelectedCategories] = useState<
-    OptionValue[] | undefined
-  >();
-
-  const [selectedPage, setSelectedPage] = useState(1);
-  const updateSelectedPage = useEffectEvent((value: number) =>
-    setSelectedPage(value)
+  const [{ selectedPage, selectedCategories }, setSearchParams] =
+    useQueryStates(actusSearchParams, {
+      urlKeys: {
+        selectedPage: 'p',
+        selectedCategories: 'c',
+      },
+    });
+  const categoriesFilter = useMemo(
+    () =>
+      (selectedCategories ?? []).filter(
+        (categoryId): categoryId is number =>
+          typeof categoryId === 'number' && Number.isFinite(categoryId)
+      ),
+    [selectedCategories]
   );
 
-  const [total, setTotal] = useState(0);
-  const [data, setData] = useState<ActuCard[]>();
-
-  const getActusData = useEffectEvent(async () => {
-    const { data, pagination } = await getData({
-      page: selectedPage,
-      limit: PAGINATION_LIMIT,
-      categories: (selectedCategories as number[]) ?? [],
-    });
-    setData(data);
-    setSelectedPage(pagination.start / PAGINATION_LIMIT + 1);
-    setTotal(pagination.total);
+  const {
+    data: actusData,
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: ['actualites', selectedPage, categoriesFilter],
+    queryFn: () =>
+      getData({
+        page: selectedPage,
+        limit: PAGINATION_LIMIT,
+        categories: categoriesFilter,
+      }),
+    placeholderData: keepPreviousData,
   });
 
-  useEffect(() => {
-    // Lorsque le filtre change, on revient en page 1 avant le fetch pour éviter des erreurs
-    if (selectedPage === 1) getActusData();
-    else updateSelectedPage(1);
-  }, [selectedCategories, selectedPage]);
+  const data = actusData?.data;
+  const total = actusData?.pagination.total ?? 0;
+  if (isPending && !actusData) {
+    return <div className="py-8 text-center">Chargement des actualités…</div>;
+  }
 
-  useEffect(() => {
-    getActusData();
-  }, [selectedPage]);
+  if (isError) {
+    return (
+      <div className="py-8 text-center">
+        Impossible de charger les actualités.
+      </div>
+    );
+  }
 
   return (
     <>
@@ -60,7 +72,13 @@ const ListeActus = ({ categories }: ListeActusProps) => {
           <SelectFilter
             values={selectedCategories}
             options={categories}
-            onChange={({ values }) => setSelectedCategories(values)}
+            onChange={({ values }) => {
+              // quand le filtre change, on revient sur la page 1
+              setSearchParams({
+                selectedCategories: (values as number[]) ?? [],
+                selectedPage: 1,
+              });
+            }}
             placeholder="Sélectionner une ou plusieurs catégories"
             small
           />
@@ -89,7 +107,7 @@ const ListeActus = ({ categories }: ListeActusProps) => {
             nbOfElements={total}
             maxElementsPerPage={PAGINATION_LIMIT}
             idToScrollTo="actus-header"
-            onChange={setSelectedPage}
+            onChange={(selectedPage) => setSearchParams({ selectedPage })}
           />
         </>
       )}
