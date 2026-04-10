@@ -8,27 +8,29 @@ import { useUpsertMesurePilotes } from '../actions/use-mesure-pilotes';
 import { useUpsertMesureServicesPilotes } from '../actions/use-mesure-services-pilotes';
 import { useUpdateActionExplication } from '../actions/use-update-action-explication';
 import { ReferentielTableExplicationCell } from './referentiel-table.explication.cell';
+import {
+  getPilotesFilterFn,
+  getServicesFilterFn,
+  getStatutFilterFn,
+} from './referentiel-table.filters.utils';
 import { ReferentielTablePersonnesPilotesCell } from './referentiel-table.personnes-pilotes.cell';
-import { ReferentielTableScoreRatioCell } from './referentiel-table.score-ratio.cell';
 import { ReferentielTableServicesPilotesCell } from './referentiel-table.services-pilotes.cell';
-import { ReferentielTableStatutOrProgressionCell } from './referentiel-table.statut-or-progression.cell';
+import { ReferentielTableStatutDetailleCell } from './referentiel-table.statut-detaille.cell';
+import { ReferentielTableStatutCell } from './referentiel-table.statut.cell';
 import { ReferentielTableTitleCell } from './referentiel-table.title.cell';
-import { getColumnPinningStyles } from './utils';
-
-// const HEADER_CELL_SMALL_CENTER_CLASSNAME = 'text-xs m-auto normal-case';
-const HEADER_CELL_BORDER_RIGHT_CLASSNAME =
-  'border-r border-primary-10 last:border-r-0';
 
 const columnHelper = createColumnHelper<ActionListItem>();
 
 const getColumns = ({
   canEdit,
+  actions,
   updateActionStatut,
   updateActionPilotes,
   updateActionServices,
   updateActionExplication,
 }: {
   canEdit: boolean;
+  actions: Record<string, ActionListItem>;
   updateActionStatut: ReturnType<typeof useUpdateActionStatut>['mutate'];
   updateActionPilotes: ReturnType<typeof useUpsertMesurePilotes>['mutate'];
   updateActionServices: ReturnType<
@@ -40,24 +42,12 @@ const getColumns = ({
 }) => [
   columnHelper.accessor('nom', {
     size: 512,
-    header: (info) => {
-      const pinning = getColumnPinningStyles(info.column, undefined, {
-        variant: 'header',
-      });
-      return (
-        <TableHeaderCell
-          title="Intitulé"
-          className={cn(
-            'bg-white',
-            HEADER_CELL_BORDER_RIGHT_CLASSNAME,
-            pinning.className
-          )}
-          style={pinning.style}
-        />
-      );
-    },
+    header: () => (
+      <TableHeaderCell title="Intitulé" className={cn('w-[32rem] bg-white')} />
+    ),
     cell: (info) => <ReferentielTableTitleCell info={info} />,
   }),
+
   // columnHelper.accessor('description', {
   //   header: () => <TableHeaderCell title="Description" className={cn('w-[32rem]',HEADER_CELL_BORDER_RIGHT_CLASSNAME)} />,
   //   cell: (info) => (
@@ -87,20 +77,16 @@ const getColumns = ({
   //     </TableCell>
   //   ),
   // }),
-  columnHelper.accessor('score.statut', {
-    header: () => (
-      <TableHeaderCell
-        title="Statut"
-        className={cn('w-40', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
-      />
-    ),
-    cell: (info) => (
-      <ReferentielTableStatutOrProgressionCell
-        info={info}
-        updateActionStatut={updateActionStatut}
-      />
-    ),
-  }),
+
+  // columnHelper.display({
+  //   id: 'progression',
+  //   header: () => (
+  //     <TableHeaderCell title="Progression" className={cn('w-[8rem]')} />
+  //   ),
+  //   cell: ({ row, cell }) => (
+  //     <ReferentielTableProgressionCell row={row.original} cell={cell} />
+  //   ),
+  // }),
 
   columnHelper.display({
     id: 'statutDetaille',
@@ -110,26 +96,33 @@ const getColumns = ({
     ),
   }),
 
-  columnHelper.display({
-    id: 'progress',
+  columnHelper.accessor('score.statut', {
+    id: 'statut',
     header: () => (
-      <TableHeaderCell
-        title="Progression"
-        className={cn('w-60', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
+      <TableHeaderCell title="Statut" className={cn('w-[11.3rem]')} />
+    ),
+    cell: (info) => (
+      <ReferentielTableStatutCell
+        info={info}
+        updateActionStatut={updateActionStatut}
       />
     ),
-    cell: ({ row, cell }) => (
-      <ReferentielTableScoreRatioCell row={row.original} cell={cell} />
-    ),
+    filterFn: getStatutFilterFn,
   }),
 
-  columnHelper.display({
-    id: 'explication',
+  // columnHelper.display({
+  //   id: 'progress',
+  //   header: () => (
+  //     <TableHeaderCell title="Fait / Potentiel" className={cn('w-[6.5rem]')} />
+  //   ),
+  //   cell: ({ row, cell }) => (
+  //     <ReferentielTableScoreRatioCell row={row.original} cell={cell} />
+  //   ),
+  // }),
+
+  columnHelper.accessor('score.explication', {
     header: () => (
-      <TableHeaderCell
-        title="État d'avancement"
-        className={cn('w-[32rem]', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
-      />
+      <TableHeaderCell title="État d'avancement" className={cn('w-[32rem]')} />
     ),
     cell: (info) => (
       <ReferentielTableExplicationCell
@@ -138,16 +131,11 @@ const getColumns = ({
         updateActionExplication={updateActionExplication}
       />
     ),
+    filterFn: 'includesString',
   }),
 
-  columnHelper.display({
-    id: 'pilotes',
-    header: () => (
-      <TableHeaderCell
-        title="Pilotes"
-        className={cn('w-40', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
-      />
-    ),
+  columnHelper.accessor('pilotes', {
+    header: () => <TableHeaderCell title="Pilotes" className={cn('w-40')} />,
     cell: (info) => (
       <ReferentielTablePersonnesPilotesCell
         info={info}
@@ -155,14 +143,14 @@ const getColumns = ({
         canEdit={canEdit}
       />
     ),
+    filterFn: getPilotesFilterFn(actions),
   }),
 
-  columnHelper.display({
-    id: 'servicesPilotes',
+  columnHelper.accessor('services', {
     header: () => (
       <TableHeaderCell
         title="Service ou direction pilote"
-        className={cn('w-40', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
+        className={cn('w-40')}
       />
     ),
     cell: (info) => (
@@ -172,6 +160,7 @@ const getColumns = ({
         canEdit={canEdit}
       />
     ),
+    filterFn: getServicesFilterFn(actions),
   }),
 
   // columnHelper.accessor('pointPotentiel', {
@@ -311,14 +300,8 @@ const getColumns = ({
   // }),
 
   // columnHelper.display({
-  //   id: 'countDocuments',
-  //   header: () => (
-  //     <TableHeaderCell
-  //       title="Documents liés"
-  //       titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
-  //       className={cn('w-32', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
-  //     />
-  //   ),
+  //   id: 'documents',
+  //   header: () => <TableHeaderCell title="Documents" className={cn('w-32')} />,
   //   cell: (info) => (
   //     <ReferentielTableNotificationCell
   //       link={makeReferentielActionUrl({
@@ -331,6 +314,7 @@ const getColumns = ({
   //     />
   //   ),
   // }),
+
   // columnHelper.accessor('countActions', {
   //   header: () => (
   //     <TableHeaderCell
@@ -363,7 +347,9 @@ const getColumns = ({
   // }),
 ];
 
-export function useReferentielTableColumns() {
+export function useListReferentielTableColumns(
+  actions: Record<string, ActionListItem>
+) {
   const { hasCollectivitePermission } = useCurrentCollectivite();
   const canEdit = hasCollectivitePermission('referentiels.mutate');
 
@@ -376,6 +362,7 @@ export function useReferentielTableColumns() {
     () =>
       getColumns({
         canEdit,
+        actions,
         updateActionStatut,
         updateActionPilotes,
         updateActionServices,
@@ -383,6 +370,7 @@ export function useReferentielTableColumns() {
       }),
     [
       canEdit,
+      actions,
       updateActionStatut,
       updateActionPilotes,
       updateActionServices,

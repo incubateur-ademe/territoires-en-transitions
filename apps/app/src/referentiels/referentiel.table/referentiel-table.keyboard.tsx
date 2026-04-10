@@ -1,20 +1,11 @@
-import { Cell, Row, Table as ReactTable } from '@tanstack/react-table';
-import type { HTMLAttributes, KeyboardEvent, RefAttributes } from 'react';
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { Table as ReactTable, Row } from '@tanstack/react-table';
+import type { FocusEvent, KeyboardEvent } from 'react';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 
 import { ActionListItem } from '../actions/use-list-actions';
 
-const FOCUS_RING_CLASS =
-  'ring-2 ring-inset ring-primary-6 z-[1] outline-none relative';
-const EDITABLE_FOCUS_RING_CLASS = 'data-[inline-edit=true]:outline-dashed';
+const CELL_ATTR = 'data-cell-id';
+const CELL_SELECTOR = `td[${CELL_ATTR}]`;
 
 function getCellMatrix(table: ReactTable<ActionListItem>): string[][] {
   return table
@@ -42,88 +33,127 @@ function findRowByCellId(
   return (
     table
       .getRowModel()
-      .rows.find((row) => row.getVisibleCells().some((cell) => cell.id === cellId)) ??
-    null
+      .rows.find((row) =>
+        row.getVisibleCells().some((cell) => cell.id === cellId)
+      ) ?? null
   );
 }
 
-type ReferentielTableKeyboardContextValue = {
-  focusedCellId: string | null;
-  setFocusedCellId: (id: string | null) => void;
-  registerCellRef: (cellId: string, el: HTMLTableCellElement | null) => void;
+export type ReferentielTableKeyboardProps = {
   tableRef: React.RefObject<HTMLTableElement | null>;
   scrollContainerRef: React.RefObject<HTMLDivElement | null>;
-  onKeyDownCapture: (event: React.KeyboardEvent<HTMLTableElement>) => void;
+  onKeyDownCapture: (event: KeyboardEvent<HTMLTableElement>) => void;
+  onFocusCapture: (event: FocusEvent<HTMLTableElement>) => void;
 };
 
-const ReferentielTableKeyboardContext =
-  createContext<ReferentielTableKeyboardContextValue | null>(null);
-
-type ProviderProps = {
-  table: ReactTable<ActionListItem>;
-  /** Re-sync focus when expansion or row data changes */
-  navigationDeps: unknown;
-  children: React.ReactNode;
-};
-
-export function ReferentielTableKeyboardProvider({
-  table,
-  navigationDeps,
-  children,
-}: ProviderProps) {
-  const [focusedCellId, setFocusedCellId] = useState<string | null>(null);
+/**
+ * Keyboard navigation for the referentiel table.
+ *
+ * Uses imperative DOM focus + CSS `:focus` for the focus ring instead of
+ * React state/context, so moving focus between cells triggers zero
+ * React re-renders.
+ */
+export function useTableKeyboard(
+  table: ReactTable<ActionListItem>,
+  navigationDeps: unknown
+): ReferentielTableKeyboardProps {
   const tableRef = useRef<HTMLTableElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const cellRefs = useRef<Map<string, HTMLTableCellElement>>(new Map());
+  const focusedCellIdRef = useRef<string | null>(null);
   const lastPositionRef = useRef({ row: 0, col: 0 });
 
-  const registerCellRef = useCallback(
-    (cellId: string, el: HTMLTableCellElement | null) => {
-      if (el) {
-        cellRefs.current.set(cellId, el);
-      } else {
-        cellRefs.current.delete(cellId);
-      }
+  const findCellElement = useCallback(
+    (cellId: string): HTMLTableCellElement | null => {
+      return (
+        (tableRef.current?.querySelector(
+          `td[${CELL_ATTR}="${CSS.escape(cellId)}"]`
+        ) as HTMLTableCellElement | null) ?? null
+      );
     },
     []
   );
 
+  const moveFocusTo = useCallback(
+    (cellId: string) => {
+      if (focusedCellIdRef.current && focusedCellIdRef.current !== cellId) {
+        const prev = findCellElement(focusedCellIdRef.current);
+        if (prev) prev.tabIndex = -1;
+      }
+
+      focusedCellIdRef.current = cellId;
+      const next = findCellElement(cellId);
+      if (next) {
+        next.tabIndex = 0;
+        next.focus({ preventScroll: false });
+        next.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      }
+    },
+    [findCellElement]
+  );
+
   useLayoutEffect(() => {
     const matrix = getCellMatrix(table);
-    if (matrix.length === 0) {
-      return;
-    }
+    if (matrix.length === 0) return;
 
-    setFocusedCellId((prev) => {
-      if (prev) {
-        const pos = findPosition(matrix, prev);
-        if (pos) {
-          lastPositionRef.current = pos;
-          return prev;
-        }
+    const currentId = focusedCellIdRef.current;
+    let targetId: string;
+
+    if (currentId) {
+      const pos = findPosition(matrix, currentId);
+      if (pos) {
+        lastPositionRef.current = pos;
+        targetId = currentId;
+      } else {
+        const { row, col } = lastPositionRef.current;
+        const r = Math.min(row, matrix.length - 1);
+        const c = Math.min(col, matrix[r].length - 1);
+        targetId = matrix[r][c];
+        lastPositionRef.current = { row: r, col: c };
       }
-      const { row, col } = lastPositionRef.current;
-      const r = Math.min(row, matrix.length - 1);
-      const c = Math.min(col, matrix[r].length - 1);
-      const id = matrix[r][c];
-      lastPositionRef.current = { row: r, col: c };
-      return id;
-    });
-  }, [table, navigationDeps]);
+    } else {
+      targetId = matrix[0][0];
+      lastPositionRef.current = { row: 0, col: 0 };
+    }
 
-  useLayoutEffect(() => {
-    if (!focusedCellId) {
-      return;
-    }
-    const el = cellRefs.current.get(focusedCellId);
-    if (!el) {
-      return;
-    }
+    focusedCellIdRef.current = targetId;
+
     requestAnimationFrame(() => {
+      const el = findCellElement(targetId);
+      if (!el) return;
+      el.tabIndex = 0;
       el.focus({ preventScroll: false });
       el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     });
-  }, [focusedCellId, navigationDeps]);
+  }, [table, navigationDeps, findCellElement]);
+
+  const onFocusCapture = useCallback(
+    (event: FocusEvent<HTMLTableElement>) => {
+      const target = event.target as HTMLElement;
+      const td = target.closest(CELL_SELECTOR) as HTMLTableCellElement | null;
+      if (!td) return;
+
+      const tbody = tableRef.current?.querySelector('tbody');
+      if (!tbody?.contains(td)) return;
+
+      const cellId = td.getAttribute(CELL_ATTR);
+      if (!cellId || cellId === focusedCellIdRef.current) return;
+
+      if (focusedCellIdRef.current) {
+        const prev = findCellElement(focusedCellIdRef.current);
+        if (prev) prev.tabIndex = -1;
+      }
+
+      focusedCellIdRef.current = cellId;
+      td.tabIndex = 0;
+
+      const matrix = getCellMatrix(table);
+      const pos = findPosition(matrix, cellId);
+      if (pos) {
+        lastPositionRef.current = pos;
+      }
+    },
+    [table, findCellElement]
+  );
 
   const onKeyDownCapture = useCallback(
     (event: KeyboardEvent<HTMLTableElement>) => {
@@ -136,63 +166,41 @@ export function ReferentielTableKeyboardProvider({
       const isSpaceKey =
         event.key === ' ' || event.key === 'Spacebar' || event.code === 'Space';
 
-      if (!isArrowKey && !isEnterKey && !isSpaceKey) {
-        return;
-      }
+      if (!isArrowKey && !isEnterKey && !isSpaceKey) return;
 
       const target = event.target as HTMLElement | null;
-      if (!target) {
-        return;
-      }
+      if (!target) return;
 
-      // Don't override keyboard interactions while typing.
-      if (target.isContentEditable) {
-        return;
-      }
-      if (target.closest('button, a, input, textarea, select')) {
-        return;
-      }
+      if (target.isContentEditable) return;
+      if (target.closest('button, a, input, textarea, select')) return;
 
-      const td = target.closest('td');
-      if (!td || !tableRef.current?.contains(td)) {
-        return;
-      }
+      const td = target.closest('td') as HTMLTableCellElement | null;
+      if (!td || !tableRef.current?.contains(td)) return;
 
       const tbody = tableRef.current.querySelector('tbody');
-      if (!tbody?.contains(td)) {
-        return;
-      }
+      if (!tbody?.contains(td)) return;
 
-      const cellId = td.getAttribute('data-referentiel-cell-id');
-      if (!cellId) {
-        return;
-      }
+      const cellId = td.getAttribute(CELL_ATTR);
+      if (!cellId) return;
 
       if (isSpaceKey) {
         const currentRow = findRowByCellId(table, cellId);
-        if (!currentRow) {
-          return;
-        }
+        if (!currentRow) return;
 
-        // Space toggles expand/collapse from any cell in the row.
-        // If the row is a leaf, collapse/expand its parent instead.
         const isLeafRow = !currentRow.getCanExpand();
-        const rowToToggle =
-          isLeafRow ? currentRow.getParentRow() : currentRow;
-        if (!rowToToggle?.getCanExpand()) {
-          return;
-        }
+        const rowToToggle = isLeafRow ? currentRow.getParentRow() : currentRow;
+        if (!rowToToggle?.getCanExpand()) return;
 
         const matrix = getCellMatrix(table);
         const currentPos = findPosition(matrix, cellId);
-        let nextFocusedCellId = cellId;
+        let nextCellId = cellId;
 
         if (isLeafRow && currentPos) {
           const parentCells = rowToToggle.getVisibleCells();
           const nextCol = Math.min(currentPos.col, parentCells.length - 1);
           const parentCellId = parentCells[nextCol]?.id;
           if (parentCellId) {
-            nextFocusedCellId = parentCellId;
+            nextCellId = parentCellId;
             const parentPos = findPosition(matrix, parentCellId);
             if (parentPos) {
               lastPositionRef.current = parentPos;
@@ -202,30 +210,24 @@ export function ReferentielTableKeyboardProvider({
 
         event.preventDefault();
         event.stopPropagation();
-        setFocusedCellId(nextFocusedCellId);
+        focusedCellIdRef.current = nextCellId;
         rowToToggle.toggleExpanded();
         return;
       }
 
       if (isEnterKey) {
-        // Inline-editable cells use this marker (see `TableCell`).
         const isInlineEditable = td.getAttribute('data-inline-edit') === 'true';
-        if (!isInlineEditable) {
-          return;
-        }
+        if (!isInlineEditable) return;
 
         event.preventDefault();
         event.stopPropagation();
-        setFocusedCellId(cellId);
         td.click();
         return;
       }
 
       const matrix = getCellMatrix(table);
       const pos = findPosition(matrix, cellId);
-      if (!pos) {
-        return;
-      }
+      if (!pos) return;
 
       let nextRow = pos.row;
       let nextCol = pos.col;
@@ -248,70 +250,14 @@ export function ReferentielTableKeyboardProvider({
       }
 
       const nextId = matrix[nextRow][nextCol];
-      if (nextId === cellId) {
-        return;
-      }
+      if (nextId === cellId) return;
 
       event.preventDefault();
       lastPositionRef.current = { row: nextRow, col: nextCol };
-      setFocusedCellId(nextId);
+      moveFocusTo(nextId);
     },
-    [table]
+    [table, moveFocusTo]
   );
 
-  const value = useMemo(
-    () => ({
-      focusedCellId,
-      setFocusedCellId,
-      registerCellRef,
-      tableRef,
-      scrollContainerRef,
-      onKeyDownCapture,
-    }),
-    [focusedCellId, registerCellRef, onKeyDownCapture]
-  );
-
-  return (
-    <ReferentielTableKeyboardContext value={value}>
-      {children}
-    </ReferentielTableKeyboardContext>
-  );
-}
-
-export function useReferentielTableCellFocus(
-  cell: Cell<ActionListItem, unknown>
-) {
-  const ctx = useContext(ReferentielTableKeyboardContext);
-
-  return useMemo(() => {
-    if (!ctx) {
-      return {
-        referentielCellProps: {} as Record<string, unknown>,
-      };
-    }
-
-    const isFocused = ctx.focusedCellId === cell.id;
-
-    return {
-      referentielCellProps: {
-        ref: (el: HTMLTableCellElement | null) =>
-          ctx.registerCellRef(cell.id, el),
-        tabIndex: isFocused ? 0 : -1,
-        className: isFocused
-          ? `${FOCUS_RING_CLASS} ${EDITABLE_FOCUS_RING_CLASS}`
-          : undefined,
-        onFocus: () => {
-          ctx.setFocusedCellId(cell.id);
-        },
-        'data-referentiel-cell-id': cell.id,
-      } satisfies HTMLAttributes<HTMLTableCellElement> &
-        RefAttributes<HTMLTableCellElement> & {
-          'data-referentiel-cell-id': string;
-        },
-    };
-  }, [ctx, cell.id]);
-}
-
-export function useReferentielTableKeyboardOptional() {
-  return useContext(ReferentielTableKeyboardContext);
+  return { tableRef, scrollContainerRef, onKeyDownCapture, onFocusCapture };
 }

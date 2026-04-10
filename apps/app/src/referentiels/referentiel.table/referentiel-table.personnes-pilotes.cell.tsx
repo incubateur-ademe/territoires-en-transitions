@@ -6,7 +6,6 @@ import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { TableCell } from '@tet/ui';
 import { ActionListItem } from '../actions/use-list-actions';
 import { useUpsertMesurePilotes } from '../actions/use-mesure-pilotes';
-import { useReferentielTableCellFocus } from './referentiel-table.keyboard';
 import { getTableMeta } from './utils';
 
 type Props = {
@@ -20,17 +19,18 @@ export const ReferentielTablePersonnesPilotesCell = ({
   canEdit,
   updateActionPilotes,
 }: Props) => {
-  const { referentielCellProps } = useReferentielTableCellFocus(info.cell);
   const { actionId, actionType, pilotes } = info.row.original;
   const { collectiviteId } = getTableMeta(info.table);
+  const cellId = info.cell.id;
 
   if (actionType !== ActionTypeEnum.ACTION) {
-    return <TableCell {...referentielCellProps} />;
+    return <TableCell tabIndex={-1} data-cell-id={cellId} />;
   }
 
   return (
     <TableCell
-      {...referentielCellProps}
+      tabIndex={-1}
+      data-cell-id={cellId}
       canEdit={canEdit}
       edit={{
         renderOnEdit: ({ openState }) => (
@@ -49,7 +49,7 @@ export const ReferentielTablePersonnesPilotesCell = ({
         ),
       }}
     >
-      {pilotes.length > 0 ? (
+      {pilotes.length > 0 && (
         <ListWithTooltip
           title={pilotes[0].nom}
           list={pilotes.map((p) => p.nom)}
@@ -58,8 +58,6 @@ export const ReferentielTablePersonnesPilotesCell = ({
             <span className="max-w-48 line-clamp-1 text-primary-9">{item}</span>
           )}
         />
-      ) : (
-        canEdit && <span className="text-grey-6">{canEdit ? '–' : ''}</span>
       )}
     </TableCell>
   );

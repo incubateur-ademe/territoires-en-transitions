@@ -26,6 +26,5 @@ export const ReferentielTableStatutOrProgressionCell = ({
   return ReferentielTableProgressionCell({
     row: data,
     cell: info.cell,
-    toggleRowExpanded: info.row.getToggleExpandedHandler(),
   });
 };

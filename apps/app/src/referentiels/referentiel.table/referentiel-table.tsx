@@ -1,8 +1,10 @@
 import {
+  ColumnFiltersState,
   ExpandedState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
+  getFilteredRowModel,
   Table as ReactTable,
   RowData,
   useReactTable,
@@ -19,12 +21,15 @@ import React, { ReactNode, useCallback, useMemo, useState } from 'react';
 import { ActionListItem } from '../actions/use-list-actions';
 import { useListActionsGroupedById } from '../actions/use-list-actions-grouped-by-id';
 import { useReferentielId } from '../referentiel-context';
+import { ReferentielTableFiltersForm } from './referentiel-table.filters.form';
+import { getTextFilterFn } from './referentiel-table.filters.utils';
 import {
-  ReferentielTableKeyboardProvider,
-  useReferentielTableKeyboardOptional,
+  ReferentielTableKeyboardProps,
+  useTableKeyboard,
 } from './referentiel-table.keyboard';
-import { useReferentielTableColumns } from './use-referentiel-table-columns';
-import { rowClassNameByActionTypeToClassName } from './utils';
+import { useGetReferentielTableFiltersState } from './use-get-referentiel-table-filters-state';
+import { useListReferentielTableColumns } from './use-list-referentiel-table-columns';
+import { rowClassNameByActionType } from './utils';
 
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -38,31 +43,61 @@ const TYPES_EXPANDED_BY_DEFAULT = new Set<ActionType>([
   ActionTypeEnum.SOUS_AXE,
 ]);
 
-/** Stable defaults for controlled table state (avoid new object refs each render). */
-const TABLE_ROW_PINNING = { top: [] as string[] };
-const TABLE_COLUMN_PINNING = { left: ['nom'] as string[] };
-
-export const ReferentielTable = () => {
-  const collectiviteId = useCollectiviteId();
+export function ReferentielTableWithData() {
   const referentielId = useReferentielId();
+  const filtersState = useGetReferentielTableFiltersState();
 
   const [{ data: actions = {}, isPending }] = useListActionsGroupedById({
     referentielIds: [referentielId],
   });
 
-  const recordOfAxesAndSousAxes = filterActionsBy(actions ?? {}, (action) =>
+  return (
+    <div className="flex flex-col gap-4">
+      <ReferentielTableFiltersForm filtersState={filtersState} />
+
+      <ReferentielTable
+        key={`${actions.length}-${isPending}`}
+        actions={actions}
+        referentielId={referentielId}
+        isPending={isPending}
+        filtersState={filtersState}
+      />
+    </div>
+  );
+}
+
+function ReferentielTable({
+  actions,
+  referentielId,
+  isPending,
+  filtersState,
+}: {
+  actions: Record<string, ActionListItem>;
+  referentielId: ReferentielId;
+  isPending: boolean;
+  filtersState: ReturnType<typeof useGetReferentielTableFiltersState>;
+}) {
+  const collectiviteId = useCollectiviteId();
+
+  const { filters, hasActiveFilters } = filtersState;
+
+  const recordOfAxesAndSousAxes = filterActionsBy(actions, (action) =>
     TYPES_EXPANDED_BY_DEFAULT.has(action.actionType)
   );
 
-  const [expanded, setExpanded] = useState<ExpandedState>(
-    Object.fromEntries(
-      Object.entries(recordOfAxesAndSousAxes).map(([id]) => [id, true])
-    )
+  const defaultExpanded = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(recordOfAxesAndSousAxes).map(([id]) => [id, true])
+      ),
+    [recordOfAxesAndSousAxes]
   );
+
+  const [expanded, setExpanded] = useState<ExpandedState>(defaultExpanded);
 
   const axes = useMemo(() => {
     const referentiel = actions[referentielId];
-    return referentiel?.childrenIds.map((id) => actions[id]);
+    return referentiel?.childrenIds.map((id) => actions[id]) ?? [];
   }, [actions, referentielId]);
 
   const getSubRows = useCallback(
@@ -70,13 +105,29 @@ export const ReferentielTable = () => {
     [actions]
   );
 
+  const columnFilters = useMemo<ColumnFiltersState>(() => {
+    const result: ColumnFiltersState = [];
+    if (filters.statuts.length > 0) {
+      result.push({ id: 'statut', value: filters.statuts });
+    }
+    if (filters.pilotes.length > 0) {
+      result.push({ id: 'pilotes', value: filters.pilotes });
+    }
+    if (filters.services.length > 0) {
+      result.push({ id: 'services', value: filters.services });
+    }
+    return result;
+  }, [filters.statuts, filters.pilotes, filters.services]);
+
+  const effectiveExpanded = filters.statuts.length > 0 ? true : expanded;
+
   const tableState = useMemo(
     () => ({
-      expanded,
-      rowPinning: TABLE_ROW_PINNING,
-      columnPinning: TABLE_COLUMN_PINNING,
+      expanded: effectiveExpanded,
+      columnFilters,
+      ...(filters.text ? { globalFilter: filters.text } : {}),
     }),
-    [expanded]
+    [effectiveExpanded, columnFilters, filters.text]
   );
 
   const tableMeta = useMemo(
@@ -84,19 +135,24 @@ export const ReferentielTable = () => {
     [collectiviteId, referentielId]
   );
 
-  const { columns } = useReferentielTableColumns();
+  const { columns } = useListReferentielTableColumns(actions);
 
   const table = useReactTable({
     columns,
     data: axes,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getSubRows,
     getRowId: (row) => row.actionId,
     state: tableState,
     onExpandedChange: setExpanded,
+    filterFromLeafRows: true,
+    globalFilterFn: getTextFilterFn,
     meta: tableMeta,
   });
+
+  const keyboard = useTableKeyboard(table, [expanded, axes]);
 
   if (isPending) {
     return <ReferentielTableLoading table={table} />;
@@ -106,47 +162,57 @@ export const ReferentielTable = () => {
 
   if (isEmpty) {
     return (
-      <div className="min-h-96 flex items-center justify-center text-error-1 bg-white rounded-xl border border-grey-3">
-        Une erreur est survenue lors de la récupération des données
+      <div className="min-h-96 flex items-center justify-center text-grey-7 bg-white rounded-xl border border-grey-3">
+        {hasActiveFilters
+          ? 'Aucun résultat ne correspond aux filtres sélectionnés'
+          : 'Une erreur est survenue lors de la récupération des données'}
       </div>
     );
   }
 
+  return <TableContent table={table} keyboard={keyboard} />;
+}
+
+function TableContent({
+  table,
+  keyboard,
+}: {
+  table: ReactTable<ActionListItem>;
+  keyboard: ReferentielTableKeyboardProps;
+}) {
+  const rows = table.getRowModel().rows;
+
   return (
-    <ReferentielTableKeyboardProvider
-      table={table}
-      navigationDeps={[expanded, axes]}
-    >
-      <TableWrapper table={table}>
-        {table.getRowModel().rows.map((row) => (
-          <TableRow
-            key={row.id}
-            className={cn(
-              'text-sm',
-              rowClassNameByActionTypeToClassName[row.original.actionType]
-            )}
-          >
-            {row.getVisibleCells().map((cell) => (
-              <React.Fragment key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </React.Fragment>
-            ))}
-          </TableRow>
-        ))}
-      </TableWrapper>
-    </ReferentielTableKeyboardProvider>
+    <TableWrapper table={table} keyboard={keyboard}>
+      {rows.map((row) => (
+        <TableRow
+          key={row.id}
+          data-action-type={row.original.actionType}
+          className={cn(
+            'text-sm',
+            rowClassNameByActionType[row.original.actionType]
+          )}
+        >
+          {row.getVisibleCells().map((cell) => (
+            <React.Fragment key={cell.id}>
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </React.Fragment>
+          ))}
+        </TableRow>
+      ))}
+    </TableWrapper>
   );
-};
+}
 
 function TableWrapper({
   children,
   table,
+  keyboard,
 }: {
   children: ReactNode;
   table: ReactTable<ActionListItem>;
+  keyboard?: ReferentielTableKeyboardProps;
 }) {
-  const keyboard = useReferentielTableKeyboardOptional();
-
   const tableHeaderRow = table
     .getHeaderGroups()
     .map((headerGroup) =>
@@ -158,29 +224,34 @@ function TableWrapper({
     );
 
   return (
-    <div
-      ref={keyboard?.scrollContainerRef}
-      className="2xl:-ml-[calc((100vw-4rem-1440px+3rem)/2)] 2xl:w-[calc(100vw-4rem)] relative bg-white rounded-xl border border-grey-3 overflow-x-scroll"
-    >
-      <div className="px-4 py-2 border-b border-grey-3 text-xs text-grey-7">
-        Raccourcis clavier :{' '}
-        <span className="font-bold font-mono">Flèches ↑ ↓ ← →</span> pour
-        naviguer entre cellules,{' '}
-        <span className="font-bold font-mono">Entrée</span> pour éditer,{' '}
-        <span className="font-bold font-mono">Espace</span> pour
-        développer/réduire.
-      </div>
-      <Table
-        ref={keyboard?.tableRef}
-        onKeyDownCapture={keyboard?.onKeyDownCapture}
-        className="border-separate border-spacing-0"
+    <>
+      <div
+        ref={keyboard?.scrollContainerRef}
+        // className="2xl:-ml-[calc((100vw-4rem-1440px+3rem)/2)] 2xl:w-[calc(100vw-4rem)] relative bg-white rounded-xl border border-grey-3 overflow-x-scroll overflow-y-auto max-h-[calc(100vh-12rem)]"
+        className="2xl:-ml-[calc((100vw-4rem-1440px+3rem)/2)] 2xl:w-[calc(100vw-4rem)] bg-white rounded-xl border border-grey-3 overflow-x-scroll"
+        // className="max-2xl:overflow-x-auto 2xl:-ml-[calc((100vw-1440px)/2)] 2xl:w-[calc(100vw-4rem)] max-h-[calc(100vh-12rem)] rounded-xl"
       >
-        <TableHead>
-          <TableRow>{tableHeaderRow}</TableRow>
-        </TableHead>
-        <tbody>{children}</tbody>
-      </Table>
-    </div>
+        <div className="sticky left-0 top-0 bg-white px-4 py-2 border-b border-grey-3 text-xs text-grey-7">
+          Raccourcis clavier :{' '}
+          <span className="font-bold font-mono">Flèches ↑ ↓ ← →</span> pour
+          naviguer entre cellules,{' '}
+          <span className="font-bold font-mono">Entrée</span> pour éditer,{' '}
+          <span className="font-bold font-mono">Espace</span> pour
+          développer/réduire.
+        </div>
+        <Table
+          ref={keyboard?.tableRef}
+          className="ref-table border-separate border-spacing-0"
+          onKeyDownCapture={keyboard?.onKeyDownCapture}
+          onFocusCapture={keyboard?.onFocusCapture}
+        >
+          <TableHead className="z-40">
+            <TableRow>{tableHeaderRow}</TableRow>
+          </TableHead>
+          <tbody>{children}</tbody>
+        </Table>
+      </div>
+    </>
   );
 }
 
