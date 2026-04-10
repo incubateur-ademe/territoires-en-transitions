@@ -3,7 +3,6 @@ import { ActionType, ActionTypeEnum } from '@tet/domain/referentiels';
 import { TableCell, TableCellRichTextEditor } from '@tet/ui';
 import { ActionListItem } from '../actions/use-list-actions';
 import { useUpdateActionExplication } from '../actions/use-update-action-explication';
-import { useReferentielTableCellFocus } from './referentiel-table.keyboard';
 import { getTableMeta } from './utils';
 
 type Props = {
@@ -24,11 +23,11 @@ export const ReferentielTableExplicationCell = ({
   canEdit,
   updateActionExplication,
 }: Props) => {
-  const { referentielCellProps } = useReferentielTableCellFocus(info.cell);
   const action = info.row.original;
+  const cellId = info.cell.id;
 
   if (!actionTypesWithExplication.has(action.actionType)) {
-    return <TableCell {...referentielCellProps} />;
+    return <TableCell tabIndex={-1} data-cell-id={cellId} />;
   }
 
   const {
@@ -40,7 +39,8 @@ export const ReferentielTableExplicationCell = ({
 
   return (
     <TableCellRichTextEditor
-      {...referentielCellProps}
+      tabIndex={-1}
+      data-cell-id={cellId}
       canEdit={canEdit}
       initialValue={explication}
       onValueChange={(value) => {

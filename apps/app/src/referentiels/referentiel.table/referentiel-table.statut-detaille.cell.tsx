@@ -4,7 +4,6 @@ import { cn, TableCell } from '@tet/ui';
 import { useRef } from 'react';
 import { OpenActionStatutDetailleModalButton } from '../actions/action-statut/open-action-statut-detaille-modal.button';
 import { ActionListItem } from '../actions/use-list-actions';
-import { useReferentielTableCellFocus } from './referentiel-table.keyboard';
 
 type Props = {
   row: ActionListItem;
@@ -17,14 +16,12 @@ export const ReferentielTableStatutDetailleCell = ({ row, cell }: Props) => {
     statut === StatutAvancementEnum.DETAILLE_AU_POURCENTAGE ||
     statut === StatutAvancementEnum.DETAILLE_A_LA_TACHE;
 
-  const { focusCellProps } = useReferentielTableCellFocus(cell);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const cellId = cell.id;
 
   if (!hasStatutDetaille) {
-    return <TableCell {...focusCellProps} />;
+    return <TableCell tabIndex={-1} data-cell-id={cellId} />;
   }
-
-  const { className, ...otherFocusCellProps } = focusCellProps;
 
   const openModal = () => {
     buttonRef.current?.click();
@@ -32,8 +29,9 @@ export const ReferentielTableStatutDetailleCell = ({ row, cell }: Props) => {
 
   return (
     <TableCell
-      {...otherFocusCellProps}
-      className={cn('text-center cursor-pointer', className)}
+      tabIndex={-1}
+      data-cell-id={cellId}
+      className={cn('text-center cursor-pointer')}
       onClick={openModal}
       onKeyDownCapture={(event) => {
         if (event.key === 'Enter') {

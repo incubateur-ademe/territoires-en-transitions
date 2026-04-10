@@ -1,10 +1,10 @@
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { CellContext } from '@tanstack/react-table';
+import { ActionTypeEnum } from '@tet/domain/referentiels';
 import { TableCell } from '@tet/ui';
 import { ActionListItem } from '../actions/use-list-actions';
 import { useUpsertMesureServicesPilotes } from '../actions/use-mesure-services-pilotes';
-import { useReferentielTableCellFocus } from './referentiel-table.keyboard';
 import { getTableMeta } from './utils';
 
 type Props = {
@@ -20,13 +20,19 @@ export const ReferentielTableServicesPilotesCell = ({
   canEdit,
   updateActionServices,
 }: Props) => {
-  const { referentielCellProps } = useReferentielTableCellFocus(info.cell);
-  const { actionId, services } = info.row.original;
+  const { actionId, actionType, services } = info.row.original;
+  const cellId = info.cell.id;
+
+  if (actionType !== ActionTypeEnum.ACTION) {
+    return <TableCell tabIndex={-1} data-cell-id={cellId} />;
+  }
+
   const { collectiviteId } = getTableMeta(info.table);
 
   return (
     <TableCell
-      {...referentielCellProps}
+      tabIndex={-1}
+      data-cell-id={cellId}
       canEdit={canEdit}
       edit={{
         renderOnEdit: ({ openState }) => (

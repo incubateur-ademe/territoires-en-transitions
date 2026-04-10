@@ -14,7 +14,6 @@ import ActionStatutBadge from '../actions/action-statut/action-statut.badge';
 import { ActionStatutDropdown } from '../actions/action-statut/action-statut.dropdown';
 import { useUpdateActionStatut } from '../actions/action-statut/use-update-action-statut';
 import { ActionListItem } from '../actions/use-list-actions';
-import { useReferentielTableCellFocus } from './referentiel-table.keyboard';
 
 type Props = {
   info: CellContext<ActionListItem, StatutAvancement | null | undefined>;
@@ -30,10 +29,8 @@ export const ReferentielTableStatutCell = ({
   info,
   updateActionStatut,
 }: Props) => {
-  const { focusCellProps: referentielCellProps } = useReferentielTableCellFocus(
-    info.cell
-  );
   const action = info.row.original;
+  const cellId = info.cell.id;
 
   const {
     actionType,
@@ -44,12 +41,14 @@ export const ReferentielTableStatutCell = ({
     !actionTypesWithStatut.has(actionType) ||
     statut === StatutAvancementEnum.NON_RENSEIGNABLE
   ) {
-    return <TableCell {...referentielCellProps} />;
+    return <TableCell tabIndex={-1} data-cell-id={cellId} />;
   }
 
   return (
     <TableCell
-      {...referentielCellProps}
+      className="text-center"
+      tabIndex={-1}
+      data-cell-id={cellId}
       canEdit={true}
       edit={{
         renderOnEdit: ({ openState }) => {
@@ -83,7 +82,6 @@ function InlineEditActionStatutDropdown({
   updateActionStatut: ReturnType<typeof useUpdateActionStatut>['mutate'];
   inlineEditOpenState: OpenState;
 }) {
-  // useRef pour garder la référence du statut sélectionné
   const selectedStatutRef = useRef<StatutAvancement | null | undefined>(null);
 
   const closeEditing = () => {
