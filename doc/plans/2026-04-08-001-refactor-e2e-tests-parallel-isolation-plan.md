@@ -308,10 +308,26 @@ Remplacer `getAuthUser()` + `collectiviteId` hard-codée par `addTestCollectivit
 
 ### Phase 7 — Vérification finale et CI
 
-- [ ] Tous les tests passent avec `fileParallelism: true`
+- [x] Run 1 avec `fileParallelism: true` : 1080/1099 tests passent (8 échecs)
+- [ ] Investiguer et corriger les échecs restants
 - [ ] Exécuter 3 fois la suite complète pour vérifier l'absence de flakiness
 - [ ] Aucun fichier de test ne référence `YOLO_DODO` ou une `collectiviteId` hard-codée (sauf fichiers seed documentés)
 - [ ] Ajouter un lint/grep CI pour détecter l'usage de `collectiviteId` hard-codées dans les nouveaux tests
+
+#### Échecs restants après Phase 6 (run 1)
+
+| Fichier | Test | Catégorie |
+|---|---|---|
+| `export-score-comparison.controller.e2e-spec.ts` | Bac à sable scores | Non migré |
+| `update-fiche.router.e2e-spec.ts` | UpdateFicheService | Non migré |
+| `list-fiches.router.e2e-spec.ts` | Filtre sur personne | Non migré |
+| `score-indicatif.router.e2e-spec.ts` | ScoreIndicatifRouter | Conflit données seed |
+| `snapshots.router.e2e-spec.ts` | Snapshot nom+date, score indicatif | Conflit données seed |
+| `list-indicateurs.router.e2e-spec.ts` | Structure du résultat | Conflit données seed |
+| `notifications.service.e2e-spec.ts` | sendPendingNotifications | Timing |
+| `trajectoire-leviers.controller.e2e-spec.ts` | Get data siren | Timing |
+| `export-plan.controller.e2e-spec.ts` | Export XLSX | Byte size variable |
+| `request-labellisation.router.e2e-spec.ts` | Audit already requested | Conflit données seed |
 
 ## Success Metrics
 
