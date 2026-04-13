@@ -2,11 +2,9 @@ import { instanceGouvernanceTagTable } from '@tet/backend/collectivites/tags/ins
 import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
 import { FichesRouter } from '@tet/backend/plans/fiches/fiches.router';
 import {
-  getAuthUser,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
@@ -63,7 +61,11 @@ describe('UpdateFicheService', () => {
     const app = await getTestApp();
     fichesRouter = app.get(FichesRouter);
     db = await getTestDatabase(app);
-    yoloDodo = await getAuthUser(YOLO_DODO);
+    const testUserResult = await addTestUser(db, {
+      collectiviteId: collectiviteId,
+      role: CollectiviteRole.ADMIN,
+    });
+    yoloDodo = getAuthUserFromUserCredentials(testUserResult.user);
 
     const { user: testUser, cleanup } = await addTestUser(db);
     userWithNoRights = getAuthUserFromUserCredentials(testUser);

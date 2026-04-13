@@ -21,13 +21,13 @@ import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-
 import { sousThematiqueTable } from '@tet/backend/shared/thematiques/sous-thematique.table';
 import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-  YOLO_DODO,
-  YOULOU_DOUDOU,
 } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import { CollectiviteRole } from '@tet/domain/users';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { withOnTestFinished } from '@tet/backend/utils/test-fixture.utils';
@@ -39,15 +39,28 @@ import { createFiche, createFiches } from '../fiches.test-fixture';
 
 let router: TrpcRouter;
 let yoloDodo: AuthenticatedUser;
+let otherUserId: string;
 let db: DatabaseService;
 
-const COLLECTIVITE_ID = YOLO_DODO.collectiviteId.admin;
+const COLLECTIVITE_ID = 1;
 
 beforeAll(async () => {
   const app = await getTestApp();
   router = await getTestRouter(app);
   db = await getTestDatabase(app);
-  yoloDodo = await getAuthUser(YOLO_DODO);
+
+  const testUserResult = await addTestUser(db, {
+    collectiviteId: COLLECTIVITE_ID,
+    role: CollectiviteRole.ADMIN,
+  });
+  yoloDodo = getAuthUserFromUserCredentials(testUserResult.user);
+
+  // Second utilisateur pour les filtres par utilisateur
+  const otherUserResult = await addTestUser(db, {
+    collectiviteId: COLLECTIVITE_ID,
+    role: CollectiviteRole.EDITION,
+  });
+  otherUserId = otherUserResult.user.id;
 });
 
 describe('Filtres sur les fiches actions', () => {
@@ -1620,7 +1633,7 @@ describe('Filtres sur les fiches actions', () => {
       await caller.plans.fiches.listFiches({
         collectiviteId: COLLECTIVITE_ID,
         filters: {
-          utilisateurReferentIds: [YOULOU_DOUDOU.id],
+          utilisateurReferentIds: [otherUserId],
         },
       });
 
