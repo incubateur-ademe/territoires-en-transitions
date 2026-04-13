@@ -1,12 +1,13 @@
+'use client';
+
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { useUser } from '@tet/api/users';
-import { hasPermission, hasRole, PlatformRole } from '@tet/domain/users';
+import { hasRole, PlatformRole } from '@tet/domain/users';
 import { noop } from 'es-toolkit';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useContext } from 'react';
 import { SuperAdminModeEnabledAlert } from './super-admin-mode-enabled.alert';
-import { ToggleSuperAdminModeCheckbox } from './toggle-super-admin-mode.checkbox';
 
 interface SuperAdminModeContextProps {
   isSuperAdminRoleEnabled: boolean;
@@ -69,12 +70,6 @@ export function SuperAdminModeProvider({
       )}
 
       {children}
-
-      {hasPermission(user, 'users.authorizations.mutate_super_admin_role') && (
-        <div className="w-full max-w-8xl mx-auto px-4 pb-4">
-          <ToggleSuperAdminModeCheckbox />
-        </div>
-      )}
     </SuperAdminModeContext.Provider>
   );
 }
