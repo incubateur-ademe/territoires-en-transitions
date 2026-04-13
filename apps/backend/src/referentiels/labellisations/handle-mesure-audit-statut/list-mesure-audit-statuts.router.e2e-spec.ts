@@ -1,10 +1,14 @@
+import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
-import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import {
+  addTestUser,
+  setUserCollectiviteRole,
+} from '@tet/backend/users/users/users.test-fixture';
 import { CollectiviteRole } from '@tet/domain/users';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -17,23 +21,43 @@ import { createAuditWithOnTestFinished } from '../../referentiels.test-fixture';
 import { addAuditeurPermission } from '../labellisations.test-fixture';
 import { mesureAuditStatutTable } from './mesure-audit-statut.table';
 
-const collectiviteId = 34 as const;
 const referentielId = 'cae' as const;
 
 describe('listMesureAuditStatuts.router', () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
   let databaseService: DatabaseService;
+  let collectiviteId: number;
+  let noAuditCollectiviteId: number;
 
   beforeAll(async () => {
     const app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
-    const testUserResult = await addTestUser(databaseService, {
-      collectiviteId: collectiviteId,
+
+    // Collectivité principale pour les tests avec audit
+    const { collectivite } = await addTestCollectivite(databaseService);
+    collectiviteId = collectivite.id;
+
+    // Collectivité séparée sans audit (pour le test "no audit in progress")
+    const { collectivite: noAuditCollectivite } =
+      await addTestCollectivite(databaseService);
+    noAuditCollectiviteId = noAuditCollectivite.id;
+
+    const testUserResult = await addTestUser(databaseService);
+    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
+
+    // Donner accès aux deux collectivités
+    await setUserCollectiviteRole(databaseService, {
+      userId: testUserResult.user.id,
+      collectiviteId,
       role: CollectiviteRole.ADMIN,
     });
-    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
+    await setUserCollectiviteRole(databaseService, {
+      userId: testUserResult.user.id,
+      collectiviteId: noAuditCollectiviteId,
+      role: CollectiviteRole.ADMIN,
+    });
   });
 
   test('should return all measures with their audit status, including measures without defined statuses', async () => {
@@ -182,7 +206,7 @@ describe('listMesureAuditStatuts.router', () => {
   test('should throw error when no audit is in progress', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
     const input = {
-      collectiviteId: 100, // collectivité sans audit en cours
+      collectiviteId: noAuditCollectiviteId, // collectivité sans audit en cours
       referentielId,
     };
 

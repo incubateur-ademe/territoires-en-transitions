@@ -1,4 +1,5 @@
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
+import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -186,12 +187,16 @@ describe('MesureAuditStatutRouter : permissions', () => {
   const referentielId = ReferentielIdEnum.CAE;
   const mesureId = 'cae_1.1.1.1';
   let noAccessUser: AuthenticatedUser;
-  const collectiviteId = 99; // id sur lequel l'utilisateur de test n'a pas de droits
+  let collectiviteId: number;
 
   beforeAll(async () => {
     const app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
+
+    // Collectivité isolée sur laquelle l'utilisateur n'a pas de droits
+    const { collectivite } = await addTestCollectivite(databaseService);
+    collectiviteId = collectivite.id;
 
     const noAccessResult = await addTestUser(databaseService);
     noAccessUser = getAuthUserFromUserCredentials(noAccessResult.user);

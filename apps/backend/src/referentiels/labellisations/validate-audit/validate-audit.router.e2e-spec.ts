@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { createAuditWithOnTestFinished } from '@tet/backend/referentiels/referentiels.test-fixture';
 
 import {
@@ -7,34 +8,33 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
-import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
-import { CollectiviteRole } from '@tet/domain/users';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { Collectivite } from '@tet/domain/collectivites';
 import { ReferentielIdEnum, SnapshotJalonEnum } from '@tet/domain/referentiels';
+import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { snapshotTable } from '../../snapshots/snapshot.table';
 import { addAuditeurPermission } from '../labellisations.test-fixture';
-
-const RANDOM_COLLECTIVITE_ID = 56;
 
 describe('ValidateAuditRouter', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
   let yoloDodoUser: AuthenticatedUser;
+  let collectivite: Collectivite;
 
   beforeAll(async () => {
     app = await getTestApp();
     router = await getTestRouter(app);
     db = await getTestDatabase(app);
 
-    const testUserResult = await addTestUser(db, {
-      collectiviteId: RANDOM_COLLECTIVITE_ID,
-      role: CollectiviteRole.ADMIN,
+    const testResult = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
     });
-    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
+    collectivite = testResult.collectivite;
+    yoloDodoUser = getAuthUserFromUserCredentials(testResult.user);
   });
 
   afterAll(async () => {
@@ -46,7 +46,7 @@ describe('ValidateAuditRouter', () => {
 
     const { audit } = await createAuditWithOnTestFinished({
       databaseService: db,
-      collectiviteId: RANDOM_COLLECTIVITE_ID,
+      collectiviteId: collectivite.id,
       referentielId: ReferentielIdEnum.CAE,
       withDemande: true,
     });
