@@ -1,55 +1,54 @@
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { Collectivite } from '@tet/domain/collectivites';
 import { IndicateurDefinition } from '@tet/domain/indicateurs';
+import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, isNull } from 'drizzle-orm';
 import { describe, expect, test } from 'vitest';
 import { createIndicateurPerso } from '../definitions.test-fixture';
 import { indicateurDefinitionTable } from '../indicateur-definition.table';
 import { UpdateIndicateurDefinitionInput } from './mutate-definition.input';
 
-const collectiviteId = 2;
-
 describe('UpdateIndicateurDefinitionRouter', () => {
   let databaseService: DatabaseService;
   let router: TrpcRouter;
-  let yoloDodo: AuthenticatedUser;
+  let authenticatedUser: AuthenticatedUser;
+  let collectivite: Collectivite;
 
   beforeAll(async () => {
     const app = await getTestApp();
     router = app.get(TrpcRouter);
-
     databaseService = await getTestDatabase(app);
-    yoloDodo = await getAuthUser(YOLO_DODO);
 
-    return async () => {
-      await app.close();
-    };
+    const testResult = await addTestCollectiviteAndUser(databaseService, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    collectivite = testResult.collectivite;
+    authenticatedUser = getAuthUserFromUserCredentials(testResult.user);
   });
 
   describe('indicateur perso', () => {
     test('should update basic fields for perso indicator', async () => {
-      const caller = router.createCaller({ user: yoloDodo });
-
-      const indicateurData = {
-        collectiviteId,
-        titre: 'Test Personal Indicator',
-      };
+      const caller = router.createCaller({ user: authenticatedUser });
 
       const indicateurId = await createIndicateurPerso({
         caller,
-        indicateurData,
+        indicateurData: {
+          collectiviteId: collectivite.id,
+          titre: 'Test Personal Indicator',
+        },
       });
 
       const updateData: UpdateIndicateurDefinitionInput = {
         indicateurId,
-        collectiviteId,
+        collectiviteId: collectivite.id,
         indicateurFields: {
           commentaire: 'Updated commentaire for test indicator',
           estFavori: true,
@@ -62,7 +61,7 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       const {
         data: [updatedIndicateur],
       } = await caller.indicateurs.indicateurs.list({
-        collectiviteId,
+        collectiviteId: collectivite.id,
         filters: {
           indicateurIds: [indicateurId],
         },
@@ -80,25 +79,25 @@ describe('UpdateIndicateurDefinitionRouter', () => {
         updateData.indicateurFields.estConfidentiel
       );
       expect(updatedIndicateur.modifiedBy).toEqual(
-        expect.objectContaining({ id: yoloDodo.id })
+        expect.objectContaining({ id: authenticatedUser.id })
       );
       expect(updatedIndicateur.modifiedAt).toBeDefined();
     });
 
     test('should update titre and unite for perso indicator', async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = router.createCaller({ user: authenticatedUser });
 
       const indicateurId = await createIndicateurPerso({
         caller,
         indicateurData: {
-          collectiviteId,
+          collectiviteId: collectivite.id,
           titre: 'Test Personal Indicator',
         },
       });
 
       const updateData: UpdateIndicateurDefinitionInput = {
         indicateurId,
-        collectiviteId,
+        collectiviteId: collectivite.id,
         indicateurFields: {
           titre: 'Updated Test Indicateur Title',
           unite: 'kg CO2',
@@ -110,7 +109,7 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       const {
         data: [updatedIndicateur],
       } = await caller.indicateurs.indicateurs.list({
-        collectiviteId,
+        collectiviteId: collectivite.id,
         filters: {
           indicateurIds: [indicateurId],
         },
@@ -134,19 +133,19 @@ describe('UpdateIndicateurDefinitionRouter', () => {
     });
 
     test('should update multiple fields at once for perso indicator', async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = router.createCaller({ user: authenticatedUser });
 
       const indicateurId = await createIndicateurPerso({
         caller,
         indicateurData: {
-          collectiviteId,
+          collectiviteId: collectivite.id,
           titre: 'hophophop',
         },
       });
 
       const updateData: UpdateIndicateurDefinitionInput = {
         indicateurId,
-        collectiviteId,
+        collectiviteId: collectivite.id,
         indicateurFields: {
           titre: 'Multi-field Updated Title',
           unite: 'tonnes',
@@ -161,7 +160,7 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       const {
         data: [updatedIndicateur],
       } = await caller.indicateurs.indicateurs.list({
-        collectiviteId,
+        collectiviteId: collectivite.id,
         filters: {
           indicateurIds: [indicateurId],
         },
@@ -184,14 +183,14 @@ describe('UpdateIndicateurDefinitionRouter', () => {
 
     test('should throw error when updating non-existent indicator', async () => {
       const updateData: UpdateIndicateurDefinitionInput = {
-        indicateurId: 99999, // Non-existent ID
-        collectiviteId,
+        indicateurId: 99999,
+        collectiviteId: collectivite.id,
         indicateurFields: {
           titre: 'This should fail',
         },
       };
 
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = router.createCaller({ user: authenticatedUser });
 
       await expect(
         caller.indicateurs.indicateurs.update(updateData)
@@ -199,19 +198,19 @@ describe('UpdateIndicateurDefinitionRouter', () => {
     });
 
     test('should throw error when user lacks permission', async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = router.createCaller({ user: authenticatedUser });
 
       const indicateurId = await createIndicateurPerso({
         caller,
         indicateurData: {
-          collectiviteId,
+          collectiviteId: collectivite.id,
           titre: 'hophophop',
         },
       });
 
       const updateData: UpdateIndicateurDefinitionInput = {
         indicateurId,
-        collectiviteId: 999, // Non-existent or unauthorized collectivite
+        collectiviteId: 999,
         indicateurFields: {
           titre: 'Unauthorized update',
         },
@@ -244,13 +243,13 @@ describe('UpdateIndicateurDefinitionRouter', () => {
     });
 
     test('should update fields', async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = router.createCaller({ user: authenticatedUser });
 
       const indicateurId = indicateurPredefiniCae1a.id;
 
       const updateData: UpdateIndicateurDefinitionInput = {
         indicateurId,
-        collectiviteId,
+        collectiviteId: collectivite.id,
         indicateurFields: {
           commentaire: 'Updated commentaire for test indicator',
           estFavori: true,
@@ -263,7 +262,7 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       const {
         data: [updatedIndicateur],
       } = await caller.indicateurs.indicateurs.list({
-        collectiviteId,
+        collectiviteId: collectivite.id,
         filters: {
           indicateurIds: [indicateurId],
         },
@@ -281,7 +280,7 @@ describe('UpdateIndicateurDefinitionRouter', () => {
         updateData.indicateurFields.estConfidentiel
       );
       expect(updatedIndicateur.modifiedBy).toEqual(
-        expect.objectContaining({ id: yoloDodo.id })
+        expect.objectContaining({ id: authenticatedUser.id })
       );
       expect(updatedIndicateur.modifiedAt).toBeDefined();
     });
@@ -303,17 +302,15 @@ describe('UpdateIndicateurDefinitionRouter', () => {
       // Try to update titre and unite for non-perso indicator
       const updateData: UpdateIndicateurDefinitionInput = {
         indicateurId: indicateurPredefini.id,
-        collectiviteId,
+        collectiviteId: collectivite.id,
         indicateurFields: {
           titre: 'This should fail',
           unite: 'This should fail too',
         },
       };
 
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = router.createCaller({ user: authenticatedUser });
 
-      // The service should throw an error because it only allows updating perso indicators
-      // (those with collectiviteId set)
       await expect(
         caller.indicateurs.indicateurs.update(updateData)
       ).rejects.toThrow();

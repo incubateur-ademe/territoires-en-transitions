@@ -1,13 +1,15 @@
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { Collectivite } from '@tet/domain/collectivites';
+import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { describe, expect } from 'vitest';
 import z from 'zod';
@@ -21,60 +23,42 @@ type CreateIndicateurDefinitionInput = z.input<
   typeof createIndicateurDefinitionInputSchema
 >;
 
-const collectiviteId = 2;
-const testIndicateurId = 9998;
-
 describe('createIndicateurPerso', () => {
   let databaseService: DatabaseService;
   let router: TrpcRouter;
-  let yoloDodo: AuthenticatedUser;
-
-  const cleanDatabase = async () => {
-    await databaseService.db
-      .delete(indicateurCollectiviteTable)
-      .where(eq(indicateurCollectiviteTable.indicateurId, testIndicateurId));
-
-    await databaseService.db
-      .delete(indicateurThematiqueTable)
-      .where(eq(indicateurThematiqueTable.indicateurId, testIndicateurId));
-
-    await databaseService.db
-      .delete(ficheActionIndicateurTable)
-      .where(eq(ficheActionIndicateurTable.indicateurId, testIndicateurId));
-
-    await databaseService.db
-      .delete(indicateurDefinitionTable)
-      .where(eq(indicateurDefinitionTable.id, testIndicateurId));
-  };
+  let authenticatedUser: AuthenticatedUser;
+  let collectivite: Collectivite;
 
   beforeAll(async () => {
     const app = await getTestApp();
     router = app.get(TrpcRouter);
-
     databaseService = await getTestDatabase(app);
-    yoloDodo = await getAuthUser(YOLO_DODO);
 
-    // Clean up any existing test data
-    await cleanDatabase();
-
-    return async () => {
-      await cleanDatabase();
-      await app.close();
-    };
+    const testResult = await addTestCollectiviteAndUser(databaseService, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    collectivite = testResult.collectivite;
+    authenticatedUser = getAuthUserFromUserCredentials(testResult.user);
   });
 
   test('should create a personal indicator with all fields', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    // Create a fiche in the collectivite for the ficheId field
+    const fiche = await caller.plans.fiches.create({
+      fiche: { collectiviteId: collectivite.id, titre: 'Fiche test indicateur' },
+    });
+
     const data = {
-      collectiviteId,
+      collectiviteId: collectivite.id,
       titre: 'Test Personal Indicator',
       unite: 'kg',
-      thematiques: [{ id: 1 }, { id: 2 }], // Assuming these thematic IDs exist
+      thematiques: [{ id: 1 }, { id: 2 }],
       commentaire: 'Test comment for personal indicator',
       estFavori: true,
-      ficheId: 1, // Assuming this fiche ID exists
+      ficheId: fiche.id,
     } satisfies CreateIndicateurDefinitionInput;
 
-    const caller = router.createCaller({ user: yoloDodo });
     const indicateurId = await caller.indicateurs.indicateurs.create(data);
 
     expect(indicateurId).toBeDefined();
@@ -127,7 +111,7 @@ describe('createIndicateurPerso', () => {
 
   test('should create a personal indicator with minimal fields', async () => {
     const data: CreateIndicateurDefinitionInput = {
-      collectiviteId,
+      collectiviteId: collectivite.id,
       titre: 'Minimal Test Indicator',
       unite: '',
       thematiques: [],
@@ -136,18 +120,11 @@ describe('createIndicateurPerso', () => {
       ficheId: undefined,
     };
 
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: authenticatedUser });
     const indicateurId = await caller.indicateurs.indicateurs.create(data);
 
     expect(indicateurId).toBeDefined();
     expect(typeof indicateurId).toBe('number');
-
-    onTestFinished(async () => {
-      await caller.indicateurs.indicateurs.delete({
-        indicateurId,
-        collectiviteId: data.collectiviteId,
-      });
-    });
 
     // Verify the indicator was created
     const createdIndicateur = await databaseService.db
@@ -191,30 +168,23 @@ describe('createIndicateurPerso', () => {
 
   test('should set modified_by field when creating an indicator', async () => {
     const data: CreateIndicateurDefinitionInput = {
-      collectiviteId,
+      collectiviteId: collectivite.id,
       titre: 'Test Indicator for modified_by',
       unite: 'kg',
       commentaire: 'Test comment',
       estFavori: true,
     };
 
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: authenticatedUser });
     const indicateurId = await caller.indicateurs.indicateurs.create(data);
 
     expect(indicateurId).toBeDefined();
-
-    onTestFinished(async () => {
-      await caller.indicateurs.indicateurs.delete({
-        indicateurId,
-        collectiviteId: data.collectiviteId,
-      });
-    });
 
     // Verify the modified_* fields are set by using the list service
     const {
       data: [indicateur],
     } = await caller.indicateurs.indicateurs.list({
-      collectiviteId,
+      collectiviteId: collectivite.id,
       filters: {
         indicateurIds: [indicateurId],
       },
@@ -226,18 +196,18 @@ describe('createIndicateurPerso', () => {
       expect.fail('modifiedBy is null');
     }
 
-    expect(indicateur.modifiedBy.id).toBe(yoloDodo.id);
+    expect(indicateur.modifiedBy.id).toBe(authenticatedUser.id);
     expect(indicateur.modifiedAt).toBeDefined();
   });
 
   test('should throw error when user lacks permission', async () => {
     const data: CreateIndicateurDefinitionInput = {
-      collectiviteId: 999, // Non-existent or unauthorized collectivite
+      collectiviteId: 999,
       titre: 'Unauthorized Test Indicator',
       unite: 'kg',
     };
 
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: authenticatedUser });
 
     await expect(
       caller.indicateurs.indicateurs.create(data)

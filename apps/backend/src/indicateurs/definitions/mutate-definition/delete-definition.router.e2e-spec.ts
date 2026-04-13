@@ -1,41 +1,42 @@
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { Collectivite } from '@tet/domain/collectivites';
+import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { describe, expect, test } from 'vitest';
 import { createIndicateurPerso } from '../definitions.test-fixture';
 import { indicateurDefinitionTable } from '../indicateur-definition.table';
 
-const collectiviteId = 2;
-
 describe('DeleteIndicateurDefinitionRouter', () => {
   let databaseService: DatabaseService;
   let router: TrpcRouter;
-  let yoloDodo: AuthenticatedUser;
+  let authenticatedUser: AuthenticatedUser;
+  let collectivite: Collectivite;
 
   beforeAll(async () => {
     const app = await getTestApp();
     router = app.get(TrpcRouter);
-
     databaseService = await getTestDatabase(app);
-    yoloDodo = await getAuthUser(YOLO_DODO);
 
-    return async () => {
-      await app.close();
-    };
+    const testResult = await addTestCollectiviteAndUser(databaseService, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    collectivite = testResult.collectivite;
+    authenticatedUser = getAuthUserFromUserCredentials(testResult.user);
   });
 
   test('should delete perso indicator successfully', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: authenticatedUser });
 
     const indicateurId = await caller.indicateurs.indicateurs.create({
-      collectiviteId,
+      collectiviteId: collectivite.id,
       titre: 'Test Personal Indicator to Delete',
       unite: 'kg',
     });
@@ -48,12 +49,12 @@ describe('DeleteIndicateurDefinitionRouter', () => {
       .limit(1);
 
     expect(createdIndicateur).toBeDefined();
-    expect(createdIndicateur.collectiviteId).toBe(collectiviteId);
+    expect(createdIndicateur.collectiviteId).toBe(collectivite.id);
 
     // Delete the indicator
     await caller.indicateurs.indicateurs.delete({
       indicateurId,
-      collectiviteId,
+      collectiviteId: collectivite.id,
     });
 
     // Verify the indicator is deleted
@@ -67,23 +68,23 @@ describe('DeleteIndicateurDefinitionRouter', () => {
   });
 
   test('should throw error when trying to delete non-existent indicator', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: authenticatedUser });
 
     await expect(
       caller.indicateurs.indicateurs.delete({
-        indicateurId: 99999, // Non-existent ID
-        collectiviteId,
+        indicateurId: 99999,
+        collectiviteId: collectivite.id,
       })
     ).rejects.toThrow();
   });
 
   test('should throw error when user lacks permission', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: authenticatedUser });
 
     const indicateurId = await createIndicateurPerso({
       caller,
       indicateurData: {
-        collectiviteId,
+        collectiviteId: collectivite.id,
         titre: 'Test Personal Indicator for Permission Test',
         unite: 'kg',
       },
@@ -93,7 +94,7 @@ describe('DeleteIndicateurDefinitionRouter', () => {
     await expect(
       caller.indicateurs.indicateurs.delete({
         indicateurId,
-        collectiviteId: 999, // Non-existent or unauthorized collectivite
+        collectiviteId: 999,
       })
     ).rejects.toThrow();
   });
@@ -117,13 +118,13 @@ describe('DeleteIndicateurDefinitionRouter', () => {
     const indicateurPredefini = await getIndicateurPredefini('cae_2.a');
     expect(indicateurPredefini).toBeDefined();
 
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: authenticatedUser });
 
     // Try to delete a non-perso indicator
     await expect(
       caller.indicateurs.indicateurs.delete({
         indicateurId: indicateurPredefini.id,
-        collectiviteId,
+        collectiviteId: collectivite.id,
       })
     ).rejects.toThrow();
 
@@ -133,12 +134,12 @@ describe('DeleteIndicateurDefinitionRouter', () => {
   });
 
   test('should not delete indicator from different collectivite', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: authenticatedUser });
 
     const indicateurId = await createIndicateurPerso({
       caller,
       indicateurData: {
-        collectiviteId,
+        collectiviteId: collectivite.id,
         titre: 'Test Personal Indicator for Cross-Collectivite Test',
         unite: 'kg',
       },
@@ -148,7 +149,7 @@ describe('DeleteIndicateurDefinitionRouter', () => {
     await expect(
       caller.indicateurs.indicateurs.delete({
         indicateurId,
-        collectiviteId: 999, // Different collectivite
+        collectiviteId: 999,
       })
     ).rejects.toThrow();
 

@@ -11,7 +11,16 @@ import {
   createPlan,
 } from '@tet/backend/plans/fiches/fiches.test-fixture';
 import { createThematique } from '@tet/backend/shared/shared.test-fixture';
-import { getAuthUser, getTestApp } from '@tet/backend/test';
+import {
+  getAuthUserFromUserCredentials,
+  getTestApp,
+  getTestDatabase,
+} from '@tet/backend/test';
+import {
+  addTestUser,
+  setUserCollectiviteRole,
+} from '@tet/backend/users/users/users.test-fixture';
+import { CollectiviteRole } from '@tet/domain/users';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { IndicateurDefinition } from '@tet/domain/indicateurs';
 import { inferProcedureInput } from '@trpc/server';
@@ -43,7 +52,20 @@ describe('ListIndicateursRouter', () => {
     app = await getTestApp();
     router = app.get(TrpcRouter);
     database = app.get(DatabaseService);
-    yoloDodoUser = await getAuthUser();
+
+    const db = await getTestDatabase(app);
+    const testUserResult = await addTestUser(db, {
+      collectiviteId: 1,
+      role: CollectiviteRole.ADMIN,
+    });
+    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
+
+    // Also give access to collectiviteId 2 (used in some tests)
+    await setUserCollectiviteRole(db, {
+      userId: testUserResult.user.id,
+      collectiviteId: 2,
+      role: CollectiviteRole.ADMIN,
+    });
   });
 
   describe('structure et règles métier', () => {

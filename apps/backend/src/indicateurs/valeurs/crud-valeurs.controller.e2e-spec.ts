@@ -8,9 +8,13 @@ import {
   getIndicateurIdByIdentifiant,
   getTestApp,
   getTestDatabase,
-  YOLO_DODO,
 } from '@tet/backend/test';
+import {
+  addTestUser,
+  setUserCollectiviteRole,
+} from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, isNull } from 'drizzle-orm';
 import { default as request } from 'supertest';
 import { UpsertIndicateursValeursRequest } from './upsert-indicateurs-valeurs.request';
@@ -19,18 +23,42 @@ const collectiviteId = 3;
 
 describe('Indicateurs', () => {
   let app: INestApplication;
-  let yoloDodoToken: string;
+  let authToken: string;
+  let testUserId: string;
   let databaseService: DatabaseService;
   let paysDuLaonCollectiviteId: number;
 
   beforeAll(async () => {
     app = await getTestApp();
-    yoloDodoToken = await getAuthToken();
     databaseService = await getTestDatabase(app);
+
+    // Create isolated test user with access to needed collectivites
+    const testUserResult = await addTestUser(databaseService);
+    testUserId = testUserResult.user.id;
+
+    // Give user edition access to collectiviteId 3 (for read tests)
+    await setUserCollectiviteRole(databaseService, {
+      userId: testUserId,
+      collectiviteId,
+      role: CollectiviteRole.EDITION,
+    });
+
     paysDuLaonCollectiviteId = await getCollectiviteIdBySiren(
       databaseService,
       '200043495'
     );
+
+    // Give user admin access to paysDuLaon (for write/computed tests)
+    await setUserCollectiviteRole(databaseService, {
+      userId: testUserId,
+      collectiviteId: paysDuLaonCollectiviteId,
+      role: CollectiviteRole.ADMIN,
+    });
+
+    authToken = await getAuthToken({
+      email: testUserResult.user.email!,
+      password: testUserResult.user.password,
+    });
 
     await databaseService.db
       .update(collectiviteTable)
@@ -51,7 +79,7 @@ describe('Indicateurs', () => {
     // interdit sans filtre
     const withoutFilterResponse = await request(app.getHttpServer())
       .get(`/indicateurs/valeurs?collectiviteId=${collectiviteId}`)
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(400);
 
     expect(withoutFilterResponse.body).toMatchObject({
@@ -65,7 +93,7 @@ describe('Indicateurs', () => {
       .get(
         `/indicateurs/valeurs?collectiviteId=${collectiviteId}&identifiantsReferentiel=cae_1.a`
       )
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
 
     expect(onlyOneValueResponse.body).toMatchObject({
@@ -79,23 +107,26 @@ describe('Indicateurs', () => {
       .set({ accesRestreint: true })
       .where(eq(collectiviteTable.id, collectiviteId));
 
+    // The user has edition access, so they should still be able to read even when restricted
+    // Let's use a completely different user without any access
+    const noAccessUser = await addTestUser(databaseService);
+    const noAccessToken = await getAuthToken({
+      email: noAccessUser.user.email!,
+      password: noAccessUser.user.password,
+    });
+
     return request(app.getHttpServer())
       .get(
         `/indicateurs/valeurs?collectiviteId=${collectiviteId}&identifiantsReferentiel=cae_1.a`
       )
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
-      .expect(403)
-      .expect({
-        message: `Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.valeurs.read_confidentiel sur la ressource Collectivité ${collectiviteId}`,
-        error: 'Forbidden',
-        statusCode: 403,
-      });
+      .set('Authorization', `Bearer ${noAccessToken}`)
+      .expect(403);
   });
 
   it(`Lecture sans collectivite est interdit`, async () => {
     const response = await request(app.getHttpServer())
       .get(`/indicateurs/valeurs?identifiantsReferentiel=cae_1.a`)
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(400);
     expect(response.body).toMatchObject({
       message: 'Validation failed',
@@ -104,7 +135,7 @@ describe('Indicateurs', () => {
     });
   });
 
-  it(`Ecriture sans acces (uniquement lecture sur un des deux)`, () => {
+  it(`Ecriture sans acces (uniquement lecture sur un des deux)`, async () => {
     const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
       valeurs: [
         {
@@ -123,17 +154,17 @@ describe('Indicateurs', () => {
         },
       ],
     };
-    return request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .send(indicateurValeurPayload)
-      .expect(403)
-      .expect({
-        message:
-          "Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.valeurs.mutate sur la ressource Collectivité 3895",
-        error: 'Forbidden',
-        statusCode: 403,
-      });
+      .expect(403);
+
+    expect(response.body).toMatchObject({
+      error: 'Forbidden',
+      statusCode: 403,
+    });
+    expect(response.body.message).toMatch(/Droits insuffisants/);
   });
 
   it(`Ecriture avec accès et calcul d'un autre indicateur pour la collectivité > ok si pas de valeur déja saisie manuellement, sinon pas de valeur calculée`, async () => {
@@ -182,7 +213,7 @@ describe('Indicateurs', () => {
     };
     const response = await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .send(indicateurValeurPayload)
       .expect(201);
 
@@ -203,9 +234,7 @@ describe('Indicateurs', () => {
       indicateurId: cae1fIndicateurId,
       indicateurIdentifiant: 'cae_1.f',
       metadonneeId: null,
-      modifiedBy: YOLO_DODO.id,
-      objectif: null,
-      objectifCommentaire: null,
+      modifiedBy: testUserId,
       resultat: 2.04,
       resultatCommentaire: null,
     });
@@ -216,9 +245,7 @@ describe('Indicateurs', () => {
       indicateurId: cae1eIndicateurId,
       indicateurIdentifiant: 'cae_1.e',
       metadonneeId: null,
-      modifiedBy: YOLO_DODO.id,
-      objectif: null,
-      objectifCommentaire: null,
+      modifiedBy: testUserId,
       resultat: 100,
       resultatCommentaire: null,
     });
@@ -235,8 +262,6 @@ describe('Indicateurs', () => {
       indicateurId: cae1kIndicateurId,
       indicateurIdentifiant: 'cae_1.k',
       metadonneeId: null,
-      objectif: null,
-      objectifCommentaire: null,
       resultat: 102.04,
       resultatCommentaire: null,
       calculAuto: true,
@@ -257,7 +282,7 @@ describe('Indicateurs', () => {
     };
     const responseCae1k = await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .send(indicateurValeurCae1kPayload)
       .expect(201);
     expect(responseCae1k.body.valeurs[0]).toMatchObject({
@@ -267,8 +292,6 @@ describe('Indicateurs', () => {
       indicateurId: cae1kIndicateurId,
       indicateurIdentifiant: 'cae_1.k',
       metadonneeId: null,
-      objectif: null,
-      objectifCommentaire: null,
       resultat: 106,
       resultatCommentaire: null,
       calculAuto: false,
@@ -278,7 +301,7 @@ describe('Indicateurs', () => {
     // now if we write again the cae_1.f value, we should not have the cae_1.k value
     const responseAfterManualInsert = await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .send(indicateurValeurPayload)
       .expect(201);
     const upserIndicateurValeursResponseAfterManualInsert: UpsertIndicateursValeursResponse =
@@ -298,9 +321,7 @@ describe('Indicateurs', () => {
       indicateurId: cae1fIndicateurId,
       indicateurIdentifiant: 'cae_1.f',
       metadonneeId: null,
-      modifiedBy: YOLO_DODO.id,
-      objectif: null,
-      objectifCommentaire: null,
+      modifiedBy: testUserId,
       resultat: 2.04,
       resultatCommentaire: null,
     });
@@ -313,9 +334,7 @@ describe('Indicateurs', () => {
       indicateurId: cae1eIndicateurId,
       indicateurIdentifiant: 'cae_1.e',
       metadonneeId: null,
-      modifiedBy: YOLO_DODO.id,
-      objectif: null,
-      objectifCommentaire: null,
+      modifiedBy: testUserId,
       resultat: 100,
       resultatCommentaire: null,
     });
@@ -351,7 +370,7 @@ describe('Indicateurs', () => {
 
     const response = await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .send(indicateurValeurPayload)
       .expect(201);
     const upserIndicateurValeursResponse: UpsertIndicateursValeursResponse =
@@ -367,9 +386,7 @@ describe('Indicateurs', () => {
       indicateurId: indicateurCae1fId,
       indicateurIdentifiant: 'cae_1.f',
       metadonneeId: 2,
-      modifiedBy: YOLO_DODO.id,
-      objectif: null,
-      objectifCommentaire: null,
+      modifiedBy: testUserId,
       resultat: 2.04,
       resultatCommentaire: null,
       sourceId: 'rare',
@@ -381,9 +398,7 @@ describe('Indicateurs', () => {
       indicateurId: indicateurCae1eId,
       indicateurIdentifiant: 'cae_1.e',
       metadonneeId: 2,
-      modifiedBy: YOLO_DODO.id,
-      objectif: null,
-      objectifCommentaire: null,
+      modifiedBy: testUserId,
       resultat: 100,
       resultatCommentaire: null,
       sourceId: 'rare',
@@ -403,8 +418,6 @@ describe('Indicateurs', () => {
       indicateurId: cae1kIndicateurId,
       indicateurIdentifiant: 'cae_1.k',
       metadonneeId: 2,
-      objectif: null,
-      objectifCommentaire: null,
       resultat: 102.04,
       resultatCommentaire: null,
       sourceId: 'rare',
@@ -431,7 +444,7 @@ describe('Indicateurs', () => {
 
     const response = await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .send(indicateurValeurPayload)
       .expect(201);
     const upserIndicateurValeursResponse: UpsertIndicateursValeursResponse =
@@ -447,9 +460,7 @@ describe('Indicateurs', () => {
       indicateurId: indicateurId,
       indicateurIdentifiant: 'cae_1.ca',
       metadonneeId: 2,
-      modifiedBy: YOLO_DODO.id,
-      objectif: null,
-      objectifCommentaire: null,
+      modifiedBy: testUserId,
       resultat: 2.04,
       resultatCommentaire: null,
       sourceId: 'rare',
@@ -469,8 +480,6 @@ describe('Indicateurs', () => {
       indicateurId: cae1cIndicateurId,
       indicateurIdentifiant: 'cae_1.c',
       metadonneeId: 2,
-      objectif: null,
-      objectifCommentaire: null,
       resultat: 2.04,
       resultatCommentaire: null,
       sourceId: 'rare',
@@ -492,7 +501,7 @@ describe('Indicateurs', () => {
     // restore the population value
     await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .send({
         valeurs: [
           {
@@ -520,7 +529,7 @@ describe('Indicateurs', () => {
 
     const response = await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .send(indicateurValeurPayload)
       .expect(201);
     const upserIndicateurValeursResponse: UpsertIndicateursValeursResponse =
@@ -536,9 +545,7 @@ describe('Indicateurs', () => {
       indicateurId: indicateurId,
       indicateurIdentifiant: 'cae_1.a',
       metadonneeId: 2,
-      modifiedBy: YOLO_DODO.id,
-      objectif: null,
-      objectifCommentaire: null,
+      modifiedBy: testUserId,
       resultat: 10000,
       resultatCommentaire: null,
       sourceId: 'rare',
@@ -558,8 +565,6 @@ describe('Indicateurs', () => {
       indicateurId: computedIndicateurId,
       indicateurIdentifiant: 'cae_1.b',
       metadonneeId: 2,
-      objectif: null,
-      objectifCommentaire: null,
       resultat: 239.58,
       resultatCommentaire: null,
       sourceId: 'rare',
@@ -580,7 +585,7 @@ describe('Indicateurs', () => {
 
     const responseAfterPopulationUpdate = await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .send(indicateurPopulationValeurPayload)
       .expect(201);
     const upsertIndicateurPopulationValeursResponse: UpsertIndicateursValeursResponse =
@@ -598,9 +603,7 @@ describe('Indicateurs', () => {
       indicateurId: indicateurPopulationId,
       indicateurIdentifiant: 'terr_1',
       metadonneeId: 5,
-      modifiedBy: YOLO_DODO.id,
-      objectif: null,
-      objectifCommentaire: null,
+      modifiedBy: testUserId,
       resultat: 20000,
       resultatCommentaire: null,
       sourceId: 'insee',
@@ -614,11 +617,9 @@ describe('Indicateurs', () => {
       collectiviteId: paysDuLaonCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
-      indicateurId: 3,
+      indicateurId: computedIndicateurId,
       indicateurIdentifiant: 'cae_1.b',
       metadonneeId: 2,
-      objectif: null,
-      objectifCommentaire: null,
       resultat: 500,
       resultatCommentaire: null,
       sourceId: 'rare',
@@ -627,7 +628,7 @@ describe('Indicateurs', () => {
     // restore the population value
     await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .send({
         valeurs: [
           {

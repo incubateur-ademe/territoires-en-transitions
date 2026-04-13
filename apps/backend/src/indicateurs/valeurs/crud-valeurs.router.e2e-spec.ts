@@ -1,18 +1,21 @@
 import { INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   deleteIndicateurValeursForCollectivite,
+  getAuthUserFromUserCredentials,
   getCollectiviteIdBySiren,
   getIndicateurIdByIdentifiant,
+  getTestApp,
+  getTestDatabase,
 } from '@tet/backend/test';
-import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import {
+  addTestUser,
+  setUserCollectiviteRole,
+} from '@tet/backend/users/users/users.test-fixture';
+import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { and, eq } from 'drizzle-orm';
-import { getTestApp } from '../../../test/app-utils';
-import {
-  getAuthUser,
-  getAuthUserFromUserCredentials,
-} from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
@@ -27,25 +30,41 @@ type InputUpsert = inferProcedureInput<
   AppRouter['indicateurs']['valeurs']['upsert']
 >;
 
-const collectiviteId = 1;
+// Platform indicateur (shared across all collectivites)
 const indicateurId = 1;
 
 describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
   let app: INestApplication;
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let authenticatedUser: AuthenticatedUser;
   let databaseService: DatabaseService;
+  let collectivite: Collectivite;
+  let collectiviteId: number;
   let paysDuLaonCollectiviteId: number;
 
   beforeAll(async () => {
     app = await getTestApp();
     router = app.get(TrpcRouter);
-    yoloDodoUser = await getAuthUser();
     databaseService = app.get<DatabaseService>(DatabaseService);
+
+    // Create isolated collectivite for CRUD tests
+    const testResult = await addTestCollectiviteAndUser(databaseService, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    collectivite = testResult.collectivite;
+    collectiviteId = collectivite.id;
+    authenticatedUser = getAuthUserFromUserCredentials(testResult.users ?? testResult.user);
+
+    // Also give user access to paysDuLaon for computed indicateur tests
     paysDuLaonCollectiviteId = await getCollectiviteIdBySiren(
       databaseService,
       '200043495'
     );
+    await setUserCollectiviteRole(databaseService, {
+      userId: testResult.user.id,
+      collectiviteId: paysDuLaonCollectiviteId,
+      role: CollectiviteRole.ADMIN,
+    });
   });
 
   beforeEach(async () => {
@@ -61,11 +80,19 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
   });
 
   test(`Renvoi des valeurs`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
+
+    // Insert a value first so we have something to retrieve
+    await caller.indicateurs.valeurs.upsert({
+      collectiviteId,
+      indicateurId,
+      dateValeur: '2020-01-01',
+      resultat: 10,
+    });
 
     const input: InputList = {
       collectiviteId,
-      identifiantsReferentiel: ['cae_8'],
+      indicateurIds: [indicateurId],
     };
     const result = await caller.indicateurs.valeurs.list(input);
     if (Array.isArray(result.indicateurs) === false) {
@@ -80,7 +107,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
   });
 
   test("Permet d'insérer une valeur", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
 
     // vérifie le nombre de valeurs avant insertion
     const inputBefore: InputList = {
@@ -116,7 +143,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
   });
 
   test('Permet de mettre à jour une valeur', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
 
     // insère une valeur
     const inputInsert: InputUpsert = {
@@ -201,7 +228,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
   });
 
   test("Valeurs calculées lors de l'insertion d'une valeur", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
 
     const cae1eIndicateurId = await getIndicateurIdByIdentifiant(
       databaseService,
@@ -263,7 +290,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
   });
 
   test("Ne permet pas d'insérer une valeur si on n'a pas le droit requis", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
 
     const input: InputUpsert = {
       collectiviteId: 100,
@@ -275,13 +302,13 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
   });
 
   test('Ne permet pas de recalculer si on utilise pas un compte de service', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
 
     await expect(caller.indicateurs.valeurs.recompute({})).rejects.toThrow();
   });
 
   test('Permet de supprimer une valeur', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
 
     // insère une valeur
     const inputInsert: InputUpsert = {
@@ -325,7 +352,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
   });
 
   test('Donne la moyenne des valeurs pour un indicateur', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
     const result = await caller.indicateurs.valeurs.average({
       collectiviteId: 3895,
       indicateurId: 73,
@@ -354,18 +381,18 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
   });
 
   test('Donne les valeurs de référence pour un indicateur', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
-    const indicateurId = await getIndicateurIdByIdentifiant(
+    const caller = router.createCaller({ user: authenticatedUser });
+    const cae7IndicateurId = await getIndicateurIdByIdentifiant(
       databaseService,
       'cae_7'
     );
     const result = await caller.indicateurs.valeurs.reference({
-      collectiviteId: 1,
-      indicateurIds: [indicateurId], // cae_7
+      collectiviteId: collectiviteId,
+      indicateurIds: [cae7IndicateurId],
     });
     expect(result).toMatchObject([
       {
-        indicateurId,
+        indicateurId: cae7IndicateurId,
         identifiantReferentiel: 'cae_7',
         cible: 65,
         drom: false,
@@ -377,7 +404,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
   });
 
   test("Un utilisateur ayant le droit edition limité, ne peut insérer / modifier / supprimer une valeur que si il est pilote de l'indicateur", async () => {
-    const adminCaller = router.createCaller({ user: yoloDodoUser });
+    const adminCaller = router.createCaller({ user: authenticatedUser });
     const adminValue = await adminCaller.indicateurs.valeurs.upsert({
       collectiviteId,
       indicateurId,
@@ -385,12 +412,9 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       resultat: 42,
     });
 
-    const { user, cleanup } = await addTestUser(databaseService, {
+    const { user } = await addTestUser(databaseService, {
       collectiviteId: collectiviteId,
       role: CollectiviteRole.EDITION_FICHES_INDICATEURS,
-    });
-    onTestFinished(async () => {
-      await cleanup();
     });
 
     const limitedEditionUser = getAuthUserFromUserCredentials(user);
@@ -456,7 +480,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       id: result.id,
     });
 
-    // Remove the user from pilote & delete the value to be able to delete the user
+    // Remove the user from pilote
     await adminCaller.indicateurs.indicateurs.update({
       indicateurId,
       collectiviteId,

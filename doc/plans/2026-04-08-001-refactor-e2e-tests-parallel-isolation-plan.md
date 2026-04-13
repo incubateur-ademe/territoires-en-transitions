@@ -233,14 +233,14 @@ Remplacer `getAuthUser()` + `collectiviteId` hard-codée par `addTestCollectivit
 
 ### Phase 3 — Migration domaine `indicateurs/` (8 fichiers)
 
-- [ ] `indicateurs/valeurs/crud-valeurs.router.e2e-spec.ts` — remplacer `collectiviteId = 1` par collectivité dynamique, garder `indicateurId = 1` (ref platform)
-- [ ] `indicateurs/valeurs/crud-valeurs.controller.e2e-spec.ts`
-- [ ] `indicateurs/indicateurs/list-indicateurs/list-indicateurs.router.e2e-spec.ts`
-- [ ] `indicateurs/definitions/mutate-definition/create-definition.router.e2e-spec.ts`
-- [ ] `indicateurs/definitions/mutate-definition/update-definition.router.e2e-spec.ts`
-- [ ] `indicateurs/definitions/mutate-definition/delete-definition.router.e2e-spec.ts`
-- [ ] `indicateurs/indicateurs/export-indicateurs/export-indicateurs.controller.e2e-spec.ts`
-- [ ] `indicateurs/trajectoire-leviers/trajectoire-leviers.router.e2e-spec.ts` — garder collectivité seed, migrer uniquement l'utilisateur
+- [x] `indicateurs/valeurs/crud-valeurs.router.e2e-spec.ts` — collectivité dynamique pour CRUD, seed pour computed
+- [x] `indicateurs/valeurs/crud-valeurs.controller.e2e-spec.ts` — auth isolée, seed collectivités pour computed
+- [x] `indicateurs/indicateurs/list-indicateurs/list-indicateurs.router.e2e-spec.ts` — auth isolée, seed collectivités 1+2
+- [x] `indicateurs/definitions/mutate-definition/create-definition.router.e2e-spec.ts` — collectivité dynamique
+- [x] `indicateurs/definitions/mutate-definition/update-definition.router.e2e-spec.ts` — collectivité dynamique
+- [x] `indicateurs/definitions/mutate-definition/delete-definition.router.e2e-spec.ts` — collectivité dynamique
+- [x] `indicateurs/indicateurs/export-indicateurs/export-indicateurs.controller.e2e-spec.ts` — auth isolée
+- [x] `indicateurs/trajectoire-leviers/trajectoire-leviers.router.e2e-spec.ts` — auth isolée, seed collectivités
 
 **Validation** : lancer les tests `indicateurs/` 2 fois, vérifier 0 échec.
 
