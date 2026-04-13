@@ -1,9 +1,10 @@
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getServiceRoleUser,
   getTestApp,
-  YOULOU_DOUDOU,
+  getTestDatabase,
 } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { INestApplication } from '@nestjs/common';
@@ -17,8 +18,13 @@ describe('Apikeys router test', () => {
   beforeAll(async () => {
     app = await getTestApp();
     router = app.get(TrpcRouter);
-    yoloDodoUser = await getAuthUser();
-    youlouDoudouUser = await getAuthUser(YOULOU_DOUDOU);
+    const db = await getTestDatabase(app);
+
+    const testUser1Result = await addTestUser(db);
+    yoloDodoUser = getAuthUserFromUserCredentials(testUser1Result.user);
+
+    const testUser2Result = await addTestUser(db);
+    youlouDoudouUser = getAuthUserFromUserCredentials(testUser2Result.user);
   });
 
   test(`Test generate, list & delete apikey by the user himself`, async () => {

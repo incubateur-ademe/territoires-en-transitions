@@ -282,25 +282,25 @@ Remplacer `getAuthUser()` + `collectiviteId` hard-codée par `addTestCollectivit
 ### Phase 6 — Migration domaines `users/`, `utils/`, `metrics/` (13 fichiers)
 
 **Domaine `users/` :**
-- [ ] `users/users/update-user/update-user.router.e2e-spec.ts`
-- [ ] `users/users/list-users/list-users.router.e2e-spec.ts` — **retirer `test_reset()`**, réécrire assertions pour ne pas dépendre du dataset complet
-- [ ] `users/authorizations/update-user-role/update-user-role.router.e2e-spec.ts`
-- [ ] `users/authorizations/permission.service.e2e-spec.ts` — teste plusieurs rôles, créer users avec différents niveaux d'accès
-- [ ] `users/apikeys/apikeys.controller.e2e-spec.ts`
-- [ ] `users/apikeys/apikeys.router.e2e-spec.ts`
+- [x] `users/users/update-user/update-user.router.e2e-spec.ts` — auth isolée
+- [x] `users/users/list-users/list-users.router.e2e-spec.ts` — **retiré `test_reset()`**, auth isolée pour test refus + seed YOULOU_DOUDOU pour données
+- [x] `users/authorizations/update-user-role/update-user-role.router.e2e-spec.ts` — auth isolée (critique : élimine le leak super-admin)
+- [x] `users/authorizations/permission.service.e2e-spec.ts` — auth isolée + seed YOULOU_DOUDOU pour tests auditeur
+- [x] `users/apikeys/apikeys.controller.e2e-spec.ts` — collectivité dynamique pour tests d'écriture
+- [x] `users/apikeys/apikeys.router.e2e-spec.ts` — auth isolée, 2 utilisateurs
 
 **Domaine `utils/` :**
-- [ ] `utils/trpc/trpc.router.e2e-spec.ts`
-- [ ] `utils/notifications/notifications.router.e2e-spec.ts`
-- [ ] `utils/notifications/notifications.service.e2e-spec.ts`
-- [ ] `utils/email/email.service.e2e-spec.ts`
-- [ ] `utils/version/version.controller.e2e-spec.ts`
+- [x] `utils/trpc/trpc.router.e2e-spec.ts` — auth isolée
+- [x] `utils/notifications/notifications.router.e2e-spec.ts` — auth isolée
+- [x] `utils/notifications/notifications.service.e2e-spec.ts` — déjà isolé (utilise addTestUser)
+- [x] `utils/email/email.service.e2e-spec.ts` — déjà isolé (utilise des mocks)
+- [x] `utils/version/version.controller.e2e-spec.ts` — déjà isolé (utilise anon key)
 
 **Domaine `metrics/` :**
-- [ ] `metrics/metrics.router.spec.ts`
+- [x] `metrics/metrics.router.spec.ts` — auth isolée, assertions relaxées pour données variables
 
 **Domaine `trajectoires/` :**
-- [ ] `indicateurs/trajectoire-leviers/trajectoire-leviers.controller.e2e-spec.ts` — garder collectivité seed, migrer uniquement l'utilisateur
+- [x] `indicateurs/trajectoire-leviers/trajectoire-leviers.controller.e2e-spec.ts` — auth isolée
 
 **Validation** : lancer les tests de ces domaines 2 fois, vérifier 0 échec.
 

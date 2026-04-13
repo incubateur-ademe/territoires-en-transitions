@@ -8,10 +8,14 @@ import {
   UserWithRolesAndPermissions,
 } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
-import { sql } from 'drizzle-orm';
-import { getTestApp } from '../../../../test/app-utils';
-import { getAuthUser, getServiceRoleUser } from '../../../../test/auth-utils';
-import { YOLO_DODO, YOULOU_DOUDOU } from '../../../../test/test-users.samples';
+import { getTestApp, getTestDatabase } from '../../../../test/app-utils';
+import {
+  getAuthUser,
+  getAuthUserFromUserCredentials,
+  getServiceRoleUser,
+} from '../../../../test/auth-utils';
+import { YOULOU_DOUDOU } from '../../../../test/test-users.samples';
+import { addTestUser } from '../users.test-fixture';
 import { DatabaseService } from '../../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../../utils/trpc/trpc.router';
 import { AuthenticatedUser } from '../../models/auth.models';
@@ -85,13 +89,14 @@ describe('ListUsersRouter', () => {
   beforeAll(async () => {
     app = await getTestApp();
     router = app.get(TrpcRouter);
-    yoloDodoUser = await getAuthUser(YOLO_DODO);
+    databaseService = await getTestDatabase(app);
+
+    // Utilisateur isolé pour le test de refus d'accès
+    const testUserResult = await addTestUser(databaseService);
+    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
+
+    // YOULOU_DOUDOU est un utilisateur seed nécessaire pour vérifier ses rôles/permissions
     youlouDoudouUser = await getAuthUser(YOULOU_DOUDOU);
-
-    databaseService = app.get<DatabaseService>(DatabaseService);
-
-    // reset les données avant de commencer les tests
-    await databaseService.db.execute(sql`select test_reset()`);
   });
 
   afterAll(async () => {

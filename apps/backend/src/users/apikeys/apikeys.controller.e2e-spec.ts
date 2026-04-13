@@ -1,21 +1,35 @@
 import { INestApplication } from '@nestjs/common';
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { UpsertIndicateursValeursRequest } from '@tet/backend/indicateurs/valeurs/upsert-indicateurs-valeurs.request';
-import { getAuthUser, getServiceRoleUser, getTestApp } from '@tet/backend/test';
+import {
+  getAuthUserFromUserCredentials,
+  getServiceRoleUser,
+  getTestApp,
+  getTestDatabase,
+} from '@tet/backend/test';
 import { GenerateTokenRequest } from '@tet/backend/users/apikeys/generate-token.request';
 import { GenerateTokenResponse } from '@tet/backend/users/apikeys/generate-token.response';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { CollectiviteRole } from '@tet/domain/users';
 import { default as request } from 'supertest';
 
 describe('Oauth controller test', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
+  let writeCollectiviteId: number;
 
   beforeAll(async () => {
     app = await getTestApp();
     router = app.get(TrpcRouter);
-    yoloDodoUser = await getAuthUser();
+    const db = await getTestDatabase(app);
+
+    const testResult = await addTestCollectiviteAndUser(db, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    yoloDodoUser = getAuthUserFromUserCredentials(testResult.user);
+    writeCollectiviteId = testResult.collectivite.id;
   });
 
   test(`Test generate & use token`, async () => {
@@ -42,11 +56,11 @@ describe('Oauth controller test', () => {
 
     const accessToken = (response.body as GenerateTokenResponse).access_token;
 
-    // Try to write an indicateur with the token
+    // Try to write an indicateur with the token on the user's collectivite
     const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
       valeurs: [
         {
-          collectiviteId: 4936,
+          collectiviteId: writeCollectiviteId,
           indicateurId: 4,
           dateValeur: '2015-01-01',
           metadonneeId: 1,
@@ -60,6 +74,7 @@ describe('Oauth controller test', () => {
       .send(indicateurValeurPayload)
       .expect(201);
 
+    // Try to write on a collectivite where the user has no access → 403
     const indicateurValeurForbiddenPayload: UpsertIndicateursValeursRequest = {
       valeurs: [
         {
@@ -71,17 +86,17 @@ describe('Oauth controller test', () => {
         },
       ],
     };
-    await request(app.getHttpServer())
+    const forbiddenResponse = await request(app.getHttpServer())
       .post('/indicateurs/valeurs')
       .set('Authorization', `Bearer ${accessToken}`)
       .send(indicateurValeurForbiddenPayload)
-      .expect(403)
-      .expect({
-        message:
-          "Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.valeurs.mutate sur la ressource Collectivité 3895",
-        error: 'Forbidden',
-        statusCode: 403,
-      });
+      .expect(403);
+
+    expect(forbiddenResponse.body).toMatchObject({
+      error: 'Forbidden',
+      statusCode: 403,
+    });
+    expect(forbiddenResponse.body.message).toMatch(/Droits insuffisants/);
 
     await caller.users.apikeys.delete({
       clientId: result.clientId,

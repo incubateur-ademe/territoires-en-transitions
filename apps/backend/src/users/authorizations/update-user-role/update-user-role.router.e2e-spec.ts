@@ -1,11 +1,11 @@
 import { INestApplication } from '@nestjs/common';
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-  YOLO_DODO,
 } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -19,10 +19,12 @@ describe('UpdateUserRole', () => {
   let databaseService: DatabaseService;
 
   beforeAll(async () => {
-    router = await getTestRouter();
-    yoloDodoUser = await getAuthUser(YOLO_DODO);
     app = await getTestApp();
+    router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
+
+    const testUserResult = await addTestUser(databaseService);
+    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
   describe('Rôle Support', () => {

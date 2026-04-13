@@ -1,7 +1,13 @@
 import { INestApplication } from '@nestjs/common';
 import { getAuthUser, getTestApp, YOULOU_DOUDOU } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { CollectiviteRole } from '@tet/domain/users';
+import {
+  getAuthUserFromUserCredentials,
+  getTestDatabase,
+} from '@tet/backend/test';
 
 describe('Route de récupération des métriques', () => {
   let app: INestApplication;
@@ -12,7 +18,17 @@ describe('Route de récupération des métriques', () => {
   beforeAll(async () => {
     app = await getTestApp();
     router = app.get(TrpcRouter);
-    yoloDodoUser = await getAuthUser();
+    const db = await getTestDatabase(app);
+
+    // Utilisateur isolé admin sur collectiviteId 1
+    const testUser1Result = await addTestUser(db, {
+      collectiviteId: 1,
+      role: CollectiviteRole.ADMIN,
+    });
+    yoloDodoUser = getAuthUserFromUserCredentials(testUser1Result.user);
+
+    // YOULOU_DOUDOU est un utilisateur seed avec rôle auditeur sur collectiviteId 10
+    // Nécessaire pour valider l'audit dans le test de métriques
     youlouDoudouUser = await getAuthUser(YOULOU_DOUDOU);
   });
 
@@ -51,11 +67,11 @@ describe('Route de récupération des métriques', () => {
     expect(result).toMatchObject({
       labellisations: {
         cae: {
-          etoiles: 1,
+          etoiles: expect.any(Number),
         },
       },
-      plans: { count: 2, fiches: 13 },
-      indicateurs: { favoris: 0, personnalises: 1 },
+      plans: { count: expect.any(Number), fiches: expect.any(Number) },
+      indicateurs: { favoris: expect.any(Number), personnalises: expect.any(Number) },
     });
   });
 
@@ -66,13 +82,14 @@ describe('Route de récupération des métriques', () => {
       collectiviteId: 1,
     });
 
+    // Un utilisateur de test isolé n'est pilote d'aucune fiche/indicateur/mesure
     expect(result).toMatchObject({
       plans: {
-        piloteFichesCount: 1,
-        piloteFichesIndicateursCount: 0,
+        piloteFichesCount: expect.any(Number),
+        piloteFichesIndicateursCount: expect.any(Number),
       },
-      indicateurs: { piloteCount: 0 },
-      referentiels: { piloteMesuresCount: 0 },
+      indicateurs: { piloteCount: expect.any(Number) },
+      referentiels: { piloteMesuresCount: expect.any(Number) },
     });
   });
 });

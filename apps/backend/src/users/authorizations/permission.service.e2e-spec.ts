@@ -3,10 +3,13 @@ import CollectivitesService from '@tet/backend/collectivites/services/collectivi
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import {
   getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   YOULOU_DOUDOU,
 } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import { CollectiviteRole } from '@tet/domain/users';
 import { PermissionService } from '@tet/backend/users/authorizations/permission.service';
 import { UpdateUserRoleService } from '@tet/backend/users/authorizations/update-user-role/update-user-role.service';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -29,9 +32,18 @@ describe('Gestion des droits', () => {
     permissionService = app.get(PermissionService);
     roleUpdateService = app.get(UpdateUserRoleService);
     collectiviteService = app.get(CollectivitesService);
-    yoloDodoUser = await getAuthUser();
-    youlouDoudouUser = await getAuthUser(YOULOU_DOUDOU);
     databaseService = await getTestDatabase(app);
+
+    // Utilisateur isolé admin sur collectiviteId 1
+    const testUser1Result = await addTestUser(databaseService, {
+      collectiviteId: 1,
+      role: CollectiviteRole.ADMIN,
+    });
+    yoloDodoUser = getAuthUserFromUserCredentials(testUser1Result.user);
+
+    // YOULOU_DOUDOU est un utilisateur seed avec rôle auditeur sur collectiviteId 10
+    // Nécessaire pour les tests de permissions d'auditeur
+    youlouDoudouUser = await getAuthUser(YOULOU_DOUDOU);
   });
 
   describe('Droit en visite sur une collectivité -> NOK', async () => {

@@ -1,9 +1,16 @@
-import { getAnonUser, getAuthUser, getTestRouter } from '@tet/backend/test';
+import {
+  getAnonUser,
+  getAuthUserFromUserCredentials,
+  getTestApp,
+  getTestDatabase,
+  getTestRouter,
+} from '@tet/backend/test';
 import {
   AuthRole,
   AuthUser,
   AuthenticatedUser,
 } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { TrpcRouter } from '../trpc/trpc.router';
 
 describe('Route de notifications', () => {
@@ -12,9 +19,12 @@ describe('Route de notifications', () => {
   let authenticatedUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    router = await getTestRouter();
+    const app = await getTestApp();
+    router = await getTestRouter(app);
+    const db = await getTestDatabase(app);
     anonUser = getAnonUser();
-    authenticatedUser = await getAuthUser();
+    const testUserResult = await addTestUser(db);
+    authenticatedUser = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
   test('Non autorisé si pas service role', async () => {

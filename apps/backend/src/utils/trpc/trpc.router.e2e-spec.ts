@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
-import { getTestApp } from '../../../test/app-utils';
-import { getAuthUser } from '../../../test/auth-utils';
+import { getTestApp, getTestDatabase } from '../../../test/app-utils';
+import { getAuthUserFromUserCredentials } from '../../../test/auth-utils';
+import { addTestUser } from '../../users/users/users.test-fixture';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { TrpcRouter } from './trpc.router';
 
@@ -12,7 +13,9 @@ describe("Route de test d'erreur", () => {
   beforeAll(async () => {
     app = await getTestApp();
     router = app.get(TrpcRouter);
-    yoloDodoUser = await getAuthUser();
+    const db = await getTestDatabase(app);
+    const testUserResult = await addTestUser(db);
+    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
   test(`Renvoi une erreur`, async () => {
