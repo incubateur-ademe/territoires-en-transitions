@@ -227,11 +227,10 @@ describe('Lister les questions de personnalisation', () => {
     test('Filtrer par actionIds', async () => {
       const caller = router.createCaller({ user: testData.userCredentials });
 
-      // actionId1 est lié à questionBinaire, actionId2 à questionChoix
       const resultAction1 = asQuestionWithChoicesList(
         await caller.collectivites.personnalisations.listQuestions({
           mode: 'questions',
-          actionIds: [testData.actionId1],
+          actionIds: [testData.questionActionLinks[0].actionId],
         })
       );
       expect(resultAction1).toHaveLength(1);
@@ -240,7 +239,7 @@ describe('Lister les questions de personnalisation', () => {
       const resultAction2 = asQuestionWithChoicesList(
         await caller.collectivites.personnalisations.listQuestions({
           mode: 'questions',
-          actionIds: [testData.actionId2],
+          actionIds: [testData.questionActionLinks[2].actionId],
         })
       );
       expect(resultAction2).toHaveLength(1);
@@ -249,7 +248,10 @@ describe('Lister les questions de personnalisation', () => {
       const resultBoth = asQuestionWithChoicesList(
         await caller.collectivites.personnalisations.listQuestions({
           mode: 'questions',
-          actionIds: [testData.actionId1, testData.actionId2],
+          actionIds: [
+            testData.questionActionLinks[0].actionId,
+            testData.questionActionLinks[2].actionId,
+          ],
         })
       );
       expect(resultBoth).toHaveLength(2);
@@ -264,20 +266,20 @@ describe('Lister les questions de personnalisation', () => {
         role: CollectiviteRole.LECTURE,
       });
 
-      onTestFinished(async () => {
+      try {
+        const readOnlyCaller = router.createCaller({
+          user: getAuthUserFromUserCredentials(user),
+        });
+
+        const result = asQuestionWithChoicesList(
+          await readOnlyCaller.collectivites.personnalisations.listQuestions({
+            mode: 'questions',
+          })
+        );
+        expect(result.length).toBeGreaterThanOrEqual(0);
+      } finally {
         await cleanup();
-      });
-
-      const readOnlyCaller = router.createCaller({
-        user: getAuthUserFromUserCredentials(user),
-      });
-
-      const result = asQuestionWithChoicesList(
-        await readOnlyCaller.collectivites.personnalisations.listQuestions({
-          mode: 'questions',
-        })
-      );
-      expect(result.length).toBeGreaterThanOrEqual(0);
+      }
     });
   });
 

@@ -2,10 +2,11 @@ import { collectiviteBanatic2025TransfertTable } from '@tet/backend/collectivite
 import { actionDefinitionTable } from '@tet/backend/referentiels/models/action-definition.table';
 import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
 import { questionActionTable } from '@tet/backend/referentiels/models/question-action.table';
+import { referentielDefinitionTable } from '@tet/backend/referentiels/models/referentiel-definition.table';
 import { banatic2025CompetenceTable } from '@tet/backend/shared/models/banatic-2025-competence.table';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import { CollectiviteType } from '@tet/domain/collectivites';
-import { ReferentielIdEnum } from '@tet/domain/referentiels';
+import { ReferentielId, ReferentielIdEnum } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { and, eq, inArray } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
@@ -31,9 +32,21 @@ function generatePersonnalisationTestId(prefix: string): string {
     : raw.slice(0, MAX_PERSONNALISATION_ID_LEN);
 }
 
-const TE_TEST_ACTION_DEFINITION_BASE = {
-  referentielVersion: '0.1.0',
-  identifiant: '1.0.0',
+const REFERENTIEL_ID = ReferentielIdEnum.TE;
+// aligné sur REFERENTIEL_ID : premier segment des actionId (avant _) doit passer getReferentielIdFromActionId (ex. SnapshotsService)
+const TEST_ACTION_ID_PREFIX = `${REFERENTIEL_ID}-a`;
+async function getReferentielVersion(
+  databaseService: DatabaseServiceInterface
+) {
+  const [referentielDefinition] = await databaseService.db
+    .select({ version: referentielDefinitionTable.version })
+    .from(referentielDefinitionTable)
+    .where(eq(referentielDefinitionTable.id, REFERENTIEL_ID))
+    .limit(1);
+  return referentielDefinition.version;
+}
+
+const TEST_ACTION_DEFINITION_BASE = {
   nom: 'Action test',
   description: '',
   contexte: '',
@@ -56,6 +69,25 @@ export async function addTestThematique(
 
   return {
     cleanup: async () => {
+      const questions = await db
+        .select({ questionId: questionTable.id })
+        .from(questionTable)
+        .where(eq(questionTable.thematiqueId, data.id));
+      const ids = questions.map((q) => q.questionId);
+      await db
+        .delete(reponseBinaireTable)
+        .where(inArray(reponseBinaireTable.questionId, ids));
+      await db
+        .delete(reponseChoixTable)
+        .where(inArray(reponseChoixTable.questionId, ids));
+      await db
+        .delete(reponseProportionTable)
+        .where(inArray(reponseProportionTable.questionId, ids));
+      await db
+        .delete(justificationTable)
+        .where(inArray(justificationTable.questionId, ids));
+      await db.delete(questionTable).where(inArray(questionTable.id, ids));
+
       await db
         .delete(questionThematiqueTable)
         .where(eq(questionThematiqueTable.id, data.id));
@@ -80,7 +112,7 @@ export async function addTestQuestions(
     ids,
     cleanup: async () => {
       if (ids.length > 0) {
-        // supprime les données liées par FK avant les questions elles-mêmes
+        // supprime les réponses et les justifications avant les questions elles-mêmes
         await db
           .delete(reponseBinaireTable)
           .where(inArray(reponseBinaireTable.questionId, ids));
@@ -300,6 +332,26 @@ export async function addTestThematiqueEtQuestions(
   );
   const [choixId] = choixIds;
 
+  const questionActionLinks = [
+    {
+      actionId: generatePersonnalisationTestId(TEST_ACTION_ID_PREFIX),
+      questionId: questionBinaireId,
+    },
+    {
+      actionId: generatePersonnalisationTestId(TEST_ACTION_ID_PREFIX),
+      questionId: questionProportionId,
+    },
+    {
+      actionId: generatePersonnalisationTestId(TEST_ACTION_ID_PREFIX),
+      questionId: questionChoixId,
+    },
+  ];
+  const { cleanup: cleanupActionLinks } =
+    await insertReferentielActionQuestionLinks(databaseService, {
+      referentielId: REFERENTIEL_ID,
+      links: questionActionLinks,
+    });
+
   const data = {
     thematiqueId,
     thematiqueNom,
@@ -311,130 +363,95 @@ export async function addTestThematiqueEtQuestions(
     questionChoixFormulation,
     choixId,
     choixFormulation,
+    questionActionLinks,
   };
 
   return {
     data,
     cleanup: async () => {
-      await cleanupChoix();
+      await cleanupActionLinks();
       await cleanupQuestions();
+      await cleanupChoix();
       await cleanupThematique();
     },
   };
 }
 
-type TestActionIds = {
-  actionId1: string;
-  actionId2: string;
-  actionId3: string;
-  questionBinaireId: string;
-  questionProportionId: string;
-  questionChoixId: string;
+type ActionQuestionLink = {
+  actionId: string;
+  questionId: string;
 };
 
 /** Insère les liens entre actions et questions */
-async function insertTestActionsLieesAuxQuestions(
+async function insertReferentielActionQuestionLinks(
   databaseService: DatabaseServiceInterface,
-  ids: TestActionIds
+  data: {
+    referentielId: ReferentielId;
+    links: ActionQuestionLink[];
+  }
 ) {
-  const referentielId = ReferentielIdEnum.TE;
+  const actionIds = Array.from(
+    new Set(data.links.map((link) => link.actionId))
+  );
+  if (actionIds.length === 0) {
+    return { cleanup: () => {} };
+  }
+
+  const referentielVersion = await getReferentielVersion(databaseService);
+
   await databaseService.db
     .insert(actionRelationTable)
-    .values([
-      { id: ids.actionId1, referentiel: referentielId },
-      { id: ids.actionId2, referentiel: referentielId },
-      { id: ids.actionId3, referentiel: referentielId },
-    ])
+    .values(
+      actionIds.map((id, index) => ({
+        id,
+        referentiel: data.referentielId,
+        identifiant: `1.2.${index}`,
+      }))
+    )
     .onConflictDoNothing();
 
-  const actionDefinitionValues = {
-    ...TE_TEST_ACTION_DEFINITION_BASE,
-    referentiel: referentielId,
-    referentielId,
-  };
   await databaseService.db
     .insert(actionDefinitionTable)
-    .values([
-      {
-        ...actionDefinitionValues,
-        actionId: ids.actionId1,
-      },
-      {
-        ...actionDefinitionValues,
-        actionId: ids.actionId2,
-      },
-      {
-        ...actionDefinitionValues,
-        actionId: ids.actionId3,
-      },
-    ])
+    .values(
+      actionIds.map((actionId, index) => ({
+        ...TEST_ACTION_DEFINITION_BASE,
+        referentielVersion,
+        referentiel: data.referentielId,
+        referentielId: data.referentielId,
+        actionId,
+        identifiant: `1.2.${index}`,
+      }))
+    )
     .onConflictDoNothing();
 
   await databaseService.db
     .insert(questionActionTable)
-    .values([
-      {
-        actionId: ids.actionId1,
-        questionId: ids.questionBinaireId,
-      },
-      {
-        actionId: ids.actionId2,
-        questionId: ids.questionChoixId,
-      },
-      {
-        actionId: ids.actionId3,
-        questionId: ids.questionProportionId,
-      },
-    ])
+    .values(
+      data.links.map((link) => ({
+        actionId: link.actionId,
+        questionId: link.questionId,
+      }))
+    )
     .onConflictDoNothing();
-}
 
-/** Supprime les liens entre actions et questions */
-async function deleteTestActionsLieesAuxQuestions(
-  databaseService: DatabaseServiceInterface,
-  ids: TestActionIds
-) {
-  await databaseService.db
-    .delete(questionActionTable)
-    .where(
-      inArray(questionActionTable.questionId, [
-        ids.questionBinaireId,
-        ids.questionProportionId,
-        ids.questionChoixId,
-      ])
-    );
-  await databaseService.db
-    .delete(actionDefinitionTable)
-    .where(inArray(actionDefinitionTable.actionId, [ids.actionId1, ids.actionId2, ids.actionId3]));
-  await databaseService.db
-    .delete(actionRelationTable)
-    .where(inArray(actionRelationTable.id, [ids.actionId1, ids.actionId2, ids.actionId3]));
-}
-
-/**
- * Lie les 3 questions d'une thématique de test à des mesures du référentiel `te`.
- */
-export async function linkThematiqueTestQuestionsToReferentielActions(
-  databaseService: DatabaseServiceInterface,
-  data: {
-    questionBinaireId: string;
-    questionProportionId: string;
-    questionChoixId: string;
-  }
-): Promise<{ cleanup: () => Promise<void> }> {
-  const actionId1 = generatePersonnalisationTestId('test-a');
-  const actionId2 = generatePersonnalisationTestId('test-a');
-  const actionId3 = generatePersonnalisationTestId('test-a');
-  const ids: TestActionIds = {
-    actionId1,
-    actionId2,
-    actionId3,
-    ...data,
-  };
-  await insertTestActionsLieesAuxQuestions(databaseService, ids);
   return {
     cleanup: async () => {
-      await deleteTestActionsLieesAuxQuestions(databaseService, ids);
+      const actionIds = Array.from(
+        new Set(data.links.map((link) => link.actionId))
+      );
+      if (actionIds.length === 0) {
+        return Promise.resolve();
+      }
+
+      await databaseService.db
+        .delete(questionActionTable)
+        .where(inArray(questionActionTable.actionId, actionIds));
+      await databaseService.db
+        .delete(actionDefinitionTable)
+        .where(inArray(actionDefinitionTable.actionId, actionIds));
+      await databaseService.db
+        .delete(actionRelationTable)
+        .where(inArray(actionRelationTable.id, actionIds));
     },
   };
 }
@@ -461,40 +478,18 @@ export async function addTestQuestionCollectiviteNonConcernee(
     },
   ]);
 
-  const actionId = generatePersonnalisationTestId('test-a');
-  const referentielTest = ReferentielIdEnum['TE-TEST'];
-  await databaseService.db
-    .insert(actionRelationTable)
-    .values([{ id: actionId, referentiel: referentielTest }])
-    .onConflictDoNothing();
-  await databaseService.db
-    .insert(actionDefinitionTable)
-    .values([
-      {
-        ...TE_TEST_ACTION_DEFINITION_BASE,
-        referentiel: referentielTest,
-        referentielId: referentielTest,
-        actionId,
-      },
-    ])
-    .onConflictDoNothing();
-  await databaseService.db
-    .insert(questionActionTable)
-    .values([{ actionId, questionId }])
-    .onConflictDoNothing();
+  const actionId = generatePersonnalisationTestId(TEST_ACTION_ID_PREFIX);
+  const links = [{ actionId, questionId }];
+  const { cleanup: cleanupActionLinks } =
+    await insertReferentielActionQuestionLinks(databaseService, {
+      referentielId: REFERENTIEL_ID,
+      links,
+    });
 
   return {
     questionId,
     cleanup: async () => {
-      await databaseService.db
-        .delete(questionActionTable)
-        .where(eq(questionActionTable.questionId, questionId));
-      await databaseService.db
-        .delete(actionDefinitionTable)
-        .where(eq(actionDefinitionTable.actionId, actionId));
-      await databaseService.db
-        .delete(actionRelationTable)
-        .where(eq(actionRelationTable.id, actionId));
+      await cleanupActionLinks();
       await cleanup();
     },
   };
@@ -550,7 +545,21 @@ export async function addTestQuestionBanaticCompetencePourCollectivite(
     },
   ]);
 
+  const actionId = generatePersonnalisationTestId(TEST_ACTION_ID_PREFIX);
+  const links = [
+    {
+      actionId,
+      questionId: questionBinaireCompetenceBanaticId,
+    },
+  ];
+  const { cleanup: cleanupActionLinks } =
+    await insertReferentielActionQuestionLinks(databaseService, {
+      referentielId: REFERENTIEL_ID,
+      links,
+    });
+
   const cleanup = async () => {
+    await cleanupActionLinks();
     await cleanupQuestionBinaireBanatic();
     await cleanupCollectiviteBanaticCompetence();
     await cleanupCollectiviteTransfertCompetence();
@@ -612,49 +621,21 @@ export async function addTestQuestionsExprVisible(
     },
   ]);
 
-  const exprVisibleActionId = generatePersonnalisationTestId('test-a');
-  const referentielTest = ReferentielIdEnum['TE-TEST'];
-  await databaseService.db
-    .insert(actionRelationTable)
-    .values([{ id: exprVisibleActionId, referentiel: referentielTest }])
-    .onConflictDoNothing();
-  await databaseService.db
-    .insert(actionDefinitionTable)
-    .values([
-      {
-        ...TE_TEST_ACTION_DEFINITION_BASE,
-        referentiel: referentielTest,
-        referentielId: referentielTest,
-        actionId: exprVisibleActionId,
-      },
-    ])
-    .onConflictDoNothing();
-  await databaseService.db
-    .insert(questionActionTable)
-    .values([
-      { actionId: exprVisibleActionId, questionId: questionReferenceId },
-      { actionId: exprVisibleActionId, questionId: questionConditionnelleId },
-    ])
-    .onConflictDoNothing();
+  const exprVisibleActionId = generatePersonnalisationTestId(TEST_ACTION_ID_PREFIX);
+  const { cleanup: cleanupActionLinks } =
+    await insertReferentielActionQuestionLinks(databaseService, {
+      referentielId: REFERENTIEL_ID,
+      links: [
+        { actionId: exprVisibleActionId, questionId: questionReferenceId },
+        { actionId: exprVisibleActionId, questionId: questionConditionnelleId },
+      ],
+    });
 
   return {
     questionReferenceId,
     questionConditionnelleId,
     cleanup: async () => {
-      await databaseService.db
-        .delete(questionActionTable)
-        .where(
-          inArray(questionActionTable.questionId, [
-            questionReferenceId,
-            questionConditionnelleId,
-          ])
-        );
-      await databaseService.db
-        .delete(actionDefinitionTable)
-        .where(eq(actionDefinitionTable.actionId, exprVisibleActionId));
-      await databaseService.db
-        .delete(actionRelationTable)
-        .where(eq(actionRelationTable.id, exprVisibleActionId));
+      await cleanupActionLinks();
       await cleanupQuestionConditionnelle();
       await cleanupQuestionReference();
     },
@@ -665,21 +646,15 @@ export async function addTestQuestionsExprVisible(
 export async function addTestPersonnalisationData(
   databaseService: DatabaseServiceInterface
 ) {
-  const testDataId = {
-    // Actions pour tester le filtre actionIds (te-test existe en seed)
-    actionId1: generatePersonnalisationTestId('test-a'),
-    actionId2: generatePersonnalisationTestId('test-a'),
-    actionId3: generatePersonnalisationTestId('test-a'),
-  };
-
-  const { user, collectivite, cleanup } = await addTestCollectiviteAndUser(
-    databaseService,
-    {
-      user: {
-        role: CollectiviteRole.ADMIN,
-      },
-    }
-  );
+  const {
+    user,
+    collectivite,
+    cleanup: cleanupCollectiviteAndUser,
+  } = await addTestCollectiviteAndUser(databaseService, {
+    user: {
+      role: CollectiviteRole.ADMIN,
+    },
+  });
 
   const userCredentials = getAuthUserFromUserCredentials(user);
 
@@ -688,54 +663,11 @@ export async function addTestPersonnalisationData(
   const { data: baseData, cleanup: cleanupThematiqueEtQuestions } =
     await addTestThematiqueEtQuestions(databaseService, collectiviteType);
 
-  const {
-    thematiqueId,
-    questionBinaireId,
-    questionProportionId,
-    questionChoixId,
-    choixId,
-  } = baseData;
-  const mergedTestDataId = {
-    thematiqueId,
-    questionBinaireId,
-    questionProportionId,
-    questionChoixId,
-    choixId,
-    ...testDataId,
-  };
-
-  await insertTestActionsLieesAuxQuestions(databaseService, {
-    actionId1: mergedTestDataId.actionId1,
-    actionId2: mergedTestDataId.actionId2,
-    actionId3: mergedTestDataId.actionId3,
-    questionBinaireId: mergedTestDataId.questionBinaireId,
-    questionProportionId: mergedTestDataId.questionProportionId,
-    questionChoixId: mergedTestDataId.questionChoixId,
-  });
-
-  const cleanupReponses = async () => {
-    // Nettoyer les réponses
-    await databaseService.db
-      .delete(reponseBinaireTable)
-      .where(eq(reponseBinaireTable.collectiviteId, collectivite.id));
-    await databaseService.db
-      .delete(reponseProportionTable)
-      .where(eq(reponseProportionTable.collectiviteId, collectivite.id));
-    await databaseService.db
-      .delete(reponseChoixTable)
-      .where(eq(reponseChoixTable.collectiviteId, collectivite.id));
-
-    // et les justifications
-    await databaseService.db
-      .delete(justificationTable)
-      .where(eq(justificationTable.collectiviteId, collectivite.id));
-  };
-
   /** les 3 questions de la thématique de test pour le type de collectivité */
   const fixtureQuestionIds = [
-    mergedTestDataId.questionBinaireId,
-    mergedTestDataId.questionProportionId,
-    mergedTestDataId.questionChoixId,
+    baseData.questionBinaireId,
+    baseData.questionProportionId,
+    baseData.questionChoixId,
   ];
 
   // isole les questions créées par cette fixture (hors données seed)
@@ -743,29 +675,15 @@ export async function addTestPersonnalisationData(
     questions.filter((q) => fixtureQuestionIds.includes(q.id));
 
   return {
-    ...mergedTestDataId,
+    ...baseData,
     fixtureQuestionIds,
     isolateFixtureQuestions,
     user,
     userCredentials,
     collectivite,
-    cleanupReponses,
     cleanup: async () => {
-      // Nettoyer les réponses
-      await cleanupReponses();
-
-      await deleteTestActionsLieesAuxQuestions(databaseService, {
-        actionId1: mergedTestDataId.actionId1,
-        actionId2: mergedTestDataId.actionId2,
-        actionId3: mergedTestDataId.actionId3,
-        questionBinaireId: mergedTestDataId.questionBinaireId,
-        questionProportionId: mergedTestDataId.questionProportionId,
-        questionChoixId: mergedTestDataId.questionChoixId,
-      });
-
       await cleanupThematiqueEtQuestions();
-
-      await cleanup();
+      await cleanupCollectiviteAndUser();
     },
   };
 }

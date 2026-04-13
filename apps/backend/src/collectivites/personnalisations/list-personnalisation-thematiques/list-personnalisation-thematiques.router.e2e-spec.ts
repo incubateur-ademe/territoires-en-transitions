@@ -1,21 +1,22 @@
+import { CollectivitePreferencesService } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.service';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
 } from '@tet/backend/test';
-import { CollectivitePreferencesService } from '@tet/backend/collectivites/collectivite-preferences/collectivite-preferences.service';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import type { PersonnalisationThematique } from '@tet/domain/collectivites';
 import { referentielIdEnumValues } from '@tet/domain/referentiels';
 import { CollectiviteRole } from '@tet/domain/users';
 import { onTestFinished } from 'vitest';
 import {
   addTestPersonnalisationData,
+  addTestQuestionBanaticCompetencePourCollectivite,
   addTestQuestionsExprVisible,
   TestPersonnalisationData,
 } from '../personnalisations.test-fixture';
+import { ListThematiquesOutput } from './list-personnalisation-thematiques.output';
 
 describe('Lister les thématiques de personnalisation', () => {
   let router: TrpcRouter;
@@ -34,19 +35,18 @@ describe('Lister les thématiques de personnalisation', () => {
     });
     router = await app.get(TrpcRouter);
     databaseService = await getTestDatabase(app);
+  });
+
+  beforeEach(async () => {
     testData = await addTestPersonnalisationData(databaseService);
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     if (testData) await testData.cleanup();
   });
 
-  afterEach(async () => {
-    if (testData) await testData.cleanupReponses();
-  });
-
-  const getFixtureThematique = (thematiques: PersonnalisationThematique[]) =>
-    thematiques.find((t) => t.id === testData.thematiqueId);
+  const getFixtureThematique = (result: ListThematiquesOutput) =>
+    result.thematiques.find((t) => t.id === testData.thematiqueId);
 
   describe('List Personnalisation Thematiques - Cas de succès', () => {
     test('Retourne la thématique de test avec les propriétés attendues', async () => {
@@ -187,14 +187,17 @@ describe('Lister les thématiques de personnalisation', () => {
       const avecUneMesure =
         await caller.collectivites.personnalisations.listThematiques({
           collectiviteId: testData.collectivite.id,
-          actionIds: [testData.actionId1],
+          actionIds: [testData.questionActionLinks[0].actionId],
         });
       expect(getFixtureThematique(avecUneMesure)?.questionsCount).toBe(1);
 
       const avecDeuxMesures =
         await caller.collectivites.personnalisations.listThematiques({
           collectiviteId: testData.collectivite.id,
-          actionIds: [testData.actionId1, testData.actionId2],
+          actionIds: [
+            testData.questionActionLinks[0].actionId,
+            testData.questionActionLinks[1].actionId,
+          ],
         });
       expect(getFixtureThematique(avecDeuxMesures)?.questionsCount).toBe(2);
     });
@@ -216,7 +219,7 @@ describe('Lister les thématiques de personnalisation', () => {
       const filtreAction1 =
         await caller.collectivites.personnalisations.listThematiques({
           collectiviteId: testData.collectivite.id,
-          actionIds: [testData.actionId1],
+          actionIds: [testData.questionActionLinks[0].actionId],
         });
       const thematique1 = getFixtureThematique(filtreAction1);
       expect(thematique1?.questionsCount).toBe(1);
@@ -226,7 +229,10 @@ describe('Lister les thématiques de personnalisation', () => {
       const filtreDeuxMesures =
         await caller.collectivites.personnalisations.listThematiques({
           collectiviteId: testData.collectivite.id,
-          actionIds: [testData.actionId1, testData.actionId2],
+          actionIds: [
+            testData.questionActionLinks[0].actionId,
+            testData.questionActionLinks[2].actionId,
+          ],
         });
       const thematique2 = getFixtureThematique(filtreDeuxMesures);
       expect(thematique2?.questionsCount).toBe(2);
@@ -295,26 +301,54 @@ describe('Lister les thématiques de personnalisation', () => {
         role: CollectiviteRole.LECTURE,
       });
 
-      onTestFinished(async () => {
-        await cleanup();
-      });
+      try {
+        const readOnlyCaller = router.createCaller({
+          user: getAuthUserFromUserCredentials(user),
+        });
 
-      const readOnlyCaller = router.createCaller({
-        user: getAuthUserFromUserCredentials(user),
-      });
+        const result =
+          await readOnlyCaller.collectivites.personnalisations.listThematiques({
+            collectiviteId: testData.collectivite.id,
+          });
+
+        const thematique = getFixtureThematique(result);
+        expect(thematique).toBeDefined();
+        expect(thematique?.id).toBe(testData.thematiqueId);
+      } finally {
+        await cleanup();
+      }
+    });
+  });
+
+  describe('Compteurs et exprVisible', () => {
+    test('compte une réponse induite par competenceExercee et incrémente nbSuggestionsBanatic', async () => {
+      const { cleanup } =
+        await addTestQuestionBanaticCompetencePourCollectivite(
+          databaseService,
+          {
+            collectiviteId: testData.collectivite.id,
+            thematiqueId: testData.thematiqueId,
+            collectiviteType: testData.collectivite.type,
+          }
+        );
+      onTestFinished(cleanup);
+
+      const caller = router.createCaller({ user: testData.userCredentials });
 
       const result =
-        await readOnlyCaller.collectivites.personnalisations.listThematiques({
+        await caller.collectivites.personnalisations.listThematiques({
           collectiviteId: testData.collectivite.id,
         });
 
       const thematique = getFixtureThematique(result);
       expect(thematique).toBeDefined();
-      expect(thematique?.id).toBe(testData.thematiqueId);
+      expect(thematique?.questionsCount).toBe(
+        testData.fixtureQuestionIds.length + 1
+      );
+      expect(thematique?.reponsesCount).toBe(1);
+      expect(result.nbSuggestionsBanatic).toBe(1);
     });
-  });
 
-  describe('Compteurs et exprVisible', () => {
     test('question conditionnelle masquée sans réponse : exclue des compteurs', async () => {
       const { questionReferenceId, cleanup } =
         await addTestQuestionsExprVisible(databaseService, {

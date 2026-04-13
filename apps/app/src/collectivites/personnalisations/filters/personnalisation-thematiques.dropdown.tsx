@@ -9,8 +9,8 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
 
 export const PersonnalisationThematiquesDropdown = (props: Props) => {
   const { collectiviteId, onChange } = props;
-  const { data: thematiques } =
-    useListPersonnalisationThematiques(collectiviteId);
+  const { data } = useListPersonnalisationThematiques(collectiviteId);
+  const thematiques = data?.thematiques;
 
   return (
     <SelectFilter

@@ -172,6 +172,33 @@ export class ListPersonnalisationReponsesRepository {
     return rows.map((r) => r.questionId);
   }
 
+  async countQuestionsWithDefinedCompetence(
+    collectiviteId: number,
+    questionIds: string[],
+    tx: Transaction
+  ): Promise<number> {
+    if (questionIds.length === 0) {
+      return 0;
+    }
+
+    const competenceSubquery = this.getCompetenceSubquery(collectiviteId, tx);
+    const rows = await tx
+      .selectDistinct({ questionId: questionTable.id })
+      .from(questionTable)
+      .leftJoin(
+        competenceSubquery,
+        eq(competenceSubquery.competenceCode, questionTable.competenceCode)
+      )
+      .where(
+        and(
+          inArray(questionTable.id, questionIds),
+          isNotNull(competenceSubquery.competenceExercee)
+        )
+      );
+
+    return rows.length;
+  }
+
   /**
    * UNION des réponses (binaire avec compétence Banatic, choix, proportion).
    * cast toutes les réponses en jsonb pour que l'UNION fonctionne

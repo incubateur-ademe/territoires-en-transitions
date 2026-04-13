@@ -1,15 +1,12 @@
 import {
-  getAuthUser,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
-import { onTestFinished } from 'vitest';
 import {
   addTestPersonnalisationData,
   TestPersonnalisationData,
@@ -25,19 +22,15 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
     const app = await getTestApp();
     router = await app.get(TrpcRouter);
     databaseService = await getTestDatabase(app);
-
-    testData = await addTestPersonnalisationData(databaseService);
   });
 
-  afterAll(async () => {
-    if (testData) {
-      await testData.cleanup();
-    }
+  beforeEach(async () => {
+    testData = await addTestPersonnalisationData(databaseService);
   });
 
   afterEach(async () => {
     if (testData) {
-      await testData.cleanupReponses();
+      await testData.cleanup();
     }
   });
 
@@ -137,16 +130,24 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
 
   describe("Set Personnalisation Reponse - Cas d'erreur", () => {
     test('Un utilisateur sans droits sur la collectivité ne peut pas créer une réponse', async () => {
-      const yoloDodoUser = await getAuthUser(YOLO_DODO);
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const { user, cleanup } = await addTestUser(databaseService, {
+        collectiviteId: null,
+      });
 
-      await expect(
-        caller.collectivites.personnalisations.setReponse({
-          collectiviteId: testData.collectivite.id,
-          questionId: testData.questionBinaireId,
-          reponse: true,
-        })
-      ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
+      try {
+        const userSansCollectivite = getAuthUserFromUserCredentials(user);
+        const caller = router.createCaller({ user: userSansCollectivite });
+
+        await expect(
+          caller.collectivites.personnalisations.setReponse({
+            collectiviteId: testData.collectivite.id,
+            questionId: testData.questionBinaireId,
+            reponse: true,
+          })
+        ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
+      } finally {
+        await cleanup();
+      }
     });
 
     test('Un utilisateur avec des droits de lecture sur la collectivité ne peut pas créer une réponse', async () => {
@@ -155,20 +156,20 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
         role: CollectiviteRole.LECTURE,
       });
 
-      onTestFinished(async () => {
+      try {
+        const lectureUser = getAuthUserFromUserCredentials(user);
+        const caller = router.createCaller({ user: lectureUser });
+
+        await expect(
+          caller.collectivites.personnalisations.setReponse({
+            collectiviteId: testData.collectivite.id,
+            questionId: testData.questionBinaireId,
+            reponse: true,
+          })
+        ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
+      } finally {
         await cleanup();
-      });
-
-      const lectureUser = getAuthUserFromUserCredentials(user);
-      const caller = router.createCaller({ user: lectureUser });
-
-      await expect(
-        caller.collectivites.personnalisations.setReponse({
-          collectiviteId: testData.collectivite.id,
-          questionId: testData.questionBinaireId,
-          reponse: true,
-        })
-      ).rejects.toThrow("Vous n'avez pas les permissions nécessaires");
+      }
     });
 
     test('Une question inexistante retourne une erreur', async () => {

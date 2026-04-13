@@ -15,6 +15,7 @@ import { ResourceType } from '@tet/domain/users';
 import { uniq } from 'es-toolkit';
 import { CollectivitePreferencesService } from '../../collectivite-preferences/collectivite-preferences.service';
 import type { ListThematiquesInput } from './list-personnalisation-thematiques.input';
+import { ListThematiquesOutput } from './list-personnalisation-thematiques.output';
 
 @Injectable()
 export class ListPersonnalisationThematiquesService {
@@ -31,7 +32,7 @@ export class ListPersonnalisationThematiquesService {
   async listThematiques(
     input: ListThematiquesInput,
     user: AuthenticatedUser
-  ): Promise<PersonnalisationThematique[]> {
+  ): Promise<ListThematiquesOutput> {
     const { collectiviteId, actionIds, referentielIds, thematiqueIds } = input;
 
     const collectivitePrivate = await this.collectiviteService.isPrivate(
@@ -77,10 +78,27 @@ export class ListPersonnalisationThematiquesService {
       ),
     ]);
 
-    return this.buildThematiquesFromVisibleQuestions(
+    const thematiques = this.buildThematiquesFromVisibleQuestions(
       questions,
       answeredQuestionIds
     );
+
+    const questionIds = uniq(questions.map((question) => question.id));
+    const nbSuggestionsBanatic =
+      collectiviteId === undefined
+        ? 0
+        : await this.databaseService.db.transaction((tx) =>
+            this.listPersonnalisationReponsesRepository.countQuestionsWithDefinedCompetence(
+              collectiviteId,
+              questionIds,
+              tx
+            )
+          );
+
+    return {
+      thematiques,
+      nbSuggestionsBanatic,
+    };
   }
 
   private buildThematiquesFromVisibleQuestions(

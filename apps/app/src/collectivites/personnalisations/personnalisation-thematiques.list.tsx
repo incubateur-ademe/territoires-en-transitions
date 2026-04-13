@@ -1,6 +1,6 @@
 'use client';
 
-import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { useCollectiviteId } from '@tet/api/collectivites';
 import { useEffect, useRef } from 'react';
 
 import { useListOpenedThematiques } from './data/use-list-opened-thematiques';
@@ -9,16 +9,14 @@ import { usePersonnalisationFilters } from './filters/personnalisation-filters-c
 import { PersonnalisationThematique } from './personnalisation-thematique';
 
 export function PersonnalisationThematiquesList() {
-  const { collectiviteId } = useCurrentCollectivite();
+  const collectiviteId = useCollectiviteId();
   const { filters } = usePersonnalisationFilters();
   const { openedThematiques, setOpenedThematiques } =
     useListOpenedThematiques();
   const initialAutoOpenCheckedRef = useRef(false);
 
-  const { data: thematiques } = useListPersonnalisationThematiques(
-    collectiviteId,
-    filters
-  );
+  const { data } = useListPersonnalisationThematiques(collectiviteId, filters);
+  const thematiques = data?.thematiques;
 
   // ouvre automatiquement toutes les thématiques affichées quand la page est
   // chargée avec un filtre actionIds et qu'il n'y a pas encore de thématiques ouvertes

@@ -19,8 +19,8 @@ const actionLabel = (action: {
 
 export const PersonnalisationFilterBadges = () => {
   const collectiviteId = useCollectiviteId();
-  const { data: thematiques } =
-    useListPersonnalisationThematiques(collectiviteId);
+  const { data } = useListPersonnalisationThematiques(collectiviteId);
+  const thematiques = data?.thematiques;
   const { filters, resetFilters, onDeleteFilterValue, onDeleteFilterCategory } =
     usePersonnalisationFilters();
 
