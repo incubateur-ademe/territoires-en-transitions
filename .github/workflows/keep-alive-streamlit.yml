@@ -1,0 +1,25 @@
+name: Keep Streamlit app alive
+
+on:
+  schedule:
+    - cron: '17 */2 * * *'
+  workflow_dispatch:
+permissions:
+   contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: pnpm install
+        uses: ./.github/actions/pnpm-install
+        with:
+          bryntum_access_token: ${{ secrets.BRYNTUM_ACCESS_TOKEN }}
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Visit Streamlit app and wake if sleeping
+        run: node --experimental-strip-types .github/workflows/scripts/keep-alive-streamlit.ts
