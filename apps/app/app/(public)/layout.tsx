@@ -30,7 +30,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
         ]}
       />
       {children}
-      <FooterTeT id="footer" />
+      <FooterTeT />
     </>
   );
 }

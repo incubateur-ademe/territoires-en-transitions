@@ -1,3 +1,5 @@
+'use client';
+
 import { Checkbox } from '@tet/ui';
 import { useSuperAdminMode } from './super-admin-mode.provider';
 

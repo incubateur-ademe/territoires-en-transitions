@@ -100,8 +100,15 @@ test.describe('Create and update document', () => {
     // Now change to lecture user
     await collectivite.setUserCollectiviteRole(CollectiviteRole.LECTURE);
     await page.reload();
+    // Le side panel documents est déjà ouvert via l'URL (?panel=documents) :
+    // on attend son titre pour s'assurer qu'il est prêt, sans re-cliquer sur
+    // documentsExpandButton (qui le fermerait).
+    await expect(
+      page
+        .getByRole('complementary')
+        .getByRole('heading', { name: '1.1.1 Définir la vision, les' })
+    ).toBeVisible();
     await referentielScoresPom.expandSousAction('1.1.1.3');
-    await referentielScoresPom.documentsExpandButton.click();
 
     await expect(
       referentielScoresPom.getPreuveReglementaireButtonLocator('agenda21')

@@ -5,7 +5,6 @@ import { Footer, LinkObject } from '../../design-system/Footer/Footer';
 import { SITE_BASE_URL } from '../../utils/constants';
 
 type FooterTeTProps = {
-  id?: string;
   /** Liens supplémentaires à afficher en fonction de la page visitée */
   customLinks?: LinkObject[];
   /** Logos supplémentaires à afficher en fonction de la page visitée */
@@ -19,14 +18,13 @@ type FooterTeTProps = {
  */
 
 export const FooterTeT = ({
-  id,
   customLinks,
   customLogos,
   className,
 }: FooterTeTProps) => {
   return (
     <Footer
-      id={id}
+      id="footer"
       className={className}
       logos={[
         <RepubliqueFrancaiseLogo key="republique" className="h-full" />,
