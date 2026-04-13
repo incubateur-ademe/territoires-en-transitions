@@ -60,11 +60,11 @@ describe('ListIndicateursRouter', () => {
     });
     yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
 
-    // Also give access to collectiviteId 2 (used in some tests)
+    // Also give access to collectiviteId 2 (used in some tests — edition like YOLO_DODO)
     await setUserCollectiviteRole(db, {
       userId: testUserResult.user.id,
       collectiviteId: 2,
-      role: CollectiviteRole.ADMIN,
+      role: CollectiviteRole.EDITION,
     });
   });
 
