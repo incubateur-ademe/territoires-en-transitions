@@ -5,11 +5,13 @@ import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fic
 import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import { CollectiviteRole } from '@tet/domain/users';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { and, eq, inArray, isNull } from 'drizzle-orm';
 import * as fs from 'node:fs';
@@ -126,10 +128,15 @@ describe("Test import Plan d'action", { timeout: 30_000 }, () => {
   };
 
   beforeAll(async () => {
-    router = await getTestRouter();
-    yoloDodoUser = await getAuthUser();
     app = await getTestApp();
+    router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
+
+    const testUserResult = await addTestUser(databaseService, {
+      collectiviteId: 1,
+      role: CollectiviteRole.ADMIN,
+    });
+    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
 
     const caller = router.createCaller({ user: yoloDodoUser });
     const { cleanup } = await addAndEnableUserSuperAdminMode({

@@ -4,13 +4,14 @@ import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-axe.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
-  YOLO_DODO,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
 
@@ -24,7 +25,12 @@ describe('PlanActionsService', () => {
     app = await getTestApp();
     db = await getTestDatabase(app);
     planService = app.get(PlanActionsService);
-    user = await getAuthUser(YOLO_DODO);
+
+    const testUserResult = await addTestUser(db, {
+      collectiviteId: 1,
+      role: CollectiviteRole.ADMIN,
+    });
+    user = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
   it("n'inclut pas les fiches supprimées (soft delete) dans le plan", async () => {
@@ -32,7 +38,7 @@ describe('PlanActionsService', () => {
     const [axe] = await db.db
       .select()
       .from(axeTable)
-      .where(eq(axeTable.collectiviteId, YOLO_DODO.collectiviteId.admin));
+      .where(eq(axeTable.collectiviteId, 1));
 
     expect(axe).toBeDefined();
 

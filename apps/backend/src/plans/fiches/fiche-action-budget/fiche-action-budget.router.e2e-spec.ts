@@ -1,35 +1,42 @@
 import { ficheActionBudgetTable } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { BudgetType, BudgetUnite, FicheBudgetCreate } from '@tet/domain/plans';
+import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 
 describe('Route CRUD des budgets des fiches actions', () => {
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let authenticatedUser: AuthenticatedUser;
   let databaseService: DatabaseService;
 
   beforeAll(async () => {
-    router = await getTestRouter();
-    yoloDodoUser = await getAuthUser();
     const app = await getTestApp();
+    router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
+
+    const testUserResult = await addTestUser(databaseService, {
+      collectiviteId: 1,
+      role: CollectiviteRole.ADMIN,
+    });
+    authenticatedUser = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
   test(`Test droit`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
     const collectiviteId = 20;
 
-    // Ajout fiche dans une collectivité où yoloDodoUser n'est pas
+    // Ajout fiche dans une collectivité où l'utilisateur n'est pas
     const [fiche] = await databaseService.db
       .insert(ficheActionTable)
       .values({ titre: 'test', collectiviteId })
@@ -90,9 +97,8 @@ describe('Route CRUD des budgets des fiches actions', () => {
     });
   });
   test(`Tests CRUD`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
 
-    // Crée jeu de test
     const ficheId = 1;
     const budgetHTInvTot: FicheBudgetCreate = {
       ficheId: ficheId,
@@ -133,7 +139,6 @@ describe('Route CRUD des budgets des fiches actions', () => {
       budgetReel: 6000,
     };
 
-    // Ajoute jeu de test
     const [upsertTot] = await caller.plans.fiches.budgets.upsert([
       budgetHTInvTot,
     ]);
@@ -159,7 +164,6 @@ describe('Route CRUD des budgets des fiches actions', () => {
     expect(result1Tot.length).toBe(1);
     expect(result1Tot[0].budgetPrevisionnel).toBe(5000.0);
 
-    // Test l'unicité
     await expect(() =>
       caller.plans.fiches.budgets.upsert([budgetHTInvTotBis])
     ).rejects.toThrowError();
@@ -170,7 +174,6 @@ describe('Route CRUD des budgets des fiches actions', () => {
     const result2 = await caller.plans.fiches.budgets.list({ ficheId });
     expect(result2.length).toBe(5);
 
-    // Update avec id
     const [upsertTotBis] = await caller.plans.fiches.budgets.upsert([
       {
         ...upsertTot,
@@ -191,7 +194,6 @@ describe('Route CRUD des budgets des fiches actions', () => {
     const result3 = await caller.plans.fiches.budgets.list({ ficheId });
     expect(result3.length).toBe(5);
 
-    // Test listes
     const resultHTInvTot = await caller.plans.fiches.budgets.list({
       ficheId,
       type: 'investissement',
@@ -246,7 +248,6 @@ describe('Route CRUD des budgets des fiches actions', () => {
       })
     ).rejects.toThrowError();
 
-    // Suppression
     await caller.plans.fiches.budgets.delete({
       ficheId,
       budgetsIds: [upsertTot.id, upsert2020.id],

@@ -1,15 +1,30 @@
 import { INestApplication } from '@nestjs/common';
-import { getAuthToken, getTestApp } from '@tet/backend/test';
+import {
+  getAuthToken,
+  getTestApp,
+  getTestDatabase,
+} from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import { CollectiviteRole } from '@tet/domain/users';
 import { Workbook } from 'exceljs';
 import { default as request } from 'supertest';
 
 describe('Export plan', () => {
   let app: INestApplication;
-  let yoloDodoToken: string;
+  let authToken: string;
 
   beforeAll(async () => {
     app = await getTestApp();
-    yoloDodoToken = await getAuthToken();
+    const db = await getTestDatabase(app);
+
+    const testUserResult = await addTestUser(db, {
+      collectiviteId: 1,
+      role: CollectiviteRole.ADMIN,
+    });
+    authToken = await getAuthToken({
+      email: testUserResult.user.email!,
+      password: testUserResult.user.password,
+    });
   });
 
   afterAll(async () => {
@@ -19,7 +34,7 @@ describe('Export plan', () => {
   test('Exporte un plan au format XLSX', async () => {
     const response = await request(app.getHttpServer())
       .post('/plan/export')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .send({ collectiviteId: 1, planId: 12, format: 'xlsx' })
       .expect(201)
       .responseType('blob');
@@ -32,17 +47,13 @@ describe('Export plan', () => {
     );
 
     const body = response.body as ArrayBuffer;
-    // décommenter pour écrire le fichier (et vérifier son contenu manuellement)
-    //writeFileSync(fileName, body);
 
     expect(fileName).toMatch(
       /^Export_Amberieu-en-Bugey_Plan Velo 2024-2028_\d{4}-\d{2}-\d{2}.*\.xlsx$/
     );
-    // poids approximitatif du fichier attendu car la date de génération peut le faire un peu varier
     expect(body.byteLength).toBeGreaterThanOrEqual(7800);
     expect(body.byteLength).toBeLessThanOrEqual(8200);
 
-    // crée le classeur et vérifie le contenu de la 7ème ligne de la 1ère feuille
     const wb = new Workbook();
     await wb.xlsx.load(body);
     const ws = wb.getWorksheet(1);
@@ -71,7 +82,7 @@ describe('Export plan', () => {
   test('Exporte un plan au format DOCX', async () => {
     const response = await request(app.getHttpServer())
       .post('/plan/export')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .send({ collectiviteId: 1, planId: 12, format: 'docx' })
       .expect(201)
       .responseType('blob');
@@ -84,13 +95,10 @@ describe('Export plan', () => {
     );
 
     const body = response.body as Buffer;
-    // décommenter pour écrire le fichier (et vérifier son contenu manuellement)
-    //writeFileSync(fileName, body);
 
     expect(fileName).toMatch(
       /^Export_Amberieu-en-Bugey_Plan Velo 2024-2028_\d{4}-\d{2}-\d{2}.*\.docx$/
     );
-    // poids approximitatif du fichier attendu car la date de génération peut le faire un peu varier
     expect(body.byteLength).toBeGreaterThanOrEqual(10200);
     expect(body.byteLength).toBeLessThanOrEqual(10700);
   });

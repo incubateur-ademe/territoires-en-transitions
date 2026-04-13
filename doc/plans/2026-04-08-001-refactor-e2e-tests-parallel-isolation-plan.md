@@ -248,16 +248,16 @@ Remplacer `getAuthUser()` + `collectiviteId` hard-codée par `addTestCollectivit
 
 ### Phase 4 — Migration domaine `plans/` — fichiers entièrement partagés (9 fichiers)
 
-- [ ] `plans/fiches/plan-actions.service.e2e-spec.ts`
-- [ ] `plans/fiches/count-by/count-by.router.e2e-spec.ts`
-- [ ] `plans/fiches/fiche-action-etape/fiche-action-etape.router.e2e-spec.ts`
-- [ ] `plans/fiches/fiche-action-budget/fiche-action-budget.router.e2e-spec.ts`
-- [ ] `plans/fiches/bulk-edit/bulk-edit.router.e2e-spec.ts`
-- [ ] `plans/fiches/share-fiches/share-fiche.service.e2e-spec.ts` — nécessite 2 collectivités isolées (partage entre collectivités)
-- [ ] `plans/fiches/export/export-plan.controller.e2e-spec.ts`
-- [ ] `plans/plans/import-plan-aggregate/import-plan.router.e2e-spec.ts`
-- [ ] `plans/plans/get-plan-completion/get-plan-completion.router.e2e-spec.ts`
-- [ ] `plans/plans/reports/generate-plan-report-pptx/generate-reports.router.e2e-spec.ts`
+- [x] `plans/fiches/plan-actions.service.e2e-spec.ts` — auth isolée
+- [x] `plans/fiches/count-by/count-by.router.e2e-spec.ts` — auth isolée
+- [x] `plans/fiches/fiche-action-etape/fiche-action-etape.router.e2e-spec.ts` — auth isolée
+- [x] `plans/fiches/fiche-action-budget/fiche-action-budget.router.e2e-spec.ts` — auth isolée
+- [x] `plans/fiches/bulk-edit/bulk-edit.router.e2e-spec.ts` — auth isolée
+- [x] `plans/fiches/share-fiches/share-fiche.service.e2e-spec.ts` — auth isolée, 2 utilisateurs
+- [x] `plans/fiches/export/export-plan.controller.e2e-spec.ts` — auth isolée
+- [x] `plans/plans/import-plan-aggregate/import-plan.router.e2e-spec.ts` — auth isolée
+- [x] `plans/plans/get-plan-completion/get-plan-completion.router.e2e-spec.ts` — auth isolée
+- [x] `plans/plans/reports/generate-plan-report-pptx/generate-reports.router.e2e-spec.ts` — auth isolée
 
 **Validation** : lancer les tests `plans/` 2 fois, vérifier 0 échec.
 

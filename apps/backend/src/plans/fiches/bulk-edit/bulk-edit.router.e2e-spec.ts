@@ -1,12 +1,9 @@
 import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
 import {
-  getAuthUser,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-  YOLO_DODO,
-  YULU_DUDU,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
@@ -25,7 +22,7 @@ import { ficheActionTable } from '../shared/models/fiche-action.table';
 
 type Input = inferProcedureInput<AppRouter['plans']['fiches']['bulkEdit']>;
 
-const COLLECTIVITE_ID = YOLO_DODO.collectiviteId.admin;
+const COLLECTIVITE_ID = 1;
 
 const generateFicheIds = async (
   caller: ReturnType<TrpcRouter['createCaller']>
@@ -93,13 +90,22 @@ function getFichesWithServices(db: DatabaseService, ficheIds: number[]) {
 describe('BulkEditRouter', () => {
   let router: TrpcRouter;
   let yoloDodo: AuthenticatedUser;
+  let noAccessUser: AuthenticatedUser;
   let db: DatabaseService;
 
   beforeAll(async () => {
     const app = await getTestApp();
     router = await getTestRouter(app);
     db = await getTestDatabase(app);
-    yoloDodo = await getAuthUser(YOLO_DODO);
+
+    const testUserResult = await addTestUser(db, {
+      collectiviteId: COLLECTIVITE_ID,
+      role: CollectiviteRole.ADMIN,
+    });
+    yoloDodo = getAuthUserFromUserCredentials(testUserResult.user);
+
+    const noAccessResult = await addTestUser(db);
+    noAccessUser = getAuthUserFromUserCredentials(noAccessResult.user);
   });
 
   test('authenticated, bulk edit `statut`', async () => {
@@ -507,8 +513,7 @@ describe('BulkEditRouter', () => {
   test('authenticated, without access to some fiches', async () => {
     const callerYoloDodo = router.createCaller({ user: yoloDodo });
 
-    const yuluDudu = await getAuthUser(YULU_DUDU);
-    const callerYuluDudu = router.createCaller({ user: yuluDudu });
+    const callerYuluDudu = router.createCaller({ user: noAccessUser });
 
     const ficheIds = await generateFicheIds(callerYoloDodo);
 

@@ -1,13 +1,15 @@
 import { INestApplication } from '@nestjs/common';
 import {
   getAuthToken,
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
+  getTestDatabase,
   getTestRouter,
-  YULU_DUDU,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { sleep } from '@tet/backend/utils/sleep.utils';
+import { CollectiviteRole } from '@tet/domain/users';
 import { default as request } from 'supertest';
 import { TrpcRouter } from '../../../utils/trpc/trpc.router';
 
@@ -17,20 +19,33 @@ const SEED_DATA_COLLECTIVITE_ID = 1;
 describe('generate-reports.router.e2e-spec.ts', () => {
   let app: INestApplication;
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
-  let yuluDuduUser: AuthenticatedUser;
-  let yoloDodoToken: string;
+  let adminUser: AuthenticatedUser;
+  let noAccessUser: AuthenticatedUser;
+  let adminToken: string;
 
   beforeAll(async () => {
     app = await getTestApp();
     router = await getTestRouter(app);
-    yoloDodoUser = await getAuthUser();
-    yuluDuduUser = await getAuthUser(YULU_DUDU);
-    yoloDodoToken = await getAuthToken();
+    const db = await getTestDatabase(app);
+
+    // User with admin access to seed collectivite
+    const adminResult = await addTestUser(db, {
+      collectiviteId: SEED_DATA_COLLECTIVITE_ID,
+      role: CollectiviteRole.ADMIN,
+    });
+    adminUser = getAuthUserFromUserCredentials(adminResult.user);
+    adminToken = await getAuthToken({
+      email: adminResult.user.email!,
+      password: adminResult.user.password,
+    });
+
+    // User without access (for permission test)
+    const noAccessResult = await addTestUser(db);
+    noAccessUser = getAuthUserFromUserCredentials(noAccessResult.user);
   });
 
   it('Génère un rapport de plan au format PPTX', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: adminUser });
     const reportGeneration = await caller.plans.reports.create({
       planId: SEED_DATA_PLAN_ID,
       templateKey: 'general_bilan_template',
@@ -52,7 +67,7 @@ describe('generate-reports.router.e2e-spec.ts', () => {
       .get(
         `/collectivites/${SEED_DATA_COLLECTIVITE_ID}/documents/${updatedReportGeneration.id}/download`
       )
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .set('Authorization', `Bearer ${adminToken}`)
       .expect(200)
       .responseType('blob');
 
@@ -66,12 +81,11 @@ describe('generate-reports.router.e2e-spec.ts', () => {
     const body = response.body as Buffer;
 
     expect(fileName).toMatch(expectedFileName);
-    // Vérifie que le fichier a une taille raisonnable (rapport PPTX)
     expect(body.byteLength).toBeGreaterThan(1000);
   }, 25000);
 
   it("Refuse la génération de rapport si l'utilisateur n'a pas les droits", async () => {
-    const caller = router.createCaller({ user: yuluDuduUser });
+    const caller = router.createCaller({ user: noAccessUser });
 
     await expect(() =>
       caller.plans.reports.create({

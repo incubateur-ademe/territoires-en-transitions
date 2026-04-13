@@ -1,53 +1,71 @@
 import { ForbiddenException, INestApplication } from '@nestjs/common';
 import {
-  YOLO_DODO,
-  YULU_DUDU,
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
+  getTestDatabase,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import { CollectiviteRole } from '@tet/domain/users';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { createFiche } from '../fiches.test-fixture';
 
 describe('ShareFicheService', () => {
   let app: INestApplication;
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
-  let yuluDuduUser: AuthenticatedUser;
+  let adminUser1: AuthenticatedUser; // admin on collectivite 1
+  let adminUser1Id: string;
+  let adminUser3: AuthenticatedUser; // admin on collectivite 3
+  let adminUser3Id: string;
 
   beforeAll(async () => {
     app = await getTestApp();
     router = app.get(TrpcRouter);
-    yoloDodoUser = await getAuthUser();
-    yuluDuduUser = await getAuthUser(YULU_DUDU);
+    const db = await getTestDatabase(app);
+
+    // User with admin on collectivite 1
+    const user1Result = await addTestUser(db, {
+      collectiviteId: 1,
+      role: CollectiviteRole.ADMIN,
+    });
+    adminUser1 = getAuthUserFromUserCredentials(user1Result.user);
+    adminUser1Id = user1Result.user.id;
+
+    // User with admin on collectivite 3
+    const user3Result = await addTestUser(db, {
+      collectiviteId: 3,
+      role: CollectiviteRole.ADMIN,
+    });
+    adminUser3 = getAuthUserFromUserCredentials(user3Result.user);
+    adminUser3Id = user3Result.user.id;
   });
 
   test('should share a fiche action with another collectivité and make it visible / editable', async () => {
-    const yulududuCaller = router.createCaller({ user: yuluDuduUser });
+    const user3Caller = router.createCaller({ user: adminUser3 });
     const ficheId = await createFiche({
-      caller: yulududuCaller,
-      ficheInput: { collectiviteId: YULU_DUDU.collectiviteId.admin },
+      caller: user3Caller,
+      ficheInput: { collectiviteId: 3 },
     });
 
     // Be sure that the fiche is not shared
-    await yulududuCaller.plans.fiches.update({
+    await user3Caller.plans.fiches.update({
       ficheId,
       ficheFields: {
         sharedWithCollectivites: [],
       },
     });
 
-    const yolododoCaller = router.createCaller({ user: yoloDodoUser });
+    const user1Caller = router.createCaller({ user: adminUser1 });
 
-    // Initially, collectivité 3 should not see the fiche
-    const initialFiches = await yolododoCaller.plans.fiches.listFiches({
+    // Initially, collectivité 1 should not see the fiche
+    const initialFiches = await user1Caller.plans.fiches.listFiches({
       collectiviteId: 1,
     });
     expect(initialFiches.data.find((f) => f.id === ficheId)).toBeUndefined();
 
     // And can't edit it as well
     await expect(() =>
-      yolododoCaller.plans.fiches.update({
+      user1Caller.plans.fiches.update({
         ficheId,
         ficheFields: {
           titre: 'title update',
@@ -55,30 +73,30 @@ describe('ShareFicheService', () => {
       })
     ).toThrowTrpcHttpError(
       new ForbiddenException(
-        `Droits insuffisants, l'utilisateur ${YOLO_DODO.id} n'a pas l'autorisation plans.fiches.update sur la ressource Collectivité 3`
+        `Droits insuffisants, l'utilisateur ${adminUser1Id} n'a pas l'autorisation plans.fiches.update sur la ressource Collectivité 3`
       )
     );
 
-    // Share the fiche with collectivité 3
-    await yulududuCaller.plans.fiches.update({
+    // Share the fiche with collectivité 1
+    await user3Caller.plans.fiches.update({
       ficheId,
       ficheFields: {
-        sharedWithCollectivites: [{ id: YOLO_DODO.collectiviteId.admin }],
+        sharedWithCollectivites: [{ id: 1 }],
       },
     });
 
-    // Now collectivité 3 should see the fiche
-    const fichesAfterSharing = await yolododoCaller.plans.fiches.listFiches({
+    // Now collectivité 1 should see the fiche
+    const fichesAfterSharing = await user1Caller.plans.fiches.listFiches({
       collectiviteId: 3,
     });
     const sharedFiche = fichesAfterSharing.data.find((f) => f.id === ficheId);
     expect(sharedFiche).toBeDefined();
     expect(sharedFiche?.sharedWithCollectivites).toEqual([
-      { id: YOLO_DODO.collectiviteId.admin, nom: 'Ambérieu-en-Bugey' },
+      { id: 1, nom: 'Ambérieu-en-Bugey' },
     ]);
 
     // And can edit it as well
-    const updatedFiche = await yolododoCaller.plans.fiches.update({
+    const updatedFiche = await user1Caller.plans.fiches.update({
       ficheId,
       ficheFields: {
         titre: 'title update',
@@ -87,18 +105,18 @@ describe('ShareFicheService', () => {
     expect(updatedFiche.titre).toBe('title update');
 
     // Can also do a bulk edit with the fiche
-    await yolododoCaller.plans.fiches.bulkEdit({
-      collectiviteId: YULU_DUDU.collectiviteId.admin,
+    await user1Caller.plans.fiches.bulkEdit({
+      collectiviteId: 3,
       ficheIds: [ficheId],
       statut: 'Bloqué',
     });
-    const ficheAfterBulkUpdate = await yolododoCaller.plans.fiches.get({
+    const ficheAfterBulkUpdate = await user1Caller.plans.fiches.get({
       id: ficheId,
     });
     expect(ficheAfterBulkUpdate.statut).toEqual('Bloqué');
 
     // Restore title & statut
-    await yolododoCaller.plans.fiches.update({
+    await user1Caller.plans.fiches.update({
       ficheId,
       ficheFields: {
         titre: sharedFiche?.titre,
@@ -107,15 +125,15 @@ describe('ShareFicheService', () => {
     });
 
     // Remove sharing
-    await yulududuCaller.plans.fiches.update({
+    await user3Caller.plans.fiches.update({
       ficheId,
       ficheFields: {
         sharedWithCollectivites: [],
       },
     });
 
-    const afterRemovalFiches = await yolododoCaller.plans.fiches.listFiches({
-      collectiviteId: YOLO_DODO.collectiviteId.admin,
+    const afterRemovalFiches = await user1Caller.plans.fiches.listFiches({
+      collectiviteId: 1,
     });
 
     expect(
@@ -125,11 +143,11 @@ describe('ShareFicheService', () => {
 
   test('when a restricted fiche action is shared with another collectivité, it can be read by the other collectivité even if it is restricted', async () => {
     const ficheId = 7;
-    const yolododoCaller = router.createCaller({ user: yoloDodoUser });
-    const yulududuCaller = router.createCaller({ user: yuluDuduUser });
+    const user1Caller = router.createCaller({ user: adminUser1 });
+    const user3Caller = router.createCaller({ user: adminUser3 });
 
     // Be sure that the fiche is not shared
-    await yolododoCaller.plans.fiches.update({
+    await user1Caller.plans.fiches.update({
       ficheId,
       ficheFields: {
         sharedWithCollectivites: [],
@@ -138,7 +156,7 @@ describe('ShareFicheService', () => {
     });
     // Do the same at the end of the test
     onTestFinished(async () => {
-      await yolododoCaller.plans.fiches.update({
+      await user1Caller.plans.fiches.update({
         ficheId,
         ficheFields: {
           sharedWithCollectivites: [],
@@ -147,14 +165,14 @@ describe('ShareFicheService', () => {
       });
     });
 
-    // Initially, yuludu should be able to get the fiche
-    const initialFiches = await yulududuCaller.plans.fiches.get({
+    // Initially, user3 should be able to get the fiche (public, visitor)
+    const initialFiches = await user3Caller.plans.fiches.get({
       id: ficheId,
     });
     expect(initialFiches.id).toBe(ficheId);
 
     // Now we change the fiche to be restricted
-    await yolododoCaller.plans.fiches.update({
+    await user1Caller.plans.fiches.update({
       ficheId,
       ficheFields: {
         restreint: true,
@@ -163,17 +181,17 @@ describe('ShareFicheService', () => {
 
     // Can't get the fiche anymore
     await expect(() =>
-      yulududuCaller.plans.fiches.get({
+      user3Caller.plans.fiches.get({
         id: ficheId,
       })
     ).toThrowTrpcHttpError(
       new ForbiddenException(
-        `Droits insuffisants, l'utilisateur ${YULU_DUDU.id} n'a pas l'autorisation plans.fiches.read_confidentiel sur la ressource Collectivité 1`
+        `Droits insuffisants, l'utilisateur ${adminUser3Id} n'a pas l'autorisation plans.fiches.read_confidentiel sur la ressource Collectivité 1`
       )
     );
 
     // Share the fiche with collectivité 3
-    await yolododoCaller.plans.fiches.update({
+    await user1Caller.plans.fiches.update({
       ficheId,
       ficheFields: {
         sharedWithCollectivites: [{ id: 3 }],
@@ -181,7 +199,7 @@ describe('ShareFicheService', () => {
     });
 
     // Even if the fiche is restricted, collectivité 3 should be able to get it
-    const sharedFiche = await yulududuCaller.plans.fiches.get({
+    const sharedFiche = await user3Caller.plans.fiches.get({
       id: ficheId,
     });
     expect(sharedFiche.id).toBe(ficheId);

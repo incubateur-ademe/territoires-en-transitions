@@ -6,11 +6,13 @@ import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/mod
 import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import { CollectiviteRole } from '@tet/domain/users';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -35,10 +37,15 @@ describe('GetPlanCompletionRouter tests', () => {
   let testCollectiviteId: number;
 
   beforeAll(async () => {
-    router = await getTestRouter();
-    yoloDodoUser = await getAuthUser();
     const app = await getTestApp();
+    router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
+
+    const testUserResult = await addTestUser(databaseService, {
+      collectiviteId: 999,
+      role: CollectiviteRole.ADMIN,
+    });
+    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
   beforeEach(async () => {
