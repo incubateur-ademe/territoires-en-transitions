@@ -113,5 +113,41 @@ test.describe('Hide desactivated action', () => {
         "2.2 Améliorer l'efficience du système de collecte"
       )
     ).toHaveCount(0);
+
+    // Navigate to action 2.1 to verify "Mesure suivante" skips 2.2
+    await referentielScoresPom.goToActionPage(
+      '2 - Développement des services de réduction, collecte et valorisation des déchets',
+      null,
+      "2.1 Disposer d'un programme de prévention des déchets",
+      true
+    );
+
+    const nextLink = page.getByRole('link', { name: 'Mesure suivante' });
+    await expect(nextLink).toBeVisible();
+    await expect(nextLink).toHaveAttribute('href', /eci_2\.3/);
+    await nextLink.click();
+    await expect(
+      page.getByRole('heading', {
+        name: '2.3 Améliorer la valorisation des déchets (dont organiques)',
+      })
+    ).toBeVisible();
+
+    // Navigate to action 2.3 to verify "Mesure précédente" skips 2.2
+    await referentielScoresPom.goto('eci');
+    await referentielScoresPom.goToActionPage(
+      '2 - Développement des services de réduction, collecte et valorisation des déchets',
+      null,
+      '2.3 Améliorer la valorisation des déchets (dont organiques)'
+    );
+
+    const prevLink = page.getByRole('link', { name: 'Mesure précédente' });
+    await expect(prevLink).toBeVisible();
+    await expect(prevLink).toHaveAttribute('href', /eci_2\.1/);
+    await prevLink.click();
+    await expect(
+      page.getByRole('heading', {
+        name: "2.1 Disposer d'un programme de prévention des déchets",
+      })
+    ).toBeVisible();
   });
 });
