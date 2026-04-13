@@ -8,5 +8,7 @@ export interface ReportFicheInfo {
   FICHE_BUDGET_TOTAL: string;
   FICHE_BUDGET_FONCTIONNEMENT: string;
   FICHE_BUDGET_INVESTISSEMENT: string;
+  FICHE_INFORMATIONS_TITLE: string;
+  FICHE_INFORMATIONS: string;
   MISSING_INFO?: string;
 }

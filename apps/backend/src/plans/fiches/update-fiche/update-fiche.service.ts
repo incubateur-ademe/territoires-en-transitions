@@ -3,6 +3,7 @@ import ListFichesService from '@tet/backend/plans/fiches/list-fiches/list-fiches
 import { ShareFicheService } from '@tet/backend/plans/fiches/share-fiches/share-fiche.service';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { Transaction } from '@tet/backend/utils/database/transaction.utils';
+import { isErrorWithCause } from '@tet/backend/utils/nest/errors.utils';
 import { WebhookService } from '@tet/backend/utils/webhooks/webhook.service';
 import {
   canLinkInstanceGouvernanceToFiche,
@@ -22,6 +23,7 @@ import {
 import { PgTable } from 'drizzle-orm/pg-core';
 import { isNil, partition } from 'es-toolkit';
 import { toCamel } from 'ts-case-convert';
+import { instanceGouvernanceTagTable } from '../../../collectivites/tags/instance-gouvernance.table';
 import { AuthenticatedUser } from '../../../users/models/auth.models';
 import { ficheActionNoteTable } from '../fiche-action-note/fiche-action-note.table';
 import FicheActionPermissionsService from '../fiche-action-permissions.service';
@@ -32,7 +34,6 @@ import { ficheActionEffetAttenduTable } from '../shared/models/fiche-action-effe
 import { ficheActionFinanceurTagTable } from '../shared/models/fiche-action-financeur-tag.table';
 import { ficheActionIndicateurTable } from '../shared/models/fiche-action-indicateur.table';
 import { ficheActionActionImpactTable } from '../shared/models/fiche-action-action-impact.table';
-import { instanceGouvernanceTagTable } from '../../../collectivites/tags/instance-gouvernance.table';
 import { ficheActionInstanceGouvernanceTableTag } from '../shared/models/fiche-action-instance-gouvernance';
 import { ficheActionLibreTagTable } from '../shared/models/fiche-action-libre-tag.table';
 import { ficheActionLienTable } from '../shared/models/fiche-action-lien.table';
@@ -487,6 +488,12 @@ export default class UpdateFicheService {
     } catch (error) {
       if (error instanceof UpdateFicheValidationError) {
         return { success: false, error: error.ficheError };
+      }
+      if (isErrorWithCause(error)) {
+        this.logger.error(
+          `Error cause: ${error.cause.message} (${error.cause.code}, ${error.cause.constraint})`
+        );
+        this.logger.debug(`Error cause stack: ${error.cause.stack}`);
       }
       return {
         success: false,

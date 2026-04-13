@@ -16,6 +16,7 @@ import {
   IndicateurValeurTypeEnum,
 } from '@tet/domain/indicateurs';
 import {
+  FicheInformationsMode,
   FicheWithRelations,
   GenerateReportInput,
   Plan,
@@ -30,6 +31,7 @@ import {
 import { EChartsOption } from 'echarts/types/dist/echarts';
 import { chunk, isNil } from 'es-toolkit';
 import { writeFileSync } from 'fs';
+import { convert } from 'html-to-text';
 import { DateTime } from 'luxon';
 import * as path from 'path';
 import {
@@ -158,6 +160,7 @@ export class PptBuilderService {
   private readonly LOCALE = 'fr-FR';
   private readonly CHART_SCALE_FACTOR = 2;
   private readonly NOT_DEFINED_VALUE = 'N/D';
+  private readonly LAST_NOTE_TITLE = 'Dernière note';
   private readonly PCAET_TYPE = 'Plan Climat Air Énergie Territorial';
   private readonly BUDGET_FORMATTER = new Intl.NumberFormat(this.LOCALE, {
     style: 'currency',
@@ -423,8 +426,10 @@ export class PptBuilderService {
             })
           );
         for (const fiche of axeFilteredFiches) {
-          const ficheTextReplacementsInfo =
-            this.getFicheTextReplacementsInfos(fiche);
+          const ficheTextReplacementsInfo = this.getFicheTextReplacementsInfos(
+            fiche,
+            request.ficheInformationsMode
+          );
 
           this.addFicheInfosSlides({
             ...slideGenerationArgs,
@@ -1094,8 +1099,69 @@ export class PptBuilderService {
     });
   }
 
+  private getLastNote(notes: FicheWithRelations['notes']) {
+    if (!notes?.length) {
+      return null;
+    }
+    const sortedNotes = [...notes].sort((a, b) =>
+      b.dateNote.localeCompare(a.dateNote)
+    );
+    const lastNote = sortedNotes[0];
+    return lastNote;
+  }
+
+  private buildFicheInformations(
+    mode: FicheInformationsMode,
+    fiche: Pick<FicheWithRelations, 'notes'>,
+    missingInfo: string
+  ): {
+    ficheInformations: string;
+    ficheInformationsTitle: string;
+    missingInfo: string;
+  } {
+    if (mode !== 'auto_last_note') {
+      return {
+        ficheInformations:
+          "Remplissez ici les informations importantes concernant l'action",
+        ficheInformationsTitle: 'Informations importantes',
+        missingInfo,
+      };
+    }
+
+    const lastNote = this.getLastNote(fiche.notes);
+    if (!lastNote) {
+      return {
+        ficheInformations: this.NOT_DEFINED_VALUE,
+        ficheInformationsTitle: this.LAST_NOTE_TITLE,
+        missingInfo: [missingInfo, this.LAST_NOTE_TITLE]
+          .filter(Boolean)
+          .join(', '),
+      };
+    }
+
+    const plainTextNote = this.htmlToPlainText(lastNote.note);
+    if (!plainTextNote) {
+      return {
+        ficheInformations: this.NOT_DEFINED_VALUE,
+        ficheInformationsTitle: this.LAST_NOTE_TITLE,
+        missingInfo: [missingInfo, this.LAST_NOTE_TITLE]
+          .filter(Boolean)
+          .join(', '),
+      };
+    }
+
+    return {
+      ficheInformations: this.htmlToPlainText(lastNote.note),
+      ficheInformationsTitle: `${
+        this.LAST_NOTE_TITLE
+      } (${lastNote.dateNote.substring(0, 4)})`,
+      missingInfo,
+    };
+  }
+
   private getFicheTextReplacementsInfos(
-    fiche: FicheWithRelations
+    fiche: FicheWithRelations,
+    ficheInformationsMode: FicheInformationsMode
   ): ReportFicheInfo {
     const dateDebut = fiche.dateDebut
       ? DateTime.fromISO(fiche.dateDebut)
@@ -1110,7 +1176,7 @@ export class PptBuilderService {
 
     const budget = this.computeBudgetRules.computeBudget([fiche]);
 
-    const missingInfo = Object.entries(this.FICHE_PROPERTIES_TO_CHECK)
+    let missingInfo = Object.entries(this.FICHE_PROPERTIES_TO_CHECK)
       .filter(([key, _]) => {
         if (isNil(fiche[key as keyof FicheWithRelations])) {
           return true;
@@ -1119,6 +1185,13 @@ export class PptBuilderService {
       })
       .map(([_, value]) => `${value}`)
       .join(', ');
+
+    const ficheInfoResult = this.buildFicheInformations(
+      ficheInformationsMode,
+      fiche,
+      missingInfo
+    );
+    missingInfo = ficheInfoResult.missingInfo;
 
     return {
       FICHE_TITRE: fiche.titre ?? '',
@@ -1144,8 +1217,20 @@ export class PptBuilderService {
       FICHE_BUDGET_INVESTISSEMENT: this.formatBudget(
         budget.investissement.HT.budgetPrevisionnel.total
       ),
+      FICHE_INFORMATIONS_TITLE: ficheInfoResult.ficheInformationsTitle,
+      FICHE_INFORMATIONS: ficheInfoResult.ficheInformations,
       MISSING_INFO: missingInfo,
     };
+  }
+
+  private htmlToPlainText(html: string): string {
+    return convert(html, {
+      wordwrap: false,
+      selectors: [
+        { selector: 'a', options: { ignoreHref: true } },
+        { selector: 'img', format: 'skip' },
+      ],
+    }).trim();
   }
 
   private getAxeGeneralInfo(

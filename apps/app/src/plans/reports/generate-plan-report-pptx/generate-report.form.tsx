@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plan, generateReportInputSchema } from '@tet/domain/plans';
-import { Checkbox, Field, Input } from '@tet/ui';
+import { Checkbox, Field, Input, Select } from '@tet/ui';
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
 
@@ -24,6 +24,7 @@ const generateReportFormSchema = generateReportInputSchema
   .partial({
     templateKey: true,
     includeFicheIndicateursSlides: true,
+    ficheInformationsMode: true,
   });
 
 export type GenerateReportFormArgs = z.infer<typeof generateReportFormSchema>;
@@ -60,6 +61,7 @@ export function GenerateReportForm({
       templateKey: 'general_bilan_template',
       ficheIds: undefined,
       includeFicheIndicateursSlides: true,
+      ficheInformationsMode: 'auto_last_note',
     },
   });
 
@@ -133,6 +135,7 @@ export function GenerateReportForm({
           )}
         />
       </Field>
+
       <Field title="Actions à ajouter au rapport">
         <div className="flex flex-col gap-4 mt-2">
           <Checkbox
@@ -169,6 +172,33 @@ export function GenerateReportForm({
             />
           )}
         </div>
+      </Field>
+      <Field title="Détail affiché par action">
+        <Controller
+          name="ficheInformationsMode"
+          control={control}
+          render={({ field }) => (
+            <Select
+              disabled={disabled}
+              options={[
+                {
+                  value: 'auto_last_note',
+                  label: "Dernière note de l'action",
+                },
+                {
+                  value: 'manual',
+                  label: 'Saisie manuelle dans le rapport généré',
+                },
+              ]}
+              values={field.value}
+              onChange={(value) => {
+                if (value) {
+                  field.onChange(value);
+                }
+              }}
+            />
+          )}
+        />
       </Field>
     </form>
   );
