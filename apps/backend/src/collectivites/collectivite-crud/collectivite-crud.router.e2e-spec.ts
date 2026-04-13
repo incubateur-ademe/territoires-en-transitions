@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { collectiviteBucketTable } from '@tet/backend/collectivites/shared/models/collectivite-bucket.table';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
@@ -10,6 +10,7 @@ import {
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import {
   addAndEnableUserSuperAdminMode,
+  addTestUser,
   addUserRoleSupport,
 } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -26,25 +27,27 @@ const sirenEPCI = '255600793';
 
 describe('Test upsert collectivite', () => {
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let authenticatedUser: AuthenticatedUser;
   let app: INestApplication;
   let databaseService: DatabaseService;
 
   beforeAll(async () => {
-    router = await getTestRouter();
-    yoloDodoUser = await getAuthUser();
     app = await getTestApp();
+    router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
+
+    const testUserResult = await addTestUser(databaseService);
+    authenticatedUser = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
   test('Test utilisateur support mais sans le mode super-admin actif', async () => {
     const { cleanup } = await addUserRoleSupport({
       databaseService,
-      userId: yoloDodoUser.id,
+      userId: authenticatedUser.id,
     });
     onTestFinished(cleanup);
 
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
     const input: upsertInput = {
       type: collectiviteTypeEnum.EPCI,
       siren: sirenEPCI,
@@ -59,12 +62,12 @@ describe('Test upsert collectivite', () => {
   });
 
   test('Test upsert', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
 
     const { cleanup } = await addAndEnableUserSuperAdminMode({
       app,
       caller,
-      userId: yoloDodoUser.id,
+      userId: authenticatedUser.id,
     });
 
     onTestFinished(cleanup);
@@ -111,12 +114,12 @@ describe('Test upsert collectivite', () => {
 
   describe('Test getAdditionalInformation', async () => {
     test('EPCI', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: authenticatedUser });
 
       const { cleanup } = await addAndEnableUserSuperAdminMode({
         app,
         caller,
-        userId: yoloDodoUser.id,
+        userId: authenticatedUser.id,
       });
 
       onTestFinished(cleanup);
@@ -141,11 +144,11 @@ describe('Test upsert collectivite', () => {
     });
 
     test('Commune', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: authenticatedUser });
       const { cleanup } = await addAndEnableUserSuperAdminMode({
         app,
         caller,
-        userId: yoloDodoUser.id,
+        userId: authenticatedUser.id,
       });
 
       onTestFinished(cleanup);
@@ -169,12 +172,12 @@ describe('Test upsert collectivite', () => {
     });
 
     test('Département', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: authenticatedUser });
 
       const { cleanup } = await addAndEnableUserSuperAdminMode({
         app,
         caller,
-        userId: yoloDodoUser.id,
+        userId: authenticatedUser.id,
       });
       onTestFinished(cleanup);
 
@@ -196,12 +199,12 @@ describe('Test upsert collectivite', () => {
     });
 
     test('Region', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: authenticatedUser });
 
       const { cleanup } = await addAndEnableUserSuperAdminMode({
         app,
         caller,
-        userId: yoloDodoUser.id,
+        userId: authenticatedUser.id,
       });
       onTestFinished(cleanup);
 

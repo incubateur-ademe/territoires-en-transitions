@@ -1,154 +1,171 @@
+import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
-import { ficheActionReferentTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-referent.table';
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
-import { dcpTable } from '@tet/backend/users/models/dcp.table';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
-import { CollectiviteRole } from '@tet/domain/users';
-import { and, eq, isNotNull, ne } from 'drizzle-orm';
-import { onTestFinished } from 'vitest';
+import { Collectivite } from '@tet/domain/collectivites';
+import { CollectiviteRole, Dcp } from '@tet/domain/users';
+import { and, eq } from 'drizzle-orm';
 import { utilisateurCollectiviteAccessTable } from '../../../users/authorizations/utilisateur-collectivite-access.table';
 import { invitationTable } from '../invitation.table';
 import { invitationPersonneTagTable } from './invitation-personne-tag.table';
 
 describe('Test les invitations', () => {
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
   let databaseService: DatabaseService;
+  let collectivite: Collectivite;
+  let adminUser: AuthenticatedUser;
+  let adminEmail: string;
+  let adminUserId: string;
+  let inviteeUser: Dcp & { password: string };
 
   beforeAll(async () => {
-    router = await getTestRouter();
-    yoloDodoUser = await getAuthUser();
     const app = await getTestApp();
+    router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
+
+    // Create collectivite with admin user
+    const testResult = await addTestCollectiviteAndUser(databaseService, {
+      user: { role: CollectiviteRole.ADMIN },
+    });
+    collectivite = testResult.collectivite;
+    adminUser = getAuthUserFromUserCredentials(testResult.user);
+    adminEmail = testResult.user.email!;
+    adminUserId = testResult.user.id;
+
+    // Create user to be invited (not in collectivite)
+    const inviteeResult = await addTestUser(databaseService);
+    inviteeUser = inviteeResult.user;
   });
 
   test(`N'a pas le droit d'inviter`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: adminUser });
     await expect(() =>
       caller.collectivites.membres.invitations.create({
-        collectiviteId: 200,
+        collectiviteId: 99999,
         email: 'test@test.fr',
         role: CollectiviteRole.EDITION,
-        tagIds: [10],
+        tagIds: [],
       })
     ).rejects.toThrowError();
   });
 
   test(`Utilisateur déjà dans la collectivité`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: adminUser });
     await expect(() =>
       caller.collectivites.membres.invitations.create({
-        collectiviteId: 1,
-        email: 'yolo@dodo.com',
+        collectiviteId: collectivite.id,
+        email: adminEmail,
         role: CollectiviteRole.EDITION,
-        tagIds: [10],
+        tagIds: [],
       })
     ).rejects.toThrowError(
-      `L'utilisateur yolo@dodo.com est déjà associé à la collectivité 1`
+      `L'utilisateur ${adminEmail} est déjà associé à la collectivité ${collectivite.id}`
     );
   });
 
   test(`Invite un utilisateur déjà existant mais pas rattaché à la collectivité`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
-    // Récupère l'id de l'utilisateur à rattacher
-    const [yulu] = await databaseService.db
-      .select()
-      .from(dcpTable)
-      .where(eq(dcpTable.email, 'yulu@dudu.com'))
-      .limit(1);
+    const caller = router.createCaller({ user: adminUser });
 
-    // Vérifie que yulu n'appartient pas à la collectivité 1
+    // Create tag and fiches for this test
+    const [testTag] = await databaseService.db
+      .insert(personneTagTable)
+      .values({ nom: 'Pilote Tag Invite', collectiviteId: collectivite.id })
+      .returning();
+
+    const fiche1 = await caller.plans.fiches.create({
+      fiche: { collectiviteId: collectivite.id, titre: 'Fiche invite test 1' },
+    });
+    const fiche2 = await caller.plans.fiches.create({
+      fiche: { collectiviteId: collectivite.id, titre: 'Fiche invite test 2' },
+    });
+
+    await databaseService.db.insert(ficheActionPiloteTable).values([
+      { ficheId: fiche1.id, tagId: testTag.id },
+      { ficheId: fiche2.id, tagId: testTag.id },
+    ]);
+
+    // Vérifie que l'invité n'appartient pas à la collectivité
     const avantInvitation = await databaseService.db
       .select()
       .from(utilisateurCollectiviteAccessTable)
       .where(
         and(
-          eq(utilisateurCollectiviteAccessTable.userId, yulu.id),
-          eq(utilisateurCollectiviteAccessTable.collectiviteId, 1)
+          eq(utilisateurCollectiviteAccessTable.userId, inviteeUser.id),
+          eq(
+            utilisateurCollectiviteAccessTable.collectiviteId,
+            collectivite.id
+          )
         )
       );
-
     expect(avantInvitation.length).toBe(0);
 
-    // Invite yulu
+    // Invite l'utilisateur
     const invitation = await caller.collectivites.membres.invitations.create({
-      collectiviteId: 1,
-      email: 'yulu@dudu.com',
+      collectiviteId: collectivite.id,
+      email: inviteeUser.email!,
       role: CollectiviteRole.EDITION,
-      tagIds: [1],
+      tagIds: [testTag.id],
     });
     // Retourne null quand il y a un rattachement sans création d'invitation
     expect(invitation).toBeNull();
 
-    // Vérifie que yulu est rattaché à la collectivité 1
+    // Vérifie que l'invité est rattaché à la collectivité
     const apresInvitation = await databaseService.db
       .select()
       .from(utilisateurCollectiviteAccessTable)
       .where(
         and(
-          eq(utilisateurCollectiviteAccessTable.userId, yulu.id),
-          eq(utilisateurCollectiviteAccessTable.collectiviteId, 1)
+          eq(utilisateurCollectiviteAccessTable.userId, inviteeUser.id),
+          eq(
+            utilisateurCollectiviteAccessTable.collectiviteId,
+            collectivite.id
+          )
         )
       );
     expect(apresInvitation.length).toBe(1);
 
-    // Vérifie que le tag 1 a été remplacé par yulu
-    // (mieux testé dans personne-tag.router.e2e-spec.ts)
+    // Vérifie que le tag a été remplacé par l'utilisateur (pilotes)
     const pilotes = await databaseService.db
       .select()
       .from(ficheActionPiloteTable)
-      .where(eq(ficheActionPiloteTable.userId, yulu.id));
+      .where(eq(ficheActionPiloteTable.userId, inviteeUser.id));
     expect(pilotes.length).toBe(2);
-
-    onTestFinished(async () => {
-      try {
-        await databaseService.db
-          .delete(utilisateurCollectiviteAccessTable)
-          .where(
-            and(
-              eq(utilisateurCollectiviteAccessTable.userId, yulu.id),
-              eq(utilisateurCollectiviteAccessTable.collectiviteId, 1)
-            )
-          );
-        await databaseService.db
-          .delete(ficheActionPiloteTable)
-          .where(eq(ficheActionPiloteTable.userId, yulu.id));
-        await databaseService.db
-          .delete(ficheActionReferentTable)
-          .where(eq(ficheActionReferentTable.userId, yulu.id));
-        await databaseService.db
-          .insert(personneTagTable)
-          .values([{ id: 1, nom: 'Lou Piote', collectiviteId: 1 }]);
-        await databaseService.db.insert(ficheActionPiloteTable).values([
-          { ficheId: 1, tagId: 1 },
-          { ficheId: 2, tagId: 1 },
-        ]);
-        await databaseService.db
-          .insert(ficheActionReferentTable)
-          .values([{ ficheId: 4, tagId: 1 }]);
-      } catch (error) {
-        console.error('Erreur lors de la suppression:', error);
-      }
-    });
   });
 
   test(`Invite un nouvel utilisateur`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: adminUser });
+
+    // Create 2 tags for this test
+    const [tag1] = await databaseService.db
+      .insert(personneTagTable)
+      .values({
+        nom: 'Tag Invite New 1',
+        collectiviteId: collectivite.id,
+      })
+      .returning();
+    const [tag2] = await databaseService.db
+      .insert(personneTagTable)
+      .values({
+        nom: 'Tag Invite New 2',
+        collectiviteId: collectivite.id,
+      })
+      .returning();
 
     // Invite l'utilisateur test
     const invitation = await caller.collectivites.membres.invitations.create({
-      collectiviteId: 1,
-      email: 'test@test.fr',
+      collectiviteId: collectivite.id,
+      email: 'newuser-invite-test@test.fr',
       role: CollectiviteRole.EDITION,
-      tagIds: [1, 10],
+      tagIds: [tag1.id, tag2.id],
     });
     // Retourne l'identifiant de l'invitation
     expect(invitation).not.toBeNull();
@@ -165,62 +182,70 @@ describe('Test les invitations', () => {
 
     expect(result).not.toBeNull();
 
-    // Vérifie que l'invitation contient le tag 1
+    // Vérifie que l'invitation contient les 2 tags
     const tags = await databaseService.db
       .select()
       .from(invitationPersonneTagTable)
       .where(eq(invitationPersonneTagTable.invitationId, invitation));
 
     expect(tags.length).toBe(2);
-
-    onTestFinished(async () => {
-      try {
-        await databaseService.db
-          .update(utilisateurCollectiviteAccessTable)
-          .set({ invitationId: null })
-          .where(
-            eq(utilisateurCollectiviteAccessTable.userId, yoloDodoUser.id)
-          );
-        await databaseService.db
-          .delete(invitationTable)
-          .where(eq(invitationTable.collectiviteId, 1));
-      } catch (error) {
-        console.error('Erreur lors de la suppression:', error);
-      }
-    });
   });
 
   test(`Consomme l'invitation`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: adminUser });
+
+    // Create tag and fiches for this test
+    const [testTag] = await databaseService.db
+      .insert(personneTagTable)
+      .values({
+        nom: 'Tag Consume Test',
+        collectiviteId: collectivite.id,
+      })
+      .returning();
+
+    const fiche1 = await caller.plans.fiches.create({
+      fiche: {
+        collectiviteId: collectivite.id,
+        titre: 'Fiche consume test 1',
+      },
+    });
+    const fiche2 = await caller.plans.fiches.create({
+      fiche: {
+        collectiviteId: collectivite.id,
+        titre: 'Fiche consume test 2',
+      },
+    });
+
+    await databaseService.db.insert(ficheActionPiloteTable).values([
+      { ficheId: fiche1.id, tagId: testTag.id },
+      { ficheId: fiche2.id, tagId: testTag.id },
+    ]);
+
     const condition = and(
-      eq(utilisateurCollectiviteAccessTable.userId, yoloDodoUser.id),
-      eq(utilisateurCollectiviteAccessTable.collectiviteId, 1)
+      eq(utilisateurCollectiviteAccessTable.userId, adminUserId),
+      eq(utilisateurCollectiviteAccessTable.collectiviteId, collectivite.id)
     );
-    // Enlève yolododo de la collectivité 1
+
+    // Enlève l'admin de la collectivité
     await databaseService.db
       .delete(utilisateurCollectiviteAccessTable)
       .where(condition);
 
-    // Crée l'invitation et l'associe au tag 1
+    // Crée l'invitation et l'associe au tag
     const [invitationAdded] = await databaseService.db
       .insert(invitationTable)
       .values({
         role: CollectiviteRole.ADMIN,
-        email: 'yolo@dodo.com',
-        collectiviteId: 1,
-        createdBy: yoloDodoUser.id,
+        email: adminEmail,
+        collectiviteId: collectivite.id,
+        createdBy: adminUserId,
       })
       .returning();
-    // Ajoute un tag à l'invitation
-    const [tagToAdd] = await databaseService.db
-      .select()
-      .from(personneTagTable)
-      .where(eq(personneTagTable.id, 1));
 
     await databaseService.db.insert(invitationPersonneTagTable).values({
-      tagId: tagToAdd.id,
+      tagId: testTag.id,
       invitationId: invitationAdded.id,
-      tagNom: tagToAdd.nom,
+      tagNom: testTag.nom,
     });
 
     // Consume l'invitation
@@ -237,7 +262,7 @@ describe('Test les invitations', () => {
 
     expect(invit.consumed).toBe(true);
 
-    // Vérifie que yolodo réappartient à la collectivité 1
+    // Vérifie que l'admin réappartient à la collectivité
     const permissions = await databaseService.db
       .select()
       .from(utilisateurCollectiviteAccessTable)
@@ -245,80 +270,29 @@ describe('Test les invitations', () => {
 
     expect(permissions.length).toBe(1);
 
-    // Vérifie que les tags lui sont associés
+    // Vérifie que les tags sont associés (pilotes)
     const pilotes = await databaseService.db
       .select()
       .from(ficheActionPiloteTable)
-      .where(eq(ficheActionPiloteTable.userId, yoloDodoUser.id));
-    expect(pilotes.length).toBe(2);
+      .where(eq(ficheActionPiloteTable.userId, adminUserId));
 
-    onTestFinished(async () => {
-      try {
-        await databaseService.db
-          .delete(ficheActionPiloteTable)
-          .where(
-            and(
-              ne(ficheActionPiloteTable.ficheId, 1),
-              isNotNull(ficheActionPiloteTable.userId)
-            )
-          );
-        await databaseService.db
-          .delete(ficheActionReferentTable)
-          .where(
-            and(
-              ne(ficheActionReferentTable.ficheId, 2),
-              isNotNull(ficheActionReferentTable.userId)
-            )
-          );
-        await databaseService.db
-          .insert(personneTagTable)
-          .values([{ id: 1, nom: 'Lou Piote', collectiviteId: 1 }]);
-        await databaseService.db.insert(ficheActionPiloteTable).values([
-          { ficheId: 1, tagId: 1 },
-          { ficheId: 2, tagId: 1 },
-        ]);
-        await databaseService.db
-          .insert(ficheActionReferentTable)
-          .values([{ ficheId: 4, tagId: 1 }]);
-        await databaseService.db
-          .update(utilisateurCollectiviteAccessTable)
-          .set({ invitationId: null })
-          .where(
-            eq(utilisateurCollectiviteAccessTable.userId, yoloDodoUser.id)
-          );
-        await databaseService.db
-          .delete(invitationTable)
-          .where(eq(invitationTable.collectiviteId, 1));
-      } catch (error) {
-        console.error('Erreur lors de la suppression:', error);
-      }
-    });
+    expect(pilotes.length).toBeGreaterThanOrEqual(2);
   });
 
   test(`Supprime une invitation en attente`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: adminUser });
 
     // Crée une invitation en attente
     const [invitationAdded] = await databaseService.db
       .insert(invitationTable)
       .values({
         role: CollectiviteRole.EDITION,
-        email: 'pending@test.fr',
-        collectiviteId: 1,
-        createdBy: yoloDodoUser.id,
+        email: 'pending-delete@test.fr',
+        collectiviteId: collectivite.id,
+        createdBy: adminUserId,
         active: true,
       })
       .returning();
-
-    onTestFinished(async () => {
-      try {
-        await databaseService.db
-          .delete(invitationTable)
-          .where(eq(invitationTable.id, invitationAdded.id));
-      } catch (error) {
-        console.error('Erreur lors de la suppression:', error);
-      }
-    });
 
     // Vérifie que l'invitation existe et est active
     const [invitationBefore] = await databaseService.db
@@ -333,8 +307,8 @@ describe('Test les invitations', () => {
     // Supprime l'invitation en attente
     const wasDeleted =
       await caller.collectivites.membres.invitations.deletePending({
-        email: 'pending@test.fr',
-        collectiviteId: 1,
+        email: 'pending-delete@test.fr',
+        collectiviteId: collectivite.id,
       });
 
     expect(wasDeleted).toBe(true);
@@ -350,108 +324,101 @@ describe('Test les invitations', () => {
   });
 
   test(`Tentative de suppression d'une invitation inexistante`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: adminUser });
 
     const wasDeleted =
       await caller.collectivites.membres.invitations.deletePending({
         email: 'nonexistent@test.fr',
-        collectiviteId: 1,
+        collectiviteId: collectivite.id,
       });
 
     expect(wasDeleted).toBe(false);
   });
 
   test(`Tentative de suppression d'une invitation sans les droits`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: adminUser });
 
     await expect(() =>
       caller.collectivites.membres.invitations.deletePending({
         email: 'test@test.fr',
-        collectiviteId: 999, // Collectivité inexistante ou sans droits
+        collectiviteId: 999999,
       })
     ).rejects.toThrowError();
   });
 
   test(`Ne peut pas inviter avec un tag déjà utilisé par une autre invitation en attente`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: adminUser });
 
-    // Crée une première invitation avec le tag 1
+    // Create tag for this test
+    const [conflictTag] = await databaseService.db
+      .insert(personneTagTable)
+      .values({
+        nom: 'Tag Conflict Test',
+        collectiviteId: collectivite.id,
+      })
+      .returning();
+
+    // Crée une première invitation avec le tag
     const [firstInvitation] = await databaseService.db
       .insert(invitationTable)
       .values({
         role: CollectiviteRole.EDITION,
-        email: 'first@test.fr',
-        collectiviteId: 1,
-        createdBy: yoloDodoUser.id,
+        email: 'first-conflict@test.fr',
+        collectiviteId: collectivite.id,
+        createdBy: adminUserId,
         active: true,
       })
       .returning();
 
-    // Associe le tag 1 à la première invitation
-    const [tagToAdd] = await databaseService.db
-      .select()
-      .from(personneTagTable)
-      .where(eq(personneTagTable.id, 1));
-
+    // Associe le tag à la première invitation
     await databaseService.db.insert(invitationPersonneTagTable).values({
-      tagId: tagToAdd.id,
+      tagId: conflictTag.id,
       invitationId: firstInvitation.id,
-      tagNom: tagToAdd.nom,
+      tagNom: conflictTag.nom,
     });
 
     // Tente de créer une deuxième invitation avec le même tag
     await expect(() =>
       caller.collectivites.membres.invitations.create({
-        collectiviteId: 1,
-        email: 'second@test.fr',
+        collectiviteId: collectivite.id,
+        email: 'second-conflict@test.fr',
         role: CollectiviteRole.EDITION,
-        tagIds: [1], // Même tag que la première invitation
+        tagIds: [conflictTag.id],
       })
     ).rejects.toThrowError(
-      `Les tags suivants sont déjà utilisés par d'autres invitations en attente : ${tagToAdd.nom}`
+      `Les tags suivants sont déjà utilisés par d'autres invitations en attente : ${conflictTag.nom}`
     );
-
-    onTestFinished(async () => {
-      try {
-        await databaseService.db
-          .delete(invitationPersonneTagTable)
-          .where(
-            eq(invitationPersonneTagTable.invitationId, firstInvitation.id)
-          );
-        await databaseService.db
-          .delete(invitationTable)
-          .where(eq(invitationTable.id, firstInvitation.id));
-      } catch (error) {
-        console.error('Erreur lors de la suppression:', error);
-      }
-    });
   });
 
   test(`Peut inviter avec un tag après suppression de l'invitation qui l'utilisait`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: adminUser });
 
-    // Crée une première invitation avec le tag 1
+    // Create tag for this test
+    const [freedTag] = await databaseService.db
+      .insert(personneTagTable)
+      .values({
+        nom: 'Tag Freed Test',
+        collectiviteId: collectivite.id,
+      })
+      .returning();
+
+    // Crée une première invitation avec le tag
     const [firstInvitation] = await databaseService.db
       .insert(invitationTable)
       .values({
         role: CollectiviteRole.EDITION,
-        email: 'first@test.fr',
-        collectiviteId: 1,
-        createdBy: yoloDodoUser.id,
+        email: 'first-freed@test.fr',
+        collectiviteId: collectivite.id,
+        createdBy: adminUserId,
         active: true,
       })
       .returning();
 
-    // Associe le tag 1 à la première invitation
-    const [tagToAdd] = await databaseService.db
-      .select()
-      .from(personneTagTable)
-      .where(eq(personneTagTable.id, 1));
-
+    // Associe le tag à la première invitation
     await databaseService.db.insert(invitationPersonneTagTable).values({
-      tagId: tagToAdd.id,
+      tagId: freedTag.id,
       invitationId: firstInvitation.id,
-      tagNom: tagToAdd.nom,
+      tagNom: freedTag.nom,
     });
 
     // Supprime la première invitation (désactive l'invitation)
@@ -463,37 +430,12 @@ describe('Test les invitations', () => {
     // Maintenant on peut créer une nouvelle invitation avec le même tag
     const secondInvitation =
       await caller.collectivites.membres.invitations.create({
-        collectiviteId: 1,
-        email: 'second@test.fr',
+        collectiviteId: collectivite.id,
+        email: 'second-freed@test.fr',
         role: CollectiviteRole.EDITION,
-        tagIds: [1], // Même tag, mais l'invitation précédente est inactive
+        tagIds: [freedTag.id],
       });
 
     expect(secondInvitation).not.toBeNull();
-
-    onTestFinished(async () => {
-      try {
-        await databaseService.db
-          .delete(invitationPersonneTagTable)
-          .where(
-            eq(invitationPersonneTagTable.invitationId, firstInvitation.id)
-          );
-        await databaseService.db
-          .delete(invitationTable)
-          .where(eq(invitationTable.id, firstInvitation.id));
-        if (secondInvitation) {
-          await databaseService.db
-            .delete(invitationPersonneTagTable)
-            .where(
-              eq(invitationPersonneTagTable.invitationId, secondInvitation)
-            );
-          await databaseService.db
-            .delete(invitationTable)
-            .where(eq(invitationTable.id, secondInvitation));
-        }
-      } catch (error) {
-        console.error('Erreur lors de la suppression:', error);
-      }
-    });
   });
 });

@@ -1,40 +1,83 @@
-import { getAuthUser, getTestRouter } from '@tet/backend/test';
+import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import {
+  getAuthUserFromUserCredentials,
+  getTestApp,
+  getTestDatabase,
+  getTestRouter,
+} from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import {
+  addTestUser,
+  setUserCollectiviteRole,
+} from '@tet/backend/users/users/users.test-fixture';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { Collectivite } from '@tet/domain/collectivites';
 import {
   collectiviteDefaultModuleKeysSchema,
   ModuleFicheCountBy,
   ModuleFicheCountByCreate,
 } from '@tet/domain/collectivites/tableau-de-bord';
+import { CollectiviteRole } from '@tet/domain/users';
 import { cloneDeep } from 'es-toolkit';
-
-export const moduleNew: ModuleFicheCountByCreate = {
-  id: '6957441c-c083-44f8-a464-65174e5438f2',
-  collectiviteId: 2,
-  titre: 'Actions par priorité',
-  type: 'fiche-action.count-by',
-  options: {
-    countByProperty: 'priorite',
-    filtre: {
-      statuts: ['En retard', 'En cours'],
-    },
-  },
-};
 
 describe('TableauDeBordCollectiviteRouter', () => {
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let authenticatedUser: AuthenticatedUser;
+  let adminCollectivite: Collectivite;
+  let editionCollectivite: Collectivite;
+  let visitCollectivite: Collectivite;
+
+  let moduleNew: ModuleFicheCountByCreate;
 
   beforeAll(async () => {
-    router = await getTestRouter();
-    yoloDodoUser = await getAuthUser();
+    const app = await getTestApp();
+    router = await getTestRouter(app);
+    const db = await getTestDatabase(app);
+
+    // Create a test user
+    const userResult = await addTestUser(db);
+    authenticatedUser = getAuthUserFromUserCredentials(userResult.user);
+
+    // Create 3 collectivites with different access levels
+    const adminResult = await addTestCollectivite(db);
+    adminCollectivite = adminResult.collectivite;
+    await setUserCollectiviteRole(db, {
+      userId: userResult.user.id,
+      collectiviteId: adminCollectivite.id,
+      role: CollectiviteRole.ADMIN,
+    });
+
+    const editionResult = await addTestCollectivite(db);
+    editionCollectivite = editionResult.collectivite;
+    await setUserCollectiviteRole(db, {
+      userId: userResult.user.id,
+      collectiviteId: editionCollectivite.id,
+      role: CollectiviteRole.EDITION,
+    });
+
+    const visitResult = await addTestCollectivite(db);
+    visitCollectivite = visitResult.collectivite;
+    // No role set → visitor access
+
+    moduleNew = {
+      id: crypto.randomUUID(),
+      collectiviteId: editionCollectivite.id,
+      titre: 'Actions par priorité',
+      type: 'fiche-action.count-by',
+      options: {
+        countByProperty: 'priorite',
+        filtre: {
+          statuts: ['En retard', 'En cours'],
+        },
+      },
+    };
   });
 
   test('authenticated with edition access, list default modules', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
 
     const moduleList = await caller.collectivites.tableauDeBord.list({
-      collectiviteId: 2,
+      collectiviteId: editionCollectivite.id,
     });
 
     expect(moduleList).toHaveLength(
@@ -81,10 +124,10 @@ describe('TableauDeBordCollectiviteRouter', () => {
   });
 
   test('authenticated with visit access, list default modules', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
 
     const moduleList = await caller.collectivites.tableauDeBord.list({
-      collectiviteId: 3,
+      collectiviteId: visitCollectivite.id,
     });
 
     expect(moduleList).toHaveLength(
@@ -135,30 +178,30 @@ describe('TableauDeBordCollectiviteRouter', () => {
 
     await expect(async () => {
       await caller.collectivites.tableauDeBord.list({
-        collectiviteId: 2,
+        collectiviteId: editionCollectivite.id,
       });
     }).rejects.toThrowError(/not authenticated/i);
   });
 
   test('authenticated with edition access, try to add a module', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: authenticatedUser });
     const moduleToUpsert = cloneDeep(moduleNew);
-    moduleToUpsert.collectiviteId = 2;
+    moduleToUpsert.collectiviteId = editionCollectivite.id;
 
     await expect(async () => {
       await caller.collectivites.tableauDeBord.upsert(moduleToUpsert);
     }).rejects.toThrowError(/Droits insuffisants/i);
   });
 
-  test('authenticated with addmin access, add a new module, delete module', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+  test('authenticated with admin access, add a new module, delete module', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
     const newModuleToUpsert = cloneDeep(moduleNew);
-    newModuleToUpsert.collectiviteId = 1;
+    newModuleToUpsert.collectiviteId = adminCollectivite.id;
 
     await caller.collectivites.tableauDeBord.upsert(newModuleToUpsert);
 
     const moduleList = await caller.collectivites.tableauDeBord.list({
-      collectiviteId: 1,
+      collectiviteId: adminCollectivite.id,
     });
 
     expect(moduleList).toHaveLength(
@@ -171,13 +214,13 @@ describe('TableauDeBordCollectiviteRouter', () => {
     expect(createdModule).toMatchObject(newModuleToUpsert);
 
     await caller.collectivites.tableauDeBord.delete({
-      collectiviteId: 1,
+      collectiviteId: adminCollectivite.id,
       moduleId: createdModule?.id ?? '',
     });
 
     const moduleListAfterDelete = await caller.collectivites.tableauDeBord.list(
       {
-        collectiviteId: 1,
+        collectiviteId: adminCollectivite.id,
       }
     );
     expect(moduleListAfterDelete).toHaveLength(
@@ -185,11 +228,11 @@ describe('TableauDeBordCollectiviteRouter', () => {
     );
   });
 
-  test('authenticated with addmin access, personnalize a default module', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+  test('authenticated with admin access, personnalize a default module', async () => {
+    const caller = router.createCaller({ user: authenticatedUser });
 
     const moduleList = await caller.collectivites.tableauDeBord.list({
-      collectiviteId: 1,
+      collectiviteId: adminCollectivite.id,
     });
     expect(moduleList).toHaveLength(
       collectiviteDefaultModuleKeysSchema.options.length
@@ -212,7 +255,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
 
     const moduleListAfterCreation =
       await caller.collectivites.tableauDeBord.list({
-        collectiviteId: 1,
+        collectiviteId: adminCollectivite.id,
       });
 
     const foundModuleToPersonnalize = moduleListAfterCreation?.find(
@@ -229,14 +272,14 @@ describe('TableauDeBordCollectiviteRouter', () => {
 
     // Delete the personnalization
     await caller.collectivites.tableauDeBord.delete({
-      collectiviteId: 1,
+      collectiviteId: adminCollectivite.id,
       moduleId: moduleToPersonnalize.id,
     });
 
     // Module should be back to default but still here
     const moduleListAfterDelete = await caller.collectivites.tableauDeBord.list(
       {
-        collectiviteId: 1,
+        collectiviteId: adminCollectivite.id,
       }
     );
     expect(moduleListAfterDelete).toHaveLength(

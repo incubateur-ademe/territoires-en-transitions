@@ -1,20 +1,20 @@
 import { instanceGouvernanceTagTable } from '@tet/backend/collectivites/tags/instance-gouvernance.table';
+import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { createFicheAndCleanupFunction } from '@tet/backend/plans/fiches/fiches.test-fixture';
 import { ficheActionInstanceGouvernanceTableTag } from '@tet/backend/plans/fiches/shared/models/fiche-action-instance-gouvernance';
 import {
-  getAuthUser,
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-  YOLO_DODO,
-  YOULOU_DOUDOU,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { Collectivite } from '@tet/domain/collectivites';
 import { InstanceGouvernance } from '@tet/domain/collectivites';
+import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
@@ -33,30 +33,34 @@ type DeleteInput = inferProcedureInput<
   AppRouter['collectivites']['tags']['instanceGouvernance']['delete']
 >;
 
-const COLLECTIVITE_ID = YOLO_DODO.collectiviteId.admin;
-
 describe('InstanceGouvernanceRouter', () => {
   let router: TrpcRouter;
   let db: DatabaseService;
+  let collectivite: Collectivite;
+  let editionUser: AuthenticatedUser;
   let userWithNoRights: AuthenticatedUser;
-  let userWithNoRightsCleanup: () => Promise<void>;
 
   beforeAll(async () => {
     const app = await getTestApp();
     router = await getTestRouter(app);
     db = await getTestDatabase(app);
 
-    const { user: testUser, cleanup } = await addTestUser(db);
-    userWithNoRights = getAuthUserFromUserCredentials(testUser);
-    userWithNoRightsCleanup = cleanup;
-  });
+    const testResult = await addTestCollectiviteAndUsers(db, {
+      users: [
+        { role: CollectiviteRole.ADMIN },
+        { role: CollectiviteRole.EDITION },
+      ],
+    });
 
-  afterAll(async () => {
-    await userWithNoRightsCleanup();
+    collectivite = testResult.collectivite;
+    editionUser = getAuthUserFromUserCredentials(testResult.users[1]);
+
+    const noAccessResult = await addTestUser(db);
+    userWithNoRights = getAuthUserFromUserCredentials(noAccessResult.user);
   });
 
   test('list: verified visiting user is allowed to read', async () => {
-    const userWithNoRights = await getAuthUser(YOLO_DODO);
+    // Any verified user can read (even on a non-existent collectivite)
     const caller = router.createCaller({ user: userWithNoRights });
 
     const input: ListInput = {
@@ -69,12 +73,10 @@ describe('InstanceGouvernanceRouter', () => {
   });
 
   test('create / list / update / delete: happy path', async () => {
-    // YOULOU_DOUDOU has EDITION rights on COLLECTIVITE_ID (1)
-    const userWithRights = await getAuthUser(YOULOU_DOUDOU);
-    const caller = router.createCaller({ user: userWithRights });
+    const caller = router.createCaller({ user: editionUser });
 
     const createInput: CreateInput = {
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: collectivite.id,
       nom: 'Comité de pilotage test',
     };
 
@@ -88,14 +90,13 @@ describe('InstanceGouvernanceRouter', () => {
 
     // Vérifie que l'instance apparaît bien dans la liste
     const listInput: ListInput = {
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: collectivite.id,
     };
 
     const listed = await caller.collectivites.tags.instanceGouvernance.list(
       listInput
     );
 
-    // Find our specific instance (there might be others from parallel tests)
     const ourInstance = listed.find(
       (item: InstanceGouvernance) => item.id === createdId
     );
@@ -103,12 +104,12 @@ describe('InstanceGouvernanceRouter', () => {
     expect(ourInstance).toMatchObject({
       id: createdId,
       nom: createInput.nom,
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: collectivite.id,
     });
 
     const updateInput: UpdateInput = {
       id: createdId,
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: collectivite.id,
       nom: 'Comité de pilotage test mis à jour',
     };
 
@@ -116,7 +117,6 @@ describe('InstanceGouvernanceRouter', () => {
 
     const listedAfterUpdate =
       await caller.collectivites.tags.instanceGouvernance.list(listInput);
-    // Find our specific instance (there might be others from parallel tests)
     const ourUpdatedInstance = listedAfterUpdate.find(
       (item: InstanceGouvernance) => item.id === createdId
     );
@@ -125,7 +125,7 @@ describe('InstanceGouvernanceRouter', () => {
 
     const deleted = await caller.collectivites.tags.instanceGouvernance.delete({
       id: createdId,
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: collectivite.id,
     });
 
     expect(deleted).toBe(true);
@@ -133,7 +133,6 @@ describe('InstanceGouvernanceRouter', () => {
     const listedAfterDelete =
       await caller.collectivites.tags.instanceGouvernance.list(listInput);
 
-    // Verify our instance is deleted (there might be others from parallel tests)
     const ourDeletedInstance = listedAfterDelete.find(
       (item: InstanceGouvernance) => item.id === createdId
     );
@@ -153,14 +152,12 @@ describe('InstanceGouvernanceRouter', () => {
   });
 
   test('update and link to fiche: happy path', async () => {
-    // YOULOU_DOUDOU has EDITION rights on COLLECTIVITE_ID (1)
-    const userWithRights = await getAuthUser(YOULOU_DOUDOU);
-    const caller = router.createCaller({ user: userWithRights });
+    const caller = router.createCaller({ user: editionUser });
 
     const { ficheId, ficheCleanup } = await createFicheAndCleanupFunction({
       caller,
       ficheInput: {
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: collectivite.id,
         titre: 'Fiche test instance-gouvernance update',
       },
     });
@@ -169,7 +166,7 @@ describe('InstanceGouvernanceRouter', () => {
       await createInstanceGouvernanceTagAndCleanupFunction({
         caller,
         instanceGouvernanceTagInput: {
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: collectivite.id,
           nom: 'Instance à mettre à jour',
         },
       });
@@ -199,7 +196,7 @@ describe('InstanceGouvernanceRouter', () => {
 
     const updateInput: UpdateInput = {
       id: instanceId,
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: collectivite.id,
       nom: 'Instance mise à jour',
     };
 
@@ -210,7 +207,7 @@ describe('InstanceGouvernanceRouter', () => {
     expect(updated).toMatchObject({
       id: instanceId,
       nom: 'Instance mise à jour',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: collectivite.id,
     });
 
     const [fromDb] = await db.db
@@ -225,7 +222,7 @@ describe('InstanceGouvernanceRouter', () => {
     const caller = router.createCaller({ user: userWithNoRights });
 
     const input: CreateInput = {
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: collectivite.id,
       nom: 'Instance non autorisée',
     };
 
@@ -235,14 +232,13 @@ describe('InstanceGouvernanceRouter', () => {
   });
 
   test('update: rejects when user has no update rights on collectivite', async () => {
-    const userWithRights = await getAuthUser(YOULOU_DOUDOU);
-    const callerWithRights = router.createCaller({ user: userWithRights });
+    const callerWithRights = router.createCaller({ user: editionUser });
 
     const { instanceGouvernanceTagId, instanceGouvernanceTagCleanup } =
       await createInstanceGouvernanceTagAndCleanupFunction({
         caller: callerWithRights,
         instanceGouvernanceTagInput: {
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: collectivite.id,
           nom: "Instance à mettre à jour pour l'update",
         },
       });
@@ -251,7 +247,7 @@ describe('InstanceGouvernanceRouter', () => {
 
     const updateInput: UpdateInput = {
       id: instanceGouvernanceTagId,
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: collectivite.id,
       nom: 'Instance non autorisée',
     };
 
@@ -267,14 +263,13 @@ describe('InstanceGouvernanceRouter', () => {
   });
 
   test('delete: rejects when user has no update rights on collectivite', async () => {
-    const userWithRights = await getAuthUser(YOULOU_DOUDOU);
-    const callerWithRights = router.createCaller({ user: userWithRights });
+    const callerWithRights = router.createCaller({ user: editionUser });
 
     const { instanceGouvernanceTagId, instanceGouvernanceTagCleanup } =
       await createInstanceGouvernanceTagAndCleanupFunction({
         caller: callerWithRights,
         instanceGouvernanceTagInput: {
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: collectivite.id,
           nom: 'Instance à supprimer permissions',
         },
       });
@@ -283,7 +278,7 @@ describe('InstanceGouvernanceRouter', () => {
 
     const deleteInput: DeleteInput = {
       id: instanceGouvernanceTagId,
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: collectivite.id,
     };
 
     await expect(

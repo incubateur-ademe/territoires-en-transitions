@@ -1,41 +1,59 @@
+import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
-import { inferProcedureInput } from '@trpc/server';
-import { eq } from 'drizzle-orm';
 import {
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-} from '../../test/app-utils';
-import { getAuthUser } from '../../test/auth-utils';
-import { YOLO_DODO, YULU_DUDU } from '../../test/test-users.samples';
-import { AuthenticatedUser } from '../users/models/auth.models';
-import { DatabaseService } from '../utils/database/database.service';
-import { AppRouter, TrpcRouter } from '../utils/trpc/trpc.router';
+} from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import { DatabaseService } from '@tet/backend/utils/database/database.service';
+import { AppRouter, TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { Collectivite } from '@tet/domain/collectivites';
+import { CollectiviteRole } from '@tet/domain/users';
+import { inferProcedureInput } from '@trpc/server';
+import { eq } from 'drizzle-orm';
 
 type ListRequest = inferProcedureInput<
   AppRouter['collectivites']['personnes']['list']
 >;
 
-const COLLECTIVITE_ID = YOLO_DODO.collectiviteId.admin;
-
 describe('PersonnesRouter', () => {
   let router: TrpcRouter;
   let db: DatabaseService;
-  let yoloDodoUser: AuthenticatedUser;
+  let collectivite: Collectivite;
+  let adminUser: AuthenticatedUser;
+  let editionUser: AuthenticatedUser;
+  let editionUserId: string;
+  let visitorUser: AuthenticatedUser;
 
   beforeAll(async () => {
     const app = await getTestApp();
     router = await getTestRouter(app);
     db = await getTestDatabase(app);
 
-    yoloDodoUser = await getAuthUser(YOLO_DODO);
+    const testResult = await addTestCollectiviteAndUsers(db, {
+      users: [
+        { role: CollectiviteRole.ADMIN },
+        { role: CollectiviteRole.EDITION },
+      ],
+    });
+    collectivite = testResult.collectivite;
+    adminUser = getAuthUserFromUserCredentials(testResult.users[0]);
+    editionUser = getAuthUserFromUserCredentials(testResult.users[1]);
+    editionUserId = testResult.users[1].id;
+
+    // Utilisateur sans accès à la collectivité (visiteur)
+    const visitorResult = await addTestUser(db);
+    visitorUser = getAuthUserFromUserCredentials(visitorResult.user);
   });
 
   test('list: authenticated, with empty filter', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: adminUser });
 
     const input: ListRequest = {
-      collectiviteIds: [COLLECTIVITE_ID],
+      collectiviteIds: [collectivite.id],
     };
 
     const result = await caller.collectivites.personnes.list(input);
@@ -43,7 +61,7 @@ describe('PersonnesRouter', () => {
 
     for (const personne of result) {
       expect(personne).toMatchObject({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: collectivite.id,
         nom: expect.any(String),
       });
 
@@ -58,11 +76,10 @@ describe('PersonnesRouter', () => {
   });
 
   test('list: authenticated, without explicit access to collectivité', async () => {
-    const yuluDudu = await getAuthUser(YULU_DUDU);
-    const caller = router.createCaller({ user: yuluDudu });
+    const caller = router.createCaller({ user: visitorUser });
 
     const input: ListRequest = {
-      collectiviteIds: [COLLECTIVITE_ID],
+      collectiviteIds: [collectivite.id],
     };
 
     const result = await caller.collectivites.personnes.list(input);
@@ -71,10 +88,10 @@ describe('PersonnesRouter', () => {
   });
 
   test('list: authenticated, with activeOnly = false', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: adminUser });
 
     const input: ListRequest = {
-      collectiviteIds: [COLLECTIVITE_ID],
+      collectiviteIds: [collectivite.id],
     };
 
     // Get only active users
@@ -89,15 +106,10 @@ describe('PersonnesRouter', () => {
     }
 
     // Deactivate a user
-    const user = activesOnly.find((p) => p.userId);
-    if (!user) {
-      expect.fail('No user found');
-    }
-
     await db.db
       .update(utilisateurCollectiviteAccessTable)
       .set({ isActive: false })
-      .where(eq(utilisateurCollectiviteAccessTable.userId, user.userId));
+      .where(eq(utilisateurCollectiviteAccessTable.userId, editionUserId));
 
     // Then get all users, either active or inactive
     const withInactives = await caller.collectivites.personnes.list({
@@ -117,16 +129,16 @@ describe('PersonnesRouter', () => {
     }
 
     // Verify the inactive user appears in the list
-    expect(withInactives.find((p) => p.userId === user.userId)?.active).toBe(
-      false
-    );
+    expect(
+      withInactives.find((p) => p.userId === editionUserId)?.active
+    ).toBe(false);
 
     // Reactivate user
     onTestFinished(async () => {
       await db.db
         .update(utilisateurCollectiviteAccessTable)
         .set({ isActive: true })
-        .where(eq(utilisateurCollectiviteAccessTable.userId, user.userId));
+        .where(eq(utilisateurCollectiviteAccessTable.userId, editionUserId));
     });
   });
 
@@ -134,7 +146,7 @@ describe('PersonnesRouter', () => {
     const caller = router.createCaller({ user: null });
 
     const input: ListRequest = {
-      collectiviteIds: [COLLECTIVITE_ID],
+      collectiviteIds: [collectivite.id],
     };
 
     await expect(async () => {
