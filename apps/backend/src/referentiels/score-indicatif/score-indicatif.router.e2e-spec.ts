@@ -15,7 +15,7 @@ import { CollectiviteRole } from '@tet/domain/users';
 
 describe('ScoreIndicatifRouter', () => {
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
   let databaseService: DatabaseService;
   let indicateurIdCae7: number;
 
@@ -27,7 +27,7 @@ describe('ScoreIndicatifRouter', () => {
       collectiviteId: 1,
       role: CollectiviteRole.ADMIN,
     });
-    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
 
     // insert test data
     const cleanup = await insertFixturePourScoreIndicatif(
@@ -58,7 +58,7 @@ describe('ScoreIndicatifRouter', () => {
   });
 
   test('Lire les valeurs utilisables pour le calcul du score indicatif', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
     const result = await caller.referentiels.actions.getValeursUtilisables({
       collectiviteId: 1,
       actionIds: ['cae_1.2.3.3.4', 'cae_1.2', 'nimp'],
@@ -135,7 +135,7 @@ describe('ScoreIndicatifRouter', () => {
   });
 
   test('Lire les valeurs utilisées pour le calcul du score indicatif', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
     const result = await caller.referentiels.actions.getValeursUtilisees({
       collectiviteId: 1,
       actionIds: ['cae_1.2.3.3.4', 'cae_1.2', 'nimp'],
@@ -188,7 +188,7 @@ describe('ScoreIndicatifRouter', () => {
   });
 
   test('Demander un score calculable', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
     const result = await caller.referentiels.actions.getScoreIndicatif({
       collectiviteId: 1,
       actionIds: ['cae_1.2.3.3.4'],
@@ -241,7 +241,7 @@ describe('ScoreIndicatifRouter', () => {
   });
 
   test("Demander un score quand il n'est pas encore calculable (par manque de valeurs sélectionnées)", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
     const result = await caller.referentiels.actions.getScoreIndicatif({
       collectiviteId: 1,
       actionIds: ['cae_1.2.3.3.1'],
@@ -251,7 +251,7 @@ describe('ScoreIndicatifRouter', () => {
   });
 
   test('Insérer des valeurs et demander le score', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const exemple2 = {
       collectiviteId: 1,

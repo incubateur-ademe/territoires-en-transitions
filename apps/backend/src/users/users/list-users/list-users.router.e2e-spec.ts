@@ -83,7 +83,7 @@ describe('ListUsersRouter', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let databaseService: DatabaseService;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
   let youlouDoudouUser: AuthenticatedUser;
 
   beforeAll(async () => {
@@ -93,7 +93,7 @@ describe('ListUsersRouter', () => {
 
     // Utilisateur isolé pour le test de refus d'accès
     const testUserResult = await addTestUser(databaseService);
-    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
 
     // YOULOU_DOUDOU est un utilisateur seed nécessaire pour vérifier ses rôles/permissions
     youlouDoudouUser = await getAuthUser(YOULOU_DOUDOU);
@@ -104,7 +104,7 @@ describe('ListUsersRouter', () => {
   });
 
   test('Un utilisateur ne peut pas accéder à ce service', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const input: Input = {
       email: 'youlou@doudou.com',

@@ -45,7 +45,7 @@ type Input = inferProcedureInput<
 describe('ListIndicateursRouter', () => {
   let app: INestApplication;
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
   let database: DatabaseService;
 
   beforeAll(async () => {
@@ -58,7 +58,7 @@ describe('ListIndicateursRouter', () => {
       collectiviteId: 1,
       role: CollectiviteRole.ADMIN,
     });
-    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
 
     // Also give access to collectiviteId 2 (used in some tests — edition like YOLO_DODO)
     await setUserCollectiviteRole(db, {
@@ -70,7 +70,7 @@ describe('ListIndicateursRouter', () => {
 
   describe('structure et règles métier', () => {
     test(`vérifie la structure du résultat`, async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const input: Input = {
         collectiviteId: 1,
@@ -87,7 +87,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('renvoie uniquement les parents par défaut', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const { data: result } = await caller.indicateurs.indicateurs.list({
         collectiviteId: 1,
@@ -101,7 +101,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test("renvoie bien tous les parents d'un indicateur", async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const { data: result } = await caller.indicateurs.indicateurs.list({
         collectiviteId: 1,
@@ -135,7 +135,7 @@ describe('ListIndicateursRouter', () => {
 
   describe('avec filtres', () => {
     test(`filtre par identifiantReferentiel`, async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const input: Input = {
         collectiviteId: 1,
@@ -158,7 +158,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('filtre par estRempli (user values)', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const indicateurId = await createIndicateurPerso({
         caller,
@@ -202,7 +202,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('filtre par indicateurIds', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const input = {
         collectiviteId: 1,
@@ -221,7 +221,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('filtre par ficheIds', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const indicateurId1 = await createIndicateurPerso({
         caller,
@@ -282,7 +282,7 @@ describe('ListIndicateursRouter', () => {
     }
 
     test('filtre par ficheIds - remonte aussi les indicateurs enfants', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const parent = await createIndicateur({
         titre: 'Indicateur Parent',
@@ -331,7 +331,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test("filtre par ficheIds - le parent remonté contient le bon nombre d'enfants", async () => {
-      const yoloDodoCaller = router.createCaller({ user: yoloDodoUser });
+      const testUserCaller = router.createCaller({ user: testUser });
 
       // Créer un groupement avec plusieurs collectivités pour reproduire le bug de doublons d'enfants
       const groupement1 = await createGroupement({
@@ -366,7 +366,7 @@ describe('ListIndicateursRouter', () => {
 
       // Créer une fiche liée à l'indicateur parent
       const ficheId = await createFiche({
-        caller: yoloDodoCaller,
+        caller: testUserCaller,
         ficheInput: {
           collectiviteId: 1,
           titre: 'Fiche Test Parent avec Enfants',
@@ -377,7 +377,7 @@ describe('ListIndicateursRouter', () => {
       // Avec une collectivite n'appartenant pas au groupement
       // on vérifie que le parent remonte seul sans les enfants des groupements
       const { data: indicateursWithoutGroupement } =
-        await yoloDodoCaller.indicateurs.indicateurs.list({
+        await testUserCaller.indicateurs.indicateurs.list({
           collectiviteId: 1,
           filters: {
             ficheIds: [ficheId],
@@ -404,7 +404,7 @@ describe('ListIndicateursRouter', () => {
       });
 
       const { data: indicateursWithGroupement } =
-        await yoloDodoCaller.indicateurs.indicateurs.list({
+        await testUserCaller.indicateurs.indicateurs.list({
           collectiviteId: 1,
           filters: {
             ficheIds: [ficheId],
@@ -427,7 +427,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('filtre par thematiqueIds', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const thematique1 = await createThematique({
         database,
@@ -469,21 +469,21 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('filtre par utilisateurPiloteIds', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const indicateurId = await createIndicateurPerso({
         caller,
         indicateurData: {
           collectiviteId: 1,
           titre: 'Indicateur 1 avec utilisateur pilote',
-          pilotes: [{ userId: yoloDodoUser.id }],
+          pilotes: [{ userId: testUser.id }],
         },
       });
 
       const input: Input = {
         collectiviteId: 1,
         filters: {
-          utilisateurPiloteIds: [yoloDodoUser.id],
+          utilisateurPiloteIds: [testUser.id],
         },
       };
 
@@ -496,7 +496,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('filtre par personnePiloteIds', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const tag = await createPersonneTag({
         database,
@@ -529,7 +529,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('filtre par serviceIds', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const serviceTag = await createServiceTag({
         database,
@@ -563,7 +563,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('filtre par planIds', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const plan = await createPlan({
         caller,
@@ -638,7 +638,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('filtre par planIds - remonte les indicateurs liés directement aux axes', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const plan = await createPlan({
         caller,
@@ -692,7 +692,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('filtre par axeIds', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const plan = await createPlan({
         caller,
@@ -831,7 +831,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('filtre par mesureId', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       // Mesure spécifique possédant des indicateurs associés
       // (data métier en dur dans la BDD)
@@ -867,7 +867,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('filtre par categorieNoms', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const categorieTag = await createCategorieTag({
         database,
@@ -913,7 +913,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('filtre par participationScore', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const input: Input = {
         collectiviteId: 1,
@@ -933,7 +933,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('filtre par estConfidentiel', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const indicateurId = await createIndicateurPerso({
         caller,
@@ -980,7 +980,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('filtre par estFavori', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const indicateurId = await createIndicateurPerso({
         caller,
@@ -1011,7 +1011,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('filtre par estPerso', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const indicateurId = await createIndicateurPerso({
         caller,
@@ -1064,7 +1064,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('filtre par hasOpenData', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const indicateurId = await createIndicateurPerso({
         caller,
@@ -1109,7 +1109,7 @@ describe('ListIndicateursRouter', () => {
 
     describe('filtre par text', () => {
       test('recherche textuelle classique', async () => {
-        const caller = router.createCaller({ user: yoloDodoUser });
+        const caller = router.createCaller({ user: testUser });
 
         const realTextWithAccentAndUppercase = 'Unique-séarch';
         const searchText = 'unique-search';
@@ -1140,7 +1140,7 @@ describe('ListIndicateursRouter', () => {
       });
 
       test('recherche par identifiantReferentiel (cae_18)', async () => {
-        const caller = router.createCaller({ user: yoloDodoUser });
+        const caller = router.createCaller({ user: testUser });
 
         // Search with underscore
         const { data: result1 } = await caller.indicateurs.indicateurs.list({
@@ -1166,7 +1166,7 @@ describe('ListIndicateursRouter', () => {
       });
 
       test('recherche par identifiantReferentiel avec point (cae_1.a)', async () => {
-        const caller = router.createCaller({ user: yoloDodoUser });
+        const caller = router.createCaller({ user: testUser });
 
         // Search with underscore and dot (parent indicator)
         const { data: result1 } = await caller.indicateurs.indicateurs.list({
@@ -1200,7 +1200,7 @@ describe('ListIndicateursRouter', () => {
       });
 
       test('filtre par text avec identifiantReferentiel (eci prefix)', async () => {
-        const caller = router.createCaller({ user: yoloDodoUser });
+        const caller = router.createCaller({ user: testUser });
 
         const { data: result1 } = await caller.indicateurs.indicateurs.list({
           collectiviteId: 1,
@@ -1223,7 +1223,7 @@ describe('ListIndicateursRouter', () => {
       });
 
       test('recherche par identifiantReferentiel (crte prefix)', async () => {
-        const caller = router.createCaller({ user: yoloDodoUser });
+        const caller = router.createCaller({ user: testUser });
 
         const { data: result1 } = await caller.indicateurs.indicateurs.list({
           collectiviteId: 1,
@@ -1247,7 +1247,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('filtre combiné - identifiantsReferentiel et estFavori', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const {
         data: [cae11a],
@@ -1321,7 +1321,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('filtre indicateurs appartenant à un groupement', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       // Créer un groupement "pcaet" et y associer la collectivité 1
       const groupement = await createGroupement({
@@ -1389,7 +1389,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test("filtre enfants d'un indicateur par groupement", async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const [groupementA, groupementB] = await Promise.all(
         [
@@ -1534,7 +1534,7 @@ describe('ListIndicateursRouter', () => {
 
   describe('tri', () => {
     test('tri par complétude (estRempli desc)', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const indicateurIdRempli = await createIndicateurPerso({
         caller,
@@ -1569,7 +1569,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('tri alphabétique par titre', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const aId = await createIndicateurPerso({
         caller,
@@ -1598,7 +1598,7 @@ describe('ListIndicateursRouter', () => {
 
   describe('Payload structure and linked entities tests', () => {
     test('vérifie la structure complète du résultat avec pagination', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const input: Input = {
         collectiviteId: 1,
@@ -1623,7 +1623,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('pilotes associés à un indicateur doivent être filtrés par collectiviteId', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       // Create person tags for two different collectivites
       const piloteCollectivite1 = await createPersonneTag({
@@ -1727,7 +1727,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('services associés à un indicateur doivent être filtrés par collectiviteId', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       // Create service tags for two different collectivites
       const serviceCollectivite1 = await createServiceTag({
@@ -1830,7 +1830,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('fiches associées à un indicateur doivent être filtrées par collectiviteId', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       // Get a referentiel indicateur that both collectivites can access
       const { data: indicateurs } = await caller.indicateurs.indicateurs.list({
@@ -1935,7 +1935,7 @@ describe('ListIndicateursRouter', () => {
 
   describe('Edge cases and error handling', () => {
     test('gère les filtres avec des valeurs vides', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const input: Input = {
         collectiviteId: 1,
@@ -1952,7 +1952,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('gère la pagination', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const { data: result } = await caller.indicateurs.indicateurs.list({
         collectiviteId: 1,
@@ -1975,7 +1975,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('gère la recherche textuelle avec des caractères spéciaux', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const input: Input = {
         collectiviteId: 1,
@@ -1992,7 +1992,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('gère les filtres multiples avec des valeurs contradictoires', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const input: Input = {
         collectiviteId: 1,
@@ -2009,7 +2009,7 @@ describe('ListIndicateursRouter', () => {
     });
 
     test('gère les filtres avec des IDs inexistants', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const input: Input = {
         collectiviteId: 1,

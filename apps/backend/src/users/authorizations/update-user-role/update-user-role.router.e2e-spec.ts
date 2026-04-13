@@ -14,7 +14,7 @@ import { addUserRoleSupport } from '../../users/users.test-fixture';
 
 describe('UpdateUserRole', () => {
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
   let app: INestApplication;
   let databaseService: DatabaseService;
 
@@ -24,7 +24,7 @@ describe('UpdateUserRole', () => {
     databaseService = await getTestDatabase(app);
 
     const testUserResult = await addTestUser(databaseService);
-    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
   describe('Rôle Support', () => {
@@ -37,13 +37,13 @@ describe('UpdateUserRole', () => {
     }
 
     test('Active le mode super-admin pour un utilisateur avec le rôle support', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       await expectUserToHaveRoleSupportEnabled(caller, false);
 
       const { cleanup } = await addUserRoleSupport({
         databaseService,
-        userId: yoloDodoUser.id,
+        userId: testUser.id,
       });
 
       onTestFinished(cleanup);
@@ -74,7 +74,7 @@ describe('UpdateUserRole', () => {
     });
 
     test("Ne peut pas activer le mode super-admin si l'utilisateur n'a pas le rôle support", async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       await expectUserToHaveRoleSupportEnabled(caller, false);
 

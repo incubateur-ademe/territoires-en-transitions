@@ -25,7 +25,7 @@ const referentielId = 'cae' as const;
 
 describe('listMesureAuditStatuts.router', () => {
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
   let databaseService: DatabaseService;
   let collectiviteId: number;
   let noAuditCollectiviteId: number;
@@ -45,7 +45,7 @@ describe('listMesureAuditStatuts.router', () => {
     noAuditCollectiviteId = noAuditCollectivite.id;
 
     const testUserResult = await addTestUser(databaseService);
-    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
 
     // Donner accès aux deux collectivités
     await setUserCollectiviteRole(databaseService, {
@@ -61,7 +61,7 @@ describe('listMesureAuditStatuts.router', () => {
   });
 
   test('should return all measures with their audit status, including measures without defined statuses', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const { audit: auditEnCours } = await createAuditWithOnTestFinished({
       databaseService,
@@ -72,7 +72,7 @@ describe('listMesureAuditStatuts.router', () => {
     addAuditeurPermission({
       databaseService,
       auditId: auditEnCours.id,
-      userId: yoloDodoUser.id,
+      userId: testUser.id,
     });
 
     // Crée des statuts pour deux mesures spécifiques
@@ -83,7 +83,7 @@ describe('listMesureAuditStatuts.router', () => {
       statut: MesureAuditStatutEnum.AUDITE,
       avis: 'Avis positif pour action 1.1.1',
       ordreDuJour: true,
-      modifiedBy: yoloDodoUser.id,
+      modifiedBy: testUser.id,
     };
 
     const mesureAuditStatusCae21 = {
@@ -93,7 +93,7 @@ describe('listMesureAuditStatuts.router', () => {
       statut: MesureAuditStatutEnum.EN_COURS,
       avis: "En cours d'audit pour sous-axe 2.1",
       ordreDuJour: false,
-      modifiedBy: yoloDodoUser.id,
+      modifiedBy: testUser.id,
     };
 
     const mesureAuditStatuses = [
@@ -204,7 +204,7 @@ describe('listMesureAuditStatuts.router', () => {
   });
 
   test('should throw error when no audit is in progress', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
     const input = {
       collectiviteId: noAuditCollectiviteId, // collectivité sans audit en cours
       referentielId,

@@ -12,8 +12,8 @@ import { INestApplication } from '@nestjs/common';
 describe('Apikeys router test', () => {
   let app: INestApplication;
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
-  let youlouDoudouUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
+  let testUser2: AuthenticatedUser;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -21,17 +21,17 @@ describe('Apikeys router test', () => {
     const db = await getTestDatabase(app);
 
     const testUser1Result = await addTestUser(db);
-    yoloDodoUser = getAuthUserFromUserCredentials(testUser1Result.user);
+    testUser = getAuthUserFromUserCredentials(testUser1Result.user);
 
     const testUser2Result = await addTestUser(db);
-    youlouDoudouUser = getAuthUserFromUserCredentials(testUser2Result.user);
+    testUser2 = getAuthUserFromUserCredentials(testUser2Result.user);
   });
 
   test(`Test generate, list & delete apikey by the user himself`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const creationResult = await caller.users.apikeys.create({
-      userId: yoloDodoUser.id,
+      userId: testUser.id,
     });
 
     const listResult = await caller.users.apikeys.list();
@@ -52,11 +52,11 @@ describe('Apikeys router test', () => {
   });
 
   test(`Can't generate an api key for another user`, async () => {
-    const caller = router.createCaller({ user: youlouDoudouUser });
+    const caller = router.createCaller({ user: testUser2 });
 
     await expect(
       caller.users.apikeys.create({
-        userId: yoloDodoUser.id,
+        userId: testUser.id,
       })
     ).rejects.toThrowError(
       /is not authorized to generate an API key for user/i
@@ -64,11 +64,11 @@ describe('Apikeys router test', () => {
   });
 
   test(`Can't delete an api key for another user`, async () => {
-    const yolododoCaller = router.createCaller({ user: yoloDodoUser });
-    const youloudoudouCaller = router.createCaller({ user: youlouDoudouUser });
+    const testUserCaller = router.createCaller({ user: testUser });
+    const youloudoudouCaller = router.createCaller({ user: testUser2 });
 
-    const creationResult = await yolododoCaller.users.apikeys.create({
-      userId: yoloDodoUser.id,
+    const creationResult = await testUserCaller.users.apikeys.create({
+      userId: testUser.id,
     });
 
     await expect(
@@ -82,7 +82,7 @@ describe('Apikeys router test', () => {
     const caller = router.createCaller({ user: getServiceRoleUser() });
 
     const creationResult = await caller.users.apikeys.create({
-      userId: yoloDodoUser.id,
+      userId: testUser.id,
     });
 
     const listResult = await caller.users.apikeys.list();

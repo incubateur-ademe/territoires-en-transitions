@@ -17,7 +17,7 @@ import { default as request } from 'supertest';
 describe('Oauth controller test', () => {
   let app: INestApplication;
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
   let writeCollectiviteId: number;
 
   beforeAll(async () => {
@@ -28,7 +28,7 @@ describe('Oauth controller test', () => {
     const testResult = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.ADMIN },
     });
-    yoloDodoUser = getAuthUserFromUserCredentials(testResult.user);
+    testUser = getAuthUserFromUserCredentials(testResult.user);
     writeCollectiviteId = testResult.collectivite.id;
   });
 
@@ -36,7 +36,7 @@ describe('Oauth controller test', () => {
     const caller = router.createCaller({ user: getServiceRoleUser() });
 
     const result = await caller.users.apikeys.create({
-      userId: yoloDodoUser.id,
+      userId: testUser.id,
     });
 
     const generateTokenRequest: GenerateTokenRequest = {
@@ -107,7 +107,7 @@ describe('Oauth controller test', () => {
     const caller = router.createCaller({ user: getServiceRoleUser() });
 
     const result = await caller.users.apikeys.create({
-      userId: yoloDodoUser.id,
+      userId: testUser.id,
     });
 
     const generateTokenRequest: GenerateTokenRequest = {
@@ -137,7 +137,7 @@ describe('Oauth controller test', () => {
     const caller = router.createCaller({ user: getServiceRoleUser() });
 
     const result = await caller.users.apikeys.create({
-      userId: yoloDodoUser.id,
+      userId: testUser.id,
       permissions: [
         'indicateurs.indicateurs.read_confidentiel',
         'indicateurs.indicateurs.read',

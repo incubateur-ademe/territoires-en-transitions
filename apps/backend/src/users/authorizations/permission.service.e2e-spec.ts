@@ -21,7 +21,7 @@ import { eq } from 'drizzle-orm';
 describe('Gestion des droits', () => {
   let app: INestApplication;
   let permissionService: PermissionService;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
   let youlouDoudouUser: AuthenticatedUser;
   let databaseService: DatabaseService;
   let roleUpdateService: UpdateUserRoleService;
@@ -39,7 +39,7 @@ describe('Gestion des droits', () => {
       collectiviteId: 1,
       role: CollectiviteRole.ADMIN,
     });
-    yoloDodoUser = getAuthUserFromUserCredentials(testUser1Result.user);
+    testUser = getAuthUserFromUserCredentials(testUser1Result.user);
 
     // YOULOU_DOUDOU est un utilisateur seed avec rôle auditeur sur collectiviteId 10
     // Nécessaire pour les tests de permissions d'auditeur
@@ -50,7 +50,7 @@ describe('Gestion des droits', () => {
     test('Utilisateur vérifié -> OK', async () => {
       expect(
         await permissionService.isAllowed(
-          yoloDodoUser,
+          testUser,
           'collectivites.read',
           ResourceType.COLLECTIVITE,
           20,
@@ -59,10 +59,10 @@ describe('Gestion des droits', () => {
       ).toBeTruthy();
     });
     test('Utilisateur non vérifié -> NOK', async () => {
-      await roleUpdateService.setIsVerified(yoloDodoUser.id, false);
+      await roleUpdateService.setIsVerified(testUser.id, false);
       expect(
         await permissionService.isAllowed(
-          yoloDodoUser,
+          testUser,
           'collectivites.read',
           ResourceType.COLLECTIVITE,
           20,
@@ -72,7 +72,7 @@ describe('Gestion des droits', () => {
 
       onTestFinished(async () => {
         try {
-          await roleUpdateService.setIsVerified(yoloDodoUser.id, true);
+          await roleUpdateService.setIsVerified(testUser.id, true);
         } catch (error) {
           console.error('Erreur lors de la remise à zéro des données.', error);
         }
@@ -87,7 +87,7 @@ describe('Gestion des droits', () => {
       const collectivitePrivate = await collectiviteService.isPrivate(20);
       expect(
         await permissionService.isAllowed(
-          yoloDodoUser,
+          testUser,
           collectivitePrivate
             ? 'collectivites.read_confidentiel'
             : 'collectivites.read',
@@ -113,7 +113,7 @@ describe('Gestion des droits', () => {
     test('Utilisateur vérifié sur sa collectivité -> OK', async () => {
       expect(
         await permissionService.isAllowed(
-          yoloDodoUser,
+          testUser,
           'collectivites.read_confidentiel',
           ResourceType.COLLECTIVITE,
           1,
@@ -123,10 +123,10 @@ describe('Gestion des droits', () => {
     });
 
     test('Utilisateur non vérifié sur sa collectivité -> OK', async () => {
-      await roleUpdateService.setIsVerified(yoloDodoUser.id, false);
+      await roleUpdateService.setIsVerified(testUser.id, false);
       expect(
         await permissionService.isAllowed(
-          yoloDodoUser,
+          testUser,
           'collectivites.read_confidentiel',
           ResourceType.COLLECTIVITE,
           1,
@@ -136,7 +136,7 @@ describe('Gestion des droits', () => {
 
       onTestFinished(async () => {
         try {
-          await roleUpdateService.setIsVerified(yoloDodoUser.id, true);
+          await roleUpdateService.setIsVerified(testUser.id, true);
         } catch (error) {
           console.error('Erreur lors de la remise à zéro des données.', error);
         }
@@ -146,7 +146,7 @@ describe('Gestion des droits', () => {
     test('Utilisateur vérifié sur une autre collectivité -> NOK', async () => {
       expect(
         await permissionService.isAllowed(
-          yoloDodoUser,
+          testUser,
           'collectivites.read_confidentiel',
           ResourceType.COLLECTIVITE,
           20,
@@ -172,7 +172,7 @@ describe('Gestion des droits', () => {
     test('Sur sa collectivité -> OK', async () => {
       expect(
         await permissionService.isAllowed(
-          yoloDodoUser,
+          testUser,
           PermissionOperationEnum['PLANS.FICHES.UPDATE'],
           ResourceType.COLLECTIVITE,
           1,
@@ -183,7 +183,7 @@ describe('Gestion des droits', () => {
     test('Sur une autre collectivité -> NOK', async () => {
       expect(
         await permissionService.isAllowed(
-          yoloDodoUser,
+          testUser,
           PermissionOperationEnum['PLANS.FICHES.UPDATE'],
           ResourceType.COLLECTIVITE,
           20,
@@ -209,7 +209,7 @@ describe('Gestion des droits', () => {
     test('Sur sa collectivité -> OK', async () => {
       expect(
         await permissionService.isAllowed(
-          yoloDodoUser,
+          testUser,
           'indicateurs.indicateurs.read_confidentiel',
           ResourceType.COLLECTIVITE,
           1,
@@ -221,7 +221,7 @@ describe('Gestion des droits', () => {
     test('Sur une autre collectivité -> NOK', async () => {
       expect(
         await permissionService.isAllowed(
-          yoloDodoUser,
+          testUser,
           'indicateurs.indicateurs.read_confidentiel',
           ResourceType.COLLECTIVITE,
           20,
@@ -234,10 +234,10 @@ describe('Gestion des droits', () => {
       await databaseService.db
         .update(dcpTable)
         .set({ email: 'yolo@ademe.fr' })
-        .where(eq(dcpTable.id, yoloDodoUser.id));
+        .where(eq(dcpTable.id, testUser.id));
       expect(
         await permissionService.isAllowed(
-          yoloDodoUser,
+          testUser,
           'indicateurs.indicateurs.read_confidentiel',
           ResourceType.COLLECTIVITE,
           20,
@@ -250,7 +250,7 @@ describe('Gestion des droits', () => {
           await databaseService.db
             .update(dcpTable)
             .set({ email: 'yolo@dodo.com' })
-            .where(eq(dcpTable.id, yoloDodoUser.id));
+            .where(eq(dcpTable.id, testUser.id));
         } catch (error) {
           console.error('Erreur lors de la remise à zéro des données.', error);
         }

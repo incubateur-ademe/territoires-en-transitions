@@ -12,8 +12,8 @@ import {
 describe('Route de récupération des métriques', () => {
   let app: INestApplication;
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
-  let youlouDoudouUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
+  let auditUser: AuthenticatedUser;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -25,15 +25,15 @@ describe('Route de récupération des métriques', () => {
       collectiviteId: 1,
       role: CollectiviteRole.ADMIN,
     });
-    yoloDodoUser = getAuthUserFromUserCredentials(testUser1Result.user);
+    testUser = getAuthUserFromUserCredentials(testUser1Result.user);
 
     // YOULOU_DOUDOU est un utilisateur seed avec rôle auditeur sur collectiviteId 10
     // Nécessaire pour valider l'audit dans le test de métriques
-    youlouDoudouUser = await getAuthUser(YOULOU_DOUDOU);
+    auditUser = await getAuthUser(YOULOU_DOUDOU);
   });
 
   test(`Métriques de la collectivité`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const parcours = await caller.referentiels.labellisations.getParcours({
       collectiviteId: 1,
@@ -46,7 +46,7 @@ describe('Route de récupération des métriques', () => {
       (!parcours.audit?.valide || !parcours.audit?.date_fin)
     ) {
       const auditeurCaller = router.createCaller({
-        user: youlouDoudouUser,
+        user: auditUser,
       });
 
       if (!parcours.audit.date_debut) {
@@ -76,7 +76,7 @@ describe('Route de récupération des métriques', () => {
   });
 
   test(`Métriques de l'utilisateur`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const result = await caller.metrics.personal({
       collectiviteId: 1,

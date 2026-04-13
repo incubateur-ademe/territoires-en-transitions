@@ -36,7 +36,7 @@ type UpdateSnapshotNameInput = inferProcedureInput<
 
 describe('SnapshotsRouter', () => {
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
   let rhoneAggloCollectiviteId: number;
   let databaseService: DatabaseService;
 
@@ -53,7 +53,7 @@ describe('SnapshotsRouter', () => {
       collectiviteId: 1,
       role: CollectiviteRole.ADMIN,
     });
-    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
 
     // Give lecture access to Rhône Agglo (matching YOLO_DODO's original seed access)
     await setUserCollectiviteRole(databaseService, {
@@ -78,7 +78,7 @@ describe('SnapshotsRouter', () => {
   });
 
   test("Création d'un snapshot: not authorized, accès en lecture uniquement", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const input: ComputeScoreInput = {
       referentielId: ReferentielIdEnum.CAE,
@@ -92,7 +92,7 @@ describe('SnapshotsRouter', () => {
   });
 
   test("Création d'un snapshot avec nom et date spécifique", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
     const snapshotDate = '2024-09-21';
     const snapshotNom = 'Test snapshot avec date';
 
@@ -128,7 +128,7 @@ describe('SnapshotsRouter', () => {
   });
 
   test("Création d'un snapshot avec un score indicatif sur une action", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
     const snapshotDate = '2024-09-21';
     const snapshotNom = 'Test snapshot avec date';
 
@@ -283,7 +283,7 @@ describe('SnapshotsRouter', () => {
   });
 
   test(`Récupération du score d'un référentiel avec sauvegarde d'un snapshot autorisé pour un utilisateur en écriture`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const currentSnapshot = await caller.referentiels.snapshots.getCurrent({
       collectiviteId: 1,
@@ -364,8 +364,8 @@ describe('SnapshotsRouter', () => {
       modifiedAt: expect.toEqualDate(snapshotTestAccent.modifiedAt),
       createdAt: expect.toEqualDate(snapshotTestAccent.createdAt),
       auditId: null,
-      createdBy: yoloDodoUser.id,
-      modifiedBy: yoloDodoUser.id,
+      createdBy: testUser.id,
+      modifiedBy: testUser.id,
       pointFait: 0.36,
       pointNonRenseigne: 492.8,
       pointPasFait: 0.03,
@@ -375,7 +375,7 @@ describe('SnapshotsRouter', () => {
   });
 
   test(`Suppression d'un snapshot non-autorisé pour un utilisateur en écriture mais sur un snapshot qui ne soit pas de type date personnalisée`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const currentSnapshot = await caller.referentiels.snapshots.getCurrent({
       collectiviteId: 1,
@@ -398,7 +398,7 @@ describe('SnapshotsRouter', () => {
   });
 
   test(`Récupération de l'historique du score d'un référentiel pour un utilisateur autorisé`, async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const currentSnapshot =
       await caller.referentiels.snapshots.computeAndUpsert({
@@ -466,7 +466,7 @@ describe('SnapshotsRouter', () => {
   });
 
   test("Mise à jour du nom d'un snapshot: not authorized, accès en lecture uniquement", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const input: UpdateSnapshotNameInput = {
       collectiviteId: rhoneAggloCollectiviteId,
@@ -481,7 +481,7 @@ describe('SnapshotsRouter', () => {
   });
 
   test("Mise à jour du nom d'un snapshot autre que date_personnalisee: score_courant, not authorized", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const input: ComputeScoreInput = {
       collectiviteId: 1,
@@ -514,7 +514,7 @@ describe('SnapshotsRouter', () => {
   });
 
   test("Mise à jour du nom d'un snapshot", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const input: ComputeScoreInput = {
       referentielId: ReferentielIdEnum.CAE,

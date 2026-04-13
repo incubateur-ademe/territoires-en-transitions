@@ -31,7 +31,7 @@ threeYearsAgo.setFullYear(threeYearsAgo.getFullYear() - 3);
 
 describe('GetPlanCompletionRouter tests', () => {
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
   let databaseService: DatabaseService;
   let testPlanId: number;
   let testCollectiviteId: number;
@@ -45,7 +45,7 @@ describe('GetPlanCompletionRouter tests', () => {
       collectiviteId: 999,
       role: CollectiviteRole.ADMIN,
     });
-    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
   beforeEach(async () => {
@@ -89,7 +89,7 @@ describe('GetPlanCompletionRouter tests', () => {
 
   describe('getPlanCompletion', () => {
     it('should return empty array for plan with no fiches', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const result = await caller.plans.plans.getPlanCompletion({
         planId: testPlanId,
@@ -100,7 +100,7 @@ describe('GetPlanCompletionRouter tests', () => {
     });
 
     it('should return all fields for plan with completely empty fiches', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       // Create empty fiches
       const [fiche1] = await databaseService.db
@@ -129,8 +129,8 @@ describe('GetPlanCompletionRouter tests', () => {
         note: 'Note plutôt ancienne',
         createdAt: twoYearsAgo.toISOString(),
         modifiedAt: twoYearsAgo.toISOString(),
-        modifiedBy: yoloDodoUser.id,
-        createdBy: yoloDodoUser.id,
+        modifiedBy: testUser.id,
+        createdBy: testUser.id,
       });
 
       await databaseService.db.insert(ficheActionNoteTable).values({
@@ -139,8 +139,8 @@ describe('GetPlanCompletionRouter tests', () => {
         note: 'Note plutôt ancienne',
         createdAt: twoYearsAgo.toISOString(),
         modifiedAt: twoYearsAgo.toISOString(),
-        modifiedBy: yoloDodoUser.id,
-        createdBy: yoloDodoUser.id,
+        modifiedBy: testUser.id,
+        createdBy: testUser.id,
       });
       // Associate fiches to the plan
       await databaseService.db.insert(ficheActionAxeTable).values([
@@ -163,7 +163,7 @@ describe('GetPlanCompletionRouter tests', () => {
     });
 
     it('should return only incomplete fields for partially completed fiches', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       // Create a partially completed fiche
       const [fiche] = await databaseService.db
@@ -180,7 +180,7 @@ describe('GetPlanCompletionRouter tests', () => {
       // Add a pilot
       await databaseService.db.insert(ficheActionPiloteTable).values({
         ficheId: fiche.id,
-        userId: yoloDodoUser.id,
+        userId: testUser.id,
       });
 
       // Associate the fiche to the plan
@@ -203,7 +203,7 @@ describe('GetPlanCompletionRouter tests', () => {
     });
 
     it('should return empty array for fully completed fiches', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       // Create a fully completed fiche
       const [fiche] = await databaseService.db
@@ -221,7 +221,7 @@ describe('GetPlanCompletionRouter tests', () => {
       // Add a pilot
       await databaseService.db.insert(ficheActionPiloteTable).values({
         ficheId: fiche.id,
-        userId: yoloDodoUser.id,
+        userId: testUser.id,
       });
 
       // Add an indicateur
@@ -244,8 +244,8 @@ describe('GetPlanCompletionRouter tests', () => {
         note: 'Note récente',
         createdAt: sixMonthsAgo.toISOString(),
         modifiedAt: sixMonthsAgo.toISOString(),
-        modifiedBy: yoloDodoUser.id,
-        createdBy: yoloDodoUser.id,
+        modifiedBy: testUser.id,
+        createdBy: testUser.id,
       });
 
       // Associate the fiche to the plan
@@ -262,7 +262,7 @@ describe('GetPlanCompletionRouter tests', () => {
     });
 
     it('should respect priority order when returning fields', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       // Create fiches with different missing fields
       const [fiche1] = await databaseService.db
@@ -319,7 +319,7 @@ describe('GetPlanCompletionRouter tests', () => {
     });
 
     it('should handle multiple fiches with mixed completion levels', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       // Fiche 1: missing title and description
       const [fiche1] = await databaseService.db
@@ -363,7 +363,7 @@ describe('GetPlanCompletionRouter tests', () => {
       // Add pilot to the fiche 3
       await databaseService.db.insert(ficheActionPiloteTable).values({
         ficheId: fiche3.id,
-        userId: yoloDodoUser.id,
+        userId: testUser.id,
       });
 
       // Associate all fiches to the plan
@@ -387,7 +387,7 @@ describe('GetPlanCompletionRouter tests', () => {
     });
 
     it('should only return fiches older than one year with notes older than one year', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       const [oldFicheWithRecentNote, oldFicheWithOldNote, recentFiche] =
         await Promise.all([
@@ -436,8 +436,8 @@ describe('GetPlanCompletionRouter tests', () => {
           note: 'Note ancienne',
           modifiedAt: twoYearsAgo.toISOString(),
           createdAt: twoYearsAgo.toISOString(),
-          modifiedBy: yoloDodoUser.id,
-          createdBy: yoloDodoUser.id,
+          modifiedBy: testUser.id,
+          createdBy: testUser.id,
         }),
         databaseService.db.insert(ficheActionNoteTable).values({
           ficheId: oldFicheWithRecentNote.id,
@@ -445,8 +445,8 @@ describe('GetPlanCompletionRouter tests', () => {
           note: 'Note récente',
           modifiedAt: sixMonthsAgo.toISOString(),
           createdAt: threeYearsAgo.toISOString(),
-          modifiedBy: yoloDodoUser.id,
-          createdBy: yoloDodoUser.id,
+          modifiedBy: testUser.id,
+          createdBy: testUser.id,
         }),
         databaseService.db.insert(ficheActionNoteTable).values({
           ficheId: recentFiche.id,
@@ -454,8 +454,8 @@ describe('GetPlanCompletionRouter tests', () => {
           note: 'Note récente',
           modifiedAt: sixMonthsAgo.toISOString(),
           createdAt: sixMonthsAgo.toISOString(),
-          modifiedBy: yoloDodoUser.id,
-          createdBy: yoloDodoUser.id,
+          modifiedBy: testUser.id,
+          createdBy: testUser.id,
         }),
       ]);
       // Associate the fiche to the plan
@@ -479,7 +479,7 @@ describe('GetPlanCompletionRouter tests', () => {
     });
 
     it('should not count soft deleted fiches in completion counters', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       // Créer une fiche normale incomplète
       const [ficheNormale] = await databaseService.db
@@ -526,7 +526,7 @@ describe('GetPlanCompletionRouter tests', () => {
     });
 
     it('should return empty array when all fiches are soft deleted', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       // Créer uniquement des fiches soft deleted
       const [fiche1] = await databaseService.db
@@ -568,7 +568,7 @@ describe('GetPlanCompletionRouter tests', () => {
     });
 
     it('should correctly count mixed normal and soft deleted fiches', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       // Créer 2 fiches normales incomplètes
       const [ficheNormale1] = await databaseService.db
@@ -643,7 +643,7 @@ describe('GetPlanCompletionRouter tests', () => {
     });
 
     it('should not count soft deleted fiches in suiviRecent calculation', async () => {
-      const caller = router.createCaller({ user: yoloDodoUser });
+      const caller = router.createCaller({ user: testUser });
 
       // Créer une fiche normale ancienne avec note ancienne
       const [ficheNormale] = await databaseService.db
@@ -675,8 +675,8 @@ describe('GetPlanCompletionRouter tests', () => {
 
       // Ajouter des pilotes, indicateurs et budgets pour compléter les fiches
       await databaseService.db.insert(ficheActionPiloteTable).values([
-        { ficheId: ficheNormale.id, userId: yoloDodoUser.id },
-        { ficheId: ficheSoftDeleted.id, userId: yoloDodoUser.id },
+        { ficheId: ficheNormale.id, userId: testUser.id },
+        { ficheId: ficheSoftDeleted.id, userId: testUser.id },
       ]);
 
       await databaseService.db.insert(ficheActionIndicateurTable).values([
@@ -707,8 +707,8 @@ describe('GetPlanCompletionRouter tests', () => {
           note: 'Note ancienne',
           modifiedAt: twoYearsAgo.toISOString(),
           createdAt: twoYearsAgo.toISOString(),
-          modifiedBy: yoloDodoUser.id,
-          createdBy: yoloDodoUser.id,
+          modifiedBy: testUser.id,
+          createdBy: testUser.id,
         },
         {
           ficheId: ficheSoftDeleted.id,
@@ -716,8 +716,8 @@ describe('GetPlanCompletionRouter tests', () => {
           note: 'Note ancienne',
           modifiedAt: twoYearsAgo.toISOString(),
           createdAt: twoYearsAgo.toISOString(),
-          modifiedBy: yoloDodoUser.id,
-          createdBy: yoloDodoUser.id,
+          modifiedBy: testUser.id,
+          createdBy: testUser.id,
         },
       ]);
 

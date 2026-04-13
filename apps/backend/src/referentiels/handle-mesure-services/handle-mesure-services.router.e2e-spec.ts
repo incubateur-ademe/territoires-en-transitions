@@ -7,7 +7,7 @@ import { CollectiviteRole } from '@tet/domain/users';
 
 describe('HandleMesureServicesRouter', () => {
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
 
   beforeAll(async () => {
     const app = await getTestApp();
@@ -17,7 +17,7 @@ describe('HandleMesureServicesRouter', () => {
       collectiviteId: 1,
       role: CollectiviteRole.ADMIN,
     });
-    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
   test('List services throws error when not authenticated', async () => {
@@ -36,7 +36,7 @@ describe('HandleMesureServicesRouter', () => {
   });
 
   test('Upsert services throws error when not authorized', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const input = {
       collectiviteId: 3,
@@ -52,7 +52,7 @@ describe('HandleMesureServicesRouter', () => {
   });
 
   test('Insert, update and delete services', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
     const mesureId = 'eci_2.2.2.2';
     const collectiviteId = 1;
 
@@ -130,7 +130,7 @@ describe('HandleMesureServicesRouter', () => {
   });
 
   test('Throw error when upserting services with empty services array', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const input = {
       collectiviteId: 1,
@@ -144,7 +144,7 @@ describe('HandleMesureServicesRouter', () => {
   });
 
   test('List all services for a collectivité', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
     const collectiviteId = 1;
 
     const mesureId1 = 'eci_2.2.2.1';

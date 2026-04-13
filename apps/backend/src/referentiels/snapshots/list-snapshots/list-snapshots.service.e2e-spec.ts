@@ -11,7 +11,7 @@ import { ReferentielsRouter } from '../../referentiels.router';
 
 describe('ListSnapshotsService', () => {
   let router: ReferentielsRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
 
   beforeAll(async () => {
     const app = await getTestApp();
@@ -21,11 +21,11 @@ describe('ListSnapshotsService', () => {
       collectiviteId: 1,
       role: CollectiviteRole.ADMIN,
     });
-    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
   test("Création d'un snapshot, liste des snapshots existants suppression", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const snapshot = await caller.snapshots.computeAndUpsert({
       referentielId: ReferentielIdEnum.CAE,
@@ -61,8 +61,8 @@ describe('ListSnapshotsService', () => {
       createdAt: expect.toEqualDate(snapshot.createdAt),
       referentielVersion: '1.0.1',
       auditId: null,
-      createdBy: yoloDodoUser.id,
-      modifiedBy: yoloDodoUser.id,
+      createdBy: testUser.id,
+      modifiedBy: testUser.id,
       pointFait: 0.36,
       pointPasFait: 0.03,
       pointNonRenseigne: 492.8,

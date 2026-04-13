@@ -19,7 +19,7 @@ describe('UserRouter', () => {
   let app: INestApplication;
   let userRouter: UsersRouter;
   let databaseService: DatabaseService;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
 
   async function getUserFromDb(userId: string) {
     return databaseService.db
@@ -35,7 +35,7 @@ describe('UserRouter', () => {
     databaseService = await getTestDatabase(app);
 
     const testUserResult = await addTestUser(databaseService);
-    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
+    testUser = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
   afterAll(async () => {
@@ -43,9 +43,9 @@ describe('UserRouter', () => {
   });
 
   test("Modification email et autres informations de l'utilisateur", async () => {
-    const caller = userRouter.createCaller({ user: yoloDodoUser });
+    const caller = userRouter.createCaller({ user: testUser });
 
-    const initialUserInfo = await getUserFromDb(yoloDodoUser.id);
+    const initialUserInfo = await getUserFromDb(testUser.id);
 
     const input: Input = {
       prenom: 'Bernard',
@@ -56,7 +56,7 @@ describe('UserRouter', () => {
     // change les infos une première fois
     await caller.users.update(input);
 
-    const user = await getUserFromDb(yoloDodoUser.id);
+    const user = await getUserFromDb(testUser.id);
 
     expect(user).toBeDefined();
     expect(user.prenom).toBe(input.prenom);
@@ -73,7 +73,7 @@ describe('UserRouter', () => {
     }
     await caller.users.update(resetInput);
 
-    const userReseted = await getUserFromDb(yoloDodoUser.id);
+    const userReseted = await getUserFromDb(testUser.id);
 
     expect(userReseted.prenom).toBe(initialUserInfo.prenom);
     expect(userReseted.nom).toBe(initialUserInfo.nom);

@@ -22,7 +22,7 @@ describe('ValidateAuditRouter', () => {
   let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
-  let yoloDodoUser: AuthenticatedUser;
+  let testUser: AuthenticatedUser;
   let collectivite: Collectivite;
 
   beforeAll(async () => {
@@ -34,7 +34,7 @@ describe('ValidateAuditRouter', () => {
       user: { role: CollectiviteRole.ADMIN },
     });
     collectivite = testResult.collectivite;
-    yoloDodoUser = getAuthUserFromUserCredentials(testResult.user);
+    testUser = getAuthUserFromUserCredentials(testResult.user);
   });
 
   afterAll(async () => {
@@ -42,7 +42,7 @@ describe('ValidateAuditRouter', () => {
   });
 
   test('un auditeur peut valider un audit', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     const { audit } = await createAuditWithOnTestFinished({
       databaseService: db,
@@ -54,7 +54,7 @@ describe('ValidateAuditRouter', () => {
     await addAuditeurPermission({
       databaseService: db,
       auditId: audit.id,
-      userId: yoloDodoUser.id,
+      userId: testUser.id,
     });
 
     const validatedAudit =
@@ -81,7 +81,7 @@ describe('ValidateAuditRouter', () => {
   });
 
   test('un non auditeur ne peut pas valider un audit', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
+    const caller = router.createCaller({ user: testUser });
 
     await expect(
       caller.referentiels.labellisations.validateAudit({
