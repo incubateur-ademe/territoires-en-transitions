@@ -81,6 +81,17 @@ export async function insertFixturePourScoreIndicatif(
     .values([{ indicateurId, actionId }])
     .onConflictDoNothing();
 
+  // supprime les valeurs existantes pour rendre la fixture idempotente
+  await databaseService.db
+    .delete(indicateurValeurTable)
+    .where(
+      and(
+        eq(indicateurValeurTable.indicateurId, indicateurId),
+        eq(indicateurValeurTable.collectiviteId, collectiviteId),
+        eq(indicateurValeurTable.dateValeur, dateValeur)
+      )
+    );
+
   // insère des valeurs
   const result2 = await databaseService.db
     .insert(indicateurValeurTable)
@@ -102,7 +113,6 @@ export async function insertFixturePourScoreIndicatif(
         objectif: null,
       },
     ])
-    .onConflictDoNothing()
     .returning();
 
   // associe les valeurs à l'action pour la collectivité
