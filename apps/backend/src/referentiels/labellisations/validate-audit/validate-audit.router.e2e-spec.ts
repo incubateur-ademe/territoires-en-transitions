@@ -2,12 +2,13 @@ import { INestApplication } from '@nestjs/common';
 import { createAuditWithOnTestFinished } from '@tet/backend/referentiels/referentiels.test-fixture';
 
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-  YOLO_DODO,
 } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import { CollectiviteRole } from '@tet/domain/users';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -29,7 +30,11 @@ describe('ValidateAuditRouter', () => {
     router = await getTestRouter(app);
     db = await getTestDatabase(app);
 
-    yoloDodoUser = await getAuthUser(YOLO_DODO);
+    const testUserResult = await addTestUser(db, {
+      collectiviteId: RANDOM_COLLECTIVITE_ID,
+      role: CollectiviteRole.ADMIN,
+    });
+    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
   afterAll(async () => {

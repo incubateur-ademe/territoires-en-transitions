@@ -1,6 +1,12 @@
-import { getAuthUser, getTestApp } from '@tet/backend/test';
+import {
+  getAuthUserFromUserCredentials,
+  getTestApp,
+  getTestDatabase,
+} from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { ReferentielIdEnum, SnapshotJalonEnum } from '@tet/domain/referentiels';
+import { CollectiviteRole } from '@tet/domain/users';
 import { ReferentielsRouter } from '../../referentiels.router';
 
 describe('ListSnapshotsService', () => {
@@ -10,7 +16,12 @@ describe('ListSnapshotsService', () => {
   beforeAll(async () => {
     const app = await getTestApp();
     router = app.get(ReferentielsRouter);
-    yoloDodoUser = await getAuthUser();
+    const db = await getTestDatabase(app);
+    const testUserResult = await addTestUser(db, {
+      collectiviteId: 1,
+      role: CollectiviteRole.ADMIN,
+    });
+    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
   test("Création d'un snapshot, liste des snapshots existants suppression", async () => {

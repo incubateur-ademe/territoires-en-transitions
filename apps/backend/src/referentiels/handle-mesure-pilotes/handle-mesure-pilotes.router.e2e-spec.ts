@@ -1,7 +1,9 @@
-import { getTestApp, getTestRouter } from '../../../test/app-utils';
-import { getAuthUser } from '../../../test/auth-utils';
+import { getTestApp, getTestDatabase, getTestRouter } from '../../../test/app-utils';
+import { getAuthUserFromUserCredentials } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
+import { addTestUser } from '../../users/users/users.test-fixture';
 import { TrpcRouter } from '../../utils/trpc/trpc.router';
+import { CollectiviteRole } from '@tet/domain/users';
 
 describe('HandleMesurePilotesRouter', () => {
   let router: TrpcRouter;
@@ -10,7 +12,12 @@ describe('HandleMesurePilotesRouter', () => {
   beforeAll(async () => {
     const app = await getTestApp();
     router = await getTestRouter(app);
-    yoloDodoUser = await getAuthUser();
+    const db = await getTestDatabase(app);
+    const testUserResult = await addTestUser(db, {
+      collectiviteId: 1,
+      role: CollectiviteRole.ADMIN,
+    });
+    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
   test('List pilotes throws error when not authenticated', async () => {

@@ -1,10 +1,11 @@
 import {
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-  YOLO_DODO,
 } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import { CollectiviteRole } from '@tet/domain/users';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
@@ -28,7 +29,11 @@ describe('listMesureAuditStatuts.router', () => {
     const app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
-    yoloDodoUser = await getAuthUser();
+    const testUserResult = await addTestUser(databaseService, {
+      collectiviteId: collectiviteId,
+      role: CollectiviteRole.ADMIN,
+    });
+    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
   test('should return all measures with their audit status, including measures without defined statuses', async () => {
@@ -177,7 +182,7 @@ describe('listMesureAuditStatuts.router', () => {
   test('should throw error when no audit is in progress', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
     const input = {
-      collectiviteId: YOLO_DODO.collectiviteId.edition,
+      collectiviteId: 100, // collectivité sans audit en cours
       referentielId,
     };
 

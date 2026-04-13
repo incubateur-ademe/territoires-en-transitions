@@ -1,6 +1,6 @@
 import {
   fixturePourScoreIndicatif,
-  getAuthUser,
+  getAuthUserFromUserCredentials,
   getIndicateurIdByIdentifiant,
   getTestApp,
   getTestDatabase,
@@ -8,8 +8,10 @@ import {
   insertFixturePourScoreIndicatif,
 } from '@tet/backend/test';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
+import { CollectiviteRole } from '@tet/domain/users';
 
 describe('ScoreIndicatifRouter', () => {
   let router: TrpcRouter;
@@ -21,7 +23,11 @@ describe('ScoreIndicatifRouter', () => {
     const app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
-    yoloDodoUser = await getAuthUser();
+    const testUserResult = await addTestUser(databaseService, {
+      collectiviteId: 1,
+      role: CollectiviteRole.ADMIN,
+    });
+    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
 
     // insert test data
     const cleanup = await insertFixturePourScoreIndicatif(

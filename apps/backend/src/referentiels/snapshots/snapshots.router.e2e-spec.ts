@@ -18,8 +18,10 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '../../../test/app-utils';
-import { getAnonUser, getAuthUser } from '../../../test/auth-utils';
+import { getAnonUser, getAuthUserFromUserCredentials } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
+import { addTestUser, setUserCollectiviteRole } from '../../users/users/users.test-fixture';
+import { CollectiviteRole } from '@tet/domain/users';
 import { AuthenticatedUser } from '../../users/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { SnapshotsRouter } from './snapshots.router';
@@ -42,11 +44,23 @@ describe('SnapshotsRouter', () => {
     const app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
-    yoloDodoUser = await getAuthUser();
     rhoneAggloCollectiviteId = await getCollectiviteIdBySiren(
       databaseService,
       '200072015'
     );
+
+    const testUserResult = await addTestUser(databaseService, {
+      collectiviteId: 1,
+      role: CollectiviteRole.ADMIN,
+    });
+    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
+
+    // Give lecture access to Rhône Agglo (matching YOLO_DODO's original seed access)
+    await setUserCollectiviteRole(databaseService, {
+      userId: testUserResult.user.id,
+      collectiviteId: rhoneAggloCollectiviteId,
+      role: CollectiviteRole.LECTURE,
+    });
   });
 
   test("Création d'un snapshot: not authenticated", async () => {

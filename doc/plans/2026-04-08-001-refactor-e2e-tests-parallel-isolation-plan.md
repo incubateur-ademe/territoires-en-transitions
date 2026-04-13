@@ -265,15 +265,15 @@ Remplacer `getAuthUser()` + `collectiviteId` hard-codée par `addTestCollectivit
 
 ### Phase 5 — Migration domaine `referentiels/` (7 fichiers)
 
-- [ ] `referentiels/score-indicatif/score-indicatif.router.e2e-spec.ts`
-- [ ] `referentiels/handle-mesure-services/handle-mesure-services.router.e2e-spec.ts`
-- [ ] `referentiels/handle-mesure-pilotes/handle-mesure-pilotes.router.e2e-spec.ts`
-- [ ] `referentiels/list-actions/list-actions.router.e2e-spec.ts`
-- [ ] `referentiels/labellisations/validate-audit/validate-audit.router.e2e-spec.ts`
-- [ ] `referentiels/labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.router.e2e-spec.ts`
-- [ ] `referentiels/labellisations/handle-mesure-audit-statut/list-mesure-audit-statuts.router.e2e-spec.ts`
-- [ ] `referentiels/snapshots/snapshots.router.e2e-spec.ts` — garder collectivité seed si siren requis, migrer l'utilisateur
-- [ ] `referentiels/snapshots/list-snapshots/list-snapshots.service.e2e-spec.ts` — idem
+- [x] `referentiels/score-indicatif/score-indicatif.router.e2e-spec.ts` — auth isolée
+- [x] `referentiels/handle-mesure-services/handle-mesure-services.router.e2e-spec.ts` — auth isolée
+- [x] `referentiels/handle-mesure-pilotes/handle-mesure-pilotes.router.e2e-spec.ts` — auth isolée
+- [x] `referentiels/list-actions/list-actions.router.e2e-spec.ts` — auth isolée
+- [x] `referentiels/labellisations/validate-audit/validate-audit.router.e2e-spec.ts` — auth isolée
+- [x] `referentiels/labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.router.e2e-spec.ts` — auth isolée
+- [x] `referentiels/labellisations/handle-mesure-audit-statut/list-mesure-audit-statuts.router.e2e-spec.ts` — auth isolée
+- [x] `referentiels/snapshots/snapshots.router.e2e-spec.ts` — auth isolée, lecture sur Rhône Agglo
+- [x] `referentiels/snapshots/list-snapshots/list-snapshots.service.e2e-spec.ts` — auth isolée
 
 **Validation** : lancer les tests `referentiels/` 2 fois, vérifier 0 échec.
 

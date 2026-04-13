@@ -1,13 +1,14 @@
-import { YOLO_DODO } from '@tet/backend/test';
 import {
   ActionTypeEnum,
   ListActionsRequestOptionsType,
   ReferentielIdEnum,
 } from '@tet/domain/referentiels';
+import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
-import { getTestRouter } from '../../../test/app-utils';
-import { getAnonUser, getAuthUser } from '../../../test/auth-utils';
+import { getTestApp, getTestDatabase, getTestRouter } from '../../../test/app-utils';
+import { getAnonUser, getAuthUserFromUserCredentials } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
+import { addTestUser } from '../../users/users/users.test-fixture';
 import { type AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 
 type ListActionsInput = inferProcedureInput<
@@ -19,19 +20,25 @@ describe('ActionStatutListRouter', () => {
   let yoloDodoUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    router = await getTestRouter();
-    yoloDodoUser = await getAuthUser();
+    const app = await getTestApp();
+    router = await getTestRouter(app);
+    const db = await getTestDatabase(app);
+    const testUserResult = await addTestUser(db, {
+      collectiviteId: 1,
+      role: CollectiviteRole.ADMIN,
+    });
+    yoloDodoUser = getAuthUserFromUserCredentials(testUserResult.user);
 
     const caller = router.createCaller({ user: yoloDodoUser });
 
     await caller.referentiels.snapshots.computeAndUpsert({
       referentielId: ReferentielIdEnum.CAE,
-      collectiviteId: YOLO_DODO.collectiviteId.id,
+      collectiviteId: 1,
     });
 
     await caller.referentiels.snapshots.computeAndUpsert({
       referentielId: ReferentielIdEnum.ECI,
-      collectiviteId: YOLO_DODO.collectiviteId.id,
+      collectiviteId: 1,
     });
   });
 
@@ -163,7 +170,7 @@ describe('ActionStatutListRouter', () => {
 
     await expect(
       caller.referentiels.actions.listActionSummaries({
-        collectiviteId: YOLO_DODO.collectiviteId.id,
+        collectiviteId: 1,
         referentielId: 'eci',
         actionTypes: [ActionTypeEnum.AXE],
       })
@@ -174,7 +181,7 @@ describe('ActionStatutListRouter', () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const result = await caller.referentiels.actions.listActionSummaries({
-      collectiviteId: YOLO_DODO.collectiviteId.id,
+      collectiviteId: 1,
       referentielId: 'eci',
       actionTypes: [
         ActionTypeEnum.AXE,
@@ -244,7 +251,7 @@ describe('ActionStatutListRouter', () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const result = await caller.referentiels.actions.listActionSummaries({
-      collectiviteId: YOLO_DODO.collectiviteId.id,
+      collectiviteId: 1,
       referentielId: 'cae',
       identifiant: '1.1.1',
       actionTypes: [ActionTypeEnum.SOUS_ACTION, ActionTypeEnum.TACHE],
