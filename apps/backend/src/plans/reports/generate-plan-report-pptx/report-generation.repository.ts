@@ -48,6 +48,7 @@ export class ReportGenerationRepository {
             ficheIds: input.ficheIds,
             logoFile: input.logoFile,
             includeFicheIndicateursSlides: input.includeFicheIndicateursSlides,
+            ficheInformationsMode: input.ficheInformationsMode,
           },
         })
         .returning();
