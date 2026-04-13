@@ -6,7 +6,6 @@ import {
   getCollectiviteIdBySiren,
   getIndicateurIdByIdentifiant,
   getTestApp,
-  getTestDatabase,
 } from '@tet/backend/test';
 import {
   addTestUser,
@@ -53,7 +52,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     });
     collectivite = testResult.collectivite;
     collectiviteId = collectivite.id;
-    authenticatedUser = getAuthUserFromUserCredentials(testResult.users ?? testResult.user);
+    authenticatedUser = getAuthUserFromUserCredentials(testResult.user);
 
     // Also give user access to paysDuLaon for computed indicateur tests
     paysDuLaonCollectiviteId = await getCollectiviteIdBySiren(

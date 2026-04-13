@@ -56,7 +56,7 @@ describe('Indicateurs', () => {
     });
 
     authToken = await getAuthToken({
-      email: testUserResult.user.email!,
+      email: testUserResult.user.email ?? '',
       password: testUserResult.user.password,
     });
 
@@ -111,7 +111,7 @@ describe('Indicateurs', () => {
     // Let's use a completely different user without any access
     const noAccessUser = await addTestUser(databaseService);
     const noAccessToken = await getAuthToken({
-      email: noAccessUser.user.email!,
+      email: noAccessUser.user.email ?? '',
       password: noAccessUser.user.password,
     });
 

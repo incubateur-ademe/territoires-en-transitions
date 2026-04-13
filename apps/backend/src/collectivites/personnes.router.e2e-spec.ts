@@ -1,11 +1,11 @@
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
+import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -24,7 +24,6 @@ describe('PersonnesRouter', () => {
   let db: DatabaseService;
   let collectivite: Collectivite;
   let adminUser: AuthenticatedUser;
-  let editionUser: AuthenticatedUser;
   let editionUserId: string;
   let visitorUser: AuthenticatedUser;
 
@@ -41,7 +40,6 @@ describe('PersonnesRouter', () => {
     });
     collectivite = testResult.collectivite;
     adminUser = getAuthUserFromUserCredentials(testResult.users[0]);
-    editionUser = getAuthUserFromUserCredentials(testResult.users[1]);
     editionUserId = testResult.users[1].id;
 
     // Utilisateur sans accès à la collectivité (visiteur)
@@ -129,9 +127,9 @@ describe('PersonnesRouter', () => {
     }
 
     // Verify the inactive user appears in the list
-    expect(
-      withInactives.find((p) => p.userId === editionUserId)?.active
-    ).toBe(false);
+    expect(withInactives.find((p) => p.userId === editionUserId)?.active).toBe(
+      false
+    );
 
     // Reactivate user
     onTestFinished(async () => {

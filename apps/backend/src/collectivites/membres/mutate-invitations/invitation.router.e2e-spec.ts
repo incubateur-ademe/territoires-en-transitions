@@ -38,7 +38,7 @@ describe('Test les invitations', () => {
     });
     collectivite = testResult.collectivite;
     adminUser = getAuthUserFromUserCredentials(testResult.user);
-    adminEmail = testResult.user.email!;
+    adminEmail = testResult.user.email ?? '';
     adminUserId = testResult.user.id;
 
     // Create user to be invited (not in collectivite)
@@ -100,10 +100,7 @@ describe('Test les invitations', () => {
       .where(
         and(
           eq(utilisateurCollectiviteAccessTable.userId, inviteeUser.id),
-          eq(
-            utilisateurCollectiviteAccessTable.collectiviteId,
-            collectivite.id
-          )
+          eq(utilisateurCollectiviteAccessTable.collectiviteId, collectivite.id)
         )
       );
     expect(avantInvitation.length).toBe(0);
@@ -111,7 +108,7 @@ describe('Test les invitations', () => {
     // Invite l'utilisateur
     const invitation = await caller.collectivites.membres.invitations.create({
       collectiviteId: collectivite.id,
-      email: inviteeUser.email!,
+      email: inviteeUser.email ?? '',
       role: CollectiviteRole.EDITION,
       tagIds: [testTag.id],
     });
@@ -125,10 +122,7 @@ describe('Test les invitations', () => {
       .where(
         and(
           eq(utilisateurCollectiviteAccessTable.userId, inviteeUser.id),
-          eq(
-            utilisateurCollectiviteAccessTable.collectiviteId,
-            collectivite.id
-          )
+          eq(utilisateurCollectiviteAccessTable.collectiviteId, collectivite.id)
         )
       );
     expect(apresInvitation.length).toBe(1);

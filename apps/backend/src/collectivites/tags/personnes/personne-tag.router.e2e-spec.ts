@@ -13,7 +13,7 @@ import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { Collectivite } from '@tet/domain/collectivites';
 import { CollectiviteRole } from '@tet/domain/users';
-import { inArray, isNotNull } from 'drizzle-orm';
+import { inArray } from 'drizzle-orm';
 import { invitationTable } from '../../membres/invitation.table';
 import { invitationPersonneTagTable } from '../../membres/mutate-invitations/invitation-personne-tag.table';
 
@@ -26,7 +26,8 @@ describe('Test PersonneTagService', () => {
 
   // Tags
   let tag1Id: number;
-  let tag2Id: number;
+  // tag2Id et tag4Id sont créés pour avoir 4 tags dans la collectivité
+  let _tag2Id: number;
   let tag3Id: number;
   let tag4Id: number;
 
@@ -66,7 +67,7 @@ describe('Test PersonneTagService', () => {
       .values({ nom: 'Zéli Tag Test', collectiviteId: collectivite.id })
       .returning();
     tag1Id = t1.id;
-    tag2Id = t2.id;
+    _tag2Id = t2.id;
     tag3Id = t3.id;
     tag4Id = t4.id;
 
@@ -127,8 +128,16 @@ describe('Test PersonneTagService', () => {
 
     // Ajoute des tags à l'invitation (tag1 et tag3)
     await databaseService.db.insert(invitationPersonneTagTable).values([
-      { tagId: tag1Id, invitationId: invitationAdded.id, tagNom: 'Lou Piote Test' },
-      { tagId: tag3Id, invitationId: invitationAdded.id, tagNom: 'Harry Cot Test' },
+      {
+        tagId: tag1Id,
+        invitationId: invitationAdded.id,
+        tagNom: 'Lou Piote Test',
+      },
+      {
+        tagId: tag3Id,
+        invitationId: invitationAdded.id,
+        tagNom: 'Harry Cot Test',
+      },
     ]);
 
     // Récupère les personne_tag de la collectivité

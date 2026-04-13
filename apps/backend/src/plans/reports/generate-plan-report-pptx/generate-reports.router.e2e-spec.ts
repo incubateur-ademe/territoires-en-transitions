@@ -35,7 +35,7 @@ describe('generate-reports.router.e2e-spec.ts', () => {
     });
     adminUser = getAuthUserFromUserCredentials(adminResult.user);
     adminToken = await getAuthToken({
-      email: adminResult.user.email!,
+      email: adminResult.user.email ?? '',
       password: adminResult.user.password,
     });
 

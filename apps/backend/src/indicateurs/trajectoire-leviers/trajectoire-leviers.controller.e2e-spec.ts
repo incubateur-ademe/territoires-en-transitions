@@ -13,7 +13,7 @@ describe('Trajectoire Leviers Controller', () => {
     const db = await getTestDatabase(app);
     const testUserResult = await addTestUser(db);
     authToken = await getAuthToken({
-      email: testUserResult.user.email!,
+      email: testUserResult.user.email ?? '',
       password: testUserResult.user.password,
     });
   });

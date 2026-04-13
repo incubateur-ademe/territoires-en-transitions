@@ -1,13 +1,6 @@
 import { INestApplication } from '@nestjs/common';
-import {
-  getAuthToken,
-  getTestApp,
-  getTestDatabase,
-} from '@tet/backend/test';
-import {
-  addTestUser,
-  setUserCollectiviteRole,
-} from '@tet/backend/users/users/users.test-fixture';
+import { getAuthToken, getTestApp, getTestDatabase } from '@tet/backend/test';
+import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { CollectiviteRole } from '@tet/domain/users';
 import { eq } from 'drizzle-orm';
@@ -29,7 +22,7 @@ describe('Indicateurs', () => {
       role: CollectiviteRole.LECTURE,
     });
     authToken = await getAuthToken({
-      email: testUserResult.user.email!,
+      email: testUserResult.user.email ?? '',
       password: testUserResult.user.password,
     });
   });

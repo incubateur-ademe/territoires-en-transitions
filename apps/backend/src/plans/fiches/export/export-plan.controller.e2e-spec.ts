@@ -22,7 +22,7 @@ describe('Export plan', () => {
       role: CollectiviteRole.ADMIN,
     });
     authToken = await getAuthToken({
-      email: testUserResult.user.email!,
+      email: testUserResult.user.email ?? '',
       password: testUserResult.user.password,
     });
   });
