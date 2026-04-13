@@ -110,10 +110,17 @@ export class ReferentielScoresPom {
     await this.page.getByRole('button', { name: axeName }).click();
   }
 
-  async goToActionPage(axe: string, sousAxe: string | null, action: string) {
-    await this.expandAxe(axe);
-    if (sousAxe) {
-      await this.expandAxe(sousAxe);
+  async goToActionPage(
+    axe: string,
+    sousAxe: string | null,
+    action: string,
+    doNotExpandAxes?: boolean
+  ) {
+    if (!doNotExpandAxes) {
+      await this.expandAxe(axe);
+      if (sousAxe) {
+        await this.expandAxe(sousAxe);
+      }
     }
     await this.getActionCardLocator(action).click();
     await expect(
