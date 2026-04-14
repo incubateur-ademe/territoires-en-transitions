@@ -29,7 +29,7 @@ export const TabsWrapper = ({ children }: PropsWithChildren) => {
         )}
       </TabsList>
 
-      <TabsPanel className="mt-8">{children}</TabsPanel>
+      <TabsPanel className="mt-4">{children}</TabsPanel>
     </Tabs>
   );
 };
