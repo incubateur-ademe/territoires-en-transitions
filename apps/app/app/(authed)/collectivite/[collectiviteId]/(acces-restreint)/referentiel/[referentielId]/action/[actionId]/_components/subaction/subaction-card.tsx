@@ -1,4 +1,3 @@
-import { appLabels } from '@/app/labels/catalog';
 import { useActionId } from '@/app/referentiels/actions/action-context';
 import { useHideAction } from '@/app/referentiels/actions/action-statut/use-hide-action';
 import SubActionDescription from '@/app/referentiels/actions/sub-action/sub-action.description';
@@ -8,11 +7,11 @@ import {
 } from '@/app/referentiels/actions/use-list-actions';
 import { useSubActionPreuvesCount } from '@/app/referentiels/preuves/use-action-preuves-count';
 import { useStickyHeaderHeight } from '@/app/ui/layout/HeaderSticky';
-import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { AccordionControlled, cn } from '@tet/ui';
 import { ActionJustificationField } from '../action/action.justification-field';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
-import { useActionSidePanel } from '../side-panel/context';
+import { SidePanelButton } from '../side-panel/buttons';
 import TaskCardsList from '../task/task.cards-list';
 import SubactionCardActions from './subaction-card.actions';
 import { SubactionCardHeader } from './subaction-card.header';
@@ -33,8 +32,12 @@ const SubactionHeader = ({
     pageRootActionId,
     subAction.actionId
   );
-  const isVisitor = useIsVisitor();
-  const { togglePanel, isActive } = useActionSidePanel();
+
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const canReadComments = hasCollectivitePermission(
+    'referentiels.discussions.read'
+  );
+
   const stickyHeaderHeight = useStickyHeaderHeight();
 
   return (
@@ -55,21 +58,19 @@ const SubactionHeader = ({
         isExpanded={isExpanded}
         toggleExpand={toggleExpand}
         actions={[
-          <OpenPanelButton
+          <SidePanelButton
             key="documents"
-            label={appLabels.document({ count: preuvesCount })}
-            onClick={() => togglePanel('documents', subAction.actionId)}
-            isActive={isActive('documents', subAction.actionId)}
+            panelId="documents"
+            count={preuvesCount}
+            targetActionId={subAction.actionId}
           />,
-          ...(!isVisitor
+          ...(canReadComments
             ? [
-                <OpenPanelButton
+                <SidePanelButton
                   key="comments"
-                  label={appLabels.commentaires({
-                    count: commentsCount ?? 0,
-                  })}
-                  onClick={() => togglePanel('comments', subAction.actionId)}
-                  isActive={isActive('comments', subAction.actionId)}
+                  panelId="comments"
+                  count={commentsCount}
+                  targetActionId={subAction.actionId}
                 />,
               ]
             : []),
