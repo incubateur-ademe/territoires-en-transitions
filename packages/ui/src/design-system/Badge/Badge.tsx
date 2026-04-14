@@ -84,6 +84,7 @@ export const Badge = forwardRef<HTMLDivElement, BadgeProps>(
           {
             'flex-row-reverse': iconPosition === 'left',
             'px-1.5 py-0.5': size === 'xs',
+            'px-2 py-1': size === 'sm',
           },
           className
         )}
@@ -98,7 +99,7 @@ export const Badge = forwardRef<HTMLDivElement, BadgeProps>(
                   {
                     'line-clamp-1': trim,
                     'text-xs': size === 'xs',
-                    'mt-0.5 text-sm': size === 'sm',
+                    'text-sm': size === 'sm',
                     uppercase,
                   }
                 )}
