@@ -5,6 +5,7 @@ import { questionThematiqueTable } from '@tet/backend/collectivites/personnalisa
 import { questionTable } from '@tet/backend/collectivites/personnalisations/models/question.table';
 import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
 import { collectiviteTable } from '@tet/backend/collectivites/shared/models/collectivite.table';
+import { GetReferentielDefinitionService } from '@tet/backend/referentiels/definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { actionRelationTable } from '@tet/backend/referentiels/models/action-relation.table';
 import { questionActionTable } from '@tet/backend/referentiels/models/question-action.table';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
@@ -20,7 +21,13 @@ import {
   QuestionChoix,
   QuestionWithChoices,
 } from '@tet/domain/collectivites';
-import { ReferentielId } from '@tet/domain/referentiels';
+import type { ActionType } from '@tet/domain/referentiels';
+import {
+  getReferentielIdFromActionId,
+  ReferentielException,
+  ReferentielId,
+  rollUpActionIdToActionLevel,
+} from '@tet/domain/referentiels';
 import { and, eq, exists, inArray, isNull, or, SQL, sql } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
 import { CollectivitePreferencesService } from '../../collectivite-preferences/collectivite-preferences.service';
@@ -46,7 +53,8 @@ export default class ListPersonnalisationQuestionsService {
     private readonly collectivitesService: CollectivitesService,
     private readonly collectivitePreferencesService: CollectivitePreferencesService,
     private readonly listPersonnalisationReponsesService: ListPersonnalisationReponsesService,
-    private readonly trackingService: TrackingService
+    private readonly trackingService: TrackingService,
+    private readonly getReferentielDefinitionService: GetReferentielDefinitionService
   ) {}
 
   /**
@@ -351,10 +359,22 @@ export default class ListPersonnalisationQuestionsService {
     const queryWithConditions =
       conditions.length > 0 ? baseQuery.where(and(...conditions)) : baseQuery;
 
-    let questions = await queryWithConditions.orderBy(
+    let questions = (await queryWithConditions.orderBy(
       questionTable.ordonnancement,
       questionTable.id
-    );
+    )) as QuestionWithChoices[];
+
+    const hierarchiesByReferentielId =
+      await this.getReferentielDefinitionService.getHierarchiesByReferentielIds(
+        enabledReferentiels
+      );
+    questions = questions.map((q) => ({
+      ...q,
+      actionIds: this.rollUpQuestionActionIds(
+        q.actionIds,
+        hierarchiesByReferentielId
+      ),
+    }));
 
     if (collectiviteId !== undefined) {
       const [reponses, identiteCollectivite] = await Promise.all([
@@ -412,8 +432,8 @@ export default class ListPersonnalisationQuestionsService {
       .select({
         questionId: questionActionTable.questionId,
         actionIds: sql<string[]>`array_agg(
-            distinct ${questionActionTable.actionId}
-            order by ${questionActionTable.actionId}
+            distinct ${actionRelationTable.id}
+            order by ${actionRelationTable.id}
           )::text[]`.as('action_ids'),
         referentielIds: sql<string[]>`array_agg(
             distinct ${actionRelationTable.referentiel}
@@ -430,5 +450,39 @@ export default class ListPersonnalisationQuestionsService {
     return base
       .where(inArray(actionRelationTable.referentiel, enabledReferentiels))
       .as('actions');
+  }
+
+  private rollUpQuestionActionIds(
+    actionIds: string[] | null | undefined,
+    hierarchiesByReferentielId: ReadonlyMap<ReferentielId, ActionType[]>
+  ): string[] | null | undefined {
+    if (actionIds == null || actionIds.length === 0) {
+      return actionIds;
+    }
+
+    const roll = (actionId: string): string => {
+      try {
+        const referentielId = getReferentielIdFromActionId(actionId);
+        const hierarchie = hierarchiesByReferentielId.get(referentielId);
+        if (!hierarchie) {
+          return actionId;
+        }
+        return rollUpActionIdToActionLevel(actionId, hierarchie);
+      } catch (err) {
+        if (err instanceof ReferentielException) {
+          this.logger.warn(
+            `Roll-up vers le niveau mesure ignoré pour l'actionId « ${actionId} » (données référentiel ou lien question-action incohérent).`,
+            err
+          );
+          return actionId;
+        }
+        throw err;
+      }
+    };
+
+    const rolled = actionIds.map(roll);
+    return [...new Set(rolled)].sort((a, b) =>
+      a.localeCompare(b, undefined, { numeric: true })
+    );
   }
 }

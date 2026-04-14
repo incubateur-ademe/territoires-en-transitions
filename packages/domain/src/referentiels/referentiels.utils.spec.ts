@@ -3,6 +3,7 @@ import {
   getActionTypeFromActionId,
   getLevelFromActionId,
   normalizeIdentifiantReferentiel,
+  rollUpActionIdToActionLevel,
 } from './referentiel.utils';
 
 describe('getLevelFromActionId', () => {
@@ -73,6 +74,52 @@ describe('getActionTypeFromActionId', () => {
     ).toThrow(
       'Action level 6 non consistent with referentiel action types: referentiel,axe,sous-axe,action,sous-action,tache'
     );
+  });
+});
+
+const hierarchieAvecAction = [
+  ActionTypeEnum.REFERENTIEL,
+  ActionTypeEnum.AXE,
+  ActionTypeEnum.SOUS_AXE,
+  ActionTypeEnum.ACTION,
+  ActionTypeEnum.SOUS_ACTION,
+  ActionTypeEnum.TACHE,
+] as const;
+
+describe('rollUpActionIdToActionLevel', () => {
+  test('remonte une tâche vers le nœud action', () => {
+    expect(
+      rollUpActionIdToActionLevel('cae_5.1.4.4.1', [...hierarchieAvecAction])
+    ).toEqual('cae_5.1.4');
+  });
+
+  test('remonte une sous-action vers le nœud action', () => {
+    expect(
+      rollUpActionIdToActionLevel('cae_5.1.4.4', [...hierarchieAvecAction])
+    ).toEqual('cae_5.1.4');
+  });
+
+  test('laisse inchangé un nœud déjà au niveau action', () => {
+    expect(
+      rollUpActionIdToActionLevel('cae_5.1.4', [...hierarchieAvecAction])
+    ).toEqual('cae_5.1.4');
+  });
+
+  test('laisse inchangé un niveau moins profond que action (axe)', () => {
+    expect(
+      rollUpActionIdToActionLevel('cae_5', [...hierarchieAvecAction])
+    ).toEqual('cae_5');
+  });
+
+  test('sans type action dans la hiérarchie, ne modifie pas', () => {
+    const sansAction = [
+      ActionTypeEnum.REFERENTIEL,
+      ActionTypeEnum.AXE,
+      ActionTypeEnum.SOUS_AXE,
+    ];
+    expect(
+      rollUpActionIdToActionLevel('cae_5.1.4.4.1', sansAction)
+    ).toEqual('cae_5.1.4.4.1');
   });
 });
 

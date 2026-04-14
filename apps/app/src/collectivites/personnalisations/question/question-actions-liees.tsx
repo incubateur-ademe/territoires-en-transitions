@@ -1,4 +1,4 @@
-import { makeReferentielTacheUrl } from '@/app/app/paths';
+import { makeReferentielActionUrl } from '@/app/app/paths';
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -52,7 +52,7 @@ const ActionsLiees = ({
     <div className="flex flex-col gap-2 pl-8 font-medium">
       {actions?.map((action) => {
         const { actionId, referentiel, identifiant, nom, score } = action;
-        const url = makeReferentielTacheUrl({
+        const url = makeReferentielActionUrl({
           collectiviteId,
           actionId,
           referentielId: referentiel,
