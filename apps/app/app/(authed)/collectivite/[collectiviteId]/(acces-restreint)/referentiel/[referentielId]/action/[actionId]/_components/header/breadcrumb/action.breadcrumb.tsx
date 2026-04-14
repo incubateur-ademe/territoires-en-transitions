@@ -31,7 +31,7 @@ export const ActionBreadcrumb = ({ action }: { action: ActionListItem }) => {
       <Breadcrumbs
         size="sm"
         enableLastElementClick
-        items={ancestors.map((parent, index) => {
+        items={ancestors.reverse().map((parent, index) => {
           if (parent.actionType === ActionTypeEnum.REFERENTIEL) {
             return {
               label: parent.nom,
