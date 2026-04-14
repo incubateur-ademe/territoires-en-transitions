@@ -1,7 +1,7 @@
 'use client';
 
-import { Icon, IconValue } from '@tet/ui';
-import { cn } from '@tet/ui/utils/cn';
+import { ActionId } from '@tet/domain/referentiels';
+import { Button, ButtonSize, ButtonVariant, cn, IconValue } from '@tet/ui';
 import { ReactNode } from 'react';
 import { LabelKey, pluralizeLabel } from '../pluralize';
 import { useActionSidePanel } from './context';
@@ -22,30 +22,38 @@ const PANEL_CONFIG: Record<
 export function SidePanelButton({
   panelId,
   count,
+  variant = 'grey',
+  size = 'xs',
+  targetActionId,
 }: {
   panelId: ActionPanelId;
   count?: number;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  targetActionId?: ActionId;
 }): ReactNode {
   const { togglePanel, isActive } = useActionSidePanel();
   const { icon, label } = PANEL_CONFIG[panelId];
-  const active = isActive(panelId);
+  const active = isActive(panelId, targetActionId);
   const displayLabel = pluralizeLabel(count, label);
   const displayText =
     count !== undefined ? `${count} ${displayLabel}` : displayLabel;
 
   return (
-    <button
-      type="button"
+    <Button
+      variant={variant}
+      size={size}
+      icon={icon}
+      onClick={() => togglePanel(panelId, targetActionId)}
       aria-pressed={active}
-      onClick={() => togglePanel(panelId)}
       className={cn(
-        'flex items-center gap-1 text-sm leading-6 font-normal cursor-pointer rounded-md px-2 py-1 -mx-2 -my-1',
-        'text-primary-9 hover:bg-grey-3',
-        active && 'font-bold'
+        // TODO à gérer nativement dans le composant Button en fonction du variant
+        active
+          ? 'bg-primary-9 hover:!bg-primary-9 text-white hover:!text-white'
+          : 'text-grey-8 border-grey-4'
       )}
     >
-      <Icon icon={icon} size="sm" />
       {displayText}
-    </button>
+    </Button>
   );
 }
