@@ -1,8 +1,9 @@
 import { HistoriqueListe } from '@/app/app/pages/collectivite/Historique/HistoriqueListe';
 import { FichesActionLiees } from '@/app/referentiels/action.show/FichesActionLiees';
 import { ActionProvider } from '@/app/referentiels/actions/action-context';
+import { useGetAction } from '@/app/referentiels/actions/use-get-action';
+import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ReferentielProvider } from '@/app/referentiels/referentiel-context';
-import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { ReactNode } from 'react';
 import { CommentsPanelContent } from './comments';
@@ -14,30 +15,30 @@ import { ActionPanelId } from './types';
 export function SidePanelInnerContent({
   panelId,
   targetActionId,
-  actionId,
   referentielId,
-  actionDefinition,
-  actionDescendants,
+  action,
   setTitle,
 }: {
   panelId: ActionPanelId;
   targetActionId?: string;
-  actionId: string;
   referentielId: ReferentielId;
-  actionDefinition?: ActionDefinitionSummary;
-  actionDescendants: ActionDefinitionSummary[];
+  action: ActionListItem;
   setTitle: (title: string) => void;
 }): ReactNode {
+  const actionId = action.actionId;
+
+  const targetAction = useGetAction({
+    actionId: targetActionId ?? action.actionId,
+  });
+
   switch (panelId) {
     case 'comments': {
-      const commentActionId = targetActionId ?? actionId;
+      const commentAction = targetAction ?? action;
       return (
         <ReferentielProvider referentielId={referentielId}>
-          <ActionProvider actionId={commentActionId}>
+          <ActionProvider actionId={commentAction.actionId}>
             <CommentsPanelContent
-              referentielId={referentielId}
-              parentActionId={actionId}
-              actionId={commentActionId}
+              action={commentAction}
               updateTitlePanel={setTitle}
             />
           </ActionProvider>
@@ -45,12 +46,9 @@ export function SidePanelInnerContent({
       );
     }
     case 'documents': {
-      const targetDefinition = targetActionId
-        ? actionDescendants.find((a) => a.id === targetActionId)
-        : actionDefinition;
-      return targetDefinition ? (
+      return targetAction ? (
         <DocumentsPanelContent
-          actionDefinition={targetDefinition}
+          action={targetAction}
           subActionId={targetActionId}
         />
       ) : null;
@@ -68,8 +66,6 @@ export function SidePanelInnerContent({
     case 'historique':
       return <HistoriqueListe actionId={actionId} small />;
     case 'informations':
-      return actionDefinition ? (
-        <InformationsPanelContent actionDefinition={actionDefinition} />
-      ) : null;
+      return action ? <InformationsPanelContent action={action} /> : null;
   }
 }

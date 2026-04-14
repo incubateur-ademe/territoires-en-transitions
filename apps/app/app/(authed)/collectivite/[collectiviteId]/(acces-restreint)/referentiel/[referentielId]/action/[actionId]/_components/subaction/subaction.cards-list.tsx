@@ -85,7 +85,11 @@ export const SubActionCardsList = ({
                       isExpanded={isExpanded(subAction.actionId)}
                       onToggleExpanded={() => toggle(subAction.actionId)}
                       showJustifications={showJustifications}
-                      commentsCount={discussions.length}
+                      commentsCount={
+                        discussions.filter((d) =>
+                          d.actionId.startsWith(subAction.actionId)
+                        ).length
+                      }
                     />
                   ))}
                 </div>
