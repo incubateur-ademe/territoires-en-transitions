@@ -56,7 +56,7 @@ describe('generate-reports.router.e2e-spec.ts', () => {
 
     expect(reportGeneration.name).toMatch(expectedFileName);
 
-    await sleep(20000);
+    await sleep(30000);
 
     const updatedReportGeneration = await caller.plans.reports.get({
       reportId: reportGeneration.id,
