@@ -13,6 +13,7 @@ import { PersonnalisationsRouter } from '@tet/backend/collectivites/personnalisa
 import { SetPersonnalisationReponseRepository } from '@tet/backend/collectivites/personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.repository';
 import { SetPersonnalisationReponseRouter } from '@tet/backend/collectivites/personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.router';
 import { SetPersonnalisationReponseService } from '@tet/backend/collectivites/personnalisations/set-personnalisation-reponse/set-personnalisation-reponse.service';
+import { ReferentielsCoreModule } from '@tet/backend/referentiels/referentiels-core.module';
 import { SheetModule } from '@tet/backend/utils/google-sheets/sheet.module';
 import { TrackingModule } from '@tet/backend/utils/tracking/tracking.module';
 import { TransactionModule } from '@tet/backend/utils/transaction/transaction.module';
@@ -24,6 +25,7 @@ import PersonnalisationsService from './services/personnalisations-service';
 @Module({
   imports: [
     CollectivitesCoreModule,
+    ReferentielsCoreModule,
     UsersModule,
     SheetModule,
     TransactionModule,

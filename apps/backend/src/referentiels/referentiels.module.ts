@@ -15,8 +15,8 @@ import { PersonnalisationsModule } from '../collectivites/personnalisations/pers
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import ScoresService from './compute-score/scores.service';
 import { GetReferentielDefinitionRouter } from './definitions/get-referentiel-definition/get-referentiel-definition.router';
-import { GetReferentielDefinitionService } from './definitions/get-referentiel-definition/get-referentiel-definition.service';
 import { GetReferentielController } from './definitions/get-referentiel-definition/get-referentiel.controller';
+import { ReferentielsCoreModule } from './referentiels-core.module';
 import { ExportScoreComparisonController } from './export-score/export-score-comparison.controller';
 import { ExportScoreComparisonService } from './export-score/export-score-comparison.service';
 import { GetReferentielService } from './get-referentiel/get-referentiel.service';
@@ -64,11 +64,11 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     PersonnalisationsModule,
     IndicateursModule,
     FichesModule,
+    ReferentielsCoreModule,
   ],
   providers: [
     ActionStatutHistoryService,
     GetReferentielService,
-    GetReferentielDefinitionService,
     GetReferentielDefinitionRouter,
     ImportReferentielRepository,
     ImportReferentielService,
