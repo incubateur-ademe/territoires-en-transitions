@@ -1,3 +1,5 @@
+import { ACTION_TYPE_LABELS } from '@/app/referentiels/actions/action-label.constants';
+import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Alert, Button } from '@tet/ui';
 import { useState } from 'react';
@@ -5,14 +7,11 @@ import { ScoreIndicatifModal } from '../score-indicatif/score-indicatif.modal';
 import { useGetScoreIndicatif } from '../score-indicatif/use-get-score-indicatif';
 
 type Props = {
-  actionId: string;
-  haveScoreIndicatif?: boolean;
+  action: Pick<ActionDefinitionSummary, 'type' | 'id' | 'haveScoreIndicatif'>;
 };
 
-const SubactionCardActions = ({
-  actionId,
-  haveScoreIndicatif = false,
-}: Props) => {
+const SubactionCardActions = ({ action }: Props) => {
+  const { id: actionId, type, haveScoreIndicatif } = action;
   const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
 
   const { hasCollectivitePermission } = useCurrentCollectivite();
@@ -53,7 +52,7 @@ const SubactionCardActions = ({
           ) : (
             <Alert
               className="w-full"
-              title={`Cette tâche nécessite des données ${
+              title={`Cette ${ACTION_TYPE_LABELS[type]} nécessite des données ${
                 nbIndicateurs > 1 ? "d'indicateurs" : "d'un indicateur"
               } pour le calcul du score.`}
               state="info"
