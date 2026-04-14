@@ -21,6 +21,7 @@ import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-
 import { sousThematiqueTable } from '@tet/backend/shared/thematiques/sous-thematique.table';
 import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
 import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
+import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -42,9 +43,11 @@ import { uniq } from 'es-toolkit';
 import { createFiche, createFiches } from '../fiches.test-fixture';
 
 let router: TrpcRouter;
-let yoloDodo: AuthenticatedUser;
+let testUser: AuthenticatedUser;
+let testUserId: string;
 let otherUserId: string;
 let db: DatabaseService;
+let personneTagId1: number;
 
 // Collectivité seed pour les tests qui dépendent des données seed
 const COLLECTIVITE_ID = 1;
@@ -60,8 +63,16 @@ beforeAll(async () => {
   const { collectivite } = await addTestCollectivite(db);
   testCollectiviteId = collectivite.id;
 
+  // Personne tags sur la collectivité isolée (pour les tests pilotes/referents)
+  const [pt1] = await db.db
+    .insert(personneTagTable)
+    .values([{ nom: 'Pilote Test 1', collectiviteId: testCollectiviteId }])
+    .returning();
+  personneTagId1 = pt1.id;
+
   const testUserResult = await addTestUser(db);
-  yoloDodo = getAuthUserFromUserCredentials(testUserResult.user);
+  testUser = getAuthUserFromUserCredentials(testUserResult.user);
+  testUserId = testUserResult.user.id;
   // Accès admin sur la collectivité seed (pour les tests qui en dépendent)
   await setUserCollectiviteRole(db, {
     userId: testUserResult.user.id,
@@ -92,7 +103,7 @@ beforeAll(async () => {
 
 describe('Filtres sur les fiches actions', () => {
   test('Fetch sans filtre retourne des fiches uniques', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const { data: fiches } = await caller.plans.fiches.listFiches({
       collectiviteId: COLLECTIVITE_ID,
@@ -111,7 +122,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Order by title en natural sort including NULL values', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     // insert des fiches avec des titres différents contenant une numérotation
     const { ficheIds } = await withOnTestFinished(createFiches)({
@@ -203,7 +214,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur une personne', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const { data: fiches } = await caller.plans.fiches.listFiches({
       collectiviteId: COLLECTIVITE_ID,
@@ -226,12 +237,12 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur un utilisateur', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const { data: fiches } = await caller.plans.fiches.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
-        utilisateurPiloteIds: [yoloDodo.id],
+        utilisateurPiloteIds: [testUser.id],
       },
     });
 
@@ -243,7 +254,7 @@ describe('Filtres sur les fiches actions', () => {
       expect(fiche).toMatchObject({
         pilotes: expect.arrayContaining([
           expect.objectContaining({
-            userId: yoloDodo.id,
+            userId: testUser.id,
             nom: 'Yolo Dodo',
             tagId: null,
           }),
@@ -253,12 +264,12 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur un utilisateur et sur personne. Le filtre doit être un OU.', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const { data: fiches } = await caller.plans.fiches.listFiches({
       collectiviteId: COLLECTIVITE_ID,
       filters: {
-        utilisateurPiloteIds: [yoloDodo.id],
+        utilisateurPiloteIds: [testUser.id],
         personnePiloteIds: [1],
       },
     });
@@ -275,23 +286,43 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec tableaux vides dans les filtres pilotes doit être équivalent à aucun filtre', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
-    // Récupérer toutes les fiches sans filtre
-    const { data: fichesWithoutFilter } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
-      filters: {},
+    // Créer des fiches isolées avec des pilotes pour éviter les interférences parallèles
+    const { ficheIds } = await withOnTestFinished(createFiches)({
+      caller,
+      ficheInputs: [
+        {
+          collectiviteId: testCollectiviteId,
+          titre: 'Fiche pilote tag test',
+          pilotes: [{ tagId: personneTagId1 }],
+        },
+        {
+          collectiviteId: testCollectiviteId,
+          titre: 'Fiche pilote user test',
+          pilotes: [{ userId: testUserId }],
+        },
+        {
+          collectiviteId: testCollectiviteId,
+          titre: 'Fiche sans pilote test',
+        },
+      ],
     });
 
-    if (!fichesWithoutFilter) {
-      expect.fail();
-    }
+    // Récupérer les fiches de test sans filtre
+    const { data: fichesWithoutFilter } = await caller.plans.fiches.listFiches({
+      collectiviteId: testCollectiviteId,
+      filters: { ficheIds },
+    });
+
+    expect(fichesWithoutFilter.length).toBe(3);
 
     // Récupérer les fiches avec des tableaux vides pour personnePiloteIds
     const { data: fichesWithEmptyPersonnePiloteIds } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
+          ficheIds,
           personnePiloteIds: [],
         },
       });
@@ -299,8 +330,9 @@ describe('Filtres sur les fiches actions', () => {
     // Récupérer les fiches avec des tableaux vides pour utilisateurPiloteIds
     const { data: fichesWithEmptyUtilisateurPiloteIds } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
+          ficheIds,
           utilisateurPiloteIds: [],
         },
       });
@@ -308,8 +340,9 @@ describe('Filtres sur les fiches actions', () => {
     // Récupérer les fiches avec les deux tableaux vides
     const { data: fichesWithBothEmptyArrays } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
+          ficheIds,
           personnePiloteIds: [],
           utilisateurPiloteIds: [],
         },
@@ -324,7 +357,7 @@ describe('Filtres sur les fiches actions', () => {
     );
     expect(fichesWithBothEmptyArrays?.length).toBe(fichesWithoutFilter.length);
 
-    // Vérifier que les IDs sont les mêmes (dans le même ordre)
+    // Vérifier que les IDs sont les mêmes
     const idsWithoutFilter = fichesWithoutFilter.map((f) => f.id).sort();
     const idsWithEmptyPersonne = fichesWithEmptyPersonnePiloteIds
       ?.map((f) => f.id)
@@ -340,7 +373,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur un service', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const { data: fiches } = await caller.plans.fiches.listFiches({
       collectiviteId: COLLECTIVITE_ID,
@@ -363,7 +396,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur un plan', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const { data: fiches } = await caller.plans.fiches.listFiches({
       collectiviteId: COLLECTIVITE_ID,
@@ -387,7 +420,7 @@ describe('Filtres sur les fiches actions', () => {
 
   test('Fetch avec filtre sur une mesure du referentiel associée', async () => {
     // Test avec une action associée à plusieurs fiches
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const { data: fichesWithAction } = await caller.plans.fiches.listFiches({
       collectiviteId: COLLECTIVITE_ID,
@@ -439,7 +472,7 @@ describe('Filtres sur les fiches actions', () => {
         .where(eq(ficheActionTable.id, testFicheId));
     });
 
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     // Cette nouvelle fiche n'est liée à aucune autre fiche
 
@@ -477,7 +510,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur un statut', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
     await Promise.all([
       createFiche({
         caller,
@@ -525,7 +558,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur la date de modification', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const { data: fiches } = await caller.plans.fiches.listFiches({
       collectiviteId: COLLECTIVITE_ID,
@@ -560,7 +593,7 @@ describe('Filtres sur les fiches actions', () => {
           .where(eq(ficheActionTable.id, testFicheId));
       });
 
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = router.createCaller({ user: testUser });
 
       const { data: ficheWithAmeliorationContinue } =
         await caller.plans.fiches.listFiches({
@@ -591,7 +624,7 @@ describe('Filtres sur les fiches actions', () => {
 
   describe('Filtres booléens', () => {
     test("Fetch avec filtre sur le fait d'avoir au moins une mesure liée", async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = router.createCaller({ user: testUser });
 
       const [fiche] = await db.db
         .insert(ficheActionTable)
@@ -635,7 +668,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     test("Fetch avec filtre sur le fait d'avoir au moins un indicateur lié", async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = router.createCaller({ user: testUser });
 
       const [fiche] = await db.db
         .insert(ficheActionTable)
@@ -687,7 +720,7 @@ describe('Filtres sur les fiches actions', () => {
 
   describe('Filtres sur absences', () => {
     test('Fetch avec filtre sur aucun pilote', async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = router.createCaller({ user: testUser });
 
       const [fiche] = await db.db
         .insert(ficheActionTable)
@@ -723,7 +756,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     test('Fetch avec filtre sur aucun service pilote', async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = router.createCaller({ user: testUser });
 
       const [fiche] = await db.db
         .insert(ficheActionTable)
@@ -759,7 +792,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     test('Fetch avec filtre sur aucun statut', async () => {
-      const caller = router.createCaller({ user: yoloDodo });
+      const caller = router.createCaller({ user: testUser });
 
       const [fiche] = await db.db
         .insert(ficheActionTable)
@@ -816,7 +849,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur budget prévisionnel', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const [fiche] = await db.db
       .insert(ficheActionTable)
@@ -853,7 +886,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur date de fin prévisionnelle', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const [fiche] = await db.db
       .insert(ficheActionTable)
@@ -886,7 +919,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur fiche restreinte', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const [fiche] = await db.db
       .insert(ficheActionTable)
@@ -924,7 +957,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur fiche mutualisée', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const [fiche] = await db.db
       .insert(ficheActionTable)
@@ -982,7 +1015,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur aucune priorité', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const [fiche] = await db.db
       .insert(ficheActionTable)
@@ -1021,7 +1054,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur aucune note', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const [fiche] = await db.db
       .insert(ficheActionTable)
@@ -1057,7 +1090,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur ficheIds spécifiques', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const [fiche1, fiche2] = await db.db
       .insert(ficheActionTable)
@@ -1099,7 +1132,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur partenaireIds', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     // Create a partenaire tag
     const [partenaireTag] = await db.db
@@ -1174,7 +1207,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur financeurIds', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     // Create a financeur tag
     const [financeurTag] = await db.db
@@ -1248,7 +1281,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur thematiqueIds', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     // Create a thematique
     const [thematique] = await db.db
@@ -1318,7 +1351,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur sousThematiqueIds', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     // Create a thematique first
     const [thematique] = await db.db
@@ -1403,7 +1436,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur libreTagsIds', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     // Create a libre tag
     const [libreTag] = await db.db
@@ -1472,7 +1505,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur aucune personne référente', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     const [personneTag] = await db.db
       .insert(personneTagTable)
@@ -1538,7 +1571,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur personne référente', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     // Create a personne tag
     const [personneTag] = await db.db
@@ -1616,7 +1649,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur utilisateur référent', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
 
     // Create a fiche
     const [fiche] = await db.db
@@ -1630,7 +1663,7 @@ describe('Filtres sur les fiches actions', () => {
     // Link fiche to user référent
     await db.db.insert(ficheActionReferentTable).values({
       ficheId: testFicheId,
-      userId: yoloDodo.id,
+      userId: testUser.id,
     });
 
     onTestFinished(async () => {
@@ -1646,7 +1679,7 @@ describe('Filtres sur les fiches actions', () => {
       await caller.plans.fiches.listFiches({
         collectiviteId: testCollectiviteId,
         filters: {
-          utilisateurReferentIds: [yoloDodo.id],
+          utilisateurReferentIds: [testUser.id],
         },
       });
 
@@ -1672,7 +1705,7 @@ describe('Filtres sur les fiches actions', () => {
   });
 
   test('Fetch avec filtre sur date de modification après', async () => {
-    const caller = router.createCaller({ user: yoloDodo });
+    const caller = router.createCaller({ user: testUser });
     const modifiedDate = new Date('2024-01-01T00:00:00Z');
 
     const [fiche] = await db.db
@@ -1721,7 +1754,7 @@ describe('Filtres sur les fiches actions', () => {
 
 test('Fetch avec filtre sur une action du referentiel associée', async () => {
   // Test avec une action associée à plusieurs fiches
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const { data: fichesWithAction } = await caller.plans.fiches.listFiches({
     collectiviteId: COLLECTIVITE_ID,
@@ -1766,7 +1799,7 @@ test('Fetch avec filtre sur une fiche liée', async () => {
       .where(eq(ficheActionLienTable.ficheUne, 5));
   });
 
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   // Test avec une fiche associée à plusieurs fiches
   const { data: fichesWithFiche } = await caller.plans.fiches.listFiches({
@@ -1812,7 +1845,7 @@ test('Fetch avec filtre sur une fiche liée', async () => {
 });
 
 test('Fetch avec filtre sur un indicateur lié', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const { data: noFichesWithInexistingIndicateur } =
     await caller.plans.fiches.listFiches({
@@ -1852,7 +1885,7 @@ test('Fetch avec filtre sur un indicateur lié', async () => {
 });
 
 test('Fetch avec filtre sur un statut', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
   const { data: emptyData } = await caller.plans.fiches.listFiches({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
@@ -1878,7 +1911,7 @@ test('Fetch avec filtre sur un statut', async () => {
 });
 
 test('Fetch avec filtre sur la date de modification', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const { data: fiches } = await caller.plans.fiches.listFiches({
     collectiviteId: COLLECTIVITE_ID,
@@ -1891,7 +1924,7 @@ test('Fetch avec filtre sur la date de modification', async () => {
 });
 
 test('Fetch avec filtre sur aucun plan', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const { data: initialWithoutData } = await caller.plans.fiches.listFiches({
     collectiviteId: COLLECTIVITE_ID,
@@ -1942,7 +1975,7 @@ test('Fetch avec filtre sur aucun plan', async () => {
 });
 
 test('Fetch avec filtre les plansIds', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const { data: withPlan } = await caller.plans.fiches.listFiches({
     collectiviteId: COLLECTIVITE_ID,
@@ -1983,7 +2016,7 @@ test('Fetch avec filtre les plansIds', async () => {
 });
 
 test('Fetch avec noPlan false et planActionIds ne retourne que les fiches du plan sélectionné', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [ficheA, ficheB] = await db.db
     .insert(ficheActionTable)
@@ -2044,7 +2077,7 @@ test('Fetch avec noPlan false et planActionIds ne retourne que les fiches du pla
 });
 
 test('Fetch avec selectAll retourne tous les IDs correspondant aux filtres', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   // Récupérer toutes les fiches sans pagination pour avoir la référence
   const { data: fichesFromSimpleSelect } = await caller.plans.fiches.listFiches(
@@ -2077,7 +2110,7 @@ test('Fetch avec selectAll retourne tous les IDs correspondant aux filtres', asy
 });
 
 test('Fetch avec filtre sur les années de notes', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   // Créer une fiche de test
   const [fiche] = await db.db
@@ -2096,8 +2129,8 @@ test('Fetch avec filtre sur les années de notes', async () => {
       ficheId: testFicheId,
       dateNote: '2023-01-01T00:00:00Z',
       note: 'Note 2023',
-      createdBy: yoloDodo.id,
-      modifiedBy: yoloDodo.id,
+      createdBy: testUser.id,
+      modifiedBy: testUser.id,
       createdAt: now.toISOString(),
       modifiedAt: now.toISOString(),
     },
@@ -2105,8 +2138,8 @@ test('Fetch avec filtre sur les années de notes', async () => {
       ficheId: testFicheId,
       dateNote: '2024-01-01T00:00:00Z',
       note: 'Note 2024',
-      createdBy: yoloDodo.id,
-      modifiedBy: yoloDodo.id,
+      createdBy: testUser.id,
+      modifiedBy: testUser.id,
       createdAt: now.toISOString(),
       modifiedAt: now.toISOString(),
     },
@@ -2114,8 +2147,8 @@ test('Fetch avec filtre sur les années de notes', async () => {
       ficheId: testFicheId,
       dateNote: '2025-01-01T00:00:00Z',
       note: 'Note 2025',
-      createdBy: yoloDodo.id,
-      modifiedBy: yoloDodo.id,
+      createdBy: testUser.id,
+      modifiedBy: testUser.id,
       createdAt: now.toISOString(),
       modifiedAt: now.toISOString(),
     },
@@ -2178,7 +2211,7 @@ test('Fetch avec filtre sur les années de notes', async () => {
 });
 
 test('Fetch avec filtre sur priorites', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [fiche] = await db.db
     .insert(ficheActionTable)
@@ -2229,7 +2262,7 @@ test('Fetch avec filtre sur priorites', async () => {
 });
 
 test('Fetch avec filtre sur cibles', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [fiche] = await db.db
     .insert(ficheActionTable)
@@ -2281,7 +2314,7 @@ test('Fetch avec filtre sur cibles', async () => {
 });
 
 test('Fetch avec filtre sur aucune tag personnalisé', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [fiche] = await db.db
     .insert(ficheActionTable)
@@ -2357,7 +2390,7 @@ test('Fetch avec filtre sur aucune tag personnalisé', async () => {
 });
 
 test('Fetch avec filtre sur actions dans plusieurs plans', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [fiche] = await db.db
     .insert(ficheActionTable)
@@ -2438,7 +2471,7 @@ test('Fetch avec filtre sur actions dans plusieurs plans', async () => {
 });
 
 test('Fetch avec filtre sur structurePiloteIds', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
   // Create a structure tag
   const [structureTag] = await db.db
     .insert(structureTagTable)
@@ -2503,7 +2536,7 @@ test('Fetch avec filtre sur structurePiloteIds', async () => {
 });
 
 test('Fetch avec filtre sur debutPeriode et finPeriode', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [fiche] = await db.db
     .insert(ficheActionTable)
@@ -2552,7 +2585,7 @@ test('Fetch avec filtre sur debutPeriode et finPeriode', async () => {
 });
 
 test('Fetch sans filtre exclut les sous-fiches par défaut', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [parentFiche] = await db.db
     .insert(ficheActionTable)
@@ -2604,7 +2637,7 @@ test('Fetch sans filtre exclut les sous-fiches par défaut', async () => {
 });
 
 test('Fetch avec withChildren inclut les sous-fiches', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [parentFiche] = await db.db
     .insert(ficheActionTable)
@@ -2667,7 +2700,7 @@ test('Fetch avec withChildren inclut les sous-fiches', async () => {
 });
 
 test('Fetch avec parentsId retourne uniquement les sous-fiches des parents spécifiés', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [parentFiche1] = await db.db
     .insert(ficheActionTable)
@@ -2747,7 +2780,7 @@ test('Fetch avec parentsId retourne uniquement les sous-fiches des parents spéc
 });
 
 test('Fetch avec les filtres parentsId et withChildren génère une erreur', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [parentFiche] = await db.db
     .insert(ficheActionTable)
@@ -2789,7 +2822,7 @@ test('Fetch avec les filtres parentsId et withChildren génère une erreur', asy
 });
 
 test("Fetch avec parentsId combiné avec d'autres filtres", async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [parentFiche] = await db.db
     .insert(ficheActionTable)
@@ -2852,7 +2885,7 @@ test("Fetch avec parentsId combiné avec d'autres filtres", async () => {
 });
 
 test('Fetch avec onlyChildren liste toutes les sous-fiches mais exclut les fiches parentes', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const { ficheIds } = await withOnTestFinished(createFiches)({
     caller,
@@ -2928,7 +2961,7 @@ test('Fetch avec onlyChildren liste toutes les sous-fiches mais exclut les fiche
 });
 
 test('Fetch avec onlyChildren et parentsId liste uniquement les sous-fiches des parents spécifiés', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const { ficheIds } = await withOnTestFinished(createFiches)({
     caller,
@@ -3002,7 +3035,7 @@ test('Fetch avec onlyChildren et parentsId liste uniquement les sous-fiches des 
 });
 
 test('Fetch avec onlyChildren ignore withChildren', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const parentFicheId = await createFiche({
     caller,
@@ -3072,7 +3105,7 @@ test('Fetch avec onlyChildren ignore withChildren', async () => {
 });
 
 test('Fetch avec filtre sur axeIds', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   // Create a plan
   const [plan] = await db.db
@@ -3153,7 +3186,7 @@ test('Fetch avec filtre sur axeIds', async () => {
 });
 
 test('Exclut les fiches supprimées (soft delete)', async () => {
-  const caller = router.createCaller({ user: yoloDodo });
+  const caller = router.createCaller({ user: testUser });
 
   const [ficheActive, ficheDeleted] = await db.db
     .insert(ficheActionTable)
