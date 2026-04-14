@@ -1,6 +1,5 @@
 'use client';
 
-import { DiscussionListItem } from '@/app/referentiels/actions/comments/hooks/use-list-discussions';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useListMesurePilotes } from '@/app/referentiels/actions/use-mesure-pilotes';
 import { useListMesureServicesPilotes } from '@/app/referentiels/actions/use-mesure-services-pilotes';
@@ -8,11 +7,9 @@ import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
-import { Badge, Button, cn, VisibleWhen } from '@tet/ui';
+import { Badge, cn, VisibleWhen } from '@tet/ui';
 import classNames from 'classnames';
-import { ReactNode } from 'react';
 import { pluralize } from '../pluralize';
-import { useActionSidePanel } from '../side-panel/context';
 import { ActionSidePanelToolbar } from './action-side-panel-toolbar';
 import { ActionBreadcrumb } from './breadcrumb/action.breadcrumb';
 import { DisplaySettingsButtons } from './display-settings-buttons';
@@ -20,32 +17,6 @@ import { Infos } from './infos';
 import { PreviousAndNextActionsLinks } from './previous-and-next-actions.links';
 import { Score } from './score';
 import { VerticalDivider } from './vertical-divider';
-
-function CommentsButton({
-  count,
-  onClick,
-}: {
-  count: number | undefined;
-  onClick: () => void;
-}): ReactNode {
-  return (
-    <div className="relative">
-      <Button
-        variant="primary"
-        size="xs"
-        icon="question-answer-line"
-        title="Commentaires"
-        aria-label="Commentaires"
-        onClick={onClick}
-      />
-      {count !== undefined && count > 0 && (
-        <span className="absolute -top-2 -right-2 flex items-center justify-center min-w-5 h-5 px-1 rounded-full bg-white text-primary-9 text-xs font-bold border-2 border-primary-9">
-          {count}
-        </span>
-      )}
-    </div>
-  );
-}
 
 const RoleAndCollectiviteBadge = () => {
   const { nom: currentCollectiviteName, role } = useCurrentCollectivite();
@@ -66,28 +37,13 @@ const RoleAndCollectiviteBadge = () => {
   );
 };
 
-export const ActionHeader = ({
-  action,
-  actionComments,
-}: {
-  action: ActionListItem;
-  actionComments: DiscussionListItem[];
-}) => {
+export const ActionHeader = ({ action }: { action: ActionListItem }) => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
 
   const { data: pilotes } = useListMesurePilotes(action.actionId);
   const { data: services } = useListMesureServicesPilotes(action.actionId);
 
   const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
-  const canReadComments = hasCollectivitePermission(
-    'referentiels.discussions.read'
-  );
-
-  const { togglePanel } = useActionSidePanel();
-
-  const openCommentsCount = actionComments
-    .filter((discussion) => discussion.status === 'ouvert')
-    .reduce((acc, discussion) => acc + discussion.messages.length, 0);
 
   return (
     <HeaderSticky
@@ -115,15 +71,6 @@ export const ActionHeader = ({
             >
               {action.identifiant} {action.nom}
             </h1>
-
-            {canReadComments && (
-              <div className="max-lg:hidden ">
-                <CommentsButton
-                  count={openCommentsCount}
-                  onClick={() => togglePanel('comments')}
-                />
-              </div>
-            )}
           </div>
 
           <div

@@ -2,13 +2,16 @@
 
 import { useListIndicateurs } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { useFichesActionLiees } from '@/app/referentiels/action.show/useFichesActionLiees';
+import { useListDiscussions } from '@/app/referentiels/actions/comments/hooks/use-list-discussions';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 
 type ActionMetadataCount = {
   documents: number | undefined;
   indicateurs: number | undefined;
   fiches: number | undefined;
+  comments: number | undefined;
 };
 
 export function useActionMetadataCount(actionId: string): ActionMetadataCount {
@@ -27,5 +30,13 @@ export function useActionMetadataCount(actionId: string): ActionMetadataCount {
     collectiviteId,
   });
 
-  return { documents, indicateurs, fiches: fichesLiees.length };
+  const referentielId = getReferentielIdFromActionId(actionId);
+  const { data: discussionsData } = useListDiscussions(referentielId, {
+    actionId,
+  });
+  const comments = discussionsData?.discussions
+    .filter((d) => d.status === 'ouvert')
+    .reduce((acc, d) => acc + d.messages.length, 0);
+
+  return { documents, indicateurs, fiches: fichesLiees.length, comments };
 }
