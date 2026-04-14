@@ -20,13 +20,17 @@ import { ficheActionThematiqueTable } from '@tet/backend/plans/fiches/shared/mod
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { sousThematiqueTable } from '@tet/backend/shared/thematiques/sous-thematique.table';
 import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
+import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
-import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
+import {
+  addTestUser,
+  setUserCollectiviteRole,
+} from '@tet/backend/users/users/users.test-fixture';
 import { CollectiviteRole } from '@tet/domain/users';
 import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -42,25 +46,48 @@ let yoloDodo: AuthenticatedUser;
 let otherUserId: string;
 let db: DatabaseService;
 
+// Collectivité seed pour les tests qui dépendent des données seed
 const COLLECTIVITE_ID = 1;
+// Collectivité isolée pour les tests qui créent leurs propres données
+let testCollectiviteId: number;
 
 beforeAll(async () => {
   const app = await getTestApp();
   router = await getTestRouter(app);
   db = await getTestDatabase(app);
 
-  const testUserResult = await addTestUser(db, {
+  // Collectivité isolée pour les tests auto-suffisants
+  const { collectivite } = await addTestCollectivite(db);
+  testCollectiviteId = collectivite.id;
+
+  const testUserResult = await addTestUser(db);
+  yoloDodo = getAuthUserFromUserCredentials(testUserResult.user);
+  // Accès admin sur la collectivité seed (pour les tests qui en dépendent)
+  await setUserCollectiviteRole(db, {
+    userId: testUserResult.user.id,
     collectiviteId: COLLECTIVITE_ID,
     role: CollectiviteRole.ADMIN,
   });
-  yoloDodo = getAuthUserFromUserCredentials(testUserResult.user);
+  // Accès admin sur la collectivité isolée
+  await setUserCollectiviteRole(db, {
+    userId: testUserResult.user.id,
+    collectiviteId: testCollectiviteId,
+    role: CollectiviteRole.ADMIN,
+  });
 
   // Second utilisateur pour les filtres par utilisateur
-  const otherUserResult = await addTestUser(db, {
+  const otherUserResult = await addTestUser(db);
+  otherUserId = otherUserResult.user.id;
+  await setUserCollectiviteRole(db, {
+    userId: otherUserResult.user.id,
     collectiviteId: COLLECTIVITE_ID,
     role: CollectiviteRole.EDITION,
   });
-  otherUserId = otherUserResult.user.id;
+  await setUserCollectiviteRole(db, {
+    userId: otherUserResult.user.id,
+    collectiviteId: testCollectiviteId,
+    role: CollectiviteRole.EDITION,
+  });
 });
 
 describe('Filtres sur les fiches actions', () => {
@@ -92,41 +119,41 @@ describe('Filtres sur les fiches actions', () => {
       ficheInputs: [
         {
           titre: '11 - Fiche-test 4',
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
         {
           titre: '10 - Fiche-test 3',
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
         {
           titre: null,
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
         {
           titre: '2 - Fiche-test 2',
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
         {
           titre: '1 - Fiche-test 1',
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
         {
           titre: 'Z - Last title',
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
         {
           titre: null,
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
         {
           titre: 'A - First title',
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
       ],
     });
 
     const { data: fichesAsc } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         ficheIds,
       },
@@ -159,7 +186,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesAscUpdated } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         ficheIds,
       },
@@ -455,7 +482,7 @@ describe('Filtres sur les fiches actions', () => {
       createFiche({
         caller,
         ficheInput: {
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
           titre: 'Fiche test pour statut A venir',
           statut: StatutEnum.A_VENIR,
         },
@@ -464,7 +491,7 @@ describe('Filtres sur les fiches actions', () => {
       createFiche({
         caller,
         ficheInput: {
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
           titre: 'Fiche test pour statut En cours',
           statut: StatutEnum.A_VENIR,
         },
@@ -472,7 +499,7 @@ describe('Filtres sur les fiches actions', () => {
       createFiche({
         caller,
         ficheInput: {
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
           titre: 'Fiche test pour statut Abandonné',
           statut: StatutEnum.ABANDONNE,
         },
@@ -480,11 +507,11 @@ describe('Filtres sur les fiches actions', () => {
     ]);
 
     const { data: allFiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {},
     });
     const { data: aVenirFiche } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         statuts: [StatutEnum.A_VENIR],
       },
@@ -522,7 +549,7 @@ describe('Filtres sur les fiches actions', () => {
         .insert(ficheActionTable)
         .values({
           ameliorationContinue: true,
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         })
         .returning();
       const testFicheId = fiche.id;
@@ -537,7 +564,7 @@ describe('Filtres sur les fiches actions', () => {
 
       const { data: ficheWithAmeliorationContinue } =
         await caller.plans.fiches.listFiches({
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
           filters: {
             ameliorationContinue: true,
           },
@@ -569,7 +596,7 @@ describe('Filtres sur les fiches actions', () => {
       const [fiche] = await db.db
         .insert(ficheActionTable)
         .values({
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         })
         .returning();
       const testFicheId = fiche.id;
@@ -590,7 +617,7 @@ describe('Filtres sur les fiches actions', () => {
 
       const { data: fichesWithMesuresLiees } =
         await caller.plans.fiches.listFiches({
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
           filters: {
             hasMesuresLiees: true,
           },
@@ -613,7 +640,7 @@ describe('Filtres sur les fiches actions', () => {
       const [fiche] = await db.db
         .insert(ficheActionTable)
         .values({
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         })
         .returning();
       const testFicheId = fiche.id;
@@ -634,7 +661,7 @@ describe('Filtres sur les fiches actions', () => {
 
       const { data: fichesWithIndicateursLies } =
         await caller.plans.fiches.listFiches({
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
           filters: {
             hasIndicateurLies: true,
           },
@@ -665,7 +692,7 @@ describe('Filtres sur les fiches actions', () => {
       const [fiche] = await db.db
         .insert(ficheActionTable)
         .values({
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         })
         .returning();
       const testFicheId = fiche.id;
@@ -677,7 +704,7 @@ describe('Filtres sur les fiches actions', () => {
       });
 
       const { data: fiches } = await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           noPilote: true,
         },
@@ -701,7 +728,7 @@ describe('Filtres sur les fiches actions', () => {
       const [fiche] = await db.db
         .insert(ficheActionTable)
         .values({
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         })
         .returning();
       const testFicheId = fiche.id;
@@ -713,7 +740,7 @@ describe('Filtres sur les fiches actions', () => {
       });
 
       const { data: fiches } = await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           noServicePilote: true,
         },
@@ -738,7 +765,7 @@ describe('Filtres sur les fiches actions', () => {
         .insert(ficheActionTable)
         .values({
           titre: 'Test aucun statut',
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
           statut: null,
         })
         .returning();
@@ -751,7 +778,7 @@ describe('Filtres sur les fiches actions', () => {
 
       const { data: fichesWithoutStatut } =
         await caller.plans.fiches.listFiches({
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
           filters: {
             noStatut: true,
           },
@@ -773,7 +800,7 @@ describe('Filtres sur les fiches actions', () => {
         .where(eq(ficheActionTable.id, fiche.id));
 
       const { data: fichesWithStatut } = await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           noStatut: true,
         },
@@ -795,7 +822,7 @@ describe('Filtres sur les fiches actions', () => {
       .insert(ficheActionTable)
       .values({
         titre: 'Test budget prévisionnel',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         budgetPrevisionnel: '50000',
       })
       .returning();
@@ -808,7 +835,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesWithBudget } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         hasBudgetPrevisionnel: true,
       },
@@ -833,7 +860,7 @@ describe('Filtres sur les fiches actions', () => {
       .values({
         titre: 'Test date de fin prévisionnelle',
         dateFin: '2024-12-31T00:00:00Z',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -845,7 +872,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesWithDateFin } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         hasDateDeFinPrevisionnelle: true,
       },
@@ -866,7 +893,7 @@ describe('Filtres sur les fiches actions', () => {
       .values({
         titre: 'Test fiche restreinte',
         restreint: true,
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -878,7 +905,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesRestreintes } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         restreint: true,
       },
@@ -903,7 +930,7 @@ describe('Filtres sur les fiches actions', () => {
       .insert(ficheActionTable)
       .values({
         titre: 'Test fiche mutualisée',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -918,7 +945,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesMutualisees } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         sharedWithCollectivites: true,
       },
@@ -938,7 +965,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesMutualiseesAfterSharing } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           sharedWithCollectivites: true,
         },
@@ -962,7 +989,7 @@ describe('Filtres sur les fiches actions', () => {
       .values({
         titre: 'Test aucune priorité',
         priorite: null,
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -975,7 +1002,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithoutPriorite } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           noPriorite: true,
         },
@@ -1000,7 +1027,7 @@ describe('Filtres sur les fiches actions', () => {
       .insert(ficheActionTable)
       .values({
         titre: 'Test aucune note',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -1012,7 +1039,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesWithoutNote } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         notes: 'WITHOUT',
       },
@@ -1037,11 +1064,11 @@ describe('Filtres sur les fiches actions', () => {
       .values([
         {
           titre: 'Test ficheIds spécifiques 1',
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
         {
           titre: 'Test ficheIds spécifiques 2',
-          collectiviteId: COLLECTIVITE_ID,
+          collectiviteId: testCollectiviteId,
         },
       ])
       .returning();
@@ -1055,7 +1082,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesSpecifiques } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         ficheIds: [testFicheId1, testFicheId2],
       },
@@ -1079,7 +1106,7 @@ describe('Filtres sur les fiches actions', () => {
       .insert(partenaireTagTable)
       .values({
         nom: 'Partenaire test',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testPartenaireTagId = partenaireTag.id;
@@ -1089,7 +1116,7 @@ describe('Filtres sur les fiches actions', () => {
       .insert(ficheActionTable)
       .values({
         titre: 'Test partenaireIds',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -1108,7 +1135,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithPartenaireBeforeAddingTag } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           partenaireIds: [testPartenaireTagId],
         },
@@ -1128,7 +1155,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithPartenaire } = await caller.plans.fiches.listFiches(
       {
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           partenaireIds: [testPartenaireTagId],
         },
@@ -1154,7 +1181,7 @@ describe('Filtres sur les fiches actions', () => {
       .insert(financeurTagTable)
       .values({
         nom: 'Financeur test',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFinanceurTagId = financeurTag.id;
@@ -1164,7 +1191,7 @@ describe('Filtres sur les fiches actions', () => {
       .insert(ficheActionTable)
       .values({
         titre: 'Test financeurIds',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -1183,7 +1210,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithFinanceurBeforeAddingTag } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           financeurIds: [testFinanceurTagId],
         },
@@ -1203,7 +1230,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesWithFinanceur } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         financeurIds: [testFinanceurTagId],
       },
@@ -1237,7 +1264,7 @@ describe('Filtres sur les fiches actions', () => {
       .insert(ficheActionTable)
       .values({
         titre: 'Test thematiqueIds',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -1256,7 +1283,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithThematiqueBeforeAddingTag } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           thematiqueIds: [testThematiqueId],
         },
@@ -1276,7 +1303,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithThematique } = await caller.plans.fiches.listFiches(
       {
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           thematiqueIds: [testThematiqueId],
         },
@@ -1316,7 +1343,7 @@ describe('Filtres sur les fiches actions', () => {
       .insert(ficheActionTable)
       .values({
         titre: 'Test sousThematiqueIds',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -1338,7 +1365,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithSousThematiqueBeforeAddingTag } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           sousThematiqueIds: [testSousThematiqueId],
         },
@@ -1358,7 +1385,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithSousThematique } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           sousThematiqueIds: [testSousThematiqueId],
         },
@@ -1383,7 +1410,7 @@ describe('Filtres sur les fiches actions', () => {
       .insert(libreTagTable)
       .values({
         nom: 'Libre tag test',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testLibreTagId = libreTag.id;
@@ -1393,7 +1420,7 @@ describe('Filtres sur les fiches actions', () => {
       .insert(ficheActionTable)
       .values({
         titre: 'Test libreTagsIds',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -1412,7 +1439,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithLibreTagBeforeAddingTag } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           libreTagsIds: [testLibreTagId],
         },
@@ -1431,7 +1458,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesWithLibreTag } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         libreTagsIds: [testLibreTagId],
       },
@@ -1451,14 +1478,14 @@ describe('Filtres sur les fiches actions', () => {
       .insert(personneTagTable)
       .values({
         nom: 'Personne référente test',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
 
     const [fiche] = await db.db
       .insert(ficheActionTable)
       .values({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -1477,7 +1504,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithoutReferent } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           noReferent: true,
         },
@@ -1497,7 +1524,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithReferentAfterAddingTag } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           noReferent: true,
         },
@@ -1518,7 +1545,7 @@ describe('Filtres sur les fiches actions', () => {
       .insert(personneTagTable)
       .values({
         nom: 'Personne référente test',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
 
@@ -1526,7 +1553,7 @@ describe('Filtres sur les fiches actions', () => {
       .insert(personneTagTable)
       .values({
         nom: 'Autre personne référente test',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
 
@@ -1534,7 +1561,7 @@ describe('Filtres sur les fiches actions', () => {
     const [fiche] = await db.db
       .insert(ficheActionTable)
       .values({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -1561,7 +1588,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesWithReferent } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         personneReferenteIds: [personneTag.id],
       },
@@ -1575,7 +1602,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithAnotherReferent } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           personneReferenteIds: [anotherPersonneTag.id],
         },
@@ -1595,7 +1622,7 @@ describe('Filtres sur les fiches actions', () => {
     const [fiche] = await db.db
       .insert(ficheActionTable)
       .values({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       })
       .returning();
     const testFicheId = fiche.id;
@@ -1617,7 +1644,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithUserReferent } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           utilisateurReferentIds: [yoloDodo.id],
         },
@@ -1631,7 +1658,7 @@ describe('Filtres sur les fiches actions', () => {
 
     const { data: fichesWithAnotherUserReferent } =
       await caller.plans.fiches.listFiches({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         filters: {
           utilisateurReferentIds: [otherUserId],
         },
@@ -1651,7 +1678,7 @@ describe('Filtres sur les fiches actions', () => {
     const [fiche] = await db.db
       .insert(ficheActionTable)
       .values({
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         modifiedAt: modifiedDate.toISOString(),
       })
       .returning();
@@ -1664,7 +1691,7 @@ describe('Filtres sur les fiches actions', () => {
     });
 
     const { data: fichesModifiedAfter } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         modifiedAfter: '2023-12-31T00:00:00Z',
       },
@@ -2057,7 +2084,7 @@ test('Fetch avec filtre sur les années de notes', async () => {
     .insert(ficheActionTable)
     .values({
       titre: 'Fiche test pour notes',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
   const testFicheId = fiche.id;
@@ -2106,7 +2133,7 @@ test('Fetch avec filtre sur les années de notes', async () => {
 
   // Test avec filtre sur l'année 2023
   const { data: fiches2023 } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       anneesNotes: ['2023'],
     },
@@ -2122,7 +2149,7 @@ test('Fetch avec filtre sur les années de notes', async () => {
 
   // Test avec filtre sur plusieurs années
   const { data: fichesMultiples } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       anneesNotes: ['2024', '2025'],
     },
@@ -2138,7 +2165,7 @@ test('Fetch avec filtre sur les années de notes', async () => {
 
   // Test avec une année qui n'existe pas
   const { data: fichesInexistantes } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       anneesNotes: ['2020'],
     },
@@ -2157,7 +2184,7 @@ test('Fetch avec filtre sur priorites', async () => {
     .insert(ficheActionTable)
     .values({
       priorite: 'Élevé',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
   const testFicheId = fiche.id;
@@ -2169,7 +2196,7 @@ test('Fetch avec filtre sur priorites', async () => {
   });
 
   const { data: fichesWithPriorite } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       priorites: ['Élevé'],
     },
@@ -2188,7 +2215,7 @@ test('Fetch avec filtre sur priorites', async () => {
 
   const { data: fichesWithAnotherPriorite } =
     await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         priorites: ['Moyen'],
       },
@@ -2208,7 +2235,7 @@ test('Fetch avec filtre sur cibles', async () => {
     .insert(ficheActionTable)
     .values({
       cibles: ['Elus locaux', 'Agents'],
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
   const testFicheId = fiche.id;
@@ -2220,7 +2247,7 @@ test('Fetch avec filtre sur cibles', async () => {
   });
 
   const { data: fichesWithCibles } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       cibles: ['Elus locaux'],
     },
@@ -2239,7 +2266,7 @@ test('Fetch avec filtre sur cibles', async () => {
   // Try with another cible which should not be found
   const { data: fichesWithAnotherCible } = await caller.plans.fiches.listFiches(
     {
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         cibles: ['Partenaires'],
       },
@@ -2259,7 +2286,7 @@ test('Fetch avec filtre sur aucune tag personnalisé', async () => {
   const [fiche] = await db.db
     .insert(ficheActionTable)
     .values({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
   const testFicheId = fiche.id;
@@ -2268,7 +2295,7 @@ test('Fetch avec filtre sur aucune tag personnalisé', async () => {
     .insert(libreTagTable)
     .values({
       nom: 'Test Tag',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -2283,7 +2310,7 @@ test('Fetch avec filtre sur aucune tag personnalisé', async () => {
   });
 
   const { data: fichesWithoutTag } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       noTag: true,
     },
@@ -2302,7 +2329,7 @@ test('Fetch avec filtre sur aucune tag personnalisé', async () => {
   });
 
   const { data: fichesWithTag } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       libreTagsIds: [tag.id],
     },
@@ -2316,7 +2343,7 @@ test('Fetch avec filtre sur aucune tag personnalisé', async () => {
 
   const { data: fichesWithoutTagAfterAddingTag } =
     await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         noTag: true,
       },
@@ -2335,7 +2362,7 @@ test('Fetch avec filtre sur actions dans plusieurs plans', async () => {
   const [fiche] = await db.db
     .insert(ficheActionTable)
     .values({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
   const testFicheId = fiche.id;
@@ -2345,11 +2372,11 @@ test('Fetch avec filtre sur actions dans plusieurs plans', async () => {
     .values([
       {
         nom: 'Test Plan 1',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       },
       {
         nom: 'Test Plan 2',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       },
     ])
     .returning();
@@ -2382,7 +2409,7 @@ test('Fetch avec filtre sur actions dans plusieurs plans', async () => {
 
   const { data: fichesWithSeveralPlans } = await caller.plans.fiches.listFiches(
     {
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         doesBelongToSeveralPlans: true,
       },
@@ -2397,7 +2424,7 @@ test('Fetch avec filtre sur actions dans plusieurs plans', async () => {
 
   const { data: fichesWithoutSeveralPlans } =
     await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         doesBelongToSeveralPlans: false,
       },
@@ -2417,7 +2444,7 @@ test('Fetch avec filtre sur structurePiloteIds', async () => {
     .insert(structureTagTable)
     .values({
       nom: 'Structure test',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -2425,7 +2452,7 @@ test('Fetch avec filtre sur structurePiloteIds', async () => {
   const [fiche] = await db.db
     .insert(ficheActionTable)
     .values({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
   const testFicheId = fiche.id;
@@ -2449,7 +2476,7 @@ test('Fetch avec filtre sur structurePiloteIds', async () => {
   });
 
   const { data: fichesWithStructure } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       structurePiloteIds: [structureTag.id],
     },
@@ -2463,7 +2490,7 @@ test('Fetch avec filtre sur structurePiloteIds', async () => {
 
   const { data: fichesWithAnotherStructure } =
     await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         structurePiloteIds: [structureTag.id - 1],
       },
@@ -2482,7 +2509,7 @@ test('Fetch avec filtre sur debutPeriode et finPeriode', async () => {
     .insert(ficheActionTable)
     .values({
       dateDebut: '2024-06-01T00:00:00Z',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
   const testFicheId = fiche.id;
@@ -2494,7 +2521,7 @@ test('Fetch avec filtre sur debutPeriode et finPeriode', async () => {
   });
 
   const { data: fichesWithPeriode } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       typePeriode: 'debut',
       debutPeriode: '2024-05-01T00:00:00Z',
@@ -2510,7 +2537,7 @@ test('Fetch avec filtre sur debutPeriode et finPeriode', async () => {
 
   const { data: fichesWithAnotherPeriode } =
     await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         typePeriode: 'debut',
         debutPeriode: '2024-07-01T00:00:00Z',
@@ -2531,7 +2558,7 @@ test('Fetch sans filtre exclut les sous-fiches par défaut', async () => {
     .insert(ficheActionTable)
     .values({
       titre: 'Fiche parente test',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -2539,7 +2566,7 @@ test('Fetch sans filtre exclut les sous-fiches par défaut', async () => {
     .insert(ficheActionTable)
     .values({
       titre: 'Sous-fiche test',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       parentId: parentFiche.id,
     })
     .returning();
@@ -2555,7 +2582,7 @@ test('Fetch sans filtre exclut les sous-fiches par défaut', async () => {
 
   // Sans withChildren, les sous-fiches ne doivent pas apparaître
   const { data: fichesWithoutChildren } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       texteNomOuDescription: 'test',
     },
@@ -2583,7 +2610,7 @@ test('Fetch avec withChildren inclut les sous-fiches', async () => {
     .insert(ficheActionTable)
     .values({
       titre: 'Fiche parente avec children',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -2591,7 +2618,7 @@ test('Fetch avec withChildren inclut les sous-fiches', async () => {
     .insert(ficheActionTable)
     .values({
       titre: 'Sous-fiche avec children',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       parentId: parentFiche.id,
     })
     .returning();
@@ -2607,7 +2634,7 @@ test('Fetch avec withChildren inclut les sous-fiches', async () => {
 
   // Avec withChildren, les sous-fiches doivent apparaître
   const { data: fichesWithChildren } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       texteNomOuDescription: 'children',
       withChildren: true,
@@ -2629,7 +2656,7 @@ test('Fetch avec withChildren inclut les sous-fiches', async () => {
   );
 
   const { data: fichesWithChildren2 } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       ficheIds: [parentFiche.id],
       withChildren: true,
@@ -2646,7 +2673,7 @@ test('Fetch avec parentsId retourne uniquement les sous-fiches des parents spéc
     .insert(ficheActionTable)
     .values({
       titre: 'Parent 1',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -2654,7 +2681,7 @@ test('Fetch avec parentsId retourne uniquement les sous-fiches des parents spéc
     .insert(ficheActionTable)
     .values({
       titre: 'Parent 2',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -2662,7 +2689,7 @@ test('Fetch avec parentsId retourne uniquement les sous-fiches des parents spéc
     .insert(ficheActionTable)
     .values({
       titre: 'Sous-fiche Parent 1',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       parentId: parentFiche1.id,
     })
     .returning();
@@ -2671,7 +2698,7 @@ test('Fetch avec parentsId retourne uniquement les sous-fiches des parents spéc
     .insert(ficheActionTable)
     .values({
       titre: 'Sous-fiche Parent 2',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       parentId: parentFiche2.id,
     })
     .returning();
@@ -2687,7 +2714,7 @@ test('Fetch avec parentsId retourne uniquement les sous-fiches des parents spéc
 
   // Avec parentsId pour parentFiche1, seules ses sous-fiches doivent apparaître
   const { data: fichesWithParentsId } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       parentsId: [parentFiche1.id],
     },
@@ -2726,7 +2753,7 @@ test('Fetch avec les filtres parentsId et withChildren génère une erreur', asy
     .insert(ficheActionTable)
     .values({
       titre: 'Parent pour test withChildren',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -2734,7 +2761,7 @@ test('Fetch avec les filtres parentsId et withChildren génère une erreur', asy
     .insert(ficheActionTable)
     .values({
       titre: 'Sous-fiche pour test withChildren',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       parentId: parentFiche.id,
     })
     .returning();
@@ -2750,7 +2777,7 @@ test('Fetch avec les filtres parentsId et withChildren génère une erreur', asy
 
   await expect(
     caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         parentsId: [parentFiche.id],
         withChildren: true,
@@ -2768,7 +2795,7 @@ test("Fetch avec parentsId combiné avec d'autres filtres", async () => {
     .insert(ficheActionTable)
     .values({
       titre: 'Parent avec restriction',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -2776,7 +2803,7 @@ test("Fetch avec parentsId combiné avec d'autres filtres", async () => {
     .insert(ficheActionTable)
     .values({
       titre: 'Sous-fiche 1 restreinte',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       parentId: parentFiche.id,
       restreint: true,
     })
@@ -2786,7 +2813,7 @@ test("Fetch avec parentsId combiné avec d'autres filtres", async () => {
     .insert(ficheActionTable)
     .values({
       titre: 'Sous-fiche 2 non restreinte',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       parentId: parentFiche.id,
       restreint: false,
     })
@@ -2803,7 +2830,7 @@ test("Fetch avec parentsId combiné avec d'autres filtres", async () => {
 
   // Filtrer par parentsId ET restreint
   const { data: fichesRestreintes } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       parentsId: [parentFiche.id],
       restreint: true,
@@ -2830,8 +2857,8 @@ test('Fetch avec onlyChildren liste toutes les sous-fiches mais exclut les fiche
   const { ficheIds } = await withOnTestFinished(createFiches)({
     caller,
     ficheInputs: [
-      { titre: 'Parent 1 onlyChildren', collectiviteId: COLLECTIVITE_ID },
-      { titre: 'Parent 2 onlyChildren', collectiviteId: COLLECTIVITE_ID },
+      { titre: 'Parent 1 onlyChildren', collectiviteId: testCollectiviteId },
+      { titre: 'Parent 2 onlyChildren', collectiviteId: testCollectiviteId },
     ],
   });
   const [parentFiche1Id, parentFiche2Id] = ficheIds;
@@ -2841,17 +2868,17 @@ test('Fetch avec onlyChildren liste toutes les sous-fiches mais exclut les fiche
     ficheInputs: [
       {
         titre: 'Sous-fiche Parent 1 onlyChildren',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         parentId: parentFiche1Id,
       },
       {
         titre: 'Sous-fiche Parent 2 onlyChildren',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         parentId: parentFiche2Id,
       },
       {
         titre: 'Fiche sans parent onlyChildren',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       },
     ],
   });
@@ -2859,7 +2886,7 @@ test('Fetch avec onlyChildren liste toutes les sous-fiches mais exclut les fiche
 
   // Avec onlyChildren, seules les sous-fiches doivent apparaître
   const { data: fichesOnlyChildren } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       onlyChildren: true,
     },
@@ -2908,11 +2935,11 @@ test('Fetch avec onlyChildren et parentsId liste uniquement les sous-fiches des 
     ficheInputs: [
       {
         titre: 'Parent 1 onlyChildren parentsId',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       },
       {
         titre: 'Parent 2 onlyChildren parentsId',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
       },
     ],
   });
@@ -2923,12 +2950,12 @@ test('Fetch avec onlyChildren et parentsId liste uniquement les sous-fiches des 
     ficheInputs: [
       {
         titre: 'Sous-fiche Parent 1 onlyChildren parentsId',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         parentId: parentFiche1Id,
       },
       {
         titre: 'Sous-fiche Parent 2 onlyChildren parentsId',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         parentId: parentFiche2Id,
       },
     ],
@@ -2938,7 +2965,7 @@ test('Fetch avec onlyChildren et parentsId liste uniquement les sous-fiches des 
   // Avec onlyChildren et parentsId pour parentFiche1, seules ses sous-fiches doivent apparaître
   const { data: fichesOnlyChildrenParentsId } =
     await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         onlyChildren: true,
         parentsId: [parentFiche1Id],
@@ -2981,21 +3008,21 @@ test('Fetch avec onlyChildren ignore withChildren', async () => {
     caller,
     ficheInput: {
       titre: 'Parent onlyChildren withChildren',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     },
   });
   const subFicheId = await createFiche({
     caller,
     ficheInput: {
       titre: 'Sous-fiche onlyChildren withChildren',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       parentId: parentFicheId,
     },
   });
 
   // Avec onlyChildren seul
   const { data: fichesOnlyChildren } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       texteNomOuDescription: 'onlyChildren withChildren',
       onlyChildren: true,
@@ -3005,7 +3032,7 @@ test('Fetch avec onlyChildren ignore withChildren', async () => {
   // Avec onlyChildren ET withChildren (withChildren doit être ignoré)
   const { data: fichesOnlyChildrenWithChildren } =
     await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         texteNomOuDescription: 'onlyChildren withChildren',
         onlyChildren: true,
@@ -3052,7 +3079,7 @@ test('Fetch avec filtre sur axeIds', async () => {
     .insert(axeTable)
     .values({
       nom: 'Test Plan',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -3062,7 +3089,7 @@ test('Fetch avec filtre sur axeIds', async () => {
     .values([
       {
         nom: 'Test Axe 1',
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         plan: plan.id,
       },
     ])
@@ -3073,7 +3100,7 @@ test('Fetch avec filtre sur axeIds', async () => {
     .insert(ficheActionTable)
     .values({
       titre: 'Fiche test axeIds 1',
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     })
     .returning();
 
@@ -3090,7 +3117,7 @@ test('Fetch avec filtre sur axeIds', async () => {
 
   // Test filtering by first axe
   const { data: fichesWithAxe1 } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
       axesId: [axe.id],
     },
@@ -3112,7 +3139,7 @@ test('Fetch avec filtre sur axeIds', async () => {
 
   const { data: fichesWithAxe1AfterAddingFiche } =
     await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
         axesId: [axe.id],
       },
@@ -3132,11 +3159,11 @@ test('Exclut les fiches supprimées (soft delete)', async () => {
     .insert(ficheActionTable)
     .values([
       {
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         titre: 'Fiche active',
       },
       {
-        collectiviteId: COLLECTIVITE_ID,
+        collectiviteId: testCollectiviteId,
         titre: 'Fiche supprimée',
         deleted: true,
       },
@@ -3153,7 +3180,7 @@ test('Exclut les fiches supprimées (soft delete)', async () => {
   });
 
   const { data } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {},
     queryOptions: { page: 1, limit: 50 },
   });
