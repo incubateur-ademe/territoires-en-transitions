@@ -1,0 +1,42 @@
+name: Sauvegarde quotidienne de la base de données
+run-name: Backup BDD production vers S3
+
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backup-production:
+    name: Backup de la BDD production vers S3
+    environment: prod
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Install AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip -q awscliv2.zip
+          sudo ./aws/install
+          rm -rf awscliv2.zip aws/
+
+      - name: Run backup
+        env:
+          FROM_DB_URL: ${{ secrets.PROD_DB_URL }}
+          BACKUP_AWS_ACCESS_KEY_ID: ${{ vars.BACKUP_AWS_ACCESS_KEY_ID }}
+          BACKUP_AWS_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_AWS_SECRET_ACCESS_KEY }}
+          BACKUP_BUCKET: ${{ vars.BACKUP_BUCKET }}
+          BACKUP_REGION: ${{ vars.BACKUP_REGION }}
+          BACKUP_ENDPOINT_URL: ${{ vars.BACKUP_ENDPOINT_URL }}
+        run: bash data_layer/backup/backup.sh
