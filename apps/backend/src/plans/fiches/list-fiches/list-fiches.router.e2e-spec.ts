@@ -1,3 +1,4 @@
+import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { financeurTagTable } from '@tet/backend/collectivites/tags/financeur-tag.table';
 import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
 import { partenaireTagTable } from '@tet/backend/collectivites/tags/partenaire-tag.table';
@@ -20,24 +21,22 @@ import { ficheActionThematiqueTable } from '@tet/backend/plans/fiches/shared/mod
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import { sousThematiqueTable } from '@tet/backend/shared/thematiques/sous-thematique.table';
 import { thematiqueTable } from '@tet/backend/shared/thematiques/thematique.table';
-import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
-import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
   getTestDatabase,
   getTestRouter,
 } from '@tet/backend/test';
+import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import {
   addTestUser,
   setUserCollectiviteRole,
 } from '@tet/backend/users/users/users.test-fixture';
-import { CollectiviteRole } from '@tet/domain/users';
-import { AuthenticatedUser } from '@tet/backend/users/models/auth.models';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
 import { withOnTestFinished } from '@tet/backend/utils/test-fixture.utils';
 import { TrpcRouter } from '@tet/backend/utils/trpc/trpc.router';
 import { StatutEnum } from '@tet/domain/plans';
+import { CollectiviteRole } from '@tet/domain/users';
 import { eq, inArray } from 'drizzle-orm';
 import { uniq } from 'es-toolkit';
 import { createFiche, createFiches } from '../fiches.test-fixture';
@@ -105,15 +104,25 @@ describe('Filtres sur les fiches actions', () => {
   test('Fetch sans filtre retourne des fiches uniques', async () => {
     const caller = router.createCaller({ user: testUser });
 
+    // Créer des fiches sur la collectivité isolée
+    const { ficheIds } = await withOnTestFinished(createFiches)({
+      caller,
+      ficheInputs: [
+        { collectiviteId: testCollectiviteId, titre: 'Fiche unicité 1' },
+        { collectiviteId: testCollectiviteId, titre: 'Fiche unicité 2' },
+        { collectiviteId: testCollectiviteId, titre: 'Fiche unicité 3' },
+      ],
+    });
+
     const { data: fiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
     });
 
     if (!fiches) {
       expect.fail();
     }
 
-    expect(fiches.length).toBeGreaterThan(0);
+    expect(fiches.length).toBeGreaterThanOrEqual(ficheIds.length);
 
     // Check unicity of all fiches
     const ids = fiches.map((f) => f.id);
