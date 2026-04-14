@@ -225,10 +225,23 @@ describe('Filtres sur les fiches actions', () => {
   test('Fetch avec filtre sur une personne', async () => {
     const caller = router.createCaller({ user: testUser });
 
+    // Créer une fiche avec un pilote tag sur la collectivité isolée
+    const { ficheIds } = await withOnTestFinished(createFiches)({
+      caller,
+      ficheInputs: [
+        {
+          collectiviteId: testCollectiviteId,
+          titre: 'Fiche filtre personne',
+          pilotes: [{ tagId: personneTagId1 }],
+        },
+      ],
+    });
+
     const { data: fiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
-        personnePiloteIds: [1],
+        ficheIds,
+        personnePiloteIds: [personneTagId1],
       },
     });
 
@@ -236,10 +249,11 @@ describe('Filtres sur les fiches actions', () => {
       expect.fail();
     }
 
+    expect(fiches.length).toBe(1);
     for (const fiche of fiches) {
       expect(fiche).toMatchObject({
         pilotes: expect.arrayContaining([
-          expect.objectContaining({ tagId: 1, nom: 'Lou Piote' }),
+          expect.objectContaining({ tagId: personneTagId1 }),
         ]),
       });
     }
@@ -248,10 +262,23 @@ describe('Filtres sur les fiches actions', () => {
   test('Fetch avec filtre sur un utilisateur', async () => {
     const caller = router.createCaller({ user: testUser });
 
+    // Créer une fiche avec un pilote utilisateur sur la collectivité isolée
+    const { ficheIds } = await withOnTestFinished(createFiches)({
+      caller,
+      ficheInputs: [
+        {
+          collectiviteId: testCollectiviteId,
+          titre: 'Fiche filtre utilisateur',
+          pilotes: [{ userId: testUserId }],
+        },
+      ],
+    });
+
     const { data: fiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
+      collectiviteId: testCollectiviteId,
       filters: {
-        utilisateurPiloteIds: [testUser.id],
+        ficheIds,
+        utilisateurPiloteIds: [testUserId],
       },
     });
 
@@ -259,12 +286,12 @@ describe('Filtres sur les fiches actions', () => {
       expect.fail();
     }
 
+    expect(fiches.length).toBe(1);
     for (const fiche of fiches) {
       expect(fiche).toMatchObject({
         pilotes: expect.arrayContaining([
           expect.objectContaining({
-            userId: testUser.id,
-            nom: 'Yolo Dodo',
+            userId: testUserId,
             tagId: null,
           }),
         ]),
