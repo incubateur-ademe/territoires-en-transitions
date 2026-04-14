@@ -8,8 +8,8 @@ import {
   discussionStatus,
 } from '@tet/domain/collectivites';
 import { ActionTypeEnum, ReferentielId } from '@tet/domain/referentiels';
+import { pluralize } from 'app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/referentiel/[referentielId]/action/[actionId]/_components/pluralize';
 import { useEffect, useMemo, useState } from 'react';
-import { pluralize } from '../../pluralize';
 import { useListDiscussions } from './use-list-discussions';
 
 type UseCommentsContentProps = {

@@ -1,19 +1,16 @@
 'use client';
 
+import { DiscussionListItem } from '@/app/referentiels/actions/comments/hooks/use-list-discussions';
 import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { useListMesurePilotes } from '@/app/referentiels/actions/use-mesure-pilotes';
 import { useListMesureServicesPilotes } from '@/app/referentiels/actions/use-mesure-services-pilotes';
 import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
-import { useReferentielId } from '@/app/referentiels/referentiel-context';
-import { useSortedActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import HeaderSticky from '@/app/ui/layout/HeaderSticky';
-import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
 import { BadgeNiveauAcces } from '@/app/users/BadgeNiveauAcces';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Badge, Button, cn, VisibleWhen } from '@tet/ui';
 import classNames from 'classnames';
 import { ReactNode } from 'react';
-import { useListDiscussions } from '../comments/hooks/use-list-discussions';
 import { pluralize } from '../pluralize';
 import { useActionSidePanel } from '../side-panel/context';
 import { ActionSidePanelToolbar } from './action-side-panel-toolbar';
@@ -69,29 +66,35 @@ const RoleAndCollectiviteBadge = () => {
   );
 };
 
-export const ActionHeader = ({ action }: { action: ActionListItem }) => {
+export const ActionHeader = ({
+  action,
+  actionComments,
+}: {
+  action: ActionListItem;
+  actionComments: DiscussionListItem[];
+}) => {
   const { hasCollectivitePermission } = useCurrentCollectivite();
 
   const { data: pilotes } = useListMesurePilotes(action.actionId);
   const { data: services } = useListMesureServicesPilotes(action.actionId);
 
   const canEditReferentiel = hasCollectivitePermission('referentiels.mutate');
-  const isVisitor = useIsVisitor();
+  const canReadComments = hasCollectivitePermission(
+    'referentiels.discussions.read'
+  );
+
   const { togglePanel } = useActionSidePanel();
-  const subActions = useSortedActionSummaryChildren(actionDefinition);
-  const referentielId = useReferentielId();
-  const { data: discussions } = useListDiscussions(referentielId, {
-    actionId: action.actionId,
-  });
-  const commentsCount = discussions?.discussions
+
+  const openCommentsCount = actionComments
     .filter((discussion) => discussion.status === 'ouvert')
     .reduce((acc, discussion) => acc + discussion.messages.length, 0);
+
   return (
     <HeaderSticky
       render={({ isSticky }) => (
         <div className="w-full bg-grey-2 sticky top-0 shadow-none transition-all duration-100">
           <PreviousAndNextActionsLinks
-            actionId={action.actionId}
+            action={action}
             headerIsSticky={isSticky}
           />
           {/** Titre */}
@@ -113,10 +116,10 @@ export const ActionHeader = ({ action }: { action: ActionListItem }) => {
               {action.identifiant} {action.nom}
             </h1>
 
-            {!isVisitor && (
+            {canReadComments && (
               <div className="max-lg:hidden ">
                 <CommentsButton
-                  count={commentsCount}
+                  count={openCommentsCount}
                   onClick={() => togglePanel('comments')}
                 />
               </div>
@@ -144,18 +147,15 @@ export const ActionHeader = ({ action }: { action: ActionListItem }) => {
             )}
           >
             {/** Score | Informations | Options */}
-            <Score actionDefinition={actionDefinition} />
+            <Score action={action} />
             <VerticalDivider />
             <div className="max-w-24">
-              <ActionAuditStatut
-                action={actionDefinition}
-                className="lg:ml-auto -m-1"
-              />
+              <ActionAuditStatut action={action} className="lg:ml-auto -m-1" />
             </div>
 
             <VerticalDivider />
             <span className="text-primary-9 text-sm font-normal text-nowrap">
-              {pluralize(subActions.count, 'sous-mesure')}
+              {pluralize(action.childrenIds.length, 'sous-mesure')}
             </span>
             {action && (
               <Infos
@@ -167,7 +167,7 @@ export const ActionHeader = ({ action }: { action: ActionListItem }) => {
             )}
           </div>
           <div className="flex items-center flex-wrap justify-left gap-3 py-3 border-b border-primary-3">
-            <ActionSidePanelToolbar actionDefinitionId={actionDefinition.id} />
+            <ActionSidePanelToolbar actionId={action.actionId} />
             <VerticalDivider />
             <DisplaySettingsButtons />
           </div>
