@@ -1,10 +1,12 @@
 'use client';
 
+import { collectiviteNatureLabel } from '@tet/domain/collectivites';
+import { useGetCollectivite } from '@/app/collectivites/collectivites/use-get-collectivite';
+import { capitalize } from '@/app/utils/formatUtils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { CollectivitePublic } from '@tet/domain/collectivites';
 import { Card } from '@tet/ui';
-import { useGetCollectivite } from '../../../../collectivites/collectivites/use-get-collectivite';
 
 /**
  * Affiche les informations administratives d'une collectivité
@@ -60,14 +62,26 @@ function getItems(identite: CollectivitePublic) {
     regionName,
     siren,
     type,
+    natureInsee,
   } = identite;
 
   const codeSirenInsee = communeCode ?? siren ?? '';
 
   return [
     { title: 'Nom', value: nom },
-    { title: 'Type de collectivité', value: type },
+    natureInsee
+      ? {
+          title: 'Nature juridique',
+          value: collectiviteNatureLabel[natureInsee]
+            ? `${collectiviteNatureLabel[natureInsee]} (${natureInsee})`
+            : natureInsee,
+        }
+      : {
+          title: 'Type',
+          value: capitalize(type),
+        },
     { title: 'Code SIREN ou INSEE', value: codeSirenInsee },
+    { title: 'Département', value: departementName ?? null },
     { title: 'Région', value: regionName ?? null },
     {
       title: populationSource
@@ -75,6 +89,5 @@ function getItems(identite: CollectivitePublic) {
         : 'Population',
       value: population ? `${population.toLocaleString()} habitants` : null,
     },
-    { title: 'Département', value: departementName ?? null },
   ];
 }
