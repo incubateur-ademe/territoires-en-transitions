@@ -9,8 +9,9 @@ await page.goto(STREAMLIT_IFRAME_SRC, {
   timeout: 60_000,
 });
 
-const wakeButton = page.getByRole('button', { name: /get this app back up/i });
-const readyText = page.getByText(
+const frame = page.frameLocator('iframe[title="streamlitApp"]');
+const wakeButton = frame.getByRole('button', { name: /get this app back up/i });
+const readyText = frame.getByText(
   'Déployer la transition écologique sur la totalité du territoire'
 );
 
