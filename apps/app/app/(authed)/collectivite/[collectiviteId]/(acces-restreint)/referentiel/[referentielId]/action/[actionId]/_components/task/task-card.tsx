@@ -35,10 +35,7 @@ const TaskCard = ({ task, hideStatus, showJustifications }: Props) => {
       <ScoreIndicatifLibelle actionId={task.id} />
 
       {/* Actions */}
-      <SubactionCardActions
-        actionId={task.id}
-        haveScoreIndicatif={task.haveScoreIndicatif}
-      />
+      <SubactionCardActions action={task} />
 
       {/* Ajout de commentaire */}
       {showJustifications && (

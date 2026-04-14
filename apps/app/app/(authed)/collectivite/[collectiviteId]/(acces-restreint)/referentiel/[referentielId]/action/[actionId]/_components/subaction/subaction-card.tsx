@@ -94,10 +94,7 @@ const SubactionHeader = ({
 
       <ScoreIndicatifLibelle actionId={subAction.id} />
 
-      <SubactionCardActions
-        actionId={subAction.id}
-        haveScoreIndicatif={subAction.haveScoreIndicatif}
-      />
+      <SubactionCardActions action={subAction} />
     </div>
   );
 };
