@@ -6,13 +6,12 @@ import {
 } from '@/app/referentiels/actions/use-list-actions';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import { useStickyHeaderHeight } from '@/app/ui/layout/HeaderSticky';
-import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { AccordionControlled, Button, cn } from '@tet/ui';
 import classNames from 'classnames';
 import { ActionJustificationField } from '../action/action.justification-field';
-import { pluralize } from '../pluralize';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
-import { useActionSidePanel } from '../side-panel/context';
+import { SidePanelButton } from '../side-panel/buttons';
 import TaskCardsList from '../task/task.cards-list';
 import SubactionCardActions from './subaction-card.actions';
 import { SubactionCardHeader } from './subaction-card.header';
@@ -54,9 +53,12 @@ const SubactionHeader = ({
   toggleExpand: () => void;
   commentsCount: number;
 }) => {
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const canReadComments = hasCollectivitePermission(
+    'referentiels.discussions.read'
+  );
+
   const preuvesCount = useActionPreuvesCount(subAction.actionId);
-  const isVisitor = useIsVisitor();
-  const { togglePanel, isActive } = useActionSidePanel();
   const stickyHeaderHeight = useStickyHeaderHeight();
 
   return (
@@ -77,19 +79,19 @@ const SubactionHeader = ({
         isExpanded={isExpanded}
         toggleExpand={toggleExpand}
         actions={[
-          <OpenPanelButton
+          <SidePanelButton
             key="documents"
-            label={pluralize(preuvesCount, 'document')}
-            onClick={() => togglePanel('documents', subAction.actionId)}
-            isActive={isActive('documents', subAction.actionId)}
+            panelId="documents"
+            count={preuvesCount}
+            targetActionId={subAction.actionId}
           />,
-          ...(!isVisitor
+          ...(canReadComments
             ? [
-                <OpenPanelButton
+                <SidePanelButton
                   key="comments"
-                  label={pluralize(commentsCount ?? 0, 'commentaire')}
-                  onClick={() => togglePanel('comments', subAction.actionId)}
-                  isActive={isActive('comments', subAction.actionId)}
+                  panelId="comments"
+                  count={commentsCount}
+                  targetActionId={subAction.actionId}
                 />,
               ]
             : []),
