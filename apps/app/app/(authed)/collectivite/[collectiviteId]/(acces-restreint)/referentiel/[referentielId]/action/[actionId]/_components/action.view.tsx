@@ -13,7 +13,6 @@ import { ActionListItem } from '@/app/referentiels/actions/use-list-actions';
 import { ActionAuditDetail } from '@/app/referentiels/audits/ActionAuditDetail';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { StickyHeaderHeightProvider } from '@/app/ui/layout/HeaderSticky';
-import { Discussion } from '@tet/domain/collectivites';
 import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Spacer } from '@tet/ui';
 import { ActionJustificationField } from './action/action.justification-field';
@@ -33,7 +32,7 @@ export const ActionView = ({ action }: { action: ActionListItem }) => {
         data-test={`Action-${action.identifiant}`}
         className="grow flex flex-col"
       >
-        <ActionHeader action={action} actionComments={data.discussions} />
+        <ActionHeader action={action} />
         <Spacer height={2} />
         <div className="grow flex flex-col">
           <ActionDetailContent

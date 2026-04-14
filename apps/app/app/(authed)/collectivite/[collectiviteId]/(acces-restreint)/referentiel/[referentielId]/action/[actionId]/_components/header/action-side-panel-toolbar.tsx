@@ -1,5 +1,6 @@
 'use client';
 
+import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ReactNode } from 'react';
 import { SidePanelButton } from '../side-panel/buttons';
 import { useActionMetadataCount } from '../side-panel/use-metadata-count';
@@ -10,7 +11,12 @@ export function ActionSidePanelToolbar({
 }: {
   actionId: string;
 }): ReactNode {
-  const { documents, indicateurs, fiches } = useActionMetadataCount(actionId);
+  const { documents, indicateurs, fiches, comments } =
+    useActionMetadataCount(actionId);
+  const { hasCollectivitePermission } = useCurrentCollectivite();
+  const canReadComments = hasCollectivitePermission(
+    'referentiels.discussions.read'
+  );
 
   return (
     <div
@@ -18,6 +24,10 @@ export function ActionSidePanelToolbar({
       aria-label="Panneaux latéraux"
       className="flex flex-row flex-wrap items-center content-start gap-3"
     >
+      {canReadComments && (
+        <SidePanelButton panelId="comments" count={comments} />
+      )}
+
       <SidePanelButton panelId="documents" count={documents} />
       <VerticalDivider />
       <SidePanelButton panelId="indicateurs" count={indicateurs} />
