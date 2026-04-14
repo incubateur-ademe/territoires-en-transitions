@@ -121,6 +121,11 @@ export function useTableKeyboard(
       const el = findCellElement(targetId);
       if (!el) return;
       el.tabIndex = 0;
+
+      const active = document.activeElement;
+      if (active && active.closest('input, textarea, select, [contenteditable]'))
+        return;
+
       el.focus({ preventScroll: false });
       el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     });
