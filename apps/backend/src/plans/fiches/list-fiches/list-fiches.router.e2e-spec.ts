@@ -299,33 +299,11 @@ describe('Filtres sur les fiches actions', () => {
     }
   });
 
-  test('Fetch avec filtre sur un utilisateur et sur personne. Le filtre doit être un OU.', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    const { data: fiches } = await caller.plans.fiches.listFiches({
-      collectiviteId: COLLECTIVITE_ID,
-      filters: {
-        utilisateurPiloteIds: [testUser.id],
-        personnePiloteIds: [1],
-      },
-    });
-
-    if (!fiches) {
-      expect.fail();
-    }
-
-    expect(fiches.length).toBeGreaterThan(0);
-
-    for (const fiche of fiches) {
-      expect(fiche.pilotes?.length).toBeGreaterThan(0);
-    }
-  });
-
-  test('Fetch avec tableaux vides dans les filtres pilotes doit être équivalent à aucun filtre', async () => {
-    const caller = router.createCaller({ user: testUser });
-
-    // Créer des fiches isolées avec des pilotes pour éviter les interférences parallèles
-    const { ficheIds } = await withOnTestFinished(createFiches)({
+  // Crée un jeu de fiches avec différents types de pilotes sur testCollectiviteId
+  async function createFichesAvecPilotes(
+    caller: ReturnType<TrpcRouter['createCaller']>
+  ) {
+    return withOnTestFinished(createFiches)({
       caller,
       ficheInputs: [
         {
@@ -344,6 +322,40 @@ describe('Filtres sur les fiches actions', () => {
         },
       ],
     });
+  }
+
+  test('Fetch avec filtre sur un utilisateur et sur personne. Le filtre doit être un OU.', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    const { ficheIds } = await createFichesAvecPilotes(caller);
+
+    // Filtre avec utilisateur OU personne → doit retourner les 2 fiches avec pilote
+    const { data: fiches } = await caller.plans.fiches.listFiches({
+      collectiviteId: testCollectiviteId,
+      filters: {
+        ficheIds,
+        utilisateurPiloteIds: [testUserId],
+        personnePiloteIds: [personneTagId1],
+      },
+    });
+
+    if (!fiches) {
+      expect.fail();
+    }
+
+    // Les 2 fiches avec pilote (tag OU user) doivent être retournées
+    expect(fiches.length).toBe(2);
+
+    for (const fiche of fiches) {
+      expect(fiche.pilotes?.length).toBeGreaterThan(0);
+    }
+  });
+
+  test('Fetch avec tableaux vides dans les filtres pilotes doit être équivalent à aucun filtre', async () => {
+    const caller = router.createCaller({ user: testUser });
+
+    // Créer des fiches isolées avec des pilotes pour éviter les interférences parallèles
+    const { ficheIds } = await createFichesAvecPilotes(caller);
 
     // Récupérer les fiches de test sans filtre
     const { data: fichesWithoutFilter } = await caller.plans.fiches.listFiches({
