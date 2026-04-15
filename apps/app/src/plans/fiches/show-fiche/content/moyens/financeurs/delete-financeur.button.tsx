@@ -25,6 +25,7 @@ export const DeleteFinanceurButton = ({
         className="text-grey-6"
         onClick={() => setIsOpen(true)}
         title="Supprimer le financeur"
+        aria-label="Supprimer le financeur"
       />
       <VisibleWhen condition={isOpen}>
         <BaseUpdateFicheModal

@@ -22,6 +22,7 @@ import { utilisateurCollectiviteAccessTable } from '../../users/authorizations/u
 import { bibliothequeFichierTable } from '../documents/models/bibliotheque-fichier.table';
 import { invitationTable } from '../membres/invitation.table';
 import { invitationPersonneTagTable } from '../membres/mutate-invitations/invitation-personne-tag.table';
+import { financeurTagTable } from '../tags/financeur-tag.table';
 import { reponseBinaireTable } from '../personnalisations/models/reponse-binaire.table';
 import { reponseChoixTable } from '../personnalisations/models/reponse-choix.table';
 import { reponseProportionTable } from '../personnalisations/models/reponse-proportion.table';
@@ -127,6 +128,9 @@ export async function addTestCollectivite(
           await db
             .delete(reponseProportionTable)
             .where(eq(reponseProportionTable.collectiviteId, collectiviteId));
+          await db
+            .delete(financeurTagTable)
+            .where(eq(financeurTagTable.collectiviteId, collectiviteId));
           await db
             .delete(collectiviteTable)
             .where(eq(collectiviteTable.id, collectiviteId));
