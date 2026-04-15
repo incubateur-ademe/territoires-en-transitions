@@ -116,23 +116,4 @@ td[data-inline-edit='true']:hover {
   @apply bg-primary-0;
 }
 
-td[data-inline-edit='true']:hover::before,
-td[data-inline-edit='true']:hover::after {
-  /* @apply opacity-90; */
-}
-
-
-/* td[data-inline-edit='true']::before {
-  content: '';
-  @apply absolute top-0 left-0 w-0 h-0 opacity-70;
-  border-style: solid;
-  border-width: 6px 6px 0 0;
-  border-color: theme('colors.primary.5') transparent transparent transparent;
-} */
-
-/* td[data-inline-edit='true']::after {
-  @apply bottom-0 right-0;
-  border-width: 0 2px 2px 0;
-} */
-
 
