@@ -13,7 +13,7 @@ const FIELD_LABELS: Record<
     plural: 'Effets attendus',
   },
   objectifs: {
-    singular: 'Objectif',
+    singular: 'Objectif(s)',
   },
   thematiques: {
     singular: 'Thématique',
