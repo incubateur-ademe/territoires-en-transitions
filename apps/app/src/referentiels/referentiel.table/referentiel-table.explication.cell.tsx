@@ -42,6 +42,7 @@ export const ReferentielTableExplicationCell = ({
       tabIndex={-1}
       data-cell-id={cellId}
       canEdit={canEdit}
+      placeholder="Ajouter un état d'avancement"
       initialValue={explication}
       onValueChange={(value) => {
         if (value === explication) {

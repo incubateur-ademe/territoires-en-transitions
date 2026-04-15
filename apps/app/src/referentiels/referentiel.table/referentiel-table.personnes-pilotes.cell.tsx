@@ -32,6 +32,7 @@ export const ReferentielTablePersonnesPilotesCell = ({
       tabIndex={-1}
       data-cell-id={cellId}
       canEdit={canEdit}
+      placeholder="Ajouter un pilote"
       edit={{
         renderOnEdit: ({ openState }) => (
           <PersonnesDropdown
