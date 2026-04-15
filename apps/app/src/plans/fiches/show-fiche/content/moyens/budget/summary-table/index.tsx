@@ -122,7 +122,7 @@ export const BudgetSummaryTable = ({ type }: BudgetSummaryTableProps) => {
 
             return (
               <TableCell
-                className="border-b border-gray-5 bg-grey-2"
+                className="bg-grey-2"
                 canEdit={!isReadonly}
                 edit={{
                   onClose: handleSubmitCallback,
