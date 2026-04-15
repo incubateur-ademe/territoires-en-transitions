@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { getTestApp, getTestDatabase, getTestRouter } from '../../../test/app-utils';
 import { getAuthUserFromUserCredentials } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../users/models/auth.models';
@@ -6,11 +7,12 @@ import { TrpcRouter } from '../../utils/trpc/trpc.router';
 import { CollectiviteRole } from '@tet/domain/users';
 
 describe('HandleMesurePilotesRouter', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let testUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     const db = await getTestDatabase(app);
     const testUserResult = await addTestUser(db, {
@@ -18,6 +20,10 @@ describe('HandleMesurePilotesRouter', () => {
       role: CollectiviteRole.ADMIN,
     });
     testUser = getAuthUserFromUserCredentials(testUserResult.user);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test('List pilotes throws error when not authenticated', async () => {

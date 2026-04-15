@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { ficheActionBudgetTable } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 import { ficheActionNoteTable } from '@tet/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
 import { axeTable } from '@tet/backend/plans/fiches/shared/models/axe.table';
@@ -30,6 +31,7 @@ const threeYearsAgo = new Date();
 threeYearsAgo.setFullYear(threeYearsAgo.getFullYear() - 3);
 
 describe('GetPlanCompletionRouter tests', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let testUser: AuthenticatedUser;
   let databaseService: DatabaseService;
@@ -37,7 +39,7 @@ describe('GetPlanCompletionRouter tests', () => {
   let testCollectiviteId: number;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
 
@@ -46,6 +48,10 @@ describe('GetPlanCompletionRouter tests', () => {
       role: CollectiviteRole.ADMIN,
     });
     testUser = getAuthUserFromUserCredentials(testUserResult.user);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   beforeEach(async () => {

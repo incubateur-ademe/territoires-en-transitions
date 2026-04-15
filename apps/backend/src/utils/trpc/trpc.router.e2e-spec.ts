@@ -18,6 +18,10 @@ describe("Route de test d'erreur", () => {
     testUser = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
+  afterAll(async () => {
+    await app.close();
+  });
+
   test(`Renvoi une erreur`, async () => {
     const caller = router.createCaller({ user: testUser });
 

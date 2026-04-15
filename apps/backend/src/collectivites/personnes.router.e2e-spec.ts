@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
@@ -20,15 +21,17 @@ type ListRequest = inferProcedureInput<
 >;
 
 describe('PersonnesRouter', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
   let collectivite: Collectivite;
   let adminUser: AuthenticatedUser;
   let editionUserId: string;
   let visitorUser: AuthenticatedUser;
+  let collectiviteCleanup: () => Promise<void>;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     db = await getTestDatabase(app);
 
@@ -38,6 +41,7 @@ describe('PersonnesRouter', () => {
         { role: CollectiviteRole.EDITION },
       ],
     });
+    collectiviteCleanup = testResult.cleanup;
     collectivite = testResult.collectivite;
     adminUser = getAuthUserFromUserCredentials(testResult.users[0]);
     editionUserId = testResult.users[1].id;
@@ -45,6 +49,11 @@ describe('PersonnesRouter', () => {
     // Utilisateur sans accès à la collectivité (visiteur)
     const visitorResult = await addTestUser(db);
     visitorUser = getAuthUserFromUserCredentials(visitorResult.user);
+  });
+
+  afterAll(async () => {
+    await collectiviteCleanup?.();
+    await app.close();
   });
 
   test('list: authenticated, with empty filter', async () => {

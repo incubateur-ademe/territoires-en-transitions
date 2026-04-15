@@ -27,6 +27,10 @@ describe('UpdateUserRole', () => {
     testUser = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
+  afterAll(async () => {
+    await app.close();
+  });
+
   describe('Rôle Support', () => {
     async function expectUserToHaveRoleSupportEnabled(
       caller: ReturnType<typeof router.createCaller>,

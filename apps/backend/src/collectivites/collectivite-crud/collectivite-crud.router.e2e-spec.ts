@@ -40,6 +40,10 @@ describe('Test upsert collectivite', () => {
     authenticatedUser = getAuthUserFromUserCredentials(testUserResult.user);
   });
 
+  afterAll(async () => {
+    await app.close();
+  });
+
   test('Test utilisateur support mais sans le mode super-admin actif', async () => {
     const { cleanup } = await addUserRoleSupport({
       databaseService,

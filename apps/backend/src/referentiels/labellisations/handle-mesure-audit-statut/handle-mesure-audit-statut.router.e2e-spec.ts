@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { auditeurTable } from '@tet/backend/referentiels/labellisations/auditeur.table';
 import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
@@ -21,6 +22,7 @@ import { addAuditeurPermission } from '../labellisations.test-fixture';
 import { mesureAuditStatutTable } from './mesure-audit-statut.table';
 
 describe('MesureAuditStatutRouter : règles métier', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let user: AuthenticatedUser;
   let databaseService: DatabaseService;
@@ -29,7 +31,7 @@ describe('MesureAuditStatutRouter : règles métier', () => {
   const mesureId = 'cae_1.1.1.1';
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
     const testUserResult = await addTestUser(databaseService, {
@@ -37,6 +39,10 @@ describe('MesureAuditStatutRouter : règles métier', () => {
       role: CollectiviteRole.EDITION,
     });
     user = getAuthUserFromUserCredentials(testUserResult.user);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test('updateStatut puis getStatut retourne le bon statut', async () => {
@@ -182,24 +188,32 @@ describe('MesureAuditStatutRouter : règles métier', () => {
 });
 
 describe('MesureAuditStatutRouter : permissions', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let databaseService: DatabaseService;
   const referentielId = ReferentielIdEnum.CAE;
   const mesureId = 'cae_1.1.1.1';
   let noAccessUser: AuthenticatedUser;
   let collectiviteId: number;
+  let collectiviteCleanup: () => Promise<void>;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
 
     // Collectivité isolée sur laquelle l'utilisateur n'a pas de droits
-    const { collectivite } = await addTestCollectivite(databaseService);
-    collectiviteId = collectivite.id;
+    const collectiviteResult = await addTestCollectivite(databaseService);
+    collectiviteId = collectiviteResult.collectivite.id;
+    collectiviteCleanup = collectiviteResult.cleanup;
 
     const noAccessResult = await addTestUser(databaseService);
     noAccessUser = getAuthUserFromUserCredentials(noAccessResult.user);
+  });
+
+  afterAll(async () => {
+    await collectiviteCleanup?.();
+    await app.close();
   });
 
   test('getStatut refuse si non authentifié', async () => {

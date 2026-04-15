@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
@@ -21,18 +22,21 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { cloneDeep } from 'es-toolkit';
 
 describe('TableauDeBordCollectiviteRouter', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let authenticatedUser: AuthenticatedUser;
   let adminCollectivite: Collectivite;
   let editionCollectivite: Collectivite;
   let visitCollectivite: Collectivite;
+  let collectiviteCleanups: (() => Promise<void>)[];
 
   let moduleNew: ModuleFicheCountByCreate;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     const db = await getTestDatabase(app);
+    collectiviteCleanups = [];
 
     // Create a test user
     const userResult = await addTestUser(db);
@@ -41,6 +45,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
     // Create 3 collectivites with different access levels
     const adminResult = await addTestCollectivite(db);
     adminCollectivite = adminResult.collectivite;
+    collectiviteCleanups.push(adminResult.cleanup);
     await setUserCollectiviteRole(db, {
       userId: userResult.user.id,
       collectiviteId: adminCollectivite.id,
@@ -49,6 +54,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
 
     const editionResult = await addTestCollectivite(db);
     editionCollectivite = editionResult.collectivite;
+    collectiviteCleanups.push(editionResult.cleanup);
     await setUserCollectiviteRole(db, {
       userId: userResult.user.id,
       collectiviteId: editionCollectivite.id,
@@ -57,6 +63,7 @@ describe('TableauDeBordCollectiviteRouter', () => {
 
     const visitResult = await addTestCollectivite(db);
     visitCollectivite = visitResult.collectivite;
+    collectiviteCleanups.push(visitResult.cleanup);
     // No role set → visitor access
 
     moduleNew = {
@@ -71,6 +78,13 @@ describe('TableauDeBordCollectiviteRouter', () => {
         },
       },
     };
+  });
+
+  afterAll(async () => {
+    for (const cleanup of collectiviteCleanups) {
+      await cleanup?.();
+    }
+    await app.close();
   });
 
   test('authenticated with edition access, list default modules', async () => {

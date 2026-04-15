@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
@@ -17,21 +18,29 @@ import { indicateurDefinitionTable } from '../indicateur-definition.table';
 import { UpdateIndicateurDefinitionInput } from './mutate-definition.input';
 
 describe('UpdateIndicateurDefinitionRouter', () => {
+  let app: INestApplication;
   let databaseService: DatabaseService;
   let router: TrpcRouter;
   let authenticatedUser: AuthenticatedUser;
   let collectivite: Collectivite;
+  let collectiviteCleanup: () => Promise<void>;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = app.get(TrpcRouter);
     databaseService = await getTestDatabase(app);
 
     const testResult = await addTestCollectiviteAndUser(databaseService, {
       user: { role: CollectiviteRole.ADMIN },
     });
+    collectiviteCleanup = testResult.cleanup;
     collectivite = testResult.collectivite;
     authenticatedUser = getAuthUserFromUserCredentials(testResult.user);
+  });
+
+  afterAll(async () => {
+    await collectiviteCleanup?.();
+    await app.close();
   });
 
   describe('indicateur perso', () => {

@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import {
   getAnonUser,
   getAuthUserFromUserCredentials,
@@ -13,12 +14,13 @@ import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import { TrpcRouter } from '../../utils/trpc/trpc.router';
 
 describe('Route de récupération des données Trajectoire Leviers', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let anonUser: AuthUser<AuthRole.ANON>;
   let authenticatedUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = app.get(TrpcRouter);
     const db = await getTestDatabase(app);
 
@@ -26,6 +28,10 @@ describe('Route de récupération des données Trajectoire Leviers', () => {
 
     const testUserResult = await addTestUser(db);
     authenticatedUser = getAuthUserFromUserCredentials(testUserResult.user);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test('Non autorisé si non authentifié ou anonyme', async () => {

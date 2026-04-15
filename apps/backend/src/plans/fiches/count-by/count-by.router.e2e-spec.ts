@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -14,11 +15,12 @@ import { inferProcedureInput } from '@trpc/server';
 type Input = inferProcedureInput<AppRouter['plans']['fiches']['countBy']>;
 
 describe('CountByRouter', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let authenticatedUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     const db = await getTestDatabase(app);
 
@@ -27,6 +29,10 @@ describe('CountByRouter', () => {
       role: CollectiviteRole.EDITION,
     });
     authenticatedUser = getAuthUserFromUserCredentials(testUserResult.user);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test('authenticated, with empty filter', async () => {

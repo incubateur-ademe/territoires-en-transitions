@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { getAuthUserFromUserCredentials } from '@tet/backend/test';
 import { DatabaseService } from '@tet/backend/utils/database/database.service';
@@ -44,6 +45,7 @@ const expectedCaeRootScoreAfterStatutUpdate: ActionScore = {
 };
 
 describe('UpdateActionStatutRouter', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let editorUser: AuthenticatedUser;
   let readerUser: AuthenticatedUser;
@@ -53,7 +55,7 @@ describe('UpdateActionStatutRouter', () => {
   let input: Input;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
 
@@ -96,6 +98,10 @@ describe('UpdateActionStatutRouter', () => {
     return async () => {
       await testCollectiviteAndUsersResult.cleanup();
     };
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   afterEach(async () => {

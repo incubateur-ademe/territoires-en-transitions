@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { ficheActionIndicateurTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
 import {
@@ -24,21 +25,29 @@ type CreateIndicateurDefinitionInput = z.input<
 >;
 
 describe('createIndicateurPerso', () => {
+  let app: INestApplication;
   let databaseService: DatabaseService;
   let router: TrpcRouter;
   let authenticatedUser: AuthenticatedUser;
   let collectivite: Collectivite;
+  let collectiviteCleanup: () => Promise<void>;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = app.get(TrpcRouter);
     databaseService = await getTestDatabase(app);
 
     const testResult = await addTestCollectiviteAndUser(databaseService, {
       user: { role: CollectiviteRole.ADMIN },
     });
+    collectiviteCleanup = testResult.cleanup;
     collectivite = testResult.collectivite;
     authenticatedUser = getAuthUserFromUserCredentials(testResult.user);
+  });
+
+  afterAll(async () => {
+    await collectiviteCleanup?.();
+    await app.close();
   });
 
   test('should create a personal indicator with all fields', async () => {

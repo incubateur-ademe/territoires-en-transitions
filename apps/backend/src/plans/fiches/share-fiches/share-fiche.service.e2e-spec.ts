@@ -40,6 +40,10 @@ describe('ShareFicheService', () => {
     adminUser3Id = user3Result.user.id;
   });
 
+  afterAll(async () => {
+    await app.close();
+  });
+
   test('should share a fiche action with another collectivité and make it visible / editable', async () => {
     const user3Caller = router.createCaller({ user: adminUser3 });
     const ficheId = await createFiche({

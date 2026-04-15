@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
@@ -15,6 +16,7 @@ import { createFicheAndCleanupFunction } from '../fiches.test-fixture';
 import { ficheActionTable } from '../shared/models/fiche-action.table';
 
 describe('Delete Fiche Action', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
 
@@ -24,7 +26,7 @@ describe('Delete Fiche Action', () => {
   let testFicheId: number;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await app.get(TrpcRouter);
     db = await getTestDatabase(app);
     const testCollectiviteAndUserResult = await addTestCollectiviteAndUser(db, {
@@ -55,6 +57,10 @@ describe('Delete Fiche Action', () => {
       await noAccessUserResult.cleanup();
       await testCollectiviteAndUserResult.cleanup();
     };
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   describe('Delete Fiche Action - Success Cases', () => {

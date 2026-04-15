@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { snapshotTable } from '@tet/backend/referentiels/snapshots/snapshot.table';
 import { getScoresIndicatifsFromSnapshot } from '@tet/backend/referentiels/snapshots/snapshots.utils';
 import {
@@ -35,13 +36,14 @@ type UpdateSnapshotNameInput = inferProcedureInput<
 >;
 
 describe('SnapshotsRouter', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let testUser: AuthenticatedUser;
   let rhoneAggloCollectiviteId: number;
   let databaseService: DatabaseService;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
     rhoneAggloCollectiviteId = await getCollectiviteIdBySiren(
@@ -61,6 +63,10 @@ describe('SnapshotsRouter', () => {
       collectiviteId: rhoneAggloCollectiviteId,
       role: CollectiviteRole.LECTURE,
     });
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test("Création d'un snapshot: not authenticated", async () => {

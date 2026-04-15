@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
@@ -19,6 +20,7 @@ import { invitationTable } from '../invitation.table';
 import { invitationPersonneTagTable } from './invitation-personne-tag.table';
 
 describe('Test les invitations', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let databaseService: DatabaseService;
   let collectivite: Collectivite;
@@ -26,9 +28,10 @@ describe('Test les invitations', () => {
   let adminEmail: string;
   let adminUserId: string;
   let inviteeUser: Dcp & { password: string };
+  let collectiviteCleanup: () => Promise<void>;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
 
@@ -36,6 +39,7 @@ describe('Test les invitations', () => {
     const testResult = await addTestCollectiviteAndUser(databaseService, {
       user: { role: CollectiviteRole.ADMIN },
     });
+    collectiviteCleanup = testResult.cleanup;
     collectivite = testResult.collectivite;
     adminUser = getAuthUserFromUserCredentials(testResult.user);
     adminEmail = testResult.user.email ?? '';
@@ -44,6 +48,11 @@ describe('Test les invitations', () => {
     // Create user to be invited (not in collectivite)
     const inviteeResult = await addTestUser(databaseService);
     inviteeUser = inviteeResult.user;
+  });
+
+  afterAll(async () => {
+    await collectiviteCleanup?.();
+    await app.close();
   });
 
   test(`N'a pas le droit d'inviter`, async () => {

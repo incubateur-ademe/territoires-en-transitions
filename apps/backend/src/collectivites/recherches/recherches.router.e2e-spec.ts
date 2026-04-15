@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -46,16 +47,21 @@ const inputWithCondition: inputType = {
  * Test que les requêtes s'executent correctement càd sans erreurs de syntaxe
  */
 describe('Test recherches collectivite', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let authenticatedUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     const db = await getTestDatabase(app);
 
     const testUserResult = await addTestUser(db);
     authenticatedUser = getAuthUserFromUserCredentials(testUserResult.user);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test('Test tab "Collectivités"', async () => {

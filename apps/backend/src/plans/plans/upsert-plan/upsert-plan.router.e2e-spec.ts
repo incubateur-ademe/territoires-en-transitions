@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { createPersonneTag } from '@tet/backend/collectivites/collectivites.test-fixture';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
@@ -17,6 +18,7 @@ import { planPiloteTable } from '../../fiches/shared/models/plan-pilote.table';
 import { planReferentTable } from '../../fiches/shared/models/plan-referent.table';
 
 describe('Créer ou modifier un plan', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
 
@@ -25,7 +27,7 @@ describe('Créer ou modifier un plan', () => {
   let noAccessUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await app.get(TrpcRouter);
     db = await getTestDatabase(app);
 
@@ -47,6 +49,10 @@ describe('Créer ou modifier un plan', () => {
       await noAccessUserResult.cleanup();
       await testCollectiviteAndUserResult.cleanup();
     };
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   describe('Créer ou modifier un plan - Cas de succès', () => {

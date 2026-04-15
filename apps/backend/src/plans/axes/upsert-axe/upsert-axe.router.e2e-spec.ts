@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
@@ -15,6 +16,7 @@ import { onTestFinished } from 'vitest';
 import { axeIndicateurTable } from '../../fiches/shared/models/axe-indicateur.table';
 
 describe('Créer ou modifier un axe', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
 
@@ -24,7 +26,7 @@ describe('Créer ou modifier un axe', () => {
   let planId: number;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await app.get(TrpcRouter);
     db = await getTestDatabase(app);
 
@@ -55,6 +57,10 @@ describe('Créer ou modifier un axe', () => {
       await caller.plans.plans.delete({ planId });
       await testCollectiviteAndUserResult.cleanup();
     };
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   describe('Créer ou modifier un axe - Cas de succès', () => {

@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { libreTagTable } from '@tet/backend/collectivites/tags/libre-tag.table';
 import {
   getAuthUserFromUserCredentials,
@@ -88,13 +89,14 @@ function getFichesWithServices(db: DatabaseService, ficheIds: number[]) {
 }
 
 describe('BulkEditRouter', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let testUser: AuthenticatedUser;
   let noAccessUser: AuthenticatedUser;
   let db: DatabaseService;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     db = await getTestDatabase(app);
 
@@ -106,6 +108,10 @@ describe('BulkEditRouter', () => {
 
     const noAccessResult = await addTestUser(db);
     noAccessUser = getAuthUserFromUserCredentials(noAccessResult.user);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test('authenticated, bulk edit `statut`', async () => {

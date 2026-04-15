@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
@@ -13,6 +14,7 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { onTestFinished } from 'vitest';
 
 describe('Supprimer un plan', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
 
@@ -21,7 +23,7 @@ describe('Supprimer un plan', () => {
   let noAccessUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await app.get(TrpcRouter);
     db = await getTestDatabase(app);
 
@@ -46,6 +48,10 @@ describe('Supprimer un plan', () => {
       await noAccessUserResult.cleanup();
       await testCollectiviteAndUserResult.cleanup();
     };
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   describe('Supprimer un plan - Cas de succès', () => {

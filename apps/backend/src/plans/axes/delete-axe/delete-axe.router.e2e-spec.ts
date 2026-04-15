@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
@@ -16,6 +17,7 @@ import { axeIndicateurTable } from '../../fiches/shared/models/axe-indicateur.ta
 import { axeTable } from '../../fiches/shared/models/axe.table';
 
 describe('Supprimer un axe', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
 
@@ -25,7 +27,7 @@ describe('Supprimer un axe', () => {
   let planId: number;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await app.get(TrpcRouter);
     db = await getTestDatabase(app);
 
@@ -50,6 +52,10 @@ describe('Supprimer un axe', () => {
       await noAccessUserResult.cleanup();
       await testCollectiviteAndUserResult.cleanup();
     };
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   beforeEach(async () => {

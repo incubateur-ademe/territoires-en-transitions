@@ -44,6 +44,10 @@ describe('generate-reports.router.e2e-spec.ts', () => {
     noAccessUser = getAuthUserFromUserCredentials(noAccessResult.user);
   });
 
+  afterAll(async () => {
+    await app.close();
+  });
+
   it('Génère un rapport de plan au format PPTX', async () => {
     const caller = router.createCaller({ user: adminUser });
     const reportGeneration = await caller.plans.reports.create({

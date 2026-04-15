@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { personneTagTable } from '@tet/backend/collectivites/tags/personnes/personne-tag.table';
 import { ficheActionPiloteTable } from '@tet/backend/plans/fiches/shared/models/fiche-action-pilote.table';
@@ -18,11 +19,13 @@ import { invitationTable } from '../../membres/invitation.table';
 import { invitationPersonneTagTable } from '../../membres/mutate-invitations/invitation-personne-tag.table';
 
 describe('Test PersonneTagService', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let adminUser: AuthenticatedUser;
   let adminUserId: string;
   let databaseService: DatabaseService;
   let collectivite: Collectivite;
+  let collectiviteCleanup: () => Promise<void>;
 
   // Tags
   let tag1Id: number;
@@ -35,7 +38,7 @@ describe('Test PersonneTagService', () => {
   let ficheIds: number[];
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
 
@@ -43,6 +46,7 @@ describe('Test PersonneTagService', () => {
     const testResult = await addTestCollectiviteAndUser(databaseService, {
       user: { role: CollectiviteRole.ADMIN },
     });
+    collectiviteCleanup = testResult.cleanup;
     collectivite = testResult.collectivite;
     adminUser = getAuthUserFromUserCredentials(testResult.user);
     adminUserId = testResult.user.id;
@@ -101,6 +105,11 @@ describe('Test PersonneTagService', () => {
       { ficheId: ficheIds[4], tagId: tag3Id },
       { ficheId: ficheIds[5], tagId: tag3Id },
     ]);
+  });
+
+  afterAll(async () => {
+    await collectiviteCleanup?.();
+    await app.close();
   });
 
   test('Appelle liste en tant que visiteur', async () => {

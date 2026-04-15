@@ -39,6 +39,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
   let databaseService: DatabaseService;
   let collectivite: Collectivite;
   let collectiviteId: number;
+  let cleanup: () => Promise<void>;
   let paysDuLaonCollectiviteId: number;
 
   beforeAll(async () => {
@@ -53,6 +54,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     collectivite = testResult.collectivite;
     collectiviteId = collectivite.id;
     authenticatedUser = getAuthUserFromUserCredentials(testResult.user);
+    cleanup = testResult.cleanup;
 
     // Also give user access to paysDuLaon for computed indicateur tests
     paysDuLaonCollectiviteId = await getCollectiviteIdBySiren(
@@ -64,6 +66,11 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       collectiviteId: paysDuLaonCollectiviteId,
       role: CollectiviteRole.ADMIN,
     });
+  });
+
+  afterAll(async () => {
+    await cleanup?.();
+    await app.close();
   });
 
   beforeEach(async () => {

@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
@@ -20,6 +21,7 @@ import { reponseChoixTable } from '../models/reponse-choix.table';
 import { reponseProportionTable } from '../models/reponse-proportion.table';
 
 describe('Enregistrer une réponse à une question de personnalisation', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let databaseService: DatabaseService;
 
@@ -34,7 +36,7 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
   let choixId: string;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await app.get(TrpcRouter);
     databaseService = await getTestDatabase(app);
 
@@ -136,6 +138,10 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
       await noAccessUserResult.cleanup();
       await testCollectiviteAndUserResult.cleanup();
     };
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   describe('Set Personnalisation Reponse - Cas de succès', () => {

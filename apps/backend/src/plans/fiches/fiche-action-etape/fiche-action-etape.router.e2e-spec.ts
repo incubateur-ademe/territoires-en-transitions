@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -24,12 +25,13 @@ type listInput = inferProcedureInput<
 >;
 
 describe('Route CRUD des étapes des fiches actions', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let authenticatedUser: AuthenticatedUser;
   let databaseService: DatabaseService;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
 
@@ -38,6 +40,10 @@ describe('Route CRUD des étapes des fiches actions', () => {
       role: CollectiviteRole.ADMIN,
     });
     authenticatedUser = getAuthUserFromUserCredentials(testUserResult.user);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test(`Test la gestion de l'ordre des étapes d'une fiche action`, async () => {

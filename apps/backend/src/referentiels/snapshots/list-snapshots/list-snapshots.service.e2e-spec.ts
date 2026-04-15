@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import {
   getAuthUserFromUserCredentials,
   getTestApp,
@@ -10,11 +11,12 @@ import { CollectiviteRole } from '@tet/domain/users';
 import { ReferentielsRouter } from '../../referentiels.router';
 
 describe('ListSnapshotsService', () => {
+  let app: INestApplication;
   let router: ReferentielsRouter;
   let testUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = app.get(ReferentielsRouter);
     const db = await getTestDatabase(app);
     const testUserResult = await addTestUser(db, {
@@ -22,6 +24,10 @@ describe('ListSnapshotsService', () => {
       role: CollectiviteRole.ADMIN,
     });
     testUser = getAuthUserFromUserCredentials(testUserResult.user);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test("Création d'un snapshot, liste des snapshots existants suppression", async () => {

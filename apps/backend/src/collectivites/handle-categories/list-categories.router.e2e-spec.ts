@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectiviteAndUser } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
@@ -16,20 +17,28 @@ type Input = inferProcedureInput<
 >;
 
 describe('Route de lecture des tags catégories', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let authenticatedUser: AuthenticatedUser;
   let collectivite: Collectivite;
+  let collectiviteCleanup: () => Promise<void>;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     const db = await getTestDatabase(app);
 
     const testResult = await addTestCollectiviteAndUser(db, {
       user: { role: CollectiviteRole.ADMIN },
     });
+    collectiviteCleanup = testResult.cleanup;
     collectivite = testResult.collectivite;
     authenticatedUser = getAuthUserFromUserCredentials(testResult.user);
+  });
+
+  afterAll(async () => {
+    await collectiviteCleanup?.();
+    await app.close();
   });
 
   test(`Test que la requête ne retourne que les tags personnalisés de la collectivité`, async () => {

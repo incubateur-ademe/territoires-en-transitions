@@ -68,6 +68,10 @@ describe('ListIndicateursRouter', () => {
     });
   });
 
+  afterAll(async () => {
+    await app.close();
+  });
+
   describe('structure et règles métier', () => {
     test(`vérifie la structure du résultat`, async () => {
       const caller = router.createCaller({ user: testUser });

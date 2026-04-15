@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { ficheActionBudgetTable } from '@tet/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 import { ficheActionTable } from '@tet/backend/plans/fiches/shared/models/fiche-action.table';
 import {
@@ -16,12 +17,13 @@ import { eq } from 'drizzle-orm';
 import { onTestFinished } from 'vitest';
 
 describe('Route CRUD des budgets des fiches actions', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let authenticatedUser: AuthenticatedUser;
   let databaseService: DatabaseService;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
 
@@ -30,6 +32,10 @@ describe('Route CRUD des budgets des fiches actions', () => {
       role: CollectiviteRole.ADMIN,
     });
     authenticatedUser = getAuthUserFromUserCredentials(testUserResult.user);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test(`Test droit`, async () => {

@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import {
   ActionTypeEnum,
   ListActionsRequestOptionsType,
@@ -16,11 +17,12 @@ type ListActionsInput = inferProcedureInput<
 >;
 
 describe('ActionStatutListRouter', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let testUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     const db = await getTestDatabase(app);
     const testUserResult = await addTestUser(db, {
@@ -40,6 +42,10 @@ describe('ActionStatutListRouter', () => {
       referentielId: ReferentielIdEnum.ECI,
       collectiviteId: 1,
     });
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   test('not authenticated = no access', async () => {

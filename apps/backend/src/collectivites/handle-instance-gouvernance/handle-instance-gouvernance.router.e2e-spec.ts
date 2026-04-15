@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { instanceGouvernanceTagTable } from '@tet/backend/collectivites/tags/instance-gouvernance.table';
 import { addTestCollectiviteAndUsers } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import { createFicheAndCleanupFunction } from '@tet/backend/plans/fiches/fiches.test-fixture';
@@ -34,14 +35,16 @@ type DeleteInput = inferProcedureInput<
 >;
 
 describe('InstanceGouvernanceRouter', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let db: DatabaseService;
   let collectivite: Collectivite;
   let editionUser: AuthenticatedUser;
   let userWithNoRights: AuthenticatedUser;
+  let collectiviteCleanup: () => Promise<void>;
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     db = await getTestDatabase(app);
 
@@ -52,11 +55,17 @@ describe('InstanceGouvernanceRouter', () => {
       ],
     });
 
+    collectiviteCleanup = testResult.cleanup;
     collectivite = testResult.collectivite;
     editionUser = getAuthUserFromUserCredentials(testResult.users[1]);
 
     const noAccessResult = await addTestUser(db);
     userWithNoRights = getAuthUserFromUserCredentials(noAccessResult.user);
+  });
+
+  afterAll(async () => {
+    await collectiviteCleanup?.();
+    await app.close();
   });
 
   test('list: verified visiting user is allowed to read', async () => {

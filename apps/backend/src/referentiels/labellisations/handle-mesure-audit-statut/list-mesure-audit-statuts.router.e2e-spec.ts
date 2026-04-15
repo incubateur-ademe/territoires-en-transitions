@@ -1,3 +1,4 @@
+import { INestApplication } from '@nestjs/common';
 import { addTestCollectivite } from '@tet/backend/collectivites/collectivites/collectivites.test-fixture';
 import {
   getAuthUserFromUserCredentials,
@@ -24,25 +25,30 @@ import { mesureAuditStatutTable } from './mesure-audit-statut.table';
 const referentielId = 'cae' as const;
 
 describe('listMesureAuditStatuts.router', () => {
+  let app: INestApplication;
   let router: TrpcRouter;
   let testUser: AuthenticatedUser;
   let databaseService: DatabaseService;
   let collectiviteId: number;
   let noAuditCollectiviteId: number;
+  let collectiviteCleanups: (() => Promise<void>)[];
 
   beforeAll(async () => {
-    const app = await getTestApp();
+    app = await getTestApp();
     router = await getTestRouter(app);
     databaseService = await getTestDatabase(app);
+    collectiviteCleanups = [];
 
     // Collectivité principale pour les tests avec audit
-    const { collectivite } = await addTestCollectivite(databaseService);
-    collectiviteId = collectivite.id;
+    const collectiviteResult = await addTestCollectivite(databaseService);
+    collectiviteId = collectiviteResult.collectivite.id;
+    collectiviteCleanups.push(collectiviteResult.cleanup);
 
     // Collectivité séparée sans audit (pour le test "no audit in progress")
-    const { collectivite: noAuditCollectivite } =
+    const noAuditResult =
       await addTestCollectivite(databaseService);
-    noAuditCollectiviteId = noAuditCollectivite.id;
+    noAuditCollectiviteId = noAuditResult.collectivite.id;
+    collectiviteCleanups.push(noAuditResult.cleanup);
 
     const testUserResult = await addTestUser(databaseService);
     testUser = getAuthUserFromUserCredentials(testUserResult.user);
@@ -58,6 +64,13 @@ describe('listMesureAuditStatuts.router', () => {
       collectiviteId: noAuditCollectiviteId,
       role: CollectiviteRole.ADMIN,
     });
+  });
+
+  afterAll(async () => {
+    for (const cleanup of collectiviteCleanups) {
+      await cleanup?.();
+    }
+    await app.close();
   });
 
   test('should return all measures with their audit status, including measures without defined statuses', async () => {
