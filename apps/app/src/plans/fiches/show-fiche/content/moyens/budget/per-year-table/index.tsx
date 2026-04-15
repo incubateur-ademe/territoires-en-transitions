@@ -11,7 +11,7 @@ import {
   TableCell,
   TableHeaderCell,
 } from '@tet/ui';
-import { useEffect, useMemo } from 'react';
+import { ReactNode, useEffect, useMemo } from 'react';
 import { useFicheContext } from '../../../../context/fiche-context';
 import { BudgetPerYear } from '../../../../context/types';
 import { getYearsOptions } from '../../../../utils';
@@ -38,6 +38,21 @@ type BudgetTableRow =
     };
 
 const columnHelper = createColumnHelper<BudgetTableRow>();
+
+const TotalTableCell = ({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+  contentClassName?: string;
+}) => (
+  <TableCell
+    className={`font-medium text-primary-9 bg-primary-3 ${className ?? ''}`}
+  >
+    <span>{children}</span>
+  </TableCell>
+);
 
 export const BudgetPerYearTable = ({
   type,
@@ -93,11 +108,7 @@ export const BudgetPerYearTable = ({
         header: () => <TableHeaderCell title="Année" className="w-[150px]" />,
         cell: ({ row }) => {
           if (row.original.type === 'total') {
-            return (
-              <TableCell className="font-medium text-primary-9 text-sm border-b border-gray-5 bg-primary-3">
-                TOTAL
-              </TableCell>
-            );
+            return <TotalTableCell>TOTAL</TotalTableCell>;
           }
           const currentYear = row.original.budget.year;
 
@@ -120,12 +131,10 @@ export const BudgetPerYearTable = ({
         cell: ({ row }) => {
           if (row.original.type === 'total') {
             return (
-              <TableCell className="font-medium text-primary-9 border-b border-gray-5 bg-primary-3">
-                <span>
-                  {getFormattedNumber(totals.montant)} €{' '}
-                  <sup className="-top-[0.4em]">HT</sup>
-                </span>
-              </TableCell>
+              <TotalTableCell>
+                {getFormattedNumber(totals.montant)} €{' '}
+                <sup className="-top-[0.4em]">HT</sup>
+              </TotalTableCell>
             );
           }
           return <BudgetPerYearMontantCell />;
@@ -137,9 +146,9 @@ export const BudgetPerYearTable = ({
         cell: ({ row }) => {
           if (row.original.type === 'total') {
             return (
-              <TableCell className="font-medium text-primary-9 border-b border-gray-5 bg-primary-3">
-                <span>{getFormattedNumber(totals.depense)} € </span>
-              </TableCell>
+              <TotalTableCell>
+                {getFormattedNumber(totals.depense)} €
+              </TotalTableCell>
             );
           }
           return <BudgetPerYearDepenseCell />;
@@ -151,9 +160,9 @@ export const BudgetPerYearTable = ({
         cell: ({ row }) => {
           if (row.original.type === 'total') {
             return (
-              <TableCell className="font-medium text-primary-9 border-b border-gray-5 bg-primary-3">
-                <span>{getFormattedFloat(totals.etpPrevisionnel)} ETP</span>
-              </TableCell>
+              <TotalTableCell>
+                {getFormattedFloat(totals.etpPrevisionnel)} ETP
+              </TotalTableCell>
             );
           }
           return <BudgetPerYearEtpPrevisionnelCell />;
@@ -165,9 +174,9 @@ export const BudgetPerYearTable = ({
         cell: ({ row }) => {
           if (row.original.type === 'total') {
             return (
-              <TableCell className="font-medium text-primary-9 border-b border-gray-5 bg-primary-3">
-                {<span>{getFormattedFloat(totals.etpReel) ?? '-'} ETP</span>}
-              </TableCell>
+              <TotalTableCell>
+                {getFormattedFloat(totals.etpReel) ?? '-'} ETP
+              </TotalTableCell>
             );
           }
           return <BudgetPerYearEtpReelCell />;
@@ -178,9 +187,7 @@ export const BudgetPerYearTable = ({
         header: () => <TableHeaderCell icon="more-2-line" />,
         cell: ({ row }) => {
           if (row.original.type === 'total') {
-            return (
-              <TableCell className="border-b border-gray-5 bg-primary-3" />
-            );
+            return <TableCell className="bg-primary-3" />;
           }
           return (
             <BudgetPerYearActionsCell
