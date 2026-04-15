@@ -34,6 +34,7 @@ export const ReferentielTableServicesPilotesCell = ({
       tabIndex={-1}
       data-cell-id={cellId}
       canEdit={canEdit}
+      placeholder="Ajouter un service"
       edit={{
         renderOnEdit: ({ openState }) => (
           <ServicesPilotesDropdown
