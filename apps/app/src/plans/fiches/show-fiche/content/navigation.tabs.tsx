@@ -18,7 +18,7 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
     rawActiveTab && isFicheSectionId(rawActiveTab) ? rawActiveTab : 'details';
   const { fiche, indicateurs, actionsLiees, documents, mesures, sousActions } =
     useFicheContext();
-  const { collectiviteId, hasCollectivitePermission } =
+  const { collectiviteId, hasCollectivitePermission, isSimplifiedView } =
     useCurrentCollectivite();
 
   const widgetCommunsFlagEnabled = useFeatureFlagEnabled(
@@ -78,8 +78,9 @@ export const NavigationTabs = ({ children }: { children: React.ReactNode }) => {
         mesures.list.length > 0 ? `(${mesures.list.length})` : ''
       }`,
       isVisible:
-        hasCollectivitePermission('referentiels.read_confidentiel') ||
-        hasCollectivitePermission('referentiels.read'),
+        !isSimplifiedView &&
+        (hasCollectivitePermission('referentiels.read_confidentiel') ||
+          hasCollectivitePermission('referentiels.read')),
       id: 'mesures-liees',
     },
     {

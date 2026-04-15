@@ -22,6 +22,7 @@ type RichTextEditorProps = {
   className?: string;
   id?: string;
   dataTest?: string;
+  ariaLabel?: string;
   initialValue?: string;
   placeholder?: string;
   disabled?: boolean;
@@ -72,6 +73,7 @@ export default function RichTextEditor({
   id,
   initialValue,
   dataTest,
+  ariaLabel,
   placeholder,
   disabled = false,
   isLoading = false,
@@ -115,6 +117,10 @@ export default function RichTextEditor({
     domAttributes: {
       editor: {
         'data-test': dataTest ?? '',
+        role: 'textbox',
+        'aria-multiline': 'true',
+        ...(ariaLabel ? { 'aria-label': ariaLabel } : {}),
+        'aria-readonly': disabled ? 'true' : 'false',
         // force l'activation du correcteur orthographique du navigateur ?
         spellcheck: 'true',
         class: cn(
