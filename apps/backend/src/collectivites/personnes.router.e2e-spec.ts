@@ -1,4 +1,9 @@
 import { utilisateurCollectiviteAccessTable } from '@tet/backend/users/authorizations/utilisateur-collectivite-access.table';
+import {
+  addAndEnableUserSuperAdminMode,
+  addTestUser,
+} from '@tet/backend/users/users/users.test-fixture';
+import { CollectiviteRole } from '@tet/domain/users';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import {
@@ -6,11 +11,15 @@ import {
   getTestDatabase,
   getTestRouter,
 } from '../../test/app-utils';
-import { getAuthUser } from '../../test/auth-utils';
-import { YOLO_DODO, YULU_DUDU } from '../../test/test-users.samples';
+import {
+  getAuthUser,
+  getAuthUserFromUserCredentials,
+} from '../../test/auth-utils';
+import { YOLO_DODO } from '../../test/test-users.samples';
 import { AuthenticatedUser } from '../users/models/auth.models';
 import { DatabaseService } from '../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../utils/trpc/trpc.router';
+import { addTestCollectiviteAndUser } from './collectivites/collectivites.test-fixture';
 
 type ListRequest = inferProcedureInput<
   AppRouter['collectivites']['personnes']['list']
@@ -57,17 +66,79 @@ describe('PersonnesRouter', () => {
     }
   });
 
-  test('list: authenticated, without explicit access to collectivité', async () => {
-    const yuluDudu = await getAuthUser(YULU_DUDU);
-    const caller = router.createCaller({ user: yuluDudu });
+  describe('list: vérification des autorisations', () => {
+    let isolatedCollectiviteId: number;
+    let editorAuthUser: AuthenticatedUser;
+    let outsiderAuthUser: AuthenticatedUser;
+    let superAdminCandidateAuthUser: AuthenticatedUser;
+    let cleanupFixtures: () => Promise<void>;
 
-    const input: ListRequest = {
-      collectiviteIds: [COLLECTIVITE_ID],
-    };
+    beforeAll(async () => {
+      const collectiviteAndEditor = await addTestCollectiviteAndUser(db, {
+        user: { role: CollectiviteRole.EDITION },
+      });
+      isolatedCollectiviteId = collectiviteAndEditor.collectivite.id;
+      editorAuthUser = getAuthUserFromUserCredentials(
+        collectiviteAndEditor.user
+      );
 
-    const result = await caller.collectivites.personnes.list(input);
-    expect(result).toBeInstanceOf(Array);
-    expect(result.length).toBeGreaterThan(0);
+      const outsider = await addTestUser(db, { collectiviteId: null });
+      outsiderAuthUser = getAuthUserFromUserCredentials(outsider.user);
+      const superAdminCandidate = await addTestUser(db, { collectiviteId: null });
+      superAdminCandidateAuthUser = getAuthUserFromUserCredentials(
+        superAdminCandidate.user
+      );
+
+      cleanupFixtures = async () => {
+        await outsider.cleanup();
+        await superAdminCandidate.cleanup();
+        await collectiviteAndEditor.cleanup();
+      };
+    });
+
+    afterAll(async () => {
+      await cleanupFixtures();
+    });
+
+    test('un éditeur peut lister les personnes de sa collectivité', async () => {
+      const caller = router.createCaller({ user: editorAuthUser });
+
+      const result = await caller.collectivites.personnes.list({
+        collectiviteIds: [isolatedCollectiviteId],
+      });
+
+      expect(result).toBeInstanceOf(Array);
+      expect(result.length).toBeGreaterThan(0);
+    });
+
+    test("un super-admin peut lister les personnes d'une collectivité sans accès direct", async () => {
+      const caller = router.createCaller({ user: superAdminCandidateAuthUser });
+
+      const { cleanup } = await addAndEnableUserSuperAdminMode({
+        app: await getTestApp(),
+        caller,
+        userId: superAdminCandidateAuthUser.id,
+      });
+      onTestFinished(cleanup);
+
+      const result = await caller.collectivites.personnes.list({
+        collectiviteIds: [isolatedCollectiviteId],
+      });
+
+      expect(result).toBeInstanceOf(Array);
+      expect(result.length).toBeGreaterThan(0);
+    });
+
+    test("un utilisateur vérifié peut lister les personnes sans accès direct à la collectivité", async () => {
+      const caller = router.createCaller({ user: outsiderAuthUser });
+
+      const result = await caller.collectivites.personnes.list({
+        collectiviteIds: [isolatedCollectiviteId],
+      });
+
+      expect(result).toBeInstanceOf(Array);
+      expect(result.length).toBeGreaterThan(0);
+    });
   });
 
   test('list: authenticated, with activeOnly = false', async () => {
