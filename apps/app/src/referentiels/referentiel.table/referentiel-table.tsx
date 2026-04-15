@@ -18,6 +18,7 @@ import {
 } from '@tet/domain/referentiels';
 import { cn, Table, TableHead, TableLoading, TableRow } from '@tet/ui';
 import React, { ReactNode, useCallback, useMemo, useState } from 'react';
+import { useSidePanel } from '../../ui/layout/side-panel/side-panel.context';
 import { ActionListItem } from '../actions/use-list-actions';
 import { useListActionsGroupedById } from '../actions/use-list-actions-grouped-by-id';
 import { useReferentielId } from '../referentiel-context';
@@ -213,6 +214,8 @@ function TableWrapper({
   table: ReactTable<ActionListItem>;
   keyboard?: ReferentielTableKeyboardProps;
 }) {
+  const { panel } = useSidePanel();
+
   const tableHeaderRow = table
     .getHeaderGroups()
     .map((headerGroup) =>
@@ -227,9 +230,11 @@ function TableWrapper({
     <>
       <div
         ref={keyboard?.scrollContainerRef}
-        // className="2xl:-ml-[calc((100vw-4rem-1440px+3rem)/2)] 2xl:w-[calc(100vw-4rem)] relative bg-white rounded-xl border border-grey-3 overflow-x-scroll overflow-y-auto max-h-[calc(100vh-12rem)]"
-        className="2xl:-ml-[calc((100vw-4rem-1440px+3rem)/2)] 2xl:w-[calc(100vw-4rem)] bg-white rounded-xl border border-grey-3 overflow-x-scroll"
-        // className="max-2xl:overflow-x-auto 2xl:-ml-[calc((100vw-1440px)/2)] 2xl:w-[calc(100vw-4rem)] max-h-[calc(100vh-12rem)] rounded-xl"
+        className={cn(
+          'bg-white rounded-xl border border-grey-3 overflow-x-scroll',
+          !panel.isOpen &&
+            '2xl:-ml-[calc((100vw-4rem-1440px+3rem)/2)] 2xl:w-[calc(100vw-4rem)]'
+        )}
       >
         <div className="sticky left-0 top-0 bg-white px-4 py-2 border-b border-grey-3 text-xs text-grey-7">
           Raccourcis clavier :{' '}
