@@ -27,7 +27,9 @@ echo "Starting backup to $BACKUP_DIRECTORY/$BACKUP_FILE..."
 # Format binaire compressé, plus fiable que --format=plain
 # Ignore les permissions (souvent inutiles à restaurer)
 # Ignore les owners (le user de destination sera owner)
-pg_dump "$FROM_DB_URL" \
+# -c transaction_timeout= prevents pg_dump from including SET transaction_timeout
+# which causes errors when restoring to older PostgreSQL versions
+PGOPTIONS="-c transaction_timeout=" pg_dump "$FROM_DB_URL" \
   --format=custom \
   --no-acl \
   --no-owner \
@@ -49,3 +51,22 @@ aws s3 cp "$BACKUP_DIRECTORY/$BACKUP_FILE" \
   --region "$BACKUP_REGION"
 
 echo "Backup uploaded to s3://$BACKUP_BUCKET/$BACKUP_FILE"
+
+# --- Metadata: backend version ---
+BACKEND_URL="${BACKEND_URL:-https://api.territoiresentransitions.fr}"
+METADATA_FILE="backup-$DATE.metadata.json"
+
+echo "Fetching backend version from $BACKEND_URL/version..."
+
+curl -sf "$BACKEND_URL/version" -o "$BACKUP_DIRECTORY/$METADATA_FILE"
+
+echo "Uploading metadata to S3..."
+
+AWS_ACCESS_KEY_ID="$BACKUP_AWS_ACCESS_KEY_ID" \
+AWS_SECRET_ACCESS_KEY="$BACKUP_AWS_SECRET_ACCESS_KEY" \
+aws s3 cp "$BACKUP_DIRECTORY/$METADATA_FILE" \
+  "s3://$BACKUP_BUCKET/$METADATA_FILE" \
+  --endpoint-url "$BACKUP_ENDPOINT_URL" \
+  --region "$BACKUP_REGION"
+
+echo "Metadata uploaded to s3://$BACKUP_BUCKET/$METADATA_FILE"

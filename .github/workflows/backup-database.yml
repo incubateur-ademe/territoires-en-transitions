@@ -3,7 +3,7 @@ run-name: Backup BDD production vers S3
 
 on:
   schedule:
-    - cron: "0 2 * * *"
+    - cron: '0 22 * * *'
   workflow_dispatch:
 
 permissions:
@@ -24,6 +24,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y postgresql-client
 
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.53.2/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
       - name: Install AWS CLI
         run: |
           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -39,4 +44,54 @@ jobs:
           BACKUP_BUCKET: ${{ vars.BACKUP_BUCKET }}
           BACKUP_REGION: ${{ vars.BACKUP_REGION }}
           BACKUP_ENDPOINT_URL: ${{ vars.BACKUP_ENDPOINT_URL }}
+          BACKEND_URL: ${{ vars.BACKEND_URL }}
         run: bash data_layer/backup/backup.sh
+
+      - name: Cleanup old backups
+        env:
+          BACKUP_AWS_ACCESS_KEY_ID: ${{ vars.BACKUP_AWS_ACCESS_KEY_ID }}
+          BACKUP_AWS_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_AWS_SECRET_ACCESS_KEY }}
+          BACKUP_BUCKET: ${{ vars.BACKUP_BUCKET }}
+          BACKUP_REGION: ${{ vars.BACKUP_REGION }}
+          BACKUP_ENDPOINT_URL: ${{ vars.BACKUP_ENDPOINT_URL }}
+        run: bash data_layer/backup/cleanup.sh
+
+  validate-restore:
+    name: Validation du restore sur preprod
+    needs: [backup-production]
+    environment: prod
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    concurrency:
+      group: restore-preprod
+      cancel-in-progress: false
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Install AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip -q awscliv2.zip
+          sudo ./aws/install --update
+          rm -rf awscliv2.zip aws/
+
+      - name: Restore backup to preprod
+        env:
+          TO_DB_URL: ${{ secrets.BACKUP_RESTORE_TO_DB_URL }}
+          BACKUP_AWS_ACCESS_KEY_ID: ${{ vars.BACKUP_AWS_ACCESS_KEY_ID }}
+          BACKUP_AWS_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_AWS_SECRET_ACCESS_KEY }}
+          BACKUP_BUCKET: ${{ vars.BACKUP_BUCKET }}
+          BACKUP_REGION: ${{ vars.BACKUP_REGION }}
+          BACKUP_ENDPOINT_URL: ${{ vars.BACKUP_ENDPOINT_URL }}
+        run: bash data_layer/backup/restore.sh
