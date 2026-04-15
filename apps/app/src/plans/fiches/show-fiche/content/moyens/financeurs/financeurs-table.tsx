@@ -120,7 +120,10 @@ export const FinanceursTable = () => {
   const isEmpty = tableData.length === 0;
 
   return (
-    <div className="p-2 bg-white rounded-lg border border-grey-3">
+    <section
+      aria-label="Financeurs"
+      className="p-2 bg-white rounded-lg border border-grey-3"
+    >
       <div className="max-2xl:overflow-x-auto">
         <ReactTable
           table={table}
@@ -173,6 +176,6 @@ export const FinanceursTable = () => {
           Ajouter un financeur
         </Button>
       )}
-    </div>
+    </section>
   );
 };

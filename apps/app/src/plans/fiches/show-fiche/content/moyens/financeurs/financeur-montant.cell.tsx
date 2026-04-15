@@ -46,6 +46,7 @@ export const FinanceurMontantCell = () => {
                 decimalScale={0}
                 icon={{ text: '€' }}
                 placeholder="Ajouter un montant"
+                aria-label="Montant de subvention obtenu"
                 value={value?.toString() ?? ''}
                 onValueChange={async ({ floatValue, value: raw }) => {
                   const newValue =
