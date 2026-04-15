@@ -123,6 +123,7 @@ export const TabsTab = (props: TabProps) => {
       aria-selected={isTabActive ? 'true' : 'false'}
       title={props.title}
       href={props.href}
+      scroll={false}
     >
       {props.icon && (!props.iconPosition || props.iconPosition === 'left') && (
         <Icon
