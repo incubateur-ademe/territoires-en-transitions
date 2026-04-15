@@ -7,6 +7,8 @@ import { ActionListItem } from '../actions/use-list-actions';
 import { useUpsertMesurePilotes } from '../actions/use-mesure-pilotes';
 import { useUpsertMesureServicesPilotes } from '../actions/use-mesure-services-pilotes';
 import { useUpdateActionExplication } from '../actions/use-update-action-explication';
+import { ReferentielTableCommentsCell } from './referentiel-table.comments.cell';
+import { ReferentielTableDocumentsCell } from './referentiel-table.documents.cell';
 import { ReferentielTableExplicationCell } from './referentiel-table.explication.cell';
 import {
   getPilotesFilterFn,
@@ -132,6 +134,20 @@ const getColumns = ({
       />
     ),
     filterFn: 'includesString',
+  }),
+
+  columnHelper.display({
+    id: 'documents',
+    header: () => <TableHeaderCell title="Documents" className={cn('w-28')} />,
+    cell: (info) => <ReferentielTableDocumentsCell info={info} />,
+  }),
+
+  columnHelper.display({
+    id: 'comments',
+    header: () => (
+      <TableHeaderCell title="Commentaires" className={cn('w-32')} />
+    ),
+    cell: (info) => <ReferentielTableCommentsCell info={info} />,
   }),
 
   columnHelper.accessor('pilotes', {
@@ -297,53 +313,6 @@ const getColumns = ({
   //       actionType={info.row.original.type}
   //     />
   //   ),
-  // }),
-
-  // columnHelper.display({
-  //   id: 'documents',
-  //   header: () => <TableHeaderCell title="Documents" className={cn('w-32')} />,
-  //   cell: (info) => (
-  //     <ReferentielTableNotificationCell
-  //       link={makeReferentielActionUrl({
-  //         ...getTableMeta(info.table),
-  //         actionId: info.row.original.actionId,
-  //         actionVue: 'documents',
-  //       })}
-  //       count={info.getValue()}
-  //       actionType={info.row.original.actionType}
-  //     />
-  //   ),
-  // }),
-
-  // columnHelper.accessor('countActions', {
-  //   header: () => (
-  //     <TableHeaderCell
-  //       title="Actions liées"
-  //       titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
-  //       className={cn('w-32', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
-  //     />
-  //   ),
-  //   cell: (info) => (
-  //     <ReferentielTableNotificationCell
-  //       link={makeReferentielActionUrl({
-  //         ...getTableMeta(info.table),
-  //         actionId: info.row.original.actionId,
-  //         actionVue: 'fiches',
-  //       })}
-  //       count={info.getValue()}
-  //       actionType={info.row.original.actionType}
-  //     />
-  //   ),
-  // }),
-  // columnHelper.accessor('countComments', {
-  //   header: () => (
-  //     <TableHeaderCell
-  //       title="Commentaires"
-  //       titleClassName={HEADER_CELL_SMALL_CENTER_CLASSNAME}
-  //       className={cn('w-32', HEADER_CELL_BORDER_RIGHT_CLASSNAME)}
-  //     />
-  //   ),
-  //   cell: (info) => <ReferentielTableCommentairesCell info={info} />,
   // }),
 ];
 
