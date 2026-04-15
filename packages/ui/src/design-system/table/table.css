@@ -68,71 +68,14 @@ table.ref-table
 /* ===== End referentiel table sticky ===== */
 
 
-
-/* First-column sticky cells: combine the column separator shadow with the focus ring */
-table.ref-table :is(tbody, tfoot) > tr > td:first-child:not([colspan])[data-cell-id]:focus,
-table.ref-table > thead th:first-child[data-cell-id]:focus {
-  /* box-shadow:
-    1px 0 0 0 theme('colors.grey.3'),
-    inset 0 0 0 1px theme('colors.primary.5'); */
-}
-
 /* Focus ring for keyboard-navigable cells */
 td[data-cell-id]:focus {
-  /* @apply outline-none; */
-  @apply ring-0;
-
-  /* @apply border-b border-primary-5 outline-none; */
-  @apply outline outline-1 outline-primary-5 -outline-offset-4;
-  /* @apply ring-1 ring-inset ring-primary-5 z-[1] outline-none relative; */
-  /* box-shadow: inset 0 0 0 1px theme('colors.primary.5'); */
-  /* @apply ring-1 ring-inset ring-primary-5 z-[1] outline-none relative; */
-
+  @apply ring-0 outline outline-1 outline-primary-5 -outline-offset-4;
 }
 
-
-/* Editable cell indicator: dashed corner brackets previewing the focus outline */
-td[data-inline-edit='true'] {
-  @apply relative cursor-pointer;
-  border-bottom: 1px dashed theme('colors.primary.5');
-}
-
-td[data-inline-edit='true']:focus {
-  @apply bg-primary-0;
-  @apply outline-double outline-1 outline-primary-5 -outline-offset-8;
-  border-bottom: 1px dashed theme('colors.primary.8');
-  /* @apply outline-dashed outline-1 outline-primary-5 -outline-offset-2; */
-  /* box-shadow:
-    inset 0 1px 0 0 2px theme('colors.primary.5'),
-    inset 1px 0 0 0 2px theme('colors.primary.5'),
-    inset -1px 0 0 0 2px theme('colors.primary.5'); */
-}
-
-td[data-inline-edit='true']:focus {
-  /* @apply outline-dashed outline-primary-5 -outline-offset-1; */
-}
-
+td[data-inline-edit='true']:focus,
 td[data-inline-edit='true']:hover {
   @apply bg-primary-0;
 }
-
-td[data-inline-edit='true']:hover::before,
-td[data-inline-edit='true']:hover::after {
-  /* @apply opacity-90; */
-}
-
-
-/* td[data-inline-edit='true']::before {
-  content: '';
-  @apply absolute top-0 left-0 w-0 h-0 opacity-70;
-  border-style: solid;
-  border-width: 6px 6px 0 0;
-  border-color: theme('colors.primary.5') transparent transparent transparent;
-} */
-
-/* td[data-inline-edit='true']::after {
-  @apply bottom-0 right-0;
-  border-width: 0 2px 2px 0;
-} */
 
 
