@@ -1974,52 +1974,55 @@ test('Fetch avec filtre sur la date de modification', async () => {
 test('Fetch avec filtre sur aucun plan', async () => {
   const caller = router.createCaller({ user: testUser });
 
-  const { data: initialWithoutData } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+  // Créer un plan sur la collectivité isolée
+  const plan = await caller.plans.plans.create({
+    nom: 'Plan test noPlan',
+    collectiviteId: testCollectiviteId,
+  });
+
+  onTestFinished(async () => {
+    await caller.plans.plans.delete({ planId: plan.id });
+  });
+
+  // Créer une fiche associée au plan et une fiche sans plan
+  const { ficheIds } = await withOnTestFinished(createFiches)({
+    caller,
+    ficheInputs: [
+      {
+        collectiviteId: testCollectiviteId,
+        titre: 'Fiche avec plan',
+        axeId: plan.id,
+      },
+      {
+        collectiviteId: testCollectiviteId,
+        titre: 'Fiche sans plan',
+      },
+    ],
+  });
+
+  // Fiches sans plan
+  const { data: withoutPlan } = await caller.plans.fiches.listFiches({
+    collectiviteId: testCollectiviteId,
     filters: {
+      ficheIds,
       noPlan: true,
     },
   });
 
-  const initialNumberOfFichesWithoutPlan = initialWithoutData.length;
+  expect(withoutPlan).toHaveLength(1);
+  expect(withoutPlan[0].titre).toBe('Fiche sans plan');
 
+  // Fiches avec plan
   const { data: withPlan } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
+    collectiviteId: testCollectiviteId,
     filters: {
+      ficheIds,
       noPlan: false,
     },
   });
 
-  expect(withPlan.length).toBeGreaterThan(0);
-
-  const ficheWithPlan = withPlan.at(0);
-  if (!ficheWithPlan) {
-    expect.fail();
-  }
-
-  // On supprime le plan de la première fiche
-  await db.db
-    .delete(ficheActionAxeTable)
-    .where(eq(ficheActionAxeTable.ficheId, ficheWithPlan.id));
-
-  // On ré-associe le plan à la fiche en fin de test
-  onTestFinished(async () => {
-    if (ficheWithPlan.axes && ficheWithPlan.axes.length > 0) {
-      await db.db
-        .insert(ficheActionAxeTable)
-        .values({ axeId: ficheWithPlan.axes[0].id, ficheId: ficheWithPlan.id });
-    }
-  });
-
-  const { data: withoutPlan } = await caller.plans.fiches.listFiches({
-    collectiviteId: COLLECTIVITE_ID,
-    filters: {
-      noPlan: true,
-    },
-  });
-
-  expect(withoutPlan).toHaveLength(initialNumberOfFichesWithoutPlan + 1);
-  expect(withoutPlan.map((f) => f.id)).toContain(ficheWithPlan.id);
+  expect(withPlan).toHaveLength(1);
+  expect(withPlan[0].titre).toBe('Fiche avec plan');
 });
 
 test('Fetch avec filtre les plansIds', async () => {
