@@ -39,6 +39,7 @@ groups:
     - imports.competence_banatic
     - imports.labellisation
     - banatic_competence
+    - collectivite_banatic_type
     - collectivite
     - collectivite_banatic_competence
     - commune
@@ -119,13 +120,6 @@ groups:
     - labellisation_calendrier
     - labellisation_fichier_critere
     - score_snapshot
-    # A supprimer lorsqu'on utilisera uniquement le nouveau moteur
-    - personnalisation_consequence
-    - action_computed_points
-    - client_scores
-    - client_scores_update
-    - pre_audit_scores
-    - post_audit_scores
 
   indicateurs_group:
     - indicateur_definition
@@ -194,6 +188,7 @@ groups:
     - annexe
     - historique.fiche_action
     - historique.fiche_action_pilote
+    - plan_report_generation
 
 # protect sensitive information
 data_rules:

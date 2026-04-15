@@ -1,0 +1,77 @@
+name: Restore manuel de la base de données prod sur l'environnement preprod
+run-name: Restore prod backup sur preprod ${{ inputs.backup_date && format('← {0}', inputs.backup_date) || '← dernier backup' }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      backup_date:
+        type: string
+        description: 'Date ISO du backup (YYYY-MM-DD). Laisser vide pour utiliser le backup le plus récent.'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  restore-preprod:
+    name: Restore manuel sur preprod
+    environment: prod
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    concurrency:
+      group: restore-preprod
+      cancel-in-progress: false
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Install AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip -q awscliv2.zip
+          sudo ./aws/install --update
+          rm -rf awscliv2.zip aws/
+
+      - name: Compute restore argument
+        id: restore_arg
+        env:
+          BACKUP_DATE_INPUT: ${{ inputs.backup_date }}
+        run: |
+          trimmed="$(echo -n "$BACKUP_DATE_INPUT" | tr -d '[:space:]')"
+          if [ -z "$trimmed" ]; then
+            restore_arg="latest"
+            echo "No date provided, will resolve latest backup in S3."
+          elif [[ "$trimmed" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+            restore_arg="$trimmed"
+            echo "Will restore backup for date: $restore_arg"
+          else
+            echo "::error::Invalid backup_date format: '$BACKUP_DATE_INPUT' (expected YYYY-MM-DD)."
+            exit 1
+          fi
+          echo "restore_arg=$restore_arg" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Restore preprod"
+            echo ""
+            echo "Argument transmis à \`restore.sh\` : \`$restore_arg\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Restore backup to preprod
+        env:
+          TO_DB_URL: ${{ secrets.BACKUP_RESTORE_TO_DB_URL }}
+          BACKUP_AWS_ACCESS_KEY_ID: ${{ vars.BACKUP_AWS_ACCESS_KEY_ID }}
+          BACKUP_AWS_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_AWS_SECRET_ACCESS_KEY }}
+          BACKUP_BUCKET: ${{ vars.BACKUP_BUCKET }}
+          BACKUP_REGION: ${{ vars.BACKUP_REGION }}
+          BACKUP_ENDPOINT_URL: ${{ vars.BACKUP_ENDPOINT_URL }}
+        run: bash data_layer/backup/restore.sh "${{ steps.restore_arg.outputs.restore_arg }}"
