@@ -17,7 +17,7 @@ function getSectionLabel(type: BudgetType) {
 }
 
 export const BudgetView = ({ type }: { type: BudgetType }) => {
-  const { budgets: budgetsState } = useFicheContext();
+  const { budgets: budgetsState, isReadonly } = useFicheContext();
 
   const { perYear, summary } = budgetsState[type];
 
@@ -65,7 +65,7 @@ export const BudgetView = ({ type }: { type: BudgetType }) => {
       <EditableSection
         label={getSectionLabel(type)}
         toggleChecked={view === 'year'}
-        onToggleChange={handleToggleChange}
+        onToggleChange={isReadonly ? undefined : handleToggleChange}
       >
         {view === 'year' ? (
           <BudgetPerYearTable type={type} />

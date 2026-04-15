@@ -56,20 +56,11 @@ test.describe('Lecteur ne peut pas modifier description et objectifs', () => {
     await expect(page.getByText('Description de test')).toBeVisible();
     await expect(page.getByText('Objectifs de test')).toBeVisible();
 
-    // Vérifie que les éditeurs de description et objectifs ne sont pas éditables
-    // BlockNote utilise l'attribut contenteditable sur le div.bn-editor
-    const editors = page.locator('.bn-editor');
-    const editorCount = await editors.count();
-
-    // Il devrait y avoir au moins 2 éditeurs (description + objectifs)
-    expect(editorCount).toBeGreaterThanOrEqual(2);
-
-    // Vérifie que tous les éditeurs sont en mode lecture seule
-    for (let i = 0; i < editorCount; i++) {
-      await expect(editors.nth(i)).toHaveAttribute(
-        'contenteditable',
-        'false'
-      );
-    }
+    await expect(
+      page.getByRole('textbox', { name: 'Description' })
+    ).toHaveAttribute('aria-readonly', 'true');
+    await expect(
+      page.getByRole('textbox', { name: 'Objectifs' })
+    ).toHaveAttribute('aria-readonly', 'true');
   });
 });

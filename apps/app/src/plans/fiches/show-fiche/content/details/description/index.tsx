@@ -95,6 +95,7 @@ export const Description = () => {
         </VisibleWhen>
         <RichTextEditor
           unstyled
+          ariaLabel="Description"
           contentStyle={{
             size: 'sm',
             color: 'primary',
@@ -113,6 +114,7 @@ export const Description = () => {
         </VisibleWhen>
         <RichTextEditor
           unstyled
+          ariaLabel="Objectifs"
           contentStyle={{
             size: 'sm',
             color: 'primary',
