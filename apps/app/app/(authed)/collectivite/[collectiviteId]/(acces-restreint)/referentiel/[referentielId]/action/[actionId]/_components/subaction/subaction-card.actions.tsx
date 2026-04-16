@@ -32,7 +32,10 @@ const SubactionCardActions = ({ action }: Props) => {
 
   return (
     <>
-      <div className="flex flex-wrap mt-1 mb-2">
+      <div
+        className="flex flex-wrap mt-1 mb-2"
+        onClickCapture={(e) => e.stopPropagation()}
+      >
         {/* Score indicatif */}
         {haveScoreIndicatif &&
           !isScoreIndicatifLoading &&
