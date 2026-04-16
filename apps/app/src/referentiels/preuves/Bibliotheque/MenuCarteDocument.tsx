@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { EditerDocumentModal } from '@/app/referentiels/preuves/Bibliotheque/EditerDocumentModal';
 import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
@@ -34,7 +35,7 @@ const MenuCarteDocument = ({
         <Button
           data-test="btn-edit"
           icon="edit-line"
-          title={fichier ? 'Editer le document' : 'Editer le lien'}
+          title={fichier ? appLabels.editerDocument : appLabels.editerLien}
           variant="grey"
           size="xs"
           onClick={() => setIsOpen(true)}
@@ -58,7 +59,7 @@ const MenuCarteDocument = ({
         <Button
           data-test="btn-comment"
           icon="discuss-line"
-          title="Commenter"
+          title={appLabels.commenter}
           variant="grey"
           size="xs"
           onClick={onComment}
@@ -67,7 +68,7 @@ const MenuCarteDocument = ({
         {/* Supprimer le document */}
         <DeleteButton
           data-test="btn-delete"
-          title="Supprimer le document"
+          title={appLabels.supprimer}
           size="xs"
           onClick={onDelete}
         />

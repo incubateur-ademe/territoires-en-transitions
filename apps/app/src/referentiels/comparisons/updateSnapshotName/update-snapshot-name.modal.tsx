@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { parseSnapshotName } from '@tet/domain/referentiels';
 import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
@@ -40,19 +41,19 @@ export const UpdateSnapshotNameModal = ({
   return (
     <>
       <Modal
-        title="Éditer le nom d'une sauvegarde"
+        title={appLabels.editerNomSauvegarde}
         size="md"
         openState={openState}
         render={({ descriptionId }) => (
           <div id={descriptionId} className="space-y-6">
-            <Field title="Nom de la sauvegarde">
+            <Field title={appLabels.nomDeLaSauvegarde}>
               <div className="flex items-center border border-grey-4 rounded-lg bg-grey-1 focus-within:border-primary-5">
                 <span className="text-sm px-3 py-3 text-primary-7 border-r border-grey-4">
                   {year} -
                 </span>
                 <Input
                   type="text"
-                  placeholder="Entrez le nom de la sauvegarde"
+                  placeholder={appLabels.entrezNomSauvegarde}
                   containerClassname="flex-grow border-none"
                   value={editedSnapshotName}
                   onChange={(e) => setEditedSnapshotName(e.target.value)}
@@ -65,7 +66,7 @@ export const UpdateSnapshotNameModal = ({
           <ModalFooterOKCancel
             btnCancelProps={{ onClick: close }}
             btnOKProps={{
-              children: `Valider`,
+              children: appLabels.valider,
               onClick: () => {
                 handleRenameSnapshot(snapshotRef);
                 close();

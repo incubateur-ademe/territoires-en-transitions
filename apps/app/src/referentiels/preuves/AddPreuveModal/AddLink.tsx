@@ -3,6 +3,7 @@
  */
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { appLabels } from '@/app/labels/catalog';
 import { Button, Field, Input } from '@tet/ui';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -15,8 +16,8 @@ export type TAddLinkProps = {
 };
 
 const validationSchema = z.object({
-  titre: z.string().min(1, 'Merci de renseigner un titre pour ce lien'),
-  url: z.string().url('Merci de renseigner un lien valide'),
+  titre: z.string().min(1, appLabels.validationTitreLienRequis),
+  url: z.string().url(appLabels.validationLienValide),
 });
 
 type FormData = z.infer<typeof validationSchema>;
@@ -49,19 +50,27 @@ export const AddLink = (props: TAddLinkProps) => {
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="flex gap-6">
-        <Field title="Titre (obligatoire)" htmlFor="titre" className="w-[35%]">
+        <Field
+          title={appLabels.titreLienObligatoire}
+          htmlFor="titre"
+          className="w-[35%]"
+        >
           <Input id="titre" type="text" {...register('titre')} />
         </Field>
-        <Field title="Lien (obligatoire)" htmlFor="url" className="w-[65%]">
+        <Field
+          title={appLabels.lienObligatoire}
+          htmlFor="url"
+          className="w-[65%]"
+        >
           <Input id="url" type="text" {...register('url')} />
         </Field>
       </div>
       <div className="flex gap-4 ml-auto">
         <Button variant="outlined" onClick={onClose}>
-          Annuler
+          {appLabels.annuler}
         </Button>
         <Button type="submit" data-test="ok" disabled={!isValid}>
-          Ajouter
+          {appLabels.ajouter}
         </Button>
       </div>
     </form>

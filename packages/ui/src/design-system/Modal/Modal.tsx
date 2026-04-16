@@ -12,6 +12,7 @@ import {
   useRole,
 } from '@floating-ui/react';
 import classNames from 'classnames';
+import { uiLabels } from '@tet/ui/labels/catalog';
 import { JSX, RefObject, cloneElement } from 'react';
 
 import { useOpenState } from '../../hooks/use-open-state';
@@ -178,7 +179,7 @@ export const Modal = ({
                     <Button
                       data-html2canvas-ignore
                       data-test={`close-${dataTest}`}
-                      title="Fermer"
+                      title={uiLabels.fermer}
                       onClick={handleOpenChange}
                       icon="close-line"
                       variant="grey"

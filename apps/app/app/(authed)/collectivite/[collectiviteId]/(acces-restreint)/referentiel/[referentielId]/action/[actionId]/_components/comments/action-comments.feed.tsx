@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { buildActionLink } from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {
@@ -9,7 +10,6 @@ import { Divider, VisibleWhen } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import Link from 'next/link';
 import { Fragment, useMemo } from 'react';
-import { pluralize } from '../pluralize';
 import ActionCommentsEmptyImg from './action-comment.empty-img';
 import ActionCommentDiscussion from './action-comments.discussion';
 import { ActionDiscussionStatut } from './action-comments.types';
@@ -171,7 +171,7 @@ const ActionHeader = ({
         <span>{`${discussion.actionIdentifiant} - ${discussion.actionNom}`}</span>
       )}
       <VisibleWhen condition={canDisplayNumberOfMessages}>
-        <span>{pluralize(numberOfMessages, 'commentaire')}</span>
+        <span>{appLabels.commentaires({ count: numberOfMessages })}</span>
       </VisibleWhen>
     </div>
   );

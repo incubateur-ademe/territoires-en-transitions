@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { convertFileToBase64 } from '@/app/utils/convert-file-to-base64';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
@@ -18,7 +19,7 @@ export type ImportPlanResult =
   | { success: true; data: { planId: number; fichesCount: number } }
   | { success: false; errorMessage: string };
 
-const FALLBACK_ERROR_MESSAGE = `Erreur lors de l'envoi du fichier.`;
+const FALLBACK_ERROR_MESSAGE = appLabels.importPlanFichierEnvoiErreur;
 
 export const useImportPlan = () => {
   const queryClient = useQueryClient();

@@ -1,4 +1,5 @@
 import { Fragment } from 'react';
+import { uiLabels } from '@tet/ui/labels/catalog';
 import { cn } from '../../utils/cn';
 import { Badge } from '../Badge';
 import { Icon } from '../Icon';
@@ -129,7 +130,7 @@ const FilterByCategory = ({
 
 const ClearAllFiltersButton = ({
   onClick,
-  children = 'Supprimer tous les filtres',
+  children = uiLabels.supprimerTousLesFiltres,
 }: {
   onClick: () => void;
   disabled?: boolean;
@@ -247,7 +248,7 @@ export const BadgeFilters = <TKey extends string = string>({
       </VisibleWhen>
       <VisibleWhen condition={shouldShowClearAllFilters}>
         <ClearAllFiltersButton onClick={() => onClearAllFilters?.()}>
-          Supprimer tous les filtres
+          {uiLabels.supprimerTousLesFiltres}
         </ClearAllFiltersButton>
       </VisibleWhen>
     </div>

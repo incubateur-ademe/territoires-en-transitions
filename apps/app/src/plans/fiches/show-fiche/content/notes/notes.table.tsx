@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-table';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 
+import { appLabels } from '@/app/labels/catalog';
 import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
 import { Button, ReactTable, TableHeaderCell } from '@tet/ui';
 import { NoteFormProvider } from './note-form.context';
@@ -56,16 +57,25 @@ export const NotesTable = ({
   const columns = useMemo(
     () => [
       columnHelper.accessor('dateNote', {
-        header: () => <TableHeaderCell title="Année" className="w-32" />,
+        header: () => (
+          <TableHeaderCell title={appLabels.noteHeaderAnnee} className="w-32" />
+        ),
         cell: () => <NoteYearCell />,
       }),
       columnHelper.accessor('note', {
-        header: () => <TableHeaderCell title="Description" />,
+        header: () => (
+          <TableHeaderCell title={appLabels.description} />
+        ),
         cell: () => <NoteDescriptionCell />,
       }),
       columnHelper.display({
         id: 'metadata',
-        header: () => <TableHeaderCell title="Auteur/Date" className="w-96" />,
+        header: () => (
+          <TableHeaderCell
+            title={appLabels.noteHeaderAuteurDate}
+            className="w-96"
+          />
+        ),
         cell: () => <NoteMetadataCell />,
       }),
       columnHelper.display({
@@ -124,16 +134,15 @@ export const NotesTable = ({
           )}
           emptyCard={{
             picto: (props) => <NoteDeSuiviPicto {...props} />,
-            title: 'Aucune note de suivi pour le moment',
-            description:
-              "Ajoutez des notes pour documenter le suivi et l'avancement de votre fiche action.",
+            title: appLabels.aucuneNotesSuivi,
+            description: appLabels.aucuneNotesSuiviDescription,
             actions:
               isReadonly || !onCreateNote
                 ? undefined
                 : [
                     {
                       onClick: onCreateNote,
-                      children: 'Ajouter une note',
+                      children: appLabels.ajouterNote,
                       icon: 'add-line',
                     },
                   ],
@@ -147,7 +156,7 @@ export const NotesTable = ({
           size="xs"
           onClick={onCreateNote}
         >
-          Ajouter une note
+          {appLabels.ajouterNote}
         </Button>
       )}
     </div>

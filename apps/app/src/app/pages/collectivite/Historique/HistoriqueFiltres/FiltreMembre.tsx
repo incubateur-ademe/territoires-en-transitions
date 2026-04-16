@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Field, SelectFilter } from '@tet/ui';
 import { TFiltreProps } from '../filters';
@@ -18,7 +19,7 @@ const FiltreMembre = ({ filters, setFilters }: TFiltreProps) => {
     }));
 
   return (
-    <Field title="Membre" small>
+    <Field title={appLabels.membre} small>
       <SelectFilter
         small
         dataTest="filtre-membre"

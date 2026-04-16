@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useSidePanel } from '@/app/ui/layout/side-panel/side-panel.context';
 import { ButtonMenu, MenuAction } from '@tet/ui';
 import { useState } from 'react';
@@ -42,7 +43,7 @@ export const AxeMenuButton = () => {
     if (!isReadOnly) {
       setPanel({
         type: 'open',
-        title: 'Associer des indicateurs',
+        title: appLabels.associerIndicateurs,
         content: (
           <AxeIndicateursPanelContent
             collectiviteId={collectivite.collectiviteId}
@@ -60,14 +61,14 @@ export const AxeMenuButton = () => {
 
   const menuActions: MenuAction[] = [
     {
-      label: 'Modifier le titre',
+      label: appLabels.modifierTitre,
       icon: 'edit-line',
       onClick: () => {
         setIsOpenEditTitle(true);
       },
     },
     {
-      label: 'Créer un axe',
+      label: appLabels.creerAxe,
       icon: 'folder-add-line',
       onClick: () => {
         setIsOpen(true);
@@ -79,11 +80,11 @@ export const AxeMenuButton = () => {
         ? {}
         : {
             disabled: true,
-            tooltip: 'Les descriptions sont masquées dans l’affichage global',
+            tooltip: appLabels.descriptionsMasquees,
           }),
       label: hasDescription
-        ? 'Supprimer la description'
-        : 'Ajouter une description',
+        ? appLabels.supprimerDescription
+        : appLabels.ajouterDescription,
       icon: 'file-text-line',
       onClick: () => {
         setIsOpen(true);
@@ -95,9 +96,9 @@ export const AxeMenuButton = () => {
         ? {}
         : {
             disabled: true,
-            tooltip: 'Les indicateurs sont masqués dans l’affichage global',
+            tooltip: appLabels.indicateursMasques,
           }),
-      label: 'Lier un indicateur',
+      label: appLabels.lierIndicateur,
       icon: 'line-chart-line',
       onClick: () => {
         setIsOpen(true);
@@ -105,14 +106,14 @@ export const AxeMenuButton = () => {
       },
     },
     {
-      label: 'Déplacer',
+      label: appLabels.deplacer,
       icon: 'drag-move-2-line',
       onClick: () => {
         setIsOpenMoveModal(true);
       },
     },
     {
-      label: 'Supprimer',
+      label: appLabels.supprimer,
       icon: 'delete-bin-6-line',
       onClick: () => {
         setIsOpenDeleteModal(true);
@@ -123,7 +124,7 @@ export const AxeMenuButton = () => {
   return (
     <>
       <ButtonMenu
-        title="Editer cet axe"
+        title={appLabels.editerAxe}
         icon="more-line"
         variant="grey"
         size="xs"

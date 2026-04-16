@@ -1,4 +1,5 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
+import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
@@ -15,11 +16,6 @@ type Props = {
   openState: OpenState;
 };
 
-/**
- * Modale détaillant la liste des tâches d'une sous-action ("Détaillé à la tâche").
- * Evolution future : déplacement du contenu de la modale dans un panneau latéral
- * (à confirmer)
- */
 const SubActionModal = ({ actionDefinition, openState }: Props) => {
   const { id: actionId, nom: actionName } = actionDefinition;
   const tasks = useActionSummaryChildren(actionDefinition);
@@ -43,7 +39,7 @@ const SubActionModal = ({ actionDefinition, openState }: Props) => {
   return (
     <Modal
       size="xl"
-      title="Détailler l'avancement à la tâche"
+      title={appLabels.detaillerAvancementTache}
       subTitle={`${actionId.split('_')[1]} ${actionName}`}
       openState={openState}
       noCloseButton={isPending}
@@ -62,7 +58,7 @@ const SubActionModal = ({ actionDefinition, openState }: Props) => {
         <ModalFooterOKCancel
           btnOKProps={{
             variant: 'primary',
-            children: 'Valider',
+            children: appLabels.valider,
             disabled: isPending,
             onClick: () => {
               handleValidate();

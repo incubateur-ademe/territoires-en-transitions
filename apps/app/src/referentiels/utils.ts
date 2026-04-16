@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Enums } from '@tet/api';
 import {
   StatutAvancement,
@@ -7,12 +8,12 @@ import {
 
 export const phaseToLabel: Record<Enums<'action_categorie'> | string, string> =
   {
-    bases: "S'engager",
-    'mise en œuvre': 'Concrétiser',
-    effets: 'Consolider',
+    bases: appLabels.phaseBases,
+    'mise en œuvre': appLabels.phaseMiseEnOeuvre,
+    effets: appLabels.phaseEffets,
   };
 
-// Valeurs par défaut de l'avancement détaillé par statut d'avancement
+// Valeurs par defaut de l'avancement detaille par statut d'avancement
 export const AVANCEMENT_DETAILLE_PAR_STATUT = {
   non_renseigne: undefined,
   fait: [1, 0, 0],
@@ -21,11 +22,11 @@ export const AVANCEMENT_DETAILLE_PAR_STATUT = {
   detaille: [0.5, 0.25, 0.25],
 } satisfies Record<StatutAvancement, number[] | undefined>;
 
-// Génère les propriétés de l'objet statut à écrire lors du changement de l'avancement
+// Genere les proprietes de l'objet statut a ecrire lors du changement de l'avancement
 export const statutParAvancement = (
   avancement: StatutAvancementIncludingNonConcerneDetailleALaTache
 ) => {
-  // cas spécial pour le faux statut "non concerné"
+  // cas special pour le faux statut "non concerne"
   if (avancement === StatutAvancementEnum.NON_CONCERNE) {
     return {
       avancement: StatutAvancementEnum.NON_RENSEIGNE,
@@ -42,15 +43,15 @@ export const statutParAvancement = (
 
   return {
     avancement,
-    // quand on change l'avancement, l'avancement détaillé est réinitialisé à la
-    // valeur par défaut correspondante
+    // quand on change l'avancement, l'avancement detaille est reinitialise a la
+    // valeur par defaut correspondante
     avancementDetaille: AVANCEMENT_DETAILLE_PAR_STATUT[avancement],
     concerne: true,
   };
 };
 
 /**
- * Renvoie le statut en fonction de l'index dans le tableau avancement détaillé
+ * Renvoie le statut en fonction de l'index dans le tableau avancement detaille
  */
 export const getStatusFromIndex = (index: number): StatutAvancement => {
   switch (index) {

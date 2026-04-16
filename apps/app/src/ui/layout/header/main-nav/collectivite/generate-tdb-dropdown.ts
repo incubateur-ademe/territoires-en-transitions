@@ -1,4 +1,5 @@
 import { makeTdbCollectiviteUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { generateTdbPersonalLink } from './generate-tdb-personal-link';
 import { CollectiviteNavItem } from './make-collectivite-nav';
 
@@ -13,11 +14,11 @@ export const generateTdbDropdown = ({
 }): CollectiviteNavItem | null => {
   if (!isVisitor) {
     return {
-      children: 'Tableaux de bord',
+      children: appLabels.navTableauxDeBord,
       dataTest: 'nav-tdb',
       links: [
         {
-          children: 'Tableau de bord synthétique',
+          children: appLabels.navTableauDeBordSynthetique,
           dataTest: 'tdb-collectivite',
           href: makeTdbCollectiviteUrl({
             collectiviteId,
@@ -36,7 +37,7 @@ export const generateTdbDropdown = ({
   }
 
   return {
-    children: 'Tableau de bord',
+    children: appLabels.navTableauDeBord,
     dataTest: 'nav-tdb',
     href: makeTdbCollectiviteUrl({
       collectiviteId,

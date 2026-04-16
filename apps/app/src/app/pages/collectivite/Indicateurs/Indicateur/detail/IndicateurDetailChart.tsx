@@ -1,4 +1,5 @@
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { appLabels } from '@/app/labels/catalog';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import { Button, EmptyCard } from '@tet/ui';
 import classNames from 'classnames';
@@ -50,7 +51,7 @@ const IndicateurDetailChart = ({
               className={classNames('ml-auto', buttonClassName)}
               onClick={() => setIsChartOpen(true)}
             >
-              Télécharger le graphique
+              {appLabels.telechargerGraphique}
             </Button>
           </div>
         )}
@@ -72,22 +73,22 @@ const IndicateurDetailChart = ({
       picto={(props) => <PictoIndicateurVide {...props} />}
       title={
         sourceFilter.avecDonneesCollectivite
-          ? "Aucune valeur n'est associée aux résultats ou aux objectifs de la collectivité !"
-          : 'Aucune valeur trouvée'
+          ? appLabels.aucuneValeurCollectivite
+          : appLabels.aucuneValeurTrouvee
       }
       actions={
         sourceFilter.avecDonneesCollectivite
           ? !isReadonly && onAddValue
             ? [
                 {
-                  children: 'Ajouter une valeur',
+                  children: appLabels.ajouterValeur,
                   onClick: () => onAddValue(),
                 },
               ]
             : undefined
           : [
               {
-                children: 'Supprimer tous les filtres',
+                children: appLabels.supprimerFiltres,
                 onClick: () => sourceFilter.setFiltresSource([]),
               },
             ]

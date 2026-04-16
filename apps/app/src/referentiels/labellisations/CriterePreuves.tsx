@@ -1,6 +1,3 @@
-/**
- * Affiche le critère Fichiers
- */
 import { referentielToName } from '@/app/app/labels';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
@@ -28,7 +25,6 @@ export const CriterePreuves = (props: TCriterePreuvesProps) => {
   const { parcours, preuves, isCOT } = props;
   const { demande, etoiles } = parcours;
 
-  // critère nécessitant l'ajout d'une ou plusieurs preuves
   const rempli = preuves.length > 0;
 
   if (isCOT && etoiles === 1) {
@@ -64,22 +60,19 @@ const MessageCriterePreuve = (props: TCriterePreuvesProps) => {
   return <MessageParDefaut {...props} />;
 };
 
-// message affiché pour ECi niveau 2+
 const MessageECi2Plus = (props: TCriterePreuvesProps) => {
   const { referentiel } = props.parcours;
   return (
     <>
-      <li className="mb-2">Ajouter les documents officiels de candidature</li>
+      <li className="mb-2">{'Ajouter les documents officiels de candidature'}</li>
       <ul>
         <li>
-          <b>Courrier d’acte de candidature</b> : motivation et palier visé,
-          précision des compétences, engagement à améliorer de façon continue la
-          politique {referentielToName[referentiel]} et coordonnées de la
-          personne référente technique
+          <b>{"Courrier d'acte de candidature"}</b>{' : motivation et palier visé, précision des compétences, engagement à améliorer de façon continue la politique '}
+          {referentielToName[referentiel]}
+          {' et coordonnées de la personne référente technique'}
         </li>
         <li>
-          <b>Arrêté préfectoral de création de l’EPCI</b> (Établissement public
-          de coopération intercommunale)
+          <b>{"Arrêté préfectoral de création de l'EPCI"}</b>{' (Établissement public de coopération intercommunale)'}
         </li>
         <MessageParDefaut {...props} />
       </ul>
@@ -87,46 +80,38 @@ const MessageECi2Plus = (props: TCriterePreuvesProps) => {
   );
 };
 
-// message affiché pour CAE score > 35%
 const MessageCAE35Plus = () => {
   return (
     <>
-      <li className="mb-2">Ajouter les documents officiels de candidature</li>
+      <li className="mb-2">{'Ajouter les documents officiels de candidature'}</li>
       <ul>
         <li>
-          <b>Dossier de demande de labellisation</b> (et Request for Award pour
-          les candidatures 5 étoiles)
+          <b>{'Dossier de demande de labellisation'}</b>{' (et Request for Award pour les candidatures 5 étoiles)'}
         </li>
         <li>
-          <b>Autres documents annexes</b> si non renseignés dans la plateforme
-          (programme politique - plan d’action, délibération de la politique
-          climat air énergie, tableau de recueil des indicateurs…)
+          <b>{'Autres documents annexes'}</b>{' si non renseignés dans la plateforme (programme politique - plan d\'action, délibération de la politique climat air énergie, tableau de recueil des indicateurs...)'}
         </li>
       </ul>
     </>
   );
 };
 
-// message affiché dans tous les cas
 const MessageParDefaut = (props: TCriterePreuvesProps) => {
   const { referentiel } = props.parcours;
   return (
     <li className="mb-2">
-      Signer un{' '}
+      {'Signer un '}
       <InlineLink href="/Acte_engagement.docx" openInNewTab>
-        acte d’engagement
-      </InlineLink>{' '}
-      dans le programme affirmant votre adhésion{' '}
+        {"acte d'engagement"}
+      </InlineLink>
+      {' dans le programme affirmant votre adhésion '}
       <InlineLink href={REGLEMENTS[referentiel]} openInNewTab>
-        au règlement du label
+        {'au règlement du label'}
       </InlineLink>
     </li>
   );
 };
 
-/**
- * Affiche les fichiers attachés à la demande
- */
 const LabellisationPreuves = (props: TCriterePreuvesProps) => {
   const { preuves, parcours } = props;
   const { demande } = parcours;

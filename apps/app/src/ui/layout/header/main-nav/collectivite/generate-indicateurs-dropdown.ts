@@ -2,6 +2,7 @@ import {
   makeCollectiviteIndicateursListUrl,
   makeCollectiviteTrajectoirelUrl,
 } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { CollectiviteNavItem } from './make-collectivite-nav';
 
 export const generateIndicateursDropdown = ({
@@ -14,11 +15,11 @@ export const generateIndicateursDropdown = ({
   isVisitor: boolean;
 }): CollectiviteNavItem => ({
   isVisible: !(collectiviteAccesRestreint && isVisitor),
-  children: 'Indicateurs',
+  children: appLabels.indicateurs,
   dataTest: 'nav-ind',
   links: [
     {
-      children: "Listes d'indicateurs",
+      children: appLabels.navListesIndicateurs,
       dataTest: 'ind-tous',
       href: makeCollectiviteIndicateursListUrl({
         collectiviteId,
@@ -31,7 +32,7 @@ export const generateIndicateursDropdown = ({
     },
     {
       dataTest: 'ind-traj-snbc',
-      children: 'Trajectoire SNBC et objectifs',
+      children: appLabels.trajectoireSnbcEtObjectifs,
       href: makeCollectiviteTrajectoirelUrl({ collectiviteId }),
     },
   ],

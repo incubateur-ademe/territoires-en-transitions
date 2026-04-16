@@ -28,7 +28,7 @@ export default async function RootProviders({
             <NuqsAdapter>
               <ToastProvider>
                 {/* L'utilisation de overflow-hidden ou overflow-auto sur le container
-empêche l'utilisation de la propriété sticky dans l'app, ne pas l'utiliser sur cette div */}
+                empêche l'utilisation de la propriété sticky dans l'app, ne pas l'utiliser sur cette div */}
                 <div id="main" className="min-h-screen flex flex-col bg-grey-2">
                   {children}
                 </div>

@@ -1,32 +1,23 @@
-import { createGetFieldLabel } from '../field-labels.utils';
+import { appLabels } from '@/app/labels/catalog';
 import { DescriptionFormValues } from './description-schema';
 
-const FIELD_LABELS: Record<
+const fieldLabels: Record<
   keyof DescriptionFormValues,
-  { singular: string; plural?: string }
+  (params: { count: number }) => string
 > = {
-  description: {
-    singular: 'Description',
-  },
-  effetsAttendus: {
-    singular: 'Effet attendu',
-    plural: 'Effets attendus',
-  },
-  objectifs: {
-    singular: 'Objectif(s)',
-  },
-  thematiques: {
-    singular: 'Thématique',
-    plural: 'Thématiques',
-  },
-  sousThematiques: {
-    singular: 'Sous-thématique',
-    plural: 'Sous-thématiques',
-  },
-  libreTags: {
-    singular: 'Tag personnalisé',
-    plural: 'Tags personnalisés',
-  },
+  description: appLabels.ficheDescription,
+  objectifs: appLabels.ficheObjectifs,
+  effetsAttendus: appLabels.ficheEffetsAttendus,
+  thematiques: appLabels.ficheThematiques,
+  sousThematiques: appLabels.ficheSousThematiques,
+  libreTags: appLabels.ficheLibreTags,
 };
 
-export const getFieldLabel = createGetFieldLabel(FIELD_LABELS);
+export const getFieldLabel = (
+  fieldName: keyof DescriptionFormValues,
+  items: unknown[] | null | undefined | string
+): string => {
+  const count =
+    !items || !Array.isArray(items) ? 1 : items.length > 1 ? items.length : 1;
+  return fieldLabels[fieldName]({ count });
+};

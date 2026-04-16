@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
 import {
   TPreuveAuditEtLabellisation,
@@ -36,7 +37,7 @@ export const BibliothequeDocs = ({
         <h2 className="mb-6">Rapports de visite annuelle</h2>
         {!isReadOnly && <AddRapportVisite />}
         {isReadOnly && (!rapports || rapports.length === 0) && (
-          <p>{"Aucun rapport de visite annuelle n'a été ajouté."}</p>
+          <p>{appLabels.aucunRapportVisiteAnnuelle}</p>
         )}
         {rapports?.map((preuve) => (
           <div className="py-4" key={preuve.id}>

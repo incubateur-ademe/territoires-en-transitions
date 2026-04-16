@@ -1,5 +1,6 @@
 import { Filters } from '@/app/plans/fiches/list-all-fiches/filters/types';
 import { SortOptions } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
+import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Alert, Button, Modal, ModalFooter, ModalProps } from '@tet/ui';
@@ -32,8 +33,8 @@ const ExportFicheModalWrapper = ({
     <Modal
       openState={openState}
       onClose={onClose}
-      title="Exporter en PDF"
-      subTitle="Paramètres de l'export"
+      title={appLabels.exporterEnPdf}
+      subTitle={appLabels.parametresExport}
       size="xl"
       render={() => (
         <div className="flex flex-col gap-4">
@@ -44,7 +45,7 @@ const ExportFicheModalWrapper = ({
       renderFooter={({ close }) => (
         <ModalFooter variant="right">
           <Button variant="outlined" onClick={close}>
-            Annuler
+            {appLabels.annuler}
           </Button>
           {submitButton(close, options)}
         </ModalFooter>

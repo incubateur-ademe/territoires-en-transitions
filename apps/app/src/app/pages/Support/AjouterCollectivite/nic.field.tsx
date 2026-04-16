@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Field, Input } from '@tet/ui';
 
 type Props = {
@@ -7,7 +8,7 @@ type Props = {
 
 export const NicField = ({ value, onChange }: Props) => {
   return (
-    <Field title="NIC" hint="Le NIC est composé de 5 chiffres">
+    <Field title={appLabels.formNic} hint={appLabels.formNicHint}>
       <Input
         type="text"
         maxLength={5}

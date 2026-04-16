@@ -1,4 +1,5 @@
 'use client';
+import { appLabels } from '@/app/labels/catalog';
 import { useCreateFicheResume } from '@/app/plans/fiches/data/use-create-fiche-resume';
 import PictoAction from '@/app/ui/pictogrammes/PictoAction';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
@@ -30,23 +31,23 @@ export const EmptyPlanView = ({
     return (
       <EmptyCard
         picto={(props) => <PictoAction {...props} />}
-        title="Cette collectivité n'a pas encore d'action ni d'arborescence de plan"
+        title={appLabels.pasDActionNiArborescencePlanLecture}
       />
     );
   }
 
   return (
     <EmptyCard
-      title="Vous n'avez aucune action ni arborescence de plan !"
+      title={appLabels.pasDActionNiArborescencePlan}
       actions={[
         {
-          children: 'Ajouter un nouveau titre/axe',
+          children: appLabels.ajouterNouveauTitreAxe,
           dataTest: 'AjouterAxe',
           variant: 'outlined',
           onClick: () => addAxe(),
         },
         {
-          children: 'Créer une action',
+          children: appLabels.creerAction,
           onClick: () => createFicheResume(),
         },
       ]}

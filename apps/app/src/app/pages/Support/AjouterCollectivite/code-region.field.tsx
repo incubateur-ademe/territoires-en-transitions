@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Field, Input } from '@tet/ui';
 
 type Props = {
@@ -7,10 +8,7 @@ type Props = {
 
 export const CodeRegionField = ({ value, onChange }: Props) => {
   return (
-    <Field
-      title="Code région"
-      hint="Le code région est composé de 2 chiffres (01 à 99)"
-    >
+    <Field title={appLabels.formCodeRegion} hint={appLabels.formCodeRegionHint}>
       <Input
         type="text"
         maxLength={2}

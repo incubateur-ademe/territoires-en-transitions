@@ -1,12 +1,26 @@
 'use client';
 
-import { collectiviteNatureLabel } from '@tet/domain/collectivites';
+import { appLabels } from '@/app/labels/catalog';
 import { useGetCollectivite } from '@/app/collectivites/collectivites/use-get-collectivite';
 import { capitalize } from '@/app/utils/formatUtils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { CollectivitePublic } from '@tet/domain/collectivites';
 import { Card } from '@tet/ui';
+
+const collectiviteNatureLabel: Record<string, string> = {
+  METRO: appLabels.typeCollectiviteMetro,
+  CU: appLabels.typeCollectiviteCu,
+  CA: appLabels.typeCollectiviteCa,
+  CC: appLabels.typeCollectiviteCc,
+  SMF: appLabels.typeCollectiviteSmf,
+  SMO: appLabels.typeCollectiviteSmo,
+  SIVU: appLabels.typeCollectiviteSivu,
+  SIVOM: appLabels.typeCollectiviteSivom,
+  POLEM: appLabels.typeCollectivitePolem,
+  PETR: appLabels.typeCollectivitePetr,
+  EPT: appLabels.typeCollectiviteEpt,
+};
 
 /**
  * Affiche les informations administratives d'une collectivité

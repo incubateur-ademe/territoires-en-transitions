@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useState } from 'react';
 
 import { EditFicheModal } from '@/app/plans/fiches/components/card/edit-fiche.modal';
@@ -33,14 +34,14 @@ export const FichesListCellActions = ({ fiche }: Props) => {
           actions: [
             {
               icon: 'edit-2-line',
-              label: 'Modifier l’action',
+              label: appLabels.modifierAction,
               onClick: () => {
                 setIsEditOpen(true);
               },
             },
             {
               icon: 'delete-bin-6-line',
-              label: 'Supprimer l’action',
+              label: appLabels.supprimerAction,
               onClick: () => {
                 setIsDeleteOpen(true);
               },
@@ -52,16 +53,18 @@ export const FichesListCellActions = ({ fiche }: Props) => {
                 <AdditionalMenuInfo
                   icon={getFicheActionShareIcon(fiche, fiche.collectiviteId)}
                   iconClassName="text-success"
-                  label={`Partagée avec ${ficheSharedSingularAndPluralText(
-                    fiche.sharedWithCollectivites
-                  )}`}
+                  label={appLabels.partageeAvec({
+                    collectivitesText: ficheSharedSingularAndPluralText(
+                      fiche.sharedWithCollectivites
+                    ),
+                  })}
                 />
               )}
               {fiche.restreint && (
                 <AdditionalMenuInfo
                   icon="lock-fill"
                   iconClassName="text-primary-7"
-                  label="Action en accès restreint"
+                  label={appLabels.actionAccesRestreint}
                 />
               )}
             </div>

@@ -1,4 +1,5 @@
 import { getFormattedFloat, getFormattedNumber } from '@/app/utils/formatUtils';
+import { appLabels } from '@/app/labels/catalog';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -127,7 +128,7 @@ export const BudgetPerYearTable = ({
       }),
       columnHelper.display({
         id: 'montant',
-        header: () => <TableHeaderCell title="Montant" />,
+        header: () => <TableHeaderCell title={appLabels.tableauMontant} />,
         cell: ({ row }) => {
           if (row.original.type === 'total') {
             return (
@@ -142,7 +143,7 @@ export const BudgetPerYearTable = ({
       }),
       columnHelper.display({
         id: 'depense',
-        header: () => <TableHeaderCell title="Dépensé" />,
+        header: () => <TableHeaderCell title={appLabels.tableauDepense} />,
         cell: ({ row }) => {
           if (row.original.type === 'total') {
             return (
@@ -156,7 +157,7 @@ export const BudgetPerYearTable = ({
       }),
       columnHelper.display({
         id: 'etpPrevisionnel',
-        header: () => <TableHeaderCell title="ETP prévisionnel" />,
+        header: () => <TableHeaderCell title={appLabels.budgetEtpPrevisionnel} />,
         cell: ({ row }) => {
           if (row.original.type === 'total') {
             return (
@@ -170,7 +171,7 @@ export const BudgetPerYearTable = ({
       }),
       columnHelper.display({
         id: 'etpReel',
-        header: () => <TableHeaderCell title="ETP Réel" />,
+        header: () => <TableHeaderCell title={appLabels.budgetEtpReel} />,
         cell: ({ row }) => {
           if (row.original.type === 'total') {
             return (
@@ -231,7 +232,7 @@ export const BudgetPerYearTable = ({
                           type
                         );
                       },
-                      children: 'Ajouter un budget',
+                      children: appLabels.ajouterBudget,
                       icon: 'add-line',
                       variant: 'outlined',
                     },
@@ -270,7 +271,7 @@ export const BudgetPerYearTable = ({
             await upsert.year({ year: firstYearOption.value }, type);
           }}
         >
-          Ajouter un budget
+          {appLabels.ajouterBudget}
         </Button>
       )}
     </div>

@@ -1,4 +1,5 @@
 import { CreateIndicateurModal } from '@/app/plans/fiches/show-fiche/content/indicateurs/create-indicateur.modal';
+import { appLabels } from '@/app/labels/catalog';
 import {
   IndicateursListParamOption,
   makeCollectiviteTousLesIndicateursUrl,
@@ -21,17 +22,15 @@ const messageByListId: Record<
   { title: string; description?: string }
 > = {
   collectivite: {
-    title: 'Votre collectivité n’a pas encore d’indicateurs favoris',
-    description:
-      'Ajoutez en à cet espace en utilisant l’icône “étoile” sur les pages indicateurs.',
+    title: appLabels.indicateurVideFavoris,
+    description: appLabels.indicateurVideFavorisDescription,
   },
   perso: {
-    title: 'Votre collectivité n’a pas encore d’indicateurs personnalisés',
+    title: appLabels.indicateurVidePersonnalise,
   },
   'mes-indicateurs': {
-    title: "Vous n'avez aucun indicateur associé à votre nom",
-    description:
-      'Parcourez les indicateurs pour vous assigner en tant que pilote.\nCela vous facilitera le suivi et la mise à jour !',
+    title: appLabels.indicateurVideMesIndicateurs,
+    description: appLabels.indicateurVideMesIndicateursDescription,
   },
 };
 
@@ -50,8 +49,11 @@ export const IndicateursListEmpty = ({
   listId: IndicateursListParamOption;
   setIsSettingsOpen?: (isOpen: boolean) => void;
 }) => {
-  return !isFiltered && validEmptyListId.includes(listId as EmptyListId) ? (
-    <IndicateursListEmptyCustom listId={listId as EmptyListId} />
+  const isValidEmptyListId = (id: string): id is EmptyListId =>
+    (validEmptyListId as readonly string[]).includes(id);
+
+  return !isFiltered && isValidEmptyListId(listId) ? (
+    <IndicateursListEmptyCustom listId={listId} />
   ) : (
     <IndicateursListNoResults setIsSettingsOpen={setIsSettingsOpen} />
   );
@@ -69,7 +71,7 @@ const IndicateursListEmptyCustom = ({ listId }: { listId: EmptyListId }) => {
 
   const actions: ButtonProps[] = [
     {
-      children: 'Parcourir les indicateurs',
+      children: appLabels.indicateurVideParcourir,
       onClick: () => {
         tracker(Event.indicateurs.viewIndicateursList);
         router.push(
@@ -87,7 +89,7 @@ const IndicateursListEmptyCustom = ({ listId }: { listId: EmptyListId }) => {
   ) {
     actions[0].variant = 'outlined';
     actions.push({
-      children: 'Créer un indicateur personnalisé',
+      children: appLabels.indicateurVideCreerPersonnalise,
       onClick: () => setIsNewIndicateurOpen(true),
     });
   }
@@ -123,7 +125,7 @@ export const IndicateursListNoResults = ({
   const actions = setIsSettingsOpen
     ? [
         {
-          children: 'Modifier le filtre',
+          children: appLabels.indicateurVideModifierFiltre,
           onClick: () => setIsSettingsOpen(true),
         },
       ]
@@ -133,7 +135,7 @@ export const IndicateursListNoResults = ({
     <EmptyCard
       className="m-auto"
       picto={(props) => <PictoDataViz {...props} />}
-      title="Aucun indicateur ne correspond à votre recherche"
+      title={appLabels.indicateurVideAucunResultat}
       actions={actions}
       variant="transparent"
     />

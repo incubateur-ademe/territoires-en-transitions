@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import { FichesList } from '@/app/plans/fiches/list-all-fiches/components/fiches-list';
@@ -39,11 +40,11 @@ const FichesLiees = ({ definition }: Props) => {
       {isEmpty ? (
         <EmptyCard
           picto={(props) => <FichePicto {...props} />}
-          title="Aucune action de vos plans n'est liée !"
+          title={appLabels.aucuneActionLiee}
           isReadonly={!canUpdateIndicateur}
           actions={[
             {
-              children: 'Lier une action',
+              children: appLabels.lierAction,
               icon: 'link',
               onClick: () => setIsModalOpen(true),
             },
@@ -53,7 +54,7 @@ const FichesLiees = ({ definition }: Props) => {
       ) : (
         <div className="bg-white p-10 border border-grey-3 rounded-xl">
           <div className="flex justify-between items-center flex-wrap mb-5">
-            <h6 className="text-lg mb-0">Actions liées</h6>
+            <h6 className="text-lg mb-0">{appLabels.actionsLiees}</h6>
             {canUpdateIndicateur && (
               <Button
                 icon="link"
@@ -61,7 +62,7 @@ const FichesLiees = ({ definition }: Props) => {
                 className="w-fit"
                 onClick={() => setIsModalOpen(true)}
               >
-                Lier une action
+                {appLabels.lierAction}
               </Button>
             )}
           </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import HistoriqueItemActionPrecision from '@/app/app/pages/collectivite/Historique/actionPrecision/HistoriqueItemActionPrecision';
 import HistoriqueItemActionStatut from '@/app/app/pages/collectivite/Historique/actionStatut/HistoriqueItemActionStatut';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -11,9 +12,6 @@ import HistoriqueItemReponse from './reponse/HistoriqueItemReponse';
 import { HistoriqueItem } from './types';
 import { useHistoriqueItemListe } from './useHistoriqueItemListe';
 
-/**
- * Affiche l'historique des modifications
- */
 export const HistoriqueListe = ({
   actionId,
   small,
@@ -84,7 +82,7 @@ const Content = ({
   if (total === 0) {
     return (
       <span className="text-sm text-grey-6" data-test="empty_history">
-        Aucun historique de modification
+        {appLabels.aucunHistorique}
       </span>
     );
   }

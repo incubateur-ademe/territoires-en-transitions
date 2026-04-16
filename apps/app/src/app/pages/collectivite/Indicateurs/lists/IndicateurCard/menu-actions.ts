@@ -1,3 +1,5 @@
+import { appLabels } from '@/app/labels/catalog';
+
 export type IndicateurActionId =
   | 'remove-from-favorites'
   | 'add-to-favorites'
@@ -18,17 +20,17 @@ export const getIndicateurMenuActions = (args: {
   return [
     {
       id: 'remove-from-favorites',
-      label: 'Retirer des favoris',
+      label: appLabels.retirerFavoris,
       isVisible: isEditable && isFavoriCollectivite,
     },
     {
       id: 'add-to-favorites',
-      label: 'Ajouter aux favoris',
+      label: appLabels.ajouterFavoris,
       isVisible: isEditable && !isFavoriCollectivite,
     },
     {
       id: 'download-chart',
-      label: 'Télécharger le graphique (.png)',
+      label: appLabels.telechargerGraphiquePng,
       isVisible: isChartVisible,
     },
   ];

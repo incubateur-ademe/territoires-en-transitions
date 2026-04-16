@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { uiLabels } from '@tet/ui/labels/catalog';
 import { JSX, useEffect, useState } from 'react';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
@@ -86,7 +87,7 @@ export const SideMenu = ({
           icon="arrow-right-double-line"
           size="xs"
           className="text-primary-8 hover:text-primary-10 transition-colors cursor-pointer"
-          title="Fermer"
+          title={uiLabels.fermer}
           onClick={() => setIsOpen(false)}
         />
 
@@ -111,7 +112,7 @@ export const SideMenu = ({
                 className="border-b-transparent hover:text-primary-9"
                 onClick={navigation.prev.onClick}
               >
-                {navigation.prev.label ?? 'Précédent'}
+                {navigation.prev.label ?? uiLabels.precedent}
               </Button>
             )}
             {navigation.next && (
@@ -123,7 +124,7 @@ export const SideMenu = ({
                 className="border-b-transparent hover:text-primary-9 ml-auto"
                 onClick={navigation.next.onClick}
               >
-                {navigation.next.label ?? 'Suivant'}
+                {navigation.next.label ?? uiLabels.suivant}
               </Button>
             )}
           </div>

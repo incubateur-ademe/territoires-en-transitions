@@ -1,6 +1,7 @@
 /**
  * Affiche le composant d'upload de fichiers
  */
+import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Button, Field, Input } from '@tet/ui';
 import { FormEvent, useEffect, useState } from 'react';
@@ -20,9 +21,7 @@ import {
 export type TAddFileFromLib = (fichier_id: number) => void;
 
 export type TAddFileProps = {
-  /** Type des documents attendus */
   docType?: DocType;
-  /** Fichiers initialement sélectionnés (pour les tests) */
   initialSelection?: Array<TFileItem>;
   onAddFileFromLib: TAddFileFromLib;
   onClose: () => void;
@@ -49,18 +48,15 @@ export const AddFile = (props: TAddFileProps) => {
     }
   };
 
-  // appelée quand un item sort de l'état "running"
   const onRunningStopped = (fileName: string, status: UploadStatus) => {
     const index = getFileByName(fileName, currentSelection);
     if (index !== -1) {
-      // met à jour la sélection courante
       const updatedSelection = [...currentSelection];
       updatedSelection[index] = { ...currentSelection[index], status };
       setCurrentSelection(updatedSelection);
     }
   };
 
-  // appelée pour supprimer un item terminé en erreur
   const onRemoveFailed = (fileName: string) => {
     const index = getFileByName(fileName, currentSelection);
     if (index !== -1) {
@@ -86,9 +82,6 @@ export const AddFile = (props: TAddFileProps) => {
     onClose();
   };
 
-  // Synchronise le flag "confidentiel" des fichiers uploadés avec l'état du
-  // bouton celui-ci pouvant être changé avant/après upload.
-  // Permet de gérer aussi le cas des documents déjà uploadés
   useEffect(() => {
     const update = async () => {
       if (collectivite_id && validFiles?.length) {
@@ -108,11 +101,7 @@ export const AddFile = (props: TAddFileProps) => {
 
   return (
     <div data-test="AddFile" className="flex flex-col gap-8">
-      <Field
-        title="Ajouter un ou plusieurs fichier(s)"
-        message={HINT}
-        state="info"
-      >
+      <Field title={appLabels.ajouterFichiers} message={HINT} state="info">
         <Input
           type="file"
           accept={EXPECTED_FORMATS_LIST}
@@ -135,10 +124,10 @@ export const AddFile = (props: TAddFileProps) => {
 
       <div className="flex gap-4 ml-auto">
         <Button variant="outlined" onClick={onClose}>
-          Annuler
+          {appLabels.annuler}
         </Button>
         <Button onClick={onSubmit} disabled={isDisabled} data-test="ok">
-          Ajouter
+          {appLabels.ajouter}
         </Button>
       </div>
     </div>

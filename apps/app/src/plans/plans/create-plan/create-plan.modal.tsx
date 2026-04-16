@@ -1,4 +1,5 @@
 import { Button, Modal } from '@tet/ui';
+import { appLabels } from '@/app/labels/catalog';
 import { OpenState } from '@tet/ui/utils/types';
 import { JSX } from 'react';
 import { CreatePlanOptionLinksList } from './components/create-plan-option-link.list.tsx';
@@ -17,7 +18,7 @@ export function CreatePlanModal({
   return (
     <Modal
       size="lg"
-      title="Créer un plan"
+      title={appLabels.creerPlan}
       openState={openState}
       render={() => (
         <CreatePlanOptionLinksList
@@ -28,7 +29,7 @@ export function CreatePlanModal({
       renderFooter={({ close }) => (
         <div className="flex justify-center">
           <Button size="xs" onClick={close} variant="outlined">
-            Annuler
+            {appLabels.annuler}
           </Button>
         </div>
       )}

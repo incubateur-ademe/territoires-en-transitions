@@ -1,5 +1,6 @@
 import ActionPreuvePanel from '@/app/referentiels/actions/action-preuve.panel';
 import { ActionReferentiel } from '@/app/referentiels/DEPRECATED_scores.types';
+import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ReferentielId } from '@tet/domain/referentiels';
 import { Fragment, useEffect, useRef } from 'react';
@@ -145,7 +146,7 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
             }
           )
         ) : (
-          <div className="message">Aucun résultat</div>
+          <div className="message">{appLabels.aucunResultat}</div>
         )}
       </div>
     </div>

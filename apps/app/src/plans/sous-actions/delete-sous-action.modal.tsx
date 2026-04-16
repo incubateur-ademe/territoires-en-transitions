@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useDeleteFiche } from '@/app/plans/fiches/data/use-delete-fiche';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
@@ -17,11 +18,11 @@ export const DeleteSousActionModal = ({
   return (
     <Modal
       openState={openState}
-      title="Supprimer la sous-action"
+      title={appLabels.supprimerSousAction}
       subTitle={sousAction.titre ?? undefined}
       render={({ descriptionId }) => (
         <div id={descriptionId} className="flex flex-col gap-6 text-center">
-          Êtes-vous sûr de vouloir supprimer cette sous-action ?
+          {appLabels.confirmDeleteSousActionDescription}
         </div>
       )}
       renderFooter={({ close }) => (

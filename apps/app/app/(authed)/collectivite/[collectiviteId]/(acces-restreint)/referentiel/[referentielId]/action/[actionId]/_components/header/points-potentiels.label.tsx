@@ -1,4 +1,5 @@
 import { useScore } from '@/app/referentiels/use-snapshot';
+import { appLabels } from '@/app/labels/catalog';
 import { toLocaleFixed } from '@/app/utils/to-locale-fixed';
 import { ActionScoreFinal } from '@tet/domain/referentiels';
 
@@ -28,25 +29,22 @@ const getLabel = (actionScore: ScorePartial): string => {
   const { pointReferentiel, pointPotentiel, pointPotentielPerso, desactive } =
     actionScore;
 
-  // affiche toujours le même libellé quand l'action est désactivée
   if (desactive) {
-    return `Potentiel réduit : 0 point`;
+    return appLabels.potentielReduitZero;
   }
 
-  // nombre de points courant
   const value = pointPotentielPerso ?? pointPotentiel ?? pointReferentiel;
-  // formate le nombre de points courant
-  const points = `${toLocaleFixed(value, 2)} point${value > 1 ? 's' : ''}`;
+  const points = appLabels.pointsFormates({
+    formattedValue: toLocaleFixed(value, 2),
+    count: value,
+  });
 
-  // détermine si le score a été modifié (on vérifie un delta minimum
-  // pour éviter les éventuelles erreurs d'arrondi dans le score reçu)
   const isModified = Math.abs(value - pointReferentiel) >= 0.1;
 
-  // renvoi le libellé formaté suivant si le score a été augmenté ou réduit
   if (isModified) {
-    const modifLabel = value > pointReferentiel ? 'augmenté' : 'réduit';
-    return `Potentiel ${modifLabel} : ${points}`;
+    return value > pointReferentiel
+      ? appLabels.potentielAugmente({ points })
+      : appLabels.potentielReduit({ points });
   }
-  // ou est identique à la valeur initiale
-  return `Potentiel : ${points}`;
+  return appLabels.potentiel({ points });
 };

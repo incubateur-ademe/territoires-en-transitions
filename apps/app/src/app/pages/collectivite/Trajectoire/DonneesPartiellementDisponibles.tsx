@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Alert, Button } from '@tet/ui';
 
 interface DonneesPartiellementDisponibles {
@@ -8,9 +9,9 @@ interface DonneesPartiellementDisponibles {
 }
 
 const DEFAULT_TITLE =
-  'Voici un premier calcul de votre trajectoire SNBC territorialisée, avec les données disponibles !';
+  appLabels.trajectoireDonneesPartiellesTitle;
 const DEFAULT_DESC =
-  "Il manque des données pour certains secteurs : complétez les données manquantes pour l'année 2015 afin de finaliser le calcul.";
+  appLabels.trajectoireDonneesPartiellesDescription;
 
 /** Affiche l'avertissement "Données partiellement disponibles" */
 export const DonneesPartiellementDisponibles = ({
@@ -26,7 +27,7 @@ export const DonneesPartiellementDisponibles = ({
       description={description}
       footer={
         <Button disabled={disabled} size="sm" onClick={onOpenModal}>
-          Compléter les données
+          {appLabels.trajectoireCompleterDonneesLabel}
         </Button>
       }
     />

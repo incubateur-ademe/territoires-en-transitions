@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import {
   Cible,
   ParticipationCitoyenne,
@@ -13,88 +14,64 @@ type Options<T extends string> = {
 }[];
 
 export const ficheActionCiblesOptions: Options<Cible> = [
-  {
-    value: 'Grand public',
-    label: 'Grand public',
-  },
-  {
-    value: 'Associations',
-    label: 'Associations',
-  },
-  {
-    value: 'Public Scolaire',
-    label: 'Public Scolaire',
-  },
-  {
-    value: 'Acteurs économiques',
-    label: 'Acteurs économiques',
-  },
+  { value: 'Grand public', label: appLabels.cibleGrandPublic },
+  { value: 'Associations', label: appLabels.cibleAssociations },
+  { value: 'Public Scolaire', label: appLabels.ciblePublicScolaire },
+  { value: 'Acteurs économiques', label: appLabels.cibleActeursEconomiques },
   {
     value: 'Acteurs économiques du secteur primaire',
-    label: 'Acteurs économiques du secteur primaire',
+    label: appLabels.cibleActeursEconomiquesPrimaire,
   },
   {
     value: 'Acteurs économiques du secteur secondaire',
-    label: 'Acteurs économiques du secteur secondaire',
+    label: appLabels.cibleActeursEconomiquesSecondaire,
   },
   {
     value: 'Acteurs économiques du secteur tertiaire',
-    label: 'Acteurs économiques du secteur tertiaire',
+    label: appLabels.cibleActeursEconomiquesTertiaire,
   },
-  {
-    value: 'Partenaires',
-    label: 'Partenaires',
-  },
+  { value: 'Partenaires', label: appLabels.ciblePartenaires },
   {
     value: 'Autres collectivités du territoire',
-    label: 'Autres collectivités du territoire',
+    label: appLabels.cibleAutresCollectivites,
   },
   {
     value: 'Collectivité elle-même',
-    label: 'Collectivité elle-même',
+    label: appLabels.cibleCollectiviteElleMeme,
   },
-  {
-    value: 'Elus locaux',
-    label: 'Elus locaux',
-  },
-  {
-    value: 'Agents',
-    label: 'Agents',
-  },
+  { value: 'Elus locaux', label: appLabels.cibleElusLocaux },
+  { value: 'Agents', label: appLabels.cibleAgents },
 ];
 
 export const ficheActionStatutOptions: Options<Statut> = [
-  { value: 'À venir', label: 'À venir' },
-  { value: 'A discuter', label: 'À discuter' },
-  { value: 'En cours', label: 'En cours' },
-  { value: 'Réalisé', label: 'Réalisé' },
-  { value: 'En retard', label: 'En retard' },
-  { value: 'En pause', label: 'En pause' },
-  { value: 'Abandonné', label: 'Abandonné' },
-  { value: 'Bloqué', label: 'Bloqué' },
+  { value: 'À venir', label: appLabels.statutAVenir },
+  { value: 'A discuter', label: appLabels.statutADiscuter },
+  { value: 'En cours', label: appLabels.statutEnCours },
+  { value: 'Réalisé', label: appLabels.statutRealise },
+  { value: 'En retard', label: appLabels.statutEnRetard },
+  { value: 'En pause', label: appLabels.statutEnPause },
+  { value: 'Abandonné', label: appLabels.statutAbandonne },
+  { value: 'Bloqué', label: appLabels.statutBloque },
 ];
 
 export const ficheActionNiveauPrioriteOptions: Options<Priorite> = [
-  { value: 'Élevé', label: 'Élevé' },
-  { value: 'Moyen', label: 'Moyen' },
-  { value: 'Bas', label: 'Bas' },
+  { value: 'Élevé', label: appLabels.prioriteEleve },
+  { value: 'Moyen', label: appLabels.prioriteMoyen },
+  { value: 'Bas', label: appLabels.prioriteBas },
 ];
 
 export const ficheActionModifiedSinceOptions: Options<ModifiedSince> = [
-  { value: 'last-15-days', label: 'les 15 derniers jours' },
-  { value: 'last-30-days', label: 'les 30 derniers jours' },
-  { value: 'last-60-days', label: 'les 60 derniers jours' },
-  { value: 'last-90-days', label: 'les 90 derniers jours' },
+  { value: 'last-15-days', label: appLabels.modifiedSinceLast15 },
+  { value: 'last-30-days', label: appLabels.modifiedSinceLast30 },
+  { value: 'last-60-days', label: appLabels.modifiedSinceLast60 },
+  { value: 'last-90-days', label: appLabels.modifiedSinceLast90 },
 ];
 
 export const ficheActionParticipationOptions: Options<ParticipationCitoyenne> =
   [
-    {
-      value: 'pas-de-participation',
-      label: 'Pas de participation citoyenne',
-    },
-    { value: 'information', label: 'Information' },
-    { value: 'consultation', label: 'Consultation' },
-    { value: 'concertation', label: 'Concertation' },
-    { value: 'co-construction', label: 'Co-construction' },
+    { value: 'pas-de-participation', label: appLabels.participationPas },
+    { value: 'information', label: appLabels.information },
+    { value: 'consultation', label: appLabels.participationConsultation },
+    { value: 'concertation', label: appLabels.participationConcertation },
+    { value: 'co-construction', label: appLabels.participationCoConstruction },
   ];

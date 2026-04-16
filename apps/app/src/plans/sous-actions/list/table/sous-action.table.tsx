@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
 
+import { appLabels } from '@/app/labels/catalog';
 import PictoAction from '@/app/ui/pictogrammes/PictoAction';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { ReactTable, ReactTableProps, TableHeaderCell } from '@tet/ui';
@@ -21,33 +22,38 @@ const columnHelper = createColumnHelper<FicheWithRelations>();
 
 const columns = [
   columnHelper.accessor('titre', {
-    header: () => <TableHeaderCell title="Titre" className="w-80" />,
+    header: () => <TableHeaderCell title={appLabels.tableauTitre} className="w-80" />,
     cell: (info) => <SousActionTitleCell sousAction={info.row.original} />,
   }),
   columnHelper.accessor('description', {
     header: () => (
-      <TableHeaderCell title="Description" className="max-2xl:w-[32rem]" />
+      <TableHeaderCell
+        title={appLabels.description}
+        className="max-2xl:w-[32rem]"
+      />
     ),
     cell: (info) => (
       <SousActionDescriptionCell sousAction={info.row.original} />
     ),
   }),
   columnHelper.accessor('parentId', {
-    header: () => <TableHeaderCell title="Action parente" className="w-64" />,
+    header: () => (
+      <TableHeaderCell title={appLabels.sousActionHeaderActionParente} className="w-64" />
+    ),
     cell: (info) => (
       <SousActionActionParenteCell parentId={info.row.original.parentId} />
     ),
   }),
   columnHelper.accessor('statut', {
-    header: () => <TableHeaderCell title="Statut" className="w-32" />,
+    header: () => <TableHeaderCell title={appLabels.statut} className="w-32" />,
     cell: (info) => <SousActionStatutCell sousAction={info.row.original} />,
   }),
   columnHelper.accessor('pilotes', {
-    header: () => <TableHeaderCell title="Pilotes" className="w-40" />,
+    header: () => <TableHeaderCell title={appLabels.pilotes} className="w-40" />,
     cell: (info) => <SousActionPilotesCell sousAction={info.row.original} />,
   }),
   columnHelper.accessor('dateFin', {
-    header: () => <TableHeaderCell title="Date de fin" className="w-32" />,
+    header: () => <TableHeaderCell title={appLabels.dateFin} className="w-32" />,
     cell: (info) => <SousActionDateCell sousAction={info.row.original} />,
   }),
   columnHelper.display({
@@ -110,16 +116,15 @@ export const SousActionTable = ({
         isEmpty={isEmpty}
         emptyCard={{
           picto: (props) => <PictoAction {...props} />,
-          title: 'Aucune sous-action pour le moment',
-          description:
-            'Décomposez votre action en tâches concrètes pour faciliter son suivi et son pilotage.',
+          title: appLabels.aucuneSousAction,
+          description: appLabels.aucuneSousActionDescription,
           actions:
             isReadOnly || !createSousAction
               ? undefined
               : [
                   {
                     onClick: () => createSousAction?.(),
-                    children: 'Ajouter une sous-action',
+                    children: appLabels.ajouterSousAction,
                     icon: 'add-line',
                   },
                 ],

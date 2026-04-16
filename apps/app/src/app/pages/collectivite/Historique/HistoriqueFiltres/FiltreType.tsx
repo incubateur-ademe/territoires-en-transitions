@@ -1,9 +1,10 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Field, SelectFilter } from '@tet/ui';
 import { filtresTypeOptions, TFilterType, TFiltreProps } from '../filters';
 
 const FiltreType = ({ filters, setFilters }: TFiltreProps) => {
   return (
-    <Field title="Type d'élément modifié" small>
+    <Field title={appLabels.typeElementModifie} small>
       <SelectFilter
         small
         dataTest="filtre-type"

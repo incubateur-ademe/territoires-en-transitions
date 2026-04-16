@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useState } from 'react';
 import { useIndicateurMoyenne } from './use-indicateur-moyenne';
 import {
@@ -10,7 +11,6 @@ import {
   useIndicateurAvailableSources,
 } from './use-indicateur-sources';
 
-// liste des filtres sur les sources de données
 const FILTRES_SOURCE = [
   'snbc',
   'pcaet',
@@ -23,38 +23,39 @@ const FILTRES_SOURCE = [
 
 export type FiltresSource = (typeof FILTRES_SOURCE)[number];
 
-const filtreToLabel: Record<FiltresSource, string> = {
-  snbc: 'Objectifs SNBC',
-  pcaet: 'Objectifs Territoires & Climat',
-  opendata: 'Résultats Open data',
-  collectivite: 'Données de la collectivité',
-  moyenne: 'Moyenne des collectivités de même type',
-  cible: 'Valeur cible',
-  seuil: 'Valeur limite',
+const filtreToLabel = (filtre: FiltresSource): string => {
+  switch (filtre) {
+    case 'snbc':
+      return appLabels.sourceSnbc;
+    case 'pcaet':
+      return appLabels.sourcePcaet;
+    case 'opendata':
+      return appLabels.sourceOpendata;
+    case 'collectivite':
+      return appLabels.sourceCollectivite;
+    case 'moyenne':
+      return appLabels.sourceMoyenne;
+    case 'cible':
+      return appLabels.sourceCible;
+    case 'seuil':
+      return appLabels.sourceSeuil;
+  }
 };
 
-/**
- * Conserve l'état du filtre sur les sources de données et fourni le filtre à
- * passer lors de la lecture des valeurs.
- */
 export const useSourceFilter = (input: GetAvailableSourcesInput) => {
-  // conserve les filtres sur les sources de données
   const [filtresSource, setFiltresSource] = useState<FiltresSource[]>([]);
 
   const { data, isLoading: isLoadingSources } =
     useIndicateurAvailableSources(input);
 
-  // on charge systématiquement la moyenne pour savoir si on doit l'afficher dans le filtre
   const { data: moyenne, isLoading: isLoadingMoyenne } =
     useIndicateurMoyenne(input);
 
-  // ainsi que le valeurs de référence (cible/seuil)
   const { data: references, isLoading: isLoadingReference } =
     useIndicateurReference(input);
   const avecValeurCible = hasValeurCible(references);
   const avecValeurSeuil = hasValeurSeuil(references);
 
-  // génère la liste des options possibles en fonction des sources disponibles
   const options: FiltresSource[] = [];
   if (data?.length) {
     const availableSourceIds = data.map((s) => s.id);
@@ -64,7 +65,6 @@ export const useSourceFilter = (input: GetAvailableSourcesInput) => {
     if (availableSourceIds.includes('pcaet')) {
       options.push('pcaet');
     }
-    // il y a d'autres sources open data disponibles
     if (availableSourceIds.length > options.length) {
       options.push('opendata');
     }
@@ -82,10 +82,9 @@ export const useSourceFilter = (input: GetAvailableSourcesInput) => {
 
   const availableOptions = options.map((value) => ({
     value,
-    label: filtreToLabel[value],
+    label: filtreToLabel(value),
   }));
 
-  // détermine le filtre sur les sources à appliquer pour la lecture des valeurs
   const sources: Array<string> = [];
   if (filtresSource.length) {
     if (filtresSource.includes('opendata')) {
@@ -103,16 +102,12 @@ export const useSourceFilter = (input: GetAvailableSourcesInput) => {
     }
   }
 
-  // indique si les données de la collectivité doivent être incluses
   const avecDonneesCollectivite =
     !sources.length || sources.includes('collectivite');
 
-  // pour afficher les sous-indicateurs avec les données de la trajectoire
-  // uniquement quand le filtre SNBC est le seul sélectionné
   const avecSecteursSNBC =
     filtresSource.length === 1 && filtresSource[0] === 'snbc';
 
-  // faleurs références à afficher en fonction du filtre
   const valeursReference = !filtresSource.length
     ? references
     : {

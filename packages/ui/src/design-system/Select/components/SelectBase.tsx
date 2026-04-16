@@ -1,4 +1,5 @@
 import { Placement } from '@floating-ui/react';
+import { uiLabels } from '@tet/ui/labels/catalog';
 import { Fragment, Ref, forwardRef, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -256,7 +257,7 @@ export const SelectBase = (props: SelectProps) => {
                   className="my-auto mr-auto"
                   uppercase={optionsAreCaseSensitive === false}
                 />
-                <span className="mt-1 ml-6 font-medium text-grey-8">Créer</span>
+                <span className="mt-1 ml-6 font-medium text-grey-8">{uiLabels.creer}</span>
               </button>
             )}
           {/** Liste des options */}
@@ -528,7 +529,7 @@ const SelectButton = forwardRef(
                     }}
                     onFocus={() => setIsInputFocused(true)}
                     onBlur={() => setIsInputFocused(false)}
-                    placeholder={placeholder ?? 'Rechercher par mots-clés'}
+                    placeholder={placeholder ?? uiLabels.rechercherParMotsCles}
                     disabled={disabled}
                   />
                 )}

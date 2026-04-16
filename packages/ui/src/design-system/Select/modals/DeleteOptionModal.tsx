@@ -1,3 +1,4 @@
+import { uiLabels } from '@tet/ui/labels/catalog';
 import { OpenState } from '../../../utils/types';
 import { Alert } from '../../Alert';
 import { Modal, ModalFooterOKCancel } from '../../Modal';
@@ -20,11 +21,11 @@ export const DeleteOptionModal = ({
   return (
     <Modal
       openState={openState}
-      title={title ?? 'Supprimer une option'}
+      title={title ?? uiLabels.supprimerUneOption}
       subTitle={tagName}
       render={() => (
         <Alert
-          title="Souhaitez-vous vraiment supprimer cette option de votre collectivité ?"
+          title={uiLabels.confirmerSuppressionOption}
           description={message ?? undefined}
         />
       )}

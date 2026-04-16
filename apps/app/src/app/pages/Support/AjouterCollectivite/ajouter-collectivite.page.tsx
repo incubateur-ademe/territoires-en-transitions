@@ -15,6 +15,7 @@ import {
   useGetAdditionalInformationCollectivite,
 } from '@/app/app/pages/Support/AjouterCollectivite/use-get-additional-information-collectivite';
 import { useSaveCollectivite } from '@/app/app/pages/Support/AjouterCollectivite/use-save-collectivite';
+import { appLabels } from '@/app/labels/catalog';
 import { Button, Divider, Field, Input, InputNumber } from '@tet/ui';
 import { useState } from 'react';
 
@@ -89,13 +90,13 @@ export const AjouterCollectivitePage = () => {
       createCollectivite(collectivite, {
         onSuccess: (data) => {
           setMessage({
-            message: `Création réussie. Identifiant de la collectivité créée : ${data.id}`,
+            message: appLabels.formCreationReussie({ id: data.id }),
             ok: true,
           });
         },
         onError: (error) => {
           setMessage({
-            message: `Erreur lors de la création : ${error}`,
+            message: appLabels.formErreurCreation({ error: String(error) }),
             ok: false,
           });
         },
@@ -105,7 +106,7 @@ export const AjouterCollectivitePage = () => {
 
   return (
     <>
-      <h2 className="mb-6">Ajouter une collectivité</h2>
+      <h2 className="mb-6">{appLabels.ajouterCollectivite}</h2>
       <Divider color="primary" className="mb-6" />
       <div className="flex items-start gap-4">
         <CollectiviteTypeField
@@ -172,38 +173,37 @@ export const AjouterCollectivitePage = () => {
             }
             onClick={handleSearch}
           >
-            Chercher la collectivité
+            {appLabels.formChercherCollectivite}
           </Button>
         )}
       </div>
       {collectivite.type && collectivite.type !== collectiviteType.Test && (
         <p className="text-sm italic text-gray-400 text-right">
-          {"Cherche la collectivité dans les données de l'INSEE 2020"}
+          {appLabels.formChercherInsee}
         </p>
       )}
       <Divider color="primary" className="mb-6" />
       <div className="space-y-6">
         {status === statusSearch.none &&
           collectivite.type !== collectiviteType.Test && (
-            <p className="text-blue-500">
-              {`Lancez la recherche ci-dessus pour pré-remplir les champs suivants`}
-            </p>
+            <p className="text-blue-500">{appLabels.formLancezRecherche}</p>
           )}
         {status === statusSearch.DBFound && (
           <p className="text-red-500">
-            {`La collectivité cherchée existe déjà avec l'identifiant ${dataDB?.id}`}
+            {appLabels.collectiviteExisteDeja({ id: Number(dataDB?.id) })}
           </p>
         )}
         {status === statusSearch.inseeFound && (
           <p className="text-green-500">
-            {`Collectivité trouvée dans les données de l'INSEE. Veuillez compléter ou corriger les champs
-            suivants si besoin avant de valider.`}
+            {appLabels.formCollectiviteTrouveeInsee}
           </p>
         )}
         {status === statusSearch.inseeNotFound && (
-          <p className="text-orange-500">{`Collectivité non trouvée dans les données de l'INSEE. Vous pouvez quand même saisir les données manuellement dans les champs suivants avant de valider.`}</p>
+          <p className="text-orange-500">
+            {appLabels.formCollectiviteNonTrouveeInsee}
+          </p>
         )}
-        <Field title="Nom de la collectivité">
+        <Field title={appLabels.formNomCollectivite}>
           <Input
             type="text"
             value={collectivite.nom ?? ''}
@@ -248,7 +248,7 @@ export const AjouterCollectivitePage = () => {
           </div>
         )}
 
-        <Field title="Population">
+        <Field title={appLabels.population}>
           <InputNumber
             value={collectivite.population?.toString() ?? ''}
             onValueChange={(e) =>
@@ -278,7 +278,7 @@ export const AjouterCollectivitePage = () => {
             }
             onClick={handleSave}
           >
-            Créer la collectivité
+            {appLabels.formCreerCollectivite}
           </Button>
           {message && (
             <p className={message.ok ? 'text-green-500' : 'text-red-500'}>

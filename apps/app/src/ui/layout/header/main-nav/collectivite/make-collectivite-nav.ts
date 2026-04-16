@@ -7,6 +7,7 @@ import {
   makeCollectiviteAffichageReferentielsUrl,
   makeCollectiviteModifierUrl,
 } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { ReferentielDisplayMap } from '@tet/domain/collectivites';
 import {
@@ -104,7 +105,7 @@ export const makeCollectiviteNav = ({
       isVisitor,
     }),
     {
-      children: 'Collectivités',
+      children: appLabels.navCollectivites,
       dataTest: 'nav-collectivites',
       href: getRechercheViewUrl({
         collectiviteId,
@@ -113,24 +114,24 @@ export const makeCollectiviteNav = ({
     },
     {
       isVisible: hasRole(user, PlatformRole.SUPER_ADMIN),
-      children: 'Super Admin',
+      children: appLabels.navSuperAdmin,
       links: [
         {
-          children: 'Importer un plan',
+          children: appLabels.navImporterUnPlan,
           href: importerPlanUrl,
         },
         {
-          children: 'Ajouter une collectivité',
+          children: appLabels.ajouterCollectivite,
           href: ajouterCollectiviteUrl,
         },
         {
-          children: 'Modifier la collectivité',
+          children: appLabels.modifierCollectivite,
           href: makeCollectiviteModifierUrl({
             collectiviteId,
           }),
         },
         {
-          children: 'Affichage des référentiels',
+          children: appLabels.navAffichageReferentiels,
           href: makeCollectiviteAffichageReferentielsUrl({
             collectiviteId,
           }),

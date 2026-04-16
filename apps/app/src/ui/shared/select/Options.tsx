@@ -1,4 +1,5 @@
 import IconThreeDotHorizontal from '@/app/ui/icons/IconThreeDotHorizontal';
+import { appLabels } from '@/app/labels/catalog';
 import { forwardRef, Ref } from 'react';
 import DropdownFloater from '../floating-ui/DropdownFloater';
 import { Checkmark, isOptionSection, TOption, TSelectOption } from './commons';
@@ -66,7 +67,7 @@ const Options = <T extends string>({
         })
       ) : (
         <div className="p-4 text-sm text-gray-500">
-          {noOptionPlaceholder || 'Aucune option disponible'}
+          {noOptionPlaceholder || appLabels.aucuneOptionDisponible}
         </div>
       )}
     </div>

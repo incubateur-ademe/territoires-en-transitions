@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { captureException } from '@/app/utils/sentry/sentry-client.lazy';
 import { getErrorMessage } from '@tet/domain/utils';
 import { TRPCClientErrorLike } from '@trpc/client';
@@ -22,10 +23,10 @@ export function ErrorPage({
   return (
     <ErrorCard
       error={error}
-      title="Erreur lors du chargement de la page !"
+      title={appLabels.erreurChargementPage}
       subTitle={`Erreur : ${getErrorMessage(error)}`}
       retry={retry}
-      retryLabel="Recharger la page"
+      retryLabel={appLabels.rechargerPage}
       crashId={crashId}
     />
   );

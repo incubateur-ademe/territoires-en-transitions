@@ -1,5 +1,6 @@
 import { useExportComparisonScores } from '@/app/referentiels/audits/AuditComparaison/useExportComparisonScore';
 import { DownloadSnapshotsDropdown } from '@/app/referentiels/comparisons/dropdowns/download-snapshots.dropdown';
+import { appLabels } from '@/app/labels/catalog';
 import { useListSnapshots } from '@/app/referentiels/use-snapshot';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ReferentielId, SnapshotJalonEnum } from '@tet/domain/referentiels';
@@ -45,7 +46,7 @@ export const DownloadScoreModal = ({
 
     return rawSnapshots.map((snap) => ({
       ...snap,
-      nom: snap.ref === 'score-courant' ? 'État des lieux actuel' : snap.nom,
+      nom: snap.ref === 'score-courant' ? appLabels.etatDesLieuxActuel : snap.nom,
     }));
   }, [rawSnapshots]);
 
@@ -68,17 +69,17 @@ export const DownloadScoreModal = ({
   return (
     <>
       <Modal
-        title="Télécharger l'état des lieux"
+        title={appLabels.telechargerEtatDesLieux}
         size="md"
         openState={openState}
         render={() => (
           <div className="space-y-6">
             {hasEMTSnapshots ? (
-              <Alert description="Il n'est pas possible de sélectionner les sauvegardes issues de labellisations dont l'audit n'a pas été réalisé sur Territoires en Transitions." />
+              <Alert description={appLabels.telechargementAuditHorsTetAlerte} />
             ) : null}
 
             <fieldset>
-              <legend className="mb-2">Format&nbsp;:</legend>
+              <legend className="mb-2">{appLabels.formatTelechargement}</legend>
               <div
                 className="flex gap-4"
                 role="radiogroup"
@@ -106,7 +107,7 @@ export const DownloadScoreModal = ({
 
             <fieldset>
               <legend id="versions-legend" className="mt-4 mb-2">
-                Sélectionnez la ou les versions à télécharger&nbsp;:
+                {appLabels.selectionnerVersionsTelecharger}
               </legend>
               <div
                 id="selection-help"
@@ -114,7 +115,7 @@ export const DownloadScoreModal = ({
                 role="note"
                 aria-live="polite"
               >
-                Vous ne pouvez sélectionner que deux versions maximum.
+                {appLabels.telechargementDeuxVersionsMaximum}
               </div>
 
               <DownloadSnapshotsDropdown
@@ -130,8 +131,7 @@ export const DownloadScoreModal = ({
 
               <div className="text-sm text-info-1 mt-4">
                 <Icon icon="information-fill" size="sm" className="mr-1" />
-                Si vous sélectionnez deux versions, elles seront téléchargées
-                dans un même fichier Excel pour comparaison.
+                {appLabels.deuxVersionsMemeFichierComparaison}
               </div>
             </fieldset>
           </div>
@@ -140,10 +140,10 @@ export const DownloadScoreModal = ({
           <ModalFooterOKCancel
             btnCancelProps={{
               onClick: close,
-              'aria-label': 'Annuler le téléchargement',
+              'aria-label': appLabels.annulerTelechargement,
             }}
             btnOKProps={{
-              children: `Valider`,
+              children: appLabels.valider,
               onClick: () => {
                 if (hasValidSelection) {
                   handleExport();
@@ -152,10 +152,11 @@ export const DownloadScoreModal = ({
               },
               disabled: !hasValidSelection,
               'aria-label': hasValidSelection
-                ? `Télécharger ${
-                    selectedSnapshots?.length
-                  } version(s) au format ${selectedFormat.toUpperCase()}`
-                : 'Veuillez sélectionner au moins une version avant de valider',
+                ? appLabels.telechargerVersionsAriaLabel({
+                    count: selectedSnapshots.length,
+                    format: selectedFormat.toUpperCase(),
+                  })
+                : appLabels.veillezSelectionnerVersionAvantValidation,
               'aria-describedby': !hasValidSelection
                 ? 'validation-error'
                 : undefined,

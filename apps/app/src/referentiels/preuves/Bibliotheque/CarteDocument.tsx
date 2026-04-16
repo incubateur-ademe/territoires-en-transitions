@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import {
   getTextFormattedDate,
   getTruncatedText,
@@ -55,9 +56,8 @@ const CarteDocument = ({
         className={classNames('relative group max-w-screen-md')}
         data-test="carte-doc"
       >
-        {/** Cadenas document privé */}
         {fichier?.confidentiel && (
-          <Tooltip label="Document en mode privé">
+          <Tooltip label={appLabels.documentModePrive}>
             <div
               data-test="carte-doc-confidentiel"
               className="absolute -top-3 left-5"
@@ -66,7 +66,6 @@ const CarteDocument = ({
             </div>
           </Tooltip>
         )}
-        {/* Menu de la carte document */}
         {!isReadonly && !isEditing && (
           <MenuCarteDocument
             document={document}
@@ -76,31 +75,28 @@ const CarteDocument = ({
           />
         )}
 
-        {/* Carte*/}
         <Card className="p-4 h-full gap-1">
-          {/* Titre avec format et taille du fichier */}
           <span
             className="text-primary-9 hover:text-primary-8 transition text-base font-bold cursor-pointer"
             data-test="name"
-            title={fichier ? 'Télécharger le fichier' : 'Ouvrir le lien'}
+            title={
+              fichier ? appLabels.telechargerFichier : appLabels.ouvrirLien
+            }
             onClick={() => openPreuve(document)}
           >
             {getFormattedTitle(document)}
           </span>
 
-          {/** Identifiant de l'action liée (pour les docs "complémentaires") */}
           {displayIdentifier && action && (
             <span className="text-grey-6 leading-6 flex gap-2">
               {action.identifiant}
             </span>
           )}
 
-          {/* Date de création et auteur */}
           <span className="text-grey-8 text-sm font-medium">
             {getAuthorAndDate(dateCreation, auteur)}
           </span>
 
-          {/* Commentaire */}
           {!editComment.isEditing ? (
             !!commentaire &&
             commentaire.length > 0 && (
@@ -133,7 +129,9 @@ const CarteDocument = ({
                       setIsFullCommentaire((prevState) => !prevState)
                     }
                   >
-                    {isFullCommentaire ? 'Voir moins' : 'Voir plus'}
+                    {isFullCommentaire
+                      ? appLabels.voirMoins
+                      : appLabels.voirPlus}
                   </Button>
                 )}
               </div>
@@ -145,22 +143,22 @@ const CarteDocument = ({
             </div>
           )}
 
-          {/* Date de visite */}
           {!!dateVisite && (
             <p className="text-xs text-grey-8 font-normal mb-1 pl-2">
-              Visite effectuée le {getTextFormattedDate({ date: dateVisite })}
+              {appLabels.visiteEffectuee({
+                dateVisite: getTextFormattedDate({ date: dateVisite }),
+              })}
             </p>
           )}
         </Card>
       </div>
 
-      {/* Alerte de suppression du document */}
       {isDeleting && !isReadonly && (
         <AlerteSuppression
           isOpen={true}
           setIsOpen={setIsDeleting}
-          title="Supprimer le document"
-          message="Le document sera définitivement supprimé. Voulez-vous vraiment le supprimer ?"
+          title={appLabels.supprimerDocument}
+          message={appLabels.supprimerDocumentMessage}
           onDelete={() => {
             remove();
           }}

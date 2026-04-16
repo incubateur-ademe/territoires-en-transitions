@@ -4,6 +4,7 @@ import { Fragment, useState } from 'react';
 import IndicateurCardMenu, {
   ChartDownloadSettings,
 } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/IndicateurCardMenu';
+import { appLabels } from '@/app/labels/catalog';
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { Button, VisibleWhen } from '@tet/ui';
 import IndicateurCardEditModal from './IndicateurCardEditModal';
@@ -48,7 +49,7 @@ const IndicateurCardOptions = ({
 
       <VisibleWhen condition={isEditable}>
         <Button
-          title="Modifier"
+          title={appLabels.modifier}
           icon="edit-line"
           size="xs"
           variant="grey"

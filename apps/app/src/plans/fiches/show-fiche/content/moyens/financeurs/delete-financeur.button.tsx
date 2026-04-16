@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Button, ModalFooterOKCancel, VisibleWhen } from '@tet/ui';
 import { useState } from 'react';
@@ -24,21 +25,18 @@ export const DeleteFinanceurButton = ({
         size="xs"
         className="text-grey-6"
         onClick={() => setIsOpen(true)}
-        title="Supprimer le financeur"
-        aria-label="Supprimer le financeur"
+        title={appLabels.supprimerFinanceur}
+        aria-label={appLabels.supprimerFinanceur}
       />
       <VisibleWhen condition={isOpen}>
         <BaseUpdateFicheModal
           fiche={fiche}
-          title="Supprimer le financeur"
+          title={appLabels.supprimerFinanceur}
           subTitle={financeurName}
           openState={{ isOpen, setIsOpen }}
           render={({ descriptionId }) => (
             <div id={descriptionId}>
-              <p className="mb-0">
-                Ce financeur sera supprimé définitivement de l&apos;action.
-                Souhaitez-vous vraiment supprimer ce financeur ?
-              </p>
+              <p className="mb-0">{appLabels.supprimerFinanceurDescription}</p>
             </div>
           )}
           renderFooter={({ close }) => (

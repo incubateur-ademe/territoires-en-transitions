@@ -150,7 +150,7 @@ export class EditAxePom {
 
     // Ouvrir le menu "..." (apparaît au survol de l'axe)
     await axe.hover();
-    const axeMenuButton = axe.locator('button[title="Editer cet axe"]');
+    const axeMenuButton = axe.locator('button[title="Éditer cet axe"]');
     await axeMenuButton.click();
 
     return this.page

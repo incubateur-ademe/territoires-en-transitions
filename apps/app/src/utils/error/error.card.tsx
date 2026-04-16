@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { EmptyCard, PictoWarning } from '@tet/ui';
 import { TRPCClientErrorLike } from '@trpc/client';
 
@@ -25,14 +26,14 @@ export function ErrorCard({
       subTitle={subTitle}
       description={
         crashId && error
-          ? `Dans l'optique de pouvoir régler ce problème technique et améliorer l'expérience pour tous nos utilisateurs, nous vous invitons à nous partager le message d'erreur ainsi que l'identifiant ${crashId} via le chat en bas à droite, ou par mail à contact@territoiresentransitions.fr`
+          ? appLabels.erreurPartageMessageCrash({ crashId })
           : undefined
       }
       actions={
         retry
           ? [
               {
-                children: retryLabel ? retryLabel : 'Recharger la page',
+                children: retryLabel ? retryLabel : appLabels.rechargerPage,
                 onClick: retry,
                 variant: 'outlined',
               },

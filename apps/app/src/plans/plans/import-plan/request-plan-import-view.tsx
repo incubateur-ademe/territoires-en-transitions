@@ -1,4 +1,5 @@
 'use client';
+import { appLabels } from '@/app/labels/catalog';
 import { useRouter } from 'next/navigation';
 import { Fragment } from 'react';
 
@@ -12,8 +13,8 @@ import {
 } from '@tet/ui';
 
 const DOWNLOAD_TEMPLATE_OPTIONS = [
-  { value: 'xlsx', label: 'Format Excel (.xlsx)' },
-  { value: 'ods', label: 'Format OpenDocument (.ods)' },
+  { value: 'xlsx', label: appLabels.formatExcel },
+  { value: 'ods', label: appLabels.formatOpenDocument },
 ];
 
 export const RequestPlanImportView = () => {
@@ -48,7 +49,7 @@ export const RequestPlanImportView = () => {
         <p className="mb-0">
           Veillez à bien respecter les consignes de remplissage présentes dans
           le fichier, pour garantir la bonne prise en compte des données lors de
-          l’import sur la plateforme.
+          l&apos;import sur la plateforme.
         </p>
         <div className="h-[1px] my-8 bg-gray-300" />
 

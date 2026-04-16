@@ -1,4 +1,5 @@
 import { useCollectiviteId } from '@tet/api/collectivites';
+import { appLabels } from '@/app/labels/catalog';
 import { cn } from '@tet/ui';
 import { JSX, useMemo } from 'react';
 import { TableInstance } from 'react-table';
@@ -71,7 +72,7 @@ export const ReferentielTable: Table = (props) => {
         ) : rows.length ? (
           rows.map(renderRow)
         ) : (
-          <div className="message">Aucun résultat</div>
+          <div className="message">{appLabels.aucunResultat}</div>
         )}
       </div>
     </div>

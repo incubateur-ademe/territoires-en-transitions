@@ -4,7 +4,8 @@ import { Divider } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import SubActionCard from './subaction-card';
-import { useHashFromUrl } from './use-hash-from-url';
+import { useGetURLHash } from '@/app/utils/use-get-url-hash';
+import { useScrollToHash } from './use-scroll-to-hash';
 
 type Props = {
   sortedSubActions: {
@@ -52,7 +53,8 @@ export const SubActionCardsList = ({
   showJustifications,
   actionsAreAllExpanded,
 }: Props) => {
-  const hash = useHashFromUrl();
+  const hash = useGetURLHash();
+  useScrollToHash(hash);
 
   const defaultExpanded: DefaultExpanded | undefined = actionsAreAllExpanded
     ? { type: 'all' }

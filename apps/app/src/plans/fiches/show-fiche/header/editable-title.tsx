@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { cn, InlineEditWrapper, TableCellTextarea } from '@tet/ui';
 import { useState } from 'react';
 
@@ -20,7 +21,7 @@ type EditableTitleProps = {
   onUpdate: (value: string | null) => void;
 };
 
-const TITLE_FALLBACK = 'Sans titre';
+const TITLE_FALLBACK = appLabels.sansTitre;
 
 export const EditableTitle = ({
   dataTest,
@@ -50,7 +51,7 @@ export const EditableTitle = ({
             onChange={(evt) =>
               setTitle(evt.target.value.slice(0, TITLE_MAX_LENGTH))
             }
-            placeholder="Saisir un titre"
+            placeholder={appLabels.placeholderSaisirTitre}
             onBlur={() => {
               openState.setIsOpen(false);
             }}

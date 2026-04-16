@@ -1,4 +1,5 @@
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
+import { appLabels } from '@/app/labels/catalog';
 import { BulkEditRequest } from '@/app/plans/fiches/list-all-fiches/data/use-bulk-fiches-edit';
 import { TagWithCollectiviteId } from '@tet/domain/collectivites';
 import { Button, Event, Field, useEventTracker } from '@tet/ui';
@@ -27,7 +28,7 @@ const ModaleEditionService = ({
   return (
     <ActionsGroupeesModale
       openState={openState}
-      title="Éditer la direction ou service pilote"
+      title={appLabels.editionServiceTitre}
       onSave={() => {
         tracker(Event.fiches.updateService.multiple);
         onUpdate({
@@ -39,19 +40,13 @@ const ModaleEditionService = ({
       }}
     >
       <>
-        <Field
-          title="Ajouter une direction ou service pilote"
-          className="col-span-2"
-        >
+        <Field title={appLabels.editionAjouterService} className="col-span-2">
           <ServiceTagDropdown
             values={servicesToAdd?.map((s) => s.id)}
             onChange={({ values: services }) => setServicesToAdd(services)}
           />
         </Field>
-        <Field
-          title="Dissocier une direction ou service pilote"
-          className="col-span-2"
-        >
+        <Field title={appLabels.editionDissocierService} className="col-span-2">
           <ServiceTagDropdown
             disableEdition
             values={servicesToRemove?.map((s) => s.id)}
@@ -78,7 +73,7 @@ const EditionService = ({ onUpdate }: EditionServiceProps) => {
         variant="outlined"
         onClick={() => setIsModalOpen(true)}
       >
-        Éditer la direction ou service pilote
+        {appLabels.editionServiceTitre}
       </Button>
       {isModalOpen && (
         <ModaleEditionService

@@ -2,6 +2,7 @@
 
 import { Invitation } from '@/app/collectivites/membres/list-invitations/use-list-pending-invitations';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
+import { appLabels } from '@/app/labels/catalog';
 import { Button, TableCell, TableRow, Tooltip } from '@tet/ui';
 import { useState } from 'react';
 import BadgeAcces from '../../../../app/(authed)/collectivite/[collectiviteId]/(acces-restreint)/users/_components/badge-acces';
@@ -36,7 +37,7 @@ const ListInvitationsTableRow = ({
         {canMutateMembres && (
           <TableCell>
             <div className="flex gap-2 justify-start items-center">
-              <Tooltip label="Renvoyer l'invitation">
+              <Tooltip label={appLabels.renvoyerInvitation}>
                 <Button
                   size="xs"
                   variant="grey"
@@ -49,7 +50,7 @@ const ListInvitationsTableRow = ({
                   }
                 />
               </Tooltip>
-              <Tooltip label="Supprimer l'invitation">
+              <Tooltip label={appLabels.supprimerInvitation}>
                 <DeleteButton
                   data-test="delete-invitation"
                   size="xs"

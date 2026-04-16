@@ -3,6 +3,7 @@ import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
+import { appLabels } from '@/app/labels/catalog';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import { Field, FormSectionGrid, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
@@ -57,14 +58,14 @@ const EditModal = ({ openState, definition }: Props) => {
     <Modal
       dataTest="IndicateurEditModal"
       openState={openState}
-      title="Modifier l'indicateur"
+      title={appLabels.modifierIndicateur}
       subTitle={definition.titre}
       render={({ descriptionId }) => (
         <FormSectionGrid formSectionId={descriptionId}>
           {/* Personnes pilote */}
-          <Field title="Personne pilote" className="col-span-2">
+          <Field title={appLabels.personnePilote} className="col-span-2">
             <PersonneTagDropdown
-              placeholder="Sélectionnez ou créez un pilote"
+              placeholder={appLabels.selectionnerOuCreerPilote}
               values={editedPilotes?.map((p) => getPersonneStringId(p))}
               onChange={({ personnes }) => {
                 setEditedPilotes(personnes);
@@ -73,7 +74,10 @@ const EditModal = ({ openState, definition }: Props) => {
           </Field>
 
           {/* Directions ou services pilote */}
-          <Field title="Direction ou service pilote" className="col-span-2">
+          <Field
+            title={appLabels.directionOuServicePilote}
+            className="col-span-2"
+          >
             <ServiceTagDropdown
               values={editedServices?.map((s) => s.id)}
               onChange={({ values: services }) => setEditedServices(services)}

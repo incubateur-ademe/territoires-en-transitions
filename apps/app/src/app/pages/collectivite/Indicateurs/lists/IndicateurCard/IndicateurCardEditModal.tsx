@@ -2,6 +2,7 @@ import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown'
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
+import { appLabels } from '@/app/labels/catalog';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { PersonneTagOrUser, Tag } from '@tet/domain/collectivites';
 import { Thematique } from '@tet/domain/shared';
@@ -43,10 +44,10 @@ const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
   return (
     <Modal
       openState={openState}
-      title="Modifier l'indicateur"
+      title={appLabels.modifierIndicateur}
       render={() => (
         <div className="flex flex-col gap-6">
-          <Field title="Personne pilote :">
+          <Field title={appLabels.champPersonnePiloteColon}>
             <PersonneTagDropdown
               values={pilotesValues}
               onChange={({ personnes }) =>
@@ -57,7 +58,7 @@ const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
               }
             />
           </Field>
-          <Field title="Direction ou service pilote :">
+          <Field title={appLabels.champDirectionServicePiloteColon}>
             <ServiceTagDropdown
               values={state.services.map((s) => s.id)}
               onChange={({ values: services }) =>
@@ -69,7 +70,7 @@ const IndicateurCardEditModal = ({ indicateur, openState }: Props) => {
             />
           </Field>
           {indicateur.estPerso && (
-            <Field title="Thématique :">
+            <Field title={appLabels.champThematiqueColon}>
               <ThematiquesDropdown
                 values={state.thematiques.map((t) => t.id)}
                 onChange={(thematiques) =>

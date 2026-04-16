@@ -1,3 +1,4 @@
+import { uiLabels } from '@tet/ui/labels/catalog';
 import { Button } from '../Button';
 import { ButtonProps } from '../Button/types';
 import { ModalFooter, ModalFooterProps } from './ModalFooter';
@@ -24,11 +25,11 @@ export const ModalFooterOKCancel = (props: ModalFooterOKCancelProps) => {
     <ModalFooter variant="right" {...remainingProps}>
       {btnCancelProps && (
         <Button type="button" variant="outlined" {...btnCancelRemainingProps}>
-          {cancel || 'Annuler'}
+          {cancel || uiLabels.annuler}
         </Button>
       )}
       <Button type="submit" {...btnOKRemainingProps}>
-        {ok || 'Valider'}
+        {ok || uiLabels.valider}
       </Button>
     </ModalFooter>
   );

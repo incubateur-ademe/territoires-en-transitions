@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Alert, Modal, ModalFooterOKCancel } from '@tet/ui';
 
 type BudgetView = 'year' | 'summary';
@@ -22,11 +23,11 @@ export const BudgetTypeChangeModal = ({
 
   return (
     <Modal
-      title="Modifier le type de budget ?"
+      title={appLabels.modifierTypeBudgetQuestion}
       render={() => (
         <Alert
           state="warning"
-          title={`Attention : en passant au mode ${nextMode}, les données budgétaires actuelles seront supprimées.`}
+          title={appLabels.modifierTypeBudgetAlerte({ nextMode })}
         />
       )}
       openState={{ isOpen, setIsOpen }}

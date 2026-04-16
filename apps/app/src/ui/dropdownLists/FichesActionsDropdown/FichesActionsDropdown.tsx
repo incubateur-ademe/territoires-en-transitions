@@ -1,4 +1,5 @@
 import { generateTitle } from '@/app/utils/generate-title';
+import { appLabels } from '@/app/labels/catalog';
 import {
   FicheListItem,
   useListFiches,
@@ -65,7 +66,7 @@ const FichesActionsDropdown = ({
       fiche.plans?.[0] ?? {
         collectiviteId: fiche.collectiviteId,
         id: -1,
-        nom: 'Actions non classées',
+        nom: appLabels.actionsNonClassees,
       }
     );
     return acc;
@@ -78,7 +79,7 @@ const FichesActionsDropdown = ({
     )
     .sort((a, b) => {
       if (!a.nom) return -1;
-      return naturalSort(a.nom, b.nom || 'Actions non classées');
+      return naturalSort(a.nom, b.nom || appLabels.actionsNonClassees);
     });
 
   /* Génère la liste d'options */
@@ -86,7 +87,7 @@ const FichesActionsDropdown = ({
     // id -1 : correspond aux fiches non classées
     if (plan.id === -1) {
       return {
-        title: 'Actions non classées',
+        title: appLabels.actionsNonClassees,
         options: (fichesDisponiblesListe ?? [])
           .filter((fiche) => !fiche.plans || !fiche.plans[0])
           .map((fiche) => ({
@@ -118,7 +119,7 @@ const FichesActionsDropdown = ({
       {...props}
       isSearcheable
       options={options}
-      placeholder={props.placeholder ?? 'Recherchez par mots-clés'}
+      placeholder={props.placeholder ?? appLabels.placeholderRecherchezMotsCles}
       onChange={({ values, selectedValue }) =>
         props.onChange({
           fiches: getSelectedFiches(values) as FicheListItem[],

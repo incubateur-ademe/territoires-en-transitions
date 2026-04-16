@@ -1,6 +1,7 @@
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { TFichier } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { usePreuves } from '@/app/referentiels/preuves/usePreuves';
+import { appLabels } from '@/app/labels/catalog';
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { DBClient, useSupabase } from '@tet/api';
@@ -15,12 +16,8 @@ export type TDownloadDocsProps = {
 
 const URL = `/api/zip`;
 
-// durée de validité des liens générées (en secondes)
 const LINKS_EXPIRES_IN_SEC = 360;
 
-/**
- * Affiche le bouton de téléchargement des documents preuves
- */
 export const DownloadDocs = ({ action, className }: TDownloadDocsProps) => {
   const { refetch, isFetching } = useDownloadDocs(action) || {};
   const queryClient = useQueryClient();
@@ -28,7 +25,9 @@ export const DownloadDocs = ({ action, className }: TDownloadDocsProps) => {
   if (isFetching) {
     return (
       <div className={classNames('flex gap-4 items-center w-fit', className)}>
-        <span className="text-sm text-grey-8"> Téléchargement en cours...</span>
+        <span className="text-sm text-grey-8">
+          {appLabels.telechargementEnCours}
+        </span>
         <Button
           onClick={() =>
             queryClient.cancelQueries({ queryKey: ['zip-action'] })
@@ -37,7 +36,7 @@ export const DownloadDocs = ({ action, className }: TDownloadDocsProps) => {
           variant="outlined"
           size="xs"
         >
-          Annuler
+          {appLabels.annuler}
         </Button>
       </div>
     );
@@ -52,27 +51,19 @@ export const DownloadDocs = ({ action, className }: TDownloadDocsProps) => {
       size="xs"
       className={className}
     >
-      Télécharger tous les documents
+      {appLabels.telechargerTousDocuments}
     </Button>
   );
 };
 
-/**
- * Renvoie une instance de `useQuery` permettant de déclencher (en appelant la
- * fonction `refetch`) la génération et le téléchargement d'un zip contenant
- * tous les fichiers associés à une sous-action.
- */
 const useDownloadDocs = (action: ActionDefinitionSummary) => {
   const { referentiel, identifiant } = action;
   const supabase = useSupabase();
   const collectivite = useCurrentCollectivite();
   const { nom } = collectivite || {};
 
-  // récupère la liste des fichiers à télécharger
   const preuves = usePreuves({ action, withSubActions: true });
 
-  // indexe les fichiers par leur clé (pour avoir l'unicité) et retransforme en
-  // tableau les valeurs restantes
   const fichiers: TFichier[] = Object.values(
     preuves.reduce((filenameByHash, { fichier }) => {
       return fichier
@@ -81,28 +72,23 @@ const useDownloadDocs = (action: ActionDefinitionSummary) => {
     }, {} as Record<string, TFichier>)
   );
 
-  // le nom du fichier cible
   const filename = `${referentiel}_${identifiant}_${nom}.zip`;
 
   const canFetch = collectivite && fichiers?.length;
 
-  // pour déclencher la génération du zip
   const query = useQuery({
     queryKey: ['zip-action', fichiers],
 
     queryFn: async ({ signal }) => {
       if (collectivite) {
-        // génère les URLs de téléchargement
         const signedUrls = await getSignedUrls(supabase, fichiers);
         if (signedUrls?.length) {
-          // et appelle le endpoint de génération du zip
           const response = await fetch(URL, {
             signal,
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ signedUrls }),
           });
-          // sauvegarde le fichier si le téléchargement a réussi
           if (response.status === 200) {
             const blob = await response.blob();
             await saveBlob(blob, filename);
@@ -118,7 +104,6 @@ const useDownloadDocs = (action: ActionDefinitionSummary) => {
   return canFetch ? query : null;
 };
 
-// crée une url signée temporaire pour chaque fichier
 const getSignedUrls = async (supabase: DBClient, fichiers: TFichier[]) => {
   const signedUrls = await Promise.all(
     fichiers.map(({ bucket_id, hash }) =>

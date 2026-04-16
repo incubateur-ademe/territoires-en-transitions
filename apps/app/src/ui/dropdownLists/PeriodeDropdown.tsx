@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { ficheActionModifiedSinceOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { ModifiedSince } from '@tet/domain/utils';
 import { Select, SelectMultipleProps } from '@tet/ui';
@@ -15,7 +16,9 @@ const PeriodeDropdown = (props: PeriodeDropdownProps) => {
     <Select
       {...props}
       options={ficheActionModifiedSinceOptions}
-      placeholder={props.placeholder ?? 'Sélectionnez une période'}
+      placeholder={
+        props.placeholder ?? appLabels.placeholderSelectionnezPeriode
+      }
       onChange={(value) => props.onChange(value as ModifiedSince)}
     />
   );

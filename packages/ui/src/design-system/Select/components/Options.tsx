@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { uiLabels } from '@tet/ui/labels/catalog';
 import { Fragment } from 'react';
 
 import { Badge, BadgeSize, BadgeType, BadgeVariant } from '../../Badge';
@@ -111,7 +112,7 @@ const Options = ({
         })
       ) : (
         <div className="py-4 px-6 text-sm text-gray-500">
-          {noOptionPlaceholder || 'Aucune option disponible'}
+          {noOptionPlaceholder || uiLabels.aucuneOptionDisponible}
         </div>
       )}
     </div>

@@ -2,6 +2,7 @@ import IndicateurCard, {
   IndicateurCardProps,
 } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
 
@@ -42,9 +43,9 @@ export const IndicateursSelectorGrid = (props: Props) => {
       ) : (
         /** No data */
         <div className="my-24 text-center text-sm text-grey-6">
-          Aucun indicateur
+          {appLabels.aucunIndicateur}
           <br />
-          ne correspond à votre recherche
+          {appLabels.neCorrespondPasRecherche}
         </div>
       )}
     </>

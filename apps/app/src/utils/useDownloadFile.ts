@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { useMutation } from '@tanstack/react-query';
 
@@ -16,7 +17,7 @@ export const useDownloadFile = () =>
 
 export const DOWNLOAD_FILE_MUTATION_OPTIONS = {
   meta: {
-    success: 'Fichier téléchargé',
-    error: 'Erreur de téléchargement',
+    success: appLabels.telechargementFichierReussi,
+    error: appLabels.telechargementFichierErreur,
   },
 };

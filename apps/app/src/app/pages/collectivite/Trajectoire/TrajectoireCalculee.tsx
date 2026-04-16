@@ -6,6 +6,7 @@ import {
   IndicateurViewParamOption,
   makeCollectiviteIndicateursUrl,
 } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { SgpeMondrian } from '@/app/indicateurs/trajectoire-leviers/sgpe-mondrian';
 import { Dataset } from '@/app/ui/charts/echarts/utils';
 import HeaderSticky, {
@@ -83,7 +84,7 @@ export const TrajectoireCalculee = () => {
 
   // secteur sélectionné
   const secteurs = [
-    { nom: 'Tous les secteurs', identifiant: undefined },
+    { nom: appLabels.trajectoireTousLesSecteurs, identifiant: undefined },
     ...(indicateur.secteurs || []),
   ];
   const selectedSecteur =
@@ -173,12 +174,12 @@ export const TrajectoireCalculee = () => {
                     'text-2xl': isSticky,
                   })}
                 >
-                  Trajectoire SNBC et objectifs
+                  {appLabels.trajectoireSnbcEtObjectifs}
                 </h2>
                 <div className="flex gap-3 items-center">
                   <Modal size="lg" render={() => <AllerPlusLoin />}>
                     <Button size="sm" variant="underlined">
-                      Aller plus loin
+                      {appLabels.trajectoireAllerPlusLoin}
                     </Button>
                   </Modal>
                   <div className="w-[0.5px] h-8 bg-primary-7" />
@@ -188,13 +189,13 @@ export const TrajectoireCalculee = () => {
                     external
                     href={HELPDESK_URL}
                   >
-                    En savoir plus
+                    {appLabels.trajectoireEnSavoirPlus}
                   </Button>
                 </div>
               </div>
               <VisibleWhen condition={recomputeButtonIsVisible}>
                 <Button size="sm" onClick={() => setIsModalDataOpen(true)}>
-                  Recalculer la trajectoire
+                  {appLabels.trajectoireRecalculer}
                 </Button>
               </VisibleWhen>
             </div>
@@ -251,7 +252,7 @@ export const TrajectoireCalculee = () => {
                 <Select
                   values={selectedSecteurIdx}
                   dropdownZindex={Z_INDEX_ABOVE_STICKY_HEADER} // above sticky header
-                  placeholder="Tous les secteurs"
+                  placeholder={appLabels.trajectoireTousLesSecteurs}
                   options={secteurs.map(({ nom }, optionIdx) => ({
                     value: optionIdx,
                     label: nom,
@@ -291,7 +292,7 @@ export const TrajectoireCalculee = () => {
             disabled={!canMutateValeurs}
             description={
               !canMutateValeurs
-                ? "Il manque des données pour certains secteurs : un utilisateur en Edition ou Admin sur le profil de cette collectivité peut compléter les données manquantes pour l'année 2015 afin de finaliser le calcul"
+                ? appLabels.trajectoireDonneesPartiellesDescriptionLecture
                 : undefined
             }
             onOpenModal={() => setIsModalDataOpen(true)}
@@ -350,7 +351,7 @@ export const TrajectoireCalculee = () => {
 
         <VisibleWhen condition={selectedSecteurDataNotAvailable}>
           <DonneesPartiellementDisponibles
-            title="Données non disponibles"
+            title={appLabels.donneesNonDisponibles}
             description={
               canMutateValeurs
                 ? `Nous ne disposons pas encore des données nécessaires pour calculer la trajectoire SNBC territorialisée de ce secteur. Nous y travaillons activement et espérons vous fournir ces informations très prochainement. En attendant, vous pouvez calculer dès maintenant votre trajectoire pour l'ensemble des secteurs en complétant les données déjà disponibles.`
@@ -425,7 +426,7 @@ const LinksToIndicateurs = ({
         })}
         aria-label={`Consulter la fiche de l'indicateur ${indicateurData.name}`}
       >
-        Voir la fiche de l&apos;indicateur
+        {appLabels.trajectoireVoirFicheIndicateur}
       </Button>
     );
   }
@@ -433,7 +434,7 @@ const LinksToIndicateurs = ({
   return (
     <div className="flex gap-2 items-center">
       <div className="text-primary-8 text-xs font-medium mb-1">
-        Voir les fiches des indicateurs&nbsp;:
+        {appLabels.trajectoireVoirFichesIndicateurs}
       </div>
       <ul role="list" className="flex gap-4 items-end mb-0">
         {indicateurData.map((indicateur) => (

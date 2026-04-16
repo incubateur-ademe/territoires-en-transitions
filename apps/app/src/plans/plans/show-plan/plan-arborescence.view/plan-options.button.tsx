@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import { ButtonMenu, Checkbox, cn } from '@tet/ui';
 import {
   PLAN_DISPLAY_OPTIONS,
@@ -9,13 +10,12 @@ import {
 } from './plan-options.context';
 
 const OPTION_LABELS: Record<PlanDisplayOption, string> = {
-  description: 'Description',
-  indicateurs: 'Indicateurs',
-  graphique_indicateurs: 'Graphique des indicateurs',
-  actions: 'Actions',
+  description: appLabels.description,
+  indicateurs: appLabels.indicateurs,
+  graphique_indicateurs: appLabels.planOptionGraphiqueIndicateurs,
+  actions: appLabels.actions,
 };
 
-/** Menu permettant de changer les options d'affichage du plan */
 export const PlanOptionsButton = () => {
   const { toggleOption, isOptionEnabled } = usePlanOptions();
 

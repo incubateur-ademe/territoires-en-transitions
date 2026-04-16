@@ -1,4 +1,5 @@
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
+import { appLabels } from '@/app/labels/catalog';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { TableCell } from '@tet/ui';
@@ -40,7 +41,9 @@ export const SousActionStatutCell = ({ sousAction }: Props) => {
       {sousAction.statut ? (
         <BadgeStatut statut={sousAction.statut} size="xs" />
       ) : (
-        <span className="text-grey-6">{canUpdate ? 'Sélectionner' : ''}</span>
+        <span className="text-grey-6">
+          {canUpdate ? appLabels.selectionner : ''}
+        </span>
       )}
     </TableCell>
   );

@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Modal } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { InviteMembreForm } from './invite-membre.form';
@@ -16,7 +17,7 @@ const InviteMembreModal = ({ openState, tagIds }: InvitationModalProps) => {
       {openState.isOpen && (
         <Modal
           openState={openState}
-          title="Inviter un membre"
+          title={appLabels.inviterMembre}
           size="lg"
           render={({ close }) => (
             <InviteMembreForm

@@ -1,5 +1,6 @@
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import { appLabels } from '@/app/labels/catalog';
 import { getFicheAllEditorCollectiviteIds } from '@/app/plans/fiches/share-fiche/share-fiche.utils';
 import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
@@ -28,7 +29,7 @@ export const Pilotes = ({ personnes }: PilotesTriggerProps) => {
               dataTest="personnes-pilotes"
               collectiviteIds={getFicheAllEditorCollectiviteIds(fiche)}
               values={fiche.pilotes?.map((p) => getPersonneStringId(p))}
-              placeholder="Sélectionner ou créer un pilote"
+              placeholder={appLabels.selectionnerOuCreerPilote}
               disabled={isUpdating}
               onChange={({ personnes }) => {
                 update({

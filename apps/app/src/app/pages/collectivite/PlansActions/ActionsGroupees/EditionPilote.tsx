@@ -1,5 +1,6 @@
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import { appLabels } from '@/app/labels/catalog';
 import { BulkEditRequest } from '@/app/plans/fiches/list-all-fiches/data/use-bulk-fiches-edit';
 import { PersonneTagOrUser } from '@tet/domain/collectivites';
 import { Button, Event, Field, useEventTracker } from '@tet/ui';
@@ -28,7 +29,7 @@ const ModaleEditionPilote = ({
   return (
     <ActionsGroupeesModale
       openState={openState}
-      title="Éditer la personne pilote"
+      title={appLabels.editionPiloteTitre}
       onSave={() => {
         tracker(Event.fiches.updatePilote.multiple);
         onUpdate({
@@ -46,18 +47,18 @@ const ModaleEditionPilote = ({
       }}
     >
       <>
-        <Field title="Ajouter une personne pilote" className="col-span-2">
+        <Field title={appLabels.editionAjouterPilote} className="col-span-2">
           <PersonneTagDropdown
             values={pilotesToAdd?.map((p) => getPersonneStringId(p))}
-            placeholder="Sélectionnez ou créez un pilote"
+            placeholder={appLabels.selectionnerOuCreerPilote}
             onChange={({ personnes }) => setPilotesToAdd(personnes)}
           />
         </Field>
-        <Field title="Dissocier une personne pilote" className="col-span-2">
+        <Field title={appLabels.editionDissocierPilote} className="col-span-2">
           <PersonneTagDropdown
             disableEdition
             values={pilotesToRemove?.map((p) => getPersonneStringId(p))}
-            placeholder="Sélectionnez un ou plusieurs pilotes"
+            placeholder={appLabels.placeholderSelectionnezPlusieursPilotes}
             onChange={({ personnes }) => setPilotesToRemove(personnes)}
           />
         </Field>
@@ -76,7 +77,7 @@ const EditionPilote = ({ onUpdate }: EditionPiloteProps) => {
   return (
     <>
       <Button icon="user-line" size="xs" onClick={() => setIsModalOpen(true)}>
-        Éditer la personne pilote
+        {appLabels.editionPiloteTitre}
       </Button>
       {isModalOpen && (
         <ModaleEditionPilote

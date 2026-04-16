@@ -1,4 +1,5 @@
 import IndicateurPersoNouveau from '@/app/app/pages/collectivite/Indicateurs/IndicateurPersoNouveau';
+import { appLabels } from '@/app/labels/catalog';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Modal } from '@tet/ui';
 
@@ -18,7 +19,7 @@ export const CreateIndicateurModal = ({
   return (
     <Modal
       openState={{ isOpen, setIsOpen }}
-      title="Créer un indicateur personnalisé"
+      title={appLabels.indicateurVideCreerPersonnalise}
       size="lg"
       render={({ close }) => (
         <IndicateurPersoNouveau

@@ -1,15 +1,16 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import { ButtonProps } from '@tet/ui';
 
 export const addAxeButtonProps: ButtonProps = {
-  children: 'Créer un axe',
+  children: appLabels.creerAxe,
   dataTest: 'AjouterAxe',
   variant: 'outlined',
   size: 'sm',
 };
 
 export const createFicheResumeButtonProps: ButtonProps = {
-  children: 'Créer une action',
+  children: appLabels.creerAction,
   size: 'sm',
 };

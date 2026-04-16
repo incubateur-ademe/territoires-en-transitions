@@ -1,5 +1,6 @@
 import { FicheCard } from '@/app/plans/fiches/components/card/fiche.card';
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
@@ -41,7 +42,7 @@ export const FichesListGrid = ({
     return (
       <EmptyCard
         picto={(props) => <PictoExpert {...props} />}
-        title="Aucune action ne correspond à votre recherche"
+        title={appLabels.aucuneActionRecherche}
         variant="transparent"
       />
     );

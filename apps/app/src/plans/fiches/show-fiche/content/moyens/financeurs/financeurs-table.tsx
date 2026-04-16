@@ -3,6 +3,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { appLabels } from '@/app/labels/catalog';
 import { Financeur } from '@tet/domain/plans';
 import { Button, ReactTable, TableHeaderCell } from '@tet/ui';
 import { useCallback, useMemo } from 'react';
@@ -69,7 +70,7 @@ export const FinanceursTable = () => {
     () => [
       columnHelper.display({
         id: 'financeur',
-        header: () => <TableHeaderCell title="Financeurs" className="w-3/6" />,
+        header: () => <TableHeaderCell title={appLabels.financeurs} className="w-3/6" />,
         cell: () => (
           <FinanceurNameCell
             fiche={fiche}
@@ -81,7 +82,7 @@ export const FinanceursTable = () => {
         id: 'montant',
         header: () => (
           <TableHeaderCell
-            title="Montant de subvention obtenu"
+            title={appLabels.financeurMontantSubventionObtenu}
             className="w-2/6"
           />
         ),
@@ -121,7 +122,7 @@ export const FinanceursTable = () => {
 
   return (
     <section
-      aria-label="Financeurs"
+      aria-label={appLabels.financeurs}
       className="p-2 bg-white rounded-lg border border-grey-3"
     >
       <div className="max-2xl:overflow-x-auto">
@@ -157,7 +158,7 @@ export const FinanceursTable = () => {
               : [
                   {
                     onClick: handleCreateDraftFinanceur,
-                    children: 'Ajouter un financeur',
+                    children: appLabels.ajouterFinanceur,
                     icon: 'add-line',
                     variant: 'outlined',
                   },
@@ -173,7 +174,7 @@ export const FinanceursTable = () => {
           onClick={handleCreateDraftFinanceur}
           variant="outlined"
         >
-          Ajouter un financeur
+          {appLabels.ajouterFinanceur}
         </Button>
       )}
     </section>

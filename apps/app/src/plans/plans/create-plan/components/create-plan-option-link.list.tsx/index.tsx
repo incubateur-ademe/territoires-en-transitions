@@ -1,4 +1,5 @@
 'use client';
+import { appLabels } from '@/app/labels/catalog';
 import {
   makeCollectivitePanierUrl,
   makeCollectivitePlansActionsCreerUrl,
@@ -45,7 +46,7 @@ export const CreatePlanOptionLinksList = ({
       />
       <Link
         title="Initier votre plan"
-        subTitle="grâce aux “Actions à Impact”"
+        subTitle={appLabels.planOptionActionsAImpact}
         icon={<CreateWithActions />}
         url={makeCollectivitePanierUrl({
           collectiviteId,

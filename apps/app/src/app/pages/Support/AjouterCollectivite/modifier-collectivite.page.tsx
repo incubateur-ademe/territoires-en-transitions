@@ -13,6 +13,7 @@ import {
   CollectiviteOutput,
   useSelectCollectivite,
 } from '@/app/app/pages/Support/AjouterCollectivite/use-select-collectivite';
+import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Button, Divider, Field, Input, InputNumber } from '@tet/ui';
 import { useEffect, useState } from 'react';
@@ -50,13 +51,13 @@ export const ModifierCollectivitePage = () => {
     saveCollectivite(collectivite, {
       onSuccess: () => {
         setMessage({
-          message: `Modification réussie. Certaines modifications ne seront visibles sur la plateforme que le lendemain. Demandez à un développeur pour les voir avant.`,
+          message: appLabels.formModificationReussie,
           ok: true,
         });
       },
       onError: (error) => {
         setMessage({
-          message: `Erreur lors de la modification : ${error.message}`,
+          message: appLabels.formErreurModification({ error: error.message }),
           ok: false,
         });
       },
@@ -64,12 +65,12 @@ export const ModifierCollectivitePage = () => {
   };
 
   if (!collectivite) {
-    return <div>Chargement...</div>;
+    return <div>{appLabels.formChargement}</div>;
   }
 
   return (
     <>
-      <h2 className="mb-6">Modifier la collectivité</h2>
+      <h2 className="mb-6">{appLabels.modifierCollectivite}</h2>
       <Divider color="primary" className="mb-6" />
       <div className="space-y-6">
         <div className="grid grid-cols-[auto_1fr] items-start gap-4">
@@ -79,7 +80,7 @@ export const ModifierCollectivitePage = () => {
               updateCollectivite('type', type?.value as string)
             }
           />
-          <Field title="Nom de la collectivité" className="self-end">
+          <Field title={appLabels.formNomCollectivite} className="self-end">
             <Input
               type="text"
               value={collectivite.nom ?? ''}
@@ -115,7 +116,7 @@ export const ModifierCollectivitePage = () => {
           </div>
         )}
 
-        <Field title="Population">
+        <Field title={appLabels.population}>
           <InputNumber
             value={collectivite.population?.toString() ?? ''}
             onValueChange={(e) =>
@@ -140,7 +141,7 @@ export const ModifierCollectivitePage = () => {
             }
             onClick={handleSave}
           >
-            Modifier la collectivité
+            {appLabels.modifierCollectivite}
           </Button>
           {message && (
             <p className={message.ok ? 'text-green-500' : 'text-red-500'}>

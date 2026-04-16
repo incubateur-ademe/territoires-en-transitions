@@ -3,7 +3,7 @@ import {
   isSousMesure,
   sortDiscussions,
 } from '@/app/referentiels/actions/comments/helpers/action-comments-helper';
-import { pluralize } from '../../pluralize';
+import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   DiscussionOrderBy,
@@ -99,7 +99,7 @@ export const useCommentsContent = ({
       0
     );
     setCommentsCount(count);
-    updateTitlePanel?.(pluralize(count, 'commentaire'));
+    updateTitlePanel?.(appLabels.commentaires({ count }));
   }, [displayedDiscussions, updateTitlePanel]);
 
   // Set selected action based on actionId

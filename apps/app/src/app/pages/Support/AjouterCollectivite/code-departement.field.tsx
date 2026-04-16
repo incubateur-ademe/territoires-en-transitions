@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Field, Input } from '@tet/ui';
 
 type Props = {
@@ -8,8 +9,8 @@ type Props = {
 export const CodeDepartementField = ({ value, onChange }: Props) => {
   return (
     <Field
-      title="Code département"
-      hint="Le code département est composé de 2 à 3 chiffres (01 à 999)"
+      title={appLabels.formCodeDepartement}
+      hint={appLabels.formCodeDepartementHint}
     >
       <Input
         type="text"

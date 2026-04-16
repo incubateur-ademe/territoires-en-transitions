@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Completion } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { Icon, Tooltip } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
@@ -8,15 +9,14 @@ type FicheCompletionStatusProps = {
   className?: string;
 };
 
-// Mapping of backend fields to display labels
 const DISPLAYED_LABELS: Partial<Record<keyof Fiche, string>> = {
-  titre: 'titre',
-  description: 'description',
-  statut: 'statut',
-  pilotes: 'pilote',
-} as const;
+  titre: appLabels.completionTitre,
+  description: appLabels.completionDescription,
+  statut: appLabels.completionStatut,
+  pilotes: appLabels.completionPilote,
+};
 
-const getFieldLabel = (field: keyof Fiche) => {
+const getFieldLabel = (field: keyof Fiche & string) => {
   return DISPLAYED_LABELS[field] || field;
 };
 
@@ -82,7 +82,7 @@ const CompletionList = ({ completion }: { completion: Completion }) => {
           field,
           isCompleted,
         }: {
-          field: keyof Fiche;
+          field: keyof Fiche & string;
           isCompleted: boolean;
         }) => (
           <li key={field} className="ml-2">
@@ -102,7 +102,7 @@ const orderFields = (completion: Completion) => {
   const DISPLAY_ORDER = ['titre', 'description', 'statut', 'pilotes'];
 
   const orderedFields = DISPLAY_ORDER.map((field) =>
-    completion.fields.find((f) => f.field === field)
+    completion.fields.find((f: { field: string }) => f.field === field)
   ).filter((field) => field !== undefined);
 
   return {

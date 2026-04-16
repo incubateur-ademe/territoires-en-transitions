@@ -1,4 +1,5 @@
 import { BaseUpdateFicheModal } from '@/app/plans/fiches/show-fiche/components/base-update-fiche.modal';
+import { appLabels } from '@/app/labels/catalog';
 import {
   AddPreuveModal,
   TAddPreuveModalHandlers,
@@ -22,7 +23,7 @@ const ModaleAjoutDocument = ({
     <BaseUpdateFicheModal
       fiche={fiche}
       openState={{ isOpen, setIsOpen }}
-      title="Ajouter un document"
+      title={appLabels.ajouterDocument}
       size="lg"
       render={({ descriptionId, close }) => (
         <div id={descriptionId}>

@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Checkbox, Input, Select } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import classNames from 'classnames';
@@ -63,7 +64,7 @@ export const IndicateursListeOptions = (
           {/** Toggle affichage des graph */}
           <Checkbox
             variant="switch"
-            label="Afficher les graphiques"
+            label={appLabels.afficherGraphiques}
             containerClassname="shrink-0"
             checked={displayGraphs}
             onChange={() => {
@@ -76,10 +77,11 @@ export const IndicateursListeOptions = (
 
           {/** Nombre total de résultats */}
           <span className="shrink-0 text-grey-7">
-            {isLoading ? '--' : countTotal}
-            {` `}
-            {`indicateur`}
-            {countTotal > 1 ? 's' : ''}
+            {isLoading
+              ? '--'
+              : `${countTotal} ${appLabels.indicateur({
+                  count: countTotal,
+                })}`}
           </span>
         </div>
       </div>
@@ -94,7 +96,7 @@ export const IndicateursListeOptions = (
           }
           value={search}
           containerClassname="w-full xl:w-96"
-          placeholder="Rechercher par nom ou description"
+          placeholder={appLabels.rechercherNomDescription}
           displaySize="sm"
         />
         {/** Bouton d'édition des filtres (une modale avec bouton ou un ButtonMenu) */}

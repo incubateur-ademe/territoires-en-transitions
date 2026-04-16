@@ -6,30 +6,20 @@ import {
 import { trierParOptions } from '@/app/app/pages/CollectivitesEngagees/data/filtreOptions';
 import { getRechercheViewUrl, RecherchesViewParam } from '@/app/app/paths';
 import { DeleteFiltersButton } from '@/app/ui/lists/DEPRECATED_filter-badges/delete-filters.button';
+import { appLabels } from '@/app/labels/catalog';
 import { CollectiviteEngagee } from '@tet/api';
 import { ButtonGroup, Select } from '@tet/ui';
 import classNames from 'classnames';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-const viewToText: Record<
-  RecherchesViewParam,
-  {
-    singular: string;
-    plural: string;
+const viewToText = (view: RecherchesViewParam, count: number): string => {
+  switch (view) {
+    case 'collectivites':
+    case 'referentiels':
+      return appLabels.collectivitesActives({ count });
+    case 'plans':
+      return appLabels.plan({ count });
   }
-> = {
-  collectivites: {
-    singular: 'collectivité active',
-    plural: 'collectivités actives',
-  },
-  referentiels: {
-    singular: 'collectivité active',
-    plural: 'collectivités actives',
-  },
-  plans: {
-    singular: 'plan',
-    plural: 'plans',
-  },
 };
 
 type CollectivitesHeaderProps = {
@@ -77,7 +67,6 @@ export const CollectivitesHeader = ({
         <div className="flex flex-wrap max-md:flex-col items-center gap-3 max-md:w-full">
           {view === 'referentiels' && (
             <div className="w-full md:w-60 max-w-full">
-              {/* Ordre d'affichage */}
               <Select
                 options={getTrierParOptions()}
                 onChange={(value) => {
@@ -97,20 +86,14 @@ export const CollectivitesHeader = ({
             </div>
           )}
 
-          {/* Nombre de résultats filtrés */}
           <span className="mb-0 text-grey-6 text-sm">
-            {`${dataCount ?? '-'} ${
-              dataCount === 1
-                ? `${viewToText[view].singular}`
-                : `${viewToText[view].plural}`
-            } ${
+            {`${dataCount ?? '-'} ${viewToText(view, dataCount ?? 0)} ${
               dataCount === 1 ? 'correspond' : 'correspondent'
             } à votre recherche`}
           </span>
         </div>
 
         <div className="max-md:order-first max-md:mx-auto shrink-0 max-md:w-full">
-          {/* Sélection de la vue */}
           <ButtonGroup
             size="sm"
             className="max-md:hidden"
@@ -142,7 +125,6 @@ export const CollectivitesHeader = ({
             ]}
           />
 
-          {/* Sélection de la vue - petit écran */}
           <div className="w-full md:hidden">
             <Select
               options={[
@@ -161,7 +143,6 @@ export const CollectivitesHeader = ({
         </div>
       </div>
 
-      {/* Suppression des filtres */}
       <DeleteFiltersButton
         dataTest="desactiver-les-filtres"
         onClick={() =>

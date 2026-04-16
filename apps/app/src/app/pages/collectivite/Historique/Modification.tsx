@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import classNames from 'classnames';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -16,15 +17,10 @@ export type HistoriqueDescription = {
 
 type Props = {
   historique: HistoriqueItem;
-  // nom de la modification. ex: 'Action: statut modifié'
   nom: string;
-  // tableau contenant par exemple l'action et la tache pour une modification de statut
   descriptions: HistoriqueDescription[];
-  // icon affiché à côté du nom de la modification
   icon?: string;
-  // le nouvel état et/ou le précédent en fonction du type d'historique
   detail?: JSX.Element;
-  // à utiliser pour voir la page où se trouve la modification
   pageLink?: string;
 };
 
@@ -60,7 +56,6 @@ const Modification = ({
 
   return (
     <div data-test="item">
-      {/* DATE */}
       <Badge
         variant="standard"
         type="outlined"
@@ -68,9 +63,7 @@ const Modification = ({
         title={format(modifiedAt, 'dd MMMM yyyy', { locale: fr })}
       />
       <Spacer height={1} />
-      {/* MAIN */}
       <div className="">
-        {/* ICON */}
         <div className="flex items-center justify-between">
           <div className="flex items-baseline justify-start gap-2">
             <Icon size="lg" icon={icon} className="text-primary-9" />
@@ -86,22 +79,22 @@ const Modification = ({
               className="text-primary-9 text-sm border-b-transparent"
               href={pageLinkWithPanel}
             >
-              {`Voir l'action`}
+              {appLabels.voirAction}
             </Button>
           )}
         </div>
 
-        {/* CONTENT */}
         <div className="flex flex-col grow overflow-hidden">
-          {/* DESCRIPTION */}
           <div className="mb-4" data-test="desc">
             <p className="mb-2 text-sm">
-              <span className="text-gray-500">Par : </span>
+              <span className="text-gray-500">{appLabels.par} : </span>
               {modifiedByNom}
             </p>
             {referentielNom ? (
               <p className="mb-2 text-sm">
-                <span className="text-gray-500">Référentiel : </span>
+                <span className="text-gray-500">
+                  {appLabels.referentiel} :{' '}
+                </span>
                 {referentielNom}
               </p>
             ) : null}
@@ -112,7 +105,6 @@ const Modification = ({
               </p>
             ))}
           </div>
-          {/* DETAILS */}
           {detail && (
             <div
               className="mb-4 border-t border-b border-grey-3 text-sm"
@@ -123,7 +115,9 @@ const Modification = ({
                 className="flex items-center w-full py-4 px-2"
               >
                 <div className="font-bold text-primary-9">
-                  {isDetailsOpen ? 'Masquer le détail' : 'Afficher le détail'}
+                  {isDetailsOpen
+                    ? appLabels.masquerDetail
+                    : appLabels.afficherDetail}
                 </div>
                 <Icon
                   size="lg"

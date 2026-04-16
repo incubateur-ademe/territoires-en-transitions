@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import FiltreMembre from './FiltreMembre';
 import FiltreType from './FiltreType';
 
@@ -30,7 +31,7 @@ const HistoriqueFiltres = ({
       {Object.values(filters).some((value) => value !== null) && (
         <div className="flex items-baseline gap-6 mt-8">
           <span className="text-sm text-gray-400">
-            {itemsNumber} résultat{itemsNumber > 1 && 's'}
+            {appLabels.historiqueResultats({ count: itemsNumber })}
           </span>
           <DeleteFiltersButton onClick={() => setFilters(null)} />
         </div>

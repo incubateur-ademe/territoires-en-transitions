@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 
 import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
+import { appLabels } from '@/app/labels/catalog';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { FicheWithRelationsAndCollectivite } from '@tet/domain/plans';
@@ -56,7 +57,7 @@ const columns = [
           <Button
             onClick={() => table.options.meta?.onUnlink?.(row.original.id)}
             icon="link-unlink"
-            title="Dissocier l'action"
+            title={appLabels.dissocierAction}
             size="xs"
             variant="grey"
           />
@@ -66,7 +67,7 @@ const columns = [
   }),
 
   columnHelper.accessor('titre', {
-    header: () => <TableHeaderCell title="Titre" />,
+    header: () => <TableHeaderCell title={appLabels.tableauTitre} />,
     cell: (info) => (
       <TableCell>
         <FichesListCellTitle
@@ -78,7 +79,9 @@ const columns = [
   }),
 
   columnHelper.accessor('plans', {
-    header: () => <TableHeaderCell title="Plan" className="w-40 xl:w-60" />,
+    header: () => (
+      <TableHeaderCell title={appLabels.tableauPlan} className="w-40 xl:w-60" />
+    ),
     cell: (info) => (
       <TableCell>
         <FichesListCellPlans plans={info.getValue()} />
@@ -87,7 +90,9 @@ const columns = [
   }),
 
   columnHelper.accessor('statut', {
-    header: () => <TableHeaderCell title="Statut" className="w-32" />,
+    header: () => (
+      <TableHeaderCell title={appLabels.statut} className="w-32" />
+    ),
     cell: (info) => {
       const statut = info.getValue();
       return (
@@ -99,7 +104,9 @@ const columns = [
   }),
 
   columnHelper.accessor('pilotes', {
-    header: () => <TableHeaderCell title="Pilote" className="w-44" />,
+    header: () => (
+      <TableHeaderCell title={appLabels.tableauPilote} className="w-44" />
+    ),
     cell: (info) => (
       <TableCell>
         <FichesListCellPilotes pilotes={info.getValue()} />
@@ -108,7 +115,9 @@ const columns = [
   }),
 
   columnHelper.accessor('priorite', {
-    header: () => <TableHeaderCell title="Priorité" className="w-24" />,
+    header: () => (
+      <TableHeaderCell title={appLabels.tableauPriorite} className="w-24" />
+    ),
     cell: (info) => {
       const priorite = info.getValue();
       return (
@@ -120,7 +129,9 @@ const columns = [
   }),
 
   columnHelper.accessor('dateFin', {
-    header: () => <TableHeaderCell title="Date de fin" className="w-32" />,
+    header: () => (
+      <TableHeaderCell title={appLabels.dateFin} className="w-32" />
+    ),
     cell: (info) => (
       <TableCell>
         <FichesListCellDateFin
@@ -217,7 +228,7 @@ export const FichesListTable = ({
         isLoading={isLoading}
         isEmpty={fiches.length === 0}
         emptyCard={{
-          description: 'Aucune action ne correspond à votre recherche',
+          description: appLabels.aucuneActionRecherche,
           picto: (props) => <PictoExpert {...props} />,
         }}
       />

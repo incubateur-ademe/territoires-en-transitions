@@ -1,11 +1,16 @@
 import { profilPath } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { signOutUser } from '@tet/api/utils/supabase/sign-out-user.server';
-import { hasRole, PlatformRole, UserWithRolesAndPermissions } from '@tet/domain/users';
+import {
+  hasRole,
+  PlatformRole,
+  UserWithRolesAndPermissions,
+} from '@tet/domain/users';
 
 export const makeSecondaryNav = (user: UserWithRolesAndPermissions) => {
   return [
     {
-      children: 'Aide',
+      children: appLabels.navAide,
       href: 'https://aide.territoiresentransitions.fr/fr/',
       icon: 'question-line',
       external: true,
@@ -15,17 +20,19 @@ export const makeSecondaryNav = (user: UserWithRolesAndPermissions) => {
       className: 'max-w-80',
       children: user.prenom,
       icon: `${
-        hasRole(user, PlatformRole.SUPPORT) ? 'customer-service-line' : 'account-circle-line'
+        hasRole(user, PlatformRole.SUPPORT)
+          ? 'customer-service-line'
+          : 'account-circle-line'
       }`,
       links: [
         {
           dataTest: 'user-profile',
           href: profilPath,
-          children: 'Profil',
+          children: appLabels.navProfil,
         },
         {
           dataTest: 'user-logout',
-          children: 'Déconnexion',
+          children: appLabels.navDeconnexion,
           href: '/',
           onClick: async () => await signOutUser(),
         },

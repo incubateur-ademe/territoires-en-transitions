@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { BadgeAuditStatut, statusToState } from './BadgeAuditStatut';
 
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
@@ -23,13 +24,11 @@ type TActionAuditStatutBaseProps = {
 };
 
 const options: { value: MesureAuditStatutEnum; label: string }[] = [
-  { value: 'non_audite', label: 'Non audité' },
-  { value: 'en_cours', label: 'Audit en cours' },
-  { value: 'audite', label: 'Audité' },
+  { value: 'non_audite', label: appLabels.auditNonAudite },
+  { value: 'en_cours', label: appLabels.auditEnCours },
+  { value: 'audite', label: appLabels.auditAudite },
 ];
-/**
- * Affiche le sélecteur de statut d'audit d'une action
- */
+
 export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
   const { auditStatut, readonly, className, onChange } = props;
   const { statut } = auditStatut;
@@ -52,25 +51,17 @@ export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
   );
 };
 
-/**
- * Charge les données et fait le rendu
- */
 const ActionAuditStatut = (props: TActionAuditStatutProps) => {
   const { action, className } = props;
 
-  // donnée de l'audit en cours (si il y en a un)
   const { data: audit } = useAudit();
-
-  // indique si l'utilisateur courant est l'auditeur
   const isAuditeur = useIsAuditeur();
 
-  // statut d'audit de l'action
   const { data: auditStatut } = useGetMesureAuditStatut({
     mesureId: action.id,
     enabled: !!audit,
   });
 
-  // fonction d'enregistrement des modifications
   const { mutate: updateMesureAuditStatut } = useUpdateMesureAuditStatut();
 
   return audit && auditStatut ? (
