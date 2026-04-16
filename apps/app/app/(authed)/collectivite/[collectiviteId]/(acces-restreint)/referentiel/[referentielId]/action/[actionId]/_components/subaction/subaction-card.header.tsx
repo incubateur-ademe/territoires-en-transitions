@@ -72,7 +72,10 @@ export const SubactionCardHeader = ({
                     aria-label={`Déplier la sous-action ${subAction.identifiant}`}
                   />
                 </VisibleWhen>
-                <div className="flex items-center">
+                <div
+                  className="flex items-center"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <SubActionStatutDropdown actionDefinition={subAction} />
 
                   {isSubAction && (

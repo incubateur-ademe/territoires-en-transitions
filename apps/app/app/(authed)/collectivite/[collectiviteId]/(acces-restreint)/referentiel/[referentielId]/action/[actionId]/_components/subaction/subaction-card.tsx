@@ -7,8 +7,7 @@ import {
 } from '@/app/referentiels/referentiel-hooks';
 import { useStickyHeaderHeight } from '@/app/ui/layout/HeaderSticky';
 import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
-import { AccordionControlled, Button } from '@tet/ui';
-import classNames from 'classnames';
+import { AccordionControlled, Button, cn } from '@tet/ui';
 import { ActionJustificationField } from '../action/action.justification-field';
 import { pluralize } from '../pluralize';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
@@ -31,7 +30,7 @@ const OpenPanelButton = ({
     size="xs"
     icon="layout-right-line"
     iconPosition="right"
-    className={classNames(
+    className={cn(
       'px-2 py-1 font-medium rounded-md border-[1px] text-xs flex gap-1 items-center justify-center text-nowrap',
       isActive
         ? 'bg-primary-9 border-primary-9 text-white'
@@ -59,8 +58,13 @@ const SubactionHeader = ({
 
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-expanded={isExpanded}
+      aria-label={`Sous-action ${subAction.identifiant}`}
+      onClick={toggleExpand}
       style={{ top: stickyHeaderHeight }}
-      className={classNames('sticky z-10 p-4 rounded-t-lg', {
+      className={cn('sticky z-10 p-4 rounded-t-lg cursor-pointer', {
         'bg-primary-1 hover:bg-primary-1': isExpanded,
         'bg-grey-1': !isExpanded,
       })}
@@ -111,7 +115,7 @@ const SubactionContent = ({
   hideTasksStatus: boolean;
 }) => (
   <div
-    className={classNames('flex flex-col gap-4', {
+    className={cn('flex flex-col gap-4', {
       'p-4': showJustifications,
     })}
   >
@@ -163,7 +167,7 @@ const SubActionCard = ({
     <div
       id={subAction.id}
       data-test={`SousAction-${subAction.identifiant}`}
-      className={classNames(
+      className={cn(
         'border border-grey-3 rounded-lg bg-grey-1 transition-colors',
         { 'hover:bg-grey-2': !isExpanded }
       )}
