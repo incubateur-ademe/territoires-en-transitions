@@ -1,3 +1,4 @@
+import { uiLabels } from '@tet/ui/labels/catalog';
 import { Button } from '../Button';
 import { ModalFooter } from './ModalFooter';
 import { ModalFooterOKCancelProps } from './ModalFooterOKCancel';
@@ -31,7 +32,7 @@ export const ModalFooterOKCancelWithSteps = (
     <ModalFooter variant="right" {...remainingProps}>
       {btnCancelProps && (
         <Button type="button" variant="outlined" {...btnCancelRemainingProps}>
-          {cancel || 'Annuler'}
+          {cancel || uiLabels.annuler}
         </Button>
       )}
       {currentStep > 1 && (
@@ -45,7 +46,7 @@ export const ModalFooterOKCancelWithSteps = (
             onStepChange(currentStep - 1);
           }}
         >
-          {`Étape ${currentStep - 1}`}
+          {uiLabels.etape({ step: currentStep - 1 })}
         </Button>
       )}
       {currentStep < stepsCount && (
@@ -59,12 +60,12 @@ export const ModalFooterOKCancelWithSteps = (
             onStepChange(currentStep + 1);
           }}
         >
-          {`Étape ${currentStep + 1}`}
+          {uiLabels.etape({ step: currentStep + 1 })}
         </Button>
       )}
       {currentStep === stepsCount && (
         <Button type="submit" {...btnOKRemainingProps}>
-          {ok || 'Valider'}
+          {ok || uiLabels.valider}
         </Button>
       )}
     </ModalFooter>

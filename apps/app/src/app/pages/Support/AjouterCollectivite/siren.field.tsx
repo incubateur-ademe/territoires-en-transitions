@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Field, Input } from '@tet/ui';
 
 type Props = {
@@ -7,7 +8,7 @@ type Props = {
 
 export const SirenField = ({ value, onChange }: Props) => {
   return (
-    <Field title="Siren" hint="Le siren est composé de 9 chiffres">
+    <Field title={appLabels.formSiren} hint={appLabels.formSirenHint}>
       <Input
         type="text"
         maxLength={9}

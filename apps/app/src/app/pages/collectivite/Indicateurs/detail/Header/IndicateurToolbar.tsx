@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUpdateIndicateur } from '@/app/indicateurs/indicateurs/use-update-indicateur';
 import { PermissionOperation } from '@tet/domain/users';
@@ -36,20 +37,20 @@ const IndicateurToolbar = ({
       <div className={classNames('flex gap-4 lg:mt-2', className)}>
         <Button
           disabled={isPending}
-          title="Modifier l'indicateur"
-          aria-label="Modifier l'indicateur"
+          title={appLabels.modifierIndicateur}
+          aria-label={appLabels.modifierIndicateur}
           size="xs"
           variant="grey"
           onClick={() => setIsEditModalOpen(true)}
         >
-          Modifier
+          {appLabels.modifier}
         </Button>
 
         <Tooltip
           label={
             estFavori
-              ? 'Retirer des favoris de ma collectivité'
-              : 'Ajouter aux favoris de ma collectivité'
+              ? appLabels.indicateurRetirerFavoris
+              : appLabels.indicateurAjouterFavoris
           }
         >
           <Button
@@ -68,7 +69,7 @@ const IndicateurToolbar = ({
           loading={isPending}
           disabled={isPending}
           icon="download-fill"
-          title="Exporter au format .xlsx"
+          title={appLabels.exporterXlsx}
           size="xs"
           variant="grey"
           onClick={() => exportIndicateurs()}

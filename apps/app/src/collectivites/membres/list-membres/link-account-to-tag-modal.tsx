@@ -1,4 +1,5 @@
 import { Membre } from '@/app/collectivites/membres/list-membres/use-list-membres';
+import { appLabels } from '@/app/labels/catalog';
 import {
   Alert,
   Button,
@@ -49,12 +50,12 @@ const LinkMembreToPersonneTagModal = ({
   return (
     <Modal
       openState={openState}
-      title="Associer ce compte utilisateur à un tag"
+      title={appLabels.associerCompteTag}
       subTitle={`${user.prenom} ${user.nom} ${user.email}`}
       render={() => (
         <>
-          <Alert description="Vous pouvez associer ce compte utilisateur à un ou plusieurs tags afin que les actions, indicateurs et mesures des référentiels soient associés à cet utilisateur." />
-          <Field title="Associer ce compte utilisateur à un ou plusieurs tags">
+          <Alert description={appLabels.associerCompteTagDescription} />
+          <Field title={appLabels.associerCompteTagChamp}>
             <SelectMultiple
               options={options}
               values={selectedTags}
@@ -78,7 +79,7 @@ const LinkMembreToPersonneTagModal = ({
           }}
           className="ml-auto"
         >
-          Valider
+          {appLabels.valider}
         </Button>
       )}
     />

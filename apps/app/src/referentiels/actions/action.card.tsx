@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { makeReferentielActionUrl } from '@/app/app/paths';
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
+import { appLabels } from '@/app/labels/catalog';
 import Markdown from '@/app/ui/Markdown';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -15,7 +16,6 @@ import { ScoreProgressBar } from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 import { useHideAction } from './action-statut/use-hide-action';
 
-/** Carte générique d'une mesure du référentiel */
 type ActionCardProps = {
   action: ActionWithScore;
   showDescription?: boolean;
@@ -37,7 +37,6 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
 
   return (
     <div className="relative group h-full">
-      {/** Hover menu */}
       <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
         {isEditOpen && (
           <ActionEditModal
@@ -54,7 +53,7 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
         {hasCollectivitePermission('referentiels.mutate') && (
           <Button
             icon="edit-line"
-            title="Modifier"
+            title={appLabels.modifier}
             variant="grey"
             size="xs"
             onClick={() => setIsEditOpen(!isEditOpen)}
@@ -69,7 +68,6 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
         })}
         className="font-normal h-full !gap-2 !p-4 !bg-grey-1 hover:!border-grey-3 hover:!bg-grey-2 !shadow-none"
       >
-        {/** Title + description */}
         <span className="text-base leading-5 font-bold text-primary-9">
           {identifiant} {title}
         </span>
@@ -81,7 +79,6 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
           />
         )}
 
-        {/** Score */}
         <div className="w-full flex max-sm:flex-col gap-3 sm:items-center justify-between">
           <ScoreProgressBar
             id={id}
@@ -94,13 +91,12 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
           </div>
         </div>
 
-        {/** Pilotes et services */}
         {(action.pilotes.length > 0 || action.services.length > 0) && (
           <div className="mt-auto flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-primary-10">
             {action.pilotes.length > 0 && (
               <ListWithTooltip
                 icon="user-line"
-                title="Pilotes"
+                title={appLabels.pilotes}
                 list={action.pilotes.map((p) => p.nom ?? '')}
               />
             )}
@@ -110,7 +106,7 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
             {action.services.length > 0 && (
               <ListWithTooltip
                 icon="briefcase-line"
-                title="Direction ou service pilote"
+                title={appLabels.directionOuServicePilote}
                 list={action.services.map((s) => s.nom ?? '')}
               />
             )}

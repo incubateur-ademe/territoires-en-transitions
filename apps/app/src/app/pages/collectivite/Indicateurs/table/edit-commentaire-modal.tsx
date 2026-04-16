@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import {
   Button,
@@ -43,10 +44,15 @@ export const EditCommentaireModal = (props: EditCommentaireModalProps) => {
     <Modal
       openState={openState}
       disableDismiss
-      title={`Mes ${getSourceTypeLabel(type)} (${definition.unite}) : ${annee}`}
+      title={appLabels.commentaireIndicateurTitre({
+        sourceTypeLabel:
+          getSourceTypeLabel(type) ?? appLabels.nonRenseigne,
+        unite: definition.unite,
+        annee,
+      })}
       render={() => {
         return (
-          <Field title="Commentaire">
+          <Field title={appLabels.commentaire}>
             <Textarea
               rows={10}
               value={commentaire ?? ''}
@@ -71,7 +77,7 @@ export const EditCommentaireModal = (props: EditCommentaireModalProps) => {
         ) : (
           <ModalFooter>
             <Button type="button" variant="outlined" onClick={close}>
-              Fermer
+              {appLabels.fermer}
             </Button>
           </ModalFooter>
         )

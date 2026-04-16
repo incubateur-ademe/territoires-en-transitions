@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Alert, useOnlineStatus } from '@tet/ui';
 
 export const OfflineAlert = () => {
@@ -9,7 +10,7 @@ export const OfflineAlert = () => {
         <Alert
           state="error"
           customIcon="cloud-off-line"
-          title="Erreur de connexion réseau. Veuillez attendre que votre connexion soit rétablie pour utiliser l'application."
+          title={appLabels.erreurConnexionReseau}
         />
       </div>
     )

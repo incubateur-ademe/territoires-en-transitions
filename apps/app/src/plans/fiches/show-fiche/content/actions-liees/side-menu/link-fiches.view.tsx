@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useListFiches } from '@/app/plans/fiches/list-all-fiches/data/use-list-fiches';
 import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
@@ -51,7 +52,7 @@ export const LinkFichesView = () => {
             type="search"
             {...register('searchText')}
             onSearch={(v) => setValue('searchTextDebounced', v)}
-            placeholder="Rechercher"
+            placeholder={appLabels.placeholderRechercher}
             displaySize="sm"
           />
         </Field>

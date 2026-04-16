@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Textarea } from '@tet/ui';
 import { useState } from 'react';
 
@@ -36,7 +37,7 @@ export const DetailsFonctionTextarea = ({
       rows={1}
       onChange={(evt) => setValue(evt.currentTarget.value)}
       onBlur={() => details_fonction !== value && save(value)}
-      placeholder="À renseigner"
+      placeholder={appLabels.placeholderARenseigner}
     />
   );
 };
@@ -54,7 +55,7 @@ export const FonctionDropdown = ({
       value={value}
       options={membreFonctions}
       onSelect={onChange}
-      placeholderText="À renseigner"
+      placeholderText={appLabels.placeholderARenseigner}
     />
   </div>
 );
@@ -77,7 +78,7 @@ export const ChampsInterventionDropdown = ({
       onSelect={onChange}
       values={values}
       buttonClassName="rounded-md hover:bg-grey-2"
-      placeholderText="À renseigner"
+      placeholderText={appLabels.placeholderARenseigner}
       renderSelection={(values) => (
         <span className="mr-auto flex flex-col gap-2">
           {values.sort().map((value) => (

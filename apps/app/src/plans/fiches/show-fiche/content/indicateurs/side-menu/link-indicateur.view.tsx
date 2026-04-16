@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { INDICATEUR_LABELS } from '@/app/app/pages/collectivite/Indicateurs/constants';
 import {
   getFiltersForIndicateurClefs,
@@ -51,17 +52,17 @@ export const LinkIndicateursViewBase = ({
   return (
     <div className="p-4" data-test={dataTest}>
       <div className="relative flex flex-col gap-4">
-        <Field title="Rechercher par nom ou description" small>
+        <Field title={appLabels.rechercherNomDescription} small>
           <Input
             type="search"
             onSearch={(v) => setValue('searchTextDebounced', v)}
             onChange={(e) => setValue('searchText', e.target.value)}
             value={searchText}
-            placeholder="Rechercher"
+            placeholder={appLabels.placeholderRechercher}
             displaySize="sm"
           />
         </Field>
-        <Field title="Thématique" small>
+        <Field title={appLabels.thematique} small>
           <ThematiquesDropdown
             values={filters.thematiqueIds}
             onChange={(thematiques) =>

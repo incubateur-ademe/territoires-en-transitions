@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { uiLabels } from '@tet/ui/labels/catalog';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from '../Button';
 import PaginationPageButton from './PaginationPageButton';
@@ -81,11 +82,11 @@ export const Pagination = ({
         icon="arrow-left-s-line"
         variant="outlined"
         size="xs"
-        title="Page précédente"
+        title={uiLabels.pagePrecedente}
         onClick={() => handleChangePage(selectedPage - 1)}
         disabled={selectedPage === 1}
       >
-        {!isCompact && 'Précédent'}
+        {!isCompact && uiLabels.precedent}
       </Button>
 
       <div className="flex gap-3">
@@ -104,11 +105,11 @@ export const Pagination = ({
         iconPosition="right"
         variant="outlined"
         size="xs"
-        title="Page suivante"
+        title={uiLabels.pageSuivante}
         onClick={() => handleChangePage(selectedPage + 1)}
         disabled={selectedPage === nbOfPages}
       >
-        {!isCompact && 'Suivant'}
+        {!isCompact && uiLabels.suivant}
       </Button>
     </nav>
   ) : null;

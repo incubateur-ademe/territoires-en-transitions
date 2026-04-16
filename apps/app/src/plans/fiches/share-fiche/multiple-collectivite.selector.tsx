@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
 import { IdNameSchema } from '@tet/domain/shared';
@@ -74,7 +75,7 @@ export const MultipleCollectiviteSelector = (
   return (
     <Select
       dataTest="select-collectivite"
-      placeholder="Renseignez le nom de la collectivité"
+      placeholder={appLabels.placeholderRenseignezCollectivite}
       debounce={500}
       multiple
       maxBadgesToShow={3}

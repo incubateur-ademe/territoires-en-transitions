@@ -1,4 +1,5 @@
 import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
+import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import {
   DATE_DEBUT_SNBC_V2_REFERENCE,
@@ -150,7 +151,7 @@ export const DonneesCollectivite = ({
       </Tabs>
       <ModalFooter variant="right">
         <Button variant="outlined" onClick={() => modalProps.close()}>
-          Annuler
+          {appLabels.annuler}
         </Button>
         <Button
           icon="arrow-right-line"

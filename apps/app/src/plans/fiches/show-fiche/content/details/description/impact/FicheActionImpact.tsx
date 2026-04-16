@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Icon, Notification } from '@tet/ui';
 import classNames from 'classnames';
 import { useFicheContext } from '../../../../context/fiche-context';
@@ -21,7 +22,7 @@ export const FicheActionImpact = () => {
           size="xs"
           classname="h-6 w-8 justify-center"
         />
-        <span className="mt-1">Action issue du service “Actions à Impact”</span>
+        <span className="mt-1">{appLabels.actionIssueActionsAImpact}</span>
         <Icon
           className="!absolute right-6 text-primary-10"
           icon="eye-line"

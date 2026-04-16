@@ -1,24 +1,24 @@
+import { appLabels } from '@/app/labels/catalog';
 import { CollectiviteRole } from '@tet/domain/users';
 
 const collectiviteRoleLabels: Record<CollectiviteRole, string> = {
-  admin: 'Admin',
-  edition: 'Éditeur',
-  edition_fiches_indicateurs: 'Contributeur',
-  lecture: 'Lecteur',
+  admin: appLabels.roleAdmin,
+  edition: appLabels.roleEdition,
+  edition_fiches_indicateurs: appLabels.roleContributeur,
+  lecture: appLabels.roleLecteur,
 };
 
-export function getCollectiviteRoleLabel(role: CollectiviteRole) {
+export function getCollectiviteRoleLabel(role: CollectiviteRole): string {
   return collectiviteRoleLabels[role];
 }
 
 const collectiviteRoleDescriptions: Record<CollectiviteRole, string> = {
-  admin: 'Peut entièrement configurer, éditer, et inviter de nouveaux membres',
-  edition: 'Peut éditer',
-  edition_fiches_indicateurs:
-    'Peut éditer uniquement les actions & indicateurs dont il est le pilote',
-  lecture: 'Peut uniquement consulter',
+  admin: appLabels.roleAdminDescription,
+  edition: appLabels.roleEditionDescription,
+  edition_fiches_indicateurs: appLabels.roleContributeurDescription,
+  lecture: appLabels.roleLecteurDescription,
 };
 
-export function getCollectiviteRoleDescription(role: CollectiviteRole) {
+export function getCollectiviteRoleDescription(role: CollectiviteRole): string {
   return collectiviteRoleDescriptions[role];
 }

@@ -6,6 +6,7 @@ import {
   useSaveActionStatuts,
 } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
+import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import {
   ActionStatutCreate,
@@ -219,7 +220,7 @@ export const SubActionStatutDropdown = ({ actionDefinition }: Props) => {
           <Button
             data-test="DetaillerAvancementButton"
             icon="edit-line"
-            title="Détailler l'avancement"
+            title={appLabels.detaillerAvancement}
             variant="underlined"
             size="xs"
             onClick={() => {

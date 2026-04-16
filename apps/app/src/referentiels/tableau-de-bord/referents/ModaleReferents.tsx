@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { membreFonctionToLabel } from '@/app/app/labels';
 import { makeCollectiviteUsersUrl } from '@/app/app/paths';
 import {
@@ -60,29 +61,23 @@ export const ModaleReferents = (props: ModaleReferentsProps) => {
   return (
     <Modal
       openState={{ isOpen, setIsOpen }}
-      title="Associer des référents"
+      title={appLabels.referentAssocierReferents}
       size="md"
       render={() => (
         <>
-          <p>
-            “Référent” est un statut lié au programme Territoire Engagé
-            Transition Écologique de l’ADEME. Les personnes désignées ci-après
-            sont les contacts privilégiés de la collectivité pour l’ADEME et
-            toutes les personnes intervenants dans ce cadre (Bureau d’Appui,
-            auditeur, membre de la CNL) ainsi que pour leurs homologues dans
-            d’autres collectivités.
-          </p>
+          <p>{appLabels.referentStatutDescription}</p>
 
           <Field
-            title="Chef·fe de projet"
+            title={appLabels.membreTeteFonctionTechnique}
             message={
               <span>
-                Etes-vous inscrit-e sur l&apos;espace collaboratif{' '}
+                {appLabels.referentInscritIntraAdemeAvant}{' '}
                 <InlineLink href={URL_INTRADEME} openInNewTab>
-                  IntrADEME
+                  {appLabels.referentInscritIntraAdemeLien}
                 </InlineLink>{' '}
-                des collectivités ? Envoyer un mail à {EMAIL_ADEME} ou via le
-                chat.
+                {appLabels.referentInscritIntraAdemeApres({
+                  email: EMAIL_ADEME,
+                })}
               </span>
             }
           >
@@ -93,7 +88,7 @@ export const ModaleReferents = (props: ModaleReferentsProps) => {
               handleChange={handleChange}
             />
           </Field>
-          <Field title="Élu·e">
+          <Field title={appLabels.membreTeteFonctionPolitique}>
             <DropdownOrMessage
               collectiviteId={collectiviteId}
               fonction="politique"
@@ -101,7 +96,7 @@ export const ModaleReferents = (props: ModaleReferentsProps) => {
               handleChange={handleChange}
             />
           </Field>
-          <Field title="Conseiller·ère">
+          <Field title={appLabels.membreTeteFonctionConseiller}>
             <DropdownOrMessage
               collectiviteId={collectiviteId}
               fonction="conseiller"
@@ -158,9 +153,11 @@ const DropdownOrMessage = ({
     <ReferentsDropdown membres={membres} onChange={handleChange} />
   ) : (
     <p>
-      Personne n’est identifié comme “{membreFonctionToLabel[fonction]}“ dans la{' '}
+      {appLabels.referentPersonneNonIdentifiee({
+        fonction: membreFonctionToLabel[fonction],
+      })}
       <InlineLink href={makeCollectiviteUsersUrl({ collectiviteId })}>
-        gestion des membres
+        {appLabels.referentGestionDesMembres}
       </InlineLink>
     </p>
   );

@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { useApiClient } from '@/app/utils/use-api-client';
 import { useMutation } from '@tanstack/react-query';
@@ -30,8 +31,8 @@ export const useExportPlanAction = (planId: number) => {
     },
 
     meta: {
-      success: 'Export terminé',
-      error: "Échec de l'export",
+      success: appLabels.exportTermine,
+      error: appLabels.exportEchec,
     },
   });
 };

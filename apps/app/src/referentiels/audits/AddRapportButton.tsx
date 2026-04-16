@@ -1,4 +1,5 @@
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
+import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, Modal } from '@tet/ui';
 import { useState } from 'react';
@@ -8,10 +9,6 @@ export type TAddDocsButtonProps = {
   audit_id: number;
 };
 
-/**
- * Affiche un bouton permettant d'ouvrir le sélecteur de fichiers pour ajouter
- * le rapport d'audit.
- */
 export const AddRapportButton = (props: TAddDocsButtonProps) => {
   const [opened, setOpened] = useState(false);
   const handlers = useAddPreuveToAudit(props.audit_id);
@@ -24,7 +21,7 @@ export const AddRapportButton = (props: TAddDocsButtonProps) => {
     <Modal
       size="lg"
       openState={{ isOpen: opened, setIsOpen: setOpened }}
-      title="Ajouter le rapport d'audit"
+      title={appLabels.ajouterRapportAudit}
       render={({ close }) => {
         return <AddPreuveModal onClose={close} handlers={handlers} />;
       }}
@@ -36,7 +33,7 @@ export const AddRapportButton = (props: TAddDocsButtonProps) => {
         variant="outlined"
         size="sm"
       >
-        {"Ajouter le rapport d'audit"}
+        {appLabels.ajouterRapportAudit}
       </Button>
     </Modal>
   );

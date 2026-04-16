@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { uiLabels } from '@tet/ui/labels/catalog';
 import { OpenState } from '../../../utils/types';
 import { Field } from '../../Field';
 import { Input } from '../../Input';
@@ -25,9 +26,9 @@ export const UpdateOptionModal = ({
   return (
     <Modal
       openState={openState}
-      title={title ?? "Éditer l'option"}
+      title={title ?? uiLabels.editerOption}
       render={() => (
-        <Field title={fieldTitle ?? "Nom de l'option"}>
+        <Field title={fieldTitle ?? uiLabels.nomDeLOption}>
           <Input
             type="text"
             value={tagName}

@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useCreateIndicateurDefinition } from '@/app/indicateurs/indicateurs/use-create-indicateur-definition';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
@@ -21,8 +22,8 @@ import { Fiche } from '@/app/plans/fiches/data/use-get-fiche';
 const validationSchema = z.object({
   titre: z
     .string()
-    .min(1, 'Un titre est requis')
-    .max(300, 'Ce champ doit faire au maximum 300 caractères'),
+    .min(1, appLabels.indicateurValidationTitreRequis)
+    .max(300, appLabels.indicateurValidationTitreMax),
   unite: z.string().optional(),
   commentaire: z.string().optional(),
 });
@@ -105,28 +106,28 @@ const IndicateurPersoNouveau = ({
   return (
     <form className="flex flex-col gap-8" onSubmit={handleSubmit(onSave)}>
       {/* Message d'information sur les indicateurs personnalisés */}
-      <Alert
-        description=" Les indicateurs personnalisés vous permettent de suivre de manière
-              spécifique les actions menées par votre collectivité. Associez-les
-              à une ou plusieurs actions pour faciliter leur mise à jour !"
-      />
+      <Alert description={appLabels.indicateurAlertDescription} />
 
       {/* Champs du formulaire */}
       <FormSectionGrid>
         <div className="col-span-2 flex gap-6">
           <Field
-            title="Nom de l'indicateur"
+            title={appLabels.champNomIndicateur}
             htmlFor="titre"
             className="w-[75%]"
           >
             <Input id="titre" type="text" {...register('titre')} />
           </Field>
-          <Field title="Unité" htmlFor="unite" className="w-[25%]">
+          <Field
+            title={appLabels.champUnite}
+            htmlFor="unite"
+            className="w-[25%]"
+          >
             <Input id="unite" type="text" {...register('unite')} />
           </Field>
         </div>
 
-        <Field title="Thématique" className="col-span-2">
+        <Field title={appLabels.thematique} className="col-span-2">
           <ThematiquesDropdown
             values={thematiqueIds}
             onChange={setThematiqueIds}
@@ -134,7 +135,7 @@ const IndicateurPersoNouveau = ({
         </Field>
 
         <Field
-          title="Description et méthodologie de calcul"
+          title={appLabels.champDescriptionMethodologie}
           htmlFor="commentaire"
           className="col-span-2"
         >
@@ -143,7 +144,7 @@ const IndicateurPersoNouveau = ({
 
         <Checkbox
           containerClassname="col-span-2"
-          label="Ajouter l’indicateur à la sélection d’indicateurs favoris de ma collectivité"
+          label={appLabels.checkboxAjouterIndicateurFavoris}
           checked={favoriCollectivite}
           onChange={() => setFavoriCollectivite(!favoriCollectivite)}
           disabled={isFavoriCollectivite}
@@ -154,11 +155,13 @@ const IndicateurPersoNouveau = ({
       <div className="flex flex-row justify-end gap-4 mt-2">
         {onClose && (
           <Button variant="outlined" onClick={onClose}>
-            Annuler
+            {appLabels.annuler}
           </Button>
         )}
         <Button type="submit" data-test="ok" disabled={isPending || !isValid}>
-          {isPending ? 'Enregistrement en cours...' : 'Valider et compléter'}
+          {isPending
+            ? appLabels.enregistrementEnCours
+            : appLabels.validerCompleter}
         </Button>
       </div>
     </form>

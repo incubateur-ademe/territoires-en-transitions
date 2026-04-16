@@ -1,22 +1,21 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import { Icon, IconValue } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 import { ReactNode } from 'react';
-import { LabelKey, pluralizeLabel } from '../pluralize';
 import { useActionSidePanel } from './context';
 import { ActionPanelId } from './types';
 
-const PANEL_CONFIG: Record<
-  ActionPanelId,
-  { icon: IconValue; label: LabelKey }
-> = {
-  documents: { icon: 'file-line', label: 'document' },
-  indicateurs: { icon: 'line-chart-line', label: 'indicateur' },
-  fiches: { icon: 'article-line', label: 'action liée' },
-  historique: { icon: 'time-line', label: 'historique' },
-  informations: { icon: 'information-line', label: 'informations' },
-  comments: { icon: 'discuss-line', label: 'commentaire' },
+type PanelLabel = string | ((params: { count: number }) => string);
+
+const PANEL_CONFIG: Record<ActionPanelId, { icon: IconValue; label: PanelLabel }> = {
+  documents: { icon: 'file-line', label: appLabels.document },
+  indicateurs: { icon: 'line-chart-line', label: appLabels.indicateur },
+  fiches: { icon: 'article-line', label: appLabels.actionLiee },
+  historique: { icon: 'time-line', label: appLabels.panneauHistorique },
+  informations: { icon: 'information-line', label: appLabels.panneauInformations },
+  comments: { icon: 'discuss-line', label: appLabels.commentaires },
 };
 
 export function SidePanelButton({
@@ -29,9 +28,8 @@ export function SidePanelButton({
   const { togglePanel, isActive } = useActionSidePanel();
   const { icon, label } = PANEL_CONFIG[panelId];
   const active = isActive(panelId);
-  const displayLabel = pluralizeLabel(count, label);
   const displayText =
-    count !== undefined ? `${count} ${displayLabel}` : displayLabel;
+    typeof label === 'function' ? label({ count: count ?? 0 }) : label;
 
   return (
     <button

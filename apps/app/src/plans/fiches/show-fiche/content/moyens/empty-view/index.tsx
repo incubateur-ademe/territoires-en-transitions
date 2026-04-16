@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { BudgetType } from '@tet/domain/plans';
 import { EmptyCardProps } from '@tet/ui';
 
@@ -16,20 +17,20 @@ export const emptyViewsProps: Record<
 > = {
   investissement: {
     className: 'h-72 min-h-0',
-    title: "Budget d'investissement",
-    actionButton: "Compléter le budget d'investissement",
+    title: appLabels.budgetInvestissement.replace(' : ', ''),
+    actionButton: appLabels.budgetCompleterInvestissement,
     picto: (props) => <InvestmentPicto {...props} />,
   },
   fonctionnement: {
     className: 'h-72 min-h-0',
-    title: 'Budget de fonctionnement',
-    actionButton: 'Compléter le budget de fonctionnement',
+    title: appLabels.budgetFonctionnement.replace(': ', ''),
+    actionButton: appLabels.budgetCompleterFonctionnement,
     picto: (props) => <FonctionnementPicto {...props} />,
   },
   financeurs: {
     className: 'h-72 min-h-0',
     title: 'Financeurs',
-    actionButton: 'Ajouter un financeur',
+    actionButton: appLabels.ajouterFinanceur,
     picto: (props) => <FinanceursPicto {...props} />,
   },
 };

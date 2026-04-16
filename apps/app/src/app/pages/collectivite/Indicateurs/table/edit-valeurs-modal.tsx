@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { useUpsertIndicateurValeur } from '@/app/indicateurs/valeurs/use-upsert-indicateur-valeur';
 import {
@@ -73,11 +74,11 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
     <Modal
       size="lg"
       openState={openState}
-      title={title || 'Compléter le tableau'}
+      title={title || appLabels.completerTableau}
       render={() => {
         return (
           <div className="flex flex-col gap-8">
-            <Field title="Année *">
+            <Field title={appLabels.champAnnee}>
               <Input
                 type="text"
                 value={annee?.toString() ?? ''}
@@ -94,13 +95,13 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
 
             <Divider />
 
-            <Field title="Résultat">
+            <Field title={appLabels.champResultat}>
               <InputValue
                 value={resultat ?? ''}
                 onChange={(value) => setValeur({ ...valeur, resultat: value })}
               />
             </Field>
-            <Field title="Ajouter un commentaire sur le résultat">
+            <Field title={appLabels.champAjouterCommentaireResultat}>
               <Textarea
                 value={resultatCommentaire ?? ''}
                 onChange={(e) =>
@@ -111,13 +112,13 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
 
             <Divider />
 
-            <Field title="Objectif">
+            <Field title={appLabels.champObjectif}>
               <InputValue
                 value={objectif ?? ''}
                 onChange={(value) => setValeur({ ...valeur, objectif: value })}
               />
             </Field>
-            <Field title="Ajouter un commentaire sur l’objectif">
+            <Field title={appLabels.champAjouterCommentaireObjectif}>
               <Textarea
                 value={objectifCommentaire ?? ''}
                 onChange={(e) =>
@@ -128,7 +129,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
             {!disabled && (
               <FieldMessage
                 state="info"
-                message="Astuce : appuyer sur Entrée pour valider et ajouter une autre année rapidement."
+                message={appLabels.confirmDeleteAstuceEntree}
               />
             )}
           </div>
@@ -137,10 +138,10 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
       renderFooter={({ close }) => (
         <ModalFooter>
           <Button variant="outlined" onClick={close}>
-            Annuler
+            {appLabels.annuler}
           </Button>
           <Button disabled={disabled} onClick={validateAndAddNewValue}>
-            Valider et ajouter une année
+            {appLabels.validerAjouterAnnee}
           </Button>
           <Button
             disabled={disabled}
@@ -149,7 +150,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
               close();
             }}
           >
-            Valider
+            {appLabels.valider}
           </Button>
         </ModalFooter>
       )}

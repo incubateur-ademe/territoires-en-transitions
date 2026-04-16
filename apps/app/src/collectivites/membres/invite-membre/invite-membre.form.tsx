@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useListUserCollectiviteRoles } from '@/app/users/authorizations/use-list-user-collectivite-roles';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { collectiviteRoleSchema } from '@tet/domain/users';
@@ -60,14 +61,14 @@ export const InviteMembreForm = (props: Props) => {
     >
       <div className="grid gap-6 lg:grid-cols-9">
         <Field
-          title="Adresse email de la personne à inviter *"
+          title={appLabels.champAdresseEmailInvitation}
           htmlFor="email"
           className="lg:col-span-5"
         >
           <Input id="email" type="text" {...register('email')} />
         </Field>
         <Field
-          title="Niveau d’accès pour cette collectivité  * "
+          title={appLabels.champNiveauAccesCollectivite}
           className="lg:col-span-4"
         >
           <Controller
@@ -86,9 +87,9 @@ export const InviteMembreForm = (props: Props) => {
       </div>
 
       <Field
-        title="Associer l’utilisateur à un ou plusieurs tag(s) pilote(s)"
+        title={appLabels.champAssocierTagsPilotes}
         state="info"
-        message="Si vous avez ajouté une personne pilote à une action, une mesure ou un indicateur alors qu'elle n'avait pas encore de compte dans l'application, son nom apparaîtra dans cette liste. En l'associant à l'invitation, tous les éléments qui lui sont attribués seront automatiquement transférés vers son nouveau profil."
+        message={appLabels.champAssocierTagsPilotesInfo}
       >
         <Controller
           name="tagIds"

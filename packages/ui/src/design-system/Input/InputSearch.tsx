@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { uiLabels } from '@tet/ui/labels/catalog';
 import {
   ForwardedRef,
   MutableRefObject,
@@ -69,7 +70,7 @@ export const InputSearch = forwardRef(
               handleDebouncedInputChange(
                 (inputRef as MutableRefObject<HTMLInputElement>).current.value
               ),
-            title: 'Rechercher',
+            title: uiLabels.rechercher,
           },
         }}
         {...remainingProps}

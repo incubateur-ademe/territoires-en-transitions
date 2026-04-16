@@ -10,7 +10,7 @@ import { useStickyHeaderHeight } from '@/app/ui/layout/HeaderSticky';
 import { useIsVisitor } from '@/app/users/authorizations/use-is-visitor';
 import { AccordionControlled, Button, cn } from '@tet/ui';
 import { ActionJustificationField } from '../action/action.justification-field';
-import { pluralize } from '../pluralize';
+import { appLabels } from '@/app/labels/catalog';
 import ScoreIndicatifLibelle from '../score-indicatif/score-indicatif.libelle';
 import { useActionSidePanel } from '../side-panel/context';
 import TaskCardsList from '../task/task.cards-list';
@@ -77,7 +77,7 @@ const SubactionHeader = ({
         actions={[
           <OpenPanelButton
             key="documents"
-            label={pluralize(preuvesCount, 'document')}
+            label={appLabels.document({ count: preuvesCount })}
             onClick={() => togglePanel('documents', subAction.id)}
             isActive={isActive('documents', subAction.id)}
           />,
@@ -85,10 +85,9 @@ const SubactionHeader = ({
             ? [
                 <OpenPanelButton
                   key="comments"
-                  label={pluralize(
-                    subAction.openDiscussionsCount ?? 0,
-                    'commentaire'
-                  )}
+                  label={appLabels.commentaires({
+                    count: subAction.openDiscussionsCount ?? 0,
+                  })}
                   onClick={() => togglePanel('comments', subAction.id)}
                   isActive={isActive('comments', subAction.id)}
                 />,

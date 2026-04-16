@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
 import MesuresReferentielsDropdown from '@/app/ui/dropdownLists/MesuresReferentielsDropdown/MesuresReferentielsDropdown';
 import { FicheWithRelations } from '@tet/domain/plans';
@@ -34,11 +35,11 @@ export const MesuresLieesModal = ({
   return (
     <Modal
       openState={openState}
-      title="Lier une mesure des référentiels"
+      title={appLabels.lierMesureReferentiels}
       size="lg"
       disableDismiss
       render={({ descriptionId }) => (
-        <Field fieldId={descriptionId} title="Mesures des référentiels">
+        <Field fieldId={descriptionId} title={appLabels.mesuresLiees}>
           <MesuresReferentielsDropdown
             values={editedMesureIds}
             onChange={({ values }) =>

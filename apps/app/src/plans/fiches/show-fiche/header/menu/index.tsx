@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { ButtonMenu, Icon } from '@tet/ui';
 import {
@@ -19,30 +20,30 @@ export const Menu = () => {
       id: 'emplacement',
       isVisible: hasCollectivitePermission('plans.mutate'),
       icon: 'folder-2-line',
-      label: "Mutualiser l'action dans un autre plan",
+      label: appLabels.mutualiserAction,
     },
     {
       id: 'accessRightsManagement',
       isVisible: hasCollectivitePermission('plans.fiches.update'),
       icon: 'lock-line',
-      label: "Gérer les droits d'accès de l'action",
+      label: appLabels.gererDroitsAcces,
     },
     {
       id: 'export',
       icon: 'download-line',
-      label: "Télécharger l'action (PDF)",
+      label: appLabels.telechargerActionPdf,
     },
     {
       id: 'activityLog',
       icon: 'history-line',
-      label: "Journal d'activités",
+      label: appLabels.journalActivite,
       isVisible: hasCollectivitePermission('collectivites.read'),
     },
     {
       id: 'deleting',
       isVisible: hasCollectivitePermission('plans.fiches.delete'),
       icon: 'delete-bin-6-line',
-      label: "Supprimer l'action",
+      label: appLabels.supprimerAction,
     },
   ];
 

@@ -17,7 +17,7 @@ import { Badge, Button, cn, VisibleWhen } from '@tet/ui';
 import classNames from 'classnames';
 import { ReactNode } from 'react';
 import { useListDiscussions } from '../comments/hooks/use-list-discussions';
-import { pluralize } from '../pluralize';
+import { appLabels } from '@/app/labels/catalog';
 import { useActionSidePanel } from '../side-panel/context';
 import { ActionSidePanelToolbar } from './action-side-panel-toolbar';
 import { ActionBreadcrumb } from './breadcrumb/action.breadcrumb';
@@ -163,7 +163,7 @@ export const ActionHeader = ({
 
             <VerticalDivider />
             <span className="text-primary-9 text-sm font-normal text-nowrap">
-              {pluralize(subActions.count, 'sous-mesure')}
+              {appLabels.sousMesure({ count: subActions.count })}
             </span>
             {action && (
               <Infos

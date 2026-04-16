@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Cible } from '@tet/domain/plans';
 import { SelectFilter, SelectMultipleProps } from '@tet/ui';
 import { ficheActionCiblesOptions } from '../../listesStatiques';
@@ -22,7 +23,7 @@ const CiblesDropdown = (props: CiblesDropdownProps) => {
       {...props}
       isSearcheable
       options={ficheActionCiblesOptions}
-      placeholder={props.placeholder ?? 'Sélectionner une ou plusieurs cibles'}
+      placeholder={props.placeholder ?? appLabels.placeholderSelectionnezCibles}
       onChange={({ values, selectedValue }) =>
         props.onChange({
           cibles: values ? (values as Cible[]) : [],

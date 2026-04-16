@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { FicheNote, FicheWithRelations } from '@tet/domain/plans';
 import { Button, ModalFooterOKCancel } from '@tet/ui';
 import { BaseUpdateFicheModal } from '../../components/base-update-fiche.modal';
@@ -17,18 +18,18 @@ export const NoteDeletionModal = ({
   return (
     <BaseUpdateFicheModal
       fiche={fiche}
-      title="Supprimer la note"
+      title={appLabels.supprimerNote}
       subTitle={`Note ${year}${
         editedNote.createdBy
-          ? ` créée par ${editedNote.createdBy.prenom} ${editedNote.createdBy.nom}`
+          ? appLabels.noteCreeePar({
+              prenom: editedNote.createdBy.prenom,
+              nom: editedNote.createdBy.nom,
+            })
           : ''
       }`}
       render={({ descriptionId }) => (
         <div id={descriptionId}>
-          <p className="mb-0">
-            Cette note sera supprimée définitivement de l&apos;action.
-            Souhaitez-vous vraiment supprimer cette note ?
-          </p>
+          <p className="mb-0">{appLabels.supprimerNoteConfirmation}</p>
         </div>
       )}
       renderFooter={({ close }) => (
@@ -48,7 +49,7 @@ export const NoteDeletionModal = ({
         variant="white"
         size="xs"
         className="text-grey-6"
-        title="Supprimer la note"
+        title={appLabels.supprimerNote}
       />
     </BaseUpdateFicheModal>
   );

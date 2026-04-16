@@ -1,4 +1,5 @@
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { FichesListTable } from '@/app/plans/fiches/list-all-fiches/components/fiches-list.table/fiches-list.table';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { useUser } from '@tet/api/users';
@@ -27,17 +28,17 @@ export const ActionsLieesView = () => {
       <ContentLayout.SharedAlert
         fiche={fiche}
         collectiviteId={collectivite.collectiviteId}
-        title="Actions associées"
-        description="Les actions affichées correspondent à celles de cette collectivité."
+        title={appLabels.actionsAssociees}
+        description={appLabels.actionsAssocieesDescription}
       />
       <ContentLayout.Empty
         isReadonly={isReadonly}
         picto={(props) => <FichePicto {...props} />}
-        title="Cette action n'est liée à aucune autre action"
-        subTitle="Ici vous pouvez faire référence à d’autres actions de vos plans"
+        title={appLabels.actionsAssocieesEmptyTitle}
+        subTitle={appLabels.actionsAssocieesEmptyDescription}
         actions={[
           {
-            children: 'Lier une action',
+            children: appLabels.lierAction,
             icon: 'link',
             onClick: () => openPanel('actions-liees', fiche),
           },
@@ -55,7 +56,7 @@ export const ActionsLieesView = () => {
                 size="sm"
                 onClick={() => openPanel('actions-liees', fiche)}
               >
-                Lier une action
+                {appLabels.lierAction}
               </Button>
             </VisibleWhen>
           </>

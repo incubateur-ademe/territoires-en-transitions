@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { FicheNote } from '@tet/domain/plans';
 import { Icon } from '@tet/ui';
 import { format } from 'date-fns';
@@ -15,7 +16,8 @@ const MetadataNoteViewLabel = ({
   date,
 }: MetadataNoteViewProps) => {
   const user = maybeUser ? `${maybeUser.prenom} ${maybeUser.nom}` : 'Inconnu';
-  const label = action === 'created' ? 'Créée' : 'Modifiée';
+  const label =
+    action === 'created' ? appLabels.metadataCreee : appLabels.metadataModifiee;
   return (
     <div className="flex items-center gap-1 text-xs">
       <Icon icon="user-line" size="sm" className="text-grey-8" />

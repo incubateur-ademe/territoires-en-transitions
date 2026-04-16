@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { Button, ModalFooterOKCancel } from '@tet/ui';
 import { useState } from 'react';
@@ -26,20 +27,17 @@ export const DeleteBudgetButton = ({
         variant="white"
         className="text-grey-6"
         onClick={() => setIsOpen(true)}
-        title="Supprimer le budget"
+        title={appLabels.supprimerBudget}
       />
       {isOpen && (
         <BaseUpdateFicheModal
           fiche={fiche}
-          title="Supprimer le budget"
-          subTitle={`Budget ${year}`}
+          title={appLabels.supprimerBudget}
+          subTitle={appLabels.budgetAnnee({ year })}
           openState={{ isOpen, setIsOpen }}
           render={({ descriptionId }) => (
             <div id={descriptionId}>
-              <p className="mb-0">
-                Ce budget sera supprimé définitivement de l&apos;action.
-                Souhaitez-vous vraiment supprimer ce budget ?
-              </p>
+              <p className="mb-0">{appLabels.supprimerBudgetDescription}</p>
             </div>
           )}
           renderFooter={({ close }) => (

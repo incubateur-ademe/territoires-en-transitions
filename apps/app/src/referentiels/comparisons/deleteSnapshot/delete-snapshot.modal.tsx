@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Alert, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
@@ -33,7 +34,7 @@ export const DeleteSnapshotModal = ({
         <ModalFooterOKCancel
           btnCancelProps={{ onClick: close }}
           btnOKProps={{
-            children: 'Confirmer',
+            children: appLabels.confirmer,
             onClick: () => {
               handleDeleteSnapshot(snapshotRef);
               close();
@@ -49,8 +50,8 @@ export const DeleteSnapshotModal = ({
 export const DeleteSnapshotModalContent = () => {
   return (
     <Alert
-      title="Supprimer une sauvegarde figée du référentiel"
-      description="Cette sauvegarde sera définitivement supprimée. Êtes-vous sûr de vouloir supprimer cette sauvegarde du référentiel ?"
+      title={appLabels.supprimerSauvegarde}
+      description={appLabels.supprimerSauvegardeDescription}
       state="info"
       className="mt-4 py-2"
     />

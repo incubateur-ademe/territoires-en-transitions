@@ -1,5 +1,6 @@
 import { useExportIndicateurs } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import { appLabels } from '@/app/labels/catalog';
 import { Badge } from '@tet/ui';
 import classNames from 'classnames';
 
@@ -26,8 +27,8 @@ const ExportButton = ({ definitions, isFiltered }: Props) => {
         iconPosition="left"
         title={
           isFiltered
-            ? 'Exporter le résultat de mon filtre en Excel'
-            : 'Exporter tous les indicateurs en Excel'
+            ? appLabels.exporterIndicateursFiltresExcel
+            : appLabels.exporterTousIndicateursExcel
         }
         variant="grey"
         type="outlined"

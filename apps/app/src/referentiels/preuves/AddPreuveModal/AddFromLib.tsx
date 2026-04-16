@@ -1,4 +1,5 @@
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { appLabels } from '@/app/labels/catalog';
 import { Button, Field, Icon, Option, SelectFilter } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -15,10 +16,6 @@ export type TAddFromLibProps = {
 
 type OptionConfidentiel = Option & { confidentiel: boolean };
 
-/**
- * Affiche la bibliothèque de fichiers de la collectivité
- * et permet de sélectionner les fichiers à ajouter comme preuve
- */
 export const AddFromLib = (props: TAddFromLibProps) => {
   const { items: fichiers, onAddFileFromLib, onClose, setFilters } = props;
 
@@ -42,7 +39,7 @@ export const AddFromLib = (props: TAddFromLibProps) => {
 
   return (
     <div className="flex flex-col gap-8">
-      <Field title="Tous les fichiers de ma collectivité">
+      <Field title={appLabels.tousLesFichiersCollectivite}>
         <SelectFilter
           debounce={500}
           options={options}
@@ -70,20 +67,20 @@ export const AddFromLib = (props: TAddFromLibProps) => {
             );
             setFilters({ search: '', page: 1 });
           }}
-          placeholder="Rechercher par nom"
+          placeholder={appLabels.rechercherParNom}
           isSearcheable
         />
       </Field>
 
       <div className="flex gap-4 ml-auto">
         <Button variant="outlined" onClick={onClose}>
-          Annuler
+          {appLabels.annuler}
         </Button>
         <Button
           disabled={!selectedFiles || !selectedFiles.length}
           onClick={onSubmit}
         >
-          Ajouter
+          {appLabels.ajouter}
         </Button>
       </div>
     </div>

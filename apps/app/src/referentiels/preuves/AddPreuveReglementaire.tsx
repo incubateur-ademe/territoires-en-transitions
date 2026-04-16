@@ -1,4 +1,5 @@
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
+import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, Modal } from '@tet/ui';
 import { useState } from 'react';
@@ -6,15 +7,8 @@ import { useAddPreuveReglementaireToAction } from './useAddPreuveToAction';
 
 export type TAddPreuveButtonProps = {
   preuve_id: string;
-  /** indique si l'action associée à la preuve est désactivée ou marquée "non
-   * concernée" */
   isDisabled: boolean;
 };
-
-/**
- * Affiche un bouton permettant d'ouvrir le sélecteur de fichiers pour ajouter
- * une preuve réglementaire à une action
- */
 
 export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
   const [opened, setOpened] = useState(false);
@@ -30,7 +24,7 @@ export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
     <Modal
       size="lg"
       openState={{ isOpen: opened, setIsOpen: setOpened }}
-      title="Ajouter un document attendu"
+      title={appLabels.ajouterDocumentAttendu}
       render={({ close }) => {
         return (
           <AddPreuveModal
@@ -46,7 +40,7 @@ export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
         size="xs"
         icon="file-add-fill"
         variant={isDisabled ? 'outlined' : 'primary'}
-        title="Ajouter une preuve"
+        title={appLabels.ajouterPreuve}
         onClick={() => setOpened(true)}
         className="w-12 flex items-center justify-center"
       />

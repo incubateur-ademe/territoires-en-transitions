@@ -4,6 +4,7 @@ import {
   makeCollectiviteUsersUrl,
   makeMaCollectiviteUrl,
 } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { CollectiviteNavItem } from './make-collectivite-nav';
 
 export const generateParametresDropdown = ({
@@ -18,11 +19,11 @@ export const generateParametresDropdown = ({
   isAdeme: boolean;
 }): CollectiviteNavItem => ({
   isVisible: !(collectiviteAccesRestreint && isVisitor),
-  children: 'Paramètres',
+  children: appLabels.navParametres,
   dataTest: 'nav-params',
   links: [
     {
-      children: 'Ma collectivité',
+      children: appLabels.navMaCollectivite,
       dataTest: 'params-collectivite',
       href: makeMaCollectiviteUrl({
         collectiviteId,
@@ -30,14 +31,14 @@ export const generateParametresDropdown = ({
       urlPrefix: ['/ma-collectivite'],
     },
     {
-      children: 'Gestion des utilisateurs',
+      children: appLabels.navGestionDesUtilisateurs,
       dataTest: 'params-membres',
       href: makeCollectiviteUsersUrl({
         collectiviteId,
       }),
     },
     {
-      children: 'Bibliothèque de documents',
+      children: appLabels.navBibliothequeDeDocuments,
       dataTest: 'params-docs',
       href: makeCollectiviteBibliothequeUrl({
         collectiviteId,
@@ -45,7 +46,7 @@ export const generateParametresDropdown = ({
     },
     {
       isVisible: !isVisitor || isAdeme,
-      children: "Journal d'activité",
+      children: appLabels.journalActivite,
       dataTest: 'params-logs',
       href: makeCollectiviteJournalUrl({
         collectiviteId,

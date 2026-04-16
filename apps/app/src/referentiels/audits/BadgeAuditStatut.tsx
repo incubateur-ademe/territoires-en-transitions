@@ -1,10 +1,11 @@
+import { appLabels } from '@/app/labels/catalog';
 import { MesureAuditStatutEnum } from '@tet/domain/referentiels';
 import { Badge, BadgeVariant } from '@tet/ui';
 
 export const statusToLabel: Record<MesureAuditStatutEnum, string> = {
-  non_audite: 'Non audité',
-  en_cours: 'Audit en cours',
-  audite: 'Audité',
+  non_audite: appLabels.auditNonAudite,
+  en_cours: appLabels.auditEnCours,
+  audite: appLabels.auditAudite,
 };
 
 export const statusToState: Record<
@@ -16,9 +17,6 @@ export const statusToState: Record<
   audite: { state: 'success' },
 };
 
-/**
- * Affiche un badge représentant un statut d'audit
- */
 export const BadgeAuditStatut = ({
   statut,
 }: {

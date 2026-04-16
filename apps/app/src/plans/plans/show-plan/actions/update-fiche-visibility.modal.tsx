@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { JSX } from 'react';
@@ -26,13 +27,13 @@ const RestreindreFichesModal = ({
       textAlign="left"
       title={
         isPrivate
-          ? 'Souhaitez-vous rendre privées toutes les actions de ce plan ?'
-          : 'Souhaitez-vous rendre publiques toutes les actions de ce plan ?'
+          ? appLabels.rendreFichesPriveesQuestion
+          : appLabels.rendreFichesPubliquesQuestion
       }
       description={
         isPrivate
-          ? "En passant en privé l'ensemble des actions de ce plan, elles ne seront plus accessibles par les personnes n’étant pas membres de votre collectivité. Les actions restent consultables par l’ADEME et le service support de la plateforme."
-          : "En passant en public l'ensemble des actions de ce plan, elles seront accessibles à toutes les personnes n’étant pas membres de votre collectivité."
+          ? appLabels.rendreFichesPriveesDescription
+          : appLabels.rendreFichesPubliquesDescription
       }
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
@@ -40,8 +41,8 @@ const RestreindreFichesModal = ({
             onClick: () => close(),
           }}
           btnOKProps={{
-            'aria-label': 'Confirmer',
-            children: 'Confirmer',
+            'aria-label': appLabels.confirmer,
+            children: appLabels.confirmer,
             onClick: () => {
               setFichesPrivate({ planId, isPrivate });
               close();

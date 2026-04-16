@@ -1,4 +1,5 @@
 import { useMutationCacheSubscriber } from '@/app/utils/react-query/use-mutation-cache-subscriber';
+import { appLabels } from '@/app/labels/catalog';
 import {
   onlineManager as oldOnlineManager,
   onlineManager,
@@ -8,8 +9,8 @@ import { useBaseToast } from './use-base-toast';
 
 // messages génériques
 const DEFAULT_MESSAGE = {
-  success: 'Modification enregistrée',
-  error: "Erreur lors de l'enregistrement",
+  success: appLabels.mutationSuccess,
+  error: appLabels.mutationError,
 };
 
 /**
@@ -31,7 +32,7 @@ export const useMutationToast = (
       if (!oldOnlineManager.isOnline() || !onlineManager.isOnline()) {
         setToast(
           'error',
-          "La connexion réseau semble être interrompue. Vos données ne peuvent pas être sauvegardées pour l'instant. Veuillez attendre que votre connexion soit rétablie pour utiliser l'application.",
+          appLabels.mutationErreurReseauSauvegarde,
           10_000
         );
         return;

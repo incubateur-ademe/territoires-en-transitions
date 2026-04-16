@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { useDeleteFiche } from '@/app/plans/fiches/data/use-delete-fiche';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import {
@@ -22,9 +23,7 @@ type DeleteFicheModalProps = {
   onDeleteCallback?: () => void;
   onClose?: () => void;
   hideButton?: boolean;
-  /** ID du plan pour la mise à jour optimiste (optionnel) */
   planId?: number;
-  /** ID de l'axe pour la mise à jour optimiste (optionnel) */
   axeId?: number;
 };
 
@@ -65,11 +64,10 @@ export const DeleteFicheModal = ({
   return (
     <Modal
       openState={openState}
-      title="Supprimer l'action"
-      subTitle={titre || 'Action sans titre'}
+      title={appLabels.supprimerAction}
+      subTitle={titre || appLabels.actionSansTitre}
       onClose={onClose}
       render={({ descriptionId }) => (
-        // Texte d'avertissement
         <div
           id={descriptionId}
           data-test="supprimer-fiche-modale"
@@ -85,18 +83,17 @@ export const DeleteFicheModal = ({
           {isInMultipleAxes && (
             <Alert
               state="warning"
-              description="Cette action est partagée entre plusieurs plans et sera supprimée partout."
+              description={appLabels.actionPartageeEntreMultiplePlans}
             />
           )}
           {hasSousActions && (
             <Alert
               state="warning"
-              description="Cette action contient des sous-actions qui seront également supprimées."
+              description={appLabels.actionContientSousActions}
             />
           )}
         </div>
       )}
-      // Boutons pour valider / annuler la suppression
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnCancelProps={{ onClick: close }}
@@ -112,11 +109,10 @@ export const DeleteFicheModal = ({
         />
       )}
     >
-      {/* Bouton d'ouverture de la modale */}
       {hideButton ? undefined : (
         <DeleteButton
           data-test="SupprimerFicheBouton"
-          title="Supprimer l'action"
+          title={appLabels.supprimerAction}
           variant={buttonVariant}
           size="xs"
           className={buttonClassName}

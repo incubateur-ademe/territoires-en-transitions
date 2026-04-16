@@ -1,6 +1,4 @@
-/**
- * Affiche l'en-tête de page contenant l'objectif et le bouton pour candidater
- */
+import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button } from '@tet/ui';
 import { useState } from 'react';
@@ -61,7 +59,7 @@ function ApplyAuditButton({
               disabled={!peutDemander1ereEtoileCOT}
               onClick={() => setOpened_1ereEtoileCOT(true)}
             >
-              Demander la première étoile
+              {appLabels.demanderPremiereEtoile}
             </Button>
           )}
           <Button
@@ -71,8 +69,8 @@ function ApplyAuditButton({
             onClick={() => setOpened(true)}
           >
             {etoiles === 1 && !isCOT
-              ? 'Demander la première étoile'
-              : 'Demander un audit'}
+              ? appLabels.demanderPremiereEtoile
+              : appLabels.demanderAudit}
           </Button>
         </>
       )}
@@ -132,10 +130,9 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
       <DerniereLabellisation parcoursLabellisation={parcoursLabellisation} />
 
       <h2 className="mb-4">
-        Objectif :{' '}
         {labellisation && labellisation.etoiles === 5
-          ? 'renouveler la labellisation'
-          : `${numLabels[etoiles]} étoile`}
+          ? appLabels.objectifRenouveler
+          : appLabels.objectifEtoile({ etoileLabel: numLabels[etoiles] })}
       </h2>
 
       {canMutateReferentiel && !isAuditeur && (
@@ -162,8 +159,6 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   );
 };
 
-// renvoi le message d'entête correspondant au positionnement de la collectivité
-// dans le parcours de labellisation
 const getHeaderMessageContent = (
   parcoursLabellisation: TCycleLabellisation,
   auditeurs: { userId: string; nom: string }[] | null | undefined
@@ -171,27 +166,26 @@ const getHeaderMessageContent = (
   const { status, isAuditeur, peutCommencerAudit } = parcoursLabellisation;
 
   if (status === 'demande_envoyee' && !peutCommencerAudit) {
-    return 'Demande envoyée';
+    return appLabels.demandeEnvoyee;
   }
 
   const listeAuditeurs = auditeurs?.map((auditeur) => auditeur.nom).join(', ');
 
   if (status === 'audit_en_cours' && !isAuditeur) {
-    return 'Audit en cours' + (listeAuditeurs ? `, par ${listeAuditeurs}` : '');
+    return listeAuditeurs
+      ? appLabels.auditEnCoursParAuditeurs({ listeAuditeurs })
+      : appLabels.auditEnCours;
   }
 
   if (status === 'audit_valide') {
-    return (
-      'Labellisation en cours' +
-      (listeAuditeurs ? ` - audité par ${listeAuditeurs}` : '')
-    );
+    return listeAuditeurs
+      ? appLabels.labellisationEnCoursParAuditeurs({ listeAuditeurs })
+      : appLabels.labellisationEnCours;
   }
 
-  // pas de message dans les autres cas
   return null;
 };
 
-/** Message  "<n-ième> étoile depuis le <date obtention>" */
 const DerniereLabellisation = ({
   parcoursLabellisation,
 }: {
@@ -216,7 +210,7 @@ const DerniereLabellisation = ({
 
   return (
     <p className="m-0">
-      <span className="capitalize">{etoileLabel}</span> étoile depuis le{' '}
+      <span className="capitalize">{etoileLabel}</span> {'étoile depuis le '}
       {fromDate ? fromDate : null}
     </p>
   );

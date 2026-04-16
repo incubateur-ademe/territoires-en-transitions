@@ -1,4 +1,5 @@
 import { finaliserMonInscriptionUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { ReferentielDisplayMap } from '@tet/domain/collectivites';
 import {
@@ -30,7 +31,7 @@ export const makeMainNav = ({
     return {
       startItems: [
         {
-          children: 'Finaliser mon inscription',
+          children: appLabels.navFinaliserInscription,
           href: finaliserMonInscriptionUrl,
         },
       ],

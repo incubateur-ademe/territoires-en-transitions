@@ -1,5 +1,6 @@
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
+import { appLabels } from '@/app/labels/catalog';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { FicheWithRelations } from '@tet/domain/plans';
 import { TableCell } from '@tet/ui';
@@ -46,7 +47,9 @@ export const SousActionPilotesCell = ({ sousAction }: Props) => {
           )}
         />
       ) : (
-        <span className="text-grey-6">{canUpdate ? 'Sélectionner' : ''}</span>
+        <span className="text-grey-6">
+          {canUpdate ? appLabels.selectionner : ''}
+        </span>
       )}
     </TableCell>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { pluralizeLabel } from '../../../action/[actionId]/_components/pluralize';
+import { appLabels } from '@/app/labels/catalog';
 import { DetailTacheTable } from '@/app/referentiels/DetailTaches/DetailTacheTable';
 import { noFilters } from '@/app/referentiels/DetailTaches/filters';
 import { useTableData } from '@/app/referentiels/DetailTaches/useTableData';
@@ -16,15 +16,19 @@ export const ActionStatutsTable = () => {
     setFilters,
     filtersCount,
   } = tableData;
-  const labelFilters = filtersCount > 1 ? 'filtres actifs' : 'filtre actif';
-  const labelSousActions = pluralizeLabel(sousActionsCount, 'sous-action');
-  const labelTaches = pluralizeLabel(count, 'tâche');
+
+  const stats = appLabels.statistiquesDetailTaches({
+    filtresActifs: appLabels.filtreActif({ count: filtersCount }),
+    sousActions: appLabels.sousAction({ count: sousActionsCount ?? 0 }),
+    sousActionsTotal,
+    taches: appLabels.tache({ count: count ?? 0 }),
+    tachesTotal: total,
+  });
 
   return (
     <>
       <div className="mb-6">
-        {filtersCount} {labelFilters} ; {sousActionsCount} {labelSousActions}{' '}
-        sur {sousActionsTotal} ; {count} {labelTaches} sur {total}
+        {stats}
         {filtersCount > 0 && (
           <DeleteFiltersButton
             className="ml-5"

@@ -1,4 +1,5 @@
 import { useCreateFicheAction } from '@/app/plans/fiches/data/use-create-fiche-action';
+import { appLabels } from '@/app/labels/catalog';
 import { PermissionOperation } from '@tet/domain/users';
 import { EmptyCard } from '@tet/ui';
 import { EmptyFichePicto } from './empty-fiche.picto';
@@ -14,11 +15,11 @@ export const FichesListEmpty = ({
     <div className="col-span-full flex flex-col items-center p-12 text-center bg-primary-0 border border-primary-4 rounded-xl">
       <EmptyCard
         picto={(props) => <EmptyFichePicto {...props} />}
-        title="Vous n'avez pas encore créé d'actions !"
-        subTitle="Une fois vos actions créées, vous les retrouvez toutes dans cette vue où vous pourrez les filtrer sur de nombreux critères."
+        title={appLabels.aucuneActionCreee}
+        subTitle={appLabels.aucuneActionCreeeDescription}
         actions={[
           {
-            children: 'Créer une action',
+            children: appLabels.creerAction,
             onClick: () => createFicheAction(),
             isVisible: hasCollectivitePermission('plans.fiches.create'),
           },

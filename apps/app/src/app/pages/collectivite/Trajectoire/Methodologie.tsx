@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import {
   isTrajectoireSecteur,
   TrajectoirePropertiesType,
@@ -19,7 +20,7 @@ export const Methodologie = ({
   const methodo = METHODO_PAR_SECTEUR[secteurNom];
   return (
     <Accordion
-      title="Méthodologie"
+      title={appLabels.trajectoireMethodologie}
       initialState={false}
       containerClassname="border-b-0"
       content={
@@ -29,7 +30,7 @@ export const Methodologie = ({
           )}
           {methodo.pivots && (
             <MethodologieSection
-              title="Méthode de territorialisation"
+              title={appLabels.trajectoireMethodologieTerritorialisation}
               content={methodo.pivots}
             />
           )}

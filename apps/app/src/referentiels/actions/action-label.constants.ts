@@ -1,11 +1,12 @@
+import { appLabels } from '@/app/labels/catalog';
 import { ActionType, ActionTypeEnum } from '@tet/domain/referentiels';
 
 export const ACTION_TYPE_LABELS: { [key in ActionType]: string } = {
-  [ActionTypeEnum.ACTION]: 'mesure',
-  [ActionTypeEnum.SOUS_ACTION]: 'sous-mesure',
-  [ActionTypeEnum.TACHE]: 'tâche',
-  [ActionTypeEnum.REFERENTIEL]: 'référentiel',
-  [ActionTypeEnum.AXE]: 'axe',
-  [ActionTypeEnum.SOUS_AXE]: 'sous-axe',
-  [ActionTypeEnum.EXEMPLE]: 'exemple',
+  [ActionTypeEnum.ACTION]: appLabels.actionTypeAction,
+  [ActionTypeEnum.SOUS_ACTION]: appLabels.actionTypeSousAction,
+  [ActionTypeEnum.TACHE]: appLabels.actionTypeTache,
+  [ActionTypeEnum.REFERENTIEL]: appLabels.actionTypeReferentiel,
+  [ActionTypeEnum.AXE]: appLabels.actionTypeAxe,
+  [ActionTypeEnum.SOUS_AXE]: appLabels.actionTypeSousAxe,
+  [ActionTypeEnum.EXEMPLE]: appLabels.actionTypeExemple,
 };

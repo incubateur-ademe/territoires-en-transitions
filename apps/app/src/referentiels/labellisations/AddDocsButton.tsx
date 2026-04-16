@@ -1,13 +1,10 @@
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
+import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, Modal } from '@tet/ui';
 import { useState } from 'react';
 import { useAddPreuveToDemande } from './useAddPreuveToDemande';
 
-/**
- * Affiche un bouton permettant d'ouvrir le sélecteur de fichiers pour ajouter
- * des documents à une demande de labellisation
- */
 export const AddDocsButton = () => {
   const [opened, setOpened] = useState(false);
   const handlers = useAddPreuveToDemande();
@@ -20,7 +17,7 @@ export const AddDocsButton = () => {
     <Modal
       size="lg"
       openState={{ isOpen: opened, setIsOpen: setOpened }}
-      title="Ajouter un document"
+      title={appLabels.ajouterDocument}
       render={({ close }) => {
         return <AddPreuveModal onClose={close} handlers={handlers} />;
       }}
@@ -32,7 +29,7 @@ export const AddDocsButton = () => {
         size="sm"
         onClick={() => setOpened(true)}
       >
-        Ajouter
+        {appLabels.ajouter}
       </Button>
     </Modal>
   );

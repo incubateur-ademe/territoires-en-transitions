@@ -11,12 +11,12 @@ import {
   useInteractions,
   useRole,
 } from '@floating-ui/react';
+import { uiLabels } from '@tet/ui/labels/catalog';
 import { Ref, cloneElement, forwardRef, useState } from 'react';
 
 import { Button } from '../../Button';
 import { Icon } from '../../Icon';
 
-import { preset } from '../../../tailwind-preset';
 import { DeleteOptionModal, UpdateOptionModal } from '../../Select';
 import { Option } from '../utils';
 import { CreateOption } from './SelectBase';
@@ -78,7 +78,6 @@ export const OptionMenu = ({
                 position: strategy,
                 top: y,
                 left: x,
-                zIndex: preset.theme.extend.zIndex.modal,
               }}
               className="flex flex-col divide-y divide-x-0 divide-solid divide-grey-3 rounded bg-white border border-grey-3 w-fit"
               onClick={(evt) => {
@@ -94,7 +93,7 @@ export const OptionMenu = ({
                     type="button"
                   >
                     <Icon icon="edit-line" size="xs" className="mr-2" />
-                    Éditer
+                    {uiLabels.editer}
                   </button>
                   {isEditOpen && (
                     <UpdateOptionModal
@@ -123,7 +122,7 @@ export const OptionMenu = ({
                     type="button"
                   >
                     <Icon icon="delete-bin-6-line" size="xs" className="mr-2" />
-                    Supprimer
+                    {uiLabels.supprimer}
                   </button>
                   {isDeleteOpen && (
                     <DeleteOptionModal

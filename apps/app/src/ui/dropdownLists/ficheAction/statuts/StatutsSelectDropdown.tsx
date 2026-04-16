@@ -1,4 +1,5 @@
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
+import { appLabels } from '@/app/labels/catalog';
 import { ficheActionStatutOptions } from '@/app/ui/dropdownLists/listesStatiques';
 import { Statut } from '@tet/domain/plans';
 import { BadgeSize, Select, SelectProps } from '@tet/ui';
@@ -17,7 +18,7 @@ const StatutsSelectDropdown = (props: Props) => {
       dataTest={props.dataTest ?? 'statuts'}
       options={ficheActionStatutOptions}
       onChange={(statut) => props.onChange(statut as Statut)}
-      placeholder="Sélectionner un statut"
+      placeholder={appLabels.placeholderSelectionnezStatut}
       customItem={(item) => (
         <BadgeStatut statut={item.value as Statut} size={props.badgeSize} />
       )}

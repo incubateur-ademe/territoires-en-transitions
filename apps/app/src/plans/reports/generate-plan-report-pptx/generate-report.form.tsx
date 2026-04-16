@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plan, generateReportInputSchema } from '@tet/domain/plans';
 import { Checkbox, Field, Input, Select } from '@tet/ui';
@@ -89,7 +90,7 @@ export function GenerateReportForm({
       className="flex flex-col gap-8"
     >
       <Field
-        title="Ajoutez le logo de votre collectivité"
+        title={appLabels.champAjouterLogoCollectivite}
         hint={`Taille max : ${MAX_FILE_SIZE_MB} Mo. Formats : jpeg, jpg, png`}
         message={errors.logoFile?.message}
         state={errors.logoFile?.message ? 'error' : 'default'}
@@ -103,11 +104,11 @@ export function GenerateReportForm({
                 <div className="mt-2 text-sm text-grey-7 flex flex-col items-center gap-2">
                   <img
                     src={imagePreview}
-                    alt="Aperçu du logo"
+                    alt={appLabels.apercuLogoAlt}
                     className="max-w-48 object-contain rounded-lg border border-grey-4 p-2 bg-grey-1"
                   />
                   <span>
-                    Fichier sélectionné : <strong>{field.value.name}</strong>
+                    {appLabels.fichierSelectionne} : <strong>{field.value.name}</strong>
                   </span>
                 </div>
               )}
@@ -135,11 +136,10 @@ export function GenerateReportForm({
           )}
         />
       </Field>
-
-      <Field title="Actions à ajouter au rapport">
+      <Field title={appLabels.champActionsAjouterRapport}>
         <div className="flex flex-col gap-4 mt-2">
           <Checkbox
-            label="Toutes les actions"
+            label={appLabels.toutesLesActions}
             checked={includeAllFiches}
             disabled={disabled}
             onChange={(e) => {
@@ -173,7 +173,7 @@ export function GenerateReportForm({
           )}
         </div>
       </Field>
-      <Field title="Détail affiché par action">
+      <Field title={appLabels.champDetailAfficheParAction}>
         <Controller
           name="ficheInformationsMode"
           control={control}
@@ -183,11 +183,11 @@ export function GenerateReportForm({
               options={[
                 {
                   value: 'auto_last_note',
-                  label: "Dernière note de l'action",
+                  label: appLabels.optionDerniereNoteAction,
                 },
                 {
                   value: 'manual',
-                  label: 'Saisie manuelle dans le rapport généré',
+                  label: appLabels.optionSaisieManuelleRapport,
                 },
               ]}
               values={field.value}

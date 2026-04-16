@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import FichesActionsDropdown from '@/app/ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useEffect, useState } from 'react';
@@ -31,10 +32,10 @@ export const FichesLieesModal = ({
   return (
     <Modal
       openState={{ isOpen, setIsOpen }}
-      title="Lier une action"
+      title={appLabels.lierAction}
       size="lg"
       render={({ descriptionId }) => (
-        <Field fieldId={descriptionId} title="Actions">
+        <Field fieldId={descriptionId} title={appLabels.actions}>
           <FichesActionsDropdown
             ficheCouranteId={currentFicheId}
             values={linkedFicheIdsState.map((id) => id.toString())}

@@ -1,5 +1,6 @@
 import { DownloadScoreModal } from '@/app/app/pages/collectivite/Referentiels/DownloadScore/download-score.modal';
 import { SaveScoreProps } from '@/app/app/pages/collectivite/Referentiels/SaveScore/save-score.modal';
+import { appLabels } from '@/app/labels/catalog';
 import { Button } from '@tet/ui';
 import { useState } from 'react';
 
@@ -10,7 +11,7 @@ type DownloadScoreButtonProps = SaveScoreProps & {
 const DownloadScoreButton = ({
   referentielId,
   collectiviteId,
-  label = 'Télécharger',
+  label = appLabels.telecharger,
 }: DownloadScoreButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
   return (

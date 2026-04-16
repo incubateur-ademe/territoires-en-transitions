@@ -1,4 +1,5 @@
 import { useFicheContext } from '@/app/plans/fiches/show-fiche/context/fiche-context';
+import { appLabels } from '@/app/labels/catalog';
 import ActionLinkedCard from '@/app/referentiels/actions/action.linked-card';
 import ActionPicto from '@/app/ui/pictogrammes/ActionPicto';
 import { useCollectiviteId } from '@tet/api/collectivites';
@@ -21,17 +22,17 @@ export const MesuresLieesView = () => {
         <ContentLayout.SharedAlert
           fiche={fiche}
           collectiviteId={currentCollectiviteId}
-          title="Mesures des référentiels liées"
-          description="Les mesures des référentiels liées affichées correspondent à celles de cette collectivité."
+          title={appLabels.mesuresLiees}
+          description={appLabels.mesuresLieesDescription}
         />
         <ContentLayout.Empty
           isReadonly={isReadonly}
           picto={(props) => <ActionPicto {...props} />}
-          title="Aucune mesure des référentiels n'est liée !"
-          subTitle="Ici vous pouvez lier votre action avec une mesure des référentiels Climat Air Energie et Economie Circulaire de l’ADEME"
+          title={appLabels.aucuneMesureLiee}
+          subTitle={appLabels.mesuresLieesEmptyDescription}
           actions={[
             {
-              children: 'Lier une mesure des référentiels',
+              children: appLabels.lierMesureReferentiels,
               icon: 'link',
               onClick: () => setIsModalOpen(true),
             },
@@ -42,7 +43,7 @@ export const MesuresLieesView = () => {
           data={mesuresState.list ?? []}
           actions={
             <Button icon="link" size="sm" onClick={() => setIsModalOpen(true)}>
-              Lier une mesure des référentiels
+              {appLabels.lierMesureReferentiels}
             </Button>
           }
         >

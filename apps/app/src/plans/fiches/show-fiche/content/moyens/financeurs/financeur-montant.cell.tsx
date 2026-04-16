@@ -1,4 +1,5 @@
 import { getFormattedNumber } from '@/app/utils/formatUtils';
+import { appLabels } from '@/app/labels/catalog';
 import { Input, TableCell } from '@tet/ui';
 import { isNil } from 'es-toolkit';
 import { useMemo } from 'react';
@@ -22,7 +23,9 @@ export const FinanceurMontantCell = () => {
     return (
       <TableCell className="font-bold text-primary-9 text-sm">
         {displayValue ?? (
-          <span className="italic text-grey-6">Ajouter un montant</span>
+          <span className="italic text-grey-6">
+            {appLabels.placeholderAjouterMontant}
+          </span>
         )}
       </TableCell>
     );
@@ -45,8 +48,8 @@ export const FinanceurMontantCell = () => {
                 type="number"
                 decimalScale={0}
                 icon={{ text: '€' }}
-                placeholder="Ajouter un montant"
-                aria-label="Montant de subvention obtenu"
+                placeholder={appLabels.placeholderAjouterMontant}
+                aria-label={appLabels.financeurMontantSubventionObtenu}
                 value={value?.toString() ?? ''}
                 onValueChange={async ({ floatValue, value: raw }) => {
                   const newValue =
@@ -69,7 +72,7 @@ export const FinanceurMontantCell = () => {
     >
       {displayValue ?? (
         <span className="font-normal italic text-grey-6">
-          Ajouter un montant
+          {appLabels.placeholderAjouterMontant}
         </span>
       )}
     </TableCell>

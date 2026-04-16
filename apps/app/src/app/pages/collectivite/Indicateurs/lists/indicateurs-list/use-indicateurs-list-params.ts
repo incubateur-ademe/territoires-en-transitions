@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { indicateursNameToParams } from '@/app/app/pages/collectivite/Indicateurs/lists/utils';
 import { ListDefinitionsInputFilters } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
 import {
@@ -37,19 +38,17 @@ type SortByItem = {
 
 export const sortByItems: SortByItem[] = [
   {
-    label: 'Complétude',
+    label: appLabels.indicateurSortCompletude,
     value: 'estRempli',
     direction: 'desc',
   },
   {
-    label: 'Ordre alphabétique',
+    label: appLabels.ordreAlphabetique,
     value: 'titre',
     direction: 'asc',
   },
 ] as const;
 
-// correspondances entre le nom d'une option et un searchParam dans l'url
-// (on préfixe les searchParams avec $ pour éviter une éventuelle collision avec les filtres)
 const optionsNameToParams: Record<keyof ListOptions, string> = {
   sortBy: '$s',
   displayGraphs: '$g',
@@ -72,7 +71,6 @@ const searchParamsMap = {
 export const listIndicateursParamsSerializer =
   createSerializer(searchParamsMap);
 
-/** Gère les paramètres d'une liste d'indicateurs */
 export const useIndicateursListParams = (
   defaultFilters: ListDefinitionsInputFilters,
   defaultOptions?: Partial<ListOptions>

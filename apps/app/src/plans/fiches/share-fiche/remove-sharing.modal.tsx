@@ -1,5 +1,6 @@
 import { Fiche } from '@/app/plans/fiches/data/use-get-fiche';
 import { FicheShareProperties } from '@/app/plans/fiches/share-fiche/fiche-share-properties.dto';
+import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { Alert, Button, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
@@ -34,15 +35,17 @@ export const RemoveSharingModal = ({
   return (
     <Modal
       openState={openState}
-      title="Retirer le partage"
-      subTitle={titre || 'Action sans titre'}
+      title={appLabels.retirerPartage}
+      subTitle={titre || appLabels.actionSansTitre}
       onClose={onClose}
       render={({ descriptionId }) => (
         // Texte d'avertissement
         <div id={descriptionId} data-test="supprimer-fiche-modale">
           <Alert
             state="warning"
-            title={`Cette action vous a été partagée par la collectivité "${collectiviteNom}". Sa suppression de votre collectivité n’affectera pas son existence dans la collectivité qui vous l’a partagée, où elle restera accessible.`}
+            title={appLabels.retirerPartageDescription({
+              collectiviteNom: collectiviteNom ?? '',
+            })}
           />
         </div>
       )}
@@ -73,7 +76,7 @@ export const RemoveSharingModal = ({
       {hideButton ? undefined : (
         <Button
           data-test="RemoveSharingFicheBouton"
-          title="Retirer le partage"
+          title={appLabels.retirerPartage}
           size="xs"
           icon="indeterminate-circle-line"
           variant={buttonVariant ?? 'grey'}

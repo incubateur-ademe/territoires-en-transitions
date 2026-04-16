@@ -1,4 +1,5 @@
 import { TActionDef } from '@/app/referentiels/preuves/usePreuves';
+import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, Field, Modal, Select } from '@tet/ui';
 import { useState } from 'react';
@@ -7,23 +8,13 @@ import { AddPreuveModal } from './AddPreuveModal';
 import { useAddPreuveComplementaireToAction } from './useAddPreuveToAction';
 
 export type TAddPreuveButtonProps = {
-  /** Identifiant de l'action concernée */
   action: TActionDef;
-  /** indique si la preuve doit être associée à une sous-action */
   addToSubAction?: boolean;
 };
 
-/**
- * Affiche un bouton permettant d'ouvrir le sélecteur de fichiers pour ajouter
- * une preuve complémentaire à une action
- */
 export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
   const [opened, setOpened] = useState(false);
 
-  // détermine si on est dans le cas de l'ajout depuis l'onglet Preuves de
-  // l'action dans ce cas il est nécessaire d'extraire l'identifiant de l'action
-  // et de demander à laquelle de ses sous-actions doit être associée la preuve
-  // complémentaire
   const { action, addToSubAction } = props;
   const [subaction_id, setSubaction] = useState('');
   const selectSubActionIsRequired = addToSubAction && !subaction_id;
@@ -39,22 +30,15 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
 
   const onClose = () => {
     setOpened(false);
-    // quand on ferme le dialogue il faut aussi réinitialiser la sous-action
-    // sélectionnée pour que le sélecteur ré-apparaisse bien lors de la
-    // prochaine ouverture
     setSubaction('');
   };
 
-  // on désactive (avec le flag `disableDismiss`) la fermeture lors du clic en
-  // en dehors de la modale, car sinon la sélection dans le dropdown ferme le
-  // dialogue !
-  // TODO: fixer l'ordre des floaters (j'imagine que c'est possible) pour éviter cela ?
   return (
     <Modal
       size="lg"
       openState={{ isOpen: opened, setIsOpen: setOpened }}
       disableDismiss={selectSubActionIsRequired}
-      title="Ajouter un document complémentaire"
+      title={appLabels.ajouterDocumentComplementaire}
       render={() => {
         return selectSubActionIsRequired ? (
           <SelectSubAction action={action} setSubaction={setSubaction} />
@@ -69,7 +53,7 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
     >
       <Button
         dataTest="AddPreuveComplementaire"
-        title="Ajouter un document complémentaire"
+        title={appLabels.ajouterDocumentComplementaire}
         size="xs"
         icon="file-add-fill"
         onClick={() => setOpened(true)}
@@ -79,7 +63,6 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
   );
 };
 
-/** Affiche le sélecteur de sous-action */
 const SelectSubAction = ({
   action,
   setSubaction,
@@ -90,7 +73,7 @@ const SelectSubAction = ({
   const options = useSubActionOptionsListe(action);
 
   return (
-    <Field title="Sous-action associée (obligatoire)">
+    <Field title={appLabels.sousActionAssociee}>
       <Select
         dataTest="SelectSubAction"
         options={options}

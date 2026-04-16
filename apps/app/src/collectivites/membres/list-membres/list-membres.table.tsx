@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import { useListMembres } from '@/app/collectivites/membres/list-membres/use-list-membres';
 import { useUpdateMembre } from '@/app/collectivites/membres/use-update-membre';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -39,16 +40,20 @@ export function ListmembresTable() {
 
   return (
     <section>
-      <h2 className="text-lg font-bold text-primary-10 mb-3">Membres</h2>
+      <h2 className="text-lg font-bold text-primary-10 mb-3">
+        {appLabels.membres}
+      </h2>
       <div className="p-4 pt-2 lg:p-8 lg:pt-4 bg-white rounded-xl border border-grey-3">
         <Table>
           <TableHead>
             <TableRow>
-              <TableHeaderCell>Nom et adresse mail</TableHeaderCell>
-              <TableHeaderCell>Rôle</TableHeaderCell>
-              <TableHeaderCell>Intitulé de poste</TableHeaderCell>
-              <TableHeaderCell>{"Champ d'intervention"}</TableHeaderCell>
-              <TableHeaderCell className="w-[12%]">Accès</TableHeaderCell>
+              <TableHeaderCell>{appLabels.membreNomEtAdresseMail}</TableHeaderCell>
+              <TableHeaderCell>{appLabels.membreRole}</TableHeaderCell>
+              <TableHeaderCell>{appLabels.membreIntitulePoste}</TableHeaderCell>
+              <TableHeaderCell>{appLabels.membreChampIntervention}</TableHeaderCell>
+              <TableHeaderCell className="w-[12%]">
+                {appLabels.membreAcces}
+              </TableHeaderCell>
 
               <VisibleWhen
                 condition={
@@ -57,7 +62,9 @@ export function ListmembresTable() {
                   isCurrentUserIncludedInMembres
                 }
               >
-                <TableHeaderCell className="w-[10%]">Actions</TableHeaderCell>
+                <TableHeaderCell className="w-[10%]">
+                  {appLabels.actions}
+                </TableHeaderCell>
               </VisibleWhen>
             </TableRow>
           </TableHead>
@@ -78,7 +85,7 @@ export function ListmembresTable() {
             ) : (
               <TableEmpty
                 columnIds={MEMBRES_COLUMNS}
-                description={"Aucun membre n'est rattaché à la collectivité"}
+                description={appLabels.aucunMembreRattacheCollectivite}
               />
             )}
           </tbody>

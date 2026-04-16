@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { appLabels } from '@/app/labels/catalog';
 import { useListPlans } from '@/app/plans/plans/list-all-plans/data/use-list-plans';
 import DEPRECATED_FilterBadges, {
   BadgeFilters,
@@ -74,7 +75,7 @@ const Module = ({
     filters: filtre,
     customValues: {
       planActions:
-        filtre.planActionIds?.length === plansCount && 'Tous les plans',
+        filtre.planActionIds?.length === plansCount && appLabels.tousLesPlans,
     },
   });
 
@@ -101,7 +102,7 @@ const Module = ({
       <EmptyCard
         picto={() => symbole}
         title={title}
-        description="Aucun résultat"
+        description={appLabels.aucunResultat}
         tags={filterBadges}
         actions={emptyButtons}
         className={className}

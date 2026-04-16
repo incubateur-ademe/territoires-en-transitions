@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { makeCollectivitePlansActionsListUrl } from '@/app/app/paths';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
@@ -36,7 +37,7 @@ export const PlanMenuButton = () => {
   const menuActions: MenuAction[] = [
     canMutatePlan
       ? {
-          label: "Rendre public l'ensemble des actions",
+          label: appLabels.rendreFichesPubliques,
           icon: 'lock-unlock-fill',
           onClick: () => {
             setRestreindreFiche('public');
@@ -45,7 +46,7 @@ export const PlanMenuButton = () => {
       : null,
     canMutatePlan
       ? {
-          label: "Rendre privé l'ensemble des actions",
+          label: appLabels.rendreFichesPrivees,
           icon: 'lock-fill',
           onClick: () => {
             setRestreindreFiche('private');
@@ -55,10 +56,10 @@ export const PlanMenuButton = () => {
     canMutatePlan ? MenuSeparator : null,
     canExportPlan
       ? {
-          label: 'Télécharger le plan (Excel)',
+          label: appLabels.telechargerPlanExcel,
           icon: 'file-excel-line',
           disabled: isPending,
-          tooltip: isPending ? 'Export en cours' : undefined,
+          tooltip: isPending ? appLabels.exportEnCours : undefined,
           onClick: () => {
             exportPlanAction('xlsx');
           },
@@ -66,10 +67,10 @@ export const PlanMenuButton = () => {
       : null,
     canExportPlan
       ? {
-          label: 'Télécharger le plan (Word)',
+          label: appLabels.telechargerPlanWord,
           icon: 'file-word-line',
           disabled: isPending,
-          tooltip: isPending ? 'Export en cours' : undefined,
+          tooltip: isPending ? appLabels.exportEnCours : undefined,
           onClick: () => {
             exportPlanAction('docx');
           },
@@ -77,10 +78,12 @@ export const PlanMenuButton = () => {
       : null,
     canExportPlan
       ? {
-          label: 'Générer un rapport (PowerPoint)',
+          label: appLabels.genererRapportPowerpoint,
           icon: 'slideshow-line',
           disabled: isPendingGenerateReport,
-          tooltip: isPendingGenerateReport ? 'Génération en cours' : undefined,
+          tooltip: isPendingGenerateReport
+            ? appLabels.generationEnCours
+            : undefined,
           onClick: () => {
             setIsOpenGenerateReportModal(true);
           },
@@ -89,7 +92,7 @@ export const PlanMenuButton = () => {
     canMutatePlan ? MenuSeparator : null,
     canMutatePlan
       ? {
-          label: 'Supprimer le plan',
+          label: appLabels.supprimerPlan,
           icon: 'delete-bin-6-line',
           disabled: isPending,
           onClick: () => {
@@ -104,12 +107,12 @@ export const PlanMenuButton = () => {
       {isPending && (
         <div className="inline-flex bg-white gap-2 items-center border rounded-md h-8 px-2 text-xs text-primary-5 font-bold min-w-max">
           <Icon icon="download-line" />
-          Export en cours
+          {appLabels.exportEnCours}
           <SpinnerLoader />
         </div>
       )}
       <ButtonMenu
-        title="Editer ce plan"
+        title={appLabels.editerPlan}
         icon="more-line"
         variant="grey"
         size="xs"

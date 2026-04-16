@@ -6,6 +6,7 @@ import {
   getFlatOptions,
   useEventTracker,
 } from '@tet/ui';
+import { appLabels } from '@/app/labels/catalog';
 
 import { MultiSelectCheckboxes } from '@/app/app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes';
 import { SetFilters } from '@/app/app/pages/CollectivitesEngagees/data/filters';
@@ -59,12 +60,12 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
               setFilters({ ...filters, nom: v });
             }}
             value={search}
-            placeholder="Rechercher par nom de collectivité"
+            placeholder={appLabels.filtreEngageesRechercher}
             displaySize="sm"
           />
           {vue === 'plans' && (
             /** Type plan */
-            <Field title="Type de plan" small>
+            <Field title={appLabels.filtreEngageesTypePlan} small>
               <SelectFilter
                 dropdownZindex={600} // nécessaire pour le menu mobile
                 options={planTypeOptions ?? []}
@@ -86,10 +87,10 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
             </Field>
           )}
           <div className="font-bold pb-4 border-b border-b-primary-3">
-            Collectivité
+            {appLabels.filtreEngageesCollectivite}
           </div>
           {/** Région */}
-          <Field title="Région" small>
+          <Field title={appLabels.region} small>
             <SelectFilter
               dropdownZindex={600} // nécessaire pour le menu mobile
               options={regions.map(({ code, libelle }) => ({
@@ -142,7 +143,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
             />
           </Field>
           {/** Départements */}
-          <Field title="Département" small>
+          <Field title={appLabels.departement} small>
             <SelectFilter
               dropdownZindex={600} // nécessaire pour le menu mobile
               options={departements
@@ -167,7 +168,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
             />
           </Field>
           {/** Type de collectivité */}
-          <Field title="Type de collectivité" small>
+          <Field title={appLabels.typeCollectivite} small>
             <SelectFilter
               dropdownZindex={600} // nécessaire pour le menu mobile
               options={typeCollectiviteOptions}
@@ -182,7 +183,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
             />
           </Field>
           {/** Population */}
-          <Field title="Population" small>
+          <Field title={appLabels.population} small>
             <SelectFilter
               dropdownZindex={600} // nécessaire pour le menu mobile
               options={populationCollectiviteOptions}
@@ -200,7 +201,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
             <>
               <MultiSelectCheckboxes
                 htmlId="ref"
-                title="Référentiel"
+                title={appLabels.referentiel}
                 options={getReferentielCollectiviteOptions(
                   referentielTeEnabled
                 )}
@@ -211,7 +212,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
               />
               <MultiSelectCheckboxes
                 htmlId="nx"
-                title="Niveau de labellisation"
+                title={appLabels.filtreEngageesNiveauLabellisation}
                 options={niveauLabellisationCollectiviteOptions}
                 onChange={(selected) => {
                   setFilters({ ...filters, niveauDeLabellisation: selected });
@@ -222,7 +223,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
                 selected={filters.niveauDeLabellisation}
               />
               {/** Taux de remplissage */}
-              <Field title="Taux de remplissage" small>
+              <Field title={appLabels.tauxRemplissage} small>
                 <SelectFilter
                   dropdownZindex={600} // nécessaire pour le menu mobile
                   options={tauxRemplissageCollectiviteOptions}

@@ -1,6 +1,7 @@
 import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, useEventTracker } from '@tet/ui';
 import { Event } from '@tet/ui/components/tracking/posthog-events';
@@ -34,8 +35,8 @@ export const IndicateursView = () => {
       <SharedFicheLinkedResourcesAlert
         fiche={fiche}
         currentCollectiviteId={collectivite.collectiviteId}
-        sharedDataTitle="Indicateurs associés"
-        sharedDataDescription="Les indicateurs et les données affichées correspondent à ceux de cette collectivité."
+        sharedDataTitle={appLabels.indicateursAssocies}
+        sharedDataDescription={appLabels.indicateursAssociesDescription}
       />
       <CreateIndicateurModal
         isOpen={isCreateIndicateurModalOpen}
@@ -47,14 +48,14 @@ export const IndicateursView = () => {
         <ContentLayout.SharedAlert
           fiche={fiche}
           collectiviteId={collectivite.collectiviteId}
-          title="Indicateurs associés"
-          description="Les indicateurs et les données affichées correspondent à ceux de cette collectivité."
+          title={appLabels.indicateursAssocies}
+          description={appLabels.indicateursAssociesDescription}
         />
         <ContentLayout.Empty
           isReadonly={isReadonly}
           picto={(props) => <DatavizPicto {...props} />}
-          title="Aucun indicateur associé !"
-          subTitle="Mesurez les résultats et l'impact de l'action grâce à des indicateurs"
+          title={appLabels.aucunIndicateurAssocie}
+          subTitle={appLabels.indicateursAssociesEmptyDescription}
           actions={[
             {
               ...createIndicateurButtonProps,
@@ -112,7 +113,7 @@ export const IndicateursView = () => {
                   key={indicateur.id}
                   onClick={() => indicateurs.update(indicateur)}
                   icon="link-unlink"
-                  title="Dissocier l'indicateur"
+                  title={appLabels.dissocierIndicateur}
                   size="xs"
                   variant="grey"
                 />,

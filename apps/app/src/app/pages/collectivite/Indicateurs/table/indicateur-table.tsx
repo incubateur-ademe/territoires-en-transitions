@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
 import { Button, ButtonGroup } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
@@ -64,13 +65,13 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
           buttons={[
             {
               id: 'resultat',
-              children: 'Résultats',
+              children: appLabels.resultats,
               disabled: !sourcesCount.resultat,
               onClick: () => setType('resultat'),
             },
             {
               id: 'objectif',
-              children: 'Objectifs',
+              children: appLabels.objectifs,
               disabled: !sourcesCount.objectif,
               onClick: () => setType('objectif'),
             },
@@ -79,7 +80,7 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
         {/** pour ouvrir le dialogue d'édition des valeurs */}
         {chartInfo.sourceFilter.avecDonneesCollectivite && !readonly && (
           <Button size="sm" onClick={() => setIsOpen(true)}>
-            Ajouter une année
+            {appLabels.ajouterAnnee}
           </Button>
         )}
       </div>

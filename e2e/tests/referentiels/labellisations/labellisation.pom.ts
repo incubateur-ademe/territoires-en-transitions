@@ -43,7 +43,7 @@ export class LabellisationPom {
     });
     this.demandeAuditModal = page.locator('[data-test="DemandeAuditModal"]');
     this.auditTypeText = page.getByText(
-      'Quel type d’audit souhaitez-vous demander ?'
+      "Quel type d'audit souhaitez-vous demander ?"
     );
     this.auditTypeCotWithoutLabellisationRadio = page.getByRole('radio', {
       name: 'Audit COT sans labellisation',

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import PersonneTagDropdown from '@/app/collectivites/tags/personne-tag.dropdown';
 import { getPersonneStringId } from '@/app/collectivites/tags/personnes.utils';
 import ServiceTagDropdown from '@/app/collectivites/tags/service-tag.dropdown';
+import { appLabels } from '@/app/labels/catalog';
 import {
   useDeleteMesurePilotes,
   useUpsertMesurePilotes,
@@ -49,7 +50,6 @@ const ActionEditModal = ({
   );
 
   const handleSave = () => {
-    // Pilotes
     if (
       !isEqual(
         pilotes?.map((p) => getPersonneStringId(p)),
@@ -70,7 +70,6 @@ const ActionEditModal = ({
       }
     }
 
-    // Services pilotes
     if (
       !isEqual(
         services?.map((s) => s.id),
@@ -92,14 +91,13 @@ const ActionEditModal = ({
   return (
     <Modal
       openState={openState}
-      title="Modifier l'action"
+      title={appLabels.modifierAction}
       subTitle={actionTitle}
       render={() => (
         <>
-          {/* Personnes pilote */}
           <Field title="Personne pilote" className="col-span-2">
             <PersonneTagDropdown
-              placeholder="Sélectionnez ou créez un pilote"
+              placeholder={appLabels.selectionnerOuCreerPilote}
               values={editedPilotes?.map((p) => getPersonneStringId(p))}
               onChange={({ personnes }) => {
                 setEditedPilotes(personnes);
@@ -107,8 +105,10 @@ const ActionEditModal = ({
             />
           </Field>
 
-          {/* Directions ou services pilote */}
-          <Field title="Direction ou service pilote" className="col-span-2">
+          <Field
+            title={appLabels.directionOuServicePilote}
+            className="col-span-2"
+          >
             <ServiceTagDropdown
               values={editedServices?.map((s) => s.id)}
               onChange={({ values: services }) => setEditedServices(services)}

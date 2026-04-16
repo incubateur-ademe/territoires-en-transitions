@@ -15,7 +15,7 @@ export class IndicateurDetailPom {
     this.editModal = page.locator('[data-test="IndicateurEditModal"]');
     this.editModalValiderButton = this.editModal.getByText('Valider');
     this.piloteDropdown = this.editModal.getByPlaceholder(
-      'Sélectionnez ou créez un pilote'
+      'Sélectionner ou créer un pilote'
     );
   }
 

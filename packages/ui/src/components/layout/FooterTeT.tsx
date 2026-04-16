@@ -1,4 +1,5 @@
 import { AdemeLogo } from '../../assets/ademe.logo';
+import { uiLabels } from '@tet/ui/labels/catalog';
 import { RepubliqueFrancaiseLogo } from '../../assets/republique-francaise.logo';
 import { Button } from '../../design-system/Button';
 import { Footer, LinkObject } from '../../design-system/Footer/Footer';
@@ -33,8 +34,8 @@ export const FooterTeT = ({
       ]}
       content="Territoires en Transitions est une startup d'État portée par l'Agence de la Transition Écologique (ADEME) avec le soutien de l'Agence Nationale de la Cohésion des Territoires (ANCT)."
       contentLinks={[
-        { label: 'ademe.fr', href: 'https://www.ademe.fr/', external: true },
-        { label: 'beta.gouv', href: 'https://beta.gouv.fr/', external: true },
+        { label: uiLabels.ademeFr, href: 'https://www.ademe.fr/', external: true },
+        { label: uiLabels.betaGouv, href: 'https://beta.gouv.fr/', external: true },
       ]}
       bottomContent={
         <div className="flex flex-wrap gap-x-1 mb-0 text-xs leading-5 text-grey-8">
@@ -52,40 +53,40 @@ export const FooterTeT = ({
       }
       bottomLinks={[
         {
-          label: 'Accessibilité : non conforme',
+          label: uiLabels.accessibiliteNonConforme,
           href: `${SITE_BASE_URL}/accessibilite`,
         },
         {
-          label: 'Mentions légales',
+          label: uiLabels.mentionsLegales,
           href: `${SITE_BASE_URL}/legal/mentions-legales`,
         },
         {
-          label: 'Politique des cookies',
+          label: uiLabels.politiqueDesCookies,
           href: `${SITE_BASE_URL}/legal/politique-des-cookies`,
         },
         {
-          label: 'Politique de confidentialité',
+          label: uiLabels.politiqueDeConfidentialite,
           href: `${SITE_BASE_URL}/legal/politique-de-confidentialite`,
         },
         {
-          label: 'Conditions générales d’utilisation',
+          label: uiLabels.conditionsGeneralesUtilisation,
           href: `${SITE_BASE_URL}/legal/cgu`,
         },
         {
-          label: 'Statistiques',
+          label: uiLabels.statistiques,
           href: `${SITE_BASE_URL}/stats`,
         },
         {
-          label: 'Ressources',
+          label: uiLabels.ressources,
           href: `${SITE_BASE_URL}/ressources`,
         },
         {
-          label: 'Code source',
+          label: uiLabels.codeSource,
           href: 'https://github.com/incubateur-ademe/territoires-en-transitions',
           external: true,
         },
         {
-          label: 'Feuille de route',
+          label: uiLabels.feuilleDeRoute,
           href: 'https://feuille-de-route.territoiresentransitions.fr/fr/roadmap',
           external: true,
         },

@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { uiLabels } from '@tet/ui/labels/catalog';
 import { alertClassnames } from '../Alert/utils';
 import { Button, ButtonProps } from '../Button';
 
@@ -47,11 +48,11 @@ export const BottomOkCancel = (props: BottomOkCancelProps) => {
                 variant="outlined"
                 {...btnCancelRemainingProps}
               >
-                {cancel || 'Annuler'}
+                {cancel || uiLabels.annuler}
               </Button>
             )}
             <Button type="submit" {...btnOKRemainingProps}>
-              {ok || 'Confirmer'}
+              {ok || uiLabels.confirmer}
             </Button>
           </div>
         </div>

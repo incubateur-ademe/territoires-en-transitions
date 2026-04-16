@@ -1,5 +1,6 @@
 import { useDeleteIndicateurDefinition } from '@/app/indicateurs/indicateurs/use-delete-indicateur-definition';
 import { IndicateurDefinition } from '@/app/indicateurs/indicateurs/use-get-indicateur';
+import { appLabels } from '@/app/labels/catalog';
 import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 
@@ -17,17 +18,17 @@ const DeleteModal = ({ definition, isLoading = false }: Props) => {
   );
   return (
     <Modal
-      title="Suppression de l'indicateur"
+      title={appLabels.suppressionIndicateur}
       subTitle={definition.titre}
-      description="Êtes-vous sûr de vouloir supprimer cet indicateur personnalisé ? Vous perdrez définitivement les données associées à cet indicateur."
+      description={appLabels.suppressionIndicateurDescription}
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnCancelProps={{
             onClick: () => close(),
           }}
           btnOKProps={{
-            'aria-label': 'Supprimer',
-            children: 'Supprimer',
+            'aria-label': appLabels.supprimer,
+            children: appLabels.supprimer,
             onClick: () => {
               deleteIndicateur();
               close();
@@ -39,8 +40,8 @@ const DeleteModal = ({ definition, isLoading = false }: Props) => {
       {/* Bouton d'ouverture de la modale */}
       <DeleteButton
         disabled={isLoading}
-        title="Supprimer l'indicateur"
-        aria-label="Supprimer l'indicateur"
+        title={appLabels.supprimerIndicateur}
+        aria-label={appLabels.supprimerIndicateur}
         size="xs"
         variant="grey"
       />

@@ -4,6 +4,7 @@ import {
   makeCollectiviteToutesLesFichesUrl,
   makeTdbPlansEtActionsUrl,
 } from '@/app/app/paths';
+import { appLabels } from '@/app/labels/catalog';
 import { CollectiviteNavItem } from './make-collectivite-nav';
 
 export const generatePlansActionsDropdown = ({
@@ -18,25 +19,25 @@ export const generatePlansActionsDropdown = ({
   panierId?: string;
 }): CollectiviteNavItem => ({
   isVisible: !(collectiviteAccesRestreint && isVisitor),
-  children: 'Plans & Actions',
+  children: appLabels.navPlansEtActions,
   dataTest: 'nav-pa',
   links: [
     {
-      children: 'Tableau de bord',
+      children: appLabels.navTableauDeBord,
       dataTest: 'pa-tdb',
       href: makeTdbPlansEtActionsUrl({
         collectiviteId,
       }),
     },
     {
-      children: 'Plans',
+      children: appLabels.plans,
       dataTest: 'pa-tous',
       href: makeCollectivitePlansActionsListUrl({
         collectiviteId,
       }),
     },
     {
-      children: 'Actions',
+      children: appLabels.actions,
       dataTest: 'pa-fa-toutes',
       href: makeCollectiviteToutesLesFichesUrl({
         collectiviteId,
@@ -44,7 +45,7 @@ export const generatePlansActionsDropdown = ({
     },
     {
       isVisible: !isVisitor,
-      children: 'Actions à Impact',
+      children: appLabels.navActionsAImpact,
       dataTest: 'pa-ai',
       href: makeCollectivitePanierUrl({
         collectiviteId,

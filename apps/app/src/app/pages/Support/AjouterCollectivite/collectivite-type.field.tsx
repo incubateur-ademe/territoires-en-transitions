@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Field, Option, Select } from '@tet/ui';
 type Props = {
   type?: string;
@@ -17,18 +18,30 @@ export const collectiviteType = {
 
 export const CollectiviteTypeField = ({ type, onSelect }: Props) => {
   const options: Option[] = [
-    { label: 'Commune', value: collectiviteType.Commune },
-    { label: 'EPCI', value: collectiviteType.EPCI },
-    { label: 'Département', value: collectiviteType.Departement },
-    { label: 'Région', value: collectiviteType.Region },
-    { label: 'Préfecture de département', value: collectiviteType.PrefectureDepartement },
-    { label: 'Préfecture de région', value: collectiviteType.PrefectureRegion },
-    { label: 'Service public', value: collectiviteType.ServicePublic },
-    { label: 'Collectivité test', value: collectiviteType.Test },
+    { label: appLabels.commune, value: collectiviteType.Commune },
+    { label: appLabels.formTypeEpci, value: collectiviteType.EPCI },
+    {
+      label: appLabels.departement,
+      value: collectiviteType.Departement,
+    },
+    { label: appLabels.region, value: collectiviteType.Region },
+    {
+      label: appLabels.formTypePrefectureDepartement,
+      value: collectiviteType.PrefectureDepartement,
+    },
+    {
+      label: appLabels.formTypePrefectureRegion,
+      value: collectiviteType.PrefectureRegion,
+    },
+    {
+      label: appLabels.formTypeServicePublic,
+      value: collectiviteType.ServicePublic,
+    },
+    { label: appLabels.formTypeCollectiviteTest, value: collectiviteType.Test },
   ];
 
   return (
-    <Field title="Type de collectivité" className="self-end">
+    <Field title={appLabels.typeCollectivite} className="self-end">
       <Select
         options={options}
         values={type ?? ''}

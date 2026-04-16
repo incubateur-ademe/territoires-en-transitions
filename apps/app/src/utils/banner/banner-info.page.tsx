@@ -1,6 +1,7 @@
 'use client';
 
 import { useSuperAdminMode } from '@/app/users/authorizations/super-admin-mode/super-admin-mode.provider';
+import { appLabels } from '@/app/labels/catalog';
 import {
   installSafeLinksHook,
   isBannerType,
@@ -30,10 +31,10 @@ import { useUpsertBannerInfo } from './use-upsert-banner-info';
 installSafeLinksHook(DOMPurify);
 
 const TYPE_OPTIONS = [
-  { value: 'info', label: 'Information' },
-  { value: 'warning', label: 'Avertissement' },
-  { value: 'error', label: 'Erreur' },
-  { value: 'event', label: 'Événement' },
+  { value: 'info', label: appLabels.information },
+  { value: 'warning', label: appLabels.avertissement },
+  { value: 'error', label: appLabels.erreur },
+  { value: 'event', label: appLabels.evenement },
 ] as const satisfies readonly { value: BannerType; label: string }[];
 
 const DEFAULT_VALUES: UpsertBannerInput = {
@@ -71,11 +72,8 @@ export const BannerInfoPage = () => {
   if (isError) {
     return (
       <div className="max-w-3xl">
-        <h2 className="mb-6">Bannière</h2>
-        <Alert
-          state="error"
-          title="Erreur de chargement de la bannière. Réessayez ou rechargez la page."
-        />
+        <h2 className="mb-6">{appLabels.banniere}</h2>
+        <Alert state="error" title={appLabels.banniereErreurChargement} />
       </div>
     );
   }
@@ -93,21 +91,22 @@ export const BannerInfoPage = () => {
   const previewUrgent = isUrgentBannerType(watchedType);
 
   const lastModificationLine = data
-    ? `Dernière modification le ${new Date(data.modifiedAt).toLocaleString(
-        'fr-FR'
-      )} par ${data.modifiedByNom}`
+    ? appLabels.banniereDerniereModification({
+        date: new Date(data.modifiedAt).toLocaleString('fr-FR'),
+        nom: data.modifiedByNom,
+      })
     : null;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="max-w-3xl">
-      <h2 className="mb-6">Bannière</h2>
+      <h2 className="mb-6">{appLabels.banniere}</h2>
 
       <div className="space-y-6 border border-grey-3 rounded-lg p-6 bg-white">
         <Controller
           name="type"
           control={control}
           render={({ field }) => (
-            <Field title="Type">
+            <Field title={appLabels.banniereType}>
               <Select
                 options={[...TYPE_OPTIONS]}
                 values={field.value}
@@ -122,12 +121,12 @@ export const BannerInfoPage = () => {
           )}
         />
 
-        <Field title="Contenu">
+        <Field title={appLabels.banniereContenu}>
           {isLoaded ? (
             <RichTextEditor
               key={isLoaded ? 'hydrated' : 'empty'}
               dataTest="banner-info-editor"
-              ariaLabel="Contenu de la bannière"
+              ariaLabel={appLabels.banniereContenuAriaLabel}
               initialValue={data?.info ?? ''}
               onChange={(html) => setValue('info', html)}
               disabled={isPending}
@@ -142,7 +141,7 @@ export const BannerInfoPage = () => {
           control={control}
           render={({ field }) => (
             <Checkbox
-              label="Bannière active"
+              label={appLabels.banniereActive}
               checked={field.value}
               onChange={(e) => field.onChange(e.currentTarget.checked)}
               disabled={!isLoaded || isPending}
@@ -157,7 +156,7 @@ export const BannerInfoPage = () => {
               !isLoaded || (watchedActive && !hasContent) || isPending
             }
           >
-            {isPending ? 'Enregistrement…' : 'Enregistrer'}
+            {isPending ? appLabels.enregistrementEnCours : appLabels.enregistrer}
           </Button>
         </div>
       </div>
@@ -168,7 +167,7 @@ export const BannerInfoPage = () => {
 
       {hasContent && (
         <div className="mt-8">
-          <h3 className="mb-3 text-base">Aperçu</h3>
+          <h3 className="mb-3 text-base">{appLabels.banniereApercu}</h3>
           <div
             role={previewUrgent ? 'alert' : 'status'}
             aria-live={previewUrgent ? 'assertive' : 'polite'}

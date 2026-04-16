@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { MembreFonction } from '@tet/domain/collectivites';
 import {
   ReferentielId,
@@ -7,25 +8,25 @@ import {
 
 // Define all labels from app
 type ReferentielLabelKey = ReferentielId | 'crte';
-export const referentielToName = {
-  cae: 'Climat Air Énergie',
-  eci: 'Économie Circulaire',
-  crte: 'Contrat Relance Transition Écologique', // TODO: Legacy, voir si crte est toujours utilisé
-  te: 'Transition Écologique',
-  'te-test': 'Transition Écologique (test)',
-} as const satisfies Record<ReferentielLabelKey, string>;
+export const referentielToName: Record<ReferentielLabelKey, string> = {
+  cae: appLabels.referentielCae,
+  eci: appLabels.referentielEci,
+  crte: appLabels.referentielCrte,
+  te: appLabels.referentielTe,
+  'te-test': appLabels.referentielTeTest,
+};
 
 export const avancementToLabel: Record<
   StatutAvancementIncludingNonConcerneDetailleALaTache,
   string
 > = {
-  non_renseigne: 'Non renseigné',
-  fait: 'Fait',
-  pas_fait: 'Pas fait',
-  detaille: 'Détaillé au %',
-  detaille_a_la_tache: 'Détaillé à la tâche',
-  programme: 'Programmé',
-  non_concerne: 'Non concerné',
+  non_renseigne: appLabels.nonRenseigne,
+  fait: appLabels.avancementFait,
+  pas_fait: appLabels.avancementPasFait,
+  detaille: appLabels.avancementDetaille,
+  detaille_a_la_tache: appLabels.avancementDetailleALaTache,
+  programme: appLabels.avancementProgramme,
+  non_concerne: appLabels.avancementNonConcerne,
 };
 
 /** Labels for statut options including display-only "Détaillé à la tâche" (subaction with tasks) */
@@ -34,22 +35,22 @@ export const avancementDisplayToLabel: Record<
   string
 > = {
   ...avancementToLabel,
-  detaille_a_la_tache: 'Détaillé à la tâche',
+  detaille_a_la_tache: appLabels.avancementDetailleALaTache,
 };
 
 export const actionIdToLabel: Record<string, string> = {
-  cae_3: 'Énergie, eau, assainissement',
-  eci_1: 'Stratégie globale',
-  eci_2: 'Réduction, collecte et valorisation des déchets',
-  eci_3: "Autres piliers de l'ECI",
-  eci_4: 'Outils financiers',
+  cae_3: appLabels.actionCae3,
+  eci_1: appLabels.actionEci1,
+  eci_2: appLabels.actionEci2,
+  eci_3: appLabels.actionEci3,
+  eci_4: appLabels.actionEci4,
 };
 
 export const membreFonctions: { value: MembreFonction; label: string }[] = [
-  { value: 'technique', label: 'Directions et services techniques' },
-  { value: 'politique', label: 'Équipe politique' },
-  { value: 'conseiller', label: "Bureau d'études" },
-  { value: 'partenaire', label: 'Partenaire' },
+  { value: 'technique', label: appLabels.membreFonctionTechnique },
+  { value: 'politique', label: appLabels.membreFonctionPolitique },
+  { value: 'conseiller', label: appLabels.membreFonctionConseiller },
+  { value: 'partenaire', label: appLabels.membreFonctionPartenaire },
 ];
 
 export const membreFonctionToLabel = membreFonctions.reduce(
@@ -58,8 +59,8 @@ export const membreFonctionToLabel = membreFonctions.reduce(
 );
 
 export const membreFonctionToTeteFonction: Record<string, string> = {
-  technique: 'Chef·fe de projet',
-  politique: 'Élu·e',
-  conseiller: 'Conseiller·ère',
-  partenaire: 'Partenaire',
+  technique: appLabels.membreTeteFonctionTechnique,
+  politique: appLabels.membreTeteFonctionPolitique,
+  conseiller: appLabels.membreTeteFonctionConseiller,
+  partenaire: appLabels.membreTeteFonctionPartenaire,
 };

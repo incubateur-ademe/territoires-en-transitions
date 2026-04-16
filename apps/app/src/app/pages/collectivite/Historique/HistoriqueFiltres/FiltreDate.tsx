@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Field, Input } from '@tet/ui';
 import { useRef } from 'react';
 import { TFiltreProps } from '../filters';
@@ -5,7 +6,7 @@ import { TFiltreProps } from '../filters';
 export const FiltreDateDebut = ({ filters, setFilters }: TFiltreProps) => {
   const ref = useRef<HTMLInputElement>(null);
   return (
-    <Field title="Date de début" small>
+    <Field title={appLabels.dateDebut} small>
       <Input
         ref={ref}
         displaySize="sm"
@@ -21,7 +22,7 @@ export const FiltreDateDebut = ({ filters, setFilters }: TFiltreProps) => {
 export const FiltreDateFin = ({ filters, setFilters }: TFiltreProps) => {
   const ref = useRef<HTMLInputElement>(null);
   return (
-    <Field title="Date de fin" small>
+    <Field title={appLabels.dateFin} small>
       <Input
         ref={ref}
         displaySize="sm"

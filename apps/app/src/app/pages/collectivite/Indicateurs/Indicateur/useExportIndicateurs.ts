@@ -1,4 +1,5 @@
 import { IndicateurDefinitionListItem } from '@/app/indicateurs/indicateurs/use-list-indicateurs';
+import { appLabels } from '@/app/labels/catalog';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { useToastContext } from '@/app/utils/toast/toast-context';
 import { useApiClient } from '@/app/utils/use-api-client';
@@ -32,13 +33,13 @@ export const useExportIndicateurs = (
         if (blob) {
           saveBlob(blob, filename || 'export-indicateur.xlsx');
           trackEvent(Event.indicateurs.downloadXlsx);
-          setToast('success', 'Export terminé');
+          setToast('success', appLabels.exportTermine);
         } else {
           throw new Error();
         }
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
-        setToast('error', "Échec de l'export");
+        setToast('error', appLabels.exportEchec);
       }
     },
   });

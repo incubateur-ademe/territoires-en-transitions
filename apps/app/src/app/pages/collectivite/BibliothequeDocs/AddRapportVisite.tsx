@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
 import { Button, Field, InputDate, Modal } from '@tet/ui';
 import { format } from 'date-fns';
@@ -27,10 +28,10 @@ export const AddRapportVisite = () => {
     <Modal
       size="lg"
       openState={{ isOpen: opened, setIsOpen: onSetOpened }}
-      title="Ajouter un rapport de visite annuelle"
+      title={appLabels.ajouterRapportVisite}
       subTitle={
         date
-          ? `Date de la visite : ${format(new Date(date), 'dd/MM/yyyy')}`
+          ? `${appLabels.champDateVisite} : ${format(new Date(date), 'dd/MM/yyyy')}`
           : undefined
       }
       render={({ close }) => {
@@ -48,7 +49,7 @@ export const AddRapportVisite = () => {
         size="sm"
         onClick={() => setOpened(true)}
       >
-        Ajouter
+        {appLabels.ajouter}
       </Button>
     </Modal>
   );
@@ -62,7 +63,7 @@ const SelectDate = ({ setDate }: { setDate: (value: string) => void }) => {
 
   return (
     <>
-      <Field title="Date de la visite annuelle (obligatoire)">
+      <Field title={appLabels.champDateVisiteAnnuelle}>
         <InputDate
           ref={inputRef}
           pattern="\d{4}-\d{2}-\d{2}"
@@ -77,7 +78,7 @@ const SelectDate = ({ setDate }: { setDate: (value: string) => void }) => {
         disabled={!isValid}
         onClick={() => value && setDate(value)}
       >
-        Ajouter le rapport
+        {appLabels.ajouterRapport}
       </Button>
     </>
   );

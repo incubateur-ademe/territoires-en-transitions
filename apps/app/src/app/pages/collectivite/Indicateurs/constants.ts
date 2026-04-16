@@ -1,8 +1,9 @@
+import { appLabels } from '@/app/labels/catalog';
 import { SourceType } from './types';
 
 export const SOURCE_TYPE_LABEL: Record<SourceType, string> = {
-  objectif: 'objectifs',
-  resultat: 'résultats',
+  objectif: appLabels.sourceTypeObjectif,
+  resultat: appLabels.sourceTypeResultat,
 };
 
 export const getSourceTypeLabel = (sourceType: SourceType | null) =>
@@ -12,29 +13,29 @@ export const SOURCE_COLLECTIVITE = '$sc';
 
 export const INDICATEUR_LABELS = {
   personalized: {
-    singular: 'Indicateur personnalisé',
-    plural: 'Indicateurs personnalisés',
+    singular: appLabels.indicateurPersonnaliseSingulier,
+    plural: appLabels.indicateurPersonnalisePluriel,
   },
   favorites: {
-    singular: 'Indicateur favori',
-    plural: 'Indicateurs favoris',
-    tooltip: 'Indicateurs favoris de la collectivité',
+    singular: appLabels.indicateurFavoriSingulier,
+    plural: appLabels.indicateurFavoriPluriel,
+    tooltip: appLabels.indicateurFavoriTooltip,
   },
   keys: {
-    singular: 'Indicateur clé',
-    plural: 'Indicateurs clés',
+    singular: appLabels.indicateurCleSingulier,
+    plural: appLabels.indicateurClePluriel,
   },
   private: {
-    singular: 'Indicateur privé',
-    plural: 'Indicateurs privés',
+    singular: appLabels.indicateurPriveSingulier,
+    plural: appLabels.indicateurPrivePluriel,
   },
   myIndicateurs: {
-    singular: 'Mon indicateur',
-    plural: 'Mes indicateurs',
-    tooltip: 'Indicateurs dont je suis la personne pilote',
+    singular: appLabels.indicateurMonSingulier,
+    plural: appLabels.indicateurMonPluriel,
+    tooltip: appLabels.indicateurMonTooltip,
   },
   all: {
-    singular: 'Indicateur',
-    plural: 'Tous les indicateurs',
+    singular: appLabels.indicateurTousSingulier,
+    plural: appLabels.indicateurTousPluriel,
   },
 } as const;

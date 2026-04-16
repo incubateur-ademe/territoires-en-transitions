@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { SujetDemande } from '@tet/domain/referentiels';
 import { Alert, Button, Modal, RadioButton } from '@tet/ui';
 import classNames from 'classnames';
@@ -10,10 +11,7 @@ import {
 import { MessageCompletudeECi } from './MessageCompletudeECi';
 import { usePreuvesLabellisation } from './useCycleLabellisation';
 import { useEnvoiDemande } from './useEnvoiDemande';
-/**
- * Affiche la modale de sélection du type d'audit souhaité et d'envoie de la
- * demande d'audit
- */
+
 export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
   const { parcoursLabellisation, opened, setOpened } = props;
   const { parcours } = parcoursLabellisation;
@@ -49,21 +47,21 @@ export const DemandeAuditModalContent = (
   );
   const preuves = usePreuvesLabellisation(parcours?.demande?.id);
 
-  // on doit afficher un meesage d'aide si la collectivité est non labellisable
-  // car le critère fichier n'est pas atteint
   const aide =
     !labellisable && preuves?.data && !preuves.data.length ? (
       <p className="text-sm">
-        * Pour passer en CNL penser à joindre les documents de labellisation.
+        {
+          '* Pour passer en CNL penser à joindre les documents de labellisation.'
+        }
       </p>
     ) : null;
   const asterique = aide ? '*' : '';
 
   return (
     <div className="flex flex-col" data-test="DemandeAuditModal">
-      <h3 className="mb-6">Demander un audit</h3>
+      <h3 className="mb-6">{appLabels.demanderAudit}</h3>
       <div className="w-full">
-        {status === 'non_demandee' && isLoading ? 'Envoi en cours...' : null}
+        {status === 'non_demandee' && isLoading ? appLabels.envoiEnCours : null}
         {status === 'demande_envoyee' ? (
           <Alert
             state="success"
@@ -80,21 +78,21 @@ export const DemandeAuditModalContent = (
             <MessageCompletudeECi parcours={parcours} />
             <div className="flex flex-col gap-6 mb-6">
               <p className="mb-0">
-                Quel type d’audit souhaitez-vous demander ?
+                {"Quel type d'audit souhaitez-vous demander ?"}
               </p>
               <RadioButton
                 id="cot"
                 value="cot"
                 onChange={() => setSujet('cot')}
                 checked={sujet === 'cot'}
-                label="Audit COT sans labellisation"
+                label={appLabels.auditCotSansLabellisation}
               />
               <RadioButton
                 id="labellisation_cot"
                 value="labellisation_cot"
                 onChange={() => setSujet('labellisation_cot')}
                 checked={sujet === 'labellisation_cot'}
-                label={`Audit COT avec labellisation${asterique}`}
+                label={appLabels.auditCotAvecLabellisation({ asterique })}
                 disabled={!labellisable}
               />
               <RadioButton
@@ -102,7 +100,7 @@ export const DemandeAuditModalContent = (
                 value="labellisation"
                 onChange={() => setSujet('labellisation')}
                 checked={sujet === 'labellisation'}
-                label={`Audit de labellisation${asterique}`}
+                label={appLabels.auditLabellisation({ asterique })}
                 disabled={!labellisable}
               />
             </div>
@@ -123,10 +121,10 @@ export const DemandeAuditModalContent = (
                   }
                 }}
               >
-                Envoyer ma demande
+                {'Envoyer ma demande'}
               </Button>
               <Button variant="outlined" size="sm" onClick={onClose}>
-                Annuler
+                {appLabels.annuler}
               </Button>
             </div>
           </>

@@ -1,5 +1,6 @@
 import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { appLabels } from '@/app/labels/catalog';
 import { useCurrentCollectivite } from '@tet/api/collectivites';
 import { Button, VisibleWhen } from '@tet/ui';
 import { useState } from 'react';
@@ -21,17 +22,17 @@ export const DocumentsView = () => {
         <ContentLayout.SharedAlert
           fiche={fiche}
           collectiviteId={collectivite.collectiviteId}
-          title="Documents associés"
-          description="Les documents affichés correspondent à ceux de cette collectivité."
+          title={appLabels.documentsAssocies}
+          description={appLabels.documentsAssociesDescription}
         />
         <ContentLayout.Empty
           isReadonly={isReadonly}
           picto={(props) => <DocumentPicto {...props} />}
-          title="Aucun document n'est associé à cette action !"
-          subTitle="Centraliser l'ensemble des informations associées à l'action en déposant les documents liés"
+          title={appLabels.aucunDocumentAssocie}
+          subTitle={appLabels.documentsAssociesEmptyDescription}
           actions={[
             {
-              children: 'Ajouter un document',
+              children: appLabels.ajouterDocument,
               onClick: () => setIsModalOpen(true),
             },
           ]}
@@ -49,7 +50,7 @@ export const DocumentsView = () => {
                 onClick={() => setIsModalOpen(true)}
               >
                 {isLoading && <SpinnerLoader className="!h-4" />}
-                Ajouter un document
+                {appLabels.ajouterDocument}
               </Button>
             </VisibleWhen>
           }

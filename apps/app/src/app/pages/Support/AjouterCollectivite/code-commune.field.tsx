@@ -1,3 +1,4 @@
+import { appLabels } from '@/app/labels/catalog';
 import { Field, Input } from '@tet/ui';
 
 type Props = {
@@ -8,8 +9,8 @@ type Props = {
 export const CodeCommuneField = ({ value, onChange }: Props) => {
   return (
     <Field
-      title="Code commune"
-      hint="Le code attendu est le code commune INSEE et non le code postal"
+      title={appLabels.formCodeCommune}
+      hint={appLabels.formCodeCommuneHint}
     >
       <Input
         type="text"

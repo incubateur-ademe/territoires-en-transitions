@@ -1,4 +1,5 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/referentiel-hooks';
+import { appLabels } from '@/app/labels/catalog';
 import { useCollectiviteId } from '@tet/api/collectivites';
 import { ActionStatutCreate } from '@tet/domain/referentiels';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
@@ -30,10 +31,6 @@ const getAvancementFromAvancementDetaille = (avancementDetaille: number[]) => {
     : 'detaille';
 };
 
-/**
- * Modale permettant l'ajustement manuel de l'avancement détaillé
- * + l'ajout d'un texte justificatif
- */
 const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
   const { id: actionId, nom: actionName } = actionDefinition;
   const { statut, isLoading } = useActionStatut(actionId);
@@ -62,9 +59,6 @@ const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
   }
 
   const handleUpdateScoreDetaille = (values: AvancementValues) => {
-    // Si la jauge est à 100% dans un des statuts, le statut
-    // est mis à jour automatiquement
-
     const newActionStatutUpdate: ActionStatutCreate = {
       ...actionStatutUpdate,
       collectiviteId,
@@ -79,12 +73,11 @@ const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
   return (
     <Modal
       size="xl"
-      title="Détailler l'avancement au pourcentage"
+      title={appLabels.detaillerAvancementPourcentage}
       subTitle={`${actionId.split('_')[1]} ${actionName}`}
       openState={openState}
       render={() => (
         <div className="flex flex-col gap-8">
-          {/* Slider pour détailler le score manuellement */}
           <AvancementDetailleSlider
             className="my-8 px-12"
             avancement={
@@ -94,22 +87,21 @@ const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
             onChange={handleUpdateScoreDetaille}
           />
 
-          {/* Raisons de la répartition */}
           <ActionJustificationField
             actionId={actionDefinition.id}
-            hint="Pour faciliter la relecture, vous pouvez préciser ici les raisons de cette répartition"
+            hint={appLabels.raisonRepartition}
           />
         </div>
       )}
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnCancelProps={{
-            children: 'Annuler',
+            children: appLabels.annuler,
             onClick: close,
           }}
           btnOKProps={{
             variant: 'primary',
-            children: 'Valider',
+            children: appLabels.valider,
             onClick: () => {
               if (actionStatutUpdate) {
                 saveActionStatut(actionStatutUpdate);

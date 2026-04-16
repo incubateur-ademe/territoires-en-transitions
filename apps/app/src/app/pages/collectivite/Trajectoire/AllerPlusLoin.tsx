@@ -1,5 +1,6 @@
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useDownloadFile } from '@/app/utils/useDownloadFile';
+import { appLabels } from '@/app/labels/catalog';
 import { Button } from '@tet/ui';
 import {
   DOC_METHODO,
@@ -17,11 +18,10 @@ export const AllerPlusLoin = () => {
   return (
     <div>
       <div className="text-center">
-        <h3 className="mb-6">Aller plus loin</h3>
+        <h3 className="mb-6">{appLabels.trajectoireAllerPlusLoin}</h3>
       </div>
       <h6 className="mb-4 text-base">
-        Téléchargez le fichier Excel de calcul pour comprendre le détail des
-        calculs et approfondir votre analyse.
+        {appLabels.trajectoireAllerPlusLoinDescription}
       </h6>
       <Button
         variant="outlined"
@@ -30,26 +30,28 @@ export const AllerPlusLoin = () => {
       >
         {isDownloading ? (
           <>
-            Téléchargement en cours <SpinnerLoader />
+            {appLabels.telechargementEnCours} <SpinnerLoader />
           </>
         ) : (
-          'Télécharger les données (.xlsx)'
+          appLabels.trajectoireTelechargerDonneesXlsx
         )}
       </Button>
       <h6 className="mt-8 mb-4 text-base">
-        Télécharger les fichiers de l’étude détaillant la méthodologie, etc.
+        {appLabels.trajectoireTelechargerFichiersMethodologie}
       </h6>
       <Button
         variant="outlined"
         onClick={() => downloadFile(DOC_METHODO)}
         disabled={isDownloadingFile}
       >
-        Télécharger la méthodologie (.pdf)
+        {appLabels.trajectoireTelechargerMethodologiePdf}
       </Button>
 
-      <h6 className="mt-8 mb-4 text-base">Simulateur territorial</h6>
+      <h6 className="mt-8 mb-4 text-base">
+        {appLabels.trajectoireSimulateurTerritorial}
+      </h6>
       <Button variant="outlined" external href={SIMULATEUR_TERRITORIAL_URL}>
-        Voir le simulateur du SGPE
+        {appLabels.trajectoireVoirSimulateurSgpe}
       </Button>
     </div>
   );

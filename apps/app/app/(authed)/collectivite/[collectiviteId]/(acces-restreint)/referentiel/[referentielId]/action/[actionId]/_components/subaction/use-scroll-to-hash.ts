@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 const MAX_PARENT_LEVELS = 2;
 
@@ -18,35 +18,7 @@ const findElementByHashOrParent = (hash: string): HTMLElement | null => {
     );
 };
 
-const readHash = (): string =>
-  typeof window !== 'undefined' ? window.location.hash.slice(1) : '';
-
-export const useHashFromUrl = (): string => {
-  const [hash, setHash] = useState('');
-
-  useEffect(() => {
-    setHash(readHash());
-
-    const onHashChange = (): void => {
-      setHash(readHash());
-    };
-
-    window.addEventListener('hashchange', onHashChange);
-    window.addEventListener('popstate', onHashChange);
-
-    const originalPushState = history.pushState.bind(history);
-    history.pushState = (...args) => {
-      originalPushState(...args);
-      onHashChange();
-    };
-
-    return () => {
-      window.removeEventListener('hashchange', onHashChange);
-      window.removeEventListener('popstate', onHashChange);
-      history.pushState = originalPushState;
-    };
-  }, []);
-
+export const useScrollToHash = (hash: string): void => {
   useEffect(() => {
     if (!hash) return;
     requestAnimationFrame(() => {
@@ -56,6 +28,4 @@ export const useHashFromUrl = (): string => {
       });
     });
   }, [hash]);
-
-  return hash;
 };

@@ -1,4 +1,5 @@
 'use client';
+import { appLabels } from '@/app/labels/catalog';
 import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
 import { CollectiviteCurrent } from '@tet/api/collectivites';
 import { EmptyCard } from '@tet/ui';
@@ -8,7 +9,7 @@ import { CreatePlanModal } from '../create-plan/create-plan.modal';
 const ListPlansVisitorEmptyCard = () => (
   <EmptyCard
     picto={(props) => <PictoDashboard {...props} />}
-    title="Cette collectivité n'a pas encore de plan"
+    title={appLabels.collectiviteSansPlan}
   />
 );
 
@@ -29,14 +30,14 @@ export const ListPlansEmptyCard = ({
     <>
       <EmptyCard
         picto={(props) => <PictoDashboard {...props} />}
-        title="Vous n'avez pas encore créé de plan !"
+        title={appLabels.utilisateurSansPlan}
         description={[
-          "Vous pouvez créer votre plan, qu'il soit déjà voté ou encore en cours d'élaboration.",
-          'Les actions seront modifiables à tout moment et vous pourrez les piloter depuis cette page !',
+          appLabels.utilisateurSansPlanDescription,
+          appLabels.utilisateurSansPlanDescriptionSuite,
         ]}
         actions={[
           {
-            children: 'Créer un plan',
+            children: appLabels.creerPlan,
             onClick: () => setIsModalOpen(true),
           },
         ]}

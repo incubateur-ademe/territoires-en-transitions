@@ -1,5 +1,6 @@
 'use client';
 
+import { appLabels } from '@/app/labels/catalog';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@tet/api';
@@ -70,38 +71,29 @@ const DonneesNonDispo = () => {
   return (
     <Card className="flex items-center my-16">
       <DbErrorPicto />
-      <h2 className="mb-6">Données disponibles insuffisantes pour le calcul</h2>
+      <h2 className="mb-6">{appLabels.trajectoireDonneesInsuffisantesCalcul}</h2>
       {canMutateValeurs ? (
         <p className="font-normal text-lg text-center">
-          Nous ne disposons pas encore des données suffisantes pour permettre le
-          calcul automatique de la trajectoire SNBC territorialisée de votre
-          collectivité. Vous pouvez néanmoins lancer un calcul en complétant les
-          données disponibles en open data avec vos propres données. Vous
-          pourrez ainsi visualiser facilement votre trajectoire SNBC
-          territorialisée et la comparer aux objectifs fixés et résultats
-          observés.
+          {appLabels.trajectoireDonneesInsuffisantesDescriptionMutateur}
         </p>
       ) : (
         <p className="font-normal text-lg text-center">
-          Nous ne disposons pas encore des données suffisantes pour permettre le
-          calcul automatique de la trajectoire SNBC territorialisé de votre
-          collectivité.{' '}
+          {appLabels.trajectoireDonneesInsuffisantesDescriptionLecture}{' '}
           <b>
-            Un utilisateur en Edition ou Admin sur le profil de cette
-            collectivité
+            {
+              appLabels.trajectoireDonneesInsuffisantesDescriptionLectureHighlight
+            }
           </b>{' '}
-          peut néanmoins lancer un calcul en complétant les données disponibles
-          en open data avec celles disponibles au sein de la collectivité. Vous
-          pourrez ensuite visualiser facilement votre trajectoire SNBC
-          territorialisée et la comparer aux objectifs fixés et résultats
-          observés.
+          {appLabels.trajectoireDonneesInsuffisantesDescriptionLectureSuite}
         </p>
       )}
       <Modal
         size="xl"
         render={(props) => <DonneesCollectivite modalProps={props} />}
       >
-        <Button disabled={!canMutateValeurs}>Compléter mes données</Button>
+        <Button disabled={!canMutateValeurs}>
+          {appLabels.trajectoireCompleterDonnees}
+        </Button>
       </Modal>
     </Card>
   );
@@ -115,8 +107,8 @@ const ErreurDroits = () => {
     <Alert
       state="error"
       className="self-stretch my-8"
-      title="Droits insuffisants"
-      description="La trajectoire des autres collectivités n’est pas encore accessible en mode visite. Elle le sera très prochainement."
+      title={appLabels.trajectoireDroitsInsuffisants}
+      description={appLabels.trajectoireDroitsInsuffisantsDescription}
     />
   );
 };
@@ -129,8 +121,8 @@ const ErreurDeChargement = () => {
     <Alert
       state="error"
       className="self-stretch my-8"
-      title="Erreur lors du chargement des données"
-      description="Veuillez ré-essayer dans quelques instants. Si le problème persiste merci de contacter le support."
+      title={appLabels.trajectoireErreurChargementDonnees}
+      description={appLabels.trajectoireErreurChargementDonneesDescription}
     />
   );
 };
@@ -150,26 +142,15 @@ const Presentation = () => {
       <div className="flex flex-row gap-14">
         <div className="w-3/5">
           <h1 className="mb-6">
-            Calculez votre trajectoire de transition bas-carbone avec la méthode
-            développée par l’ADEME.
+            {appLabels.trajectoireTitrePresentation}
           </h1>
-          <p className="font-bold text-lg">
-            C’est un excellent outil stratégique pour :
-          </p>
+          <p className="font-bold text-lg">{appLabels.trajectoireSousTitrePresentation}</p>
           <ul className="w-11/12 text-lg list-disc ml-4 mb-0">
-            <li>
-              {
-                "Définir ou évaluer vos objectifs, par exemple lors d'un suivi annuel ou d'un bilan à mi-parcours de PCAET"
-              }
-            </li>
-            <li>Quantifier les efforts nécessaires secteur par secteur</li>
-            <li>Identifier votre contribution à la SNBC</li>
+            <li>{appLabels.trajectoireObjectif1}</li>
+            <li>{appLabels.trajectoireObjectif2}</li>
+            <li>{appLabels.trajectoireObjectif3}</li>
           </ul>
-          <p className="text-lg mt-2">
-            {
-              "Cette trajectoire n'est pas prescriptive, mais peut constituer un repère pour guider votre stratégie, vos actions."
-            }
-          </p>
+          <p className="text-lg mt-2">{appLabels.trajectoirePresentationDescription}</p>
           <Button
             size="md"
             variant="underlined"
@@ -177,7 +158,7 @@ const Presentation = () => {
             href={HELPDESK_URL}
             className="mb-6"
           >
-            Pour plus d’informations
+            {appLabels.trajectoirePlusInformations}
           </Button>
         </div>
         <TrajectoirePicto />
@@ -194,15 +175,12 @@ const Presentation = () => {
             });
           }}
         >
-          J’accède à la trajectoire
+          {appLabels.trajectoireAcceder}
         </Button>
       ) : (
         <div className="flex flex-row gap-2 items-center">
           {isPending && (
-            <span>
-              Le calcul de la trajectoire peut prendre jusqu’à 25 secondes. Il
-              s’est lancé automatiquement à l’arrivée sur la page.
-            </span>
+            <span>{appLabels.trajectoireCalculEnCoursInfo}</span>
           )}
         </div>
       )}
