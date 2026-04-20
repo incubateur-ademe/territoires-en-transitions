@@ -77,6 +77,7 @@ export const updateFicheInputSchema = ficheSchemaUpdate.extend({
     .pick({ id: true })
     .array()
     .nullish(),
+  actionsImpact: z.array(z.object({ id: z.number() })).nullish(),
 });
 
 export type UpdateFicheInput = z.infer<typeof updateFicheInputSchema>;

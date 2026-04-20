@@ -31,6 +31,7 @@ import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
 import { ficheActionEffetAttenduTable } from '../shared/models/fiche-action-effet-attendu.table';
 import { ficheActionFinanceurTagTable } from '../shared/models/fiche-action-financeur-tag.table';
 import { ficheActionIndicateurTable } from '../shared/models/fiche-action-indicateur.table';
+import { ficheActionActionImpactTable } from '../shared/models/fiche-action-action-impact.table';
 import { instanceGouvernanceTagTable } from '../../../collectivites/tags/instance-gouvernance.table';
 import { ficheActionInstanceGouvernanceTableTag } from '../shared/models/fiche-action-instance-gouvernance';
 import { ficheActionLibreTagTable } from '../shared/models/fiche-action-libre-tag.table';
@@ -64,6 +65,7 @@ type RelationObjectType =
   | { ficheId: number | string; structureTagId: number }
   | { ficheId: number | string; tagId: number; userId: string }
   | { ficheId: number | string; actionId: string }
+  | { ficheId: number | string; actionImpactId: number }
   | { ficheId: number | string; indicateurId: number }
   | { ficheId: number | string; serviceTagId: number }
   | { ficheId: number | string; financeurTagId: number; montantTtc: number }
@@ -116,6 +118,7 @@ export default class UpdateFicheService {
       notes,
       sharedWithCollectivites,
       instanceGouvernance,
+      actionsImpact,
       tempsDeMiseEnOeuvre,
       ...unsafeFicheAction
     } = ficheFields;
@@ -387,6 +390,18 @@ export default class UpdateFicheService {
             )
             .returning();
         }
+      }
+
+      if (actionsImpact !== undefined) {
+        await this.updateRelations(
+          ficheId,
+          actionsImpact,
+          transaction,
+          ficheActionActionImpactTable,
+          ['id'],
+          ficheActionActionImpactTable.ficheId,
+          [ficheActionActionImpactTable.actionImpactId]
+        );
       }
 
       await this.updateNotes({

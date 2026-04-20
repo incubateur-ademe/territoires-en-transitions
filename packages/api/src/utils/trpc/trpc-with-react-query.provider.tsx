@@ -6,7 +6,12 @@ import {
   UseQueryResult,
 } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { createTRPCClient, httpLink, TRPCClientErrorLike } from '@trpc/client';
+import {
+  createTRPCClient,
+  httpLink,
+  TRPCClient,
+  TRPCClientErrorLike,
+} from '@trpc/client';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import { createTRPCContext } from '@trpc/tanstack-react-query';
 import { getQueryClient } from './react-query-client';
@@ -56,7 +61,7 @@ const CLIENT_HTTP_LINK = httpLink({
   },
 });
 
-function getTrpcClient() {
+export function getTrpcClient(): TRPCClient<AppRouter> {
   return createTRPCClient<AppRouter>({
     links: [getTrpcLoggerLink(), CLIENT_HTTP_LINK],
   });

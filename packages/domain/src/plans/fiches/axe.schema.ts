@@ -12,7 +12,7 @@ const axeTableSchema = z.object({
   createdAt: z.iso.datetime(),
   modifiedAt: z.iso.datetime(),
   modifiedBy: z.nullable(z.uuid()),
-  panierId: z.nullable(z.number()),
+  panierId: z.nullable(z.uuid()),
 });
 
 export type AxeLight = z.infer<typeof axeTableSchema>;

@@ -6,12 +6,14 @@ import {
 } from '@/panier/providers';
 import {
   PanierAPI,
+  createPlanFromPanier,
   getAuthPaths,
   getCollectivitePlanPath,
   getRejoindreCollectivitePath,
   useSupabase,
 } from '@tet/api';
 import {
+  Alert,
   Button,
   Divider,
   Event,
@@ -148,7 +150,6 @@ const ModeConnecteRattache = ({
   const { panier } = usePanierContext();
   const router = useRouter();
   const { collectiviteId: savedCollectiviteId } = useCollectiviteContext();
-  const supabase = useSupabase();
 
   // vérifie que l'id est bien présent dans la liste
   const found =
@@ -158,23 +159,35 @@ const ModeConnecteRattache = ({
   const [collectiviteId, setCollectiviteId] = useState<OptionValue>(
     found ? savedCollectiviteId : collectivites[0].collectiviteId
   );
+  const [isCreating, setIsCreating] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   const handleOnClick = async () => {
     const collectivite = collectivites.find(
       (c) => c.collectiviteId === collectiviteId
     );
     if (!collectivite) return;
-    await tracker(Event.panier.createPlanClick, {
-      collectiviteId: collectivite.collectiviteId,
-      panierId: panier?.id ?? '',
-    });
-    const plan_id = await new PanierAPI(supabase).createPlanFromPanier(
-      collectivite.collectiviteId,
-      panier?.id ?? ''
-    );
+    setHasError(false);
+    setIsCreating(true);
+    try {
+      await tracker(Event.panier.createPlanClick, {
+        collectiviteId: collectivite.collectiviteId,
+        panierId: panier?.id ?? '',
+      });
+      const plan_id = await createPlanFromPanier(
+        collectivite.collectiviteId,
+        panier?.id ?? ''
+      );
 
-    const href = getCollectivitePlanPath(collectivite.collectiviteId, plan_id);
-    router.push(href);
+      const href = getCollectivitePlanPath(
+        collectivite.collectiviteId,
+        plan_id
+      );
+      router.push(href);
+    } catch {
+      setHasError(true);
+      setIsCreating(false);
+    }
   };
 
   return (
@@ -191,9 +204,21 @@ const ModeConnecteRattache = ({
               setCollectiviteId(value);
             }
           }}
+          disabled={isCreating}
         />
       </Field>
-      <Button onClick={handleOnClick} disabled={!collectiviteId}>
+      {hasError && (
+        <Alert
+          state="error"
+          title="La création du plan a échoué"
+          description="Une erreur est survenue. Merci de réessayer dans quelques instants."
+        />
+      )}
+      <Button
+        onClick={handleOnClick}
+        disabled={!collectiviteId || isCreating}
+        loading={isCreating}
+      >
         {'Créer le plan'}
       </Button>
     </>

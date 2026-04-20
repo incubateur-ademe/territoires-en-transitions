@@ -960,4 +960,4 @@ migrate_calendrier_to_description 2026-02-04T09:43:46Z System Administrator <roo
 
 stats/drop-old-stats-views [stats/locales stats/vues_BI] 2026-04-02T00:00:00Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime les vues publiques historiques des stats remplacées par l'iframe
 referentiel/drop-action-historique-triggers [referentiel/historique_modified_by] 2026-03-25T00:00:00Z System Administrator <root@MacBook-Pro-de-Thibaut.local> # Supprime les triggers d'historisation des statuts et commentaires, remplacés par le backend TypeScript
-
+panier_action_impact/drop_plan_from_panier 2026-04-14T14:23:25Z Gaël Servaud <gaelservaud@Host-002.lan> # Supprime la fonction plan_from_panier remplacée par l'endpoint tRPC paniers.checkout
