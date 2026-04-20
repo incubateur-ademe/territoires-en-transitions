@@ -24,6 +24,7 @@ describe('Créer ou modifier un axe', () => {
   let editorUser: AuthenticatedUser;
   let noAccessUser: AuthenticatedUser;
   let planId: number;
+  let cleanupBeforeAll: (() => Promise<void>) | undefined;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -52,7 +53,7 @@ describe('Créer ou modifier un axe', () => {
     });
     planId = plan.id;
 
-    return async () => {
+    cleanupBeforeAll = async () => {
       await noAccessUserResult.cleanup();
       await caller.plans.plans.delete({ planId });
       await testCollectiviteAndUserResult.cleanup();
@@ -60,6 +61,7 @@ describe('Créer ou modifier un axe', () => {
   });
 
   afterAll(async () => {
+    await cleanupBeforeAll?.();
     await app.close();
   });
 

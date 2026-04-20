@@ -25,6 +25,8 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
   let router: TrpcRouter;
   let databaseService: DatabaseService;
 
+  let cleanupBeforeAll: (() => Promise<void>) | undefined;
+
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
   let noAccessUser: AuthenticatedUser;
@@ -106,7 +108,7 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
       version: '1.0.0',
     });
 
-    return async () => {
+    cleanupBeforeAll = async () => {
       // Nettoyer les réponses
       await databaseService.db
         .delete(reponseBinaireTable)
@@ -141,6 +143,7 @@ describe('Enregistrer une réponse à une question de personnalisation', () => {
   });
 
   afterAll(async () => {
+    await cleanupBeforeAll?.();
     await app.close();
   });
 

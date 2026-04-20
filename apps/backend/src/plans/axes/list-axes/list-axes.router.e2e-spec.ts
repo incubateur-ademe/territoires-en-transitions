@@ -22,6 +22,7 @@ describe('Lister les axes', () => {
   let editorUser: AuthenticatedUser;
   let noAccessUser: AuthenticatedUser;
   let planId: number;
+  let cleanupBeforeAll: (() => Promise<void>) | undefined;
 
   beforeAll(async () => {
     app = await getTestApp();
@@ -53,7 +54,7 @@ describe('Lister les axes', () => {
     });
     planId = plan.id;
 
-    return async () => {
+    cleanupBeforeAll = async () => {
       await noAccessUserResult.cleanup();
       await caller.plans.plans.delete({ planId });
       await testCollectiviteAndUserResult.cleanup();
@@ -61,6 +62,7 @@ describe('Lister les axes', () => {
   });
 
   afterAll(async () => {
+    await cleanupBeforeAll?.();
     await app.close();
   });
 

@@ -18,6 +18,8 @@ describe('Supprimer un plan', () => {
   let router: TrpcRouter;
   let db: DatabaseService;
 
+  let cleanupBeforeAll: (() => Promise<void>) | undefined;
+
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
   let noAccessUser: AuthenticatedUser;
@@ -44,13 +46,14 @@ describe('Supprimer un plan', () => {
     const noAccessUserResult = await addTestUser(db);
     noAccessUser = getAuthUserFromUserCredentials(noAccessUserResult.user);
 
-    return async () => {
+    cleanupBeforeAll = async () => {
       await noAccessUserResult.cleanup();
       await testCollectiviteAndUserResult.cleanup();
     };
   });
 
   afterAll(async () => {
+    await cleanupBeforeAll?.();
     await app.close();
   });
 

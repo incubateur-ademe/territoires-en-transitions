@@ -18,6 +18,8 @@ describe('Récupérer un plan', () => {
   let router: TrpcRouter;
   let db: DatabaseService;
 
+  let cleanupBeforeAll: (() => Promise<void>) | undefined;
+
   let collectivite: Collectivite;
   let editorUser: AuthenticatedUser;
   let noAccessUser: AuthenticatedUser;
@@ -53,7 +55,7 @@ describe('Récupérer un plan', () => {
     });
     planId = plan.id;
 
-    return async () => {
+    cleanupBeforeAll = async () => {
       await noAccessUserResult.cleanup();
       await caller.plans.plans.delete({ planId });
       await testCollectiviteAndUserResult.cleanup();
@@ -61,6 +63,7 @@ describe('Récupérer un plan', () => {
   });
 
   afterAll(async () => {
+    await cleanupBeforeAll?.();
     await app.close();
   });
 

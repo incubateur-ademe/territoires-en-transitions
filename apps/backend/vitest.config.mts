@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => ({
     watch: false,
     globals: true,
     testTimeout: 20000, // milliseconds (default is 5000)
+    hookTimeout: 30000, // milliseconds (default is 10000)
     env: loadEnv(mode, __dirname, ''),
 
     setupFiles: ['./test/vitest-matchers.ts'],
