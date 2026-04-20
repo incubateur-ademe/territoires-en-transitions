@@ -11,7 +11,7 @@ import {
   useFloating,
   useInteractions,
 } from '@floating-ui/react';
-import { cloneElement, HTMLAttributes, useState } from 'react';
+import { cloneElement, CSSProperties, HTMLAttributes, useState } from 'react';
 
 import { useOpenState } from '../../hooks/use-open-state';
 import { preset } from '../../tailwind-preset';
@@ -27,6 +27,7 @@ export type InlineEditWrapperProps = {
   onClose?: () => void;
   disabled?: boolean;
   floatingMatchReferenceHeight?: boolean;
+  maxHeight?: CSSProperties['maxHeight'];
 };
 
 /**
@@ -40,6 +41,7 @@ export const InlineEditWrapper = ({
   disabled,
   openState,
   floatingMatchReferenceHeight = true,
+  maxHeight,
 }: InlineEditWrapperProps) => {
   const { isOpen, setIsOpen } = useOpenState(openState);
 
@@ -52,7 +54,7 @@ export const InlineEditWrapper = ({
     setIsOpen(open);
   };
 
-  const [maxHeight, setMaxHeight] = useState(0);
+  const [internalMaxHeight, setInternalMaxHeight] = useState(0);
 
   const { refs, context, x, y, strategy } = useFloating({
     open: isOpen,
@@ -67,7 +69,7 @@ export const InlineEditWrapper = ({
       }),
       size({
         apply({ availableHeight }) {
-          setMaxHeight(availableHeight);
+          setInternalMaxHeight(availableHeight);
         },
       }),
     ],
@@ -114,7 +116,7 @@ export const InlineEditWrapper = ({
                         refs.reference?.current?.getBoundingClientRect().height
                       }px`
                     : undefined,
-                  maxHeight, // set by floating-ui size middleware to calculate available space within the viewport
+                  maxHeight: maxHeight ?? internalMaxHeight, // if maxHeight is not provided, use the value set by floating-ui size middleware to calculate available space within the viewport
                   zIndex: preset.theme.extend.zIndex.modal,
                 },
               })}
