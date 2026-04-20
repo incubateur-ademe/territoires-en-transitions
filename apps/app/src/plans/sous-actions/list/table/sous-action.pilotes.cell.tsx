@@ -29,6 +29,7 @@ export const SousActionPilotesCell = ({ sousAction }: Props) => {
     <TableCell
       canEdit={canUpdate}
       edit={{
+        maxHeight: '24rem',
         renderOnEdit: ({ openState }) => (
           <div className="w-80">
             <PersonnesDropdown
