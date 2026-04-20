@@ -1,7 +1,7 @@
 import { Icon, IconValue, Tooltip } from '@tet/ui';
 import { cn } from '@tet/ui/utils/cn';
 
-type Props = {
+type Props = Omit<React.HTMLAttributes<HTMLSpanElement>, 'onClick'> & {
   title?: string;
   list: string[];
   icon?: IconValue;
@@ -10,6 +10,7 @@ type Props = {
   className?: string;
   renderFirstItem?: (item: string) => React.ReactNode;
   disabled?: boolean;
+  ref?: React.Ref<HTMLSpanElement>;
 };
 
 const ListWithTooltip = ({
@@ -21,6 +22,8 @@ const ListWithTooltip = ({
   onClick,
   className,
   disabled,
+  ref,
+  ...rest
 }: Props) => {
   const isClickable = !!onClick && !disabled;
 
@@ -29,6 +32,8 @@ const ListWithTooltip = ({
   const [firstItem, ...otherItems] = list;
   return (
     <span
+      {...rest}
+      ref={ref}
       title={title}
       onClick={isClickable ? onClick : undefined}
       className={cn(
