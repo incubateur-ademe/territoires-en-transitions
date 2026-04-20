@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export function proxy(request: NextRequest) {
   // génère un id à chaque requête
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080';
 
   // on autorise 'unsafe-eval' et 'unsafe-inline' en mode dev. pour que les pages
   // ne soient pas bloquées par le chargement des sources-map
@@ -35,6 +36,7 @@ export function proxy(request: NextRequest) {
     connect-src 'self'
       ${process.env.NEXT_PUBLIC_SUPABASE_URL}
       ${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace('http', 'ws')}
+      ${backendUrl}
       ws://${request.nextUrl.host}
       ws://127.0.0.1:54321
       client.crisp.chat

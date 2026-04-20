@@ -1,6 +1,7 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { objectToCamel } from 'ts-case-convert';
 import { Database } from '../typeUtils';
+import { getTrpcClient } from '../utils/trpc/trpc-with-react-query.provider';
 import {
   ActionImpactDetails,
   ActionImpactFull,
@@ -263,7 +264,7 @@ export class PanierAPI {
   }
 
   /**
-   * Charge la liste des actions déjà importées (faisant partie d'un plan)
+   * Charge la liste des actions déjà importées (faisant partie d'un plan
    */
   async getActionsDejaImportees(collectiviteId: number | null) {
     if (!collectiviteId) {
@@ -273,33 +274,13 @@ export class PanierAPI {
     const { data, error } = await this.supabase
       .from('fiche_action')
       .select('action_impact_fiche_action!inner(action_impact_id)')
-      .eq('collectivite_id', collectiviteId);
+      .eq('collectivite_id', collectiviteId)
+      .eq('deleted', false);
+
     if (error) throw error;
     return data?.flatMap((row) =>
       row.action_impact_fiche_action.map((action) => action.action_impact_id)
     );
-  }
-
-  /**
-   * Crée un plan pour la collectivité à partir d'un panier
-   *
-   * Renvoi l'id du plan créé.
-   *
-   * On pourra alors rediriger l'utilisateur vers le plan nouvellement créé.
-   *
-   * @param collectivite_id
-   * @param panier_id
-   */
-  async createPlanFromPanier(
-    collectivite_id: number,
-    panier_id: string
-  ): Promise<number> {
-    const { data, error } = await this.supabase.rpc('plan_from_panier', {
-      collectivite_id,
-      panier_id,
-    });
-    if (error) throw error;
-    return data;
   }
 
   /**
@@ -322,4 +303,16 @@ export class PanierAPI {
       nom: collectivite.nom as string,
     }));
   }
+}
+
+export async function createPlanFromPanier(
+  collectivite_id: number,
+  panier_id: string
+): Promise<number> {
+  const trpcClient = getTrpcClient();
+  const { planId } = await trpcClient.plans.paniers.checkout.mutate({
+    collectiviteId: collectivite_id,
+    panierId: panier_id,
+  });
+  return planId;
 }

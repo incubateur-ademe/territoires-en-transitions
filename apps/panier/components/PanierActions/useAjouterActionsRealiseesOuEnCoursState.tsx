@@ -1,5 +1,4 @@
 import { Panier, PanierAPI, useSupabase } from '@tet/api';
-import { useEffect, useEffectEvent, useState } from 'react';
 import { usePanierContext } from '../../providers';
 
 /**
@@ -42,45 +41,35 @@ const useToggleAjoutActions = (
   panier: Panier | null,
   subset: 'en_cours' | 'realise'
 ) => {
-  const [ajout, setAjout] = useState(false);
-  const updateAjout = useEffectEvent((value: boolean) => setAjout(value));
-
   const supabase = useSupabase();
   const panierAPI = new PanierAPI(supabase);
 
   const panierId = panier?.id;
 
-  // le sous-ensemble
   const actions = panier?.[subset];
 
-  // nombre d'items total et dans le panier
-  const count = actions?.length ?? 0;
-  const countInPanier =
+  const itemsCount = actions?.length ?? 0;
+  const itemsInPanier =
     actions?.filter((action) => action.isinpanier).length ?? 0;
+  const isSubsetAddedToPanier =
+    itemsCount > 0 && itemsInPanier === itemsCount;
 
-  // ajoute/enlève les actions du panier
-  const toggleAjout = () => {
+  const toggleAjout = async () => {
     if (!actions?.length || !panierId) return;
-    if (ajout) {
-      actions.forEach((action) =>
-        panierAPI.removeActionFromPanier(action.id, panierId)
-      );
-    } else {
-      actions.forEach((action) =>
-        panierAPI.addActionToPanier(action.id, panierId)
-      );
-    }
-    setAjout(!ajout);
+
+    await Promise.all(
+      actions.map(async (action) =>
+        isSubsetAddedToPanier
+          ? panierAPI.removeActionFromPanier(action.id, panierId)
+          : panierAPI.addActionToPanier(action.id, panierId)
+      )
+    );
   };
 
-  // synchronise l'état si il n'y a plus d'actions dans le panier
-  useEffect(() => {
-    if (!countInPanier && ajout) {
-      updateAjout(false);
-    } else if (countInPanier && !ajout) {
-      updateAjout(true);
-    }
-  }, [countInPanier, ajout]);
-
-  return { ajout, toggleAjout, count, countInPanier };
+  return {
+    ajout: isSubsetAddedToPanier,
+    toggleAjout,
+    count: itemsCount,
+    countInPanier: itemsInPanier,
+  };
 };

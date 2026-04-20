@@ -15,6 +15,7 @@ export * from './fiches/utils/fiche.rule';
 export * from './filters';
 export * from './labels';
 export * from './paniers/action-impact.schema';
+export * from './paniers/panier-checkout.schema';
 export * from './plans/flat-axe.schema';
 export * from './plans/generate-report/download-plan-report.queryparams';
 export * from './plans/generate-report/generate-report.input';
