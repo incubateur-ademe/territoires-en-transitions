@@ -70,13 +70,21 @@ const read = async (
 
 export const useSaveActionCommentaire = () => {
   const trpc = useTRPC();
-  const collectivite_id = useCollectiviteId();
   const queryClient = useQueryClient();
   return useMutation(
     trpc.referentiels.actions.updateCommentaire.mutationOptions({
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: ['historique', collectivite_id],
+      // On rafraîchit l'historique dans `onSettled` plutôt que `onSuccess`
+      // pour rester cohérent avec le pattern de
+      // `useSetPersonnalisationJustification` : le cache historique doit
+      // être invalidé même en cas d'échec (pour rebondir sur l'état serveur
+      // après un rollback optimistique), et la promesse de mutation ne se
+      // résout qu'une fois les invalidations propagées.
+      onSettled: async () => {
+        await queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.historique.list.queryKey(),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.historique.listUtilisateurs.queryKey(),
         });
       },
     })

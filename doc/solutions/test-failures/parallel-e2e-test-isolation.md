@@ -140,3 +140,4 @@ const result = await db.insert(table).values([...]).returning();
 - Fixture collectivité : `apps/backend/src/collectivites/collectivites/collectivites.test-fixture.ts`
 - Fixture users : `apps/backend/src/users/users/users.test-fixture.ts`
 - Config vitest : `apps/backend/vitest.config.mts`
+- Pattern de migration Supabase → tRPC (consommateur de ces règles d'isolation) : `doc/solutions/architecture-patterns/supabase-to-trpc-with-computed-enrichment-2026-04-27.md`

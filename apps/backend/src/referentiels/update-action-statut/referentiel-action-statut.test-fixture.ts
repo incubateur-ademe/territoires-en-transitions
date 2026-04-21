@@ -2,6 +2,14 @@ import { preuveAuditTable } from '@tet/backend/collectivites/documents/models/pr
 import { preuveComplementaireTable } from '@tet/backend/collectivites/documents/models/preuve-complementaire.table';
 import { preuveLabellisationTable } from '@tet/backend/collectivites/documents/models/preuve-labellisation.table';
 import { preuveReglementaireTable } from '@tet/backend/collectivites/documents/models/preuve-reglementaire.table';
+import { historiqueJustificationTable } from '@tet/backend/collectivites/personnalisations/models/historique-justification.table';
+import { historiqueReponseBinaireTable } from '@tet/backend/collectivites/personnalisations/models/historique-reponse-binaire.table';
+import { historiqueReponseChoixTable } from '@tet/backend/collectivites/personnalisations/models/historique-reponse-choix.table';
+import { historiqueReponseProportionTable } from '@tet/backend/collectivites/personnalisations/models/historique-reponse-proportion.table';
+import { justificationTable } from '@tet/backend/collectivites/personnalisations/models/justification.table';
+import { reponseBinaireTable } from '@tet/backend/collectivites/personnalisations/models/reponse-binaire.table';
+import { reponseChoixTable } from '@tet/backend/collectivites/personnalisations/models/reponse-choix.table';
+import { reponseProportionTable } from '@tet/backend/collectivites/personnalisations/models/reponse-proportion.table';
 import { DatabaseServiceInterface } from '@tet/backend/utils/database/database-service.interface';
 import { AppRouter } from '@tet/backend/utils/trpc/trpc.router';
 import {
@@ -225,6 +233,70 @@ export async function cleanupReferentielActionStatutsAndLabellisations(
     .returning();
   console.log(
     `${historiqueActionCommentairesRet.length} historique action commentaires removed from collectivite ${collectiviteId}`
+  );
+
+  // Personnalisation histories : reponse_binaire / _choix / _proportion +
+  // justification. Nécessaire avant la suppression des reponse_* publiques
+  // dans `cleanupCollectivitePrerequisites`.
+  const historiqueReponseBinaireRet = await databaseService.db
+    .delete(historiqueReponseBinaireTable)
+    .where(eq(historiqueReponseBinaireTable.collectiviteId, collectiviteId))
+    .returning();
+  console.log(
+    `${historiqueReponseBinaireRet.length} historique reponses binaires removed from collectivite ${collectiviteId}`
+  );
+
+  const historiqueReponseChoixRet = await databaseService.db
+    .delete(historiqueReponseChoixTable)
+    .where(eq(historiqueReponseChoixTable.collectiviteId, collectiviteId))
+    .returning();
+  console.log(
+    `${historiqueReponseChoixRet.length} historique reponses choix removed from collectivite ${collectiviteId}`
+  );
+
+  const historiqueReponseProportionRet = await databaseService.db
+    .delete(historiqueReponseProportionTable)
+    .where(eq(historiqueReponseProportionTable.collectiviteId, collectiviteId))
+    .returning();
+  console.log(
+    `${historiqueReponseProportionRet.length} historique reponses proportion removed from collectivite ${collectiviteId}`
+  );
+
+  const reponseBinaireRet = await databaseService.db
+    .delete(reponseBinaireTable)
+    .where(eq(reponseBinaireTable.collectiviteId, collectiviteId))
+    .returning();
+  console.log(
+    `${reponseBinaireRet.length} reponses binaires removed from collectivite ${collectiviteId}`
+  );
+  const reponseProportionRet = await databaseService.db
+    .delete(reponseProportionTable)
+    .where(eq(reponseProportionTable.collectiviteId, collectiviteId))
+    .returning();
+  console.log(
+    `${reponseProportionRet.length} reponses proportion removed from collectivite ${collectiviteId}`
+  );
+  const reponseChoixRet = await databaseService.db
+    .delete(reponseChoixTable)
+    .where(eq(reponseChoixTable.collectiviteId, collectiviteId))
+    .returning();
+  console.log(
+    `${reponseChoixRet.length} reponses choix removed from collectivite ${collectiviteId}`
+  );
+
+  const historiqueJustificationRet = await databaseService.db
+    .delete(historiqueJustificationTable)
+    .where(eq(historiqueJustificationTable.collectiviteId, collectiviteId))
+    .returning();
+  console.log(
+    `${historiqueJustificationRet.length} historique justifications removed from collectivite ${collectiviteId}`
+  );
+  const justificationRet = await databaseService.db
+    .delete(justificationTable)
+    .where(eq(justificationTable.collectiviteId, collectiviteId))
+    .returning();
+  console.log(
+    `${justificationRet.length} justifications removed from collectivite ${collectiviteId}`
   );
 
   const actionStatutsRet = await databaseService.db

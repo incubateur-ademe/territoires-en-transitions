@@ -7,6 +7,7 @@ export * from './enum.utils';
 export * from './feature-flags';
 export * from './get-error-message';
 export * from './html-to-text';
+export * from './modified-by.constants';
 export * from './modified-since.enum';
 export * from './notifications';
 export * from './number.utils';

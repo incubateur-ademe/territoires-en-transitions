@@ -4,29 +4,29 @@ import {
 } from '@/app/app/pages/collectivite/Historique/DetailModificationWrapper';
 import Modification from '@/app/app/pages/collectivite/Historique/Modification';
 import { makeMaCollectiviteUrl } from '@/app/app/paths';
-import { THistoriqueItemProps } from '../types';
+import { HistoriqueItemPropsOf } from '../types';
 import { formatReponseValue } from './formatReponseValue';
+
+type Props = HistoriqueItemPropsOf<'justification'>;
 
 /**
  * Modification d'une justification d'une réponse à une question de
  * personnalisation du référentiel
  */
-const HistoriqueItemJustification = ({ item }: THistoriqueItemProps) => {
-  const { collectivite_id, thematique_nom, thematique_id } = item;
+const HistoriqueItemJustification = ({ item }: Props) => {
+  const { collectiviteId, thematiqueNom, thematiqueId } = item;
 
   return (
     <Modification
       historique={item}
       nom="Justification d'une caractéristique de la collectivité modifiée"
-      descriptions={[
-        { titre: 'Thématique', description: thematique_nom ?? '' },
-      ]}
+      descriptions={[{ titre: 'Thématique', description: thematiqueNom ?? '' }]}
       detail={<HistoriqueItemJustificationDetails item={item} />}
       pageLink={makeMaCollectiviteUrl({
-        collectiviteId: collectivite_id,
+        collectiviteId: collectiviteId,
         view: 'personnalisation',
-        searchParams: thematique_id
-          ? { t: thematique_id, ot: thematique_id }
+        searchParams: thematiqueId
+          ? { t: thematiqueId, ot: thematiqueId }
           : undefined,
       })}
     />
@@ -35,27 +35,27 @@ const HistoriqueItemJustification = ({ item }: THistoriqueItemProps) => {
 
 export default HistoriqueItemJustification;
 
-const HistoriqueItemJustificationDetails = ({ item }: THistoriqueItemProps) => {
+const HistoriqueItemJustificationDetails = ({ item }: Props) => {
   const {
     justification,
-    previous_justification,
+    previousJustification,
     reponse,
-    question_formulation,
-    question_type,
+    questionFormulation,
+    questionType,
   } = item;
 
   return (
     <>
-      <p>Question : {question_formulation}</p>
+      <p>Question : {questionFormulation}</p>
       {reponse !== null && reponse !== undefined && (
         <p className="mt-4">
           Réponse (lors de la justification) :{' '}
-          {formatReponseValue(reponse, question_type)}
+          {formatReponseValue(reponse, questionType)}
         </p>
       )}
-      {previous_justification !== null ? (
+      {previousJustification !== null ? (
         <DetailPrecedenteModificationWrapper>
-          <span className="line-through">{previous_justification}</span>
+          <span className="line-through">{previousJustification}</span>
         </DetailPrecedenteModificationWrapper>
       ) : null}
       <DetailNouvelleModificationWrapper>

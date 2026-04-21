@@ -18,6 +18,7 @@ component:
 related_adr: 0011-architecture-service-ddd.md
 related_solutions:
   - database-issues/select-for-update-race-condition-drizzle-orm.md
+  - architecture-patterns/supabase-to-trpc-with-computed-enrichment-2026-04-27.md
 ---
 
 # Extraire les repositories d'historique depuis les services NestJS
@@ -123,4 +124,5 @@ providers: [
 - ADR #11 : `doc/adr/0011-architecture-service-ddd.md` -- conventions repository DDD
 - ADR #12 : `doc/adr/0012-pattern-result.md` -- pattern Result et TransactionManager
 - Solution race condition : `doc/solutions/database-issues/select-for-update-race-condition-drizzle-orm.md`
+- Pattern read-side (compagnon) : `doc/solutions/architecture-patterns/supabase-to-trpc-with-computed-enrichment-2026-04-27.md` -- migration des read paths Supabase → tRPC, pendant côté lecture de cette extraction côté écriture.
 - Plan : `doc/plans/2026-04-14-001-refactor-extract-historique-repositories-plan.md`

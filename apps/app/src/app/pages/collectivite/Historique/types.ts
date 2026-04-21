@@ -1,36 +1,30 @@
-import { Views } from '@tet/api';
+import { HistoriqueItem, HistoriqueType } from '@tet/domain/referentiels';
 import { TFilters } from './filters';
 
-/* type de modification enregistrée dans l'historique */
-export const historiqueTypeEnumValues = [
-  'action_statut',
-  'action_precision',
-  'reponse',
-  'justification',
-  'preuve',
-  'membre',
-  'indicateur',
-  'plan_action_arborescence',
-  'plan_action_fiche',
-] as const;
+export {
+  historiqueTypeEnumValues,
+  type HistoriqueActionPrecisionItem,
+  type HistoriqueActionStatutItem,
+  type HistoriqueItem,
+  type HistoriqueJustificationItem,
+  type HistoriqueReponseItem,
+  type HistoriqueType,
+} from '@tet/domain/referentiels';
 
-export type HistoriqueType = (typeof historiqueTypeEnumValues)[number];
-
-/** un item de l'historique */
-export type THistoriqueItem = Views<'historique'> & {
-  collectivite_id: number;
-  type: HistoriqueType;
-  modified_at: string;
+export type HistoriqueItemProps = {
+  item: HistoriqueItem;
 };
 
-export type THistoriqueItemProps = {
-  item: THistoriqueItem;
+/** Props d'un composant qui ne consomme qu'une variante de l'union. */
+export type HistoriqueItemPropsOf<T extends HistoriqueType> = {
+  item: Extract<HistoriqueItem, { type: T }>;
 };
 
 export type THistoriqueProps = {
-  items: THistoriqueItem[];
+  items: HistoriqueItem[];
   total: number;
   filters: TFilters;
   setFilters: (filters: TFilters | null) => void;
   isLoading?: boolean;
+  isError: boolean;
 };

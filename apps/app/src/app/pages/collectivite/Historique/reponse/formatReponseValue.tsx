@@ -1,11 +1,10 @@
 import { toPercentString } from '@/app/utils/to-percent-string';
-import { THistoriqueItem } from '../types';
 
 export const formatReponseValue = (
-  value: THistoriqueItem['reponse'],
-  type: THistoriqueItem['question_type']
+  value: unknown,
+  type: string | null
 ) => {
-  if (value === null) {
+  if (value === null || value === undefined) {
     return <i>Non renseigné</i>;
   }
 

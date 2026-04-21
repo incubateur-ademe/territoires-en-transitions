@@ -9,12 +9,12 @@ const FiltreMembre = ({ filters, setFilters }: TFiltreProps) => {
 
   const memberList = (utilisateurs ?? [])
     .filter(
-      (u): u is { modified_by_id: string; modified_by_nom: string } =>
-        u.modified_by_id !== null && u.modified_by_nom !== null
+      (u): u is { modifiedById: string; modifiedByNom: string } =>
+        u.modifiedById !== null && u.modifiedByNom !== null
     )
     .map((u) => ({
-      value: u.modified_by_id,
-      label: u.modified_by_nom,
+      value: u.modifiedById,
+      label: u.modifiedByNom,
     }));
 
   return (

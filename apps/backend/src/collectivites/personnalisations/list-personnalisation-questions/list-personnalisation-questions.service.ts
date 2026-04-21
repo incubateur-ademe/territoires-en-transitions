@@ -75,10 +75,16 @@ export default class ListPersonnalisationQuestionsService {
         input.collectiviteId,
         user
       );
-
     const questions = await this.getVisibleQuestionsForCollectivite(
       input,
       enabledReferentiels
+    );
+    this.logger.log(
+      `Found ${questions.length} questions for collectivite ${
+        input.collectiviteId
+      } and enabledreferentiels ${enabledReferentiels.join(
+        ', '
+      )} and input ${JSON.stringify(input)}`
     );
     if (questions.length === 0) {
       return success([]);
