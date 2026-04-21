@@ -102,6 +102,21 @@ export const useSaveActionStatut = () => {
           }),
         });
       },
+      // Les invalidations de l'historique sont placées dans `onSettled` et
+      // awaitées, alignées sur le pattern de
+      // `useSetPersonnalisationJustification` : on veut rafraîchir
+      // l'historique même si la mutation a échoué (cas optimistique avec
+      // rollback) et garantir que la promesse de mutation ne se résout
+      // qu'une fois le cache à jour, pour éviter qu'un caller chaîné voie
+      // l'ancien état.
+      onSettled: async () => {
+        await queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.historique.list.queryKey(),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.historique.listUtilisateurs.queryKey(),
+        });
+      },
     })
   );
 
@@ -130,6 +145,18 @@ export const useSaveActionStatuts = () => {
             collectiviteId,
             referentielId,
           }),
+        });
+      },
+      // Voir useSaveActionStatut : invalidations historique dans
+      // `onSettled` + awaitées pour conserver la cohérence du cache même
+      // en cas d'échec de la mutation et bloquer la résolution tant que
+      // les requêtes historique n'ont pas été marquées stales.
+      onSettled: async () => {
+        await queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.historique.list.queryKey(),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: trpc.referentiels.historique.listUtilisateurs.queryKey(),
         });
       },
     })

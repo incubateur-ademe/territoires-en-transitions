@@ -7,8 +7,6 @@ import {
 } from 'nuqs';
 import { HistoriqueType, historiqueTypeEnumValues } from './types';
 
-export const NB_ITEMS_PER_PAGE = 10;
-
 export type TFilterType = HistoriqueType;
 
 export const filtresTypeOptions: { value: TFilterType; label: string }[] = [

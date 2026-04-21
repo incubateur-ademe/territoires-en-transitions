@@ -104,6 +104,12 @@ export const useSetPersonnalisationReponse = () => {
           { collectiviteId }
         ),
       });
+      await queryClient.invalidateQueries({
+        queryKey: trpc.referentiels.historique.list.queryKey(),
+      });
+      await queryClient.invalidateQueries({
+        queryKey: trpc.referentiels.historique.listUtilisateurs.queryKey(),
+      });
     },
   });
 

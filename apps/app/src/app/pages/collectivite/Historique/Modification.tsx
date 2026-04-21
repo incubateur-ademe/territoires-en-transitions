@@ -5,9 +5,9 @@ import { useSearchParams } from 'next/navigation';
 import { JSX, useState } from 'react';
 
 import { referentielToName } from '@/app/app/labels';
-import { ReferentielId } from '@tet/domain/referentiels';
+import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
 import { Badge, Button, Icon, Spacer } from '@tet/ui';
-import { HistoriqueType, THistoriqueItem } from './types';
+import { HistoriqueItem } from './types';
 
 export type HistoriqueDescription = {
   titre: string;
@@ -15,7 +15,7 @@ export type HistoriqueDescription = {
 };
 
 type Props = {
-  historique: THistoriqueItem;
+  historique: HistoriqueItem;
   // nom de la modification. ex: 'Action: statut modifié'
   nom: string;
   // tableau contenant par exemple l'action et la tache pour une modification de statut
@@ -28,13 +28,6 @@ type Props = {
   pageLink?: string;
 };
 
-// le nom du référentiel concerné sera affiché pour ces types de modifications
-const SHOW_REFERENTIEL: HistoriqueType[] = [
-  'action_statut',
-  'action_precision',
-  'preuve',
-];
-
 const Modification = ({
   historique,
   icon = 'information-fill',
@@ -45,12 +38,17 @@ const Modification = ({
 }: Props) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const searchParams = useSearchParams();
-  const { modified_at, modified_by_nom, type, action_id } = historique;
+  const { modifiedAt: modifiedAtIso, modifiedByNom } = historique;
   const referentielId =
-    SHOW_REFERENTIEL.includes(type) &&
-    (action_id?.substring(0, 3) as ReferentielId);
-  const referentielNom = referentielId && referentielToName[referentielId];
-  const modifiedAt = new Date(modified_at);
+    historique.type !== 'action_statut' &&
+    historique.type !== 'action_precision'
+      ? null
+      : getReferentielIdFromActionId(historique.actionId);
+
+  const referentielNom = referentielId
+    ? referentielToName[referentielId]
+    : null;
+  const modifiedAt = new Date(modifiedAtIso);
 
   const pageLinkWithPanel = (() => {
     if (!pageLink) return undefined;
@@ -99,7 +97,7 @@ const Modification = ({
           <div className="mb-4" data-test="desc">
             <p className="mb-2 text-sm">
               <span className="text-gray-500">Par : </span>
-              {modified_by_nom}
+              {modifiedByNom}
             </p>
             {referentielNom ? (
               <p className="mb-2 text-sm">

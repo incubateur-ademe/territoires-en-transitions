@@ -125,3 +125,4 @@ const current = await tx.select().from(table).where(eq(table.id, id)).for('updat
 - Plan: `doc/plans/2026-04-14-001-refactor-select-for-update-history-race-condition-plan.md`
 - ADR #12 (`doc/adr/0012-pattern-result.md`): TransactionManager pattern
 - Files modified: `apps/backend/src/referentiels/update-action-commentaire/update-action-commentaire.service.ts`, `apps/backend/src/referentiels/update-action-statut/update-action-statut.service.ts`
+- Read-path migration pattern (orthogonal context): `doc/solutions/architecture-patterns/supabase-to-trpc-with-computed-enrichment-2026-04-27.md` — useful when a new read repository touches the same `FOR UPDATE` consumers.

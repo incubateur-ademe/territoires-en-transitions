@@ -1,7 +1,7 @@
 import {Meta} from '@storybook/nextjs-vite';
 
 import HistoriqueItemActionStatut from './HistoriqueItemActionStatut';
-import {THistoriqueItemProps} from '../types';
+import {HistoriqueItemProps} from '../types';
 import {
   fakeAjoutSimpleActionStatutHistorique,
   fakeModificationSimpleActionStatutHistorique,
@@ -14,7 +14,7 @@ export default {
   component: HistoriqueItemActionStatut,
 } as Meta;
 
-const ajoutDeStatutSimpleArgs: THistoriqueItemProps = {
+const ajoutDeStatutSimpleArgs: HistoriqueItemProps = {
   item: fakeAjoutSimpleActionStatutHistorique,
 };
 
@@ -22,7 +22,7 @@ export const AjoutDeStatutSimple = {
   args: ajoutDeStatutSimpleArgs,
 };
 
-const ajoutDeStatutDetailleArgs: THistoriqueItemProps = {
+const ajoutDeStatutDetailleArgs: HistoriqueItemProps = {
   item: fakeAjoutDetailleActionStatutHistorique,
 };
 
@@ -30,7 +30,7 @@ export const AjoutDeStatutDetaille = {
   args: ajoutDeStatutDetailleArgs,
 };
 
-const modificationDeStatutSimpleArgs: THistoriqueItemProps = {
+const modificationDeStatutSimpleArgs: HistoriqueItemProps = {
   item: fakeModificationSimpleActionStatutHistorique,
 };
 
@@ -38,7 +38,7 @@ export const ModificationDeStatutSimple = {
   args: modificationDeStatutSimpleArgs,
 };
 
-const modificationDeStatutSimpleADetailleArgs: THistoriqueItemProps = {
+const modificationDeStatutSimpleADetailleArgs: HistoriqueItemProps = {
   item: fakeModificationSimpleADetailleActionStatutHistorique,
 };
 
@@ -46,7 +46,7 @@ export const ModificationDeStatutSimpleADetaille = {
   args: modificationDeStatutSimpleADetailleArgs,
 };
 
-const modificationDeStatutDetailleADetailleArgs: THistoriqueItemProps = {
+const modificationDeStatutDetailleADetailleArgs: HistoriqueItemProps = {
   item: fakeModificationDetailleActionStatutHistorique,
 };
 

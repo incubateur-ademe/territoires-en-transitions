@@ -6,9 +6,11 @@ import {
   DetailPrecedenteModificationWrapper,
 } from '../DetailModificationWrapper';
 import { getItemActionProps } from '../actionStatut/getItemActionProps';
-import { THistoriqueItemProps } from '../types';
+import { HistoriqueItemPropsOf } from '../types';
 
-const HistoriqueItemActionPrecision = (props: THistoriqueItemProps) => {
+type Props = HistoriqueItemPropsOf<'action_precision'>;
+
+const HistoriqueItemActionPrecision = (props: Props) => {
   const { item } = props;
 
   return (
@@ -23,15 +25,15 @@ const HistoriqueItemActionPrecision = (props: THistoriqueItemProps) => {
 
 export default HistoriqueItemActionPrecision;
 
-const HistoriqueItemActionPrecisionDetails = (props: THistoriqueItemProps) => {
+const HistoriqueItemActionPrecisionDetails = (props: Props) => {
   const { item } = props;
-  const { previous_precision, precision } = item;
+  const { previousPrecision, precision } = item;
 
   return (
     <>
-      {previous_precision ? (
+      {previousPrecision ? (
         <DetailPrecedenteModificationWrapper>
-          {renderPrecision(previous_precision, true)}
+          {renderPrecision(previousPrecision, true)}
         </DetailPrecedenteModificationWrapper>
       ) : null}
       {precision && (

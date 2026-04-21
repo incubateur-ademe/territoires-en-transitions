@@ -1,6 +1,7 @@
 /**
  * Définitions usuelles de colonnes
  */
+import { SYSTEM_MODIFIED_BY_ID } from '@tet/domain/utils';
 import { sql, SQL } from 'drizzle-orm';
 import {
   PgColumn,
@@ -52,3 +53,5 @@ export function sqlToDateTimeISO(dateTimeColumn: PgColumn | SQL): SQL<string> {
 export function sqlToDate(dateTimeColumn: PgColumn | SQL): SQL<string> {
   return sql<string>`to_char(${dateTimeColumn}, 'YYYY-MM-DD')`;
 }
+
+export const SYSTEM_MODIFIED_BY_SQL_LITERAL = sql<string>`${SYSTEM_MODIFIED_BY_ID}::uuid`;

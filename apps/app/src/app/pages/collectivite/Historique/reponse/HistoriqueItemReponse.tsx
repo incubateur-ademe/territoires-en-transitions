@@ -4,28 +4,28 @@ import {
 } from '@/app/app/pages/collectivite/Historique/DetailModificationWrapper';
 import Modification from '@/app/app/pages/collectivite/Historique/Modification';
 import { makeMaCollectiviteUrl } from '@/app/app/paths';
-import { THistoriqueItemProps } from '../types';
+import { HistoriqueItemPropsOf } from '../types';
 import { formatReponseValue } from './formatReponseValue';
+
+type Props = HistoriqueItemPropsOf<'reponse'>;
 
 /**
  * Modification d'une réponse à une question de personnalisation du référentiel
  */
-const HistoriqueItemReponse = ({ item }: THistoriqueItemProps) => {
-  const { collectivite_id, thematique_nom, thematique_id } = item;
+const HistoriqueItemReponse = ({ item }: Props) => {
+  const { collectiviteId, thematiqueNom, thematiqueId } = item;
 
   return (
     <Modification
       historique={item}
       nom="Caractéristique de la collectivité modifiée"
-      descriptions={[
-        { titre: 'Thématique', description: thematique_nom ?? '' },
-      ]}
+      descriptions={[{ titre: 'Thématique', description: thematiqueNom ?? '' }]}
       detail={<HistoriqueItemReponseDetails item={item} />}
       pageLink={makeMaCollectiviteUrl({
-        collectiviteId: collectivite_id,
+        collectiviteId: collectiviteId,
         view: 'personnalisation',
-        searchParams: thematique_id
-          ? { t: thematique_id, ot: thematique_id }
+        searchParams: thematiqueId
+          ? { t: thematiqueId, ot: thematiqueId }
           : undefined,
       })}
     />
@@ -34,28 +34,28 @@ const HistoriqueItemReponse = ({ item }: THistoriqueItemProps) => {
 
 export default HistoriqueItemReponse;
 
-const HistoriqueItemReponseDetails = (props: THistoriqueItemProps) => {
+const HistoriqueItemReponseDetails = (props: Props) => {
   const { item } = props;
   const {
-    previous_reponse,
+    previousReponse,
     reponse,
-    question_formulation,
-    question_type,
+    questionFormulation,
+    questionType,
     justification,
   } = item;
 
   return (
     <>
-      <p>Question : {question_formulation}</p>
-      {previous_reponse !== null ? (
+      <p>Question : {questionFormulation}</p>
+      {previousReponse !== null ? (
         <DetailPrecedenteModificationWrapper>
           <span className="line-through">
-            {formatReponseValue(previous_reponse, question_type)}
+            {formatReponseValue(previousReponse, questionType)}
           </span>
         </DetailPrecedenteModificationWrapper>
       ) : null}
       <DetailNouvelleModificationWrapper>
-        {formatReponseValue(reponse, question_type)}
+        {formatReponseValue(reponse, questionType)}
       </DetailNouvelleModificationWrapper>
       {justification && (
         <p className="mt-4">

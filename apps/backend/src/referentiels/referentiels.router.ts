@@ -4,6 +4,7 @@ import { TrpcService } from '../utils/trpc/trpc.service';
 import { GetReferentielDefinitionRouter } from './definitions/get-referentiel-definition/get-referentiel-definition.router';
 import { HandleMesurePilotesRouter } from './handle-mesure-pilotes/handle-mesure-pilotes.router';
 import { HandleMesuresServicesRouter } from './handle-mesure-services/handle-mesure-services.router';
+import { HistoriqueRouter } from './historique/historique.router';
 import { CreatePreuveRouter } from './labellisations/create-preuve/create-preuve.router';
 import { GetLabellisationRouter } from './labellisations/get-labellisation.router';
 import { HandleMesureAuditStatutRouter } from './labellisations/handle-mesure-audit-statut/handle-mesure-audit-statut.router';
@@ -39,7 +40,8 @@ export class ReferentielsRouter {
     private readonly actionPersonnalisationsRouter: ActionPersonnalisationsRouter,
     private readonly handleMesureAuditStatutRouter: HandleMesureAuditStatutRouter,
     private readonly getReferentielDefinitionRouter: GetReferentielDefinitionRouter,
-    private readonly resetDisplayPreferencesRouter: ResetDisplayPreferencesRouter
+    private readonly resetDisplayPreferencesRouter: ResetDisplayPreferencesRouter,
+    private readonly historiqueRouter: HistoriqueRouter
   ) {}
 
   router = this.trpc.router({
@@ -69,6 +71,8 @@ export class ReferentielsRouter {
     definitions: this.getReferentielDefinitionRouter.router,
 
     preferences: this.resetDisplayPreferencesRouter.router,
+
+    historique: this.historiqueRouter.router,
   });
 
   createCaller = this.trpc.createCallerFactory(this.router);

@@ -1,7 +1,7 @@
 import {Meta} from '@storybook/nextjs-vite';
 
 import HistoriqueItemActionPrecision from './HistoriqueItemActionPrecision';
-import {THistoriqueItemProps} from '../types';
+import {HistoriqueItemProps} from '../types';
 import {
   fakeAjoutActionPrecisionHistorique,
   fakeModificationActionPrecisionHistorique,
@@ -11,7 +11,7 @@ export default {
   component: HistoriqueItemActionPrecision,
 } as Meta;
 
-const ajoutPrecisionArgs: THistoriqueItemProps = {
+const ajoutPrecisionArgs: HistoriqueItemProps = {
   item: fakeAjoutActionPrecisionHistorique,
 };
 
@@ -19,7 +19,7 @@ export const AjoutPrecision = {
   args: ajoutPrecisionArgs,
 };
 
-const modificationPrecisionArgs: THistoriqueItemProps = {
+const modificationPrecisionArgs: HistoriqueItemProps = {
   item: fakeModificationActionPrecisionHistorique,
 };
 

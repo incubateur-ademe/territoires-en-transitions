@@ -193,6 +193,22 @@ domain/src/plans/
   
 ```
 
+### 🏷️ Conventions de nommage des fichiers d'entrée/sortie
+
+**Suffixes canoniques.** Les schémas et types d'entrée d'un router ou service utilisent `*.input.ts`. Les schémas et types de sortie utilisent `*.output.ts`. Les anciens fichiers en `*.request.ts` / `*.response.ts` (ou les schémas de réponse inlinés dans des fichiers de schéma primitif) sont considérés comme du legacy et sont migrés vers `*.input.ts` / `*.output.ts` à l'occasion de modifications fonctionnelles, sans refactor de masse — cohérent avec le principe d'adoption graduelle décrit en section *Conséquences*.
+
+**Nommage des symboles à l'intérieur.** Le schéma porte le nom de la feature suivi du suffixe `Schema` : `xxxInputSchema`, `xxxOutputSchema`. Le type inféré porte le nom de la feature sans suffixe `Type` : `XxxInput`, `XxxOutput`. Pour les sous-schémas (filtres, options, etc.), on étend la même convention : `xxxInputFiltersSchema`, `XxxInputFilters`.
+
+```ts
+// ✅ packages/domain/.../list-plans.input.ts
+export const listPlansInputSchema = z.object({ /* … */ });
+export type ListPlansInput = z.infer<typeof listPlansInputSchema>;
+
+// ✅ packages/domain/.../list-plans.output.ts
+export const listPlansOutputSchema = z.object({ /* … */ });
+export type ListPlansOutput = z.infer<typeof listPlansOutputSchema>;
+```
+
 ### ♻️ Flux de données entre les couches de responsabilité
 
 ```

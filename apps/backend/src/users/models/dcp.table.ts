@@ -1,4 +1,5 @@
 import { UserPreferences } from '@tet/domain/users';
+import { SYSTEM_MODIFIED_BY_NOM } from '@tet/domain/utils';
 import { sql } from 'drizzle-orm';
 import {
   boolean,
@@ -29,7 +30,7 @@ export const dcpTable = pgTable('dcp', {
 });
 
 export const createdByNom = sql<string>`CASE
-  WHEN ${dcpTable.id} IS NULL THEN 'Utilisateur inconnu'
+  WHEN ${dcpTable.id} IS NULL THEN ${SYSTEM_MODIFIED_BY_NOM}
   WHEN ${dcpTable.limited} THEN 'Compte désactivé'
   WHEN ${dcpTable.deleted} THEN 'Compte supprimé'
   ELSE CONCAT(${dcpTable.prenom}, ' ', ${dcpTable.nom})

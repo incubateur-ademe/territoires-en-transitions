@@ -25,6 +25,11 @@ import { HandleMesurePilotesRouter } from './handle-mesure-pilotes/handle-mesure
 import { HandleMesurePilotesService } from './handle-mesure-pilotes/handle-mesure-pilotes.service';
 import { HandleMesuresServicesRouter } from './handle-mesure-services/handle-mesure-services.router';
 import { HandleMesureServicesService } from './handle-mesure-services/handle-mesure-services.service';
+import { HistoriqueRouter } from './historique/historique.router';
+import { ListHistoriqueUtilisateurRepository } from './historique/list-historique-utilisateur/list-historique-utilisateur.repository';
+import { ListHistoriqueUtilisateurService } from './historique/list-historique-utilisateur/list-historique-utilisateur.service';
+import { ListHistoriqueRepository } from './historique/list-historique/list-historique.repository';
+import { ListHistoriqueService } from './historique/list-historique/list-historique.service';
 import { ImportReferentielController } from './import-referentiel/import-referentiel.controller';
 import { ImportReferentielRepository } from './import-referentiel/import-referentiel.repository';
 import { ImportReferentielService } from './import-referentiel/import-referentiel.service';
@@ -130,8 +135,19 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
 
     ResetDisplayPreferencesService,
     ResetDisplayPreferencesRouter,
+
+    HistoriqueRouter,
+    ListHistoriqueRepository,
+    ListHistoriqueService,
+    ListHistoriqueUtilisateurRepository,
+    ListHistoriqueUtilisateurService,
   ],
-  exports: [ListLabellisationsService, ListActionsService, ReferentielsRouter],
+  exports: [
+    ListLabellisationsService,
+    ListActionsService,
+    ReferentielsRouter,
+    HistoriqueRouter,
+  ],
   controllers: [
     GetReferentielController,
     ListSnapshotsController,

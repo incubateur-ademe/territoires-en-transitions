@@ -72,6 +72,12 @@ export const useSetPersonnalisationJustification = (collectiviteId: number) => {
       await queryClient.invalidateQueries({
         queryKey: queryKeyQuestionsReponses,
       });
+      await queryClient.invalidateQueries({
+        queryKey: trpc.referentiels.historique.list.queryKey(),
+      });
+      await queryClient.invalidateQueries({
+        queryKey: trpc.referentiels.historique.listUtilisateurs.queryKey(),
+      });
     },
   });
 };

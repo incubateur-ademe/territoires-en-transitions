@@ -1,49 +1,70 @@
 import { makeReferentielTacheUrl } from '@/app/app/paths';
-import { getReferentielIdFromActionId } from '@tet/domain/referentiels';
-import { THistoriqueItem } from '../types';
+import { ACTION_TYPE_LABELS } from '@/app/referentiels/actions/action-label.constants';
+import {
+  ActionTypeEnum,
+  getReferentielIdFromActionId,
+} from '@tet/domain/referentiels';
+import {
+  HistoriqueActionPrecisionItem,
+  HistoriqueActionStatutItem,
+} from '../types';
 
-/** Génère les propriétés communes aux modifications (statut, précision) sur les
- * actions du référentiel */
-export const getItemActionProps = (item: THistoriqueItem) => {
+/** Retourne le label avec première lettre en majuscule. */
+const capitalize = (s: string): string =>
+  s.length > 0 ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+
+/**
+ * Génère les propriétés communes aux modifications (statut, précision) sur les
+ * actions du référentiel.
+ *
+ * Le label du second descripteur est piloté par `actionType` (calculé côté
+ * backend via `getActionTypeFromActionId`). `ACTION_TYPE_LABELS` est la source
+ * de vérité pour la traduction : sous-action → "Sous-mesure", tache → "Tâche",
+ * etc. On retombe sur "Tâche"/"Mesure" quand `actionType` est indisponible.
+ */
+export const getItemActionProps = (
+  item: HistoriqueActionStatutItem | HistoriqueActionPrecisionItem
+) => {
   const {
-    action_id,
-    action_identifiant,
-    action_nom,
-    tache_identifiant,
-    tache_nom,
-    collectivite_id,
+    actionId,
+    actionIdentifiant,
+    actionNom,
+    tacheIdentifiant,
+    tacheNom,
+    collectiviteId,
+    actionType,
   } = item;
 
-  // génère le description de l'action et de la tâche auxquelles se rapporte la modification
-  const descriptions = [];
-  const isValidAction = action_identifiant && action_nom;
+  const descriptions: { titre: string; description: string }[] = [];
+  const isValidAction = actionIdentifiant && actionNom;
   if (isValidAction) {
     descriptions.push({
       titre: 'Mesure',
-      description: `${action_identifiant} ${action_nom}`,
+      description: `${actionIdentifiant} ${actionNom}`,
     });
   }
-  if (tache_identifiant && tache_nom) {
-    const referentiel = (action_id ?? '').split('_')[0];
-    const isSousAction =
-      (referentiel === 'cae' && tache_identifiant.split('.').length === 4) ||
-      (referentiel === 'eci' && tache_identifiant.split('.').length === 3);
+  if (tacheIdentifiant && tacheNom) {
+    const titre =
+      actionType && actionType !== ActionTypeEnum.ACTION
+        ? capitalize(ACTION_TYPE_LABELS[actionType])
+        : isValidAction
+        ? 'Tâche'
+        : 'Mesure';
 
     descriptions.push({
-      // cas particulier : l'identifiant et le nom de l'action sont dans les
-      // champs `tache_` pour la modification sur les précisions de l'action =>
-      // on affiche alors "Action" au lieu de "Tâche"
-      titre: isSousAction ? 'Sous-mesure' : isValidAction ? 'Tâche' : 'Mesure',
-      description: `${tache_identifiant} ${tache_nom}`,
+      titre,
+      description: `${tacheIdentifiant} ${tacheNom}`,
     });
   }
 
-  // génère le lien vers la page concernée
-  const pageLink = makeReferentielTacheUrl({
-    referentielId: getReferentielIdFromActionId(action_id || ''),
-    collectiviteId: collectivite_id,
-    actionId: action_id ?? '',
-  });
+  const pageLink =
+    actionId && collectiviteId !== null
+      ? makeReferentielTacheUrl({
+          referentielId: getReferentielIdFromActionId(actionId),
+          collectiviteId,
+          actionId,
+        })
+      : undefined;
 
   return { descriptions, pageLink };
 };

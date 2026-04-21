@@ -3,13 +3,12 @@
 import HistoriqueItemActionPrecision from '@/app/app/pages/collectivite/Historique/actionPrecision/HistoriqueItemActionPrecision';
 import HistoriqueItemActionStatut from '@/app/app/pages/collectivite/Historique/actionStatut/HistoriqueItemActionStatut';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Event, Pagination, useEventTracker } from '@tet/ui';
-import { FC } from 'react';
-import { NB_ITEMS_PER_PAGE } from './filters';
+import { NB_HISTORIQUE_ITEMS_PER_PAGE } from '@tet/domain/referentiels';
+import { Alert, Event, Pagination, useEventTracker } from '@tet/ui';
 import HistoriqueFiltres from './HistoriqueFiltres/HistoriqueFiltres';
 import HistoriqueItemJustification from './reponse/HistoriqueItemJustification';
 import HistoriqueItemReponse from './reponse/HistoriqueItemReponse';
-import { THistoriqueItem, THistoriqueItemProps } from './types';
+import { HistoriqueItem } from './types';
 import { useHistoriqueItemListe } from './useHistoriqueItemListe';
 
 /**
@@ -23,7 +22,7 @@ export const HistoriqueListe = ({
   small?: boolean;
 }) => {
   const tracker = useEventTracker();
-  const { items, total, filters, setFilters, isLoading } =
+  const { items, total, filters, setFilters, isLoading, isError } =
     useHistoriqueItemListe({ actionId });
 
   return (
@@ -34,13 +33,18 @@ export const HistoriqueListe = ({
         setFilters={setFilters}
       />
       <div className="grow flex flex-col gap-5" data-test="Historique">
-        <Content isLoading={isLoading} items={items} total={total} />
+        <Content
+          isLoading={isLoading}
+          isError={isError}
+          items={items}
+          total={total}
+        />
       </div>
 
       <Pagination
         className="mt-6 md:mt-12 mx-auto"
         nbOfElements={total}
-        maxElementsPerPage={NB_ITEMS_PER_PAGE}
+        maxElementsPerPage={NB_HISTORIQUE_ITEMS_PER_PAGE}
         selectedPage={filters.page ?? 1}
         onChange={(selected) => {
           setFilters({ ...filters, page: selected });
@@ -55,15 +59,27 @@ export const HistoriqueListe = ({
 
 const Content = ({
   isLoading,
+  isError,
   items,
   total,
 }: {
-  items: THistoriqueItem[];
+  items: HistoriqueItem[];
   total: number;
   isLoading?: boolean;
+  isError: boolean;
 }) => {
   if (isLoading) {
     return <SpinnerLoader className="m-auto" />;
+  }
+  if (isError) {
+    return (
+      <div role="alert" data-test="historique_error">
+        <Alert
+          state="error"
+          title="Une erreur est survenue lors du chargement de l'historique. Veuillez réessayer."
+        />
+      </div>
+    );
   }
   if (total === 0) {
     return (
@@ -73,38 +89,29 @@ const Content = ({
     );
   }
   return items.map((item) => {
-    const { type } = item;
-    const Item = historiqueParType[type];
-    return Item ? <Item key={makeKey(item)} item={item} /> : null;
+    const key = makeKey(item);
+    switch (item.type) {
+      case 'action_statut':
+        return <HistoriqueItemActionStatut key={key} item={item} />;
+      case 'action_precision':
+        return <HistoriqueItemActionPrecision key={key} item={item} />;
+      case 'reponse':
+        return <HistoriqueItemReponse key={key} item={item} />;
+      case 'justification':
+        return <HistoriqueItemJustification key={key} item={item} />;
+    }
   });
 };
 
-// correspondances entre le type d'un item de l'historique et le composant
-// utilisé pour l'afficher
-const historiqueParType: { [k: string]: FC<THistoriqueItemProps> } = {
-  action_statut: HistoriqueItemActionStatut,
-  action_precision: HistoriqueItemActionPrecision,
-  reponse: HistoriqueItemReponse,
-  justification: HistoriqueItemJustification,
-};
-
 // construit une clé d'identification d'un item de l'historique
-const makeKey = (item: THistoriqueItem): string => {
-  const { type, action_id, question_id, modified_at } = item;
-  const timestamp = new Date(modified_at).getTime();
-
-  if (
-    type === 'action_statut' ||
-    type === 'action_precision' ||
-    type === 'preuve'
-  ) {
-    return `${type}-${action_id}-${timestamp}`;
+const makeKey = (item: HistoriqueItem): string => {
+  const timestamp = new Date(item.modifiedAt).getTime();
+  switch (item.type) {
+    case 'action_statut':
+    case 'action_precision':
+      return `${item.type}-${item.actionId}-${timestamp}`;
+    case 'reponse':
+    case 'justification':
+      return `${item.type}-${item.questionId}-${timestamp}`;
   }
-
-  if (type === 'reponse' || type === 'justification') {
-    return `${type}-${question_id}-${timestamp}`;
-  }
-
-  // TODO: gérer les autres types de modification
-  return type;
 };
