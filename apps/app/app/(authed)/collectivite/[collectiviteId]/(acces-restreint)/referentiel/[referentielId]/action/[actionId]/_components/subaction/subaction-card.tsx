@@ -46,12 +46,10 @@ const SubactionHeader = ({
   subAction,
   isExpanded,
   toggleExpand,
-  showJustifications,
 }: {
   subAction: ActionDefinitionSummary;
   isExpanded: boolean;
   toggleExpand: () => void;
-  showJustifications: boolean;
 }) => {
   const preuvesCount = useActionPreuvesCount(subAction.id);
   const isVisitor = useIsVisitor();
@@ -101,12 +99,6 @@ const SubactionHeader = ({
       <ScoreIndicatifLibelle actionId={subAction.id} />
 
       <SubactionCardActions action={subAction} />
-      {showJustifications && (
-        <ActionJustificationField
-          actionId={subAction.id}
-          placeholder="Explications sur l'etat d'avancement"
-        />
-      )}
     </div>
   );
 };
@@ -120,7 +112,7 @@ const SubactionContent = ({
   tasks: ActionDefinitionSummary[];
   hideTasksStatus: boolean;
 }) => (
-  <div className="flex flex-col gap-4">
+  <div className={cn('flex flex-col gap-4 p-4')}>
     {(subAction.description || subAction.haveExemples) && (
       <SubActionDescription subAction={subAction} className="text-sm" />
     )}
@@ -171,12 +163,27 @@ const SubActionCard = ({
         expanded={isExpanded}
         setExpanded={onToggleExpanded}
         renderHeader={({ isExpanded: expanded, toggleExpand }) => (
-          <SubactionHeader
-            subAction={subAction}
-            isExpanded={expanded}
-            toggleExpand={toggleExpand}
-            showJustifications={showJustifications}
-          />
+          <>
+            <SubactionHeader
+              subAction={subAction}
+              isExpanded={expanded}
+              toggleExpand={toggleExpand}
+            />
+            <div
+              className={cn('px-4 pb-4 bg-white cursor-pointer', {
+                'bg-primary-1': isExpanded,
+                'rounded-lg': !isExpanded,
+              })}
+              onClick={toggleExpand}
+            >
+              {showJustifications && (
+                <ActionJustificationField
+                  actionId={subAction.id}
+                  placeholder="Explications sur l'etat d'avancement"
+                />
+              )}
+            </div>
+          </>
         )}
         content={
           <SubactionContent
