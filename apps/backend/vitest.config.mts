@@ -20,6 +20,10 @@ export default defineConfig(({ mode }) => ({
     hookTimeout: 30000, // milliseconds (default is 10000)
     env: loadEnv(mode, __dirname, ''),
 
+    // Limit parallelism: each test file creates its own NestJS app with a DB pool
+    // of 20 connections. Too many parallel files saturate PostgreSQL.
+    maxWorkers: 4,
+
     setupFiles: ['./test/vitest-matchers.ts'],
 
     include: ['src/**/*.{test,spec,e2e-spec}.{ts,mts,cts}'],

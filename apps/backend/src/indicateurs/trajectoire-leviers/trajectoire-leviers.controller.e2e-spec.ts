@@ -1,8 +1,14 @@
 import { INestApplication } from '@nestjs/common';
-import { getAuthToken, getTestApp, getTestDatabase } from '@tet/backend/test';
+import {
+  getAuthToken,
+  getAuthUserFromUserCredentials,
+  getTestApp,
+  getTestDatabase,
+} from '@tet/backend/test';
 import { addTestUser } from '@tet/backend/users/users/users.test-fixture';
 import request from 'supertest';
 import { expect } from 'vitest';
+import { TrpcRouter } from '../../utils/trpc/trpc.router';
 
 describe('Trajectoire Leviers Controller', () => {
   let app: INestApplication;
@@ -16,7 +22,18 @@ describe('Trajectoire Leviers Controller', () => {
       email: testUserResult.user.email ?? '',
       password: testUserResult.user.password,
     });
-  });
+
+    // Ensure the SNBC trajectory exists before testing the HTTP endpoint,
+    // as a parallel test may delete and recompute it (race condition).
+    const router = app.get(TrpcRouter);
+    const authenticatedUser = getAuthUserFromUserCredentials(
+      testUserResult.user
+    );
+    const caller = router.createCaller({ user: authenticatedUser });
+    await caller.indicateurs.trajectoires.snbc.getOrCompute({
+      siren: '246700488',
+    });
+  }, 30000);
 
   test('Get data for collectivite with siren 246700488', async () => {
     const response = await request(app.getHttpServer())

@@ -60,11 +60,22 @@ describe('generate-reports.router.e2e-spec.ts', () => {
 
     expect(reportGeneration.name).toMatch(expectedFileName);
 
-    await sleep(30000);
-
-    const updatedReportGeneration = await caller.plans.reports.get({
+    // Poll until the report is completed (max 60s)
+    let updatedReportGeneration = await caller.plans.reports.get({
       reportId: reportGeneration.id,
     });
+    const maxWait = 60000;
+    const pollInterval = 2000;
+    const start = Date.now();
+    while (
+      updatedReportGeneration.status !== 'completed' &&
+      Date.now() - start < maxWait
+    ) {
+      await sleep(pollInterval);
+      updatedReportGeneration = await caller.plans.reports.get({
+        reportId: reportGeneration.id,
+      });
+    }
     expect(updatedReportGeneration.status).toBe('completed');
 
     const response = await request(app.getHttpServer())
@@ -86,7 +97,7 @@ describe('generate-reports.router.e2e-spec.ts', () => {
 
     expect(fileName).toMatch(expectedFileName);
     expect(body.byteLength).toBeGreaterThan(1000);
-  }, 25000);
+  }, 90000);
 
   it("Refuse la génération de rapport si l'utilisateur n'a pas les droits", async () => {
     const caller = router.createCaller({ user: noAccessUser });
