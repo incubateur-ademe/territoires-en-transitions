@@ -17,7 +17,8 @@ import {
   filterActionsBy,
   ReferentielId,
 } from '@tet/domain/referentiels';
-import { cn, Table, TableHead, TableLoading, TableRow } from '@tet/ui';
+import { divisionOrZero } from '@tet/domain/utils';
+import { cn, Table, TableCell, TableHead, TableLoading, TableRow } from '@tet/ui';
 import React, { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useSidePanel } from '../../ui/layout/side-panel/side-panel.context';
 import { ActionListItem } from '../actions/use-list-actions';
@@ -29,6 +30,7 @@ import {
   ReferentielTableKeyboardProps,
   useTableKeyboard,
 } from './referentiel-table.keyboard';
+import { ReferentielTablePointsCell } from './referentiel-table.points.cell';
 import { useGetReferentielTableFiltersState } from './use-get-referentiel-table-filters-state';
 import { useListReferentielTableColumns } from './use-list-referentiel-table-columns';
 import { useReferentielTableColumnVisibility } from './use-referentiel-table-column-visibility';
@@ -211,7 +213,90 @@ function TableContent({
           ))}
         </TableRow>
       ))}
+      <TableTotalRow table={table} />
     </TableWrapper>
+  );
+}
+
+// Identifiants des colonnes à sommer (les pourcentages sont recalculés
+// à partir des totaux car sommer des pourcentages n'a pas de sens).
+const SUMMABLE_COLUMN_IDS = [
+  'pointPotentiel',
+  'pointReferentiel',
+  'pointNonRenseigne',
+  'pointFait',
+  'pointProgramme',
+  'pointPasFait',
+] as const;
+
+type SummableColumnId = (typeof SUMMABLE_COLUMN_IDS)[number];
+
+function TableTotalRow({ table }: { table: ReactTable<ActionListItem> }) {
+  // On somme uniquement les lignes de premier niveau (axes) du modèle filtré :
+  // leurs scores sont déjà agrégés sur toute la descendance, ce qui évite
+  // tout double comptage via les sous-lignes dépliées.
+  const topLevelRows = table.getFilteredRowModel().rows;
+
+  const totals = useMemo(() => {
+    const initial = Object.fromEntries(
+      SUMMABLE_COLUMN_IDS.map((id) => [id, 0])
+    ) as Record<SummableColumnId, number>;
+
+    return topLevelRows.reduce((acc, row) => {
+      const score = row.original.score;
+      for (const id of SUMMABLE_COLUMN_IDS) {
+        acc[id] += score[id] ?? 0;
+      }
+      return acc;
+    }, initial);
+  }, [topLevelRows]);
+
+  const valuesById: Record<string, { value: number; percentage?: boolean }> = {
+    pointPotentiel: { value: totals.pointPotentiel },
+    pointReferentiel: { value: totals.pointReferentiel },
+    pointNonRenseigne: { value: totals.pointNonRenseigne },
+    pointFait: { value: totals.pointFait },
+    pointProgramme: { value: totals.pointProgramme },
+    pointPasFait: { value: totals.pointPasFait },
+    scoreRealise: {
+      value: divisionOrZero(totals.pointFait, totals.pointPotentiel),
+      percentage: true,
+    },
+    scoreProgramme: {
+      value: divisionOrZero(totals.pointProgramme, totals.pointPotentiel),
+      percentage: true,
+    },
+    scorePasFait: {
+      value: divisionOrZero(totals.pointPasFait, totals.pointPotentiel),
+      percentage: true,
+    },
+  };
+
+  const visibleColumns = table.getVisibleLeafColumns();
+
+  return (
+    <TableRow className="text-sm !bg-white font-medium text-primary-9 [&_td]:border-t [&_td]:border-grey-3">
+      {visibleColumns.map((column, index) => {
+        const total = valuesById[column.id];
+        if (total) {
+          return (
+            <ReferentielTablePointsCell
+              key={column.id}
+              value={total.value}
+              percentage={total.percentage}
+            />
+          );
+        }
+        if (index === 0) {
+          return (
+            <TableCell key={column.id} tabIndex={-1} className="font-bold">
+              TOTAL
+            </TableCell>
+          );
+        }
+        return <TableCell key={column.id} tabIndex={-1} />;
+      })}
+    </TableRow>
   );
 }
 
