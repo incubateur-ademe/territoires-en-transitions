@@ -9,7 +9,7 @@ import {
 import { useDebouncedCallback } from 'use-debounce';
 import { InputBase, InputBaseProps } from './InputBase';
 
-export type InputSearchProps = Omit<InputBaseProps, 'icon' | 'type'> & {
+export type InputSearchProps = Omit<InputBaseProps, 'type'> & {
   /** Fait apparaître un picto "chargement" à la place du picto "recherche" */
   isLoading?: boolean;
   /** Valeur en ms du délai entre deux appels à `onSearch` lors de la saisie. */
