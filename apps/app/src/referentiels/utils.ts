@@ -1,8 +1,7 @@
-import { Enums } from '@tet/api';
+import { ActionCategorie } from '@tet/domain/referentiels';
 
-export const phaseToLabel: Record<Enums<'action_categorie'> | string, string> =
-  {
-    bases: "S'engager",
-    'mise en œuvre': 'Concrétiser',
-    effets: 'Consolider',
-  };
+export const phaseToLabel: Record<ActionCategorie | string, string> = {
+  bases: "S'engager",
+  'mise en œuvre': 'Concrétiser',
+  effets: 'Consolider',
+};

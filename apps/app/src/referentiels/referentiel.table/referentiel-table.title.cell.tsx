@@ -4,7 +4,6 @@ import { ActionId, ActionTypeEnum } from '@tet/domain/referentiels';
 import { Button, cn, Icon, TableCell, Tooltip } from '@tet/ui';
 import { MouseEvent } from 'react';
 import { ActionListItem } from '../actions/use-list-actions';
-import { ProgressionBadgeAndBar } from './progression-badge-and-bar';
 import { getTableMeta } from './utils';
 
 type Props = {
@@ -27,13 +26,10 @@ export const ReferentielTableTitleCell = ({ info }: Props) => {
       className={cn('group relative', haveChildren ? 'cursor-pointer' : '')}
       onClick={haveChildren ? row.getToggleExpandedHandler() : undefined}
     >
-      {actionType === ActionTypeEnum.ACTION && (
-        <div className="absolute right-4 inset-y-0 hidden group-hover:flex group-focus-within:flex">
-          <OpenActionPageButton actionId={actionId} cell={info} />
-        </div>
-      )}
-
-      <div className={cn('flex items-center gap-2')}>
+      <div
+        className={cn('flex items-center gap-2')}
+        style={{ paddingLeft: `${row.depth + (haveChildren ? 0 : -1) * 1}rem` }}
+      >
         {haveChildren ? (
           <Icon
             icon={
@@ -67,10 +63,14 @@ export const ReferentielTableTitleCell = ({ info }: Props) => {
               </span>
             </Tooltip>
           </span>
-
-          <ProgressionBadgeAndBar action={row.original} className="w-full" />
         </div>
       </div>
+
+      {actionType === ActionTypeEnum.ACTION && (
+        <div className="absolute right-4 inset-y-0 hidden group-hover:flex group-focus-within:flex">
+          <OpenActionPageButton actionId={actionId} cell={info} />
+        </div>
+      )}
     </TableCell>
   );
 };
