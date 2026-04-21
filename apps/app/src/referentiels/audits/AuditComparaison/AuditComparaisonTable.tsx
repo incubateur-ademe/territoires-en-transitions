@@ -148,7 +148,7 @@ const getColumns = (headerData?: TScoreAuditRowData): TColumn[] => {
               Cell={CellPoints}
               field="pointFait"
               value={pre_audit?.score}
-              label="Points réalisés"
+              label="Points faits"
             />
           ),
           Cell: CellPoints,
@@ -161,7 +161,7 @@ const getColumns = (headerData?: TScoreAuditRowData): TColumn[] => {
               Cell={CellPercent}
               field="scoreRealise"
               value={pre_audit?.score}
-              label="% réalisé"
+              label="% fait"
             />
           ),
           Cell: CellPercent,
@@ -199,7 +199,7 @@ const getColumns = (headerData?: TScoreAuditRowData): TColumn[] => {
               field="pointFait"
               value={courant?.score}
               previous={pre_audit?.score}
-              label="Points réalisés"
+              label="Points faits"
             />
           ),
           Cell: (props: TCellProps) => (
@@ -218,7 +218,7 @@ const getColumns = (headerData?: TScoreAuditRowData): TColumn[] => {
               field="scoreRealise"
               value={courant?.score}
               previous={pre_audit?.score}
-              label="% réalisé"
+              label="% fait"
             />
           ),
           Cell: (props: TCellProps) => (
